@@ -19,7 +19,7 @@ namespace Game_Server_Control_Panel
 			InitializeComponent();
 			cmbGame.Enabled = true;
 			chkDefaultPath.Enabled = false;
-			txtPath.Enabled = false;
+			txtInstallPath.Enabled = false;
 			btnBrowse.Enabled = false;
 
 			WarningLabel.Text = @"Warning! You cannot edit this after the server has been saved!
@@ -28,17 +28,47 @@ namespace Game_Server_Control_Panel
 				C:\Games\[Game Name]\[Your Server Name]";
 		}
 
+		private void ServerSettingsGUI_Load(object sender, EventArgs e)
+		{
+			// Only clear and pull from DB if we are ADDING (button says Save)
+			if (btnSave.Text == "Save Server")
+			{
+				cmbGame.Items.Clear();
+				foreach (var game in GameDatabase.GetGameList())
+				{
+					cmbGame.Items.Add(game.Name);
+				}
+			}
+		}
+
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			// 1. Check if they picked something other than the default text
 			if (cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game")
 			{
-				chkDefaultPath.Enabled = true; // Unlock the checkbox
+				chkDefaultPath.Enabled = true;
+
+				// --- NEW AUTO-FILL LOGIC ---
+				// Only pull defaults if we are ADDING a new server (Save Mode)
+				if (btnSave.Text == "Save Server")
+				{
+					var selectedGameName = cmbGame.SelectedItem.ToString();
+					var gameData = GameDatabase.GetGame(selectedGameName);
+
+					if (gameData != null)
+					{
+						// Pull the specific defaults from the Database list
+						numPort.Value = gameData.DefaultPort;
+						numQueryPort.Value = gameData.DefaultQueryPort;
+						txtExtraArgs.Text = gameData.DefaultArgs;
+					}
+				}
+				// ----------------------------
 			}
 			else
 			{
-				chkDefaultPath.Enabled = false; // Lock it back up
-				chkDefaultPath.Checked = false; // Uncheck it if they switched back to "Pick Game"
+				chkDefaultPath.Enabled = false;
+				chkDefaultPath.Checked = false;
 			}
 
 			// 2. Refresh the path preview
@@ -67,7 +97,7 @@ namespace Game_Server_Control_Panel
 			{
 				string gameFolder = cmbGame.Text.Replace(" ", "_");
 				string serverFolder = txtName.Text.Replace(" ", "_");
-				txtPath.Text = $@"C:\Games\{gameFolder}\{serverFolder}";
+				txtInstallPath.Text = $@"C:\Games\{gameFolder}\{serverFolder}";
 			}
 		}
 
@@ -83,11 +113,11 @@ namespace Game_Server_Control_Panel
 
 			// 3. Location Settings - LOCK DOWN
 			chkDefaultPath.Checked = existingServer.IsDefaultPath;
-			txtPath.Text = existingServer.InstallPath;
+			txtInstallPath.Text = existingServer.InstallPath;
 
 			// These must be false so the user can't manually break the link to the files
 			chkDefaultPath.Enabled = false;
-			txtPath.Enabled = false;
+			txtInstallPath.Enabled = false;
 			btnBrowse.Enabled = false;
 
 			// 4. Server Configuration (Still editable)
@@ -113,7 +143,7 @@ namespace Game_Server_Control_Panel
 			}
 
 			// 2. Dynamic Path Calculation
-			string finalPath = txtPath.Text;
+			string finalPath = txtInstallPath.Text;
 			if (chkDefaultPath.Checked)
 			{
 				// Clean the names (remove spaces/special chars) to avoid Windows naming errors
@@ -155,11 +185,11 @@ namespace Game_Server_Control_Panel
 
 		private void btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+			using (var fbd = new FolderBrowserDialog())
 			{
 				if (fbd.ShowDialog() == DialogResult.OK)
 				{
-					txtPath.Text = fbd.SelectedPath;
+					txtInstallPath.Text = fbd.SelectedPath;
 				}
 			}
 		}
@@ -168,13 +198,13 @@ namespace Game_Server_Control_Panel
 		{
 			if (chkDefaultPath.Checked)
 			{
-				txtPath.Enabled = false;
+				txtInstallPath.Enabled = false;
 				btnBrowse.Enabled = false;
 				UpdatePathPreview();
 			}
 			else
 			{
-				txtPath.Enabled = true;
+				txtInstallPath.Enabled = true;
 				btnBrowse.Enabled = true;
 			}
 		}

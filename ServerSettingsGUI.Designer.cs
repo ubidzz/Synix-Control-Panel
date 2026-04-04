@@ -35,7 +35,7 @@
 			txtName = new TextBox();
 			cmbGame = new ComboBox();
 			numPort = new NumericUpDown();
-			txtPath = new TextBox();
+			txtInstallPath = new TextBox();
 			btnBrowse = new Button();
 			btnSave = new Button();
 			chkDefaultPath = new CheckBox();
@@ -125,12 +125,12 @@
 			numPort.TabIndex = 6;
 			numPort.Value = new decimal(new int[] { 1024, 0, 0, 0 });
 			// 
-			// txtPath
+			// txtInstallPath
 			// 
-			txtPath.Location = new Point(12, 254);
-			txtPath.Name = "txtPath";
-			txtPath.Size = new Size(287, 23);
-			txtPath.TabIndex = 7;
+			txtInstallPath.Location = new Point(12, 254);
+			txtInstallPath.Name = "txtInstallPath";
+			txtInstallPath.Size = new Size(287, 23);
+			txtInstallPath.TabIndex = 7;
 			// 
 			// btnBrowse
 			// 
@@ -283,7 +283,7 @@
 			WarningLabel.Size = new Size(368, 60);
 			WarningLabel.TabIndex = 23;
 			// 
-			// ServerSettingsForm
+			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
@@ -304,7 +304,7 @@
 			Controls.Add(chkDefaultPath);
 			Controls.Add(btnSave);
 			Controls.Add(btnBrowse);
-			Controls.Add(txtPath);
+			Controls.Add(txtInstallPath);
 			Controls.Add(numPort);
 			Controls.Add(cmbGame);
 			Controls.Add(txtName);
@@ -312,7 +312,7 @@
 			Controls.Add(PortLabel);
 			Controls.Add(GameServerLabel);
 			Controls.Add(ServerNameLabel);
-			Name = "ServerSettingsForm";
+			Name = "ServerSettingsGUI";
 			Text = "ServerSettingsForm";
 			((System.ComponentModel.ISupportInitialize)numPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).EndInit();
@@ -330,7 +330,7 @@
 		private TextBox txtName;
 		private ComboBox cmbGame;
 		private NumericUpDown numPort;
-		private TextBox txtPath;
+		private TextBox txtInstallPath;
 		private Button btnBrowse;
 		private Button btnSave;
 		private CheckBox chkDefaultPath;

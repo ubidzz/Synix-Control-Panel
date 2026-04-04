@@ -29,12 +29,6 @@
 		private void InitializeComponent()
 		{
 			dataGridView1 = new DataGridView();
-			colGame = new DataGridViewTextBoxColumn();
-			colName = new DataGridViewTextBoxColumn();
-			colPort = new DataGridViewTextBoxColumn();
-			colQueryPort = new DataGridViewTextBoxColumn();
-			colPassword = new DataGridViewTextBoxColumn();
-			colStatus = new DataGridViewTextBoxColumn();
 			btnDelete = new Button();
 			btnAddServer = new Button();
 			btnEdit = new Button();
@@ -42,6 +36,12 @@
 			ServerManagerLabel = new Label();
 			btnStart = new Button();
 			btnStop = new Button();
+			colGame = new DataGridViewTextBoxColumn();
+			colName = new DataGridViewTextBoxColumn();
+			colPort = new DataGridViewTextBoxColumn();
+			colQueryPort = new DataGridViewTextBoxColumn();
+			colPassword = new DataGridViewTextBoxColumn();
+			colStatus = new DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			SuspendLayout();
 			// 
@@ -56,42 +56,6 @@
 			dataGridView1.ReadOnly = true;
 			dataGridView1.Size = new Size(698, 503);
 			dataGridView1.TabIndex = 0;
-			// 
-			// colGame
-			// 
-			colGame.HeaderText = "Game";
-			colGame.Name = "colGame";
-			colGame.ReadOnly = true;
-			// 
-			// colName
-			// 
-			colName.HeaderText = "Name";
-			colName.Name = "colName";
-			colName.ReadOnly = true;
-			// 
-			// colPort
-			// 
-			colPort.HeaderText = "Port";
-			colPort.Name = "colPort";
-			colPort.ReadOnly = true;
-			// 
-			// colQueryPort
-			// 
-			colQueryPort.HeaderText = "Query Port";
-			colQueryPort.Name = "colQueryPort";
-			colQueryPort.ReadOnly = true;
-			// 
-			// colPassword
-			// 
-			colPassword.HeaderText = "Password";
-			colPassword.Name = "colPassword";
-			colPassword.ReadOnly = true;
-			// 
-			// colStatus
-			// 
-			colStatus.HeaderText = "Status";
-			colStatus.Name = "colStatus";
-			colStatus.ReadOnly = true;
 			// 
 			// btnDelete
 			// 
@@ -168,6 +132,44 @@
 			btnStop.UseVisualStyleBackColor = true;
 			btnStop.Click += btnStop_Click;
 			// 
+			// colGame
+			// 
+			colGame.HeaderText = "Game";
+			colGame.Name = "colGame";
+			colGame.ReadOnly = true;
+			// 
+			// colName
+			// 
+			colName.HeaderText = "Name";
+			colName.Name = "colName";
+			colName.ReadOnly = true;
+			// 
+			// colPort
+			// 
+			colPort.HeaderText = "Port";
+			colPort.Name = "colPort";
+			colPort.ReadOnly = true;
+			// 
+			// colQueryPort
+			// 
+			colQueryPort.DataPropertyName = "QueryPort";
+			colQueryPort.HeaderText = "Query Port";
+			colQueryPort.Name = "colQueryPort";
+			colQueryPort.ReadOnly = true;
+			// 
+			// colPassword
+			// 
+			colPassword.DataPropertyName = "Password";
+			colPassword.HeaderText = "Password";
+			colPassword.Name = "colPassword";
+			colPassword.ReadOnly = true;
+			// 
+			// colStatus
+			// 
+			colStatus.HeaderText = "Status";
+			colStatus.Name = "colStatus";
+			colStatus.ReadOnly = true;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -197,14 +199,14 @@
 		private Button btnAddServer;
 		private Button btnEdit;
 		private RichTextBox rtbLog;
+		private Label ServerManagerLabel;
+		private Button btnStart;
+		private Button btnStop;
 		private DataGridViewTextBoxColumn colGame;
 		private DataGridViewTextBoxColumn colName;
 		private DataGridViewTextBoxColumn colPort;
 		private DataGridViewTextBoxColumn colQueryPort;
 		private DataGridViewTextBoxColumn colPassword;
 		private DataGridViewTextBoxColumn colStatus;
-		private Label ServerManagerLabel;
-		private Button btnStart;
-		private Button btnStop;
 	}
 }

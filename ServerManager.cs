@@ -145,8 +145,8 @@ public static class ServerManager
 		using (Process process = new Process())
 		{
 			process.StartInfo.FileName = steamCmdPath;
-			// Use game.AppId from our new class
-			process.StartInfo.Arguments = $"+force_install_dir \"{installPath}\" +login anonymous +app_update {game.AppId} validate +quit";
+			// Use game.AppID from our new class
+			process.StartInfo.Arguments = $"+force_install_dir \"{installPath}\" +login anonymous +app_update {game.AppID} validate +quit";
 
 			process.StartInfo.UseShellExecute = false;
 			process.StartInfo.RedirectStandardOutput = true;

@@ -8,20 +8,13 @@ namespace Game_Server_Control_Panel
 	public class GameInfo
 	{
 		public string Name { get; set; }
-		public string AppId { get; set; }
+		public string AppID { get; set; }
 		public string ExeName { get; set; }
 		public string DefaultArgs { get; set; }
-
-		public GameInfo(string name, string appId, string exeName, string defaultArgs = "")
-		{
-			Name = name;
-			AppId = appId;
-			ExeName = exeName;
-			DefaultArgs = defaultArgs;
-		}
+		public int DefaultPort { get; set; }      // NEW
+		public int DefaultQueryPort { get; set; } // NEW
 	}
 
-	// --- NEW CLASS ADDED HERE ---
 	public class GameServer
 	{
 		public string Name { get; set; }
@@ -29,25 +22,48 @@ namespace Game_Server_Control_Panel
 		public int Port { get; set; }
 		public int QueryPort { get; set; }
 		public string Password { get; set; }
-		public string Status { get; set; }
+		public string Status { get; set; } = "Stopped";
+		public string InstallPath { get; set; }
+		public int MaxPlayers { get; set; } = 10;
+		public string WorldName { get; set; } = "NewWorld";
+		public string ExtraArgs { get; set; } = "-log";
+		public bool IsDefaultPath { get; set; }
 
-		// This tracks the running process while the app is open
 		[JsonIgnore]
 		public Process RunningProcess { get; set; }
 	}
 
 	public static class GameDatabase
 	{
-		public static readonly List<GameInfo> SupportedGames = new List<GameInfo>
-		{
-			new GameInfo("Soulmask", "3017300", "SoulmaskServer.exe", "-log"),
-			new GameInfo("StarRupture", "2519830", "StarRuptureServer.exe", ""),
-			new GameInfo("Palworld", "2394010", "PalServer.exe", "")
-		};
+		private static List<GameInfo> games = new List<GameInfo>
+        {
+            new GameInfo { 
+                Name = "Soulmask", 
+                AppID = "3017310", 
+                ExeName = "SoulmaskServer.exe", 
+                DefaultArgs = "-log",
+                DefaultPort = 8777,
+                DefaultQueryPort = 27015
+            },
+            new GameInfo { 
+                Name = "StarRupture", 
+                AppID = "3809400", 
+                ExeName = "StarRuptureServer.exe", 
+                DefaultArgs = "-log -nosound",
+                DefaultPort = 8777,
+                DefaultQueryPort = 27015
+            }
+        };
 
-		public static GameInfo GetGame(string name)
-		{
-			return SupportedGames.Find(g => g.Name == name);
-		}
-	}
+        // This method is what MainGUI line 272 is looking for!
+        public static GameInfo GetGame(string name)
+        {
+            return games.Find(g => g.Name == name);
+        }
+
+        public static List<GameInfo> GetGameList()
+        {
+            return games;
+        }
+	};
 }

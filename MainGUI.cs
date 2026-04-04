@@ -317,18 +317,3 @@ namespace Game_Server_Control_Panel
 		}
 	}
 }
-
-public class GameServer
-{
-	public string Name { get; set; }
-	public string Game { get; set; }
-	public int Port { get; set; }
-	public int QueryPort { get; set; }
-	public string Status { get; set; } = "Stopped";
-	public string InstallPath { get; set; }
-	public string Password { get; set; }
-	public int MaxPlayers { get; set; } = 10;
-	public string WorldName { get; set; } = "NewWorld";
-	public string ExtraArgs { get; set; } = "-log";
-	public bool IsDefaultPath { get; set; }
-}
