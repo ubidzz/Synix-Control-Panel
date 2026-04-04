@@ -113,7 +113,7 @@
 			cmbGame.Size = new Size(368, 23);
 			cmbGame.TabIndex = 5;
 			cmbGame.Text = "Pick Game";
-			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged_1;
+			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
 			// 
 			// numPort
 			// 
@@ -315,6 +315,7 @@
 			Controls.Add(ServerNameLabel);
 			Name = "ServerSettingsGUI";
 			Text = "ServerSettingsForm";
+			Load += ServerSettingsGUI_Load;
 			((System.ComponentModel.ISupportInitialize)numPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).EndInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).EndInit();

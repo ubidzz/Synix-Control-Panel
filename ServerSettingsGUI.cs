@@ -30,57 +30,36 @@ namespace Game_Server_Control_Panel
 
 		private void ServerSettingsGUI_Load(object sender, EventArgs e)
 		{
-			// 1. COMPLETELY WIPE any hard-coded items from the Designer
 			cmbGame.Items.Clear();
 
-			// 2. Loop through your neat GameDatabase list
+			// Add the blank placeholder
+			cmbGame.Items.Add("-- Pick a Game --");
+
 			foreach (var game in GameDatabase.GetGameList())
 			{
 				cmbGame.Items.Add(game.Name);
 			}
 
-			// 3. Set the default display
-			if (cmbGame.Items.Count > 0)
-			{
-				cmbGame.SelectedIndex = 0;
-			}
-			else
-			{
-				cmbGame.Text = "Pick Game";
-			}
+			// Force it to start on the blank placeholder
+			cmbGame.SelectedIndex = 0;
 		}
 
-		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
+		private void cmbGame_SelectedIndexChanged_1(object sender, EventArgs e)
 		{
-			// 1. Check if they picked something other than the default text
-			if (cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game")
-			{
-				chkDefaultPath.Enabled = true;
+			bool isGamePicked = cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game";
 
-				// --- NEW AUTO-FILL LOGIC ---
-				// Only pull defaults if we are ADDING a new server (Save Mode)
-				if (btnSave.Text == "Save Server")
-				{
-					var selectedGameName = cmbGame.SelectedItem.ToString();
-					var gameData = GameDatabase.GetGame(selectedGameName);
+			// Unlock the controls
+			chkDefaultPath.Enabled = isGamePicked;
 
-					if (gameData != null)
-					{
-						// Pull the specific defaults from the Database list
-						numPort.Value = gameData.DefaultPort;
-						numQueryPort.Value = gameData.DefaultQueryPort;
-						txtExtraArgs.Text = gameData.DefaultArgs;
-					}
-				}
-				// ----------------------------
-			}
-			else
+			// If a game is picked and they HAVEN'T checked "Default Path", unlock Browse
+			btnBrowse.Enabled = isGamePicked && !chkDefaultPath.Checked;
+			txtInstallPath.Enabled = isGamePicked && !chkDefaultPath.Checked;
+
+			if (isGamePicked)
 			{
-				chkDefaultPath.Enabled = false;
-				chkDefaultPath.Checked = false;
+				// ... (Keep your existing Map and Port auto-fill logic here) ...
 			}
 
-			// 2. Refresh the path preview
 			UpdatePathPreview();
 		}
 
@@ -218,30 +197,34 @@ namespace Game_Server_Control_Panel
 			}
 		}
 
-		private void cmbGame_SelectedIndexChanged_1(object sender, EventArgs e)
+		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			// 1. Check if a valid game is picked
-			if (cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game")
+			// index 0 is our "-- Pick a Game --" placeholder
+			bool isGamePicked = cmbGame.SelectedIndex > 0;
+			bool hasServerName = !string.IsNullOrWhiteSpace(txtName.Text);
+
+			// Checkbox only unlocks if game is picked
+			chkDefaultPath.Enabled = isGamePicked;
+
+			// Browse ONLY unlocks if BOTH game is picked AND server name is entered
+			bool canBrowse = isGamePicked && hasServerName && !chkDefaultPath.Checked;
+			btnBrowse.Enabled = canBrowse;
+			txtInstallPath.Enabled = canBrowse;
+
+			if (isGamePicked)
 			{
-				chkDefaultPath.Enabled = true;
-
-				// Get the data for the selected game from our Database
-				var selectedGameName = cmbGame.SelectedItem.ToString();
-				var gameData = GameDatabase.GetGame(selectedGameName);
-
+				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
 				if (gameData != null)
 				{
-					// 2. Populate the Map Dropdown (cmbWorldName)
+					// Populate Map Dropdown
 					cmbWorldName.Items.Clear();
 					foreach (var map in gameData.Maps)
 					{
 						cmbWorldName.Items.Add(map);
 					}
-
-					// Auto-select the first map if available
 					if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
 
-					// 3. Auto-fill Ports and Args (ONLY if we are adding a NEW server)
+					// FIX: Pre-fill ports and args if this is a NEW server
 					if (btnSave.Text == "Save Server")
 					{
 						numPort.Value = gameData.DefaultPort;
@@ -250,15 +233,6 @@ namespace Game_Server_Control_Panel
 					}
 				}
 			}
-			else
-			{
-				// Reset if no game is selected
-				chkDefaultPath.Enabled = false;
-				chkDefaultPath.Checked = false;
-				cmbWorldName.Items.Clear();
-			}
-
-			// 4. Update the folder path preview label
 			UpdatePathPreview();
 		}
 	}
