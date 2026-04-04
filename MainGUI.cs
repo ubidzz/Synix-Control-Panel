@@ -265,22 +265,40 @@ namespace Game_Server_Control_Panel
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
+			// 1. Get the server the user selected in the list
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				AppendLog($"Starting {selectedServer.Name}...");
+				// 2. Look up the GameInfo (to get the .exe name like "SoulmaskServer.exe")
+				var info = GameDatabase.GetGame(selectedServer.Game);
 
-				// Start a test CMD window so you can see it's working
+				if (info == null)
+				{
+					AppendLog("Error: Game template not found.");
+					return;
+				}
+
+				AppendLog($"Launching {selectedServer.Name}...");
+
+				// 3. Set up the launch
 				ProcessStartInfo start = new ProcessStartInfo
 				{
-					FileName = "cmd.exe",
-					Arguments = $"/k echo Starting {selectedServer.Game} on Port {selectedServer.Port}",
-					UseShellExecute = true
+					// We'll need to make sure the "Path" is saved in your GameServer class later
+					FileName = info.ExeName,
+					Arguments = $"{info.DefaultArgs} -port={selectedServer.Port}",
+					UseShellExecute = true,
+					WorkingDirectory = "C:\\Path\\To\\Server" // We need to add this to your GUI!
 				};
 
-				selectedServer.RunningProcess = Process.Start(start);
-				selectedServer.Status = "Running";
-
-				dataGridView1.Refresh();
+				try
+				{
+					selectedServer.RunningProcess = Process.Start(start);
+					selectedServer.Status = "Running";
+					dataGridView1.Refresh();
+				}
+				catch (Exception ex)
+				{
+					AppendLog($"Failed to start: {ex.Message}");
+				}
 			}
 		}
 
