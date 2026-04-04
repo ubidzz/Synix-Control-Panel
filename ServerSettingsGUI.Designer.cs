@@ -103,6 +103,7 @@
 			txtName.Name = "txtName";
 			txtName.Size = new Size(368, 23);
 			txtName.TabIndex = 4;
+			txtName.TextChanged += txtName_TextChanged;
 			// 
 			// cmbGame
 			// 

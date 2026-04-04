@@ -13,6 +13,7 @@ namespace Game_Server_Control_Panel
 	public partial class ServerSettingsGUI : Form
 	{
 		public GameServer NewServer { get; set; }
+		private bool isManualLoading = false;
 
 		public ServerSettingsGUI()
 		{
@@ -92,33 +93,28 @@ namespace Game_Server_Control_Panel
 		// Inside your ServerSettingsForm class
 		public void FillFormForEditing(GameServer existingServer)
 		{
-			// 1. Basic Info
+			isManualLoading = true; // START SILENCE
+
 			txtName.Text = existingServer.Name;
+			cmbGame.SelectedItem = existingServer.Game;
 
-			// 2. Lock the Game Selection (Changing games breaks the server install)
-			cmbGame.Text = existingServer.Game;
-			cmbGame.Enabled = false;
-
-			// 3. Location Settings - LOCK DOWN
 			chkDefaultPath.Checked = existingServer.IsDefaultPath;
 			txtInstallPath.Text = existingServer.InstallPath;
 
-			// These must be false so the user can't manually break the link to the files
-			chkDefaultPath.Enabled = false;
-			txtInstallPath.Enabled = false;
-			btnBrowse.Enabled = false;
-
-			// 4. Server Configuration (Still editable)
 			numPort.Value = existingServer.Port;
 			numQueryPort.Value = existingServer.QueryPort;
 			txtPassword.Text = existingServer.Password;
 			numMaxPlayers.Value = existingServer.MaxPlayers;
+
+			// Set the button to Update mode
+			btnSave.Text = "Update Server";
+
+			// Set map after game is selected
 			cmbWorldName.Text = existingServer.WorldName;
 			txtExtraArgs.Text = existingServer.ExtraArgs;
 
-			// 5. Visual Cue
-			// Change the button text so they know they are updating, not adding
-			btnSave.Text = "Update Server";
+			isManualLoading = false; // END SILENCE
+			UpdateControlStates();
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
@@ -197,43 +193,50 @@ namespace Game_Server_Control_Panel
 			}
 		}
 
+		private void UpdateControlStates()
+		{
+			// MUST HAVE: A name typed AND a real game picked (not index 0)
+			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
+			bool isGamePicked = cmbGame.SelectedIndex > 0;
+			bool canEnableLocation = hasName && isGamePicked;
+
+			// Set the states
+			chkDefaultPath.Enabled = canEnableLocation;
+
+			// Browse/Path only unlock if both are true AND "Default Location" is NOT checked
+			bool browseState = canEnableLocation && !chkDefaultPath.Checked;
+			btnBrowse.Enabled = browseState;
+			txtInstallPath.Enabled = browseState;
+		}
+
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			// index 0 is our "-- Pick a Game --" placeholder
+			if (isManualLoading) return; // If we are loading an existing server, STOP HERE.
+
 			bool isGamePicked = cmbGame.SelectedIndex > 0;
-			bool hasServerName = !string.IsNullOrWhiteSpace(txtName.Text);
+			UpdateControlStates();
 
-			// Checkbox only unlocks if game is picked
-			chkDefaultPath.Enabled = isGamePicked;
-
-			// Browse ONLY unlocks if BOTH game is picked AND server name is entered
-			bool canBrowse = isGamePicked && hasServerName && !chkDefaultPath.Checked;
-			btnBrowse.Enabled = canBrowse;
-			txtInstallPath.Enabled = canBrowse;
-
-			if (isGamePicked)
+			if (isGamePicked && btnSave.Text == "Save Server")
 			{
 				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
 				if (gameData != null)
 				{
-					// Populate Map Dropdown
-					cmbWorldName.Items.Clear();
-					foreach (var map in gameData.Maps)
-					{
-						cmbWorldName.Items.Add(map);
-					}
-					if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
+					// ONLY auto-fill defaults if it's a BRAND NEW server
+					numPort.Value = gameData.DefaultPort;
+					numQueryPort.Value = gameData.DefaultQueryPort;
+					txtExtraArgs.Text = gameData.DefaultArgs;
 
-					// FIX: Pre-fill ports and args if this is a NEW server
-					if (btnSave.Text == "Save Server")
-					{
-						numPort.Value = gameData.DefaultPort;
-						numQueryPort.Value = gameData.DefaultQueryPort;
-						txtExtraArgs.Text = gameData.DefaultArgs;
-					}
+					cmbWorldName.Items.Clear();
+					foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map);
+					if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
 				}
 			}
 			UpdatePathPreview();
+		}
+
+		private void txtName_TextChanged(object sender, EventArgs e)
+		{
+			UpdateControlStates();
 		}
 	}
 }
