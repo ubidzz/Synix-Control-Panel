@@ -45,13 +45,13 @@
 			MaxPlayerLabel = new Label();
 			numMaxPlayers = new NumericUpDown();
 			label2 = new Label();
-			txtWorldName = new TextBox();
 			label3 = new Label();
 			txtExtraArgs = new TextBox();
 			label4 = new Label();
 			QueryPortLabel = new Label();
 			numQueryPort = new NumericUpDown();
 			WarningLabel = new Label();
+			cmbWorldName = new ComboBox();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -221,13 +221,6 @@
 			label2.TabIndex = 16;
 			label2.Text = "World Name";
 			// 
-			// txtWorldName
-			// 
-			txtWorldName.Location = new Point(12, 547);
-			txtWorldName.Name = "txtWorldName";
-			txtWorldName.Size = new Size(368, 23);
-			txtWorldName.TabIndex = 17;
-			// 
 			// label3
 			// 
 			label3.AutoSize = true;
@@ -283,18 +276,26 @@
 			WarningLabel.Size = new Size(368, 60);
 			WarningLabel.TabIndex = 23;
 			// 
+			// cmbWorldName
+			// 
+			cmbWorldName.FormattingEnabled = true;
+			cmbWorldName.Location = new Point(12, 547);
+			cmbWorldName.Name = "cmbWorldName";
+			cmbWorldName.Size = new Size(368, 23);
+			cmbWorldName.TabIndex = 24;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(392, 703);
+			Controls.Add(cmbWorldName);
 			Controls.Add(WarningLabel);
 			Controls.Add(numQueryPort);
 			Controls.Add(QueryPortLabel);
 			Controls.Add(label4);
 			Controls.Add(txtExtraArgs);
 			Controls.Add(label3);
-			Controls.Add(txtWorldName);
 			Controls.Add(label2);
 			Controls.Add(numMaxPlayers);
 			Controls.Add(MaxPlayerLabel);
@@ -340,12 +341,12 @@
 		private Label MaxPlayerLabel;
 		private NumericUpDown numMaxPlayers;
 		private Label label2;
-		private TextBox txtWorldName;
 		private Label label3;
 		private TextBox txtExtraArgs;
 		private Label label4;
 		private Label QueryPortLabel;
 		private NumericUpDown numQueryPort;
 		private Label WarningLabel;
+		private ComboBox cmbWorldName;
 	}
 }

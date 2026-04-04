@@ -30,14 +30,23 @@ namespace Game_Server_Control_Panel
 
 		private void ServerSettingsGUI_Load(object sender, EventArgs e)
 		{
-			// Only clear and pull from DB if we are ADDING (button says Save)
-			if (btnSave.Text == "Save Server")
+			// 1. COMPLETELY WIPE any hard-coded items from the Designer
+			cmbGame.Items.Clear();
+
+			// 2. Loop through your neat GameDatabase list
+			foreach (var game in GameDatabase.GetGameList())
 			{
-				cmbGame.Items.Clear();
-				foreach (var game in GameDatabase.GetGameList())
-				{
-					cmbGame.Items.Add(game.Name);
-				}
+				cmbGame.Items.Add(game.Name);
+			}
+
+			// 3. Set the default display
+			if (cmbGame.Items.Count > 0)
+			{
+				cmbGame.SelectedIndex = 0;
+			}
+			else
+			{
+				cmbGame.Text = "Pick Game";
 			}
 		}
 
@@ -125,7 +134,7 @@ namespace Game_Server_Control_Panel
 			numQueryPort.Value = existingServer.QueryPort;
 			txtPassword.Text = existingServer.Password;
 			numMaxPlayers.Value = existingServer.MaxPlayers;
-			txtWorldName.Text = existingServer.WorldName;
+			cmbWorldName.Text = existingServer.WorldName;
 			txtExtraArgs.Text = existingServer.ExtraArgs;
 
 			// 5. Visual Cue
@@ -161,7 +170,7 @@ namespace Game_Server_Control_Panel
 				QueryPort = (int)numQueryPort.Value,
 				Password = txtPassword.Text,
 				MaxPlayers = (int)numMaxPlayers.Value,
-				WorldName = txtWorldName.Text,
+				WorldName = cmbWorldName.Text,
 				ExtraArgs = txtExtraArgs.Text,
 				InstallPath = finalPath,
 				IsDefaultPath = chkDefaultPath.Checked,
@@ -211,18 +220,45 @@ namespace Game_Server_Control_Panel
 
 		private void cmbGame_SelectedIndexChanged_1(object sender, EventArgs e)
 		{
-			// 1. Check if they picked something other than the default text
+			// 1. Check if a valid game is picked
 			if (cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game")
 			{
-				chkDefaultPath.Enabled = true; // Unlock the checkbox
+				chkDefaultPath.Enabled = true;
+
+				// Get the data for the selected game from our Database
+				var selectedGameName = cmbGame.SelectedItem.ToString();
+				var gameData = GameDatabase.GetGame(selectedGameName);
+
+				if (gameData != null)
+				{
+					// 2. Populate the Map Dropdown (cmbWorldName)
+					cmbWorldName.Items.Clear();
+					foreach (var map in gameData.Maps)
+					{
+						cmbWorldName.Items.Add(map);
+					}
+
+					// Auto-select the first map if available
+					if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
+
+					// 3. Auto-fill Ports and Args (ONLY if we are adding a NEW server)
+					if (btnSave.Text == "Save Server")
+					{
+						numPort.Value = gameData.DefaultPort;
+						numQueryPort.Value = gameData.DefaultQueryPort;
+						txtExtraArgs.Text = gameData.DefaultArgs;
+					}
+				}
 			}
 			else
 			{
-				chkDefaultPath.Enabled = false; // Lock it back up
-				chkDefaultPath.Checked = false; // Uncheck it if they switched back to "Pick Game"
+				// Reset if no game is selected
+				chkDefaultPath.Enabled = false;
+				chkDefaultPath.Checked = false;
+				cmbWorldName.Items.Clear();
 			}
 
-			// 2. Refresh the path preview
+			// 4. Update the folder path preview label
 			UpdatePathPreview();
 		}
 	}
