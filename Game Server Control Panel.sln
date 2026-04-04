@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game Server Control Panel", "Game Server Control Panel.csproj", "{55E19FBE-EF0C-4380-AD24-280203B779EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{55E19FBE-EF0C-4380-AD24-280203B779EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55E19FBE-EF0C-4380-AD24-280203B779EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55E19FBE-EF0C-4380-AD24-280203B779EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55E19FBE-EF0C-4380-AD24-280203B779EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00828674-AF86-43E0-A6C2-F27A67A950E4}
+	EndGlobalSection
+EndGlobal

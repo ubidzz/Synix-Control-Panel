@@ -1,0 +1,199 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Game_Server_Control_Panel
+{
+	public partial class ServerSettingsGUI : Form
+	{
+		public GameServer NewServer { get; set; }
+
+		public ServerSettingsGUI()
+		{
+			InitializeComponent();
+			cmbGame.Enabled = true;
+			chkDefaultPath.Enabled = false;
+			txtPath.Enabled = false;
+			btnBrowse.Enabled = false;
+
+			WarningLabel.Text = @"Warning! You cannot edit this after the server has been saved!
+				If you used the Default Location and you changed the Server Name, 
+				the folder name will be changed to:
+				C:\Games\[Game Name]\[Your Server Name]";
+		}
+
+		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			// 1. Check if they picked something other than the default text
+			if (cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game")
+			{
+				chkDefaultPath.Enabled = true; // Unlock the checkbox
+			}
+			else
+			{
+				chkDefaultPath.Enabled = false; // Lock it back up
+				chkDefaultPath.Checked = false; // Uncheck it if they switched back to "Pick Game"
+			}
+
+			// 2. Refresh the path preview
+			UpdatePathPreview();
+		}
+
+		private void UpdatePathPreview()
+		{
+			// 1. Define what "Ready" looks like
+			bool hasGame = cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game";
+			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
+
+			// 2. Only unlock the checkbox if BOTH are true
+			if (hasGame && hasName)
+			{
+				chkDefaultPath.Enabled = true;
+			}
+			else
+			{
+				chkDefaultPath.Enabled = false;
+				chkDefaultPath.Checked = false; // Force it off if they delete the name
+			}
+
+			// 3. Handle the path string if the box is checked
+			if (chkDefaultPath.Checked)
+			{
+				string gameFolder = cmbGame.Text.Replace(" ", "_");
+				string serverFolder = txtName.Text.Replace(" ", "_");
+				txtPath.Text = $@"C:\Games\{gameFolder}\{serverFolder}";
+			}
+		}
+
+		// Inside your ServerSettingsForm class
+		public void FillFormForEditing(GameServer existingServer)
+		{
+			// 1. Basic Info
+			txtName.Text = existingServer.Name;
+
+			// 2. Lock the Game Selection (Changing games breaks the server install)
+			cmbGame.Text = existingServer.Game;
+			cmbGame.Enabled = false;
+
+			// 3. Location Settings - LOCK DOWN
+			chkDefaultPath.Checked = existingServer.IsDefaultPath;
+			txtPath.Text = existingServer.InstallPath;
+
+			// These must be false so the user can't manually break the link to the files
+			chkDefaultPath.Enabled = false;
+			txtPath.Enabled = false;
+			btnBrowse.Enabled = false;
+
+			// 4. Server Configuration (Still editable)
+			numPort.Value = existingServer.Port;
+			numQueryPort.Value = existingServer.QueryPort;
+			txtPassword.Text = existingServer.Password;
+			numMaxPlayers.Value = existingServer.MaxPlayers;
+			txtWorldName.Text = existingServer.WorldName;
+			txtExtraArgs.Text = existingServer.ExtraArgs;
+
+			// 5. Visual Cue
+			// Change the button text so they know they are updating, not adding
+			btnSave.Text = "Update Server";
+		}
+
+		private void btnSave_Click(object sender, EventArgs e)
+		{
+			// 1. Safety Guard: Must pick a game
+			if (cmbGame.SelectedIndex == -1 || cmbGame.Text == "Pick Game")
+			{
+				MessageBox.Show("Please select a game server from the list!", "Selection Required");
+				return;
+			}
+
+			// 2. Dynamic Path Calculation
+			string finalPath = txtPath.Text;
+			if (chkDefaultPath.Checked)
+			{
+				// Clean the names (remove spaces/special chars) to avoid Windows naming errors
+				string gameFolder = cmbGame.Text.Replace(" ", "_");
+				string serverFolder = txtName.Text.Replace(" ", "_");
+				finalPath = $@"C:\Games\{gameFolder}\{serverFolder}";
+			}
+
+			// 3. Package the Data
+			NewServer = new GameServer
+			{
+				Name = txtName.Text,
+				Game = cmbGame.Text,
+				Port = (int)numPort.Value,
+				QueryPort = (int)numQueryPort.Value,
+				Password = txtPassword.Text,
+				MaxPlayers = (int)numMaxPlayers.Value,
+				WorldName = txtWorldName.Text,
+				ExtraArgs = txtExtraArgs.Text,
+				InstallPath = finalPath,
+				IsDefaultPath = chkDefaultPath.Checked,
+				Status = "Stopped"
+			};
+
+			// If this is a NEW server (the button text is "Save" and not "Update")
+			if (btnSave.Text == "Save Server")
+			{
+				// We set the DialogResult so Form1 knows to add it to the list
+				this.DialogResult = DialogResult.OK;
+				this.Close();
+			}
+			else
+			{
+				// Logic for Updating an existing server
+				this.DialogResult = DialogResult.OK;
+				this.Close();
+			}
+		}
+
+		private void btnBrowse_Click(object sender, EventArgs e)
+		{
+			using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+			{
+				if (fbd.ShowDialog() == DialogResult.OK)
+				{
+					txtPath.Text = fbd.SelectedPath;
+				}
+			}
+		}
+
+		private void chkDefaultPath_CheckedChanged(object sender, EventArgs e)
+		{
+			if (chkDefaultPath.Checked)
+			{
+				txtPath.Enabled = false;
+				btnBrowse.Enabled = false;
+				UpdatePathPreview();
+			}
+			else
+			{
+				txtPath.Enabled = true;
+				btnBrowse.Enabled = true;
+			}
+		}
+
+		private void cmbGame_SelectedIndexChanged_1(object sender, EventArgs e)
+		{
+			// 1. Check if they picked something other than the default text
+			if (cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game")
+			{
+				chkDefaultPath.Enabled = true; // Unlock the checkbox
+			}
+			else
+			{
+				chkDefaultPath.Enabled = false; // Lock it back up
+				chkDefaultPath.Checked = false; // Uncheck it if they switched back to "Pick Game"
+			}
+
+			// 2. Refresh the path preview
+			UpdatePathPreview();
+		}
+	}
+}
