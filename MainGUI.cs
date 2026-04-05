@@ -27,6 +27,22 @@ namespace Game_Server_Control_Panel
 			dataGridView1.Columns["colStatus"].DataPropertyName = "Status";
 		}
 
+		private void UpdateGrid()
+		{
+			// This tells the DataGridView to look at the 'serverList' 
+			// and update the screen with the new Status/PID values.
+			dataGridView1.ResetBindings();
+		}
+
+		private void timerMonitor_Tick(object sender, EventArgs e)
+		{
+			// Pass your list and the log method
+			ServerManager.CheckServerStatus(serverList, msg => AppendLog(msg));
+
+			// Refresh the Grid so the "Status" column updates visually
+			UpdateGrid();
+		}
+
 		private void PrepareServerFolder(string path)
 		{
 			if (!Directory.Exists(path))
@@ -35,20 +51,24 @@ namespace Game_Server_Control_Panel
 			}
 		}
 
-		private void SaveServersToDisk()
+		public static void SaveServersToDisk(BindingList<GameServer> servers)
 		{
 			try
 			{
-				// This turns your server list into a string of text
-				string jsonString = JsonSerializer.Serialize(serverList);
-
-				// This writes that text to a file named 'servers.json' in your app folder
+				string jsonString = JsonSerializer.Serialize(servers);
 				File.WriteAllText("servers.json", jsonString);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Failed to save servers: " + ex.Message);
+				System.Diagnostics.Debug.WriteLine("Failed to save: " + ex.Message);
 			}
+		}
+
+		// 2. THIS IS THE "BRIDGE" (Keeps all your old code from breaking)
+		public void SaveServersToDisk()
+		{
+			// It just calls the one above and hands it the form's serverList
+			SaveServersToDisk(serverList);
 		}
 
 		private void LoadServersFromDisk()

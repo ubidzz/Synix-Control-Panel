@@ -1,6 +1,7 @@
 ﻿using Game_Server_Control_Panel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -238,6 +239,58 @@ public static class ServerManager
 		catch (Exception ex)
 		{
 			logCallback?.Invoke($"[CRITICAL ERROR] Failed to start: {ex.Message}");
+		}
+	}
+
+	public static void CheckServerStatus(BindingList<GameServer> servers, Action<string> logCallback)
+	{
+		foreach (var server in servers)
+		{
+			// We only care about servers that are supposed to be "Running"
+			if (server.Status == "Running")
+			{
+				bool isAlive = false;
+
+				// 1. Check by the active Process object (Best for current session)
+				if (server.RunningProcess != null)
+				{
+					if (!server.RunningProcess.HasExited)
+					{
+						isAlive = true;
+					}
+				}
+				// 2. Recovery: Check by PID if the Process object is null (GUI was restarted)
+				else if (server.PID.HasValue)
+				{
+					try
+					{
+						// Try to re-hook the process from Windows
+						var existingProc = Process.GetProcessById(server.PID.Value);
+						if (existingProc != null && !existingProc.HasExited)
+						{
+							server.RunningProcess = existingProc;
+							isAlive = true;
+						}
+					}
+					catch
+					{
+						// Process ID no longer exists in Windows
+						isAlive = false;
+					}
+				}
+
+				// 3. Handle a Crash or Manual Close
+				if (!isAlive)
+				{
+					server.Status = "Stopped";
+					server.PID = null;
+					server.RunningProcess = null;
+					logCallback?.Invoke($"[MONITOR] {server.ServerName} has stopped.");
+
+					// Call the exact name you have in MainGUI
+					MainGUI.SaveServersToDisk(servers);
+				}
+			}
 		}
 	}
 }
