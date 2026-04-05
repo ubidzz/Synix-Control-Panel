@@ -199,7 +199,6 @@ public static class ServerManager
 	{
 		try
 		{
-			// 1. Path Calculation (Make sure ExeName includes the WS\Binaries\... path)
 			string fullPath = Path.Combine(server.InstallPath, server.ExeName);
 
 			if (!File.Exists(fullPath))
@@ -208,8 +207,33 @@ public static class ServerManager
 				return;
 			}
 
-			// 2. Build Argument String
-			string args = $"-port={server.Port} -queryport={server.QueryPort} {server.ExtraArgs}";
+			// --- THE DYNAMIC FIX ---
+			// We build the arguments based on the USER'S settings, not just the template.
+			string args = "";
+
+			// Handle arguments based on the game type
+			switch (server.Game)
+			{
+				case "Palworld":
+					args = $"-port={server.Port} -queryport={server.QueryPort} {server.ExtraArgs}";
+					if (!string.IsNullOrEmpty(server.Password)) args += $" -AdminPassword=\"{server.Password}\"";
+					break;
+
+				case "7 Days to Die":
+					// 7D2D usually uses a config file, but we can override ports here
+					args = $"-configfile=serverconfig.xml -port={server.Port} {server.ExtraArgs}";
+					break;
+
+				case "Valheim":
+					args = $"-nographics -batchmode -name \"{server.ServerName}\" -port {server.Port} -world \"{server.WorldName}\" -password \"{server.Password}\" {server.ExtraArgs}";
+					break;
+
+				default:
+					// Universal fallback for most Unreal Engine games (Soulmask, StarRupture, Icarus)
+					args = $"-log -port={server.Port} -queryport={server.QueryPort} {server.ExtraArgs}";
+					if (!string.IsNullOrEmpty(server.Password)) args += $" -Password=\"{server.Password}\"";
+					break;
+			}
 
 			ProcessStartInfo psi = new ProcessStartInfo
 			{
@@ -220,7 +244,8 @@ public static class ServerManager
 				CreateNoWindow = false
 			};
 
-			// 3. START AND CAPTURE PID
+			logCallback?.Invoke($"[LAUNCHING] {server.Game} with Args: {args}");
+
 			Process proc = Process.Start(psi);
 
 			if (proc != null)
@@ -230,15 +255,11 @@ public static class ServerManager
 				server.Status = "Running";
 
 				logCallback?.Invoke($"--- SERVER STARTED: {server.ServerName} (PID: {proc.Id}) ---");
-
-				// 4. SAVE THE PID TO DISK IMMEDIATELY
-				// This ensures if the GUI crashes/restarts, it still knows which PID to watch.
-				// (Assuming you have a Save function that takes the list)
 			}
 		}
 		catch (Exception ex)
 		{
-			logCallback?.Invoke($"[CRITICAL ERROR] Failed to start: {ex.Message}");
+			logCallback?.Invoke($"[CRITICAL ERROR] {ex.Message}");
 		}
 	}
 

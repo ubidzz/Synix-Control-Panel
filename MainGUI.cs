@@ -60,19 +60,20 @@ namespace Game_Server_Control_Panel
 			}
 			catch (Exception ex)
 			{
-				System.Diagnostics.Debug.WriteLine("Failed to save: " + ex.Message);
+				System.Diagnostics.Debug.WriteLine("Save failed: " + ex.Message);
 			}
 		}
 
-		// 2. THIS IS THE "BRIDGE" (Keeps all your old code from breaking)
+		// VERSION B: The "Bridge" (Used by all your existing buttons)
 		public void SaveServersToDisk()
 		{
-			// It just calls the one above and hands it the form's serverList
+			// This calls Version A and gives it the current list
 			SaveServersToDisk(serverList);
 		}
 
 		private void LoadServersFromDisk()
 		{
+			isInitializing = true;
 			if (File.Exists("servers.json"))
 			{
 				try
@@ -95,6 +96,7 @@ namespace Game_Server_Control_Panel
 					MessageBox.Show("Could not load previous servers. Starting fresh.");
 				}
 			}
+			isInitializing = false;
 		}
 
 		private void btnAddServer_Click(object sender, EventArgs e)
@@ -259,40 +261,32 @@ namespace Game_Server_Control_Panel
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			// 1. Get the server the user selected in the list
+			// 1. Get the actual server object from the selected row
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// 2. Look up the GameInfo (to get the .exe name like "SoulmaskServer.exe")
-				var info = GameDatabase.GetGame(selectedServer.Game);
+				AppendLog($"Launching {selectedServer.Game}: {selectedServer.ServerName}...");
 
-				if (info == null)
+				// 2. Hand it off to the ServerManager (The Expert)
+				// This uses the REAL InstallPath and REAL ExeName from the object
+				ServerManager.StartServer(selectedServer, msg =>
 				{
-					AppendLog("Error: Game template not found.");
-					return;
-				}
+					// Use Invoke to make sure the log updates on the UI thread
+					if (this.InvokeRequired)
+					{
+						this.Invoke((MethodInvoker)delegate { AppendLog(msg); });
+					}
+					else
+					{
+						AppendLog(msg);
+					}
+				});
 
-				AppendLog($"Launching {selectedServer.Game}...");
-
-				// 3. Set up the launch
-				ProcessStartInfo start = new ProcessStartInfo
-				{
-					// We'll need to make sure the "Path" is saved in your GameServer class later
-					FileName = info.ExeName,
-					Arguments = $"{info.ExtraArgs} -port={selectedServer.Port}",
-					UseShellExecute = true,
-					WorkingDirectory = "C:\\Path\\To\\Server" // We need to add this to your GUI!
-				};
-
-				try
-				{
-					selectedServer.RunningProcess = Process.Start(start);
-					selectedServer.Status = "Running";
-					dataGridView1.Refresh();
-				}
-				catch (Exception ex)
-				{
-					AppendLog($"Failed to start: {ex.Message}");
-				}
+				// 3. Refresh the UI to show "Running"
+				UpdateGrid();
+			}
+			else
+			{
+				MessageBox.Show("Please select a server in the list first.");
 			}
 		}
 

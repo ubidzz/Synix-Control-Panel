@@ -41,8 +41,8 @@ namespace Game_Server_Control_Panel
 			new() {
 				Game = "StarRupture",
 				AppID = "3333140",
-				ExeName = "StarRuptureServer.exe",
-				Port = 7777, 
+				ExeName = @"StarRupture\Binaries\Win64\StarRuptureServerEOS-Win64-Shipping.exe",
+				Port = 7777,
 				QueryPort = 27015,
 				ExtraArgs = "-log",
 				Maps = ["MainWorld"]
@@ -50,8 +50,8 @@ namespace Game_Server_Control_Panel
 			new() {
 				Game = "Soulmask",
 				AppID = "3017310",
-				ExeName = "SoulmaskServer.exe",
-				Port = 8777, 
+				ExeName = @"WS\Binaries\Win64\SoulmaskServer-Win64-Shipping.exe",
+				Port = 8777,
 				QueryPort = 27015,
 				ExtraArgs = "-log",
 				Maps = ["MainWorld"]
@@ -60,7 +60,7 @@ namespace Game_Server_Control_Panel
 				Game = "7 Days to Die",
 				AppID = "294420",
 				ExeName = "7DaysToDieServer.exe",
-				Port = 26900, 
+				Port = 26900,
 				QueryPort = 26900,
 				ExtraArgs = "-configfile=serverconfig.xml -quit -batchmode -nographics",
 				Maps = ["Navezgane", "Pregen01"]
@@ -69,7 +69,7 @@ namespace Game_Server_Control_Panel
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				Port = 28015, 
+				Port = 28015,
 				QueryPort = 28016,
 				ExtraArgs = "-batchmode +server.port 28015",
 				Maps = ["Procedural Map"]
@@ -78,25 +78,26 @@ namespace Game_Server_Control_Panel
 				Game = "DayZ",
 				AppID = "223350",
 				ExeName = "DayZServer_x64.exe",
-				Port = 2302, 
+				Port = 2302,
 				QueryPort = 27016,
 				ExtraArgs = "-config=serverDZ.cfg -port=2302 -BEpath= -logs= -profiles=Profiles",
 				Maps = ["Chernarus", "Livonia"]
 			},
 			new() {
 				Game = "Enshrouded",
-				AppID = "2278520", // Dedicated Server ID
+				AppID = "2278520",
 				ExeName = "enshrouded_server.exe",
-				Port = 15636, 
+				Port = 15636,
 				QueryPort = 15637,
 				ExtraArgs = "",
 				Maps = ["Enshrouded"]
 			},
 			new() {
 				Game = "Icarus",
-				AppID = "2089390", // Dedicated Server ID
-				ExeName = "IcarusServer.exe",
-				Port = 17777, 
+				AppID = "2089390",
+				// FIXED: Icarus requires the deep path to the actual engine binary
+				ExeName = @"Icarus\Binaries\Win64\IcarusServer-Win64-Shipping.exe",
+				Port = 17777,
 				QueryPort = 27015,
 				ExtraArgs = "-Log",
 				Maps = ["Styx", "Olympus", "Prometheus"]
@@ -104,8 +105,9 @@ namespace Game_Server_Control_Panel
 			new() {
 				Game = "Valheim",
 				AppID = "896660",
+				// FIXED: Valheim dedicated server binary name
 				ExeName = "valheim_server.exe",
-				Port = 2456, 
+				Port = 2456,
 				QueryPort = 2457,
 				ExtraArgs = "-nographics -batchmode -name \"MyServer\" -port 2456 -world \"Dedicated\" -password \"secret\"",
 				Maps = ["Dedicated"]
@@ -114,7 +116,7 @@ namespace Game_Server_Control_Panel
 				Game = "Palworld",
 				AppID = "2394010",
 				ExeName = "PalServer.exe",
-				Port = 8211, 
+				Port = 8211,
 				QueryPort = 27015,
 				ExtraArgs = "Port=8211,QueryPort=27015",
 				Maps = ["DefaultWorld"]
