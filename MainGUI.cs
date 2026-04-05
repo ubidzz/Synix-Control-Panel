@@ -92,6 +92,8 @@ namespace Game_Server_Control_Panel
 					// Define the path to your SteamCMD
 					string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
+					AppendLog($"--- Checking if the install path, AppID are not null: {newServer.InstallPath} %% {newServer.AppID} ---");
+
 					// Call your existing RunUpdate method
 					// We pass the InstallPath, the AppID, and our AppendLog method
 					ServerManager.RunUpdate(steamPath, newServer.InstallPath, newServer.AppID, msg => AppendLog(msg));

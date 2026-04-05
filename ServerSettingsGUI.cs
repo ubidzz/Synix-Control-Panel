@@ -206,11 +206,16 @@ namespace Game_Server_Control_Panel
 				finalPath = $@"C:\Games\{gameFolder}\{serverFolder}";
 			}
 
-			// 3. Package the Data
+			// 3. Package the Data (Added AppID and ExeName Lookup)
+			var gameData = GameDatabase.GetGame(cmbGame.Text);
+
 			NewServer = new GameServer
 			{
 				ServerName = txtName.Text,
 				Game = cmbGame.Text,
+				// THE FIX: Grabbing the invisible data from the database
+				AppID = gameData?.AppID ?? "0",
+				ExeName = gameData?.ExeName ?? "",
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
 				Password = txtPassword.Text,
