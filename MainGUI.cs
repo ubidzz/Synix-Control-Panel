@@ -77,74 +77,51 @@ namespace Game_Server_Control_Panel
 			}
 		}
 
-		private async void btnAddServer_Click(object sender, EventArgs e)
+		private void btnAddServer_Click(object sender, EventArgs e)
 		{
-			using (ServerSettingsGUI popup = new ServerSettingsGUI())
+			using (ServerSettingsGUI settingsForm = new ServerSettingsGUI())
 			{
-				if (popup.ShowDialog() == DialogResult.OK)
+				if (settingsForm.ShowDialog() == DialogResult.OK)
 				{
-					serverList.Add(popup.NewServer);
+					GameServer newServer = settingsForm.NewServer;
+					serverList.Add(newServer);
 					SaveServersToDisk();
 
-					// Start Tracking
-					isDownloadActive = true;
-					AppendLog($"--- AUTO-INSTALL STARTED: {popup.NewServer.Game} ---");
+					AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
 
-					try
-					{
-						// We use 'await' here so the app knows when the task is actually DONE
-						await Task.Run(() => ServerManager.RunUpdate(
-							@"C:\Games\SteamCMD\steamcmd.exe",
-							popup.NewServer.InstallPath,
-							popup.NewServer.Game,
-							AppendLog
-						));
+					// Define the path to your SteamCMD
+					string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
-						AppendLog("--- INSTALLATION FINISHED ---");
-					}
-					catch (Exception ex)
-					{
-						AppendLog("ERROR: " + ex.Message);
-					}
-					finally
-					{
-						// Stop Tracking
-						isDownloadActive = false;
-					}
+					// Call your existing RunUpdate method
+					// We pass the InstallPath, the AppID, and our AppendLog method
+					ServerManager.RunUpdate(steamPath, newServer.InstallPath, newServer.AppID, msg => AppendLog(msg));
 				}
 			}
 		}
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
-			// 1. Matches your grid name
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
-				// 2. Casts to your GameServer class
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				// 3. Matches your Settings Form name
 				using (ServerSettingsGUI settingsForm = new ServerSettingsGUI())
 				{
-					// 4. Matches your EXACT method name for loading the data
 					settingsForm.FillFormForEditing(selectedServer);
 
 					if (settingsForm.ShowDialog() == DialogResult.OK)
 					{
-						// 5. Update the object in your BindingList<GameServer>
 						int index = serverList.IndexOf(selectedServer);
 						if (index != -1)
 						{
 							serverList[index] = settingsForm.NewServer;
-
-							// 6. Force UI refresh
 							serverList.ResetBindings();
 
-							// 7. Matches your actual save method in MainGUI.cs
+							// Matches your local save method
 							SaveServersToDisk();
 
-							// 8. Matches your actual logging method in MainGUI.cs
-							LogToConsole($"Updated server settings for: {settingsForm.NewServer.Name}");
+							// THE FIX: Using your ACTUAL property 'ServerName' and method 'AppendLog'
+							AppendLog($"Updated settings for server: {settingsForm.NewServer.ServerName}");
 						}
 					}
 				}

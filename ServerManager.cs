@@ -129,34 +129,57 @@ public static class ServerManager
 	}
 
 	// The SteamCMD Engine
-	public static void RunUpdate(string steamCmdPath, string installPath, string gameName, Action<string> logCallback)
+	public static void RunUpdate(string steamCmdPath, string installPath, string appId, Action<string> logCallback)
 	{
-		// Ask the database for the game details
-		var game = GameDatabase.GetGame(gameName);
-
-		if (game == null)
+		// 1. Verify SteamCMD exists before starting
+		if (!File.Exists(steamCmdPath))
 		{
-			logCallback($"ERROR: {gameName} is not in the Game Database!");
+			logCallback?.Invoke($"ERROR: SteamCMD not found at: {steamCmdPath}");
 			return;
 		}
 
-		if (!Directory.Exists(installPath)) Directory.CreateDirectory(installPath);
+		// 2. THE CRITICAL FIX: The Argument Order
+		// Must be: force_install_dir -> login anonymous -> app_update -> validate -> quit
+		// We use \"{installPath}\" to handle folders with spaces.
+		string args = $"+force_install_dir \"{installPath}\" +login anonymous +app_update {appId} validate +quit";
 
-		using (Process process = new Process())
+		ProcessStartInfo psi = new ProcessStartInfo
 		{
-			process.StartInfo.FileName = steamCmdPath;
-			// Use game.AppID from our new class
-			process.StartInfo.Arguments = $"+force_install_dir \"{installPath}\" +login anonymous +app_update {game.AppID} validate +quit";
+			FileName = steamCmdPath,
+			Arguments = args,
+			RedirectStandardOutput = true,
+			RedirectStandardError = true,
+			UseShellExecute = false,
+			CreateNoWindow = true
+		};
 
-			process.StartInfo.UseShellExecute = false;
-			process.StartInfo.RedirectStandardOutput = true;
-			process.StartInfo.CreateNoWindow = true;
+		// 3. Start the process and route the logs to your GUI (rtbLog)
+		Process process = new Process { StartInfo = psi };
 
-			process.OutputDataReceived += (sender, e) => { if (!string.IsNullOrEmpty(e.Data)) logCallback(e.Data); };
+		process.OutputDataReceived += (s, e) =>
+		{
+			if (!string.IsNullOrEmpty(e.Data))
+			{
+				logCallback?.Invoke(e.Data);
+			}
+		};
 
+		try
+		{
 			process.Start();
 			process.BeginOutputReadLine();
-			process.WaitForExit();
+			process.BeginErrorReadLine(); // Added to catch SteamCMD specific errors
+
+			// 4. Run on a background thread so the GUI stays alive
+			Task.Run(() =>
+			{
+				process.WaitForExit();
+				logCallback?.Invoke("--- STEAMCMD PROCESS FINISHED ---");
+			});
+		}
+		catch (Exception ex)
+		{
+			logCallback?.Invoke($"CRITICAL ERROR starting SteamCMD: {ex.Message}");
 		}
 	}
 }

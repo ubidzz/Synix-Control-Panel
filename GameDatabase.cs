@@ -33,70 +33,80 @@ namespace Game_Server_Control_Panel
 
 	public static class GameDatabase
 	{
-		public static List<GameInfo> GetGameList() => [
+		private static List<GameInfo> games =
+[
 			new() {
-			Game = "StarRupture",
-			AppID = "3809400",
-			ExeName = "StarRuptureServer.exe",
-			ExtraArgs = "-log -nosound",
-			Port = 8777,
-			QueryPort = 27015,
-			Maps = ["Default", "Experimental"]
-		},
-		new() {
-			Game = "Soulmask",
-			AppID = "2646460",
-			ExeName = "SoulmaskServer.exe",
-			ExtraArgs = "-log",
-			Port = 8777,
-			QueryPort = 27015,
-			Maps = ["MainWorld"]
-		},
-		new() {
-			Game = "Rust",
-			AppID = "258550",
-			ExeName = "RustDedicated.exe",
-			ExtraArgs = "-batchmode +server.level \"Procedural Map\" +server.identity \"{Identity}\" +server.hostname \"{Hostname}\"",
-			Port = 28015,
-			QueryPort = 28016,
-			Maps = ["Procedural Map", "Barren"]
-		},
-		new() {
-			Game = "7 Days to Die",
-			AppID = "294420",
-			ExeName = "7DaysToDieServer.exe",
-			ExtraArgs = "-configfile=serverconfig.xml -quit -batchmode -nographics",
-			Port = 26900,
-			QueryPort = 26900,
-			Maps = ["Navezgane", "Pregen01"]
-		},
-		new() {
-			Game = "DayZ",
-			AppID = "223350",
-			ExeName = "DayZServer_x64.exe",
-			ExtraArgs = "-config=serverDZ.cfg -port=2302 -BEpath= -logs= -profiles=Profiles",
-			Port = 2302,
-			QueryPort = 27016,
-			Maps = ["ChernarusPlus", "Livonia"]
-		},
-		new() {
-			Game = "Enshrouded",
-			AppID = "2278520",
-			ExeName = "enshrouded_server.exe",
-			ExtraArgs = "",
-			Port = 15636,
-			QueryPort = 15637,
-			Maps = ["Default"]
-		},
-		new() {
-			Game = "Icarus",
-			AppID = "2089390",
-			ExeName = "IcarusServer-Win64-Shipping.exe",
-			ExtraArgs = "-Log",
-			Port = 17777,
-			QueryPort = 27015,
-			Maps = ["Olympus", "Styx", "Prometheus"]
-		}
+				Game = "StarRupture",
+				AppID = "3333140",
+				ExeName = "StarRuptureServer.exe",
+				Port = 7777, QueryPort = 27015,
+				ExtraArgs = "-log",
+				Maps = ["MainWorld"]
+			},
+			new() {
+				Game = "Soulmask",
+				AppID = "3017310",
+				ExeName = "SoulmaskServer.exe",
+				Port = 8777, QueryPort = 27015,
+				ExtraArgs = "-log",
+				Maps = ["MainWorld"]
+			},
+			new() {
+				Game = "7 Days to Die",
+				AppID = "294420",
+				ExeName = "7DaysToDieServer.exe",
+				Port = 26900, QueryPort = 26900,
+				ExtraArgs = "-configfile=serverconfig.xml -quit -batchmode -nographics",
+				Maps = ["Navezgane", "Pregen01"]
+			},
+			new() {
+				Game = "Rust",
+				AppID = "258550",
+				ExeName = "RustDedicated.exe",
+				Port = 28015, QueryPort = 28016,
+				ExtraArgs = "-batchmode +server.port 28015",
+				Maps = ["Procedural Map"]
+			},
+			new() {
+				Game = "DayZ",
+				AppID = "223350",
+				ExeName = "DayZServer_x64.exe",
+				Port = 2302, QueryPort = 27016,
+				ExtraArgs = "-config=serverDZ.cfg -port=2302 -BEpath= -logs= -profiles=Profiles",
+				Maps = ["Chernarus", "Livonia"]
+			},
+			new() {
+				Game = "Enshrouded",
+				AppID = "2278520", // Dedicated Server ID
+				ExeName = "enshrouded_server.exe",
+				Port = 15636, QueryPort = 15637,
+				ExtraArgs = "",
+				Maps = ["Enshrouded"]
+			},
+			new() {
+				Game = "Icarus",
+				AppID = "2089390", // Dedicated Server ID
+				ExeName = "IcarusServer.exe",
+				Port = 17777, QueryPort = 27015,
+				ExtraArgs = "-Log",
+				Maps = ["Styx", "Olympus", "Prometheus"]
+			},
+			new() {
+				Game = "Valheim",
+				AppID = "896660",
+				ExeName = "valheim_server.exe",
+				Port = 2456, QueryPort = 2457,
+				ExtraArgs = "-nographics -batchmode -name \"MyServer\" -port 2456 -world \"Dedicated\" -password \"secret\"",
+				Maps = ["Dedicated"]
+			},
+			new() {
+				Game = "Palworld",
+				AppID = "2394010",
+				ExeName = "PalServer.exe",
+				Port = 8211, QueryPort = 27015,
+				ExtraArgs = "Port=8211,QueryPort=27015",
+				Maps = ["DefaultWorld"]
+			}
 		];
 
 		public static GameInfo? GetGame(string name) => GetGameList().Find(g => g.Game == name);

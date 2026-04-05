@@ -31,76 +31,89 @@ namespace Game_Server_Control_Panel
 
 		private void ServerSettingsGUI_Load(object sender, EventArgs e)
 		{
-			// 1. Populate the Game Dropdown first
+			cmbGame.SelectedIndexChanged -= cmbGame_SelectedIndexChanged;
+
 			cmbGame.Items.Clear();
+			cmbGame.Items.Add("-- Pick a Game --");
 			foreach (var game in GameDatabase.GetGameList())
 			{
 				cmbGame.Items.Add(game.Game);
 			}
+			cmbGame.SelectedIndex = 0;
 
-			// 2. Check if we are EDITING an existing server
-			if (CurrentServer != null)
+			if (btnSave.Text == "Update Server" && NewServer != null)
 			{
-				isManualLoading = true; // Block the IndexChanged auto-fill
+				isManualLoading = true;
 
-				txtName.Text = CurrentServer.ServerName;
-				cmbGame.Text = CurrentServer.Game;
-				numPort.Value = CurrentServer.Port;
-				numQueryPort.Value = CurrentServer.QueryPort;
-				txtPassword.Text = CurrentServer.Password;
-				numMaxPlayers.Value = CurrentServer.MaxPlayers;
-				cmbWorldName.Text = CurrentServer.WorldName;
-				txtExtraArgs.Text = CurrentServer.ExtraArgs;
-				txtPath.Text = CurrentServer.InstallPath;
-				chkDefaultPath.Checked = CurrentServer.IsDefaultPath;
+				txtName.Text = NewServer.ServerName;
 
-				btnSave.Text = "Update Server";
+				int gameIndex = cmbGame.FindStringExact(NewServer.Game);
+				if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 
-				isManualLoading = false; // Unblock
+				numPort.Value = NewServer.Port;
+				numQueryPort.Value = NewServer.QueryPort;
+				txtPassword.Text = NewServer.Password;
+				numMaxPlayers.Value = NewServer.MaxPlayers;
+				txtExtraArgs.Text = NewServer.ExtraArgs;
+				txtInstallPath.Text = NewServer.InstallPath;
+				chkDefaultPath.Checked = NewServer.IsDefaultPath;
+
+				// THE FIX: Repopulate Maps list so we can select the saved world
+				var gameData = GameDatabase.GetGame(NewServer.Game);
+				if (gameData != null)
+				{
+					cmbWorldName.Items.Clear();
+					foreach (var map in gameData.Maps)
+					{
+						cmbWorldName.Items.Add(map);
+					}
+					// Select the saved world name
+					cmbWorldName.Text = NewServer.WorldName;
+				}
+
+				cmbGame.Enabled = false;
+				chkDefaultPath.Enabled = false;
+				txtInstallPath.Enabled = false;
+				btnBrowse.Enabled = false;
+
+				isManualLoading = false;
 			}
 			else
 			{
-				// Default settings for a NEW server
-				txtName.Text = "-- New Server --";
 				btnSave.Text = "Save Server";
+				txtName.Text = string.Empty;
+				txtInstallPath.Text = string.Empty;
+				cmbWorldName.Items.Clear(); // Clear maps for new server until game is picked
+
+				chkDefaultPath.Enabled = false;
+				btnSave.Enabled = false;
+				cmbGame.Enabled = true;
 			}
+
+			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
+			UpdateControlStates();
 		}
 
 		private void UpdatePathPreview()
 		{
-			// 1. Get the current Game name from the dropdown
+			// Don't mess with the path if we are just editing an existing server
+			if (btnSave.Text == "Update Server") return;
+
 			string selectedGame = cmbGame.SelectedItem?.ToString() ?? "";
 			string serverName = txtName.Text.Trim();
 
-			// 2. Handle Folder Path Preview
 			if (chkDefaultPath.Checked)
 			{
-				// Example: C:\GameServers\Soulmask\Buffalo
-				if (!string.IsNullOrEmpty(selectedGame) && selectedGame != "-- Pick a Game --" && !string.IsNullOrEmpty(serverName))
+				// ONLY build a path if we have a Game AND a Name
+				if (cmbGame.SelectedIndex > 0 && !string.IsNullOrWhiteSpace(serverName))
 				{
+					// Result: C:\GameServers\Soulmask\Buffalo
 					txtInstallPath.Text = Path.Combine(@"C:\GameServers", selectedGame, serverName);
 				}
-			}
-
-			// 3. Handle Argument Placeholder Swapping (Identity and Hostname)
-			if (!string.IsNullOrEmpty(selectedGame) && selectedGame != "-- Pick a Game --")
-			{
-				var gameInfo = GameDatabase.GetGame(selectedGame);
-				if (gameInfo != null)
+				else
 				{
-					string folderName = Path.GetFileName(txtInstallPath.Text);
-
-					// Swap {Identity} with the folder name and {Hostname} with the Server Name
-					string processedArgs = gameInfo.ExtraArgs
-						.Replace("{Identity}", folderName)
-						.Replace("{Hostname}", serverName);
-
-					// Only update the box if the user hasn't manually typed something different
-					// or if we are in "New" mode.
-					if (btnSave.Text != "Update Server")
-					{
-						txtExtraArgs.Text = processedArgs;
-					}
+					// If one is missing, clear the path box so they don't think it's ready
+					txtInstallPath.Text = string.Empty;
 				}
 			}
 		}
@@ -252,51 +265,62 @@ namespace Game_Server_Control_Panel
 
 		private void UpdateControlStates()
 		{
-			// MUST HAVE: A name typed AND a real game picked (not index 0)
-			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
+			// 1. Get the current values
+			string serverName = txtName.Text.Trim();
 			bool isGamePicked = cmbGame.SelectedIndex > 0;
-			bool canEnableLocation = hasName && isGamePicked;
 
-			// Set the states
-			chkDefaultPath.Enabled = canEnableLocation;
+			// 2. STRICT RULE: Name must be at least 1 character long
+			bool hasValidName = !string.IsNullOrWhiteSpace(serverName);
 
-			// Browse/Path only unlock if both are true AND "Default Location" is NOT checked
-			bool browseState = canEnableLocation && !chkDefaultPath.Checked;
-			btnBrowse.Enabled = browseState;
-			txtInstallPath.Enabled = browseState;
+			// 3. ONLY unlock the location options if BOTH are true
+			bool canSelectLocation = isGamePicked && hasValidName;
+
+			chkDefaultPath.Enabled = canSelectLocation;
+
+			// 4. Handle the Browse/Path box visibility
+			// They only unlock if location is allowed AND "Default" is unchecked
+			bool manualPathMode = canSelectLocation && !chkDefaultPath.Checked;
+			btnBrowse.Enabled = manualPathMode;
+			txtInstallPath.Enabled = manualPathMode;
+
+			// 5. The SAVE button stays dead until we have both a name and a game
+			btnSave.Enabled = canSelectLocation;
 		}
 
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			// - Exit if we are editing an existing server OR it's the placeholder
 			if (isManualLoading || cmbGame.SelectedIndex <= 0) return;
 
 			var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
+
 			if (gameData != null)
 			{
-				// - Only set the name if it's a fresh new server
-				if (txtName.Text == "-- New Server --" || string.IsNullOrWhiteSpace(txtName.Text))
+				numPort.Value = gameData.Port;
+				numQueryPort.Value = gameData.QueryPort;
+				txtExtraArgs.Text = gameData.ExtraArgs;
+
+				cmbWorldName.Items.Clear();
+
+				// CHANGED: Use .Count instead of .Length for List<string>
+				if (gameData.Maps != null && gameData.Maps.Count > 0)
 				{
-					txtName.Text = gameData.Game;
+					foreach (var map in gameData.Maps)
+					{
+						cmbWorldName.Items.Add(map);
+					}
+					cmbWorldName.SelectedIndex = 0;
 				}
 
-				numPort.Value = gameData.DefaultPort;
-				numQueryPort.Value = gameData.DefaultQueryPort;
-				txtExtraArgs.Text = gameData.DefaultArgs;
-
-				// - Update world list
-				cmbWorldName.Items.Clear();
-				foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map);
-				if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
+				UpdatePathPreview();
 			}
 
 			UpdateControlStates();
-			UpdatePathPreview();
 		}
 
 		private void txtName_TextChanged(object sender, EventArgs e)
 		{
 			UpdateControlStates();
+			UpdatePathPreview();
 		}
 	}
 }
