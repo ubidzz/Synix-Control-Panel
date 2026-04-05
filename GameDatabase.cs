@@ -8,12 +8,12 @@ namespace Game_Server_Control_Panel
 	// These MUST be outside the GameDatabase class to be visible everywhere
 	public class GameInfo
 	{
-		public string Name { get; set; } = string.Empty;
+		public string Game { get; set; } = string.Empty; // Changed back from Name
 		public string AppID { get; set; } = string.Empty;
 		public string ExeName { get; set; } = string.Empty;
-		public string DefaultArgs { get; set; } = string.Empty;
-		public int DefaultPort { get; set; }
-		public int DefaultQueryPort { get; set; }
+		public string ExtraArgs { get; set; } = string.Empty; // Changed back from DefaultArgs
+		public int Port { get; set; } // Changed back from DefaultPort
+		public int QueryPort { get; set; } // Changed back from DefaultQueryPort
 		public List<string> Maps { get; set; } = [];
 	}
 
@@ -25,6 +25,7 @@ namespace Game_Server_Control_Panel
 		public string Status { get; set; } = "Stopped";
 		public int MaxPlayers { get; set; } = 10;
 		public string WorldName { get; set; } = "NewWorld";
+		public bool IsDefaultPath { get; set; } = true;
 
 		[JsonIgnore]
 		public Process? RunningProcess { get; set; }
@@ -34,70 +35,70 @@ namespace Game_Server_Control_Panel
 	{
 		public static List<GameInfo> GetGameList() => [
 			new() {
-			Name = "StarRupture",
+			Game = "StarRupture",
 			AppID = "3809400",
 			ExeName = "StarRuptureServer.exe",
-			DefaultArgs = "-log -nosound",
-			DefaultPort = 8777,
-			DefaultQueryPort = 27015,
+			ExtraArgs = "-log -nosound",
+			Port = 8777,
+			QueryPort = 27015,
 			Maps = ["Default", "Experimental"]
 		},
 		new() {
-			Name = "Soulmask",
+			Game = "Soulmask",
 			AppID = "2646460",
 			ExeName = "SoulmaskServer.exe",
-			DefaultArgs = "-log",
-			DefaultPort = 8777,
-			DefaultQueryPort = 27015,
+			ExtraArgs = "-log",
+			Port = 8777,
+			QueryPort = 27015,
 			Maps = ["MainWorld"]
 		},
 		new() {
-			Name = "Rust",
+			Game = "Rust",
 			AppID = "258550",
 			ExeName = "RustDedicated.exe",
-			DefaultArgs = "-batchmode +server.level \"Procedural Map\" +server.identity \"{Identity}\" +server.hostname \"{Hostname}\"",
-			DefaultPort = 28015,
-			DefaultQueryPort = 28016,
+			ExtraArgs = "-batchmode +server.level \"Procedural Map\" +server.identity \"{Identity}\" +server.hostname \"{Hostname}\"",
+			Port = 28015,
+			QueryPort = 28016,
 			Maps = ["Procedural Map", "Barren"]
 		},
 		new() {
-			Name = "7 Days to Die",
+			Game = "7 Days to Die",
 			AppID = "294420",
 			ExeName = "7DaysToDieServer.exe",
-			DefaultArgs = "-configfile=serverconfig.xml -quit -batchmode -nographics",
-			DefaultPort = 26900,
-			DefaultQueryPort = 26900,
+			ExtraArgs = "-configfile=serverconfig.xml -quit -batchmode -nographics",
+			Port = 26900,
+			QueryPort = 26900,
 			Maps = ["Navezgane", "Pregen01"]
 		},
 		new() {
-			Name = "DayZ",
+			Game = "DayZ",
 			AppID = "223350",
 			ExeName = "DayZServer_x64.exe",
-			DefaultArgs = "-config=serverDZ.cfg -port=2302 -BEpath= -logs= -profiles=Profiles",
-			DefaultPort = 2302,
-			DefaultQueryPort = 27016,
+			ExtraArgs = "-config=serverDZ.cfg -port=2302 -BEpath= -logs= -profiles=Profiles",
+			Port = 2302,
+			QueryPort = 27016,
 			Maps = ["ChernarusPlus", "Livonia"]
 		},
 		new() {
-			Name = "Enshrouded",
+			Game = "Enshrouded",
 			AppID = "2278520",
 			ExeName = "enshrouded_server.exe",
-			DefaultArgs = "",
-			DefaultPort = 15636,
-			DefaultQueryPort = 15637,
+			ExtraArgs = "",
+			Port = 15636,
+			QueryPort = 15637,
 			Maps = ["Default"]
 		},
 		new() {
-			Name = "Icarus",
+			Game = "Icarus",
 			AppID = "2089390",
 			ExeName = "IcarusServer-Win64-Shipping.exe",
-			DefaultArgs = "-Log",
-			DefaultPort = 17777,
-			DefaultQueryPort = 27015,
+			ExtraArgs = "-Log",
+			Port = 17777,
+			QueryPort = 27015,
 			Maps = ["Olympus", "Styx", "Prometheus"]
 		}
 		];
 
-		public static GameInfo? GetGame(string name) => GetGameList().Find(g => g.Name == name);
+		public static GameInfo? GetGame(string name) => GetGameList().Find(g => g.Game == name);
 	}
 }

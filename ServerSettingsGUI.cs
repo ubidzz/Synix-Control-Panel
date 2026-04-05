@@ -31,26 +31,39 @@ namespace Game_Server_Control_Panel
 
 		private void ServerSettingsGUI_Load(object sender, EventArgs e)
 		{
-			// If we are already in Update mode, do not reset the dropdown
-			if (btnSave.Text == "Update Server")
-			{
-				return;
-			}
-
-			// Default setup for NEW servers
-			cmbGame.SelectedIndexChanged -= cmbGame_SelectedIndexChanged;
-
+			// 1. Populate the Game Dropdown first
 			cmbGame.Items.Clear();
-			cmbGame.Items.Add("-- Pick a Game --");
 			foreach (var game in GameDatabase.GetGameList())
 			{
-				cmbGame.Items.Add(game.Name);
+				cmbGame.Items.Add(game.Game);
 			}
 
-			cmbGame.SelectedIndex = 0;
+			// 2. Check if we are EDITING an existing server
+			if (CurrentServer != null)
+			{
+				isManualLoading = true; // Block the IndexChanged auto-fill
 
-			// Only listen for changes if it's a new server
-			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
+				txtName.Text = CurrentServer.ServerName;
+				cmbGame.Text = CurrentServer.Game;
+				numPort.Value = CurrentServer.Port;
+				numQueryPort.Value = CurrentServer.QueryPort;
+				txtPassword.Text = CurrentServer.Password;
+				numMaxPlayers.Value = CurrentServer.MaxPlayers;
+				cmbWorldName.Text = CurrentServer.WorldName;
+				txtExtraArgs.Text = CurrentServer.ExtraArgs;
+				txtPath.Text = CurrentServer.InstallPath;
+				chkDefaultPath.Checked = CurrentServer.IsDefaultPath;
+
+				btnSave.Text = "Update Server";
+
+				isManualLoading = false; // Unblock
+			}
+			else
+			{
+				// Default settings for a NEW server
+				txtName.Text = "-- New Server --";
+				btnSave.Text = "Save Server";
+			}
 		}
 
 		private void UpdatePathPreview()
@@ -78,7 +91,7 @@ namespace Game_Server_Control_Panel
 					string folderName = Path.GetFileName(txtInstallPath.Text);
 
 					// Swap {Identity} with the folder name and {Hostname} with the Server Name
-					string processedArgs = gameInfo.DefaultArgs
+					string processedArgs = gameInfo.ExtraArgs
 						.Replace("{Identity}", folderName)
 						.Replace("{Hostname}", serverName);
 
@@ -106,11 +119,11 @@ namespace Game_Server_Control_Panel
 			cmbGame.Items.Add("-- Pick a Game --");
 			foreach (var g in GameDatabase.GetGameList())
 			{
-				cmbGame.Items.Add(g.Name);
+				cmbGame.Items.Add(g.Game);
 			}
 
 			// 4. LOAD SAVED SERVER DATA
-			txtName.Text = existingServer.Name;
+			txtName.Text = existingServer.Game;
 
 			// Force Game Selection
 			int gameIndex = cmbGame.FindStringExact(existingServer.Game);
@@ -186,7 +199,7 @@ namespace Game_Server_Control_Panel
 			// 3. Package the Data
 			NewServer = new GameServer
 			{
-				Name = txtName.Text,
+				ServerName = txtName.Text,
 				Game = cmbGame.Text,
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
@@ -258,31 +271,25 @@ namespace Game_Server_Control_Panel
 
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			// Do nothing if no game is selected or if we are in Edit mode
-			if (cmbGame.SelectedIndex <= 0 || btnSave.Text == "Update Server")
-			{
-				return;
-			}
+			// If we are loading an existing server, stop here so we don't overwrite
+			if (isManualLoading) return;
 
-			var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
-			if (gameData != null)
+			var selectedGame = GameDatabase.GetGame(cmbGame.Text);
+			if (selectedGame != null)
 			{
-				// Apply Factory Defaults for NEW servers
-				numPort.Value = gameData.DefaultPort;
-				numQueryPort.Value = gameData.DefaultQueryPort;
-				txtExtraArgs.Text = gameData.DefaultArgs;
-
-				// Fill Map Dropdown
-				cmbWorldName.Items.Clear();
-				foreach (var map in gameData.Maps)
+				// Only overwrite the name if it's still the default placeholder
+				if (txtName.Text == "-- New Server --" || string.IsNullOrWhiteSpace(txtName.Text))
 				{
-					cmbWorldName.Items.Add(map);
+					txtName.Text = selectedGame.Game;
 				}
-				if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
-			}
 
-			UpdateControlStates();
-			UpdatePathPreview();
+				numPort.Value = selectedGame.Port;
+				numQueryPort.Value = selectedGame.QueryPort;
+				txtExtraArgs.Text = selectedGame.ExtraArgs;
+
+				// Update the path based on the new game selection
+				UpdatePath();
+			}
 		}
 
 		private void txtName_TextChanged(object sender, EventArgs e)

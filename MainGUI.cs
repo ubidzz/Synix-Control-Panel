@@ -21,7 +21,7 @@ namespace Game_Server_Control_Panel
 
 			// Map the Columns to the Class Properties
 			// Check your Designer.cs to make sure these names (colName, etc.) match!
-			dataGridView1.Columns["colName"].DataPropertyName = "Name";
+			dataGridView1.Columns["colName"].DataPropertyName = "ServerName";
 			dataGridView1.Columns["colGame"].DataPropertyName = "Game";
 			dataGridView1.Columns["colPort"].DataPropertyName = "Port";
 			dataGridView1.Columns["colStatus"].DataPropertyName = "Status";
@@ -88,7 +88,7 @@ namespace Game_Server_Control_Panel
 
 					// Start Tracking
 					isDownloadActive = true;
-					AppendLog($"--- AUTO-INSTALL STARTED: {popup.NewServer.Name} ---");
+					AppendLog($"--- AUTO-INSTALL STARTED: {popup.NewServer.Game} ---");
 
 					try
 					{
@@ -176,7 +176,7 @@ namespace Game_Server_Control_Panel
 				}
 
 				// 4. Safety Confirmation
-				var confirm = MessageBox.Show($"Delete '{selectedServer.Name}'?", "Confirm", MessageBoxButtons.YesNo);
+				var confirm = MessageBox.Show($"Delete '{selectedServer.Game}'?", "Confirm", MessageBoxButtons.YesNo);
 				if (confirm == DialogResult.Yes)
 				{
 					serverList.Remove(selectedServer);
@@ -277,14 +277,14 @@ namespace Game_Server_Control_Panel
 					return;
 				}
 
-				AppendLog($"Launching {selectedServer.Name}...");
+				AppendLog($"Launching {selectedServer.Game}...");
 
 				// 3. Set up the launch
 				ProcessStartInfo start = new ProcessStartInfo
 				{
 					// We'll need to make sure the "Path" is saved in your GameServer class later
 					FileName = info.ExeName,
-					Arguments = $"{info.DefaultArgs} -port={selectedServer.Port}",
+					Arguments = $"{info.ExtraArgs} -port={selectedServer.Port}",
 					UseShellExecute = true,
 					WorkingDirectory = "C:\\Path\\To\\Server" // We need to add this to your GUI!
 				};
@@ -308,7 +308,7 @@ namespace Game_Server_Control_Panel
 			{
 				if (selectedServer.RunningProcess != null && !selectedServer.RunningProcess.HasExited)
 				{
-					AppendLog($"Stopping {selectedServer.Name}...");
+					AppendLog($"Stopping {selectedServer.Game}...");
 					selectedServer.RunningProcess.Kill();
 					selectedServer.Status = "Stopped";
 					dataGridView1.Refresh();

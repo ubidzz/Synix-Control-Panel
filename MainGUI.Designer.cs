@@ -134,18 +134,21 @@
 			// 
 			// colGame
 			// 
+			colGame.DataPropertyName = "Game";
 			colGame.HeaderText = "Game";
 			colGame.Name = "colGame";
 			colGame.ReadOnly = true;
 			// 
 			// colName
 			// 
-			colName.HeaderText = "Name";
+			colName.DataPropertyName = "ServerName";
+			colName.HeaderText = "Server Name";
 			colName.Name = "colName";
 			colName.ReadOnly = true;
 			// 
 			// colPort
 			// 
+			colPort.DataPropertyName = "Port";
 			colPort.HeaderText = "Port";
 			colPort.Name = "colPort";
 			colPort.ReadOnly = true;
@@ -166,6 +169,7 @@
 			// 
 			// colStatus
 			// 
+			colStatus.DataPropertyName = "Status";
 			colStatus.HeaderText = "Status";
 			colStatus.Name = "colStatus";
 			colStatus.ReadOnly = true;
