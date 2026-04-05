@@ -199,6 +199,10 @@ public static class ServerManager
 	{
 		try
 		{
+			// 1. Get the template from the database
+			var info = GameDatabase.GetGame(server.Game);
+			if (info == null) return;
+
 			string fullPath = Path.Combine(server.InstallPath, server.ExeName);
 
 			if (!File.Exists(fullPath))
@@ -207,32 +211,19 @@ public static class ServerManager
 				return;
 			}
 
-			// --- THE DYNAMIC FIX ---
-			// We build the arguments based on the USER'S settings, not just the template.
-			string args = "";
+			// 2. Build the Mandatory Args from the Database Template
+			// We swap the placeholders with the REAL data saved in the 'server' object
+			string args = info.RequiredArgs
+				.Replace("{name}", server.ServerName)
+				.Replace("{port}", server.Port.ToString())
+				.Replace("{query}", server.QueryPort.ToString())
+				.Replace("{world}", server.WorldName)
+				.Replace("{pass}", server.Password ?? "");
 
-			// Handle arguments based on the game type
-			switch (server.Game)
+			// 3. Append the user's custom ExtraArgs (the ones they can change in the GUI)
+			if (!string.IsNullOrEmpty(server.ExtraArgs))
 			{
-				case "Palworld":
-					args = $"-port={server.Port} -queryport={server.QueryPort} {server.ExtraArgs}";
-					if (!string.IsNullOrEmpty(server.Password)) args += $" -AdminPassword=\"{server.Password}\"";
-					break;
-
-				case "7 Days to Die":
-					// 7D2D usually uses a config file, but we can override ports here
-					args = $"-configfile=serverconfig.xml -port={server.Port} {server.ExtraArgs}";
-					break;
-
-				case "Valheim":
-					args = $"-nographics -batchmode -name \"{server.ServerName}\" -port {server.Port} -world \"{server.WorldName}\" -password \"{server.Password}\" {server.ExtraArgs}";
-					break;
-
-				default:
-					// Universal fallback for most Unreal Engine games (Soulmask, StarRupture, Icarus)
-					args = $"-log -port={server.Port} -queryport={server.QueryPort} {server.ExtraArgs}";
-					if (!string.IsNullOrEmpty(server.Password)) args += $" -Password=\"{server.Password}\"";
-					break;
+				args += " " + server.ExtraArgs;
 			}
 
 			ProcessStartInfo psi = new ProcessStartInfo
@@ -244,16 +235,15 @@ public static class ServerManager
 				CreateNoWindow = false
 			};
 
-			logCallback?.Invoke($"[LAUNCHING] {server.Game} with Args: {args}");
+			logCallback?.Invoke($"[LAUNCHING] {server.Game}: {server.ServerName}...");
+			logCallback?.Invoke($"DEBUG: {args}");
 
 			Process proc = Process.Start(psi);
 
 			if (proc != null)
 			{
-				// WE SAVE THE PID HERE FOR THE MONITORING SYSTEM
 				server.RunningProcess = proc;
 				server.Status = "Running";
-
 				logCallback?.Invoke($"--- SERVER STARTED: {server.ServerName} (PID: {proc.Id}) ---");
 			}
 		}

@@ -15,6 +15,8 @@ namespace Game_Server_Control_Panel
 			InitializeComponent();
 			LoadServersFromDisk();
 
+			this.FormClosing += MainGUI_FormClosing;
+
 			// Link the Grid to the List
 			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = serverList;
@@ -207,19 +209,22 @@ namespace Game_Server_Control_Panel
 
 		private void MainGUI_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (isDownloadActive)
+			// Check for SteamCMD OR any running server in your list
+			bool isServerRunning = serverList.Any(s => s.Status == "Running");
+
+			if (isDownloadActive || isServerRunning)
 			{
-				// 1. Tell the user WHY they can't leave
-				MessageBox.Show("SteamCMD is currently downloading or updating a game server. " +
-								"Please wait for the process to finish to avoid file corruption.",
-								"Download in Progress",
+				string reason = isDownloadActive ? "SteamCMD is downloading." : "A game server is still running.";
+
+				MessageBox.Show($"{reason} Please stop all processes before closing to avoid corruption.",
+								"Busy - Cannot Close",
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Warning);
 
-				// 2. This line cancels the "Close" action
-				e.Cancel = true;
+				e.Cancel = true; // Blocks the close
 			}
 		}
+
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
 			await Task.Delay(1500);
