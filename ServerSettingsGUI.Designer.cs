@@ -108,7 +108,7 @@
 			// cmbGame
 			// 
 			cmbGame.FormattingEnabled = true;
-			cmbGame.Items.AddRange(new object[] { "Soulmask", "StarRupture" });
+			cmbGame.Items.AddRange(new object[] { "Game List" });
 			cmbGame.Location = new Point(12, 90);
 			cmbGame.Name = "cmbGame";
 			cmbGame.Size = new Size(368, 23);

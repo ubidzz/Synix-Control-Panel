@@ -14,7 +14,7 @@ namespace Game_Server_Control_Panel
 		public string ExtraArgs { get; set; } = string.Empty; // Changed back from DefaultArgs
 		public int Port { get; set; } // Changed back from DefaultPort
 		public int QueryPort { get; set; } // Changed back from DefaultQueryPort
-		public List<string> Maps { get; set; } = [];
+		public List<string> Maps { get; set; } = new List<string>();
 	}
 
 	public class GameServer : GameInfo
@@ -118,6 +118,16 @@ namespace Game_Server_Control_Panel
 			}
 		];
 
-		public static GameInfo? GetGame(string name) => GetGameList().Find(g => g.Game == name);
-	}
+		// Returns the full list for the dropdowns
+		public static List<GameInfo> GetGameList()
+		{
+			return games;
+		}
+
+		// Returns a single game for the settings
+		public static GameInfo GetGame(string gameName)
+		{
+			return games.FirstOrDefault(g => g.Game.Equals(gameName, StringComparison.OrdinalIgnoreCase))!;
+		}
+}
 }
