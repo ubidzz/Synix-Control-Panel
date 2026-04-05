@@ -42,7 +42,7 @@ namespace Game_Server_Control_Panel
 				Game = "StarRupture",
 				AppID = "3333140",
 				ExeName = @"StarRupture\Binaries\Win64\StarRuptureServerEOS-Win64-Shipping.exe",
-				RequiredArgs = "-server -log -Port={port} -Password={pass} -Name=\"{ServerName}\"",
+				RequiredArgs = "-server -log -port={port} -password={pass} -name=\"{ServerName}\"",
 				Port = 7777,
 				QueryPort = 27015,
 				ExtraArgs = "",
@@ -53,7 +53,7 @@ namespace Game_Server_Control_Panel
 				AppID = "3017310",
 				// FIXED: Changed from SoulmaskServer to WSServer as seen in your folder
 				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
-				RequiredArgs = "{map} -server -log -NOSTEAM -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -SteamServerName=\"{ServerName}\"",
+				RequiredArgs = "{map} -server -log -NOSTEAM -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" -forcepassthrough",
 				Port = 8777,
 				QueryPort = 27015,
 				ExtraArgs = "",

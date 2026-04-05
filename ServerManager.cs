@@ -196,31 +196,31 @@ public static class ServerManager
 	{
 		try
 		{
+			// 1. Fetch the master template from your Database
 			var dbEntry = GameDatabase.GetGame(server.Game);
 			if (dbEntry == null) return;
 
-			// 1. Fetch the Template (Fresh from Database)
-			string args = dbEntry.RequiredArgs;
-
 			// 2. The Universal Replacement Map
-			// This handles ANY game. If {port} isn't in the string, nothing happens.
-			args = args.Replace("{map}", server.WorldName)
-					   .Replace("{appid}", dbEntry.AppID)
-					   .Replace("{port}", server.Port.ToString())
-					   .Replace("{query}", server.QueryPort.ToString())
-					   .Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-					   .Replace("{pass}", server.Password ?? "")
-					   .Replace("{adminpass}", server.AdminPassword ?? "")
-					   .Replace("{ServerName}", server.ServerName);
+			// This handles ANY game by swapping the {tags} you put in the database
+			string args = dbEntry.RequiredArgs
+				.Replace("{map}", server.WorldName)
+				.Replace("{appid}", dbEntry.AppID)
+				.Replace("{port}", server.Port.ToString())
+				.Replace("{query}", server.QueryPort.ToString())
+				.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
+				.Replace("{pass}", server.Password ?? "")
+				.Replace("{adminpass}", server.AdminPassword ?? "") // The new field we added
+				.Replace("{ServerName}", server.ServerName);
 
-			// 3. Append User's Custom Flags
+			// 3. Append User's "ExtraArgs" from the GUI
 			if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
 			{
 				args += " " + server.ExtraArgs;
 			}
 
-			// 4. Build Paths & Launch
+			// 4. Build Path: Combine user's InstallPath + database's ExeName
 			string fullPath = Path.Combine(server.InstallPath, dbEntry.ExeName);
+
 			ProcessStartInfo psi = new ProcessStartInfo
 			{
 				FileName = fullPath,
@@ -231,11 +231,20 @@ public static class ServerManager
 			};
 
 			logCallback?.Invoke($"[LAUNCHING] {server.Game}...");
-			logCallback?.Invoke($"[COMMAND] {args}");
+			logCallback?.Invoke($"[COMMAND] {args}"); // Verify the flags here!
 
-			Process.Start(psi);
+			Process proc = Process.Start(psi);
+			if (proc != null)
+			{
+				server.RunningProcess = proc;
+				server.Status = "Running";
+				server.PID = proc.Id; // Update the PID for the grid
+			}
 		}
-		catch (Exception ex) { logCallback?.Invoke($"[ERROR] {ex.Message}"); }
+		catch (Exception ex)
+		{
+			logCallback?.Invoke($"[CRITICAL ERROR] {ex.Message}");
+		}
 	}
 
 	public static void CheckServerStatus(BindingList<GameServer> servers, Action<string> logCallback)

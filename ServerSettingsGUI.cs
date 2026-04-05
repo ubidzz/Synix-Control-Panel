@@ -190,9 +190,20 @@ namespace Game_Server_Control_Panel
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			if (cmbGame.SelectedIndex == -1) return;
+			// 1. Validation
+			if (cmbGame.SelectedIndex == -1)
+			{
+				MessageBox.Show("Please select a game.");
+				return;
+			}
 
-			// 1. Calculate Path
+			if (string.IsNullOrWhiteSpace(txtName.Text))
+			{
+				MessageBox.Show("Please enter a Server Name.");
+				return;
+			}
+
+			// 2. Calculate the NEW Path
 			string finalPath = txtInstallPath.Text;
 			if (chkDefaultPath.Checked)
 			{
@@ -201,28 +212,57 @@ namespace Game_Server_Control_Panel
 				finalPath = $@"C:\Games\{gameFolder}\{serverFolder}";
 			}
 
-			// 2. Fetch the "Master Template" from GameDatabase
+			// 3. The "Last 1%" Rename Logic (For Edits)
+			// _isEditMode should be a bool you set in your Constructor
+			// _existingServer is the GameServer object you passed in to Edit
+			if (_isEditMode && _existingServer != null && chkDefaultPath.Checked)
+			{
+				string oldPath = _existingServer.InstallPath;
+
+				// If the name changed, rename the folder so files aren't "lost"
+				if (oldPath != finalPath && Directory.Exists(oldPath))
+				{
+					try
+					{
+						// Instant rename on the same drive (C:)
+						Directory.Move(oldPath, finalPath);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show($"Could not rename folder: {ex.Message}\nCheck if the server is still running.");
+						return; // Stop save if rename fails
+					}
+				}
+			}
+
+			// 4. Fetch Master Template from GameDatabase
 			var gameData = GameDatabase.GetGame(cmbGame.Text);
 
-			// 3. Create the Server Object with ALL data points
+			// 5. Package the Data for the JSON Save
 			NewServer = new GameServer
 			{
-				// User Inputs
+				// User Inputs (Dynamic)
 				ServerName = txtName.Text,
-				Password = txtPassword.Text,
-				AdminPassword = txtAdminPassword.Text, // Captures the new input
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
 				MaxPlayers = (int)numMaxPlayers.Value,
+				Password = txtPassword.Text,
+				AdminPassword = txtAdminPassword.Text,
 				WorldName = cmbWorldName.Text,
+				ExtraArgs = txtExtraArgs.Text.Trim(),
 				InstallPath = finalPath,
+				IsDefaultPath = chkDefaultPath.Checked,
 
-				// Database Defaults
+				// Database Info (Static)
 				Game = cmbGame.Text,
 				AppID = gameData?.AppID ?? "0",
 				ExeName = gameData?.ExeName ?? "",
+
+				// Use List<string> to match your GameDatabase.cs type
 				Maps = gameData?.Maps ?? new List<string>(),
-				Status = "Stopped"
+
+				// Keep status if editing, otherwise default to Stopped
+				Status = _isEditMode ? _existingServer.Status : "Stopped"
 			};
 
 			this.DialogResult = DialogResult.OK;

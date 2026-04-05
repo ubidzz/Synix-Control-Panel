@@ -144,48 +144,54 @@ namespace Game_Server_Control_Panel
 			}
 		}
 
-		private async void btnEdit_Click(object sender, EventArgs e)
+		private void btnEdit_Click(object sender, EventArgs e)
 		{
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				using (ServerSettingsGUI settingsForm = new ServerSettingsGUI())
+				// 1. Safety Check: Don't rename a folder while the EXE is running!
+				if (selectedServer.Status == "Running")
 				{
-					settingsForm.FillFormForEditing(selectedServer);
+					MessageBox.Show("Please stop the server before renaming it.", "Server Busy");
+					return;
+				}
 
-					if (settingsForm.ShowDialog() == DialogResult.OK)
+				string oldPath = selectedServer.InstallPath;
+
+				using (var editForm = new ServerSettingsGUI(selectedServer))
+				{
+					if (editForm.ShowDialog() == DialogResult.OK)
 					{
-						int index = serverList.IndexOf(selectedServer);
-						if (index != -1)
+						var updatedServer = editForm.NewServer;
+						string newPath = updatedServer.InstallPath;
+
+						// 2. The Rename Logic
+						if (oldPath != newPath && Directory.Exists(oldPath))
 						{
-							// Update the local list
-							serverList[index] = settingsForm.NewServer;
-							serverList.ResetBindings();
-							SaveServersToDisk();
-
-							// --- THE SHIELD START ---
-							isDownloadActive = true;
-							AppendLog($"Updating files for: {settingsForm.NewServer.ServerName}");
-
-							string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
-
-							// We run the update here too, just in case the user changed the Install Path
-							await Task.Run(() =>
-								ServerManager.RunUpdate(steamPath, settingsForm.NewServer.InstallPath, settingsForm.NewServer.AppID, msg => AppendLog(msg))
-							);
-
-							isDownloadActive = false;
-							// --- THE SHIELD END ---
-
-							AppendLog($"Updated settings for server: {settingsForm.NewServer.ServerName}");
+							try
+							{
+								// Directory.Move acts as a 'Rename' if the parent folder is the same
+								if (!Directory.Exists(newPath))
+								{
+									Directory.Move(oldPath, newPath);
+									AppendLog($"[RENAME] Folder changed to: {newPath}");
+								}
+							}
+							catch (Exception ex)
+							{
+								MessageBox.Show($"Could not rename folder: {ex.Message}");
+								// Optional: Roll back the path in the object if rename fails
+								updatedServer.InstallPath = oldPath;
+							}
 						}
+
+						// 3. Update the UI and Save
+						int index = serverList.IndexOf(selectedServer);
+						serverList[index] = updatedServer;
+						SaveServersToDisk();
 					}
 				}
-			}
-			else
-			{
-				MessageBox.Show("Please select a server to edit.");
 			}
 		}
 
