@@ -117,46 +117,41 @@ namespace Game_Server_Control_Panel
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
-			// 1. Safety check: Did they select a server?
-			if (dataGridView1.SelectedRows.Count == 0)
+			// 1. Matches your grid name
+			if (dataGridView1.SelectedRows.Count > 0)
 			{
-				MessageBox.Show("Please select a server to edit.");
-				return;
-			}
+				// 2. Casts to your GameServer class
+				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-			// 2. Get the current server data from the grid
-			var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
-
-			// 3. Safety check: Is the server running? (Can't rename a folder in use!)
-			if (selectedServer.Status == "Running")
-			{
-				MessageBox.Show("Please stop the server before editing its settings or name.");
-				return;
-			}
-
-			using (ServerSettingsGUI popup = new ServerSettingsGUI())
-			{
-				// 4. Fill the popup with existing data
-				popup.FillFormForEditing(selectedServer);
-
-				if (popup.ShowDialog() == DialogResult.OK)
+				// 3. Matches your Settings Form name
+				using (ServerSettingsGUI settingsForm = new ServerSettingsGUI())
 				{
-					try
-					{
-						// Pass both the old and new server objects to the brain
-						ServerManager.RenameServerFolder(selectedServer, popup.NewServer);
+					// 4. Matches your EXACT method name for loading the data
+					settingsForm.FillFormForEditing(selectedServer);
 
+					if (settingsForm.ShowDialog() == DialogResult.OK)
+					{
+						// 5. Update the object in your BindingList<GameServer>
 						int index = serverList.IndexOf(selectedServer);
-						serverList[index] = popup.NewServer;
+						if (index != -1)
+						{
+							serverList[index] = settingsForm.NewServer;
 
-						SaveServersToDisk();
-						dataGridView1.Refresh();
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show(ex.Message);
+							// 6. Force UI refresh
+							serverList.ResetBindings();
+
+							// 7. Matches your actual save method in MainGUI.cs
+							SaveServersToDisk();
+
+							// 8. Matches your actual logging method in MainGUI.cs
+							LogToConsole($"Updated server settings for: {settingsForm.NewServer.Name}");
+						}
 					}
 				}
+			}
+			else
+			{
+				MessageBox.Show("Please select a server to edit.");
 			}
 		}
 
