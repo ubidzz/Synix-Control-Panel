@@ -62,7 +62,9 @@ namespace Game_Server_Control_Panel
 		{
 			try
 			{
-				string jsonString = JsonSerializer.Serialize(servers);
+				var options = new JsonSerializerOptions { WriteIndented = true };
+				string jsonString = JsonSerializer.Serialize(servers, options);
+
 				File.WriteAllText("servers.json", jsonString);
 			}
 			catch (Exception ex)
@@ -148,48 +150,28 @@ namespace Game_Server_Control_Panel
 		{
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
+				// 1. Identify the exact server selected in the UI
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				// 1. Safety Check: Don't rename a folder while the EXE is running!
-				if (selectedServer.Status == "Running")
-				{
-					MessageBox.Show("Please stop the server before renaming it.", "Server Busy");
-					return;
-				}
-
-				string oldPath = selectedServer.InstallPath;
-
+				// 2. Open the Edit Form
 				using (var editForm = new ServerSettingsGUI(selectedServer))
 				{
 					if (editForm.ShowDialog() == DialogResult.OK)
 					{
-						var updatedServer = editForm.NewServer;
-						string newPath = updatedServer.InstallPath;
-
-						// 2. The Rename Logic
-						if (oldPath != newPath && Directory.Exists(oldPath))
-						{
-							try
-							{
-								// Directory.Move acts as a 'Rename' if the parent folder is the same
-								if (!Directory.Exists(newPath))
-								{
-									Directory.Move(oldPath, newPath);
-									AppendLog($"[RENAME] Folder changed to: {newPath}");
-								}
-							}
-							catch (Exception ex)
-							{
-								MessageBox.Show($"Could not rename folder: {ex.Message}");
-								// Optional: Roll back the path in the object if rename fails
-								updatedServer.InstallPath = oldPath;
-							}
-						}
-
-						// 3. Update the UI and Save
+						// 3. SURGICAL UPDATE: Find where this server lives in your list
 						int index = serverList.IndexOf(selectedServer);
-						serverList[index] = updatedServer;
-						SaveServersToDisk();
+
+						if (index != -1)
+						{
+							// Update only this specific slot in the array
+							serverList[index] = editForm.NewServer;
+
+							// 4. SAVE THE DECK: Overwrite the file with the full, updated list
+							// This keeps all 10 servers but with your changes to the 1 you edited.
+							SaveServersToDisk();
+
+							AppendLog($"[SUCCESS] Settings for '{editForm.NewServer.ServerName}' updated.");
+						}
 					}
 				}
 			}
