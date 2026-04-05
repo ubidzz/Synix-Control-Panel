@@ -6,7 +6,7 @@ namespace Game_Server_Control_Panel
 {
 	public partial class MainGUI : Form
 	{
-		BindingList<GameServer> serverList = new BindingList<GameServer>();
+		public static BindingList<GameServer> serverList = new BindingList<GameServer>();
 		private bool isDownloadActive = false;
 		private bool isInitializing = false;
 
