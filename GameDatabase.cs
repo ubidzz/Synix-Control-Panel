@@ -22,6 +22,7 @@ namespace Game_Server_Control_Panel
 		public string InstallPath { get; set; } = string.Empty;
 		public string ServerName { get; set; } = string.Empty;
 		public string Password { get; set; } = string.Empty;
+		public string AdminPassword { get; set; } = string.Empty;
 		public string Status { get; set; } = "Stopped";
 		public int MaxPlayers { get; set; } = 10;
 		public string WorldName { get; set; } = "NewWorld";
@@ -41,7 +42,7 @@ namespace Game_Server_Control_Panel
 				Game = "StarRupture",
 				AppID = "3333140",
 				ExeName = @"StarRupture\Binaries\Win64\StarRuptureServerEOS-Win64-Shipping.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -Password=\"{pass}\"",
+				RequiredArgs = "-server -log -Port={port} -Password={pass} -Name=\"{ServerName}\"",
 				Port = 7777,
 				QueryPort = 27015,
 				ExtraArgs = "",
@@ -50,12 +51,13 @@ namespace Game_Server_Control_Panel
 			new() {
 				Game = "Soulmask",
 				AppID = "3017310",
-				ExeName = @"WS\Binaries\Win64\SoulmaskServer-Win64-Shipping.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -Password=\"{pass}\"",
+				// FIXED: Changed from SoulmaskServer to WSServer as seen in your folder
+				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
+				RequiredArgs = "{map} -server -log -NOSTEAM -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -SteamServerName=\"{ServerName}\"",
 				Port = 8777,
 				QueryPort = 27015,
 				ExtraArgs = "",
-				Maps = ["MainWorld"]
+				Maps = ["Level01_Main"]
 			},
 			new() {
 				Game = "7 Days to Die",

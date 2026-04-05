@@ -190,63 +190,41 @@ namespace Game_Server_Control_Panel
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			// 1. Safety Guard: User must pick a game from the dropdown
-			if (cmbGame.SelectedIndex == -1 || cmbGame.Text == "Pick Game")
-			{
-				MessageBox.Show("Please select a game server from the list!", "Selection Required",
-								MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
+			if (cmbGame.SelectedIndex == -1) return;
 
-			// 2. Dynamic Path Calculation
+			// 1. Calculate Path
 			string finalPath = txtInstallPath.Text;
 			if (chkDefaultPath.Checked)
 			{
-				// Replace spaces with underscores for clean folder naming
 				string gameFolder = cmbGame.Text.Replace(" ", "_");
 				string serverFolder = txtName.Text.Replace(" ", "_");
 				finalPath = $@"C:\Games\{gameFolder}\{serverFolder}";
 			}
 
-			// 3. CRITICAL SHIELD: Prevent the SteamCMD "Empty Path" crash
-			if (string.IsNullOrWhiteSpace(finalPath))
-			{
-				MessageBox.Show("The installation path cannot be empty. Please select a folder or use the default path.",
-								"Path Required", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-
-			// 4. Database Lookup: Pull the templates (AppID, Exe, RequiredArgs)
+			// 2. Fetch the "Master Template" from GameDatabase
 			var gameData = GameDatabase.GetGame(cmbGame.Text);
 
-			// 5. Package the Data (This is what gets turned into JSON by MainGUI)
+			// 3. Create the Server Object with ALL data points
 			NewServer = new GameServer
 			{
+				// User Inputs
 				ServerName = txtName.Text,
-				Game = cmbGame.Text,
-
-				// Data from Database (The Engine)
-				AppID = gameData?.AppID ?? "0",
-				ExeName = gameData?.ExeName ?? "",
-				RequiredArgs = gameData?.RequiredArgs ?? "",
-
-				// Core Server Settings
+				Password = txtPassword.Text,
+				AdminPassword = txtAdminPassword.Text, // Captures the new input
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
-				Password = txtPassword.Text,
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
-
-				// User Customizations (The Wildcard)
-				ExtraArgs = txtExtraArgs.Text.Trim(),
-
 				InstallPath = finalPath,
-				IsDefaultPath = chkDefaultPath.Checked,
+
+				// Database Defaults
+				Game = cmbGame.Text,
+				AppID = gameData?.AppID ?? "0",
+				ExeName = gameData?.ExeName ?? "",
+				Maps = gameData?.Maps ?? new List<string>(),
 				Status = "Stopped"
 			};
 
-			// 6. Return Control to MainGUI
-			// This tells MainGUI to run 'serverList.Add(newServer)' and then 'SaveServersToDisk()'
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}

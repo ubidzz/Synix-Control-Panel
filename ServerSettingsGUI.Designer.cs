@@ -52,6 +52,8 @@
 			numQueryPort = new NumericUpDown();
 			WarningLabel = new Label();
 			cmbWorldName = new ComboBox();
+			AdminPasswordLabel = new Label();
+			txtAdminPassword = new TextBox();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -81,7 +83,7 @@
 			// 
 			PortLabel.AutoSize = true;
 			PortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			PortLabel.Location = new Point(12, 291);
+			PortLabel.Location = new Point(12, 135);
 			PortLabel.Name = "PortLabel";
 			PortLabel.Size = new Size(34, 17);
 			PortLabel.TabIndex = 2;
@@ -91,7 +93,7 @@
 			// 
 			FolderPathLabel.AutoSize = true;
 			FolderPathLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			FolderPathLabel.Location = new Point(12, 132);
+			FolderPathLabel.Location = new Point(414, 9);
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(104, 17);
 			FolderPathLabel.TabIndex = 3;
@@ -118,7 +120,7 @@
 			// 
 			// numPort
 			// 
-			numPort.Location = new Point(12, 311);
+			numPort.Location = new Point(12, 155);
 			numPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numPort.Name = "numPort";
@@ -128,14 +130,14 @@
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(12, 254);
+			txtInstallPath.Location = new Point(414, 135);
 			txtInstallPath.Name = "txtInstallPath";
 			txtInstallPath.Size = new Size(287, 23);
 			txtInstallPath.TabIndex = 7;
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(305, 254);
+			btnBrowse.Location = new Point(707, 135);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -146,9 +148,9 @@
 			// btnSave
 			// 
 			btnSave.Cursor = Cursors.Hand;
-			btnSave.Location = new Point(149, 660);
+			btnSave.Location = new Point(328, 500);
 			btnSave.Name = "btnSave";
-			btnSave.Size = new Size(102, 31);
+			btnSave.Size = new Size(138, 44);
 			btnSave.TabIndex = 9;
 			btnSave.Text = "Save Server";
 			btnSave.UseVisualStyleBackColor = true;
@@ -157,7 +159,7 @@
 			// chkDefaultPath
 			// 
 			chkDefaultPath.AutoSize = true;
-			chkDefaultPath.Location = new Point(12, 212);
+			chkDefaultPath.Location = new Point(414, 33);
 			chkDefaultPath.Name = "chkDefaultPath";
 			chkDefaultPath.Size = new Size(230, 19);
 			chkDefaultPath.TabIndex = 10;
@@ -169,7 +171,7 @@
 			// 
 			label1.AutoSize = true;
 			label1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label1.Location = new Point(12, 234);
+			label1.Location = new Point(414, 115);
 			label1.Name = "label1";
 			label1.Size = new Size(127, 17);
 			label1.TabIndex = 11;
@@ -179,7 +181,7 @@
 			// 
 			ServerPasswordLabel.AutoSize = true;
 			ServerPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			ServerPasswordLabel.Location = new Point(12, 408);
+			ServerPasswordLabel.Location = new Point(414, 189);
 			ServerPasswordLabel.Name = "ServerPasswordLabel";
 			ServerPasswordLabel.Size = new Size(109, 17);
 			ServerPasswordLabel.TabIndex = 12;
@@ -187,7 +189,7 @@
 			// 
 			// txtPassword
 			// 
-			txtPassword.Location = new Point(12, 428);
+			txtPassword.Location = new Point(414, 209);
 			txtPassword.Name = "txtPassword";
 			txtPassword.Size = new Size(368, 23);
 			txtPassword.TabIndex = 13;
@@ -196,7 +198,7 @@
 			// 
 			MaxPlayerLabel.AutoSize = true;
 			MaxPlayerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			MaxPlayerLabel.Location = new Point(12, 464);
+			MaxPlayerLabel.Location = new Point(12, 266);
 			MaxPlayerLabel.Name = "MaxPlayerLabel";
 			MaxPlayerLabel.Size = new Size(76, 17);
 			MaxPlayerLabel.TabIndex = 14;
@@ -204,7 +206,7 @@
 			// 
 			// numMaxPlayers
 			// 
-			numMaxPlayers.Location = new Point(12, 484);
+			numMaxPlayers.Location = new Point(12, 291);
 			numMaxPlayers.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
 			numMaxPlayers.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
 			numMaxPlayers.Name = "numMaxPlayers";
@@ -216,7 +218,7 @@
 			// 
 			label2.AutoSize = true;
 			label2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label2.Location = new Point(12, 527);
+			label2.Location = new Point(12, 341);
 			label2.Name = "label2";
 			label2.Size = new Size(86, 17);
 			label2.TabIndex = 16;
@@ -226,7 +228,7 @@
 			// 
 			label3.AutoSize = true;
 			label3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label3.Location = new Point(12, 585);
+			label3.Location = new Point(12, 410);
 			label3.Name = "label3";
 			label3.Size = new Size(124, 17);
 			label3.TabIndex = 18;
@@ -234,7 +236,7 @@
 			// 
 			// txtExtraArgs
 			// 
-			txtExtraArgs.Location = new Point(12, 620);
+			txtExtraArgs.Location = new Point(12, 445);
 			txtExtraArgs.Name = "txtExtraArgs";
 			txtExtraArgs.Size = new Size(368, 23);
 			txtExtraArgs.TabIndex = 19;
@@ -242,7 +244,7 @@
 			// label4
 			// 
 			label4.AutoSize = true;
-			label4.Location = new Point(12, 602);
+			label4.Location = new Point(12, 427);
 			label4.Name = "label4";
 			label4.Size = new Size(257, 15);
 			label4.TabIndex = 20;
@@ -252,7 +254,7 @@
 			// 
 			QueryPortLabel.AutoSize = true;
 			QueryPortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			QueryPortLabel.Location = new Point(12, 347);
+			QueryPortLabel.Location = new Point(12, 201);
 			QueryPortLabel.Name = "QueryPortLabel";
 			QueryPortLabel.Size = new Size(76, 17);
 			QueryPortLabel.TabIndex = 21;
@@ -260,7 +262,7 @@
 			// 
 			// numQueryPort
 			// 
-			numQueryPort.Location = new Point(12, 367);
+			numQueryPort.Location = new Point(12, 221);
 			numQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numQueryPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numQueryPort.Name = "numQueryPort";
@@ -272,7 +274,7 @@
 			// 
 			WarningLabel.AutoEllipsis = true;
 			WarningLabel.ForeColor = Color.Red;
-			WarningLabel.Location = new Point(12, 149);
+			WarningLabel.Location = new Point(414, 55);
 			WarningLabel.Name = "WarningLabel";
 			WarningLabel.Size = new Size(368, 60);
 			WarningLabel.TabIndex = 23;
@@ -280,16 +282,35 @@
 			// cmbWorldName
 			// 
 			cmbWorldName.FormattingEnabled = true;
-			cmbWorldName.Location = new Point(12, 547);
+			cmbWorldName.Location = new Point(12, 361);
 			cmbWorldName.Name = "cmbWorldName";
 			cmbWorldName.Size = new Size(368, 23);
 			cmbWorldName.TabIndex = 24;
+			// 
+			// AdminPasswordLabel
+			// 
+			AdminPasswordLabel.AutoSize = true;
+			AdminPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			AdminPasswordLabel.Location = new Point(414, 259);
+			AdminPasswordLabel.Name = "AdminPasswordLabel";
+			AdminPasswordLabel.Size = new Size(154, 17);
+			AdminPasswordLabel.TabIndex = 25;
+			AdminPasswordLabel.Text = "Server Admin Password";
+			// 
+			// txtAdminPassword
+			// 
+			txtAdminPassword.Location = new Point(414, 279);
+			txtAdminPassword.Name = "txtAdminPassword";
+			txtAdminPassword.Size = new Size(368, 23);
+			txtAdminPassword.TabIndex = 26;
 			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(392, 703);
+			ClientSize = new Size(819, 558);
+			Controls.Add(txtAdminPassword);
+			Controls.Add(AdminPasswordLabel);
 			Controls.Add(cmbWorldName);
 			Controls.Add(WarningLabel);
 			Controls.Add(numQueryPort);
@@ -350,5 +371,7 @@
 		private NumericUpDown numQueryPort;
 		private Label WarningLabel;
 		private ComboBox cmbWorldName;
+		private Label AdminPasswordLabel;
+		private TextBox txtAdminPassword;
 	}
 }

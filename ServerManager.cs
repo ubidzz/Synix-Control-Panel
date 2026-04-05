@@ -196,78 +196,46 @@ public static class ServerManager
 	{
 		try
 		{
-			// 1. PATH CORRECTION LOGIC
-			// We combine the InstallPath with the ExeName. 
-			// If the ExeName starts with the Game Folder (e.g. "Soulmask\Binaries..."), 
-			// but the InstallPath already ends with it, we fix the "Double Path" bug.
-			string fullPath = Path.Combine(server.InstallPath, server.ExeName);
+			var dbEntry = GameDatabase.GetGame(server.Game);
+			if (dbEntry == null) return;
 
-			// If the path doesn't exist, we try a "Shallow Search" 
-			// (Removing the game folder prefix from the ExeName)
-			if (!File.Exists(fullPath))
-			{
-				string cleanExe = server.ExeName;
-				if (cleanExe.StartsWith(server.Game + "\\", StringComparison.OrdinalIgnoreCase))
-				{
-					cleanExe = cleanExe.Substring(server.Game.Length + 1);
-				}
+			// 1. Fetch the Template (Fresh from Database)
+			string args = dbEntry.RequiredArgs;
 
-				string altPath = Path.Combine(server.InstallPath, cleanExe);
-				if (File.Exists(altPath))
-				{
-					fullPath = altPath; // Found it!
-				}
-			}
+			// 2. The Universal Replacement Map
+			// This handles ANY game. If {port} isn't in the string, nothing happens.
+			args = args.Replace("{map}", server.WorldName)
+					   .Replace("{appid}", dbEntry.AppID)
+					   .Replace("{port}", server.Port.ToString())
+					   .Replace("{query}", server.QueryPort.ToString())
+					   .Replace("{MaxPlayers}", server.MaxPlayers.ToString())
+					   .Replace("{pass}", server.Password ?? "")
+					   .Replace("{adminpass}", server.AdminPassword ?? "")
+					   .Replace("{ServerName}", server.ServerName);
 
-			// Final Check: If it still doesn't exist, kill the launch
-			if (!File.Exists(fullPath))
-			{
-				logCallback?.Invoke($"[ERROR] Executable not found at: {fullPath}");
-				return;
-			}
-
-			// 2. ARGUMENT INJECTION
-			// Start with the RequiredArgs template (e.g. "-log -port={port}")
-			string args = server.RequiredArgs
-				.Replace("{name}", server.ServerName)
-				.Replace("{port}", server.Port.ToString())
-				.Replace("{query}", server.QueryPort.ToString())
-				.Replace("{world}", server.WorldName)
-				.Replace("{pass}", server.Password ?? "");
-
-			// Append the user's custom ExtraArgs if they exist
+			// 3. Append User's Custom Flags
 			if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
 			{
 				args += " " + server.ExtraArgs;
 			}
 
-			// 3. LAUNCH PROCESS
+			// 4. Build Paths & Launch
+			string fullPath = Path.Combine(server.InstallPath, dbEntry.ExeName);
 			ProcessStartInfo psi = new ProcessStartInfo
 			{
 				FileName = fullPath,
 				Arguments = args,
 				WorkingDirectory = Path.GetDirectoryName(fullPath),
-				UseShellExecute = true, // Set to true to see the game console window
+				UseShellExecute = false,
 				CreateNoWindow = false
 			};
 
-			logCallback?.Invoke($"[LAUNCHING] {server.Game}: {server.ServerName}");
-			logCallback?.Invoke($"[ARGS] {args}");
+			logCallback?.Invoke($"[LAUNCHING] {server.Game}...");
+			logCallback?.Invoke($"[COMMAND] {args}");
 
-			Process proc = Process.Start(psi);
-
-			if (proc != null)
-			{
-				// Update the server object with the running info
-				server.RunningProcess = proc;
-				server.Status = "Running";
-				logCallback?.Invoke($"--- SERVER STARTED: {server.ServerName} (PID: {proc.Id}) ---");
-			}
+			Process.Start(psi);
 		}
-		catch (Exception ex)
-		{
-			logCallback?.Invoke($"[CRITICAL ERROR] Failed to start server: {ex.Message}");
-		}
+		catch (Exception ex) { logCallback?.Invoke($"[ERROR] {ex.Message}"); }
 	}
 
 	public static void CheckServerStatus(BindingList<GameServer> servers, Action<string> logCallback)

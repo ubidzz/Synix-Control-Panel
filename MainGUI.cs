@@ -191,25 +191,41 @@ namespace Game_Server_Control_Panel
 
 		private void btnDelete_Click(object sender, EventArgs e)
 		{
-			// 1. Check if a row is actually selected
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
-				// 2. Identify the server FIRST
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				// 3. NOW check if it's running
 				if (selectedServer.Status == "Running")
 				{
 					MessageBox.Show("Stop the server before deleting it!", "Server Active");
 					return;
 				}
 
-				// 4. Safety Confirmation
-				var confirm = MessageBox.Show($"Delete '{selectedServer.Game}'?", "Confirm", MessageBoxButtons.YesNo);
+				// 1. Expanded Safety Confirmation
+				var confirm = MessageBox.Show($"Are you sure you want to delete '{selectedServer.ServerName}'?\n\nTHIS WILL PERMANENTLY REMOVE ALL SERVER FILES AT:\n{selectedServer.InstallPath}",
+											"Confirm Total Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
 				if (confirm == DialogResult.Yes)
 				{
-					serverList.Remove(selectedServer);
-					SaveServersToDisk();
+					try
+					{
+						// 2. Delete the physical files first
+						if (Directory.Exists(selectedServer.InstallPath))
+						{
+							// 'true' means it deletes all subfolders and files inside
+							Directory.Delete(selectedServer.InstallPath, true);
+						}
+
+						// 3. Remove from the UI list and Save JSON
+						serverList.Remove(selectedServer);
+						SaveServersToDisk();
+
+						AppendLog($"[CLEANUP] Deleted server '{selectedServer.ServerName}' and all files at {selectedServer.InstallPath}");
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show($"Files were deleted from the list, but some physical files couldn't be removed: {ex.Message}", "Cleanup Error");
+					}
 				}
 			}
 			else

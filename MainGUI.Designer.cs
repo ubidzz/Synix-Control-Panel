@@ -41,6 +41,7 @@
 			colPort = new DataGridViewTextBoxColumn();
 			colQueryPort = new DataGridViewTextBoxColumn();
 			colPassword = new DataGridViewTextBoxColumn();
+			AdminPassword = new DataGridViewTextBoxColumn();
 			colStatus = new DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			SuspendLayout();
@@ -50,11 +51,11 @@
 			dataGridView1.AllowUserToAddRows = false;
 			dataGridView1.AllowUserToDeleteRows = false;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPassword, colStatus });
+			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPassword, AdminPassword, colStatus });
 			dataGridView1.Location = new Point(12, 42);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(698, 503);
+			dataGridView1.Size = new Size(744, 503);
 			dataGridView1.TabIndex = 0;
 			// 
 			// btnDelete
@@ -91,7 +92,7 @@
 			// 
 			rtbLog.BackColor = SystemColors.ActiveCaptionText;
 			rtbLog.ForeColor = Color.Lime;
-			rtbLog.Location = new Point(723, 42);
+			rtbLog.Location = new Point(831, 42);
 			rtbLog.Name = "rtbLog";
 			rtbLog.ReadOnly = true;
 			rtbLog.Size = new Size(398, 547);
@@ -167,6 +168,13 @@
 			colPassword.Name = "colPassword";
 			colPassword.ReadOnly = true;
 			// 
+			// AdminPassword
+			// 
+			AdminPassword.DataPropertyName = "AdminPassword";
+			AdminPassword.HeaderText = "Admin Password";
+			AdminPassword.Name = "AdminPassword";
+			AdminPassword.ReadOnly = true;
+			// 
 			// colStatus
 			// 
 			colStatus.DataPropertyName = "Status";
@@ -178,7 +186,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(1133, 601);
+			ClientSize = new Size(1241, 601);
 			Controls.Add(btnStop);
 			Controls.Add(btnStart);
 			Controls.Add(ServerManagerLabel);
@@ -211,6 +219,7 @@
 		private DataGridViewTextBoxColumn colPort;
 		private DataGridViewTextBoxColumn colQueryPort;
 		private DataGridViewTextBoxColumn colPassword;
+		private DataGridViewTextBoxColumn AdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
 	}
 }
