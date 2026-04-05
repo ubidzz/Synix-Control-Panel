@@ -58,26 +58,27 @@ namespace Game_Server_Control_Panel
 			}
 		}
 
+		public void SaveServersToDisk()
+		{
+			// Simply pass the current list to the static saver
+			SaveServersToDisk(serverList);
+		}
+
 		public static void SaveServersToDisk(BindingList<GameServer> servers)
 		{
 			try
 			{
+				// 'WriteIndented' makes the JSON pretty and easy to read in Notepad
 				var options = new JsonSerializerOptions { WriteIndented = true };
 				string jsonString = JsonSerializer.Serialize(servers, options);
 
+				// This overwrites the old file with the new, corrected list
 				File.WriteAllText("servers.json", jsonString);
 			}
 			catch (Exception ex)
 			{
-				System.Diagnostics.Debug.WriteLine("Save failed: " + ex.Message);
+				System.Diagnostics.Debug.WriteLine("JSON Save failed: " + ex.Message);
 			}
-		}
-
-		// VERSION B: The "Bridge" (Used by all your existing buttons)
-		public void SaveServersToDisk()
-		{
-			// This calls Version A and gives it the current list
-			SaveServersToDisk(serverList);
 		}
 
 		private void LoadServersFromDisk()
@@ -148,29 +149,36 @@ namespace Game_Server_Control_Panel
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
+			// 1. Check if a server is actually selected in the grid
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
-				// 1. Identify the exact server selected in the UI
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				// 2. Open the Edit Form
+				// 2. Safety: Cannot rename folders or edit ports while the EXE is running
+				if (selectedServer.Status == "Running")
+				{
+					MessageBox.Show("Please stop the server before editing.", "Server Active");
+					return;
+				}
+
+				// 3. Open the Edit form (Passing the current server object to the constructor)
 				using (var editForm = new ServerSettingsGUI(selectedServer))
 				{
 					if (editForm.ShowDialog() == DialogResult.OK)
 					{
-						// 3. SURGICAL UPDATE: Find where this server lives in your list
+						// 4. SURGICAL SWAP: Find the exact index of the server we just edited
 						int index = serverList.IndexOf(selectedServer);
 
 						if (index != -1)
 						{
-							// Update only this specific slot in the array
+							// Update only this specific 'slot' in the array
 							serverList[index] = editForm.NewServer;
 
-							// 4. SAVE THE DECK: Overwrite the file with the full, updated list
-							// This keeps all 10 servers but with your changes to the 1 you edited.
+							// 5. COMMIT: Save the entire updated list back to 'servers.json'
+							// This keeps all other servers safe while updating the 1 you edited.
 							SaveServersToDisk();
 
-							AppendLog($"[SUCCESS] Settings for '{editForm.NewServer.ServerName}' updated.");
+							AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
 						}
 					}
 				}
