@@ -15,7 +15,7 @@ namespace Game_Server_Control_Panel
 			InitializeComponent();
 			LoadServersFromDisk();
 
-			this.FormClosing += MainGUI_FormClosing;
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GUI_FormClosing);
 
 			// Link the Grid to the List
 			dataGridView1.AutoGenerateColumns = false;
@@ -205,24 +205,6 @@ namespace Game_Server_Control_Panel
 			// Auto-scroll to ensure you see the live SteamCMD output
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
-		}
-
-		private void MainGUI_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			// Check for SteamCMD OR any running server in your list
-			bool isServerRunning = serverList.Any(s => s.Status == "Running");
-
-			if (isDownloadActive || isServerRunning)
-			{
-				string reason = isDownloadActive ? "SteamCMD is downloading." : "A game server is still running.";
-
-				MessageBox.Show($"{reason} Please stop all processes before closing to avoid corruption.",
-								"Busy - Cannot Close",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Warning);
-
-				e.Cancel = true; // Blocks the close
-			}
 		}
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
