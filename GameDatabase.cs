@@ -39,7 +39,8 @@ namespace Game_Server_Control_Panel
 				Game = "StarRupture",
 				AppID = "3333140",
 				ExeName = "StarRuptureServer.exe",
-				Port = 7777, QueryPort = 27015,
+				Port = 7777, 
+				QueryPort = 27015,
 				ExtraArgs = "-log",
 				Maps = ["MainWorld"]
 			},
@@ -47,7 +48,8 @@ namespace Game_Server_Control_Panel
 				Game = "Soulmask",
 				AppID = "3017310",
 				ExeName = "SoulmaskServer.exe",
-				Port = 8777, QueryPort = 27015,
+				Port = 8777, 
+				QueryPort = 27015,
 				ExtraArgs = "-log",
 				Maps = ["MainWorld"]
 			},
@@ -55,7 +57,8 @@ namespace Game_Server_Control_Panel
 				Game = "7 Days to Die",
 				AppID = "294420",
 				ExeName = "7DaysToDieServer.exe",
-				Port = 26900, QueryPort = 26900,
+				Port = 26900, 
+				QueryPort = 26900,
 				ExtraArgs = "-configfile=serverconfig.xml -quit -batchmode -nographics",
 				Maps = ["Navezgane", "Pregen01"]
 			},
@@ -63,7 +66,8 @@ namespace Game_Server_Control_Panel
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				Port = 28015, QueryPort = 28016,
+				Port = 28015, 
+				QueryPort = 28016,
 				ExtraArgs = "-batchmode +server.port 28015",
 				Maps = ["Procedural Map"]
 			},
@@ -71,7 +75,8 @@ namespace Game_Server_Control_Panel
 				Game = "DayZ",
 				AppID = "223350",
 				ExeName = "DayZServer_x64.exe",
-				Port = 2302, QueryPort = 27016,
+				Port = 2302, 
+				QueryPort = 27016,
 				ExtraArgs = "-config=serverDZ.cfg -port=2302 -BEpath= -logs= -profiles=Profiles",
 				Maps = ["Chernarus", "Livonia"]
 			},
@@ -79,7 +84,8 @@ namespace Game_Server_Control_Panel
 				Game = "Enshrouded",
 				AppID = "2278520", // Dedicated Server ID
 				ExeName = "enshrouded_server.exe",
-				Port = 15636, QueryPort = 15637,
+				Port = 15636, 
+				QueryPort = 15637,
 				ExtraArgs = "",
 				Maps = ["Enshrouded"]
 			},
@@ -87,7 +93,8 @@ namespace Game_Server_Control_Panel
 				Game = "Icarus",
 				AppID = "2089390", // Dedicated Server ID
 				ExeName = "IcarusServer.exe",
-				Port = 17777, QueryPort = 27015,
+				Port = 17777, 
+				QueryPort = 27015,
 				ExtraArgs = "-Log",
 				Maps = ["Styx", "Olympus", "Prometheus"]
 			},
@@ -95,7 +102,8 @@ namespace Game_Server_Control_Panel
 				Game = "Valheim",
 				AppID = "896660",
 				ExeName = "valheim_server.exe",
-				Port = 2456, QueryPort = 2457,
+				Port = 2456, 
+				QueryPort = 2457,
 				ExtraArgs = "-nographics -batchmode -name \"MyServer\" -port 2456 -world \"Dedicated\" -password \"secret\"",
 				Maps = ["Dedicated"]
 			},
@@ -103,7 +111,8 @@ namespace Game_Server_Control_Panel
 				Game = "Palworld",
 				AppID = "2394010",
 				ExeName = "PalServer.exe",
-				Port = 8211, QueryPort = 27015,
+				Port = 8211, 
+				QueryPort = 27015,
 				ExtraArgs = "Port=8211,QueryPort=27015",
 				Maps = ["DefaultWorld"]
 			}
