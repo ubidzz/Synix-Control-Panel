@@ -15,8 +15,6 @@ namespace Game_Server_Control_Panel
 			InitializeComponent();
 			LoadServersFromDisk();
 
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GUI_FormClosing);
-
 			// Link the Grid to the List
 			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = serverList;
@@ -31,6 +29,13 @@ namespace Game_Server_Control_Panel
 
 		private void UpdateGrid()
 		{
+			if (dataGridView1.InvokeRequired)
+			{
+				// This pushes the command back to the Main UI thread so it doesn't crash
+				dataGridView1.Invoke(new Action(UpdateGrid));
+				return;
+			}
+
 			// This tells the DataGridView to look at the 'serverList' 
 			// and update the screen with the new Status/PID values.
 			dataGridView1.ResetBindings();
@@ -101,31 +106,45 @@ namespace Game_Server_Control_Panel
 			isInitializing = false;
 		}
 
-		private void btnAddServer_Click(object sender, EventArgs e)
+		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
 			using (ServerSettingsGUI settingsForm = new ServerSettingsGUI())
 			{
 				if (settingsForm.ShowDialog() == DialogResult.OK)
 				{
 					GameServer newServer = settingsForm.NewServer;
+
+					// 1. ADD & REFRESH THE GRID
 					serverList.Add(newServer);
 					SaveServersToDisk();
+					UpdateGrid(); // Shows the server in the list immediately
+
+					// 2. RAISE THE SHIELD (Locks the 'X' button)
+					isDownloadActive = true;
 
 					AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
 
-					// Define the path to your SteamCMD
 					string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
-					AppendLog($"--- Checking if the install path, AppID are not null: {newServer.InstallPath} %% {newServer.AppID} ---");
+					// 3. RUN IN BACKGROUND
+					// 'await Task.Run' ensures the UI stays responsive so the 'X' lock can work
+					await Task.Run(() =>
+						ServerManager.RunUpdate(steamPath, newServer.InstallPath, newServer.AppID, msg => AppendLog(msg))
+					);
 
-					// Call your existing RunUpdate method
-					// We pass the InstallPath, the AppID, and our AppendLog method
-					ServerManager.RunUpdate(steamPath, newServer.InstallPath, newServer.AppID, msg => AppendLog(msg));
+					// 4. LOWER THE SHIELD (Unlocks the 'X' button)
+					isDownloadActive = false;
+
+					// 5. FINAL LOGGING
+					AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
+
+					// Final refresh to update Status from 'Installing' to 'Stopped'
+					UpdateGrid();
 				}
 			}
 		}
 
-		private void btnEdit_Click(object sender, EventArgs e)
+		private async void btnEdit_Click(object sender, EventArgs e)
 		{
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
@@ -140,13 +159,25 @@ namespace Game_Server_Control_Panel
 						int index = serverList.IndexOf(selectedServer);
 						if (index != -1)
 						{
+							// Update the local list
 							serverList[index] = settingsForm.NewServer;
 							serverList.ResetBindings();
-
-							// Matches your local save method
 							SaveServersToDisk();
 
-							// THE FIX: Using your ACTUAL property 'ServerName' and method 'AppendLog'
+							// --- THE SHIELD START ---
+							isDownloadActive = true;
+							AppendLog($"Updating files for: {settingsForm.NewServer.ServerName}");
+
+							string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
+
+							// We run the update here too, just in case the user changed the Install Path
+							await Task.Run(() =>
+								ServerManager.RunUpdate(steamPath, settingsForm.NewServer.InstallPath, settingsForm.NewServer.AppID, msg => AppendLog(msg))
+							);
+
+							isDownloadActive = false;
+							// --- THE SHIELD END ---
+
 							AppendLog($"Updated settings for server: {settingsForm.NewServer.ServerName}");
 						}
 					}
@@ -209,40 +240,37 @@ namespace Game_Server_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
-			await Task.Delay(1500);
-
-			// LOCK: Set active before starting
+			// 1. Set the lock immediately
 			isDownloadActive = true;
-			AppendLog("Checking dependencies... Close button locked.");
 
-			await Task.Run(() =>
-			{
-				try
-				{
-					ServerManager.EnsureSteamCMD(AppendLog);
-				}
-				finally
-				{
-					// UNLOCK: Ensure this runs even if there is an error
-					isDownloadActive = false;
-					AppendLog("Process finished. Close button unlocked.");
-				}
-			});
+			AppendLog("Checking SteamCMD dependencies...");
+
+			// 2. Run the check on a background thread
+			// This allows the 'X' button to stay active and trigger GUI_FormClosing
+			await Task.Run(() => ServerManager.EnsureSteamCMD(AppendLog));
+
+			// 3. Release the lock once the background task is done
+			isDownloadActive = false;
+
+			AppendLog("Initialization complete.");
 		}
 
 		private void GUI_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (isDownloadActive)
+			// 1. Check if the 'steamcmd' process exists on the PC right now
+			bool isSteamRunning = Process.GetProcessesByName("steamcmd").Length > 0;
+
+			// 2. Check your manual flag (for internal initialization)
+			if (isDownloadActive || isSteamRunning)
 			{
-				// 1. Tell the user WHY they can't close it
-				MessageBox.Show("SteamCMD is currently downloading or updating files.\n\n" +
-								"Closing now may corrupt your installation. Please wait until it finishes.",
-								"Download in Progress",
+				MessageBox.Show("SteamCMD is currently active and performing operations.\n\n" +
+								"Closing now will corrupt your game files or SteamCMD installation. " +
+								"Please wait for the console to finish.",
+								"Process in Progress",
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Warning);
 
-				// 2. This is the 'Lock' - it cancels the closing action
-				e.Cancel = true;
+				e.Cancel = true; // LOCK THE X
 			}
 		}
 

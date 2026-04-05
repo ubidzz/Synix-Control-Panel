@@ -173,75 +173,92 @@ public static class ServerManager
 
 		try
 		{
-			// 3. Ensure the folder exists (like the .bat would)
-			if (!Directory.Exists(cleanPath))
-			{
-				Directory.CreateDirectory(cleanPath);
-			}
+			if (!Directory.Exists(cleanPath)) Directory.CreateDirectory(cleanPath);
 
 			process.Start();
 			process.BeginOutputReadLine();
 			process.BeginErrorReadLine();
 
-			Task.Run(() =>
-			{
-				process.WaitForExit();
-				logCallback?.Invoke("--- STEAMCMD PROCESS FINISHED ---");
-			});
+			// THIS IS THE LINE THAT LOCKS THE 'X'
+			// It must be exactly like this. No Task.Run wrapper.
+			process.WaitForExit();
+
+			logCallback?.Invoke("--- STEAMCMD PROCESS FINISHED ---");
 		}
 		catch (Exception ex)
 		{
-			logCallback?.Invoke($"[CRITICAL ERROR] Failed to launch Game Install: {ex.Message}");
+			logCallback?.Invoke($"[ERROR]: {ex.Message}");
 		}
+		finally { process.Dispose(); }
 	}
 
 	public static void StartServer(GameServer server, Action<string> logCallback)
 	{
 		try
 		{
-			// 1. Get the template from the database
-			var info = GameDatabase.GetGame(server.Game);
-			if (info == null) return;
-
+			// 1. PATH CORRECTION LOGIC
+			// We combine the InstallPath with the ExeName. 
+			// If the ExeName starts with the Game Folder (e.g. "Soulmask\Binaries..."), 
+			// but the InstallPath already ends with it, we fix the "Double Path" bug.
 			string fullPath = Path.Combine(server.InstallPath, server.ExeName);
 
+			// If the path doesn't exist, we try a "Shallow Search" 
+			// (Removing the game folder prefix from the ExeName)
 			if (!File.Exists(fullPath))
 			{
-				logCallback?.Invoke($"[ERROR] Executable not found: {fullPath}");
+				string cleanExe = server.ExeName;
+				if (cleanExe.StartsWith(server.Game + "\\", StringComparison.OrdinalIgnoreCase))
+				{
+					cleanExe = cleanExe.Substring(server.Game.Length + 1);
+				}
+
+				string altPath = Path.Combine(server.InstallPath, cleanExe);
+				if (File.Exists(altPath))
+				{
+					fullPath = altPath; // Found it!
+				}
+			}
+
+			// Final Check: If it still doesn't exist, kill the launch
+			if (!File.Exists(fullPath))
+			{
+				logCallback?.Invoke($"[ERROR] Executable not found at: {fullPath}");
 				return;
 			}
 
-			// 2. Build the Mandatory Args from the Database Template
-			// We swap the placeholders with the REAL data saved in the 'server' object
-			string args = info.RequiredArgs
+			// 2. ARGUMENT INJECTION
+			// Start with the RequiredArgs template (e.g. "-log -port={port}")
+			string args = server.RequiredArgs
 				.Replace("{name}", server.ServerName)
 				.Replace("{port}", server.Port.ToString())
 				.Replace("{query}", server.QueryPort.ToString())
 				.Replace("{world}", server.WorldName)
 				.Replace("{pass}", server.Password ?? "");
 
-			// 3. Append the user's custom ExtraArgs (the ones they can change in the GUI)
-			if (!string.IsNullOrEmpty(server.ExtraArgs))
+			// Append the user's custom ExtraArgs if they exist
+			if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
 			{
 				args += " " + server.ExtraArgs;
 			}
 
+			// 3. LAUNCH PROCESS
 			ProcessStartInfo psi = new ProcessStartInfo
 			{
 				FileName = fullPath,
 				Arguments = args,
 				WorkingDirectory = Path.GetDirectoryName(fullPath),
-				UseShellExecute = true,
+				UseShellExecute = true, // Set to true to see the game console window
 				CreateNoWindow = false
 			};
 
-			logCallback?.Invoke($"[LAUNCHING] {server.Game}: {server.ServerName}...");
-			logCallback?.Invoke($"DEBUG: {args}");
+			logCallback?.Invoke($"[LAUNCHING] {server.Game}: {server.ServerName}");
+			logCallback?.Invoke($"[ARGS] {args}");
 
 			Process proc = Process.Start(psi);
 
 			if (proc != null)
 			{
+				// Update the server object with the running info
 				server.RunningProcess = proc;
 				server.Status = "Running";
 				logCallback?.Invoke($"--- SERVER STARTED: {server.ServerName} (PID: {proc.Id}) ---");
@@ -249,7 +266,7 @@ public static class ServerManager
 		}
 		catch (Exception ex)
 		{
-			logCallback?.Invoke($"[CRITICAL ERROR] {ex.Message}");
+			logCallback?.Invoke($"[CRITICAL ERROR] Failed to start server: {ex.Message}");
 		}
 	}
 

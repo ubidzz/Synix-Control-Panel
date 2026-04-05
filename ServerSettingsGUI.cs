@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -189,10 +190,11 @@ namespace Game_Server_Control_Panel
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			// 1. Safety Guard: Must pick a game
+			// 1. Safety Guard: User must pick a game from the dropdown
 			if (cmbGame.SelectedIndex == -1 || cmbGame.Text == "Pick Game")
 			{
-				MessageBox.Show("Please select a game server from the list!", "Selection Required");
+				MessageBox.Show("Please select a game server from the list!", "Selection Required",
+								MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
@@ -200,46 +202,53 @@ namespace Game_Server_Control_Panel
 			string finalPath = txtInstallPath.Text;
 			if (chkDefaultPath.Checked)
 			{
-				// Clean the names (remove spaces/special chars) to avoid Windows naming errors
+				// Replace spaces with underscores for clean folder naming
 				string gameFolder = cmbGame.Text.Replace(" ", "_");
 				string serverFolder = txtName.Text.Replace(" ", "_");
 				finalPath = $@"C:\Games\{gameFolder}\{serverFolder}";
 			}
 
-			// 3. Package the Data (Added AppID and ExeName Lookup)
+			// 3. CRITICAL SHIELD: Prevent the SteamCMD "Empty Path" crash
+			if (string.IsNullOrWhiteSpace(finalPath))
+			{
+				MessageBox.Show("The installation path cannot be empty. Please select a folder or use the default path.",
+								"Path Required", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			// 4. Database Lookup: Pull the templates (AppID, Exe, RequiredArgs)
 			var gameData = GameDatabase.GetGame(cmbGame.Text);
 
+			// 5. Package the Data (This is what gets turned into JSON by MainGUI)
 			NewServer = new GameServer
 			{
 				ServerName = txtName.Text,
 				Game = cmbGame.Text,
-				// THE FIX: Grabbing the invisible data from the database
+
+				// Data from Database (The Engine)
 				AppID = gameData?.AppID ?? "0",
 				ExeName = gameData?.ExeName ?? "",
+				RequiredArgs = gameData?.RequiredArgs ?? "",
+
+				// Core Server Settings
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
 				Password = txtPassword.Text,
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
-				ExtraArgs = txtExtraArgs.Text,
+
+				// User Customizations (The Wildcard)
+				ExtraArgs = txtExtraArgs.Text.Trim(),
+
 				InstallPath = finalPath,
 				IsDefaultPath = chkDefaultPath.Checked,
 				Status = "Stopped"
 			};
 
-			// If this is a NEW server (the button text is "Save" and not "Update")
-			if (btnSave.Text == "Save Server")
-			{
-				// We set the DialogResult so Form1 knows to add it to the list
-				this.DialogResult = DialogResult.OK;
-				this.Close();
-			}
-			else
-			{
-				// Logic for Updating an existing server
-				this.DialogResult = DialogResult.OK;
-				this.Close();
-			}
+			// 6. Return Control to MainGUI
+			// This tells MainGUI to run 'serverList.Add(newServer)' and then 'SaveServersToDisk()'
+			this.DialogResult = DialogResult.OK;
+			this.Close();
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e)
