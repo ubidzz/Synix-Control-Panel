@@ -212,58 +212,59 @@ namespace Game_Server_Control_Panel
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			// 1. Validation
+			// 1. Validation: Ensure a game is selected
 			if (cmbGame.SelectedIndex == -1)
 			{
-				MessageBox.Show("Please select a game.");
+				MessageBox.Show("Please select a game from the list.", "Validation Error");
 				return;
 			}
 
-			if (string.IsNullOrWhiteSpace(txtName.Text))
+			// 2. Port Conflict Check: Ensure Game + Name + Port remains unique
+			// We check against the master list in MainGUI to prevent "Busy Port" crashes
+			int targetPort = (int)numPort.Value;
+			foreach (var s in MainGUI.serverList)
 			{
-				MessageBox.Show("Please enter a Server Name.");
-				return;
+				// If we are editing, don't compare the server to itself
+				if (_isEditMode && s == _existingServer) continue;
+
+				if (s.Port == targetPort)
+				{
+					MessageBox.Show($"Conflict: Port {targetPort} is already assigned to '{s.ServerName}'.", "Port Busy");
+					return;
+				}
 			}
 
-			// 2. Calculate the NEW Path
-			string finalPath = txtInstallPath.Text;
-			if (chkDefaultPath.Checked)
-			{
-				string gameFolder = cmbGame.Text.Replace(" ", "_");
-				string serverFolder = txtName.Text.Replace(" ", "_");
-				finalPath = $@"C:\Games\{gameFolder}\{serverFolder}";
-			}
+			// 3. Path Calculation
+			string gameFolder = cmbGame.Text.Replace(" ", "_");
+			string serverFolder = txtName.Text.Replace(" ", "_");
+			string finalPath = chkDefaultPath.Checked ? $@"C:\Games\{gameFolder}\{serverFolder}" : txtInstallPath.Text;
 
-			// 3. The "Last 1%" Rename Logic (For Edits)
-			// _isEditMode should be a bool you set in your Constructor
-			// _existingServer is the GameServer object you passed in to Edit
+			// 4. The "Last 1%" Rename Logic (Instant rename for Edits)
 			if (_isEditMode && _existingServer != null && chkDefaultPath.Checked)
 			{
 				string oldPath = _existingServer.InstallPath;
-
-				// If the name changed, rename the folder so files aren't "lost"
 				if (oldPath != finalPath && Directory.Exists(oldPath))
 				{
 					try
 					{
-						// Instant rename on the same drive (C:)
+						// This renames the folder on the C: drive instantly
 						Directory.Move(oldPath, finalPath);
 					}
 					catch (Exception ex)
 					{
 						MessageBox.Show($"Could not rename folder: {ex.Message}\nCheck if the server is still running.");
-						return; // Stop save if rename fails
+						return;
 					}
 				}
 			}
 
-			// 4. Fetch Master Template from GameDatabase
+			// 5. Fetch "Static" Data from the GameDatabase (AppID, ExeName, etc.)
 			var gameData = GameDatabase.GetGame(cmbGame.Text);
 
-			// 5. Package the Data for the JSON Save
+			// 6. Package the data into the NewServer object
+			// This is what MainGUI will put into the JSON array
 			NewServer = new GameServer
 			{
-				// User Inputs (Dynamic)
 				ServerName = txtName.Text,
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
@@ -274,19 +275,19 @@ namespace Game_Server_Control_Panel
 				ExtraArgs = txtExtraArgs.Text.Trim(),
 				InstallPath = finalPath,
 				IsDefaultPath = chkDefaultPath.Checked,
-
-				// Database Info (Static)
 				Game = cmbGame.Text,
+
+				// Data from Database
 				AppID = gameData?.AppID ?? "0",
 				ExeName = gameData?.ExeName ?? "",
-
-				// Use List<string> to match your GameDatabase.cs type
 				Maps = gameData?.Maps ?? new List<string>(),
 
-				// Keep status if editing, otherwise default to Stopped
-				Status = _isEditMode ? _existingServer.Status : "Stopped"
+				// Keep existing status/PID if editing, otherwise new
+				Status = _isEditMode ? _existingServer.Status : "Stopped",
+				PID = _isEditMode ? _existingServer.PID : null
 			};
 
+			// 7. Success!
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}
