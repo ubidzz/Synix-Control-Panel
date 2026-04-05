@@ -27,6 +27,9 @@ namespace Game_Server_Control_Panel
 		public string WorldName { get; set; } = "NewWorld";
 		public bool IsDefaultPath { get; set; } = true;
 
+		// Add this so server.PID = proc.Id works
+		public int? PID { get; set; }
+
 		[JsonIgnore]
 		public Process? RunningProcess { get; set; }
 	}

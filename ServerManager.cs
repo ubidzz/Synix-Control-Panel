@@ -225,10 +225,10 @@ public static class ServerManager
 			if (proc != null)
 			{
 				// WE SAVE THE PID HERE FOR THE MONITORING SYSTEM
-				server.PID = proc.Id;
+				server.RunningProcess = proc;
 				server.Status = "Running";
 
-				logCallback?.Invoke($"--- SERVER STARTED: {server.ServerName} (PID: {server.PID}) ---");
+				logCallback?.Invoke($"--- SERVER STARTED: {server.ServerName} (PID: {proc.Id}) ---");
 
 				// 4. SAVE THE PID TO DISK IMMEDIATELY
 				// This ensures if the GUI crashes/restarts, it still knows which PID to watch.
