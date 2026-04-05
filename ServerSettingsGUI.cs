@@ -31,37 +31,14 @@ namespace Game_Server_Control_Panel
 
 		private void ServerSettingsGUI_Load(object sender, EventArgs e)
 		{
+			cmbGame.SelectedIndexChanged -= cmbGame_SelectedIndexChanged; // Detach
+
 			cmbGame.Items.Clear();
-
-			// Add the blank placeholder
 			cmbGame.Items.Add("-- Pick a Game --");
-
-			foreach (var game in GameDatabase.GetGameList())
-			{
-				cmbGame.Items.Add(game.Name);
-			}
-
-			// Force it to start on the blank placeholder
+			foreach (var game in GameDatabase.GetGameList()) cmbGame.Items.Add(game.Name);
 			cmbGame.SelectedIndex = 0;
-		}
 
-		private void cmbGame_SelectedIndexChanged_1(object sender, EventArgs e)
-		{
-			bool isGamePicked = cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game";
-
-			// Unlock the controls
-			chkDefaultPath.Enabled = isGamePicked;
-
-			// If a game is picked and they HAVEN'T checked "Default Path", unlock Browse
-			btnBrowse.Enabled = isGamePicked && !chkDefaultPath.Checked;
-			txtInstallPath.Enabled = isGamePicked && !chkDefaultPath.Checked;
-
-			if (isGamePicked)
-			{
-				// ... (Keep your existing Map and Port auto-fill logic here) ...
-			}
-
-			UpdatePathPreview();
+			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged; // Re-attach
 		}
 
 		private void UpdatePathPreview()
@@ -93,28 +70,56 @@ namespace Game_Server_Control_Panel
 		// Inside your ServerSettingsForm class
 		public void FillFormForEditing(GameServer existingServer)
 		{
-			isManualLoading = true; // START SILENCE
+			// 1. Mute the event so it doesn't overwrite ports with defaults
+			cmbGame.SelectedIndexChanged -= cmbGame_SelectedIndexChanged;
 
+			btnSave.Text = "Update Server";
+
+			// 2. Refresh the list items
+			cmbGame.Items.Clear();
+			cmbGame.Items.Add("-- Pick a Game --");
+			foreach (var g in GameDatabase.GetGameList()) cmbGame.Items.Add(g.Name);
+
+			// 3. FORCE the selection by matching the text
 			txtName.Text = existingServer.Name;
-			cmbGame.SelectedItem = existingServer.Game;
 
-			chkDefaultPath.Checked = existingServer.IsDefaultPath;
-			txtInstallPath.Text = existingServer.InstallPath;
+			// Find the item by text rather than index to be safe
+			for (int i = 0; i < cmbGame.Items.Count; i++)
+			{
+				if (cmbGame.Items[i].ToString() == existingServer.Game)
+				{
+					cmbGame.SelectedIndex = i;
+					break;
+				}
+			}
 
+			// 4. Fill all other saved settings
 			numPort.Value = existingServer.Port;
 			numQueryPort.Value = existingServer.QueryPort;
 			txtPassword.Text = existingServer.Password;
 			numMaxPlayers.Value = existingServer.MaxPlayers;
-
-			// Set the button to Update mode
-			btnSave.Text = "Update Server";
-
-			// Set map after game is selected
-			cmbWorldName.Text = existingServer.WorldName;
 			txtExtraArgs.Text = existingServer.ExtraArgs;
 
-			isManualLoading = false; // END SILENCE
-			UpdateControlStates();
+			// 5. Load the specific maps for this game
+			var gameData = GameDatabase.GetGame(existingServer.Game);
+			if (gameData != null)
+			{
+				cmbWorldName.Items.Clear();
+				foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map);
+				cmbWorldName.Text = existingServer.WorldName;
+			}
+
+			// 6. Set Paths and LOCK them
+			chkDefaultPath.Checked = existingServer.IsDefaultPath;
+			txtInstallPath.Text = existingServer.InstallPath;
+
+			// 7. Re-attach and lock the UI
+			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
+
+			// Disable location editing during 'Update' mode
+			chkDefaultPath.Enabled = false;
+			btnBrowse.Enabled = false;
+			txtInstallPath.Enabled = false;
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
@@ -211,24 +216,28 @@ namespace Game_Server_Control_Panel
 
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (isManualLoading) return; // If we are loading an existing server, STOP HERE.
+			if (isManualLoading) return; // Silent if loading existing data
 
 			bool isGamePicked = cmbGame.SelectedIndex > 0;
 			UpdateControlStates();
 
-			if (isGamePicked && btnSave.Text == "Save Server")
+			if (isGamePicked)
 			{
 				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
 				if (gameData != null)
 				{
-					// ONLY auto-fill defaults if it's a BRAND NEW server
-					numPort.Value = gameData.DefaultPort;
-					numQueryPort.Value = gameData.DefaultQueryPort;
-					txtExtraArgs.Text = gameData.DefaultArgs;
-
+					// ALWAYS update the maps list so the dropdown works
 					cmbWorldName.Items.Clear();
 					foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map);
-					if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
+
+					// ONLY auto-fill defaults for NEW servers (Save mode)
+					if (btnSave.Text == "Save Server")
+					{
+						numPort.Value = gameData.DefaultPort;
+						numQueryPort.Value = gameData.DefaultQueryPort;
+						txtExtraArgs.Text = gameData.DefaultArgs;
+						if (cmbWorldName.Items.Count > 0) cmbWorldName.SelectedIndex = 0;
+					}
 				}
 			}
 			UpdatePathPreview();
