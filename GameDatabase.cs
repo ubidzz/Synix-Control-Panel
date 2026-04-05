@@ -14,7 +14,7 @@ namespace Game_Server_Control_Panel
 		public string DefaultArgs { get; set; }
 		public int DefaultPort { get; set; }
 		public int DefaultQueryPort { get; set; }
-		public List<string> Maps { get; set; } = new List<string>();
+		public List<string> Maps { get; set; }
 	}
 
 	public class GameServer
@@ -37,120 +37,105 @@ namespace Game_Server_Control_Panel
 
 	public static class GameDatabase
 	{
-		private static List<GameInfo> SupportedGames = new List<GameInfo>
+		public static List<GameInfo> GetGameList()
 		{
-			new GameInfo
-			{
-				Name = "StarRupture",
-				AppID = "3809400",
-				ExeName = "StarRuptureServer.exe",
-				DefaultArgs = "-log -nosound",
-				DefaultPort = 8777,
-				DefaultQueryPort = 27015,
-				Maps = new List<string> { "Default", "Experimental" }
-			},
+			return [
+				new() {
+					Name = "StarRupture",
+					AppID = "3809400",
+					ExeName = "StarRuptureServer.exe",
+					DefaultArgs = "-log -nosound",
+					DefaultPort = 8777,
+					DefaultQueryPort = 27015,
+					Maps = ["Default", "Experimental"]
+				},
+				new() {
+					Name = "Soulmask",
+					AppID = "2646460",
+					ExeName = "SoulmaskServer.exe",
+					DefaultArgs = "-log",
+					DefaultPort = 8777,
+					DefaultQueryPort = 27015,
+					Maps = ["MainWorld"]
+				},
+				new() {
+					Name = "Rust",
+					AppID = "258550",
+					ExeName = "RustDedicated.exe",
+					DefaultArgs = "-batchmode +server.level \"Procedural Map\" +server.seed 12345 +server.worldsize 3000 +server.identity \"{Identity}\" +server.hostname \"{Hostname}\" +rcon.port 28016 +rcon.password \"changeit\" +rcon.web 1",
+					DefaultPort = 28015,
+					DefaultQueryPort = 28016,
+					Maps = ["Procedural Map", "Barren", "Hapaislands"]
+				},
+				new() {
+					Name = "7 Days to Die",
+					AppID = "294420",
+					ExeName = "7DaysToDieServer.exe",
+					DefaultArgs = "-configfile=serverconfig.xml -quit -batchmode -nographics",
+					DefaultPort = 26900,
+					DefaultQueryPort = 26900,
+					Maps = ["Navezgane", "Pregen01", "Random Gen"]
+				},
+				new() {
+					Name = "ARK: Survival Evolved",
+					AppID = "376030",
+					ExeName = "ShooterGameServer.exe",
+					DefaultArgs = "TheIsland?listen?SessionName=\"{Hostname}\"?ServerPassword=changeit -log",
+					DefaultPort = 7777,
+					DefaultQueryPort = 27015,
+					Maps = ["TheIsland", "TheCenter", "Ragnarok"]
+				},
+				new() {
+					Name = "Palworld",
+					AppID = "2394010",
+					ExeName = "PalServer-Win64-Shipping.exe",
+					DefaultArgs = "EpicApp=PalServer -useperfthreads -NoAsyncLoadingThread",
+					DefaultPort = 8211,
+					DefaultQueryPort = 27015,
+					Maps = ["Default"]
+				},
+				new() {
+					Name = "Valheim",
+					AppID = "896660",
+					ExeName = "valheim_server.exe",
+					DefaultArgs = "-nographics -batchmode -name \"{Hostname}\" -port 2456 -world \"{Identity}\" -password \"changeit\"",
+					DefaultPort = 2456,
+					DefaultQueryPort = 2457,
+					Maps = ["Dedicated"]
+				},
+				new() {
+					Name = "Counter-Strike 2",
+					AppID = "730",
+					ExeName = "cs2.exe",
+					DefaultArgs = "-dedicated +map de_dust2 +servercfgfile server.cfg",
+					DefaultPort = 27015,
+					DefaultQueryPort = 27015,
+					Maps = ["de_dust2", "de_mirage", "de_inferno"]
+				},
+				new() {
+					Name = "Sons of the Forest",
+					AppID = "2465200",
+					ExeName = "SonsOfTheForestDS.exe",
+					DefaultArgs = "-dedicated",
+					DefaultPort = 8766,
+					DefaultQueryPort = 27016,
+					Maps = ["Default"]
+				},
+				new() {
+					Name = "Conan Exiles",
+					AppID = "443030",
+					ExeName = "ConanSandboxServer.exe",
+					DefaultArgs = "-log -MaxPlayers=40",
+					DefaultPort = 7777,
+					DefaultQueryPort = 27015,
+					Maps = ["TheExiledLands", "Siptah"]
+				}
+			];
+		}
 
-			new GameInfo
-			{
-				Name = "Soulmask",
-				AppID = "3017310",
-				ExeName = "SoulmaskServer.exe",
-				DefaultArgs = "-log",
-				DefaultPort = 8777,
-				DefaultQueryPort = 27015,
-				Maps = new List<string> { "MainWorld" }
-			},
-
-			new GameInfo
-			{
-				Name = "7 Days to Die",
-				AppID = "294420",
-				ExeName = "7DaysToDieServer.exe",
-				DefaultArgs = "-configfile=serverconfig.xml -dedicated",
-				DefaultPort = 26900,
-				DefaultQueryPort = 26901,
-				Maps = new List<string> { "Navezgane", "PREGEN01", "PREGEN02", "RWG" }
-			},
-
-			new GameInfo
-			{
-				Name = "Palworld",
-				AppID = "2394010",
-				ExeName = "PalServer-Win64-Shipping.exe",
-				DefaultArgs = "-log -port=8211",
-				DefaultPort = 8211,
-				DefaultQueryPort = 27015,
-				Maps = new List<string> { "Palpagos" }
-			},
-
-			new GameInfo
-			{
-				Name = "ARK: Survival Ascended",
-				AppID = "2430930",
-				ExeName = "ArkAscendedServer.exe",
-				DefaultArgs = "-log -server",
-				DefaultPort = 7777,
-				DefaultQueryPort = 27015,
-				Maps = new List<string> { "TheIsland_WP", "TheCenter_WP", "ScorchedEarth_WP" }
-			},
-
-			new GameInfo
-			{
-				Name = "Abiotic Factor",
-				AppID = "2857200",
-				ExeName = "AbioticFactorServer.exe",
-				DefaultArgs = "-log",
-				DefaultPort = 7777,
-				DefaultQueryPort = 27015,
-				Maps = new List<string> { "Facility" }
-			},
-
-			new GameInfo
-			{
-				Name = "Satisfactory",
-				AppID = "1690800",
-				ExeName = "FactoryServer.exe",
-				DefaultArgs = "-log -unattended",
-				DefaultPort = 7777,
-				DefaultQueryPort = 15000,
-				Maps = new List<string> { "GrassFields", "RockyDesert", "NorthernForest", "DuneDesert" }
-			},
-
-			new GameInfo
-			{
-				Name = "Valheim",
-				AppID = "896660",
-				ExeName = "valheim_server.exe",
-				DefaultArgs = "-nographics -batchmode -public 0",
-				DefaultPort = 2456,
-				DefaultQueryPort = 2457,
-				Maps = new List<string> { "Dedicated" }
-			},
-
-			new GameInfo
-			{
-				Name = "Sons of the Forest",
-				AppID = "2465200",
-				ExeName = "SonsOfTheForestDS.exe",
-				DefaultArgs = "-userdatapath ./userdata",
-				DefaultPort = 8766,
-				DefaultQueryPort = 27016,
-				Maps = new List<string> { "Site2" }
-			},
-
-			new GameInfo
-			{
-				Name = "Icarus",
-				AppID = "2089390",
-				ExeName = "IcarusServer.exe",
-				DefaultArgs = "-log",
-				DefaultPort = 17777,
-				DefaultQueryPort = 27015,
-				Maps = new List<string> { "Olympus", "Styx", "Prometheus" }
-			}
-		};
-
-		public static GameInfo GetGame(string name) => SupportedGames.Find(g => g.Name == name);
-		public static List<GameInfo> GetGameList() => SupportedGames;
+		public static GameInfo GetGame(string name)
+		{
+			return GetGameList().Find(g => g.Name == name);
+		}
 	}
 }

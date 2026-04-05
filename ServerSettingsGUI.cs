@@ -55,27 +55,40 @@ namespace Game_Server_Control_Panel
 
 		private void UpdatePathPreview()
 		{
-			// 1. Define what "Ready" looks like
-			bool hasGame = cmbGame.SelectedIndex != -1 && cmbGame.Text != "Pick Game";
-			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
+			// 1. Get the current Game name from the dropdown
+			string selectedGame = cmbGame.SelectedItem?.ToString() ?? "";
+			string serverName = txtName.Text.Trim();
 
-			// 2. Only unlock the checkbox if BOTH are true
-			if (hasGame && hasName)
-			{
-				chkDefaultPath.Enabled = true;
-			}
-			else
-			{
-				chkDefaultPath.Enabled = false;
-				chkDefaultPath.Checked = false; // Force it off if they delete the name
-			}
-
-			// 3. Handle the path string if the box is checked
+			// 2. Handle Folder Path Preview
 			if (chkDefaultPath.Checked)
 			{
-				string gameFolder = cmbGame.Text.Replace(" ", "_");
-				string serverFolder = txtName.Text.Replace(" ", "_");
-				txtInstallPath.Text = $@"C:\Games\{gameFolder}\{serverFolder}";
+				// Example: C:\GameServers\Soulmask\Buffalo
+				if (!string.IsNullOrEmpty(selectedGame) && selectedGame != "-- Pick a Game --" && !string.IsNullOrEmpty(serverName))
+				{
+					txtInstallPath.Text = Path.Combine(@"C:\GameServers", selectedGame, serverName);
+				}
+			}
+
+			// 3. Handle Argument Placeholder Swapping (Identity and Hostname)
+			if (!string.IsNullOrEmpty(selectedGame) && selectedGame != "-- Pick a Game --")
+			{
+				var gameInfo = GameDatabase.GetGame(selectedGame);
+				if (gameInfo != null)
+				{
+					string folderName = Path.GetFileName(txtInstallPath.Text);
+
+					// Swap {Identity} with the folder name and {Hostname} with the Server Name
+					string processedArgs = gameInfo.DefaultArgs
+						.Replace("{Identity}", folderName)
+						.Replace("{Hostname}", serverName);
+
+					// Only update the box if the user hasn't manually typed something different
+					// or if we are in "New" mode.
+					if (btnSave.Text != "Update Server")
+					{
+						txtExtraArgs.Text = processedArgs;
+					}
+				}
 			}
 		}
 
