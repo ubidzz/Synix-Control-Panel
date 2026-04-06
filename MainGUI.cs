@@ -28,7 +28,41 @@ namespace Game_Server_Control_Panel
 			dataGridView1.Columns["colName"].DataPropertyName = "ServerName";
 			dataGridView1.Columns["colGame"].DataPropertyName = "Game";
 			dataGridView1.Columns["colPort"].DataPropertyName = "Port";
+			dataGridView1.Columns["colPassword"].DataPropertyName = "Password";
+			dataGridView1.Columns["colAdminPassword"].DataPropertyName = "AdminPassword";
 			dataGridView1.Columns["colStatus"].DataPropertyName = "Status";
+
+			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
+		}
+
+		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			// Styling the Status column: Stopped (Red), Installing (Blue), Running (Green)
+			if (dataGridView1.Columns[e.ColumnIndex].DataPropertyName == "Status" ||
+				dataGridView1.Columns[e.ColumnIndex].Name == "colStatus")
+			{
+				if (e.Value != null)
+				{
+					string status = e.Value.ToString() ?? "";
+					Font boldFont = new Font(dataGridView1.Font, FontStyle.Bold);
+
+					if (status == "Stopped")
+					{
+						e.CellStyle.ForeColor = Color.Red;
+						e.CellStyle.Font = boldFont;
+					}
+					else if (status == "Installing")
+					{
+						e.CellStyle.ForeColor = Color.Blue;
+						e.CellStyle.Font = boldFont;
+					}
+					else if (status == "Running")
+					{
+						e.CellStyle.ForeColor = Color.Green;
+						e.CellStyle.Font = boldFont;
+					}
+				}
+			}
 		}
 
 		private void UpdateGrid()
@@ -151,31 +185,37 @@ namespace Game_Server_Control_Panel
 			{
 				GameServer newServer = settingsForm.NewServer;
 
-				// 1. REFRESH THE GRID
-				// ServerSettingsGUI.cs already handles adding to the list and saving the JSON.
-				UpdateGrid(); // Shows the server in the list immediately
+				// Grab correct AppID
+				var gameData = GameDatabase.GetGame(newServer.Game);
+				string correctAppId = gameData?.AppID ?? "";
 
-				// 2. RAISE THE SHIELD (Locks the 'X' button)
+				// 1. UPDATE STATUS TO INSTALLING IMMEDIATELY
+				newServer.Status = "Installing";
 				isDownloadActive = true;
+
+				// Force the grid to show Blue 'Installing' right now
+				dataGridView1.Refresh();
 
 				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
 
 				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
-				// 3. RUN IN BACKGROUND
-				// 'await Task.Run' ensures the UI stays responsive so the 'X' lock can work
+				// 2. RUN IN BACKGROUND
 				await Task.Run(() =>
-					ServerManager.RunUpdate(steamPath, newServer.InstallPath, newServer.AppID, msg => AppendLog(msg))
+					ServerManager.RunUpdate(steamPath, newServer.InstallPath, correctAppId, msg => AppendLog(msg))
 				);
 
-				// 4. LOWER THE SHIELD (Unlocks the 'X' button)
+				// 3. SNAPPY STATUS UPDATE
+				// The moment Task.Run finishes, we flip the status
+				newServer.Status = "Stopped";
 				isDownloadActive = false;
 
-				// 5. FINAL LOGGING
-				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
+				// Force the grid to repaint so it turns RED immediately
+				dataGridView1.Invalidate();
+				dataGridView1.Refresh();
 
-				// Final refresh to update Status from 'Installing' to 'Stopped'
-				UpdateGrid();
+				SaveServersToDisk();
+				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
 			}
 		}
 
@@ -183,27 +223,20 @@ namespace Game_Server_Control_Panel
 		{
 			if (isInitializing) return;
 
-			// 1. Check if a server is actually selected in the grid
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				// 2. Safety: Cannot rename folders or edit ports while the EXE is running
 				if (selectedServer.Status == "Running")
 				{
 					MessageBox.Show("Please stop the server before editing.", "Server Active");
 					return;
 				}
 
-				// 3. Open the Edit form (Passing the current server object to the constructor)
 				using var editForm = new ServerSettingsGUI(selectedServer);
 				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
 				{
-					// 4. SURGICAL SWAP & COMMIT
-					// We let ServerSettingsGUI handle the array swap and JSON save to prevent duplicate saves.
-					// (NOTE: If we tried to find 'selectedServer' in the list here, it would fail because 
-					// ServerSettingsGUI already replaced it with 'NewServer'!)
-
+					// ServerSettingsGUI.cs handles the list swap and JSON save internally.
 					dataGridView1.Refresh();
 					AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
 				}

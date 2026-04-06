@@ -41,7 +41,7 @@
 			colPort = new DataGridViewTextBoxColumn();
 			colQueryPort = new DataGridViewTextBoxColumn();
 			colPassword = new DataGridViewTextBoxColumn();
-			AdminPassword = new DataGridViewTextBoxColumn();
+			colAdminPassword = new DataGridViewTextBoxColumn();
 			colStatus = new DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			SuspendLayout();
@@ -51,7 +51,7 @@
 			dataGridView1.AllowUserToAddRows = false;
 			dataGridView1.AllowUserToDeleteRows = false;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPassword, AdminPassword, colStatus });
+			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPassword, colAdminPassword, colStatus });
 			dataGridView1.Location = new Point(12, 42);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
@@ -168,12 +168,12 @@
 			colPassword.Name = "colPassword";
 			colPassword.ReadOnly = true;
 			// 
-			// AdminPassword
+			// colAdminPassword
 			// 
-			AdminPassword.DataPropertyName = "AdminPassword";
-			AdminPassword.HeaderText = "Admin Password";
-			AdminPassword.Name = "AdminPassword";
-			AdminPassword.ReadOnly = true;
+			colAdminPassword.DataPropertyName = "AdminPassword";
+			colAdminPassword.HeaderText = "Admin Password";
+			colAdminPassword.Name = "colAdminPassword";
+			colAdminPassword.ReadOnly = true;
 			// 
 			// colStatus
 			// 
@@ -219,7 +219,7 @@
 		private DataGridViewTextBoxColumn colPort;
 		private DataGridViewTextBoxColumn colQueryPort;
 		private DataGridViewTextBoxColumn colPassword;
-		private DataGridViewTextBoxColumn AdminPassword;
+		private DataGridViewTextBoxColumn colAdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
 	}
 }

@@ -130,14 +130,14 @@
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(414, 135);
+			txtInstallPath.Location = new Point(414, 166);
 			txtInstallPath.Name = "txtInstallPath";
 			txtInstallPath.Size = new Size(287, 23);
 			txtInstallPath.TabIndex = 7;
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(707, 135);
+			btnBrowse.Location = new Point(707, 166);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -171,7 +171,7 @@
 			// 
 			label1.AutoSize = true;
 			label1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label1.Location = new Point(414, 115);
+			label1.Location = new Point(414, 146);
 			label1.Name = "label1";
 			label1.Size = new Size(127, 17);
 			label1.TabIndex = 11;
@@ -181,7 +181,7 @@
 			// 
 			ServerPasswordLabel.AutoSize = true;
 			ServerPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			ServerPasswordLabel.Location = new Point(414, 189);
+			ServerPasswordLabel.Location = new Point(414, 210);
 			ServerPasswordLabel.Name = "ServerPasswordLabel";
 			ServerPasswordLabel.Size = new Size(109, 17);
 			ServerPasswordLabel.TabIndex = 12;
@@ -189,7 +189,7 @@
 			// 
 			// txtPassword
 			// 
-			txtPassword.Location = new Point(414, 209);
+			txtPassword.Location = new Point(414, 230);
 			txtPassword.Name = "txtPassword";
 			txtPassword.Size = new Size(368, 23);
 			txtPassword.TabIndex = 13;
@@ -276,7 +276,7 @@
 			WarningLabel.ForeColor = Color.Red;
 			WarningLabel.Location = new Point(414, 55);
 			WarningLabel.Name = "WarningLabel";
-			WarningLabel.Size = new Size(368, 60);
+			WarningLabel.Size = new Size(368, 91);
 			WarningLabel.TabIndex = 23;
 			// 
 			// cmbWorldName
@@ -291,7 +291,7 @@
 			// 
 			AdminPasswordLabel.AutoSize = true;
 			AdminPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			AdminPasswordLabel.Location = new Point(414, 259);
+			AdminPasswordLabel.Location = new Point(414, 275);
 			AdminPasswordLabel.Name = "AdminPasswordLabel";
 			AdminPasswordLabel.Size = new Size(154, 17);
 			AdminPasswordLabel.TabIndex = 25;
@@ -299,7 +299,7 @@
 			// 
 			// txtAdminPassword
 			// 
-			txtAdminPassword.Location = new Point(414, 279);
+			txtAdminPassword.Location = new Point(414, 295);
 			txtAdminPassword.Name = "txtAdminPassword";
 			txtAdminPassword.Size = new Size(368, 23);
 			txtAdminPassword.TabIndex = 26;
@@ -308,7 +308,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(819, 558);
+			ClientSize = new Size(795, 558);
 			Controls.Add(txtAdminPassword);
 			Controls.Add(AdminPasswordLabel);
 			Controls.Add(cmbWorldName);

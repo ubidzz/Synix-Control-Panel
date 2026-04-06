@@ -38,10 +38,10 @@ namespace Game_Server_Control_Panel
 				txtInstallPath.Enabled = false;
 				btnBrowse.Enabled = false;
 
-				WarningLabel.Text = @"Warning! You cannot edit this after the server has been saved!
-        If you used the Default Location and you changed the Server Name, 
-        the folder name will be changed to:
-        C:\Games\[Game Name]\[Your Server Name]";
+				WarningLabel.Text = "Warning! You cannot edit this after the server has been saved!\n" +
+								   "If you used the Default Folder Location and you changed the " +
+								   "Server Name the location and name will be changed to:\n" +
+								   @"C:\Games\[Game Name]\[Your Server Name]";
 
 				// Fill the GUI with existing data. Compiler now knows 'server' is not null!
 				txtName.Text = server.ServerName;
@@ -59,7 +59,11 @@ namespace Game_Server_Control_Panel
 			else
 			{
 				_isEditMode = false;
-				WarningLabel.Text = ""; // Clear warning for new servers
+				WarningLabel.Text = "[WARNING] Make sure to pick a place on your pc to install the server\n" +
+									"or use the default location because you can't change this later!\n" +
+								   "[INFO] If you used the Default Folder Location, the folder name and\n" +
+								   "the location will be:\n" +
+								   @"C:\Games\[Game Name]\[Your Server Name]";
 			}
 		}
 
