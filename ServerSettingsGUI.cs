@@ -19,36 +19,41 @@ namespace Game_Server_Control_Panel
 		private GameServer? _existingServer = null;
 
 		// Add (GameServer server) inside the parentheses here!
-		public ServerSettingsGUI(GameServer server)
+		// Change this line to make the server optional
+		public ServerSettingsGUI(GameServer? server = null)
 		{
 			InitializeComponent();
-			_isEditMode = true;
 
-			cmbGame.Enabled = true;
-			chkDefaultPath.Enabled = false;
-			txtInstallPath.Enabled = false;
-			btnBrowse.Enabled = false;
-
-			WarningLabel.Text = @"Warning! You cannot edit this after the server has been saved!
-				If you used the Default Location and you changed the Server Name, 
-				the folder name will be changed to:
-				C:\Games\[Game Name]\[Your Server Name]";
-
-			// Now 'server' exists, so these lines will work!
+			// This now works for both ADD (null) and EDIT (existing server)
 			_existingServer = server;
 
-			// Fill the GUI with existing data
-			txtName.Text = server.ServerName;
-			cmbGame.Text = server.Game;
-			txtPassword.Text = server.Password;
-			txtAdminPassword.Text = server.AdminPassword;
-			numPort.Value = server.Port;
-			numQueryPort.Value = server.QueryPort;
-			numMaxPlayers.Value = server.MaxPlayers;
-			cmbWorldName.Text = server.WorldName;
-			txtInstallPath.Text = server.InstallPath;
-			chkDefaultPath.Checked = server.IsDefaultPath;
-			txtExtraArgs.Text = server.ExtraArgs;
+			if (server != null)
+			{
+				_isEditMode = true;
+
+				cmbGame.Enabled = true;
+				chkDefaultPath.Enabled = false;
+				txtInstallPath.Enabled = false;
+				btnBrowse.Enabled = false;
+
+				WarningLabel.Text = @"Warning! You cannot edit this after the server has been saved!
+					If you used the Default Location and you changed the Server Name, 
+					the folder name will be changed to:
+					C:\Games\[Game Name]\[Your Server Name]";
+
+				// Fill the GUI with existing data
+				txtName.Text = server.ServerName;
+				cmbGame.Text = server.Game;
+				txtPassword.Text = server.Password;
+				txtAdminPassword.Text = server.AdminPassword;
+				numPort.Value = server.Port;
+				numQueryPort.Value = server.QueryPort;
+				numMaxPlayers.Value = server.MaxPlayers;
+				cmbWorldName.Text = server.WorldName;
+				txtInstallPath.Text = server.InstallPath;
+				chkDefaultPath.Checked = server.IsDefaultPath;
+				txtExtraArgs.Text = server.ExtraArgs;
+			}
 		}
 
 		private void ServerSettingsGUI_Load(object sender, EventArgs e)
