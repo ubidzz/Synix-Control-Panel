@@ -151,9 +151,8 @@ namespace Game_Server_Control_Panel
 			{
 				GameServer newServer = settingsForm.NewServer;
 
-				// 1. ADD & REFRESH THE GRID
-				serverList.Add(newServer);
-				SaveServersToDisk();
+				// 1. REFRESH THE GRID
+				// ServerSettingsGUI.cs already handles adding to the list and saving the JSON.
 				UpdateGrid(); // Shows the server in the list immediately
 
 				// 2. RAISE THE SHIELD (Locks the 'X' button)
@@ -200,20 +199,13 @@ namespace Game_Server_Control_Panel
 				using var editForm = new ServerSettingsGUI(selectedServer);
 				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
 				{
-					// 4. SURGICAL SWAP: Find the exact index of the server we just edited
-					int index = serverList.IndexOf(selectedServer);
+					// 4. SURGICAL SWAP & COMMIT
+					// We let ServerSettingsGUI handle the array swap and JSON save to prevent duplicate saves.
+					// (NOTE: If we tried to find 'selectedServer' in the list here, it would fail because 
+					// ServerSettingsGUI already replaced it with 'NewServer'!)
 
-					if (index != -1)
-					{
-						// Update only this specific 'slot' in the array
-						serverList[index] = editForm.NewServer;
-
-						// 5. COMMIT: Save the entire updated list back to 'servers.json'
-						// This keeps all other servers safe while updating the 1 you edited.
-						SaveServersToDisk();
-
-						AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
-					}
+					dataGridView1.Refresh();
+					AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
 				}
 			}
 		}

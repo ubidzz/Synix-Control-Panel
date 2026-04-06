@@ -43,7 +43,8 @@ namespace Game_Server_Control_Panel
 		// Use ReadOnly to protect the master list
 		private static readonly List<GameInfo> games =
 		[
-			new() {
+			new()
+			{
 				Game = "StarRupture",
 				AppID = "3333140",
 				ExeName = @"StarRupture\Binaries\Win64\StarRuptureServerEOS-Win64-Shipping.exe",
@@ -52,7 +53,8 @@ namespace Game_Server_Control_Panel
 				QueryPort = 27015,
 				Maps = ["MainWorld"]
 			},
-			new() {
+			new()
+			{
 				Game = "Soulmask",
 				AppID = "3017310",
 				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
@@ -61,7 +63,8 @@ namespace Game_Server_Control_Panel
 				QueryPort = 27015,
 				Maps = ["Level01_Main"]
 			},
-			new() {
+			new()
+			{
 				Game = "7 Days to Die",
 				AppID = "294420",
 				ExeName = "7DaysToDieServer.exe",
@@ -70,8 +73,8 @@ namespace Game_Server_Control_Panel
 				QueryPort = 26900,
 				Maps = ["Navezgane", "Pregen01"]
 			},
-            // I standardized the tags here for Valheim/Rust to match your Soulmask logic
-            new() {
+			new()
+			{
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
@@ -80,7 +83,8 @@ namespace Game_Server_Control_Panel
 				QueryPort = 28016,
 				Maps = ["Procedural Map"]
 			},
-			new() {
+			new()
+			{
 				Game = "Valheim",
 				AppID = "896660",
 				ExeName = "valheim_server.exe",
@@ -89,18 +93,119 @@ namespace Game_Server_Control_Panel
 				QueryPort = 2457,
 				Maps = ["Dedicated"]
 			},
-			new() {
+			new()
+			{
 				Game = "Palworld",
 				AppID = "2394010",
-				ExeName = "PalServer.exe", 
-				// Using {pass} for the AdminPassword since Palworld uses one main password for admin rights
+				ExeName = "PalServer.exe",
 				RequiredArgs = "-port={port} -queryport={query} -AdminPassword=\"{pass}\"",
 				Port = 8211,
 				QueryPort = 27015,
 				Maps = ["DefaultWorld"]
+			},
+            // --- NEWLY ADDED GAMES BELOW ---
+            new()
+			{
+				Game = "ARK: Survival Evolved",
+				AppID = "376030",
+				ExeName = @"ShooterGame\Binaries\Win64\ShooterGameServer.exe",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["TheIsland", "ScorchedEarth_P", "Aberration_P", "Extinction", "Genesis", "Ragnarok"]
+			},
+			new()
+			{
+				Game = "ARK: Survival Ascended",
+				AppID = "2430930",
+				ExeName = @"ShooterGame\Binaries\Win64\ArkAscendedServer.exe",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["TheIsland_WP", "ScorchedEarth_WP"]
+			},
+			new()
+			{
+				Game = "Conan Exiles",
+				AppID = "443030",
+				ExeName = @"ConanSandbox\Binaries\Win64\ConanSandboxServer.exe",
+				RequiredArgs = "-log -MaxPlayers={MaxPlayers} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -Port={port} -QueryPort={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["ConanSandbox", "Camp"]
+			},
+			new()
+			{
+				Game = "DayZ",
+				AppID = "223350",
+				ExeName = "DayZServer_x64.exe",
+				RequiredArgs = "-config=serverDZ.cfg -port={port} -name=\"{ServerName}\"",
+				Port = 2302,
+				QueryPort = 27016,
+				Maps = ["chernarusplus", "enoch"]
+			},
+			new()
+			{
+				Game = "Project Zomboid",
+				AppID = "380870",
+				ExeName = "ProjectZomboid64.exe",
+				RequiredArgs = "-servername \"{ServerName}\" -adminpassword \"{adminpass}\" -port {port}",
+				Port = 16261,
+				QueryPort = 16262,
+				Maps = ["Muldraugh, KY"]
+			},
+			new()
+			{
+				Game = "Garry's Mod",
+				AppID = "4020",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				Maps = ["gm_construct", "gm_flatgrass"]
+			},
+			new()
+			{
+				Game = "V Rising",
+				AppID = "1828900",
+				ExeName = "VRisingServer.exe",
+				RequiredArgs = "-persistentDataPath .\\save-data -serverName \"{ServerName}\" -saveName \"{map}\" -logLevel \"info\"",
+				Port = 9876,
+				QueryPort = 9877,
+				Maps = ["world1"]
+			},
+			new()
+			{
+				Game = "Satisfactory",
+				AppID = "1690800",
+				ExeName = @"FactoryGame\Binaries\Win64\FactoryServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -unattended -ServerQueryPort={query} -multihome=0.0.0.0 -port={port}",
+				Port = 7777,
+				QueryPort = 15777,
+				Maps = ["Satisfactory"]
+			},
+			new()
+			{
+				Game = "Sons Of The Forest",
+				AppID = "2465200",
+				ExeName = "SonsOfTheForestDS.exe",
+				RequiredArgs = "-userdatapath \"config\" -servername \"{ServerName}\" -serverpassword \"{pass}\" -serverport {port} -queryport {query}",
+				Port = 8766,
+				QueryPort = 27016,
+				Maps = ["Default"]
+			},
+			new()
+			{
+				Game = "Enshrouded",
+				AppID = "2278520",
+				ExeName = "enshrouded_server.exe",
+                // Enshrouded uses a JSON config file (enshrouded_server.json) mostly instead of launch args
+                RequiredArgs = "",
+				Port = 15636,
+				QueryPort = 15637,
+				Maps = ["Embervale"]
 			}
-            // Add more games following the same {tag} pattern...
-        ];
+		];
 
 		public static List<GameInfo> GetGameList() => games;
 
