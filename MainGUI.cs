@@ -1,6 +1,7 @@
 using System.ComponentModel; // Add this at the very top of the file
 using System.Diagnostics;
 using System.Text.Json;
+using System.Linq;
 
 namespace Game_Server_Control_Panel
 {
@@ -93,19 +94,25 @@ namespace Game_Server_Control_Panel
 
 		public static void SaveServersToDisk()
 		{
+			// Use the Instance bridge to set the bool
+			if (Instance != null) Instance.isInitializing = true;
+
 			try
 			{
 				var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
 				string jsonString = System.Text.Json.JsonSerializer.Serialize(serverList, options);
 				File.WriteAllText("servers.json", jsonString);
 
-				// Use the Bridge to log the success
 				Instance?.AppendLog("JSON saved successfully.");
 			}
 			catch (Exception ex)
 			{
-				// Use the Bridge to log the error
 				Instance?.AppendLog("Save Error: " + ex.Message);
+			}
+			finally
+			{
+				// Use finally to ensure it flips back to false even if it crashes
+				if (Instance != null) Instance.isInitializing = false;
 			}
 		}
 
@@ -261,7 +268,7 @@ namespace Game_Server_Control_Panel
 		private void GUI_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			// 1. Check if the 'steamcmd' process exists on the PC right now
-			bool isSteamRunning = Process.GetProcessesByName("steamcmd").Length > 0;
+			bool isSteamRunning = Process.GetProcessesByName("steamcmd").Any();
 
 			// 2. Check your manual flag (for internal initialization)
 			if (isDownloadActive || isSteamRunning)
