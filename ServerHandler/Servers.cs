@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game_Server_Control_Panel.FileEditor;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -66,12 +67,55 @@ namespace Game_Server_Control_Panel.ServerHandler
 					server.Status = "Running";
 					server.PID = proc.Id;
 
-					MainGUI.SaveServersToDisk();
+					JsonManager.Save();
 				}
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke($"[CRITICAL ERROR] Failed to start server: {ex.Message}");
+			}
+		}
+
+		public static void Stop(GameServer server, Action<string> logCallback)
+		{
+			try
+			{
+				logCallback?.Invoke($"Stopping {server.Game}: {server.ServerName}...");
+
+				// 1. Try to kill by the active process object
+				if (server.RunningProcess != null && !server.RunningProcess.HasExited)
+				{
+					server.RunningProcess.Kill();
+				}
+				// 2. Recovery: Try to kill by PID (if the app was restarted)
+				else if (server.PID.HasValue)
+				{
+					try
+					{
+						Process oldProc = Process.GetProcessById(server.PID.Value);
+						if (!oldProc.HasExited)
+						{
+							oldProc.Kill();
+						}
+					}
+					catch { /* Process already gone */ }
+				}
+
+				logCallback?.Invoke($"[STOPPED] {server.ServerName} has been shut down.");
+			}
+			catch (Exception ex)
+			{
+				logCallback?.Invoke($"[ERROR] Stop failed: {ex.Message}");
+			}
+			finally
+			{
+				// 3. Always clean up the server data regardless of errors
+				server.Status = "Stopped";
+				server.PID = null;
+				server.RunningProcess = null;
+
+				// 4. Save the status change to disk immediately
+				JsonManager.Save();
 			}
 		}
 	}

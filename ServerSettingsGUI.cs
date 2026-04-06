@@ -223,7 +223,7 @@ namespace Game_Server_Control_Panel
 				}
 
 				// 5. Save the updated list to servers.json
-				MainGUI.SaveServersToDisk();
+				JsonManager.Save();
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}

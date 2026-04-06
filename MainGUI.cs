@@ -1,3 +1,4 @@
+using Game_Server_Control_Panel.FileEditor;
 using Game_Server_Control_Panel.MonitoringHandler;
 using Game_Server_Control_Panel.ServerHandler;
 using Game_Server_Control_Panel.SteamCMD;
@@ -18,7 +19,7 @@ namespace Game_Server_Control_Panel
 		public MainGUI()
 		{
 			InitializeComponent();
-			LoadServersFromDisk();
+			JsonManager.Load();
 
 			Instance = this;
 
@@ -137,58 +138,6 @@ namespace Game_Server_Control_Panel
 			UpdateGrid();
 		}
 
-		public static void SaveServersToDisk()
-		{
-			// FIX: Remove 'Instance.' because the variable is now Static
-			isInitializing = true;
-
-			try
-			{
-				var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
-				string jsonString = System.Text.Json.JsonSerializer.Serialize(serverList, options);
-				File.WriteAllText("servers.json", jsonString);
-
-				Instance?.AppendLog("JSON saved successfully.");
-			}
-			catch (Exception ex)
-			{
-				Instance?.AppendLog("Save Error: " + ex.Message);
-			}
-			finally
-			{
-				// FIX: Flip it back directly
-				isInitializing = false;
-			}
-		}
-
-		private void LoadServersFromDisk()
-		{
-			isInitializing = true;
-			if (File.Exists("servers.json"))
-			{
-				try
-				{
-					string jsonString = File.ReadAllText("servers.json");
-					var loadedServers = JsonSerializer.Deserialize<List<GameServer>>(jsonString);
-
-					if (loadedServers != null)
-					{
-						serverList.Clear();
-						foreach (var server in loadedServers)
-						{
-							serverList.Add(server);
-						}
-					}
-				}
-				catch
-				{
-					// If the file is corrupted, we just start fresh
-					MessageBox.Show("Could not load previous servers. Starting fresh.");
-				}
-			}
-			isInitializing = false;
-		}
-
 		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
 			using ServerSettingsGUI settingsForm = new();
@@ -223,7 +172,7 @@ namespace Game_Server_Control_Panel
 				dataGridView1.Invalidate();
 				dataGridView1.Refresh();
 
-				SaveServersToDisk();
+				JsonManager.Save();
 				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
 			}
 		}
@@ -270,29 +219,24 @@ namespace Game_Server_Control_Panel
 					return;
 				}
 
-				// 1. Expanded Safety Confirmation
-				var confirm = MessageBox.Show($"Are you sure you want to delete '{selectedServer.ServerName}'?\n\nTHIS WILL PERMANENTLY REMOVE ALL SERVER FILES AT:\n{selectedServer.InstallPath}",
+				// 1. Expanded Safety Confirmation (Stay in GUI)
+				var confirm = MessageBox.Show($"Are you sure you want to delete '{selectedServer.ServerName}'?\n\n" +
+											$"THIS WILL PERMANENTLY REMOVE ALL SERVER FILES AT:\n{selectedServer.InstallPath}",
 											"Confirm Total Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 				if (confirm == DialogResult.Yes)
 				{
 					try
 					{
-						// 2. Delete the physical files first
-						if (Directory.Exists(selectedServer.InstallPath))
-						{
-							// 'true' means it deletes all subfolders and files inside
-							Directory.Delete(selectedServer.InstallPath, true);
-						}
+						// 2. Call the backend to do the dirty work
+						Delete.Server(selectedServer, AppendLog);
 
-						// 3. Remove from the UI list and Save JSON
-						serverList.Remove(selectedServer);
-						SaveServersToDisk();
-
-						AppendLog($"[CLEANUP] Deleted server '{selectedServer.ServerName}' and all files at {selectedServer.InstallPath}");
+						// 3. Update the UI
+						UpdateGrid();
 					}
 					catch (Exception ex)
 					{
+						// 4. Show your specific error message if the physical delete fails
 						MessageBox.Show($"Files were deleted from the list, but some physical files couldn't be removed: {ex.Message}", "Cleanup Error");
 					}
 				}
@@ -360,58 +304,19 @@ namespace Game_Server_Control_Panel
 
 		private void btnStop_Click(object sender, EventArgs e)
 		{
-			// 1. Get the actual server object from the selected row
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// Don't try to stop something that is already stopped
 				if (selectedServer.Status != "Running")
 				{
 					MessageBox.Show("This server is already stopped.", "Info");
 					return;
 				}
 
-				AppendLog($"Stopping {selectedServer.Game}: {selectedServer.ServerName}...");
+				// One line does all the heavy lifting now!
+				Servers.Stop(selectedServer, AppendLog);
 
-				// 2. Safely hunt down and kill the process
-				try
-				{
-					// Scenario A: We just started it and still have the process in memory
-					if (selectedServer.RunningProcess != null && !selectedServer.RunningProcess.HasExited)
-					{
-						selectedServer.RunningProcess.Kill();
-					}
-					// Scenario B: The Control Panel was closed and reopened, but we saved the PID!
-					else if (selectedServer.PID.HasValue)
-					{
-						Process oldProc = Process.GetProcessById(selectedServer.PID.Value);
-						if (!oldProc.HasExited)
-						{
-							oldProc.Kill();
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					// This just means the server window was already closed manually by the user
-					AppendLog($"[NOTE] Process was already closed or could not be found.");
-				}
-
-				// 3. Update the Object's Data
-				selectedServer.Status = "Stopped";
-				selectedServer.PID = null;
-				selectedServer.RunningProcess = null;
-
-				// 4. Save the "Stopped" status to your servers.json immediately
-				SaveServersToDisk();
-
-				// 5. Trigger your new UI refresh to instantly turn the text Red
+				// Update the colors on the screen
 				UpdateGrid();
-
-				AppendLog($"[STOPPED] {selectedServer.ServerName} has been shut down.");
-			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list first.");
 			}
 		}
 	}
