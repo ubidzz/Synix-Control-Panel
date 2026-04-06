@@ -55,16 +55,36 @@ namespace Game_Server_Control_Panel
 
 		private void UpdateGrid()
 		{
-			if (dataGridView1.InvokeRequired)
+			// 1. Thread safety check
+			if (this.InvokeRequired)
 			{
-				// This pushes the command back to the Main UI thread so it doesn't crash
-				dataGridView1.Invoke(new Action(UpdateGrid));
+				this.Invoke(new Action(UpdateGrid));
 				return;
 			}
 
-			// This tells the DataGridView to look at the 'serverList' 
-			// and update the screen with the new Status/PID values.
-			dataGridView1.ResetBindings();
+			// 2. Remember where the user was looking and clicking so the screen doesn't jump
+			int scrollPosition = dataGridView1.FirstDisplayedScrollingRowIndex;
+			int selectedIndex = dataGridView1.CurrentRow != null ? dataGridView1.CurrentRow.Index : -1;
+
+			// 3. THE NUCLEAR REFRESH: Unbind and rebind the list. 
+			// This is the ONLY way a standard List forces the DataGridView to update its text.
+			dataGridView1.DataSource = null;
+			dataGridView1.DataSource = serverList;
+
+			// 4. Put the user's selection and scroll bar exactly back where it was
+			if (scrollPosition != -1 && scrollPosition < dataGridView1.Rows.Count)
+			{
+				dataGridView1.FirstDisplayedScrollingRowIndex = scrollPosition;
+			}
+
+			if (selectedIndex != -1 && selectedIndex < dataGridView1.Rows.Count)
+			{
+				dataGridView1.ClearSelection();
+				dataGridView1.Rows[selectedIndex].Selected = true;
+			}
+
+			// 5. Force Windows to physically repaint the Green/Red colors on your monitor right now
+			dataGridView1.Refresh();
 		}
 
 		public void AppendLog(string message)
@@ -222,6 +242,10 @@ namespace Game_Server_Control_Panel
 					AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
 				}
 			}
+			else
+			{
+				MessageBox.Show("Please select a server in the list first.");
+			}
 		}
 
 		private void btnDelete_Click(object sender, EventArgs e)
@@ -297,23 +321,28 @@ namespace Game_Server_Control_Panel
 			{
 				AppendLog($"Launching {selectedServer.Game}: {selectedServer.ServerName}...");
 
+				// Set to running immediately
+				selectedServer.Status = "Running";
+				UpdateGrid(); // <--- Added this to snap the grid to Green immediately
+
 				// 2. Hand it off to the ServerManager (The Expert)
-				// This uses the REAL InstallPath and REAL ExeName from the object
 				ServerManager.StartServer(selectedServer, msg =>
 				{
 					// Use Invoke to make sure the log updates on the UI thread
 					if (this.InvokeRequired)
 					{
-						this.Invoke((MethodInvoker)delegate { AppendLog(msg); });
+						this.Invoke((MethodInvoker)delegate
+						{
+							AppendLog(msg);
+							UpdateGrid(); // <--- MOVED THIS HERE so the grid updates from the background thread!
+						});
 					}
 					else
 					{
 						AppendLog(msg);
+						UpdateGrid();
 					}
 				});
-
-				// 3. Refresh the UI to show "Running"
-				UpdateGrid();
 			}
 			else
 			{

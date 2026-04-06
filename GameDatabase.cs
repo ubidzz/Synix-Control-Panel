@@ -10,11 +10,15 @@ namespace Game_Server_Control_Panel
 	public class GameInfo
 	{
 		public string Game { get; set; } = string.Empty;
+		[JsonIgnore]
 		public string AppID { get; set; } = string.Empty;
+		[JsonIgnore]
 		public string ExeName { get; set; } = string.Empty;
+		[JsonIgnore]
 		public string RequiredArgs { get; set; } = string.Empty;
 		public int Port { get; set; }
 		public int QueryPort { get; set; }
+		[JsonIgnore]
 		public List<string> Maps { get; set; } = [];
 
 		// This is a "Default" field for new servers
