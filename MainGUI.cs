@@ -9,7 +9,7 @@ namespace Game_Server_Control_Panel
 	{
 		public static BindingList<GameServer> serverList = new BindingList<GameServer>();
 		private bool isDownloadActive = false;
-		private bool isInitializing = false;
+		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
 
 		public MainGUI()
@@ -47,13 +47,10 @@ namespace Game_Server_Control_Panel
 
 		public void AppendLog(string message)
 		{
-			// If the window isn't ready or is closing, don't try to log
 			if (!this.IsHandleCreated || this.IsDisposed) return;
 
 			if (rtbLog.InvokeRequired)
 			{
-				// This 'BeginInvoke' is what prevents the app from hanging 
-				// when SteamCMD sends dozens of lines at once
 				rtbLog.BeginInvoke(new Action(() => AppendLog(message)));
 				return;
 			}
@@ -61,9 +58,12 @@ namespace Game_Server_Control_Panel
 			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
 
-			// Auto-scroll to ensure you see the live SteamCMD output
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
+
+			// ADD THIS: Forces the box to draw the new text IMMEDIATELY
+			// This stops the "Frozen" look during SteamCMD installs
+			rtbLog.Update();
 		}
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
@@ -94,8 +94,8 @@ namespace Game_Server_Control_Panel
 
 		public static void SaveServersToDisk()
 		{
-			// Use the Instance bridge to set the bool
-			if (Instance != null) Instance.isInitializing = true;
+			// FIX: Remove 'Instance.' because the variable is now Static
+			isInitializing = true;
 
 			try
 			{
@@ -111,8 +111,8 @@ namespace Game_Server_Control_Panel
 			}
 			finally
 			{
-				// Use finally to ensure it flips back to false even if it crashes
-				if (Instance != null) Instance.isInitializing = false;
+				// FIX: Flip it back directly
+				isInitializing = false;
 			}
 		}
 
@@ -222,6 +222,8 @@ namespace Game_Server_Control_Panel
 
 		private void btnDelete_Click(object sender, EventArgs e)
 		{
+			if (isInitializing) return;
+
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
