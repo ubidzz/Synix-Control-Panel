@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
+// Change namespace to SteamCMD to avoid naming conflicts!
 namespace Game_Server_Control_Panel.SteamCMD
 {
 	public static class ServerInstaller
@@ -10,7 +11,7 @@ namespace Game_Server_Control_Panel.SteamCMD
 		{
 			if (!File.Exists(steamCmdPath))
 			{
-				logCallback?.Invoke($"[ERROR] SteamCMD.exe not found at: {steamCmdPath}");
+				logCallback?.Invoke($"[ERROR] SteamCMD not found: {steamCmdPath}");
 				return;
 			}
 
@@ -21,36 +22,27 @@ namespace Game_Server_Control_Panel.SteamCMD
 			{
 				FileName = steamCmdPath,
 				Arguments = args,
+				WorkingDirectory = Path.GetDirectoryName(steamCmdPath),
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
 				UseShellExecute = false,
-				CreateNoWindow = true,
-				WorkingDirectory = Path.GetDirectoryName(steamCmdPath)
+				CreateNoWindow = true
 			};
 
-			Process process = new() { StartInfo = psi };
-
+			using Process process = new() { StartInfo = psi };
 			process.OutputDataReceived += (s, e) => { if (!string.IsNullOrEmpty(e.Data)) logCallback?.Invoke(e.Data); };
-			process.ErrorDataReceived += (s, e) => { if (!string.IsNullOrEmpty(e.Data)) logCallback?.Invoke($"[SteamCMD Error] {e.Data}"); };
 
 			try
 			{
 				if (!Directory.Exists(cleanPath)) Directory.CreateDirectory(cleanPath);
-
 				process.Start();
 				process.BeginOutputReadLine();
-				process.BeginErrorReadLine();
 				process.WaitForExit();
-
 				logCallback?.Invoke("--- STEAMCMD PROCESS FINISHED ---");
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke($"[ERROR]: {ex.Message}");
-			}
-			finally
-			{
-				process.Dispose();
 			}
 		}
 	}

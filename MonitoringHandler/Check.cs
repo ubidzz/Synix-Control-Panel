@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game_Server_Control_Panel.FileEditor;
+using System;
 using System.Diagnostics;
 
 namespace Game_Server_Control_Panel.MonitoringHandler
@@ -48,7 +49,7 @@ namespace Game_Server_Control_Panel.MonitoringHandler
 						MainGUI.Instance?.AppendLog($"[MONITOR] {server.ServerName} has stopped or crashed.");
 
 						// Save the "Stopped" status to the JSON immediately
-						MainGUI.SaveServersToDisk();
+						JsonManager.Save();
 					}
 				}
 			}
