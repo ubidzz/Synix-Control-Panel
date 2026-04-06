@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Linq;
 using System.Collections.Generic;
 using Game_Server_Control_Panel.ServerHandler;
 
@@ -38,19 +39,28 @@ namespace Game_Server_Control_Panel.FileFolderHandler
 
 					if (loadedServers != null)
 					{
-						// 1. Clear the static list first
 						MainGUI.serverList.Clear();
-
-						// 2. Repopulate it
 						foreach (var server in loadedServers)
 						{
+							// Find the original game data using the name (e.g., "Soulmask")
+							var masterData = GameDatabase.GetGame(server.Game);
+
+							if (masterData != null)
+							{
+								// Put the "brains" back into the server object
+								server.AppID = masterData.AppID;
+								server.ExeName = masterData.ExeName;
+								server.RequiredArgs = masterData.RequiredArgs;
+								server.Maps = masterData.Maps.ToList();
+							}
+
 							MainGUI.serverList.Add(server);
 						}
 					}
 				}
 				catch (Exception ex)
 				{
-					System.Windows.Forms.MessageBox.Show($"Could not load servers: {ex.Message}");
+					MainGUI.Instance?.AppendLog($"[ERROR] Load failed: {ex.Message}");
 				}
 			}
 		}
