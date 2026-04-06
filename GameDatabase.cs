@@ -404,13 +404,123 @@ namespace Game_Server_Control_Panel
 			},
 			new()
 			{
-				Game = "Minecraft: Bedrock Edition",
-				AppID = "", // Blank because it is non-steam
-                ExeName = "bedrock_server.exe",
-				RequiredArgs = "", // Bedrock natively ignores args and uses server.properties, but you can manage that config directly in your code
-                Port = 19132,
-				QueryPort = 19132,
-				Maps = ["Bedrock level"]
+				Game = "Abiotic Factor",
+				AppID = "2816220",
+				ExeName = @"AbioticFactor\Binaries\Win64\AbioticFactorServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -MaxPlayers={MaxPlayers} -Port={port} -QueryPort={query} -ServerPassword=\"{pass}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["Cascade"]
+			},
+			new()
+			{
+				Game = "Icarus",
+				AppID = "2089300",
+				ExeName = @"Icarus\Binaries\Win64\IcarusServer-Win64-Shipping.exe",
+				RequiredArgs = "-Log -ServerName=\"{ServerName}\" -Password=\"{pass}\" -Port={port} -QueryPort={query}",
+				Port = 17777,
+				QueryPort = 27015,
+				Maps = ["Olympus", "Styx", "Prometheus"]
+			},
+			new()
+			{
+				Game = "Don't Starve Together",
+				AppID = "343050",
+				ExeName = @"bin\dontstarve_dedicated_server_nullrenderer.exe",
+				RequiredArgs = "-console -cluster \"{ServerName}\" -shard {map}",
+				Port = 10999,
+				QueryPort = 27016,
+				Maps = ["Master", "Caves"]
+			},
+			new()
+			{
+				Game = "Arma Reforger",
+				AppID = "1874900",
+				ExeName = "ArmaReforgerServer.exe",
+				RequiredArgs = "-config \"{map}\" -profile \"profile\" -maxPlayers {MaxPlayers} -port {port}",
+				Port = 2001,
+				QueryPort = 2001,
+				Maps = ["server.json"]
+			},
+			new()
+			{
+				Game = "Killing Floor 2",
+				AppID = "232130",
+				ExeName = @"Binaries\Win64\KFServer.exe",
+				RequiredArgs = "{map}?Game=KFGameContent.KFGameInfo_Survival?AdminPassword=\"{adminpass}\"?GamePassword=\"{pass}\" -Port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["KF-BioticsLab", "KF-BurningParis", "KF-Outpost", "KF-ZedLanding"]
+			},
+			new()
+			{
+				Game = "The Front",
+				AppID = "2568660",
+				ExeName = @"ProjectWar\Binaries\Win64\TheFrontServer-Win64-Shipping.exe",
+				RequiredArgs = "?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["TheFront"]
+			},
+			new()
+			{
+				Game = "Smalland: Survive the Wilds",
+				AppID = "2404090",
+				ExeName = @"SMALLAND\Binaries\Win64\SMALLANDServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -ServerName=\"{ServerName}\" -Password=\"{pass}\" -MaxPlayers={MaxPlayers} -Port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["Smalland"]
+			},
+			new()
+			{
+				Game = "Sunkenland",
+				AppID = "2605310",
+				ExeName = "Sunkenland Dedicated Server.exe",
+				RequiredArgs = "-batchmode -nographics -serverName \"{ServerName}\" -password \"{pass}\" -port {port} -maxPlayers {MaxPlayers}",
+				Port = 27015,
+				QueryPort = 27015,
+				Maps = ["World1"]
+			},
+			new()
+			{
+				Game = "Risk of Rain 2",
+				AppID = "1180760",
+				ExeName = "Risk of Rain 2 Dedicated Server.exe",
+				RequiredArgs = "-batchmode -nographics -server_port {port} -server_query_port {query}",
+				Port = 27015,
+				QueryPort = 27016,
+				Maps = ["Default"]
+			},
+			new()
+			{
+				Game = "Avorion",
+				AppID = "565060",
+				ExeName = @"bin\AvorionServer.exe",
+				RequiredArgs = "--server-name \"{ServerName}\" --admin \"{adminpass}\" --port {port} --use-steam-networking 1",
+				Port = 27000,
+				QueryPort = 27003,
+				Maps = ["galaxy"]
+			},
+			new()
+			{
+				Game = "PixARK",
+				AppID = "824360",
+				ExeName = @"ShooterGame\Binaries\Win64\PixARKServer.exe",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["CubeWorld_Light"]
+			},
+			new()
+			{
+				Game = "Atlas",
+				AppID = "1006030",
+				ExeName = @"ShooterGame\Binaries\Win64\ShooterGameServer.exe",
+				RequiredArgs = "Ocean?ServerX=0?ServerY=0?AltSaveDirectoryName=\"{map}\"?ServerAdminPassword=\"{adminpass}\"?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query}?SeamlessIP=0.0.0.0 -log -server",
+				Port = 57555,
+				QueryPort = 57555,
+				Maps = ["00"]
 			}
 		];
 
