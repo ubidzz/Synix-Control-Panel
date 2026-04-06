@@ -15,7 +15,7 @@ namespace Game_Server_Control_Panel
 		public string RequiredArgs { get; set; } = string.Empty;
 		public int Port { get; set; }
 		public int QueryPort { get; set; }
-		public List<string> Maps { get; set; } = new List<string>();
+		public List<string> Maps { get; set; } = [];
 
 		// This is a "Default" field for new servers
 		public string ExtraArgs { get; set; } = string.Empty;
@@ -41,8 +41,8 @@ namespace Game_Server_Control_Panel
 	public static class GameDatabase
 	{
 		// Use ReadOnly to protect the master list
-		private static readonly List<GameInfo> games = new List<GameInfo>
-		{
+		private static readonly List<GameInfo> games =
+		[
 			new() {
 				Game = "StarRupture",
 				AppID = "3333140",
@@ -50,7 +50,7 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "-server -log -port={port} -password={pass} -name=\"{ServerName}\"",
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = new List<string> { "MainWorld" }
+				Maps = ["MainWorld"]
 			},
 			new() {
 				Game = "Soulmask",
@@ -59,7 +59,7 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "{map} -server -log -NOSTEAM -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" -forcepassthrough",
 				Port = 8777,
 				QueryPort = 27015,
-				Maps = new List<string> { "Level01_Main" }
+				Maps = ["Level01_Main"]
 			},
 			new() {
 				Game = "7 Days to Die",
@@ -68,7 +68,7 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "-configfile=serverconfig.xml -port={port} -quit -batchmode -nographics",
 				Port = 26900,
 				QueryPort = 26900,
-				Maps = new List<string> { "Navezgane", "Pregen01" }
+				Maps = ["Navezgane", "Pregen01"]
 			},
             // I standardized the tags here for Valheim/Rust to match your Soulmask logic
             new() {
@@ -78,7 +78,7 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "-batchmode +server.port {port} +server.queryport {query} +server.hostname \"{ServerName}\"",
 				Port = 28015,
 				QueryPort = 28016,
-				Maps = new List<string> { "Procedural Map" }
+				Maps = ["Procedural Map"]
 			},
 			new() {
 				Game = "Valheim",
@@ -87,7 +87,7 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "-nographics -batchmode -name \"{ServerName}\" -port {port} -world \"{map}\" -password \"{pass}\"",
 				Port = 2456,
 				QueryPort = 2457,
-				Maps = new List<string> { "Dedicated" }
+				Maps = ["Dedicated"]
 			},
 			new() {
 				Game = "Palworld",
@@ -97,10 +97,10 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "-port={port} -queryport={query} -AdminPassword=\"{pass}\"",
 				Port = 8211,
 				QueryPort = 27015,
-				Maps = new List<string> { "DefaultWorld" }
+				Maps = ["DefaultWorld"]
 			}
             // Add more games following the same {tag} pattern...
-        };
+        ];
 
 		public static List<GameInfo> GetGameList() => games;
 

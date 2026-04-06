@@ -54,7 +54,7 @@ public static class ServerManager
 				string packageFolder = Path.Combine(steamCmdDir, "package");
 				if (Directory.Exists(packageFolder)) Directory.Delete(packageFolder, true);
 
-				ProcessStartInfo startInfo = new ProcessStartInfo
+				ProcessStartInfo startInfo = new()
 				{
 					FileName = steamCmdExe,
 					Arguments = "+quit",
@@ -65,7 +65,8 @@ public static class ServerManager
 					RedirectStandardError = true
 				};
 
-				using (Process proc = new Process { StartInfo = startInfo })
+				using (Process proc = new()
+				{ StartInfo = startInfo })
 				{
 					proc.OutputDataReceived += (s, ev) => { if (!string.IsNullOrEmpty(ev.Data)) logCallback?.Invoke(ev.Data); };
 					proc.Start();
@@ -140,7 +141,7 @@ public static class ServerManager
 		// This matches your working .bat: +force_install_dir, +login, +app_update, validate, +quit
 		string args = $"+force_install_dir \"{cleanPath}\" +login anonymous +app_update {appId} validate +quit";
 
-		ProcessStartInfo psi = new ProcessStartInfo
+		ProcessStartInfo psi = new()
 		{
 			FileName = steamCmdPath,
 			Arguments = args,
@@ -152,7 +153,7 @@ public static class ServerManager
 			WorkingDirectory = Path.GetDirectoryName(steamCmdPath)
 		};
 
-		Process process = new Process { StartInfo = psi };
+		Process process = new() { StartInfo = psi };
 
 		process.OutputDataReceived += (s, e) =>
 		{
@@ -228,7 +229,7 @@ public static class ServerManager
 			}
 
 			// 5. Configure the Process Launch
-			ProcessStartInfo psi = new ProcessStartInfo
+			ProcessStartInfo psi = new()
 			{
 				FileName = fullExePath,
 				Arguments = args,
@@ -242,7 +243,7 @@ public static class ServerManager
 			logCallback?.Invoke($"[COMMAND] {args}");
 
 			// 6. Fire it up!
-			Process proc = Process.Start(psi);
+			Process? proc = Process.Start(psi);
 			if (proc != null)
 			{
 				server.RunningProcess = proc;

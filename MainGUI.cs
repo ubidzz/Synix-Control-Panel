@@ -146,39 +146,37 @@ namespace Game_Server_Control_Panel
 
 		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
-			using (ServerSettingsGUI settingsForm = new ServerSettingsGUI())
+			using ServerSettingsGUI settingsForm = new();
+			if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
 			{
-				if (settingsForm.ShowDialog() == DialogResult.OK)
-				{
-					GameServer newServer = settingsForm.NewServer;
+				GameServer newServer = settingsForm.NewServer;
 
-					// 1. ADD & REFRESH THE GRID
-					serverList.Add(newServer);
-					SaveServersToDisk();
-					UpdateGrid(); // Shows the server in the list immediately
+				// 1. ADD & REFRESH THE GRID
+				serverList.Add(newServer);
+				SaveServersToDisk();
+				UpdateGrid(); // Shows the server in the list immediately
 
-					// 2. RAISE THE SHIELD (Locks the 'X' button)
-					isDownloadActive = true;
+				// 2. RAISE THE SHIELD (Locks the 'X' button)
+				isDownloadActive = true;
 
-					AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
+				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
 
-					string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
+				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
-					// 3. RUN IN BACKGROUND
-					// 'await Task.Run' ensures the UI stays responsive so the 'X' lock can work
-					await Task.Run(() =>
-						ServerManager.RunUpdate(steamPath, newServer.InstallPath, newServer.AppID, msg => AppendLog(msg))
-					);
+				// 3. RUN IN BACKGROUND
+				// 'await Task.Run' ensures the UI stays responsive so the 'X' lock can work
+				await Task.Run(() =>
+					ServerManager.RunUpdate(steamPath, newServer.InstallPath, newServer.AppID, msg => AppendLog(msg))
+				);
 
-					// 4. LOWER THE SHIELD (Unlocks the 'X' button)
-					isDownloadActive = false;
+				// 4. LOWER THE SHIELD (Unlocks the 'X' button)
+				isDownloadActive = false;
 
-					// 5. FINAL LOGGING
-					AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
+				// 5. FINAL LOGGING
+				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
 
-					// Final refresh to update Status from 'Installing' to 'Stopped'
-					UpdateGrid();
-				}
+				// Final refresh to update Status from 'Installing' to 'Stopped'
+				UpdateGrid();
 			}
 		}
 
@@ -199,24 +197,22 @@ namespace Game_Server_Control_Panel
 				}
 
 				// 3. Open the Edit form (Passing the current server object to the constructor)
-				using (var editForm = new ServerSettingsGUI(selectedServer))
+				using var editForm = new ServerSettingsGUI(selectedServer);
+				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
 				{
-					if (editForm.ShowDialog() == DialogResult.OK)
+					// 4. SURGICAL SWAP: Find the exact index of the server we just edited
+					int index = serverList.IndexOf(selectedServer);
+
+					if (index != -1)
 					{
-						// 4. SURGICAL SWAP: Find the exact index of the server we just edited
-						int index = serverList.IndexOf(selectedServer);
+						// Update only this specific 'slot' in the array
+						serverList[index] = editForm.NewServer;
 
-						if (index != -1)
-						{
-							// Update only this specific 'slot' in the array
-							serverList[index] = editForm.NewServer;
+						// 5. COMMIT: Save the entire updated list back to 'servers.json'
+						// This keeps all other servers safe while updating the 1 you edited.
+						SaveServersToDisk();
 
-							// 5. COMMIT: Save the entire updated list back to 'servers.json'
-							// This keeps all other servers safe while updating the 1 you edited.
-							SaveServersToDisk();
-
-							AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
-						}
+						AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
 					}
 				}
 			}
