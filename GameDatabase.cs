@@ -107,8 +107,7 @@ namespace Game_Server_Control_Panel
 				QueryPort = 27015,
 				Maps = ["DefaultWorld"]
 			},
-            // --- NEWLY ADDED GAMES BELOW ---
-            new()
+			new()
 			{
 				Game = "ARK: Survival Evolved",
 				AppID = "376030",
@@ -203,11 +202,215 @@ namespace Game_Server_Control_Panel
 				Game = "Enshrouded",
 				AppID = "2278520",
 				ExeName = "enshrouded_server.exe",
-                // Enshrouded uses a JSON config file (enshrouded_server.json) mostly instead of launch args
-                RequiredArgs = "",
+				RequiredArgs = "",
 				Port = 15636,
 				QueryPort = 15637,
 				Maps = ["Embervale"]
+			},
+            
+            // ==========================================
+            // --- NEWLY ADDED GAMES (EXTENDED LIST) ---
+            // ==========================================
+
+            new()
+			{
+				Game = "Factorio",
+				AppID = "428200",
+				ExeName = @"bin\x64\factorio.exe",
+				RequiredArgs = "--start-server-load-latest --server-settings data\\server-settings.json --port {port}",
+				Port = 34197,
+				QueryPort = 34197,
+				Maps = ["FactorioWorld"]
+			},
+			new()
+			{
+				Game = "Unturned",
+				AppID = "1110390", // Unturned Dedicated Server Tool
+                ExeName = "Unturned.exe",
+				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} -port {port} -password {pass}",
+				Port = 27015,
+				QueryPort = 27016,
+				Maps = ["PEI", "Washington", "Russia", "Germany", "Hawaii"]
+			},
+			new()
+			{
+				Game = "Space Engineers",
+				AppID = "298740",
+				ExeName = @"DedicatedServer64\SpaceEngineersDedicated.exe",
+				RequiredArgs = "-console -noconsole -port {port} -ignorelastsession",
+				Port = 27016,
+				QueryPort = 27016,
+				Maps = ["StarSystem", "AlienPlanet", "EmptyWorld"]
+			},
+			new()
+			{
+				Game = "Arma 3",
+				AppID = "233780",
+				ExeName = "arma3server.exe",
+				RequiredArgs = "-port={port} -name=\"{ServerName}\" -config=server.cfg -world=empty",
+				Port = 2302,
+				QueryPort = 2303,
+				Maps = ["Altis", "Stratis", "Tanoa", "Malden"]
+			},
+			new()
+			{
+				Game = "Core Keeper",
+				AppID = "1963720",
+				ExeName = "CoreKeeperServer.exe",
+				RequiredArgs = "-world {map} -worldname \"{ServerName}\" -maxplayers {MaxPlayers} -port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Maps = ["0", "1", "2"] // Core Keeper uses numerical world indices natively
+            },
+			new()
+			{
+				Game = "Terraria",
+				AppID = "105600",
+				ExeName = "TerrariaServer.exe",
+				RequiredArgs = "-port {port} -maxplayers {MaxPlayers} -world \"{map}\" -password \"{pass}\" -motd \"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 7777,
+				Maps = ["World1.wld"]
+			},
+			new()
+			{
+				Game = "Counter-Strike 2",
+				AppID = "730",
+				ExeName = @"game\bin\win64\cs2.exe",
+				RequiredArgs = "-dedicated +map {map} -port {port} -maxplayers {MaxPlayers} +sv_password \"{pass}\" +hostname \"{ServerName}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				Maps = ["de_dust2", "de_inferno", "de_mirage", "de_nuke", "de_vertigo"]
+			},
+			new()
+			{
+				Game = "Team Fortress 2",
+				AppID = "232250",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game tf -console -port {port} +maxplayers {MaxPlayers} +map {map} +sv_password \"{pass}\" +hostname \"{ServerName}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				Maps = ["ctf_2fort", "pl_upward", "cp_dustbowl", "koth_harvest"]
+			},
+			new()
+			{
+				Game = "Left 4 Dead 2",
+				AppID = "222860",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				Maps = ["c1m1_hotel", "c2m1_highway", "c8m1_apartment", "c14m1_junkyard"]
+			},
+			new()
+			{
+				Game = "Squad",
+				AppID = "403240",
+				ExeName = "SquadGameServer.exe",
+				RequiredArgs = "Port={port} QueryPort={query} FIXEDMAXPLAYERS={MaxPlayers}",
+				Port = 7787,
+				QueryPort = 27165,
+				Maps = ["Mutaha_AAS_v1", "Gorodok_RAAS_v1", "Fallujah_AAS_v1"]
+			},
+			new()
+			{
+				Game = "Insurgency: Sandstorm",
+				AppID = "581330",
+				ExeName = @"Insurgency\Binaries\Win64\InsurgencyServer-Win64-Shipping.exe",
+				RequiredArgs = "{map}?Scenario={map}?MaxPlayers={MaxPlayers} -port={port} -queryport={query} -hostname=\"{ServerName}\" -password=\"{pass}\"",
+				Port = 27102,
+				QueryPort = 27131,
+				Maps = ["Refinery", "Farmhouse", "Hideout", "Crossing"]
+			},
+			new()
+			{
+				Game = "Stationeers",
+				AppID = "600760",
+				ExeName = "rocketstation_DedicatedServer.exe",
+				RequiredArgs = "-batchmode -nographics -autostart -loadlatest {map} -settings StartLocalHost true ServerVisible true ServerMaxPlayers {MaxPlayers} ServerPort {port} ServerName \"{ServerName}\" ServerPassword \"{pass}\"",
+				Port = 27016,
+				QueryPort = 27015,
+				Maps = ["Moon", "Mars", "Europa", "Mimas"]
+			},
+			new()
+			{
+				Game = "Empyrion - Galactic Survival",
+				AppID = "530870",
+				ExeName = "EmpyrionDedicated.cmd",
+				RequiredArgs = "-batchmode -nographics -logFile Logs\\current.log",
+				Port = 30000,
+				QueryPort = 30001,
+				Maps = ["Default Multiplayer"]
+			},
+			new()
+			{
+				Game = "Stormworks: Build and Rescue",
+				AppID = "1247090",
+				ExeName = "server64.exe",
+				RequiredArgs = "+server_name \"{ServerName}\" +port {port} +password \"{pass}\" +max_players {MaxPlayers}",
+				Port = 25564,
+				QueryPort = 25564,
+				Maps = ["Default"]
+			},
+			new()
+			{
+				Game = "The Forest",
+				AppID = "556450",
+				ExeName = "TheForestDedicatedServer.exe",
+				RequiredArgs = "-batchmode -nographics -savefolderpath \"{map}\" -serverip 0.0.0.0 -serverport {port} -serverplayers {MaxPlayers} -serverpassword \"{pass}\" -serverpasswordadmin \"{adminpass}\"",
+				Port = 27015,
+				QueryPort = 27016,
+				Maps = ["Saves"]
+			},
+			new()
+			{
+				Game = "Astroneer",
+				AppID = "533830",
+				ExeName = @"Astro\Binaries\Win64\AstroServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port}",
+				Port = 8777,
+				QueryPort = 8777,
+				Maps = ["Sylva"]
+			},
+			new()
+			{
+				Game = "Barotrauma",
+				AppID = "1022710",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-port {port} -queryport {query} -name \"{ServerName}\"",
+				Port = 27015,
+				QueryPort = 27016,
+				Maps = ["Campaign"]
+			},
+			new()
+			{
+				Game = "Myth of Empires",
+				AppID = "1371580",
+				ExeName = @"MOE\Binaries\Win64\MOEServer-Win64-Shipping.exe",
+				RequiredArgs = "{map} -server -log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["ZhongZhou", "DongZhou"]
+			},
+			new()
+			{
+				Game = "Mount & Blade II: Bannerlord",
+				AppID = "1863440",
+				ExeName = @"bin\Win64_Shipping_Server\Bannerlord.DedicatedServer.exe",
+				RequiredArgs = "_MODULES_*Native*Multiplayer*_MODULES_ /dedicatedcustomserverconfigfile {map} /port {port}",
+				Port = 7230,
+				QueryPort = 7230,
+				Maps = ["CustomServerconfig.txt"]
+			},
+			new()
+			{
+				Game = "Minecraft: Bedrock Edition",
+				AppID = "", // Blank because it is non-steam
+                ExeName = "bedrock_server.exe",
+				RequiredArgs = "", // Bedrock natively ignores args and uses server.properties, but you can manage that config directly in your code
+                Port = 19132,
+				QueryPort = 19132,
+				Maps = ["Bedrock level"]
 			}
 		];
 

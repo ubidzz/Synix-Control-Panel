@@ -352,15 +352,58 @@ namespace Game_Server_Control_Panel
 
 		private void btnStop_Click(object sender, EventArgs e)
 		{
+			// 1. Get the actual server object from the selected row
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				if (selectedServer.RunningProcess != null && !selectedServer.RunningProcess.HasExited)
+				// Don't try to stop something that is already stopped
+				if (selectedServer.Status != "Running")
 				{
-					AppendLog($"Stopping {selectedServer.Game}...");
-					selectedServer.RunningProcess.Kill();
-					selectedServer.Status = "Stopped";
-					dataGridView1.Refresh();
+					MessageBox.Show("This server is already stopped.", "Info");
+					return;
 				}
+
+				AppendLog($"Stopping {selectedServer.Game}: {selectedServer.ServerName}...");
+
+				// 2. Safely hunt down and kill the process
+				try
+				{
+					// Scenario A: We just started it and still have the process in memory
+					if (selectedServer.RunningProcess != null && !selectedServer.RunningProcess.HasExited)
+					{
+						selectedServer.RunningProcess.Kill();
+					}
+					// Scenario B: The Control Panel was closed and reopened, but we saved the PID!
+					else if (selectedServer.PID.HasValue)
+					{
+						Process oldProc = Process.GetProcessById(selectedServer.PID.Value);
+						if (!oldProc.HasExited)
+						{
+							oldProc.Kill();
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					// This just means the server window was already closed manually by the user
+					AppendLog($"[NOTE] Process was already closed or could not be found.");
+				}
+
+				// 3. Update the Object's Data
+				selectedServer.Status = "Stopped";
+				selectedServer.PID = null;
+				selectedServer.RunningProcess = null;
+
+				// 4. Save the "Stopped" status to your servers.json immediately
+				SaveServersToDisk();
+
+				// 5. Trigger your new UI refresh to instantly turn the text Red
+				UpdateGrid();
+
+				AppendLog($"[STOPPED] {selectedServer.ServerName} has been shut down.");
+			}
+			else
+			{
+				MessageBox.Show("Please select a server in the list first.");
 			}
 		}
 	}
