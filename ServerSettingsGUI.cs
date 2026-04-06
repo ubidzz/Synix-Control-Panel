@@ -169,18 +169,9 @@ namespace Game_Server_Control_Panel
 				return;
 			}
 
-			// Port conflict check
-			int selectedPort = (int)numPort.Value;
-			foreach (var s in MainGUI.serverList)
-			{
-				if (_isEditMode && s == _existingServer) continue;
-				if (s.Port == selectedPort)
-				{
-					MessageBox.Show($"Port {selectedPort} is already in use by '{s.ServerName}'.", "Port Conflict");
-					return;
-				}
-			}
-
+			// 1. Create the server object using ONLY user-defined data
+			// We leave out AppID, ExeName, RequiredArgs, and Maps because 
+			// those are pulled from the GameDatabase at runtime.
 			NewServer = new GameServer
 			{
 				Game = cmbGame.Text,
@@ -197,32 +188,40 @@ namespace Game_Server_Control_Panel
 				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null
 			};
 
+			// 2. Calculate the target path
 			string cleanGameName = NewServer.Game.Replace(" ", "_");
 			string cleanServerName = NewServer.ServerName.Replace(" ", "_");
 			string targetPath = chkDefaultPath.Checked ? $@"C:\Games\{cleanGameName}\{cleanServerName}" : txtInstallPath.Text;
 
-			// CRITICAL FIX: Set the path BEFORE calling Rename logic. Fixes the 'destDirName' error.
+			// 3. CRITICAL: Assign the path to NewServer BEFORE the rename logic runs
+			// This fixes the "Parameter 'destDirName' cannot be empty" error.
 			NewServer.InstallPath = targetPath;
 
 			try
 			{
 				if (_isEditMode && _existingServer != null)
 				{
+					// 4. Check if the folder needs to be renamed
 					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
 					{
+						// This calls your logic to physically move the folder on the hard drive
 						ServerManager.RenameServerFolder(_existingServer, NewServer);
 						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
 					}
+
+					// Update the existing item in your main list
 					int index = MainGUI.serverList.IndexOf(_existingServer);
 					if (index != -1) MainGUI.serverList[index] = NewServer;
 				}
 				else
 				{
+					// Logic for a brand new server
 					ServerManager.CreateFolders(targetPath);
 					MainGUI.serverList.Add(NewServer);
 					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
 				}
 
+				// 5. Save the updated list to servers.json
 				MainGUI.SaveServersToDisk();
 				this.DialogResult = DialogResult.OK;
 				this.Close();

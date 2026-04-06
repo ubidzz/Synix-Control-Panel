@@ -37,30 +37,18 @@ namespace Game_Server_Control_Panel
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			// Styling the Status column: Stopped (Red), Installing (Blue), Running (Green)
-			if (dataGridView1.Columns[e.ColumnIndex].DataPropertyName == "Status" ||
-				dataGridView1.Columns[e.ColumnIndex].Name == "colStatus")
+			if (dataGridView1.Columns[e.ColumnIndex].DataPropertyName == "Status")
 			{
 				if (e.Value != null)
 				{
 					string status = e.Value.ToString() ?? "";
 					Font boldFont = new Font(dataGridView1.Font, FontStyle.Bold);
 
-					if (status == "Stopped")
-					{
-						e.CellStyle.ForeColor = Color.Red;
-						e.CellStyle.Font = boldFont;
-					}
-					else if (status == "Installing")
-					{
-						e.CellStyle.ForeColor = Color.Blue;
-						e.CellStyle.Font = boldFont;
-					}
-					else if (status == "Running")
-					{
-						e.CellStyle.ForeColor = Color.Green;
-						e.CellStyle.Font = boldFont;
-					}
+					if (status == "Stopped") e.CellStyle.ForeColor = Color.Red;
+					else if (status == "Installing") e.CellStyle.ForeColor = Color.Blue;
+					else if (status == "Running") e.CellStyle.ForeColor = Color.Green;
+
+					e.CellStyle.Font = boldFont;
 				}
 			}
 		}
@@ -184,33 +172,26 @@ namespace Game_Server_Control_Panel
 			if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
 			{
 				GameServer newServer = settingsForm.NewServer;
-
-				// Grab correct AppID
 				var gameData = GameDatabase.GetGame(newServer.Game);
 				string correctAppId = gameData?.AppID ?? "";
 
-				// 1. UPDATE STATUS TO INSTALLING IMMEDIATELY
+				// 1. Set status to Installing immediately
 				newServer.Status = "Installing";
 				isDownloadActive = true;
-
-				// Force the grid to show Blue 'Installing' right now
-				dataGridView1.Refresh();
+				dataGridView1.Refresh(); // Force the grid to turn Blue immediately
 
 				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
-
 				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
-				// 2. RUN IN BACKGROUND
+				// 2. Run SteamCMD in the background
 				await Task.Run(() =>
 					ServerManager.RunUpdate(steamPath, newServer.InstallPath, correctAppId, msg => AppendLog(msg))
 				);
 
-				// 3. SNAPPY STATUS UPDATE
-				// The moment Task.Run finishes, we flip the status
+				// 3. SNAPPY UPDATE: Flip to Stopped (Red) immediately after finishing
 				newServer.Status = "Stopped";
 				isDownloadActive = false;
 
-				// Force the grid to repaint so it turns RED immediately
 				dataGridView1.Invalidate();
 				dataGridView1.Refresh();
 
