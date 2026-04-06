@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game_Server_Control_Panel.FileEditor;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -205,7 +206,7 @@ namespace Game_Server_Control_Panel
 					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
 					{
 						// This calls your logic to physically move the folder on the hard drive
-						ServerManager.RenameServerFolder(_existingServer, NewServer);
+						RenameServerFolder.Rename(_existingServer, NewServer);
 						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
 					}
 
@@ -216,7 +217,7 @@ namespace Game_Server_Control_Panel
 				else
 				{
 					// Logic for a brand new server
-					ServerManager.CreateFolders(targetPath);
+					CreateFolders.Create(targetPath);
 					MainGUI.serverList.Add(NewServer);
 					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
 				}

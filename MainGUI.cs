@@ -1,7 +1,10 @@
-using System.ComponentModel; // Add this at the very top of the file
+using Game_Server_Control_Panel.MonitoringHandler;
+using Game_Server_Control_Panel.ServerHandler;
+using Game_Server_Control_Panel.SteamCMD;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Text.Json;
 using System.Linq;
+using System.Text.Json;
 
 namespace Game_Server_Control_Panel
 {
@@ -117,7 +120,7 @@ namespace Game_Server_Control_Panel
 
 			// 2. Run the check on a background thread
 			// This allows the 'X' button to stay active and trigger GUI_FormClosing
-			await Task.Run(() => ServerManager.EnsureSteamCMD(AppendLog));
+			await Task.Run(() => SteamCMD.SteamCMD.EnsureSteamCMD(AppendLog));
 
 			// 3. Release the lock once the background task is done
 			isDownloadActive = false;
@@ -128,7 +131,7 @@ namespace Game_Server_Control_Panel
 		private void timerMonitor_Tick(object sender, EventArgs e)
 		{
 			// Pass your list and the log method
-			ServerManager.CheckServerStatus();
+			Check.ServerStatus();
 
 			// Refresh the Grid so the "Status" column updates visually
 			UpdateGrid();
@@ -198,17 +201,22 @@ namespace Game_Server_Control_Panel
 				// 1. Set status to Installing immediately
 				newServer.Status = "Installing";
 				isDownloadActive = true;
-				dataGridView1.Refresh(); // Force the grid to turn Blue immediately
+				dataGridView1.Refresh();
 
 				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
 				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
 				// 2. Run SteamCMD in the background
 				await Task.Run(() =>
-					ServerManager.RunUpdate(steamPath, newServer.InstallPath, correctAppId, msg => AppendLog(msg))
-				);
+				{
+					ServerInstaller.Install(
+						steamPath,
+						newServer.InstallPath,
+						correctAppId,
+						AppendLog
+					);
+				});
 
-				// 3. SNAPPY UPDATE: Flip to Stopped (Red) immediately after finishing
 				newServer.Status = "Stopped";
 				isDownloadActive = false;
 
@@ -326,15 +334,15 @@ namespace Game_Server_Control_Panel
 				UpdateGrid(); // <--- Added this to snap the grid to Green immediately
 
 				// 2. Hand it off to the ServerManager (The Expert)
-				ServerManager.StartServer(selectedServer, msg =>
+				Servers.Start(selectedServer, msg =>
 				{
-					// Use Invoke to make sure the log updates on the UI thread
+					// Use Invoke to make sure the log updates on the UI thread safely
 					if (this.InvokeRequired)
 					{
-						this.Invoke((MethodInvoker)delegate
+						this.Invoke((System.Windows.Forms.MethodInvoker)delegate
 						{
 							AppendLog(msg);
-							UpdateGrid(); // <--- MOVED THIS HERE so the grid updates from the background thread!
+							UpdateGrid(); // Refresh the GUI
 						});
 					}
 					else

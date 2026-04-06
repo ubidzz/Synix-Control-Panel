@@ -68,7 +68,7 @@ namespace Game_Server_Control_Panel
 				Game = "Soulmask",
 				AppID = "3017310",
 				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
-				RequiredArgs = "{map} -server -log -online=Steam -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" -forcepassthrough",
+				RequiredArgs = "{map} -server -log -online=Steam -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\"",
 				Port = 8777,
 				QueryPort = 27015,
 				Maps = ["Level01_Main"]
@@ -121,7 +121,7 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["TheIsland", "ScorchedEarth_P", "Aberration_P", "Extinction", "Genesis", "Ragnarok"]
+				Maps = ["TheIsland", "ScorchedEarth_P", "Aberration_P", "Extinction", "Genesis", "Ragnarok", "TheCenter", "Valguero_P", "CrystalIsles", "Gen2", "LostIsland", "Fjordur"]
 			},
 			new()
 			{
@@ -131,7 +131,7 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["TheIsland_WP", "ScorchedEarth_WP"]
+				Maps = ["TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP"]
 			},
 			new()
 			{
