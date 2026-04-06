@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Game_Server_Control_Panel
 {
+	// The "Blueprint" - Define what every game needs
 	public class GameInfo
 	{
-		public string Game { get; set; } = string.Empty; 
+		public string Game { get; set; } = string.Empty;
 		public string AppID { get; set; } = string.Empty;
 		public string ExeName { get; set; } = string.Empty;
-		public string ExtraArgs { get; set; } = string.Empty; 
-		public int Port { get; set; } 
-		public int QueryPort { get; set; } 
+		public string RequiredArgs { get; set; } = string.Empty;
+		public int Port { get; set; }
+		public int QueryPort { get; set; }
 		public List<string> Maps { get; set; } = new List<string>();
-		public string RequiredArgs { get; set; }
+
+		// This is a "Default" field for new servers
+		public string ExtraArgs { get; set; } = string.Empty;
 	}
 
+	// The "Instance" - This is what actually gets saved to your JSON
 	public class GameServer : GameInfo
 	{
 		public string InstallPath { get; set; } = string.Empty;
@@ -27,8 +32,6 @@ namespace Game_Server_Control_Panel
 		public int MaxPlayers { get; set; } = 10;
 		public string WorldName { get; set; } = "NewWorld";
 		public bool IsDefaultPath { get; set; } = true;
-
-		// Add this so server.PID = proc.Id works
 		public int? PID { get; set; }
 
 		[JsonIgnore]
@@ -37,7 +40,9 @@ namespace Game_Server_Control_Panel
 
 	public static class GameDatabase
 	{
-		private static List<GameInfo> games = [
+		// Use ReadOnly to protect the master list
+		private static readonly List<GameInfo> games = new List<GameInfo>
+		{
 			new() {
 				Game = "StarRupture",
 				AppID = "3333140",
@@ -45,19 +50,16 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "-server -log -port={port} -password={pass} -name=\"{ServerName}\"",
 				Port = 7777,
 				QueryPort = 27015,
-				ExtraArgs = "",
-				Maps = ["MainWorld"]
+				Maps = new List<string> { "MainWorld" }
 			},
 			new() {
 				Game = "Soulmask",
 				AppID = "3017310",
-				// FIXED: Changed from SoulmaskServer to WSServer as seen in your folder
 				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
 				RequiredArgs = "{map} -server -log -NOSTEAM -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" -forcepassthrough",
 				Port = 8777,
 				QueryPort = 27015,
-				ExtraArgs = "",
-				Maps = ["Level01_Main"]
+				Maps = new List<string> { "Level01_Main" }
 			},
 			new() {
 				Game = "7 Days to Die",
@@ -66,81 +68,45 @@ namespace Game_Server_Control_Panel
 				RequiredArgs = "-configfile=serverconfig.xml -port={port} -quit -batchmode -nographics",
 				Port = 26900,
 				QueryPort = 26900,
-				ExtraArgs = "",
-				Maps = ["Navezgane", "Pregen01"]
+				Maps = new List<string> { "Navezgane", "Pregen01" }
 			},
-			new() {
+            // I standardized the tags here for Valheim/Rust to match your Soulmask logic
+            new() {
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				RequiredArgs = "-batchmode +server.port {port} +server.queryport {query} +server.hostname \"{name}\"",
+				RequiredArgs = "-batchmode +server.port {port} +server.queryport {query} +server.hostname \"{ServerName}\"",
 				Port = 28015,
 				QueryPort = 28016,
-				ExtraArgs = "",
-				Maps = ["Procedural Map"]
-			},
-			new() {
-				Game = "DayZ",
-				AppID = "223350",
-				ExeName = "DayZServer_x64.exe",
-				RequiredArgs = "-config=serverDZ.cfg -port={port} -BEpath= -logs= -profiles=Profiles",
-				Port = 2302,
-				QueryPort = 27016,
-				ExtraArgs = "",
-				Maps = ["Chernarus", "Livonia"]
-			},
-			new() {
-				Game = "Enshrouded",
-				AppID = "2278520",
-				ExeName = "enshrouded_server.exe",
-				RequiredArgs = "",
-				Port = 15636,
-				QueryPort = 15637,
-				ExtraArgs = "",
-				Maps = ["Enshrouded"]
-			},
-			new() {
-				Game = "Icarus",
-				AppID = "2089390",
-				ExeName = @"Icarus\Binaries\Win64\IcarusServer-Win64-Shipping.exe",
-				RequiredArgs = "-Log -port={port} -queryport={query}",
-				Port = 17777,
-				QueryPort = 27015,
-				ExtraArgs = "",
-				Maps = ["Styx", "Olympus", "Prometheus"]
+				Maps = new List<string> { "Procedural Map" }
 			},
 			new() {
 				Game = "Valheim",
 				AppID = "896660",
 				ExeName = "valheim_server.exe",
-				RequiredArgs = "-nographics -batchmode -name \"{name}\" -port {port} -world \"{world}\" -password \"{pass}\"",
+				RequiredArgs = "-nographics -batchmode -name \"{ServerName}\" -port {port} -world \"{map}\" -password \"{pass}\"",
 				Port = 2456,
 				QueryPort = 2457,
-				ExtraArgs = "",
-				Maps = ["Dedicated"]
+				Maps = new List<string> { "Dedicated" }
 			},
 			new() {
 				Game = "Palworld",
 				AppID = "2394010",
-				ExeName = "PalServer.exe",
+				ExeName = "PalServer.exe", 
+				// Using {pass} for the AdminPassword since Palworld uses one main password for admin rights
 				RequiredArgs = "-port={port} -queryport={query} -AdminPassword=\"{pass}\"",
 				Port = 8211,
 				QueryPort = 27015,
-				ExtraArgs = "",
-				Maps = ["DefaultWorld"]
+				Maps = new List<string> { "DefaultWorld" }
 			}
-		];
+            // Add more games following the same {tag} pattern...
+        };
 
-		// Returns the full list for the dropdowns
-		public static List<GameInfo> GetGameList()
-		{
-			return games;
-		}
+		public static List<GameInfo> GetGameList() => games;
 
-		// Returns a single game for the settings
-		public static GameInfo GetGame(string gameName)
+		public static GameInfo? GetGame(string gameName)
 		{
-			return games.FirstOrDefault(g => g.Game.Equals(gameName, StringComparison.OrdinalIgnoreCase))!;
+			return games.FirstOrDefault(g => g.Game.Equals(gameName, StringComparison.OrdinalIgnoreCase));
 		}
-}
+	}
 }

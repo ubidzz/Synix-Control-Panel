@@ -9,11 +9,14 @@ namespace Game_Server_Control_Panel
 		public static BindingList<GameServer> serverList = new BindingList<GameServer>();
 		private bool isDownloadActive = false;
 		private bool isInitializing = false;
+		public static MainGUI? Instance { get; private set; }
 
 		public MainGUI()
 		{
 			InitializeComponent();
 			LoadServersFromDisk();
+
+			Instance = this;
 
 			// Link the Grid to the List
 			dataGridView1.AutoGenerateColumns = false;
@@ -41,43 +44,68 @@ namespace Game_Server_Control_Panel
 			dataGridView1.ResetBindings();
 		}
 
+		public void AppendLog(string message)
+		{
+			// If the window isn't ready or is closing, don't try to log
+			if (!this.IsHandleCreated || this.IsDisposed) return;
+
+			if (rtbLog.InvokeRequired)
+			{
+				// This 'BeginInvoke' is what prevents the app from hanging 
+				// when SteamCMD sends dozens of lines at once
+				rtbLog.BeginInvoke(new Action(() => AppendLog(message)));
+				return;
+			}
+
+			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
+			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
+
+			// Auto-scroll to ensure you see the live SteamCMD output
+			rtbLog.SelectionStart = rtbLog.Text.Length;
+			rtbLog.ScrollToCaret();
+		}
+
+		private async void MainGUI_Shown(object sender, EventArgs e)
+		{
+			// 1. Set the lock immediately
+			isDownloadActive = true;
+
+			AppendLog("Checking SteamCMD dependencies...");
+
+			// 2. Run the check on a background thread
+			// This allows the 'X' button to stay active and trigger GUI_FormClosing
+			await Task.Run(() => ServerManager.EnsureSteamCMD(AppendLog));
+
+			// 3. Release the lock once the background task is done
+			isDownloadActive = false;
+
+			AppendLog("Initialization complete.");
+		}
+
 		private void timerMonitor_Tick(object sender, EventArgs e)
 		{
 			// Pass your list and the log method
-			ServerManager.CheckServerStatus(serverList, msg => AppendLog(msg));
+			ServerManager.CheckServerStatus();
 
 			// Refresh the Grid so the "Status" column updates visually
 			UpdateGrid();
 		}
 
-		private void PrepareServerFolder(string path)
-		{
-			if (!Directory.Exists(path))
-			{
-				Directory.CreateDirectory(path);
-			}
-		}
-
-		public void SaveServersToDisk()
-		{
-			// Simply pass the current list to the static saver
-			SaveServersToDisk(serverList);
-		}
-
-		public static void SaveServersToDisk(BindingList<GameServer> servers)
+		public static void SaveServersToDisk()
 		{
 			try
 			{
-				// 'WriteIndented' makes the JSON pretty and easy to read in Notepad
-				var options = new JsonSerializerOptions { WriteIndented = true };
-				string jsonString = JsonSerializer.Serialize(servers, options);
-
-				// This overwrites the old file with the new, corrected list
+				var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+				string jsonString = System.Text.Json.JsonSerializer.Serialize(serverList, options);
 				File.WriteAllText("servers.json", jsonString);
+
+				// Use the Bridge to log the success
+				Instance?.AppendLog("JSON saved successfully.");
 			}
 			catch (Exception ex)
 			{
-				System.Diagnostics.Debug.WriteLine("JSON Save failed: " + ex.Message);
+				// Use the Bridge to log the error
+				Instance?.AppendLog("Save Error: " + ex.Message);
 			}
 		}
 
@@ -228,43 +256,6 @@ namespace Game_Server_Control_Panel
 			{
 				MessageBox.Show("Click a server in the list first!");
 			}
-		}
-		public void AppendLog(string message)
-		{
-			// If the window isn't ready or is closing, don't try to log
-			if (!this.IsHandleCreated || this.IsDisposed) return;
-
-			if (rtbLog.InvokeRequired)
-			{
-				// This 'BeginInvoke' is what prevents the app from hanging 
-				// when SteamCMD sends dozens of lines at once
-				rtbLog.BeginInvoke(new Action(() => AppendLog(message)));
-				return;
-			}
-
-			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
-			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
-
-			// Auto-scroll to ensure you see the live SteamCMD output
-			rtbLog.SelectionStart = rtbLog.Text.Length;
-			rtbLog.ScrollToCaret();
-		}
-
-		private async void MainGUI_Shown(object sender, EventArgs e)
-		{
-			// 1. Set the lock immediately
-			isDownloadActive = true;
-
-			AppendLog("Checking SteamCMD dependencies...");
-
-			// 2. Run the check on a background thread
-			// This allows the 'X' button to stay active and trigger GUI_FormClosing
-			await Task.Run(() => ServerManager.EnsureSteamCMD(AppendLog));
-
-			// 3. Release the lock once the background task is done
-			isDownloadActive = false;
-
-			AppendLog("Initialization complete.");
 		}
 
 		private void GUI_FormClosing(object sender, FormClosingEventArgs e)

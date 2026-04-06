@@ -198,10 +198,14 @@ public static class ServerManager
 		{
 			// 1. Fetch the master template from your Database
 			var dbEntry = GameDatabase.GetGame(server.Game);
-			if (dbEntry == null) return;
+			if (dbEntry == null)
+			{
+				logCallback?.Invoke($"[ERROR] Game definition for '{server.Game}' not found in Database.");
+				return;
+			}
 
 			// 2. The Universal Replacement Map
-			// This handles ANY game by swapping the {tags} you put in the database
+			// Standardized tags: {map}, {appid}, {port}, {query}, {MaxPlayers}, {pass}, {adminpass}, {ServerName}
 			string args = dbEntry.RequiredArgs
 				.Replace("{map}", server.WorldName)
 				.Replace("{appid}", dbEntry.AppID)
@@ -209,67 +213,80 @@ public static class ServerManager
 				.Replace("{query}", server.QueryPort.ToString())
 				.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
 				.Replace("{pass}", server.Password ?? "")
-				.Replace("{adminpass}", server.AdminPassword ?? "") // The new field we added
+				.Replace("{adminpass}", server.AdminPassword ?? "")
 				.Replace("{ServerName}", server.ServerName);
 
-			// 3. Append User's "ExtraArgs" from the GUI
+			// 3. Append User's "ExtraArgs" from the JSON
+			// We trim and add a space only if the user actually typed something
 			if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
 			{
-				args += " " + server.ExtraArgs;
+				args += " " + server.ExtraArgs.Trim();
 			}
 
-			// 4. Build Path: Combine user's InstallPath + database's ExeName
-			string fullPath = Path.Combine(server.InstallPath, dbEntry.ExeName);
+			// 4. Build the Full Executable Path
+			// This combines the user's folder with the DB's relative EXE path
+			string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName);
 
+			// Safety check: Does the file actually exist?
+			if (!File.Exists(fullExePath))
+			{
+				logCallback?.Invoke($"[ERROR] Executable not found at: {fullExePath}");
+				return;
+			}
+
+			// 5. Configure the Process Launch
 			ProcessStartInfo psi = new ProcessStartInfo
 			{
-				FileName = fullPath,
+				FileName = fullExePath,
 				Arguments = args,
-				WorkingDirectory = Path.GetDirectoryName(fullPath),
+				// Run the process FROM its own folder to prevent 'Missing DLL' errors
+				WorkingDirectory = Path.GetDirectoryName(fullExePath),
 				UseShellExecute = false,
 				CreateNoWindow = false
 			};
 
 			logCallback?.Invoke($"[LAUNCHING] {server.Game}...");
-			logCallback?.Invoke($"[COMMAND] {args}"); // Verify the flags here!
+			logCallback?.Invoke($"[COMMAND] {args}");
 
+			// 6. Fire it up!
 			Process proc = Process.Start(psi);
 			if (proc != null)
 			{
 				server.RunningProcess = proc;
 				server.Status = "Running";
-				server.PID = proc.Id; // Update the PID for the grid
+				server.PID = proc.Id; // This allows MainGUI to track it
+
+				// Immediately save the PID to JSON so the GUI remembers it if it crashes
+				MainGUI.SaveServersToDisk();
 			}
 		}
 		catch (Exception ex)
 		{
-			logCallback?.Invoke($"[CRITICAL ERROR] {ex.Message}");
+			logCallback?.Invoke($"[CRITICAL ERROR] Failed to start server: {ex.Message}");
 		}
 	}
 
-	public static void CheckServerStatus(BindingList<GameServer> servers, Action<string> logCallback)
+	// 1. We remove 'BindingList<GameServer> servers' because we use the Static MainGUI.serverList
+	// 2. We remove 'Action<string> logCallback' because we use the Instance Bridge
+	public static void CheckServerStatus()
 	{
-		foreach (var server in servers)
+		// Use the static list directly from MainGUI
+		foreach (var server in MainGUI.serverList)
 		{
-			// We only care about servers that are supposed to be "Running"
 			if (server.Status == "Running")
 			{
 				bool isAlive = false;
 
-				// 1. Check by the active Process object (Best for current session)
+				// 1. Check by active Process object
 				if (server.RunningProcess != null)
 				{
-					if (!server.RunningProcess.HasExited)
-					{
-						isAlive = true;
-					}
+					if (!server.RunningProcess.HasExited) isAlive = true;
 				}
-				// 2. Recovery: Check by PID if the Process object is null (GUI was restarted)
+				// 2. Recovery: Check by PID
 				else if (server.PID.HasValue)
 				{
 					try
 					{
-						// Try to re-hook the process from Windows
 						var existingProc = Process.GetProcessById(server.PID.Value);
 						if (existingProc != null && !existingProc.HasExited)
 						{
@@ -277,23 +294,21 @@ public static class ServerManager
 							isAlive = true;
 						}
 					}
-					catch
-					{
-						// Process ID no longer exists in Windows
-						isAlive = false;
-					}
+					catch { isAlive = false; }
 				}
 
-				// 3. Handle a Crash or Manual Close
+				// 3. The "Crashed" or "Stopped" Handler
 				if (!isAlive)
 				{
 					server.Status = "Stopped";
 					server.PID = null;
 					server.RunningProcess = null;
-					logCallback?.Invoke($"[MONITOR] {server.ServerName} has stopped.");
 
-					// Call the exact name you have in MainGUI
-					MainGUI.SaveServersToDisk(servers);
+					// Use the Bridge to log to the MainGUI RichTextBox
+					MainGUI.Instance?.AppendLog($"[MONITOR] {server.ServerName} has stopped or crashed.");
+
+					// Save the "Stopped" status to the JSON immediately
+					MainGUI.SaveServersToDisk();
 				}
 			}
 		}
