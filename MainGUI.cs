@@ -1,17 +1,19 @@
-using Game_Server_Control_Panel.FileFolderHandler;
-using Game_Server_Control_Panel.MonitoringHandler;
 using Game_Server_Control_Panel.ServerHandler;
+using Game_Server_Control_Panel.FileFolderHandler;
 using Game_Server_Control_Panel.SteamCMDHandler;
+using Game_Server_Control_Panel.MonitoringHandler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System;
+using System.Windows.Forms;
 
 namespace Game_Server_Control_Panel
 {
 	public partial class MainGUI : Form
 	{
-		public static BindingList<GameServer> serverList = [];
+		public static BindingList<GameServer> serverList = new();
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
