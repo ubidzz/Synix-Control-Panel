@@ -212,84 +212,88 @@ namespace Game_Server_Control_Panel
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			// 1. Validation: Ensure a game is selected
-			if (cmbGame.SelectedIndex == -1)
+			// 1. Validation: Don't allow empty names
+			if (string.IsNullOrWhiteSpace(txtName.Text))
 			{
-				MessageBox.Show("Please select a game from the list.", "Validation Error");
+				MessageBox.Show("Please enter a Server Name.", "Validation Error");
 				return;
 			}
 
-			// 2. Port Conflict Check: Ensure Game + Name + Port remains unique
-			// We check against the master list in MainGUI to prevent "Busy Port" crashes
-			int targetPort = (int)numPort.Value;
+			// 2. Port Conflict Check
+			// We check the 'public static' list in MainGUI to see if anyone else is using this port
+			int selectedPort = (int)numPort.Value;
 			foreach (var s in MainGUI.serverList)
 			{
-				// If we are editing, don't compare the server to itself
+				// Skip the check if we are editing the SAME server
 				if (_isEditMode && s == _existingServer) continue;
 
-				if (s.Port == targetPort)
+				if (s.Port == selectedPort)
 				{
-					MessageBox.Show($"Conflict: Port {targetPort} is already assigned to '{s.ServerName}'.", "Port Busy");
+					MessageBox.Show($"Port {selectedPort} is already in use by '{s.ServerName}'.", "Port Conflict");
 					return;
 				}
 			}
 
-			// 3. Path Calculation
-			string gameFolder = cmbGame.Text.Replace(" ", "_");
-			string serverFolder = txtName.Text.Replace(" ", "_");
-			string finalPath = chkDefaultPath.Checked ? $@"C:\Games\{gameFolder}\{serverFolder}" : txtInstallPath.Text;
-
-			// 4. The "Last 1%" Rename Logic (Instant rename for Edits)
-			if (_isEditMode && _existingServer != null && chkDefaultPath.Checked)
+			// 3. Create the New Server Data Object
+			var NewServer = new GameServer
 			{
-				string oldPath = _existingServer.InstallPath;
-				if (oldPath != finalPath && Directory.Exists(oldPath))
-				{
-					try
-					{
-						// This renames the folder on the C: drive instantly
-						Directory.Move(oldPath, finalPath);
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show($"Could not rename folder: {ex.Message}\nCheck if the server is still running.");
-						return;
-					}
-				}
-			}
-
-			// 5. Fetch "Static" Data from the GameDatabase (AppID, ExeName, etc.)
-			var gameData = GameDatabase.GetGame(cmbGame.Text);
-
-			// 6. Package the data into the NewServer object
-			// This is what MainGUI will put into the JSON array
-			NewServer = new GameServer
-			{
+				Game = cmbGame.Text,
 				ServerName = txtName.Text,
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
-				MaxPlayers = (int)numMaxPlayers.Value,
 				Password = txtPassword.Text,
-				AdminPassword = txtAdminPassword.Text,
+				AdminPassword = txtAdminPassword.Text, // Matches Soulmask/Palworld logic
+				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
-				ExtraArgs = txtExtraArgs.Text.Trim(),
-				InstallPath = finalPath,
+				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
-				Game = cmbGame.Text,
-
-				// Data from Database
-				AppID = gameData?.AppID ?? "0",
-				ExeName = gameData?.ExeName ?? "",
-				Maps = gameData?.Maps ?? new List<string>(),
-
-				// Keep existing status/PID if editing, otherwise new
 				Status = _isEditMode ? _existingServer.Status : "Stopped",
 				PID = _isEditMode ? _existingServer.PID : null
 			};
 
-			// 7. Success!
-			this.DialogResult = DialogResult.OK;
-			this.Close();
+			// 4. Handle Folder Logic (Create or Rename)
+			string cleanGameName = NewServer.Game.Replace(" ", "_");
+			string cleanServerName = NewServer.ServerName.Replace(" ", "_");
+			string targetPath = chkDefaultPath.Checked
+				? $@"C:\Games\{cleanGameName}\{cleanServerName}"
+				: txtInstallPath.Text;
+
+			try
+			{
+				if (_isEditMode && _existingServer != null)
+				{
+					// RENAME LOGIC: If the path changed, move the physical folder
+					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
+					{
+						ServerManager.RenameServerFolder(_existingServer, NewServer);
+						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
+					}
+
+					// Update the existing server in the static list (Surgical Swap)
+					int index = MainGUI.serverList.IndexOf(_existingServer);
+					NewServer.InstallPath = targetPath;
+					MainGUI.serverList[index] = NewServer;
+				}
+				else
+				{
+					// ADD LOGIC: Create brand new folders
+					NewServer.InstallPath = targetPath;
+					ServerManager.CreateFolders(targetPath);
+					MainGUI.serverList.Add(NewServer);
+					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
+				}
+
+				// 5. Final Save to JSON
+				// Calls the static method we fixed in MainGUI
+				MainGUI.SaveServersToDisk();
+
+				this.DialogResult = DialogResult.OK;
+				this.Close();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Operation failed: {ex.Message}", "File Error");
+			}
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e)
