@@ -62,7 +62,7 @@ namespace Game_Server_Control_Panel
 			// 1. Thread safety check
 			if (this.InvokeRequired)
 			{
-				this.Invoke(new Action(UpdateGrid));
+				this.BeginInvoke(new Action(UpdateGrid)); // Use BeginInvoke here
 				return;
 			}
 
