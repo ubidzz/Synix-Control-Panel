@@ -1,7 +1,7 @@
-using Game_Server_Control_Panel.FileEditor;
+using Game_Server_Control_Panel.FileFolderHandler;
 using Game_Server_Control_Panel.MonitoringHandler;
 using Game_Server_Control_Panel.ServerHandler;
-using Game_Server_Control_Panel.SteamCMD;
+using Game_Server_Control_Panel.SteamCMDHandler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -121,7 +121,7 @@ namespace Game_Server_Control_Panel
 
 			// 2. Run the check on a background thread
 			// This allows the 'X' button to stay active and trigger GUI_FormClosing
-			await Task.Run(() => SteamCMD.SteamCMD.EnsureSteamCMD(AppendLog));
+			await Task.Run(() => SteamCMD.EnsureSteamCMD(AppendLog));
 
 			// 3. Release the lock once the background task is done
 			isDownloadActive = false;

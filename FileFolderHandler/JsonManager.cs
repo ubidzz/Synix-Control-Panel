@@ -4,7 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.ComponentModel;
 
-namespace Game_Server_Control_Panel.FileEditor
+namespace Game_Server_Control_Panel.FileFolderHandler
 {
 	public static class JsonManager
 	{

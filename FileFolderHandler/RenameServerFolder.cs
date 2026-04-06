@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Game_Server_Control_Panel.FileEditor
+namespace Game_Server_Control_Panel.FileFolderHandler
 {
 	public static class RenameServerFolder
 	{

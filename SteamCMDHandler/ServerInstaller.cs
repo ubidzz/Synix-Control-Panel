@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 
 // Change namespace to SteamCMD to avoid naming conflicts!
-namespace Game_Server_Control_Panel.SteamCMD
+namespace Game_Server_Control_Panel.SteamCMDHandler
 {
 	public static class ServerInstaller
 	{

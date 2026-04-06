@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Game_Server_Control_Panel.SteamCMD
+namespace Game_Server_Control_Panel.SteamCMDHandler
 {
 	public static class SteamCMD
 	{
