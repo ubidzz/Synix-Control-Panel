@@ -7,7 +7,7 @@ namespace Game_Server_Control_Panel.ServerHandler
 {
 	public static class Servers
 	{
-		public static void Start(Game_Server_Control_Panel.GameServer server, Action<string> logCallback)
+		public static void Start(GameServer server, Action<string> logCallback)
 		{
 			try
 			{
@@ -76,7 +76,7 @@ namespace Game_Server_Control_Panel.ServerHandler
 			}
 		}
 
-		public static void Stop(Game_Server_Control_Panel.GameServer server, Action<string> logCallback)
+		public static void Stop(GameServer server, Action<string> logCallback)
 		{
 			try
 			{

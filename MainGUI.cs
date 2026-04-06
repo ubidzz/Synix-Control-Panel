@@ -1,3 +1,5 @@
+using System;
+using System.Windows.Forms;
 using Game_Server_Control_Panel.ServerHandler;
 using Game_Server_Control_Panel.FileFolderHandler;
 using Game_Server_Control_Panel.SteamCMDHandler;
@@ -6,8 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
-using System;
-using System.Windows.Forms;
 
 namespace Game_Server_Control_Panel
 {
@@ -270,7 +270,7 @@ namespace Game_Server_Control_Panel
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			// 1. Get the actual server object from the selected row
+			
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				AppendLog($"Launching {selectedServer.Game}: {selectedServer.ServerName}...");
