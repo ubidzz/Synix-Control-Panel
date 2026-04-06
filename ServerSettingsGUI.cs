@@ -13,14 +13,17 @@ namespace Game_Server_Control_Panel
 {
 	public partial class ServerSettingsGUI : Form
 	{
-		public GameServer NewServer { get; set; }
+		public GameServer? NewServer { get; private set; }
 		private bool isManualLoading = false;
 		private bool _isEditMode = false;
-		private GameServer _existingServer = null;
+		private GameServer? _existingServer = null;
 
-		public ServerSettingsGUI()
+		// Add (GameServer server) inside the parentheses here!
+		public ServerSettingsGUI(GameServer server)
 		{
 			InitializeComponent();
+			_isEditMode = true;
+
 			cmbGame.Enabled = true;
 			chkDefaultPath.Enabled = false;
 			txtInstallPath.Enabled = false;
@@ -30,15 +33,11 @@ namespace Game_Server_Control_Panel
 				If you used the Default Location and you changed the Server Name, 
 				the folder name will be changed to:
 				C:\Games\[Game Name]\[Your Server Name]";
-		}
 
-		public ServerSettingsGUI(GameServer server)
-		{
-			InitializeComponent();
-			_isEditMode = true;
+			// Now 'server' exists, so these lines will work!
 			_existingServer = server;
 
-			// Fill the GUI with existing data so the user can see what to change
+			// Fill the GUI with existing data
 			txtName.Text = server.ServerName;
 			cmbGame.Text = server.Game;
 			txtPassword.Text = server.Password;

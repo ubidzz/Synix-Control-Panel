@@ -7,7 +7,7 @@ namespace Game_Server_Control_Panel
 {
 	public partial class MainGUI : Form
 	{
-		public static BindingList<GameServer> serverList = new BindingList<GameServer>();
+		public static BindingList<GameServer> serverList = [];
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
@@ -184,6 +184,8 @@ namespace Game_Server_Control_Panel
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
+			if (isInitializing) return;
+
 			// 1. Check if a server is actually selected in the grid
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
