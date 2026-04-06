@@ -169,11 +169,11 @@ namespace Game_Server_Control_Panel
 				return;
 			}
 
+			// Port conflict check
 			int selectedPort = (int)numPort.Value;
 			foreach (var s in MainGUI.serverList)
 			{
 				if (_isEditMode && s == _existingServer) continue;
-
 				if (s.Port == selectedPort)
 				{
 					MessageBox.Show($"Port {selectedPort} is already in use by '{s.ServerName}'.", "Port Conflict");
@@ -201,6 +201,9 @@ namespace Game_Server_Control_Panel
 			string cleanServerName = NewServer.ServerName.Replace(" ", "_");
 			string targetPath = chkDefaultPath.Checked ? $@"C:\Games\{cleanGameName}\{cleanServerName}" : txtInstallPath.Text;
 
+			// CRITICAL FIX: Set the path BEFORE calling Rename logic. Fixes the 'destDirName' error.
+			NewServer.InstallPath = targetPath;
+
 			try
 			{
 				if (_isEditMode && _existingServer != null)
@@ -210,24 +213,17 @@ namespace Game_Server_Control_Panel
 						ServerManager.RenameServerFolder(_existingServer, NewServer);
 						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
 					}
-
 					int index = MainGUI.serverList.IndexOf(_existingServer);
-					NewServer.InstallPath = targetPath;
-					if (index != -1)
-					{
-						MainGUI.serverList[index] = NewServer;
-					}
+					if (index != -1) MainGUI.serverList[index] = NewServer;
 				}
 				else
 				{
-					NewServer.InstallPath = targetPath;
 					ServerManager.CreateFolders(targetPath);
 					MainGUI.serverList.Add(NewServer);
 					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
 				}
 
 				MainGUI.SaveServersToDisk();
-
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}
