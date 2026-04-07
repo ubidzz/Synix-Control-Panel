@@ -57,9 +57,15 @@
 			CompetitiveLabel = new Label();
 			txtInstallPath = new TextBox();
 			label5 = new Label();
+			chkEnableRcon = new CheckBox();
+			numRconPort = new NumericUpDown();
+			txtRconPassword = new TextBox();
+			label2 = new Label();
+			label6 = new Label();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
+			((System.ComponentModel.ISupportInitialize)numRconPort).BeginInit();
 			SuspendLayout();
 			// 
 			// ServerNameLabel
@@ -127,7 +133,7 @@
 			numPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numPort.Name = "numPort";
-			numPort.Size = new Size(102, 23);
+			numPort.Size = new Size(63, 23);
 			numPort.TabIndex = 6;
 			numPort.Value = new decimal(new int[] { 1024, 0, 0, 0 });
 			// 
@@ -194,7 +200,7 @@
 			// 
 			MaxPlayerLabel.AutoSize = true;
 			MaxPlayerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			MaxPlayerLabel.Location = new Point(12, 193);
+			MaxPlayerLabel.Location = new Point(178, 135);
 			MaxPlayerLabel.Name = "MaxPlayerLabel";
 			MaxPlayerLabel.Size = new Size(76, 17);
 			MaxPlayerLabel.TabIndex = 14;
@@ -202,7 +208,7 @@
 			// 
 			// numMaxPlayers
 			// 
-			numMaxPlayers.Location = new Point(12, 213);
+			numMaxPlayers.Location = new Point(178, 155);
 			numMaxPlayers.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
 			numMaxPlayers.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
 			numMaxPlayers.Name = "numMaxPlayers";
@@ -250,7 +256,7 @@
 			// 
 			QueryPortLabel.AutoSize = true;
 			QueryPortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			QueryPortLabel.Location = new Point(133, 135);
+			QueryPortLabel.Location = new Point(91, 135);
 			QueryPortLabel.Name = "QueryPortLabel";
 			QueryPortLabel.Size = new Size(76, 17);
 			QueryPortLabel.TabIndex = 21;
@@ -258,11 +264,11 @@
 			// 
 			// numQueryPort
 			// 
-			numQueryPort.Location = new Point(133, 155);
+			numQueryPort.Location = new Point(91, 155);
 			numQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numQueryPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numQueryPort.Name = "numQueryPort";
-			numQueryPort.Size = new Size(98, 23);
+			numQueryPort.Size = new Size(63, 23);
 			numQueryPort.TabIndex = 22;
 			numQueryPort.Value = new decimal(new int[] { 27015, 0, 0, 0 });
 			// 
@@ -303,16 +309,16 @@
 			// cmbCompetitive
 			// 
 			cmbCompetitive.FormattingEnabled = true;
-			cmbCompetitive.Location = new Point(249, 154);
+			cmbCompetitive.Location = new Point(277, 155);
 			cmbCompetitive.Name = "cmbCompetitive";
-			cmbCompetitive.Size = new Size(83, 23);
+			cmbCompetitive.Size = new Size(103, 23);
 			cmbCompetitive.TabIndex = 27;
 			// 
 			// CompetitiveLabel
 			// 
 			CompetitiveLabel.AutoSize = true;
 			CompetitiveLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			CompetitiveLabel.Location = new Point(249, 135);
+			CompetitiveLabel.Location = new Point(277, 135);
 			CompetitiveLabel.Name = "CompetitiveLabel";
 			CompetitiveLabel.Size = new Size(83, 17);
 			CompetitiveLabel.TabIndex = 28;
@@ -335,11 +341,63 @@
 			label5.TabIndex = 30;
 			label5.Text = "Or";
 			// 
+			// chkEnableRcon
+			// 
+			chkEnableRcon.AutoSize = true;
+			chkEnableRcon.Location = new Point(12, 191);
+			chkEnableRcon.Name = "chkEnableRcon";
+			chkEnableRcon.Size = new Size(105, 19);
+			chkEnableRcon.TabIndex = 31;
+			chkEnableRcon.Text = "Activate RCON";
+			chkEnableRcon.UseVisualStyleBackColor = true;
+			// 
+			// numRconPort
+			// 
+			numRconPort.Location = new Point(12, 233);
+			numRconPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+			numRconPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
+			numRconPort.Name = "numRconPort";
+			numRconPort.Size = new Size(63, 23);
+			numRconPort.TabIndex = 32;
+			numRconPort.Value = new decimal(new int[] { 1024, 0, 0, 0 });
+			// 
+			// txtRconPassword
+			// 
+			txtRconPassword.Location = new Point(107, 233);
+			txtRconPassword.Name = "txtRconPassword";
+			txtRconPassword.Size = new Size(223, 23);
+			txtRconPassword.TabIndex = 33;
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label2.Location = new Point(12, 213);
+			label2.Name = "label2";
+			label2.Size = new Size(74, 17);
+			label2.TabIndex = 34;
+			label2.Text = "RCON Port";
+			// 
+			// label6
+			// 
+			label6.AutoSize = true;
+			label6.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label6.Location = new Point(107, 213);
+			label6.Name = "label6";
+			label6.Size = new Size(106, 17);
+			label6.TabIndex = 35;
+			label6.Text = "RCON Password";
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(795, 558);
+			Controls.Add(label6);
+			Controls.Add(label2);
+			Controls.Add(txtRconPassword);
+			Controls.Add(numRconPort);
+			Controls.Add(chkEnableRcon);
 			Controls.Add(label5);
 			Controls.Add(txtInstallPath);
 			Controls.Add(CompetitiveLabel);
@@ -375,6 +433,7 @@
 			((System.ComponentModel.ISupportInitialize)numPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).EndInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).EndInit();
+			((System.ComponentModel.ISupportInitialize)numRconPort).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -410,5 +469,10 @@
 		private Label CompetitiveLabel;
 		private TextBox txtInstallPath;
 		private Label label5;
+		private CheckBox chkEnableRcon;
+		private NumericUpDown numRconPort;
+		private TextBox txtRconPassword;
+		private Label label2;
+		private Label label6;
 	}
 }

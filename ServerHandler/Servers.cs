@@ -42,6 +42,30 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{ServerName}", server.ServerName)
 					.Replace("{InstallPath}", server.InstallPath);
 
+				// --- THE RCON INJECTOR ---
+				if (args.Contains("{rcon}"))
+				{
+					if (server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax))
+					{
+						// 1. Fill out the formatting rule with the user's specific port and password
+						string formattedRcon = dbEntry.RconSyntax
+							.Replace("{rcon_port}", server.RconPort.ToString())
+							.Replace("{rcon_pass}", server.RconPassword ?? "");
+
+						// 2. Inject it into the main launch string
+						args = args.Replace("{rcon}", formattedRcon);
+					}
+					else
+					{
+						// The user has RCON turned OFF. Just delete the {rcon} tag entirely.
+						args = args.Replace("{rcon}", "");
+					}
+				}
+				// -------------------------
+
+				// Clean up any double spaces
+				args = args.Replace("  ", " ").Trim();
+
 				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.SelectedMode))
 				{
 					// Simply inject the exact word the user selected from the dropdown

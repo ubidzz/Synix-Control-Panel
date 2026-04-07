@@ -55,7 +55,8 @@ namespace Synix_Control_Panel
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				RequiredArgs = "-batchmode +server.level \"{map}\" +server.port {port} +server.queryport {query} +server.hostname \"{ServerName}\" +server.pve {mode}", 
+				RequiredArgs = "-batchmode +server.level \"{map}\" +server.port {port} +server.queryport {query} +server.identity \"{ServerName}\" +rcon.port {query} +rcon.password \"{adminpass}\" +server.hostname \"{ServerName}\" +server.pve {mode} {rcon}",
+				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
 				Port = 28015,
 				QueryPort = 28016,
 				Maps = ["Procedural Map"],
@@ -74,7 +75,7 @@ namespace Synix_Control_Panel
 				Game = "Palworld",
 				AppID = "2394010",
 				ExeName = "PalServer.exe",
-				RequiredArgs = "-port={port} -publicqueryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\" -AdminPassword=\"{adminpass}\"",
+				RequiredArgs = "-port={port} -publicqueryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\" -AdminPassword=\"{adminpass}\" -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS",
 				Port = 8211,
 				QueryPort = 27015,
 				Maps = ["DefaultWorld"]
@@ -93,7 +94,8 @@ namespace Synix_Control_Panel
 				Game = "ARK: Survival Ascended",
 				AppID = "2430930",
 				ExeName = @"ShooterGame\Binaries\Win64\ArkServer.exe",
-				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} {rcon} -server -log",
+				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\"",
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheIsland_WP"],
@@ -130,7 +132,8 @@ namespace Synix_Control_Panel
 				Game = "Factorio",
 				AppID = "428200",
 				ExeName = @"bin\x64\factorio.exe",
-				RequiredArgs = "--start-server {map}.zip --server-settings data\\server-settings.json --port {port}",
+				RequiredArgs = "--start-server {map}.zip --server-settings data\\server-settings.json --port {port} {rcon}",
+				RconSyntax = "--rcon-port {rcon_port} --rcon-password \"{rcon_pass}\"",
 				Port = 34197,
 				QueryPort = 34197,
 				Maps = ["FactorioWorld"]
@@ -187,7 +190,8 @@ namespace Synix_Control_Panel
 				Game = "Counter-Strike 2",
 				AppID = "730",
 				ExeName = @"game\bin\win64\cs2.exe",
-				RequiredArgs = "-dedicated +map {map} -port {port} -maxplayers {MaxPlayers} +sv_password \"{pass}\" +hostname \"{ServerName}\"",
+				RequiredArgs = "-dedicated +map {map} -port {port} -maxplayers {MaxPlayers} +sv_password \"{pass}\" +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["de_dust2", "de_inferno", "de_mirage", "de_nuke", "de_vertigo"]
@@ -196,7 +200,8 @@ namespace Synix_Control_Panel
 				Game = "Team Fortress 2",
 				AppID = "232250",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game tf -console -port {port} +maxplayers {MaxPlayers} +map {map} +sv_password \"{pass}\" +hostname \"{ServerName}\"",
+				RequiredArgs = "-game tf -console -port {port} +maxplayers {MaxPlayers} +map {map} +sv_password \"{pass}\" +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["ctf_2fort", "pl_upward", "cp_dustbowl", "koth_harvest"]
@@ -205,7 +210,8 @@ namespace Synix_Control_Panel
 				Game = "Left 4 Dead 2",
 				AppID = "222860",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\"",
+				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["c1m1_hotel", "c2m1_highway", "c8m1_apartment", "c14m1_junkyard"]
@@ -424,7 +430,8 @@ namespace Synix_Control_Panel
 				Game = "Garry's Mod",
 				AppID = "4000",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\"",
+				RequiredArgs = "-game garrysmod +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["gm_construct", "gm_flatgrass"]
@@ -433,7 +440,7 @@ namespace Synix_Control_Panel
 				Game = "Project Zomboid",
 				AppID = "380870",
 				ExeName = "StartServer64.bat",
-				RequiredArgs = "-adminpassword {adminpass} -port {port} -servername \"{ServerName}\"",
+				RequiredArgs = "-servername \"{ServerName}\" -adminpassword \"{adminpass}\"",
 				Port = 16261,
 				QueryPort = 16262,
 				Maps = ["Muldraugh, KY"]
@@ -469,7 +476,8 @@ namespace Synix_Control_Panel
 				Game = "Garry's Mod (Trouble in Terrorist Town)",
 				AppID = "4000",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode ttt +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\"",
+				RequiredArgs = "-game garrysmod +gamemode ttt +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["ttt_67thway_v3", "ttt_clue"]
@@ -499,7 +507,7 @@ namespace Synix_Control_Panel
 				Game = "Sons Of The Forest",
 				AppID = "2465200",
 				ExeName = "SonsOfTheForestDS.exe",
-				RequiredArgs = "-userdatapath \"config\" -servername \"{ServerName}\" -serverpassword \"{pass}\" -serverport {port} -queryport {query}",
+				RequiredArgs = "-userdatapath \"config\"",
 				Port = 8766,
 				QueryPort = 27016,
 				Maps = ["Default"]
@@ -813,7 +821,8 @@ namespace Synix_Control_Panel
 				Game = "PixARK",
 				AppID = "824360",
 				ExeName = @"ShooterGame\Binaries\Win64\PixARKServer.exe",
-				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} {rcon} -server -log",
+				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\""
 				Port = 7777,
 				QueryPort = 27015,
 				GameModes = ["PVE", "PVP"],
@@ -824,10 +833,11 @@ namespace Synix_Control_Panel
 				Game = "Atlas",
 				AppID = "1006030",
 				ExeName = @"ShooterGame\Binaries\Win64\ShooterGameServer.exe",
-				RequiredArgs = "Ocean?ServerX=0?ServerY=0?AltSaveDirectoryName=\"{map}\"?ServerPVE={mode}?ServerAdminPassword=\"{adminpass}\"?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query}?SeamlessIP=0.0.0.0 -log -server", // <-- Added ?ServerPVE={mode}
+				RequiredArgs = "Ocean?ServerX=0?ServerY=0?AltSaveDirectoryName=\"{map}\"?ServerPVE={mode}?ServerAdminPassword=\"{adminpass}\"?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query} {rcon} ?SeamlessIP=0.0.0.0 -log -server",
+				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\"",
 				Port = 57555,
 				QueryPort = 57555,
-				GameModes = ["True", "False"], // <-- Changed to match ARK engine
+				GameModes = ["True", "False"],
 				Maps = ["00"]
 			},
 			new()
@@ -945,7 +955,8 @@ namespace Synix_Control_Panel
 				Game = "No More Room in Hell",
 				AppID = "317590",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game nmrih -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\"",
+				RequiredArgs = "-game nmrih -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\""
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["nmo_broadway", "nmo_cabin"]
@@ -955,7 +966,8 @@ namespace Synix_Control_Panel
 				Game = "Sven Co-op",
 				AppID = "276060",
 				ExeName = "svends.exe",
-				RequiredArgs = "-console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\"",
+				RequiredArgs = "-console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["stadium4"]

@@ -21,6 +21,7 @@ public class GameInfo
 	public int QueryPort { get; set; }
 	public string ExtraArgs { get; set; } = string.Empty;
 	public List<string> GameModes { get; set; } = [];
+	public string RconSyntax { get; init; } = "";
 }
 
 public class GameServer : GameInfo
@@ -42,4 +43,7 @@ public class GameServer : GameInfo
 	[JsonIgnore]
 	public DateTime LastSampleTime { get; set; } = DateTime.Now;
 	public string? SelectedMode { get; set; } = "PVE";
+	public bool EnableRcon { get; set; } = false;
+	public int RconPort { get; set; }
+	public string RconPassword { get; set; } = "";
 }

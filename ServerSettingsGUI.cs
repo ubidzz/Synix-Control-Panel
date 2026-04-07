@@ -110,7 +110,9 @@ namespace Synix_Control_Panel
 				txtExtraArgs.Text = _existingServer.ExtraArgs;
 				txtInstallPath.Text = _existingServer.InstallPath;
 				chkDefaultPath.Checked = _existingServer.IsDefaultPath;
-
+				chkEnableRcon.Checked = _existingServer.EnableRcon;
+				numRconPort.Value = _existingServer.RconPort > 0 ? _existingServer.RconPort : 0; // Safe fallback
+				txtRconPassword.Text = _existingServer.RconPassword ?? "";
 
 				// Repopulate Maps list so we can select the saved world
 				var gameData = GameDatabase.GetGame(_existingServer.Game);
@@ -225,6 +227,9 @@ namespace Synix_Control_Panel
 				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
 				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null,
 				GameMode = cmbCompetitive.Text,
+				EnableRcon = chkEnableRcon.Checked,
+				RconPort = (int)numRconPort.Value,
+				RconPassword = txtRconPassword.Text
 			};
 
 			// 2. Calculate the target path
