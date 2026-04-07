@@ -1,13 +1,12 @@
 ﻿/*
  * Copyright (c) 2026 ubidzz. All Rights Reserved.
  *
- * This file is part of Synix Control Panel.
+ * This file is part of Game-Server-Control-Panel.
  *
- * This code is provided for transparent viewing and personal use only.
- * Unauthorized distribution, public modification, or commercial 
- * use of this source code or the compiled executable is strictly 
- * prohibited. Please refer to the LICENSE file in the root 
- * directory for full terms.
+ * Unauthorized copying of this file, via any medium, is strictly prohibited.
+ * This code is proprietary and confidential. No part of this project may 
+ * be reproduced, distributed, or transmitted in any form or by any means 
+ * without the prior written permission of the owner.
  */
 using System;
 using System.IO;
@@ -32,7 +31,7 @@ namespace Synix_Control_Panel.FileFolderHandler
 				// 2. Remove from the UI list and Save JSON
 				// We access the static list from MainGUI directly
 				MainGUI.serverList.Remove(server);
-				JsonManager.Save();
+				CreateFiles.SaveServers();
 
 				logCallback?.Invoke($"[CLEANUP] Deleted server '{server.ServerName}' and all files at {server.InstallPath}");
 			}

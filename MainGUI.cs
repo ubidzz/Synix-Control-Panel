@@ -32,7 +32,7 @@ namespace Synix_Control_Panel
 		public MainGUI()
 		{
 			InitializeComponent();
-			JsonManager.Load();
+			CreateFiles.LoadServers();
 
 			Instance = this;
 
@@ -207,7 +207,7 @@ namespace Synix_Control_Panel
 				dataGridView1.Invalidate();
 				dataGridView1.Refresh();
 
-				JsonManager.Save();
+				CreateFiles.SaveServers();
 				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
 			}
 		}
