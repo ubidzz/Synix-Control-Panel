@@ -26,7 +26,7 @@ namespace Synix_Control_Panel
 			new()
 			{
 				Game = "StarRupture",
-				AppID = "3333140",
+				AppID = "3809400",
 				ExeName = @"StarRupture\Binaries\Win64\StarRuptureServerEOS-Win64-Shipping.exe",
 				RequiredArgs = "{map}?Listen -server -log -port={port} -password={pass} -name=\"{ServerName}\"",
 				Port = 7777,

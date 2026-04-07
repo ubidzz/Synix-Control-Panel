@@ -72,24 +72,31 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// 1. Get the data
+			// 1. Run the monitor (this updates CPU, RAM, and the Online/Offline status)
 			var usage = Synix_Control_Panel.MonitoringHandler.ResourceMonitor.GetTotalResources(serverList);
 
-			// 2. YOU NEED THIS LINE - It defines 'ramGB'
+			// 2. Convert RAM for the chart and label
 			double ramGB = usage.TotalRamMB / 1024.0;
 
+			// 3. Update the Graph Waves
 			var cpuSer = chartHeartbeat.Series["TotalCPU"];
 			var ramSer = chartHeartbeat.Series["TotalRAM"];
 			var ca = chartHeartbeat.ChartAreas[0];
 
-			// 3. Plot the points
 			cpuSer.Points.AddXY(chartTickCounter, usage.TotalCpuPercent);
 			ramSer.Points.AddXY(chartTickCounter, ramGB);
 			chartTickCounter++;
 
-			// 4. Update the labels
+			// Sliding window (Keep the graph moving)
+			ca.AxisX.Minimum = chartTickCounter - maxGraphPoints;
+			ca.AxisX.Maximum = chartTickCounter;
+
+			// 4. Update the Dashboard Text
 			lblTotalCpu.Text = $"CPU: {usage.TotalCpuPercent:N1}%";
-			lblTotalRam.Text = $"RAM: {ramGB:N2} GB"; // This line will fail if Step 2 is missing!
+			lblTotalRam.Text = $"RAM: {ramGB:N2} GB / {systemTotalRamGb:N1} GB";
+
+			// 5. THE AUTO-REFRESH: This makes the "Online/Offline" text update in your list!
+			UpdateGrid();
 		}
 
 		private void UpdateGrid()

@@ -35,55 +35,56 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 			foreach (var server in serverList)
 			{
-				// Only monitor if server is Online and has a PID
+				// 1. Only check servers that are supposed to be "Online"
 				if (server.PID.HasValue && server.Status?.ToLower() == "online")
 				{
 					try
 					{
-						using (Process proc = Process.GetProcessById(server.PID.Value))
+						// We attempt to find the process using the ID we saved when we clicked Start
+						Process proc = Process.GetProcessById(server.PID.Value);
+
+						if (proc.HasExited)
 						{
-							if (!proc.HasExited)
+							// THE AUTO-FIX: The process is gone! Set it to Offline.
+							server.Status = "Offline";
+							server.PID = null;
+							continue;
+						}
+
+						// 2. RAM Calculation
+						total.TotalRamMB += (proc.WorkingSet64 / 1024.0 / 1024.0);
+
+						// 3. CPU Calculation (Delta Math)
+						DateTime currentTime = DateTime.Now;
+						TimeSpan currentCpuTime = proc.TotalProcessorTime;
+
+						if (lastCpuTime.ContainsKey(proc.Id))
+						{
+							double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
+							double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
+
+							if (totalMsPassed > 0)
 							{
-								// 1. RAM Usage (Simple snapshot)
-								total.TotalRamMB += (proc.WorkingSet64 / 1024.0 / 1024.0);
-
-								// 2. CPU Usage (The "Delta" Math)
-								// We compare how much CPU time the process used vs how much real time passed
-								DateTime currentTime = DateTime.Now;
-								TimeSpan currentCpuTime = proc.TotalProcessorTime;
-
-								if (lastCpuTime.ContainsKey(proc.Id))
-								{
-									double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
-									double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
-
-									// Calculate % based on all CPU cores
-									double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
-
-									// Add to the total (Sum of all running servers)
-									total.TotalCpuPercent += cpuPercent;
-								}
-
-								// Update the "Last Seen" data for the next tick
-								lastCpuTime[proc.Id] = currentCpuTime;
-								lastCheckTime[proc.Id] = currentTime;
+								double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
+								total.TotalCpuPercent += cpuPercent;
 							}
 						}
+
+						// Save current stats for the next tick
+						lastCpuTime[proc.Id] = currentCpuTime;
+						lastCheckTime[proc.Id] = currentTime;
 					}
 					catch
 					{
-						// Process closed or access denied; clean up the dictionary
-						if (server.PID.HasValue)
-						{
-							lastCpuTime.Remove(server.PID.Value);
-							lastCheckTime.Remove(server.PID.Value);
-						}
+						// If we hit an error (like "Access Denied"), the server is likely closing/gone
+						server.Status = "Offline";
+						server.PID = null;
 					}
 				}
 			}
-
 			return total;
 		}
+
 		public static double GetTotalSystemRamGB()
 		{
 			var gcInfo = GC.GetGCMemoryInfo();
