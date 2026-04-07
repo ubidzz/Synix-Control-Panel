@@ -68,6 +68,7 @@ namespace Synix_Control_Panel
 				txtInstallPath.Text = server.InstallPath;
 				chkDefaultPath.Checked = server.IsDefaultPath;
 				txtExtraArgs.Text = server.ExtraArgs;
+				cmbCompetitive.Text = server.GameMode;
 			}
 			else
 			{
@@ -93,12 +94,6 @@ namespace Synix_Control_Panel
 			}
 			cmbGame.SelectedIndex = 0;
 
-			CompetitiveComboBox.Items.Clear();
-			CompetitiveComboBox.Items.Add("PVE");
-			CompetitiveComboBox.Items.Add("PVP");
-			CompetitiveComboBox.Items.Add("PVPVE");
-			CompetitiveComboBox.DropDownStyle = ComboBoxStyle.DropDownList; 
-
 			if (_isEditMode && _existingServer != null)
 			{
 				isManualLoading = true;
@@ -116,15 +111,6 @@ namespace Synix_Control_Panel
 				txtInstallPath.Text = _existingServer.InstallPath;
 				chkDefaultPath.Checked = _existingServer.IsDefaultPath;
 
-				if (string.IsNullOrEmpty(_existingServer.CompetitiveMode))
-				{
-					CompetitiveComboBox.SelectedItem = "PVE"; // Failsafe
-				}
-				else
-				{
-					CompetitiveComboBox.SelectedItem = _existingServer.CompetitiveMode;
-				}
-				// -------------------------------------------------------
 
 				// Repopulate Maps list so we can select the saved world
 				var gameData = GameDatabase.GetGame(_existingServer.Game);
@@ -145,6 +131,28 @@ namespace Synix_Control_Panel
 					}
 				}
 
+				if (gameData != null && gameData.GameModes != null)
+				{
+					cmbCompetitive.Items.Clear();
+
+					// 1. Loop through the LIST to fill the dropdown (Plural: GameModes)
+					foreach (var gameMode in gameData.GameModes)
+					{
+						cmbCompetitive.Items.Add(gameMode);
+					}
+
+					// 2. Check and set the selection using the STRING (Singular: GameMode)
+					if (cmbCompetitive.Items.Contains(_existingServer.GameModes))
+					{
+						cmbCompetitive.SelectedItem = _existingServer.GameModes;
+					}
+					else
+					{
+						// Fallback to the saved text if it's not in the list
+						cmbCompetitive.Text = _existingServer.GameMode;
+					}
+				}
+
 				cmbGame.Enabled = false;
 				chkDefaultPath.Enabled = false;
 				txtInstallPath.Enabled = false;
@@ -158,7 +166,7 @@ namespace Synix_Control_Panel
 				txtName.Text = string.Empty;
 				txtInstallPath.Text = string.Empty;
 				cmbWorldName.Items.Clear();
-				CompetitiveComboBox.SelectedItem = "PVE";
+				cmbCompetitive.SelectedItem = "PVE";
 
 				chkDefaultPath.Enabled = false;
 				btnSave.Enabled = false;
@@ -216,7 +224,7 @@ namespace Synix_Control_Panel
 				IsDefaultPath = chkDefaultPath.Checked,
 				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
 				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null,
-				CompetitiveMode = CompetitiveComboBox.SelectedItem?.ToString() ?? "PVE"
+				GameMode = cmbCompetitive.Text,
 			};
 
 			// 2. Calculate the target path

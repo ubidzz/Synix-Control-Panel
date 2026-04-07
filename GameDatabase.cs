@@ -41,7 +41,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map} -server -log -online=Steam -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\"",
 				Port = 8777,
 				QueryPort = 27015,
-				Maps = ["Level01_Main"]
+				Maps = ["Level01_Main"],
+				GameModes = ["PVE", "PVP"]
 			},
 			new()
 			{
@@ -59,9 +60,9 @@ namespace Synix_Control_Panel
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
 				RequiredArgs = "-batchmode +server.level \"{map}\" +server.port {port} +server.queryport {query} +server.hostname \"{ServerName}\"",
+				GameModes = ["PVE", "PVP", "PVPVE"],
 				Port = 28015,
 				QueryPort = 28016,
-				CompetitiveMode = ["PVE", "PVP", "PVPVE"],
 				Maps = ["Procedural Map"]
 			},
 			new()

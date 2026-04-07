@@ -37,6 +37,8 @@ namespace Synix_Control_Panel.ServerHandler
 		public int Port { get; set; }
 		public int QueryPort { get; set; }
 		public string ExtraArgs { get; set; } = string.Empty;
+
+		public List<string> GameModes { get; internal set; } = [];
 	}
 
 	public class GameServer : GameInfo
@@ -50,8 +52,8 @@ namespace Synix_Control_Panel.ServerHandler
 		public string WorldName { get; set; } = "NewWorld";
 		public bool IsDefaultPath { get; set; } = true;
 		public int? PID { get; set; }
-		public string CompetitiveMode { get; set; } = "PVE";
 		[JsonIgnore]
 		public Process? RunningProcess { get; set; }
+		public string GameMode { get; internal set; } = "PVE";
 	}
 }

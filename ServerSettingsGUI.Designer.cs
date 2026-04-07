@@ -53,7 +53,7 @@
 			cmbWorldName = new ComboBox();
 			AdminPasswordLabel = new Label();
 			txtAdminPassword = new TextBox();
-			CompetitiveComboBox = new ComboBox();
+			cmbCompetitive = new ComboBox();
 			CompetitiveLabel = new Label();
 			txtInstallPath = new TextBox();
 			label5 = new Label();
@@ -300,13 +300,13 @@
 			txtAdminPassword.Size = new Size(368, 23);
 			txtAdminPassword.TabIndex = 26;
 			// 
-			// CompetitiveComboBox
+			// cmbCompetitive
 			// 
-			CompetitiveComboBox.FormattingEnabled = true;
-			CompetitiveComboBox.Location = new Point(249, 154);
-			CompetitiveComboBox.Name = "CompetitiveComboBox";
-			CompetitiveComboBox.Size = new Size(83, 23);
-			CompetitiveComboBox.TabIndex = 27;
+			cmbCompetitive.FormattingEnabled = true;
+			cmbCompetitive.Location = new Point(249, 154);
+			cmbCompetitive.Name = "cmbCompetitive";
+			cmbCompetitive.Size = new Size(83, 23);
+			cmbCompetitive.TabIndex = 27;
 			// 
 			// CompetitiveLabel
 			// 
@@ -343,7 +343,7 @@
 			Controls.Add(label5);
 			Controls.Add(txtInstallPath);
 			Controls.Add(CompetitiveLabel);
-			Controls.Add(CompetitiveComboBox);
+			Controls.Add(cmbCompetitive);
 			Controls.Add(txtAdminPassword);
 			Controls.Add(AdminPasswordLabel);
 			Controls.Add(cmbWorldName);
@@ -406,7 +406,7 @@
 		private ComboBox cmbWorldName;
 		private Label AdminPasswordLabel;
 		private TextBox txtAdminPassword;
-		private ComboBox CompetitiveComboBox;
+		private ComboBox cmbCompetitive;
 		private Label CompetitiveLabel;
 		private TextBox txtInstallPath;
 		private Label label5;
