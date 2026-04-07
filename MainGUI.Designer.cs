@@ -52,6 +52,7 @@
 			lblTotalRam = new Label();
 			lblTotalCpu = new Label();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
+			button1 = new Button();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -130,7 +131,7 @@
 			// btnDelete
 			// 
 			btnDelete.Cursor = Cursors.Hand;
-			btnDelete.Location = new Point(308, 589);
+			btnDelete.Location = new Point(455, 589);
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(142, 28);
 			btnDelete.TabIndex = 2;
@@ -152,7 +153,7 @@
 			// btnEdit
 			// 
 			btnEdit.Cursor = Cursors.Hand;
-			btnEdit.Location = new Point(160, 589);
+			btnEdit.Location = new Point(160, 588);
 			btnEdit.Name = "btnEdit";
 			btnEdit.Size = new Size(142, 28);
 			btnEdit.TabIndex = 5;
@@ -253,6 +254,17 @@
 			tmrResourceUpdates.Interval = 1000;
 			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
 			// 
+			// button1
+			// 
+			button1.Cursor = Cursors.Hand;
+			button1.Location = new Point(307, 588);
+			button1.Name = "button1";
+			button1.Size = new Size(142, 28);
+			button1.TabIndex = 14;
+			button1.Text = "Update Server";
+			button1.UseVisualStyleBackColor = true;
+			button1.Click += btnUpdate_Click;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -260,6 +272,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
+			Controls.Add(button1);
 			Controls.Add(lblTotalCpu);
 			Controls.Add(lblTotalRam);
 			Controls.Add(chartHeartbeat);
@@ -308,5 +321,6 @@
 		private DataGridViewTextBoxColumn colPassword;
 		private DataGridViewTextBoxColumn colAdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
+		private Button button1;
 	}
 }

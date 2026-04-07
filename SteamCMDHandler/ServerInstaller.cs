@@ -12,48 +12,65 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
-// Change namespace to SteamCMD to avoid naming conflicts!
 namespace Synix_Control_Panel.SteamCMDHandler
 {
 	public static class ServerInstaller
 	{
 		public static void Install(string steamCmdPath, string installPath, string appId, Action<string> logCallback)
 		{
-			if (!File.Exists(steamCmdPath))
-			{
-				logCallback?.Invoke($"[ERROR] SteamCMD not found: {steamCmdPath}");
-				return;
-			}
-
-			string cleanPath = installPath.TrimEnd('\\', '/');
-			string args = $"+force_install_dir \"{cleanPath}\" +login anonymous +app_update {appId} validate +quit";
-
-			ProcessStartInfo psi = new()
+			ProcessStartInfo startInfo = new ProcessStartInfo
 			{
 				FileName = steamCmdPath,
-				Arguments = args,
-				WorkingDirectory = Path.GetDirectoryName(steamCmdPath),
+				Arguments = $"+force_install_dir \"{installPath}\" +login anonymous +app_update {appId} validate +quit",
+				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
-				UseShellExecute = false,
 				CreateNoWindow = true
 			};
 
-			using Process process = new() { StartInfo = psi };
-			process.OutputDataReceived += (s, e) => { if (!string.IsNullOrEmpty(e.Data)) logCallback?.Invoke(e.Data); };
+			using Process process = new Process { StartInfo = startInfo };
+			process.Start();
 
-			try
+			// Create asynchronous tasks to read the streams in real-time
+			Task outputTask = ReadStreamAsync(process.StandardOutput, logCallback);
+			Task errorTask = ReadStreamAsync(process.StandardError, logCallback);
+
+			// Wait for both the process to exit AND the streams to finish reading
+			process.WaitForExit();
+			Task.WaitAll(outputTask, errorTask);
+		}
+
+		// A dedicated async reader that doesn't get hung up on buffer sizes
+		private static async Task ReadStreamAsync(StreamReader stream, Action<string> logCallback)
+		{
+			char[] buffer = new char[1]; // Read literally one character at a time
+			string currentLine = "";
+
+			while (await stream.ReadAsync(buffer, 0, 1) > 0)
 			{
-				if (!Directory.Exists(cleanPath)) Directory.CreateDirectory(cleanPath);
-				process.Start();
-				process.BeginOutputReadLine();
-				process.WaitForExit();
-				logCallback?.Invoke("--- STEAMCMD PROCESS FINISHED ---");
+				char c = buffer[0];
+
+				// If we hit a newline or carriage return, flush the line to the UI!
+				if (c == '\r' || c == '\n')
+				{
+					if (!string.IsNullOrWhiteSpace(currentLine))
+					{
+						logCallback(currentLine);
+						currentLine = ""; // Reset for the next line
+					}
+				}
+				else
+				{
+					currentLine += c;
+				}
 			}
-			catch (Exception ex)
+
+			// Catch any leftover text that didn't end in a newline when the process closed
+			if (!string.IsNullOrWhiteSpace(currentLine))
 			{
-				logCallback?.Invoke($"[ERROR]: {ex.Message}");
+				logCallback(currentLine);
 			}
 		}
 	}

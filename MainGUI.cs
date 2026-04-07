@@ -117,22 +117,49 @@ namespace Synix_Control_Panel
 
 		public void AppendLog(string message)
 		{
+			AppendLog(message, null, false);
+		}
+
+		public void AppendLog(string message, Color textColor)
+		{
+			AppendLog(message, textColor, false);
+		}
+
+		public void AppendLog(string message, Color? textColor, bool isBold)
+		{
 			if (!this.IsHandleCreated || this.IsDisposed) return;
 
 			if (rtbLog.InvokeRequired)
 			{
-				rtbLog.BeginInvoke(new Action(() => AppendLog(message)));
+				rtbLog.BeginInvoke(new Action(() => AppendLog(message, textColor, isBold)));
 				return;
 			}
 
 			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
+
+			// Move to end
+			rtbLog.SelectionStart = rtbLog.TextLength;
+			rtbLog.SelectionLength = 0;
+
+			// --- APPLY COLOR ---
+			rtbLog.SelectionColor = textColor ?? rtbLog.ForeColor;
+
+			// --- APPLY BOLD ---
+			// We take the current font and just "add" the Bold style to it
+			if (isBold)
+				rtbLog.SelectionFont = new Font(rtbLog.Font, FontStyle.Bold);
+			else
+				rtbLog.SelectionFont = new Font(rtbLog.Font, FontStyle.Regular);
+
+			// Print text
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
 
+			// Reset for next time (important so next log isn't accidentally bold!)
+			rtbLog.SelectionFont = rtbLog.Font;
+
+			// Scroll and Refresh
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
-
-			// ADD THIS: Forces the box to draw the new text IMMEDIATELY
-			// This stops the "Frozen" look during SteamCMD installs
 			rtbLog.Update();
 		}
 
@@ -140,8 +167,8 @@ namespace Synix_Control_Panel
 		{
 			// 1. Set the lock immediately
 			isDownloadActive = true;
-
 			AppendLog("Checking SteamCMD dependencies...");
+			AppendLog($"--- [WARNING] Synix close window button is now Disabled! ---", Color.Orange, true);
 
 			// 2. Run the check on a background thread
 			// This allows the 'X' button to stay active and trigger GUI_FormClosing
@@ -149,7 +176,7 @@ namespace Synix_Control_Panel
 
 			// 3. Release the lock once the background task is done
 			isDownloadActive = false;
-
+			AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 			AppendLog("Initialization complete.");
 		}
 
@@ -177,6 +204,9 @@ namespace Synix_Control_Panel
 				dataGridView1.Refresh();
 
 				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
+				AppendLog($"--- [INFO] INSTALL {newServer.Game} can take up to 2-10 minutes ---", Color.DeepSkyBlue, true);
+				AppendLog($"--- [WARNING] Synix close window button is disabled while the installation is in progress and will be disabled once the installation is complete! ---", Color.Orange, true);
+				AppendLog($"--- [INFO] If it looks like it's not working steamCMD is running in the background and will not return real time results in till it finishes. ---", Color.OrangeRed, true);
 				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
 
 				// 2. Run SteamCMD in the background
@@ -198,6 +228,7 @@ namespace Synix_Control_Panel
 				}
 				newServer.Status = "Offline";
 				isDownloadActive = false;
+				AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 
 				dataGridView1.Invalidate();
 				dataGridView1.Refresh();
@@ -232,6 +263,93 @@ namespace Synix_Control_Panel
 			else
 			{
 				MessageBox.Show("Please select a server in the list first.");
+			}
+		}
+
+		private async void btnUpdate_Click(object sender, EventArgs e)
+		{
+			// Prevent clicking if the app is still loading
+			if (isInitializing) return;
+
+			// 1. Make sure they actually selected a server in the grid
+			if (dataGridView1.SelectedRows.Count > 0)
+			{
+				// Grab the server they clicked on
+				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
+
+				// 2. Safety Check: Don't update a running server!
+				if (selectedServer.Status == "Online")
+				{
+					MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+
+				// Safety Check: Don't update if it's already busy
+				if (selectedServer.Status == "Updating" || selectedServer.Status == "Installing")
+				{
+					MessageBox.Show("This server is already busy.", "Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return;
+				}
+
+				// Ask for confirmation just in case they clicked it by accident
+				var confirmResult = MessageBox.Show($"Are you sure you want to update {selectedServer.ServerName}?",
+										 "Confirm Update",
+										 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+				if (confirmResult != DialogResult.Yes) return;
+
+				// 3. Get the AppID from the database
+				var gameData = GameDatabase.GetGame(selectedServer.Game);
+				string correctAppId = gameData?.AppID ?? "";
+
+				if (string.IsNullOrEmpty(correctAppId))
+				{
+					MessageBox.Show("Could not find the AppID for this game. Cannot update.", "Error");
+					return;
+				}
+
+				// 4. Update the UI to show it's working
+				selectedServer.Status = "Updating";
+				isDownloadActive = true;
+				dataGridView1.Refresh();
+				AppendLog($"--- UPDATE STARTED: {selectedServer.Game} ---");
+				AppendLog($"--- [WARNING] Synix close window button is disabled while the update is in progress and will be disabled once the update is complete! ---", Color.Orange, true);
+				AppendLog($"--- [INFO] Updating {selectedServer.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
+
+				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
+
+				// 5. Run SteamCMD in the background (Re-using your Installer!)
+				await Task.Run(() =>
+				{
+					ServerInstaller.Install(
+						steamPath,
+						selectedServer.InstallPath,
+						correctAppId,
+						AppendLog
+					);
+				});
+
+				// 6. STEAMCMD IS DONE! 
+				// Re-apply our custom game fixes just in case Steam wiped out the DLLs or configs!
+				bool fixApplied = GameFix.PostInstall(selectedServer);
+				if (fixApplied)
+				{
+					AppendLog($"[SUCCESS] Re-applied missing files to the {selectedServer.Game} server after the update.");
+				}
+
+				// 7. Put the server back to normal
+				selectedServer.Status = "Offline";
+				AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
+				isDownloadActive = false;
+
+				dataGridView1.Invalidate();
+				dataGridView1.Refresh();
+
+				AppendLog($"--- UPDATE FINISHED: {selectedServer.Game} ---");
+			}
+			else
+			{
+				MessageBox.Show("Please select a server in the list to update.", "No Server Selected");
 			}
 		}
 
