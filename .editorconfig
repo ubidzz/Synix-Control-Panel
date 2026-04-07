@@ -281,3 +281,7 @@ dotnet_style_qualification_for_field = false:silent
 dotnet_style_qualification_for_property = false:silent
 dotnet_style_qualification_for_method = false:silent
 dotnet_style_qualification_for_event = false:silent
+
+# Ignore auto-generated Designer files so the UI doesn't break
+[*.Designer.cs]
+generated_code = true

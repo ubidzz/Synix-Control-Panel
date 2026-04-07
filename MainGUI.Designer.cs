@@ -177,7 +177,7 @@
 			// logo
 			// 
 			logo.BackColor = Color.Transparent;
-			logo.Image = Game_Server_Control_Panel.Properties.Resources.synix_logo;
+			logo.Image = Synix_Control_Panel.Properties.Resources.synix_logo;
 			logo.Location = new Point(-19, -49);
 			logo.Name = "logo";
 			logo.Size = new Size(321, 189);
@@ -189,7 +189,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			BackgroundImage = Game_Server_Control_Panel.Properties.Resources.background;
+			BackgroundImage = Synix_Control_Panel.Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
 			Controls.Add(dataGridView1);

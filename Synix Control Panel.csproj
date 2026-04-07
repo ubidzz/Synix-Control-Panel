@@ -3,11 +3,12 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <RootNamespace>Game_Server_Control_Panel</RootNamespace>
+    <RootNamespace>Synix_Control_Panel</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Images\SyniX logo.ico</ApplicationIcon>
+    <AssemblyName>Synix_Control_Panel</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
