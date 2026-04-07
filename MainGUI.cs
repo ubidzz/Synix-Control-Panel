@@ -30,39 +30,66 @@ namespace Synix_Control_Panel
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
-		private const int maxGraphPoints = 60;
+		private int chartTickCounter = 0;
+		private double systemTotalRamGb = 16.0;
 
 		public MainGUI()
 		{
 			InitializeComponent();
 			CreateFiles.LoadServers();
 			GridStyler.DarkTheme(dataGridView1);
-			GridStyler.StyleHeartbeatChart(chartHeartbeat);
+			GridStyler.HeartbeatChart(chartHeartbeat);
 			chartHeartbeat.Series["TotalCPU"].Points.Clear();
 			dataGridView1.DataSource = serverList;
 			Instance = this;
 		}
 
+		private void MainGUI_Load(object sender, EventArgs e)
+		{
+			// 1. Get your actual RAM (e.g. 98GB) 
+			// We removed 'double' from the start so it updates the variable at the top of your file
+			systemTotalRamGb = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+
+			// 2. Setup the chart with that limit
+			Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
+
+			// 3. Style your labels
+			Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
+		}
+
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// A. Use your existing PID-based monitor to get the Total CPU
+			// 1. Get the raw server-only data
 			var usage = Synix_Control_Panel.MonitoringHandler.ResourceMonitor.GetTotalResources(serverList);
 
-			// B. Get the series object
-			Series s = chartHeartbeat.Series["TotalCPU"];
+			// 2. Convert MB to GB for the graph and label
+			double ramGB = usage.TotalRamMB / 1024.0;
 
-			// C. Add the new "Heartbeat" point
-			s.Points.AddY(usage.TotalCpuPercent);
+			// 3. Get the Series and ChartArea
+			var cpuSer = chartHeartbeat.Series["TotalCPU"];
+			var ramSer = chartHeartbeat.Series["TotalRAM"];
+			var ca = chartHeartbeat.ChartAreas[0];
 
-			// D. "Shift" the graph: Remove the oldest point to make it roll
-			if (s.Points.Count > maxGraphPoints)
+			// 4. Plot the points using the incrementing counter
+			cpuSer.Points.AddXY(chartTickCounter, usage.TotalCpuPercent);
+			ramSer.Points.AddXY(chartTickCounter, ramGB);
+
+			chartTickCounter++;
+
+			// 5. Memory Management: Remove old points that left the screen
+			if (cpuSer.Points.Count > 100)
 			{
-				s.Points.RemoveAt(0); // This creates the rolling effect
+				cpuSer.Points.RemoveAt(0);
+				ramSer.Points.RemoveAt(0);
 			}
 
-			// E. Keep the labels updated too
-			lblTotalCpu.Text = $"System Load: {usage.TotalCpuPercent:N1}%";
-			lblTotalRam.Text = $"Total RAM: {usage.TotalRamMB:N0} MB";
+			// 6. ANIMATION: Slide the "Camera" (shows last 60 ticks)
+			ca.AxisX.Minimum = chartTickCounter - 60;
+			ca.AxisX.Maximum = chartTickCounter;
+
+			// 7. Update the Dashboard Labels
+			lblTotalCpu.Text = $"CPU: {usage.TotalCpuPercent:N1}%";
+			lblTotalRam.Text = $"RAM: {ramGB:N2} GB / {systemTotalRamGb:N1} GB";
 		}
 
 		private void UpdateGrid()
@@ -254,33 +281,16 @@ namespace Synix_Control_Panel
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				AppendLog($"Launching {selectedServer.Game}: {selectedServer.ServerName}...");
-
-				// Set to running immediately
-				selectedServer.Status = "Online";
-				selectedServer.PID = startedProcess.Id;
-				UpdateGrid(); 
-
-				// 2. Hand it off to the ServerManager (The Expert)
+				// 1. Just call your method. It handles the PID and Status internally!
 				Servers.Start(selectedServer, msg =>
 				{
-					// Use Invoke to make sure the log updates on the UI thread safely
-					if (this.InvokeRequired)
-					{
-						this.Invoke((System.Windows.Forms.MethodInvoker)delegate
-						{
-							AppendLog(msg);
-							UpdateGrid(); // Refresh the GUI
-						});
-					}
-					else
+					this.Invoke((MethodInvoker)delegate
 					{
 						AppendLog(msg);
-						UpdateGrid();
-					}
+						UpdateGrid(); // This will refresh the colors and PID on screen
+					});
 				});
 			}
 			else

@@ -11,7 +11,6 @@
 using Synix_Control_Panel.ServerHandler;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel; // Required for BindingList
 using System.Diagnostics;
 using System.Linq;
 
@@ -19,35 +18,24 @@ namespace Synix_Control_Panel.MonitoringHandler
 {
 	public static class ResourceMonitor
 	{
+		// We store the last time we saw each process to calculate the "Delta"
+		private static Dictionary<int, TimeSpan> lastCpuTime = new Dictionary<int, TimeSpan>();
+		private static Dictionary<int, DateTime> lastCheckTime = new Dictionary<int, DateTime>();
+
 		public struct ServerUsage
 		{
 			public double TotalCpuPercent;
 			public double TotalRamMB;
-			public int ActiveServerCount;
 		}
 
-		// 1. This handles standard Lists
-		public static ServerUsage GetTotalResources(List<GameServer> serverList)
-		{
-			return CalculateUsage(serverList);
-		}
-
-		// 2. This handles the BindingList used by your DataGridView
-		// FIX: Change 'object' to 'ServerUsage'
-		public static ServerUsage GetTotalResources(BindingList<GameServer> serverList)
-		{
-			// We convert the BindingList to a List so we can use the same logic
-			return CalculateUsage(serverList.ToList());
-		}
-
-		// 3. Shared logic to keep things clean
 		public static ServerUsage CalculateUsage(IEnumerable<GameServer> serverList)
 		{
 			ServerUsage total = new ServerUsage();
+			int processorCount = Environment.ProcessorCount;
 
 			foreach (var server in serverList)
 			{
-				// Check if server is actually running
+				// Only monitor if server is Online and has a PID
 				if (server.PID.HasValue && server.Status?.ToLower() == "online")
 				{
 					try
@@ -56,28 +44,58 @@ namespace Synix_Control_Panel.MonitoringHandler
 						{
 							if (!proc.HasExited)
 							{
-								// 1. RAM Usage
+								// 1. RAM Usage (Simple snapshot)
 								total.TotalRamMB += (proc.WorkingSet64 / 1024.0 / 1024.0);
 
-								// 2. CPU Usage (The proper way for .NET)
-								// This gets the total time the CPU has worked since the process started.
-								// For a dashboard, we'll use a simpler 'Total System' check or 
-								// just use the ActiveServerCount to verify it's working.
-								total.ActiveServerCount++;
+								// 2. CPU Usage (The "Delta" Math)
+								// We compare how much CPU time the process used vs how much real time passed
+								DateTime currentTime = DateTime.Now;
+								TimeSpan currentCpuTime = proc.TotalProcessorTime;
 
-								// For now, let's just put a random 'Pulse' to see if the graph moves
-								// We will add the high-precision delta math once we see the line!
-								total.TotalCpuPercent += 5.0;
+								if (lastCpuTime.ContainsKey(proc.Id))
+								{
+									double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
+									double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
+
+									// Calculate % based on all CPU cores
+									double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
+
+									// Add to the total (Sum of all running servers)
+									total.TotalCpuPercent += cpuPercent;
+								}
+
+								// Update the "Last Seen" data for the next tick
+								lastCpuTime[proc.Id] = currentCpuTime;
+								lastCheckTime[proc.Id] = currentTime;
 							}
 						}
 					}
 					catch
 					{
-						server.Status = "Offline"; // Auto-detect if it crashed
+						// Process closed or access denied; clean up the dictionary
+						if (server.PID.HasValue)
+						{
+							lastCpuTime.Remove(server.PID.Value);
+							lastCheckTime.Remove(server.PID.Value);
+						}
 					}
 				}
 			}
+
 			return total;
+		}
+		public static double GetTotalSystemRamGB()
+		{
+			// This gets the total physical memory in bytes, then converts to GB
+			// Using 'long' to handle large amounts like your 98GB
+			var gcInfo = GC.GetGCMemoryInfo();
+			double totalBytes = (double)gcInfo.TotalAvailableMemoryBytes;
+			return totalBytes / 1024.0 / 1024.0 / 1024.0;
+		}
+
+		public static ServerUsage GetTotalResources(System.ComponentModel.BindingList<GameServer> serverList)
+		{
+			return CalculateUsage(serverList.ToList());
 		}
 	}
 }

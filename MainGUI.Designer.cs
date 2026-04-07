@@ -29,9 +29,9 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-			System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-			System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+			System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
 			colGame = new DataGridViewTextBoxColumn();
@@ -49,9 +49,9 @@
 			btnStop = new Button();
 			logo = new PictureBox();
 			chartHeartbeat = new System.Windows.Forms.DataVisualization.Charting.Chart();
-			lblTotalCpu = new Label();
 			lblTotalRam = new Label();
-			timer1 = new System.Windows.Forms.Timer(components);
+			lblTotalCpu = new Label();
+			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -197,42 +197,46 @@
 			// 
 			// chartHeartbeat
 			// 
-			chartArea2.Name = "ChartArea1";
-			chartHeartbeat.ChartAreas.Add(chartArea2);
-			legend2.Name = "Legend1";
-			chartHeartbeat.Legends.Add(legend2);
-			chartHeartbeat.Location = new Point(505, 9);
+			chartArea1.Name = "ChartArea1";
+			chartHeartbeat.ChartAreas.Add(chartArea1);
+			legend1.Name = "Legend1";
+			chartHeartbeat.Legends.Add(legend1);
+			chartHeartbeat.Location = new Point(505, 28);
 			chartHeartbeat.Name = "chartHeartbeat";
-			series2.ChartArea = "ChartArea1";
-			series2.Legend = "Legend1";
-			series2.Name = "Series1";
-			chartHeartbeat.Series.Add(series2);
-			chartHeartbeat.Size = new Size(300, 80);
+			series1.ChartArea = "ChartArea1";
+			series1.Legend = "Legend1";
+			series1.Name = "Series1";
+			chartHeartbeat.Series.Add(series1);
+			chartHeartbeat.Size = new Size(300, 64);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
-			// 
-			// lblTotalCpu
-			// 
-			lblTotalCpu.AutoSize = true;
-			lblTotalCpu.Location = new Point(399, 50);
-			lblTotalCpu.Name = "lblTotalCpu";
-			lblTotalCpu.Size = new Size(38, 15);
-			lblTotalCpu.TabIndex = 12;
-			lblTotalCpu.Text = "label1";
 			// 
 			// lblTotalRam
 			// 
 			lblTotalRam.AutoSize = true;
-			lblTotalRam.Location = new Point(399, 9);
+			lblTotalRam.BackColor = Color.Transparent;
+			lblTotalRam.ForeColor = Color.Fuchsia;
+			lblTotalRam.Location = new Point(670, 9);
 			lblTotalRam.Name = "lblTotalRam";
-			lblTotalRam.Size = new Size(38, 15);
-			lblTotalRam.TabIndex = 13;
-			lblTotalRam.Text = "label1";
+			lblTotalRam.Size = new Size(33, 15);
+			lblTotalRam.TabIndex = 12;
+			lblTotalRam.Text = "RAM";
 			// 
-			// timer1
+			// lblTotalCpu
 			// 
-			timer1.Enabled = true;
-			timer1.Interval = 1000;
+			lblTotalCpu.AutoSize = true;
+			lblTotalCpu.BackColor = Color.Transparent;
+			lblTotalCpu.ForeColor = Color.DarkCyan;
+			lblTotalCpu.Location = new Point(516, 9);
+			lblTotalCpu.Name = "lblTotalCpu";
+			lblTotalCpu.Size = new Size(0, 15);
+			lblTotalCpu.TabIndex = 13;
+			// 
+			// tmrResourceUpdates
+			// 
+			tmrResourceUpdates.Enabled = true;
+			tmrResourceUpdates.Interval = 1000;
+			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
 			// 
 			// MainGUI
 			// 
@@ -241,8 +245,8 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
-			Controls.Add(lblTotalRam);
 			Controls.Add(lblTotalCpu);
+			Controls.Add(lblTotalRam);
 			Controls.Add(chartHeartbeat);
 			Controls.Add(dataGridView1);
 			Controls.Add(logo);
@@ -259,6 +263,7 @@
 			SizeGripStyle = SizeGripStyle.Hide;
 			Text = "Synix Control Panel";
 			FormClosing += GUI_FormClosing;
+			Load += MainGUI_Load;
 			Shown += MainGUI_Shown;
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
 			((System.ComponentModel.ISupportInitialize)logo).EndInit();
@@ -285,8 +290,8 @@
 		private DataGridViewTextBoxColumn colStatus;
 		private PictureBox logo;
 		private System.Windows.Forms.DataVisualization.Charting.Chart chartHeartbeat;
-		private Label lblTotalCpu;
 		private Label lblTotalRam;
-		private System.Windows.Forms.Timer timer1;
+		private Label lblTotalCpu;
+		private System.Windows.Forms.Timer tmrResourceUpdates;
 	}
 }
