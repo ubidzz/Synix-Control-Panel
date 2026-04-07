@@ -17,10 +17,10 @@ namespace Synix_Control_Panel.Design
 {
 	public static class GridStyler
 	{
-		public static Color CpuColor = Color.Cyan;
-		public static Color RamColor = Color.MediumPurple;
-		public static Color PanelBg = Color.FromArgb(25, 25, 25);
-		public static Color ChartAreaBg = Color.FromArgb(15, 15, 15);
+		private static Color CpuCyan = Color.FromArgb(160, 0, 255, 255);
+		private static Color RamPurple = Color.FromArgb(80, 150, 0, 200);
+		private static Color PlotBg = Color.FromArgb(15, 15, 15);
+		private static Color GridLineColor = Color.FromArgb(40, 40, 40);
 
 		public static void DarkTheme(DataGridView dgv)
 		{
@@ -76,7 +76,7 @@ namespace Synix_Control_Panel.Design
 		{
 			if (chart == null) return;
 
-			// 1. Base Setup
+			// --- Reset and Transparency ---
 			chart.Series.Clear();
 			chart.ChartAreas.Clear();
 			chart.Legends.Clear();
@@ -84,51 +84,66 @@ namespace Synix_Control_Panel.Design
 			chart.AntiAliasing = AntiAliasingStyles.All;
 
 			ChartArea ca = chart.ChartAreas.Add("Default");
-			ca.BackColor = Color.FromArgb(15, 15, 15); // Deep dark plot area
+			ca.BackColor = PlotBg;
 
-			// 2. CPU Axis (Left Side: 0-100%)
+			// --- Left Axis (CPU 0-100%) ---
 			ca.AxisY.Minimum = 0;
 			ca.AxisY.Maximum = 100;
 			ca.AxisY.LabelStyle.Enabled = false;
-			ca.AxisY.MajorGrid.LineColor = Color.FromArgb(40, 40, 40);
 
-			// 3. RAM Axis (Right Side: 0 to Total System GB)
+			// Horizontal lines stay STILL because the Y-axis doesn't scroll
+			ca.AxisY.MajorGrid.Enabled = true;
+			ca.AxisY.MajorGrid.LineColor = GridLineColor;
+
+			// --- Right Axis (RAM 0 to Max GB) ---
 			ca.AxisY2.Enabled = AxisEnabled.True;
 			ca.AxisY2.Minimum = 0;
-			ca.AxisY2.Maximum = maxRamGb; // This prevents the "Filled Block" issue
+			ca.AxisY2.Maximum = (maxRamGb > 0) ? maxRamGb : 98.0;
 			ca.AxisY2.LabelStyle.Enabled = false;
 			ca.AxisY2.MajorGrid.Enabled = false;
 
-			// 4. X-Axis (Timeline)
+			// --- X-Axis (The Scrolling Timeline) ---
 			ca.AxisX.LabelStyle.Enabled = false;
-			ca.AxisX.MajorGrid.LineColor = Color.FromArgb(40, 40, 40);
 
-			// 5. RAM Series (Background Layer - Purple)
+			// THE FIX: Disabling MajorGrid here stops the vertical lines from 
+			// "walking" or scrolling across the screen.
+			ca.AxisX.MajorGrid.Enabled = false;
+
+			// --- RAM Series (Background Layer) ---
 			Series ramSer = chart.Series.Add("TotalRAM");
 			ramSer.ChartType = SeriesChartType.SplineArea;
-			ramSer.YAxisType = AxisType.Secondary; // Link to GB scale
-			ramSer.Color = Color.FromArgb(80, 150, 0, 200); // Semi-transparent
+			ramSer.YAxisType = AxisType.Secondary;
+			ramSer.Color = RamPurple;
 			ramSer.BorderColor = Color.MediumPurple;
 			ramSer.BorderWidth = 1;
 
-			// 6. CPU Series (Foreground Layer - Cyan)
+			// --- CPU Series (Foreground Layer) ---
 			Series cpuSer = chart.Series.Add("TotalCPU");
 			cpuSer.ChartType = SeriesChartType.SplineArea;
-			cpuSer.YAxisType = AxisType.Primary; // Link to % scale
-			cpuSer.Color = Color.FromArgb(160, 0, 255, 255); // Glowing Cyan
+			cpuSer.YAxisType = AxisType.Primary;
+			cpuSer.Color = CpuCyan;
 			cpuSer.BorderColor = Color.Cyan;
 			cpuSer.BorderWidth = 2;
 		}
 
+		public static void HeartbeatChart(Chart chart)
+		{
+			// If you forget the 98GB, this automatically adds it for you
+			HeartbeatChart(chart, 98.0);
+		}
+
 		public static void DashboardLabels(Label cpuLabel, Label ramLabel)
 		{
-			// CPU Label
-			cpuLabel.BackColor = Color.Transparent;
-			cpuLabel.ForeColor = CpuColor;
-
-			// RAM Label
-			ramLabel.BackColor = Color.Transparent;
-			ramLabel.ForeColor = RamColor;
+			if (cpuLabel != null)
+			{
+				cpuLabel.ForeColor = Color.Cyan;
+				cpuLabel.BackColor = Color.Transparent;
+			}
+			if (ramLabel != null)
+			{
+				ramLabel.ForeColor = Color.MediumPurple;
+				ramLabel.BackColor = Color.Transparent;
+			}
 		}
 
 		public static void SetStatusColor(DataGridView dgv, DataGridViewCellFormattingEventArgs e)

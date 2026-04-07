@@ -86,11 +86,9 @@ namespace Synix_Control_Panel.MonitoringHandler
 		}
 		public static double GetTotalSystemRamGB()
 		{
-			// This gets the total physical memory in bytes, then converts to GB
-			// Using 'long' to handle large amounts like your 98GB
 			var gcInfo = GC.GetGCMemoryInfo();
-			double totalBytes = (double)gcInfo.TotalAvailableMemoryBytes;
-			return totalBytes / 1024.0 / 1024.0 / 1024.0;
+			// Converts Bytes to GB
+			return (double)gcInfo.TotalAvailableMemoryBytes / 1024 / 1024 / 1024;
 		}
 
 		public static ServerUsage GetTotalResources(System.ComponentModel.BindingList<GameServer> serverList)

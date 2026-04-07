@@ -30,8 +30,9 @@ namespace Synix_Control_Panel
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
+		private double systemTotalRamGb = 98.0;
 		private int chartTickCounter = 0;
-		private double systemTotalRamGb = 16.0;
+		private const int maxGraphPoints = 60;
 
 		public MainGUI()
 		{
@@ -46,50 +47,49 @@ namespace Synix_Control_Panel
 
 		private void MainGUI_Load(object sender, EventArgs e)
 		{
-			// 1. Get your actual RAM (e.g. 98GB) 
-			// We removed 'double' from the start so it updates the variable at the top of your file
-			systemTotalRamGb = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+			try
+			{
+				// 1. Get the RAM. If the helper fails, we use 98.0 as a backup.
+				systemTotalRamGb = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+				if (systemTotalRamGb <= 0) systemTotalRamGb = 98.0;
 
-			// 2. Setup the chart with that limit
-			Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
+				// 2. THIS IS LINE 42 - It must have the comma and the variable!
+				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
 
-			// 3. Style your labels
-			Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
+				// 3. Setup the labels
+				Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
+
+				// 4. Load the rest of your app
+				UpdateGrid();
+				tmrResourceUpdates.Start();
+			}
+			catch (Exception ex)
+			{
+				// This will tell you if something else is crashing during startup
+				MessageBox.Show("Error loading Synix: " + ex.Message);
+			}
 		}
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// 1. Get the raw server-only data
+			// 1. Get the data
 			var usage = Synix_Control_Panel.MonitoringHandler.ResourceMonitor.GetTotalResources(serverList);
 
-			// 2. Convert MB to GB for the graph and label
+			// 2. YOU NEED THIS LINE - It defines 'ramGB'
 			double ramGB = usage.TotalRamMB / 1024.0;
 
-			// 3. Get the Series and ChartArea
 			var cpuSer = chartHeartbeat.Series["TotalCPU"];
 			var ramSer = chartHeartbeat.Series["TotalRAM"];
 			var ca = chartHeartbeat.ChartAreas[0];
 
-			// 4. Plot the points using the incrementing counter
+			// 3. Plot the points
 			cpuSer.Points.AddXY(chartTickCounter, usage.TotalCpuPercent);
 			ramSer.Points.AddXY(chartTickCounter, ramGB);
-
 			chartTickCounter++;
 
-			// 5. Memory Management: Remove old points that left the screen
-			if (cpuSer.Points.Count > 100)
-			{
-				cpuSer.Points.RemoveAt(0);
-				ramSer.Points.RemoveAt(0);
-			}
-
-			// 6. ANIMATION: Slide the "Camera" (shows last 60 ticks)
-			ca.AxisX.Minimum = chartTickCounter - 60;
-			ca.AxisX.Maximum = chartTickCounter;
-
-			// 7. Update the Dashboard Labels
+			// 4. Update the labels
 			lblTotalCpu.Text = $"CPU: {usage.TotalCpuPercent:N1}%";
-			lblTotalRam.Text = $"RAM: {ramGB:N2} GB / {systemTotalRamGb:N1} GB";
+			lblTotalRam.Text = $"RAM: {ramGB:N2} GB"; // This line will fail if Step 2 is missing!
 		}
 
 		private void UpdateGrid()
