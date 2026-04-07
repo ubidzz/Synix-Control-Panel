@@ -42,6 +42,10 @@ namespace Synix_Control_Panel
 			GridStyler.HeartbeatChart(chartHeartbeat);
 			chartHeartbeat.Series["TotalCPU"].Points.Clear();
 			dataGridView1.DataSource = serverList;
+			typeof(DataGridView).InvokeMember("DoubleBuffered",
+		System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty,
+		null, dataGridView1, new object[] { true });
+			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Instance = this;
 		}
 
@@ -54,7 +58,8 @@ namespace Synix_Control_Panel
 				if (physicalRam <= 0) physicalRam = 98.0;
 
 				// 2. The 7GB Buffer: Subtract 7 so Windows stays happy
-				systemTotalRamGb = Math.Max(physicalRam - 7.0, 4.0);
+				double reserved = Math.Max(physicalRam * 0.15, 3.0); // Reserve 15% or at least 3GB
+				systemTotalRamGb = physicalRam - reserved;
 
 				// 3. Apply styles with the NEW limit
 				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
@@ -330,6 +335,11 @@ namespace Synix_Control_Panel
 			// Pass the current list of servers to the new monitor window
 			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
 			monitor.Show(); // .Show() lets them keep the panel open while using the main app
+		}
+		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		{
+			// Just draw the rows using the solid colors from GridStyler
+			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 	}
 }

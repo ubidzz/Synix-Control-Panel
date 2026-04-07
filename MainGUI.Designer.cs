@@ -67,9 +67,10 @@
 			dataGridView1.Location = new Point(12, 95);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(841, 487);
+			dataGridView1.Size = new Size(883, 487);
 			dataGridView1.TabIndex = 0;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
+			dataGridView1.CellPainting += dataGridView1_CellPainting;
 			// 
 			// colGame
 			// 
@@ -160,10 +161,10 @@
 			// 
 			rtbLog.BackColor = SystemColors.ActiveCaptionText;
 			rtbLog.ForeColor = Color.Lime;
-			rtbLog.Location = new Point(859, 12);
+			rtbLog.Location = new Point(901, 12);
 			rtbLog.Name = "rtbLog";
 			rtbLog.ReadOnly = true;
-			rtbLog.Size = new Size(370, 605);
+			rtbLog.Size = new Size(328, 605);
 			rtbLog.TabIndex = 6;
 			rtbLog.Text = "";
 			// 
@@ -215,7 +216,7 @@
 			series1.Legend = "Legend1";
 			series1.Name = "Series1";
 			chartHeartbeat.Series.Add(series1);
-			chartHeartbeat.Size = new Size(348, 64);
+			chartHeartbeat.Size = new Size(384, 64);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
 			chartHeartbeat.Click += ResourceGraph_Click;

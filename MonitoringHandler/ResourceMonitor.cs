@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management;
 
 namespace Synix_Control_Panel.MonitoringHandler
 {
@@ -87,9 +88,27 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 		public static double GetTotalSystemRamGB()
 		{
-			var gcInfo = GC.GetGCMemoryInfo();
-			// Converts Bytes to GB
-			return (double)gcInfo.TotalAvailableMemoryBytes / 1024 / 1024 / 1024;
+			try
+			{
+				double totalBytes = 0;
+
+				// This talks directly to the PC hardware to find the REAL RAM total
+				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+				{
+					foreach (ManagementObject obj in searcher.Get())
+					{
+						totalBytes = Convert.ToDouble(obj["TotalPhysicalMemory"]);
+					}
+				}
+
+				// Bytes -> Kilobytes -> Megabytes -> Gigabytes
+				return totalBytes / 1024.0 / 1024.0 / 1024.0;
+			}
+			catch (Exception)
+			{
+				// If the hardware check fails, we'll just guess 16GB so the app doesn't crash
+				return 16.0;
+			}
 		}
 
 		public static ServerUsage GetTotalResources(System.ComponentModel.BindingList<GameServer> serverList)
