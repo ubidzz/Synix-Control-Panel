@@ -336,8 +336,8 @@ namespace Synix_Control_Panel
 				numQueryPort.Value = gameData.QueryPort;
 				txtExtraArgs.Text = gameData.ExtraArgs;
 
+				// --- MAPS POPULATION ---
 				cmbWorldName.Items.Clear();
-
 				if (gameData.Maps != null && gameData.Maps.Count > 0)
 				{
 					foreach (var map in gameData.Maps)
@@ -345,6 +345,19 @@ namespace Synix_Control_Panel
 						cmbWorldName.Items.Add(map);
 					}
 					cmbWorldName.SelectedIndex = 0;
+				}
+
+				// --- ADD THIS: COMPETITIVE MODES POPULATION ---
+				cmbCompetitive.Items.Clear();
+				if (gameData.GameModes != null && gameData.GameModes.Count > 0)
+				{
+					foreach (var mode in gameData.GameModes)
+					{
+						cmbCompetitive.Items.Add(mode);
+					}
+					// Default to PVE or the first item if PVE isn't there
+					if (cmbCompetitive.Items.Contains("PVE")) cmbCompetitive.Text = "PVE";
+					else cmbCompetitive.SelectedIndex = 0;
 				}
 
 				UpdatePathPreview();
