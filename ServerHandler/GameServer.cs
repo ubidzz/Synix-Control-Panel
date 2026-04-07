@@ -20,9 +20,6 @@ public class GameInfo
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
 	public string ExtraArgs { get; set; } = string.Empty;
-
-	// Change 'internal set' to 'public set' so it saves/loads in JSON
-	// We removed [JsonIgnore] because you want this to save
 	public List<string> GameModes { get; set; } = [];
 }
 
@@ -37,14 +34,12 @@ public class GameServer : GameInfo
 	public string WorldName { get; set; } = "NewWorld";
 	public bool IsDefaultPath { get; set; } = true;
 	public int? PID { get; set; }
-
 	[JsonIgnore]
 	public Process? RunningProcess { get; set; }
-
-	// Change to 'public set' to ensure the user's choice is saved
 	public string GameMode { get; set; } = "PVE";
 	[JsonIgnore]
 	public double LastCpuMillis { get; set; } = 0;
 	[JsonIgnore]
 	public DateTime LastSampleTime { get; set; } = DateTime.Now;
+	public string? SelectedMode { get; set; } = "PVE";
 }
