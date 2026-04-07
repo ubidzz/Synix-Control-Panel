@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Serialization;
+using static Synix_Control_Panel.GameDatabase;
 
 public class GameInfo
 {
@@ -22,6 +23,7 @@ public class GameInfo
 	public string ExtraArgs { get; set; } = string.Empty;
 	public List<string> GameModes { get; set; } = [];
 	public string RconSyntax { get; init; } = "";
+	public PostInstallStep[]? PostInstallSteps { get; init; }
 }
 
 public class GameServer : GameInfo

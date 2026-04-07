@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
 
 namespace Synix_Control_Panel
 {
@@ -249,7 +250,7 @@ namespace Synix_Control_Panel
 					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
 					{
 						// This calls your logic to physically move the folder on the hard drive
-						RenameServerFolder.Rename(_existingServer, NewServer);
+						ServerFolder.Rename(_existingServer, NewServer);
 						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
 					}
 
@@ -260,13 +261,13 @@ namespace Synix_Control_Panel
 				else
 				{
 					// Logic for a brand new server
-					CreateFolders.Create(targetPath);
+					FolderHandler.Create(targetPath);
 					MainGUI.serverList.Add(NewServer);
 					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
 				}
 
 				// 5. Save the updated list to servers.json
-				CreateFiles.SaveServers();
+				FileHandler.SaveServers();
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}

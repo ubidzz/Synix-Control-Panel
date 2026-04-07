@@ -822,7 +822,7 @@ namespace Synix_Control_Panel
 				AppID = "824360",
 				ExeName = @"ShooterGame\Binaries\Win64\PixARKServer.exe",
 				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} {rcon} -server -log",
-				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\""
+				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\"",
 				Port = 7777,
 				QueryPort = 27015,
 				GameModes = ["PVE", "PVP"],
@@ -956,7 +956,7 @@ namespace Synix_Control_Panel
 				AppID = "317590",
 				ExeName = "srcds.exe",
 				RequiredArgs = "-game nmrih -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\""
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["nmo_broadway", "nmo_cabin"]
@@ -1002,6 +1002,18 @@ namespace Synix_Control_Panel
 		public static GameInfo? GetGame(string gameName)
 		{
 			return games.FirstOrDefault(g => g.Game.Equals(gameName, StringComparison.OrdinalIgnoreCase));
+		}
+
+		public class PostInstallStep
+		{
+			// Can be "CopySteamDlls" or "CreateFile"
+			public string ActionType { get; init; } = "";
+
+			// Where the file goes (e.g., "WS\Binaries\Win64" or "DSSetings.txt")
+			public string TargetPath { get; init; } = "";
+
+			// The raw text to write into the file (Only used for "CreateFile")
+			public string FileContent { get; init; } = "";
 		}
 	}
 }

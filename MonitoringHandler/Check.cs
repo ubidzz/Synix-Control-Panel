@@ -61,7 +61,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 						MainGUI.Instance?.AppendLog($"[MONITOR] {server.ServerName} has stopped or crashed.");
 
 						// Save the "Stopped" status to the JSON immediately
-						CreateFiles.SaveServers();
+						FileHandler.SaveServers();
 					}
 				}
 			}

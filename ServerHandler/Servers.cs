@@ -102,7 +102,7 @@ namespace Synix_Control_Panel.ServerHandler
 					server.Status = "Online";
 					server.PID = proc.Id;
 
-					CreateFiles.SaveServers();
+					FileHandler.SaveServers();
 				}
 			}
 			catch (Exception ex)
@@ -154,7 +154,7 @@ namespace Synix_Control_Panel.ServerHandler
 				server.Status = "Offline";
 				server.PID = null;
 				server.RunningProcess = null;
-				CreateFiles.SaveServers();
+				FileHandler.SaveServers();
 			}
 		}
 	}

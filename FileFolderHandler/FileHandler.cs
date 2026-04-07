@@ -19,7 +19,7 @@ using System.Text.Json;
 
 namespace Synix_Control_Panel
 {
-	public static class CreateFiles
+	public static class FileHandler
 	{
 		private static readonly string FolderPath = @"C:\games\SynixData";
 		private static readonly string FileName = "servers.json";
@@ -89,7 +89,7 @@ namespace Synix_Control_Panel
 			try
 			{
 				// Uses your dedicated CreateFolders utility to ensure the path is ready
-				CreateFolders.Create(folderPath);
+				FolderHandler.Create(folderPath);
 
 				string fullPath = Path.Combine(folderPath, fileName);
 
@@ -99,6 +99,34 @@ namespace Synix_Control_Panel
 			}
 			catch (Exception)
 			{
+				return false;
+			}
+		}
+
+		// ---> NEW COPY METHOD ADDED HERE <---
+		public static bool Copy(string sourceFilePath, string targetFolderPath, string targetFileName, bool overwrite = true)
+		{
+			try
+			{
+				// 1. Make sure the file we want to copy actually exists
+				if (!File.Exists(sourceFilePath))
+				{
+					return false;
+				}
+
+				// 2. Make sure the folder we are copying TO exists
+				FolderHandler.Create(targetFolderPath);
+
+				// 3. Build the final destination path
+				string fullTargetPath = Path.Combine(targetFolderPath, targetFileName);
+
+				// 4. Copy the file
+				File.Copy(sourceFilePath, fullTargetPath, overwrite);
+				return true;
+			}
+			catch (Exception)
+			{
+				// Returns false if a file is locked or access is denied
 				return false;
 			}
 		}

@@ -9,18 +9,19 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
-using System.Windows.Forms;
-using Synix_Control_Panel.ServerHandler;
-using Synix_Control_Panel.FileFolderHandler;
-using Synix_Control_Panel.SteamCMDHandler;
-using Synix_Control_Panel.MonitoringHandler;
 using Synix_Control_Panel.Design;
+using Synix_Control_Panel.FileFolderHandler;
+using Synix_Control_Panel.MonitoringHandler;
+using Synix_Control_Panel.ServerHandler;
+using Synix_Control_Panel.SteamCMDHandler;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
 
 namespace Synix_Control_Panel
 {
@@ -37,7 +38,7 @@ namespace Synix_Control_Panel
 		public MainGUI()
 		{
 			InitializeComponent();
-			CreateFiles.LoadServers();
+			FileHandler.LoadServers();
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.HeartbeatChart(chartHeartbeat);
 			chartHeartbeat.Series["TotalCPU"].Points.Clear();
@@ -189,13 +190,14 @@ namespace Synix_Control_Panel
 					);
 				});
 
+				GameFix.PostInstall(newServer);
 				newServer.Status = "Offline";
 				isDownloadActive = false;
 
 				dataGridView1.Invalidate();
 				dataGridView1.Refresh();
 
-				CreateFiles.SaveServers();
+				FileHandler.SaveServers();
 				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
 			}
 		}
@@ -252,7 +254,7 @@ namespace Synix_Control_Panel
 					try
 					{
 						// 2. Call the backend to do the dirty work
-						Delete.Server(selectedServer, AppendLog);
+						ServerFolder.Delete(selectedServer, AppendLog);
 
 						// 3. Update the UI
 						UpdateGrid();
