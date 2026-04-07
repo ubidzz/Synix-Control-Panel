@@ -29,4 +29,12 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="G:\Projects C#\Game Server Manager\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="G:\Projects C#\Game Server Manager\.editorconfig" />
+  </ItemGroup>
+
 </Project>

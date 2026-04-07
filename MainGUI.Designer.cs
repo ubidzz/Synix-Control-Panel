@@ -43,9 +43,9 @@
 			rtbLog = new RichTextBox();
 			btnStart = new Button();
 			btnStop = new Button();
-			pictureBox1 = new PictureBox();
+			logo = new PictureBox();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			SuspendLayout();
 			// 
 			// dataGridView1
@@ -174,26 +174,26 @@
 			btnStop.UseVisualStyleBackColor = true;
 			btnStop.Click += btnStop_Click;
 			// 
-			// pictureBox1
+			// logo
 			// 
-			pictureBox1.BackColor = Color.Transparent;
-			pictureBox1.Image = Properties.Resources.synix_logo;
-			pictureBox1.Location = new Point(-19, -49);
-			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(321, 189);
-			pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-			pictureBox1.TabIndex = 10;
-			pictureBox1.TabStop = false;
+			logo.BackColor = Color.Transparent;
+			logo.Image = Game_Server_Control_Panel.Properties.Resources.synix_logo;
+			logo.Location = new Point(-19, -49);
+			logo.Name = "logo";
+			logo.Size = new Size(321, 189);
+			logo.SizeMode = PictureBoxSizeMode.StretchImage;
+			logo.TabIndex = 10;
+			logo.TabStop = false;
 			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			BackgroundImage = Properties.Resources.background;
+			BackgroundImage = Game_Server_Control_Panel.Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
 			Controls.Add(dataGridView1);
-			Controls.Add(pictureBox1);
+			Controls.Add(logo);
 			Controls.Add(btnStop);
 			Controls.Add(btnStart);
 			Controls.Add(rtbLog);
@@ -209,7 +209,7 @@
 			FormClosing += GUI_FormClosing;
 			Shown += MainGUI_Shown;
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+			((System.ComponentModel.ISupportInitialize)logo).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -229,6 +229,6 @@
 		private DataGridViewTextBoxColumn colPassword;
 		private DataGridViewTextBoxColumn colAdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
-		private PictureBox pictureBox1;
+		private PictureBox logo;
 	}
 }
