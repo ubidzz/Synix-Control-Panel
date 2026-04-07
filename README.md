@@ -7,3 +7,5 @@ This source code is provided for **viewing and personal educational purposes onl
 * **No License:** This project does not carry an open-source license. The author retains all legal rights to the source code.
 * **Prohibited:** You may not modify, redistribute, or sell this software or its source code in any form.
 * **Commercial Use:** Unauthorized commercial use or resale is strictly prohibited.
+
+### Coming Soon

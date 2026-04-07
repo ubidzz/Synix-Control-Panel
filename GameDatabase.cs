@@ -36,7 +36,7 @@ namespace Synix_Control_Panel
 				Game = "Soulmask",
 				AppID = "3017310",
 				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
-				RequiredArgs = "{map} -server -log -online=Steam -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" {mode}", // <-- Added {mode} here
+				RequiredArgs = "{map} -server -log -online=Steam -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" -{mode}",
 				Port = 8777,
 				QueryPort = 27015,
 				Maps = ["Level01_Main"],
@@ -55,7 +55,7 @@ namespace Synix_Control_Panel
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				RequiredArgs = "-batchmode +server.level \"{map}\" +server.port {port} +server.queryport {query} +server.hostname \"{ServerName}\" +server.pve {mode}", // <-- Added +server.pve {mode}
+				RequiredArgs = "-batchmode +server.level \"{map}\" +server.port {port} +server.queryport {query} +server.hostname \"{ServerName}\" +server.pve {mode}", 
 				Port = 28015,
 				QueryPort = 28016,
 				Maps = ["Procedural Map"],
@@ -83,7 +83,7 @@ namespace Synix_Control_Panel
 				Game = "ARK: Survival Evolved",
 				AppID = "376030",
 				ExeName = @"ShooterGame\Binaries\Win64\ShooterGameServer.exe",
-				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheIsland", "ScorchedEarth_P", "Aberration_P", "Extinction", "Genesis", "Ragnarok", "TheCenter", "Valguero_P", "CrystalIsles", "Gen2", "LostIsland", "Fjordur"],
@@ -93,7 +93,7 @@ namespace Synix_Control_Panel
 				Game = "ARK: Survival Ascended",
 				AppID = "2430930",
 				ExeName = @"ShooterGame\Binaries\Win64\ArkServer.exe",
-				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheIsland_WP"],
@@ -139,7 +139,7 @@ namespace Synix_Control_Panel
 				Game = "Unturned",
 				AppID = "1110390",
 				ExeName = "Unturned.exe",
-				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} +map {map} -port {port} -password {pass}",
+				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} +map {map} -port {port} -password {pass} -{mode}",
 				Port = 27015,
 				QueryPort = 27016,
 				Maps = ["PEI", "Washington", "Russia", "Germany", "Hawaii"],
@@ -150,7 +150,7 @@ namespace Synix_Control_Panel
 				Game = "Space Engineers",
 				AppID = "298740",
 				ExeName = @"DedicatedServer64\SpaceEngineersDedicated.exe",
-				RequiredArgs = "-noconsole -ignorelastsession -port {port} {mode}", // <-- Added {mode} here
+				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} +map {map} -port {port} -password {pass} -{mode}",
 				Port = 27016,
 				QueryPort = 27016,
 				Maps = ["StarSystem", "AlienPlanet", "EmptyWorld"],
@@ -286,7 +286,7 @@ namespace Synix_Control_Panel
 				Game = "Myth of Empires",
 				AppID = "1371580",
 				ExeName = @"MOE\Binaries\Win64\MOEServer-Win64-Shipping.exe",
-				RequiredArgs = "{map}?Listen -server -log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\"",
+				RequiredArgs = "{map}?Listen -server -log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -{mode}",
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["ZhongZhou", "DongZhou"],
@@ -341,7 +341,7 @@ namespace Synix_Control_Panel
 				Game = "Killing Floor 2",
 				AppID = "232130",
 				ExeName = @"Binaries\Win64\KFServer.exe",
-				RequiredArgs = "{map}?Game=KFGameContent.KFGameInfo_{mode}?AdminPassword=\"{adminpass}\"?GamePassword=\"{pass}\" -Port={port}", // <-- Replaced Survival with {mode}
+				RequiredArgs = "{map}?Game=KFGameContent.KFGameInfo_{mode}?AdminPassword=\"{adminpass}\"?GamePassword=\"{pass}\" -Port={port}", 
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["KF-BioticsLab", "KF-BurningParis", "KF-Outpost", "KF-ZedLanding"],
@@ -351,7 +351,7 @@ namespace Synix_Control_Panel
 				Game = "The Front",
 				AppID = "2568660",
 				ExeName = @"ProjectWar\Binaries\Win64\TheFrontServer-Win64-Shipping.exe",
-				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
+				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log -{mode}",
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheFront"]
@@ -405,7 +405,7 @@ namespace Synix_Control_Panel
 				Game = "Conan Exiles",
 				AppID = "443030",
 				ExeName = @"ConanSandbox\Binaries\Win64\ConanSandboxServer.exe",
-				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?AdminPassword=\"{adminpass}\" -Port={port} -QueryPort={query} -nosteam",
+				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?AdminPassword=\"{adminpass}\" -Port={port} -QueryPort={query} -nosteam -{mode}",
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheExiledLands"],
@@ -813,7 +813,7 @@ namespace Synix_Control_Panel
 				Game = "PixARK",
 				AppID = "824360",
 				ExeName = @"ShooterGame\Binaries\Win64\PixARKServer.exe",
-				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log",
 				Port = 7777,
 				QueryPort = 27015,
 				GameModes = ["PVE", "PVP"],
@@ -824,10 +824,10 @@ namespace Synix_Control_Panel
 				Game = "Atlas",
 				AppID = "1006030",
 				ExeName = @"ShooterGame\Binaries\Win64\ShooterGameServer.exe",
-				RequiredArgs = "Ocean?ServerX=0?ServerY=0?AltSaveDirectoryName=\"{map}\"?ServerAdminPassword=\"{adminpass}\"?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query}?SeamlessIP=0.0.0.0 -log -server",
+				RequiredArgs = "Ocean?ServerX=0?ServerY=0?AltSaveDirectoryName=\"{map}\"?ServerPVE={mode}?ServerAdminPassword=\"{adminpass}\"?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query}?SeamlessIP=0.0.0.0 -log -server", // <-- Added ?ServerPVE={mode}
 				Port = 57555,
 				QueryPort = 57555,
-				GameModes = ["PVE", "PVP"],
+				GameModes = ["True", "False"], // <-- Changed to match ARK engine
 				Maps = ["00"]
 			},
 			new()
@@ -838,7 +838,6 @@ namespace Synix_Control_Panel
 				RequiredArgs = "Port={port} QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -log",
 				Port = 7042,
 				QueryPort = 7043,
-				GameModes = ["PVE", "PVP"],
 				Maps = ["SCUM_Island"]
 			},
 			new()
@@ -849,7 +848,6 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-nogui",
 				Port = 3000,
 				QueryPort = 3001,
-				GameModes = ["PVE", "Creative"],
 				Maps = ["DefaultWorld"]
 			},
 			new()

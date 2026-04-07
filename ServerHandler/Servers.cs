@@ -42,37 +42,10 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{ServerName}", server.ServerName)
 					.Replace("{InstallPath}", server.InstallPath);
 
-				if (args.Contains("{mode}"))
+				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.SelectedMode))
 				{
-					// Make sure to add 'SelectedMode' to your GameServer class so the UI can save it!
-					string mode = server.SelectedMode ?? "";
-
-					if (server.Game == "Rust")
-					{
-						// Rust uses true/false for PVE
-						if (mode == "PVE") args = args.Replace("{mode}", "true");
-						else args = args.Replace("{mode}", "false"); // Default to PVP
-					}
-					else if (server.Game == "Killing Floor 2")
-					{
-						// KF2 uses class names
-						if (mode == "Versus") args = args.Replace("{mode}", "Versus");
-						else args = args.Replace("{mode}", "Survival"); // Default
-					}
-					else
-					{
-						// Most standard games use -pve, -pvp, or -creative
-						if (mode == "Creative") args = args.Replace("{mode}", "-creative");
-						else if (mode == "PVE") args = args.Replace("{mode}", "-pve");
-						else if (mode == "PVP") args = args.Replace("{mode}", "-pvp");
-						else args = args.Replace("{mode}", ""); // Blank fallback
-					}
-				}
-
-				// 3. Append User's ExtraArgs
-				if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
-				{
-					args += " " + server.ExtraArgs.Trim();
+					// Simply inject the exact word the user selected from the dropdown
+					args = args.Replace("{mode}", server.SelectedMode);
 				}
 
 				// 4. Build the Full Executable Path
