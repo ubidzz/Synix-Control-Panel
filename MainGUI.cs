@@ -190,7 +190,12 @@ namespace Synix_Control_Panel
 					);
 				});
 
-				GameFix.PostInstall(newServer);
+				bool fixApplied = GameFix.PostInstall(newServer);
+
+				if (fixApplied)
+				{
+					AppendLog($"[SUCCESS] Added the missing files to the {newServer.Game} server.");
+				}
 				newServer.Status = "Offline";
 				isDownloadActive = false;
 

@@ -67,7 +67,7 @@
 			dataGridView1.Location = new Point(12, 95);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(883, 487);
+			dataGridView1.Size = new Size(881, 487);
 			dataGridView1.TabIndex = 0;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.CellPainting += dataGridView1_CellPainting;
@@ -129,6 +129,7 @@
 			// 
 			// btnDelete
 			// 
+			btnDelete.Cursor = Cursors.Hand;
 			btnDelete.Location = new Point(308, 589);
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(142, 28);
@@ -139,6 +140,7 @@
 			// 
 			// btnAddServer
 			// 
+			btnAddServer.Cursor = Cursors.Hand;
 			btnAddServer.Location = new Point(12, 589);
 			btnAddServer.Name = "btnAddServer";
 			btnAddServer.Size = new Size(142, 28);
@@ -149,6 +151,7 @@
 			// 
 			// btnEdit
 			// 
+			btnEdit.Cursor = Cursors.Hand;
 			btnEdit.Location = new Point(160, 589);
 			btnEdit.Name = "btnEdit";
 			btnEdit.Size = new Size(142, 28);
@@ -161,20 +164,21 @@
 			// 
 			rtbLog.BackColor = SystemColors.ActiveCaptionText;
 			rtbLog.ForeColor = Color.Lime;
-			rtbLog.Location = new Point(901, 12);
+			rtbLog.Location = new Point(899, 12);
 			rtbLog.Name = "rtbLog";
 			rtbLog.ReadOnly = true;
-			rtbLog.Size = new Size(328, 605);
+			rtbLog.Size = new Size(330, 605);
 			rtbLog.TabIndex = 6;
 			rtbLog.Text = "";
 			// 
 			// btnStart
 			// 
+			btnStart.Cursor = Cursors.Hand;
 			btnStart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStart.ForeColor = Color.Green;
-			btnStart.Location = new Point(593, 589);
+			btnStart.Location = new Point(603, 589);
 			btnStart.Name = "btnStart";
-			btnStart.Size = new Size(103, 28);
+			btnStart.Size = new Size(142, 28);
 			btnStart.TabIndex = 8;
 			btnStart.Text = "Start Server";
 			btnStart.UseVisualStyleBackColor = true;
@@ -182,11 +186,12 @@
 			// 
 			// btnStop
 			// 
+			btnStop.Cursor = Cursors.Hand;
 			btnStop.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStop.ForeColor = Color.Red;
-			btnStop.Location = new Point(702, 589);
+			btnStop.Location = new Point(751, 589);
 			btnStop.Name = "btnStop";
-			btnStop.Size = new Size(103, 28);
+			btnStop.Size = new Size(142, 28);
 			btnStop.TabIndex = 9;
 			btnStop.Text = "Stop Server";
 			btnStop.UseVisualStyleBackColor = true;

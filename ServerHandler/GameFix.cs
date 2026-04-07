@@ -19,40 +19,28 @@ namespace Synix_Control_Panel.ServerHandler
 {
 	public static class GameFix
 	{
-		public static void PostInstall(GameServer server)
+		// Changed from void to bool!
+		public static bool PostInstall(GameServer server)
 		{
 			if (string.IsNullOrWhiteSpace(server.InstallPath) || !Directory.Exists(server.InstallPath))
-				return;
+				return false;
 
 			try
 			{
-				// We use a switch statement to look at the name of the game and apply the specific fix
+				// Now it returns true if a fix was applied, or false if it wasn't
 				switch (server.Game)
 				{
-					case "Soulmask":
-						FixSoulmask(server.InstallPath);
-						break;
-
-					case "StarRupture":
-						FixStarRupture(server.InstallPath);
-						break;
-
-					case "Sons Of The Forest":
-						FixSonsOfTheForest(server.InstallPath);
-						break;
-
-					case "Palworld":
-						FixPalworld(server.InstallPath);
-						break;
-
-					case "Enshrouded":
-						FixEnshrouded(server.InstallPath);
-						break;
+					case "Soulmask": return FixSoulmask(server.InstallPath);
+					case "StarRupture": return FixStarRupture(server.InstallPath);
+					case "Sons Of The Forest": return FixSonsOfTheForest(server.InstallPath);
+					case "Palworld": return FixPalworld(server.InstallPath);
+					case "Enshrouded": return FixEnshrouded(server.InstallPath);
+					default: return false; // No fixes needed for this game
 				}
 			}
 			catch (Exception)
 			{
-				// Optional: Log the error so your app doesn't crash if a file is locked
+				return false;
 			}
 		}
 
@@ -60,8 +48,9 @@ namespace Synix_Control_Panel.ServerHandler
 		// INDIVIDUAL GAME FIXES BELOW
 		// --------------------------------------------------------
 
-		private static void FixSoulmask(string installPath)
+		private static bool FixSoulmask(string installPath)
 		{
+			bool filesCopied = false;
 			string[] dlls = { "steamclient64.dll", "tier0_s64.dll", "vstdlib_s64.dll" };
 			string targetDir = Path.Combine(installPath, @"WS\Binaries\Win64");
 
@@ -69,18 +58,19 @@ namespace Synix_Control_Panel.ServerHandler
 			{
 				string sourcePath = Path.Combine(installPath, dll);
 
-				// Ensure the file exists before we try to copy it, and only copy if it's missing in the destination
 				if (File.Exists(sourcePath) && !File.Exists(Path.Combine(targetDir, dll)))
 				{
-					// USING YOUR NEW COPY UTILITY!
-					FileHandler.Copy(sourcePath, targetDir, dll, false);
+					if (FileHandler.Copy(sourcePath, targetDir, dll, false))
+					{
+						filesCopied = true; // We actually copied something!
+					}
 				}
 			}
+			return filesCopied;
 		}
 
-		private static void FixStarRupture(string installPath)
+		private static bool FixStarRupture(string installPath)
 		{
-			// Only create it if it doesn't exist so we don't overwrite user settings
 			if (!File.Exists(Path.Combine(installPath, "DSSetings.txt")))
 			{
 				string content = @"{
@@ -90,12 +80,12 @@ namespace Synix_Control_Panel.ServerHandler
 				  ""LoadSavedGame"": ""false"",
 				  ""SaveGameName"": ""AutoSave0.sav""
 				}";
-				// USING YOUR NEW CREATE UTILITY!
-				FileHandler.Create(installPath, "DSSetings.txt", content);
+				return FileHandler.Create(installPath, "DSSetings.txt", content);
 			}
+			return false;
 		}
 
-		private static void FixSonsOfTheForest(string installPath)
+		private static bool FixSonsOfTheForest(string installPath)
 		{
 			string configDir = Path.Combine(installPath, "config");
 
@@ -110,12 +100,12 @@ namespace Synix_Control_Panel.ServerHandler
 				  ""Password"": """",
 				  ""ServerPlayMode"": ""Normal""
 				}";
-				// USING YOUR NEW CREATE UTILITY!
-				FileHandler.Create(configDir, "dedicatedserver.cfg", content);
+				return FileHandler.Create(configDir, "dedicatedserver.cfg", content);
 			}
+			return false;
 		}
 
-		private static void FixPalworld(string installPath)
+		private static bool FixPalworld(string installPath)
 		{
 			string configDir = Path.Combine(installPath, @"Pal\Saved\Config\WindowsServer");
 
@@ -124,12 +114,12 @@ namespace Synix_Control_Panel.ServerHandler
 				string content = @"[/Script/Pal.PalGameWorldSettings]
 					OptionSettings=(ServerName=""Default Palworld Server"",ServerPassword="""",ServerPlayerMaxNum=32,bEnableInvaderEnemy=True,bEnableAimAssistPad=True,bEnableAimAssistKeyboard=False,DropItemMaxNum=3000,BaseCampMaxNum=128,BaseCampWorkerMaxNum=15,DropItemAliveMaxHours=1.000000,bAutoResetGuildNoOnlinePlayers=False,AutoResetGuildTimeNoOnlinePlayers=72.000000,GuildPlayerMaxNum=20,PalEggDefaultHatchingTime=72.000000,WorkSpeedRate=1.000000,bIsMultiplay=True,bIsPvP=False,bCanPickupOtherGuildDeathPenaltyDrop=False,bEnableNonLoginPenalty=True,bEnableFastTravel=True,bIsStartLocationSelectByMap=True,bExistPlayerAfterLogout=False,bEnableDefenseOtherGuildPlayer=False,CoopPlayerMaxNum=4,ServerPlayerMaxNum=32,ServerName=""Default Palworld Server"",ServerDescription="""",ServerPassword="""",AdminPassword="""",PublicPort=8211,PublicIP="""",RCONEnabled=False,RCONPort=25575,Region="""",bUseAuth=True,BanListURL=""https://api.palworldgame.com/api/banlist.txt"")";
 
-				// USING YOUR NEW CREATE UTILITY!
-				FileHandler.Create(configDir, "PalWorldSettings.ini", content);
+				return FileHandler.Create(configDir, "PalWorldSettings.ini", content);
 			}
+			return false;
 		}
 
-		private static void FixEnshrouded(string installPath)
+		private static bool FixEnshrouded(string installPath)
 		{
 			if (!File.Exists(Path.Combine(installPath, "enshrouded_server.json")))
 			{
@@ -143,9 +133,9 @@ namespace Synix_Control_Panel.ServerHandler
 				  ""queryPort"": 15637,
 				  ""slotCount"": 16
 				}";
-				// USING YOUR NEW CREATE UTILITY!
-				FileHandler.Create(installPath, "enshrouded_server.json", content);
+				return FileHandler.Create(installPath, "enshrouded_server.json", content);
 			}
+			return false;
 		}
 	}
 }
