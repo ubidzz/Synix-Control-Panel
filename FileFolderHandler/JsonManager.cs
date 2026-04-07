@@ -9,17 +9,19 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
-using System.IO;
-using System.Text.Json;
-using System.Linq;
-using System.Collections.Generic;
+using Synix_Control_Panel.FileFolderHandler; // Points to your utility folder
 using Synix_Control_Panel.ServerHandler;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
-namespace Synix_Control_Panel.FileFolderHandler
+namespace Synix_Control_Panel
 {
 	public static class JsonManager
 	{
+		private static readonly string FolderPath = @"C:\games\SynixData";
 		private static readonly string FileName = "servers.json";
 
 		public static void Save()
@@ -27,11 +29,19 @@ namespace Synix_Control_Panel.FileFolderHandler
 			try
 			{
 				var options = new JsonSerializerOptions { WriteIndented = true };
-				// Directly use the static list from MainGUI
 				string jsonString = JsonSerializer.Serialize(MainGUI.serverList, options);
-				File.WriteAllText(FileName, jsonString);
 
-				MainGUI.Instance?.AppendLog("JSON saved successfully.");
+				// Use your dedicated CreateFiles class to handle directory checks and writing
+				bool success = CreateFiles.Create(FolderPath, FileName, jsonString);
+
+				if (success)
+				{
+					MainGUI.Instance?.AppendLog("JSON saved successfully to C:\\games.");
+				}
+				else
+				{
+					MainGUI.Instance?.AppendLog("Save Error: CreateFiles utility failed to write the file.");
+				}
 			}
 			catch (Exception ex)
 			{
@@ -41,11 +51,14 @@ namespace Synix_Control_Panel.FileFolderHandler
 
 		public static void Load()
 		{
-			if (File.Exists(FileName))
+			// Construction of the path for reading
+			string fullPath = Path.Combine(FolderPath, FileName);
+
+			if (File.Exists(fullPath))
 			{
 				try
 				{
-					string jsonString = File.ReadAllText(FileName);
+					string jsonString = File.ReadAllText(fullPath);
 					var loadedServers = JsonSerializer.Deserialize<List<GameServer>>(jsonString);
 
 					if (loadedServers != null)
@@ -53,12 +66,10 @@ namespace Synix_Control_Panel.FileFolderHandler
 						MainGUI.serverList.Clear();
 						foreach (var server in loadedServers)
 						{
-							// Find the original game data using the name (e.g., "Soulmask")
 							var masterData = GameDatabase.GetGame(server.Game);
 
 							if (masterData != null)
 							{
-								// Put the "brains" back into the server object
 								server.AppID = masterData.AppID;
 								server.ExeName = masterData.ExeName;
 								server.RequiredArgs = masterData.RequiredArgs;

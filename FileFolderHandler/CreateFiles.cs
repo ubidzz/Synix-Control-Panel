@@ -20,11 +20,8 @@ namespace Synix_Control_Panel.FileFolderHandler
 		{
 			try
 			{
-				// Safety: Ensure the target directory exists before writing
-				if (!Directory.Exists(folderPath))
-				{
-					Directory.CreateDirectory(folderPath);
-				}
+				// Use your dedicated CreateFolders utility to handle the directory logic
+				CreateFolders.Create(folderPath);
 
 				string fullPath = Path.Combine(folderPath, fileName);
 
@@ -34,7 +31,7 @@ namespace Synix_Control_Panel.FileFolderHandler
 			}
 			catch (Exception)
 			{
-				// You can add your logCallback here later if you want error tracking
+				// Error tracking can be added here if needed
 				return false;
 			}
 		}
