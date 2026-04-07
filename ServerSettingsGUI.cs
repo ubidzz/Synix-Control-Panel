@@ -93,6 +93,12 @@ namespace Synix_Control_Panel
 			}
 			cmbGame.SelectedIndex = 0;
 
+			CompetitiveComboBox.Items.Clear();
+			CompetitiveComboBox.Items.Add("PVE");
+			CompetitiveComboBox.Items.Add("PVP");
+			CompetitiveComboBox.Items.Add("PVPVE");
+			CompetitiveComboBox.DropDownStyle = ComboBoxStyle.DropDownList; 
+
 			if (_isEditMode && _existingServer != null)
 			{
 				isManualLoading = true;
@@ -109,6 +115,16 @@ namespace Synix_Control_Panel
 				txtExtraArgs.Text = _existingServer.ExtraArgs;
 				txtInstallPath.Text = _existingServer.InstallPath;
 				chkDefaultPath.Checked = _existingServer.IsDefaultPath;
+
+				if (string.IsNullOrEmpty(_existingServer.CompetitiveMode))
+				{
+					CompetitiveComboBox.SelectedItem = "PVE"; // Failsafe
+				}
+				else
+				{
+					CompetitiveComboBox.SelectedItem = _existingServer.CompetitiveMode;
+				}
+				// -------------------------------------------------------
 
 				// Repopulate Maps list so we can select the saved world
 				var gameData = GameDatabase.GetGame(_existingServer.Game);
@@ -142,6 +158,7 @@ namespace Synix_Control_Panel
 				txtName.Text = string.Empty;
 				txtInstallPath.Text = string.Empty;
 				cmbWorldName.Items.Clear();
+				CompetitiveComboBox.SelectedItem = "PVE";
 
 				chkDefaultPath.Enabled = false;
 				btnSave.Enabled = false;
@@ -198,7 +215,8 @@ namespace Synix_Control_Panel
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
 				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
-				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null
+				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null,
+				CompetitiveMode = CompetitiveComboBox.SelectedItem?.ToString() ?? "PVE"
 			};
 
 			// 2. Calculate the target path
@@ -251,6 +269,9 @@ namespace Synix_Control_Panel
 			if (fbd.ShowDialog() == DialogResult.OK)
 			{
 				txtInstallPath.Text = fbd.SelectedPath;
+
+				// ---> NEW: Re-check the locks after picking a folder
+				UpdateControlStates();
 			}
 		}
 
@@ -267,6 +288,9 @@ namespace Synix_Control_Panel
 				txtInstallPath.Enabled = true;
 				btnBrowse.Enabled = true;
 			}
+
+			// ---> NEW: Re-check the locks when the checkbox is clicked
+			UpdateControlStates();
 		}
 
 		private void UpdateControlStates()
@@ -274,6 +298,8 @@ namespace Synix_Control_Panel
 			string serverName = txtName.Text.Trim();
 			bool isGamePicked = cmbGame.SelectedIndex > 0;
 			bool hasValidName = !string.IsNullOrWhiteSpace(serverName);
+
+			// 1. Can they interact with location settings yet? (Game + Name filled)
 			bool canSelectLocation = isGamePicked && hasValidName;
 
 			chkDefaultPath.Enabled = canSelectLocation;
@@ -282,7 +308,12 @@ namespace Synix_Control_Panel
 			btnBrowse.Enabled = manualPathMode;
 			txtInstallPath.Enabled = manualPathMode;
 
-			btnSave.Enabled = canSelectLocation;
+			// 2. NEW: Have they actually picked a location?
+			// They either checked the box, OR the text box has something in it.
+			bool hasValidLocation = chkDefaultPath.Checked || !string.IsNullOrWhiteSpace(txtInstallPath.Text);
+
+			// 3. NEW: The Save button now requires BOTH the base info AND a location
+			btnSave.Enabled = canSelectLocation && hasValidLocation;
 		}
 
 		private void cmbGame_SelectedIndexChanged(object? sender, EventArgs e)

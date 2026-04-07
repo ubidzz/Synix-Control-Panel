@@ -50,7 +50,7 @@ namespace Synix_Control_Panel.ServerHandler
 		public string WorldName { get; set; } = "NewWorld";
 		public bool IsDefaultPath { get; set; } = true;
 		public int? PID { get; set; }
-
+		public string CompetitiveMode { get; set; } = "PVE";
 		[JsonIgnore]
 		public Process? RunningProcess { get; set; }
 	}

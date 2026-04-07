@@ -61,6 +61,7 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-batchmode +server.level \"{map}\" +server.port {port} +server.queryport {query} +server.hostname \"{ServerName}\"",
 				Port = 28015,
 				QueryPort = 28016,
+				CompetitiveMode = ["PVE", "PVP", "PVPVE"],
 				Maps = ["Procedural Map"]
 			},
 			new()
