@@ -1,4 +1,4 @@
-﻿namespace Game_Server_Control_Panel
+﻿namespace Synix_Control_Panel
 {
     partial class MainGUI
     {
@@ -28,14 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
-			btnDelete = new Button();
-			btnAddServer = new Button();
-			btnEdit = new Button();
-			rtbLog = new RichTextBox();
-			ServerManagerLabel = new Label();
-			btnStart = new Button();
-			btnStop = new Button();
 			colGame = new DataGridViewTextBoxColumn();
 			colName = new DataGridViewTextBoxColumn();
 			colPort = new DataGridViewTextBoxColumn();
@@ -43,7 +37,15 @@
 			colPassword = new DataGridViewTextBoxColumn();
 			colAdminPassword = new DataGridViewTextBoxColumn();
 			colStatus = new DataGridViewTextBoxColumn();
+			btnDelete = new Button();
+			btnAddServer = new Button();
+			btnEdit = new Button();
+			rtbLog = new RichTextBox();
+			btnStart = new Button();
+			btnStop = new Button();
+			pictureBox1 = new PictureBox();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
 			SuspendLayout();
 			// 
 			// dataGridView1
@@ -52,86 +54,11 @@
 			dataGridView1.AllowUserToDeleteRows = false;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPassword, colAdminPassword, colStatus });
-			dataGridView1.Location = new Point(12, 42);
+			dataGridView1.Location = new Point(12, 95);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(744, 503);
+			dataGridView1.Size = new Size(793, 487);
 			dataGridView1.TabIndex = 0;
-			// 
-			// btnDelete
-			// 
-			btnDelete.Location = new Point(308, 561);
-			btnDelete.Name = "btnDelete";
-			btnDelete.Size = new Size(142, 28);
-			btnDelete.TabIndex = 2;
-			btnDelete.Text = "Delete Server";
-			btnDelete.UseVisualStyleBackColor = true;
-			btnDelete.Click += btnDelete_Click;
-			// 
-			// btnAddServer
-			// 
-			btnAddServer.Location = new Point(12, 561);
-			btnAddServer.Name = "btnAddServer";
-			btnAddServer.Size = new Size(142, 28);
-			btnAddServer.TabIndex = 4;
-			btnAddServer.Text = "Add Server";
-			btnAddServer.UseVisualStyleBackColor = true;
-			btnAddServer.Click += btnAddServer_Click;
-			// 
-			// btnEdit
-			// 
-			btnEdit.Location = new Point(160, 561);
-			btnEdit.Name = "btnEdit";
-			btnEdit.Size = new Size(142, 28);
-			btnEdit.TabIndex = 5;
-			btnEdit.Text = "Edit Server";
-			btnEdit.UseVisualStyleBackColor = true;
-			btnEdit.Click += btnEdit_Click;
-			// 
-			// rtbLog
-			// 
-			rtbLog.BackColor = SystemColors.ActiveCaptionText;
-			rtbLog.ForeColor = Color.Lime;
-			rtbLog.Location = new Point(831, 42);
-			rtbLog.Name = "rtbLog";
-			rtbLog.ReadOnly = true;
-			rtbLog.Size = new Size(398, 547);
-			rtbLog.TabIndex = 6;
-			rtbLog.Text = "";
-			// 
-			// ServerManagerLabel
-			// 
-			ServerManagerLabel.AutoSize = true;
-			ServerManagerLabel.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			ServerManagerLabel.Location = new Point(12, 2);
-			ServerManagerLabel.Name = "ServerManagerLabel";
-			ServerManagerLabel.Size = new Size(196, 32);
-			ServerManagerLabel.TabIndex = 7;
-			ServerManagerLabel.Text = "Server Manager";
-			// 
-			// btnStart
-			// 
-			btnStart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnStart.ForeColor = Color.Green;
-			btnStart.Location = new Point(498, 561);
-			btnStart.Name = "btnStart";
-			btnStart.Size = new Size(103, 28);
-			btnStart.TabIndex = 8;
-			btnStart.Text = "Start Server";
-			btnStart.UseVisualStyleBackColor = true;
-			btnStart.Click += btnStart_Click;
-			// 
-			// btnStop
-			// 
-			btnStop.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnStop.ForeColor = Color.Red;
-			btnStop.Location = new Point(607, 561);
-			btnStop.Name = "btnStop";
-			btnStop.Size = new Size(103, 28);
-			btnStop.TabIndex = 9;
-			btnStop.Text = "Stop Server";
-			btnStop.UseVisualStyleBackColor = true;
-			btnStop.Click += btnStop_Click;
 			// 
 			// colGame
 			// 
@@ -182,26 +109,108 @@
 			colStatus.Name = "colStatus";
 			colStatus.ReadOnly = true;
 			// 
+			// btnDelete
+			// 
+			btnDelete.Location = new Point(308, 589);
+			btnDelete.Name = "btnDelete";
+			btnDelete.Size = new Size(142, 28);
+			btnDelete.TabIndex = 2;
+			btnDelete.Text = "Delete Server";
+			btnDelete.UseVisualStyleBackColor = true;
+			btnDelete.Click += btnDelete_Click;
+			// 
+			// btnAddServer
+			// 
+			btnAddServer.Location = new Point(12, 589);
+			btnAddServer.Name = "btnAddServer";
+			btnAddServer.Size = new Size(142, 28);
+			btnAddServer.TabIndex = 4;
+			btnAddServer.Text = "Add Server";
+			btnAddServer.UseVisualStyleBackColor = true;
+			btnAddServer.Click += btnAddServer_Click;
+			// 
+			// btnEdit
+			// 
+			btnEdit.Location = new Point(160, 589);
+			btnEdit.Name = "btnEdit";
+			btnEdit.Size = new Size(142, 28);
+			btnEdit.TabIndex = 5;
+			btnEdit.Text = "Edit Server";
+			btnEdit.UseVisualStyleBackColor = true;
+			btnEdit.Click += btnEdit_Click;
+			// 
+			// rtbLog
+			// 
+			rtbLog.BackColor = SystemColors.ActiveCaptionText;
+			rtbLog.ForeColor = Color.Lime;
+			rtbLog.Location = new Point(811, 12);
+			rtbLog.Name = "rtbLog";
+			rtbLog.ReadOnly = true;
+			rtbLog.Size = new Size(418, 605);
+			rtbLog.TabIndex = 6;
+			rtbLog.Text = "";
+			// 
+			// btnStart
+			// 
+			btnStart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			btnStart.ForeColor = Color.Green;
+			btnStart.Location = new Point(593, 589);
+			btnStart.Name = "btnStart";
+			btnStart.Size = new Size(103, 28);
+			btnStart.TabIndex = 8;
+			btnStart.Text = "Start Server";
+			btnStart.UseVisualStyleBackColor = true;
+			btnStart.Click += btnStart_Click;
+			// 
+			// btnStop
+			// 
+			btnStop.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			btnStop.ForeColor = Color.Red;
+			btnStop.Location = new Point(702, 589);
+			btnStop.Name = "btnStop";
+			btnStop.Size = new Size(103, 28);
+			btnStop.TabIndex = 9;
+			btnStop.Text = "Stop Server";
+			btnStop.UseVisualStyleBackColor = true;
+			btnStop.Click += btnStop_Click;
+			// 
+			// pictureBox1
+			// 
+			pictureBox1.BackColor = Color.Transparent;
+			pictureBox1.Image = Properties.Resources.synix_logo;
+			pictureBox1.Location = new Point(-19, -49);
+			pictureBox1.Name = "pictureBox1";
+			pictureBox1.Size = new Size(321, 189);
+			pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+			pictureBox1.TabIndex = 10;
+			pictureBox1.TabStop = false;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(1241, 601);
+			BackgroundImage = Properties.Resources.background;
+			BackgroundImageLayout = ImageLayout.Stretch;
+			ClientSize = new Size(1241, 628);
+			Controls.Add(dataGridView1);
+			Controls.Add(pictureBox1);
 			Controls.Add(btnStop);
 			Controls.Add(btnStart);
-			Controls.Add(ServerManagerLabel);
 			Controls.Add(rtbLog);
 			Controls.Add(btnEdit);
 			Controls.Add(btnAddServer);
 			Controls.Add(btnDelete);
-			Controls.Add(dataGridView1);
+			FormBorderStyle = FormBorderStyle.FixedSingle;
+			Icon = (Icon)resources.GetObject("$this.Icon");
+			MaximizeBox = false;
 			Name = "MainGUI";
-			Text = "Game Server Control Panel";
+			SizeGripStyle = SizeGripStyle.Hide;
+			Text = "Synix Control Panel";
 			FormClosing += GUI_FormClosing;
 			Shown += MainGUI_Shown;
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
 			ResumeLayout(false);
-			PerformLayout();
 		}
 
 		#endregion
@@ -211,7 +220,6 @@
 		private Button btnAddServer;
 		private Button btnEdit;
 		private RichTextBox rtbLog;
-		private Label ServerManagerLabel;
 		private Button btnStart;
 		private Button btnStop;
 		private DataGridViewTextBoxColumn colGame;
@@ -221,5 +229,6 @@
 		private DataGridViewTextBoxColumn colPassword;
 		private DataGridViewTextBoxColumn colAdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
+		private PictureBox pictureBox1;
 	}
 }

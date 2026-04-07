@@ -1,4 +1,4 @@
-﻿namespace Game_Server_Control_Panel
+﻿namespace Synix_Control_Panel
 {
 	partial class ServerSettingsGUI
 	{

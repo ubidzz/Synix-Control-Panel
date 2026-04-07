@@ -1,5 +1,16 @@
-﻿using Game_Server_Control_Panel.FileFolderHandler;
-using Game_Server_Control_Panel.ServerHandler;
+﻿/*
+ * Copyright (c) 2026 ubidzz. All Rights Reserved.
+ *
+ * This file is part of Synix Control Panel.
+ *
+ * This code is provided for transparent viewing and personal use only.
+ * Unauthorized distribution, public modification, or commercial 
+ * use of this source code or the compiled executable is strictly 
+ * prohibited. Please refer to the LICENSE file in the root 
+ * directory for full terms.
+ */
+using Synix_Control_Panel.FileFolderHandler;
+using Synix_Control_Panel.ServerHandler;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Game_Server_Control_Panel
+namespace Synix_Control_Panel
 {
 	public partial class ServerSettingsGUI : Form
 	{

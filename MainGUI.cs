@@ -1,15 +1,26 @@
+/*
+ * Copyright (c) 2026 ubidzz. All Rights Reserved.
+ *
+ * This file is part of Synix Control Panel.
+ *
+ * This code is provided for transparent viewing and personal use only.
+ * Unauthorized distribution, public modification, or commercial 
+ * use of this source code or the compiled executable is strictly 
+ * prohibited. Please refer to the LICENSE file in the root 
+ * directory for full terms.
+ */
 using System;
 using System.Windows.Forms;
-using Game_Server_Control_Panel.ServerHandler;
-using Game_Server_Control_Panel.FileFolderHandler;
-using Game_Server_Control_Panel.SteamCMDHandler;
-using Game_Server_Control_Panel.MonitoringHandler;
+using Synix_Control_Panel.ServerHandler;
+using Synix_Control_Panel.FileFolderHandler;
+using Synix_Control_Panel.SteamCMDHandler;
+using Synix_Control_Panel.MonitoringHandler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 
-namespace Game_Server_Control_Panel
+namespace Synix_Control_Panel
 {
 	public partial class MainGUI : Form
 	{
@@ -39,24 +50,46 @@ namespace Game_Server_Control_Panel
 			dataGridView1.Columns["colStatus"].DataPropertyName = "Status";
 
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
-		}
 
-		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		{
-			if (dataGridView1.Columns[e.ColumnIndex].DataPropertyName == "Status")
-			{
-				if (e.Value != null)
-				{
-					string status = e.Value.ToString() ?? "";
-					Font boldFont = new Font(dataGridView1.Font, FontStyle.Bold);
+			// 1. Dark Theme Backgrounds
+			dataGridView1.BackgroundColor = Color.FromArgb(25, 25, 25);
+			dataGridView1.DefaultCellStyle.BackColor = Color.FromArgb(30, 30, 30);
+			dataGridView1.DefaultCellStyle.ForeColor = Color.WhiteSmoke;
+			dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(60, 60, 60);
+			dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
 
-					if (status == "Stopped") e.CellStyle.ForeColor = Color.Red;
-					else if (status == "Installing") e.CellStyle.ForeColor = Color.Blue;
-					else if (status == "Running") e.CellStyle.ForeColor = Color.Green;
+			// 2. Remove Blocky Grid Lines & Row Headers
+			dataGridView1.RowHeadersVisible = false;
+			dataGridView1.BorderStyle = BorderStyle.None;
+			dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+			dataGridView1.GridColor = Color.FromArgb(50, 50, 50);
+			dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+			dataGridView1.AllowUserToResizeRows = false;
 
-					e.CellStyle.Font = boldFont;
-				}
-			}
+			// 3. Modern Column Headers
+			dataGridView1.EnableHeadersVisualStyles = false;
+			dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+			dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(40, 40, 40);
+			dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.Cyan;
+			dataGridView1.ColumnHeadersHeight = 40;
+			dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+
+			// 4. Clean up columns (Stretch Path, Hide Technical Data)
+			if (dataGridView1.Columns["InstallPath"] != null)
+				dataGridView1.Columns["InstallPath"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+			if (dataGridView1.Columns["PID"] != null)
+				dataGridView1.Columns["PID"].Visible = false;
+			if (dataGridView1.Columns["AppID"] != null)
+				dataGridView1.Columns["AppID"].Visible = false;
+
+			// --- Clean up the View ---
+			// Hide the "Technical" columns you don't need to see every day
+			if (dataGridView1.Columns["PID"] != null) dataGridView1.Columns["PID"].Visible = false;
+			if (dataGridView1.Columns["AppID"] != null) dataGridView1.Columns["AppID"].Visible = false;
+
+			// Make the Path stretch to fill the empty space
+			if (dataGridView1.Columns["InstallPath"] != null)
+				dataGridView1.Columns["InstallPath"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 		}
 
 		private void UpdateGrid()
@@ -319,6 +352,32 @@ namespace Game_Server_Control_Panel
 
 				// Update the colors on the screen
 				UpdateGrid();
+			}
+		}
+
+		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			// Check if we are coloring the Status column
+			if (dataGridView1.Columns[e.ColumnIndex].DataPropertyName == "Status" && e.Value != null)
+			{
+				string status = e.Value.ToString();
+
+				if (status == "Running")
+				{
+					e.CellStyle.ForeColor = Color.LimeGreen;
+					e.CellStyle.SelectionForeColor = Color.LimeGreen;
+				}
+				else if (status == "Stopped")
+				{
+					e.CellStyle.ForeColor = Color.LightCoral; // High visibility red
+					e.CellStyle.SelectionForeColor = Color.LightCoral;
+				}
+				else if (status == "Installing" || status == "Updating")
+				{
+					e.CellStyle.ForeColor = Color.Gold;
+					e.CellStyle.SelectionForeColor = Color.Gold;
+					e.CellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+				}
 			}
 		}
 	}
