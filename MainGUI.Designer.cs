@@ -61,12 +61,13 @@
 			// 
 			dataGridView1.AllowUserToAddRows = false;
 			dataGridView1.AllowUserToDeleteRows = false;
+			dataGridView1.BorderStyle = BorderStyle.None;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPassword, colAdminPassword, colStatus });
 			dataGridView1.Location = new Point(12, 95);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(793, 487);
+			dataGridView1.Size = new Size(841, 487);
 			dataGridView1.TabIndex = 0;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			// 
@@ -83,6 +84,7 @@
 			colName.HeaderText = "Server Name";
 			colName.Name = "colName";
 			colName.ReadOnly = true;
+			colName.Width = 200;
 			// 
 			// colPort
 			// 
@@ -90,6 +92,7 @@
 			colPort.HeaderText = "Port";
 			colPort.Name = "colPort";
 			colPort.ReadOnly = true;
+			colPort.Width = 80;
 			// 
 			// colQueryPort
 			// 
@@ -97,6 +100,7 @@
 			colQueryPort.HeaderText = "Query Port";
 			colQueryPort.Name = "colQueryPort";
 			colQueryPort.ReadOnly = true;
+			colQueryPort.Width = 80;
 			// 
 			// colPassword
 			// 
@@ -104,6 +108,7 @@
 			colPassword.HeaderText = "Password";
 			colPassword.Name = "colPassword";
 			colPassword.ReadOnly = true;
+			colPassword.Width = 150;
 			// 
 			// colAdminPassword
 			// 
@@ -111,6 +116,7 @@
 			colAdminPassword.HeaderText = "Admin Password";
 			colAdminPassword.Name = "colAdminPassword";
 			colAdminPassword.ReadOnly = true;
+			colAdminPassword.Width = 150;
 			// 
 			// colStatus
 			// 
@@ -118,6 +124,7 @@
 			colStatus.HeaderText = "Status";
 			colStatus.Name = "colStatus";
 			colStatus.ReadOnly = true;
+			colStatus.Width = 80;
 			// 
 			// btnDelete
 			// 
@@ -153,10 +160,10 @@
 			// 
 			rtbLog.BackColor = SystemColors.ActiveCaptionText;
 			rtbLog.ForeColor = Color.Lime;
-			rtbLog.Location = new Point(811, 12);
+			rtbLog.Location = new Point(859, 12);
 			rtbLog.Name = "rtbLog";
 			rtbLog.ReadOnly = true;
-			rtbLog.Size = new Size(418, 605);
+			rtbLog.Size = new Size(370, 605);
 			rtbLog.TabIndex = 6;
 			rtbLog.Text = "";
 			// 
@@ -199,6 +206,7 @@
 			// 
 			chartArea1.Name = "ChartArea1";
 			chartHeartbeat.ChartAreas.Add(chartArea1);
+			chartHeartbeat.Cursor = Cursors.Hand;
 			legend1.Name = "Legend1";
 			chartHeartbeat.Legends.Add(legend1);
 			chartHeartbeat.Location = new Point(505, 28);
@@ -207,16 +215,17 @@
 			series1.Legend = "Legend1";
 			series1.Name = "Series1";
 			chartHeartbeat.Series.Add(series1);
-			chartHeartbeat.Size = new Size(300, 64);
+			chartHeartbeat.Size = new Size(348, 64);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
+			chartHeartbeat.Click += ResourceGraph_Click;
 			// 
 			// lblTotalRam
 			// 
 			lblTotalRam.AutoSize = true;
 			lblTotalRam.BackColor = Color.Transparent;
 			lblTotalRam.ForeColor = Color.Fuchsia;
-			lblTotalRam.Location = new Point(670, 9);
+			lblTotalRam.Location = new Point(623, 9);
 			lblTotalRam.Name = "lblTotalRam";
 			lblTotalRam.Size = new Size(33, 15);
 			lblTotalRam.TabIndex = 12;
@@ -281,6 +290,11 @@
 		private RichTextBox rtbLog;
 		private Button btnStart;
 		private Button btnStop;
+		private PictureBox logo;
+		private System.Windows.Forms.DataVisualization.Charting.Chart chartHeartbeat;
+		private Label lblTotalRam;
+		private Label lblTotalCpu;
+		private System.Windows.Forms.Timer tmrResourceUpdates;
 		private DataGridViewTextBoxColumn colGame;
 		private DataGridViewTextBoxColumn colName;
 		private DataGridViewTextBoxColumn colPort;
@@ -288,10 +302,5 @@
 		private DataGridViewTextBoxColumn colPassword;
 		private DataGridViewTextBoxColumn colAdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
-		private PictureBox logo;
-		private System.Windows.Forms.DataVisualization.Charting.Chart chartHeartbeat;
-		private Label lblTotalRam;
-		private Label lblTotalCpu;
-		private System.Windows.Forms.Timer tmrResourceUpdates;
 	}
 }

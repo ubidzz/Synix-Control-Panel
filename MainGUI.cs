@@ -30,7 +30,7 @@ namespace Synix_Control_Panel
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
-		private double systemTotalRamGb = 98.0;
+		public double systemTotalRamGb = 98.0;
 		private int chartTickCounter = 0;
 		private const int maxGraphPoints = 60;
 
@@ -49,36 +49,33 @@ namespace Synix_Control_Panel
 		{
 			try
 			{
-				// 1. Get the RAM. If the helper fails, we use 98.0 as a backup.
-				systemTotalRamGb = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
-				if (systemTotalRamGb <= 0) systemTotalRamGb = 98.0;
+				// 1. Get real hardware total
+				double physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+				if (physicalRam <= 0) physicalRam = 98.0;
 
-				// 2. THIS IS LINE 42 - It must have the comma and the variable!
+				// 2. The 7GB Buffer: Subtract 7 so Windows stays happy
+				systemTotalRamGb = Math.Max(physicalRam - 7.0, 4.0);
+
+				// 3. Apply styles with the NEW limit
 				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
-
-				// 3. Setup the labels
 				Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
 
-				// 4. Load the rest of your app
 				UpdateGrid();
 				tmrResourceUpdates.Start();
 			}
 			catch (Exception ex)
 			{
-				// This will tell you if something else is crashing during startup
 				MessageBox.Show("Error loading Synix: " + ex.Message);
 			}
 		}
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// 1. Run the monitor (this updates CPU, RAM, and the Online/Offline status)
+			// 1. Get current stats
 			var usage = Synix_Control_Panel.MonitoringHandler.ResourceMonitor.GetTotalResources(serverList);
-
-			// 2. Convert RAM for the chart and label
 			double ramGB = usage.TotalRamMB / 1024.0;
 
-			// 3. Update the Graph Waves
+			// 2. Chart Waves & Sliding Window
 			var cpuSer = chartHeartbeat.Series["TotalCPU"];
 			var ramSer = chartHeartbeat.Series["TotalRAM"];
 			var ca = chartHeartbeat.ChartAreas[0];
@@ -87,15 +84,16 @@ namespace Synix_Control_Panel
 			ramSer.Points.AddXY(chartTickCounter, ramGB);
 			chartTickCounter++;
 
-			// Sliding window (Keep the graph moving)
 			ca.AxisX.Minimum = chartTickCounter - maxGraphPoints;
 			ca.AxisX.Maximum = chartTickCounter;
 
-			// 4. Update the Dashboard Text
+			// 3. Update Text (Using your 'N1' and 'N2' styles for that clean decimal look)
 			lblTotalCpu.Text = $"CPU: {usage.TotalCpuPercent:N1}%";
-			lblTotalRam.Text = $"RAM: {ramGB:N2} GB / {systemTotalRamGb:N1} GB";
 
-			// 5. THE AUTO-REFRESH: This makes the "Online/Offline" text update in your list!
+			// We label this as "Usable" so the user knows why it's lower than their hardware total
+			lblTotalRam.Text = $"RAM: {ramGB:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
+
+			// 4. Final Grid Refresh
 			UpdateGrid();
 		}
 
@@ -325,6 +323,13 @@ namespace Synix_Control_Panel
 		{
 			// Let the GridStyler handle the colors
 			GridStyler.SetStatusColor(dataGridView1, e);
+		}
+
+		private void ResourceGraph_Click(object sender, EventArgs e)
+		{
+			// Pass the current list of servers to the new monitor window
+			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
+			monitor.Show(); // .Show() lets them keep the panel open while using the main app
 		}
 	}
 }

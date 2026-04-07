@@ -43,4 +43,8 @@ public class GameServer : GameInfo
 
 	// Change to 'public set' to ensure the user's choice is saved
 	public string GameMode { get; set; } = "PVE";
+	[JsonIgnore]
+	public double LastCpuMillis { get; set; } = 0;
+	[JsonIgnore]
+	public DateTime LastSampleTime { get; set; } = DateTime.Now;
 }
