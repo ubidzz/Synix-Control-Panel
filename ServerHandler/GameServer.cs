@@ -45,7 +45,7 @@ namespace Synix_Control_Panel.ServerHandler
 		public string ServerName { get; set; } = string.Empty;
 		public string Password { get; set; } = string.Empty;
 		public string AdminPassword { get; set; } = string.Empty;
-		public string Status { get; set; } = "Stopped";
+		public string Status { get; set; } = "Offline";
 		public int MaxPlayers { get; set; } = 10;
 		public string WorldName { get; set; } = "NewWorld";
 		public bool IsDefaultPath { get; set; } = true;

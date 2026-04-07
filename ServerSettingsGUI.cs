@@ -197,7 +197,7 @@ namespace Synix_Control_Panel
 				WorldName = cmbWorldName.Text,
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
-				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Stopped",
+				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
 				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null
 			};
 
@@ -235,7 +235,7 @@ namespace Synix_Control_Panel
 				}
 
 				// 5. Save the updated list to servers.json
-				JsonManager.Save();
+				CreateFiles.SaveServers();
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}

@@ -75,10 +75,10 @@ namespace Synix_Control_Panel.ServerHandler
 				if (proc != null)
 				{
 					server.RunningProcess = proc;
-					server.Status = "Running";
+					server.Status = "Online";
 					server.PID = proc.Id;
 
-					JsonManager.Save();
+					CreateFiles.SaveServers();
 				}
 			}
 			catch (Exception ex)
@@ -91,25 +91,31 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			try
 			{
-				logCallback?.Invoke($"Stopping {server.Game}: {server.ServerName}...");
+				logCallback?.Invoke($"Attempting to shut down {server.ServerName}...");
 
-				// 1. Try to kill by the active process object
+				// 1. Try to kill the active object
 				if (server.RunningProcess != null && !server.RunningProcess.HasExited)
 				{
 					server.RunningProcess.Kill();
 				}
-				// 2. Recovery: Try to kill by PID (if the app was restarted)
+				// 2. Recovery: Kill by PID from JSON
 				else if (server.PID.HasValue)
 				{
 					try
 					{
 						Process oldProc = Process.GetProcessById(server.PID.Value);
-						if (!oldProc.HasExited)
+
+						// Safety: Check if the process name matches your game exe (e.g., "Soulmask")
+						// This prevents accidentally killing a different app if the PID was reused.
+						if (oldProc.ProcessName.Contains(server.ExeName.Replace(".exe", ""), StringComparison.OrdinalIgnoreCase))
 						{
 							oldProc.Kill();
 						}
 					}
-					catch { /* Process already gone */ }
+					catch (Exception pidEx)
+					{
+						logCallback?.Invoke($"[DEBUG] Could not reach process {server.PID}: {pidEx.Message}");
+					}
 				}
 
 				logCallback?.Invoke($"[STOPPED] {server.ServerName} has been shut down.");
@@ -120,13 +126,11 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 			finally
 			{
-				// 3. Always clean up the server data regardless of errors
-				server.Status = "Stopped";
+				// 3. Cleanup data and save
+				server.Status = "Offline";
 				server.PID = null;
 				server.RunningProcess = null;
-
-				// 4. Save the status change to disk immediately
-				JsonManager.Save();
+				CreateFiles.SaveServers();
 			}
 		}
 	}

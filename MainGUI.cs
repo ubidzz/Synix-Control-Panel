@@ -15,10 +15,12 @@ using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.MonitoringHandler;
+using Synix_Control_Panel.Design;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Synix_Control_Panel
 {
@@ -28,102 +30,51 @@ namespace Synix_Control_Panel
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
+		private const int maxGraphPoints = 60;
 
 		public MainGUI()
 		{
 			InitializeComponent();
 			CreateFiles.LoadServers();
-
-			Instance = this;
-
-			// Link the Grid to the List
-			dataGridView1.AutoGenerateColumns = false;
+			GridStyler.DarkTheme(dataGridView1);
+			GridStyler.StyleHeartbeatChart(chartHeartbeat);
+			chartHeartbeat.Series["TotalCPU"].Points.Clear();
 			dataGridView1.DataSource = serverList;
+			Instance = this;
+		}
 
-			// Map the Columns to the Class Properties
-			// Check your Designer.cs to make sure these names (colName, etc.) match!
-			dataGridView1.Columns["colName"].DataPropertyName = "ServerName";
-			dataGridView1.Columns["colGame"].DataPropertyName = "Game";
-			dataGridView1.Columns["colPort"].DataPropertyName = "Port";
-			dataGridView1.Columns["colPassword"].DataPropertyName = "Password";
-			dataGridView1.Columns["colAdminPassword"].DataPropertyName = "AdminPassword";
-			dataGridView1.Columns["colStatus"].DataPropertyName = "Status";
+		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
+		{
+			// A. Use your existing PID-based monitor to get the Total CPU
+			var usage = Synix_Control_Panel.MonitoringHandler.ResourceMonitor.GetTotalResources(serverList);
 
-			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
+			// B. Get the series object
+			Series s = chartHeartbeat.Series["TotalCPU"];
 
-			// 1. Dark Theme Backgrounds
-			dataGridView1.BackgroundColor = Color.FromArgb(25, 25, 25);
-			dataGridView1.DefaultCellStyle.BackColor = Color.FromArgb(30, 30, 30);
-			dataGridView1.DefaultCellStyle.ForeColor = Color.WhiteSmoke;
-			dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(60, 60, 60);
-			dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
+			// C. Add the new "Heartbeat" point
+			s.Points.AddY(usage.TotalCpuPercent);
 
-			// 2. Remove Blocky Grid Lines & Row Headers
-			dataGridView1.RowHeadersVisible = false;
-			dataGridView1.BorderStyle = BorderStyle.None;
-			dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-			dataGridView1.GridColor = Color.FromArgb(50, 50, 50);
-			dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-			dataGridView1.AllowUserToResizeRows = false;
+			// D. "Shift" the graph: Remove the oldest point to make it roll
+			if (s.Points.Count > maxGraphPoints)
+			{
+				s.Points.RemoveAt(0); // This creates the rolling effect
+			}
 
-			// 3. Modern Column Headers
-			dataGridView1.EnableHeadersVisualStyles = false;
-			dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-			dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(40, 40, 40);
-			dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.Cyan;
-			dataGridView1.ColumnHeadersHeight = 40;
-			dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-
-			// 4. Clean up columns (Stretch Path, Hide Technical Data)
-			if (dataGridView1.Columns["InstallPath"] != null)
-				dataGridView1.Columns["InstallPath"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-			if (dataGridView1.Columns["PID"] != null)
-				dataGridView1.Columns["PID"].Visible = false;
-			if (dataGridView1.Columns["AppID"] != null)
-				dataGridView1.Columns["AppID"].Visible = false;
-
-			// --- Clean up the View ---
-			// Hide the "Technical" columns you don't need to see every day
-			if (dataGridView1.Columns["PID"] != null) dataGridView1.Columns["PID"].Visible = false;
-			if (dataGridView1.Columns["AppID"] != null) dataGridView1.Columns["AppID"].Visible = false;
-
-			// Make the Path stretch to fill the empty space
-			if (dataGridView1.Columns["InstallPath"] != null)
-				dataGridView1.Columns["InstallPath"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+			// E. Keep the labels updated too
+			lblTotalCpu.Text = $"System Load: {usage.TotalCpuPercent:N1}%";
+			lblTotalRam.Text = $"Total RAM: {usage.TotalRamMB:N0} MB";
 		}
 
 		private void UpdateGrid()
 		{
-			// 1. Thread safety check
 			if (this.InvokeRequired)
 			{
-				this.BeginInvoke(new Action(UpdateGrid)); // Use BeginInvoke here
+				this.BeginInvoke(new Action(UpdateGrid));
 				return;
 			}
 
-			// 2. Remember where the user was looking and clicking so the screen doesn't jump
-			int scrollPosition = dataGridView1.FirstDisplayedScrollingRowIndex;
-			int selectedIndex = dataGridView1.CurrentRow != null ? dataGridView1.CurrentRow.Index : -1;
-
-			// 3. THE NUCLEAR REFRESH: Unbind and rebind the list. 
-			// This is the ONLY way a standard List forces the DataGridView to update its text.
-			dataGridView1.DataSource = null;
-			dataGridView1.DataSource = serverList;
-
-			// 4. Put the user's selection and scroll bar exactly back where it was
-			if (scrollPosition != -1 && scrollPosition < dataGridView1.Rows.Count)
-			{
-				dataGridView1.FirstDisplayedScrollingRowIndex = scrollPosition;
-			}
-
-			if (selectedIndex != -1 && selectedIndex < dataGridView1.Rows.Count)
-			{
-				dataGridView1.ClearSelection();
-				dataGridView1.Rows[selectedIndex].Selected = true;
-			}
-
-			// 5. Force Windows to physically repaint the Green/Red colors on your monitor right now
-			dataGridView1.Refresh();
+			// All the "Nuclear Refresh" and scroll logic is hidden in the helper
+			GridHelper.RefreshWithPersistence(dataGridView1, serverList);
 		}
 
 		public void AppendLog(string message)
@@ -201,7 +152,7 @@ namespace Synix_Control_Panel
 					);
 				});
 
-				newServer.Status = "Stopped";
+				newServer.Status = "Offline";
 				isDownloadActive = false;
 
 				dataGridView1.Invalidate();
@@ -220,7 +171,7 @@ namespace Synix_Control_Panel
 			{
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				if (selectedServer.Status == "Running")
+				if (selectedServer.Status == "Online")
 				{
 					MessageBox.Show("Please stop the server before editing.", "Server Active");
 					return;
@@ -248,7 +199,7 @@ namespace Synix_Control_Panel
 			{
 				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
 
-				if (selectedServer.Status == "Running")
+				if (selectedServer.Status == "Online")
 				{
 					MessageBox.Show("Stop the server before deleting it!", "Server Active");
 					return;
@@ -303,14 +254,15 @@ namespace Synix_Control_Panel
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			
+
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				AppendLog($"Launching {selectedServer.Game}: {selectedServer.ServerName}...");
 
 				// Set to running immediately
-				selectedServer.Status = "Running";
-				UpdateGrid(); // <--- Added this to snap the grid to Green immediately
+				selectedServer.Status = "Online";
+				selectedServer.PID = startedProcess.Id;
+				UpdateGrid(); 
 
 				// 2. Hand it off to the ServerManager (The Expert)
 				Servers.Start(selectedServer, msg =>
@@ -341,44 +293,21 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				if (selectedServer.Status != "Running")
+				// Allow the stop attempt as long as there is a PID or a process object
+				if (selectedServer.RunningProcess == null && !selectedServer.PID.HasValue)
 				{
-					MessageBox.Show("This server is already stopped.", "Info");
+					MessageBox.Show("No active process found for this server.", "Info");
 					return;
 				}
 
-				// One line does all the heavy lifting now!
 				Servers.Stop(selectedServer, AppendLog);
-
-				// Update the colors on the screen
 				UpdateGrid();
 			}
 		}
-
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			// Check if we are coloring the Status column
-			if (dataGridView1.Columns[e.ColumnIndex].DataPropertyName == "Status" && e.Value != null)
-			{
-				string status = e.Value.ToString();
-
-				if (status == "Running")
-				{
-					e.CellStyle.ForeColor = Color.LimeGreen;
-					e.CellStyle.SelectionForeColor = Color.LimeGreen;
-				}
-				else if (status == "Stopped")
-				{
-					e.CellStyle.ForeColor = Color.LightCoral; // High visibility red
-					e.CellStyle.SelectionForeColor = Color.LightCoral;
-				}
-				else if (status == "Installing" || status == "Updating")
-				{
-					e.CellStyle.ForeColor = Color.Gold;
-					e.CellStyle.SelectionForeColor = Color.Gold;
-					e.CellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
-				}
-			}
+			// Let the GridStyler handle the colors
+			GridStyler.SetStatusColor(dataGridView1, e);
 		}
 	}
 }

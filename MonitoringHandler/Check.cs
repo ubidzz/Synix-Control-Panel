@@ -53,7 +53,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 					// 3. The "Crashed" or "Stopped" Handler
 					if (!isAlive)
 					{
-						server.Status = "Stopped";
+						server.Status = "Offline";
 						server.PID = null;
 						server.RunningProcess = null;
 
@@ -61,7 +61,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 						MainGUI.Instance?.AppendLog($"[MONITOR] {server.ServerName} has stopped or crashed.");
 
 						// Save the "Stopped" status to the JSON immediately
-						JsonManager.Save();
+						CreateFiles.SaveServers();
 					}
 				}
 			}
