@@ -20,6 +20,7 @@ Synix streamlines the entire lifecycle of a game server. It acts as a central ne
 
 ## ✨ Key Features
 
+* **🚀 Portable & Lightweight:** Synix does not require installation or UAC elevation to operate. Simply download the executable and run it directly.
 * **🛡️ Port Guard Validation:** Built-in conflict detection prevents Game, Query, or RCON port overlaps. It intelligently skips inactive features (like disabled RCON) to ensure maximum flexibility.
 * **🔄 Smart Process Rebinding:** Even if the app closes or crashes, Synix "remembers" its children. Upon restart, it automatically re-detects and adopts running server processes using saved PIDs.
 * **📊 Real-Time Telemetry:** Integrated high-performance charts provide live-streaming waves of CPU and RAM usage for each individual server.
