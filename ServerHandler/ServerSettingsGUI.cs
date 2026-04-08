@@ -202,142 +202,6 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void btnSave_Click(object? sender, EventArgs e)
-		{
-			if (string.IsNullOrWhiteSpace(txtName.Text))
-			{
-				MessageBox.Show("Please enter a Server Name.", "Validation Error");
-				return;
-			}
-
-			// --- PORT CONFLICT CHECKER ---
-			int newPort = (int)numPort.Value;
-			int newQuery = (int)numQueryPort.Value;
-			int newRcon = (int)numRconPort.Value;
-			bool isRconActive = chkEnableRcon.Checked; // Check if the box is actually checked
-
-			// 1. Internal Check: Game vs Query (Always checked)
-			if (newPort == newQuery)
-			{
-				MessageBox.Show("The Game and Query ports must be different.", "Internal Port Conflict");
-				return;
-			}
-
-			// Internal Check: Only check RCON against Game/Query if RCON is activated
-			if (isRconActive && (newRcon == newPort || newRcon == newQuery))
-			{
-				MessageBox.Show("The RCON port cannot be the same as the Game or Query port.", "Internal Port Conflict");
-				return;
-			}
-
-			// 2. External Check: Compare against other servers
-			foreach (var server in MainGUI.serverList)
-			{
-				if (_isEditMode && server == _existingServer)
-					continue;
-
-				// Game and Query ports are always blocked if they match another server
-				if (server.Port == newPort)
-				{
-					MessageBox.Show($"The Game Port ({newPort}) is already in use by '{server.ServerName}'.", "Port Conflict");
-					return;
-				}
-
-				if (server.QueryPort == newQuery)
-				{
-					MessageBox.Show($"The Query Port ({newQuery}) is already in use by '{server.ServerName}'.", "Port Conflict");
-					return;
-				}
-
-				// --- RCON ACTIVATION CHECK ---
-				// We only care about RCON port conflicts if THIS server is activating RCON
-				if (isRconActive)
-				{
-					// Does our RCON port hit someone else's Game or Query port?
-					if (server.Port == newRcon || server.QueryPort == newRcon)
-					{
-						MessageBox.Show($"The RCON Port ({newRcon}) conflicts with the ports of '{server.ServerName}'.", "Port Conflict");
-						return;
-					}
-
-					// Does our RCON port hit someone else's RCON port?
-					// (But only if THAT server also has RCON activated)
-					if (server.EnableRcon && server.RconPort == newRcon)
-					{
-						MessageBox.Show($"The RCON Port ({newRcon}) is already in use by '{server.ServerName}'.", "Port Conflict");
-						return;
-					}
-				}
-			}
-			// --- END OF PORT CHECKER ---
-
-			// 1. Create the server object using ONLY user-defined data
-			// We leave out AppID, ExeName, RequiredArgs, and Maps because 
-			// those are pulled from the GameDatabase at runtime.
-			NewServer = new GameServer
-			{
-				Game = cmbGame.Text,
-				ServerName = txtName.Text,
-				Port = (int)numPort.Value,
-				QueryPort = (int)numQueryPort.Value,
-				Password = txtPassword.Text,
-				AdminPassword = txtAdminPassword.Text,
-				MaxPlayers = (int)numMaxPlayers.Value,
-				WorldName = cmbWorldName.Text,
-				ExtraArgs = txtExtraArgs.Text,
-				IsDefaultPath = chkDefaultPath.Checked,
-				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
-				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null,
-				GameMode = cmbCompetitive.Text,
-				EnableRcon = chkEnableRcon.Checked,
-				RconPort = (int)numRconPort.Value,
-				RconPassword = txtRconPassword.Text
-			};
-
-			// 2. Calculate the target path
-			string cleanGameName = NewServer.Game.Replace(" ", "_");
-			string cleanServerName = NewServer.ServerName.Replace(" ", "_");
-			string targetPath = chkDefaultPath.Checked ? $@"C:\Games\{cleanGameName}\{cleanServerName}" : txtInstallPath.Text;
-
-			// 3. CRITICAL: Assign the path to NewServer BEFORE the rename logic runs
-			// This fixes the "Parameter 'destDirName' cannot be empty" error.
-			NewServer.InstallPath = targetPath;
-
-			try
-			{
-				if (_isEditMode && _existingServer != null)
-				{
-					// 4. Check if the folder needs to be renamed
-					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
-					{
-						// This calls your logic to physically move the folder on the hard drive
-						ServerFolder.Rename(_existingServer, NewServer);
-						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
-					}
-
-					// Update the existing item in your main list
-					int index = MainGUI.serverList.IndexOf(_existingServer);
-					if (index != -1) MainGUI.serverList[index] = NewServer;
-				}
-				else
-				{
-					// Logic for a brand new server
-					FolderHandler.Create(targetPath);
-					MainGUI.serverList.Add(NewServer);
-					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
-				}
-
-				// 5. Save the updated list to servers.json
-				FileHandler.SaveServers();
-				this.DialogResult = DialogResult.OK;
-				this.Close();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Operation failed: {ex.Message}", "File Error");
-			}
-		}
-
 		private void btnBrowse_Click(object? sender, EventArgs e)
 		{
 			using var fbd = new FolderBrowserDialog();
@@ -437,6 +301,165 @@ namespace Synix_Control_Panel
 		{
 			UpdateControlStates();
 			UpdatePathPreview();
+		}
+
+		private void btnSave_Click(object? sender, EventArgs e)
+		{
+			string newServerName = txtName.Text.Trim();
+			string selectedGame = cmbGame.Text; // Grab the currently selected game
+
+			if (string.IsNullOrWhiteSpace(newServerName))
+			{
+				MessageBox.Show("Please enter a Server Name.", "Validation Error");
+				return;
+			}
+
+			// ==========================================
+			// 🛡️ GUARD 1: DUPLICATE NAME & GAME CHECKER
+			// ==========================================
+			// Check if another server of the SAME GAME already has this exact name
+			bool nameExists = MainGUI.serverList.Any(s =>
+				s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) && // Must be the same Game
+				s.ServerName.Equals(newServerName, StringComparison.OrdinalIgnoreCase) && // Must be the same Name
+				(!_isEditMode || s != _existingServer) // Ignore itself if we are editing
+			);
+
+			if (nameExists)
+			{
+				MessageBox.Show($"You already have a {selectedGame} server named '{newServerName}'.\n\nPlease choose a unique Server Name for this game.", "Duplicate Name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			// ==========================================
+			// 🛡️ GUARD 2: FOLDER OVERWRITE CHECKER
+			// ==========================================
+			string cleanGameName = selectedGame.Replace(" ", "_");
+			string cleanServerName = newServerName.Replace(" ", "_");
+			string targetPath = chkDefaultPath.Checked ? $@"C:\Games\{cleanGameName}\{cleanServerName}" : txtInstallPath.Text;
+
+			// If it's a NEW server, make sure the folder doesn't already exist on the hard drive
+			if (!_isEditMode && Directory.Exists(targetPath))
+			{
+				MessageBox.Show($"The installation folder for this server already exists:\n\n{targetPath}\n\nPlease choose a different Server Name or a different Manual Path to avoid corrupting existing files.", "Folder Already Exists", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			// --- PORT CONFLICT CHECKER ---
+			int newPort = (int)numPort.Value;
+			int newQuery = (int)numQueryPort.Value;
+			int newRcon = (int)numRconPort.Value;
+			bool isRconActive = chkEnableRcon.Checked; // Check if the box is actually checked
+
+			// 1. Internal Check: Game vs Query (Always checked)
+			if (newPort == newQuery)
+			{
+				MessageBox.Show("The Game and Query ports must be different.", "Internal Port Conflict");
+				return;
+			}
+
+			// Internal Check: Only check RCON against Game/Query if RCON is activated
+			if (isRconActive && (newRcon == newPort || newRcon == newQuery))
+			{
+				MessageBox.Show("The RCON port cannot be the same as the Game or Query port.", "Internal Port Conflict");
+				return;
+			}
+
+			// 2. External Check: Compare against other servers
+			foreach (var server in MainGUI.serverList)
+			{
+				if (_isEditMode && server == _existingServer)
+					continue;
+
+				// Game and Query ports are always blocked if they match another server
+				if (server.Port == newPort)
+				{
+					MessageBox.Show($"The Game Port ({newPort}) is already in use by '{server.ServerName}'.", "Port Conflict");
+					return;
+				}
+
+				if (server.QueryPort == newQuery)
+				{
+					MessageBox.Show($"The Query Port ({newQuery}) is already in use by '{server.ServerName}'.", "Port Conflict");
+					return;
+				}
+
+				// --- RCON ACTIVATION CHECK ---
+				if (isRconActive)
+				{
+					// Does our RCON port hit someone else's Game or Query port?
+					if (server.Port == newRcon || server.QueryPort == newRcon)
+					{
+						MessageBox.Show($"The RCON Port ({newRcon}) conflicts with the ports of '{server.ServerName}'.", "Port Conflict");
+						return;
+					}
+
+					// Does our RCON port hit someone else's RCON port?
+					if (server.EnableRcon && server.RconPort == newRcon)
+					{
+						MessageBox.Show($"The RCON Port ({newRcon}) is already in use by '{server.ServerName}'.", "Port Conflict");
+						return;
+					}
+				}
+			}
+			// --- END OF PORT CHECKER ---
+
+			// 1. Create the server object using ONLY user-defined data
+			NewServer = new GameServer
+			{
+				Game = selectedGame, // Re-used the variable from the top
+				ServerName = newServerName, // Re-used the variable from the top
+				Port = (int)numPort.Value,
+				QueryPort = (int)numQueryPort.Value,
+				Password = txtPassword.Text,
+				AdminPassword = txtAdminPassword.Text,
+				MaxPlayers = (int)numMaxPlayers.Value,
+				WorldName = cmbWorldName.Text,
+				ExtraArgs = txtExtraArgs.Text,
+				IsDefaultPath = chkDefaultPath.Checked,
+				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
+				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null,
+				GameMode = cmbCompetitive.Text,
+				EnableRcon = chkEnableRcon.Checked,
+				RconPort = (int)numRconPort.Value,
+				RconPassword = txtRconPassword.Text
+			};
+
+			// 2. CRITICAL: Assign the path to NewServer BEFORE the rename logic runs
+			NewServer.InstallPath = targetPath;
+
+			try
+			{
+				if (_isEditMode && _existingServer != null)
+				{
+					// 4. Check if the folder needs to be renamed
+					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
+					{
+						// This calls your logic to physically move the folder on the hard drive
+						ServerFolder.Rename(_existingServer, NewServer);
+						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
+					}
+
+					// Update the existing item in your main list
+					int index = MainGUI.serverList.IndexOf(_existingServer);
+					if (index != -1) MainGUI.serverList[index] = NewServer;
+				}
+				else
+				{
+					// Logic for a brand new server
+					FolderHandler.Create(targetPath);
+					MainGUI.serverList.Add(NewServer);
+					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
+				}
+
+				// 5. Save the updated list to servers.json
+				FileHandler.SaveServers();
+				this.DialogResult = DialogResult.OK;
+				this.Close();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Operation failed: {ex.Message}", "File Error");
+			}
 		}
 	}
 }
