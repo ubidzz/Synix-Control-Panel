@@ -39,10 +39,7 @@ Synix streamlines the entire lifecycle of a game server. It acts as a central ne
 ---
 
 ## 📝 App "About" Description
-(Use this text inside your app's "About" window)
-
 **Synix Control Panel v1.0**
-*Copyright © 2026 ubidzz. All Rights Reserved.*
 
 Synix is a high-performance game server manager designed for efficiency and reliability. By combining automated SteamCMD handling with real-time hardware telemetry and smart process adoption, Synix provides a professional-grade hosting environment for home labs and dedicated server hosts alike.
 
@@ -56,7 +53,7 @@ Synix is a high-performance game server manager designed for efficiency and reli
 
 ## 📜 License & Usage
 
-Copyright © 2026 ubidzz. All Rights Reserved.
+*Copyright © 2026 ubidzz. All Rights Reserved.*
 
 This source code is provided for **viewing and personal educational purposes only**.
 
