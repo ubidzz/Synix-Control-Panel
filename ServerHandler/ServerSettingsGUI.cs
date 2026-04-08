@@ -210,6 +210,67 @@ namespace Synix_Control_Panel
 				return;
 			}
 
+			// --- PORT CONFLICT CHECKER ---
+			int newPort = (int)numPort.Value;
+			int newQuery = (int)numQueryPort.Value;
+			int newRcon = (int)numRconPort.Value;
+			bool isRconActive = chkEnableRcon.Checked; // Check if the box is actually checked
+
+			// 1. Internal Check: Game vs Query (Always checked)
+			if (newPort == newQuery)
+			{
+				MessageBox.Show("The Game and Query ports must be different.", "Internal Port Conflict");
+				return;
+			}
+
+			// Internal Check: Only check RCON against Game/Query if RCON is activated
+			if (isRconActive && (newRcon == newPort || newRcon == newQuery))
+			{
+				MessageBox.Show("The RCON port cannot be the same as the Game or Query port.", "Internal Port Conflict");
+				return;
+			}
+
+			// 2. External Check: Compare against other servers
+			foreach (var server in MainGUI.serverList)
+			{
+				if (_isEditMode && server == _existingServer)
+					continue;
+
+				// Game and Query ports are always blocked if they match another server
+				if (server.Port == newPort)
+				{
+					MessageBox.Show($"The Game Port ({newPort}) is already in use by '{server.ServerName}'.", "Port Conflict");
+					return;
+				}
+
+				if (server.QueryPort == newQuery)
+				{
+					MessageBox.Show($"The Query Port ({newQuery}) is already in use by '{server.ServerName}'.", "Port Conflict");
+					return;
+				}
+
+				// --- RCON ACTIVATION CHECK ---
+				// We only care about RCON port conflicts if THIS server is activating RCON
+				if (isRconActive)
+				{
+					// Does our RCON port hit someone else's Game or Query port?
+					if (server.Port == newRcon || server.QueryPort == newRcon)
+					{
+						MessageBox.Show($"The RCON Port ({newRcon}) conflicts with the ports of '{server.ServerName}'.", "Port Conflict");
+						return;
+					}
+
+					// Does our RCON port hit someone else's RCON port?
+					// (But only if THAT server also has RCON activated)
+					if (server.EnableRcon && server.RconPort == newRcon)
+					{
+						MessageBox.Show($"The RCON Port ({newRcon}) is already in use by '{server.ServerName}'.", "Port Conflict");
+						return;
+					}
+				}
+			}
+			// --- END OF PORT CHECKER ---
+
 			// 1. Create the server object using ONLY user-defined data
 			// We leave out AppID, ExeName, RequiredArgs, and Maps because 
 			// those are pulled from the GameDatabase at runtime.
