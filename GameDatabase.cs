@@ -31,6 +31,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}?Listen -server -log -port={port} -password={pass} -name=\"{ServerName}\"",
 				Port = 7777,
 				QueryPort = 27015,
+				RelativeConfigPath = @"StarRupture\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["MainWorld"]
 			},
 			new() {
@@ -52,6 +54,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-configfile=serverconfig.xml -batchmode -nographics -dedicated",
 				Port = 26900,
 				QueryPort = 26900,
+				RelativeConfigPath = "serverconfig.xml",
+				Format = ConfigFormat.XML,
 				Maps = ["Navezgane", "Pregen01"]
 			},
 			new() {
@@ -62,6 +66,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
 				Port = 28015,
 				QueryPort = 28016,
+				RelativeConfigPath = @"server\my_server_identity\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Procedural Map"],
 				GameModes = ["PVP", "PVE"]
 			},
@@ -92,6 +98,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log",
 				Port = 7777,
 				QueryPort = 27015,
+				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["TheIsland", "ScorchedEarth_P", "Aberration_P", "Extinction", "Genesis", "Ragnarok", "TheCenter", "Valguero_P", "CrystalIsles", "Gen2", "LostIsland", "Fjordur"],
 				GameModes = ["PVE", "PVP"]
 			},
@@ -101,6 +109,8 @@ namespace Synix_Control_Panel
 				ExeName = @"ShooterGame\Binaries\Win64\ArkServer.exe",
 				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} {rcon} -server -log",
 				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\"",
+				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheIsland_WP"],
@@ -122,12 +132,16 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-userdatapath \"config\" -servername \"{ServerName}\" -serverpassword \"{pass}\" -serverport {port} -queryport {query}",
 				Port = 8766,
 				QueryPort = 27016,
+				RelativeConfigPath = @"userdata\dedicated_server.cfg",
+				Format = ConfigFormat.JSON,
 				Maps = ["Default"]
 			},
 			new() {
 				Game = "Enshrouded",
 				AppID = "2278520",
 				ExeName = "enshrouded_server.exe",
+				RelativeConfigPath = "enshrouded_server.json",
+				Format = ConfigFormat.JSON,
 				RequiredArgs = "",
 				Port = 15636,
 				QueryPort = 15637,
@@ -180,6 +194,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-world {map} -worldname \"{ServerName}\" -maxplayers {MaxPlayers} -port {port}",
 				Port = 27015,
 				QueryPort = 27016,
+				RelativeConfigPath = @"DedicatedServer\ServerConfig.json",
+				Format = ConfigFormat.JSON,
 				Maps = ["0", "1", "2"]
 			},
 			new() {
@@ -189,6 +205,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-port {port} -maxplayers {MaxPlayers} -world \"{map}\" -password \"{pass}\" -motd \"{ServerName}\"",
 				Port = 7777,
 				QueryPort = 7777,
+				RelativeConfigPath = "serverconfig.txt",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["World1.wld"]
 			},
 			new() {
@@ -199,6 +217,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"game\csgo\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["de_dust2", "de_inferno", "de_mirage", "de_nuke", "de_vertigo"]
 			},
 			new() {
@@ -209,6 +229,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"tf\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["ctf_2fort", "pl_upward", "cp_dustbowl", "koth_harvest"]
 			},
 			new() {
@@ -219,6 +241,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"left4dead2\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["c1m1_hotel", "c2m1_highway", "c8m1_apartment", "c14m1_junkyard"]
 			},
 			new() {
@@ -228,6 +252,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "Port={port} QueryPort={query} FIXEDMAXPLAYERS={MaxPlayers}",
 				Port = 7787,
 				QueryPort = 27165,
+				RelativeConfigPath = @"SquadGame\ServerConfig\Server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Mutaha_AAS_v1", "Gorodok_RAAS_v1", "Fallujah_AAS_v1"]
 			},
 			new() {
@@ -246,6 +272,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-batchmode -nographics -autostart -loadlatest {map} -settings StartLocalHost true ServerVisible true ServerMaxPlayers {MaxPlayers} ServerPort {port} ServerName \"{ServerName}\" ServerPassword \"{pass}\"",
 				Port = 27016,
 				QueryPort = 27015,
+				RelativeConfigPath = "default.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Moon", "Mars", "Europa", "Mimas"]
 			},
 			new() {
@@ -264,6 +292,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "+server_name \"{ServerName}\" +port {port} +password \"{pass}\" +max_players {MaxPlayers}",
 				Port = 25564,
 				QueryPort = 25564,
+				RelativeConfigPath = "server_config.xml",
+				Format = ConfigFormat.XML,
 				Maps = ["Default"]
 			},
 			new() {
@@ -273,6 +303,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-batchmode -nographics -savefolderpath \"{map}\" -serverip 0.0.0.0 -serverport {port} -serverplayers {MaxPlayers} -serverpassword \"{pass}\" -serverpasswordadmin \"{adminpass}\"",
 				Port = 27015,
 				QueryPort = 27016,
+				RelativeConfigPath = @"ds\Server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Saves"]
 			},
 			new() {
@@ -282,6 +314,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-log -port={port}",
 				Port = 8777,
 				QueryPort = 8777,
+				RelativeConfigPath = @"Astro\Saved\Config\WindowsServer\AstroServerSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Sylva"]
 			},
 			new() {
@@ -291,6 +325,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-port {port} -queryport {query} -name \"{ServerName}\"",
 				Port = 27015,
 				QueryPort = 27016,
+				RelativeConfigPath = "serversettings.xml",
+				Format = ConfigFormat.XML,
 				Maps = ["Campaign"]
 			},
 			new() {
@@ -317,6 +353,8 @@ namespace Synix_Control_Panel
 				AppID = "2816220",
 				ExeName = @"AbioticFactor\Binaries\Win64\AbioticFactorServer-Win64-Shipping.exe",
 				RequiredArgs = "{map}?Listen -log -MaxPlayers={MaxPlayers} -Port={port} -QueryPort={query} -ServerPassword=\"{pass}\"",
+				RelativeConfigPath = @"AbioticFactor\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["Cascade"]
@@ -326,6 +364,8 @@ namespace Synix_Control_Panel
 				AppID = "2089300",
 				ExeName = @"Icarus\Binaries\Win64\IcarusServer-Win64-Shipping.exe",
 				RequiredArgs = "-Log -ServerName=\"{ServerName}\" -Password=\"{pass}\" -Port={port} -QueryPort={query}",
+				RelativeConfigPath = @"Icarus\Saved\Config\WindowsServer\ServerSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 17777,
 				QueryPort = 27015,
 				Maps = ["Olympus", "Styx", "Prometheus"]
@@ -337,6 +377,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-console -cluster \"{ServerName}\" -shard {map}",
 				Port = 10999,
 				QueryPort = 27016,
+				RelativeConfigPath = @"DoNotStarveTogether\Cluster_1\cluster.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Master", "Caves"]
 			},
 			new() {
@@ -355,6 +397,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}?Game=KFGameContent.KFGameInfo_{mode}?AdminPassword=\"{adminpass}\"?GamePassword=\"{pass}\" -Port={port}", 
 				Port = 7777,
 				QueryPort = 27015,
+				RelativeConfigPath = @"KFGame\Config\PCServer-KFGame.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["KF-BioticsLab", "KF-BurningParis", "KF-Outpost", "KF-ZedLanding"],
 				GameModes = ["Survival", "Versus"]
 			},
@@ -365,6 +409,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log -{mode}",
 				Port = 7777,
 				QueryPort = 27015,
+				RelativeConfigPath = @"ProjectWar\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["TheFront"]
 			},
 			new() {
@@ -372,6 +418,8 @@ namespace Synix_Control_Panel
 				AppID = "2404090",
 				ExeName = @"SMALLAND\Binaries\Win64\SMALLANDServer-Win64-Shipping.exe",
 				RequiredArgs = "{map}?Listen -log -ServerName=\"{ServerName}\" -Password=\"{pass}\" -MaxPlayers={MaxPlayers} -Port={port}",
+				RelativeConfigPath = @"SMALLAND\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["Smalland"]
@@ -383,6 +431,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-batchmode -nographics -serverName \"{ServerName}\" -password \"{pass}\" -port {port} -maxPlayers {MaxPlayers}",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"Worlds\World_Name\ServerConfig.txt",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["World1"]
 			},
 			new() {
@@ -401,15 +451,19 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-persistentDataPath .\\save-data -serverName \"{ServerName}\" -saveName \"{map}\" -logLevel \"info\" -port {port} -queryPort {query}",
 				Port = 9876,
 				QueryPort = 9877,
+				RelativeConfigPath = @"VRisingServer_Data\StreamingAssets\Settings\ServerHostSettings.json",
+				Format = ConfigFormat.JSON,
 				Maps = ["World1"]
 			},
 			new() {
 				Game = "DayZ",
 				AppID = "223350",
 				ExeName = "DayZServer_x64.exe",
-				RequiredArgs = "-config=serverDZ.cfg -port={port} -name={ServerName}",
+				RequiredArgs = "-config=serverDZ.cfg -port={port} -name=\"{ServerName}\"",
 				Port = 2302,
 				QueryPort = 27016,
+				RelativeConfigPath = "serverDZ.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["ChernarusPlus"]
 			},
 			new() {
@@ -420,16 +474,9 @@ namespace Synix_Control_Panel
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheExiledLands"],
+				RelativeConfigPath = @"ConanSandbox\Saved\Config\WindowsServer\ServerSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				GameModes = ["PVE", "PVP"]
-			},
-			new() {
-				Game = "Minecraft Java",
-				AppID = "0",
-				ExeName = "server.jar",
-				RequiredArgs = "java -Xmx4G -Xms4G -jar server.jar nogui",
-				Port = 25565,
-				QueryPort = 25565,
-				Maps = ["world"]
 			},
 			new() {
 				Game = "Garry's Mod",
@@ -439,6 +486,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["gm_construct", "gm_flatgrass"]
 			},
 			new() {
@@ -448,6 +497,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-servername \"{ServerName}\" -adminpassword \"{adminpass}\"",
 				Port = 16261,
 				QueryPort = 16262,
+				RelativeConfigPath = @"Zomboid\Server\servertest.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Muldraugh, KY"]
 			},
 			new() {
@@ -457,6 +508,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map} -log -port={port} -QueryPort={query}",
 				Port = 7777,
 				QueryPort = 27015,
+				RelativeConfigPath = @"Mordhau\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["FFA_Contraband", "SKM_Camp"]
 			},
 			new() {
@@ -485,6 +538,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["ttt_67thway_v3", "ttt_clue"]
 			},
 			new()
@@ -495,6 +550,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-log -unattended -ServerQueryPort={query} -multihome=0.0.0.0 -port={port}",
 				Port = 7777,
 				QueryPort = 15777,
+				RelativeConfigPath = @"FactoryGame\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Satisfactory"]
 			},
 			new()
@@ -513,6 +570,8 @@ namespace Synix_Control_Panel
 				AppID = "2278520",
 				ExeName = "enshrouded_server.exe",
 				RequiredArgs = "",
+				RelativeConfigPath = "enshrouded_server.json",
+				Format = ConfigFormat.JSON,
 				Port = 15636,
 				QueryPort = 15637,
 				Maps = ["Embervale"]
@@ -525,6 +584,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "--start-server {map}.zip --server-settings data\\server-settings.json --port {port}",
 				Port = 34197,
 				QueryPort = 34197,
+				RelativeConfigPath = @"data\server-settings.json",
+				Format = ConfigFormat.JSON,
 				Maps = ["FactorioWorld"]
 			},
 			new()
@@ -532,9 +593,10 @@ namespace Synix_Control_Panel
 				Game = "Unturned",
 				AppID = "1110390",
 				ExeName = "Unturned.exe",
-				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} +map {map} -port {port} -password {pass} {mode}", 
-				Port = 27015,
+				RequiredArgs = "-batchmode -nographics \"+InternetServer/{ServerName}\" +map {map} -port {port} -password \"{pass}\" {mode}",
 				QueryPort = 27016,
+				RelativeConfigPath = @"Servers\Default\Server\Commands.dat",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["PEI", "Washington", "Russia", "Germany", "Hawaii"],
 				GameModes = ["PVP", "PVE"]
 			},
@@ -547,6 +609,8 @@ namespace Synix_Control_Panel
 				Port = 27016,
 				QueryPort = 27016,
 				GameModes = ["Creative"],
+				RelativeConfigPath = @"Instance\SpaceEngineers-Dedicated.cfg",
+				Format = ConfigFormat.XML,
 				Maps = ["StarSystem", "AlienPlanet", "EmptyWorld"]
 			},
 			new()
@@ -557,6 +621,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-port={port} -name=\"{ServerName}\" -config=server.cfg -world={map}",
 				Port = 2302,
 				QueryPort = 2303,
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["empty", "Altis", "Stratis", "Tanoa", "Malden"]
 			},
 			new()
@@ -627,6 +693,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}?Scenario={map}?MaxPlayers={MaxPlayers} -port={port} -queryport={query} -hostname=\"{ServerName}\" -password=\"{pass}\"",
 				Port = 27102,
 				QueryPort = 27131,
+				RelativeConfigPath = @"Insurgency\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Refinery", "Farmhouse", "Hideout", "Crossing"]
 			},
 			new()
@@ -697,6 +765,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}?Listen -server -log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\"",
 				Port = 7777,
 				QueryPort = 27015,
+				RelativeConfigPath = @"MOE\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				GameModes = ["PVE", "PVP"],
 				Maps = ["ZhongZhou", "DongZhou"]
 			},
@@ -748,6 +818,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-config \"{map}\" -profile \"profile\" -maxPlayers {MaxPlayers} -port {port}",
 				Port = 2001,
 				QueryPort = 2001,
+				RelativeConfigPath = @"configs\server.json",
+				Format = ConfigFormat.JSON,
 				Maps = ["server.json"]
 			},
 			new()
@@ -799,6 +871,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "--galaxy-name \"{map}\" --server-name \"{ServerName}\" --admin \"{adminpass}\" --port {port} --use-steam-networking 1",
 				Port = 27000,
 				QueryPort = 27003,
+				RelativeConfigPath = @"galaxies\avorion_galaxy\server.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["galaxy"]
 			},
 			new()
@@ -831,6 +905,8 @@ namespace Synix_Control_Panel
 				AppID = "683000",
 				ExeName = @"SCUM\Binaries\Win64\SCUMServer-Win64-Shipping.exe",
 				RequiredArgs = "Port={port} QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -log",
+				RelativeConfigPath = @"SCUM\Saved\Config\WindowsServer\ServerSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 7042,
 				QueryPort = 7043,
 				Maps = ["SCUM_Island"]
@@ -843,6 +919,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-nogui",
 				Port = 3000,
 				QueryPort = 3001,
+				RelativeConfigPath = @"Configs\Network.eco",
+				Format = ConfigFormat.JSON,
 				Maps = ["DefaultWorld"]
 			},
 			new()
@@ -853,6 +931,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-port={port} -queryport={query} -log",
 				Port = 8211,
 				QueryPort = 27015,
+				RelativeConfigPath = @"HLL\Saved\Config\WindowsServer\Server.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["SainteMarieDuMont_Warfare"]
 			},
 			new()
@@ -873,6 +953,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "",
 				Port = 21025,
 				QueryPort = 21025,
+				RelativeConfigPath = @"storage\starbound_server.config",
+				Format = ConfigFormat.JSON,
 				Maps = ["Universe"]
 			},
 			new()
@@ -883,6 +965,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}",
 				Port = 3724,
 				QueryPort = 27016,
+				RelativeConfigPath = @"Creative\gameserver.conf",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Adventure"]
 			},
 			new()
@@ -891,6 +975,8 @@ namespace Synix_Control_Panel
 				AppID = "2445990",
 				ExeName = @"NWX\Binaries\Win64\NWXServer-Win64-Shipping.exe",
 				RequiredArgs = "{map}?Listen -log -ServerName=\"{ServerName}\" -Password=\"{pass}\" -Port={port} -QueryPort={query}",
+				RelativeConfigPath = @"NWX\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["SylvanGlade"]
@@ -903,6 +989,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-batchmode -nographics -server_name=\"{ServerName}\" -port={port} -query_port={query} -map_name=\"{map}\"",
 				Port = 20101,
 				QueryPort = 27015,
+				RelativeConfigPath = @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["FortSchwarz", "CampNile"]
 			},
 			new()
@@ -913,6 +1001,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "{map}?Listen -log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\"",
 				Port = 7777,
 				QueryPort = 27015,
+				RelativeConfigPath = @"DeadPoly\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["DeadPoly"]
 			},
 			new()
@@ -921,6 +1011,8 @@ namespace Synix_Control_Panel
 				AppID = "2862850",
 				ExeName = @"Bellwright\Binaries\Win64\BellwrightServer-Win64-Shipping.exe",
 				RequiredArgs = "{map}?Listen -log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\"",
+				RelativeConfigPath = @"Bellwright\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["Bellwright"]
@@ -934,6 +1026,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"nmrih\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["nmo_broadway", "nmo_cabin"]
 			},
 			new()
@@ -945,6 +1039,8 @@ namespace Synix_Control_Panel
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
+				RelativeConfigPath = @"svencoop\server.cfg",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["stadium4"]
 			},
 			new()
@@ -955,6 +1051,8 @@ namespace Synix_Control_Panel
 				RequiredArgs = "-batchmode -showlogs -nographics -port {port} -name \"{ServerName}\" -pwd \"{pass}\"",
 				Port = 8787,
 				QueryPort = 8787,
+				RelativeConfigPath = @"Craftopia_Data\Server\ServerSetting.ini",
+				Format = ConfigFormat.StandardINI,
 				Maps = ["Default"]
 			},
 			new()
@@ -963,6 +1061,8 @@ namespace Synix_Control_Panel
 				AppID = "412680",
 				ExeName = @"TheIsle\Binaries\Win64\TheIsleServer-Win64-Shipping.exe",
 				RequiredArgs = "{map}?Listen?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -log",
+				RelativeConfigPath = @"TheIsle\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["Spiro", "Gateway"]
