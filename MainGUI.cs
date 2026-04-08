@@ -215,53 +215,47 @@ namespace Synix_Control_Panel
 			if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
 			{
 				GameServer newServer = settingsForm.NewServer;
-
-				// THE FIX: Look up the technical data from the Database
-				// This ensures correctAppId isn't empty even if the JSON is ignored.
 				var gameData = GameDatabase.GetGame(newServer.Game);
 				string correctAppId = gameData?.AppID ?? "";
 
-				if (string.IsNullOrEmpty(correctAppId))
-				{
-					AppendLog($"[ERROR] Could not find Steam AppID for {newServer.Game} in the database.");
-					return;
-				}
-
-				// Set status to Installing immediately
 				newServer.Status = "Installing";
 				isDownloadActive = true;
 				dataGridView1.Refresh();
 
 				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
-				AppendLog($"--- [INFO] INSTALL {newServer.Game} can take up to 2-10 minutes ---", Color.DeepSkyBlue, true);
-				AppendLog($"--- [WARNING] Synix close window button is disabled! ---", Color.Orange, true);
 
-				// 2. Run your existing ServerInstaller (NO CHANGES NEEDED TO THAT FILE)
-				await Task.Run(() =>
+				// CAPTURE THE CODE
+				int exitCode = await Task.Run(() =>
 				{
-					Synix_Control_Panel.SteamCMDHandler.ServerInstaller.Install(
+					return ServerInstaller.Install(
 						newServer.InstallPath,
-						correctAppId, // Passing the ID we pulled from the database
+						correctAppId,
 						msg => this.Invoke((MethodInvoker)(() => AppendLog(msg)))
 					);
 				});
 
-				// 3. Run Post-Install fixes
-				bool fixApplied = GameFix.PostInstall(newServer);
-				if (fixApplied)
+				// POPUP WARNING IF FAILED
+				if (exitCode != 0)
 				{
-					AppendLog($"[SUCCESS] Applied fixes to the {newServer.Game} server.");
+					string errorMsg = ServerInstaller.GetSteamError(exitCode);
+
+					// Show the warning window as requested
+					MessageBox.Show($"Installation Failed!\n\nReason: {errorMsg}",
+									"SteamCMD Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+					newServer.Status = "Failed";
+					isDownloadActive = false;
+					dataGridView1.Refresh();
+					return; // STOP!
 				}
 
+				// Proceed only on success
+				bool fixApplied = GameFix.PostInstall(newServer);
 				newServer.Status = "Offline";
 				isDownloadActive = false;
-				AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
-
-				dataGridView1.Invalidate();
-				dataGridView1.Refresh();
-
 				FileHandler.SaveServers();
 				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
+				dataGridView1.Refresh();
 			}
 		}
 
@@ -340,21 +334,38 @@ namespace Synix_Control_Panel
 				isDownloadActive = true;
 				dataGridView1.Refresh();
 				AppendLog($"--- UPDATE STARTED: {selectedServer.Game} ---");
-				AppendLog($"--- [WARNING] Synix close window button is disabled while the update is in progress and will be disabled once the update is complete! ---", Color.Orange, true);
+				AppendLog($"--- [WARNING] Synix close window button is disabled! ---", Color.Orange, true);
 				AppendLog($"--- [INFO] Updating {selectedServer.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
 
-				// 5. Run SteamCMD in the background (Re-using your Installer!)
-				await Task.Run(() =>
+				// 5. Run SteamCMD and capture the Exit Code
+				int exitCode = await Task.Run(() =>
 				{
-					ServerInstaller.Install(
+					// Using the updated signature (3 arguments) and thread-safe logging
+					return ServerInstaller.Install(
 						selectedServer.InstallPath,
 						correctAppId,
-						AppendLog
+						msg => this.Invoke((MethodInvoker)(() => AppendLog(msg)))
 					);
 				});
 
-				// 6. STEAMCMD IS DONE! 
-				// Re-apply our custom game fixes just in case Steam wiped out the DLLs or configs!
+				// FAILURE DETECTION: Trigger the popup if an error occurred
+				if (exitCode != 0)
+				{
+					string errorDetail = ServerInstaller.GetSteamError(exitCode);
+
+					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}",
+									"Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+					AppendLog($"[CRITICAL ERROR] Update failed with code {exitCode}.", Color.Red, true);
+
+					// Reset status and unlock
+					selectedServer.Status = "Offline";
+					isDownloadActive = false;
+					dataGridView1.Refresh();
+					return; // STOP! Do not run GameFix or show finished log
+				}
+
+				// 6. SUCCESS: Re-apply fixes
 				bool fixApplied = GameFix.PostInstall(selectedServer);
 				if (fixApplied)
 				{

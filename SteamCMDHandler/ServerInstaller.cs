@@ -18,8 +18,10 @@ namespace Synix_Control_Panel.SteamCMDHandler
 {
 	public static class ServerInstaller
 	{
-		public static void Install(string installPath, string appId, Action<string> logCallback)
+		public static int Install(string installPath, string appId, Action<string> logCallback)
 		{
+			bool hasInternalError = false;
+
 			ProcessStartInfo startInfo = new ProcessStartInfo
 			{
 				FileName = @"C:\Games\SteamCMD\steamcmd.exe",
@@ -31,34 +33,61 @@ namespace Synix_Control_Panel.SteamCMDHandler
 			};
 
 			using Process process = new Process { StartInfo = startInfo };
-			process.Start();
 
-			// Create asynchronous tasks to read the streams in real-time
-			Task outputTask = ReadStreamAsync(process.StandardOutput, logCallback);
-			Task errorTask = ReadStreamAsync(process.StandardError, logCallback);
+			try
+			{
+				process.Start();
 
-			// Wait for both the process to exit AND the streams to finish reading
-			process.WaitForExit();
-			Task.WaitAll(outputTask, errorTask);
+				// We wrap your logCallback to look for the word "ERROR!"
+				Action<string> checkForErrors = (msg) =>
+				{
+					if (msg.Contains("ERROR!")) hasInternalError = true;
+					logCallback?.Invoke(msg);
+				};
+
+				Task outputTask = ReadStreamAsync(process.StandardOutput, checkForErrors);
+				Task errorTask = ReadStreamAsync(process.StandardError, checkForErrors);
+
+				process.WaitForExit();
+				Task.WaitAll(outputTask, errorTask);
+
+				// If we saw "ERROR!" in the text, return 99, otherwise return the real exit code
+				return hasInternalError ? 99 : process.ExitCode;
+			}
+			catch (Exception ex)
+			{
+				logCallback?.Invoke($"[CRITICAL] Launcher Error: {ex.Message}");
+				return -1;
+			}
 		}
 
-		// A dedicated async reader that doesn't get hung up on buffer sizes
+		public static string GetSteamError(int code)
+		{
+			return code switch
+			{
+				0 => "Success",
+				99 => "Steam Error: AppID not found or No Subscription.",
+				5 => "Invalid Arguments",
+				7 => "Disk Space Full",
+				8 => "Network Connection Lost",
+				_ => $"SteamCMD Failure (Code: {code})"
+			};
+		}
+
 		private static async Task ReadStreamAsync(StreamReader stream, Action<string> logCallback)
 		{
-			char[] buffer = new char[1]; // Read literally one character at a time
+			char[] buffer = new char[1];
 			string currentLine = "";
 
 			while (await stream.ReadAsync(buffer, 0, 1) > 0)
 			{
 				char c = buffer[0];
-
-				// If we hit a newline or carriage return, flush the line to the UI!
 				if (c == '\r' || c == '\n')
 				{
 					if (!string.IsNullOrWhiteSpace(currentLine))
 					{
 						logCallback(currentLine);
-						currentLine = ""; // Reset for the next line
+						currentLine = "";
 					}
 				}
 				else
@@ -66,12 +95,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 					currentLine += c;
 				}
 			}
-
-			// Catch any leftover text that didn't end in a newline when the process closed
-			if (!string.IsNullOrWhiteSpace(currentLine))
-			{
-				logCallback(currentLine);
-			}
+			if (!string.IsNullOrWhiteSpace(currentLine)) logCallback(currentLine);
 		}
 	}
 }
