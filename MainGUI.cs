@@ -15,6 +15,7 @@ using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.MonitoringHandler;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
+using Synix_Control_Panel.SynixEngine;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -41,6 +42,7 @@ namespace Synix_Control_Panel
 			InitializeComponent();
 			Instance = this;
 			FileHandler.LoadServers();
+			var engine = Synix_Control_Panel.SynixEngine.Core.Instance;
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.HeartbeatChart(chartHeartbeat);
 			chartHeartbeat.Series["TotalCPU"].Points.Clear();
@@ -49,6 +51,30 @@ namespace Synix_Control_Panel
 			System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Instance = this;
+		}
+
+		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
+		{
+			// Grab the numbers from the Brain
+			double cpu = Synix_Control_Panel.SynixEngine.Core.Instance.TotalCpuUsage;
+			double ram = Synix_Control_Panel.SynixEngine.Core.Instance.TotalRamUsageGb;
+
+			// Update the Labels
+			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
+			lblTotalRam.Text = $"RAM: {ram:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
+
+			// Update the Chart
+			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
+			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
+
+			// Keep the graph moving
+			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints)
+			{
+				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
+				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
+			}
+
+			chartTickCounter++;
 		}
 
 		private void MainGUI_Load(object sender, EventArgs e)
@@ -74,34 +100,6 @@ namespace Synix_Control_Panel
 			{
 				MessageBox.Show("Error loading Synix: " + ex.Message);
 			}
-		}
-
-		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
-		{
-			// 1. Get current stats
-			var usage = Synix_Control_Panel.MonitoringHandler.ResourceMonitor.GetTotalResources(serverList);
-			double ramGB = usage.TotalRamMB / 1024.0;
-
-			// 2. Chart Waves & Sliding Window
-			var cpuSer = chartHeartbeat.Series["TotalCPU"];
-			var ramSer = chartHeartbeat.Series["TotalRAM"];
-			var ca = chartHeartbeat.ChartAreas[0];
-
-			cpuSer.Points.AddXY(chartTickCounter, usage.TotalCpuPercent);
-			ramSer.Points.AddXY(chartTickCounter, ramGB);
-			chartTickCounter++;
-
-			ca.AxisX.Minimum = chartTickCounter - maxGraphPoints;
-			ca.AxisX.Maximum = chartTickCounter;
-
-			// 3. Update Text (Using your 'N1' and 'N2' styles for that clean decimal look)
-			lblTotalCpu.Text = $"CPU: {usage.TotalCpuPercent:N1}%";
-
-			// We label this as "Usable" so the user knows why it's lower than their hardware total
-			lblTotalRam.Text = $"RAM: {ramGB:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
-
-			// 4. Final Grid Refresh
-			UpdateGrid();
 		}
 
 		public void AppendLog(string message)
@@ -159,7 +157,6 @@ namespace Synix_Control_Panel
 			await Task.Delay(100);
 			AppendLog("Checking SteamCMD dependencies...");
 			AppendLog($"--- [WARNING] Synix close window button is now Disabled! ---", Color.Orange, true);
-			Servers.RebindProcesses(serverList);
 			// 2. Run the check on a background thread
 			// This allows the 'X' button to stay active and trigger GUI_FormClosing
 			await Task.Run(() => SteamCMD.EnsureSteamCMD(AppendLog));
@@ -200,187 +197,40 @@ namespace Synix_Control_Panel
 			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 
-		private void timerMonitor_Tick(object sender, EventArgs e)
-		{
-			// Pass your list and the log method
-			Check.ServerStatus();
-
-			// Refresh the Grid so the "Status" column updates visually
-			UpdateGrid();
-		}
-
 		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
-			using ServerSettingsGUI settingsForm = new();
-			if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
-			{
-				GameServer newServer = settingsForm.NewServer;
-				var gameData = GameDatabase.GetGame(newServer.Game);
-				string correctAppId = gameData?.AppID ?? "";
+			// UI-specific check
+			if (isInitializing) return;
 
-				newServer.Status = "Installing";
-				isDownloadActive = true;
-				dataGridView1.Refresh();
-
-				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
-
-				// CAPTURE THE CODE
-				int exitCode = await Task.Run(() =>
-				{
-					return ServerInstaller.Install(
-						newServer.InstallPath,
-						correctAppId,
-						msg => this.Invoke((MethodInvoker)(() => AppendLog(msg)))
-					);
-				});
-
-				// POPUP WARNING IF FAILED
-				if (exitCode != 0)
-				{
-					string errorMsg = ServerInstaller.GetSteamError(exitCode);
-
-					// Show the warning window as requested
-					MessageBox.Show($"Installation Failed!\n\nReason: {errorMsg}",
-									"SteamCMD Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-					newServer.Status = "Failed";
-					isDownloadActive = false;
-					dataGridView1.Refresh();
-					return; // STOP!
-				}
-
-				// Proceed only on success
-				bool fixApplied = GameFix.PostInstall(newServer);
-				newServer.Status = "Offline";
-				isDownloadActive = false;
-				FileHandler.SaveServers();
-				AppendLog($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---");
-				dataGridView1.Refresh();
-			}
+			// The AI handles the window, the download, the fixes, and the logging
+			await Core.Instance.AddServerAndReport();
 		}
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
+			// UI-specific safety check
 			if (isInitializing) return;
 
-			if (dataGridView1.SelectedRows.Count > 0)
+			// The AI handles the "Online" check, opens the form, and logs the result
+			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
-
-				if (selectedServer.Status == "Online")
-				{
-					MessageBox.Show("Please stop the server before editing.", "Server Active");
-					return;
-				}
-
-				using var editForm = new ServerSettingsGUI(selectedServer);
-				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
-				{
-					// ServerSettingsGUI.cs handles the list swap and JSON save internally.
-					dataGridView1.Refresh();
-					AppendLog($"[SUCCESS] {editForm.NewServer.ServerName} updated and saved.");
-				}
+				Core.Instance.EditServerAndReport(selectedServer);
 			}
 			else
 			{
-				MessageBox.Show("Please select a server in the list first.");
+				MessageBox.Show("Please select a server in the list first.", "No Selection");
 			}
 		}
 
 		private async void btnUpdate_Click(object sender, EventArgs e)
 		{
-			// Prevent clicking if the app is still loading
+			// UI-specific check
 			if (isInitializing) return;
 
-			// 1. Make sure they actually selected a server in the grid
-			if (dataGridView1.SelectedRows.Count > 0)
+			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// Grab the server they clicked on
-				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
-
-				// 2. Safety Check: Don't update a running server!
-				if (selectedServer.Status == "Online")
-				{
-					MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return;
-				}
-
-				// Safety Check: Don't update if it's already busy
-				if (selectedServer.Status == "Updating" || selectedServer.Status == "Installing")
-				{
-					MessageBox.Show("This server is already busy.", "Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return;
-				}
-
-				// Ask for confirmation just in case they clicked it by accident
-				var confirmResult = MessageBox.Show($"Are you sure you want to update {selectedServer.ServerName}?",
-										 "Confirm Update",
-										 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-				if (confirmResult != DialogResult.Yes) return;
-
-				// 3. Get the AppID from the database
-				var gameData = GameDatabase.GetGame(selectedServer.Game);
-				string correctAppId = gameData?.AppID ?? "";
-
-				if (string.IsNullOrEmpty(correctAppId))
-				{
-					MessageBox.Show("Could not find the AppID for this game. Cannot update.", "Error");
-					return;
-				}
-
-				// 4. Update the UI to show it's working
-				selectedServer.Status = "Updating";
-				isDownloadActive = true;
-				dataGridView1.Refresh();
-				AppendLog($"--- UPDATE STARTED: {selectedServer.Game} ---");
-				AppendLog($"--- [WARNING] Synix close window button is disabled! ---", Color.Orange, true);
-				AppendLog($"--- [INFO] Updating {selectedServer.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
-
-				// 5. Run SteamCMD and capture the Exit Code
-				int exitCode = await Task.Run(() =>
-				{
-					// Using the updated signature (3 arguments) and thread-safe logging
-					return ServerInstaller.Install(
-						selectedServer.InstallPath,
-						correctAppId,
-						msg => this.Invoke((MethodInvoker)(() => AppendLog(msg)))
-					);
-				});
-
-				// FAILURE DETECTION: Trigger the popup if an error occurred
-				if (exitCode != 0)
-				{
-					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-
-					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}",
-									"Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-					AppendLog($"[CRITICAL ERROR] Update failed with code {exitCode}.", Color.Red, true);
-
-					// Reset status and unlock
-					selectedServer.Status = "Offline";
-					isDownloadActive = false;
-					dataGridView1.Refresh();
-					return; // STOP! Do not run GameFix or show finished log
-				}
-
-				// 6. SUCCESS: Re-apply fixes
-				bool fixApplied = GameFix.PostInstall(selectedServer);
-				if (fixApplied)
-				{
-					AppendLog($"[SUCCESS] Re-applied missing files to the {selectedServer.Game} server after the update.");
-				}
-
-				// 7. Put the server back to normal
-				selectedServer.Status = "Offline";
-				AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
-				isDownloadActive = false;
-
-				dataGridView1.Invalidate();
-				dataGridView1.Refresh();
-
-				AppendLog($"--- UPDATE FINISHED: {selectedServer.Game} ---");
+				// The AI handles everything: Safety, Database, SteamCMD, and Logging
+				await Core.Instance.UpdateServerAndReport(selectedServer);
 			}
 			else
 			{
@@ -390,43 +240,18 @@ namespace Synix_Control_Panel
 
 		private void btnDelete_Click(object sender, EventArgs e)
 		{
+			// 1. Check if the app is still loading
 			if (isInitializing) return;
 
-			if (dataGridView1.SelectedRows.Count > 0)
+			// 2. Hand over the server object to the AI
+			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				var selectedServer = (GameServer)dataGridView1.SelectedRows[0].DataBoundItem;
-
-				if (selectedServer.Status == "Online")
-				{
-					MessageBox.Show("Stop the server before deleting it!", "Server Active");
-					return;
-				}
-
-				// 1. Expanded Safety Confirmation (Stay in GUI)
-				var confirm = MessageBox.Show($"Are you sure you want to delete '{selectedServer.ServerName}'?\n\n" +
-											$"THIS WILL PERMANENTLY REMOVE ALL SERVER FILES AT:\n{selectedServer.InstallPath}",
-											"Confirm Total Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-				if (confirm == DialogResult.Yes)
-				{
-					try
-					{
-						// 2. Call the backend to do the dirty work
-						ServerFolder.Delete(selectedServer, AppendLog);
-
-						// 3. Update the UI
-						UpdateGrid();
-					}
-					catch (Exception ex)
-					{
-						// 4. Show your specific error message if the physical delete fails
-						MessageBox.Show($"Files were deleted from the list, but some physical files couldn't be removed: {ex.Message}", "Cleanup Error");
-					}
-				}
+				// The AI handles the "Online" check, the Confirmation, and the File Deletion
+				Core.Instance.DeleteServerAndReport(selectedServer);
 			}
 			else
 			{
-				MessageBox.Show("Click a server in the list first!");
+				MessageBox.Show("Please select a server in the list first.", "No Selection");
 			}
 		}
 
@@ -434,28 +259,23 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// Look up the database
-				var gameData = GameDatabase.GetGame(selectedServer.Game);
+				// 1. ENGINE INTEGRITY CHECK
+				// This uses the Validator logic
+				if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
 
-				// THE BLOCKER: Always stop if the warning is shown
-				if (gameData != null && gameData.NeedsConfigWarning && selectedServer.IsFirstBoot)
-				{
-					using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(selectedServer))
-					{
-						warningForm.ShowDialog();
+				// 2. CONFIG WARNING BLOCKER
+				// This uses the Validator logic
+				if (Core.Instance.ShouldBlockForConfig(selectedServer)) return;
 
-						// NO MATTER WHAT, return here so the server does NOT start yet.
-						// They must click 'Start' again AFTER they close the config editor.
-						return;
-					}
-				}
-
-				// Proceed to start the server ONLY if the warning is cleared
+				// 3. START THE SERVER
 				Servers.Start(selectedServer, msg =>
 				{
 					this.Invoke((MethodInvoker)delegate
 					{
 						AppendLog(msg);
+
+						// The Engine refreshes the grid every 1 second, 
+						// but we call it here for instant feedback.
 						UpdateGrid();
 					});
 				});
@@ -466,68 +286,17 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// Allow the stop attempt as long as there is a PID or a process object
-				if (selectedServer.RunningProcess == null && !selectedServer.PID.HasValue)
-				{
-					MessageBox.Show("No active process found for this server.", "Info");
-					return;
-				}
-
-				Servers.Stop(selectedServer, AppendLog);
-				UpdateGrid();
+				// The AI handles the PID check, the stop command, and the log
+				Core.Instance.StopServerAndReport(selectedServer);
 			}
 		}
 
 		private void btnOpenConfig_Click(object sender, EventArgs e)
 		{
-			// 1. Get the server the user has highlighted in the grid
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// 2. Look up the Game Database to find the file path for this specific game
-				// Note: Use your actual public list name (e.g., Games or GetGames)
-				var blueprint = GameDatabase.GetGames.FirstOrDefault(g => g.Game == selectedServer.Game);
-
-				if (blueprint != null && !string.IsNullOrEmpty(blueprint.RelativeConfigPath))
-				{
-					// 3. Stitch the Install Path and the Config Path together
-					// Result: C:\Games\MySoulmask\WS\Saved\Config\...\GameUserSettings.ini
-					string fullConfigPath = Path.Combine(selectedServer.InstallPath, blueprint.RelativeConfigPath);
-
-					// 4. Double-check the file actually exists before trying to open it
-					if (File.Exists(fullConfigPath))
-					{
-						// Open the editor form and pass it the path
-						ServerConfig editor = new ServerConfig(fullConfigPath, blueprint.Format);
-						editor.ShowDialog();
-					}
-					else
-					{
-						MessageBox.Show($"Could not find the config file at:\n{fullConfigPath}", "Missing Config");
-					}
-				}
-				else
-				{
-					MessageBox.Show("This game does not have a config path defined in the GameDatabase.", "No Config Path");
-				}
-			}
-		}
-
-		private void GUI_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			// 1. Check if the 'steamcmd' process exists on the PC right now
-			bool isSteamRunning = Process.GetProcessesByName("steamcmd").Any();
-
-			// 2. Check your manual flag (for internal initialization)
-			if (isDownloadActive || isSteamRunning)
-			{
-				MessageBox.Show("SteamCMD is currently active and performing operations.\n\n" +
-								"Closing now will corrupt your game files or SteamCMD installation. " +
-								"Please wait for the console to finish.",
-								"Process in Progress",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Warning);
-
-				e.Cancel = true; // LOCK THE X
+				// One line. The AI handles the lookup, the file check, and the window.
+				Core.Instance.OpenConfigEditor(selectedServer);
 			}
 		}
 

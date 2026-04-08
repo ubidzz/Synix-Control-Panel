@@ -48,14 +48,14 @@
 			chartHeartbeat = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			lblTotalRam = new Label();
 			lblTotalCpu = new Label();
-			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			contextMenuStrip = new ContextMenuStrip(components);
-			installServer = new ToolStripMenuItem();
+			deleteServer = new ToolStripMenuItem();
+			openServerConfig = new ToolStripMenuItem();
 			editServer = new ToolStripMenuItem();
 			udateServer = new ToolStripMenuItem();
-			openServerConfig = new ToolStripMenuItem();
-			deleteServer = new ToolStripMenuItem();
+			installServer = new ToolStripMenuItem();
 			btnServerActions = new Button();
+			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -221,24 +221,25 @@
 			lblTotalCpu.TabIndex = 13;
 			lblTotalCpu.Text = "CPU";
 			// 
-			// tmrResourceUpdates
-			// 
-			tmrResourceUpdates.Enabled = true;
-			tmrResourceUpdates.Interval = 1000;
-			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
-			// 
 			// contextMenuStrip
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { deleteServer, openServerConfig, editServer, udateServer, installServer });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(199, 136);
+			contextMenuStrip.Size = new Size(199, 114);
 			// 
-			// installServer
+			// deleteServer
 			// 
-			installServer.Name = "installServer";
-			installServer.Size = new Size(198, 22);
-			installServer.Text = "Install Server";
-			installServer.Click += btnAddServer_Click;
+			deleteServer.Name = "deleteServer";
+			deleteServer.Size = new Size(198, 22);
+			deleteServer.Text = "Delete Server";
+			deleteServer.Click += btnDelete_Click;
+			// 
+			// openServerConfig
+			// 
+			openServerConfig.Name = "openServerConfig";
+			openServerConfig.Size = new Size(198, 22);
+			openServerConfig.Text = "Open Server Config File";
+			openServerConfig.Click += btnOpenConfig_Click;
 			// 
 			// editServer
 			// 
@@ -254,19 +255,12 @@
 			udateServer.Text = "Update Server";
 			udateServer.Click += btnUpdate_Click;
 			// 
-			// openServerConfig
+			// installServer
 			// 
-			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(198, 22);
-			openServerConfig.Text = "Open Server Config File";
-			openServerConfig.Click += btnOpenConfig_Click;
-			// 
-			// deleteServer
-			// 
-			deleteServer.Name = "deleteServer";
-			deleteServer.Size = new Size(198, 22);
-			deleteServer.Text = "Delete Server";
-			deleteServer.Click += btnDelete_Click;
+			installServer.Name = "installServer";
+			installServer.Size = new Size(198, 22);
+			installServer.Text = "Install Server";
+			installServer.Click += btnAddServer_Click;
 			// 
 			// btnServerActions
 			// 
@@ -277,6 +271,12 @@
 			btnServerActions.Text = "Server Actions";
 			btnServerActions.UseVisualStyleBackColor = true;
 			btnServerActions.Click += btnServerActionsMenu_Click;
+			// 
+			// tmrResourceUpdates
+			// 
+			tmrResourceUpdates.Enabled = true;
+			tmrResourceUpdates.Interval = 1000;
+			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
 			// 
 			// MainGUI
 			// 
@@ -300,7 +300,6 @@
 			Name = "MainGUI";
 			SizeGripStyle = SizeGripStyle.Hide;
 			Text = "Synix Control Panel";
-			FormClosing += GUI_FormClosing;
 			Load += MainGUI_Load;
 			Shown += MainGUI_Shown;
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
@@ -321,7 +320,6 @@
 		private System.Windows.Forms.DataVisualization.Charting.Chart chartHeartbeat;
 		private Label lblTotalRam;
 		private Label lblTotalCpu;
-		private System.Windows.Forms.Timer tmrResourceUpdates;
 		private DataGridViewTextBoxColumn colGame;
 		private DataGridViewTextBoxColumn colName;
 		private DataGridViewTextBoxColumn colPort;
@@ -336,5 +334,6 @@
 		private ToolStripMenuItem openServerConfig;
 		private ToolStripMenuItem deleteServer;
 		private Button btnServerActions;
+		private System.Windows.Forms.Timer tmrResourceUpdates;
 	}
 }

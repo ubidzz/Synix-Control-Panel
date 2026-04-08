@@ -12,16 +12,14 @@
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.ServerHandler;
+using Synix_Control_Panel.SynixEngine; // 👈 Namespace for the Brain
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
 
@@ -29,36 +27,27 @@ namespace Synix_Control_Panel
 {
 	public partial class ServerSettingsGUI : Form
 	{
-		// 1. Properly marked as nullable (?) to prevent CS8618 and CS8625
 		public GameServer? NewServer { get; private set; }
 
 		private bool isManualLoading = false;
 		private bool _isEditMode = false;
 		private GameServer? _existingServer = null;
 
-		// 2. The Unified Constructor (Handles both Add and Edit)
 		public ServerSettingsGUI(GameServer? server = null)
 		{
 			InitializeComponent();
-
 			_existingServer = server;
 
-			// FIX: Check 'server' directly instead of '_existingServer' to satisfy the compiler's null-flow analysis
 			if (server != null)
 			{
 				_isEditMode = true;
-
 				cmbGame.Enabled = true;
 				chkDefaultPath.Enabled = false;
 				txtInstallPath.Enabled = false;
 				btnBrowse.Enabled = false;
 
-				WarningLabel.Text = "Warning! You cannot edit this after the server has been saved!\n" +
-								   "If you used the Default Folder Location and you changed the " +
-								   "Server Name the location and name will be changed to:\n" +
-								   @"C:\Games\[Game Name]\[Your Server Name]";
+				WarningLabel.Text = "Warning! You cannot edit location after the server has been saved!";
 
-				// Fill the GUI with existing data. Compiler now knows 'server' is not null!
 				txtName.Text = server.ServerName;
 				cmbGame.Text = server.Game;
 				txtPassword.Text = server.Password;
@@ -75,15 +64,10 @@ namespace Synix_Control_Panel
 			else
 			{
 				_isEditMode = false;
-				WarningLabel.Text = "[WARNING] Make sure to pick a place on your pc to install the server\n" +
-									"or use the default location because you can't change this later!\n" +
-								   "[INFO] If you used the Default Folder Location, the folder name and\n" +
-								   "the location will be:\n" +
-								   @"C:\Games\[Game Name]\[Your Server Name]";
+				WarningLabel.Text = "[WARNING] Pick a location to install or use default. This cannot be changed later!";
 			}
 		}
 
-		// 3. Nullable 'sender' (object?) prevents CS8022 delegate warnings
 		private void ServerSettingsGUI_Load(object? sender, EventArgs e)
 		{
 			cmbGame.SelectedIndexChanged -= cmbGame_SelectedIndexChanged;
@@ -99,9 +83,7 @@ namespace Synix_Control_Panel
 			if (_isEditMode && _existingServer != null)
 			{
 				isManualLoading = true;
-
 				txtName.Text = _existingServer.ServerName;
-
 				int gameIndex = cmbGame.FindStringExact(_existingServer.Game);
 				if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 
@@ -113,94 +95,64 @@ namespace Synix_Control_Panel
 				txtInstallPath.Text = _existingServer.InstallPath;
 				chkDefaultPath.Checked = _existingServer.IsDefaultPath;
 				chkEnableRcon.Checked = _existingServer.EnableRcon;
-				numRconPort.Value = _existingServer.RconPort > 0 ? _existingServer.RconPort : 0; // Safe fallback
+				numRconPort.Value = _existingServer.RconPort > 0 ? _existingServer.RconPort : 0;
 				txtRconPassword.Text = _existingServer.RconPassword ?? "";
 
-				// Repopulate Maps list so we can select the saved world
 				var gameData = GameDatabase.GetGame(_existingServer.Game);
-				if (gameData != null && gameData.Maps != null)
+				if (gameData != null)
 				{
-					cmbWorldName.Items.Clear();
-					foreach (var map in gameData.Maps)
-					{
-						cmbWorldName.Items.Add(map);
-					}
-					if (cmbWorldName.Items.Contains(_existingServer.WorldName))
-					{
-						cmbWorldName.SelectedItem = _existingServer.WorldName;
-					}
-					else
-					{
-						cmbWorldName.Text = _existingServer.WorldName;
-					}
-				}
-
-				if (gameData != null && gameData.GameModes != null)
-				{
-					cmbCompetitive.Items.Clear();
-
-					// 1. Loop through the LIST to fill the dropdown (Plural: GameModes)
-					foreach (var gameMode in gameData.GameModes)
-					{
-						cmbCompetitive.Items.Add(gameMode);
-					}
-
-					// 2. Check and set the selection using the STRING (Singular: GameMode)
-					if (cmbCompetitive.Items.Contains(_existingServer.GameMode))
-					{
-						cmbCompetitive.SelectedItem = _existingServer.GameMode;
-					}
-					else
-					{
-						// Fallback to the saved text if it's not in the list
-						cmbCompetitive.Text = _existingServer.GameMode;
-					}
+					PopulateMaps(gameData, _existingServer.WorldName);
+					PopulateGameModes(gameData, _existingServer.GameMode);
 				}
 
 				cmbGame.Enabled = false;
 				chkDefaultPath.Enabled = false;
 				txtInstallPath.Enabled = false;
 				btnBrowse.Enabled = false;
-
 				isManualLoading = false;
 			}
 			else
 			{
 				btnSave.Text = "Save Server";
-				txtName.Text = string.Empty;
-				txtInstallPath.Text = string.Empty;
-				cmbWorldName.Items.Clear();
 				cmbCompetitive.SelectedItem = "PVE";
-
-				chkDefaultPath.Enabled = false;
-				btnSave.Enabled = false;
-				cmbGame.Enabled = true;
 			}
 
 			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
 			UpdateControlStates();
 		}
 
+		private void PopulateMaps(GameInfo gameData, string selectedMap)
+		{
+			cmbWorldName.Items.Clear();
+			if (gameData.Maps == null) return;
+			foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map);
+			if (cmbWorldName.Items.Contains(selectedMap)) cmbWorldName.SelectedItem = selectedMap;
+			else cmbWorldName.Text = selectedMap;
+		}
+
+		private void PopulateGameModes(GameInfo gameData, string selectedMode)
+		{
+			cmbCompetitive.Items.Clear();
+			if (gameData.GameModes == null) return;
+			foreach (var mode in gameData.GameModes) cmbCompetitive.Items.Add(mode);
+			if (cmbCompetitive.Items.Contains(selectedMode)) cmbCompetitive.SelectedItem = selectedMode;
+			else cmbCompetitive.Text = selectedMode;
+		}
+
 		private void UpdatePathPreview()
 		{
-			if (_isEditMode) return; // Don't mess with the path if editing
+			if (_isEditMode || !chkDefaultPath.Checked) return;
 
 			string selectedGame = cmbGame.SelectedItem?.ToString() ?? "";
 			string serverName = txtName.Text.Trim();
 
-			if (chkDefaultPath.Checked)
+			if (cmbGame.SelectedIndex > 0 && !string.IsNullOrWhiteSpace(serverName))
 			{
-				if (cmbGame.SelectedIndex > 0 && !string.IsNullOrWhiteSpace(serverName))
-				{
-					string cleanGameName = selectedGame.Replace(" ", "_");
-					string cleanServerName = serverName.Replace(" ", "_");
-					txtInstallPath.Text = Path.Combine(@"C:\Games", cleanGameName, cleanServerName);
-				}
-				else
-				{
-					txtInstallPath.Text = string.Empty;
-				}
+				string cleanGame = selectedGame.Replace(" ", "_");
+				string cleanName = serverName.Replace(" ", "_");
+				txtInstallPath.Text = Path.Combine(@"C:\Games", cleanGame, cleanName);
 			}
+			else txtInstallPath.Text = string.Empty;
 		}
 
 		private void btnBrowse_Click(object? sender, EventArgs e)
@@ -209,51 +161,25 @@ namespace Synix_Control_Panel
 			if (fbd.ShowDialog() == DialogResult.OK)
 			{
 				txtInstallPath.Text = fbd.SelectedPath;
-
-				// ---> NEW: Re-check the locks after picking a folder
 				UpdateControlStates();
 			}
 		}
 
 		private void chkDefaultPath_CheckedChanged(object? sender, EventArgs e)
 		{
-			if (chkDefaultPath.Checked)
-			{
-				txtInstallPath.Enabled = false;
-				btnBrowse.Enabled = false;
-				UpdatePathPreview();
-			}
-			else
-			{
-				txtInstallPath.Enabled = true;
-				btnBrowse.Enabled = true;
-			}
-
-			// ---> NEW: Re-check the locks when the checkbox is clicked
+			txtInstallPath.Enabled = !chkDefaultPath.Checked;
+			btnBrowse.Enabled = !chkDefaultPath.Checked;
+			if (chkDefaultPath.Checked) UpdatePathPreview();
 			UpdateControlStates();
 		}
 
 		private void UpdateControlStates()
 		{
-			string serverName = txtName.Text.Trim();
 			bool isGamePicked = cmbGame.SelectedIndex > 0;
-			bool hasValidName = !string.IsNullOrWhiteSpace(serverName);
-
-			// 1. Can they interact with location settings yet? (Game + Name filled)
-			bool canSelectLocation = isGamePicked && hasValidName;
-
-			chkDefaultPath.Enabled = canSelectLocation;
-
-			bool manualPathMode = canSelectLocation && !chkDefaultPath.Checked;
-			btnBrowse.Enabled = manualPathMode;
-			txtInstallPath.Enabled = manualPathMode;
-
-			// 2. NEW: Have they actually picked a location?
-			// They either checked the box, OR the text box has something in it.
-			bool hasValidLocation = chkDefaultPath.Checked || !string.IsNullOrWhiteSpace(txtInstallPath.Text);
-
-			// 3. NEW: The Save button now requires BOTH the base info AND a location
-			btnSave.Enabled = canSelectLocation && hasValidLocation;
+			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
+			chkDefaultPath.Enabled = isGamePicked && hasName;
+			bool hasLocation = chkDefaultPath.Checked || !string.IsNullOrWhiteSpace(txtInstallPath.Text);
+			btnSave.Enabled = isGamePicked && hasName && hasLocation;
 		}
 
 		private void cmbGame_SelectedIndexChanged(object? sender, EventArgs e)
@@ -261,40 +187,15 @@ namespace Synix_Control_Panel
 			if (isManualLoading || cmbGame.SelectedIndex <= 0) return;
 
 			var gameData = GameDatabase.GetGame(cmbGame.SelectedItem?.ToString() ?? "");
-
 			if (gameData != null)
 			{
 				numPort.Value = gameData.Port;
 				numQueryPort.Value = gameData.QueryPort;
 				txtExtraArgs.Text = gameData.ExtraArgs;
-
-				// --- MAPS POPULATION ---
-				cmbWorldName.Items.Clear();
-				if (gameData.Maps != null && gameData.Maps.Count > 0)
-				{
-					foreach (var map in gameData.Maps)
-					{
-						cmbWorldName.Items.Add(map);
-					}
-					cmbWorldName.SelectedIndex = 0;
-				}
-
-				// --- ADD THIS: COMPETITIVE MODES POPULATION ---
-				cmbCompetitive.Items.Clear();
-				if (gameData.GameModes != null && gameData.GameModes.Count > 0)
-				{
-					foreach (var mode in gameData.GameModes)
-					{
-						cmbCompetitive.Items.Add(mode);
-					}
-					// Default to PVE or the first item if PVE isn't there
-					if (cmbCompetitive.Items.Contains("PVE")) cmbCompetitive.Text = "PVE";
-					else cmbCompetitive.SelectedIndex = 0;
-				}
-
+				PopulateMaps(gameData, gameData.Maps.FirstOrDefault() ?? "");
+				PopulateGameModes(gameData, "PVE");
 				UpdatePathPreview();
 			}
-
 			UpdateControlStates();
 		}
 
@@ -306,120 +207,34 @@ namespace Synix_Control_Panel
 
 		private void btnSave_Click(object? sender, EventArgs e)
 		{
-			string newServerName = txtName.Text.Trim();
-			string selectedGame = cmbGame.Text; // Grab the currently selected game
+			string newName = txtName.Text.Trim();
+			string selectedGame = cmbGame.Text;
 
-			if (string.IsNullOrWhiteSpace(newServerName))
-			{
-				MessageBox.Show("Please enter a Server Name.", "Validation Error");
-				return;
-			}
+			if (string.IsNullOrWhiteSpace(newName)) return;
 
-			// ==========================================
-			// 🛡️ GUARD 1: DUPLICATE NAME & GAME CHECKER
-			// ==========================================
-			// Check if another server of the SAME GAME already has this exact name
-			bool nameExists = MainGUI.serverList.Any(s =>
-				s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) && // Must be the same Game
-				s.ServerName.Equals(newServerName, StringComparison.OrdinalIgnoreCase) && // Must be the same Name
-				(!_isEditMode || s != _existingServer) // Ignore itself if we are editing
-			);
+			// 1. Let the Engine handle the Name Check & MessageBox
+			if (!Core.Instance.ValidateNameAndReport(newName, selectedGame, _existingServer)) return;
 
-			if (nameExists)
-			{
-				MessageBox.Show($"You already have a {selectedGame} server named '{newServerName}'.\n\nPlease choose a unique Server Name for this game.", "Duplicate Name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
+			// 2. Let the Engine handle the Port Checks & MessageBox
+			if (!Core.Instance.ValidatePortsAndReport((int)numPort.Value, (int)numQueryPort.Value, (int)numRconPort.Value, chkEnableRcon.Checked, _existingServer)) return;
 
-			// ==========================================
-			// 🛡️ GUARD 2: FOLDER OVERWRITE CHECKER
-			// ==========================================
-			string cleanGameName = selectedGame.Replace(" ", "_");
-			string cleanServerName = newServerName.Replace(" ", "_");
-			string targetPath = chkDefaultPath.Checked ? $@"C:\Games\{cleanGameName}\{cleanServerName}" : txtInstallPath.Text;
+			// Path calculation
+			string cleanGame = selectedGame.Replace(" ", "_");
+			string cleanName = newName.Replace(" ", "_");
+			string targetPath = chkDefaultPath.Checked ? $@"C:\Games\{cleanGame}\{cleanName}" : txtInstallPath.Text;
 
-			// If it's a NEW server, make sure the folder doesn't already exist on the hard drive
-			if (!_isEditMode && Directory.Exists(targetPath))
-			{
-				MessageBox.Show($"The installation folder for this server already exists:\n\n{targetPath}\n\nPlease choose a different Server Name or a different Manual Path to avoid corrupting existing files.", "Folder Already Exists", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
+			// 3. Let the Engine handle the Folder Check & MessageBox
+			if (!Core.Instance.ValidateFolderAndReport(targetPath, _isEditMode)) return;
 
-			// --- PORT CONFLICT CHECKER ---
-			int newPort = (int)numPort.Value;
-			int newQuery = (int)numQueryPort.Value;
-			int newRcon = (int)numRconPort.Value;
-			bool isRconActive = chkEnableRcon.Checked; // Check if the box is actually checked
-
-			// 1. Internal Check: Game vs Query (Always checked)
-			if (newPort == newQuery)
-			{
-				MessageBox.Show("The Game and Query ports must be different.", "Internal Port Conflict");
-				return;
-			}
-
-			// Internal Check: Only check RCON against Game/Query if RCON is activated
-			if (isRconActive && (newRcon == newPort || newRcon == newQuery))
-			{
-				MessageBox.Show("The RCON port cannot be the same as the Game or Query port.", "Internal Port Conflict");
-				return;
-			}
-
-			// 2. External Check: Compare against other servers
-			foreach (var server in MainGUI.serverList)
-			{
-				if (_isEditMode && server == _existingServer)
-					continue;
-
-				// Game and Query ports are always blocked if they match another server
-				if (server.Port == newPort)
-				{
-					MessageBox.Show($"The Game Port ({newPort}) is already in use by '{server.ServerName}'.", "Port Conflict");
-					return;
-				}
-
-				if (server.QueryPort == newQuery)
-				{
-					MessageBox.Show($"The Query Port ({newQuery}) is already in use by '{server.ServerName}'.", "Port Conflict");
-					return;
-				}
-
-				// --- RCON ACTIVATION CHECK ---
-				if (isRconActive)
-				{
-					// Does our RCON port hit someone else's Game or Query port?
-					if (server.Port == newRcon || server.QueryPort == newRcon)
-					{
-						MessageBox.Show($"The RCON Port ({newRcon}) conflicts with the ports of '{server.ServerName}'.", "Port Conflict");
-						return;
-					}
-
-					// Does our RCON port hit someone else's RCON port?
-					if (server.EnableRcon && server.RconPort == newRcon)
-					{
-						MessageBox.Show($"The RCON Port ({newRcon}) is already in use by '{server.ServerName}'.", "Port Conflict");
-						return;
-					}
-				}
-			}
-			// --- END OF PORT CHECKER ---
-
-			// 1. First, find the game in the database to see if it has a warning flag
+			// --- ALL CHECKS PASSED ---
 			var dbGame = GameDatabase.GetGame(selectedGame);
 
-			// 2. Create the server object using ONLY user-defined data
 			NewServer = new GameServer
 			{
-				Game = selectedGame, // Re-used the variable from the top
-				ServerName = newServerName, // Re-used the variable from the top
-
-				// --- ADDED WARNING FLAGS ---
-				// Sets NeedsConfigWarning based on GameDatabase, defaults to false if game not found
+				Game = selectedGame,
+				ServerName = newName,
 				NeedsConfigWarning = dbGame?.NeedsConfigWarning ?? false,
-
-				// Preserve IsFirstBoot if editing, otherwise set to true for new installs
 				IsFirstBoot = _isEditMode && _existingServer != null ? _existingServer.IsFirstBoot : true,
-
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
 				Password = txtPassword.Text,
@@ -433,43 +248,36 @@ namespace Synix_Control_Panel
 				GameMode = cmbCompetitive.Text,
 				EnableRcon = chkEnableRcon.Checked,
 				RconPort = (int)numRconPort.Value,
-				RconPassword = txtRconPassword.Text
+				RconPassword = txtRconPassword.Text,
+				InstallPath = targetPath
 			};
-
-			// 3. CRITICAL: Assign the path to NewServer BEFORE the rename logic runs
-			NewServer.InstallPath = targetPath;
 
 			try
 			{
 				if (_isEditMode && _existingServer != null)
 				{
-					// 4. Check if the folder needs to be renamed
 					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
 					{
-						// This calls your logic to physically move the folder on the hard drive
 						ServerFolder.Rename(_existingServer, NewServer);
 						MainGUI.Instance?.AppendLog($"[RENAME] Folder moved to: {targetPath}");
 					}
-
-					// Update the existing item in your main list
 					int index = MainGUI.serverList.IndexOf(_existingServer);
 					if (index != -1) MainGUI.serverList[index] = NewServer;
 				}
 				else
 				{
-					// Logic for a brand new server
 					FolderHandler.Create(targetPath);
 					MainGUI.serverList.Add(NewServer);
 					MainGUI.Instance?.AppendLog($"[NEW] Server '{NewServer.ServerName}' added.");
 				}
 
-				// 5. Save the updated list to servers.json
 				FileHandler.SaveServers();
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}
 			catch (Exception ex)
 			{
+				// You can move this catch block to a Core.ReportError(ex) if you want even more centralization
 				MessageBox.Show($"Operation failed: {ex.Message}", "File Error");
 			}
 		}

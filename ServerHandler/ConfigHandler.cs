@@ -194,7 +194,6 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			switch (format)
 			{
-				case ConfigFormat.Palworld: SavePalworld(path, data); break;
 				case ConfigFormat.StandardINI: SaveStandard(path, data); break;
 				case ConfigFormat.JSON: SaveJSON(path, data); break;
 				case ConfigFormat.XML: SaveXML(path, data); break;
@@ -230,23 +229,6 @@ namespace Synix_Control_Panel.ServerHandler
 
 			// Overwrite file with the preserved lines + injected edits
 			File.WriteAllLines(path, originalLines);
-		}
-
-		private static void SavePalworld(string path, List<ConfigLine> data)
-		{
-			if (!File.Exists(path)) return;
-
-			string[] lines = File.ReadAllLines(path);
-			for (int i = 0; i < lines.Length; i++)
-			{
-				if (lines[i].Trim().StartsWith("OptionSettings=("))
-				{
-					string combined = string.Join(",", data.Select(c => $"{c.Key}={c.Value}"));
-					lines[i] = $"OptionSettings=({combined})"; // Safely update just this line
-					break;
-				}
-			}
-			File.WriteAllLines(path, lines);
 		}
 
 		private static void SaveJSON(string path, List<ConfigLine> data)
