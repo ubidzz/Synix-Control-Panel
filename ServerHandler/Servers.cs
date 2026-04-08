@@ -118,32 +118,44 @@ namespace Synix_Control_Panel.ServerHandler
 			{
 				logCallback?.Invoke($"Attempting to shut down {server.ServerName}...");
 
-				// 1. Try to kill the active object
+				// 1. Get the "Clean" process name (e.g., "PalServer-Win64-Shipping")
+				string targetName = Path.GetFileNameWithoutExtension(server.ExeName);
+
+				// 2. Identify the PID to kill
+				int? pidToKill = null;
+
 				if (server.RunningProcess != null && !server.RunningProcess.HasExited)
 				{
-					server.RunningProcess.Kill();
+					pidToKill = server.RunningProcess.Id;
 				}
-				// 2. Recovery: Kill by PID from JSON
 				else if (server.PID.HasValue)
+				{
+					pidToKill = server.PID.Value;
+				}
+
+				if (pidToKill.HasValue)
 				{
 					try
 					{
-						Process oldProc = Process.GetProcessById(server.PID.Value);
-                
-						// Safety: Check if the process name matches your game exe (e.g., "Soulmask")
-						// This prevents accidentally killing a different app if the PID was reused.
-						if (oldProc.ProcessName.Contains(server.ExeName.Replace(".exe", ""), StringComparison.OrdinalIgnoreCase))
+						Process proc = Process.GetProcessById(pidToKill.Value);
+
+						// FIXED SAFETY CHECK: Compare only the filename, not the full path
+						if (proc.ProcessName.Equals(targetName, StringComparison.OrdinalIgnoreCase))
 						{
-							oldProc.Kill();
+							// Use a helper to kill the process and all its children
+							KillProcessTree(pidToKill.Value);
+							logCallback?.Invoke($"[STOPPED] {server.ServerName} (PID {pidToKill}) has been shut down.");
+						}
+						else
+						{
+							logCallback?.Invoke($"[DEBUG] Safety block: Process {pidToKill} is '{proc.ProcessName}', not '{targetName}'.");
 						}
 					}
-					catch (Exception pidEx)
+					catch (ArgumentException)
 					{
-						logCallback?.Invoke($"[DEBUG] Could not reach process {server.PID}: {pidEx.Message}");
+						logCallback?.Invoke($"[DEBUG] Process {pidToKill} is already dead.");
 					}
 				}
-
-				logCallback?.Invoke($"[STOPPED] {server.ServerName} has been shut down.");
 			}
 			catch (Exception ex)
 			{
@@ -151,12 +163,35 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 			finally
 			{
-				// 3. Cleanup data and save
 				server.Status = "Offline";
 				server.PID = null;
 				server.RunningProcess = null;
 				FileHandler.SaveServers();
 			}
+		}
+
+		// Add this helper method inside your Server class or a helper class
+		private static void KillProcessTree(int pid)
+		{
+			if (pid == 0) return;
+
+			try
+			{
+				// Find all child processes
+				using (var searcher = new System.Management.ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid))
+				using (var moc = searcher.Get())
+				{
+					foreach (var mo in moc)
+					{
+						KillProcessTree(Convert.ToInt32(mo["ProcessID"]));
+					}
+				}
+
+				// Kill the actual process
+				var proc = Process.GetProcessById(pid);
+				proc.Kill();
+			}
+			catch (Exception) { /* Handle cases where process is already gone */ }
 		}
 
 		public static void RebindProcesses(BindingList<GameServer> servers)

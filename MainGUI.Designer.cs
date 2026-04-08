@@ -53,6 +53,7 @@
 			lblTotalCpu = new Label();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			button1 = new Button();
+			button2 = new Button();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -267,6 +268,16 @@
 			button1.UseVisualStyleBackColor = true;
 			button1.Click += btnUpdate_Click;
 			// 
+			// button2
+			// 
+			button2.Location = new Point(410, 47);
+			button2.Name = "button2";
+			button2.Size = new Size(75, 23);
+			button2.TabIndex = 15;
+			button2.Text = "button2";
+			button2.UseVisualStyleBackColor = true;
+			button2.Click += btnOpenConfig_Click;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -274,6 +285,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
+			Controls.Add(button2);
 			Controls.Add(button1);
 			Controls.Add(lblTotalCpu);
 			Controls.Add(lblTotalRam);
@@ -324,5 +336,6 @@
 		private DataGridViewTextBoxColumn colAdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
 		private Button button1;
+		private Button button2;
 	}
 }

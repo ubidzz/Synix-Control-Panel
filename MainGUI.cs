@@ -414,25 +414,6 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void GUI_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			// 1. Check if the 'steamcmd' process exists on the PC right now
-			bool isSteamRunning = Process.GetProcessesByName("steamcmd").Any();
-
-			// 2. Check your manual flag (for internal initialization)
-			if (isDownloadActive || isSteamRunning)
-			{
-				MessageBox.Show("SteamCMD is currently active and performing operations.\n\n" +
-								"Closing now will corrupt your game files or SteamCMD installation. " +
-								"Please wait for the console to finish.",
-								"Process in Progress",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Warning);
-
-				e.Cancel = true; // LOCK THE X
-			}
-		}
-
 		private void btnStart_Click(object sender, EventArgs e)
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
@@ -466,6 +447,59 @@ namespace Synix_Control_Panel
 
 				Servers.Stop(selectedServer, AppendLog);
 				UpdateGrid();
+			}
+		}
+
+		private void btnOpenConfig_Click(object sender, EventArgs e)
+		{
+			// 1. Get the server the user has highlighted in the grid
+			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			{
+				// 2. Look up the Game Database to find the file path for this specific game
+				// Note: Use your actual public list name (e.g., Games or GetGames)
+				var blueprint = GameDatabase.GetGames.FirstOrDefault(g => g.Game == selectedServer.Game);
+
+				if (blueprint != null && !string.IsNullOrEmpty(blueprint.RelativeConfigPath))
+				{
+					// 3. Stitch the Install Path and the Config Path together
+					// Result: C:\Games\MySoulmask\WS\Saved\Config\...\GameUserSettings.ini
+					string fullConfigPath = Path.Combine(selectedServer.InstallPath, blueprint.RelativeConfigPath);
+
+					// 4. Double-check the file actually exists before trying to open it
+					if (File.Exists(fullConfigPath))
+					{
+						// Open the editor form and pass it the path
+						ServerConfig editor = new ServerConfig(fullConfigPath, blueprint.Format);
+						editor.ShowDialog();
+					}
+					else
+					{
+						MessageBox.Show($"Could not find the config file at:\n{fullConfigPath}", "Missing Config");
+					}
+				}
+				else
+				{
+					MessageBox.Show("This game does not have a config path defined in the GameDatabase.", "No Config Path");
+				}
+			}
+		}
+
+		private void GUI_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			// 1. Check if the 'steamcmd' process exists on the PC right now
+			bool isSteamRunning = Process.GetProcessesByName("steamcmd").Any();
+
+			// 2. Check your manual flag (for internal initialization)
+			if (isDownloadActive || isSteamRunning)
+			{
+				MessageBox.Show("SteamCMD is currently active and performing operations.\n\n" +
+								"Closing now will corrupt your game files or SteamCMD installation. " +
+								"Please wait for the console to finish.",
+								"Process in Progress",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Warning);
+
+				e.Cancel = true; // LOCK THE X
 			}
 		}
 	}

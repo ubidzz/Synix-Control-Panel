@@ -20,6 +20,7 @@ namespace Synix_Control_Panel
 {	
 	public static class GameDatabase
 	{
+		public static IReadOnlyList<GameInfo> GetGames => games;
 		// Use ReadOnly to protect the master list
 		private static readonly IReadOnlyList<GameInfo> games =
 		[
@@ -37,10 +38,12 @@ namespace Synix_Control_Panel
 				AppID = "3017310",
 				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
 				RequiredArgs = "{map} -server -log -online=Steam -SteamAppId={appid} -Port={port} -QueryPort={query} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" -{mode}",
+				RelativeConfigPath = @"WS\Saved\GameplaySettings\GameXishu.json",
 				Port = 8777,
 				QueryPort = 27015,
 				Maps = ["Level01_Main"],
-				GameModes = ["PVP", "PVE"]
+				GameModes = ["PVP", "PVE"],
+				Format = Synix_Control_Panel.ServerHandler.ConfigFormat.JSON
 			},
 			new() {
 				Game = "7 Days to Die",
@@ -74,11 +77,13 @@ namespace Synix_Control_Panel
 			new() {
 				Game = "Palworld",
 				AppID = "2394010",
-				ExeName = "PalServer.exe",
-				RequiredArgs = "-port={port} -publicqueryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\" -AdminPassword=\"{adminpass}\" -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS",
+				ExeName = "Pal\\Binaries\\Win64\\PalServer-Win64-Shipping.exe",
+				RequiredArgs = "EpicApp=PalServer -port={port} -queryport={query} -players={MaxPlayers} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -AdminPassword=\"{adminpass}\" -log",
+				RelativeConfigPath = "Pal\\Saved\\Config\\WindowsServer\\PalWorldSettings.ini",
 				Port = 8211,
 				QueryPort = 27015,
-				Maps = ["DefaultWorld"]
+				Maps = ["DefaultWorld"],
+				Format = ConfigFormat.Palworld
 			},
 			new() {
 				Game = "ARK: Survival Evolved",
@@ -153,7 +158,7 @@ namespace Synix_Control_Panel
 				Game = "Space Engineers",
 				AppID = "298740",
 				ExeName = @"DedicatedServer64\SpaceEngineersDedicated.exe",
-				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} +map {map} -port {port} -password {pass} -{mode}",
+				RequiredArgs = "-noconsole -ignorelastsession -port {port}",
 				Port = 27016,
 				QueryPort = 27016,
 				Maps = ["StarSystem", "AlienPlanet", "EmptyWorld"],
@@ -384,16 +389,16 @@ namespace Synix_Control_Panel
 				Game = "Risk of Rain 2",
 				AppID = "1180760",
 				ExeName = "Risk of Rain 2 Dedicated Server.exe",
-				RequiredArgs = "-batchmode -nographics -server_port {port}",
+				RequiredArgs = "-batchmode -nographics -server_port {port} -server_query_port {query}",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["Default"]
 			},
 			new() {
 				Game = "V Rising",
-				AppID = "1829350",
+				AppID = "1828900",
 				ExeName = "VRisingServer.exe",
-				RequiredArgs = "-serverName \"{ServerName}\" -saveName \"{map}\" -logFile \"Logs/VRisingServer.log\"",
+				RequiredArgs = "-persistentDataPath .\\save-data -serverName \"{ServerName}\" -saveName \"{map}\" -logLevel \"info\" -port {port} -queryPort {query}",
 				Port = 9876,
 				QueryPort = 9877,
 				Maps = ["World1"]
@@ -465,9 +470,9 @@ namespace Synix_Control_Panel
 			},
 			new() {
 				Game = "No More Room in Hell",
-				AppID = "224260",
+				AppID = "317590",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game nmrih -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\"",
+				RequiredArgs = "-game nmrih -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon}",
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["nmo_broadway", "nms_notel"]
@@ -481,16 +486,6 @@ namespace Synix_Control_Panel
 				Port = 27015,
 				QueryPort = 27015,
 				Maps = ["ttt_67thway_v3", "ttt_clue"]
-			},
-			new()
-			{
-				Game = "V Rising",
-				AppID = "1828900",
-				ExeName = "VRisingServer.exe",
-				RequiredArgs = "-persistentDataPath .\\save-data -serverName \"{ServerName}\" -saveName \"{map}\" -logLevel \"info\" -port {port} -queryPort {query}",
-				Port = 9876,
-				QueryPort = 9877,
-				Maps = ["world1"]
 			},
 			new()
 			{
@@ -537,7 +532,7 @@ namespace Synix_Control_Panel
 				Game = "Unturned",
 				AppID = "1110390",
 				ExeName = "Unturned.exe",
-				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} +map {map} -port {port} -password {pass} {mode}", // <-- Added {mode} here
+				RequiredArgs = "-batchmode -nographics +InternetServer/{ServerName} +map {map} -port {port} -password {pass} {mode}", 
 				Port = 27015,
 				QueryPort = 27016,
 				Maps = ["PEI", "Washington", "Russia", "Germany", "Hawaii"],
@@ -798,16 +793,6 @@ namespace Synix_Control_Panel
 			},
 			new()
 			{
-				Game = "Risk of Rain 2",
-				AppID = "1180760",
-				ExeName = "Risk of Rain 2 Dedicated Server.exe",
-				RequiredArgs = "-batchmode -nographics -server_port {port} -server_query_port {query}",
-				Port = 27015,
-				QueryPort = 27016,
-				Maps = ["Default"]
-			},
-			new()
-			{
 				Game = "Avorion",
 				AppID = "565060",
 				ExeName = @"bin\AvorionServer.exe",
@@ -859,16 +844,6 @@ namespace Synix_Control_Panel
 				Port = 3000,
 				QueryPort = 3001,
 				Maps = ["DefaultWorld"]
-			},
-			new()
-			{
-				Game = "Mordhau",
-				AppID = "629800",
-				ExeName = @"Mordhau\Binaries\Win64\MordhauServer-Win64-Shipping.exe",
-				RequiredArgs = "{map}?Listen -log -port={port} -queryport={query}",
-				Port = 7777,
-				QueryPort = 27015,
-				Maps = ["ThePit", "Camp", "Crossroads"]
 			},
 			new()
 			{
