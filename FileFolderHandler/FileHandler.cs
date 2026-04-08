@@ -38,7 +38,7 @@ namespace Synix_Control_Panel
 
 				if (success)
 				{
-					MainGUI.Instance?.AppendLog("JSON saved successfully to C:\\games.");
+					MainGUI.Instance?.AppendLog("[INFO] JSON saved successfully to C:\\games\\SynixData\\servers.json.", Color.DarkSeaGreen);
 				}
 			}
 			catch (Exception ex)

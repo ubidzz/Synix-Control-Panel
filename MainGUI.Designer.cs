@@ -232,7 +232,7 @@
 			lblTotalRam.AutoSize = true;
 			lblTotalRam.BackColor = Color.Transparent;
 			lblTotalRam.ForeColor = Color.Fuchsia;
-			lblTotalRam.Location = new Point(623, 9);
+			lblTotalRam.Location = new Point(661, 9);
 			lblTotalRam.Name = "lblTotalRam";
 			lblTotalRam.Size = new Size(33, 15);
 			lblTotalRam.TabIndex = 12;
@@ -242,11 +242,13 @@
 			// 
 			lblTotalCpu.AutoSize = true;
 			lblTotalCpu.BackColor = Color.Transparent;
+			lblTotalCpu.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblTotalCpu.ForeColor = Color.DarkCyan;
 			lblTotalCpu.Location = new Point(516, 9);
 			lblTotalCpu.Name = "lblTotalCpu";
-			lblTotalCpu.Size = new Size(0, 15);
+			lblTotalCpu.Size = new Size(30, 15);
 			lblTotalCpu.TabIndex = 13;
+			lblTotalCpu.Text = "CPU";
 			// 
 			// tmrResourceUpdates
 			// 

@@ -38,14 +38,14 @@ namespace Synix_Control_Panel
 		public MainGUI()
 		{
 			InitializeComponent();
+			Instance = this;
 			FileHandler.LoadServers();
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.HeartbeatChart(chartHeartbeat);
 			chartHeartbeat.Series["TotalCPU"].Points.Clear();
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered",
-		System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty,
-		null, dataGridView1, new object[] { true });
+			System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Instance = this;
 		}
@@ -103,18 +103,6 @@ namespace Synix_Control_Panel
 			UpdateGrid();
 		}
 
-		private void UpdateGrid()
-		{
-			if (this.InvokeRequired)
-			{
-				this.BeginInvoke(new Action(UpdateGrid));
-				return;
-			}
-
-			// All the "Nuclear Refresh" and scroll logic is hidden in the helper
-			GridHelper.RefreshWithPersistence(dataGridView1, serverList);
-		}
-
 		public void AppendLog(string message)
 		{
 			AppendLog(message, null, false);
@@ -167,9 +155,10 @@ namespace Synix_Control_Panel
 		{
 			// 1. Set the lock immediately
 			isDownloadActive = true;
+			await Task.Delay(100);
 			AppendLog("Checking SteamCMD dependencies...");
 			AppendLog($"--- [WARNING] Synix close window button is now Disabled! ---", Color.Orange, true);
-
+			Servers.RebindProcesses(serverList);
 			// 2. Run the check on a background thread
 			// This allows the 'X' button to stay active and trigger GUI_FormClosing
 			await Task.Run(() => SteamCMD.EnsureSteamCMD(AppendLog));
@@ -178,6 +167,36 @@ namespace Synix_Control_Panel
 			isDownloadActive = false;
 			AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 			AppendLog("Initialization complete.");
+		}
+
+		public void UpdateGrid()
+		{
+			if (this.InvokeRequired)
+			{
+				this.BeginInvoke(new Action(UpdateGrid));
+				return;
+			}
+
+			// All the "Nuclear Refresh" and scroll logic is hidden in the helper
+			GridHelper.RefreshWithPersistence(dataGridView1, serverList);
+		}
+
+		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			// Let the GridStyler handle the colors
+			GridStyler.SetStatusColor(dataGridView1, e);
+		}
+
+		private void ResourceGraph_Click(object sender, EventArgs e)
+		{
+			// Pass the current list of servers to the new monitor window
+			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
+			monitor.Show(); // .Show() lets them keep the panel open while using the main app
+		}
+		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		{
+			// Just draw the rows using the solid colors from GridStyler
+			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 
 		private void timerMonitor_Tick(object sender, EventArgs e)
@@ -424,7 +443,7 @@ namespace Synix_Control_Panel
 					this.Invoke((MethodInvoker)delegate
 					{
 						AppendLog(msg);
-						UpdateGrid(); // This will refresh the colors and PID on screen
+						UpdateGrid();
 					});
 				});
 			}
@@ -448,23 +467,6 @@ namespace Synix_Control_Panel
 				Servers.Stop(selectedServer, AppendLog);
 				UpdateGrid();
 			}
-		}
-		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		{
-			// Let the GridStyler handle the colors
-			GridStyler.SetStatusColor(dataGridView1, e);
-		}
-
-		private void ResourceGraph_Click(object sender, EventArgs e)
-		{
-			// Pass the current list of servers to the new monitor window
-			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
-			monitor.Show(); // .Show() lets them keep the panel open while using the main app
-		}
-		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-		{
-			// Just draw the rows using the solid colors from GridStyler
-			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 	}
 }

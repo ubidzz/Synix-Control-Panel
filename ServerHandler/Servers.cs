@@ -9,10 +9,11 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
-using System.IO;
-using System.Diagnostics;
 using Synix_Control_Panel.FileFolderHandler;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 
 namespace Synix_Control_Panel.ServerHandler
 {
@@ -155,6 +156,45 @@ namespace Synix_Control_Panel.ServerHandler
 				server.PID = null;
 				server.RunningProcess = null;
 				FileHandler.SaveServers();
+			}
+		}
+
+		public static void RebindProcesses(BindingList<GameServer> servers)
+		{
+			if (servers.Count == 0) return;
+
+			foreach (var server in servers)
+			{
+				if (server.PID.HasValue && server.PID.Value > 0)
+				{
+					try
+					{
+						var process = Process.GetProcessById(server.PID.Value);
+
+						if (process != null && !process.HasExited)
+						{
+							server.RunningProcess = process;
+							server.Status = "Online";
+
+							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
+
+							process.EnableRaisingEvents = true;
+							process.Exited += (s, e) => {
+								server.Status = "Offline";
+								server.PID = null;
+								server.RunningProcess = null;
+								MainGUI.Instance?.UpdateGrid();
+							};
+						}
+					}
+					catch (Exception)
+					{
+						// The process isn't in Task Manager anymore
+						server.Status = "Offline";
+						server.PID = null;
+						MainGUI.Instance?.AppendLog($"--- [REBIND] {server.ServerName} process not found in Windows. ---", Color.Gray);
+					}
+				}
 			}
 		}
 	}
