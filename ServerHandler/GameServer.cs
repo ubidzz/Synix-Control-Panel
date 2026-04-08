@@ -12,12 +12,15 @@ using Synix_Control_Panel.ServerHandler;
 
 using System.Diagnostics;
 using System.Text.Json.Serialization;
-using static Synix_Control_Panel.GameDatabase;
+using static Synix_Control_Panel.Database.GameDatabase;
 
 public class GameInfo
 {
 	public string Game { get; init; } = string.Empty;
-
+	[JsonIgnore]
+	public bool NeedsConfigWarning { get; internal set; }
+	[JsonIgnore]
+	public string WarningMessage { get; set; } = "This game requires configuration before it can boot properly.";
 	public ConfigFormat Format { get; set; }
 	[JsonIgnore]
 	public string RelativeConfigPath { get; init; } = string.Empty;
@@ -37,6 +40,7 @@ public class GameInfo
 	public string ExtraArgs { get; set; } = string.Empty;
 	public List<string> GameModes { get; set; } = [];
 	public string RconSyntax { get; init; } = "";
+	[JsonIgnore]
 	public PostInstallStep[]? PostInstallSteps { get; init; }
 }
 
@@ -67,4 +71,5 @@ public class GameServer : GameInfo
 	public bool EnableRcon { get; set; } = false;
 	public int RconPort { get; set; }
 	public string RconPassword { get; set; } = "";
+	public bool IsFirstBoot { get; set; } = true;
 }

@@ -18,11 +18,11 @@ namespace Synix_Control_Panel.SteamCMDHandler
 {
 	public static class ServerInstaller
 	{
-		public static void Install(string steamCmdPath, string installPath, string appId, Action<string> logCallback)
+		public static void Install(string installPath, string appId, Action<string> logCallback)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo
 			{
-				FileName = steamCmdPath,
+				FileName = @"C:\Games\SteamCMD\steamcmd.exe",
 				Arguments = $"+force_install_dir \"{installPath}\" +login anonymous +app_update {appId} validate +quit",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,

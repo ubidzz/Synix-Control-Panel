@@ -9,6 +9,7 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
+using Synix_Control_Panel.Database;
 using Synix_Control_Panel.Design;
 using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.MonitoringHandler;
@@ -214,37 +215,44 @@ namespace Synix_Control_Panel
 			if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
 			{
 				GameServer newServer = settingsForm.NewServer;
+
+				// THE FIX: Look up the technical data from the Database
+				// This ensures correctAppId isn't empty even if the JSON is ignored.
 				var gameData = GameDatabase.GetGame(newServer.Game);
 				string correctAppId = gameData?.AppID ?? "";
 
-				// 1. Set status to Installing immediately
+				if (string.IsNullOrEmpty(correctAppId))
+				{
+					AppendLog($"[ERROR] Could not find Steam AppID for {newServer.Game} in the database.");
+					return;
+				}
+
+				// Set status to Installing immediately
 				newServer.Status = "Installing";
 				isDownloadActive = true;
 				dataGridView1.Refresh();
 
 				AppendLog($"--- AUTO-INSTALL STARTED: {newServer.Game} ---");
 				AppendLog($"--- [INFO] INSTALL {newServer.Game} can take up to 2-10 minutes ---", Color.DeepSkyBlue, true);
-				AppendLog($"--- [WARNING] Synix close window button is disabled while the installation is in progress and will be disabled once the installation is complete! ---", Color.Orange, true);
-				AppendLog($"--- [INFO] If it looks like it's not working steamCMD is running in the background and will not return real time results in till it finishes. ---", Color.OrangeRed, true);
-				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
+				AppendLog($"--- [WARNING] Synix close window button is disabled! ---", Color.Orange, true);
 
-				// 2. Run SteamCMD in the background
+				// 2. Run your existing ServerInstaller (NO CHANGES NEEDED TO THAT FILE)
 				await Task.Run(() =>
 				{
-					ServerInstaller.Install(
-						steamPath,
+					Synix_Control_Panel.SteamCMDHandler.ServerInstaller.Install(
 						newServer.InstallPath,
-						correctAppId,
-						AppendLog
+						correctAppId, // Passing the ID we pulled from the database
+						msg => this.Invoke((MethodInvoker)(() => AppendLog(msg)))
 					);
 				});
 
+				// 3. Run Post-Install fixes
 				bool fixApplied = GameFix.PostInstall(newServer);
-
 				if (fixApplied)
 				{
-					AppendLog($"[SUCCESS] Added the missing files to the {newServer.Game} server.");
+					AppendLog($"[SUCCESS] Applied fixes to the {newServer.Game} server.");
 				}
+
 				newServer.Status = "Offline";
 				isDownloadActive = false;
 				AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
@@ -335,13 +343,10 @@ namespace Synix_Control_Panel
 				AppendLog($"--- [WARNING] Synix close window button is disabled while the update is in progress and will be disabled once the update is complete! ---", Color.Orange, true);
 				AppendLog($"--- [INFO] Updating {selectedServer.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
 
-				string steamPath = @"C:\Games\SteamCMD\steamcmd.exe";
-
 				// 5. Run SteamCMD in the background (Re-using your Installer!)
 				await Task.Run(() =>
 				{
 					ServerInstaller.Install(
-						steamPath,
 						selectedServer.InstallPath,
 						correctAppId,
 						AppendLog
@@ -418,7 +423,23 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// 1. Just call your method. It handles the PID and Status internally!
+				// Look up the database
+				var gameData = GameDatabase.GetGame(selectedServer.Game);
+
+				// THE BLOCKER: Always stop if the warning is shown
+				if (gameData != null && gameData.NeedsConfigWarning && selectedServer.IsFirstBoot)
+				{
+					using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(selectedServer))
+					{
+						warningForm.ShowDialog();
+
+						// NO MATTER WHAT, return here so the server does NOT start yet.
+						// They must click 'Start' again AFTER they close the config editor.
+						return;
+					}
+				}
+
+				// Proceed to start the server ONLY if the warning is cleared
 				Servers.Start(selectedServer, msg =>
 				{
 					this.Invoke((MethodInvoker)delegate
@@ -427,10 +448,6 @@ namespace Synix_Control_Panel
 						UpdateGrid();
 					});
 				});
-			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list first.");
 			}
 		}
 

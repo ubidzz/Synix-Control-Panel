@@ -9,6 +9,7 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
+using Synix_Control_Panel.Database;
 using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.ServerHandler;
 using System;
@@ -145,9 +146,9 @@ namespace Synix_Control_Panel
 					}
 
 					// 2. Check and set the selection using the STRING (Singular: GameMode)
-					if (cmbCompetitive.Items.Contains(_existingServer.GameModes))
+					if (cmbCompetitive.Items.Contains(_existingServer.GameMode))
 					{
-						cmbCompetitive.SelectedItem = _existingServer.GameModes;
+						cmbCompetitive.SelectedItem = _existingServer.GameMode;
 					}
 					else
 					{
@@ -403,11 +404,22 @@ namespace Synix_Control_Panel
 			}
 			// --- END OF PORT CHECKER ---
 
-			// 1. Create the server object using ONLY user-defined data
+			// 1. First, find the game in the database to see if it has a warning flag
+			var dbGame = GameDatabase.GetGame(selectedGame);
+
+			// 2. Create the server object using ONLY user-defined data
 			NewServer = new GameServer
 			{
 				Game = selectedGame, // Re-used the variable from the top
 				ServerName = newServerName, // Re-used the variable from the top
+
+				// --- ADDED WARNING FLAGS ---
+				// Sets NeedsConfigWarning based on GameDatabase, defaults to false if game not found
+				NeedsConfigWarning = dbGame?.NeedsConfigWarning ?? false,
+
+				// Preserve IsFirstBoot if editing, otherwise set to true for new installs
+				IsFirstBoot = _isEditMode && _existingServer != null ? _existingServer.IsFirstBoot : true,
+
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
 				Password = txtPassword.Text,
@@ -424,7 +436,7 @@ namespace Synix_Control_Panel
 				RconPassword = txtRconPassword.Text
 			};
 
-			// 2. CRITICAL: Assign the path to NewServer BEFORE the rename logic runs
+			// 3. CRITICAL: Assign the path to NewServer BEFORE the rename logic runs
 			NewServer.InstallPath = targetPath;
 
 			try

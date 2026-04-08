@@ -229,9 +229,9 @@
 			// 
 			// contextMenuStrip
 			// 
-			contextMenuStrip.Items.AddRange(new ToolStripItem[] { installServer, editServer, udateServer, openServerConfig, deleteServer });
+			contextMenuStrip.Items.AddRange(new ToolStripItem[] { deleteServer, openServerConfig, editServer, udateServer, installServer });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(199, 114);
+			contextMenuStrip.Size = new Size(199, 136);
 			// 
 			// installServer
 			// 
