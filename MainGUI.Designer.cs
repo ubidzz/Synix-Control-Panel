@@ -41,9 +41,6 @@
 			colPassword = new DataGridViewTextBoxColumn();
 			colAdminPassword = new DataGridViewTextBoxColumn();
 			colStatus = new DataGridViewTextBoxColumn();
-			btnDelete = new Button();
-			btnAddServer = new Button();
-			btnEdit = new Button();
 			rtbLog = new RichTextBox();
 			btnStart = new Button();
 			btnStop = new Button();
@@ -52,11 +49,17 @@
 			lblTotalRam = new Label();
 			lblTotalCpu = new Label();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
-			button1 = new Button();
-			button2 = new Button();
+			contextMenuStrip = new ContextMenuStrip(components);
+			installServer = new ToolStripMenuItem();
+			editServer = new ToolStripMenuItem();
+			udateServer = new ToolStripMenuItem();
+			openServerConfig = new ToolStripMenuItem();
+			deleteServer = new ToolStripMenuItem();
+			btnServerActions = new Button();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
+			contextMenuStrip.SuspendLayout();
 			SuspendLayout();
 			// 
 			// dataGridView1
@@ -129,39 +132,6 @@
 			colStatus.ReadOnly = true;
 			colStatus.Width = 80;
 			// 
-			// btnDelete
-			// 
-			btnDelete.Cursor = Cursors.Hand;
-			btnDelete.Location = new Point(455, 589);
-			btnDelete.Name = "btnDelete";
-			btnDelete.Size = new Size(142, 28);
-			btnDelete.TabIndex = 2;
-			btnDelete.Text = "Delete Server";
-			btnDelete.UseVisualStyleBackColor = true;
-			btnDelete.Click += btnDelete_Click;
-			// 
-			// btnAddServer
-			// 
-			btnAddServer.Cursor = Cursors.Hand;
-			btnAddServer.Location = new Point(12, 589);
-			btnAddServer.Name = "btnAddServer";
-			btnAddServer.Size = new Size(142, 28);
-			btnAddServer.TabIndex = 4;
-			btnAddServer.Text = "Add Server";
-			btnAddServer.UseVisualStyleBackColor = true;
-			btnAddServer.Click += btnAddServer_Click;
-			// 
-			// btnEdit
-			// 
-			btnEdit.Cursor = Cursors.Hand;
-			btnEdit.Location = new Point(160, 588);
-			btnEdit.Name = "btnEdit";
-			btnEdit.Size = new Size(142, 28);
-			btnEdit.TabIndex = 5;
-			btnEdit.Text = "Edit Server";
-			btnEdit.UseVisualStyleBackColor = true;
-			btnEdit.Click += btnEdit_Click;
-			// 
 			// rtbLog
 			// 
 			rtbLog.BackColor = SystemColors.ActiveCaptionText;
@@ -203,7 +173,7 @@
 			// 
 			logo.BackColor = Color.Transparent;
 			logo.Image = Properties.Resources.synix_logo;
-			logo.Location = new Point(-19, -49);
+			logo.Location = new Point(-10, -44);
 			logo.Name = "logo";
 			logo.Size = new Size(321, 189);
 			logo.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -233,7 +203,7 @@
 			lblTotalRam.AutoSize = true;
 			lblTotalRam.BackColor = Color.Transparent;
 			lblTotalRam.ForeColor = Color.Fuchsia;
-			lblTotalRam.Location = new Point(661, 9);
+			lblTotalRam.Location = new Point(694, 9);
 			lblTotalRam.Name = "lblTotalRam";
 			lblTotalRam.Size = new Size(33, 15);
 			lblTotalRam.TabIndex = 12;
@@ -245,7 +215,7 @@
 			lblTotalCpu.BackColor = Color.Transparent;
 			lblTotalCpu.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblTotalCpu.ForeColor = Color.DarkCyan;
-			lblTotalCpu.Location = new Point(516, 9);
+			lblTotalCpu.Location = new Point(522, 9);
 			lblTotalCpu.Name = "lblTotalCpu";
 			lblTotalCpu.Size = new Size(30, 15);
 			lblTotalCpu.TabIndex = 13;
@@ -257,26 +227,56 @@
 			tmrResourceUpdates.Interval = 1000;
 			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
 			// 
-			// button1
+			// contextMenuStrip
 			// 
-			button1.Cursor = Cursors.Hand;
-			button1.Location = new Point(307, 588);
-			button1.Name = "button1";
-			button1.Size = new Size(142, 28);
-			button1.TabIndex = 14;
-			button1.Text = "Update Server";
-			button1.UseVisualStyleBackColor = true;
-			button1.Click += btnUpdate_Click;
+			contextMenuStrip.Items.AddRange(new ToolStripItem[] { installServer, editServer, udateServer, openServerConfig, deleteServer });
+			contextMenuStrip.Name = "contextMenuStrip";
+			contextMenuStrip.Size = new Size(199, 114);
 			// 
-			// button2
+			// installServer
 			// 
-			button2.Location = new Point(410, 47);
-			button2.Name = "button2";
-			button2.Size = new Size(75, 23);
-			button2.TabIndex = 15;
-			button2.Text = "button2";
-			button2.UseVisualStyleBackColor = true;
-			button2.Click += btnOpenConfig_Click;
+			installServer.Name = "installServer";
+			installServer.Size = new Size(198, 22);
+			installServer.Text = "Install Server";
+			installServer.Click += btnAddServer_Click;
+			// 
+			// editServer
+			// 
+			editServer.Name = "editServer";
+			editServer.Size = new Size(198, 22);
+			editServer.Text = "Edit Server";
+			editServer.Click += btnEdit_Click;
+			// 
+			// udateServer
+			// 
+			udateServer.Name = "udateServer";
+			udateServer.Size = new Size(198, 22);
+			udateServer.Text = "Update Server";
+			udateServer.Click += btnUpdate_Click;
+			// 
+			// openServerConfig
+			// 
+			openServerConfig.Name = "openServerConfig";
+			openServerConfig.Size = new Size(198, 22);
+			openServerConfig.Text = "Open Server Config File";
+			openServerConfig.Click += btnOpenConfig_Click;
+			// 
+			// deleteServer
+			// 
+			deleteServer.Name = "deleteServer";
+			deleteServer.Size = new Size(198, 22);
+			deleteServer.Text = "Delete Server";
+			deleteServer.Click += btnDelete_Click;
+			// 
+			// btnServerActions
+			// 
+			btnServerActions.Location = new Point(12, 590);
+			btnServerActions.Name = "btnServerActions";
+			btnServerActions.Size = new Size(142, 28);
+			btnServerActions.TabIndex = 16;
+			btnServerActions.Text = "Server Actions";
+			btnServerActions.UseVisualStyleBackColor = true;
+			btnServerActions.Click += btnServerActionsMenu_Click;
 			// 
 			// MainGUI
 			// 
@@ -285,8 +285,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
-			Controls.Add(button2);
-			Controls.Add(button1);
+			Controls.Add(btnServerActions);
 			Controls.Add(lblTotalCpu);
 			Controls.Add(lblTotalRam);
 			Controls.Add(chartHeartbeat);
@@ -295,9 +294,6 @@
 			Controls.Add(btnStop);
 			Controls.Add(btnStart);
 			Controls.Add(rtbLog);
-			Controls.Add(btnEdit);
-			Controls.Add(btnAddServer);
-			Controls.Add(btnDelete);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
@@ -310,6 +306,7 @@
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
 			((System.ComponentModel.ISupportInitialize)logo).EndInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).EndInit();
+			contextMenuStrip.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -317,9 +314,6 @@
 		#endregion
 
 		private DataGridView dataGridView1;
-		private Button btnDelete;
-		private Button btnAddServer;
-		private Button btnEdit;
 		private RichTextBox rtbLog;
 		private Button btnStart;
 		private Button btnStop;
@@ -335,7 +329,12 @@
 		private DataGridViewTextBoxColumn colPassword;
 		private DataGridViewTextBoxColumn colAdminPassword;
 		private DataGridViewTextBoxColumn colStatus;
-		private Button button1;
-		private Button button2;
+		private ContextMenuStrip contextMenuStrip;
+		private ToolStripMenuItem installServer;
+		private ToolStripMenuItem editServer;
+		private ToolStripMenuItem udateServer;
+		private ToolStripMenuItem openServerConfig;
+		private ToolStripMenuItem deleteServer;
+		private Button btnServerActions;
 	}
 }

@@ -502,5 +502,11 @@ namespace Synix_Control_Panel
 				e.Cancel = true; // LOCK THE X
 			}
 		}
+
+		private void btnServerActionsMenu_Click(object sender, EventArgs e)
+		{
+			// Spawns the menu at the top-left corner of the button (0,0) and forces it to open UPWARDS
+			contextMenuStrip.Show(btnServerActions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
+		}
 	}
 }

@@ -1,5 +1,3 @@
-
-
 ## Coming Soon
 
 
@@ -24,6 +22,7 @@ Synix streamlines the entire lifecycle of a game server. It acts as a central ne
 * **🛡️ Port Guard Validation:** Built-in conflict detection prevents Game, Query, or RCON port overlaps. It intelligently skips inactive features (like disabled RCON) to ensure maximum flexibility.
 * **🔄 Smart Process Rebinding:** Even if the app closes or crashes, Synix "remembers" its children. Upon restart, it automatically re-detects and adopts running server processes using saved PIDs.
 * **📊 Real-Time Telemetry:** Integrated high-performance charts provide live-streaming waves of CPU and RAM usage for each individual server.
+* **⚙️ Unified Config Manager:** Seamlessly locate, read, and edit game server configuration files directly from the panel. No more hunting through messy directories to tweak your settings.
 * **📦 SteamCMD Automation:** One-click deployment for major titles (Soulmask, StarRupture, etc.), including automated verification and update handling.
 * **🎨 Pro-Grade UI:** A customized, double-buffered Dark Theme grid and a multi-threaded, color-coded logging console.
 * **🛠️ Post-Install Fixes:** Automatically applies custom patches, configuration tweaks, or missing DLLs immediately after a SteamCMD update.
