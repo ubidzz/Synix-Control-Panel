@@ -132,7 +132,7 @@ namespace Synix_Control_Panel
 			bool isReady = hasGame && hasName;
 
 			// 2. Lock/Unlock Core Groups
-			groupBox1.Enabled = isReady; // Maintenance Settings
+			groupBox1.Enabled = isReady;
 
 			if (!_isEditMode)
 			{
