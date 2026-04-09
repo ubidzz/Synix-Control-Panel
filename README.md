@@ -50,7 +50,6 @@ Synix is built on a **Modular Singleton Architecture**. The UI acts as a high-sp
 ---
 
 ## 📜 License & Legal Information
-## 📜 License & Legal Information
 *Copyright © 2026 ubidzz. All Rights Reserved.*
 
 The **Synix Control Panel** is a proprietary software project. 
