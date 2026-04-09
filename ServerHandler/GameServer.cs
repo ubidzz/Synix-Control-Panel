@@ -42,6 +42,15 @@ public class GameInfo
 	public string RconSyntax { get; init; } = "";
 	[JsonIgnore]
 	public PostInstallStep[]? PostInstallSteps { get; init; }
+
+
+	public bool IsScheduledRestartEnabled { get; set; } = false;
+	public string RestartTime { get; set; } = "04:00";
+
+	// Index 0 = Sunday, 1 = Monday, etc. (Matches .NET DayOfWeek)
+	public bool[] RestartDays { get; set; } = new bool[7] { true, true, true, true, true, true, true };
+
+	public string LastMaintenanceDate { get; set; } = "";
 }
 
 public class GameServer : GameInfo

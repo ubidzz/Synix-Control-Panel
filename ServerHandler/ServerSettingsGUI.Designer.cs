@@ -38,15 +38,15 @@
 			btnBrowse = new Button();
 			btnSave = new Button();
 			chkDefaultPath = new CheckBox();
-			label1 = new Label();
+			ltextLabel1 = new Label();
 			ServerPasswordLabel = new Label();
 			txtPassword = new TextBox();
 			MaxPlayerLabel = new Label();
 			numMaxPlayers = new NumericUpDown();
 			MapLabel = new Label();
-			label3 = new Label();
+			TextLabel3 = new Label();
 			txtExtraArgs = new TextBox();
-			label4 = new Label();
+			TextLabel7 = new Label();
 			QueryPortLabel = new Label();
 			numQueryPort = new NumericUpDown();
 			WarningLabel = new Label();
@@ -56,16 +56,28 @@
 			cmbCompetitive = new ComboBox();
 			CompetitiveLabel = new Label();
 			txtInstallPath = new TextBox();
-			label5 = new Label();
+			textLabel2 = new Label();
 			chkEnableRcon = new CheckBox();
 			numRconPort = new NumericUpDown();
 			txtRconPassword = new TextBox();
-			label2 = new Label();
-			label6 = new Label();
+			TextLabel5 = new Label();
+			TextLabel6 = new Label();
+			TextLabel4 = new Label();
+			chkEnableSchedule = new CheckBox();
+			dtpRestartTime = new DateTimePicker();
+			chkMon = new CheckBox();
+			chkTue = new CheckBox();
+			chkWed = new CheckBox();
+			chkThu = new CheckBox();
+			chkFri = new CheckBox();
+			chkSat = new CheckBox();
+			chkSun = new CheckBox();
+			groupBox1 = new GroupBox();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).BeginInit();
+			groupBox1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// ServerNameLabel
@@ -102,7 +114,7 @@
 			// 
 			FolderPathLabel.AutoSize = true;
 			FolderPathLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			FolderPathLabel.Location = new Point(414, 9);
+			FolderPathLabel.Location = new Point(12, 269);
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(104, 17);
 			FolderPathLabel.TabIndex = 3;
@@ -139,7 +151,7 @@
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(434, 145);
+			btnBrowse.Location = new Point(41, 405);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -161,29 +173,29 @@
 			// chkDefaultPath
 			// 
 			chkDefaultPath.AutoSize = true;
-			chkDefaultPath.Location = new Point(414, 33);
+			chkDefaultPath.Location = new Point(12, 289);
 			chkDefaultPath.Name = "chkDefaultPath";
 			chkDefaultPath.Size = new Size(230, 19);
 			chkDefaultPath.TabIndex = 10;
 			chkDefaultPath.Text = "Use Default Location (C:\\GameServers)";
 			chkDefaultPath.UseVisualStyleBackColor = true;
-			chkDefaultPath.CheckedChanged += chkDefaultPath_CheckedChanged;
+			chkDefaultPath.Click += chkDefaultPath_CheckedChanged;
 			// 
-			// label1
+			// ltextLabel1
 			// 
-			label1.AutoSize = true;
-			label1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label1.Location = new Point(506, 147);
-			label1.Name = "label1";
-			label1.Size = new Size(73, 17);
-			label1.TabIndex = 11;
-			label1.Text = " a location";
+			ltextLabel1.AutoSize = true;
+			ltextLabel1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			ltextLabel1.Location = new Point(122, 407);
+			ltextLabel1.Name = "ltextLabel1";
+			ltextLabel1.Size = new Size(73, 17);
+			ltextLabel1.TabIndex = 11;
+			ltextLabel1.Text = " a location";
 			// 
 			// ServerPasswordLabel
 			// 
 			ServerPasswordLabel.AutoSize = true;
 			ServerPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			ServerPasswordLabel.Location = new Point(414, 213);
+			ServerPasswordLabel.Location = new Point(414, 9);
 			ServerPasswordLabel.Name = "ServerPasswordLabel";
 			ServerPasswordLabel.Size = new Size(109, 17);
 			ServerPasswordLabel.TabIndex = 12;
@@ -191,7 +203,7 @@
 			// 
 			// txtPassword
 			// 
-			txtPassword.Location = new Point(414, 233);
+			txtPassword.Location = new Point(414, 29);
 			txtPassword.Name = "txtPassword";
 			txtPassword.Size = new Size(368, 23);
 			txtPassword.TabIndex = 13;
@@ -226,31 +238,31 @@
 			MapLabel.TabIndex = 16;
 			MapLabel.Text = "Map";
 			// 
-			// label3
+			// TextLabel3
 			// 
-			label3.AutoSize = true;
-			label3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label3.Location = new Point(12, 410);
-			label3.Name = "label3";
-			label3.Size = new Size(124, 17);
-			label3.TabIndex = 18;
-			label3.Text = "Launch Arguments";
+			TextLabel3.AutoSize = true;
+			TextLabel3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel3.Location = new Point(415, 434);
+			TextLabel3.Name = "TextLabel3";
+			TextLabel3.Size = new Size(124, 17);
+			TextLabel3.TabIndex = 18;
+			TextLabel3.Text = "Launch Arguments";
 			// 
 			// txtExtraArgs
 			// 
-			txtExtraArgs.Location = new Point(12, 445);
+			txtExtraArgs.Location = new Point(415, 471);
 			txtExtraArgs.Name = "txtExtraArgs";
 			txtExtraArgs.Size = new Size(368, 23);
 			txtExtraArgs.TabIndex = 19;
 			// 
-			// label4
+			// TextLabel7
 			// 
-			label4.AutoSize = true;
-			label4.Location = new Point(12, 427);
-			label4.Name = "label4";
-			label4.Size = new Size(257, 15);
-			label4.TabIndex = 20;
-			label4.Text = "Example:  -log, -nosteamclient, or -forceupdate";
+			TextLabel7.AutoSize = true;
+			TextLabel7.Location = new Point(415, 453);
+			TextLabel7.Name = "TextLabel7";
+			TextLabel7.Size = new Size(257, 15);
+			TextLabel7.TabIndex = 20;
+			TextLabel7.Text = "Example:  -log, -nosteamclient, or -forceupdate";
 			// 
 			// QueryPortLabel
 			// 
@@ -276,7 +288,7 @@
 			// 
 			WarningLabel.AutoEllipsis = true;
 			WarningLabel.ForeColor = Color.Red;
-			WarningLabel.Location = new Point(414, 55);
+			WarningLabel.Location = new Point(12, 311);
 			WarningLabel.Name = "WarningLabel";
 			WarningLabel.Size = new Size(368, 86);
 			WarningLabel.TabIndex = 23;
@@ -293,7 +305,7 @@
 			// 
 			AdminPasswordLabel.AutoSize = true;
 			AdminPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			AdminPasswordLabel.Location = new Point(415, 269);
+			AdminPasswordLabel.Location = new Point(414, 70);
 			AdminPasswordLabel.Name = "AdminPasswordLabel";
 			AdminPasswordLabel.Size = new Size(154, 17);
 			AdminPasswordLabel.TabIndex = 25;
@@ -301,7 +313,7 @@
 			// 
 			// txtAdminPassword
 			// 
-			txtAdminPassword.Location = new Point(415, 289);
+			txtAdminPassword.Location = new Point(415, 90);
 			txtAdminPassword.Name = "txtAdminPassword";
 			txtAdminPassword.Size = new Size(368, 23);
 			txtAdminPassword.TabIndex = 26;
@@ -326,20 +338,21 @@
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(414, 174);
+			txtInstallPath.Location = new Point(12, 434);
 			txtInstallPath.Name = "txtInstallPath";
 			txtInstallPath.Size = new Size(368, 23);
 			txtInstallPath.TabIndex = 29;
+			txtInstallPath.TextChanged += txtInstallPath_TextChanged;
 			// 
-			// label5
+			// textLabel2
 			// 
-			label5.AutoSize = true;
-			label5.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label5.Location = new Point(414, 147);
-			label5.Name = "label5";
-			label5.Size = new Size(23, 17);
-			label5.TabIndex = 30;
-			label5.Text = "Or";
+			textLabel2.AutoSize = true;
+			textLabel2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			textLabel2.Location = new Point(12, 407);
+			textLabel2.Name = "textLabel2";
+			textLabel2.Size = new Size(23, 17);
+			textLabel2.TabIndex = 30;
+			textLabel2.Text = "Or";
 			// 
 			// chkEnableRcon
 			// 
@@ -368,37 +381,157 @@
 			txtRconPassword.Size = new Size(223, 23);
 			txtRconPassword.TabIndex = 33;
 			// 
-			// label2
+			// TextLabel5
 			// 
-			label2.AutoSize = true;
-			label2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label2.Location = new Point(12, 213);
-			label2.Name = "label2";
-			label2.Size = new Size(74, 17);
-			label2.TabIndex = 34;
-			label2.Text = "RCON Port";
+			TextLabel5.AutoSize = true;
+			TextLabel5.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel5.Location = new Point(12, 213);
+			TextLabel5.Name = "TextLabel5";
+			TextLabel5.Size = new Size(74, 17);
+			TextLabel5.TabIndex = 34;
+			TextLabel5.Text = "RCON Port";
 			// 
-			// label6
+			// TextLabel6
 			// 
-			label6.AutoSize = true;
-			label6.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			label6.Location = new Point(107, 213);
-			label6.Name = "label6";
-			label6.Size = new Size(106, 17);
-			label6.TabIndex = 35;
-			label6.Text = "RCON Password";
+			TextLabel6.AutoSize = true;
+			TextLabel6.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel6.Location = new Point(107, 213);
+			TextLabel6.Name = "TextLabel6";
+			TextLabel6.Size = new Size(106, 17);
+			TextLabel6.TabIndex = 35;
+			TextLabel6.Text = "RCON Password";
+			// 
+			// TextLabel4
+			// 
+			TextLabel4.AutoSize = true;
+			TextLabel4.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel4.Location = new Point(415, 135);
+			TextLabel4.Name = "TextLabel4";
+			TextLabel4.Size = new Size(237, 17);
+			TextLabel4.TabIndex = 36;
+			TextLabel4.Text = "Maintenance & Auto-Restart Scheduler";
+			// 
+			// chkEnableSchedule
+			// 
+			chkEnableSchedule.AutoSize = true;
+			chkEnableSchedule.Location = new Point(6, 18);
+			chkEnableSchedule.Name = "chkEnableSchedule";
+			chkEnableSchedule.Size = new Size(69, 19);
+			chkEnableSchedule.TabIndex = 0;
+			chkEnableSchedule.Text = "Activate";
+			chkEnableSchedule.UseVisualStyleBackColor = true;
+			chkEnableSchedule.CheckedChanged += chkEnableSchedule_CheckedChanged;
+			// 
+			// dtpRestartTime
+			// 
+			dtpRestartTime.CustomFormat = "HH:mm";
+			dtpRestartTime.Format = DateTimePickerFormat.Custom;
+			dtpRestartTime.Location = new Point(81, 13);
+			dtpRestartTime.Name = "dtpRestartTime";
+			dtpRestartTime.ShowUpDown = true;
+			dtpRestartTime.Size = new Size(63, 23);
+			dtpRestartTime.TabIndex = 37;
+			// 
+			// chkMon
+			// 
+			chkMon.AutoSize = true;
+			chkMon.Location = new Point(6, 43);
+			chkMon.Name = "chkMon";
+			chkMon.Size = new Size(70, 19);
+			chkMon.TabIndex = 38;
+			chkMon.Text = "Monday";
+			chkMon.UseVisualStyleBackColor = true;
+			// 
+			// chkTue
+			// 
+			chkTue.AutoSize = true;
+			chkTue.Location = new Point(82, 43);
+			chkTue.Name = "chkTue";
+			chkTue.Size = new Size(70, 19);
+			chkTue.TabIndex = 39;
+			chkTue.Text = "Tuesday";
+			chkTue.UseVisualStyleBackColor = true;
+			// 
+			// chkWed
+			// 
+			chkWed.AutoSize = true;
+			chkWed.Location = new Point(158, 43);
+			chkWed.Name = "chkWed";
+			chkWed.Size = new Size(87, 19);
+			chkWed.TabIndex = 40;
+			chkWed.Text = "Wednesday";
+			chkWed.UseVisualStyleBackColor = true;
+			// 
+			// chkThu
+			// 
+			chkThu.AutoSize = true;
+			chkThu.Location = new Point(251, 43);
+			chkThu.Name = "chkThu";
+			chkThu.Size = new Size(75, 19);
+			chkThu.TabIndex = 41;
+			chkThu.Text = "Thursday";
+			chkThu.UseVisualStyleBackColor = true;
+			// 
+			// chkFri
+			// 
+			chkFri.AutoSize = true;
+			chkFri.Location = new Point(6, 68);
+			chkFri.Name = "chkFri";
+			chkFri.Size = new Size(58, 19);
+			chkFri.TabIndex = 42;
+			chkFri.Text = "Friday";
+			chkFri.UseVisualStyleBackColor = true;
+			// 
+			// chkSat
+			// 
+			chkSat.AutoSize = true;
+			chkSat.Location = new Point(82, 68);
+			chkSat.Name = "chkSat";
+			chkSat.Size = new Size(72, 19);
+			chkSat.TabIndex = 43;
+			chkSat.Text = "Saturday";
+			chkSat.UseVisualStyleBackColor = true;
+			// 
+			// chkSun
+			// 
+			chkSun.AutoSize = true;
+			chkSun.Location = new Point(158, 68);
+			chkSun.Name = "chkSun";
+			chkSun.Size = new Size(65, 19);
+			chkSun.TabIndex = 44;
+			chkSun.Text = "Sunday";
+			chkSun.UseVisualStyleBackColor = true;
+			// 
+			// groupBox1
+			// 
+			groupBox1.Controls.Add(chkFri);
+			groupBox1.Controls.Add(dtpRestartTime);
+			groupBox1.Controls.Add(chkThu);
+			groupBox1.Controls.Add(chkEnableSchedule);
+			groupBox1.Controls.Add(chkSun);
+			groupBox1.Controls.Add(chkWed);
+			groupBox1.Controls.Add(chkSat);
+			groupBox1.Controls.Add(chkTue);
+			groupBox1.Controls.Add(chkMon);
+			groupBox1.Location = new Point(415, 155);
+			groupBox1.Name = "groupBox1";
+			groupBox1.Size = new Size(351, 101);
+			groupBox1.TabIndex = 45;
+			groupBox1.TabStop = false;
 			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(795, 558);
-			Controls.Add(label6);
-			Controls.Add(label2);
+			Controls.Add(groupBox1);
+			Controls.Add(TextLabel4);
+			Controls.Add(TextLabel6);
+			Controls.Add(TextLabel5);
 			Controls.Add(txtRconPassword);
 			Controls.Add(numRconPort);
 			Controls.Add(chkEnableRcon);
-			Controls.Add(label5);
+			Controls.Add(textLabel2);
 			Controls.Add(txtInstallPath);
 			Controls.Add(CompetitiveLabel);
 			Controls.Add(cmbCompetitive);
@@ -408,15 +541,15 @@
 			Controls.Add(WarningLabel);
 			Controls.Add(numQueryPort);
 			Controls.Add(QueryPortLabel);
-			Controls.Add(label4);
+			Controls.Add(TextLabel7);
 			Controls.Add(txtExtraArgs);
-			Controls.Add(label3);
+			Controls.Add(TextLabel3);
 			Controls.Add(MapLabel);
 			Controls.Add(numMaxPlayers);
 			Controls.Add(MaxPlayerLabel);
 			Controls.Add(txtPassword);
 			Controls.Add(ServerPasswordLabel);
-			Controls.Add(label1);
+			Controls.Add(ltextLabel1);
 			Controls.Add(chkDefaultPath);
 			Controls.Add(btnSave);
 			Controls.Add(btnBrowse);
@@ -429,11 +562,12 @@
 			Controls.Add(ServerNameLabel);
 			Name = "ServerSettingsGUI";
 			Text = "ServerSettingsForm";
-			Load += ServerSettingsGUI_Load;
 			((System.ComponentModel.ISupportInitialize)numPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).EndInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).EndInit();
+			groupBox1.ResumeLayout(false);
+			groupBox1.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -450,15 +584,15 @@
 		private Button btnBrowse;
 		private Button btnSave;
 		private CheckBox chkDefaultPath;
-		private Label label1;
+		private Label ltextLabel1;
 		private Label ServerPasswordLabel;
 		private TextBox txtPassword;
 		private Label MaxPlayerLabel;
 		private NumericUpDown numMaxPlayers;
 		private Label MapLabel;
-		private Label label3;
+		private Label TextLabel3;
 		private TextBox txtExtraArgs;
-		private Label label4;
+		private Label TextLabel7;
 		private Label QueryPortLabel;
 		private NumericUpDown numQueryPort;
 		private Label WarningLabel;
@@ -468,11 +602,22 @@
 		private ComboBox cmbCompetitive;
 		private Label CompetitiveLabel;
 		private TextBox txtInstallPath;
-		private Label label5;
+		private Label textLabel2;
 		private CheckBox chkEnableRcon;
 		private NumericUpDown numRconPort;
 		private TextBox txtRconPassword;
-		private Label label2;
-		private Label label6;
+		private Label TextLabel5;
+		private Label TextLabel6;
+		private Label TextLabel4;
+		private CheckBox chkEnableSchedule;
+		private DateTimePicker dtpRestartTime;
+		private CheckBox chkMon;
+		private CheckBox chkTue;
+		private CheckBox chkWed;
+		private CheckBox chkThu;
+		private CheckBox chkFri;
+		private CheckBox chkSat;
+		private CheckBox chkSun;
+		private GroupBox groupBox1;
 	}
 }

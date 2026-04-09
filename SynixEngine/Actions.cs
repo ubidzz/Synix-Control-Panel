@@ -278,5 +278,25 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 		}
+
+		public void ExecuteMaintenanceRestart(GameServer server)
+		{
+			Log($"[MAINTENANCE] Scheduled restart triggered for {server.ServerName}.", Color.Cyan, true);
+
+			// 1. Stop the server
+			StopServerAndReport(server);
+
+			// 2. Wait 5 seconds for the PID to fully clear and the OS to breathe
+			Task.Delay(5000).ContinueWith(_ =>
+			{
+				MainGUI.Instance?.Invoke((Action)(() =>
+				{
+					Log($"[MAINTENANCE] Restarting {server.ServerName}...", Color.Cyan);
+
+					// 3. Start it back up
+					Servers.Start(server, msg => Log(msg));
+				}));
+			});
+		}
 	}
 }
