@@ -54,8 +54,10 @@
 			editServer = new ToolStripMenuItem();
 			udateServer = new ToolStripMenuItem();
 			installServer = new ToolStripMenuItem();
+			btnRestart = new ToolStripMenuItem();
 			btnServerActions = new Button();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
+			btnHelp = new ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -223,9 +225,9 @@
 			// 
 			// contextMenuStrip
 			// 
-			contextMenuStrip.Items.AddRange(new ToolStripItem[] { deleteServer, openServerConfig, editServer, udateServer, installServer });
+			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, deleteServer, openServerConfig, btnRestart, editServer, udateServer, installServer });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(199, 114);
+			contextMenuStrip.Size = new Size(199, 180);
 			// 
 			// deleteServer
 			// 
@@ -262,6 +264,13 @@
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
+			// btnRestart
+			// 
+			btnRestart.Name = "btnRestart";
+			btnRestart.Size = new Size(198, 22);
+			btnRestart.Text = "Restart Server";
+			btnRestart.Click += btnRestart_Click;
+			// 
 			// btnServerActions
 			// 
 			btnServerActions.Location = new Point(12, 590);
@@ -277,6 +286,12 @@
 			tmrResourceUpdates.Enabled = true;
 			tmrResourceUpdates.Interval = 1000;
 			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
+			// 
+			// btnHelp
+			// 
+			btnHelp.Name = "btnHelp";
+			btnHelp.Size = new Size(198, 22);
+			btnHelp.Text = "Help";
 			// 
 			// MainGUI
 			// 
@@ -335,5 +350,7 @@
 		private ToolStripMenuItem deleteServer;
 		private Button btnServerActions;
 		private System.Windows.Forms.Timer tmrResourceUpdates;
+		private ToolStripMenuItem btnRestart;
+		private ToolStripMenuItem btnHelp;
 	}
 }

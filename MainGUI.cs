@@ -74,6 +74,19 @@ namespace Synix_Control_Panel
 				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
 			}
 
+			foreach (var server in serverList)
+			{
+				if (server.IsScheduledRestartEnabled)
+				{
+					string currentTime = DateTime.Now.ToString("HH:mm");
+					if (server.RestartTime == currentTime)
+					{
+						// Call the sequence so it saves before restarting
+						_ = Core.Instance.ExecuteRestartSequence(server);
+					}
+				}
+			}
+
 			chartTickCounter++;
 		}
 
@@ -286,7 +299,7 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// The AI handles the PID check, the stop command, and the log
+				// 🚀 SENDS COMMAND: MainGUI -> Actions.cs -> Servers.cs
 				Core.Instance.StopServerAndReport(selectedServer);
 			}
 		}
@@ -304,6 +317,14 @@ namespace Synix_Control_Panel
 		{
 			// Spawns the menu at the top-left corner of the button (0,0) and forces it to open UPWARDS
 			contextMenuStrip.Show(btnServerActions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
+		}
+
+		private async void btnRestart_Click(object sender, EventArgs e)
+		{
+			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			{
+				await Core.Instance.ExecuteRestartSequence(selectedServer);
+			}
 		}
 	}
 }

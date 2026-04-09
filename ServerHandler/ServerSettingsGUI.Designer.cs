@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerSettingsGUI));
 			ServerNameLabel = new Label();
 			GameServerLabel = new Label();
 			PortLabel = new Label();
@@ -83,7 +84,9 @@
 			// ServerNameLabel
 			// 
 			ServerNameLabel.AutoSize = true;
+			ServerNameLabel.BackColor = Color.Transparent;
 			ServerNameLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			ServerNameLabel.ForeColor = Color.White;
 			ServerNameLabel.Location = new Point(12, 9);
 			ServerNameLabel.Name = "ServerNameLabel";
 			ServerNameLabel.Size = new Size(87, 17);
@@ -93,7 +96,9 @@
 			// GameServerLabel
 			// 
 			GameServerLabel.AutoSize = true;
+			GameServerLabel.BackColor = Color.Transparent;
 			GameServerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			GameServerLabel.ForeColor = Color.White;
 			GameServerLabel.Location = new Point(12, 70);
 			GameServerLabel.Name = "GameServerLabel";
 			GameServerLabel.Size = new Size(86, 17);
@@ -103,7 +108,9 @@
 			// PortLabel
 			// 
 			PortLabel.AutoSize = true;
+			PortLabel.BackColor = Color.Transparent;
 			PortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			PortLabel.ForeColor = Color.White;
 			PortLabel.Location = new Point(12, 135);
 			PortLabel.Name = "PortLabel";
 			PortLabel.Size = new Size(34, 17);
@@ -113,7 +120,9 @@
 			// FolderPathLabel
 			// 
 			FolderPathLabel.AutoSize = true;
+			FolderPathLabel.BackColor = Color.Transparent;
 			FolderPathLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			FolderPathLabel.ForeColor = Color.White;
 			FolderPathLabel.Location = new Point(12, 269);
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(104, 17);
@@ -151,7 +160,7 @@
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(41, 405);
+			btnBrowse.Location = new Point(41, 366);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -173,19 +182,23 @@
 			// chkDefaultPath
 			// 
 			chkDefaultPath.AutoSize = true;
+			chkDefaultPath.BackColor = Color.Transparent;
+			chkDefaultPath.ForeColor = Color.White;
 			chkDefaultPath.Location = new Point(12, 289);
 			chkDefaultPath.Name = "chkDefaultPath";
 			chkDefaultPath.Size = new Size(230, 19);
 			chkDefaultPath.TabIndex = 10;
 			chkDefaultPath.Text = "Use Default Location (C:\\GameServers)";
-			chkDefaultPath.UseVisualStyleBackColor = true;
+			chkDefaultPath.UseVisualStyleBackColor = false;
 			chkDefaultPath.Click += chkDefaultPath_CheckedChanged;
 			// 
 			// ltextLabel1
 			// 
 			ltextLabel1.AutoSize = true;
+			ltextLabel1.BackColor = Color.Transparent;
 			ltextLabel1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			ltextLabel1.Location = new Point(122, 407);
+			ltextLabel1.ForeColor = Color.White;
+			ltextLabel1.Location = new Point(122, 368);
 			ltextLabel1.Name = "ltextLabel1";
 			ltextLabel1.Size = new Size(73, 17);
 			ltextLabel1.TabIndex = 11;
@@ -194,7 +207,9 @@
 			// ServerPasswordLabel
 			// 
 			ServerPasswordLabel.AutoSize = true;
+			ServerPasswordLabel.BackColor = Color.Transparent;
 			ServerPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			ServerPasswordLabel.ForeColor = Color.White;
 			ServerPasswordLabel.Location = new Point(414, 9);
 			ServerPasswordLabel.Name = "ServerPasswordLabel";
 			ServerPasswordLabel.Size = new Size(109, 17);
@@ -211,7 +226,9 @@
 			// MaxPlayerLabel
 			// 
 			MaxPlayerLabel.AutoSize = true;
+			MaxPlayerLabel.BackColor = Color.Transparent;
 			MaxPlayerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			MaxPlayerLabel.ForeColor = Color.White;
 			MaxPlayerLabel.Location = new Point(178, 135);
 			MaxPlayerLabel.Name = "MaxPlayerLabel";
 			MaxPlayerLabel.Size = new Size(76, 17);
@@ -231,7 +248,9 @@
 			// MapLabel
 			// 
 			MapLabel.AutoSize = true;
+			MapLabel.BackColor = Color.Transparent;
 			MapLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			MapLabel.ForeColor = Color.White;
 			MapLabel.Location = new Point(229, 70);
 			MapLabel.Name = "MapLabel";
 			MapLabel.Size = new Size(35, 17);
@@ -241,7 +260,9 @@
 			// TextLabel3
 			// 
 			TextLabel3.AutoSize = true;
+			TextLabel3.BackColor = Color.Transparent;
 			TextLabel3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel3.ForeColor = Color.White;
 			TextLabel3.Location = new Point(415, 434);
 			TextLabel3.Name = "TextLabel3";
 			TextLabel3.Size = new Size(124, 17);
@@ -258,6 +279,8 @@
 			// TextLabel7
 			// 
 			TextLabel7.AutoSize = true;
+			TextLabel7.BackColor = Color.Transparent;
+			TextLabel7.ForeColor = Color.White;
 			TextLabel7.Location = new Point(415, 453);
 			TextLabel7.Name = "TextLabel7";
 			TextLabel7.Size = new Size(257, 15);
@@ -267,7 +290,9 @@
 			// QueryPortLabel
 			// 
 			QueryPortLabel.AutoSize = true;
+			QueryPortLabel.BackColor = Color.Transparent;
 			QueryPortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			QueryPortLabel.ForeColor = Color.White;
 			QueryPortLabel.Location = new Point(91, 135);
 			QueryPortLabel.Name = "QueryPortLabel";
 			QueryPortLabel.Size = new Size(76, 17);
@@ -287,10 +312,11 @@
 			// WarningLabel
 			// 
 			WarningLabel.AutoEllipsis = true;
+			WarningLabel.BackColor = Color.Transparent;
 			WarningLabel.ForeColor = Color.Red;
 			WarningLabel.Location = new Point(12, 311);
 			WarningLabel.Name = "WarningLabel";
-			WarningLabel.Size = new Size(368, 86);
+			WarningLabel.Size = new Size(368, 57);
 			WarningLabel.TabIndex = 23;
 			// 
 			// cmbWorldName
@@ -304,7 +330,9 @@
 			// AdminPasswordLabel
 			// 
 			AdminPasswordLabel.AutoSize = true;
+			AdminPasswordLabel.BackColor = Color.Transparent;
 			AdminPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			AdminPasswordLabel.ForeColor = Color.White;
 			AdminPasswordLabel.Location = new Point(414, 70);
 			AdminPasswordLabel.Name = "AdminPasswordLabel";
 			AdminPasswordLabel.Size = new Size(154, 17);
@@ -329,7 +357,9 @@
 			// CompetitiveLabel
 			// 
 			CompetitiveLabel.AutoSize = true;
+			CompetitiveLabel.BackColor = Color.Transparent;
 			CompetitiveLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			CompetitiveLabel.ForeColor = Color.White;
 			CompetitiveLabel.Location = new Point(277, 135);
 			CompetitiveLabel.Name = "CompetitiveLabel";
 			CompetitiveLabel.Size = new Size(83, 17);
@@ -338,7 +368,7 @@
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(12, 434);
+			txtInstallPath.Location = new Point(12, 395);
 			txtInstallPath.Name = "txtInstallPath";
 			txtInstallPath.Size = new Size(368, 23);
 			txtInstallPath.TabIndex = 29;
@@ -347,8 +377,10 @@
 			// textLabel2
 			// 
 			textLabel2.AutoSize = true;
+			textLabel2.BackColor = Color.Transparent;
 			textLabel2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			textLabel2.Location = new Point(12, 407);
+			textLabel2.ForeColor = Color.White;
+			textLabel2.Location = new Point(12, 368);
 			textLabel2.Name = "textLabel2";
 			textLabel2.Size = new Size(23, 17);
 			textLabel2.TabIndex = 30;
@@ -357,12 +389,14 @@
 			// chkEnableRcon
 			// 
 			chkEnableRcon.AutoSize = true;
+			chkEnableRcon.BackColor = Color.Transparent;
+			chkEnableRcon.ForeColor = Color.White;
 			chkEnableRcon.Location = new Point(12, 191);
 			chkEnableRcon.Name = "chkEnableRcon";
 			chkEnableRcon.Size = new Size(105, 19);
 			chkEnableRcon.TabIndex = 31;
 			chkEnableRcon.Text = "Activate RCON";
-			chkEnableRcon.UseVisualStyleBackColor = true;
+			chkEnableRcon.UseVisualStyleBackColor = false;
 			// 
 			// numRconPort
 			// 
@@ -384,7 +418,9 @@
 			// TextLabel5
 			// 
 			TextLabel5.AutoSize = true;
+			TextLabel5.BackColor = Color.Transparent;
 			TextLabel5.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel5.ForeColor = Color.White;
 			TextLabel5.Location = new Point(12, 213);
 			TextLabel5.Name = "TextLabel5";
 			TextLabel5.Size = new Size(74, 17);
@@ -394,7 +430,9 @@
 			// TextLabel6
 			// 
 			TextLabel6.AutoSize = true;
+			TextLabel6.BackColor = Color.Transparent;
 			TextLabel6.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel6.ForeColor = Color.White;
 			TextLabel6.Location = new Point(107, 213);
 			TextLabel6.Name = "TextLabel6";
 			TextLabel6.Size = new Size(106, 17);
@@ -404,7 +442,9 @@
 			// TextLabel4
 			// 
 			TextLabel4.AutoSize = true;
+			TextLabel4.BackColor = Color.Transparent;
 			TextLabel4.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			TextLabel4.ForeColor = Color.White;
 			TextLabel4.Location = new Point(415, 135);
 			TextLabel4.Name = "TextLabel4";
 			TextLabel4.Size = new Size(237, 17);
@@ -414,6 +454,7 @@
 			// chkEnableSchedule
 			// 
 			chkEnableSchedule.AutoSize = true;
+			chkEnableSchedule.ForeColor = Color.White;
 			chkEnableSchedule.Location = new Point(6, 18);
 			chkEnableSchedule.Name = "chkEnableSchedule";
 			chkEnableSchedule.Size = new Size(69, 19);
@@ -435,6 +476,7 @@
 			// chkMon
 			// 
 			chkMon.AutoSize = true;
+			chkMon.ForeColor = Color.White;
 			chkMon.Location = new Point(6, 43);
 			chkMon.Name = "chkMon";
 			chkMon.Size = new Size(70, 19);
@@ -445,6 +487,7 @@
 			// chkTue
 			// 
 			chkTue.AutoSize = true;
+			chkTue.ForeColor = Color.White;
 			chkTue.Location = new Point(82, 43);
 			chkTue.Name = "chkTue";
 			chkTue.Size = new Size(70, 19);
@@ -455,6 +498,7 @@
 			// chkWed
 			// 
 			chkWed.AutoSize = true;
+			chkWed.ForeColor = Color.White;
 			chkWed.Location = new Point(158, 43);
 			chkWed.Name = "chkWed";
 			chkWed.Size = new Size(87, 19);
@@ -465,6 +509,7 @@
 			// chkThu
 			// 
 			chkThu.AutoSize = true;
+			chkThu.ForeColor = Color.White;
 			chkThu.Location = new Point(251, 43);
 			chkThu.Name = "chkThu";
 			chkThu.Size = new Size(75, 19);
@@ -475,6 +520,7 @@
 			// chkFri
 			// 
 			chkFri.AutoSize = true;
+			chkFri.ForeColor = Color.White;
 			chkFri.Location = new Point(6, 68);
 			chkFri.Name = "chkFri";
 			chkFri.Size = new Size(58, 19);
@@ -485,6 +531,7 @@
 			// chkSat
 			// 
 			chkSat.AutoSize = true;
+			chkSat.ForeColor = Color.White;
 			chkSat.Location = new Point(82, 68);
 			chkSat.Name = "chkSat";
 			chkSat.Size = new Size(72, 19);
@@ -495,6 +542,7 @@
 			// chkSun
 			// 
 			chkSun.AutoSize = true;
+			chkSun.ForeColor = Color.White;
 			chkSun.Location = new Point(158, 68);
 			chkSun.Name = "chkSun";
 			chkSun.Size = new Size(65, 19);
@@ -504,6 +552,8 @@
 			// 
 			// groupBox1
 			// 
+			groupBox1.BackColor = Color.Transparent;
+			groupBox1.BackgroundImageLayout = ImageLayout.None;
 			groupBox1.Controls.Add(chkFri);
 			groupBox1.Controls.Add(dtpRestartTime);
 			groupBox1.Controls.Add(chkThu);
@@ -513,9 +563,9 @@
 			groupBox1.Controls.Add(chkSat);
 			groupBox1.Controls.Add(chkTue);
 			groupBox1.Controls.Add(chkMon);
-			groupBox1.Location = new Point(415, 155);
+			groupBox1.Location = new Point(415, 151);
 			groupBox1.Name = "groupBox1";
-			groupBox1.Size = new Size(351, 101);
+			groupBox1.Size = new Size(351, 105);
 			groupBox1.TabIndex = 45;
 			groupBox1.TabStop = false;
 			// 
@@ -523,6 +573,8 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackgroundImage = Properties.Resources.background;
+			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 558);
 			Controls.Add(groupBox1);
 			Controls.Add(TextLabel4);
@@ -560,8 +612,12 @@
 			Controls.Add(PortLabel);
 			Controls.Add(GameServerLabel);
 			Controls.Add(ServerNameLabel);
+			FormBorderStyle = FormBorderStyle.FixedSingle;
+			Icon = (Icon)resources.GetObject("$this.Icon");
+			MaximizeBox = false;
+			MinimizeBox = false;
 			Name = "ServerSettingsGUI";
-			Text = "ServerSettingsForm";
+			Text = "Server Settings";
 			((System.ComponentModel.ISupportInitialize)numPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).EndInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).EndInit();

@@ -60,7 +60,7 @@ namespace Synix_Control_Panel
 			{
 				cmbGame.SelectedIndex = 0;
 				WarningLabel.Text = "[WARNING] Pick a location to install or use default. This cannot be changed later!";
-				WarningLabel.ForeColor = Color.Orange;
+				WarningLabel.ForeColor = Color.Red;
 			}
 
 			// 4. Initial Gatekeeper Check
@@ -113,7 +113,7 @@ namespace Synix_Control_Panel
 			chkDefaultPath.Enabled = false;
 			txtInstallPath.Enabled = false;
 			btnBrowse.Enabled = false;
-			WarningLabel.Text = "Warning! You cannot edit location after the server has been saved!";
+			WarningLabel.Text = "{WARNING] You cannot edit location after the server has been saved!";
 			WarningLabel.ForeColor = Color.Red;
 
 			isManualLoading = false;
@@ -149,29 +149,29 @@ namespace Synix_Control_Panel
 					string cleanName = txtName.Text.Trim().Replace(" ", "_");
 					txtInstallPath.Text = Path.Combine(@"C:\Games", cleanGame, cleanName);
 
-					WarningLabel.Text = $"Synix will install to: {txtInstallPath.Text}";
-					WarningLabel.ForeColor = Color.LightGreen;
+					WarningLabel.Text = $"Synix will install {cmbGame.SelectedItem.ToString()} to: {txtInstallPath.Text}";
+					WarningLabel.ForeColor = Color.Green;
 				}
 				else if (isReady && !chkDefaultPath.Checked)
 				{
 					// Logic for custom path warnings
 					if (string.IsNullOrWhiteSpace(txtInstallPath.Text))
 					{
-						WarningLabel.Text = "[ACTION REQUIRED] Please browse for an install folder.";
-						WarningLabel.ForeColor = Color.Yellow;
+						WarningLabel.Text = "[ACTION REQUIRED] You can choose a custom installation location or use the default folder location: C:/Games/[Game]/[Server Name]";
+						WarningLabel.ForeColor = Color.Red;
 					}
 					else
 					{
 						WarningLabel.Text = "Custom installation location verified.";
-						WarningLabel.ForeColor = Color.White;
+						WarningLabel.ForeColor = Color.Green;
 					}
 				}
 				else
 				{
 					// Not ready (missing name or game selection)
 					txtInstallPath.Text = string.Empty;
-					WarningLabel.Text = "Enter a Server Name and select a Game to enable installation.";
-					WarningLabel.ForeColor = Color.Orange;
+					WarningLabel.Text = "[INFO] Enter a Server Name and select a Game to enable installation.";
+					WarningLabel.ForeColor = Color.Red;
 				}
 			}
 
@@ -192,13 +192,13 @@ namespace Synix_Control_Panel
 				txtInstallPath.Text = Path.Combine(@"C:\Games", cleanGame, cleanName);
 
 				WarningLabel.Text = $"Synix will install to: {txtInstallPath.Text}";
-				WarningLabel.ForeColor = Color.LightGreen;
+				WarningLabel.ForeColor = Color.Green;
 			}
 			else
 			{
 				txtInstallPath.Text = string.Empty;
 				WarningLabel.Text = "Enter a Server Name and select a Game to continue.";
-				WarningLabel.ForeColor = Color.Orange;
+				WarningLabel.ForeColor = Color.Red;
 			}
 		}
 

@@ -14,17 +14,36 @@ using Synix_Control_Panel.FileFolderHandler;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel.ServerHandler
 {
 	public static class Servers
 	{
+		#region Win32 API for Graceful Shutdown
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern bool AttachConsole(uint dwProcessId);
+
+		[DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+		static extern bool FreeConsole();
+
+		[DllImport("kernel32.dll")]
+		static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
+
+		[DllImport("kernel32.dll")]
+		static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate? HandlerRoutine, bool Add);
+		delegate bool ConsoleCtrlDelegate(uint CtrlType);
+
+		const uint CTRL_C_EVENT = 0;
+		#endregion
+
 		public static void Start(GameServer server, Action<string> logCallback)
 		{
 			try
 			{
-				// 1. Fetch the master template from your Database
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				if (dbEntry == null)
 				{
@@ -32,7 +51,10 @@ namespace Synix_Control_Panel.ServerHandler
 					return;
 				}
 
-				// 2. The Universal Replacement Map
+				// 🛠️ CREATE THE IDENTITY (No Spaces)
+				// This replaces " " with "_" for folder-safe paths.
+				string cleanIdentity = server.ServerName.Replace(" ", "_");
+
 				string args = dbEntry.RequiredArgs
 					.Replace("{map}", server.WorldName)
 					.Replace("{appid}", dbEntry.AppID)
@@ -41,40 +63,29 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
 					.Replace("{pass}", server.Password ?? "")
 					.Replace("{adminpass}", server.AdminPassword ?? "")
-					.Replace("{ServerName}", server.ServerName)
-					.Replace("{InstallPath}", server.InstallPath);
+					.Replace("{ServerName}", server.ServerName) // Original name for Hostnames
+					.Replace("{InstallPath}", server.InstallPath)
+					.Replace("{Identity}", cleanIdentity); // 🎯 FIXED: Was incorrectly using InstallPath
 
-				// --- THE RCON INJECTOR ---
 				if (args.Contains("{rcon}"))
 				{
 					if (server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax))
 					{
-						// 1. Fill out the formatting rule with the user's specific port and password
 						string formattedRcon = dbEntry.RconSyntax
 							.Replace("{rcon_port}", server.RconPort.ToString())
 							.Replace("{rcon_pass}", server.RconPassword ?? "");
-
-						// 2. Inject it into the main launch string
 						args = args.Replace("{rcon}", formattedRcon);
 					}
-					else
-					{
-						// The user has RCON turned OFF. Just delete the {rcon} tag entirely.
-						args = args.Replace("{rcon}", "");
-					}
+					else args = args.Replace("{rcon}", "");
 				}
-				// -------------------------
 
-				// Clean up any double spaces
+				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
+				{
+					args = args.Replace("{mode}", server.GameMode);
+				}
+
 				args = args.Replace("  ", " ").Trim();
 
-				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.SelectedMode))
-				{
-					// Simply inject the exact word the user selected from the dropdown
-					args = args.Replace("{mode}", server.SelectedMode);
-				}
-
-				// 4. Build the Full Executable Path
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName);
 
 				if (!File.Exists(fullExePath))
@@ -83,7 +94,6 @@ namespace Synix_Control_Panel.ServerHandler
 					return;
 				}
 
-				// 5. Configure the Process Launch
 				ProcessStartInfo psi = new()
 				{
 					FileName = fullExePath,
@@ -96,13 +106,32 @@ namespace Synix_Control_Panel.ServerHandler
 				logCallback?.Invoke($"[LAUNCHING] {server.Game}...");
 				logCallback?.Invoke($"[COMMAND] {args}");
 
-				// 6. Fire it up!
 				Process? proc = Process.Start(psi);
 				if (proc != null)
 				{
 					server.RunningProcess = proc;
 					server.Status = "Online";
 					server.PID = proc.Id;
+
+					// 🛡️ WATCHDOG INTEGRATION
+					// We subscribe here so new servers also benefit from auto-restart
+					proc.EnableRaisingEvents = true;
+					proc.Exited += async (s, e) => {
+						if (server.Status == "Online")
+						{
+							MainGUI.Instance?.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly! Restarting...", System.Drawing.Color.Red);
+
+							// Trigger the master recovery logic in your Core
+							await Synix_Control_Panel.SynixEngine.Core.Instance.ExecuteRestartSequence(server);
+						}
+						else
+						{
+							server.Status = "Offline";
+							server.PID = null;
+							server.RunningProcess = null;
+							MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+						}
+					};
 
 					FileHandler.SaveServers();
 				}
@@ -117,82 +146,70 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			try
 			{
-				logCallback?.Invoke($"Attempting to shut down {server.ServerName}...");
+				int targetPid = server.RunningProcess?.Id ?? server.PID ?? 0;
 
-				// 1. Get the "Clean" process name (e.g., "PalServer-Win64-Shipping")
-				string targetName = Path.GetFileNameWithoutExtension(server.ExeName);
-
-				// 2. Identify the PID to kill
-				int? pidToKill = null;
-
-				if (server.RunningProcess != null && !server.RunningProcess.HasExited)
+				if (targetPid <= 0)
 				{
-					pidToKill = server.RunningProcess.Id;
-				}
-				else if (server.PID.HasValue)
-				{
-					pidToKill = server.PID.Value;
+					logCallback?.Invoke($"[ERROR] {server.ServerName} has no valid PID to stop.");
+					return;
 				}
 
-				if (pidToKill.HasValue)
-				{
-					try
-					{
-						Process proc = Process.GetProcessById(pidToKill.Value);
+				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...");
 
-						// FIXED SAFETY CHECK: Compare only the filename, not the full path
-						if (proc.ProcessName.Equals(targetName, StringComparison.OrdinalIgnoreCase))
-						{
-							// Use a helper to kill the process and all its children
-							KillProcessTree(pidToKill.Value);
-							logCallback?.Invoke($"[STOPPED] {server.ServerName} (PID {pidToKill}) has been shut down.");
-						}
-						else
-						{
-							logCallback?.Invoke($"[DEBUG] Safety block: Process {pidToKill} is '{proc.ProcessName}', not '{targetName}'.");
-						}
-					}
-					catch (ArgumentException)
+				// --- 1. ATTEMPT GRACEFUL SHUTDOWN (Ctrl+C) ---
+				if (AttachConsole((uint)targetPid))
+				{
+					// Prevent the Control Panel from closing itself when the signal is sent
+					SetConsoleCtrlHandler(null, true);
+
+					// Send the Ctrl+C signal
+					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+
+					// Wait for the server to save and exit (15s limit)
+					bool cleanExit = server.RunningProcess?.WaitForExit(20000) ?? false;
+
+					// Cleanup
+					FreeConsole();
+					SetConsoleCtrlHandler(null, false);
+
+					if (cleanExit)
 					{
-						logCallback?.Invoke($"[DEBUG] Process {pidToKill} is already dead.");
+						logCallback?.Invoke($"[STOP] {server.ServerName} saved and closed cleanly.");
+						FinalizeOfflineState(server);
+						return;
 					}
 				}
+
+				// --- 2. HARD KILL FALLBACK (Taskkill) ---
+				logCallback?.Invoke($"[WATCHDOG] {server.ServerName} did not respond. Forcing taskkill...");
+
+				ProcessStartInfo killInfo = new ProcessStartInfo
+				{
+					FileName = "taskkill",
+					Arguments = $"/F /T /PID {targetPid}",
+					CreateNoWindow = true,
+					UseShellExecute = false
+				};
+
+				using (Process? killProcess = Process.Start(killInfo))
+				{
+					killProcess?.WaitForExit();
+				}
+
+				FinalizeOfflineState(server);
+				logCallback?.Invoke($"[WATCHDOG] {server.ServerName} forced closed.");
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[ERROR] Stop failed: {ex.Message}");
-			}
-			finally
-			{
-				server.Status = "Offline";
-				server.PID = null;
-				server.RunningProcess = null;
-				FileHandler.SaveServers();
+				logCallback?.Invoke($"[ERROR] Failed to stop {server.ServerName}: {ex.Message}");
 			}
 		}
 
-		// Add this helper method inside your Server class or a helper class
-		private static void KillProcessTree(int pid)
+		private static void FinalizeOfflineState(GameServer server)
 		{
-			if (pid == 0) return;
-
-			try
-			{
-				// Find all child processes
-				using (var searcher = new System.Management.ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid))
-				using (var moc = searcher.Get())
-				{
-					foreach (var mo in moc)
-					{
-						KillProcessTree(Convert.ToInt32(mo["ProcessID"]));
-					}
-				}
-
-				// Kill the actual process
-				var proc = Process.GetProcessById(pid);
-				proc.Kill();
-			}
-			catch (Exception) { /* Handle cases where process is already gone */ }
+			server.Status = "Offline";
+			server.PID = null;
+			server.RunningProcess = null;
 		}
 
 		public static void RebindProcesses(BindingList<GameServer> servers)
@@ -215,15 +232,25 @@ namespace Synix_Control_Panel.ServerHandler
 							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
-							process.Exited += (s, e) => {
-								server.Status = "Offline";
-								server.PID = null;
-								server.RunningProcess = null;
-								MainGUI.Instance?.UpdateGrid();
+
+							// 🛡️ THE WATCHDOG: This triggers if the process closes
+							process.Exited += async (s, e) => {
+								// If we didn't plan to stop it, it's a failure
+								if (server.Status == "Online")
+								{
+									await SynixEngine.Core.Instance.RecoverServer(server);
+								}
+								else
+								{
+									server.Status = "Offline";
+									server.PID = null;
+									server.RunningProcess = null;
+									MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+								}
 							};
 						}
 					}
-					catch (Exception)
+					catch
 					{
 						// The process isn't in Task Manager anymore
 						server.Status = "Offline";

@@ -21,22 +21,23 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		// ACTION 1: STOP SERVER
 		public void StopServerAndReport(GameServer server)
 		{
+			// Basic check before calling the executioner
 			if (server.RunningProcess == null && !server.PID.HasValue)
 			{
 				MessageBox.Show($"No active process found for '{server.ServerName}'.",
-								"Process Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+								"Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 
+			// Call the executioner in Servers.cs
 			Servers.Stop(server, msg =>
 			{
 				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.AppendLog(msg)));
 			});
 
-			UpdateGridStatus();
+			UpdateGridStatus(); // Refresh the UI state
 		}
 
 		// ACTION 2: CONFIG EDITOR
@@ -50,7 +51,19 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			string fullPath = Path.Combine(server.InstallPath, blueprint.RelativeConfigPath);
+			// 🛠️ THE IDENTITY FIX: Standardize spaces to underscores for file paths
+			string cleanIdentity = server.ServerName.Replace(" ", "_");
+
+			// 1. RESOLVE ALL TAGS: This handles Rust, Sunkenland, and others
+			string resolvedRelativePath = blueprint.RelativeConfigPath
+				.Replace("{Identity}", cleanIdentity)
+				.Replace("{ServerName}", cleanIdentity) // Ensures folder paths use underscores
+				.Replace("{map}", server.WorldName)
+				.Replace("{port}", server.Port.ToString())
+				.Replace("{query}", server.QueryPort.ToString());
+
+			// 2. COMBINE: Build the absolute path
+			string fullPath = Path.Combine(server.InstallPath, resolvedRelativePath);
 
 			if (File.Exists(fullPath))
 			{
@@ -297,6 +310,100 @@ namespace Synix_Control_Panel.SynixEngine
 					Servers.Start(server, msg => Log(msg));
 				}));
 			});
+		}
+
+		public async Task ExecuteRestartSequence(GameServer server)
+		{
+			Log($"[RESTART] Starting sequence for {server.ServerName}...", Color.Cyan);
+
+			// 1. Wait for the stop process to finish (Ctrl+C + 15s grace period)
+			await Task.Run(() =>
+			{
+				Servers.Stop(server, msg =>
+				{
+					MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color.Yellow)));
+				});
+			});
+
+			// 2. The "OS Breath": Wait 3 seconds for Windows to release the IP ports
+			await Task.Delay(3000);
+
+			// 3. Verify it is actually stopped before restarting
+			if (server.Status == "Offline")
+			{
+				Log($"[RESTART] Port verified. Booting {server.Game}...", Color.Green);
+
+				Servers.Start(server, msg =>
+				{
+					MainGUI.Instance?.Invoke((Action)(() => Log(msg)));
+				});
+			}
+			else
+			{
+				Log($"[CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+			}
+
+			UpdateGridStatus();
+		}
+
+		// Inside Synix_Control_Panel.SynixEngine.Core
+		public async Task RecoverServer(GameServer server)
+		{
+			// 1. Identify failure type
+			string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
+			Log($"[WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
+
+			// 2. SCRUB: The Stop method handles Ctrl+C and the mandatory taskkill fallback
+			// This ensures that even if the EXE is "stuck," it is forcefully cleared.
+			await Task.Run(() =>
+			{
+				Servers.Stop(server, msg =>
+				{
+					MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color.Yellow)));
+				});
+			});
+
+			// 3. COOL DOWN: Wait for Windows to fully release file locks and ports
+			await Task.Delay(4000);
+
+			// 4. VERIFY & RESTART
+			if (server.Status == "Offline")
+			{
+				Log($"[WATCHDOG] Environment cleared. Restarting {server.Game}...", Color.Green);
+				Servers.Start(server, msg =>
+				{
+					MainGUI.Instance?.Invoke((Action)(() => Log(msg)));
+				});
+			}
+			UpdateGridStatus();
+		}
+
+		public void RunUniversalHealthCheck()
+		{
+			foreach (var server in MainGUI.serverList)
+			{
+				// Only monitor servers marked as Online
+				if (server.Status == "Online")
+				{
+					// Scenario A: The process object is gone or exited (Crash/Manual Close)
+					if (server.RunningProcess == null || server.RunningProcess.HasExited)
+					{
+						_ = RecoverServer(server);
+						continue;
+					}
+
+					// Scenario B: The PID is active but the logic is frozen (Not Responding)
+					try
+					{
+						server.RunningProcess.Refresh(); // Force Windows to update process stats
+						if (!server.RunningProcess.Responding)
+						{
+							_ = RecoverServer(server);
+						}
+					}
+					catch { /* Process might have closed during the check */ }
+				}
+			}
 		}
 	}
 }
