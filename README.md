@@ -50,12 +50,19 @@ Synix is built on a **Modular Singleton Architecture**. The UI acts as a high-sp
 ---
 
 ## 📜 License & Legal Information
+## 📜 License & Legal Information
 *Copyright © 2026 ubidzz. All Rights Reserved.*
 
-The **Synix Control Panel** is a proprietary software project. The source code is provided for **viewing and personal educational purposes only**.
+The **Synix Control Panel** is a proprietary software project. 
 
-* **No License:** The author retains all legal rights to the source code.
-* **Strictly Prohibited:** Modification, redistribution, or commercial resale of the source code or compiled binaries is strictly prohibited.
+* **Permitted Use:** This software is **free for personal use**. You are welcome to use it to host your own game servers.
+* **Source Code:** The source code is provided for **viewing and personal educational purposes only**.
+* **No License:** The author retains all legal rights to the software and its source code.
+
+### 🚫 Strictly Prohibited:
+* **No Trading/Modding:** You may not "mod," modify, or trade this software or its source code.
+* **No Selling:** Commercial resale of the source code or compiled binaries is strictly prohibited.
+* **No Redistribution:** You may not redistribute this software in any form.
 * **Commercial Use:** Unauthorized commercial deployment or branding is a violation of copyright.
 
 ---
