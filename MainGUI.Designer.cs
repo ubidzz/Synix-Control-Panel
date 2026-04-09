@@ -49,15 +49,15 @@
 			lblTotalRam = new Label();
 			lblTotalCpu = new Label();
 			contextMenuStrip = new ContextMenuStrip(components);
+			btnHelp = new ToolStripMenuItem();
 			deleteServer = new ToolStripMenuItem();
 			openServerConfig = new ToolStripMenuItem();
+			btnRestart = new ToolStripMenuItem();
 			editServer = new ToolStripMenuItem();
 			udateServer = new ToolStripMenuItem();
 			installServer = new ToolStripMenuItem();
-			btnRestart = new ToolStripMenuItem();
 			btnServerActions = new Button();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
-			btnHelp = new ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -229,6 +229,13 @@
 			contextMenuStrip.Name = "contextMenuStrip";
 			contextMenuStrip.Size = new Size(199, 180);
 			// 
+			// btnHelp
+			// 
+			btnHelp.Name = "btnHelp";
+			btnHelp.Size = new Size(198, 22);
+			btnHelp.Text = "Help";
+			btnHelp.Click += btnHelp_Click;
+			// 
 			// deleteServer
 			// 
 			deleteServer.Name = "deleteServer";
@@ -242,6 +249,13 @@
 			openServerConfig.Size = new Size(198, 22);
 			openServerConfig.Text = "Open Server Config File";
 			openServerConfig.Click += btnOpenConfig_Click;
+			// 
+			// btnRestart
+			// 
+			btnRestart.Name = "btnRestart";
+			btnRestart.Size = new Size(198, 22);
+			btnRestart.Text = "Restart Server";
+			btnRestart.Click += btnRestart_Click;
 			// 
 			// editServer
 			// 
@@ -264,13 +278,6 @@
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
-			// btnRestart
-			// 
-			btnRestart.Name = "btnRestart";
-			btnRestart.Size = new Size(198, 22);
-			btnRestart.Text = "Restart Server";
-			btnRestart.Click += btnRestart_Click;
-			// 
 			// btnServerActions
 			// 
 			btnServerActions.Location = new Point(12, 590);
@@ -286,12 +293,6 @@
 			tmrResourceUpdates.Enabled = true;
 			tmrResourceUpdates.Interval = 1000;
 			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
-			// 
-			// btnHelp
-			// 
-			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(198, 22);
-			btnHelp.Text = "Help";
 			// 
 			// MainGUI
 			// 

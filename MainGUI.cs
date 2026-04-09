@@ -326,5 +326,13 @@ namespace Synix_Control_Panel
 				await Core.Instance.ExecuteRestartSequence(selectedServer);
 			}
 		}
+
+		private void btnHelp_Click(object sender, EventArgs e)
+		{
+			using (Synix_Control_Panel.SynixEngine.HelpGUI helpWindow = new Synix_Control_Panel.SynixEngine.HelpGUI())
+			{
+				helpWindow.ShowDialog();
+			}
+		}
 	}
 }
