@@ -307,7 +307,7 @@ namespace Synix_Control_Panel.Database
 			new() {
 				Game = "Don't Starve Together",
 				AppID = "343050",
-				ExeName = @"bin\\dontstarve_dedicated_server_nullrenderer.exe",
+				ExeName = @"bin\dontstarve_dedicated_server_nullrenderer.exe",
 				RequiredArgs = "-console -cluster \"{Identity}\" -shard {map}",
 				Port = 10999,
 				QueryPort = 27016,
@@ -560,7 +560,7 @@ namespace Synix_Control_Panel.Database
 			{
 				Game = "Mount & Blade II: Bannerlord",
 				AppID = "1863440",
-				ExeName = @"bin\\Win64_Shipping_Server\\Bannerlord.DedicatedServer.exe",
+				ExeName = @"bin\Win64_Shipping_Server\Bannerlord.DedicatedServer.exe",
 				RequiredArgs = "_MODULES_*Native*Multiplayer*_MODULES_ /dedicatedcustomserverconfigfile {map} /port {port}",
 				Port = 7230,
 				QueryPort = 7230,

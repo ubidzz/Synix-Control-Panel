@@ -81,6 +81,16 @@ namespace Synix_Control_Panel.ServerHandler
 
 				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 				{
+					string translatedMode = server.GameMode;
+
+					// 🦖 ARK & ATLAS TRANSLATOR
+					// These games use ?ServerPVE=True/False, so we translate the UI text here.
+					if (server.Game == "ARK: Survival Evolved" || server.Game == "ARK: Survival Ascended" || server.Game == "Atlas")
+					{
+						translatedMode = (server.GameMode == "PVE") ? "True" : "False";
+					}
+
+					// Now perform the actual replacement in the command line
 					args = args.Replace("{mode}", server.GameMode);
 				}
 
