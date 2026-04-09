@@ -83,6 +83,7 @@ namespace Synix_Control_Panel
 			txtInstallPath.Text = _existingServer.InstallPath;
 			chkDefaultPath.Checked = _existingServer.IsDefaultPath;
 			txtExtraArgs.Text = _existingServer.ExtraArgs;
+			txtWorldSeed.Text = _existingServer.WorldSeed ?? "12345";
 
 			// Load Maintenance Settings
 			chkEnableSchedule.Checked = _existingServer.IsScheduledRestartEnabled;
@@ -106,6 +107,7 @@ namespace Synix_Control_Panel
 			{
 				PopulateMaps(gameData, _existingServer.WorldName);
 				PopulateGameModes(gameData, _existingServer.GameMode);
+				ToggleGameSpecificFields(gameData);
 			}
 
 			// Lock critical fields in Edit Mode
@@ -204,7 +206,6 @@ namespace Synix_Control_Panel
 
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			// Important: Fill default ports/modes first, then sync the gatekeeper
 			if (cmbGame.SelectedIndex > 0)
 			{
 				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
@@ -214,7 +215,14 @@ namespace Synix_Control_Panel
 					numQueryPort.Value = gameData.QueryPort;
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
 					PopulateGameModes(gameData, "PVE");
+
+					// 🔒 CALL THE SMART LOCKER
+					ToggleGameSpecificFields(gameData);
 				}
+			}
+			else
+			{
+				ToggleGameSpecificFields(null);
 			}
 			SyncGatekeeper();
 		}
@@ -248,6 +256,7 @@ namespace Synix_Control_Panel
 				AdminPassword = txtAdminPassword.Text,
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
+				WorldSeed = txtWorldSeed.Text.Trim(),
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
 				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
@@ -335,6 +344,49 @@ namespace Synix_Control_Panel
 			foreach (var mode in gameData.GameModes) cmbCompetitive.Items.Add(mode);
 			if (cmbCompetitive.Items.Contains(selectedMode)) cmbCompetitive.SelectedItem = selectedMode;
 			else cmbCompetitive.Text = selectedMode;
+		}
+
+		private void txtWorldSeed_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			// If the selected game is Rust, only allow numbers in the seed box
+			if (cmbGame.Text == "Rust")
+			{
+				if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+				{
+					e.Handled = true; // Block the key press
+				}
+			}
+		}
+
+		private void ToggleGameSpecificFields(GameInfo? gameData)
+		{
+			if (gameData == null)
+			{
+				txtWorldSeed.Enabled = false;
+				cmbCompetitive.Enabled = false;
+				chkEnableRcon.Enabled = false;
+				return;
+			}
+
+			// 🎲 SEED LOCK: Only unlock if the arguments actually contain the {seed} tag
+			bool supportsSeed = gameData.RequiredArgs.Contains("{seed}");
+			txtWorldSeed.Enabled = supportsSeed;
+			lblWorldSeed.ForeColor = supportsSeed ? Color.Black : Color.Gray;
+			if (!supportsSeed) txtWorldSeed.Text = "N/A";
+
+			// ⚔️ PVP/PVE LOCK: Only unlock if the game has more than 1 mode defined
+			bool supportsModes = gameData.GameModes != null && gameData.GameModes.Count > 1;
+			cmbCompetitive.Enabled = supportsModes;
+			lblCompetitive.ForeColor = supportsModes ? Color.White : Color.Gray;
+
+			// 📡 RCON LOCK: Only unlock if the game has RCON syntax defined
+			bool supportsRcon = !string.IsNullOrWhiteSpace(gameData.RconSyntax);
+			chkEnableRcon.Enabled = supportsRcon;
+			if (!supportsRcon) chkEnableRcon.Checked = false;
+
+			// 🗺️ MAP LOCK: Only unlock if the game has multiple maps
+			bool supportsMaps = gameData.Maps != null && gameData.Maps.Count > 1;
+			cmbWorldName.Enabled = supportsMaps;
 		}
 	}
 }

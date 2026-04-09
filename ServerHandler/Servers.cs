@@ -63,9 +63,10 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
 					.Replace("{pass}", server.Password ?? "")
 					.Replace("{adminpass}", server.AdminPassword ?? "")
-					.Replace("{ServerName}", server.ServerName) // Original name for Hostnames
+					.Replace("{ServerName}", server.ServerName)
 					.Replace("{InstallPath}", server.InstallPath)
-					.Replace("{Identity}", cleanIdentity); // 🎯 FIXED: Was incorrectly using InstallPath
+					.Replace("{Identity}", cleanIdentity)
+					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed);
 
 				if (args.Contains("{rcon}"))
 				{

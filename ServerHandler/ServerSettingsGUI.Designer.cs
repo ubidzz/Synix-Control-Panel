@@ -55,7 +55,7 @@
 			AdminPasswordLabel = new Label();
 			txtAdminPassword = new TextBox();
 			cmbCompetitive = new ComboBox();
-			CompetitiveLabel = new Label();
+			lblCompetitive = new Label();
 			txtInstallPath = new TextBox();
 			textLabel2 = new Label();
 			chkEnableRcon = new CheckBox();
@@ -74,6 +74,8 @@
 			chkSat = new CheckBox();
 			chkSun = new CheckBox();
 			groupBox1 = new GroupBox();
+			lblWorldSeed = new Label();
+			txtWorldSeed = new TextBox();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -123,7 +125,7 @@
 			FolderPathLabel.BackColor = Color.Transparent;
 			FolderPathLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			FolderPathLabel.ForeColor = Color.White;
-			FolderPathLabel.Location = new Point(12, 269);
+			FolderPathLabel.Location = new Point(12, 343);
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(104, 17);
 			FolderPathLabel.TabIndex = 3;
@@ -160,7 +162,7 @@
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(41, 366);
+			btnBrowse.Location = new Point(41, 445);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -184,7 +186,7 @@
 			chkDefaultPath.AutoSize = true;
 			chkDefaultPath.BackColor = Color.Transparent;
 			chkDefaultPath.ForeColor = Color.White;
-			chkDefaultPath.Location = new Point(12, 289);
+			chkDefaultPath.Location = new Point(12, 363);
 			chkDefaultPath.Name = "chkDefaultPath";
 			chkDefaultPath.Size = new Size(230, 19);
 			chkDefaultPath.TabIndex = 10;
@@ -198,7 +200,7 @@
 			ltextLabel1.BackColor = Color.Transparent;
 			ltextLabel1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			ltextLabel1.ForeColor = Color.White;
-			ltextLabel1.Location = new Point(122, 368);
+			ltextLabel1.Location = new Point(122, 447);
 			ltextLabel1.Name = "ltextLabel1";
 			ltextLabel1.Size = new Size(73, 17);
 			ltextLabel1.TabIndex = 11;
@@ -314,7 +316,7 @@
 			WarningLabel.AutoEllipsis = true;
 			WarningLabel.BackColor = Color.Transparent;
 			WarningLabel.ForeColor = Color.Red;
-			WarningLabel.Location = new Point(12, 311);
+			WarningLabel.Location = new Point(12, 385);
 			WarningLabel.Name = "WarningLabel";
 			WarningLabel.Size = new Size(368, 57);
 			WarningLabel.TabIndex = 23;
@@ -354,21 +356,21 @@
 			cmbCompetitive.Size = new Size(103, 23);
 			cmbCompetitive.TabIndex = 27;
 			// 
-			// CompetitiveLabel
+			// lblCompetitive
 			// 
-			CompetitiveLabel.AutoSize = true;
-			CompetitiveLabel.BackColor = Color.Transparent;
-			CompetitiveLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			CompetitiveLabel.ForeColor = Color.White;
-			CompetitiveLabel.Location = new Point(277, 135);
-			CompetitiveLabel.Name = "CompetitiveLabel";
-			CompetitiveLabel.Size = new Size(83, 17);
-			CompetitiveLabel.TabIndex = 28;
-			CompetitiveLabel.Text = "Competitive";
+			lblCompetitive.AutoSize = true;
+			lblCompetitive.BackColor = Color.Transparent;
+			lblCompetitive.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblCompetitive.ForeColor = Color.White;
+			lblCompetitive.Location = new Point(277, 135);
+			lblCompetitive.Name = "lblCompetitive";
+			lblCompetitive.Size = new Size(83, 17);
+			lblCompetitive.TabIndex = 28;
+			lblCompetitive.Text = "Competitive";
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(12, 395);
+			txtInstallPath.Location = new Point(12, 471);
 			txtInstallPath.Name = "txtInstallPath";
 			txtInstallPath.Size = new Size(368, 23);
 			txtInstallPath.TabIndex = 29;
@@ -380,7 +382,7 @@
 			textLabel2.BackColor = Color.Transparent;
 			textLabel2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			textLabel2.ForeColor = Color.White;
-			textLabel2.Location = new Point(12, 368);
+			textLabel2.Location = new Point(23, 447);
 			textLabel2.Name = "textLabel2";
 			textLabel2.Size = new Size(23, 17);
 			textLabel2.TabIndex = 30;
@@ -391,7 +393,7 @@
 			chkEnableRcon.AutoSize = true;
 			chkEnableRcon.BackColor = Color.Transparent;
 			chkEnableRcon.ForeColor = Color.White;
-			chkEnableRcon.Location = new Point(12, 191);
+			chkEnableRcon.Location = new Point(12, 274);
 			chkEnableRcon.Name = "chkEnableRcon";
 			chkEnableRcon.Size = new Size(105, 19);
 			chkEnableRcon.TabIndex = 31;
@@ -400,7 +402,7 @@
 			// 
 			// numRconPort
 			// 
-			numRconPort.Location = new Point(12, 233);
+			numRconPort.Location = new Point(12, 317);
 			numRconPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numRconPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numRconPort.Name = "numRconPort";
@@ -410,7 +412,7 @@
 			// 
 			// txtRconPassword
 			// 
-			txtRconPassword.Location = new Point(107, 233);
+			txtRconPassword.Location = new Point(107, 316);
 			txtRconPassword.Name = "txtRconPassword";
 			txtRconPassword.Size = new Size(223, 23);
 			txtRconPassword.TabIndex = 33;
@@ -421,7 +423,7 @@
 			TextLabel5.BackColor = Color.Transparent;
 			TextLabel5.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel5.ForeColor = Color.White;
-			TextLabel5.Location = new Point(12, 213);
+			TextLabel5.Location = new Point(12, 296);
 			TextLabel5.Name = "TextLabel5";
 			TextLabel5.Size = new Size(74, 17);
 			TextLabel5.TabIndex = 34;
@@ -433,7 +435,7 @@
 			TextLabel6.BackColor = Color.Transparent;
 			TextLabel6.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel6.ForeColor = Color.White;
-			TextLabel6.Location = new Point(107, 213);
+			TextLabel6.Location = new Point(107, 296);
 			TextLabel6.Name = "TextLabel6";
 			TextLabel6.Size = new Size(106, 17);
 			TextLabel6.TabIndex = 35;
@@ -569,6 +571,26 @@
 			groupBox1.TabIndex = 45;
 			groupBox1.TabStop = false;
 			// 
+			// lblWorldSeed
+			// 
+			lblWorldSeed.AutoSize = true;
+			lblWorldSeed.BackColor = Color.Transparent;
+			lblWorldSeed.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblWorldSeed.ForeColor = Color.White;
+			lblWorldSeed.Location = new Point(12, 194);
+			lblWorldSeed.Name = "lblWorldSeed";
+			lblWorldSeed.Size = new Size(79, 17);
+			lblWorldSeed.TabIndex = 46;
+			lblWorldSeed.Text = "World Seed";
+			// 
+			// txtWorldSeed
+			// 
+			txtWorldSeed.Location = new Point(12, 214);
+			txtWorldSeed.Name = "txtWorldSeed";
+			txtWorldSeed.Size = new Size(142, 23);
+			txtWorldSeed.TabIndex = 47;
+			txtWorldSeed.KeyPress += txtWorldSeed_KeyPress;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -576,6 +598,8 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 558);
+			Controls.Add(txtWorldSeed);
+			Controls.Add(lblWorldSeed);
 			Controls.Add(groupBox1);
 			Controls.Add(TextLabel4);
 			Controls.Add(TextLabel6);
@@ -585,7 +609,7 @@
 			Controls.Add(chkEnableRcon);
 			Controls.Add(textLabel2);
 			Controls.Add(txtInstallPath);
-			Controls.Add(CompetitiveLabel);
+			Controls.Add(lblCompetitive);
 			Controls.Add(cmbCompetitive);
 			Controls.Add(txtAdminPassword);
 			Controls.Add(AdminPasswordLabel);
@@ -656,7 +680,7 @@
 		private Label AdminPasswordLabel;
 		private TextBox txtAdminPassword;
 		private ComboBox cmbCompetitive;
-		private Label CompetitiveLabel;
+		private Label lblCompetitive;
 		private TextBox txtInstallPath;
 		private Label textLabel2;
 		private CheckBox chkEnableRcon;
@@ -675,5 +699,7 @@
 		private CheckBox chkSat;
 		private CheckBox chkSun;
 		private GroupBox groupBox1;
+		private Label lblWorldSeed;
+		private TextBox txtWorldSeed;
 	}
 }

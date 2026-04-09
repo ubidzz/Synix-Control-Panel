@@ -81,4 +81,5 @@ public class GameServer : GameInfo
 	public int RconPort { get; set; }
 	public string RconPassword { get; set; } = "";
 	public bool IsFirstBoot { get; set; } = true;
+	public string WorldSeed { get; set; } = "12345";
 }
