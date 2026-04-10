@@ -134,7 +134,7 @@ namespace Synix_Control_Panel
 			// 2. Lock/Unlock Core Groups
 			groupBox1.Enabled = isReady;
 
-			if (!_isEditMode)
+			if (!_isEditMode || chkDefaultPath.Checked)
 			{
 				chkDefaultPath.Enabled = isReady;
 
@@ -149,7 +149,7 @@ namespace Synix_Control_Panel
 					// Automatically fill the path when default is checked
 					string cleanGame = cmbGame.SelectedItem.ToString().Replace(" ", "_");
 					string cleanName = txtName.Text.Trim().Replace(" ", "_");
-					txtInstallPath.Text = Path.Combine(@"C:\Games", cleanGame, cleanName);
+					txtInstallPath.Text = Path.Combine(@"C:\Synix\Games", cleanGame, cleanName);
 
 					WarningLabel.Text = $"Synix will install {cmbGame.SelectedItem.ToString()} to: {txtInstallPath.Text}";
 					WarningLabel.ForeColor = Color.Green;
@@ -191,7 +191,7 @@ namespace Synix_Control_Panel
 			{
 				string cleanGame = cmbGame.SelectedItem.ToString().Replace(" ", "_");
 				string cleanName = txtName.Text.Trim().Replace(" ", "_");
-				txtInstallPath.Text = Path.Combine(@"C:\Games", cleanGame, cleanName);
+				txtInstallPath.Text = Path.Combine(@"C:\Synix\Games", cleanGame, cleanName);
 
 				WarningLabel.Text = $"Synix will install to: {txtInstallPath.Text}";
 				WarningLabel.ForeColor = Color.Green;

@@ -24,7 +24,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 
 			ProcessStartInfo startInfo = new ProcessStartInfo
 			{
-				FileName = @"C:\Games\SteamCMD\steamcmd.exe",
+				FileName = @"C:\Synix\SteamCMD\steamcmd.exe",
 				Arguments = $"+force_install_dir \"{installPath}\" +login anonymous +app_update {appId} validate +quit",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,

@@ -21,7 +21,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 	public static class SteamCMD
 	{
 		// 1. Centralized SteamCMD Paths
-		public static readonly string SteamCmdDir = @"C:\Games\SteamCMD";
+		public static readonly string SteamCmdDir = @"C:\Synix\SteamCMD";
 		public static readonly string SteamCmdExe = Path.Combine(SteamCmdDir, "steamcmd.exe");
 		private static readonly string ZipPath = Path.Combine(SteamCmdDir, "steamcmd.zip");
 

@@ -26,27 +26,35 @@ namespace Synix_Control_Panel.SynixEngine
 			_helpData = new Dictionary<string, string>
 			{
 				// --- GETTING STARTED ---
-				["How to start the server?"] = "Select your server from the sidebar list, ensure the status is 'Ready', and click the green 'Start' button. The console will initialize shortly after.",
-				["What is {Identity}?"] = "The {Identity} tag is a unique variable Synix uses to prevent folder conflicts. It automatically converts your server name into a file-safe ID (e.g., 'My Server' becomes 'My_Server').",
-				["First Time Setup"] = "1. Install the game files via the 'SteamCMD' tab.\n2. Configure your ports in 'Server Settings'.\n3. Click Start. \n\nNote: Make sure your Windows Firewall isn't blocking the application.",
+				// MERGED: Both "First Time Setup" entries combined so you don't lose steps or crash
+				["First Time Setup"] = "1. Synix installs SteamCMD to C:\\Synix\\SteamCMD.\n2. Download game files via the 'SteamCMD' tab into C:\\Synix\\Games.\n3. Set your ports in 'Server Settings'.\n4. Click Start.\n\nNote: If the window closes immediately, check 'Troubleshooting > Missing .DLL Errors'.",
 
-				// --- NETWORKING ---
-				["Port Forwarding Guide"] = "To allow players to join, you must forward the Game Port and Query Port (usually 27015 or 7777) in your router settings. Redirect these to your local IP address.",
-				["Can't find server in list?"] = "This is usually caused by the 'Query Port' being blocked. Ensure your router and Windows Firewall allow UDP traffic on the specified port.",
-				["Public vs Local IP"] = "Internal players on your Wi-Fi should use your Local IP. Players over the internet must use your Public IP, which can be found at the top of the Synix Dashboard.",
+				["How to start the server?"] = "Select your server from the sidebar, ensure status is 'Ready', and click 'Start'. Synix will initialize the process and the console window will appear shortly.",
+
+				["What is {Identity}?"] = "Synix uses {Identity} to create a file-safe ID for your server (e.g., 'My Server' becomes 'My_Server'). This prevents folder conflicts and 'Space in Path' errors that crash many engines.",
+
+				["Where are my world saves?"] = "By default, all game data is stored in C:\\Synix\\Games\\{Identity}. Look for a 'Saves' folder inside. Note: Custom locations (like a G: drive) stay where you picked them.",
+
+				// --- NETWORKING & CONNECTIVITY ---
+				["Port Forwarding Guide"] = "To let others join, you must 'drill a hole' in your router for the Game Port and Query Port. Redirect these to your Local IP. \n\nTip: Use 'UDP' for Game/Query ports and 'TCP' for RCON.",
+				["The 'Golden Trio' of Ports"] = "Most servers need three ports open:\n1. Game Port (UDP)\n2. Query Port (UDP)\n3. RCON Port (TCP).",
+				["Public vs Local IP"] = "Internal players use your Local IP. External players use your Public IP. Both are displayed at the top of the Synix Dashboard.",
+				["NAT Loopback / Can't join myself?"] = "CAUSE: Many ISP routers don't allow you to connect to your own Public IP.\n\nFIX: Use '127.0.0.1' or your Local IP in the game's 'Direct Connect' box.",
 
 				// --- TROUBLESHOOTING ---
-				["Port Conflict Error"] = "This error means another program (or another instance of the server) is already using the selected port. Try changing the port number in Settings or restarting your PC.",
-				["Watchdog Restarting"] = "The Synix Watchdog monitors server health. If the server stops responding for more than 60 seconds, it will automatically reboot the instance to keep it online.",
-				["High CPU Usage"] = "Game servers are demanding. If usage stays at 100%, try reducing the 'Tick Rate' or 'Player Limit' in the game's configuration files.",
-				["Server File Corruption"] = "If the server crashes on startup, use the 'Validate Files' button. This runs a SteamCMD check to repair missing or broken game data.",
+				["Friends can't see my server?"] = "SYMPTOM: Server is running but invisible.\n\nFIX: Ensure 'Query Port' is forwarded as UDP and check Windows Firewall.",
+				["'Address Already in Use' Error?"] = "SYMPTOM: Port is 'taken'.\n\nFIX: Use the 'Kill All Processes' button in Synix or change your port by 1.",
+				["Missing .DLL Errors"] = "SYMPTOM: 'System Error' on launch.\n\nFIX: Install 'C++ Redistributables x64' (2015-2022) from Microsoft's site.",
+				["SteamCMD stuck at 0%?"] = "SYMPTOM: No download progress.\n\nFIX: Run Synix as Admin and check for 20GB+ free disk space.",
+				["Watchdog Restarting Server"] = "If the server hangs for 60s, the Synix Watchdog will force a reboot to keep the server online.",
+				["Server File Corruption"] = "Use 'Validate Files' to trigger a SteamCMD repair without deleting your world saves.",
 
 				// --- MAINTENANCE ---
-				["Automated Backups"] = "Synix creates a snapshot of your world data every 6 hours. You can change this frequency in the 'Backups' tab. Always backup before updating!",
-				["How to Update"] = "Stop the server first. Go to the 'Updates' tab and click 'Check for Updates'. If an update is found, Synix will download it via SteamCMD automatically.",
+				["Automated Backups"] = "Synix snapshots world data every 6 hours by default. Adjust this in the 'Backups' tab.",
+				["How to Update"] = "1. Stop the server.\n2. Go to 'Updates' tab.\n3. Click 'Check for Updates' to pull the latest version via SteamCMD.",
 
 				// --- SUPPORT ---
-				["Donate & Support"] = "Synix Control Panel is a labor of love. Your gift keeps this project free for all and fuels the next generation of server automation. Thank you for supporting the journey!\n\nhttps://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8"
+				["Donate & Support"] = "Synix is a labor of love to make hosting accessible. Your support keeps the project free!\n\nPayPal: https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8"
 			};
 		}
 
@@ -72,7 +80,7 @@ namespace Synix_Control_Panel.SynixEngine
 					continue;
 
 				// Sorting Logic based on keywords
-				if (key.Contains("How to") || key.Contains("Setup") || key.Contains("Identity"))
+				if (key.Contains("How to") || key.Contains("Setup") || key.Contains("Identity") || key.Contains("saves"))
 					nodeStart.Nodes.Add(new TreeNode(key));
 				else if (key.Contains("Port") || key.Contains("IP") || key.Contains("list"))
 					nodeNet.Nodes.Add(new TreeNode(key));

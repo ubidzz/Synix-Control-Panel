@@ -296,20 +296,31 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void EditServerAndReport(GameServer server)
 		{
-			// 1. AI Safety Check: Don't edit a live server!
-			if (server.Status == "Online")
+			// 1. ONLINE SAFETY: Don't edit a live server!
+			if (server.Status == "Online" || (server.PID.HasValue && server.PID > 0))
 			{
 				MessageBox.Show("Please stop the server before editing its settings.",
 								"Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
-			// 2. AI Action: Open the Settings GUI in Edit Mode
-			using (var editForm = new ServerSettingsGUI(server)) //
+			// 2. 🛡️ INSTALL/UPDATE SAFETY: Protect the JSON while SteamCMD is active
+			if (server.Status == "Installing" || server.Status == "Updating" || (server.SteamPID.HasValue && server.SteamPID > 0))
+			{
+				string currentAction = (server.Status == "Updating") ? "updating" : "installing";
+
+				MessageBox.Show($"Cannot edit '{server.ServerName}' while it is {currentAction}.\n\nPlease wait for the process to finish.",
+								"System Busy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			// 3. ACTION: Open the Settings GUI in Edit Mode
+			using (var editForm = new ServerSettingsGUI(server))
 			{
 				if (editForm.ShowDialog() == DialogResult.OK)
 				{
-					// 3. AI Feedback: Log success and refresh the grid
+					// 4. FEEDBACK: Log success and refresh the grid
+					// Note: ServerSettingsGUI handles the FileHandler.SaveServers() call
 					Log($"[SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
 					UpdateGridStatus();
 				}

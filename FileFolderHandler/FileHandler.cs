@@ -22,7 +22,7 @@ namespace Synix_Control_Panel
 {
 	public static class FileHandler
 	{
-		private static readonly string FolderPath = @"C:\games\SynixData";
+		private static readonly string FolderPath = @"C:\Synix\SynixData";
 		private static readonly string FileName = "servers.json";
 
 		// --- SECTION 1: SERVER SPECIFIC LOGIC ---
@@ -39,7 +39,7 @@ namespace Synix_Control_Panel
 
 				if (success)
 				{
-					MainGUI.Instance?.AppendLog("[INFO] JSON saved successfully to C:\\games\\SynixData\\servers.json.", Color.DarkSeaGreen);
+					MainGUI.Instance?.AppendLog("[INFO] JSON saved successfully to C:\\Synix\\SynixData\\servers.json.", Color.DarkSeaGreen);
 				}
 			}
 			catch (Exception ex)

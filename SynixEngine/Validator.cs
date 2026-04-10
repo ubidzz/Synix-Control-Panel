@@ -79,8 +79,13 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!isEditMode && Directory.Exists(path))
 			{
-				MessageBox.Show("Installation folder already exists.", "Folder Exists");
-				return false;
+				// Check if the folder is empty
+				if (Directory.EnumerateFileSystemEntries(path).Any())
+				{
+					var result = MessageBox.Show("This folder isn't empty. Installing here might overwrite files. Continue?",
+											   "Folder Not Empty", MessageBoxButtons.YesNo);
+					return result == DialogResult.Yes;
+				}
 			}
 			return true;
 		}
