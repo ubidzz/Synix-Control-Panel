@@ -45,8 +45,7 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				Maps = ["Level01_Main", "DLC_Level01_Main"],
 				GameModes = ["PVP", "PVE"],
-				Format = ConfigFormat.JSON,
-				NeedsConfigWarning = true
+				Format = ConfigFormat.JSON
 			},
 			new() {
 				Game = "7 Days to Die",

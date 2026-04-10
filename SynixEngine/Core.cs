@@ -26,6 +26,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private Core()
 		{
+			_instance = this;
 			_heartbeatTimer = new System.Windows.Forms.Timer { Interval = 1000 };
 			_heartbeatTimer.Tick += Heartbeat_Tick;
 			_heartbeatTimer.Start();

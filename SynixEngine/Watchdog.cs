@@ -27,10 +27,7 @@ namespace Synix_Control_Panel.SynixEngine
 				// If status is "Stopping" or "Offline", this loop skips them
 				if (server.Status == "Online" && server.PID.HasValue)
 				{
-					// Get just the EXE name for a perfect identity match
-					string expectedName = System.IO.Path.GetFileNameWithoutExtension(server.ExeName);
-
-					if (!IsProcessAlive(server.PID.Value, expectedName))
+					if (!IsProcessAlive(server.PID.Value, server.ExeName))
 					{
 						HandleCrash(server);
 					}
@@ -38,17 +35,27 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private bool IsProcessAlive(int pid, string trimmedExeName)
+		private bool IsProcessAlive(int pid, string dbExePath)
 		{
 			try
 			{
+				// 1. Attempt to hook the process by its ID
 				using var p = Process.GetProcessById(pid);
+
+				// 2. Immediate check if it has already exited
 				if (p.HasExited) return false;
 
-				// IDENTITY CHECK: Prevents restarting if the PID was recycled by another app
-				return p.ProcessName.Equals(trimmedExeName, StringComparison.OrdinalIgnoreCase);
+				// 3. Extract just the filename (e.g., "StarRuptureServerEOS-Win64-Shipping")
+				string expectedName = System.IO.Path.GetFileNameWithoutExtension(dbExePath);
+
+				// 4. Identity Match
+				return p.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase);
 			}
-			catch { return false; }
+			catch
+			{
+				// Catching "Process not found" or "Access denied"
+				return false;
+			}
 		}
 
 		// 🚀 AI RECOVERY: Merged logic for crash reporting and auto-restart
@@ -81,7 +88,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public void InitializeAndRebind()
 		{
 			// Re-links processes if the app was restarted while servers were running
-			Servers.RebindProcesses(MainGUI.serverList);
+			RebindProcesses();
 		}
 	}
 }

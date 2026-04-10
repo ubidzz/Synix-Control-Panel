@@ -112,6 +112,13 @@ namespace Synix_Control_Panel.SynixEngine
 								"Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
+			if (server.Status == "Installing" || server.Status == "Updating" || (server.SteamPID.HasValue && server.SteamPID > 0))
+			{
+				string currentAction = server.Status == "Updating" ? "updating" : "installing";
+				MessageBox.Show($"Cannot delete '{server.ServerName}' while it is {currentAction}.\n\nPlease wait for the process to finish.",
+								"Process Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
 
 			// 2. AI Confirmation: The "Point of No Return" warning
 			var confirm = MessageBox.Show($"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?\n\n" +
@@ -141,27 +148,29 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		// Update these two methods in Actions.cs (Core partial class)
+
 		public async Task UpdateServerAndReport(GameServer server)
 		{
-			// 1. AI Safety: Don't update if server is running
+			// 1. YOUR SAFETY: Don't update if server is running
 			if (server.Status == "Online")
 			{
 				MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
-			// 2. AI Safety: Don't update if already busy
+			// 2. YOUR SAFETY: Don't update if already busy
 			if (server.Status == "Updating" || server.Status == "Installing" || isDownloadActive)
 			{
 				MessageBox.Show("A download or update is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 
-			// 3. AI Confirmation
+			// 3. YOUR CONFIRMATION
 			var confirm = MessageBox.Show($"Are you sure you want to update {server.ServerName}?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (confirm != DialogResult.Yes) return;
 
-			// 4. AI Database Lookup
+			// 4. YOUR DATABASE LOOKUP
 			var gameData = GameDatabase.GetGame(server.Game);
 			string appId = gameData?.AppID ?? "";
 
@@ -185,8 +194,13 @@ namespace Synix_Control_Panel.SynixEngine
 				// 6. RUN INSTALLER (Thread-safe background task)
 				int exitCode = await Task.Run(() =>
 				{
-					// Uses the Log helper we put in Core.cs!
-					return ServerInstaller.Install(server.InstallPath, appId, msg => Log(msg));
+					// Updated to include the PID callback
+					return ServerInstaller.Install(server.InstallPath, appId,
+						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
+						pid => {
+							server.SteamPID = pid;
+							FileHandler.SaveServers(); // Save the PID immediately
+						});
 				});
 
 				// 7. HANDLE ERRORS
@@ -195,12 +209,10 @@ namespace Synix_Control_Panel.SynixEngine
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
 					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					Log($"[CRITICAL ERROR] Update failed with code {exitCode}.", Color.Red, true);
-
-					server.Status = "Offline";
 					return;
 				}
 
-				// 8. SUCCESS: Re-apply GameFixes
+				// 8. YOUR SUCCESS LOGIC: Re-apply GameFixes
 				bool fixApplied = GameFix.PostInstall(server);
 				if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
 
@@ -209,10 +221,76 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				// 9. CLEANUP: Always unlock the app, even if it crashes
+				// 9. CLEANUP: Always unlock the app and CLEAR the SteamPID
 				server.Status = "Offline";
+				server.SteamPID = null;
 				isDownloadActive = false;
+				FileHandler.SaveServers();
 				UpdateGridStatus();
+			}
+		}
+
+		public async Task AddServerAndReport()
+		{
+			using (ServerSettingsGUI settingsForm = new())
+			{
+				if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
+				{
+					GameServer newServer = settingsForm.NewServer;
+					var gameData = GameDatabase.GetGame(newServer.Game);
+					string appId = gameData?.AppID ?? "";
+
+					if (string.IsNullOrEmpty(appId))
+					{
+						MessageBox.Show("Could not find the AppID for this game. Installation aborted.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
+					}
+
+					try
+					{
+						newServer.Status = "Installing";
+						isDownloadActive = true;
+						UpdateGridStatus();
+
+						Log($"--- AUTO-INSTALL STARTED: {newServer.Game} ---", Color.White, true);
+
+						int exitCode = await Task.Run(() =>
+						{
+							// Updated to include the PID callback
+							return ServerInstaller.Install(newServer.InstallPath, appId,
+								msg => Log(msg),
+								pid => {
+									newServer.SteamPID = pid;
+									FileHandler.SaveServers(); // Save the PID immediately
+								});
+						});
+
+						if (exitCode != 0)
+						{
+							string errorMsg = ServerInstaller.GetSteamError(exitCode);
+							MessageBox.Show($"Installation Failed!\n\nReason: {errorMsg}", "SteamCMD Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+							newServer.Status = "Failed";
+							return;
+						}
+
+						bool fixApplied = GameFix.PostInstall(newServer);
+						if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
+
+						FileHandler.SaveServers();
+						Log($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---", Color.Green, true);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show($"An unexpected error occurred during installation: {ex.Message}", "System Error");
+					}
+					finally
+					{
+						newServer.Status = "Offline";
+						newServer.SteamPID = null;
+						isDownloadActive = false;
+						UpdateGridStatus();
+					}
+				}
 			}
 		}
 
@@ -234,70 +312,6 @@ namespace Synix_Control_Panel.SynixEngine
 					// 3. AI Feedback: Log success and refresh the grid
 					Log($"[SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
 					UpdateGridStatus();
-				}
-			}
-		}
-
-		public async Task AddServerAndReport()
-		{
-			// 1. AI Action: Open the configuration window
-			using (ServerSettingsGUI settingsForm = new())
-			{
-				if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
-				{
-					GameServer newServer = settingsForm.NewServer;
-					var gameData = GameDatabase.GetGame(newServer.Game);
-					string appId = gameData?.AppID ?? "";
-
-					if (string.IsNullOrEmpty(appId))
-					{
-						MessageBox.Show("Could not find the AppID for this game. Installation aborted.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-						return;
-					}
-
-					try
-					{
-						// 2. SET BUSY STATE
-						newServer.Status = "Installing";
-						isDownloadActive = true;
-						UpdateGridStatus();
-
-						Log($"--- AUTO-INSTALL STARTED: {newServer.Game} ---", Color.White, true);
-
-						// 3. RUN INSTALLER (Thread-safe background task)
-						int exitCode = await Task.Run(() =>
-						{
-							return ServerInstaller.Install(newServer.InstallPath, appId, msg => Log(msg));
-						});
-
-						// 4. HANDLE ERRORS
-						if (exitCode != 0)
-						{
-							string errorMsg = ServerInstaller.GetSteamError(exitCode);
-							MessageBox.Show($"Installation Failed!\n\nReason: {errorMsg}", "SteamCMD Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-							newServer.Status = "Failed";
-							return;
-						}
-
-						// 5. SUCCESS: Re-apply GameFixes and Save
-						bool fixApplied = GameFix.PostInstall(newServer);
-						if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
-
-						FileHandler.SaveServers();
-						Log($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---", Color.Green, true);
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show($"An unexpected error occurred during installation: {ex.Message}", "System Error");
-					}
-					finally
-					{
-						// 6. CLEANUP: Reset status and unlock the app
-						newServer.Status = "Offline";
-						isDownloadActive = false;
-						UpdateGridStatus();
-					}
 				}
 			}
 		}

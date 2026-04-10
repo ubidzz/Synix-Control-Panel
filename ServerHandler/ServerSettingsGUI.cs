@@ -266,6 +266,7 @@ namespace Synix_Control_Panel
 				RconPort = (int)numRconPort.Value,
 				RconPassword = txtRconPassword.Text,
 				InstallPath = targetPath,
+				SteamPID = _isEditMode && _existingServer != null ? _existingServer.SteamPID : null,
 
 				// 🕒 SAVE MAINTENANCE SETTINGS
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,

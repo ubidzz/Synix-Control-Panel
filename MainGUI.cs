@@ -50,6 +50,7 @@ namespace Synix_Control_Panel
 			typeof(DataGridView).InvokeMember("DoubleBuffered",
 			System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
+			Core.Instance.RebindProcesses();
 			Instance = this;
 		}
 

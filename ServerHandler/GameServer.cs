@@ -64,18 +64,14 @@ public class GameServer : GameInfo
 	public string WorldName { get; set; } = "NewWorld";
 	public bool IsDefaultPath { get; set; } = true;
 	public int? PID { get; set; }
-
+	public int? SteamPID { get; set; }
 	[JsonIgnore]
 	public Process? RunningProcess { get; set; }
-
 	public string GameMode { get; set; } = "PVE";
-
 	[JsonIgnore]
 	public double LastCpuMillis { get; set; } = 0;
-
 	[JsonIgnore]
 	public DateTime LastSampleTime { get; set; } = DateTime.Now;
-
 	public string? SelectedMode { get; set; } = "PVE";
 	public bool EnableRcon { get; set; } = false;
 	public int RconPort { get; set; }

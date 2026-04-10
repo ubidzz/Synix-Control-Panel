@@ -18,7 +18,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 {
 	public static class ServerInstaller
 	{
-		public static int Install(string installPath, string appId, Action<string> logCallback)
+		public static int Install(string installPath, string appId, Action<string> logCallback, Action<int>? onPidStarted = null)
 		{
 			bool hasInternalError = false;
 
@@ -38,26 +38,66 @@ namespace Synix_Control_Panel.SteamCMDHandler
 			{
 				process.Start();
 
-				// We wrap your logCallback to look for the word "ERROR!"
+				// 🛡️ Immediately report the PID back to the manager
+				onPidStarted?.Invoke(process.Id);
+
+				// 🛡️ BULLETPROOF ERROR CHECKING
 				Action<string> checkForErrors = (msg) =>
 				{
-					if (msg.Contains("ERROR!")) hasInternalError = true;
+					// OrdinalIgnoreCase catches "No Subscription" even if it's "no subscription"
+					bool isSubError = msg.Contains("subscription", StringComparison.OrdinalIgnoreCase);
+					bool isAppError = msg.Contains("AppID not found", StringComparison.OrdinalIgnoreCase);
+
+					if (msg.Contains("ERROR!") || isSubError || isAppError)
+						hasInternalError = true;
+
 					logCallback?.Invoke(msg);
 				};
 
+				// 🚀 REAL-TIME OUTPUT HANDLING
 				Task outputTask = ReadStreamAsync(process.StandardOutput, checkForErrors);
 				Task errorTask = ReadStreamAsync(process.StandardError, checkForErrors);
 
 				process.WaitForExit();
 				Task.WaitAll(outputTask, errorTask);
 
-				// If we saw "ERROR!" in the text, return 99, otherwise return the real exit code
 				return hasInternalError ? 99 : process.ExitCode;
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke($"[CRITICAL] Launcher Error: {ex.Message}");
 				return -1;
+			}
+		}
+
+		private static async Task ReadStreamAsync(StreamReader stream, Action<string> logCallback)
+		{
+			char[] buffer = new char[1];
+			var lineBuilder = new System.Text.StringBuilder();
+			string lastLoggedLine = "";
+
+			while (await stream.ReadAsync(buffer, 0, 1) > 0)
+			{
+				char c = buffer[0];
+				if (c == '\r' || c == '\n')
+				{
+					string line = lineBuilder.ToString().Trim();
+					if (!string.IsNullOrWhiteSpace(line))
+					{
+						// 🛡️ THE "DUMP" FILTER: Skip logging if the line is exactly the same as the last
+						// This prevents 50 identical lines with the same timestamp.
+						if (line != lastLoggedLine)
+						{
+							logCallback(line);
+							lastLoggedLine = line;
+						}
+					}
+					lineBuilder.Clear();
+				}
+				else
+				{
+					lineBuilder.Append(c);
+				}
 			}
 		}
 
@@ -72,30 +112,6 @@ namespace Synix_Control_Panel.SteamCMDHandler
 				8 => "Network Connection Lost",
 				_ => $"SteamCMD Failure (Code: {code})"
 			};
-		}
-
-		private static async Task ReadStreamAsync(StreamReader stream, Action<string> logCallback)
-		{
-			char[] buffer = new char[1];
-			string currentLine = "";
-
-			while (await stream.ReadAsync(buffer, 0, 1) > 0)
-			{
-				char c = buffer[0];
-				if (c == '\r' || c == '\n')
-				{
-					if (!string.IsNullOrWhiteSpace(currentLine))
-					{
-						logCallback(currentLine);
-						currentLine = "";
-					}
-				}
-				else
-				{
-					currentLine += c;
-				}
-			}
-			if (!string.IsNullOrWhiteSpace(currentLine)) logCallback(currentLine);
 		}
 	}
 }

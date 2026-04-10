@@ -49,6 +49,12 @@ namespace Synix_Control_Panel.ServerHandler
 				{
 					logCallback?.Invoke($"[ERROR] Game definition for '{server.Game}' not found in Database.");
 					return;
+
+				}// 🛡️ THE SAFETY GATE
+				if (server.Status == "Stopping")
+				{
+					logCallback?.Invoke($"[ERROR] Cannot start {server.ServerName} while it is shutting down. Please wait.");
+					return;
 				}
 
 				// 🛠️ CREATE THE IDENTITY (No Spaces)
@@ -158,14 +164,6 @@ namespace Synix_Control_Panel.ServerHandler
 			try
 			{
 				int targetPid = server.RunningProcess?.Id ?? server.PID ?? 0;
-
-				// 🛡️ THE SAFETY GATE
-				if (server.Status == "Stopping")
-				{
-					logCallback?.Invoke($"[ERROR] Cannot start {server.ServerName} while it is shutting down. Please wait.");
-					return;
-				}
-
 				if (targetPid <= 0)
 				{
 					logCallback?.Invoke($"[ERROR] {server.ServerName} has no valid PID to stop.");
@@ -228,55 +226,6 @@ namespace Synix_Control_Panel.ServerHandler
 			server.Status = "Offline";
 			server.PID = null;
 			server.RunningProcess = null;
-		}
-
-		public static void RebindProcesses(BindingList<GameServer> servers)
-		{
-			if (servers.Count == 0) return;
-
-			foreach (var server in servers)
-			{
-				if (server.PID.HasValue && server.PID.Value > 0)
-				{
-					try
-					{
-						var process = Process.GetProcessById(server.PID.Value);
-
-						if (process != null && !process.HasExited)
-						{
-							server.RunningProcess = process;
-							server.Status = "Online";
-
-							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
-
-							process.EnableRaisingEvents = true;
-
-							// 🛡️ THE WATCHDOG: This triggers if the process closes
-							process.Exited += async (s, e) => {
-								// If we didn't plan to stop it, it's a failure
-								if (server.Status == "Online")
-								{
-									await SynixEngine.Core.Instance.RecoverServer(server);
-								}
-								else
-								{
-									server.Status = "Offline";
-									server.PID = null;
-									server.RunningProcess = null;
-									MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
-								}
-							};
-						}
-					}
-					catch
-					{
-						// The process isn't in Task Manager anymore
-						server.Status = "Offline";
-						server.PID = null;
-						MainGUI.Instance?.AppendLog($"--- [REBIND] {server.ServerName} process not found in Windows. ---", Color.Gray);
-					}
-				}
-			}
 		}
 	}
 }
