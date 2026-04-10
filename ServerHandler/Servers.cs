@@ -176,7 +176,7 @@ namespace Synix_Control_Panel.ServerHandler
 					// Send the Ctrl+C signal
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 
-					// Wait for the server to save and exit (15s limit)
+					// Wait for the server to save and exit (20s limit)
 					bool cleanExit = server.RunningProcess?.WaitForExit(20000) ?? false;
 
 					// Cleanup

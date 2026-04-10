@@ -43,7 +43,7 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = @"WS\Saved\GameplaySettings\GameXishu.json",
 				Port = 8777,
 				QueryPort = 27015,
-				Maps = ["Level01_Main"],
+				Maps = ["Level01_Main", "DLC_Level01_Main"],
 				GameModes = ["PVP", "PVE"],
 				Format = ConfigFormat.JSON,
 				NeedsConfigWarning = true

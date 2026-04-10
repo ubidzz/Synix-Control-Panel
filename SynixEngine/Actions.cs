@@ -21,23 +21,33 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		public void StopServerAndReport(GameServer server)
+		// Change 'public void' to 'public async Task'
+		public async Task StopServerAndReport(GameServer server)
 		{
-			// Basic check before calling the executioner
 			if (server.RunningProcess == null && !server.PID.HasValue)
 			{
-				MessageBox.Show($"No active process found for '{server.ServerName}'.",
-								"Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show($"No active process found for '{server.ServerName}'.", "Information");
 				return;
 			}
 
-			// Call the executioner in Servers.cs
-			Servers.Stop(server, msg =>
+			// 1. SHIELD THE SERVER: Watchdog will now ignore this server
+			server.Status = "Stopping";
+			UpdateGridStatus();
+
+			// 2. STOP ASYNC: No more app freezing
+			await Task.Run(() =>
 			{
-				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.AppendLog(msg)));
+				Servers.Stop(server, msg =>
+				{
+					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.AppendLog(msg)));
+				});
 			});
 
-			UpdateGridStatus(); // Refresh the UI state
+			// 3. CLEANUP & SAVE
+			server.Status = "Offline";
+			server.PID = null;
+			FileHandler.SaveServers(); // Write the Offline status to disk
+			UpdateGridStatus();
 		}
 
 		// ACTION 2: CONFIG EDITOR

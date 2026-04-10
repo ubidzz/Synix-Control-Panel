@@ -21,13 +21,16 @@ namespace Synix_Control_Panel.SynixEngine
 		// 🛡️ AI MONITOR: This runs every 1 second via the Heartbeat
 		private void PerformWatchdogCheck()
 		{
-			// .ToList() prevents "Collection was modified" errors if a server is deleted mid-check
 			foreach (var server in MainGUI.serverList.ToList())
 			{
-				// Only monitor servers that are supposed to be "Online"
+				// 🛡️ ONLY MONITOR STABLE ONLINE SERVERS
+				// If status is "Stopping" or "Offline", this loop skips them
 				if (server.Status == "Online" && server.PID.HasValue)
 				{
-					if (!IsProcessAlive(server.PID.Value))
+					// Get just the EXE name for a perfect identity match
+					string processIdentity = System.IO.Path.GetFileNameWithoutExtension(server.ExeName);
+
+					if (!IsProcessAlive(server.PID.Value, processIdentity))
 					{
 						HandleCrash(server);
 					}
@@ -35,14 +38,17 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private bool IsProcessAlive(int pid)
+		private bool IsProcessAlive(int pid, string trimmedExeName)
 		{
 			try
 			{
 				using var p = Process.GetProcessById(pid);
-				return !p.HasExited;
+				if (p.HasExited) return false;
+
+				// IDENTITY CHECK: Prevents restarting if the PID was recycled by another app
+				return p.ProcessName.Equals(trimmedExeName, StringComparison.OrdinalIgnoreCase);
 			}
-			catch { return false; } // Process not found = crashed/closed
+			catch { return false; }
 		}
 
 		// 🚀 AI RECOVERY: Merged logic for crash reporting and auto-restart

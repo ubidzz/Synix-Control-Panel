@@ -55,25 +55,32 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// Grab the numbers from the Brain
+			// 1. Grab telemetry from the Singleton Engine
 			double cpu = Synix_Control_Panel.SynixEngine.Core.Instance.TotalCpuUsage;
 			double ram = Synix_Control_Panel.SynixEngine.Core.Instance.TotalRamUsageGb;
 
-			// Update the Labels
+			// 2. Update the Text Labels
 			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
 			lblTotalRam.Text = $"RAM: {ram:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
 
-			// Update the Chart
+			// 3. Add new data points
 			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
 			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
 
-			// Keep the graph moving
-			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints)
+			// 4. ANIMATION LOGIC: Lock the Viewport to the last 'maxGraphPoints'
+			// This creates the right-to-left scrolling effect
+			var chartArea = chartHeartbeat.ChartAreas[0];
+			chartArea.AxisX.Minimum = chartTickCounter - maxGraphPoints;
+			chartArea.AxisX.Maximum = chartTickCounter;
+
+			// 5. Cleanup: Keep the data buffer small to save memory
+			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints + 10)
 			{
 				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
 				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
 			}
 
+			// 6. Handle Scheduled Restarts from servers.json
 			foreach (var server in serverList)
 			{
 				if (server.IsScheduledRestartEnabled)
@@ -81,7 +88,7 @@ namespace Synix_Control_Panel
 					string currentTime = DateTime.Now.ToString("HH:mm");
 					if (server.RestartTime == currentTime)
 					{
-						// Call the sequence so it saves before restarting
+						// Autonomous recovery sequence: Save -> Shutdown -> Reboot
 						_ = Core.Instance.ExecuteRestartSequence(server);
 					}
 				}
