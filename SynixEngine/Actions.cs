@@ -44,9 +44,9 @@ namespace Synix_Control_Panel.SynixEngine
 			});
 
 			// 3. CLEANUP & SAVE
-			server.Status = StatusManager.GetStatus(ServerState.Offline); ;
+			server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
 			server.PID = null;
-			FileHandler.SaveServers(); // Write the Offline status to disk
+			FileHandler.SaveServers(); // Write the Stopped status to disk
 			UpdateGridStatus();
 		}
 
@@ -106,9 +106,16 @@ namespace Synix_Control_Panel.SynixEngine
 		public void DeleteServerAndReport(GameServer server)
 		{
 			// 1. AI Safety Check: Prevent deleting an active server
-			if (server.Status == StatusManager.GetStatus(ServerState.Online) || (server.PID.HasValue && server.PID > 0))
+			// 🛡️ THE STEAMCMD LOCK
+			string status = server.Status ?? "";
+			if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating))
 			{
-				MessageBox.Show($"Cannot delete '{server.ServerName}' while it is Online.\n\nPlease stop the server first.",
+				MainGUI.Instance?.AppendLog($"[LOCKED] Cannot modify {server.ServerName} while SteamCMD is working!", Color.Orange, true);
+				return;
+			}
+			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
+			{
+				MessageBox.Show($"Cannot delete '{server.ServerName}' while it is Running.\n\nPlease stop the server first.",
 								"Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
@@ -153,7 +160,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task UpdateServerAndReport(GameServer server)
 		{
 			// 1. YOUR SAFETY: Don't update if server is running
-			if (server.Status == StatusManager.GetStatus(ServerState.Online))
+			if (server.Status == StatusManager.GetStatus(ServerState.Running))
 			{
 				MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
@@ -222,7 +229,7 @@ namespace Synix_Control_Panel.SynixEngine
 			finally
 			{
 				// 9. CLEANUP: Always unlock the app and CLEAR the SteamPID
-				server.Status = StatusManager.GetStatus(ServerState.Offline); ;
+				server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
 				server.SteamPID = null;
 				isDownloadActive = false;
 				FileHandler.SaveServers();
@@ -285,7 +292,7 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					finally
 					{
-						newServer.Status = StatusManager.GetStatus(ServerState.Offline); ;
+						newServer.Status = StatusManager.GetStatus(ServerState.Stopped); ;
 						newServer.SteamPID = null;
 						isDownloadActive = false;
 						UpdateGridStatus();
@@ -296,8 +303,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void EditServerAndReport(GameServer server)
 		{
-			// 1. ONLINE SAFETY: Don't edit a live server!
-			if (server.Status == StatusManager.GetStatus(ServerState.Online) || (server.PID.HasValue && server.PID > 0))
+			// 1. RUNNING SAFETY: Don't edit a live server!
+			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
 				MessageBox.Show("Please stop the server before editing its settings.",
 								"Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -364,7 +371,7 @@ namespace Synix_Control_Panel.SynixEngine
 			await Task.Delay(3000);
 
 			// 3. Verify it is actually stopped before restarting
-			if (server.Status == StatusManager.GetStatus(ServerState.Offline))
+			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 			{
 				Log($"[RESTART] Port verified. Booting {server.Game}...", Color.Green);
 
@@ -402,7 +409,7 @@ namespace Synix_Control_Panel.SynixEngine
 			await Task.Delay(4000);
 
 			// 4. VERIFY & RESTART
-			if (server.Status == StatusManager.GetStatus(ServerState.Offline))
+			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 			{
 				Log($"[WATCHDOG] Environment cleared. Restarting {server.Game}...", Color.Green);
 				Servers.Start(server, msg =>
@@ -417,8 +424,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			foreach (var server in MainGUI.serverList)
 			{
-				// Only monitor servers marked as Online
-				if (server.Status == StatusManager.GetStatus(ServerState.Online))
+				// Only monitor servers marked as Running
+				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
 					// Scenario A: The process object is gone or exited (Crash/Manual Close)
 					if (server.RunningProcess == null || server.RunningProcess.HasExited)

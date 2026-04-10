@@ -39,19 +39,19 @@ namespace Synix_Control_Panel.SynixEngine
 						if (process != null && !process.HasExited)
 						{
 							server.RunningProcess = process;
-							server.Status = StatusManager.GetStatus(ServerState.Online);
+							server.Status = StatusManager.GetStatus(ServerState.Running);
 							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
 							process.Exited += async (s, e) => {
-								if (server.Status == StatusManager.GetStatus(ServerState.Online))
+								if (server.Status == StatusManager.GetStatus(ServerState.Running))
 									await RecoverServer(server);
 								else
-									CleanupOfflineState(server);
+									CleanupStoppedState(server);
 							};
 						}
 					}
-					catch { CleanupOfflineState(server); }
+					catch { CleanupStoppedState(server); }
 				}
 
 				// --- 2. STEAMCMD REBIND (Orphan Recovery) ---
@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixEngine
 					catch
 					{
 						// If process is GONE, it finished while Synix was closed
-						server.Status = StatusManager.GetStatus(ServerState.Offline);
+						server.Status = StatusManager.GetStatus(ServerState.Stopped);
 						server.SteamPID = null;
 
 						// 🛠️ RUN SURGERY: Fix missing DLLs/Configs for the orphaned install
@@ -83,9 +83,9 @@ namespace Synix_Control_Panel.SynixEngine
 			UpdateGridStatus();
 		}
 
-		private void CleanupOfflineState(GameServer server)
+		private void CleanupStoppedState(GameServer server)
 		{
-			server.Status = StatusManager.GetStatus(ServerState.Offline); ;
+			server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
 			server.PID = null;
 			server.RunningProcess = null;
 			UpdateGridStatus();
@@ -94,8 +94,8 @@ namespace Synix_Control_Panel.SynixEngine
 		// Did this for now but will put in a multi-language dictionary later to allow users to add their own languages
 		public enum ServerState
 		{
-			Offline = 0,
-			Online = 1,
+			Stopped = 0,
+			Running = 1,
 			Starting = 2,
 			Crashed = 3,
 			Stopping = 4,
@@ -110,8 +110,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return state switch
 				{
-					ServerState.Offline => "Offline",
-					ServerState.Online => "Online",
+					ServerState.Stopped => "Stopped",
+					ServerState.Running => "Running",
 					ServerState.Starting => "Starting",
 					ServerState.Crashed => "Crashed",
 					ServerState.Stopping => "Stopping",

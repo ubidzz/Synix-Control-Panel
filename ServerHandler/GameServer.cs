@@ -60,7 +60,7 @@ public class GameServer : GameInfo
 	public string ServerName { get; set; } = string.Empty;
 	public string Password { get; set; } = string.Empty;
 	public string AdminPassword { get; set; } = string.Empty;
-	public string Status { get; set; } = StatusManager.GetStatus(ServerState.Offline);
+	public string Status { get; set; } = StatusManager.GetStatus(ServerState.Stopped);
 	public int MaxPlayers { get; set; } = 10;
 	public string WorldName { get; set; } = "NewWorld";
 	public bool IsDefaultPath { get; set; } = true;

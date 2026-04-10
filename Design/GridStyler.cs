@@ -162,23 +162,41 @@ namespace Synix_Control_Panel.Design
 			var column = dgv.Columns[e.ColumnIndex];
 			if ((column.Name == "colStatus" || column.DataPropertyName == "Status") && e.Value != null)
 			{
-				string status = e.Value.ToString().Trim().ToLower();
+				// 1. Notice there is NO .ToLower() here anymore!
+				string status = e.Value.ToString().Trim();
 				e.CellStyle.Font = new Font(dgv.DefaultCellStyle.Font, FontStyle.Bold);
 
-				if (status == StatusManager.GetStatus(ServerState.Online))
+				// 2. string.Equals with OrdinalIgnoreCase ignores capitals completely
+				if (string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase))
 				{
 					e.CellStyle.ForeColor = Color.LimeGreen;
 					e.CellStyle.SelectionForeColor = Color.LimeGreen;
 				}
-				else if (status == "offline")
+				else if (string.Equals(status, StatusManager.GetStatus(ServerState.Stopped), StringComparison.OrdinalIgnoreCase))
 				{
 					e.CellStyle.ForeColor = Color.LightCoral;
 					e.CellStyle.SelectionForeColor = Color.LightCoral;
 				}
-				else if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating))
+				else if (string.Equals(status, StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase) ||
+						 string.Equals(status, StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase))
 				{
 					e.CellStyle.ForeColor = Color.Gold;
 					e.CellStyle.SelectionForeColor = Color.Gold;
+				}
+				else if (string.Equals(status, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase))
+				{
+					e.CellStyle.ForeColor = Color.Orange;
+					e.CellStyle.SelectionForeColor = Color.Orange;
+				}
+				else if (string.Equals(status, StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase))
+				{
+					e.CellStyle.ForeColor = Color.Yellow;
+					e.CellStyle.SelectionForeColor = Color.Yellow;
+				}
+				else if (string.Equals(status, StatusManager.GetStatus(ServerState.Crashed), StringComparison.OrdinalIgnoreCase))
+				{
+					e.CellStyle.ForeColor = Color.Red;
+					e.CellStyle.SelectionForeColor = Color.Red;
 				}
 			}
 		}

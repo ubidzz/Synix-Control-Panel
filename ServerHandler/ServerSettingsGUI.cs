@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
 {
@@ -259,7 +260,7 @@ namespace Synix_Control_Panel
 				WorldSeed = txtWorldSeed.Text.Trim(),
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
-				Status = _isEditMode && _existingServer != null ? _existingServer.Status : "Offline",
+				Status = _isEditMode && _existingServer != null ? _existingServer.Status : StatusManager.GetStatus(ServerState.Stopped),
 				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null,
 				GameMode = cmbCompetitive.Text,
 				EnableRcon = chkEnableRcon.Checked,

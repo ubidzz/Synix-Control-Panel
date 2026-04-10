@@ -46,7 +46,7 @@ namespace Synix_Control_Panel.SynixEngine
 				["'Address Already in Use' Error?"] = "SYMPTOM: Port is 'taken'.\n\nFIX: Use the 'Kill All Processes' button in Synix or change your port by 1.",
 				["Missing .DLL Errors"] = "SYMPTOM: 'System Error' on launch.\n\nFIX: Install 'C++ Redistributables x64' (2015-2022) from Microsoft's site.",
 				["SteamCMD stuck at 0%?"] = "SYMPTOM: No download progress.\n\nFIX: Run Synix as Admin and check for 20GB+ free disk space.",
-				["Watchdog Restarting Server"] = "If the server hangs for 60s, the Synix Watchdog will force a reboot to keep the server online.",
+				["Watchdog Restarting Server"] = "If the server hangs for 60s, the Synix Watchdog will force a reboot to keep the server Running.",
 				["Server File Corruption"] = "Use 'Validate Files' to trigger a SteamCMD repair without deleting your world saves.",
 
 				// --- MAINTENANCE ---

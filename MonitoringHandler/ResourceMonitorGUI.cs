@@ -98,7 +98,7 @@ namespace Synix_Control_Panel
 					row.SubItems.Add(exe);
 
 					// IMPORTANT: This tells the drawing code to color the row
-					// We check if the server is online (since it's running, it is!)
+					// We check if the server is Running (since it's running, it is!)
 					row.Tag = true;
 
 					listViewResources.Items.Add(row);
@@ -135,10 +135,10 @@ namespace Synix_Control_Panel
 
 		private void listViewResources_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
 		{
-			bool isOnline = (e.Item.Tag is bool status) && status;
+			bool isRunning = (e.Item.Tag is bool status) && status;
 
-			// 1. DRAW THE HIGHLIGHT (If online)
-			if (isOnline)
+			// 1. DRAW THE HIGHLIGHT (If Running)
+			if (isRunning)
 			{
 				// Alpha: 50 (Very transparent) to 100 (Noticeable). 
 				// This allows the Synix logo to be seen through the green bar.

@@ -31,39 +31,50 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			foreach (var server in MainGUI.serverList.ToList())
 			{
-				// 🛡️ ONLY MONITOR STABLE ONLINE SERVERS
-				if (server.Status == StatusManager.GetStatus(ServerState.Online) && server.PID.HasValue)
+				// 🛡️ GHOST PROTECTION: Pull ExeName from Database
+				var dbEntry = GameDatabase.GetGame(server.Game);
+				string exePathFromDB = dbEntry?.ExeName ?? "";
+
+				// --- 1. THE PROMOTION MECHANIC (Starting -> Running) ---
+				if (server.Status == StatusManager.GetStatus(ServerState.Starting) && server.PID.HasValue)
+				{
+					// If it survives the identity check, promote it!
+					if (IsProcessAlive(server.PID.Value, exePathFromDB))
+					{
+						server.Status = StatusManager.GetStatus(ServerState.Running);
+
+						// Force the grid to redraw so it turns Green immediately
+						MainGUI.Instance?.BeginInvoke((MethodInvoker)delegate { MainGUI.Instance.UpdateGrid(); });
+					}
+					continue; // Move to the next server for this tick
+				}
+
+				// --- 2. MONITOR STABLE RUNNING SERVERS ---
+				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.PID.HasValue)
 				{
 					int currentPid = server.PID.Value;
 
-					// 1. Initialize 1-second grace period (one heartbeat tick)
 					if (!_watchdogGracePeriods.ContainsKey(currentPid))
 					{
 						_watchdogGracePeriods[currentPid] = 1;
 					}
 
-					// 2. Decrement and skip the check if the grace period is still active
 					if (_watchdogGracePeriods[currentPid] > 0)
 					{
 						_watchdogGracePeriods[currentPid]--;
-						continue; // Back off for 1 tick so JSON/PID can settle
+						continue;
 					}
-
-					// 🛡️ GHOST PROTECTION: Pull ExeName from Database
-					// This ensures we never check against an empty string from the JSON.
-					var dbEntry = GameDatabase.GetGame(server.Game);
-					string exePathFromDB = dbEntry?.ExeName ?? "";
 
 					// 3. 2-Layer Identity Check: PID existence + Process Name match
 					if (!IsProcessAlive(currentPid, exePathFromDB))
 					{
-						_watchdogGracePeriods.Remove(currentPid); // Clean up for this PID
+						_watchdogGracePeriods.Remove(currentPid);
 						HandleCrash(server);
 					}
 				}
 				else if (server.PID.HasValue)
 				{
-					// Clean up dictionary if the server is stopped or offline
+					// Clean up dictionary if the server is stopped or Stopped
 					_watchdogGracePeriods.Remove(server.PID.Value);
 				}
 			}
@@ -98,7 +109,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 🛡️ LOG FIRST: Ensure we see the PID before it's cleared
 			Log($"[WATCHDOG] {server.ServerName} stopped unexpectedly! PID: {server.PID}", Color.Red, true);
 
-			server.Status = StatusManager.GetStatus(ServerState.Offline);
+			server.Status = StatusManager.GetStatus(ServerState.Crashed);
 			server.PID = null;
 			server.RunningProcess = null;
 

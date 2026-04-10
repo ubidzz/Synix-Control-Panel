@@ -24,6 +24,7 @@ using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
 {
@@ -232,7 +233,7 @@ namespace Synix_Control_Panel
 			// UI-specific safety check
 			if (isInitializing) return;
 
-			// The AI handles the "Online" check, opens the form, and logs the result
+			// The AI handles the "Running" check, opens the form, and logs the result
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				Core.Instance.EditServerAndReport(selectedServer);
@@ -267,7 +268,7 @@ namespace Synix_Control_Panel
 			// 2. Hand over the server object to the AI
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// The AI handles the "Online" check, the Confirmation, and the File Deletion
+				// The AI handles the "Running" check, the Confirmation, and the File Deletion
 				Core.Instance.DeleteServerAndReport(selectedServer);
 			}
 			else
@@ -280,23 +281,25 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// 1. ENGINE INTEGRITY CHECK
-				// This uses the Validator logic
+				// 🛡️ 1. THE SPAM LOCK
+				if (!Core.Instance.PassStartSpamLock(selectedServer, out string lockMsg))
+				{
+					AppendLog(lockMsg, Color.Orange);
+					return;
+				}
+
+				// 🛡️ 2. ENGINE INTEGRITY CHECK
 				if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
 
-				// 2. CONFIG WARNING BLOCKER
-				// This uses the Validator logic
-				if (Core.Instance.ShouldBlockForConfig(selectedServer)) return;
+				// 🛡️ 3. CONFIG WARNING BLOCKER
+				if (!Core.Instance.ShouldBlockForConfig(selectedServer)) return;
 
-				// 3. START THE SERVER
+				// 🚀 4. START THE SERVER
 				Servers.Start(selectedServer, msg =>
 				{
 					this.Invoke((MethodInvoker)delegate
 					{
 						AppendLog(msg);
-
-						// The Engine refreshes the grid every 1 second, 
-						// but we call it here for instant feedback.
 						UpdateGrid();
 					});
 				});

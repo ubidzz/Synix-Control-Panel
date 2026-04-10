@@ -135,7 +135,7 @@ namespace Synix_Control_Panel.ServerHandler
 					// We subscribe here so new servers also benefit from auto-restart
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) => {
-						if (server.Status == StatusManager.GetStatus(ServerState.Online))
+						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
 							MainGUI.Instance?.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly! Restarting...", System.Drawing.Color.Red);
 
@@ -144,7 +144,7 @@ namespace Synix_Control_Panel.ServerHandler
 						}
 						else
 						{
-							server.Status = StatusManager.GetStatus(ServerState.Offline);
+							server.Status = StatusManager.GetStatus(ServerState.Stopped);
 							server.PID = null;
 							server.RunningProcess = null;
 							MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
@@ -164,6 +164,9 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			try
 			{
+				server.Status = StatusManager.GetStatus(ServerState.Stopping);
+				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+
 				int targetPid = server.RunningProcess?.Id ?? server.PID ?? 0;
 				if (targetPid <= 0)
 				{
@@ -182,8 +185,8 @@ namespace Synix_Control_Panel.ServerHandler
 					// Send the Ctrl+C signal
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 
-					// Wait for the server to save and exit (20s limit)
-					bool cleanExit = server.RunningProcess?.WaitForExit(20000) ?? false;
+					// Wait for the server to save and exit (25s limit to allow the server to shutdown it's self)
+					bool cleanExit = server.RunningProcess?.WaitForExit(25000) ?? false;
 
 					// Cleanup
 					FreeConsole();
@@ -192,7 +195,7 @@ namespace Synix_Control_Panel.ServerHandler
 					if (cleanExit)
 					{
 						logCallback?.Invoke($"[STOP] {server.ServerName} saved and closed cleanly.");
-						FinalizeOfflineState(server);
+						FinalizeStoppedState(server);
 						return;
 					}
 				}
@@ -213,7 +216,7 @@ namespace Synix_Control_Panel.ServerHandler
 					killProcess?.WaitForExit();
 				}
 
-				FinalizeOfflineState(server);
+				FinalizeStoppedState(server);
 				logCallback?.Invoke($"[WATCHDOG] {server.ServerName} forced closed.");
 			}
 			catch (Exception ex)
@@ -222,9 +225,9 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 		}
 
-		private static void FinalizeOfflineState(GameServer server)
+		private static void FinalizeStoppedState(GameServer server)
 		{
-			server.Status = StatusManager.GetStatus(ServerState.Offline);
+			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
 			server.RunningProcess = null;
 		}

@@ -37,8 +37,11 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 			foreach (var server in serverList)
 			{
-				// 1. Only check servers that are supposed to be "Online"
-				if (server.PID.HasValue && server.Status?.ToLower() == StatusManager.GetStatus(ServerState.Online))
+				// 1. Only check servers that are supposed to be "Running or Starting"
+				string currentStatus = server.Status ?? "";
+				bool isRunning = string.Equals(currentStatus, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase);
+				bool isStarting = string.Equals(currentStatus, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);
+				if (server.PID.HasValue && (isRunning || isStarting))
 				{
 					try
 					{
@@ -47,8 +50,8 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 						if (proc.HasExited)
 						{
-							// THE AUTO-FIX: The process is gone! Set it to Offline.
-							server.Status = "Offline";
+							// THE AUTO-FIX: The process is gone! Set it to Stopped.
+							server.Status = StatusManager.GetStatus(ServerState.Stopped);
 							server.PID = null;
 							continue;
 						}
@@ -79,7 +82,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 					catch
 					{
 						// If we hit an error (like "Access Denied"), the server is likely closing/gone
-						server.Status = "Offline";
+						server.Status = StatusManager.GetStatus(ServerState.Stopped);
 						server.PID = null;
 					}
 				}

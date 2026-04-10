@@ -66,7 +66,7 @@ namespace Synix_Control_Panel.SynixEngine
 					server.RestartDays[dayIndex] &&
 					server.RestartTime == currentTime &&
 					server.LastMaintenanceDate != todayDate &&
-					server.Status == StatusManager.GetStatus(ServerState.Online))
+					server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
 					server.LastMaintenanceDate = todayDate;
 					ExecuteMaintenanceRestart(server); //

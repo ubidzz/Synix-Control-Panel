@@ -129,5 +129,45 @@ namespace Synix_Control_Panel.SynixEngine
 
 			return true; // Files are good!
 		}
+
+		public bool PassStartSpamLock(GameServer server, out string lockMessage)
+		{
+			lockMessage = string.Empty;
+			string status = server.Status ?? "";
+
+			bool isStarting = string.Equals(status, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);
+			bool isRunning = string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase);
+			bool isStopping = string.Equals(status, StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase);
+			bool isInstalling = string.Equals(status, StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase);
+			bool isUpdating = string.Equals(status, StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase);
+
+			if (isStarting || isRunning || isStopping || isInstalling || isUpdating)
+			{
+				lockMessage = $"[LOCKED] Cannot start. {server.ServerName} is currently {status}.";
+				return false; // Lock is triggered
+			}
+
+			return true; // Safe to start
+		}
+
+		public bool PassStopSpamLock(GameServer server, out string lockMessage)
+		{
+			lockMessage = string.Empty;
+			string status = server.Status ?? "";
+
+			bool isStopping = string.Equals(status, StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase);
+			bool isStopped = string.Equals(status, StatusManager.GetStatus(ServerState.Stopped), StringComparison.OrdinalIgnoreCase);
+			bool isCrashed = string.Equals(status, StatusManager.GetStatus(ServerState.Crashed), StringComparison.OrdinalIgnoreCase);
+			bool isInstalling = string.Equals(status, StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase);
+			bool isUpdating = string.Equals(status, StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase);
+
+			if (isStopping || isStopped || isCrashed || isInstalling || isUpdating)
+			{
+				lockMessage = $"[LOCKED] Cannot stop. {server.ServerName} is currently {status}.";
+				return false; // Lock is triggered
+			}
+
+			return true; // Safe to stop
+		}
 	}
 }
