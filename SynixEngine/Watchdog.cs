@@ -1,12 +1,14 @@
-﻿// Copyright (c) 2026 ubidzz. All Rights Reserved.
-//
-// This file is part of Synix Control Panel.
-//
-// This code is provided for transparent viewing and personal use only.
-// Unauthorized distribution, public modification, or commercial
-// use of this source code or the compiled executable is strictly
-// prohibited. Please refer to the LICENSE file in the root
-// directory for full terms.
+﻿/*
+ * Copyright (c) 2026 ubidzz. All Rights Reserved.
+ *
+ * This file is part of Synix Control Panel.
+ *
+ * This code is provided for transparent viewing and personal use only.
+ * Unauthorized distribution, public modification, or commercial 
+ * use of this source code or the compiled executable is strictly 
+ * prohibited. Please refer to the LICENSE file in the root 
+ * directory for full terms.
+ */
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -24,10 +26,11 @@ namespace Synix_Control_Panel.SynixEngine
 			foreach (var server in MainGUI.serverList.ToList())
 			{
 				// 🛡️ ONLY MONITOR STABLE ONLINE SERVERS
-				// If status is "Stopping" or "Offline", this loop skips them
+				// If status is "Stopping" or "Offline", this loop skips them as requested.
 				if (server.Status == "Online" && server.PID.HasValue)
 				{
-					if (!IsProcessAlive(server.PID.Value, server.ExeName))
+					// We pass the full path to ensure we aren't fooled by PID reuse
+					if (!IsProcessAlive(server.PID.Value, server.InstallPath, server.ExeName))
 					{
 						HandleCrash(server);
 					}
@@ -35,7 +38,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private bool IsProcessAlive(int pid, string dbExePath)
+		private bool IsProcessAlive(int pid, string installPath, string exeName)
 		{
 			try
 			{
@@ -45,15 +48,17 @@ namespace Synix_Control_Panel.SynixEngine
 				// 2. Immediate check if it has already exited
 				if (p.HasExited) return false;
 
-				// 3. Extract just the filename (e.g., "StarRuptureServerEOS-Win64-Shipping")
-				string expectedName = System.IO.Path.GetFileNameWithoutExtension(dbExePath);
+				// 3. 🛡️ GHOST PID PROTECTION: Verify the file path
+				// We check if the process path starts with our installation directory.
+				// This ensures that if Windows reused the PID for another app, we catch it.
+				string currentPath = p.MainModule.FileName;
 
-				// 4. Identity Match
-				return p.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase);
+				// Compare path to ensure it belongs to this server instance
+				return currentPath.StartsWith(installPath, StringComparison.OrdinalIgnoreCase);
 			}
 			catch
 			{
-				// Catching "Process not found" or "Access denied"
+				// Catching "Process not found" or "Access denied" (which happens with System PIDs)
 				return false;
 			}
 		}
@@ -61,7 +66,7 @@ namespace Synix_Control_Panel.SynixEngine
 		// 🚀 AI RECOVERY: Merged logic for crash reporting and auto-restart
 		private void HandleCrash(GameServer server)
 		{
-			server.Status = "Crashed";
+			server.Status = "Crashed"; //
 			server.PID = null;
 			server.RunningProcess = null;
 
@@ -71,16 +76,20 @@ namespace Synix_Control_Panel.SynixEngine
 			// 2. Prepare for auto-restart
 			Log($"[WATCHDOG] Attempting to restart {server.ServerName} in 2 seconds...", Color.Yellow);
 
-			// 3. The AI takes the wheel
-			// We use a small delay so the system can finish cleaning up the old process
+			// 3. The Recovery Sequence
+			// Small delay allows Windows to fully release any file locks from the crash
 			Task.Delay(2000).ContinueWith(_ =>
 			{
 				MainGUI.Instance?.Invoke((Action)(() =>
 				{
-					Log($"[WATCHDOG] Restarting {server.ServerName} now...", Color.Cyan);
+					// Verify the user didn't click "Stop" while we were waiting
+					if (server.Status == "Crashed")
+					{
+						Log($"[WATCHDOG] Restarting {server.ServerName} now...", Color.Cyan);
 
-					// Re-use the existing Start logic from the Servers handler
-					Servers.Start(server, msg => Log(msg));
+						// Re-use your existing Start logic from the Servers handler
+						Servers.Start(server, msg => Log(msg));
+					}
 				}));
 			});
 		}
