@@ -28,9 +28,9 @@ namespace Synix_Control_Panel.SynixEngine
 				if (server.Status == "Online" && server.PID.HasValue)
 				{
 					// Get just the EXE name for a perfect identity match
-					string processIdentity = System.IO.Path.GetFileNameWithoutExtension(server.ExeName);
+					string expectedName = System.IO.Path.GetFileNameWithoutExtension(server.ExeName);
 
-					if (!IsProcessAlive(server.PID.Value, processIdentity))
+					if (!IsProcessAlive(server.PID.Value, expectedName))
 					{
 						HandleCrash(server);
 					}

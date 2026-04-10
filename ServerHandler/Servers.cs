@@ -159,6 +159,13 @@ namespace Synix_Control_Panel.ServerHandler
 			{
 				int targetPid = server.RunningProcess?.Id ?? server.PID ?? 0;
 
+				// 🛡️ THE SAFETY GATE
+				if (server.Status == "Stopping")
+				{
+					logCallback?.Invoke($"[ERROR] Cannot start {server.ServerName} while it is shutting down. Please wait.");
+					return;
+				}
+
 				if (targetPid <= 0)
 				{
 					logCallback?.Invoke($"[ERROR] {server.ServerName} has no valid PID to stop.");
