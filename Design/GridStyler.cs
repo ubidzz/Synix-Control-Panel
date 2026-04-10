@@ -13,6 +13,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.Design
 {
@@ -164,7 +165,7 @@ namespace Synix_Control_Panel.Design
 				string status = e.Value.ToString().Trim().ToLower();
 				e.CellStyle.Font = new Font(dgv.DefaultCellStyle.Font, FontStyle.Bold);
 
-				if (status == "online")
+				if (status == StatusManager.GetStatus(ServerState.Online))
 				{
 					e.CellStyle.ForeColor = Color.LimeGreen;
 					e.CellStyle.SelectionForeColor = Color.LimeGreen;
@@ -174,7 +175,7 @@ namespace Synix_Control_Panel.Design
 					e.CellStyle.ForeColor = Color.LightCoral;
 					e.CellStyle.SelectionForeColor = Color.LightCoral;
 				}
-				else if (status == "installing" || status == "updating")
+				else if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating))
 				{
 					e.CellStyle.ForeColor = Color.Gold;
 					e.CellStyle.SelectionForeColor = Color.Gold;

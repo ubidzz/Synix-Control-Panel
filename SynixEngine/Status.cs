@@ -39,12 +39,12 @@ namespace Synix_Control_Panel.SynixEngine
 						if (process != null && !process.HasExited)
 						{
 							server.RunningProcess = process;
-							server.Status = "Online";
+							server.Status = StatusManager.GetStatus(ServerState.Online);
 							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
 							process.Exited += async (s, e) => {
-								if (server.Status == "Online")
+								if (server.Status == StatusManager.GetStatus(ServerState.Online))
 									await RecoverServer(server);
 								else
 									CleanupOfflineState(server);
@@ -56,7 +56,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				// --- 2. STEAMCMD REBIND (Orphan Recovery) ---
 				// This uses the SteamPID 49012 you saw in your JSON!
-				if ((server.Status == "Installing" || server.Status == "Updating") && server.SteamPID.HasValue)
+				if ((server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Updating)) && server.SteamPID.HasValue)
 				{
 					try
 					{
@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixEngine
 					catch
 					{
 						// If process is GONE, it finished while Synix was closed
-						server.Status = "Offline";
+						server.Status = StatusManager.GetStatus(ServerState.Offline);
 						server.SteamPID = null;
 
 						// 🛠️ RUN SURGERY: Fix missing DLLs/Configs for the orphaned install
@@ -85,10 +85,44 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void CleanupOfflineState(GameServer server)
 		{
-			server.Status = "Offline";
+			server.Status = StatusManager.GetStatus(ServerState.Offline); ;
 			server.PID = null;
 			server.RunningProcess = null;
 			UpdateGridStatus();
+		}
+
+		// Did this for now but will put in a multi-language dictionary later to allow users to add their own languages
+		public enum ServerState
+		{
+			Offline = 0,
+			Online = 1,
+			Starting = 2,
+			Crashed = 3,
+			Stopping = 4,
+			Installing = 5,
+			Updating = 6
+		}
+
+		public static class StatusManager
+		{
+			// This is your "one source of truth"
+			public static string GetStatus(ServerState state)
+			{
+				return state switch
+				{
+					ServerState.Offline => "Offline",
+					ServerState.Online => "Online",
+					ServerState.Starting => "Starting",
+					ServerState.Crashed => "Crashed",
+					ServerState.Stopping => "Stopping",
+					ServerState.Installing => "Installing",
+					ServerState.Updating => "Updating",
+					_ => "Unknown"
+				};
+			}
+
+			// Over-engineer it to handle numbers too, just like you wanted
+			public static string GetStatus(int code) => GetStatus((ServerState)code);
 		}
 	}
 }

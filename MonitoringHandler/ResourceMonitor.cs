@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.MonitoringHandler
 {
@@ -37,7 +38,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 			foreach (var server in serverList)
 			{
 				// 1. Only check servers that are supposed to be "Online"
-				if (server.PID.HasValue && server.Status?.ToLower() == "online")
+				if (server.PID.HasValue && server.Status?.ToLower() == StatusManager.GetStatus(ServerState.Online))
 				{
 					try
 					{

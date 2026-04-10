@@ -10,55 +10,84 @@
  * directory for full terms.
  */
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using Synix_Control_Panel.ServerHandler;
+using Synix_Control_Panel.Database;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
+		// ⏱️ INTERNAL GRACE PERIOD: Tracks countdown ticks for each PID
+		private readonly Dictionary<int, int> _watchdogGracePeriods = new();
+
 		// 🛡️ AI MONITOR: This runs every 1 second via the Heartbeat
 		private void PerformWatchdogCheck()
 		{
 			foreach (var server in MainGUI.serverList.ToList())
 			{
 				// 🛡️ ONLY MONITOR STABLE ONLINE SERVERS
-				// If status is "Stopping" or "Offline", this loop skips them as requested.
-				if (server.Status == "Online" && server.PID.HasValue)
+				if (server.Status == StatusManager.GetStatus(ServerState.Online) && server.PID.HasValue)
 				{
-					// We pass the full path to ensure we aren't fooled by PID reuse
-					if (!IsProcessAlive(server.PID.Value, server.InstallPath, server.ExeName))
+					int currentPid = server.PID.Value;
+
+					// 1. Initialize 1-second grace period (one heartbeat tick)
+					if (!_watchdogGracePeriods.ContainsKey(currentPid))
 					{
+						_watchdogGracePeriods[currentPid] = 1;
+					}
+
+					// 2. Decrement and skip the check if the grace period is still active
+					if (_watchdogGracePeriods[currentPid] > 0)
+					{
+						_watchdogGracePeriods[currentPid]--;
+						continue; // Back off for 1 tick so JSON/PID can settle
+					}
+
+					// 🛡️ GHOST PROTECTION: Pull ExeName from Database
+					// This ensures we never check against an empty string from the JSON.
+					var dbEntry = GameDatabase.GetGame(server.Game);
+					string exePathFromDB = dbEntry?.ExeName ?? "";
+
+					// 3. 2-Layer Identity Check: PID existence + Process Name match
+					if (!IsProcessAlive(currentPid, exePathFromDB))
+					{
+						_watchdogGracePeriods.Remove(currentPid); // Clean up for this PID
 						HandleCrash(server);
 					}
+				}
+				else if (server.PID.HasValue)
+				{
+					// Clean up dictionary if the server is stopped or offline
+					_watchdogGracePeriods.Remove(server.PID.Value);
 				}
 			}
 		}
 
-		private bool IsProcessAlive(int pid, string installPath, string exeName)
+		private bool IsProcessAlive(int pid, string dbExePath)
 		{
 			try
 			{
-				// 1. Attempt to hook the process by its ID
+				// 1. Hook the process by its ID
 				using var p = Process.GetProcessById(pid);
 
 				// 2. Immediate check if it has already exited
 				if (p.HasExited) return false;
 
-				// 3. 🛡️ GHOST PID PROTECTION: Verify the file path
-				// We check if the process path starts with our installation directory.
-				// This ensures that if Windows reused the PID for another app, we catch it.
-				string currentPath = p.MainModule.FileName;
+				// 3. 🛡️ GHOST-PROOF IDENTITY MATCH
+				string expectedName = Path.GetFileNameWithoutExtension(dbExePath);
 
-				// Compare path to ensure it belongs to this server instance
-				return currentPath.StartsWith(installPath, StringComparison.OrdinalIgnoreCase);
+				// 4. Return true only if the name in Windows matches the name in our Database
+				return p.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase);
 			}
 			catch
 			{
-				// Catching "Process not found" or "Access denied" (which happens with System PIDs)
+				// Catching "Process not found" - PID is genuinely gone
 				return false;
 			}
 		}
@@ -66,29 +95,27 @@ namespace Synix_Control_Panel.SynixEngine
 		// 🚀 AI RECOVERY: Merged logic for crash reporting and auto-restart
 		private void HandleCrash(GameServer server)
 		{
-			server.Status = "Crashed"; //
+			// 🛡️ LOG FIRST: Ensure we see the PID before it's cleared
+			Log($"[WATCHDOG] {server.ServerName} stopped unexpectedly! PID: {server.PID}", Color.Red, true);
+
+			server.Status = StatusManager.GetStatus(ServerState.Offline);
 			server.PID = null;
 			server.RunningProcess = null;
-
-			// 1. Log the failure immediately using the AI Log helper
-			Log($"[WATCHDOG] {server.ServerName} stopped unexpectedly!", Color.Red, true);
 
 			// 2. Prepare for auto-restart
 			Log($"[WATCHDOG] Attempting to restart {server.ServerName} in 2 seconds...", Color.Yellow);
 
-			// 3. The Recovery Sequence
-			// Small delay allows Windows to fully release any file locks from the crash
+			// 3. The recovery sequence
 			Task.Delay(2000).ContinueWith(_ =>
 			{
 				MainGUI.Instance?.Invoke((Action)(() =>
 				{
-					// Verify the user didn't click "Stop" while we were waiting
-					if (server.Status == "Crashed")
+					if (server.Status == StatusManager.GetStatus(ServerState.Crashed))
 					{
 						Log($"[WATCHDOG] Restarting {server.ServerName} now...", Color.Cyan);
 
-						// Re-use your existing Start logic from the Servers handler
-						Servers.Start(server, msg => Log(msg));
+						// Re-use the existing Start logic from the Servers handler
+						Servers.Start(server, msg => Log(msg), StatusManager.GetStatus(ServerState.Crashed));
 					}
 				}));
 			});

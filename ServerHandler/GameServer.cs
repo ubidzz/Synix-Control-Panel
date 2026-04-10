@@ -13,6 +13,7 @@ using Synix_Control_Panel.ServerHandler;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using static Synix_Control_Panel.Database.GameDatabase;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 public class GameInfo
 {
@@ -59,7 +60,7 @@ public class GameServer : GameInfo
 	public string ServerName { get; set; } = string.Empty;
 	public string Password { get; set; } = string.Empty;
 	public string AdminPassword { get; set; } = string.Empty;
-	public string Status { get; set; } = "Offline";
+	public string Status { get; set; } = StatusManager.GetStatus(ServerState.Offline);
 	public int MaxPlayers { get; set; } = 10;
 	public string WorldName { get; set; } = "NewWorld";
 	public bool IsDefaultPath { get; set; } = true;

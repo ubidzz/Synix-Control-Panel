@@ -18,6 +18,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.ServerHandler
 {
@@ -40,10 +41,11 @@ namespace Synix_Control_Panel.ServerHandler
 		const uint CTRL_C_EVENT = 0;
 		#endregion
 
-		public static void Start(GameServer server, Action<string> logCallback)
+		public static void Start(GameServer server, Action<string> logCallback, string StatusMessage = "")
 		{
 			try
 			{
+				server.Status = StatusManager.GetStatus(ServerState.Starting);
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				if (dbEntry == null)
 				{
@@ -51,7 +53,7 @@ namespace Synix_Control_Panel.ServerHandler
 					return;
 
 				}// 🛡️ THE SAFETY GATE
-				if (server.Status == "Stopping")
+				if (server.Status == StatusManager.GetStatus(ServerState.Stopping))
 				{
 					logCallback?.Invoke($"[ERROR] Cannot start {server.ServerName} while it is shutting down. Please wait.");
 					return;
@@ -127,14 +129,14 @@ namespace Synix_Control_Panel.ServerHandler
 				if (proc != null)
 				{
 					server.RunningProcess = proc;
-					server.Status = "Online";
+					server.Status = StatusManager.GetStatus(ServerState.Online);
 					server.PID = proc.Id;
 
 					// 🛡️ WATCHDOG INTEGRATION
 					// We subscribe here so new servers also benefit from auto-restart
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) => {
-						if (server.Status == "Online")
+						if (server.Status == StatusManager.GetStatus(ServerState.Online))
 						{
 							MainGUI.Instance?.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly! Restarting...", System.Drawing.Color.Red);
 
@@ -143,7 +145,7 @@ namespace Synix_Control_Panel.ServerHandler
 						}
 						else
 						{
-							server.Status = "Offline";
+							server.Status = StatusManager.GetStatus(ServerState.Offline);
 							server.PID = null;
 							server.RunningProcess = null;
 							MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
@@ -223,7 +225,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 		private static void FinalizeOfflineState(GameServer server)
 		{
-			server.Status = "Offline";
+			server.Status = StatusManager.GetStatus(ServerState.Offline);
 			server.PID = null;
 			server.RunningProcess = null;
 		}
