@@ -310,7 +310,16 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// 🚀 SENDS COMMAND: MainGUI -> Actions.cs -> Servers.cs
+				// 🛡️ 1. THE SPAM LOCK
+				if (!Core.Instance.PassStopSpamLock(selectedServer, out string lockMsg))
+				{
+					// If it's already stopping or dead, print the orange warning and block the click!
+					AppendLog(lockMsg, Color.Orange);
+					return;
+				}
+
+				// 🚀 2. SENDS COMMAND: MainGUI -> Engine -> Servers.cs
+				// If it passes the bouncer, hand it off to the Engine to do the graceful shutdown.
 				Core.Instance.StopServerAndReport(selectedServer);
 			}
 		}
