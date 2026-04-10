@@ -129,7 +129,6 @@ namespace Synix_Control_Panel.ServerHandler
 				if (proc != null)
 				{
 					server.RunningProcess = proc;
-					server.Status = StatusManager.GetStatus(ServerState.Online);
 					server.PID = proc.Id;
 
 					// 🛡️ WATCHDOG INTEGRATION

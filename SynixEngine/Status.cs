@@ -121,7 +121,6 @@ namespace Synix_Control_Panel.SynixEngine
 				};
 			}
 
-			// Over-engineer it to handle numbers too, just like you wanted
 			public static string GetStatus(int code) => GetStatus((ServerState)code);
 		}
 	}
