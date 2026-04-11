@@ -275,6 +275,58 @@ ServerName=""{ServerName}""";
 						string csJson = @"{ ""serverName"": ""{ServerName}"" }";
 						if (CreateGameConfig(server, "config.json", csJson)) applied = true;
 						break;
+					case "Core Keeper":
+						string coreJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": 16 }";
+						if (CreateGameConfig(server, @"DedicatedServer\ServerConfig.json", coreJson)) applied = true;
+						break;
+
+					case "Factorio":
+					case "Factorio (Experimental)":
+					case "Factorio (Space Age)":
+						string factJson = @"{ ""name"": ""{ServerName}"", ""max_players"": 0 }";
+						if (CreateGameConfig(server, @"data\server-settings.json", factJson)) applied = true;
+						break;
+
+					case "Eco":
+						string ecoJson = @"{ ""Description"": ""{ServerName}"", ""MaxConnections"": 10 }";
+						if (CreateGameConfig(server, @"Configs\Network.eco", ecoJson)) applied = true;
+						break;
+
+					case "Starbound":
+						string sbJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": 8 }";
+						if (CreateGameConfig(server, @"storage\starbound_server.config", sbJson)) applied = true;
+						break;
+
+					case "Project CARS 2":
+						string pcarsJson = @"{ ""server"": { ""name"": ""{ServerName}"" } }";
+						if (CreateGameConfig(server, "server_config.json", pcarsJson)) applied = true;
+						break;
+
+					case "Keplerth":
+						string kepJson = @"{ ""ServerName"": ""{ServerName}"" }";
+						if (CreateGameConfig(server, "config.json", kepJson)) applied = true;
+						break;
+
+					case "Assetto Corsa Competizione":
+						string accJson = @"{ ""serverName"": ""{ServerName}"", ""maxClients"": 10 }";
+						if (CreateGameConfig(server, @"cfg\settings.json", accJson)) applied = true;
+						break;
+
+					case "rFactor 2":
+						string rf2Json = @"{ ""ServerName"": ""{ServerName}"" }";
+						if (CreateGameConfig(server, @"UserData\player\Multiplayer.json", rf2Json)) applied = true;
+						break;
+
+					case "Mindustry":
+						string minJson = @"{ ""name"": ""{ServerName}"" }";
+						if (CreateGameConfig(server, @"config\server-settings.json", minJson)) applied = true;
+						break;
+
+					case "Survive the Nights":
+					case "Savage Lands":
+						string stnJson = @"{ ""ServerName"": ""{ServerName}"" }";
+						if (CreateGameConfig(server, "ServerConfig.json", stnJson)) applied = true;
+						break;
 				}
 			}
 			catch (Exception)

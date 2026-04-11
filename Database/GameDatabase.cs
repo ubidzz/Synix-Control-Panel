@@ -2195,16 +2195,6 @@ namespace Synix_Control_Panel.Database
 				NeedsConfigWarning = true // Requires manual server name/identity in config
 			},
 			new() {
-				Game = "America's Army: Proving Grounds",
-				AppID = "203300",
-				ExeName = "AAGameServer.exe",
-				RequiredArgs = "server {map}?Port={port}",
-				Port = 7777,
-				QueryPort = 27015,
-				Maps = ["AA_Downtown"],
-				NeedsConfigWarning = true // Requires server authorization/tokens
-			},
-			new() {
 				Game = "Alien Swarm",
 				AppID = "635",
 				ExeName = "srcds.exe",
@@ -2349,26 +2339,6 @@ namespace Synix_Control_Panel.Database
 				Port = 25787,
 				QueryPort = 25787,
 				Maps = ["dm1"]
-			},
-			new() {
-				Game = "The Mean Greens - Plastic Warfare",
-				AppID = "421670",
-				ExeName = @"MeanGreens\Binaries\Win64\MeanGreensServer-Win64-Shipping.exe",
-				RequiredArgs = "-log -port={port}",
-				Port = 7777,
-				QueryPort = 27015,
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true // Unreal Engine 4 identity setup required
-			},
-			new() {
-				Game = "No One Survived",
-				AppID = "1963390",
-				ExeName = "NoOneSurvivedServer.exe",
-				RequiredArgs = "-port {port}",
-				Port = 27015,
-				QueryPort = 27016,
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true // Survival world and identity setup required
 			},
 			new() {
 				Game = "Operation: Harsh Doorstop",
@@ -2789,50 +2759,6 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = @"ns\server.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["ns_mines"]
-			},
-			new() {
-				Game = "Call of Duty 2",
-				AppID = "2630",
-				ExeName = "CoD2mp_s.exe",
-				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate",
-				Port = 28960,
-				QueryPort = 28960,
-				RelativeConfigPath = @"main\dedicated.cfg",
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Call of Duty 4: Modern Warfare",
-				AppID = "7940",
-				ExeName = "iw3mp.exe",
-				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate",
-				Port = 28960,
-				QueryPort = 28960,
-				RelativeConfigPath = @"main\dedicated.cfg",
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Farming Simulator 17",
-				AppID = "447020",
-				ExeName = "DedicatedServer.exe",
-				RequiredArgs = "-port {port}",
-				Port = 10823,
-				QueryPort = 10823,
-				RelativeConfigPath = "dedicatedServerConfig.xml",
-				Format = ConfigFormat.XML,
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Farming Simulator 15",
-				AppID = "313290",
-				ExeName = "DedicatedServer.exe",
-				RequiredArgs = "-port {port}",
-				Port = 10823,
-				QueryPort = 10823,
-				RelativeConfigPath = "dedicatedServerConfig.xml",
-				Format = ConfigFormat.XML,
-				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "The Wild Eight",

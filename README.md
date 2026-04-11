@@ -36,7 +36,7 @@ Synix is built on a **Modular Singleton Architecture**. The UI acts as a high-sp
 Synix completely automates the traditional frustrations of Windows server hosting. Once SteamCMD finishes downloading the server files, the Synix `PostInstall` routine intercepts the deployment:
 
 * **Pass 1 (Automated DLL Injection):** Natively detects Unreal Engine and Source engine titles, automatically grabbing required SteamCMD DLLs (`steamclient64.dll`, `tier0_s64.dll`, `vstdlib_s64.dll`) and injecting them directly into the game's `Binaries\Win64` folders to prevent common dedicated server launch crashes.
-* **Pass 2 (Dynamic Config Generation):** Automatically builds, formats, and deploys default configuration files before the server boots. Synix natively handles `.json`, `.xml`, `.ini`, `.lua`, and proprietary formats.
+* **Pass 2 (Dynamic Config Generation):** Automatically builds, formats, and deploys default configuration files before the server boots. Synix natively handles `.json`, `.xml`, `.ini`, `.lua`, `cfg`, and proprietary formats.
 
 ---
 
