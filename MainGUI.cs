@@ -54,6 +54,7 @@ namespace Synix_Control_Panel
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Core.Instance.RebindProcesses();
 			Instance = this;
+			_ = LoadNetworkInfo();
 		}
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
@@ -123,6 +124,36 @@ namespace Synix_Control_Panel
 			{
 				MessageBox.Show("Error loading Synix: " + ex.Message);
 			}
+		}
+
+		private async Task LoadNetworkInfo()
+		{
+			// 1. Get the LAN IP instantly
+			string localIP = Core.Instance.GetLocalIP();
+			lblLocalIP.Text = $"LAN: {localIP}";
+
+			// 2. Get the Public IP in the background
+			lblPublicIP.Text = "Public IP: Fetching..."; // Fix: was using lblLocalIP
+			string publicIP = await Core.Instance.GetPublicIP();
+			lblPublicIP.Text = $"Public IP: {publicIP}"; // Fix: was using lblLocalIP
+		}
+
+		private void lblPublicIP_Click(object sender, EventArgs e)
+		{
+			// Strip the prefix and copy just the IP
+			string ip = lblPublicIP.Text.Replace("Public IP: ", "");
+			if (ip != "Offline" && ip != "Fetching...")
+			{
+				Clipboard.SetText(ip);
+				Core.Instance.Log($"[SYSTEM] Public IP {ip} copied to clipboard.", Color.Cyan);
+			}
+		}
+
+		private void lblLocalIP_Click(object sender, EventArgs e)
+		{
+			string ip = lblLocalIP.Text.Replace("LAN IP: ", "");
+			Clipboard.SetText(ip);
+			Core.Instance.Log($"[SYSTEM] Local IP {ip} copied to clipboard.", Color.Cyan);
 		}
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
@@ -370,6 +401,37 @@ namespace Synix_Control_Panel
 				Core.Instance.Log("[SYSTEM] Please select a server from the list first.", System.Drawing.Color.Yellow);
 			}
 		}
+
+		private async void btnTestConnection_Click(object sender, EventArgs e)
+		{
+			// 1. Get the server currently highlighted in the list
+			var selectedServer = GetSelectedServer();
+
+			if (selectedServer != null)
+			{
+				// 2. Visual feedback in the log
+				Core.Instance.Log($"[NETWORK] Probing {selectedServer.ServerName} (Port: {selectedServer.QueryPort})...", Color.White);
+
+				// 3. Run the test (Testing 127.0.0.1 confirms the server is actually listening)
+				// Note: To test if friends can join, you would pass your Public IP here instead.
+				bool isResponding = await Core.Instance.TestServerConnectivity("127.0.0.1", selectedServer.QueryPort);
+
+				if (isResponding)
+				{
+					Core.Instance.Log($"[SUCCESS] {selectedServer.ServerName} is alive and responding on UDP {selectedServer.QueryPort}!", Color.Green);
+				}
+				else
+				{
+					Core.Instance.Log($"[OFFLINE] No response from {selectedServer.ServerName}. Ensure the server is 'Running' and the port is not blocked.", Color.Red);
+				}
+			}
+			else
+			{
+				Core.Instance.Log("[SYSTEM] Please select a server from the list first.", Color.Yellow);
+			}
+		}
+
+		// Helper to make sure the button knows which server you clicked
 
 		private void btnServerActionsMenu_Click(object sender, EventArgs e)
 		{

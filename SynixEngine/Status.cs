@@ -10,6 +10,8 @@
 using Synix_Control_Panel.ServerHandler;
 using System;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using System.Windows.Forms;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -122,6 +124,38 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			public static string GetStatus(int code) => GetStatus((ServerState)code);
+		}
+
+		public string GetLocalIP()
+		{
+			try
+			{
+				// Looks at the network card to find the internal (LAN) address
+				using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+				{
+					socket.Connect("8.8.8.8", 65530);
+					IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+					return endPoint?.Address.ToString() ?? "127.0.0.1";
+				}
+			}
+			catch
+			{
+				return "127.0.0.1";
+			}
+		}
+
+		public async Task<string> GetPublicIP()
+		{
+			try
+			{
+				using var client = new System.Net.Http.HttpClient();
+				client.Timeout = TimeSpan.FromSeconds(5);
+				return await client.GetStringAsync("https://api.ipify.org");
+			}
+			catch
+			{
+				return "Offline";
+			}
 		}
 	}
 }

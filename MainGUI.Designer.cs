@@ -54,12 +54,15 @@
 			openServerConfig = new ToolStripMenuItem();
 			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
 			openServerFolderToolStripMenuItem = new ToolStripMenuItem();
+			connectionTestToolStripMenuItem = new ToolStripMenuItem();
 			btnRestart = new ToolStripMenuItem();
 			editServer = new ToolStripMenuItem();
 			udateServer = new ToolStripMenuItem();
 			installServer = new ToolStripMenuItem();
 			btnServerActions = new Button();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
+			lblLocalIP = new Label();
+			lblPublicIP = new Label();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -247,7 +250,7 @@
 			// 
 			// openServerConfig
 			// 
-			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerConfigFileToolStripMenuItem, openServerFolderToolStripMenuItem });
+			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerConfigFileToolStripMenuItem, openServerFolderToolStripMenuItem, connectionTestToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
 			openServerConfig.Size = new Size(147, 22);
 			openServerConfig.Text = "Server Files";
@@ -265,6 +268,13 @@
 			openServerFolderToolStripMenuItem.Size = new Size(198, 22);
 			openServerFolderToolStripMenuItem.Text = "Open Server Folder";
 			openServerFolderToolStripMenuItem.Click += btnOpenFolder_Click;
+			// 
+			// connectionTestToolStripMenuItem
+			// 
+			connectionTestToolStripMenuItem.Name = "connectionTestToolStripMenuItem";
+			connectionTestToolStripMenuItem.Size = new Size(198, 22);
+			connectionTestToolStripMenuItem.Text = "Connection Test";
+			connectionTestToolStripMenuItem.Click += btnTestConnection_Click;
 			// 
 			// btnRestart
 			// 
@@ -310,6 +320,34 @@
 			tmrResourceUpdates.Interval = 1000;
 			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
 			// 
+			// lblLocalIP
+			// 
+			lblLocalIP.AutoSize = true;
+			lblLocalIP.BackColor = Color.Transparent;
+			lblLocalIP.Cursor = Cursors.Hand;
+			lblLocalIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblLocalIP.ForeColor = Color.Lime;
+			lblLocalIP.Location = new Point(185, 586);
+			lblLocalIP.Name = "lblLocalIP";
+			lblLocalIP.Size = new Size(62, 17);
+			lblLocalIP.TabIndex = 17;
+			lblLocalIP.Text = "Public IP";
+			lblLocalIP.Click += lblPublicIP_Click;
+			// 
+			// lblPublicIP
+			// 
+			lblPublicIP.AutoSize = true;
+			lblPublicIP.BackColor = Color.Transparent;
+			lblPublicIP.Cursor = Cursors.Hand;
+			lblPublicIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblPublicIP.ForeColor = Color.Lime;
+			lblPublicIP.Location = new Point(185, 606);
+			lblPublicIP.Name = "lblPublicIP";
+			lblPublicIP.Size = new Size(56, 17);
+			lblPublicIP.TabIndex = 18;
+			lblPublicIP.Text = "Local IP";
+			lblPublicIP.Click += lblLocalIP_Click;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -317,6 +355,8 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
+			Controls.Add(lblPublicIP);
+			Controls.Add(lblLocalIP);
 			Controls.Add(btnServerActions);
 			Controls.Add(lblTotalCpu);
 			Controls.Add(lblTotalRam);
@@ -371,5 +411,8 @@
 		private ToolStripMenuItem btnHelp;
 		private ToolStripMenuItem openServerConfigFileToolStripMenuItem;
 		private ToolStripMenuItem openServerFolderToolStripMenuItem;
+		private ToolStripMenuItem connectionTestToolStripMenuItem;
+		private Label lblLocalIP;
+		private Label lblPublicIP;
 	}
 }
