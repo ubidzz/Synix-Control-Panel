@@ -38,42 +38,22 @@ namespace Synix_Control_Panel.ServerHandler
 		/// </summary>
 		private void InitializeComponent()
 		{
-			flowLayoutPanel1 = new FlowLayoutPanel();
-			btnSaveConfig = new Button();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerConfig));
 			SuspendLayout();
-			// 
-			// flowLayoutPanel1
-			// 
-			flowLayoutPanel1.Location = new Point(12, 12);
-			flowLayoutPanel1.Name = "flowLayoutPanel1";
-			flowLayoutPanel1.Size = new Size(776, 383);
-			flowLayoutPanel1.TabIndex = 0;
-			// 
-			// btnSaveConfig
-			// 
-			btnSaveConfig.Location = new Point(347, 401);
-			btnSaveConfig.Name = "btnSaveConfig";
-			btnSaveConfig.Size = new Size(119, 40);
-			btnSaveConfig.TabIndex = 1;
-			btnSaveConfig.Text = "Save Config";
-			btnSaveConfig.UseVisualStyleBackColor = true;
-			btnSaveConfig.Click += btnSave_Click;
 			// 
 			// ServerConfig
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
-			Controls.Add(btnSaveConfig);
-			Controls.Add(flowLayoutPanel1);
+			Icon = (Icon)resources.GetObject("$this.Icon");
+			MaximizeBox = false;
+			MinimizeBox = false;
 			Name = "ServerConfig";
-			Text = "ServerConfig";
+			Text = "Server Config";
 			ResumeLayout(false);
 		}
 
 		#endregion
-
-		private FlowLayoutPanel flowLayoutPanel1;
-		private Button btnSaveConfig;
 	}
 }

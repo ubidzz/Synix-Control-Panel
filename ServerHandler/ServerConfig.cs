@@ -7,7 +7,6 @@
 // use of this source code or the compiled executable is strictly
 // prohibited. Please refer to the LICENSE file in the root
 // directory for full terms.
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +21,10 @@ namespace Synix_Control_Panel.ServerHandler
 		private List<ConfigLine> _fileData;
 		private ConfigFormat _format;
 
+		// 🚀 Declare these manually to fix "does not exist" errors
+		private DataGridView dgvConfig = new DataGridView();
+		private Button btnSave = new Button();
+
 		public ServerConfig(string filePath, ConfigFormat format)
 		{
 			InitializeComponent();
@@ -29,77 +32,77 @@ namespace Synix_Control_Panel.ServerHandler
 			_format = format;
 
 			this.Text = "Config Editor - " + Path.GetFileName(filePath);
+			this.Size = new Size(800, 600);
+			this.StartPosition = FormStartPosition.CenterParent;
 
-			flowLayoutPanel1.AutoScroll = true;
-			flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-			flowLayoutPanel1.WrapContents = false;
-
+			SetupInterface();
 			LoadUI();
+		}
+
+		private void SetupInterface()
+		{
+			// 1. Setup the Save Button
+			btnSave.Text = "Save Config";
+			btnSave.Height = 40;
+			btnSave.Width = 150;
+			// Position at the bottom center
+			btnSave.Location = new Point((this.ClientSize.Width / 2) - 75, this.ClientSize.Height - 50);
+			btnSave.Anchor = AnchorStyles.Bottom;
+			btnSave.Click += btnSave_Click; // Link the click event
+			this.Controls.Add(btnSave);
+
+			// 2. Setup the Grid
+			dgvConfig.Location = new Point(0, 0);
+			dgvConfig.Width = this.ClientSize.Width;
+			dgvConfig.Height = this.ClientSize.Height - 60;
+			dgvConfig.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+
+			dgvConfig.AllowUserToAddRows = false;
+			dgvConfig.RowHeadersVisible = false;
+			dgvConfig.BackgroundColor = Color.White;
+			dgvConfig.BorderStyle = BorderStyle.None;
+			dgvConfig.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			dgvConfig.RowTemplate.Height = 35;
+
+			this.Controls.Add(dgvConfig);
+			dgvConfig.SendToBack(); // Keeps button on top
+
+			// 3. Add Columns
+			dgvConfig.Columns.Add("Key", "Setting Name");
+			dgvConfig.Columns.Add("Value", "Value");
+			dgvConfig.Columns[0].ReadOnly = true;
+			dgvConfig.Columns[0].Width = 250;
+			dgvConfig.Columns[0].DefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
 		}
 
 		private void LoadUI()
 		{
 			_fileData = ConfigHandler.LoadConfig(_path, _format);
-
-			flowLayoutPanel1.Controls.Clear();
-			flowLayoutPanel1.SuspendLayout();
-
+			dgvConfig.Rows.Clear();
 			foreach (var line in _fileData)
 			{
-				Panel p = new Panel
-				{
-					Width = flowLayoutPanel1.Width - 40,
-					Height = 35,
-					Padding = new Padding(5)
-				};
-
-				Label lbl = new Label
-				{
-					Text = line.Key,
-					Width = 250,
-					Location = new Point(5, 8),
-					ForeColor = Color.Black,
-					Font = new Font("Segoe UI", 9, FontStyle.Bold),
-					AutoSize = false,
-					TextAlign = ContentAlignment.MiddleLeft
-				};
-
-				TextBox txt = new TextBox
-				{
-					Text = line.Value,
-					Width = p.Width - 270,
-					Location = new Point(260, 5),
-					BackColor = Color.White,
-					ForeColor = Color.Black,
-					BorderStyle = BorderStyle.FixedSingle,
-					Font = new Font("Segoe UI", 9, FontStyle.Regular)
-				};
-
-				p.Controls.Add(lbl);
-				p.Controls.Add(txt);
-				flowLayoutPanel1.Controls.Add(p);
+				dgvConfig.Rows.Add(line.Key, line.Value);
 			}
-
-			flowLayoutPanel1.ResumeLayout();
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
+			dgvConfig.EndEdit();
 			List<ConfigLine> updatedData = new List<ConfigLine>();
 
-			foreach (Control ctrl in flowLayoutPanel1.Controls)
+			foreach (DataGridViewRow row in dgvConfig.Rows)
 			{
-				if (ctrl is Panel p && p.Controls.Count >= 2)
+				if (row.Cells[0].Value != null)
 				{
-					string key = p.Controls[0].Text.Trim();
-					string val = p.Controls[1].Text.Trim();
-
-					updatedData.Add(new ConfigLine { Key = key, Value = val });
+					updatedData.Add(new ConfigLine
+					{
+						Key = row.Cells[0].Value.ToString(),
+						Value = row.Cells[1].Value?.ToString() ?? ""
+					});
 				}
 			}
 
 			ConfigHandler.SaveConfig(_path, updatedData, _format);
-
 			this.Close();
 		}
 	}

@@ -124,18 +124,18 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		public void AppendLog(string message)
+		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
 		{
-			AppendLog(message, null, false);
-		}
+			try
+			{
+				string logDirectory = @"C:\Synix\SynixData\logs";
+				System.IO.Directory.CreateDirectory(logDirectory);
+				string logFilePath = System.IO.Path.Combine(logDirectory, "synix_engine.log");
+				string timeStampedMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}";
+				System.IO.File.AppendAllText(logFilePath, timeStampedMessage);
+			}
+			catch { /* Silent fail */ }
 
-		public void AppendLog(string message, Color textColor)
-		{
-			AppendLog(message, textColor, false);
-		}
-
-		public void AppendLog(string message, Color? textColor, bool isBold)
-		{
 			if (!this.IsHandleCreated || this.IsDisposed) return;
 
 			if (rtbLog.InvokeRequired)
@@ -146,15 +146,11 @@ namespace Synix_Control_Panel
 
 			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
 
-			// Move to end
 			rtbLog.SelectionStart = rtbLog.TextLength;
 			rtbLog.SelectionLength = 0;
 
-			// --- APPLY COLOR ---
 			rtbLog.SelectionColor = textColor ?? rtbLog.ForeColor;
 
-			// --- APPLY BOLD ---
-			// We take the current font and just "add" the Bold style to it
 			if (isBold)
 				rtbLog.SelectionFont = new Font(rtbLog.Font, FontStyle.Bold);
 			else
@@ -163,7 +159,6 @@ namespace Synix_Control_Panel
 			// Print text
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
 
-			// Reset for next time (important so next log isn't accidentally bold!)
 			rtbLog.SelectionFont = rtbLog.Font;
 
 			// Scroll and Refresh
@@ -181,7 +176,7 @@ namespace Synix_Control_Panel
 			AppendLog($"--- [WARNING] Synix close window button is now Disabled! ---", Color.Orange, true);
 			// 2. Run the check on a background thread
 			// This allows the 'X' button to stay active and trigger GUI_FormClosing
-			await Task.Run(() => SteamCMD.EnsureSteamCMD(AppendLog));
+			await Task.Run(() => SteamCMD.EnsureSteamCMD(msg => AppendLog(msg)));
 
 			// 3. Release the lock once the background task is done
 			isDownloadActive = false;
@@ -279,31 +274,45 @@ namespace Synix_Control_Panel
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			// 🪤 TRIPWIRE 1: If this doesn't print, the button is completely disconnected from this code!
+			AppendLog("Start button clicked...", Color.Cyan);
+
+			// 🪤 TRIPWIRE 2: Check if the grid actually has a row selected
+			if (dataGridView1.CurrentRow == null)
 			{
-				// 🛡️ 1. THE SPAM LOCK
-				if (!Core.Instance.PassStartSpamLock(selectedServer, out string lockMsg))
-				{
-					AppendLog(lockMsg, Color.Orange);
-					return;
-				}
-
-				// 🛡️ 2. ENGINE INTEGRITY CHECK
-				if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
-
-				// 🛡️ 3. CONFIG WARNING BLOCKER
-				if (!Core.Instance.ShouldBlockForConfig(selectedServer)) return;
-
-				// 🚀 4. START THE SERVER
-				Servers.Start(selectedServer, msg =>
-				{
-					this.Invoke((MethodInvoker)delegate
-					{
-						AppendLog(msg);
-						UpdateGrid();
-					});
-				});
+				AppendLog("[ERROR] No row is currently selected in the grid!", Color.Red);
+				return;
 			}
+
+			// 🪤 TRIPWIRE 3: Check if the selected row is actually a GameServer object
+			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
+			{
+				AppendLog("[ERROR] The selected row is not a valid GameServer object!", Color.Red);
+				return;
+			}
+
+			// 🛡️ 1. THE SPAM LOCK
+			if (!Core.Instance.PassStartSpamLock(selectedServer, out string lockMsg))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+
+			// 🛡️ 2. ENGINE INTEGRITY CHECK
+			if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
+
+			// 🛡️ 3. CONFIG WARNING BLOCKER
+			if (Core.Instance.ShouldBlockForConfig(selectedServer)) return;
+
+			// 🚀 4. START THE SERVER
+			Servers.Start(selectedServer, msg =>
+			{
+				this.Invoke((MethodInvoker)delegate
+				{
+					AppendLog(msg);
+					UpdateGrid();
+				});
+			});
 		}
 
 		private void btnStop_Click(object sender, EventArgs e)
