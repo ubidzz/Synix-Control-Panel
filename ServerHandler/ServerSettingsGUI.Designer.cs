@@ -40,7 +40,7 @@
 			btnSave = new Button();
 			chkDefaultPath = new CheckBox();
 			ltextLabel1 = new Label();
-			ServerPasswordLabel = new Label();
+			lblPassword = new Label();
 			txtPassword = new TextBox();
 			MaxPlayerLabel = new Label();
 			numMaxPlayers = new NumericUpDown();
@@ -52,7 +52,7 @@
 			numQueryPort = new NumericUpDown();
 			WarningLabel = new Label();
 			cmbWorldName = new ComboBox();
-			AdminPasswordLabel = new Label();
+			lblAdminPassword = new Label();
 			txtAdminPassword = new TextBox();
 			cmbCompetitive = new ComboBox();
 			lblCompetitive = new Label();
@@ -61,8 +61,7 @@
 			chkEnableRcon = new CheckBox();
 			numRconPort = new NumericUpDown();
 			txtRconPassword = new TextBox();
-			TextLabel5 = new Label();
-			TextLabel6 = new Label();
+			lblRCONpassword = new Label();
 			TextLabel4 = new Label();
 			chkEnableSchedule = new CheckBox();
 			dtpRestartTime = new DateTimePicker();
@@ -76,6 +75,9 @@
 			groupBox1 = new GroupBox();
 			lblWorldSeed = new Label();
 			txtWorldSeed = new TextBox();
+			lblRCONport = new Label();
+			lblaruments = new Label();
+			lblDefaultArgs = new Label();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -162,7 +164,7 @@
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(41, 445);
+			btnBrowse.Location = new Point(47, 445);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -206,17 +208,17 @@
 			ltextLabel1.TabIndex = 11;
 			ltextLabel1.Text = " a location";
 			// 
-			// ServerPasswordLabel
+			// lblPassword
 			// 
-			ServerPasswordLabel.AutoSize = true;
-			ServerPasswordLabel.BackColor = Color.Transparent;
-			ServerPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			ServerPasswordLabel.ForeColor = Color.White;
-			ServerPasswordLabel.Location = new Point(414, 9);
-			ServerPasswordLabel.Name = "ServerPasswordLabel";
-			ServerPasswordLabel.Size = new Size(109, 17);
-			ServerPasswordLabel.TabIndex = 12;
-			ServerPasswordLabel.Text = "Server Password";
+			lblPassword.AutoSize = true;
+			lblPassword.BackColor = Color.Transparent;
+			lblPassword.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblPassword.ForeColor = Color.White;
+			lblPassword.Location = new Point(414, 9);
+			lblPassword.Name = "lblPassword";
+			lblPassword.Size = new Size(109, 17);
+			lblPassword.TabIndex = 12;
+			lblPassword.Text = "Server Password";
 			// 
 			// txtPassword
 			// 
@@ -265,7 +267,7 @@
 			TextLabel3.BackColor = Color.Transparent;
 			TextLabel3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel3.ForeColor = Color.White;
-			TextLabel3.Location = new Point(415, 434);
+			TextLabel3.Location = new Point(415, 276);
 			TextLabel3.Name = "TextLabel3";
 			TextLabel3.Size = new Size(124, 17);
 			TextLabel3.TabIndex = 18;
@@ -326,20 +328,20 @@
 			cmbWorldName.FormattingEnabled = true;
 			cmbWorldName.Location = new Point(12, 155);
 			cmbWorldName.Name = "cmbWorldName";
-			cmbWorldName.Size = new Size(168, 23);
+			cmbWorldName.Size = new Size(186, 23);
 			cmbWorldName.TabIndex = 24;
 			// 
-			// AdminPasswordLabel
+			// lblAdminPassword
 			// 
-			AdminPasswordLabel.AutoSize = true;
-			AdminPasswordLabel.BackColor = Color.Transparent;
-			AdminPasswordLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			AdminPasswordLabel.ForeColor = Color.White;
-			AdminPasswordLabel.Location = new Point(414, 70);
-			AdminPasswordLabel.Name = "AdminPasswordLabel";
-			AdminPasswordLabel.Size = new Size(154, 17);
-			AdminPasswordLabel.TabIndex = 25;
-			AdminPasswordLabel.Text = "Server Admin Password";
+			lblAdminPassword.AutoSize = true;
+			lblAdminPassword.BackColor = Color.Transparent;
+			lblAdminPassword.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblAdminPassword.ForeColor = Color.White;
+			lblAdminPassword.Location = new Point(414, 70);
+			lblAdminPassword.Name = "lblAdminPassword";
+			lblAdminPassword.Size = new Size(154, 17);
+			lblAdminPassword.TabIndex = 25;
+			lblAdminPassword.Text = "Server Admin Password";
 			// 
 			// txtAdminPassword
 			// 
@@ -417,29 +419,17 @@
 			txtRconPassword.Size = new Size(223, 23);
 			txtRconPassword.TabIndex = 33;
 			// 
-			// TextLabel5
+			// lblRCONpassword
 			// 
-			TextLabel5.AutoSize = true;
-			TextLabel5.BackColor = Color.Transparent;
-			TextLabel5.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			TextLabel5.ForeColor = Color.White;
-			TextLabel5.Location = new Point(12, 296);
-			TextLabel5.Name = "TextLabel5";
-			TextLabel5.Size = new Size(74, 17);
-			TextLabel5.TabIndex = 34;
-			TextLabel5.Text = "RCON Port";
-			// 
-			// TextLabel6
-			// 
-			TextLabel6.AutoSize = true;
-			TextLabel6.BackColor = Color.Transparent;
-			TextLabel6.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			TextLabel6.ForeColor = Color.White;
-			TextLabel6.Location = new Point(107, 296);
-			TextLabel6.Name = "TextLabel6";
-			TextLabel6.Size = new Size(106, 17);
-			TextLabel6.TabIndex = 35;
-			TextLabel6.Text = "RCON Password";
+			lblRCONpassword.AutoSize = true;
+			lblRCONpassword.BackColor = Color.Transparent;
+			lblRCONpassword.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblRCONpassword.ForeColor = Color.White;
+			lblRCONpassword.Location = new Point(107, 296);
+			lblRCONpassword.Name = "lblRCONpassword";
+			lblRCONpassword.Size = new Size(106, 17);
+			lblRCONpassword.TabIndex = 35;
+			lblRCONpassword.Text = "RCON Password";
 			// 
 			// TextLabel4
 			// 
@@ -447,7 +437,7 @@
 			TextLabel4.BackColor = Color.Transparent;
 			TextLabel4.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel4.ForeColor = Color.White;
-			TextLabel4.Location = new Point(415, 296);
+			TextLabel4.Location = new Point(414, 135);
 			TextLabel4.Name = "TextLabel4";
 			TextLabel4.Size = new Size(237, 17);
 			TextLabel4.TabIndex = 36;
@@ -565,7 +555,7 @@
 			groupBox1.Controls.Add(chkSat);
 			groupBox1.Controls.Add(chkTue);
 			groupBox1.Controls.Add(chkMon);
-			groupBox1.Location = new Point(414, 316);
+			groupBox1.Location = new Point(414, 155);
 			groupBox1.Name = "groupBox1";
 			groupBox1.Size = new Size(351, 105);
 			groupBox1.TabIndex = 45;
@@ -577,7 +567,7 @@
 			lblWorldSeed.BackColor = Color.Transparent;
 			lblWorldSeed.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblWorldSeed.ForeColor = Color.White;
-			lblWorldSeed.Location = new Point(186, 135);
+			lblWorldSeed.Location = new Point(204, 135);
 			lblWorldSeed.Name = "lblWorldSeed";
 			lblWorldSeed.Size = new Size(79, 17);
 			lblWorldSeed.TabIndex = 46;
@@ -585,11 +575,44 @@
 			// 
 			// txtWorldSeed
 			// 
-			txtWorldSeed.Location = new Point(186, 155);
+			txtWorldSeed.Location = new Point(204, 155);
 			txtWorldSeed.Name = "txtWorldSeed";
-			txtWorldSeed.Size = new Size(194, 23);
+			txtWorldSeed.Size = new Size(176, 23);
 			txtWorldSeed.TabIndex = 47;
 			txtWorldSeed.KeyPress += txtWorldSeed_KeyPress;
+			// 
+			// lblRCONport
+			// 
+			lblRCONport.AutoSize = true;
+			lblRCONport.BackColor = Color.Transparent;
+			lblRCONport.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblRCONport.ForeColor = Color.White;
+			lblRCONport.Location = new Point(12, 296);
+			lblRCONport.Name = "lblRCONport";
+			lblRCONport.Size = new Size(74, 17);
+			lblRCONport.TabIndex = 48;
+			lblRCONport.Text = "RCON Port";
+			// 
+			// lblaruments
+			// 
+			lblaruments.AutoEllipsis = true;
+			lblaruments.BackColor = Color.Transparent;
+			lblaruments.ForeColor = Color.White;
+			lblaruments.Location = new Point(414, 293);
+			lblaruments.Name = "lblaruments";
+			lblaruments.Size = new Size(368, 66);
+			lblaruments.TabIndex = 52;
+			lblaruments.Text = resources.GetString("lblaruments.Text");
+			// 
+			// lblDefaultArgs
+			// 
+			lblDefaultArgs.AutoEllipsis = true;
+			lblDefaultArgs.BorderStyle = BorderStyle.Fixed3D;
+			lblDefaultArgs.Location = new Point(415, 359);
+			lblDefaultArgs.Name = "lblDefaultArgs";
+			lblDefaultArgs.Size = new Size(367, 90);
+			lblDefaultArgs.TabIndex = 53;
+			lblDefaultArgs.Text = "label1";
 			// 
 			// ServerSettingsGUI
 			// 
@@ -598,12 +621,14 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 558);
+			Controls.Add(lblDefaultArgs);
+			Controls.Add(lblaruments);
+			Controls.Add(lblRCONport);
 			Controls.Add(txtWorldSeed);
 			Controls.Add(lblWorldSeed);
 			Controls.Add(groupBox1);
 			Controls.Add(TextLabel4);
-			Controls.Add(TextLabel6);
-			Controls.Add(TextLabel5);
+			Controls.Add(lblRCONpassword);
 			Controls.Add(txtRconPassword);
 			Controls.Add(numRconPort);
 			Controls.Add(chkEnableRcon);
@@ -612,7 +637,7 @@
 			Controls.Add(lblCompetitive);
 			Controls.Add(cmbCompetitive);
 			Controls.Add(txtAdminPassword);
-			Controls.Add(AdminPasswordLabel);
+			Controls.Add(lblAdminPassword);
 			Controls.Add(cmbWorldName);
 			Controls.Add(WarningLabel);
 			Controls.Add(numQueryPort);
@@ -624,7 +649,7 @@
 			Controls.Add(numMaxPlayers);
 			Controls.Add(MaxPlayerLabel);
 			Controls.Add(txtPassword);
-			Controls.Add(ServerPasswordLabel);
+			Controls.Add(lblPassword);
 			Controls.Add(ltextLabel1);
 			Controls.Add(chkDefaultPath);
 			Controls.Add(btnSave);
@@ -665,7 +690,7 @@
 		private Button btnSave;
 		private CheckBox chkDefaultPath;
 		private Label ltextLabel1;
-		private Label ServerPasswordLabel;
+		private Label lblPassword;
 		private TextBox txtPassword;
 		private Label MaxPlayerLabel;
 		private NumericUpDown numMaxPlayers;
@@ -677,7 +702,7 @@
 		private NumericUpDown numQueryPort;
 		private Label WarningLabel;
 		private ComboBox cmbWorldName;
-		private Label AdminPasswordLabel;
+		private Label lblAdminPassword;
 		private TextBox txtAdminPassword;
 		private ComboBox cmbCompetitive;
 		private Label lblCompetitive;
@@ -687,7 +712,7 @@
 		private NumericUpDown numRconPort;
 		private TextBox txtRconPassword;
 		private Label TextLabel5;
-		private Label TextLabel6;
+		private Label lblRCONpassword;
 		private Label TextLabel4;
 		private CheckBox chkEnableSchedule;
 		private DateTimePicker dtpRestartTime;
@@ -701,5 +726,8 @@
 		private GroupBox groupBox1;
 		private Label lblWorldSeed;
 		private TextBox txtWorldSeed;
+		private Label lblRCONport;
+		private Label lblaruments;
+		private Label lblDefaultArgs;
 	}
 }

@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
 using static Synix_Control_Panel.SynixEngine.Core;
@@ -31,6 +32,11 @@ namespace Synix_Control_Panel
 		private bool isManualLoading = false;
 		private bool _isEditMode = false;
 		private GameServer? _existingServer = null;
+
+		[DllImport("user32.dll")]
+		static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+		[DllImport("user32.dll")]
+		static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
 		public ServerSettingsGUI(GameServer? server = null)
 		{
@@ -63,6 +69,12 @@ namespace Synix_Control_Panel
 				WarningLabel.Text = "[WARNING] Pick a location to install or use default. This cannot be changed later!";
 				WarningLabel.ForeColor = Color.Red;
 			}
+
+			// 1. Set the background to transparent (Inherits from parent)
+			lblDefaultArgs.BackColor = Color.Transparent;
+
+			// 3. Optional: Professional styling
+			lblDefaultArgs.ForeColor = Color.White;
 
 			// 4. Initial Gatekeeper Check
 			SyncGatekeeper();
@@ -116,38 +128,29 @@ namespace Synix_Control_Panel
 			chkDefaultPath.Enabled = false;
 			txtInstallPath.Enabled = false;
 			btnBrowse.Enabled = false;
-			WarningLabel.Text = "{WARNING] You cannot edit location after the server has been saved!";
+			WarningLabel.Text = "[WARNING] You cannot edit location after the server has been saved!";
 			WarningLabel.ForeColor = Color.Red;
 
 			isManualLoading = false;
 		}
 
-		/// <summary>
-		/// 🤖 AI Gatekeeper: The Engine decides if the form is valid.
-		/// </summary>
 		private void SyncGatekeeper()
 		{
-			// 1. Basic Validation
 			bool hasGame = cmbGame.SelectedIndex > 0;
 			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
 			bool isReady = hasGame && hasName;
 
-			// 2. Lock/Unlock Core Groups
 			groupBox1.Enabled = isReady;
 
 			if (!_isEditMode || chkDefaultPath.Checked)
 			{
 				chkDefaultPath.Enabled = isReady;
-
-				// 🛡️ BROWSE LOCK LOGIC: Only active if ready AND NOT using default
 				bool customMode = isReady && !chkDefaultPath.Checked;
 				txtInstallPath.Enabled = customMode;
 				btnBrowse.Enabled = customMode;
 
-				// 📂 PATH POPULATION LOGIC
 				if (isReady && chkDefaultPath.Checked)
 				{
-					// Automatically fill the path when default is checked
 					string cleanGame = cmbGame.SelectedItem.ToString().Replace(" ", "_");
 					string cleanName = txtName.Text.Trim().Replace(" ", "_");
 					txtInstallPath.Text = Path.Combine(@"C:\Synix\Games", cleanGame, cleanName);
@@ -157,7 +160,6 @@ namespace Synix_Control_Panel
 				}
 				else if (isReady && !chkDefaultPath.Checked)
 				{
-					// Logic for custom path warnings
 					if (string.IsNullOrWhiteSpace(txtInstallPath.Text))
 					{
 						WarningLabel.Text = "[ACTION REQUIRED] You can choose a custom installation location or use the default folder location: C:/Games/[Game]/[Server Name]";
@@ -171,38 +173,14 @@ namespace Synix_Control_Panel
 				}
 				else
 				{
-					// Not ready (missing name or game selection)
 					txtInstallPath.Text = string.Empty;
 					WarningLabel.Text = "[INFO] Enter a Server Name and select a Game to enable installation.";
 					WarningLabel.ForeColor = Color.Red;
 				}
 			}
 
-			// 3. MASTER SAVE BUTTON LOCK
-			// Save is only enabled if ready AND we have a location (default checked OR manual path entered)
 			bool hasLocation = chkDefaultPath.Checked || !string.IsNullOrWhiteSpace(txtInstallPath.Text);
 			btnSave.Enabled = isReady && hasLocation;
-		}
-
-		private void UpdatePathPreview(bool isReady)
-		{
-			if (_isEditMode || !chkDefaultPath.Checked) return;
-
-			if (isReady)
-			{
-				string cleanGame = cmbGame.SelectedItem.ToString().Replace(" ", "_");
-				string cleanName = txtName.Text.Trim().Replace(" ", "_");
-				txtInstallPath.Text = Path.Combine(@"C:\Synix\Games", cleanGame, cleanName);
-
-				WarningLabel.Text = $"Synix will install to: {txtInstallPath.Text}";
-				WarningLabel.ForeColor = Color.Green;
-			}
-			else
-			{
-				txtInstallPath.Text = string.Empty;
-				WarningLabel.Text = "Enter a Server Name and select a Game to continue.";
-				WarningLabel.ForeColor = Color.Red;
-			}
 		}
 
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
@@ -216,8 +194,6 @@ namespace Synix_Control_Panel
 					numQueryPort.Value = gameData.QueryPort;
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
 					PopulateGameModes(gameData, "PVE");
-
-					// 🔒 CALL THE SMART LOCKER
 					ToggleGameSpecificFields(gameData);
 				}
 			}
@@ -268,15 +244,9 @@ namespace Synix_Control_Panel
 				RconPassword = txtRconPassword.Text,
 				InstallPath = targetPath,
 				SteamPID = _isEditMode && _existingServer != null ? _existingServer.SteamPID : null,
-
-				// 🕒 SAVE MAINTENANCE SETTINGS
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = dtpRestartTime.Value.ToString("HH:mm"),
-				RestartDays = new bool[]
-				{
-					chkSun.Checked, chkMon.Checked, chkTue.Checked, chkWed.Checked,
-					chkThu.Checked, chkFri.Checked, chkSat.Checked
-				},
+				RestartDays = new bool[] { chkSun.Checked, chkMon.Checked, chkTue.Checked, chkWed.Checked, chkThu.Checked, chkFri.Checked, chkSat.Checked },
 				LastMaintenanceDate = _existingServer?.LastMaintenanceDate ?? ""
 			};
 
@@ -284,10 +254,7 @@ namespace Synix_Control_Panel
 			{
 				if (_isEditMode && _existingServer != null)
 				{
-					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath))
-					{
-						ServerFolder.Rename(_existingServer, NewServer);
-					}
+					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath)) ServerFolder.Rename(_existingServer, NewServer);
 					int index = MainGUI.serverList.IndexOf(_existingServer);
 					if (index != -1) MainGUI.serverList[index] = NewServer;
 				}
@@ -301,23 +268,21 @@ namespace Synix_Control_Panel
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Operation failed: {ex.Message}", "File Error");
-			}
+			catch (Exception ex) { MessageBox.Show($"Operation failed: {ex.Message}", "File Error"); }
 		}
 
 		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e)
 		{
 			bool isEnabled = chkEnableSchedule.Checked;
 			dtpRestartTime.Enabled = isEnabled;
-			chkSun.Enabled = isEnabled;
-			chkMon.Enabled = isEnabled;
-			chkTue.Enabled = isEnabled;
-			chkWed.Enabled = isEnabled;
-			chkThu.Enabled = isEnabled;
-			chkFri.Enabled = isEnabled;
-			chkSat.Enabled = isEnabled;
+			chkSun.Enabled = chkMon.Enabled = chkTue.Enabled = chkWed.Enabled = chkThu.Enabled = chkFri.Enabled = chkSat.Enabled = isEnabled;
+		}
+
+		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e)
+		{
+			// 📡 RCON REACTIVITY: Ensure sub-controls unlock immediately when clicked
+			bool rconActive = chkEnableRcon.Enabled && chkEnableRcon.Checked;
+			lblRCONport.Enabled = numRconPort.Enabled = lblRCONpassword.Enabled = txtRconPassword.Enabled = rconActive;
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e)
@@ -350,13 +315,9 @@ namespace Synix_Control_Panel
 
 		private void txtWorldSeed_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			// If the selected game is Rust, only allow numbers in the seed box
 			if (cmbGame.Text == "Rust")
 			{
-				if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-				{
-					e.Handled = true; // Block the key press
-				}
+				if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
 			}
 		}
 
@@ -364,31 +325,75 @@ namespace Synix_Control_Panel
 		{
 			if (gameData == null)
 			{
+				txtPassword.Enabled = false;
+				txtAdminPassword.Enabled = false;
 				txtWorldSeed.Enabled = false;
 				cmbCompetitive.Enabled = false;
 				chkEnableRcon.Enabled = false;
+
+				// Clear the arguments display if no game is selected
+				lblDefaultArgs.Text = string.Empty;
 				return;
 			}
 
-			// 🎲 SEED LOCK: Only unlock if the arguments actually contain the {seed} tag
+			// 📋 DISPLAY DEFAULT ARGUMENTS AS WRAPPED TEXT
+			// The Label will now automatically wrap the RequiredArgs into multiple lines
+			lblDefaultArgs.Text = gameData.RequiredArgs;
+
+			// --- 🔐 SERVER PASSWORD LOCK ---
+			bool supportsPass = gameData.RequiredArgs.Contains("{pass}");
+			txtPassword.Enabled = supportsPass;
+			lblPassword.ForeColor = supportsPass ? Color.White : Color.Gray;
+
+			if (!supportsPass)
+			{
+				txtPassword.Text = "Not Supported";
+			}
+			else if (txtPassword.Text == "Not Supported")
+			{
+				txtPassword.Text = _existingServer?.Password ?? "";
+			}
+
+			// --- 👑 ADMIN PASSWORD LOCK ---
+			bool supportsAdminPass = gameData.RequiredArgs.Contains("{adminpass}");
+			txtAdminPassword.Enabled = supportsAdminPass;
+			lblAdminPassword.ForeColor = supportsAdminPass ? Color.White : Color.Gray;
+
+			if (!supportsAdminPass)
+			{
+				txtAdminPassword.Text = "Not Supported";
+			}
+			else if (txtAdminPassword.Text == "Not Supported")
+			{
+				txtAdminPassword.Text = _existingServer?.AdminPassword ?? "";
+			}
+
+			// --- 🎲 WORLD SEED LOCK ---
 			bool supportsSeed = gameData.RequiredArgs.Contains("{seed}");
 			txtWorldSeed.Enabled = supportsSeed;
-			lblWorldSeed.ForeColor = supportsSeed ? Color.Black : Color.Gray;
-			if (!supportsSeed) txtWorldSeed.Text = "N/A";
+			lblWorldSeed.ForeColor = supportsSeed ? Color.White : Color.Gray;
 
-			// ⚔️ PVP/PVE LOCK: Only unlock if the game has more than 1 mode defined
+			if (!supportsSeed)
+			{
+				txtWorldSeed.Text = "N/A";
+			}
+			else if (txtWorldSeed.Text == "N/A")
+			{
+				txtWorldSeed.Text = _existingServer?.WorldSeed ?? "";
+			}
+
+			// --- ⚔️ PVP/PVE MODE LOCK ---
 			bool supportsModes = gameData.GameModes != null && gameData.GameModes.Count > 1;
 			cmbCompetitive.Enabled = supportsModes;
 			lblCompetitive.ForeColor = supportsModes ? Color.White : Color.Gray;
 
-			// 📡 RCON LOCK: Only unlock if the game has RCON syntax defined
-			bool supportsRcon = !string.IsNullOrWhiteSpace(gameData.RconSyntax);
+			// --- 📡 RCON LOCK ---
+			bool supportsRcon = !string.IsNullOrEmpty(gameData.RconSyntax);
 			chkEnableRcon.Enabled = supportsRcon;
-			if (!supportsRcon) chkEnableRcon.Checked = false;
 
-			// 🗺️ MAP LOCK: Only unlock if the game has multiple maps
-			bool supportsMaps = gameData.Maps != null && gameData.Maps.Count > 1;
-			cmbWorldName.Enabled = supportsMaps;
+			// Logic Lock: RCON sub-fields only unlock if the game supports it AND it is checked
+			bool rconActive = supportsRcon && chkEnableRcon.Checked;
+			lblRCONport.Enabled = numRconPort.Enabled = lblRCONpassword.Enabled = txtRconPassword.Enabled = rconActive;
 		}
 	}
 }
