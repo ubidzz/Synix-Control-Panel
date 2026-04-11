@@ -2278,7 +2278,7 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27016,
 				RelativeConfigPath = "ServerConfig.json",
 				Format = ConfigFormat.JSON,
-				NeedsConfigWarning = true // Survival world/session setup required
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Red Orchestra: Ostfront 41-45",
@@ -2288,7 +2288,7 @@ namespace Synix_Control_Panel.Database
 				Port = 7757,
 				QueryPort = 7758,
 				Maps = ["RO-Arad"],
-				NeedsConfigWarning = true // Master server listing requires manual INI tweaks
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "SiN 1",
@@ -3735,7 +3735,7 @@ namespace Synix_Control_Panel.Database
 			},
 			new() {
 				Game = "GoldenEye: Source",
-				AppID = "244310", // Uses Source SDK 2013 Dedicated Server
+				AppID = "244310",
 				ExeName = "srcds.exe",
 				RequiredArgs = "-game gesource -console -port {port} +maxplayers {MaxPlayers} +map {map}",
 				Port = 27015,
