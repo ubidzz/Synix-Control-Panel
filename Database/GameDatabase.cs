@@ -119,7 +119,7 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["TheIsland_WP"],
+				Maps = ["TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP", "Extinction_WP"],
 				GameModes = ["PVE", "PVP"],
 				NeedsConfigWarning = true
 			},
@@ -199,13 +199,14 @@ namespace Synix_Control_Panel.Database
 				Game = "Left 4 Dead 2",
 				AppID = "222860",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon}",
+				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +mp_gamemode {mode} +hostname \"{ServerName}\" {rcon}",
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				RelativeConfigPath = @"left4dead2\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["c1m1_hotel", "c2m1_highway", "c8m1_apartment", "c14m1_junkyard"]
+				Maps = ["c1m1_hotel", "c2m1_highway", "c8m1_apartment", "c14m1_junkyard", "c1m4_atrium"],
+				GameModes = ["coop", "versus", "survival", "scavenge"]
 			},
 			new() {
 				Game = "Squad",
@@ -419,13 +420,14 @@ namespace Synix_Control_Panel.Database
 				Game = "Garry's Mod",
 				AppID = "4000",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RequiredArgs = "-game garrysmod +gamemode {mode} +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
 				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["gm_construct", "gm_flatgrass"]
+				Maps = ["gm_construct", "gm_flatgrass", "ttt_67thway_v3", "ttt_clue", "rp_downtown_v4c_v2", "zs_obj_vertigo", "ph_office", "mu_clue", "dr_playstation"],
+				GameModes = ["sandbox", "ttt", "darkrp", "zombiesurvival", "prophunt", "murder", "deathrun", "basewars"]
 			},
 			new() {
 				Game = "Project Zomboid",
@@ -460,19 +462,6 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 2457,
 				Format = ConfigFormat.StandardINI,
 				Maps = ["Dedicated"]
-			},
-
-			new() {
-				Game = "Garry's Mod (Trouble in Terrorist Town)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode ttt +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["ttt_67thway_v3", "ttt_clue"]
 			},
 			new()
 			{
@@ -1043,7 +1032,7 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"hl2mp\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["dm_lockdown", "dm_overwatch"]
+				Maps = ["crossfire", "bounce", "data-core", "ns_mines"]
 			},
 			new() {
 				Game = "Left 4 Dead (1)",
@@ -1557,17 +1546,6 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI
 			},
 			new() {
-				Game = "Farming Simulator 22",
-				AppID = "1248130",
-				ExeName = "DedicatedServer.exe",
-				RequiredArgs = "-port {port}",
-				Port = 10823,
-				QueryPort = 10823,
-				RelativeConfigPath = "dedicatedServerConfig.xml",
-				Format = ConfigFormat.XML,
-				NeedsConfigWarning = true
-			},
-			new() {
 				Game = "Zero Hour",
 				AppID = "1359090",
 				ExeName = "ZeroHourServer.exe",
@@ -1635,7 +1613,7 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"cstrike\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["de_dust2", "cs_assault"]
+				Maps = ["de_dust2", "cs_assault", "de_dust2_cz"]
 			},
 			new() {
 				Game = "Keplerth",
@@ -1940,28 +1918,6 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27960,
 				RelativeConfigPath = "server.cfg",
 				Format = ConfigFormat.StandardINI
-			},
-			new() {
-				Game = "Wurm Unlimited",
-				AppID = "402370",
-				ExeName = "WurmServerLauncher-64.exe",
-				RequiredArgs = "{map}",
-				Port = 3724,
-				QueryPort = 27016,
-				RelativeConfigPath = @"Creative\gameserver.conf",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["Adventure"]
-			},
-			new() {
-				Game = "Holdfast: Nations At War",
-				AppID = "589290",
-				ExeName = "Holdfast NaW - Dedicated Server.exe",
-				RequiredArgs = "-batchmode -nographics -server_name=\"{ServerName}\" -port={port} -query_port={query} -map_name=\"{map}\"",
-				Port = 20101,
-				QueryPort = 27015,
-				RelativeConfigPath = @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["FortSchwarz", "CampNile"]
 			},
 			new() {
 				Game = "Craftopia",
@@ -2308,18 +2264,7 @@ namespace Synix_Control_Panel.Database
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["MNC-Crossfire"],
-				NeedsConfigWarning = true // Unreal Engine configuration required for listing
-			},
-			new() {
-				Game = "NEOTOKYO",
-				AppID = "313600",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game neotokyo -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"neotokyo\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["nt_engage_ctg"]
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "NS2: Combat",
@@ -2329,16 +2274,7 @@ namespace Synix_Control_Panel.Database
 				Port = 27015,
 				QueryPort = 27016,
 				Format = ConfigFormat.JSON,
-				NeedsConfigWarning = true // Requires setup of ServerConfig.json for identity
-			},
-			new() {
-				Game = "Reflex Arena",
-				AppID = "328070",
-				ExeName = "ReflexServer.exe",
-				RequiredArgs = "+port {port} +map {map}",
-				Port = 25787,
-				QueryPort = 25787,
-				Maps = ["dm1"]
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Operation: Harsh Doorstop",
@@ -2614,61 +2550,6 @@ namespace Synix_Control_Panel.Database
 				Maps = ["syn_d1_trainstation_01"]
 			},
 			new() {
-				Game = "Age of Chivalry",
-				AppID = "17510",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game ageofchivalry -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"ageofchivalry\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["aoc_siege"]
-			},
-			new() {
-				Game = "Zombie Master 2",
-				AppID = "299000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game zombiemaster -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"zombiemaster\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["zm_factory"]
-			},
-			new() {
-				Game = "Empires Mod",
-				AppID = "17740",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game empires -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"empires\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["emp_canyon"]
-			},
-			new() {
-				Game = "Resistance and Liberation",
-				AppID = "17530",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game reslib -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"reslib\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["rnl_st_mere_eglise"]
-			},
-			new() {
-				Game = "E.Y.E: Divine Cybermancy",
-				AppID = "91700",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game eye -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"eye\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["cc_temple"]
-			},
-			new() {
 				Game = "Sanctum",
 				AppID = "91600",
 				ExeName = @"UDKGame\Binaries\Win64\SanctumServer.exe",
@@ -2780,27 +2661,6 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = @"ns\server.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["ns_mines"]
-			},
-			new() {
-				Game = "War of Rights",
-				AppID = "614050",
-				ExeName = "WarOfRightsServer.exe",
-				RequiredArgs = "-port {port} -queryport {query} -servername \"{ServerName}\"",
-				Port = 7777,
-				QueryPort = 27015,
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Colony Survival",
-				AppID = "366090",
-				ExeName = "ColonySurvivalServer.exe",
-				RequiredArgs = "+server.port {port} +server.name \"{ServerName}\"",
-				Port = 27016,
-				QueryPort = 27016,
-				RelativeConfigPath = "config.json",
-				Format = ConfigFormat.JSON,
-				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "BrainBread 2",
@@ -2965,30 +2825,6 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = @"csgo\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["de_dust2", "de_mirage", "de_inferno"]
-			},
-			new() {
-				Game = "Garry's Mod (DarkRP)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode darkrp +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["rp_downtown_v4c_v2"]
-			},
-			new() {
-				Game = "Garry's Mod (Zombie Survival)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode zombiesurvival +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["zs_obj_vertigo"]
 			},
 			new() {
 				Game = "Arma 2: Operation Arrowhead",
@@ -3275,42 +3111,6 @@ namespace Synix_Control_Panel.Database
 				Maps = ["rc_arena"]
 			},
 			new() {
-				Game = "Garry's Mod (Prop Hunt)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode prophunt +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["ph_office"]
-			},
-			new() {
-				Game = "Garry's Mod (Murder)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode murder +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["mu_clue"]
-			},
-			new() {
-				Game = "Garry's Mod (Sandbox)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode sandbox +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["gm_construct", "gm_flatgrass"]
-			},
-			new() {
 				Game = "RUST (Staging)",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
@@ -3332,18 +3132,6 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = "serverDZ.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["ChernarusPlus"],
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "7 Days to Die (Experimental)",
-				AppID = "294420",
-				ExeName = "7DaysToDieServer.exe",
-				RequiredArgs = "-beta latest_experimental -configfile=serverconfig.xml -port={port} -batchmode -nographics -dedicated",
-				Port = 26900,
-				QueryPort = 26900,
-				RelativeConfigPath = "serverconfig.xml",
-				Format = ConfigFormat.XML,
-				Maps = ["Navezgane", "Pregen01"],
 				NeedsConfigWarning = true
 			},
 			new() {
@@ -3416,28 +3204,6 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = @"cryoffear\server.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["cof_campaign_01"]
-			},
-			new() {
-				Game = "Double Action: Boogaloo",
-				AppID = "317360",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game dab -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"dab\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["da_street"]
-			},
-			new() {
-				Game = "Pirates, Vikings, and Knights II",
-				AppID = "17570",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game pvkii -console -port {port} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"pvkii\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["bt_island"]
 			},
 			new() {
 				Game = "The Ship: Murder Party",
@@ -3704,30 +3470,6 @@ namespace Synix_Control_Panel.Database
 				NeedsConfigWarning = true
 			},
 			new() {
-				Game = "Garry's Mod (Deathrun)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode deathrun +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["dr_playstation"]
-			},
-			new() {
-				Game = "Garry's Mod (BaseWars)",
-				AppID = "4000",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod +gamemode basewars +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["gm_construct"]
-			},
-			new() {
 				Game = "Halo: The Master Chief Collection",
 				AppID = "1164850",
 				ExeName = "mcctcnd.exe",
@@ -3782,30 +3524,6 @@ namespace Synix_Control_Panel.Database
 				Maps = ["DM-Morpheus"]
 			},
 			new() {
-				Game = "Left 4 Dead 2 (Versus)",
-				AppID = "222860",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +mp_gamemode versus +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"left4dead2\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["c1m1_hotel"]
-			},
-			new() {
-				Game = "Left 4 Dead 2 (Survival)",
-				AppID = "222860",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +mp_gamemode survival +hostname \"{ServerName}\" {rcon}",
-				RconSyntax = "+rcon_password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"left4dead2\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["c1m4_atrium"]
-			},
-			new() {
 				Game = "Factorio (Space Age)",
 				AppID = "428200",
 				ExeName = @"bin\x64\factorio.exe",
@@ -3817,20 +3535,6 @@ namespace Synix_Control_Panel.Database
 				Maps = ["SpaceAgeWorld"],
 				NeedsConfigWarning = true
 			},
-			new() {
-				Game = "ARK: Survival Ascended (Scorched Earth)",
-				AppID = "2430930",
-				ExeName = @"ShooterGame\Binaries\Win64\ArkServer.exe",
-				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} {rcon} -server -log",
-				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\"",
-				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
-				Format = ConfigFormat.StandardINI,
-				Port = 7777,
-				QueryPort = 27015,
-				Maps = ["ScorchedEarth_WP"],
-				GameModes = ["PVE", "PVP"],
-				NeedsConfigWarning = true
-			}
 		];
 
 		public static IReadOnlyList<GameInfo> GetGameList()

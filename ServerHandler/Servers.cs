@@ -100,7 +100,7 @@ namespace Synix_Control_Panel.ServerHandler
 					}
 
 					// Now perform the actual replacement in the command line
-					args = args.Replace("{mode}", server.GameMode);
+					args = args.Replace("{mode}", translatedMode);
 				}
 
 				args = args.Replace("  ", " ").Trim();

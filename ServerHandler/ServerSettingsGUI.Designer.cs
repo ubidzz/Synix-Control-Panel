@@ -113,7 +113,7 @@
 			PortLabel.BackColor = Color.Transparent;
 			PortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			PortLabel.ForeColor = Color.White;
-			PortLabel.Location = new Point(12, 135);
+			PortLabel.Location = new Point(94, 205);
 			PortLabel.Name = "PortLabel";
 			PortLabel.Size = new Size(34, 17);
 			PortLabel.TabIndex = 2;
@@ -145,14 +145,14 @@
 			cmbGame.Items.AddRange(new object[] { "Game List" });
 			cmbGame.Location = new Point(12, 90);
 			cmbGame.Name = "cmbGame";
-			cmbGame.Size = new Size(211, 23);
+			cmbGame.Size = new Size(273, 23);
 			cmbGame.TabIndex = 5;
 			cmbGame.Text = "Pick Game";
 			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
 			// 
 			// numPort
 			// 
-			numPort.Location = new Point(12, 155);
+			numPort.Location = new Point(94, 225);
 			numPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numPort.Name = "numPort";
@@ -231,7 +231,7 @@
 			MaxPlayerLabel.BackColor = Color.Transparent;
 			MaxPlayerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			MaxPlayerLabel.ForeColor = Color.White;
-			MaxPlayerLabel.Location = new Point(178, 135);
+			MaxPlayerLabel.Location = new Point(12, 205);
 			MaxPlayerLabel.Name = "MaxPlayerLabel";
 			MaxPlayerLabel.Size = new Size(76, 17);
 			MaxPlayerLabel.TabIndex = 14;
@@ -239,7 +239,7 @@
 			// 
 			// numMaxPlayers
 			// 
-			numMaxPlayers.Location = new Point(178, 155);
+			numMaxPlayers.Location = new Point(12, 225);
 			numMaxPlayers.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
 			numMaxPlayers.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
 			numMaxPlayers.Name = "numMaxPlayers";
@@ -253,7 +253,7 @@
 			MapLabel.BackColor = Color.Transparent;
 			MapLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			MapLabel.ForeColor = Color.White;
-			MapLabel.Location = new Point(229, 70);
+			MapLabel.Location = new Point(12, 135);
 			MapLabel.Name = "MapLabel";
 			MapLabel.Size = new Size(35, 17);
 			MapLabel.TabIndex = 16;
@@ -295,7 +295,7 @@
 			QueryPortLabel.BackColor = Color.Transparent;
 			QueryPortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			QueryPortLabel.ForeColor = Color.White;
-			QueryPortLabel.Location = new Point(91, 135);
+			QueryPortLabel.Location = new Point(163, 205);
 			QueryPortLabel.Name = "QueryPortLabel";
 			QueryPortLabel.Size = new Size(76, 17);
 			QueryPortLabel.TabIndex = 21;
@@ -303,7 +303,7 @@
 			// 
 			// numQueryPort
 			// 
-			numQueryPort.Location = new Point(91, 155);
+			numQueryPort.Location = new Point(163, 225);
 			numQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numQueryPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numQueryPort.Name = "numQueryPort";
@@ -324,9 +324,9 @@
 			// cmbWorldName
 			// 
 			cmbWorldName.FormattingEnabled = true;
-			cmbWorldName.Location = new Point(229, 90);
+			cmbWorldName.Location = new Point(12, 155);
 			cmbWorldName.Name = "cmbWorldName";
-			cmbWorldName.Size = new Size(151, 23);
+			cmbWorldName.Size = new Size(168, 23);
 			cmbWorldName.TabIndex = 24;
 			// 
 			// AdminPasswordLabel
@@ -351,9 +351,9 @@
 			// cmbCompetitive
 			// 
 			cmbCompetitive.FormattingEnabled = true;
-			cmbCompetitive.Location = new Point(277, 155);
+			cmbCompetitive.Location = new Point(291, 90);
 			cmbCompetitive.Name = "cmbCompetitive";
-			cmbCompetitive.Size = new Size(103, 23);
+			cmbCompetitive.Size = new Size(89, 23);
 			cmbCompetitive.TabIndex = 27;
 			// 
 			// lblCompetitive
@@ -362,7 +362,7 @@
 			lblCompetitive.BackColor = Color.Transparent;
 			lblCompetitive.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblCompetitive.ForeColor = Color.White;
-			lblCompetitive.Location = new Point(277, 135);
+			lblCompetitive.Location = new Point(291, 70);
 			lblCompetitive.Name = "lblCompetitive";
 			lblCompetitive.Size = new Size(83, 17);
 			lblCompetitive.TabIndex = 28;
@@ -447,7 +447,7 @@
 			TextLabel4.BackColor = Color.Transparent;
 			TextLabel4.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel4.ForeColor = Color.White;
-			TextLabel4.Location = new Point(415, 135);
+			TextLabel4.Location = new Point(415, 296);
 			TextLabel4.Name = "TextLabel4";
 			TextLabel4.Size = new Size(237, 17);
 			TextLabel4.TabIndex = 36;
@@ -565,7 +565,7 @@
 			groupBox1.Controls.Add(chkSat);
 			groupBox1.Controls.Add(chkTue);
 			groupBox1.Controls.Add(chkMon);
-			groupBox1.Location = new Point(415, 151);
+			groupBox1.Location = new Point(414, 316);
 			groupBox1.Name = "groupBox1";
 			groupBox1.Size = new Size(351, 105);
 			groupBox1.TabIndex = 45;
@@ -577,7 +577,7 @@
 			lblWorldSeed.BackColor = Color.Transparent;
 			lblWorldSeed.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblWorldSeed.ForeColor = Color.White;
-			lblWorldSeed.Location = new Point(12, 194);
+			lblWorldSeed.Location = new Point(186, 135);
 			lblWorldSeed.Name = "lblWorldSeed";
 			lblWorldSeed.Size = new Size(79, 17);
 			lblWorldSeed.TabIndex = 46;
@@ -585,9 +585,9 @@
 			// 
 			// txtWorldSeed
 			// 
-			txtWorldSeed.Location = new Point(12, 214);
+			txtWorldSeed.Location = new Point(186, 155);
 			txtWorldSeed.Name = "txtWorldSeed";
-			txtWorldSeed.Size = new Size(142, 23);
+			txtWorldSeed.Size = new Size(194, 23);
 			txtWorldSeed.TabIndex = 47;
 			txtWorldSeed.KeyPress += txtWorldSeed_KeyPress;
 			// 
