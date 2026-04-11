@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
 using static Synix_Control_Panel.SynixEngine.Core;
+using static System.Windows.Forms.Design.AxImporter;
 
 namespace Synix_Control_Panel
 {
@@ -339,6 +340,34 @@ namespace Synix_Control_Panel
 			{
 				// One line. The AI handles the lookup, the file check, and the window.
 				Core.Instance.OpenConfigEditor(selectedServer);
+			}
+		}
+
+		private GameServer? GetSelectedServer()
+		{
+			// Checks if a row is selected and pulls the GameServer object from it
+			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer server)
+			{
+				return server;
+			}
+			return null;
+		}
+
+		private void btnOpenFolder_Click(object sender, EventArgs e)
+		{
+			// 1. Get the server from the grid
+			var selectedServer = GetSelectedServer();
+
+			if (selectedServer != null)
+			{
+				// 2. Call your function in Actions.cs
+				// Note: Make sure your Actions class has a public static Instance!
+				Core.Instance.OpenServerFolder(selectedServer);
+			}
+			else
+			{
+				// Safety log if they click with no server selected
+				Core.Instance.Log("[SYSTEM] Please select a server from the list first.", System.Drawing.Color.Yellow);
 			}
 		}
 

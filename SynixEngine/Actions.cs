@@ -21,7 +21,6 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		// Change 'public void' to 'public async Task'
 		public async Task StopServerAndReport(GameServer server)
 		{
 			if (server.RunningProcess == null && !server.PID.HasValue)
@@ -93,11 +92,11 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (Directory.Exists(server.InstallPath))
 			{
-				Process.Start("explorer.exe", server.InstallPath);
+				// Wrapping the path in quotes handle spaces in folder names perfectly
+				Process.Start("explorer.exe", $"\"{server.InstallPath}\"");
 			}
 			else
 			{
-				// This uses the Log helper in Core.cs
 				Log($"[ERROR] Folder does not exist: {server.InstallPath}", Color.Red);
 			}
 		}

@@ -52,6 +52,8 @@
 			btnHelp = new ToolStripMenuItem();
 			deleteServer = new ToolStripMenuItem();
 			openServerConfig = new ToolStripMenuItem();
+			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
+			openServerFolderToolStripMenuItem = new ToolStripMenuItem();
 			btnRestart = new ToolStripMenuItem();
 			editServer = new ToolStripMenuItem();
 			udateServer = new ToolStripMenuItem();
@@ -227,54 +229,68 @@
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, deleteServer, openServerConfig, btnRestart, editServer, udateServer, installServer });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(199, 180);
+			contextMenuStrip.Size = new Size(148, 158);
 			// 
 			// btnHelp
 			// 
 			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(198, 22);
+			btnHelp.Size = new Size(147, 22);
 			btnHelp.Text = "Help";
 			btnHelp.Click += btnHelp_Click;
 			// 
 			// deleteServer
 			// 
 			deleteServer.Name = "deleteServer";
-			deleteServer.Size = new Size(198, 22);
+			deleteServer.Size = new Size(147, 22);
 			deleteServer.Text = "Delete Server";
 			deleteServer.Click += btnDelete_Click;
 			// 
 			// openServerConfig
 			// 
+			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerConfigFileToolStripMenuItem, openServerFolderToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(198, 22);
-			openServerConfig.Text = "Open Server Config File";
-			openServerConfig.Click += btnOpenConfig_Click;
+			openServerConfig.Size = new Size(147, 22);
+			openServerConfig.Text = "Server Files";
+			// 
+			// openServerConfigFileToolStripMenuItem
+			// 
+			openServerConfigFileToolStripMenuItem.Name = "openServerConfigFileToolStripMenuItem";
+			openServerConfigFileToolStripMenuItem.Size = new Size(198, 22);
+			openServerConfigFileToolStripMenuItem.Text = "Open Server Config File";
+			openServerConfigFileToolStripMenuItem.Click += btnOpenConfig_Click;
+			// 
+			// openServerFolderToolStripMenuItem
+			// 
+			openServerFolderToolStripMenuItem.Name = "openServerFolderToolStripMenuItem";
+			openServerFolderToolStripMenuItem.Size = new Size(198, 22);
+			openServerFolderToolStripMenuItem.Text = "Open Server Folder";
+			openServerFolderToolStripMenuItem.Click += btnOpenFolder_Click;
 			// 
 			// btnRestart
 			// 
 			btnRestart.Name = "btnRestart";
-			btnRestart.Size = new Size(198, 22);
+			btnRestart.Size = new Size(147, 22);
 			btnRestart.Text = "Restart Server";
 			btnRestart.Click += btnRestart_Click;
 			// 
 			// editServer
 			// 
 			editServer.Name = "editServer";
-			editServer.Size = new Size(198, 22);
+			editServer.Size = new Size(147, 22);
 			editServer.Text = "Edit Server";
 			editServer.Click += btnEdit_Click;
 			// 
 			// udateServer
 			// 
 			udateServer.Name = "udateServer";
-			udateServer.Size = new Size(198, 22);
+			udateServer.Size = new Size(147, 22);
 			udateServer.Text = "Update Server";
 			udateServer.Click += btnUpdate_Click;
 			// 
 			// installServer
 			// 
 			installServer.Name = "installServer";
-			installServer.Size = new Size(198, 22);
+			installServer.Size = new Size(147, 22);
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
@@ -353,5 +369,7 @@
 		private System.Windows.Forms.Timer tmrResourceUpdates;
 		private ToolStripMenuItem btnRestart;
 		private ToolStripMenuItem btnHelp;
+		private ToolStripMenuItem openServerConfigFileToolStripMenuItem;
+		private ToolStripMenuItem openServerFolderToolStripMenuItem;
 	}
 }
