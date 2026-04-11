@@ -33,7 +33,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"StarRupture\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["MainWorld"]
+				Maps = ["MainWorld"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Soulmask",
@@ -45,7 +46,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				Maps = ["Level01_Main", "DLC_Level01_Main"],
 				GameModes = ["PVP", "PVE"],
-				Format = ConfigFormat.JSON
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "7 Days to Die",
@@ -130,7 +132,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27016,
 				RelativeConfigPath = @"userdata\dedicated_server.cfg",
 				Format = ConfigFormat.JSON,
-				Maps = ["Default"]
+				Maps = ["Default"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Enshrouded",
@@ -267,7 +270,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 8777,
 				RelativeConfigPath = @"Astro\Saved\Config\WindowsServer\AstroServerSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Sylva"]
+				Maps = ["Sylva"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Barotrauma",
@@ -289,7 +293,8 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["Cascade"]
+				Maps = ["Cascade"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Icarus",
@@ -300,7 +305,8 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 17777,
 				QueryPort = 27015,
-				Maps = ["Olympus", "Styx", "Prometheus"]
+				Maps = ["Olympus", "Styx", "Prometheus"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Don't Starve Together",
@@ -324,7 +330,8 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = @"KFGame\Config\PCServer-KFGame.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["KF-BioticsLab", "KF-BurningParis", "KF-Outpost", "KF-ZedLanding"],
-				GameModes = ["Survival", "Versus"]
+				GameModes = ["Survival", "Versus"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "The Front",
@@ -335,7 +342,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"ProjectWar\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["TheFront"]
+				Maps = ["TheFront"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Smalland: Survive the Wilds",
@@ -346,7 +354,8 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["Smalland"]
+				Maps = ["Smalland"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Sunkenland",
@@ -439,7 +448,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"Mordhau\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["FFA_Contraband", "SKM_Camp"]
+				Maps = ["FFA_Contraband", "SKM_Camp"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Valheim (Crossplay)",
@@ -538,7 +548,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27131,
 				RelativeConfigPath = @"Insurgency\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Refinery", "Farmhouse", "Hideout", "Crossing"]
+				Maps = ["Refinery", "Farmhouse", "Hideout", "Crossing"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -601,7 +612,8 @@ namespace Synix_Control_Panel.Database
 				GameModes = ["PVE", "PVP"],
 				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["CubeWorld_Light"]
+				Maps = ["CubeWorld_Light"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -615,7 +627,8 @@ namespace Synix_Control_Panel.Database
 				GameModes = ["True", "False"],
 				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["00"]
+				Maps = ["00"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -627,7 +640,8 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7042,
 				QueryPort = 7043,
-				Maps = ["SCUM_Island"]
+				Maps = ["SCUM_Island"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -651,7 +665,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"HLL\Saved\Config\WindowsServer\Server.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["SainteMarieDuMont_Warfare"]
+				Maps = ["SainteMarieDuMont_Warfare"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -686,7 +701,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27016,
 				RelativeConfigPath = @"Creative\gameserver.conf",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Adventure"]
+				Maps = ["Adventure"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -698,7 +714,8 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["SylvanGlade"]
+				Maps = ["SylvanGlade"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -710,7 +727,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["FortSchwarz", "CampNile"]
+				Maps = ["FortSchwarz", "CampNile"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -722,7 +740,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"DeadPoly\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["DeadPoly"]
+				Maps = ["DeadPoly"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -734,7 +753,8 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["Bellwright"]
+				Maps = ["Bellwright"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -772,7 +792,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 8787,
 				RelativeConfigPath = @"Craftopia_Data\Server\ServerSetting.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Default"]
+				Maps = ["Default"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -784,7 +805,8 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["Spiro", "Gateway"]
+				Maps = ["Spiro", "Gateway"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Ready or Not",
@@ -1114,7 +1136,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"PrimalCarnage\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["PC-Docks"]
+				Maps = ["PC-Docks"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Ranch Simulator",
@@ -1125,7 +1148,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"Ranch_Simulator\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["RanchMap"]
+				Maps = ["RanchMap"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Memories of Mars",
@@ -1136,7 +1160,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"MemoriesOfMars\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Mars"]
+				Maps = ["Mars"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Fistful of Frags",
@@ -1158,7 +1183,8 @@ namespace Synix_Control_Panel.Database
 				Port = 27015,
 				QueryPort = 27016,
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Default"]
+				Maps = ["Default"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Wreckfest",
@@ -1212,7 +1238,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"DNL\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["TheArchos"]
+				Maps = ["TheArchos"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Vagante",
@@ -1368,7 +1395,8 @@ namespace Synix_Control_Panel.Database
 				RequiredArgs = "-log -port={port} -queryport={query}",
 				Port = 7777,
 				QueryPort = 27015,
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Volcanoids",
@@ -1378,7 +1406,8 @@ namespace Synix_Control_Panel.Database
 				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = "server_settings.json",
-				Format = ConfigFormat.JSON
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Pavlov VR",
@@ -1563,7 +1592,8 @@ namespace Synix_Control_Panel.Database
 				RequiredArgs = "-log -port={port} -queryport={query}",
 				Port = 7777,
 				QueryPort = 27015,
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "WolfQuest: Anniversary Edition",
@@ -1625,7 +1655,8 @@ namespace Synix_Control_Panel.Database
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"Longvinter\Saved\Config\WindowsServer\Game.ini",
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Ground Branch",
@@ -1635,7 +1666,8 @@ namespace Synix_Control_Panel.Database
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"GroundBranch\Saved\Config\WindowsServer\Game.ini",
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Red Orchestra 2: Heroes of Stalingrad",
@@ -1646,7 +1678,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"ROGame\Config\ROGame.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["TE-Apartments", "TE-Gumrak"]
+				Maps = ["TE-Apartments", "TE-Gumrak"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Sengoku Dynasty",
@@ -1666,7 +1699,8 @@ namespace Synix_Control_Panel.Database
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"BeastsOfBermuda\Saved\Config\WindowsServer\Game.ini",
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "The Isle (Evrima)",
@@ -1677,7 +1711,8 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"TheIsle\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Gateway"]
+				Maps = ["Gateway"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Pirates, Vikings, and Knights II",
@@ -1748,7 +1783,8 @@ namespace Synix_Control_Panel.Database
 				Port = 38465,
 				QueryPort = 38465,
 				RelativeConfigPath = "server.config",
-				Format = ConfigFormat.JSON
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Boundless",
@@ -1904,6 +1940,1970 @@ namespace Synix_Control_Panel.Database
 				QueryPort = 27960,
 				RelativeConfigPath = "server.cfg",
 				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Wurm Unlimited",
+				AppID = "402370",
+				ExeName = "WurmServerLauncher-64.exe",
+				RequiredArgs = "{map}",
+				Port = 3724,
+				QueryPort = 27016,
+				RelativeConfigPath = @"Creative\gameserver.conf",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Adventure"]
+			},
+			new() {
+				Game = "Holdfast: Nations At War",
+				AppID = "589290",
+				ExeName = "Holdfast NaW - Dedicated Server.exe",
+				RequiredArgs = "-batchmode -nographics -server_name=\"{ServerName}\" -port={port} -query_port={query} -map_name=\"{map}\"",
+				Port = 20101,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["FortSchwarz", "CampNile"]
+			},
+			new() {
+				Game = "Craftopia",
+				AppID = "1385410",
+				ExeName = "Craftopia.exe",
+				RequiredArgs = "-batchmode -showlogs -nographics -port {port} -name \"{ServerName}\" -pwd \"{pass}\"",
+				Port = 8787,
+				QueryPort = 8787,
+				RelativeConfigPath = @"Craftopia_Data\Server\ServerSetting.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Default"]
+			},
+			new() {
+				Game = "Hurtworld",
+				AppID = "405100",
+				ExeName = "Hurtworld.exe",
+				RequiredArgs = "-batchmode -nographics -exec \"host {port};queryport {query};servername {ServerName};addadmin {adminpass}\" -logfile \"gamelog.txt\"",
+				Port = 12871,
+				QueryPort = 12881,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Medieval Engineers",
+				AppID = "367970",
+				ExeName = @"DedicatedServer64\MedievalEngineersDedicated.exe",
+				RequiredArgs = "-console -noconsole -path {map}",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = @"Instance\MedievalEngineers-Dedicated.cfg",
+				Format = ConfigFormat.XML,
+				Maps = ["Default"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Day of Dragons",
+				AppID = "1088320",
+				ExeName = @"Dragons\Binaries\Win64\DragonsServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Dragons\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["OpenWorld"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "BattleBit Remastered",
+				AppID = "1152000",
+				ExeName = "BattleBitDedicated.exe",
+				RequiredArgs = "-port {port} -queryport {query} -servername \"{ServerName}\"",
+				Port = 30000,
+				QueryPort = 30001,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Miscreated",
+				AppID = "302200",
+				ExeName = @"Bin64_dedicated\MiscreatedServer.exe",
+				RequiredArgs = "-sv_port {port} +sv_maxplayers {MaxPlayers} +sv_servername \"{ServerName}\" +map {map}",
+				Port = 64090,
+				QueryPort = 64091,
+				RelativeConfigPath = "miscreated.db",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["islands"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Euro Truck Simulator 2",
+				AppID = "1948160",
+				ExeName = @"bin\win_x64\eurotrucks2.exe",
+				RequiredArgs = "-dedicated -server_config server_config.sii",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = "server_config.sii",
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "American Truck Simulator",
+				AppID = "270880",
+				ExeName = @"bin\win_x64\amtrucks.exe",
+				RequiredArgs = "-dedicated -server_config server_config.sii",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = "server_config.sii",
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Natural Selection 2",
+				AppID = "4920",
+				ExeName = "Server.exe",
+				RequiredArgs = "-name \"{ServerName}\" -port {port} -limit {MaxPlayers} -map {map} -config_path \"config\"",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = @"config\ServerConfig.json",
+				Format = ConfigFormat.JSON,
+				Maps = ["ns2_docking", "ns2_summit"]
+			},
+			new() {
+				Game = "Return to Moria",
+				AppID = "3349480",
+				ExeName = @"Moria\Binaries\Win64\MoriaServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Life is Feudal: Your Own",
+				AppID = "320850",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-world {map} -port {port}",
+				Port = 28000,
+				QueryPort = 28001,
+				RelativeConfigPath = "config_local.xml",
+				Format = ConfigFormat.XML,
+				Maps = ["yo_main"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Reign of Kings",
+				AppID = "344760",
+				ExeName = "ROK.exe",
+				RequiredArgs = "-batchmode -nographics -port {port}",
+				Port = 7350,
+				QueryPort = 7350,
+				RelativeConfigPath = @"Configuration\ServerSettings.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Stormhold"]
+			},
+			new() {
+				Game = "Citadel: Forged with Fire",
+				AppID = "487120",
+				ExeName = @"Citadel\Binaries\Win64\CitadelServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Citadel\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Ignus"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Outlaws of the Old West",
+				AppID = "955060",
+				ExeName = @"Outlaws\Binaries\Win64\OutlawsServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Outlaws\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Outlaws"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "CryoFall",
+				AppID = "829590",
+				ExeName = "CryoFall_Server.exe",
+				RequiredArgs = "-port {port}",
+				Port = 6000,
+				QueryPort = 6000,
+				RelativeConfigPath = "Settings.xml",
+				Format = ConfigFormat.XML,
+				Maps = ["Default"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Squad 44 (Post Scriptum)",
+				AppID = "746200",
+				ExeName = "PostScriptumServer.exe",
+				RequiredArgs = "Port={port} QueryPort={query} FIXEDMAXPLAYERS={MaxPlayers} +map {map}",
+				Port = 7787,
+				QueryPort = 27165,
+				RelativeConfigPath = @"PostScriptum\ServerConfig\Server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Carentan_AAS_v1"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Project CARS 2",
+				AppID = "378030",
+				ExeName = "pCARS2AVServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = "server_config.json",
+				Format = ConfigFormat.JSON
+			},
+			new() {
+				Game = "SCP: Pandemic",
+				AppID = "1402320",
+				ExeName = @"Pandemic\Binaries\Win64\PandemicServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+				new() {
+				Game = "Deathmatch Classic",
+				AppID = "90",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game dmc +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"dmc\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["dmc_dm4", "dmc_dm6"]
+			},
+			new() {
+				Game = "Half-Life: Opposing Force",
+				AppID = "90",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game gearbox +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"gearbox\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["op4dm1"]
+			},
+			new() {
+				Game = "Aliens vs Predator (2010)",
+				AppID = "34120",
+				ExeName = "AvP_DedicatedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 27015,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true // Requires manual server name/identity in config
+			},
+			new() {
+				Game = "America's Army: Proving Grounds",
+				AppID = "203300",
+				ExeName = "AAGameServer.exe",
+				RequiredArgs = "server {map}?Port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["AA_Downtown"],
+				NeedsConfigWarning = true // Requires server authorization/tokens
+			},
+			new() {
+				Game = "Alien Swarm",
+				AppID = "635",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game swarm -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"swarm\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["asi-jac1-landingbay_01"]
+			},
+			new() {
+				Game = "Dark Messiah of Might & Magic",
+				AppID = "2145",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game mm -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"mm\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["dm_castle"]
+			},
+			new() {
+				Game = "Darkest Hour: Europe '44-'45",
+				AppID = "1290",
+				ExeName = "RedOrchestra.exe",
+				RequiredArgs = "server {map}?Listen -port={port}",
+				Port = 7757,
+				QueryPort = 7758,
+				Maps = ["DH-Stonne"],
+				NeedsConfigWarning = true // Mod-specific INI setup required
+			},
+			new() {
+				Game = "Fortress Forever",
+				AppID = "329710",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game fortressforever -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"fortressforever\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ff_2fort", "ff_well"]
+			},
+			new() {
+				Game = "Just Cause 2: Multiplayer",
+				AppID = "261140",
+				ExeName = "JcmpServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 7777,
+				QueryPort = 7777,
+				RelativeConfigPath = "config.lua",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true // Config is in Lua, manual setup essential
+			},
+			new() {
+				Game = "Nuclear Dawn",
+				AppID = "111710",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game nucleardawn -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"nucleardawn\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["nd_hydro", "nd_metro"]
+			},
+			new() {
+				Game = "Out of Reach",
+				AppID = "406800",
+				ExeName = "OutOfReachServer.exe",
+				RequiredArgs = "-batchmode -nographics -port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = "ServerConfig.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true // Survival world/session setup required
+			},
+			new() {
+				Game = "Red Orchestra: Ostfront 41-45",
+				AppID = "1203",
+				ExeName = "RedOrchestra.exe",
+				RequiredArgs = "server {map}?Listen -port={port}",
+				Port = 7757,
+				QueryPort = 7758,
+				Maps = ["RO-Arad"],
+				NeedsConfigWarning = true // Master server listing requires manual INI tweaks
+			},
+			new() {
+				Game = "SiN 1",
+				AppID = "1314",
+				ExeName = "sin.exe",
+				RequiredArgs = "+set dedicated 1 +set port {port} +map {map}",
+				Port = 28001,
+				QueryPort = 28001,
+				Maps = ["sin_dm1"]
+			},
+			new() {
+				Game = "Military Conflict: Vietnam",
+				AppID = "1136190",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game vietnam -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"vietnam\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["vdm_hue"]
+			},
+			new() {
+				Game = "Monday Night Combat",
+				AppID = "63220",
+				ExeName = "MNC.exe",
+				RequiredArgs = "server {map}?Listen -port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["MNC-Crossfire"],
+				NeedsConfigWarning = true // Unreal Engine configuration required for listing
+			},
+			new() {
+				Game = "NEOTOKYO",
+				AppID = "313600",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game neotokyo -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"neotokyo\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["nt_engage_ctg"]
+			},
+			new() {
+				Game = "NS2: Combat",
+				AppID = "313900",
+				ExeName = "Server.exe",
+				RequiredArgs = "-port {port} -name \"{ServerName}\"",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true // Requires setup of ServerConfig.json for identity
+			},
+			new() {
+				Game = "Reflex Arena",
+				AppID = "328070",
+				ExeName = "ReflexServer.exe",
+				RequiredArgs = "+port {port} +map {map}",
+				Port = 25787,
+				QueryPort = 25787,
+				Maps = ["dm1"]
+			},
+			new() {
+				Game = "The Mean Greens - Plastic Warfare",
+				AppID = "421670",
+				ExeName = @"MeanGreens\Binaries\Win64\MeanGreensServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true // Unreal Engine 4 identity setup required
+			},
+			new() {
+				Game = "No One Survived",
+				AppID = "1963390",
+				ExeName = "NoOneSurvivedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true // Survival world and identity setup required
+			},
+			new() {
+				Game = "Operation: Harsh Doorstop",
+				AppID = "733530",
+				ExeName = @"HarshDoorstop\Binaries\Win64\HarshDoorstopServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"HarshDoorstop\Saved\Config\WindowsServer\Engine.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "No One Survived",
+				AppID = "1963390",
+				ExeName = "NoOneSurvivedServer.exe",
+				RequiredArgs = "-port {port} -queryport {query}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "The Mean Greens - Plastic Warfare",
+				AppID = "421670",
+				ExeName = @"MeanGreens\Binaries\Win64\MeanGreensServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "America's Army: Proving Grounds",
+				AppID = "203300",
+				ExeName = @"AAGame\Binaries\Win64\AAGameServer.exe",
+				RequiredArgs = "server {map}?Port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["AA_Downtown"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "NEOTOKYO",
+				AppID = "313600",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game neotokyo -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"neotokyo\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["nt_engage_ctg"]
+			},
+			new() {
+				Game = "Monday Night Combat",
+				AppID = "63220",
+				ExeName = @"MNC\Binaries\Win64\MNC.exe",
+				RequiredArgs = "server {map}?Listen -port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["MNC-Crossfire"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Nuclear Dawn",
+				AppID = "111710",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game nucleardawn -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"nucleardawn\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["nd_hydro", "nd_metro"]
+			},
+			new() {
+				Game = "Dark Messiah of Might & Magic",
+				AppID = "2145",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game mm -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"mm\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["dm_castle"]
+			},
+			new() {
+				Game = "Just Cause 2: Multiplayer",
+				AppID = "261140",
+				ExeName = "JcmpServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 7777,
+				QueryPort = 7777,
+				RelativeConfigPath = "config.lua",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Out of Reach",
+				AppID = "406800",
+				ExeName = "OutOfReachServer.exe",
+				RequiredArgs = "-batchmode -nographics -port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = "ServerConfig.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Reflex Arena",
+				AppID = "328070",
+				ExeName = "ReflexServer.exe",
+				RequiredArgs = "+port {port} +map {map}",
+				Port = 25787,
+				QueryPort = 25787,
+				Maps = ["dm1"]
+			},
+			new() {
+				Game = "SiN Episodes: Emergence",
+				AppID = "1300",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game emerge -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"emerge\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["emerge_arena"]
+			},
+			new() {
+				Game = "Toxikk",
+				AppID = "324810",
+				ExeName = @"UDKGame\Binaries\Win64\ToxikkServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"UDKGame\Config\UDKEngine.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Unreal Tournament 2004",
+				AppID = "13230",
+				ExeName = @"System\ucc.exe",
+				RequiredArgs = "server {map}?game=XGame.XDeathmatch?AdminName=admin?AdminPassword=admin -port={port}",
+				Port = 7777,
+				QueryPort = 7778,
+				RelativeConfigPath = @"System\UT2004.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["DM-Rankin", "DM-Deck17"]
+			},
+			new() {
+				Game = "Unreal Tournament 3",
+				AppID = "13210",
+				ExeName = @"Binaries\UT3.exe",
+				RequiredArgs = "server {map}?MaxPlayers={MaxPlayers} -port={port}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"UTGame\Config\UTEngine.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["DM-Deck"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Viscera Cleanup Detail",
+				AppID = "246900",
+				ExeName = @"Binaries\Win64\VisceraServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Blackwake",
+				AppID = "420290",
+				ExeName = "BlackwakeServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Serious Sam HD: The First Encounter",
+				AppID = "41000",
+				ExeName = "SeriousSamHD.exe",
+				RequiredArgs = "+port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Serious Sam HD: The Second Encounter",
+				AppID = "41014",
+				ExeName = "SeriousSamHD_TSE.exe",
+				RequiredArgs = "+port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Sanctum 2",
+				AppID = "210770",
+				ExeName = @"UDKGame\Binaries\Win64\Sanctum2Server.exe",
+				RequiredArgs = "-port {port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Beyond the Wire",
+				AppID = "1055540",
+				ExeName = @"BeyondTheWire\Binaries\Win64\BeyondTheWireServer-Win64-Shipping.exe",
+				RequiredArgs = "Port={port} QueryPort={query} FIXEDMAXPLAYERS={MaxPlayers} +map {map}",
+				Port = 7787,
+				QueryPort = 27165,
+				RelativeConfigPath = @"BeyondTheWire\ServerConfig\Server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Ancre_AAS_v1"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "War of Rights",
+				AppID = "614050",
+				ExeName = "WarOfRightsServer.exe",
+				RequiredArgs = "-port {port} -queryport {query} -servername \"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Colony Survival",
+				AppID = "366090",
+				ExeName = "ColonySurvivalServer.exe",
+				RequiredArgs = "+server.port {port} +server.name \"{ServerName}\"",
+				Port = 27016,
+				QueryPort = 27016,
+				RelativeConfigPath = "config.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "BrainBread 2",
+				AppID = "457870",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game brainbread2 -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"brainbread2\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["bb_creek"]
+			},
+			new() {
+				Game = "Codename CURE",
+				AppID = "355180",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game cure -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"cure\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["cure_bunker"]
+			},
+			new() {
+				Game = "Synergy",
+				AppID = "17520",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game synergy -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"synergy\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["syn_d1_trainstation_01"]
+			},
+			new() {
+				Game = "Age of Chivalry",
+				AppID = "17510",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game ageofchivalry -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"ageofchivalry\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["aoc_siege"]
+			},
+			new() {
+				Game = "Zombie Master 2",
+				AppID = "299000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game zombiemaster -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"zombiemaster\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["zm_factory"]
+			},
+			new() {
+				Game = "Empires Mod",
+				AppID = "17740",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game empires -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"empires\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["emp_canyon"]
+			},
+			new() {
+				Game = "Resistance and Liberation",
+				AppID = "17530",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game reslib -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"reslib\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["rnl_st_mere_eglise"]
+			},
+			new() {
+				Game = "E.Y.E: Divine Cybermancy",
+				AppID = "91700",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game eye -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"eye\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["cc_temple"]
+			},
+			new() {
+				Game = "Sanctum",
+				AppID = "91600",
+				ExeName = @"UDKGame\Binaries\Win64\SanctumServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "The Haunted: Hell's Reach",
+				AppID = "43190",
+				ExeName = @"UDKGame\Binaries\Win64\HauntedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Aliens versus Predator Classic 2000",
+				AppID = "3730",
+				ExeName = "AvP.exe",
+				RequiredArgs = "-dedicated -port {port}",
+				Port = 27015,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Call of Duty 2",
+				AppID = "2630",
+				ExeName = "CoD2mp_s.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate",
+				Port = 28960,
+				QueryPort = 28960,
+				RelativeConfigPath = @"main\dedicated.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Call of Duty 4: Modern Warfare",
+				AppID = "7940",
+				ExeName = "iw3mp.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate",
+				Port = 28960,
+				QueryPort = 28960,
+				RelativeConfigPath = @"main\dedicated.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Farming Simulator 17",
+				AppID = "447020",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 10823,
+				QueryPort = 10823,
+				RelativeConfigPath = "dedicatedServerConfig.xml",
+				Format = ConfigFormat.XML,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Farming Simulator 15",
+				AppID = "313290",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 10823,
+				QueryPort = 10823,
+				RelativeConfigPath = "dedicatedServerConfig.xml",
+				Format = ConfigFormat.XML,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "The Wild Eight",
+				AppID = "526160",
+				ExeName = "TheWildEightServer.exe",
+				RequiredArgs = "-port {port} -queryport {query}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Natural Selection (Retail)",
+				AppID = "70",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game ns +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"ns\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ns_mines"]
+			},
+			new() {
+				Game = "Call of Duty 2",
+				AppID = "2630",
+				ExeName = "CoD2mp_s.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate",
+				Port = 28960,
+				QueryPort = 28960,
+				RelativeConfigPath = @"main\dedicated.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Call of Duty 4: Modern Warfare",
+				AppID = "7940",
+				ExeName = "iw3mp.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate",
+				Port = 28960,
+				QueryPort = 28960,
+				RelativeConfigPath = @"main\dedicated.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Farming Simulator 17",
+				AppID = "447020",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 10823,
+				QueryPort = 10823,
+				RelativeConfigPath = "dedicatedServerConfig.xml",
+				Format = ConfigFormat.XML,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Farming Simulator 15",
+				AppID = "313290",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 10823,
+				QueryPort = 10823,
+				RelativeConfigPath = "dedicatedServerConfig.xml",
+				Format = ConfigFormat.XML,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "The Wild Eight",
+				AppID = "526160",
+				ExeName = "TheWildEightServer.exe",
+				RequiredArgs = "-port {port} -queryport {query}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Natural Selection",
+				AppID = "70",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game ns +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"ns\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ns_mines"]
+			},
+			new() {
+				Game = "War of Rights",
+				AppID = "614050",
+				ExeName = "WarOfRightsServer.exe",
+				RequiredArgs = "-port {port} -queryport {query} -servername \"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Colony Survival",
+				AppID = "366090",
+				ExeName = "ColonySurvivalServer.exe",
+				RequiredArgs = "+server.port {port} +server.name \"{ServerName}\"",
+				Port = 27016,
+				QueryPort = 27016,
+				RelativeConfigPath = "config.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "BrainBread 2",
+				AppID = "457870",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game brainbread2 -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"brainbread2\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["bb_creek"]
+			},
+			new() {
+				Game = "Codename CURE",
+				AppID = "355180",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game cure -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"cure\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["cure_bunker"]
+			},
+			new() {
+				Game = "Synergy",
+				AppID = "17520",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game synergy -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"synergy\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["syn_d1_trainstation_01"]
+			},
+			new() {
+				Game = "Age of Chivalry",
+				AppID = "17510",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game ageofchivalry -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"ageofchivalry\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["aoc_siege"]
+			},
+			new() {
+				Game = "Zombie Master",
+				AppID = "299000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game zombiemaster -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"zombiemaster\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["zm_factory"]
+			},
+			new() {
+				Game = "Empires Mod",
+				AppID = "17740",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game empires -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"empires\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["emp_canyon"]
+			},
+			new() {
+				Game = "Resistance and Liberation",
+				AppID = "17530",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game reslib -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"reslib\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["rnl_st_mere_eglise"]
+			},
+			new() {
+				Game = "E.Y.E: Divine Cybermancy",
+				AppID = "91700",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game eye -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"eye\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["cc_temple"]
+			},
+			new() {
+				Game = "The Hidden: Source",
+				AppID = "220",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game hidden -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"hidden\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["hdn_exec"]
+			},
+			new() {
+				Game = "S.T.A.L.K.E.R.: Shadow of Chernobyl",
+				AppID = "4500",
+				ExeName = @"bin\XR_3DA.exe",
+				RequiredArgs = "-start server({map}/deathmatch) -port {port}",
+				Port = 5445,
+				QueryPort = 5445,
+				Maps = ["mp_agroprom"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "S.T.A.L.K.E.R.: Call of Pripyat",
+				AppID = "41700",
+				ExeName = @"bin\xrEngine.exe",
+				RequiredArgs = "-start server({map}/deathmatch) -port {port}",
+				Port = 5445,
+				QueryPort = 5445,
+				Maps = ["mp_pool"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "S.T.A.L.K.E.R.: Clear Sky",
+				AppID = "20510",
+				ExeName = @"bin\xrEngine.exe",
+				RequiredArgs = "-start server({map}/deathmatch) -port {port}",
+				Port = 5445,
+				QueryPort = 5445,
+				Maps = ["mp_rembase"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Scrap Mechanic",
+				AppID = "1366820",
+				ExeName = "ScrapMechanic.exe",
+				RequiredArgs = "-server -port {port} -maxplayers {MaxPlayers} -password \"{pass}\"",
+				Port = 50000,
+				QueryPort = 50001,
+				RelativeConfigPath = "ServerConfig.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Terraria (tModLoader)",
+				AppID = "1281930",
+				ExeName = "tModLoaderServer.exe",
+				RequiredArgs = "-port {port} -players {MaxPlayers} -world \"{map}\" -password \"{pass}\" -motd \"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 7777,
+				RelativeConfigPath = "serverconfig.txt",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["World1.wld"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Counter-Strike: Global Offensive (Legacy)",
+				AppID = "740",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game csgo -console -usercon +game_type 0 +game_mode 1 +mapgroup mg_active +map {map} -port {port} +sv_password \"{pass}\" +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"csgo\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["de_dust2", "de_mirage", "de_inferno"]
+			},
+			new() {
+				Game = "Garry's Mod (DarkRP)",
+				AppID = "4000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod +gamemode darkrp +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["rp_downtown_v4c_v2"]
+			},
+			new() {
+				Game = "Garry's Mod (Zombie Survival)",
+				AppID = "4000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod +gamemode zombiesurvival +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["zs_obj_vertigo"]
+			},
+			new() {
+				Game = "Arma 2: Operation Arrowhead",
+				AppID = "33390",
+				ExeName = "arma2oaserver.exe",
+				RequiredArgs = "-port={port} -name=\"{ServerName}\" -config=server.cfg -world={map}",
+				Port = 2302,
+				QueryPort = 2303,
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Takistan"]
+			},
+			new() {
+				Game = "Arma 2: DayZ Mod",
+				AppID = "224900",
+				ExeName = "arma2oaserver.exe",
+				RequiredArgs = "-mod=@DayZ -port={port} -name=\"{ServerName}\" -config=server.cfg -world={map}",
+				Port = 2302,
+				QueryPort = 2303,
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Chernarus"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Brink",
+				AppID = "22350",
+				ExeName = "brink_ded.exe",
+				RequiredArgs = "+set net_port {port} +exec server.cfg +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"base\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["cc_reactor"]
+			},
+			new() {
+				Game = "Dirty Bomb",
+				AppID = "333930",
+				ExeName = @"ShooterGame\Binaries\Win64\ShooterGameServer.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\ShooterEngine.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Mortal Online 2",
+				AppID = "1435650",
+				ExeName = @"MortalOnline2\Binaries\Win64\MortalOnline2Server-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"MortalOnline2\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "XERA: Survival",
+				AppID = "873740",
+				ExeName = @"Xera\Binaries\Win64\XeraServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\"",
+				Port = 8000,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Xera\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Survive the Nights",
+				AppID = "1353340",
+				ExeName = "SurviveTheNights.exe",
+				RequiredArgs = "-batchmode -nographics -port {port} -servername \"{ServerName}\" -password \"{pass}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = "ServerConfig.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Desolate",
+				AppID = "1205160",
+				ExeName = @"Desolate\Binaries\Win64\DesolateServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Desolate\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Savage Lands",
+				AppID = "397340",
+				ExeName = "SavageLandsServer.exe",
+				RequiredArgs = "-batchmode -nographics -port {port} -servername \"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = "ServerConfig.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Fragmented",
+				AppID = "441790",
+				ExeName = @"Fragmented\Binaries\Win64\FragmentedServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Fragmented\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "GRAV",
+				AppID = "400640",
+				ExeName = @"CAG\Binaries\Win64\CAGServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"CAG\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Eden Star",
+				AppID = "431560",
+				ExeName = @"EdenGame\Binaries\Win64\EdenGameServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"EdenGame\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Rokh",
+				AppID = "462440",
+				ExeName = @"Rokh\Binaries\Win64\RokhServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Rokh\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Outpost Zero",
+				AppID = "653660",
+				ExeName = @"OutpostZero\Binaries\Win64\OutpostZeroServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"OutpostZero\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Rend",
+				AppID = "550650",
+				ExeName = @"Rend\Binaries\Win64\RendServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Rend\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Night of the Dead",
+				AppID = "1377380",
+				ExeName = @"LF\Binaries\Win64\LFServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\"",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"LF\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Tower Unite",
+				AppID = "394690",
+				ExeName = @"TowerUnite\Binaries\Win64\TowerServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"TowerUnite\Saved\Config\WindowsServer\TowerGame.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Witch It",
+				AppID = "559650",
+				ExeName = @"WitchIt\Binaries\Win64\WitchItServer-Win64-Shipping.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"WitchIt\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Shattered Skies",
+				AppID = "439860",
+				ExeName = @"ShatteredSkies\Binaries\Win64\ShatteredSkiesServer.exe",
+				RequiredArgs = "-log -port={port} -queryport={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Chivalry: Medieval Warfare",
+				AppID = "219640",
+				ExeName = @"UDKGame\Binaries\Win64\UDK.exe",
+				RequiredArgs = "server {map}?steamsockets?Port={port}?QueryPort={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"UDKGame\Config\PCServer-UDKGame.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["AOCTD-Arena_P"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "The Stomping Land",
+				AppID = "299860",
+				ExeName = @"UDKGame\Binaries\Win64\UDK.exe",
+				RequiredArgs = "server {map}?Port={port}?QueryPort={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"UDKGame\Config\PCServer-UDKGame.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Farming Simulator 22",
+				AppID = "1248130",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 10823,
+				QueryPort = 10823,
+				RelativeConfigPath = "dedicatedServerConfig.xml",
+				Format = ConfigFormat.XML,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Dinkum",
+				AppID = "1062520",
+				ExeName = "DinkumServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Interstellar Rift",
+				AppID = "804360",
+				ExeName = "IR.exe",
+				RequiredArgs = "-server -port {port}",
+				Port = 6124,
+				QueryPort = 6124,
+				RelativeConfigPath = "server.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Golf With Your Friends",
+				AppID = "431240",
+				ExeName = "GWYF_Server.exe",
+				RequiredArgs = "-port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Ricochet",
+				AppID = "60",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game ricochet +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"ricochet\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["rc_arena"]
+			},
+			new() {
+				Game = "Garry's Mod (Prop Hunt)",
+				AppID = "4000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod +gamemode prophunt +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ph_office"]
+			},
+			new() {
+				Game = "Garry's Mod (Murder)",
+				AppID = "4000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod +gamemode murder +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["mu_clue"]
+			},
+			new() {
+				Game = "Garry's Mod (Sandbox)",
+				AppID = "4000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod +gamemode sandbox +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["gm_construct", "gm_flatgrass"]
+			},
+			new() {
+				Game = "RUST (Staging)",
+				AppID = "258550",
+				ExeName = "RustDedicated.exe",
+				RequiredArgs = "-beta staging -batchmode +server.level \"{map}\" +server.port {port} +server.queryport {query} +server.identity \"{Identity}\" +server.hostname \"{ServerName}\"",
+				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
+				Port = 28015,
+				QueryPort = 28016,
+				RelativeConfigPath = @"server\{Identity}\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Procedural Map"]
+			},
+			new() {
+				Game = "DayZ (Experimental)",
+				AppID = "1042420",
+				ExeName = "DayZServer_x64.exe",
+				RequiredArgs = "-config=serverDZ.cfg -port={port} -name=\"{ServerName}\"",
+				Port = 2302,
+				QueryPort = 27016,
+				RelativeConfigPath = "serverDZ.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ChernarusPlus"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "7 Days to Die (Experimental)",
+				AppID = "294420",
+				ExeName = "7DaysToDieServer.exe",
+				RequiredArgs = "-beta latest_experimental -configfile=serverconfig.xml -port={port} -batchmode -nographics -dedicated",
+				Port = 26900,
+				QueryPort = 26900,
+				RelativeConfigPath = "serverconfig.xml",
+				Format = ConfigFormat.XML,
+				Maps = ["Navezgane", "Pregen01"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Conan Exiles (TestLive)",
+				AppID = "443030",
+				ExeName = @"ConanSandbox\Binaries\Win64\ConanSandboxServer.exe",
+				RequiredArgs = "-beta testlive {map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?AdminPassword=\"{adminpass}\" -Port={port} -QueryPort={query} -nosteam",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["TheExiledLands"],
+				RelativeConfigPath = @"ConanSandbox\Saved\Config\WindowsServer\ServerSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				GameModes = ["PVE", "PVP"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Space Engineers (Crossplay)",
+				AppID = "298740",
+				ExeName = @"DedicatedServer64\SpaceEngineersDedicated.exe",
+				RequiredArgs = "-noconsole -ignorelastsession -port {port}",
+				Port = 27016,
+				QueryPort = 27016,
+				GameModes = ["Creative"],
+				RelativeConfigPath = @"Instance\SpaceEngineers-Dedicated.cfg",
+				Format = ConfigFormat.XML,
+				Maps = ["StarSystem"],
+				NeedsConfigWarning = true // EOS setup required for Crossplay
+			},
+			new() {
+				Game = "Mindustry",
+				AppID = "1127400",
+				ExeName = "Mindustry.exe",
+				RequiredArgs = "-server",
+				Port = 6567,
+				QueryPort = 6567,
+				RelativeConfigPath = @"config\server-settings.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Necesse",
+				AppID = "1169040",
+				ExeName = "jre\\bin\\java.exe",
+				RequiredArgs = "-jar Server.jar -port {port} -world \"{map}\" -password \"{pass}\" -slots {MaxPlayers}",
+				Port = 14159,
+				QueryPort = 14159,
+				RelativeConfigPath = @"cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["world"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Mount & Blade: Warband",
+				AppID = "48700",
+				ExeName = "mb_warband_dedicated.exe",
+				RequiredArgs = "-r Sample_Battle.txt -m Native -port {port}",
+				Port = 7240,
+				QueryPort = 7240,
+				RelativeConfigPath = "Sample_Battle.txt",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Cry of Fear",
+				AppID = "225420",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game cryoffear +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"cryoffear\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["cof_campaign_01"]
+			},
+			new() {
+				Game = "Double Action: Boogaloo",
+				AppID = "317360",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game dab -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"dab\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["da_street"]
+			},
+			new() {
+				Game = "Pirates, Vikings, and Knights II",
+				AppID = "17570",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game pvkii -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"pvkii\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["bt_island"]
+			},
+			new() {
+				Game = "The Ship: Murder Party",
+				AppID = "2400",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game ship -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"ship\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["bataleon"]
+			},
+			new() {
+				Game = "Blade Symphony",
+				AppID = "225600",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game berimbau -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"berimbau\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["duel_monastery"]
+			},
+			new() {
+				Game = "Dystopia",
+				AppID = "17580",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game dystopia -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"dystopia\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["dys_vaccine"]
+			},
+			new() {
+				Game = "Half-Life 2: Capture the Flag",
+				AppID = "17550",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game hl2ctf -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"hl2ctf\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ctf_2fort"]
+			},
+			new() {
+				Game = "Zombie Master: Reborn",
+				AppID = "35140",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game zombiemaster -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"zombiemaster\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["zm_farm"]
+			},
+			new() {
+				Game = "Action: Source",
+				AppID = "211720",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game action -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"action\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["as_city"]
+			},
+			new() {
+				Game = "Murder Miners",
+				AppID = "274900",
+				ExeName = "MurderMinersServer.exe",
+				RequiredArgs = "-port {port} -name \"{ServerName}\" -maxplayers {MaxPlayers}",
+				Port = 27015,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Lead and Gold: Gangs of the Wild West",
+				AppID = "42120",
+				ExeName = "lag_server.exe",
+				RequiredArgs = "-port {port} -servername \"{ServerName}\"",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Orion: Prelude",
+				AppID = "104900",
+				ExeName = @"UDKGame\Binaries\Win64\OrionGameServer.exe",
+				RequiredArgs = "{map}?steamsockets?Port={port}?QueryPort={query}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"UDKGame\Config\PCServer-UDKGame.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["c1m1_survive"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Saurian",
+				AppID = "587450",
+				ExeName = "SaurianServer.exe",
+				RequiredArgs = "-batchmode -nographics -port {port}",
+				Port = 7777,
+				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Factorio (Experimental)",
+				AppID = "428200",
+				ExeName = @"bin\x64\factorio.exe",
+				RequiredArgs = "-beta experimental --start-server {map}.zip --server-settings data\\server-settings.json --port {port}",
+				Port = 34197,
+				QueryPort = 34197,
+				RelativeConfigPath = @"data\server-settings.json",
+				Format = ConfigFormat.JSON,
+				Maps = ["FactorioWorld"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Project Zomboid (Beta)",
+				AppID = "380870",
+				ExeName = "StartServer64.bat",
+				RequiredArgs = "-beta b41multiplayer -port {port} -servername \"{Identity}\" -adminpassword \"{adminpass}\"",
+				Port = 16261,
+				QueryPort = 16262,
+				RelativeConfigPath = @"Zomboid\Server\{Identity}.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Muldraugh, KY"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "The Isle (Legacy)",
+				AppID = "412680",
+				ExeName = @"TheIsle\Binaries\Win64\TheIsleServer-Win64-Shipping.exe",
+				RequiredArgs = "-beta legacy {map}?Listen?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -log",
+				RelativeConfigPath = @"TheIsle\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["V3"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Barotrauma (Unstable)",
+				AppID = "1022710",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-beta unstable -port {port} -queryport {query} -name \"{ServerName}\"",
+				Port = 27015,
+				QueryPort = 27016,
+				RelativeConfigPath = "serversettings.xml",
+				Format = ConfigFormat.XML,
+				Maps = ["Campaign"]
+			},
+			new() {
+				Game = "Palworld (Experimental)",
+				AppID = "2394010",
+				ExeName = "Pal\\Binaries\\Win64\\PalServer-Win64-Shipping.exe",
+				RequiredArgs = "-beta experimental EpicApp=PalServer -port={port} -queryport={query} -players={MaxPlayers} -ServerName=\"{ServerName}\" -log",
+				RelativeConfigPath = "Pal\\Saved\\Config\\WindowsServer\\PalWorldSettings.ini",
+				Port = 8211,
+				QueryPort = 27015,
+				Maps = ["DefaultWorld"],
+				Format = ConfigFormat.Palworld,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Counter-Strike 1.6",
+				AppID = "90",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game cstrike +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"cstrike\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["de_dust2", "cs_assault"]
+			},
+			new() {
+				Game = "Counter-Strike: Condition Zero",
+				AppID = "90",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game czero +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"czero\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["de_dust2_cz"]
+			},
+			new() {
+				Game = "Day of Defeat",
+				AppID = "90",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game dod +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"dod\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["dod_avalanche"]
+			},
+			new() {
+				Game = "Team Fortress Classic",
+				AppID = "90",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game tfc +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"tfc\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["2fort"]
+			},
+			new() {
+				Game = "Half-Life: Blue Shift",
+				AppID = "90",
+				ExeName = "hlds.exe",
+				RequiredArgs = "-console -game bshift +port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"bshift\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ba_yard"]
+			},
+			new() {
+				Game = "GoldenEye: Source",
+				AppID = "244310", // Uses Source SDK 2013 Dedicated Server
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game gesource -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"gesource\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["ge_facility"]
+			},
+			new() {
+				Game = "Star Wars Jedi Knight: Jedi Academy",
+				AppID = "6010",
+				ExeName = @"GameData\jampDed.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec server.cfg",
+				Port = 29070,
+				QueryPort = 29070,
+				RelativeConfigPath = @"GameData\base\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Star Wars Jedi Knight II: Jedi Outcast",
+				AppID = "6020",
+				ExeName = @"GameData\jk2ded.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec server.cfg",
+				Port = 28070,
+				QueryPort = 28070,
+				RelativeConfigPath = @"GameData\base\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "OpenTTD",
+				AppID = "1536610",
+				ExeName = "openttd.exe",
+				RequiredArgs = "-D 0.0.0.0:{port}",
+				Port = 3979,
+				QueryPort = 3979,
+				RelativeConfigPath = "openttd.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Garry's Mod (Deathrun)",
+				AppID = "4000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod +gamemode deathrun +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["dr_playstation"]
+			},
+			new() {
+				Game = "Garry's Mod (BaseWars)",
+				AppID = "4000",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game garrysmod +gamemode basewars +map {map} +maxplayers {MaxPlayers} -port {port} +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"garrysmod\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["gm_construct"]
+			},
+			new() {
+				Game = "Halo: The Master Chief Collection",
+				AppID = "1164850",
+				ExeName = "mcctcnd.exe",
+				RequiredArgs = "-port {port}",
+				Port = 27015,
+				QueryPort = 27016,
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Farming Simulator 19",
+				AppID = "787860",
+				ExeName = "DedicatedServer.exe",
+				RequiredArgs = "-port {port}",
+				Port = 10823,
+				QueryPort = 10823,
+				RelativeConfigPath = "dedicatedServerConfig.xml",
+				Format = ConfigFormat.XML,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Obsidian Conflict",
+				AppID = "31580",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game obsidian -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"obsidian\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["oc_harvest"]
+			},
+			new() {
+				Game = "Bloody Good Time",
+				AppID = "2450",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game bgt -console -port {port} +maxplayers {MaxPlayers} +map {map}",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"bgt\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["bgt_casino"]
+			},
+			new() {
+				Game = "Unreal Tournament (1999)",
+				AppID = "13240",
+				ExeName = @"System\ucc.exe",
+				RequiredArgs = "server {map}?game=Botpack.DeathMatchPlus -port={port}",
+				Port = 7777,
+				QueryPort = 7778,
+				RelativeConfigPath = @"System\UnrealTournament.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["DM-Morpheus"]
+			},
+			new() {
+				Game = "Left 4 Dead 2 (Versus)",
+				AppID = "222860",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +mp_gamemode versus +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"left4dead2\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["c1m1_hotel"]
+			},
+			new() {
+				Game = "Left 4 Dead 2 (Survival)",
+				AppID = "222860",
+				ExeName = "srcds.exe",
+				RequiredArgs = "-game left4dead2 -console -port {port} +maxplayers {MaxPlayers} +map {map} +mp_gamemode survival +hostname \"{ServerName}\" {rcon}",
+				RconSyntax = "+rcon_password \"{rcon_pass}\"",
+				Port = 27015,
+				QueryPort = 27015,
+				RelativeConfigPath = @"left4dead2\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["c1m4_atrium"]
+			},
+			new() {
+				Game = "Factorio (Space Age)",
+				AppID = "428200",
+				ExeName = @"bin\x64\factorio.exe",
+				RequiredArgs = "--start-server {map}.zip --server-settings data\\server-settings.json --port {port}",
+				Port = 34197,
+				QueryPort = 34197,
+				RelativeConfigPath = @"data\server-settings.json",
+				Format = ConfigFormat.JSON,
+				Maps = ["SpaceAgeWorld"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "ARK: Survival Ascended (Scorched Earth)",
+				AppID = "2430930",
+				ExeName = @"ShooterGame\Binaries\Win64\ArkServer.exe",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} {rcon} -server -log",
+				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\"",
+				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["ScorchedEarth_WP"],
+				GameModes = ["PVE", "PVP"],
+				NeedsConfigWarning = true
 			}
 		];
 
