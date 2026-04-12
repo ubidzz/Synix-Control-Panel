@@ -79,6 +79,7 @@ public class GameServer : GameInfo
 	public string WorldSeed { get; set; } = "12345";
 	[JsonIgnore]
 	public string PlayerCountDisplay => $"{CurrentPlayers} / {MaxPlayers}";
+	public int AppPort { get; set; } = 8777;
 
 	public DateTime? StartTime { get; set; }
 	[JsonIgnore]

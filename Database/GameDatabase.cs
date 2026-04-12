@@ -62,19 +62,6 @@ namespace Synix_Control_Panel.Database
 				NeedsConfigWarning = true
 			},
 			new() {
-				Game = "Rust",
-				AppID = "258550",
-				ExeName = "RustDedicated.exe",
-				RequiredArgs = "-batchmode +server.level \"{map}\" -SteamAppId={steamAppID} +server.port {port} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" +rcon.port {port} +rcon.password \"{pass}\"",
-				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
-				Port = 28015,
-				QueryPort = 28016,
-				RelativeConfigPath = @"server\{Identity}\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["Procedural Map"],
-				GameModes = ["PVP", "PVE"],
-			},
-			new() {
 				Game = "Valheim",
 				AppID = "896660",
 				ExeName = "valheim_server.exe",
@@ -2605,16 +2592,17 @@ namespace Synix_Control_Panel.Database
 				Maps = ["rc_arena"]
 			},
 			new() {
-				Game = "RUST (Staging)",
+				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				RequiredArgs = "-batchmode -nographics -SteamAppId={steamAppID} +server.ip 0.0.0.0 +server.port {port} +server.queryport {query} +server.level \"{map}\" +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" +rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
+				RequiredArgs = "-batchmode -nographics +server.ip 0.0.0.0 +server.port {port} +server.queryport {query} +app.port {app_port} +server.level \"{map}\" +server.seed {seed} +server.worldsize 4000 +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" {rcon} -SteamAppId={steamAppID}",
 				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
 				Port = 28015,
 				QueryPort = 28016,
 				RelativeConfigPath = @"server\{Identity}\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Procedural Map"]
+				Maps = ["Procedural Map", "Barren", "HapisIsland", "CraggyIsland"],
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "DayZ (Experimental)",

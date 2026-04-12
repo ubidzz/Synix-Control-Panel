@@ -37,6 +37,7 @@ namespace Synix_Control_Panel
 		static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 		[DllImport("user32.dll")]
 		static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+		private bool isAppPortLocked = true;
 
 		public ServerSettingsGUI(GameServer? server = null)
 		{
@@ -92,6 +93,7 @@ namespace Synix_Control_Panel
 			txtAdminPassword.Text = _existingServer.AdminPassword;
 			numPort.Value = _existingServer.Port;
 			numQueryPort.Value = _existingServer.QueryPort;
+			AppPortNumeric.Value = _existingServer.AppPort;
 			numMaxPlayers.Value = _existingServer.MaxPlayers;
 			txtInstallPath.Text = _existingServer.InstallPath;
 			chkDefaultPath.Checked = _existingServer.IsDefaultPath;
@@ -247,7 +249,8 @@ namespace Synix_Control_Panel
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = dtpRestartTime.Value.ToString("HH:mm"),
 				RestartDays = new bool[] { chkSun.Checked, chkMon.Checked, chkTue.Checked, chkWed.Checked, chkThu.Checked, chkFri.Checked, chkSat.Checked },
-				LastMaintenanceDate = _existingServer?.LastMaintenanceDate ?? ""
+				LastMaintenanceDate = _existingServer?.LastMaintenanceDate ?? "",
+				AppPort = (int)AppPortNumeric.Value
 			};
 
 			try
@@ -330,6 +333,7 @@ namespace Synix_Control_Panel
 				txtWorldSeed.Enabled = false;
 				cmbCompetitive.Enabled = false;
 				chkEnableRcon.Enabled = false;
+				AppPortNumeric.Enabled = false;
 
 				// Clear the arguments display if no game is selected
 				lblDefaultArgs.Text = string.Empty;
@@ -387,8 +391,13 @@ namespace Synix_Control_Panel
 			cmbCompetitive.Enabled = supportsModes;
 			lblCompetitive.ForeColor = supportsModes ? Color.White : Color.Gray;
 
+			// --- 📱 APP PORT LOCK ---
+			bool supportsAppPort = gameData.RequiredArgs.Contains("{app_port}");
+			AppPortNumeric.Enabled = supportsAppPort;
+			lblAppPort.ForeColor = supportsAppPort ? Color.White : Color.Gray;
+
 			// --- 📡 RCON LOCK ---
-			bool supportsRcon = !string.IsNullOrEmpty(gameData.RconSyntax);
+			bool supportsRcon = gameData.RequiredArgs.Contains("{rcon}");
 			chkEnableRcon.Enabled = supportsRcon;
 
 			// Logic Lock: RCON sub-fields only unlock if the game supports it AND it is checked

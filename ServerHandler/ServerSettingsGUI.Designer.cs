@@ -78,11 +78,14 @@
 			lblRCONport = new Label();
 			lblaruments = new Label();
 			lblDefaultArgs = new Label();
+			lblAppPort = new Label();
+			AppPortNumeric = new NumericUpDown();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).BeginInit();
 			groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)AppPortNumeric).BeginInit();
 			SuspendLayout();
 			// 
 			// ServerNameLabel
@@ -190,9 +193,9 @@
 			chkDefaultPath.ForeColor = Color.White;
 			chkDefaultPath.Location = new Point(12, 363);
 			chkDefaultPath.Name = "chkDefaultPath";
-			chkDefaultPath.Size = new Size(230, 19);
+			chkDefaultPath.Size = new Size(193, 19);
 			chkDefaultPath.TabIndex = 10;
-			chkDefaultPath.Text = "Use Default Location (C:\\GameServers)";
+			chkDefaultPath.Text = "Use Default Location (C:\\Game)";
 			chkDefaultPath.UseVisualStyleBackColor = false;
 			chkDefaultPath.Click += chkDefaultPath_CheckedChanged;
 			// 
@@ -614,6 +617,28 @@
 			lblDefaultArgs.TabIndex = 53;
 			lblDefaultArgs.Text = "label1";
 			// 
+			// lblAppPort
+			// 
+			lblAppPort.AutoSize = true;
+			lblAppPort.BackColor = Color.Transparent;
+			lblAppPort.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblAppPort.ForeColor = Color.White;
+			lblAppPort.Location = new Point(245, 205);
+			lblAppPort.Name = "lblAppPort";
+			lblAppPort.Size = new Size(63, 17);
+			lblAppPort.TabIndex = 55;
+			lblAppPort.Text = "App Port";
+			// 
+			// AppPortNumeric
+			// 
+			AppPortNumeric.Location = new Point(245, 225);
+			AppPortNumeric.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+			AppPortNumeric.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
+			AppPortNumeric.Name = "AppPortNumeric";
+			AppPortNumeric.Size = new Size(78, 23);
+			AppPortNumeric.TabIndex = 56;
+			AppPortNumeric.Value = new decimal(new int[] { 1024, 0, 0, 0 });
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -621,6 +646,8 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 558);
+			Controls.Add(AppPortNumeric);
+			Controls.Add(lblAppPort);
 			Controls.Add(lblDefaultArgs);
 			Controls.Add(lblaruments);
 			Controls.Add(lblRCONport);
@@ -673,6 +700,7 @@
 			((System.ComponentModel.ISupportInitialize)numRconPort).EndInit();
 			groupBox1.ResumeLayout(false);
 			groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)AppPortNumeric).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -729,5 +757,8 @@
 		private Label lblRCONport;
 		private Label lblaruments;
 		private Label lblDefaultArgs;
+		private NumericUpDown numericUpDown1;
+		private Label lblAppPort;
+		private NumericUpDown AppPortNumeric;
 	}
 }

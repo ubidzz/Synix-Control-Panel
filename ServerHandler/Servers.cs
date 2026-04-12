@@ -127,6 +127,7 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{ServerName}", server.ServerName)
 					.Replace("{InstallPath}", server.InstallPath)
 					.Replace("{Identity}", cleanIdentity)
+					.Replace("{app_port}", (server.Port + 67).ToString())
 					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed);
 
 				// --- RCON and Mode Logic ---
