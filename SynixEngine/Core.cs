@@ -43,40 +43,50 @@ namespace Synix_Control_Panel.SynixEngine
 			}));
 		}
 
-		private void Heartbeat_Tick(object? sender, EventArgs e)
+		private async void Heartbeat_Tick(object? sender, EventArgs e)
 		{
 			PerformWatchdogCheck();
 			UpdateResourceStats();
 			PerformMaintenanceCheck();
+
+			// 🚀 Trigger player count updates for running servers
+			foreach (var server in MainGUI.serverList)
+			{
+				if (server.Status == "Running")
+				{
+					// Fire-and-forget the query so the UI stays smooth
+					_ = UpdatePlayerCount(server);
+				}
+			}
+
 			UpdateGridStatus();
 		}
 
 		private void PerformMaintenanceCheck()
-		{
-			DateTime now = DateTime.Now;
-			string currentTime = now.ToString("HH:mm");
+{
+    DateTime now = DateTime.Now;
+    string currentTime = now.ToString("HH:mm");
+    
+    // This is the "Bookmark" - it generates itself based on today's date
+    string todayBookmark = now.ToString("yyyy-MM-dd"); 
+    int dayIndex = (int)now.DayOfWeek; // 0=Sun, 1=Mon...
 
-			// This is the "Bookmark" - it generates itself based on today's date
-			string todayBookmark = now.ToString("yyyy-MM-dd");
-			int dayIndex = (int)now.DayOfWeek; // 0=Sun, 1=Mon...
-
-			foreach (var server in MainGUI.serverList)
-			{
-				if (server.IsScheduledRestartEnabled &&
-					server.RestartDays[dayIndex] &&           // User's Day Checkbox
-					server.RestartTime == currentTime &&      // User's Time Setting
-					server.LastMaintenanceDate != todayBookmark) // The Internal Bookmark Check
-				{
-					// 1. Mark it as "Done for today" immediately
-					server.LastMaintenanceDate = todayBookmark;
-
-					// 2. Trigger the reboot
-					Log($"[ENGINE] Scheduled weekly maintenance triggered for {server.ServerName}.");
-					ExecuteMaintenanceRestart(server);
-				}
-			}
-		}
-
+    foreach (var server in MainGUI.serverList)
+    {
+        if (server.IsScheduledRestartEnabled && 
+            server.RestartDays[dayIndex] &&           // User's Day Checkbox
+            server.RestartTime == currentTime &&      // User's Time Setting
+            server.LastMaintenanceDate != todayBookmark) // The Internal Bookmark Check
+        {
+            // 1. Mark it as "Done for today" immediately
+            server.LastMaintenanceDate = todayBookmark;
+            
+            // 2. Trigger the reboot
+            Log($"[ENGINE] Scheduled weekly maintenance triggered for {server.ServerName}.");
+            ExecuteMaintenanceRestart(server);
+        }
+    }
+}
 		public bool IsBasicInfoValid(string name, string game)
 		{
 			// The AI's simple rule: You need a name and a game selected

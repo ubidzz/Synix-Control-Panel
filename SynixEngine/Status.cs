@@ -42,6 +42,10 @@ namespace Synix_Control_Panel.SynixEngine
 						{
 							server.RunningProcess = process;
 							server.Status = StatusManager.GetStatus(ServerState.Running);
+							if (server.StartTime == null)
+							{
+								server.StartTime = process.StartTime;
+							}
 							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
@@ -155,6 +159,52 @@ namespace Synix_Control_Panel.SynixEngine
 			catch
 			{
 				return "Offline";
+			}
+		}
+
+		public async Task UpdatePlayerCount(GameServer server)
+		{
+			// 1. Only query if the server is actually running
+			if (server.Status != "Running")
+			{
+				server.CurrentPlayers = 0;
+				return;
+			}
+
+			using var udpClient = new System.Net.Sockets.UdpClient();
+			try
+			{
+				// Short timeout to maintain snappy 45MB performance
+				udpClient.Client.ReceiveTimeout = 1500;
+				System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), server.QueryPort);
+
+				await udpClient.SendAsync(_a2sInfoRequest, _a2sInfoRequest.Length, remoteEP);
+
+				var result = await udpClient.ReceiveAsync();
+				byte[] data = result.Buffer;
+
+				// Check for valid A2S_INFO 'I' response (Header: FFFFFFFF, Type: 49)
+				if (data.Length > 0 && data[4] == 0x49)
+				{
+					int pointer = 6; // Start after Header, Type, and Protocol bytes
+
+					// Skip the 4 null-terminated strings: Name, Map, Folder, Game
+					for (int i = 0; i < 4; i++)
+					{
+						while (data[pointer] != 0x00) pointer++;
+						pointer++;
+					}
+
+					pointer += 2; // Skip the Steam App ID (short)
+
+					// 🎯 Grab the live counts from the byte array
+					server.CurrentPlayers = data[pointer];
+					server.MaxPlayersFromQuery = data[pointer + 1];
+				}
+			}
+			catch
+			{
+				// Keep it silent: if the query fails, the count just stays at 0
 			}
 		}
 	}

@@ -9,23 +9,11 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using Synix_Control_Panel.Database;
 using Synix_Control_Panel.Design;
-using Synix_Control_Panel.FileFolderHandler;
-using Synix_Control_Panel.MonitoringHandler;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
-using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.Json;
-using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
-using static Synix_Control_Panel.SynixEngine.Core;
-using static System.Windows.Forms.Design.AxImporter;
 
 namespace Synix_Control_Panel
 {
@@ -130,7 +118,7 @@ namespace Synix_Control_Panel
 		{
 			// 1. Get the LAN IP instantly
 			string localIP = Core.Instance.GetLocalIP();
-			lblLocalIP.Text = $"LAN: {localIP}";
+			lblLocalIP1.Text = $"LAN IP: {localIP}";
 
 			// 2. Get the Public IP in the background
 			lblPublicIP.Text = "Public IP: Fetching..."; // Fix: was using lblLocalIP
@@ -151,9 +139,9 @@ namespace Synix_Control_Panel
 
 		private void lblLocalIP_Click(object sender, EventArgs e)
 		{
-			string ip = lblLocalIP.Text.Replace("LAN IP: ", "");
-			Clipboard.SetText(ip);
-			Core.Instance.Log($"[SYSTEM] Local IP {ip} copied to clipboard.", Color.Cyan);
+			string LANip = lblLocalIP1.Text.Replace("LAN IP: ", "");
+			Clipboard.SetText(LANip);
+			Core.Instance.Log($"[SYSTEM] Local IP {LANip} copied to clipboard.", Color.Cyan);
 		}
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
@@ -297,6 +285,9 @@ namespace Synix_Control_Panel
 			{
 				// The AI handles the "Running" check, the Confirmation, and the File Deletion
 				Core.Instance.DeleteServerAndReport(selectedServer);
+				dataGridView1.CurrentCell = null;
+				dataGridView1.DataSource = null;
+				dataGridView1.DataSource = serverList;
 			}
 			else
 			{
@@ -341,6 +332,7 @@ namespace Synix_Control_Panel
 			{
 				this.Invoke((MethodInvoker)delegate
 				{
+					selectedServer.StartTime = DateTime.Now;
 					AppendLog(msg);
 					UpdateGrid();
 				});

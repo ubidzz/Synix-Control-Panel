@@ -37,9 +37,8 @@ namespace Synix_Control_Panel.Design
 			if (dgv.Columns.Contains("colName")) dgv.Columns["colName"].DataPropertyName = "ServerName";
 			if (dgv.Columns.Contains("colGame")) dgv.Columns["colGame"].DataPropertyName = "Game";
 			if (dgv.Columns.Contains("colPort")) dgv.Columns["colPort"].DataPropertyName = "Port";
-			if (dgv.Columns.Contains("colPassword")) dgv.Columns["colPassword"].DataPropertyName = "Password";
-			if (dgv.Columns.Contains("colAdminPassword")) dgv.Columns["colAdminPassword"].DataPropertyName = "AdminPassword";
 			if (dgv.Columns.Contains("colStatus")) dgv.Columns["colStatus"].DataPropertyName = "Status";
+			dgv.Columns["PlayerCountDisplay"].DefaultCellStyle.ForeColor = Color.Cyan;
 
 			// Header Style (Kills the blue Game column)
 			dgv.EnableHeadersVisualStyles = false;

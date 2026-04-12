@@ -104,52 +104,44 @@ namespace Synix_Control_Panel.SynixEngine
 		// ACTION 4: DELETE SERVER (Merged & Safe)
 		public void DeleteServerAndReport(GameServer server)
 		{
-			// 1. AI Safety Check: Prevent deleting an active server
-			// 🛡️ THE STEAMCMD LOCK
+			// 1. Safety Checks (Installing/Running)
 			string status = server.Status ?? "";
-			if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating))
+			if (status == "Installing" || status == "Updating" || (server.PID.HasValue && server.PID > 0))
 			{
-				MainGUI.Instance?.AppendLog($"[LOCKED] Cannot modify {server.ServerName} while SteamCMD is working!", Color.Orange, true);
-				return;
-			}
-			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
-			{
-				MessageBox.Show($"Cannot delete '{server.ServerName}' while it is Running.\n\nPlease stop the server first.",
-								"Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
-			if (server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Updating) || (server.SteamPID.HasValue && server.SteamPID > 0))
-			{
-				string currentAction = server.Status == StatusManager.GetStatus(ServerState.Updating) ? StatusManager.GetStatus(ServerState.Updating) : StatusManager.GetStatus(ServerState.Installing);
-				MessageBox.Show($"Cannot delete '{server.ServerName}' while it is {currentAction}.\n\nPlease wait for the process to finish.",
-								"Process Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show("Cannot delete an active or installing server.", "Action Locked");
 				return;
 			}
 
-			// 2. AI Confirmation: The "Point of No Return" warning
-			var confirm = MessageBox.Show($"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?\n\n" +
-										  $"THIS WILL REMOVE ALL FILES AT:\n{server.InstallPath}",
-										  "Confirm Total Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+			// 🎯 THE FIX: Declare 'confirm' right here by assigning the MessageBox result
+			DialogResult confirm = MessageBox.Show($"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?\n\n" +
+												   $"This will wipe: {server.InstallPath}",
+												   "Confirm Total Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
+			// Now the compiler knows what 'confirm' is!
 			if (confirm == DialogResult.Yes)
 			{
 				try
 				{
-					// 3. AI Action: Call the folder handler to wipe the files
+					// 2. RAM FIX: Pull it out of the list so the engine stops "thinking" about it
+					if (MainGUI.serverList.Contains(server))
+					{
+						MainGUI.serverList.Remove(server);
+					}
+
+					// 3. WIPE FILES: Call your folder handler
 					FolderHandler.ServerFolder.Delete(server, msg =>
 					{
-						MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.AppendLog(msg)));
+						// Use the Core logger to print the result to the UI
+						Core.Instance.Log(msg);
 					});
 
-					// 4. AI Feedback: Refresh the UI
-					UpdateGridStatus();
+					// 4. Update the Grid
+					Core.Instance.UpdateGridStatus();
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show($"The server was removed from the list, but some files couldn't be deleted: {ex.Message}",
-									"Cleanup Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-					UpdateGridStatus();
+					MessageBox.Show($"Files were partially deleted, but an error occurred: {ex.Message}");
+					Core.Instance.UpdateGridStatus();
 				}
 			}
 		}

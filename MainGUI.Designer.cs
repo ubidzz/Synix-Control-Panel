@@ -38,8 +38,8 @@
 			colName = new DataGridViewTextBoxColumn();
 			colPort = new DataGridViewTextBoxColumn();
 			colQueryPort = new DataGridViewTextBoxColumn();
-			colPassword = new DataGridViewTextBoxColumn();
-			colAdminPassword = new DataGridViewTextBoxColumn();
+			PlayerCountDisplay = new DataGridViewTextBoxColumn();
+			UptimeDisplay = new DataGridViewTextBoxColumn();
 			colStatus = new DataGridViewTextBoxColumn();
 			rtbLog = new RichTextBox();
 			btnStart = new Button();
@@ -61,7 +61,7 @@
 			installServer = new ToolStripMenuItem();
 			btnServerActions = new Button();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
-			lblLocalIP = new Label();
+			lblLocalIP1 = new Label();
 			lblPublicIP = new Label();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
@@ -75,7 +75,7 @@
 			dataGridView1.AllowUserToDeleteRows = false;
 			dataGridView1.BorderStyle = BorderStyle.None;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPassword, colAdminPassword, colStatus });
+			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, PlayerCountDisplay, UptimeDisplay, colStatus });
 			dataGridView1.Location = new Point(12, 95);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
@@ -115,21 +115,21 @@
 			colQueryPort.ReadOnly = true;
 			colQueryPort.Width = 80;
 			// 
-			// colPassword
+			// PlayerCountDisplay
 			// 
-			colPassword.DataPropertyName = "Password";
-			colPassword.HeaderText = "Password";
-			colPassword.Name = "colPassword";
-			colPassword.ReadOnly = true;
-			colPassword.Width = 150;
+			PlayerCountDisplay.DataPropertyName = "PlayerCountDisplay";
+			PlayerCountDisplay.HeaderText = "Players";
+			PlayerCountDisplay.Name = "PlayerCountDisplay";
+			PlayerCountDisplay.ReadOnly = true;
+			PlayerCountDisplay.Width = 75;
 			// 
-			// colAdminPassword
+			// UptimeDisplay
 			// 
-			colAdminPassword.DataPropertyName = "AdminPassword";
-			colAdminPassword.HeaderText = "Admin Password";
-			colAdminPassword.Name = "colAdminPassword";
-			colAdminPassword.ReadOnly = true;
-			colAdminPassword.Width = 150;
+			UptimeDisplay.DataPropertyName = "UptimeDisplay";
+			UptimeDisplay.HeaderText = "UPTIME";
+			UptimeDisplay.Name = "UptimeDisplay";
+			UptimeDisplay.ReadOnly = true;
+			UptimeDisplay.Width = 120;
 			// 
 			// colStatus
 			// 
@@ -232,19 +232,19 @@
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, deleteServer, openServerConfig, btnRestart, editServer, udateServer, installServer });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(148, 158);
+			contextMenuStrip.Size = new Size(181, 180);
 			// 
 			// btnHelp
 			// 
 			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(147, 22);
+			btnHelp.Size = new Size(180, 22);
 			btnHelp.Text = "Help";
 			btnHelp.Click += btnHelp_Click;
 			// 
 			// deleteServer
 			// 
 			deleteServer.Name = "deleteServer";
-			deleteServer.Size = new Size(147, 22);
+			deleteServer.Size = new Size(180, 22);
 			deleteServer.Text = "Delete Server";
 			deleteServer.Click += btnDelete_Click;
 			// 
@@ -252,8 +252,8 @@
 			// 
 			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerConfigFileToolStripMenuItem, openServerFolderToolStripMenuItem, connectionTestToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(147, 22);
-			openServerConfig.Text = "Server Files";
+			openServerConfig.Size = new Size(180, 22);
+			openServerConfig.Text = "Server Options";
 			// 
 			// openServerConfigFileToolStripMenuItem
 			// 
@@ -279,28 +279,28 @@
 			// btnRestart
 			// 
 			btnRestart.Name = "btnRestart";
-			btnRestart.Size = new Size(147, 22);
+			btnRestart.Size = new Size(180, 22);
 			btnRestart.Text = "Restart Server";
 			btnRestart.Click += btnRestart_Click;
 			// 
 			// editServer
 			// 
 			editServer.Name = "editServer";
-			editServer.Size = new Size(147, 22);
+			editServer.Size = new Size(180, 22);
 			editServer.Text = "Edit Server";
 			editServer.Click += btnEdit_Click;
 			// 
 			// udateServer
 			// 
 			udateServer.Name = "udateServer";
-			udateServer.Size = new Size(147, 22);
+			udateServer.Size = new Size(180, 22);
 			udateServer.Text = "Update Server";
 			udateServer.Click += btnUpdate_Click;
 			// 
 			// installServer
 			// 
 			installServer.Name = "installServer";
-			installServer.Size = new Size(147, 22);
+			installServer.Size = new Size(180, 22);
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
@@ -320,19 +320,19 @@
 			tmrResourceUpdates.Interval = 1000;
 			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
 			// 
-			// lblLocalIP
+			// lblLocalIP1
 			// 
-			lblLocalIP.AutoSize = true;
-			lblLocalIP.BackColor = Color.Transparent;
-			lblLocalIP.Cursor = Cursors.Hand;
-			lblLocalIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			lblLocalIP.ForeColor = Color.Lime;
-			lblLocalIP.Location = new Point(185, 586);
-			lblLocalIP.Name = "lblLocalIP";
-			lblLocalIP.Size = new Size(62, 17);
-			lblLocalIP.TabIndex = 17;
-			lblLocalIP.Text = "Public IP";
-			lblLocalIP.Click += lblPublicIP_Click;
+			lblLocalIP1.AutoSize = true;
+			lblLocalIP1.BackColor = Color.Transparent;
+			lblLocalIP1.Cursor = Cursors.Hand;
+			lblLocalIP1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblLocalIP1.ForeColor = Color.Lime;
+			lblLocalIP1.Location = new Point(186, 605);
+			lblLocalIP1.Name = "lblLocalIP1";
+			lblLocalIP1.Size = new Size(56, 17);
+			lblLocalIP1.TabIndex = 18;
+			lblLocalIP1.Text = "Local IP";
+			lblLocalIP1.Click += lblLocalIP_Click;
 			// 
 			// lblPublicIP
 			// 
@@ -341,12 +341,12 @@
 			lblPublicIP.Cursor = Cursors.Hand;
 			lblPublicIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblPublicIP.ForeColor = Color.Lime;
-			lblPublicIP.Location = new Point(185, 606);
+			lblPublicIP.Location = new Point(186, 585);
 			lblPublicIP.Name = "lblPublicIP";
-			lblPublicIP.Size = new Size(56, 17);
-			lblPublicIP.TabIndex = 18;
-			lblPublicIP.Text = "Local IP";
-			lblPublicIP.Click += lblLocalIP_Click;
+			lblPublicIP.Size = new Size(62, 17);
+			lblPublicIP.TabIndex = 19;
+			lblPublicIP.Text = "Public IP";
+			lblPublicIP.Click += lblPublicIP_Click;
 			// 
 			// MainGUI
 			// 
@@ -356,7 +356,7 @@
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
 			Controls.Add(lblPublicIP);
-			Controls.Add(lblLocalIP);
+			Controls.Add(lblLocalIP1);
 			Controls.Add(btnServerActions);
 			Controls.Add(lblTotalCpu);
 			Controls.Add(lblTotalRam);
@@ -392,13 +392,6 @@
 		private System.Windows.Forms.DataVisualization.Charting.Chart chartHeartbeat;
 		private Label lblTotalRam;
 		private Label lblTotalCpu;
-		private DataGridViewTextBoxColumn colGame;
-		private DataGridViewTextBoxColumn colName;
-		private DataGridViewTextBoxColumn colPort;
-		private DataGridViewTextBoxColumn colQueryPort;
-		private DataGridViewTextBoxColumn colPassword;
-		private DataGridViewTextBoxColumn colAdminPassword;
-		private DataGridViewTextBoxColumn colStatus;
 		private ContextMenuStrip contextMenuStrip;
 		private ToolStripMenuItem installServer;
 		private ToolStripMenuItem editServer;
@@ -413,6 +406,14 @@
 		private ToolStripMenuItem openServerFolderToolStripMenuItem;
 		private ToolStripMenuItem connectionTestToolStripMenuItem;
 		private Label lblLocalIP;
+		private Label lblLocalIP1;
 		private Label lblPublicIP;
+		private DataGridViewTextBoxColumn colGame;
+		private DataGridViewTextBoxColumn colName;
+		private DataGridViewTextBoxColumn colPort;
+		private DataGridViewTextBoxColumn colQueryPort;
+		private DataGridViewTextBoxColumn PlayerCountDisplay;
+		private DataGridViewTextBoxColumn UptimeDisplay;
+		private DataGridViewTextBoxColumn colStatus;
 	}
 }

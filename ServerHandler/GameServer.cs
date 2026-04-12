@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using static Synix_Control_Panel.Database.GameDatabase;
 using static Synix_Control_Panel.SynixEngine.Core;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 public class GameInfo
 {
@@ -27,13 +28,10 @@ public class GameInfo
 	public string RelativeConfigPath { get; init; } = string.Empty;
 	[JsonIgnore]
 	public string AppID { get; set; } = string.Empty;
-
 	[JsonIgnore]
 	public string ExeName { get; set; } = string.Empty;
-
 	[JsonIgnore]
 	public string RequiredArgs { get; set; } = string.Empty;
-
 	[JsonIgnore]
 	public List<string> Maps { get; set; } = [];
 	public int Port { get; set; }
@@ -43,15 +41,15 @@ public class GameInfo
 	public string RconSyntax { get; init; } = "";
 	[JsonIgnore]
 	public PostInstallStep[]? PostInstallSteps { get; init; }
-
-
+	[JsonIgnore]
+	public int CurrentPlayers { get; set; } = 0;
 	public bool IsScheduledRestartEnabled { get; set; } = false;
 	public string RestartTime { get; set; } = "04:00";
-
 	// Index 0 = Sunday, 1 = Monday, etc. (Matches .NET DayOfWeek)
 	public bool[] RestartDays { get; set; } = new bool[7] { true, true, true, true, true, true, true };
-
 	public string LastMaintenanceDate { get; set; } = "";
+	[JsonIgnore]
+	public int MaxPlayersFromQuery { get; set; } = 0;
 }
 
 public class GameServer : GameInfo
@@ -79,4 +77,24 @@ public class GameServer : GameInfo
 	public string RconPassword { get; set; } = "";
 	public bool IsFirstBoot { get; set; } = true;
 	public string WorldSeed { get; set; } = "12345";
+	[JsonIgnore]
+	public string PlayerCountDisplay => $"{CurrentPlayers} / {MaxPlayers}";
+
+	public DateTime? StartTime { get; set; }
+	[JsonIgnore]
+	public string UptimeDisplay
+	{
+		get
+		{
+			if (Status != "Running" || !StartTime.HasValue)
+				return "--:--:--";
+
+			TimeSpan duration = DateTime.Now - StartTime.Value;
+
+			if (duration.TotalDays >= 1)
+				return $"{(int)duration.TotalDays}d {duration.Hours:D2}h {duration.Minutes:D2}m";
+
+			return $"{duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}";
+		}
+	}
 }
