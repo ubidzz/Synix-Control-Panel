@@ -11,8 +11,10 @@
  */
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.FileFolderHandler;
+using Synix_Control_Panel.Help;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -70,12 +72,7 @@ namespace Synix_Control_Panel
 				WarningLabel.Text = "[WARNING] Pick a location to install or use default. This cannot be changed later!";
 				WarningLabel.ForeColor = Color.Red;
 			}
-
-			// 1. Set the background to transparent (Inherits from parent)
-			lblDefaultArgs.BackColor = Color.Transparent;
-
-			// 3. Optional: Professional styling
-			lblDefaultArgs.ForeColor = Color.White;
+			chkEnableRcon.Tag = "RCON";
 
 			// 4. Initial Gatekeeper Check
 			SyncGatekeeper();
@@ -99,6 +96,14 @@ namespace Synix_Control_Panel
 			chkDefaultPath.Checked = _existingServer.IsDefaultPath;
 			txtExtraArgs.Text = _existingServer.ExtraArgs;
 			txtWorldSeed.Text = _existingServer.WorldSeed ?? "12345";
+			chkUpdateOnStart.Checked = _existingServer.UpdateOnStart;
+			UIStyleHelper.StyleToggleButton(chkUpdateOnStart, "Auto Update");
+
+			// 🎯 FIX: Explicitly load saved RCON settings so they populate on Edit
+			chkEnableRcon.Checked = _existingServer.EnableRcon;
+			numRconPort.Value = _existingServer.RconPort;
+			txtRconPassword.Text = _existingServer.RconPassword;
+			UIStyleHelper.StyleToggleButton(chkEnableRcon, "RCON");
 
 			// Load Maintenance Settings
 			chkEnableSchedule.Checked = _existingServer.IsScheduledRestartEnabled;
@@ -250,7 +255,8 @@ namespace Synix_Control_Panel
 				RestartTime = dtpRestartTime.Value.ToString("HH:mm"),
 				RestartDays = new bool[] { chkSun.Checked, chkMon.Checked, chkTue.Checked, chkWed.Checked, chkThu.Checked, chkFri.Checked, chkSat.Checked },
 				LastMaintenanceDate = _existingServer?.LastMaintenanceDate ?? "",
-				AppPort = (int)AppPortNumeric.Value
+				AppPort = (int)AppPortNumeric.Value,
+				UpdateOnStart = chkUpdateOnStart.Checked
 			};
 
 			try
@@ -283,9 +289,16 @@ namespace Synix_Control_Panel
 
 		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e)
 		{
-			// 📡 RCON REACTIVITY: Ensure sub-controls unlock immediately when clicked
-			bool rconActive = chkEnableRcon.Enabled && chkEnableRcon.Checked;
-			lblRCONport.Enabled = numRconPort.Enabled = lblRCONpassword.Enabled = txtRconPassword.Enabled = rconActive;
+			if (sender is CheckBox chk)
+			{
+				string labelText = chk.Tag?.ToString() ?? "RCON";
+				UIStyleHelper.StyleToggleButton(chk, labelText);
+
+				// 🎯 FIX: Explicitly toggle enablement of sub-fields so they react immediately to clicks
+				bool rconActive = chk.Checked;
+				lblRCONport.Enabled = numRconPort.Enabled = rconActive;
+				lblRCONpassword.Enabled = txtRconPassword.Enabled = rconActive;
+			}
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e)
@@ -324,6 +337,24 @@ namespace Synix_Control_Panel
 			}
 		}
 
+		private void btnViewArgs_Click(object sender, EventArgs e)
+		{
+			string selectedGame = cmbGame.SelectedItem?.ToString() ?? "";
+			if (!string.IsNullOrEmpty(selectedGame))
+			{
+				var gameData = GameDatabase.GetGame(selectedGame);
+				if (gameData != null)
+				{
+					DefaultArgumentsDisplay display = new DefaultArgumentsDisplay(gameData.RequiredArgs);
+					display.ShowDialog();
+				}
+			}
+			else
+			{
+				MessageBox.Show("Please select a game first.");
+			}
+		}
+
 		private void ToggleGameSpecificFields(GameInfo? gameData)
 		{
 			if (gameData == null)
@@ -334,17 +365,9 @@ namespace Synix_Control_Panel
 				cmbCompetitive.Enabled = false;
 				chkEnableRcon.Enabled = false;
 				AppPortNumeric.Enabled = false;
-
-				// Clear the arguments display if no game is selected
-				lblDefaultArgs.Text = string.Empty;
 				return;
 			}
 
-			// 📋 DISPLAY DEFAULT ARGUMENTS AS WRAPPED TEXT
-			// The Label will now automatically wrap the RequiredArgs into multiple lines
-			lblDefaultArgs.Text = gameData.RequiredArgs;
-
-			// --- 🔐 SERVER PASSWORD LOCK ---
 			bool supportsPass = gameData.RequiredArgs.Contains("{pass}");
 			txtPassword.Enabled = supportsPass;
 			lblPassword.ForeColor = supportsPass ? Color.White : Color.Gray;
@@ -358,7 +381,6 @@ namespace Synix_Control_Panel
 				txtPassword.Text = _existingServer?.Password ?? "";
 			}
 
-			// --- 👑 ADMIN PASSWORD LOCK ---
 			bool supportsAdminPass = gameData.RequiredArgs.Contains("{adminpass}");
 			txtAdminPassword.Enabled = supportsAdminPass;
 			lblAdminPassword.ForeColor = supportsAdminPass ? Color.White : Color.Gray;
@@ -372,7 +394,6 @@ namespace Synix_Control_Panel
 				txtAdminPassword.Text = _existingServer?.AdminPassword ?? "";
 			}
 
-			// --- 🎲 WORLD SEED LOCK ---
 			bool supportsSeed = gameData.RequiredArgs.Contains("{seed}");
 			txtWorldSeed.Enabled = supportsSeed;
 			lblWorldSeed.ForeColor = supportsSeed ? Color.White : Color.Gray;
@@ -386,23 +407,24 @@ namespace Synix_Control_Panel
 				txtWorldSeed.Text = _existingServer?.WorldSeed ?? "";
 			}
 
-			// --- ⚔️ PVP/PVE MODE LOCK ---
 			bool supportsModes = gameData.GameModes != null && gameData.GameModes.Count > 1;
 			cmbCompetitive.Enabled = supportsModes;
 			lblCompetitive.ForeColor = supportsModes ? Color.White : Color.Gray;
 
-			// --- 📱 APP PORT LOCK ---
 			bool supportsAppPort = gameData.RequiredArgs.Contains("{app_port}");
 			AppPortNumeric.Enabled = supportsAppPort;
 			lblAppPort.ForeColor = supportsAppPort ? Color.White : Color.Gray;
 
-			// --- 📡 RCON LOCK ---
 			bool supportsRcon = gameData.RequiredArgs.Contains("{rcon}");
 			chkEnableRcon.Enabled = supportsRcon;
 
-			// Logic Lock: RCON sub-fields only unlock if the game supports it AND it is checked
 			bool rconActive = supportsRcon && chkEnableRcon.Checked;
 			lblRCONport.Enabled = numRconPort.Enabled = lblRCONpassword.Enabled = txtRconPassword.Enabled = rconActive;
+		}
+
+		private void chkUpdateOnStart_CheckedChanged(object sender, EventArgs e)
+		{
+			UIStyleHelper.StyleToggleButton(chkUpdateOnStart, "Auto Update");
 		}
 	}
 }

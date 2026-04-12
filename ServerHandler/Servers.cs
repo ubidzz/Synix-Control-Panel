@@ -42,10 +42,17 @@ namespace Synix_Control_Panel.ServerHandler
 		const uint CTRL_C_EVENT = 0;
 		#endregion
 
-		public static void Start(GameServer server, Action<string> logCallback, string StatusMessage = "")
+		public static async Task Start(GameServer server, Action<string> logCallback, string StatusMessage = "")
 		{
 			try
 			{
+
+				if (server.UpdateOnStart)
+				{
+					logCallback?.Invoke($"[ACTION] Update on Start is ON. Pausing launch for update...");
+					await Synix_Control_Panel.SynixEngine.Core.Instance.InstallOrUpdate(server);
+				}
+
 				server.Status = StatusManager.GetStatus(ServerState.Starting);
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				if (dbEntry == null) return;
@@ -113,9 +120,11 @@ namespace Synix_Control_Panel.ServerHandler
 				catch (Exception ex) { logCallback?.Invoke($"[WARNING] File access error: {ex.Message}"); }
 
 				// 🛠️ 4. DYNAMIC ARGUMENT REPLACEMENT
-				string cleanIdentity = server.ServerName.Replace(" ", "_");
+				string cleanIdentity = (server.ServerName ?? "Server").Replace(" ", "_");
 
 				string args = dbEntry.RequiredArgs
+					.Replace("{app_port}", server.AppPort.ToString())
+					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed) // Move this up
 					.Replace("{map}", server.WorldName)
 					.Replace("{steamAppID}", targetId)
 					.Replace("{appid}", targetId)
@@ -127,7 +136,6 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{ServerName}", server.ServerName)
 					.Replace("{InstallPath}", server.InstallPath)
 					.Replace("{Identity}", cleanIdentity)
-					.Replace("{app_port}", (server.Port + 67).ToString())
 					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed);
 
 				// --- RCON and Mode Logic ---
@@ -142,7 +150,7 @@ namespace Synix_Control_Panel.ServerHandler
 				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 				{
 					string translatedMode = server.GameMode;
-					if (server.Game.Contains("ARK") || server.Game == "Atlas")
+					if (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust")
 						translatedMode = (server.GameMode == "PVE") ? "True" : "False";
 
 					args = args.Replace("{mode}", translatedMode);

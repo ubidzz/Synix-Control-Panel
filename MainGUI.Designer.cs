@@ -29,9 +29,9 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-			System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+			System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+			System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
 			colGame = new DataGridViewTextBoxColumn();
@@ -50,19 +50,22 @@
 			lblTotalCpu = new Label();
 			contextMenuStrip = new ContextMenuStrip(components);
 			btnHelp = new ToolStripMenuItem();
-			deleteServer = new ToolStripMenuItem();
 			openServerConfig = new ToolStripMenuItem();
 			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
 			openServerFolderToolStripMenuItem = new ToolStripMenuItem();
 			connectionTestToolStripMenuItem = new ToolStripMenuItem();
-			btnRestart = new ToolStripMenuItem();
-			editServer = new ToolStripMenuItem();
-			udateServer = new ToolStripMenuItem();
+			editServerToolStripMenuItem = new ToolStripMenuItem();
+			deleteServerToolStripMenuItem = new ToolStripMenuItem();
+			updateServerToolStripMenuItem = new ToolStripMenuItem();
 			installServer = new ToolStripMenuItem();
+			toolStripSeparator1 = new ToolStripSeparator();
 			btnServerActions = new Button();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			lblLocalIP1 = new Label();
 			lblPublicIP = new Label();
+			btnRestart = new Button();
+			toolStripSeparator2 = new ToolStripSeparator();
+			toolStripSeparator3 = new ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -155,7 +158,7 @@
 			btnStart.Cursor = Cursors.Hand;
 			btnStart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStart.ForeColor = Color.Green;
-			btnStart.Location = new Point(603, 589);
+			btnStart.Location = new Point(451, 590);
 			btnStart.Name = "btnStart";
 			btnStart.Size = new Size(142, 28);
 			btnStart.TabIndex = 8;
@@ -168,7 +171,7 @@
 			btnStop.Cursor = Cursors.Hand;
 			btnStop.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStop.ForeColor = Color.Red;
-			btnStop.Location = new Point(751, 589);
+			btnStop.Location = new Point(599, 590);
 			btnStop.Name = "btnStop";
 			btnStop.Size = new Size(142, 28);
 			btnStop.TabIndex = 9;
@@ -189,17 +192,17 @@
 			// 
 			// chartHeartbeat
 			// 
-			chartArea1.Name = "ChartArea1";
-			chartHeartbeat.ChartAreas.Add(chartArea1);
+			chartArea2.Name = "ChartArea1";
+			chartHeartbeat.ChartAreas.Add(chartArea2);
 			chartHeartbeat.Cursor = Cursors.Hand;
-			legend1.Name = "Legend1";
-			chartHeartbeat.Legends.Add(legend1);
+			legend2.Name = "Legend1";
+			chartHeartbeat.Legends.Add(legend2);
 			chartHeartbeat.Location = new Point(505, 28);
 			chartHeartbeat.Name = "chartHeartbeat";
-			series1.ChartArea = "ChartArea1";
-			series1.Legend = "Legend1";
-			series1.Name = "Series1";
-			chartHeartbeat.Series.Add(series1);
+			series2.ChartArea = "ChartArea1";
+			series2.Legend = "Legend1";
+			series2.Name = "Series1";
+			chartHeartbeat.Series.Add(series2);
 			chartHeartbeat.Size = new Size(384, 64);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
@@ -230,29 +233,22 @@
 			// 
 			// contextMenuStrip
 			// 
-			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, deleteServer, openServerConfig, btnRestart, editServer, udateServer, installServer });
+			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, openServerConfig, installServer, toolStripSeparator1 });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(181, 180);
+			contextMenuStrip.Size = new Size(152, 76);
 			// 
 			// btnHelp
 			// 
 			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(180, 22);
+			btnHelp.Size = new Size(151, 22);
 			btnHelp.Text = "Help";
 			btnHelp.Click += btnHelp_Click;
 			// 
-			// deleteServer
-			// 
-			deleteServer.Name = "deleteServer";
-			deleteServer.Size = new Size(180, 22);
-			deleteServer.Text = "Delete Server";
-			deleteServer.Click += btnDelete_Click;
-			// 
 			// openServerConfig
 			// 
-			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerConfigFileToolStripMenuItem, openServerFolderToolStripMenuItem, connectionTestToolStripMenuItem });
+			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, updateServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, deleteServerToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(180, 22);
+			openServerConfig.Size = new Size(151, 22);
 			openServerConfig.Text = "Server Options";
 			// 
 			// openServerConfigFileToolStripMenuItem
@@ -276,33 +272,38 @@
 			connectionTestToolStripMenuItem.Text = "Connection Test";
 			connectionTestToolStripMenuItem.Click += btnTestConnection_Click;
 			// 
-			// btnRestart
+			// editServerToolStripMenuItem
 			// 
-			btnRestart.Name = "btnRestart";
-			btnRestart.Size = new Size(180, 22);
-			btnRestart.Text = "Restart Server";
-			btnRestart.Click += btnRestart_Click;
+			editServerToolStripMenuItem.Name = "editServerToolStripMenuItem";
+			editServerToolStripMenuItem.Size = new Size(198, 22);
+			editServerToolStripMenuItem.Text = "Edit Server";
+			editServerToolStripMenuItem.Click += btnEdit_Click;
 			// 
-			// editServer
+			// deleteServerToolStripMenuItem
 			// 
-			editServer.Name = "editServer";
-			editServer.Size = new Size(180, 22);
-			editServer.Text = "Edit Server";
-			editServer.Click += btnEdit_Click;
+			deleteServerToolStripMenuItem.Name = "deleteServerToolStripMenuItem";
+			deleteServerToolStripMenuItem.Size = new Size(198, 22);
+			deleteServerToolStripMenuItem.Text = "Delete Server";
+			deleteServerToolStripMenuItem.Click += btnDelete_Click;
 			// 
-			// udateServer
+			// updateServerToolStripMenuItem
 			// 
-			udateServer.Name = "udateServer";
-			udateServer.Size = new Size(180, 22);
-			udateServer.Text = "Update Server";
-			udateServer.Click += btnUpdate_Click;
+			updateServerToolStripMenuItem.Name = "updateServerToolStripMenuItem";
+			updateServerToolStripMenuItem.Size = new Size(198, 22);
+			updateServerToolStripMenuItem.Text = "Update Server";
+			updateServerToolStripMenuItem.Click += btnUpdate_Click;
 			// 
 			// installServer
 			// 
 			installServer.Name = "installServer";
-			installServer.Size = new Size(180, 22);
+			installServer.Size = new Size(151, 22);
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
+			// 
+			// toolStripSeparator1
+			// 
+			toolStripSeparator1.Name = "toolStripSeparator1";
+			toolStripSeparator1.Size = new Size(148, 6);
 			// 
 			// btnServerActions
 			// 
@@ -348,6 +349,28 @@
 			lblPublicIP.Text = "Public IP";
 			lblPublicIP.Click += lblPublicIP_Click;
 			// 
+			// btnRestart
+			// 
+			btnRestart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			btnRestart.ForeColor = Color.DarkCyan;
+			btnRestart.Location = new Point(747, 590);
+			btnRestart.Name = "btnRestart";
+			btnRestart.Size = new Size(142, 28);
+			btnRestart.TabIndex = 20;
+			btnRestart.Text = "Restart Server";
+			btnRestart.UseVisualStyleBackColor = true;
+			btnRestart.Click += btnRestart_Click;
+			// 
+			// toolStripSeparator2
+			// 
+			toolStripSeparator2.Name = "toolStripSeparator2";
+			toolStripSeparator2.Size = new Size(195, 6);
+			// 
+			// toolStripSeparator3
+			// 
+			toolStripSeparator3.Name = "toolStripSeparator3";
+			toolStripSeparator3.Size = new Size(195, 6);
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -355,6 +378,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
+			Controls.Add(btnRestart);
 			Controls.Add(lblPublicIP);
 			Controls.Add(lblLocalIP1);
 			Controls.Add(btnServerActions);
@@ -395,12 +419,9 @@
 		private ContextMenuStrip contextMenuStrip;
 		private ToolStripMenuItem installServer;
 		private ToolStripMenuItem editServer;
-		private ToolStripMenuItem udateServer;
 		private ToolStripMenuItem openServerConfig;
-		private ToolStripMenuItem deleteServer;
 		private Button btnServerActions;
 		private System.Windows.Forms.Timer tmrResourceUpdates;
-		private ToolStripMenuItem btnRestart;
 		private ToolStripMenuItem btnHelp;
 		private ToolStripMenuItem openServerConfigFileToolStripMenuItem;
 		private ToolStripMenuItem openServerFolderToolStripMenuItem;
@@ -415,5 +436,12 @@
 		private DataGridViewTextBoxColumn PlayerCountDisplay;
 		private DataGridViewTextBoxColumn UptimeDisplay;
 		private DataGridViewTextBoxColumn colStatus;
+		private ToolStripMenuItem editServerToolStripMenuItem;
+		private ToolStripMenuItem deleteServerToolStripMenuItem;
+		private ToolStripMenuItem updateServerToolStripMenuItem;
+		private Button btnRestart;
+		private ToolStripSeparator toolStripSeparator1;
+		private ToolStripSeparator toolStripSeparator2;
+		private ToolStripSeparator toolStripSeparator3;
 	}
 }

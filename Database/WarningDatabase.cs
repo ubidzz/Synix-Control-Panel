@@ -39,24 +39,31 @@ namespace Synix_Control_Panel.Database
 		// 🛠️ THE "OPEN CONFIG MANAGER" BUTTON (Formerly 'Yes')
 		private void btnYes_Click(object sender, EventArgs e)
 		{
-			// 1. Update the JSON status
 			_server.IsFirstBoot = false;
 			try
 			{
 				FileHandler.SaveServers();
 
-				// 2. Find the config path using the GameDatabase
+				// 1. Get the game data template
 				var gameData = GameDatabase.GetGame(_server.Game);
 				if (gameData != null && !string.IsNullOrEmpty(gameData.RelativeConfigPath))
 				{
-					string fullPath = Path.Combine(_server.InstallPath, gameData.RelativeConfigPath);
+					// 2. "Clean" the identity: get the ServerName and replace " " with "_"
+					// We use the Identity property which should already be clean, 
+					// but this ensures no spaces sneak into the path.
+					string cleanIdentity = _server.ServerName.Replace(" ", "_");
+
+					// 3. Replace the placeholder in the path
+					string relativePath = gameData.RelativeConfigPath.Replace("{Identity}", cleanIdentity);
+
+					// 4. Combine with the root install path
+					string fullPath = Path.Combine(_server.InstallPath, relativePath);
 
 					if (File.Exists(fullPath))
 					{
-						// 3. Close this window first as requested
 						this.Hide();
 
-						// 4. Open the Config Editor
+						// 5. Open the Config Editor using the cleaned path
 						using (ServerConfig editor = new ServerConfig(fullPath, gameData.Format))
 						{
 							editor.ShowDialog();
@@ -64,7 +71,8 @@ namespace Synix_Control_Panel.Database
 					}
 					else
 					{
-						MessageBox.Show($"Config file not found at:\n{fullPath}\n\nPlease ensure the game is installed correctly.", "Missing File");
+						// Detailed error helps find if the pathing is wrong
+						MessageBox.Show($"Config file not found!\n\nTarget Path: {fullPath}", "Path Error");
 					}
 				}
 

@@ -80,6 +80,7 @@ public class GameServer : GameInfo
 	[JsonIgnore]
 	public string PlayerCountDisplay => $"{CurrentPlayers} / {MaxPlayers}";
 	public int AppPort { get; set; } = 8777;
+	public bool UpdateOnStart { get; set; } = false;
 
 	public DateTime? StartTime { get; set; }
 	[JsonIgnore]

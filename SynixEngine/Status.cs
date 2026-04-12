@@ -7,6 +7,7 @@
 // use of this source code or the compiled executable is strictly
 // prohibited. Please refer to the LICENSE file in the root
 // directory for full terms.
+using Synix_Control_Panel.Database;
 using Synix_Control_Panel.ServerHandler;
 using System;
 using System.Diagnostics;

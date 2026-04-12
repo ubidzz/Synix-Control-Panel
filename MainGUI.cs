@@ -295,40 +295,36 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void btnStart_Click(object sender, EventArgs e)
+		// 🎯 1. Change 'void' to 'async void' (standard for event handlers)
+		private async void btnStart_Click(object sender, EventArgs e)
 		{
-			// 🪤 TRIPWIRE 1: If this doesn't print, the button is completely disconnected from this code!
 			AppendLog("Start button clicked...", Color.Cyan);
 
-			// 🪤 TRIPWIRE 2: Check if the grid actually has a row selected
 			if (dataGridView1.CurrentRow == null)
 			{
 				AppendLog("[ERROR] No row is currently selected in the grid!", Color.Red);
 				return;
 			}
 
-			// 🪤 TRIPWIRE 3: Check if the selected row is actually a GameServer object
 			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
 			{
 				AppendLog("[ERROR] The selected row is not a valid GameServer object!", Color.Red);
 				return;
 			}
 
-			// 🛡️ 1. THE SPAM LOCK
 			if (!Core.Instance.PassStartSpamLock(selectedServer, out string lockMsg))
 			{
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
 
-			// 🛡️ 2. ENGINE INTEGRITY CHECK
 			if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
 
-			// 🛡️ 3. CONFIG WARNING BLOCKER
 			if (Core.Instance.ShouldBlockForConfig(selectedServer)) return;
 
-			// 🚀 4. START THE SERVER
-			Servers.Start(selectedServer, msg =>
+			// 🚀 2. ADD 'await' HERE
+			// This makes the button wait for the update and the launch process
+			await Servers.Start(selectedServer, msg =>
 			{
 				this.Invoke((MethodInvoker)delegate
 				{
@@ -396,30 +392,31 @@ namespace Synix_Control_Panel
 
 		private async void btnTestConnection_Click(object sender, EventArgs e)
 		{
-			// 1. Get the server currently highlighted in the list
 			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
-			if (selectedServer != null)
+			Core.Instance.Log($"[NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+
+			try
 			{
-				// 2. Visual feedback in the log
-				Core.Instance.Log($"[NETWORK] Probing {selectedServer.ServerName} (Port: {selectedServer.QueryPort})...", Color.White);
+				// 1. Get the actual Public IP of the Texas machine
+				string publicIp = await Core.Instance.GetPublicIP();
 
-				// 3. Run the test (Testing 127.0.0.1 confirms the server is actually listening)
-				// Note: To test if friends can join, you would pass your Public IP here instead.
-				bool isResponding = await Core.Instance.TestServerConnectivity("127.0.0.1", selectedServer.QueryPort);
+				// 2. Probe the Query Port over the internet (UDP)
+				bool isResponding = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[SUCCESS] {selectedServer.ServerName} is alive and responding on UDP {selectedServer.QueryPort}!", Color.Green);
+					Core.Instance.Log($"[ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[OFFLINE] No response from {selectedServer.ServerName}. Ensure the server is 'Running' and the port is not blocked.", Color.Red);
+					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort}.", Color.Red);
 				}
 			}
-			else
+			catch (Exception ex)
 			{
-				Core.Instance.Log("[SYSTEM] Please select a server from the list first.", Color.Yellow);
+				Core.Instance.Log($"[ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 

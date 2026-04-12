@@ -19,7 +19,7 @@ using System.Xml; // Added for XML parsing
 
 namespace Synix_Control_Panel.ServerHandler
 {
-	public enum ConfigFormat { StandardINI, Palworld, XML, JSON }
+	public enum ConfigFormat { StandardINI, Palworld, XML, JSON, Space }
 
 	public class ConfigLine
 	{
@@ -40,8 +40,64 @@ namespace Synix_Control_Panel.ServerHandler
 				case ConfigFormat.StandardINI: return LoadStandard(path);
 				case ConfigFormat.JSON: return LoadJSON(path);
 				case ConfigFormat.XML: return LoadXML(path);
+				case ConfigFormat.Space: return LoadSpace(path);
 				default: return new List<ConfigLine>();
 			}
+		}
+
+		private static List<ConfigLine> LoadSpace(string path)
+		{
+			var settings = new List<ConfigLine>();
+			if (!File.Exists(path)) return settings;
+
+			foreach (var line in File.ReadAllLines(path))
+			{
+				string trimmed = line.Trim();
+				// Skip comments and empty lines
+				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("//") || trimmed.StartsWith("#"))
+					continue;
+
+				// Use Split by space, but only into 2 parts
+				var parts = trimmed.Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
+
+				if (parts.Length == 2)
+				{
+					settings.Add(new ConfigLine
+					{
+						Key = parts[0].Trim(),
+						Value = parts[1].Trim().Trim('"') // This removes the quotes for the UI
+					});
+				}
+			}
+			return settings;
+		}
+
+		private static void SaveSpace(string path, List<ConfigLine> data)
+		{
+			if (!File.Exists(path)) return;
+
+			string[] originalLines = File.ReadAllLines(path);
+
+			for (int i = 0; i < originalLines.Length; i++)
+			{
+				string trimmed = originalLines[i].Trim();
+				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("//") || trimmed.StartsWith("#"))
+					continue;
+
+				int firstSpace = trimmed.IndexOf(' ');
+				if (firstSpace > 0)
+				{
+					string fileKey = trimmed.Substring(0, firstSpace).Trim();
+					var matchingData = data.FirstOrDefault(d => d.Key == fileKey);
+
+					if (matchingData != null)
+					{
+						// Put it back in Rust format: Key "Value"
+						originalLines[i] = $"{fileKey} \"{matchingData.Value}\"";
+					}
+				}
+			}
+			File.WriteAllLines(path, originalLines);
 		}
 
 		private static List<ConfigLine> LoadStandard(string path)
@@ -197,6 +253,7 @@ namespace Synix_Control_Panel.ServerHandler
 				case ConfigFormat.StandardINI: SaveStandard(path, data); break;
 				case ConfigFormat.JSON: SaveJSON(path, data); break;
 				case ConfigFormat.XML: SaveXML(path, data); break;
+				case ConfigFormat.Space: SaveSpace(path, data); break;
 			}
 		}
 

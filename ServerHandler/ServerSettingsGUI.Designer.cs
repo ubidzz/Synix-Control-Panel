@@ -77,9 +77,10 @@
 			txtWorldSeed = new TextBox();
 			lblRCONport = new Label();
 			lblaruments = new Label();
-			lblDefaultArgs = new Label();
 			lblAppPort = new Label();
 			AppPortNumeric = new NumericUpDown();
+			btnViewArgs = new Button();
+			chkUpdateOnStart = new CheckBox();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -188,14 +189,16 @@
 			// 
 			// chkDefaultPath
 			// 
-			chkDefaultPath.AutoSize = true;
+			chkDefaultPath.Appearance = Appearance.Button;
 			chkDefaultPath.BackColor = Color.Transparent;
+			chkDefaultPath.FlatStyle = FlatStyle.Flat;
 			chkDefaultPath.ForeColor = Color.White;
 			chkDefaultPath.Location = new Point(12, 363);
 			chkDefaultPath.Name = "chkDefaultPath";
-			chkDefaultPath.Size = new Size(193, 19);
+			chkDefaultPath.Size = new Size(193, 29);
 			chkDefaultPath.TabIndex = 10;
 			chkDefaultPath.Text = "Use Default Location (C:\\Game)";
+			chkDefaultPath.TextAlign = ContentAlignment.MiddleCenter;
 			chkDefaultPath.UseVisualStyleBackColor = false;
 			chkDefaultPath.Click += chkDefaultPath_CheckedChanged;
 			// 
@@ -270,7 +273,7 @@
 			TextLabel3.BackColor = Color.Transparent;
 			TextLabel3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel3.ForeColor = Color.White;
-			TextLabel3.Location = new Point(415, 276);
+			TextLabel3.Location = new Point(415, 359);
 			TextLabel3.Name = "TextLabel3";
 			TextLabel3.Size = new Size(124, 17);
 			TextLabel3.TabIndex = 18;
@@ -321,9 +324,9 @@
 			WarningLabel.AutoEllipsis = true;
 			WarningLabel.BackColor = Color.Transparent;
 			WarningLabel.ForeColor = Color.Red;
-			WarningLabel.Location = new Point(12, 385);
+			WarningLabel.Location = new Point(12, 395);
 			WarningLabel.Name = "WarningLabel";
-			WarningLabel.Size = new Size(368, 57);
+			WarningLabel.Size = new Size(368, 47);
 			WarningLabel.TabIndex = 23;
 			// 
 			// cmbWorldName
@@ -395,15 +398,18 @@
 			// 
 			// chkEnableRcon
 			// 
-			chkEnableRcon.AutoSize = true;
-			chkEnableRcon.BackColor = Color.Transparent;
-			chkEnableRcon.ForeColor = Color.White;
-			chkEnableRcon.Location = new Point(12, 274);
+			chkEnableRcon.Appearance = Appearance.Button;
+			chkEnableRcon.BackColor = Color.White;
+			chkEnableRcon.FlatStyle = FlatStyle.Flat;
+			chkEnableRcon.ForeColor = Color.Black;
+			chkEnableRcon.Location = new Point(12, 267);
 			chkEnableRcon.Name = "chkEnableRcon";
-			chkEnableRcon.Size = new Size(105, 19);
+			chkEnableRcon.Size = new Size(105, 26);
 			chkEnableRcon.TabIndex = 31;
 			chkEnableRcon.Text = "Activate RCON";
+			chkEnableRcon.TextAlign = ContentAlignment.MiddleCenter;
 			chkEnableRcon.UseVisualStyleBackColor = false;
+			chkEnableRcon.CheckedChanged += chkEnableRcon_CheckedChanged;
 			// 
 			// numRconPort
 			// 
@@ -448,13 +454,15 @@
 			// 
 			// chkEnableSchedule
 			// 
-			chkEnableSchedule.AutoSize = true;
+			chkEnableSchedule.Appearance = Appearance.Button;
+			chkEnableSchedule.FlatStyle = FlatStyle.Flat;
 			chkEnableSchedule.ForeColor = Color.White;
 			chkEnableSchedule.Location = new Point(6, 18);
 			chkEnableSchedule.Name = "chkEnableSchedule";
-			chkEnableSchedule.Size = new Size(69, 19);
+			chkEnableSchedule.Size = new Size(69, 26);
 			chkEnableSchedule.TabIndex = 0;
 			chkEnableSchedule.Text = "Activate";
+			chkEnableSchedule.TextAlign = ContentAlignment.MiddleCenter;
 			chkEnableSchedule.UseVisualStyleBackColor = true;
 			chkEnableSchedule.CheckedChanged += chkEnableSchedule_CheckedChanged;
 			// 
@@ -462,7 +470,7 @@
 			// 
 			dtpRestartTime.CustomFormat = "HH:mm";
 			dtpRestartTime.Format = DateTimePickerFormat.Custom;
-			dtpRestartTime.Location = new Point(81, 13);
+			dtpRestartTime.Location = new Point(82, 18);
 			dtpRestartTime.Name = "dtpRestartTime";
 			dtpRestartTime.ShowUpDown = true;
 			dtpRestartTime.Size = new Size(63, 23);
@@ -470,79 +478,95 @@
 			// 
 			// chkMon
 			// 
-			chkMon.AutoSize = true;
+			chkMon.Appearance = Appearance.Button;
+			chkMon.FlatStyle = FlatStyle.Flat;
 			chkMon.ForeColor = Color.White;
-			chkMon.Location = new Point(6, 43);
+			chkMon.Location = new Point(5, 52);
 			chkMon.Name = "chkMon";
-			chkMon.Size = new Size(70, 19);
+			chkMon.Size = new Size(70, 25);
 			chkMon.TabIndex = 38;
 			chkMon.Text = "Monday";
+			chkMon.TextAlign = ContentAlignment.MiddleCenter;
 			chkMon.UseVisualStyleBackColor = true;
 			// 
 			// chkTue
 			// 
-			chkTue.AutoSize = true;
+			chkTue.Appearance = Appearance.Button;
+			chkTue.FlatStyle = FlatStyle.Flat;
 			chkTue.ForeColor = Color.White;
-			chkTue.Location = new Point(82, 43);
+			chkTue.Location = new Point(82, 52);
 			chkTue.Name = "chkTue";
-			chkTue.Size = new Size(70, 19);
+			chkTue.Size = new Size(70, 25);
 			chkTue.TabIndex = 39;
 			chkTue.Text = "Tuesday";
+			chkTue.TextAlign = ContentAlignment.MiddleCenter;
 			chkTue.UseVisualStyleBackColor = true;
 			// 
 			// chkWed
 			// 
+			chkWed.Appearance = Appearance.Button;
+			chkWed.AutoCheck = false;
 			chkWed.AutoSize = true;
+			chkWed.FlatStyle = FlatStyle.Flat;
 			chkWed.ForeColor = Color.White;
-			chkWed.Location = new Point(158, 43);
+			chkWed.Location = new Point(159, 52);
 			chkWed.Name = "chkWed";
-			chkWed.Size = new Size(87, 19);
+			chkWed.Size = new Size(78, 25);
 			chkWed.TabIndex = 40;
 			chkWed.Text = "Wednesday";
+			chkWed.TextAlign = ContentAlignment.MiddleCenter;
 			chkWed.UseVisualStyleBackColor = true;
 			// 
 			// chkThu
 			// 
-			chkThu.AutoSize = true;
+			chkThu.Appearance = Appearance.Button;
+			chkThu.FlatStyle = FlatStyle.Flat;
 			chkThu.ForeColor = Color.White;
-			chkThu.Location = new Point(251, 43);
+			chkThu.Location = new Point(243, 52);
 			chkThu.Name = "chkThu";
-			chkThu.Size = new Size(75, 19);
+			chkThu.Size = new Size(75, 25);
 			chkThu.TabIndex = 41;
 			chkThu.Text = "Thursday";
+			chkThu.TextAlign = ContentAlignment.MiddleCenter;
 			chkThu.UseVisualStyleBackColor = true;
 			// 
 			// chkFri
 			// 
-			chkFri.AutoSize = true;
+			chkFri.Appearance = Appearance.Button;
+			chkFri.FlatStyle = FlatStyle.Flat;
 			chkFri.ForeColor = Color.White;
-			chkFri.Location = new Point(6, 68);
+			chkFri.Location = new Point(6, 90);
 			chkFri.Name = "chkFri";
-			chkFri.Size = new Size(58, 19);
+			chkFri.Size = new Size(58, 24);
 			chkFri.TabIndex = 42;
 			chkFri.Text = "Friday";
+			chkFri.TextAlign = ContentAlignment.MiddleCenter;
 			chkFri.UseVisualStyleBackColor = true;
 			// 
 			// chkSat
 			// 
-			chkSat.AutoSize = true;
+			chkSat.Appearance = Appearance.Button;
+			chkSat.FlatStyle = FlatStyle.Flat;
 			chkSat.ForeColor = Color.White;
-			chkSat.Location = new Point(82, 68);
+			chkSat.Location = new Point(70, 90);
 			chkSat.Name = "chkSat";
-			chkSat.Size = new Size(72, 19);
+			chkSat.Size = new Size(72, 24);
 			chkSat.TabIndex = 43;
 			chkSat.Text = "Saturday";
+			chkSat.TextAlign = ContentAlignment.MiddleCenter;
 			chkSat.UseVisualStyleBackColor = true;
 			// 
 			// chkSun
 			// 
-			chkSun.AutoSize = true;
+			chkSun.Appearance = Appearance.Button;
+			chkSun.FlatStyle = FlatStyle.Flat;
 			chkSun.ForeColor = Color.White;
-			chkSun.Location = new Point(158, 68);
+			chkSun.Location = new Point(148, 90);
 			chkSun.Name = "chkSun";
-			chkSun.Size = new Size(65, 19);
+			chkSun.Size = new Size(65, 24);
 			chkSun.TabIndex = 44;
 			chkSun.Text = "Sunday";
+			chkSun.TextAlign = ContentAlignment.MiddleCenter;
 			chkSun.UseVisualStyleBackColor = true;
 			// 
 			// groupBox1
@@ -560,7 +584,7 @@
 			groupBox1.Controls.Add(chkMon);
 			groupBox1.Location = new Point(414, 155);
 			groupBox1.Name = "groupBox1";
-			groupBox1.Size = new Size(351, 105);
+			groupBox1.Size = new Size(351, 128);
 			groupBox1.TabIndex = 45;
 			groupBox1.TabStop = false;
 			// 
@@ -601,21 +625,11 @@
 			lblaruments.AutoEllipsis = true;
 			lblaruments.BackColor = Color.Transparent;
 			lblaruments.ForeColor = Color.White;
-			lblaruments.Location = new Point(414, 293);
+			lblaruments.Location = new Point(414, 376);
 			lblaruments.Name = "lblaruments";
 			lblaruments.Size = new Size(368, 66);
 			lblaruments.TabIndex = 52;
 			lblaruments.Text = resources.GetString("lblaruments.Text");
-			// 
-			// lblDefaultArgs
-			// 
-			lblDefaultArgs.AutoEllipsis = true;
-			lblDefaultArgs.BorderStyle = BorderStyle.Fixed3D;
-			lblDefaultArgs.Location = new Point(415, 359);
-			lblDefaultArgs.Name = "lblDefaultArgs";
-			lblDefaultArgs.Size = new Size(367, 90);
-			lblDefaultArgs.TabIndex = 53;
-			lblDefaultArgs.Text = "label1";
 			// 
 			// lblAppPort
 			// 
@@ -639,6 +653,29 @@
 			AppPortNumeric.TabIndex = 56;
 			AppPortNumeric.Value = new decimal(new int[] { 1024, 0, 0, 0 });
 			// 
+			// btnViewArgs
+			// 
+			btnViewArgs.Location = new Point(537, 429);
+			btnViewArgs.Name = "btnViewArgs";
+			btnViewArgs.Size = new Size(135, 21);
+			btnViewArgs.TabIndex = 57;
+			btnViewArgs.Text = "View Arguments";
+			btnViewArgs.UseVisualStyleBackColor = true;
+			btnViewArgs.Click += btnViewArgs_Click;
+			// 
+			// chkUpdateOnStart
+			// 
+			chkUpdateOnStart.Appearance = Appearance.Button;
+			chkUpdateOnStart.FlatStyle = FlatStyle.Flat;
+			chkUpdateOnStart.Location = new Point(414, 296);
+			chkUpdateOnStart.Name = "chkUpdateOnStart";
+			chkUpdateOnStart.Size = new Size(141, 24);
+			chkUpdateOnStart.TabIndex = 58;
+			chkUpdateOnStart.Text = "Auto Update on Start";
+			chkUpdateOnStart.TextAlign = ContentAlignment.MiddleCenter;
+			chkUpdateOnStart.UseVisualStyleBackColor = true;
+			chkUpdateOnStart.CheckedChanged += chkUpdateOnStart_CheckedChanged;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -646,9 +683,10 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 558);
+			Controls.Add(chkUpdateOnStart);
+			Controls.Add(btnViewArgs);
 			Controls.Add(AppPortNumeric);
 			Controls.Add(lblAppPort);
-			Controls.Add(lblDefaultArgs);
 			Controls.Add(lblaruments);
 			Controls.Add(lblRCONport);
 			Controls.Add(txtWorldSeed);
@@ -756,9 +794,10 @@
 		private TextBox txtWorldSeed;
 		private Label lblRCONport;
 		private Label lblaruments;
-		private Label lblDefaultArgs;
 		private NumericUpDown numericUpDown1;
 		private Label lblAppPort;
 		private NumericUpDown AppPortNumeric;
+		private Button btnViewArgs;
+		private CheckBox chkUpdateOnStart;
 	}
 }

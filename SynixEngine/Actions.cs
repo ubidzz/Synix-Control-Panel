@@ -438,5 +438,52 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 		}
+
+		// Inside Actions.cs (part of the Core class)
+		// Inside Actions.cs (Core partial class)
+		public async Task InstallOrUpdate(GameServer server)
+		{
+			try
+			{
+				var dbEntry = GameDatabase.GetGame(server.Game);
+				if (dbEntry == null) return;
+
+				// 🎯 2. Use your ServerInstaller to do the work
+				// We use Task.Run because ServerInstaller.Install is a synchronous call
+				int exitCode = await Task.Run(() =>
+				{
+					return ServerInstaller.Install(
+						server.InstallPath,
+						dbEntry.AppID,
+						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
+						pid => {
+							server.SteamPID = pid;
+							FileHandler.SaveServers(); // Save PID so monitor sees it
+						});
+				});
+
+				// 🎯 3. Log the result based on your exit codes
+				if (exitCode != 0)
+				{
+					string errorDetail = ServerInstaller.GetSteamError(exitCode);
+					Log($"[ERROR] Update failed for {server.ServerName}: {errorDetail}", Color.Red);
+				}
+				else
+				{
+					Log($"[SUCCESS] {server.ServerName} is up to date.", Color.Green);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log($"[CRITICAL] InstallOrUpdate Exception: {ex.Message}", Color.Red);
+			}
+			finally
+			{
+				// Always clear the SteamPID when the task finishes
+				server.SteamPID = null;
+				FileHandler.SaveServers();
+				UpdateGridStatus();
+			}
+		}
 	}
 }

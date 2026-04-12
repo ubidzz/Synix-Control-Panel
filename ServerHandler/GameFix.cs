@@ -176,6 +176,42 @@ namespace Synix_Control_Panel.ServerHandler
 				// --- PASS 2: DYNAMIC CONFIG FILE CREATION ---
 				switch (server.Game)
 				{
+					case "Rust":
+						string cleanIdentity = server.ServerName.Replace(" ", "_");
+						string rustRelativePath = $@"server\{cleanIdentity}\cfg\server.cfg";
+
+						// The $@ allows us to pull directly from the server object into the string!
+						// Define the multi-line string with proper formatting
+						string rustCfg = $@"// Synix Custom Rust Configuration
+// Settings like Port and Query Port are managed by command-line arguments.
+
+server.hostname ""{server.ServerName}""
+server.maxplayers {server.MaxPlayers}
+server.seed {(string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)}
+server.worldsize 4000
+
+// --- Server Browser Visuals ---
+server.description ""Welcome to {server.ServerName}!\n\nThis server is hosted and managed using the Synix Control Panel.\n\nBe sure to edit this description in your server.cfg file!""
+server.url ""https://github.com/ubidzz/Synix-Control-Panel""
+server.headerimage """"
+server.tags ""monthly,modded""
+
+// --- Server Rules ---
+server.saveinterval 300
+server.globalchat true
+server.secure true
+server.radiation true
+server.official true
+server.globalchat true";
+						// Ensure we are targeting the /server/{identity}/cfg/ folder
+						// Your CreateGameConfig should handle the folder creation, but we'll pass the relative path
+						string rustCfgPath = Path.Combine("server", cleanIdentity, "cfg", "server.cfg");
+
+						if (CreateGameConfig(server, rustCfgPath, rustCfg))
+						{
+							applied = true;
+						}
+						break;
 					case "StarRupture":
 						string srJson = @"{ ""SessionName"": ""{ServerName}"", ""SaveGameInterval"": ""300"", ""StartNewGame"": ""true"", ""LoadSavedGame"": ""false"", ""SaveGameName"": ""AutoSave0.sav"" }";
 						if (CreateGameConfig(server, @"StarRupture\Binaries\Win64\DSSettings.txt", srJson)) applied = true;
