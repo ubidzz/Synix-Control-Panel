@@ -2,13 +2,8 @@
  * Copyright (c) 2026 ubidzz. All Rights Reserved.
  *
  * This file is part of Synix Control Panel.
- *
- * This code is provided for transparent viewing and personal use only.
- * Unauthorized distribution, public modification, or commercial 
- * use of this source code or the compiled executable is strictly 
- * prohibited. Please refer to the LICENSE file in the root 
- * directory for full terms.
  */
+
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.Help;
@@ -21,6 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
 using static Synix_Control_Panel.SynixEngine.Core;
@@ -31,15 +27,13 @@ namespace Synix_Control_Panel
 	{
 		public GameServer? NewServer { get; private set; }
 
-		private bool isManualLoading = false;
+		private bool isManualLoading = false; // 🎯 THE SHIELD: Stops crashes during Load
 		private bool _isEditMode = false;
 		private GameServer? _existingServer = null;
+		private string _oldPath = string.Empty;
 
-		[DllImport("user32.dll")]
-		static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-		[DllImport("user32.dll")]
-		static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-		private bool isAppPortLocked = true;
+		private bool[] _selectedDays = new bool[7] { false, false, false, false, false, false, false };
+		private string _selectedTime = "04:00";
 
 		public ServerSettingsGUI(GameServer? server = null)
 		{
@@ -47,173 +41,84 @@ namespace Synix_Control_Panel
 			_existingServer = server;
 			_isEditMode = server != null;
 
-			// 1. Setup UI Styles
-			dtpRestartTime.ShowUpDown = true;
-			dtpRestartTime.Format = DateTimePickerFormat.Custom;
-			dtpRestartTime.CustomFormat = "HH:mm";
+			// 1. Setup Tags for UI Pills
+			chkDefaultPath.Tag = "Default Folder";
+			chkEnableSchedule.Tag = "Activate Scheduler";
+			chkUpdateOnStart.Tag = "Update on Start";
+			chkEnableRcon.Tag = "RCON";
 
-			// 2. Populate and Sort Game List (0-9, A-Z)
+			// 2. Style & Game List Setup
+			Synix_Control_Panel.UI.UIStyleHelper.InitializeToggles(this);
+
 			cmbGame.Items.Clear();
 			cmbGame.Items.Add("-- Pick a Game --");
 			var sortedGames = GameDatabase.GetGameList().OrderBy(g => g.Game).ToList();
-			foreach (var game in sortedGames)
-			{
-				cmbGame.Items.Add(game.Game);
-			}
+			foreach (var game in sortedGames) cmbGame.Items.Add(game.Game);
 
-			// 3. Load Data
 			if (_isEditMode && _existingServer != null)
 			{
+				_oldPath = _existingServer.InstallPath;
 				LoadExistingServerData();
 			}
 			else
 			{
+				// Block events for new server default selection
+				isManualLoading = true;
 				cmbGame.SelectedIndex = 0;
-				WarningLabel.Text = "[WARNING] Pick a location to install or use default. This cannot be changed later!";
-				WarningLabel.ForeColor = Color.Red;
+				isManualLoading = false;
 			}
-			chkEnableRcon.Tag = "RCON";
 
-			// 4. Initial Gatekeeper Check
 			SyncGatekeeper();
 		}
 
 		private void LoadExistingServerData()
 		{
-			isManualLoading = true;
+			if (_existingServer == null) return;
 
-			txtName.Text = _existingServer.ServerName;
+			isManualLoading = true; // 🎯 ACTIVATE SHIELD
+
+			txtName.Text = _existingServer.ServerName ?? "";
 			int gameIndex = cmbGame.FindStringExact(_existingServer.Game);
 			if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 
-			txtPassword.Text = _existingServer.Password;
-			txtAdminPassword.Text = _existingServer.AdminPassword;
-			numPort.Value = _existingServer.Port;
-			numQueryPort.Value = _existingServer.QueryPort;
-			AppPortNumeric.Value = _existingServer.AppPort;
-			numMaxPlayers.Value = _existingServer.MaxPlayers;
-			txtInstallPath.Text = _existingServer.InstallPath;
+			txtPassword.Text = _existingServer.Password ?? "";
+			txtAdminPassword.Text = _existingServer.AdminPassword ?? "";
+
+			// 🎯 SAFETY: Cast to decimal for NumericUpDown
+			numPort.Value = Math.Clamp((decimal)_existingServer.Port, numPort.Minimum, numPort.Maximum);
+			numQueryPort.Value = Math.Clamp((decimal)_existingServer.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+			if (AppPortNumeric != null)
+				AppPortNumeric.Value = Math.Clamp((decimal)_existingServer.AppPort, AppPortNumeric.Minimum, AppPortNumeric.Maximum);
+
+			numMaxPlayers.Value = Math.Clamp((decimal)_existingServer.MaxPlayers, numMaxPlayers.Minimum, numMaxPlayers.Maximum);
+
+			txtInstallPath.Text = _existingServer.InstallPath ?? "";
 			chkDefaultPath.Checked = _existingServer.IsDefaultPath;
-			txtExtraArgs.Text = _existingServer.ExtraArgs;
+			txtExtraArgs.Text = _existingServer.ExtraArgs ?? "";
 			txtWorldSeed.Text = _existingServer.WorldSeed ?? "12345";
 			chkUpdateOnStart.Checked = _existingServer.UpdateOnStart;
-			UIStyleHelper.StyleToggleButton(chkUpdateOnStart, "Auto Update");
 
-			// 🎯 FIX: Explicitly load saved RCON settings so they populate on Edit
 			chkEnableRcon.Checked = _existingServer.EnableRcon;
-			numRconPort.Value = _existingServer.RconPort;
-			txtRconPassword.Text = _existingServer.RconPassword;
-			UIStyleHelper.StyleToggleButton(chkEnableRcon, "RCON");
+			numRconPort.Value = Math.Clamp((decimal)_existingServer.RconPort, numRconPort.Minimum, numRconPort.Maximum);
+			txtRconPassword.Text = _existingServer.RconPassword ?? "";
 
-			// Load Maintenance Settings
 			chkEnableSchedule.Checked = _existingServer.IsScheduledRestartEnabled;
-			if (DateTime.TryParse(_existingServer.RestartTime, out DateTime savedTime))
-				dtpRestartTime.Value = savedTime;
+			if (_existingServer.RestartDays != null) _selectedDays = (bool[])_existingServer.RestartDays.Clone();
+			_selectedTime = _existingServer.RestartTime ?? "04:00";
 
-			// Map Day Checkboxes
-			if (_existingServer.RestartDays != null && _existingServer.RestartDays.Length == 7)
-			{
-				chkSun.Checked = _existingServer.RestartDays[0];
-				chkMon.Checked = _existingServer.RestartDays[1];
-				chkTue.Checked = _existingServer.RestartDays[2];
-				chkWed.Checked = _existingServer.RestartDays[3];
-				chkThu.Checked = _existingServer.RestartDays[4];
-				chkFri.Checked = _existingServer.RestartDays[5];
-				chkSat.Checked = _existingServer.RestartDays[6];
-			}
+			if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked;
 
 			var gameData = GameDatabase.GetGame(_existingServer.Game);
 			if (gameData != null)
 			{
-				PopulateMaps(gameData, _existingServer.WorldName);
-				PopulateGameModes(gameData, _existingServer.GameMode);
+				PopulateMaps(gameData, _existingServer.WorldName ?? "");
+				PopulateGameModes(gameData, _existingServer.GameMode ?? "PVE");
 				ToggleGameSpecificFields(gameData);
 			}
 
-			// Lock critical fields in Edit Mode
-			cmbGame.Enabled = false;
-			chkDefaultPath.Enabled = false;
-			txtInstallPath.Enabled = false;
-			btnBrowse.Enabled = false;
-			WarningLabel.Text = "[WARNING] You cannot edit location after the server has been saved!";
-			WarningLabel.ForeColor = Color.Red;
-
-			isManualLoading = false;
+			cmbGame.Enabled = false; // Prevent game changes on existing servers
+			isManualLoading = false; // 🎯 DEACTIVATE SHIELD
 		}
-
-		private void SyncGatekeeper()
-		{
-			bool hasGame = cmbGame.SelectedIndex > 0;
-			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
-			bool isReady = hasGame && hasName;
-
-			groupBox1.Enabled = isReady;
-
-			if (!_isEditMode || chkDefaultPath.Checked)
-			{
-				chkDefaultPath.Enabled = isReady;
-				bool customMode = isReady && !chkDefaultPath.Checked;
-				txtInstallPath.Enabled = customMode;
-				btnBrowse.Enabled = customMode;
-
-				if (isReady && chkDefaultPath.Checked)
-				{
-					string cleanGame = cmbGame.SelectedItem.ToString().Replace(" ", "_");
-					string cleanName = txtName.Text.Trim().Replace(" ", "_");
-					txtInstallPath.Text = Path.Combine(@"C:\Synix\Games", cleanGame, cleanName);
-
-					WarningLabel.Text = $"Synix will install {cmbGame.SelectedItem.ToString()} to: {txtInstallPath.Text}";
-					WarningLabel.ForeColor = Color.Green;
-				}
-				else if (isReady && !chkDefaultPath.Checked)
-				{
-					if (string.IsNullOrWhiteSpace(txtInstallPath.Text))
-					{
-						WarningLabel.Text = "[ACTION REQUIRED] You can choose a custom installation location or use the default folder location: C:/Games/[Game]/[Server Name]";
-						WarningLabel.ForeColor = Color.Red;
-					}
-					else
-					{
-						WarningLabel.Text = "Custom installation location verified.";
-						WarningLabel.ForeColor = Color.Green;
-					}
-				}
-				else
-				{
-					txtInstallPath.Text = string.Empty;
-					WarningLabel.Text = "[INFO] Enter a Server Name and select a Game to enable installation.";
-					WarningLabel.ForeColor = Color.Red;
-				}
-			}
-
-			bool hasLocation = chkDefaultPath.Checked || !string.IsNullOrWhiteSpace(txtInstallPath.Text);
-			btnSave.Enabled = isReady && hasLocation;
-		}
-
-		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (cmbGame.SelectedIndex > 0)
-			{
-				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
-				if (gameData != null)
-				{
-					numPort.Value = gameData.Port;
-					numQueryPort.Value = gameData.QueryPort;
-					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
-					PopulateGameModes(gameData, "PVE");
-					ToggleGameSpecificFields(gameData);
-				}
-			}
-			else
-			{
-				ToggleGameSpecificFields(null);
-			}
-			SyncGatekeeper();
-		}
-
-		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
-		private void chkDefaultPath_CheckedChanged(object sender, EventArgs e) => SyncGatekeeper();
-		private void txtInstallPath_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
@@ -221,84 +126,159 @@ namespace Synix_Control_Panel
 			string selectedGame = cmbGame.Text;
 
 			if (!Core.Instance.ValidateNameAndReport(newName, selectedGame, _existingServer)) return;
-			if (!Core.Instance.ValidatePortsAndReport((int)numPort.Value, (int)numQueryPort.Value, (int)numRconPort.Value, chkEnableRcon.Checked, _existingServer)) return;
 
-			string targetPath = txtInstallPath.Text;
-			if (!Core.Instance.ValidateFolderAndReport(targetPath, _isEditMode)) return;
-
-			var dbGame = GameDatabase.GetGame(selectedGame);
+			string newPath = txtInstallPath.Text.Trim();
+			if (_isEditMode && !string.IsNullOrEmpty(_oldPath) && _oldPath != newPath)
+			{
+				try { if (Directory.Exists(_oldPath)) Directory.Move(_oldPath, newPath); }
+				catch (Exception ex) { MessageBox.Show($"Move failed: {ex.Message}"); }
+			}
 
 			NewServer = new GameServer
 			{
 				Game = selectedGame,
 				ServerName = newName,
-				NeedsConfigWarning = dbGame?.NeedsConfigWarning ?? false,
-				IsFirstBoot = _isEditMode && _existingServer != null ? _existingServer.IsFirstBoot : true,
 				Port = (int)numPort.Value,
 				QueryPort = (int)numQueryPort.Value,
 				Password = txtPassword.Text,
 				AdminPassword = txtAdminPassword.Text,
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
+				GameMode = cmbCompetitive.Text,
 				WorldSeed = txtWorldSeed.Text.Trim(),
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
-				Status = _isEditMode && _existingServer != null ? _existingServer.Status : StatusManager.GetStatus(ServerState.Stopped),
-				PID = _isEditMode && _existingServer != null ? _existingServer.PID : null,
-				GameMode = cmbCompetitive.Text,
+				UpdateOnStart = chkUpdateOnStart.Checked,
 				EnableRcon = chkEnableRcon.Checked,
 				RconPort = (int)numRconPort.Value,
 				RconPassword = txtRconPassword.Text,
-				InstallPath = targetPath,
-				SteamPID = _isEditMode && _existingServer != null ? _existingServer.SteamPID : null,
+				InstallPath = newPath,
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
-				RestartTime = dtpRestartTime.Value.ToString("HH:mm"),
-				RestartDays = new bool[] { chkSun.Checked, chkMon.Checked, chkTue.Checked, chkWed.Checked, chkThu.Checked, chkFri.Checked, chkSat.Checked },
-				LastMaintenanceDate = _existingServer?.LastMaintenanceDate ?? "",
-				AppPort = (int)AppPortNumeric.Value,
-				UpdateOnStart = chkUpdateOnStart.Checked
+				RestartTime = _selectedTime,
+				RestartDays = (bool[])_selectedDays.Clone(),
+				Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped),
+				AppPort = (int)(AppPortNumeric?.Value ?? 8777)
 			};
 
 			try
 			{
 				if (_isEditMode && _existingServer != null)
 				{
-					if (_existingServer.InstallPath != targetPath && Directory.Exists(_existingServer.InstallPath)) ServerFolder.Rename(_existingServer, NewServer);
-					int index = MainGUI.serverList.IndexOf(_existingServer);
+					int index = -1;
+					for (int i = 0; i < MainGUI.serverList.Count; i++)
+					{
+						if (MainGUI.serverList[i].ServerName == _existingServer.ServerName) { index = i; break; }
+					}
 					if (index != -1) MainGUI.serverList[index] = NewServer;
 				}
-				else
-				{
-					FolderHandler.Create(targetPath);
-					MainGUI.serverList.Add(NewServer);
-				}
+				else MainGUI.serverList.Add(NewServer);
 
 				FileHandler.SaveServers();
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}
-			catch (Exception ex) { MessageBox.Show($"Operation failed: {ex.Message}", "File Error"); }
+			catch (Exception ex) { MessageBox.Show($"Operation failed: {ex.Message}"); }
 		}
 
-		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e)
+		private void SyncGatekeeper()
 		{
-			bool isEnabled = chkEnableSchedule.Checked;
-			dtpRestartTime.Enabled = isEnabled;
-			chkSun.Enabled = chkMon.Enabled = chkTue.Enabled = chkWed.Enabled = chkThu.Enabled = chkFri.Enabled = chkSat.Enabled = isEnabled;
-		}
+			if (isManualLoading) return; // 🎯 BLOCK logic during Load
 
-		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e)
-		{
-			if (sender is CheckBox chk)
+			bool hasName = !string.IsNullOrWhiteSpace(txtName.Text);
+			bool hasGame = cmbGame.SelectedIndex > 0;
+			bool isBaseReady = hasName && hasGame;
+
+			if (_isEditMode)
 			{
-				string labelText = chk.Tag?.ToString() ?? "RCON";
-				UIStyleHelper.StyleToggleButton(chk, labelText);
+				// 🎯 PRO TEXT: Ready state for editing
+				WarningLabel.Text = $"[READY] Editing existing server: {txtName.Text}. Game and Path modifications are restricted.";
+				WarningLabel.ForeColor = Color.LimeGreen;
 
-				// 🎯 FIX: Explicitly toggle enablement of sub-fields so they react immediately to clicks
-				bool rconActive = chk.Checked;
-				lblRCONport.Enabled = numRconPort.Enabled = rconActive;
-				lblRCONpassword.Enabled = txtRconPassword.Enabled = rconActive;
+				chkDefaultPath.Enabled = false;
+				btnBrowse.Enabled = false;
+				txtInstallPath.Enabled = false;
+				btnSave.Enabled = true;
 			}
+			else if (!isBaseReady)
+			{
+				WarningLabel.Text = "[LOCKED] Required: Provide a Server Name and select a Game Template to unlock configuration.";
+				WarningLabel.ForeColor = Color.Orange;
+				chkDefaultPath.Enabled = chkEnableSchedule.Enabled = chkUpdateOnStart.Enabled = false;
+				btnBrowse.Enabled = txtInstallPath.Enabled = btnSave.Enabled = false;
+			}
+			else
+			{
+				string safeName = Regex.Replace(txtName.Text.Trim(), @"[^a-zA-Z0-9_\-]", "_");
+				string selectedGame = cmbGame.Text.Trim();
+				string displayPath = $@"C:\Synix\Games\{selectedGame}\{safeName}";
+
+				WarningLabel.Text = $"[READY] Configuration active. Specify a custom directory or use the default: {displayPath}";
+				WarningLabel.ForeColor = Color.LimeGreen;
+
+				chkDefaultPath.Enabled = chkEnableSchedule.Enabled = chkUpdateOnStart.Enabled = true;
+
+				if (chkDefaultPath.Checked)
+				{
+					txtInstallPath.Text = displayPath;
+					btnBrowse.Enabled = txtInstallPath.Enabled = false;
+				}
+				else
+				{
+					btnBrowse.Enabled = txtInstallPath.Enabled = true;
+				}
+				btnSave.Enabled = !string.IsNullOrWhiteSpace(txtInstallPath.Text);
+			}
+
+			if (btnEditSchedule != null) btnEditSchedule.Enabled = isBaseReady && chkEnableSchedule.Checked;
+		}
+
+		private void ToggleGameSpecificFields(GameInfo? gameData)
+		{
+			if (gameData == null)
+			{
+				txtPassword.Enabled = txtAdminPassword.Enabled = txtWorldSeed.Enabled = cmbCompetitive.Enabled =
+				chkEnableRcon.Enabled = AppPortNumeric.Enabled = numMaxPlayers.Enabled = numQueryPort.Enabled =
+				cmbWorldName.Enabled = chkUpdateOnStart.Enabled = false;
+				return;
+			}
+
+			string args = gameData.RequiredArgs.ToLower();
+			txtPassword.Enabled = args.Contains("{pass}");
+			txtAdminPassword.Enabled = args.Contains("{adminpass}");
+			txtWorldSeed.Enabled = args.Contains("{seed}");
+			cmbCompetitive.Enabled = args.Contains("{mode}");
+			numMaxPlayers.Enabled = args.Contains("{maxplayers}");
+			numQueryPort.Enabled = args.Contains("{query}");
+			cmbWorldName.Enabled = args.Contains("{map}");
+			if (AppPortNumeric != null) AppPortNumeric.Enabled = args.Contains("{app_port}");
+			chkUpdateOnStart.Enabled = args.Contains("{steamappid}");
+
+			chkEnableRcon.Enabled = args.Contains("{rcon}") || args.Contains("{rcon_port}") || args.Contains("{rcon_pass}");
+			chkEnableRcon_CheckedChanged(null, null);
+		}
+
+		#region Event Handlers
+
+		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
+
+		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (isManualLoading) return; // 🎯 SHIELDED
+
+			if (cmbGame.SelectedIndex > 0)
+			{
+				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
+				if (gameData != null)
+				{
+					numPort.Value = Math.Clamp((decimal)gameData.Port, numPort.Minimum, numPort.Maximum);
+					numQueryPort.Value = Math.Clamp((decimal)gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
+					PopulateGameModes(gameData, _isEditMode ? (_existingServer?.GameMode ?? "PVE") : "PVE");
+					ToggleGameSpecificFields(gameData);
+				}
+			}
+			else ToggleGameSpecificFields(null);
+			SyncGatekeeper();
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e)
@@ -311,36 +291,33 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void PopulateMaps(GameInfo gameData, string selectedMap)
+		private void chkDefaultPath_CheckedChanged(object sender, EventArgs e) => SyncGatekeeper();
+
+		private void txtInstallPath_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
+
+		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e)
 		{
-			cmbWorldName.Items.Clear();
-			if (gameData.Maps == null) return;
-			foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map);
-			if (cmbWorldName.Items.Contains(selectedMap)) cmbWorldName.SelectedItem = selectedMap;
-			else cmbWorldName.Text = selectedMap;
+			if (isManualLoading) return; // 🎯 SHIELDED
+			bool active = chkEnableRcon.Checked;
+			lblRCONport.Enabled = numRconPort.Enabled = lblRCONpassword.Enabled = txtRconPassword.Enabled = active;
 		}
 
-		private void PopulateGameModes(GameInfo gameData, string selectedMode)
+		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e)
 		{
-			cmbCompetitive.Items.Clear();
-			if (gameData.GameModes == null) return;
-			foreach (var mode in gameData.GameModes) cmbCompetitive.Items.Add(mode);
-			if (cmbCompetitive.Items.Contains(selectedMode)) cmbCompetitive.SelectedItem = selectedMode;
-			else cmbCompetitive.Text = selectedMode;
+			if (isManualLoading) return; // 🎯 SHIELDED
+			if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked;
+			SyncGatekeeper();
 		}
 
 		private void txtWorldSeed_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			if (cmbGame.Text == "Rust")
-			{
-				if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
-			}
+			if (cmbGame.Text == "Rust" && !char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
 		}
 
 		private void btnViewArgs_Click(object sender, EventArgs e)
 		{
 			string selectedGame = cmbGame.SelectedItem?.ToString() ?? "";
-			if (!string.IsNullOrEmpty(selectedGame))
+			if (!string.IsNullOrEmpty(selectedGame) && selectedGame != "-- Pick a Game --")
 			{
 				var gameData = GameDatabase.GetGame(selectedGame);
 				if (gameData != null)
@@ -349,82 +326,44 @@ namespace Synix_Control_Panel
 					display.ShowDialog();
 				}
 			}
-			else
-			{
-				MessageBox.Show("Please select a game first.");
-			}
 		}
 
-		private void ToggleGameSpecificFields(GameInfo? gameData)
+		private void btnEditSchedule_Click(object sender, EventArgs e)
 		{
-			if (gameData == null)
+			using (var scheduler = new ScheduleSettingsGUI(_selectedDays, _selectedTime))
 			{
-				txtPassword.Enabled = false;
-				txtAdminPassword.Enabled = false;
-				txtWorldSeed.Enabled = false;
-				cmbCompetitive.Enabled = false;
-				chkEnableRcon.Enabled = false;
-				AppPortNumeric.Enabled = false;
-				return;
+				if (scheduler.ShowDialog() == DialogResult.OK)
+				{
+					_selectedDays = scheduler.SelectedDays;
+					_selectedTime = scheduler.SelectedTime;
+				}
 			}
-
-			bool supportsPass = gameData.RequiredArgs.Contains("{pass}");
-			txtPassword.Enabled = supportsPass;
-			lblPassword.ForeColor = supportsPass ? Color.White : Color.Gray;
-
-			if (!supportsPass)
-			{
-				txtPassword.Text = "Not Supported";
-			}
-			else if (txtPassword.Text == "Not Supported")
-			{
-				txtPassword.Text = _existingServer?.Password ?? "";
-			}
-
-			bool supportsAdminPass = gameData.RequiredArgs.Contains("{adminpass}");
-			txtAdminPassword.Enabled = supportsAdminPass;
-			lblAdminPassword.ForeColor = supportsAdminPass ? Color.White : Color.Gray;
-
-			if (!supportsAdminPass)
-			{
-				txtAdminPassword.Text = "Not Supported";
-			}
-			else if (txtAdminPassword.Text == "Not Supported")
-			{
-				txtAdminPassword.Text = _existingServer?.AdminPassword ?? "";
-			}
-
-			bool supportsSeed = gameData.RequiredArgs.Contains("{seed}");
-			txtWorldSeed.Enabled = supportsSeed;
-			lblWorldSeed.ForeColor = supportsSeed ? Color.White : Color.Gray;
-
-			if (!supportsSeed)
-			{
-				txtWorldSeed.Text = "N/A";
-			}
-			else if (txtWorldSeed.Text == "N/A")
-			{
-				txtWorldSeed.Text = _existingServer?.WorldSeed ?? "";
-			}
-
-			bool supportsModes = gameData.GameModes != null && gameData.GameModes.Count > 1;
-			cmbCompetitive.Enabled = supportsModes;
-			lblCompetitive.ForeColor = supportsModes ? Color.White : Color.Gray;
-
-			bool supportsAppPort = gameData.RequiredArgs.Contains("{app_port}");
-			AppPortNumeric.Enabled = supportsAppPort;
-			lblAppPort.ForeColor = supportsAppPort ? Color.White : Color.Gray;
-
-			bool supportsRcon = gameData.RequiredArgs.Contains("{rcon}");
-			chkEnableRcon.Enabled = supportsRcon;
-
-			bool rconActive = supportsRcon && chkEnableRcon.Checked;
-			lblRCONport.Enabled = numRconPort.Enabled = lblRCONpassword.Enabled = txtRconPassword.Enabled = rconActive;
 		}
 
-		private void chkUpdateOnStart_CheckedChanged(object sender, EventArgs e)
+		private void PopulateMaps(GameInfo gameData, string selectedMap)
 		{
-			UIStyleHelper.StyleToggleButton(chkUpdateOnStart, "Auto Update");
+			cmbWorldName.Items.Clear();
+			if (gameData.Maps == null) return;
+			foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map);
+			cmbWorldName.Text = selectedMap;
 		}
+
+		private void PopulateGameModes(GameInfo gameData, string selectedMode)
+		{
+			cmbCompetitive.Items.Clear();
+			if (gameData.GameModes == null) return;
+			foreach (var mode in gameData.GameModes) cmbCompetitive.Items.Add(mode);
+			if (!string.IsNullOrEmpty(selectedMode) && cmbCompetitive.Items.Contains(selectedMode))
+				cmbCompetitive.SelectedItem = selectedMode;
+			else if (cmbCompetitive.Items.Count > 0) cmbCompetitive.SelectedIndex = 0;
+		}
+
+		private void btnCancel_Click(object sender, EventArgs e)
+		{
+			this.DialogResult = DialogResult.Cancel;
+			this.Close();
+		}
+
+		#endregion
 	}
 }

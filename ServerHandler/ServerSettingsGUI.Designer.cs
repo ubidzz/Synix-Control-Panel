@@ -38,7 +38,7 @@
 			numPort = new NumericUpDown();
 			btnBrowse = new Button();
 			btnSave = new Button();
-			chkDefaultPath = new CheckBox();
+			chkDefaultPath = new Synix_Control_Panel.UI.SynixToggle();
 			ltextLabel1 = new Label();
 			lblPassword = new Label();
 			txtPassword = new TextBox();
@@ -58,21 +58,11 @@
 			lblCompetitive = new Label();
 			txtInstallPath = new TextBox();
 			textLabel2 = new Label();
-			chkEnableRcon = new CheckBox();
+			chkEnableRcon = new Synix_Control_Panel.UI.SynixToggle();
 			numRconPort = new NumericUpDown();
 			txtRconPassword = new TextBox();
 			lblRCONpassword = new Label();
-			TextLabel4 = new Label();
-			chkEnableSchedule = new CheckBox();
-			dtpRestartTime = new DateTimePicker();
-			chkMon = new CheckBox();
-			chkTue = new CheckBox();
-			chkWed = new CheckBox();
-			chkThu = new CheckBox();
-			chkFri = new CheckBox();
-			chkSat = new CheckBox();
-			chkSun = new CheckBox();
-			groupBox1 = new GroupBox();
+			chkEnableSchedule = new Synix_Control_Panel.UI.SynixToggle();
 			lblWorldSeed = new Label();
 			txtWorldSeed = new TextBox();
 			lblRCONport = new Label();
@@ -80,12 +70,13 @@
 			lblAppPort = new Label();
 			AppPortNumeric = new NumericUpDown();
 			btnViewArgs = new Button();
-			chkUpdateOnStart = new CheckBox();
+			chkUpdateOnStart = new Synix_Control_Panel.UI.SynixToggle();
+			btnEditSchedule = new Button();
+			button1 = new Button();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).BeginInit();
-			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)AppPortNumeric).BeginInit();
 			SuspendLayout();
 			// 
@@ -131,7 +122,7 @@
 			FolderPathLabel.BackColor = Color.Transparent;
 			FolderPathLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			FolderPathLabel.ForeColor = Color.White;
-			FolderPathLabel.Location = new Point(12, 343);
+			FolderPathLabel.Location = new Point(12, 366);
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(104, 17);
 			FolderPathLabel.TabIndex = 3;
@@ -168,7 +159,7 @@
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(47, 445);
+			btnBrowse.Location = new Point(41, 473);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -179,7 +170,7 @@
 			// btnSave
 			// 
 			btnSave.Cursor = Cursors.Hand;
-			btnSave.Location = new Point(328, 500);
+			btnSave.Location = new Point(245, 528);
 			btnSave.Name = "btnSave";
 			btnSave.Size = new Size(138, 44);
 			btnSave.TabIndex = 9;
@@ -193,9 +184,9 @@
 			chkDefaultPath.BackColor = Color.Transparent;
 			chkDefaultPath.FlatStyle = FlatStyle.Flat;
 			chkDefaultPath.ForeColor = Color.White;
-			chkDefaultPath.Location = new Point(12, 363);
+			chkDefaultPath.Location = new Point(12, 386);
 			chkDefaultPath.Name = "chkDefaultPath";
-			chkDefaultPath.Size = new Size(193, 29);
+			chkDefaultPath.Size = new Size(157, 32);
 			chkDefaultPath.TabIndex = 10;
 			chkDefaultPath.Text = "Use Default Location (C:\\Game)";
 			chkDefaultPath.TextAlign = ContentAlignment.MiddleCenter;
@@ -208,7 +199,7 @@
 			ltextLabel1.BackColor = Color.Transparent;
 			ltextLabel1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			ltextLabel1.ForeColor = Color.White;
-			ltextLabel1.Location = new Point(122, 447);
+			ltextLabel1.Location = new Point(122, 475);
 			ltextLabel1.Name = "ltextLabel1";
 			ltextLabel1.Size = new Size(73, 17);
 			ltextLabel1.TabIndex = 11;
@@ -273,7 +264,7 @@
 			TextLabel3.BackColor = Color.Transparent;
 			TextLabel3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel3.ForeColor = Color.White;
-			TextLabel3.Location = new Point(415, 359);
+			TextLabel3.Location = new Point(415, 386);
 			TextLabel3.Name = "TextLabel3";
 			TextLabel3.Size = new Size(124, 17);
 			TextLabel3.TabIndex = 18;
@@ -281,7 +272,7 @@
 			// 
 			// txtExtraArgs
 			// 
-			txtExtraArgs.Location = new Point(415, 471);
+			txtExtraArgs.Location = new Point(414, 499);
 			txtExtraArgs.Name = "txtExtraArgs";
 			txtExtraArgs.Size = new Size(368, 23);
 			txtExtraArgs.TabIndex = 19;
@@ -291,7 +282,7 @@
 			TextLabel7.AutoSize = true;
 			TextLabel7.BackColor = Color.Transparent;
 			TextLabel7.ForeColor = Color.White;
-			TextLabel7.Location = new Point(415, 453);
+			TextLabel7.Location = new Point(415, 481);
 			TextLabel7.Name = "TextLabel7";
 			TextLabel7.Size = new Size(257, 15);
 			TextLabel7.TabIndex = 20;
@@ -324,7 +315,7 @@
 			WarningLabel.AutoEllipsis = true;
 			WarningLabel.BackColor = Color.Transparent;
 			WarningLabel.ForeColor = Color.Red;
-			WarningLabel.Location = new Point(12, 395);
+			WarningLabel.Location = new Point(12, 421);
 			WarningLabel.Name = "WarningLabel";
 			WarningLabel.Size = new Size(368, 47);
 			WarningLabel.TabIndex = 23;
@@ -378,7 +369,7 @@
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(12, 471);
+			txtInstallPath.Location = new Point(12, 499);
 			txtInstallPath.Name = "txtInstallPath";
 			txtInstallPath.Size = new Size(368, 23);
 			txtInstallPath.TabIndex = 29;
@@ -390,7 +381,7 @@
 			textLabel2.BackColor = Color.Transparent;
 			textLabel2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			textLabel2.ForeColor = Color.White;
-			textLabel2.Location = new Point(23, 447);
+			textLabel2.Location = new Point(12, 475);
 			textLabel2.Name = "textLabel2";
 			textLabel2.Size = new Size(23, 17);
 			textLabel2.TabIndex = 30;
@@ -402,9 +393,9 @@
 			chkEnableRcon.BackColor = Color.White;
 			chkEnableRcon.FlatStyle = FlatStyle.Flat;
 			chkEnableRcon.ForeColor = Color.Black;
-			chkEnableRcon.Location = new Point(12, 267);
+			chkEnableRcon.Location = new Point(12, 261);
 			chkEnableRcon.Name = "chkEnableRcon";
-			chkEnableRcon.Size = new Size(105, 26);
+			chkEnableRcon.Size = new Size(104, 32);
 			chkEnableRcon.TabIndex = 31;
 			chkEnableRcon.Text = "Activate RCON";
 			chkEnableRcon.TextAlign = ContentAlignment.MiddleCenter;
@@ -440,153 +431,20 @@
 			lblRCONpassword.TabIndex = 35;
 			lblRCONpassword.Text = "RCON Password";
 			// 
-			// TextLabel4
-			// 
-			TextLabel4.AutoSize = true;
-			TextLabel4.BackColor = Color.Transparent;
-			TextLabel4.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			TextLabel4.ForeColor = Color.White;
-			TextLabel4.Location = new Point(414, 135);
-			TextLabel4.Name = "TextLabel4";
-			TextLabel4.Size = new Size(237, 17);
-			TextLabel4.TabIndex = 36;
-			TextLabel4.Text = "Maintenance & Auto-Restart Scheduler";
-			// 
 			// chkEnableSchedule
 			// 
 			chkEnableSchedule.Appearance = Appearance.Button;
+			chkEnableSchedule.BackColor = Color.FromArgb(32, 32, 32);
 			chkEnableSchedule.FlatStyle = FlatStyle.Flat;
 			chkEnableSchedule.ForeColor = Color.White;
-			chkEnableSchedule.Location = new Point(6, 18);
+			chkEnableSchedule.Location = new Point(415, 128);
 			chkEnableSchedule.Name = "chkEnableSchedule";
-			chkEnableSchedule.Size = new Size(69, 26);
+			chkEnableSchedule.Size = new Size(164, 32);
 			chkEnableSchedule.TabIndex = 0;
 			chkEnableSchedule.Text = "Activate";
 			chkEnableSchedule.TextAlign = ContentAlignment.MiddleCenter;
-			chkEnableSchedule.UseVisualStyleBackColor = true;
+			chkEnableSchedule.UseVisualStyleBackColor = false;
 			chkEnableSchedule.CheckedChanged += chkEnableSchedule_CheckedChanged;
-			// 
-			// dtpRestartTime
-			// 
-			dtpRestartTime.CustomFormat = "HH:mm";
-			dtpRestartTime.Format = DateTimePickerFormat.Custom;
-			dtpRestartTime.Location = new Point(82, 18);
-			dtpRestartTime.Name = "dtpRestartTime";
-			dtpRestartTime.ShowUpDown = true;
-			dtpRestartTime.Size = new Size(63, 23);
-			dtpRestartTime.TabIndex = 37;
-			// 
-			// chkMon
-			// 
-			chkMon.Appearance = Appearance.Button;
-			chkMon.FlatStyle = FlatStyle.Flat;
-			chkMon.ForeColor = Color.White;
-			chkMon.Location = new Point(5, 52);
-			chkMon.Name = "chkMon";
-			chkMon.Size = new Size(70, 25);
-			chkMon.TabIndex = 38;
-			chkMon.Text = "Monday";
-			chkMon.TextAlign = ContentAlignment.MiddleCenter;
-			chkMon.UseVisualStyleBackColor = true;
-			// 
-			// chkTue
-			// 
-			chkTue.Appearance = Appearance.Button;
-			chkTue.FlatStyle = FlatStyle.Flat;
-			chkTue.ForeColor = Color.White;
-			chkTue.Location = new Point(82, 52);
-			chkTue.Name = "chkTue";
-			chkTue.Size = new Size(70, 25);
-			chkTue.TabIndex = 39;
-			chkTue.Text = "Tuesday";
-			chkTue.TextAlign = ContentAlignment.MiddleCenter;
-			chkTue.UseVisualStyleBackColor = true;
-			// 
-			// chkWed
-			// 
-			chkWed.Appearance = Appearance.Button;
-			chkWed.AutoCheck = false;
-			chkWed.AutoSize = true;
-			chkWed.FlatStyle = FlatStyle.Flat;
-			chkWed.ForeColor = Color.White;
-			chkWed.Location = new Point(159, 52);
-			chkWed.Name = "chkWed";
-			chkWed.Size = new Size(78, 25);
-			chkWed.TabIndex = 40;
-			chkWed.Text = "Wednesday";
-			chkWed.TextAlign = ContentAlignment.MiddleCenter;
-			chkWed.UseVisualStyleBackColor = true;
-			// 
-			// chkThu
-			// 
-			chkThu.Appearance = Appearance.Button;
-			chkThu.FlatStyle = FlatStyle.Flat;
-			chkThu.ForeColor = Color.White;
-			chkThu.Location = new Point(243, 52);
-			chkThu.Name = "chkThu";
-			chkThu.Size = new Size(75, 25);
-			chkThu.TabIndex = 41;
-			chkThu.Text = "Thursday";
-			chkThu.TextAlign = ContentAlignment.MiddleCenter;
-			chkThu.UseVisualStyleBackColor = true;
-			// 
-			// chkFri
-			// 
-			chkFri.Appearance = Appearance.Button;
-			chkFri.FlatStyle = FlatStyle.Flat;
-			chkFri.ForeColor = Color.White;
-			chkFri.Location = new Point(6, 90);
-			chkFri.Name = "chkFri";
-			chkFri.Size = new Size(58, 24);
-			chkFri.TabIndex = 42;
-			chkFri.Text = "Friday";
-			chkFri.TextAlign = ContentAlignment.MiddleCenter;
-			chkFri.UseVisualStyleBackColor = true;
-			// 
-			// chkSat
-			// 
-			chkSat.Appearance = Appearance.Button;
-			chkSat.FlatStyle = FlatStyle.Flat;
-			chkSat.ForeColor = Color.White;
-			chkSat.Location = new Point(70, 90);
-			chkSat.Name = "chkSat";
-			chkSat.Size = new Size(72, 24);
-			chkSat.TabIndex = 43;
-			chkSat.Text = "Saturday";
-			chkSat.TextAlign = ContentAlignment.MiddleCenter;
-			chkSat.UseVisualStyleBackColor = true;
-			// 
-			// chkSun
-			// 
-			chkSun.Appearance = Appearance.Button;
-			chkSun.FlatStyle = FlatStyle.Flat;
-			chkSun.ForeColor = Color.White;
-			chkSun.Location = new Point(148, 90);
-			chkSun.Name = "chkSun";
-			chkSun.Size = new Size(65, 24);
-			chkSun.TabIndex = 44;
-			chkSun.Text = "Sunday";
-			chkSun.TextAlign = ContentAlignment.MiddleCenter;
-			chkSun.UseVisualStyleBackColor = true;
-			// 
-			// groupBox1
-			// 
-			groupBox1.BackColor = Color.Transparent;
-			groupBox1.BackgroundImageLayout = ImageLayout.None;
-			groupBox1.Controls.Add(chkFri);
-			groupBox1.Controls.Add(dtpRestartTime);
-			groupBox1.Controls.Add(chkThu);
-			groupBox1.Controls.Add(chkEnableSchedule);
-			groupBox1.Controls.Add(chkSun);
-			groupBox1.Controls.Add(chkWed);
-			groupBox1.Controls.Add(chkSat);
-			groupBox1.Controls.Add(chkTue);
-			groupBox1.Controls.Add(chkMon);
-			groupBox1.Location = new Point(414, 155);
-			groupBox1.Name = "groupBox1";
-			groupBox1.Size = new Size(351, 128);
-			groupBox1.TabIndex = 45;
-			groupBox1.TabStop = false;
 			// 
 			// lblWorldSeed
 			// 
@@ -625,7 +483,7 @@
 			lblaruments.AutoEllipsis = true;
 			lblaruments.BackColor = Color.Transparent;
 			lblaruments.ForeColor = Color.White;
-			lblaruments.Location = new Point(414, 376);
+			lblaruments.Location = new Point(415, 410);
 			lblaruments.Name = "lblaruments";
 			lblaruments.Size = new Size(368, 66);
 			lblaruments.TabIndex = 52;
@@ -647,34 +505,54 @@
 			// 
 			AppPortNumeric.Location = new Point(245, 225);
 			AppPortNumeric.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
-			AppPortNumeric.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
+			AppPortNumeric.Minimum = new decimal(new int[] { 10000, 0, 0, 0 });
 			AppPortNumeric.Name = "AppPortNumeric";
 			AppPortNumeric.Size = new Size(78, 23);
 			AppPortNumeric.TabIndex = 56;
-			AppPortNumeric.Value = new decimal(new int[] { 1024, 0, 0, 0 });
+			AppPortNumeric.Value = new decimal(new int[] { 10000, 0, 0, 0 });
 			// 
 			// btnViewArgs
 			// 
-			btnViewArgs.Location = new Point(537, 429);
+			btnViewArgs.Location = new Point(542, 457);
 			btnViewArgs.Name = "btnViewArgs";
-			btnViewArgs.Size = new Size(135, 21);
+			btnViewArgs.Size = new Size(158, 21);
 			btnViewArgs.TabIndex = 57;
-			btnViewArgs.Text = "View Arguments";
+			btnViewArgs.Text = "View Default Arguments";
 			btnViewArgs.UseVisualStyleBackColor = true;
 			btnViewArgs.Click += btnViewArgs_Click;
 			// 
 			// chkUpdateOnStart
 			// 
 			chkUpdateOnStart.Appearance = Appearance.Button;
+			chkUpdateOnStart.BackColor = Color.FromArgb(32, 32, 32);
 			chkUpdateOnStart.FlatStyle = FlatStyle.Flat;
-			chkUpdateOnStart.Location = new Point(414, 296);
+			chkUpdateOnStart.Location = new Point(415, 166);
 			chkUpdateOnStart.Name = "chkUpdateOnStart";
-			chkUpdateOnStart.Size = new Size(141, 24);
+			chkUpdateOnStart.Size = new Size(164, 32);
 			chkUpdateOnStart.TabIndex = 58;
 			chkUpdateOnStart.Text = "Auto Update on Start";
 			chkUpdateOnStart.TextAlign = ContentAlignment.MiddleCenter;
-			chkUpdateOnStart.UseVisualStyleBackColor = true;
-			chkUpdateOnStart.CheckedChanged += chkUpdateOnStart_CheckedChanged;
+			chkUpdateOnStart.UseVisualStyleBackColor = false;
+			// 
+			// btnEditSchedule
+			// 
+			btnEditSchedule.Location = new Point(585, 131);
+			btnEditSchedule.Name = "btnEditSchedule";
+			btnEditSchedule.Size = new Size(104, 26);
+			btnEditSchedule.TabIndex = 62;
+			btnEditSchedule.Text = "Edit Scheduler";
+			btnEditSchedule.UseVisualStyleBackColor = true;
+			btnEditSchedule.Click += btnEditSchedule_Click;
+			// 
+			// button1
+			// 
+			button1.Location = new Point(414, 528);
+			button1.Name = "button1";
+			button1.Size = new Size(138, 44);
+			button1.TabIndex = 63;
+			button1.Text = "Cancel";
+			button1.UseVisualStyleBackColor = true;
+			button1.Click += btnCancel_Click;
 			// 
 			// ServerSettingsGUI
 			// 
@@ -682,7 +560,10 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
-			ClientSize = new Size(795, 558);
+			ClientSize = new Size(795, 584);
+			Controls.Add(button1);
+			Controls.Add(btnEditSchedule);
+			Controls.Add(chkEnableSchedule);
 			Controls.Add(chkUpdateOnStart);
 			Controls.Add(btnViewArgs);
 			Controls.Add(AppPortNumeric);
@@ -691,8 +572,6 @@
 			Controls.Add(lblRCONport);
 			Controls.Add(txtWorldSeed);
 			Controls.Add(lblWorldSeed);
-			Controls.Add(groupBox1);
-			Controls.Add(TextLabel4);
 			Controls.Add(lblRCONpassword);
 			Controls.Add(txtRconPassword);
 			Controls.Add(numRconPort);
@@ -736,8 +615,6 @@
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).EndInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).EndInit();
-			groupBox1.ResumeLayout(false);
-			groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)AppPortNumeric).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
@@ -754,7 +631,7 @@
 		private NumericUpDown numPort;
 		private Button btnBrowse;
 		private Button btnSave;
-		private CheckBox chkDefaultPath;
+		private Synix_Control_Panel.UI.SynixToggle chkDefaultPath;
 		private Label ltextLabel1;
 		private Label lblPassword;
 		private TextBox txtPassword;
@@ -774,22 +651,12 @@
 		private Label lblCompetitive;
 		private TextBox txtInstallPath;
 		private Label textLabel2;
-		private CheckBox chkEnableRcon;
+		private Synix_Control_Panel.UI.SynixToggle chkEnableRcon;
 		private NumericUpDown numRconPort;
 		private TextBox txtRconPassword;
 		private Label TextLabel5;
 		private Label lblRCONpassword;
-		private Label TextLabel4;
-		private CheckBox chkEnableSchedule;
-		private DateTimePicker dtpRestartTime;
-		private CheckBox chkMon;
-		private CheckBox chkTue;
-		private CheckBox chkWed;
-		private CheckBox chkThu;
-		private CheckBox chkFri;
-		private CheckBox chkSat;
-		private CheckBox chkSun;
-		private GroupBox groupBox1;
+		private Synix_Control_Panel.UI.SynixToggle chkEnableSchedule;
 		private Label lblWorldSeed;
 		private TextBox txtWorldSeed;
 		private Label lblRCONport;
@@ -798,6 +665,8 @@
 		private Label lblAppPort;
 		private NumericUpDown AppPortNumeric;
 		private Button btnViewArgs;
-		private CheckBox chkUpdateOnStart;
+		private Synix_Control_Panel.UI.SynixToggle chkUpdateOnStart;
+		private Button btnEditSchedule;
+		private Button button1;
 	}
 }
