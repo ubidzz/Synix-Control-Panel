@@ -46,10 +46,12 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			try
 			{
+				// 1. PRE-FLIGHT (Backup & Update)
 				if (server.BackupOnStart && context != StartContext.CrashRecovery)
 				{
 					logCallback?.Invoke("[BACKUP] Starting...");
 					await Task.Run(() => BackupManager.ExecuteBackup(server, context));
+					logCallback?.Invoke("[BACKUP] Finished...");
 				}
 
 				if (server.UpdateOnStart)
@@ -58,22 +60,29 @@ namespace Synix_Control_Panel.ServerHandler
 					await Synix_Control_Panel.SynixEngine.Core.Instance.InstallOrUpdate(server);
 				}
 
+				// 2. TEMPLATE VALIDATION
 				server.Status = StatusManager.GetStatus(ServerState.Starting);
 				var dbEntry = GameDatabase.GetGame(server.Game);
-				if (dbEntry == null) return;
+				if (dbEntry == null)
+				{
+					logCallback?.Invoke("[ERROR] Game template not found.");
+					return;
+				}
 
-				// 1. Setup paths
+				// 3. PATH SETUP
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName);
 				string binDir = Path.GetDirectoryName(fullExePath) ?? "";
 
 				if (!File.Exists(fullExePath))
 				{
 					logCallback?.Invoke($"[ERROR] Executable missing: {fullExePath}");
+					server.Status = StatusManager.GetStatus(ServerState.Stopped);
 					return;
 				}
 
-				// 🎯 2. THE ADVANCED SEARCH & PULL: Find steam_appid.txt ANYWHERE
-				string targetId = (server.Game == "Soulmask") ? "2646460" : dbEntry.AppID;
+				// 🎯 4. DYNAMIC IDENTITY & SEARCH (No more hardcoding)
+				// We pull the ID directly from your GameDatabase blueprint
+				string targetId = dbEntry.AppID;
 				string appidPath = "";
 
 				// Fast Check 1: The folder where the .exe lives (Unreal Engine standard)
@@ -91,29 +100,29 @@ namespace Synix_Control_Panel.ServerHandler
 				}
 				else
 				{
-					// Deep Check 3: Search every single subfolder in the server installation
+					// Deep Check 3: Search every subfolder in the server installation
 					try
 					{
 						string[] foundFiles = Directory.GetFiles(server.InstallPath, "steam_appid.txt", SearchOption.AllDirectories);
 
 						if (foundFiles.Length > 0)
 						{
-							appidPath = foundFiles[0]; // Grab the exact path of the file it found
+							appidPath = foundFiles[0]; // Use the specific path discovered
 						}
 						else
 						{
-							// If the file truly doesn't exist ANYWHERE yet, default to creating it next to the .exe
+							// If missing everywhere, default to the binary directory
 							appidPath = binPath;
 						}
 					}
 					catch (Exception ex)
 					{
-						logCallback?.Invoke($"[WARNING] Deep search for AppID file failed: {ex.Message}");
-						appidPath = binPath; // Safe fallback
+						logCallback?.Invoke($"[WARNING] Deep search failed: {ex.Message}");
+						appidPath = binPath;
 					}
 				}
 
-				// 🛠️ 3. PHYSICAL FILE SELF-HEALING (Using the dynamically found path)
+				// 🛠️ 5. SELF-HEALING (Using the dynamically found path)
 				try
 				{
 					if (!File.Exists(appidPath) || File.ReadAllText(appidPath).Trim() != targetId)
@@ -122,14 +131,14 @@ namespace Synix_Control_Panel.ServerHandler
 						logCallback?.Invoke($"[ENGINE] Self-Healed steam_appid.txt at: {appidPath}");
 					}
 				}
-				catch (Exception ex) { logCallback?.Invoke($"[WARNING] File access error: {ex.Message}"); }
+				catch (Exception ex) { logCallback?.Invoke($"[WARNING] AppID Write Error: {ex.Message}"); }
 
-				// 🛠️ 4. DYNAMIC ARGUMENT REPLACEMENT
+				// 🛠️ 6. ARGUMENT REPLACEMENT
 				string cleanIdentity = (server.ServerName ?? "Server").Replace(" ", "_");
 
 				string args = dbEntry.RequiredArgs
-					.Replace("{app_port}", server.AppPort.ToString())
-					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed) // Move this up
+					.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
+					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
 					.Replace("{map}", server.WorldName)
 					.Replace("{steamAppID}", targetId)
 					.Replace("{appid}", targetId)
@@ -140,8 +149,7 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{adminpass}", server.AdminPassword ?? "")
 					.Replace("{ServerName}", server.ServerName)
 					.Replace("{InstallPath}", server.InstallPath)
-					.Replace("{Identity}", cleanIdentity)
-					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed);
+					.Replace("{Identity}", cleanIdentity);
 
 				// --- RCON and Mode Logic ---
 				if (args.Contains("{rcon}"))
@@ -161,31 +169,33 @@ namespace Synix_Control_Panel.ServerHandler
 					args = args.Replace("{mode}", translatedMode);
 				}
 
-				args = args.Replace("  ", " ").Trim();
-
-				// 🚀 5. CONFIGURE THE PROCESS
+				// 🚀 7. CONFIGURE PROCESS
 				ProcessStartInfo psi = new()
 				{
 					FileName = fullExePath,
-					Arguments = args,
+					Arguments = args.Replace("  ", " ").Trim(),
 					WorkingDirectory = binDir,
-					UseShellExecute = false, // 🎯 Required to force EnvironmentVariables
+					UseShellExecute = false,
 					CreateNoWindow = false
 				};
 
-				// 🚀 THE INVOKE: Force OS identity to match the command line
+				// Inject Environment Variables (Matches command line identity)
 				psi.EnvironmentVariables["SteamAppId"] = targetId;
 				psi.EnvironmentVariables["SteamGameId"] = targetId;
 
 				logCallback?.Invoke($"[LAUNCHING] {server.Game} with identity: {targetId}");
-				logCallback?.Invoke($"[COMMAND] {args}");
+				logCallback?.Invoke($"[COMMAND] {psi.Arguments}");
 
-				// 🚀 6. THE SINGLE START
+				// 🚀 8. EXECUTION & MONITORING
 				Process? proc = Process.Start(psi);
 				if (proc != null)
 				{
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
+					server.Status = StatusManager.GetStatus(ServerState.Running);
+
+					if (server.StartTime == null) server.StartTime = DateTime.Now;
+
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) => {
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
