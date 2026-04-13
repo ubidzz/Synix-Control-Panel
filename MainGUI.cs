@@ -300,6 +300,7 @@ namespace Synix_Control_Panel
 		{
 			AppendLog("Start button clicked...", Color.Cyan);
 
+			// 1. YOUR SAFETY CHECKS (Kept exactly as is)
 			if (dataGridView1.CurrentRow == null)
 			{
 				AppendLog("[ERROR] No row is currently selected in the grid!", Color.Red);
@@ -319,19 +320,27 @@ namespace Synix_Control_Panel
 			}
 
 			if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
-
 			if (Core.Instance.ShouldBlockForConfig(selectedServer)) return;
 
-			// 🚀 2. ADD 'await' HERE
-			// This makes the button wait for the update and the launch process
-			await Servers.Start(selectedServer, msg =>
+			if (selectedServer.BackupOnStart)
 			{
-				this.Invoke((MethodInvoker)delegate
+				selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
+				UpdateGrid();
+			}
+
+			// 🚀 2. EXECUTE: We offload the start to a Task so the UI doesn't freeze
+			await Task.Run(async () =>
+			{
+				await Servers.Start(selectedServer, msg =>
 				{
-					selectedServer.StartTime = DateTime.Now;
-					AppendLog(msg);
-					UpdateGrid();
-				});
+					// We use Invoke to get back to your MainGUI thread for logging
+					this.Invoke((MethodInvoker)delegate
+					{
+						selectedServer.StartTime = DateTime.Now;
+						AppendLog(msg);
+						UpdateGrid(); // Final refresh for "Running"
+					});
+				}, StartContext.Manual);
 			});
 		}
 

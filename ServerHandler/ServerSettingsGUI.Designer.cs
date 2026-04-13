@@ -68,16 +68,17 @@
 			lblRCONport = new Label();
 			lblaruments = new Label();
 			lblAppPort = new Label();
-			AppPortNumeric = new NumericUpDown();
+			numAppPort = new NumericUpDown();
 			btnViewArgs = new Button();
 			chkUpdateOnStart = new Synix_Control_Panel.UI.SynixToggle();
 			btnEditSchedule = new Button();
 			button1 = new Button();
+			chkBackupOnStart = new Synix_Control_Panel.UI.SynixToggle();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).BeginInit();
-			((System.ComponentModel.ISupportInitialize)AppPortNumeric).BeginInit();
+			((System.ComponentModel.ISupportInitialize)numAppPort).BeginInit();
 			SuspendLayout();
 			// 
 			// ServerNameLabel
@@ -501,15 +502,15 @@
 			lblAppPort.TabIndex = 55;
 			lblAppPort.Text = "App Port";
 			// 
-			// AppPortNumeric
+			// numAppPort
 			// 
-			AppPortNumeric.Location = new Point(245, 225);
-			AppPortNumeric.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
-			AppPortNumeric.Minimum = new decimal(new int[] { 10000, 0, 0, 0 });
-			AppPortNumeric.Name = "AppPortNumeric";
-			AppPortNumeric.Size = new Size(78, 23);
-			AppPortNumeric.TabIndex = 56;
-			AppPortNumeric.Value = new decimal(new int[] { 10000, 0, 0, 0 });
+			numAppPort.Location = new Point(245, 225);
+			numAppPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+			numAppPort.Minimum = new decimal(new int[] { 10000, 0, 0, 0 });
+			numAppPort.Name = "numAppPort";
+			numAppPort.Size = new Size(78, 23);
+			numAppPort.TabIndex = 56;
+			numAppPort.Value = new decimal(new int[] { 10000, 0, 0, 0 });
 			// 
 			// btnViewArgs
 			// 
@@ -554,6 +555,16 @@
 			button1.UseVisualStyleBackColor = true;
 			button1.Click += btnCancel_Click;
 			// 
+			// chkBackupOnStart
+			// 
+			chkBackupOnStart.BackColor = Color.Transparent;
+			chkBackupOnStart.Location = new Point(585, 167);
+			chkBackupOnStart.Name = "chkBackupOnStart";
+			chkBackupOnStart.Size = new Size(164, 32);
+			chkBackupOnStart.TabIndex = 64;
+			chkBackupOnStart.Text = "Auto Backup";
+			chkBackupOnStart.UseVisualStyleBackColor = true;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -561,12 +572,13 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 584);
+			Controls.Add(chkBackupOnStart);
 			Controls.Add(button1);
 			Controls.Add(btnEditSchedule);
 			Controls.Add(chkEnableSchedule);
 			Controls.Add(chkUpdateOnStart);
 			Controls.Add(btnViewArgs);
-			Controls.Add(AppPortNumeric);
+			Controls.Add(numAppPort);
 			Controls.Add(lblAppPort);
 			Controls.Add(lblaruments);
 			Controls.Add(lblRCONport);
@@ -615,7 +627,7 @@
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).EndInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).EndInit();
-			((System.ComponentModel.ISupportInitialize)AppPortNumeric).EndInit();
+			((System.ComponentModel.ISupportInitialize)numAppPort).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -663,10 +675,11 @@
 		private Label lblaruments;
 		private NumericUpDown numericUpDown1;
 		private Label lblAppPort;
-		private NumericUpDown AppPortNumeric;
+		private NumericUpDown numAppPort;
 		private Button btnViewArgs;
 		private Synix_Control_Panel.UI.SynixToggle chkUpdateOnStart;
 		private Button btnEditSchedule;
 		private Button button1;
+		private Synix_Control_Panel.UI.SynixToggle chkBackupOnStart;
 	}
 }

@@ -125,8 +125,9 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						Log($"[WATCHDOG] Restarting {server.ServerName} now...", Color.Cyan);
 
-						// Re-use the existing Start logic from the Servers handler
-						Servers.Start(server, msg => Log(msg), StatusManager.GetStatus(ServerState.Crashed));
+						// 🎯 THE FIX: Only one call is needed, using the 'CrashRecovery' context
+						// This tells the engine to skip the backup and keep that 1% CPU usage stable.
+						Servers.Start(server, msg => Log(msg), StartContext.CrashRecovery);
 					}
 				}));
 			});

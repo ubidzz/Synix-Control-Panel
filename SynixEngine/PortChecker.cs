@@ -69,5 +69,16 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 		}
+
+		public bool IsPortInUseLocally(int port)
+		{
+			var ipProps = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+
+			// 🎯 Checks UDP and TCP listeners
+			bool udpInUse = ipProps.GetActiveUdpListeners().Any(l => l.Port == port);
+			bool tcpInUse = ipProps.GetActiveTcpListeners().Any(l => l.Port == port);
+
+			return udpInUse || tcpInUse;
+		}
 	}
 }

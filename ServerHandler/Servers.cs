@@ -42,10 +42,15 @@ namespace Synix_Control_Panel.ServerHandler
 		const uint CTRL_C_EVENT = 0;
 		#endregion
 
-		public static async Task Start(GameServer server, Action<string> logCallback, string StatusMessage = "")
+		public static async Task Start(GameServer server, Action<string> logCallback, StartContext context = StartContext.Manual)
 		{
 			try
 			{
+				if (server.BackupOnStart && context != StartContext.CrashRecovery)
+				{
+					logCallback?.Invoke("[BACKUP] Starting...");
+					await Task.Run(() => BackupManager.ExecuteBackup(server, context));
+				}
 
 				if (server.UpdateOnStart)
 				{

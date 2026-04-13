@@ -318,7 +318,6 @@ namespace Synix_Control_Panel.SynixEngine
 				if (editForm.ShowDialog() == DialogResult.OK)
 				{
 					// 4. FEEDBACK: Log success and refresh the grid
-					// Note: ServerSettingsGUI handles the FileHandler.SaveServers() call
 					Log($"[SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
 					UpdateGridStatus();
 				}
@@ -340,7 +339,7 @@ namespace Synix_Control_Panel.SynixEngine
 					Log($"[MAINTENANCE] Restarting {server.ServerName}...", Color.Cyan);
 
 					// 3. Start it back up
-					Servers.Start(server, msg => Log(msg));
+					Servers.Start(server, msg => Log(msg), StartContext.Scheduled);
 				}));
 			});
 		}
@@ -366,10 +365,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Log($"[RESTART] Port verified. Booting {server.Game}...", Color.Green);
 
-				Servers.Start(server, msg =>
+				// 🎯 UPDATE: Pass StartContext.Manual to trigger the backup
+				await Servers.Start(server, msg =>
 				{
 					MainGUI.Instance?.Invoke((Action)(() => Log(msg)));
-				});
+				}, StartContext.Manual);
 			}
 			else
 			{
@@ -387,7 +387,6 @@ namespace Synix_Control_Panel.SynixEngine
 			Log($"[WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
 
 			// 2. SCRUB: The Stop method handles Ctrl+C and the mandatory taskkill fallback
-			// This ensures that even if the EXE is "stuck," it is forcefully cleared.
 			await Task.Run(() =>
 			{
 				Servers.Stop(server, msg =>
@@ -403,10 +402,12 @@ namespace Synix_Control_Panel.SynixEngine
 			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 			{
 				Log($"[WATCHDOG] Environment cleared. Restarting {server.Game}...", Color.Green);
-				Servers.Start(server, msg =>
+
+				// 🎯 UPDATE: Pass StartContext.CrashRecovery to skip the backup
+				await Servers.Start(server, msg =>
 				{
 					MainGUI.Instance?.Invoke((Action)(() => Log(msg)));
-				});
+				}, StartContext.CrashRecovery);
 			}
 			UpdateGridStatus();
 		}
@@ -484,6 +485,31 @@ namespace Synix_Control_Panel.SynixEngine
 				FileHandler.SaveServers();
 				UpdateGridStatus();
 			}
+		}
+
+		// 🎯 RENAME and CLEAN this method:
+		public async Task StartServerAndReport(GameServer server)
+		{
+			// 1. Logic Checks (Uses your Validator.cs)
+			if (!ValidateIntegrityAndReport(server)) return;
+			if (!PassStartSpamLock(server, out string lockMsg)) { Log(lockMsg, Color.Orange); return; }
+
+			// 2. THE UI PUSH: Set status to Backing up before the task starts
+			if (server.BackupOnStart)
+			{
+				server.Status = StatusManager.GetStatus(ServerState.BackingUp);
+				UpdateGridStatus(); // Redraws grid instantly
+			}
+
+			// 3. EXECUTE: This calls Servers.Start which runs the BackupManager and the .exe
+			await Servers.Start(server, msg =>
+			{
+				server.StartTime = DateTime.Now;
+				Log(msg);
+				UpdateGridStatus();
+			}, StartContext.Manual);
+
+			UpdateGridStatus();
 		}
 	}
 }

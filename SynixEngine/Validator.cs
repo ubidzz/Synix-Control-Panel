@@ -55,23 +55,50 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
-		public bool ValidatePortsAndReport(int p, int q, int r, bool rconActive, GameServer? excluding = null)
+		// Inside Validator.cs (Core partial class)
+		// Inside Validator.cs
+		// Inside Validator.cs
+		public bool ValidatePortsAndReport(GameServer? excluding, int game, int query, int rcon, bool checkRcon, int app, bool checkAppPort, string gameName)
 		{
-			if (p == q)
+			var portChecks = new List<(int Value, string Name)>
 			{
-				MessageBox.Show("Game and Query ports must be different.", "Port Conflict");
-				return false;
-			}
+				(game, "Game Port"),
+				(query, "Query Port")
+			};
 
-			foreach (var s in MainGUI.serverList)
+			// 🎯 Only check RCON if the user enabled it
+			if (checkRcon) portChecks.Add((rcon, "RCON Port"));
+
+			// 🎯 Only check App Port if Rust is active
+			if (checkAppPort) portChecks.Add((app, "App Port (Rust+)"));
+
+			foreach (var check in portChecks)
 			{
-				if (s == excluding) continue;
-				if (s.Port == p || s.QueryPort == q)
+				// 1. Internal Database Check
+				var owner = GetPortCollisionOwner(check.Value, excluding);
+				if (owner != null)
 				{
-					MessageBox.Show($"Port conflict with '{s.ServerName}'.", "Conflict");
+					MessageBox.Show($"Resource Collision: The {check.Name} ({check.Value}) is already allocated to instance: '{owner}'.",
+									"Network Resource Conflict", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+					return false;
+				}
+
+				// 2. OS Socket Check
+				if (IsPortInUseLocally(check.Value))
+				{
+					MessageBox.Show($"Socket Conflict: The {check.Name} ({check.Value}) is currently occupied by another system process.",
+									"System Resource Conflict", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 					return false;
 				}
 			}
+
+			// 3. Rust Protocol Check
+			if (checkAppPort && gameName.Contains("Rust", StringComparison.OrdinalIgnoreCase) && app < 10000)
+			{
+				MessageBox.Show("Protocol Error: Rust+ (App Port) must be 10000 or higher.", "Logic Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return false;
+			}
+
 			return true;
 		}
 
@@ -114,24 +141,20 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public bool ValidateIntegrityAndReport(GameServer server)
 		{
-			// 1. Run the internal technical check
 			if (!CanServerStart(server, out string errorMessage))
 			{
-				// 2. The AI logs the error to the MainGUI thread
 				MainGUI.Instance?.Invoke((Action)(() => {
 					MainGUI.Instance.AppendLog($"[ERROR] {errorMessage}", Color.Red, true);
 				}));
 
-				// 3. The AI shows the popup
 				MessageBox.Show(errorMessage, "Integrity Check Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-				// 4. The AI marks the server as broken
 				server.Status = "Needs Repair";
 
-				return false; // Stop the launch
+				return false;
 			}
 
-			return true; // Files are good!
+			return true;
 		}
 
 		public bool PassStartSpamLock(GameServer server, out string lockMessage)
@@ -172,6 +195,18 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			return true; // Safe to stop
+		}
+
+		// Inside Validator.cs (Core partial class)
+		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
+		{
+			var conflict = MainGUI.serverList.FirstOrDefault(s =>
+				s != excluding &&
+				(s.Port == port ||
+				 s.QueryPort == port ||
+				 (s.AppPort.HasValue && s.AppPort.Value == port))); // 🎯 ADD .HasValue check
+
+			return conflict?.ServerName;
 		}
 	}
 }
