@@ -14,6 +14,7 @@ using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Synix_Control_Panel
 {
@@ -403,6 +404,35 @@ namespace Synix_Control_Panel
 			{
 				// Safety log if they click with no server selected
 				Core.Instance.Log("[SYSTEM] Please select a server from the list first.", System.Drawing.Color.Yellow);
+			}
+		}
+
+		private void btnOpenBackup_Click(object sender, EventArgs e)
+		{
+			if (dataGridView1.CurrentRow == null || !(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)) return;
+
+			string rootBackupPath = @"C:\Synix\BackupGames";
+
+			// 🎯 These lines will no longer have CS0103 errors:
+			string cleanGame = BackupManager.GetSafeName(selectedServer.Game);
+			string cleanServer = BackupManager.GetSafeName(selectedServer.ServerName);
+
+			string fullPath = Path.Combine(rootBackupPath, cleanGame, cleanServer);
+
+			if (Directory.Exists(fullPath))
+			{
+				Process.Start("explorer.exe", fullPath);
+				AppendLog($"[SYSTEM] Opening vault: {selectedServer.ServerName}", Color.Cyan);
+			}
+			else
+			{
+				AppendLog($"[INFO] Creating directory: {fullPath}", Color.Yellow);
+				try
+				{
+					Directory.CreateDirectory(fullPath);
+					Process.Start("explorer.exe", fullPath);
+				}
+				catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}"); }
 			}
 		}
 

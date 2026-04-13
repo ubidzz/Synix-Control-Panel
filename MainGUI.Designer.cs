@@ -52,9 +52,10 @@
 			btnHelp = new ToolStripMenuItem();
 			openServerConfig = new ToolStripMenuItem();
 			openServerFolderToolStripMenuItem = new ToolStripMenuItem();
-			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
+			backupToolStripMenuItem = new ToolStripMenuItem();
 			toolStripSeparator2 = new ToolStripSeparator();
 			editServerToolStripMenuItem = new ToolStripMenuItem();
+			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
 			updateServerToolStripMenuItem = new ToolStripMenuItem();
 			toolStripSeparator3 = new ToolStripSeparator();
 			connectionTestToolStripMenuItem = new ToolStripMenuItem();
@@ -93,6 +94,7 @@
 			colGame.HeaderText = "Game";
 			colGame.Name = "colGame";
 			colGame.ReadOnly = true;
+			colGame.Width = 200;
 			// 
 			// colName
 			// 
@@ -100,7 +102,7 @@
 			colName.HeaderText = "Server Name";
 			colName.Name = "colName";
 			colName.ReadOnly = true;
-			colName.Width = 200;
+			colName.Width = 220;
 			// 
 			// colPort
 			// 
@@ -124,7 +126,7 @@
 			PlayerCountDisplay.HeaderText = "Players";
 			PlayerCountDisplay.Name = "PlayerCountDisplay";
 			PlayerCountDisplay.ReadOnly = true;
-			PlayerCountDisplay.Width = 75;
+			PlayerCountDisplay.Width = 70;
 			// 
 			// UptimeDisplay
 			// 
@@ -132,7 +134,7 @@
 			UptimeDisplay.HeaderText = "UPTIME";
 			UptimeDisplay.Name = "UptimeDisplay";
 			UptimeDisplay.ReadOnly = true;
-			UptimeDisplay.Width = 120;
+			UptimeDisplay.Width = 110;
 			// 
 			// colStatus
 			// 
@@ -140,7 +142,7 @@
 			colStatus.HeaderText = "Status";
 			colStatus.Name = "colStatus";
 			colStatus.ReadOnly = true;
-			colStatus.Width = 80;
+			colStatus.Width = 85;
 			// 
 			// rtbLog
 			// 
@@ -246,7 +248,7 @@
 			// 
 			// openServerConfig
 			// 
-			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, updateServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, deleteServerToolStripMenuItem });
+			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, updateServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, deleteServerToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
 			openServerConfig.Size = new Size(151, 22);
 			openServerConfig.Text = "Server Options";
@@ -258,12 +260,12 @@
 			openServerFolderToolStripMenuItem.Text = "Open Server Folder";
 			openServerFolderToolStripMenuItem.Click += btnOpenFolder_Click;
 			// 
-			// openServerConfigFileToolStripMenuItem
+			// backupToolStripMenuItem
 			// 
-			openServerConfigFileToolStripMenuItem.Name = "openServerConfigFileToolStripMenuItem";
-			openServerConfigFileToolStripMenuItem.Size = new Size(198, 22);
-			openServerConfigFileToolStripMenuItem.Text = "Open Server Config File";
-			openServerConfigFileToolStripMenuItem.Click += btnOpenConfig_Click;
+			backupToolStripMenuItem.Name = "backupToolStripMenuItem";
+			backupToolStripMenuItem.Size = new Size(198, 22);
+			backupToolStripMenuItem.Text = "Backup Files";
+			backupToolStripMenuItem.Click += btnOpenBackup_Click;
 			// 
 			// toolStripSeparator2
 			// 
@@ -276,6 +278,13 @@
 			editServerToolStripMenuItem.Size = new Size(198, 22);
 			editServerToolStripMenuItem.Text = "Edit Server";
 			editServerToolStripMenuItem.Click += btnEdit_Click;
+			// 
+			// openServerConfigFileToolStripMenuItem
+			// 
+			openServerConfigFileToolStripMenuItem.Name = "openServerConfigFileToolStripMenuItem";
+			openServerConfigFileToolStripMenuItem.Size = new Size(198, 22);
+			openServerConfigFileToolStripMenuItem.Text = "Open Server Config File";
+			openServerConfigFileToolStripMenuItem.Click += btnOpenConfig_Click;
 			// 
 			// updateServerToolStripMenuItem
 			// 
@@ -429,13 +438,6 @@
 		private Label lblLocalIP;
 		private Label lblLocalIP1;
 		private Label lblPublicIP;
-		private DataGridViewTextBoxColumn colGame;
-		private DataGridViewTextBoxColumn colName;
-		private DataGridViewTextBoxColumn colPort;
-		private DataGridViewTextBoxColumn colQueryPort;
-		private DataGridViewTextBoxColumn PlayerCountDisplay;
-		private DataGridViewTextBoxColumn UptimeDisplay;
-		private DataGridViewTextBoxColumn colStatus;
 		private ToolStripMenuItem editServerToolStripMenuItem;
 		private ToolStripMenuItem deleteServerToolStripMenuItem;
 		private ToolStripMenuItem updateServerToolStripMenuItem;
@@ -443,5 +445,13 @@
 		private ToolStripSeparator toolStripSeparator1;
 		private ToolStripSeparator toolStripSeparator2;
 		private ToolStripSeparator toolStripSeparator3;
+		private DataGridViewTextBoxColumn colGame;
+		private DataGridViewTextBoxColumn colName;
+		private DataGridViewTextBoxColumn colPort;
+		private DataGridViewTextBoxColumn colQueryPort;
+		private DataGridViewTextBoxColumn PlayerCountDisplay;
+		private DataGridViewTextBoxColumn UptimeDisplay;
+		private DataGridViewTextBoxColumn colStatus;
+		private ToolStripMenuItem backupToolStripMenuItem;
 	}
 }
