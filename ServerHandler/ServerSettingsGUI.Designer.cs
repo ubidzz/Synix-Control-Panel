@@ -74,6 +74,8 @@
 			btnEditSchedule = new Button();
 			button1 = new Button();
 			chkBackupOnStart = new Synix_Control_Panel.UI.SynixToggle();
+			chkEnableDiscord = new Synix_Control_Panel.UI.SynixToggle();
+			txtDiscordWebhook = new TextBox();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -565,6 +567,24 @@
 			chkBackupOnStart.Text = "Auto Backup";
 			chkBackupOnStart.UseVisualStyleBackColor = true;
 			// 
+			// chkEnableDiscord
+			// 
+			chkEnableDiscord.BackColor = Color.Transparent;
+			chkEnableDiscord.Location = new Point(415, 225);
+			chkEnableDiscord.Name = "chkEnableDiscord";
+			chkEnableDiscord.Size = new Size(164, 32);
+			chkEnableDiscord.TabIndex = 65;
+			chkEnableDiscord.Text = "Activate Discord";
+			chkEnableDiscord.UseVisualStyleBackColor = true;
+			chkEnableDiscord.Click += chkEnableDiscord_CheckedChanged;
+			// 
+			// txtDiscordWebhook
+			// 
+			txtDiscordWebhook.Location = new Point(415, 270);
+			txtDiscordWebhook.Name = "txtDiscordWebhook";
+			txtDiscordWebhook.Size = new Size(368, 23);
+			txtDiscordWebhook.TabIndex = 66;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -572,6 +592,8 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 584);
+			Controls.Add(txtDiscordWebhook);
+			Controls.Add(chkEnableDiscord);
 			Controls.Add(chkBackupOnStart);
 			Controls.Add(button1);
 			Controls.Add(btnEditSchedule);
@@ -681,5 +703,7 @@
 		private Button btnEditSchedule;
 		private Button button1;
 		private Synix_Control_Panel.UI.SynixToggle chkBackupOnStart;
+		private Synix_Control_Panel.UI.SynixToggle chkEnableDiscord;
+		private TextBox txtDiscordWebhook;
 	}
 }

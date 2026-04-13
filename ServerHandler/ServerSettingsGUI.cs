@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static Synix_Control_Panel.FileFolderHandler.FolderHandler;
 using static Synix_Control_Panel.SynixEngine.Core;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel
 {
@@ -40,6 +41,11 @@ namespace Synix_Control_Panel
 		private bool[] _selectedDays = new bool[7] { false, false, false, false, false, false, false };
 		private string _selectedTime = "04:00";
 
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+
+		private const int EM_SETCUEBANNER = 0x1501;
+
 		public ServerSettingsGUI(GameServer? server = null)
 		{
 			InitializeComponent();
@@ -52,6 +58,9 @@ namespace Synix_Control_Panel
 			chkUpdateOnStart.Tag = "Update on Start";
 			chkEnableRcon.Tag = "RCON";
 			chkBackupOnStart.Tag = "Backup on Start";
+
+			chkEnableDiscord.Tag = "Discord Alerts";
+			SendMessage(txtDiscordWebhook.Handle, EM_SETCUEBANNER, 0, "Paste Discord Webhook URL here...");
 
 			// 2. Style & Game List Setup
 			Synix_Control_Panel.UI.UIStyleHelper.InitializeToggles(this);
@@ -89,6 +98,12 @@ namespace Synix_Control_Panel
 
 			txtPassword.Text = _existingServer.Password ?? "";
 			txtAdminPassword.Text = _existingServer.AdminPassword ?? "";
+
+			chkEnableDiscord.Checked = _existingServer.IsDiscordAlertEnabled;
+			txtDiscordWebhook.Text = _existingServer.DiscordWebhook ?? "";
+
+			// Disable the textbox if the toggle is off for better UX
+			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
 
 			// 🎯 SAFETY: Cast to decimal for NumericUpDown
 			numPort.Value = Math.Clamp((decimal)_existingServer.Port, numPort.Minimum, numPort.Maximum);
@@ -180,11 +195,13 @@ namespace Synix_Control_Panel
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = _selectedTime,
 				RestartDays = (bool[])_selectedDays.Clone(),
+				IsDiscordAlertEnabled = chkEnableDiscord.Checked,
+				DiscordWebhook = txtDiscordWebhook.Text.Trim(),
 				Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped),
 				BackupOnStart = chkBackupOnStart.Checked,
 			};
 
-			// 4. DATABASE UPDATE (Kept exactly as you wrote it)
+			// 4. DATABASE UPDATE
 			try
 			{
 				if (_isEditMode && _existingServer != null)
@@ -214,114 +231,186 @@ namespace Synix_Control_Panel
 
 		private void SyncGatekeeper()
 		{
-			if (isManualLoading) return; // 🎯 Block during initialization
+			// 🎯 1. THE SHIELD: Prevent logic loops while loading existing data
+			if (isManualLoading) return;
 
-			// 1. COLLECT DATA
-			string currentName = txtName.Text.Trim();
-			int gPort = (int)numPort.Value;
-			int qPort = (int)numQueryPort.Value;
-			int rPort = (int)numRconPort.Value;
-			int aPort = (int)numAppPort.Value;
-			string selectedGame = cmbGame.Text.Trim();
-
-			// 🎯 THE KEY: Conditional flags for optional features
-			bool isAppPortActive = numAppPort.Enabled;
-			bool rconActive = chkEnableRcon.Checked;
-
-			bool hasName = !string.IsNullOrWhiteSpace(currentName);
-			bool hasGame = cmbGame.SelectedIndex > 0;
-			bool isBaseReady = hasName && hasGame;
-
-			// 2. LIVE COLLISIONS (Internal + OS)
-			// 🎯 SILENT CHECK: No MessageBox here to keep typing smooth
-			bool isNameTaken = MainGUI.serverList.Any(s =>
-				s != _existingServer &&
-				s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) &&
-				s.ServerName.Equals(currentName, StringComparison.OrdinalIgnoreCase));
-
-			string? gOwner = Core.Instance.GetPortCollisionOwner(gPort, _existingServer);
-			string? qOwner = Core.Instance.GetPortCollisionOwner(qPort, _existingServer);
-
-			// 🎯 CONDITIONAL OWNER CHECKS: Only look for owners if the feature is enabled
-			string? rOwner = rconActive ? Core.Instance.GetPortCollisionOwner(rPort, _existingServer) : null;
-			string? aOwner = isAppPortActive ? Core.Instance.GetPortCollisionOwner(aPort, _existingServer) : null;
-
-			// 🎯 CONDITIONAL OS CHECKS: Only check OS listeners for ports that are "Live"
-			bool osConflict = Core.Instance.IsPortInUseLocally(gPort) ||
-							  Core.Instance.IsPortInUseLocally(qPort) ||
-							  (rconActive && Core.Instance.IsPortInUseLocally(rPort)) ||
-							  (isAppPortActive && Core.Instance.IsPortInUseLocally(aPort));
-
-			// 3. UI STATE ENGINE
-			if (_isEditMode)
+			try
 			{
-				WarningLabel.Text = $"[READY] Editing existing server: {currentName}.";
-				WarningLabel.ForeColor = Color.LimeGreen;
-				btnSave.Enabled = true;
+				// 🎯 2. IDENTITY CHECK: Does the server have a Name and a Game?
+				string currentName = txtName?.Text?.Trim() ?? "";
+				bool hasName = !string.IsNullOrWhiteSpace(currentName);
+				bool hasGame = cmbGame != null && cmbGame.SelectedIndex > 0;
+				string selectedGame = hasGame ? cmbGame.Text : "";
+
+				// This is our Master Key for unlocking the UI
+				bool isBaseReady = hasName && hasGame;
+
+				// 🎯 3. CAPABILITY HELPER: Checks if the game supports the tag AND the identity is ready
+				bool CanUnlock(Control c) => isBaseReady && c.Tag?.ToString() == "Required";
+
+				// 🎯 4. DYNAMIC UI UNLOCKING
+				// Game Specifics
+				txtWorldSeed.Enabled = CanUnlock(txtWorldSeed);
+				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
+				cmbCompetitive.Enabled = CanUnlock(cmbCompetitive);
+				numMaxPlayers.Enabled = CanUnlock(numMaxPlayers);
+
+				// Network & Identity
+				numPort.Enabled = isBaseReady;
+				numQueryPort.Enabled = CanUnlock(numQueryPort);
+				numAppPort.Enabled = CanUnlock(numAppPort);
+
+				// Security & RCON
+				txtPassword.Enabled = CanUnlock(txtPassword);
+				txtAdminPassword.Enabled = CanUnlock(txtAdminPassword);
+				chkEnableRcon.Enabled = CanUnlock(chkEnableRcon);
+
+				// Only unlock sub-fields if RCON is both supported AND toggled ON
+				bool rconActive = chkEnableRcon.Enabled && chkEnableRcon.Checked;
+				numRconPort.Enabled = rconActive;
+				txtRconPassword.Enabled = rconActive;
+
+				// Discord Alerts
+				chkEnableDiscord.Enabled = isBaseReady;
+				txtDiscordWebhook.Enabled = isBaseReady && chkEnableDiscord.Checked;
+
+				// Automation & Backups
+				chkUpdateOnStart.Enabled = CanUnlock(chkUpdateOnStart);
+				chkBackupOnStart.Enabled = isBaseReady;
+				chkEnableSchedule.Enabled = isBaseReady;
+				if (btnEditSchedule != null) btnEditSchedule.Enabled = isBaseReady && chkEnableSchedule.Checked;
+
+				// Folder Location
+				chkDefaultPath.Enabled = isBaseReady;
+				btnBrowse.Enabled = isBaseReady;
+				txtInstallPath.Enabled = isBaseReady && !chkDefaultPath.Checked;
+
+				// 🎯 5. VALIDATION ENGINE (Collisions & Conflicts)
+				int gPort = (int)numPort.Value;
+				int qPort = (int)numQueryPort.Value;
+				int rPort = (int)numRconPort.Value;
+				int aPort = numAppPort != null ? (int)numAppPort.Value : 0;
+
+				// Check if name is already taken in your server list
+				bool isNameTaken = MainGUI.serverList.Any(s =>
+					s != _existingServer &&
+					s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) &&
+					s.ServerName.Equals(currentName, StringComparison.OrdinalIgnoreCase));
+
+				// Check for port owners in the Synix database
+				string? gOwner = Core.Instance.GetPortCollisionOwner(gPort, _existingServer);
+				string? qOwner = numQueryPort.Enabled ? Core.Instance.GetPortCollisionOwner(qPort, _existingServer) : null;
+				string? rOwner = rconActive ? Core.Instance.GetPortCollisionOwner(rPort, _existingServer) : null;
+				string? aOwner = numAppPort.Enabled ? Core.Instance.GetPortCollisionOwner(aPort, _existingServer) : null;
+
+				// Check if Windows is already listening on these ports (OS Collision)
+				bool osConflict = Core.Instance.IsPortInUseLocally(gPort) ||
+								  (numQueryPort.Enabled && Core.Instance.IsPortInUseLocally(qPort)) ||
+								  (rconActive && Core.Instance.IsPortInUseLocally(rPort)) ||
+								  (numAppPort.Enabled && Core.Instance.IsPortInUseLocally(aPort));
+
+				// 🎯 6. UI STATE ENGINE (Warnings & Paths)
+				if (_isEditMode)
+				{
+					WarningLabel.Text = $"[READY] Updating existing server: {currentName}";
+					WarningLabel.ForeColor = Color.LimeGreen;
+					btnSave.Enabled = true;
+				}
+				else if (!isBaseReady)
+				{
+					WarningLabel.Text = "[LOCKED] Required: Server Name and Game Template selection.";
+					WarningLabel.ForeColor = Color.Orange;
+					btnSave.Enabled = false;
+				}
+				else if (isNameTaken)
+				{
+					WarningLabel.Text = $"[CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
+					WarningLabel.ForeColor = Color.Red;
+					btnSave.Enabled = false;
+				}
+				else if (gOwner != null || qOwner != null || rOwner != null || aOwner != null || osConflict)
+				{
+					string source = gOwner ?? qOwner ?? rOwner ?? aOwner ?? "Local System Process";
+					WarningLabel.Text = $"[CONFLICT] Port Collision detected with: {source}";
+					WarningLabel.ForeColor = Color.Red;
+					btnSave.Enabled = false;
+				}
+				else
+				{
+					// 🚀 SUCCESS STATE: Everything is valid
+					WarningLabel.Text = "[READY] Configuration is valid and safe to deploy.";
+					WarningLabel.ForeColor = Color.LimeGreen;
+
+					// Handle Default Path Generation with Underscores
+					if (chkDefaultPath.Checked)
+					{
+						string safeName = BackupManager.GetSafeName(currentName);
+						txtInstallPath.Text = $@"C:\Synix\Games\{selectedGame}\{safeName}";
+					}
+
+					// Final check: Save only works if we have an install path
+					btnSave.Enabled = !string.IsNullOrWhiteSpace(txtInstallPath.Text);
+				}
 			}
-			else if (!isBaseReady)
+			catch (Exception ex)
 			{
-				WarningLabel.Text = "[LOCKED] Required: Provide a Server Name and select a Game Template.";
-				WarningLabel.ForeColor = Color.Orange;
-				btnSave.Enabled = false;
-			}
-			else if (isNameTaken)
-			{
-				WarningLabel.Text = $"[CONFLICT] The name '{currentName}' is already in use for {selectedGame}.";
-				WarningLabel.ForeColor = Color.Red;
-				btnSave.Enabled = false;
-			}
-			else if (gOwner != null || qOwner != null || rOwner != null || aOwner != null || osConflict)
-			{
-				// 🎯 The engine now identifies if RCON or App Port is the specific culprit
-				string conflictSource = gOwner ?? qOwner ?? rOwner ?? aOwner ?? "System Process";
-				WarningLabel.Text = $"[CONFLICT] Port Collision detected with: {conflictSource}";
-				WarningLabel.ForeColor = Color.Red;
-				btnSave.Enabled = false;
-			}
-			else if (isAppPortActive && selectedGame.Contains("Rust", StringComparison.OrdinalIgnoreCase) && aPort < 10000)
-			{
-				WarningLabel.Text = "[LOCKED] Rust App Port must be 10000+ for mobile compatibility.";
-				WarningLabel.ForeColor = Color.Orange;
-				btnSave.Enabled = false;
-			}
-			else
-			{
-				// 🚀 ALL CLEAR: Generate Paths
-				string safeName = System.Text.RegularExpressions.Regex.Replace(currentName, @"[^a-zA-Z0-9_\-]", "_");
-				string displayPath = $@"C:\Synix\Games\{selectedGame}\{safeName}";
-
-				WarningLabel.Text = $"[READY] Configuration valid. Default Path: {displayPath}";
-				WarningLabel.ForeColor = Color.LimeGreen;
-
-				if (chkDefaultPath.Checked) txtInstallPath.Text = displayPath;
-				btnSave.Enabled = !string.IsNullOrWhiteSpace(txtInstallPath.Text);
+				// Silence errors for smooth typing, but log for debugging
+				System.Diagnostics.Debug.WriteLine($"[GATEKEEPER CRASH] {ex.Message}");
 			}
 		}
 
 		private void ToggleGameSpecificFields(GameInfo? gameData)
 		{
+			// 🎯 1. RESET TAGS: If no game is picked, everything is "Disabled"
 			if (gameData == null)
 			{
-				txtPassword.Enabled = txtAdminPassword.Enabled = txtWorldSeed.Enabled = cmbCompetitive.Enabled =
-				chkEnableRcon.Enabled = numAppPort.Enabled = numMaxPlayers.Enabled = numQueryPort.Enabled =
-				cmbWorldName.Enabled = chkUpdateOnStart.Enabled = false;
+				var controls = new Control[] {
+			txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive,
+			numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon
+		};
+
+				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
+
+				SyncGatekeeper();
 				return;
 			}
 
-			string args = gameData.RequiredArgs.ToLower();
-			txtPassword.Enabled = args.Contains("{pass}");
-			txtAdminPassword.Enabled = args.Contains("{adminpass}");
-			txtWorldSeed.Enabled = args.Contains("{seed}");
-			cmbCompetitive.Enabled = args.Contains("{mode}");
-			numMaxPlayers.Enabled = args.Contains("{maxplayers}");
-			numQueryPort.Enabled = args.Contains("{query}");
-			cmbWorldName.Enabled = args.Contains("{map}");
-			if (numAppPort != null) numAppPort.Enabled = args.Contains("{app_port}");
-			chkUpdateOnStart.Enabled = args.Contains("{steamappid}");
+			// 🎯 2. SCAN BLUEPRINTS: Pull the strings from your GameDatabase
+			string args = (gameData.RequiredArgs ?? "").ToLower();
+			string rconTemp = (gameData.RconSyntax ?? "").ToLower();
 
-			chkEnableRcon.Enabled = args.Contains("{rcon}") || args.Contains("{rcon_port}") || args.Contains("{rcon_pass}");
-			chkEnableRcon_CheckedChanged(null, null);
+			// 🎯 3. ASSIGN CAPABILITY TAGS: Mark what the game actually supports
+			// We use "Required" so SyncGatekeeper knows it's allowed to unlock these
+			txtPassword.Tag = args.Contains("{pass}") ? "Required" : "Disabled";
+			txtAdminPassword.Tag = args.Contains("{adminpass}") ? "Required" : "Disabled";
+			txtWorldSeed.Tag = args.Contains("{seed}") ? "Required" : "Disabled";
+			cmbCompetitive.Tag = args.Contains("{mode}") ? "Required" : "Disabled";
+			numMaxPlayers.Tag = args.Contains("{maxplayers}") ? "Required" : "Disabled";
+			numQueryPort.Tag = args.Contains("{query}") ? "Required" : "Disabled";
+			cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
+
+			if (numAppPort != null)
+				numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
+
+			// RCON Check: Does the main string call {rcon} or does the RCON syntax have ports?
+			chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
+
+			// Steam Update Check
+			chkUpdateOnStart.Tag = args.Contains("{steamappid}") ? "Required" : "Disabled";
+
+			// 🎯 4. REFRESH UI: Let the Gatekeeper apply the final locks
+			SyncGatekeeper();
+		}
+
+		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e)
+		{
+			if (isManualLoading) return;
+
+			// Toggle the textbox based on the pill state
+			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
+
+			// Optional: Add a visual cue if they turn it on but leave it empty
+			SyncGatekeeper();
 		}
 
 		#region Event Handlers

@@ -83,6 +83,8 @@ public class GameServer : GameInfo
 	public int? AppPort { get; set; } = 10777;
 	public bool UpdateOnStart { get; set; } = false;
 	public bool BackupOnStart { get; set; } = false;
+	public bool IsDiscordAlertEnabled { get; set; } = false;
+	public string DiscordWebhook { get; set; } = string.Empty;
 	public DateTime? StartTime { get; set; }
 	[JsonIgnore]
 	public string UptimeDisplay
