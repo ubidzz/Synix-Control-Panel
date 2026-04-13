@@ -1,5 +1,7 @@
 # 🛸 Synix Control Panel
 
+## Coming Soon.....
+
 ### **The High-Performance Backbone for Effortless Game Server Hosting**
 
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
