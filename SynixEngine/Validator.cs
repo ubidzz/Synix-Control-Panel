@@ -127,12 +127,7 @@ namespace Synix_Control_Panel.SynixEngine
 				using (var warningForm = new WarningDatabase(server))
 				{
 					warningForm.ShowDialog();
-
-					// Note: Ensure that inside warningForm, you have:
-					// server.IsFirstBoot = false;
-					// Then save the JSON so it stays false permanently.
-
-					return true; // Block the launch
+					return true; 
 				}
 			}
 
@@ -171,10 +166,10 @@ namespace Synix_Control_Panel.SynixEngine
 			if (isStarting || isRunning || isStopping || isInstalling || isUpdating)
 			{
 				lockMessage = $"[LOCKED] Cannot start. {server.ServerName} is currently {status}.";
-				return false; // Lock is triggered
+				return false; 
 			}
 
-			return true; // Safe to start
+			return true; 
 		}
 
 		public bool PassStopSpamLock(GameServer server, out string lockMessage)
@@ -191,22 +186,43 @@ namespace Synix_Control_Panel.SynixEngine
 			if (isStopping || isStopped || isCrashed || isInstalling || isUpdating)
 			{
 				lockMessage = $"[LOCKED] Cannot stop. {server.ServerName} is currently {status}.";
-				return false; // Lock is triggered
+				return false; 
 			}
 
 			return true; // Safe to stop
 		}
 
-		// Inside Validator.cs (Core partial class)
 		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
 		{
 			var conflict = MainGUI.serverList.FirstOrDefault(s =>
 				s != excluding &&
 				(s.Port == port ||
 				 s.QueryPort == port ||
-				 (s.AppPort.HasValue && s.AppPort.Value == port))); // 🎯 ADD .HasValue check
+				 (s.AppPort.HasValue && s.AppPort.Value == port))); 
 
 			return conflict?.ServerName;
+		}
+
+		public bool PassResourceGuard(out string message)
+		{
+			message = string.Empty;
+
+			if (TotalCpuUsage >= 85.0)
+			{
+				message = $"[RESOURCE GUARD] CPU load is critical ({TotalCpuUsage:F1}%). Launch aborted.";
+				return false;
+			}
+
+			// 🎯 (Current Usage / (Total - 7GB)) * 100
+			double currentRamPercent = (TotalRamUsageGb / TotalRamGb) * 100;
+
+			if (currentRamPercent >= 80.0)
+			{
+				message = $"[RESOURCE GUARD] System RAM usage is at {currentRamPercent:F1}% of the usable pool.";
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

@@ -197,7 +197,7 @@ namespace Synix_Control_Panel.SynixEngine
 						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
 						pid => {
 							server.SteamPID = pid;
-							FileHandler.SaveServers(); // Save the PID immediately
+							FileHandler.SaveServers();
 						});
 				});
 
@@ -440,8 +440,6 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		// Inside Actions.cs (part of the Core class)
-		// Inside Actions.cs (Core partial class)
 		public async Task InstallOrUpdate(GameServer server)
 		{
 			try
@@ -449,8 +447,6 @@ namespace Synix_Control_Panel.SynixEngine
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				if (dbEntry == null) return;
 
-				// 🎯 2. Use your ServerInstaller to do the work
-				// We use Task.Run because ServerInstaller.Install is a synchronous call
 				int exitCode = await Task.Run(() =>
 				{
 					return ServerInstaller.Install(
@@ -490,15 +486,24 @@ namespace Synix_Control_Panel.SynixEngine
 		// 🎯 RENAME and CLEAN this method:
 		public async Task StartServerAndReport(GameServer server)
 		{
-			// 1. Logic Checks (Uses your Validator.cs)
-			if (!ValidateIntegrityAndReport(server)) return;
-			if (!PassStartSpamLock(server, out string lockMsg)) { Log(lockMsg, Color.Orange); return; }
+			if (!PassResourceGuard(out string guardMsg))
+			{
+				Log(guardMsg, System.Drawing.Color.Red, true); // Bold red for critical logs
+				System.Windows.Forms.MessageBox.Show(guardMsg, "System Resource Exhaustion",
+					System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+				return;
+			}
 
-			// 2. THE UI PUSH: Set status to Backing up before the task starts
+			// 1. Technical & Logic Checks (Your existing safety locks)
+			if (!PassStartSpamLock(server, out string lockMsg)) { Log(lockMsg, System.Drawing.Color.Orange); return; }
+			if (!ValidateIntegrityAndReport(server)) return;
+			if (ShouldBlockForConfig(server)) return;
+
+			// 2. Backup Logic
 			if (server.BackupOnStart)
 			{
 				server.Status = StatusManager.GetStatus(ServerState.BackingUp);
-				UpdateGridStatus(); // Redraws grid instantly
+				UpdateGridStatus();
 			}
 
 			// 3. EXECUTE: This calls Servers.Start which runs the BackupManager and the .exe

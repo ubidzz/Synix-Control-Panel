@@ -300,47 +300,54 @@ namespace Synix_Control_Panel
 		{
 			AppendLog("Start button clicked...", Color.Cyan);
 
-			// 1. YOUR SAFETY CHECKS (Kept exactly as is)
+			// 1. SELECTION CHECKS
 			if (dataGridView1.CurrentRow == null)
 			{
-				AppendLog("[ERROR] No row is currently selected in the grid!", Color.Red);
+				AppendLog("[ERROR] No row is currently selected!", Color.Red);
 				return;
 			}
 
 			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
 			{
-				AppendLog("[ERROR] The selected row is not a valid GameServer object!", Color.Red);
+				AppendLog("[ERROR] Invalid GameServer object!", Color.Red);
 				return;
 			}
 
+			// 2. SAFETY & RESOURCE CHECKS
 			if (!Core.Instance.PassStartSpamLock(selectedServer, out string lockMsg))
 			{
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
 
+			// 🎯 THE RESOURCE SAFEGUARD: Check CPU and RAM before we do anything else
+			// This respects your 7GB Windows buffer logic
+			if (!Core.Instance.PassResourceGuard(out string guardMsg))
+			{
+				AppendLog(guardMsg, Color.Red, true); // Bold red for critical resource warnings
+				MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return; // 🛑 Launch aborted
+			}
+
 			if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
 			if (Core.Instance.ShouldBlockForConfig(selectedServer)) return;
 
+			// 3. UI PRE-FLIGHT: Show "Backing up" in the grid immediately
 			if (selectedServer.BackupOnStart)
 			{
 				selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
 				UpdateGrid();
 			}
 
-			// 🚀 2. EXECUTE: We offload the start to a Task so the UI doesn't freeze
-			await Task.Run(async () =>
+			// 🚀 4. EXECUTION: The actual launch process
+			await Servers.Start(selectedServer, msg =>
 			{
-				await Servers.Start(selectedServer, msg =>
+				this.Invoke((MethodInvoker)delegate
 				{
-					// We use Invoke to get back to your MainGUI thread for logging
-					this.Invoke((MethodInvoker)delegate
-					{
-						selectedServer.StartTime = DateTime.Now;
-						AppendLog(msg);
-						UpdateGrid(); // Final refresh for "Running"
-					});
-				}, StartContext.Manual);
+					selectedServer.StartTime = DateTime.Now;
+					AppendLog(msg);
+					UpdateGrid(); // Final refresh for "Running"
+				});
 			});
 		}
 

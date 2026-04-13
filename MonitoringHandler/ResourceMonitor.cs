@@ -120,5 +120,15 @@ namespace Synix_Control_Panel.MonitoringHandler
 		{
 			return CalculateUsage(serverList.ToList());
 		}
+
+		public static double GetTotalSystemRamMB()
+		{
+			// 🎯 THE FIX: Efficiently pull total physical memory
+			var gcInfo = GC.GetGCMemoryInfo();
+
+			// TotalAvailableMemoryBytes represents the total physical memory 
+			// accessible to the OS/Process.
+			return (double)gcInfo.TotalAvailableMemoryBytes / (1024 * 1024);
+		}
 	}
 }

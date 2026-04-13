@@ -21,6 +21,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public double TotalCpuUsage { get; set; }
 		public double TotalRamUsageGb { get; set; }
 		public bool isDownloadActive = false;
+		public static double TotalRamGb { get; set; }
 		private System.Windows.Forms.Timer _heartbeatTimer;
 
 		private Core()
