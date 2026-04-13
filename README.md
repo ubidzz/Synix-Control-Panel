@@ -18,8 +18,8 @@ With **250+ unique game servers fully supported right out of the box**, Synix ha
 Synix is designed to remove the "technical headache" of hosting. Whether you are a veteran admin or a first-time host, the Synix Engine handles the complexity for you:
 
 1.  **Select Your Game:** Choose from a massive native library including **Rust**, **ARK**, **Soulmask**, **Palworld**, and **StarRupture**.
-2.  **Smart Configuration:** The UI dynamically adapts. Fields like "App Port" or "RCON" only unlock when the game actually supports them, preventing "Ghost Conflicts" in your network.
-3.  **Visual Lifecycle:** See exactly what’s happening with real-time grid status updates. From **"Backing up"** archives to **"Downloading"** updates, you're never left wondering what the engine is doing.
+2.  **Network Validation:** Built-in port checkers ensure your local sockets are clear before launch, while the **Connection Test** verifies if your server is actually visible on the public internet (WAN).
+3.  **Live Player Monitoring:** Keep track of your community at a glance. Synix displays real-time player counts directly in the grid using high-speed UDP queries.
 4.  **One-Click Launch:** Synix validates your ports, creates your folders, resolves dependencies, and deploys the server instantly.
 
 ---
@@ -28,16 +28,16 @@ Synix is designed to remove the "technical headache" of hosting. Whether you are
 Synix is built on a **Modular Singleton Architecture**. The UI acts as a high-speed client, while the core engine natively manages your servers with built-in intelligence.
 
 * **🤖 Autonomous Watchdog:** Synix monitors the process message loop to detect crashes or freezes ("Not Responding" states). If a failure is detected, the engine initiates a recovery sequence: *Save Data ➔ Graceful Shutdown ➔ Automated Reboot*.
-* **📂 Universal AppID Discovery:** No more hardcoded launch IDs. Synix dynamically searches your server directories for `steam_appid.txt`, self-healing the file and injecting the correct ID from the GameDatabase blueprint before the process even starts.
-* **🛡️ Smart-Context Logic:** The engine scans game blueprints to ensure your setup is bulletproof. It automatically translates human-friendly UI choices into technical engine requirements—such as converting "PVP/PVE" toggles into the "True/False" arguments required by games like **ARK**.
-* **📂 Intelligent Identity Mapping:** Synix eliminates the common "Space in Path" errors. It automatically generates a technical `{Identity}` for every server, using safe underscores for folder paths while keeping your custom server name exactly as you typed it for the public hostname.
+* **📡 A2S Player Telemetry:** The engine uses the industry-standard A2S_INFO protocol to query running servers. It tracks `CurrentPlayers` vs `MaxPlayers` without impacting server performance.
+* **📂 Universal AppID Discovery:** No more hardcoded launch IDs. Synix dynamically searches server directories for `steam_appid.txt`, self-healing the file and injecting the correct ID from the GameDatabase blueprint.
+* **🌐 WAN/LAN Awareness:** Synix automatically detects your Local IP and Public IP, allowing for instant network diagnostics and easier port forwarding verification.
 
 ---
 
 ## 🚀 The Dual-Pass Deployment System
 Synix completely automates the traditional frustrations of Windows server hosting. Once SteamCMD finishes downloading the server files, the Synix `PostInstall` routine intercepts the deployment:
 
-* **Pass 1 (Automated DLL Injection):** Natively detects Unreal Engine and Source engine titles, automatically grabbing required SteamCMD DLLs (`steamclient64.dll`, `tier0_s64.dll`, `vstdlib_s64.dll`) and injecting them directly into the game's `Binaries\Win64` folders to prevent launch crashes.
+* **Pass 1 (Automated DLL Injection):** Natively detects Unreal Engine and Source engine titles, automatically grabbing required SteamCMD DLLs (`steamclient64.dll`, `tier0_s64.dll`, `vstdlib_s64.dll`) and injecting them directly into the game's `Binaries\Win64` folders.
 * **Pass 2 (Dynamic Config Generation):** Automatically builds, formats, and deploys default configuration files before the server boots. Synix natively handles `.json`, `.xml`, `.ini`, `.lua`, `cfg`, and proprietary formats.
 
 ---
@@ -45,8 +45,8 @@ Synix completely automates the traditional frustrations of Windows server hostin
 ## ✨ Feature Highlights
 
 * **🔄 Atomic Action Protection:** Operations like Updates and Starts are state-locked. You can't accidentally interrupt or corrupt a server while it is downloading, updating, or saving.
-* **📦 Safe-Start Backups:** Optional automated compression before every launch. Synix zips your game data into a timestamped archive, rotating the newest 3 backups to save disk space.
-* **🛠️ Universal Config Suite:** A built-in, format-aware editor that resolves dynamic path tags like `{Identity}` and `{Port}` to open the correct file every time.
+* **📦 Safe-Start Backups:** Optional automated compression before every launch. Synix zips your world data into a timestamped archive, rotating the newest 3 backups to save disk space.
+* **📡 Port & Connection Diagnostics:** An integrated scanner that checks both local socket availability and external WAN accessibility to ensure players can join.
 * **🎨 Semantic Logging:** A multi-threaded console that uses color-coding to help you instantly distinguish between system info, success states, and critical alerts.
 
 ---
@@ -58,8 +58,7 @@ Synix completely automates the traditional frustrations of Windows server hostin
 * **Framework:** C# / .NET 8.0+
 * **Design Pattern:** Singleton Engine Pattern with Partial Class modularity.
 * **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O.
-* **Persistence:** JSON-based state management for ultra-fast server rebinding.
-* **Process Hooking:** Direct Windows API integration for PID tracking and status monitoring.
+* **Network Logic:** UDP-based A2S querying and HttpClient WAN detection.
 
 ---
 
