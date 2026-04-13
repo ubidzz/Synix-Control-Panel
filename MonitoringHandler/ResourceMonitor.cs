@@ -11,6 +11,7 @@
  */
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.ServerHandler;
+using Synix_Control_Panel.SynixEngine;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,29 +40,34 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 			foreach (var server in serverList)
 			{
-				// 1. Only check servers that are supposed to be "Running or Starting"
 				string currentStatus = server.Status ?? "";
 				bool isRunning = string.Equals(currentStatus, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase);
 				bool isStarting = string.Equals(currentStatus, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);
+
 				if (server.PID.HasValue && (isRunning || isStarting))
 				{
 					try
 					{
-						// We attempt to find the process using the ID we saved when we clicked Start
 						Process proc = Process.GetProcessById(server.PID.Value);
 
+						// 🎯 THE FIX: Do NOT change status or null the PID here.
+						// If the process is gone, just set usage to 0 and move on.
 						if (proc.HasExited)
 						{
-							// THE AUTO-FIX: The process is gone! Set it to Stopped.
-							server.Status = StatusManager.GetStatus(ServerState.Stopped);
-							server.PID = null;
+							server.RamUsage = 0;
 							continue;
 						}
 
-						// 2. RAM Calculation
-						total.TotalRamMB += (proc.WorkingSet64 / 1024.0 / 1024.0);
+						// --- 1. RAM Calculation ---
+						double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
+						total.TotalRamMB += serverMB;
 
-						// 3. CPU Calculation (Delta Math)
+						if (Core.TotalRamGb > 0)
+						{
+							server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
+						}
+
+						// --- 2. CPU Calculation ---
 						DateTime currentTime = DateTime.Now;
 						TimeSpan currentCpuTime = proc.TotalProcessorTime;
 
@@ -77,16 +83,17 @@ namespace Synix_Control_Panel.MonitoringHandler
 							}
 						}
 
-						// Save current stats for the next tick
 						lastCpuTime[proc.Id] = currentCpuTime;
 						lastCheckTime[proc.Id] = currentTime;
 					}
 					catch
 					{
-						// If we hit an error (like "Access Denied"), the server is likely closing/gone
-						server.Status = StatusManager.GetStatus(ServerState.Stopped);
-						server.PID = null;
+						server.RamUsage = 0;
 					}
+				}
+				else
+				{
+					server.RamUsage = 0;
 				}
 			}
 			return total;
@@ -130,6 +137,28 @@ namespace Synix_Control_Panel.MonitoringHandler
 			// TotalAvailableMemoryBytes represents the total physical memory 
 			// accessible to the OS/Process.
 			return (double)gcInfo.TotalAvailableMemoryBytes / (1024 * 1024);
+		}
+
+		public static double GetProcessRamMB(int pid)
+		{
+			try
+			{
+				if (pid <= 0) return 0;
+
+				// Using 'using' ensures we don't leak handles on your 6-core rig
+				using (Process proc = Process.GetProcessById(pid))
+				{
+					if (proc.HasExited) return 0;
+
+					// Matches the logic in your CalculateUsage method
+					return proc.WorkingSet64 / 1024.0 / 1024.0;
+				}
+			}
+			catch (Exception)
+			{
+				// Silent return for the engine heartbeat
+				return 0;
+			}
 		}
 	}
 }

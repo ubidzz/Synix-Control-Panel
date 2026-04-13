@@ -9,14 +9,17 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
+// 🎯 THE FIX: You must include this so the Core knows what a "GameServer" is
+using Synix_Control_Panel.Database;
 using System;
+using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -25,7 +28,6 @@ namespace Synix_Control_Panel.SynixEngine
 		private static Core? _instance;
 		public static Core Instance => _instance ??= new Core();
 
-		// 🎯 DISCORD WEBHOOK CLIENT: Shared and persistent to prevent memory leaks
 		private static readonly HttpClient _discordClient = new HttpClient();
 
 		public double TotalCpuUsage { get; set; }
@@ -52,42 +54,37 @@ namespace Synix_Control_Panel.SynixEngine
 			}));
 		}
 
-		// 🎯 THE DISCORD ENGINE: Centralized alerting logic
 		public async Task SendDiscordAlert(GameServer server, string title, string message, Color color)
 		{
-			// 🎯 THE SAFETY GUARD: Only proceed if alerts are toggled ON and the URL is valid
+			// 🎯 This check only works if IsDiscordAlertEnabled is in GameServer.cs
 			if (!server.IsDiscordAlertEnabled || string.IsNullOrWhiteSpace(server.DiscordWebhook))
 				return;
 
-			// Convert color for Discord embeds (Decimal format)
 			int discordColor = (color.R << 16) | (color.G << 8) | color.B;
 
 			var payload = new
 			{
 				embeds = new[]
 				{
-			new
-			{
-				title = $"🛰️ {server.ServerName} | {title}",
-				description = message,
-				color = discordColor,
-				footer = new { text = "Synix Engine • Professional Automation" },
-				timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
-			}
-		}
+					new
+					{
+						title = $"🛰️ {server.ServerName} | {title}",
+						description = message,
+						color = discordColor,
+						footer = new { text = "Synix Engine • Professional Automation" },
+						timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+					}
+				}
 			};
 
 			try
 			{
 				string json = JsonSerializer.Serialize(payload);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-				// Fire-and-forget keeps the Engine Heartbeat from lagging on slow networks
 				_ = _discordClient.PostAsync(server.DiscordWebhook, content);
 			}
 			catch (Exception ex)
 			{
-				// Silently log to debug so it doesn't crash the engine if the internet is down
 				System.Diagnostics.Debug.WriteLine($"[DISCORD ERROR] {ex.Message}");
 			}
 		}
@@ -98,11 +95,22 @@ namespace Synix_Control_Panel.SynixEngine
 			UpdateResourceStats();
 			PerformMaintenanceCheck();
 
-			foreach (var server in MainGUI.serverList)
+			foreach (GameServer server in MainGUI.serverList)
 			{
 				if (server.Status == "Running")
 				{
+					// 1. Keep your existing player count update
 					_ = UpdatePlayerCount(server);
+
+					// 🎯 2. NEW: RAM Threshold Alert
+					// This uses the 80.0 limit you set to keep things stable
+					// We assume 'RamUsage' is a property in your GameServer class
+					if (server.RamUsage >= 80.0)
+					{
+						_ = SendDiscordAlert(server, "RESOURCE WARNING",
+							$"High RAM usage detected: {server.RamUsage:F1}%. Performance may be impacted.",
+							Color.Gold);
+					}
 				}
 			}
 
@@ -116,7 +124,8 @@ namespace Synix_Control_Panel.SynixEngine
 			string todayBookmark = now.ToString("yyyy-MM-dd");
 			int dayIndex = (int)now.DayOfWeek;
 
-			foreach (var server in MainGUI.serverList)
+			// 🎯 THE FIX: Explicitly type the server variable
+			foreach (GameServer server in MainGUI.serverList)
 			{
 				if (server.IsScheduledRestartEnabled &&
 					server.RestartDays[dayIndex] &&
@@ -125,7 +134,6 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					server.LastMaintenanceDate = todayBookmark;
 
-					// 🎯 ALERT DISCORD: Scheduled Reboot
 					_ = SendDiscordAlert(server, "SCHEDULED RESTART",
 						"Weekly maintenance is starting now. The server will be back online shortly.", Color.Cyan);
 

@@ -11,6 +11,7 @@
  */
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.FileFolderHandler;
+using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System;
 using System.ComponentModel;
@@ -82,6 +83,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 				// 4. DYNAMIC IDENTITY & SEARCH
 				string targetId = dbEntry.AppID;
+				string invokedId = targetId;
 				string appidPath = "";
 
 				string binPath = Path.Combine(binDir, "steam_appid.txt");
@@ -99,26 +101,30 @@ namespace Synix_Control_Panel.ServerHandler
 					catch { appidPath = binPath; }
 				}
 
-				// 🛠️ 5. SELF-HEALING
-				try
+				// 🎯 THE INVOKE: Pull the ID from the file for {steamAppID}
+				if (File.Exists(appidPath))
 				{
-					if (!File.Exists(appidPath) || File.ReadAllText(appidPath).Trim() != targetId)
+					try
 					{
-						File.WriteAllText(appidPath, targetId);
-						logCallback?.Invoke($"[ENGINE] Self-Healed steam_appid.txt at: {appidPath}");
+						string fileContent = File.ReadAllText(appidPath).Trim();
+						if (!string.IsNullOrWhiteSpace(fileContent))
+						{
+							invokedId = fileContent;
+							logCallback?.Invoke($"[ENGINE] {server.ServerName} invoked {invokedId} from file.");
+						}
 					}
+					catch (Exception ex) { logCallback?.Invoke($"[WARNING] File Read Error: {ex.Message}"); }
 				}
-				catch (Exception ex) { logCallback?.Invoke($"[WARNING] AppID Write Error: {ex.Message}"); }
 
 				// 🛠️ 6. ARGUMENT REPLACEMENT
-				string cleanIdentity = BackupManager.GetSafeName(server.ServerName); // 🎯 Now using your shared sanitizer
+				string cleanIdentity = BackupManager.GetSafeName(server.ServerName);
 
 				string args = dbEntry.RequiredArgs
 					.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
 					.Replace("{map}", server.WorldName)
-					.Replace("{steamAppID}", targetId)
-					.Replace("{appid}", targetId)
+					.Replace("{steamAppID}", invokedId) // 🎯 Uses the file content
+					.Replace("{appid}", targetId)       // 🎯 Keeps the DB ID separate
 					.Replace("{port}", server.Port.ToString())
 					.Replace("{query}", server.QueryPort.ToString())
 					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
@@ -128,6 +134,7 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{InstallPath}", server.InstallPath)
 					.Replace("{Identity}", cleanIdentity);
 
+				// 🎯 RCON LOGIC RESTORED
 				if (args.Contains("{rcon}"))
 				{
 					string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
@@ -136,6 +143,7 @@ namespace Synix_Control_Panel.ServerHandler
 					args = args.Replace("{rcon}", formattedRcon);
 				}
 
+				// 🎯 GAME MODE TRANSLATION RESTORED
 				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 				{
 					string translatedMode = (server.GameMode == "PVE" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
@@ -154,10 +162,11 @@ namespace Synix_Control_Panel.ServerHandler
 					CreateNoWindow = false
 				};
 
-				psi.EnvironmentVariables["SteamAppId"] = targetId;
-				psi.EnvironmentVariables["SteamGameId"] = targetId;
+				// 🎯 MEMORY INJECTION
+				psi.EnvironmentVariables["SteamAppId"] = invokedId;
+				psi.EnvironmentVariables["SteamGameId"] = invokedId;
 
-				logCallback?.Invoke($"[LAUNCHING] {server.Game} with identity: {targetId}");
+				logCallback?.Invoke($"[LAUNCHING] {server.Game} with identity: {invokedId}");
 
 				// 🚀 8. EXECUTION & MONITORING
 				Process? proc = Process.Start(psi);
@@ -169,19 +178,18 @@ namespace Synix_Control_Panel.ServerHandler
 
 					if (server.StartTime == null) server.StartTime = DateTime.Now;
 
-					// 🎯 DISCORD ALERT: Server Online
-					_ = Core.Instance.SendDiscordAlert(server, "SERVER ONLINE",
-						$"Launch successful. PID: {proc.Id}. Synix is now monitoring process health.", Color.Green);
+					// 🎯 DISCORD ALERT: Server Online (Clean alert)
+					_ = SynixEngine.Core.Instance.SendDiscordAlert(server, "SERVER STARTING", $"{server.ServerName} process has been initiated.", Color.Cyan);
 
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) => {
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
-							// 🎯 DISCORD ALERT: Crash Detected
-							_ = Core.Instance.SendDiscordAlert(server, "CRASH DETECTED",
-								"Process exited unexpectedly. Synix is initiating automated recovery.", Color.Red);
+							// Keep local Red log for your Buffalo control panel
+							MainGUI.Instance?.Invoke((Action)(() =>
+								MainGUI.Instance.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly!", Color.Red)));
 
-							MainGUI.Instance?.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly!", System.Drawing.Color.Red);
+							// Watchdog handles the single Discord crash notification
 							await Synix_Control_Panel.SynixEngine.Core.Instance.ExecuteRestartSequence(server);
 						}
 						else
@@ -198,7 +206,7 @@ namespace Synix_Control_Panel.ServerHandler
 			catch (Exception ex) { logCallback?.Invoke($"[CRITICAL ERROR] {ex.Message}"); }
 		}
 
-		public static void Stop(GameServer server, Action<string> logCallback)
+		public static void Stop(GameServer server, Action<string> logCallback, bool isManual = true)
 		{
 			try
 			{
@@ -213,8 +221,11 @@ namespace Synix_Control_Panel.ServerHandler
 				}
 
 				// 🎯 DISCORD ALERT: Manual Shutdown
-				_ = Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
-					"A shutdown command was issued via the Control Panel.", Color.Orange);
+				if (isManual)
+				{
+					_ = SynixEngine.Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
+						"A shutdown command was issued via the Control Panel.", Color.Orange);
+				}
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...");
 

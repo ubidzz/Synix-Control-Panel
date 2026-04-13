@@ -109,7 +109,7 @@ namespace Synix_Control_Panel
 			numPort.Value = Math.Clamp((decimal)_existingServer.Port, numPort.Minimum, numPort.Maximum);
 			numQueryPort.Value = Math.Clamp((decimal)_existingServer.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
 			if (numAppPort != null)
-				numAppPort.Value = Math.Clamp((decimal)_existingServer.AppPort, numAppPort.Minimum, numAppPort.Maximum);
+				numAppPort.Value = Math.Clamp((decimal)(_existingServer.AppPort ?? numAppPort.Minimum), numAppPort.Minimum, numAppPort.Maximum);
 
 			numMaxPlayers.Value = Math.Clamp((decimal)_existingServer.MaxPlayers, numMaxPlayers.Minimum, numMaxPlayers.Maximum);
 
@@ -280,36 +280,44 @@ namespace Synix_Control_Panel
 				chkEnableSchedule.Enabled = isBaseReady;
 				if (btnEditSchedule != null) btnEditSchedule.Enabled = isBaseReady && chkEnableSchedule.Checked;
 
-				// Folder Location
-				chkDefaultPath.Enabled = isBaseReady;
-				btnBrowse.Enabled = isBaseReady;
-				txtInstallPath.Enabled = isBaseReady && !chkDefaultPath.Checked;
+				// 🎯 5. FOLDER LOCATION (Locked during Edit Mode)
+				if (_isEditMode)
+				{
+					// Hard-lock the path controls so location cannot be changed after install
+					chkDefaultPath.Enabled = false;
+					btnBrowse.Enabled = false;
+					txtInstallPath.Enabled = false;
+				}
+				else
+				{
+					// Normal behavior for New Servers
+					chkDefaultPath.Enabled = isBaseReady;
+					btnBrowse.Enabled = isBaseReady;
+					txtInstallPath.Enabled = isBaseReady && !chkDefaultPath.Checked;
+				}
 
-				// 🎯 5. VALIDATION ENGINE (Collisions & Conflicts)
+				// 🎯 6. VALIDATION ENGINE (Collisions & Conflicts)
 				int gPort = (int)numPort.Value;
 				int qPort = (int)numQueryPort.Value;
 				int rPort = (int)numRconPort.Value;
 				int aPort = numAppPort != null ? (int)numAppPort.Value : 0;
 
-				// Check if name is already taken in your server list
 				bool isNameTaken = MainGUI.serverList.Any(s =>
 					s != _existingServer &&
 					s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) &&
 					s.ServerName.Equals(currentName, StringComparison.OrdinalIgnoreCase));
 
-				// Check for port owners in the Synix database
 				string? gOwner = Core.Instance.GetPortCollisionOwner(gPort, _existingServer);
 				string? qOwner = numQueryPort.Enabled ? Core.Instance.GetPortCollisionOwner(qPort, _existingServer) : null;
 				string? rOwner = rconActive ? Core.Instance.GetPortCollisionOwner(rPort, _existingServer) : null;
 				string? aOwner = numAppPort.Enabled ? Core.Instance.GetPortCollisionOwner(aPort, _existingServer) : null;
 
-				// Check if Windows is already listening on these ports (OS Collision)
 				bool osConflict = Core.Instance.IsPortInUseLocally(gPort) ||
 								  (numQueryPort.Enabled && Core.Instance.IsPortInUseLocally(qPort)) ||
 								  (rconActive && Core.Instance.IsPortInUseLocally(rPort)) ||
 								  (numAppPort.Enabled && Core.Instance.IsPortInUseLocally(aPort));
 
-				// 🎯 6. UI STATE ENGINE (Warnings & Paths)
+				// 🎯 7. UI STATE ENGINE (Warnings & Paths)
 				if (_isEditMode)
 				{
 					WarningLabel.Text = $"[READY] Updating existing server: {currentName}";
@@ -330,7 +338,7 @@ namespace Synix_Control_Panel
 				}
 				else if (gOwner != null || qOwner != null || rOwner != null || aOwner != null || osConflict)
 				{
-					string source = gOwner ?? qOwner ?? rOwner ?? aOwner ?? "Local System Process";
+					string source = gOwner ?? qOwner ?? rOwner ?? "Local System Process";
 					WarningLabel.Text = $"[CONFLICT] Port Collision detected with: {source}";
 					WarningLabel.ForeColor = Color.Red;
 					btnSave.Enabled = false;
@@ -341,20 +349,18 @@ namespace Synix_Control_Panel
 					WarningLabel.Text = "[READY] Configuration is valid and safe to deploy.";
 					WarningLabel.ForeColor = Color.LimeGreen;
 
-					// Handle Default Path Generation with Underscores
-					if (chkDefaultPath.Checked)
+					// 🎯 THE FIX: Only auto-generate path if NOT in edit mode
+					if (!_isEditMode && chkDefaultPath.Checked)
 					{
 						string safeName = BackupManager.GetSafeName(currentName);
 						txtInstallPath.Text = $@"C:\Synix\Games\{selectedGame}\{safeName}";
 					}
 
-					// Final check: Save only works if we have an install path
 					btnSave.Enabled = !string.IsNullOrWhiteSpace(txtInstallPath.Text);
 				}
 			}
 			catch (Exception ex)
 			{
-				// Silence errors for smooth typing, but log for debugging
 				System.Diagnostics.Debug.WriteLine($"[GATEKEEPER CRASH] {ex.Message}");
 			}
 		}
@@ -512,6 +518,33 @@ namespace Synix_Control_Panel
 			if (!string.IsNullOrEmpty(selectedMode) && cmbCompetitive.Items.Contains(selectedMode))
 				cmbCompetitive.SelectedItem = selectedMode;
 			else if (cmbCompetitive.Items.Count > 0) cmbCompetitive.SelectedIndex = 0;
+		}
+
+		private async void btnTestDiscord_Click(object sender, EventArgs e)
+		{
+			string url = txtDiscordWebhook.Text.Trim();
+
+			// 1. Validate the URL exists
+			if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://discord.com/api/webhooks/"))
+			{
+				MessageBox.Show("Please paste a valid Discord Webhook URL first.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			// 2. Create a temporary 'Dummy' server for the test
+			// This allows us to test the link even before the server is saved to the JSON
+			GameServer testDummy = new GameServer
+			{
+				ServerName = !string.IsNullOrWhiteSpace(txtName.Text) ? txtName.Text : "Synix Test Rig",
+				DiscordWebhook = url,
+				IsDiscordAlertEnabled = true // Force true for the test
+			};
+
+			// 3. Fire the Alert
+			await Core.Instance.SendDiscordAlert(testDummy, "TEST CONNECTION",
+				"Great news! Your Synix Control Panel is now officially linked to this channel. Future alerts will appear here.", Color.Lime);
+
+			MessageBox.Show("Test alert sent! Check your Discord channel.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)

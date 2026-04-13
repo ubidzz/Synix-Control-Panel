@@ -51,6 +51,7 @@ public class GameInfo
 	public string LastMaintenanceDate { get; set; } = "";
 	[JsonIgnore]
 	public int MaxPlayersFromQuery { get; set; } = 0;
+	public DateTime? LastProbeTime { get; set; }
 }
 
 public class GameServer : GameInfo
@@ -86,6 +87,9 @@ public class GameServer : GameInfo
 	public bool IsDiscordAlertEnabled { get; set; } = false;
 	public string DiscordWebhook { get; set; } = string.Empty;
 	public DateTime? StartTime { get; set; }
+	public double RamUsage { get; set; }
+
+
 	[JsonIgnore]
 	public string UptimeDisplay
 	{

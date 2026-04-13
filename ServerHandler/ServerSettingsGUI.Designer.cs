@@ -76,6 +76,7 @@
 			chkBackupOnStart = new Synix_Control_Panel.UI.SynixToggle();
 			chkEnableDiscord = new Synix_Control_Panel.UI.SynixToggle();
 			txtDiscordWebhook = new TextBox();
+			btnTestDiscord = new Button();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -585,6 +586,16 @@
 			txtDiscordWebhook.Size = new Size(368, 23);
 			txtDiscordWebhook.TabIndex = 66;
 			// 
+			// btnTestDiscord
+			// 
+			btnTestDiscord.Location = new Point(601, 229);
+			btnTestDiscord.Name = "btnTestDiscord";
+			btnTestDiscord.Size = new Size(115, 23);
+			btnTestDiscord.TabIndex = 67;
+			btnTestDiscord.Text = "Test Discord";
+			btnTestDiscord.UseVisualStyleBackColor = true;
+			btnTestDiscord.Click += btnTestDiscord_Click;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -592,6 +603,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 584);
+			Controls.Add(btnTestDiscord);
 			Controls.Add(txtDiscordWebhook);
 			Controls.Add(chkEnableDiscord);
 			Controls.Add(chkBackupOnStart);
@@ -705,5 +717,6 @@
 		private Synix_Control_Panel.UI.SynixToggle chkBackupOnStart;
 		private Synix_Control_Panel.UI.SynixToggle chkEnableDiscord;
 		private TextBox txtDiscordWebhook;
+		private Button btnTestDiscord;
 	}
 }

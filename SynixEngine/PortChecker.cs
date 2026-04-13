@@ -27,35 +27,31 @@ namespace Synix_Control_Panel.SynixEngine
 			0x72, 0x79, 0x00
 		};
 
-		/// <summary>
-		/// Probes a UDP port to verify if the game server is reachable and responding.
-		/// </summary>
-		/// <param name="ip">The IP address to test (Use 127.0.0.1 for local, Public IP for external).</param>
-		/// <param name="port">The Query Port assigned to the server.</param>
-		/// <param name="timeoutMs">Wait time before declaring the port closed.</param>
-		/// <returns>True if the server replies with valid game data.</returns>
 		public async Task<bool> TestServerConnectivity(string ip, int port, int timeoutMs = 2500)
 		{
+			// 🎯 BIND FIX: Use a specific endpoint to ensure the OS allows the return packet
 			using var udpClient = new UdpClient();
 			try
 			{
-				// Ensure the IP is valid
+				// DNS RESOLUTION: This allows 'localhost' or '127.0.0.1' to work reliably
 				if (!IPAddress.TryParse(ip, out IPAddress address))
 				{
-					Log($"[NETWORK] Invalid IP Address: {ip}", Color.Red);
-					return false;
+					var hostAddresses = await Dns.GetHostAddressesAsync(ip);
+					if (hostAddresses.Length == 0) return false;
+					address = hostAddresses[0];
 				}
 
 				IPEndPoint remoteEP = new IPEndPoint(address, port);
 
-				// Send the A2S_INFO challenge packet
+				// Set internal timeouts for the socket itself
+				udpClient.Client.SendTimeout = timeoutMs;
+				udpClient.Client.ReceiveTimeout = timeoutMs;
+
 				await udpClient.SendAsync(_a2sInfoRequest, _a2sInfoRequest.Length, remoteEP);
 
-				// Create a timeout task to prevent the engine from hanging on silent ports
 				var receiveTask = udpClient.ReceiveAsync();
 				var timeoutTask = Task.Delay(timeoutMs);
 
-				// Return true only if we receive a response before the timeout
 				if (await Task.WhenAny(receiveTask, timeoutTask) == receiveTask)
 				{
 					var result = await receiveTask;
@@ -73,13 +69,17 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public bool IsPortInUseLocally(int port)
 		{
-			var ipProps = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+			try
+			{
+				var ipProps = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
-			// 🎯 Checks UDP and TCP listeners
-			bool udpInUse = ipProps.GetActiveUdpListeners().Any(l => l.Port == port);
-			bool tcpInUse = ipProps.GetActiveTcpListeners().Any(l => l.Port == port);
+				// Now that we added 'using System.Linq', these will work correctly
+				bool udpInUse = ipProps.GetActiveUdpListeners().Any(l => l.Port == port);
+				bool tcpInUse = ipProps.GetActiveTcpListeners().Any(l => l.Port == port);
 
-			return udpInUse || tcpInUse;
+				return udpInUse || tcpInUse;
+			}
+			catch { return false; }
 		}
 	}
 }

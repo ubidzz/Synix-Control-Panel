@@ -15,18 +15,33 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private void UpdateResourceStats()
 		{
+			// 1. Get the summary for the GUI totals
 			var usage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
 
 			TotalCpuUsage = usage.TotalCpuPercent;
 			TotalRamUsageGb = usage.TotalRamMB / 1024.0;
 
-			// 🎯 YOUR LOGIC: Get Total Physical RAM and subtract 7GB for Windows overhead
-			// ResourceMonitor should have a way to get the total system memory
+			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM
 			double physicalRamGb = ResourceMonitor.GetTotalSystemRamMB() / 1024.0;
-			TotalRamGb = physicalRamGb - 7.0;
+			TotalRamGb = physicalRamGb - 7.0; // Subtracting 7GB for Windows
 
-			// Fallback: If a machine has very low RAM, don't let TotalRamGb go to 0 or negative
 			if (TotalRamGb < 1) TotalRamGb = physicalRamGb;
+
+			// 3. 🎯 PER-SERVER TRACKING: Populate the RamUsage for your alerts
+			foreach (var server in MainGUI.serverList)
+			{
+				if (server.Status == "Running" && server.RunningProcess != null)
+				{
+					// Get the individual process usage from your Monitor
+					// We calculate the % based on the "Available" RAM (TotalRamGb)
+					double serverMB = ResourceMonitor.GetProcessRamMB(server.PID ?? 0);
+					server.RamUsage = (serverMB / 1024.0 / TotalRamGb) * 100.0;
+				}
+				else
+				{
+					server.RamUsage = 0;
+				}
+			}
 		}
 	}
 }
