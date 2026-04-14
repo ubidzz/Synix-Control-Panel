@@ -45,6 +45,8 @@ namespace Synix_Control_Panel.ServerHandler
 
 		public static async Task Start(GameServer server, Action<string> logCallback, StartContext context = StartContext.Manual)
 		{
+			// 🛡️ THE SAFEGUARD: Only check if it's a Manual start
+			if (context == StartContext.Manual && !IsSystemSafeToStart()) return;
 			try
 			{
 				// 1. PRE-FLIGHT (Backup & Update)
@@ -166,7 +168,7 @@ namespace Synix_Control_Panel.ServerHandler
 				psi.EnvironmentVariables["SteamAppId"] = invokedId;
 				psi.EnvironmentVariables["SteamGameId"] = invokedId;
 
-				logCallback?.Invoke($"[LAUNCHING] {server.Game} with identity: {invokedId}");
+				logCallback?.Invoke($"[ARGUMENT] {args}");
 
 				// 🚀 8. EXECUTION & MONITORING
 				Process? proc = Process.Start(psi);

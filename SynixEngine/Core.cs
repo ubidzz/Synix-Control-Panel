@@ -143,6 +143,37 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		public static bool IsSystemSafeToStart()
+		{
+			// 1. Get the REAL hardware total (e.g., 32GB)
+			double physicalRamGb = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+
+			// 2. Apply your 7GB Windows overhead
+			double usablePool = physicalRamGb - 7.0;
+			if (usablePool < 1) usablePool = physicalRamGb;
+
+			// 3. Get the current usage from ALL running servers
+			var usage = MonitoringHandler.ResourceMonitor.GetTotalResources(MainGUI.serverList);
+			double usedGb = usage.TotalRamMB / 1024.0;
+
+			// 4. THE MATH: Ensure we aren't dividing by zero or using a stale variable
+			double totalUsagePercent = (usedGb / usablePool) * 100.0;
+
+			// 🎯 YOUR 80% THRESHOLD
+			if (totalUsagePercent >= 80.0)
+			{
+				System.Windows.Forms.MessageBox.Show(
+					$"[RESOURCE GUARD] System RAM usage is at {totalUsagePercent:F1}% of the {usablePool:F1}GB usable pool.\n\nPlease stop a server before starting another.",
+					"System Resource Exhaustion",
+					System.Windows.Forms.MessageBoxButtons.OK,
+					System.Windows.Forms.MessageBoxIcon.Warning);
+
+				return false; // BLOCK THE START
+			}
+
+			return true; // PROCEED WITH START
+		}
+
 		public bool IsBasicInfoValid(string name, string game) => !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(game);
 		public bool IsServerSetupValid(string name, string game) => !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(game);
 	}

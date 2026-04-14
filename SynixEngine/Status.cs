@@ -133,7 +133,7 @@ namespace Synix_Control_Panel.SynixEngine
 			public static string GetStatus(int code) => GetStatus((ServerState)code);
 		}
 
-		public string GetLocalIP()
+		public async Task<string> GetLocalIP()
 		{
 			try
 			{

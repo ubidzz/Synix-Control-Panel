@@ -186,7 +186,6 @@ namespace Synix_Control_Panel.ServerHandler
 // Settings like Port and Query Port are managed by command-line arguments.
 
 server.hostname ""{server.ServerName}""
-server.maxplayers {server.MaxPlayers}
 server.seed {(string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)}
 server.worldsize 4000
 

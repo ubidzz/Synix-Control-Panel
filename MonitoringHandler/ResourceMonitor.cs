@@ -136,7 +136,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 			// TotalAvailableMemoryBytes represents the total physical memory 
 			// accessible to the OS/Process.
-			return (double)gcInfo.TotalAvailableMemoryBytes / (1024 * 1024);
+			return GetTotalSystemRamGB() * 1024.0;
 		}
 
 		public static double GetProcessRamMB(int pid)

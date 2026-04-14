@@ -118,7 +118,7 @@ namespace Synix_Control_Panel
 		private async Task LoadNetworkInfo()
 		{
 			// 1. Get the LAN IP instantly
-			string localIP = Core.Instance.GetLocalIP();
+			string localIP = await Core.Instance.GetLocalIP();
 			lblLocalIP1.Text = $"LAN IP: {localIP}";
 
 			// 2. Get the Public IP in the background
@@ -256,7 +256,7 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				MessageBox.Show("Please select a server in the list first.", "No Selection");
+				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
 			}
 		}
 
@@ -292,7 +292,7 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				MessageBox.Show("Please select a server in the list first.", "No Selection");
+				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
 			}
 		}
 
@@ -347,7 +347,7 @@ namespace Synix_Control_Panel
 				{
 					selectedServer.StartTime = DateTime.Now;
 					AppendLog(msg);
-					UpdateGrid(); // Final refresh for "Running"
+					UpdateGrid();
 				});
 			});
 		}
@@ -436,7 +436,7 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private async void btnTestConnection_Click(object sender, EventArgs e)
+		private async void btnPublicConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
@@ -454,6 +454,36 @@ namespace Synix_Control_Panel
 				if (isResponding)
 				{
 					Core.Instance.Log($"[ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
+				}
+				else
+				{
+					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort}.", Color.Red);
+				}
+			}
+			catch (Exception ex)
+			{
+				Core.Instance.Log($"[ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+			}
+		}
+
+		private async void btnLocalConnection_Click(object sender, EventArgs e)
+		{
+			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
+
+			Core.Instance.Log($"[NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+
+			try
+			{
+				// 1. Get the actual Public IP of the Texas machine
+				string localIp = await Core.Instance.GetLocalIP();
+
+				// 2. Probe the Query Port over the internet (UDP)
+				bool isResponding = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
+
+				if (isResponding)
+				{
+					Core.Instance.Log($"[ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{

@@ -43,7 +43,7 @@ namespace Synix_Control_Panel.Database
 				RequiredArgs = "{map} -server -log -online=Steam -SteamAppId={steamAppID} -Port={port} -QueryPort={query} -EchoPort=18888 -mainserverport=19000 -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -MaxPlayers={MaxPlayers} -SteamServerName=\"{ServerName}\" -{mode} -serverid=1 -forcepassthrough",
 				RelativeConfigPath = @"WS\Saved\GameplaySettings\GameXishu.json",
 				Port = 8777,
-				QueryPort = 27015,
+				QueryPort = 27016,
 				Maps = ["Level01_Main", "DLC_Level01_Main"],
 				GameModes = ["PVP", "PVE"],
 				Format = ConfigFormat.JSON,
