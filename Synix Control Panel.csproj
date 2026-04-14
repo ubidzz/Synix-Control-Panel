@@ -8,7 +8,17 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Images\SyniX logo.ico</ApplicationIcon>
-    <AssemblyName>Synix_Control_Panel</AssemblyName>
+    <AssemblyName>Synix Control Panel</AssemblyName>
+    <AssemblyTitle>Synix</AssemblyTitle>
+    <PackageProjectUrl>https://github.com/ubidzz/Synix-Control-Panel/blob/master/README.md</PackageProjectUrl>
+    <Copyright>Copyright © 2026 ubidzz. All Rights Reserved.</Copyright>
+    <Description>PC Game Server Hosting</Description>
+    <PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <AssemblyVersion>0.50</AssemblyVersion>
+    <FileVersion>0.50</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,6 +51,17 @@
   <ItemGroup>
     <PackageReference Include="System.Management" Version="10.0.5" />
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Images\SyniX logo with glowing accents.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
