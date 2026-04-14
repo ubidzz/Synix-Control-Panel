@@ -228,6 +228,86 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		public async Task ValidationServerAndReport(GameServer server)
+		{
+			// 1. YOUR SAFETY: Don't update if server is running
+			if (server.Status == StatusManager.GetStatus(ServerState.Running))
+			{
+				MessageBox.Show("You must stop the server before validating server files.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			// 2. YOUR SAFETY: Don't update if already busy
+			if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
+			{
+				MessageBox.Show("A download, update or validation is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+
+			// 3. YOUR CONFIRMATION
+			var confirm = MessageBox.Show($"Are you sure you want to Validate the {server.ServerName} server files?", "Confirm Validate", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (confirm != DialogResult.Yes) return;
+
+			// 4. YOUR DATABASE LOOKUP
+			var gameData = GameDatabase.GetGame(server.Game);
+			string appId = gameData?.AppID ?? "";
+
+			if (string.IsNullOrEmpty(appId))
+			{
+				MessageBox.Show("Could not find the AppID for this game. Cannot validate server files.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			try
+			{
+				// 5. SET BUSY STATE
+				server.Status = StatusManager.GetStatus(ServerState.Updating);
+				isDownloadActive = true;
+				UpdateGridStatus();
+
+				Log($"--- Validating STARTED: {server.Game} ---", Color.White, true);
+				Log($"--- [WARNING] Synix close window button is disabled! ---", Color.Orange, true);
+				Log($"--- [INFO] Validating {server.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
+
+				// 6. RUN INSTALLER (Thread-safe background task)
+				int exitCode = await Task.Run(() =>
+				{
+					// Updated to include the PID callback
+					return ServerInstaller.Install(server.InstallPath, appId,
+						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
+						pid => {
+							server.SteamPID = pid;
+							FileHandler.SaveServers();
+						});
+				});
+
+				// 7. HANDLE ERRORS
+				if (exitCode != 0)
+				{
+					string errorDetail = ServerInstaller.GetSteamError(exitCode);
+					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					Log($"[CRITICAL ERROR] Validate failed with code {exitCode}.", Color.Red, true);
+					return;
+				}
+
+				// 8. YOUR SUCCESS LOGIC: Re-apply GameFixes
+				bool fixApplied = GameFix.PostInstall(server);
+				if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
+
+				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
+				Log($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
+			}
+			finally
+			{
+				// 9. CLEANUP: Always unlock the app and CLEAR the SteamPID
+				server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
+				server.SteamPID = null;
+				isDownloadActive = false;
+				FileHandler.SaveServers();
+				UpdateGridStatus();
+			}
+		}
+
 		public async Task AddServerAndReport()
 		{
 			using (ServerSettingsGUI settingsForm = new())

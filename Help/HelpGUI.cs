@@ -36,36 +36,44 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			_helpData = new Dictionary<string, string>
 			{
-				// --- GETTING STARTED ---
-				// MERGED: Both "First Time Setup" entries combined so you don't lose steps or crash
-				["First Time Setup"] = "1. Synix installs SteamCMD to C:\\Synix\\SteamCMD.\n2. Download game files via the 'SteamCMD' tab into C:\\Synix\\Games.\n3. Set your ports in 'Server Settings'.\n4. Click Start.\n\nNote: If the window closes immediately, check 'Troubleshooting > Missing .DLL Errors'.",
+				// --- 1. GETTING STARTED ---
+				["Initial Repository Setup"] = "1. Deployment: Synix installs SteamCMD to C:\\Synix\\SteamCMD.\n2. Library: Use the 'SteamCMD' tab to download game binaries.\n3. Configuration: Use 'Add New Server' to define your unique {Identity}.\n4. Execution: Select your server and click 'Start Server'.",
+				["Understanding {Identity}"] = "Synix generates a sanitized, unique {Identity} for every server. This prevents folder path conflicts and ensures multiple instances of the same game don't interfere with each other.",
+				["Where are my world saves?"] = "All data is isolated in C:\\Synix\\Games\\{Identity}. Your world saves and logs are contained within this unique folder for total portability.",
 
-				["How to start the server?"] = "Select your server from the sidebar, ensure status is 'Ready', and click 'Start'. Synix will initialize the process and the console window will appear shortly.",
+				// --- 2. DASHBOARD & CONTROLS ---
+				["Main Controls (Start/Stop)"] = "• Start: Initializes the engine boot sequence.\n• Stop: Triggers a staged shutdown. Synix sends a 'Safe Close' signal, waits for the save cycle, and automatically executes a 'taskkill' if the process remains open.\n• Kill: Instantly terminates the Process ID (PID). Use this only if the engine is completely unresponsive.\n• Restart: Performs a staged Stop followed by an automatic Start.",
+				["Maintenance Suite"] = "• Update: Synchronizes your files with the Steam Master Manifest.\n• Validate: Repairs binaries without deleting world progress.\n• Backups: Opens the snapshot manager to restore previous world states.",
+				["Connection Link Status"] = "• Local Link: Probes your Local LAN IP. If [ONLINE], your process and Windows Firewall are healthy.\n• WAN Link: Probes your Public IP. If [HIDDEN], check your router's Port Forwarding (UDP).",
+				["Total Resource Graph"] = "Tracks your CPU and RAM health. Click the graph to open the 'Resource History' window for a detailed view of CPU and RAM performance of each of your running game servers.",
 
-				["What is {Identity}?"] = "Synix uses {Identity} to create a file-safe ID for your server (e.g., 'My Server' becomes 'My_Server'). This prevents folder conflicts and 'Space in Path' errors that crash many engines.",
+				// --- 3. SERVER CONFIGURATION (ADD/EDIT) ---
+				["Display Name & Game Templates"] = "The 'Display Name' is your organizational label. Selecting a 'Game' applies the correct engine templates for ports and startup arguments.",
+				["The Port Trio (+App Port)"] = "• Game Port (UDP): Core gameplay data.\n• Query Port (UDP): Server browser metadata (Use 27016 to avoid Steam conflicts).\n• RCON Port (TCP): Remote admin console.\n• App Port (TCP): External tool access (e.g., Rust+). \n\nThe Rust+ app only use ports over 10000.",
+				["Access Control & Map Selection"] = "• Server Password: Required for players to join.\n• Admin Password: Required for console commands.\n• Map/Mode: Defined in the startup string to set the game ruleset.",
+				["AppID & Binary Name"] = "Synix auto-fills the Steam AppID. The Binary Name (e.g., WS-Win64-Shipping) tells the Synix Watchdog exactly which process to monitor.",
 
-				["Where are my world saves?"] = "By default, all game data is stored in C:\\Synix\\Games\\{Identity}. Look for a 'Saves' folder inside. Note: Custom locations (like a G: drive) stay where you picked them.",
+				// --- 4. NETWORKING & IP ---
+				["Public vs Local IP"] = "Local IP (192.168.x.x) is for internal testing. Public IP is for the internet. Both are displayed at the top of your Synix Dashboard.",
+				["Port Forwarding Guide"] = "You must 'Forward' your Query and Game ports (UDP) in your router settings to your Local IP so the world can find your server.",
+				["NAT Loopback / Hairpinning"] = "If your WAN test is [ONLINE] but you can't join, your router blocks internal WAN loops. Use your Local IP or '127.0.0.1' or your LAN IP to join your own machine.",
 
-				// --- NETWORKING & CONNECTIVITY ---
-				["Port Forwarding Guide"] = "To let others join, you must 'drill a hole' in your router for the Game Port and Query Port. Redirect these to your Local IP. \n\nTip: Use 'UDP' for Game/Query ports and 'TCP' for RCON.",
-				["The 'Golden Trio' of Ports"] = "Most servers need three ports open:\n1. Game Port (UDP)\n2. Query Port (UDP)\n3. RCON Port (TCP).",
-				["Public vs Local IP"] = "Internal players use your Local IP. External players use your Public IP. Both are displayed at the top of the Synix Dashboard.",
-				["NAT Loopback / Can't join myself?"] = "CAUSE: Many ISP routers don't allow you to connect to your own Public IP.\n\nFIX: Use '127.0.0.1' or your Local IP in the game's 'Direct Connect' box.",
+				// --- 5. AUTOMATION & DISCORD ---
+				["Watchdog Recovery"] = "The Watchdog monitors the server 'Heartbeat.' If the process crashes or hangs for 60 seconds, Synix forces a reboot to minimize downtime.",
+				["Discord Webhook Setup"] = "1. Create a Webhook in Discord.\n2. Paste it into 'Edit Server' in Synix.\n3. Synix will now broadcast status updates for Boots, Shutdowns, and Watchdog restarts.",
+				["Automated Backup Logic"] = "Synix takes snapshots every 6 hours. If enabled, a backup is also created before every manual startup (skipped during crash-recovery).",
 
-				// --- TROUBLESHOOTING ---
-				["Friends can't see my server?"] = "SYMPTOM: Server is running but invisible.\n\nFIX: Ensure 'Query Port' is forwarded as UDP and check Windows Firewall.",
-				["'Address Already in Use' Error?"] = "SYMPTOM: Port is 'taken'.\n\nFIX: Use the 'Kill All Processes' button in Synix or change your port by 1.",
-				["Missing .DLL Errors"] = "SYMPTOM: 'System Error' on launch.\n\nFIX: Install 'C++ Redistributables x64' (2015-2022) from Microsoft's site.",
-				["SteamCMD stuck at 0%?"] = "SYMPTOM: No download progress.\n\nFIX: Run Synix as Admin and check for 20GB+ free disk space.",
-				["Watchdog Restarting Server"] = "If the server hangs for 60s, the Synix Watchdog will force a reboot to keep the server Running.",
-				["Server File Corruption"] = "Use 'Validate Files' to trigger a SteamCMD repair without deleting your world saves.",
+				// --- 6. TROUBLESHOOTING & SYSTEM ---
+				["No-Admin Philosophy"] = "Synix runs without Admin/UAC prompts to protect your system. This means it cannot auto-open ports; you must manually allow game binaries in Windows Firewall.",
+				["Missing .DLL Errors"] = "Symptom: 'System Error' on launch. Fix: Install 'C++ Redistributables x64 (2015-2022)' from the Microsoft website.",
+				["Resource Guard Limits"] = "Synix reserves 7GB of RAM for Windows 11 and blocks new launches at 80% CPU usage to prevent system instability.",
+				["Where are My Server Backups"] = "If the auto backup feature is enabled, backups are stored in C:\\Synix\\BackupGames\\Game_Name\\Your_Server_Name.",
+				// --- 7. SUPPORTED GAMES ---
+				["How to add a game"] = "Synix utilizes a hardcoded database to ensure 100% engine stability. Manual 'plugin' support for custom games is not supported.",
+				["No Minecraft?"] = "Minecraft uses a Java-based architecture that installs differently than SteamCMD games. It is not currently supported in the Synix engine.",
 
-				// --- MAINTENANCE ---
-				["Automated Backups"] = "Synix snapshots world data every 6 hours by default. Adjust this in the 'Backups' tab.",
-				["How to Update"] = "1. Stop the server.\n2. Go to 'Updates' tab.\n3. Click 'Check for Updates' to pull the latest version via SteamCMD.",
-
-				// --- SUPPORT ---
-				["Donate & Support"] = "Synix is a labor of love to make hosting accessible. Your support keeps the project free!\n\nPayPal: https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8"
+				// --- 8. DONATIONS ---
+				["Donate & Support"] = "Synix is a labor of love for the community. Your support keeps the project free and the updates frequent!\n\nPayPal: https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8"
 			};
 		}
 
@@ -73,45 +81,54 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			treeNavigation.Nodes.Clear();
 
-			// Create the Main Folders
 			TreeNode root = new TreeNode("Synix Documentation");
-			TreeNode nodeStart = new TreeNode("Getting Started");
-			TreeNode nodeNet = new TreeNode("Networking & IP");
-			TreeNode nodeTrouble = new TreeNode("Troubleshooting");
-			TreeNode nodeMaint = new TreeNode("Maintenance");
-			TreeNode nodeSupport = new TreeNode("Support & Donations");
+			TreeNode nodeStart = new TreeNode("1. Getting Started");
+			TreeNode nodeDash = new TreeNode("2. Dashboard & Controls");
+			TreeNode nodeConfig = new TreeNode("3. Server Configuration");
+			TreeNode nodeNet = new TreeNode("4. Networking & IP");
+			TreeNode nodeMaint = new TreeNode("5. Maintenance & Discord");
+			TreeNode nodeTrouble = new TreeNode("6. Troubleshooting & System");
+			TreeNode nodeGames = new TreeNode("7. Supported Games");
+			TreeNode nodeSupport = new TreeNode("8. Support & Donations");
 
-			// Style the support folder so it stands out
 			nodeSupport.ForeColor = Color.DarkGreen;
 
 			foreach (var key in _helpData.Keys)
 			{
-				// Apply search filter if user is typing
 				if (!string.IsNullOrEmpty(filter) && !key.ToLower().Contains(filter.ToLower()))
 					continue;
 
-				// Sorting Logic based on keywords
-				if (key.Contains("How to") || key.Contains("Setup") || key.Contains("Identity") || key.Contains("saves"))
+				// 🎯 Logic with the new Graph entry
+				if (key.Contains("Setup") || key.Contains("Identity") || key.Contains("saves") || key.Contains("Structure"))
 					nodeStart.Nodes.Add(new TreeNode(key));
-				else if (key.Contains("Port") || key.Contains("IP") || key.Contains("list"))
+				else if (key.Contains("Controls") || key.Contains("Link") || key.Contains("Graph"))
+					nodeDash.Nodes.Add(new TreeNode(key));
+				else if (key.Contains("Name") || key.Contains("Trio") || key.Contains("Password") || key.Contains("AppID") || key.Contains("Map"))
+					nodeConfig.Nodes.Add(new TreeNode(key));
+				else if (key.Contains("IP") || key.Contains("Forwarding") || key.Contains("Loopback"))
 					nodeNet.Nodes.Add(new TreeNode(key));
-				else if (key.Contains("Error") || key.Contains("Watchdog") || key.Contains("CPU") || key.Contains("Corruption"))
-					nodeTrouble.Nodes.Add(new TreeNode(key));
-				else if (key.Contains("Backup") || key.Contains("Update"))
+				else if (key.Contains("Backup") || key.Contains("Update") || key.Contains("Discord") || key.Contains("Validation") || key.Contains("Suite"))
 					nodeMaint.Nodes.Add(new TreeNode(key));
+				else if (key.Contains("Watchdog") || key.Contains("Guard") || key.Contains("Philosophy") || key.Contains("Dependencies") || key.Contains("Use"))
+					nodeTrouble.Nodes.Add(new TreeNode(key));
+				else if (key.Contains("game") || key.Contains("Minecraft"))
+					nodeGames.Nodes.Add(new TreeNode(key));
 				else if (key.Contains("Donate"))
 					nodeSupport.Nodes.Add(new TreeNode(key));
 			}
 
-			// Only add folders to the tree if they have items inside (cleaner for search)
+			// Only add folders that actually have items
 			if (nodeStart.Nodes.Count > 0) root.Nodes.Add(nodeStart);
+			if (nodeDash.Nodes.Count > 0) root.Nodes.Add(nodeDash);
+			if (nodeConfig.Nodes.Count > 0) root.Nodes.Add(nodeConfig);
 			if (nodeNet.Nodes.Count > 0) root.Nodes.Add(nodeNet);
 			if (nodeMaint.Nodes.Count > 0) root.Nodes.Add(nodeMaint);
 			if (nodeTrouble.Nodes.Count > 0) root.Nodes.Add(nodeTrouble);
+			if (nodeGames.Nodes.Count > 0) root.Nodes.Add(nodeGames);
 			if (nodeSupport.Nodes.Count > 0) root.Nodes.Add(nodeSupport);
 
 			treeNavigation.Nodes.Add(root);
-			treeNavigation.ExpandAll(); // Keep it expanded so it's easy to read
+			treeNavigation.ExpandAll();
 		}
 
 		private void treeNavigation_AfterSelect(object sender, TreeViewEventArgs e)

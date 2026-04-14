@@ -123,6 +123,7 @@ namespace Synix_Control_Panel
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackgroundImage = Properties.Resources.background;
+			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(800, 450);
 			Controls.Add(lblTotalRam);
 			Controls.Add(lblTotalCpu);
@@ -131,7 +132,7 @@ namespace Synix_Control_Panel
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "ResourceMonitorGUI";
-			Text = "ResourceMonitorGUI";
+			Text = "Resource Monitor";
 			ResumeLayout(false);
 			PerformLayout();
 		}

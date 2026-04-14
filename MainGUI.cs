@@ -276,6 +276,22 @@ namespace Synix_Control_Panel
 			}
 		}
 
+		private async void btnFileValidation_Click(object sender, EventArgs e)
+		{
+			// UI-specific check
+			if (isInitializing) return;
+
+			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			{
+				// The AI handles everything: Safety, Database, SteamCMD, and Logging
+				await Core.Instance.ValidationServerAndReport(selectedServer);
+			}
+			else
+			{
+				MessageBox.Show("Please select a server in the list to validate.", "No Server Selected");
+			}
+		}
+
 		private void btnDelete_Click(object sender, EventArgs e)
 		{
 			// 1. Check if the app is still loading
@@ -457,7 +473,7 @@ namespace Synix_Control_Panel
 				}
 				else
 				{
-					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort}.", Color.Red);
+					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
@@ -487,7 +503,7 @@ namespace Synix_Control_Panel
 				}
 				else
 				{
-					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort}.", Color.Red);
+					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)

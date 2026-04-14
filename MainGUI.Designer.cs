@@ -56,7 +56,9 @@
 			toolStripSeparator2 = new ToolStripSeparator();
 			editServerToolStripMenuItem = new ToolStripMenuItem();
 			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
+			toolStripSeparator5 = new ToolStripSeparator();
 			updateServerToolStripMenuItem = new ToolStripMenuItem();
+			fileValidationToolStripMenuItem = new ToolStripMenuItem();
 			toolStripSeparator3 = new ToolStripSeparator();
 			connectionTestToolStripMenuItem = new ToolStripMenuItem();
 			connectionLocalTestToolStripMenuItem = new ToolStripMenuItem();
@@ -239,20 +241,20 @@
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, openServerConfig, installServer, toolStripSeparator1 });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(152, 76);
+			contextMenuStrip.Size = new Size(181, 98);
 			// 
 			// btnHelp
 			// 
 			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(151, 22);
+			btnHelp.Size = new Size(180, 22);
 			btnHelp.Text = "Help";
 			btnHelp.Click += btnHelp_Click;
 			// 
 			// openServerConfig
 			// 
-			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, updateServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
+			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(151, 22);
+			openServerConfig.Size = new Size(180, 22);
 			openServerConfig.Text = "Server Options";
 			// 
 			// openServerFolderToolStripMenuItem
@@ -288,12 +290,24 @@
 			openServerConfigFileToolStripMenuItem.Text = "Open Server Config File";
 			openServerConfigFileToolStripMenuItem.Click += btnOpenConfig_Click;
 			// 
+			// toolStripSeparator5
+			// 
+			toolStripSeparator5.Name = "toolStripSeparator5";
+			toolStripSeparator5.Size = new Size(195, 6);
+			// 
 			// updateServerToolStripMenuItem
 			// 
 			updateServerToolStripMenuItem.Name = "updateServerToolStripMenuItem";
 			updateServerToolStripMenuItem.Size = new Size(198, 22);
 			updateServerToolStripMenuItem.Text = "Update Server";
 			updateServerToolStripMenuItem.Click += btnUpdate_Click;
+			// 
+			// fileValidationToolStripMenuItem
+			// 
+			fileValidationToolStripMenuItem.Name = "fileValidationToolStripMenuItem";
+			fileValidationToolStripMenuItem.Size = new Size(198, 22);
+			fileValidationToolStripMenuItem.Text = "Game Validation";
+			fileValidationToolStripMenuItem.Click += btnFileValidation_Click;
 			// 
 			// toolStripSeparator3
 			// 
@@ -329,14 +343,14 @@
 			// installServer
 			// 
 			installServer.Name = "installServer";
-			installServer.Size = new Size(151, 22);
+			installServer.Size = new Size(180, 22);
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new Size(148, 6);
+			toolStripSeparator1.Size = new Size(177, 6);
 			// 
 			// btnServerActions
 			// 
@@ -469,5 +483,7 @@
 		private DataGridViewTextBoxColumn colStatus;
 		private ToolStripMenuItem connectionLocalTestToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator4;
+		private ToolStripSeparator toolStripSeparator5;
+		private ToolStripMenuItem fileValidationToolStripMenuItem;
 	}
 }
