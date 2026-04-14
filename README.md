@@ -61,6 +61,19 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 
 ---
 
+## 🛡️ Security & Installation Notes
+Because Synix is a specialized tool developed for the community, you may encounter Windows security prompts during your first launch.
+
+> **Note on Digital Signatures:**
+> Synix is currently a new, independent project and does not yet have a paid Microsoft Digital Signature. This often triggers **Windows SmartScreen** or **Smart App Control**.
+> 
+> * **Windows SmartScreen:** Click `More Info` -> `Run Anyway`.
+> * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
+> 
+> **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
+
+---
+
 ## 📜 License & Legal Information
 *Copyright © 2026 ubidzz. All Rights Reserved.*
 
@@ -70,6 +83,8 @@ The **Synix Control Panel** is a proprietary software project.
 * **Strict Restrictions:** Redistribution, public modification, or commercial resale of the code or compiled binaries is strictly prohibited.
 
 ---
+
+Synix is a No-Admin tool. If Windows SmartScreen flags the .exe, click 'More Info' -> 'Run Anyway' or on Windows 11 new SmartScreen warning you have to turn off Smart APP Control. This happens because the app is new and doesn't have a paid digital signature yet.
 
 ### **Status: Revolutionizing the Personal Host Experience**
 *Synix handles the hardware stewardship and networking complexity, so you can focus on the game.*
