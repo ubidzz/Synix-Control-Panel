@@ -69,14 +69,11 @@ The **Synix Control Panel** is a proprietary software project.
 * **Source Code:** Provided for transparent viewing and educational purposes only.
 * **Strict Restrictions:** Redistribution, public modification, or commercial resale of the code or compiled binaries is strictly prohibited.
 
-<img width="1243" height="660" alt="UI" src="https://github.com/user-attachments/assets/f10cc223-b1a0-4b85-a048-2989daf8ca8d" />
-<img width="797" height="616" alt="image" src="https://github.com/user-attachments/assets/8939b8f1-72ac-4a80-974c-c04f3e3e0cdf" />
-<img width="802" height="482" alt="image" src="https://github.com/user-attachments/assets/4598aa5f-eb95-4589-afe2-bed4dd84d78b" />
-
-
-
-
 ---
 
 ### **Status: Revolutionizing the Personal Host Experience**
 *Synix handles the hardware stewardship and networking complexity, so you can focus on the game.*
+
+<img width="1243" height="660" alt="UI" src="https://github.com/user-attachments/assets/f10cc223-b1a0-4b85-a048-2989daf8ca8d" />
+<img width="797" height="616" alt="image" src="https://github.com/user-attachments/assets/8939b8f1-72ac-4a80-974c-c04f3e3e0cdf" />
+<img width="802" height="482" alt="image" src="https://github.com/user-attachments/assets/4598aa5f-eb95-4589-afe2-bed4dd84d78b" />
