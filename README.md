@@ -1,66 +1,63 @@
 # 🛸 Synix Control Panel
 
-## Coming Soon.....
-
-### **The High-Performance Backbone for Effortless Game Server Hosting**
+### **The High-Performance, Zero-Admin Backbone for Enterprise-Grade Game Hosting**
 
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
-![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg?style=for-the-badge&logo=windows)
+![Platform](https://img.shields.io/badge/Platform-Windows%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Build](https://img.shields.io/badge/Architecture-Engine--Driven-orange.svg?style=for-the-badge)
-![Games Supported](https://img.shields.io/badge/Supported_Games-250-brightgreen.svg?style=for-the-badge)
+![Security](https://img.shields.io/badge/Privilege-Zero--UAC%20Required-blueviolet.svg?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)
 
-**Synix Control Panel** is an elite, engine-driven management suite designed to make professional-grade hosting accessible to everyone. By moving beyond simple batch-file scripts and fragmented community plugins, Synix provides a centralized "Brain" that handles deployment, process health, configuration, and technical directory constraints automatically.
-
-With **250+ unique game servers fully supported right out of the box**, Synix handles the heavy lifting so you can focus on playing.
+**Synix Control Panel** is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a **Zero-Admin (No UAC)** environment.
 
 ---
 
-## 🎮 Hosting Made Effortless
-Synix is designed to remove the "technical headache" of hosting. Whether you are a veteran admin or a first-time host, the Synix Engine handles the complexity for you:
-
-1.  **Select Your Game:** Choose from a massive native library including **Rust**, **ARK**, **Soulmask**, **Palworld**, and **StarRupture**.
-2.  **Network Validation:** Built-in port checkers ensure your local sockets are clear before launch, while the **Connection Test** verifies if your server is actually visible on the public internet (WAN).
-3.  **Live Player Monitoring:** Keep track of your community at a glance. Synix displays real-time player counts directly in the grid using high-speed UDP queries.
-4.  **One-Click Launch:** Synix validates your ports, creates your folders, resolves dependencies, and deploys the server instantly.
+## 🛡️ Core Philosophy: User-Mode Sovereignty
+Synix is engineered to protect both the game server and the host operating system without requiring elevated privileges.
+* **Non-Invasive Execution:** Operates entirely within `C:\Synix`, ensuring zero modifications to Windows registry hives or protected system directories.
+* **Sanitized {Identity} Isolation:** Every server is containerized using a unique {Identity} string. This prevents "Space in Path" errors, avoids folder collisions, and allows for infinite instances of the same game title on a single machine.
+* **Portable Infrastructure:** The entire ecosystem is file-path independent. Move your root directory to any drive (SSD/NVMe), and the engine self-heals its internal pointers.
 
 ---
 
 ## 🧠 The Synix Engine: Professional Automation
-Synix is built on a **Modular Singleton Architecture**. The UI acts as a high-speed client, while the core engine natively manages your servers with built-in intelligence.
+The core engine is a **Modular Singleton** that manages the server lifecycle with proactive intelligence.
 
-* **🤖 Autonomous Watchdog:** Synix monitors the process message loop to detect crashes or freezes ("Not Responding" states). If a failure is detected, the engine initiates a recovery sequence: *Save Data ➔ Graceful Shutdown ➔ Automated Reboot*.
-* **📡 A2S Player Telemetry:** The engine uses the industry-standard A2S_INFO protocol to query running servers. It tracks `CurrentPlayers` vs `MaxPlayers` without impacting server performance.
-* **📂 Universal AppID Discovery:** No more hardcoded launch IDs. Synix dynamically searches server directories for `steam_appid.txt`, self-healing the file and injecting the correct ID from the GameDatabase blueprint.
-* **🌐 WAN/LAN Awareness:** Synix automatically detects your Local IP and Public IP, allowing for instant network diagnostics and easier port forwarding verification.
+### **Proactive Hardware Stewardship (Resource Guard)**
+Optimized for high-performance architectures (benchmarked on **Ryzen 9 / 96GB RAM** environments), Synix protects system stability:
+* **The 7GB Safety Buffer:** Synix calculates available headroom by reserving a strict 7GB RAM overhead for Windows 11 kernel processes, preventing "Out of Memory" OS crashes.
+* **80% CPU Ingress Throttle:** To maintain zero-lag performance for active players, the engine blocks new server launches if global CPU utilization exceeds 80%.
+* **Interactive Telemetry:** A 60-second real-time history graph tracks hardware health. Click the graph to access deep-dive **Resource History** diagnostics.
 
----
-
-## 🚀 The Dual-Pass Deployment System
-Synix completely automates the traditional frustrations of Windows server hosting. Once SteamCMD finishes downloading the server files, the Synix `PostInstall` routine intercepts the deployment:
-
-* **Pass 1 (Automated DLL Injection):** Natively detects Unreal Engine and Source engine titles, automatically grabbing required SteamCMD DLLs (`steamclient64.dll`, `tier0_s64.dll`, `vstdlib_s64.dll`) and injecting them directly into the game's `Binaries\Win64` folders.
-* **Pass 2 (Dynamic Config Generation):** Automatically builds, formats, and deploys default configuration files before the server boots. Synix natively handles `.json`, `.xml`, `.ini`, `.lua`, `cfg`, and proprietary formats.
+### **Autonomous Process Health (Watchdog)**
+* **Heartbeat Monitoring:** Synix monitors the process message loop to detect "Not Responding" states. If a hang is detected for >60 seconds, the engine initiates a recovery sequence.
+* **Staged Termination:** The "Stop" command executes a high-integrity shutdown. It sends a 'Safe Close' signal to the engine, allows time for a world-save, and automatically triggers a `taskkill` only if the process remains stubborn.
+* **Atomic Action Locking:** Prevents "State Corruption" by locking the server during critical operations (Updates, Validations, or Saves).
 
 ---
 
-## ✨ Feature Highlights
+## 🌐 Elite Networking & Connectivity
+Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic suite.
+* **Local vs. WAN Probing:** Natively checks if the server is binding to the LAN IP and clearing the Windows Firewall, then probes the Public WAN IP to verify router NAT Table forwarding.
+* **NAT Hairpinning Awareness:** Detects if the router blocks internal WAN loops, automatically guiding the user to utilize the correct 127.0.0.1 or LAN IP for local joining.
+* **A2S Telemetry:** Uses the industry-standard A2S_INFO protocol to query player counts and metadata without impacting server performance.
+* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to resolve the common "Invisible Server" conflict in titles like Soulmask, ensuring the Steam API handshakes with the correct Dedicated Server ID.
 
-* **🔄 Atomic Action Protection:** Operations like Updates and Starts are state-locked. You can't accidentally interrupt or corrupt a server while it is downloading, updating, or saving.
-* **📦 Safe-Start Backups:** Optional automated compression before every launch. Synix zips your world data into a timestamped archive, rotating the newest 3 backups to save disk space.
-* **📡 Port & Connection Diagnostics:** An integrated scanner that checks both local socket availability and external WAN accessibility to ensure players can join.
-* **🎨 Semantic Logging:** A multi-threaded console that uses color-coding to help you instantly distinguish between system info, success states, and critical alerts.
+---
+
+## 📂 Deployment & Maintenance Suite
+* **Binary Integrity Validation:** A native tool that compares local files against the Steam Master Manifest, repairing corrupted game data without purging world saves or configurations.
+* **Automated DLL Injection:** Detects Unreal and Source engine titles post-install, automatically injecting required SteamCMD libraries (`steamclient64.dll`, etc.) into the target binary folders.
+* **Smart Backups:** Recursive world snapshots occur every 6 hours. "Safe-Start" backups generate a full zip before manual launches, with an automated skip-logic for crash-recovery states to prevent backing up corrupted data.
+* **Discord Webhooks:** Full lifecycle notification support. Receive live JSON payloads in your Discord channels for Boots, Shutdowns, and Watchdog recovery events.
 
 ---
 
 ## 💻 Technical Stack
-> **Maximum Control. Minimal Footprint.**
-
-* **Performance Benchmarks:** Optimized for ultra-low overhead, maintaining a **~30MB RAM** idle footprint and **<1% CPU** usage.
-* **Framework:** C# / .NET 8.0+
-* **Design Pattern:** Singleton Engine Pattern with Partial Class modularity.
-* **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O.
+* **Framework:** C# / .NET 8.0+ / Modern WinForms
+* **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O and multi-threaded logging.
 * **Network Logic:** UDP-based A2S querying and HttpClient WAN detection.
+* **Efficiency:** Ultra-low overhead design (~30MB RAM idle / <1% CPU footprint).
 
 ---
 
@@ -68,18 +65,11 @@ Synix completely automates the traditional frustrations of Windows server hostin
 *Copyright © 2026 ubidzz. All Rights Reserved.*
 
 The **Synix Control Panel** is a proprietary software project. 
-
-* **Permitted Use:** This software is **free for personal use**.
-* **Source Code:** The source code is provided for **viewing and personal educational purposes only**.
-* **No License:** The author retains all legal rights to the software and its source code.
-
-### 🚫 Strictly Prohibited:
-* **No Trading/Modding:** You may not modify or trade this software or its source code.
-* **No Selling:** Commercial resale of the source code or compiled binaries is strictly prohibited.
-* **No Redistribution:** You may not redistribute this software in any form.
-* **Commercial Use:** Unauthorized commercial deployment is a direct violation of copyright.
+* **Permitted Use:** Free for personal, non-commercial use.
+* **Source Code:** Provided for transparent viewing and educational purposes only.
+* **Strict Restrictions:** Redistribution, public modification, or commercial resale of the code or compiled binaries is strictly prohibited.
 
 ---
 
 ### **Status: Revolutionizing the Personal Host Experience**
-*Synix is currently in active development. Experience the engine that handles the hard work so you can focus on the game.*
+*Synix handles the hardware stewardship and networking complexity, so you can focus on the game.*
