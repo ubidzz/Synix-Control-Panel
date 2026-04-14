@@ -12,6 +12,36 @@
 
 ---
 
+## 🏗️ Architectural Style & Design Patterns
+Synix is built with a focus on modularity, thread safety, and low-latency execution.
+
+### **Engine-Driven Singleton Architecture**
+The application utilizes a **Singleton Engine Pattern**, ensuring a single, centralized source of truth for all server operations. By separating the UI client from the core processing logic, Synix prevents race conditions and ensures that state-heavy operations—such as updates or backups—remain atomic and synchronized.
+
+### **Asynchronous Event-Driven Execution**
+Built on the **Task-based Asynchronous Pattern (TAP)**, Synix ensures a non-blocking user experience. Heavy I/O operations, including SteamCMD downloads and A2S telemetry queries, are executed on background threads. The UI remains responsive while the engine reacts to lifecycle events, such as Watchdog triggers or staged shutdown completions.
+
+### **Resource-Aware Middleware**
+Synix acts as a deterministic middleware layer between the Operating System and the Game Engine. Its **Resource Guard** logic calculates system headroom in real-time, enforcing a 7GB RAM safety buffer and an 80% CPU throttle to maintain host stability.
+
+### **Portable User-Mode Binary**
+Designed as a **Least-Privilege** executable, Synix requires no installation or administrative elevation. This portable architecture allows for effortless migration across drives or machines while maintaining folder-safe {Identity} isolation for every server instance.
+
+---
+
+## 🛡️ Security & Installation Notes
+Because Synix is a specialized tool developed for the community, you may encounter Windows security prompts during your first launch.
+
+> **Note on Digital Signatures:**
+> Synix is currently a new, independent project and does not yet have a paid Microsoft Digital Signature. This often triggers **Windows SmartScreen** or **Smart App Control**.
+> 
+> * **Windows SmartScreen:** Click `More Info` -> `Run Anyway`.
+> * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
+> 
+> **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
+
+---
+
 ## 🛡️ Core Philosophy: User-Mode Sovereignty
 Synix is engineered to protect both the game server and the host operating system without requiring elevated privileges.
 * **Non-Invasive Execution:** Operates entirely within `C:\Synix`, ensuring zero modifications to Windows registry hives or protected system directories.
@@ -58,19 +88,6 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 * **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O and multi-threaded logging.
 * **Network Logic:** UDP-based A2S querying and HttpClient WAN detection.
 * **Efficiency:** Ultra-low overhead design (~30MB RAM idle / <1% CPU footprint).
-
----
-
-## 🛡️ Security & Installation Notes
-Because Synix is a specialized tool developed for the community, you may encounter Windows security prompts during your first launch.
-
-> **Note on Digital Signatures:**
-> Synix is currently a new, independent project and does not yet have a paid Microsoft Digital Signature. This often triggers **Windows SmartScreen** or **Smart App Control**.
-> 
-> * **Windows SmartScreen:** Click `More Info` -> `Run Anyway`.
-> * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
-> 
-> **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
 
 ---
 
