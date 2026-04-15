@@ -73,7 +73,7 @@ namespace Synix_Control_Panel.SynixEngine
 				["No Minecraft?"] = "Minecraft uses a Java-based architecture that installs differently than SteamCMD games. It is not currently supported in the Synix engine.",
 
 				// --- 8. DONATIONS ---
-				["Donate & Support"] = "Synix is a labor of love for the community. Your support keeps the project free and the updates frequent!\n\nPayPal: https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8"
+				["Donate & Support"] = "Synix is a labor of love for the community. \n\nSubmit bugs on Github: https://github.com/ubidzz/Synix-Control-Panel/issues \nDiscord Support: https://discord.gg/2WR7ArC2Vr \nUpcoming Features: https://discord.gg/ZKTcpgmXNM \nRequest Game: https://discord.gg/DxUXPtyVm9 \n\nYour support keeps the project free and the updates frequent!\n\nPayPal: https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8"
 			};
 		}
 
