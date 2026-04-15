@@ -106,6 +106,7 @@ Synix is a No-Admin tool. If Windows SmartScreen flags the .exe, click 'More Inf
 ### **Status: Revolutionizing the Personal Host Experience**
 *Synix handles the hardware stewardship and networking complexity, so you can focus on the game.*
 
+Support: https://discord.gg/2WR7ArC2Vr
 Youtube Video: https://youtu.be/uxLvrT548Hk
 
 <img width="1243" height="660" alt="UI" src="https://github.com/user-attachments/assets/f10cc223-b1a0-4b85-a048-2989daf8ca8d" />
