@@ -401,7 +401,7 @@
 			chkEnableRcon.Name = "chkEnableRcon";
 			chkEnableRcon.Size = new Size(104, 32);
 			chkEnableRcon.TabIndex = 31;
-			chkEnableRcon.Text = "Activate RCON";
+			chkEnableRcon.Text = "RCON";
 			chkEnableRcon.TextAlign = ContentAlignment.MiddleCenter;
 			chkEnableRcon.UseVisualStyleBackColor = false;
 			chkEnableRcon.CheckedChanged += chkEnableRcon_CheckedChanged;
@@ -534,7 +534,7 @@
 			chkUpdateOnStart.Name = "chkUpdateOnStart";
 			chkUpdateOnStart.Size = new Size(164, 32);
 			chkUpdateOnStart.TabIndex = 58;
-			chkUpdateOnStart.Text = "Auto Update on Start";
+			chkUpdateOnStart.Text = "Update on Start";
 			chkUpdateOnStart.TextAlign = ContentAlignment.MiddleCenter;
 			chkUpdateOnStart.UseVisualStyleBackColor = false;
 			// 

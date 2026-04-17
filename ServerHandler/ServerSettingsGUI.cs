@@ -371,9 +371,9 @@ namespace Synix_Control_Panel
 			if (gameData == null)
 			{
 				var controls = new Control[] {
-			txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive,
-			numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon
-		};
+				txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive,
+				numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon
+			};
 
 				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
 
