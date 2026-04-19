@@ -48,7 +48,6 @@ public class GameInfo
 	public int CurrentPlayers { get; set; } = 0;
 	public bool IsScheduledRestartEnabled { get; set; } = false;
 	public string RestartTime { get; set; } = "04:00";
-	// Index 0 = Sunday, 1 = Monday, etc. (Matches .NET DayOfWeek)
 	public bool[] RestartDays { get; set; } = new bool[7] { true, true, true, true, true, true, true };
 	public string LastMaintenanceDate { get; set; } = "";
 	[JsonIgnore]
@@ -75,7 +74,6 @@ public class GameServer : GameInfo
 	public double LastCpuMillis { get; set; } = 0;
 	[JsonIgnore]
 	public DateTime LastSampleTime { get; set; } = DateTime.Now;
-	public string? SelectedMode { get; set; } = "PVE";
 	public bool EnableRcon { get; set; } = false;
 	public int RconPort { get; set; }
 	public string RconPassword { get; set; } = "";

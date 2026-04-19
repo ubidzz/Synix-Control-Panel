@@ -15,6 +15,7 @@ using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Diagnostics;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
 {
@@ -310,6 +311,47 @@ namespace Synix_Control_Panel
 			{
 				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
 			}
+		}
+
+		private async void btnBackup_Click(object sender, EventArgs e)
+		{
+			// 1. SELECTION CHECKS
+			if (dataGridView1.CurrentRow == null)
+			{
+				AppendLog("[ERROR] No row is currently selected!", Color.Red);
+				return;
+			}
+
+			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
+			{
+				AppendLog("[ERROR] Invalid GameServer object!", Color.Red);
+				return;
+			}
+
+			if (!Core.Instance.PassBackupSpamLock(selectedServer, out string lockMsg))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+
+			// 2. STATUS CHECK: Ensure the server is Stopped before zipping
+			if (selectedServer.Status != StatusManager.GetStatus(ServerState.Stopped))
+			{
+				AppendLog($"[ERROR] {selectedServer.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				return;
+			}
+
+			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
+			AppendLog($"[BACKUP] Starting background compression for {selectedServer.ServerName}...", Color.Cyan);
+
+			await Task.Run(() =>
+			{
+				BackupManager.ExecuteBackup(selectedServer, StartContext.Manual);
+			});
+
+			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped);
+			AppendLog($"[BACKUP] Finished zipping {selectedServer.ServerName}.", Color.LimeGreen);
+			UpdateGrid();
 		}
 
 		// 🎯 1. Change 'void' to 'async void' (standard for event handlers)

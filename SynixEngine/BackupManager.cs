@@ -22,7 +22,10 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		public static void ExecuteBackup(GameServer server, StartContext context)
 		{
-			if (!server.BackupOnStart || context == StartContext.CrashRecovery) return;
+			if (context != StartContext.Manual && !server.BackupOnStart) return;
+
+			// Never backup during a crash recovery
+			if (context == StartContext.CrashRecovery) return;
 
 			// 1. DYNAMIC PATHING
 			string sourceDir = server.InstallPath;

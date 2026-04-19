@@ -71,6 +71,7 @@
 			lblLocalIP1 = new Label();
 			lblPublicIP = new Label();
 			btnRestart = new Button();
+			backupServerToolStripMenuItem = new ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -252,7 +253,7 @@
 			// 
 			// openServerConfig
 			// 
-			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
+			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
 			openServerConfig.Size = new Size(180, 22);
 			openServerConfig.Text = "Server Options";
@@ -408,6 +409,13 @@
 			btnRestart.UseVisualStyleBackColor = true;
 			btnRestart.Click += btnRestart_Click;
 			// 
+			// backupServerToolStripMenuItem
+			// 
+			backupServerToolStripMenuItem.Name = "backupServerToolStripMenuItem";
+			backupServerToolStripMenuItem.Size = new Size(198, 22);
+			backupServerToolStripMenuItem.Text = "Backup Server";
+			backupServerToolStripMenuItem.Click += btnBackup_Click;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -485,5 +493,6 @@
 		private ToolStripSeparator toolStripSeparator4;
 		private ToolStripSeparator toolStripSeparator5;
 		private ToolStripMenuItem fileValidationToolStripMenuItem;
+		private ToolStripMenuItem backupServerToolStripMenuItem;
 	}
 }
