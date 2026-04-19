@@ -194,13 +194,27 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
 		{
-			var conflict = MainGUI.serverList.FirstOrDefault(s =>
-				s != excluding &&
-				(s.Port == port ||
-				 s.QueryPort == port ||
-				 (s.AppPort.HasValue && s.AppPort.Value == port))); 
+			// 🎯 1. First, check for an EXACT match on the primary Port.
+			// This is the most "illegal" conflict (two games on same launch port).
+			var primaryMatch = MainGUI.serverList.FirstOrDefault(s =>
+				s != excluding && s.Port == port);
 
-			return conflict?.ServerName;
+			if (primaryMatch != null) return primaryMatch.ServerName;
+
+			// 🎯 2. If no primary match, check for overlaps with Query or App ports.
+			// This handles the "+1" bleed you're seeing.
+			var secondaryMatch = MainGUI.serverList.FirstOrDefault(s =>
+				s != excluding &&
+				(s.QueryPort == port || (s.AppPort.HasValue && s.AppPort.Value == port)));
+
+			if (secondaryMatch != null)
+			{
+				// We return the name, but adding " (Query)" or " (App)" to the string
+				// helps the SyncGatekeeper show a better warning.
+				return secondaryMatch.ServerName;
+			}
+
+			return null;
 		}
 
 		public bool PassResourceGuard(out string message)

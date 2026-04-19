@@ -90,7 +90,7 @@
 			ServerNameLabel.BackColor = Color.Transparent;
 			ServerNameLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			ServerNameLabel.ForeColor = Color.White;
-			ServerNameLabel.Location = new Point(12, 9);
+			ServerNameLabel.Location = new Point(12, 61);
 			ServerNameLabel.Name = "ServerNameLabel";
 			ServerNameLabel.Size = new Size(87, 17);
 			ServerNameLabel.TabIndex = 0;
@@ -102,7 +102,7 @@
 			GameServerLabel.BackColor = Color.Transparent;
 			GameServerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			GameServerLabel.ForeColor = Color.White;
-			GameServerLabel.Location = new Point(12, 70);
+			GameServerLabel.Location = new Point(12, 118);
 			GameServerLabel.Name = "GameServerLabel";
 			GameServerLabel.Size = new Size(86, 17);
 			GameServerLabel.TabIndex = 1;
@@ -114,7 +114,7 @@
 			PortLabel.BackColor = Color.Transparent;
 			PortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			PortLabel.ForeColor = Color.White;
-			PortLabel.Location = new Point(94, 205);
+			PortLabel.Location = new Point(100, 242);
 			PortLabel.Name = "PortLabel";
 			PortLabel.Size = new Size(34, 17);
 			PortLabel.TabIndex = 2;
@@ -126,7 +126,7 @@
 			FolderPathLabel.BackColor = Color.Transparent;
 			FolderPathLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			FolderPathLabel.ForeColor = Color.White;
-			FolderPathLabel.Location = new Point(12, 366);
+			FolderPathLabel.Location = new Point(12, 408);
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(104, 17);
 			FolderPathLabel.TabIndex = 3;
@@ -134,7 +134,7 @@
 			// 
 			// txtName
 			// 
-			txtName.Location = new Point(12, 29);
+			txtName.Location = new Point(12, 81);
 			txtName.Name = "txtName";
 			txtName.Size = new Size(368, 23);
 			txtName.TabIndex = 4;
@@ -144,16 +144,16 @@
 			// 
 			cmbGame.FormattingEnabled = true;
 			cmbGame.Items.AddRange(new object[] { "Game List" });
-			cmbGame.Location = new Point(12, 90);
+			cmbGame.Location = new Point(12, 138);
 			cmbGame.Name = "cmbGame";
-			cmbGame.Size = new Size(273, 23);
+			cmbGame.Size = new Size(276, 23);
 			cmbGame.TabIndex = 5;
 			cmbGame.Text = "Pick Game";
 			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
 			// 
 			// numPort
 			// 
-			numPort.Location = new Point(94, 225);
+			numPort.Location = new Point(100, 262);
 			numPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numPort.Name = "numPort";
@@ -163,7 +163,7 @@
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(41, 473);
+			btnBrowse.Location = new Point(204, 433);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -188,11 +188,11 @@
 			chkDefaultPath.BackColor = Color.Transparent;
 			chkDefaultPath.FlatStyle = FlatStyle.Flat;
 			chkDefaultPath.ForeColor = Color.White;
-			chkDefaultPath.Location = new Point(12, 386);
+			chkDefaultPath.Location = new Point(12, 428);
 			chkDefaultPath.Name = "chkDefaultPath";
 			chkDefaultPath.Size = new Size(157, 32);
 			chkDefaultPath.TabIndex = 10;
-			chkDefaultPath.Text = "Use Default Location (C:\\Game)";
+			chkDefaultPath.Text = "Default Location";
 			chkDefaultPath.TextAlign = ContentAlignment.MiddleCenter;
 			chkDefaultPath.UseVisualStyleBackColor = false;
 			chkDefaultPath.Click += chkDefaultPath_CheckedChanged;
@@ -203,7 +203,7 @@
 			ltextLabel1.BackColor = Color.Transparent;
 			ltextLabel1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			ltextLabel1.ForeColor = Color.White;
-			ltextLabel1.Location = new Point(122, 475);
+			ltextLabel1.Location = new Point(285, 435);
 			ltextLabel1.Name = "ltextLabel1";
 			ltextLabel1.Size = new Size(73, 17);
 			ltextLabel1.TabIndex = 11;
@@ -234,7 +234,7 @@
 			MaxPlayerLabel.BackColor = Color.Transparent;
 			MaxPlayerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			MaxPlayerLabel.ForeColor = Color.White;
-			MaxPlayerLabel.Location = new Point(12, 205);
+			MaxPlayerLabel.Location = new Point(12, 242);
 			MaxPlayerLabel.Name = "MaxPlayerLabel";
 			MaxPlayerLabel.Size = new Size(76, 17);
 			MaxPlayerLabel.TabIndex = 14;
@@ -242,7 +242,7 @@
 			// 
 			// numMaxPlayers
 			// 
-			numMaxPlayers.Location = new Point(12, 225);
+			numMaxPlayers.Location = new Point(12, 262);
 			numMaxPlayers.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
 			numMaxPlayers.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
 			numMaxPlayers.Name = "numMaxPlayers";
@@ -256,7 +256,7 @@
 			MapLabel.BackColor = Color.Transparent;
 			MapLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			MapLabel.ForeColor = Color.White;
-			MapLabel.Location = new Point(12, 135);
+			MapLabel.Location = new Point(12, 181);
 			MapLabel.Name = "MapLabel";
 			MapLabel.Size = new Size(35, 17);
 			MapLabel.TabIndex = 16;
@@ -268,7 +268,7 @@
 			TextLabel3.BackColor = Color.Transparent;
 			TextLabel3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel3.ForeColor = Color.White;
-			TextLabel3.Location = new Point(415, 386);
+			TextLabel3.Location = new Point(415, 359);
 			TextLabel3.Name = "TextLabel3";
 			TextLabel3.Size = new Size(124, 17);
 			TextLabel3.TabIndex = 18;
@@ -276,7 +276,7 @@
 			// 
 			// txtExtraArgs
 			// 
-			txtExtraArgs.Location = new Point(414, 499);
+			txtExtraArgs.Location = new Point(414, 466);
 			txtExtraArgs.Name = "txtExtraArgs";
 			txtExtraArgs.Size = new Size(368, 23);
 			txtExtraArgs.TabIndex = 19;
@@ -286,7 +286,7 @@
 			TextLabel7.AutoSize = true;
 			TextLabel7.BackColor = Color.Transparent;
 			TextLabel7.ForeColor = Color.White;
-			TextLabel7.Location = new Point(415, 481);
+			TextLabel7.Location = new Point(415, 448);
 			TextLabel7.Name = "TextLabel7";
 			TextLabel7.Size = new Size(257, 15);
 			TextLabel7.TabIndex = 20;
@@ -298,7 +298,7 @@
 			QueryPortLabel.BackColor = Color.Transparent;
 			QueryPortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			QueryPortLabel.ForeColor = Color.White;
-			QueryPortLabel.Location = new Point(163, 205);
+			QueryPortLabel.Location = new Point(175, 242);
 			QueryPortLabel.Name = "QueryPortLabel";
 			QueryPortLabel.Size = new Size(76, 17);
 			QueryPortLabel.TabIndex = 21;
@@ -306,7 +306,7 @@
 			// 
 			// numQueryPort
 			// 
-			numQueryPort.Location = new Point(163, 225);
+			numQueryPort.Location = new Point(175, 262);
 			numQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numQueryPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numQueryPort.Name = "numQueryPort";
@@ -319,15 +319,15 @@
 			WarningLabel.AutoEllipsis = true;
 			WarningLabel.BackColor = Color.Transparent;
 			WarningLabel.ForeColor = Color.Red;
-			WarningLabel.Location = new Point(12, 421);
+			WarningLabel.Location = new Point(12, 12);
 			WarningLabel.Name = "WarningLabel";
-			WarningLabel.Size = new Size(368, 47);
+			WarningLabel.Size = new Size(375, 40);
 			WarningLabel.TabIndex = 23;
 			// 
 			// cmbWorldName
 			// 
 			cmbWorldName.FormattingEnabled = true;
-			cmbWorldName.Location = new Point(12, 155);
+			cmbWorldName.Location = new Point(12, 201);
 			cmbWorldName.Name = "cmbWorldName";
 			cmbWorldName.Size = new Size(186, 23);
 			cmbWorldName.TabIndex = 24;
@@ -354,7 +354,7 @@
 			// cmbCompetitive
 			// 
 			cmbCompetitive.FormattingEnabled = true;
-			cmbCompetitive.Location = new Point(291, 90);
+			cmbCompetitive.Location = new Point(291, 138);
 			cmbCompetitive.Name = "cmbCompetitive";
 			cmbCompetitive.Size = new Size(89, 23);
 			cmbCompetitive.TabIndex = 27;
@@ -365,7 +365,7 @@
 			lblCompetitive.BackColor = Color.Transparent;
 			lblCompetitive.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblCompetitive.ForeColor = Color.White;
-			lblCompetitive.Location = new Point(291, 70);
+			lblCompetitive.Location = new Point(294, 118);
 			lblCompetitive.Name = "lblCompetitive";
 			lblCompetitive.Size = new Size(83, 17);
 			lblCompetitive.TabIndex = 28;
@@ -373,8 +373,9 @@
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(12, 499);
+			txtInstallPath.Location = new Point(12, 466);
 			txtInstallPath.Name = "txtInstallPath";
+			txtInstallPath.ReadOnly = true;
 			txtInstallPath.Size = new Size(368, 23);
 			txtInstallPath.TabIndex = 29;
 			txtInstallPath.TextChanged += txtInstallPath_TextChanged;
@@ -385,7 +386,7 @@
 			textLabel2.BackColor = Color.Transparent;
 			textLabel2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			textLabel2.ForeColor = Color.White;
-			textLabel2.Location = new Point(12, 475);
+			textLabel2.Location = new Point(175, 435);
 			textLabel2.Name = "textLabel2";
 			textLabel2.Size = new Size(23, 17);
 			textLabel2.TabIndex = 30;
@@ -397,7 +398,7 @@
 			chkEnableRcon.BackColor = Color.White;
 			chkEnableRcon.FlatStyle = FlatStyle.Flat;
 			chkEnableRcon.ForeColor = Color.Black;
-			chkEnableRcon.Location = new Point(12, 261);
+			chkEnableRcon.Location = new Point(12, 305);
 			chkEnableRcon.Name = "chkEnableRcon";
 			chkEnableRcon.Size = new Size(104, 32);
 			chkEnableRcon.TabIndex = 31;
@@ -408,7 +409,7 @@
 			// 
 			// numRconPort
 			// 
-			numRconPort.Location = new Point(12, 317);
+			numRconPort.Location = new Point(12, 360);
 			numRconPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numRconPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numRconPort.Name = "numRconPort";
@@ -418,7 +419,7 @@
 			// 
 			// txtRconPassword
 			// 
-			txtRconPassword.Location = new Point(107, 316);
+			txtRconPassword.Location = new Point(100, 360);
 			txtRconPassword.Name = "txtRconPassword";
 			txtRconPassword.Size = new Size(223, 23);
 			txtRconPassword.TabIndex = 33;
@@ -429,7 +430,7 @@
 			lblRCONpassword.BackColor = Color.Transparent;
 			lblRCONpassword.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblRCONpassword.ForeColor = Color.White;
-			lblRCONpassword.Location = new Point(107, 296);
+			lblRCONpassword.Location = new Point(100, 340);
 			lblRCONpassword.Name = "lblRCONpassword";
 			lblRCONpassword.Size = new Size(106, 17);
 			lblRCONpassword.TabIndex = 35;
@@ -445,7 +446,7 @@
 			chkEnableSchedule.Name = "chkEnableSchedule";
 			chkEnableSchedule.Size = new Size(164, 32);
 			chkEnableSchedule.TabIndex = 0;
-			chkEnableSchedule.Text = "Activate";
+			chkEnableSchedule.Text = "Auto Restart";
 			chkEnableSchedule.TextAlign = ContentAlignment.MiddleCenter;
 			chkEnableSchedule.UseVisualStyleBackColor = false;
 			chkEnableSchedule.CheckedChanged += chkEnableSchedule_CheckedChanged;
@@ -456,7 +457,7 @@
 			lblWorldSeed.BackColor = Color.Transparent;
 			lblWorldSeed.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblWorldSeed.ForeColor = Color.White;
-			lblWorldSeed.Location = new Point(204, 135);
+			lblWorldSeed.Location = new Point(204, 181);
 			lblWorldSeed.Name = "lblWorldSeed";
 			lblWorldSeed.Size = new Size(79, 17);
 			lblWorldSeed.TabIndex = 46;
@@ -464,7 +465,7 @@
 			// 
 			// txtWorldSeed
 			// 
-			txtWorldSeed.Location = new Point(204, 155);
+			txtWorldSeed.Location = new Point(204, 201);
 			txtWorldSeed.Name = "txtWorldSeed";
 			txtWorldSeed.Size = new Size(176, 23);
 			txtWorldSeed.TabIndex = 47;
@@ -476,7 +477,7 @@
 			lblRCONport.BackColor = Color.Transparent;
 			lblRCONport.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblRCONport.ForeColor = Color.White;
-			lblRCONport.Location = new Point(12, 296);
+			lblRCONport.Location = new Point(12, 340);
 			lblRCONport.Name = "lblRCONport";
 			lblRCONport.Size = new Size(74, 17);
 			lblRCONport.TabIndex = 48;
@@ -487,7 +488,7 @@
 			lblaruments.AutoEllipsis = true;
 			lblaruments.BackColor = Color.Transparent;
 			lblaruments.ForeColor = Color.White;
-			lblaruments.Location = new Point(415, 410);
+			lblaruments.Location = new Point(414, 376);
 			lblaruments.Name = "lblaruments";
 			lblaruments.Size = new Size(368, 66);
 			lblaruments.TabIndex = 52;
@@ -499,7 +500,7 @@
 			lblAppPort.BackColor = Color.Transparent;
 			lblAppPort.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblAppPort.ForeColor = Color.White;
-			lblAppPort.Location = new Point(245, 205);
+			lblAppPort.Location = new Point(261, 242);
 			lblAppPort.Name = "lblAppPort";
 			lblAppPort.Size = new Size(63, 17);
 			lblAppPort.TabIndex = 55;
@@ -507,17 +508,17 @@
 			// 
 			// numAppPort
 			// 
-			numAppPort.Location = new Point(245, 225);
+			numAppPort.Location = new Point(261, 262);
 			numAppPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numAppPort.Minimum = new decimal(new int[] { 10000, 0, 0, 0 });
 			numAppPort.Name = "numAppPort";
-			numAppPort.Size = new Size(78, 23);
+			numAppPort.Size = new Size(63, 23);
 			numAppPort.TabIndex = 56;
 			numAppPort.Value = new decimal(new int[] { 10000, 0, 0, 0 });
 			// 
 			// btnViewArgs
 			// 
-			btnViewArgs.Location = new Point(542, 457);
+			btnViewArgs.Location = new Point(542, 424);
 			btnViewArgs.Name = "btnViewArgs";
 			btnViewArgs.Size = new Size(158, 21);
 			btnViewArgs.TabIndex = 57;
@@ -565,13 +566,13 @@
 			chkBackupOnStart.Name = "chkBackupOnStart";
 			chkBackupOnStart.Size = new Size(164, 32);
 			chkBackupOnStart.TabIndex = 64;
-			chkBackupOnStart.Text = "Auto Backup";
+			chkBackupOnStart.Text = "Backup on Start";
 			chkBackupOnStart.UseVisualStyleBackColor = true;
 			// 
 			// chkEnableDiscord
 			// 
 			chkEnableDiscord.BackColor = Color.Transparent;
-			chkEnableDiscord.Location = new Point(415, 225);
+			chkEnableDiscord.Location = new Point(415, 204);
 			chkEnableDiscord.Name = "chkEnableDiscord";
 			chkEnableDiscord.Size = new Size(164, 32);
 			chkEnableDiscord.TabIndex = 65;
@@ -581,14 +582,14 @@
 			// 
 			// txtDiscordWebhook
 			// 
-			txtDiscordWebhook.Location = new Point(415, 270);
+			txtDiscordWebhook.Location = new Point(415, 242);
 			txtDiscordWebhook.Name = "txtDiscordWebhook";
 			txtDiscordWebhook.Size = new Size(368, 23);
 			txtDiscordWebhook.TabIndex = 66;
 			// 
 			// btnTestDiscord
 			// 
-			btnTestDiscord.Location = new Point(601, 229);
+			btnTestDiscord.Location = new Point(585, 208);
 			btnTestDiscord.Name = "btnTestDiscord";
 			btnTestDiscord.Size = new Size(115, 23);
 			btnTestDiscord.TabIndex = 67;
@@ -603,6 +604,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 584);
+			Controls.Add(WarningLabel);
 			Controls.Add(btnTestDiscord);
 			Controls.Add(txtDiscordWebhook);
 			Controls.Add(chkEnableDiscord);
@@ -629,7 +631,6 @@
 			Controls.Add(txtAdminPassword);
 			Controls.Add(lblAdminPassword);
 			Controls.Add(cmbWorldName);
-			Controls.Add(WarningLabel);
 			Controls.Add(numQueryPort);
 			Controls.Add(QueryPortLabel);
 			Controls.Add(TextLabel7);

@@ -110,7 +110,7 @@ namespace Synix_Control_Panel.UI
 				g.FillEllipse(Brushes.White, xPos, rect.Y + 4, thumbSize, thumbSize);
 
 				// 3. Draw Labels (Sun, Mon, etc.)
-				string text = string.IsNullOrEmpty(label) ? (chk.Checked ? "ON" : "OFF") : label;
+				string text = !string.IsNullOrEmpty(chk.Text) ? chk.Text : (string.IsNullOrEmpty(label) ? (chk.Checked ? "ON" : "OFF") : label);
 				Font font = new Font("Segoe UI", 8F, FontStyle.Bold);
 
 				Rectangle textRect = chk.Checked ? new Rectangle(rect.X, rect.Y, rect.Width - 22, rect.Height)
@@ -119,6 +119,56 @@ namespace Synix_Control_Panel.UI
 				TextRenderer.DrawText(g, text, font, textRect, Color.White,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 			}
+		}
+
+		public static void WarningLabel_Paint(object sender, PaintEventArgs e)
+		{
+			Label lbl = (Label)sender;
+			if (lbl.Width <= 0 || lbl.Height <= 0) return;
+
+			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			int radius = 15; // Buffalo-sized roundness
+			using (GraphicsPath path = new GraphicsPath())
+			{
+				path.AddArc(0, 0, radius, radius, 180, 90);
+				path.AddArc(lbl.Width - radius - 1, 0, radius, radius, 270, 90);
+				path.AddArc(lbl.Width - radius - 1, lbl.Height - radius - 1, radius, radius, 0, 90);
+				path.AddArc(0, lbl.Height - radius - 1, radius, radius, 90, 90);
+				path.CloseFigure();
+
+				// 🎯 1. CLIP THE REGION (This makes it actually round)
+				if (lbl.Region == null || lbl.Region.GetBounds(e.Graphics).Width != lbl.Width)
+				{
+					lbl.Region = new Region(path);
+				}
+
+				// 🎯 2. FILL BACKGROUND
+				using (SolidBrush brush = new SolidBrush(lbl.BackColor))
+				{
+					e.Graphics.FillPath(brush, path);
+				}
+			}
+
+			// 🎯 3. DRAW TEXT (Using the center alignment)
+			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, lbl.ClientRectangle, lbl.ForeColor,
+				TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+		}
+
+		public static void StyleWarningLabel(Label lbl)
+		{
+			if (lbl == null) return;
+
+			lbl.AutoSize = false;
+			lbl.FlatStyle = FlatStyle.Flat;
+
+			// 🎯 Explicitly use System.Drawing to kill the ambiguity
+			lbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
+			lbl.Paint -= WarningLabel_Paint;
+			lbl.Paint += WarningLabel_Paint;
+
+			lbl.Invalidate();
 		}
 	}
 }
