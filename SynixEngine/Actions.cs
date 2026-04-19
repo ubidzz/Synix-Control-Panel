@@ -230,7 +230,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task ValidationServerAndReport(GameServer server)
 		{
-			// 1. YOUR SAFETY: Don't update if server is running
+			// 1. YOUR SAFETY: Don't validate if server is running
 			if (server.Status == StatusManager.GetStatus(ServerState.Running))
 			{
 				MessageBox.Show("You must stop the server before validating server files.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -466,13 +466,17 @@ namespace Synix_Control_Panel.SynixEngine
 			string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
 			Log($"[WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
 
+			_ = SendDiscordAlert(server, "CRASH DETECTED",
+				$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
+				Color.Red);
+
 			// 2. SCRUB: The Stop method handles Ctrl+C and the mandatory taskkill fallback
 			await Task.Run(() =>
 			{
 				Servers.Stop(server, msg =>
 				{
 					MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color.Yellow)));
-				});
+				}, false);
 			});
 
 			// 3. COOL DOWN: Wait for Windows to fully release file locks and ports

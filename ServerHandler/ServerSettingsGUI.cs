@@ -335,14 +335,11 @@ namespace Synix_Control_Panel
 			{
 				if (_isEditMode && _existingServer != null)
 				{
-					// FIX: Manual search to avoid FindIndex issue on BindingList
-					for (int i = 0; i < MainGUI.serverList.Count; i++)
+					var existing = MainGUI.serverList.FirstOrDefault(s => s.ServerName == _existingServer.ServerName);
+					if (existing != null)
 					{
-						if (MainGUI.serverList[i].ServerName == _existingServer.ServerName)
-						{
-							MainGUI.serverList[i] = NewServer;
-							break;
-						}
+						int index = MainGUI.serverList.IndexOf(existing);
+						MainGUI.serverList[index] = NewServer;
 					}
 				}
 				else MainGUI.serverList.Add(NewServer);

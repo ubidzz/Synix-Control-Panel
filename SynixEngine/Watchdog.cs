@@ -32,78 +32,49 @@ namespace Synix_Control_Panel.SynixEngine
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				string exePathFromDB = dbEntry?.ExeName ?? "";
 
-				// --- 1. THE PROMOTION MECHANIC (Starting -> Running) ---
-				if (server.Status == StatusManager.GetStatus(ServerState.Starting) && server.PID.HasValue)
+				if (server.Status == StatusManager.GetStatus(ServerState.Starting))
 				{
-					// Check if the process is physically alive first
+					if (!server.PID.HasValue) continue;
+
 					if (IsProcessAlive(server.PID.Value, exePathFromDB))
 					{
-						// 🎯 A2S PROBE INTEGRATION: Don't promote until the game responds to packets
-						// We use a 5-second interval so we don't flood the server while it's loading
-						if (server.LastProbeTime == null || (DateTime.Now - server.LastProbeTime.Value).TotalSeconds >= 5)
+						if (!server.HasAnnouncedOnline)
 						{
-							server.LastProbeTime = DateTime.Now;
-
-							// Run the probe asynchronously to keep the Heartbeat loop fast
-							_ = Task.Run(async () =>
+							if (server.LastProbeTime == null || (DateTime.Now - server.LastProbeTime.Value).TotalSeconds >= 5)
 							{
-								// Prove the game is truly awake using your A2S logic
-								bool isTrulyOnline = await TestServerConnectivity("127.0.0.1", server.QueryPort);
-
-								if (isTrulyOnline)
+								server.LastProbeTime = DateTime.Now;
+								_ = Task.Run(async () =>
 								{
-									MainGUI.Instance?.Invoke((Action)(() =>
+									string publicIp = await GetPublicIP();
+									bool isResponding = await TestServerConnectivity(publicIp, server.QueryPort);
+									if (isResponding)
 									{
-										// Final safety check: ensure status hasn't changed since probe started
-										if (server.Status == StatusManager.GetStatus(ServerState.Starting))
+										MainGUI.Instance?.Invoke((Action)(() =>
 										{
-											server.Status = StatusManager.GetStatus(ServerState.Running);
-
-											// 🚀 PUBLIC ALERT: Fire only when players can actually join!
+											// 🚀 CALLING DISCORD: SERVER ONLINE
 											_ = SendDiscordAlert(server, "SERVER ONLINE",
-												"The server has finished loading and is now accepting connections. Join now!",
+												$"Successfully tested the server connectivity! If you still can't connect to the server please wait a minutes or two then try again.",
 												Color.LimeGreen);
 
-											Log($"[ENGINE] {server.ServerName} passed A2S_INFO probe. Promotion complete.", Color.Lime);
-
-											// Redraw the UI grid
+											server.Status = StatusManager.GetStatus(ServerState.Running);
 											MainGUI.Instance.UpdateGrid();
-										}
-									}));
-								}
-							});
+										}));
+									}
+								});
+							}
 						}
 					}
+					else { _ = RecoverServer(server); }
 					continue;
 				}
 
-				// --- 2. MONITOR STABLE RUNNING SERVERS ---
+				// --- 2. MONITOR STABLE SERVERS ---
 				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.PID.HasValue)
 				{
-					int currentPid = server.PID.Value;
-
-					if (!_watchdogGracePeriods.ContainsKey(currentPid))
+					if (!IsProcessAlive(server.PID.Value, exePathFromDB))
 					{
-						_watchdogGracePeriods[currentPid] = 1;
+						_ = RecoverServer(server);
 					}
-
-					if (_watchdogGracePeriods[currentPid] > 0)
-					{
-						_watchdogGracePeriods[currentPid]--;
-						continue;
-					}
-
-					// 3. 2-Layer Identity Check: PID existence + Process Name match
-					if (!IsProcessAlive(currentPid, exePathFromDB))
-					{
-						_watchdogGracePeriods.Remove(currentPid);
-						HandleCrash(server);
-					}
-				}
-				else if (server.PID.HasValue)
-				{
-					// Clean up dictionary if the server is stopped
-					_watchdogGracePeriods.Remove(server.PID.Value);
 				}
 			}
 		}
@@ -129,42 +100,6 @@ namespace Synix_Control_Panel.SynixEngine
 				// Catching "Process not found" - PID is genuinely gone
 				return false;
 			}
-		}
-
-		// 🚀 AI RECOVERY: Merged logic for crash reporting and auto-restart
-		private void HandleCrash(GameServer server)
-		{
-			// 🎯 1. LOG FIRST: Immediate local feedback
-			Log($"[WATCHDOG] {server.ServerName} stopped unexpectedly! PID: {server.PID}", Color.Red, true);
-
-			// 🎯 2. SEND DISCORD ALERT: This was missing!
-			// We do this before clearing the PID so the alert has the right context
-			_ = SendDiscordAlert(server, "CRASH DETECTED",
-				$"The server process has unexpectedly terminated. Synix is initiating a 2-second recovery delay.",
-				Color.Red);
-
-			// 🎯 3. CLEAR STATE: Prepare for the fresh PID
-			server.RunningProcess = null;
-
-			Log($"[WATCHDOG] Attempting to restart {server.ServerName} in 2 seconds...", Color.Yellow);
-
-			// 🎯 4. IMPROVED RECOVERY: Using async/await is safer for WinForms context than ContinueWith
-			_ = Task.Run(async () =>
-			{
-				await Task.Delay(2000);
-
-				MainGUI.Instance?.Invoke((Action)(() =>
-				{
-					// Only restart if the status hasn't been manually changed to 'Stopped' in those 2 seconds
-					if (server.Status == StatusManager.GetStatus(ServerState.Crashed))
-					{
-						Log($"[WATCHDOG] Restarting {server.ServerName} now...", Color.Cyan);
-
-						// Start with CrashRecovery context to skip backups and stay under 1% CPU usage
-						Servers.Start(server, msg => Log(msg), StartContext.CrashRecovery);
-					}
-				}));
-			});
 		}
 
 		public void InitializeAndRebind()

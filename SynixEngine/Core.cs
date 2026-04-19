@@ -56,7 +56,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task SendDiscordAlert(GameServer server, string title, string message, Color color)
 		{
-			// 🎯 This check only works if IsDiscordAlertEnabled is in GameServer.cs
 			if (!server.IsDiscordAlertEnabled || string.IsNullOrWhiteSpace(server.DiscordWebhook))
 				return;
 
@@ -66,22 +65,29 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				embeds = new[]
 				{
-					new
-					{
-						title = $"🛰️ {server.ServerName} | {title}",
-						description = message,
-						color = discordColor,
-						footer = new { text = "Synix Engine • Professional Automation" },
-						timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
-					}
-				}
+			new
+			{
+				title = $"🛰️ {server.ServerName} | {title}",
+				description = message,
+				color = discordColor,
+				footer = new { text = "Synix Engine • Professional Automation" },
+				timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+			}
+		}
 			};
 
 			try
 			{
 				string json = JsonSerializer.Serialize(payload);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
-				_ = _discordClient.PostAsync(server.DiscordWebhook, content);
+
+				// 🎯 FIX: We MUST await the actual post, otherwise it dies when the method scope ends
+				var response = await _discordClient.PostAsync(server.DiscordWebhook, content);
+
+				if (!response.IsSuccessStatusCode)
+				{
+					System.Diagnostics.Debug.WriteLine($"[DISCORD] Webhook failed: {response.StatusCode}");
+				}
 			}
 			catch (Exception ex)
 			{

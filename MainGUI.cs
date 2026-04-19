@@ -315,8 +315,6 @@ namespace Synix_Control_Panel
 		// 🎯 1. Change 'void' to 'async void' (standard for event handlers)
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
-			AppendLog("Start button clicked...", Color.Cyan);
-
 			// 1. SELECTION CHECKS
 			if (dataGridView1.CurrentRow == null)
 			{

@@ -112,7 +112,6 @@ namespace Synix_Control_Panel.ServerHandler
 						if (!string.IsNullOrWhiteSpace(fileContent))
 						{
 							invokedId = fileContent;
-							logCallback?.Invoke($"[ENGINE] {server.ServerName} invoked {invokedId} from file.");
 						}
 					}
 					catch (Exception ex) { logCallback?.Invoke($"[WARNING] File Read Error: {ex.Message}"); }
@@ -176,7 +175,6 @@ namespace Synix_Control_Panel.ServerHandler
 				{
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
-					server.Status = StatusManager.GetStatus(ServerState.Running);
 
 					if (server.StartTime == null) server.StartTime = DateTime.Now;
 
@@ -188,11 +186,11 @@ namespace Synix_Control_Panel.ServerHandler
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
 							// Keep local Red log for your Buffalo control panel
-							MainGUI.Instance?.Invoke((Action)(() =>
-								MainGUI.Instance.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly!", Color.Red)));
+							//MainGUI.Instance?.Invoke((Action)(() =>
+								//MainGUI.Instance.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly!", Color.Red)));
 
 							// Watchdog handles the single Discord crash notification
-							await Synix_Control_Panel.SynixEngine.Core.Instance.ExecuteRestartSequence(server);
+							await Synix_Control_Panel.SynixEngine.Core.Instance.RecoverServer(server);
 						}
 						else
 						{
@@ -226,7 +224,7 @@ namespace Synix_Control_Panel.ServerHandler
 				if (isManual)
 				{
 					_ = SynixEngine.Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
-						"A shutdown command was issued via the Control Panel.", Color.Orange);
+						"A shutdown command was issued via the Synix Control Panel.", Color.Orange);
 				}
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...");

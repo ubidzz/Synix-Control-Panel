@@ -21,6 +21,8 @@ public class GameInfo
 {
 	public string Game { get; init; } = string.Empty;
 	[JsonIgnore]
+	public bool HasAnnouncedOnline { get; set; } = false;
+	[JsonIgnore]
 	public bool NeedsConfigWarning { get; internal set; }
 	[JsonIgnore]
 	public string WarningMessage { get; set; } = "This game requires configuration before it can boot properly.";
