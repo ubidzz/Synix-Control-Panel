@@ -17,6 +17,8 @@ namespace Synix_Control_Panel.ServerHandler
 {
 	public static class GameFix
 	{
+		public static bool ManualConfigWasCreated { get; set; } = false;
+
 		public static bool PostInstall(GameServer server)
 		{
 			if (string.IsNullOrWhiteSpace(server.InstallPath) || !Directory.Exists(server.InstallPath))
@@ -382,6 +384,7 @@ ServerName=""{ServerName}""";
 			{
 				string finalContent = contentTemplate.Replace("{ServerName}", server.ServerName);
 				string targetFolder = Path.GetDirectoryName(fullFilePath);
+				ManualConfigWasCreated = true;
 				return FileHandler.Create(targetFolder, Path.GetFileName(fullFilePath), finalContent);
 			}
 			return false;

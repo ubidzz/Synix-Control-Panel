@@ -317,6 +317,7 @@ namespace Synix_Control_Panel.SynixEngine
 					GameServer newServer = settingsForm.NewServer;
 					var gameData = GameDatabase.GetGame(newServer.Game);
 					string appId = gameData?.AppID ?? "";
+					GameFix.ManualConfigWasCreated = false;
 
 					if (string.IsNullOrEmpty(appId))
 					{
@@ -353,7 +354,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 						bool fixApplied = GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
-
+						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
 						FileHandler.SaveServers();
 						Log($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---", Color.Green, true);
 					}
