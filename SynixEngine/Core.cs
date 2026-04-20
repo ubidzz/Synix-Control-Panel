@@ -12,6 +12,7 @@
 // 🎯 THE FIX: You must include this so the Core knows what a "GameServer" is
 using Synix_Control_Panel.Database;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
@@ -100,6 +101,7 @@ namespace Synix_Control_Panel.SynixEngine
 			PerformWatchdogCheck();
 			UpdateResourceStats();
 			PerformMaintenanceCheck();
+			CheckForDDoS();
 
 			foreach (GameServer server in MainGUI.serverList)
 			{

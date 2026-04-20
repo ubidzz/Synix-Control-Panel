@@ -19,13 +19,20 @@ Synix is built with a focus on modularity, thread safety, and low-latency execut
 The application utilizes a **Singleton Engine Pattern**, ensuring a single, centralized source of truth for all server operations. By separating the UI client from the core processing logic, Synix prevents race conditions and ensures that state-heavy operations—such as updates or backups—remain atomic and synchronized.
 
 ### **Asynchronous Event-Driven Execution**
-Built on the **Task-based Asynchronous Pattern (TAP)**, Synix ensures a non-blocking user experience. Heavy I/O operations, including SteamCMD downloads and A2S telemetry queries, are executed on background threads. The UI remains responsive while the engine reacts to lifecycle events, such as Watchdog triggers or staged shutdown completions.
+Built on the **Task-based Asynchronous Pattern (TAP)**, Synix ensures a non-blocking user experience. Heavy I/O operations, including SteamCMD downloads and network telemetry, are executed on background threads. The UI remains responsive while the engine reacts to lifecycle events.
 
 ### **Resource-Aware Middleware**
 Synix acts as a deterministic middleware layer between the Operating System and the Game Engine. Its **Resource Guard** logic calculates system headroom in real-time, enforcing a 7GB RAM safety buffer and an 80% CPU throttle to maintain host stability.
 
-### **Portable User-Mode Binary**
-Designed as a **Least-Privilege** executable, Synix requires no installation or administrative elevation. This portable architecture allows for effortless migration across drives or machines while maintaining folder-safe {Identity} isolation for every server instance.
+---
+
+## 🛡️ Synix Network Guard
+A specialized security module designed to protect the host's global network interface from saturation and resource exhaustion.
+
+* **Global Interface Monitoring:** Tracks total bandwidth (Bytes/s) across the primary network adapter, identifying surges that exceed normal gameplay thresholds.
+* **Heuristic Attack Analysis:** Differentiates between legitimate player spikes and malicious floods by cross-referencing network traffic with CPU interrupt levels.
+* **SteamCMD Awareness:** Intelligent logic prevents false positives during game installations or updates by monitoring active SteamCMD processes.
+* **Critical Service Alerts:** Triggers a system-wide "Network Guard" MessageBox that identifies a DDoS attack even when the user is tabbed out.
 
 ---
 
@@ -45,7 +52,7 @@ Because Synix is a specialized tool developed for the community, you may encount
 ## 🛡️ Core Philosophy: User-Mode Sovereignty
 Synix is engineered to protect both the game server and the host operating system without requiring elevated privileges.
 * **Non-Invasive Execution:** Operates entirely within `C:\Synix`, ensuring zero modifications to Windows registry hives or protected system directories.
-* **Sanitized {Identity} Isolation:** Every server is containerized using a unique {Identity} string. This prevents "Space in Path" errors, avoids folder collisions, and allows for infinite instances of the same game title on a single machine.
+* **Sanitized {Identity} Isolation:** Every server is containerized using a unique {Identity} string to avoid collisions and "Space in Path" errors.
 * **Portable Infrastructure:** The entire ecosystem is file-path independent. Move your root directory to any drive (SSD/NVMe), and the engine self-heals its internal pointers.
 
 ---
@@ -55,38 +62,36 @@ The core engine is a **Modular Singleton** that manages the server lifecycle wit
 
 ### **Proactive Hardware Stewardship (Resource Guard)**
 Optimized for high-performance architectures (benchmarked on **Ryzen 9 / 96GB RAM** environments), Synix protects system stability:
-* **The 7GB Safety Buffer:** Synix calculates available headroom by reserving a strict 7GB RAM overhead for Windows 11 kernel processes, preventing "Out of Memory" OS crashes.
-* **80% CPU Ingress Throttle:** To maintain zero-lag performance for active players, the engine blocks new server launches if global CPU utilization exceeds 80%.
-* **Interactive Telemetry:** A 60-second real-time history graph tracks hardware health. Click the graph to access deep-dive **Resource History** diagnostics.
+* **The 7GB Safety Buffer:** Synix calculates available headroom by reserving a strict 7GB RAM overhead for Windows 11 kernel processes.
+* **80% CPU Ingress Throttle:** The engine blocks new server launches if global CPU utilization exceeds 80% to ensure smooth performance for active players.
+* **Interactive Telemetry:** A 60-second real-time history graph tracks hardware health with deep-dive **Resource History** diagnostics.
 
 ### **Autonomous Process Health (Watchdog)**
-* **Heartbeat Monitoring:** Synix monitors the process message loop to detect "Not Responding" states. If a hang is detected for >60 seconds, the engine initiates a recovery sequence.
-* **Staged Termination:** The "Stop" command executes a high-integrity shutdown. It sends a 'Safe Close' signal to the engine, allows time for a world-save, and automatically triggers a `taskkill` only if the process remains stubborn.
-* **Atomic Action Locking:** Prevents "State Corruption" by locking the server during critical operations (Updates, Validations, or Saves).
+* **Heartbeat Monitoring:** Synix monitors process loop health to detect hangs. If a process is unresponsive for >60 seconds, the engine initiates a recovery sequence.
+* **Staged Termination:** Sends a 'Safe Close' signal for world-saves, triggering a `taskkill` only if the process remains stubborn.
 
 ---
 
 ## 🌐 Elite Networking & Connectivity
 Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic suite.
-* **Local vs. WAN Probing:** Natively checks if the server is binding to the LAN IP and clearing the Windows Firewall, then probes the Public WAN IP to verify router NAT Table forwarding.
-* **NAT Hairpinning Awareness:** Detects if the router blocks internal WAN loops, automatically guiding the user to utilize the correct 127.0.0.1 or LAN IP for local joining.
-* **A2S Telemetry:** Uses the industry-standard A2S_INFO protocol to query player counts and metadata without impacting server performance.
-* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to resolve the common "Invisible Server" conflict in titles like Soulmask, ensuring the Steam API handshakes with the correct Dedicated Server ID.
+* **Local vs. WAN Probing:** Verifies LAN IP binding and Public WAN NAT Table forwarding.
+* **NAT Hairpinning Awareness:** Detects router loopback limitations and guides users to the correct connection IP.
+* **A2S Telemetry:** Uses A2S_INFO protocols to query player counts and metadata without impacting server performance.
+* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to ensure correct Steam API handshakes for titles like Soulmask.
 
 ---
 
 ## 📂 Deployment & Maintenance Suite
-* **Binary Integrity Validation:** A native tool that compares local files against the Steam Master Manifest, repairing corrupted game data without purging world saves or configurations.
-* **Automated DLL Injection:** Detects Unreal and Source engine titles post-install, automatically injecting required SteamCMD libraries (`steamclient64.dll`, etc.) into the target binary folders.
-* **Smart Backups:** Recursive world snapshots occur every 6 hours. "Safe-Start" backups generate a full zip before manual launches, with an automated skip-logic for crash-recovery states to prevent backing up corrupted data.
-* **Discord Webhooks:** Full lifecycle notification support. Receive live JSON payloads in your Discord channels for Boots, Shutdowns, and Watchdog recovery events.
+* **Binary Integrity Validation:** Compares local files against the Steam Master Manifest to repair corrupted data without purging world saves.
+* **Automated DLL Injection:** Automatically injects required SteamCMD libraries into target binary folders post-install.
+* **Smart Backups:** Recursive world snapshots every 6 hours and "Safe-Start" zips before manual launches.
+* **Discord Webhooks:** Full lifecycle notification support for Boots, Shutdowns, and Watchdog recovery events.
 
 ---
 
 ## 💻 Technical Stack
 * **Framework:** C# / .NET 8.0+ / Modern WinForms
-* **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O and multi-threaded logging.
-* **Network Logic:** UDP-based A2S querying and HttpClient WAN detection.
+* **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O.
 * **Efficiency:** Ultra-low overhead design (~30MB RAM idle / <1% CPU footprint).
 
 ---
@@ -101,11 +106,6 @@ The **Synix Control Panel** is a proprietary software project.
 
 ---
 
-Synix is a No-Admin tool. If Windows SmartScreen flags the .exe, click 'More Info' -> 'Run Anyway' or on Windows 11 new SmartScreen warning you have to turn off Smart APP Control. This happens because the app is new and doesn't have a paid digital signature yet.
-
-### **Status: Revolutionizing the Personal Host Experience**
-*Synix handles the hardware stewardship and networking complexity, so you can focus on the game.*
-
 Support: https://discord.gg/2WR7ArC2Vr
 Youtube Video: https://youtu.be/uxLvrT548Hk
 
@@ -115,4 +115,3 @@ Youtube Video: https://youtu.be/uxLvrT548Hk
 <img width="351" height="254" alt="image" src="https://github.com/user-attachments/assets/ee8b0e34-eef3-4059-8cb8-913adc087ba0" />
 <img width="797" height="616" alt="image" src="https://github.com/user-attachments/assets/8939b8f1-72ac-4a80-974c-c04f3e3e0cdf" />
 <img width="343" height="247" alt="image" src="https://github.com/user-attachments/assets/a0b6f395-1850-4b3b-a531-3b45c3a6dd75" />
-
