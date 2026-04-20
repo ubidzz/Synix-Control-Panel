@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixEngine
 			splitContainer1.Panel2.Controls.Add(lblTopicTitle);
 			splitContainer1.Panel2.Controls.Add(pbQRCode);
 			splitContainer1.Size = new Size(800, 450);
-			splitContainer1.SplitterDistance = 266;
+			splitContainer1.SplitterDistance = 296;
 			splitContainer1.TabIndex = 0;
 			// 
 			// treeNavigation
@@ -77,7 +77,7 @@ namespace Synix_Control_Panel.SynixEngine
 			treeNavigation.Dock = DockStyle.Fill;
 			treeNavigation.Location = new Point(0, 23);
 			treeNavigation.Name = "treeNavigation";
-			treeNavigation.Size = new Size(266, 427);
+			treeNavigation.Size = new Size(296, 427);
 			treeNavigation.TabIndex = 1;
 			treeNavigation.AfterSelect += treeNavigation_AfterSelect;
 			// 
@@ -86,7 +86,7 @@ namespace Synix_Control_Panel.SynixEngine
 			txtSearch.Dock = DockStyle.Top;
 			txtSearch.Location = new Point(0, 0);
 			txtSearch.Name = "txtSearch";
-			txtSearch.Size = new Size(266, 23);
+			txtSearch.Size = new Size(296, 23);
 			txtSearch.TabIndex = 0;
 			txtSearch.TextChanged += txtSearch_TextChanged;
 			// 
@@ -96,7 +96,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblAnswer.Location = new Point(0, 15);
 			lblAnswer.Name = "lblAnswer";
 			lblAnswer.ReadOnly = true;
-			lblAnswer.Size = new Size(530, 243);
+			lblAnswer.Size = new Size(500, 243);
 			lblAnswer.TabIndex = 1;
 			lblAnswer.Text = "";
 			lblAnswer.LinkClicked += lblAnswer_LinkClicked;
@@ -120,7 +120,7 @@ namespace Synix_Control_Panel.SynixEngine
 			pbQRCode.Margin = new Padding(3, 3, 3, 60);
 			pbQRCode.Name = "pbQRCode";
 			pbQRCode.Padding = new Padding(40, 40, 40, 60);
-			pbQRCode.Size = new Size(530, 450);
+			pbQRCode.Size = new Size(500, 450);
 			pbQRCode.SizeMode = PictureBoxSizeMode.Zoom;
 			pbQRCode.TabIndex = 2;
 			pbQRCode.TabStop = false;

@@ -58,6 +58,7 @@ namespace Synix_Control_Panel.SynixEngine
 				["Missing .DLL Errors"] = new HelpItem("Trouble", "Symptom: 'System Error' on launch. Fix: Install 'C++ Redistributables x64 (2015-2022)' from the Microsoft website. \n\n https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version"),
 				["Resource Guard Limits"] = new HelpItem("Trouble", "Synix reserves 7GB of RAM for Windows and blocks new launches at 80% CPU/RAM usage to prevent system instability."),
 				["Where are My Server Backups"] = new HelpItem("Trouble", "If the backup on start feature is enabled, backups are stored in \n`C:\\Synix\\BackupGames\\Game_Name\\Your_Server_Name`"),
+				["Server not showing up in the game"] = new HelpItem("Trouble", "Games online server list use steam master server lists that server are registered on. Some games query ports you have to use a strict query port number to get your server added to the steam master lists."),
 
 				// --- 7. SUPPORTED GAMES (Category: "Games") ---
 				["How to add a game"] = new HelpItem("Games", "Synix utilizes a hardcoded database to ensure 100% engine stability. Manual 'plugin' support for custom games is not supported."),
