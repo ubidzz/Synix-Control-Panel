@@ -596,7 +596,7 @@ namespace Synix_Control_Panel
 
 		private async Task CheckForUpdates()
 		{
-			string currentVersion = "1.0.5-beta"; // Set this to your current Synix version
+			string currentVersion = "1.0.7-beta"; // Set this to your current Synix version
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
 			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
@@ -612,14 +612,14 @@ namespace Synix_Control_Panel
 
 					if (latestVersion == currentVersion)
 					{
-						lblUpdateStatus.Text = " ✔ You are running the latest version";
+						lblUpdateStatus.Text = " ✔ You are running the latest version " + currentVersion;
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Green;
 					}
 					else
 					{
-						lblUpdateStatus.Text = " ⚠️ New Synix version available!";
+						lblUpdateStatus.Text = " ⚠️ New Synix " + currentVersion + " version is available!";
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;
