@@ -72,6 +72,8 @@
 			lblLocalIP1 = new Label();
 			lblPublicIP = new Label();
 			btnRestart = new Button();
+			lblUpdateStatus = new Label();
+			btnDownloadUpdate = new Button();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -85,10 +87,10 @@
 			dataGridView1.BorderStyle = BorderStyle.None;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, PlayerCountDisplay, UptimeDisplay, colStatus });
-			dataGridView1.Location = new Point(12, 95);
+			dataGridView1.Location = new Point(12, 140);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(881, 487);
+			dataGridView1.Size = new Size(881, 442);
 			dataGridView1.TabIndex = 0;
 			dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
@@ -417,6 +419,32 @@
 			btnRestart.UseVisualStyleBackColor = true;
 			btnRestart.Click += btnRestart_Click;
 			// 
+			// lblUpdateStatus
+			// 
+			lblUpdateStatus.BackColor = Color.DodgerBlue;
+			lblUpdateStatus.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblUpdateStatus.ImageAlign = ContentAlignment.MiddleLeft;
+			lblUpdateStatus.Location = new Point(12, 104);
+			lblUpdateStatus.Name = "lblUpdateStatus";
+			lblUpdateStatus.Size = new Size(881, 33);
+			lblUpdateStatus.TabIndex = 21;
+			lblUpdateStatus.Text = "Version Check Message";
+			lblUpdateStatus.TextAlign = ContentAlignment.MiddleLeft;
+			// 
+			// btnDownloadUpdate
+			// 
+			btnDownloadUpdate.BackColor = SystemColors.Control;
+			btnDownloadUpdate.Cursor = Cursors.Hand;
+			btnDownloadUpdate.FlatStyle = FlatStyle.Popup;
+			btnDownloadUpdate.ImageAlign = ContentAlignment.TopLeft;
+			btnDownloadUpdate.Location = new Point(710, 110);
+			btnDownloadUpdate.Name = "btnDownloadUpdate";
+			btnDownloadUpdate.Size = new Size(161, 22);
+			btnDownloadUpdate.TabIndex = 22;
+			btnDownloadUpdate.Text = "Download";
+			btnDownloadUpdate.UseVisualStyleBackColor = false;
+			btnDownloadUpdate.Click += btnDownloadUpdate_Click;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -424,6 +452,8 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
+			Controls.Add(btnDownloadUpdate);
+			Controls.Add(lblUpdateStatus);
 			Controls.Add(btnRestart);
 			Controls.Add(lblPublicIP);
 			Controls.Add(lblLocalIP1);
@@ -495,5 +525,7 @@
 		private ToolStripSeparator toolStripSeparator5;
 		private ToolStripMenuItem fileValidationToolStripMenuItem;
 		private ToolStripMenuItem backupServerToolStripMenuItem;
+		private Label lblUpdateStatus;
+		private Button btnDownloadUpdate;
 	}
 }

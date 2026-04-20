@@ -126,9 +126,9 @@ namespace Synix_Control_Panel.UI
 			Label lbl = (Label)sender;
 			if (lbl.Width <= 0 || lbl.Height <= 0) return;
 
+			// --- Your existing Rounding & Background code stays exactly the same ---
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-			int radius = 15; // Buffalo-sized roundness
+			int radius = 15;
 			using (GraphicsPath path = new GraphicsPath())
 			{
 				path.AddArc(0, 0, radius, radius, 180, 90);
@@ -137,33 +137,43 @@ namespace Synix_Control_Panel.UI
 				path.AddArc(0, lbl.Height - radius - 1, radius, radius, 90, 90);
 				path.CloseFigure();
 
-				// 🎯 1. CLIP THE REGION (This makes it actually round)
 				if (lbl.Region == null || lbl.Region.GetBounds(e.Graphics).Width != lbl.Width)
-				{
 					lbl.Region = new Region(path);
-				}
 
-				// 🎯 2. FILL BACKGROUND
 				using (SolidBrush brush = new SolidBrush(lbl.BackColor))
-				{
 					e.Graphics.FillPath(brush, path);
-				}
 			}
 
-			// 🎯 3. DRAW TEXT (Using the center alignment)
-			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, lbl.ClientRectangle, lbl.ForeColor,
-				TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+			// 🎯 THE FIX: The If-Statement Logic
+			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter; // Default
+
+			string align = lbl.Tag?.ToString() ?? "MiddleCenter";
+
+			if (align == "MiddleRight")
+			{
+				flags = TextFormatFlags.VerticalCenter | TextFormatFlags.Right;
+			}
+			else if (align == "MiddleLeft")
+			{
+				flags = TextFormatFlags.VerticalCenter | TextFormatFlags.Left;
+			}
+			else if (align == "TopCenter")
+			{
+				flags = TextFormatFlags.Top | TextFormatFlags.HorizontalCenter;
+			}
+			// Add more else-if statements here if you need TopLeft, BottomRight, etc.
+
+			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, lbl.ClientRectangle, lbl.ForeColor, flags);
 		}
 
-		public static void StyleWarningLabel(Label lbl)
+		public static void StyleWarningLabel(Label lbl, string alignment = "MiddleCenter")
 		{
 			if (lbl == null) return;
 
 			lbl.AutoSize = false;
 			lbl.FlatStyle = FlatStyle.Flat;
 
-			// 🎯 Explicitly use System.Drawing to kill the ambiguity
-			lbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			lbl.Tag = alignment;
 
 			lbl.Paint -= WarningLabel_Paint;
 			lbl.Paint += WarningLabel_Paint;

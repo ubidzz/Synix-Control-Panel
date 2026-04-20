@@ -14,6 +14,7 @@ using Synix_Control_Panel.Help;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.UI;
 using System.ComponentModel;
 using System.Diagnostics;
 using static Synix_Control_Panel.SynixEngine.Core;
@@ -46,6 +47,7 @@ namespace Synix_Control_Panel
 			Core.Instance.RebindProcesses();
 			Instance = this;
 			_ = LoadNetworkInfo();
+			_ = CheckForUpdates();
 		}
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
@@ -589,6 +591,72 @@ namespace Synix_Control_Panel
 			using (Synix_Control_Panel.SynixEngine.HelpGUI helpWindow = new Synix_Control_Panel.SynixEngine.HelpGUI())
 			{
 				helpWindow.ShowDialog();
+			}
+		}
+
+		private async Task CheckForUpdates()
+		{
+			string currentVersion = "1.0.5-beta"; // Set this to your current Synix version
+			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixEngine/version.txt";
+			btnDownloadUpdate.Visible = false;
+			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
+			lblUpdateStatus.Text = "Checking for updates...";
+
+			try
+			{
+				using (HttpClient client = new HttpClient())
+				{
+					client.Timeout = TimeSpan.FromSeconds(5);
+
+					string latestVersion = (await client.GetStringAsync(versionUrl)).Trim();
+
+					if (latestVersion == currentVersion)
+					{
+						lblUpdateStatus.Text = " ✔ You are running the latest version";
+						lblUpdateStatus.ForeColor = Color.Black;
+						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
+						lblUpdateStatus.BackColor = Color.Green;
+					}
+					else
+					{
+						lblUpdateStatus.Text = " ⚠️ New Synix version available!";
+						lblUpdateStatus.ForeColor = Color.Black;
+						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
+						lblUpdateStatus.BackColor = Color.Red;
+
+						btnDownloadUpdate.Visible = true;
+						btnDownloadUpdate.Text = "Download from GitHub";
+					}
+				}
+			}
+			catch
+			{
+				lblUpdateStatus.Text = " ⚠️ [ERROR] Could not check for updates.";
+				lblUpdateStatus.ForeColor = Color.Black;
+				lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
+				lblUpdateStatus.BackColor = Color.Red;
+			}
+		}
+
+		private void btnDownloadUpdate_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				// The URL for your project releases or main page
+				string url = "https://github.com/ubidzz/Synix-Control-Panel/releases";
+
+				// This is the Buffalo-safe way to open a browser in .NET 6/7/8+
+				ProcessStartInfo psi = new ProcessStartInfo
+				{
+					FileName = url,
+					UseShellExecute = true
+				};
+				Process.Start(psi);
+			}
+			catch (Exception ex)
+			{
+				// If something goes wrong, log it so you can see it in your video
+				AppendLog($"[ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
 		}
 	}
