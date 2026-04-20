@@ -23,7 +23,7 @@ namespace Synix_Control_Panel
 {
 	public partial class MainGUI : Form
 	{
-		public static BindingList<GameServer> serverList = new();
+		public static BindingList<GameServer> serverList = [];
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
@@ -604,7 +604,7 @@ namespace Synix_Control_Panel
 
 			try
 			{
-				using (HttpClient client = new HttpClient())
+				using (HttpClient client = new())
 				{
 					client.Timeout = TimeSpan.FromSeconds(5);
 

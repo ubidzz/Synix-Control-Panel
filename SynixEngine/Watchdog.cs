@@ -25,7 +25,7 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		private readonly Dictionary<int, int> _watchdogGracePeriods = new();
+		private readonly Dictionary<int, int> _watchdogGracePeriods = [];
 
 		private void PerformWatchdogCheck()
 		{
