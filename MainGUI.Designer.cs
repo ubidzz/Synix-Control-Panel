@@ -213,7 +213,7 @@
 			series1.Legend = "Legend1";
 			series1.Name = "Series1";
 			chartHeartbeat.Series.Add(series1);
-			chartHeartbeat.Size = new Size(384, 64);
+			chartHeartbeat.Size = new Size(384, 73);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
 			chartHeartbeat.Click += ResourceGraph_Click;

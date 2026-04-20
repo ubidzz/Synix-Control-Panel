@@ -619,7 +619,7 @@ namespace Synix_Control_Panel
 					}
 					else
 					{
-						lblUpdateStatus.Text = " ⚠️ New Synix " + currentVersion + " version is available!";
+						lblUpdateStatus.Text = " ⚠️ A newer Synix " + currentVersion + " version is available!";
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;
