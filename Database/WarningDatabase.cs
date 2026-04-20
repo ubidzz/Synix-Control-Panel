@@ -44,7 +44,7 @@ namespace Synix_Control_Panel.Database
 			if (_messages.TryGetValue(server.Game, out string customMessage))
 				lblWarningText.Text = customMessage;
 			else
-				lblWarningText.Text = "Configuration required before the first launch. If the Config file is missing in the game then the server needs to run once to create the config file.";
+				lblWarningText.Text = "Configuration required before the first launch. \n1. If the Config file is missing in the game then the server needs to run once to create the config file. \n2. Then shut the server down and go to `Server Ations -> Server Options -> Edit Config File` and edit the config file. \n3. Some Servers use their own server manager in the game to fully setup the server.";
 		}
 
 		// 🛠️ THE "OPEN CONFIG MANAGER" BUTTON (Formerly 'Yes')
