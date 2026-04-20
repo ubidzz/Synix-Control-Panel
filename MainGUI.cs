@@ -10,6 +10,7 @@
  * directory for full terms.
  */
 using Synix_Control_Panel.Design;
+using Synix_Control_Panel.Help;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
@@ -565,6 +566,21 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				await Core.Instance.ExecuteRestartSequence(selectedServer);
+			}
+		}
+
+		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+			// Ensure the user didn't double-click the header row (index -1)
+			if (e.RowIndex >= 0)
+			{
+				// Grab the server from the row, exactly like your Stop button does
+				if (dataGridView1.Rows[e.RowIndex].DataBoundItem is GameServer selectedServer)
+				{
+					// Open the Info form and pass the server
+					Synix_Control_Panel.Help.ServerInfo infoForm = new Synix_Control_Panel.Help.ServerInfo(selectedServer);
+					infoForm.Show();
+				}
 			}
 		}
 

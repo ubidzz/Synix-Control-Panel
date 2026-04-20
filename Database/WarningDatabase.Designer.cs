@@ -47,9 +47,11 @@ namespace Synix_Control_Panel.Database
 			// button1
 			// 
 			button1.Dock = DockStyle.Bottom;
-			button1.Location = new Point(0, 409);
+			button1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			button1.ForeColor = Color.ForestGreen;
+			button1.Location = new Point(0, 215);
 			button1.Name = "button1";
-			button1.Size = new Size(800, 41);
+			button1.Size = new Size(400, 46);
 			button1.TabIndex = 0;
 			button1.Text = "Open Config File";
 			button1.UseVisualStyleBackColor = true;
@@ -58,9 +60,11 @@ namespace Synix_Control_Panel.Database
 			// btnNo
 			// 
 			btnNo.Dock = DockStyle.Bottom;
-			btnNo.Location = new Point(0, 368);
+			btnNo.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			btnNo.ForeColor = Color.Red;
+			btnNo.Location = new Point(0, 169);
 			btnNo.Name = "btnNo";
-			btnNo.Size = new Size(800, 41);
+			btnNo.Size = new Size(400, 46);
 			btnNo.TabIndex = 1;
 			btnNo.Text = "Remine Me Later";
 			btnNo.UseVisualStyleBackColor = true;
@@ -68,29 +72,35 @@ namespace Synix_Control_Panel.Database
 			// 
 			// lblWarningText
 			// 
+			lblWarningText.BackColor = Color.Transparent;
 			lblWarningText.Dock = DockStyle.Fill;
+			lblWarningText.ForeColor = Color.White;
+			lblWarningText.Image = Properties.Resources.background;
 			lblWarningText.Location = new Point(0, 0);
 			lblWarningText.Name = "lblWarningText";
-			lblWarningText.Padding = new Padding(15);
-			lblWarningText.Size = new Size(800, 368);
+			lblWarningText.Padding = new Padding(17, 17, 17, 17);
+			lblWarningText.Size = new Size(400, 169);
 			lblWarningText.TabIndex = 2;
-			lblWarningText.Text = "label1";
+			lblWarningText.Text = "Warning Message Here";
 			// 
 			// WarningDatabase
 			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(8F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(800, 450);
+			BackgroundImage = Properties.Resources.background;
+			ClientSize = new Size(400, 261);
 			ControlBox = false;
 			Controls.Add(lblWarningText);
 			Controls.Add(btnNo);
 			Controls.Add(button1);
+			Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			ForeColor = Color.Black;
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MdiChildrenMinimizedAnchorBottom = false;
 			MinimizeBox = false;
 			Name = "WarningDatabase";
-			Text = "Warning";
+			Text = "⚠️ Start Warning";
 			ResumeLayout(false);
 		}
 
