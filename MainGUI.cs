@@ -596,7 +596,7 @@ namespace Synix_Control_Panel
 
 		private async Task CheckForUpdates()
 		{
-			string currentVersion = "1.0.9-beta"; // Set this to your current Synix version
+			string currentVersion = "1.0.10-beta"; // Set this to your current Synix version
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
 			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
