@@ -173,6 +173,8 @@ namespace Synix_Control_Panel.ServerHandler
 					case "Unreal Tournament 3":
 					case "Viscera Cleanup Detail":
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
+					case "Windrose":
+						if (CopySteamDLLs(server.InstallPath, @"R5\Binaries\Win64")) applied = true; break;
 				}
 
 				// --- PASS 2: DYNAMIC CONFIG FILE CREATION ---
@@ -216,6 +218,17 @@ server.globalchat true";
 					case "StarRupture":
 						string srJson = @"{ ""SessionName"": ""{ServerName}"", ""SaveGameInterval"": ""300"", ""StartNewGame"": ""true"", ""LoadSavedGame"": ""false"", ""SaveGameName"": ""AutoSave0.sav"" }";
 						if (CreateGameConfig(server, @"StarRupture\Binaries\Win64\DSSettings.txt", srJson)) applied = true;
+						break;
+
+					case "Windrose":
+						string windroseJson = @"{ 
+							""ServerName"": ""{ServerName}"", 
+							""MaxPlayers"": 16, 
+							""WorldIslandId"": ""MainWorld"",
+							""AutoRestart"": true
+						}";
+
+						if (CreateGameConfig(server, "ServerDescription.json", windroseJson)) applied = true;
 						break;
 
 					case "ASKA":
