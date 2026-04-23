@@ -39,14 +39,13 @@ namespace Synix_Control_Panel.Database
 			new() {
 				Game = "Windrose",
 				AppID = "4129620",
-				// Path to the actual UE5 shipping binary
 				ExeName = @"R5\Binaries\Win64\WindroseServer-Win64-Shipping.exe",
-				RequiredArgs = "-server -log -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers}",
+				RequiredArgs = "{map} -server -log -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers}",
 				Port = 7777,
-				QueryPort = 7778, // Game defaults to 7778 for Query
-				RelativeConfigPath = @"ServerDescription.json",
+				QueryPort = 7778,
+				RelativeConfigPath = @"R5\ServerDescription.json",
 				Format = ConfigFormat.JSON,
-				Maps = ["MainWorld"],
+				Maps = ["Default"],
 				NeedsConfigWarning = true
 			},
 			new() {

@@ -222,13 +222,13 @@ server.globalchat true";
 
 					case "Windrose":
 						string windroseJson = @"{ 
-							""ServerName"": ""{ServerName}"", 
-							""MaxPlayers"": 16, 
-							""WorldIslandId"": ""MainWorld"",
-							""AutoRestart"": true
-						}";
+	""ServerName"": ""{ServerName}"", 
+	""MaxPlayers"": 16, 
+	""WorldIslandId"": ""MainWorld"",
+	""AutoRestart"": true
+}";
 
-						if (CreateGameConfig(server, "ServerDescription.json", windroseJson)) applied = true;
+						if (CreateGameConfig(server, @"R5\ServerDescription.json", windroseJson)) applied = true;
 						break;
 
 					case "ASKA":

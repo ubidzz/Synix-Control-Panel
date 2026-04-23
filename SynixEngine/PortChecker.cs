@@ -13,6 +13,7 @@ using System;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -29,11 +30,18 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> TestServerConnectivity(string ip, int port, int timeoutMs = 2500)
 		{
-			// 🎯 BIND FIX: Use a specific endpoint to ensure the OS allows the return packet
 			using var udpClient = new UdpClient();
 			try
 			{
-				// DNS RESOLUTION: This allows 'localhost' or '127.0.0.1' to work reliably
+				// FIX 1: Prevent the "Forcibly Closed" (10054) error on Windows.
+				// This is necessary because Windrose/UE5 often sends an ICMP unreachable 
+				// packet that crashes the standard .NET UdpClient.
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					const int SIO_UDP_CONNRESET = -1744830452;
+					udpClient.Client.IOControl(SIO_UDP_CONNRESET, new byte[] { 0 }, null);
+				}
+
 				if (!IPAddress.TryParse(ip, out IPAddress address))
 				{
 					var hostAddresses = await Dns.GetHostAddressesAsync(ip);
@@ -43,7 +51,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 				IPEndPoint remoteEP = new IPEndPoint(address, port);
 
-				// Set internal timeouts for the socket itself
 				udpClient.Client.SendTimeout = timeoutMs;
 				udpClient.Client.ReceiveTimeout = timeoutMs;
 
@@ -55,13 +62,17 @@ namespace Synix_Control_Panel.SynixEngine
 				if (await Task.WhenAny(receiveTask, timeoutTask) == receiveTask)
 				{
 					var result = await receiveTask;
-					return result.Buffer.Length > 0;
+
+					// FIX 2: Ensure the buffer actually contains data from the server.
+					// result.Buffer.Length > 0 confirms the server responded to your probe.
+					return result.Buffer != null && result.Buffer.Length > 0;
 				}
 
 				return false;
 			}
 			catch (Exception ex)
 			{
+				// This stays exactly as you had it for your logging
 				Log($"[NETWORK ERROR] Probe failed for {ip}:{port} - {ex.Message}", Color.Red);
 				return false;
 			}
