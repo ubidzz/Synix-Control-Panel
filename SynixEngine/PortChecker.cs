@@ -33,8 +33,7 @@ namespace Synix_Control_Panel.SynixEngine
 			using var udpClient = new UdpClient();
 			try
 			{
-				// FIX 1: Prevent the "Forcibly Closed" (10054) error on Windows.
-				// This is necessary because Windrose/UE5 often sends an ICMP unreachable 
+				// This is necessary because UE5 often sends an ICMP unreachable 
 				// packet that crashes the standard .NET UdpClient.
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{
@@ -63,7 +62,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					var result = await receiveTask;
 
-					// FIX 2: Ensure the buffer actually contains data from the server.
+					// Ensure the buffer actually contains data from the server.
 					// result.Buffer.Length > 0 confirms the server responded to your probe.
 					return result.Buffer != null && result.Buffer.Length > 0;
 				}

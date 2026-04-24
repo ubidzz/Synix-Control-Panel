@@ -47,7 +47,8 @@ namespace Synix_Control_Panel.SynixEngine
 								server.LastProbeTime = DateTime.Now;
 								_ = Task.Run(async () =>
 								{
-									bool isResponding = await TestServerConnectivity(await GetPublicIP(), server.QueryPort);
+									string publicIP = await GetPublicIP();
+									bool isResponding = await TestServerConnectivity(publicIP, server.QueryPort);
 									if (isResponding)
 									{
 										MainGUI.Instance?.Invoke((Action)(() =>
