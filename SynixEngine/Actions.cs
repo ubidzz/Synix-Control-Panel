@@ -213,7 +213,6 @@ namespace Synix_Control_Panel.SynixEngine
 				// 8. YOUR SUCCESS LOGIC: Re-apply GameFixes
 				bool fixApplied = await GameFix.PostInstall(server);
 				if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
-
 				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
 				Log($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 			}
@@ -410,6 +409,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Log($"[MAINTENANCE] Scheduled restart triggered for {server.ServerName}.", Color.Cyan, true);
 
 			// 1. Stop the server
+
 			StopServerAndReport(server);
 
 			// 2. Wait 5 seconds for the PID to fully clear and the OS to breathe

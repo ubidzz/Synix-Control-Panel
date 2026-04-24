@@ -92,6 +92,17 @@ namespace Synix_Control_Panel
 			chartTickCounter++;
 		}
 
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			// Use the variable that Heartbeat_Tick has been updating
+			if (isDownloadActive)
+			{
+				e.Cancel = true; // NOW this works because 'e' is a FormClosingEventArgs
+				MessageBox.Show("Cannot close Synix while a server is installing or updating!",
+								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+		}
+
 		private void MainGUI_Load(object sender, EventArgs e)
 		{
 			try
@@ -124,16 +135,16 @@ namespace Synix_Control_Panel
 			lblLocalIP1.Text = $"LAN IP: {localIP}";
 
 			// 2. Get the Public IP in the background
-			lblPublicIP.Text = "Public IP: Fetching..."; // Fix: was using lblLocalIP
+			lblPublicIP.Text = "Public IP: Fetching...";
 			string publicIP = await Core.Instance.GetPublicIP();
-			lblPublicIP.Text = $"Public IP: {publicIP}"; // Fix: was using lblLocalIP
+			lblPublicIP.Text = $"Public IP: {publicIP}";
 		}
 
 		private void lblPublicIP_Click(object sender, EventArgs e)
 		{
 			// Strip the prefix and copy just the IP
 			string ip = lblPublicIP.Text.Replace("Public IP: ", "");
-			if (ip != "Offline" && ip != "Fetching...")
+			if (ip != StatusManager.GetStatus(ServerState.Stopped) && ip != "Fetching...")
 			{
 				Clipboard.SetText(ip);
 				Core.Instance.Log($"[SYSTEM] Public IP {ip} copied to clipboard.", Color.Cyan);
@@ -241,9 +252,10 @@ namespace Synix_Control_Panel
 		{
 			// UI-specific check
 			if (isInitializing) return;
-
+			isDownloadActive = true;
 			// The AI handles the window, the download, the fixes, and the logging
 			await Core.Instance.AddServerAndReport();
+			isDownloadActive = false;
 		}
 
 		private void btnEdit_Click(object sender, EventArgs e)
