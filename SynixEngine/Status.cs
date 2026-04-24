@@ -166,74 +166,76 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task UpdatePlayerCount(GameServer server)
 		{
-			if (server.Status != StatusManager.GetStatus(ServerState.Running))
-			{
-				server.CurrentPlayers = 0;
-				return;
-			}
+			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
+
+			// 🎯 DYNAMIC IP GATHERING
+			string localIp = await GetLocalIP();
+
+			// Create a list of unique, non-empty IPs to check
+			var probeTargets = new List<string> { "127.0.0.1", localIp };
 
 			using var udpClient = new System.Net.Sockets.UdpClient();
 			try
 			{
-				// 1. Windows ICMP Fix (Prevents crashes if the port is suddenly closed)
+				// Windows ICMP Fix to prevent crashes on closed ports
 				if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
 				{
 					const int SIO_UDP_CONNRESET = -1744830452;
 					udpClient.Client.IOControl(SIO_UDP_CONNRESET, new byte[] { 0 }, null);
 				}
 
-				udpClient.Client.ReceiveTimeout = 1500;
-				System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), server.QueryPort);
+				udpClient.Client.ReceiveTimeout = 1000;
 
-				// Initial Request
-				byte[] request = _a2sInfoRequest;
-				await udpClient.SendAsync(request, request.Length, remoteEP);
-
-				var result = await udpClient.ReceiveAsync();
-				byte[] data = result.Buffer;
-
-				// 🎯 FIX: Handle Challenge Response (0x41)
-				if (data.Length >= 9 && data[4] == 0x41)
+				// 🎯 THE PROBE LOOP
+				foreach (string ip in probeTargets.Where(s => !string.IsNullOrEmpty(s)).Distinct())
 				{
-					// The server sent 4 bytes of challenge data starting at index 5
-					byte[] challengeRequest = new byte[_a2sInfoRequest.Length + 4];
-					Array.Copy(_a2sInfoRequest, 0, challengeRequest, 0, _a2sInfoRequest.Length);
-					Array.Copy(data, 5, challengeRequest, _a2sInfoRequest.Length, 4);
-
-					// Re-send with the challenge bytes
-					await udpClient.SendAsync(challengeRequest, challengeRequest.Length, remoteEP);
-					result = await udpClient.ReceiveAsync();
-					data = result.Buffer;
-				}
-
-				// 2. Parse the Actual Info Response (0x49)
-				if (data.Length > 5 && data[4] == 0x49)
-				{
-					int pointer = 6; // Skip Header(4), Type(1), Protocol(1)
-
-					// SAFE String Skipping (Prevents IndexOutOfRange crashes)
-					for (int i = 0; i < 4; i++)
+					try
 					{
-						while (pointer < data.Length && data[pointer] != 0x00) pointer++;
-						pointer++; // Move past null terminator
-					}
+						System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(System.Net.IPAddress.Parse(ip), server.QueryPort);
 
-					// Skip ID (2 bytes)
-					pointer += 2;
+						await udpClient.SendAsync(_a2sInfoRequest, _a2sInfoRequest.Length, remoteEP);
 
-					if (pointer + 2 <= data.Length)
-					{
-						server.CurrentPlayers = data[pointer];
-						server.MaxPlayersFromQuery = data[pointer + 1];
+						var receiveTask = udpClient.ReceiveAsync();
+						if (await Task.WhenAny(receiveTask, Task.Delay(500)) != receiveTask) continue;
+
+						var result = await receiveTask;
+						byte[] data = result.Buffer;
+
+						// 🎯 CHALLENGE HANDSHAKE (Required for Windrose/UE5)
+						if (data.Length >= 9 && data[4] == 0x41)
+						{
+							byte[] challengeRequest = new byte[_a2sInfoRequest.Length + 4];
+							Array.Copy(_a2sInfoRequest, 0, challengeRequest, 0, _a2sInfoRequest.Length);
+							Array.Copy(data, 5, challengeRequest, _a2sInfoRequest.Length, 4);
+
+							await udpClient.SendAsync(challengeRequest, challengeRequest.Length, remoteEP);
+							result = await udpClient.ReceiveAsync();
+							data = result.Buffer;
+						}
+
+						// 🎯 PARSE PLAYER DATA
+						if (data.Length > 5 && data[4] == 0x49)
+						{
+							int pointer = 6;
+							for (int i = 0; i < 4; i++) // Skip Name, Map, Folder, Game
+							{
+								while (pointer < data.Length && data[pointer] != 0x00) pointer++;
+								pointer++;
+							}
+							pointer += 2; // Skip ID section
+
+							if (pointer + 1 < data.Length)
+							{
+								server.CurrentPlayers = data[pointer];
+								server.MaxPlayersFromQuery = data[pointer + 1];
+								return; // Found it! Exit the method.
+							}
+						}
 					}
+					catch { /* Try the next IP in the list */ }
 				}
 			}
-			catch
-			{
-				// On failure, we don't want to show old data. 
-				// Some devs prefer keeping the last known count, but 0 is safer for a Watchdog.
-				server.CurrentPlayers = 0;
-			}
+			catch { server.CurrentPlayers = 0; }
 		}
 	}
 }
