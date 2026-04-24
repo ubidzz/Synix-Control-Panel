@@ -40,9 +40,9 @@ namespace Synix_Control_Panel.SynixEngine
 				Servers.Stop(server, msg =>
 				{
 					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.AppendLog(msg)));
-				}, isManual);
+				}, 
+				isManual);
 			});
-
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
 			FileHandler.SaveServers();

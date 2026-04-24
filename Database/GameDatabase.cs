@@ -2279,28 +2279,6 @@ namespace Synix_Control_Panel.Database
 				Format = ConfigFormat.StandardINI
 			},
 			new() {
-				Game = "Call of Duty 2",
-				AppID = "2630",
-				ExeName = "CoD2mp_s.exe",
-				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate -SteamAppId={steamAppID}",				
-				Port = 28960,
-				QueryPort = 28960,
-				RelativeConfigPath = @"main\dedicated.cfg",
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Call of Duty 4: Modern Warfare",
-				AppID = "7940",
-				ExeName = "iw3mp.exe",
-				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec dedicated.cfg +map_rotate -SteamAppId={steamAppID}",				
-				Port = 28960,
-				QueryPort = 28960,
-				RelativeConfigPath = @"main\dedicated.cfg",
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
 				Game = "Farming Simulator 17",
 				AppID = "447020",
 				ExeName = "DedicatedServer.exe",
