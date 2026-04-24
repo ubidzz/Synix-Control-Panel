@@ -104,7 +104,6 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		// ---> NEW COPY METHOD ADDED HERE <---
 		public static bool Copy(string sourceFilePath, string targetFolderPath, string targetFileName, bool overwrite = true)
 		{
 			try

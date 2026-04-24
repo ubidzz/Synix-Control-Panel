@@ -50,7 +50,6 @@ namespace Synix_Control_Panel.MonitoringHandler
 					{
 						Process proc = Process.GetProcessById(server.PID.Value);
 
-						// 🎯 THE FIX: Do NOT change status or null the PID here.
 						// If the process is gone, just set usage to 0 and move on.
 						if (proc.HasExited)
 						{

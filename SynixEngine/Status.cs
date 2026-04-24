@@ -62,7 +62,6 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				// --- 2. STEAMCMD REBIND (Orphan Recovery) ---
-				// This uses the SteamPID 49012 you saw in your JSON!
 				if ((server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Updating)) && server.SteamPID.HasValue)
 				{
 					try
@@ -161,14 +160,14 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				return "Offline";
+				return StatusManager.GetStatus(ServerState.Stopped);
 			}
 		}
 
 		public async Task UpdatePlayerCount(GameServer server)
 		{
 			// 1. Only query if the server is actually running
-			if (server.Status != "Running")
+			if (server.Status != StatusManager.GetStatus(ServerState.Running))
 			{
 				server.CurrentPlayers = 0;
 				return;
@@ -198,7 +197,7 @@ namespace Synix_Control_Panel.SynixEngine
 						pointer++;
 					}
 
-					pointer += 2; // Skip the Steam App ID (short)
+					pointer += 2;
 
 					// 🎯 Grab the live counts from the byte array
 					server.CurrentPlayers = data[pointer];

@@ -9,9 +9,10 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
+using Synix_Control_Panel.FileFolderHandler;
+using Synix_Control_Panel.SynixEngine;
 using System;
 using System.IO;
-using Synix_Control_Panel.FileFolderHandler; // Points to your FolderHandler utility
 
 namespace Synix_Control_Panel.ServerHandler
 {
@@ -19,12 +20,14 @@ namespace Synix_Control_Panel.ServerHandler
 	{
 		public static bool ManualConfigWasCreated { get; set; } = false;
 
-		public static bool PostInstall(GameServer server)
+		public static async Task<bool> PostInstall(GameServer server)
 		{
 			if (string.IsNullOrWhiteSpace(server.InstallPath) || !Directory.Exists(server.InstallPath))
 				return false;
 
 			bool applied = false;
+			string publicIp = await Core.Instance.GetPublicIP();
+			string localIp = await Core.Instance.GetLocalIP();
 
 			try
 			{
@@ -206,8 +209,7 @@ server.secure true
 server.radiation true
 server.official true
 server.globalchat true";
-						// Ensure we are targeting the /server/{identity}/cfg/ folder
-						// Your CreateGameConfig should handle the folder creation, but we'll pass the relative path
+
 						string rustCfgPath = Path.Combine("server", cleanIdentity, "cfg", "server.cfg");
 
 						if (CreateGameConfig(server, rustCfgPath, rustCfg))
@@ -221,12 +223,21 @@ server.globalchat true";
 						break;
 
 					case "Windrose":
+
 						string windroseJson = @"{ 
-	""ServerName"": ""{ServerName}"", 
-	""MaxPlayers"": 16, 
-	""WorldIslandId"": ""MainWorld"",
-	""AutoRestart"": true
-}";
+""Password"": """ + server.Password + @""",
+""ServerName"": """ + server.ServerName + @""",
+""MaxPlayerCount"": """ + server.MaxPlayers + @""",
+""UserSelectedRegion"": "",
+""P2pProxyAddress"": """ + localIp + @""",
+""AutoRestart"": true,
+""UseDirectConnection"": false,
+""DirectConnectionServerAddress"": """ + publicIp + @""",
+""DirectConnectionServerPort"": """ + server.Port + @""",
+""DirectConnectionProxyAddress"": ""0.0.0.0""
+
+	}
+				";
 
 						if (CreateGameConfig(server, @"R5\ServerDescription.json", windroseJson)) applied = true;
 						break;

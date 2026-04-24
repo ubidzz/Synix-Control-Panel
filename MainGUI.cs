@@ -38,8 +38,6 @@ namespace Synix_Control_Panel
 			FileHandler.LoadServers();
 			var engine = Synix_Control_Panel.SynixEngine.Core.Instance;
 			GridStyler.DarkTheme(dataGridView1);
-			GridStyler.HeartbeatChart(chartHeartbeat);
-			chartHeartbeat.Series["TotalCPU"].Points.Clear();
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered",
 			System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });

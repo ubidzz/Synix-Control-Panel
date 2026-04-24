@@ -37,7 +37,6 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			switch (format)
 			{
-				case ConfigFormat.Palworld: return LoadPalworld(path);
 				case ConfigFormat.StandardINI: return LoadStandard(path);
 				case ConfigFormat.JSON: return LoadJSON(path);
 				case ConfigFormat.XML: return LoadXML(path);
@@ -117,28 +116,6 @@ namespace Synix_Control_Panel.ServerHandler
 				if (kv.Length == 2)
 				{
 					settings.Add(new ConfigLine { Key = kv[0].Trim(), Value = kv[1].Trim() });
-				}
-			}
-			return settings;
-		}
-
-		private static List<ConfigLine> LoadPalworld(string path)
-		{
-			var settings = new List<ConfigLine>();
-			if (!File.Exists(path)) return settings;
-
-			foreach (var line in File.ReadAllLines(path))
-			{
-				string trimmed = line.Trim();
-				if (trimmed.StartsWith("OptionSettings=("))
-				{
-					string inner = trimmed.Replace("OptionSettings=(", "").TrimEnd(')');
-					var parts = inner.Split(',');
-					foreach (var part in parts)
-					{
-						var kv = part.Split('=');
-						if (kv.Length == 2) settings.Add(new ConfigLine { Key = kv[0].Trim(), Value = kv[1].Trim() });
-					}
 				}
 			}
 			return settings;

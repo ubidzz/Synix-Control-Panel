@@ -223,7 +223,6 @@ namespace Synix_Control_Panel.SynixEngine
 			if (primaryMatch != null) return primaryMatch.ServerName;
 
 			// 🎯 2. If no primary match, check for overlaps with Query or App ports.
-			// This handles the "+1" bleed you're seeing.
 			var secondaryMatch = MainGUI.serverList.FirstOrDefault(s =>
 				s != excluding &&
 				(s.QueryPort == port || (s.AppPort.HasValue && s.AppPort.Value == port)));
@@ -242,7 +241,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			message = string.Empty;
 
-			if (TotalCpuUsage >= 85.0)
+			if (TotalCpuUsage >= 80.0)
 			{
 				message = $"[RESOURCE GUARD] CPU load is critical ({TotalCpuUsage:F1}%). Launch aborted.";
 				return false;
@@ -251,7 +250,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 🎯 (Current Usage / (Total - 7GB)) * 100
 			double currentRamPercent = (TotalRamUsageGb / TotalRamGb) * 100;
 
-			if (currentRamPercent >= 80.0)
+			if (currentRamPercent >= 85.0)
 			{
 				message = $"[RESOURCE GUARD] System RAM usage is at {currentRamPercent:F1}% of the usable pool.";
 				return false;

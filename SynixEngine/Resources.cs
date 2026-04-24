@@ -30,7 +30,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 3. 🎯 PER-SERVER TRACKING: Populate the RamUsage for your alerts
 			foreach (var server in MainGUI.serverList)
 			{
-				if (server.Status == "Running" && server.RunningProcess != null)
+				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.RunningProcess != null)
 				{
 					// Get the individual process usage from your Monitor
 					// We calculate the % based on the "Available" RAM (TotalRamGb)

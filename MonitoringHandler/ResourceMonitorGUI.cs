@@ -139,7 +139,6 @@ namespace Synix_Control_Panel
 			if (isRunning)
 			{
 				// Alpha: 50 (Very transparent) to 100 (Noticeable). 
-				// This allows the Synix logo to be seen through the green bar.
 				using (SolidBrush brush = new SolidBrush(Color.FromArgb(50, 0, 255, 0)))
 				{
 					e.Graphics.FillRectangle(brush, e.Bounds);

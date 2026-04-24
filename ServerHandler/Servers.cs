@@ -185,10 +185,6 @@ namespace Synix_Control_Panel.ServerHandler
 					proc.Exited += async (s, e) => {
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
-							// Keep local Red log for your Buffalo control panel
-							//MainGUI.Instance?.Invoke((Action)(() =>
-								//MainGUI.Instance.AppendLog($"[CRASH] {server.ServerName} stopped unexpectedly!", Color.Red)));
-
 							// Watchdog handles the single Discord crash notification
 							await Synix_Control_Panel.SynixEngine.Core.Instance.RecoverServer(server);
 						}

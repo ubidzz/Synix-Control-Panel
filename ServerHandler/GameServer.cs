@@ -95,7 +95,7 @@ public class GameServer : GameInfo
 	{
 		get
 		{
-			if (Status != "Running" || !StartTime.HasValue)
+			if (Status != StatusManager.GetStatus(ServerState.Running) || !StartTime.HasValue)
 				return "--:--:--";
 
 			TimeSpan duration = DateTime.Now - StartTime.Value;

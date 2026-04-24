@@ -106,7 +106,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			// 1. Safety Checks (Installing/Running)
 			string status = server.Status ?? "";
-			if (status == "Installing" || status == "Updating" || (server.PID.HasValue && server.PID > 0))
+			if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating) || (server.PID.HasValue && server.PID > 0))
 			{
 				MessageBox.Show("Cannot delete an active or installing server.", "Action Locked");
 				return;
@@ -211,7 +211,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				// 8. YOUR SUCCESS LOGIC: Re-apply GameFixes
-				bool fixApplied = GameFix.PostInstall(server);
+				bool fixApplied = await GameFix.PostInstall(server);
 				if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
 
 				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
@@ -291,7 +291,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				// 8. YOUR SUCCESS LOGIC: Re-apply GameFixes
-				bool fixApplied = GameFix.PostInstall(server);
+				bool fixApplied = await GameFix.PostInstall(server);
 				if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
 
 				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
@@ -352,7 +352,7 @@ namespace Synix_Control_Panel.SynixEngine
 							return;
 						}
 
-						bool fixApplied = GameFix.PostInstall(newServer);
+						bool fixApplied = await GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
 						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
 						FileHandler.SaveServers();

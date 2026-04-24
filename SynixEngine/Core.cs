@@ -105,7 +105,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			foreach (GameServer server in MainGUI.serverList)
 			{
-				if (server.Status == "Running")
+				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
 					// 1. Keep your existing player count update
 					_ = UpdatePlayerCount(server);
