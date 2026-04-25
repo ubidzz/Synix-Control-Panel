@@ -46,7 +46,7 @@ Because Synix is a specialized tool developed for the community, you may encount
 > * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
 > 
 > **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
-> **[Security Scan](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)**
+> **[security Scan Results](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)**
 ---
 
 ## 🛡️ Core Philosophy: User-Mode Sovereignty
