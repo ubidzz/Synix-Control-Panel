@@ -143,11 +143,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public static bool IsSystemSafeToStart()
 		{
-			// 🎯 1. CPU GUARD (80% Global Limit)
+			// 🎯 1. CPU GUARD (85% Global Limit)
 			// We check the entire system load so Synix doesn't crash a busy host.
 			double globalCpu = MonitoringHandler.ResourceMonitor.GetGlobalCpuUsage();
 
-			if (globalCpu >= 80.0)
+			if (globalCpu >= 85.0)
 			{
 				System.Windows.Forms.MessageBox.Show(
 					$"[🛡️ RESOURCE GUARD] Global CPU Load is at {globalCpu:F1}%.\n\nStarting another server now would push the host into instability. Please wait for load to drop.",

@@ -1,12 +1,14 @@
 # 🛸 Synix Control Panel
 
-### **The High-Performance, Zero-Admin Backbone for Enterprise-Grade Game Hosting**
+### **The High-Performance, Zero-Admin Backbone for Your Personal Game Servers**
 
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Build](https://img.shields.io/badge/Architecture-Engine--Driven-orange.svg?style=for-the-badge)
 ![Security](https://img.shields.io/badge/Privilege-Zero--UAC%20Required-blueviolet.svg?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)
+[![SECURITY](https://img.shields.io/badge/SECURITY-PASSING-brightgreen?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql)
+[![VirusTotal](https://img.shields.io/badge/VirusTotal-1%2F71%20Clean-yellowgreen?style=for-the-badge&logo=virustotal)](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)
 
 **Synix Control Panel** is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a **Zero-Admin (No UAC)** environment.
 
@@ -22,7 +24,7 @@ The application utilizes a **Singleton Engine Pattern**, ensuring a single, cent
 Built on the **Task-based Asynchronous Pattern (TAP)**, Synix ensures a non-blocking user experience. Heavy I/O operations, including SteamCMD downloads and network telemetry, are executed on background threads. The UI remains responsive while the engine reacts to lifecycle events.
 
 ### **Resource-Aware Middleware**
-Synix acts as a deterministic middleware layer between the Operating System and the Game Engine. Its **Resource Guard** logic calculates system headroom in real-time, enforcing a 7GB RAM safety buffer and an 80% CPU throttle to maintain host stability.
+Synix acts as a deterministic middleware layer between the Operating System and the Game Engine. Its **Resource Guard** logic calculates system headroom in real-time, enforcing a 5GB RAM safety buffer and an 85% CPU throttle to maintain host stability.
 
 ---
 
@@ -36,7 +38,6 @@ Because Synix is a specialized tool developed for the community, you may encount
 > * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
 > 
 > **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
-> **Security Scan [Results](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1) from Virustotal**
 
 ---
 
@@ -63,8 +64,8 @@ The core engine is a **Modular Singleton** that manages the server lifecycle wit
 
 ### **Proactive Hardware Stewardship (Resource Guard)**
 Optimized for high-performance architectures (benchmarked on **Ryzen 9 / 96GB RAM** environments), Synix protects system stability:
-* **The 5GB Safety Buffer:** Synix calculates available headroom by reserving a strict 7GB RAM overhead for Windows 11 kernel processes.
-* **80% CPU Ingress Throttle:** The engine blocks new server launches if global CPU utilization exceeds 80% to ensure smooth performance for active players.
+* **The 5GB Safety Buffer:** Synix calculates available headroom by reserving a strict 5GB RAM overhead for Windows 11 kernel processes.
+* **85% CPU Ingress Throttle:** The engine blocks new server launches if global CPU utilization exceeds 80% to ensure smooth performance for active players.
 * **Interactive Telemetry:** A 60-second real-time history graph tracks hardware health with deep-dive **Resource History** diagnostics.
 
 ### **Autonomous Process Health (Watchdog)**
