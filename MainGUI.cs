@@ -606,23 +606,39 @@ namespace Synix_Control_Panel
 
 		private async Task CheckForUpdates()
 		{
-			// --- ADD THIS PART TO READ THE FILE ---
 			string currentVersion = "Unknown";
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-			string resourcePath = "Synix_Control_Panel.SynixEngine.version.txt";
 
-			using (System.IO.Stream stream = assembly.GetManifestResourceStream(resourcePath))
+			// 1. DYNAMICALLY FIND THE FILE
+			// This looks at every file inside the EXE and finds yours automatically
+			string[] resourceNames = assembly.GetManifestResourceNames();
+			string actualResourcePath = null;
+
+			foreach (string name in resourceNames)
 			{
-				if (stream != null)
+				if (name.EndsWith("version.txt"))
 				{
-					using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
+					actualResourcePath = name;
+					break;
+				}
+			}
+
+			// 2. READ THE FILE CONTENT
+			if (actualResourcePath != null)
+			{
+				using (System.IO.Stream stream = assembly.GetManifestResourceStream(actualResourcePath))
+				{
+					if (stream != null)
 					{
-						currentVersion = reader.ReadToEnd().Trim();
+						using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
+						{
+							currentVersion = reader.ReadToEnd().Trim();
+						}
 					}
 				}
 			}
-			// ---------------------------------------
 
+			// --- EVERYTHING BELOW IS YOUR ORIGINAL STYLE ---
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
 			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
@@ -633,10 +649,9 @@ namespace Synix_Control_Panel
 				using (HttpClient client = new())
 				{
 					client.Timeout = TimeSpan.FromSeconds(5);
-
 					string latestVersion = (await client.GetStringAsync(versionUrl)).Trim();
 
-					// This now compares "1.0.10" (from file) to "1.0.10" (from GitHub)
+					// 3. COMPARE THE TWO STRINGS
 					if (latestVersion == currentVersion)
 					{
 						lblUpdateStatus.Text = " ✔ You are running the latest version " + currentVersion;
@@ -646,7 +661,7 @@ namespace Synix_Control_Panel
 					}
 					else
 					{
-						// Shows the real version numbers in the warning
+						// If it's still failing, this will tell us WHY by showing what it thinks currentVersion is
 						lblUpdateStatus.Text = " ⚠️ A newer Synix " + latestVersion + " version is available!";
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
