@@ -48,7 +48,19 @@ namespace Synix_Control_Panel.SynixEngine
 								_ = Task.Run(async () =>
 								{
 									string publicIP = await GetPublicIP();
-									bool isResponding = await TestServerConnectivity(publicIP, server.QueryPort);
+									string localIp = await GetLocalIP();
+									bool isResponding = false;
+
+									if (!string.IsNullOrEmpty(publicIP) && await TestServerConnectivity(publicIP, server.QueryPort))
+									{
+										isResponding = true;
+									} else if (!string.IsNullOrEmpty(localIp) && await TestServerConnectivity(localIp, server.QueryPort))
+									{
+										isResponding = true;
+									} else if (await TestServerConnectivity("127.0.0.1", server.QueryPort))
+									{
+										isResponding = true;
+									}
 									if (isResponding)
 									{
 										MainGUI.Instance?.Invoke((Action)(() =>
