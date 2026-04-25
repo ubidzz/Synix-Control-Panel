@@ -77,7 +77,7 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 * **Local vs. WAN Probing:** Verifies LAN IP binding and Public WAN NAT Table forwarding.
 * **NAT Hairpinning Awareness:** Detects router loopback limitations and guides users to the correct connection IP.
 * **A2S Telemetry:** Uses A2S_INFO protocols to query player counts and metadata without impacting server performance.
-* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to ensure correct Steam API handshakes for titles like Soulmask.
+* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to ensure correct Steam API handshakes for titles like ARK, Rust, Soulmask.
 
 ---
 
