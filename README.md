@@ -63,7 +63,7 @@ The core engine is a **Modular Singleton** that manages the server lifecycle wit
 
 ### **Proactive Hardware Stewardship (Resource Guard)**
 Optimized for high-performance architectures (benchmarked on **Ryzen 9 / 96GB RAM** environments), Synix protects system stability:
-* **The 7GB Safety Buffer:** Synix calculates available headroom by reserving a strict 7GB RAM overhead for Windows 11 kernel processes.
+* **The 5GB Safety Buffer:** Synix calculates available headroom by reserving a strict 7GB RAM overhead for Windows 11 kernel processes.
 * **80% CPU Ingress Throttle:** The engine blocks new server launches if global CPU utilization exceeds 80% to ensure smooth performance for active players.
 * **Interactive Telemetry:** A 60-second real-time history graph tracks hardware health with deep-dive **Resource History** diagnostics.
 

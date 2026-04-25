@@ -34,12 +34,12 @@ namespace Synix_Control_Panel
 
 				if (success)
 				{
-					MainGUI.Instance?.AppendLog("[INFO] JSON saved successfully to C:\\Synix\\SynixData\\servers.json.", Color.DarkSeaGreen);
+					MainGUI.Instance?.AppendLog("[📜 INFO] JSON saved successfully to C:\\Synix\\SynixData\\servers.json.", Color.DarkSeaGreen);
 				}
 			}
 			catch (Exception ex)
 			{
-				MainGUI.Instance?.AppendLog("Save Error: " + ex.Message);
+				MainGUI.Instance?.AppendLog("[🚨 ERROR] Save Error: " + ex.Message);
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace Synix_Control_Panel
 				}
 				catch (Exception ex)
 				{
-					MainGUI.Instance?.AppendLog($"[ERROR] Load failed: {ex.Message}");
+					MainGUI.Instance?.AppendLog($"[🚨 ERROR] Load failed: {ex.Message}");
 				}
 			}
 		}

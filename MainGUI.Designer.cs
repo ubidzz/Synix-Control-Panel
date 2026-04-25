@@ -172,7 +172,7 @@
 			btnStart.Name = "btnStart";
 			btnStart.Size = new Size(101, 28);
 			btnStart.TabIndex = 8;
-			btnStart.Text = "Start";
+			btnStart.Text = "🚀 Start";
 			btnStart.UseVisualStyleBackColor = true;
 			btnStart.Click += btnStart_Click;
 			// 
@@ -185,7 +185,7 @@
 			btnStop.Name = "btnStop";
 			btnStop.Size = new Size(101, 28);
 			btnStop.TabIndex = 9;
-			btnStop.Text = "Stop";
+			btnStop.Text = "❌ Stop";
 			btnStop.UseVisualStyleBackColor = true;
 			btnStop.Click += btnStop_Click;
 			// 
@@ -365,11 +365,13 @@
 			// 
 			// btnServerActions
 			// 
+			btnServerActions.Cursor = Cursors.Hand;
+			btnServerActions.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnServerActions.Location = new Point(12, 590);
 			btnServerActions.Name = "btnServerActions";
 			btnServerActions.Size = new Size(142, 28);
 			btnServerActions.TabIndex = 16;
-			btnServerActions.Text = "Server Actions";
+			btnServerActions.Text = "🛠️ Server Actions";
 			btnServerActions.UseVisualStyleBackColor = true;
 			btnServerActions.Click += btnServerActionsMenu_Click;
 			// 
@@ -415,7 +417,7 @@
 			btnRestart.Name = "btnRestart";
 			btnRestart.Size = new Size(101, 28);
 			btnRestart.TabIndex = 20;
-			btnRestart.Text = "Restart";
+			btnRestart.Text = "📡 Restart";
 			btnRestart.UseVisualStyleBackColor = true;
 			btnRestart.Click += btnRestart_Click;
 			// 

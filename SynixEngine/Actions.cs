@@ -93,7 +93,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				Log($"[ERROR] Folder does not exist: {server.InstallPath}", Color.Red);
+				Log($"[🚨 ERROR] Folder does not exist: {server.InstallPath}", Color.Red);
 			}
 		}
 
@@ -181,9 +181,9 @@ namespace Synix_Control_Panel.SynixEngine
 				isDownloadActive = true;
 				UpdateGridStatus();
 
+				Log($"--- [🔒 WARNING] Synix close window button is disabled! ---", Color.Orange, true);
 				Log($"--- UPDATE STARTED: {server.Game} ---", Color.White, true);
-				Log($"--- [WARNING] Synix close window button is disabled! ---", Color.Orange, true);
-				Log($"--- [INFO] Updating {server.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
+				Log($"--- [📜 INFO] Updating {server.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
 
 				// 6. RUN INSTALLER (Thread-safe background task)
 				int exitCode = await Task.Run(() =>
@@ -203,15 +203,15 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
 					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					Log($"[CRITICAL ERROR] Update failed with code {exitCode}.", Color.Red, true);
+					Log($"[🚨 CRITICAL ERROR] Update failed with code {exitCode}.", Color.Red, true);
 					return;
 				}
 
 				// 8. YOUR SUCCESS LOGIC: Re-apply GameFixes
 				bool fixApplied = await GameFix.PostInstall(server);
-				if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
+				if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
 				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
-				Log($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
+				Log($"--- [🔓 WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 			}
 			finally
 			{
@@ -262,8 +262,8 @@ namespace Synix_Control_Panel.SynixEngine
 				UpdateGridStatus();
 
 				Log($"--- Validating STARTED: {server.Game} ---", Color.White, true);
-				Log($"--- [WARNING] Synix close window button is disabled! ---", Color.Orange, true);
-				Log($"--- [INFO] Validating {server.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
+				Log($"--- [🔒 WARNING] Synix close window button is disabled! ---", Color.Orange, true);
+				Log($"--- [📜 INFO] Validating {server.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
 
 				// 6. RUN INSTALLER (Thread-safe background task)
 				int exitCode = await Task.Run(() =>
@@ -283,16 +283,16 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
 					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					Log($"[CRITICAL ERROR] Validate failed with code {exitCode}.", Color.Red, true);
+					Log($"[🚨 CRITICAL ERROR] Validate failed with code {exitCode}.", Color.Red, true);
 					return;
 				}
 
 				// 8. YOUR SUCCESS LOGIC: Re-apply GameFixes
 				bool fixApplied = await GameFix.PostInstall(server);
-				if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
+				if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
 
 				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
-				Log($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
+				Log($"--- [🔓 WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 			}
 			finally
 			{
@@ -351,7 +351,7 @@ namespace Synix_Control_Panel.SynixEngine
 						}
 
 						bool fixApplied = await GameFix.PostInstall(newServer);
-						if (fixApplied) Log($"[SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
+						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
 						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
 						FileHandler.SaveServers();
 						Log($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---", Color.Green, true);
@@ -397,7 +397,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (editForm.ShowDialog() == DialogResult.OK)
 				{
 					// 4. FEEDBACK: Log success and refresh the grid
-					Log($"[SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
+					Log($"[✔️ SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
 					UpdateGridStatus();
 				}
 			}
@@ -464,9 +464,9 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			// 1. Identify failure type
 			string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
-			Log($"[WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
+			Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
 
-			_ = SendDiscordAlert(server, "CRASH DETECTED",
+			_ = SendDiscordAlert(server, "🚨 CRASH DETECTED",
 				$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
 				Color.Red);
 
@@ -485,7 +485,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 4. VERIFY & RESTART
 			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 			{
-				Log($"[WATCHDOG] Environment cleared. Restarting {server.Game}...", Color.Green);
+				Log($"[🛡️ WATCHDOG] Environment cleared. Restarting {server.Game}...", Color.Green);
 
 				// 🎯 UPDATE: Pass StartContext.CrashRecovery to skip the backup
 				await Servers.Start(server, msg =>
@@ -548,11 +548,11 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"[ERROR] Update failed for {server.ServerName}: {errorDetail}", Color.Red);
+					Log($"[🚨 ERROR] Update failed for {server.ServerName}: {errorDetail}", Color.Red);
 				}
 				else
 				{
-					Log($"[SUCCESS] {server.ServerName} is up to date.", Color.Green);
+					Log($"[✔️ SUCCESS] {server.ServerName} is up to date.", Color.Green);
 				}
 			}
 			catch (Exception ex)

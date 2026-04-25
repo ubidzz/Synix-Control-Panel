@@ -68,8 +68,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception ex)
 			{
-				// This stays exactly as you had it for your logging
-				Log($"[NETWORK ERROR] Probe failed for {ip}:{port} - {ex.Message}", Color.Red);
+				Log($"[🛰️ NETWORK ERROR] Probe failed for {ip}:{port} - {ex.Message}", Color.Red);
 				return false;
 			}
 		}

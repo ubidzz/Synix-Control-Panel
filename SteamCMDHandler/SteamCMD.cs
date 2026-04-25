@@ -86,7 +86,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[CRITICAL ERROR] SteamCMD Setup Failed: {ex.Message}");
+				logCallback?.Invoke($"[🚨 CRITICAL ERROR] SteamCMD Setup Failed: {ex.Message}");
 			}
 		}
 	}

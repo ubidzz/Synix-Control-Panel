@@ -154,5 +154,30 @@ namespace Synix_Control_Panel.MonitoringHandler
 				return 0;
 			}
 		}
+
+		public static double GetGlobalCpuUsage()
+		{
+			try
+			{ 
+				double cpuLoad = 0;
+
+				// This queries the Windows hardware abstraction layer for the current 
+				// average load across all CPU cores.
+				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT LoadPercentage FROM Win32_Processor"))
+				{
+					foreach (ManagementObject obj in searcher.Get())
+					{
+						cpuLoad = Convert.ToDouble(obj["LoadPercentage"]);
+					}
+				}
+
+				return cpuLoad;
+			}
+			catch (Exception)
+			{
+				// If the hardware check fails, return 0 so it doesn't block the server launch
+				return 0.0;
+			}
+		}
 	}
 }

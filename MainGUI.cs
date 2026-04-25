@@ -44,7 +44,7 @@ namespace Synix_Control_Panel
 			Core.Instance.RebindProcesses();
 			Instance = this;
 			_ = LoadNetworkInfo();
-			_ = CheckForUpdates();
+			_ = VersionCheck();
 		}
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
@@ -97,7 +97,7 @@ namespace Synix_Control_Panel
 			if (isDownloadActive)
 			{
 				e.Cancel = true; // NOW this works because 'e' is a FormClosingEventArgs
-				MessageBox.Show("Cannot close Synix while a server is installing or updating!",
+				MessageBox.Show("Cannot close Synix while a server is installing, updating or Backing Up!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
@@ -206,7 +206,7 @@ namespace Synix_Control_Panel
 			isDownloadActive = true;
 			await Task.Delay(100);
 
-			AppendLog($"--- [WARNING] Synix close window button is now Disabled! ---", Color.Orange, true);
+			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			AppendLog("Checking SteamCMD dependencies...");
 
 			// 2. Run the check on a background thread
@@ -215,7 +215,7 @@ namespace Synix_Control_Panel
 			// 3. Release the lock once the background task is done
 			isDownloadActive = false;
 			AppendLog("Initialization complete.");
-			AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
+			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		public void UpdateGrid()
@@ -253,9 +253,11 @@ namespace Synix_Control_Panel
 			// UI-specific check
 			if (isInitializing) return;
 			isDownloadActive = true;
+			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			// The AI handles the window, the download, the fixes, and the logging
 			await Core.Instance.AddServerAndReport();
 			isDownloadActive = false;
+			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		private void btnEdit_Click(object sender, EventArgs e)
@@ -282,7 +284,11 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				// The AI handles everything: Safety, Database, SteamCMD, and Logging
+				isDownloadActive = true;
+				AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.UpdateServerAndReport(selectedServer);
+				isDownloadActive = false;
+				AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{
@@ -298,7 +304,11 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				// The AI handles everything: Safety, Database, SteamCMD, and Logging
+				isDownloadActive = true;
+				AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.ValidationServerAndReport(selectedServer);
+				isDownloadActive = false;
+				AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{
@@ -331,13 +341,13 @@ namespace Synix_Control_Panel
 			// 1. SELECTION CHECKS
 			if (dataGridView1.CurrentRow == null)
 			{
-				AppendLog("[ERROR] No row is currently selected!", Color.Red);
+				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
 				return;
 			}
 
 			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
 			{
-				AppendLog("[ERROR] Invalid GameServer object!", Color.Red);
+				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
 				return;
 			}
 
@@ -350,20 +360,25 @@ namespace Synix_Control_Panel
 			// 2. STATUS CHECK: Ensure the server is Stopped before zipping
 			if (selectedServer.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
-				AppendLog($"[ERROR] {selectedServer.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				AppendLog($"[🚨 ERROR] {selectedServer.ServerName} must be Stopped to perform a backup.", Color.Orange);
 				return;
 			}
 
 			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
-			AppendLog($"[BACKUP] Starting background compression for {selectedServer.ServerName}...", Color.Cyan);
+			isDownloadActive = true;
+
+			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			AppendLog($"[💾 BACKUP] Starting backup compression for {selectedServer.ServerName}...", Color.Cyan);
 
 			await Task.Run(() =>
 			{
 				BackupManager.ExecuteBackup(selectedServer, StartContext.Manual);
 			});
 
+			isDownloadActive = false;
 			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped);
-			AppendLog($"[BACKUP] Finished zipping {selectedServer.ServerName}.", Color.LimeGreen);
+			AppendLog($"[💾 BACKUP] Finished backing up {selectedServer.ServerName}.", Color.LimeGreen);
+			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			UpdateGrid();
 		}
 
@@ -373,13 +388,13 @@ namespace Synix_Control_Panel
 			// 1. SELECTION CHECKS
 			if (dataGridView1.CurrentRow == null)
 			{
-				AppendLog("[ERROR] No row is currently selected!", Color.Red);
+				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
 				return;
 			}
 
 			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
 			{
-				AppendLog("[ERROR] Invalid GameServer object!", Color.Red);
+				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
 				return;
 			}
 
@@ -391,7 +406,7 @@ namespace Synix_Control_Panel
 			}
 
 			// 🎯 THE RESOURCE SAFEGUARD: Check CPU and RAM before we do anything else
-			// This respects your 7GB Windows buffer logic
+			// This respects your 5GB Windows buffer logic
 			if (!Core.Instance.PassResourceGuard(out string guardMsg))
 			{
 				AppendLog(guardMsg, Color.Red, true); // Bold red for critical resource warnings
@@ -495,7 +510,7 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				AppendLog($"[INFO] Creating directory: {fullPath}", Color.Yellow);
+				AppendLog($"[📜 INFO] Creating directory: {fullPath}", Color.Yellow);
 				try
 				{
 					Directory.CreateDirectory(fullPath);
@@ -531,7 +546,7 @@ namespace Synix_Control_Panel
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				Core.Instance.Log($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
@@ -561,7 +576,7 @@ namespace Synix_Control_Panel
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				Core.Instance.Log($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
@@ -604,7 +619,7 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private async Task CheckForUpdates()
+		private async Task VersionCheck()
 		{
 			string currentVersion = "Unknown";
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -674,7 +689,7 @@ namespace Synix_Control_Panel
 			}
 			catch
 			{
-				lblUpdateStatus.Text = " ⚠️ [ERROR] Could not check for updates.";
+				lblUpdateStatus.Text = " ⚠️ [🚨 ERROR] Could not check for updates.";
 				lblUpdateStatus.ForeColor = Color.Black;
 				lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 				lblUpdateStatus.BackColor = Color.Red;
@@ -699,7 +714,7 @@ namespace Synix_Control_Panel
 			catch (Exception ex)
 			{
 				// If something goes wrong, log it so you can see it in your video
-				AppendLog($"[ERROR] Could not open browser: {ex.Message}", Color.Red);
+				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
 		}
 	}

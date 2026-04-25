@@ -113,7 +113,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// If it's the first time running, show the warning
 			if (server.IsFirstBoot)
 			{
-				MainGUI.Instance?.AppendLog($"[CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
+				MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
 
 				using (var warningForm = new WarningDatabase(server))
 				{
@@ -131,7 +131,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				MainGUI.Instance?.Invoke((Action)(() =>
 				{
-					MainGUI.Instance.AppendLog($"[ERROR] {errorMessage}", Color.Red, true);
+					MainGUI.Instance.AppendLog($"[🚨 ERROR] {errorMessage}", Color.Red, true);
 				}));
 
 				MessageBox.Show(errorMessage, "Integrity Check Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -181,7 +181,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp)
 			{
-				lockMessage = $"[LOCKED] Cannot start. {server.ServerName} is currently {status}.";
+				lockMessage = $"[🔒 LOCKED] Cannot start. {server.ServerName} is currently {status}.";
 				return false;
 			}
 
@@ -202,7 +202,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (isStopping || isStopped || isCrashed || isInstalling || isUpdating || isBackingUp)
 			{
-				lockMessage = $"[LOCKED] Cannot stop. {server.ServerName} is currently {status}.";
+				lockMessage = $"[🔒 LOCKED] Cannot stop. {server.ServerName} is currently {status}.";
 				return false;
 			}
 

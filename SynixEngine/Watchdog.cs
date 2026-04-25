@@ -140,7 +140,7 @@ namespace Synix_Control_Panel.SynixEngine
 					// Just call the alert with a global message
 					TriggerGlobalDDoSAlert();
 
-					MainGUI.Instance?.AppendLog($"[SECURITY] NETWORK FLOOD: {currentBps / 1024 / 1024} MB/s | System CPU: {cpuUsage:0}%", Color.Maroon);
+					MainGUI.Instance?.AppendLog($"[🚨 SECURITY] NETWORK FLOOD: {currentBps / 1024 / 1024} MB/s | System CPU: {cpuUsage:0}%", Color.Maroon);
 				}
 			}
 			else

@@ -65,7 +65,7 @@ namespace Synix_Control_Panel.ServerHandler
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				if (dbEntry == null)
 				{
-					logCallback?.Invoke("[ERROR] Game template not found.");
+					logCallback?.Invoke("[🚨 ERROR] Game template not found.");
 					return;
 				}
 
@@ -75,7 +75,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 				if (!File.Exists(fullExePath))
 				{
-					logCallback?.Invoke($"[ERROR] Executable missing: {fullExePath}");
+					logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}");
 					server.Status = StatusManager.GetStatus(ServerState.Stopped);
 					return;
 				}
@@ -130,7 +130,7 @@ namespace Synix_Control_Panel.ServerHandler
 							invokedId = fileContent;
 						}
 					}
-					catch (Exception ex) { logCallback?.Invoke($"[WARNING] File Read Error: {ex.Message}"); }
+					catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}"); }
 				}
 
 				// 🛠️ 6. ARGUMENT REPLACEMENT
@@ -216,7 +216,7 @@ namespace Synix_Control_Panel.ServerHandler
 					FileHandler.SaveServers();
 				}
 			}
-			catch (Exception ex) { logCallback?.Invoke($"[CRITICAL ERROR] {ex.Message}"); }
+			catch (Exception ex) { logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}"); }
 		}
 
 		public static void Stop(GameServer server, Action<string> logCallback, bool isManual = true)
@@ -229,7 +229,7 @@ namespace Synix_Control_Panel.ServerHandler
 				int targetPid = server.RunningProcess?.Id ?? server.PID ?? 0;
 				if (targetPid <= 0)
 				{
-					logCallback?.Invoke($"[ERROR] {server.ServerName} has no valid PID to stop.");
+					logCallback?.Invoke($"[🚨 ERROR] {server.ServerName} has no valid PID to stop.");
 					return;
 				}
 
@@ -258,7 +258,7 @@ namespace Synix_Control_Panel.ServerHandler
 					}
 				}
 
-				logCallback?.Invoke($"[WATCHDOG] {server.ServerName} did not respond. Forcing taskkill...");
+				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} did not respond. Forcing taskkill...");
 				ProcessStartInfo killInfo = new ProcessStartInfo
 				{
 					FileName = "taskkill",
@@ -269,9 +269,9 @@ namespace Synix_Control_Panel.ServerHandler
 
 				using (Process? killProcess = Process.Start(killInfo)) { killProcess?.WaitForExit(); }
 				FinalizeStoppedState(server);
-				logCallback?.Invoke($"[WATCHDOG] {server.ServerName} forced closed.");
+				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} forced closed.");
 			}
-			catch (Exception ex) { logCallback?.Invoke($"[ERROR] Failed to stop {server.ServerName}: {ex.Message}"); }
+			catch (Exception ex) { logCallback?.Invoke($"[🚨 ERROR] Failed to stop {server.ServerName}: {ex.Message}"); }
 		}
 
 		private static void FinalizeStoppedState(GameServer server)

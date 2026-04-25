@@ -45,7 +45,7 @@ namespace Synix_Control_Panel.SynixEngine
 							{
 								server.StartTime = process.StartTime;
 							}
-							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
+							MainGUI.Instance?.AppendLog($"--- [🔗 REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
 							process.Exited += async (s, e) =>
@@ -68,7 +68,7 @@ namespace Synix_Control_Panel.SynixEngine
 						var installer = Process.GetProcessById(server.SteamPID.Value);
 						if (installer != null && !installer.HasExited)
 						{
-							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} install still active (PID: {server.SteamPID}) ---", Color.BlueViolet, true);
+							MainGUI.Instance?.AppendLog($"--- [🔗 REBIND] Found {server.Game} install still active (PID: {server.SteamPID}) ---", Color.BlueViolet, true);
 						}
 					}
 					catch
@@ -80,7 +80,7 @@ namespace Synix_Control_Panel.SynixEngine
 						// 🛠️ RUN SURGERY: Fix missing DLLs/Configs for the orphaned install
 						GameFix.PostInstall(server);
 
-						MainGUI.Instance?.AppendLog($"--- [RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes. ---", Color.Green, true);
+						MainGUI.Instance?.AppendLog($"--- [🔧 RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes. ---", Color.Green, true);
 						FileHandler.SaveServers();
 					}
 				}
@@ -123,7 +123,7 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerState.Stopping => "Stopping",
 					ServerState.Installing => "Installing",
 					ServerState.Updating => "Updating",
-					ServerState.BackingUp => "BackingUp",
+					ServerState.BackingUp => "Backing Up",
 					_ => "Unknown"
 				};
 			}
