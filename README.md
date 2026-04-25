@@ -37,7 +37,8 @@ Because Synix is a specialized tool developed for the community, you may encount
 > 
 > **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
 > **Security Scan [Results](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1) from Virustotal**
-
+[![CodeQL Analysis](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/codeql.yml/badge.svg)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/codeql.yml)
+> 
 ---
 
 ## 🛡️ Synix Network Guard
