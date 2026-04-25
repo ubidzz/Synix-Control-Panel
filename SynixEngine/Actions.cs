@@ -13,11 +13,7 @@ using Synix_Control_Panel.Database;
 using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
-using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -40,7 +36,7 @@ namespace Synix_Control_Panel.SynixEngine
 				Servers.Stop(server, msg =>
 				{
 					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.AppendLog(msg)));
-				}, 
+				},
 				isManual);
 			});
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
@@ -195,7 +191,8 @@ namespace Synix_Control_Panel.SynixEngine
 					// Updated to include the PID callback
 					return ServerInstaller.Install(server.InstallPath, appId,
 						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
-						pid => {
+						pid =>
+						{
 							server.SteamPID = pid;
 							FileHandler.SaveServers();
 						});
@@ -274,7 +271,8 @@ namespace Synix_Control_Panel.SynixEngine
 					// Updated to include the PID callback
 					return ServerInstaller.Install(server.InstallPath, appId,
 						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
-						pid => {
+						pid =>
+						{
 							server.SteamPID = pid;
 							FileHandler.SaveServers();
 						});
@@ -337,7 +335,8 @@ namespace Synix_Control_Panel.SynixEngine
 							// Updated to include the PID callback
 							return ServerInstaller.Install(newServer.InstallPath, appId,
 								msg => Log(msg),
-								pid => {
+								pid =>
+								{
 									newServer.SteamPID = pid;
 									FileHandler.SaveServers(); // Save the PID immediately
 								});
@@ -538,7 +537,8 @@ namespace Synix_Control_Panel.SynixEngine
 						server.InstallPath,
 						dbEntry.AppID,
 						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
-						pid => {
+						pid =>
+						{
 							server.SteamPID = pid;
 							FileHandler.SaveServers(); // Save PID so monitor sees it
 						});

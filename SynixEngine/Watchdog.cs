@@ -10,16 +10,7 @@
  * directory for full terms.
  */
 using Synix_Control_Panel.Database;
-using Synix_Control_Panel.ServerHandler;
-using Synix_Control_Panel.FileFolderHandler;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -54,10 +45,12 @@ namespace Synix_Control_Panel.SynixEngine
 									if (!string.IsNullOrEmpty(publicIP) && await TestServerConnectivity(publicIP, server.QueryPort))
 									{
 										isResponding = true;
-									} else if (!string.IsNullOrEmpty(localIp) && await TestServerConnectivity(localIp, server.QueryPort))
+									}
+									else if (!string.IsNullOrEmpty(localIp) && await TestServerConnectivity(localIp, server.QueryPort))
 									{
 										isResponding = true;
-									} else if (await TestServerConnectivity("127.0.0.1", server.QueryPort))
+									}
+									else if (await TestServerConnectivity("127.0.0.1", server.QueryPort))
 									{
 										isResponding = true;
 									}

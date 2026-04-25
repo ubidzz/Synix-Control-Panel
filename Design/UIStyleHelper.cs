@@ -9,12 +9,8 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
 namespace Synix_Control_Panel.UI
 {

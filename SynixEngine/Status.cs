@@ -7,13 +7,10 @@
 // use of this source code or the compiled executable is strictly
 // prohibited. Please refer to the LICENSE file in the root
 // directory for full terms.
-using Synix_Control_Panel.Database;
 using Synix_Control_Panel.ServerHandler;
-using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Windows.Forms;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -23,7 +20,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (MainGUI.Instance != null && !MainGUI.Instance.IsDisposed && MainGUI.Instance.IsHandleCreated)
 			{
-				MainGUI.Instance.BeginInvoke((MethodInvoker)delegate {
+				MainGUI.Instance.BeginInvoke((MethodInvoker)delegate
+				{
 					MainGUI.Instance.UpdateGrid();
 				});
 			}
@@ -50,7 +48,8 @@ namespace Synix_Control_Panel.SynixEngine
 							MainGUI.Instance?.AppendLog($"--- [REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
-							process.Exited += async (s, e) => {
+							process.Exited += async (s, e) =>
+							{
 								if (server.Status == StatusManager.GetStatus(ServerState.Running))
 									await RecoverServer(server);
 								else

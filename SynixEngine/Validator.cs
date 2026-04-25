@@ -7,12 +7,7 @@
 // use of this source code or the compiled executable is strictly
 // prohibited. Please refer to the LICENSE file in the root
 // directory for full terms.
-using System;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
 using Synix_Control_Panel.Database;
-using Synix_Control_Panel.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -123,7 +118,7 @@ namespace Synix_Control_Panel.SynixEngine
 				using (var warningForm = new WarningDatabase(server))
 				{
 					warningForm.ShowDialog();
-					return true; 
+					return true;
 				}
 			}
 
@@ -134,7 +129,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!CanServerStart(server, out string errorMessage))
 			{
-				MainGUI.Instance?.Invoke((Action)(() => {
+				MainGUI.Instance?.Invoke((Action)(() =>
+				{
 					MainGUI.Instance.AppendLog($"[ERROR] {errorMessage}", Color.Red, true);
 				}));
 
@@ -186,10 +182,10 @@ namespace Synix_Control_Panel.SynixEngine
 			if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp)
 			{
 				lockMessage = $"[LOCKED] Cannot start. {server.ServerName} is currently {status}.";
-				return false; 
+				return false;
 			}
 
-			return true; 
+			return true;
 		}
 
 		public bool PassStopSpamLock(GameServer server, out string lockMessage)
@@ -207,7 +203,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (isStopping || isStopped || isCrashed || isInstalling || isUpdating || isBackingUp)
 			{
 				lockMessage = $"[LOCKED] Cannot stop. {server.ServerName} is currently {status}.";
-				return false; 
+				return false;
 			}
 
 			return true; // Safe to stop

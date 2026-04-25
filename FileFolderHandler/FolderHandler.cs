@@ -9,11 +9,6 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
-using System.IO;
-using Synix_Control_Panel;
-using Synix_Control_Panel.ServerHandler;
-
 namespace Synix_Control_Panel.FileFolderHandler
 {
 	public static class FolderHandler

@@ -10,15 +10,8 @@
  * directory for full terms.
  */
 using Synix_Control_Panel.Database;
-using Synix_Control_Panel.FileFolderHandler;
-using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
-using System;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
 
@@ -186,7 +179,8 @@ namespace Synix_Control_Panel.ServerHandler
 					_ = Core.Instance.SendDiscordAlert(server, "SERVER STARTING", $"{server.ServerName} process has been initiated.", Color.Cyan);
 
 					proc.EnableRaisingEvents = true;
-					proc.Exited += async (s, e) => {
+					proc.Exited += async (s, e) =>
+					{
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
 							// Watchdog handles the single Discord crash notification

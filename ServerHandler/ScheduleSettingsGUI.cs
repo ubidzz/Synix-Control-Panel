@@ -9,11 +9,6 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using Synix_Control_Panel.UI;
-
 namespace Synix_Control_Panel.ServerHandler
 {
 	public partial class ScheduleSettingsGUI : Form

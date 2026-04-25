@@ -9,14 +9,7 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
-using Synix_Control_Panel.ServerHandler;
 
 namespace Synix_Control_Panel
 {

@@ -9,14 +9,9 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using System.Windows.Forms;
 using System.Xml; // Added for XML parsing
 
 namespace Synix_Control_Panel.ServerHandler

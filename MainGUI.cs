@@ -10,7 +10,6 @@
  * directory for full terms.
  */
 using Synix_Control_Panel.Design;
-using Synix_Control_Panel.Help;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
@@ -36,7 +35,7 @@ namespace Synix_Control_Panel
 			InitializeComponent();
 			Instance = this;
 			FileHandler.LoadServers();
-			var engine = Synix_Control_Panel.SynixEngine.Core.Instance;
+			var engine = Core.Instance;
 			GridStyler.DarkTheme(dataGridView1);
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered",
@@ -51,8 +50,8 @@ namespace Synix_Control_Panel
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
 			// 1. Grab telemetry from the Singleton Engine
-			double cpu = Synix_Control_Panel.SynixEngine.Core.Instance.TotalCpuUsage;
-			double ram = Synix_Control_Panel.SynixEngine.Core.Instance.TotalRamUsageGb;
+			double cpu = Core.Instance.TotalCpuUsage;
+			double ram = Core.Instance.TotalRamUsageGb;
 
 			// 2. Update the Text Labels
 			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
@@ -206,7 +205,7 @@ namespace Synix_Control_Panel
 			// 1. Set the lock immediately
 			isDownloadActive = true;
 			await Task.Delay(100);
-			
+
 			AppendLog($"--- [WARNING] Synix close window button is now Disabled! ---", Color.Orange, true);
 			AppendLog("Checking SteamCMD dependencies...");
 

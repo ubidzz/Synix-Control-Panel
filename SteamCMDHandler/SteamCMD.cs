@@ -9,12 +9,8 @@
  * prohibited. Please refer to the LICENSE file in the root 
  * directory for full terms.
  */
-using System;
 using System.Diagnostics;
-using System.IO;
 using System.IO.Compression;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Synix_Control_Panel.SteamCMDHandler
 {

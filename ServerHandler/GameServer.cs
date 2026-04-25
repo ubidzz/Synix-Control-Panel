@@ -15,7 +15,6 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using static Synix_Control_Panel.Database.GameDatabase;
 using static Synix_Control_Panel.SynixEngine.Core;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 public class GameInfo
 {
