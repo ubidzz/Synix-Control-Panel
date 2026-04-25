@@ -206,16 +206,17 @@ namespace Synix_Control_Panel
 			// 1. Set the lock immediately
 			isDownloadActive = true;
 			await Task.Delay(100);
-			AppendLog("Checking SteamCMD dependencies...");
+			
 			AppendLog($"--- [WARNING] Synix close window button is now Disabled! ---", Color.Orange, true);
+			AppendLog("Checking SteamCMD dependencies...");
+
 			// 2. Run the check on a background thread
-			// This allows the 'X' button to stay active and trigger GUI_FormClosing
 			await Task.Run(() => SteamCMD.EnsureSteamCMD(msg => AppendLog(msg)));
 
 			// 3. Release the lock once the background task is done
 			isDownloadActive = false;
-			AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 			AppendLog("Initialization complete.");
+			AppendLog($"--- [WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
 		}
 
 		public void UpdateGrid()

@@ -168,11 +168,11 @@
 			btnStart.Cursor = Cursors.Hand;
 			btnStart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStart.ForeColor = Color.Green;
-			btnStart.Location = new Point(451, 590);
+			btnStart.Location = new Point(574, 589);
 			btnStart.Name = "btnStart";
-			btnStart.Size = new Size(142, 28);
+			btnStart.Size = new Size(101, 28);
 			btnStart.TabIndex = 8;
-			btnStart.Text = "Start Server";
+			btnStart.Text = "Start";
 			btnStart.UseVisualStyleBackColor = true;
 			btnStart.Click += btnStart_Click;
 			// 
@@ -181,11 +181,11 @@
 			btnStop.Cursor = Cursors.Hand;
 			btnStop.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStop.ForeColor = Color.Red;
-			btnStop.Location = new Point(747, 588);
+			btnStop.Location = new Point(788, 589);
 			btnStop.Name = "btnStop";
-			btnStop.Size = new Size(142, 28);
+			btnStop.Size = new Size(101, 28);
 			btnStop.TabIndex = 9;
-			btnStop.Text = "Stop Server";
+			btnStop.Text = "Stop";
 			btnStop.UseVisualStyleBackColor = true;
 			btnStop.Click += btnStop_Click;
 			// 
@@ -411,11 +411,11 @@
 			// 
 			btnRestart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnRestart.ForeColor = Color.DarkCyan;
-			btnRestart.Location = new Point(599, 589);
+			btnRestart.Location = new Point(681, 589);
 			btnRestart.Name = "btnRestart";
-			btnRestart.Size = new Size(142, 28);
+			btnRestart.Size = new Size(101, 28);
 			btnRestart.TabIndex = 20;
-			btnRestart.Text = "Restart Server";
+			btnRestart.Text = "Restart";
 			btnRestart.UseVisualStyleBackColor = true;
 			btnRestart.Click += btnRestart_Click;
 			// 
