@@ -45,6 +45,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="SynixEngine\version.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="SynixEngine\version.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="G:\Projects C#\Game Server Manager\.editorconfig" />
   </ItemGroup>
 

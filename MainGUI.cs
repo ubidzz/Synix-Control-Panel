@@ -606,7 +606,23 @@ namespace Synix_Control_Panel
 
 		private async Task CheckForUpdates()
 		{
-			string currentVersion = "1.0.10-beta"; // Set this to your current Synix version
+			// --- ADD THIS PART TO READ THE FILE ---
+			string currentVersion = "Unknown";
+			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+			string resourcePath = "Synix_Control_Panel.SynixEngine.version.txt";
+
+			using (System.IO.Stream stream = assembly.GetManifestResourceStream(resourcePath))
+			{
+				if (stream != null)
+				{
+					using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
+					{
+						currentVersion = reader.ReadToEnd().Trim();
+					}
+				}
+			}
+			// ---------------------------------------
+
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
 			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
@@ -620,6 +636,7 @@ namespace Synix_Control_Panel
 
 					string latestVersion = (await client.GetStringAsync(versionUrl)).Trim();
 
+					// This now compares "1.0.10" (from file) to "1.0.10" (from GitHub)
 					if (latestVersion == currentVersion)
 					{
 						lblUpdateStatus.Text = " ✔ You are running the latest version " + currentVersion;
@@ -629,7 +646,8 @@ namespace Synix_Control_Panel
 					}
 					else
 					{
-						lblUpdateStatus.Text = " ⚠️ A newer Synix " + currentVersion + " version is available!";
+						// Shows the real version numbers in the warning
+						lblUpdateStatus.Text = " ⚠️ A newer Synix " + latestVersion + " version is available!";
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;
