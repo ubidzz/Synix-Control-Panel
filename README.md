@@ -7,6 +7,8 @@
 ![Build](https://img.shields.io/badge/Architecture-Engine--Driven-orange.svg?style=for-the-badge)
 ![Security](https://img.shields.io/badge/Privilege-Zero--UAC%20Required-blueviolet.svg?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)
+[![SECURITY](https://img.shields.io/badge/SECURITY-PASSING-brightgreen?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql)
+[![VirusTotal](https://img.shields.io/badge/VirusTotal-1%2F71%20Clean-yellowgreen?style=for-the-badge&logo=virustotal)](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)
 
 **Synix Control Panel** is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a **Zero-Admin (No UAC)** environment.
 
@@ -36,8 +38,6 @@ Because Synix is a specialized tool developed for the community, you may encount
 > * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
 > 
 > **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
-> **Security Scan [Results](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1) from Virustotal**
-> [![CodeQL](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql)
 
 ---
 
