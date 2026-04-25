@@ -1,6 +1,6 @@
 # 🛸 Synix Control Panel
 
-### **The High-Performance, Zero-Admin Backbone for Enterprise-Grade Game Hosting**
+### **The High-Performance, Zero-Admin Backbone for Your Personal Game Servers**
 
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2011-lightgrey.svg?style=for-the-badge&logo=windows)
