@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using System.Xml; // Added for XML parsing
 
@@ -272,6 +273,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 			try
 			{
+				// 1. Clean the raw string (Handling UE5 null-padding)
 				string jsonString = File.ReadAllText(path).Replace("\0", "").Replace("\uFEFF", "");
 
 				int firstBracket = jsonString.IndexOf('{');
@@ -281,15 +283,24 @@ namespace Synix_Control_Panel.ServerHandler
 
 				if (jsonNode is JsonObject jsonObj)
 				{
-					// Dynamically inject values without destroying structure
+					// 2. Inject the UI values into the JSON structure
 					UpdateJsonNode(jsonObj, data);
 
-					var options = new JsonSerializerOptions { WriteIndented = true };
+					// 🎯 THE FIX: Define options that allow "illegal" math values
+					var options = new JsonSerializerOptions
+					{
+						WriteIndented = true,
+						// This prevents the "Save Error" crash by converting Infinity/NaN to strings
+						NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
+					};
+
+					// 3. Save to disk
 					File.WriteAllText(path, jsonNode.ToJsonString(options));
 				}
 			}
 			catch (Exception ex)
 			{
+				// This is your current error trap
 				MessageBox.Show($"Error saving JSON: {ex.Message}", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}

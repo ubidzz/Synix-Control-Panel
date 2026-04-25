@@ -53,6 +53,8 @@ namespace Synix_Control_Panel.ServerHandler
 				if (server.BackupOnStart && context != StartContext.CrashRecovery)
 				{
 					logCallback?.Invoke("[BACKUP] Starting...");
+					server.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
+					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 					await Task.Run(() => BackupManager.ExecuteBackup(server, context));
 					logCallback?.Invoke("[BACKUP] Finished...");
 				}
@@ -60,6 +62,8 @@ namespace Synix_Control_Panel.ServerHandler
 				if (server.UpdateOnStart)
 				{
 					logCallback?.Invoke($"[ACTION] Update on Start is ON. Pausing launch for update...");
+					server.Status = Core.StatusManager.GetStatus(Core.ServerState.Updating);
+					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 					await Synix_Control_Panel.SynixEngine.Core.Instance.InstallOrUpdate(server);
 				}
 
@@ -124,8 +128,8 @@ namespace Synix_Control_Panel.ServerHandler
 					.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
 					.Replace("{map}", server.WorldName)
-					.Replace("{steamAppID}", invokedId) // 🎯 Uses the file content
-					.Replace("{appid}", targetId)       // 🎯 Keeps the DB ID separate
+					.Replace("{steamAppID}", invokedId)
+					.Replace("{appid}", targetId)
 					.Replace("{port}", server.Port.ToString())
 					.Replace("{query}", server.QueryPort.ToString())
 					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
@@ -179,14 +183,14 @@ namespace Synix_Control_Panel.ServerHandler
 					if (server.StartTime == null) server.StartTime = DateTime.Now;
 
 					// 🎯 DISCORD ALERT: Server Online (Clean alert)
-					_ = SynixEngine.Core.Instance.SendDiscordAlert(server, "SERVER STARTING", $"{server.ServerName} process has been initiated.", Color.Cyan);
+					_ = Core.Instance.SendDiscordAlert(server, "SERVER STARTING", $"{server.ServerName} process has been initiated.", Color.Cyan);
 
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) => {
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
 							// Watchdog handles the single Discord crash notification
-							await Synix_Control_Panel.SynixEngine.Core.Instance.RecoverServer(server);
+							await Core.Instance.RecoverServer(server);
 						}
 						else
 						{

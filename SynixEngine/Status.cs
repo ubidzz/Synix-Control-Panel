@@ -168,71 +168,71 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
 
-			// 🎯 DYNAMIC IP GATHERING
-			string localIp = await GetLocalIP();
-
-			// Create a list of unique, non-empty IPs to check
-			var probeTargets = new List<string> { "127.0.0.1", localIp };
+			// 🎯 Use your dynamic LAN IP and Loopback
+			string localIp = await Core.Instance.GetLocalIP();
+			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
 
 			using var udpClient = new System.Net.Sockets.UdpClient();
 			try
 			{
-				// Windows ICMP Fix to prevent crashes on closed ports
+				// Windows ICMP Fix (Essential for UE5 servers)
 				if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
 				{
 					const int SIO_UDP_CONNRESET = -1744830452;
 					udpClient.Client.IOControl(SIO_UDP_CONNRESET, new byte[] { 0 }, null);
 				}
 
-				udpClient.Client.ReceiveTimeout = 1000;
+				udpClient.Client.ReceiveTimeout = 1500;
 
-				// 🎯 THE PROBE LOOP
-				foreach (string ip in probeTargets.Where(s => !string.IsNullOrEmpty(s)).Distinct())
+				foreach (var ip in targets)
 				{
 					try
 					{
 						System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(System.Net.IPAddress.Parse(ip), server.QueryPort);
 
+						// 1. Send the standard request
 						await udpClient.SendAsync(_a2sInfoRequest, _a2sInfoRequest.Length, remoteEP);
-
-						var receiveTask = udpClient.ReceiveAsync();
-						if (await Task.WhenAny(receiveTask, Task.Delay(500)) != receiveTask) continue;
-
-						var result = await receiveTask;
+						var result = await udpClient.ReceiveAsync();
 						byte[] data = result.Buffer;
 
-						// 🎯 CHALLENGE HANDSHAKE (Required for Windrose/UE5)
+						// 🎯 THE WINDROSE FIX: Handle the 0x41 Challenge
+						// Rust usually skips this, but UE5 demands it.
 						if (data.Length >= 9 && data[4] == 0x41)
 						{
+							// Copy original request + 4 bytes of challenge data from the server
 							byte[] challengeRequest = new byte[_a2sInfoRequest.Length + 4];
 							Array.Copy(_a2sInfoRequest, 0, challengeRequest, 0, _a2sInfoRequest.Length);
 							Array.Copy(data, 5, challengeRequest, _a2sInfoRequest.Length, 4);
 
+							// Re-send with the "Proof" the server wants
 							await udpClient.SendAsync(challengeRequest, challengeRequest.Length, remoteEP);
 							result = await udpClient.ReceiveAsync();
 							data = result.Buffer;
 						}
 
-						// 🎯 PARSE PLAYER DATA
+						// 2. Parse the actual data (Header 0x49)
 						if (data.Length > 5 && data[4] == 0x49)
 						{
-							int pointer = 6;
-							for (int i = 0; i < 4; i++) // Skip Name, Map, Folder, Game
+							int pointer = 6; // Skip Header, Type, Protocol
+
+							// Skip the 4 strings: Name, Map, Folder, Game
+							for (int i = 0; i < 4; i++)
 							{
 								while (pointer < data.Length && data[pointer] != 0x00) pointer++;
 								pointer++;
 							}
+
 							pointer += 2; // Skip ID section
 
 							if (pointer + 1 < data.Length)
 							{
 								server.CurrentPlayers = data[pointer];
 								server.MaxPlayersFromQuery = data[pointer + 1];
-								return; // Found it! Exit the method.
+								return; // 🎯 SUCCESS: Found the server and parsed data
 							}
 						}
 					}
-					catch { /* Try the next IP in the list */ }
+					catch { continue; } // Try the next IP if this one times out
 				}
 			}
 			catch { server.CurrentPlayers = 0; }
