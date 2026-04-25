@@ -67,7 +67,7 @@ namespace Synix_Control_Panel.SynixEngine
 										{
 											// 🚀 CALLING DISCORD: SERVER ONLINE
 											_ = SendDiscordAlert(server, "SERVER ONLINE",
-												$"Successfully tested the server connectivity! If you still can't connect to the server please wait a minutes or two then try again.",
+												$"Successfully tested the server connectivity! If you still can't connect to the server please wait a minute or two then try again.",
 												Color.LimeGreen);
 
 											server.Status = StatusManager.GetStatus(ServerState.Running);
