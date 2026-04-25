@@ -23,7 +23,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM
 			double physicalRamGb = ResourceMonitor.GetTotalSystemRamMB() / 1024.0;
-			TotalRamGb = physicalRamGb - 7.0; // Subtracting 7GB for Windows
+			TotalRamGb = physicalRamGb - 5.0; // Subtracting 7GB for Windows
 
 			if (TotalRamGb < 1) TotalRamGb = physicalRamGb;
 

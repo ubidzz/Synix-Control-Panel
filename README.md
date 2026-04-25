@@ -26,16 +26,6 @@ Synix acts as a deterministic middleware layer between the Operating System and 
 
 ---
 
-## 🛡️ Synix Network Guard
-A specialized security module designed to protect the host's global network interface from saturation and resource exhaustion.
-
-* **Global Interface Monitoring:** Tracks total bandwidth (Bytes/s) across the primary network adapter, identifying surges that exceed normal gameplay thresholds.
-* **Heuristic Attack Analysis:** Differentiates between legitimate player spikes and malicious floods by cross-referencing network traffic with CPU interrupt levels.
-* **SteamCMD Awareness:** Intelligent logic prevents false positives during game installations or updates by monitoring active SteamCMD processes.
-* **Critical Service Alerts:** Triggers a system-wide "Network Guard" MessageBox that identifies a DDoS attack even when the user is tabbed out.
-
----
-
 ## 🛡️ Security & Installation Notes
 Because Synix is a specialized tool developed for the community, you may encounter Windows security prompts during your first launch.
 
@@ -46,6 +36,17 @@ Because Synix is a specialized tool developed for the community, you may encount
 > * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
 > 
 > **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
+> **Security Scan [Results](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1) from Virustotal**
+
+---
+
+## 🛡️ Synix Network Guard
+A specialized security module designed to protect the host's global network interface from saturation and resource exhaustion.
+
+* **Global Interface Monitoring:** Tracks total bandwidth (Bytes/s) across the primary network adapter, identifying surges that exceed normal gameplay thresholds.
+* **Heuristic Attack Analysis:** Differentiates between legitimate player spikes and malicious floods by cross-referencing network traffic with CPU interrupt levels.
+* **SteamCMD Awareness:** Intelligent logic prevents false positives during game installations or updates by monitoring active SteamCMD processes.
+* **Critical Service Alerts:** Triggers a system-wide "Network Guard" MessageBox that identifies a DDoS attack even when the user is tabbed out.
 
 ---
 
@@ -77,7 +78,7 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 * **Local vs. WAN Probing:** Verifies LAN IP binding and Public WAN NAT Table forwarding.
 * **NAT Hairpinning Awareness:** Detects router loopback limitations and guides users to the correct connection IP.
 * **A2S Telemetry:** Uses A2S_INFO protocols to query player counts and metadata without impacting server performance.
-* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to ensure correct Steam API handshakes for titles like Soulmask.
+* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to ensure correct Steam API handshakes for titles like ARK, Rust, Soulmask.
 
 ---
 
