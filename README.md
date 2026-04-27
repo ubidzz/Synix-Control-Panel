@@ -9,6 +9,7 @@
 ![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)
 [![SECURITY](https://img.shields.io/badge/SECURITY-PASSING-brightgreen?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql)
 [![VirusTotal](https://img.shields.io/badge/VirusTotal-1%2F71%20Clean-yellowgreen?style=for-the-badge&logo=virustotal)](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)
+[![WinGet Status](https://img.shields.io/winget/v/ubidzz.Synix?style=for-the-badge&color=blue&label=WINGET%20INSTALL)](https://github.com/microsoft/winget-pkgs/tree/master/manifests/u/ubidzz/Synix)
 
 **Synix Control Panel** is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a **Zero-Admin (No UAC)** environment.
 
