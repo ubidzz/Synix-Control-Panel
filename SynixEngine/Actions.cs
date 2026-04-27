@@ -146,25 +146,21 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task UpdateServerAndReport(GameServer server)
 		{
-			// 1. YOUR SAFETY: Don't update if server is running
 			if (server.Status == StatusManager.GetStatus(ServerState.Running))
 			{
 				MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
-			// 2. YOUR SAFETY: Don't update if already busy
 			if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
 			{
 				MessageBox.Show("A download or update is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 
-			// 3. YOUR CONFIRMATION
 			var confirm = MessageBox.Show($"Are you sure you want to update {server.ServerName}?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (confirm != DialogResult.Yes) return;
 
-			// 4. YOUR DATABASE LOOKUP
 			var gameData = GameDatabase.GetGame(server.Game);
 			string appId = gameData?.AppID ?? "";
 
@@ -176,7 +172,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
-				// 5. SET BUSY STATE
 				server.Status = StatusManager.GetStatus(ServerState.Updating);
 				isDownloadActive = true;
 				UpdateGridStatus();
@@ -198,7 +193,6 @@ namespace Synix_Control_Panel.SynixEngine
 						});
 				});
 
-				// 7. HANDLE ERRORS
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
@@ -338,7 +332,7 @@ namespace Synix_Control_Panel.SynixEngine
 								pid =>
 								{
 									newServer.SteamPID = pid;
-									FileHandler.SaveServers(); // Save the PID immediately
+									FileHandler.SaveServers();
 								});
 						});
 
@@ -408,7 +402,6 @@ namespace Synix_Control_Panel.SynixEngine
 			Log($"[MAINTENANCE] Scheduled restart triggered for {server.ServerName}.", Color.Cyan, true);
 
 			// 1. Stop the server
-
 			StopServerAndReport(server);
 
 			// 2. Wait 5 seconds for the PID to fully clear and the OS to breathe

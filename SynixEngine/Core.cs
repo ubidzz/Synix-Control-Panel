@@ -73,7 +73,6 @@ namespace Synix_Control_Panel.SynixEngine
 				string json = JsonSerializer.Serialize(payload);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-				// 🎯 FIX: We MUST await the actual post, otherwise it dies when the method scope ends
 				var response = await _discordClient.PostAsync(server.DiscordWebhook, content);
 
 				if (!response.IsSuccessStatusCode)
@@ -102,7 +101,6 @@ namespace Synix_Control_Panel.SynixEngine
 					_ = UpdatePlayerCount(server);
 					// 🎯 2. NEW: RAM Threshold Alert
 					// This uses the 80.0 limit you set to keep things stable
-					// We assume 'RamUsage' is a property in your GameServer class
 					if (server.RamUsage >= 80.0)
 					{
 						_ = SendDiscordAlert(server, "RESOURCE WARNING",

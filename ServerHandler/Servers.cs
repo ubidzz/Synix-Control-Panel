@@ -39,17 +39,17 @@ namespace Synix_Control_Panel.ServerHandler
 		public static async Task Start(GameServer server, Action<string> logCallback, StartContext context = StartContext.Manual)
 		{
 			// 🛡️ THE SAFEGUARD: Only check if it's a Manual start
-			if (context == StartContext.Manual && !IsSystemSafeToStart()) return;
+			if (!IsSystemSafeToStart()) return;
 			try
 			{
 				// 1. PRE-FLIGHT (Backup & Update)
 				if (server.BackupOnStart && context != StartContext.CrashRecovery)
 				{
-					logCallback?.Invoke("[BACKUP] Starting...");
+					logCallback?.Invoke("[💾 BACKUP] Starting...");
 					server.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
 					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 					await Task.Run(() => BackupManager.ExecuteBackup(server, context));
-					logCallback?.Invoke("[BACKUP] Finished...");
+					logCallback?.Invoke("[💾 BACKUP] Finished...");
 				}
 
 				if (server.UpdateOnStart)

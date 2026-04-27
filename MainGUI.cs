@@ -13,10 +13,10 @@ using Synix_Control_Panel.Design;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
+using static Synix_Control_Panel.SynixEngine.Core;
 using Synix_Control_Panel.UI;
 using System.ComponentModel;
 using System.Diagnostics;
-using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
 {
@@ -26,7 +26,7 @@ namespace Synix_Control_Panel
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
-		public double systemTotalRamGb = 98.0;
+		public double systemTotalRamGb = 128.0;
 		private int chartTickCounter = 0;
 		private const int maxGraphPoints = 60;
 
@@ -35,11 +35,10 @@ namespace Synix_Control_Panel
 			InitializeComponent();
 			Instance = this;
 			FileHandler.LoadServers();
-			var engine = Core.Instance;
+			_ = Core.Instance;
 			GridStyler.DarkTheme(dataGridView1);
 			dataGridView1.DataSource = serverList;
-			typeof(DataGridView).InvokeMember("DoubleBuffered",
-			System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
+			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Core.Instance.RebindProcesses();
 			Instance = this;
@@ -62,7 +61,6 @@ namespace Synix_Control_Panel
 			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
 
 			// 4. ANIMATION LOGIC: Lock the Viewport to the last 'maxGraphPoints'
-			// This creates the right-to-left scrolling effect
 			var chartArea = chartHeartbeat.ChartAreas[0];
 			chartArea.AxisX.Minimum = chartTickCounter - maxGraphPoints;
 			chartArea.AxisX.Maximum = chartTickCounter;
@@ -96,7 +94,7 @@ namespace Synix_Control_Panel
 			// Use the variable that Heartbeat_Tick has been updating
 			if (isDownloadActive)
 			{
-				e.Cancel = true; // NOW this works because 'e' is a FormClosingEventArgs
+				e.Cancel = true;
 				MessageBox.Show("Cannot close Synix while a server is installing, updating or Backing Up!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
@@ -108,10 +106,9 @@ namespace Synix_Control_Panel
 			{
 				// 1. Get real hardware total
 				double physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
-				if (physicalRam <= 0) physicalRam = 98.0;
 
-				// 2. The 7GB Buffer: Subtract 7 so Windows stays happy
-				double reserved = Math.Max(physicalRam * 0.15, 3.0); // Reserve 15% or at least 3GB
+				// 2. The 5GB Buffer: Subtract 5 so Windows stays happy
+				double reserved = Math.Max(physicalRam * 0.10, 5.0); // Reserve 15% or at least 5GB
 				systemTotalRamGb = physicalRam - reserved;
 
 				// 3. Apply styles with the NEW limit
@@ -525,7 +522,7 @@ namespace Synix_Control_Panel
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			Core.Instance.Log($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -537,11 +534,11 @@ namespace Synix_Control_Panel
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
+					Core.Instance.Log($"[🛰️ ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					Core.Instance.Log($"[🔒 BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
@@ -555,7 +552,7 @@ namespace Synix_Control_Panel
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			Core.Instance.Log($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -567,11 +564,11 @@ namespace Synix_Control_Panel
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
+					Core.Instance.Log($"[🛰️ ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					Core.Instance.Log($"[🔒 BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
@@ -625,7 +622,6 @@ namespace Synix_Control_Panel
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
 			// 1. DYNAMICALLY FIND THE FILE
-			// This looks at every file inside the EXE and finds yours automatically
 			string[] resourceNames = assembly.GetManifestResourceNames();
 			string actualResourcePath = null;
 
@@ -689,7 +685,7 @@ namespace Synix_Control_Panel
 			}
 			catch
 			{
-				lblUpdateStatus.Text = " ⚠️ [🚨 ERROR] Could not check for updates.";
+				lblUpdateStatus.Text = "[🚨 ERROR] Could not check for updates.";
 				lblUpdateStatus.ForeColor = Color.Black;
 				lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 				lblUpdateStatus.BackColor = Color.Red;
