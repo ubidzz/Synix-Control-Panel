@@ -87,7 +87,8 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 ## 📂 Deployment & Maintenance Suite
 * **Binary Integrity Validation:** Compares local files against the Steam Master Manifest to repair corrupted data without purging world saves.
 * **Automated DLL Injection:** Automatically injects required SteamCMD libraries into target binary folders post-install.
-* **Smart Backups:** "Backup on Start" zips before manual launches.
+* **Smart Backups:** "Backup on Start" zips before manual launches or Auto Restart.
+* **Smart Update** "Update on Start" will update server files before manual launches or Auto Restart.
 * **Discord Webhooks:** Full lifecycle notification support for Boots, Shutdowns, and Watchdog recovery events.
 
 ---
