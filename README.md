@@ -87,14 +87,14 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 ## 📂 Deployment & Maintenance Suite
 * **Binary Integrity Validation:** Compares local files against the Steam Master Manifest to repair corrupted data without purging world saves.
 * **Automated DLL Injection:** Automatically injects required SteamCMD libraries into target binary folders post-install.
-* **Smart Backups:** Recursive world snapshots every 6 hours and "Safe-Start" zips before manual launches.
+* **Smart Backups:** "Backup on Start" zips before manual launches.
 * **Discord Webhooks:** Full lifecycle notification support for Boots, Shutdowns, and Watchdog recovery events.
 
 ---
 
 ## 💾 Winget install
 * **`winget install synix`**
-* **`winget uninstall synix`** or from the App List
+* **`winget uninstall synix`** or from the computer App List
 * Synix will be downloaded into this folder `%LocalAppData%\Microsoft\WinGet\Packages` because it's a portable program with no installer needed.
 
 ---
