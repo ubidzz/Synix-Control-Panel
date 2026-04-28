@@ -13,6 +13,8 @@
 
 **Synix Control Panel** is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a **Zero-Admin (No UAC)** environment.
 
+[Support Discord](https://discord.gg/2WR7ArC2Vr)
+[Youtube Video](https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s)
 ---
 
 ## 🏗️ Architectural Style & Design Patterns
@@ -115,9 +117,6 @@ The **Synix Control Panel** is a proprietary software project.
 * **Strict Restrictions:** Redistribution, public modification, or commercial resale of the code or compiled binaries is strictly prohibited.
 
 ---
-
-[Support Discord](https://discord.gg/2WR7ArC2Vr)
-[Youtube Video](https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s)
 
 <img width="1243" height="660" alt="UI" src="https://github.com/user-attachments/assets/f10cc223-b1a0-4b85-a048-2989daf8ca8d" />
 <img width="802" height="482" alt="image" src="https://github.com/user-attachments/assets/4598aa5f-eb95-4589-afe2-bed4dd84d78b" />
