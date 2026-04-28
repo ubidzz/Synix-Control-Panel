@@ -93,8 +93,8 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 ---
 
 ## 💾 Winget install
-* **`winget install synix`
-* **`winget uninstall synix` or from the App List
+* **`winget install synix`**
+* **`winget uninstall synix`** or from the App List
 * **Synix will be downloaded into this folder `%LocalAppData%\Microsoft\WinGet\Packages` because it's a portable program with no installer needed.
 
 ---
