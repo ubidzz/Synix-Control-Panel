@@ -1,77 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <RootNamespace>Synix_Control_Panel</RootNamespace>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>Images\SyniX logo.ico</ApplicationIcon>
-    <AssemblyName>Synix Control Panel</AssemblyName>
-    <AssemblyTitle>Synix</AssemblyTitle>
-    <PackageProjectUrl>https://github.com/ubidzz/Synix-Control-Panel/blob/master/README.md</PackageProjectUrl>
-    <Copyright>Copyright © 2026 ubidzz. All Rights Reserved.</Copyright>
-    <Description>PC Game Server Hosting</Description>
-    <PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <AssemblyVersion>0.55</AssemblyVersion>
-    <FileVersion>0.55</FileVersion>
-	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-	<NeutralLanguage>en-US</NeutralLanguage>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<RootNamespace>Synix_Control_Panel</RootNamespace>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<ApplicationIcon>Images\SyniX logo.ico</ApplicationIcon>
+		<AssemblyName>Synix Control Panel</AssemblyName>
+		<AssemblyTitle>Synix</AssemblyTitle>
+		<PackageProjectUrl>https://github.com/ubidzz/Synix-Control-Panel/blob/master/README.md</PackageProjectUrl>
+		<Copyright>Copyright © 2026 ubidzz. All Rights Reserved.</Copyright>
+		<Description>PC Game Server Hosting</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<AssemblyVersion>1.0.12</AssemblyVersion>
+		<FileVersion>1.0.12</FileVersion>
+		<NeutralLanguage>en-US</NeutralLanguage>
 
-  <ItemGroup>
-    <Content Include="Images\SyniX logo.ico" />
-  </ItemGroup>
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>true</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<PublishReadyToRun>false</PublishReadyToRun>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+		<PublishTrimmed>false</PublishTrimmed>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Images\SyniX logo.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EditorConfigFiles Remove="G:\Projects C#\Game Server Manager\.editorconfig" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Management" Version="10.0.7" />
+		<PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="SynixEngine\version.txt" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="SynixEngine\version.txt" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="SynixEngine\version.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="G:\Projects C#\Game Server Manager\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Management" Version="10.0.7" />
-    <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Images\SyniX logo with glowing accents.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="Images\SyniX logo with glowing accents.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

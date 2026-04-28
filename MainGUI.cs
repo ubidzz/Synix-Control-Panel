@@ -29,6 +29,8 @@ namespace Synix_Control_Panel
 		public double systemTotalRamGb = 128.0;
 		private int chartTickCounter = 0;
 		private const int maxGraphPoints = 60;
+		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
+		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 
 		public MainGUI()
 		{
@@ -66,10 +68,12 @@ namespace Synix_Control_Panel
 			chartArea.AxisX.Maximum = chartTickCounter;
 
 			// 5. Cleanup: Keep the data buffer small to save memory
-			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints + 10)
+			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints)
 			{
 				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
 				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
+
+				chartHeartbeat.ResetAutoValues();
 			}
 
 			// 6. Handle Scheduled Restarts from servers.json
@@ -181,15 +185,17 @@ namespace Synix_Control_Panel
 
 			rtbLog.SelectionColor = textColor ?? rtbLog.ForeColor;
 
-			if (isBold)
-				rtbLog.SelectionFont = new Font(rtbLog.Font, FontStyle.Bold);
-			else
-				rtbLog.SelectionFont = new Font(rtbLog.Font, FontStyle.Regular);
+			if (rtbLog.Lines.Length > 500)
+			{
+				// Remove the top 100 lines to keep memory lean
+				rtbLog.ReadOnly = false;
+				rtbLog.Select(0, rtbLog.GetFirstCharIndexFromLine(100));
+				rtbLog.SelectedText = "";
+				rtbLog.ReadOnly = true;
+			}
 
-			// Print text
+			rtbLog.SelectionFont = isBold ? boldFont : regularFont;
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
-
-			rtbLog.SelectionFont = rtbLog.Font;
 
 			// Scroll and Refresh
 			rtbLog.SelectionStart = rtbLog.Text.Length;

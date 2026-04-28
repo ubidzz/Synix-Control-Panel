@@ -92,6 +92,13 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 
 ---
 
+## 💾 Winget install
+* **`winget install synix`
+* **`winget uninstall synix` or from the App List
+* **Synix will be downloaded into this folder `%LocalAppData%\Microsoft\WinGet\Packages` because it's a portable program with no installer needed.
+
+---
+
 ## 💻 Technical Stack
 * **Framework:** C# / .NET 8.0+ / Modern WinForms
 * **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O.
@@ -110,7 +117,7 @@ The **Synix Control Panel** is a proprietary software project.
 ---
 
 Support: https://discord.gg/2WR7ArC2Vr
-Youtube Video: https://youtu.be/uxLvrT548Hk
+Youtube Video: https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s
 
 <img width="1243" height="660" alt="UI" src="https://github.com/user-attachments/assets/f10cc223-b1a0-4b85-a048-2989daf8ca8d" />
 <img width="802" height="482" alt="image" src="https://github.com/user-attachments/assets/4598aa5f-eb95-4589-afe2-bed4dd84d78b" />

@@ -17,6 +17,7 @@ namespace Synix_Control_Panel.SynixEngine
 	public partial class Core
 	{
 		private readonly Dictionary<int, int> _watchdogGracePeriods = [];
+		private static readonly PerformanceCounter _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
 		private void PerformWatchdogCheck()
 		{
@@ -29,53 +30,63 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					if (!server.PID.HasValue) continue;
 
+					// 🎯 CHECK 1: Ensure the process is actually still there
 					if (IsProcessAlive(server.PID.Value, exePathFromDB))
 					{
-						if (!server.HasAnnouncedOnline)
+						// 🎯 CHECK 2: Only probe if not already announced AND not currently probing
+						if (!server.HasAnnouncedOnline && !server.IsProbing)
 						{
+							// 5-second throttle to keep the CPU low
 							if (server.LastProbeTime == null || (DateTime.Now - server.LastProbeTime.Value).TotalSeconds >= 5)
 							{
 								server.LastProbeTime = DateTime.Now;
+								server.IsProbing = true; // 🔒 LOCK THE GATE
+
 								_ = Task.Run(async () =>
 								{
-									string publicIP = await GetPublicIP();
-									string localIp = await GetLocalIP();
-									bool isResponding = false;
+									try
+									{
+										string publicIP = await GetPublicIP();
+										string localIp = await GetLocalIP();
+										bool isResponding = false;
 
-									if (!string.IsNullOrEmpty(publicIP) && await TestServerConnectivity(publicIP, server.QueryPort))
-									{
-										isResponding = true;
-									}
-									else if (!string.IsNullOrEmpty(localIp) && await TestServerConnectivity(localIp, server.QueryPort))
-									{
-										isResponding = true;
-									}
-									else if (await TestServerConnectivity("127.0.0.1", server.QueryPort))
-									{
-										isResponding = true;
-									}
-									if (isResponding)
-									{
-										MainGUI.Instance?.Invoke((Action)(() =>
+										// Test all three connection types
+										if (!string.IsNullOrEmpty(publicIP) && await TestServerConnectivity(publicIP, server.QueryPort))
+											isResponding = true;
+										else if (!string.IsNullOrEmpty(localIp) && await TestServerConnectivity(localIp, server.QueryPort))
+											isResponding = true;
+										else if (await TestServerConnectivity("127.0.0.1", server.QueryPort))
+											isResponding = true;
+
+										if (isResponding)
 										{
-											// 🚀 CALLING DISCORD: SERVER ONLINE
-											_ = SendDiscordAlert(server, "SERVER ONLINE",
-												$"Successfully tested the server connectivity! If you still can't connect to the server please wait a minute or two then try again.",
-												Color.LimeGreen);
+											MainGUI.Instance?.Invoke((Action)(() =>
+											{
+												_ = SendDiscordAlert(server, "SERVER ONLINE",
+													$"Successfully tested the server connectivity!",
+													Color.LimeGreen);
 
-											server.Status = StatusManager.GetStatus(ServerState.Running);
-											MainGUI.Instance.UpdateGrid();
-										}));
+												server.Status = StatusManager.GetStatus(ServerState.Running);
+												MainGUI.Instance.UpdateGrid();
+											}));
+										}
+									}
+									finally
+									{
+										server.IsProbing = false; // 🔓 OPEN THE GATE (even if it fails)
 									}
 								});
 							}
 						}
 					}
-					else { _ = RecoverServer(server); }
+					else
+					{
+						_ = RecoverServer(server);
+					}
 					continue;
 				}
 
-				// --- 2. MONITOR STABLE SERVERS ---
+				// --- MONITOR STABLE SERVERS ---
 				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.PID.HasValue)
 				{
 					if (!IsProcessAlive(server.PID.Value, exePathFromDB))
@@ -170,15 +181,7 @@ namespace Synix_Control_Panel.SynixEngine
 		// Helper to get the actual system CPU for the alert
 		private float GetSystemCpuUsage()
 		{
-			try
-			{
-				using (var cpuCounter = new System.Diagnostics.PerformanceCounter("Processor", "% Processor Time", "_Total"))
-				{
-					cpuCounter.NextValue();
-					System.Threading.Thread.Sleep(50); // Small delay for accurate reading
-					return cpuCounter.NextValue();
-				}
-			}
+			try { return _cpuCounter.NextValue(); }
 			catch { return 0; }
 		}
 

@@ -10,6 +10,7 @@
  * directory for full terms.
  */
 // 🎯 THE FIX: You must include this so the Core knows what a "GameServer" is
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 

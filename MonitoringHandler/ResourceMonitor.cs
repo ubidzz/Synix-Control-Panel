@@ -49,6 +49,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 						if (proc.HasExited)
 						{
 							server.RamUsage = 0;
+							proc.Dispose();
 							continue;
 						}
 
@@ -79,6 +80,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 						lastCpuTime[proc.Id] = currentCpuTime;
 						lastCheckTime[proc.Id] = currentTime;
+						proc.Dispose();
 					}
 					catch
 					{

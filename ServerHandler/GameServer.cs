@@ -87,7 +87,7 @@ public class GameServer : GameInfo
 	public string DiscordWebhook { get; set; } = string.Empty;
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
-
+	public bool IsProbing { get; set; } = false;
 
 	[JsonIgnore]
 	public string UptimeDisplay

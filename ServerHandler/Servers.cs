@@ -209,6 +209,7 @@ namespace Synix_Control_Panel.ServerHandler
 						{
 							server.Status = StatusManager.GetStatus(ServerState.Stopped);
 							server.PID = null;
+							server.RunningProcess?.Dispose();
 							server.RunningProcess = null;
 							MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 						}
