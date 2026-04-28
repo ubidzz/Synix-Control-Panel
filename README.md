@@ -42,6 +42,13 @@ Because Synix is a specialized tool developed for the community, you may encount
 
 ---
 
+## 💾 Winget install
+* **`winget install synix`**
+* **`winget uninstall synix`** or from the computer App List
+* Synix will be downloaded into this folder `%LocalAppData%\Microsoft\WinGet\Packages` because it's a portable program with no installer needed.
+
+---
+
 ## 🛡️ Synix Network Guard
 A specialized security module designed to protect the host's global network interface from saturation and resource exhaustion.
 
@@ -90,13 +97,6 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 * **Smart Backups:** "Backup on Start" zips before manual launches or Auto Restart.
 * **Smart Update** "Update on Start" will update server files before manual launches or Auto Restart.
 * **Discord Webhooks:** Full lifecycle notification support for Boots, Shutdowns, and Watchdog recovery events.
-
----
-
-## 💾 Winget install
-* **`winget install synix`**
-* **`winget uninstall synix`** or from the computer App List
-* Synix will be downloaded into this folder `%LocalAppData%\Microsoft\WinGet\Packages` because it's a portable program with no installer needed.
 
 ---
 
