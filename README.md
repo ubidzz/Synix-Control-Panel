@@ -15,6 +15,7 @@
 
 [Support Discord](https://discord.gg/2WR7ArC2Vr)
 [Youtube Video](https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s)
+
 ---
 
 ## 🏗️ Architectural Style & Design Patterns
