@@ -102,7 +102,6 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 ## 💻 Technical Stack
 * **Framework:** C# / .NET 8.0+ / Modern WinForms
 * **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O.
-* **Efficiency:** Ultra-low overhead design (~30MB RAM idle / <1% CPU footprint).
 
 ---
 
