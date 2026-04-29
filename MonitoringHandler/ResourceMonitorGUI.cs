@@ -20,7 +20,7 @@ namespace Synix_Control_Panel
 		public ResourceMonitorGUI()
 		{
 			InitializeComponent();
-
+			this.FormClosed += ResourceMonitorGUI_FormClosed;
 			// 1. FLICKER FIX
 			PropertyInfo cp = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
 			cp.SetValue(listViewResources, true, null);
@@ -178,6 +178,34 @@ namespace Synix_Control_Panel
 				listViewResources.BackgroundImage?.Dispose();
 				listViewResources.BackgroundImage = bmp;
 			}
+		}
+
+		private void ResourceMonitorGUI_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			// 1. Destroy the background image stuck in RAM
+			if (originalBg != null)
+			{
+				originalBg.Dispose();
+				originalBg = null;
+			}
+
+			// 2. Destroy the unmanaged fonts
+			if (lblTotalCpu.Font != null) lblTotalCpu.Font.Dispose();
+			if (lblTotalRam.Font != null) lblTotalRam.Font.Dispose();
+
+			// 3. Stop the timer
+			if (tmrRefresh != null)
+			{
+				tmrRefresh.Stop();
+				tmrRefresh.Dispose();
+			}
+
+			// 4. Standard dispose
+			this.Dispose();
+
+			// 5. Force the OS to instantly reclaim the memory
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 	}
 }

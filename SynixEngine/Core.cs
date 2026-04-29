@@ -87,31 +87,65 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private async void Heartbeat_Tick(object? sender, EventArgs e)
-		{
-			PerformWatchdogCheck();
-			UpdateResourceStats();
-			PerformMaintenanceCheck();
-			CheckForDDoS();
+		// 🎯 THE FIX: Dictionaries to prevent overlapping tasks and HTTP spam
+		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
+		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
 
-			foreach (GameServer server in MainGUI.serverList)
+		private void Heartbeat_Tick(object? sender, EventArgs e)
+		{
+			// 🛑 1. Pause the timer so slow network queries don't cause overlap
+			_heartbeatTimer.Stop();
+
+			try
 			{
-				if (server.Status == StatusManager.GetStatus(ServerState.Running))
+				PerformWatchdogCheck();
+				UpdateResourceStats();
+				PerformMaintenanceCheck();
+				CheckForDDoS();
+
+				foreach (GameServer server in MainGUI.serverList)
 				{
-					// 1. Keep your existing player count update
-					_ = UpdatePlayerCount(server);
-					// 🎯 2. NEW: RAM Threshold Alert
-					// This uses the 80.0 limit you set to keep things stable
-					if (server.RamUsage >= 80.0)
+					if (server.Status == StatusManager.GetStatus(ServerState.Running))
 					{
-						_ = SendDiscordAlert(server, "RESOURCE WARNING",
-							$"High RAM usage detected: {server.RamUsage:F1}%. Performance may be impacted.",
-							Color.Gold);
+						string srvId = server.ServerName ?? "unknown_server";
+
+						// 🎯 2. ASYNC TASK LEAK FIX: Only ask for players if the previous query finished
+						if (!_activePlayerQueries.TryGetValue(srvId, out bool isQuerying) || !isQuerying)
+						{
+							_activePlayerQueries[srvId] = true;
+
+							// Run the network call in the background, then unlock it when done
+							Task.Run(async () =>
+							{
+								try { await UpdatePlayerCount(server); }
+								finally { _activePlayerQueries[srvId] = false; }
+							});
+						}
+
+						// 🎯 3. DISCORD HTTP LEAK FIX: Only send a warning once every 15 minutes
+						if (server.RamUsage >= 80.0)
+						{
+							bool canAlert = !_lastRamWarning.TryGetValue(srvId, out DateTime lastAlert) ||
+											(DateTime.Now - lastAlert).TotalMinutes >= 15;
+
+							if (canAlert)
+							{
+								_lastRamWarning[srvId] = DateTime.Now;
+								_ = SendDiscordAlert(server, "RESOURCE WARNING",
+									$"High RAM usage detected: {server.RamUsage:F1}%. Performance may be impacted.",
+									Color.Gold);
+							}
+						}
 					}
 				}
-			}
 
-			UpdateGridStatus();
+				UpdateGridStatus();
+			}
+			finally
+			{
+				// 🟢 4. Resume the timer only after all checks are safely dispatched
+				_heartbeatTimer.Start();
+			}
 		}
 
 		private void PerformMaintenanceCheck()

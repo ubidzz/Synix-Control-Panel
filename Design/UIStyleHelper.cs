@@ -14,6 +14,7 @@ using System.Drawing.Drawing2D;
 
 namespace Synix_Control_Panel.UI
 {
+
 	[ToolboxItem(true)]
 	public class SynixToggle : CheckBox
 	{
@@ -39,16 +40,29 @@ namespace Synix_Control_Panel.UI
 
 	public static class UIStyleHelper
 	{
+		private static readonly Font _sliderFont = new Font("Segoe UI", 8F, FontStyle.Bold);
+
 		public static void StyleToggleButton(CheckBox chk, string labelPrefix)
 		{
 			chk.Cursor = Cursors.Hand;
 			chk.AutoSize = false;
 			chk.BackColor = Color.Transparent;
+			chk.Tag = labelPrefix; // Ensure the prefix is stored in the Tag for the paint handler
 
-			chk.Paint -= (s, e) => DrawRoundedSlider(e.Graphics, chk, labelPrefix);
-			chk.Paint += (s, e) => DrawRoundedSlider(e.Graphics, chk, labelPrefix);
+			// 🎯 THE FIX: Use a named method instead of an anonymous lambda to prevent event stacking leaks
+			chk.Paint -= Chk_CustomPaint;
+			chk.Paint += Chk_CustomPaint;
 
 			chk.Invalidate();
+		}
+
+		private static void Chk_CustomPaint(object sender, PaintEventArgs e)
+		{
+			if (sender is CheckBox chk)
+			{
+				string labelPrefix = chk.Tag?.ToString() ?? "";
+				DrawRoundedSlider(e.Graphics, chk, labelPrefix);
+			}
 		}
 
 		public static void InitializeToggles(Control parent)
@@ -67,7 +81,6 @@ namespace Synix_Control_Panel.UI
 		{
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
-			// 🎯 THE TRANSPARENCY: Forces the parent's texture onto the button area
 			if (Application.RenderWithVisualStyles)
 				ButtonRenderer.DrawParentBackground(g, chk.ClientRectangle, chk);
 			else
@@ -76,7 +89,6 @@ namespace Synix_Control_Panel.UI
 					g.FillRectangle(b, chk.ClientRectangle);
 			}
 
-			// Inset by 2.5 pixels to give the thicker border room to breathe
 			Rectangle rect = new Rectangle(2, 2, chk.Width - 6, chk.Height - 6);
 			int diameter = rect.Height;
 
@@ -86,33 +98,28 @@ namespace Synix_Control_Panel.UI
 				path.AddArc(rect.Width - diameter + rect.X, rect.Y, diameter, diameter, 270, 180);
 				path.CloseFigure();
 
-				// 1. Draw the Track (Green for ON, Dark Gray for OFF)
 				Color trackColor = chk.Checked ? Color.FromArgb(40, 150, 40) : Color.FromArgb(60, 60, 60);
 				using (var brush = new SolidBrush(trackColor))
 				{
 					g.FillPath(brush, path);
 				}
 
-				// 🎯 THE THICKER BORDER: Bumped to 2.2f for that high-end look
 				using (var pen = new Pen(Color.FromArgb(30, 30, 30), 2.2f))
 				{
 					g.DrawPath(pen, path);
 				}
 
-				// 2. Draw the Sliding Circle (Thumb)
-				// Slightly smaller now to account for the thicker border
 				float thumbSize = rect.Height - 8;
 				float xPos = chk.Checked ? (rect.Right - thumbSize - 4) : (rect.Left + 4);
 				g.FillEllipse(Brushes.White, xPos, rect.Y + 4, thumbSize, thumbSize);
 
-				// 3. Draw Labels (Sun, Mon, etc.)
 				string text = !string.IsNullOrEmpty(chk.Text) ? chk.Text : (string.IsNullOrEmpty(label) ? (chk.Checked ? "ON" : "OFF") : label);
-				Font font = new Font("Segoe UI", 8F, FontStyle.Bold);
 
+				// 🎯 THE FIX: Use the cached static font here instead of instantiating a new Font
 				Rectangle textRect = chk.Checked ? new Rectangle(rect.X, rect.Y, rect.Width - 22, rect.Height)
 											   : new Rectangle(rect.X + 22, rect.Y, rect.Width - 22, rect.Height);
 
-				TextRenderer.DrawText(g, text, font, textRect, Color.White,
+				TextRenderer.DrawText(g, text, _sliderFont, textRect, Color.White,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 			}
 		}
@@ -122,7 +129,6 @@ namespace Synix_Control_Panel.UI
 			Label lbl = (Label)sender;
 			if (lbl.Width <= 0 || lbl.Height <= 0) return;
 
-			// --- Your existing Rounding & Background code stays exactly the same ---
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 			int radius = 15;
 			using (GraphicsPath path = new GraphicsPath())
@@ -133,15 +139,19 @@ namespace Synix_Control_Panel.UI
 				path.AddArc(0, lbl.Height - radius - 1, radius, radius, 90, 90);
 				path.CloseFigure();
 
+				// 🎯 THE FIX: Store the old region and dispose of it explicitly before overwriting it
 				if (lbl.Region == null || lbl.Region.GetBounds(e.Graphics).Width != lbl.Width)
+				{
+					var oldRegion = lbl.Region;
 					lbl.Region = new Region(path);
+					oldRegion?.Dispose();
+				}
 
 				using (SolidBrush brush = new SolidBrush(lbl.BackColor))
 					e.Graphics.FillPath(brush, path);
 			}
 
-			// 🎯 THE FIX: The If-Statement Logic
-			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter; // Default
+			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter;
 
 			string align = lbl.Tag?.ToString() ?? "MiddleCenter";
 
@@ -157,7 +167,6 @@ namespace Synix_Control_Panel.UI
 			{
 				flags = TextFormatFlags.Top | TextFormatFlags.HorizontalCenter;
 			}
-			// Add more else-if statements here if you need TopLeft, BottomRight, etc.
 
 			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, lbl.ClientRectangle, lbl.ForeColor, flags);
 		}

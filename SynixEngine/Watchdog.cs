@@ -18,6 +18,9 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private readonly Dictionary<int, int> _watchdogGracePeriods = [];
 		private static readonly PerformanceCounter _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+		private long _lastTotalBytes = 0;
+		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
+		private bool _isAlertActive = false;
 
 		private void PerformWatchdogCheck()
 		{
@@ -126,8 +129,6 @@ namespace Synix_Control_Panel.SynixEngine
 			RebindProcesses();
 		}
 
-		private bool _isAlertActive = false;
-		private long _lastTotalBytes = 0;
 
 		private void CheckForDDoS()
 		{
@@ -189,25 +190,36 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			try
 			{
-				var interfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
-				long currentTotalBytes = 0;
-
-				foreach (var ni in interfaces)
+				if (_activeInterfaces == null)
 				{
-					if (ni.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up &&
-						ni.NetworkInterfaceType != System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
-					{
-						currentTotalBytes += ni.GetIPv4Statistics().BytesReceived;
-					}
+					_activeInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+						.Where(ni => ni.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up &&
+									 ni.NetworkInterfaceType != System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
+						.ToArray();
 				}
 
-				if (_lastTotalBytes == 0) { _lastTotalBytes = currentTotalBytes; return 0; }
+				long currentTotalBytes = 0;
 
-				long diff = currentTotalBytes - _lastTotalBytes;
+				foreach (var ni in _activeInterfaces)
+				{
+					currentTotalBytes += ni.GetIPv4Statistics().BytesReceived;
+				}
+
+				if (_lastTotalBytes == 0)
+				{
+					_lastTotalBytes = currentTotalBytes;
+					return 0;
+				}
+
+				long bytesPerSecond = currentTotalBytes - _lastTotalBytes;
 				_lastTotalBytes = currentTotalBytes;
-				return diff;
+
+				return bytesPerSecond;
 			}
-			catch { return 0; }
+			catch
+			{
+				return 0;
+			}
 		}
 	}
 }
