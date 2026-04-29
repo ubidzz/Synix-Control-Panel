@@ -17,7 +17,7 @@ namespace Synix_Control_Panel.SynixEngine
 	public partial class Core
 	{
 		private readonly Dictionary<int, int> _watchdogGracePeriods = [];
-		private static readonly PerformanceCounter _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+		private static PerformanceCounter? _cpuCounter = null;
 		private long _lastTotalBytes = 0;
 		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		private bool _isAlertActive = false;
@@ -179,11 +179,33 @@ namespace Synix_Control_Panel.SynixEngine
 			});
 		}
 
-		// Helper to get the actual system CPU for the alert
+		private static bool _isInitializingCpu = false;
+
 		private float GetSystemCpuUsage()
 		{
-			try { return _cpuCounter.NextValue(); }
-			catch { return 0; }
+			try
+			{
+				if (_cpuCounter == null)
+				{
+					if (!_isInitializingCpu)
+					{
+						_isInitializingCpu = true;
+
+						// Push the heavy 2-second Windows freeze to a background thread
+						Task.Run(() =>
+						{
+							_cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+							_cpuCounter.NextValue(); // Prime it once
+						});
+					}
+
+					// Return 0 so the UI thread doesn't pause waiting for Windows
+					return 0f;
+				}
+
+				return _cpuCounter.NextValue();
+			}
+			catch { return 0f; }
 		}
 
 		private long GetBytesPerSecond()

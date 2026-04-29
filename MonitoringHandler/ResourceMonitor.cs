@@ -18,7 +18,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 {
 	public static class ResourceMonitor
 	{
-		private static PerformanceCounter _globalCpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+		private static PerformanceCounter? _globalCpuCounter = null;
 		private static Dictionary<int, TimeSpan> lastCpuTime = new Dictionary<int, TimeSpan>();
 		private static Dictionary<int, DateTime> lastCheckTime = new Dictionary<int, DateTime>();
 
@@ -180,7 +180,11 @@ namespace Synix_Control_Panel.MonitoringHandler
 		{
 			try
 			{
-				// 🎯 THE WMI KILLER: This reads the CPU directly from the kernel with 0 memory allocation
+				if (_globalCpuCounter == null)
+				{
+					_globalCpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+				}
+
 				return Math.Round((double)_globalCpuCounter.NextValue(), 1);
 			}
 			catch (Exception)

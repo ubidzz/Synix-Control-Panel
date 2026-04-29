@@ -378,7 +378,6 @@
 			// tmrResourceUpdates
 			// 
 			tmrResourceUpdates.Enabled = true;
-			tmrResourceUpdates.Interval = 1000;
 			tmrResourceUpdates.Tick += tmrResourceUpdates_Tick;
 			// 
 			// lblLocalIP1

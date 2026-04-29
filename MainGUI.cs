@@ -181,30 +181,35 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
-			double physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+			double physicalRam = 16.0;
 
-			// 2. The 5GB Buffer: Subtract 5 so Windows stays happy
-			double reserved = Math.Max(physicalRam * 0.10, 5.0); // Reserve 15% or at least 5GB
+			await Task.Run(() =>
+			{
+				physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+			});
+
+			double reserved = Math.Max(physicalRam * 0.10, 5.0);
 			systemTotalRamGb = physicalRam - reserved;
 
-			// 3. Apply styles with the NEW limit
 			Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
 			Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
 
-			UpdateGrid();
+			// 🎯 THE GRAPH FIX: Shove a dummy point in and FORCE the heavy graphics engine to draw instantly
+			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, 0);
+			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, 0);
+			chartHeartbeat.Update(); // This is the magic line that prevents the UI freeze
+
+			chartTickCounter++;
 			tmrResourceUpdates.Start();
 
-			// 1. Set the lock immediately
 			isDownloadActive = true;
 			await Task.Delay(100);
 
 			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			AppendLog("Checking SteamCMD dependencies...");
 
-			// 2. Run the check on a background thread
 			await Task.Run(() => SteamCMD.EnsureSteamCMD(msg => AppendLog(msg)));
 
-			// 3. Release the lock once the background task is done
 			isDownloadActive = false;
 			AppendLog("Initialization complete.");
 			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
@@ -663,8 +668,8 @@ namespace Synix_Control_Panel
 					else
 					{
 						// If it's still failing, this will tell us WHY by showing what it thinks currentVersion is
-						lblUpdateStatus.Text = " ⚠️ A newer Synix " + latestVersion + " version is available!";
-						lblUpdateStatus.ForeColor = Color.Black;
+						lblUpdateStatus.Text = " ⚠️ A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
+						lblUpdateStatus.ForeColor = Color.White;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;
 

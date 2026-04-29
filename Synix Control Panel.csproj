@@ -15,10 +15,10 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.14</Version>
-		<AssemblyVersion>1.0.14.0</AssemblyVersion>
-		<FileVersion>1.0.14.0</FileVersion>
-		<InformationalVersion>1.0.14</InformationalVersion>
+		<Version>1.0.15</Version>
+		<AssemblyVersion>1.0.15.0</AssemblyVersion>
+		<FileVersion>1.0.15.0</FileVersion>
+		<InformationalVersion>1.0.15</InformationalVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
