@@ -132,10 +132,9 @@ namespace Synix_Control_Panel.Design
 
 		public static void HeartbeatChart(Chart chart)
 		{
-			HeartbeatChart(chart, 98.0);
+			HeartbeatChart(chart, 128.0);
 		}
 
-		// --- LABEL METHODS (Fixes CS0117) ---
 		public static void DashboardLabels(Label cpuLabel, Label ramLabel)
 		{
 			if (cpuLabel != null)
@@ -150,7 +149,6 @@ namespace Synix_Control_Panel.Design
 			}
 		}
 
-		// --- STATUS COLOR METHOD (Fixes CS0117) ---
 		public static void SetStatusColor(DataGridView dgv, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.ColumnIndex < 0 || e.ColumnIndex >= dgv.Columns.Count) return;

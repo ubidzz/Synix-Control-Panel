@@ -402,7 +402,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Log($"[MAINTENANCE] Scheduled restart triggered for {server.ServerName}.", Color.Cyan, true);
 
 			// 1. Stop the server
-			StopServerAndReport(server);
+			ExecuteRestartSequence(server);
 
 			// 2. Wait 5 seconds for the PID to fully clear and the OS to breathe
 			Task.Delay(5000).ContinueWith(_ =>

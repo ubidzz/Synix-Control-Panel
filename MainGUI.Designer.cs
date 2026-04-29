@@ -475,7 +475,6 @@
 			SizeGripStyle = SizeGripStyle.Hide;
 			Text = "Synix Control Panel";
 			FormClosing += MainForm_FormClosing;
-			Load += MainGUI_Load;
 			Shown += MainGUI_Shown;
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
 			((System.ComponentModel.ISupportInitialize)logo).EndInit();

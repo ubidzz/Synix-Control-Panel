@@ -43,44 +43,44 @@ namespace Synix_Control_Panel.MonitoringHandler
 				{
 					try
 					{
-						Process proc = Process.GetProcessById(server.PID.Value);
-
-						// If the process is gone, just set usage to 0 and move on.
-						if (proc.HasExited)
+						// THE FIX: 'using' guarantees the unmanaged handle is killed, even on a crash
+						using (Process proc = Process.GetProcessById(server.PID.Value))
 						{
-							server.RamUsage = 0;
-							proc.Dispose();
-							continue;
-						}
-
-						// --- 1. RAM Calculation ---
-						double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
-						total.TotalRamMB += serverMB;
-
-						if (Core.TotalRamGb > 0)
-						{
-							server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
-						}
-
-						// --- 2. CPU Calculation ---
-						DateTime currentTime = DateTime.Now;
-						TimeSpan currentCpuTime = proc.TotalProcessorTime;
-
-						if (lastCpuTime.ContainsKey(proc.Id))
-						{
-							double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
-							double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
-
-							if (totalMsPassed > 0)
+							// If the process is gone, just set usage to 0 and move on.
+							if (proc.HasExited)
 							{
-								double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
-								total.TotalCpuPercent += cpuPercent;
+								server.RamUsage = 0;
+								continue;
 							}
-						}
 
-						lastCpuTime[proc.Id] = currentCpuTime;
-						lastCheckTime[proc.Id] = currentTime;
-						proc.Dispose();
+							// --- 1. RAM Calculation ---
+							double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
+							total.TotalRamMB += serverMB;
+
+							if (Core.TotalRamGb > 0)
+							{
+								server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
+							}
+
+							// --- 2. CPU Calculation ---
+							DateTime currentTime = DateTime.Now;
+							TimeSpan currentCpuTime = proc.TotalProcessorTime;
+
+							if (lastCpuTime.ContainsKey(proc.Id))
+							{
+								double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
+								double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
+
+								if (totalMsPassed > 0)
+								{
+									double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
+									total.TotalCpuPercent += cpuPercent;
+								}
+							}
+
+							lastCpuTime[proc.Id] = currentCpuTime;
+							lastCheckTime[proc.Id] = currentTime;
+						} // <- The process handle is cleanly destroyed here automatically
 					}
 					catch
 					{
@@ -101,28 +101,28 @@ namespace Synix_Control_Panel.MonitoringHandler
 			{
 				double totalBytes = 0;
 
-				// This talks directly to the PC hardware to find the REAL RAM total
+				// 🎯 THE LEAK FIX: Added using blocks for the collection and disposed the object
 				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+				using (ManagementObjectCollection collection = searcher.Get())
 				{
-					foreach (ManagementObject obj in searcher.Get())
+					foreach (ManagementObject obj in collection)
 					{
 						totalBytes = Convert.ToDouble(obj["TotalPhysicalMemory"]);
+						obj.Dispose(); // Nuke the handle
 					}
 				}
 
-				// Bytes -> Kilobytes -> Megabytes -> Gigabytes
 				return totalBytes / 1024.0 / 1024.0 / 1024.0;
 			}
 			catch (Exception)
 			{
-				// If the hardware check fails, we'll just guess 16GB so the app doesn't crash
 				return 16.0;
 			}
 		}
 
 		public static ServerUsage GetTotalResources(System.ComponentModel.BindingList<GameServer> serverList)
 		{
-			return CalculateUsage(serverList.ToList());
+			return CalculateUsage(serverList);
 		}
 
 		public static double GetTotalSystemRamMB()
@@ -160,16 +160,17 @@ namespace Synix_Control_Panel.MonitoringHandler
 		public static double GetGlobalCpuUsage()
 		{
 			try
-			{ 
+			{
 				double cpuLoad = 0;
 
-				// This queries the Windows hardware abstraction layer for the current 
-				// average load across all CPU cores.
+				// 🎯 THE LEAK FIX: Added using blocks and object disposal
 				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT LoadPercentage FROM Win32_Processor"))
+				using (ManagementObjectCollection collection = searcher.Get())
 				{
-					foreach (ManagementObject obj in searcher.Get())
+					foreach (ManagementObject obj in collection)
 					{
 						cpuLoad = Convert.ToDouble(obj["LoadPercentage"]);
+						obj.Dispose(); // Nuke the handle
 					}
 				}
 
@@ -177,7 +178,6 @@ namespace Synix_Control_Panel.MonitoringHandler
 			}
 			catch (Exception)
 			{
-				// If the hardware check fails, return 0 so it doesn't block the server launch
 				return 0.0;
 			}
 		}

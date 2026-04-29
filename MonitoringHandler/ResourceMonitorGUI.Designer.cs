@@ -133,6 +133,7 @@ namespace Synix_Control_Panel
 			MinimizeBox = false;
 			Name = "ResourceMonitorGUI";
 			Text = "Resource Monitor";
+			FormClosed += ResourceMonitorGUI_FormClosed;
 			ResumeLayout(false);
 			PerformLayout();
 		}
