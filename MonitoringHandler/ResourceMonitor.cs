@@ -31,7 +31,20 @@ namespace Synix_Control_Panel.MonitoringHandler
 		public static ServerUsage CalculateUsage(IEnumerable<GameServer> serverList)
 		{
 			ServerUsage total = new ServerUsage();
+			// 🎯 THE FIX: Put the Windows core scaler back so it matches Task Manager exactly
 			int processorCount = Environment.ProcessorCount;
+
+			// Clean up dead processes from the dictionary so it doesn't leak memory
+			List<int> activePids = new List<int>();
+			foreach (var s in serverList) { if (s.PID.HasValue) activePids.Add(s.PID.Value); }
+
+			List<int> deadPids = new List<int>();
+			foreach (var pid in lastCpuTime.Keys) { if (!activePids.Contains(pid)) deadPids.Add(pid); }
+			foreach (var pid in deadPids)
+			{
+				lastCpuTime.Remove(pid);
+				lastCheckTime.Remove(pid);
+			}
 
 			foreach (var server in serverList)
 			{
@@ -43,10 +56,8 @@ namespace Synix_Control_Panel.MonitoringHandler
 				{
 					try
 					{
-						// THE FIX: 'using' guarantees the unmanaged handle is killed, even on a crash
 						using (Process proc = Process.GetProcessById(server.PID.Value))
 						{
-							// If the process is gone, just set usage to 0 and move on.
 							if (proc.HasExited)
 							{
 								server.RamUsage = 0;
@@ -63,24 +74,32 @@ namespace Synix_Control_Panel.MonitoringHandler
 							}
 
 							// --- 2. CPU Calculation ---
-							DateTime currentTime = DateTime.Now;
-							TimeSpan currentCpuTime = proc.TotalProcessorTime;
-
-							if (lastCpuTime.ContainsKey(proc.Id))
+							try
 							{
-								double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
-								double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
+								DateTime currentTime = DateTime.Now;
+								TimeSpan currentCpuTime = proc.TotalProcessorTime;
 
-								if (totalMsPassed > 0)
+								if (lastCpuTime.ContainsKey(proc.Id))
 								{
-									double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
-									total.TotalCpuPercent += cpuPercent;
-								}
-							}
+									double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
+									double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
 
-							lastCpuTime[proc.Id] = currentCpuTime;
-							lastCheckTime[proc.Id] = currentTime;
-						} // <- The process handle is cleanly destroyed here automatically
+									if (totalMsPassed > 0)
+									{
+										// 🎯 THE FIX: Divides by the total cores to perfectly mimic Task Manager
+										double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100.0;
+										total.TotalCpuPercent += cpuPercent;
+									}
+								}
+
+								lastCpuTime[proc.Id] = currentCpuTime;
+								lastCheckTime[proc.Id] = currentTime;
+							}
+							catch
+							{
+								// Silent ignore: Windows denied access to the CPU timer for this specific PID.
+							}
+						}
 					}
 					catch
 					{
