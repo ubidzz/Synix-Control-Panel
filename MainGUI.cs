@@ -23,11 +23,15 @@ namespace Synix_Control_Panel
 	public partial class MainGUI : Form
 	{
 		public static BindingList<GameServer> serverList = [];
+		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
 		public double systemTotalRamGb = 128;
 		private int chartTickCounter = 0;
+		private List<int> _chartX = new List<int>();
+		private List<double> _chartCpu = new List<double>();
+		private List<double> _chartRam = new List<double>();
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
@@ -49,55 +53,43 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// 1. Grab telemetry from the Singleton Engine
+			// 1. Grab telemetry
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
-			// 2. Update the Text Labels
 			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
 			lblTotalRam.Text = $"RAM: {ram:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
 
 			if (chartHeartbeat.Series.FindByName("TotalCPU") == null)
-			{
 				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
-			}
 
-			// 3. Add new data points (Safe now because we checked above)
-			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
-			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
+			// 2. Add to our safe background lists (NOT the chart)
+			_chartX.Add(chartTickCounter);
+			_chartCpu.Add(cpu);
+			_chartRam.Add(ram);
 
-			// 4. ANIMATION LOGIC: Lock the Viewport to the last 'maxGraphPoints'
-			var chartArea = chartHeartbeat.ChartAreas[0];
-			chartArea.AxisX.Minimum = chartTickCounter - maxGraphPoints;
-			chartArea.AxisX.Maximum = chartTickCounter;
-
-			// 5. 🎯 THE CHART MEMORY LEAK FIX
-			// 5. 🎯 THE CHART MEMORY LEAK FIX (Suspend Redraws)
-			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints)
+			// 3. Keep the lists at 30 points max
+			if (_chartX.Count > 30)
 			{
-				// Freeze the engine so it doesn't generate unmanaged rendering garbage
-				chartHeartbeat.Series["TotalCPU"].Points.SuspendUpdates();
-				chartHeartbeat.Series["TotalRAM"].Points.SuspendUpdates();
-
-				// Remove the oldest points safely
-				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
-				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
-
-				// Unfreeze the engine to draw the new state exactly once
-				chartHeartbeat.Series["TotalCPU"].Points.ResumeUpdates();
-				chartHeartbeat.Series["TotalRAM"].Points.ResumeUpdates();
-
-				chartHeartbeat.ResetAutoValues();
+				_chartX.RemoveAt(0);
+				_chartCpu.RemoveAt(0);
+				_chartRam.RemoveAt(0);
 			}
 
-			// 6. 🎯 THE 60-TASK BOMB FIX
-			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
+			// 4. 🎯 THE LEAK FIX: DataBind instantly paints the graph without creating unmanaged objects
+			chartHeartbeat.Series["TotalCPU"].Points.DataBindXY(_chartX, _chartCpu);
+			chartHeartbeat.Series["TotalRAM"].Points.DataBindXY(_chartX, _chartRam);
 
+			// 5. Scroll the view
+			var chartArea = chartHeartbeat.ChartAreas[0];
+			chartArea.AxisX.Minimum = _chartX.First();
+			chartArea.AxisX.Maximum = _chartX.Last();
+
+			// 6. Zero-Garbage Restart Check
+			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
 			if (needsTimeCheck)
 			{
-				// Format the time ONCE per tick, not inside the loop
 				string currentExactTime = DateTime.Now.ToString("HH:mm:ss");
-
 				foreach (var server in serverList)
 				{
 					if (server.IsScheduledRestartEnabled && currentExactTime == (server.RestartTime + ":00"))

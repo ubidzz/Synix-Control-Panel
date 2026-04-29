@@ -1,4 +1,4 @@
-SYNIX ENGINE SOURCE DUMP - 04/29/2026 00:23:43
+SYNIX ENGINE SOURCE DUMP - 04/29/2026 12:37:08
 ------------------------------------------------------------
 
 
@@ -29,11 +29,15 @@ namespace Synix_Control_Panel
 	public partial class MainGUI : Form
 	{
 		public static BindingList<GameServer> serverList = [];
+		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
 		public double systemTotalRamGb = 128;
 		private int chartTickCounter = 0;
+		private List<int> _chartX = new List<int>();
+		private List<double> _chartCpu = new List<double>();
+		private List<double> _chartRam = new List<double>();
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
@@ -55,44 +59,46 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// 1. Grab telemetry from the Singleton Engine
+			// 1. Grab telemetry
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
-			// 2. Update the Text Labels
 			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
 			lblTotalRam.Text = $"RAM: {ram:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
 
 			if (chartHeartbeat.Series.FindByName("TotalCPU") == null)
-			{
 				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
+
+			// 2. Add to our safe background lists (NOT the chart)
+			_chartX.Add(chartTickCounter);
+			_chartCpu.Add(cpu);
+			_chartRam.Add(ram);
+
+			// 3. Keep the lists at 30 points max
+			if (_chartX.Count > 30)
+			{
+				_chartX.RemoveAt(0);
+				_chartCpu.RemoveAt(0);
+				_chartRam.RemoveAt(0);
 			}
 
-			// 3. Add new data points (Safe now because we checked above)
-			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
-			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
+			// 4. 🎯 THE LEAK FIX: DataBind instantly paints the graph without creating unmanaged objects
+			chartHeartbeat.Series["TotalCPU"].Points.DataBindXY(_chartX, _chartCpu);
+			chartHeartbeat.Series["TotalRAM"].Points.DataBindXY(_chartX, _chartRam);
 
-			// 4. ANIMATION LOGIC: Lock the Viewport to the last 'maxGraphPoints'
+			// 5. Scroll the view
 			var chartArea = chartHeartbeat.ChartAreas[0];
-			chartArea.AxisX.Minimum = chartTickCounter - maxGraphPoints;
-			chartArea.AxisX.Maximum = chartTickCounter;
+			chartArea.AxisX.Minimum = _chartX.First();
+			chartArea.AxisX.Maximum = _chartX.Last();
 
-			// 5. Cleanup: Keep the data buffer small
-			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints)
+			// 6. Zero-Garbage Restart Check
+			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
+			if (needsTimeCheck)
 			{
-				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
-				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
-
-				chartHeartbeat.ResetAutoValues();
-			}
-
-			// 6. Handle Scheduled Restarts from servers.json
-			foreach (var server in serverList)
-			{
-				if (server.IsScheduledRestartEnabled)
+				string currentExactTime = DateTime.Now.ToString("HH:mm:ss");
+				foreach (var server in serverList)
 				{
-					string currentTime = DateTime.Now.ToString("HH:mm");
-					if (server.RestartTime == currentTime)
+					if (server.IsScheduledRestartEnabled && currentExactTime == (server.RestartTime + ":00"))
 					{
 						_ = Core.Instance.ExecuteRestartSequence(server);
 					}
@@ -172,10 +178,10 @@ namespace Synix_Control_Panel
 
 			if (rtbLog.Lines.Length > 500)
 			{
-				// Remove the top 100 lines to keep memory lean
 				rtbLog.ReadOnly = false;
 				rtbLog.Select(0, rtbLog.GetFirstCharIndexFromLine(100));
 				rtbLog.SelectedText = "";
+				rtbLog.ClearUndo(); // THIS actually frees the memory!
 				rtbLog.ReadOnly = true;
 			}
 
@@ -3560,7 +3566,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 {
 	public static class ResourceMonitor
 	{
-		// We store the last time we saw each process to calculate the "Delta"
+		private static PerformanceCounter _globalCpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 		private static Dictionary<int, TimeSpan> lastCpuTime = new Dictionary<int, TimeSpan>();
 		private static Dictionary<int, DateTime> lastCheckTime = new Dictionary<int, DateTime>();
 
@@ -3585,44 +3591,44 @@ namespace Synix_Control_Panel.MonitoringHandler
 				{
 					try
 					{
-						Process proc = Process.GetProcessById(server.PID.Value);
-
-						// If the process is gone, just set usage to 0 and move on.
-						if (proc.HasExited)
+						// THE FIX: 'using' guarantees the unmanaged handle is killed, even on a crash
+						using (Process proc = Process.GetProcessById(server.PID.Value))
 						{
-							server.RamUsage = 0;
-							proc.Dispose();
-							continue;
-						}
-
-						// --- 1. RAM Calculation ---
-						double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
-						total.TotalRamMB += serverMB;
-
-						if (Core.TotalRamGb > 0)
-						{
-							server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
-						}
-
-						// --- 2. CPU Calculation ---
-						DateTime currentTime = DateTime.Now;
-						TimeSpan currentCpuTime = proc.TotalProcessorTime;
-
-						if (lastCpuTime.ContainsKey(proc.Id))
-						{
-							double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
-							double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
-
-							if (totalMsPassed > 0)
+							// If the process is gone, just set usage to 0 and move on.
+							if (proc.HasExited)
 							{
-								double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
-								total.TotalCpuPercent += cpuPercent;
+								server.RamUsage = 0;
+								continue;
 							}
-						}
 
-						lastCpuTime[proc.Id] = currentCpuTime;
-						lastCheckTime[proc.Id] = currentTime;
-						proc.Dispose();
+							// --- 1. RAM Calculation ---
+							double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
+							total.TotalRamMB += serverMB;
+
+							if (Core.TotalRamGb > 0)
+							{
+								server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
+							}
+
+							// --- 2. CPU Calculation ---
+							DateTime currentTime = DateTime.Now;
+							TimeSpan currentCpuTime = proc.TotalProcessorTime;
+
+							if (lastCpuTime.ContainsKey(proc.Id))
+							{
+								double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
+								double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
+
+								if (totalMsPassed > 0)
+								{
+									double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
+									total.TotalCpuPercent += cpuPercent;
+								}
+							}
+
+							lastCpuTime[proc.Id] = currentCpuTime;
+							lastCheckTime[proc.Id] = currentTime;
+						} // <- The process handle is cleanly destroyed here automatically
 					}
 					catch
 					{
@@ -3643,28 +3649,28 @@ namespace Synix_Control_Panel.MonitoringHandler
 			{
 				double totalBytes = 0;
 
-				// This talks directly to the PC hardware to find the REAL RAM total
+				// 🎯 THE LEAK FIX: Added using blocks for the collection and disposed the object
 				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+				using (ManagementObjectCollection collection = searcher.Get())
 				{
-					foreach (ManagementObject obj in searcher.Get())
+					foreach (ManagementObject obj in collection)
 					{
 						totalBytes = Convert.ToDouble(obj["TotalPhysicalMemory"]);
+						obj.Dispose(); // Nuke the handle
 					}
 				}
 
-				// Bytes -> Kilobytes -> Megabytes -> Gigabytes
 				return totalBytes / 1024.0 / 1024.0 / 1024.0;
 			}
 			catch (Exception)
 			{
-				// If the hardware check fails, we'll just guess 16GB so the app doesn't crash
 				return 16.0;
 			}
 		}
 
 		public static ServerUsage GetTotalResources(System.ComponentModel.BindingList<GameServer> serverList)
 		{
-			return CalculateUsage(serverList.ToList());
+			return CalculateUsage(serverList);
 		}
 
 		public static double GetTotalSystemRamMB()
@@ -3702,24 +3708,12 @@ namespace Synix_Control_Panel.MonitoringHandler
 		public static double GetGlobalCpuUsage()
 		{
 			try
-			{ 
-				double cpuLoad = 0;
-
-				// This queries the Windows hardware abstraction layer for the current 
-				// average load across all CPU cores.
-				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT LoadPercentage FROM Win32_Processor"))
-				{
-					foreach (ManagementObject obj in searcher.Get())
-					{
-						cpuLoad = Convert.ToDouble(obj["LoadPercentage"]);
-					}
-				}
-
-				return cpuLoad;
+			{
+				// 🎯 THE WMI KILLER: This reads the CPU directly from the kernel with 0 memory allocation
+				return Math.Round((double)_globalCpuCounter.NextValue(), 1);
 			}
 			catch (Exception)
 			{
-				// If the hardware check fails, return 0 so it doesn't block the server launch
 				return 0.0;
 			}
 		}
@@ -3753,7 +3747,7 @@ namespace Synix_Control_Panel
 		public ResourceMonitorGUI()
 		{
 			InitializeComponent();
-			this.FormClosed += (s, e) => this.Dispose();
+			this.FormClosed += ResourceMonitorGUI_FormClosed;
 			// 1. FLICKER FIX
 			PropertyInfo cp = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
 			cp.SetValue(listViewResources, true, null);
@@ -3912,6 +3906,34 @@ namespace Synix_Control_Panel
 				listViewResources.BackgroundImage = bmp;
 			}
 		}
+
+		private void ResourceMonitorGUI_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			// 1. Destroy the background image stuck in RAM
+			if (originalBg != null)
+			{
+				originalBg.Dispose();
+				originalBg = null;
+			}
+
+			// 2. Destroy the unmanaged fonts
+			if (lblTotalCpu.Font != null) lblTotalCpu.Font.Dispose();
+			if (lblTotalRam.Font != null) lblTotalRam.Font.Dispose();
+
+			// 3. Stop the timer
+			if (tmrRefresh != null)
+			{
+				tmrRefresh.Stop();
+				tmrRefresh.Dispose();
+			}
+
+			// 4. Standard dispose
+			this.Dispose();
+
+			// 5. Force the OS to instantly reclaim the memory
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+		}
 	}
 }
 
@@ -4055,6 +4077,7 @@ namespace Synix_Control_Panel
 			MinimizeBox = false;
 			Name = "ResourceMonitorGUI";
 			Text = "Resource Monitor";
+			FormClosed += ResourceMonitorGUI_FormClosed;
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -8156,6 +8179,9 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
+		// 🎯 THE CACHE: Store the hardware RAM total here so we don't poll WMI every second
+		private static double? _cachedPhysicalRamGb = null;
+
 		private void UpdateResourceStats()
 		{
 			// 1. Get the summary for the GUI totals
@@ -8164,19 +8190,23 @@ namespace Synix_Control_Panel.SynixEngine
 			TotalCpuUsage = usage.TotalCpuPercent;
 			TotalRamUsageGb = usage.TotalRamMB / 1024.0;
 
-			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM
-			double physicalRamGb = ResourceMonitor.GetTotalSystemRamMB() / 1024.0;
-			TotalRamGb = physicalRamGb - 5.0; // Subtracting 7GB for Windows
+			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM (Using the Cache!)
+			if (_cachedPhysicalRamGb == null)
+			{
+				// This heavy WMI hardware call now runs EXACTLY ONCE when the engine starts
+				_cachedPhysicalRamGb = ResourceMonitor.GetTotalSystemRamMB() / 1024.0;
+			}
 
-			if (TotalRamGb < 1) TotalRamGb = physicalRamGb;
+			// Subtracting 5GB for Windows overhead
+			TotalRamGb = _cachedPhysicalRamGb.Value - 5.0;
 
-			// 3. 🎯 PER-SERVER TRACKING: Populate the RamUsage for your alerts
+			if (TotalRamGb < 1) TotalRamGb = _cachedPhysicalRamGb.Value;
+
+			// 3. PER-SERVER TRACKING
 			foreach (var server in MainGUI.serverList)
 			{
 				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.RunningProcess != null)
 				{
-					// Get the individual process usage from your Monitor
-					// We calculate the % based on the "Available" RAM (TotalRamGb)
 					double serverMB = ResourceMonitor.GetProcessRamMB(server.PID ?? 0);
 					server.RamUsage = (serverMB / 1024.0 / TotalRamGb) * 100.0;
 				}
@@ -8725,6 +8755,9 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private readonly Dictionary<int, int> _watchdogGracePeriods = [];
 		private static readonly PerformanceCounter _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+		private long _lastTotalBytes = 0;
+		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
+		private bool _isAlertActive = false;
 
 		private void PerformWatchdogCheck()
 		{
@@ -8833,8 +8866,6 @@ namespace Synix_Control_Panel.SynixEngine
 			RebindProcesses();
 		}
 
-		private bool _isAlertActive = false;
-		private long _lastTotalBytes = 0;
 
 		private void CheckForDDoS()
 		{
@@ -8896,25 +8927,36 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			try
 			{
-				var interfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
-				long currentTotalBytes = 0;
-
-				foreach (var ni in interfaces)
+				if (_activeInterfaces == null)
 				{
-					if (ni.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up &&
-						ni.NetworkInterfaceType != System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
-					{
-						currentTotalBytes += ni.GetIPv4Statistics().BytesReceived;
-					}
+					_activeInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+						.Where(ni => ni.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up &&
+									 ni.NetworkInterfaceType != System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
+						.ToArray();
 				}
 
-				if (_lastTotalBytes == 0) { _lastTotalBytes = currentTotalBytes; return 0; }
+				long currentTotalBytes = 0;
 
-				long diff = currentTotalBytes - _lastTotalBytes;
+				foreach (var ni in _activeInterfaces)
+				{
+					currentTotalBytes += ni.GetIPv4Statistics().BytesReceived;
+				}
+
+				if (_lastTotalBytes == 0)
+				{
+					_lastTotalBytes = currentTotalBytes;
+					return 0;
+				}
+
+				long bytesPerSecond = currentTotalBytes - _lastTotalBytes;
 				_lastTotalBytes = currentTotalBytes;
-				return diff;
+
+				return bytesPerSecond;
 			}
-			catch { return 0; }
+			catch
+			{
+				return 0;
+			}
 		}
 	}
 }

@@ -24,14 +24,15 @@ namespace Synix_Control_Panel.SynixEngine
 			TotalCpuUsage = usage.TotalCpuPercent;
 			TotalRamUsageGb = usage.TotalRamMB / 1024.0;
 
-			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM (Zero-Garbage Hardware Check)
+			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM (Using the Cache!)
 			if (_cachedPhysicalRamGb == null)
 			{
-				// This heavy WMI call now ONLY runs the very first time this method is called
+				// This heavy WMI hardware call now runs EXACTLY ONCE when the engine starts
 				_cachedPhysicalRamGb = ResourceMonitor.GetTotalSystemRamMB() / 1024.0;
 			}
 
-			TotalRamGb = _cachedPhysicalRamGb.Value - 5.0; // Subtracting 5GB for Windows
+			// Subtracting 5GB for Windows overhead
+			TotalRamGb = _cachedPhysicalRamGb.Value - 5.0;
 
 			if (TotalRamGb < 1) TotalRamGb = _cachedPhysicalRamGb.Value;
 

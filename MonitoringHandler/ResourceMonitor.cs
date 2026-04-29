@@ -18,7 +18,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 {
 	public static class ResourceMonitor
 	{
-		// We store the last time we saw each process to calculate the "Delta"
+		private static PerformanceCounter _globalCpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 		private static Dictionary<int, TimeSpan> lastCpuTime = new Dictionary<int, TimeSpan>();
 		private static Dictionary<int, DateTime> lastCheckTime = new Dictionary<int, DateTime>();
 
@@ -161,20 +161,8 @@ namespace Synix_Control_Panel.MonitoringHandler
 		{
 			try
 			{
-				double cpuLoad = 0;
-
-				// 🎯 THE LEAK FIX: Added using blocks and object disposal
-				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT LoadPercentage FROM Win32_Processor"))
-				using (ManagementObjectCollection collection = searcher.Get())
-				{
-					foreach (ManagementObject obj in collection)
-					{
-						cpuLoad = Convert.ToDouble(obj["LoadPercentage"]);
-						obj.Dispose(); // Nuke the handle
-					}
-				}
-
-				return cpuLoad;
+				// 🎯 THE WMI KILLER: This reads the CPU directly from the kernel with 0 memory allocation
+				return Math.Round((double)_globalCpuCounter.NextValue(), 1);
 			}
 			catch (Exception)
 			{

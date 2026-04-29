@@ -25,6 +25,7 @@ namespace Synix_Control_Panel.Design
 		private static Color RowDarkGrey = Color.FromArgb(30, 30, 30);
 		private static Color HeaderGrey = Color.FromArgb(35, 35, 35);
 		private static Color BackgroundBlack = Color.FromArgb(15, 15, 15);
+		private static Font _boldStatusFont = null;
 
 		public static void DarkTheme(DataGridView dgv)
 		{
@@ -156,9 +157,15 @@ namespace Synix_Control_Panel.Design
 			var column = dgv.Columns[e.ColumnIndex];
 			if ((column.Name == "colStatus" || column.DataPropertyName == "Status") && e.Value != null)
 			{
-				// 1. Notice there is NO .ToLower() here anymore!
 				string status = e.Value.ToString().Trim();
-				e.CellStyle.Font = new Font(dgv.DefaultCellStyle.Font, FontStyle.Bold);
+
+				if (_boldStatusFont == null || _boldStatusFont.FontFamily.Name != dgv.DefaultCellStyle.Font.Name)
+				{
+					_boldStatusFont?.Dispose();
+					_boldStatusFont = new Font(dgv.DefaultCellStyle.Font, FontStyle.Bold);
+				}
+
+				e.CellStyle.Font = _boldStatusFont;
 
 				// 2. string.Equals with OrdinalIgnoreCase ignores capitals completely
 				if (string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase))
