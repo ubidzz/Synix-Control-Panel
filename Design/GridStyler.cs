@@ -26,6 +26,8 @@ namespace Synix_Control_Panel.Design
 		private static Color HeaderGrey = Color.FromArgb(35, 35, 35);
 		private static Color BackgroundBlack = Color.FromArgb(15, 15, 15);
 		private static Font _boldStatusFont = null;
+		private static readonly SolidBrush _rowDarkGreyBrush = new SolidBrush(RowDarkGrey);
+		private static readonly Pen _faintDividerPen = new Pen(Color.FromArgb(45, 45, 45));
 
 		public static void DarkTheme(DataGridView dgv)
 		{
@@ -73,17 +75,11 @@ namespace Synix_Control_Panel.Design
 		{
 			if (e.RowIndex < 0) return;
 
-			// Draw Solid Row
-			using (SolidBrush br = new SolidBrush(RowDarkGrey))
-			{
-				e.Graphics.FillRectangle(br, e.CellBounds);
-			}
+			// 🎯 THE FIX: Use the statically cached brush instead of creating a new one
+			e.Graphics.FillRectangle(_rowDarkGreyBrush, e.CellBounds);
 
-			// Faint divider
-			using (Pen p = new Pen(Color.FromArgb(45, 45, 45)))
-			{
-				e.Graphics.DrawLine(p, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
-			}
+			// 🎯 THE FIX: Use the statically cached pen instead of creating a new one
+			e.Graphics.DrawLine(_faintDividerPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
 
 			e.PaintContent(e.CellBounds);
 			e.Handled = true;

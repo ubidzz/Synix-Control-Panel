@@ -29,7 +29,6 @@ namespace Synix_Control_Panel
 		public static MainGUI? Instance { get; private set; }
 		public double systemTotalRamGb = 128;
 		private int chartTickCounter = 0;
-		private List<int> _chartX = new List<int>();
 		private List<double> _chartCpu = new List<double>();
 		private List<double> _chartRam = new List<double>();
 		private const int maxGraphPoints = 60;
@@ -63,29 +62,23 @@ namespace Synix_Control_Panel
 			if (chartHeartbeat.Series.FindByName("TotalCPU") == null)
 				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
 
-			// 2. Add to our safe background lists (NOT the chart)
-			_chartX.Add(chartTickCounter);
-			_chartCpu.Add(cpu);
-			_chartRam.Add(ram);
+			// 2. Manually append the new data directly to the existing chart collection
+			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
+			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
 
-			// 3. Keep the lists at 30 points max
-			if (_chartX.Count > 30)
+			// 3. Remove the oldest points to keep the collection size stable and prevent managed memory growth
+			if (chartHeartbeat.Series["TotalCPU"].Points.Count > 30)
 			{
-				_chartX.RemoveAt(0);
-				_chartCpu.RemoveAt(0);
-				_chartRam.RemoveAt(0);
+				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
+				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
 			}
 
-			// 4. 🎯 THE LEAK FIX: DataBind instantly paints the graph without creating unmanaged objects
-			chartHeartbeat.Series["TotalCPU"].Points.DataBindXY(_chartX, _chartCpu);
-			chartHeartbeat.Series["TotalRAM"].Points.DataBindXY(_chartX, _chartRam);
-
-			// 5. Scroll the view
+			// 4. Scroll the view dynamically based on the actual points
 			var chartArea = chartHeartbeat.ChartAreas[0];
-			chartArea.AxisX.Minimum = _chartX.First();
-			chartArea.AxisX.Maximum = _chartX.Last();
+			chartArea.AxisX.Minimum = chartHeartbeat.Series["TotalCPU"].Points.First().XValue;
+			chartArea.AxisX.Maximum = chartHeartbeat.Series["TotalCPU"].Points.Last().XValue;
 
-			// 6. Zero-Garbage Restart Check
+			// 5. Restart Check
 			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
 			if (needsTimeCheck)
 			{

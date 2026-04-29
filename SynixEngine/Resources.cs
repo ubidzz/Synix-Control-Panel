@@ -18,7 +18,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void UpdateResourceStats()
 		{
-			// 1. Get the summary for the GUI totals
+			// 1. Get the summary for the GUI totals (This ALREADY calculates server.RamUsage inside ResourceMonitor!)
 			var usage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
 
 			TotalCpuUsage = usage.TotalCpuPercent;
@@ -36,19 +36,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (TotalRamGb < 1) TotalRamGb = _cachedPhysicalRamGb.Value;
 
-			// 3. PER-SERVER TRACKING
-			foreach (var server in MainGUI.serverList)
-			{
-				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.RunningProcess != null)
-				{
-					double serverMB = ResourceMonitor.GetProcessRamMB(server.PID ?? 0);
-					server.RamUsage = (serverMB / 1024.0 / TotalRamGb) * 100.0;
-				}
-				else
-				{
-					server.RamUsage = 0;
-				}
-			}
+			// 🎯 3. REMOVED THE DUPLICATE PER-SERVER LOOP
+			// We no longer need the foreach loop here because ResourceMonitor.CalculateUsage 
+			// already set the individual server.RamUsage for us!
 		}
 	}
 }
