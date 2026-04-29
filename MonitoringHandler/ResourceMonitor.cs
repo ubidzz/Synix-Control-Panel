@@ -18,7 +18,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 {
 	public static class ResourceMonitor
 	{
-		// We store the last time we saw each process to calculate the "Delta"
+		private static PerformanceCounter _globalCpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 		private static Dictionary<int, TimeSpan> lastCpuTime = new Dictionary<int, TimeSpan>();
 		private static Dictionary<int, DateTime> lastCheckTime = new Dictionary<int, DateTime>();
 
@@ -31,7 +31,20 @@ namespace Synix_Control_Panel.MonitoringHandler
 		public static ServerUsage CalculateUsage(IEnumerable<GameServer> serverList)
 		{
 			ServerUsage total = new ServerUsage();
+			// 🎯 THE FIX: Put the Windows core scaler back so it matches Task Manager exactly
 			int processorCount = Environment.ProcessorCount;
+
+			// Clean up dead processes from the dictionary so it doesn't leak memory
+			List<int> activePids = new List<int>();
+			foreach (var s in serverList) { if (s.PID.HasValue) activePids.Add(s.PID.Value); }
+
+			List<int> deadPids = new List<int>();
+			foreach (var pid in lastCpuTime.Keys) { if (!activePids.Contains(pid)) deadPids.Add(pid); }
+			foreach (var pid in deadPids)
+			{
+				lastCpuTime.Remove(pid);
+				lastCheckTime.Remove(pid);
+			}
 
 			foreach (var server in serverList)
 			{
@@ -43,44 +56,50 @@ namespace Synix_Control_Panel.MonitoringHandler
 				{
 					try
 					{
-						Process proc = Process.GetProcessById(server.PID.Value);
-
-						// If the process is gone, just set usage to 0 and move on.
-						if (proc.HasExited)
+						using (Process proc = Process.GetProcessById(server.PID.Value))
 						{
-							server.RamUsage = 0;
-							proc.Dispose();
-							continue;
-						}
-
-						// --- 1. RAM Calculation ---
-						double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
-						total.TotalRamMB += serverMB;
-
-						if (Core.TotalRamGb > 0)
-						{
-							server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
-						}
-
-						// --- 2. CPU Calculation ---
-						DateTime currentTime = DateTime.Now;
-						TimeSpan currentCpuTime = proc.TotalProcessorTime;
-
-						if (lastCpuTime.ContainsKey(proc.Id))
-						{
-							double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
-							double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
-
-							if (totalMsPassed > 0)
+							if (proc.HasExited)
 							{
-								double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100;
-								total.TotalCpuPercent += cpuPercent;
+								server.RamUsage = 0;
+								continue;
+							}
+
+							// --- 1. RAM Calculation ---
+							double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
+							total.TotalRamMB += serverMB;
+
+							if (Core.TotalRamGb > 0)
+							{
+								server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
+							}
+
+							// --- 2. CPU Calculation ---
+							try
+							{
+								DateTime currentTime = DateTime.Now;
+								TimeSpan currentCpuTime = proc.TotalProcessorTime;
+
+								if (lastCpuTime.ContainsKey(proc.Id))
+								{
+									double cpuUsedMs = (currentCpuTime - lastCpuTime[proc.Id]).TotalMilliseconds;
+									double totalMsPassed = (currentTime - lastCheckTime[proc.Id]).TotalMilliseconds;
+
+									if (totalMsPassed > 0)
+									{
+										// 🎯 THE FIX: Divides by the total cores to perfectly mimic Task Manager
+										double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100.0;
+										total.TotalCpuPercent += cpuPercent;
+									}
+								}
+
+								lastCpuTime[proc.Id] = currentCpuTime;
+								lastCheckTime[proc.Id] = currentTime;
+							}
+							catch
+							{
+								// Silent ignore: Windows denied access to the CPU timer for this specific PID.
 							}
 						}
-
-						lastCpuTime[proc.Id] = currentCpuTime;
-						lastCheckTime[proc.Id] = currentTime;
-						proc.Dispose();
 					}
 					catch
 					{
@@ -101,28 +120,28 @@ namespace Synix_Control_Panel.MonitoringHandler
 			{
 				double totalBytes = 0;
 
-				// This talks directly to the PC hardware to find the REAL RAM total
+				// 🎯 THE LEAK FIX: Added using blocks for the collection and disposed the object
 				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+				using (ManagementObjectCollection collection = searcher.Get())
 				{
-					foreach (ManagementObject obj in searcher.Get())
+					foreach (ManagementObject obj in collection)
 					{
 						totalBytes = Convert.ToDouble(obj["TotalPhysicalMemory"]);
+						obj.Dispose(); // Nuke the handle
 					}
 				}
 
-				// Bytes -> Kilobytes -> Megabytes -> Gigabytes
 				return totalBytes / 1024.0 / 1024.0 / 1024.0;
 			}
 			catch (Exception)
 			{
-				// If the hardware check fails, we'll just guess 16GB so the app doesn't crash
 				return 16.0;
 			}
 		}
 
 		public static ServerUsage GetTotalResources(System.ComponentModel.BindingList<GameServer> serverList)
 		{
-			return CalculateUsage(serverList.ToList());
+			return CalculateUsage(serverList);
 		}
 
 		public static double GetTotalSystemRamMB()
@@ -160,24 +179,12 @@ namespace Synix_Control_Panel.MonitoringHandler
 		public static double GetGlobalCpuUsage()
 		{
 			try
-			{ 
-				double cpuLoad = 0;
-
-				// This queries the Windows hardware abstraction layer for the current 
-				// average load across all CPU cores.
-				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT LoadPercentage FROM Win32_Processor"))
-				{
-					foreach (ManagementObject obj in searcher.Get())
-					{
-						cpuLoad = Convert.ToDouble(obj["LoadPercentage"]);
-					}
-				}
-
-				return cpuLoad;
+			{
+				// 🎯 THE WMI KILLER: This reads the CPU directly from the kernel with 0 memory allocation
+				return Math.Round((double)_globalCpuCounter.NextValue(), 1);
 			}
 			catch (Exception)
 			{
-				// If the hardware check fails, return 0 so it doesn't block the server launch
 				return 0.0;
 			}
 		}

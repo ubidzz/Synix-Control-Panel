@@ -23,10 +23,11 @@ namespace Synix_Control_Panel
 	public partial class MainGUI : Form
 	{
 		public static BindingList<GameServer> serverList = [];
+		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		private bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
-		public double systemTotalRamGb = 128.0;
+		public double systemTotalRamGb = 128;
 		private int chartTickCounter = 0;
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
@@ -49,41 +50,41 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			// 1. Grab telemetry from the Singleton Engine
+			// 1. Grab telemetry
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
-			// 2. Update the Text Labels
 			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
 			lblTotalRam.Text = $"RAM: {ram:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
 
-			// 3. Add new data points
+			if (chartHeartbeat.Series.FindByName("TotalCPU") == null)
+				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
+
+			// 2. Manually append the new data directly to the existing chart collection
 			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
 			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
 
-			// 4. ANIMATION LOGIC: Lock the Viewport to the last 'maxGraphPoints'
-			var chartArea = chartHeartbeat.ChartAreas[0];
-			chartArea.AxisX.Minimum = chartTickCounter - maxGraphPoints;
-			chartArea.AxisX.Maximum = chartTickCounter;
-
-			// 5. Cleanup: Keep the data buffer small to save memory
-			if (chartHeartbeat.Series["TotalCPU"].Points.Count > maxGraphPoints)
+			// 3. Remove the oldest points to keep the collection size stable and prevent managed memory growth
+			if (chartHeartbeat.Series["TotalCPU"].Points.Count > 30)
 			{
 				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
 				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
-
-				chartHeartbeat.ResetAutoValues();
 			}
 
-			// 6. Handle Scheduled Restarts from servers.json
-			foreach (var server in serverList)
+			// 4. Scroll the view dynamically based on the actual points
+			var chartArea = chartHeartbeat.ChartAreas[0];
+			chartArea.AxisX.Minimum = chartHeartbeat.Series["TotalCPU"].Points.First().XValue;
+			chartArea.AxisX.Maximum = chartHeartbeat.Series["TotalCPU"].Points.Last().XValue;
+
+			// 5. Restart Check
+			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
+			if (needsTimeCheck)
 			{
-				if (server.IsScheduledRestartEnabled)
+				string currentExactTime = DateTime.Now.ToString("HH:mm:ss");
+				foreach (var server in serverList)
 				{
-					string currentTime = DateTime.Now.ToString("HH:mm");
-					if (server.RestartTime == currentTime)
+					if (server.IsScheduledRestartEnabled && currentExactTime == (server.RestartTime + ":00"))
 					{
-						// Autonomous recovery sequence: Save -> Shutdown -> Reboot
 						_ = Core.Instance.ExecuteRestartSequence(server);
 					}
 				}
@@ -100,30 +101,6 @@ namespace Synix_Control_Panel
 				e.Cancel = true;
 				MessageBox.Show("Cannot close Synix while a server is installing, updating or Backing Up!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-		}
-
-		private void MainGUI_Load(object sender, EventArgs e)
-		{
-			try
-			{
-				// 1. Get real hardware total
-				double physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
-
-				// 2. The 5GB Buffer: Subtract 5 so Windows stays happy
-				double reserved = Math.Max(physicalRam * 0.10, 5.0); // Reserve 15% or at least 5GB
-				systemTotalRamGb = physicalRam - reserved;
-
-				// 3. Apply styles with the NEW limit
-				Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
-				Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
-
-				UpdateGrid();
-				tmrResourceUpdates.Start();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show("Error loading Synix: " + ex.Message);
 			}
 		}
 
@@ -186,10 +163,10 @@ namespace Synix_Control_Panel
 
 			if (rtbLog.Lines.Length > 500)
 			{
-				// Remove the top 100 lines to keep memory lean
 				rtbLog.ReadOnly = false;
 				rtbLog.Select(0, rtbLog.GetFirstCharIndexFromLine(100));
 				rtbLog.SelectedText = "";
+				rtbLog.ClearUndo(); // THIS actually frees the memory!
 				rtbLog.ReadOnly = true;
 			}
 
@@ -204,6 +181,19 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
+			double physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
+
+			// 2. The 5GB Buffer: Subtract 5 so Windows stays happy
+			double reserved = Math.Max(physicalRam * 0.10, 5.0); // Reserve 15% or at least 5GB
+			systemTotalRamGb = physicalRam - reserved;
+
+			// 3. Apply styles with the NEW limit
+			Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
+			Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
+
+			UpdateGrid();
+			tmrResourceUpdates.Start();
+
 			// 1. Set the lock immediately
 			isDownloadActive = true;
 			await Task.Delay(100);

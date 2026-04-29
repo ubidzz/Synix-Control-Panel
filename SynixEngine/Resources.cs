@@ -13,35 +13,28 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
+		// 🎯 THE CACHE: Store the hardware RAM total here so we don't poll WMI every second
+		private static double? _cachedPhysicalRamGb = null;
+
 		private void UpdateResourceStats()
 		{
-			// 1. Get the summary for the GUI totals
+			// 1. Get the summary for the GUI totals (This ALREADY calculates server.RamUsage inside ResourceMonitor!)
 			var usage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
 
 			TotalCpuUsage = usage.TotalCpuPercent;
 			TotalRamUsageGb = usage.TotalRamMB / 1024.0;
 
-			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM
-			double physicalRamGb = ResourceMonitor.GetTotalSystemRamMB() / 1024.0;
-			TotalRamGb = physicalRamGb - 5.0; // Subtracting 7GB for Windows
-
-			if (TotalRamGb < 1) TotalRamGb = physicalRamGb;
-
-			// 3. 🎯 PER-SERVER TRACKING: Populate the RamUsage for your alerts
-			foreach (var server in MainGUI.serverList)
+			// 2. 🎯 CALCULATE THE "OVERHEAD" RAM (Using the Cache!)
+			if (_cachedPhysicalRamGb == null)
 			{
-				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.RunningProcess != null)
-				{
-					// Get the individual process usage from your Monitor
-					// We calculate the % based on the "Available" RAM (TotalRamGb)
-					double serverMB = ResourceMonitor.GetProcessRamMB(server.PID ?? 0);
-					server.RamUsage = (serverMB / 1024.0 / TotalRamGb) * 100.0;
-				}
-				else
-				{
-					server.RamUsage = 0;
-				}
+				// This heavy WMI hardware call now runs EXACTLY ONCE when the engine starts
+				_cachedPhysicalRamGb = ResourceMonitor.GetTotalSystemRamMB() / 1024.0;
 			}
+
+			// Subtracting 5GB for Windows overhead
+			TotalRamGb = _cachedPhysicalRamGb.Value - 5.0;
+
+			if (TotalRamGb < 1) TotalRamGb = _cachedPhysicalRamGb.Value;
 		}
 	}
 }

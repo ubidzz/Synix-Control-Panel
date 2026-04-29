@@ -25,6 +25,9 @@ namespace Synix_Control_Panel.Design
 		private static Color RowDarkGrey = Color.FromArgb(30, 30, 30);
 		private static Color HeaderGrey = Color.FromArgb(35, 35, 35);
 		private static Color BackgroundBlack = Color.FromArgb(15, 15, 15);
+		private static Font _boldStatusFont = null;
+		private static readonly SolidBrush _rowDarkGreyBrush = new SolidBrush(RowDarkGrey);
+		private static readonly Pen _faintDividerPen = new Pen(Color.FromArgb(45, 45, 45));
 
 		public static void DarkTheme(DataGridView dgv)
 		{
@@ -72,17 +75,11 @@ namespace Synix_Control_Panel.Design
 		{
 			if (e.RowIndex < 0) return;
 
-			// Draw Solid Row
-			using (SolidBrush br = new SolidBrush(RowDarkGrey))
-			{
-				e.Graphics.FillRectangle(br, e.CellBounds);
-			}
+			// 🎯 THE FIX: Use the statically cached brush instead of creating a new one
+			e.Graphics.FillRectangle(_rowDarkGreyBrush, e.CellBounds);
 
-			// Faint divider
-			using (Pen p = new Pen(Color.FromArgb(45, 45, 45)))
-			{
-				e.Graphics.DrawLine(p, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
-			}
+			// 🎯 THE FIX: Use the statically cached pen instead of creating a new one
+			e.Graphics.DrawLine(_faintDividerPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
 
 			e.PaintContent(e.CellBounds);
 			e.Handled = true;
@@ -132,10 +129,9 @@ namespace Synix_Control_Panel.Design
 
 		public static void HeartbeatChart(Chart chart)
 		{
-			HeartbeatChart(chart, 98.0);
+			HeartbeatChart(chart, 128.0);
 		}
 
-		// --- LABEL METHODS (Fixes CS0117) ---
 		public static void DashboardLabels(Label cpuLabel, Label ramLabel)
 		{
 			if (cpuLabel != null)
@@ -150,7 +146,6 @@ namespace Synix_Control_Panel.Design
 			}
 		}
 
-		// --- STATUS COLOR METHOD (Fixes CS0117) ---
 		public static void SetStatusColor(DataGridView dgv, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.ColumnIndex < 0 || e.ColumnIndex >= dgv.Columns.Count) return;
@@ -158,9 +153,15 @@ namespace Synix_Control_Panel.Design
 			var column = dgv.Columns[e.ColumnIndex];
 			if ((column.Name == "colStatus" || column.DataPropertyName == "Status") && e.Value != null)
 			{
-				// 1. Notice there is NO .ToLower() here anymore!
 				string status = e.Value.ToString().Trim();
-				e.CellStyle.Font = new Font(dgv.DefaultCellStyle.Font, FontStyle.Bold);
+
+				if (_boldStatusFont == null || _boldStatusFont.FontFamily.Name != dgv.DefaultCellStyle.Font.Name)
+				{
+					_boldStatusFont?.Dispose();
+					_boldStatusFont = new Font(dgv.DefaultCellStyle.Font, FontStyle.Bold);
+				}
+
+				e.CellStyle.Font = _boldStatusFont;
 
 				// 2. string.Equals with OrdinalIgnoreCase ignores capitals completely
 				if (string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase))
