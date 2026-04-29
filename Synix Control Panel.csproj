@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
@@ -16,22 +15,35 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.0.12</AssemblyVersion>
-		<FileVersion>1.0.12</FileVersion>
+		<Version>1.0.13</Version>
+		<AssemblyVersion>1.0.13.0</AssemblyVersion>
+		<FileVersion>1.0.13.0</FileVersion>
+		<InformationalVersion>1.0.13</InformationalVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
-
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
-		<SelfContained>true</SelfContained>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-		<PublishReadyToRun>false</PublishReadyToRun>
-		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-
-		<PublishTrimmed>false</PublishTrimmed>
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<Content Include="Images\SyniX logo.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -54,4 +66,10 @@
 		</None>
 	</ItemGroup>
 
+	<Target Name="RunInnoAfterPublish" AfterTargets="Publish">
+		<Exec Command="powershell -Command &quot;Start-Sleep -s 5&quot;" />
+		<Message Text="Windows metadata synced. Starting Inno Setup..." Importance="high" />
+		<Message Text="Sending Version $(Version) to Inno Setup..." Importance="high" />
+		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) &quot;C:\Users\ubidz\OneDrive\Desktop\Synix\Control_panel\package\Synix.iss&quot;" />
+	</Target>
 </Project>

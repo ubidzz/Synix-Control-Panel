@@ -42,7 +42,6 @@ namespace Synix_Control_Panel
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
-			Core.Instance.RebindProcesses();
 			Instance = this;
 			_ = LoadNetworkInfo();
 			_ = VersionCheck();
@@ -163,10 +162,10 @@ namespace Synix_Control_Panel
 			try
 			{
 				string logDirectory = @"C:\Synix\SynixData\logs";
-				System.IO.Directory.CreateDirectory(logDirectory);
-				string logFilePath = System.IO.Path.Combine(logDirectory, "synix_engine.log");
+				Directory.CreateDirectory(logDirectory);
+				string logFilePath = Path.Combine(logDirectory, "synix_engine.log");
 				string timeStampedMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}";
-				System.IO.File.AppendAllText(logFilePath, timeStampedMessage);
+				File.AppendAllText(logFilePath, timeStampedMessage);
 			}
 			catch { /* Silent fail */ }
 
@@ -257,7 +256,6 @@ namespace Synix_Control_Panel
 			if (isInitializing) return;
 			isDownloadActive = true;
 			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			// The AI handles the window, the download, the fixes, and the logging
 			await Core.Instance.AddServerAndReport();
 			isDownloadActive = false;
 			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
@@ -286,7 +284,6 @@ namespace Synix_Control_Panel
 
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// The AI handles everything: Safety, Database, SteamCMD, and Logging
 				isDownloadActive = true;
 				AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.UpdateServerAndReport(selectedServer);
@@ -306,7 +303,6 @@ namespace Synix_Control_Panel
 
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// The AI handles everything: Safety, Database, SteamCMD, and Logging
 				isDownloadActive = true;
 				AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.ValidationServerAndReport(selectedServer);
@@ -324,10 +320,8 @@ namespace Synix_Control_Panel
 			// 1. Check if the app is still loading
 			if (isInitializing) return;
 
-			// 2. Hand over the server object to the AI
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// The AI handles the "Running" check, the Confirmation, and the File Deletion
 				Core.Instance.DeleteServerAndReport(selectedServer);
 				dataGridView1.CurrentCell = null;
 				dataGridView1.DataSource = null;
@@ -643,11 +637,11 @@ namespace Synix_Control_Panel
 			// 2. READ THE FILE CONTENT
 			if (actualResourcePath != null)
 			{
-				using (System.IO.Stream stream = assembly.GetManifestResourceStream(actualResourcePath))
+				using (Stream stream = assembly.GetManifestResourceStream(actualResourcePath))
 				{
 					if (stream != null)
 					{
-						using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
+						using (StreamReader reader = new StreamReader(stream))
 						{
 							currentVersion = reader.ReadToEnd().Trim();
 						}
