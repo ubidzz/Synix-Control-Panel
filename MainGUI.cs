@@ -29,8 +29,6 @@ namespace Synix_Control_Panel
 		public static MainGUI? Instance { get; private set; }
 		public double systemTotalRamGb = 128;
 		private int chartTickCounter = 0;
-		private List<double> _chartCpu = new List<double>();
-		private List<double> _chartRam = new List<double>();
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);

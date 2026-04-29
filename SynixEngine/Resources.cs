@@ -35,10 +35,6 @@ namespace Synix_Control_Panel.SynixEngine
 			TotalRamGb = _cachedPhysicalRamGb.Value - 5.0;
 
 			if (TotalRamGb < 1) TotalRamGb = _cachedPhysicalRamGb.Value;
-
-			// 🎯 3. REMOVED THE DUPLICATE PER-SERVER LOOP
-			// We no longer need the foreach loop here because ResourceMonitor.CalculateUsage 
-			// already set the individual server.RamUsage for us!
 		}
 	}
 }
