@@ -397,24 +397,38 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public void ExecuteMaintenanceRestart(GameServer server)
+		public async Task ExecuteMaintenanceRestart(GameServer server)
 		{
 			Log($"[MAINTENANCE] Scheduled restart triggered for {server.ServerName}.", Color.Cyan, true);
 
-			// 1. Stop the server
-			ExecuteRestartSequence(server);
-
-			// 2. Wait 5 seconds for the PID to fully clear and the OS to breathe
-			Task.Delay(5000).ContinueWith(_ =>
+			await Task.Run(() =>
 			{
-				MainGUI.Instance?.Invoke((Action)(() =>
+				Servers.Stop(server, msg =>
 				{
-					Log($"[MAINTENANCE] Restarting {server.ServerName}...", Color.Cyan);
-
-					// 3. Start it back up
-					Servers.Start(server, msg => Log(msg), StartContext.Scheduled);
-				}));
+					MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color.Yellow)));
+				});
 			});
+
+			// 2. The "OS Breath": Wait 3 seconds for Windows to release the IP ports
+			await Task.Delay(3000);
+
+			// 3. Verify it is actually stopped before restarting
+			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
+			{
+				Log($"[RESTART] Port verified. Booting {server.Game}...", Color.Green);
+
+				// 🎯 UPDATE: Pass StartContext.Manual to trigger the backup
+				await Servers.Start(server, msg =>
+				{
+					MainGUI.Instance?.Invoke((Action)(() => Log(msg)));
+				}, StartContext.Manual);
+			}
+			else
+			{
+				Log($"[CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+			}
+			Log($"[MAINTENANCE] Scheduled restart has finished for {server.ServerName}.", Color.Cyan, true);
+			UpdateGridStatus();
 		}
 
 		public async Task ExecuteRestartSequence(GameServer server)
