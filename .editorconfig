@@ -30,7 +30,7 @@ dotnet_search_reference_assemblies = true
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = false
-file_header_template = Copyright (c) 2026 ubidzz. All Rights Reserved.\n\nThis file is part of Synix Control Panel.\n\nThis code is provided for transparent viewing and personal use only.\nUnauthorized distribution, public modification, or commercial\nuse of this source code or the compiled executable is strictly\nprohibited. Please refer to the LICENSE file in the root\ndirectory for full terms.
+file_header_template = ============================================================================\nPROJECT: Synix Game Server Control Panel\nAUTHOR: Jason Turner (ubidzz)\nCOPYRIGHT: © 2026 All Rights Reserved.\n\nLEGAL NOTICE:\nThis source code is proprietary and confidential.\n1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.\n2. You may modify this code for your own use, but you may NOT redistribute,\n   rebrand, or sell this code or derivative works without written consent.\n3. The "Synix" brand and logic remain the property of Jason Turner.\n============================================================================
 
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false
