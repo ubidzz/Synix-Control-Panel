@@ -125,4 +125,3 @@ The **Synix Control Panel** is a proprietary software project.
 <img width="351" height="254" alt="image" src="https://github.com/user-attachments/assets/ee8b0e34-eef3-4059-8cb8-913adc087ba0" />
 <img width="797" height="616" alt="image" src="https://github.com/user-attachments/assets/8939b8f1-72ac-4a80-974c-c04f3e3e0cdf" />
 <img width="343" height="247" alt="image" src="https://github.com/user-attachments/assets/a0b6f395-1850-4b3b-a531-3b45c3a6dd75" />
- 
