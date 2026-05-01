@@ -109,7 +109,8 @@ namespace Synix_Control_Panel.SynixEngine
 			Stopping = 4,
 			Installing = 5,
 			Updating = 6,
-			BackingUp = 7
+			BackingUp = 7,
+			Validating = 8
 		}
 
 		public static class StatusManager
@@ -127,6 +128,7 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerState.Installing => "Installing",
 					ServerState.Updating => "Updating",
 					ServerState.BackingUp => "Backing Up",
+					ServerState.Validating => "Validating",
 					_ => "Unknown"
 				};
 			}

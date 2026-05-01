@@ -274,10 +274,8 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				isDownloadActive = true;
-				AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-				await Core.Instance.UpdateServerAndReport(selectedServer);
+				await Core.Instance.UpdateServerAndReport(selectedServer, "UPDATE");
 				isDownloadActive = false;
-				AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{
@@ -292,10 +290,8 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				isDownloadActive = true;
-				AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-				await Core.Instance.ValidationServerAndReport(selectedServer);
+				await Core.Instance.UpdateServerAndReport(selectedServer, "VALIDATE");
 				isDownloadActive = false;
-				AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{

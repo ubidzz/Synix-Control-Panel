@@ -145,41 +145,74 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async Task UpdateServerAndReport(GameServer server)
+		public async Task UpdateServerAndReport(GameServer server, string serverProcess)
 		{
-			if (server.Status == StatusManager.GetStatus(ServerState.Running))
-			{
-				MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
+			bool ServerUpdating = false;
 
-			if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
+			if(serverProcess == "UPDATE")
 			{
-				Log("A download or update is already in progress.", Color.Orange);
-				return;
-			}
+				if (server.Status == StatusManager.GetStatus(ServerState.Running))
+				{
+					MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+					return;
+				}
+				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
+				{
+					Log("A download or update is already in progress.", Color.Orange);
+					return;
+				}
 
-			var confirm = MessageBox.Show($"Are you sure you want to update {server.ServerName}?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-			if (confirm != DialogResult.Yes) return;
+				ServerUpdating = true;
+				var confirm = MessageBox.Show($"Are you sure you want to update {server.ServerName}?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				if (confirm != DialogResult.Yes) return;
+			}
+			else if (serverProcess == "VALIDATE")
+			{
+				if (server.Status == StatusManager.GetStatus(ServerState.Running))
+				{
+					MessageBox.Show("You must stop the server before validating server files.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+
+				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
+				{
+					MessageBox.Show("A download, update or validation is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return;
+				}
+
+				var confirm = MessageBox.Show($"Are you sure you want to Validate the {server.ServerName} server files?", "Confirm Validate", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				if (confirm != DialogResult.Yes) return;
+			}
 
 			var gameData = GameDatabase.GetGame(server.Game);
 			string appId = gameData?.AppID ?? "";
 
 			if (string.IsNullOrEmpty(appId))
 			{
-				Log("Could not find the AppID for this game. Cannot update.", Color.Red);
+				Log($"Could not find the AppID for the {gameData} game.", Color.Red);
 				return;
 			}
 
 			try
 			{
-				server.Status = StatusManager.GetStatus(ServerState.Updating);
 				isDownloadActive = true;
-				UpdateGridStatus();
 
 				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
-				Log($"UPDATE STARTED: {server.Game} ---", Color.White, true);
-				Log($"[📜 INFO] Updating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
+				if (ServerUpdating)
+				{
+					Log($"UPDATE STARTED: {server.Game} ---", Color.White, true);
+					server.Status = StatusManager.GetStatus(ServerState.Updating);
+					Log($"[📜 INFO] Updating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
+				} 
+				else
+				{
+					Log($"VALIDATION STARTED: {server.Game}", Color.White, true);
+					server.Status = StatusManager.GetStatus(ServerState.Validating);
+					Log($"[📜 INFO] Validating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
+				}
+
+				UpdateGridStatus();
 
 				int exitCode = await Task.Run(() =>
 				{
@@ -195,89 +228,26 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"Update Failed!\n\nReason: {errorDetail}", Color.Red);
-					Log($"[🚨 CRITICAL ERROR] Update failed with code {exitCode}.", Color.Red, true);
+					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red);
+					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
 					return;
 				}
 
 				bool fixApplied = await GameFix.PostInstall(server);
 				if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
-				Log($"UPDATE FINISHED: {server.Game}", Color.Green, true);
-				Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
-			}
-			finally
-			{
-				server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
-				server.SteamPID = null;
-				isDownloadActive = false;
-				FileHandler.SaveServers();
-				UpdateGridStatus();
-			}
-		}
-
-		public async Task ValidationServerAndReport(GameServer server)
-		{
-			if (server.Status == StatusManager.GetStatus(ServerState.Running))
-			{
-				MessageBox.Show("You must stop the server before validating server files.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
-
-			if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
-			{
-				MessageBox.Show("A download, update or validation is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
-
-			var confirm = MessageBox.Show($"Are you sure you want to Validate the {server.ServerName} server files?", "Confirm Validate", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-			if (confirm != DialogResult.Yes) return;
-
-			var gameData = GameDatabase.GetGame(server.Game);
-			string appId = gameData?.AppID ?? "";
-
-			if (string.IsNullOrEmpty(appId))
-			{
-				Log("Could not find the AppID for this game. Cannot validate server files.", Color.Red);
-				return;
-			}
-
-			try
-			{
-				server.Status = StatusManager.GetStatus(ServerState.Updating);
-				isDownloadActive = true;
-				UpdateGridStatus();
-
-				Log($"Validating STARTED: {server.Game}", Color.White, true);
-				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
-				Log($"[📜 INFO] Validating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
-
-				int exitCode = await Task.Run(() =>
+				
+				if (ServerUpdating)
 				{
-					return ServerInstaller.Install(server.InstallPath, appId,
-						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
-						pid =>
-						{
-							server.SteamPID = pid;
-							FileHandler.SaveServers();
-						});
-				});
-
-				if (exitCode != 0)
-				{
-					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"Update Failed!\n\nReason: {errorDetail}", Color.Red);
-					Log($"[🚨 CRITICAL ERROR] Validate failed with code {exitCode}.", Color.Red, true);
-					return;
+					Log($"[SYNIX] UPDATE FINISHED: {server.Game}", Color.Green, true);
 				}
-
-				bool fixApplied = await GameFix.PostInstall(server);
-				if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
-
-				Log($"UPDATE FINISHED: {server.Game}", Color.Green, true);
-				Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				else
+				{
+					Log($"[SYNIX] Validating FINISHED: {server.Game}", Color.White, true);
+				}
 			}
 			finally
 			{
+				Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 				server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
 				server.SteamPID = null;
 				isDownloadActive = false;
@@ -400,7 +370,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else if (status == "MAINTENANCE")
 			{
-				Log($"[MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
+				Log($"[🛠 MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
 				stopServer = true;
 			}
 			else if (status == "WATCHDOG")
