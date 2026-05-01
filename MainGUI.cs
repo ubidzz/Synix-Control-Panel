@@ -14,6 +14,7 @@ using Synix_Control_Panel.Design;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.UI;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -125,7 +126,7 @@ namespace Synix_Control_Panel
 			if (ip != StatusManager.GetStatus(ServerState.Stopped) && ip != "Fetching...")
 			{
 				Clipboard.SetText(ip);
-				Core.Instance.Log($"[SYSTEM] Public IP {ip} copied to clipboard.", Color.Cyan);
+				Core.Instance.Log($"[🚨 SYNIX] Public IP {ip} copied to clipboard.", Color.Cyan);
 			}
 		}
 
@@ -133,18 +134,14 @@ namespace Synix_Control_Panel
 		{
 			string LANip = lblLocalIP1.Text.Replace("LAN IP: ", "");
 			Clipboard.SetText(LANip);
-			Core.Instance.Log($"[SYSTEM] Local IP {LANip} copied to clipboard.", Color.Cyan);
+			Core.Instance.Log($"[🚨 SYNIX] Local IP {LANip} copied to clipboard.", Color.Cyan);
 		}
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
 		{
 			try
 			{
-				string logDirectory = @"C:\Synix\SynixData\logs";
-				Directory.CreateDirectory(logDirectory);
-				string logFilePath = Path.Combine(logDirectory, "synix_engine.log");
-				string timeStampedMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}";
-				File.AppendAllText(logFilePath, timeStampedMessage);
+				FileHandler.WriteLog("Synix_Log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
 			}
 			catch { /* Silent fail */ }
 
@@ -194,7 +191,6 @@ namespace Synix_Control_Panel
 			Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
 			Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
 
-			//  THE GRAPH FIX: Shove a dummy point in and FORCE the heavy graphics engine to draw instantly
 			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, 0);
 			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, 0);
 			chartHeartbeat.Update();
@@ -205,14 +201,14 @@ namespace Synix_Control_Panel
 			isDownloadActive = true;
 			await Task.Delay(100);
 
-			AppendLog($"[WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			AppendLog("Checking SteamCMD dependencies...");
 
 			await Task.Run(() => SteamCMD.EnsureSteamCMD(msg => AppendLog(msg)));
 
 			isDownloadActive = false;
 			AppendLog("Initialization complete.");
-			AppendLog($"[WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		public void UpdateGrid()
@@ -250,10 +246,10 @@ namespace Synix_Control_Panel
 			// UI-specific check
 			if (isInitializing) return;
 			isDownloadActive = true;
-			AppendLog($"[WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			await Core.Instance.AddServerAndReport();
 			isDownloadActive = false;
-			AppendLog($"[WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		private void btnEdit_Click(object sender, EventArgs e)
@@ -278,10 +274,10 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				isDownloadActive = true;
-				AppendLog($"[WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+				AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.UpdateServerAndReport(selectedServer);
 				isDownloadActive = false;
-				AppendLog($"[WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{
@@ -296,10 +292,10 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				isDownloadActive = true;
-				AppendLog($"[WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+				AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.ValidationServerAndReport(selectedServer);
 				isDownloadActive = false;
-				AppendLog($"[WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{
@@ -354,8 +350,8 @@ namespace Synix_Control_Panel
 			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
 			isDownloadActive = true;
 
-			AppendLog($"[WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			AppendLog($"[BACKUP] Starting backup compression for {selectedServer.ServerName}...", Color.Cyan);
+			AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			AppendLog($"[💾 BACKUP] Starting backup compression for {selectedServer.ServerName}...", Color.Cyan);
 
 			await Task.Run(() =>
 			{
@@ -364,8 +360,8 @@ namespace Synix_Control_Panel
 
 			isDownloadActive = false;
 			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped);
-			AppendLog($"[BACKUP] Finished backing up {selectedServer.ServerName}.", Color.LimeGreen);
-			AppendLog($"[WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			AppendLog($"[💾 BACKUP] Finished backing up {selectedServer.ServerName}.", Color.LimeGreen);
+			AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			UpdateGrid();
 		}
 
@@ -433,35 +429,21 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				Core.Instance.Log("[SYSTEM] Please select a server from the list first.", System.Drawing.Color.Yellow);
+				Core.Instance.Log("[🚨 SYNIX] Please select a server from the list first.", System.Drawing.Color.Yellow);
 			}
 		}
 
 		private void btnOpenBackup_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow == null || !(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)) return;
+			var selectedServer = GetSelectedServer();
 
-			string rootBackupPath = @"C:\Synix\BackupGames";
-
-			string cleanGame = BackupManager.GetSafeName(selectedServer.Game);
-			string cleanServer = BackupManager.GetSafeName(selectedServer.ServerName);
-
-			string fullPath = Path.Combine(rootBackupPath, cleanGame, cleanServer);
-
-			if (Directory.Exists(fullPath))
+			if (selectedServer != null)
 			{
-				Process.Start("explorer.exe", fullPath);
-				AppendLog($"[SYSTEM] Opening vault: {selectedServer.ServerName}", Color.Cyan);
+				Core.Instance.OpenBackFolder(selectedServer);
 			}
 			else
 			{
-				AppendLog($"[SYNIX] Creating directory: {fullPath}", Color.Yellow);
-				try
-				{
-					Directory.CreateDirectory(fullPath);
-					Process.Start("explorer.exe", fullPath);
-				}
-				catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}"); }
+				Core.Instance.Log("[🚨 SYNIX] Please select a server from the list first.", System.Drawing.Color.Yellow);
 			}
 		}
 
@@ -470,7 +452,7 @@ namespace Synix_Control_Panel
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			Core.Instance.Log($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -479,11 +461,11 @@ namespace Synix_Control_Panel
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
+					Core.Instance.Log($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					Core.Instance.Log($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
@@ -497,7 +479,7 @@ namespace Synix_Control_Panel
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			Core.Instance.Log($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -506,11 +488,11 @@ namespace Synix_Control_Panel
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
+					Core.Instance.Log($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					Core.Instance.Log($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)

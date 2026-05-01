@@ -45,13 +45,13 @@ namespace Synix_Control_Panel.SynixEngine
 							{
 								server.StartTime = process.StartTime;
 							}
-							MainGUI.Instance?.AppendLog($"--- [🔗 REBIND] Found {server.Game} still running (PID: {server.PID}) ---", Color.BlueViolet, true);
+							MainGUI.Instance?.AppendLog($"[🔗 REBIND] Found {server.Game} still running (PID: {server.PID})", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
 							process.Exited += async (s, e) =>
 							{
 								if (server.Status == StatusManager.GetStatus(ServerState.Running))
-									await RecoverServer(server);
+									await ExecuteStartSequence(server);
 								else
 									CleanupStoppedState(server);
 							};

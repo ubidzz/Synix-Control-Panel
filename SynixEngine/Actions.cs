@@ -24,7 +24,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server.RunningProcess == null && !server.PID.HasValue)
 			{
-				MessageBox.Show($"No active process found for '{server.ServerName}'.", "Information");
+				Log($"No active process found for '{server.ServerName}'.", Color.Red);
 				return;
 			}
 
@@ -35,7 +35,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Servers.Stop(server, msg =>
 				{
-					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.AppendLog(msg)));
+					Log(msg);
 				},
 				isManual);
 			});
@@ -95,7 +95,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string status = server.Status ?? "";
 			if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating) || (server.PID.HasValue && server.PID > 0))
 			{
-				MessageBox.Show("Cannot delete an active or installing server.", "Action Locked");
+				Log("Cannot delete an active or installing server.", Color.Red);
 				return;
 			}
 
@@ -127,6 +127,24 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		public void OpenBackFolder(GameServer selectedServer)
+		{
+			string cleanGame = BackupManager.GetSafeName(selectedServer.Game);
+			string cleanServer = BackupManager.GetSafeName(selectedServer.ServerName);
+
+			string fullPath = Path.Combine(@"C:\Synix\BackupGames", cleanGame, cleanServer);
+
+			if (Directory.Exists(fullPath))
+			{
+				Process.Start("explorer.exe", fullPath);
+				Log($"[✔ SYNIX] Opening vault: {selectedServer.ServerName}", Color.Cyan);
+			}
+			else
+			{
+				Log($"[🚨 SYNIX] There are no created backups at: {fullPath}", Color.Yellow);
+			}
+		}
+
 		public async Task UpdateServerAndReport(GameServer server)
 		{
 			if (server.Status == StatusManager.GetStatus(ServerState.Running))
@@ -137,7 +155,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
 			{
-				MessageBox.Show("A download or update is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				Log("A download or update is already in progress.", Color.Orange);
 				return;
 			}
 
@@ -149,7 +167,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (string.IsNullOrEmpty(appId))
 			{
-				MessageBox.Show("Could not find the AppID for this game. Cannot update.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Log("Could not find the AppID for this game. Cannot update.", Color.Red);
 				return;
 			}
 
@@ -159,9 +177,9 @@ namespace Synix_Control_Panel.SynixEngine
 				isDownloadActive = true;
 				UpdateGridStatus();
 
-				Log($"--- [🔒 WARNING] Synix close window button is disabled! ---", Color.Orange, true);
-				Log($"--- UPDATE STARTED: {server.Game} ---", Color.White, true);
-				Log($"--- [📜 INFO] Updating {server.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
+				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
+				Log($"UPDATE STARTED: {server.Game} ---", Color.White, true);
+				Log($"[📜 INFO] Updating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
 
 				int exitCode = await Task.Run(() =>
 				{
@@ -177,15 +195,15 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					Log($"Update Failed!\n\nReason: {errorDetail}", Color.Red);
 					Log($"[🚨 CRITICAL ERROR] Update failed with code {exitCode}.", Color.Red, true);
 					return;
 				}
 
 				bool fixApplied = await GameFix.PostInstall(server);
 				if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
-				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
-				Log($"--- [🔓 WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
+				Log($"UPDATE FINISHED: {server.Game}", Color.Green, true);
+				Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			finally
 			{
@@ -219,7 +237,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (string.IsNullOrEmpty(appId))
 			{
-				MessageBox.Show("Could not find the AppID for this game. Cannot validate server files.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Log("Could not find the AppID for this game. Cannot validate server files.", Color.Red);
 				return;
 			}
 
@@ -229,9 +247,9 @@ namespace Synix_Control_Panel.SynixEngine
 				isDownloadActive = true;
 				UpdateGridStatus();
 
-				Log($"--- Validating STARTED: {server.Game} ---", Color.White, true);
-				Log($"--- [🔒 WARNING] Synix close window button is disabled! ---", Color.Orange, true);
-				Log($"--- [📜 INFO] Validating {server.Game} can take up to 5 minutes ---", Color.DeepSkyBlue, true);
+				Log($"Validating STARTED: {server.Game}", Color.White, true);
+				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
+				Log($"[📜 INFO] Validating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
 
 				int exitCode = await Task.Run(() =>
 				{
@@ -247,7 +265,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					MessageBox.Show($"Update Failed!\n\nReason: {errorDetail}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					Log($"Update Failed!\n\nReason: {errorDetail}", Color.Red);
 					Log($"[🚨 CRITICAL ERROR] Validate failed with code {exitCode}.", Color.Red, true);
 					return;
 				}
@@ -255,8 +273,8 @@ namespace Synix_Control_Panel.SynixEngine
 				bool fixApplied = await GameFix.PostInstall(server);
 				if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
 
-				Log($"--- UPDATE FINISHED: {server.Game} ---", Color.Green, true);
-				Log($"--- [🔓 WARNING] Synix close window button is now Enabled! ---", Color.Orange, true);
+				Log($"UPDATE FINISHED: {server.Game}", Color.Green, true);
+				Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			finally
 			{
@@ -281,7 +299,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (string.IsNullOrEmpty(appId))
 					{
-						MessageBox.Show("Could not find the AppID for this game. Installation aborted.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						Log("Could not find the AppID for this game. Installation aborted.", Color.Red);
 						return;
 					}
 
@@ -291,7 +309,7 @@ namespace Synix_Control_Panel.SynixEngine
 						isDownloadActive = true;
 						UpdateGridStatus();
 
-						Log($"--- AUTO-INSTALL STARTED: {newServer.Game} ---", Color.White, true);
+						Log($"[SYNIX] AUTO-INSTALL STARTED: {newServer.Game}", Color.LightCyan, true);
 
 						int exitCode = await Task.Run(() =>
 						{
@@ -307,7 +325,7 @@ namespace Synix_Control_Panel.SynixEngine
 						if (exitCode != 0)
 						{
 							string errorMsg = ServerInstaller.GetSteamError(exitCode);
-							MessageBox.Show($"Installation Failed!\n\nReason: {errorMsg}", "SteamCMD Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red);
 							newServer.Status = "Failed";
 							return;
 						}
@@ -316,11 +334,11 @@ namespace Synix_Control_Panel.SynixEngine
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
 						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
 						FileHandler.SaveServers();
-						Log($"--- AUTO-INSTALL FINISHED: {newServer.Game} ---", Color.Green, true);
+						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
 					}
 					catch (Exception ex)
 					{
-						MessageBox.Show($"An unexpected error occurred during installation: {ex.Message}", "System Error");
+						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red);
 					}
 					finally
 					{
@@ -367,7 +385,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!PassResourceGuard(out string guardMsg))
 			{
 				Log(guardMsg, System.Drawing.Color.Red, true);
-				System.Windows.Forms.MessageBox.Show(guardMsg, "System Resource Exhaustion",
+				MessageBox.Show(guardMsg, "System Resource Exhaustion",
 					System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
 				return;
 			}
@@ -385,9 +403,21 @@ namespace Synix_Control_Panel.SynixEngine
 				Log($"[MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
 				stopServer = true;
 			}
+			else if (status == "WATCHDOG")
+			{
+				string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
+				Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
+
+				_ = SendDiscordAlert(server, "🚨 CRASH DETECTED",
+				$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
+				Color.Red);
+
+				stopServer = true;
+			}
 
 			if (stopServer)
 			{
+				Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
 				await Task.Run(() =>
 				{
 					Servers.Stop(server, msg =>
@@ -411,41 +441,9 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				Log($"[CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+				Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
 			}
 
-			UpdateGridStatus();
-		}
-
-		public async Task RecoverServer(GameServer server)
-		{
-			// 1. Identify failure type
-			string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
-			Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
-
-			_ = SendDiscordAlert(server, "🚨 CRASH DETECTED",
-				$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
-				Color.Red);
-
-			await Task.Run(() =>
-			{
-				Servers.Stop(server, msg =>
-				{
-					MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color.Yellow)));
-				}, false);
-			});
-
-			await Task.Delay(4000);
-
-			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
-			{
-				Log($"[🛡️ WATCHDOG] Environment cleared. Restarting {server.Game}...", Color.Green);
-
-				await Servers.Start(server, msg =>
-				{
-					MainGUI.Instance?.Invoke((Action)(() => Log(msg)));
-				}, StartContext.CrashRecovery);
-			}
 			UpdateGridStatus();
 		}
 
@@ -457,7 +455,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					if (server.RunningProcess == null || server.RunningProcess.HasExited)
 					{
-						_ = RecoverServer(server);
+						_ = ExecuteStartSequence(server, "WATCHDOG");
 						continue;
 					}
 
@@ -466,7 +464,7 @@ namespace Synix_Control_Panel.SynixEngine
 						server.RunningProcess.Refresh();
 						if (!server.RunningProcess.Responding)
 						{
-							_ = RecoverServer(server);
+							_ = ExecuteStartSequence(server, "WATCHDOG");
 						}
 					}
 					catch { /* Process might have closed during the check */ }
@@ -506,7 +504,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception ex)
 			{
-				Log($"[CRITICAL] InstallOrUpdate Exception: {ex.Message}", Color.Red);
+				Log($"[🚨 CRITICAL] InstallOrUpdate Exception: {ex.Message}", Color.Red);
 			}
 			finally
 			{

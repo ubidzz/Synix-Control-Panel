@@ -36,7 +36,7 @@ namespace Synix_Control_Panel.SynixEngine
 			_heartbeatTimer.Tick += Heartbeat_Tick;
 			_heartbeatTimer.Start();
 
-			InitializeAndRebind();
+			RebindProcesses();
 		}
 
 		public void Log(string message, Color? color = null, bool bold = false)
@@ -78,12 +78,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (!response.IsSuccessStatusCode)
 				{
-					System.Diagnostics.Debug.WriteLine($"[👾 DISCORD] Webhook failed: {response.StatusCode}");
+					Log($"[👾 DISCORD] Webhook failed: {response.StatusCode}", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				System.Diagnostics.Debug.WriteLine($"[👾 DISCORD ERROR] {ex.Message}");
+				Log($"[👾 DISCORD ERROR] {ex.Message}", Color.Red);
 			}
 		}
 
@@ -161,7 +161,7 @@ namespace Synix_Control_Panel.SynixEngine
 					_ = SendDiscordAlert(server, "SCHEDULED RESTART",
 						"Weekly maintenance is starting now. The server will be back online shortly.", Color.Cyan);
 
-					Log($"[ENGINE] Scheduled weekly maintenance triggered for {server.ServerName}.");
+					Log($"[SYNIX] Scheduled weekly maintenance triggered for {server.ServerName}.");
 					await ExecuteStartSequence(server);
 				}
 			}
@@ -175,11 +175,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (globalCpu >= 85.0)
 			{
-				System.Windows.Forms.MessageBox.Show(
+				MessageBox.Show(
 					$"[🛡️ RESOURCE GUARD] Global CPU Load is at {globalCpu:F1}%.\n\nStarting another server now would push the host into instability. Please wait for load to drop.",
 					"CPU Overload Protection",
-					System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Warning);
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 
 				return false;
 			}
@@ -202,11 +202,11 @@ namespace Synix_Control_Panel.SynixEngine
 			// Setting this to 85.0 RAM limit
 			if (ramUsagePercent >= 85.0)
 			{
-				System.Windows.Forms.MessageBox.Show(
+				MessageBox.Show(
 					$"[🛡️ RESOURCE GUARD] System RAM usage is at {ramUsagePercent:F1}% of the {usablePool:F1}GB usable pool.\n\nPlease stop a server before starting another.",
 					"System Resource Exhaustion",
-					System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Warning);
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 
 				return false;
 			}

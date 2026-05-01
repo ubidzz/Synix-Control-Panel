@@ -211,7 +211,7 @@ namespace Synix_Control_Panel.ServerHandler
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
 							// Watchdog handles the single Discord crash notification
-							await Core.Instance.RecoverServer(server);
+							await Core.Instance.ExecuteStartSequence(server, "WATCHDOG");
 						}
 						else
 						{
