@@ -157,9 +157,9 @@ namespace Synix_Control_Panel.SynixEngine
 					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 					return;
 				}
-				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
+				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating)  || isDownloadActive)
 				{
-					Log("A download or update is already in progress.", Color.Orange);
+					Log("A Downloading or Updating is already in progress.", Color.Orange);
 					return;
 				}
 
@@ -175,7 +175,7 @@ namespace Synix_Control_Panel.SynixEngine
 					return;
 				}
 
-				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || isDownloadActive)
+				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
 				{
 					MessageBox.Show("A download, update or validation is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
@@ -402,7 +402,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 			{
 				Log($"[SYNIX] Starting the {server.ServerName} server.", Color.Cyan, true);
-				if (!PassStartSpamLock(server, out string lockMsg)) { Log(lockMsg, System.Drawing.Color.Orange); return; }
+				if (!PassSpamLock(server, out string lockMsg, "Start")) { Log(lockMsg, System.Drawing.Color.Orange); return; }
 
 				await Servers.Start(server, msg =>
 				{

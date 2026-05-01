@@ -241,6 +241,28 @@ namespace Synix_Control_Panel
 			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 
+		private GameServer? GetSelectedServer()
+		{
+			if (dataGridView1.CurrentRow == null)
+			{
+				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
+				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
+				return null;
+			}
+
+			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
+			{
+				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
+				return null;
+			}
+
+			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer server)
+			{
+				return server;
+			}
+			return null;
+		}
+
 		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
 			// UI-specific check
@@ -254,84 +276,68 @@ namespace Synix_Control_Panel
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
-			// UI-specific safety check
 			if (isInitializing) return;
-
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "EditConfig"))
 			{
-				Core.Instance.EditServerAndReport(selectedServer);
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
-			}
+			Core.Instance.EditServerAndReport(selectedServer);
 		}
 
 		private async void btnUpdate_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
+			var selectedServer = GetSelectedServer();
 
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Update"))
 			{
-				isDownloadActive = true;
-				await Core.Instance.UpdateServerAndReport(selectedServer, "UPDATE");
-				isDownloadActive = false;
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list to update.", "No Server Selected");
-			}
+
+			isDownloadActive = true;
+			await Core.Instance.UpdateServerAndReport(selectedServer, "UPDATE");
+			isDownloadActive = false;
 		}
 
 		private async void btnFileValidation_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
+			var selectedServer = GetSelectedServer();
 
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Validate"))
 			{
-				isDownloadActive = true;
-				await Core.Instance.UpdateServerAndReport(selectedServer, "VALIDATE");
-				isDownloadActive = false;
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list to validate.", "No Server Selected");
-			}
+
+			isDownloadActive = true;
+			await Core.Instance.UpdateServerAndReport(selectedServer, "VALIDATE");
+			isDownloadActive = false;
 		}
 
 		private void btnDelete_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Delete"))
 			{
-				Core.Instance.DeleteServerAndReport(selectedServer);
-				dataGridView1.CurrentCell = null;
-				dataGridView1.DataSource = null;
-				dataGridView1.DataSource = serverList;
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
-			}
+			Core.Instance.DeleteServerAndReport(selectedServer);
+			dataGridView1.CurrentCell = null;
+			dataGridView1.DataSource = null;
+			dataGridView1.DataSource = serverList;
 		}
 
 		private async void btnBackup_Click(object sender, EventArgs e)
 		{
-			// 1. SELECTION CHECKS
-			if (dataGridView1.CurrentRow == null)
-			{
-				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
-				return;
-			}
+			var selectedServer = GetSelectedServer();
 
-			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
-			{
-				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
-				return;
-			}
-
-			if (!Core.Instance.PassBackupSpamLock(selectedServer, out string lockMsg))
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Backup"))
 			{
 				AppendLog(lockMsg, Color.Orange);
 				return;
@@ -363,19 +369,9 @@ namespace Synix_Control_Panel
 
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow == null)
-			{
-				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
-				return;
-			}
+			var selectedServer = GetSelectedServer();
 
-			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
-			{
-				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
-				return;
-			}
-
-			if (!Core.Instance.PassStartSpamLock(selectedServer, out string lockMsg))
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Start"))
 			{
 				AppendLog(lockMsg, Color.Orange);
 				return;
@@ -386,67 +382,38 @@ namespace Synix_Control_Panel
 
 		private async void btnStop_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				if (!Core.Instance.PassStopSpamLock(selectedServer, out string lockMsg))
-				{
-					AppendLog(lockMsg, Color.Orange);
-					return;
-				}
+			var selectedServer = GetSelectedServer();
 
-				await Core.Instance.StopServerAndReport(selectedServer);
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Stop"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
+
+			await Core.Instance.StopServerAndReport(selectedServer);
 		}
 
 		private void btnOpenConfig_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				Core.Instance.OpenConfigEditor(selectedServer);
-			}
-		}
-
-		private GameServer? GetSelectedServer()
-		{
-			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer server)
-			{
-				return server;
-			}
-			return null;
+			var selectedServer = GetSelectedServer();
+			Core.Instance.OpenConfigEditor(selectedServer);
 		}
 
 		private void btnOpenFolder_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
-
-			if (selectedServer != null)
-			{
-				Core.Instance.OpenServerFolder(selectedServer);
-			}
-			else
-			{
-				Core.Instance.Log("[🚨 SYNIX] Please select a server from the list first.", System.Drawing.Color.Yellow);
-			}
+			Core.Instance.OpenServerFolder(selectedServer);
 		}
 
 		private void btnOpenBackup_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
-
-			if (selectedServer != null)
-			{
-				Core.Instance.OpenBackFolder(selectedServer);
-			}
-			else
-			{
-				Core.Instance.Log("[🚨 SYNIX] Please select a server from the list first.", System.Drawing.Color.Yellow);
-			}
+			Core.Instance.OpenBackFolder(selectedServer);
 		}
 
 		private async void btnPublicConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
-			if (selectedServer == null) return;
 
 			Core.Instance.Log($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
@@ -473,7 +440,6 @@ namespace Synix_Control_Panel
 		private async void btnLocalConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
-			if (selectedServer == null) return;
 
 			Core.Instance.Log($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
@@ -504,21 +470,23 @@ namespace Synix_Control_Panel
 
 		private async void btnRestart_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Restart"))
 			{
-				await Core.Instance.ExecuteStartSequence(selectedServer);
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
+
+			await Core.Instance.ExecuteStartSequence(selectedServer);
 		}
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.RowIndex >= 0)
 			{
-				if (dataGridView1.Rows[e.RowIndex].DataBoundItem is GameServer selectedServer)
-				{
-					Synix_Control_Panel.Help.ServerInfo infoForm = new Synix_Control_Panel.Help.ServerInfo(selectedServer);
-					infoForm.Show();
-				}
+				var selectedServer = GetSelectedServer();
+				Synix_Control_Panel.Help.ServerInfo infoForm = new Synix_Control_Panel.Help.ServerInfo(selectedServer);
+				infoForm.Show();
 			}
 		}
 
