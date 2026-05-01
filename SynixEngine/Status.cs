@@ -1,12 +1,15 @@
-﻿// Copyright (c) 2026 ubidzz. All Rights Reserved.
-//
-// This file is part of Synix Control Panel.
-//
-// This code is provided for transparent viewing and personal use only.
-// Unauthorized distribution, public modification, or commercial
-// use of this source code or the compiled executable is strictly
-// prohibited. Please refer to the LICENSE file in the root
-// directory for full terms.
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.ServerHandler;
 using System.Diagnostics;
 using System.Net;
@@ -27,7 +30,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public void RebindProcesses()
+		public async void RebindProcesses()
 		{
 			foreach (var server in MainGUI.serverList)
 			{
@@ -45,7 +48,7 @@ namespace Synix_Control_Panel.SynixEngine
 							{
 								server.StartTime = process.StartTime;
 							}
-							MainGUI.Instance?.AppendLog($"[🔗 REBIND] Found {server.Game} still running (PID: {server.PID})", Color.BlueViolet, true);
+							Log($"[🔗 REBIND] Found {server.Game} still running (PID: {server.PID})", Color.BlueViolet, true);
 
 							process.EnableRaisingEvents = true;
 							process.Exited += async (s, e) =>
@@ -68,7 +71,7 @@ namespace Synix_Control_Panel.SynixEngine
 						var installer = Process.GetProcessById(server.SteamPID.Value);
 						if (installer != null && !installer.HasExited)
 						{
-							MainGUI.Instance?.AppendLog($"--- [🔗 REBIND] Found {server.Game} install still active (PID: {server.SteamPID}) ---", Color.BlueViolet, true);
+							Log($"[🔗 REBIND] Found {server.Game} install still active (PID: {server.SteamPID})", Color.BlueViolet, true);
 						}
 					}
 					catch
@@ -78,9 +81,9 @@ namespace Synix_Control_Panel.SynixEngine
 						server.SteamPID = null;
 
 						// 🛠️ RUN SURGERY: Fix missing DLLs/Configs for the orphaned install
-						GameFix.PostInstall(server);
+						await GameFix.PostInstall(server);
 
-						MainGUI.Instance?.AppendLog($"--- [🔧 RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes. ---", Color.Green, true);
+						Log($"[🔧 RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes.", Color.Green, true);
 						FileHandler.SaveServers();
 					}
 				}
@@ -194,8 +197,6 @@ namespace Synix_Control_Panel.SynixEngine
 						var result = await udpClient.ReceiveAsync();
 						byte[] data = result.Buffer;
 
-						// 🎯 THE WINDROSE FIX: Handle the 0x41 Challenge
-						// Rust usually skips this, but UE5 demands it.
 						if (data.Length >= 9 && data[4] == 0x41)
 						{
 							// Copy original request + 4 bytes of challenge data from the server
@@ -227,11 +228,11 @@ namespace Synix_Control_Panel.SynixEngine
 							{
 								server.CurrentPlayers = data[pointer];
 								server.MaxPlayersFromQuery = data[pointer + 1];
-								return; // 🎯 SUCCESS: Found the server and parsed data
+								return;
 							}
 						}
 					}
-					catch { continue; } // Try the next IP if this one times out
+					catch { continue; }
 				}
 			}
 			catch { server.CurrentPlayers = 0; }
