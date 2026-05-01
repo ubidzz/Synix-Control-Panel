@@ -53,7 +53,6 @@ namespace Synix_Control_Panel.Help
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
 		}
 
-		// Helper function to turn your bool array into a readable string like "Mon, Wed, Fri"
 		private string GetActiveDays(bool[] days)
 		{
 			if (days == null || days.Length < 7) return "None";
@@ -73,12 +72,12 @@ namespace Synix_Control_Panel.Help
 			if (isActive)
 			{
 				label.Text = "On";
-				label.ForeColor = Color.LimeGreen; // Bright green for "On"
+				label.ForeColor = Color.LimeGreen;
 			}
 			else
 			{
 				label.Text = "Off";
-				label.ForeColor = Color.Red; // Red for "Off"
+				label.ForeColor = Color.Red;
 			}
 		}
 	}

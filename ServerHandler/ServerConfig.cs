@@ -18,7 +18,6 @@ namespace Synix_Control_Panel.ServerHandler
 		private List<ConfigLine> _fileData;
 		private ConfigFormat _format;
 
-		// 🚀 Declare these manually to fix "does not exist" errors
 		private DataGridView dgvConfig = new DataGridView();
 		private Button btnSave = new Button();
 
@@ -38,17 +37,14 @@ namespace Synix_Control_Panel.ServerHandler
 
 		private void SetupInterface()
 		{
-			// 1. Setup the Save Button
 			btnSave.Text = "Save Config";
 			btnSave.Height = 40;
 			btnSave.Width = 150;
-			// Position at the bottom center
 			btnSave.Location = new Point((this.ClientSize.Width / 2) - 75, this.ClientSize.Height - 50);
 			btnSave.Anchor = AnchorStyles.Bottom;
 			btnSave.Click += btnSave_Click; // Link the click event
 			this.Controls.Add(btnSave);
 
-			// 2. Setup the Grid
 			dgvConfig.Location = new Point(0, 0);
 			dgvConfig.Width = this.ClientSize.Width;
 			dgvConfig.Height = this.ClientSize.Height - 60;
@@ -62,9 +58,8 @@ namespace Synix_Control_Panel.ServerHandler
 			dgvConfig.RowTemplate.Height = 35;
 
 			this.Controls.Add(dgvConfig);
-			dgvConfig.SendToBack(); // Keeps button on top
+			dgvConfig.SendToBack();
 
-			// 3. Add Columns
 			dgvConfig.Columns.Add("Key", "Setting Name");
 			dgvConfig.Columns.Add("Value", "Value");
 			dgvConfig.Columns[0].ReadOnly = true;

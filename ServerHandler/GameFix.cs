@@ -29,8 +29,6 @@ namespace Synix_Control_Panel.ServerHandler
 
 			try
 			{
-				// --- PASS 1: STEAM DLL COPIES (Unreal Engine & Engine Specifics) ---
-				// Grabs DLLs from C:\Synix\SteamCMD and pushes to game binary folders
 				switch (server.Game)
 				{
 					case "StarRupture":
@@ -178,15 +176,12 @@ namespace Synix_Control_Panel.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"R5\Binaries\Win64")) applied = true; break;
 				}
 
-				// --- PASS 2: DYNAMIC CONFIG FILE CREATION ---
 				switch (server.Game)
 				{
 					case "Rust":
 						string cleanIdentity = server.ServerName.Replace(" ", "_");
 						string rustRelativePath = $@"server\{cleanIdentity}\cfg\server.cfg";
 
-						// The $@ allows us to pull directly from the server object into the string!
-						// Define the multi-line string with proper formatting
 						string rustCfg = $@"// Synix Custom Rust Configuration
 // Settings like Port and Query Port are managed by command-line arguments.
 
@@ -424,10 +419,8 @@ ServerName=""{ServerName}""";
 			{
 				string sourcePath = Path.Combine(steamCmdPath, dll);
 
-				// If it exists in SteamCMD, and the game doesn't have it yet, copy it over
 				if (File.Exists(sourcePath) && !File.Exists(Path.Combine(targetDir, dll)))
 				{
-					// Uses your FileHandler.Copy utility
 					if (FileHandler.Copy(sourcePath, targetDir, dll, false))
 					{
 						filesCopied = true;

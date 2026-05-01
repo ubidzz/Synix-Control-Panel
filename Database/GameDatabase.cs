@@ -17,7 +17,6 @@ namespace Synix_Control_Panel.Database
 	public static class GameDatabase
 	{
 		public static IReadOnlyList<GameInfo> GetGames => games;
-		// Use ReadOnly to protect the master list
 		private static readonly IReadOnlyList<GameInfo> games =
 		[
 			new() {
@@ -3127,13 +3126,10 @@ namespace Synix_Control_Panel.Database
 
 		public class PostInstallStep
 		{
-			// Can be "CopySteamDlls" or "CreateFile"
 			public string ActionType { get; init; } = "";
 
-			// Where the file goes (e.g., "WS\Binaries\Win64" or "DSSetings.txt")
 			public string TargetPath { get; init; } = "";
 
-			// The raw text to write into the file (Only used for "CreateFile")
 			public string FileContent { get; init; } = "";
 		}
 	}

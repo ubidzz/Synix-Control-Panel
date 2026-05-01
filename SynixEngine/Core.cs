@@ -10,7 +10,6 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-// 🎯 THE FIX: You must include this so the Core knows what a "GameServer" is
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
@@ -88,13 +87,11 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		// 🎯 THE FIX: Dictionaries to prevent overlapping tasks and HTTP spam
 		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
 		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
 
 		private void Heartbeat_Tick(object? sender, EventArgs e)
 		{
-			// 🛑 1. Pause the timer so slow network queries don't cause overlap
 			_heartbeatTimer.Stop();
 
 			try
@@ -110,12 +107,10 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						string srvId = server.ServerName ?? "unknown_server";
 
-						// 🎯 2. ASYNC TASK LEAK FIX: Only ask for players if the previous query finished
 						if (!_activePlayerQueries.TryGetValue(srvId, out bool isQuerying) || !isQuerying)
 						{
 							_activePlayerQueries[srvId] = true;
 
-							// Run the network call in the background, then unlock it when done
 							Task.Run(async () =>
 							{
 								try { await UpdatePlayerCount(server); }
@@ -123,7 +118,6 @@ namespace Synix_Control_Panel.SynixEngine
 							});
 						}
 
-						// 🎯 3. DISCORD HTTP LEAK FIX: Only send a warning once every 15 minutes
 						if (server.RamUsage >= 80.0)
 						{
 							bool canAlert = !_lastRamWarning.TryGetValue(srvId, out DateTime lastAlert) ||
@@ -144,19 +138,17 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				// 🟢 4. Resume the timer only after all checks are safely dispatched
 				_heartbeatTimer.Start();
 			}
 		}
 
-		private void PerformMaintenanceCheck()
+		private async void PerformMaintenanceCheck()
 		{
 			DateTime now = DateTime.Now;
 			string currentTime = now.ToString("HH:mm");
 			string todayBookmark = now.ToString("yyyy-MM-dd");
 			int dayIndex = (int)now.DayOfWeek;
 
-			// 🎯 THE FIX: Explicitly type the server variable
 			foreach (GameServer server in MainGUI.serverList)
 			{
 				if (server.IsScheduledRestartEnabled &&
@@ -170,7 +162,7 @@ namespace Synix_Control_Panel.SynixEngine
 						"Weekly maintenance is starting now. The server will be back online shortly.", Color.Cyan);
 
 					Log($"[ENGINE] Scheduled weekly maintenance triggered for {server.ServerName}.");
-					ExecuteMaintenanceRestart(server);
+					await ExecuteStartSequence(server);
 				}
 			}
 		}
@@ -189,7 +181,7 @@ namespace Synix_Control_Panel.SynixEngine
 					System.Windows.Forms.MessageBoxButtons.OK,
 					System.Windows.Forms.MessageBoxIcon.Warning);
 
-				return false; // BLOCK THE START
+				return false;
 			}
 
 			// 🎯 2. RAM GUARD (85% Usable Pool Limit)
@@ -205,7 +197,6 @@ namespace Synix_Control_Panel.SynixEngine
 			double usedGb = usage.TotalRamMB / 1024.0;
 
 			// THE MATH: Percentage of the usable pool used by servers
-			// $$Percentage = \frac{Used}{UsablePool} \times 100$$
 			double ramUsagePercent = (usedGb / usablePool) * 100.0;
 
 			// Setting this to 85.0 RAM limit
@@ -217,10 +208,10 @@ namespace Synix_Control_Panel.SynixEngine
 					System.Windows.Forms.MessageBoxButtons.OK,
 					System.Windows.Forms.MessageBoxIcon.Warning);
 
-				return false; // BLOCK THE START
+				return false;
 			}
 
-			return true; // BOTH ARE SAFE - PROCEED WITH START
+			return true;
 		}
 
 		public bool IsBasicInfoValid(string name, string game) => !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(game);

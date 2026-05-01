@@ -129,17 +129,14 @@ namespace Synix_Control_Panel
 
 			try
 			{
-				// 🎯 1. IDENTITY & CAPABILITY
 				string currentName = txtName?.Text?.Trim() ?? "";
 				bool hasName = !string.IsNullOrWhiteSpace(currentName);
 				bool hasGame = cmbGame != null && cmbGame.SelectedIndex > 0;
 				string selectedGame = hasGame ? cmbGame.Text : "";
 				bool isBaseReady = hasName && hasGame;
 
-				// Helper to check if a control is allowed by the Game Template
 				bool CanUnlock(Control c) => isBaseReady && c.Tag?.ToString() == "Required";
 
-				// 🎯 2. DYNAMIC UI UNLOCKING (FULL RESTORATION)
 				txtPassword.Enabled = CanUnlock(txtPassword);
 				txtAdminPassword.Enabled = CanUnlock(txtAdminPassword);
 				txtWorldSeed.Enabled = CanUnlock(txtWorldSeed);
@@ -167,7 +164,6 @@ namespace Synix_Control_Panel
 				chkEnableDiscord.Enabled = isBaseReady;
 				txtDiscordWebhook.Enabled = isBaseReady && chkEnableDiscord.Checked;
 
-				// 🎯 3. FOLDER & BROWSE LOCKING (Grey-out Fix)
 				if (_isEditMode)
 				{
 					chkDefaultPath.Enabled = false;
@@ -182,20 +178,17 @@ namespace Synix_Control_Panel
 					txtInstallPath.Enabled = manualMode;
 				}
 
-				// 🎯 4. AUTO-PATH GENERATION
 				if (!_isEditMode && isBaseReady && chkDefaultPath.Checked)
 				{
 					string safeName = BackupManager.GetSafeName(currentName);
 					txtInstallPath.Text = $@"C:\Synix\Games\{selectedGame}\{safeName}";
 				}
 
-				// 🎯 5. PORT DATA ISOLATION
 				int gPort = (int)numPort.Value;
 				int qPort = numQueryPort.Enabled ? (int)numQueryPort.Value : 0;
 				int aPort = (numAppPort != null && numAppPort.Enabled) ? (int)numAppPort.Value : 0;
 				int rPort = rconActive ? (int)numRconPort.Value : 0;
 
-				// 🎯 6. COLLISION DETECTION (FULL OS & DB CHECKS)
 				string? gOwner = Core.Instance.GetPortCollisionOwner(gPort, _existingServer);
 				bool gOS = Core.Instance.IsPortInUseLocally(gPort);
 
@@ -213,7 +206,6 @@ namespace Synix_Control_Panel
 					s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) &&
 					s.ServerName.Equals(currentName, StringComparison.OrdinalIgnoreCase));
 
-				// 🎯 7. UI STATE ENGINE (The Rounded Color Bar)
 				if (!isBaseReady)
 				{
 					WarningLabel.Text = "  🔒 [LOCKED] Required: Server Name and Game Template selection.";
@@ -258,16 +250,13 @@ namespace Synix_Control_Panel
 				}
 				else
 				{
-					// 🚀 SUCCESS STATE
 					WarningLabel.Text = _isEditMode ? $"  ✔ [READY] Updating: {currentName}" : "  ✔ [READY] Configuration is valid and safe.";
 					WarningLabel.ForeColor = Color.SpringGreen;
 					WarningLabel.BackColor = Color.FromArgb(20, 50, 20);
 
-					// Final Button Unlock
 					btnSave.Enabled = !string.IsNullOrWhiteSpace(txtInstallPath.Text);
 				}
 
-				// 🎯 8. REFRESH ROUNDED CORNERS
 				WarningLabel.Invalidate();
 			}
 			catch (Exception ex)
@@ -311,7 +300,6 @@ namespace Synix_Control_Panel
 			chkDefaultPath.CheckedChanged += (s, e) => trigger();
 		}
 
-		// 🎯 DESIGNER EVENT HANDLERS (EXACT NAMES)
 		private void btnSave_Click(object sender, EventArgs e)
 		{
 			string newName = txtName.Text.Trim();

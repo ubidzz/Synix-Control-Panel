@@ -43,6 +43,13 @@ namespace Synix_Control_Panel.ServerHandler
 			if (!IsSystemSafeToStart()) return;
 			try
 			{
+				if (!Core.Instance.PassResourceGuard(out string guardMsg))
+				{
+					logCallback?.Invoke(guardMsg);
+					MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+
 				// 1. PRE-FLIGHT (Backup & Update)
 				if (server.BackupOnStart && context != StartContext.CrashRecovery)
 				{
