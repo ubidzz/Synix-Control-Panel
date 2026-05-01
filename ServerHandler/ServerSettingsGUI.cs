@@ -1,14 +1,15 @@
-﻿/*
- * Copyright (c) 2026 ubidzz. All Rights Reserved.
- *
- * This file is part of Synix Control Panel.
- *
- * This code is provided for transparent viewing and personal use only.
- * Unauthorized distribution, public modification, or commercial 
- * use of this source code or the compiled executable is strictly 
- * prohibited. Please refer to the LICENSE file in the root 
- * directory for full terms.
- */
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.Help;
 using Synix_Control_Panel.ServerHandler;
@@ -323,6 +324,14 @@ namespace Synix_Control_Panel
 			if (!Core.Instance.ValidatePortsAndReport(_existingServer, gPort, qPort, rPort, chkEnableRcon.Checked, aPort ?? 0, numAppPort.Enabled, selectedGame)) return;
 			string newPath = txtInstallPath.Text.Trim();
 			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
+
+			if (!IsGameServerConfigSafe(NewServer))
+			{
+				MessageBox.Show("Security Alert: One of your inputs contains illegal characters.",
+								"Input Blocked", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
 			try
 			{
 				if (_isEditMode && _existingServer != null)

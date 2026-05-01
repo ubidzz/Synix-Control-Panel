@@ -1,16 +1,18 @@
-﻿/*
- * Copyright (c) 2026 ubidzz. All Rights Reserved.
- *
- * This file is part of Synix Control Panel.
- *
- * This code is provided for transparent viewing and personal use only.
- * Unauthorized distribution, public modification, or commercial 
- * use of this source code or the compiled executable is strictly 
- * prohibited. Please refer to the LICENSE file in the root 
- * directory for full terms.
- */
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.SynixEngine;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
@@ -167,6 +169,28 @@ namespace Synix_Control_Panel.ServerHandler
 						? "True" : (server.GameMode == "PVP" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
 						? "False" : server.GameMode;
 					args = args.Replace("{mode}", translatedMode);
+				}
+
+				// 🛡️ SECURITY GUARD: Validate ExtraArgs before appending
+				if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
+				{
+					if (!IsGameServerConfigSafe(server.ExtraArgs))
+					{
+						logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected in the extra arguments. Aborting startup.", Color.Red);
+						server.Status = StatusManager.GetStatus(ServerState.Stopped);
+						return;
+					}
+
+					args = $"{args} \"{server.ExtraArgs.Trim()}\"";
+				}
+
+				args = args.Replace("  ", " ").Trim();
+
+				if (!IsStringSafe(args))
+				{
+					logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected. Aborting startup.", Color.Red);
+					server.Status = StatusManager.GetStatus(ServerState.Stopped);
+					return;
 				}
 
 				// 🚀 7. CONFIGURE PROCESS

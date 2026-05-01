@@ -1,14 +1,15 @@
-/*
- * Copyright (c) 2026 ubidzz. All Rights Reserved.
- *
- * This file is part of Synix Control Panel.
- *
- * This code is provided for transparent viewing and personal use only.
- * Unauthorized distribution, public modification, or commercial 
- * use of this source code or the compiled executable is strictly 
- * prohibited. Please refer to the LICENSE file in the root 
- * directory for full terms.
- */
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.Design;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
@@ -32,6 +33,8 @@ namespace Synix_Control_Panel
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
+		private bool isPrivacyLoading = false;
+		private System.Windows.Forms.Timer? versionTimer;
 
 		public MainGUI()
 		{
@@ -45,6 +48,7 @@ namespace Synix_Control_Panel
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Instance = this;
 			_ = LoadNetworkInfo();
+			InitializeVersionCheckTimer();
 			_ = VersionCheck();
 		}
 
@@ -194,7 +198,7 @@ namespace Synix_Control_Panel
 			Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
 			Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
 
-			// 🎯 THE GRAPH FIX: Shove a dummy point in and FORCE the heavy graphics engine to draw instantly
+			// ðŸŽ¯ THE GRAPH FIX: Shove a dummy point in and FORCE the heavy graphics engine to draw instantly
 			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, 0);
 			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, 0);
 			chartHeartbeat.Update(); // This is the magic line that prevents the UI freeze
@@ -205,14 +209,14 @@ namespace Synix_Control_Panel
 			isDownloadActive = true;
 			await Task.Delay(100);
 
-			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			AppendLog("Checking SteamCMD dependencies...");
 
 			await Task.Run(() => SteamCMD.EnsureSteamCMD(msg => AppendLog(msg)));
 
 			isDownloadActive = false;
 			AppendLog("Initialization complete.");
-			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		public void UpdateGrid()
@@ -250,10 +254,10 @@ namespace Synix_Control_Panel
 			// UI-specific check
 			if (isInitializing) return;
 			isDownloadActive = true;
-			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			await Core.Instance.AddServerAndReport();
 			isDownloadActive = false;
-			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		private void btnEdit_Click(object sender, EventArgs e)
@@ -280,10 +284,10 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				isDownloadActive = true;
-				AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+				AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.UpdateServerAndReport(selectedServer);
 				isDownloadActive = false;
-				AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{
@@ -299,10 +303,10 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
 				isDownloadActive = true;
-				AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+				AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 				await Core.Instance.ValidationServerAndReport(selectedServer);
 				isDownloadActive = false;
-				AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
 			else
 			{
@@ -333,13 +337,13 @@ namespace Synix_Control_Panel
 			// 1. SELECTION CHECKS
 			if (dataGridView1.CurrentRow == null)
 			{
-				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
+				AppendLog("[ðŸš¨ ERROR] No row is currently selected!", Color.Red);
 				return;
 			}
 
 			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
 			{
-				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
+				AppendLog("[ðŸš¨ ERROR] Invalid GameServer object!", Color.Red);
 				return;
 			}
 
@@ -352,15 +356,15 @@ namespace Synix_Control_Panel
 			// 2. STATUS CHECK: Ensure the server is Stopped before zipping
 			if (selectedServer.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
-				AppendLog($"[🚨 ERROR] {selectedServer.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				AppendLog($"[ðŸš¨ ERROR] {selectedServer.ServerName} must be Stopped to perform a backup.", Color.Orange);
 				return;
 			}
 
 			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
 			isDownloadActive = true;
 
-			AppendLog($"[🔒 WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			AppendLog($"[💾 BACKUP] Starting backup compression for {selectedServer.ServerName}...", Color.Cyan);
+			AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			AppendLog($"[ðŸ’¾ BACKUP] Starting backup compression for {selectedServer.ServerName}...", Color.Cyan);
 
 			await Task.Run(() =>
 			{
@@ -369,24 +373,24 @@ namespace Synix_Control_Panel
 
 			isDownloadActive = false;
 			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped);
-			AppendLog($"[💾 BACKUP] Finished backing up {selectedServer.ServerName}.", Color.LimeGreen);
-			AppendLog($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			AppendLog($"[ðŸ’¾ BACKUP] Finished backing up {selectedServer.ServerName}.", Color.LimeGreen);
+			AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			UpdateGrid();
 		}
 
-		// 🎯 1. Change 'void' to 'async void' (standard for event handlers)
+		// ðŸŽ¯ 1. Change 'void' to 'async void' (standard for event handlers)
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
 			// 1. SELECTION CHECKS
 			if (dataGridView1.CurrentRow == null)
 			{
-				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
+				AppendLog("[ðŸš¨ ERROR] No row is currently selected!", Color.Red);
 				return;
 			}
 
 			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
 			{
-				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
+				AppendLog("[ðŸš¨ ERROR] Invalid GameServer object!", Color.Red);
 				return;
 			}
 
@@ -397,13 +401,13 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			// 🎯 THE RESOURCE SAFEGUARD: Check CPU and RAM before we do anything else
+			// ðŸŽ¯ THE RESOURCE SAFEGUARD: Check CPU and RAM before we do anything else
 			// This respects your 5GB Windows buffer logic
 			if (!Core.Instance.PassResourceGuard(out string guardMsg))
 			{
 				AppendLog(guardMsg, Color.Red, true); // Bold red for critical resource warnings
 				MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return; // 🛑 Launch aborted
+				return; // ðŸ›‘ Launch aborted
 			}
 
 			if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
@@ -416,7 +420,7 @@ namespace Synix_Control_Panel
 				UpdateGrid();
 			}
 
-			// 🚀 4. EXECUTION: The actual launch process
+			// ðŸš€ 4. EXECUTION: The actual launch process
 			await Servers.Start(selectedServer, msg =>
 			{
 				this.Invoke((MethodInvoker)delegate
@@ -432,7 +436,7 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
 			{
-				// 🛡️ 1. THE SPAM LOCK
+				// ðŸ›¡ï¸ 1. THE SPAM LOCK
 				if (!Core.Instance.PassStopSpamLock(selectedServer, out string lockMsg))
 				{
 					// If it's already stopping or dead, print the orange warning and block the click!
@@ -440,7 +444,7 @@ namespace Synix_Control_Panel
 					return;
 				}
 
-				// 🚀 2. SENDS COMMAND: MainGUI -> Engine -> Servers.cs
+				// ðŸš€ 2. SENDS COMMAND: MainGUI -> Engine -> Servers.cs
 				// If it passes the bouncer, hand it off to the Engine to do the graceful shutdown.
 				Core.Instance.StopServerAndReport(selectedServer);
 			}
@@ -489,7 +493,7 @@ namespace Synix_Control_Panel
 
 			string rootBackupPath = @"C:\Synix\BackupGames";
 
-			// 🎯 These lines will no longer have CS0103 errors:
+			// ðŸŽ¯ These lines will no longer have CS0103 errors:
 			string cleanGame = BackupManager.GetSafeName(selectedServer.Game);
 			string cleanServer = BackupManager.GetSafeName(selectedServer.ServerName);
 
@@ -502,7 +506,7 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				AppendLog($"[📜 INFO] Creating directory: {fullPath}", Color.Yellow);
+				AppendLog($"[ðŸ“œ INFO] Creating directory: {fullPath}", Color.Yellow);
 				try
 				{
 					Directory.CreateDirectory(fullPath);
@@ -517,7 +521,7 @@ namespace Synix_Control_Panel
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			Core.Instance.Log($"[ðŸ“¡ NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -529,16 +533,16 @@ namespace Synix_Control_Panel
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[🛰️ ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
+					Core.Instance.Log($"[ðŸ›°ï¸ ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[🔒 BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					Core.Instance.Log($"[ðŸ”’ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				Core.Instance.Log($"[ðŸš¨ ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
@@ -547,7 +551,7 @@ namespace Synix_Control_Panel
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			Core.Instance.Log($"[ðŸ“¡ NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -559,16 +563,16 @@ namespace Synix_Control_Panel
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[🛰️ ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
+					Core.Instance.Log($"[ðŸ›°ï¸ ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[🔒 BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					Core.Instance.Log($"[ðŸ”’ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				Core.Instance.Log($"[ðŸš¨ ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
@@ -609,6 +613,22 @@ namespace Synix_Control_Panel
 			{
 				helpWindow.ShowDialog();
 			}
+		}
+
+		private void InitializeVersionCheckTimer()
+		{
+			versionTimer = new System.Windows.Forms.Timer();
+
+			// 20 minutes * 60 seconds * 1000 milliseconds
+			versionTimer.Interval = 20 * 60 * 1000;
+
+			versionTimer.Tick += async (sender, e) =>
+			{
+				// This fires every 20 minutes in the background
+				await VersionCheck();
+			};
+
+			versionTimer.Start();
 		}
 
 		private async Task VersionCheck()
@@ -660,7 +680,7 @@ namespace Synix_Control_Panel
 					// 3. COMPARE THE TWO STRINGS
 					if (latestVersion == currentVersion)
 					{
-						lblUpdateStatus.Text = " ✔ You are running the latest version " + currentVersion;
+						lblUpdateStatus.Text = " âœ” You are running the latest version " + currentVersion;
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Green;
@@ -668,7 +688,7 @@ namespace Synix_Control_Panel
 					else
 					{
 						// If it's still failing, this will tell us WHY by showing what it thinks currentVersion is
-						lblUpdateStatus.Text = " ⚠️ A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
+						lblUpdateStatus.Text = " âš ï¸ A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
 						lblUpdateStatus.ForeColor = Color.White;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;
@@ -680,7 +700,7 @@ namespace Synix_Control_Panel
 			}
 			catch
 			{
-				lblUpdateStatus.Text = "[🚨 ERROR] Could not check for updates.";
+				lblUpdateStatus.Text = "[ðŸš¨ ERROR] Could not check for updates.";
 				lblUpdateStatus.ForeColor = Color.Black;
 				lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 				lblUpdateStatus.BackColor = Color.Red;
@@ -705,7 +725,7 @@ namespace Synix_Control_Panel
 			catch (Exception ex)
 			{
 				// If something goes wrong, log it so you can see it in your video
-				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
+				AppendLog($"[ðŸš¨ ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
 		}
 	}

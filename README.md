@@ -109,16 +109,6 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 
 ---
 
-## 📜 License & Legal Information
-*Copyright © 2026 ubidzz. All Rights Reserved.*
-
-The **Synix Control Panel** is a proprietary software project. 
-* **Permitted Use:** Free for personal, non-commercial use.
-* **Source Code:** Provided for transparent viewing and educational purposes only.
-* **Strict Restrictions:** Redistribution, public modification, or commercial resale of the code or compiled binaries is strictly prohibited.
-
----
-
 <img width="1243" height="660" alt="UI" src="https://github.com/user-attachments/assets/f10cc223-b1a0-4b85-a048-2989daf8ca8d" />
 <img width="802" height="482" alt="image" src="https://github.com/user-attachments/assets/4598aa5f-eb95-4589-afe2-bed4dd84d78b" />
 <img width="802" height="482" alt="image" src="https://github.com/user-attachments/assets/a24ad17a-8895-4711-a6e7-7390d71a7691" />
