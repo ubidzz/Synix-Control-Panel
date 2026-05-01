@@ -410,6 +410,7 @@
 			// 
 			// btnRestart
 			// 
+			btnRestart.Cursor = Cursors.Hand;
 			btnRestart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnRestart.ForeColor = Color.DarkCyan;
 			btnRestart.Location = new Point(681, 589);

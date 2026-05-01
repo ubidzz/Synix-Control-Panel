@@ -343,12 +343,6 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			if (selectedServer.Status != StatusManager.GetStatus(ServerState.Stopped))
-			{
-				AppendLog($"[🚨 ERROR] {selectedServer.ServerName} must be Stopped to perform a backup.", Color.Orange);
-				return;
-			}
-
 			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
 			isDownloadActive = true;
 

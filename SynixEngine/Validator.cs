@@ -165,7 +165,7 @@ namespace Synix_Control_Panel.SynixEngine
 				// 1. Check if the server is active (Must be Stopped or Crashed to backup)
 				if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp || isValidating)
 				{
-					lockMessage = $"[LOCKED] Cannot backup. {server.ServerName} is currently {status}.";
+					lockMessage = $"[🔒 LOCKED] Cannot backup. {server.ServerName} is currently {status}.";
 					return false;
 				}
 			}
@@ -182,7 +182,7 @@ namespace Synix_Control_Panel.SynixEngine
 				// 1. Check if the server is active (Must be Stopped or Crashed to backup)
 				if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp || isValidating)
 				{
-					lockMessage = $"[LOCKED] Cannot delete. {server.ServerName} is currently {status}.";
+					lockMessage = $"[🔒 LOCKED] Cannot delete. {server.ServerName} is currently {status}.";
 					return false;
 				}
 			}
@@ -199,7 +199,7 @@ namespace Synix_Control_Panel.SynixEngine
 				// 1. Check if the server is active (Must be Stopped or Crashed to backup)
 				if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp || isValidating)
 				{
-					lockMessage = $"[LOCKED] Cannot edit server config. {server.ServerName} is currently {status}.";
+					lockMessage = $"[🔒 LOCKED] Cannot edit server config. {server.ServerName} is currently {status}.";
 					return false;
 				}
 			}
@@ -215,7 +215,7 @@ namespace Synix_Control_Panel.SynixEngine
 				// 1. Check if the server is active (Must be Stopped or Crashed to backup)
 				if (isStarting || isStopping || isInstalling || isUpdating || isBackingUp || isValidating)
 				{
-					lockMessage = $"[LOCKED] Cannot restart. {server.ServerName} is currently {status}.";
+					lockMessage = $"[🔒 LOCKED] Cannot restart. {server.ServerName} is currently {status}.";
 					return false;
 				}
 			}

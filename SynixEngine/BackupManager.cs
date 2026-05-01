@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.IO.Compression;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -21,6 +22,12 @@ namespace Synix_Control_Panel.SynixEngine
 		public static void ExecuteBackup(GameServer server, StartContext context)
 		{
 			if (context != StartContext.Manual && !server.BackupOnStart) return;
+
+			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
+			{
+				MainGUI.Instance.AppendLog($"[🚨 ERROR] {server.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				return;
+			}
 
 			// Never backup during a crash recovery
 			if (context == StartContext.CrashRecovery) return;
