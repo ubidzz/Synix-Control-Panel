@@ -27,15 +27,11 @@ namespace Synix_Control_Panel.FileFolderHandler
 			{
 				try
 				{
-					// 1. Delete the physical files first
 					if (Directory.Exists(server.InstallPath))
 					{
-						// 'true' means it deletes all subfolders and files inside
 						Directory.Delete(server.InstallPath, true);
 					}
 
-					// 2. Remove from the UI list and Save JSON
-					// We access the static list from MainGUI directly
 					MainGUI.serverList.Remove(server);
 					FileHandler.SaveServers();
 
@@ -43,20 +39,17 @@ namespace Synix_Control_Panel.FileFolderHandler
 				}
 				catch (Exception ex)
 				{
-					// Rethrow the error so the GUI can show the specific MessageBox you want
 					throw new Exception(ex.Message);
 				}
 			}
 
 			public static bool Rename(GameServer oldServer, GameServer newServer)
 			{
-				// 1. GATEKEEPER: If they didn't use Default Location, DO NOT RENAME.
 				if (!oldServer.IsDefaultPath)
 				{
-					return false; // Exit early; no physical folder movement
+					return false;
 				}
 
-				// 2. Only move if the path actually changed
 				if (oldServer.InstallPath != newServer.InstallPath)
 				{
 					try

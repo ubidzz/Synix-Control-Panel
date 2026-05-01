@@ -29,21 +29,21 @@ namespace Synix_Control_Panel.SteamCMDHandler
 				// 1. Create the Directory if it's missing
 				if (!Directory.Exists(SteamCmdDir))
 				{
-					logCallback?.Invoke("[INIT] Creating SteamCMD directory...");
+					logCallback?.Invoke("[SYNIX] Creating SteamCMD directory...");
 					Directory.CreateDirectory(SteamCmdDir);
 				}
 
 				// 2. Download and Extract if the EXE is missing
 				if (!File.Exists(SteamCmdExe))
 				{
-					logCallback?.Invoke("[INIT] Downloading SteamCMD...");
+					logCallback?.Invoke("[SYNIX] Downloading SteamCMD...");
 					using (var client = new HttpClient())
 					{
 						var response = await client.GetByteArrayAsync("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip");
 						await File.WriteAllBytesAsync(ZipPath, response);
 					}
 
-					logCallback?.Invoke("[INIT] Unzipping SteamCMD...");
+					logCallback?.Invoke("[SYNIX] Unzipping SteamCMD...");
 					ZipFile.ExtractToDirectory(ZipPath, SteamCmdDir, true);
 
 					if (File.Exists(ZipPath)) File.Delete(ZipPath);
@@ -53,7 +53,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 				string publicFolder = Path.Combine(SteamCmdDir, "public");
 				if (!Directory.Exists(publicFolder))
 				{
-					logCallback?.Invoke("[INIT] Starting first-run updates (this may take a few minutes)...");
+					logCallback?.Invoke("[SYNIX] Starting first-run updates (this may take a few minutes)...");
 
 					// Clear out any corrupted 'package' folders from a failed previous run
 					string packageFolder = Path.Combine(SteamCmdDir, "package");
@@ -77,11 +77,11 @@ namespace Synix_Control_Panel.SteamCMDHandler
 						proc.BeginOutputReadLine();
 						await proc.WaitForExitAsync(); // Waits for SteamCMD to finish its first-run downloads
 					}
-					logCallback?.Invoke("[INIT] SteamCMD is ready for action.");
+					logCallback?.Invoke("[SYNIX] SteamCMD is ready for action.");
 				}
 				else
 				{
-					logCallback?.Invoke("[INIT] SteamCMD already initialized.");
+					logCallback?.Invoke("[SYNIX] SteamCMD already initialized.");
 				}
 			}
 			catch (Exception ex)

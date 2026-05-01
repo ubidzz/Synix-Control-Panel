@@ -1,12 +1,14 @@
-﻿// Copyright (c) 2026 ubidzz. All Rights Reserved.
-//
-// This file is part of Synix Control Panel.
-//
-// This code is provided for transparent viewing and personal use only.
-// Unauthorized distribution, public modification, or commercial
-// use of this source code or the compiled executable is strictly
-// prohibited. Please refer to the LICENSE file in the root
-// directory for full terms.
+﻿/*
+ * Copyright (c) 2026 ubidzz. All Rights Reserved.
+ *
+ * This file is part of Synix Control Panel.
+ *
+ * This code is provided for transparent viewing and personal use only.
+ * Unauthorized distribution, public modification, or commercial 
+ * use of this source code or the compiled executable is strictly 
+ * prohibited. Please refer to the LICENSE file in the root 
+ * directory for full terms.
+ */
 using Synix_Control_Panel.Database;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -74,7 +76,6 @@ namespace Synix_Control_Panel.SynixEngine
 					return false;
 				}
 
-				// 2. OS Socket Check
 				if (IsPortInUseLocally(check.Value))
 				{
 					MessageBox.Show($"Socket Conflict: The {check.Name} ({check.Value}) is currently occupied by another system process.",
@@ -83,7 +84,6 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 
-			// 3. Rust Protocol Check
 			if (checkAppPort && gameName.Contains("Rust", StringComparison.OrdinalIgnoreCase) && app < 10000)
 			{
 				MessageBox.Show("Protocol Error: Rust+ (App Port) must be 10000 or higher.", "Logic Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -97,7 +97,6 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!isEditMode && Directory.Exists(path))
 			{
-				// Check if the folder is empty
 				if (Directory.EnumerateFileSystemEntries(path).Any())
 				{
 					var result = MessageBox.Show("This folder isn't empty. Installing here might overwrite files. Continue?",
@@ -110,7 +109,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public bool ShouldBlockForConfig(GameServer server)
 		{
-			// If it's the first time running, show the warning
 			if (server.IsFirstBoot)
 			{
 				MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
@@ -122,7 +120,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 
-			return false; // Already been booted before, let it through
+			return false;
 		}
 
 		public bool ValidateIntegrityAndReport(GameServer server)
@@ -243,7 +241,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			// 🎯 (Current Usage / (Total - 7GB)) * 100
+			// 🎯 (Current Usage / (Total - 5GB)) * 100
 			double currentRamPercent = (TotalRamUsageGb / TotalRamGb) * 100;
 
 			if (currentRamPercent >= 85.0)

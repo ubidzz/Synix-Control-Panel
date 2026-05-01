@@ -26,15 +26,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			// 1. DYNAMIC PATHING
 			string sourceDir = server.InstallPath;
-
-			// 🎯 THE FIX: Apply the sanitizer HERE to ensure the folder matches the UI
 			string cleanGame = GetSafeName(server.Game);
 			string cleanServer = GetSafeName(server.ServerName);
-
-			// Path: C:\Synix\BackupGames\Soulmask_Dedicated\My_Server_Instance\
 			string backupRoot = Path.Combine(@"C:\Synix\BackupGames", cleanGame, cleanServer);
-
-			// 2. TIMESTAMP & FILENAME
 			string timestamp = DateTime.UtcNow.ToString("yyyy_MM_dd_HHmmss");
 			string zipPath = Path.Combine(backupRoot, $"backup_{timestamp}.zip");
 
@@ -53,10 +47,8 @@ namespace Synix_Control_Panel.SynixEngine
 					files.RemoveAt(files.Count - 1);
 				}
 
-				// 4. COMPRESSION: Respecting the 1% CPU target
 				if (Directory.Exists(sourceDir))
 				{
-					// Using Fastest compression to avoid lag on your 6-core rig
 					ZipFile.CreateFromDirectory(sourceDir, zipPath, CompressionLevel.Fastest, false);
 				}
 			}

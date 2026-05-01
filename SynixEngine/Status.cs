@@ -1,12 +1,14 @@
-﻿// Copyright (c) 2026 ubidzz. All Rights Reserved.
-//
-// This file is part of Synix Control Panel.
-//
-// This code is provided for transparent viewing and personal use only.
-// Unauthorized distribution, public modification, or commercial
-// use of this source code or the compiled executable is strictly
-// prohibited. Please refer to the LICENSE file in the root
-// directory for full terms.
+﻿/*
+ * Copyright (c) 2026 ubidzz. All Rights Reserved.
+ *
+ * This file is part of Synix Control Panel.
+ *
+ * This code is provided for transparent viewing and personal use only.
+ * Unauthorized distribution, public modification, or commercial 
+ * use of this source code or the compiled executable is strictly 
+ * prohibited. Please refer to the LICENSE file in the root 
+ * directory for full terms.
+ */
 using Synix_Control_Panel.ServerHandler;
 using System.Diagnostics;
 using System.Net;
@@ -27,7 +29,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public void RebindProcesses()
+		public async void RebindProcesses()
 		{
 			foreach (var server in MainGUI.serverList)
 			{
@@ -78,7 +80,7 @@ namespace Synix_Control_Panel.SynixEngine
 						server.SteamPID = null;
 
 						// 🛠️ RUN SURGERY: Fix missing DLLs/Configs for the orphaned install
-						GameFix.PostInstall(server);
+						await GameFix.PostInstall(server);
 
 						MainGUI.Instance?.AppendLog($"--- [🔧 RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes. ---", Color.Green, true);
 						FileHandler.SaveServers();
@@ -96,7 +98,6 @@ namespace Synix_Control_Panel.SynixEngine
 			UpdateGridStatus();
 		}
 
-		// Did this for now but will put in a multi-language dictionary later to allow users to add their own languages
 		public enum ServerState
 		{
 			Stopped = 0,
@@ -111,7 +112,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public static class StatusManager
 		{
-			// This is your "one source of truth"
 			public static string GetStatus(ServerState state)
 			{
 				return state switch
@@ -135,11 +135,10 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			try
 			{
-				// Looks at the network card to find the internal (LAN) address
 				using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
 				{
 					socket.Connect("8.8.8.8", 65530);
-					IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+					IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
 					return endPoint?.Address.ToString() ?? "127.0.0.1";
 				}
 			}
@@ -167,7 +166,6 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
 
-			// 🎯 Use your dynamic LAN IP and Loopback
 			string localIp = await Core.Instance.GetLocalIP();
 			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
 
@@ -194,8 +192,6 @@ namespace Synix_Control_Panel.SynixEngine
 						var result = await udpClient.ReceiveAsync();
 						byte[] data = result.Buffer;
 
-						// 🎯 THE WINDROSE FIX: Handle the 0x41 Challenge
-						// Rust usually skips this, but UE5 demands it.
 						if (data.Length >= 9 && data[4] == 0x41)
 						{
 							// Copy original request + 4 bytes of challenge data from the server
@@ -227,11 +223,11 @@ namespace Synix_Control_Panel.SynixEngine
 							{
 								server.CurrentPlayers = data[pointer];
 								server.MaxPlayersFromQuery = data[pointer + 1];
-								return; // 🎯 SUCCESS: Found the server and parsed data
+								return; 
 							}
 						}
 					}
-					catch { continue; } // Try the next IP if this one times out
+					catch { continue; }
 				}
 			}
 			catch { server.CurrentPlayers = 0; }

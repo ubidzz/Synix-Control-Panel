@@ -27,7 +27,6 @@ namespace Synix_Control_Panel.Database
 			{ "Palworld", "Set an 'AdminPassword' in PalWorldSettings.ini to manage your server in-game." },
 			{ "Soulmask", "Soulmask requires an 'adminpsw' and 'PSW' to be set in the JSON config." },
 			{ "V Rising", "You must set a unique 'SaveName' and 'ServerName' or the game won't generate a world." }
-			// Add more messages as needed...
 		};
 
 		public WarningDatabase(GameServer server)
@@ -35,14 +34,12 @@ namespace Synix_Control_Panel.Database
 			InitializeComponent();
 			_server = server;
 
-			// Set the specific warning message
 			if (_messages.TryGetValue(server.Game, out string customMessage))
 				lblWarningText.Text = customMessage;
 			else
 				lblWarningText.Text = "Configuration required before the first launch. \n1. If the Config file is missing in the game then the server needs to run once to create the config file. \n2. Then shut the server down and go to `Server Ations -> Server Options -> Edit Config File` and edit the config file. \n3. Some Servers use their own server manager in the game to fully setup the server.";
 		}
 
-		// 🛠️ THE "OPEN CONFIG MANAGER" BUTTON (Formerly 'Yes')
 		private void btnYes_Click(object sender, EventArgs e)
 		{
 			_server.IsFirstBoot = false;
@@ -50,26 +47,19 @@ namespace Synix_Control_Panel.Database
 			{
 				FileHandler.SaveServers();
 
-				// 1. Get the game data template
 				var gameData = GameDatabase.GetGame(_server.Game);
 				if (gameData != null && !string.IsNullOrEmpty(gameData.RelativeConfigPath))
 				{
-					// 2. "Clean" the identity: get the ServerName and replace " " with "_"
-					// We use the Identity property which should already be clean, 
-					// but this ensures no spaces sneak into the path.
 					string cleanIdentity = _server.ServerName.Replace(" ", "_");
 
-					// 3. Replace the placeholder in the path
 					string relativePath = gameData.RelativeConfigPath.Replace("{Identity}", cleanIdentity);
 
-					// 4. Combine with the root install path
 					string fullPath = Path.Combine(_server.InstallPath, relativePath);
 
 					if (File.Exists(fullPath))
 					{
 						this.Hide();
 
-						// 5. Open the Config Editor using the cleaned path
 						using (ServerConfig editor = new ServerConfig(fullPath, gameData.Format))
 						{
 							editor.ShowDialog();
@@ -77,7 +67,6 @@ namespace Synix_Control_Panel.Database
 					}
 					else
 					{
-						// Detailed error helps find if the pathing is wrong
 						MessageBox.Show($"Config file not found!\n\nTarget Path: {fullPath}", "Path Error");
 					}
 				}
@@ -91,8 +80,6 @@ namespace Synix_Control_Panel.Database
 			}
 		}
 
-		// 🛠️ THE "CANCEL" BUTTON (Formerly 'No')
-		// Ensure this is linked in the Designer events!
 		private void btnNo_Click(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.Cancel;

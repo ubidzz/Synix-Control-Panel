@@ -79,7 +79,6 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				var ipProps = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
-				// Now that we added 'using System.Linq', these will work correctly
 				bool udpInUse = ipProps.GetActiveUdpListeners().Any(l => l.Port == port);
 				bool tcpInUse = ipProps.GetActiveTcpListeners().Any(l => l.Port == port);
 

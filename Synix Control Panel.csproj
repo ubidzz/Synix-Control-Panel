@@ -70,6 +70,6 @@
 		<Exec Command="powershell -Command &quot;Start-Sleep -s 5&quot;" />
 		<Message Text="Windows metadata synced. Starting Inno Setup..." Importance="high" />
 		<Message Text="Sending Version $(Version) to Inno Setup..." Importance="high" />
-		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) &quot;C:\Users\ubidz\OneDrive\Desktop\Synix\Control_panel\package\Synix.iss&quot;" />
+		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) /DSourcePath=&quot;$(PublishDir).&quot; &quot;$(PublishDir)package\Synix.iss&quot;" />
 	</Target>
 </Project>

@@ -183,9 +183,6 @@ namespace Synix_Control_Panel.ServerHandler
 					case "Rust":
 						string cleanIdentity = server.ServerName.Replace(" ", "_");
 						string rustRelativePath = $@"server\{cleanIdentity}\cfg\server.cfg";
-
-						// The $@ allows us to pull directly from the server object into the string!
-						// Define the multi-line string with proper formatting
 						string rustCfg = $@"// Synix Custom Rust Configuration
 // Settings like Port and Query Port are managed by command-line arguments.
 

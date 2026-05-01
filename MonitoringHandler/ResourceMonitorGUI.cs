@@ -111,16 +111,13 @@ namespace Synix_Control_Panel
 			listViewResources.EndUpdate();
 		}
 
-		// --- OWNER DRAWING METHODS ---
-
 		private void listViewResources_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
 		{
-			e.DrawDefault = true; // Keep the standard header look
+			e.DrawDefault = true;
 		}
 
 		private void listViewResources_DrawItem(object sender, DrawListViewItemEventArgs e)
 		{
-			// We handle everything in DrawSubItem, so we tell this to do nothing
 			e.DrawDefault = false;
 		}
 
@@ -128,28 +125,23 @@ namespace Synix_Control_Panel
 		{
 			bool isRunning = (e.Item.Tag is bool status) && status;
 
-			// 1. DRAW THE HIGHLIGHT (If Running)
 			if (isRunning)
 			{
-				// Alpha: 50 (Very transparent) to 100 (Noticeable). 
 				using (SolidBrush brush = new SolidBrush(Color.FromArgb(50, 0, 255, 0)))
 				{
 					e.Graphics.FillRectangle(brush, e.Bounds);
 				}
 			}
 
-			// 2. TEXT COLORS (Lime for data, Cyan for Names)
 			Color txtColor = Color.Lime;
 			if (e.ColumnIndex == 1 || e.ColumnIndex == 4) txtColor = Color.Cyan;
 
-			// 3. TEXT ALIGNMENT
 			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis;
 			if (e.ColumnIndex == 0 || e.ColumnIndex == 2 || e.ColumnIndex == 3)
 				flags |= TextFormatFlags.HorizontalCenter;
 			else
 				flags |= TextFormatFlags.Left;
 
-			// 4. DRAW THE TEXT
 			TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.Font, e.Bounds, txtColor, flags);
 		}
 

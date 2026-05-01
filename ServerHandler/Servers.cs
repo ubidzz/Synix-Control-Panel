@@ -91,29 +91,19 @@ namespace Synix_Control_Panel.ServerHandler
 					// This creates a "scanner" that looks through every single subfolder
 					var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
 					{
-						// Keep looking through every subfolder
 						RecurseSubdirectories = true,
-
-						// If it hits a folder it can't open (locked/protected), skip it and keep going
 						IgnoreInaccessible = true,
-
-						// Use the maximum possible depth (effectively unlimited)
 						MaxRecursionDepth = int.MaxValue,
-
-						// Skip things like symlinks to avoid getting stuck in a loop
 						AttributesToSkip = FileAttributes.ReparsePoint
 					});
 
-					// Find the first one that exists
 					appidPath = scanner.FirstOrDefault();
 				}
 				catch
 				{
-					// If something goes catastrophic, fallback to the root
 					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
 				}
 
-				// If it's still empty, it truly isn't in that install folder
 				if (string.IsNullOrEmpty(appidPath))
 				{
 					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");

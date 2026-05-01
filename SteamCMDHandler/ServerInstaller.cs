@@ -51,7 +51,6 @@ namespace Synix_Control_Panel.SteamCMDHandler
 					logCallback?.Invoke(msg);
 				};
 
-				// 🚀 REAL-TIME OUTPUT HANDLING
 				Task outputTask = ReadStreamAsync(process.StandardOutput, checkForErrors);
 				Task errorTask = ReadStreamAsync(process.StandardError, checkForErrors);
 
@@ -81,8 +80,6 @@ namespace Synix_Control_Panel.SteamCMDHandler
 					string line = lineBuilder.ToString().Trim();
 					if (!string.IsNullOrWhiteSpace(line))
 					{
-						// 🛡️ THE "DUMP" FILTER: Skip logging if the line is exactly the same as the last
-						// This prevents 50 identical lines with the same timestamp.
 						if (line != lastLoggedLine)
 						{
 							logCallback(line);

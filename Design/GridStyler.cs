@@ -20,8 +20,6 @@ namespace Synix_Control_Panel.Design
 		private static Color RamPurple = Color.FromArgb(80, 150, 0, 200);
 		private static Color PlotBg = Color.FromArgb(15, 15, 15);
 		private static Color GridLineColor = Color.FromArgb(40, 40, 40);
-
-		// Colors for a solid, no-blue theme
 		private static Color RowDarkGrey = Color.FromArgb(30, 30, 30);
 		private static Color HeaderGrey = Color.FromArgb(35, 35, 35);
 		private static Color BackgroundBlack = Color.FromArgb(15, 15, 15);
@@ -33,14 +31,12 @@ namespace Synix_Control_Panel.Design
 		{
 			dgv.AutoGenerateColumns = false;
 
-			// Map Columns to Class Properties
 			if (dgv.Columns.Contains("colName")) dgv.Columns["colName"].DataPropertyName = "ServerName";
 			if (dgv.Columns.Contains("colGame")) dgv.Columns["colGame"].DataPropertyName = "Game";
 			if (dgv.Columns.Contains("colPort")) dgv.Columns["colPort"].DataPropertyName = "Port";
 			if (dgv.Columns.Contains("colStatus")) dgv.Columns["colStatus"].DataPropertyName = "Status";
 			dgv.Columns["PlayerCountDisplay"].DefaultCellStyle.ForeColor = Color.Cyan;
 
-			// Header Style (Kills the blue Game column)
 			dgv.EnableHeadersVisualStyles = false;
 			dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
 			dgv.ColumnHeadersDefaultCellStyle.BackColor = HeaderGrey;
@@ -60,8 +56,6 @@ namespace Synix_Control_Panel.Design
 		{
 			dgv.BackgroundColor = BackgroundBlack;
 			dgv.BorderStyle = BorderStyle.None;
-
-			// Selection Fix: Matches row color so it doesn't turn blue on click
 			dgv.DefaultCellStyle.BackColor = RowDarkGrey;
 			dgv.DefaultCellStyle.ForeColor = Color.WhiteSmoke;
 			dgv.DefaultCellStyle.SelectionBackColor = RowDarkGrey;
@@ -75,17 +69,14 @@ namespace Synix_Control_Panel.Design
 		{
 			if (e.RowIndex < 0) return;
 
-			// 🎯 THE FIX: Use the statically cached brush instead of creating a new one
 			e.Graphics.FillRectangle(_rowDarkGreyBrush, e.CellBounds);
 
-			// 🎯 THE FIX: Use the statically cached pen instead of creating a new one
 			e.Graphics.DrawLine(_faintDividerPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
 
 			e.PaintContent(e.CellBounds);
 			e.Handled = true;
 		}
 
-		// --- CHART METHODS (Fixes CS7036) ---
 		public static void HeartbeatChart(Chart chart, double maxRamGb)
 		{
 			if (chart == null) return;
@@ -163,7 +154,6 @@ namespace Synix_Control_Panel.Design
 
 				e.CellStyle.Font = _boldStatusFont;
 
-				// 2. string.Equals with OrdinalIgnoreCase ignores capitals completely
 				if (string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase))
 				{
 					e.CellStyle.ForeColor = Color.LimeGreen;

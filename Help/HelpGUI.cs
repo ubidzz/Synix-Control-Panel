@@ -10,7 +10,6 @@
 
 namespace Synix_Control_Panel.SynixEngine
 {
-	// ✅ MUST BE FIRST: The Designer class must be the first class in the file
 	public partial class HelpGUI : Form
 	{
 		private Dictionary<string, HelpItem> _helpData;

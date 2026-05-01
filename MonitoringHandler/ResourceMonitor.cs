@@ -31,10 +31,8 @@ namespace Synix_Control_Panel.MonitoringHandler
 		public static ServerUsage CalculateUsage(IEnumerable<GameServer> serverList)
 		{
 			ServerUsage total = new ServerUsage();
-			// 🎯 THE FIX: Put the Windows core scaler back so it matches Task Manager exactly
 			int processorCount = Environment.ProcessorCount;
 
-			// Clean up dead processes from the dictionary so it doesn't leak memory
 			List<int> activePids = new List<int>();
 			foreach (var s in serverList) { if (s.PID.HasValue) activePids.Add(s.PID.Value); }
 
@@ -64,7 +62,6 @@ namespace Synix_Control_Panel.MonitoringHandler
 								continue;
 							}
 
-							// --- 1. RAM Calculation ---
 							double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
 							total.TotalRamMB += serverMB;
 
@@ -73,7 +70,6 @@ namespace Synix_Control_Panel.MonitoringHandler
 								server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
 							}
 
-							// --- 2. CPU Calculation ---
 							try
 							{
 								DateTime currentTime = DateTime.Now;
@@ -86,7 +82,6 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 									if (totalMsPassed > 0)
 									{
-										// 🎯 THE FIX: Divides by the total cores to perfectly mimic Task Manager
 										double cpuPercent = (cpuUsedMs / (totalMsPassed * processorCount)) * 100.0;
 										total.TotalCpuPercent += cpuPercent;
 									}
@@ -120,14 +115,13 @@ namespace Synix_Control_Panel.MonitoringHandler
 			{
 				double totalBytes = 0;
 
-				// 🎯 THE LEAK FIX: Added using blocks for the collection and disposed the object
 				using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
 				using (ManagementObjectCollection collection = searcher.Get())
 				{
 					foreach (ManagementObject obj in collection)
 					{
 						totalBytes = Convert.ToDouble(obj["TotalPhysicalMemory"]);
-						obj.Dispose(); // Nuke the handle
+						obj.Dispose();
 					}
 				}
 
@@ -146,11 +140,7 @@ namespace Synix_Control_Panel.MonitoringHandler
 
 		public static double GetTotalSystemRamMB()
 		{
-			// 🎯 THE FIX: Efficiently pull total physical memory
 			var gcInfo = GC.GetGCMemoryInfo();
-
-			// TotalAvailableMemoryBytes represents the total physical memory 
-			// accessible to the OS/Process.
 			return GetTotalSystemRamGB() * 1024.0;
 		}
 
@@ -160,18 +150,14 @@ namespace Synix_Control_Panel.MonitoringHandler
 			{
 				if (pid <= 0) return 0;
 
-				// Using 'using' ensures we don't leak handles on your 6-core rig
 				using (Process proc = Process.GetProcessById(pid))
 				{
 					if (proc.HasExited) return 0;
-
-					// Matches the logic in your CalculateUsage method
 					return proc.WorkingSet64 / 1024.0 / 1024.0;
 				}
 			}
 			catch (Exception)
 			{
-				// Silent return for the engine heartbeat
 				return 0;
 			}
 		}

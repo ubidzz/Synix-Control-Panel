@@ -191,15 +191,12 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						_isInitializingCpu = true;
 
-						// Push the heavy 2-second Windows freeze to a background thread
 						Task.Run(() =>
 						{
 							_cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 							_cpuCounter.NextValue(); // Prime it once
 						});
 					}
-
-					// Return 0 so the UI thread doesn't pause waiting for Windows
 					return 0f;
 				}
 

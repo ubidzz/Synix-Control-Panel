@@ -47,9 +47,7 @@ namespace Synix_Control_Panel.UI
 			chk.Cursor = Cursors.Hand;
 			chk.AutoSize = false;
 			chk.BackColor = Color.Transparent;
-			chk.Tag = labelPrefix; // Ensure the prefix is stored in the Tag for the paint handler
-
-			// 🎯 THE FIX: Use a named method instead of an anonymous lambda to prevent event stacking leaks
+			chk.Tag = labelPrefix;
 			chk.Paint -= Chk_CustomPaint;
 			chk.Paint += Chk_CustomPaint;
 
@@ -115,7 +113,6 @@ namespace Synix_Control_Panel.UI
 
 				string text = !string.IsNullOrEmpty(chk.Text) ? chk.Text : (string.IsNullOrEmpty(label) ? (chk.Checked ? "ON" : "OFF") : label);
 
-				// 🎯 THE FIX: Use the cached static font here instead of instantiating a new Font
 				Rectangle textRect = chk.Checked ? new Rectangle(rect.X, rect.Y, rect.Width - 22, rect.Height)
 											   : new Rectangle(rect.X + 22, rect.Y, rect.Width - 22, rect.Height);
 
@@ -139,7 +136,6 @@ namespace Synix_Control_Panel.UI
 				path.AddArc(0, lbl.Height - radius - 1, radius, radius, 90, 90);
 				path.CloseFigure();
 
-				// 🎯 THE FIX: Store the old region and dispose of it explicitly before overwriting it
 				if (lbl.Region == null || lbl.Region.GetBounds(e.Graphics).Width != lbl.Width)
 				{
 					var oldRegion = lbl.Region;

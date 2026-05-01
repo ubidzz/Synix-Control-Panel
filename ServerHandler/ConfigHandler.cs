@@ -49,11 +49,9 @@ namespace Synix_Control_Panel.ServerHandler
 			foreach (var line in File.ReadAllLines(path))
 			{
 				string trimmed = line.Trim();
-				// Skip comments and empty lines
 				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("//") || trimmed.StartsWith("#"))
 					continue;
 
-				// Use Split by space, but only into 2 parts
 				var parts = trimmed.Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
 
 				if (parts.Length == 2)
@@ -61,7 +59,7 @@ namespace Synix_Control_Panel.ServerHandler
 					settings.Add(new ConfigLine
 					{
 						Key = parts[0].Trim(),
-						Value = parts[1].Trim().Trim('"') // This removes the quotes for the UI
+						Value = parts[1].Trim().Trim('"')
 					});
 				}
 			}
@@ -88,7 +86,6 @@ namespace Synix_Control_Panel.ServerHandler
 
 					if (matchingData != null)
 					{
-						// Put it back in Rust format: Key "Value"
 						originalLines[i] = $"{fileKey} \"{matchingData.Value}\"";
 					}
 				}
@@ -104,11 +101,11 @@ namespace Synix_Control_Panel.ServerHandler
 			foreach (var line in File.ReadAllLines(path))
 			{
 				string trimmed = line.Trim();
-				// Ignore comments and headers
+
 				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("[") || trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("//"))
 					continue;
 
-				var kv = trimmed.Split(new[] { '=' }, 2); // Split only on the FIRST equals sign
+				var kv = trimmed.Split(new[] { '=' }, 2);
 				if (kv.Length == 2)
 				{
 					settings.Add(new ConfigLine { Key = kv[0].Trim(), Value = kv[1].Trim() });
@@ -124,7 +121,6 @@ namespace Synix_Control_Panel.ServerHandler
 
 			try
 			{
-				// Raw byte reader to bypass file locks and engine corruption
 				byte[] rawBytes;
 				using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				{
@@ -147,7 +143,6 @@ namespace Synix_Control_Panel.ServerHandler
 
 				var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions { AllowTrailingCommas = true });
 
-				// Dynamically flatten ANY JSON structure
 				if (jsonNode is JsonObject jsonObj)
 				{
 					FlattenJsonNode(jsonObj, settings);
@@ -161,18 +156,17 @@ namespace Synix_Control_Panel.ServerHandler
 			return settings;
 		}
 
-		// Recursive function to dig through folders inside JSON files
 		private static void FlattenJsonNode(JsonObject jsonObj, List<ConfigLine> settings)
 		{
 			foreach (var kvp in jsonObj)
 			{
 				if (kvp.Value is JsonObject innerObj)
 				{
-					FlattenJsonNode(innerObj, settings); // Dig deeper!
+					FlattenJsonNode(innerObj, settings);
 				}
 				else if (kvp.Value is JsonArray)
 				{
-					continue; // Ignore raw arrays in the UI for now
+					continue;
 				}
 				else
 				{
@@ -182,7 +176,6 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 		}
 
-		// XML PARSER
 		private static List<ConfigLine> LoadXML(string path)
 		{
 			var settings = new List<ConfigLine>();
@@ -193,7 +186,6 @@ namespace Synix_Control_Panel.ServerHandler
 				XmlDocument doc = new XmlDocument();
 				doc.Load(path);
 
-				// Most game servers (like 7DTD) use: <property name="ServerName" value="My Server"/>
 				XmlNodeList? properties = doc.SelectNodes("//property");
 				if (properties != null)
 				{
@@ -235,30 +227,25 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			if (!File.Exists(path)) return;
 
-			// Read all lines to PRESERVE comments and headers
 			string[] originalLines = File.ReadAllLines(path);
 
 			for (int i = 0; i < originalLines.Length; i++)
 			{
 				string trimmed = originalLines[i].Trim();
 				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("[") || trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("//"))
-					continue; // Skip comments, don't delete them!
+					continue;
 
 				var kv = trimmed.Split(new[] { '=' }, 2);
 				if (kv.Length == 2)
 				{
 					string fileKey = kv[0].Trim();
-					// Find if the UI changed this setting
 					var matchingData = data.FirstOrDefault(d => d.Key == fileKey);
 					if (matchingData != null)
 					{
-						// Inject the new value perfectly
 						originalLines[i] = $"{fileKey}={matchingData.Value}";
 					}
 				}
 			}
-
-			// Overwrite file with the preserved lines + injected edits
 			File.WriteAllLines(path, originalLines);
 		}
 
@@ -281,11 +268,9 @@ namespace Synix_Control_Panel.ServerHandler
 					// 2. Inject the UI values into the JSON structure
 					UpdateJsonNode(jsonObj, data);
 
-					// 🎯 THE FIX: Define options that allow "illegal" math values
 					var options = new JsonSerializerOptions
 					{
 						WriteIndented = true,
-						// This prevents the "Save Error" crash by converting Infinity/NaN to strings
 						NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
 					};
 
@@ -300,21 +285,19 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 		}
 
-		// Recursive function to find the exact node and update it safely
 		private static void UpdateJsonNode(JsonObject jsonObj, List<ConfigLine> data)
 		{
-			foreach (var kvp in jsonObj.ToList()) // ToList prevents modification errors
+			foreach (var kvp in jsonObj.ToList())
 			{
 				if (kvp.Value is JsonObject innerObj)
 				{
-					UpdateJsonNode(innerObj, data); // Dig deeper!
+					UpdateJsonNode(innerObj, data);
 				}
 				else
 				{
 					var matchingData = data.FirstOrDefault(d => d.Key == kvp.Key);
 					if (matchingData != null)
 					{
-						// Inject the proper data type so the game engine doesn't crash
 						if (int.TryParse(matchingData.Value, out int intVal))
 							jsonObj[kvp.Key] = intVal;
 						else if (double.TryParse(matchingData.Value, out double dblVal))
@@ -322,7 +305,7 @@ namespace Synix_Control_Panel.ServerHandler
 						else if (bool.TryParse(matchingData.Value, out bool boolVal))
 							jsonObj[kvp.Key] = boolVal;
 						else
-							jsonObj[kvp.Key] = matchingData.Value; // String fallback
+							jsonObj[kvp.Key] = matchingData.Value;
 					}
 				}
 			}
@@ -349,13 +332,12 @@ namespace Synix_Control_Panel.ServerHandler
 
 							if (matchingData != null)
 							{
-								// Inject the new value perfectly into the XML attribute
 								node.Attributes["value"]!.Value = matchingData.Value;
 							}
 						}
 					}
 				}
-				doc.Save(path); // Saves while perfectly preserving all XML tags and comments
+				doc.Save(path);
 			}
 			catch (Exception ex)
 			{

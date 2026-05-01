@@ -13,9 +13,6 @@ namespace Synix_Control_Panel.Design
 {
 	public static class GridHelper
 	{
-		/// <summary>
-		/// Refreshes the DataGridView while preserving the user's scroll position and selected row.
-		/// </summary>
 		public static void RefreshWithPersistence(DataGridView dgv, object dataSource)
 		{
 			// 1. Capture the current state before the refresh

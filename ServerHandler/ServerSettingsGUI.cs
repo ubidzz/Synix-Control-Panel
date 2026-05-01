@@ -148,7 +148,7 @@ namespace Synix_Control_Panel
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
 
 				if (numAppPort != null)
-					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled"; // Sync tag
+					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled";
 
 				numPort.Enabled = isBaseReady;
 				if (numAppPort != null) numAppPort.Enabled = CanUnlock(numAppPort);
