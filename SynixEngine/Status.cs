@@ -14,6 +14,7 @@ using Synix_Control_Panel.ServerHandler;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Synix_Control_Panel.SynixEngine
 {

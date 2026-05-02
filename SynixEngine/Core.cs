@@ -35,8 +35,6 @@ namespace Synix_Control_Panel.SynixEngine
 			_heartbeatTimer = new System.Windows.Forms.Timer { Interval = 1000 };
 			_heartbeatTimer.Tick += Heartbeat_Tick;
 			_heartbeatTimer.Start();
-
-			RebindProcesses();
 		}
 
 		public void Log(string message, Color? color = null, bool bold = false)

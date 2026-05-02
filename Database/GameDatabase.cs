@@ -1579,6 +1579,18 @@ namespace Synix_Control_Panel.Database
 				Maps = ["tw_tortuga", "bt_island"]
 			},
 			new() {
+				Game = "Foundry",
+				AppID = "2915550",
+				ExeName = "FoundryDedicatedServer.exe",
+				RequiredArgs = "server_port={port} server_query_port={query} server_name=\"{ServerName}\" server_max_players={MaxPlayers} server_password=\"{pass}\" -SteamAppId={steamAppID}",
+				Port = 3724,
+				QueryPort = 27015,
+				RelativeConfigPath = @"app.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Default"],
+				NeedsConfigWarning = true
+			},
+			new() {
 				Game = "Minimum",
 				AppID = "214190",
 				ExeName = "MinimumServer.exe",

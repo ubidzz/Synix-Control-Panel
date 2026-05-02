@@ -267,6 +267,22 @@ namespace Synix_Control_Panel.SynixEngine
 					return false;
 				}
 			}
+			else if (serverTrigger == "Config")
+			{
+				bool isStarting = string.Equals(status, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);
+				bool isRunning = string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase);
+				bool isStopping = string.Equals(status, StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase);
+				bool isInstalling = string.Equals(status, StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase);
+				bool isUpdating = string.Equals(status, StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase);
+				bool isBackingUp = string.Equals(status, StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase);
+				bool isValidating = string.Equals(status, StatusManager.GetStatus(ServerState.Validating), StringComparison.OrdinalIgnoreCase);
+
+				if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp || isValidating)
+				{
+					lockMessage = $"[🔒 LOCKED] Cannot config file. {server.ServerName} is currently {status}.";
+					return false;
+				}
+			}
 			else if (serverTrigger == "Update")
 			{
 				bool isStarting = string.Equals(status, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);

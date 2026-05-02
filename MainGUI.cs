@@ -178,8 +178,8 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
+			Core.Instance.RebindProcesses();
 			double physicalRam = 16.0;
-
 			await Task.Run(() =>
 			{
 				physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
@@ -389,7 +389,13 @@ namespace Synix_Control_Panel
 
 		private void btnOpenConfig_Click(object sender, EventArgs e)
 		{
+
 			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Config"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
 			Core.Instance.OpenConfigEditor(selectedServer);
 		}
 

@@ -46,6 +46,8 @@ namespace Synix_Control_Panel.ServerHandler
 					case "The Stomping Land":
 					case "Dirty Bomb":
 						if (CopySteamDLLs(server.InstallPath, @"ShooterGame\Binaries\Win64")) applied = true; break;
+					case "Foundry":
+						if (CopySteamDLLs(server.InstallPath, "")) applied = true; break;
 					case "Astroneer":
 						if (CopySteamDLLs(server.InstallPath, @"Astro\Binaries\Win64")) applied = true; break;
 					case "Abiotic Factor":
@@ -380,6 +382,20 @@ ServerName=""{ServerName}""";
 					case "Savage Lands":
 						string stnJson = @"{ ""ServerName"": ""{ServerName}"" }";
 						if (CreateGameConfig(server, "ServerConfig.json", stnJson)) applied = true;
+						break;
+					case "Foundry":
+						string foundryCfg = $@"server_name={{ServerName}}
+server_description=Hosted using Synix
+server_world_name=New_World
+server_port={server.Port}
+server_query_port={server.QueryPort}
+server_is_public=true
+server_max_players={server.MaxPlayers}
+server_password={server.Password}
+server_autosave_interval=300
+server_save_slots=10
+server_pause_when_empty=true";
+						if (CreateGameConfig(server, "app.cfg", foundryCfg)) applied = true;
 						break;
 				}
 			}
