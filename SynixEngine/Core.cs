@@ -28,6 +28,8 @@ namespace Synix_Control_Panel.SynixEngine
 		public bool isDownloadActive = false;
 		public static double TotalRamGb { get; set; }
 		private System.Windows.Forms.Timer _heartbeatTimer;
+		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
+		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
 
 		private Core()
 		{
@@ -84,9 +86,6 @@ namespace Synix_Control_Panel.SynixEngine
 				Log($"[👾 DISCORD ERROR] {ex.Message}", Color.Red);
 			}
 		}
-
-		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
-		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
 
 		private void Heartbeat_Tick(object? sender, EventArgs e)
 		{

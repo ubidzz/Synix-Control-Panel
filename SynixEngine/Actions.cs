@@ -129,8 +129,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void OpenBackFolder(GameServer selectedServer)
 		{
-			string cleanGame = BackupManager.GetSafeName(selectedServer.Game);
-			string cleanServer = BackupManager.GetSafeName(selectedServer.ServerName);
+			string cleanGame = Core.Instance.GetSafeName(selectedServer.Game);
+			string cleanServer = Core.Instance.GetSafeName(selectedServer.ServerName);
 
 			string fullPath = Path.Combine(@"C:\Synix\BackupGames", cleanGame, cleanServer);
 

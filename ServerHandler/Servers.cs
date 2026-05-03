@@ -56,7 +56,7 @@ namespace Synix_Control_Panel.ServerHandler
 					logCallback?.Invoke("[💾 BACKUP] Starting...");
 					server.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
 					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
-					await Task.Run(() => BackupManager.ExecuteBackup(server, context));
+					await Task.Run(() => Core.Instance.ExecuteBackup(server, context));
 					logCallback?.Invoke("[💾 BACKUP] Finished...");
 				}
 
@@ -142,7 +142,7 @@ namespace Synix_Control_Panel.ServerHandler
 				}
 
 				// 🛠️ 6. ARGUMENT REPLACEMENT
-				string cleanIdentity = BackupManager.GetSafeName(server.ServerName);
+				string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
 
 				string args = dbEntry.RequiredArgs
 					.Replace("{app_port}", server.AppPort?.ToString() ?? "0")

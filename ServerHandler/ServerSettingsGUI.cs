@@ -180,7 +180,7 @@ namespace Synix_Control_Panel
 
 				if (!_isEditMode && isBaseReady && chkDefaultPath.Checked)
 				{
-					string safeName = BackupManager.GetSafeName(currentName);
+					string safeName = Core.Instance.GetSafeName(currentName);
 					txtInstallPath.Text = $@"C:\Synix\Games\{selectedGame}\{safeName}";
 				}
 

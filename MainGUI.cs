@@ -343,22 +343,12 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
 			isDownloadActive = true;
-
-			AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			AppendLog($"[💾 BACKUP] Starting backup compression for {selectedServer.ServerName}...", Color.Cyan);
-
 			await Task.Run(() =>
 			{
-				BackupManager.ExecuteBackup(selectedServer, StartContext.Manual);
+				Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
 			});
-
 			isDownloadActive = false;
-			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped);
-			AppendLog($"[💾 BACKUP] Finished backing up {selectedServer.ServerName}.", Color.LimeGreen);
-			AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
-			UpdateGrid();
 		}
 
 		private async void btnStart_Click(object sender, EventArgs e)
