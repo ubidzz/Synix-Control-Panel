@@ -88,7 +88,7 @@ namespace Synix_Control_Panel
 				{
 					if (server.IsScheduledRestartEnabled && currentExactTime == (server.RestartTime + ":00"))
 					{
-						_ = Core.Instance.ExecuteStartSequence(server);
+						_ = Core.Instance.ExecuteStartSequence(server, "MAINTENANCE");
 					}
 				}
 			}
@@ -467,7 +467,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			await Core.Instance.ExecuteStartSequence(selectedServer);
+			await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
 		}
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

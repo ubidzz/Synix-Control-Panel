@@ -413,7 +413,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
 			}
-
+			stopServer = false;
 			UpdateGridStatus();
 		}
 
