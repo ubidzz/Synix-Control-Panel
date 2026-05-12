@@ -22,23 +22,14 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		public async Task StopServerAndReport(GameServer server, bool isManual = true)
 		{
-			if (server.RunningProcess == null && !server.PID.HasValue)
-			{
-				Log($"No active process found for '{server.ServerName}'.", Color.Red);
-				return;
-			}
-
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
 			UpdateGridStatus();
 
-			await Task.Run(() =>
+			await Servers.Stop(server, (msg, Color) =>
 			{
-				Servers.Stop(server, msg =>
-				{
-					Log(msg);
-				},
-				isManual);
-			});
+				Log(msg);
+			}, isManual);
+
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
 			FileHandler.SaveServers();
@@ -112,9 +103,9 @@ namespace Synix_Control_Panel.SynixEngine
 						MainGUI.serverList.Remove(server);
 					}
 
-					FolderHandler.ServerFolder.Delete(server, msg =>
+					FolderHandler.ServerFolder.Delete(server, (msg, Color) =>
 					{
-						Core.Instance.Log(msg);
+						Core.Instance.Log((msg));
 					});
 
 					Core.Instance.UpdateGridStatus();
@@ -352,6 +343,8 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task ExecuteStartSequence(GameServer server, string status = "")
 		{
 			bool stopServer = false;
+			StartContext currentContext = StartContext.Manual;
+
 			if (!PassResourceGuard(out string guardMsg))
 			{
 				Log(guardMsg, System.Drawing.Color.Red, true);
@@ -372,9 +365,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Log($"[🛠 MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
 				stopServer = true;
+				currentContext = StartContext.Scheduled;
 			}
 			else if (status == "WATCHDOG")
 			{
+				server.Status = StatusManager.GetStatus(ServerState.Stopped);
 				string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
 				Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
 
@@ -383,18 +378,16 @@ namespace Synix_Control_Panel.SynixEngine
 				Color.Red);
 
 				stopServer = true;
+				currentContext = StartContext.CrashRecovery;
 			}
+
+			UpdateGridStatus();
 
 			if (stopServer)
 			{
 				Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
-				await Task.Run(() =>
-				{
-					Servers.Stop(server, msg =>
-					{
-						MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color.Yellow)));
-					});
-				});
+
+				await StopServerAndReport(server);
 			}
 
 			await Task.Delay(3000);
@@ -404,17 +397,14 @@ namespace Synix_Control_Panel.SynixEngine
 				Log($"[SYNIX] Starting the {server.ServerName} server.", Color.Cyan, true);
 				if (!PassSpamLock(server, out string lockMsg, "Start")) { Log(lockMsg, System.Drawing.Color.Orange); return; }
 
-				await Servers.Start(server, msg =>
-				{
-					MainGUI.Instance?.Invoke((Action)(() => Log(msg)));
-				}, StartContext.Manual);
+				await Servers.Start(server, (msg, Color) => MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color))), currentContext);
 			}
+
 			else
 			{
 				Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
 			}
 			stopServer = false;
-			UpdateGridStatus();
 		}
 
 		public void RunUniversalHealthCheck()

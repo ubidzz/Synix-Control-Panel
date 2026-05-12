@@ -180,10 +180,7 @@ namespace Synix_Control_Panel
 		{
 			Core.Instance.RebindProcesses();
 			double physicalRam = 16.0;
-			await Task.Run(() =>
-			{
-				physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
-			});
+			await Task.Run(() => physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB());
 
 			double reserved = Math.Max(physicalRam * 0.10, 5.0);
 			systemTotalRamGb = physicalRam - reserved;
@@ -194,21 +191,14 @@ namespace Synix_Control_Panel
 			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, 0);
 			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, 0);
 			chartHeartbeat.Update();
-
 			chartTickCounter++;
 			tmrResourceUpdates.Start();
 
 			isDownloadActive = true;
-			await Task.Delay(100);
 
-			AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			AppendLog("Checking SteamCMD dependencies...");
-
-			await Task.Run(() => SteamCMD.EnsureSteamCMD(msg => AppendLog(msg)));
+			await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
 
 			isDownloadActive = false;
-			AppendLog("Initialization complete.");
-			AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		public void UpdateGrid()

@@ -18,9 +18,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 	public partial class Core
 	{
-		public void ExecuteBackup(GameServer server, StartContext context)
+		public async Task ExecuteBackup(GameServer server, StartContext context)
 		{
-			if (context != StartContext.Manual && !server.BackupOnStart) return;
+			if (context == StartContext.CrashRecovery && server.BackupOnStart) return;
 
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
