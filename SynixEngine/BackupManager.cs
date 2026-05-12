@@ -29,6 +29,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			Log($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			isDownloadActive = true;
 			Log($"[💾 BACKUP] Starting backup compression for {server.ServerName}...", Color.Cyan);
 
 			server.Status = StatusManager.GetStatus(Core.ServerState.BackingUp);
@@ -79,6 +80,7 @@ namespace Synix_Control_Panel.SynixEngine
 				System.Diagnostics.Debug.WriteLine($"[BACKUP ERROR] {ex.Message}");
 			}
 			server.Status = StatusManager.GetStatus(Core.ServerState.Stopped);
+			isDownloadActive = false;
 			Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			UpdateGridStatus();
 		}

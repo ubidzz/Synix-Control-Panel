@@ -99,7 +99,7 @@ namespace Synix_Control_Panel
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			// Use the variable that Heartbeat_Tick has been updating
-			if (isDownloadActive)
+			if (isDownloadActive || Core.Instance.isDownloadActive)
 			{
 				e.Cancel = true;
 				MessageBox.Show("Cannot close Synix while a server is installing, updating or Backing Up!",
@@ -257,11 +257,7 @@ namespace Synix_Control_Panel
 		{
 			// UI-specific check
 			if (isInitializing) return;
-			isDownloadActive = true;
-			AppendLog($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			await Core.Instance.AddServerAndReport();
-			isDownloadActive = false;
-			AppendLog($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		private void btnEdit_Click(object sender, EventArgs e)
@@ -287,9 +283,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			isDownloadActive = true;
 			await Core.Instance.UpdateServerAndReport(selectedServer, "UPDATE");
-			isDownloadActive = false;
 		}
 
 		private async void btnFileValidation_Click(object sender, EventArgs e)
@@ -303,9 +297,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			isDownloadActive = true;
 			await Core.Instance.UpdateServerAndReport(selectedServer, "VALIDATE");
-			isDownloadActive = false;
 		}
 
 		private void btnDelete_Click(object sender, EventArgs e)
@@ -333,12 +325,10 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			isDownloadActive = true;
 			await Task.Run(() =>
 			{
 				Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
 			});
-			isDownloadActive = false;
 		}
 
 		private async void btnStart_Click(object sender, EventArgs e)

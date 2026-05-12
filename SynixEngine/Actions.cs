@@ -23,7 +23,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task StopServerAndReport(GameServer server, bool isManual = true)
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
-			UpdateGridStatus();
+			Core.Instance.UpdateGridStatus();
 
 			await Servers.Stop(server, (msg, Color) =>
 			{
@@ -33,7 +33,7 @@ namespace Synix_Control_Panel.SynixEngine
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
 			FileHandler.SaveServers();
-			UpdateGridStatus();
+			Core.Instance.UpdateGridStatus();
 		}
 
 		public void OpenConfigEditor(GameServer server)
@@ -136,16 +136,15 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async Task UpdateServerAndReport(GameServer server, string serverProcess)
+		public async Task UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false)
 		{
 			bool ServerUpdating = false;
 
-			if(serverProcess == "UPDATE")
+			if (serverProcess == "UPDATE")
 			{
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
 					MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 					return;
 				}
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating)  || isDownloadActive)
@@ -155,8 +154,11 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				ServerUpdating = true;
-				var confirm = MessageBox.Show($"Are you sure you want to update {server.ServerName}?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-				if (confirm != DialogResult.Yes) return;
+				if (!autoRestart)
+				{
+					var confirm = MessageBox.Show($"Are you sure you want to Update the {server.ServerName} server files?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+					if (confirm != DialogResult.Yes) return;
+				}
 			}
 			else if (serverProcess == "VALIDATE")
 			{
@@ -187,9 +189,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
+				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
 				isDownloadActive = true;
 
-				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
 				if (ServerUpdating)
 				{
 					Log($"UPDATE STARTED: {server.Game} ---", Color.White, true);
@@ -203,7 +205,7 @@ namespace Synix_Control_Panel.SynixEngine
 					Log($"[📜 INFO] Validating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
 				}
 
-				UpdateGridStatus();
+				Core.Instance.UpdateGridStatus();
 
 				int exitCode = await Task.Run(() =>
 				{
@@ -238,13 +240,13 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 				server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
 				server.SteamPID = null;
-				isDownloadActive = false;
 				FileHandler.SaveServers();
-				UpdateGridStatus();
+				Core.Instance.UpdateGridStatus();
 			}
+			isDownloadActive = false;
+			Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		public async Task AddServerAndReport()
@@ -266,11 +268,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 					try
 					{
-						newServer.Status = StatusManager.GetStatus(ServerState.Installing);
 						isDownloadActive = true;
-						UpdateGridStatus();
+						Log($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 
 						Log($"[SYNIX] AUTO-INSTALL STARTED: {newServer.Game}", Color.LightCyan, true);
+						newServer.Status = StatusManager.GetStatus(ServerState.Installing);
+						Core.Instance.UpdateGridStatus();
 
 						int exitCode = await Task.Run(() =>
 						{
@@ -296,6 +299,7 @@ namespace Synix_Control_Panel.SynixEngine
 						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
 						FileHandler.SaveServers();
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
+						isDownloadActive = false;
 					}
 					catch (Exception ex)
 					{
@@ -306,8 +310,9 @@ namespace Synix_Control_Panel.SynixEngine
 						newServer.Status = StatusManager.GetStatus(ServerState.Stopped); ;
 						newServer.SteamPID = null;
 						isDownloadActive = false;
-						UpdateGridStatus();
+						Core.Instance.UpdateGridStatus();
 					}
+					Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 				}
 			}
 		}
@@ -335,7 +340,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (editForm.ShowDialog() == DialogResult.OK)
 				{
 					Log($"[✔️ SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
-					UpdateGridStatus();
+					Core.Instance.UpdateGridStatus();
 				}
 			}
 		}
@@ -369,7 +374,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else if (status == "WATCHDOG")
 			{
-				server.Status = StatusManager.GetStatus(ServerState.Stopped);
+				server.Status = StatusManager.GetStatus(ServerState.Crashed);
 				string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
 				Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
 
@@ -379,9 +384,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 				stopServer = true;
 				currentContext = StartContext.CrashRecovery;
+				Core.Instance.UpdateGridStatus();
 			}
-
-			UpdateGridStatus();
 
 			if (stopServer)
 			{
@@ -429,48 +433,6 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					catch { /* Process might have closed during the check */ }
 				}
-			}
-		}
-
-		public async Task InstallOrUpdate(GameServer server)
-		{
-			try
-			{
-				var dbEntry = GameDatabase.GetGame(server.Game);
-				if (dbEntry == null) return;
-
-				int exitCode = await Task.Run(() =>
-				{
-					return ServerInstaller.Install(
-						server.InstallPath,
-						dbEntry.AppID,
-						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
-						pid =>
-						{
-							server.SteamPID = pid;
-							FileHandler.SaveServers();
-						});
-				});
-
-				if (exitCode != 0)
-				{
-					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"[🚨 ERROR] Update failed for {server.ServerName}: {errorDetail}", Color.Red);
-				}
-				else
-				{
-					Log($"[✔️ SUCCESS] {server.ServerName} is up to date.", Color.Green);
-				}
-			}
-			catch (Exception ex)
-			{
-				Log($"[🚨 CRITICAL] InstallOrUpdate Exception: {ex.Message}", Color.Red);
-			}
-			finally
-			{
-				server.SteamPID = null;
-				FileHandler.SaveServers();
-				UpdateGridStatus();
 			}
 		}
 	}

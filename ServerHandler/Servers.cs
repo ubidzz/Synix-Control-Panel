@@ -58,10 +58,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 				if (server.UpdateOnStart)
 				{
-					logCallback?.Invoke($"[ACTION] Update on Start is ON. Pausing launch for update...", Color.Yellow);
-					server.Status = Core.StatusManager.GetStatus(Core.ServerState.Updating);
-					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
-					await Task.Run(() => Synix_Control_Panel.SynixEngine.Core.Instance.InstallOrUpdate(server));
+					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
 
 				// 2. TEMPLATE VALIDATION
@@ -218,11 +215,7 @@ namespace Synix_Control_Panel.ServerHandler
 						}
 						else
 						{
-							server.Status = StatusManager.GetStatus(ServerState.Stopped);
-							server.PID = null;
-							server.RunningProcess?.Dispose();
-							server.RunningProcess = null;
-							MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+							FinalizeStoppedState(server);
 						}
 					};
 					FileHandler.SaveServers();
@@ -299,6 +292,7 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
+			server.RunningProcess?.Dispose();
 			server.RunningProcess = null;
 			MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 		}
