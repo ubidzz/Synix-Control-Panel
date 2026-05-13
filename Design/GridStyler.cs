@@ -66,7 +66,7 @@ namespace Synix_Control_Panel.Design
 			dgv.DefaultCellStyle.BackColor = RowDarkGrey;
 			dgv.DefaultCellStyle.ForeColor = Color.WhiteSmoke;
 			dgv.DefaultCellStyle.SelectionBackColor = RowDarkGrey;
-			dgv.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
+			dgv.DefaultCellStyle.SelectionForeColor = Color.Cyan;
 
 			dgv.GridColor = Color.FromArgb(45, 45, 45);
 			dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -76,10 +76,8 @@ namespace Synix_Control_Panel.Design
 		{
 			if (e.RowIndex < 0) return;
 
-			// 🎯 THE FIX: Use the statically cached brush instead of creating a new one
 			e.Graphics.FillRectangle(_rowDarkGreyBrush, e.CellBounds);
 
-			// 🎯 THE FIX: Use the statically cached pen instead of creating a new one
 			e.Graphics.DrawLine(_faintDividerPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
 
 			e.PaintContent(e.CellBounds);

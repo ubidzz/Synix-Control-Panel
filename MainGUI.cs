@@ -27,7 +27,7 @@ namespace Synix_Control_Panel
 	{
 		public static BindingList<GameServer> serverList = [];
 		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
-		private bool isDownloadActive = false;
+		public bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
 		public double systemTotalRamGb = 128;
@@ -35,6 +35,7 @@ namespace Synix_Control_Panel
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
+		private bool isManualLoading = false;
 
 		public MainGUI()
 		{
@@ -43,10 +44,14 @@ namespace Synix_Control_Panel
 			FileHandler.LoadServers();
 			_ = Core.Instance;
 			GridStyler.DarkTheme(dataGridView1);
+			UIStyleHelper.InitializeToggles(this);
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Instance = this;
+			chkStreamerMode.Text = "Streamer Mode";
+			chkStreamerMode.Checked = Properties.Settings.Default.StreamerMode;
+			isManualLoading = chkStreamerMode.Checked;
 			_ = LoadNetworkInfo();
 			_ = VersionCheck();
 		}
@@ -96,6 +101,15 @@ namespace Synix_Control_Panel
 			chartTickCounter++;
 		}
 
+		private void StreamerModeCheck()
+		{
+			if (isManualLoading)
+			{
+				AppendLog("[🛡️ BLOCK] Streamer mode is active", Color.Red);
+				return;
+			}
+		}
+
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			// Use the variable that Heartbeat_Tick has been updating
@@ -110,13 +124,16 @@ namespace Synix_Control_Panel
 		private async Task LoadNetworkInfo()
 		{
 			// 1. Get the LAN IP instantly
-			string localIP = await Core.Instance.GetLocalIP();
-			lblLocalIP1.Text = $"LAN IP: {localIP}";
+			if(!isManualLoading)
+			{
+				string localIP = await Core.Instance.GetLocalIP();
+				lblLocalIP1.Text = $"LAN IP: {localIP}";
 
-			// 2. Get the Public IP in the background
-			lblPublicIP.Text = "Public IP: Fetching...";
-			string publicIP = await Core.Instance.GetPublicIP();
-			lblPublicIP.Text = $"Public IP: {publicIP}";
+				// 2. Get the Public IP in the background
+				lblPublicIP.Text = "Public IP: Fetching...";
+				string publicIP = await Core.Instance.GetPublicIP();
+				lblPublicIP.Text = $"Public IP: {publicIP}";
+			}
 		}
 
 		private void lblPublicIP_Click(object sender, EventArgs e)
@@ -126,7 +143,13 @@ namespace Synix_Control_Panel
 			if (ip != StatusManager.GetStatus(ServerState.Stopped) && ip != "Fetching...")
 			{
 				Clipboard.SetText(ip);
-				Core.Instance.Log($"[🚨 SYNIX] Public IP {ip} copied to clipboard.", Color.Cyan);
+				if (!isManualLoading)
+				{
+					AppendLog($"[🚨 SYNIX] Public IP {ip} was copied to clipboard.", Color.Cyan);
+				} else
+				{
+					AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
+				}
 			}
 		}
 
@@ -134,7 +157,14 @@ namespace Synix_Control_Panel
 		{
 			string LANip = lblLocalIP1.Text.Replace("LAN IP: ", "");
 			Clipboard.SetText(LANip);
-			Core.Instance.Log($"[🚨 SYNIX] Local IP {LANip} copied to clipboard.", Color.Cyan);
+			if (!isManualLoading)
+			{
+				AppendLog($"[🚨 SYNIX] Local IP {LANip} was copied to clipboard.", Color.Cyan);
+			}
+			else
+			{
+				AppendLog($"[🚨 SYNIX] Local IP [HIDDEN] was copied to clipboard.", Color.Cyan);
+			}
 		}
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
@@ -194,11 +224,7 @@ namespace Synix_Control_Panel
 			chartTickCounter++;
 			tmrResourceUpdates.Start();
 
-			isDownloadActive = true;
-
 			await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
-
-			isDownloadActive = false;
 		}
 
 		public void UpdateGrid()
@@ -262,6 +288,8 @@ namespace Synix_Control_Panel
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
+			StreamerModeCheck();
+			if (isManualLoading) return;
 			if (isInitializing) return;
 			var selectedServer = GetSelectedServer();
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "EditConfig"))
@@ -359,7 +387,8 @@ namespace Synix_Control_Panel
 
 		private void btnOpenConfig_Click(object sender, EventArgs e)
 		{
-
+			StreamerModeCheck();
+			if (isManualLoading) return;
 			var selectedServer = GetSelectedServer();
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Config"))
 			{
@@ -391,19 +420,25 @@ namespace Synix_Control_Panel
 			{
 				string publicIp = await Core.Instance.GetPublicIP();
 				bool isResponding = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
+				string ipText = "[HIDDEN]";
+
+				if (!isManualLoading)
+				{
+					ipText = publicIp;
+				}
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
@@ -417,19 +452,25 @@ namespace Synix_Control_Panel
 			{
 				string localIp = await Core.Instance.GetLocalIP();
 				bool isResponding = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
+				string ipText = "[HIDDEN]";
+
+				if (!isManualLoading)
+				{
+					ipText = localIp;
+				}
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
@@ -452,10 +493,10 @@ namespace Synix_Control_Panel
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.RowIndex >= 0)
+				if (e.RowIndex >= 0 && !isManualLoading)
 			{
 				var selectedServer = GetSelectedServer();
-				Synix_Control_Panel.Help.ServerInfo infoForm = new Synix_Control_Panel.Help.ServerInfo(selectedServer);
+				Help.ServerInfo infoForm = new Help.ServerInfo(selectedServer);
 				infoForm.Show();
 			}
 		}
@@ -556,6 +597,20 @@ namespace Synix_Control_Panel
 			{
 				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
+		}
+		private async void chkStreamerMode_CheckedChanged(object sender, EventArgs e) 
+		{
+			isManualLoading = chkStreamerMode.Checked;
+
+			Properties.Settings.Default.StreamerMode = chkStreamerMode.Checked;
+			Properties.Settings.Default.Save();
+
+			if (chkStreamerMode.Checked)
+			{
+				lblPublicIP.Text = "Public IP: [HIDDEN]";
+				lblLocalIP1.Text = "LAN IP: [HIDDEN]";
+			}
+			await LoadNetworkInfo();
 		}
 	}
 }

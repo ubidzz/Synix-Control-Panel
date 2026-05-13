@@ -28,6 +28,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 			try
 			{
 				logCallback?.Invoke($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange);
+				MainGUI.Instance.isDownloadActive = true;
 				logCallback?.Invoke("[SYNIX] Checking SteamCMD dependencies...", Color.Cyan);
 
 				// 1. Create the Directory if it's missing
@@ -88,6 +89,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 					logCallback?.Invoke("[SYNIX] SteamCMD already initialized.", Color.Cyan);
 				}
 				logCallback?.Invoke("[SYNIX] Initialization complete.", Color.LimeGreen);
+				MainGUI.Instance.isDownloadActive = false;
 				logCallback?.Invoke($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange);
 			}
 			catch (Exception ex)
