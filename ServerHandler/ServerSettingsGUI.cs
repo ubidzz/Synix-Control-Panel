@@ -30,6 +30,7 @@ namespace Synix_Control_Panel
 		private bool[] _selectedDays = new bool[7] { false, false, false, false, false, false, false };
 		private string _selectedTime = "04:00";
 		private System.Windows.Forms.Timer debounceTimer;
+		private bool _StreamerMode = false;
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
@@ -41,6 +42,7 @@ namespace Synix_Control_Panel
 			isManualLoading = true;
 			_existingServer = server;
 			_isEditMode = server != null;
+			_StreamerMode = Properties.Settings.Default.StreamerMode;
 
 			// UI Styling
 			UIStyleHelper.StyleWarningLabel(WarningLabel);
@@ -75,7 +77,29 @@ namespace Synix_Control_Panel
 			}
 
 			isManualLoading = false;
+			ApplyStreamerMode();
 			SyncGatekeeper();
+		}
+
+		private void ApplyStreamerMode()
+		{
+			if (_StreamerMode)
+			{
+				// Mask the textboxes with system password characters (dots)
+				txtPassword.UseSystemPasswordChar = true;
+				txtAdminPassword.UseSystemPasswordChar = true;
+				txtRconPassword.UseSystemPasswordChar = true;
+				txtDiscordWebhook.UseSystemPasswordChar = true;
+
+			}
+			else
+			{
+				// Reveal text if Streamer Mode is off
+				txtPassword.UseSystemPasswordChar = false;
+				txtAdminPassword.UseSystemPasswordChar = false;
+				txtRconPassword.UseSystemPasswordChar = false;
+				txtDiscordWebhook.UseSystemPasswordChar = false;
+			}
 		}
 
 		private void LoadExistingServerData()

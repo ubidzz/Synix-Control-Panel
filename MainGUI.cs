@@ -288,8 +288,6 @@ namespace Synix_Control_Panel
 
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
-			StreamerModeCheck();
-			if (isManualLoading) return;
 			if (isInitializing) return;
 			var selectedServer = GetSelectedServer();
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "EditConfig"))

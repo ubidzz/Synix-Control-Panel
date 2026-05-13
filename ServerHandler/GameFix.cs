@@ -186,8 +186,8 @@ namespace Synix_Control_Panel.ServerHandler
 
 						string rustCfg = $@"// Synix Custom Rust Configuration
 // Settings like Port and Query Port are managed by command-line arguments.
-
 server.hostname ""{server.ServerName}""
+server.password ""{server.Password}""
 server.seed {(string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)}
 server.worldsize 4000
 
@@ -230,9 +230,7 @@ server.globalchat true";
 ""DirectConnectionServerAddress"": """ + publicIp + @""",
 ""DirectConnectionServerPort"": """ + server.Port + @""",
 ""DirectConnectionProxyAddress"": ""0.0.0.0""
-
-	}
-				";
+						}";
 
 						if (CreateGameConfig(server, @"R5\ServerDescription.json", windroseJson)) applied = true;
 						break;
