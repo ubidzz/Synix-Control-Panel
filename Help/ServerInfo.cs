@@ -10,16 +10,26 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using System.Runtime.InteropServices;
+
 namespace Synix_Control_Panel.Help
 {
 	public partial class ServerInfo : Form
 	{
+		[DllImport("user32.dll")]
+		private static extern uint SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
+		private const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;
+
 		private GameServer _server;
 
 		public ServerInfo(GameServer server)
 		{
 			InitializeComponent();
 			_server = server;
+			if (Properties.Settings.Default.PrivacyMode)
+			{
+				SetWindowDisplayAffinity(this.Handle, WDA_EXCLUDEFROMCAPTURE);
+			}
 			LoadServerData();
 		}
 

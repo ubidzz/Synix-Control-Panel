@@ -491,7 +491,7 @@ namespace Synix_Control_Panel
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-				if (e.RowIndex >= 0 && !isPrivacyLoading)
+			if (e.RowIndex >= 0)
 			{
 				var selectedServer = GetSelectedServer();
 				Help.ServerInfo infoForm = new Help.ServerInfo(selectedServer);
