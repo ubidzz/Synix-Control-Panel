@@ -35,7 +35,7 @@ namespace Synix_Control_Panel
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
-		private bool isManualLoading = false;
+		private bool isPrivacyLoading = false;
 
 		public MainGUI()
 		{
@@ -49,9 +49,9 @@ namespace Synix_Control_Panel
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Instance = this;
-			chkStreamerMode.Text = "Streamer Mode";
-			chkStreamerMode.Checked = Properties.Settings.Default.StreamerMode;
-			isManualLoading = chkStreamerMode.Checked;
+			chkPrivacyMode.Text = "Privacy Mode";
+			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
+			isPrivacyLoading = chkPrivacyMode.Checked;
 			_ = LoadNetworkInfo();
 			_ = VersionCheck();
 		}
@@ -103,7 +103,7 @@ namespace Synix_Control_Panel
 
 		private void StreamerModeCheck()
 		{
-			if (isManualLoading)
+			if (isPrivacyLoading)
 			{
 				AppendLog("[🛡️ BLOCK] Streamer mode is active", Color.Red);
 				return;
@@ -124,7 +124,7 @@ namespace Synix_Control_Panel
 		private async Task LoadNetworkInfo()
 		{
 			// 1. Get the LAN IP instantly
-			if(!isManualLoading)
+			if(!isPrivacyLoading)
 			{
 				string localIP = await Core.Instance.GetLocalIP();
 				lblLocalIP1.Text = $"LAN IP: {localIP}";
@@ -143,7 +143,7 @@ namespace Synix_Control_Panel
 			if (ip != StatusManager.GetStatus(ServerState.Stopped) && ip != "Fetching...")
 			{
 				Clipboard.SetText(ip);
-				if (!isManualLoading)
+				if (!isPrivacyLoading)
 				{
 					AppendLog($"[🚨 SYNIX] Public IP {ip} was copied to clipboard.", Color.Cyan);
 				} else
@@ -157,7 +157,7 @@ namespace Synix_Control_Panel
 		{
 			string LANip = lblLocalIP1.Text.Replace("LAN IP: ", "");
 			Clipboard.SetText(LANip);
-			if (!isManualLoading)
+			if (!isPrivacyLoading)
 			{
 				AppendLog($"[🚨 SYNIX] Local IP {LANip} was copied to clipboard.", Color.Cyan);
 			}
@@ -386,7 +386,7 @@ namespace Synix_Control_Panel
 		private void btnOpenConfig_Click(object sender, EventArgs e)
 		{
 			StreamerModeCheck();
-			if (isManualLoading) return;
+			if (isPrivacyLoading) return;
 			var selectedServer = GetSelectedServer();
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Config"))
 			{
@@ -420,7 +420,7 @@ namespace Synix_Control_Panel
 				bool isResponding = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
 				string ipText = "[HIDDEN]";
 
-				if (!isManualLoading)
+				if (!isPrivacyLoading)
 				{
 					ipText = publicIp;
 				}
@@ -452,7 +452,7 @@ namespace Synix_Control_Panel
 				bool isResponding = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
 				string ipText = "[HIDDEN]";
 
-				if (!isManualLoading)
+				if (!isPrivacyLoading)
 				{
 					ipText = localIp;
 				}
@@ -491,7 +491,7 @@ namespace Synix_Control_Panel
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-				if (e.RowIndex >= 0 && !isManualLoading)
+				if (e.RowIndex >= 0 && !isPrivacyLoading)
 			{
 				var selectedServer = GetSelectedServer();
 				Help.ServerInfo infoForm = new Help.ServerInfo(selectedServer);
@@ -596,14 +596,14 @@ namespace Synix_Control_Panel
 				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
 		}
-		private async void chkStreamerMode_CheckedChanged(object sender, EventArgs e) 
+		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e) 
 		{
-			isManualLoading = chkStreamerMode.Checked;
+			isPrivacyLoading = chkPrivacyMode.Checked;
 
-			Properties.Settings.Default.StreamerMode = chkStreamerMode.Checked;
+			Properties.Settings.Default.PrivacyMode = chkPrivacyMode.Checked;
 			Properties.Settings.Default.Save();
 
-			if (chkStreamerMode.Checked)
+			if (chkPrivacyMode.Checked)
 			{
 				lblPublicIP.Text = "Public IP: [HIDDEN]";
 				lblLocalIP1.Text = "LAN IP: [HIDDEN]";

@@ -74,7 +74,7 @@
 			btnRestart = new Button();
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Button();
-			chkStreamerMode = new CheckBox();
+			chkPrivacyMode = new CheckBox();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -448,15 +448,16 @@
 			btnDownloadUpdate.UseVisualStyleBackColor = false;
 			btnDownloadUpdate.Click += btnDownloadUpdate_Click;
 			// 
-			// chkStreamerMode
+			// chkPrivacyMode
 			// 
-			chkStreamerMode.Location = new Point(427, 589);
-			chkStreamerMode.Name = "chkStreamerMode";
-			chkStreamerMode.Size = new Size(125, 28);
-			chkStreamerMode.TabIndex = 23;
-			chkStreamerMode.Text = "Streamer Mode checkbox";
-			chkStreamerMode.UseVisualStyleBackColor = true;
-			chkStreamerMode.CheckedChanged += chkStreamerMode_CheckedChanged;
+			chkPrivacyMode.Location = new Point(427, 589);
+			chkPrivacyMode.Name = "chkPrivacyMode";
+			chkPrivacyMode.Size = new Size(125, 28);
+			chkPrivacyMode.TabIndex = 23;
+			chkPrivacyMode.Text = "Privacy Mode";
+			chkPrivacyMode.TextAlign = ContentAlignment.MiddleCenter;
+			chkPrivacyMode.UseVisualStyleBackColor = true;
+			chkPrivacyMode.CheckedChanged += chkPrivacyMode_CheckedChanged;
 			// 
 			// MainGUI
 			// 
@@ -465,7 +466,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
-			Controls.Add(chkStreamerMode);
+			Controls.Add(chkPrivacyMode);
 			Controls.Add(btnDownloadUpdate);
 			Controls.Add(lblUpdateStatus);
 			Controls.Add(btnRestart);
@@ -541,6 +542,6 @@
 		private ToolStripMenuItem backupServerToolStripMenuItem;
 		private Label lblUpdateStatus;
 		private Button btnDownloadUpdate;
-		private CheckBox chkStreamerMode;
+		private CheckBox chkPrivacyMode;
 	}
 }

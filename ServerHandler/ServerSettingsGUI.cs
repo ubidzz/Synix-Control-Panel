@@ -23,14 +23,14 @@ namespace Synix_Control_Panel
 	public partial class ServerSettingsGUI : Form
 	{
 		public GameServer? NewServer { get; private set; }
-		private bool isManualLoading = false;
+		private bool isPrivacyLoading = false;
 		private bool _isEditMode = false;
 		private GameServer? _existingServer = null;
 		private string _oldPath = string.Empty;
 		private bool[] _selectedDays = new bool[7] { false, false, false, false, false, false, false };
 		private string _selectedTime = "04:00";
 		private System.Windows.Forms.Timer debounceTimer;
-		private bool _StreamerMode = false;
+		private bool _PrivacyMode = false;
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
@@ -39,10 +39,10 @@ namespace Synix_Control_Panel
 		public ServerSettingsGUI(GameServer? server = null)
 		{
 			InitializeComponent();
-			isManualLoading = true;
+			isPrivacyLoading = true;
 			_existingServer = server;
 			_isEditMode = server != null;
-			_StreamerMode = Properties.Settings.Default.StreamerMode;
+			_PrivacyMode = Properties.Settings.Default.PrivacyMode;
 
 			// UI Styling
 			UIStyleHelper.StyleWarningLabel(WarningLabel);
@@ -76,14 +76,14 @@ namespace Synix_Control_Panel
 				ToggleGameSpecificFields(null);
 			}
 
-			isManualLoading = false;
-			ApplyStreamerMode();
+			isPrivacyLoading = false;
+			PrivacyMode();
 			SyncGatekeeper();
 		}
 
-		private void ApplyStreamerMode()
+		private void PrivacyMode()
 		{
-			if (_StreamerMode)
+			if (_PrivacyMode)
 			{
 				// Mask the textboxes with system password characters (dots)
 				txtPassword.UseSystemPasswordChar = true;
@@ -105,7 +105,7 @@ namespace Synix_Control_Panel
 		private void LoadExistingServerData()
 		{
 			if (_existingServer == null) return;
-			isManualLoading = true;
+			isPrivacyLoading = true;
 
 			txtName.Text = _existingServer.ServerName ?? "";
 			int gameIndex = cmbGame.FindStringExact(_existingServer.Game);
@@ -144,12 +144,12 @@ namespace Synix_Control_Panel
 			}
 
 			cmbGame.Enabled = false;
-			isManualLoading = false;
+			isPrivacyLoading = false;
 		}
 
 		private void SyncGatekeeper()
 		{
-			if (isManualLoading) return;
+			if (isPrivacyLoading) return;
 
 			try
 			{
@@ -355,7 +355,7 @@ namespace Synix_Control_Panel
 
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (isManualLoading) return;
+			if (isPrivacyLoading) return;
 			if (cmbGame.SelectedIndex > 0)
 			{
 				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
@@ -375,13 +375,13 @@ namespace Synix_Control_Panel
 		private void btnBrowse_Click(object sender, EventArgs e) { using var fbd = new FolderBrowserDialog(); if (fbd.ShowDialog() == DialogResult.OK) { txtInstallPath.Text = fbd.SelectedPath; SyncGatekeeper(); } }
 		private void chkDefaultPath_CheckedChanged(object sender, EventArgs e) => SyncGatekeeper();
 		private void txtInstallPath_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
-		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e) { if (isManualLoading) return; bool active = chkEnableRcon.Checked; numRconPort.Enabled = txtRconPassword.Enabled = active; SyncGatekeeper(); }
-		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e) { if (isManualLoading) return; if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked; SyncGatekeeper(); }
+		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableRcon.Checked; numRconPort.Enabled = txtRconPassword.Enabled = active; SyncGatekeeper(); }
+		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked; SyncGatekeeper(); }
 		private void txtWorldSeed_KeyPress(object sender, KeyPressEventArgs e) { if (cmbGame.Text == "Rust" && !char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true; }
 		private void btnViewArgs_Click(object sender, EventArgs e) { var gameData = GameDatabase.GetGame(cmbGame.Text); if (gameData != null) { var display = new DefaultArgumentsDisplay(gameData.RequiredArgs); display.ShowDialog(); } }
 		private void btnEditSchedule_Click(object sender, EventArgs e) { using var scheduler = new ScheduleSettingsGUI(_selectedDays, _selectedTime); if (scheduler.ShowDialog() == DialogResult.OK) { _selectedDays = scheduler.SelectedDays; _selectedTime = scheduler.SelectedTime; } }
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
-		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e) { if (isManualLoading) return; txtDiscordWebhook.Enabled = chkEnableDiscord.Checked; SyncGatekeeper(); }
+		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; txtDiscordWebhook.Enabled = chkEnableDiscord.Checked; SyncGatekeeper(); }
 		private async void btnTestDiscord_Click(object sender, EventArgs e) { string url = txtDiscordWebhook.Text.Trim(); if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://discord.com/api/webhooks/")) return; await Core.Instance.SendDiscordAlert(new GameServer { ServerName = txtName.Text, DiscordWebhook = url, IsDiscordAlertEnabled = true }, "TEST CONNECTION", "Alert Success", Color.Lime); }
 		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
 

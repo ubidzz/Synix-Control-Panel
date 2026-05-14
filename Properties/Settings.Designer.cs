@@ -26,12 +26,12 @@ namespace Synix_Control_Panel.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool StreamerMode {
+        public bool PrivacyMode {
             get {
-                return ((bool)(this["StreamerMode"]));
+                return ((bool)(this["PrivacyMode"]));
             }
             set {
-                this["StreamerMode"] = value;
+                this["PrivacyMode"] = value;
             }
         }
     }
