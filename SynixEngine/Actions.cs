@@ -177,6 +177,8 @@ namespace Synix_Control_Panel.SynixEngine
 				var confirm = MessageBox.Show($"Are you sure you want to Validate the {server.ServerName} server files?", "Confirm Validate", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				if (confirm != DialogResult.Yes) return;
 			}
+			else
+			{ return; }
 
 			var gameData = GameDatabase.GetGame(server.Game);
 			string appId = gameData?.AppID ?? "";
@@ -191,21 +193,41 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
 				isDownloadActive = true;
+				string ManifestMessage = "";
 
 				if (ServerUpdating)
 				{
 					Log($"UPDATE STARTED: {server.Game} ---", Color.White, true);
 					server.Status = StatusManager.GetStatus(ServerState.Updating);
 					Log($"[📜 INFO] Updating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
+					ManifestMessage = "update";
 				} 
 				else
 				{
 					Log($"VALIDATION STARTED: {server.Game}", Color.White, true);
 					server.Status = StatusManager.GetStatus(ServerState.Validating);
 					Log($"[📜 INFO] Validating {server.Game} can take up to 5 minutes!", Color.DeepSkyBlue, true);
+					ManifestMessage = "validation";
 				}
 
 				Core.Instance.UpdateGridStatus();
+
+				// 🎯 THE AUTOMATED MANIFEST NUKE
+				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
+				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{appId}.acf");
+
+				if (File.Exists(manifestPath))
+				{
+					try
+					{
+						File.Delete(manifestPath);
+						Log($"[🛠️ SYSTEM] Cleared old Steam manifest to force a clean {ManifestMessage}.", Color.SeaGreen);
+					}
+					catch (Exception ex)
+					{
+						Log($"[⚠ WARNING] Could not clear manifest. The {ManifestMessage} might fail. Error: {ex.Message}", Color.Red);
+					}
+				}
 
 				int exitCode = await Task.Run(() =>
 				{
@@ -223,11 +245,10 @@ namespace Synix_Control_Panel.SynixEngine
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
 					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red);
 					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
+					isDownloadActive = false;
+					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 					return;
 				}
-
-				bool fixApplied = await GameFix.PostInstall(server);
-				if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {server.Game} server.", Color.Green);
 				
 				if (ServerUpdating)
 				{
@@ -235,8 +256,9 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				else
 				{
-					Log($"[SYNIX] Validating FINISHED: {server.Game}", Color.White, true);
+					Log($"[SYNIX] Validating FINISHED: {server.Game}", Color.Green, true);
 				}
+				ManifestMessage = "";
 			}
 			finally
 			{
