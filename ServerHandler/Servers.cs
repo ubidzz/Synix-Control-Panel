@@ -39,7 +39,6 @@ namespace Synix_Control_Panel.ServerHandler
 
 		public static async Task Start(GameServer server, Action<string, Color> logCallback, StartContext context = StartContext.Manual)
 		{
-			// 🛡️ THE SAFEGUARD: Only check if it's a Manual start
 			if (!IsSystemSafeToStart()) return;
 			try
 			{

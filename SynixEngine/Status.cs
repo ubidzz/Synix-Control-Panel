@@ -111,7 +111,8 @@ namespace Synix_Control_Panel.SynixEngine
 			Installing = 5,
 			Updating = 6,
 			BackingUp = 7,
-			Validating = 8
+			Validating = 8,
+			Export = 9
 		}
 
 		public static class StatusManager
@@ -130,6 +131,7 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerState.Updating => "Updating",
 					ServerState.BackingUp => "Backing Up",
 					ServerState.Validating => "Validating",
+					ServerState.Export => "Exporting",
 					_ => "Unknown"
 				};
 			}

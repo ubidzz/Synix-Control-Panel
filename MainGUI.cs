@@ -58,6 +58,8 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
+			CheckRunningStatus();
+
 			// 1. Grab telemetry
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
@@ -97,8 +99,47 @@ namespace Synix_Control_Panel
 					}
 				}
 			}
-
 			chartTickCounter++;
+		}
+
+		private void CheckRunningStatus()
+		{
+			string[] spinFrames = { "|", "/", "-", "\\" };
+
+			foreach (var server in serverList)
+			{
+				string status = server.Status ?? "";
+
+				if (status.StartsWith("Updating"))
+				{
+					string currentFrame = status.Replace("Updating ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Updating " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Validating"))
+				{
+					string currentFrame = status.Replace("Validating ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Validating " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Installing"))
+				{
+					string currentFrame = status.Replace("Installing ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Installing " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Backing Up"))
+				{
+					string currentFrame = status.Replace("Backing Up ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Backing Up " + spinFrames[nextIndex];
+				}
+			}
+			UpdateGrid();
 		}
 
 		private void StreamerModeCheck()
@@ -124,7 +165,7 @@ namespace Synix_Control_Panel
 		private async Task LoadNetworkInfo()
 		{
 			// 1. Get the LAN IP instantly
-			if(!isPrivacyLoading)
+			if (!isPrivacyLoading)
 			{
 				string localIP = await Core.Instance.GetLocalIP();
 				lblLocalIP1.Text = $"LAN IP: {localIP}";
@@ -146,7 +187,8 @@ namespace Synix_Control_Panel
 				if (!isPrivacyLoading)
 				{
 					AppendLog($"[🚨 SYNIX] Public IP {ip} was copied to clipboard.", Color.Cyan);
-				} else
+				}
+				else
 				{
 					AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
 				}
@@ -412,7 +454,7 @@ namespace Synix_Control_Panel
 		{
 			var selectedServer = GetSelectedServer();
 
-			Core.Instance.Log($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			AppendLog($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -444,7 +486,7 @@ namespace Synix_Control_Panel
 		{
 			var selectedServer = GetSelectedServer();
 
-			Core.Instance.Log($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			AppendLog($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
@@ -596,7 +638,7 @@ namespace Synix_Control_Panel
 				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
 		}
-		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e) 
+		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e)
 		{
 			isPrivacyLoading = chkPrivacyMode.Checked;
 
@@ -609,6 +651,28 @@ namespace Synix_Control_Panel
 				lblLocalIP1.Text = "LAN IP: [HIDDEN]";
 			}
 			await LoadNetworkInfo();
+		}
+
+		private void btnExportBatch_Click(object sender, EventArgs e)
+		{
+			if (isInitializing) return;
+
+			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
+
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Export"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+
+			bool success = Core.Instance.ExportServerToBatch(selectedServer);
+
+			if (success)
+			{
+				MessageBox.Show($"Batch file generated successfully!\n\nSaved directly to:\n{selectedServer.InstallPath}",
+								"Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
 		}
 	}
 }

@@ -35,7 +35,7 @@ namespace Synix_Control_Panel.Database
 				Game = "Windrose",
 				AppID = "4129620",
 				ExeName = @"R5\Binaries\Win64\WindroseServer-Win64-Shipping.exe",
-				RequiredArgs = "{map} -server -log -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers}",
+				RequiredArgs = "{map} -server -log -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 7778,
 				RelativeConfigPath = @"R5\ServerDescription.json",

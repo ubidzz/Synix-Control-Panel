@@ -158,6 +158,7 @@ namespace Synix_Control_Panel.SynixEngine
 								   status == StatusManager.GetStatus(ServerState.Installing) ||
 								   status == StatusManager.GetStatus(ServerState.Updating) ||
 								   status == StatusManager.GetStatus(ServerState.BackingUp) ||
+								   status == StatusManager.GetStatus(ServerState.Export) ||
 								   status == StatusManager.GetStatus(ServerState.Validating);
 
 			bool isRunning = status == StatusManager.GetStatus(ServerState.Running);
@@ -176,6 +177,7 @@ namespace Synix_Control_Panel.SynixEngine
 				case "Config":
 				case "Update":
 				case "Start":
+				case "Export":
 					isLocked = isTransitioning || isRunning;
 					break;
 				case "Restart":
