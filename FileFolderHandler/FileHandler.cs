@@ -20,9 +20,6 @@ namespace Synix_Control_Panel
 	{
 		private static readonly string FolderPath = @"C:\Synix\SynixData";
 		private static readonly string FileName = "servers.json";
-
-		// --- SECTION 1: SERVER SPECIFIC LOGIC ---
-
 		public static void SaveServers()
 		{
 			try
@@ -30,7 +27,6 @@ namespace Synix_Control_Panel
 				var options = new JsonSerializerOptions { WriteIndented = true };
 				string jsonString = JsonSerializer.Serialize(MainGUI.serverList, options);
 
-				// Calls the generic Create method below to handle the heavy lifting
 				bool success = Create(FolderPath, FileName, jsonString);
 
 				if (success)
@@ -79,19 +75,56 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		// --- SECTION 2: GENERIC FILE UTILITY ---
-
 		public static bool Create(string folderPath, string fileName, string content)
 		{
 			try
 			{
-				// Uses your dedicated CreateFolders utility to ensure the path is ready
 				FolderHandler.Create(folderPath);
 
 				string fullPath = Path.Combine(folderPath, fileName);
 
-				// WriteAllText creates a new file, or overwrites an existing one
 				File.WriteAllText(fullPath, content);
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		public static bool WriteLog(string logFileName, string content)
+		{
+			// Prevent logging if the content is empty or just white space
+			if (string.IsNullOrWhiteSpace(content)) return false;
+
+			try
+			{
+				string logFolder = FolderPath + "\\logs";
+				FolderHandler.Create(logFolder);
+
+				// Create filename based on today's date
+				string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
+				string fullPath = Path.Combine(logFolder, fileName);
+
+				// .TrimEnd() removes the extra invisible characters that cause the empty lines
+				File.AppendAllText(fullPath, content.TrimEnd() + Environment.NewLine);
+
+				// Get all .log files and sort them by Name (descending)
+				// Since the name is yyyy-MM-dd, the newest date is always at the top
+				var logFiles = new DirectoryInfo(logFolder)
+					.GetFiles("*.txt")
+					.OrderByDescending(f => f.Name)
+					.ToList();
+
+				// Keep only the 10 most recent files
+				if (logFiles.Count > 10)
+				{
+					for (int i = 10; i < logFiles.Count; i++)
+					{
+						logFiles[i].Delete();
+					}
+				}
+
 				return true;
 			}
 			catch (Exception)
@@ -104,25 +137,20 @@ namespace Synix_Control_Panel
 		{
 			try
 			{
-				// 1. Make sure the file we want to copy actually exists
 				if (!File.Exists(sourceFilePath))
 				{
 					return false;
 				}
 
-				// 2. Make sure the folder we are copying TO exists
 				FolderHandler.Create(targetFolderPath);
 
-				// 3. Build the final destination path
 				string fullTargetPath = Path.Combine(targetFolderPath, targetFileName);
 
-				// 4. Copy the file
 				File.Copy(sourceFilePath, fullTargetPath, overwrite);
 				return true;
 			}
 			catch (Exception)
 			{
-				// Returns false if a file is locked or access is denied
 				return false;
 			}
 		}

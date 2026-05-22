@@ -10,15 +10,15 @@
 		<AssemblyName>Synix Control Panel</AssemblyName>
 		<AssemblyTitle>Synix</AssemblyTitle>
 		<PackageProjectUrl>https://github.com/ubidzz/Synix-Control-Panel/blob/master/README.md</PackageProjectUrl>
-		<Copyright>Copyright © 2026 ubidzz. All Rights Reserved.</Copyright>
+		<Copyright>Copyright © 2026 Jason Turner (ubidzz). All Rights Reserved.</Copyright>
 		<Description>PC Game Server Hosting</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.15</Version>
-		<AssemblyVersion>1.0.15.0</AssemblyVersion>
-		<FileVersion>1.0.15.0</FileVersion>
-		<InformationalVersion>1.0.15</InformationalVersion>
+		<Version>1.0.16</Version>
+		<AssemblyVersion>1.0.16.0</AssemblyVersion>
+		<FileVersion>1.0.16.0</FileVersion>
+		<InformationalVersion>1.0.16</InformationalVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
@@ -36,6 +36,11 @@
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+		  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
 	</ItemGroup>
 
@@ -56,6 +61,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+		  <Generator>SettingsSingleFileGenerator</Generator>
+		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
 		<None Update="README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
@@ -70,6 +79,6 @@
 		<Exec Command="powershell -Command &quot;Start-Sleep -s 5&quot;" />
 		<Message Text="Windows metadata synced. Starting Inno Setup..." Importance="high" />
 		<Message Text="Sending Version $(Version) to Inno Setup..." Importance="high" />
-		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) &quot;C:\Users\ubidz\OneDrive\Desktop\Synix\Control_panel\package\Synix.iss&quot;" />
+		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) /DSourcePath=&quot;$(PublishDir)&quot; &quot;$(PublishDir)package\Synix.iss&quot;" />
 	</Target>
 </Project>

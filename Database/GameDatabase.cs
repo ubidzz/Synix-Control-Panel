@@ -17,7 +17,6 @@ namespace Synix_Control_Panel.Database
 	public static class GameDatabase
 	{
 		public static IReadOnlyList<GameInfo> GetGames => games;
-		// Use ReadOnly to protect the master list
 		private static readonly IReadOnlyList<GameInfo> games =
 		[
 			new() {
@@ -36,7 +35,7 @@ namespace Synix_Control_Panel.Database
 				Game = "Windrose",
 				AppID = "4129620",
 				ExeName = @"R5\Binaries\Win64\WindroseServer-Win64-Shipping.exe",
-				RequiredArgs = "{map} -server -log -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers}",
+				RequiredArgs = "{map} -server -log -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 7778,
 				RelativeConfigPath = @"R5\ServerDescription.json",
@@ -1580,6 +1579,18 @@ namespace Synix_Control_Panel.Database
 				Maps = ["tw_tortuga", "bt_island"]
 			},
 			new() {
+				Game = "Foundry",
+				AppID = "2915550",
+				ExeName = "FoundryDedicatedServer.exe",
+				RequiredArgs = "server_port={port} server_query_port={query} server_name=\"{ServerName}\" server_max_players={MaxPlayers} server_password=\"{pass}\" -SteamAppId={steamAppID}",
+				Port = 3724,
+				QueryPort = 27015,
+				RelativeConfigPath = @"app.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Default"],
+				NeedsConfigWarning = true
+			},
+			new() {
 				Game = "Minimum",
 				AppID = "214190",
 				ExeName = "MinimumServer.exe",
@@ -2746,7 +2757,7 @@ namespace Synix_Control_Panel.Database
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				RequiredArgs = "-batchmode -nographics +server.ip 0.0.0.0 +server.port {port} +server.queryport {query} +app.port {app_port} +server.level \"{map}\" +server.seed {seed} +server.worldsize 4000 +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" +server.pve {mode} {rcon} -SteamAppId={steamAppID} -logfile \"server_log.txt\"",
+				RequiredArgs = "-batchmode -nographics +server.ip 0.0.0.0 +server.port {port} +server.queryport {query} +app.port {app_port} +server.password \"{pass}\" +server.level \"{map}\" +server.seed {seed} +server.worldsize 4000 +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" +server.pve {mode} {rcon} -SteamAppId={steamAppID} -logfile \"server_log.txt\"",
 				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
 				Port = 28015,
 				QueryPort = 28016,
@@ -3127,13 +3138,10 @@ namespace Synix_Control_Panel.Database
 
 		public class PostInstallStep
 		{
-			// Can be "CopySteamDlls" or "CreateFile"
 			public string ActionType { get; init; } = "";
 
-			// Where the file goes (e.g., "WS\Binaries\Win64" or "DSSetings.txt")
 			public string TargetPath { get; init; } = "";
 
-			// The raw text to write into the file (Only used for "CreateFile")
 			public string FileContent { get; init; } = "";
 		}
 	}

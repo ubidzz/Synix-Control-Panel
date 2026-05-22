@@ -37,28 +37,27 @@ namespace Synix_Control_Panel.ServerHandler
 		const uint CTRL_C_EVENT = 0;
 		#endregion
 
-		public static async Task Start(GameServer server, Action<string> logCallback, StartContext context = StartContext.Manual)
+		public static async Task Start(GameServer server, Action<string, Color> logCallback, StartContext context = StartContext.Manual)
 		{
-			// 🛡️ THE SAFEGUARD: Only check if it's a Manual start
 			if (!IsSystemSafeToStart()) return;
 			try
 			{
+				if (!Core.Instance.PassResourceGuard(out string guardMsg))
+				{
+					logCallback?.Invoke(guardMsg, Color.Orange);
+					MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+
 				// 1. PRE-FLIGHT (Backup & Update)
 				if (server.BackupOnStart && context != StartContext.CrashRecovery)
 				{
-					logCallback?.Invoke("[💾 BACKUP] Starting...");
-					server.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
-					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
-					await Task.Run(() => BackupManager.ExecuteBackup(server, context));
-					logCallback?.Invoke("[💾 BACKUP] Finished...");
+					await Task.Run(() => Core.Instance.ExecuteBackup(server, context));
 				}
 
 				if (server.UpdateOnStart)
 				{
-					logCallback?.Invoke($"[ACTION] Update on Start is ON. Pausing launch for update...");
-					server.Status = Core.StatusManager.GetStatus(Core.ServerState.Updating);
-					MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
-					await Synix_Control_Panel.SynixEngine.Core.Instance.InstallOrUpdate(server);
+					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
 
 				// 2. TEMPLATE VALIDATION
@@ -66,7 +65,7 @@ namespace Synix_Control_Panel.ServerHandler
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				if (dbEntry == null)
 				{
-					logCallback?.Invoke("[🚨 ERROR] Game template not found.");
+					logCallback?.Invoke("[🚨 ERROR] Game template not found.", Color.Red);
 					return;
 				}
 
@@ -76,7 +75,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 				if (!File.Exists(fullExePath))
 				{
-					logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}");
+					logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}", Color.Red);
 					server.Status = StatusManager.GetStatus(ServerState.Stopped);
 					return;
 				}
@@ -131,11 +130,11 @@ namespace Synix_Control_Panel.ServerHandler
 							invokedId = fileContent;
 						}
 					}
-					catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}"); }
+					catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
 				}
 
 				// 🛠️ 6. ARGUMENT REPLACEMENT
-				string cleanIdentity = BackupManager.GetSafeName(server.ServerName);
+				string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
 
 				string args = dbEntry.RequiredArgs
 					.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
@@ -170,11 +169,18 @@ namespace Synix_Control_Panel.ServerHandler
 					args = args.Replace("{mode}", translatedMode);
 				}
 
+				if(!string.IsNullOrWhiteSpace(server.ExtraArgs))
+				{
+					args = args + " " + server.ExtraArgs;
+				}
+
+				args = args.Replace("  ", " ").Trim();
+
 				// 🚀 7. CONFIGURE PROCESS
 				ProcessStartInfo psi = new()
 				{
 					FileName = fullExePath,
-					Arguments = args.Replace("  ", " ").Trim(),
+					Arguments = args,
 					WorkingDirectory = binDir,
 					UseShellExecute = false,
 					CreateNoWindow = false
@@ -184,7 +190,7 @@ namespace Synix_Control_Panel.ServerHandler
 				psi.EnvironmentVariables["SteamAppId"] = invokedId;
 				psi.EnvironmentVariables["SteamGameId"] = invokedId;
 
-				logCallback?.Invoke($"[ARGUMENT] {args}");
+				logCallback?.Invoke($"[ARGUMENT] {args}", Color.Cyan);
 
 				// 🚀 8. EXECUTION & MONITORING
 				Process? proc = Process.Start(psi);
@@ -204,24 +210,20 @@ namespace Synix_Control_Panel.ServerHandler
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
 							// Watchdog handles the single Discord crash notification
-							await Core.Instance.RecoverServer(server);
+							await Core.Instance.ExecuteStartSequence(server, "WATCHDOG");
 						}
 						else
 						{
-							server.Status = StatusManager.GetStatus(ServerState.Stopped);
-							server.PID = null;
-							server.RunningProcess?.Dispose();
-							server.RunningProcess = null;
-							MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+							FinalizeStoppedState(server);
 						}
 					};
 					FileHandler.SaveServers();
 				}
 			}
-			catch (Exception ex) { logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}"); }
+			catch (Exception ex) { logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red); }
 		}
 
-		public static void Stop(GameServer server, Action<string> logCallback, bool isManual = true)
+		public static async Task Stop(GameServer server, Action<string, Color> logCallback, bool isManual = true)
 		{
 			try
 			{
@@ -231,36 +233,38 @@ namespace Synix_Control_Panel.ServerHandler
 				int targetPid = server.RunningProcess?.Id ?? server.PID ?? 0;
 				if (targetPid <= 0)
 				{
-					logCallback?.Invoke($"[🚨 ERROR] {server.ServerName} has no valid PID to stop.");
+					logCallback?.Invoke($"[🚨 ERROR] {server.ServerName} has no valid PID to stop.", Color.Red);
 					return;
 				}
 
 				// 🎯 DISCORD ALERT: Manual Shutdown
 				if (isManual)
 				{
-					_ = SynixEngine.Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
+					_ = Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
 						"A shutdown command was issued via the Synix Control Panel.", Color.Orange);
 				}
 
-				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...");
+				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
 				if (AttachConsole((uint)targetPid))
 				{
 					SetConsoleCtrlHandler(null, true);
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-					bool cleanExit = server.RunningProcess?.WaitForExit(25000) ?? false;
+
+					bool cleanExit = await Task.Run(() => server.RunningProcess?.WaitForExit(25000) ?? false);
+
 					FreeConsole();
 					SetConsoleCtrlHandler(null, false);
 
 					if (cleanExit)
 					{
-						logCallback?.Invoke($"[STOP] {server.ServerName} saved and closed cleanly.");
+						logCallback?.Invoke($"[STOP] {server.ServerName} saved and closed cleanly.", Color.Lime);
 						FinalizeStoppedState(server);
 						return;
 					}
 				}
 
-				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} did not respond. Forcing taskkill...");
+				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} did not respond. Forcing taskkill...", Color.Violet);
 				ProcessStartInfo killInfo = new ProcessStartInfo
 				{
 					FileName = "taskkill",
@@ -269,18 +273,27 @@ namespace Synix_Control_Panel.ServerHandler
 					UseShellExecute = false
 				};
 
-				using (Process? killProcess = Process.Start(killInfo)) { killProcess?.WaitForExit(); }
+				using (Process? killProcess = Process.Start(killInfo))
+				{
+					if (killProcess != null)
+					{
+						await Task.Run(() => killProcess.WaitForExit());
+					}
+				}
+
 				FinalizeStoppedState(server);
-				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} forced closed.");
+				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} forced closed.", Color.Violet);
 			}
-			catch (Exception ex) { logCallback?.Invoke($"[🚨 ERROR] Failed to stop {server.ServerName}: {ex.Message}"); }
+			catch (Exception ex) { logCallback?.Invoke($"[🚨 ERROR] Failed to stop {server.ServerName}: {ex.Message}", Color.Red); }
 		}
 
 		private static void FinalizeStoppedState(GameServer server)
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
+			server.RunningProcess?.Dispose();
 			server.RunningProcess = null;
+			MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 		}
 	}
 }

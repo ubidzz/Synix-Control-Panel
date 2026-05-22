@@ -85,7 +85,7 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					else
 					{
-						_ = RecoverServer(server);
+						_ = ExecuteStartSequence(server, "WATCHDOG");
 					}
 					continue;
 				}
@@ -95,7 +95,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					if (!IsProcessAlive(server.PID.Value, exePathFromDB))
 					{
-						_ = RecoverServer(server);
+						_ = ExecuteStartSequence(server, "WATCHDOG");
 					}
 				}
 			}
@@ -123,13 +123,6 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 		}
-
-		public void InitializeAndRebind()
-		{
-			// Re-links processes if the app was restarted while servers were running
-			RebindProcesses();
-		}
-
 
 		private void CheckForDDoS()
 		{

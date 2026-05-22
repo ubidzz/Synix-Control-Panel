@@ -60,6 +60,7 @@
 			updateServerToolStripMenuItem = new ToolStripMenuItem();
 			fileValidationToolStripMenuItem = new ToolStripMenuItem();
 			backupServerToolStripMenuItem = new ToolStripMenuItem();
+			btnExportBatch = new ToolStripMenuItem();
 			toolStripSeparator3 = new ToolStripSeparator();
 			connectionTestToolStripMenuItem = new ToolStripMenuItem();
 			connectionLocalTestToolStripMenuItem = new ToolStripMenuItem();
@@ -74,6 +75,7 @@
 			btnRestart = new Button();
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Button();
+			chkPrivacyMode = new CheckBox();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -142,7 +144,6 @@
 			UptimeDisplay.HeaderText = "UPTIME";
 			UptimeDisplay.Name = "UptimeDisplay";
 			UptimeDisplay.ReadOnly = true;
-			UptimeDisplay.Width = 105;
 			// 
 			// colStatus
 			// 
@@ -150,7 +151,7 @@
 			colStatus.HeaderText = "Status";
 			colStatus.Name = "colStatus";
 			colStatus.ReadOnly = true;
-			colStatus.Width = 85;
+			colStatus.Width = 90;
 			// 
 			// rtbLog
 			// 
@@ -245,20 +246,20 @@
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, openServerConfig, installServer, toolStripSeparator1 });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(152, 76);
+			contextMenuStrip.Size = new Size(181, 98);
 			// 
 			// btnHelp
 			// 
 			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(151, 22);
+			btnHelp.Size = new Size(180, 22);
 			btnHelp.Text = "Help";
 			btnHelp.Click += btnHelp_Click;
 			// 
 			// openServerConfig
 			// 
-			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
+			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(151, 22);
+			openServerConfig.Size = new Size(180, 22);
 			openServerConfig.Text = "Server Options";
 			// 
 			// openServerFolderToolStripMenuItem
@@ -320,6 +321,13 @@
 			backupServerToolStripMenuItem.Text = "Backup Server";
 			backupServerToolStripMenuItem.Click += btnBackup_Click;
 			// 
+			// btnExportBatch
+			// 
+			btnExportBatch.Name = "btnExportBatch";
+			btnExportBatch.Size = new Size(196, 22);
+			btnExportBatch.Text = "Export to Batch File";
+			btnExportBatch.Click += btnExportBatch_Click;
+			// 
 			// toolStripSeparator3
 			// 
 			toolStripSeparator3.Name = "toolStripSeparator3";
@@ -354,14 +362,14 @@
 			// installServer
 			// 
 			installServer.Name = "installServer";
-			installServer.Size = new Size(151, 22);
+			installServer.Size = new Size(180, 22);
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new Size(148, 6);
+			toolStripSeparator1.Size = new Size(177, 6);
 			// 
 			// btnServerActions
 			// 
@@ -410,6 +418,7 @@
 			// 
 			// btnRestart
 			// 
+			btnRestart.Cursor = Cursors.Hand;
 			btnRestart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnRestart.ForeColor = Color.DarkCyan;
 			btnRestart.Location = new Point(681, 589);
@@ -446,6 +455,16 @@
 			btnDownloadUpdate.UseVisualStyleBackColor = false;
 			btnDownloadUpdate.Click += btnDownloadUpdate_Click;
 			// 
+			// chkPrivacyMode
+			// 
+			chkPrivacyMode.Location = new Point(427, 589);
+			chkPrivacyMode.Name = "chkPrivacyMode";
+			chkPrivacyMode.Size = new Size(125, 28);
+			chkPrivacyMode.TabIndex = 23;
+			chkPrivacyMode.Text = "Privacy Mode";
+			chkPrivacyMode.UseVisualStyleBackColor = true;
+			chkPrivacyMode.CheckedChanged += chkPrivacyMode_CheckedChanged;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -453,6 +472,7 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 628);
+			Controls.Add(chkPrivacyMode);
 			Controls.Add(btnDownloadUpdate);
 			Controls.Add(lblUpdateStatus);
 			Controls.Add(btnRestart);
@@ -514,13 +534,6 @@
 		private ToolStripSeparator toolStripSeparator2;
 		private ToolStripSeparator toolStripSeparator3;
 		private ToolStripMenuItem backupToolStripMenuItem;
-		private DataGridViewTextBoxColumn colGame;
-		private DataGridViewTextBoxColumn colName;
-		private DataGridViewTextBoxColumn colPort;
-		private DataGridViewTextBoxColumn colQueryPort;
-		private DataGridViewTextBoxColumn PlayerCountDisplay;
-		private DataGridViewTextBoxColumn UptimeDisplay;
-		private DataGridViewTextBoxColumn colStatus;
 		private ToolStripMenuItem connectionLocalTestToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator4;
 		private ToolStripSeparator toolStripSeparator5;
@@ -528,5 +541,14 @@
 		private ToolStripMenuItem backupServerToolStripMenuItem;
 		private Label lblUpdateStatus;
 		private Button btnDownloadUpdate;
+		private CheckBox chkPrivacyMode;
+		private ToolStripMenuItem btnExportBatch;
+		private DataGridViewTextBoxColumn colGame;
+		private DataGridViewTextBoxColumn colName;
+		private DataGridViewTextBoxColumn colPort;
+		private DataGridViewTextBoxColumn colQueryPort;
+		private DataGridViewTextBoxColumn PlayerCountDisplay;
+		private DataGridViewTextBoxColumn UptimeDisplay;
+		private DataGridViewTextBoxColumn colStatus;
 	}
 }
