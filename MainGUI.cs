@@ -104,7 +104,7 @@ namespace Synix_Control_Panel
 
 		private void CheckRunningStatus()
 		{
-			string[] spinFrames = { "|", "/", "-", "\\" };
+			string[] spinFrames = { "|", "/", "--", "\\" };
 
 			foreach (var server in serverList)
 			{

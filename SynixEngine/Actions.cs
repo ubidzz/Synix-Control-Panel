@@ -419,7 +419,7 @@ namespace Synix_Control_Panel.SynixEngine
 				await StopServerAndReport(server);
 			}
 
-			await Task.Delay(3000);
+			await Task.Delay(4000);
 
 			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 			{
@@ -428,10 +428,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				await Servers.Start(server, (msg, Color) => MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color))), currentContext);
 			}
-
 			else
 			{
-				Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+				if (server.Status != StatusManager.GetStatus(ServerState.Starting))
+				{
+					Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+				}
 			}
 			stopServer = false;
 		}
