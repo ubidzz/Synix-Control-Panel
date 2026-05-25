@@ -15,7 +15,7 @@
 
 **Synix Control Panel** is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a **Zero-Admin (No UAC)** environment.
 
-[Support Discord](https://discord.gg/2WR7ArC2Vr)
+[Discord](https://discord.gg/2WR7ArC2Vr)
 [Youtube Video](https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s)
 
 ---
