@@ -26,11 +26,10 @@ namespace Synix_Control_Panel.ServerHandler
 			bool applied = false;
 			string publicIp = await Core.Instance.GetPublicIP();
 			string localIp = await Core.Instance.GetLocalIP();
+			string cleanIdentity = server.ServerName.Replace(" ", "_");
 
 			try
 			{
-				// --- PASS 1: STEAM DLL COPIES (Unreal Engine & Engine Specifics) ---
-				// Grabs DLLs from C:\Synix\SteamCMD and pushes to game binary folders
 				switch (server.Game)
 				{
 					case "StarRupture":
@@ -48,6 +47,8 @@ namespace Synix_Control_Panel.ServerHandler
 					case "The Stomping Land":
 					case "Dirty Bomb":
 						if (CopySteamDLLs(server.InstallPath, @"ShooterGame\Binaries\Win64")) applied = true; break;
+					case "Foundry":
+						if (CopySteamDLLs(server.InstallPath, "")) applied = true; break;
 					case "Astroneer":
 						if (CopySteamDLLs(server.InstallPath, @"Astro\Binaries\Win64")) applied = true; break;
 					case "Abiotic Factor":
@@ -178,19 +179,15 @@ namespace Synix_Control_Panel.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"R5\Binaries\Win64")) applied = true; break;
 				}
 
-				// --- PASS 2: DYNAMIC CONFIG FILE CREATION ---
 				switch (server.Game)
 				{
 					case "Rust":
-						string cleanIdentity = server.ServerName.Replace(" ", "_");
 						string rustRelativePath = $@"server\{cleanIdentity}\cfg\server.cfg";
 
-						// The $@ allows us to pull directly from the server object into the string!
-						// Define the multi-line string with proper formatting
 						string rustCfg = $@"// Synix Custom Rust Configuration
 // Settings like Port and Query Port are managed by command-line arguments.
-
 server.hostname ""{server.ServerName}""
+server.password ""{server.Password}""
 server.seed {(string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)}
 server.worldsize 4000
 
@@ -221,27 +218,23 @@ server.globalchat true";
 						break;
 
 					case "Windrose":
-
 						string windroseJson = @"{ 
-""Password"": """ + server.Password + @""",
-""ServerName"": """ + server.ServerName + @""",
-""MaxPlayerCount"": """ + server.MaxPlayers + @""",
-""UserSelectedRegion"": "",
-""P2pProxyAddress"": """ + localIp + @""",
-""AutoRestart"": true,
-""UseDirectConnection"": false,
-""DirectConnectionServerAddress"": """ + publicIp + @""",
-""DirectConnectionServerPort"": """ + server.Port + @""",
-""DirectConnectionProxyAddress"": ""0.0.0.0""
-
-	}
-				";
-
+            ""Password"": """ + server.Password + @""",
+            ""ServerName"": """ + server.ServerName + @""",
+            ""MaxPlayerCount"": """ + server.MaxPlayers + @""",
+            ""UserSelectedRegion"": """",
+            ""P2pProxyAddress"": """ + localIp + @""",
+            ""AutoRestart"": true,
+            ""UseDirectConnection"": false,
+            ""DirectConnectionServerAddress"": """ + publicIp + @""",
+            ""DirectConnectionServerPort"": """ + server.Port + @""",
+            ""DirectConnectionProxyAddress"": ""0.0.0.0""
+        }";
 						if (CreateGameConfig(server, @"R5\ServerDescription.json", windroseJson)) applied = true;
 						break;
 
 					case "ASKA":
-						string askaJson = @"{ ""ServerName"": ""{ServerName}"", ""Password"": """", ""MaxPlayers"": 16 }";
+						string askaJson = @"{ ""ServerName"": ""{ServerName}"", ""Password"": """ + server.Password + @""", ""MaxPlayers"": 16 }";
 						if (CreateGameConfig(server, "server_settings.json", askaJson)) applied = true;
 						break;
 
@@ -258,7 +251,7 @@ server.globalchat true";
 					case "Palworld":
 					case "Palworld (Experimental)":
 						string palIni = @"[/Script/Pal.PalGameWorldSettings]
-OptionSettings=(ServerName=""{ServerName}"")";
+OptionSettings=(ServerName=""{ServerName}"",ServerPassword=""" + server.Password + @""",AdminPassword=""" + server.AdminPassword + @""")";
 						if (CreateGameConfig(server, @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini", palIni)) applied = true;
 						break;
 
@@ -386,6 +379,20 @@ ServerName=""{ServerName}""";
 						string stnJson = @"{ ""ServerName"": ""{ServerName}"" }";
 						if (CreateGameConfig(server, "ServerConfig.json", stnJson)) applied = true;
 						break;
+					case "Foundry":
+						string foundryCfg = $@"server_name={{ServerName}}
+server_description=Hosted using Synix
+server_world_name={cleanIdentity}
+server_port={server.Port}
+server_query_port={server.QueryPort}
+server_is_public=true
+server_max_players={server.MaxPlayers}
+server_password={server.Password}
+server_autosave_interval=300
+server_save_slots=10
+server_pause_when_empty=true";
+						if (CreateGameConfig(server, "app.cfg", foundryCfg)) applied = true;
+						break;
 				}
 			}
 			catch (Exception)
@@ -404,7 +411,12 @@ ServerName=""{ServerName}""";
 			string fullFilePath = Path.Combine(server.InstallPath, relativeFilePath);
 			if (!File.Exists(fullFilePath))
 			{
-				string finalContent = contentTemplate.Replace("{ServerName}", server.ServerName);
+				string finalContent = contentTemplate
+					.Replace("{ServerName}", server.ServerName)
+					.Replace("{Password}", server.Password)
+					.Replace("{Port}", server.Port.ToString())
+					.Replace("{MaxPlayers}", server.MaxPlayers.ToString());
+
 				string targetFolder = Path.GetDirectoryName(fullFilePath);
 				ManualConfigWasCreated = true;
 				return FileHandler.Create(targetFolder, Path.GetFileName(fullFilePath), finalContent);
@@ -424,10 +436,8 @@ ServerName=""{ServerName}""";
 			{
 				string sourcePath = Path.Combine(steamCmdPath, dll);
 
-				// If it exists in SteamCMD, and the game doesn't have it yet, copy it over
 				if (File.Exists(sourcePath) && !File.Exists(Path.Combine(targetDir, dll)))
 				{
-					// Uses your FileHandler.Copy utility
 					if (FileHandler.Copy(sourcePath, targetDir, dll, false))
 					{
 						filesCopied = true;

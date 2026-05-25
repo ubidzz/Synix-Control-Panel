@@ -29,7 +29,6 @@ namespace Synix_Control_Panel
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			// Starts your actual UI
 			Application.Run(new MainGUI());
 		}
 
@@ -50,21 +49,11 @@ namespace Synix_Control_Panel
 		{
 			try
 			{
-				// 1. Define the hardcoded path
-				string logDirectory = @"C:\Synix\SynixData\logs";
-
-				// 2. Force Windows to create the folder if it doesn't exist
-				Directory.CreateDirectory(logDirectory);
-
-				// 3. Combine the folder path with the exact file name
-				string logFilePath = Path.Combine(logDirectory, "synix_fatal_crashes.log");
-
-				string message = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n";
-
-				File.AppendAllText(logFilePath, message);
+				string logFilePath = Path.Combine(@"C:\Synix\SynixData\logs", "Synix_fatal_crashes.log");
+				FileHandler.WriteLog("Synix_fatal_crashes", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n");
 
 				MessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",
-								"Engine Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+							"Engine Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch
 			{

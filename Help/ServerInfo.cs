@@ -1,23 +1,35 @@
-﻿// Copyright (c) 2026 ubidzz. All Rights Reserved.
-//
-// This file is part of Synix Control Panel.
-//
-// This code is provided for transparent viewing and personal use only.
-// Unauthorized distribution, public modification, or commercial
-// use of this source code or the compiled executable is strictly
-// prohibited. Please refer to the LICENSE file in the root
-// directory for full terms.
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel.Help
 {
 	public partial class ServerInfo : Form
 	{
+		[DllImport("user32.dll")]
+		private static extern uint SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
+		private const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;
+
 		private GameServer _server;
 
 		public ServerInfo(GameServer server)
 		{
 			InitializeComponent();
 			_server = server;
+			if (Properties.Settings.Default.PrivacyMode)
+			{
+				SetWindowDisplayAffinity(this.Handle, WDA_EXCLUDEFROMCAPTURE);
+			}
 			LoadServerData();
 		}
 
@@ -53,7 +65,6 @@ namespace Synix_Control_Panel.Help
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
 		}
 
-		// Helper function to turn your bool array into a readable string like "Mon, Wed, Fri"
 		private string GetActiveDays(bool[] days)
 		{
 			if (days == null || days.Length < 7) return "None";
@@ -73,12 +84,12 @@ namespace Synix_Control_Panel.Help
 			if (isActive)
 			{
 				label.Text = "On";
-				label.ForeColor = Color.LimeGreen; // Bright green for "On"
+				label.ForeColor = Color.LimeGreen;
 			}
 			else
 			{
 				label.Text = "Off";
-				label.ForeColor = Color.Red; // Red for "Off"
+				label.ForeColor = Color.Red;
 			}
 		}
 	}

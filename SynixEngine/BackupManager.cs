@@ -16,11 +16,24 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public enum StartContext { Manual, Scheduled, CrashRecovery }
 
-	public static class BackupManager
+	public partial class Core
 	{
-		public static void ExecuteBackup(GameServer server, StartContext context)
+		public async Task ExecuteBackup(GameServer server, StartContext context)
 		{
-			if (context != StartContext.Manual && !server.BackupOnStart) return;
+			if (context == StartContext.CrashRecovery && server.BackupOnStart) return;
+
+			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
+			{
+				Log($"[🚨 ERROR] {server.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				return;
+			}
+
+			Log($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			isDownloadActive = true;
+			Log($"[💾 BACKUP] Starting backup compression for {server.ServerName}...", Color.Cyan);
+
+			server.Status = StatusManager.GetStatus(Core.ServerState.BackingUp);
+			UpdateGridStatus();
 
 			// Never backup during a crash recovery
 			if (context == StartContext.CrashRecovery) return;
@@ -60,15 +73,20 @@ namespace Synix_Control_Panel.SynixEngine
 					// Using Fastest compression to avoid lag on your 6-core rig
 					ZipFile.CreateFromDirectory(sourceDir, zipPath, CompressionLevel.Fastest, false);
 				}
+				Log($"[💾 BACKUP] Finished backing up {server.ServerName}.", Color.LimeGreen);
 			}
 			catch (Exception ex)
 			{
 				System.Diagnostics.Debug.WriteLine($"[BACKUP ERROR] {ex.Message}");
 			}
+			server.Status = StatusManager.GetStatus(Core.ServerState.Stopped);
+			isDownloadActive = false;
+			Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			UpdateGridStatus();
 		}
 
 		// 🎯 SHARED SANITIZER: Public Static so MainGUI.cs can use it too
-		public static string GetSafeName(string name)
+		public string GetSafeName(string name)
 		{
 			if (string.IsNullOrWhiteSpace(name)) return "Unknown";
 

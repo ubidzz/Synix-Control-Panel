@@ -38,13 +38,11 @@ namespace Synix_Control_Panel.ServerHandler
 				chkSa.Checked = initialDays[6];
 			}
 
-			// 3. Pre-fill Time
 			if (DateTime.TryParseExact(initialTime, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime parsedTime))
 				dtpRestartTime.Value = parsedTime;
 			else
 				dtpRestartTime.Value = DateTime.Today.AddHours(4);
 
-			// 🎯 STYLE LINK: Calls the helper we just fixed
 			Synix_Control_Panel.UI.UIStyleHelper.InitializeToggles(this);
 		}
 

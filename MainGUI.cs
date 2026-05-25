@@ -14,10 +14,12 @@ using Synix_Control_Panel.Design;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
-using static Synix_Control_Panel.SynixEngine.Core;
+using Synix_Control_Panel.FileFolderHandler;
 using Synix_Control_Panel.UI;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Forms.DataVisualization.Charting;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
 {
@@ -25,7 +27,7 @@ namespace Synix_Control_Panel
 	{
 		public static BindingList<GameServer> serverList = [];
 		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
-		private bool isDownloadActive = false;
+		public bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
 		public double systemTotalRamGb = 128;
@@ -43,10 +45,14 @@ namespace Synix_Control_Panel
 			FileHandler.LoadServers();
 			_ = Core.Instance;
 			GridStyler.DarkTheme(dataGridView1);
+			UIStyleHelper.InitializeToggles(this);
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			Instance = this;
+			chkPrivacyMode.Text = "Privacy Mode";
+			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
+			isPrivacyLoading = chkPrivacyMode.Checked;
 			_ = LoadNetworkInfo();
 			InitializeVersionCheckTimer();
 			_ = VersionCheck();
@@ -54,6 +60,8 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
+			CheckRunningStatus();
+
 			// 1. Grab telemetry
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
@@ -89,18 +97,66 @@ namespace Synix_Control_Panel
 				{
 					if (server.IsScheduledRestartEnabled && currentExactTime == (server.RestartTime + ":00"))
 					{
-						_ = Core.Instance.ExecuteRestartSequence(server);
+						_ = Core.Instance.ExecuteStartSequence(server, "MAINTENANCE");
 					}
 				}
 			}
-
 			chartTickCounter++;
+		}
+
+		private void CheckRunningStatus()
+		{
+			string[] spinFrames = { "|", "/", "--", "\\" };
+
+			foreach (var server in serverList)
+			{
+				string status = server.Status ?? "";
+
+				if (status.StartsWith("Updating"))
+				{
+					string currentFrame = status.Replace("Updating ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Updating " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Validating"))
+				{
+					string currentFrame = status.Replace("Validating ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Validating " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Installing"))
+				{
+					string currentFrame = status.Replace("Installing ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Installing " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Backing Up"))
+				{
+					string currentFrame = status.Replace("Backing Up ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Backing Up " + spinFrames[nextIndex];
+				}
+			}
+			UpdateGrid();
+		}
+
+		private void StreamerModeCheck()
+		{
+			if (isPrivacyLoading)
+			{
+				AppendLog("[🛡️ BLOCK] Streamer mode is active", Color.Red);
+				return;
+			}
 		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			// Use the variable that Heartbeat_Tick has been updating
-			if (isDownloadActive)
+			if (isDownloadActive || Core.Instance.isDownloadActive)
 			{
 				e.Cancel = true;
 				MessageBox.Show("Cannot close Synix while a server is installing, updating or Backing Up!",
@@ -111,13 +167,16 @@ namespace Synix_Control_Panel
 		private async Task LoadNetworkInfo()
 		{
 			// 1. Get the LAN IP instantly
-			string localIP = await Core.Instance.GetLocalIP();
-			lblLocalIP1.Text = $"LAN IP: {localIP}";
+			if (!isPrivacyLoading)
+			{
+				string localIP = await Core.Instance.GetLocalIP();
+				lblLocalIP1.Text = $"LAN IP: {localIP}";
 
-			// 2. Get the Public IP in the background
-			lblPublicIP.Text = "Public IP: Fetching...";
-			string publicIP = await Core.Instance.GetPublicIP();
-			lblPublicIP.Text = $"Public IP: {publicIP}";
+				// 2. Get the Public IP in the background
+				lblPublicIP.Text = "Public IP: Fetching...";
+				string publicIP = await Core.Instance.GetPublicIP();
+				lblPublicIP.Text = $"Public IP: {publicIP}";
+			}
 		}
 
 		private void lblPublicIP_Click(object sender, EventArgs e)
@@ -127,7 +186,14 @@ namespace Synix_Control_Panel
 			if (ip != StatusManager.GetStatus(ServerState.Stopped) && ip != "Fetching...")
 			{
 				Clipboard.SetText(ip);
-				Core.Instance.Log($"[SYSTEM] Public IP {ip} copied to clipboard.", Color.Cyan);
+				if (!isPrivacyLoading)
+				{
+					AppendLog($"[🚨 SYNIX] Public IP {ip} was copied to clipboard.", Color.Cyan);
+				}
+				else
+				{
+					AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
+				}
 			}
 		}
 
@@ -135,18 +201,21 @@ namespace Synix_Control_Panel
 		{
 			string LANip = lblLocalIP1.Text.Replace("LAN IP: ", "");
 			Clipboard.SetText(LANip);
-			Core.Instance.Log($"[SYSTEM] Local IP {LANip} copied to clipboard.", Color.Cyan);
+			if (!isPrivacyLoading)
+			{
+				AppendLog($"[🚨 SYNIX] Local IP {LANip} was copied to clipboard.", Color.Cyan);
+			}
+			else
+			{
+				AppendLog($"[🚨 SYNIX] Local IP [HIDDEN] was copied to clipboard.", Color.Cyan);
+			}
 		}
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
 		{
 			try
 			{
-				string logDirectory = @"C:\Synix\SynixData\logs";
-				Directory.CreateDirectory(logDirectory);
-				string logFilePath = Path.Combine(logDirectory, "synix_engine.log");
-				string timeStampedMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}";
-				File.AppendAllText(logFilePath, timeStampedMessage);
+				FileHandler.WriteLog("Synix_Log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
 			}
 			catch { /* Silent fail */ }
 
@@ -170,14 +239,12 @@ namespace Synix_Control_Panel
 				rtbLog.ReadOnly = false;
 				rtbLog.Select(0, rtbLog.GetFirstCharIndexFromLine(100));
 				rtbLog.SelectedText = "";
-				rtbLog.ClearUndo(); // THIS actually frees the memory!
+				rtbLog.ClearUndo();
 				rtbLog.ReadOnly = true;
 			}
 
 			rtbLog.SelectionFont = isBold ? boldFont : regularFont;
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
-
-			// Scroll and Refresh
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
 			rtbLog.Update();
@@ -185,12 +252,9 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
+			Core.Instance.RebindProcesses();
 			double physicalRam = 16.0;
-
-			await Task.Run(() =>
-			{
-				physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB();
-			});
+			await Task.Run(() => physicalRam = MonitoringHandler.ResourceMonitor.GetTotalSystemRamGB());
 
 			double reserved = Math.Max(physicalRam * 0.10, 5.0);
 			systemTotalRamGb = physicalRam - reserved;
@@ -198,25 +262,13 @@ namespace Synix_Control_Panel
 			Design.GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
 			Design.GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
 
-			// ðŸŽ¯ THE GRAPH FIX: Shove a dummy point in and FORCE the heavy graphics engine to draw instantly
 			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, 0);
 			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, 0);
-			chartHeartbeat.Update(); // This is the magic line that prevents the UI freeze
-
+			chartHeartbeat.Update();
 			chartTickCounter++;
 			tmrResourceUpdates.Start();
 
-			isDownloadActive = true;
-			await Task.Delay(100);
-
-			AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			AppendLog("Checking SteamCMD dependencies...");
-
-			await Task.Run(() => SteamCMD.EnsureSteamCMD(msg => AppendLog(msg)));
-
-			isDownloadActive = false;
-			AppendLog("Initialization complete.");
-			AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+			await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
 		}
 
 		public void UpdateGrid()
@@ -249,219 +301,21 @@ namespace Synix_Control_Panel
 			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 
-		private async void btnAddServer_Click(object sender, EventArgs e)
-		{
-			// UI-specific check
-			if (isInitializing) return;
-			isDownloadActive = true;
-			AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			await Core.Instance.AddServerAndReport();
-			isDownloadActive = false;
-			AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
-		}
-
-		private void btnEdit_Click(object sender, EventArgs e)
-		{
-			// UI-specific safety check
-			if (isInitializing) return;
-
-			// The AI handles the "Running" check, opens the form, and logs the result
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				Core.Instance.EditServerAndReport(selectedServer);
-			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
-			}
-		}
-
-		private async void btnUpdate_Click(object sender, EventArgs e)
-		{
-			// UI-specific check
-			if (isInitializing) return;
-
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				isDownloadActive = true;
-				AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-				await Core.Instance.UpdateServerAndReport(selectedServer);
-				isDownloadActive = false;
-				AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
-			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list to update.", "No Server Selected");
-			}
-		}
-
-		private async void btnFileValidation_Click(object sender, EventArgs e)
-		{
-			// UI-specific check
-			if (isInitializing) return;
-
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				isDownloadActive = true;
-				AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-				await Core.Instance.ValidationServerAndReport(selectedServer);
-				isDownloadActive = false;
-				AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
-			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list to validate.", "No Server Selected");
-			}
-		}
-
-		private void btnDelete_Click(object sender, EventArgs e)
-		{
-			// 1. Check if the app is still loading
-			if (isInitializing) return;
-
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				Core.Instance.DeleteServerAndReport(selectedServer);
-				dataGridView1.CurrentCell = null;
-				dataGridView1.DataSource = null;
-				dataGridView1.DataSource = serverList;
-			}
-			else
-			{
-				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
-			}
-		}
-
-		private async void btnBackup_Click(object sender, EventArgs e)
-		{
-			// 1. SELECTION CHECKS
-			if (dataGridView1.CurrentRow == null)
-			{
-				AppendLog("[ðŸš¨ ERROR] No row is currently selected!", Color.Red);
-				return;
-			}
-
-			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
-			{
-				AppendLog("[ðŸš¨ ERROR] Invalid GameServer object!", Color.Red);
-				return;
-			}
-
-			if (!Core.Instance.PassBackupSpamLock(selectedServer, out string lockMsg))
-			{
-				AppendLog(lockMsg, Color.Orange);
-				return;
-			}
-
-			// 2. STATUS CHECK: Ensure the server is Stopped before zipping
-			if (selectedServer.Status != StatusManager.GetStatus(ServerState.Stopped))
-			{
-				AppendLog($"[ðŸš¨ ERROR] {selectedServer.ServerName} must be Stopped to perform a backup.", Color.Orange);
-				return;
-			}
-
-			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
-			isDownloadActive = true;
-
-			AppendLog($"[ðŸ”’ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			AppendLog($"[ðŸ’¾ BACKUP] Starting backup compression for {selectedServer.ServerName}...", Color.Cyan);
-
-			await Task.Run(() =>
-			{
-				BackupManager.ExecuteBackup(selectedServer, StartContext.Manual);
-			});
-
-			isDownloadActive = false;
-			selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped);
-			AppendLog($"[ðŸ’¾ BACKUP] Finished backing up {selectedServer.ServerName}.", Color.LimeGreen);
-			AppendLog($"[ðŸ”“ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
-			UpdateGrid();
-		}
-
-		// ðŸŽ¯ 1. Change 'void' to 'async void' (standard for event handlers)
-		private async void btnStart_Click(object sender, EventArgs e)
-		{
-			// 1. SELECTION CHECKS
-			if (dataGridView1.CurrentRow == null)
-			{
-				AppendLog("[ðŸš¨ ERROR] No row is currently selected!", Color.Red);
-				return;
-			}
-
-			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
-			{
-				AppendLog("[ðŸš¨ ERROR] Invalid GameServer object!", Color.Red);
-				return;
-			}
-
-			// 2. SAFETY & RESOURCE CHECKS
-			if (!Core.Instance.PassStartSpamLock(selectedServer, out string lockMsg))
-			{
-				AppendLog(lockMsg, Color.Orange);
-				return;
-			}
-
-			// ðŸŽ¯ THE RESOURCE SAFEGUARD: Check CPU and RAM before we do anything else
-			// This respects your 5GB Windows buffer logic
-			if (!Core.Instance.PassResourceGuard(out string guardMsg))
-			{
-				AppendLog(guardMsg, Color.Red, true); // Bold red for critical resource warnings
-				MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return; // ðŸ›‘ Launch aborted
-			}
-
-			if (!Core.Instance.ValidateIntegrityAndReport(selectedServer)) return;
-			if (Core.Instance.ShouldBlockForConfig(selectedServer)) return;
-
-			// 3. UI PRE-FLIGHT: Show "Backing up" in the grid immediately
-			if (selectedServer.BackupOnStart)
-			{
-				selectedServer.Status = Core.StatusManager.GetStatus(Core.ServerState.BackingUp);
-				UpdateGrid();
-			}
-
-			// ðŸš€ 4. EXECUTION: The actual launch process
-			await Servers.Start(selectedServer, msg =>
-			{
-				this.Invoke((MethodInvoker)delegate
-				{
-					selectedServer.StartTime = DateTime.Now;
-					AppendLog(msg);
-					UpdateGrid();
-				});
-			});
-		}
-
-		private void btnStop_Click(object sender, EventArgs e)
-		{
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				// ðŸ›¡ï¸ 1. THE SPAM LOCK
-				if (!Core.Instance.PassStopSpamLock(selectedServer, out string lockMsg))
-				{
-					// If it's already stopping or dead, print the orange warning and block the click!
-					AppendLog(lockMsg, Color.Orange);
-					return;
-				}
-
-				// ðŸš€ 2. SENDS COMMAND: MainGUI -> Engine -> Servers.cs
-				// If it passes the bouncer, hand it off to the Engine to do the graceful shutdown.
-				Core.Instance.StopServerAndReport(selectedServer);
-			}
-		}
-
-		private void btnOpenConfig_Click(object sender, EventArgs e)
-		{
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
-			{
-				// One line. The AI handles the lookup, the file check, and the window.
-				Core.Instance.OpenConfigEditor(selectedServer);
-			}
-		}
-
 		private GameServer? GetSelectedServer()
 		{
-			// Checks if a row is selected and pulls the GameServer object from it
+			if (dataGridView1.CurrentRow == null)
+			{
+				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
+				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
+				return null;
+			}
+
+			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
+			{
+				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
+				return null;
+			}
+
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer server)
 			{
 				return server;
@@ -469,141 +323,223 @@ namespace Synix_Control_Panel
 			return null;
 		}
 
-		private void btnOpenFolder_Click(object sender, EventArgs e)
+		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
-			// 1. Get the server from the grid
+			// UI-specific check
+			if (isInitializing) return;
+			await Core.Instance.AddServerAndReport();
+		}
+
+		private void btnEdit_Click(object sender, EventArgs e)
+		{
+			if (isInitializing) return;
+			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "EditConfig"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+			Core.Instance.EditServerAndReport(selectedServer);
+		}
+
+		private async void btnUpdate_Click(object sender, EventArgs e)
+		{
+			if (isInitializing) return;
 			var selectedServer = GetSelectedServer();
 
-			if (selectedServer != null)
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Update"))
 			{
-				// 2. Call your function in Actions.cs
-				// Note: Make sure your Actions class has a public static Instance!
-				Core.Instance.OpenServerFolder(selectedServer);
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
-			else
+
+			await Core.Instance.UpdateServerAndReport(selectedServer, "UPDATE");
+		}
+
+		private async void btnFileValidation_Click(object sender, EventArgs e)
+		{
+			if (isInitializing) return;
+			var selectedServer = GetSelectedServer();
+
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Validate"))
 			{
-				// Safety log if they click with no server selected
-				Core.Instance.Log("[SYSTEM] Please select a server from the list first.", System.Drawing.Color.Yellow);
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
+
+			await Core.Instance.UpdateServerAndReport(selectedServer, "VALIDATE");
+		}
+
+		private void btnDelete_Click(object sender, EventArgs e)
+		{
+			if (isInitializing) return;
+			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Delete"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+			Core.Instance.DeleteServerAndReport(selectedServer);
+			dataGridView1.CurrentCell = null;
+			dataGridView1.DataSource = null;
+			dataGridView1.DataSource = serverList;
+		}
+
+		private async void btnBackup_Click(object sender, EventArgs e)
+		{
+			var selectedServer = GetSelectedServer();
+
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Backup"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+
+			await Task.Run(() =>
+			{
+				Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
+			});
+		}
+
+		private async void btnStart_Click(object sender, EventArgs e)
+		{
+			var selectedServer = GetSelectedServer();
+
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Start"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+
+			await Core.Instance.ExecuteStartSequence(selectedServer);
+		}
+
+		private async void btnStop_Click(object sender, EventArgs e)
+		{
+			var selectedServer = GetSelectedServer();
+
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Stop"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+
+			await Core.Instance.StopServerAndReport(selectedServer);
+		}
+
+		private void btnOpenConfig_Click(object sender, EventArgs e)
+		{
+			StreamerModeCheck();
+			if (isPrivacyLoading) return;
+			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Config"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+			Core.Instance.OpenConfigEditor(selectedServer);
+		}
+
+		private void btnOpenFolder_Click(object sender, EventArgs e)
+		{
+			var selectedServer = GetSelectedServer();
+			Core.Instance.OpenServerFolder(selectedServer);
 		}
 
 		private void btnOpenBackup_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow == null || !(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)) return;
-
-			string rootBackupPath = @"C:\Synix\BackupGames";
-
-			// ðŸŽ¯ These lines will no longer have CS0103 errors:
-			string cleanGame = BackupManager.GetSafeName(selectedServer.Game);
-			string cleanServer = BackupManager.GetSafeName(selectedServer.ServerName);
-
-			string fullPath = Path.Combine(rootBackupPath, cleanGame, cleanServer);
-
-			if (Directory.Exists(fullPath))
-			{
-				Process.Start("explorer.exe", fullPath);
-				AppendLog($"[SYSTEM] Opening vault: {selectedServer.ServerName}", Color.Cyan);
-			}
-			else
-			{
-				AppendLog($"[ðŸ“œ INFO] Creating directory: {fullPath}", Color.Yellow);
-				try
-				{
-					Directory.CreateDirectory(fullPath);
-					Process.Start("explorer.exe", fullPath);
-				}
-				catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}"); }
-			}
+			var selectedServer = GetSelectedServer();
+			Core.Instance.OpenBackFolder(selectedServer);
 		}
 
 		private async void btnPublicConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
-			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[ðŸ“¡ NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			AppendLog($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
-				// 1. Get the actual Public IP of the Texas machine
 				string publicIp = await Core.Instance.GetPublicIP();
-
-				// 2. Probe the Query Port over the internet (UDP)
 				bool isResponding = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
+				string ipText = "[HIDDEN]";
+
+				if (!isPrivacyLoading)
+				{
+					ipText = publicIp;
+				}
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[ðŸ›°ï¸ ONLINE] {selectedServer.ServerName} is visible at {publicIp}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[ðŸ”’ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[ðŸš¨ ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
 		private async void btnLocalConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
-			if (selectedServer == null) return;
 
-			Core.Instance.Log($"[ðŸ“¡ NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			AppendLog($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
-				// 1. Get the actual Public IP of the Texas machine
 				string localIp = await Core.Instance.GetLocalIP();
-
-				// 2. Probe the Query Port over the internet (UDP)
 				bool isResponding = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
+				string ipText = "[HIDDEN]";
+
+				if (!isPrivacyLoading)
+				{
+					ipText = localIp;
+				}
 
 				if (isResponding)
 				{
-					Core.Instance.Log($"[ðŸ›°ï¸ ONLINE] {selectedServer.ServerName} is visible at {localIp}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
 				}
 				else
 				{
-					Core.Instance.Log($"[ðŸ”’ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				Core.Instance.Log($"[ðŸš¨ ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
 			}
 		}
 
-		// Helper to make sure the button knows which server you clicked
-
 		private void btnServerActionsMenu_Click(object sender, EventArgs e)
 		{
-			// Spawns the menu at the top-left corner of the button (0,0) and forces it to open UPWARDS
 			contextMenuStrip.Show(btnServerActions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
 		}
 
 		private async void btnRestart_Click(object sender, EventArgs e)
 		{
-			if (dataGridView1.CurrentRow?.DataBoundItem is GameServer selectedServer)
+			var selectedServer = GetSelectedServer();
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Restart"))
 			{
-				await Core.Instance.ExecuteRestartSequence(selectedServer);
+				AppendLog(lockMsg, Color.Orange);
+				return;
 			}
+
+			await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
 		}
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			// Ensure the user didn't double-click the header row (index -1)
 			if (e.RowIndex >= 0)
 			{
-				// Grab the server from the row, exactly like your Stop button does
-				if (dataGridView1.Rows[e.RowIndex].DataBoundItem is GameServer selectedServer)
-				{
-					// Open the Info form and pass the server
-					Synix_Control_Panel.Help.ServerInfo infoForm = new Synix_Control_Panel.Help.ServerInfo(selectedServer);
-					infoForm.Show();
-				}
+				var selectedServer = GetSelectedServer();
+				Help.ServerInfo infoForm = new Help.ServerInfo(selectedServer);
+				infoForm.Show();
 			}
 		}
 
@@ -636,7 +572,6 @@ namespace Synix_Control_Panel
 			string currentVersion = "Unknown";
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
-			// 1. DYNAMICALLY FIND THE FILE
 			string[] resourceNames = assembly.GetManifestResourceNames();
 			string actualResourcePath = null;
 
@@ -649,7 +584,6 @@ namespace Synix_Control_Panel
 				}
 			}
 
-			// 2. READ THE FILE CONTENT
 			if (actualResourcePath != null)
 			{
 				using (Stream stream = assembly.GetManifestResourceStream(actualResourcePath))
@@ -664,7 +598,6 @@ namespace Synix_Control_Panel
 				}
 			}
 
-			// --- EVERYTHING BELOW IS YOUR ORIGINAL STYLE ---
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
 			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
@@ -677,18 +610,16 @@ namespace Synix_Control_Panel
 					client.Timeout = TimeSpan.FromSeconds(5);
 					string latestVersion = (await client.GetStringAsync(versionUrl)).Trim();
 
-					// 3. COMPARE THE TWO STRINGS
 					if (latestVersion == currentVersion)
 					{
-						lblUpdateStatus.Text = " âœ” You are running the latest version " + currentVersion;
+						lblUpdateStatus.Text = "You are running the latest version " + currentVersion;
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Green;
 					}
 					else
 					{
-						// If it's still failing, this will tell us WHY by showing what it thinks currentVersion is
-						lblUpdateStatus.Text = " âš ï¸ A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
+						lblUpdateStatus.Text = "A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
 						lblUpdateStatus.ForeColor = Color.White;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;
@@ -700,7 +631,7 @@ namespace Synix_Control_Panel
 			}
 			catch
 			{
-				lblUpdateStatus.Text = "[ðŸš¨ ERROR] Could not check for updates.";
+				lblUpdateStatus.Text = "[🚨 ERROR] Could not check for updates.";
 				lblUpdateStatus.ForeColor = Color.Black;
 				lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 				lblUpdateStatus.BackColor = Color.Red;
@@ -711,10 +642,8 @@ namespace Synix_Control_Panel
 		{
 			try
 			{
-				// The URL for your project releases or main page
 				string url = "https://github.com/ubidzz/Synix-Control-Panel/releases";
 
-				// This is the Buffalo-safe way to open a browser in .NET 6/7/8+
 				ProcessStartInfo psi = new ProcessStartInfo
 				{
 					FileName = url,
@@ -724,8 +653,43 @@ namespace Synix_Control_Panel
 			}
 			catch (Exception ex)
 			{
-				// If something goes wrong, log it so you can see it in your video
-				AppendLog($"[ðŸš¨ ERROR] Could not open browser: {ex.Message}", Color.Red);
+				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
+			}
+		}
+		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e)
+		{
+			isPrivacyLoading = chkPrivacyMode.Checked;
+
+			Properties.Settings.Default.PrivacyMode = chkPrivacyMode.Checked;
+			Properties.Settings.Default.Save();
+
+			if (chkPrivacyMode.Checked)
+			{
+				lblPublicIP.Text = "Public IP: [HIDDEN]";
+				lblLocalIP1.Text = "LAN IP: [HIDDEN]";
+			}
+			await LoadNetworkInfo();
+		}
+
+		private void btnExportBatch_Click(object sender, EventArgs e)
+		{
+			if (isInitializing) return;
+
+			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
+
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Export"))
+			{
+				AppendLog(lockMsg, Color.Orange);
+				return;
+			}
+
+			bool success = Core.Instance.ExportServerToBatch(selectedServer);
+
+			if (success)
+			{
+				MessageBox.Show($"Batch file generated successfully!\n\nSaved directly to:\n{selectedServer.InstallPath}",
+								"Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 	}

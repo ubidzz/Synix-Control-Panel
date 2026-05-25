@@ -1,12 +1,15 @@
-﻿// Copyright (c) 2026 ubidzz. All Rights Reserved.
-//
-// This file is part of Synix Control Panel.
-//
-// This code is provided for transparent viewing and personal use only.
-// Unauthorized distribution, public modification, or commercial
-// use of this source code or the compiled executable is strictly
-// prohibited. Please refer to the LICENSE file in the root
-// directory for full terms.
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.Database;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -148,69 +151,54 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
-		public bool PassBackupSpamLock(GameServer server, out string lockMessage)
+		public bool PassSpamLock(GameServer server, out string lockMessage, string serverTrigger)
 		{
 			lockMessage = string.Empty;
 			string status = server.Status ?? "";
 
-			// 🎯 Define the states where backup is FORBIDDEN
-			bool isStarting = string.Equals(status, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);
-			bool isRunning = string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase);
-			bool isStopping = string.Equals(status, StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase);
-			bool isInstalling = string.Equals(status, StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase);
-			bool isUpdating = string.Equals(status, StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase);
-			bool isBackingUp = string.Equals(status, StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase);
+			// 1. Define states ONCE
+			bool isTransitioning = status == StatusManager.GetStatus(ServerState.Starting) ||
+								   status == StatusManager.GetStatus(ServerState.Stopping) ||
+								   status == StatusManager.GetStatus(ServerState.Installing) ||
+								   status == StatusManager.GetStatus(ServerState.Updating) ||
+								   status == StatusManager.GetStatus(ServerState.BackingUp) ||
+								   status == StatusManager.GetStatus(ServerState.Export) ||
+								   status == StatusManager.GetStatus(ServerState.Validating);
 
-			// 1. Check if the server is active (Must be Stopped or Crashed to backup)
-			if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp)
+			bool isRunning = status == StatusManager.GetStatus(ServerState.Running);
+			bool isStopped = status == StatusManager.GetStatus(ServerState.Stopped);
+			bool isCrashed = status == StatusManager.GetStatus(ServerState.Crashed);
+
+			// 2. Evaluate based on trigger
+			bool isLocked = false;
+
+			switch (serverTrigger)
 			{
-				lockMessage = $"[LOCKED] Cannot backup. {server.ServerName} is currently {status}.";
+				case "Backup":
+				case "Delete":
+				case "EditConfig":
+				case "Validate":
+				case "Config":
+				case "Update":
+				case "Start":
+				case "Export":
+					isLocked = isTransitioning || isRunning;
+					break;
+				case "Restart":
+					isLocked = isTransitioning;
+					break;
+				case "Stop":
+					isLocked = isTransitioning || isStopped || isCrashed;
+					break;
+			}
+
+			if (isLocked)
+			{
+				lockMessage = $"[🔒 LOCKED] Cannot {serverTrigger.ToLower()}. {server.ServerName} is currently {status}.";
 				return false;
 			}
 
 			return true;
-		}
-
-		public bool PassStartSpamLock(GameServer server, out string lockMessage)
-		{
-			lockMessage = string.Empty;
-			string status = server.Status ?? "";
-
-			bool isStarting = string.Equals(status, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);
-			bool isRunning = string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase);
-			bool isStopping = string.Equals(status, StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase);
-			bool isInstalling = string.Equals(status, StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase);
-			bool isUpdating = string.Equals(status, StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase);
-			bool isBackingUp = string.Equals(status, StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase);
-
-			if (isStarting || isRunning || isStopping || isInstalling || isUpdating || isBackingUp)
-			{
-				lockMessage = $"[🔒 LOCKED] Cannot start. {server.ServerName} is currently {status}.";
-				return false;
-			}
-
-			return true;
-		}
-
-		public bool PassStopSpamLock(GameServer server, out string lockMessage)
-		{
-			lockMessage = string.Empty;
-			string status = server.Status ?? "";
-
-			bool isStopping = string.Equals(status, StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase);
-			bool isStopped = string.Equals(status, StatusManager.GetStatus(ServerState.Stopped), StringComparison.OrdinalIgnoreCase);
-			bool isCrashed = string.Equals(status, StatusManager.GetStatus(ServerState.Crashed), StringComparison.OrdinalIgnoreCase);
-			bool isInstalling = string.Equals(status, StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase);
-			bool isUpdating = string.Equals(status, StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase);
-			bool isBackingUp = string.Equals(status, StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase);
-
-			if (isStopping || isStopped || isCrashed || isInstalling || isUpdating || isBackingUp)
-			{
-				lockMessage = $"[🔒 LOCKED] Cannot stop. {server.ServerName} is currently {status}.";
-				return false;
-			}
-
-			return true; // Safe to stop
 		}
 
 		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)

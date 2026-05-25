@@ -24,7 +24,7 @@ namespace Synix_Control_Panel.FileFolderHandler
 
 		public static class ServerFolder
 		{
-			public static void Delete(GameServer server, Action<string> logCallback)
+			public static void Delete(GameServer server, Action<string, Color> logCallback)
 			{
 				try
 				{
@@ -40,7 +40,7 @@ namespace Synix_Control_Panel.FileFolderHandler
 					MainGUI.serverList.Remove(server);
 					FileHandler.SaveServers();
 
-					logCallback?.Invoke($"[CLEANUP] Deleted server '{server.ServerName}' and all files at {server.InstallPath}");
+					logCallback?.Invoke($"[CLEANUP] Deleted server '{server.ServerName}' and all files at {server.InstallPath}", Color.Yellow);
 				}
 				catch (Exception ex)
 				{

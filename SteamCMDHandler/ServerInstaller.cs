@@ -19,6 +19,7 @@ namespace Synix_Control_Panel.SteamCMDHandler
 		public static int Install(string installPath, string appId, Action<string> logCallback, Action<int>? onPidStarted = null)
 		{
 			bool hasInternalError = false;
+			string lastLoggedLine = "";
 
 			ProcessStartInfo startInfo = new ProcessStartInfo
 			{
@@ -32,32 +33,44 @@ namespace Synix_Control_Panel.SteamCMDHandler
 
 			using Process process = new Process { StartInfo = startInfo };
 
+			// 🎯 NATIVE ASYNC EVENT HANDLER (Replaces the 1-character loop)
+			DataReceivedEventHandler outputHandler = (sender, e) =>
+			{
+				string line = e.Data;
+				if (!string.IsNullOrWhiteSpace(line))
+				{
+					// Check for errors
+					if (line.Contains("ERROR!") ||
+						line.Contains("subscription", StringComparison.OrdinalIgnoreCase) ||
+						line.Contains("AppID not found", StringComparison.OrdinalIgnoreCase))
+					{
+						hasInternalError = true;
+					}
+
+					// SteamCMD "Dump" Filter: Prevents spamming the exact same line
+					if (line != lastLoggedLine)
+					{
+						logCallback?.Invoke(line.Trim());
+						lastLoggedLine = line;
+					}
+				}
+			};
+
+			// Wire up the events
+			process.OutputDataReceived += outputHandler;
+			process.ErrorDataReceived += outputHandler;
+
 			try
 			{
 				process.Start();
-
-				// 🛡️ Immediately report the PID back to the manager
 				onPidStarted?.Invoke(process.Id);
 
-				// 🛡️ BULLETPROOF ERROR CHECKING
-				Action<string> checkForErrors = (msg) =>
-				{
-					// OrdinalIgnoreCase catches "No Subscription" even if it's "no subscription"
-					bool isSubError = msg.Contains("subscription", StringComparison.OrdinalIgnoreCase);
-					bool isAppError = msg.Contains("AppID not found", StringComparison.OrdinalIgnoreCase);
+				// Start the asynchronous reading pipeline
+				process.BeginOutputReadLine();
+				process.BeginErrorReadLine();
 
-					if (msg.Contains("ERROR!") || isSubError || isAppError)
-						hasInternalError = true;
-
-					logCallback?.Invoke(msg);
-				};
-
-				// 🚀 REAL-TIME OUTPUT HANDLING
-				Task outputTask = ReadStreamAsync(process.StandardOutput, checkForErrors);
-				Task errorTask = ReadStreamAsync(process.StandardError, checkForErrors);
-
+				// Wait for SteamCMD to finish
 				process.WaitForExit();
-				Task.WaitAll(outputTask, errorTask);
 
 				return hasInternalError ? 99 : process.ExitCode;
 			}
@@ -65,37 +78,6 @@ namespace Synix_Control_Panel.SteamCMDHandler
 			{
 				logCallback?.Invoke($"[CRITICAL] Launcher Error: {ex.Message}");
 				return -1;
-			}
-		}
-
-		private static async Task ReadStreamAsync(StreamReader stream, Action<string> logCallback)
-		{
-			char[] buffer = new char[1];
-			var lineBuilder = new System.Text.StringBuilder();
-			string lastLoggedLine = "";
-
-			while (await stream.ReadAsync(buffer, 0, 1) > 0)
-			{
-				char c = buffer[0];
-				if (c == '\r' || c == '\n')
-				{
-					string line = lineBuilder.ToString().Trim();
-					if (!string.IsNullOrWhiteSpace(line))
-					{
-						// 🛡️ THE "DUMP" FILTER: Skip logging if the line is exactly the same as the last
-						// This prevents 50 identical lines with the same timestamp.
-						if (line != lastLoggedLine)
-						{
-							logCallback(line);
-							lastLoggedLine = line;
-						}
-					}
-					lineBuilder.Clear();
-				}
-				else
-				{
-					lineBuilder.Append(c);
-				}
 			}
 		}
 
