@@ -85,39 +85,38 @@ namespace Synix_Control_Panel.ServerHandler
 				string targetId = dbEntry.AppID;
 				string invokedId = targetId;
 
-				string appidPath = "";
+				// 1. FAST CHECK: Look in the two exact places it belongs first (0ms operation)
+				string rootAppIdPath = Path.Combine(server.InstallPath, "steam_appid.txt");
+				string binAppIdPath = Path.Combine(binDir, "steam_appid.txt");
+				string appidPath = rootAppIdPath; // Default fallback
 
-				try
+				if (File.Exists(rootAppIdPath))
 				{
-					// This creates a "scanner" that looks through every single subfolder
-					var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
+					appidPath = rootAppIdPath;
+				}
+				else if (File.Exists(binAppIdPath))
+				{
+					appidPath = binAppIdPath;
+				}
+				else
+				{
+					// 2. LAST RESORT: Only run the heavy recursive scan if it's completely missing
+					try
 					{
-						// Keep looking through every subfolder
-						RecurseSubdirectories = true,
+						var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
+						{
+							RecurseSubdirectories = true,
+							IgnoreInaccessible = true,
+							MaxRecursionDepth = 5, // Limit to 5 folders deep so it doesn't hang on 200k files
+							AttributesToSkip = FileAttributes.ReparsePoint
+						});
 
-						// If it hits a folder it can't open (locked/protected), skip it and keep going
-						IgnoreInaccessible = true,
-
-						// Use the maximum possible depth (effectively unlimited)
-						MaxRecursionDepth = int.MaxValue,
-
-						// Skip things like symlinks to avoid getting stuck in a loop
-						AttributesToSkip = FileAttributes.ReparsePoint
-					});
-
-					// Find the first one that exists
-					appidPath = scanner.FirstOrDefault();
-				}
-				catch
-				{
-					// If something goes catastrophic, fallback to the root
-					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
-				}
-
-				// If it's still empty, it truly isn't in that install folder
-				if (string.IsNullOrEmpty(appidPath))
-				{
-					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
+						appidPath = scanner.FirstOrDefault() ?? rootAppIdPath;
+					}
+					catch
+					{
+						appidPath = rootAppIdPath;
+					}
 				}
 
 				// 🎯 THE INVOKE: Pull the ID from the file for {steamAppID}
@@ -126,6 +125,10 @@ namespace Synix_Control_Panel.ServerHandler
 					try
 					{
 						string fileContent = File.ReadAllText(appidPath).Trim();
+
+						// Safety: If SteamCMD adds weird invisible characters or newlines, strictly grab the first line
+						fileContent = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim() ?? "";
+
 						if (!string.IsNullOrWhiteSpace(fileContent))
 						{
 							invokedId = fileContent;

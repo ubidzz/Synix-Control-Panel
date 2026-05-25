@@ -281,7 +281,7 @@ namespace Synix_Control_Panel.Database
 			},
 			new() {
 				Game = "Abiotic Factor",
-				AppID = "2816220",
+				AppID = "2857200",
 				ExeName = @"AbioticFactor\Binaries\Win64\AbioticFactorServer-Win64-Shipping.exe",
 				RequiredArgs = "{map}?Listen -log -MaxPlayers={MaxPlayers} -Port={port} -QueryPort={query} -ServerPassword=\"{pass}\" -SteamAppId={steamAppID}",
 				RelativeConfigPath = @"AbioticFactor\Saved\Config\WindowsServer\GameUserSettings.ini",

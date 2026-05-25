@@ -12,6 +12,7 @@
 // ============================================================================
 using System.Windows.Forms.DataVisualization.Charting;
 using static Synix_Control_Panel.SynixEngine.Core;
+using System.Drawing.Drawing2D;
 
 namespace Synix_Control_Panel.Design
 {
@@ -39,7 +40,8 @@ namespace Synix_Control_Panel.Design
 			if (dgv.Columns.Contains("colGame")) dgv.Columns["colGame"].DataPropertyName = "Game";
 			if (dgv.Columns.Contains("colPort")) dgv.Columns["colPort"].DataPropertyName = "Port";
 			if (dgv.Columns.Contains("colStatus")) dgv.Columns["colStatus"].DataPropertyName = "Status";
-			dgv.Columns["PlayerCountDisplay"].DefaultCellStyle.ForeColor = Color.Cyan;
+			//if (dgv.Columns.Contains("colPlayerCount")) dgv.Columns["colPlayerCount"].DataPropertyName = "PlayerCount";
+			//if (dgv.Columns.Contains("colUptime")) dgv.Columns["colUptime"].DataPropertyName = "Uptime";
 
 			// Header Style (Kills the blue Game column)
 			dgv.EnableHeadersVisualStyles = false;
@@ -57,8 +59,42 @@ namespace Synix_Control_Panel.Design
 			}
 		}
 
+		public static void ApplyRoundedCorners(DataGridView dgv, int radius)
+		{
+			// Apply the rounded corners immediately
+			UpdateGridRegion(dgv, radius);
+
+			// Ensure the rounded corners recalculate if the form is resized
+			dgv.Resize += (s, e) => UpdateGridRegion(dgv, radius);
+		}
+
+		private static void UpdateGridRegion(DataGridView dgv, int radius)
+		{
+			if (dgv == null || dgv.Width == 0 || dgv.Height == 0) return;
+
+			int diameter = radius * 2;
+			GraphicsPath path = new GraphicsPath();
+
+			path.StartFigure();
+			// Top Left Corner
+			path.AddArc(new Rectangle(0, 0, diameter, diameter), 180, 90);
+			// Top Right Corner
+			path.AddArc(new Rectangle(dgv.Width - diameter, 0, diameter, diameter), 270, 90);
+			// Bottom Right Corner
+			path.AddArc(new Rectangle(dgv.Width - diameter, dgv.Height - diameter, diameter, diameter), 0, 90);
+			// Bottom Left Corner
+			path.AddArc(new Rectangle(0, dgv.Height - diameter, diameter, diameter), 90, 90);
+			path.CloseFigure();
+
+			// Apply the new region and dispose of the old one to prevent memory leaks
+			Region oldRegion = dgv.Region;
+			dgv.Region = new Region(path);
+			oldRegion?.Dispose();
+		}
+
 		public static void ApplyTransparentTheme(DataGridView dgv)
 		{
+			dgv.RowHeadersVisible = false;
 			dgv.BackgroundColor = BackgroundBlack;
 			dgv.BorderStyle = BorderStyle.None;
 
@@ -70,6 +106,47 @@ namespace Synix_Control_Panel.Design
 
 			dgv.GridColor = Color.FromArgb(45, 45, 45);
 			dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+			// Add this line to trigger the custom border drawing
+			dgv.RowPostPaint -= Dgv_PaintGlowingSelection; // Prevent multiple subscriptions
+			dgv.RowPostPaint += Dgv_PaintGlowingSelection;
+		}
+
+		private static void Dgv_PaintGlowingSelection(object sender, DataGridViewRowPostPaintEventArgs e)
+		{
+			DataGridView dgv = sender as DataGridView;
+			if (dgv == null) return;
+
+			if ((e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected)
+			{
+				// 1. Get the exact width of the data columns, skipping the row header
+				int startX = dgv.RowHeadersVisible ? dgv.RowHeadersWidth : 0;
+				int width = dgv.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) - dgv.HorizontalScrollingOffset;
+
+				// 2. Define the bounds. We inset by 2 pixels so the thickest pen doesn't get clipped.
+				Rectangle bounds = new Rectangle(startX + 2, e.RowBounds.Y + 2, width - 5, e.RowBounds.Height - 5);
+
+				Color neonColor = Color.DarkCyan; // The color of the glow
+
+				// LAYER 1: The wide, faint blur (Width 5)
+				using (Pen outerGlow = new Pen(Color.FromArgb(40, neonColor), 5))
+				{
+					e.Graphics.DrawRectangle(outerGlow, bounds);
+				}
+
+				// LAYER 2: The tighter, brighter blur (Width 3)
+				using (Pen innerGlow = new Pen(Color.FromArgb(100, neonColor), 3))
+				{
+					e.Graphics.DrawRectangle(innerGlow, bounds);
+				}
+
+				// LAYER 3: The intense hot core (Width 1)
+				// Using White makes it look like actual glowing gas, but you can change this back to Lime if you prefer.
+				using (Pen corePen = new Pen(Color.White, 1))
+				{
+					e.Graphics.DrawRectangle(corePen, bounds);
+				}
+			}
 		}
 
 		public static void PaintTransparentRows(DataGridView dgv, DataGridViewCellPaintingEventArgs e)

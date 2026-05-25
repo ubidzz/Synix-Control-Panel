@@ -412,14 +412,14 @@ namespace Synix_Control_Panel.SynixEngine
 				Core.Instance.UpdateGridStatus();
 			}
 
-			if (stopServer)
+			if (stopServer && server.Status != StatusManager.GetStatus(ServerState.Stopping))
 			{
 				Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
 
 				await StopServerAndReport(server);
 			}
 
-			await Task.Delay(4000);
+			await Task.Delay(1000);
 
 			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 			{

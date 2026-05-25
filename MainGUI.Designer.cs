@@ -34,13 +34,6 @@
 			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
-			colGame = new DataGridViewTextBoxColumn();
-			colName = new DataGridViewTextBoxColumn();
-			colPort = new DataGridViewTextBoxColumn();
-			colQueryPort = new DataGridViewTextBoxColumn();
-			PlayerCountDisplay = new DataGridViewTextBoxColumn();
-			UptimeDisplay = new DataGridViewTextBoxColumn();
-			colStatus = new DataGridViewTextBoxColumn();
 			rtbLog = new RichTextBox();
 			btnStart = new Button();
 			btnStop = new Button();
@@ -59,8 +52,8 @@
 			toolStripSeparator5 = new ToolStripSeparator();
 			updateServerToolStripMenuItem = new ToolStripMenuItem();
 			fileValidationToolStripMenuItem = new ToolStripMenuItem();
-			backupServerToolStripMenuItem = new ToolStripMenuItem();
 			btnExportBatch = new ToolStripMenuItem();
+			backupServerToolStripMenuItem = new ToolStripMenuItem();
 			toolStripSeparator3 = new ToolStripSeparator();
 			connectionTestToolStripMenuItem = new ToolStripMenuItem();
 			connectionLocalTestToolStripMenuItem = new ToolStripMenuItem();
@@ -76,6 +69,13 @@
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Button();
 			chkPrivacyMode = new CheckBox();
+			colGame = new DataGridViewTextBoxColumn();
+			colName = new DataGridViewTextBoxColumn();
+			colPort = new DataGridViewTextBoxColumn();
+			colQueryPort = new DataGridViewTextBoxColumn();
+			colPlayerCount = new DataGridViewTextBoxColumn();
+			colUptime = new DataGridViewTextBoxColumn();
+			colStatus = new DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -88,7 +88,7 @@
 			dataGridView1.AllowUserToDeleteRows = false;
 			dataGridView1.BorderStyle = BorderStyle.None;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, PlayerCountDisplay, UptimeDisplay, colStatus });
+			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPlayerCount, colUptime, colStatus });
 			dataGridView1.Location = new Point(12, 140);
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
@@ -97,61 +97,6 @@
 			dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.CellPainting += dataGridView1_CellPainting;
-			// 
-			// colGame
-			// 
-			colGame.DataPropertyName = "Game";
-			colGame.HeaderText = "Game";
-			colGame.Name = "colGame";
-			colGame.ReadOnly = true;
-			colGame.Width = 200;
-			// 
-			// colName
-			// 
-			colName.DataPropertyName = "ServerName";
-			colName.HeaderText = "Server Name";
-			colName.Name = "colName";
-			colName.ReadOnly = true;
-			colName.Width = 220;
-			// 
-			// colPort
-			// 
-			colPort.DataPropertyName = "Port";
-			colPort.HeaderText = "Port";
-			colPort.Name = "colPort";
-			colPort.ReadOnly = true;
-			colPort.Width = 80;
-			// 
-			// colQueryPort
-			// 
-			colQueryPort.DataPropertyName = "QueryPort";
-			colQueryPort.HeaderText = "Query Port";
-			colQueryPort.Name = "colQueryPort";
-			colQueryPort.ReadOnly = true;
-			colQueryPort.Width = 80;
-			// 
-			// PlayerCountDisplay
-			// 
-			PlayerCountDisplay.DataPropertyName = "PlayerCountDisplay";
-			PlayerCountDisplay.HeaderText = "Players";
-			PlayerCountDisplay.Name = "PlayerCountDisplay";
-			PlayerCountDisplay.ReadOnly = true;
-			PlayerCountDisplay.Width = 70;
-			// 
-			// UptimeDisplay
-			// 
-			UptimeDisplay.DataPropertyName = "UptimeDisplay";
-			UptimeDisplay.HeaderText = "UPTIME";
-			UptimeDisplay.Name = "UptimeDisplay";
-			UptimeDisplay.ReadOnly = true;
-			// 
-			// colStatus
-			// 
-			colStatus.DataPropertyName = "Status";
-			colStatus.HeaderText = "Status";
-			colStatus.Name = "colStatus";
-			colStatus.ReadOnly = true;
-			colStatus.Width = 90;
 			// 
 			// rtbLog
 			// 
@@ -246,12 +191,12 @@
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, openServerConfig, installServer, toolStripSeparator1 });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(181, 98);
+			contextMenuStrip.Size = new Size(152, 76);
 			// 
 			// btnHelp
 			// 
 			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(180, 22);
+			btnHelp.Size = new Size(151, 22);
 			btnHelp.Text = "Help";
 			btnHelp.Click += btnHelp_Click;
 			// 
@@ -259,7 +204,7 @@
 			// 
 			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(180, 22);
+			openServerConfig.Size = new Size(151, 22);
 			openServerConfig.Text = "Server Options";
 			// 
 			// openServerFolderToolStripMenuItem
@@ -314,19 +259,19 @@
 			fileValidationToolStripMenuItem.Text = "Game Validation";
 			fileValidationToolStripMenuItem.Click += btnFileValidation_Click;
 			// 
-			// backupServerToolStripMenuItem
-			// 
-			backupServerToolStripMenuItem.Name = "backupServerToolStripMenuItem";
-			backupServerToolStripMenuItem.Size = new Size(196, 22);
-			backupServerToolStripMenuItem.Text = "Backup Server";
-			backupServerToolStripMenuItem.Click += btnBackup_Click;
-			// 
 			// btnExportBatch
 			// 
 			btnExportBatch.Name = "btnExportBatch";
 			btnExportBatch.Size = new Size(196, 22);
 			btnExportBatch.Text = "Export to Batch File";
 			btnExportBatch.Click += btnExportBatch_Click;
+			// 
+			// backupServerToolStripMenuItem
+			// 
+			backupServerToolStripMenuItem.Name = "backupServerToolStripMenuItem";
+			backupServerToolStripMenuItem.Size = new Size(196, 22);
+			backupServerToolStripMenuItem.Text = "Backup Server";
+			backupServerToolStripMenuItem.Click += btnBackup_Click;
 			// 
 			// toolStripSeparator3
 			// 
@@ -362,14 +307,14 @@
 			// installServer
 			// 
 			installServer.Name = "installServer";
-			installServer.Size = new Size(180, 22);
+			installServer.Size = new Size(151, 22);
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new Size(177, 6);
+			toolStripSeparator1.Size = new Size(148, 6);
 			// 
 			// btnServerActions
 			// 
@@ -465,6 +410,61 @@
 			chkPrivacyMode.UseVisualStyleBackColor = true;
 			chkPrivacyMode.CheckedChanged += chkPrivacyMode_CheckedChanged;
 			// 
+			// colGame
+			// 
+			colGame.DataPropertyName = "Game";
+			colGame.HeaderText = "Game";
+			colGame.Name = "colGame";
+			colGame.ReadOnly = true;
+			colGame.Width = 200;
+			// 
+			// colName
+			// 
+			colName.DataPropertyName = "ServerName";
+			colName.HeaderText = "Server Name";
+			colName.Name = "colName";
+			colName.ReadOnly = true;
+			colName.Width = 260;
+			// 
+			// colPort
+			// 
+			colPort.DataPropertyName = "Port";
+			colPort.HeaderText = "Port";
+			colPort.Name = "colPort";
+			colPort.ReadOnly = true;
+			colPort.Width = 80;
+			// 
+			// colQueryPort
+			// 
+			colQueryPort.DataPropertyName = "QueryPort";
+			colQueryPort.HeaderText = "Query Port";
+			colQueryPort.Name = "colQueryPort";
+			colQueryPort.ReadOnly = true;
+			colQueryPort.Width = 80;
+			// 
+			// colPlayerCount
+			// 
+			colPlayerCount.DataPropertyName = "PlayerCount";
+			colPlayerCount.HeaderText = "Players";
+			colPlayerCount.Name = "colPlayerCount";
+			colPlayerCount.ReadOnly = true;
+			colPlayerCount.Width = 70;
+			// 
+			// colUptime
+			// 
+			colUptime.DataPropertyName = "Uptime";
+			colUptime.HeaderText = "UPTIME";
+			colUptime.Name = "colUptime";
+			colUptime.ReadOnly = true;
+			// 
+			// colStatus
+			// 
+			colStatus.DataPropertyName = "Status";
+			colStatus.HeaderText = "Status";
+			colStatus.Name = "colStatus";
+			colStatus.ReadOnly = true;
+			colStatus.Width = 90;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -547,8 +547,8 @@
 		private DataGridViewTextBoxColumn colName;
 		private DataGridViewTextBoxColumn colPort;
 		private DataGridViewTextBoxColumn colQueryPort;
-		private DataGridViewTextBoxColumn PlayerCountDisplay;
-		private DataGridViewTextBoxColumn UptimeDisplay;
+		private DataGridViewTextBoxColumn colPlayerCount;
+		private DataGridViewTextBoxColumn colUptime;
 		private DataGridViewTextBoxColumn colStatus;
 	}
 }

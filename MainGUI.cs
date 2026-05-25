@@ -45,6 +45,7 @@ namespace Synix_Control_Panel
 			FileHandler.LoadServers();
 			_ = Core.Instance;
 			GridStyler.DarkTheme(dataGridView1);
+			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			UIStyleHelper.InitializeToggles(this);
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
