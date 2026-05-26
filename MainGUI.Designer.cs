@@ -34,6 +34,13 @@
 			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
+			colGame = new DataGridViewTextBoxColumn();
+			colName = new DataGridViewTextBoxColumn();
+			colPort = new DataGridViewTextBoxColumn();
+			colQueryPort = new DataGridViewTextBoxColumn();
+			colPlayerCount = new DataGridViewTextBoxColumn();
+			colUptime = new DataGridViewTextBoxColumn();
+			colStatus = new DataGridViewTextBoxColumn();
 			rtbLog = new RichTextBox();
 			btnStart = new Button();
 			btnStop = new Button();
@@ -69,13 +76,10 @@
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Button();
 			chkPrivacyMode = new CheckBox();
-			colGame = new DataGridViewTextBoxColumn();
-			colName = new DataGridViewTextBoxColumn();
-			colPort = new DataGridViewTextBoxColumn();
-			colQueryPort = new DataGridViewTextBoxColumn();
-			colPlayerCount = new DataGridViewTextBoxColumn();
-			colUptime = new DataGridViewTextBoxColumn();
-			colStatus = new DataGridViewTextBoxColumn();
+			btnClose = new Button();
+			btnMinimize = new Button();
+			btnDiscord = new Button();
+			btnGithub = new Button();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -89,23 +93,80 @@
 			dataGridView1.BorderStyle = BorderStyle.None;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPlayerCount, colUptime, colStatus });
-			dataGridView1.Location = new Point(12, 140);
+			dataGridView1.Location = new Point(12, 171);
+			dataGridView1.MultiSelect = false;
 			dataGridView1.Name = "dataGridView1";
 			dataGridView1.ReadOnly = true;
-			dataGridView1.Size = new Size(881, 442);
+			dataGridView1.Size = new Size(881, 538);
 			dataGridView1.TabIndex = 0;
 			dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.CellPainting += dataGridView1_CellPainting;
 			// 
+			// colGame
+			// 
+			colGame.DataPropertyName = "Game";
+			colGame.HeaderText = "Game";
+			colGame.Name = "colGame";
+			colGame.ReadOnly = true;
+			colGame.Width = 200;
+			// 
+			// colName
+			// 
+			colName.DataPropertyName = "ServerName";
+			colName.HeaderText = "Server Name";
+			colName.Name = "colName";
+			colName.ReadOnly = true;
+			colName.Width = 280;
+			// 
+			// colPort
+			// 
+			colPort.DataPropertyName = "Port";
+			colPort.HeaderText = "Port";
+			colPort.Name = "colPort";
+			colPort.ReadOnly = true;
+			colPort.Width = 80;
+			// 
+			// colQueryPort
+			// 
+			colQueryPort.DataPropertyName = "QueryPort";
+			colQueryPort.HeaderText = "Query Port";
+			colQueryPort.Name = "colQueryPort";
+			colQueryPort.ReadOnly = true;
+			colQueryPort.Width = 80;
+			// 
+			// colPlayerCount
+			// 
+			colPlayerCount.DataPropertyName = "PlayerCount";
+			colPlayerCount.HeaderText = "Players";
+			colPlayerCount.Name = "colPlayerCount";
+			colPlayerCount.ReadOnly = true;
+			colPlayerCount.Width = 70;
+			// 
+			// colUptime
+			// 
+			colUptime.DataPropertyName = "Uptime";
+			colUptime.HeaderText = "UPTIME";
+			colUptime.Name = "colUptime";
+			colUptime.ReadOnly = true;
+			colUptime.Width = 80;
+			// 
+			// colStatus
+			// 
+			colStatus.DataPropertyName = "Status";
+			colStatus.HeaderText = "Status";
+			colStatus.Name = "colStatus";
+			colStatus.ReadOnly = true;
+			colStatus.Width = 90;
+			// 
 			// rtbLog
 			// 
 			rtbLog.BackColor = SystemColors.ActiveCaptionText;
 			rtbLog.ForeColor = Color.Lime;
-			rtbLog.Location = new Point(899, 12);
+			rtbLog.Location = new Point(899, 45);
 			rtbLog.Name = "rtbLog";
 			rtbLog.ReadOnly = true;
-			rtbLog.Size = new Size(330, 605);
+			rtbLog.Size = new Size(330, 712);
 			rtbLog.TabIndex = 6;
 			rtbLog.Text = "";
 			// 
@@ -114,9 +175,9 @@
 			btnStart.Cursor = Cursors.Hand;
 			btnStart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStart.ForeColor = Color.Green;
-			btnStart.Location = new Point(574, 589);
+			btnStart.Location = new Point(574, 726);
 			btnStart.Name = "btnStart";
-			btnStart.Size = new Size(101, 28);
+			btnStart.Size = new Size(101, 32);
 			btnStart.TabIndex = 8;
 			btnStart.Text = "🚀 Start";
 			btnStart.UseVisualStyleBackColor = true;
@@ -127,9 +188,9 @@
 			btnStop.Cursor = Cursors.Hand;
 			btnStop.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnStop.ForeColor = Color.Red;
-			btnStop.Location = new Point(788, 589);
+			btnStop.Location = new Point(788, 726);
 			btnStop.Name = "btnStop";
-			btnStop.Size = new Size(101, 28);
+			btnStop.Size = new Size(101, 32);
 			btnStop.TabIndex = 9;
 			btnStop.Text = "❌ Stop";
 			btnStop.UseVisualStyleBackColor = true;
@@ -139,12 +200,13 @@
 			// 
 			logo.BackColor = Color.Transparent;
 			logo.Image = Properties.Resources.synix_logo;
-			logo.Location = new Point(-10, -44);
+			logo.Location = new Point(-10, -70);
 			logo.Name = "logo";
-			logo.Size = new Size(321, 189);
+			logo.Size = new Size(353, 270);
 			logo.SizeMode = PictureBoxSizeMode.StretchImage;
 			logo.TabIndex = 10;
 			logo.TabStop = false;
+			logo.MouseDown += Form_Drag_MouseDown;
 			// 
 			// chartHeartbeat
 			// 
@@ -153,13 +215,13 @@
 			chartHeartbeat.Cursor = Cursors.Hand;
 			legend1.Name = "Legend1";
 			chartHeartbeat.Legends.Add(legend1);
-			chartHeartbeat.Location = new Point(505, 28);
+			chartHeartbeat.Location = new Point(505, 30);
 			chartHeartbeat.Name = "chartHeartbeat";
 			series1.ChartArea = "ChartArea1";
 			series1.Legend = "Legend1";
 			series1.Name = "Series1";
 			chartHeartbeat.Series.Add(series1);
-			chartHeartbeat.Size = new Size(384, 73);
+			chartHeartbeat.Size = new Size(388, 98);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
 			chartHeartbeat.Click += ResourceGraph_Click;
@@ -169,9 +231,9 @@
 			lblTotalRam.AutoSize = true;
 			lblTotalRam.BackColor = Color.Transparent;
 			lblTotalRam.ForeColor = Color.Fuchsia;
-			lblTotalRam.Location = new Point(694, 9);
+			lblTotalRam.Location = new Point(681, 9);
 			lblTotalRam.Name = "lblTotalRam";
-			lblTotalRam.Size = new Size(33, 15);
+			lblTotalRam.Size = new Size(36, 17);
 			lblTotalRam.TabIndex = 12;
 			lblTotalRam.Text = "RAM";
 			// 
@@ -181,7 +243,7 @@
 			lblTotalCpu.BackColor = Color.Transparent;
 			lblTotalCpu.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblTotalCpu.ForeColor = Color.DarkCyan;
-			lblTotalCpu.Location = new Point(522, 9);
+			lblTotalCpu.Location = new Point(522, 11);
 			lblTotalCpu.Name = "lblTotalCpu";
 			lblTotalCpu.Size = new Size(30, 15);
 			lblTotalCpu.TabIndex = 13;
@@ -320,9 +382,9 @@
 			// 
 			btnServerActions.Cursor = Cursors.Hand;
 			btnServerActions.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnServerActions.Location = new Point(12, 590);
+			btnServerActions.Location = new Point(12, 724);
 			btnServerActions.Name = "btnServerActions";
-			btnServerActions.Size = new Size(142, 28);
+			btnServerActions.Size = new Size(142, 32);
 			btnServerActions.TabIndex = 16;
 			btnServerActions.Text = "🛠️ Server Actions";
 			btnServerActions.UseVisualStyleBackColor = true;
@@ -340,7 +402,7 @@
 			lblLocalIP1.Cursor = Cursors.Hand;
 			lblLocalIP1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblLocalIP1.ForeColor = Color.Lime;
-			lblLocalIP1.Location = new Point(186, 605);
+			lblLocalIP1.Location = new Point(177, 746);
 			lblLocalIP1.Name = "lblLocalIP1";
 			lblLocalIP1.Size = new Size(56, 17);
 			lblLocalIP1.TabIndex = 18;
@@ -354,7 +416,7 @@
 			lblPublicIP.Cursor = Cursors.Hand;
 			lblPublicIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblPublicIP.ForeColor = Color.Lime;
-			lblPublicIP.Location = new Point(186, 585);
+			lblPublicIP.Location = new Point(177, 724);
 			lblPublicIP.Name = "lblPublicIP";
 			lblPublicIP.Size = new Size(62, 17);
 			lblPublicIP.TabIndex = 19;
@@ -366,9 +428,9 @@
 			btnRestart.Cursor = Cursors.Hand;
 			btnRestart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			btnRestart.ForeColor = Color.DarkCyan;
-			btnRestart.Location = new Point(681, 589);
+			btnRestart.Location = new Point(681, 726);
 			btnRestart.Name = "btnRestart";
-			btnRestart.Size = new Size(101, 28);
+			btnRestart.Size = new Size(101, 32);
 			btnRestart.TabIndex = 20;
 			btnRestart.Text = "📡 Restart";
 			btnRestart.UseVisualStyleBackColor = true;
@@ -379,12 +441,13 @@
 			lblUpdateStatus.BackColor = Color.DodgerBlue;
 			lblUpdateStatus.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblUpdateStatus.ImageAlign = ContentAlignment.MiddleLeft;
-			lblUpdateStatus.Location = new Point(12, 104);
+			lblUpdateStatus.Location = new Point(12, 131);
 			lblUpdateStatus.Name = "lblUpdateStatus";
-			lblUpdateStatus.Size = new Size(881, 33);
+			lblUpdateStatus.Size = new Size(881, 37);
 			lblUpdateStatus.TabIndex = 21;
 			lblUpdateStatus.Text = "Version Check Message";
 			lblUpdateStatus.TextAlign = ContentAlignment.MiddleLeft;
+			lblUpdateStatus.MouseDown += Form_Drag_MouseDown;
 			// 
 			// btnDownloadUpdate
 			// 
@@ -392,9 +455,9 @@
 			btnDownloadUpdate.Cursor = Cursors.Hand;
 			btnDownloadUpdate.FlatStyle = FlatStyle.Popup;
 			btnDownloadUpdate.ImageAlign = ContentAlignment.TopLeft;
-			btnDownloadUpdate.Location = new Point(710, 110);
+			btnDownloadUpdate.Location = new Point(711, 137);
 			btnDownloadUpdate.Name = "btnDownloadUpdate";
-			btnDownloadUpdate.Size = new Size(161, 22);
+			btnDownloadUpdate.Size = new Size(161, 25);
 			btnDownloadUpdate.TabIndex = 22;
 			btnDownloadUpdate.Text = "Download";
 			btnDownloadUpdate.UseVisualStyleBackColor = false;
@@ -402,76 +465,71 @@
 			// 
 			// chkPrivacyMode
 			// 
-			chkPrivacyMode.Location = new Point(427, 589);
+			chkPrivacyMode.Location = new Point(427, 726);
 			chkPrivacyMode.Name = "chkPrivacyMode";
-			chkPrivacyMode.Size = new Size(125, 28);
+			chkPrivacyMode.Size = new Size(125, 32);
 			chkPrivacyMode.TabIndex = 23;
 			chkPrivacyMode.Text = "Privacy Mode";
 			chkPrivacyMode.UseVisualStyleBackColor = true;
 			chkPrivacyMode.CheckedChanged += chkPrivacyMode_CheckedChanged;
 			// 
-			// colGame
+			// btnClose
 			// 
-			colGame.DataPropertyName = "Game";
-			colGame.HeaderText = "Game";
-			colGame.Name = "colGame";
-			colGame.ReadOnly = true;
-			colGame.Width = 200;
+			btnClose.Cursor = Cursors.Hand;
+			btnClose.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			btnClose.Location = new Point(1204, 9);
+			btnClose.Name = "btnClose";
+			btnClose.Size = new Size(25, 25);
+			btnClose.TabIndex = 24;
+			btnClose.Text = "❌";
+			btnClose.UseVisualStyleBackColor = true;
+			btnClose.Click += btnClose_Click;
 			// 
-			// colName
+			// btnMinimize
 			// 
-			colName.DataPropertyName = "ServerName";
-			colName.HeaderText = "Server Name";
-			colName.Name = "colName";
-			colName.ReadOnly = true;
-			colName.Width = 260;
+			btnMinimize.Cursor = Cursors.Hand;
+			btnMinimize.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			btnMinimize.Location = new Point(1173, 9);
+			btnMinimize.Name = "btnMinimize";
+			btnMinimize.Size = new Size(25, 25);
+			btnMinimize.TabIndex = 25;
+			btnMinimize.Text = "-";
+			btnMinimize.UseVisualStyleBackColor = true;
+			btnMinimize.Click += btnMinimize_Click;
 			// 
-			// colPort
+			// btnDiscord
 			// 
-			colPort.DataPropertyName = "Port";
-			colPort.HeaderText = "Port";
-			colPort.Name = "colPort";
-			colPort.ReadOnly = true;
-			colPort.Width = 80;
+			btnDiscord.Cursor = Cursors.Hand;
+			btnDiscord.Location = new Point(1142, 9);
+			btnDiscord.Name = "btnDiscord";
+			btnDiscord.Size = new Size(25, 25);
+			btnDiscord.TabIndex = 26;
+			btnDiscord.Text = "Discord Icon";
+			btnDiscord.UseVisualStyleBackColor = true;
+			btnDiscord.Click += btnDiscord_Click;
 			// 
-			// colQueryPort
+			// btnGithub
 			// 
-			colQueryPort.DataPropertyName = "QueryPort";
-			colQueryPort.HeaderText = "Query Port";
-			colQueryPort.Name = "colQueryPort";
-			colQueryPort.ReadOnly = true;
-			colQueryPort.Width = 80;
-			// 
-			// colPlayerCount
-			// 
-			colPlayerCount.DataPropertyName = "PlayerCount";
-			colPlayerCount.HeaderText = "Players";
-			colPlayerCount.Name = "colPlayerCount";
-			colPlayerCount.ReadOnly = true;
-			colPlayerCount.Width = 70;
-			// 
-			// colUptime
-			// 
-			colUptime.DataPropertyName = "Uptime";
-			colUptime.HeaderText = "UPTIME";
-			colUptime.Name = "colUptime";
-			colUptime.ReadOnly = true;
-			// 
-			// colStatus
-			// 
-			colStatus.DataPropertyName = "Status";
-			colStatus.HeaderText = "Status";
-			colStatus.Name = "colStatus";
-			colStatus.ReadOnly = true;
-			colStatus.Width = 90;
+			btnGithub.Cursor = Cursors.Hand;
+			btnGithub.Location = new Point(1111, 9);
+			btnGithub.Name = "btnGithub";
+			btnGithub.Size = new Size(25, 25);
+			btnGithub.TabIndex = 27;
+			btnGithub.Text = "Github";
+			btnGithub.UseVisualStyleBackColor = true;
+			btnGithub.Click += btnGithub_Click;
 			// 
 			// MainGUI
 			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
-			ClientSize = new Size(1241, 628);
+			ClientSize = new Size(1241, 772);
+			Controls.Add(btnGithub);
+			Controls.Add(btnDiscord);
+			Controls.Add(btnMinimize);
+			Controls.Add(btnClose);
 			Controls.Add(chkPrivacyMode);
 			Controls.Add(btnDownloadUpdate);
 			Controls.Add(lblUpdateStatus);
@@ -487,7 +545,8 @@
 			Controls.Add(btnStop);
 			Controls.Add(btnStart);
 			Controls.Add(rtbLog);
-			FormBorderStyle = FormBorderStyle.FixedSingle;
+			Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			FormBorderStyle = FormBorderStyle.None;
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			Name = "MainGUI";
@@ -495,6 +554,7 @@
 			Text = "Synix Control Panel";
 			FormClosing += MainForm_FormClosing;
 			Shown += MainGUI_Shown;
+			MouseDown += Form_Drag_MouseDown;
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
 			((System.ComponentModel.ISupportInitialize)logo).EndInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).EndInit();
@@ -543,6 +603,10 @@
 		private Button btnDownloadUpdate;
 		private CheckBox chkPrivacyMode;
 		private ToolStripMenuItem btnExportBatch;
+		private Button btnClose;
+		private Button btnMinimize;
+		private Button btnDiscord;
+		private Button btnGithub;
 		private DataGridViewTextBoxColumn colGame;
 		private DataGridViewTextBoxColumn colName;
 		private DataGridViewTextBoxColumn colPort;

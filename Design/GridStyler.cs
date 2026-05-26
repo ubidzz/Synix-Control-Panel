@@ -40,8 +40,8 @@ namespace Synix_Control_Panel.Design
 			if (dgv.Columns.Contains("colGame")) dgv.Columns["colGame"].DataPropertyName = "Game";
 			if (dgv.Columns.Contains("colPort")) dgv.Columns["colPort"].DataPropertyName = "Port";
 			if (dgv.Columns.Contains("colStatus")) dgv.Columns["colStatus"].DataPropertyName = "Status";
-			//if (dgv.Columns.Contains("colPlayerCount")) dgv.Columns["colPlayerCount"].DataPropertyName = "PlayerCount";
-			//if (dgv.Columns.Contains("colUptime")) dgv.Columns["colUptime"].DataPropertyName = "Uptime";
+			if (dgv.Columns.Contains("colPlayerCount")) dgv.Columns["colPlayerCount"].DataPropertyName = "PlayerCount";
+			if (dgv.Columns.Contains("colUptime")) dgv.Columns["colUptime"].DataPropertyName = "Uptime";
 
 			// Header Style (Kills the blue Game column)
 			dgv.EnableHeadersVisualStyles = false;
@@ -57,6 +57,210 @@ namespace Synix_Control_Panel.Design
 				col.HeaderCell.Style.BackColor = HeaderGrey;
 				col.HeaderCell.Style.ForeColor = Color.Cyan;
 			}
+		}
+
+		public static void StyleMinimizeButton(Button btn)
+		{
+			// Strip the default UI
+			btn.FlatStyle = FlatStyle.Flat;
+			btn.FlatAppearance.BorderSize = 0;
+			btn.BackColor = Color.Transparent;
+			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+
+			btn.Text = "";
+			btn.TabStop = false;
+
+			// Override the Paint event for the smooth pill shape
+			btn.Paint += (s, e) =>
+			{
+				Button b = (Button)s;
+				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
+				bool isHovering = b.ClientRectangle.Contains(mousePos);
+				bool isPressed = isHovering && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
+
+				Color bgColor = Color.WhiteSmoke;
+				Color fgColor = Color.Black;
+
+				// UPDATED: Much darker, highly visible gray hover colors
+				if (isPressed)
+				{
+					bgColor = Color.FromArgb(160, 160, 160); // Darker gray for click
+				}
+				else if (isHovering)
+				{
+					bgColor = Color.FromArgb(200, 200, 200); // Noticeable gray for hover
+				}
+
+				// Draw the smooth background curve
+				using (var path = GetRoundedPath(b.ClientRectangle, 6))
+				using (var brush = new SolidBrush(bgColor))
+				{
+					e.Graphics.FillPath(brush, path);
+				}
+
+				// Draw a perfect, crisp minimize line
+				int lineWidth = 12;
+				int lineThickness = 2;
+
+				// Calculate exact center
+				int xPos = (b.Width / 2) - (lineWidth / 2);
+				int yPos = (b.Height / 2) - (lineThickness / 2) + 2;
+
+				using (SolidBrush lineBrush = new SolidBrush(fgColor))
+				{
+					e.Graphics.FillRectangle(lineBrush, xPos, yPos, lineWidth, lineThickness);
+				}
+			};
+
+			// Force instant redraws on mouse interaction
+			btn.MouseEnter += (s, e) => btn.Invalidate();
+			btn.MouseLeave += (s, e) => btn.Invalidate();
+			btn.MouseDown += (s, e) => btn.Invalidate();
+			btn.MouseUp += (s, e) => btn.Invalidate();
+		}
+
+		public static void StyleIconButton(Button btn, Image icon, Color hoverColor)
+		{
+			// 1. Strip the default UI
+			btn.FlatStyle = FlatStyle.Flat;
+			btn.FlatAppearance.BorderSize = 0;
+			btn.BackColor = Color.Transparent;
+			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+
+			btn.Text = "";
+			btn.TabStop = false;
+
+			// 2. Override the Paint event for the smooth pill shape and image
+			btn.Paint += (s, e) =>
+			{
+				Button b = (Button)s;
+				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+				// This makes sure the PNG scales down smoothly without looking pixelated
+				e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
+				bool isHovering = b.ClientRectangle.Contains(mousePos);
+				bool isPressed = isHovering && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
+
+				Color bgColor = Color.WhiteSmoke; // Default background to match your other buttons
+
+				// Apply custom hover/click colors
+				if (isPressed)
+				{
+					bgColor = Color.DarkGray;
+				}
+				else if (isHovering)
+				{
+					bgColor = hoverColor;
+				}
+
+				// Draw the smooth background curve
+				using (var path = GetRoundedPath(b.ClientRectangle, 6))
+				using (var brush = new SolidBrush(bgColor))
+				{
+					e.Graphics.FillPath(brush, path);
+				}
+
+				// 3. Draw the Icon perfectly centered
+				if (icon != null)
+				{
+					// Calculate a size that fits comfortably inside the pill with a 4px padding
+					int iconSize = Math.Min(b.Width, b.Height) - 8;
+					int x = (b.Width - iconSize) / 2;
+					int y = (b.Height - iconSize) / 2;
+
+					e.Graphics.DrawImage(icon, new Rectangle(x, y, iconSize, iconSize));
+				}
+			};
+
+			// 4. Force instant redraws on mouse interaction
+			btn.MouseEnter += (s, e) => btn.Invalidate();
+			btn.MouseLeave += (s, e) => btn.Invalidate();
+			btn.MouseDown += (s, e) => btn.Invalidate();
+			btn.MouseUp += (s, e) => btn.Invalidate();
+		}
+
+		public static void StyleCloseButton(Button btn)
+		{
+			// 1. Strip the default UI and make it perfectly transparent
+			btn.FlatStyle = FlatStyle.Flat;
+			btn.FlatAppearance.BorderSize = 0;
+			btn.BackColor = Color.Transparent;
+			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+
+			// Clear the standard text because we will draw it manually to layer it correctly
+			btn.Text = "";
+			btn.TabStop = false;
+
+			// 2. Override the Paint event to draw a high-quality smooth shape
+			btn.Paint += (s, e) =>
+			{
+				Button b = (Button)s;
+
+				// Turn on high-quality edge smoothing
+				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+				// Determine if the mouse is hovering or actively clicking
+				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
+				bool isHovering = b.ClientRectangle.Contains(mousePos);
+				bool isPressed = isHovering && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
+
+				Color bgColor = Color.WhiteSmoke;
+				Color fgColor = Color.Black;
+
+				if (isPressed)
+				{
+					bgColor = Color.FromArgb(178, 11, 22); // Dark Red (Click)
+					fgColor = Color.White;
+				}
+				else if (isHovering)
+				{
+					bgColor = Color.FromArgb(232, 17, 35); // Bright Red (Hover)
+					fgColor = Color.White;
+				}
+
+				// Draw the smooth background
+				using (var path = GetRoundedPath(b.ClientRectangle, 6))
+				using (var brush = new SolidBrush(bgColor))
+				{
+					e.Graphics.FillPath(brush, path);
+				}
+
+				// Draw the text exactly in the center
+				TextRenderer.DrawText(
+					e.Graphics,
+					"✕",
+					new Font("Segoe UI", 10, FontStyle.Bold),
+					b.ClientRectangle,
+					fgColor,
+					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
+				);
+			};
+
+			// 3. Force the button to redraw itself instantly when the mouse interacts with it
+			btn.MouseEnter += (s, e) => btn.Invalidate();
+			btn.MouseLeave += (s, e) => btn.Invalidate();
+			btn.MouseDown += (s, e) => btn.Invalidate();
+			btn.MouseUp += (s, e) => btn.Invalidate();
+		}
+
+		private static System.Drawing.Drawing2D.GraphicsPath GetRoundedPath(Rectangle rect, int radius)
+		{
+			System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+			int d = radius * 2;
+			path.StartFigure();
+			path.AddArc(rect.X, rect.Y, d, d, 180, 90);
+			path.AddArc(rect.Width - d - 1, rect.Y, d, d, 270, 90);
+			path.AddArc(rect.Width - d - 1, rect.Height - d - 1, d, d, 0, 90);
+			path.AddArc(rect.X, rect.Height - d - 1, d, d, 90, 90);
+			path.CloseFigure();
+			return path;
 		}
 
 		public static void ApplyRoundedCorners(DataGridView dgv, int radius)

@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Synix_Control_Panel.SynixEngine.Core;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel
 {
@@ -38,21 +39,36 @@ namespace Synix_Control_Panel
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
 
+		public const int WM_NCLBUTTONDOWN = 0xA1;
+		public const int HT_CAPTION = 0x2;
+
+		[DllImport("user32.dll")]
+		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+		[DllImport("user32.dll")]
+		public static extern bool ReleaseCapture();
+
 		public MainGUI()
 		{
 			InitializeComponent();
 			Instance = this;
 			FileHandler.LoadServers();
 			_ = Core.Instance;
+			
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			UIStyleHelper.InitializeToggles(this);
 			dataGridView1.DataSource = serverList;
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
+			GridStyler.StyleCloseButton(btnClose);
+			GridStyler.StyleMinimizeButton(btnMinimize);
+			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
+			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
+
 			Instance = this;
 			chkPrivacyMode.Text = "Privacy Mode";
 			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
+			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
 			isPrivacyLoading = chkPrivacyMode.Checked;
 			_ = LoadNetworkInfo();
 			InitializeVersionCheckTimer();
@@ -105,6 +121,26 @@ namespace Synix_Control_Panel
 			chartTickCounter++;
 		}
 
+		[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+		private static extern IntPtr CreateRoundRectRgn
+		(
+			int nLeftRect,     // x-coordinate of upper-left corner
+			int nTopRect,      // y-coordinate of upper-left corner
+			int nRightRect,    // x-coordinate of lower-right corner
+			int nBottomRect,   // y-coordinate of lower-right corner
+			int nWidthEllipse, // width of the rounded corner
+			int nHeightEllipse // height of the rounded corner
+		);
+
+		private void Form_Drag_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ReleaseCapture();
+				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+			}
+		}
+
 		private void CheckRunningStatus()
 		{
 			string[] spinFrames = { "|", "/", "--", "\\" };
@@ -140,6 +176,13 @@ namespace Synix_Control_Panel
 					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
 					int nextIndex = (currentIndex + 1) % spinFrames.Length;
 					server.Status = "Backing Up " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Stopping"))
+				{
+					string currentFrame = status.Replace("Stopping ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Stopping " + spinFrames[nextIndex];
 				}
 			}
 			UpdateGrid();
@@ -691,6 +734,42 @@ namespace Synix_Control_Panel
 			{
 				MessageBox.Show($"Batch file generated successfully!\n\nSaved directly to:\n{selectedServer.InstallPath}",
 								"Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+		}
+
+		private void btnClose_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
+		}
+
+		private void btnMinimize_Click(object sender, EventArgs e)
+		{
+			this.WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnDiscord_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://discord.gg/WduKEU3j8s");
+		}
+
+		private void btnGithub_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://github.com/ubidzz/Synix-Control-Panel");
+		}
+
+		private void OpenUrl(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+				{
+					FileName = url,
+					UseShellExecute = true
+				});
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Unable to open the link automatically.\n\nError: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 	}
