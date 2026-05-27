@@ -54,9 +54,9 @@ namespace Synix_Control_Panel
 			Instance = this;
 			FileHandler.LoadServers();
 			UIStyleHelper.InitializeToggles(this);
-
+			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = serverList;
-			dataGridView1.DataError += dataGridView1_DataError;
+			//dataGridView1.DataError += dataGridView1_DataError;
 			if (!dataGridView1.Columns.Contains("IconCol"))
 			{
 				DataGridViewImageColumn iconCol = new DataGridViewImageColumn();
@@ -65,7 +65,7 @@ namespace Synix_Control_Panel
 				iconCol.DataPropertyName = "DisplayIcon";
 				iconCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
 				iconCol.Width = 35;
-				iconCol.DefaultCellStyle.Padding = new Padding(4);
+				iconCol.DefaultCellStyle.Padding = new Padding(5);
 
 				dataGridView1.Columns.Insert(0, iconCol);
 				dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
