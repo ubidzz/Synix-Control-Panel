@@ -469,7 +469,7 @@
 			DisplayIcon.HeaderText = "";
 			DisplayIcon.Name = "DisplayIcon";
 			DisplayIcon.ReadOnly = true;
-			DisplayIcon.Width = 15;
+			DisplayIcon.Width = 5;
 			// 
 			// colGame
 			// 
@@ -485,7 +485,7 @@
 			colName.HeaderText = "Server Name";
 			colName.Name = "colName";
 			colName.ReadOnly = true;
-			colName.Width = 255;
+			colName.Width = 265;
 			// 
 			// colPort
 			// 
