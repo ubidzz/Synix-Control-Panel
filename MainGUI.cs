@@ -53,10 +53,6 @@ namespace Synix_Control_Panel
 			InitializeComponent();
 			Instance = this;
 			FileHandler.LoadServers();
-			_ = Core.Instance;
-			
-			GridStyler.DarkTheme(dataGridView1);
-			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			UIStyleHelper.InitializeToggles(this);
 
 			dataGridView1.DataSource = serverList;
@@ -69,11 +65,9 @@ namespace Synix_Control_Panel
 				iconCol.DataPropertyName = "DisplayIcon";
 				iconCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
 				iconCol.Width = 35;
-
 				iconCol.DefaultCellStyle.Padding = new Padding(4);
 
 				dataGridView1.Columns.Insert(0, iconCol);
-
 				dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
 				dataGridView1.RowTemplate.Height = 35;
 				foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -82,6 +76,8 @@ namespace Synix_Control_Panel
 				}
 			}
 
+			GridStyler.DarkTheme(dataGridView1);
+			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			GridStyler.StyleCloseButton(btnClose);
@@ -89,20 +85,18 @@ namespace Synix_Control_Panel
 			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
 
-			Instance = this;
 			chkPrivacyMode.Text = "Privacy Mode";
 			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
 			isPrivacyLoading = chkPrivacyMode.Checked;
 			_ = LoadNetworkInfo();
-			InitializeVersionCheckTimer();
+			_ = Core.Instance;
 			_ = VersionCheck();
+			InitializeVersionCheckTimer();
 		}
 
 		private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
 		{
-			// If the grid throws a fit because the image is temporarily missing during an edit,
-			// this tells it to ignore the error and not draw the ugly Red X.
 			e.ThrowException = false;
 		}
 
@@ -141,9 +135,14 @@ namespace Synix_Control_Panel
 			if (needsTimeCheck)
 			{
 				string currentExactTime = DateTime.Now.ToString("HH:mm:ss");
+				int currentDayIndex = (int)DateTime.Now.DayOfWeek;
+
 				foreach (var server in serverList)
 				{
-					if (server.IsScheduledRestartEnabled && currentExactTime == (server.RestartTime + ":00"))
+					if (server.IsScheduledRestartEnabled &&
+						server.RestartDays != null &&
+						server.RestartDays[currentDayIndex] &&
+						currentExactTime == (server.RestartTime + ":00"))
 					{
 						_ = Core.Instance.ExecuteStartSequence(server, "MAINTENANCE");
 					}
