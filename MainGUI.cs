@@ -38,6 +38,7 @@ namespace Synix_Control_Panel
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
+		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -57,7 +58,30 @@ namespace Synix_Control_Panel
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			UIStyleHelper.InitializeToggles(this);
+
 			dataGridView1.DataSource = serverList;
+			dataGridView1.DataError += dataGridView1_DataError;
+			if (!dataGridView1.Columns.Contains("IconCol"))
+			{
+				DataGridViewImageColumn iconCol = new DataGridViewImageColumn();
+				iconCol.Name = "IconCol";
+				iconCol.HeaderText = "";
+				iconCol.DataPropertyName = "DisplayIcon";
+				iconCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
+				iconCol.Width = 35;
+
+				iconCol.DefaultCellStyle.Padding = new Padding(4);
+
+				dataGridView1.Columns.Insert(0, iconCol);
+
+				dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+				dataGridView1.RowTemplate.Height = 35;
+				foreach (DataGridViewRow row in dataGridView1.Rows)
+				{
+					row.Height = 35;
+				}
+			}
+
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
 			GridStyler.StyleCloseButton(btnClose);
@@ -73,6 +97,13 @@ namespace Synix_Control_Panel
 			_ = LoadNetworkInfo();
 			InitializeVersionCheckTimer();
 			_ = VersionCheck();
+		}
+
+		private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+		{
+			// If the grid throws a fit because the image is temporarily missing during an edit,
+			// this tells it to ignore the error and not draw the ugly Red X.
+			e.ThrowException = false;
 		}
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)

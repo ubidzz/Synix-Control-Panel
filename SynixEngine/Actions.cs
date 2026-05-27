@@ -21,6 +21,8 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
+		private static readonly HashSet<string> _activeSequences = new HashSet<string>();
+
 		public async Task StopServerAndReport(GameServer server, bool isManual = true)
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
@@ -372,70 +374,86 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task ExecuteStartSequence(GameServer server, string status = "")
 		{
-			bool stopServer = false;
-			StartContext currentContext = StartContext.Manual;
-
-			if (!PassResourceGuard(out string guardMsg))
+			lock (_activeSequences)
 			{
-				Log(guardMsg, System.Drawing.Color.Red, true);
-				MessageBox.Show(guardMsg, "System Resource Exhaustion",
-					System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
-				return;
-			}
-
-			if (!ValidateIntegrityAndReport(server)) return;
-			if (ShouldBlockForConfig(server)) return;
-
-			if (status == "RESTART")
-			{
-				Log($"[SYNIX] Starting restart sequence for {server.ServerName}...", Color.Cyan);
-				stopServer = true;
-			}
-			else if (status == "MAINTENANCE")
-			{
-				Log($"[🛠 MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
-				stopServer = true;
-				currentContext = StartContext.Scheduled;
-			}
-			else if (status == "WATCHDOG")
-			{
-				server.Status = StatusManager.GetStatus(ServerState.Crashed);
-				string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
-				Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
-
-				_ = SendDiscordAlert(server, "🚨 CRASH DETECTED",
-				$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
-				Color.Red);
-
-				stopServer = true;
-				currentContext = StartContext.CrashRecovery;
-				Core.Instance.UpdateGridStatus();
-			}
-
-			if (stopServer && server.Status != StatusManager.GetStatus(ServerState.Stopping))
-			{
-				Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
-
-				await StopServerAndReport(server);
-			}
-
-			await Task.Delay(1000);
-
-			if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
-			{
-				Log($"[SYNIX] Starting the {server.ServerName} server.", Color.Cyan, true);
-				if (!PassSpamLock(server, out string lockMsg, "Start")) { Log(lockMsg, System.Drawing.Color.Orange); return; }
-
-				await Servers.Start(server, (msg, Color) => MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color))), currentContext);
-			}
-			else
-			{
-				if (server.Status != StatusManager.GetStatus(ServerState.Starting))
+				if (_activeSequences.Contains(server.ServerName))
 				{
-					Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+					return;
+				}
+				_activeSequences.Add(server.ServerName);
+			}
+
+			try
+			{
+				bool stopServer = false;
+				StartContext currentContext = StartContext.Manual;
+
+				if (!PassResourceGuard(out string guardMsg))
+				{
+					Log(guardMsg, System.Drawing.Color.Red, true);
+					MessageBox.Show(guardMsg, "System Resource Exhaustion",
+						System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+					return;
+				}
+
+				if (!ValidateIntegrityAndReport(server)) return;
+				if (ShouldBlockForConfig(server)) return;
+
+				if (status == "RESTART")
+				{
+					Log($"[SYNIX] Starting restart sequence for {server.ServerName}...", Color.Cyan);
+					stopServer = true;
+				}
+				else if (status == "MAINTENANCE")
+				{
+					Log($"[🛠 MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
+					stopServer = true;
+					currentContext = StartContext.Scheduled;
+				}
+				else if (status == "WATCHDOG")
+				{
+					server.Status = StatusManager.GetStatus(ServerState.Crashed);
+					string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
+					Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
+
+					_ = SendDiscordAlert(server, "🚨 CRASH DETECTED",
+					$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
+					Color.Red);
+
+					stopServer = true;
+					currentContext = StartContext.CrashRecovery;
+					Core.Instance.UpdateGridStatus();
+				}
+
+				if (stopServer && server.PID != null)
+				{
+					Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
+					await StopServerAndReport(server);
+				}
+
+				if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
+				{
+					Log($"[SYNIX] Starting the {server.ServerName} server.", Color.Cyan, true);
+					if (!PassSpamLock(server, out string lockMsg, "Start")) { Log(lockMsg, System.Drawing.Color.Orange); return; }
+
+					await Servers.Start(server, (msg, Color) => MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color))), currentContext);
+				}
+				else
+				{
+					if (server.Status != StatusManager.GetStatus(ServerState.Starting))
+					{
+						Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+					}
+				}
+				stopServer = false;
+			}
+			finally
+			{
+				lock (_activeSequences)
+				{
+					_activeSequences.Remove(server.ServerName);
 				}
 			}
-			stopServer = false;
 		}
 
 		public void RunUniversalHealthCheck()

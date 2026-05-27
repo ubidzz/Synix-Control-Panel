@@ -21,6 +21,8 @@ public class GameInfo
 {
 	public string Game { get; init; } = string.Empty;
 	[JsonIgnore]
+	public System.Drawing.Image DisplayIcon { get; set; }
+	[JsonIgnore]
 	public bool HasAnnouncedOnline { get; set; } = false;
 	[JsonIgnore]
 	public bool NeedsConfigWarning { get; internal set; }

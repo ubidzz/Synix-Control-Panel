@@ -356,6 +356,22 @@ namespace Synix_Control_Panel
 					}
 				}
 				else MainGUI.serverList.Add(NewServer);
+
+				var masterData = GameDatabase.GetGame(NewServer.Game);
+				if (masterData != null)
+				{
+					NewServer.AppID = masterData.AppID;
+					NewServer.ExeName = masterData.ExeName;
+
+					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, NewServer.ExeName);
+					string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(NewServer.AppID, fullExePath);
+
+					if (System.IO.File.Exists(iconPath))
+					{
+						NewServer.DisplayIcon = System.Drawing.Image.FromFile(iconPath);
+					}
+				}
+
 				FileHandler.SaveServers(); this.DialogResult = DialogResult.OK; this.Close();
 			}
 			catch (Exception ex) { MessageBox.Show(ex.Message); }

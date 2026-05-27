@@ -36,6 +36,7 @@ namespace Synix_Control_Panel.Design
 			dgv.AutoGenerateColumns = false;
 
 			// Map Columns to Class Properties
+			if (dgv.Columns.Contains("colIcon")) dgv.Columns["colIcon"].DataPropertyName = "";
 			if (dgv.Columns.Contains("colName")) dgv.Columns["colName"].DataPropertyName = "ServerName";
 			if (dgv.Columns.Contains("colGame")) dgv.Columns["colGame"].DataPropertyName = "Game";
 			if (dgv.Columns.Contains("colPort")) dgv.Columns["colPort"].DataPropertyName = "Port";

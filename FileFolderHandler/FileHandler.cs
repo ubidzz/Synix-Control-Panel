@@ -56,6 +56,7 @@ namespace Synix_Control_Panel
 						MainGUI.serverList.Clear();
 						foreach (var server in loadedServers)
 						{
+							// 1. Grab the hardcoded data from the switch statement in your screenshot
 							var masterData = GameDatabase.GetGame(server.Game);
 							if (masterData != null)
 							{
@@ -63,6 +64,18 @@ namespace Synix_Control_Panel
 								server.ExeName = masterData.ExeName;
 								server.RequiredArgs = masterData.RequiredArgs;
 								server.Maps = masterData.Maps.ToList();
+
+								// 2. Smash the JSON path and Hardcoded ExeName together
+								string fullExePath = Path.Combine(server.InstallPath, server.ExeName);
+
+								// 3. Extract the icon
+								string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(server.AppID, fullExePath);
+
+								// 4. Attach it permanently to the object
+								if (File.Exists(iconPath))
+								{
+									server.DisplayIcon = System.Drawing.Image.FromFile(iconPath);
+								}
 							}
 							MainGUI.serverList.Add(server);
 						}

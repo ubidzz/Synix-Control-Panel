@@ -34,13 +34,6 @@
 			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
-			colGame = new DataGridViewTextBoxColumn();
-			colName = new DataGridViewTextBoxColumn();
-			colPort = new DataGridViewTextBoxColumn();
-			colQueryPort = new DataGridViewTextBoxColumn();
-			colPlayerCount = new DataGridViewTextBoxColumn();
-			colUptime = new DataGridViewTextBoxColumn();
-			colStatus = new DataGridViewTextBoxColumn();
 			rtbLog = new RichTextBox();
 			btnStart = new Button();
 			btnStop = new Button();
@@ -80,6 +73,14 @@
 			btnMinimize = new Button();
 			btnDiscord = new Button();
 			btnGithub = new Button();
+			DisplayIcon = new DataGridViewTextBoxColumn();
+			colGame = new DataGridViewTextBoxColumn();
+			colName = new DataGridViewTextBoxColumn();
+			colPort = new DataGridViewTextBoxColumn();
+			colQueryPort = new DataGridViewTextBoxColumn();
+			colPlayerCount = new DataGridViewTextBoxColumn();
+			colUptime = new DataGridViewTextBoxColumn();
+			colStatus = new DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -92,7 +93,7 @@
 			dataGridView1.AllowUserToDeleteRows = false;
 			dataGridView1.BorderStyle = BorderStyle.None;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPlayerCount, colUptime, colStatus });
+			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { DisplayIcon, colGame, colName, colPort, colQueryPort, colPlayerCount, colUptime, colStatus });
 			dataGridView1.Location = new Point(12, 171);
 			dataGridView1.MultiSelect = false;
 			dataGridView1.Name = "dataGridView1";
@@ -102,62 +103,6 @@
 			dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.CellPainting += dataGridView1_CellPainting;
-			// 
-			// colGame
-			// 
-			colGame.DataPropertyName = "Game";
-			colGame.HeaderText = "Game";
-			colGame.Name = "colGame";
-			colGame.ReadOnly = true;
-			colGame.Width = 200;
-			// 
-			// colName
-			// 
-			colName.DataPropertyName = "ServerName";
-			colName.HeaderText = "Server Name";
-			colName.Name = "colName";
-			colName.ReadOnly = true;
-			colName.Width = 280;
-			// 
-			// colPort
-			// 
-			colPort.DataPropertyName = "Port";
-			colPort.HeaderText = "Port";
-			colPort.Name = "colPort";
-			colPort.ReadOnly = true;
-			colPort.Width = 80;
-			// 
-			// colQueryPort
-			// 
-			colQueryPort.DataPropertyName = "QueryPort";
-			colQueryPort.HeaderText = "Query Port";
-			colQueryPort.Name = "colQueryPort";
-			colQueryPort.ReadOnly = true;
-			colQueryPort.Width = 80;
-			// 
-			// colPlayerCount
-			// 
-			colPlayerCount.DataPropertyName = "PlayerCount";
-			colPlayerCount.HeaderText = "Players";
-			colPlayerCount.Name = "colPlayerCount";
-			colPlayerCount.ReadOnly = true;
-			colPlayerCount.Width = 70;
-			// 
-			// colUptime
-			// 
-			colUptime.DataPropertyName = "Uptime";
-			colUptime.HeaderText = "UPTIME";
-			colUptime.Name = "colUptime";
-			colUptime.ReadOnly = true;
-			colUptime.Width = 80;
-			// 
-			// colStatus
-			// 
-			colStatus.DataPropertyName = "Status";
-			colStatus.HeaderText = "Status";
-			colStatus.Name = "colStatus";
-			colStatus.ReadOnly = true;
-			colStatus.Width = 90;
 			// 
 			// rtbLog
 			// 
@@ -519,6 +464,69 @@
 			btnGithub.UseVisualStyleBackColor = true;
 			btnGithub.Click += btnGithub_Click;
 			// 
+			// DisplayIcon
+			// 
+			DisplayIcon.HeaderText = "";
+			DisplayIcon.Name = "DisplayIcon";
+			DisplayIcon.ReadOnly = true;
+			DisplayIcon.Width = 15;
+			// 
+			// colGame
+			// 
+			colGame.DataPropertyName = "Game";
+			colGame.HeaderText = "Game";
+			colGame.Name = "colGame";
+			colGame.ReadOnly = true;
+			colGame.Width = 175;
+			// 
+			// colName
+			// 
+			colName.DataPropertyName = "ServerName";
+			colName.HeaderText = "Server Name";
+			colName.Name = "colName";
+			colName.ReadOnly = true;
+			colName.Width = 255;
+			// 
+			// colPort
+			// 
+			colPort.DataPropertyName = "Port";
+			colPort.HeaderText = "Port";
+			colPort.Name = "colPort";
+			colPort.ReadOnly = true;
+			colPort.Width = 80;
+			// 
+			// colQueryPort
+			// 
+			colQueryPort.DataPropertyName = "QueryPort";
+			colQueryPort.HeaderText = "Query Port";
+			colQueryPort.Name = "colQueryPort";
+			colQueryPort.ReadOnly = true;
+			colQueryPort.Width = 80;
+			// 
+			// colPlayerCount
+			// 
+			colPlayerCount.DataPropertyName = "PlayerCount";
+			colPlayerCount.HeaderText = "Players";
+			colPlayerCount.Name = "colPlayerCount";
+			colPlayerCount.ReadOnly = true;
+			colPlayerCount.Width = 70;
+			// 
+			// colUptime
+			// 
+			colUptime.DataPropertyName = "Uptime";
+			colUptime.HeaderText = "UPTIME";
+			colUptime.Name = "colUptime";
+			colUptime.ReadOnly = true;
+			colUptime.Width = 80;
+			// 
+			// colStatus
+			// 
+			colStatus.DataPropertyName = "Status";
+			colStatus.HeaderText = "Status";
+			colStatus.Name = "colStatus";
+			colStatus.ReadOnly = true;
+			colStatus.Width = 90;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 17F);
@@ -607,6 +615,7 @@
 		private Button btnMinimize;
 		private Button btnDiscord;
 		private Button btnGithub;
+		private DataGridViewTextBoxColumn DisplayIcon;
 		private DataGridViewTextBoxColumn colGame;
 		private DataGridViewTextBoxColumn colName;
 		private DataGridViewTextBoxColumn colPort;
