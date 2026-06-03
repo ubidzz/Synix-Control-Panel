@@ -22,8 +22,6 @@ namespace Synix_Control_Panel.Design
 		private static Color RamPurple = Color.FromArgb(80, 150, 0, 200);
 		private static Color PlotBg = Color.FromArgb(15, 15, 15);
 		private static Color GridLineColor = Color.FromArgb(40, 40, 40);
-
-		// Colors for a solid, no-blue theme
 		private static Color RowDarkGrey = Color.FromArgb(30, 30, 30);
 		private static Color HeaderGrey = Color.FromArgb(35, 35, 35);
 		private static Color BackgroundBlack = Color.FromArgb(15, 15, 15);
@@ -35,7 +33,6 @@ namespace Synix_Control_Panel.Design
 		{
 			dgv.AutoGenerateColumns = false;
 
-			// Map Columns to Class Properties
 			if (dgv.Columns.Contains("colIcon")) dgv.Columns["colIcon"].DataPropertyName = "";
 			if (dgv.Columns.Contains("colName")) dgv.Columns["colName"].DataPropertyName = "ServerName";
 			if (dgv.Columns.Contains("colGame")) dgv.Columns["colGame"].DataPropertyName = "Game";
@@ -44,7 +41,6 @@ namespace Synix_Control_Panel.Design
 			if (dgv.Columns.Contains("colPlayerCount")) dgv.Columns["colPlayerCount"].DataPropertyName = "PlayerCount";
 			if (dgv.Columns.Contains("colUptime")) dgv.Columns["colUptime"].DataPropertyName = "Uptime";
 
-			// Header Style (Kills the blue Game column)
 			dgv.EnableHeadersVisualStyles = false;
 			dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
 			dgv.ColumnHeadersDefaultCellStyle.BackColor = HeaderGrey;
@@ -62,17 +58,13 @@ namespace Synix_Control_Panel.Design
 
 		public static void StyleMinimizeButton(Button btn)
 		{
-			// Strip the default UI
 			btn.FlatStyle = FlatStyle.Flat;
 			btn.FlatAppearance.BorderSize = 0;
 			btn.BackColor = Color.Transparent;
 			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
 			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
-
 			btn.Text = "";
 			btn.TabStop = false;
-
-			// Override the Paint event for the smooth pill shape
 			btn.Paint += (s, e) =>
 			{
 				Button b = (Button)s;
@@ -85,28 +77,23 @@ namespace Synix_Control_Panel.Design
 				Color bgColor = Color.WhiteSmoke;
 				Color fgColor = Color.Black;
 
-				// UPDATED: Much darker, highly visible gray hover colors
 				if (isPressed)
 				{
-					bgColor = Color.FromArgb(160, 160, 160); // Darker gray for click
+					bgColor = Color.FromArgb(160, 160, 160);
 				}
 				else if (isHovering)
 				{
-					bgColor = Color.FromArgb(200, 200, 200); // Noticeable gray for hover
+					bgColor = Color.FromArgb(200, 200, 200); 
 				}
 
-				// Draw the smooth background curve
 				using (var path = GetRoundedPath(b.ClientRectangle, 6))
 				using (var brush = new SolidBrush(bgColor))
 				{
 					e.Graphics.FillPath(brush, path);
 				}
 
-				// Draw a perfect, crisp minimize line
 				int lineWidth = 12;
 				int lineThickness = 2;
-
-				// Calculate exact center
 				int xPos = (b.Width / 2) - (lineWidth / 2);
 				int yPos = (b.Height / 2) - (lineThickness / 2) + 2;
 
@@ -116,7 +103,6 @@ namespace Synix_Control_Panel.Design
 				}
 			};
 
-			// Force instant redraws on mouse interaction
 			btn.MouseEnter += (s, e) => btn.Invalidate();
 			btn.MouseLeave += (s, e) => btn.Invalidate();
 			btn.MouseDown += (s, e) => btn.Invalidate();
@@ -125,32 +111,27 @@ namespace Synix_Control_Panel.Design
 
 		public static void StyleIconButton(Button btn, Image icon, Color hoverColor)
 		{
-			// 1. Strip the default UI
 			btn.FlatStyle = FlatStyle.Flat;
 			btn.FlatAppearance.BorderSize = 0;
 			btn.BackColor = Color.Transparent;
 			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
 			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
-
 			btn.Text = "";
 			btn.TabStop = false;
 
-			// 2. Override the Paint event for the smooth pill shape and image
 			btn.Paint += (s, e) =>
 			{
 				Button b = (Button)s;
 				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-				// This makes sure the PNG scales down smoothly without looking pixelated
 				e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
 				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
 				bool isHovering = b.ClientRectangle.Contains(mousePos);
 				bool isPressed = isHovering && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
 
-				Color bgColor = Color.WhiteSmoke; // Default background to match your other buttons
+				Color bgColor = Color.WhiteSmoke;
 
-				// Apply custom hover/click colors
 				if (isPressed)
 				{
 					bgColor = Color.DarkGray;
@@ -160,17 +141,14 @@ namespace Synix_Control_Panel.Design
 					bgColor = hoverColor;
 				}
 
-				// Draw the smooth background curve
 				using (var path = GetRoundedPath(b.ClientRectangle, 6))
 				using (var brush = new SolidBrush(bgColor))
 				{
 					e.Graphics.FillPath(brush, path);
 				}
 
-				// 3. Draw the Icon perfectly centered
 				if (icon != null)
 				{
-					// Calculate a size that fits comfortably inside the pill with a 4px padding
 					int iconSize = Math.Min(b.Width, b.Height) - 8;
 					int x = (b.Width - iconSize) / 2;
 					int y = (b.Height - iconSize) / 2;
@@ -179,7 +157,6 @@ namespace Synix_Control_Panel.Design
 				}
 			};
 
-			// 4. Force instant redraws on mouse interaction
 			btn.MouseEnter += (s, e) => btn.Invalidate();
 			btn.MouseLeave += (s, e) => btn.Invalidate();
 			btn.MouseDown += (s, e) => btn.Invalidate();
@@ -188,26 +165,19 @@ namespace Synix_Control_Panel.Design
 
 		public static void StyleCloseButton(Button btn)
 		{
-			// 1. Strip the default UI and make it perfectly transparent
 			btn.FlatStyle = FlatStyle.Flat;
 			btn.FlatAppearance.BorderSize = 0;
 			btn.BackColor = Color.Transparent;
 			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
 			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
-
-			// Clear the standard text because we will draw it manually to layer it correctly
 			btn.Text = "";
 			btn.TabStop = false;
-
-			// 2. Override the Paint event to draw a high-quality smooth shape
 			btn.Paint += (s, e) =>
 			{
 				Button b = (Button)s;
 
-				// Turn on high-quality edge smoothing
 				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-				// Determine if the mouse is hovering or actively clicking
 				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
 				bool isHovering = b.ClientRectangle.Contains(mousePos);
 				bool isPressed = isHovering && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
@@ -217,23 +187,21 @@ namespace Synix_Control_Panel.Design
 
 				if (isPressed)
 				{
-					bgColor = Color.FromArgb(178, 11, 22); // Dark Red (Click)
+					bgColor = Color.FromArgb(178, 11, 22);
 					fgColor = Color.White;
 				}
 				else if (isHovering)
 				{
-					bgColor = Color.FromArgb(232, 17, 35); // Bright Red (Hover)
+					bgColor = Color.FromArgb(232, 17, 35);
 					fgColor = Color.White;
 				}
 
-				// Draw the smooth background
 				using (var path = GetRoundedPath(b.ClientRectangle, 6))
 				using (var brush = new SolidBrush(bgColor))
 				{
 					e.Graphics.FillPath(brush, path);
 				}
 
-				// Draw the text exactly in the center
 				TextRenderer.DrawText(
 					e.Graphics,
 					"✕",
@@ -244,7 +212,6 @@ namespace Synix_Control_Panel.Design
 				);
 			};
 
-			// 3. Force the button to redraw itself instantly when the mouse interacts with it
 			btn.MouseEnter += (s, e) => btn.Invalidate();
 			btn.MouseLeave += (s, e) => btn.Invalidate();
 			btn.MouseDown += (s, e) => btn.Invalidate();
@@ -266,10 +233,7 @@ namespace Synix_Control_Panel.Design
 
 		public static void ApplyRoundedCorners(DataGridView dgv, int radius)
 		{
-			// Apply the rounded corners immediately
 			UpdateGridRegion(dgv, radius);
-
-			// Ensure the rounded corners recalculate if the form is resized
 			dgv.Resize += (s, e) => UpdateGridRegion(dgv, radius);
 		}
 
@@ -281,17 +245,12 @@ namespace Synix_Control_Panel.Design
 			GraphicsPath path = new GraphicsPath();
 
 			path.StartFigure();
-			// Top Left Corner
 			path.AddArc(new Rectangle(0, 0, diameter, diameter), 180, 90);
-			// Top Right Corner
 			path.AddArc(new Rectangle(dgv.Width - diameter, 0, diameter, diameter), 270, 90);
-			// Bottom Right Corner
 			path.AddArc(new Rectangle(dgv.Width - diameter, dgv.Height - diameter, diameter, diameter), 0, 90);
-			// Bottom Left Corner
 			path.AddArc(new Rectangle(0, dgv.Height - diameter, diameter, diameter), 90, 90);
 			path.CloseFigure();
 
-			// Apply the new region and dispose of the old one to prevent memory leaks
 			Region oldRegion = dgv.Region;
 			dgv.Region = new Region(path);
 			oldRegion?.Dispose();
@@ -302,18 +261,13 @@ namespace Synix_Control_Panel.Design
 			dgv.RowHeadersVisible = false;
 			dgv.BackgroundColor = BackgroundBlack;
 			dgv.BorderStyle = BorderStyle.None;
-
-			// Selection Fix: Matches row color so it doesn't turn blue on click
 			dgv.DefaultCellStyle.BackColor = RowDarkGrey;
 			dgv.DefaultCellStyle.ForeColor = Color.WhiteSmoke;
 			dgv.DefaultCellStyle.SelectionBackColor = RowDarkGrey;
 			dgv.DefaultCellStyle.SelectionForeColor = Color.Cyan;
-
 			dgv.GridColor = Color.FromArgb(45, 45, 45);
 			dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
-			// Add this line to trigger the custom border drawing
-			dgv.RowPostPaint -= Dgv_PaintGlowingSelection; // Prevent multiple subscriptions
+			dgv.RowPostPaint -= Dgv_PaintGlowingSelection;
 			dgv.RowPostPaint += Dgv_PaintGlowingSelection;
 		}
 
@@ -324,29 +278,23 @@ namespace Synix_Control_Panel.Design
 
 			if ((e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected)
 			{
-				// 1. Get the exact width of the data columns, skipping the row header
 				int startX = dgv.RowHeadersVisible ? dgv.RowHeadersWidth : 0;
 				int width = dgv.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) - dgv.HorizontalScrollingOffset;
 
-				// 2. Define the bounds. We inset by 2 pixels so the thickest pen doesn't get clipped.
 				Rectangle bounds = new Rectangle(startX + 2, e.RowBounds.Y + 2, width - 5, e.RowBounds.Height - 5);
 
-				Color neonColor = Color.DarkCyan; // The color of the glow
+				Color neonColor = Color.DarkCyan;
 
-				// LAYER 1: The wide, faint blur (Width 5)
 				using (Pen outerGlow = new Pen(Color.FromArgb(40, neonColor), 5))
 				{
 					e.Graphics.DrawRectangle(outerGlow, bounds);
 				}
 
-				// LAYER 2: The tighter, brighter blur (Width 3)
 				using (Pen innerGlow = new Pen(Color.FromArgb(100, neonColor), 3))
 				{
 					e.Graphics.DrawRectangle(innerGlow, bounds);
 				}
 
-				// LAYER 3: The intense hot core (Width 1)
-				// Using White makes it look like actual glowing gas, but you can change this back to Lime if you prefer.
 				using (Pen corePen = new Pen(Color.White, 1))
 				{
 					e.Graphics.DrawRectangle(corePen, bounds);

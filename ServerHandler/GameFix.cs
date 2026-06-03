@@ -177,6 +177,8 @@ namespace Synix_Control_Panel.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
 					case "Windrose":
 						if (CopySteamDLLs(server.InstallPath, @"R5\Binaries\Win64")) applied = true; break;
+					case "Subsistence":
+						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
 				}
 
 				switch (server.Game)
@@ -215,6 +217,29 @@ server.globalchat true";
 					case "StarRupture":
 						string srJson = @"{ ""SessionName"": ""{ServerName}"", ""SaveGameInterval"": ""300"", ""StartNewGame"": ""true"", ""LoadSavedGame"": ""false"", ""SaveGameName"": ""AutoSave0.sav"" }";
 						if (CreateGameConfig(server, @"StarRupture\Binaries\Win64\DSSettings.txt", srJson)) applied = true;
+						break;
+
+					case "Subsistence":
+						// 1. Force the Port and Query Port into the Engine config
+						string subEngineIni = $@"[URL]
+Port={server.Port}
+
+[IpDrv.TcpNetDriver]
+Port={server.Port}
+
+[OnlineSubsystemSteamworks.OnlineSubsystemSteamworks]
+QueryPort={server.QueryPort}";
+
+						// 2. Force the Server Name, Passwords, and Players into the Settings config
+						string subSettingsIni = $@"[SubDedicatedServer.SubServerConfig]
+ServerName=""{server.ServerName}""
+ServerPassword=""{server.Password}""
+AdminPassword=""{server.AdminPassword}""
+MaxPlayers={server.MaxPlayers}";
+
+						// Create both files in the UDKGame\Config folder
+						if (CreateGameConfig(server, @"UDKGame\Config\UDKEngine.ini", subEngineIni)) applied = true;
+						if (CreateGameConfig(server, @"UDKGame\Config\UDKDedServerSettings.ini", subSettingsIni)) applied = true;
 						break;
 
 					case "Windrose":
@@ -392,6 +417,13 @@ server_autosave_interval=300
 server_save_slots=10
 server_pause_when_empty=true";
 						if (CreateGameConfig(server, "app.cfg", foundryCfg)) applied = true;
+						break;
+					case "HumanitZ":
+						string hzIni = $@"ServerName=""{server.ServerName}""
+Password=""{server.Password}""
+AdminPassword=""{server.AdminPassword}""
+MaxPlayers={server.MaxPlayers}";
+						if (CreateGameConfig(server, @"HumanitZServer\GameServerSettings.ini", hzIni)) applied = true;
 						break;
 				}
 			}

@@ -686,14 +686,14 @@ namespace Synix_Control_Panel
 
 					if (latestVersion == currentVersion)
 					{
-						lblUpdateStatus.Text = "You are running the latest version " + currentVersion;
+						lblUpdateStatus.Text = "★ You are running the latest version " + currentVersion;
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Green;
 					}
 					else
 					{
-						lblUpdateStatus.Text = "A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
+						lblUpdateStatus.Text = "🚨 A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
 						lblUpdateStatus.ForeColor = Color.White;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;

@@ -32,6 +32,19 @@ namespace Synix_Control_Panel.Database
 				NeedsConfigWarning = true
 			},
 			new() {
+				Game = "Subsistence",
+				AppID = "1362640",
+				ExeName = @"Binaries\Win64\UDK.exe",
+				RequiredArgs = "server coldmap1?steamsockets -log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass={pass} -adminpass={adminpass}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"UDKGame\Config\UDKDedServerSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = [],
+				GameModes = ["easy", "normal", "hardcore"],
+				NeedsConfigWarning = true
+			},
+			new () {
 				Game = "Windrose",
 				AppID = "4129620",
 				ExeName = @"R5\Binaries\Win64\WindroseServer-Win64-Shipping.exe",
@@ -41,6 +54,18 @@ namespace Synix_Control_Panel.Database
 				RelativeConfigPath = @"R5\ServerDescription.json",
 				Format = ConfigFormat.JSON,
 				Maps = ["Default"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "HumanitZ",
+				AppID = "2728330",
+				ExeName = "HumanitZServer.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass={pass} -adminpass={adminpass}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"HumanitZServer\GameServerSettings.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = [],
 				NeedsConfigWarning = true
 			},
 			new() {
@@ -1648,15 +1673,6 @@ namespace Synix_Control_Panel.Database
 				Port = 27015,
 				QueryPort = 27016,
 				Format = ConfigFormat.JSON
-			},
-			new() {
-				Game = "Subsistence",
-				AppID = "418030",
-				ExeName = "SubsistenceServer.exe",
-				RequiredArgs = "-port {port} -servername \"{ServerName}\" -SteamAppId={steamAppID}",
-				Port = 27015,
-				QueryPort = 27016,
-				Format = ConfigFormat.StandardINI
 			},
 			new() {
 				Game = "Fountain of Youth",

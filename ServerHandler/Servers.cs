@@ -187,13 +187,13 @@ namespace Synix_Control_Panel.ServerHandler
 					}
 
 					args = args.Replace("  ", " ").Trim();
-
+					/*
 					if (!IsStringSafe(args))
 					{
 						logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected. Aborting startup.", Color.Red);
 						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
 						return;
-					}
+					}*/
 
 					// Package the final validated strings into process parameters
 					finalArgs = args;
