@@ -82,6 +82,18 @@ namespace Synix_Control_Panel.Database
 				NeedsConfigWarning = true
 			},
 			new() {
+				Game = "Cepheus Protocol",
+				AppID = "979640",
+				ExeName = @"CepheusProtocol\Binaries\Win64\CepheusProtocolServer.exe",
+				RequiredArgs = "{map} -server -log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass={pass} -adminpass={adminpass}",
+				RelativeConfigPath = @"CepheusProtocol\Saved\Config\WindowsServer\Game.ini",
+				Port = 7777,
+				QueryPort = 27015,
+				Maps = ["TreasureIsland", "HalfMoonBay"],
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
 				Game = "7 Days to Die",
 				AppID = "294420",
 				ExeName = "7DaysToDieServer.exe",

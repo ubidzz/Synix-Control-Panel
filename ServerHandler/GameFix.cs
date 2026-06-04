@@ -179,6 +179,8 @@ namespace Synix_Control_Panel.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"R5\Binaries\Win64")) applied = true; break;
 					case "Subsistence":
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
+					case "Cepheus Protocol":
+						if (CopySteamDLLs(server.InstallPath, @"CepheusProtocol\Binaries\Win64")) applied = true; break;
 				}
 
 				switch (server.Game)
@@ -220,7 +222,6 @@ server.globalchat true";
 						break;
 
 					case "Subsistence":
-						// 1. Force the Port and Query Port into the Engine config
 						string subEngineIni = $@"[URL]
 Port={server.Port}
 
@@ -229,8 +230,6 @@ Port={server.Port}
 
 [OnlineSubsystemSteamworks.OnlineSubsystemSteamworks]
 QueryPort={server.QueryPort}";
-
-						// 2. Force the Server Name, Passwords, and Players into the Settings config
 						string subSettingsIni = $@"[SubDedicatedServer.SubServerConfig]
 ServerName=""{server.ServerName}""
 ServerPassword=""{server.Password}""
@@ -272,7 +271,14 @@ MaxPlayers={server.MaxPlayers}";
 						string sotfCfg = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": 8, ""ServerPlayMode"": ""Normal"" }";
 						if (CreateGameConfig(server, @"userdata\dedicated_server.cfg", sotfCfg)) applied = true;
 						break;
-
+					case "Cepheus Protocol":
+						string cpIni = $@"[/Script/Engine.GameSession]
+MaxPlayers={server.MaxPlayers}
+ServerName=""{server.ServerName}""
+Password=""{server.Password}""
+AdminPassword=""{server.AdminPassword}""";
+						if (CreateGameConfig(server, @"CepheusProtocol\Saved\Config\WindowsServer\Game.ini", cpIni)) applied = true;
+						break;
 					case "Palworld":
 					case "Palworld (Experimental)":
 						string palIni = @"[/Script/Pal.PalGameWorldSettings]
