@@ -49,9 +49,11 @@ Because Synix is a specialized tool developed for the community, you may encount
 ---
 
 ## 💾 Winget install
+Installing Synix Control Panel with winget dose use a installer so that it can be added to the start menu and the Installed apps list.
+
 * **`winget install synix`**
 * **`winget uninstall synix`** or from the computer App List
-* Synix will be downloaded into this folder `%LocalAppData%\Microsoft\WinGet\Packages` because it's a portable program with no installer needed.
+* Synix will be downloaded, installed and can be found in the start menu after it installed.
 
 ---
 
