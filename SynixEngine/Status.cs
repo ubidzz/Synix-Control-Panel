@@ -175,7 +175,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
 
-			// 🎯 Use your dynamic LAN IP and Loopback
+			// 🎯 Use dynamic LAN IP and Loopback
 			string localIp = await Core.Instance.GetLocalIP();
 			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
 

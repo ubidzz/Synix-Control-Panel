@@ -336,6 +336,14 @@ namespace Synix_Control_Panel
 			if (!Core.Instance.ValidatePortsAndReport(_existingServer, gPort, qPort, rPort, chkEnableRcon.Checked, aPort ?? 0, numAppPort.Enabled, selectedGame)) return;
 			string newPath = txtInstallPath.Text.Trim();
 			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
+
+			if (!IsGameServerConfigSafe(NewServer))
+			{
+				MessageBox.Show("Security Alert: One of your inputs contains illegal characters.",
+								"Input Blocked", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
 			try
 			{
 				if (_isEditMode && _existingServer != null)
@@ -348,6 +356,22 @@ namespace Synix_Control_Panel
 					}
 				}
 				else MainGUI.serverList.Add(NewServer);
+
+				var masterData = GameDatabase.GetGame(NewServer.Game);
+				if (masterData != null)
+				{
+					NewServer.AppID = masterData.AppID;
+					NewServer.ExeName = masterData.ExeName;
+
+					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, NewServer.ExeName);
+					string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(NewServer.AppID, fullExePath);
+
+					if (System.IO.File.Exists(iconPath))
+					{
+						NewServer.DisplayIcon = System.Drawing.Image.FromFile(iconPath);
+					}
+				}
+
 				FileHandler.SaveServers(); this.DialogResult = DialogResult.OK; this.Close();
 			}
 			catch (Exception ex) { MessageBox.Show(ex.Message); }

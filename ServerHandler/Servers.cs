@@ -12,9 +12,10 @@
 // ============================================================================
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.SynixEngine;
+using static Synix_Control_Panel.SynixEngine.Core;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.ServerHandler
 {
@@ -39,9 +40,12 @@ namespace Synix_Control_Panel.ServerHandler
 
 		public static async Task Start(GameServer server, Action<string, Color> logCallback, StartContext context = StartContext.Manual)
 		{
-			if (!IsSystemSafeToStart()) return;
 			try
 			{
+				// 1. HARDWARE CHECKS (Backgrounded to prevent WMI/PerfCounter UI Freezes)
+				bool isSystemSafe = await Task.Run(() => IsSystemSafeToStart());
+				if (!isSystemSafe) return;
+
 				if (!Core.Instance.PassResourceGuard(out string guardMsg))
 				{
 					logCallback?.Invoke(guardMsg, Color.Orange);
@@ -49,7 +53,6 @@ namespace Synix_Control_Panel.ServerHandler
 					return;
 				}
 
-				// 1. PRE-FLIGHT (Backup & Update)
 				if (server.BackupOnStart && context != StartContext.CrashRecovery)
 				{
 					await Task.Run(() => Core.Instance.ExecuteBackup(server, context));
@@ -60,148 +63,167 @@ namespace Synix_Control_Panel.ServerHandler
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
 
-				// 2. TEMPLATE VALIDATION
+				// Safely update the DataGridView UI state on the main thread
 				server.Status = StatusManager.GetStatus(ServerState.Starting);
-				var dbEntry = GameDatabase.GetGame(server.Game);
-				if (dbEntry == null)
+				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+
+				ProcessStartInfo? psi = null;
+				string finalArgs = "";
+
+				// 2. HEAVY DISK & STRING PROCESSING (Backgrounded to prevent lag)
+				await Task.Run(() =>
 				{
-					logCallback?.Invoke("[🚨 ERROR] Game template not found.", Color.Red);
-					return;
-				}
-
-				// 3. PATH SETUP
-				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName);
-				string binDir = Path.GetDirectoryName(fullExePath) ?? "";
-
-				if (!File.Exists(fullExePath))
-				{
-					logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}", Color.Red);
-					server.Status = StatusManager.GetStatus(ServerState.Stopped);
-					return;
-				}
-
-				// 4. DYNAMIC IDENTITY & SEARCH
-				string targetId = dbEntry.AppID;
-				string invokedId = targetId;
-
-				string appidPath = "";
-
-				try
-				{
-					// This creates a "scanner" that looks through every single subfolder
-					var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
+					var dbEntry = GameDatabase.GetGame(server.Game);
+					if (dbEntry == null)
 					{
-						// Keep looking through every subfolder
-						RecurseSubdirectories = true,
+						logCallback?.Invoke("[🚨 ERROR] Game template not found.", Color.Red);
+						return;
+					}
 
-						// If it hits a folder it can't open (locked/protected), skip it and keep going
-						IgnoreInaccessible = true,
+					string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName);
+					string binDir = Path.GetDirectoryName(fullExePath) ?? "";
 
-						// Use the maximum possible depth (effectively unlimited)
-						MaxRecursionDepth = int.MaxValue,
-
-						// Skip things like symlinks to avoid getting stuck in a loop
-						AttributesToSkip = FileAttributes.ReparsePoint
-					});
-
-					// Find the first one that exists
-					appidPath = scanner.FirstOrDefault();
-				}
-				catch
-				{
-					// If something goes catastrophic, fallback to the root
-					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
-				}
-
-				// If it's still empty, it truly isn't in that install folder
-				if (string.IsNullOrEmpty(appidPath))
-				{
-					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
-				}
-
-				// 🎯 THE INVOKE: Pull the ID from the file for {steamAppID}
-				if (File.Exists(appidPath))
-				{
-					try
+					if (!File.Exists(fullExePath))
 					{
-						string fileContent = File.ReadAllText(appidPath).Trim();
-						if (!string.IsNullOrWhiteSpace(fileContent))
+						logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}", Color.Red);
+						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
+						return;
+					}
+
+					string targetId = dbEntry.AppID;
+					string invokedId = targetId;
+
+					string rootAppIdPath = Path.Combine(server.InstallPath, "steam_appid.txt");
+					string binAppIdPath = Path.Combine(binDir, "steam_appid.txt");
+					string appidPath = rootAppIdPath;
+
+					if (File.Exists(rootAppIdPath))
+					{
+						appidPath = rootAppIdPath;
+					}
+					else if (File.Exists(binAppIdPath))
+					{
+						appidPath = binAppIdPath;
+					}
+					else
+					{
+						try
 						{
-							invokedId = fileContent;
+							var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
+							{
+								RecurseSubdirectories = true,
+								IgnoreInaccessible = true,
+								MaxRecursionDepth = 5,
+								AttributesToSkip = FileAttributes.ReparsePoint
+							});
+
+							appidPath = scanner.FirstOrDefault() ?? rootAppIdPath;
+						}
+						catch
+						{
+							appidPath = rootAppIdPath;
 						}
 					}
-					catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
-				}
 
-				// 🛠️ 6. ARGUMENT REPLACEMENT
-				string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
+					if (File.Exists(appidPath))
+					{
+						try
+						{
+							string fileContent = File.ReadAllText(appidPath).Trim();
 
-				string args = dbEntry.RequiredArgs
-					.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
-					.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
-					.Replace("{map}", server.WorldName)
-					.Replace("{steamAppID}", invokedId)
-					.Replace("{appid}", targetId)
-					.Replace("{port}", server.Port.ToString())
-					.Replace("{query}", server.QueryPort.ToString())
-					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-					.Replace("{pass}", server.Password ?? "")
-					.Replace("{adminpass}", server.AdminPassword ?? "")
-					.Replace("{ServerName}", server.ServerName)
-					.Replace("{InstallPath}", server.InstallPath)
-					.Replace("{Identity}", cleanIdentity);
+							fileContent = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim() ?? "";
 
-				// 🎯 RCON LOGIC RESTORED
-				if (args.Contains("{rcon}"))
-				{
-					string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
-						? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", server.RconPassword ?? "")
-						: "";
-					args = args.Replace("{rcon}", formattedRcon);
-				}
+							if (!string.IsNullOrWhiteSpace(fileContent))
+							{
+								invokedId = fileContent;
+							}
+						}
+						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
+					}
 
-				// 🎯 GAME MODE TRANSLATION RESTORED
-				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
-				{
-					string translatedMode = (server.GameMode == "PVE" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
-						? "True" : (server.GameMode == "PVP" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
-						? "False" : server.GameMode;
-					args = args.Replace("{mode}", translatedMode);
-				}
+					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
 
-				if(!string.IsNullOrWhiteSpace(server.ExtraArgs))
-				{
-					args = args + " " + server.ExtraArgs;
-				}
+					string args = dbEntry.RequiredArgs
+						.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
+						.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
+						.Replace("{map}", server.WorldName)
+						.Replace("{steamAppID}", invokedId)
+						.Replace("{appid}", targetId)
+						.Replace("{port}", server.Port.ToString())
+						.Replace("{query}", server.QueryPort.ToString())
+						.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
+						.Replace("{pass}", server.Password ?? "")
+						.Replace("{adminpass}", server.AdminPassword ?? "")
+						.Replace("{ServerName}", server.ServerName)
+						.Replace("{InstallPath}", server.InstallPath)
+						.Replace("{Identity}", cleanIdentity);
 
-				args = args.Replace("  ", " ").Trim();
+					if (args.Contains("{rcon}"))
+					{
+						string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
+							? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", server.RconPassword ?? "")
+							: "";
+						args = args.Replace("{rcon}", formattedRcon);
+					}
 
-				// 🚀 7. CONFIGURE PROCESS
-				ProcessStartInfo psi = new()
-				{
-					FileName = fullExePath,
-					Arguments = args,
-					WorkingDirectory = binDir,
-					UseShellExecute = false,
-					CreateNoWindow = false
-				};
+					if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
+					{
+						string translatedMode = (server.GameMode == "PVE" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
+							? "True" : (server.GameMode == "PVP" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
+							? "False" : server.GameMode;
+						args = args.Replace("{mode}", translatedMode);
+					}
 
-				// 🎯 MEMORY INJECTION
-				psi.EnvironmentVariables["SteamAppId"] = invokedId;
-				psi.EnvironmentVariables["SteamGameId"] = invokedId;
+					if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
+					{
+						if (!IsGameServerConfigSafe(server.ExtraArgs))
+						{
+							logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected in the extra arguments. Aborting startup.", Color.Red);
+							MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
+							return;
+						}
 
-				logCallback?.Invoke($"[ARGUMENT] {args}", Color.Cyan);
+						args = $"{args} \"{server.ExtraArgs.Trim()}\"";
+					}
 
-				// 🚀 8. EXECUTION & MONITORING
+					args = args.Replace("  ", " ").Trim();
+					/*
+					if (!IsStringSafe(args))
+					{
+						logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected. Aborting startup.", Color.Red);
+						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
+						return;
+					}*/
+
+					// Package the final validated strings into process parameters
+					finalArgs = args;
+					psi = new ProcessStartInfo
+					{
+						FileName = fullExePath,
+						Arguments = finalArgs,
+						WorkingDirectory = binDir,
+						UseShellExecute = false,
+						CreateNoWindow = false
+					};
+
+					psi.EnvironmentVariables["SteamAppId"] = invokedId;
+					psi.EnvironmentVariables["SteamGameId"] = invokedId;
+				});
+
+				// If the background task failed early (missing exe, bad string), safely stop execution
+				if (psi == null) return;
+
+				// 3. LAUNCH PROCESS (Back on the UI thread, instantaneous)
+				logCallback?.Invoke($"[ARGUMENT] {finalArgs}", Color.Cyan);
+
 				Process? proc = Process.Start(psi);
 				if (proc != null)
 				{
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
 
-					if (server.StartTime == null) server.StartTime = DateTime.Now;
+					server.StartTime = DateTime.Now;
 
-					// 🎯 DISCORD ALERT: Server Online (Clean alert)
 					_ = Core.Instance.SendDiscordAlert(server, "SERVER STARTING", $"{server.ServerName} process has been initiated.", Color.Cyan);
 
 					proc.EnableRaisingEvents = true;
@@ -209,7 +231,6 @@ namespace Synix_Control_Panel.ServerHandler
 					{
 						if (server.Status == StatusManager.GetStatus(ServerState.Running))
 						{
-							// Watchdog handles the single Discord crash notification
 							await Core.Instance.ExecuteStartSequence(server, "WATCHDOG");
 						}
 						else
@@ -237,7 +258,6 @@ namespace Synix_Control_Panel.ServerHandler
 					return;
 				}
 
-				// 🎯 DISCORD ALERT: Manual Shutdown
 				if (isManual)
 				{
 					_ = Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
@@ -258,7 +278,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 					if (cleanExit)
 					{
-						logCallback?.Invoke($"[STOP] {server.ServerName} saved and closed cleanly.", Color.Lime);
+						logCallback?.Invoke($"[SYNIX] {server.ServerName} saved and closed cleanly.", Color.Lime);
 						FinalizeStoppedState(server);
 						return;
 					}

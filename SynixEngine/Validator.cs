@@ -11,11 +11,15 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.Database;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
+		private static readonly Regex SafeRegex = new Regex(@"^[a-zA-Z0-9\s\-+:\""\\/._=?,]*$", RegexOptions.Compiled);
+
 		public bool CanServerStart(GameServer server, out string errorMessage)
 		{
 			var dbEntry = GameDatabase.GetGame(server.Game);
@@ -243,5 +247,48 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
+		// 1. The dedicated string checker (Used by Start sequence)
+		public static bool IsStringSafe(string input)
+		{
+			// If it's empty, it's safe (no injection possible)
+			if (string.IsNullOrWhiteSpace(input)) return true;
+
+			// Block directory traversal climbing
+			if (input.Contains("..")) return false;
+
+			// Run the regex (Make sure SafeRegex includes = ? , if you need them for games like ARK/Rust)
+			return SafeRegex.IsMatch(input);
+		}
+
+		// 2. The object checker (Used by Save button)
+		public static bool IsGameServerConfigSafe(object obj)
+		{
+			if (obj == null) return false;
+
+			// SAFETY CATCH: If someone accidentally passes a direct string into the object checker, 
+			// route it to the string checker instead of using Reflection.
+			if (obj is string directString)
+			{
+				return IsStringSafe(directString);
+			}
+
+			PropertyInfo[] properties = obj.GetType().GetProperties();
+
+			foreach (var prop in properties)
+			{
+				if (prop.PropertyType == typeof(string))
+				{
+					string value = (string)prop.GetValue(obj);
+
+					// Pass the extracted string to our dedicated checker
+					if (!IsStringSafe(value))
+					{
+						Core.Instance.Log($"[🚨 SECURITY] Illegal characters found in property: {prop.Name}");
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 	}
 }

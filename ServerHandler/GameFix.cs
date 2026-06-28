@@ -177,6 +177,10 @@ namespace Synix_Control_Panel.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
 					case "Windrose":
 						if (CopySteamDLLs(server.InstallPath, @"R5\Binaries\Win64")) applied = true; break;
+					case "Subsistence":
+						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
+					case "Cepheus Protocol":
+						if (CopySteamDLLs(server.InstallPath, @"CepheusProtocol\Binaries\Win64")) applied = true; break;
 				}
 
 				switch (server.Game)
@@ -217,6 +221,26 @@ server.globalchat true";
 						if (CreateGameConfig(server, @"StarRupture\Binaries\Win64\DSSettings.txt", srJson)) applied = true;
 						break;
 
+					case "Subsistence":
+						string subEngineIni = $@"[URL]
+Port={server.Port}
+
+[IpDrv.TcpNetDriver]
+Port={server.Port}
+
+[OnlineSubsystemSteamworks.OnlineSubsystemSteamworks]
+QueryPort={server.QueryPort}";
+						string subSettingsIni = $@"[SubDedicatedServer.SubServerConfig]
+ServerName=""{server.ServerName}""
+ServerPassword=""{server.Password}""
+AdminPassword=""{server.AdminPassword}""
+MaxPlayers={server.MaxPlayers}";
+
+						// Create both files in the UDKGame\Config folder
+						if (CreateGameConfig(server, @"UDKGame\Config\UDKEngine.ini", subEngineIni)) applied = true;
+						if (CreateGameConfig(server, @"UDKGame\Config\UDKDedServerSettings.ini", subSettingsIni)) applied = true;
+						break;
+
 					case "Windrose":
 						string windroseJson = @"{ 
             ""Password"": """ + server.Password + @""",
@@ -247,7 +271,14 @@ server.globalchat true";
 						string sotfCfg = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": 8, ""ServerPlayMode"": ""Normal"" }";
 						if (CreateGameConfig(server, @"userdata\dedicated_server.cfg", sotfCfg)) applied = true;
 						break;
-
+					case "Cepheus Protocol":
+						string cpIni = $@"[/Script/Engine.GameSession]
+MaxPlayers={server.MaxPlayers}
+ServerName=""{server.ServerName}""
+Password=""{server.Password}""
+AdminPassword=""{server.AdminPassword}""";
+						if (CreateGameConfig(server, @"CepheusProtocol\Saved\Config\WindowsServer\Game.ini", cpIni)) applied = true;
+						break;
 					case "Palworld":
 					case "Palworld (Experimental)":
 						string palIni = @"[/Script/Pal.PalGameWorldSettings]
@@ -392,6 +423,13 @@ server_autosave_interval=300
 server_save_slots=10
 server_pause_when_empty=true";
 						if (CreateGameConfig(server, "app.cfg", foundryCfg)) applied = true;
+						break;
+					case "HumanitZ":
+						string hzIni = $@"ServerName=""{server.ServerName}""
+Password=""{server.Password}""
+AdminPassword=""{server.AdminPassword}""
+MaxPlayers={server.MaxPlayers}";
+						if (CreateGameConfig(server, @"HumanitZServer\GameServerSettings.ini", hzIni)) applied = true;
 						break;
 				}
 			}

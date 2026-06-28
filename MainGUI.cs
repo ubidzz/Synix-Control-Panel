@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Synix_Control_Panel.SynixEngine.Core;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel
 {
@@ -36,24 +37,67 @@ namespace Synix_Control_Panel
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 		private bool isPrivacyLoading = false;
+		private System.Windows.Forms.Timer? versionTimer;
+		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
+
+		public const int WM_NCLBUTTONDOWN = 0xA1;
+		public const int HT_CAPTION = 0x2;
+
+		[DllImport("user32.dll")]
+		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+		[DllImport("user32.dll")]
+		public static extern bool ReleaseCapture();
 
 		public MainGUI()
 		{
 			InitializeComponent();
 			Instance = this;
 			FileHandler.LoadServers();
-			_ = Core.Instance;
-			GridStyler.DarkTheme(dataGridView1);
 			UIStyleHelper.InitializeToggles(this);
+			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = serverList;
+			//dataGridView1.DataError += dataGridView1_DataError;
+			if (!dataGridView1.Columns.Contains("IconCol"))
+			{
+				DataGridViewImageColumn iconCol = new DataGridViewImageColumn();
+				iconCol.Name = "IconCol";
+				iconCol.HeaderText = "";
+				iconCol.DataPropertyName = "DisplayIcon";
+				iconCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
+				iconCol.Width = 35;
+				iconCol.DefaultCellStyle.Padding = new Padding(6);
+
+				dataGridView1.Columns.Insert(0, iconCol);
+				dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+				dataGridView1.RowTemplate.Height = 35;
+				foreach (DataGridViewRow row in dataGridView1.Rows)
+				{
+					row.Height = 35;
+				}
+			}
+
+			GridStyler.DarkTheme(dataGridView1);
+			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyTransparentTheme(dataGridView1);
-			Instance = this;
+			GridStyler.StyleCloseButton(btnClose);
+			GridStyler.StyleMinimizeButton(btnMinimize);
+			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
+			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
+
 			chkPrivacyMode.Text = "Privacy Mode";
 			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
+			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
 			isPrivacyLoading = chkPrivacyMode.Checked;
 			_ = LoadNetworkInfo();
+			_ = Core.Instance;
 			_ = VersionCheck();
+			InitializeVersionCheckTimer();
+		}
+
+		private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+		{
+			e.ThrowException = false;
 		}
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
@@ -91,15 +135,40 @@ namespace Synix_Control_Panel
 			if (needsTimeCheck)
 			{
 				string currentExactTime = DateTime.Now.ToString("HH:mm:ss");
+				int currentDayIndex = (int)DateTime.Now.DayOfWeek;
+
 				foreach (var server in serverList)
 				{
-					if (server.IsScheduledRestartEnabled && currentExactTime == (server.RestartTime + ":00"))
+					if (server.IsScheduledRestartEnabled &&
+						server.RestartDays != null &&
+						server.RestartDays[currentDayIndex] &&
+						currentExactTime == (server.RestartTime + ":00"))
 					{
 						_ = Core.Instance.ExecuteStartSequence(server, "MAINTENANCE");
 					}
 				}
 			}
 			chartTickCounter++;
+		}
+
+		[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+		private static extern IntPtr CreateRoundRectRgn
+		(
+			int nLeftRect,     // x-coordinate of upper-left corner
+			int nTopRect,      // y-coordinate of upper-left corner
+			int nRightRect,    // x-coordinate of lower-right corner
+			int nBottomRect,   // y-coordinate of lower-right corner
+			int nWidthEllipse, // width of the rounded corner
+			int nHeightEllipse // height of the rounded corner
+		);
+
+		private void Form_Drag_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ReleaseCapture();
+				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+			}
 		}
 
 		private void CheckRunningStatus()
@@ -137,6 +206,13 @@ namespace Synix_Control_Panel
 					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
 					int nextIndex = (currentIndex + 1) % spinFrames.Length;
 					server.Status = "Backing Up " + spinFrames[nextIndex];
+				}
+				else if (status.StartsWith("Stopping"))
+				{
+					string currentFrame = status.Replace("Stopping ", "");
+					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+					int nextIndex = (currentIndex + 1) % spinFrames.Length;
+					server.Status = "Stopping " + spinFrames[nextIndex];
 				}
 			}
 			UpdateGrid();
@@ -549,6 +625,22 @@ namespace Synix_Control_Panel
 			}
 		}
 
+		private void InitializeVersionCheckTimer()
+		{
+			versionTimer = new System.Windows.Forms.Timer();
+
+			// 20 minutes * 60 seconds * 1000 milliseconds
+			versionTimer.Interval = 20 * 60 * 1000;
+
+			versionTimer.Tick += async (sender, e) =>
+			{
+				// This fires every 20 minutes in the background
+				await VersionCheck();
+			};
+
+			versionTimer.Start();
+		}
+
 		private async Task VersionCheck()
 		{
 			string currentVersion = "Unknown";
@@ -594,14 +686,14 @@ namespace Synix_Control_Panel
 
 					if (latestVersion == currentVersion)
 					{
-						lblUpdateStatus.Text = "You are running the latest version " + currentVersion;
+						lblUpdateStatus.Text = "★ You are running the latest version " + currentVersion;
 						lblUpdateStatus.ForeColor = Color.Black;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Green;
 					}
 					else
 					{
-						lblUpdateStatus.Text = "A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
+						lblUpdateStatus.Text = "🚨 A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
 						lblUpdateStatus.ForeColor = Color.White;
 						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 						lblUpdateStatus.BackColor = Color.Red;
@@ -672,6 +764,42 @@ namespace Synix_Control_Panel
 			{
 				MessageBox.Show($"Batch file generated successfully!\n\nSaved directly to:\n{selectedServer.InstallPath}",
 								"Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+		}
+
+		private void btnClose_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
+		}
+
+		private void btnMinimize_Click(object sender, EventArgs e)
+		{
+			this.WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnDiscord_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://discord.gg/WduKEU3j8s");
+		}
+
+		private void btnGithub_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://github.com/ubidzz/Synix-Control-Panel");
+		}
+
+		private void OpenUrl(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+				{
+					FileName = url,
+					UseShellExecute = true
+				});
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Unable to open the link automatically.\n\nError: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 	}
