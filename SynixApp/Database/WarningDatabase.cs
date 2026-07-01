@@ -1,0 +1,94 @@
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
+using Synix_Control_Panel.ServerHandler;
+using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
+
+namespace Synix_Control_Panel.Database
+{
+	public partial class WarningDatabase : Form
+	{
+		private GameServer _server;
+
+		// 📖 Dynamic instructions for each game
+		private static readonly Dictionary<string, string> _messages = new()
+		{
+			{ "7 Days to Die", "You must edit 'serverconfig.xml' to set your Server Name and Admin Password." },
+			{ "ARK: Survival Evolved", "Ensure you set a 'ServerAdminPassword' in the config for admin rights." },
+			{ "Don't Starve Together", "CRITICAL: You must paste your Cluster Token into 'cluster.ini' or the server will crash." },
+			{ "Factorio", "You must enter your Factorio Username and Token in 'server-settings.json' for public listing." },
+			{ "Palworld", "Set an 'AdminPassword' in PalWorldSettings.ini to manage your server in-game." },
+			{ "Soulmask", "Soulmask requires an 'adminpsw' and 'PSW' to be set in the JSON config." },
+			{ "V Rising", "You must set a unique 'SaveName' and 'ServerName' or the game won't generate a world." }
+			// Add more messages as needed...
+		};
+
+		public WarningDatabase(GameServer server)
+		{
+			InitializeComponent();
+			_server = server;
+
+			// Set the specific warning message
+			if (_messages.TryGetValue(server.Game, out string customMessage))
+				lblWarningText.Text = customMessage;
+			else
+				lblWarningText.Text = "Configuration required before the first launch. \n1. If the Config file is missing in the game then the server needs to run once to create the config file. \n2. Then shut the server down and go to `Server Ations -> Server Options -> Edit Config File` and edit the config file. \n3. Some Servers use their own server manager in the game to fully setup the server.";
+		}
+
+		private void btnYes_Click(object sender, EventArgs e)
+		{
+			_server.IsFirstBoot = false;
+			try
+			{
+				FileHandler.SaveServers();
+
+				var gameData = GameDatabase.GetGame(_server.Game);
+				if (gameData != null && !string.IsNullOrEmpty(gameData.RelativeConfigPath))
+				{
+					string cleanIdentity = _server.ServerName.Replace(" ", "_");
+
+					string relativePath = gameData.RelativeConfigPath.Replace("{Identity}", cleanIdentity);
+
+					string fullPath = Path.Combine(_server.InstallPath, relativePath);
+
+					if (File.Exists(fullPath))
+					{
+						this.Hide();
+
+						using (ServerConfig editor = new ServerConfig(fullPath, gameData.Format))
+						{
+							editor.ShowDialog();
+						}
+					}
+					else
+					{
+						MessageBox.Show($"Config file not found!\n\nTarget Path: {fullPath}", "Path Error");
+					}
+				}
+
+				this.DialogResult = DialogResult.OK;
+				this.Close();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error: {ex.Message}");
+			}
+		}
+
+		private void btnNo_Click(object sender, EventArgs e)
+		{
+			this.DialogResult = DialogResult.Cancel;
+			this.Close();
+		}
+	}
+}
