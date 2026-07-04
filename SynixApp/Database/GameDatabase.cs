@@ -151,7 +151,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP", "Extinction_WP"],
+				Maps = [ "TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP", "Extinction_WP", "Valguero_WP", "Ragnarok_WP", "LostColony_WP", "Astraeos_WP", "Genesis_WP"],
 				GameModes = ["PVE", "PVP"],
 				NeedsConfigWarning = true
 			},
