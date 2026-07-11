@@ -54,6 +54,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"Astro\Binaries\Win64")) applied = true; break;
 					case "Abiotic Factor":
 						if (CopySteamDLLs(server.InstallPath, @"AbioticFactor\Binaries\Win64")) applied = true; break;
+					case "BATTALION: Legacy":
+						if (CopySteamDLLs(server.InstallPath, @"Battalion\Binaries\Win64")) applied = true; break;
 					case "Icarus":
 						if (CopySteamDLLs(server.InstallPath, @"Icarus\Binaries\Win64")) applied = true; break;
 					case "The Front":
@@ -131,6 +133,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"AAGame\Binaries\Win64")) applied = true; break;
 					case "Monday Night Combat":
 						if (CopySteamDLLs(server.InstallPath, @"MNC\Binaries\Win64")) applied = true; break;
+					case "Chivalry 2":
+						if (CopySteamDLLs(server.InstallPath, @"TBL\Binaries\Win64")) applied = true; break;
+					case "Depth":
+						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
+					case "Primal Carnage":
+						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win32")) applied = true; break;
 					case "Toxikk":
 					case "Sanctum 2":
 					case "Sanctum":
@@ -261,6 +269,16 @@ MaxPlayers={server.MaxPlayers}";
 					case "ASKA":
 						string askaJson = @"{ ""ServerName"": ""{ServerName}"", ""Password"": """ + server.Password + @""", ""MaxPlayers"": 16 }";
 						if (CreateGameConfig(server, "server_settings.json", askaJson)) applied = true;
+						break;
+
+					case "Just Cause 3: Multiplayer":
+						string jc3Json = @"{
+    ""ServerName"": ""{ServerName}"",
+    ""MaxPlayers"": {MaxPlayers},
+    ""BindIP"": ""0.0.0.0"",
+    ""Port"": {Port}
+}";
+						if (CreateGameConfig(server, "config.json", jc3Json)) applied = true;
 						break;
 
 					case "Raft Dedicated Server":
@@ -404,6 +422,17 @@ ServerName=""{ServerName}""";
 					case "Mindustry":
 						string minJson = @"{ ""name"": ""{ServerName}"" }";
 						if (CreateGameConfig(server, @"config\server-settings.json", minJson)) applied = true;
+						break;
+					
+					case "Portal Knights":
+						string pkJson = @"{
+    ""basicServerData"": {
+        ""name"": ""{ServerName}"",
+        ""port"": {Port}
+    },
+    ""universeSize"": ""Normal""
+}";
+						if (CreateGameConfig(server, "server_config.json", pkJson)) applied = true;
 						break;
 
 					case "Survive the Nights":
