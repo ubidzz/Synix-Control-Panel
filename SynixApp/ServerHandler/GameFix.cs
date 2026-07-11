@@ -12,6 +12,9 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -31,6 +34,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			try
 			{
+				// --------------------------------------------------------
+				// PHASE 1: STEAM API DLL INJECTIONS
+				// --------------------------------------------------------
 				switch (server.Game)
 				{
 					case "StarRupture":
@@ -192,83 +198,73 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"CepheusProtocol\Binaries\Win64")) applied = true; break;
 				}
 
+				// --------------------------------------------------------
+				// PHASE 2: CONFIGURATION FILE CREATION & PARSING
+				// --------------------------------------------------------
 				switch (server.Game)
 				{
 					case "Rust":
-						string rustRelativePath = $@"server\{cleanIdentity}\cfg\server.cfg";
-
-						string rustCfg = $@"// Synix Custom Rust Configuration
-// Settings like Port and Query Port are managed by command-line arguments.
-server.hostname ""{server.ServerName}""
-server.password ""{server.Password}""
-server.seed {(string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)}
+						string rustCfg = @"// Synix Custom Rust Configuration
+server.hostname ""{ServerName}""
+server.password ""{Password}""
+server.seed {WorldSeed}
 server.worldsize 4000
-
-// --- Server Browser Visuals ---
-server.description ""Welcome to {server.ServerName}!\n\nThis server is hosted and managed using the Synix Control Panel.\n\nBe sure to edit this description in your server.cfg file!""
+server.description ""Welcome to {ServerName}!\n\nManaged via Synix Control Panel.""
 server.url ""https://github.com/ubidzz/Synix-Control-Panel""
-server.headerimage """"
-server.tags ""monthly,modded""
-
-// --- Server Rules ---
 server.saveinterval 300
 server.globalchat true
 server.secure true
 server.radiation true
-server.official true
-server.globalchat true";
+server.official true";
 
 						string rustCfgPath = Path.Combine("server", cleanIdentity, "cfg", "server.cfg");
-
-						if (CreateGameConfig(server, rustCfgPath, rustCfg))
-						{
-							applied = true;
-						}
+						if (CreateGameConfig(server, rustCfgPath, rustCfg, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
+
 					case "StarRupture":
 						string srJson = @"{ ""SessionName"": ""{ServerName}"", ""SaveGameInterval"": ""300"", ""StartNewGame"": ""true"", ""LoadSavedGame"": ""false"", ""SaveGameName"": ""AutoSave0.sav"" }";
-						if (CreateGameConfig(server, @"StarRupture\Binaries\Win64\DSSettings.txt", srJson)) applied = true;
+						if (CreateGameConfig(server, @"StarRupture\Binaries\Win64\DSSettings.txt", srJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Subsistence":
-						string subEngineIni = $@"[URL]
-Port={server.Port}
+						string subEngineIni = @"[URL]
+Port={Port}
 
 [IpDrv.TcpNetDriver]
-Port={server.Port}
+Port={Port}
 
 [OnlineSubsystemSteamworks.OnlineSubsystemSteamworks]
-QueryPort={server.QueryPort}";
-						string subSettingsIni = $@"[SubDedicatedServer.SubServerConfig]
-ServerName=""{server.ServerName}""
-ServerPassword=""{server.Password}""
-AdminPassword=""{server.AdminPassword}""
-MaxPlayers={server.MaxPlayers}";
+QueryPort={QueryPort}";
 
-						// Create both files in the UDKGame\Config folder
-						if (CreateGameConfig(server, @"UDKGame\Config\UDKEngine.ini", subEngineIni)) applied = true;
-						if (CreateGameConfig(server, @"UDKGame\Config\UDKDedServerSettings.ini", subSettingsIni)) applied = true;
+						string subSettingsIni = @"[SubDedicatedServer.SubServerConfig]
+ServerName=""{ServerName}""
+ServerPassword=""{Password}""
+AdminPassword=""{AdminPassword}""
+MaxPlayers={MaxPlayers}";
+
+						if (CreateGameConfig(server, @"UDKGame\Config\UDKEngine.ini", subEngineIni, cleanIdentity, localIp, publicIp)) applied = true;
+						if (CreateGameConfig(server, @"UDKGame\Config\UDKDedServerSettings.ini", subSettingsIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Windrose":
 						string windroseJson = @"{ 
-            ""Password"": """ + server.Password + @""",
-            ""ServerName"": """ + server.ServerName + @""",
-            ""MaxPlayerCount"": """ + server.MaxPlayers + @""",
-            ""UserSelectedRegion"": """",
-            ""P2pProxyAddress"": """ + localIp + @""",
-            ""AutoRestart"": true,
-            ""UseDirectConnection"": false,
-            ""DirectConnectionServerAddress"": """ + publicIp + @""",
-            ""DirectConnectionServerPort"": """ + server.Port + @""",
-            ""DirectConnectionProxyAddress"": ""0.0.0.0""
-        }";
-						if (CreateGameConfig(server, @"R5\ServerDescription.json", windroseJson)) applied = true;
+    ""Password"": ""{Password}"",
+    ""ServerName"": ""{ServerName}"",
+    ""MaxPlayerCount"": ""{MaxPlayers}"",
+    ""UserSelectedRegion"": """",
+    ""P2pProxyAddress"": ""{LocalIP}"",
+    ""AutoRestart"": true,
+    ""UseDirectConnection"": false,
+    ""DirectConnectionServerAddress"": ""{PublicIP}"",
+    ""DirectConnectionServerPort"": ""{Port}"",
+    ""DirectConnectionProxyAddress"": ""0.0.0.0""
+}";
+						if (CreateGameConfig(server, @"R5\ServerDescription.json", windroseJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "ASKA":
-						string askaJson = @"{ ""ServerName"": ""{ServerName}"", ""Password"": """ + server.Password + @""", ""MaxPlayers"": 16 }";
-						if (CreateGameConfig(server, "server_settings.json", askaJson)) applied = true;
+						string askaJson = @"{ ""ServerName"": ""{ServerName}"", ""Password"": ""{Password}"", ""MaxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, "server_settings.json", askaJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Just Cause 3: Multiplayer":
@@ -278,188 +274,187 @@ MaxPlayers={server.MaxPlayers}";
     ""BindIP"": ""0.0.0.0"",
     ""Port"": {Port}
 }";
-						if (CreateGameConfig(server, "config.json", jc3Json)) applied = true;
+						if (CreateGameConfig(server, "config.json", jc3Json, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Raft Dedicated Server":
-						string raftJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": 8 }";
-						if (CreateGameConfig(server, "server_config.json", raftJson)) applied = true;
+						string raftJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, "server_config.json", raftJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Sons Of The Forest":
-						string sotfCfg = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": 8, ""ServerPlayMode"": ""Normal"" }";
-						if (CreateGameConfig(server, @"userdata\dedicated_server.cfg", sotfCfg)) applied = true;
+						string sotfCfg = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers}, ""ServerPlayMode"": ""Normal"" }";
+						if (CreateGameConfig(server, @"userdata\dedicated_server.cfg", sotfCfg, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
+
 					case "Cepheus Protocol":
-						string cpIni = $@"[/Script/Engine.GameSession]
-MaxPlayers={server.MaxPlayers}
-ServerName=""{server.ServerName}""
-Password=""{server.Password}""
-AdminPassword=""{server.AdminPassword}""";
-						if (CreateGameConfig(server, @"CepheusProtocol\Saved\Config\WindowsServer\Game.ini", cpIni)) applied = true;
+						string cpIni = @"[/Script/Engine.GameSession]
+MaxPlayers={MaxPlayers}
+ServerName=""{ServerName}""
+Password=""{Password}""
+AdminPassword=""{AdminPassword}""";
+						if (CreateGameConfig(server, @"CepheusProtocol\Saved\Config\WindowsServer\Game.ini", cpIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
+
 					case "Palworld":
 					case "Palworld (Experimental)":
 						string palIni = @"[/Script/Pal.PalGameWorldSettings]
-OptionSettings=(ServerName=""{ServerName}"",ServerPassword=""" + server.Password + @""",AdminPassword=""" + server.AdminPassword + @""")";
-						if (CreateGameConfig(server, @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini", palIni)) applied = true;
+OptionSettings=(ServerName=""{ServerName}"",ServerPassword=""{Password}"",AdminPassword=""{AdminPassword}"")";
+						if (CreateGameConfig(server, @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini", palIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Enshrouded":
-						string enshroudedJson = @"{ ""name"": ""{ServerName}"", ""slotCount"": 16 }";
-						if (CreateGameConfig(server, "enshrouded_server.json", enshroudedJson)) applied = true;
+						string enshroudedJson = @"{ ""name"": ""{ServerName}"", ""slotCount"": {MaxPlayers} }";
+						if (CreateGameConfig(server, "enshrouded_server.json", enshroudedJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Longvinter":
 						string longIni = @"[/Script/Longvinter.LongvinterGameMode]
 ServerName=""{ServerName}""";
-						if (CreateGameConfig(server, @"Longvinter\Saved\Config\WindowsServer\Game.ini", longIni)) applied = true;
+						if (CreateGameConfig(server, @"Longvinter\Saved\Config\WindowsServer\Game.ini", longIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Ground Branch":
 						string gbIni = @"[/Script/GroundBranch.GBGameMode]
 ServerName=""{ServerName}""";
-						if (CreateGameConfig(server, @"GroundBranch\Saved\Config\WindowsServer\Game.ini", gbIni)) applied = true;
+						if (CreateGameConfig(server, @"GroundBranch\Saved\Config\WindowsServer\Game.ini", gbIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Stranded Deep":
-						string sdJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": 2 }";
-						if (CreateGameConfig(server, "ServerConfig.json", sdJson)) applied = true;
+						string sdJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, "ServerConfig.json", sdJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Staxel":
-						string staxelJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": 10 }";
-						if (CreateGameConfig(server, "server.config", staxelJson)) applied = true;
+						string staxelJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, "server.config", staxelJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Volcanoids":
 						string volJson = @"{ ""ServerName"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, "server_settings.json", volJson)) applied = true;
+						if (CreateGameConfig(server, "server_settings.json", volJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Holdfast: Nations At War":
-						string hfTxt = $@"server_name {server.ServerName}";
-						if (CreateGameConfig(server, @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt", hfTxt)) applied = true;
+						string hfTxt = @"server_name {ServerName}";
+						if (CreateGameConfig(server, @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt", hfTxt, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "V Rising":
 						string vrJson = @"{ ""Name"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, @"VRisingServer_Data\StreamingAssets\Settings\ServerHostSettings.json", vrJson)) applied = true;
+						if (CreateGameConfig(server, @"VRisingServer_Data\StreamingAssets\Settings\ServerHostSettings.json", vrJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "7 Days to Die":
 					case "7 Days to Die (Experimental)":
 						string sd2dXml = @"<ServerSettings><property name=""ServerName"" value=""{ServerName}""/></ServerSettings>";
-						if (CreateGameConfig(server, "serverconfig.xml", sd2dXml)) applied = true;
+						if (CreateGameConfig(server, "serverconfig.xml", sd2dXml, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Out of Reach":
-						string oorJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": 20 }";
-						if (CreateGameConfig(server, "ServerConfig.json", oorJson)) applied = true;
+						string oorJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, "ServerConfig.json", oorJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "NS2: Combat":
-						string ns2cJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": 16 }";
-						if (CreateGameConfig(server, "ServerConfig.json", ns2cJson)) applied = true;
+						string ns2cJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, "ServerConfig.json", ns2cJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Just Cause 2: Multiplayer":
-						string jc2Lua = $@"ServerName = ""{server.ServerName}""";
-						if (CreateGameConfig(server, "config.lua", jc2Lua)) applied = true;
+						string jc2Lua = @"ServerName = ""{ServerName}""";
+						if (CreateGameConfig(server, "config.lua", jc2Lua, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Beyond the Wire":
-						string btwCfg = $@"ServerName=""{server.ServerName}""";
-						if (CreateGameConfig(server, @"BeyondTheWire\ServerConfig\Server.cfg", btwCfg)) applied = true;
+						string btwCfg = @"ServerName=""{ServerName}""";
+						if (CreateGameConfig(server, @"BeyondTheWire\ServerConfig\Server.cfg", btwCfg, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Colony Survival":
 						string csJson = @"{ ""serverName"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, "config.json", csJson)) applied = true;
+						if (CreateGameConfig(server, "config.json", csJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
+
 					case "Core Keeper":
-						string coreJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": 16 }";
-						if (CreateGameConfig(server, @"DedicatedServer\ServerConfig.json", coreJson)) applied = true;
+						string coreJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, @"DedicatedServer\ServerConfig.json", coreJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Factorio":
 					case "Factorio (Experimental)":
 					case "Factorio (Space Age)":
-						string factJson = @"{ ""name"": ""{ServerName}"", ""max_players"": 0 }";
-						if (CreateGameConfig(server, @"data\server-settings.json", factJson)) applied = true;
+						string factJson = @"{ ""name"": ""{ServerName}"", ""max_players"": {MaxPlayers} }";
+						if (CreateGameConfig(server, @"data\server-settings.json", factJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Eco":
-						string ecoJson = @"{ ""Description"": ""{ServerName}"", ""MaxConnections"": 10 }";
-						if (CreateGameConfig(server, @"Configs\Network.eco", ecoJson)) applied = true;
+						string ecoJson = @"{ ""Description"": ""{ServerName}"", ""MaxConnections"": {MaxPlayers} }";
+						if (CreateGameConfig(server, @"Configs\Network.eco", ecoJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Starbound":
-						string sbJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": 8 }";
-						if (CreateGameConfig(server, @"storage\starbound_server.config", sbJson)) applied = true;
+						string sbJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": {MaxPlayers} }";
+						if (CreateGameConfig(server, @"storage\starbound_server.config", sbJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Project CARS 2":
 						string pcarsJson = @"{ ""server"": { ""name"": ""{ServerName}"" } }";
-						if (CreateGameConfig(server, "server_config.json", pcarsJson)) applied = true;
+						if (CreateGameConfig(server, "server_config.json", pcarsJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Keplerth":
 						string kepJson = @"{ ""ServerName"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, "config.json", kepJson)) applied = true;
+						if (CreateGameConfig(server, "config.json", kepJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Assetto Corsa Competizione":
-						string accJson = @"{ ""serverName"": ""{ServerName}"", ""maxClients"": 10 }";
-						if (CreateGameConfig(server, @"cfg\settings.json", accJson)) applied = true;
+						string accJson = @"{ ""serverName"": ""{ServerName}"", ""maxClients"": {MaxPlayers} }";
+						if (CreateGameConfig(server, @"cfg\settings.json", accJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "rFactor 2":
 						string rf2Json = @"{ ""ServerName"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, @"UserData\player\Multiplayer.json", rf2Json)) applied = true;
+						if (CreateGameConfig(server, @"UserData\player\Multiplayer.json", rf2Json, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Mindustry":
 						string minJson = @"{ ""name"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, @"config\server-settings.json", minJson)) applied = true;
+						if (CreateGameConfig(server, @"config\server-settings.json", minJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
-					
+
 					case "Portal Knights":
-						string pkJson = @"{
-    ""basicServerData"": {
-        ""name"": ""{ServerName}"",
-        ""port"": {Port}
-    },
-    ""universeSize"": ""Normal""
-}";
-						if (CreateGameConfig(server, "server_config.json", pkJson)) applied = true;
+						string pkJson = @"{ ""basicServerData"": { ""name"": ""{ServerName}"", ""port"": {Port} }, ""universeSize"": ""Normal"" }";
+						if (CreateGameConfig(server, "server_config.json", pkJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Survive the Nights":
 					case "Savage Lands":
 						string stnJson = @"{ ""ServerName"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, "ServerConfig.json", stnJson)) applied = true;
+						if (CreateGameConfig(server, "ServerConfig.json", stnJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
+
 					case "Foundry":
-						string foundryCfg = $@"server_name={{ServerName}}
+						string foundryCfg = @"server_name={ServerName}
 server_description=Hosted using Synix
-server_world_name={cleanIdentity}
-server_port={server.Port}
-server_query_port={server.QueryPort}
+server_world_name={Identity}
+server_port={Port}
+server_query_port={QueryPort}
 server_is_public=true
-server_max_players={server.MaxPlayers}
-server_password={server.Password}
+server_max_players={MaxPlayers}
+server_password={Password}
 server_autosave_interval=300
 server_save_slots=10
 server_pause_when_empty=true";
-						if (CreateGameConfig(server, "app.cfg", foundryCfg)) applied = true;
+						if (CreateGameConfig(server, "app.cfg", foundryCfg, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
+
 					case "HumanitZ":
-						string hzIni = $@"ServerName=""{server.ServerName}""
-Password=""{server.Password}""
-AdminPassword=""{server.AdminPassword}""
-MaxPlayers={server.MaxPlayers}";
-						if (CreateGameConfig(server, @"HumanitZServer\GameServerSettings.ini", hzIni)) applied = true;
+						string hzIni = @"ServerName=""{ServerName}""
+Password=""{Password}""
+AdminPassword=""{AdminPassword}""
+MaxPlayers={MaxPlayers}";
+						if (CreateGameConfig(server, @"HumanitZServer\GameServerSettings.ini", hzIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 				}
 			}
@@ -474,18 +469,30 @@ MaxPlayers={server.MaxPlayers}";
 		// UNIFIED UTILITY FUNCTIONS
 		// --------------------------------------------------------
 
-		private static bool CreateGameConfig(GameServer server, string relativeFilePath, string contentTemplate)
+		private static bool CreateGameConfig(GameServer server, string relativeFilePath, string contentTemplate, string identity, string localIp, string publicIp)
 		{
 			string fullFilePath = Path.Combine(server.InstallPath, relativeFilePath);
+
+			string targetFolder = Path.GetDirectoryName(fullFilePath);
+			if (!Directory.Exists(targetFolder))
+			{
+				Directory.CreateDirectory(targetFolder);
+			}
+
 			if (!File.Exists(fullFilePath))
 			{
 				string finalContent = contentTemplate
 					.Replace("{ServerName}", server.ServerName)
 					.Replace("{Password}", server.Password)
+					.Replace("{AdminPassword}", server.AdminPassword)
 					.Replace("{Port}", server.Port.ToString())
-					.Replace("{MaxPlayers}", server.MaxPlayers.ToString());
+					.Replace("{QueryPort}", server.QueryPort.ToString())
+					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
+					.Replace("{WorldSeed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
+					.Replace("{Identity}", identity)
+					.Replace("{LocalIP}", localIp)
+					.Replace("{PublicIP}", publicIp);
 
-				string targetFolder = Path.GetDirectoryName(fullFilePath);
 				ManualConfigWasCreated = true;
 				return FileHandler.Create(targetFolder, Path.GetFileName(fullFilePath), finalContent);
 			}
@@ -499,6 +506,11 @@ MaxPlayers={server.MaxPlayers}";
 
 			string targetDir = Path.Combine(installPath, BinariesDir);
 			string steamCmdPath = @"C:\Synix\SteamCMD";
+
+			if (!Directory.Exists(targetDir))
+			{
+				Directory.CreateDirectory(targetDir);
+			}
 
 			foreach (string dll in dlls)
 			{
