@@ -64,6 +64,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					ZipFile.CreateFromDirectory(sourceDir, zipPath, CompressionLevel.Fastest, false);
 				}
+				Log($"[💾 BACKUP] Backup location: {zipPath}.", Color.LimeGreen);
 				Log($"[💾 BACKUP] Finished backing up {server.ServerName}.", Color.LimeGreen);
 			}
 			catch (Exception ex)

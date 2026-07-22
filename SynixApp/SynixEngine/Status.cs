@@ -188,7 +188,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				return StatusManager.GetStatus(ServerState.Stopped);
+				return string.Empty;
 			}
 		}
 
