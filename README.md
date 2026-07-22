@@ -1,6 +1,6 @@
 # 🛸 Synix Control Panel
 
-### **The High-Performance, Zero-Admin Backbone for Your Personal Game Servers**
+### **The High-Performance Backbone for Your Personal Game Servers**
 
 [![Latest Release](https://img.shields.io/github/v/release/ubidzz/Synix-Control-Panel?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/releases/latest)
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
@@ -14,7 +14,7 @@
 [![Donate with PayPal](https://img.shields.io/badge/PAYPAL-DONATE-0079C1?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/ubidzz/Synix-Control-Panel/total?style=for-the-badge&logo=github)
 
-**Synix Control Panel** is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a **Zero-Admin (No UAC)** environment.
+Synix Control Panel is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a streamlined Windows environment.
 
 [Discord](https://discord.gg/2WR7ArC2Vr)
 [Youtube Video](https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s)
@@ -22,80 +22,75 @@
 ---
 
 ## 🏗️ Architectural Style & Design Patterns
-Synix is built with a focus on modularity, thread safety, and low-latency execution.
 
-### **Engine-Driven Singleton Architecture**
-The application utilizes a **Singleton Engine Pattern**, ensuring a single, centralized source of truth for all server operations. By separating the UI client from the core processing logic, Synix prevents race conditions and ensures that state-heavy operations—such as updates or backups—remain atomic and synchronized.
-
-### **Asynchronous Event-Driven Execution**
-Built on the **Task-based Asynchronous Pattern (TAP)**, Synix ensures a non-blocking user experience. Heavy I/O operations, including SteamCMD downloads and network telemetry, are executed on background threads. The UI remains responsive while the engine reacts to lifecycle events.
-
-### **Resource-Aware Middleware**
-Synix acts as a deterministic middleware layer between the Operating System and the Game Engine. Its **Resource Guard** logic calculates system headroom in real-time, enforcing a 5GB RAM safety buffer and an 85% CPU throttle to maintain host stability.
+* **Engine-Driven Singleton Architecture: Utilizes a centralized source of truth for all server operations, separating the UI client from core processing logic to eliminate race conditions and keep background backups/updates atomic.**
+* **Asynchronous Event-Driven Execution: Built on the Task-based Asynchronous Pattern (TAP) for a non-blocking user experience during heavy I/O operations like SteamCMD downloads.**
+* **Resource-Aware Middleware Resource-Aware Middleware: Calculates system headroom in real-time, enforcing safety buffers and CPU throttles to maintain host stability.**
 
 ---
 
-## 🛡️ Security & Installation Notes
+## 💾 Quick Install (Winget)
+Installing Synix Control Panel via winget handles the application installation, start menu shortcuts, and registers it to your Windows Apps list automatically. You can run these commands from Command Prompt (cmd) or PowerShell.
+
+To install:
+* **`winget install synix`**
+
+To uninstall:
+* **`winget uninstall synix`**
+
+**(Note: Synix can also be uninstalled directly from the standard Windows Apps list settings).**
+
+---
+
+## 🛡️ Security & SmartScreen Notes
 Because Synix is a specialized tool developed for the community, you may encounter Windows security prompts during your first launch.
 
 > **Note on Digital Signatures:**
-> Synix is currently a new, independent project and does not yet have a paid Microsoft Digital Signature. This often triggers **Windows SmartScreen** or **Smart App Control**.
+Because Synix is an independently developed community tool without a paid Microsoft Digital Signature, you may encounter Windows security prompts:
 > 
-> * **Windows SmartScreen:** Click `More Info` -> `Run Anyway`.
-> * **Windows 11 Smart App Control (SAC):** If your system has Smart App Control enabled, it may block unsigned executables entirely. You may need to set Smart App Control to 'Evaluation' or 'Off' to run independent community tools like Synix.
+> * **Windows SmartScreen:** Click `More Info` -> `Run Anyway`.**
+> * **Smart App Control (SAC): If enabled on Windows 11, strict SAC policies may require setting evaluation mode to run independent community apps.**
 > 
-> **Rest Assured:** Synix is a **No-Admin** tool. It does not require or request UAC/Administrative privileges, meaning it cannot modify your system registry or protected Windows files.
-
----
-
-## 💾 Winget install
-Installing Synix Control Panel with winget dose use a installer so that it can be added to the start menu and the Installed apps list.
-
-* **`winget install synix`**
-* **`winget uninstall synix`** or from the computer App List
-* Synix will be downloaded, installed and can be found in the start menu after it installed.
+> **Rest Assured:** Synix is designed to respect system safety boundaries while providing robust management features.
 
 ---
 
 ## 🛡️ Synix Network Guard
 A specialized security module designed to protect the host's global network interface from saturation and resource exhaustion.
 
-* **Global Interface Monitoring:** Tracks total bandwidth (Bytes/s) across the primary network adapter, identifying surges that exceed normal gameplay thresholds.
+* **Global Interface Monitoring:** Tracks total bandwidth across the primary network adapter, identifying surges that exceed normal gameplay thresholds.
 * **Heuristic Attack Analysis:** Differentiates between legitimate player spikes and malicious floods by cross-referencing network traffic with CPU interrupt levels.
 * **SteamCMD Awareness:** Intelligent logic prevents false positives during game installations or updates by monitoring active SteamCMD processes.
-* **Critical Service Alerts:** Triggers a system-wide "Network Guard" MessageBox that identifies a DDoS attack even when the user is tabbed out.
+* **Critical Service Alerts:** Triggers a system-wide "Network Guard" alert that identifies network issues even when the user is tabbed out.
 
 ---
 
 ## 🛡️ Core Philosophy: User-Mode Sovereignty
-Synix is engineered to protect both the game server and the host operating system without requiring elevated privileges.
-* **Non-Invasive Execution:** Operates entirely within `C:\Synix`, ensuring zero modifications to Windows registry hives or protected system directories.
-* **Sanitized {Identity} Isolation:** Every server is containerized using a unique {Identity} string to avoid collisions and "Space in Path" errors.
+Synix is engineered to protect both the game server and the host operating system efficiently.
+* **Non-Invasive Execution:** Operates entirely within its dedicated root structure, ensuring clean file organization..
+* **Sanitized Identity Isolation:** Every server is containerized using a unique identifier string to avoid collisions and path errors.
 * **Portable Infrastructure:** The entire ecosystem is file-path independent. Move your root directory to any drive (SSD/NVMe), and the engine self-heals its internal pointers.
 
 ---
 
 ## 🧠 The Synix Engine: Professional Automation
-The core engine is a **Modular Singleton** that manages the server lifecycle with proactive intelligence.
-
 ### **Proactive Hardware Stewardship (Resource Guard)**
-Optimized for high-performance architectures (benchmarked on **Ryzen 9 / 96GB RAM** environments), Synix protects system stability:
-* **The 5GB Safety Buffer:** Synix calculates available headroom by reserving a strict 5GB RAM overhead for Windows 11 kernel processes.
-* **85% CPU Ingress Throttle:** The engine blocks new server launches if global CPU utilization exceeds 85% to ensure smooth performance for active players.
-* **Interactive Telemetry:** A 60-second real-time history graph tracks hardware health with deep-dive **Resource History** diagnostics.
+Optimized for high-performance architectures (benchmarked on Ryzen 9 / 96GB RAM environments):
+* **The 5GB Safety Buffer:** Reserves strict RAM overhead for Windows kernel processes.
+* **85% CPU Ingress Throttle:** Blocks new server launches if global CPU utilization exceeds safe limits.
+* **Interactive Telemetry:** Real-time history tracking hardware health and diagnostics.
 
 ### **Autonomous Process Health (Watchdog)**
-* **Heartbeat Monitoring:** Synix monitors process loop health to detect hangs. If a process is unresponsive for >60 seconds, the engine initiates a recovery sequence.
-* **Staged Termination:** Sends a 'Safe Close' signal for world-saves, triggering a `taskkill` only if the process remains stubborn.
+* Heartbeat Monitoring: Monitors process loop health. If a server becomes unresponsive for >60 seconds, the engine initiates a recovery sequence.
+* Staged Termination: Sends a `Safe Close` signal for clean world-saves before enforcing a fallback process termination if necessary.
 
 ---
 
 ## 🌐 Elite Networking & Connectivity
-Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic suite.
 * **Local vs. WAN Probing:** Verifies LAN IP binding and Public WAN NAT Table forwarding.
 * **NAT Hairpinning Awareness:** Detects router loopback limitations and guides users to the correct connection IP.
 * **A2S Telemetry:** Uses A2S_INFO protocols to query player counts and metadata without impacting server performance.
-* **AppID Synchronization:** Dynamically manages `steam_appid.txt` to ensure correct Steam API handshakes for titles like ARK, Rust, Soulmask.
+* **AppID Synchronization:** Dynamically manages steam_appid.txt to ensure correct Steam API handshakes for titles like ARK, Rust, Soulmask, and Dune: Awakening.
 
 ---
 
@@ -113,6 +108,8 @@ Synix solves the "Hidden Server" mystery with a proprietary two-tier diagnostic 
 * **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O.
 
 ---
+
+## 🖼️ Gallery
 
 <img width="1243" height="660" alt="UI" src="https://github.com/user-attachments/assets/f10cc223-b1a0-4b85-a048-2989daf8ca8d" />
 <img width="802" height="482" alt="image" src="https://github.com/user-attachments/assets/4598aa5f-eb95-4589-afe2-bed4dd84d78b" />
