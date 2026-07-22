@@ -206,14 +206,19 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						CreateNoWindow = false
 					};
 
-					psi.EnvironmentVariables["SteamAppId"] = invokedId;
-					psi.EnvironmentVariables["SteamGameId"] = invokedId;
+					if (server.Game == "Dune: Awakening")
+					{
+						psi.UseShellExecute = true;
+						psi.Verb = "runas";
+					}
+					else
+					{
+						psi.EnvironmentVariables["SteamAppId"] = invokedId;
+						psi.EnvironmentVariables["SteamGameId"] = invokedId;
+					}
 				});
 
-				// If the background task failed early (missing exe, bad string), safely stop execution
 				if (psi == null) return;
-
-				// 3. LAUNCH PROCESS (Back on the UI thread, instantaneous)
 				logCallback?.Invoke($"[ARGUMENT] {finalArgs}", Color.Cyan);
 
 				Process? proc = Process.Start(psi);

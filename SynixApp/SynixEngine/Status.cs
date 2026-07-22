@@ -10,6 +10,7 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Diagnostics;
@@ -38,54 +39,75 @@ namespace Synix_Control_Panel.SynixEngine
 				// --- 1. GAME SERVER REBIND ---
 				if (server.PID.HasValue && server.PID.Value > 0)
 				{
+					bool isServerRunning = false;
+
 					try
 					{
 						var process = Process.GetProcessById(server.PID.Value);
-						if (process != null && !process.HasExited)
-						{
-							server.RunningProcess = process;
-							server.Status = StatusManager.GetStatus(ServerState.Running);
-							if (server.StartTime == null)
-							{
-								server.StartTime = process.StartTime;
-							}
-							Log($"[🔗 REBIND] Found {server.Game} still running (PID: {server.PID})", Color.BlueViolet, true);
 
-							process.EnableRaisingEvents = true;
-							process.Exited += async (s, e) =>
+						if (!process.HasExited)
+						{
+							var gameData = GameDatabase.GetGame(server.Game);
+
+							if (gameData != null && !string.IsNullOrEmpty(gameData.ExeName))
 							{
-								if (server.Status == StatusManager.GetStatus(ServerState.Running))
-									await ExecuteStartSequence(server);
-								else
-									CleanupStoppedState(server);
-							};
+								string expectedProcessName = System.IO.Path.GetFileNameWithoutExtension(gameData.ExeName);
+								if (process.ProcessName.Equals(expectedProcessName, StringComparison.OrdinalIgnoreCase) || (gameData.ExeName.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) && process.ProcessName.Equals("cmd", StringComparison.OrdinalIgnoreCase)))
+								{
+									isServerRunning = true;
+									server.RunningProcess = process;
+									server.Status = StatusManager.GetStatus(ServerState.Running);
+
+									if (server.StartTime == null)
+									{
+										server.StartTime = process.StartTime;
+									}
+
+									Log($"[🔗 REBIND] Found {server.Game} still running (PID: {server.PID})", Color.BlueViolet, true);
+
+									process.EnableRaisingEvents = true;
+									process.Exited += async (s, e) =>
+									{
+										if (server.Status == StatusManager.GetStatus(ServerState.Running))
+											await ExecuteStartSequence(server);
+										else
+											CleanupStoppedState(server);
+									};
+								}
+							}
 						}
 					}
-					catch { CleanupStoppedState(server); }
+					catch { }
+
+					if (!isServerRunning)
+					{
+						CleanupStoppedState(server);
+					}
 				}
 
 				// --- 2. STEAMCMD REBIND (Orphan Recovery) ---
 				if ((server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Updating)) && server.SteamPID.HasValue)
 				{
+					bool isSteamCmdActive = false;
 					try
 					{
 						var installer = Process.GetProcessById(server.SteamPID.Value);
-						if (installer != null && !installer.HasExited)
+						if (!installer.HasExited && installer.ProcessName.Contains("steamcmd", StringComparison.OrdinalIgnoreCase))
 						{
+							isSteamCmdActive = true;
 							Log($"[🔗 REBIND] Found {server.Game} install still active (PID: {server.SteamPID})", Color.BlueViolet, true);
 						}
 					}
-					catch
+					catch { }
+
+					if (!isSteamCmdActive)
 					{
-						// If process is GONE, it finished while Synix was closed
 						server.Status = StatusManager.GetStatus(ServerState.Stopped);
 						server.SteamPID = null;
-
-						// 🛠️ RUN SURGERY: Fix missing DLLs/Configs for the orphaned install
 						await GameFix.PostInstall(server);
-
 						Log($"[🔧 RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes.", Color.Green, true);
 						FileHandler.SaveServers();
+						Core.Instance.UpdateGridStatus();
 					}
 				}
 			}
@@ -100,7 +122,6 @@ namespace Synix_Control_Panel.SynixEngine
 			UpdateGridStatus();
 		}
 
-		// Did this for now but will put in a multi-language dictionary later to allow users to add their own languages
 		public enum ServerState
 		{
 			Stopped = 0,

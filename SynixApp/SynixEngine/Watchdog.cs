@@ -32,12 +32,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Starting))
 				{
-					if (!server.PID.HasValue) continue;
+					// 🎯 DUNE EXCEPTION: UAC elevation (Run as Admin) spawns a new detached process, 
+					// so the original PID dies instantly. We bypass the PID check for Dune.
+					bool isAlive = server.Game == "Dune: Awakening" || (server.PID.HasValue && IsProcessAlive(server.PID.Value, exePathFromDB));
 
-					// 🎯 CHECK 1: Ensure the process is actually still there
-					if (IsProcessAlive(server.PID.Value, exePathFromDB))
+					if (isAlive)
 					{
-						// 🎯 CHECK 2: Only probe if not already announced AND not currently probing
 						if (!server.HasAnnouncedOnline && !server.IsProbing)
 						{
 							// 5-second throttle to keep the CPU low
@@ -91,11 +91,14 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				// --- MONITOR STABLE SERVERS ---
-				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.PID.HasValue)
+				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					if (!IsProcessAlive(server.PID.Value, exePathFromDB))
+					if (server.Game != "Dune: Awakening" && server.PID.HasValue)
 					{
-						_ = ExecuteStartSequence(server, "WATCHDOG");
+						if (!IsProcessAlive(server.PID.Value, exePathFromDB))
+						{
+							_ = ExecuteStartSequence(server, "WATCHDOG");
+						}
 					}
 				}
 			}

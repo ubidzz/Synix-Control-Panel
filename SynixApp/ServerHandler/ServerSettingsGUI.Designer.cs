@@ -40,7 +40,7 @@ namespace Synix_Control_Panel
 			numPort = new NumericUpDown();
 			btnBrowse = new Button();
 			btnSave = new Button();
-			chkDefaultPath = new Synix_Control_Panel.SynixApp.Design.SynixToggle();
+			chkDefaultPath = new SynixToggle();
 			ltextLabel1 = new Label();
 			lblPassword = new Label();
 			txtPassword = new TextBox();
@@ -60,11 +60,11 @@ namespace Synix_Control_Panel
 			lblCompetitive = new Label();
 			txtInstallPath = new TextBox();
 			textLabel2 = new Label();
-			chkEnableRcon = new Synix_Control_Panel.SynixApp.Design.SynixToggle();
+			chkEnableRcon = new SynixToggle();
 			numRconPort = new NumericUpDown();
 			txtRconPassword = new TextBox();
 			lblRCONpassword = new Label();
-			chkEnableSchedule = new Synix_Control_Panel.SynixApp.Design.SynixToggle();
+			chkEnableSchedule = new SynixToggle();
 			lblWorldSeed = new Label();
 			txtWorldSeed = new TextBox();
 			lblRCONport = new Label();
@@ -72,13 +72,14 @@ namespace Synix_Control_Panel
 			lblAppPort = new Label();
 			numAppPort = new NumericUpDown();
 			btnViewArgs = new Button();
-			chkUpdateOnStart = new Synix_Control_Panel.SynixApp.Design.SynixToggle();
+			chkUpdateOnStart = new SynixToggle();
 			btnEditSchedule = new Button();
 			button1 = new Button();
-			chkBackupOnStart = new Synix_Control_Panel.SynixApp.Design.SynixToggle();
-			chkEnableDiscord = new Synix_Control_Panel.SynixApp.Design.SynixToggle();
+			chkBackupOnStart = new SynixToggle();
+			chkEnableDiscord = new SynixToggle();
 			txtDiscordWebhook = new TextBox();
 			btnTestDiscord = new Button();
+			lblConfigWarning = new Label();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -599,6 +600,19 @@ namespace Synix_Control_Panel
 			btnTestDiscord.UseVisualStyleBackColor = true;
 			btnTestDiscord.Click += btnTestDiscord_Click;
 			// 
+			// lblConfigWarning
+			// 
+			lblConfigWarning.BackColor = Color.Red;
+			lblConfigWarning.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblConfigWarning.ForeColor = Color.Yellow;
+			lblConfigWarning.Location = new Point(12, 502);
+			lblConfigWarning.Name = "lblConfigWarning";
+			lblConfigWarning.Size = new Size(771, 22);
+			lblConfigWarning.TabIndex = 68;
+			lblConfigWarning.Text = "🚨 Please boot the server completely for its initial startup, shut it down, and then configure your server settings files.";
+			lblConfigWarning.TextAlign = ContentAlignment.MiddleCenter;
+			lblConfigWarning.Visible = false;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -606,6 +620,7 @@ namespace Synix_Control_Panel
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 584);
+			Controls.Add(lblConfigWarning);
 			Controls.Add(WarningLabel);
 			Controls.Add(btnTestDiscord);
 			Controls.Add(txtDiscordWebhook);
@@ -721,5 +736,6 @@ namespace Synix_Control_Panel
 		private SynixToggle chkEnableDiscord;
 		private TextBox txtDiscordWebhook;
 		private Button btnTestDiscord;
+		private Label lblConfigWarning;
 	}
 }

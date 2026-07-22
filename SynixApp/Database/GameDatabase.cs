@@ -83,6 +83,19 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
+				Game = "Dune: Awakening",
+				AppID = "4754530",
+				ExeName = "battlegroup.bat",
+				RequiredArgs = "",
+				RelativeConfigPath = @"UserSettings\DefaultGame.ini",
+				Port = 7777,
+				QueryPort = 31982,
+				Maps = ["Arrakis"],
+				GameModes = ["PVE", "PVP"],
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
 				Game = "Cepheus Protocol",
 				AppID = "979640",
 				ExeName = @"CepheusProtocol\Binaries\Win64\CepheusProtocolServer.exe",

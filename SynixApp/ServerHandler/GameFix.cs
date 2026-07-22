@@ -111,6 +111,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"MemoriesOfMars\Binaries\Win64")) applied = true; break;
 					case "Deadside":
 						if (CopySteamDLLs(server.InstallPath, @"DeadsideServer\Binaries\Win64")) applied = true; break;
+					case "Dune: Awakening":
+						if (CopySteamDLLs(server.InstallPath, "")) applied = true; break;
 					case "Last Oasis":
 						if (CopySteamDLLs(server.InstallPath, @"OasisServer\Binaries\Win64")) applied = true; break;
 					case "Dark and Light":

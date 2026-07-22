@@ -55,7 +55,6 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 						MainGUI.serverList.Clear();
 						foreach (var server in loadedServers)
 						{
-							// 1. Grab the hardcoded data from the switch statement in your screenshot
 							var masterData = GameDatabase.GetGame(server.Game);
 							if (masterData != null)
 							{
@@ -64,13 +63,10 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 								server.RequiredArgs = masterData.RequiredArgs;
 								server.Maps = masterData.Maps.ToList();
 
-								// 2. Smash the JSON path and Hardcoded ExeName together
 								string fullExePath = Path.Combine(server.InstallPath, server.ExeName);
 
-								// 3. Extract the icon
 								string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(server.AppID, fullExePath);
 
-								// 4. Attach it permanently to the object
 								if (File.Exists(iconPath))
 								{
 									server.DisplayIcon = System.Drawing.Image.FromFile(iconPath);
@@ -106,7 +102,6 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 		public static bool WriteLog(string logFileName, string content)
 		{
-			// Prevent logging if the content is empty or just white space
 			if (string.IsNullOrWhiteSpace(content)) return false;
 
 			try
@@ -114,21 +109,16 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				string logFolder = FolderPath + "\\logs";
 				FolderHandler.Create(logFolder);
 
-				// Create filename based on today's date
 				string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
 				string fullPath = Path.Combine(logFolder, fileName);
 
-				// .TrimEnd() removes the extra invisible characters that cause the empty lines
 				File.AppendAllText(fullPath, content.TrimEnd() + Environment.NewLine);
 
-				// Get all .log files and sort them by Name (descending)
-				// Since the name is yyyy-MM-dd, the newest date is always at the top
 				var logFiles = new DirectoryInfo(logFolder)
 					.GetFiles("*.txt")
 					.OrderByDescending(f => f.Name)
 					.ToList();
 
-				// Keep only the 10 most recent files
 				if (logFiles.Count > 10)
 				{
 					for (int i = 10; i < logFiles.Count; i++)

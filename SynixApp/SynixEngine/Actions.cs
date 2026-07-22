@@ -325,9 +325,7 @@ namespace Synix_Control_Panel.SynixEngine
 						bool fixApplied = await GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
 						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
-						FileHandler.SaveServers();
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
-						isDownloadActive = false;
 					}
 					catch (Exception ex)
 					{
@@ -335,9 +333,10 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					finally
 					{
-						newServer.Status = StatusManager.GetStatus(ServerState.Stopped); ;
+						newServer.Status = StatusManager.GetStatus(ServerState.Stopped);
 						newServer.SteamPID = null;
 						isDownloadActive = false;
+						FileHandler.SaveServers();
 						Core.Instance.UpdateGridStatus();
 					}
 					Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
@@ -494,6 +493,18 @@ namespace Synix_Control_Panel.SynixEngine
 			if (dbEntry == null)
 			{
 				Log($"[🚨 ERROR] Game database entry for '{server.Game}' not found.", Color.Red);
+				return false;
+			}
+
+			// 🎯 DUNE INTERCEPT: Prevent generating a standard script for the Hyper-V deployment
+			if (server.Game == "Dune: Awakening")
+			{
+				Log("[⚠️ NOTICE] Dune: Awakening requires the official battlegroup.bat script. Export aborted.", Color.Orange);
+				MessageBox.Show(
+					"Dune: Awakening relies on a dedicated Hyper-V deployment script (battlegroup.bat) to initialize its virtual machine cluster.\n\nA standard batch file cannot be generated for this game.",
+					"Export Disabled",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
 				return false;
 			}
 
