@@ -32,42 +32,59 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Starting))
 				{
-					if (!server.PID.HasValue) continue;
-
-					// 🎯 CHECK 1: Ensure the process is actually still there
-					if (IsProcessAlive(server.PID.Value, exePathFromDB))
+					// Allow a grace period if PID is null during initial spawn
+					if (!server.PID.HasValue && server.Game != "Dune: Awakening")
 					{
-						// 🎯 CHECK 2: Only probe if not already announced AND not currently probing
+						continue;
+					}
+
+					// 🎯 DUNE EXCEPTION: UAC elevation (Run as Admin) spawns a new detached process, 
+					// so the original PID dies instantly. We bypass the PID check for Dune.
+					bool isAlive = server.Game == "Dune: Awakening" ||
+								   (server.PID.HasValue && IsProcessAlive(server.PID.Value, exePathFromDB));
+
+					if (isAlive)
+					{
 						if (!server.HasAnnouncedOnline && !server.IsProbing)
 						{
 							// 5-second throttle to keep the CPU low
 							if (server.LastProbeTime == null || (DateTime.Now - server.LastProbeTime.Value).TotalSeconds >= 5)
 							{
 								server.LastProbeTime = DateTime.Now;
-								server.IsProbing = true; // 🔒 LOCK THE GATE
+								server.IsProbing = true;
 
 								_ = Task.Run(async () =>
 								{
 									try
 									{
-										string publicIP = await GetPublicIP();
-										string localIp = await GetLocalIP();
 										bool isResponding = false;
 
-										// Test all three connection types
-										if (!string.IsNullOrEmpty(publicIP) && await TestServerConnectivity(publicIP, server.QueryPort))
-											isResponding = true;
-										else if (!string.IsNullOrEmpty(localIp) && await TestServerConnectivity(localIp, server.QueryPort))
-											isResponding = true;
-										else if (await TestServerConnectivity("127.0.0.1", server.QueryPort))
-											isResponding = true;
+										// 1. Run the dynamic gauntlet on Local Loopback FIRST (Fastest, avoids firewalls)
+										isResponding = await ExecuteDynamicProbes(server, "127.0.0.1");
+
+										// 2. Fallback to Local IP if loopback fails
+										if (!isResponding)
+										{
+											string localIp = await GetLocalIP();
+											if (!string.IsNullOrEmpty(localIp))
+												isResponding = await ExecuteDynamicProbes(server, localIp);
+										}
+
+										// 3. Fallback to Public IP last
+										if (!isResponding)
+										{
+											using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+											string publicIP = await GetPublicIP().WaitAsync(cts.Token);
+											if (!string.IsNullOrEmpty(publicIP))
+												isResponding = await ExecuteDynamicProbes(server, publicIP);
+										}
 
 										if (isResponding)
 										{
 											MainGUI.Instance?.Invoke((Action)(() =>
 											{
 												_ = SendDiscordAlert(server, "SERVER ONLINE",
-													$"Successfully tested the server connectivity!",
+													$"Successfully verified server connectivity!",
 													Color.LimeGreen);
 
 												server.Status = StatusManager.GetStatus(ServerState.Running);
@@ -75,9 +92,13 @@ namespace Synix_Control_Panel.SynixEngine
 											}));
 										}
 									}
+									catch (Exception ex)
+									{
+										Log($"[Watchdog Error] {server.Game}: {ex.Message}");
+									}
 									finally
 									{
-										server.IsProbing = false; // 🔓 OPEN THE GATE (even if it fails)
+										server.IsProbing = false;
 									}
 								});
 							}
@@ -85,17 +106,28 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					else
 					{
-						_ = ExecuteStartSequence(server, "WATCHDOG");
+						server.Status = StatusManager.GetStatus(ServerState.Stopped);
+						server.IsProbing = false;
+
+						MainGUI.Instance?.Invoke((Action)(() =>
+						{
+							MainGUI.Instance.UpdateGrid();
+						}));
+
+						Log($"[Watchdog] {server.Game} process terminated during startup. Aborting sequence.");
 					}
 					continue;
 				}
 
 				// --- MONITOR STABLE SERVERS ---
-				if (server.Status == StatusManager.GetStatus(ServerState.Running) && server.PID.HasValue)
+				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					if (!IsProcessAlive(server.PID.Value, exePathFromDB))
+					if (server.Game != "Dune: Awakening" && server.PID.HasValue)
 					{
-						_ = ExecuteStartSequence(server, "WATCHDOG");
+						if (!IsProcessAlive(server.PID.Value, exePathFromDB))
+						{
+							_ = ExecuteStartSequence(server, "WATCHDOG");
+						}
 					}
 				}
 			}
@@ -105,21 +137,13 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			try
 			{
-				// 1. Hook the process by its ID
 				using var p = Process.GetProcessById(pid);
-
-				// 2. Immediate check if it has already exited
 				if (p.HasExited) return false;
-
-				// 3. 🛡️ GHOST-PROOF IDENTITY MATCH
 				string expectedName = Path.GetFileNameWithoutExtension(dbExePath);
-
-				// 4. Return true only if the name in Windows matches the name in our Database
 				return p.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase);
 			}
 			catch
 			{
-				// Catching "Process not found" - PID is genuinely gone
 				return false;
 			}
 		}
@@ -157,7 +181,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void TriggerGlobalDDoSAlert()
 		{
-			// Task.Run prevents the UI from freezing while the box is open
 			System.Threading.Tasks.Task.Run(() =>
 			{
 				MessageBox.Show(
@@ -189,11 +212,9 @@ namespace Synix_Control_Panel.SynixEngine
 						Task.Run(() =>
 						{
 							_cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-							_cpuCounter.NextValue(); // Prime it once
+							_cpuCounter.NextValue();
 						});
 					}
-
-					// Return 0 so the UI thread doesn't pause waiting for Windows
 					return 0f;
 				}
 

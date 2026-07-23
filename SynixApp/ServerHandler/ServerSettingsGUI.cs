@@ -48,6 +48,7 @@ namespace Synix_Control_Panel
 			// UI Styling
 			UIStyleHelper.StyleWarningLabel(WarningLabel);
 			UIStyleHelper.InitializeToggles(this);
+			UIStyleHelper.StyleWarningLabel(lblConfigWarning);
 			WireUpGatekeeperEvents();
 
 			// Tags for Pill logic
@@ -78,6 +79,7 @@ namespace Synix_Control_Panel
 			}
 
 			isPrivacyLoading = false;
+			lblConfigWarning.Visible = false;
 			PrivacyMode();
 			SyncGatekeeper();
 		}
@@ -159,8 +161,7 @@ namespace Synix_Control_Panel
 				bool hasGame = cmbGame != null && cmbGame.SelectedIndex > 0;
 				string selectedGame = hasGame ? cmbGame.Text : "";
 				bool isBaseReady = hasName && hasGame;
-
-				bool CanUnlock(Control c) => isBaseReady && c.Tag?.ToString() == "Required";
+				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
 
 				txtPassword.Enabled = CanUnlock(txtPassword);
 				txtAdminPassword.Enabled = CanUnlock(txtAdminPassword);
@@ -171,9 +172,9 @@ namespace Synix_Control_Panel
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
 
 				if (numAppPort != null)
-					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled"; // Sync tag
+					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled";
 
-				numPort.Enabled = isBaseReady;
+				numPort.Enabled = hasGame;
 				if (numAppPort != null) numAppPort.Enabled = CanUnlock(numAppPort);
 
 				chkEnableRcon.Enabled = CanUnlock(chkEnableRcon);
@@ -206,7 +207,8 @@ namespace Synix_Control_Panel
 				if (!_isEditMode && isBaseReady && chkDefaultPath.Checked)
 				{
 					string safeName = Core.Instance.GetSafeName(currentName);
-					txtInstallPath.Text = $@"C:\Synix\Games\{selectedGame}\{safeName}";
+					string safeFolderName = Core.Instance.GetSafeName(selectedGame);
+					txtInstallPath.Text = $@"C:\Synix\Games\{safeFolderName}\{safeName}";
 				}
 
 				int gPort = (int)numPort.Value;
@@ -293,22 +295,130 @@ namespace Synix_Control_Panel
 		private void ToggleGameSpecificFields(GameInfo? gameData)
 		{
 			var controls = new Control[] { txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive, numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon };
-			if (gameData == null) { foreach (var c in controls) if (c != null) c.Tag = "Disabled"; }
+			if (gameData == null)
+			{
+				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
+				lblConfigWarning.Visible = false;
+
+				SetupManagedPlaceholder(txtPassword, "Select a game...");
+				SetupManagedPlaceholder(txtAdminPassword, "Select a game...");
+				SetupManagedPlaceholder(txtWorldSeed, "Select a game...");
+			}
 			else
 			{
 				string args = (gameData.RequiredArgs ?? "").ToLower();
 				string rconTemp = (gameData.RconSyntax ?? "").ToLower();
-				txtPassword.Tag = args.Contains("{pass}") ? "Required" : "Disabled";
-				txtAdminPassword.Tag = args.Contains("{adminpass}") ? "Required" : "Disabled";
-				txtWorldSeed.Tag = args.Contains("{seed}") ? "Required" : "Disabled";
-				cmbCompetitive.Tag = args.Contains("{mode}") ? "Required" : "Disabled";
+
+				// Password Field
+				bool needsPass = args.Contains("{pass}");
+				txtPassword.Tag = needsPass ? "Required" : "Disabled";
+				if (!needsPass)
+				{
+					SetupManagedPlaceholder(txtPassword, "Not Required");
+				}
+				else
+				{
+					if (txtPassword.Text == "Select a game..." || txtPassword.Text == "Not Required" || txtPassword.ForeColor == Color.Gray)
+					{
+						txtPassword.Text = "";
+					}
+					txtPassword.ForeColor = SystemColors.WindowText;
+					txtPassword.GotFocus -= Placeholder_GotFocus;
+					txtPassword.LostFocus -= Placeholder_LostFocus;
+				}
+
+				// Admin Password Field
+				bool needsAdminPass = args.Contains("{adminpass}");
+				txtAdminPassword.Tag = needsAdminPass ? "Required" : "Disabled";
+				if (!needsAdminPass)
+				{
+					SetupManagedPlaceholder(txtAdminPassword, "Not Required");
+				}
+				else
+				{
+					if (txtAdminPassword.Text == "Select a game..." || txtAdminPassword.Text == "Not Required" || txtAdminPassword.ForeColor == Color.Gray)
+					{
+						txtAdminPassword.Text = "";
+					}
+					txtAdminPassword.ForeColor = SystemColors.WindowText;
+					txtAdminPassword.GotFocus -= Placeholder_GotFocus;
+					txtAdminPassword.LostFocus -= Placeholder_LostFocus;
+				}
+
+				// World Seed Field
+				bool needsSeed = args.Contains("{seed}");
+				txtWorldSeed.Tag = needsSeed ? "Required" : "Disabled";
+				if (!needsSeed)
+				{
+					SetupManagedPlaceholder(txtWorldSeed, "Not Required");
+				}
+				else
+				{
+					if (txtWorldSeed.Text == "Select a game..." || txtWorldSeed.Text == "Not Required" || txtWorldSeed.ForeColor == Color.Gray)
+					{
+						txtWorldSeed.Text = "";
+					}
+					txtWorldSeed.ForeColor = SystemColors.WindowText;
+					txtWorldSeed.GotFocus -= Placeholder_GotFocus;
+					txtWorldSeed.LostFocus -= Placeholder_LostFocus;
+				}
+
+				cmbCompetitive.Tag = (args.Contains("{mode}") || (gameData.GameModes != null && gameData.GameModes.Count > 0)) ? "Required" : "Disabled";
 				numMaxPlayers.Tag = args.Contains("{maxplayers}") ? "Required" : "Disabled";
 				numQueryPort.Tag = args.Contains("{query}") ? "Required" : "Disabled";
 				cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
 				if (numAppPort != null) numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
 				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
+
+				if (gameData.NeedsConfigWarning == true)
+				{
+					lblConfigWarning.Visible = true;
+				}
+				else
+				{
+					lblConfigWarning.Visible = false;
+				}
 			}
 			SyncGatekeeper();
+		}
+
+		private void SetupManagedPlaceholder(TextBox textBox, string placeholderText)
+		{
+			textBox.GotFocus -= Placeholder_GotFocus;
+			textBox.LostFocus -= Placeholder_LostFocus;
+
+			textBox.Tag = placeholderText;
+
+			// If the box is empty or currently holding an old placeholder, update it immediately
+			if (string.IsNullOrWhiteSpace(textBox.Text) ||
+				textBox.Text == "Select a game..." ||
+				textBox.Text == "Not Required" ||
+				textBox.ForeColor == Color.Gray)
+			{
+				textBox.ForeColor = Color.Gray;
+				textBox.Text = placeholderText;
+			}
+
+			textBox.GotFocus += Placeholder_GotFocus;
+			textBox.LostFocus += Placeholder_LostFocus;
+		}
+
+		private void Placeholder_GotFocus(object? sender, EventArgs e)
+		{
+			if (sender is TextBox txt && txt.Text == (string?)(txt.Tag ?? ""))
+			{
+				txt.Text = "";
+				txt.ForeColor = SystemColors.WindowText;
+			}
+		}
+
+		private void Placeholder_LostFocus(object? sender, EventArgs e)
+		{
+			if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
+			{
+				txt.ForeColor = Color.Gray;
+				txt.Text = (string?)(txt.Tag ?? "");
+			}
 		}
 
 		private void WireUpGatekeeperEvents()
@@ -352,6 +462,7 @@ namespace Synix_Control_Panel
 					var existing = MainGUI.serverList.FirstOrDefault(s => s.ServerName == _existingServer.ServerName);
 					if (existing != null)
 					{
+						NewServer.IsFirstBoot = false;
 						int index = MainGUI.serverList.IndexOf(existing);
 						MainGUI.serverList[index] = NewServer;
 					}

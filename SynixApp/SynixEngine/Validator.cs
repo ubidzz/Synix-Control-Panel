@@ -204,22 +204,17 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
 		{
-			// 🎯 1. First, check for an EXACT match on the primary Port.
-			// This is the most "illegal" conflict (two games on same launch port).
 			var primaryMatch = MainGUI.serverList.FirstOrDefault(s =>
 				s != excluding && s.Port == port);
 
 			if (primaryMatch != null) return primaryMatch.ServerName;
 
-			// 🎯 2. If no primary match, check for overlaps with Query or App ports.
 			var secondaryMatch = MainGUI.serverList.FirstOrDefault(s =>
 				s != excluding &&
 				(s.QueryPort == port || (s.AppPort.HasValue && s.AppPort.Value == port)));
 
 			if (secondaryMatch != null)
 			{
-				// We return the name, but adding " (Query)" or " (App)" to the string
-				// helps the SyncGatekeeper show a better warning.
 				return secondaryMatch.ServerName;
 			}
 
@@ -236,7 +231,6 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			// 🎯 (Current Usage / (Total - 7GB)) * 100
 			double currentRamPercent = (TotalRamUsageGb / TotalRamGb) * 100;
 
 			if (currentRamPercent >= 85.0)
@@ -248,26 +242,19 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
-		// 1. The dedicated string checker (Used by Start sequence)
 		public static bool IsStringSafe(string input)
 		{
-			// If it's empty, it's safe (no injection possible)
 			if (string.IsNullOrWhiteSpace(input)) return true;
 
-			// Block directory traversal climbing
 			if (input.Contains("..")) return false;
 
-			// Run the regex (Make sure SafeRegex includes = ? , if you need them for games like ARK/Rust)
 			return SafeRegex.IsMatch(input);
 		}
 
-		// 2. The object checker (Used by Save button)
 		public static bool IsGameServerConfigSafe(object obj)
 		{
 			if (obj == null) return false;
 
-			// SAFETY CATCH: If someone accidentally passes a direct string into the object checker, 
-			// route it to the string checker instead of using Reflection.
 			if (obj is string directString)
 			{
 				return IsStringSafe(directString);
@@ -281,7 +268,6 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					string value = (string)prop.GetValue(obj);
 
-					// Pass the extracted string to our dedicated checker
 					if (!IsStringSafe(value))
 					{
 						Core.Instance.Log($"[🚨 SECURITY] Illegal characters found in property: {prop.Name}");

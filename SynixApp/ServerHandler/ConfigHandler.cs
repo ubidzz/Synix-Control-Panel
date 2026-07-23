@@ -27,9 +27,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 	public static class ConfigHandler
 	{
-		// ==========================================
-		// 1. MASTER LOAD ROUTER
-		// ==========================================
 		public static List<ConfigLine> LoadConfig(string path, ConfigFormat format)
 		{
 			switch (format)
@@ -50,11 +47,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			foreach (var line in File.ReadAllLines(path))
 			{
 				string trimmed = line.Trim();
-				// Skip comments and empty lines
 				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("//") || trimmed.StartsWith("#"))
 					continue;
 
-				// Use Split by space, but only into 2 parts
 				var parts = trimmed.Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
 
 				if (parts.Length == 2)
@@ -62,7 +57,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					settings.Add(new ConfigLine
 					{
 						Key = parts[0].Trim(),
-						Value = parts[1].Trim().Trim('"') // This removes the quotes for the UI
+						Value = parts[1].Trim().Trim('"')
 					});
 				}
 			}
@@ -211,9 +206,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			return settings;
 		}
 
-		// ==========================================
-		// 2. MASTER SAVE ROUTER (NON-DESTRUCTIVE)
-		// ==========================================
 		public static void SaveConfig(string path, List<ConfigLine> data, ConfigFormat format)
 		{
 			switch (format)

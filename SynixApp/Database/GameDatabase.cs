@@ -36,12 +36,12 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Subsistence",
 				AppID = "1362640",
 				ExeName = @"Binaries\Win64\UDK.exe",
-				RequiredArgs = "server coldmap1?steamsockets -log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass={pass} -adminpass={adminpass}",
+				RequiredArgs = "server {map}?steamsockets -log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass=\"{pass}\" -adminpass=\"{adminpass}\"",
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"UDKGame\Config\UDKDedServerSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = [],
+				Maps = ["coldmap1"],
 				GameModes = ["easy", "normal", "hardcore"],
 				NeedsConfigWarning = true
 			},
@@ -61,7 +61,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "HumanitZ",
 				AppID = "2728330",
 				ExeName = "HumanitZServer.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass={pass} -adminpass={adminpass} -SteamAppId={steamAppID}",
+				RequiredArgs = "-log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass=\"{pass}\" -adminpass=\"{adminpass}\" -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"HumanitZServer\GameServerSettings.ini",
@@ -83,10 +83,23 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
+				Game = "Dune: Awakening",
+				AppID = "4754530",
+				ExeName = "battlegroup.bat",
+				RequiredArgs = "",
+				RelativeConfigPath = @"UserSettings\DefaultGame.ini",
+				Port = 7777,
+				QueryPort = 31982,
+				Maps = ["Arrakis"],
+				GameModes = ["PVE", "PVP"],
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
 				Game = "Cepheus Protocol",
 				AppID = "979640",
 				ExeName = @"CepheusProtocol\Binaries\Win64\CepheusProtocolServer.exe",
-				RequiredArgs = "{map} -server -log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass={pass} -adminpass={adminpass} -SteamAppId={steamAppID}",
+				RequiredArgs = "{map} -server -log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass=\"{pass}\" -adminpass=\"{adminpass}\" -SteamAppId={steamAppID}",
 				RelativeConfigPath = @"CepheusProtocol\Saved\Config\WindowsServer\Game.ini",
 				Port = 7777,
 				QueryPort = 27015,
@@ -103,7 +116,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 26900,
 				RelativeConfigPath = "serverconfig.xml",
 				Format = ConfigFormat.XML,
-				Maps = ["Navezgane", "Pregen01"],
+				Maps = ["Navezgane", "Pregen01", "Pregen02", "Pregen03"],
 				NeedsConfigWarning = true
 			},
 			new() {
@@ -151,7 +164,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
 				QueryPort = 27015,
-				Maps = ["TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP", "Extinction_WP"],
+				Maps = [ "TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP", "Extinction_WP", "Valguero_WP", "Ragnarok_WP", "LostColony_WP", "Astraeos_WP", "Genesis_WP"],
 				GameModes = ["PVE", "PVP"],
 				NeedsConfigWarning = true
 			},
@@ -1280,17 +1293,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
-				Game = "HumanitZ",
-				AppID = "2465360",
-				ExeName = @"HumanitZ\Binaries\Win64\HumanitZServer-Win64-Shipping.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -SteamAppId={steamAppID}",
-				Port = 7777,
-				QueryPort = 27015,
-				RelativeConfigPath = @"HumanitZ\Saved\Config\WindowsServer\GameUserSettings.ini",
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
 				Game = "Raft Dedicated Server",
 				AppID = "2521190",
 				ExeName = "RaftServer.exe",
@@ -2347,17 +2349,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
-				Game = "Natural Selection (Retail)",
-				AppID = "70",
-				ExeName = "hlds.exe",
-				RequiredArgs = "-console -game ns +port {port} +maxplayers {MaxPlayers} +map {map} -SteamAppId={steamAppID}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"ns\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["ns_mines"]
-			},
-			new() {
 				Game = "Natural Selection",
 				AppID = "70",
 				ExeName = "hlds.exe",
@@ -2508,7 +2499,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"csgo\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["de_dust2", "de_mirage", "de_inferno"]
+				Maps = ["de_dust2", "de_mirage", "de_inferno", "de_nuke", "de_overpass", "de_vertigo", "cs_office"]
 			},
 			new() {
 				Game = "Arma 2: Operation Arrowhead",
@@ -3153,6 +3144,185 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = ["SpaceAgeWorld"],
 				NeedsConfigWarning = true
 			},
+			new() {
+				Game = "Call of Duty: Modern Warfare 3",
+				AppID = "42690",
+				ExeName = "iw5mp_server.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec server.cfg +map {map} -SteamAppId={steamAppID}",
+				Port = 27014,
+				QueryPort = 27014,
+				RelativeConfigPath = @"admin\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["mp_alpha", "mp_bootleg", "mp_dome", "mp_hardhat", "mp_interchange"]
+			},
+			new() {
+				Game = "Call of Duty: Black Ops",
+				AppID = "42750",
+				ExeName = "BlackOpsUnrankedDed.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec server.cfg +map {map} -SteamAppId={steamAppID}",
+				Port = 28960,
+				QueryPort = 28960,
+				RelativeConfigPath = @"main\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["mp_array", "mp_cairo", "mp_nuked", "mp_firingrange", "mp_summit"]
+			},
+			new() {
+				Game = "Sniper Elite 4",
+				AppID = "559630",
+				ExeName = @"bin\SniperElite4_DedicatedServer.exe",
+				RequiredArgs = "-port {port} -name \"{ServerName}\" -password \"{pass}\" -SteamAppId={steamAppID}",
+				Port = 27000,
+				QueryPort = 27015,
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Just Cause 3: Multiplayer",
+				AppID = "619960",
+				ExeName = "Server.exe",
+				RequiredArgs = "-port {port} -name \"{ServerName}\" -SteamAppId={steamAppID}",
+				Port = 4200,
+				QueryPort = 4201,
+				RelativeConfigPath = "config.json",
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Wargame: Red Dragon",
+				AppID = "317610",
+				ExeName = "wargame3.exe",
+				RequiredArgs = "+port {port} +name \"{ServerName}\" -SteamAppId={steamAppID}",
+				Port = 10803,
+				QueryPort = 10803,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "BATTALION: Legacy",
+				AppID = "805140",
+				ExeName = @"Battalion\Binaries\Win64\BattalionServer-Win64-Shipping.exe",
+				RequiredArgs = "Port={port} QueryPort={query} -ServerName=\"{ServerName}\" -SteamAppId={steamAppID}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"Battalion\Saved\Config\WindowsServer\Game.ini",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "StarMade",
+				AppID = "242720",
+				ExeName = "StarMade-dedicated-server-windows.bat",
+				RequiredArgs = "-port {port} -SteamAppId={steamAppID}",
+				Port = 4242,
+				QueryPort = 4242,
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Chivalry 2",
+				AppID = "1824240",
+				ExeName = @"TBL\Binaries\Win64\Chivalry2Server-Win64-Shipping.exe",
+				RequiredArgs = "{map}?Listen -ServerName=\"{ServerName}\" -Port={port} -QueryPort={query} -MaxPlayers={MaxPlayers} -SteamAppId={steamAppID}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"TBL\Saved\Config\WindowsServer\Engine.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["FSA_Arena", "FSA_Wardenglade", "TO_Darkforest", "TO_Lionspire"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Call of Duty: World at War",
+				AppID = "10090",
+				ExeName = "CoDWaWmp.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec server.cfg +map {map} -SteamAppId={steamAppID}",
+				Port = 28960,
+				QueryPort = 28960,
+				RelativeConfigPath = @"main\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["mp_castle", "mp_makin", "mp_asylum", "mp_dome"]
+			},
+			new() {
+				Game = "Call of Duty 2",
+				AppID = "2620",
+				ExeName = "CoD2MP_s.exe",
+				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec server.cfg +map {map} -SteamAppId={steamAppID}",
+				Port = 28960,
+				QueryPort = 28960,
+				RelativeConfigPath = @"main\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["mp_carentan", "mp_burgundy", "mp_toujane", "mp_dawnville"]
+			},
+			new() {
+				Game = "Wargame: AirLand Battle",
+				AppID = "251060",
+				ExeName = "wargame2.exe",
+				RequiredArgs = "+port {port} +name \"{ServerName}\" -SteamAppId={steamAppID}",
+				Port = 10803,
+				QueryPort = 10803,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Sniper Elite 3",
+				AppID = "300360",
+				ExeName = @"bin\SniperElite3_DedicatedServer.exe",
+				RequiredArgs = "-port {port} -name \"{ServerName}\" -password \"{pass}\" -SteamAppId={steamAppID}",
+				Port = 27000,
+				QueryPort = 27015,
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Portal Knights",
+				AppID = "439820",
+				ExeName = "pk_dedicated_server.exe",
+				RequiredArgs = "-port {port} -SteamAppId={steamAppID}",
+				Port = 14159,
+				QueryPort = 14159,
+				RelativeConfigPath = "server_config.json",
+				Format = ConfigFormat.JSON
+			},
+			new() {
+				Game = "Depth",
+				AppID = "751510",
+				ExeName = @"Binaries\Win64\DepthGameServer.exe",
+				RequiredArgs = "{map}?Listen -seekfreeloadingserver -port={port} -SteamAppId={steamAppID}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"DepthGame\Config\PCServer-DepthEngine.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Olmstead", "Fractured", "Cove"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Primal Carnage",
+				AppID = "215470",
+				ExeName = @"Binaries\Win32\PrimalCarnageServer.exe",
+				RequiredArgs = "{map}?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query} -server -log -SteamAppId={steamAppID}",
+				Port = 7777,
+				QueryPort = 27015,
+				RelativeConfigPath = @"PrimalCarnage\Config\PCServer-PrimalCarnage.ini",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["PC-Docks"],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Wargame: European Escalation",
+				AppID = "58610",
+				ExeName = "wargame.exe",
+				RequiredArgs = "+port {port} +name \"{ServerName}\" -SteamAppId={steamAppID}",
+				Port = 10803,
+				QueryPort = 10803,
+				Format = ConfigFormat.StandardINI
+			},
+			new() {
+				Game = "Sniper Elite V2",
+				AppID = "207950",
+				ExeName = @"bin\SniperEliteV2_DedicatedServer.exe",
+				RequiredArgs = "-port {port} -name \"{ServerName}\" -password \"{pass}\" -SteamAppId={steamAppID}",
+				Port = 27000,
+				QueryPort = 27015,
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI
+			}
 		];
 
 		public static IReadOnlyList<GameInfo> GetGameList()

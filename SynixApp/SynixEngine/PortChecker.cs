@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
@@ -31,8 +32,6 @@ namespace Synix_Control_Panel.SynixEngine
 			using var udpClient = new UdpClient();
 			try
 			{
-				// This is necessary because UE5 often sends an ICMP unreachable 
-				// packet that crashes the standard .NET UdpClient.
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{
 					const int SIO_UDP_CONNRESET = -1744830452;
@@ -47,11 +46,13 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				IPEndPoint remoteEP = new IPEndPoint(address, port);
-
 				udpClient.Client.SendTimeout = timeoutMs;
 				udpClient.Client.ReceiveTimeout = timeoutMs;
 
-				await udpClient.SendAsync(_a2sInfoRequest, _a2sInfoRequest.Length, remoteEP);
+				// The standard 25-byte A2S_INFO request
+				byte[] requestPayload = _a2sInfoRequest;
+
+				await udpClient.SendAsync(requestPayload, requestPayload.Length, remoteEP);
 
 				var receiveTask = udpClient.ReceiveAsync();
 				var timeoutTask = Task.Delay(timeoutMs);
@@ -59,10 +60,38 @@ namespace Synix_Control_Panel.SynixEngine
 				if (await Task.WhenAny(receiveTask, timeoutTask) == receiveTask)
 				{
 					var result = await receiveTask;
+					byte[] buffer = result.Buffer;
 
-					// Ensure the buffer actually contains data from the server.
-					// result.Buffer.Length > 0 confirms the server responded to your probe.
-					return result.Buffer != null && result.Buffer.Length > 0;
+					// Check if the response is valid
+					if (buffer == null || buffer.Length < 5) return false;
+
+					// 0x41 ('A') means the server is challenging us
+					if (buffer[4] == 0x41)
+					{
+						// Extract the 4-byte challenge token
+						byte[] challenge = new byte[4];
+						Array.Copy(buffer, 5, challenge, 0, 4);
+
+						// Create a new payload: Original Request + Challenge Token
+						byte[] challengePayload = new byte[requestPayload.Length + 4];
+						Buffer.BlockCopy(requestPayload, 0, challengePayload, 0, requestPayload.Length);
+						Buffer.BlockCopy(challenge, 0, challengePayload, requestPayload.Length, 4);
+
+						// Send the challenge response
+						await udpClient.SendAsync(challengePayload, challengePayload.Length, remoteEP);
+
+						// Wait for the final server data
+						var finalReceiveTask = udpClient.ReceiveAsync();
+						if (await Task.WhenAny(finalReceiveTask, Task.Delay(timeoutMs)) == finalReceiveTask)
+						{
+							var finalResult = await finalReceiveTask;
+							// 0x49 ('I') means the server accepted the challenge and sent the data
+							return finalResult.Buffer != null && finalResult.Buffer.Length > 4 && finalResult.Buffer[4] == 0x49;
+						}
+						return false;
+					}
+
+					return buffer[4] == 0x49;
 				}
 
 				return false;
@@ -74,19 +103,168 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public bool IsPortInUseLocally(int port)
+		public async Task<bool> ExecuteDynamicProbes(GameServer server, string ip)
+		{
+			// 1. A2S PROTOCOL (Steamworks / Source / Standard Unreal)
+			if (await TestServerConnectivity(ip, server.QueryPort))
+			{
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> A2S (Steam UDP) on Port {server.QueryPort}");
+				return true;
+			}
+
+			// 2. TCP PROTOCOL (Legacy)
+			else if (await TestTcpConnectivity(ip, server.Port))
+			{
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake");
+				return true;
+			}
+
+			// 2. TCP PROTOCOL (Custom Engines)
+			else if (await TestTcpConnectivity(ip, server.QueryPort))
+			{
+				Log($"[PROBE SUCCESS] {server.QueryPort} verified via -> TCP Handshake");
+				return true;
+			}
+
+			// 4. EOS PROTOCOL (Epic Online Services)
+			// Note: True EOS network pinging requires the Epic SDK or Web API auth. 
+			// This is the dedicated slot if you build an Epic API HTTP parser later.
+			/*
+			if (await TestEOSWebAPI(server)) 
+			{
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> Epic Online Services Web API");
+				return true;
+			}
+			*/
+
+			// 5. LOCAL PORT PROTOCOL (The ultimate failsafe for stubborn EOS games)
+			// We wait 25 seconds to give the server time to boot and bind the port in the OS.
+			else if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 25)
+			{
+				if (IsPortInUseLocally(server.Port))
+				{
+					Log($"[PROBE SUCCESS] {server.Game} verified via -> IsPortInUseLocally (Game Port {server.Port} Bound)");
+					return true;
+				}
+
+				else if (IsPortInUseLocally(server.QueryPort))
+				{
+					Log($"[PROBE SUCCESS] {server.Game} verified via -> IsPortInUseLocally (Query Port {server.QueryPort} Bound)");
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public async Task<bool> TestTcpConnectivity(string ip, int port, int timeoutMs = 2000)
 		{
 			try
 			{
-				var ipProps = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+				if (!IPAddress.TryParse(ip, out IPAddress address))
+				{
+					var hostAddresses = await Dns.GetHostAddressesAsync(ip);
+					if (hostAddresses.Length == 0) return false;
+					address = hostAddresses[0];
+				}
 
-				// Now that we added 'using System.Linq', these will work correctly
-				bool udpInUse = ipProps.GetActiveUdpListeners().Any(l => l.Port == port);
-				bool tcpInUse = ipProps.GetActiveTcpListeners().Any(l => l.Port == port);
+				using var tcpClient = new TcpClient();
+				var connectTask = tcpClient.ConnectAsync(address, port);
+				var timeoutTask = Task.Delay(timeoutMs);
 
-				return udpInUse || tcpInUse;
+				if (await Task.WhenAny(connectTask, timeoutTask) == connectTask)
+				{
+					return tcpClient.Connected;
+				}
+
+				return false;
 			}
-			catch { return false; }
+			catch
+			{
+				return false;
+			}
+		}
+		/*
+		// This not used and only added for maybe used later on
+		public async Task<bool> TestEOSWebAPI(GameServer server)
+		{
+			// EOS requires specific Deployment IDs per game, which you would store in your GameDatabase
+			string eosDeploymentId = "GAME_SPECIFIC_DEPLOYMENT_ID";
+
+			// In a real scenario, you must retrieve an OAuth token first using your Epic Client ID & Secret
+			string eosOAuthToken = "YOUR_BEARER_TOKEN";
+
+			if (string.IsNullOrEmpty(eosOAuthToken) || eosOAuthToken == "YOUR_BEARER_TOKEN")
+			{
+				// Skip silently if no token is configured
+				return false;
+			}
+
+			try
+			{
+				using var client = new HttpClient();
+				client.Timeout = TimeSpan.FromSeconds(5);
+
+				// Epic's public sessions endpoint for matchmaking
+				string url = $"https://api.epicgames.dev/matchmaking/v1/public/sessions?deploymentId={eosDeploymentId}";
+
+				// Attach the required Bearer token to prove we are authorized to ask Epic for data
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", eosOAuthToken);
+				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+				HttpResponseMessage response = await client.GetAsync(url);
+
+				if (response.IsSuccessStatusCode)
+				{
+					string jsonResponse = await response.Content.ReadAsStringAsync();
+
+					// The JSON response contains a massive list of all active servers for that game globally.
+					// We search the raw JSON text to see if our specific server's IP and Port are actively listed.
+
+					// Note: A more robust method would be using System.Text.Json to deserialize the payload,
+					// but a quick string check is highly efficient for the watchdog loop.
+					string targetIpPort = $"{await GetPublicIP()}:{server.Port}";
+
+					if (jsonResponse.Contains(targetIpPort) || jsonResponse.Contains(server.ServerName))
+					{
+						return true; // Epic confirms our server is alive and listed!
+					}
+				}
+
+				return false;
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"[EOS API Error] {server.Game}: {ex.Message}");
+				return false;
+			}
+		}
+		*/
+
+		public bool IsPortInUseLocally(int port)
+		{
+			// 2. THE BULLETPROOF FALLBACK: The Bind Test (Stealth Mode)
+			try
+			{
+				// Bind strictly to localhost (127.0.0.1) to avoid Windows Firewall popups
+				var localEndPoint = new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, port);
+				using var udpTest = new System.Net.Sockets.UdpClient(localEndPoint);
+
+				return false;
+			}
+			catch (System.Net.Sockets.SocketException ex)
+			{
+				if (ex.SocketErrorCode == System.Net.Sockets.SocketError.AddressAlreadyInUse ||
+					ex.SocketErrorCode == System.Net.Sockets.SocketError.AccessDenied)
+				{
+					return true;
+				}
+			}
+			catch
+			{
+				// Catch-all for any other errors
+			}
+
+			return false;
 		}
 	}
 }

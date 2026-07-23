@@ -44,7 +44,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnSave.Width = 150;
 			btnSave.Location = new Point((this.ClientSize.Width / 2) - 75, this.ClientSize.Height - 50);
 			btnSave.Anchor = AnchorStyles.Bottom;
-			btnSave.Click += btnSave_Click; // Link the click event
+			btnSave.Click += btnSave_Click;
 			this.Controls.Add(btnSave);
 
 			dgvConfig.Location = new Point(0, 0);
