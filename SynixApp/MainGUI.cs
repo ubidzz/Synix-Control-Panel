@@ -85,8 +85,6 @@ namespace Synix_Control_Panel
 			GridStyler.StyleSettingsButton(btnSettings);
 
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
-			isPrivacyLoading = Properties.Settings.Default.PrivacyMode;
-			_ = LoadNetworkInfo();
 			_ = Core.Instance;
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
@@ -250,31 +248,28 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void lblPublicIP_Click(object sender, EventArgs e)
+		private async void lblPublicIP_Click(object sender, EventArgs e)
 		{
 			// Strip the prefix and copy just the IP
-			string ip = lblPublicIP.Text.Replace("Public IP: ", "");
-			if (ip != StatusManager.GetStatus(ServerState.Stopped) && ip != "Fetching...")
+			string publicIP = await Core.Instance.GetPublicIP();
+			Clipboard.SetText(publicIP);
+			if (!isPrivacyLoading)
 			{
-				Clipboard.SetText(ip);
-				if (!isPrivacyLoading)
-				{
-					AppendLog($"[🚨 SYNIX] Public IP {ip} was copied to clipboard.", Color.Cyan);
-				}
-				else
-				{
-					AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
-				}
+				AppendLog($"[🚨 SYNIX] Public IP {publicIP} was copied to clipboard.", Color.Cyan);
+			}
+			else
+			{
+				AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
 			}
 		}
 
-		private void lblLocalIP_Click(object sender, EventArgs e)
+		private async void lblLocalIP_Click(object sender, EventArgs e)
 		{
-			string LANip = lblLocalIP1.Text.Replace("LAN IP: ", "");
-			Clipboard.SetText(LANip);
+			string localIP = await Core.Instance.GetLocalIP();
+			Clipboard.SetText(localIP);
 			if (!isPrivacyLoading)
 			{
-				AppendLog($"[🚨 SYNIX] Local IP {LANip} was copied to clipboard.", Color.Cyan);
+				AppendLog($"[🚨 SYNIX] Local IP {localIP} was copied to clipboard.", Color.Cyan);
 			}
 			else
 			{
@@ -323,6 +318,8 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
+			await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
+
 			Core.Instance.RebindProcesses();
 			double physicalRam = 16.0;
 			await Task.Run(() => physicalRam = ResourceMonitor.GetTotalSystemRamGB());
