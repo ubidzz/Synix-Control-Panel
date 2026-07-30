@@ -94,7 +94,6 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			// Use TaskDialog to natively add the extra checkbox
 			var page = new TaskDialogPage()
 			{
 				Caption = "Confirm Total Deletion",
@@ -109,17 +108,14 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			};
 
-			// Assuming MainGUI.Instance is the parent window
 			TaskDialogButton result = TaskDialog.ShowDialog(MainGUI.Instance, page);
 
 			if (result == TaskDialogButton.Yes)
 			{
-				// Read the checkbox state
 				bool deleteBackups = page.Verification.Checked;
 
 				try
 				{
-					// Pass the boolean to the FolderHandler
 					FolderHandler.ServerFolder.Delete(server, deleteBackups, (msg, logColor) =>
 					{
 						Core.Instance.Log(msg, logColor);
