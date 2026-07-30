@@ -28,29 +28,24 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		public AppSettings()
 		{
-			UIStyleHelper.InitializeToggles(this);
-
 			InitializeComponent();
 
 			UIStyleHelper.InitializeToggles(this);
+			chkCustomBackup.Text = "Activate";
+			chkRunAsAdmin.Text = "Activate";
+			chkPrivacyMode.Text = "Activate";
+
 			chkCustomBackup.Checked = Properties.Settings.Default.UseCustomBackupPath;
 			txtBackupPath.Text = Properties.Settings.Default.CustomBackupPath;
-
-			// Grey out the textbox and button if the toggle is off
-			txtBackupPath.Enabled = chkCustomBackup.Checked;
 			btnBrowseBackup.Enabled = chkCustomBackup.Checked;
-
-			chkPrivacyMode.Text = "Privacy Mode";
 			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
+			chkRunAsAdmin.Checked = Properties.Settings.Default.enableRunAsAdmin;
 		}
 
 		private void chkCustomBackup_CheckedChanged(object sender, EventArgs e)
 		{
-			// 1. Toggle the UI elements
-			txtBackupPath.Enabled = chkCustomBackup.Checked;
 			btnBrowseBackup.Enabled = chkCustomBackup.Checked;
 
-			// 2. Save the bool state
 			Properties.Settings.Default.UseCustomBackupPath = chkCustomBackup.Checked;
 			Properties.Settings.Default.Save();
 		}
@@ -64,10 +59,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (fbd.ShowDialog() == DialogResult.OK)
 				{
-					// 1. Display the string in the textbox
 					txtBackupPath.Text = fbd.SelectedPath;
 
-					// 2. Save the string path to settings
 					Properties.Settings.Default.CustomBackupPath = fbd.SelectedPath;
 					Properties.Settings.Default.Save();
 				}
@@ -76,15 +69,19 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e)
 		{
-			// 1. Save the setting immediately
 			Properties.Settings.Default.PrivacyMode = chkPrivacyMode.Checked;
 			Properties.Settings.Default.Save();
 
-			// 2. Send the call to MainGUI to update its labels and network state
 			if (MainGUI.Instance != null)
 			{
 				await MainGUI.Instance.UpdatePrivacyMode(chkPrivacyMode.Checked);
 			}
+		}
+
+		private void chkRunAsAdmin_CheckedChanged(object sender, EventArgs e)
+		{
+			Properties.Settings.Default.enableRunAsAdmin = chkRunAsAdmin.Checked;
+			Properties.Settings.Default.Save();
 		}
 	}
 }

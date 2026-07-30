@@ -46,7 +46,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (blueprint == null || string.IsNullOrEmpty(blueprint.RelativeConfigPath))
 			{
-				MessageBox.Show("This game does not have a config path defined.", "No Config");
+				Log("This game does not have a config path defined.", Color.Red, true);
 				return;
 			}
 
@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				MessageBox.Show($"Could not find the config file at:\n{fullPath}", "Missing Config");
+				Log($"Could not find the config file at:\n{fullPath}", Color.Red, true);
 			}
 		}
 
@@ -81,7 +81,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				Log($"[🚨 ERROR] Folder does not exist: {server.InstallPath}", Color.Red);
+				Log($"[🚨 ERROR] Folder does not exist: {server.InstallPath}", Color.Red, true);
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string status = server.Status ?? "";
 			if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating) || (server.PID.HasValue && server.PID > 0))
 			{
-				Log("Cannot delete an active or installing server.", Color.Red);
+				Log("Cannot delete an active or installing server.", Color.Red, true);
 				return;
 			}
 
@@ -116,17 +116,29 @@ namespace Synix_Control_Panel.SynixEngine
 
 				try
 				{
+					// --- 🛡️ ADMIN TASKS (Firewall Cleanup) ---
+					if (Properties.Settings.Default.enableRunAsAdmin)
+					{
+						string serverExePath = Path.Combine(server.InstallPath, server.ExeName);
+
+						if (File.Exists(serverExePath))
+						{
+							CleanFirewallRules(serverExePath);
+						}
+					}
+
 					FolderHandler.ServerFolder.Delete(server, deleteBackups, (msg, logColor) =>
 					{
-						Core.Instance.Log(msg, logColor);
+						Log(msg, logColor);
 					});
 
-					Core.Instance.UpdateGridStatus();
+					UpdateGridStatus();
 				}
 				catch (Exception ex)
 				{
+					Log($"Files were partially deleted, but an error occurred:\n{ex.Message}", Color.Red, true);
 					MessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					Core.Instance.UpdateGridStatus();
+					UpdateGridStatus();
 				}
 			}
 		}
@@ -145,7 +157,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				Log($"[🚨 SYNIX] There are no created backups at: {fullPath}", Color.Yellow);
+				Log($"[🚨 SYNIX] There are no created backups at: {fullPath}", Color.Yellow, true);
 			}
 		}
 
@@ -198,7 +210,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (string.IsNullOrEmpty(appId))
 			{
-				Log($"Could not find the AppID for the {gameData} game.", Color.Red);
+				Log($"Could not find the AppID for the {gameData} game.", Color.Red, true);
 				return;
 			}
 
@@ -240,7 +252,7 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					catch (Exception ex)
 					{
-						Log($"[⚠ WARNING] Could not clear manifest. The {ManifestMessage} might fail. Error: {ex.Message}", Color.Red);
+						Log($"[⚠ WARNING] Could not clear manifest. The {ManifestMessage} might fail. Error: {ex.Message}", Color.Red, true);
 					}
 				}
 
@@ -258,7 +270,8 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red);
+					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
+					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
 					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
 					isDownloadActive = false;
 					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
@@ -299,7 +312,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (string.IsNullOrEmpty(appId))
 					{
-						Log("Could not find the AppID for this game. Installation aborted.", Color.Red);
+						Log("Could not find the AppID for this game. Installation aborted.", Color.Red, true);
 						return;
 					}
 
@@ -326,7 +339,7 @@ namespace Synix_Control_Panel.SynixEngine
 						if (exitCode != 0)
 						{
 							string errorMsg = ServerInstaller.GetSteamError(exitCode);
-							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red);
+							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red, true);
 							newServer.Status = "Failed";
 							return;
 						}
@@ -338,7 +351,7 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					catch (Exception ex)
 					{
-						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red);
+						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red, true);
 					}
 					finally
 					{
@@ -600,8 +613,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 				args = args.Replace("  ", " ").Trim();
 
-				// 🎯 3. EXACT PATH RESOLUTION (The Fix)
-				// Break apart the installation path and the executable name
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
@@ -632,7 +643,6 @@ namespace Synix_Control_Panel.SynixEngine
 				batchContent.AppendLine("echo Press any key to close this window.");
 				batchContent.AppendLine("pause >nul");
 
-				// 5. WRITE SCRIPT TO DISK
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
 				string fullOutputPath = Path.Combine(server.InstallPath, safeFileName);
 
@@ -643,8 +653,36 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception ex)
 			{
-				Log($"[🚨 ERROR] Failed to generate batch file payload: {ex.Message}", Color.Yellow);
+				Log($"[🚨 ERROR] Failed to generate batch file payload: {ex.Message}", Color.Red, true);
 				return false;
+			}
+		}
+
+		public void CleanFirewallRules(string executablePath)
+		{
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo
+				{
+					FileName = "netsh",
+					Arguments = $"advfirewall firewall delete rule name=all program=\"{executablePath}\"",
+					UseShellExecute = true,
+					Verb = "runas", // Triggers the Just-In-Time Admin prompt
+					WindowStyle = ProcessWindowStyle.Hidden
+				};
+
+				Process cleanup = Process.Start(psi);
+				cleanup?.WaitForExit();
+
+				Log($"[FIREWALL] Successfully removed rules for {executablePath}", Color.LimeGreen);
+			}
+			catch (System.ComponentModel.Win32Exception)
+			{
+				Log("[FIREWALL] User denied Admin rights. Rule was not deleted.", Color.Orange, true);
+			}
+			catch (Exception ex)
+			{
+				Log($"[FIREWALL ERROR] {ex.Message}", Color.Red, true);
 			}
 		}
 	}

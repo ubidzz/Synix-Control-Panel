@@ -51,11 +51,16 @@ namespace Synix_Control_Panel.SynixEngine
 			label1 = new Label();
 			label2 = new Label();
 			lblLine = new Label();
+			chkRunAsAdmin = new CheckBox();
+			lblRunAsAdmin = new Label();
+			label3 = new Label();
+			lblRunAsAdminInfo = new Label();
+			lblBackupWarning = new Label();
 			SuspendLayout();
 			// 
 			// chkCustomBackup
 			// 
-			chkCustomBackup.Location = new Point(12, 222);
+			chkCustomBackup.Location = new Point(12, 299);
 			chkCustomBackup.Name = "chkCustomBackup";
 			chkCustomBackup.Size = new Size(88, 26);
 			chkCustomBackup.TabIndex = 0;
@@ -65,7 +70,8 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// txtBackupPath
 			// 
-			txtBackupPath.Location = new Point(12, 254);
+			txtBackupPath.Enabled = false;
+			txtBackupPath.Location = new Point(12, 331);
 			txtBackupPath.Name = "txtBackupPath";
 			txtBackupPath.ReadOnly = true;
 			txtBackupPath.Size = new Size(287, 23);
@@ -73,7 +79,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// btnBrowseBackup
 			// 
-			btnBrowseBackup.Location = new Point(305, 254);
+			btnBrowseBackup.Location = new Point(305, 331);
 			btnBrowseBackup.Name = "btnBrowseBackup";
 			btnBrowseBackup.Size = new Size(75, 23);
 			btnBrowseBackup.TabIndex = 2;
@@ -99,7 +105,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblCustomBackupLocationInfo.ForeColor = Color.White;
 			lblCustomBackupLocationInfo.Location = new Point(12, 184);
 			lblCustomBackupLocationInfo.Name = "lblCustomBackupLocationInfo";
-			lblCustomBackupLocationInfo.Size = new Size(354, 35);
+			lblCustomBackupLocationInfo.Size = new Size(354, 42);
 			lblCustomBackupLocationInfo.TabIndex = 4;
 			lblCustomBackupLocationInfo.Text = "Enable this setting to direct all automated and manual server backup archives to a preferred folder or secondary drive.";
 			// 
@@ -107,7 +113,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			chkPrivacyMode.Location = new Point(12, 95);
 			chkPrivacyMode.Name = "chkPrivacyMode";
-			chkPrivacyMode.Size = new Size(108, 26);
+			chkPrivacyMode.Size = new Size(88, 26);
 			chkPrivacyMode.TabIndex = 5;
 			chkPrivacyMode.Text = "checkBox1";
 			chkPrivacyMode.UseVisualStyleBackColor = true;
@@ -142,12 +148,68 @@ namespace Synix_Control_Panel.SynixEngine
 			lblLine.Size = new Size(399, 10);
 			lblLine.TabIndex = 8;
 			// 
+			// chkRunAsAdmin
+			// 
+			chkRunAsAdmin.Location = new Point(12, 488);
+			chkRunAsAdmin.Name = "chkRunAsAdmin";
+			chkRunAsAdmin.Size = new Size(88, 26);
+			chkRunAsAdmin.TabIndex = 9;
+			chkRunAsAdmin.Text = "checkBox1";
+			chkRunAsAdmin.UseVisualStyleBackColor = true;
+			chkRunAsAdmin.CheckedChanged += chkRunAsAdmin_CheckedChanged;
+			// 
+			// lblRunAsAdmin
+			// 
+			lblRunAsAdmin.AutoSize = true;
+			lblRunAsAdmin.BackColor = Color.Transparent;
+			lblRunAsAdmin.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblRunAsAdmin.ForeColor = Color.White;
+			lblRunAsAdmin.Location = new Point(12, 394);
+			lblRunAsAdmin.Name = "lblRunAsAdmin";
+			lblRunAsAdmin.Size = new Size(200, 25);
+			lblRunAsAdmin.TabIndex = 10;
+			lblRunAsAdmin.Text = "Run as Administrator";
+			// 
+			// label3
+			// 
+			label3.BackColor = Color.White;
+			label3.Location = new Point(-4, 369);
+			label3.Name = "label3";
+			label3.Size = new Size(399, 10);
+			label3.TabIndex = 11;
+			// 
+			// lblRunAsAdminInfo
+			// 
+			lblRunAsAdminInfo.BackColor = Color.Transparent;
+			lblRunAsAdminInfo.ForeColor = Color.White;
+			lblRunAsAdminInfo.Location = new Point(12, 419);
+			lblRunAsAdminInfo.Name = "lblRunAsAdminInfo";
+			lblRunAsAdminInfo.Size = new Size(362, 66);
+			lblRunAsAdminInfo.TabIndex = 12;
+			lblRunAsAdminInfo.Text = resources.GetString("lblRunAsAdminInfo.Text");
+			// 
+			// lblBackupWarning
+			// 
+			lblBackupWarning.BackColor = Color.Transparent;
+			lblBackupWarning.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblBackupWarning.ForeColor = Color.Yellow;
+			lblBackupWarning.Location = new Point(12, 226);
+			lblBackupWarning.Name = "lblBackupWarning";
+			lblBackupWarning.Size = new Size(368, 70);
+			lblBackupWarning.TabIndex = 13;
+			lblBackupWarning.Text = resources.GetString("lblBackupWarning.Text");
+			// 
 			// AppSettings
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackgroundImage = Properties.Resources.background;
-			ClientSize = new Size(392, 297);
+			ClientSize = new Size(392, 526);
+			Controls.Add(lblBackupWarning);
+			Controls.Add(lblRunAsAdminInfo);
+			Controls.Add(label3);
+			Controls.Add(lblRunAsAdmin);
+			Controls.Add(chkRunAsAdmin);
 			Controls.Add(lblLine);
 			Controls.Add(label2);
 			Controls.Add(label1);
@@ -178,5 +240,10 @@ namespace Synix_Control_Panel.SynixEngine
 		private Label label1;
 		private Label label2;
 		private Label lblLine;
+		private CheckBox chkRunAsAdmin;
+		private Label lblRunAsAdmin;
+		private Label label3;
+		private Label lblRunAsAdminInfo;
+		private Label lblBackupWarning;
 	}
 }
