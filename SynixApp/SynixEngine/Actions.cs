@@ -94,29 +94,42 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			DialogResult confirm = MessageBox.Show($"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?\n\n" +
-												   $"This will wipe: {server.InstallPath}",
-												   "Confirm Total Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-			if (confirm == DialogResult.Yes)
+			// Use TaskDialog to natively add the extra checkbox
+			var page = new TaskDialogPage()
 			{
+				Caption = "Confirm Total Deletion",
+				Heading = $"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?",
+				Text = $"This will wipe the installation at:\n{server.InstallPath}",
+				Icon = TaskDialogIcon.Warning,
+				Buttons = { TaskDialogButton.Yes, TaskDialogButton.No },
+
+				Verification = new TaskDialogVerificationCheckBox()
+				{
+					Text = "Also delete all server backup archives"
+				}
+			};
+
+			// Assuming MainGUI.Instance is the parent window
+			TaskDialogButton result = TaskDialog.ShowDialog(MainGUI.Instance, page);
+
+			if (result == TaskDialogButton.Yes)
+			{
+				// Read the checkbox state
+				bool deleteBackups = page.Verification.Checked;
+
 				try
 				{
-					if (MainGUI.serverList.Contains(server))
+					// Pass the boolean to the FolderHandler
+					FolderHandler.ServerFolder.Delete(server, deleteBackups, (msg, logColor) =>
 					{
-						MainGUI.serverList.Remove(server);
-					}
-
-					FolderHandler.ServerFolder.Delete(server, (msg, Color) =>
-					{
-						Core.Instance.Log((msg));
+						Core.Instance.Log(msg, logColor);
 					});
 
 					Core.Instance.UpdateGridStatus();
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show($"Files were partially deleted, but an error occurred: {ex.Message}");
+					MessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					Core.Instance.UpdateGridStatus();
 				}
 			}

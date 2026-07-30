@@ -57,7 +57,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			chkCustomBackup.Location = new Point(12, 222);
 			chkCustomBackup.Name = "chkCustomBackup";
-			chkCustomBackup.Size = new Size(95, 26);
+			chkCustomBackup.Size = new Size(88, 26);
 			chkCustomBackup.TabIndex = 0;
 			chkCustomBackup.Text = "Activate";
 			chkCustomBackup.UseVisualStyleBackColor = true;
@@ -107,7 +107,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			chkPrivacyMode.Location = new Point(12, 95);
 			chkPrivacyMode.Name = "chkPrivacyMode";
-			chkPrivacyMode.Size = new Size(117, 26);
+			chkPrivacyMode.Size = new Size(108, 26);
 			chkPrivacyMode.TabIndex = 5;
 			chkPrivacyMode.Text = "checkBox1";
 			chkPrivacyMode.UseVisualStyleBackColor = true;
