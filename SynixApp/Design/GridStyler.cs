@@ -56,6 +56,70 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 		}
 
+		public static void StyleSettingsButton(Button btn, Color? hoverColor = null)
+		{
+			btn.FlatStyle = FlatStyle.Flat;
+			btn.FlatAppearance.BorderSize = 0;
+			btn.BackColor = Color.Transparent;
+			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btn.Text = "";
+			btn.TabStop = false;
+
+			btn.Paint += (s, e) =>
+			{
+				Button b = (Button)s;
+				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
+				bool isHovering = b.ClientRectangle.Contains(mousePos);
+				bool isPressed = isHovering && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
+
+				Color bgColor = Color.WhiteSmoke;
+				Color fgColor = Color.Black;
+
+				if (isPressed)
+				{
+					bgColor = Color.DarkGray;
+				}
+				else if (isHovering)
+				{
+					bgColor = hoverColor ?? Color.FromArgb(200, 200, 200);
+				}
+
+				using (var path = GetRoundedPath(b.ClientRectangle, 6))
+				using (var brush = new SolidBrush(bgColor))
+				{
+					e.Graphics.FillPath(brush, path);
+				}
+
+				int xOffset = 0;
+				int yOffset = -2;
+				int fontSize = 15;
+
+				Rectangle textRect = new Rectangle(
+					b.ClientRectangle.X + xOffset,
+					b.ClientRectangle.Y + yOffset,
+					b.ClientRectangle.Width,
+					b.ClientRectangle.Height
+				);
+
+				TextRenderer.DrawText(
+					e.Graphics,
+					"⚙",
+					new Font("Segoe UI Symbol", fontSize, FontStyle.Bold),
+					textRect,
+					fgColor,
+					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding
+				);
+			};
+
+			btn.MouseEnter += (s, e) => btn.Invalidate();
+			btn.MouseLeave += (s, e) => btn.Invalidate();
+			btn.MouseDown += (s, e) => btn.Invalidate();
+			btn.MouseUp += (s, e) => btn.Invalidate();
+		}
+
 		public static void StyleMinimizeButton(Button btn)
 		{
 			btn.FlatStyle = FlatStyle.Flat;

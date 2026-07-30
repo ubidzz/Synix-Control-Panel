@@ -26,7 +26,7 @@ namespace Synix_Control_Panel.Help
 		{
 			InitializeComponent();
 			_server = server;
-			if (SynixApp.Properties.Settings.Default.PrivacyMode)
+			if (Properties.Settings.Default.PrivacyMode)
 			{
 				SetWindowDisplayAffinity(this.Handle, WDA_EXCLUDEFROMCAPTURE);
 			}

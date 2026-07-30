@@ -76,11 +76,11 @@
 			btnRestart = new Button();
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Button();
-			chkPrivacyMode = new CheckBox();
 			btnClose = new Button();
 			btnMinimize = new Button();
 			btnDiscord = new Button();
 			btnGithub = new Button();
+			btnSettings = new Button();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -261,12 +261,12 @@
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, openServerConfig, installServer, toolStripSeparator1 });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(181, 98);
+			contextMenuStrip.Size = new Size(152, 76);
 			// 
 			// btnHelp
 			// 
 			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(180, 22);
+			btnHelp.Size = new Size(151, 22);
 			btnHelp.Text = "Help";
 			btnHelp.Click += btnHelp_Click;
 			// 
@@ -274,7 +274,7 @@
 			// 
 			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, toolStripSeparator2, editServerToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
 			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(180, 22);
+			openServerConfig.Size = new Size(151, 22);
 			openServerConfig.Text = "Server Options";
 			// 
 			// openServerFolderToolStripMenuItem
@@ -377,14 +377,14 @@
 			// installServer
 			// 
 			installServer.Name = "installServer";
-			installServer.Size = new Size(180, 22);
+			installServer.Size = new Size(151, 22);
 			installServer.Text = "Install Server";
 			installServer.Click += btnAddServer_Click;
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new Size(177, 6);
+			toolStripSeparator1.Size = new Size(148, 6);
 			// 
 			// btnServerActions
 			// 
@@ -471,16 +471,6 @@
 			btnDownloadUpdate.UseVisualStyleBackColor = false;
 			btnDownloadUpdate.Click += btnDownloadUpdate_Click;
 			// 
-			// chkPrivacyMode
-			// 
-			chkPrivacyMode.Location = new Point(427, 726);
-			chkPrivacyMode.Name = "chkPrivacyMode";
-			chkPrivacyMode.Size = new Size(125, 32);
-			chkPrivacyMode.TabIndex = 23;
-			chkPrivacyMode.Text = "Privacy Mode";
-			chkPrivacyMode.UseVisualStyleBackColor = true;
-			chkPrivacyMode.CheckedChanged += chkPrivacyMode_CheckedChanged;
-			// 
 			// btnClose
 			// 
 			btnClose.Cursor = Cursors.Hand;
@@ -527,6 +517,17 @@
 			btnGithub.UseVisualStyleBackColor = true;
 			btnGithub.Click += btnGithub_Click;
 			// 
+			// btnSettings
+			// 
+			btnSettings.Cursor = Cursors.Hand;
+			btnSettings.Location = new Point(1080, 9);
+			btnSettings.Name = "btnSettings";
+			btnSettings.Size = new Size(25, 25);
+			btnSettings.TabIndex = 28;
+			btnSettings.Text = "button1";
+			btnSettings.UseVisualStyleBackColor = true;
+			btnSettings.Click += btnSettings_Click;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 17F);
@@ -534,11 +535,11 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 772);
+			Controls.Add(btnSettings);
 			Controls.Add(btnGithub);
 			Controls.Add(btnDiscord);
 			Controls.Add(btnMinimize);
 			Controls.Add(btnClose);
-			Controls.Add(chkPrivacyMode);
 			Controls.Add(btnDownloadUpdate);
 			Controls.Add(lblUpdateStatus);
 			Controls.Add(btnRestart);
@@ -609,7 +610,6 @@
 		private ToolStripMenuItem backupServerToolStripMenuItem;
 		private Label lblUpdateStatus;
 		private Button btnDownloadUpdate;
-		private CheckBox chkPrivacyMode;
 		private ToolStripMenuItem btnExportBatch;
 		private Button btnClose;
 		private Button btnMinimize;
@@ -623,5 +623,6 @@
 		private DataGridViewTextBoxColumn colPlayerCount;
 		private DataGridViewTextBoxColumn colUptime;
 		private DataGridViewTextBoxColumn colStatus;
+		private Button btnSettings;
 	}
 }

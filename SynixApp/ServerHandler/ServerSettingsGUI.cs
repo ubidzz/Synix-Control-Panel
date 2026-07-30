@@ -43,7 +43,7 @@ namespace Synix_Control_Panel
 			isPrivacyLoading = true;
 			_existingServer = server;
 			_isEditMode = server != null;
-			_PrivacyMode = SynixApp.Properties.Settings.Default.PrivacyMode;
+			_PrivacyMode = Properties.Settings.Default.PrivacyMode;
 
 			// UI Styling
 			UIStyleHelper.StyleWarningLabel(WarningLabel);

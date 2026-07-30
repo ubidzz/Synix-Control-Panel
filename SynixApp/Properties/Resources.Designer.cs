@@ -83,6 +83,16 @@ namespace Synix_Control_Panel.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap gear_icon {
+            get {
+                object obj = ResourceManager.GetObject("gear_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap github_icon {
             get {
                 object obj = ResourceManager.GetObject("github_icon", resourceCulture);

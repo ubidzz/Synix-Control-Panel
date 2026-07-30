@@ -49,8 +49,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 			chk.AutoSize = false;
 			chk.BackColor = Color.Transparent;
 			chk.Tag = labelPrefix; // Ensure the prefix is stored in the Tag for the paint handler
-
-			// 🎯 THE FIX: Use a named method instead of an anonymous lambda to prevent event stacking leaks
 			chk.Paint -= Chk_CustomPaint;
 			chk.Paint += Chk_CustomPaint;
 

@@ -82,11 +82,10 @@ namespace Synix_Control_Panel
 			GridStyler.StyleMinimizeButton(btnMinimize);
 			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
+			GridStyler.StyleSettingsButton(btnSettings);
 
-			chkPrivacyMode.Text = "Privacy Mode";
-			chkPrivacyMode.Checked = SynixApp.Properties.Settings.Default.PrivacyMode;
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
-			isPrivacyLoading = chkPrivacyMode.Checked;
+			isPrivacyLoading = Properties.Settings.Default.PrivacyMode;
 			_ = LoadNetworkInfo();
 			_ = Core.Instance;
 			_ = VersionCheck();
@@ -728,18 +727,16 @@ namespace Synix_Control_Panel
 				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
 		}
-		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e)
+		public async Task UpdatePrivacyMode(bool isEnabled)
 		{
-			isPrivacyLoading = chkPrivacyMode.Checked;
+			isPrivacyLoading = isEnabled;
 
-			SynixApp.Properties.Settings.Default.PrivacyMode = chkPrivacyMode.Checked;
-			SynixApp.Properties.Settings.Default.Save();
-
-			if (chkPrivacyMode.Checked)
+			if (isEnabled)
 			{
 				lblPublicIP.Text = "Public IP: [HIDDEN]";
 				lblLocalIP1.Text = "LAN IP: [HIDDEN]";
 			}
+
 			await LoadNetworkInfo();
 		}
 
@@ -798,6 +795,14 @@ namespace Synix_Control_Panel
 			catch (Exception ex)
 			{
 				MessageBox.Show($"Unable to open the link automatically.\n\nError: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+		}
+
+		private void btnSettings_Click(object sender, EventArgs e)
+		{
+			using (Synix_Control_Panel.SynixEngine.AppSettings SynixSettings = new Synix_Control_Panel.SynixEngine.AppSettings())
+			{
+				SynixSettings.ShowDialog();
 			}
 		}
 	}
