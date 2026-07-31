@@ -82,6 +82,20 @@ namespace Synix_Control_Panel.Help
 			lblRconPortText = new Label();
 			lblRconPasswordText = new Label();
 			lblVerticalLine = new Label();
+			pnlCpuCard = new Panel();
+			pnlCpuFill = new Label();
+			lblCpuCardValue = new Label();
+			label1 = new Label();
+			pnlCpuAccent = new Panel();
+			pnlRamCard = new Panel();
+			pnlRamFill = new Label();
+			lblRamCardValue = new Label();
+			label4 = new Label();
+			panel2 = new Panel();
+			label2 = new Label();
+			lblStatusCardValue = new Label();
+			pnlCpuCard.SuspendLayout();
+			pnlRamCard.SuspendLayout();
 			SuspendLayout();
 			// 
 			// lblServerName
@@ -558,6 +572,132 @@ namespace Synix_Control_Panel.Help
 			lblVerticalLine.Size = new Size(5, 434);
 			lblVerticalLine.TabIndex = 42;
 			// 
+			// pnlCpuCard
+			// 
+			pnlCpuCard.BackColor = Color.Transparent;
+			pnlCpuCard.Controls.Add(pnlCpuFill);
+			pnlCpuCard.Controls.Add(lblCpuCardValue);
+			pnlCpuCard.Controls.Add(label1);
+			pnlCpuCard.Controls.Add(pnlCpuAccent);
+			pnlCpuCard.Location = new Point(23, 460);
+			pnlCpuCard.Name = "pnlCpuCard";
+			pnlCpuCard.Size = new Size(250, 100);
+			pnlCpuCard.TabIndex = 43;
+			// 
+			// pnlCpuFill
+			// 
+			pnlCpuFill.BackColor = Color.FromArgb(0, 122, 255);
+			pnlCpuFill.Location = new Point(14, 64);
+			pnlCpuFill.Name = "pnlCpuFill";
+			pnlCpuFill.Size = new Size(1, 24);
+			pnlCpuFill.TabIndex = 3;
+			// 
+			// lblCpuCardValue
+			// 
+			lblCpuCardValue.AutoSize = true;
+			lblCpuCardValue.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			lblCpuCardValue.ForeColor = Color.White;
+			lblCpuCardValue.Location = new Point(15, 42);
+			lblCpuCardValue.Name = "lblCpuCardValue";
+			lblCpuCardValue.Size = new Size(36, 17);
+			lblCpuCardValue.TabIndex = 2;
+			lblCpuCardValue.Text = "0.0%";
+			// 
+			// label1
+			// 
+			label1.AutoSize = true;
+			label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label1.ForeColor = Color.Transparent;
+			label1.Location = new Point(11, 10);
+			label1.Name = "label1";
+			label1.Size = new Size(50, 25);
+			label1.TabIndex = 1;
+			label1.Text = "CPU";
+			// 
+			// pnlCpuAccent
+			// 
+			pnlCpuAccent.BackColor = Color.FromArgb(0, 122, 255);
+			pnlCpuAccent.Dock = DockStyle.Left;
+			pnlCpuAccent.Location = new Point(0, 0);
+			pnlCpuAccent.Name = "pnlCpuAccent";
+			pnlCpuAccent.Size = new Size(5, 100);
+			pnlCpuAccent.TabIndex = 0;
+			// 
+			// pnlRamCard
+			// 
+			pnlRamCard.BackColor = Color.Transparent;
+			pnlRamCard.Controls.Add(pnlRamFill);
+			pnlRamCard.Controls.Add(lblRamCardValue);
+			pnlRamCard.Controls.Add(label4);
+			pnlRamCard.Controls.Add(panel2);
+			pnlRamCard.Location = new Point(294, 460);
+			pnlRamCard.Name = "pnlRamCard";
+			pnlRamCard.Size = new Size(250, 100);
+			pnlRamCard.TabIndex = 44;
+			// 
+			// pnlRamFill
+			// 
+			pnlRamFill.BackColor = Color.FromArgb(192, 0, 192);
+			pnlRamFill.Location = new Point(14, 64);
+			pnlRamFill.Name = "pnlRamFill";
+			pnlRamFill.Size = new Size(1, 24);
+			pnlRamFill.TabIndex = 3;
+			// 
+			// lblRamCardValue
+			// 
+			lblRamCardValue.AutoSize = true;
+			lblRamCardValue.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			lblRamCardValue.ForeColor = Color.White;
+			lblRamCardValue.Location = new Point(15, 42);
+			lblRamCardValue.Name = "lblRamCardValue";
+			lblRamCardValue.Size = new Size(52, 17);
+			lblRamCardValue.TabIndex = 2;
+			lblRamCardValue.Text = "0.00 GB";
+			// 
+			// label4
+			// 
+			label4.AutoSize = true;
+			label4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label4.ForeColor = Color.Transparent;
+			label4.Location = new Point(11, 10);
+			label4.Name = "label4";
+			label4.Size = new Size(51, 25);
+			label4.TabIndex = 1;
+			label4.Text = "Ram";
+			// 
+			// panel2
+			// 
+			panel2.BackColor = Color.FromArgb(192, 0, 192);
+			panel2.Dock = DockStyle.Left;
+			panel2.Location = new Point(0, 0);
+			panel2.Name = "panel2";
+			panel2.Size = new Size(5, 100);
+			panel2.TabIndex = 0;
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.BackColor = Color.Transparent;
+			label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label2.ForeColor = Color.White;
+			label2.Location = new Point(593, 460);
+			label2.Name = "label2";
+			label2.Size = new Size(130, 25);
+			label2.TabIndex = 45;
+			label2.Text = "Server Status";
+			// 
+			// lblStatusCardValue
+			// 
+			lblStatusCardValue.AutoSize = true;
+			lblStatusCardValue.BackColor = Color.Transparent;
+			lblStatusCardValue.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblStatusCardValue.ForeColor = Color.White;
+			lblStatusCardValue.Location = new Point(625, 498);
+			lblStatusCardValue.Name = "lblStatusCardValue";
+			lblStatusCardValue.Size = new Size(63, 21);
+			lblStatusCardValue.TabIndex = 46;
+			lblStatusCardValue.Text = "Offline";
+			// 
 			// ServerInfo
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -565,7 +705,11 @@ namespace Synix_Control_Panel.Help
 			BackColor = SystemColors.Control;
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
-			ClientSize = new Size(800, 432);
+			ClientSize = new Size(799, 620);
+			Controls.Add(lblStatusCardValue);
+			Controls.Add(label2);
+			Controls.Add(pnlRamCard);
+			Controls.Add(pnlCpuCard);
 			Controls.Add(lblVerticalLine);
 			Controls.Add(lblRconPasswordText);
 			Controls.Add(lblRconPortText);
@@ -614,6 +758,11 @@ namespace Synix_Control_Panel.Help
 			MinimizeBox = false;
 			Name = "ServerInfo";
 			Text = "Server Info";
+			FormClosing += ServerInfo_FormClosing;
+			pnlCpuCard.ResumeLayout(false);
+			pnlCpuCard.PerformLayout();
+			pnlRamCard.ResumeLayout(false);
+			pnlRamCard.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -663,5 +812,17 @@ namespace Synix_Control_Panel.Help
 		private Label lblRconPortText;
 		private Label lblRconPasswordText;
 		private Label lblVerticalLine;
+		private Panel pnlCpuCard;
+		private Panel pnlCpuAccent;
+		private Label label1;
+		private Label pnlCpuFill;
+		private Label lblCpuCardValue;
+		private Panel pnlRamCard;
+		private Label pnlRamFill;
+		private Label lblRamCardValue;
+		private Label label4;
+		private Panel panel2;
+		private Label label2;
+		private Label lblStatusCardValue;
 	}
 }

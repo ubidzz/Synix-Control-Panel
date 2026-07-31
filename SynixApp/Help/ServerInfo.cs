@@ -10,6 +10,7 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel.Help
@@ -21,18 +22,28 @@ namespace Synix_Control_Panel.Help
 		private const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;
 
 		private GameServer _server;
+		private Process _serverProcess;
+		private System.Windows.Forms.Timer _metricsTimer;
+		private DateTime _lastCpuCheckTime;
+		private TimeSpan _lastCpuTotalProcessorTime;
 
 		public ServerInfo(GameServer server)
 		{
 			InitializeComponent();
 			_server = server;
+
 			if (Properties.Settings.Default.PrivacyMode)
 			{
 				SetWindowDisplayAffinity(this.Handle, WDA_EXCLUDEFROMCAPTURE);
 			}
+
 			LoadServerData();
+			InitializeMetricsEngine();
 		}
 
+		// ====================================================================
+		// SECTION 1: STATIC SERVER DATA (From original ServerInfo)
+		// ====================================================================
 		private void LoadServerData()
 		{
 			if (_server == null) return;
@@ -90,6 +101,108 @@ namespace Synix_Control_Panel.Help
 			{
 				label.Text = "Off";
 				label.ForeColor = Color.Red;
+			}
+		}
+
+		// ====================================================================
+		// SECTION 2: LIVE TELEMETRY ENGINE
+		// ====================================================================
+		private void InitializeMetricsEngine()
+		{
+			_metricsTimer = new System.Windows.Forms.Timer();
+			_metricsTimer.Interval = 1000;
+			_metricsTimer.Tick += MetricsTimer_Tick;
+			_metricsTimer.Start();
+		}
+
+		private void MetricsTimer_Tick(object sender, EventArgs e)
+		{
+			if (_server.PID.HasValue && _server.PID > 0)
+			{
+				try
+				{
+					if (_serverProcess == null || _serverProcess.Id != _server.PID.Value)
+					{
+						_serverProcess = Process.GetProcessById(_server.PID.Value);
+						_lastCpuCheckTime = DateTime.Now;
+						_lastCpuTotalProcessorTime = _serverProcess.TotalProcessorTime;
+					}
+				}
+				catch
+				{
+					_serverProcess = null; // Process ended or is invalid
+				}
+			}
+			else
+			{
+				_serverProcess = null;
+			}
+
+			double currentCpu = 0;
+			double currentRamGb = 0;
+
+			if (_serverProcess != null && !_serverProcess.HasExited)
+			{
+				_serverProcess.Refresh();
+
+				TimeSpan currentTotalProcessorTime = _serverProcess.TotalProcessorTime;
+				DateTime currentCheckTime = DateTime.Now;
+
+				double cpuUsage = (currentTotalProcessorTime - _lastCpuTotalProcessorTime).TotalMilliseconds /
+								  (currentCheckTime - _lastCpuCheckTime).TotalMilliseconds;
+
+				currentCpu = (cpuUsage / Environment.ProcessorCount) * 100;
+
+				_lastCpuCheckTime = currentCheckTime;
+				_lastCpuTotalProcessorTime = currentTotalProcessorTime;
+
+				currentRamGb = _serverProcess.WorkingSet64 / 1024.0 / 1024.0 / 1024.0;
+
+				if (lblStatusCardValue != null)
+				{
+					lblStatusCardValue.Text = "ONLINE";
+					lblStatusCardValue.ForeColor = Color.LimeGreen;
+				}
+			}
+			else
+			{
+				if (lblStatusCardValue != null)
+				{
+					lblStatusCardValue.Text = "OFFLINE";
+					lblStatusCardValue.ForeColor = Color.IndianRed;
+				}
+			}
+
+			if (lblCpuCardValue != null) lblCpuCardValue.Text = $"{currentCpu:0.0}%";
+			if (lblRamCardValue != null) lblRamCardValue.Text = $"{currentRamGb:0.00} GB";
+
+			double totalRam = MainGUI.Instance != null ? MainGUI.Instance.systemTotalRamGb : 32.0;
+			double ramPercentage = (currentRamGb / totalRam) * 100;
+
+			int maxBarWidth = 150;
+
+			UpdateFlatProgressBar(pnlCpuFill, currentCpu, maxBarWidth);
+			UpdateFlatProgressBar(pnlRamFill, ramPercentage, maxBarWidth);
+		}
+
+		private void UpdateFlatProgressBar(Control fill, double percentage, int maxWidth)
+		{
+			if (fill == null) return;
+
+			if (percentage > 100) percentage = 100;
+			if (percentage < 0) percentage = 0;
+
+			int targetWidth = (int)((percentage / 100.0) * maxWidth);
+
+			fill.Width = targetWidth;
+		}
+
+		private void ServerInfo_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (_metricsTimer != null)
+			{
+				_metricsTimer.Stop();
+				_metricsTimer.Dispose();
 			}
 		}
 	}
