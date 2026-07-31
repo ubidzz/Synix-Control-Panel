@@ -43,6 +43,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			_helpData = new Dictionary<string, HelpItem>
 			{
+				// --- 1. GETTING STARTED (Category: "Start") ---
 				["First-Time Setup Guide"] = new HelpItem("Start",
 					"WELCOME TO SYNIX CONTROL PANEL!\n\n" +
 					"Synix is designed as a zero-admin, non-invasive management suite for game servers on Windows 11.\n\n" +
@@ -78,6 +79,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"  winget uninstall synix\n\n" +
 					"Note: Winget automatically registers Synix in your Start Menu and Windows Settings 'Installed Apps' list."),
 
+				// --- 2. DASHBOARD & CONTROLS (Category: "Dash") ---
 				["Main Dashboard Operations"] = new HelpItem("Dash",
 					"SERVER CONTROL SEQUENCES:\n\n" +
 					"• START SERVER: Initiates pre-flight checks (RAM safety check, process sanity, optional Backup on Start, optional Update on Start) and launches the dedicated executable.\n" +
@@ -98,7 +100,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"The interactive graph at the bottom of the dashboard monitors global host CPU and RAM utilization.\n\n" +
 					"RESOURCE MONITOR DEEP-DIVE:\n" +
 					"Click anywhere on the total resource graph to open the dedicated 'Resource Monitor' window. Here you can inspect PID, CPU utilization, working memory, and executable paths for every active game server managed by Synix."),
-					
+
 				["Global Settings Menu & Privacy Mode"] = new HelpItem("Dash",
 					"SYNIX GLOBAL SETTINGS:\n\n" +
 					"Access the global settings menu via the gear icon in the top right corner of the main dashboard.\n\n" +
@@ -107,6 +109,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Privacy Mode: Hides sensitive information (like IPs) while screen sharing. (Tip: You can still click the hidden IP labels on the dashboard to copy your actual IP address to your clipboard!)\n" +
 					"• Run as Administrator: Enables advanced system management tasks (like Firewall Cleanup)."),
 
+				// --- 3. SERVER CONFIGURATION (Category: "Config") ---
 				["Adding vs Editing Servers & FirstBoot"] = new HelpItem("Config",
 					"NEW INSTALL VS EDIT SERVER LOGIC:\n\n" +
 					"• New Server Install: When creating a server, `IsFirstBoot` is set to `TRUE`. This ensures the setup wizard executes, downloads initial binaries, and prompts configuration windows.\n" +
@@ -126,6 +129,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"When launching a brand-new game server for the first time, Synix displays a reminder dialogue prompting you to review configuration options (`server.cfg`, admin passwords, maps).\n\n" +
 					"This dialogue only appears on new server installations and will not bother you during subsequent boots or parameter edits."),
 
+				// --- 4. NETWORKING & IP (Category: "Net") ---
 				["Local Link vs WAN Link Diagnostic"] = new HelpItem("Net",
 					"NETWORK PROBING ARCHITECTURE:\n\n" +
 					"Synix utilizes a two-tier network diagnostic check shown on the dashboard:\n\n" +
@@ -165,6 +169,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• False-Positive Suppression: Automatically suppresses network flood warnings when active SteamCMD downloads or game updates are detected.\n" +
 					"• Alert Overlay: Displays visual desktop notifications if network saturation occurs while you are tabbed out."),
 
+				// --- 5. AUTOMATION & DISCORD (Category: "Maint") ---
 				["Smart Backup on Start"] = new HelpItem("Maint",
 					"AUTOMATED WORLD BACKUPS:\n\n" +
 					"Enabling 'Backup on Start' in server settings triggers an automated archival process before the game boots.\n\n" +
@@ -190,6 +195,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"   • 🛑 Graceful Shutdowns\n" +
 					"   • ⚠️ Watchdog Recovery & Crash Reboots"),
 
+				// --- 6. WATCHDOG & RESOURCE GUARD (Category: "Watch") ---
 				["Autonomous Watchdog Loop"] = new HelpItem("Watch",
 					"AUTONOMOUS WATCHDOG HEALTH MONITORING:\n\n" +
 					"The Synix Watchdog operates as a background thread monitoring server process loop health.\n\n" +
@@ -210,6 +216,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"If Synix is closed or updated while game servers or SteamCMD are actively running, reopening Synix initiates process rebinding.\n\n" +
 					"The engine queries active OS PID handles, matches binary names to `{Identity}` configurations, and restores live monitoring without interrupting active players or background SteamCMD downloads."),
 
+				// --- 7. TROUBLESHOOTING & SYSTEM (Category: "Trouble") ---
 				["No-Admin Philosophy & Windows Firewall"] = new HelpItem("Trouble",
 					"USER-MODE SOVEREIGNTY (NO-ADMIN):\n\n" +
 					"Synix runs entirely in User-Mode without requesting Administrator (UAC) privileges by default. It will not edit your Windows registry or modify host system settings.\n\n" +
@@ -238,6 +245,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"If you have activated a Custom Backup Location in the Synix Settings menu, your backups will be routed to that specific drive/folder instead.\n\n" +
 					"You can extract any ZIP directly over your active server folder to restore previous world saves."),
 
+				// --- 8. SUPPORTED GAMES (Category: "Games") ---
 				["Internal IReadOnlyList<GameInfo> Database"] = new HelpItem("Games",
 					"INTERNAL GAME DATABASE ARCHITECTURE:\n\n" +
 					"Synix does not use SQLite or external SQL databases. Instead, it relies entirely on a high-performance, compiled internal `IReadOnlyList<GameInfo>` database.\n\n" +
@@ -258,6 +266,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• App Port (Rust+): Set to a unique port above 10000 (e.g., 28082 TCP).\n" +
 					"• Identity Isolation: Synix enforces `+server.identity \"{Server_Name}\"` automatically to isolate world save files and blueprints cleanly."),
 
+				// --- 9. COMMUNITY & LEGAL (Category: "Support") ---
 				["Official Support Links"] = new HelpItem("Support",
 					"COMMUNITY & SUPPORT RESOURCES:\n\n" +
 					"• GitHub Issues: https://github.com/ubidzz/Synix-Control-Panel/issues \n" +

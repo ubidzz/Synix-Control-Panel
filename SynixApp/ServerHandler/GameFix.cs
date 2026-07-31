@@ -15,6 +15,7 @@ using Synix_Control_Panel.SynixEngine;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -31,6 +32,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string publicIp = await Core.Instance.GetPublicIP();
 			string localIp = await Core.Instance.GetLocalIP();
 			string cleanIdentity = server.ServerName.Replace(" ", "_");
+
+			if (server.Game == "Dune: Awakening")
+			{
+				ManualConfigWasCreated = true;
+			}
 
 			try
 			{

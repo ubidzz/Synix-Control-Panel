@@ -82,7 +82,7 @@ namespace Synix_Control_Panel
 			GridStyler.StyleMinimizeButton(btnMinimize);
 			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
-			GridStyler.StyleSettingsButton(btnSettings);
+			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
 
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
 			_ = Core.Instance;

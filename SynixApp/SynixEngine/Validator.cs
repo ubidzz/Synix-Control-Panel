@@ -118,16 +118,30 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public bool ShouldBlockForConfig(GameServer server)
 		{
-			// If it's the first time running, show the warning
 			if (server.IsFirstBoot)
 			{
-				MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
+				DialogResult result = DialogResult.Cancel;
 
-				using (var warningForm = new WarningDatabase(server))
+				if (MainGUI.Instance != null && MainGUI.Instance.InvokeRequired)
 				{
-					warningForm.ShowDialog();
-					return true;
+					MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
+					MainGUI.Instance.Invoke((Action)(() =>
+					{
+						using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
+						{
+							result = warningForm.ShowDialog(MainGUI.Instance);
+						}
+					}));
 				}
+				else
+				{
+					using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
+					{
+						result = warningForm.ShowDialog(MainGUI.Instance);
+					}
+				}
+
+				return result != DialogResult.OK;
 			}
 
 			return false; // Already been booted before, let it through
