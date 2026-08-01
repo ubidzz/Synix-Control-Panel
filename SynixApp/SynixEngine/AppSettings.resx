@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblRunAsAdminInfo.Text" xml:space="preserve">
-    <value>Allows Synix to request temporary Administrator permissions for advanced system tasks. Currently, this enables Synix to automatically find and remove leftover Windows Firewall rules when you delete a game server, keeping your system clean.</value>
+    <value>Allows Synix to request temporary administrator permission only when performing approved system tasks such as firewall cleanup or temporary Network Guard actions. Synix remains a standard-user application.</value>
   </data>
   <data name="lblBackupWarning.Text" xml:space="preserve">
     <value>⚠ Warning: Synix only deletes backups from the currently active save location. If you disable this setting or change the folder path, any backups left in the previous location must be deleted manually when removing a server.</value>

@@ -166,9 +166,9 @@ namespace Synix_Control_Panel.SynixEngine
 			lblRunAsAdmin.ForeColor = Color.White;
 			lblRunAsAdmin.Location = new Point(12, 394);
 			lblRunAsAdmin.Name = "lblRunAsAdmin";
-			lblRunAsAdmin.Size = new Size(200, 25);
+			lblRunAsAdmin.Size = new Size(269, 25);
 			lblRunAsAdmin.TabIndex = 10;
-			lblRunAsAdmin.Text = "Run as Administrator";
+			lblRunAsAdmin.Text = "Enable Elevated System Tasks";
 			// 
 			// label3
 			// 
