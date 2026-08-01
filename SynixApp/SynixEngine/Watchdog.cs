@@ -187,7 +187,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"🚨 SYNIX NETWORK GUARD 🚨\n\n" +
 					"Critical bandwidth saturation detected on the network interface.\n\n" +
 					"System resources are redlining. Please check your firewall immediately.",
-					"Global DDoS Detection",
+					"Possible Network Flood Detected",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Stop,
 					MessageBoxDefaultButton.Button1,
