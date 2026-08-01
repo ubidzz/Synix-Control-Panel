@@ -136,7 +136,7 @@ namespace Synix_Control_Panel.SynixEngine
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "HelpGUI";
-			Text = "HelpGUI";
+			Text = "Help";
 			splitContainer1.Panel1.ResumeLayout(false);
 			splitContainer1.Panel1.PerformLayout();
 			splitContainer1.Panel2.ResumeLayout(false);
