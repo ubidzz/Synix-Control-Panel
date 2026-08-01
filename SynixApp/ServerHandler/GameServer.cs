@@ -38,6 +38,7 @@ public class GameInfo
 	public string RequiredArgs { get; set; } = string.Empty;
 	[JsonIgnore]
 	public List<string> Maps { get; set; } = [];
+	public int WorldSize { get; set; }
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
 	public string ExtraArgs { get; set; } = string.Empty;

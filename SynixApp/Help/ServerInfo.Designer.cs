@@ -688,15 +688,15 @@ namespace Synix_Control_Panel.Help
 			// 
 			// lblStatusCardValue
 			// 
-			lblStatusCardValue.AutoSize = true;
 			lblStatusCardValue.BackColor = Color.Transparent;
 			lblStatusCardValue.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblStatusCardValue.ForeColor = Color.White;
-			lblStatusCardValue.Location = new Point(625, 498);
+			lblStatusCardValue.Location = new Point(593, 485);
 			lblStatusCardValue.Name = "lblStatusCardValue";
-			lblStatusCardValue.Size = new Size(63, 21);
+			lblStatusCardValue.Size = new Size(130, 21);
 			lblStatusCardValue.TabIndex = 46;
-			lblStatusCardValue.Text = "Offline";
+			lblStatusCardValue.Text = "Stopped";
+			lblStatusCardValue.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// ServerInfo
 			// 

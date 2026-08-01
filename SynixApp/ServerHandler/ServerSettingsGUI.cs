@@ -18,6 +18,8 @@ using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
+using System.Management;
+using System.Runtime.Intrinsics.X86;
 
 namespace Synix_Control_Panel
 {
@@ -163,6 +165,30 @@ namespace Synix_Control_Panel
 				bool isBaseReady = hasName && hasGame;
 				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
 
+				// --- DUNE: AWAKENING HARDWARE & OS CHECKS ---
+				bool isDuneAwakening = selectedGame.Equals("Dune: Awakening", StringComparison.OrdinalIgnoreCase);
+				bool virtMissing = false;
+				string missingTechName = "";
+				bool isHomeEdition = false;
+				bool hyperVMissing = false;
+				bool avx2Missing = false;
+				bool ramMissing = false;
+				double sysRam = 0;
+
+				if (isDuneAwakening)
+				{
+					var virtData = CheckVirtualizationStatus();
+					virtMissing = !virtData.IsEnabled;
+					missingTechName = virtData.TechName;
+
+					isHomeEdition = !IsWindowsProOrBetter();
+					hyperVMissing = !IsHypervisorPresent();
+					avx2Missing = !Avx2.IsSupported;
+
+					sysRam = GetSystemRamGB();
+					ramMissing = sysRam < 23.0; // 24GB minimum, allowing a tiny margin for hardware reserved RAM
+				}
+
 				txtPassword.Enabled = CanUnlock(txtPassword);
 				txtAdminPassword.Enabled = CanUnlock(txtAdminPassword);
 				txtWorldSeed.Enabled = CanUnlock(txtWorldSeed);
@@ -170,6 +196,7 @@ namespace Synix_Control_Panel
 				numMaxPlayers.Enabled = CanUnlock(numMaxPlayers);
 				numQueryPort.Enabled = CanUnlock(numQueryPort);
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
+				numWorldSize.Enabled = CanUnlock(numWorldSize);
 
 				if (numAppPort != null)
 					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled";
@@ -240,6 +267,47 @@ namespace Synix_Control_Panel
 					WarningLabel.BackColor = Color.FromArgb(60, 45, 0);
 					btnSave.Enabled = false;
 				}
+				// --- DUNE CHECK: Minimum RAM ---
+				else if (ramMissing)
+				{
+					WarningLabel.Text = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires at least 24GB of RAM (Detected: {sysRam:0.0} GB).";
+					WarningLabel.ForeColor = Color.Red;
+					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					btnSave.Enabled = false;
+				}
+				// --- DUNE CHECK: AVX2 Processor Support ---
+				else if (avx2Missing)
+				{
+					WarningLabel.Text = "  ⚠️ [HARDWARE] 'Dune: Awakening' strictly requires a CPU with AVX2 support.";
+					WarningLabel.ForeColor = Color.Red;
+					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					btnSave.Enabled = false;
+				}
+				// --- DUNE CHECK: Windows Pro/Enterprise ---
+				else if (isHomeEdition)
+				{
+					WarningLabel.Text = "  ⚠️ [OS CHECK] Windows Pro/Enterprise is required. Home editions do not support Hyper-V.";
+					WarningLabel.ForeColor = Color.Red;
+					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					btnSave.Enabled = false;
+				}
+				// --- DUNE CHECK: BIOS Virtualization ---
+				else if (virtMissing)
+				{
+					WarningLabel.Text = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires {missingTechName} to be enabled in your PC's BIOS.";
+					WarningLabel.ForeColor = Color.Red;
+					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					btnSave.Enabled = false;
+				}
+				// --- DUNE CHECK: Hyper-V Enabled in Windows ---
+				else if (hyperVMissing)
+				{
+					WarningLabel.Text = "  ⚠️ [SYSTEM] Windows Hyper-V is disabled. Please turn it on in 'Windows Features'.";
+					WarningLabel.ForeColor = Color.Red;
+					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					btnSave.Enabled = false;
+				}
+				// ------------------------------------------
 				else if (isNameTaken)
 				{
 					WarningLabel.Text = $"  ⚠️ [CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
@@ -277,9 +345,18 @@ namespace Synix_Control_Panel
 				}
 				else
 				{
-					WarningLabel.Text = _isEditMode ? $"  ✔ [READY] Updating: {currentName}" : "  ✔ [READY] Configuration is valid and safe.";
-					WarningLabel.ForeColor = Color.SpringGreen;
-					WarningLabel.BackColor = Color.FromArgb(20, 50, 20);
+					if (isDuneAwakening)
+					{
+						WarningLabel.Text = "  ✔ [READY] NOTE: Have your Self-Host Token ready for the battlegroup.bat prompt.";
+						WarningLabel.ForeColor = Color.Orange;
+						WarningLabel.BackColor = Color.FromArgb(20, 50, 20);
+					}
+					else
+					{
+						WarningLabel.Text = _isEditMode ? $"  ✔ [READY] Updating: {currentName}" : "  ✔ [READY] Configuration is valid and safe.";
+						WarningLabel.ForeColor = Color.SpringGreen;
+						WarningLabel.BackColor = Color.FromArgb(20, 50, 20);
+					}
 
 					btnSave.Enabled = !string.IsNullOrWhiteSpace(txtInstallPath.Text);
 				}
@@ -369,6 +446,7 @@ namespace Synix_Control_Panel
 				cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
 				if (numAppPort != null) numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
 				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
+				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
 
 				if (gameData.NeedsConfigWarning == true)
 				{
@@ -433,6 +511,7 @@ namespace Synix_Control_Panel
 			numRconPort.ValueChanged += (s, e) => trigger();
 			chkEnableRcon.CheckedChanged += (s, e) => trigger();
 			chkDefaultPath.CheckedChanged += (s, e) => trigger();
+			numWorldSize.ValueChanged += (s, e) => trigger();
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
@@ -443,10 +522,12 @@ namespace Synix_Control_Panel
 			int gPort = (int)numPort.Value;
 			int qPort = (int)numQueryPort.Value;
 			int rPort = (int)numRconPort.Value;
+			int wSize = (int)numWorldSize.Value;
+
 			int? aPort = numAppPort.Enabled ? (int)numAppPort.Value : (int?)null;
 			if (!Core.Instance.ValidatePortsAndReport(_existingServer, gPort, qPort, rPort, chkEnableRcon.Checked, aPort ?? 0, numAppPort.Enabled, selectedGame)) return;
 			string newPath = txtInstallPath.Text.Trim();
-			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
+			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{
@@ -487,6 +568,93 @@ namespace Synix_Control_Panel
 				FileHandler.SaveServers(); this.DialogResult = DialogResult.OK; this.Close();
 			}
 			catch (Exception ex) { MessageBox.Show(ex.Message); }
+		}
+
+		// ====================================================================
+		// HARDWARE & OS GATEKEEPER CHECKS
+		// ====================================================================
+		private (bool IsEnabled, string TechName) CheckVirtualizationStatus()
+		{
+			bool isEnabled = true;
+			string techName = "Hardware Virtualization";
+
+			try
+			{
+				using (var searcher = new ManagementObjectSearcher("Select VirtualizationFirmwareEnabled, Manufacturer FROM Win32_Processor"))
+				{
+					foreach (var obj in searcher.Get())
+					{
+						if (obj["Manufacturer"] != null)
+						{
+							string manufacturer = obj["Manufacturer"].ToString();
+							if (manufacturer.Contains("Intel", StringComparison.OrdinalIgnoreCase))
+								techName = "Intel VT-x";
+							else if (manufacturer.Contains("AMD", StringComparison.OrdinalIgnoreCase))
+								techName = "AMD-V (SVM)";
+						}
+
+						if (obj["VirtualizationFirmwareEnabled"] != null)
+							isEnabled = (bool)obj["VirtualizationFirmwareEnabled"];
+
+						break;
+					}
+				}
+			}
+			catch { }
+			return (isEnabled, techName);
+		}
+
+		private bool IsWindowsProOrBetter()
+		{
+			try
+			{
+				using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
+				{
+					foreach (var obj in searcher.Get())
+					{
+						string caption = obj["Caption"]?.ToString() ?? "";
+						if (caption.Contains("Home", StringComparison.OrdinalIgnoreCase)) return false;
+					}
+				}
+			}
+			catch { }
+			return true;
+		}
+
+		private bool IsHypervisorPresent()
+		{
+			try
+			{
+				using (var searcher = new ManagementObjectSearcher("SELECT HypervisorPresent FROM Win32_ComputerSystem"))
+				{
+					foreach (var obj in searcher.Get())
+					{
+						if (obj["HypervisorPresent"] != null) return (bool)obj["HypervisorPresent"];
+					}
+				}
+			}
+			catch { }
+			return true;
+		}
+
+		private double GetSystemRamGB()
+		{
+			try
+			{
+				using (var searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+				{
+					foreach (var obj in searcher.Get())
+					{
+						if (obj["TotalPhysicalMemory"] != null)
+						{
+							ulong bytes = Convert.ToUInt64(obj["TotalPhysicalMemory"]);
+							return bytes / (1024.0 * 1024.0 * 1024.0);
+						}
+					}
+				}
+			}
+			catch { }
+			return 999.0; // Default to pass on WMI error so user isn't locked out
 		}
 
 		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)

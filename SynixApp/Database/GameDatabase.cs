@@ -2777,7 +2777,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Rust",
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
-				RequiredArgs = "-batchmode -nographics +server.ip 0.0.0.0 +server.port {port} +server.queryport {query} +app.port {app_port} +server.password \"{pass}\" +server.level \"{map}\" +server.seed {seed} +server.worldsize 4000 +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" +server.pve {mode} {rcon} -SteamAppId={steamAppID} -logfile \"server_log.txt\"",
+				RequiredArgs = "-batchmode -nographics +server.ip 0.0.0.0 +server.port {port} +server.queryport {query} +app.port {app_port} +server.password \"{pass}\" +server.level \"{map}\" +server.seed {seed} +server.worldsize {world_size} +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" +server.pve {mode} {rcon} -SteamAppId={steamAppID} -logfile \"server_log.txt\"",
 				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
 				Port = 28015,
 				QueryPort = 28016,

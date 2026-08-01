@@ -12,6 +12,7 @@
 // ============================================================================
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Synix_Control_Panel.Help
 {
@@ -76,6 +77,76 @@ namespace Synix_Control_Panel.Help
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
 		}
 
+		private void CheckRunningStatus()
+		{
+			// Read the global object to see if another form updated it, but DO NOT modify it!
+			if (_server == null || string.IsNullOrEmpty(_server.Status)) return;
+
+			string[] spinFrames = { "|", "/", "--", "\\" };
+			string status = _server.Status;
+			bool isBusy = false;
+			string nextSpinnerText = "";
+
+			// Read what is currently on the screen so we can calculate the next animation frame locally
+			string currentVisualText = lblStatusCardValue != null ? lblStatusCardValue.Text : "";
+
+			if (status.StartsWith("Updating"))
+			{
+				string currentFrame = currentVisualText.Replace("Updating ", "");
+				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
+				nextSpinnerText = "Updating " + spinFrames[nextIndex];
+				isBusy = true;
+			}
+			else if (status.StartsWith("Validating"))
+			{
+				string currentFrame = currentVisualText.Replace("Validating ", "");
+				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
+				nextSpinnerText = "Validating " + spinFrames[nextIndex];
+				isBusy = true;
+			}
+			else if (status.StartsWith("Installing"))
+			{
+				string currentFrame = currentVisualText.Replace("Installing ", "");
+				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
+				nextSpinnerText = "Installing " + spinFrames[nextIndex];
+				isBusy = true;
+			}
+			else if (status.StartsWith("Backing Up"))
+			{
+				string currentFrame = currentVisualText.Replace("Backing Up ", "");
+				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
+				nextSpinnerText = "Backing Up " + spinFrames[nextIndex];
+				isBusy = true;
+			}
+			else if (status.StartsWith("Stopping"))
+			{
+				string currentFrame = currentVisualText.Replace("Stopping ", "");
+				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
+				nextSpinnerText = "Stopping " + spinFrames[nextIndex];
+				isBusy = true;
+			}
+			else if (status.StartsWith("Starting"))
+			{
+				string currentFrame = currentVisualText.Replace("Starting ", "");
+				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
+				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
+				nextSpinnerText = "Starting " + spinFrames[nextIndex];
+				isBusy = true;
+			}
+
+			// ONLY update the local UI label. Leave the global _server.Status completely untouched!
+			if (isBusy && lblStatusCardValue != null)
+			{
+				lblStatusCardValue.Text = nextSpinnerText;
+				lblStatusCardValue.ForeColor = Color.Orange;
+			}
+		}
+
 		private string GetActiveDays(bool[] days)
 		{
 			if (days == null || days.Length < 7) return "None";
@@ -110,13 +181,24 @@ namespace Synix_Control_Panel.Help
 		private void InitializeMetricsEngine()
 		{
 			_metricsTimer = new System.Windows.Forms.Timer();
-			_metricsTimer.Interval = 1000;
+			_metricsTimer.Interval = 150;
 			_metricsTimer.Tick += MetricsTimer_Tick;
 			_metricsTimer.Start();
 		}
 
 		private void MetricsTimer_Tick(object sender, EventArgs e)
 		{
+			if (_server.Status == "Running")
+			{
+				lblStatusCardValue.Text = _server.Status;
+				lblStatusCardValue.ForeColor = Color.Green;
+			}
+			else
+			{
+				CheckRunningStatus();
+			}
+
+			// 1. Hook the active process
 			if (_server.PID.HasValue && _server.PID > 0)
 			{
 				try
@@ -141,6 +223,7 @@ namespace Synix_Control_Panel.Help
 			double currentCpu = 0;
 			double currentRamGb = 0;
 
+			// 2. Extract metrics and set base ONLINE/OFFLINE status
 			if (_serverProcess != null && !_serverProcess.HasExited)
 			{
 				_serverProcess.Refresh();
@@ -155,27 +238,23 @@ namespace Synix_Control_Panel.Help
 
 				_lastCpuCheckTime = currentCheckTime;
 				_lastCpuTotalProcessorTime = currentTotalProcessorTime;
-
 				currentRamGb = _serverProcess.WorkingSet64 / 1024.0 / 1024.0 / 1024.0;
-
-				if (lblStatusCardValue != null)
-				{
-					lblStatusCardValue.Text = "ONLINE";
-					lblStatusCardValue.ForeColor = Color.LimeGreen;
-				}
 			}
 			else
 			{
+				// Default to OFFLINE
 				if (lblStatusCardValue != null)
 				{
-					lblStatusCardValue.Text = "OFFLINE";
+					lblStatusCardValue.Text = "Stopped";
 					lblStatusCardValue.ForeColor = Color.IndianRed;
 				}
 			}
 
+			// 3. Update the UI Metric Labels
 			if (lblCpuCardValue != null) lblCpuCardValue.Text = $"{currentCpu:0.0}%";
 			if (lblRamCardValue != null) lblRamCardValue.Text = $"{currentRamGb:0.00} GB";
 
+			// 4. Animate the flat progress bars
 			double totalRam = MainGUI.Instance != null ? MainGUI.Instance.systemTotalRamGb : 32.0;
 			double ramPercentage = (currentRamGb / totalRam) * 100;
 

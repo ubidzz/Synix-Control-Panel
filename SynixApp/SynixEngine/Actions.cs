@@ -588,7 +588,8 @@ namespace Synix_Control_Panel.SynixEngine
 						   .Replace("{adminpass}", server.AdminPassword ?? "")
 						   .Replace("{ServerName}", server.ServerName ?? "SynixServer")
 						   .Replace("{InstallPath}", server.InstallPath ?? "")
-						   .Replace("{Identity}", cleanIdentity);
+						   .Replace("{Identity}", cleanIdentity)
+						   .Replace("{world_size}", server.WorldSize.ToString());
 
 				if (args.Contains("{rcon}"))
 				{
