@@ -156,6 +156,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.Replace("{adminpass}", server.AdminPassword ?? "")
 						.Replace("{ServerName}", server.ServerName)
 						.Replace("{InstallPath}", server.InstallPath)
+						.Replace("{world_size}", server.WorldSize.ToString())
 						.Replace("{Identity}", cleanIdentity);
 
 					if (args.Contains("{rcon}"))

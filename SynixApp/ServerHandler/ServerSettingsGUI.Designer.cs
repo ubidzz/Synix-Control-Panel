@@ -629,7 +629,7 @@ namespace Synix_Control_Panel
 			// numWorldSize
 			// 
 			numWorldSize.Location = new Point(292, 272);
-			numWorldSize.Maximum = new decimal(new int[] { 4000, 0, 0, 0 });
+			numWorldSize.Maximum = new decimal(new int[] { 5000, 0, 0, 0 });
 			numWorldSize.Minimum = new decimal(new int[] { 50, 0, 0, 0 });
 			numWorldSize.Name = "numWorldSize";
 			numWorldSize.Size = new Size(73, 23);
