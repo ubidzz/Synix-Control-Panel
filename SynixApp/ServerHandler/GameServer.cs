@@ -34,11 +34,12 @@ public class GameInfo
 	public string AppID { get; set; } = string.Empty;
 	[JsonIgnore]
 	public string ExeName { get; set; } = string.Empty;
+	public int WorldSize { get; set; }
+	public string WorldSeed { get; set; } = "12345";
 	[JsonIgnore]
 	public string RequiredArgs { get; set; } = string.Empty;
 	[JsonIgnore]
 	public List<string> Maps { get; set; } = [];
-	public int WorldSize { get; set; }
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
 	public string ExtraArgs { get; set; } = string.Empty;
@@ -81,6 +82,7 @@ public class GameServer : GameInfo
 	public string RconPassword { get; set; } = "";
 	public bool IsFirstBoot { get; set; } = true;
 	public string WorldSeed { get; set; } = "12345";
+	public int WorldSize { get; set; }
 	[JsonIgnore]
 	public string PlayerCount => $"{CurrentPlayers} / {MaxPlayers}";
 	public int? AppPort { get; set; } = 10777;

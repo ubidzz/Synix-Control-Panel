@@ -37,6 +37,7 @@ namespace Synix_Control_Panel
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
+		private ToolTip? _resourceGraphToolTip;
 
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -50,11 +51,12 @@ namespace Synix_Control_Panel
 		{
 			InitializeComponent();
 			Instance = this;
+
 			FileHandler.LoadServers();
 			UIStyleHelper.InitializeToggles(this);
+
 			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = serverList;
-			//dataGridView1.DataError += dataGridView1_DataError;
 			if (!dataGridView1.Columns.Contains("IconCol"))
 			{
 				DataGridViewImageColumn iconCol = new DataGridViewImageColumn();
@@ -83,6 +85,22 @@ namespace Synix_Control_Panel
 			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
+
+			_resourceGraphToolTip = new ToolTip(components)
+			{
+				InitialDelay = 300,
+				ReshowDelay = 100,
+				AutoPopDelay = 8000,
+				ShowAlways = true
+			};
+
+			_resourceGraphToolTip.SetToolTip(
+				chartHeartbeat,
+				"Click to open detailed CPU and RAM usage for all running servers."
+			);
+
+			chartHeartbeat.Cursor = Cursors.Hand;
+			chartHeartbeat.MouseLeave += chartHeartbeat_MouseLeave;
 
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
 			_ = Core.Instance;
@@ -347,25 +365,28 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			// All the "Nuclear Refresh" and scroll logic is hidden in the helper
 			GridHelper.RefreshWithPersistence(dataGridView1, serverList);
 		}
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			// Let the GridStyler handle the colors
 			GridStyler.SetStatusColor(dataGridView1, e);
 		}
 
 		private void ResourceGraph_Click(object sender, EventArgs e)
 		{
-			// Pass the current list of servers to the new monitor window
 			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
-			monitor.Show(); // .Show() lets them keep the panel open while using the main app
+			monitor.Show();
 		}
+
+		private void chartHeartbeat_MouseLeave(object? sender, EventArgs e)
+		{
+			chartHeartbeat.BorderlineDashStyle =
+				System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
+		}
+
 		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
-			// Just draw the rows using the solid colors from GridStyler
 			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 

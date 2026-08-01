@@ -131,6 +131,8 @@ namespace Synix_Control_Panel
 			chkDefaultPath.Checked = _existingServer.IsDefaultPath;
 			txtExtraArgs.Text = _existingServer.ExtraArgs ?? "";
 			txtWorldSeed.Text = _existingServer.WorldSeed ?? "12345";
+			numWorldSize.Value = Math.Clamp((decimal)_existingServer.WorldSize, numWorldSize.Minimum, numWorldSize.Maximum);
+
 			chkUpdateOnStart.Checked = _existingServer.UpdateOnStart;
 			chkEnableRcon.Checked = _existingServer.EnableRcon;
 			numRconPort.Value = Math.Clamp((decimal)_existingServer.RconPort, numRconPort.Minimum, numRconPort.Maximum);
