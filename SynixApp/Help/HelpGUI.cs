@@ -276,23 +276,137 @@ namespace Synix_Control_Panel.SynixEngine
 					"• YouTube Video Showcase: https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s"),
 
 				["License & Proprietary Terms"] = new HelpItem("Support",
-					"SYNIX CONTROL PANEL - LIMITED PROPRIETARY LICENSE\n\n" +
-					"Copyright (c) 2026 Jason Turner. All Rights Reserved.\n\n" +
-					"1. GRANT OF LICENSE\n" +
-					"Permission is hereby granted to any individual to download, view, and modify the source code of the Synix Control Panel for PERSONAL, NON-COMMERCIAL USE ONLY.\n\n" +
-					"2. MODIFICATIONS\n" +
-					"You are permitted to modify the source code to suit your personal requirements. However, you are STRICTLY PROHIBITED from publishing, sharing, or distributing these modifications (forks) to the public without express written consent from the original author.\n\n" +
-					"3. PROHIBITIONS & RESTRICTIONS\n" +
-					"• NO COMMERCIAL USE: You may not sell, lease, rent, or profit from this software, its source code, or any compiled binaries.\n" +
-					"• NO REBRANDING: You may not remove the \"Synix\" name, logos, or author credits. You may not represent this software as your own creation.\n" +
-					"• NO REDISTRIBUTION: You may not host this software or its source code on other repositories, websites, or file-sharing platforms for public download.\n" +
-					"• NO DECOMPILATION: You may not attempt to reverse engineer or decompile the official binaries for the purpose of removing licensing checks or branding.\n\n" +
-					"4. OWNERSHIP & TRADEMARK\n" +
-					"\"Synix\" and its associated code are the intellectual property of Jason Turner. This license does not transfer ownership. Any unauthorized use of the Synix brand for commercial purposes is a violation of trademark and copyright law.\n\n" +
-					"5. TERMINATION & LEGAL ACTION\n" +
-					"Any violation of these terms automatically terminates your right to use or possess this software. The author reserves the right to take legal action, including DMCA takedown notices and civil litigation, against any party found to be in violation of this license.\n\n" +
-					"6. DISCLAIMER\n" +
-					"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY."),
+					"SYNIX CONTROL PANEL — LIMITED PROPRIETARY SOURCE-AVAILABLE LICENSE\n" +
+					"\n" +
+					"Version 1.0 — August 2, 2026\n" +
+					"Copyright © 2026 Jason Turner. All Rights Reserved.\n" +
+					"U.S. Copyright Registration Application: Pending\n" +
+					"\n" +
+					"This license applies to the Synix Control Panel software, including its source code, compiled binaries, user interface, documentation, artwork, logos, and other included materials (collectively, the \"Software\").\n" +
+					"\n" +
+					"1. OWNERSHIP\n" +
+					"\n" +
+					"The Software is licensed, not sold.\n" +
+					"\n" +
+					"Jason Turner retains all right, title, and interest in and to the Software, including all copyrights and other intellectual-property rights. No ownership rights are transferred to you under this license.\n" +
+					"\n" +
+					"2. LIMITED LICENSE GRANT\n" +
+					"\n" +
+					"Subject to all terms of this license, you are granted a limited, non-exclusive, non-transferable, non-sublicensable, and revocable license to:\n" +
+					"\n" +
+					"• Download and use the Software for your own personal, non-commercial purposes.\n" +
+					"• View and study the source code.\n" +
+					"• Make backup copies for your own personal use.\n" +
+					"• Modify the source code for your own personal, non-commercial use.\n" +
+					"• Compile and run your personal modifications on devices you own or control.\n" +
+					"\n" +
+					"Any right not expressly granted by this license is reserved by the copyright holder.\n" +
+					"\n" +
+					"3. PERSONAL MODIFICATIONS\n" +
+					"\n" +
+					"You may modify the Software to meet your own personal requirements.\n" +
+					"\n" +
+					"Personal modifications must remain private unless Jason Turner gives you prior written permission to distribute them.\n" +
+					"\n" +
+					"You may not publish, upload, share, release, distribute, or make modified source code or modified compiled binaries available to the public as a separate version of Synix.\n" +
+					"\n" +
+					"4. RESTRICTIONS\n" +
+					"\n" +
+					"You may not, without prior written permission from Jason Turner:\n" +
+					"\n" +
+					"4.1 COMMERCIAL USE\n" +
+					"\n" +
+					"• Sell, rent, lease, license, sublicense, or charge for the Software.\n" +
+					"• Sell or distribute modified or unmodified compiled binaries.\n" +
+					"• Use the Software or its source code as part of a paid product or commercial service.\n" +
+					"• Directly or indirectly profit from distributing, licensing, rebranding, or providing access to the Software.\n" +
+					"\n" +
+					"4.2 REDISTRIBUTION AND PUBLIC HOSTING\n" +
+					"\n" +
+					"• Upload, mirror, or host the Software on another website, repository, download service, file-sharing platform, or application store.\n" +
+					"• Redistribute the source code or compiled binaries, whether modified or unmodified.\n" +
+					"• Create or publish unofficial installers, portable packages, mirrors, or download links.\n" +
+					"• Publish releases from a fork or modified copy of the Software.\n" +
+					"• Present a fork, modification, or derivative version as an independent or competing product.\n" +
+					"\n" +
+					"4.3 REBRANDING AND ATTRIBUTION\n" +
+					"\n" +
+					"• Remove, hide, or alter the Synix name, copyright notices, author credits, license notices, logos, or attribution.\n" +
+					"• Rename or rebrand the Software for public release or distribution.\n" +
+					"• Claim that you created the original Software.\n" +
+					"• Use the Synix name or branding in a way that falsely suggests sponsorship, approval, partnership, or official status.\n" +
+					"\n" +
+					"4.4 REVERSE ENGINEERING AND PROTECTION BYPASS\n" +
+					"\n" +
+					"To the maximum extent permitted by applicable law, you may not reverse engineer, decompile, disassemble, or otherwise attempt to bypass licensing notices, attribution, security features, update checks, or branding contained in an official compiled release.\n" +
+					"\n" +
+					"This restriction does not limit any non-waivable right that applicable law expressly gives you.\n" +
+					"\n" +
+					"5. GITHUB FORKS AND CONTRIBUTIONS\n" +
+					"\n" +
+					"The official Synix repository may be publicly visible on GitHub. GitHub's platform may allow users to view and fork a public repository through GitHub's built-in functionality.\n" +
+					"\n" +
+					"A GitHub fork does not give you permission to:\n" +
+					"\n" +
+					"• Publish an unofficial Synix release.\n" +
+					"• Distribute modified or unmodified binaries.\n" +
+					"• Rebrand Synix.\n" +
+					"• Operate a separate public download page or mirror.\n" +
+					"• Present the fork as your own software.\n" +
+					"• Redistribute the Software outside the limited functionality provided by GitHub.\n" +
+					"\n" +
+					"GitHub forks may be used only to review the code, prepare a contribution, or submit a pull request to the official Synix repository. Personal modifications that are not being submitted as a contribution must remain local and private.\n" +
+					"\n" +
+					"By submitting source code, documentation, artwork, or another contribution to the official Synix repository, you represent that you have the right to submit it and grant Jason Turner a perpetual, worldwide, non-exclusive, irrevocable, royalty-free license to use, reproduce, modify, publish, distribute, sublicense, and incorporate that contribution into Synix.\n" +
+					"\n" +
+					"6. SYNIX NAME AND BRANDING\n" +
+					"\n" +
+					"The Synix name, logo, visual identity, and related branding remain the property of Jason Turner.\n" +
+					"\n" +
+					"No trademark or branding license is granted by this license except for displaying the unmodified Synix name and branding while personally using the Software.\n" +
+					"\n" +
+					"Unauthorized use of Synix branding may violate applicable copyright, trademark, unfair-competition, or other laws.\n" +
+					"\n" +
+					"7. TERMINATION\n" +
+					"\n" +
+					"Your rights under this license terminate automatically if you violate any term of this license.\n" +
+					"\n" +
+					"After termination, you must:\n" +
+					"\n" +
+					"• Stop using and modifying the Software.\n" +
+					"• Stop distributing or displaying any unauthorized copy.\n" +
+					"• Remove unauthorized public copies, releases, mirrors, or downloads under your control.\n" +
+					"• Delete personal copies when legally required to do so.\n" +
+					"\n" +
+					"Sections concerning ownership, restrictions, contributions, disclaimers, and enforcement survive termination.\n" +
+					"\n" +
+					"8. ENFORCEMENT\n" +
+					"\n" +
+					"The copyright holder may pursue any remedies available under applicable law for unauthorized copying, distribution, public hosting, sale, rebranding, or other infringement.\n" +
+					"\n" +
+					"Available remedies may include removal requests, platform takedown procedures, injunctive relief, damages, and other civil remedies where legally appropriate.\n" +
+					"\n" +
+					"Nothing in this license guarantees that any particular enforcement action or remedy will be available in every jurisdiction.\n" +
+					"\n" +
+					"9. DISCLAIMER AND LIMITATION OF LIABILITY\n" +
+					"\n" +
+					"THE SOFTWARE IS PROVIDED \"AS IS\" AND \"AS AVAILABLE,\" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.\n" +
+					"\n" +
+					"TO THE MAXIMUM EXTENT PERMITTED BY LAW, JASON TURNER SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES, OR FOR ANY LOSS OF DATA, PROFITS, REVENUE, SERVER FILES, GAME WORLDS, BUSINESS, OR SERVICE AVAILABILITY ARISING FROM OR RELATED TO THE SOFTWARE OR ITS USE.\n" +
+					"\n" +
+					"You are responsible for maintaining backups and verifying that the Software is suitable for your system and game-server environment.\n" +
+					"\n" +
+					"10. THIRD-PARTY COMPONENTS\n" +
+					"\n" +
+					"Third-party software, libraries, game-server files, SteamCMD components, trademarks, and other materials are owned by their respective owners and remain subject to their own licenses and terms.\n" +
+					"\n" +
+					"This license applies only to the portions of Synix owned by Jason Turner.\n" +
+					"\n" +
+					"11. WRITTEN PERMISSION\n" +
+					"\n" +
+					"Exceptions to this license are valid only when provided in writing by Jason Turner.\n" +
+					"\n" +
+					"Questions or permission requests should be submitted through the official Synix GitHub repository or another official Synix contact method."),
 
 				["Donate & Support Development"] = new HelpItem("Support",
 					"SUPPORT THE PROJECT:\n\n" +
