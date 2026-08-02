@@ -7,7 +7,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Build](https://img.shields.io/badge/Architecture-Engine--Driven-orange.svg?style=for-the-badge)
 ![Security](https://img.shields.io/badge/Privilege-Standard%20User%20by%20Default-blueviolet.svg?style=for-the-badge)
-![Supported Games](https://img.shields.io/badge/Supported%20Game%20Profiles-299%2B-00c8ff.svg?style=for-the-badge)
+![Supported Games](https://img.shields.io/badge/Supported%20Game%20Profiles-290%2B-00c8ff.svg?style=for-the-badge)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md)
 [![SECURITY](https://img.shields.io/badge/SECURITY-PASSING-brightgreen?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql)
 [![VirusTotal](https://img.shields.io/badge/VirusTotal-View%20Scan-yellowgreen?style=for-the-badge&logo=virustotal)](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)
@@ -37,7 +37,7 @@ Popular supported games include:
 | **Palworld** | **Project Zomboid** | **V Rising** | **DayZ** |
 | **Conan Exiles** | **Satisfactory** | **Space Engineers** | **Arma 3** |
 | **Icarus** | **Factorio** | **Terraria** | **Counter-Strike 2** |
-| **Team Fortress 2** | **Enshrouded** | **Core Keeper** | **Grounded** |
+| **Team Fortress 2** | **Enshrouded** | **Core Keeper** | **Scrap Mechanic** |
 | **Sons Of The Forest** | **HumanitZ** | **Stationeers** | **Barotrauma** |
 | **The Forest** | **Abiotic Factor** | **Sunkenland** | **Bellwright** |
 | **SCUM** | **Squad** | **Unturned** | **Garry's Mod** |
