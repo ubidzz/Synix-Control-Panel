@@ -41,7 +41,7 @@ Popular supported games include:
 | **Sons Of The Forest** | **HumanitZ** | **Stationeers** | **Barotrauma** |
 | **The Forest** | **Abiotic Factor** | **Sunkenland** | **Bellwright** |
 | **SCUM** | **Squad** | **Unturned** | **Garry's Mod** |
-| **Soulmask** | **Windrose** | **Dune: Awakening** | **Cepheus Protocol** |
+| **Farming Simulator 22** | **Windrose** | **Dune: Awakening** | **Cepheus Protocol** |
 | **Cepheus Protocol** | **Arma Reforger** | **Just Cause 3: Multiplayer** | **Factorio** |
 
 * **And many more**
