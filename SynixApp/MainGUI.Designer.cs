@@ -288,7 +288,7 @@
 			// 
 			backupToolStripMenuItem.Name = "backupToolStripMenuItem";
 			backupToolStripMenuItem.Size = new Size(196, 22);
-			backupToolStripMenuItem.Text = "Backup Files";
+			backupToolStripMenuItem.Text = "Open Backup Folder";
 			backupToolStripMenuItem.Click += btnOpenBackup_Click;
 			// 
 			// toolStripSeparator2
