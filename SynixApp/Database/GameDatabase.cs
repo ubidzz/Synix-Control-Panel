@@ -60,8 +60,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "HumanitZ",
 				AppID = "2728330",
-				ExeName = "HumanitZServer.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -MaxPlayers={MaxPlayers} -pass=\"{pass}\" -adminpass=\"{adminpass}\" -SteamAppId={steamAppID}",
+				ExeName = "TSSGameServer.exe",
+				RequiredArgs = "-log -port={port} -queryport={query} -steamservername=\"{ServerName}\"",
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"HumanitZServer\GameServerSettings.ini",
@@ -138,7 +138,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 8211,
 				QueryPort = 27015,
 				Maps = ["DefaultWorld"],
-				Format = ConfigFormat.Palworld,
+				Format = ConfigFormat.StandardINI,
 				NeedsConfigWarning = true
 			},
 			new() {
@@ -158,7 +158,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "ARK: Survival Ascended",
 				AppID = "2430930",
 				ExeName = @"ShooterGame\Binaries\Win64\ArkServer.exe",
-				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log -SteamAppId={steamAppID}",
+				RequiredArgs = "{map}?Listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log -SteamAppId={steamAppID} {rcon}",
 				RconSyntax = "?RCONEnabled=True?RCONPort={rcon_port}?ServerAdminPassword=\"{rcon_pass}\"",
 				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
@@ -220,7 +220,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Counter-Strike 2",
 				AppID = "730",
 				ExeName = @"game\bin\win64\cs2.exe",
-				RequiredArgs = "-dedicated +map {map} -port {port} -maxplayers {MaxPlayers} +sv_password \"{pass}\" -SteamAppId={steamAppID}",
+				RequiredArgs = "-dedicated +map {map} -port {port} -maxplayers {MaxPlayers} +sv_password \"{pass}\" -SteamAppId={steamAppID} {rcon}",
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
@@ -232,7 +232,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Team Fortress 2",
 				AppID = "232250",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game tf -console -port {port} -SteamAppId={steamAppID} +maxplayers {MaxPlayers} +map {map} +sv_password \"{pass}\" +hostname \"{ServerName}\"",
+				RequiredArgs = "-game tf -console -port {port} -SteamAppId={steamAppID} +maxplayers {MaxPlayers} +map {map} +sv_password \"{pass}\" +hostname \"{ServerName}\" {rcon}",
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
@@ -370,7 +370,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Killing Floor 2",
 				AppID = "232130",
 				ExeName = @"Binaries\Win64\KFServer.exe",
-				RequiredArgs = "{map}?Game=KFGameContent.KFGameInfo_{mode}?AdminPassword=\"{adminpass}\"?GamePassword=\"{pass}\" -Port={port} -SteamAppId={steamAppID}",                Port = 7777,
+				RequiredArgs = "{map}?Game=KFGameContent.KFGameInfo_{mode}?AdminPassword=\"{adminpass}\"?GamePassword=\"{pass}\" -Port={port} -SteamAppId={steamAppID}",
+				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"KFGame\Config\PCServer-KFGame.ini",
 				Format = ConfigFormat.StandardINI,
@@ -382,7 +383,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "The Front",
 				AppID = "2568660",
 				ExeName = @"ProjectWar\Binaries\Win64\TheFrontServer-Win64-Shipping.exe",
-				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log -SteamAppId={steamAppID} -{mode}",
+				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} -server -log -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"ProjectWar\Saved\Config\WindowsServer\GameUserSettings.ini",
@@ -462,9 +463,9 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Garry's Mod",
-				AppID = "4000",
+				AppID = "4020",
 				ExeName = "srcds.exe",
-				RequiredArgs = "-game garrysmod -console -port {port} -SteamAppId={steamAppID} +maxplayers {MaxPlayers} +map {map} +gamemode {mode} +hostname \"{ServerName}\" +sv_password \"{pass}\"",
+				RequiredArgs = "-game garrysmod -console -port {port} -SteamAppId={steamAppID} +maxplayers {MaxPlayers} +map {map} +gamemode {mode} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon}",
 				RconSyntax = "+rcon_password \"{rcon_pass}\"",
 				Port = 27015,
 				QueryPort = 27015,
@@ -523,9 +524,9 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new()
 			{
 				Game = "Factorio",
-				AppID = "428200",
+				AppID = "427520",
 				ExeName = @"bin\x64\factorio.exe",
-				RequiredArgs = "--start-server {map}.zip --server-settings data\\server-settings.json --port {port} -SteamAppId={steamAppID}",
+				RequiredArgs = "--start-server \"{map}.zip\" --server-settings \"data\\server-settings.json\" --port {port}",
 				Port = 34197,
 				QueryPort = 34197,
 				RelativeConfigPath = @"data\server-settings.json",
@@ -539,6 +540,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				AppID = "1110390",
 				ExeName = "Unturned.exe",
 				RequiredArgs = "-batchmode -nographics -SteamAppId={steamAppID} \"+InternetServer/{Identity}\" +map {map} -port {port} -password \"{pass}\" {mode}",
+				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = @"Servers\{Identity}\Server\Commands.dat",
 				Format = ConfigFormat.StandardINI,
@@ -842,28 +844,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
-				Game = "Ready or Not",
-				AppID = "1845110",
-				ExeName = @"ReadyOrNotServer.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -SteamAppId={steamAppID}",
-				Port = 7777,
-				QueryPort = 27015,
-				RelativeConfigPath = @"ReadyOrNot\Saved\Config\WindowsServer\Engine.ini",
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Grounded",
-				AppID = "2162980",
-				ExeName = @"Maine\Binaries\Win64\MaineServer-Win64-Shipping.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -SteamAppId={steamAppID}",
-				Port = 7777,
-				QueryPort = 27015,
-				RelativeConfigPath = @"Maine\Saved\Config\WindowsServer\GameUserSettings.ini",
-				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
 				Game = "Rising Storm 2: Vietnam",
 				AppID = "418480",
 				ExeName = @"Binaries\Win64\VNGame.exe",
@@ -901,7 +881,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Miscreated",
 				AppID = "302200",
 				ExeName = @"Bin64_dedicated\MiscreatedServer.exe",
-				RequiredArgs = "-sv_port {port} +sv_maxplayers {MaxPlayers} +sv_servername \"{ServerName}\" +map {map} -SteamAppId={steamAppID}",               Port = 64090,
+				RequiredArgs = "-sv_port {port} +sv_maxplayers {MaxPlayers} +sv_servername \"{ServerName}\" +map {map} -SteamAppId={steamAppID}",
+				Port = 64090,
 				QueryPort = 64091,
 				RelativeConfigPath = "miscreated.db",
 				Format = ConfigFormat.StandardINI,
@@ -1262,15 +1243,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
-				Game = "Battlefield 2 (Direct Download)",
-				AppID = "0", // Needs custom download logic
-				ExeName = "bf2_w32ded.exe",
-				RequiredArgs = "+dedicated +map {map} +port {port} -SteamAppId={steamAppID}",
-				Port = 16567,
-				QueryPort = 29900,
-				Maps = ["strike_at_karkand", "wake_island_2007"]
-			},
-			new() {
 				Game = "Gray Zone Warfare",
 				AppID = "2548800",
 				ExeName = @"GZW\Binaries\Win64\GZWServer-Win64-Shipping.exe",
@@ -1378,6 +1350,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "+set dedicated 1 +set net_port {port} +map {map} -SteamAppId={steamAppID}",
 				Port = 27910,
 				QueryPort = 27910,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["base1", "q2dm1", "q2dm2", "q2dm3"]
 			},
 			new() {
@@ -1449,6 +1422,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-console -game ricochet +port {port} +maxplayers {MaxPlayers} +map {map} -SteamAppId={steamAppID}",
 				Port = 27015,
 				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["rc_arena", "rc_deathmatch"]
 			},
 			new() {
@@ -1458,6 +1432,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-console -game czero +port {port} +maxplayers {MaxPlayers} +map {map} -SteamAppId={steamAppID}",
 				Port = 27015,
 				QueryPort = 27015,
+				Maps = ["de_dust2_cz", "cs_office_cz"],
 				RelativeConfigPath = @"czero\server.cfg",
 				Format = ConfigFormat.StandardINI
 			},
@@ -1520,17 +1495,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = ["da_rooftops"]
 			},
 			new() {
-				Game = "The Ship",
-				AppID = "2400",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game ship -console -port {port} -SteamAppId={steamAppID} +maxplayers {MaxPlayers} +map {map}",
-				Port = 27015,
-				QueryPort = 27015,
-				RelativeConfigPath = @"ship\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["ship_cabins"]
-			},
-			new() {
 				Game = "Keplerth",
 				AppID = "747200",
 				ExeName = "KeplerthServer.exe",
@@ -1553,7 +1517,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Ground Branch",
-				AppID = "436320",
+				AppID = "476400",
 				ExeName = @"GroundBranch\Binaries\Win64\GroundBranchServer-Win64-Shipping.exe",
 				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -SteamAppId={steamAppID}",
 				Port = 7777,
@@ -1862,7 +1826,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Natural Selection 2",
 				AppID = "4920",
 				ExeName = "Server.exe",
-				RequiredArgs = "-name \"{ServerName}\" -port {port} -limit {MaxPlayers} -map {map} -config_path \"config\" -SteamAppId={steamAppID}",               Port = 27015,
+				RequiredArgs = "-name \"{ServerName}\" -port {port} -limit {MaxPlayers} -map {map} -config_path \"config\" -SteamAppId={steamAppID}",
+				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = @"config\ServerConfig.json",
 				Format = ConfigFormat.JSON,
@@ -1923,7 +1888,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				NeedsConfigWarning = true
 			},
-				new() {
+			new() {
 				Game = "Deathmatch Classic",
 				AppID = "90",
 				ExeName = "hlds.exe",
@@ -1984,6 +1949,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "server {map}?Listen -port={port} -SteamAppId={steamAppID}",
 				Port = 7757,
 				QueryPort = 7758,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["DH-Stonne"],
 				NeedsConfigWarning = true
 			},
@@ -2016,6 +1982,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "server {map}?Listen -port={port} -SteamAppId={steamAppID}",
 				Port = 7757,
 				QueryPort = 7758,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["RO-Arad"],
 				NeedsConfigWarning = true
 			},
@@ -2026,6 +1993,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "+set dedicated 1 +set port {port} +map {map} -SteamAppId={steamAppID}",
 				Port = 28001,
 				QueryPort = 28001,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["sin_dm1"]
 			},
 			new() {
@@ -2046,6 +2014,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "server {map}?Listen -port={port} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["MNC-Crossfire"],
 				NeedsConfigWarning = true
 			},
@@ -2097,6 +2066,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "server {map}?Port={port} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["AA_Downtown"],
 				NeedsConfigWarning = true
 			},
@@ -2140,6 +2110,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "+port {port} +map {map} -SteamAppId={steamAppID}",
 				Port = 25787,
 				QueryPort = 25787,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["dm1"]
 			},
 			new() {
@@ -2443,6 +2414,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-start server({map}/deathmatch) -port {port} -SteamAppId={steamAppID}",
 				Port = 5445,
 				QueryPort = 5445,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["mp_agroprom"],
 				NeedsConfigWarning = true
 			},
@@ -2453,6 +2425,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-start server({map}/deathmatch) -port {port} -SteamAppId={steamAppID}",
 				Port = 5445,
 				QueryPort = 5445,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["mp_pool"],
 				NeedsConfigWarning = true
 			},
@@ -2463,6 +2436,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-start server({map}/deathmatch) -port {port} -SteamAppId={steamAppID}",
 				Port = 5445,
 				QueryPort = 5445,
+				Format = ConfigFormat.StandardINI,
 				Maps = ["mp_rembase"],
 				NeedsConfigWarning = true
 			},
@@ -2671,7 +2645,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Night of the Dead",
 				AppID = "1377380",
 				ExeName = @"LF\Binaries\Win64\LFServer-Win64-Shipping.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\" -SteamAppId={steamAppID}",               Port = 7777,
+				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -Password=\"{pass}\" -SteamAppId={steamAppID}",
+				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"LF\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
@@ -2803,7 +2778,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Conan Exiles (TestLive)",
 				AppID = "443030",
 				ExeName = @"ConanSandbox\Binaries\Win64\ConanSandboxServer.exe",
-				RequiredArgs = "-beta testlive {map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?AdminPassword=\"{adminpass}\" -Port={port} -QueryPort={query} -nosteam -SteamAppId={steamAppID}",
+				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
+				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?AdminPassword=\"{adminpass}\" -Port={port} -QueryPort={query} -nosteam -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["TheExiledLands"],
@@ -2816,7 +2792,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Space Engineers (Crossplay)",
 				AppID = "298740",
 				ExeName = @"DedicatedServer64\SpaceEngineersDedicated.exe",
-				RequiredArgs = "-noconsole -ignorelastsession -port {port} -SteamAppId={steamAppID}",
+				RequiredArgs = "-noconsole -ignorelastsession -port {port} -SteamAppId={steamAppID} -eos",
 				Port = 27016,
 				QueryPort = 27016,
 				GameModes = ["Creative"],
@@ -2867,7 +2843,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"ship\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["bataleon"]
+				Maps = ["bataleon", "ship_cabins"]
 			},
 			new() {
 				Game = "Blade Symphony",
@@ -2966,9 +2942,9 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Factorio (Experimental)",
-				AppID = "428200",
+				AppID = "427520",
 				ExeName = @"bin\x64\factorio.exe",
-				RequiredArgs = "-beta experimental --start-server {map}.zip --server-settings data\\server-settings.json --port {port} -SteamAppId={steamAppID}",
+				RequiredArgs = "--start-server \"{map}.zip\" --server-settings \"data\\server-settings.json\" --port {port}",
 				Port = 34197,
 				QueryPort = 34197,
 				RelativeConfigPath = @"data\server-settings.json",
@@ -2980,7 +2956,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Project Zomboid (Beta)",
 				AppID = "380870",
 				ExeName = "StartServer64.bat",
-				RequiredArgs = "-beta b41multiplayer -port {port} -servername \"{Identity}\" -adminpassword \"{adminpass}\" -SteamAppId={steamAppID}",
+				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
+				RequiredArgs = "-port {port} -servername \"{Identity}\" -adminpassword \"{adminpass}\" -SteamAppId={steamAppID}",
 				Port = 16261,
 				QueryPort = 16262,
 				RelativeConfigPath = @"Zomboid\Server\{Identity}.ini",
@@ -2992,7 +2969,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "The Isle (Legacy)",
 				AppID = "412680",
 				ExeName = @"TheIsle\Binaries\Win64\TheIsleServer-Win64-Shipping.exe",
-				RequiredArgs = "-beta legacy {map}?Listen?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -log -SteamAppId={steamAppID}",
+				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
+				RequiredArgs = "{map}?Listen?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -log -SteamAppId={steamAppID}",
 				RelativeConfigPath = @"TheIsle\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Port = 7777,
@@ -3004,24 +2982,13 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Barotrauma (Unstable)",
 				AppID = "1022710",
 				ExeName = "DedicatedServer.exe",
-				RequiredArgs = "-beta unstable -port {port} -queryport {query} -name \"{ServerName}\" -SteamAppId={steamAppID}",
+				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
+				RequiredArgs = "-port {port} -queryport {query} -name \"{ServerName}\" -SteamAppId={steamAppID}",
 				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = "serversettings.xml",
 				Format = ConfigFormat.XML,
 				Maps = ["Campaign"]
-			},
-			new() {
-				Game = "Palworld (Experimental)",
-				AppID = "2394010",
-				ExeName = "Pal\\Binaries\\Win64\\PalServer-Win64-Shipping.exe",
-				RequiredArgs = "EpicApp=PalServer -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS -port={port} -queryport={query} -players={MaxPlayers} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -AdminPassword=\"{adminpass}\" -SteamAppId={steamAppID}",
-				RelativeConfigPath = "Pal\\Saved\\Config\\WindowsServer\\PalWorldSettings.ini",
-				Port = 8211,
-				QueryPort = 27015,
-				Maps = ["DefaultWorld"],
-				Format = ConfigFormat.Palworld,
-				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Counter-Strike 1.6",
@@ -3069,7 +3036,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Star Wars Jedi Knight II: Jedi Outcast",
-				AppID = "6020",
+				AppID = "6030",
 				ExeName = @"GameData\jk2ded.exe",
 				RequiredArgs = "+set dedicated 2 +set net_port {port} +exec server.cfg -SteamAppId={steamAppID}",
 				Port = 28070,
@@ -3134,9 +3101,9 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Factorio (Space Age)",
-				AppID = "428200",
+				AppID = "427520",
 				ExeName = @"bin\x64\factorio.exe",
-				RequiredArgs = "--start-server {map}.zip --server-settings data\\server-settings.json --port {port} -SteamAppId={steamAppID}",
+				RequiredArgs = "--start-server \"{map}.zip\" --server-settings \"data\\server-settings.json\" --port {port}",
 				Port = 34197,
 				QueryPort = 34197,
 				RelativeConfigPath = @"data\server-settings.json",
@@ -3323,6 +3290,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "server.cfg",
 				Format = ConfigFormat.StandardINI
 			}
+
 		];
 
 		public static IReadOnlyList<GameInfo> GetGameList()
