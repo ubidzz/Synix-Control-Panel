@@ -42,7 +42,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			try
 			{
-				// 1. HARDWARE CHECKS (Backgrounded to prevent WMI/PerfCounter UI Freezes)
 				bool isSystemSafe = await Task.Run(() => IsSystemSafeToStart());
 				if (!isSystemSafe) return;
 
@@ -63,14 +62,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
 
-				// Safely update the DataGridView UI state on the main thread
 				server.Status = StatusManager.GetStatus(ServerState.Starting);
 				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";
 
-				// 2. HEAVY DISK & STRING PROCESSING (Backgrounded to prevent lag)
 				await Task.Run(() =>
 				{
 					var dbEntry = GameDatabase.GetGame(server.Game);
@@ -113,7 +110,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							{
 								RecurseSubdirectories = true,
 								IgnoreInaccessible = true,
-								MaxRecursionDepth = 5,
+								MaxRecursionDepth = 10,
 								AttributesToSkip = FileAttributes.ReparsePoint
 							});
 
@@ -210,7 +207,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						return;
 					}*/
 
-					// Package the final validated strings into process parameters
 					finalArgs = args;
 					psi = new ProcessStartInfo
 					{
