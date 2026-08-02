@@ -2775,20 +2775,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
-				Game = "Conan Exiles (TestLive)",
-				AppID = "443030",
-				ExeName = @"ConanSandbox\Binaries\Win64\ConanSandboxServer.exe",
-				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
-				RequiredArgs = "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?AdminPassword=\"{adminpass}\" -Port={port} -QueryPort={query} -nosteam -SteamAppId={steamAppID}",
-				Port = 7777,
-				QueryPort = 27015,
-				Maps = ["TheExiledLands"],
-				RelativeConfigPath = @"ConanSandbox\Saved\Config\WindowsServer\ServerSettings.ini",
-				Format = ConfigFormat.StandardINI,
-				GameModes = ["PVE", "PVP"],
-				NeedsConfigWarning = true
-			},
-			new() {
 				Game = "Space Engineers (Crossplay)",
 				AppID = "298740",
 				ExeName = @"DedicatedServer64\SpaceEngineersDedicated.exe",
@@ -2951,44 +2937,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.JSON,
 				Maps = ["FactorioWorld"],
 				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Project Zomboid (Beta)",
-				AppID = "380870",
-				ExeName = "StartServer64.bat",
-				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
-				RequiredArgs = "-port {port} -servername \"{Identity}\" -adminpassword \"{adminpass}\" -SteamAppId={steamAppID}",
-				Port = 16261,
-				QueryPort = 16262,
-				RelativeConfigPath = @"Zomboid\Server\{Identity}.ini",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["Muldraugh, KY"],
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "The Isle (Legacy)",
-				AppID = "412680",
-				ExeName = @"TheIsle\Binaries\Win64\TheIsleServer-Win64-Shipping.exe",
-				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
-				RequiredArgs = "{map}?Listen?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -log -SteamAppId={steamAppID}",
-				RelativeConfigPath = @"TheIsle\Saved\Config\WindowsServer\Game.ini",
-				Format = ConfigFormat.StandardINI,
-				Port = 7777,
-				QueryPort = 27015,
-				Maps = ["V3"],
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Barotrauma (Unstable)",
-				AppID = "1022710",
-				ExeName = "DedicatedServer.exe",
-				// Requires manual SteamCMD branch installation; Synix installer currently has no branch selector.
-				RequiredArgs = "-port {port} -queryport {query} -name \"{ServerName}\" -SteamAppId={steamAppID}",
-				Port = 27015,
-				QueryPort = 27016,
-				RelativeConfigPath = "serversettings.xml",
-				Format = ConfigFormat.XML,
-				Maps = ["Campaign"]
 			},
 			new() {
 				Game = "Counter-Strike 1.6",
