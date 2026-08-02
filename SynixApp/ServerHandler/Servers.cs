@@ -169,9 +169,23 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 					{
-						string translatedMode = (server.GameMode == "PVE" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
-							? "True" : (server.GameMode == "PVP" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
-							? "False" : server.GameMode;
+						bool usesBooleanMode =
+							server.Game.Equals("ARK: Survival Evolved", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("ARK: Survival Ascended", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("PixARK", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("Atlas", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("Rust", StringComparison.OrdinalIgnoreCase);
+
+						string translatedMode = server.GameMode;
+
+						if (usesBooleanMode)
+						{
+							if (server.GameMode.Equals("PVE", StringComparison.OrdinalIgnoreCase))
+								translatedMode = "True";
+							else if (server.GameMode.Equals("PVP", StringComparison.OrdinalIgnoreCase))
+								translatedMode = "False";
+						}
+
 						args = args.Replace("{mode}", translatedMode);
 					}
 
