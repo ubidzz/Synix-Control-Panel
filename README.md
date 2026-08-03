@@ -7,7 +7,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Build](https://img.shields.io/badge/Architecture-Engine--Driven-orange.svg?style=for-the-badge)
 ![Security](https://img.shields.io/badge/Privilege-Standard%20User%20by%20Default-blueviolet.svg?style=for-the-badge)
-![Supported Games](https://img.shields.io/badge/Supported%20Game%20Profiles-290%2B-00c8ff.svg?style=for-the-badge)
+![Supported Games](https://img.shields.io/badge/Supported%20Game%20Profiles-250%2B-00c8ff.svg?style=for-the-badge)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md)
 [![SECURITY](https://img.shields.io/badge/SECURITY-PASSING-brightgreen?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql)
 [![VirusTotal](https://img.shields.io/badge/VirusTotal-View%20Scan-yellowgreen?style=for-the-badge&logo=virustotal)](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)
@@ -17,7 +17,7 @@
 
 Synix Control Panel is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a streamlined Windows environment.
 
-Synix currently includes **299+ built-in game server profiles**, with more games and profile updates continuing to be added.
+Synix currently includes **250+ built-in game server profiles**, with more games and profile updates continuing to be added.
 
 [Discord](https://discord.gg/2WR7ArC2Vr)  
 [YouTube Video](https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s)
