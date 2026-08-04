@@ -26,7 +26,7 @@ Synix currently includes **210+ built-in game server profiles**, with more games
 
 ## 🎮 Supported Games
 
-Synix currently supports **299+ built-in dedicated game server profiles**, and the supported game list continues to grow.
+Synix currently supports **210+ built-in dedicated game server profiles**, and the supported game list continues to grow.
 
 Popular supported games include:
 
@@ -36,12 +36,12 @@ Popular supported games include:
 | **7 Days to Die** | **ARK: Survival Evolved** | **ARK: Survival Ascended** | **Valheim** |
 | **Palworld** | **Project Zomboid** | **V Rising** | **DayZ** |
 | **Conan Exiles** | **Satisfactory** | **Space Engineers** | **Arma 3** |
-| **Icarus** | **Factorio** | **Terraria** | **Counter-Strike 2** |
+| **Icarus** | **Factorio** | **Terraria** | **RuneScape: Dragonwilds** |
 | **Team Fortress 2** | **Enshrouded** | **Core Keeper** | **Scrap Mechanic** |
 | **Sons Of The Forest** | **HumanitZ** | **Stationeers** | **Barotrauma** |
 | **The Forest** | **Abiotic Factor** | **Sunkenland** | **Bellwright** |
 | **SCUM** | **Squad** | **Unturned** | **Garry's Mod** |
-| **Farming Simulator 22** | **Windrose** | **Dune: Awakening** | **Cepheus Protocol** |
+| **Starground** | **Windrose** | **Dune: Awakening** | **Cepheus Protocol** |
 | **Cepheus Protocol** | **Arma Reforger** | **Just Cause 3: Multiplayer** | **Factorio** |
 
 * **And many more**
