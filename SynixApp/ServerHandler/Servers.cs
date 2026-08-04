@@ -13,9 +13,9 @@
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
+using static Synix_Control_Panel.SynixEngine.Core;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -110,7 +110,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							{
 								RecurseSubdirectories = true,
 								IgnoreInaccessible = true,
-								MaxRecursionDepth = 10,
+								MaxRecursionDepth = 15,
 								AttributesToSkip = FileAttributes.ReparsePoint
 							});
 

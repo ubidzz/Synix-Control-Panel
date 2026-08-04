@@ -2545,7 +2545,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				WorldSeed = "12345",
 				WorldSize = 4000,
 				RelativeConfigPath = @"server\{Identity}\cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
+				Format = ConfigFormat.Space,
 				Maps = ["Procedural Map", "Barren", "HapisIsland", "SavasIsland"],
 				NeedsConfigWarning = true
 			},

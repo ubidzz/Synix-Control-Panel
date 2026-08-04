@@ -42,6 +42,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void OpenConfigEditor(GameServer server)
 		{
+			if (server == null) return;
+
 			var blueprint = GameDatabase.GetGame(server.Game);
 
 			if (blueprint == null || string.IsNullOrEmpty(blueprint.RelativeConfigPath))
@@ -50,13 +52,26 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			string cleanIdentity = server.ServerName.Replace(" ", "_");
+			if (string.IsNullOrWhiteSpace(server.InstallPath))
+			{
+				Log("Server installation path is not set.", Color.Red, true);
+				return;
+			}
+
+			string cleanIdentity = !string.IsNullOrWhiteSpace(server.ServerName)
+				? server.ServerName.Replace(" ", "_")
+				: "Server";
+
+			string worldName = server.WorldName ?? "";
+
 			string resolvedRelativePath = blueprint.RelativeConfigPath
 				.Replace("{Identity}", cleanIdentity)
 				.Replace("{ServerName}", cleanIdentity)
-				.Replace("{map}", server.WorldName)
+				.Replace("{map}", worldName)
 				.Replace("{port}", server.Port.ToString())
-				.Replace("{query}", server.QueryPort.ToString());
+				.Replace("{query}", server.QueryPort.ToString())
+				.Replace('/', Path.DirectorySeparatorChar)
+				.Replace('\\', Path.DirectorySeparatorChar);
 
 			string fullPath = Path.Combine(server.InstallPath, resolvedRelativePath);
 
