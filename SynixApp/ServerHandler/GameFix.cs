@@ -50,7 +50,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					case "Soulmask":
 						if (CopySteamDLLs(server.InstallPath, @"WS\Binaries\Win64")) applied = true; break;
 					case "Palworld":
-					case "Palworld (Experimental)":
 						if (CopySteamDLLs(server.InstallPath, @"Pal\Binaries\Win64")) applied = true; break;
 					case "ARK: Survival Evolved":
 					case "ARK: Survival Ascended":
@@ -62,7 +61,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"ShooterGame\Binaries\Win64")) applied = true; break;
 					case "Foundry":
 						if (CopySteamDLLs(server.InstallPath, "")) applied = true; break;
-					case "Astroneer":
+					case "ASTRONEER":
 						if (CopySteamDLLs(server.InstallPath, @"Astro\Binaries\Win64")) applied = true; break;
 					case "Abiotic Factor":
 						if (CopySteamDLLs(server.InstallPath, @"AbioticFactor\Binaries\Win64")) applied = true; break;
@@ -123,8 +122,26 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"OasisServer\Binaries\Win64")) applied = true; break;
 					case "Dark and Light":
 						if (CopySteamDLLs(server.InstallPath, @"DNL\Binaries\Win64")) applied = true; break;
-					case "SCP: Pandemic":
+					case "SCP: 5K":
 						if (CopySteamDLLs(server.InstallPath, @"Pandemic\Binaries\Win64")) applied = true; break;
+					case "GROUND BRANCH CTE":
+						if (CopySteamDLLs(server.InstallPath, @"GroundBranch\Binaries\Win64")) applied = true; break;
+					case "Desynced":
+						if (CopySteamDLLs(server.InstallPath, @"Desynced\Binaries\Win64")) applied = true; break;
+					case "HYPERCHARGE: Unboxed":
+						if (CopySteamDLLs(server.InstallPath, @"Unboxed\Binaries\Win64")) applied = true; break;
+					case "Dysterra":
+						if (CopySteamDLLs(server.InstallPath, @"Dysterra\Binaries\Win64")) applied = true; break;
+					case "D.A.T.A":
+						if (CopySteamDLLs(server.InstallPath, @"WindowsServer\ABYSS421\Binaries\Win64")) applied = true; break;
+					case "Days of War":
+						if (CopySteamDLLs(server.InstallPath, @"DaysOfWar\Binaries\Win64")) applied = true; break;
+					case "Angels Fall First":
+						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
+					case "Right to Rule":
+						if (CopySteamDLLs(server.InstallPath, @"RightToRule\Binaries\Win64")) applied = true; break;
+					case "HELL'S NEW WORLD":
+						if (CopySteamDLLs(server.InstallPath, @"WindowsServer\HellsNewWorld\Binaries\Win64")) applied = true; break;
 					case "Gray Zone Warfare":
 						if (CopySteamDLLs(server.InstallPath, @"GZW\Binaries\Win64")) applied = true; break;
 					case "HumanitZ":
@@ -202,8 +219,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"R5\Binaries\Win64")) applied = true; break;
 					case "Subsistence":
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
-					case "Cepheus Protocol":
-						if (CopySteamDLLs(server.InstallPath, @"CepheusProtocol\Binaries\Win64")) applied = true; break;
 				}
 
 				// --------------------------------------------------------
@@ -275,7 +290,7 @@ MaxPlayers={MaxPlayers}";
 						if (CreateGameConfig(server, "server_settings.json", askaJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
-					case "Just Cause 3: Multiplayer":
+					case "Just Cause 3 Multiplayer":
 						string jc3Json = @"{
     ""ServerName"": ""{ServerName}"",
     ""MaxPlayers"": {MaxPlayers},
@@ -284,28 +299,12 @@ MaxPlayers={MaxPlayers}";
 }";
 						if (CreateGameConfig(server, "config.json", jc3Json, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
-
-					case "Raft Dedicated Server":
-						string raftJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers} }";
-						if (CreateGameConfig(server, "server_config.json", raftJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
 					case "Sons Of The Forest":
 						string sotfCfg = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers}, ""ServerPlayMode"": ""Normal"" }";
 						if (CreateGameConfig(server, @"userdata\dedicated_server.cfg", sotfCfg, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
-					case "Cepheus Protocol":
-						string cpIni = @"[/Script/Engine.GameSession]
-MaxPlayers={MaxPlayers}
-ServerName=""{ServerName}""
-Password=""{Password}""
-AdminPassword=""{AdminPassword}""";
-						if (CreateGameConfig(server, @"CepheusProtocol\Saved\Config\WindowsServer\Game.ini", cpIni, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
 					case "Palworld":
-					case "Palworld (Experimental)":
 						string palIni = @"[/Script/Pal.PalGameWorldSettings]
 OptionSettings=(ServerName=""{ServerName}"",ServerPassword=""{Password}"",AdminPassword=""{AdminPassword}"")";
 						if (CreateGameConfig(server, @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini", palIni, cleanIdentity, localIp, publicIp)) applied = true;
@@ -327,22 +326,6 @@ ServerName=""{ServerName}""";
 ServerName=""{ServerName}""";
 						if (CreateGameConfig(server, @"GroundBranch\Saved\Config\WindowsServer\Game.ini", gbIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
-
-					case "Stranded Deep":
-						string sdJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers} }";
-						if (CreateGameConfig(server, "ServerConfig.json", sdJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
-					case "Staxel":
-						string staxelJson = @"{ ""ServerName"": ""{ServerName}"", ""MaxPlayers"": {MaxPlayers} }";
-						if (CreateGameConfig(server, "server.config", staxelJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
-					case "Volcanoids":
-						string volJson = @"{ ""ServerName"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, "server_settings.json", volJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
 					case "Holdfast: Nations At War":
 						string hfTxt = @"server_name {ServerName}";
 						if (CreateGameConfig(server, @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt", hfTxt, cleanIdentity, localIp, publicIp)) applied = true;
@@ -354,7 +337,6 @@ ServerName=""{ServerName}""";
 						break;
 
 					case "7 Days to Die":
-					case "7 Days to Die (Experimental)":
 						string sd2dXml = @"<ServerSettings><property name=""ServerName"" value=""{ServerName}""/></ServerSettings>";
 						if (CreateGameConfig(server, "serverconfig.xml", sd2dXml, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
@@ -390,8 +372,6 @@ ServerName=""{ServerName}""";
 						break;
 
 					case "Factorio":
-					case "Factorio (Experimental)":
-					case "Factorio (Space Age)":
 						string factJson = @"{ ""name"": ""{ServerName}"", ""max_players"": {MaxPlayers} }";
 						if (CreateGameConfig(server, @"data\server-settings.json", factJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
@@ -400,20 +380,9 @@ ServerName=""{ServerName}""";
 						string ecoJson = @"{ ""Description"": ""{ServerName}"", ""MaxConnections"": {MaxPlayers} }";
 						if (CreateGameConfig(server, @"Configs\Network.eco", ecoJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
-
-					case "Starbound":
-						string sbJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": {MaxPlayers} }";
-						if (CreateGameConfig(server, @"storage\starbound_server.config", sbJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
 					case "Project CARS 2":
 						string pcarsJson = @"{ ""server"": { ""name"": ""{ServerName}"" } }";
 						if (CreateGameConfig(server, "server_config.json", pcarsJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
-					case "Keplerth":
-						string kepJson = @"{ ""ServerName"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, "config.json", kepJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
 					case "Assetto Corsa Competizione":
@@ -425,19 +394,7 @@ ServerName=""{ServerName}""";
 						string rf2Json = @"{ ""ServerName"": ""{ServerName}"" }";
 						if (CreateGameConfig(server, @"UserData\player\Multiplayer.json", rf2Json, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
-
-					case "Mindustry":
-						string minJson = @"{ ""name"": ""{ServerName}"" }";
-						if (CreateGameConfig(server, @"config\server-settings.json", minJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
-					case "Portal Knights":
-						string pkJson = @"{ ""basicServerData"": { ""name"": ""{ServerName}"", ""port"": {Port} }, ""universeSize"": ""Normal"" }";
-						if (CreateGameConfig(server, "server_config.json", pkJson, cleanIdentity, localIp, publicIp)) applied = true;
-						break;
-
 					case "Survive the Nights":
-					case "Savage Lands":
 						string stnJson = @"{ ""ServerName"": ""{ServerName}"" }";
 						if (CreateGameConfig(server, "ServerConfig.json", stnJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
@@ -625,6 +582,165 @@ Weather_Snow=1
 Weather_Blizzard=1";
 						if (CreateGameConfig(server, @"HumanitZServer\GameServerSettings.ini", hzIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
+					case "ASTRONEER":
+						{
+							string astroEngineIni = @"[URL]
+Port={Port}";
+
+							string astroServerSettingsIni = @"PublicIP={PublicIP}
+OwnerName=
+OwnerGuid=0";
+
+							if (CreateGameConfig(server, @"Astro\Saved\Config\WindowsServer\Engine.ini", astroEngineIni, cleanIdentity, localIp, publicIp)) applied = true;
+							if (CreateGameConfig(server, @"Astro\Saved\Config\WindowsServer\AstroServerSettings.ini", astroServerSettingsIni, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "DayZ":
+						{
+							string dayzCfg = @"hostname = ""{ServerName}"";
+password = ""{Password}"";
+passwordAdmin = ""{AdminPassword}"";
+maxPlayers = {MaxPlayers};
+verifySignatures = 2;
+forceSameBuild = 1;
+disableVoN = 0;
+vonCodecQuality = 20;
+persistent = 1;
+guaranteedUpdates = 1;
+instanceId = 1;
+storageAutoFix = 1;
+
+class Missions
+{
+    class DayZ
+    {
+        template = ""dayzOffline.chernarusplus"";
+    };
+};";
+
+							if (CreateGameConfig(server, "serverDZ.cfg", dayzCfg, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "Arma 3":
+						{
+							string arma3Cfg = @"hostname = ""{ServerName}"";
+password = ""{Password}"";
+passwordAdmin = ""{AdminPassword}"";
+maxPlayers = {MaxPlayers};
+verifySignatures = 2;
+BattlEye = 1;
+persistent = 1;
+kickDuplicate = 1;
+disableVoN = 0;
+vonCodecQuality = 20;";
+
+							if (CreateGameConfig(server, "server.cfg", arma3Cfg, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "Arma Reforger":
+						{
+							string reforgerJson = @"{
+  ""bindPort"": {Port},
+  ""publicPort"": {Port},
+  ""a2s"": {
+    ""address"": ""0.0.0.0"",
+    ""port"": {QueryPort}
+  },
+  ""game"": {
+    ""name"": ""{ServerName}"",
+    ""password"": ""{Password}"",
+    ""passwordAdmin"": ""{AdminPassword}"",
+    ""scenarioId"": ""{ECC61978EDCC2B5A}Missions/23_Campaign.conf"",
+    ""maxPlayers"": {MaxPlayers},
+    ""visible"": true,
+    ""crossPlatform"": true,
+    ""gameProperties"": {
+      ""fastValidation"": true,
+      ""battlEye"": true
+    },
+    ""mods"": []
+  }
+}";
+
+							if (CreateGameConfig(server, @"configs\server.json", reforgerJson, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "Mount & Blade II: Bannerlord":
+						{
+							string bannerlordCfg = @"ServerName {ServerName}
+GamePassword {Password}
+AdminPassword {AdminPassword}
+GameType TeamDeathmatch
+MaxNumberOfPlayers {MaxPlayers}
+start_game_and_mission";
+
+							if (CreateGameConfig(server, @"Modules\Native\CustomServerconfig.txt", bannerlordCfg, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "Dysterra":
+						{
+							string dysterraJson = @"{
+  ""WorldName"": ""{ServerName}"",
+  ""WorldInfo"": ""Managed by Synix"",
+  ""Password"": ""{Password}"",
+  ""MaxPlayers"": {MaxPlayers},
+  ""ValueOverrides"": {}
+}";
+
+							if (CreateGameConfig(server, @"Dysterra\WorldSettings\MyServer.json", dysterraJson, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "Serious Sam 2017":
+						{
+							string seriousSamServerCfg = @"rconpass = ""{AdminPassword}"";
+sessionname = ""{ServerName}""
+port = {Port}";
+
+							string seriousSamGameOptionsCfg = @"gam_ctMaxPlayers = {MaxPlayers}
+gam_ctMinPlayers = 1
+gamemode = ""Cooperative""
+gam_bAutoCycleMaps = 1";
+
+							if (CreateGameConfig(server, "server.cfg", seriousSamServerCfg, cleanIdentity, localIp, publicIp)) applied = true;
+							if (CreateGameConfig(server, "gameoptions.cfg", seriousSamGameOptionsCfg, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "Serious Sam HD: The Second Encounter":
+					case "Serious Sam HD: The First Encounter":
+					case "Serious Sam 3: BFE":
+						{
+							string seriousSamCfg = @"rconpass = ""{AdminPassword}"";
+sessionname = ""{ServerName}""
+gam_ctMaxPlayers = {MaxPlayers}
+gamemode = ""Cooperative""
+gam_bAutoCycleMaps = 1";
+
+							if (CreateGameConfig(server, "server.cfg", seriousSamCfg, cleanIdentity, localIp, publicIp)) applied = true;
+							break;
+						}
+
+					case "Wreckfest":
+						{
+							// Synix launches Wreckfest.exe directly, so start_server.bat never gets a
+							// chance to copy the vendor-provided initial_server_config.cfg.
+							string sourceConfig = Path.Combine(server.InstallPath, "initial_server_config.cfg");
+							string targetConfig = Path.Combine(server.InstallPath, "server_config.cfg");
+
+							if (File.Exists(sourceConfig) && !File.Exists(targetConfig))
+							{
+								File.Copy(sourceConfig, targetConfig);
+								ManualConfigWasCreated = true;
+								applied = true;
+							}
+							break;
+						}
 				}
 			}
 			catch (Exception)

@@ -487,7 +487,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 2303,
 				RelativeConfigPath = "server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["empty", "Altis", "Stratis", "Tanoa", "Malden"]
+				Maps = ["empty", "Altis", "Stratis", "Tanoa", "Malden"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -512,6 +513,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 7230,
 				Maps = ["CustomServerconfig.txt"],
 				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -523,7 +525,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 2001,
 				RelativeConfigPath = @"configs\server.json",
 				Format = ConfigFormat.JSON,
-				Maps = ["server.json"]
+				Maps = ["server.json"],
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -1900,7 +1903,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = ["dow_carentan"],
 				NeedsConfigWarning = true
 			},
-						new() {
+			new() {
 				Game = "ASTRONEER",
 				AppID = "728470",
 				ExeName = "AstroServer.exe",
@@ -2530,6 +2533,20 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "GroundBranch\\Saved\\Config\\WindowsServer\\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "Rust",
+				AppID = "258550",
+				ExeName = "RustDedicated.exe",
+				RequiredArgs = "-batchmode -nographics +server.port {port} +server.queryport {query} +server.level \"{map}\" +server.seed {seed} +server.worldsize {world_size} +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.identity \"{Identity}\" {rcon} +rcon.web 1 -SteamAppId={steamAppID}",
+				Port = 28015,
+				QueryPort = 28015,
+				WorldSeed = "12345",
+				WorldSize = 4000,
+				RelativeConfigPath = @"server\{Identity}\cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["Procedural Map", "Barren", "HapisIsland", "SavasIsland"],
 				NeedsConfigWarning = true
 			},
 		];
