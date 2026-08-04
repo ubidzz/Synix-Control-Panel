@@ -240,8 +240,16 @@ namespace Synix_Control_Panel
 					txtInstallPath.Text = $@"C:\Synix\Games\{safeFolderName}\{safeName}";
 				}
 
+				GameInfo? selectedGameData = hasGame
+					? GameDatabase.GetGame(selectedGame)
+					: null;
+
+				bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains(
+					"{query}",
+					StringComparison.OrdinalIgnoreCase) == true;
+
 				int gPort = (int)numPort.Value;
-				int qPort = numQueryPort.Enabled ? (int)numQueryPort.Value : 0;
+				int qPort = usesQueryPort ? (int)numQueryPort.Value : 0;
 				int aPort = (numAppPort != null && numAppPort.Enabled) ? (int)numAppPort.Value : 0;
 				int rPort = rconActive ? (int)numRconPort.Value : 0;
 
@@ -469,7 +477,6 @@ namespace Synix_Control_Panel
 
 			textBox.Tag = placeholderText;
 
-			// If the box is empty or currently holding an old placeholder, update it immediately
 			if (string.IsNullOrWhiteSpace(textBox.Text) ||
 				textBox.Text == "Select a game..." ||
 				textBox.Text == "Not Required" ||
@@ -521,8 +528,14 @@ namespace Synix_Control_Panel
 			string newName = txtName.Text.Trim();
 			string selectedGame = cmbGame.Text;
 			if (!Core.Instance.ValidateNameAndReport(newName, selectedGame, _existingServer)) return;
+
+			GameInfo? selectedGameData = GameDatabase.GetGame(selectedGame);
+			bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains(
+				"{query}",
+				StringComparison.OrdinalIgnoreCase) == true;
+
 			int gPort = (int)numPort.Value;
-			int qPort = (int)numQueryPort.Value;
+			int qPort = usesQueryPort ? (int)numQueryPort.Value : 0;
 			int rPort = (int)numRconPort.Value;
 			int wSize = (int)numWorldSize.Value;
 

@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<ApplicationIcon>Images\SyniX logo.ico</ApplicationIcon>
+		<ApplicationIcon>Images\Synix_logo_Icon.ico</ApplicationIcon>
 		<AssemblyName>Synix Control Panel</AssemblyName>
 		<AssemblyTitle>Synix</AssemblyTitle>
 		<PackageProjectUrl>https://github.com/ubidzz/Synix-Control-Panel/blob/master/README.md</PackageProjectUrl>
@@ -25,6 +25,7 @@
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
+		<PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="SynixApp\**" />
@@ -67,6 +68,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="Images\SyniX logo with glowing accents.png">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 		<None Update="Properties\Settings.settings">
 		  <Generator>SettingsSingleFileGenerator</Generator>
 		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>

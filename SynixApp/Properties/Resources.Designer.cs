@@ -119,5 +119,15 @@ namespace Synix_Control_Panel.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Synix_logo_Icon {
+            get {
+                object obj = ResourceManager.GetObject("Synix_logo_Icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

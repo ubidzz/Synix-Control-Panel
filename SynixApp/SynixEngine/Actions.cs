@@ -518,7 +518,6 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			// 🎯 DUNE INTERCEPT: Prevent generating a standard script for the Hyper-V deployment
 			if (server.Game == "Dune: Awakening")
 			{
 				Log("[⚠️ NOTICE] Dune: Awakening requires the official battlegroup.bat script. Export aborted.", Color.Orange);
@@ -668,7 +667,7 @@ namespace Synix_Control_Panel.SynixEngine
 					FileName = "netsh",
 					Arguments = $"advfirewall firewall delete rule name=all program=\"{executablePath}\"",
 					UseShellExecute = true,
-					Verb = "runas", // Triggers the Just-In-Time Admin prompt
+					Verb = "runas",
 					WindowStyle = ProcessWindowStyle.Hidden
 				};
 

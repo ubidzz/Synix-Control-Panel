@@ -65,15 +65,12 @@ namespace Synix_Control_Panel.SynixEngine
 				(query, "Query Port")
 			};
 
-			// 🎯 Only check RCON if the user enabled it
 			if (checkRcon) portChecks.Add((rcon, "RCON Port"));
 
-			// 🎯 Only check App Port if Rust is active
 			if (checkAppPort) portChecks.Add((app, "App Port (Rust+)"));
 
 			foreach (var check in portChecks)
 			{
-				// 1. Internal Database Check
 				var owner = GetPortCollisionOwner(check.Value, excluding);
 				if (owner != null)
 				{
@@ -82,7 +79,6 @@ namespace Synix_Control_Panel.SynixEngine
 					return false;
 				}
 
-				// 2. OS Socket Check
 				if (IsPortInUseLocally(check.Value))
 				{
 					MessageBox.Show($"Socket Conflict: The {check.Name} ({check.Value}) is currently occupied by another system process.",
@@ -91,7 +87,6 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 
-			// 3. Rust Protocol Check
 			if (checkAppPort && gameName.Contains("Rust", StringComparison.OrdinalIgnoreCase) && app < 10000)
 			{
 				MessageBox.Show("Protocol Error: Rust+ (App Port) must be 10000 or higher.", "Logic Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -105,7 +100,6 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!isEditMode && Directory.Exists(path))
 			{
-				// Check if the folder is empty
 				if (Directory.EnumerateFileSystemEntries(path).Any())
 				{
 					var result = MessageBox.Show("This folder isn't empty. Installing here might overwrite files. Continue?",
@@ -144,7 +138,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return result != DialogResult.OK;
 			}
 
-			return false; // Already been booted before, let it through
+			return false;
 		}
 
 		public bool ValidateIntegrityAndReport(GameServer server)
@@ -171,7 +165,6 @@ namespace Synix_Control_Panel.SynixEngine
 			lockMessage = string.Empty;
 			string status = server.Status ?? "";
 
-			// 1. Define states ONCE
 			bool isTransitioning = status == StatusManager.GetStatus(ServerState.Starting) ||
 								   status == StatusManager.GetStatus(ServerState.Stopping) ||
 								   status == StatusManager.GetStatus(ServerState.Installing) ||
@@ -184,7 +177,6 @@ namespace Synix_Control_Panel.SynixEngine
 			bool isStopped = status == StatusManager.GetStatus(ServerState.Stopped);
 			bool isCrashed = status == StatusManager.GetStatus(ServerState.Crashed);
 
-			// 2. Evaluate based on trigger
 			bool isLocked = false;
 
 			switch (serverTrigger)
@@ -218,21 +210,53 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
 		{
-			var primaryMatch = MainGUI.serverList.FirstOrDefault(s =>
-				s != excluding && s.Port == port);
-
-			if (primaryMatch != null) return primaryMatch.ServerName;
-
-			var secondaryMatch = MainGUI.serverList.FirstOrDefault(s =>
-				s != excluding &&
-				(s.QueryPort == port || (s.AppPort.HasValue && s.AppPort.Value == port)));
-
-			if (secondaryMatch != null)
+			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
 			{
-				return secondaryMatch.ServerName;
-			}
+				if (server == excluding)
+					return false;
 
-			return null;
+				if (server.Port == port)
+					return true;
+
+				GameInfo? gameData = GameDatabase.GetGame(server.Game);
+				string requiredArgs = gameData?.RequiredArgs ?? "";
+				string rconSyntax = gameData?.RconSyntax ?? "";
+
+				bool usesQueryPort = requiredArgs.Contains(
+					"{query}",
+					StringComparison.OrdinalIgnoreCase);
+
+				if (usesQueryPort &&
+					server.QueryPort > 0 &&
+					server.QueryPort == port)
+				{
+					return true;
+				}
+
+				bool usesAppPort = requiredArgs.Contains(
+					"{app_port}",
+					StringComparison.OrdinalIgnoreCase);
+
+				if (usesAppPort &&
+					server.AppPort.HasValue &&
+					server.AppPort.Value > 0 &&
+					server.AppPort.Value == port)
+				{
+					return true;
+				}
+
+				bool usesRconPort =
+					requiredArgs.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase) ||
+					requiredArgs.Contains("{rcon}", StringComparison.OrdinalIgnoreCase) ||
+					rconSyntax.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase);
+
+				return server.EnableRcon &&
+					usesRconPort &&
+					server.RconPort > 0 &&
+					server.RconPort == port;
+			});
+
+			return owner?.ServerName;
 		}
 
 		public bool PassResourceGuard(out string message)

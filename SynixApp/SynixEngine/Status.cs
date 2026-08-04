@@ -21,7 +21,7 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		private void UpdateGridStatus()
+		public void UpdateGridStatus()
 		{
 			if (MainGUI.Instance != null && !MainGUI.Instance.IsDisposed && MainGUI.Instance.IsHandleCreated)
 			{
