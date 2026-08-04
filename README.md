@@ -36,13 +36,13 @@ Popular supported games include:
 | **7 Days to Die** | **ARK: Survival Evolved** | **ARK: Survival Ascended** | **Valheim** |
 | **Palworld** | **Project Zomboid** | **V Rising** | **DayZ** |
 | **Conan Exiles** | **Satisfactory** | **Space Engineers** | **Arma 3** |
-| **Icarus** | **Factorio** | **Terraria** | **RuneScape: Dragonwilds** |
+| **Icarus** | **DeadPoly** | **Terraria** | **RuneScape: Dragonwilds** |
 | **Team Fortress 2** | **Enshrouded** | **Core Keeper** | **Scrap Mechanic** |
 | **Sons Of The Forest** | **HumanitZ** | **Stationeers** | **Barotrauma** |
 | **The Forest** | **Abiotic Factor** | **Sunkenland** | **Bellwright** |
 | **SCUM** | **Squad** | **Unturned** | **Garry's Mod** |
-| **Starground** | **Windrose** | **Dune: Awakening** | **Cepheus Protocol** |
-| **Cepheus Protocol** | **Arma Reforger** | **Just Cause 3: Multiplayer** | **Factorio** |
+| **Starground** | **Windrose** | **Dune: Awakening** | **Survive the Nights** |
+| **Desynced** | **Arma Reforger** | **Just Cause 3: Multiplayer** | **Myth of Empires** |
 
 * **And many more**
 
