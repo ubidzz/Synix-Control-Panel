@@ -139,7 +139,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 
 					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
-
+					
 					string args = dbEntry.RequiredArgs
 						.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 						.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
@@ -158,9 +158,21 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					if (args.Contains("{rcon}"))
 					{
-						string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
-							? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", server.RconPassword ?? "")
-							: "";
+						string formattedRcon = "";
+
+						if (server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax))
+						{
+							formattedRcon = dbEntry.RconSyntax
+								.Replace("{rcon_port}", server.RconPort.ToString())
+								.Replace("{rcon_pass}", server.RconPassword ?? "");
+
+							// Append Web RCON switch if this is a Rust server
+							if (string.Equals(server.Game, "Rust", StringComparison.OrdinalIgnoreCase))
+							{
+								formattedRcon += " +rcon.web 1";
+							}
+						}
+
 						args = args.Replace("{rcon}", formattedRcon);
 					}
 
