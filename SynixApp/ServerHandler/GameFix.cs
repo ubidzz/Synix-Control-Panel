@@ -33,9 +33,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string localIp = await Core.Instance.GetLocalIP();
 			string cleanIdentity = server.ServerName.Replace(" ", "_");
 
-			if (server.Game == "Dune: Awakening")
+			if (server.Game == "Dune: Awakening" || server.Game == "Minecraft Java")
 			{
 				ManualConfigWasCreated = true;
+				applied = true;
 			}
 
 			try
@@ -365,7 +366,6 @@ ServerName=""{ServerName}""";
 						string csJson = @"{ ""serverName"": ""{ServerName}"" }";
 						if (CreateGameConfig(server, "config.json", csJson, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
-
 					case "Core Keeper":
 						string coreJson = @"{ ""serverName"": ""{ServerName}"", ""maxPlayers"": {MaxPlayers} }";
 						if (CreateGameConfig(server, @"DedicatedServer\ServerConfig.json", coreJson, cleanIdentity, localIp, publicIp)) applied = true;

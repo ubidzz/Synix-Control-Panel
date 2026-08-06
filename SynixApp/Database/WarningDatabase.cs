@@ -25,6 +25,13 @@ namespace Synix_Control_Panel.Database
 		private static readonly Dictionary<string, string> _messages = new()
 		{
 			{
+				"Minecraft Java",
+				"MINECRAFT EULA AGREEMENT REQUIRED:\n\n" +
+				"By starting this server, you agree to the Minecraft End User License Agreement (EULA).\n\n" +
+				"If you do not agree to these terms, click Decline and the server will not start.\n\n" +
+				"Official EULA Document: https://aka.ms/MinecraftEULA"
+			},
+			{
 				"StarRupture",
 				"CRITICAL SETUP REQUIRED:\n\n" +
 				"1. Boot the server once for its initial startup, shut it down, and then configure your server settings!\n\n" +
@@ -1019,6 +1026,12 @@ namespace Synix_Control_Panel.Database
 			{
 				lblWarningText.Text = customMessage;
 				FormatUrlLink(customMessage);
+
+				if (server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+				{
+					btnStart.Text = "I Agree";
+					btnNo.Text = "Decline";
+				}
 			}
 			else
 			{
@@ -1069,6 +1082,19 @@ namespace Synix_Control_Panel.Database
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
+			if (_server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+			{
+				try
+				{
+					SynixApp.FileFolderHandler.FileHandler.Create(_server.InstallPath, "eula.txt", "eula=true");
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show($"Could not write eula.txt. Please check folder permissions:\n{ex.Message}", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+			}
+
 			_server.IsFirstBoot = false;
 			try
 			{

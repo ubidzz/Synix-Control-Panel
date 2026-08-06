@@ -141,6 +141,7 @@ namespace Synix_Control_Panel
 			if (_existingServer.RestartDays != null) _selectedDays = (bool[])_existingServer.RestartDays.Clone();
 			_selectedTime = _existingServer.RestartTime ?? "04:00";
 			chkBackupOnStart.Checked = _existingServer.BackupOnStart;
+			cmbGameVersion.Text = _existingServer.GameVersion ?? "latest";
 
 			var gameData = GameDatabase.GetGame(_existingServer.Game);
 			if (gameData != null)
@@ -199,6 +200,7 @@ namespace Synix_Control_Panel
 				numQueryPort.Enabled = CanUnlock(numQueryPort);
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
 				numWorldSize.Enabled = CanUnlock(numWorldSize);
+				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion);
 
 				if (numAppPort != null)
 					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled";
@@ -457,6 +459,7 @@ namespace Synix_Control_Panel
 				if (numAppPort != null) numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
 				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
 				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
+				cmbGameVersion.Tag = gameData.Game == "Minecraft Java" ? "Required" : "Disabled";
 
 				if (gameData.NeedsConfigWarning == true)
 				{
@@ -521,6 +524,7 @@ namespace Synix_Control_Panel
 			chkEnableRcon.CheckedChanged += (s, e) => trigger();
 			chkDefaultPath.CheckedChanged += (s, e) => trigger();
 			numWorldSize.ValueChanged += (s, e) => trigger();
+			cmbGameVersion.SelectedIndexChanged += (s, e) => trigger();
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
@@ -530,9 +534,7 @@ namespace Synix_Control_Panel
 			if (!Core.Instance.ValidateNameAndReport(newName, selectedGame, _existingServer)) return;
 
 			GameInfo? selectedGameData = GameDatabase.GetGame(selectedGame);
-			bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains(
-				"{query}",
-				StringComparison.OrdinalIgnoreCase) == true;
+			bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains("{query}", StringComparison.OrdinalIgnoreCase) == true;
 
 			int gPort = (int)numPort.Value;
 			int qPort = usesQueryPort ? (int)numQueryPort.Value : 0;
@@ -542,7 +544,7 @@ namespace Synix_Control_Panel
 			int? aPort = numAppPort.Enabled ? (int)numAppPort.Value : (int?)null;
 			if (!Core.Instance.ValidatePortsAndReport(_existingServer, gPort, qPort, rPort, chkEnableRcon.Checked, aPort ?? 0, numAppPort.Enabled, selectedGame)) return;
 			string newPath = txtInstallPath.Text.Trim();
-			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
+			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, GameVersion = cmbGameVersion.Text.Trim(),  IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{
@@ -572,7 +574,7 @@ namespace Synix_Control_Panel
 					NewServer.ExeName = masterData.ExeName;
 
 					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, NewServer.ExeName);
-					string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(NewServer.AppID, fullExePath);
+					string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(NewServer.Game, fullExePath);
 
 					if (System.IO.File.Exists(iconPath))
 					{
@@ -672,7 +674,7 @@ namespace Synix_Control_Panel
 			return 999.0; // Default to pass on WMI error so user isn't locked out
 		}
 
-		private void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
+		private async void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (isPrivacyLoading) return;
 			if (cmbGame.SelectedIndex > 0)
@@ -684,11 +686,56 @@ namespace Synix_Control_Panel
 					numQueryPort.Value = Math.Clamp((decimal)gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
 					PopulateGameModes(gameData, "PVE");
+
+					// ---> TRIGGER THE VERSION POPULATOR <---
+					await PopulateVersionsAsync(gameData, _existingServer?.GameVersion ?? "latest");
+
 					ToggleGameSpecificFields(gameData);
 				}
 			}
 			else ToggleGameSpecificFields(null);
 			SyncGatekeeper();
+		}
+
+		private async Task PopulateVersionsAsync(GameInfo gameData, string selectedVersion)
+		{
+			cmbGameVersion.Items.Clear();
+			cmbGameVersion.Items.Add("latest"); // Always provide a latest option
+
+			// If the game is Minecraft, ping the Mojang API to fill the dropdown!
+			if (gameData.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+			{
+				try
+				{
+					using HttpClient client = new HttpClient();
+					string manifestJson = await client.GetStringAsync("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+					var manifestNode = System.Text.Json.Nodes.JsonNode.Parse(manifestJson);
+					var versionsArray = manifestNode?["versions"]?.AsArray();
+
+					if (versionsArray != null)
+					{
+						foreach (var version in versionsArray)
+						{
+							// Only add stable releases to the dropdown
+							if (version?["type"]?.ToString() == "release")
+							{
+								string id = version?["id"]?.ToString() ?? "";
+								if (!string.IsNullOrEmpty(id)) cmbGameVersion.Items.Add(id);
+							}
+						}
+					}
+				}
+				catch
+				{
+					// If the API fails (no internet), it gracefully falls back to just "latest"
+				}
+			}
+
+			// Apply the previously saved version, or default to latest
+			if (cmbGameVersion.Items.Contains(selectedVersion))
+				cmbGameVersion.SelectedItem = selectedVersion;
+			else if (cmbGameVersion.Items.Count > 0)
+				cmbGameVersion.SelectedIndex = 0;
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e) { using var fbd = new FolderBrowserDialog(); if (fbd.ShowDialog() == DialogResult.OK) { txtInstallPath.Text = fbd.SelectedPath; SyncGatekeeper(); } }

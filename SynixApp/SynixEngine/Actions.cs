@@ -221,11 +221,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{ return; }
 
 			var gameData = GameDatabase.GetGame(server.Game);
-			string appId = gameData?.AppID ?? "";
 
-			if (string.IsNullOrEmpty(appId))
+			// Guard against null blueprint or missing AppID
+			if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 			{
-				Log($"Could not find the AppID for the {gameData} game.", Color.Red, true);
+				Log($"Could not find the database blueprint or AppID for {server.Game}.", Color.Red, true);
 				return;
 			}
 
@@ -256,7 +256,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				// 🎯 THE AUTOMATED MANIFEST NUKE
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
-				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{appId}.acf");
+				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf"); // Used gameData object
 
 				if (File.Exists(manifestPath))
 				{
@@ -273,7 +273,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				int exitCode = await Task.Run(() =>
 				{
-					return ServerInstaller.Install(server.InstallPath, appId,
+					return ServerInstaller.Install(server, gameData,
 						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
 						pid =>
 						{
@@ -285,7 +285,6 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
 					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
 					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
 					isDownloadActive = false;
@@ -305,7 +304,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
+				server.Status = StatusManager.GetStatus(ServerState.Stopped);
 				server.SteamPID = null;
 				FileHandler.SaveServers();
 				Core.Instance.UpdateGridStatus();
@@ -322,10 +321,10 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					GameServer newServer = settingsForm.NewServer;
 					var gameData = GameDatabase.GetGame(newServer.Game);
-					string appId = gameData?.AppID ?? "";
 					GameFix.ManualConfigWasCreated = false;
 
-					if (string.IsNullOrEmpty(appId))
+					// Guard against null blueprint or missing AppID
+					if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 					{
 						Log("Could not find the AppID for this game. Installation aborted.", Color.Red, true);
 						return;
@@ -342,7 +341,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 						int exitCode = await Task.Run(() =>
 						{
-							return ServerInstaller.Install(newServer.InstallPath, appId,
+							return ServerInstaller.Install(newServer, gameData,
 								msg => Log(msg),
 								pid =>
 								{
@@ -361,7 +360,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 						bool fixApplied = await GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
-						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
+						newServer.IsFirstBoot = fixApplied;
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
 					}
 					catch (Exception ex)

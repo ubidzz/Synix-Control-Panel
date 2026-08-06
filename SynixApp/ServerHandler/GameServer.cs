@@ -16,6 +16,7 @@ using System.Text.Json.Serialization;
 using static Synix_Control_Panel.SynixApp.Database.GameDatabase;
 using static Synix_Control_Panel.SynixEngine.Core;
 
+//------- Database -------
 public class GameInfo
 {
 	public string Game { get; init; } = string.Empty;
@@ -34,6 +35,8 @@ public class GameInfo
 	public string AppID { get; set; } = string.Empty;
 	[JsonIgnore]
 	public string ExeName { get; set; } = string.Empty;
+	[JsonIgnore]
+	public string DownloadUrl { get; init; } = string.Empty;
 	public int WorldSize { get; set; }
 	public string WorldSeed { get; set; } = "12345";
 	[JsonIgnore]
@@ -56,8 +59,11 @@ public class GameInfo
 	[JsonIgnore]
 	public int MaxPlayersFromQuery { get; set; } = 0;
 	public DateTime? LastProbeTime { get; set; }
+	[JsonIgnore]
+	public string IconUrl { get; init; } = string.Empty;
 }
 
+//----------- json ---------------
 public class GameServer : GameInfo
 {
 	public string InstallPath { get; set; } = string.Empty;
@@ -93,6 +99,7 @@ public class GameServer : GameInfo
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
 	public bool IsProbing { get; set; } = false;
+	public string GameVersion { get; set; } = "latest";
 
 	[JsonIgnore]
 	public string Uptime

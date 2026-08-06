@@ -200,6 +200,17 @@ namespace Synix_Control_Panel.SynixEngine
 			string localIp = await Core.Instance.GetLocalIP();
 			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
 
+			if (server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+			{
+				foreach (var ip in targets)
+				{
+					bool success = await UpdateMinecraftPlayerCount(server, ip);
+					if (success) return; // If successful, stop trying other IPs
+				}
+				server.CurrentPlayers = 0; // Reset if all IPs fail
+				return;
+			}
+
 			using var udpClient = new System.Net.Sockets.UdpClient();
 			try
 			{

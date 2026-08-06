@@ -220,13 +220,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}*/
 
 					finalArgs = args;
+
 					psi = new ProcessStartInfo
 					{
 						FileName = fullExePath,
 						Arguments = finalArgs,
 						WorkingDirectory = binDir,
 						UseShellExecute = false,
-						CreateNoWindow = false
+						CreateNoWindow = false,
 					};
 
 					if (server.Game == "Dune: Awakening")
@@ -298,6 +299,17 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					SetConsoleCtrlHandler(null, true);
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+
+					if (server.RunningProcess != null && server.RunningProcess.StartInfo.RedirectStandardInput)
+					{
+						try
+						{
+							// Instantly pipes 'Y' and hits Enter
+							server.RunningProcess.StandardInput.WriteLine("Y");
+							server.RunningProcess.StandardInput.Flush();
+						}
+						catch { } // Failsafe in case it closed faster than we could write to it
+					}
 
 					bool cleanExit = await Task.Run(() => server.RunningProcess?.WaitForExit(25000) ?? false);
 

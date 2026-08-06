@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.SynixApp.Database;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -314,6 +315,48 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 			return true;
+		}
+
+		public static int GetSystemJavaVersion()
+		{
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo
+				{
+					FileName = "java",
+					Arguments = "-version",
+					RedirectStandardError = true, // Java prints version info to the Error stream, not Output
+					UseShellExecute = false,
+					CreateNoWindow = true
+				};
+
+				using Process proc = Process.Start(psi);
+				string output = proc.StandardError.ReadToEnd();
+				proc.WaitForExit();
+
+				// Older Java 8 formats like: java version "1.8.0_xxx"
+				if (output.Contains("version \"1.8")) return 8;
+				if (output.Contains("version \"1.7")) return 7;
+
+				// Modern Java 9+ formats like: openjdk version "21.0.2"
+				int startIndex = output.IndexOf("version \"") + 9;
+				if (startIndex > 8)
+				{
+					int endIndex = output.IndexOf('.', startIndex);
+					if (endIndex == -1) endIndex = output.IndexOf('"', startIndex);
+
+					if (endIndex > startIndex)
+					{
+						string versionStr = output.Substring(startIndex, endIndex - startIndex);
+						if (int.TryParse(versionStr, out int version)) return version;
+					}
+				}
+			}
+			catch
+			{
+				// Triggers if Java is completely missing or not added to Windows PATH
+			}
+			return 0;
 		}
 	}
 }

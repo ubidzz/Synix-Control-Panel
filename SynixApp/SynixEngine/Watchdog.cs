@@ -139,6 +139,15 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				using var p = Process.GetProcessById(pid);
 				if (p.HasExited) return false;
+
+				// ---> FIX: Handle Windows Command Scripts <---
+				if (dbExePath.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) ||
+					dbExePath.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
+				{
+					return p.ProcessName.Equals("cmd", StringComparison.OrdinalIgnoreCase);
+				}
+
+				// Standard executable check
 				string expectedName = Path.GetFileNameWithoutExtension(dbExePath);
 				return p.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase);
 			}

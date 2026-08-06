@@ -20,6 +20,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 
 		private static readonly IReadOnlyList<GameInfo> games =
 		[
+			//----------------- Steam game servers ---------------------
 			new() {
 				Game = "Subsistence",
 				AppID = "1362640",
@@ -286,7 +287,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Don't Starve Together",
 				AppID = "343050",
-				ExeName = @"bin\dontstarve_dedicated_server_nullrenderer.exe",
+				ExeName = @"bin64\dontstarve_dedicated_server_nullrenderer_x64.exe",
 				RequiredArgs = "-console -cluster \"{Identity}\" -shard {map} -SteamAppId={steamAppID}",
 				Port = 10999,
 				QueryPort = 27016,
@@ -346,7 +347,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Risk of Rain 2",
 				AppID = "1180760",
-				ExeName = "Risk of Rain 2.exe",
+				ExeName = "Risk of Rain 2 Dedicated Server.exe",
 				RequiredArgs = "-batchmode -nographics -server_port {port} -server_query_port {query} -SteamAppId={steamAppID}",
 				Port = 27015,
 				QueryPort = 27015,
@@ -441,7 +442,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			{
 				Game = "Satisfactory",
 				AppID = "1690800",
-				ExeName = @"FactoryGame\Binaries\Win64\FactoryServer-Win64-Shipping.exe",
+				ExeName = @"FactoryServer.exe",
 				RequiredArgs = "-log -unattended -multihome=0.0.0.0 -Port={port} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 15777,
@@ -574,7 +575,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			{
 				Game = "SCUM",
 				AppID = "3792580",
-				ExeName = @"SCUM\Binaries\Win64\SCUMServer-Win64-Shipping.exe",
+				ExeName = @"SCUM\Binaries\Win64\SCUMServer.exe",
 				RequiredArgs = "Port={port} QueryPort={query} -ServerName=\"{ServerName}\" -SteamAppId={steamAppID}",
 				RelativeConfigPath = @"SCUM\Saved\Config\WindowsServer\ServerSettings.ini",
 				Format = ConfigFormat.StandardINI,
@@ -1111,7 +1112,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Foundry",
 				AppID = "2915550",
-				ExeName = "FoundryDedicatedServerLauncher.bat",
+				ExeName = "FoundryDedicatedServer.exe",
 				RequiredArgs = "server_port={port} server_query_port={query} server_name=\"{ServerName}\" server_max_players={MaxPlayers} server_password=\"{pass}\" -SteamAppId={steamAppID}",
 				Port = 3724,
 				QueryPort = 27015,
@@ -1234,7 +1235,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Euro Truck Simulator 2",
 				AppID = "1948160",
-				ExeName = @"bin\win_x64\eurotrucks2.exe",
+				ExeName = @"bin\win_x64\eurotrucks2_server.exe",
 				RequiredArgs = "-dedicated -server_config \"server_config.sii\" -SteamAppId={steamAppID}",
 				Port = 27015,
 				QueryPort = 27016,
@@ -1455,7 +1456,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Colony Survival",
 				AppID = "748090",
-				ExeName = "ColonySurvivalServer.exe",
+				ExeName = "colonyserver.exe",
 				RequiredArgs = "+server.port {port} +server.name \"{ServerName}\" -SteamAppId={steamAppID}",
 				Port = 27016,
 				QueryPort = 27016,
@@ -1578,18 +1579,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"Desolate\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
-			},
-			new() {
-				Game = "Necesse",
-				AppID = "1169370",
-				ExeName = @"jre\bin\java.exe",
-				RequiredArgs = "-jar Server.jar -nogui -localdir -world \"{map}\" -port {port} -slots {MaxPlayers} -password \"{pass}\" -SteamAppId={steamAppID}",
-				Port = 14159,
-				QueryPort = 14159,
-				RelativeConfigPath = @"cfg\server.cfg",
-				Format = ConfigFormat.StandardINI,
-				Maps = ["world"],
 				NeedsConfigWarning = true
 			},
 			new() {
@@ -2488,6 +2477,19 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true
 			},
 			new() {
+				Game = "Dune: Awakening",
+				AppID = "4754530",
+				ExeName = "battlegroup.bat",
+				RequiredArgs = "",
+				RelativeConfigPath = @"UserSettings\DefaultGame.ini",
+				Port = 7777,
+				QueryPort = 31982,
+				Maps = ["Arrakis"],
+				GameModes = ["PVE", "PVP"],
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
+			},
+			new() {
 				Game = "Hanako: Honor & Blade",
 				AppID = "668390",
 				ExeName = "HanakoServer.exe",
@@ -2562,6 +2564,40 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = ["Procedural Map", "Barren", "HapisIsland", "SavasIsland"],
 				NeedsConfigWarning = true
 			},
+			new() {
+				Game = "Necesse",
+				AppID = "1169370",
+				ExeName = @"jre\bin\java.exe",
+				RequiredArgs = "-jar Server.jar -nogui -localdir -world \"{map}\" -port {port} -slots {MaxPlayers} -password \"{pass}\" -SteamAppId={steamAppID}",
+				Port = 14159,
+				QueryPort = 14159,
+				RelativeConfigPath = @"cfg\server.cfg",
+				Format = ConfigFormat.StandardINI,
+				Maps = ["world"],
+				NeedsConfigWarning = true
+			},
+
+			//----------------- Java games ---------------------
+			new() {
+				Game = "Minecraft Java",
+				AppID = "0",
+				ExeName = "Start.bat",
+				RequiredArgs = "-Xmx2048M -Xms1024M -jar server.jar nogui",
+				Port = 25565,
+				QueryPort = 25565,
+				RelativeConfigPath = "server.properties",
+				IconUrl = "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/png/minecraft.png",
+				NeedsConfigWarning = true
+			},
+			new() {
+				Game = "BeamMP",
+				AppID = "0",
+				DownloadUrl = "https://github.com/BeamMP/BeamMP-Server/releases/latest/download/BeamMP-Server.zip",
+				ExeName = "BeamMP-Server.exe",
+				RequiredArgs = "",
+				Port = 30814,
+				QueryPort = 30814
+			}
 		];
 
 		public static IReadOnlyList<GameInfo> GetGameList()
