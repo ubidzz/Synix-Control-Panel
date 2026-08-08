@@ -1027,7 +1027,7 @@ namespace Synix_Control_Panel.Database
 				lblWarningText.Text = customMessage;
 				FormatUrlLink(customMessage);
 
-				if (server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+				if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 				{
 					btnStart.Text = "I Agree";
 					btnNo.Text = "Decline";
@@ -1082,7 +1082,7 @@ namespace Synix_Control_Panel.Database
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			if (_server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+			if (_server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
 				try
 				{

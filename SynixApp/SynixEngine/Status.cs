@@ -196,11 +196,10 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
 
-			// 🎯 Use dynamic LAN IP and Loopback
 			string localIp = await Core.Instance.GetLocalIP();
 			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
 
-			if (server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+			if (server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
 				foreach (var ip in targets)
 				{

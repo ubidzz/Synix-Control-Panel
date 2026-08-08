@@ -170,7 +170,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			// ========================================================
 			// 1. THE ROUTER: DETERMINE THE TARGET URL
 			// ========================================================
-			if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+			// ---> CHANGE 1: Use 'Equals' so only Vanilla hits the Mojang API <---
+			if (blueprint.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
 			{
 				logCallback?.Invoke("Querying Mojang API for the latest Vanilla Java version...");
 				try
@@ -202,7 +203,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					downloadUrl = versionNode?["downloads"]?["server"]?["url"]?.ToString() ?? "";
 					fileName = "server.jar";
 
-					// ---> NEW: PULL REQUIRED JAVA VERSION FROM MOJANG <---
+					// PULL REQUIRED JAVA VERSION FROM MOJANG
 					if (versionNode?["javaVersion"]?["majorVersion"] != null)
 					{
 						requiredJava = (int)versionNode["javaVersion"]["majorVersion"];
@@ -220,6 +221,12 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				downloadUrl = blueprint.DownloadUrl;
 				fileName = Path.GetFileName(new Uri(downloadUrl).AbsolutePath);
 				if (string.IsNullOrWhiteSpace(fileName)) fileName = "server_files.zip";
+
+				// ---> CHANGE 2: Set modern Java 21 default for Modded Minecraft <---
+				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+				{
+					requiredJava = 21; // Forge/Fabric 1.20+ requires Java 21
+				}
 			}
 			else
 			{
