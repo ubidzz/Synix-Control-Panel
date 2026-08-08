@@ -687,7 +687,6 @@ namespace Synix_Control_Panel
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
 					PopulateGameModes(gameData, "PVE");
 
-					// ---> TRIGGER THE VERSION POPULATOR <---
 					await PopulateVersionsAsync(gameData, _existingServer?.GameVersion ?? "latest");
 
 					ToggleGameSpecificFields(gameData);
@@ -700,7 +699,7 @@ namespace Synix_Control_Panel
 		private async Task PopulateVersionsAsync(GameInfo gameData, string selectedVersion)
 		{
 			cmbGameVersion.Items.Clear();
-			cmbGameVersion.Items.Add("latest"); // Always provide a latest option
+			cmbGameVersion.Items.Add("latest");
 
 			// If the game is Minecraft, ping the Mojang API to fill the dropdown!
 			if (gameData.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))

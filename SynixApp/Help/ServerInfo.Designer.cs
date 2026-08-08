@@ -94,6 +94,8 @@ namespace Synix_Control_Panel.Help
 			panel2 = new Panel();
 			label2 = new Label();
 			lblStatusCardValue = new Label();
+			label3 = new Label();
+			lblGameVersion = new Label();
 			pnlCpuCard.SuspendLayout();
 			pnlRamCard.SuspendLayout();
 			SuspendLayout();
@@ -569,7 +571,7 @@ namespace Synix_Control_Panel.Help
 			lblVerticalLine.BackColor = SystemColors.MenuHighlight;
 			lblVerticalLine.Location = new Point(387, -2);
 			lblVerticalLine.Name = "lblVerticalLine";
-			lblVerticalLine.Size = new Size(5, 434);
+			lblVerticalLine.Size = new Size(5, 481);
 			lblVerticalLine.TabIndex = 42;
 			// 
 			// pnlCpuCard
@@ -579,7 +581,7 @@ namespace Synix_Control_Panel.Help
 			pnlCpuCard.Controls.Add(lblCpuCardValue);
 			pnlCpuCard.Controls.Add(label1);
 			pnlCpuCard.Controls.Add(pnlCpuAccent);
-			pnlCpuCard.Location = new Point(23, 460);
+			pnlCpuCard.Location = new Point(12, 502);
 			pnlCpuCard.Name = "pnlCpuCard";
 			pnlCpuCard.Size = new Size(250, 100);
 			pnlCpuCard.TabIndex = 43;
@@ -630,7 +632,7 @@ namespace Synix_Control_Panel.Help
 			pnlRamCard.Controls.Add(lblRamCardValue);
 			pnlRamCard.Controls.Add(label4);
 			pnlRamCard.Controls.Add(panel2);
-			pnlRamCard.Location = new Point(294, 460);
+			pnlRamCard.Location = new Point(293, 502);
 			pnlRamCard.Name = "pnlRamCard";
 			pnlRamCard.Size = new Size(250, 100);
 			pnlRamCard.TabIndex = 44;
@@ -680,7 +682,7 @@ namespace Synix_Control_Panel.Help
 			label2.BackColor = Color.Transparent;
 			label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			label2.ForeColor = Color.White;
-			label2.Location = new Point(593, 460);
+			label2.Location = new Point(604, 502);
 			label2.Name = "label2";
 			label2.Size = new Size(130, 25);
 			label2.TabIndex = 45;
@@ -691,12 +693,34 @@ namespace Synix_Control_Panel.Help
 			lblStatusCardValue.BackColor = Color.Transparent;
 			lblStatusCardValue.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblStatusCardValue.ForeColor = Color.White;
-			lblStatusCardValue.Location = new Point(593, 485);
+			lblStatusCardValue.Location = new Point(604, 527);
 			lblStatusCardValue.Name = "lblStatusCardValue";
 			lblStatusCardValue.Size = new Size(130, 21);
 			lblStatusCardValue.TabIndex = 46;
 			lblStatusCardValue.Text = "Stopped";
 			lblStatusCardValue.TextAlign = ContentAlignment.MiddleCenter;
+			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.BackColor = Color.Transparent;
+			label3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label3.ForeColor = Color.White;
+			label3.Location = new Point(12, 437);
+			label3.Name = "label3";
+			label3.Size = new Size(97, 17);
+			label3.TabIndex = 47;
+			label3.Text = "Game Version:";
+			// 
+			// lblGameVersion
+			// 
+			lblGameVersion.BackColor = Color.Transparent;
+			lblGameVersion.ForeColor = Color.White;
+			lblGameVersion.Location = new Point(115, 439);
+			lblGameVersion.Name = "lblGameVersion";
+			lblGameVersion.Size = new Size(261, 15);
+			lblGameVersion.TabIndex = 48;
+			lblGameVersion.Text = "label5";
 			// 
 			// ServerInfo
 			// 
@@ -706,6 +730,8 @@ namespace Synix_Control_Panel.Help
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(799, 620);
+			Controls.Add(lblGameVersion);
+			Controls.Add(label3);
 			Controls.Add(lblStatusCardValue);
 			Controls.Add(label2);
 			Controls.Add(pnlRamCard);
@@ -824,5 +850,7 @@ namespace Synix_Control_Panel.Help
 		private Panel panel2;
 		private Label label2;
 		private Label lblStatusCardValue;
+		private Label label3;
+		private Label lblGameVersion;
 	}
 }

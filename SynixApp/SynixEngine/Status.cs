@@ -204,9 +204,9 @@ namespace Synix_Control_Panel.SynixEngine
 				foreach (var ip in targets)
 				{
 					bool success = await UpdateMinecraftPlayerCount(server, ip);
-					if (success) return; // If successful, stop trying other IPs
+					if (success) return;
 				}
-				server.CurrentPlayers = 0; // Reset if all IPs fail
+				server.CurrentPlayers = 0; 
 				return;
 			}
 

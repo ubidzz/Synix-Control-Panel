@@ -49,32 +49,37 @@ namespace Synix_Control_Panel.Help
 		{
 			if (_server == null) return;
 
-			lblMaxPlayersText.Text = _server.MaxPlayers.ToString();
-			lblGamePortText.Text = _server.Port.ToString();
-			lblQueryPortText.Text = _server.QueryPort.ToString();
-			lblRconPortText.Text = _server.RconPort.ToString();
-
-			lblAppPortText.Text = _server.AppPort?.ToString() ?? "N/A";
-
 			SetStatusColor(lblRconActiveText, _server.EnableRcon);
 			SetStatusColor(lblBackupOnStartText, _server.BackupOnStart);
 			SetStatusColor(lbllUpdateOnStartText, _server.UpdateOnStart);
 			SetStatusColor(lblDiscordActivateText, _server.IsDiscordAlertEnabled);
 
+			lblMaxPlayersText.Text = _server.MaxPlayers.ToString();
+			lblGamePortText.Text = _server.Port.ToString();
+			lblQueryPortText.Text = _server.QueryPort.ToString();
+			lblRconPortText.Text = _server.RconPort.ToString();
+			lblAppPortText.Text = _server.AppPort?.ToString() ?? "N/A";
 			lblServerNameText.Text = _server.ServerName;
 			lblGameServerText.Text = _server.Game;
 			lblMapText.Text = _server.WorldName;
 			lblSeedText.Text = _server.WorldSeed;
 			lblCompetitiveText.Text = _server.GameMode;
 			lblRconPasswordText.Text = _server.RconPassword;
-
 			lblDiscordWebhookText.Text = _server.DiscordWebhook;
 			lblServerPasswordText.Text = _server.Password;
 			lblServerAdminPasswordText.Text = _server.AdminPassword;
 			lblServerFolderText.Text = _server.InstallPath;
 			lblExtraArgsText.Text = _server.ExtraArgs;
-
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
+
+			if (_server.Game == "Minecraft Java")
+			{
+				lblGameVersion.Text = _server.GameVersion;
+			}
+			else
+			{
+				lblGameVersion.Text = "";
+			}
 		}
 
 		private void CheckRunningStatus()

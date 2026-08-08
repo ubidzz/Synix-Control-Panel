@@ -99,7 +99,7 @@ public class GameServer : GameInfo
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
 	public bool IsProbing { get; set; } = false;
-	public string GameVersion { get; set; } = "latest";
+	public string GameVersion { get; set; }
 
 	[JsonIgnore]
 	public string Uptime
