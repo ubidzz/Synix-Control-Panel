@@ -56,6 +56,11 @@ namespace Synix_Control_Panel.SynixEngine
 			label3 = new Label();
 			lblRunAsAdminInfo = new Label();
 			lblBackupWarning = new Label();
+			label4 = new Label();
+			lblMaxBackup = new Label();
+			numMaxBackups = new NumericUpDown();
+			lblMaxBackupInfo = new Label();
+			((System.ComponentModel.ISupportInitialize)numMaxBackups).BeginInit();
 			SuspendLayout();
 			// 
 			// chkCustomBackup
@@ -150,7 +155,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// chkRunAsAdmin
 			// 
-			chkRunAsAdmin.Location = new Point(12, 488);
+			chkRunAsAdmin.Location = new Point(12, 642);
 			chkRunAsAdmin.Name = "chkRunAsAdmin";
 			chkRunAsAdmin.Size = new Size(88, 26);
 			chkRunAsAdmin.TabIndex = 9;
@@ -164,7 +169,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblRunAsAdmin.BackColor = Color.Transparent;
 			lblRunAsAdmin.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblRunAsAdmin.ForeColor = Color.White;
-			lblRunAsAdmin.Location = new Point(12, 394);
+			lblRunAsAdmin.Location = new Point(12, 548);
 			lblRunAsAdmin.Name = "lblRunAsAdmin";
 			lblRunAsAdmin.Size = new Size(269, 25);
 			lblRunAsAdmin.TabIndex = 10;
@@ -182,7 +187,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			lblRunAsAdminInfo.BackColor = Color.Transparent;
 			lblRunAsAdminInfo.ForeColor = Color.White;
-			lblRunAsAdminInfo.Location = new Point(12, 419);
+			lblRunAsAdminInfo.Location = new Point(12, 573);
 			lblRunAsAdminInfo.Name = "lblRunAsAdminInfo";
 			lblRunAsAdminInfo.Size = new Size(362, 66);
 			lblRunAsAdminInfo.TabIndex = 12;
@@ -199,13 +204,57 @@ namespace Synix_Control_Panel.SynixEngine
 			lblBackupWarning.TabIndex = 13;
 			lblBackupWarning.Text = resources.GetString("lblBackupWarning.Text");
 			// 
+			// label4
+			// 
+			label4.BackColor = Color.White;
+			label4.Location = new Point(-4, 529);
+			label4.Name = "label4";
+			label4.Size = new Size(399, 10);
+			label4.TabIndex = 14;
+			// 
+			// lblMaxBackup
+			// 
+			lblMaxBackup.AutoSize = true;
+			lblMaxBackup.BackColor = Color.Transparent;
+			lblMaxBackup.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblMaxBackup.ForeColor = Color.White;
+			lblMaxBackup.Location = new Point(12, 395);
+			lblMaxBackup.Name = "lblMaxBackup";
+			lblMaxBackup.Size = new Size(229, 25);
+			lblMaxBackup.TabIndex = 15;
+			lblMaxBackup.Text = "Max Saved Backup Limit";
+			// 
+			// numMaxBackups
+			// 
+			numMaxBackups.Location = new Point(12, 493);
+			numMaxBackups.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+			numMaxBackups.Name = "numMaxBackups";
+			numMaxBackups.Size = new Size(69, 23);
+			numMaxBackups.TabIndex = 16;
+			numMaxBackups.Value = new decimal(new int[] { 1, 0, 0, 0 });
+			numMaxBackups.ValueChanged += numMaxBackups_ValueChanged;
+			// 
+			// lblMaxBackupInfo
+			// 
+			lblMaxBackupInfo.BackColor = Color.Transparent;
+			lblMaxBackupInfo.ForeColor = Color.White;
+			lblMaxBackupInfo.Location = new Point(12, 430);
+			lblMaxBackupInfo.Name = "lblMaxBackupInfo";
+			lblMaxBackupInfo.Size = new Size(368, 49);
+			lblMaxBackupInfo.TabIndex = 17;
+			lblMaxBackupInfo.Text = "Define the maximum number of backup archives Synix will retain per server. When a new backup is created and this limit is exceeded, the oldest archive is automatically deleted to conserve disk space.";
+			// 
 			// AppSettings
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			BackgroundImage = Properties.Resources.background;
-			ClientSize = new Size(392, 526);
+			ClientSize = new Size(392, 677);
+			Controls.Add(lblMaxBackupInfo);
+			Controls.Add(numMaxBackups);
+			Controls.Add(lblMaxBackup);
+			Controls.Add(label4);
 			Controls.Add(lblBackupWarning);
 			Controls.Add(lblRunAsAdminInfo);
 			Controls.Add(label3);
@@ -228,6 +277,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Name = "AppSettings";
 			SizeGripStyle = SizeGripStyle.Hide;
 			Text = "Synix Settings";
+			((System.ComponentModel.ISupportInitialize)numMaxBackups).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -248,5 +298,9 @@ namespace Synix_Control_Panel.SynixEngine
 		private Label label3;
 		private Label lblRunAsAdminInfo;
 		private Label lblBackupWarning;
+		private Label label4;
+		private Label lblMaxBackup;
+		private NumericUpDown numMaxBackups;
+		private Label lblMaxBackupInfo;
 	}
 }

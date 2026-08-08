@@ -40,6 +40,13 @@ namespace Synix_Control_Panel.SynixEngine
 			btnBrowseBackup.Enabled = chkCustomBackup.Checked;
 			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
 			chkRunAsAdmin.Checked = Properties.Settings.Default.enableRunAsAdmin;
+			numMaxBackups.Value = Properties.Settings.Default.MaxBackups;
+		}
+
+		private void numMaxBackups_ValueChanged(object sender, EventArgs e)
+		{
+			Properties.Settings.Default.MaxBackups = (int)numMaxBackups.Value;
+			Properties.Settings.Default.Save();
 		}
 
 		private void chkCustomBackup_CheckedChanged(object sender, EventArgs e)

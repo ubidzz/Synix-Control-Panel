@@ -70,5 +70,17 @@ namespace Synix_Control_Panel.Properties {
                 this["enableRunAsAdmin"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int MaxBackups {
+            get {
+                return ((int)(this["MaxBackups"]));
+            }
+            set {
+                this["MaxBackups"] = value;
+            }
+        }
     }
 }

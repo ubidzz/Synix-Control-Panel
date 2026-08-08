@@ -60,7 +60,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				var files = new DirectoryInfo(backupRoot).GetFiles("*.zip").OrderByDescending(f => f.CreationTime).ToList();
 
-				while (files.Count >= 3)
+				while (files.Count >= Properties.Settings.Default.MaxBackups)
 				{
 					files.Last().Delete();
 					files.RemoveAt(files.Count - 1);
