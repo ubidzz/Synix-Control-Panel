@@ -73,7 +73,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					try
 					{
-						// Keep the existing Core.Log -> MainGUI.AppendLog chain unchanged.
 						logCallback?.Invoke(line);
 					}
 					catch
@@ -164,13 +163,12 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 		{
 			string downloadUrl = "";
 			string fileName = "";
-			int requiredJava = 8; // Default fallback for older Minecraft versions
-			string javaExeCmd = "java"; // Defaults to the system's global Java
+			int requiredJava = 8;
+			string javaExeCmd = "java";
 
 			// ========================================================
 			// 1. THE ROUTER: DETERMINE THE TARGET URL
 			// ========================================================
-			// ---> CHANGE 1: Use 'Equals' so only Vanilla hits the Mojang API <---
 			if (blueprint.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
 			{
 				logCallback?.Invoke("Querying Mojang API for the latest Vanilla Java version...");
@@ -222,10 +220,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				fileName = Path.GetFileName(new Uri(downloadUrl).AbsolutePath);
 				if (string.IsNullOrWhiteSpace(fileName)) fileName = "server_files.zip";
 
-				// ---> CHANGE 2: Set modern Java 21 default for Modded Minecraft <---
 				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 				{
-					requiredJava = 21; // Forge/Fabric 1.20+ requires Java 21
+					requiredJava = 21;
 				}
 			}
 			else
@@ -299,10 +296,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					logCallback?.Invoke($"[SYSTEM] Unzipping {fileName} into server directory... Please wait.");
 
-					// Extract all files directly into the InstallPath, overwriting existing files
 					System.IO.Compression.ZipFile.ExtractToDirectory(fullFilePath, server.InstallPath, overwriteFiles: true);
 
-					// Clean up the massive .zip file to save user disk space
 					File.Delete(fullFilePath);
 					logCallback?.Invoke("[SYSTEM] Extraction complete. Temporary archive deleted.");
 				}
@@ -407,7 +402,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 
 			Core.Instance.UpdateGridStatus();
-			return 0; // Success
+			return 0;
 		}
 
 		private static async Task PumpStreamAsync(
