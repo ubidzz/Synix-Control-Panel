@@ -83,6 +83,8 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// txtSearch
 			// 
+			txtSearch.BackColor = Color.White;
+			txtSearch.BorderStyle = BorderStyle.FixedSingle;
 			txtSearch.Dock = DockStyle.Top;
 			txtSearch.Location = new Point(0, 0);
 			txtSearch.Name = "txtSearch";

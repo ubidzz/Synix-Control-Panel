@@ -81,6 +81,7 @@
 			btnDiscord = new Button();
 			btnGithub = new Button();
 			btnSettings = new Button();
+			toolTip1 = new ToolTip(components);
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -232,6 +233,7 @@
 			chartHeartbeat.Size = new Size(388, 98);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
+			toolTip1.SetToolTip(chartHeartbeat, "Click here to open the overall graph.");
 			chartHeartbeat.Click += ResourceGraph_Click;
 			// 
 			// lblTotalRam
@@ -503,6 +505,7 @@
 			btnDiscord.Size = new Size(25, 25);
 			btnDiscord.TabIndex = 26;
 			btnDiscord.Text = "Discord Icon";
+			toolTip1.SetToolTip(btnDiscord, "Go to Synix Discord");
 			btnDiscord.UseVisualStyleBackColor = true;
 			btnDiscord.Click += btnDiscord_Click;
 			// 
@@ -514,6 +517,7 @@
 			btnGithub.Size = new Size(25, 25);
 			btnGithub.TabIndex = 27;
 			btnGithub.Text = "Github";
+			toolTip1.SetToolTip(btnGithub, "Go to Synix Github");
 			btnGithub.UseVisualStyleBackColor = true;
 			btnGithub.Click += btnGithub_Click;
 			// 
@@ -525,6 +529,7 @@
 			btnSettings.Size = new Size(25, 25);
 			btnSettings.TabIndex = 28;
 			btnSettings.Text = "button1";
+			toolTip1.SetToolTip(btnSettings, "Synix Settings");
 			btnSettings.UseVisualStyleBackColor = true;
 			btnSettings.Click += btnSettings_Click;
 			// 
@@ -624,5 +629,6 @@
 		private DataGridViewTextBoxColumn colUptime;
 		private DataGridViewTextBoxColumn colStatus;
 		private Button btnSettings;
+		private ToolTip toolTip1;
 	}
 }

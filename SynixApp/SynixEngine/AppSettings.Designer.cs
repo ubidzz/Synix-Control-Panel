@@ -60,6 +60,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblMaxBackup = new Label();
 			numMaxBackups = new NumericUpDown();
 			lblMaxBackupInfo = new Label();
+			label5 = new Label();
 			((System.ComponentModel.ISupportInitialize)numMaxBackups).BeginInit();
 			SuspendLayout();
 			// 
@@ -244,6 +245,17 @@ namespace Synix_Control_Panel.SynixEngine
 			lblMaxBackupInfo.TabIndex = 17;
 			lblMaxBackupInfo.Text = "Define the maximum number of backup archives Synix will retain per server. When a new backup is created and this limit is exceeded, the oldest archive is automatically deleted to conserve disk space.";
 			// 
+			// label5
+			// 
+			label5.BackColor = Color.Transparent;
+			label5.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label5.ForeColor = Color.FromArgb(192, 192, 0);
+			label5.Location = new Point(87, 495);
+			label5.Name = "label5";
+			label5.Size = new Size(100, 19);
+			label5.TabIndex = 18;
+			label5.Text = "Set to 1 - 100";
+			// 
 			// AppSettings
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -251,6 +263,7 @@ namespace Synix_Control_Panel.SynixEngine
 			AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			BackgroundImage = Properties.Resources.background;
 			ClientSize = new Size(392, 677);
+			Controls.Add(label5);
 			Controls.Add(lblMaxBackupInfo);
 			Controls.Add(numMaxBackups);
 			Controls.Add(lblMaxBackup);
@@ -302,5 +315,6 @@ namespace Synix_Control_Panel.SynixEngine
 		private Label lblMaxBackup;
 		private NumericUpDown numMaxBackups;
 		private Label lblMaxBackupInfo;
+		private Label label5;
 	}
 }

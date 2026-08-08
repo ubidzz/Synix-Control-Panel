@@ -1082,7 +1082,7 @@ namespace Synix_Control_Panel.Database
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			if (_server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
+			if (_server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
 			{
 				try
 				{

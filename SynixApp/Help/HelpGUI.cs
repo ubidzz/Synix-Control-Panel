@@ -25,8 +25,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public HelpGUI()
 		{
-			// Note: InitializeComponent() and all UI controls (lblTopicTitle, lblAnswer, treeNavigation, txtSearch, pbQRCode) 
-			// are fully managed inside HelpGUI.Designer.cs. Do NOT re-declare them here to prevent CS0121 / CS0229 errors.
 			InitializeComponent();
 			InitializeData();
 			PopulateTree();
@@ -105,7 +103,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"SYNIX GLOBAL SETTINGS:\n\n" +
 					"Access the global settings menu via the gear icon in the top right corner of the main dashboard.\n\n" +
 					"FEATURES:\n" +
-					"• Custom Backup Locations: Route all automated and manual server backups to a preferred global folder or secondary drive.\n" +
+					"• Custom Backups & Rolling Limits: Route all automated and manual server backups to a preferred global folder or secondary drive, and define a maximum saved backups limit to automatically purge old archives.\n" +
 					"• Privacy Mode: Hides sensitive information (like IPs) while screen sharing. (Tip: You can still click the hidden IP labels on the dashboard to copy your actual IP address to your clipboard!)\n" +
 					"• Run as Administrator: Enables advanced system management tasks (like Firewall Cleanup)."),
 
@@ -177,7 +175,8 @@ namespace Synix_Control_Panel.SynixEngine
 					"1. Synix targets the server's save data directory (default or custom path).\n" +
 					"2. Compresses world state into a ZIP file.\n" +
 					"3. Stores the ZIP archive in your designated Backup Repository with a timestamp suffix.\n" +
-					"4. Automated crash recoveries bypass backups to ensure rapid reboot times."),
+					"4. Rolling Limit Enforcement: Synix checks the 'Max Saved Backups Limit' in your Global Settings and automatically deletes the oldest archive if the limit is exceeded.\n" +
+					"5. Automated crash recoveries bypass backups to ensure rapid reboot times."),
 
 				["Smart Update on Start & Manifest Validation"] = new HelpItem("Maint",
 					"AUTOMATED GAME UPDATES:\n\n" +
@@ -243,6 +242,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"By default, all automated ZIP backups created by Synix are stored at:\n\n" +
 					"  C:\\Synix\\BackupGames\\[Game_Name]\\{Server_Name}\\\n\n" +
 					"If you have activated a Custom Backup Location in the Synix Settings menu, your backups will be routed to that specific drive/folder instead.\n\n" +
+					"Note: Synix actively monitors this folder and will automatically delete the oldest backup if your rolling 'Max Saved Backups Limit' (configurable in Settings) is reached.\n\n" +
 					"You can extract any ZIP directly over your active server folder to restore previous world saves."),
 
 				// --- 8. SUPPORTED GAMES (Category: "Games") ---
@@ -265,6 +265,16 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Steam AppID: 258550\n" +
 					"• App Port (Rust+): Set to a unique port above 10000 (e.g., 28082 TCP).\n" +
 					"• Identity Isolation: Synix enforces `+server.identity \"{Server_Name}\"` automatically to isolate world save files and blueprints cleanly."),
+
+				["Minecraft Java Automation"] = new HelpItem("Games",
+					"MINECRAFT JAVA EDITION INTEGRATION:\n\n" +
+					"Synix provides full lifecycle automation for Vanilla Minecraft Java servers.\n\n" +
+					"FEATURES:\n" +
+					"• Automated Java Provisioning: Synix queries the Mojang API to determine the exact Java version required. If missing, it safely downloads a portable Eclipse Temurin JRE specifically for that server.\n" +
+					"• EULA Compliance: During the first boot, Synix intercepts the startup to present Microsoft's EULA. Clicking 'I Agree' automatically generates the required eula.txt file.\n" +
+					"• Configuration: Settings are managed natively through the 'server.properties' file via the Synix editor.\n" +
+					"• Native Player Tracking: Synix uses a custom TCP Server List Ping (SLP) protocol to display live, accurate player counts on your dashboard.\n\n" +
+					"Note: Synix currently supports official Vanilla Minecraft (modded environments like Forge/Fabric are not included)."),
 
 				// --- 9. COMMUNITY & LEGAL (Category: "Support") ---
 				["Official Support Links"] = new HelpItem("Support",
