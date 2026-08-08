@@ -2597,7 +2597,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "",
 				Port = 30814,
 				QueryPort = 30814
-			}
+			},
 		];
 
 		public static IReadOnlyList<GameInfo> GetGameList()

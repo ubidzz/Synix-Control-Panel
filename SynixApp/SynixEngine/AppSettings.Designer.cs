@@ -203,6 +203,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			BackgroundImage = Properties.Resources.background;
 			ClientSize = new Size(392, 526);
 			Controls.Add(lblBackupWarning);
@@ -219,11 +220,13 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(btnBrowseBackup);
 			Controls.Add(txtBackupPath);
 			Controls.Add(chkCustomBackup);
+			FormBorderStyle = FormBorderStyle.Fixed3D;
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MdiChildrenMinimizedAnchorBottom = false;
 			MinimizeBox = false;
 			Name = "AppSettings";
+			SizeGripStyle = SizeGripStyle.Hide;
 			Text = "Synix Settings";
 			ResumeLayout(false);
 			PerformLayout();
