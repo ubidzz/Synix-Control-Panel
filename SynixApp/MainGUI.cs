@@ -364,8 +364,7 @@ namespace Synix_Control_Panel
 				this.BeginInvoke(new Action(UpdateGrid));
 				return;
 			}
-
-			GridHelper.RefreshWithPersistence(dataGridView1, serverList);
+			dataGridView1.Refresh();
 		}
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

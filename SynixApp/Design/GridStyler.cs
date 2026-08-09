@@ -28,6 +28,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private static Font _boldStatusFont = null;
 		private static readonly SolidBrush _rowDarkGreyBrush = new SolidBrush(RowDarkGrey);
 		private static readonly Pen _faintDividerPen = new Pen(Color.FromArgb(45, 45, 45));
+		private static readonly Font _settingsFont = new Font("Segoe UI Symbol", 15, FontStyle.Bold);
+		private static readonly Font _closeFont = new Font("Segoe UI", 10, FontStyle.Bold);
 
 		public static void DarkTheme(DataGridView dgv)
 		{
@@ -107,7 +109,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 				TextRenderer.DrawText(
 					e.Graphics,
 					"⚙",
-					new Font("Segoe UI Symbol", fontSize, FontStyle.Bold),
+					_settingsFont,
 					textRect,
 					fgColor,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding
@@ -269,7 +271,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 				TextRenderer.DrawText(
 					e.Graphics,
 					"✕",
-					new Font("Segoe UI", 10, FontStyle.Bold),
+					_closeFont,
 					b.ClientRectangle,
 					fgColor,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
@@ -306,18 +308,20 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (dgv == null || dgv.Width == 0 || dgv.Height == 0) return;
 
 			int diameter = radius * 2;
-			GraphicsPath path = new GraphicsPath();
 
-			path.StartFigure();
-			path.AddArc(new Rectangle(0, 0, diameter, diameter), 180, 90);
-			path.AddArc(new Rectangle(dgv.Width - diameter, 0, diameter, diameter), 270, 90);
-			path.AddArc(new Rectangle(dgv.Width - diameter, dgv.Height - diameter, diameter, diameter), 0, 90);
-			path.AddArc(new Rectangle(0, dgv.Height - diameter, diameter, diameter), 90, 90);
-			path.CloseFigure();
+			using (GraphicsPath path = new GraphicsPath())
+			{
+				path.StartFigure();
+				path.AddArc(new Rectangle(0, 0, diameter, diameter), 180, 90);
+				path.AddArc(new Rectangle(dgv.Width - diameter, 0, diameter, diameter), 270, 90);
+				path.AddArc(new Rectangle(dgv.Width - diameter, dgv.Height - diameter, diameter, diameter), 0, 90);
+				path.AddArc(new Rectangle(0, dgv.Height - diameter, diameter, diameter), 90, 90);
+				path.CloseFigure();
 
-			Region oldRegion = dgv.Region;
-			dgv.Region = new Region(path);
-			oldRegion?.Dispose();
+				Region oldRegion = dgv.Region;
+				dgv.Region = new Region(path);
+				oldRegion?.Dispose();
+			}
 		}
 
 		public static void ApplyTransparentTheme(DataGridView dgv)

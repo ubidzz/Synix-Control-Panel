@@ -626,10 +626,13 @@ namespace Synix_Control_Panel
 			try
 			{
 				using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
+				using (var collection = searcher.Get())
 				{
-					foreach (var obj in searcher.Get())
+					foreach (ManagementObject obj in collection)
 					{
 						string caption = obj["Caption"]?.ToString() ?? "";
+						obj.Dispose();
+
 						if (caption.Contains("Home", StringComparison.OrdinalIgnoreCase)) return false;
 					}
 				}
