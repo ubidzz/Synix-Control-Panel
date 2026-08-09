@@ -84,12 +84,15 @@ namespace Synix_Control_Panel
 			numWorldSize = new NumericUpDown();
 			cmbGameVersion = new ComboBox();
 			lblGameVersion = new Label();
+			label1 = new Label();
+			numRam = new NumericUpDown();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numAppPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numWorldSize).BeginInit();
+			((System.ComponentModel.ISupportInitialize)numRam).BeginInit();
 			SuspendLayout();
 			// 
 			// ServerNameLabel
@@ -506,7 +509,7 @@ namespace Synix_Control_Panel
 			lblAppPort.BackColor = Color.Transparent;
 			lblAppPort.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblAppPort.ForeColor = Color.White;
-			lblAppPort.Location = new Point(75, 305);
+			lblAppPort.Location = new Point(71, 305);
 			lblAppPort.Name = "lblAppPort";
 			lblAppPort.Size = new Size(53, 36);
 			lblAppPort.TabIndex = 55;
@@ -514,7 +517,7 @@ namespace Synix_Control_Panel
 			// 
 			// numAppPort
 			// 
-			numAppPort.Location = new Point(75, 344);
+			numAppPort.Location = new Point(71, 344);
 			numAppPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numAppPort.Minimum = new decimal(new int[] { 10000, 0, 0, 0 });
 			numAppPort.Name = "numAppPort";
@@ -618,30 +621,29 @@ namespace Synix_Control_Panel
 			// 
 			// lblWorldSize
 			// 
-			lblWorldSize.AutoSize = true;
 			lblWorldSize.BackColor = Color.Transparent;
 			lblWorldSize.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblWorldSize.ForeColor = Color.White;
-			lblWorldSize.Location = new Point(137, 325);
+			lblWorldSize.Location = new Point(130, 304);
 			lblWorldSize.Name = "lblWorldSize";
-			lblWorldSize.Size = new Size(74, 17);
+			lblWorldSize.Size = new Size(50, 37);
 			lblWorldSize.TabIndex = 69;
-			lblWorldSize.Text = "World Size";
+			lblWorldSize.Text = "World \r\nSize";
 			// 
 			// numWorldSize
 			// 
-			numWorldSize.Location = new Point(138, 345);
+			numWorldSize.Location = new Point(130, 344);
 			numWorldSize.Maximum = new decimal(new int[] { 5000, 0, 0, 0 });
 			numWorldSize.Minimum = new decimal(new int[] { 50, 0, 0, 0 });
 			numWorldSize.Name = "numWorldSize";
-			numWorldSize.Size = new Size(73, 23);
+			numWorldSize.Size = new Size(50, 23);
 			numWorldSize.TabIndex = 70;
 			numWorldSize.Value = new decimal(new int[] { 4000, 0, 0, 0 });
 			// 
 			// cmbGameVersion
 			// 
 			cmbGameVersion.FormattingEnabled = true;
-			cmbGameVersion.Location = new Point(222, 345);
+			cmbGameVersion.Location = new Point(186, 344);
 			cmbGameVersion.Name = "cmbGameVersion";
 			cmbGameVersion.Size = new Size(93, 23);
 			cmbGameVersion.TabIndex = 71;
@@ -651,11 +653,32 @@ namespace Synix_Control_Panel
 			lblGameVersion.BackColor = Color.Transparent;
 			lblGameVersion.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblGameVersion.ForeColor = Color.White;
-			lblGameVersion.Location = new Point(222, 322);
+			lblGameVersion.Location = new Point(188, 305);
 			lblGameVersion.Name = "lblGameVersion";
-			lblGameVersion.Size = new Size(100, 20);
+			lblGameVersion.Size = new Size(91, 36);
 			lblGameVersion.TabIndex = 72;
 			lblGameVersion.Text = "Game Version";
+			// 
+			// label1
+			// 
+			label1.BackColor = Color.Transparent;
+			label1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label1.ForeColor = Color.White;
+			label1.Location = new Point(285, 305);
+			label1.Name = "label1";
+			label1.Size = new Size(72, 36);
+			label1.TabIndex = 73;
+			label1.Text = "Server RAM (GB)";
+			// 
+			// numRam
+			// 
+			numRam.Location = new Point(285, 344);
+			numRam.Maximum = new decimal(new int[] { 128, 0, 0, 0 });
+			numRam.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+			numRam.Name = "numRam";
+			numRam.Size = new Size(60, 23);
+			numRam.TabIndex = 74;
+			numRam.Value = new decimal(new int[] { 2, 0, 0, 0 });
 			// 
 			// ServerSettingsGUI
 			// 
@@ -664,6 +687,8 @@ namespace Synix_Control_Panel
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 642);
+			Controls.Add(numRam);
+			Controls.Add(label1);
 			Controls.Add(lblGameVersion);
 			Controls.Add(cmbGameVersion);
 			Controls.Add(numWorldSize);
@@ -729,6 +754,7 @@ namespace Synix_Control_Panel
 			((System.ComponentModel.ISupportInitialize)numRconPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numAppPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numWorldSize).EndInit();
+			((System.ComponentModel.ISupportInitialize)numRam).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -789,5 +815,7 @@ namespace Synix_Control_Panel
 		private Label lblWorldSize;
 		private ComboBox cmbGameVersion;
 		private Label lblGameVersion;
+		private Label label1;
+		private NumericUpDown numRam;
 	}
 }

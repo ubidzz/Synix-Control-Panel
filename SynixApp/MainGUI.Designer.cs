@@ -233,7 +233,6 @@
 			chartHeartbeat.Size = new Size(388, 98);
 			chartHeartbeat.TabIndex = 11;
 			chartHeartbeat.Text = "chart1";
-			toolTip1.SetToolTip(chartHeartbeat, "Click here to open the overall graph.");
 			chartHeartbeat.Click += ResourceGraph_Click;
 			// 
 			// lblTotalRam

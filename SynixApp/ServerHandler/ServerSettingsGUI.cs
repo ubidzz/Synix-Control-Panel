@@ -142,6 +142,7 @@ namespace Synix_Control_Panel
 			_selectedTime = _existingServer.RestartTime ?? "04:00";
 			chkBackupOnStart.Checked = _existingServer.BackupOnStart;
 			cmbGameVersion.Text = _existingServer.GameVersion ?? "latest";
+			numRam.Value = Math.Clamp((decimal)_existingServer.MaxRam, numRam.Minimum, numRam.Maximum);
 
 			var gameData = GameDatabase.GetGame(_existingServer.Game);
 			if (gameData != null)
@@ -201,6 +202,7 @@ namespace Synix_Control_Panel
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
 				numWorldSize.Enabled = CanUnlock(numWorldSize);
 				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion);
+				numRam.Enabled = CanUnlock(numRam);
 
 				if (numAppPort != null)
 					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled";
@@ -242,13 +244,9 @@ namespace Synix_Control_Panel
 					txtInstallPath.Text = $@"C:\Synix\Games\{safeFolderName}\{safeName}";
 				}
 
-				GameInfo? selectedGameData = hasGame
-					? GameDatabase.GetGame(selectedGame)
-					: null;
+				GameInfo? selectedGameData = hasGame ? GameDatabase.GetGame(selectedGame) : null;
 
-				bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains(
-					"{query}",
-					StringComparison.OrdinalIgnoreCase) == true;
+				bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains( "{query}", StringComparison.OrdinalIgnoreCase) == true;
 
 				int gPort = (int)numPort.Value;
 				int qPort = usesQueryPort ? (int)numQueryPort.Value : 0;
@@ -460,6 +458,7 @@ namespace Synix_Control_Panel
 				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
 				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
 				cmbGameVersion.Tag = gameData.Game == "Minecraft Java" ? "Required" : "Disabled";
+				numRam.Tag = args.Contains("{ram}") ? "Required" : "Disabled";
 
 				if (gameData.NeedsConfigWarning == true)
 				{
@@ -525,6 +524,7 @@ namespace Synix_Control_Panel
 			chkDefaultPath.CheckedChanged += (s, e) => trigger();
 			numWorldSize.ValueChanged += (s, e) => trigger();
 			cmbGameVersion.SelectedIndexChanged += (s, e) => trigger();
+			numRam.ValueChanged += (s, e) => trigger();
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
@@ -544,7 +544,7 @@ namespace Synix_Control_Panel
 			int? aPort = numAppPort.Enabled ? (int)numAppPort.Value : (int?)null;
 			if (!Core.Instance.ValidatePortsAndReport(_existingServer, gPort, qPort, rPort, chkEnableRcon.Checked, aPort ?? 0, numAppPort.Enabled, selectedGame)) return;
 			string newPath = txtInstallPath.Text.Trim();
-			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, GameVersion = cmbGameVersion.Text.Trim(),  IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
+			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, MaxRam = (int)numRam.Value, GameVersion = cmbGameVersion.Text.Trim(),  IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{

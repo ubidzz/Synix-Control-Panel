@@ -138,6 +138,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
 					}
 
+					if (server.Game == "Minecraft Java")
+					{
+						int selectedGb = (int)server.MaxRam;
+						server.MaxRam = selectedGb * 1024;
+					}
+
 					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
 					
 					string args = dbEntry.RequiredArgs
@@ -154,7 +160,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.Replace("{ServerName}", server.ServerName)
 						.Replace("{InstallPath}", server.InstallPath)
 						.Replace("{world_size}", server.WorldSize.ToString())
-						.Replace("{Identity}", cleanIdentity);
+						.Replace("{Identity}", cleanIdentity)
+					    .Replace("{ram}", server.MaxRam.ToString());
 
 					if (args.Contains("{rcon}"))
 					{

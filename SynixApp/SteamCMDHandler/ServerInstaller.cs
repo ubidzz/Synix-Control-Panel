@@ -176,9 +176,19 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					string manifestJson = await _httpClient.GetStringAsync("https://launchermeta.mojang.com/mc/game/version_manifest.json");
 					var manifestNode = System.Text.Json.Nodes.JsonNode.Parse(manifestJson);
+					string targetVersion = server.GameVersion;
 
-					string targetVersion = manifestNode?["latest"]?["release"]?.ToString() ?? "";
-					logCallback?.Invoke($"Resolved latest Minecraft version: {targetVersion}");
+					// 2. If they didn't pick one (or picked "Latest"), fetch the newest one from Mojang
+					if (string.IsNullOrWhiteSpace(targetVersion) || targetVersion.Equals("Latest", StringComparison.OrdinalIgnoreCase))
+					{
+						targetVersion = manifestNode?["latest"]?["release"]?.ToString() ?? "";
+						logCallback?.Invoke($"Resolved latest Minecraft version: {targetVersion}");
+						server.GameVersion = targetVersion; // Save it so the UI updates
+					}
+					else
+					{
+						logCallback?.Invoke($"Using user-selected Minecraft version: {targetVersion}");
+					}
 
 					string versionUrl = "";
 					var versionsArray = manifestNode?["versions"]?.AsArray();

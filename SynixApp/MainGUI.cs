@@ -607,6 +607,15 @@ namespace Synix_Control_Panel
 
 		private void btnServerActionsMenu_Click(object sender, EventArgs e)
 		{
+			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
+			{
+				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+
+				updateServerToolStripMenuItem.Enabled = !isMinecraft;
+				fileValidationToolStripMenuItem.Enabled = !isMinecraft;
+				btnExportBatch.Enabled = !isMinecraft;
+			}
+
 			contextMenuStrip.Show(btnServerActions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
 		}
 

@@ -100,6 +100,7 @@ public class GameServer : GameInfo
 	public double RamUsage { get; set; }
 	public bool IsProbing { get; set; } = false;
 	public string GameVersion { get; set; }
+	public int MaxRam { get; set; }
 
 	[JsonIgnore]
 	public string Uptime

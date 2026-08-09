@@ -2582,7 +2582,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Minecraft Java",
 				AppID = "0",
 				ExeName = "Start.bat",
-				RequiredArgs = "-Xmx2048M -Xms1024M -jar server.jar nogui",
+				RequiredArgs = "-Xmx{ram}M -Xms{ram}M -jar server.jar nogui",
 				Port = 25565,
 				QueryPort = 25565,
 				RelativeConfigPath = "server.properties",
