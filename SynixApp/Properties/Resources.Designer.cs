@@ -83,6 +83,16 @@ namespace Synix_Control_Panel.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap gear_icon {
+            get {
+                object obj = ResourceManager.GetObject("gear_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap github_icon {
             get {
                 object obj = ResourceManager.GetObject("github_icon", resourceCulture);
@@ -107,6 +117,16 @@ namespace Synix_Control_Panel.Properties {
             get {
                 object obj = ResourceManager.GetObject("synix_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Synix_logo_Icon {
+            get {
+                object obj = ResourceManager.GetObject("Synix_logo_Icon", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

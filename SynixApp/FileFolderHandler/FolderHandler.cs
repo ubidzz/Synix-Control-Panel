@@ -24,27 +24,48 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 		public static class ServerFolder
 		{
-			public static void Delete(GameServer server, Action<string, Color> logCallback)
+			public static void Delete(GameServer server, bool deleteBackups, Action<string, Color> logCallback)
 			{
 				try
 				{
-					// 1. Delete the physical files first
 					if (Directory.Exists(server.InstallPath))
 					{
-						// 'true' means it deletes all subfolders and files inside
 						Directory.Delete(server.InstallPath, true);
+						logCallback?.Invoke($"[CLEANUP] Deleted server '{server.ServerName}' and all files at {server.InstallPath}", Color.Yellow);
 					}
 
-					// 2. Remove from the UI list and Save JSON
-					// We access the static list from MainGUI directly
-					MainGUI.serverList.Remove(server);
-					FileHandler.SaveServers();
+					if (deleteBackups)
+					{
 
-					logCallback?.Invoke($"[CLEANUP] Deleted server '{server.ServerName}' and all files at {server.InstallPath}", Color.Yellow);
+						string cleanGame = SynixEngine.Core.Instance.GetSafeName(server.Game);
+						string cleanServer = SynixEngine.Core.Instance.GetSafeName(server.ServerName);
+						string baseBackupFolder = @"C:\Synix\BackupGames";
+
+						if (Properties.Settings.Default.UseCustomBackupPath &&
+							!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&
+							Directory.Exists(Properties.Settings.Default.CustomBackupPath))
+						{
+							baseBackupFolder = Properties.Settings.Default.CustomBackupPath;
+						}
+
+						string backupRoot = Path.Combine(baseBackupFolder, cleanGame, cleanServer);
+
+						if (Directory.Exists(backupRoot))
+						{
+							Directory.Delete(backupRoot, true);
+							logCallback?.Invoke($"[CLEANUP] Deleted server backups at {backupRoot}", Color.LimeGreen);
+						}
+					}
+
+					if (MainGUI.serverList.Contains(server))
+					{
+						MainGUI.serverList.Remove(server);
+					}
+
+					FileHandler.SaveServers();
 				}
 				catch (Exception ex)
 				{
-					// Rethrow the error so the GUI can show the specific MessageBox you want
 					throw new Exception(ex.Message);
 				}
 			}

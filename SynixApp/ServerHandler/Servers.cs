@@ -13,9 +13,9 @@
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
+using static Synix_Control_Panel.SynixEngine.Core;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -42,7 +42,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			try
 			{
-				// 1. HARDWARE CHECKS (Backgrounded to prevent WMI/PerfCounter UI Freezes)
 				bool isSystemSafe = await Task.Run(() => IsSystemSafeToStart());
 				if (!isSystemSafe) return;
 
@@ -63,14 +62,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
 
-				// Safely update the DataGridView UI state on the main thread
 				server.Status = StatusManager.GetStatus(ServerState.Starting);
 				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";
 
-				// 2. HEAVY DISK & STRING PROCESSING (Backgrounded to prevent lag)
 				await Task.Run(() =>
 				{
 					var dbEntry = GameDatabase.GetGame(server.Game);
@@ -113,7 +110,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							{
 								RecurseSubdirectories = true,
 								IgnoreInaccessible = true,
-								MaxRecursionDepth = 5,
+								MaxRecursionDepth = 15,
 								AttributesToSkip = FileAttributes.ReparsePoint
 							});
 
@@ -141,8 +138,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
 					}
 
-					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
+					if (server.Game == "Minecraft Java")
+					{
+						int selectedGb = (int)server.MaxRam;
+						server.MaxRam = selectedGb * 1024;
+					}
 
+					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
+					
 					string args = dbEntry.RequiredArgs
 						.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 						.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
@@ -156,21 +159,49 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.Replace("{adminpass}", server.AdminPassword ?? "")
 						.Replace("{ServerName}", server.ServerName)
 						.Replace("{InstallPath}", server.InstallPath)
-						.Replace("{Identity}", cleanIdentity);
+						.Replace("{world_size}", server.WorldSize.ToString())
+						.Replace("{Identity}", cleanIdentity)
+					    .Replace("{ram}", server.MaxRam.ToString());
 
 					if (args.Contains("{rcon}"))
 					{
-						string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
-							? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", server.RconPassword ?? "")
-							: "";
+						string formattedRcon = "";
+
+						if (server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax))
+						{
+							formattedRcon = dbEntry.RconSyntax
+								.Replace("{rcon_port}", server.RconPort.ToString())
+								.Replace("{rcon_pass}", server.RconPassword ?? "");
+
+							// Append Web RCON switch if this is a Rust server
+							if (string.Equals(server.Game, "Rust", StringComparison.OrdinalIgnoreCase))
+							{
+								formattedRcon += " +rcon.web 1";
+							}
+						}
+
 						args = args.Replace("{rcon}", formattedRcon);
 					}
 
 					if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 					{
-						string translatedMode = (server.GameMode == "PVE" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
-							? "True" : (server.GameMode == "PVP" && (server.Game.Contains("ARK") || server.Game == "Atlas" || server.Game == "Rust"))
-							? "False" : server.GameMode;
+						bool usesBooleanMode =
+							server.Game.Equals("ARK: Survival Evolved", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("ARK: Survival Ascended", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("PixARK", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("Atlas", StringComparison.OrdinalIgnoreCase) ||
+							server.Game.Equals("Rust", StringComparison.OrdinalIgnoreCase);
+
+						string translatedMode = server.GameMode;
+
+						if (usesBooleanMode)
+						{
+							if (server.GameMode.Equals("PVE", StringComparison.OrdinalIgnoreCase))
+								translatedMode = "True";
+							else if (server.GameMode.Equals("PVP", StringComparison.OrdinalIgnoreCase))
+								translatedMode = "False";
+						}
+
 						args = args.Replace("{mode}", translatedMode);
 					}
 
@@ -195,15 +226,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						return;
 					}*/
 
-					// Package the final validated strings into process parameters
 					finalArgs = args;
+
 					psi = new ProcessStartInfo
 					{
 						FileName = fullExePath,
 						Arguments = finalArgs,
 						WorkingDirectory = binDir,
 						UseShellExecute = false,
-						CreateNoWindow = false
+						CreateNoWindow = false,
 					};
 
 					if (server.Game == "Dune: Awakening")
@@ -275,6 +306,17 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					SetConsoleCtrlHandler(null, true);
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+
+					if (server.RunningProcess != null && server.RunningProcess.StartInfo.RedirectStandardInput)
+					{
+						try
+						{
+							// Instantly pipes 'Y' and hits Enter
+							server.RunningProcess.StandardInput.WriteLine("Y");
+							server.RunningProcess.StandardInput.Flush();
+						}
+						catch { } // Failsafe in case it closed faster than we could write to it
+					}
 
 					bool cleanExit = await Task.Run(() => server.RunningProcess?.WaitForExit(25000) ?? false);
 

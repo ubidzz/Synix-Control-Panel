@@ -13,6 +13,7 @@
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixEngine;
 using System.Diagnostics;
 
 namespace Synix_Control_Panel.Database
@@ -23,6 +24,13 @@ namespace Synix_Control_Panel.Database
 
 		private static readonly Dictionary<string, string> _messages = new()
 		{
+			{
+				"Minecraft Java",
+				"MINECRAFT EULA AGREEMENT REQUIRED:\n\n" +
+				"By starting this server, you agree to the Minecraft End User License Agreement (EULA).\n\n" +
+				"If you do not agree to these terms, click Decline and the server will not start.\n\n" +
+				"Official EULA Document: https://aka.ms/MinecraftEULA"
+			},
 			{
 				"StarRupture",
 				"CRITICAL SETUP REQUIRED:\n\n" +
@@ -1009,7 +1017,8 @@ namespace Synix_Control_Panel.Database
 			InitializeComponent();
 			_server = server;
 
-			// Attach the click event for the LinkLabel
+			// Ensure LinkBehavior is set so links are properly formatted as hyperlinks
+			lblWarningText.Links.Clear();
 			lblWarningText.LinkClicked += LblWarningText_LinkClicked;
 
 			// Set the specific warning message and extract the link
@@ -1017,6 +1026,12 @@ namespace Synix_Control_Panel.Database
 			{
 				lblWarningText.Text = customMessage;
 				FormatUrlLink(customMessage);
+
+				if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+				{
+					btnStart.Text = "I Agree";
+					btnNo.Text = "Decline";
+				}
 			}
 			else
 			{
@@ -1032,10 +1047,13 @@ namespace Synix_Control_Panel.Database
 			int linkIndex = text.IndexOf("http");
 			if (linkIndex != -1)
 			{
-				int linkLength = text.Length - linkIndex;
+				// Find where the URL ends (by looking for whitespace, newline, or end of string)
+				int spaceIndex = text.IndexOfAny(new char[] { ' ', '\n', '\r' }, linkIndex);
+				int linkLength = (spaceIndex != -1) ? spaceIndex - linkIndex : text.Length - linkIndex;
+
 				string url = text.Substring(linkIndex, linkLength).Trim();
 
-				// Add the clickable region to the LinkLabel
+				// Add only the exact URL range to the LinkLabel
 				lblWarningText.Links.Add(linkIndex, linkLength, url);
 			}
 		}
@@ -1062,34 +1080,25 @@ namespace Synix_Control_Panel.Database
 			}
 		}
 
-		private void btnYes_Click(object sender, EventArgs e)
+		private void btnStart_Click(object sender, EventArgs e)
 		{
+			if (_server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+			{
+				try
+				{
+					SynixApp.FileFolderHandler.FileHandler.Create(_server.InstallPath, "eula.txt", "eula=true");
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show($"Could not write eula.txt. Please check folder permissions:\n{ex.Message}", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+			}
+
 			_server.IsFirstBoot = false;
 			try
 			{
 				FileHandler.SaveServers();
-
-				var gameData = GameDatabase.GetGame(_server.Game);
-				if (gameData != null && !string.IsNullOrEmpty(gameData.RelativeConfigPath))
-				{
-					string cleanIdentity = _server.ServerName.Replace(" ", "_");
-					string relativePath = gameData.RelativeConfigPath.Replace("{Identity}", cleanIdentity);
-					string fullPath = Path.Combine(_server.InstallPath, relativePath);
-
-					if (File.Exists(fullPath))
-					{
-						this.Hide();
-
-						using (ServerConfig editor = new ServerConfig(fullPath, gameData.Format))
-						{
-							editor.ShowDialog();
-						}
-					}
-					else
-					{
-						MessageBox.Show($"Config file not found!\n\nTarget Path: {fullPath}", "Path Error");
-					}
-				}
 
 				this.DialogResult = DialogResult.OK;
 				this.Close();

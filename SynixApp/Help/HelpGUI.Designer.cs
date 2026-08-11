@@ -83,6 +83,8 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// txtSearch
 			// 
+			txtSearch.BackColor = Color.White;
+			txtSearch.BorderStyle = BorderStyle.FixedSingle;
 			txtSearch.Dock = DockStyle.Top;
 			txtSearch.Location = new Point(0, 0);
 			txtSearch.Name = "txtSearch";
@@ -136,7 +138,7 @@ namespace Synix_Control_Panel.SynixEngine
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "HelpGUI";
-			Text = "HelpGUI";
+			Text = "Help";
 			splitContainer1.Panel1.ResumeLayout(false);
 			splitContainer1.Panel1.PerformLayout();
 			splitContainer1.Panel2.ResumeLayout(false);

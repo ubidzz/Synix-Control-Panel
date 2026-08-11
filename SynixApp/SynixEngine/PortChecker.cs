@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -265,6 +266,72 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			return false;
+		}
+
+		// ========================================================================
+		// ⛏️ MINECRAFT NATIVE SERVER LIST PING (TCP PROTOCOL)
+		// ========================================================================
+		private async Task<bool> UpdateMinecraftPlayerCount(GameServer server, string ip)
+		{
+			try
+			{
+				using var tcpClient = new System.Net.Sockets.TcpClient();
+
+				// 1. Connect directly to the main game port (e.g., 25565), NOT the Query Port!
+				var connectTask = tcpClient.ConnectAsync(ip, server.Port);
+				if (await Task.WhenAny(connectTask, Task.Delay(1500)) != connectTask) return false;
+
+				using var stream = tcpClient.GetStream();
+
+				// 2. Build the Modern Minecraft Handshake Packet (VarInt formatted)
+				List<byte> handshake = new List<byte> { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }; // PacketID (0) + Protocol (-1)
+
+				byte[] hostBytes = Encoding.UTF8.GetBytes(ip);
+				handshake.Add((byte)hostBytes.Length);
+				handshake.AddRange(hostBytes);
+
+				handshake.Add((byte)((server.Port >> 8) & 0xFF)); // Port MSB
+				handshake.Add((byte)(server.Port & 0xFF)); // Port LSB
+				handshake.Add(0x01); // Next State: 1 (Status)
+
+				List<byte> payload = new List<byte>();
+				payload.Add((byte)handshake.Count); // Packet length
+				payload.AddRange(handshake);
+
+				// 3. Append Status Request (Length 1, Packet ID 0)
+				payload.Add(0x01);
+				payload.Add(0x00);
+
+				await stream.WriteAsync(payload.ToArray(), 0, payload.Count);
+
+				// 4. Read the JSON string response from the server
+				byte[] buffer = new byte[4096];
+				int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+				if (bytesRead > 0)
+				{
+					// Convert the raw byte buffer to a string and use Regex to find the player counts inside the JSON payload
+					string rawStr = Encoding.UTF8.GetString(buffer);
+
+					var onlineMatch = System.Text.RegularExpressions.Regex.Match(rawStr, @"""online""\s*:\s*(\d+)");
+					var maxMatch = System.Text.RegularExpressions.Regex.Match(rawStr, @"""max""\s*:\s*(\d+)");
+
+					if (onlineMatch.Success && int.TryParse(onlineMatch.Groups[1].Value, out int online))
+					{
+						server.CurrentPlayers = online;
+
+						if (maxMatch.Success && int.TryParse(maxMatch.Groups[1].Value, out int max))
+						{
+							server.MaxPlayersFromQuery = max;
+						}
+
+						return true; // Successfully pinged!
+					}
+				}
+			}
+			catch { }
+
+			return false; // Ping failed
 		}
 	}
 }

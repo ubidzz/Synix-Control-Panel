@@ -65,7 +65,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 								string fullExePath = Path.Combine(server.InstallPath, server.ExeName);
 
-								string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(server.AppID, fullExePath);
+								string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(server.Game, fullExePath);
 
 								if (File.Exists(iconPath))
 								{

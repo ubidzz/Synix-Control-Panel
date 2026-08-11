@@ -37,6 +37,7 @@ namespace Synix_Control_Panel
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
+		private ToolTip? _resourceGraphToolTip;
 
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -50,11 +51,12 @@ namespace Synix_Control_Panel
 		{
 			InitializeComponent();
 			Instance = this;
+
 			FileHandler.LoadServers();
 			UIStyleHelper.InitializeToggles(this);
+
 			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = serverList;
-			//dataGridView1.DataError += dataGridView1_DataError;
 			if (!dataGridView1.Columns.Contains("IconCol"))
 			{
 				DataGridViewImageColumn iconCol = new DataGridViewImageColumn();
@@ -82,12 +84,25 @@ namespace Synix_Control_Panel
 			GridStyler.StyleMinimizeButton(btnMinimize);
 			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
+			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
 
-			chkPrivacyMode.Text = "Privacy Mode";
-			chkPrivacyMode.Checked = SynixApp.Properties.Settings.Default.PrivacyMode;
+			_resourceGraphToolTip = new ToolTip(components)
+			{
+				InitialDelay = 300,
+				ReshowDelay = 100,
+				AutoPopDelay = 8000,
+				ShowAlways = true
+			};
+
+			_resourceGraphToolTip.SetToolTip(
+				chartHeartbeat,
+				"Click to open detailed CPU and RAM usage for all running servers."
+			);
+
+			chartHeartbeat.Cursor = Cursors.Hand;
+			chartHeartbeat.MouseLeave += chartHeartbeat_MouseLeave;
+
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
-			isPrivacyLoading = chkPrivacyMode.Checked;
-			_ = LoadNetworkInfo();
 			_ = Core.Instance;
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
@@ -251,31 +266,28 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void lblPublicIP_Click(object sender, EventArgs e)
+		private async void lblPublicIP_Click(object sender, EventArgs e)
 		{
 			// Strip the prefix and copy just the IP
-			string ip = lblPublicIP.Text.Replace("Public IP: ", "");
-			if (ip != StatusManager.GetStatus(ServerState.Stopped) && ip != "Fetching...")
+			string publicIP = await Core.Instance.GetPublicIP();
+			Clipboard.SetText(publicIP);
+			if (!isPrivacyLoading)
 			{
-				Clipboard.SetText(ip);
-				if (!isPrivacyLoading)
-				{
-					AppendLog($"[🚨 SYNIX] Public IP {ip} was copied to clipboard.", Color.Cyan);
-				}
-				else
-				{
-					AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
-				}
+				AppendLog($"[🚨 SYNIX] Public IP {publicIP} was copied to clipboard.", Color.Cyan);
+			}
+			else
+			{
+				AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
 			}
 		}
 
-		private void lblLocalIP_Click(object sender, EventArgs e)
+		private async void lblLocalIP_Click(object sender, EventArgs e)
 		{
-			string LANip = lblLocalIP1.Text.Replace("LAN IP: ", "");
-			Clipboard.SetText(LANip);
+			string localIP = await Core.Instance.GetLocalIP();
+			Clipboard.SetText(localIP);
 			if (!isPrivacyLoading)
 			{
-				AppendLog($"[🚨 SYNIX] Local IP {LANip} was copied to clipboard.", Color.Cyan);
+				AppendLog($"[🚨 SYNIX] Local IP {localIP} was copied to clipboard.", Color.Cyan);
 			}
 			else
 			{
@@ -324,6 +336,8 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
+			await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
+
 			Core.Instance.RebindProcesses();
 			double physicalRam = 16.0;
 			await Task.Run(() => physicalRam = ResourceMonitor.GetTotalSystemRamGB());
@@ -350,26 +364,28 @@ namespace Synix_Control_Panel
 				this.BeginInvoke(new Action(UpdateGrid));
 				return;
 			}
-
-			// All the "Nuclear Refresh" and scroll logic is hidden in the helper
-			GridHelper.RefreshWithPersistence(dataGridView1, serverList);
+			dataGridView1.Refresh();
 		}
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			// Let the GridStyler handle the colors
 			GridStyler.SetStatusColor(dataGridView1, e);
 		}
 
 		private void ResourceGraph_Click(object sender, EventArgs e)
 		{
-			// Pass the current list of servers to the new monitor window
 			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
-			monitor.Show(); // .Show() lets them keep the panel open while using the main app
+			monitor.Show();
 		}
+
+		private void chartHeartbeat_MouseLeave(object? sender, EventArgs e)
+		{
+			chartHeartbeat.BorderlineDashStyle =
+				System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
+		}
+
 		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
-			// Just draw the rows using the solid colors from GridStyler
 			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 
@@ -590,6 +606,15 @@ namespace Synix_Control_Panel
 
 		private void btnServerActionsMenu_Click(object sender, EventArgs e)
 		{
+			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
+			{
+				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+
+				updateServerToolStripMenuItem.Enabled = !isMinecraft;
+				fileValidationToolStripMenuItem.Enabled = !isMinecraft;
+				btnExportBatch.Enabled = !isMinecraft;
+			}
+
 			contextMenuStrip.Show(btnServerActions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
 		}
 
@@ -728,18 +753,16 @@ namespace Synix_Control_Panel
 				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
 			}
 		}
-		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e)
+		public async Task UpdatePrivacyMode(bool isEnabled)
 		{
-			isPrivacyLoading = chkPrivacyMode.Checked;
+			isPrivacyLoading = isEnabled;
 
-			SynixApp.Properties.Settings.Default.PrivacyMode = chkPrivacyMode.Checked;
-			SynixApp.Properties.Settings.Default.Save();
-
-			if (chkPrivacyMode.Checked)
+			if (isEnabled)
 			{
 				lblPublicIP.Text = "Public IP: [HIDDEN]";
 				lblLocalIP1.Text = "LAN IP: [HIDDEN]";
 			}
+
 			await LoadNetworkInfo();
 		}
 
@@ -798,6 +821,14 @@ namespace Synix_Control_Panel
 			catch (Exception ex)
 			{
 				MessageBox.Show($"Unable to open the link automatically.\n\nError: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+		}
+
+		private void btnSettings_Click(object sender, EventArgs e)
+		{
+			using (Synix_Control_Panel.SynixEngine.AppSettings SynixSettings = new Synix_Control_Panel.SynixEngine.AppSettings())
+			{
+				SynixSettings.ShowDialog();
 			}
 		}
 	}

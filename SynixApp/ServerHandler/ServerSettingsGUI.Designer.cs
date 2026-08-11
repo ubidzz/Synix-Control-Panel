@@ -80,11 +80,19 @@ namespace Synix_Control_Panel
 			txtDiscordWebhook = new TextBox();
 			btnTestDiscord = new Button();
 			lblConfigWarning = new Label();
+			lblWorldSize = new Label();
+			numWorldSize = new NumericUpDown();
+			cmbGameVersion = new ComboBox();
+			lblGameVersion = new Label();
+			label1 = new Label();
+			numRam = new NumericUpDown();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numAppPort).BeginInit();
+			((System.ComponentModel.ISupportInitialize)numWorldSize).BeginInit();
+			((System.ComponentModel.ISupportInitialize)numRam).BeginInit();
 			SuspendLayout();
 			// 
 			// ServerNameLabel
@@ -93,7 +101,7 @@ namespace Synix_Control_Panel
 			ServerNameLabel.BackColor = Color.Transparent;
 			ServerNameLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			ServerNameLabel.ForeColor = Color.White;
-			ServerNameLabel.Location = new Point(12, 61);
+			ServerNameLabel.Location = new Point(12, 59);
 			ServerNameLabel.Name = "ServerNameLabel";
 			ServerNameLabel.Size = new Size(87, 17);
 			ServerNameLabel.TabIndex = 0;
@@ -105,7 +113,7 @@ namespace Synix_Control_Panel
 			GameServerLabel.BackColor = Color.Transparent;
 			GameServerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			GameServerLabel.ForeColor = Color.White;
-			GameServerLabel.Location = new Point(12, 118);
+			GameServerLabel.Location = new Point(12, 116);
 			GameServerLabel.Name = "GameServerLabel";
 			GameServerLabel.Size = new Size(86, 17);
 			GameServerLabel.TabIndex = 1;
@@ -117,7 +125,7 @@ namespace Synix_Control_Panel
 			PortLabel.BackColor = Color.Transparent;
 			PortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			PortLabel.ForeColor = Color.White;
-			PortLabel.Location = new Point(100, 242);
+			PortLabel.Location = new Point(330, 240);
 			PortLabel.Name = "PortLabel";
 			PortLabel.Size = new Size(34, 17);
 			PortLabel.TabIndex = 2;
@@ -129,7 +137,7 @@ namespace Synix_Control_Panel
 			FolderPathLabel.BackColor = Color.Transparent;
 			FolderPathLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			FolderPathLabel.ForeColor = Color.White;
-			FolderPathLabel.Location = new Point(12, 408);
+			FolderPathLabel.Location = new Point(414, 464);
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(104, 17);
 			FolderPathLabel.TabIndex = 3;
@@ -137,7 +145,7 @@ namespace Synix_Control_Panel
 			// 
 			// txtName
 			// 
-			txtName.Location = new Point(12, 81);
+			txtName.Location = new Point(12, 79);
 			txtName.Name = "txtName";
 			txtName.Size = new Size(368, 23);
 			txtName.TabIndex = 4;
@@ -147,7 +155,7 @@ namespace Synix_Control_Panel
 			// 
 			cmbGame.FormattingEnabled = true;
 			cmbGame.Items.AddRange(new object[] { "Game List" });
-			cmbGame.Location = new Point(12, 138);
+			cmbGame.Location = new Point(12, 136);
 			cmbGame.Name = "cmbGame";
 			cmbGame.Size = new Size(276, 23);
 			cmbGame.TabIndex = 5;
@@ -156,17 +164,17 @@ namespace Synix_Control_Panel
 			// 
 			// numPort
 			// 
-			numPort.Location = new Point(100, 262);
+			numPort.Location = new Point(330, 260);
 			numPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numPort.Name = "numPort";
-			numPort.Size = new Size(63, 23);
+			numPort.Size = new Size(50, 23);
 			numPort.TabIndex = 6;
 			numPort.Value = new decimal(new int[] { 1024, 0, 0, 0 });
 			// 
 			// btnBrowse
 			// 
-			btnBrowse.Location = new Point(204, 433);
+			btnBrowse.Location = new Point(606, 489);
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(75, 23);
 			btnBrowse.TabIndex = 8;
@@ -177,7 +185,7 @@ namespace Synix_Control_Panel
 			// btnSave
 			// 
 			btnSave.Cursor = Cursors.Hand;
-			btnSave.Location = new Point(245, 528);
+			btnSave.Location = new Point(242, 586);
 			btnSave.Name = "btnSave";
 			btnSave.Size = new Size(138, 44);
 			btnSave.TabIndex = 9;
@@ -191,7 +199,7 @@ namespace Synix_Control_Panel
 			chkDefaultPath.BackColor = Color.Transparent;
 			chkDefaultPath.FlatStyle = FlatStyle.Flat;
 			chkDefaultPath.ForeColor = Color.White;
-			chkDefaultPath.Location = new Point(12, 428);
+			chkDefaultPath.Location = new Point(414, 484);
 			chkDefaultPath.Name = "chkDefaultPath";
 			chkDefaultPath.Size = new Size(157, 32);
 			chkDefaultPath.TabIndex = 10;
@@ -206,7 +214,7 @@ namespace Synix_Control_Panel
 			ltextLabel1.BackColor = Color.Transparent;
 			ltextLabel1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			ltextLabel1.ForeColor = Color.White;
-			ltextLabel1.Location = new Point(285, 435);
+			ltextLabel1.Location = new Point(687, 491);
 			ltextLabel1.Name = "ltextLabel1";
 			ltextLabel1.Size = new Size(73, 17);
 			ltextLabel1.TabIndex = 11;
@@ -218,7 +226,7 @@ namespace Synix_Control_Panel
 			lblPassword.BackColor = Color.Transparent;
 			lblPassword.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblPassword.ForeColor = Color.White;
-			lblPassword.Location = new Point(414, 9);
+			lblPassword.Location = new Point(12, 390);
 			lblPassword.Name = "lblPassword";
 			lblPassword.Size = new Size(109, 17);
 			lblPassword.TabIndex = 12;
@@ -226,7 +234,7 @@ namespace Synix_Control_Panel
 			// 
 			// txtPassword
 			// 
-			txtPassword.Location = new Point(414, 29);
+			txtPassword.Location = new Point(12, 410);
 			txtPassword.Name = "txtPassword";
 			txtPassword.Size = new Size(368, 23);
 			txtPassword.TabIndex = 13;
@@ -237,7 +245,7 @@ namespace Synix_Control_Panel
 			MaxPlayerLabel.BackColor = Color.Transparent;
 			MaxPlayerLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			MaxPlayerLabel.ForeColor = Color.White;
-			MaxPlayerLabel.Location = new Point(12, 242);
+			MaxPlayerLabel.Location = new Point(242, 240);
 			MaxPlayerLabel.Name = "MaxPlayerLabel";
 			MaxPlayerLabel.Size = new Size(76, 17);
 			MaxPlayerLabel.TabIndex = 14;
@@ -245,11 +253,11 @@ namespace Synix_Control_Panel
 			// 
 			// numMaxPlayers
 			// 
-			numMaxPlayers.Location = new Point(12, 262);
+			numMaxPlayers.Location = new Point(242, 260);
 			numMaxPlayers.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
 			numMaxPlayers.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
 			numMaxPlayers.Name = "numMaxPlayers";
-			numMaxPlayers.Size = new Size(76, 23);
+			numMaxPlayers.Size = new Size(74, 23);
 			numMaxPlayers.TabIndex = 15;
 			numMaxPlayers.Value = new decimal(new int[] { 10, 0, 0, 0 });
 			// 
@@ -259,7 +267,7 @@ namespace Synix_Control_Panel
 			MapLabel.BackColor = Color.Transparent;
 			MapLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			MapLabel.ForeColor = Color.White;
-			MapLabel.Location = new Point(12, 181);
+			MapLabel.Location = new Point(12, 179);
 			MapLabel.Name = "MapLabel";
 			MapLabel.Size = new Size(35, 17);
 			MapLabel.TabIndex = 16;
@@ -271,7 +279,7 @@ namespace Synix_Control_Panel
 			TextLabel3.BackColor = Color.Transparent;
 			TextLabel3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			TextLabel3.ForeColor = Color.White;
-			TextLabel3.Location = new Point(415, 359);
+			TextLabel3.Location = new Point(415, 314);
 			TextLabel3.Name = "TextLabel3";
 			TextLabel3.Size = new Size(124, 17);
 			TextLabel3.TabIndex = 18;
@@ -279,7 +287,7 @@ namespace Synix_Control_Panel
 			// 
 			// txtExtraArgs
 			// 
-			txtExtraArgs.Location = new Point(414, 466);
+			txtExtraArgs.Location = new Point(414, 422);
 			txtExtraArgs.Name = "txtExtraArgs";
 			txtExtraArgs.Size = new Size(368, 23);
 			txtExtraArgs.TabIndex = 19;
@@ -289,7 +297,7 @@ namespace Synix_Control_Panel
 			TextLabel7.AutoSize = true;
 			TextLabel7.BackColor = Color.Transparent;
 			TextLabel7.ForeColor = Color.White;
-			TextLabel7.Location = new Point(415, 448);
+			TextLabel7.Location = new Point(415, 404);
 			TextLabel7.Name = "TextLabel7";
 			TextLabel7.Size = new Size(257, 15);
 			TextLabel7.TabIndex = 20;
@@ -297,23 +305,22 @@ namespace Synix_Control_Panel
 			// 
 			// QueryPortLabel
 			// 
-			QueryPortLabel.AutoSize = true;
 			QueryPortLabel.BackColor = Color.Transparent;
 			QueryPortLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			QueryPortLabel.ForeColor = Color.White;
-			QueryPortLabel.Location = new Point(175, 242);
+			QueryPortLabel.Location = new Point(12, 304);
 			QueryPortLabel.Name = "QueryPortLabel";
-			QueryPortLabel.Size = new Size(76, 17);
+			QueryPortLabel.Size = new Size(53, 37);
 			QueryPortLabel.TabIndex = 21;
 			QueryPortLabel.Text = "Query Port";
 			// 
 			// numQueryPort
 			// 
-			numQueryPort.Location = new Point(175, 262);
+			numQueryPort.Location = new Point(12, 344);
 			numQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numQueryPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numQueryPort.Name = "numQueryPort";
-			numQueryPort.Size = new Size(63, 23);
+			numQueryPort.Size = new Size(53, 23);
 			numQueryPort.TabIndex = 22;
 			numQueryPort.Value = new decimal(new int[] { 27015, 0, 0, 0 });
 			// 
@@ -322,17 +329,17 @@ namespace Synix_Control_Panel
 			WarningLabel.AutoEllipsis = true;
 			WarningLabel.BackColor = Color.Transparent;
 			WarningLabel.ForeColor = Color.Red;
-			WarningLabel.Location = new Point(12, 12);
+			WarningLabel.Location = new Point(12, 3);
 			WarningLabel.Name = "WarningLabel";
-			WarningLabel.Size = new Size(375, 40);
+			WarningLabel.Size = new Size(771, 49);
 			WarningLabel.TabIndex = 23;
 			// 
 			// cmbWorldName
 			// 
 			cmbWorldName.FormattingEnabled = true;
-			cmbWorldName.Location = new Point(12, 201);
+			cmbWorldName.Location = new Point(12, 199);
 			cmbWorldName.Name = "cmbWorldName";
-			cmbWorldName.Size = new Size(186, 23);
+			cmbWorldName.Size = new Size(368, 23);
 			cmbWorldName.TabIndex = 24;
 			// 
 			// lblAdminPassword
@@ -341,7 +348,7 @@ namespace Synix_Control_Panel
 			lblAdminPassword.BackColor = Color.Transparent;
 			lblAdminPassword.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblAdminPassword.ForeColor = Color.White;
-			lblAdminPassword.Location = new Point(414, 70);
+			lblAdminPassword.Location = new Point(12, 449);
 			lblAdminPassword.Name = "lblAdminPassword";
 			lblAdminPassword.Size = new Size(154, 17);
 			lblAdminPassword.TabIndex = 25;
@@ -349,7 +356,7 @@ namespace Synix_Control_Panel
 			// 
 			// txtAdminPassword
 			// 
-			txtAdminPassword.Location = new Point(415, 90);
+			txtAdminPassword.Location = new Point(12, 469);
 			txtAdminPassword.Name = "txtAdminPassword";
 			txtAdminPassword.Size = new Size(368, 23);
 			txtAdminPassword.TabIndex = 26;
@@ -357,7 +364,7 @@ namespace Synix_Control_Panel
 			// cmbCompetitive
 			// 
 			cmbCompetitive.FormattingEnabled = true;
-			cmbCompetitive.Location = new Point(291, 138);
+			cmbCompetitive.Location = new Point(291, 136);
 			cmbCompetitive.Name = "cmbCompetitive";
 			cmbCompetitive.Size = new Size(89, 23);
 			cmbCompetitive.TabIndex = 27;
@@ -368,7 +375,7 @@ namespace Synix_Control_Panel
 			lblCompetitive.BackColor = Color.Transparent;
 			lblCompetitive.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblCompetitive.ForeColor = Color.White;
-			lblCompetitive.Location = new Point(294, 118);
+			lblCompetitive.Location = new Point(294, 116);
 			lblCompetitive.Name = "lblCompetitive";
 			lblCompetitive.Size = new Size(83, 17);
 			lblCompetitive.TabIndex = 28;
@@ -376,7 +383,7 @@ namespace Synix_Control_Panel
 			// 
 			// txtInstallPath
 			// 
-			txtInstallPath.Location = new Point(12, 466);
+			txtInstallPath.Location = new Point(414, 522);
 			txtInstallPath.Name = "txtInstallPath";
 			txtInstallPath.ReadOnly = true;
 			txtInstallPath.Size = new Size(368, 23);
@@ -389,7 +396,7 @@ namespace Synix_Control_Panel
 			textLabel2.BackColor = Color.Transparent;
 			textLabel2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			textLabel2.ForeColor = Color.White;
-			textLabel2.Location = new Point(175, 435);
+			textLabel2.Location = new Point(577, 491);
 			textLabel2.Name = "textLabel2";
 			textLabel2.Size = new Size(23, 17);
 			textLabel2.TabIndex = 30;
@@ -401,7 +408,7 @@ namespace Synix_Control_Panel
 			chkEnableRcon.BackColor = Color.White;
 			chkEnableRcon.FlatStyle = FlatStyle.Flat;
 			chkEnableRcon.ForeColor = Color.Black;
-			chkEnableRcon.Location = new Point(12, 305);
+			chkEnableRcon.Location = new Point(415, 59);
 			chkEnableRcon.Name = "chkEnableRcon";
 			chkEnableRcon.Size = new Size(104, 32);
 			chkEnableRcon.TabIndex = 31;
@@ -412,7 +419,7 @@ namespace Synix_Control_Panel
 			// 
 			// numRconPort
 			// 
-			numRconPort.Location = new Point(12, 360);
+			numRconPort.Location = new Point(415, 117);
 			numRconPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numRconPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
 			numRconPort.Name = "numRconPort";
@@ -422,9 +429,9 @@ namespace Synix_Control_Panel
 			// 
 			// txtRconPassword
 			// 
-			txtRconPassword.Location = new Point(100, 360);
+			txtRconPassword.Location = new Point(503, 116);
 			txtRconPassword.Name = "txtRconPassword";
-			txtRconPassword.Size = new Size(223, 23);
+			txtRconPassword.Size = new Size(280, 23);
 			txtRconPassword.TabIndex = 33;
 			// 
 			// lblRCONpassword
@@ -433,7 +440,7 @@ namespace Synix_Control_Panel
 			lblRCONpassword.BackColor = Color.Transparent;
 			lblRCONpassword.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblRCONpassword.ForeColor = Color.White;
-			lblRCONpassword.Location = new Point(100, 340);
+			lblRCONpassword.Location = new Point(503, 96);
 			lblRCONpassword.Name = "lblRCONpassword";
 			lblRCONpassword.Size = new Size(106, 17);
 			lblRCONpassword.TabIndex = 35;
@@ -445,7 +452,7 @@ namespace Synix_Control_Panel
 			chkEnableSchedule.BackColor = Color.FromArgb(32, 32, 32);
 			chkEnableSchedule.FlatStyle = FlatStyle.Flat;
 			chkEnableSchedule.ForeColor = Color.White;
-			chkEnableSchedule.Location = new Point(415, 128);
+			chkEnableSchedule.Location = new Point(415, 164);
 			chkEnableSchedule.Name = "chkEnableSchedule";
 			chkEnableSchedule.Size = new Size(164, 32);
 			chkEnableSchedule.TabIndex = 0;
@@ -460,7 +467,7 @@ namespace Synix_Control_Panel
 			lblWorldSeed.BackColor = Color.Transparent;
 			lblWorldSeed.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblWorldSeed.ForeColor = Color.White;
-			lblWorldSeed.Location = new Point(204, 181);
+			lblWorldSeed.Location = new Point(12, 240);
 			lblWorldSeed.Name = "lblWorldSeed";
 			lblWorldSeed.Size = new Size(79, 17);
 			lblWorldSeed.TabIndex = 46;
@@ -468,9 +475,9 @@ namespace Synix_Control_Panel
 			// 
 			// txtWorldSeed
 			// 
-			txtWorldSeed.Location = new Point(204, 201);
+			txtWorldSeed.Location = new Point(12, 260);
 			txtWorldSeed.Name = "txtWorldSeed";
-			txtWorldSeed.Size = new Size(176, 23);
+			txtWorldSeed.Size = new Size(224, 23);
 			txtWorldSeed.TabIndex = 47;
 			txtWorldSeed.KeyPress += txtWorldSeed_KeyPress;
 			// 
@@ -480,7 +487,7 @@ namespace Synix_Control_Panel
 			lblRCONport.BackColor = Color.Transparent;
 			lblRCONport.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblRCONport.ForeColor = Color.White;
-			lblRCONport.Location = new Point(12, 340);
+			lblRCONport.Location = new Point(415, 96);
 			lblRCONport.Name = "lblRCONport";
 			lblRCONport.Size = new Size(74, 17);
 			lblRCONport.TabIndex = 48;
@@ -491,7 +498,7 @@ namespace Synix_Control_Panel
 			lblaruments.AutoEllipsis = true;
 			lblaruments.BackColor = Color.Transparent;
 			lblaruments.ForeColor = Color.White;
-			lblaruments.Location = new Point(414, 376);
+			lblaruments.Location = new Point(414, 331);
 			lblaruments.Name = "lblaruments";
 			lblaruments.Size = new Size(368, 66);
 			lblaruments.TabIndex = 52;
@@ -499,29 +506,28 @@ namespace Synix_Control_Panel
 			// 
 			// lblAppPort
 			// 
-			lblAppPort.AutoSize = true;
 			lblAppPort.BackColor = Color.Transparent;
 			lblAppPort.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblAppPort.ForeColor = Color.White;
-			lblAppPort.Location = new Point(261, 242);
+			lblAppPort.Location = new Point(71, 305);
 			lblAppPort.Name = "lblAppPort";
-			lblAppPort.Size = new Size(63, 17);
+			lblAppPort.Size = new Size(53, 36);
 			lblAppPort.TabIndex = 55;
 			lblAppPort.Text = "App Port";
 			// 
 			// numAppPort
 			// 
-			numAppPort.Location = new Point(261, 262);
+			numAppPort.Location = new Point(71, 344);
 			numAppPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 			numAppPort.Minimum = new decimal(new int[] { 10000, 0, 0, 0 });
 			numAppPort.Name = "numAppPort";
-			numAppPort.Size = new Size(63, 23);
+			numAppPort.Size = new Size(53, 23);
 			numAppPort.TabIndex = 56;
 			numAppPort.Value = new decimal(new int[] { 10000, 0, 0, 0 });
 			// 
 			// btnViewArgs
 			// 
-			btnViewArgs.Location = new Point(542, 424);
+			btnViewArgs.Location = new Point(542, 376);
 			btnViewArgs.Name = "btnViewArgs";
 			btnViewArgs.Size = new Size(158, 21);
 			btnViewArgs.TabIndex = 57;
@@ -534,7 +540,7 @@ namespace Synix_Control_Panel
 			chkUpdateOnStart.Appearance = Appearance.Button;
 			chkUpdateOnStart.BackColor = Color.FromArgb(32, 32, 32);
 			chkUpdateOnStart.FlatStyle = FlatStyle.Flat;
-			chkUpdateOnStart.Location = new Point(415, 166);
+			chkUpdateOnStart.Location = new Point(415, 202);
 			chkUpdateOnStart.Name = "chkUpdateOnStart";
 			chkUpdateOnStart.Size = new Size(164, 32);
 			chkUpdateOnStart.TabIndex = 58;
@@ -544,7 +550,7 @@ namespace Synix_Control_Panel
 			// 
 			// btnEditSchedule
 			// 
-			btnEditSchedule.Location = new Point(585, 131);
+			btnEditSchedule.Location = new Point(585, 167);
 			btnEditSchedule.Name = "btnEditSchedule";
 			btnEditSchedule.Size = new Size(104, 26);
 			btnEditSchedule.TabIndex = 62;
@@ -554,7 +560,7 @@ namespace Synix_Control_Panel
 			// 
 			// button1
 			// 
-			button1.Location = new Point(414, 528);
+			button1.Location = new Point(415, 585);
 			button1.Name = "button1";
 			button1.Size = new Size(138, 44);
 			button1.TabIndex = 63;
@@ -565,7 +571,7 @@ namespace Synix_Control_Panel
 			// chkBackupOnStart
 			// 
 			chkBackupOnStart.BackColor = Color.Transparent;
-			chkBackupOnStart.Location = new Point(585, 167);
+			chkBackupOnStart.Location = new Point(585, 203);
 			chkBackupOnStart.Name = "chkBackupOnStart";
 			chkBackupOnStart.Size = new Size(164, 32);
 			chkBackupOnStart.TabIndex = 64;
@@ -575,7 +581,7 @@ namespace Synix_Control_Panel
 			// chkEnableDiscord
 			// 
 			chkEnableDiscord.BackColor = Color.Transparent;
-			chkEnableDiscord.Location = new Point(415, 204);
+			chkEnableDiscord.Location = new Point(415, 240);
 			chkEnableDiscord.Name = "chkEnableDiscord";
 			chkEnableDiscord.Size = new Size(164, 32);
 			chkEnableDiscord.TabIndex = 65;
@@ -585,14 +591,14 @@ namespace Synix_Control_Panel
 			// 
 			// txtDiscordWebhook
 			// 
-			txtDiscordWebhook.Location = new Point(415, 242);
+			txtDiscordWebhook.Location = new Point(415, 278);
 			txtDiscordWebhook.Name = "txtDiscordWebhook";
 			txtDiscordWebhook.Size = new Size(368, 23);
 			txtDiscordWebhook.TabIndex = 66;
 			// 
 			// btnTestDiscord
 			// 
-			btnTestDiscord.Location = new Point(585, 208);
+			btnTestDiscord.Location = new Point(585, 244);
 			btnTestDiscord.Name = "btnTestDiscord";
 			btnTestDiscord.Size = new Size(115, 23);
 			btnTestDiscord.TabIndex = 67;
@@ -605,7 +611,7 @@ namespace Synix_Control_Panel
 			lblConfigWarning.BackColor = Color.Red;
 			lblConfigWarning.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblConfigWarning.ForeColor = Color.Yellow;
-			lblConfigWarning.Location = new Point(12, 502);
+			lblConfigWarning.Location = new Point(12, 554);
 			lblConfigWarning.Name = "lblConfigWarning";
 			lblConfigWarning.Size = new Size(771, 22);
 			lblConfigWarning.TabIndex = 68;
@@ -613,13 +619,80 @@ namespace Synix_Control_Panel
 			lblConfigWarning.TextAlign = ContentAlignment.MiddleCenter;
 			lblConfigWarning.Visible = false;
 			// 
+			// lblWorldSize
+			// 
+			lblWorldSize.BackColor = Color.Transparent;
+			lblWorldSize.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblWorldSize.ForeColor = Color.White;
+			lblWorldSize.Location = new Point(130, 304);
+			lblWorldSize.Name = "lblWorldSize";
+			lblWorldSize.Size = new Size(50, 37);
+			lblWorldSize.TabIndex = 69;
+			lblWorldSize.Text = "World \r\nSize";
+			// 
+			// numWorldSize
+			// 
+			numWorldSize.Location = new Point(130, 344);
+			numWorldSize.Maximum = new decimal(new int[] { 5000, 0, 0, 0 });
+			numWorldSize.Minimum = new decimal(new int[] { 50, 0, 0, 0 });
+			numWorldSize.Name = "numWorldSize";
+			numWorldSize.Size = new Size(50, 23);
+			numWorldSize.TabIndex = 70;
+			numWorldSize.Value = new decimal(new int[] { 4000, 0, 0, 0 });
+			// 
+			// cmbGameVersion
+			// 
+			cmbGameVersion.FormattingEnabled = true;
+			cmbGameVersion.Location = new Point(186, 344);
+			cmbGameVersion.Name = "cmbGameVersion";
+			cmbGameVersion.Size = new Size(93, 23);
+			cmbGameVersion.TabIndex = 71;
+			// 
+			// lblGameVersion
+			// 
+			lblGameVersion.BackColor = Color.Transparent;
+			lblGameVersion.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblGameVersion.ForeColor = Color.White;
+			lblGameVersion.Location = new Point(188, 305);
+			lblGameVersion.Name = "lblGameVersion";
+			lblGameVersion.Size = new Size(91, 36);
+			lblGameVersion.TabIndex = 72;
+			lblGameVersion.Text = "Game Version";
+			// 
+			// label1
+			// 
+			label1.BackColor = Color.Transparent;
+			label1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			label1.ForeColor = Color.White;
+			label1.Location = new Point(285, 305);
+			label1.Name = "label1";
+			label1.Size = new Size(72, 36);
+			label1.TabIndex = 73;
+			label1.Text = "Server RAM (GB)";
+			// 
+			// numRam
+			// 
+			numRam.Location = new Point(285, 344);
+			numRam.Maximum = new decimal(new int[] { 128, 0, 0, 0 });
+			numRam.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+			numRam.Name = "numRam";
+			numRam.Size = new Size(60, 23);
+			numRam.TabIndex = 74;
+			numRam.Value = new decimal(new int[] { 2, 0, 0, 0 });
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
-			ClientSize = new Size(795, 584);
+			ClientSize = new Size(795, 642);
+			Controls.Add(numRam);
+			Controls.Add(label1);
+			Controls.Add(lblGameVersion);
+			Controls.Add(cmbGameVersion);
+			Controls.Add(numWorldSize);
+			Controls.Add(lblWorldSize);
 			Controls.Add(lblConfigWarning);
 			Controls.Add(WarningLabel);
 			Controls.Add(btnTestDiscord);
@@ -680,6 +753,8 @@ namespace Synix_Control_Panel
 			((System.ComponentModel.ISupportInitialize)numQueryPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numRconPort).EndInit();
 			((System.ComponentModel.ISupportInitialize)numAppPort).EndInit();
+			((System.ComponentModel.ISupportInitialize)numWorldSize).EndInit();
+			((System.ComponentModel.ISupportInitialize)numRam).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -725,7 +800,7 @@ namespace Synix_Control_Panel
 		private TextBox txtWorldSeed;
 		private Label lblRCONport;
 		private Label lblaruments;
-		private NumericUpDown numericUpDown1;
+		private NumericUpDown numWorldSize;
 		private Label lblAppPort;
 		private NumericUpDown numAppPort;
 		private Button btnViewArgs;
@@ -737,5 +812,10 @@ namespace Synix_Control_Panel
 		private TextBox txtDiscordWebhook;
 		private Button btnTestDiscord;
 		private Label lblConfigWarning;
+		private Label lblWorldSize;
+		private ComboBox cmbGameVersion;
+		private Label lblGameVersion;
+		private Label label1;
+		private NumericUpDown numRam;
 	}
 }

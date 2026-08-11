@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.Database;
 using Synix_Control_Panel.SynixApp.Database;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -65,15 +66,12 @@ namespace Synix_Control_Panel.SynixEngine
 				(query, "Query Port")
 			};
 
-			// 🎯 Only check RCON if the user enabled it
 			if (checkRcon) portChecks.Add((rcon, "RCON Port"));
 
-			// 🎯 Only check App Port if Rust is active
 			if (checkAppPort) portChecks.Add((app, "App Port (Rust+)"));
 
 			foreach (var check in portChecks)
 			{
-				// 1. Internal Database Check
 				var owner = GetPortCollisionOwner(check.Value, excluding);
 				if (owner != null)
 				{
@@ -82,7 +80,6 @@ namespace Synix_Control_Panel.SynixEngine
 					return false;
 				}
 
-				// 2. OS Socket Check
 				if (IsPortInUseLocally(check.Value))
 				{
 					MessageBox.Show($"Socket Conflict: The {check.Name} ({check.Value}) is currently occupied by another system process.",
@@ -91,7 +88,6 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 
-			// 3. Rust Protocol Check
 			if (checkAppPort && gameName.Contains("Rust", StringComparison.OrdinalIgnoreCase) && app < 10000)
 			{
 				MessageBox.Show("Protocol Error: Rust+ (App Port) must be 10000 or higher.", "Logic Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -105,7 +101,6 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!isEditMode && Directory.Exists(path))
 			{
-				// Check if the folder is empty
 				if (Directory.EnumerateFileSystemEntries(path).Any())
 				{
 					var result = MessageBox.Show("This folder isn't empty. Installing here might overwrite files. Continue?",
@@ -118,19 +113,33 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public bool ShouldBlockForConfig(GameServer server)
 		{
-			// If it's the first time running, show the warning
 			if (server.IsFirstBoot)
 			{
-				MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
+				DialogResult result = DialogResult.Cancel;
 
-				using (var warningForm = new WarningDatabase(server))
+				if (MainGUI.Instance != null && MainGUI.Instance.InvokeRequired)
 				{
-					warningForm.ShowDialog();
-					return true;
+					MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
+					MainGUI.Instance.Invoke((Action)(() =>
+					{
+						using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
+						{
+							result = warningForm.ShowDialog(MainGUI.Instance);
+						}
+					}));
 				}
+				else
+				{
+					using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
+					{
+						result = warningForm.ShowDialog(MainGUI.Instance);
+					}
+				}
+
+				return result != DialogResult.OK;
 			}
 
-			return false; // Already been booted before, let it through
+			return false;
 		}
 
 		public bool ValidateIntegrityAndReport(GameServer server)
@@ -157,7 +166,6 @@ namespace Synix_Control_Panel.SynixEngine
 			lockMessage = string.Empty;
 			string status = server.Status ?? "";
 
-			// 1. Define states ONCE
 			bool isTransitioning = status == StatusManager.GetStatus(ServerState.Starting) ||
 								   status == StatusManager.GetStatus(ServerState.Stopping) ||
 								   status == StatusManager.GetStatus(ServerState.Installing) ||
@@ -170,7 +178,6 @@ namespace Synix_Control_Panel.SynixEngine
 			bool isStopped = status == StatusManager.GetStatus(ServerState.Stopped);
 			bool isCrashed = status == StatusManager.GetStatus(ServerState.Crashed);
 
-			// 2. Evaluate based on trigger
 			bool isLocked = false;
 
 			switch (serverTrigger)
@@ -204,21 +211,47 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
 		{
-			var primaryMatch = MainGUI.serverList.FirstOrDefault(s =>
-				s != excluding && s.Port == port);
-
-			if (primaryMatch != null) return primaryMatch.ServerName;
-
-			var secondaryMatch = MainGUI.serverList.FirstOrDefault(s =>
-				s != excluding &&
-				(s.QueryPort == port || (s.AppPort.HasValue && s.AppPort.Value == port)));
-
-			if (secondaryMatch != null)
+			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
 			{
-				return secondaryMatch.ServerName;
-			}
+				GameInfo? gameData = GameDatabase.GetGame(server.Game);
+				string requiredArgs = gameData?.RequiredArgs ?? "";
+				string rconSyntax = gameData?.RconSyntax ?? "";
 
-			return null;
+				if (server == excluding)
+					return false;
+
+				if (server.Port == port && requiredArgs.Contains("{port}", StringComparison.OrdinalIgnoreCase))
+					return true;
+
+				bool usesQueryPort = requiredArgs.Contains("{query}", StringComparison.OrdinalIgnoreCase);
+
+				if (usesQueryPort && server.QueryPort > 0 && server.QueryPort == port)
+				{
+					return true;
+				}
+
+				bool usesAppPort = requiredArgs.Contains("{app_port}", StringComparison.OrdinalIgnoreCase);
+
+				if (usesAppPort &&
+					server.AppPort.HasValue &&
+					server.AppPort.Value > 0 &&
+					server.AppPort.Value == port)
+				{
+					return true;
+				}
+
+				bool usesRconPort =
+					requiredArgs.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase) ||
+					requiredArgs.Contains("{rcon}", StringComparison.OrdinalIgnoreCase) ||
+					rconSyntax.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase);
+
+				return server.EnableRcon &&
+					usesRconPort &&
+					server.RconPort > 0 &&
+					server.RconPort == port;
+			});
+
+			return owner?.ServerName;
 		}
 
 		public bool PassResourceGuard(out string message)
@@ -276,6 +309,48 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 			return true;
+		}
+
+		public static int GetSystemJavaVersion()
+		{
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo
+				{
+					FileName = "java",
+					Arguments = "-version",
+					RedirectStandardError = true, // Java prints version info to the Error stream, not Output
+					UseShellExecute = false,
+					CreateNoWindow = true
+				};
+
+				using Process proc = Process.Start(psi);
+				string output = proc.StandardError.ReadToEnd();
+				proc.WaitForExit();
+
+				// Older Java 8 formats like: java version "1.8.0_xxx"
+				if (output.Contains("version \"1.8")) return 8;
+				if (output.Contains("version \"1.7")) return 7;
+
+				// Modern Java 9+ formats like: openjdk version "21.0.2"
+				int startIndex = output.IndexOf("version \"") + 9;
+				if (startIndex > 8)
+				{
+					int endIndex = output.IndexOf('.', startIndex);
+					if (endIndex == -1) endIndex = output.IndexOf('"', startIndex);
+
+					if (endIndex > startIndex)
+					{
+						string versionStr = output.Substring(startIndex, endIndex - startIndex);
+						if (int.TryParse(versionStr, out int version)) return version;
+					}
+				}
+			}
+			catch
+			{
+				// Triggers if Java is completely missing or not added to Windows PATH
+			}
+			return 0;
 		}
 	}
 }

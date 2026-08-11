@@ -41,9 +41,16 @@ namespace Synix_Control_Panel.SynixEngine
 
 			string cleanGame = GetSafeName(server.Game);
 			string cleanServer = GetSafeName(server.ServerName);
+			string baseBackupFolder = @"C:\Synix\BackupGames";
 
-			string backupRoot = Path.Combine(@"C:\Synix\BackupGames", cleanGame, cleanServer);
+			if (Properties.Settings.Default.UseCustomBackupPath &&
+				!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&
+				Directory.Exists(Properties.Settings.Default.CustomBackupPath))
+			{
+				baseBackupFolder = Properties.Settings.Default.CustomBackupPath;
+			}
 
+			string backupRoot = Path.Combine(baseBackupFolder, cleanGame, cleanServer);
 			string timestamp = DateTime.UtcNow.ToString("yyyy_MM_dd_HHmmss");
 			string zipPath = Path.Combine(backupRoot, $"backup_{timestamp}.zip");
 
@@ -51,10 +58,9 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (!Directory.Exists(backupRoot)) Directory.CreateDirectory(backupRoot);
 
-				var files = new DirectoryInfo(backupRoot).GetFiles("*.zip")
-								.OrderByDescending(f => f.CreationTime).ToList();
+				var files = new DirectoryInfo(backupRoot).GetFiles("*.zip").OrderByDescending(f => f.CreationTime).ToList();
 
-				while (files.Count >= 3)
+				while (files.Count >= Properties.Settings.Default.MaxBackups)
 				{
 					files.Last().Delete();
 					files.RemoveAt(files.Count - 1);
@@ -62,7 +68,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (Directory.Exists(sourceDir))
 				{
-					ZipFile.CreateFromDirectory(sourceDir, zipPath, CompressionLevel.Fastest, false);
+					await Task.Run(() =>
+					{
+						ZipFile.CreateFromDirectory(
+							sourceDirectoryName: sourceDir,
+							destinationArchiveFileName: zipPath,
+							compressionLevel: CompressionLevel.Optimal,
+							includeBaseDirectory: true
+						);
+					});
 				}
 				Log($"[💾 BACKUP] Backup location: {zipPath}.", Color.LimeGreen);
 				Log($"[💾 BACKUP] Finished backing up {server.ServerName}.", Color.LimeGreen);

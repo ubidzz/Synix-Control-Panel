@@ -39,23 +39,23 @@ namespace Synix_Control_Panel.Database
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WarningDatabase));
-			button1 = new Button();
+			btnStart = new Button();
 			btnNo = new Button();
 			lblWarningText = new LinkLabel();
 			SuspendLayout();
 			// 
-			// button1
+			// btnStart
 			// 
-			button1.Dock = DockStyle.Bottom;
-			button1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			button1.ForeColor = Color.ForestGreen;
-			button1.Location = new Point(0, 382);
-			button1.Name = "button1";
-			button1.Size = new Size(576, 46);
-			button1.TabIndex = 0;
-			button1.Text = "Open Config File";
-			button1.UseVisualStyleBackColor = true;
-			button1.Click += btnYes_Click;
+			btnStart.Dock = DockStyle.Bottom;
+			btnStart.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			btnStart.ForeColor = Color.ForestGreen;
+			btnStart.Location = new Point(0, 382);
+			btnStart.Name = "btnStart";
+			btnStart.Size = new Size(576, 46);
+			btnStart.TabIndex = 0;
+			btnStart.Text = "Start Server";
+			btnStart.UseVisualStyleBackColor = true;
+			btnStart.Click += btnStart_Click;
 			// 
 			// btnNo
 			// 
@@ -66,7 +66,7 @@ namespace Synix_Control_Panel.Database
 			btnNo.Name = "btnNo";
 			btnNo.Size = new Size(576, 46);
 			btnNo.TabIndex = 1;
-			btnNo.Text = "Remine Me Later";
+			btnNo.Text = "Remind Me Later";
 			btnNo.UseVisualStyleBackColor = true;
 			btnNo.Click += btnNo_Click;
 			// 
@@ -94,7 +94,7 @@ namespace Synix_Control_Panel.Database
 			ControlBox = false;
 			Controls.Add(lblWarningText);
 			Controls.Add(btnNo);
-			Controls.Add(button1);
+			Controls.Add(btnStart);
 			Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			ForeColor = Color.Black;
 			Icon = (Icon)resources.GetObject("$this.Icon");
@@ -108,7 +108,7 @@ namespace Synix_Control_Panel.Database
 
 		#endregion
 
-		private Button button1;
+		private Button btnStart;
 		private Button btnNo;
 		private LinkLabel lblWarningText;
 	}

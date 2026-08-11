@@ -16,6 +16,7 @@ using System.Text.Json.Serialization;
 using static Synix_Control_Panel.SynixApp.Database.GameDatabase;
 using static Synix_Control_Panel.SynixEngine.Core;
 
+//------- Database -------
 public class GameInfo
 {
 	public string Game { get; init; } = string.Empty;
@@ -34,6 +35,10 @@ public class GameInfo
 	public string AppID { get; set; } = string.Empty;
 	[JsonIgnore]
 	public string ExeName { get; set; } = string.Empty;
+	[JsonIgnore]
+	public string DownloadUrl { get; init; } = string.Empty;
+	public int WorldSize { get; set; }
+	public string WorldSeed { get; set; } = "12345";
 	[JsonIgnore]
 	public string RequiredArgs { get; set; } = string.Empty;
 	[JsonIgnore]
@@ -54,8 +59,11 @@ public class GameInfo
 	[JsonIgnore]
 	public int MaxPlayersFromQuery { get; set; } = 0;
 	public DateTime? LastProbeTime { get; set; }
+	[JsonIgnore]
+	public string IconUrl { get; init; } = string.Empty;
 }
 
+//----------- json ---------------
 public class GameServer : GameInfo
 {
 	public string InstallPath { get; set; } = string.Empty;
@@ -80,6 +88,7 @@ public class GameServer : GameInfo
 	public string RconPassword { get; set; } = "";
 	public bool IsFirstBoot { get; set; } = true;
 	public string WorldSeed { get; set; } = "12345";
+	public int WorldSize { get; set; }
 	[JsonIgnore]
 	public string PlayerCount => $"{CurrentPlayers} / {MaxPlayers}";
 	public int? AppPort { get; set; } = 10777;
@@ -90,6 +99,8 @@ public class GameServer : GameInfo
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
 	public bool IsProbing { get; set; } = false;
+	public string GameVersion { get; set; }
+	public int MaxRam { get; set; }
 
 	[JsonIgnore]
 	public string Uptime

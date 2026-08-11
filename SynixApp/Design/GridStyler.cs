@@ -28,6 +28,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private static Font _boldStatusFont = null;
 		private static readonly SolidBrush _rowDarkGreyBrush = new SolidBrush(RowDarkGrey);
 		private static readonly Pen _faintDividerPen = new Pen(Color.FromArgb(45, 45, 45));
+		private static readonly Font _settingsFont = new Font("Segoe UI Symbol", 15, FontStyle.Bold);
+		private static readonly Font _closeFont = new Font("Segoe UI", 10, FontStyle.Bold);
 
 		public static void DarkTheme(DataGridView dgv)
 		{
@@ -54,6 +56,70 @@ namespace Synix_Control_Panel.SynixApp.Design
 				col.HeaderCell.Style.BackColor = HeaderGrey;
 				col.HeaderCell.Style.ForeColor = Color.Cyan;
 			}
+		}
+
+		public static void StyleSettingsButton(Button btn, Color? hoverColor = null)
+		{
+			btn.FlatStyle = FlatStyle.Flat;
+			btn.FlatAppearance.BorderSize = 0;
+			btn.BackColor = Color.Transparent;
+			btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btn.Text = "";
+			btn.TabStop = false;
+
+			btn.Paint += (s, e) =>
+			{
+				Button b = (Button)s;
+				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
+				bool isHovering = b.ClientRectangle.Contains(mousePos);
+				bool isPressed = isHovering && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
+
+				Color bgColor = Color.WhiteSmoke;
+				Color fgColor = Color.Black;
+
+				if (isPressed)
+				{
+					bgColor = Color.DarkGray;
+				}
+				else if (isHovering)
+				{
+					bgColor = hoverColor ?? Color.FromArgb(200, 200, 200);
+				}
+
+				using (var path = GetRoundedPath(b.ClientRectangle, 6))
+				using (var brush = new SolidBrush(bgColor))
+				{
+					e.Graphics.FillPath(brush, path);
+				}
+
+				int xOffset = 0;
+				int yOffset = -2;
+				int fontSize = 15;
+
+				Rectangle textRect = new Rectangle(
+					b.ClientRectangle.X + xOffset,
+					b.ClientRectangle.Y + yOffset,
+					b.ClientRectangle.Width,
+					b.ClientRectangle.Height
+				);
+
+				TextRenderer.DrawText(
+					e.Graphics,
+					"⚙",
+					_settingsFont,
+					textRect,
+					fgColor,
+					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding
+				);
+			};
+
+			btn.MouseEnter += (s, e) => btn.Invalidate();
+			btn.MouseLeave += (s, e) => btn.Invalidate();
+			btn.MouseDown += (s, e) => btn.Invalidate();
+			btn.MouseUp += (s, e) => btn.Invalidate();
 		}
 
 		public static void StyleMinimizeButton(Button btn)
@@ -205,7 +271,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 				TextRenderer.DrawText(
 					e.Graphics,
 					"✕",
-					new Font("Segoe UI", 10, FontStyle.Bold),
+					_closeFont,
 					b.ClientRectangle,
 					fgColor,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
@@ -242,18 +308,20 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (dgv == null || dgv.Width == 0 || dgv.Height == 0) return;
 
 			int diameter = radius * 2;
-			GraphicsPath path = new GraphicsPath();
 
-			path.StartFigure();
-			path.AddArc(new Rectangle(0, 0, diameter, diameter), 180, 90);
-			path.AddArc(new Rectangle(dgv.Width - diameter, 0, diameter, diameter), 270, 90);
-			path.AddArc(new Rectangle(dgv.Width - diameter, dgv.Height - diameter, diameter, diameter), 0, 90);
-			path.AddArc(new Rectangle(0, dgv.Height - diameter, diameter, diameter), 90, 90);
-			path.CloseFigure();
+			using (GraphicsPath path = new GraphicsPath())
+			{
+				path.StartFigure();
+				path.AddArc(new Rectangle(0, 0, diameter, diameter), 180, 90);
+				path.AddArc(new Rectangle(dgv.Width - diameter, 0, diameter, diameter), 270, 90);
+				path.AddArc(new Rectangle(dgv.Width - diameter, dgv.Height - diameter, diameter, diameter), 0, 90);
+				path.AddArc(new Rectangle(0, dgv.Height - diameter, diameter, diameter), 90, 90);
+				path.CloseFigure();
 
-			Region oldRegion = dgv.Region;
-			dgv.Region = new Region(path);
-			oldRegion?.Dispose();
+				Region oldRegion = dgv.Region;
+				dgv.Region = new Region(path);
+				oldRegion?.Dispose();
+			}
 		}
 
 		public static void ApplyTransparentTheme(DataGridView dgv)

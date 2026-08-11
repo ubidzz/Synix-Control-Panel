@@ -49,8 +49,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 			chk.AutoSize = false;
 			chk.BackColor = Color.Transparent;
 			chk.Tag = labelPrefix; // Ensure the prefix is stored in the Tag for the paint handler
-
-			// 🎯 THE FIX: Use a named method instead of an anonymous lambda to prevent event stacking leaks
 			chk.Paint -= Chk_CustomPaint;
 			chk.Paint += Chk_CustomPaint;
 
@@ -152,21 +150,26 @@ namespace Synix_Control_Panel.SynixApp.Design
 					e.Graphics.FillPath(brush, path);
 			}
 
-			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter;
+			// 🎯 NEW FIX: Added TextFormatFlags.WordBreak to allow text to wrap to the next line!
+			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak;
 
 			string align = lbl.Tag?.ToString() ?? "MiddleCenter";
 
 			if (align == "MiddleRight")
 			{
-				flags = TextFormatFlags.VerticalCenter | TextFormatFlags.Right;
+				flags = TextFormatFlags.VerticalCenter | TextFormatFlags.Right | TextFormatFlags.WordBreak;
 			}
 			else if (align == "MiddleLeft")
 			{
-				flags = TextFormatFlags.VerticalCenter | TextFormatFlags.Left;
+				flags = TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.WordBreak;
 			}
 			else if (align == "TopCenter")
 			{
-				flags = TextFormatFlags.Top | TextFormatFlags.HorizontalCenter;
+				flags = TextFormatFlags.Top | TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak;
+			}
+			else if (align == "TopLeft")
+			{
+				flags = TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak;
 			}
 
 			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, lbl.ClientRectangle, lbl.ForeColor, flags);

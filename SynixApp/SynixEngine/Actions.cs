@@ -42,21 +42,36 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void OpenConfigEditor(GameServer server)
 		{
+			if (server == null) return;
+
 			var blueprint = GameDatabase.GetGame(server.Game);
 
 			if (blueprint == null || string.IsNullOrEmpty(blueprint.RelativeConfigPath))
 			{
-				MessageBox.Show("This game does not have a config path defined.", "No Config");
+				Log("This game does not have a config path defined.", Color.Red, true);
 				return;
 			}
 
-			string cleanIdentity = server.ServerName.Replace(" ", "_");
+			if (string.IsNullOrWhiteSpace(server.InstallPath))
+			{
+				Log("Server installation path is not set.", Color.Red, true);
+				return;
+			}
+
+			string cleanIdentity = !string.IsNullOrWhiteSpace(server.ServerName)
+				? server.ServerName.Replace(" ", "_")
+				: "Server";
+
+			string worldName = server.WorldName ?? "";
+
 			string resolvedRelativePath = blueprint.RelativeConfigPath
 				.Replace("{Identity}", cleanIdentity)
 				.Replace("{ServerName}", cleanIdentity)
-				.Replace("{map}", server.WorldName)
+				.Replace("{map}", worldName)
 				.Replace("{port}", server.Port.ToString())
-				.Replace("{query}", server.QueryPort.ToString());
+				.Replace("{query}", server.QueryPort.ToString())
+				.Replace('/', Path.DirectorySeparatorChar)
+				.Replace('\\', Path.DirectorySeparatorChar);
 
 			string fullPath = Path.Combine(server.InstallPath, resolvedRelativePath);
 
@@ -69,7 +84,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				MessageBox.Show($"Could not find the config file at:\n{fullPath}", "Missing Config");
+				Log($"Could not find the config file at:\n{fullPath}", Color.Red, true);
 			}
 		}
 
@@ -81,7 +96,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				Log($"[🚨 ERROR] Folder does not exist: {server.InstallPath}", Color.Red);
+				Log($"[🚨 ERROR] Folder does not exist: {server.InstallPath}", Color.Red, true);
 			}
 		}
 
@@ -90,34 +105,55 @@ namespace Synix_Control_Panel.SynixEngine
 			string status = server.Status ?? "";
 			if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating) || (server.PID.HasValue && server.PID > 0))
 			{
-				Log("Cannot delete an active or installing server.", Color.Red);
+				Log("Cannot delete an active or installing server.", Color.Red, true);
 				return;
 			}
 
-			DialogResult confirm = MessageBox.Show($"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?\n\n" +
-												   $"This will wipe: {server.InstallPath}",
-												   "Confirm Total Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-			if (confirm == DialogResult.Yes)
+			var page = new TaskDialogPage()
 			{
+				Caption = "Confirm Total Deletion",
+				Heading = $"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?",
+				Text = $"This will wipe the installation at:\n{server.InstallPath}",
+				Icon = TaskDialogIcon.Warning,
+				Buttons = { TaskDialogButton.Yes, TaskDialogButton.No },
+
+				Verification = new TaskDialogVerificationCheckBox()
+				{
+					Text = "Also delete all server backup archives"
+				}
+			};
+
+			TaskDialogButton result = TaskDialog.ShowDialog(MainGUI.Instance, page);
+
+			if (result == TaskDialogButton.Yes)
+			{
+				bool deleteBackups = page.Verification.Checked;
+
 				try
 				{
-					if (MainGUI.serverList.Contains(server))
+					// --- 🛡️ ADMIN TASKS (Firewall Cleanup) ---
+					if (Properties.Settings.Default.enableRunAsAdmin)
 					{
-						MainGUI.serverList.Remove(server);
+						string serverExePath = Path.Combine(server.InstallPath, server.ExeName);
+
+						if (File.Exists(serverExePath))
+						{
+							CleanFirewallRules(serverExePath);
+						}
 					}
 
-					FolderHandler.ServerFolder.Delete(server, (msg, Color) =>
+					FolderHandler.ServerFolder.Delete(server, deleteBackups, (msg, logColor) =>
 					{
-						Core.Instance.Log((msg));
+						Log(msg, logColor);
 					});
 
-					Core.Instance.UpdateGridStatus();
+					UpdateGridStatus();
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show($"Files were partially deleted, but an error occurred: {ex.Message}");
-					Core.Instance.UpdateGridStatus();
+					Log($"Files were partially deleted, but an error occurred:\n{ex.Message}", Color.Red, true);
+					MessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					UpdateGridStatus();
 				}
 			}
 		}
@@ -136,7 +172,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				Log($"[🚨 SYNIX] There are no created backups at: {fullPath}", Color.Yellow);
+				Log($"[🚨 SYNIX] There are no created backups at: {fullPath}", Color.Yellow, true);
 			}
 		}
 
@@ -185,11 +221,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{ return; }
 
 			var gameData = GameDatabase.GetGame(server.Game);
-			string appId = gameData?.AppID ?? "";
 
-			if (string.IsNullOrEmpty(appId))
+			// Guard against null blueprint or missing AppID
+			if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 			{
-				Log($"Could not find the AppID for the {gameData} game.", Color.Red);
+				Log($"Could not find the database blueprint or AppID for {server.Game}.", Color.Red, true);
 				return;
 			}
 
@@ -220,7 +256,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				// 🎯 THE AUTOMATED MANIFEST NUKE
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
-				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{appId}.acf");
+				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf"); // Used gameData object
 
 				if (File.Exists(manifestPath))
 				{
@@ -231,13 +267,13 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					catch (Exception ex)
 					{
-						Log($"[⚠ WARNING] Could not clear manifest. The {ManifestMessage} might fail. Error: {ex.Message}", Color.Red);
+						Log($"[⚠ WARNING] Could not clear manifest. The {ManifestMessage} might fail. Error: {ex.Message}", Color.Red, true);
 					}
 				}
 
 				int exitCode = await Task.Run(() =>
 				{
-					return ServerInstaller.Install(server.InstallPath, appId,
+					return ServerInstaller.Install(server, gameData,
 						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
 						pid =>
 						{
@@ -249,7 +285,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red);
+					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
 					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
 					isDownloadActive = false;
 					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
@@ -268,7 +304,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
+				server.Status = StatusManager.GetStatus(ServerState.Stopped);
 				server.SteamPID = null;
 				FileHandler.SaveServers();
 				Core.Instance.UpdateGridStatus();
@@ -285,12 +321,12 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					GameServer newServer = settingsForm.NewServer;
 					var gameData = GameDatabase.GetGame(newServer.Game);
-					string appId = gameData?.AppID ?? "";
 					GameFix.ManualConfigWasCreated = false;
 
-					if (string.IsNullOrEmpty(appId))
+					// Guard against null blueprint or missing AppID
+					if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 					{
-						Log("Could not find the AppID for this game. Installation aborted.", Color.Red);
+						Log("Could not find the AppID for this game. Installation aborted.", Color.Red, true);
 						return;
 					}
 
@@ -305,7 +341,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 						int exitCode = await Task.Run(() =>
 						{
-							return ServerInstaller.Install(newServer.InstallPath, appId,
+							return ServerInstaller.Install(newServer, gameData,
 								msg => Log(msg),
 								pid =>
 								{
@@ -317,19 +353,19 @@ namespace Synix_Control_Panel.SynixEngine
 						if (exitCode != 0)
 						{
 							string errorMsg = ServerInstaller.GetSteamError(exitCode);
-							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red);
+							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red, true);
 							newServer.Status = "Failed";
 							return;
 						}
 
 						bool fixApplied = await GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
-						newServer.IsFirstBoot = GameFix.ManualConfigWasCreated;
+						newServer.IsFirstBoot = fixApplied;
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
 					}
 					catch (Exception ex)
 					{
-						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red);
+						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red, true);
 					}
 					finally
 					{
@@ -496,7 +532,6 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			// 🎯 DUNE INTERCEPT: Prevent generating a standard script for the Hyper-V deployment
 			if (server.Game == "Dune: Awakening")
 			{
 				Log("[⚠️ NOTICE] Dune: Awakening requires the official battlegroup.bat script. Export aborted.", Color.Orange);
@@ -566,7 +601,8 @@ namespace Synix_Control_Panel.SynixEngine
 						   .Replace("{adminpass}", server.AdminPassword ?? "")
 						   .Replace("{ServerName}", server.ServerName ?? "SynixServer")
 						   .Replace("{InstallPath}", server.InstallPath ?? "")
-						   .Replace("{Identity}", cleanIdentity);
+						   .Replace("{Identity}", cleanIdentity)
+						   .Replace("{world_size}", server.WorldSize.ToString());
 
 				if (args.Contains("{rcon}"))
 				{
@@ -591,8 +627,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 				args = args.Replace("  ", " ").Trim();
 
-				// 🎯 3. EXACT PATH RESOLUTION (The Fix)
-				// Break apart the installation path and the executable name
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
@@ -623,7 +657,6 @@ namespace Synix_Control_Panel.SynixEngine
 				batchContent.AppendLine("echo Press any key to close this window.");
 				batchContent.AppendLine("pause >nul");
 
-				// 5. WRITE SCRIPT TO DISK
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
 				string fullOutputPath = Path.Combine(server.InstallPath, safeFileName);
 
@@ -634,8 +667,36 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception ex)
 			{
-				Log($"[🚨 ERROR] Failed to generate batch file payload: {ex.Message}", Color.Yellow);
+				Log($"[🚨 ERROR] Failed to generate batch file payload: {ex.Message}", Color.Red, true);
 				return false;
+			}
+		}
+
+		public void CleanFirewallRules(string executablePath)
+		{
+			try
+			{
+				ProcessStartInfo psi = new ProcessStartInfo
+				{
+					FileName = "netsh",
+					Arguments = $"advfirewall firewall delete rule name=all program=\"{executablePath}\"",
+					UseShellExecute = true,
+					Verb = "runas",
+					WindowStyle = ProcessWindowStyle.Hidden
+				};
+
+				Process cleanup = Process.Start(psi);
+				cleanup?.WaitForExit();
+
+				Log($"[FIREWALL] Successfully removed rules for {executablePath}", Color.LimeGreen);
+			}
+			catch (System.ComponentModel.Win32Exception)
+			{
+				Log("[FIREWALL] User denied Admin rights. Rule was not deleted.", Color.Orange, true);
+			}
+			catch (Exception ex)
+			{
+				Log($"[FIREWALL ERROR] {ex.Message}", Color.Red, true);
 			}
 		}
 	}
