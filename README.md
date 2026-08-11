@@ -60,7 +60,7 @@ New games, updates, fixes, and community-requested profiles are still being adde
 
 ## 💾 Quick Install (WinGet)
 
-Installing Synix Control Panel through WinGet handles the application installation, Start Menu shortcuts, and registration in the Windows Apps list automatically. You can run these commands from Command Prompt or PowerShell.
+[Installing Synix Control Panel](https://github.com/ubidzz/Synix-Control-Panel/wiki/Getting-Started-&-Installation) through WinGet handles the application installation, Start Menu shortcuts, and registration in the Windows Apps list automatically. You can run these commands from Command Prompt or PowerShell.
 
 To install:
 
