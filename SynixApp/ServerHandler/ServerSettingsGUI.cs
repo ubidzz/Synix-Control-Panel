@@ -203,12 +203,11 @@ namespace Synix_Control_Panel
 				numWorldSize.Enabled = CanUnlock(numWorldSize);
 				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion);
 				numRam.Enabled = CanUnlock(numRam);
+				numPort.Enabled = CanUnlock(numPort);
+				numAppPort.Enabled = CanUnlock(numAppPort);
 
 				if (numAppPort != null)
 					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled";
-
-				numPort.Enabled = hasGame;
-				if (numAppPort != null) numAppPort.Enabled = CanUnlock(numAppPort);
 
 				chkEnableRcon.Enabled = CanUnlock(chkEnableRcon);
 				bool rconActive = chkEnableRcon.Enabled && chkEnableRcon.Checked;
@@ -454,11 +453,12 @@ namespace Synix_Control_Panel
 				numMaxPlayers.Tag = args.Contains("{maxplayers}") ? "Required" : "Disabled";
 				numQueryPort.Tag = args.Contains("{query}") ? "Required" : "Disabled";
 				cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
-				if (numAppPort != null) numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
 				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
 				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
 				cmbGameVersion.Tag = gameData.Game == "Minecraft Java" ? "Required" : "Disabled";
 				numRam.Tag = args.Contains("{ram}") ? "Required" : "Disabled";
+				numPort.Tag = args.Contains("{port}") ? "Required" : "Disabled";
+				numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
 
 				if (gameData.NeedsConfigWarning == true)
 				{

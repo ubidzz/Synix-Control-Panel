@@ -213,30 +213,24 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
 			{
-				if (server == excluding)
-					return false;
-
-				if (server.Port == port)
-					return true;
-
 				GameInfo? gameData = GameDatabase.GetGame(server.Game);
 				string requiredArgs = gameData?.RequiredArgs ?? "";
 				string rconSyntax = gameData?.RconSyntax ?? "";
 
-				bool usesQueryPort = requiredArgs.Contains(
-					"{query}",
-					StringComparison.OrdinalIgnoreCase);
+				if (server == excluding)
+					return false;
 
-				if (usesQueryPort &&
-					server.QueryPort > 0 &&
-					server.QueryPort == port)
+				if (server.Port == port && requiredArgs.Contains("{port}", StringComparison.OrdinalIgnoreCase))
+					return true;
+
+				bool usesQueryPort = requiredArgs.Contains("{query}", StringComparison.OrdinalIgnoreCase);
+
+				if (usesQueryPort && server.QueryPort > 0 && server.QueryPort == port)
 				{
 					return true;
 				}
 
-				bool usesAppPort = requiredArgs.Contains(
-					"{app_port}",
-					StringComparison.OrdinalIgnoreCase);
+				bool usesAppPort = requiredArgs.Contains("{app_port}", StringComparison.OrdinalIgnoreCase);
 
 				if (usesAppPort &&
 					server.AppPort.HasValue &&
