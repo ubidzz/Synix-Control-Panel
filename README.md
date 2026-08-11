@@ -44,7 +44,7 @@ Popular supported games include:
 | **Starground** | **Windrose** | **Dune: Awakening** | **Survive the Nights** |
 | **Desynced** | **Arma Reforger** | **Just Cause 3: Multiplayer** | **Myth of Empires** |
 
-* **And many more**
+* **[And many more](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List)**
 
 New games, updates, fixes, and community-requested profiles are still being added.
 
