@@ -8,19 +8,18 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Build](https://img.shields.io/badge/Architecture-Engine--Driven-orange.svg?style=for-the-badge)
 ![Security](https://img.shields.io/badge/Privilege-Standard%20User%20by%20Default-blueviolet.svg?style=for-the-badge)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/ubidzz/Synix-Control-Panel/total?style=for-the-badge&logo=github)
 [![Supported Games](https://img.shields.io/badge/Supported%20Game%20Profiles-210%2B-00c8ff.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md)
 [![SECURITY](https://img.shields.io/badge/SECURITY-PASSING-brightgreen?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/actions/workflows/github-code-scanning/codeql)
 [![VirusTotal](https://img.shields.io/badge/VirusTotal-View%20Scan-yellowgreen?style=for-the-badge&logo=virustotal)](https://www.virustotal.com/gui/file/c3a62c98e52bacccb57bc4e9b342feef20d2be49de4f91bfca164f7e6487d0b8?nocache=1)
 [![Donate with PayPal](https://img.shields.io/badge/PAYPAL-DONATE-0079C1?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/ubidzz/Synix-Control-Panel/total?style=for-the-badge&logo=github)
+[![Discord](https://img.shields.io/badge/Discord-Join_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/WduKEU3j8s)
+[![YouTube](https://img.shields.io/badge/YouTube-Video_Showcase-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=EcVLT4kgdb)
 
 Synix Control Panel is an elite, engine-driven management suite designed to provide a centralized "Brain" for game server hosting. By moving beyond simple batch scripts, Synix automates deployment, process health, networking diagnostics, and hardware stewardship within a streamlined Windows environment.
 
 Synix currently includes **210+ built-in game server profiles**, with more games and profile updates continuing to be added.
-
-[Discord](https://discord.gg/2WR7ArC2Vr)  
-[YouTube Video](https://www.youtube.com/watch?v=EcVLT4kgdb8&t=1796s)
 
 ---
 
