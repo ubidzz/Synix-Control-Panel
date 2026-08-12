@@ -12,6 +12,7 @@
 // ============================================================================
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -20,6 +21,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 {
 	public static class UIStyleHelper
 	{
+		private static readonly Font _sliderFont = new Font("Segoe UI", 8F, FontStyle.Bold);
+
 		public static void StyleLogBox(RichTextBox rtb)
 		{
 			if (rtb == null) return;
@@ -141,10 +144,80 @@ namespace Synix_Control_Panel.SynixApp.Design
 		{
 			foreach (Control ctrl in parent.Controls)
 			{
-				if (ctrl.HasChildren)
+				if (ctrl is CheckBox chk && chk.Name.StartsWith("chk", StringComparison.OrdinalIgnoreCase))
 				{
-					InitializeToggles(ctrl);
+					chk.Paint -= Chk_CustomPaint;
+					StyleToggleButton(chk, chk.Tag?.ToString() ?? "");
 				}
+				if (ctrl.HasChildren) InitializeToggles(ctrl);
+			}
+		}
+
+		public static void StyleToggleButton(CheckBox chk, string labelPrefix)
+		{
+			chk.Cursor = Cursors.Hand;
+			chk.AutoSize = false;
+			chk.BackColor = Color.Transparent;
+			chk.Tag = labelPrefix;
+			chk.Paint -= Chk_CustomPaint;
+			chk.Paint += Chk_CustomPaint;
+
+			chk.Invalidate();
+		}
+
+		private static void Chk_CustomPaint(object sender, PaintEventArgs e)
+		{
+			if (sender is CheckBox chk)
+			{
+				string labelPrefix = chk.Tag?.ToString() ?? "";
+				DrawRoundedSlider(e.Graphics, chk, labelPrefix);
+			}
+		}
+
+		public static void DrawRoundedSlider(Graphics g, CheckBox chk, string label)
+		{
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+
+			if (Application.RenderWithVisualStyles)
+				ButtonRenderer.DrawParentBackground(g, chk.ClientRectangle, chk);
+			else
+			{
+				using (var b = new SolidBrush(chk.Parent?.BackColor ?? Color.FromArgb(32, 32, 32)))
+					g.FillRectangle(b, chk.ClientRectangle);
+			}
+
+			Rectangle rect = new Rectangle(2, 2, chk.Width - 6, chk.Height - 6);
+			int diameter = rect.Height;
+
+			using (GraphicsPath path = new GraphicsPath())
+			{
+				path.AddArc(rect.X, rect.Y, diameter, diameter, 90, 180);
+				path.AddArc(rect.Width - diameter + rect.X, rect.Y, diameter, diameter, 270, 180);
+				path.CloseFigure();
+
+				// Changed from cyan to green when checked
+				Color trackColor = chk.Checked ? Color.FromArgb(40, 150, 40) : Color.FromArgb(45, 45, 45);
+				using (var brush = new SolidBrush(trackColor))
+				{
+					g.FillPath(brush, path);
+				}
+
+				using (var pen = new Pen(Color.FromArgb(30, 30, 30), 2.2f))
+				{
+					g.DrawPath(pen, path);
+				}
+
+				float thumbSize = rect.Height - 8;
+				float xPos = chk.Checked ? (rect.Right - thumbSize - 4) : (rect.Left + 4);
+				g.FillEllipse(Brushes.White, xPos, rect.Y + 4, thumbSize, thumbSize);
+
+				string text = !string.IsNullOrEmpty(chk.Text) ? chk.Text : (string.IsNullOrEmpty(label) ? (chk.Checked ? "ON" : "OFF") : label);
+
+				Rectangle textRect = chk.Checked ? new Rectangle(rect.X, rect.Y, rect.Width - 22, rect.Height)
+											   : new Rectangle(rect.X + 22, rect.Y, rect.Width - 22, rect.Height);
+
+				TextRenderer.DrawText(g, text, _sliderFont, textRect, Color.White,
+					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 			}
 		}
 
@@ -176,10 +249,15 @@ namespace Synix_Control_Panel.SynixApp.Design
 				path.AddArc(0, lbl.Height - radius - 1, radius, radius, 90, 90);
 				path.CloseFigure();
 
-				using (SolidBrush brush = new SolidBrush(lbl.BackColor))
+				if (lbl.Region == null || lbl.Region.GetBounds(e.Graphics).Width != lbl.Width)
 				{
-					e.Graphics.FillPath(brush, path);
+					var oldRegion = lbl.Region;
+					lbl.Region = new Region(path);
+					oldRegion?.Dispose();
 				}
+
+				using (SolidBrush brush = new SolidBrush(lbl.BackColor))
+					e.Graphics.FillPath(brush, path);
 			}
 
 			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak;
@@ -193,6 +271,14 @@ namespace Synix_Control_Panel.SynixApp.Design
 			{
 				flags = TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.WordBreak;
 			}
+			else if (align == "TopCenter")
+			{
+				flags = TextFormatFlags.Top | TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak;
+			}
+			else if (align == "TopLeft")
+			{
+				flags = TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak;
+			}
 
 			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, lbl.ClientRectangle, lbl.ForeColor, flags);
 		}
@@ -203,9 +289,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			lbl.AutoSize = false;
 			lbl.FlatStyle = FlatStyle.Flat;
-			lbl.BorderStyle = BorderStyle.None;
 			lbl.Tag = alignment;
-			lbl.Region = null;
 
 			lbl.Paint -= WarningLabel_Paint;
 			lbl.Paint += WarningLabel_Paint;
@@ -214,55 +298,26 @@ namespace Synix_Control_Panel.SynixApp.Design
 		}
 	}
 
+	[ToolboxItem(true)]
 	public class SynixToggle : CheckBox
 	{
 		public SynixToggle()
 		{
-			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+			this.SetStyle(ControlStyles.UserPaint |
+						  ControlStyles.AllPaintingInWmPaint |
+						  ControlStyles.OptimizedDoubleBuffer |
+						  ControlStyles.SupportsTransparentBackColor, true);
+
+			this.BackColor = Color.Transparent;
+			this.Size = new Size(60, 28);
+			this.Cursor = Cursors.Hand;
 		}
+
+		protected override void OnPaintBackground(PaintEventArgs pevent) { /* Handled in OnPaint */ }
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			e.Graphics.Clear(this.Parent?.BackColor ?? Color.FromArgb(15, 15, 15));
-
-			Rectangle rect = new Rectangle(0, (this.Height - 20) / 2, 40, 20);
-			Color bgCol = this.Checked ? Color.FromArgb(0, 190, 255) : Color.FromArgb(45, 45, 45);
-			Color thumbCol = Color.White;
-
-			using (GraphicsPath path = GetRoundedPathInternal(rect, 10))
-			using (SolidBrush brush = new SolidBrush(bgCol))
-			{
-				e.Graphics.FillPath(brush, path);
-			}
-
-			int thumbX = this.Checked ? rect.Right - 18 : rect.X + 2;
-			Rectangle thumbRect = new Rectangle(thumbX, rect.Y + 2, 16, 16);
-
-			using (GraphicsPath thumbPath = GetRoundedPathInternal(thumbRect, 8))
-			using (SolidBrush thumbBrush = new SolidBrush(thumbCol))
-			{
-				e.Graphics.FillPath(thumbBrush, thumbPath);
-			}
-
-			if (!string.IsNullOrEmpty(this.Text))
-			{
-				Rectangle textRect = new Rectangle(rect.Right + 8, 0, this.Width - rect.Right - 8, this.Height);
-				TextRenderer.DrawText(e.Graphics, this.Text, this.Font, textRect, this.ForeColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
-			}
-		}
-
-		private GraphicsPath GetRoundedPathInternal(Rectangle rect, int radius)
-		{
-			GraphicsPath path = new GraphicsPath();
-			int d = radius * 2;
-			path.StartFigure();
-			path.AddArc(rect.X, rect.Y, d, d, 180, 90);
-			path.AddArc(rect.Width - d - 1, rect.Y, d, d, 270, 90);
-			path.AddArc(rect.Width - d - 1, rect.Height - d - 1, d, d, 0, 90);
-			path.AddArc(rect.X, rect.Height - d - 1, d, d, 90, 90);
-			path.CloseFigure();
-			return path;
+			UIStyleHelper.DrawRoundedSlider(e.Graphics, this, this.Tag?.ToString() ?? "");
 		}
 	}
 }

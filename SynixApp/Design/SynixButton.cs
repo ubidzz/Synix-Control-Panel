@@ -70,12 +70,44 @@ namespace Synix_Control_Panel.SynixApp.Design
 			Rectangle rectSurface = this.ClientRectangle;
 			Rectangle rectBorder = new Rectangle(rectSurface.X, rectSurface.Y, rectSurface.Width - 1, rectSurface.Height - 1);
 
-			if (Application.RenderWithVisualStyles)
-				ButtonRenderer.DrawParentBackground(g, rectSurface, this);
-			else if (this.Parent != null)
-				using (SolidBrush bgBrush = new SolidBrush(this.Parent.BackColor))
-					g.FillRectangle(bgBrush, rectSurface);
+			// --- DYNAMIC BACKGROUND MATCHER ---
+			// Scans the Z-order to find whatever colored panel/label is directly behind the button
+			bool foundSibling = false;
+			Color bgMatch = Color.Transparent;
 
+			if (this.Parent != null)
+			{
+				int myIndex = this.Parent.Controls.IndexOf(this);
+				for (int i = myIndex + 1; i < this.Parent.Controls.Count; i++)
+				{
+					Control sibling = this.Parent.Controls[i];
+					if (sibling.Visible && sibling.Bounds.IntersectsWith(this.Bounds))
+					{
+						if (sibling.BackColor != Color.Transparent)
+						{
+							bgMatch = sibling.BackColor;
+							foundSibling = true;
+							break;
+						}
+					}
+				}
+			}
+
+			// If it sits on a label/panel, blend with its color. Otherwise, draw the form background natively.
+			if (foundSibling)
+			{
+				g.Clear(bgMatch);
+			}
+			else
+			{
+				if (Application.RenderWithVisualStyles)
+					ButtonRenderer.DrawParentBackground(g, rectSurface, this);
+				else if (this.Parent != null)
+					using (SolidBrush bgBrush = new SolidBrush(this.Parent.BackColor))
+						g.FillRectangle(bgBrush, rectSurface);
+			}
+
+			// --- DRAW BUTTON ---
 			Color currentTopColor = FillColorSecondary;
 			Color currentBottomColor = FillColor;
 			Point cursorLocation = this.PointToClient(Cursor.Position);

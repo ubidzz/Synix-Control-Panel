@@ -1,24 +1,37 @@
-﻿namespace Synix_Control_Panel
-{
-    partial class MainGUI
-    {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+namespace Synix_Control_Panel
+{
+	partial class MainGUI
+	{
+		/// <summary>
+		///  Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
+
+		/// <summary>
+		///  Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
 		#region Windows Form Designer generated code
 
@@ -70,7 +83,6 @@
 			lblLocalIP1 = new Label();
 			lblPublicIP = new Label();
 			lblUpdateStatus = new Label();
-			btnDownloadUpdate = new Button();
 			btnClose = new Button();
 			btnMinimize = new Button();
 			btnDiscord = new Button();
@@ -81,6 +93,7 @@
 			btnRestart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnStop = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnServerActions = new Synix_Control_Panel.SynixApp.Design.SynixButton();
+			btnDownloadUpdate = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -365,7 +378,7 @@
 			lblLocalIP1.Cursor = Cursors.Hand;
 			lblLocalIP1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblLocalIP1.ForeColor = Color.Lime;
-			lblLocalIP1.Location = new Point(254, 743);
+			lblLocalIP1.Location = new Point(225, 743);
 			lblLocalIP1.Name = "lblLocalIP1";
 			lblLocalIP1.Size = new Size(56, 17);
 			lblLocalIP1.TabIndex = 18;
@@ -379,7 +392,7 @@
 			lblPublicIP.Cursor = Cursors.Hand;
 			lblPublicIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblPublicIP.ForeColor = Color.Lime;
-			lblPublicIP.Location = new Point(254, 721);
+			lblPublicIP.Location = new Point(225, 721);
 			lblPublicIP.Name = "lblPublicIP";
 			lblPublicIP.Size = new Size(62, 17);
 			lblPublicIP.TabIndex = 19;
@@ -398,20 +411,6 @@
 			lblUpdateStatus.Text = "Version Check Message";
 			lblUpdateStatus.TextAlign = ContentAlignment.MiddleLeft;
 			lblUpdateStatus.MouseDown += Form_Drag_MouseDown;
-			// 
-			// btnDownloadUpdate
-			// 
-			btnDownloadUpdate.BackColor = SystemColors.Control;
-			btnDownloadUpdate.Cursor = Cursors.Hand;
-			btnDownloadUpdate.FlatStyle = FlatStyle.Popup;
-			btnDownloadUpdate.ImageAlign = ContentAlignment.TopLeft;
-			btnDownloadUpdate.Location = new Point(711, 137);
-			btnDownloadUpdate.Name = "btnDownloadUpdate";
-			btnDownloadUpdate.Size = new Size(161, 25);
-			btnDownloadUpdate.TabIndex = 22;
-			btnDownloadUpdate.Text = "Download";
-			btnDownloadUpdate.UseVisualStyleBackColor = false;
-			btnDownloadUpdate.Click += btnDownloadUpdate_Click;
 			// 
 			// btnClose
 			// 
@@ -481,13 +480,10 @@
 			btnStart.BorderSize = 1;
 			btnStart.FillColor = Color.FromArgb(10, 20, 30);
 			btnStart.FillColorSecondary = Color.FromArgb(20, 35, 50);
-			btnStart.FlatAppearance.BorderSize = 0;
-			btnStart.FlatAppearance.MouseDownBackColor = Color.Transparent;
-			btnStart.FlatAppearance.MouseOverBackColor = Color.Transparent;
 			btnStart.FlatStyle = FlatStyle.Flat;
 			btnStart.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			btnStart.ForeColor = Color.FromArgb(50, 220, 50);
-			btnStart.Location = new Point(808, 720);
+			btnStart.Location = new Point(812, 720);
 			btnStart.Name = "btnStart";
 			btnStart.Size = new Size(130, 40);
 			btnStart.TabIndex = 29;
@@ -503,17 +499,14 @@
 			btnRestart.BorderSize = 1;
 			btnRestart.FillColor = Color.FromArgb(10, 20, 30);
 			btnRestart.FillColorSecondary = Color.FromArgb(20, 35, 50);
-			btnRestart.FlatAppearance.BorderSize = 0;
-			btnRestart.FlatAppearance.MouseDownBackColor = Color.Transparent;
-			btnRestart.FlatAppearance.MouseOverBackColor = Color.Transparent;
 			btnRestart.FlatStyle = FlatStyle.Flat;
 			btnRestart.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			btnRestart.ForeColor = Color.FromArgb(0, 192, 192);
-			btnRestart.Location = new Point(944, 720);
+			btnRestart.Location = new Point(949, 720);
 			btnRestart.Name = "btnRestart";
 			btnRestart.Size = new Size(130, 40);
 			btnRestart.TabIndex = 30;
-			btnRestart.Text = "📡 Restart";
+			btnRestart.Text = "🔄 Restart";
 			btnRestart.UseVisualStyleBackColor = false;
 			btnRestart.Click += btnRestart_Click;
 			// 
@@ -525,13 +518,10 @@
 			btnStop.BorderSize = 1;
 			btnStop.FillColor = Color.FromArgb(10, 20, 30);
 			btnStop.FillColorSecondary = Color.FromArgb(20, 35, 50);
-			btnStop.FlatAppearance.BorderSize = 0;
-			btnStop.FlatAppearance.MouseDownBackColor = Color.Transparent;
-			btnStop.FlatAppearance.MouseOverBackColor = Color.Transparent;
 			btnStop.FlatStyle = FlatStyle.Flat;
 			btnStop.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			btnStop.ForeColor = Color.Red;
-			btnStop.Location = new Point(1080, 720);
+			btnStop.Location = new Point(1085, 720);
 			btnStop.Name = "btnStop";
 			btnStop.Size = new Size(130, 40);
 			btnStop.TabIndex = 31;
@@ -547,19 +537,36 @@
 			btnServerActions.BorderSize = 1;
 			btnServerActions.FillColor = Color.FromArgb(10, 20, 30);
 			btnServerActions.FillColorSecondary = Color.FromArgb(20, 35, 50);
-			btnServerActions.FlatAppearance.BorderSize = 0;
-			btnServerActions.FlatAppearance.MouseDownBackColor = Color.Transparent;
-			btnServerActions.FlatAppearance.MouseOverBackColor = Color.Transparent;
 			btnServerActions.FlatStyle = FlatStyle.Flat;
 			btnServerActions.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			btnServerActions.ForeColor = Color.White;
-			btnServerActions.Location = new Point(35, 720);
+			btnServerActions.Location = new Point(21, 720);
 			btnServerActions.Name = "btnServerActions";
-			btnServerActions.Size = new Size(170, 40);
+			btnServerActions.Size = new Size(160, 40);
 			btnServerActions.TabIndex = 32;
 			btnServerActions.Text = "🛠️ Server Actions";
 			btnServerActions.UseVisualStyleBackColor = false;
 			btnServerActions.Click += btnServerActionsMenu_Click;
+			// 
+			// btnDownloadUpdate
+			// 
+			btnDownloadUpdate.BackColor = Color.Transparent;
+			btnDownloadUpdate.BorderColor = Color.FromArgb(0, 80, 150);
+			btnDownloadUpdate.BorderRadius = 8;
+			btnDownloadUpdate.BorderSize = 1;
+			btnDownloadUpdate.FillColor = Color.FromArgb(10, 20, 30);
+			btnDownloadUpdate.FillColorSecondary = Color.FromArgb(20, 35, 50);
+			btnDownloadUpdate.FlatStyle = FlatStyle.Flat;
+			btnDownloadUpdate.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			btnDownloadUpdate.ForeColor = Color.FromArgb(50, 220, 50);
+			btnDownloadUpdate.Location = new Point(680, 137);
+			btnDownloadUpdate.Name = "btnDownloadUpdate";
+			btnDownloadUpdate.Size = new Size(200, 25);
+			btnDownloadUpdate.TabIndex = 33;
+			btnDownloadUpdate.Text = "Download from GitHub";
+			btnDownloadUpdate.UseVisualStyleBackColor = false;
+			btnDownloadUpdate.Visible = false;
+			btnDownloadUpdate.Click += btnDownloadUpdate_Click;
 			// 
 			// MainGUI
 			// 
@@ -568,16 +575,16 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 772);
-			Controls.Add(btnServerActions);
-			Controls.Add(btnStop);
-			Controls.Add(btnRestart);
 			Controls.Add(btnStart);
+			Controls.Add(btnRestart);
+			Controls.Add(btnStop);
+			Controls.Add(btnServerActions);
+			Controls.Add(btnDownloadUpdate);
 			Controls.Add(btnSettings);
 			Controls.Add(btnGithub);
 			Controls.Add(btnDiscord);
 			Controls.Add(btnMinimize);
 			Controls.Add(btnClose);
-			Controls.Add(btnDownloadUpdate);
 			Controls.Add(lblUpdateStatus);
 			Controls.Add(lblPublicIP);
 			Controls.Add(lblLocalIP1);
@@ -638,7 +645,6 @@
 		private ToolStripMenuItem fileValidationToolStripMenuItem;
 		private ToolStripMenuItem backupServerToolStripMenuItem;
 		private Label lblUpdateStatus;
-		private Button btnDownloadUpdate;
 		private ToolStripMenuItem btnExportBatch;
 		private Button btnClose;
 		private Button btnMinimize;
@@ -657,5 +663,6 @@
 		private SynixApp.Design.SynixButton btnRestart;
 		private SynixApp.Design.SynixButton btnStop;
 		private SynixApp.Design.SynixButton btnServerActions;
+		private SynixApp.Design.SynixButton btnDownloadUpdate;
 	}
 }
