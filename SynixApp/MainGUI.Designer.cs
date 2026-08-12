@@ -34,7 +34,6 @@
 			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
-			DisplayIcon = new DataGridViewTextBoxColumn();
 			colGame = new DataGridViewTextBoxColumn();
 			colName = new DataGridViewTextBoxColumn();
 			colPort = new DataGridViewTextBoxColumn();
@@ -43,8 +42,6 @@
 			colUptime = new DataGridViewTextBoxColumn();
 			colStatus = new DataGridViewTextBoxColumn();
 			rtbLog = new RichTextBox();
-			btnStart = new Button();
-			btnStop = new Button();
 			logo = new PictureBox();
 			chartHeartbeat = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			lblTotalRam = new Label();
@@ -69,11 +66,9 @@
 			deleteServerToolStripMenuItem = new ToolStripMenuItem();
 			installServer = new ToolStripMenuItem();
 			toolStripSeparator1 = new ToolStripSeparator();
-			btnServerActions = new Button();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			lblLocalIP1 = new Label();
 			lblPublicIP = new Label();
-			btnRestart = new Button();
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Button();
 			btnClose = new Button();
@@ -82,6 +77,10 @@
 			btnGithub = new Button();
 			btnSettings = new Button();
 			toolTip1 = new ToolTip(components);
+			btnStart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
+			btnRestart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
+			btnStop = new Synix_Control_Panel.SynixApp.Design.SynixButton();
+			btnServerActions = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
@@ -94,7 +93,7 @@
 			dataGridView1.AllowUserToDeleteRows = false;
 			dataGridView1.BorderStyle = BorderStyle.None;
 			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { DisplayIcon, colGame, colName, colPort, colQueryPort, colPlayerCount, colUptime, colStatus });
+			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colGame, colName, colPort, colQueryPort, colPlayerCount, colUptime, colStatus });
 			dataGridView1.Location = new Point(12, 171);
 			dataGridView1.MultiSelect = false;
 			dataGridView1.Name = "dataGridView1";
@@ -104,13 +103,6 @@
 			dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.CellPainting += dataGridView1_CellPainting;
-			// 
-			// DisplayIcon
-			// 
-			DisplayIcon.HeaderText = "";
-			DisplayIcon.Name = "DisplayIcon";
-			DisplayIcon.ReadOnly = true;
-			DisplayIcon.Width = 5;
 			// 
 			// colGame
 			// 
@@ -175,35 +167,9 @@
 			rtbLog.Location = new Point(899, 45);
 			rtbLog.Name = "rtbLog";
 			rtbLog.ReadOnly = true;
-			rtbLog.Size = new Size(330, 712);
+			rtbLog.Size = new Size(330, 664);
 			rtbLog.TabIndex = 6;
 			rtbLog.Text = "";
-			// 
-			// btnStart
-			// 
-			btnStart.Cursor = Cursors.Hand;
-			btnStart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnStart.ForeColor = Color.Green;
-			btnStart.Location = new Point(574, 726);
-			btnStart.Name = "btnStart";
-			btnStart.Size = new Size(101, 32);
-			btnStart.TabIndex = 8;
-			btnStart.Text = "🚀 Start";
-			btnStart.UseVisualStyleBackColor = true;
-			btnStart.Click += btnStart_Click;
-			// 
-			// btnStop
-			// 
-			btnStop.Cursor = Cursors.Hand;
-			btnStop.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnStop.ForeColor = Color.Red;
-			btnStop.Location = new Point(788, 726);
-			btnStop.Name = "btnStop";
-			btnStop.Size = new Size(101, 32);
-			btnStop.TabIndex = 9;
-			btnStop.Text = "❌ Stop";
-			btnStop.UseVisualStyleBackColor = true;
-			btnStop.Click += btnStop_Click;
 			// 
 			// logo
 			// 
@@ -387,18 +353,6 @@
 			toolStripSeparator1.Name = "toolStripSeparator1";
 			toolStripSeparator1.Size = new Size(148, 6);
 			// 
-			// btnServerActions
-			// 
-			btnServerActions.Cursor = Cursors.Hand;
-			btnServerActions.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnServerActions.Location = new Point(12, 724);
-			btnServerActions.Name = "btnServerActions";
-			btnServerActions.Size = new Size(142, 32);
-			btnServerActions.TabIndex = 16;
-			btnServerActions.Text = "🛠️ Server Actions";
-			btnServerActions.UseVisualStyleBackColor = true;
-			btnServerActions.Click += btnServerActionsMenu_Click;
-			// 
 			// tmrResourceUpdates
 			// 
 			tmrResourceUpdates.Enabled = true;
@@ -411,7 +365,7 @@
 			lblLocalIP1.Cursor = Cursors.Hand;
 			lblLocalIP1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblLocalIP1.ForeColor = Color.Lime;
-			lblLocalIP1.Location = new Point(177, 746);
+			lblLocalIP1.Location = new Point(254, 743);
 			lblLocalIP1.Name = "lblLocalIP1";
 			lblLocalIP1.Size = new Size(56, 17);
 			lblLocalIP1.TabIndex = 18;
@@ -425,25 +379,12 @@
 			lblPublicIP.Cursor = Cursors.Hand;
 			lblPublicIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblPublicIP.ForeColor = Color.Lime;
-			lblPublicIP.Location = new Point(177, 724);
+			lblPublicIP.Location = new Point(254, 721);
 			lblPublicIP.Name = "lblPublicIP";
 			lblPublicIP.Size = new Size(62, 17);
 			lblPublicIP.TabIndex = 19;
 			lblPublicIP.Text = "Public IP";
 			lblPublicIP.Click += lblPublicIP_Click;
-			// 
-			// btnRestart
-			// 
-			btnRestart.Cursor = Cursors.Hand;
-			btnRestart.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnRestart.ForeColor = Color.DarkCyan;
-			btnRestart.Location = new Point(681, 726);
-			btnRestart.Name = "btnRestart";
-			btnRestart.Size = new Size(101, 32);
-			btnRestart.TabIndex = 20;
-			btnRestart.Text = "📡 Restart";
-			btnRestart.UseVisualStyleBackColor = true;
-			btnRestart.Click += btnRestart_Click;
 			// 
 			// lblUpdateStatus
 			// 
@@ -532,6 +473,94 @@
 			btnSettings.UseVisualStyleBackColor = true;
 			btnSettings.Click += btnSettings_Click;
 			// 
+			// btnStart
+			// 
+			btnStart.BackColor = Color.Transparent;
+			btnStart.BorderColor = Color.FromArgb(0, 80, 150);
+			btnStart.BorderRadius = 8;
+			btnStart.BorderSize = 1;
+			btnStart.FillColor = Color.FromArgb(10, 20, 30);
+			btnStart.FillColorSecondary = Color.FromArgb(20, 35, 50);
+			btnStart.FlatAppearance.BorderSize = 0;
+			btnStart.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btnStart.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btnStart.FlatStyle = FlatStyle.Flat;
+			btnStart.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			btnStart.ForeColor = Color.FromArgb(50, 220, 50);
+			btnStart.Location = new Point(808, 720);
+			btnStart.Name = "btnStart";
+			btnStart.Size = new Size(130, 40);
+			btnStart.TabIndex = 29;
+			btnStart.Text = "🚀 Start";
+			btnStart.UseVisualStyleBackColor = false;
+			btnStart.Click += btnStart_Click;
+			// 
+			// btnRestart
+			// 
+			btnRestart.BackColor = Color.Transparent;
+			btnRestart.BorderColor = Color.FromArgb(0, 80, 150);
+			btnRestart.BorderRadius = 8;
+			btnRestart.BorderSize = 1;
+			btnRestart.FillColor = Color.FromArgb(10, 20, 30);
+			btnRestart.FillColorSecondary = Color.FromArgb(20, 35, 50);
+			btnRestart.FlatAppearance.BorderSize = 0;
+			btnRestart.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btnRestart.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btnRestart.FlatStyle = FlatStyle.Flat;
+			btnRestart.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			btnRestart.ForeColor = Color.FromArgb(0, 192, 192);
+			btnRestart.Location = new Point(944, 720);
+			btnRestart.Name = "btnRestart";
+			btnRestart.Size = new Size(130, 40);
+			btnRestart.TabIndex = 30;
+			btnRestart.Text = "📡 Restart";
+			btnRestart.UseVisualStyleBackColor = false;
+			btnRestart.Click += btnRestart_Click;
+			// 
+			// btnStop
+			// 
+			btnStop.BackColor = Color.Transparent;
+			btnStop.BorderColor = Color.FromArgb(0, 80, 150);
+			btnStop.BorderRadius = 8;
+			btnStop.BorderSize = 1;
+			btnStop.FillColor = Color.FromArgb(10, 20, 30);
+			btnStop.FillColorSecondary = Color.FromArgb(20, 35, 50);
+			btnStop.FlatAppearance.BorderSize = 0;
+			btnStop.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btnStop.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btnStop.FlatStyle = FlatStyle.Flat;
+			btnStop.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			btnStop.ForeColor = Color.Red;
+			btnStop.Location = new Point(1080, 720);
+			btnStop.Name = "btnStop";
+			btnStop.Size = new Size(130, 40);
+			btnStop.TabIndex = 31;
+			btnStop.Text = "❌ Stop";
+			btnStop.UseVisualStyleBackColor = false;
+			btnStop.Click += btnStop_Click;
+			// 
+			// btnServerActions
+			// 
+			btnServerActions.BackColor = Color.Transparent;
+			btnServerActions.BorderColor = Color.FromArgb(0, 80, 150);
+			btnServerActions.BorderRadius = 8;
+			btnServerActions.BorderSize = 1;
+			btnServerActions.FillColor = Color.FromArgb(10, 20, 30);
+			btnServerActions.FillColorSecondary = Color.FromArgb(20, 35, 50);
+			btnServerActions.FlatAppearance.BorderSize = 0;
+			btnServerActions.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btnServerActions.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btnServerActions.FlatStyle = FlatStyle.Flat;
+			btnServerActions.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			btnServerActions.ForeColor = Color.White;
+			btnServerActions.Location = new Point(35, 720);
+			btnServerActions.Name = "btnServerActions";
+			btnServerActions.Size = new Size(170, 40);
+			btnServerActions.TabIndex = 32;
+			btnServerActions.Text = "🛠️ Server Actions";
+			btnServerActions.UseVisualStyleBackColor = false;
+			btnServerActions.Click += btnServerActionsMenu_Click;
+			// 
 			// MainGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 17F);
@@ -539,6 +568,10 @@
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(1241, 772);
+			Controls.Add(btnServerActions);
+			Controls.Add(btnStop);
+			Controls.Add(btnRestart);
+			Controls.Add(btnStart);
 			Controls.Add(btnSettings);
 			Controls.Add(btnGithub);
 			Controls.Add(btnDiscord);
@@ -546,17 +579,13 @@
 			Controls.Add(btnClose);
 			Controls.Add(btnDownloadUpdate);
 			Controls.Add(lblUpdateStatus);
-			Controls.Add(btnRestart);
 			Controls.Add(lblPublicIP);
 			Controls.Add(lblLocalIP1);
-			Controls.Add(btnServerActions);
 			Controls.Add(lblTotalCpu);
 			Controls.Add(lblTotalRam);
 			Controls.Add(chartHeartbeat);
 			Controls.Add(dataGridView1);
 			Controls.Add(logo);
-			Controls.Add(btnStop);
-			Controls.Add(btnStart);
 			Controls.Add(rtbLog);
 			Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			FormBorderStyle = FormBorderStyle.None;
@@ -580,8 +609,6 @@
 
 		private DataGridView dataGridView1;
 		private RichTextBox rtbLog;
-		private Button btnStart;
-		private Button btnStop;
 		private PictureBox logo;
 		private System.Windows.Forms.DataVisualization.Charting.Chart chartHeartbeat;
 		private Label lblTotalRam;
@@ -590,7 +617,6 @@
 		private ToolStripMenuItem installServer;
 		private ToolStripMenuItem editServer;
 		private ToolStripMenuItem openServerConfig;
-		private Button btnServerActions;
 		private System.Windows.Forms.Timer tmrResourceUpdates;
 		private ToolStripMenuItem btnHelp;
 		private ToolStripMenuItem openServerConfigFileToolStripMenuItem;
@@ -602,7 +628,6 @@
 		private ToolStripMenuItem editServerToolStripMenuItem;
 		private ToolStripMenuItem deleteServerToolStripMenuItem;
 		private ToolStripMenuItem updateServerToolStripMenuItem;
-		private Button btnRestart;
 		private ToolStripSeparator toolStripSeparator1;
 		private ToolStripSeparator toolStripSeparator2;
 		private ToolStripSeparator toolStripSeparator3;
@@ -619,7 +644,8 @@
 		private Button btnMinimize;
 		private Button btnDiscord;
 		private Button btnGithub;
-		private DataGridViewTextBoxColumn DisplayIcon;
+		private Button btnSettings;
+		private ToolTip toolTip1;
 		private DataGridViewTextBoxColumn colGame;
 		private DataGridViewTextBoxColumn colName;
 		private DataGridViewTextBoxColumn colPort;
@@ -627,7 +653,9 @@
 		private DataGridViewTextBoxColumn colPlayerCount;
 		private DataGridViewTextBoxColumn colUptime;
 		private DataGridViewTextBoxColumn colStatus;
-		private Button btnSettings;
-		private ToolTip toolTip1;
+		private SynixApp.Design.SynixButton btnStart;
+		private SynixApp.Design.SynixButton btnRestart;
+		private SynixApp.Design.SynixButton btnStop;
+		private SynixApp.Design.SynixButton btnServerActions;
 	}
 }

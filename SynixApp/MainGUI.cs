@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel
 {
@@ -54,6 +55,12 @@ namespace Synix_Control_Panel
 
 			FileHandler.LoadServers();
 			UIStyleHelper.InitializeToggles(this);
+			UIStyleHelper.StyleLogBox(rtbLog);
+
+			contextMenuStrip.Renderer = new Synix_Control_Panel.SynixApp.Design.SynixMenuRenderer();
+			contextMenuStrip.ShowImageMargin = false;
+			contextMenuStrip.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
+			ApplyMenuRoundingAndSpacing(contextMenuStrip);
 
 			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = serverList;
@@ -106,6 +113,46 @@ namespace Synix_Control_Panel
 			_ = Core.Instance;
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
+		}
+
+		// Import the Windows hardware rendering API
+		[DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+		internal static extern void DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int pvAttribute, uint cbAttribute);
+
+		// A helper method to catch every single dropdown window and space it out
+		private void ApplyMenuRoundingAndSpacing(ToolStripDropDown menu)
+		{
+			// 1. The DWM rounding logic isolated into a quick local function
+			void ApplyDwm()
+			{
+				if (Environment.OSVersion.Version.Build >= 22000)
+				{
+					int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+					int DWMWCP_ROUND = 2; // Perfect Smooth Rounding
+					DwmSetWindowAttribute(menu.Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref DWMWCP_ROUND, sizeof(int));
+				}
+			}
+
+			// 2. THE FIX: If the menu (Main Menu) already exists, apply it right now!
+			if (menu.IsHandleCreated)
+			{
+				ApplyDwm();
+			}
+			else
+			{
+				// Otherwise, wait for it to be created (Submenus)
+				menu.HandleCreated += (s, e) => ApplyDwm();
+			}
+
+			foreach (ToolStripItem item in menu.Items)
+			{
+				item.Padding = new Padding(0, 4, 0, 4);
+
+				if (item is ToolStripDropDownItem dropDownItem && dropDownItem.HasDropDownItems)
+				{
+					ApplyMenuRoundingAndSpacing(dropDownItem.DropDown);
+				}
+			}
 		}
 
 		private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)

@@ -10,7 +10,11 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+
+using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Synix_Control_Panel.SynixEngine.Core;
 
@@ -25,6 +29,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private static Color RowDarkGrey = Color.FromArgb(30, 30, 30);
 		private static Color HeaderGrey = Color.FromArgb(35, 35, 35);
 		private static Color BackgroundBlack = Color.FromArgb(15, 15, 15);
+
+		// Synix Theme Colors for DataGridView Selection
+		private static Color selectionFill = Color.FromArgb(25, 45, 65);
+		private static Color cyanBorder = Color.FromArgb(0, 190, 255);
+
 		private static Font _boldStatusFont = null;
 		private static readonly SolidBrush _rowDarkGreyBrush = new SolidBrush(RowDarkGrey);
 		private static readonly Pen _faintDividerPen = new Pen(Color.FromArgb(45, 45, 45));
@@ -43,6 +52,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (dgv.Columns.Contains("colPlayerCount")) dgv.Columns["colPlayerCount"].DataPropertyName = "PlayerCount";
 			if (dgv.Columns.Contains("colUptime")) dgv.Columns["colUptime"].DataPropertyName = "Uptime";
 
+			// Lock column and row sizing
+			dgv.AllowUserToResizeColumns = false;
+			dgv.AllowUserToResizeRows = false;
+
 			dgv.EnableHeadersVisualStyles = false;
 			dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
 			dgv.ColumnHeadersDefaultCellStyle.BackColor = HeaderGrey;
@@ -51,10 +64,37 @@ namespace Synix_Control_Panel.SynixApp.Design
 			dgv.ColumnHeadersHeight = 40;
 			dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
 
+			dgv.TopLeftHeaderCell.Style.BackColor = HeaderGrey;
+			dgv.TopLeftHeaderCell.Style.SelectionBackColor = HeaderGrey;
+
 			foreach (DataGridViewColumn col in dgv.Columns)
 			{
+				col.Resizable = DataGridViewTriState.False;
 				col.HeaderCell.Style.BackColor = HeaderGrey;
 				col.HeaderCell.Style.ForeColor = Color.Cyan;
+			}
+
+			// Hook mouse events for hand cursor and tooltips on rows
+			dgv.CellMouseEnter -= Dgv_CellMouseEnter;
+			dgv.CellMouseEnter += Dgv_CellMouseEnter;
+			dgv.CellMouseLeave -= Dgv_CellMouseLeave;
+			dgv.CellMouseLeave += Dgv_CellMouseLeave;
+		}
+
+		private static void Dgv_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			if (sender is DataGridView dgv && e.RowIndex >= 0)
+			{
+				dgv.Cursor = Cursors.Hand;
+				dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = "Double click on the server to view server info";
+			}
+		}
+
+		private static void Dgv_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+		{
+			if (sender is DataGridView dgv)
+			{
+				dgv.Cursor = Cursors.Default;
 			}
 		}
 
@@ -97,7 +137,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 				int xOffset = 0;
 				int yOffset = -2;
-				int fontSize = 15;
 
 				Rectangle textRect = new Rectangle(
 					b.ClientRectangle.X + xOffset,
@@ -189,7 +228,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 			{
 				Button b = (Button)s;
 				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
 				e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
 				Point mousePos = b.PointToClient(System.Windows.Forms.Cursor.Position);
@@ -284,9 +322,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 			btn.MouseUp += (s, e) => btn.Invalidate();
 		}
 
-		private static System.Drawing.Drawing2D.GraphicsPath GetRoundedPath(Rectangle rect, int radius)
+		private static GraphicsPath GetRoundedPath(Rectangle rect, int radius)
 		{
-			System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+			GraphicsPath path = new GraphicsPath();
 			int d = radius * 2;
 			path.StartFigure();
 			path.AddArc(rect.X, rect.Y, d, d, 180, 90);
@@ -300,22 +338,34 @@ namespace Synix_Control_Panel.SynixApp.Design
 		public static void ApplyRoundedCorners(DataGridView dgv, int radius)
 		{
 			UpdateGridRegion(dgv, radius);
-			dgv.Resize += (s, e) => UpdateGridRegion(dgv, radius);
+			dgv.Resize -= Dgv_ResizeUpdateRegion;
+			dgv.Resize += Dgv_ResizeUpdateRegion;
+
+			dgv.Tag = radius;
+			dgv.Paint -= Dgv_PaintSmoothCorners;
+			dgv.Paint += Dgv_PaintSmoothCorners;
+		}
+
+		private static void Dgv_ResizeUpdateRegion(object sender, EventArgs e)
+		{
+			if (sender is DataGridView dgv && dgv.Tag is int radius)
+			{
+				UpdateGridRegion(dgv, radius);
+			}
 		}
 
 		private static void UpdateGridRegion(DataGridView dgv, int radius)
 		{
 			if (dgv == null || dgv.Width == 0 || dgv.Height == 0) return;
 
-			int diameter = radius * 2;
-
+			int d = radius * 2;
 			using (GraphicsPath path = new GraphicsPath())
 			{
 				path.StartFigure();
-				path.AddArc(new Rectangle(0, 0, diameter, diameter), 180, 90);
-				path.AddArc(new Rectangle(dgv.Width - diameter, 0, diameter, diameter), 270, 90);
-				path.AddArc(new Rectangle(dgv.Width - diameter, dgv.Height - diameter, diameter, diameter), 0, 90);
-				path.AddArc(new Rectangle(0, dgv.Height - diameter, diameter, diameter), 90, 90);
+				path.AddArc(new Rectangle(0, 0, d, d), 180, 90);
+				path.AddArc(new Rectangle(dgv.Width - d, 0, d, d), 270, 90);
+				path.AddArc(new Rectangle(dgv.Width - d, dgv.Height - d, d, d), 0, 90);
+				path.AddArc(new Rectangle(0, dgv.Height - d, d, d), 90, 90);
 				path.CloseFigure();
 
 				Region oldRegion = dgv.Region;
@@ -324,65 +374,124 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 		}
 
+		private static void Dgv_PaintSmoothCorners(object sender, PaintEventArgs e)
+		{
+			DataGridView dgv = sender as DataGridView;
+			if (dgv == null) return;
+
+			int radius = dgv.Tag is int r ? r : 10;
+			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			using (GraphicsPath outline = GetRoundedPath(new Rectangle(0, 0, dgv.Width - 1, dgv.Height - 1), radius))
+			using (Pen cyanPen = new Pen(cyanBorder, 1f))
+			{
+				e.Graphics.DrawPath(cyanPen, outline);
+			}
+		}
+
 		public static void ApplyTransparentTheme(DataGridView dgv)
 		{
 			dgv.RowHeadersVisible = false;
 			dgv.BackgroundColor = BackgroundBlack;
 			dgv.BorderStyle = BorderStyle.None;
+			dgv.AllowUserToAddRows = false;
+
 			dgv.DefaultCellStyle.BackColor = RowDarkGrey;
 			dgv.DefaultCellStyle.ForeColor = Color.WhiteSmoke;
+
 			dgv.DefaultCellStyle.SelectionBackColor = RowDarkGrey;
-			dgv.DefaultCellStyle.SelectionForeColor = Color.Cyan;
-			dgv.GridColor = Color.FromArgb(45, 45, 45);
+			dgv.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
+
+			dgv.GridColor = BackgroundBlack;
 			dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-			dgv.RowPostPaint -= Dgv_PaintGlowingSelection;
-			dgv.RowPostPaint += Dgv_PaintGlowingSelection;
+
+			dgv.RowPrePaint -= Dgv_RowPrePaint;
+			dgv.RowPrePaint += Dgv_RowPrePaint;
 		}
 
-		private static void Dgv_PaintGlowingSelection(object sender, DataGridViewRowPostPaintEventArgs e)
+		private static void Dgv_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
 			DataGridView dgv = sender as DataGridView;
 			if (dgv == null) return;
 
-			if ((e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected)
+			using (SolidBrush bgBrush = new SolidBrush(RowDarkGrey))
+				e.Graphics.FillRectangle(bgBrush, e.RowBounds);
+
+			bool isSelected = (dgv.Rows[e.RowIndex].State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected;
+
+			if (isSelected)
 			{
-				int startX = dgv.RowHeadersVisible ? dgv.RowHeadersWidth : 0;
-				int width = dgv.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) - dgv.HorizontalScrollingOffset;
+				e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-				Rectangle bounds = new Rectangle(startX + 2, e.RowBounds.Y + 2, width - 5, e.RowBounds.Height - 5);
-
-				Color neonColor = Color.DarkCyan;
-
-				using (Pen outerGlow = new Pen(Color.FromArgb(40, neonColor), 5))
+				using (SolidBrush selectBrush = new SolidBrush(selectionFill))
 				{
-					e.Graphics.DrawRectangle(outerGlow, bounds);
+					e.Graphics.FillRectangle(selectBrush, e.RowBounds);
 				}
 
-				using (Pen innerGlow = new Pen(Color.FromArgb(100, neonColor), 3))
+				using (SolidBrush accentBrush = new SolidBrush(cyanBorder))
 				{
-					e.Graphics.DrawRectangle(innerGlow, bounds);
-				}
-
-				using (Pen corePen = new Pen(Color.White, 1))
-				{
-					e.Graphics.DrawRectangle(corePen, bounds);
+					e.Graphics.FillRectangle(accentBrush, e.RowBounds.Left, e.RowBounds.Top, 3, e.RowBounds.Height);
 				}
 			}
+			else
+			{
+				e.Graphics.DrawLine(_faintDividerPen, e.RowBounds.Left, e.RowBounds.Bottom - 1, e.RowBounds.Right, e.RowBounds.Bottom - 1);
+			}
+
+			e.PaintParts &= ~DataGridViewPaintParts.Background;
+			e.PaintParts &= ~DataGridViewPaintParts.SelectionBackground;
 		}
 
 		public static void PaintTransparentRows(DataGridView dgv, DataGridViewCellPaintingEventArgs e)
 		{
-			if (e.RowIndex < 0) return;
+			if (e.RowIndex == -1)
+			{
+				e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+				Color parentColor = dgv.Parent?.BackColor ?? BackgroundBlack;
 
-			e.Graphics.FillRectangle(_rowDarkGreyBrush, e.CellBounds);
+				using (SolidBrush parentBrush = new SolidBrush(parentColor))
+				{
+					e.Graphics.FillRectangle(parentBrush, e.CellBounds);
+				}
 
-			e.Graphics.DrawLine(_faintDividerPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
+				Rectangle headerRect = e.CellBounds;
 
-			e.PaintContent(e.CellBounds);
-			e.Handled = true;
+				var firstVisibleCol = dgv.Columns.GetFirstColumn(DataGridViewElementStates.Visible);
+				var lastVisibleCol = dgv.Columns.GetLastColumn(DataGridViewElementStates.Visible, DataGridViewElementStates.None);
+
+				if (firstVisibleCol != null && e.ColumnIndex == firstVisibleCol.Index)
+				{
+					headerRect.X += 1;
+					headerRect.Width -= 1;
+				}
+
+				if (lastVisibleCol != null && e.ColumnIndex == lastVisibleCol.Index)
+				{
+					if (headerRect.Right < dgv.Width)
+					{
+						headerRect.Width = dgv.Width - headerRect.X;
+					}
+					else
+					{
+						headerRect.Width -= 2;
+					}
+				}
+
+				using (SolidBrush bgBrush = new SolidBrush(HeaderGrey))
+				{
+					e.Graphics.FillRectangle(bgBrush, headerRect);
+				}
+
+				if (e.Value != null && e.Value.ToString() != "")
+				{
+					TextRenderer.DrawText(e.Graphics, e.Value.ToString(), e.CellStyle.Font, e.CellBounds, cyanBorder, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
+				}
+
+				e.Handled = true;
+			}
 		}
 
-		// --- CHART METHODS (Fixes CS7036) ---
+		// --- CHART METHODS ---
 		public static void HeartbeatChart(Chart chart, double maxRamGb)
 		{
 			if (chart == null) return;
@@ -460,7 +569,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 				e.CellStyle.Font = _boldStatusFont;
 
-				// 2. string.Equals with OrdinalIgnoreCase ignores capitals completely
 				if (string.Equals(status, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase))
 				{
 					e.CellStyle.ForeColor = Color.LimeGreen;
