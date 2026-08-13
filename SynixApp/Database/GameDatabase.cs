@@ -37,7 +37,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "HumanitZ",
 				AppID = "2728330",
-				ExeName = "TSSGameServer.exe",
+				ExeName = @"HumanitZServer\Binaries\Win64\HumanitZServer-Win64-Shipping.exe",
 				RequiredArgs = "TSSGame -log -port={port} -queryport={query} -steamservername=\"{ServerName}\" -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,

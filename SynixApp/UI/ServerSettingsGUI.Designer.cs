@@ -39,7 +39,6 @@ namespace Synix_Control_Panel
 			cmbGame = new ComboBox();
 			numPort = new NumericUpDown();
 			btnBrowse = new Button();
-			btnSave = new Button();
 			chkDefaultPath = new SynixToggle();
 			ltextLabel1 = new Label();
 			lblPassword = new Label();
@@ -74,7 +73,6 @@ namespace Synix_Control_Panel
 			btnViewArgs = new Button();
 			chkUpdateOnStart = new SynixToggle();
 			btnEditSchedule = new Button();
-			button1 = new Button();
 			chkBackupOnStart = new SynixToggle();
 			chkEnableDiscord = new SynixToggle();
 			txtDiscordWebhook = new TextBox();
@@ -86,6 +84,8 @@ namespace Synix_Control_Panel
 			lblGameVersion = new Label();
 			label1 = new Label();
 			numRam = new NumericUpDown();
+			btnSave = new SynixButton();
+			btnCancel = new SynixButton();
 			((System.ComponentModel.ISupportInitialize)numPort).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numMaxPlayers).BeginInit();
 			((System.ComponentModel.ISupportInitialize)numQueryPort).BeginInit();
@@ -181,17 +181,6 @@ namespace Synix_Control_Panel
 			btnBrowse.Text = "Browse";
 			btnBrowse.UseVisualStyleBackColor = true;
 			btnBrowse.Click += btnBrowse_Click;
-			// 
-			// btnSave
-			// 
-			btnSave.Cursor = Cursors.Hand;
-			btnSave.Location = new Point(242, 586);
-			btnSave.Name = "btnSave";
-			btnSave.Size = new Size(138, 44);
-			btnSave.TabIndex = 9;
-			btnSave.Text = "Save Server";
-			btnSave.UseVisualStyleBackColor = true;
-			btnSave.Click += btnSave_Click;
 			// 
 			// chkDefaultPath
 			// 
@@ -558,16 +547,6 @@ namespace Synix_Control_Panel
 			btnEditSchedule.UseVisualStyleBackColor = true;
 			btnEditSchedule.Click += btnEditSchedule_Click;
 			// 
-			// button1
-			// 
-			button1.Location = new Point(415, 585);
-			button1.Name = "button1";
-			button1.Size = new Size(138, 44);
-			button1.TabIndex = 63;
-			button1.Text = "Cancel";
-			button1.UseVisualStyleBackColor = true;
-			button1.Click += btnCancel_Click;
-			// 
 			// chkBackupOnStart
 			// 
 			chkBackupOnStart.BackColor = Color.Transparent;
@@ -680,6 +659,50 @@ namespace Synix_Control_Panel
 			numRam.TabIndex = 74;
 			numRam.Value = new decimal(new int[] { 2, 0, 0, 0 });
 			// 
+			// btnSave
+			// 
+			btnSave.BackColor = Color.Transparent;
+			btnSave.BorderColor = Color.FromArgb(0, 80, 150);
+			btnSave.BorderRadius = 8;
+			btnSave.BorderSize = 1;
+			btnSave.FillColor = Color.FromArgb(10, 20, 30);
+			btnSave.FillColorSecondary = Color.FromArgb(20, 35, 50);
+			btnSave.FlatAppearance.BorderSize = 0;
+			btnSave.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btnSave.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btnSave.FlatStyle = FlatStyle.Flat;
+			btnSave.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			btnSave.ForeColor = Color.FromArgb(50, 220, 50);
+			btnSave.Location = new Point(250, 589);
+			btnSave.Name = "btnSave";
+			btnSave.Size = new Size(130, 40);
+			btnSave.TabIndex = 75;
+			btnSave.Text = "Save Server";
+			btnSave.UseVisualStyleBackColor = false;
+			btnSave.Click += btnSave_Click;
+			// 
+			// btnCancel
+			// 
+			btnCancel.BackColor = Color.Transparent;
+			btnCancel.BorderColor = Color.FromArgb(0, 80, 150);
+			btnCancel.BorderRadius = 8;
+			btnCancel.BorderSize = 1;
+			btnCancel.FillColor = Color.FromArgb(10, 20, 30);
+			btnCancel.FillColorSecondary = Color.FromArgb(20, 35, 50);
+			btnCancel.FlatAppearance.BorderSize = 0;
+			btnCancel.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			btnCancel.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			btnCancel.FlatStyle = FlatStyle.Flat;
+			btnCancel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			btnCancel.ForeColor = Color.Red;
+			btnCancel.Location = new Point(409, 589);
+			btnCancel.Name = "btnCancel";
+			btnCancel.Size = new Size(130, 40);
+			btnCancel.TabIndex = 76;
+			btnCancel.Text = "Cancel";
+			btnCancel.UseVisualStyleBackColor = false;
+			btnCancel.Click += btnCancel_Click;
+			// 
 			// ServerSettingsGUI
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -687,6 +710,8 @@ namespace Synix_Control_Panel
 			BackgroundImage = Properties.Resources.background;
 			BackgroundImageLayout = ImageLayout.Stretch;
 			ClientSize = new Size(795, 642);
+			Controls.Add(btnCancel);
+			Controls.Add(btnSave);
 			Controls.Add(numRam);
 			Controls.Add(label1);
 			Controls.Add(lblGameVersion);
@@ -699,7 +724,6 @@ namespace Synix_Control_Panel
 			Controls.Add(txtDiscordWebhook);
 			Controls.Add(chkEnableDiscord);
 			Controls.Add(chkBackupOnStart);
-			Controls.Add(button1);
 			Controls.Add(btnEditSchedule);
 			Controls.Add(chkEnableSchedule);
 			Controls.Add(chkUpdateOnStart);
@@ -733,7 +757,6 @@ namespace Synix_Control_Panel
 			Controls.Add(lblPassword);
 			Controls.Add(ltextLabel1);
 			Controls.Add(chkDefaultPath);
-			Controls.Add(btnSave);
 			Controls.Add(btnBrowse);
 			Controls.Add(numPort);
 			Controls.Add(cmbGame);
@@ -769,7 +792,6 @@ namespace Synix_Control_Panel
 		private ComboBox cmbGame;
 		private NumericUpDown numPort;
 		private Button btnBrowse;
-		private Button btnSave;
 		private SynixToggle chkDefaultPath;
 		private Label ltextLabel1;
 		private Label lblPassword;
@@ -806,7 +828,6 @@ namespace Synix_Control_Panel
 		private Button btnViewArgs;
 		private SynixToggle chkUpdateOnStart;
 		private Button btnEditSchedule;
-		private Button button1;
 		private SynixToggle chkBackupOnStart;
 		private SynixToggle chkEnableDiscord;
 		private TextBox txtDiscordWebhook;
@@ -817,5 +838,7 @@ namespace Synix_Control_Panel
 		private Label lblGameVersion;
 		private Label label1;
 		private NumericUpDown numRam;
+		private SynixButton btnSave;
+		private SynixButton btnCancel;
 	}
 }
