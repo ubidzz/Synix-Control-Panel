@@ -55,8 +55,10 @@ namespace Synix_Control_Panel.SynixEngine
 									{
 										bool isResponding = false;
 
+										// Check local loopback first
 										isResponding = await ExecuteDynamicProbes(server, "127.0.0.1");
 
+										// Check LAN IP next
 										if (!isResponding)
 										{
 											string localIp = await GetLocalIP();
@@ -64,6 +66,7 @@ namespace Synix_Control_Panel.SynixEngine
 												isResponding = await ExecuteDynamicProbes(server, localIp);
 										}
 
+										// Check WAN IP last
 										if (!isResponding)
 										{
 											using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));

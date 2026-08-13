@@ -453,6 +453,7 @@ namespace Synix_Control_Panel
 			ramGauge.Size = new Size(210, 145);
 			ramGauge.TabIndex = 35;
 			ramGauge.Text = "synixGauge1";
+			toolTip1.SetToolTip(ramGauge, "Click to open the resource graph window");
 			ramGauge.Value = 0F;
 			ramGauge.Click += ResourceGraph_Click;
 			// 

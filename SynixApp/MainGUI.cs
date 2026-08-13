@@ -13,13 +13,14 @@
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using static Synix_Control_Panel.SynixEngine.Core;
 using System.Runtime.InteropServices;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
 {
@@ -100,15 +101,7 @@ namespace Synix_Control_Panel
 				AutoPopDelay = 8000,
 				ShowAlways = true
 			};
-			/*
-			_resourceGraphToolTip.SetToolTip(
-				chartHeartbeat,
-				"Click to open detailed CPU and RAM usage for all running servers."
-			);
 
-			chartHeartbeat.Cursor = Cursors.Hand;
-			chartHeartbeat.MouseLeave += chartHeartbeat_MouseLeave;
-			*/
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
 			_ = Core.Instance;
 			_ = VersionCheck();
@@ -163,7 +156,8 @@ namespace Synix_Control_Panel
 			double ram = Core.Instance.TotalRamUsageGb;
 
 			cpuGauge.UpdateGauge((float)cpu, "CPU %");
-			ramGauge.UpdateGauge((float)ram, "RAM %");
+			ramGauge.MaxValue = (float)systemTotalRamGb;
+			ramGauge.UpdateGauge((float)ram, "RAM GB");
 
 			// 5. Restart Check
 			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
@@ -389,11 +383,6 @@ namespace Synix_Control_Panel
 			monitor.Show();
 		}
 
-		private void chartHeartbeat_MouseLeave(object? sender, EventArgs e)
-		{
-			//chartHeartbeat.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
-		}
-
 		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
 			GridStyler.PaintTransparentRows(dataGridView1, e);
@@ -552,64 +541,66 @@ namespace Synix_Control_Panel
 		private async void btnPublicConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
-			AppendLog($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			AppendLog($"[📡 NETWORK] Running comprehensive WAN connectivity tests for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
 				string publicIp = await Core.Instance.GetPublicIP();
-				bool isResponding = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
-				string ipText = "[HIDDEN]";
+				string ipText = isPrivacyLoading ? "[HIDDEN]" : publicIp;
 
-				if (!isPrivacyLoading)
-				{
-					ipText = publicIp;
-				}
+				// Test Game Port & Query Port via TCP and UDP
+				bool gameTcp = await Core.Instance.TestTcpConnectivity(publicIp, selectedServer.Port);
+				bool queryTcp = await Core.Instance.TestTcpConnectivity(publicIp, selectedServer.QueryPort);
+				bool gameUdp = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.Port);
+				bool queryUdp = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
 
-				if (isResponding)
+				if (gameTcp || queryTcp || gameUdp || queryUdp)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable at {ipText}! (GamePort TCP:{gameTcp} UDP:{gameUdp} | QueryPort TCP:{queryTcp} UDP:{queryUdp})", Color.Green);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] All connectivity tests failed for {selectedServer.ServerName} at {ipText} (Tested Game Port {selectedServer.Port} & Query Port {selectedServer.QueryPort} via TCP/UDP). Check Router/Firewall settings.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not complete Public connectivity test: {ex.Message}", Color.Yellow);
 			}
 		}
 
 		private async void btnLocalConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
-			AppendLog($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			AppendLog($"[📡 NETWORK] Running comprehensive LAN connectivity tests for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
 				string localIp = await Core.Instance.GetLocalIP();
-				bool isResponding = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
-				string ipText = "[HIDDEN]";
+				string ipText = isPrivacyLoading ? "[HIDDEN]" : localIp;
 
-				if (!isPrivacyLoading)
-				{
-					ipText = localIp;
-				}
+				// Test Game Port & Query Port via TCP and UDP
+				bool gameTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.Port);
+				bool queryTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.QueryPort);
+				bool gameUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort); // Fallback check
+				bool queryUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
 
-				if (isResponding)
+				if (gameTcp || queryTcp || gameUdp || queryUdp)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable locally at {ipText}! (GamePort TCP:{gameTcp} | QueryPort UDP:{queryUdp})", Color.Green);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] All local connectivity tests failed for {selectedServer.ServerName} at {ipText} (Tested Game Port {selectedServer.Port} & Query Port {selectedServer.QueryPort} via TCP/UDP). Ensure the server is running.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not complete LAN connectivity test: {ex.Message}", Color.Yellow);
 			}
 		}
 

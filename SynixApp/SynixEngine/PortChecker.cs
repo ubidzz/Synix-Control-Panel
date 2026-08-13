@@ -28,6 +28,17 @@ namespace Synix_Control_Panel.SynixEngine
 			0x72, 0x79, 0x00
 		};
 
+		public async Task<bool> TestAllProtocolsConnectivity(string ip, int gamePort, int queryPort)
+		{
+			// Test Game Port and Query Port across both TCP and UDP
+			bool gameTcp = await TestTcpConnectivity(ip, gamePort);
+			bool queryTcp = await TestTcpConnectivity(ip, queryPort);
+			bool gameUdp = await TestServerConnectivity(ip, gamePort);
+			bool queryUdp = await TestServerConnectivity(ip, queryPort);
+
+			return gameTcp || queryTcp || gameUdp || queryUdp;
+		}
+
 		public async Task<bool> TestServerConnectivity(string ip, int port, int timeoutMs = 2500)
 		{
 			using var udpClient = new UdpClient();
@@ -106,54 +117,51 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> ExecuteDynamicProbes(GameServer server, string ip)
 		{
-			// 1. A2S PROTOCOL (Steamworks / Source / Standard Unreal)
+			// 1. A2S PROTOCOL ON QUERY PORT (Steamworks / Source / Standard Unreal)
 			if (await TestServerConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> A2S (Steam UDP) on Port {server.QueryPort}");
 				return true;
 			}
 
-			// 2. TCP PROTOCOL (Legacy)
-			else if (await TestTcpConnectivity(ip, server.Port))
+			// 2. TCP PROTOCOL ON GAME PORT
+			if (await TestTcpConnectivity(ip, server.Port))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake");
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.Port}");
 				return true;
 			}
 
-			// 2. TCP PROTOCOL (Custom Engines)
-			else if (await TestTcpConnectivity(ip, server.QueryPort))
+			// 3. TCP PROTOCOL ON QUERY PORT
+			if (await TestTcpConnectivity(ip, server.QueryPort))
 			{
-				Log($"[PROBE SUCCESS] {server.QueryPort} verified via -> TCP Handshake");
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.QueryPort}");
 				return true;
 			}
 
-			// 4. EOS PROTOCOL (Epic Online Services)
-			// Note: True EOS network pinging requires the Epic SDK or Web API auth. 
-			// This is the dedicated slot if you build an Epic API HTTP parser later.
-			/*
-			if (await TestEOSWebAPI(server)) 
+			// 4. UDP PROTOCOL ON GAME PORT
+			if (await TestServerConnectivity(ip, server.Port))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> Epic Online Services Web API");
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> UDP Check on Port {server.Port}");
 				return true;
 			}
-			*/
 
-			// 5. LOCAL PORT PROTOCOL (The ultimate failsafe for stubborn EOS games)
+			// 5. LOCAL PORT BINDING (The ultimate failsafe)
 			// We wait 25 seconds to give the server time to boot and bind the port in the OS.
-			else if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 25)
+			if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 25)
 			{
 				if (IsPortInUseLocally(server.Port))
 				{
-					Log($"[PROBE SUCCESS] {server.Game} verified via -> IsPortInUseLocally (Game Port {server.Port} Bound)");
+					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Game Port {server.Port} In Use)");
 					return true;
 				}
 
-				else if (IsPortInUseLocally(server.QueryPort))
+				if (IsPortInUseLocally(server.QueryPort))
 				{
-					Log($"[PROBE SUCCESS] {server.Game} verified via -> IsPortInUseLocally (Query Port {server.QueryPort} Bound)");
+					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Query Port {server.QueryPort} In Use)");
 					return true;
 				}
 			}
+
 			return false;
 		}
 
