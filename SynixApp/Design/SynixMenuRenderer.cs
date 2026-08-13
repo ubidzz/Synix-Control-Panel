@@ -10,6 +10,7 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -29,6 +30,45 @@ namespace Synix_Control_Panel.SynixApp.Design
 			this.RoundedEdges = false;
 		}
 
+		// --- THE REAL FIX: DYNAMIC ITEM EVENT TRACKING ---
+		protected override void InitializeItem(ToolStripItem item)
+		{
+			base.InitializeItem(item);
+
+			// Unsubscribe first to prevent duplicate event fires
+			item.MouseEnter -= Item_MouseEnter;
+			item.MouseEnter += Item_MouseEnter;
+
+			item.MouseLeave -= Item_MouseLeave;
+			item.MouseLeave += Item_MouseLeave;
+		}
+
+		private void Item_MouseEnter(object sender, EventArgs e)
+		{
+			if (sender is ToolStripItem item && !(item is ToolStripSeparator))
+			{
+				// GetCurrentParent grabs the exact floating sub-menu layer the item belongs to
+				ToolStrip parent = item.GetCurrentParent();
+				if (parent != null)
+				{
+					parent.Cursor = Cursors.Hand;
+				}
+			}
+		}
+
+		private void Item_MouseLeave(object sender, EventArgs e)
+		{
+			if (sender is ToolStripItem item)
+			{
+				ToolStrip parent = item.GetCurrentParent();
+				if (parent != null)
+				{
+					parent.Cursor = Cursors.Default;
+				}
+			}
+		}
+		// --------------------------------------------------
+
 		private GraphicsPath GetRoundedRect(Rectangle rect, float radius)
 		{
 			GraphicsPath path = new GraphicsPath();
@@ -45,28 +85,23 @@ namespace Synix_Control_Panel.SynixApp.Design
 		protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
 		{
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			// Just clear the background with the dark color, no jagged Region cuts!
 			e.Graphics.Clear(bgColor);
 		}
 
-		// 2. THE ARTIFACT FIX: Force Windows to completely ignore the image gutter
 		protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
 		{
 			// Leave this entirely blank! This kills those broken grey boxes on the left.
 		}
 
-		// 3. THE SEPARATOR FIX: Clean, simple center lines
 		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
 		{
 			using (Pen pen = new Pen(Color.FromArgb(50, 50, 60), 1))
 			{
 				int y = e.Item.Height / 2;
-				// Add 10px of padding to the left and right so the line doesn't touch the walls
 				e.Graphics.DrawLine(pen, 10, y, e.Item.Width - 10, y);
 			}
 		}
 
-		// 4. THE HOVER EFFECT
 		protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
 		{
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -84,33 +119,24 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 		}
 
-		// 5. PERFECT TEXT
 		protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
 		{
 			e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
-			// THE FIX: Ignore the padded TextRectangle. 
-			// Force the text to use the absolute full height (e.Item.Height) so it perfectly centers.
-			// Starts 12 pixels from the left so it has nice breathing room.
 			Rectangle textRect = new Rectangle(12, 0, e.Item.Width - 24, e.Item.Height);
-
 			Color textColor = (e.Item.Selected || e.Item.Pressed) ? cyanBorder : Color.White;
 
 			TextRenderer.DrawText(e.Graphics, e.Item.Text, e.Item.Font, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
 		}
 
-		// 6. DYNAMIC SUBMENU ARROWS
 		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
 		{
-			// Make the arrow glow cyan when hovered to match the text!
 			e.ArrowColor = (e.Item.Selected || e.Item.Pressed) ? cyanBorder : Color.White;
 			base.OnRenderArrow(e);
 		}
 
-		// 7. REMOVE OUTER BORDER
 		protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
 		{
-			// A crisp, dark border to frame the menu perfectly
 			using (Pen borderPen = new Pen(Color.FromArgb(15, 15, 18), 1))
 			{
 				Rectangle rect = new Rectangle(0, 0, e.ToolStrip.Width - 1, e.ToolStrip.Height - 1);

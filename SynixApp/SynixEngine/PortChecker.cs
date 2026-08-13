@@ -243,29 +243,26 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public bool IsPortInUseLocally(int port)
 		{
-			// 2. THE BULLETPROOF FALLBACK: The Bind Test (Stealth Mode)
 			try
 			{
-				// Bind strictly to localhost (127.0.0.1) to avoid Windows Firewall popups
-				var localEndPoint = new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, port);
-				using var udpTest = new System.Net.Sockets.UdpClient(localEndPoint);
+				var properties = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
-				return false;
-			}
-			catch (System.Net.Sockets.SocketException ex)
-			{
-				if (ex.SocketErrorCode == System.Net.Sockets.SocketError.AddressAlreadyInUse ||
-					ex.SocketErrorCode == System.Net.Sockets.SocketError.AccessDenied)
+				if (properties.GetActiveUdpListeners().Any(ep => ep.Port == port))
 				{
 					return true;
 				}
+
+				if (properties.GetActiveTcpListeners().Any(ep => ep.Port == port))
+				{
+					return true;
+				}
+
+				return false;
 			}
 			catch
 			{
-				// Catch-all for any other errors
+				return false;
 			}
-
-			return false;
 		}
 
 		// ========================================================================
@@ -277,40 +274,35 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				using var tcpClient = new System.Net.Sockets.TcpClient();
 
-				// 1. Connect directly to the main game port (e.g., 25565), NOT the Query Port!
 				var connectTask = tcpClient.ConnectAsync(ip, server.Port);
 				if (await Task.WhenAny(connectTask, Task.Delay(1500)) != connectTask) return false;
 
 				using var stream = tcpClient.GetStream();
 
-				// 2. Build the Modern Minecraft Handshake Packet (VarInt formatted)
 				List<byte> handshake = new List<byte> { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }; // PacketID (0) + Protocol (-1)
 
 				byte[] hostBytes = Encoding.UTF8.GetBytes(ip);
 				handshake.Add((byte)hostBytes.Length);
 				handshake.AddRange(hostBytes);
 
-				handshake.Add((byte)((server.Port >> 8) & 0xFF)); // Port MSB
-				handshake.Add((byte)(server.Port & 0xFF)); // Port LSB
-				handshake.Add(0x01); // Next State: 1 (Status)
+				handshake.Add((byte)((server.Port >> 8) & 0xFF));
+				handshake.Add((byte)(server.Port & 0xFF));
+				handshake.Add(0x01);
 
 				List<byte> payload = new List<byte>();
-				payload.Add((byte)handshake.Count); // Packet length
+				payload.Add((byte)handshake.Count);
 				payload.AddRange(handshake);
 
-				// 3. Append Status Request (Length 1, Packet ID 0)
 				payload.Add(0x01);
 				payload.Add(0x00);
 
 				await stream.WriteAsync(payload.ToArray(), 0, payload.Count);
 
-				// 4. Read the JSON string response from the server
 				byte[] buffer = new byte[4096];
 				int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
 
 				if (bytesRead > 0)
 				{
-					// Convert the raw byte buffer to a string and use Regex to find the player counts inside the JSON payload
 					string rawStr = Encoding.UTF8.GetString(buffer);
 
 					var onlineMatch = System.Text.RegularExpressions.Regex.Match(rawStr, @"""online""\s*:\s*(\d+)");
@@ -325,13 +317,13 @@ namespace Synix_Control_Panel.SynixEngine
 							server.MaxPlayersFromQuery = max;
 						}
 
-						return true; // Successfully pinged!
+						return true;
 					}
 				}
 			}
 			catch { }
 
-			return false; // Ping failed
+			return false;
 		}
 	}
 }

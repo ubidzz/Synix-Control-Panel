@@ -15,7 +15,6 @@ using Synix_Control_Panel.SynixEngine;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {

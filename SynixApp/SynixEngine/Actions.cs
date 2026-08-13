@@ -131,7 +131,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 				try
 				{
-					// --- 🛡️ ADMIN TASKS (Firewall Cleanup) ---
 					if (Properties.Settings.Default.enableRunAsAdmin)
 					{
 						string serverExePath = Path.Combine(server.InstallPath, server.ExeName);
@@ -222,7 +221,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 			var gameData = GameDatabase.GetGame(server.Game);
 
-			// Guard against null blueprint or missing AppID
 			if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 			{
 				Log($"Could not find the database blueprint or AppID for {server.Game}.", Color.Red, true);
@@ -254,7 +252,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 				Core.Instance.UpdateGridStatus();
 
-				// 🎯 THE AUTOMATED MANIFEST NUKE
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
 				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf"); // Used gameData object
 
@@ -274,7 +271,7 @@ namespace Synix_Control_Panel.SynixEngine
 				int exitCode = await Task.Run(() =>
 				{
 					return ServerInstaller.Install(server, gameData,
-						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
+						msg => { MainGUI.Instance?.BeginInvoke((Action)(() => Log(msg))); },
 						pid =>
 						{
 							server.SteamPID = pid;
@@ -323,7 +320,6 @@ namespace Synix_Control_Panel.SynixEngine
 					var gameData = GameDatabase.GetGame(newServer.Game);
 					GameFix.ManualConfigWasCreated = false;
 
-					// Guard against null blueprint or missing AppID
 					if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 					{
 						Log("Could not find the AppID for this game. Installation aborted.", Color.Red, true);
@@ -545,7 +541,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
-				// 1. DYNAMIC IDENTITY & SEARCH
 				string targetId = dbEntry.AppID ?? "";
 				string invokedId = targetId;
 				string appidPath = "";

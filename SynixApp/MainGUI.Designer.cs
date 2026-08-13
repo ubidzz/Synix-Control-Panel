@@ -42,9 +42,6 @@ namespace Synix_Control_Panel
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-			System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			dataGridView1 = new DataGridView();
 			colGame = new DataGridViewTextBoxColumn();
@@ -56,9 +53,6 @@ namespace Synix_Control_Panel
 			colStatus = new DataGridViewTextBoxColumn();
 			rtbLog = new RichTextBox();
 			logo = new PictureBox();
-			chartHeartbeat = new System.Windows.Forms.DataVisualization.Charting.Chart();
-			lblTotalRam = new Label();
-			lblTotalCpu = new Label();
 			contextMenuStrip = new ContextMenuStrip(components);
 			btnHelp = new ToolStripMenuItem();
 			openServerConfig = new ToolStripMenuItem();
@@ -89,6 +83,8 @@ namespace Synix_Control_Panel
 			btnGithub = new Button();
 			btnSettings = new Button();
 			toolTip1 = new ToolTip(components);
+			cpuGauge = new Synix_Control_Panel.SynixApp.Design.SynixGauge();
+			ramGauge = new Synix_Control_Panel.SynixApp.Design.SynixGauge();
 			btnStart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnRestart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnStop = new Synix_Control_Panel.SynixApp.Design.SynixButton();
@@ -96,7 +92,6 @@ namespace Synix_Control_Panel
 			btnDownloadUpdate = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			((System.ComponentModel.ISupportInitialize)logo).BeginInit();
-			((System.ComponentModel.ISupportInitialize)chartHeartbeat).BeginInit();
 			contextMenuStrip.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -195,47 +190,6 @@ namespace Synix_Control_Panel
 			logo.TabIndex = 10;
 			logo.TabStop = false;
 			logo.MouseDown += Form_Drag_MouseDown;
-			// 
-			// chartHeartbeat
-			// 
-			chartArea1.Name = "ChartArea1";
-			chartHeartbeat.ChartAreas.Add(chartArea1);
-			chartHeartbeat.Cursor = Cursors.Hand;
-			legend1.Name = "Legend1";
-			chartHeartbeat.Legends.Add(legend1);
-			chartHeartbeat.Location = new Point(505, 30);
-			chartHeartbeat.Name = "chartHeartbeat";
-			series1.ChartArea = "ChartArea1";
-			series1.Legend = "Legend1";
-			series1.Name = "Series1";
-			chartHeartbeat.Series.Add(series1);
-			chartHeartbeat.Size = new Size(388, 98);
-			chartHeartbeat.TabIndex = 11;
-			chartHeartbeat.Text = "chart1";
-			chartHeartbeat.Click += ResourceGraph_Click;
-			// 
-			// lblTotalRam
-			// 
-			lblTotalRam.AutoSize = true;
-			lblTotalRam.BackColor = Color.Transparent;
-			lblTotalRam.ForeColor = Color.Fuchsia;
-			lblTotalRam.Location = new Point(681, 9);
-			lblTotalRam.Name = "lblTotalRam";
-			lblTotalRam.Size = new Size(36, 17);
-			lblTotalRam.TabIndex = 12;
-			lblTotalRam.Text = "RAM";
-			// 
-			// lblTotalCpu
-			// 
-			lblTotalCpu.AutoSize = true;
-			lblTotalCpu.BackColor = Color.Transparent;
-			lblTotalCpu.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			lblTotalCpu.ForeColor = Color.DarkCyan;
-			lblTotalCpu.Location = new Point(522, 11);
-			lblTotalCpu.Name = "lblTotalCpu";
-			lblTotalCpu.Size = new Size(30, 15);
-			lblTotalCpu.TabIndex = 13;
-			lblTotalCpu.Text = "CPU";
 			// 
 			// contextMenuStrip
 			// 
@@ -378,7 +332,7 @@ namespace Synix_Control_Panel
 			lblLocalIP1.Cursor = Cursors.Hand;
 			lblLocalIP1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblLocalIP1.ForeColor = Color.Lime;
-			lblLocalIP1.Location = new Point(225, 743);
+			lblLocalIP1.Location = new Point(543, 733);
 			lblLocalIP1.Name = "lblLocalIP1";
 			lblLocalIP1.Size = new Size(56, 17);
 			lblLocalIP1.TabIndex = 18;
@@ -392,7 +346,7 @@ namespace Synix_Control_Panel
 			lblPublicIP.Cursor = Cursors.Hand;
 			lblPublicIP.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblPublicIP.ForeColor = Color.Lime;
-			lblPublicIP.Location = new Point(225, 721);
+			lblPublicIP.Location = new Point(263, 733);
 			lblPublicIP.Name = "lblPublicIP";
 			lblPublicIP.Size = new Size(62, 17);
 			lblPublicIP.TabIndex = 19;
@@ -471,6 +425,36 @@ namespace Synix_Control_Panel
 			toolTip1.SetToolTip(btnSettings, "Synix Settings");
 			btnSettings.UseVisualStyleBackColor = true;
 			btnSettings.Click += btnSettings_Click;
+			// 
+			// cpuGauge
+			// 
+			cpuGauge.BackColor = Color.Transparent;
+			cpuGauge.Cursor = Cursors.Hand;
+			cpuGauge.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			cpuGauge.ForeColor = Color.White;
+			cpuGauge.Location = new Point(543, 3);
+			cpuGauge.MaxValue = 100F;
+			cpuGauge.Name = "cpuGauge";
+			cpuGauge.Size = new Size(210, 145);
+			cpuGauge.TabIndex = 34;
+			cpuGauge.Text = "synixGauge1";
+			toolTip1.SetToolTip(cpuGauge, "Click to open the resource graph window");
+			cpuGauge.Value = 0F;
+			cpuGauge.Click += ResourceGraph_Click;
+			// 
+			// ramGauge
+			// 
+			ramGauge.BackColor = Color.Transparent;
+			ramGauge.Cursor = Cursors.Hand;
+			ramGauge.ForeColor = Color.White;
+			ramGauge.Location = new Point(694, 3);
+			ramGauge.MaxValue = 100F;
+			ramGauge.Name = "ramGauge";
+			ramGauge.Size = new Size(210, 145);
+			ramGauge.TabIndex = 35;
+			ramGauge.Text = "synixGauge1";
+			ramGauge.Value = 0F;
+			ramGauge.Click += ResourceGraph_Click;
 			// 
 			// btnStart
 			// 
@@ -588,12 +572,11 @@ namespace Synix_Control_Panel
 			Controls.Add(lblUpdateStatus);
 			Controls.Add(lblPublicIP);
 			Controls.Add(lblLocalIP1);
-			Controls.Add(lblTotalCpu);
-			Controls.Add(lblTotalRam);
-			Controls.Add(chartHeartbeat);
 			Controls.Add(dataGridView1);
 			Controls.Add(logo);
 			Controls.Add(rtbLog);
+			Controls.Add(cpuGauge);
+			Controls.Add(ramGauge);
 			Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			FormBorderStyle = FormBorderStyle.None;
 			Icon = (Icon)resources.GetObject("$this.Icon");
@@ -606,7 +589,6 @@ namespace Synix_Control_Panel
 			MouseDown += Form_Drag_MouseDown;
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
 			((System.ComponentModel.ISupportInitialize)logo).EndInit();
-			((System.ComponentModel.ISupportInitialize)chartHeartbeat).EndInit();
 			contextMenuStrip.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
@@ -617,9 +599,6 @@ namespace Synix_Control_Panel
 		private DataGridView dataGridView1;
 		private RichTextBox rtbLog;
 		private PictureBox logo;
-		private System.Windows.Forms.DataVisualization.Charting.Chart chartHeartbeat;
-		private Label lblTotalRam;
-		private Label lblTotalCpu;
 		private ContextMenuStrip contextMenuStrip;
 		private ToolStripMenuItem installServer;
 		private ToolStripMenuItem editServer;
@@ -664,5 +643,7 @@ namespace Synix_Control_Panel
 		private SynixApp.Design.SynixButton btnStop;
 		private SynixApp.Design.SynixButton btnServerActions;
 		private SynixApp.Design.SynixButton btnDownloadUpdate;
+		private SynixApp.Design.SynixGauge cpuGauge;
+		private SynixApp.Design.SynixGauge ramGauge;
 	}
 }

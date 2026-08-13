@@ -100,7 +100,7 @@ namespace Synix_Control_Panel
 				AutoPopDelay = 8000,
 				ShowAlways = true
 			};
-
+			/*
 			_resourceGraphToolTip.SetToolTip(
 				chartHeartbeat,
 				"Click to open detailed CPU and RAM usage for all running servers."
@@ -108,39 +108,34 @@ namespace Synix_Control_Panel
 
 			chartHeartbeat.Cursor = Cursors.Hand;
 			chartHeartbeat.MouseLeave += chartHeartbeat_MouseLeave;
-
+			*/
 			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
 			_ = Core.Instance;
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
 		}
 
-		// Import the Windows hardware rendering API
 		[DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
 		internal static extern void DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int pvAttribute, uint cbAttribute);
 
-		// A helper method to catch every single dropdown window and space it out
 		private void ApplyMenuRoundingAndSpacing(ToolStripDropDown menu)
 		{
-			// 1. The DWM rounding logic isolated into a quick local function
 			void ApplyDwm()
 			{
 				if (Environment.OSVersion.Version.Build >= 22000)
 				{
 					int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
-					int DWMWCP_ROUND = 2; // Perfect Smooth Rounding
+					int DWMWCP_ROUND = 2;
 					DwmSetWindowAttribute(menu.Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref DWMWCP_ROUND, sizeof(int));
 				}
 			}
 
-			// 2. THE FIX: If the menu (Main Menu) already exists, apply it right now!
 			if (menu.IsHandleCreated)
 			{
 				ApplyDwm();
 			}
 			else
 			{
-				// Otherwise, wait for it to be created (Submenus)
 				menu.HandleCreated += (s, e) => ApplyDwm();
 			}
 
@@ -164,31 +159,11 @@ namespace Synix_Control_Panel
 		{
 			CheckRunningStatus();
 
-			// 1. Grab telemetry
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
-			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
-			lblTotalRam.Text = $"RAM: {ram:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
-
-			if (chartHeartbeat.Series.FindByName("TotalCPU") == null)
-				GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
-
-			// 2. Manually append the new data directly to the existing chart collection
-			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
-			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
-
-			// 3. Remove the oldest points to keep the collection size stable and prevent managed memory growth
-			if (chartHeartbeat.Series["TotalCPU"].Points.Count > 30)
-			{
-				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
-				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
-			}
-
-			// 4. Scroll the view dynamically based on the actual points
-			var chartArea = chartHeartbeat.ChartAreas[0];
-			chartArea.AxisX.Minimum = chartHeartbeat.Series["TotalCPU"].Points.First().XValue;
-			chartArea.AxisX.Maximum = chartHeartbeat.Series["TotalCPU"].Points.Last().XValue;
+			cpuGauge.UpdateGauge((float)cpu, "CPU %");
+			ramGauge.UpdateGauge((float)ram, "RAM %");
 
 			// 5. Restart Check
 			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
@@ -214,12 +189,12 @@ namespace Synix_Control_Panel
 		[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
 		private static extern IntPtr CreateRoundRectRgn
 		(
-			int nLeftRect,     // x-coordinate of upper-left corner
-			int nTopRect,      // y-coordinate of upper-left corner
-			int nRightRect,    // x-coordinate of lower-right corner
-			int nBottomRect,   // y-coordinate of lower-right corner
-			int nWidthEllipse, // width of the rounded corner
-			int nHeightEllipse // height of the rounded corner
+			int nLeftRect,
+			int nTopRect,
+			int nRightRect,
+			int nBottomRect,
+			int nWidthEllipse,
+			int nHeightEllipse
 		);
 
 		private void Form_Drag_MouseDown(object sender, MouseEventArgs e)
@@ -289,7 +264,6 @@ namespace Synix_Control_Panel
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			// Use the variable that Heartbeat_Tick has been updating
 			if (isDownloadActive || Core.Instance.isDownloadActive)
 			{
 				e.Cancel = true;
@@ -300,13 +274,11 @@ namespace Synix_Control_Panel
 
 		private async Task LoadNetworkInfo()
 		{
-			// 1. Get the LAN IP instantly
 			if (!isPrivacyLoading)
 			{
 				string localIP = await Core.Instance.GetLocalIP();
 				lblLocalIP1.Text = $"LAN IP: {localIP}";
 
-				// 2. Get the Public IP in the background
 				lblPublicIP.Text = "Public IP: Fetching...";
 				string publicIP = await Core.Instance.GetPublicIP();
 				lblPublicIP.Text = $"Public IP: {publicIP}";
@@ -315,7 +287,6 @@ namespace Synix_Control_Panel
 
 		private async void lblPublicIP_Click(object sender, EventArgs e)
 		{
-			// Strip the prefix and copy just the IP
 			string publicIP = await Core.Instance.GetPublicIP();
 			Clipboard.SetText(publicIP);
 			if (!isPrivacyLoading)
@@ -378,7 +349,6 @@ namespace Synix_Control_Panel
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
-			rtbLog.Update();
 		}
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
@@ -392,12 +362,6 @@ namespace Synix_Control_Panel
 			double reserved = Math.Max(physicalRam * 0.10, 5.0);
 			systemTotalRamGb = physicalRam - reserved;
 
-			GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
-			GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
-
-			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, 0);
-			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, 0);
-			chartHeartbeat.Update();
 			chartTickCounter++;
 			tmrResourceUpdates.Start();
 
@@ -427,8 +391,7 @@ namespace Synix_Control_Panel
 
 		private void chartHeartbeat_MouseLeave(object? sender, EventArgs e)
 		{
-			chartHeartbeat.BorderlineDashStyle =
-				System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
+			//chartHeartbeat.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
 		}
 
 		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -460,7 +423,6 @@ namespace Synix_Control_Panel
 
 		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
-			// UI-specific check
 			if (isInitializing) return;
 			await Core.Instance.AddServerAndReport();
 		}
@@ -698,13 +660,9 @@ namespace Synix_Control_Panel
 		private void InitializeVersionCheckTimer()
 		{
 			versionTimer = new System.Windows.Forms.Timer();
-
-			// 20 minutes * 60 seconds * 1000 milliseconds
 			versionTimer.Interval = 20 * 60 * 1000;
-
 			versionTimer.Tick += async (sender, e) =>
 			{
-				// This fires every 20 minutes in the background
 				await VersionCheck();
 			};
 

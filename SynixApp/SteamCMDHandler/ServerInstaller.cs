@@ -46,7 +46,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			ProcessStartInfo startInfo = new()
 			{
 				FileName = @"C:\Synix\SteamCMD\steamcmd.exe",
-				// Map directly to the object properties
 				Arguments = $"+force_install_dir \"{server.InstallPath}\" +login anonymous +app_update {blueprint.AppID} validate +quit",
 				WorkingDirectory = @"C:\Synix\SteamCMD",
 				UseShellExecute = false,
@@ -57,8 +56,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 			using Process process = new() { StartInfo = startInfo };
 
-			// The stream readers must never wait for Core.Log/MainGUI.AppendLog.
-			// They only place complete SteamCMD messages in this queue.
 			Channel<string> logQueue = Channel.CreateUnbounded<string>(
 				new UnboundedChannelOptions
 				{
@@ -82,6 +79,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 			});
 
+			DateTime lastProgressTime = DateTime.MinValue;
+
 			void QueueSteamLine(string text)
 			{
 				string line = text.Trim();
@@ -95,6 +94,15 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					line.Contains("FAILED", StringComparison.OrdinalIgnoreCase))
 				{
 					Interlocked.Exchange(ref hasInternalError, 1);
+				}
+
+				if (line.Contains("progress:", StringComparison.OrdinalIgnoreCase) ||
+					line.Contains("downloading", StringComparison.OrdinalIgnoreCase))
+				{
+					if ((DateTime.Now - lastProgressTime).TotalMilliseconds < 250)
+						return;
+
+					lastProgressTime = DateTime.Now;
 				}
 
 				lock (lineSync)
@@ -113,6 +121,30 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				process.Start();
 				onPidStarted?.Invoke(process.Id);
 
+				CancellationTokenSource heartbeatCts = new CancellationTokenSource();
+				Stopwatch installTimer = Stopwatch.StartNew();
+
+				Task heartbeatTask = Task.Run(async () =>
+				{
+					while (!heartbeatCts.Token.IsCancellationRequested)
+					{
+						try
+						{
+							await Task.Delay(1000, heartbeatCts.Token);
+							if (heartbeatCts.Token.IsCancellationRequested) break;
+
+							MainGUI.Instance?.BeginInvoke(new Action(() =>
+							{
+								if (MainGUI.Instance != null)
+								{
+									MainGUI.Instance.Text = $"Synix Control Panel - Working... [{installTimer.Elapsed.Minutes:D2}m {installTimer.Elapsed.Seconds:D2}s]";
+								}
+							}));
+						}
+						catch (TaskCanceledException) { break; }
+					}
+				});
+
 				Task outputReader = PumpStreamAsync(
 					process.StandardOutput,
 					QueueSteamLine);
@@ -123,13 +155,20 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 				process.WaitForExit();
 
+				heartbeatCts.Cancel();
+				MainGUI.Instance?.BeginInvoke(new Action(() =>
+				{
+					if (MainGUI.Instance != null)
+					{
+						MainGUI.Instance.Text = "Synix Control Panel";
+					}
+				}));
+
 				Task.WhenAll(outputReader, errorReader)
 					.GetAwaiter()
 					.GetResult();
 
 				logQueue.Writer.TryComplete();
-				dashboardWriter.GetAwaiter().GetResult();
-
 				Core.Instance.UpdateGridStatus();
 
 				return Volatile.Read(ref hasInternalError) == 1
@@ -147,10 +186,12 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					dashboardWriter.GetAwaiter().GetResult();
 				}
-				catch
+				catch { }
+
+				MainGUI.Instance?.BeginInvoke(new Action(() =>
 				{
-					// Preserve the original launcher error result.
-				}
+					if (MainGUI.Instance != null) MainGUI.Instance.Text = "Synix Control Panel";
+				}));
 
 				return -1;
 			}
@@ -166,9 +207,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			int requiredJava = 8;
 			string javaExeCmd = "java";
 
-			// ========================================================
-			// 1. THE ROUTER: DETERMINE THE TARGET URL
-			// ========================================================
 			if (blueprint.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
 			{
 				logCallback?.Invoke("Querying Mojang API for the latest Vanilla Java version...");
@@ -178,12 +216,11 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					var manifestNode = System.Text.Json.Nodes.JsonNode.Parse(manifestJson);
 					string targetVersion = server.GameVersion;
 
-					// 2. If they didn't pick one (or picked "Latest"), fetch the newest one from Mojang
 					if (string.IsNullOrWhiteSpace(targetVersion) || targetVersion.Equals("Latest", StringComparison.OrdinalIgnoreCase))
 					{
 						targetVersion = manifestNode?["latest"]?["release"]?.ToString() ?? "";
 						logCallback?.Invoke($"Resolved latest Minecraft version: {targetVersion}");
-						server.GameVersion = targetVersion; // Save it so the UI updates
+						server.GameVersion = targetVersion;
 					}
 					else
 					{
@@ -211,7 +248,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					downloadUrl = versionNode?["downloads"]?["server"]?["url"]?.ToString() ?? "";
 					fileName = "server.jar";
 
-					// PULL REQUIRED JAVA VERSION FROM MOJANG
 					if (versionNode?["javaVersion"]?["majorVersion"] != null)
 					{
 						requiredJava = (int)versionNode["javaVersion"]["majorVersion"];
@@ -241,9 +277,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				return 1;
 			}
 
-			// ========================================================
-			// 2. HTTP DOWNLOADER (WITH PROGRESS LOGGING)
-			// ========================================================
 			string fullFilePath = "";
 			try
 			{
@@ -253,7 +286,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				fullFilePath = Path.Combine(server.InstallPath, fileName);
 				logCallback?.Invoke($"Starting download: {fileName}...");
 
-				// Use HttpRequestMessage to explicitly force HTTP/1.1
 				using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, downloadUrl))
 				{
 					request.Version = new Version(1, 1);
@@ -297,9 +329,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				return -1;
 			}
 
-			// ========================================================
-			// 3. POST-DOWNLOAD AUTO-EXTRACTION
-			// ========================================================
 			try
 			{
 				if (fileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
@@ -318,29 +347,23 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				return -1;
 			}
 
-			// ========================================================
-			// 4. SMART JAVA CHECKER & SCRIPT GENERATION
-			// ========================================================
 			try
 			{
 				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 				{
 					string runtimeFolder = Path.Combine(@"C:\Synix\SynixData\Runtimes", $"Java{requiredJava}");
 
-					// 1. Check if Synix ALREADY downloaded this Java version
 					string[] existingExecutables = Directory.Exists(runtimeFolder)
 						? Directory.GetFiles(runtimeFolder, "java.exe", SearchOption.AllDirectories)
 						: Array.Empty<string>();
 
 					if (existingExecutables.Length > 0)
 					{
-						// Perfect! We already have it. Skip the system check and the popup.
 						javaExeCmd = $"\"{existingExecutables[0]}\"";
 						logCallback?.Invoke($"[SYSTEM] Using previously cached Portable Java {requiredJava}.");
 					}
 					else
 					{
-						// 2. No portable version found, so NOW we check the user's PC
 						int systemJava = Core.GetSystemJavaVersion();
 
 						if (systemJava < requiredJava)
@@ -401,8 +424,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 					logCallback?.Invoke("[SYSTEM] Generating Minecraft Start.bat bootstrapper...");
 					string batPath = Path.Combine(server.InstallPath, "Start.bat");
-
-					// Write the bat file using either global "java" or the specific portable path
 					File.WriteAllText(batPath, $"@echo off\r\n{javaExeCmd} %* <NUL\r\nif %errorlevel% neq 0 pause\r\n");
 				}
 			}
@@ -419,23 +440,21 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			StreamReader reader,
 			Action<string> queueLine)
 		{
-			char[] readBuffer = new char[256];
+			Stream stream = reader.BaseStream;
+			byte[] buffer = new byte[256];
 			StringBuilder pending = new();
 			bool previousWasCarriageReturn = false;
 
 			while (true)
 			{
-				int charactersRead = await reader
-					.ReadAsync(readBuffer.AsMemory(0, readBuffer.Length))
-					.ConfigureAwait(false);
-
-				if (charactersRead == 0)
+				int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
+				if (bytesRead == 0)
 					break;
 
-				for (int index = 0; index < charactersRead; index++)
-				{
-					char character = readBuffer[index];
+				string chunk = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
+				foreach (char character in chunk)
+				{
 					if (character == '\r')
 					{
 						FlushPending(pending, queueLine);
@@ -445,7 +464,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 					if (character == '\n')
 					{
-						// Do not create an empty second message for a CRLF pair.
 						if (!previousWasCarriageReturn)
 							FlushPending(pending, queueLine);
 

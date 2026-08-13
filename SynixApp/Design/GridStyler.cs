@@ -15,7 +15,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
 using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.SynixApp.Design
@@ -423,14 +422,34 @@ namespace Synix_Control_Panel.SynixApp.Design
 			{
 				e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-				using (SolidBrush selectBrush = new SolidBrush(selectionFill))
-				{
-					e.Graphics.FillRectangle(selectBrush, e.RowBounds);
-				}
+				Rectangle selectRect = new Rectangle(
+					3,
+					e.RowBounds.Top + 2,
+					dgv.ClientSize.Width - 7,
+					e.RowBounds.Height - 5
+				);
 
-				using (SolidBrush accentBrush = new SolidBrush(cyanBorder))
+				using (GraphicsPath path = new GraphicsPath())
 				{
-					e.Graphics.FillRectangle(accentBrush, e.RowBounds.Left, e.RowBounds.Top, 3, e.RowBounds.Height);
+					int radius = 5;
+					int d = radius * 2;
+
+					path.StartFigure();
+					path.AddArc(selectRect.X, selectRect.Y, d, d, 180, 90);
+					path.AddArc(selectRect.Right - d, selectRect.Y, d, d, 270, 90);
+					path.AddArc(selectRect.Right - d, selectRect.Bottom - d, d, d, 0, 90);
+					path.AddArc(selectRect.X, selectRect.Bottom - d, d, d, 90, 90);
+					path.CloseFigure();
+
+					using (SolidBrush selectBrush = new SolidBrush(selectionFill))
+					{
+						e.Graphics.FillPath(selectBrush, path);
+					}
+
+					using (Pen cyanPen = new Pen(cyanBorder, 1))
+					{
+						e.Graphics.DrawPath(cyanPen, path);
+					}
 				}
 			}
 			else
@@ -440,6 +459,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			e.PaintParts &= ~DataGridViewPaintParts.Background;
 			e.PaintParts &= ~DataGridViewPaintParts.SelectionBackground;
+			e.PaintParts &= ~DataGridViewPaintParts.Border;
 		}
 
 		public static void PaintTransparentRows(DataGridView dgv, DataGridViewCellPaintingEventArgs e)
@@ -489,53 +509,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 				e.Handled = true;
 			}
-		}
-
-		// --- CHART METHODS ---
-		public static void HeartbeatChart(Chart chart, double maxRamGb)
-		{
-			if (chart == null) return;
-			chart.Series.Clear();
-			chart.ChartAreas.Clear();
-			chart.Legends.Clear();
-			chart.BackColor = Color.Transparent;
-			chart.AntiAliasing = AntiAliasingStyles.All;
-
-			ChartArea ca = chart.ChartAreas.Add("Default");
-			ca.BackColor = PlotBg;
-			ca.AxisY.Minimum = 0;
-			ca.AxisY.Maximum = 100;
-			ca.AxisY.LabelStyle.Enabled = false;
-			ca.AxisY.MajorGrid.Enabled = true;
-			ca.AxisY.MajorGrid.LineColor = GridLineColor;
-
-			ca.AxisY2.Enabled = AxisEnabled.True;
-			ca.AxisY2.Minimum = 0;
-			ca.AxisY2.Maximum = (maxRamGb > 0) ? maxRamGb : 98.0;
-			ca.AxisY2.LabelStyle.Enabled = false;
-			ca.AxisY2.MajorGrid.Enabled = false;
-
-			ca.AxisX.LabelStyle.Enabled = false;
-			ca.AxisX.MajorGrid.Enabled = false;
-
-			Series ramSer = chart.Series.Add("TotalRAM");
-			ramSer.ChartType = SeriesChartType.SplineArea;
-			ramSer.YAxisType = AxisType.Secondary;
-			ramSer.Color = RamPurple;
-			ramSer.BorderColor = Color.MediumPurple;
-			ramSer.BorderWidth = 1;
-
-			Series cpuSer = chart.Series.Add("TotalCPU");
-			cpuSer.ChartType = SeriesChartType.SplineArea;
-			cpuSer.YAxisType = AxisType.Primary;
-			cpuSer.Color = CpuCyan;
-			cpuSer.BorderColor = Color.Cyan;
-			cpuSer.BorderWidth = 2;
-		}
-
-		public static void HeartbeatChart(Chart chart)
-		{
-			HeartbeatChart(chart, 128.0);
 		}
 
 		public static void DashboardLabels(Label cpuLabel, Label ramLabel)
