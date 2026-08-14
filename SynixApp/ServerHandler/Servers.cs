@@ -173,7 +173,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 								.Replace("{rcon_port}", server.RconPort.ToString())
 								.Replace("{rcon_pass}", server.RconPassword ?? "");
 
-							// Append Web RCON switch if this is a Rust server
 							if (string.Equals(server.Game, "Rust", StringComparison.OrdinalIgnoreCase))
 							{
 								formattedRcon += " +rcon.web 1";

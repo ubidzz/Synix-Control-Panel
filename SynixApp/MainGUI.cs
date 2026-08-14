@@ -19,7 +19,6 @@ using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
@@ -40,7 +39,6 @@ namespace Synix_Control_Panel
 		private System.Windows.Forms.Timer? versionTimer;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 		private ToolTip? _resourceGraphToolTip;
-
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
 
@@ -159,7 +157,6 @@ namespace Synix_Control_Panel
 			ramGauge.MaxValue = (float)systemTotalRamGb;
 			ramGauge.UpdateGauge((float)ram, "RAM GB");
 
-			// 5. Restart Check
 			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
 			if (needsTimeCheck)
 			{
@@ -550,7 +547,6 @@ namespace Synix_Control_Panel
 				string publicIp = await Core.Instance.GetPublicIP();
 				string ipText = isPrivacyLoading ? "[HIDDEN]" : publicIp;
 
-				// Test Game Port & Query Port via TCP and UDP
 				bool gameTcp = await Core.Instance.TestTcpConnectivity(publicIp, selectedServer.Port);
 				bool queryTcp = await Core.Instance.TestTcpConnectivity(publicIp, selectedServer.QueryPort);
 				bool gameUdp = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.Port);
@@ -583,7 +579,6 @@ namespace Synix_Control_Panel
 				string localIp = await Core.Instance.GetLocalIP();
 				string ipText = isPrivacyLoading ? "[HIDDEN]" : localIp;
 
-				// Test Game Port & Query Port via TCP and UDP
 				bool gameTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.Port);
 				bool queryTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.QueryPort);
 				bool gameUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort); // Fallback check

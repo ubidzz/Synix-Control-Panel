@@ -20,7 +20,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 {
 	public class SynixMenuRenderer : ToolStripProfessionalRenderer
 	{
-		private readonly Color bgColor = Color.FromArgb(25, 25, 30); // Slightly darker base for better contrast
+		private readonly Color bgColor = Color.FromArgb(25, 25, 30);
 		private readonly Color hoverTop = Color.FromArgb(20, 35, 50);
 		private readonly Color hoverBottom = Color.FromArgb(10, 20, 30);
 		private readonly Color cyanBorder = Color.FromArgb(0, 190, 255);
@@ -30,12 +30,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 			this.RoundedEdges = false;
 		}
 
-		// --- THE REAL FIX: DYNAMIC ITEM EVENT TRACKING ---
 		protected override void InitializeItem(ToolStripItem item)
 		{
 			base.InitializeItem(item);
 
-			// Unsubscribe first to prevent duplicate event fires
 			item.MouseEnter -= Item_MouseEnter;
 			item.MouseEnter += Item_MouseEnter;
 
@@ -47,7 +45,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 		{
 			if (sender is ToolStripItem item && !(item is ToolStripSeparator))
 			{
-				// GetCurrentParent grabs the exact floating sub-menu layer the item belongs to
 				ToolStrip parent = item.GetCurrentParent();
 				if (parent != null)
 				{
@@ -67,7 +64,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				}
 			}
 		}
-		// --------------------------------------------------
 
 		private GraphicsPath GetRoundedRect(Rectangle rect, float radius)
 		{

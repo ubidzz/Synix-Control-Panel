@@ -20,7 +20,6 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		// Standard Steam A2S_INFO query header for probing game servers
 		private readonly byte[] _a2sInfoRequest = new byte[]
 		{
 			0xFF, 0xFF, 0xFF, 0xFF, 0x54, 0x53, 0x6F, 0x75, 0x72, 0x63, 0x65,
@@ -30,7 +29,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> TestAllProtocolsConnectivity(string ip, int gamePort, int queryPort)
 		{
-			// Test Game Port and Query Port across both TCP and UDP
 			bool gameTcp = await TestTcpConnectivity(ip, gamePort);
 			bool queryTcp = await TestTcpConnectivity(ip, queryPort);
 			bool gameUdp = await TestServerConnectivity(ip, gamePort);
@@ -61,7 +59,6 @@ namespace Synix_Control_Panel.SynixEngine
 				udpClient.Client.SendTimeout = timeoutMs;
 				udpClient.Client.ReceiveTimeout = timeoutMs;
 
-				// The standard 25-byte A2S_INFO request
 				byte[] requestPayload = _a2sInfoRequest;
 
 				await udpClient.SendAsync(requestPayload, requestPayload.Length, remoteEP);
@@ -74,30 +71,23 @@ namespace Synix_Control_Panel.SynixEngine
 					var result = await receiveTask;
 					byte[] buffer = result.Buffer;
 
-					// Check if the response is valid
 					if (buffer == null || buffer.Length < 5) return false;
 
-					// 0x41 ('A') means the server is challenging us
 					if (buffer[4] == 0x41)
 					{
-						// Extract the 4-byte challenge token
 						byte[] challenge = new byte[4];
 						Array.Copy(buffer, 5, challenge, 0, 4);
 
-						// Create a new payload: Original Request + Challenge Token
 						byte[] challengePayload = new byte[requestPayload.Length + 4];
 						Buffer.BlockCopy(requestPayload, 0, challengePayload, 0, requestPayload.Length);
 						Buffer.BlockCopy(challenge, 0, challengePayload, requestPayload.Length, 4);
 
-						// Send the challenge response
 						await udpClient.SendAsync(challengePayload, challengePayload.Length, remoteEP);
 
-						// Wait for the final server data
 						var finalReceiveTask = udpClient.ReceiveAsync();
 						if (await Task.WhenAny(finalReceiveTask, Task.Delay(timeoutMs)) == finalReceiveTask)
 						{
 							var finalResult = await finalReceiveTask;
-							// 0x49 ('I') means the server accepted the challenge and sent the data
 							return finalResult.Buffer != null && finalResult.Buffer.Length > 4 && finalResult.Buffer[4] == 0x49;
 						}
 						return false;
@@ -117,36 +107,30 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> ExecuteDynamicProbes(GameServer server, string ip)
 		{
-			// 1. A2S PROTOCOL ON QUERY PORT (Steamworks / Source / Standard Unreal)
 			if (await TestServerConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> A2S (Steam UDP) on Port {server.QueryPort}");
 				return true;
 			}
 
-			// 2. TCP PROTOCOL ON GAME PORT
 			if (await TestTcpConnectivity(ip, server.Port))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.Port}");
 				return true;
 			}
 
-			// 3. TCP PROTOCOL ON QUERY PORT
 			if (await TestTcpConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.QueryPort}");
 				return true;
 			}
 
-			// 4. UDP PROTOCOL ON GAME PORT
 			if (await TestServerConnectivity(ip, server.Port))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> UDP Check on Port {server.Port}");
 				return true;
 			}
 
-			// 5. LOCAL PORT BINDING (The ultimate failsafe)
-			// We wait 25 seconds to give the server time to boot and bind the port in the OS.
 			if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 25)
 			{
 				if (IsPortInUseLocally(server.Port))

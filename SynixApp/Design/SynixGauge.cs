@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+// 
+// LEGAL NOTICE:
+// This source code is proprietary and confidential. 
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System;
 using System.ComponentModel;
@@ -91,7 +98,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 			float startAngle = 135f;
 			float sweepAngle = 270f;
 
-			// --- 1. OUTER DASHED ARC ---
 			using (Pen dashedPen = new Pen(Color.FromArgb(0, 100, 255), Math.Max(2f, minDimension * 0.015f)))
 			{
 				dashedPen.DashStyle = DashStyle.Dash;
@@ -102,7 +108,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 			int innerRadius = (int)(radius * 0.85);
 			Rectangle innerRect = new Rectangle(cx - innerRadius, cy - innerRadius, innerRadius * 2, innerRadius * 2);
 
-			// --- 2. COLOR TRACK ---
 			using (Pen trackPen = new Pen(Color.DodgerBlue, Math.Max(3f, minDimension * 0.025f)))
 			{
 				g.DrawArc(trackPen, innerRect, startAngle, sweepAngle * 0.6f);
@@ -112,7 +117,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				g.DrawArc(trackPen, innerRect, startAngle + (sweepAngle * 0.8f), sweepAngle * 0.2f);
 			}
 
-			// --- 3. DYNAMIC TICKS AND NUMBERS ---
 			int textRadius = (int)(radius * 0.62);
 			int tickLength = (int)(radius * 0.06);
 
@@ -144,7 +148,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				}
 			}
 
-			// --- 4. INNER GLOW RING ---
 			int glowRadius = (int)(radius * 0.38);
 			using (Pen glowPen = new Pen(Color.FromArgb(40, 0, 150, 255), Math.Max(4f, minDimension * 0.06f)))
 			{
@@ -154,7 +157,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				g.DrawEllipse(glowPen, cx - glowRadius, cy - glowRadius, glowRadius * 2, glowRadius * 2);
 			}
 
-			// --- 5. THE EDGE-ATTACHED TAPERED NEEDLE ---
 			float needleAngle = startAngle + (_value / _maxValue) * sweepAngle;
 			double needleRad = needleAngle * Math.PI / 180.0;
 
@@ -185,7 +187,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				}
 			}
 
-			// --- 6. CENTRAL TEXT ---
 			using (SolidBrush textBrush = new SolidBrush(Color.White))
 			using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
 			{

@@ -580,7 +580,6 @@ namespace Synix_Control_Panel.SynixEngine
 					catch { /* Silent fail */ }
 				}
 
-				// 2. EXACT ARGUMENT REPLACEMENT (1:1 with Servers.cs)
 				string cleanIdentity = GetSafeName(server.ServerName ?? "Server");
 				string args = dbEntry.RequiredArgs ?? "";
 

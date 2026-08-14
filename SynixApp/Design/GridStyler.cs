@@ -10,7 +10,6 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -28,11 +27,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private static Color RowDarkGrey = Color.FromArgb(30, 30, 30);
 		private static Color HeaderGrey = Color.FromArgb(35, 35, 35);
 		private static Color BackgroundBlack = Color.FromArgb(15, 15, 15);
-
-		// Synix Theme Colors for DataGridView Selection
 		private static Color selectionFill = Color.FromArgb(25, 45, 65);
 		private static Color cyanBorder = Color.FromArgb(0, 190, 255);
-
 		private static Font _boldStatusFont = null;
 		private static readonly SolidBrush _rowDarkGreyBrush = new SolidBrush(RowDarkGrey);
 		private static readonly Pen _faintDividerPen = new Pen(Color.FromArgb(45, 45, 45));
@@ -73,7 +69,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				col.HeaderCell.Style.ForeColor = Color.Cyan;
 			}
 
-			// Hook mouse events for hand cursor and tooltips on rows
 			dgv.CellMouseEnter -= Dgv_CellMouseEnter;
 			dgv.CellMouseEnter += Dgv_CellMouseEnter;
 			dgv.CellMouseLeave -= Dgv_CellMouseLeave;

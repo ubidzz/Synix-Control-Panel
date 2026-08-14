@@ -10,7 +10,6 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -70,8 +69,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 			Rectangle rectSurface = this.ClientRectangle;
 			Rectangle rectBorder = new Rectangle(rectSurface.X, rectSurface.Y, rectSurface.Width - 1, rectSurface.Height - 1);
 
-			// --- DYNAMIC BACKGROUND MATCHER ---
-			// Scans the Z-order to find whatever colored panel/label is directly behind the button
 			bool foundSibling = false;
 			Color bgMatch = Color.Transparent;
 
@@ -93,7 +90,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				}
 			}
 
-			// If it sits on a label/panel, blend with its color. Otherwise, draw the form background natively.
 			if (foundSibling)
 			{
 				g.Clear(bgMatch);
@@ -107,7 +103,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 						g.FillRectangle(bgBrush, rectSurface);
 			}
 
-			// --- DRAW BUTTON ---
 			Color currentTopColor = FillColorSecondary;
 			Color currentBottomColor = FillColor;
 			Point cursorLocation = this.PointToClient(Cursor.Position);
