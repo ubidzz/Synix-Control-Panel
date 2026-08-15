@@ -39,6 +39,151 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 		}
 
+		public static void SaveConfig(string path, List<ConfigLine> data, ConfigFormat format)
+		{
+			switch (format)
+			{
+				case ConfigFormat.StandardINI: SaveStandard(path, data); break;
+				case ConfigFormat.JSON: SaveJSON(path, data); break;
+				case ConfigFormat.XML: SaveXML(path, data); break;
+				case ConfigFormat.Space: SaveSpace(path, data); break;
+			}
+		}
+
+		// --------------------------------------------------------
+		// STANDARD INI (WITH PALWORLD AUTO-DETECTION)
+		// --------------------------------------------------------
+		private static List<ConfigLine> LoadStandard(string path)
+		{
+			var settings = new List<ConfigLine>();
+			if (!File.Exists(path)) return settings;
+
+			string fullContent = File.ReadAllText(path);
+
+			// AUTO-DETECT: If the INI contains Palworld's unique array syntax, parse it dynamically
+			if (fullContent.Contains("OptionSettings=("))
+			{
+				return LoadPalworld(fullContent);
+			}
+
+			// Standard INI parsing for normal games
+			foreach (var line in File.ReadAllLines(path))
+			{
+				string trimmed = line.Trim();
+				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("[") || trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("//"))
+					continue;
+
+				var kv = trimmed.Split(new[] { '=' }, 2);
+				if (kv.Length == 2)
+				{
+					settings.Add(new ConfigLine { Key = kv[0].Trim(), Value = kv[1].Trim() });
+				}
+			}
+			return settings;
+		}
+
+		private static void SaveStandard(string path, List<ConfigLine> data)
+		{
+			if (!File.Exists(path)) return;
+
+			string fullContent = File.ReadAllText(path);
+
+			// AUTO-DETECT: Re-pack Palworld settings to a single line instead of standard INI format
+			if (fullContent.Contains("OptionSettings=("))
+			{
+				SavePalworld(path, data);
+				return;
+			}
+
+			// Standard INI saving
+			string[] originalLines = File.ReadAllLines(path);
+			for (int i = 0; i < originalLines.Length; i++)
+			{
+				string trimmed = originalLines[i].Trim();
+				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("[") || trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("//"))
+					continue;
+
+				var kv = trimmed.Split(new[] { '=' }, 2);
+				if (kv.Length == 2)
+				{
+					string fileKey = kv[0].Trim();
+					var matchingData = data.FirstOrDefault(d => d.Key == fileKey);
+					if (matchingData != null)
+					{
+						originalLines[i] = $"{fileKey}={matchingData.Value}";
+					}
+				}
+			}
+
+			File.WriteAllLines(path, originalLines);
+		}
+
+		// --------------------------------------------------------
+		// PALWORLD SPECIFIC PARSERS
+		// --------------------------------------------------------
+		private static List<ConfigLine> LoadPalworld(string content)
+		{
+			var settings = new List<ConfigLine>();
+
+			int startIndex = content.IndexOf("OptionSettings=(");
+			if (startIndex == -1) return settings;
+
+			startIndex += 16; // Move past "OptionSettings=("
+			int endIndex = content.LastIndexOf(')');
+			if (endIndex == -1 || endIndex <= startIndex) return settings;
+
+			string optionsStr = content.Substring(startIndex, endIndex - startIndex);
+
+			// Safely split by comma, ignoring commas inside double quotes (e.g. CrossplayPlatforms)
+			var parts = new List<string>();
+			bool inQuotes = false;
+			int chunkStart = 0;
+			for (int i = 0; i < optionsStr.Length; i++)
+			{
+				if (optionsStr[i] == '"') inQuotes = !inQuotes;
+				else if (optionsStr[i] == ',' && !inQuotes)
+				{
+					parts.Add(optionsStr.Substring(chunkStart, i - chunkStart));
+					chunkStart = i + 1;
+				}
+			}
+			parts.Add(optionsStr.Substring(chunkStart));
+
+			// Convert safely split strings into DataGridView rows
+			foreach (string kv in parts)
+			{
+				string trimmedKv = kv.Trim();
+				int eqIndex = trimmedKv.IndexOf('=');
+				if (eqIndex > 0)
+				{
+					settings.Add(new ConfigLine
+					{
+						Key = trimmedKv.Substring(0, eqIndex).Trim(),
+						Value = trimmedKv.Substring(eqIndex + 1).Trim()
+					});
+				}
+			}
+			return settings;
+		}
+
+		private static void SavePalworld(string path, List<ConfigLine> data)
+		{
+			// Reconstruct the massive single-line OptionSettings string
+			List<string> kvPairs = new List<string>();
+			foreach (var item in data)
+			{
+				kvPairs.Add($"{item.Key}={item.Value}");
+			}
+
+			string newOptions = "OptionSettings=(" + string.Join(",", kvPairs) + ")";
+			string fileHeader = "[/Script/Pal.PalGameWorldSettings]";
+
+			File.WriteAllText(path, fileHeader + Environment.NewLine + newOptions);
+		}
+
+		// --------------------------------------------------------
+		// EXISTING PARSERS
+		// --------------------------------------------------------
 		private static List<ConfigLine> LoadSpace(string path)
 		{
 			var settings = new List<ConfigLine>();
@@ -89,26 +234,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 			}
 			File.WriteAllLines(path, originalLines);
-		}
-
-		private static List<ConfigLine> LoadStandard(string path)
-		{
-			var settings = new List<ConfigLine>();
-			if (!File.Exists(path)) return settings;
-
-			foreach (var line in File.ReadAllLines(path))
-			{
-				string trimmed = line.Trim();
-				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("[") || trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("//"))
-					continue;
-
-				var kv = trimmed.Split(new[] { '=' }, 2);
-				if (kv.Length == 2)
-				{
-					settings.Add(new ConfigLine { Key = kv[0].Trim(), Value = kv[1].Trim() });
-				}
-			}
-			return settings;
 		}
 
 		private static List<ConfigLine> LoadJSON(string path)
@@ -173,77 +298,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 		}
 
-		private static List<ConfigLine> LoadXML(string path)
-		{
-			var settings = new List<ConfigLine>();
-			if (!File.Exists(path)) return settings;
-
-			try
-			{
-				XmlDocument doc = new XmlDocument();
-				doc.Load(path);
-
-				XmlNodeList? properties = doc.SelectNodes("//property");
-				if (properties != null)
-				{
-					foreach (XmlNode node in properties)
-					{
-						if (node.Attributes?["name"] != null && node.Attributes["value"] != null)
-						{
-							settings.Add(new ConfigLine
-							{
-								Key = node.Attributes["name"]!.Value,
-								Value = node.Attributes["value"]!.Value
-							});
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Error reading XML: {ex.Message}", "XML Parser Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			return settings;
-		}
-
-		public static void SaveConfig(string path, List<ConfigLine> data, ConfigFormat format)
-		{
-			switch (format)
-			{
-				case ConfigFormat.StandardINI: SaveStandard(path, data); break;
-				case ConfigFormat.JSON: SaveJSON(path, data); break;
-				case ConfigFormat.XML: SaveXML(path, data); break;
-				case ConfigFormat.Space: SaveSpace(path, data); break;
-			}
-		}
-
-		private static void SaveStandard(string path, List<ConfigLine> data)
-		{
-			if (!File.Exists(path)) return;
-
-			string[] originalLines = File.ReadAllLines(path);
-
-			for (int i = 0; i < originalLines.Length; i++)
-			{
-				string trimmed = originalLines[i].Trim();
-				if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("[") || trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("//"))
-					continue;
-
-				var kv = trimmed.Split(new[] { '=' }, 2);
-				if (kv.Length == 2)
-				{
-					string fileKey = kv[0].Trim();
-					var matchingData = data.FirstOrDefault(d => d.Key == fileKey);
-					if (matchingData != null)
-					{
-						originalLines[i] = $"{fileKey}={matchingData.Value}";
-					}
-				}
-			}
-
-			File.WriteAllLines(path, originalLines);
-		}
-
 		private static void SaveJSON(string path, List<ConfigLine> data)
 		{
 			if (!File.Exists(path)) return;
@@ -300,6 +354,39 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 				}
 			}
+		}
+
+		private static List<ConfigLine> LoadXML(string path)
+		{
+			var settings = new List<ConfigLine>();
+			if (!File.Exists(path)) return settings;
+
+			try
+			{
+				XmlDocument doc = new XmlDocument();
+				doc.Load(path);
+
+				XmlNodeList? properties = doc.SelectNodes("//property");
+				if (properties != null)
+				{
+					foreach (XmlNode node in properties)
+					{
+						if (node.Attributes?["name"] != null && node.Attributes["value"] != null)
+						{
+							settings.Add(new ConfigLine
+							{
+								Key = node.Attributes["name"]!.Value,
+								Value = node.Attributes["value"]!.Value
+							});
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error reading XML: {ex.Message}", "XML Parser Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+			return settings;
 		}
 
 		private static void SaveXML(string path, List<ConfigLine> data)
