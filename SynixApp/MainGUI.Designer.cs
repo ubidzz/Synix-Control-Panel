@@ -421,7 +421,7 @@ namespace Synix_Control_Panel
 			btnSettings.Name = "btnSettings";
 			btnSettings.Size = new Size(25, 25);
 			btnSettings.TabIndex = 28;
-			btnSettings.Text = "button1";
+			btnSettings.Text = "Settings";
 			toolTip1.SetToolTip(btnSettings, "Synix Settings");
 			btnSettings.UseVisualStyleBackColor = true;
 			btnSettings.Click += btnSettings_Click;
