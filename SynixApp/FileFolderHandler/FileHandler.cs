@@ -20,6 +20,8 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 	{
 		private static readonly string FolderPath = Core.DataPath;
 		private static readonly string FileName = "servers.json";
+		private static readonly object _logLock = new object();
+
 		public static void SaveServers()
 		{
 			try
@@ -117,12 +119,15 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 			try
 			{
-				FolderHandler.Create(Core.LogsPath);
+				lock (_logLock)
+				{
+					FolderHandler.Create(Core.LogsPath);
 
-				string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
-				string fullPath = Path.Combine(Core.LogsPath, fileName);
+					string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
+					string fullPath = Path.Combine(Core.LogsPath, fileName);
 
-				File.AppendAllText(fullPath, content.TrimEnd() + Environment.NewLine);
+					File.AppendAllText(fullPath, content.TrimEnd() + Environment.NewLine);
+				}
 
 				var logFiles = new DirectoryInfo(Core.LogsPath)
 					.GetFiles("*.log")

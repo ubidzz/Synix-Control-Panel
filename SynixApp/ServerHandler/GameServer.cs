@@ -107,7 +107,7 @@ public class GameServer : GameInfo
 	public double RamUsage { get; set; }
 	public bool IsProbing { get; set; } = false;
 	public string GameVersion { get; set; } = "Latest";
-	public int MaxRam { get; set; } = 4096;
+	public int MaxRam { get; set; } = 4;
 
 	[JsonIgnore]
 	public string Uptime

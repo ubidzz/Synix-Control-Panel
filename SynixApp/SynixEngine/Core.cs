@@ -165,7 +165,7 @@ namespace Synix_Control_Panel.SynixEngine
 						"Weekly maintenance is starting now. The server will be back online shortly.", Color.Cyan);
 
 					Log($"[SYNIX] Scheduled weekly maintenance triggered for {server.ServerName}.");
-					await ExecuteStartSequence(server);
+					await ExecuteStartSequence(server, "MAINTENANCE");
 				}
 			}
 		}

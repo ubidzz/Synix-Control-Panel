@@ -287,34 +287,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 		}
 
-		private static void UpdateJsonNode(JsonObject jsonObj, List<ConfigLine> data, string prefix = "")
-		{
-			foreach (var kvp in jsonObj.ToList())
-			{
-				string currentKey = string.IsNullOrEmpty(prefix) ? kvp.Key : $"{prefix}.{kvp.Key}";
-
-				if (kvp.Value is JsonObject innerObj)
-				{
-					UpdateJsonNode(innerObj, data, currentKey);
-				}
-				else
-				{
-					var matchingData = data.FirstOrDefault(d => d.Key == currentKey);
-					if (matchingData != null)
-					{
-						if (int.TryParse(matchingData.Value, out int intVal))
-							jsonObj[kvp.Key] = intVal;
-						else if (double.TryParse(matchingData.Value, out double dblVal))
-							jsonObj[kvp.Key] = dblVal;
-						else if (bool.TryParse(matchingData.Value, out bool boolVal))
-							jsonObj[kvp.Key] = boolVal;
-						else
-							jsonObj[kvp.Key] = matchingData.Value;
-					}
-				}
-			}
-		}
-
 		private static void SaveJSON(string path, List<ConfigLine> data)
 		{
 			if (!File.Exists(path)) return;
@@ -347,17 +319,19 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 		}
 
-		private static void UpdateJsonNode(JsonObject jsonObj, List<ConfigLine> data)
+		private static void UpdateJsonNode(JsonObject jsonObj, List<ConfigLine> data, string prefix = "")
 		{
 			foreach (var kvp in jsonObj.ToList())
 			{
+				string currentKey = string.IsNullOrEmpty(prefix) ? kvp.Key : $"{prefix}.{kvp.Key}";
+
 				if (kvp.Value is JsonObject innerObj)
 				{
-					UpdateJsonNode(innerObj, data);
+					UpdateJsonNode(innerObj, data, currentKey);
 				}
 				else
 				{
-					var matchingData = data.FirstOrDefault(d => d.Key == kvp.Key);
+					var matchingData = data.FirstOrDefault(d => d.Key == currentKey);
 					if (matchingData != null)
 					{
 						if (int.TryParse(matchingData.Value, out int intVal))

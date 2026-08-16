@@ -20,7 +20,7 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		private static readonly Regex SafeRegex = new Regex(@"^[a-zA-Z0-9\s\-+:\""\\/._=?,]*$", RegexOptions.Compiled);
+		private static readonly Regex SafeRegex = new Regex(@"^[a-zA-Z0-9\s\-+:\""\\/._=?,!@#$%&*'&]*$", RegexOptions.Compiled);
 
 		public bool CanServerStart(GameServer server, out string errorMessage)
 		{

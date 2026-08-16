@@ -88,12 +88,15 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					logCallback?.Invoke("[SYNIX] SteamCMD already initialized.", Color.Cyan);
 				}
 				logCallback?.Invoke("[SYNIX] Initialization complete.", Color.LimeGreen);
-				MainGUI.Instance.isDownloadActive = false;
-				logCallback?.Invoke($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange);
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke($"[🚨 CRITICAL ERROR] SteamCMD Setup Failed: {ex.Message}", Color.Red);
+			}
+			finally
+			{
+				if (MainGUI.Instance != null) MainGUI.Instance.isDownloadActive = false;
+				logCallback?.Invoke($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange);
 			}
 		}
 	}

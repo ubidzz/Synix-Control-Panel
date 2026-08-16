@@ -65,13 +65,20 @@ namespace Synix_Control_Panel.SynixEngine
 
 									Log($"[🔗 REBIND] Found {server.Game} still running (PID: {server.PID})", Color.BlueViolet, true);
 
-									process.EnableRaisingEvents = true;
 									process.Exited += async (s, e) =>
 									{
-										if (server.Status == StatusManager.GetStatus(ServerState.Running))
-											await ExecuteStartSequence(server, "WATCHDOG");
-										else
+										try
+										{
+											if (server.Status == StatusManager.GetStatus(ServerState.Running))
+												await ExecuteStartSequence(server, "WATCHDOG");
+											else
+												CleanupStoppedState(server);
+										}
+										catch (Exception ex)
+										{
+											Log($"[🚨 CRASH HANDLER ERROR] {ex.Message}", Color.Red);
 											CleanupStoppedState(server);
+										}
 									};
 								}
 							}
