@@ -139,6 +139,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 				UpdateGridStatus();
 			}
+			catch (Exception ex)
+			{
+				// Don't need the error displayed 
+			}
 			finally
 			{
 				_heartbeatTimer?.Change(1000, Timeout.Infinite);

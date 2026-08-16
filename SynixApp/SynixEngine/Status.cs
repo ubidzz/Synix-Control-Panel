@@ -80,6 +80,7 @@ namespace Synix_Control_Panel.SynixEngine
 											CleanupStoppedState(server);
 										}
 									};
+									process.EnableRaisingEvents = true;
 								}
 							}
 						}
