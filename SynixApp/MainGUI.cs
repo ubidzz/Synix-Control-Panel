@@ -308,7 +308,8 @@ namespace Synix_Control_Panel
 		{
 			try
 			{
-				FileHandler.WriteLog("Synix_Log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
+				// Offload the slow disk write to a background thread so it never blocks the UI
+				Task.Run(() => FileHandler.WriteLog("Synix_Log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}"));
 			}
 			catch { /* Silent fail */ }
 

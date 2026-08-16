@@ -27,16 +27,14 @@ namespace Synix_Control_Panel.SynixEngine
 		public double TotalRamUsageGb { get; set; }
 		public bool isDownloadActive = false;
 		public static double TotalRamGb { get; set; }
-		private System.Windows.Forms.Timer _heartbeatTimer;
+		private System.Threading.Timer _heartbeatTimer;
 		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
 		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
 
 		private Core()
 		{
 			_instance = this;
-			_heartbeatTimer = new System.Windows.Forms.Timer { Interval = 1000 };
-			_heartbeatTimer.Tick += Heartbeat_Tick;
-			_heartbeatTimer.Start();
+			_heartbeatTimer = new System.Threading.Timer(Heartbeat_Tick, null, 1000, Timeout.Infinite);
 		}
 
 		public void Log(string message, Color? color = null, bool bold = false)
@@ -87,10 +85,8 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private void Heartbeat_Tick(object? sender, EventArgs e)
+		private void Heartbeat_Tick(object? state)
 		{
-			_heartbeatTimer.Stop();
-
 			try
 			{
 				PerformWatchdogCheck();
@@ -98,7 +94,7 @@ namespace Synix_Control_Panel.SynixEngine
 				PerformMaintenanceCheck();
 				CheckForDDoS();
 
-				foreach (GameServer server in MainGUI.serverList)
+				foreach (GameServer server in MainGUI.serverList.ToList())
 				{
 					if (server.Status == StatusManager.GetStatus(ServerState.Running))
 					{
@@ -135,7 +131,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				_heartbeatTimer.Start();
+				_heartbeatTimer?.Change(1000, Timeout.Infinite);
 			}
 		}
 
@@ -146,7 +142,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string todayBookmark = now.ToString("yyyy-MM-dd");
 			int dayIndex = (int)now.DayOfWeek;
 
-			foreach (GameServer server in MainGUI.serverList)
+			foreach (GameServer server in MainGUI.serverList.ToList())
 			{
 				if (server.IsScheduledRestartEnabled &&
 					server.RestartDays[dayIndex] &&
