@@ -178,13 +178,13 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		private static readonly HttpClient _sharedNetworkClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+
 		public async Task<string> GetPublicIP()
 		{
 			try
 			{
-				using var client = new System.Net.Http.HttpClient();
-				client.Timeout = TimeSpan.FromSeconds(5);
-				return await client.GetStringAsync("https://api.ipify.org");
+				return await _sharedNetworkClient.GetStringAsync("https://api.ipify.org");
 			}
 			catch
 			{

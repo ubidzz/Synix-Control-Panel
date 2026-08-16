@@ -16,7 +16,7 @@ using System.Text.Json.Serialization;
 using static Synix_Control_Panel.SynixApp.Database.GameDatabase;
 using static Synix_Control_Panel.SynixEngine.Core;
 
-//------- Database -------
+//------- Database Blueprint Template -------
 public class GameInfo
 {
 	public string Game { get; init; } = string.Empty;
@@ -43,8 +43,11 @@ public class GameInfo
 	public string RequiredArgs { get; set; } = string.Empty;
 	[JsonIgnore]
 	public List<string> Maps { get; set; } = [];
+
+	// Restored to GameInfo so GameDatabase initialization compiles successfully
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
+
 	public string ExtraArgs { get; set; } = string.Empty;
 	public List<string> GameModes { get; set; } = [];
 	public string RconSyntax { get; init; } = "";
@@ -58,12 +61,16 @@ public class GameInfo
 	public string LastMaintenanceDate { get; set; } = "";
 	[JsonIgnore]
 	public int MaxPlayersFromQuery { get; set; } = 0;
+
+	// Restored for Watchdog tracking
+	[JsonIgnore]
 	public DateTime? LastProbeTime { get; set; }
+
 	[JsonIgnore]
 	public string IconUrl { get; init; } = string.Empty;
 }
 
-//----------- json ---------------
+//----------- Configured Server Instance ---------------
 public class GameServer : GameInfo
 {
 	public string InstallPath { get; set; } = string.Empty;
@@ -99,8 +106,8 @@ public class GameServer : GameInfo
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
 	public bool IsProbing { get; set; } = false;
-	public string GameVersion { get; set; }
-	public int MaxRam { get; set; }
+	public string GameVersion { get; set; } = "Latest";
+	public int MaxRam { get; set; } = 4096;
 
 	[JsonIgnore]
 	public string Uptime

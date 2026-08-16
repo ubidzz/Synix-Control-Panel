@@ -34,6 +34,7 @@ namespace Synix_Control_Panel.SynixEngine
 			chkCustomBackup.Text = "Activate";
 			chkRunAsAdmin.Text = "Activate";
 			chkPrivacyMode.Text = "Activate";
+			chkShowServerWindow.Text = "Activate";
 
 			chkCustomBackup.Checked = Properties.Settings.Default.UseCustomBackupPath;
 			txtBackupPath.Text = Properties.Settings.Default.CustomBackupPath;
@@ -41,6 +42,7 @@ namespace Synix_Control_Panel.SynixEngine
 			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
 			chkRunAsAdmin.Checked = Properties.Settings.Default.enableRunAsAdmin;
 			numMaxBackups.Value = Properties.Settings.Default.MaxBackups;
+			chkShowServerWindow.Checked = Properties.Settings.Default.ShowServerWindow;
 		}
 
 		private void numMaxBackups_ValueChanged(object sender, EventArgs e)
@@ -88,6 +90,12 @@ namespace Synix_Control_Panel.SynixEngine
 		private void chkRunAsAdmin_CheckedChanged(object sender, EventArgs e)
 		{
 			Properties.Settings.Default.enableRunAsAdmin = chkRunAsAdmin.Checked;
+			Properties.Settings.Default.Save();
+		}
+
+		private void chkShowServerWindow_CheckedChanged(object sender, EventArgs e)
+		{
+			Properties.Settings.Default.ShowServerWindow = chkShowServerWindow.Checked;
 			Properties.Settings.Default.Save();
 		}
 	}

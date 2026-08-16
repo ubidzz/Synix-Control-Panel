@@ -82,5 +82,17 @@ namespace Synix_Control_Panel.Properties {
                 this["MaxBackups"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowServerWindow {
+            get {
+                return ((bool)(this["ShowServerWindow"]));
+            }
+            set {
+                this["ShowServerWindow"] = value;
+            }
+        }
     }
 }

@@ -479,6 +479,10 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				stopServer = false;
 			}
+			catch (Exception ex)
+			{
+				Log($"[🚨 CRITICAL ENGINE ERROR] Sequence failed for {server.ServerName}: {ex.Message}", Color.Red, true);
+			}
 			finally
 			{
 				lock (_activeSequences)

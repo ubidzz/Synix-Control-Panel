@@ -2606,9 +2606,11 @@ namespace Synix_Control_Panel.SynixApp.Database
 			return games;
 		}
 
+		private static readonly Dictionary<string, GameInfo> _gameDict = games.ToDictionary(g => g.Game, StringComparer.OrdinalIgnoreCase);
+
 		public static GameInfo? GetGame(string gameName)
 		{
-			return games.FirstOrDefault(g => g.Game.Equals(gameName, StringComparison.OrdinalIgnoreCase));
+			return _gameDict.TryGetValue(gameName, out var game) ? game : null;
 		}
 
 		public class PostInstallStep

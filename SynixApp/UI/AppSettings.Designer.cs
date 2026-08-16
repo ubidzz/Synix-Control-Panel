@@ -61,6 +61,10 @@ namespace Synix_Control_Panel.SynixEngine
 			numMaxBackups = new NumericUpDown();
 			lblMaxBackupInfo = new Label();
 			label5 = new Label();
+			label6 = new Label();
+			chkShowServerWindow = new Synix_Control_Panel.SynixApp.Design.SynixToggle();
+			lblShowServerWindowTitle = new Label();
+			label7 = new Label();
 			((System.ComponentModel.ISupportInitialize)numMaxBackups).BeginInit();
 			SuspendLayout();
 			// 
@@ -151,7 +155,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblLine.BackColor = Color.White;
 			lblLine.Location = new Point(-4, 137);
 			lblLine.Name = "lblLine";
-			lblLine.Size = new Size(399, 10);
+			lblLine.Size = new Size(855, 10);
 			lblLine.TabIndex = 8;
 			// 
 			// chkRunAsAdmin
@@ -181,7 +185,7 @@ namespace Synix_Control_Panel.SynixEngine
 			label3.BackColor = Color.White;
 			label3.Location = new Point(-4, 369);
 			label3.Name = "label3";
-			label3.Size = new Size(399, 10);
+			label3.Size = new Size(855, 10);
 			label3.TabIndex = 11;
 			// 
 			// lblRunAsAdminInfo
@@ -210,7 +214,7 @@ namespace Synix_Control_Panel.SynixEngine
 			label4.BackColor = Color.White;
 			label4.Location = new Point(-4, 529);
 			label4.Name = "label4";
-			label4.Size = new Size(399, 10);
+			label4.Size = new Size(855, 10);
 			label4.TabIndex = 14;
 			// 
 			// lblMaxBackup
@@ -256,13 +260,57 @@ namespace Synix_Control_Panel.SynixEngine
 			label5.TabIndex = 18;
 			label5.Text = "Set to 1 - 100";
 			// 
+			// label6
+			// 
+			label6.Location = new Point(413, -4);
+			label6.Name = "label6";
+			label6.Size = new Size(10, 687);
+			label6.TabIndex = 19;
+			// 
+			// chkShowServerWindow
+			// 
+			chkShowServerWindow.BackColor = Color.Transparent;
+			chkShowServerWindow.Location = new Point(429, 97);
+			chkShowServerWindow.Name = "chkShowServerWindow";
+			chkShowServerWindow.Size = new Size(88, 26);
+			chkShowServerWindow.TabIndex = 20;
+			chkShowServerWindow.Text = "chkShowServerWindow";
+			chkShowServerWindow.UseVisualStyleBackColor = false;
+			chkShowServerWindow.Click += chkShowServerWindow_CheckedChanged;
+			// 
+			// lblShowServerWindowTitle
+			// 
+			lblShowServerWindowTitle.AutoSize = true;
+			lblShowServerWindowTitle.BackColor = Color.Transparent;
+			lblShowServerWindowTitle.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblShowServerWindowTitle.ForeColor = Color.White;
+			lblShowServerWindowTitle.Location = new Point(429, 9);
+			lblShowServerWindowTitle.Name = "lblShowServerWindowTitle";
+			lblShowServerWindowTitle.Size = new Size(280, 25);
+			lblShowServerWindowTitle.TabIndex = 21;
+			lblShowServerWindowTitle.Text = "Show Server Console Window";
+			// 
+			// label7
+			// 
+			label7.BackColor = Color.Transparent;
+			label7.ForeColor = Color.White;
+			label7.Location = new Point(429, 34);
+			label7.Name = "label7";
+			label7.Size = new Size(408, 60);
+			label7.TabIndex = 22;
+			label7.Text = resources.GetString("label7.Text");
+			// 
 			// AppSettings
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			BackgroundImage = Properties.Resources.background;
-			ClientSize = new Size(392, 677);
+			ClientSize = new Size(849, 677);
+			Controls.Add(label7);
+			Controls.Add(lblShowServerWindowTitle);
+			Controls.Add(chkShowServerWindow);
+			Controls.Add(label6);
 			Controls.Add(label5);
 			Controls.Add(lblMaxBackupInfo);
 			Controls.Add(numMaxBackups);
@@ -316,5 +364,9 @@ namespace Synix_Control_Panel.SynixEngine
 		private NumericUpDown numMaxBackups;
 		private Label lblMaxBackupInfo;
 		private Label label5;
+		private Label label6;
+		private SynixApp.Design.SynixToggle chkShowServerWindow;
+		private Label lblShowServerWindowTitle;
+		private Label label7;
 	}
 }

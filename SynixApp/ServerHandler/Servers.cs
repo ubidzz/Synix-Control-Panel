@@ -226,6 +226,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}*/
 
 					finalArgs = args;
+					bool hideWindow = !Properties.Settings.Default.ShowServerWindow;
 
 					psi = new ProcessStartInfo
 					{
@@ -233,7 +234,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						Arguments = finalArgs,
 						WorkingDirectory = binDir,
 						UseShellExecute = false,
-						CreateNoWindow = false,
+						CreateNoWindow = hideWindow,
 					};
 
 					if (server.Game == "Dune: Awakening")
@@ -264,12 +265,20 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) =>
 					{
-						if (server.Status == StatusManager.GetStatus(ServerState.Running))
+						try
 						{
-							await Core.Instance.ExecuteStartSequence(server, "WATCHDOG");
+							if (server.Status == StatusManager.GetStatus(ServerState.Running))
+							{
+								await Core.Instance.ExecuteStartSequence(server, "WATCHDOG");
+							}
+							else
+							{
+								FinalizeStoppedState(server);
+							}
 						}
-						else
+						catch (Exception ex)
 						{
+							logCallback?.Invoke($"[🚨 CRASH HANDLER ERROR] {ex.Message}", Color.Red);
 							FinalizeStoppedState(server);
 						}
 					};

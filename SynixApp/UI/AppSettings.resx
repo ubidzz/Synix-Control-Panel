@@ -123,6 +123,9 @@
   <data name="lblBackupWarning.Text" xml:space="preserve">
     <value>⚠ Warning: Synix only deletes backups from the currently active save location. If you disable this setting or change the folder path, any backups left in the previous location must be deleted manually when removing a server.</value>
   </data>
+  <data name="label7.Text" xml:space="preserve">
+    <value>Enabling this forces the native command prompt window to open when a server starts. This is useful for directly entering live commands into servers like Minecraft or Source engine games. When disabled, servers will run silently in the background.</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

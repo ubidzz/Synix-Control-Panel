@@ -29,12 +29,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> TestAllProtocolsConnectivity(string ip, int gamePort, int queryPort)
 		{
-			bool gameTcp = await TestTcpConnectivity(ip, gamePort);
-			bool queryTcp = await TestTcpConnectivity(ip, queryPort);
-			bool gameUdp = await TestServerConnectivity(ip, gamePort);
-			bool queryUdp = await TestServerConnectivity(ip, queryPort);
+			var t1 = TestTcpConnectivity(ip, gamePort);
+			var t2 = TestTcpConnectivity(ip, queryPort);
+			var t3 = TestServerConnectivity(ip, gamePort);
+			var t4 = TestServerConnectivity(ip, queryPort);
 
-			return gameTcp || queryTcp || gameUdp || queryUdp;
+			await Task.WhenAll(t1, t2, t3, t4);
+
+			return t1.Result || t2.Result || t3.Result || t4.Result;
 		}
 
 		public async Task<bool> TestServerConnectivity(string ip, int port, int timeoutMs = 2500)
