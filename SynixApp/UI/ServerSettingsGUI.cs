@@ -240,7 +240,8 @@ namespace Synix_Control_Panel
 				{
 					string safeName = Core.Instance.GetSafeName(currentName);
 					string safeFolderName = Core.Instance.GetSafeName(selectedGame);
-					txtInstallPath.Text = $@"C:\Synix\Games\{safeFolderName}\{safeName}";
+					string safeFolderPath = Path.Combine(safeFolderName, safeName);
+					txtInstallPath.Text = Path.Combine(Core.GamesPath, safeFolderPath);
 				}
 
 				GameInfo? selectedGameData = hasGame ? GameDatabase.GetGame(selectedGame) : null;

@@ -39,7 +39,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			string cleanGame = GetSafeName(server.Game);
 			string cleanServer = GetSafeName(server.ServerName);
-			string baseBackupFolder = @"C:\Synix\BackupGames";
+			string baseBackupFolder = DefaultBackupPath;
 
 			if (Properties.Settings.Default.UseCustomBackupPath &&
 				!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&

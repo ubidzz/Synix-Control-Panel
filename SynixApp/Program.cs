@@ -10,8 +10,8 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.SynixApp
 {
@@ -54,7 +54,7 @@ namespace Synix_Control_Panel.SynixApp
 		{
 			try
 			{
-				string logFilePath = Path.Combine(@"C:\Synix\SynixData\logs", "Synix_fatal_crashes.log");
+				string logFilePath = Path.Combine(Core.LogsPath, "Synix_fatal_crashes.log");
 				FileHandler.WriteLog("Synix_fatal_crashes", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n");
 
 				MessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",

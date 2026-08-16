@@ -884,7 +884,7 @@ gam_bAutoCycleMaps = 1";
 			string[] dlls = { "steamclient64.dll", "tier0_s64.dll", "vstdlib_s64.dll" };
 
 			string targetDir = Path.Combine(installPath, BinariesDir);
-			string steamCmdPath = @"C:\Synix\SteamCMD";
+			string steamCmdPath = Core.SteamCmdPath;
 
 			if (!Directory.Exists(targetDir))
 			{

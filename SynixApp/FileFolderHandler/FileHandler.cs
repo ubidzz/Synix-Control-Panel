@@ -11,13 +11,14 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixEngine;
 using System.Text.Json;
 
 namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 {
 	public static class FileHandler
 	{
-		private static readonly string FolderPath = @"C:\Synix\SynixData";
+		private static readonly string FolderPath = Core.DataPath;
 		private static readonly string FileName = "servers.json";
 		public static void SaveServers()
 		{
@@ -26,7 +27,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				var options = new JsonSerializerOptions { WriteIndented = true };
 				string jsonString = JsonSerializer.Serialize(MainGUI.serverList, options);
 
-				bool success = Create(FolderPath, FileName, jsonString);
+				bool success = Create(Core.DataPath, FileName, jsonString);
 
 				if (success)
 				{
@@ -41,7 +42,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 		public static void LoadServers()
 		{
-			string fullPath = Path.Combine(FolderPath, FileName);
+			string fullPath = Path.Combine(Core.DataPath, FileName);
 
 			if (File.Exists(fullPath))
 			{
@@ -116,15 +117,14 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 			try
 			{
-				string logFolder = FolderPath + "\\logs";
-				FolderHandler.Create(logFolder);
+				FolderHandler.Create(Core.LogsPath);
 
 				string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
-				string fullPath = Path.Combine(logFolder, fileName);
+				string fullPath = Path.Combine(Core.LogsPath, fileName);
 
 				File.AppendAllText(fullPath, content.TrimEnd() + Environment.NewLine);
 
-				var logFiles = new DirectoryInfo(logFolder)
+				var logFiles = new DirectoryInfo(Core.LogsPath)
 					.GetFiles("*.log")
 					.OrderByDescending(f => f.Name)
 					.ToList();

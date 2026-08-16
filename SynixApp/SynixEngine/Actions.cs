@@ -162,7 +162,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string cleanGame = Core.Instance.GetSafeName(selectedServer.Game);
 			string cleanServer = Core.Instance.GetSafeName(selectedServer.ServerName);
 
-			string fullPath = Path.Combine(@"C:\Synix\BackupGames", cleanGame, cleanServer);
+			string fullPath = Path.Combine(DefaultBackupPath, cleanGame, cleanServer);
 
 			if (Directory.Exists(fullPath))
 			{

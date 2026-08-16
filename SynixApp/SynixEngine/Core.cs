@@ -31,6 +31,16 @@ namespace Synix_Control_Panel.SynixEngine
 		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
 		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
 
+		public static readonly string RootPath = @"C:\Synix";
+		public static string DataPath => Path.Combine(RootPath, "SynixData");
+		public static string LogsPath => Path.Combine(DataPath, "logs");
+		public static string GameIconsPath => Path.Combine(DataPath, "GameIcons");
+		public static string RuntimesPath => Path.Combine(DataPath, "Runtimes");
+		public static string SteamCmdPath => Path.Combine(RootPath, "SteamCMD");
+		public static string SteamCmdExe => Path.Combine(SteamCmdPath, "steamcmd.exe");
+		public static string DefaultBackupPath => Path.Combine(RootPath, "BackupGames");
+		public static string GamesPath => Path.Combine(RootPath, "Games");
+
 		private Core()
 		{
 			_instance = this;

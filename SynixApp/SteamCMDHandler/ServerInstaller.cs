@@ -45,9 +45,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 			ProcessStartInfo startInfo = new()
 			{
-				FileName = @"C:\Synix\SteamCMD\steamcmd.exe",
+				FileName = Core.SteamCmdExe,
 				Arguments = $"+force_install_dir \"{server.InstallPath}\" +login anonymous +app_update {blueprint.AppID} validate +quit",
-				WorkingDirectory = @"C:\Synix\SteamCMD",
+				WorkingDirectory = Core.SteamCmdPath,
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
@@ -351,7 +351,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			{
 				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 				{
-					string runtimeFolder = Path.Combine(@"C:\Synix\SynixData\Runtimes", $"Java{requiredJava}");
+					string runtimeFolder = Path.Combine(Core.RuntimesPath, $"Java{requiredJava}");
 
 					string[] existingExecutables = Directory.Exists(runtimeFolder)
 						? Directory.GetFiles(runtimeFolder, "java.exe", SearchOption.AllDirectories)
@@ -387,7 +387,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 								logCallback?.Invoke($"[SYSTEM] Downloading Portable Java {requiredJava} (Eclipse Temurin JRE)...");
 
 								string jreUrl = $"https://api.adoptium.net/v3/binary/latest/{requiredJava}/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk";
-								string zipPath = Path.Combine(@"C:\Synix\SynixData\Runtimes", $"java{requiredJava}_temp.zip");
+								string zipPath = Path.Combine(Core.RuntimesPath, $"java{requiredJava}_temp.zip");
 								Directory.CreateDirectory(runtimeFolder);
 
 								using (HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, jreUrl))
