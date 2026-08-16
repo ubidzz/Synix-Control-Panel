@@ -70,16 +70,16 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 								if (File.Exists(iconPath))
 								{
-									// Check if we already loaded this game's icon into memory
 									if (!MainGUI.ServerIconsCache.ContainsKey(server.Game))
 									{
-										// Read into a MemoryStream to prevent locking the file on disk
 										using (var ms = new MemoryStream(File.ReadAllBytes(iconPath)))
 										{
-											MainGUI.ServerIconsCache[server.Game] = System.Drawing.Image.FromStream(ms);
+											using (var tempImage = System.Drawing.Image.FromStream(ms))
+											{
+												MainGUI.ServerIconsCache[server.Game] = new Bitmap(tempImage);
+											}
 										}
 									}
-									// Assign the shared cached image to the server
 									server.DisplayIcon = MainGUI.ServerIconsCache[server.Game];
 								}
 							}

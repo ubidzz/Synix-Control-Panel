@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixEngine
 									process.Exited += async (s, e) =>
 									{
 										if (server.Status == StatusManager.GetStatus(ServerState.Running))
-											await ExecuteStartSequence(server);
+											await ExecuteStartSequence(server, "WATCHDOG");
 										else
 											CleanupStoppedState(server);
 									};

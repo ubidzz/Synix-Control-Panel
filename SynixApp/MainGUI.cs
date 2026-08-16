@@ -157,23 +157,6 @@ namespace Synix_Control_Panel
 			ramGauge.MaxValue = (float)systemTotalRamGb;
 			ramGauge.UpdateGauge((float)ram, "RAM GB");
 
-			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
-			if (needsTimeCheck)
-			{
-				string currentExactTime = DateTime.Now.ToString("HH:mm:ss");
-				int currentDayIndex = (int)DateTime.Now.DayOfWeek;
-
-				foreach (var server in serverList)
-				{
-					if (server.IsScheduledRestartEnabled &&
-						server.RestartDays != null &&
-						server.RestartDays[currentDayIndex] &&
-						currentExactTime == (server.RestartTime + ":00"))
-					{
-						_ = Core.Instance.ExecuteStartSequence(server, "MAINTENANCE");
-					}
-				}
-			}
 			chartTickCounter++;
 		}
 

@@ -587,6 +587,9 @@ namespace Synix_Control_Panel.SynixEngine
 				string cleanIdentity = GetSafeName(server.ServerName ?? "Server");
 				string args = dbEntry.RequiredArgs ?? "";
 
+				int ramToUse = server.MaxRam;
+				if (server.Game == "Minecraft Java") ramToUse = server.MaxRam * 1024;
+
 				args = args.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 						   .Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
 						   .Replace("{map}", server.WorldName ?? "")
@@ -600,7 +603,8 @@ namespace Synix_Control_Panel.SynixEngine
 						   .Replace("{ServerName}", server.ServerName ?? "SynixServer")
 						   .Replace("{InstallPath}", server.InstallPath ?? "")
 						   .Replace("{Identity}", cleanIdentity)
-						   .Replace("{world_size}", server.WorldSize.ToString());
+						   .Replace("{world_size}", server.WorldSize.ToString())
+						   .Replace("{ram}", ramToUse.ToString());
 
 				if (args.Contains("{rcon}"))
 				{

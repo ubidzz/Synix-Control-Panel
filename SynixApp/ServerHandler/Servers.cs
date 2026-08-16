@@ -138,14 +138,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
 					}
 
+					// Calculate RAM for the launch argument WITHOUT overwriting the saved variable
+					int ramToUse = server.MaxRam;
 					if (server.Game == "Minecraft Java")
 					{
-						int selectedGb = (int)server.MaxRam;
-						server.MaxRam = selectedGb * 1024;
+						ramToUse = server.MaxRam * 1024;
 					}
 
 					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
-					
+
 					string args = dbEntry.RequiredArgs
 						.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 						.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
@@ -161,7 +162,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.Replace("{InstallPath}", server.InstallPath)
 						.Replace("{world_size}", server.WorldSize.ToString())
 						.Replace("{Identity}", cleanIdentity)
-					    .Replace("{ram}", server.MaxRam.ToString());
+						.Replace("{ram}", ramToUse.ToString());
 
 					if (args.Contains("{rcon}"))
 					{
@@ -250,7 +251,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				});
 
 				if (psi == null) return;
-				logCallback?.Invoke($"[ARGUMENT] {finalArgs}", Color.Cyan);
+
+				// Scrub passwords from the UI log
+				string safeLogArgs = finalArgs;
+				if (!string.IsNullOrWhiteSpace(server.Password)) safeLogArgs = safeLogArgs.Replace(server.Password, "********");
+				if (!string.IsNullOrWhiteSpace(server.AdminPassword)) safeLogArgs = safeLogArgs.Replace(server.AdminPassword, "********");
+				if (!string.IsNullOrWhiteSpace(server.RconPassword)) safeLogArgs = safeLogArgs.Replace(server.RconPassword, "********");
+
+				logCallback?.Invoke($"[ARGUMENT] {safeLogArgs}", Color.Cyan);
 
 				Process? proc = Process.Start(psi);
 				if (proc != null)

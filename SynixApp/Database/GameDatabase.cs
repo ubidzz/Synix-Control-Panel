@@ -358,7 +358,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "V Rising",
 				AppID = "1829350",
 				ExeName = "VRisingServer.exe",
-				RequiredArgs = "-persistentDataPath \".\\save-data\" -serverName \"{ServerName}\" -saveName \"{map}\" -gamePort {Port} -queryPort {query} -SteamAppId={steamAppID}",
+				RequiredArgs = "-persistentDataPath \".\\save-data\" -serverName \"{ServerName}\" -saveName \"{map}\" -gamePort {port} -queryPort {query} -SteamAppId={steamAppID}",
 				Port = 9876,
 				QueryPort = 9877,
 				RelativeConfigPath = @"VRisingServer_Data\StreamingAssets\Settings\ServerHostSettings.json",
