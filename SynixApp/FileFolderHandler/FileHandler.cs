@@ -69,7 +69,17 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 								if (File.Exists(iconPath))
 								{
-									server.DisplayIcon = System.Drawing.Image.FromFile(iconPath);
+									// Check if we already loaded this game's icon into memory
+									if (!MainGUI.ServerIconsCache.ContainsKey(server.Game))
+									{
+										// Read into a MemoryStream to prevent locking the file on disk
+										using (var ms = new MemoryStream(File.ReadAllBytes(iconPath)))
+										{
+											MainGUI.ServerIconsCache[server.Game] = System.Drawing.Image.FromStream(ms);
+										}
+									}
+									// Assign the shared cached image to the server
+									server.DisplayIcon = MainGUI.ServerIconsCache[server.Game];
 								}
 							}
 							MainGUI.serverList.Add(server);
@@ -115,7 +125,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				File.AppendAllText(fullPath, content.TrimEnd() + Environment.NewLine);
 
 				var logFiles = new DirectoryInfo(logFolder)
-					.GetFiles("*.txt")
+					.GetFiles("*.log")
 					.OrderByDescending(f => f.Name)
 					.ToList();
 

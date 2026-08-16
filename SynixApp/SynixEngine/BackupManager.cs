@@ -20,7 +20,7 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		public async Task ExecuteBackup(GameServer server, StartContext context)
 		{
-			if (context == StartContext.CrashRecovery && server.BackupOnStart) return;
+			if (context == StartContext.CrashRecovery) return;
 
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
@@ -34,8 +34,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 			server.Status = StatusManager.GetStatus(Core.ServerState.BackingUp);
 			UpdateGridStatus();
-
-			if (context == StartContext.CrashRecovery) return;
 
 			string sourceDir = server.InstallPath;
 
@@ -85,6 +83,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				System.Diagnostics.Debug.WriteLine($"[BACKUP ERROR] {ex.Message}");
 			}
+
 			server.Status = StatusManager.GetStatus(Core.ServerState.Stopped);
 			isDownloadActive = false;
 			Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);

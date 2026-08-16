@@ -60,13 +60,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			string fullContent = File.ReadAllText(path);
 
-			// AUTO-DETECT: If the INI contains Palworld's unique array syntax, parse it dynamically
 			if (fullContent.Contains("OptionSettings=("))
 			{
 				return LoadPalworld(fullContent);
 			}
 
-			// Standard INI parsing for normal games
 			foreach (var line in File.ReadAllLines(path))
 			{
 				string trimmed = line.Trim();
@@ -88,14 +86,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			string fullContent = File.ReadAllText(path);
 
-			// AUTO-DETECT: Re-pack Palworld settings to a single line instead of standard INI format
 			if (fullContent.Contains("OptionSettings=("))
 			{
 				SavePalworld(path, data);
 				return;
 			}
 
-			// Standard INI saving
 			string[] originalLines = File.ReadAllLines(path);
 			for (int i = 0; i < originalLines.Length; i++)
 			{
@@ -118,9 +114,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			File.WriteAllLines(path, originalLines);
 		}
 
-		// --------------------------------------------------------
-		// PALWORLD SPECIFIC PARSERS
-		// --------------------------------------------------------
 		private static List<ConfigLine> LoadPalworld(string content)
 		{
 			var settings = new List<ConfigLine>();
@@ -128,13 +121,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			int startIndex = content.IndexOf("OptionSettings=(");
 			if (startIndex == -1) return settings;
 
-			startIndex += 16; // Move past "OptionSettings=("
+			startIndex += 16;
 			int endIndex = content.LastIndexOf(')');
 			if (endIndex == -1 || endIndex <= startIndex) return settings;
 
 			string optionsStr = content.Substring(startIndex, endIndex - startIndex);
 
-			// Safely split by comma, ignoring commas inside double quotes (e.g. CrossplayPlatforms)
 			var parts = new List<string>();
 			bool inQuotes = false;
 			int chunkStart = 0;
@@ -149,7 +141,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			parts.Add(optionsStr.Substring(chunkStart));
 
-			// Convert safely split strings into DataGridView rows
 			foreach (string kv in parts)
 			{
 				string trimmedKv = kv.Trim();
@@ -168,7 +159,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		private static void SavePalworld(string path, List<ConfigLine> data)
 		{
-			// Reconstruct the massive single-line OptionSettings string
 			List<string> kvPairs = new List<string>();
 			foreach (var item in data)
 			{
@@ -181,9 +171,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			File.WriteAllText(path, fileHeader + Environment.NewLine + newOptions);
 		}
 
-		// --------------------------------------------------------
-		// EXISTING PARSERS
-		// --------------------------------------------------------
 		private static List<ConfigLine> LoadSpace(string path)
 		{
 			var settings = new List<ConfigLine>();
@@ -278,13 +265,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			return settings;
 		}
 
-		private static void FlattenJsonNode(JsonObject jsonObj, List<ConfigLine> settings)
+		private static void FlattenJsonNode(JsonObject jsonObj, List<ConfigLine> settings, string prefix = "")
 		{
 			foreach (var kvp in jsonObj)
 			{
+				string currentKey = string.IsNullOrEmpty(prefix) ? kvp.Key : $"{prefix}.{kvp.Key}";
+
 				if (kvp.Value is JsonObject innerObj)
 				{
-					FlattenJsonNode(innerObj, settings);
+					FlattenJsonNode(innerObj, settings, currentKey);
 				}
 				else if (kvp.Value is JsonArray)
 				{
@@ -293,7 +282,35 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				else
 				{
 					string cleanValue = kvp.Value != null ? kvp.Value.GetValue<JsonElement>().ToString() : "";
-					settings.Add(new ConfigLine { Key = kvp.Key, Value = cleanValue });
+					settings.Add(new ConfigLine { Key = currentKey, Value = cleanValue });
+				}
+			}
+		}
+
+		private static void UpdateJsonNode(JsonObject jsonObj, List<ConfigLine> data, string prefix = "")
+		{
+			foreach (var kvp in jsonObj.ToList())
+			{
+				string currentKey = string.IsNullOrEmpty(prefix) ? kvp.Key : $"{prefix}.{kvp.Key}";
+
+				if (kvp.Value is JsonObject innerObj)
+				{
+					UpdateJsonNode(innerObj, data, currentKey);
+				}
+				else
+				{
+					var matchingData = data.FirstOrDefault(d => d.Key == currentKey);
+					if (matchingData != null)
+					{
+						if (int.TryParse(matchingData.Value, out int intVal))
+							jsonObj[kvp.Key] = intVal;
+						else if (double.TryParse(matchingData.Value, out double dblVal))
+							jsonObj[kvp.Key] = dblVal;
+						else if (bool.TryParse(matchingData.Value, out bool boolVal))
+							jsonObj[kvp.Key] = boolVal;
+						else
+							jsonObj[kvp.Key] = matchingData.Value;
+					}
 				}
 			}
 		}
