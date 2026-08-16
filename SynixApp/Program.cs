@@ -54,8 +54,8 @@ namespace Synix_Control_Panel.SynixApp
 		{
 			try
 			{
-				string logFilePath = Path.Combine(Core.LogsPath, "Synix_fatal_crashes.log");
-				FileHandler.WriteLog("Synix_fatal_crashes", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n");
+				string logFilePath = Path.Combine(Core.LogsPath, $"Synix_fatal_crashes_{DateTime.Now:yyyy-MM-dd}.log");
+				FileHandler.WriteLogImmediate("Synix_fatal_crashes", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n");
 
 				MessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",
 							"Engine Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);

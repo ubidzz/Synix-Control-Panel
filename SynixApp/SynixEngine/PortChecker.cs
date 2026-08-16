@@ -268,8 +268,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				using var tcpClient = new System.Net.Sockets.TcpClient();
 
-				var connectTask = tcpClient.ConnectAsync(ip, server.Port);
-				if (await Task.WhenAny(connectTask, Task.Delay(1500)) != connectTask) return false;
+				using (var connectTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500)))
+				{
+					await tcpClient.ConnectAsync(ip, server.Port, connectTimeout.Token);
+				}
 
 				using var stream = tcpClient.GetStream();
 
@@ -290,10 +292,18 @@ namespace Synix_Control_Panel.SynixEngine
 				payload.Add(0x01);
 				payload.Add(0x00);
 
-				await stream.WriteAsync(payload.ToArray(), 0, payload.Count);
+				using (var writeTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500)))
+				{
+					await stream.WriteAsync(payload.ToArray().AsMemory(), writeTimeout.Token);
+				}
 
 				byte[] buffer = new byte[4096];
-				int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+				int bytesRead;
+
+				using (var readTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500)))
+				{
+					bytesRead = await stream.ReadAsync(buffer.AsMemory(), readTimeout.Token);
+				}
 
 				if (bytesRead > 0)
 				{

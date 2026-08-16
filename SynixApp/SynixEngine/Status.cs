@@ -228,29 +228,35 @@ namespace Synix_Control_Panel.SynixEngine
 					udpClient.Client.IOControl(SIO_UDP_CONNRESET, new byte[] { 0 }, null);
 				}
 
-				udpClient.Client.ReceiveTimeout = 1500;
-
 				foreach (var ip in targets)
 				{
 					try
 					{
 						System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(System.Net.IPAddress.Parse(ip), server.QueryPort);
 
-						// 1. Send the standard request
 						await udpClient.SendAsync(_a2sInfoRequest, _a2sInfoRequest.Length, remoteEP);
-						var result = await udpClient.ReceiveAsync();
+
+						UdpReceiveResult result;
+						using (var receiveTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500)))
+						{
+							result = await udpClient.ReceiveAsync(receiveTimeout.Token);
+						}
+
 						byte[] data = result.Buffer;
 
 						if (data.Length >= 9 && data[4] == 0x41)
 						{
-							// Copy original request + 4 bytes of challenge data from the server
 							byte[] challengeRequest = new byte[_a2sInfoRequest.Length + 4];
 							Array.Copy(_a2sInfoRequest, 0, challengeRequest, 0, _a2sInfoRequest.Length);
 							Array.Copy(data, 5, challengeRequest, _a2sInfoRequest.Length, 4);
 
-							// Re-send with the "Proof" the server wants
 							await udpClient.SendAsync(challengeRequest, challengeRequest.Length, remoteEP);
-							result = await udpClient.ReceiveAsync();
+
+							using (var challengeTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500)))
+							{
+								result = await udpClient.ReceiveAsync(challengeTimeout.Token);
+							}
+
 							data = result.Buffer;
 						}
 

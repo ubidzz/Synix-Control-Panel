@@ -289,26 +289,32 @@ namespace Synix_Control_Panel
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
 		{
-			try
-			{
-				// Offload the slow disk write to a background thread so it never blocks the UI
-				Task.Run(() => FileHandler.WriteLog("Synix_Log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}"));
-			}
-			catch { /* Silent fail */ }
+			FileHandler.QueueLog(
+				"Synix_Log",
+				$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}");
 
-			if (!this.IsHandleCreated || this.IsDisposed) return;
+			if (!IsHandleCreated || IsDisposed)
+				return;
 
 			if (rtbLog.InvokeRequired)
 			{
-				rtbLog.BeginInvoke(new Action(() => AppendLog(message, textColor, isBold)));
+				rtbLog.BeginInvoke(
+					new Action(() => AppendLogToUi(message, textColor, isBold)));
 				return;
 			}
+
+			AppendLogToUi(message, textColor, isBold);
+		}
+
+		private void AppendLogToUi(string message, Color? textColor, bool isBold)
+		{
+			if (rtbLog.IsDisposed)
+				return;
 
 			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
 
 			rtbLog.SelectionStart = rtbLog.TextLength;
 			rtbLog.SelectionLength = 0;
-
 			rtbLog.SelectionColor = textColor ?? rtbLog.ForeColor;
 
 			if (rtbLog.Lines.Length > 500)

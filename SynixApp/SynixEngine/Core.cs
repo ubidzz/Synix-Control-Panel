@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using System.Text;
 using System.Text.Json;
+using System.Collections.Concurrent;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -28,9 +29,9 @@ namespace Synix_Control_Panel.SynixEngine
 		public bool isDownloadActive = false;
 		public static double TotalRamGb { get; set; }
 		private System.Threading.Timer _heartbeatTimer;
-		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
-		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
-
+		private readonly ConcurrentDictionary<string, byte> _activePlayerQueries = new(StringComparer.OrdinalIgnoreCase);
+		private readonly ConcurrentDictionary<string, DateTime> _lastRamWarning = new(StringComparer.OrdinalIgnoreCase);
+		private readonly SemaphoreSlim _maintenanceLock = new(1, 1);
 		public static readonly string RootPath = @"C:\Synix";
 		public static string DataPath => Path.Combine(RootPath, "SynixData");
 		public static string LogsPath => Path.Combine(DataPath, "logs");
@@ -101,7 +102,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				PerformWatchdogCheck();
 				UpdateResourceStats();
-				PerformMaintenanceCheck();
+				_ = PerformMaintenanceCheckAsync();
 				CheckForDDoS();
 
 				foreach (GameServer server in MainGUI.serverList.ToList())
@@ -110,14 +111,23 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						string srvId = server.ServerName ?? "unknown_server";
 
-						if (!_activePlayerQueries.TryGetValue(srvId, out bool isQuerying) || !isQuerying)
+						if (_activePlayerQueries.TryAdd(srvId, 0))
 						{
-							_activePlayerQueries[srvId] = true;
-
-							Task.Run(async () =>
+							_ = Task.Run(async () =>
 							{
-								try { await UpdatePlayerCount(server); }
-								finally { _activePlayerQueries[srvId] = false; }
+								try
+								{
+									await UpdatePlayerCount(server);
+								}
+								catch (Exception ex)
+								{
+									System.Diagnostics.Debug.WriteLine(
+										$"[PLAYER QUERY ERROR] {server.ServerName}: {ex}");
+								}
+								finally
+								{
+									_activePlayerQueries.TryRemove(srvId, out _);
+								}
 							});
 						}
 
@@ -141,7 +151,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception ex)
 			{
-				// Don't need the error displayed 
+				System.Diagnostics.Debug.WriteLine($"[HEARTBEAT ERROR] {ex}");
 			}
 			finally
 			{
@@ -149,28 +159,51 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private async void PerformMaintenanceCheck()
+		private async Task PerformMaintenanceCheckAsync()
 		{
-			DateTime now = DateTime.Now;
-			string currentTime = now.ToString("HH:mm");
-			string todayBookmark = now.ToString("yyyy-MM-dd");
-			int dayIndex = (int)now.DayOfWeek;
+			if (!await _maintenanceLock.WaitAsync(0))
+				return;
 
-			foreach (GameServer server in MainGUI.serverList.ToList())
+			try
 			{
-				if (server.IsScheduledRestartEnabled &&
-					server.RestartDays[dayIndex] &&
-					server.RestartTime == currentTime &&
-					server.LastMaintenanceDate != todayBookmark)
+				DateTime now = DateTime.Now;
+				string currentTime = now.ToString("HH:mm");
+				string todayBookmark = now.ToString("yyyy-MM-dd");
+				int dayIndex = (int)now.DayOfWeek;
+
+				foreach (GameServer server in MainGUI.serverList.ToList())
 				{
-					server.LastMaintenanceDate = todayBookmark;
+					bool hasValidRestartDays =
+						server.RestartDays != null &&
+						server.RestartDays.Length > dayIndex;
 
-					_ = SendDiscordAlert(server, "SCHEDULED RESTART",
-						"Weekly maintenance is starting now. The server will be back online shortly.", Color.Cyan);
+					if (server.IsScheduledRestartEnabled &&
+						hasValidRestartDays &&
+						server.RestartDays[dayIndex] &&
+						server.RestartTime == currentTime &&
+						server.LastMaintenanceDate != todayBookmark)
+					{
+						server.LastMaintenanceDate = todayBookmark;
 
-					Log($"[SYNIX] Scheduled weekly maintenance triggered for {server.ServerName}.");
-					await ExecuteStartSequence(server, "MAINTENANCE");
+						_ = SendDiscordAlert(
+							server,
+							"SCHEDULED RESTART",
+							"Weekly maintenance is starting now. The server will be back online shortly.",
+							Color.Cyan);
+
+						Log($"[SYNIX] Scheduled weekly maintenance triggered for {server.ServerName}.");
+
+						await ExecuteStartSequence(server, "MAINTENANCE");
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"[MAINTENANCE ERROR] {ex}");
+			}
+			finally
+			{
+				_maintenanceLock.Release();
 			}
 		}
 

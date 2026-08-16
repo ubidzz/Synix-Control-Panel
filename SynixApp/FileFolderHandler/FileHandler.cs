@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixEngine;
 using System.Text.Json;
+using System.Threading.Channels;
 
 namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 {
@@ -20,7 +21,18 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 	{
 		private static readonly string FolderPath = Core.DataPath;
 		private static readonly string FileName = "servers.json";
-		private static readonly object _logLock = new object();
+		private static readonly object _logWriteLock = new();
+		private static readonly Channel<(string LogFileName, string Content)> _logQueue = Channel.CreateUnbounded<(string LogFileName, string Content)>(
+		new UnboundedChannelOptions
+		{
+			SingleReader = true,
+			SingleWriter = false
+		});
+
+		static FileHandler()
+		{
+			_ = Task.Run(ProcessLogQueueAsync);
+		}
 
 		public static void SaveServers()
 		{
@@ -113,38 +125,56 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			}
 		}
 
-		public static bool WriteLog(string logFileName, string content)
+		public static bool QueueLog(string logFileName, string content)
 		{
-			if (string.IsNullOrWhiteSpace(content)) return false;
+			if (string.IsNullOrWhiteSpace(content))
+				return false;
 
+			return _logQueue.Writer.TryWrite((logFileName, content));
+		}
+
+		private static async Task ProcessLogQueueAsync()
+		{
+			await foreach (var entry in _logQueue.Reader.ReadAllAsync())
+			{
+				WriteLogCore(entry.LogFileName, entry.Content);
+			}
+		}
+
+		public static bool WriteLogImmediate(string logFileName, string content)
+		{
+			lock (_logWriteLock)
+			{
+				return WriteLogCore(logFileName, content);
+			}
+		}
+
+		private static bool WriteLogCore(string logFileName, string content)
+		{
 			try
 			{
-				lock (_logLock)
-				{
-					FolderHandler.Create(Core.LogsPath);
+				FolderHandler.Create(Core.LogsPath);
 
-					string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
-					string fullPath = Path.Combine(Core.LogsPath, fileName);
+				string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
+				string fullPath = Path.Combine(Core.LogsPath, fileName);
 
-					File.AppendAllText(fullPath, content.TrimEnd() + Environment.NewLine);
-				}
+				File.AppendAllText(
+					fullPath,
+					content.TrimEnd() + Environment.NewLine);
 
 				var logFiles = new DirectoryInfo(Core.LogsPath)
 					.GetFiles("*.log")
 					.OrderByDescending(f => f.Name)
 					.ToList();
 
-				if (logFiles.Count > 10)
+				for (int i = 10; i < logFiles.Count; i++)
 				{
-					for (int i = 10; i < logFiles.Count; i++)
-					{
-						logFiles[i].Delete();
-					}
+					logFiles[i].Delete();
 				}
 
 				return true;
 			}
-			catch (Exception)
+			catch
 			{
 				return false;
 			}
