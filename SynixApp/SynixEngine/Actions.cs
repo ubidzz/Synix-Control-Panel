@@ -303,11 +303,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				server.Status = StatusManager.GetStatus(ServerState.Stopped);
 				server.SteamPID = null;
+				isDownloadActive = false;
 				FileHandler.SaveServers();
 				Core.Instance.UpdateGridStatus();
+				Log("[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
-			isDownloadActive = false;
-			Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		public async Task AddServerAndReport()
@@ -370,8 +370,8 @@ namespace Synix_Control_Panel.SynixEngine
 						isDownloadActive = false;
 						FileHandler.SaveServers();
 						Core.Instance.UpdateGridStatus();
+						Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 					}
-					Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 				}
 			}
 		}

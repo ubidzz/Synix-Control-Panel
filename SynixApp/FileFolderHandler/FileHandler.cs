@@ -19,19 +19,29 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 {
 	public static class FileHandler
 	{
-		private static readonly string FolderPath = Core.DataPath;
 		private static readonly string FileName = "servers.json";
+
+		private const int LogQueueCapacity = 4096;
+		private const int MaxLogFilesPerCategory = 10;
+
 		private static readonly object _logWriteLock = new();
-		private static readonly Channel<(string LogFileName, string Content)> _logQueue = Channel.CreateUnbounded<(string LogFileName, string Content)>(
-		new UnboundedChannelOptions
-		{
-			SingleReader = true,
-			SingleWriter = false
-		});
+
+		private static readonly Channel<(string LogFileName, string Content)>
+			_logQueue = Channel.CreateBounded<(string LogFileName, string Content)>(
+				new BoundedChannelOptions(LogQueueCapacity)
+				{
+					SingleReader = true,
+					SingleWriter = false,
+					AllowSynchronousContinuations = false,
+					FullMode = BoundedChannelFullMode.DropOldest
+				});
+
+		private static readonly Task _logWorkerTask;
+		private static int _loggingShutdownStarted;
 
 		static FileHandler()
 		{
-			_ = Task.Run(ProcessLogQueueAsync);
+			_logWorkerTask = Task.Run(ProcessLogQueueAsync);
 		}
 
 		public static void SaveServers()
@@ -45,7 +55,9 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 				if (success)
 				{
-					MainGUI.Instance?.AppendLog("[📜 INFO] JSON saved successfully to C:\\Synix\\SynixData\\servers.json.", Color.DarkSeaGreen);
+					string savedPath = Path.Combine(Core.DataPath, FileName);
+
+					MainGUI.Instance?.AppendLog($"[📜 INFO] JSON saved successfully to {savedPath}.", Color.DarkSeaGreen);
 				}
 			}
 			catch (Exception ex)
@@ -127,57 +139,174 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 		public static bool QueueLog(string logFileName, string content)
 		{
-			if (string.IsNullOrWhiteSpace(content))
+			if (string.IsNullOrWhiteSpace(logFileName) ||
+				string.IsNullOrWhiteSpace(content))
+			{
+				return false;
+			}
+
+			// Do not accept more queued entries after application shutdown starts.
+			if (Volatile.Read(ref _loggingShutdownStarted) != 0)
 				return false;
 
-			return _logQueue.Writer.TryWrite((logFileName, content));
+			return _logQueue.Writer.TryWrite(
+				(logFileName, content));
 		}
 
 		private static async Task ProcessLogQueueAsync()
 		{
-			await foreach (var entry in _logQueue.Reader.ReadAllAsync())
+			await foreach (var entry in
+				_logQueue.Reader.ReadAllAsync())
 			{
-				WriteLogCore(entry.LogFileName, entry.Content);
+				WriteLogCore(
+					entry.LogFileName,
+					entry.Content);
 			}
 		}
 
-		public static bool WriteLogImmediate(string logFileName, string content)
+		/// <summary>
+		/// Completes the logging queue and waits until every queued entry
+		/// has been processed. Call this after Application.Run returns.
+		/// </summary>
+		public static async Task FlushLogsAsync()
 		{
-			lock (_logWriteLock)
+			if (Interlocked.Exchange(
+					ref _loggingShutdownStarted,
+					1) == 0)
 			{
-				return WriteLogCore(logFileName, content);
+				_logQueue.Writer.TryComplete();
 			}
-		}
 
-		private static bool WriteLogCore(string logFileName, string content)
-		{
 			try
 			{
-				FolderHandler.Create(Core.LogsPath);
-
-				string fileName = $"{logFileName}_{DateTime.Now:yyyy-MM-dd}.log";
-				string fullPath = Path.Combine(Core.LogsPath, fileName);
-
-				File.AppendAllText(
-					fullPath,
-					content.TrimEnd() + Environment.NewLine);
-
-				var logFiles = new DirectoryInfo(Core.LogsPath)
-					.GetFiles("*.log")
-					.OrderByDescending(f => f.Name)
-					.ToList();
-
-				for (int i = 10; i < logFiles.Count; i++)
-				{
-					logFiles[i].Delete();
-				}
-
-				return true;
+				await _logWorkerTask.ConfigureAwait(false);
 			}
 			catch
 			{
+				// Application shutdown must continue even if logging failed.
+			}
+		}
+
+		public static bool WriteLogImmediate(
+	string logFileName,
+	string content)
+		{
+			if (string.IsNullOrWhiteSpace(logFileName) ||
+				string.IsNullOrWhiteSpace(content))
+			{
 				return false;
 			}
+
+			return WriteLogCore(logFileName, content);
+		}
+
+		private static bool WriteLogCore(
+			string logFileName,
+			string content)
+		{
+			lock (_logWriteLock)
+			{
+				try
+				{
+					FolderHandler.Create(Core.LogsPath);
+
+					string safeLogFileName =
+						SanitizeLogFileName(logFileName);
+
+					DateTime currentTime = DateTime.Now;
+
+					string dailyFileName =
+						$"{safeLogFileName}_{currentTime:yyyy-MM-dd}.log";
+
+					string fullPath = Path.Combine(
+						Core.LogsPath,
+						dailyFileName);
+
+					bool isNewDailyFile = !File.Exists(fullPath);
+
+					File.AppendAllText(
+						fullPath,
+						content.TrimEnd() + Environment.NewLine);
+
+					// Retention only needs to run when a new daily file
+					// is created, not after every individual log message.
+					if (isNewDailyFile)
+					{
+						CleanupOldLogFiles(safeLogFileName);
+					}
+
+					return true;
+				}
+				catch
+				{
+					return false;
+				}
+			}
+		}
+
+		private static void CleanupOldLogFiles(
+			string safeLogFileName)
+		{
+			try
+			{
+				var oldLogFiles = new DirectoryInfo(Core.LogsPath)
+					.GetFiles(
+						$"{safeLogFileName}_*.log",
+						SearchOption.TopDirectoryOnly)
+					.OrderByDescending(
+						file => file.LastWriteTimeUtc)
+					.Skip(MaxLogFilesPerCategory)
+					.ToList();
+
+				foreach (FileInfo oldLogFile in oldLogFiles)
+				{
+					try
+					{
+						oldLogFile.Delete();
+					}
+					catch
+					{
+						// A locked old log should not prevent current logging.
+					}
+				}
+			}
+			catch
+			{
+				// Retention failure should not make the current write fail.
+			}
+		}
+
+		private static string SanitizeLogFileName(
+			string logFileName)
+		{
+			char[] characters = logFileName.Trim().ToCharArray();
+			char[] invalidCharacters = Path.GetInvalidFileNameChars();
+
+			for (int index = 0; index < characters.Length; index++)
+			{
+				char character = characters[index];
+
+				if (Array.IndexOf(invalidCharacters, character) >= 0 ||
+					character == '/' ||
+					character == '\\' ||
+					character == '*' ||
+					character == '?')
+				{
+					characters[index] = '_';
+				}
+			}
+
+			string safeName = new string(characters)
+				.Trim(' ', '.');
+
+			if (string.IsNullOrWhiteSpace(safeName))
+				safeName = "Synix";
+
+			// Prevent excessively long Windows paths.
+			if (safeName.Length > 80)
+				safeName = safeName[..80];
+
+			return safeName;
 		}
 
 		public static bool Copy(string sourceFilePath, string targetFolderPath, string targetFileName, bool overwrite = true)

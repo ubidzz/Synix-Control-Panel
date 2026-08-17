@@ -28,17 +28,18 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 		public static int Install(GameServer server, GameInfo blueprint, Action<string> logCallback, Action<int>? onPidStarted = null)
 		{
-			// --------------------------------------------------------
-			// PHASE 1: DIRECT DOWNLOAD ROUTING (NON-STEAM GAMES)
-			// --------------------------------------------------------
-			if (blueprint.AppID == "0" || blueprint.AppID.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+			// Direct-download games do not use SteamCMD.
+			if (blueprint.AppID == "0" ||
+				blueprint.AppID.StartsWith(
+					"Minecraft",
+					StringComparison.OrdinalIgnoreCase))
 			{
-				return InstallDirectDownloadAsync(server, blueprint, logCallback).GetAwaiter().GetResult();
+				return InstallDirectDownloadAsync(
+					server,
+					blueprint,
+					logCallback).GetAwaiter().GetResult();
 			}
 
-			// --------------------------------------------------------
-			// PHASE 2: STANDARD STEAMCMD INSTALLATION
-			// --------------------------------------------------------
 			int hasInternalError = 0;
 			string lastLoggedLine = "";
 			object lineSync = new();
@@ -46,7 +47,10 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			ProcessStartInfo startInfo = new()
 			{
 				FileName = Core.SteamCmdExe,
-				Arguments = $"+force_install_dir \"{server.InstallPath}\" +login anonymous +app_update {blueprint.AppID} validate +quit",
+				Arguments =
+					$"+force_install_dir \"{server.InstallPath}\" " +
+					$"+login anonymous " +
+					$"+app_update {blueprint.AppID} validate +quit",
 				WorkingDirectory = Core.SteamCmdPath,
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
@@ -54,19 +58,26 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				CreateNoWindow = true
 			};
 
-			using Process process = new() { StartInfo = startInfo };
+			using Process process = new()
+			{
+				StartInfo = startInfo
+			};
 
-			Channel<string> logQueue = Channel.CreateUnbounded<string>(
-				new UnboundedChannelOptions
+			// Prevent an extremely busy SteamCMD session from consuming
+			// unlimited memory while waiting for the dashboard.
+			Channel<string> logQueue = Channel.CreateBounded<string>(
+				new BoundedChannelOptions(4096)
 				{
 					SingleReader = true,
 					SingleWriter = false,
-					AllowSynchronousContinuations = false
+					AllowSynchronousContinuations = false,
+					FullMode = BoundedChannelFullMode.DropOldest
 				});
 
 			Task dashboardWriter = Task.Run(async () =>
 			{
-				await foreach (string line in logQueue.Reader.ReadAllAsync())
+				await foreach (string line in
+					logQueue.Reader.ReadAllAsync())
 				{
 					try
 					{
@@ -74,7 +85,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					}
 					catch
 					{
-						// A dashboard logging failure must not stop SteamCMD output capture.
+						// Dashboard logging must not stop SteamCMD.
 					}
 				}
 			});
@@ -88,27 +99,49 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				if (line.Length == 0)
 					return;
 
-				if (line.Contains("ERROR!", StringComparison.OrdinalIgnoreCase) ||
-					line.Contains("subscription", StringComparison.OrdinalIgnoreCase) ||
-					line.Contains("AppID not found", StringComparison.OrdinalIgnoreCase) ||
-					line.Contains("FAILED", StringComparison.OrdinalIgnoreCase))
+				if (line.Contains(
+						"ERROR!",
+						StringComparison.OrdinalIgnoreCase) ||
+					line.Contains(
+						"subscription",
+						StringComparison.OrdinalIgnoreCase) ||
+					line.Contains(
+						"AppID not found",
+						StringComparison.OrdinalIgnoreCase) ||
+					line.Contains(
+						"FAILED",
+						StringComparison.OrdinalIgnoreCase))
 				{
 					Interlocked.Exchange(ref hasInternalError, 1);
 				}
 
-				if (line.Contains("progress:", StringComparison.OrdinalIgnoreCase) ||
-					line.Contains("downloading", StringComparison.OrdinalIgnoreCase))
-				{
-					if ((DateTime.Now - lastProgressTime).TotalMilliseconds < 250)
-						return;
+				bool isProgressLine =
+					line.Contains(
+						"progress:",
+						StringComparison.OrdinalIgnoreCase) ||
+					line.Contains(
+						"downloading",
+						StringComparison.OrdinalIgnoreCase);
 
-					lastProgressTime = DateTime.Now;
-				}
-
+				// Standard output and standard error call this concurrently.
 				lock (lineSync)
 				{
-					if (line.Equals(lastLoggedLine, StringComparison.Ordinal))
+					if (isProgressLine)
+					{
+						DateTime now = DateTime.UtcNow;
+
+						if ((now - lastProgressTime).TotalMilliseconds < 250)
+							return;
+
+						lastProgressTime = now;
+					}
+
+					if (line.Equals(
+							lastLoggedLine,
+							StringComparison.Ordinal))
+					{
 						return;
+					}
 
 					lastLoggedLine = line;
 				}
@@ -116,32 +149,67 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				logQueue.Writer.TryWrite(line);
 			}
 
+			void SetMainWindowTitle(string title)
+			{
+				MainGUI? mainWindow = MainGUI.Instance;
+
+				if (mainWindow == null ||
+					mainWindow.IsDisposed ||
+					!mainWindow.IsHandleCreated)
+				{
+					return;
+				}
+
+				try
+				{
+					mainWindow.BeginInvoke(new Action(() =>
+					{
+						if (!mainWindow.IsDisposed)
+							mainWindow.Text = title;
+					}));
+				}
+				catch (InvalidOperationException)
+				{
+					// The application may be closing.
+				}
+			}
+
+			CancellationTokenSource heartbeatCts =
+				new CancellationTokenSource();
+
+			Stopwatch installTimer = new Stopwatch();
+			Task heartbeatTask = Task.CompletedTask;
+			int resultCode = -1;
+
 			try
 			{
 				process.Start();
 				onPidStarted?.Invoke(process.Id);
 
-				CancellationTokenSource heartbeatCts = new CancellationTokenSource();
-				Stopwatch installTimer = Stopwatch.StartNew();
+				installTimer.Start();
 
-				Task heartbeatTask = Task.Run(async () =>
+				heartbeatTask = Task.Run(async () =>
 				{
-					while (!heartbeatCts.Token.IsCancellationRequested)
+					try
 					{
-						try
+						while (true)
 						{
-							await Task.Delay(1000, heartbeatCts.Token);
-							if (heartbeatCts.Token.IsCancellationRequested) break;
+							await Task.Delay(
+								1000,
+								heartbeatCts.Token).ConfigureAwait(false);
 
-							MainGUI.Instance?.BeginInvoke(new Action(() =>
-							{
-								if (MainGUI.Instance != null)
-								{
-									MainGUI.Instance.Text = $"Synix Control Panel - Working... [{installTimer.Elapsed.Minutes:D2}m {installTimer.Elapsed.Seconds:D2}s]";
-								}
-							}));
+							TimeSpan elapsed = installTimer.Elapsed;
+
+							SetMainWindowTitle(
+								"Synix Control Panel - Working... " +
+								$"[{elapsed.Minutes:D2}m " +
+								$"{elapsed.Seconds:D2}s]");
 						}
-						catch (TaskCanceledException) { break; }
+					}
+					catch (OperationCanceledException)
+						when (heartbeatCts.IsCancellationRequested)
+					{
+						// Normal shutdown of the heartbeat task.
 					}
 				});
 
@@ -155,46 +223,62 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 				process.WaitForExit();
 
-				heartbeatCts.Cancel();
-				MainGUI.Instance?.BeginInvoke(new Action(() =>
-				{
-					if (MainGUI.Instance != null)
-					{
-						MainGUI.Instance.Text = "Synix Control Panel";
-					}
-				}));
-
+				// Drain both redirected streams before inspecting the result.
 				Task.WhenAll(outputReader, errorReader)
 					.GetAwaiter()
 					.GetResult();
 
-				logQueue.Writer.TryComplete();
-				Core.Instance.UpdateGridStatus();
-
-				return Volatile.Read(ref hasInternalError) == 1
-					? 99
-					: process.ExitCode;
+				resultCode =
+					Volatile.Read(ref hasInternalError) == 1
+						? 99
+						: process.ExitCode;
 			}
 			catch (Exception ex)
 			{
 				logQueue.Writer.TryWrite(
 					$"[CRITICAL] Launcher Error: {ex.Message}");
 
+				resultCode = -1;
+			}
+			finally
+			{
+				// This now executes for success and every exception path.
+				heartbeatCts.Cancel();
+
+				try
+				{
+					heartbeatTask.GetAwaiter().GetResult();
+				}
+				catch (OperationCanceledException)
+				{
+					// Expected during cancellation.
+				}
+				catch (Exception ex)
+				{
+					logQueue.Writer.TryWrite(
+						$"[WARNING] Heartbeat cleanup failed: {ex.Message}");
+				}
+
+				installTimer.Stop();
+				heartbeatCts.Dispose();
+
+				// Complete and drain the dashboard log queue before returning.
 				logQueue.Writer.TryComplete();
 
 				try
 				{
 					dashboardWriter.GetAwaiter().GetResult();
 				}
-				catch { }
-
-				MainGUI.Instance?.BeginInvoke(new Action(() =>
+				catch
 				{
-					if (MainGUI.Instance != null) MainGUI.Instance.Text = "Synix Control Panel";
-				}));
+					// Logging cleanup must not alter the SteamCMD result.
+				}
 
-				return -1;
+				SetMainWindowTitle("Synix Control Panel");
+				Core.Instance.UpdateGridStatus();
 			}
+
+			return resultCode;
 		}
 
 		// --------------------------------------------------------
@@ -436,9 +520,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			return 0;
 		}
 
-		private static async Task PumpStreamAsync(
-			StreamReader reader,
-			Action<string> queueLine)
+		private static async Task PumpStreamAsync(StreamReader reader, Action<string> queueLine)
 		{
 			Stream stream = reader.BaseStream;
 			byte[] buffer = new byte[256];

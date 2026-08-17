@@ -34,7 +34,17 @@ namespace Synix_Control_Panel.SynixApp
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			Application.Run(new MainGUI());
+			try
+			{
+				Application.Run(new MainGUI());
+			}
+			finally
+			{
+				// Wait for queued log entries to reach disk before exiting.
+				FileHandler.FlushLogsAsync()
+					.GetAwaiter()
+					.GetResult();
+			}
 		}
 
 		static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)

@@ -579,7 +579,15 @@ namespace Synix_Control_Panel
 
 					if (System.IO.File.Exists(iconPath))
 					{
-						NewServer.DisplayIcon = System.Drawing.Image.FromFile(iconPath);
+						if (!MainGUI.ServerIconsCache.TryGetValue(NewServer.Game, out Image? cachedIcon))
+						{
+							using MemoryStream stream = new(File.ReadAllBytes(iconPath));
+							using Image sourceImage = Image.FromStream(stream);
+							cachedIcon = new Bitmap(sourceImage);
+							MainGUI.ServerIconsCache[NewServer.Game] = cachedIcon;
+						}
+
+						NewServer.DisplayIcon = cachedIcon;
 					}
 				}
 
