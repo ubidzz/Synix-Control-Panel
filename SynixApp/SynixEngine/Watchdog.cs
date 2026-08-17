@@ -157,7 +157,17 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				float cpuUsage = GetSystemCpuUsage();
 
-				bool isSteamActive = System.Diagnostics.Process.GetProcessesByName("steamcmd").Length > 0;
+				Process[] steamProcesses = Process.GetProcessesByName("steamcmd");
+				bool isSteamActive;
+				try
+				{
+					isSteamActive = steamProcesses.Length > 0;
+				}
+				finally
+				{
+					foreach (Process steamProcess in steamProcesses)
+						steamProcess.Dispose();
+				}
 
 				if (!isSteamActive && cpuUsage > 90 && !_isAlertActive)
 				{

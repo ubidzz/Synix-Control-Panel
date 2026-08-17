@@ -336,7 +336,7 @@ namespace Synix_Control_Panel
 		{
 			await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
 
-			Core.Instance.RebindProcesses();
+			await Core.Instance.RebindProcesses();
 			double physicalRam = 16.0;
 			await Task.Run(() => physicalRam = ResourceMonitor.GetTotalSystemRamGB());
 
@@ -544,7 +544,7 @@ namespace Synix_Control_Panel
 
 				if (gameTcp || queryTcp || gameUdp || queryUdp)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable at {ipText}! (GamePort TCP:{gameTcp} UDP:{gameUdp} | QueryPort TCP:{queryTcp} UDP:{queryUdp})", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable locally at {ipText}! (GamePort TCP:{gameTcp} UDP:{gameUdp} | QueryPort TCP:{queryTcp} UDP:{queryUdp})", Color.Green);
 				}
 				else
 				{
@@ -571,7 +571,7 @@ namespace Synix_Control_Panel
 
 				bool gameTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.Port);
 				bool queryTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.QueryPort);
-				bool gameUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort); // Fallback check
+				bool gameUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.Port);
 				bool queryUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
 
 				if (gameTcp || queryTcp || gameUdp || queryUdp)

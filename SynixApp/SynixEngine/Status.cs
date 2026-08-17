@@ -32,7 +32,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async void RebindProcesses()
+		public async Task RebindProcesses()
 		{
 			foreach (var server in MainGUI.serverList)
 			{
@@ -43,46 +43,91 @@ namespace Synix_Control_Panel.SynixEngine
 
 					try
 					{
-						var process = Process.GetProcessById(server.PID.Value);
+						Process? process = null;
 
-						if (!process.HasExited)
+						try
 						{
-							var gameData = GameDatabase.GetGame(server.Game);
+							process = Process.GetProcessById(server.PID.Value);
 
-							if (gameData != null && !string.IsNullOrEmpty(gameData.ExeName))
+							if (!process.HasExited)
 							{
-								string expectedProcessName = System.IO.Path.GetFileNameWithoutExtension(gameData.ExeName);
-								if (process.ProcessName.Equals(expectedProcessName, StringComparison.OrdinalIgnoreCase) || (gameData.ExeName.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) && process.ProcessName.Equals("cmd", StringComparison.OrdinalIgnoreCase)))
+								var gameData = GameDatabase.GetGame(server.Game);
+
+								if (gameData != null && !string.IsNullOrEmpty(gameData.ExeName))
 								{
-									isServerRunning = true;
-									server.RunningProcess = process;
-									server.Status = StatusManager.GetStatus(ServerState.Running);
+									string expectedProcessName =
+										Path.GetFileNameWithoutExtension(gameData.ExeName);
 
-									if (server.StartTime == null)
+									bool processMatches =
+										process.ProcessName.Equals(
+											expectedProcessName,
+											StringComparison.OrdinalIgnoreCase) ||
+										(gameData.ExeName.EndsWith(
+											".bat",
+											StringComparison.OrdinalIgnoreCase) &&
+										 process.ProcessName.Equals(
+											"cmd",
+											StringComparison.OrdinalIgnoreCase));
+
+									if (processMatches)
 									{
-										server.StartTime = process.StartTime;
-									}
+										Process reboundProcess = process;
 
-									Log($"[🔗 REBIND] Found {server.Game} still running (PID: {server.PID})", Color.BlueViolet, true);
+										server.RunningProcess?.Dispose();
+										server.RunningProcess = reboundProcess;
+										process = null;
 
-									process.Exited += async (s, e) =>
-									{
-										try
+										server.Status =
+											StatusManager.GetStatus(ServerState.Running);
+
+										if (server.StartTime == null)
+											server.StartTime = reboundProcess.StartTime;
+
+										reboundProcess.Exited += async (s, e) =>
 										{
-											if (server.Status == StatusManager.GetStatus(ServerState.Running))
-												await ExecuteStartSequence(server, "WATCHDOG");
-											else
+											try
+											{
+												if (server.Status ==
+													StatusManager.GetStatus(ServerState.Running))
+												{
+													await ExecuteStartSequence(server, "WATCHDOG");
+												}
+												else
+												{
+													CleanupStoppedState(server);
+												}
+											}
+											catch (Exception ex)
+											{
+												Log(
+													$"[🚨 CRASH HANDLER ERROR] {ex.Message}",
+													Color.Red);
+
 												CleanupStoppedState(server);
-										}
-										catch (Exception ex)
-										{
-											Log($"[🚨 CRASH HANDLER ERROR] {ex.Message}", Color.Red);
-											CleanupStoppedState(server);
-										}
-									};
-									process.EnableRaisingEvents = true;
+											}
+										};
+
+										reboundProcess.EnableRaisingEvents = true;
+										isServerRunning = true;
+
+										Log(
+											$"[🔗 REBIND] Found {server.Game} still running " +
+											$"(PID: {server.PID})",
+											Color.BlueViolet,
+											true);
+									}
 								}
 							}
+						}
+						catch (Exception ex)
+						{
+							Log(
+								$"[⚠️ REBIND ERROR] Could not rebind {server.Game}: {ex.Message}",
+								Color.OrangeRed);
+						}
+						finally
+						{
+							process?.Dispose();
 						}
 					}
 					catch { }
@@ -99,7 +144,7 @@ namespace Synix_Control_Panel.SynixEngine
 					bool isSteamCmdActive = false;
 					try
 					{
-						var installer = Process.GetProcessById(server.SteamPID.Value);
+						using var installer = Process.GetProcessById(server.SteamPID.Value);
 						if (!installer.HasExited && installer.ProcessName.Contains("steamcmd", StringComparison.OrdinalIgnoreCase))
 						{
 							isSteamCmdActive = true;
@@ -124,8 +169,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void CleanupStoppedState(GameServer server)
 		{
-			server.Status = StatusManager.GetStatus(ServerState.Stopped); ;
+			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
+			server.RunningProcess?.Dispose();
 			server.RunningProcess = null;
 			UpdateGridStatus();
 		}
