@@ -17,18 +17,15 @@ namespace Synix_Control_Panel
 {
 	public partial class ResourceMonitorGUI : Form
 	{
-		private Image originalBg = Properties.Resources.logo;
+		private Bitmap? _scaledBackground;
 
 		public ResourceMonitorGUI()
 		{
 			InitializeComponent();
-			this.FormClosed += ResourceMonitorGUI_FormClosed;
 
-			PropertyInfo cp = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
-			cp.SetValue(listViewResources, true, null);
+			PropertyInfo? cp = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
 
-			lblTotalCpu.Font = new Font(lblTotalCpu.Font, FontStyle.Bold);
-			lblTotalRam.Font = new Font(lblTotalRam.Font, FontStyle.Bold);
+			cp?.SetValue(listViewResources, true, null);
 
 			listViewResources.Columns[0].Width = 60;
 			listViewResources.Columns[1].Width = 180;
@@ -37,7 +34,7 @@ namespace Synix_Control_Panel
 			listViewResources.Columns[4].Width = 200;
 			listViewResources.OwnerDraw = true;
 
-			this.Load += (s, e) => listViewResources_Resize(this, EventArgs.Empty);
+			listViewResources_Resize(listViewResources, EventArgs.Empty);
 
 			tmrRefresh_Tick(this, EventArgs.Empty);
 		}
@@ -129,48 +126,57 @@ namespace Synix_Control_Panel
 			TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.Font, e.Bounds, txtColor, flags);
 		}
 
-		private void listViewResources_Resize(object sender, EventArgs e)
+		private void listViewResources_Resize(object? sender, EventArgs e)
 		{
-			if (listViewResources.Width > 0 && listViewResources.Height > 0 && originalBg != null)
+			if (listViewResources.ClientSize.Width <= 0 ||
+				listViewResources.ClientSize.Height <= 0)
 			{
-				int otherColumnsWidth = listViewResources.Columns[0].Width +
-										listViewResources.Columns[1].Width +
-										listViewResources.Columns[2].Width +
-										listViewResources.Columns[3].Width;
-
-				int remainingWidth = listViewResources.ClientSize.Width - otherColumnsWidth;
-
-				if (remainingWidth > 100)
-				{
-					listViewResources.Columns[4].Width = remainingWidth;
-				}
-
-				Bitmap bmp = new Bitmap(originalBg, listViewResources.Width, listViewResources.Height);
-				listViewResources.BackgroundImage?.Dispose();
-				listViewResources.BackgroundImage = bmp;
+				return;
 			}
+
+			int otherColumnsWidth =
+				listViewResources.Columns[0].Width +
+				listViewResources.Columns[1].Width +
+				listViewResources.Columns[2].Width +
+				listViewResources.Columns[3].Width;
+
+			int remainingWidth =
+				listViewResources.ClientSize.Width - otherColumnsWidth;
+
+			if (remainingWidth > 100)
+			{
+				listViewResources.Columns[4].Width = remainingWidth;
+			}
+
+			Size targetSize = listViewResources.ClientSize;
+
+			if (_scaledBackground?.Size == targetSize)
+			{
+				return;
+			}
+
+			Bitmap newBackground =
+				new Bitmap(Properties.Resources.logo, targetSize);
+
+			Bitmap? oldBackground = _scaledBackground;
+
+			_scaledBackground = newBackground;
+			listViewResources.BackgroundImage = newBackground;
+
+			oldBackground?.Dispose();
 		}
 
-		private void ResourceMonitorGUI_FormClosed(object sender, FormClosedEventArgs e)
+		private void ResourceMonitorGUI_FormClosed(object? sender, FormClosedEventArgs e)
 		{
-			if (originalBg != null)
-			{
-				originalBg.Dispose();
-				originalBg = null;
-			}
+			tmrRefresh.Stop();
+			tmrRefresh.Tick -= tmrRefresh_Tick;
 
-			if (lblTotalCpu.Font != null) lblTotalCpu.Font.Dispose();
-			if (lblTotalRam.Font != null) lblTotalRam.Font.Dispose();
-			if (tmrRefresh != null)
-			{
-				tmrRefresh.Stop();
-				tmrRefresh.Dispose();
-			}
+			listViewResources.BackgroundImage = null;
 
-			this.Dispose();
+			_scaledBackground?.Dispose();
+			_scaledBackground = null;
 
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+			listViewResources.Items.Clear();
 		}
 	}
 }

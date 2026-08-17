@@ -22,9 +22,9 @@ namespace Synix_Control_Panel.Help
 		private static extern uint SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
 		private const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;
 
-		private GameServer _server;
-		private Process _serverProcess;
-		private System.Windows.Forms.Timer _metricsTimer;
+		private readonly GameServer _server;
+		private Process? _serverProcess;
+		private System.Windows.Forms.Timer? _metricsTimer;
 		private DateTime _lastCpuCheckTime;
 		private TimeSpan _lastCpuTotalProcessorTime;
 
@@ -40,6 +40,12 @@ namespace Synix_Control_Panel.Help
 
 			LoadServerData();
 			InitializeMetricsEngine();
+		}
+
+		private void ReleaseServerProcess()
+		{
+			_serverProcess?.Dispose();
+			_serverProcess = null;
 		}
 
 		private void LoadServerData()
@@ -177,7 +183,7 @@ namespace Synix_Control_Panel.Help
 		private void InitializeMetricsEngine()
 		{
 			_metricsTimer = new System.Windows.Forms.Timer();
-			_metricsTimer.Interval = 150;
+			_metricsTimer.Interval = 500;
 			_metricsTimer.Tick += MetricsTimer_Tick;
 			_metricsTimer.Start();
 		}
@@ -201,19 +207,22 @@ namespace Synix_Control_Panel.Help
 				{
 					if (_serverProcess == null || _serverProcess.Id != _server.PID.Value)
 					{
+						ReleaseServerProcess();
+
 						_serverProcess = Process.GetProcessById(_server.PID.Value);
 						_lastCpuCheckTime = DateTime.Now;
-						_lastCpuTotalProcessorTime = _serverProcess.TotalProcessorTime;
+						_lastCpuTotalProcessorTime =
+						_serverProcess.TotalProcessorTime;
 					}
 				}
 				catch
 				{
-					_serverProcess = null; // Process ended or is invalid
+					ReleaseServerProcess();
 				}
 			}
 			else
 			{
-				_serverProcess = null;
+				ReleaseServerProcess();
 			}
 
 			double currentCpu = 0;
@@ -237,6 +246,8 @@ namespace Synix_Control_Panel.Help
 			}
 			else
 			{
+				ReleaseServerProcess();
+
 				if (lblStatusCardValue != null)
 				{
 					lblStatusCardValue.Text = "Stopped";
@@ -268,13 +279,17 @@ namespace Synix_Control_Panel.Help
 			fill.Width = targetWidth;
 		}
 
-		private void ServerInfo_FormClosing(object sender, FormClosingEventArgs e)
+		private void ServerInfo_FormClosing(object? sender, FormClosingEventArgs e)
 		{
 			if (_metricsTimer != null)
 			{
 				_metricsTimer.Stop();
+				_metricsTimer.Tick -= MetricsTimer_Tick;
 				_metricsTimer.Dispose();
+				_metricsTimer = null;
 			}
+
+			ReleaseServerProcess();
 		}
 	}
 }
