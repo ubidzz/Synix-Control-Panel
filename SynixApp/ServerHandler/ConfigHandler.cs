@@ -302,7 +302,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				if (jsonNode is JsonObject jsonObj)
 				{
-					UpdateJsonNode(jsonObj, data);
+					UpdateJsonNode(jsonObj, data, "");
 
 					var options = new JsonSerializerOptions
 					{
