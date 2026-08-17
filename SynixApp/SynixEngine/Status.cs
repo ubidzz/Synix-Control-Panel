@@ -168,8 +168,10 @@ namespace Synix_Control_Panel.SynixEngine
 			public static string GetStatus(int code) => GetStatus((ServerState)code);
 		}
 
+		private static string? _cachedLocalIp = null;
 		public async Task<string> GetLocalIP()
 		{
+			if (_cachedLocalIp != null) return _cachedLocalIp;
 			try
 			{
 				// Looks at the network card to find the internal (LAN) address
@@ -177,7 +179,8 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					socket.Connect("8.8.8.8", 65530);
 					IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-					return endPoint?.Address.ToString() ?? "127.0.0.1";
+					_cachedLocalIp = endPoint?.Address.ToString() ?? "127.0.0.1";
+					return _cachedLocalIp;
 				}
 			}
 			catch

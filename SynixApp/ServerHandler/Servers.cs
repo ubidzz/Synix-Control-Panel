@@ -37,6 +37,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		const uint CTRL_C_EVENT = 0;
 		#endregion
+		private static readonly SemaphoreSlim _consoleLock = new SemaphoreSlim(1, 1);
 
 		public static async Task Start(GameServer server, Action<string, Color> logCallback, StartContext context = StartContext.Manual)
 		{
@@ -318,33 +319,41 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
-				if (AttachConsole((uint)targetPid))
+				bool cleanExit = false;
+				await _consoleLock.WaitAsync();
+				try
 				{
-					SetConsoleCtrlHandler(null, true);
-					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-
-					if (server.RunningProcess != null && server.RunningProcess.StartInfo.RedirectStandardInput)
+					if (AttachConsole((uint)targetPid))
 					{
-						try
+						SetConsoleCtrlHandler(null, true);
+						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+
+						if (server.RunningProcess != null && server.RunningProcess.StartInfo.RedirectStandardInput)
 						{
-							// Instantly pipes 'Y' and hits Enter
-							server.RunningProcess.StandardInput.WriteLine("Y");
-							server.RunningProcess.StandardInput.Flush();
+							try
+							{
+								server.RunningProcess.StandardInput.WriteLine("Y");
+								server.RunningProcess.StandardInput.Flush();
+							}
+							catch { }
 						}
-						catch { } // Failsafe in case it closed faster than we could write to it
+
+						cleanExit = await Task.Run(() => server.RunningProcess?.WaitForExit(25000) ?? false);
+
+						FreeConsole();
+						SetConsoleCtrlHandler(null, false);
 					}
+				}
+				finally
+				{
+					_consoleLock.Release();
+				}
 
-					bool cleanExit = await Task.Run(() => server.RunningProcess?.WaitForExit(25000) ?? false);
-
-					FreeConsole();
-					SetConsoleCtrlHandler(null, false);
-
-					if (cleanExit)
-					{
-						logCallback?.Invoke($"[SYNIX] {server.ServerName} saved and closed cleanly.", Color.Lime);
-						FinalizeStoppedState(server);
-						return;
-					}
+				if (cleanExit)
+				{
+					logCallback?.Invoke($"[SYNIX] {server.ServerName} saved and closed cleanly.", Color.Lime);
+					FinalizeStoppedState(server);
+					return;
 				}
 
 				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} did not respond. Forcing taskkill...", Color.Violet);

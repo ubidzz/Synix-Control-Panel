@@ -42,9 +42,6 @@ namespace Synix_Control_Panel.Help
 			InitializeMetricsEngine();
 		}
 
-		// ====================================================================
-		// SECTION 1: STATIC SERVER DATA (From original ServerInfo)
-		// ====================================================================
 		private void LoadServerData()
 		{
 			if (_server == null) return;
@@ -84,7 +81,6 @@ namespace Synix_Control_Panel.Help
 
 		private void CheckRunningStatus()
 		{
-			// Read the global object to see if another form updated it, but DO NOT modify it!
 			if (_server == null || string.IsNullOrEmpty(_server.Status)) return;
 
 			string[] spinFrames = { "|", "/", "--", "\\" };
@@ -92,7 +88,6 @@ namespace Synix_Control_Panel.Help
 			bool isBusy = false;
 			string nextSpinnerText = "";
 
-			// Read what is currently on the screen so we can calculate the next animation frame locally
 			string currentVisualText = lblStatusCardValue != null ? lblStatusCardValue.Text : "";
 
 			if (status.StartsWith("Updating"))
@@ -144,7 +139,6 @@ namespace Synix_Control_Panel.Help
 				isBusy = true;
 			}
 
-			// ONLY update the local UI label. Leave the global _server.Status completely untouched!
 			if (isBusy && lblStatusCardValue != null)
 			{
 				lblStatusCardValue.Text = nextSpinnerText;
@@ -180,9 +174,6 @@ namespace Synix_Control_Panel.Help
 			}
 		}
 
-		// ====================================================================
-		// SECTION 2: LIVE TELEMETRY ENGINE
-		// ====================================================================
 		private void InitializeMetricsEngine()
 		{
 			_metricsTimer = new System.Windows.Forms.Timer();
@@ -228,7 +219,6 @@ namespace Synix_Control_Panel.Help
 			double currentCpu = 0;
 			double currentRamGb = 0;
 
-			// 2. Extract metrics and set base ONLINE/OFFLINE status
 			if (_serverProcess != null && !_serverProcess.HasExited)
 			{
 				_serverProcess.Refresh();
@@ -247,7 +237,6 @@ namespace Synix_Control_Panel.Help
 			}
 			else
 			{
-				// Default to OFFLINE
 				if (lblStatusCardValue != null)
 				{
 					lblStatusCardValue.Text = "Stopped";
@@ -255,11 +244,9 @@ namespace Synix_Control_Panel.Help
 				}
 			}
 
-			// 3. Update the UI Metric Labels
 			if (lblCpuCardValue != null) lblCpuCardValue.Text = $"{currentCpu:0.0}%";
 			if (lblRamCardValue != null) lblRamCardValue.Text = $"{currentRamGb:0.00} GB";
 
-			// 4. Animate the flat progress bars
 			double totalRam = MainGUI.Instance != null ? MainGUI.Instance.systemTotalRamGb : 32.0;
 			double ramPercentage = (currentRamGb / totalRam) * 100;
 

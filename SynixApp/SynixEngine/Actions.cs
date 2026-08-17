@@ -629,6 +629,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 				args = args.Replace("  ", " ").Trim();
 
+				// Escape ampersands so batch files don't interpret them as command separators (e.g. s&box)
+				string safeArgs = args.Replace("&", "^&");
+
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
@@ -650,7 +653,7 @@ namespace Synix_Control_Panel.SynixEngine
 				batchContent.AppendLine($"set SteamGameId={invokedId}");
 				batchContent.AppendLine();
 				batchContent.AppendLine($":: Execute the standalone server payload");
-				batchContent.AppendLine($"start \"{server.ServerName}\" \"{exeNameOnly}\" {args}");
+				batchContent.AppendLine($"start \"{server.ServerName}\" \"{exeNameOnly}\" {safeArgs}");
 				batchContent.AppendLine();
 				batchContent.AppendLine("echo.");
 				batchContent.AppendLine($"echo Starting the {server.ServerName} Server. Please wait...");
