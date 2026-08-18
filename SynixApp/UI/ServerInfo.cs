@@ -1,56 +1,146 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Synix_Control_Panel.Help
 {
 	public partial class ServerInfo : Form
 	{
-		[DllImport("user32.dll")]
-		private static extern uint SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
-		private const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;
+		private const uint WdaExcludeFromCapture = 0x00000011;
+		private const int WmNcHitTest = 0x0084;
+		private const int WmNcLeftButtonDown = 0x00A1;
+		private const int HtCaption = 0x0002;
+		private const int HtLeft = 10;
+		private const int HtRight = 11;
+		private const int HtTop = 12;
+		private const int HtTopLeft = 13;
+		private const int HtTopRight = 14;
+		private const int HtBottom = 15;
+		private const int HtBottomLeft = 16;
+		private const int HtBottomRight = 17;
+		private const int DwmWindowCornerPreference = 33;
+		private const int DwmRound = 2;
+		private const int ResizeBorder = 7;
+
+		private static readonly Color SuccessColor = Color.FromArgb(52, 211, 153);
+		private static readonly Color DangerColor = Color.FromArgb(248, 113, 113);
+		private static readonly Color BusyColor = Color.FromArgb(245, 185, 76);
+		private static readonly Color IdleColor = Color.FromArgb(96, 165, 250);
 
 		private readonly GameServer _server;
 		private Process? _serverProcess;
 		private System.Windows.Forms.Timer? _metricsTimer;
 		private DateTime _lastCpuCheckTime;
 		private TimeSpan _lastCpuTotalProcessorTime;
+		private int _spinnerFrame;
+		private double _currentCpuPercentage;
+		private double _currentRamPercentage;
+
+		/// <summary>
+		/// Parameterless constructor used by the Windows Forms Designer.
+		/// The application should open this form with ServerInfo(GameServer).
+		/// </summary>
+		public ServerInfo()
+		{
+			InitializeComponent();
+			_server = new GameServer();
+		}
 
 		public ServerInfo(GameServer server)
 		{
 			InitializeComponent();
-			_server = server;
-
-			if (Properties.Settings.Default.PrivacyMode)
-			{
-				SetWindowDisplayAffinity(this.Handle, WDA_EXCLUDEFROMCAPTURE);
-			}
+			_server = server ?? throw new ArgumentNullException(nameof(server));
 
 			LoadServerData();
+			UpdateStatusPresentation(_server.Status);
+			UpdatePerformanceDisplay(0, 0);
 			InitializeMetricsEngine();
 		}
 
-		private void ReleaseServerProcess()
+		protected override void OnHandleCreated(EventArgs eventArgs)
 		{
-			_serverProcess?.Dispose();
-			_serverProcess = null;
+			base.OnHandleCreated(eventArgs);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+			{
+				return;
+			}
+
+			if (Properties.Settings.Default.PrivacyMode)
+			{
+				_ = SetWindowDisplayAffinity(Handle, WdaExcludeFromCapture);
+			}
+
+			try
+			{
+				int preference = DwmRound;
+				_ = DwmSetWindowAttribute(
+					Handle,
+					DwmWindowCornerPreference,
+					ref preference,
+					sizeof(int));
+			}
+			catch
+			{
+				// Older Windows versions do not support rounded DWM corners.
+			}
+		}
+
+		protected override void WndProc(ref Message message)
+		{
+			base.WndProc(ref message);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
+				message.Msg != WmNcHitTest ||
+				WindowState == FormWindowState.Maximized)
+			{
+				return;
+			}
+
+			Point cursor = PointToClient(Cursor.Position);
+			bool left = cursor.X <= ResizeBorder;
+			bool right = cursor.X >= ClientSize.Width - ResizeBorder;
+			bool top = cursor.Y <= ResizeBorder;
+			bool bottom = cursor.Y >= ClientSize.Height - ResizeBorder;
+
+			if (left && top) message.Result = (IntPtr)HtTopLeft;
+			else if (right && top) message.Result = (IntPtr)HtTopRight;
+			else if (left && bottom) message.Result = (IntPtr)HtBottomLeft;
+			else if (right && bottom) message.Result = (IntPtr)HtBottomRight;
+			else if (left) message.Result = (IntPtr)HtLeft;
+			else if (right) message.Result = (IntPtr)HtRight;
+			else if (top) message.Result = (IntPtr)HtTop;
+			else if (bottom) message.Result = (IntPtr)HtBottom;
+		}
+
+		protected override bool ProcessCmdKey(ref Message message, Keys keyData)
+		{
+			if (keyData == Keys.Escape)
+			{
+				Close();
+				return true;
+			}
+
+			return base.ProcessCmdKey(ref message, keyData);
 		}
 
 		private void LoadServerData()
 		{
-			if (_server == null) return;
+			lblPageHeading.Text = DisplayOrFallback(_server.ServerName, "Server Overview");
+			lblPageSubtitle.Text =
+				$"{DisplayOrFallback(_server.Game, "Dedicated server")}  •  Live performance and configuration details";
 
 			SetStatusColor(lblRconActiveText, _server.EnableRcon);
 			SetStatusColor(lblBackupOnStartText, _server.BackupOnStart);
@@ -62,224 +152,254 @@ namespace Synix_Control_Panel.Help
 			lblQueryPortText.Text = _server.QueryPort.ToString();
 			lblRconPortText.Text = _server.RconPort.ToString();
 			lblAppPortText.Text = _server.AppPort?.ToString() ?? "N/A";
-			lblServerNameText.Text = _server.ServerName;
-			lblGameServerText.Text = _server.Game;
-			lblMapText.Text = _server.WorldName;
-			lblSeedText.Text = _server.WorldSeed;
-			lblCompetitiveText.Text = _server.GameMode;
-			lblRconPasswordText.Text = _server.RconPassword;
-			lblDiscordWebhookText.Text = _server.DiscordWebhook;
-			lblServerPasswordText.Text = _server.Password;
-			lblServerAdminPasswordText.Text = _server.AdminPassword;
-			lblServerFolderText.Text = _server.InstallPath;
-			lblExtraArgsText.Text = _server.ExtraArgs;
+			lblServerNameText.Text = DisplayOrFallback(_server.ServerName);
+			lblGameServerText.Text = DisplayOrFallback(_server.Game);
+			lblMapText.Text = DisplayOrFallback(_server.WorldName, "Not Required");
+			lblSeedText.Text = DisplayOrFallback(_server.WorldSeed, "Not Required");
+			lblCompetitiveText.Text = DisplayOrFallback(_server.GameMode, "Not Required");
+			lblRconPasswordText.Text = DisplayOrFallback(_server.RconPassword, "Not Required");
+			lblServerPasswordText.Text = DisplayOrFallback(_server.Password, "Not Required");
+			lblServerAdminPasswordText.Text = DisplayOrFallback(_server.AdminPassword, "Not Required");
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
+			lblGameVersion.Text = _server.Game == "Minecraft Java"
+				? DisplayOrFallback(_server.GameVersion, "Latest")
+				: "N/A";
 
-			if (_server.Game == "Minecraft Java")
-			{
-				lblGameVersion.Text = _server.GameVersion;
-			}
-			else
-			{
-				lblGameVersion.Text = "";
-			}
+			txtServerFolderValue.Text = DisplayOrFallback(_server.InstallPath);
+			txtDiscordWebhookValue.Text = DisplayOrFallback(_server.DiscordWebhook, "Not Configured");
+			txtExtraArgsValue.Text = DisplayOrFallback(_server.ExtraArgs, "No extra arguments");
 		}
 
-		private void CheckRunningStatus()
+		private static string DisplayOrFallback(string? value, string fallback = "N/A")
 		{
-			if (_server == null || string.IsNullOrEmpty(_server.Status)) return;
-
-			string[] spinFrames = { "|", "/", "--", "\\" };
-			string status = _server.Status;
-			bool isBusy = false;
-			string nextSpinnerText = "";
-
-			string currentVisualText = lblStatusCardValue != null ? lblStatusCardValue.Text : "";
-
-			if (status.StartsWith("Updating"))
-			{
-				string currentFrame = currentVisualText.Replace("Updating ", "");
-				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
-				nextSpinnerText = "Updating " + spinFrames[nextIndex];
-				isBusy = true;
-			}
-			else if (status.StartsWith("Validating"))
-			{
-				string currentFrame = currentVisualText.Replace("Validating ", "");
-				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
-				nextSpinnerText = "Validating " + spinFrames[nextIndex];
-				isBusy = true;
-			}
-			else if (status.StartsWith("Installing"))
-			{
-				string currentFrame = currentVisualText.Replace("Installing ", "");
-				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
-				nextSpinnerText = "Installing " + spinFrames[nextIndex];
-				isBusy = true;
-			}
-			else if (status.StartsWith("Backing Up"))
-			{
-				string currentFrame = currentVisualText.Replace("Backing Up ", "");
-				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
-				nextSpinnerText = "Backing Up " + spinFrames[nextIndex];
-				isBusy = true;
-			}
-			else if (status.StartsWith("Stopping"))
-			{
-				string currentFrame = currentVisualText.Replace("Stopping ", "");
-				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
-				nextSpinnerText = "Stopping " + spinFrames[nextIndex];
-				isBusy = true;
-			}
-			else if (status.StartsWith("Starting"))
-			{
-				string currentFrame = currentVisualText.Replace("Starting ", "");
-				int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-				int nextIndex = (currentIndex >= 0 ? currentIndex + 1 : 0) % spinFrames.Length;
-				nextSpinnerText = "Starting " + spinFrames[nextIndex];
-				isBusy = true;
-			}
-
-			if (isBusy && lblStatusCardValue != null)
-			{
-				lblStatusCardValue.Text = nextSpinnerText;
-				lblStatusCardValue.ForeColor = Color.Orange;
-			}
+			return string.IsNullOrWhiteSpace(value) ? fallback : value;
 		}
 
-		private string GetActiveDays(bool[] days)
+		private static string GetActiveDays(bool[]? days)
 		{
-			if (days == null || days.Length < 7) return "None";
+			if (days == null || days.Length < 7)
+			{
+				return "No Days Scheduled";
+			}
+
 			string[] names = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-			List<string> active = new List<string>();
+			List<string> active = new();
 
-			for (int i = 0; i < 7; i++)
+			for (int index = 0; index < 7; index++)
 			{
-				if (days[i]) active.Add(names[i]);
+				if (days[index])
+				{
+					active.Add(names[index]);
+				}
 			}
 
-			return active.Count > 0 ? string.Join(", ", active) : "No Days Scheduled";
+			return active.Count > 0
+				? string.Join(", ", active)
+				: "No Days Scheduled";
 		}
 
-		private void SetStatusColor(Label label, bool isActive)
+		private static void SetStatusColor(Label label, bool isActive)
 		{
-			if (isActive)
-			{
-				label.Text = "On";
-				label.ForeColor = Color.LimeGreen;
-			}
-			else
-			{
-				label.Text = "Off";
-				label.ForeColor = Color.Red;
-			}
+			label.Text = isActive ? "On" : "Off";
+			label.ForeColor = isActive ? SuccessColor : DangerColor;
 		}
 
 		private void InitializeMetricsEngine()
 		{
-			_metricsTimer = new System.Windows.Forms.Timer();
-			_metricsTimer.Interval = 500;
+			_metricsTimer = new System.Windows.Forms.Timer
+			{
+				Interval = 500
+			};
 			_metricsTimer.Tick += MetricsTimer_Tick;
 			_metricsTimer.Start();
 		}
 
-		private void MetricsTimer_Tick(object sender, EventArgs e)
+		private void MetricsTimer_Tick(object? sender, EventArgs eventArgs)
 		{
-			if (_server.Status == "Running")
-			{
-				lblStatusCardValue.Text = _server.Status;
-				lblStatusCardValue.ForeColor = Color.Green;
-			}
-			else
-			{
-				CheckRunningStatus();
-			}
-
-			// 1. Hook the active process
-			if (_server.PID.HasValue && _server.PID > 0)
-			{
-				try
-				{
-					if (_serverProcess == null || _serverProcess.Id != _server.PID.Value)
-					{
-						ReleaseServerProcess();
-
-						_serverProcess = Process.GetProcessById(_server.PID.Value);
-						_lastCpuCheckTime = DateTime.Now;
-						_lastCpuTotalProcessorTime =
-						_serverProcess.TotalProcessorTime;
-					}
-				}
-				catch
-				{
-					ReleaseServerProcess();
-				}
-			}
-			else
-			{
-				ReleaseServerProcess();
-			}
+			UpdateStatusPresentation(_server.Status);
+			EnsureServerProcessAttached();
 
 			double currentCpu = 0;
 			double currentRamGb = 0;
 
-			if (_serverProcess != null && !_serverProcess.HasExited)
+			if (_serverProcess != null)
 			{
-				_serverProcess.Refresh();
-
-				TimeSpan currentTotalProcessorTime = _serverProcess.TotalProcessorTime;
-				DateTime currentCheckTime = DateTime.Now;
-
-				double cpuUsage = (currentTotalProcessorTime - _lastCpuTotalProcessorTime).TotalMilliseconds /
-								  (currentCheckTime - _lastCpuCheckTime).TotalMilliseconds;
-
-				currentCpu = (cpuUsage / Environment.ProcessorCount) * 100;
-
-				_lastCpuCheckTime = currentCheckTime;
-				_lastCpuTotalProcessorTime = currentTotalProcessorTime;
-				currentRamGb = _serverProcess.WorkingSet64 / 1024.0 / 1024.0 / 1024.0;
-			}
-			else
-			{
-				ReleaseServerProcess();
-
-				if (lblStatusCardValue != null)
+				try
 				{
-					lblStatusCardValue.Text = "Stopped";
-					lblStatusCardValue.ForeColor = Color.IndianRed;
+					if (_serverProcess.HasExited)
+					{
+						ReleaseServerProcess();
+					}
+					else
+					{
+						_serverProcess.Refresh();
+						DateTime currentCheckTime = DateTime.UtcNow;
+						TimeSpan currentProcessorTime = _serverProcess.TotalProcessorTime;
+						double elapsedMilliseconds =
+							(currentCheckTime - _lastCpuCheckTime).TotalMilliseconds;
+
+						if (elapsedMilliseconds > 0)
+						{
+							double processorMilliseconds =
+								(currentProcessorTime - _lastCpuTotalProcessorTime).TotalMilliseconds;
+							currentCpu = processorMilliseconds /
+								elapsedMilliseconds /
+								Environment.ProcessorCount * 100.0;
+						}
+
+						_lastCpuCheckTime = currentCheckTime;
+						_lastCpuTotalProcessorTime = currentProcessorTime;
+						currentRamGb = _serverProcess.WorkingSet64 /
+							1024.0 / 1024.0 / 1024.0;
+					}
+				}
+				catch (InvalidOperationException)
+				{
+					ReleaseServerProcess();
+				}
+				catch (System.ComponentModel.Win32Exception)
+				{
+					ReleaseServerProcess();
 				}
 			}
 
-			if (lblCpuCardValue != null) lblCpuCardValue.Text = $"{currentCpu:0.0}%";
-			if (lblRamCardValue != null) lblRamCardValue.Text = $"{currentRamGb:0.00} GB";
-
-			double totalRam = MainGUI.Instance != null ? MainGUI.Instance.systemTotalRamGb : 32.0;
-			double ramPercentage = (currentRamGb / totalRam) * 100;
-
-			int maxBarWidth = 150;
-
-			UpdateFlatProgressBar(pnlCpuFill, currentCpu, maxBarWidth);
-			UpdateFlatProgressBar(pnlRamFill, ramPercentage, maxBarWidth);
+			UpdatePerformanceDisplay(currentCpu, currentRamGb);
 		}
 
-		private void UpdateFlatProgressBar(Control fill, double percentage, int maxWidth)
+		private void EnsureServerProcessAttached()
 		{
-			if (fill == null) return;
+			if (!_server.PID.HasValue || _server.PID.Value <= 0)
+			{
+				ReleaseServerProcess();
+				return;
+			}
 
-			if (percentage > 100) percentage = 100;
-			if (percentage < 0) percentage = 0;
-
-			int targetWidth = (int)((percentage / 100.0) * maxWidth);
-
-			fill.Width = targetWidth;
+			try
+			{
+				if (_serverProcess == null || _serverProcess.Id != _server.PID.Value)
+				{
+					ReleaseServerProcess();
+					_serverProcess = Process.GetProcessById(_server.PID.Value);
+					_lastCpuCheckTime = DateTime.UtcNow;
+					_lastCpuTotalProcessorTime = _serverProcess.TotalProcessorTime;
+				}
+			}
+			catch (ArgumentException)
+			{
+				ReleaseServerProcess();
+			}
+			catch (InvalidOperationException)
+			{
+				ReleaseServerProcess();
+			}
+			catch (System.ComponentModel.Win32Exception)
+			{
+				ReleaseServerProcess();
+			}
 		}
 
-		private void ServerInfo_FormClosing(object? sender, FormClosingEventArgs e)
+		private void UpdatePerformanceDisplay(double cpuPercentage, double ramGb)
+		{
+			_currentCpuPercentage = Math.Clamp(cpuPercentage, 0, 100);
+			lblCpuCardValue.Text = $"{_currentCpuPercentage:0.0}%";
+			lblCpuCaption.Text = _server.PID.HasValue && _server.PID.Value > 0
+				? $"Process {_server.PID.Value:N0}  •  500 ms refresh"
+				: "Waiting for a running server process";
+
+			double totalRam = MainGUI.Instance != null
+				? MainGUI.Instance.systemTotalRamGb
+				: 32.0;
+			if (totalRam <= 0)
+			{
+				totalRam = 32.0;
+			}
+
+			_currentRamPercentage = Math.Clamp(ramGb / totalRam * 100.0, 0, 100);
+			lblRamCardValue.Text = $"{ramGb:0.00} GB";
+			lblRamCaption.Text = $"{_currentRamPercentage:0.0}% of {totalRam:0.#} GB system memory";
+			lblProcessIdValue.Text = _server.PID.HasValue && _server.PID.Value > 0
+				? _server.PID.Value.ToString("N0")
+				: "—";
+
+			UpdateMetricBar(pnlCpuTrack, pnlCpuFill, _currentCpuPercentage);
+			UpdateMetricBar(pnlRamTrack, pnlRamFill, _currentRamPercentage);
+		}
+
+		private static void UpdateMetricBar(
+			Panel track,
+			Panel fill,
+			double percentage)
+		{
+			int availableWidth = Math.Max(0, track.ClientSize.Width);
+			fill.Width = (int)Math.Round(
+				Math.Clamp(percentage, 0, 100) / 100.0 * availableWidth);
+			fill.Height = track.ClientSize.Height;
+		}
+
+		private void UpdateStatusPresentation(string? rawStatus)
+		{
+			string status = DisplayOrFallback(rawStatus, "Stopped");
+			string[] busyStates =
+			{
+				"Updating",
+				"Validating",
+				"Installing",
+				"Backing Up",
+				"Stopping",
+				"Starting"
+			};
+
+			string? busyState = busyStates.FirstOrDefault(
+				item => status.StartsWith(item, StringComparison.OrdinalIgnoreCase));
+
+			Color statusColor;
+			string displayedStatus;
+
+			if (busyState != null)
+			{
+				string[] frames = { "|", "/", "—", "\\" };
+				displayedStatus = $"{busyState} {frames[_spinnerFrame++ % frames.Length]}";
+				statusColor = BusyColor;
+				lblStatusCaption.Text = "A server operation is currently in progress";
+			}
+			else if (status.Equals("Running", StringComparison.OrdinalIgnoreCase))
+			{
+				displayedStatus = "Running";
+				statusColor = SuccessColor;
+				lblStatusCaption.Text = "The game server process is online";
+			}
+			else if (status.Equals("Stopped", StringComparison.OrdinalIgnoreCase) ||
+				status.Equals("Offline", StringComparison.OrdinalIgnoreCase))
+			{
+				displayedStatus = status;
+				statusColor = DangerColor;
+				lblStatusCaption.Text = "The game server process is not running";
+			}
+			else
+			{
+				displayedStatus = status;
+				statusColor = IdleColor;
+				lblStatusCaption.Text = "Current state reported by the Synix engine";
+			}
+
+			lblStatusCardValue.Text = displayedStatus;
+			lblStatusCardValue.ForeColor = statusColor;
+			pnlStatusIndicator.BackColor = statusColor;
+		}
+
+		private void MetricTrack_SizeChanged(object? sender, EventArgs eventArgs)
+		{
+			UpdateMetricBar(pnlCpuTrack, pnlCpuFill, _currentCpuPercentage);
+			UpdateMetricBar(pnlRamTrack, pnlRamFill, _currentRamPercentage);
+		}
+
+		private void ReleaseServerProcess()
+		{
+			_serverProcess?.Dispose();
+			_serverProcess = null;
+		}
+
+		private void StopMetricsEngine()
 		{
 			if (_metricsTimer != null)
 			{
@@ -291,5 +411,53 @@ namespace Synix_Control_Panel.Help
 
 			ReleaseServerProcess();
 		}
+
+		private void ServerInfo_FormClosing(object? sender, FormClosingEventArgs eventArgs)
+		{
+			StopMetricsEngine();
+		}
+
+		private void btnMinimize_Click(object? sender, EventArgs eventArgs)
+		{
+			WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnClose_Click(object? sender, EventArgs eventArgs)
+		{
+			Close();
+		}
+
+		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)
+		{
+			if (eventArgs.Button != MouseButtons.Left)
+			{
+				return;
+			}
+
+			_ = ReleaseCapture();
+			_ = SendMessage(Handle, WmNcLeftButtonDown, HtCaption, 0);
+		}
+
+		[DllImport("user32.dll")]
+		private static extern uint SetWindowDisplayAffinity(
+			IntPtr windowHandle,
+			uint affinity);
+
+		[DllImport("user32.dll")]
+		private static extern bool ReleaseCapture();
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr SendMessage(
+			IntPtr windowHandle,
+			int message,
+			int wordParameter,
+			int longParameter);
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(
+			IntPtr windowHandle,
+			int attribute,
+			ref int attributeValue,
+			int attributeSize);
 	}
 }
