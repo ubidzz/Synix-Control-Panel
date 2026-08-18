@@ -37,6 +37,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private const int DwmRound = 2;
 		private const int ResizeBorder = 7;
 		private const int EmSetCueBanner = 0x1501;
+		private readonly ModernSettingsButton btnDonateAction = new();
 
 		private static readonly (
 			string Key,
@@ -76,6 +77,21 @@ namespace Synix_Control_Panel.SynixEngine
 				EmSetCueBanner,
 				IntPtr.Zero,
 				"Search topics, guides, or answers...");
+
+			btnDonateAction.Text = "Open PayPal Donation";
+			btnDonateAction.UseAccentStyle = true;
+			btnDonateAction.Size = new Size(176, 38);
+			// Position it inside the QR card right below lblQrCaption
+			btnDonateAction.Location = new Point(20, 304);
+			btnDonateAction.Click += (s, e) =>
+			{
+				Process.Start(new ProcessStartInfo
+				{
+					FileName = "https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8",
+					UseShellExecute = true
+				});
+			};
+			qrCard.Controls.Add(btnDonateAction);
 		}
 
 		private void InitializeData()
@@ -462,8 +478,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 				["Donate & Support Development"] = new HelpItem("Support",
 					"SUPPORT THE PROJECT:\n\n" +
-					"Synix Control Panel is developed with passion for the server hosting community. Your support keeps updates frequent and features growing!\n\n" +
-					"PayPal Donation: https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8")
+					"Synix Control Panel is developed with passion for the server hosting community. \nYour support keeps updates frequent and features growing!\n\n" +
+					"Click the button below or scan the QR code to open the official PayPal \ndonation page securely in your browser.")
 			};
 		}
 
@@ -637,9 +653,18 @@ namespace Synix_Control_Panel.SynixEngine
 			lblArticleBadge.Text = isDonationTopic ? "SUPPORT" : "ARTICLE";
 			lblAnswer.Text = item.Answer;
 			qrCard.Visible = isDonationTopic;
+			btnDonateAction.Visible = isDonationTopic;
 			if (isDonationTopic)
 			{
 				qrCard.BringToFront();
+				btnDonateAction.BringToFront();
+			}
+
+			btnDonateAction.Visible = isDonationTopic;
+			if (isDonationTopic)
+			{
+				qrCard.BringToFront();
+				btnDonateAction.BringToFront();
 			}
 
 			lblFooterStatus.Text = "VIEWING HELP ARTICLE";

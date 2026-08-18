@@ -161,8 +161,9 @@ namespace Synix_Control_Panel.SynixEngine
 			lblWindowSubtitle.Name = "lblWindowSubtitle";
 			lblWindowSubtitle.Size = new Size(171, 15);
 			lblWindowSubtitle.TabIndex = 2;
-			lblWindowSubtitle.Text = "Support & command knowledge";
+			lblWindowSubtitle.Text = string.Empty;
 			lblWindowSubtitle.MouseDown += TitleBar_MouseDown;
+			lblWindowSubtitle.Visible = false;
 			//
 			// btnMinimize
 			//
