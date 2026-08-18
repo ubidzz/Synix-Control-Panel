@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
@@ -10,93 +10,369 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-
 using Synix_Control_Panel.SynixApp.Design;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class AppSettings : Form
 	{
+		private const int WmNcHitTest = 0x0084;
+		private const int WmNcLeftButtonDown = 0x00A1;
+		private const int HtCaption = 0x0002;
+		private const int HtLeft = 10;
+		private const int HtRight = 11;
+		private const int HtTop = 12;
+		private const int HtTopLeft = 13;
+		private const int HtTopRight = 14;
+		private const int HtBottom = 15;
+		private const int HtBottomLeft = 16;
+		private const int HtBottomRight = 17;
+		private const int DwmWindowCornerPreference = 33;
+		private const int DwmRound = 2;
+		private const int ResizeBorder = 7;
+
+		private bool _loadingSettings;
+
 		public AppSettings()
 		{
 			InitializeComponent();
+			ShowPage(
+				generalSettingsPage,
+				btnGeneral,
+				"General",
+				"Configure basic Synix behavior on this computer.");
 
-			UIStyleHelper.InitializeToggles(this);
-			chkCustomBackup.Text = "Activate";
-			chkRunAsAdmin.Text = "Activate";
-			chkPrivacyMode.Text = "Activate";
-			chkShowServerWindow.Text = "Activate";
-
-			chkCustomBackup.Checked = Properties.Settings.Default.UseCustomBackupPath;
-			txtBackupPath.Text = Properties.Settings.Default.CustomBackupPath;
-			btnBrowseBackup.Enabled = chkCustomBackup.Checked;
-			chkPrivacyMode.Checked = Properties.Settings.Default.PrivacyMode;
-			chkRunAsAdmin.Checked = Properties.Settings.Default.enableRunAsAdmin;
-			numMaxBackups.Value = Properties.Settings.Default.MaxBackups;
-			chkShowServerWindow.Checked = Properties.Settings.Default.ShowServerWindow;
-		}
-
-		private void numMaxBackups_ValueChanged(object sender, EventArgs e)
-		{
-			Properties.Settings.Default.MaxBackups = (int)numMaxBackups.Value;
-			Properties.Settings.Default.Save();
-		}
-
-		private void chkCustomBackup_CheckedChanged(object sender, EventArgs e)
-		{
-			btnBrowseBackup.Enabled = chkCustomBackup.Checked;
-
-			Properties.Settings.Default.UseCustomBackupPath = chkCustomBackup.Checked;
-			Properties.Settings.Default.Save();
-		}
-
-		private void btnBrowseBackup_Click(object sender, EventArgs e)
-		{
-			using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
 			{
-				fbd.Description = "Select a custom folder or drive to save all Synix server backups.";
-				fbd.UseDescriptionForTitle = true;
+				return;
+			}
 
-				if (fbd.ShowDialog() == DialogResult.OK)
-				{
-					txtBackupPath.Text = fbd.SelectedPath;
+			lblVersion.Text =
+				$"SYNIX CONTROL PANEL  •  v{Application.ProductVersion}";
 
-					Properties.Settings.Default.CustomBackupPath = fbd.SelectedPath;
-					Properties.Settings.Default.Save();
-				}
+			WireSettingsEvents();
+			LoadSavedSettings();
+		}
+
+		protected override void OnHandleCreated(EventArgs eventArgs)
+		{
+			base.OnHandleCreated(eventArgs);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+			{
+				return;
+			}
+
+			try
+			{
+				int preference = DwmRound;
+				_ = DwmSetWindowAttribute(
+					Handle,
+					DwmWindowCornerPreference,
+					ref preference,
+					sizeof(int));
+			}
+			catch
+			{
+				// Older Windows versions do not support rounded DWM corners.
 			}
 		}
 
-		private async void chkPrivacyMode_CheckedChanged(object sender, EventArgs e)
+		protected override void WndProc(ref Message message)
 		{
-			Properties.Settings.Default.PrivacyMode = chkPrivacyMode.Checked;
+			base.WndProc(ref message);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+			{
+				return;
+			}
+
+			if (message.Msg != WmNcHitTest ||
+				WindowState == FormWindowState.Maximized)
+			{
+				return;
+			}
+
+			Point cursor = PointToClient(Cursor.Position);
+			bool left = cursor.X <= ResizeBorder;
+			bool right = cursor.X >= ClientSize.Width - ResizeBorder;
+			bool top = cursor.Y <= ResizeBorder;
+			bool bottom = cursor.Y >= ClientSize.Height - ResizeBorder;
+
+			if (left && top) message.Result = (IntPtr)HtTopLeft;
+			else if (right && top) message.Result = (IntPtr)HtTopRight;
+			else if (left && bottom) message.Result = (IntPtr)HtBottomLeft;
+			else if (right && bottom) message.Result = (IntPtr)HtBottomRight;
+			else if (left) message.Result = (IntPtr)HtLeft;
+			else if (right) message.Result = (IntPtr)HtRight;
+			else if (top) message.Result = (IntPtr)HtTop;
+			else if (bottom) message.Result = (IntPtr)HtBottom;
+		}
+
+		protected override bool ProcessCmdKey(ref Message message, Keys keyData)
+		{
+			if (keyData == Keys.Escape)
+			{
+				Close();
+				return true;
+			}
+
+			return base.ProcessCmdKey(ref message, keyData);
+		}
+
+		private void WireSettingsEvents()
+		{
+			generalSettingsPage.ShowServerWindowChanged +=
+				ShowServerWindowChanged;
+			backupSettingsPage.CustomBackupChanged +=
+				CustomBackupChanged;
+			backupSettingsPage.BrowseRequested +=
+				BrowseBackupRequested;
+			backupSettingsPage.MaximumBackupsChanged +=
+				MaximumBackupsChanged;
+			privacySettingsPage.PrivacyModeChanged +=
+				PrivacyModeChanged;
+			advancedSettingsPage.ElevatedSystemTasksChanged +=
+				ElevatedSystemTasksChanged;
+		}
+
+		private void LoadSavedSettings()
+		{
+			_loadingSettings = true;
+
+			try
+			{
+				generalSettingsPage.ShowServerWindow =
+					Properties.Settings.Default.ShowServerWindow;
+				backupSettingsPage.UseCustomBackupPath =
+					Properties.Settings.Default.UseCustomBackupPath;
+
+				string savedBackupPath =
+					Properties.Settings.Default.CustomBackupPath;
+				backupSettingsPage.BackupPath =
+					string.IsNullOrWhiteSpace(savedBackupPath)
+						? Core.DefaultBackupPath
+						: savedBackupPath;
+
+				backupSettingsPage.MaximumBackups =
+					Properties.Settings.Default.MaxBackups;
+				privacySettingsPage.PrivacyMode =
+					Properties.Settings.Default.PrivacyMode;
+				advancedSettingsPage.ElevatedSystemTasks =
+					Properties.Settings.Default.enableRunAsAdmin;
+			}
+			finally
+			{
+				_loadingSettings = false;
+			}
+		}
+
+		private void ShowPage(
+			Control page,
+			ModernSettingsNavButton selectedButton,
+			string heading,
+			string subtitle)
+		{
+			generalSettingsPage.Visible =
+				ReferenceEquals(page, generalSettingsPage);
+			backupSettingsPage.Visible =
+				ReferenceEquals(page, backupSettingsPage);
+			privacySettingsPage.Visible =
+				ReferenceEquals(page, privacySettingsPage);
+			advancedSettingsPage.Visible =
+				ReferenceEquals(page, advancedSettingsPage);
+
+			btnGeneral.Selected = ReferenceEquals(selectedButton, btnGeneral);
+			btnBackups.Selected = ReferenceEquals(selectedButton, btnBackups);
+			btnPrivacy.Selected = ReferenceEquals(selectedButton, btnPrivacy);
+			btnAdvanced.Selected = ReferenceEquals(selectedButton, btnAdvanced);
+
+			lblPageHeading.Text = heading;
+			lblPageSubtitle.Text = subtitle;
+			page.BringToFront();
+		}
+
+		private void btnGeneral_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowPage(
+				generalSettingsPage,
+				btnGeneral,
+				"General",
+				"Configure basic Synix behavior on this computer.");
+		}
+
+		private void btnBackups_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowPage(
+				backupSettingsPage,
+				btnBackups,
+				"Backups",
+				"Choose where backups are stored and how many Synix retains.");
+		}
+
+		private void btnPrivacy_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowPage(
+				privacySettingsPage,
+				btnPrivacy,
+				"Privacy & Security",
+				"Control how sensitive server information is displayed.");
+		}
+
+		private void btnAdvanced_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowPage(
+				advancedSettingsPage,
+				btnAdvanced,
+				"Advanced",
+				"Configure elevated operations and advanced system behavior.");
+		}
+
+		private void btnMinimize_Click(object? sender, EventArgs eventArgs)
+		{
+			WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnClose_Click(object? sender, EventArgs eventArgs)
+		{
+			Close();
+		}
+
+		private void MaximumBackupsChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.MaxBackups =
+				backupSettingsPage.MaximumBackups;
+			Properties.Settings.Default.Save();
+		}
+
+		private void CustomBackupChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.UseCustomBackupPath =
+				backupSettingsPage.UseCustomBackupPath;
+			Properties.Settings.Default.Save();
+		}
+
+		private void BrowseBackupRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			using FolderBrowserDialog dialog = new()
+			{
+				Description =
+					"Select a custom folder or drive for Synix server backups.",
+				UseDescriptionForTitle = true
+			};
+
+			string currentPath = backupSettingsPage.BackupPath;
+			if (!string.IsNullOrWhiteSpace(currentPath) &&
+				Directory.Exists(currentPath))
+			{
+				dialog.InitialDirectory = currentPath;
+			}
+
+			if (dialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			backupSettingsPage.BackupPath = dialog.SelectedPath;
+			Properties.Settings.Default.CustomBackupPath =
+				dialog.SelectedPath;
+			Properties.Settings.Default.Save();
+		}
+
+		private async void PrivacyModeChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.PrivacyMode =
+				privacySettingsPage.PrivacyMode;
 			Properties.Settings.Default.Save();
 
 			if (MainGUI.Instance != null)
 			{
-				await MainGUI.Instance.UpdatePrivacyMode(chkPrivacyMode.Checked);
+				await MainGUI.Instance.UpdatePrivacyMode(
+					privacySettingsPage.PrivacyMode);
 			}
 		}
 
-		private void chkRunAsAdmin_CheckedChanged(object sender, EventArgs e)
+		private void ElevatedSystemTasksChanged(
+			object? sender,
+			EventArgs eventArgs)
 		{
-			Properties.Settings.Default.enableRunAsAdmin = chkRunAsAdmin.Checked;
+			if (_loadingSettings)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.enableRunAsAdmin =
+				advancedSettingsPage.ElevatedSystemTasks;
 			Properties.Settings.Default.Save();
 		}
 
-		private void chkShowServerWindow_CheckedChanged(object sender, EventArgs e)
+		private void ShowServerWindowChanged(
+			object? sender,
+			EventArgs eventArgs)
 		{
-			Properties.Settings.Default.ShowServerWindow = chkShowServerWindow.Checked;
+			if (_loadingSettings)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.ShowServerWindow =
+				generalSettingsPage.ShowServerWindow;
 			Properties.Settings.Default.Save();
 		}
+
+		private void TitleBar_MouseDown(
+			object? sender,
+			MouseEventArgs eventArgs)
+		{
+			if (eventArgs.Button != MouseButtons.Left)
+			{
+				return;
+			}
+
+			_ = ReleaseCapture();
+			_ = SendMessage(Handle, WmNcLeftButtonDown, HtCaption, 0);
+		}
+
+		[DllImport("user32.dll")]
+		private static extern bool ReleaseCapture();
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr SendMessage(
+			IntPtr windowHandle,
+			int message,
+			int wordParameter,
+			int longParameter);
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(
+			IntPtr windowHandle,
+			int attribute,
+			ref int attributeValue,
+			int attributeSize);
 	}
 }

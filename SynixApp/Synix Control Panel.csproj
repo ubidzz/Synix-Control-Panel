@@ -60,6 +60,33 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="UI\GeneralSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\GeneralSettingsPage.Designer.cs">
+	    <DependentUpon>GeneralSettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\BackupSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\BackupSettingsPage.Designer.cs">
+	    <DependentUpon>BackupSettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\PrivacySettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\PrivacySettingsPage.Designer.cs">
+	    <DependentUpon>PrivacySettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\AdvancedSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\AdvancedSettingsPage.Designer.cs">
+	    <DependentUpon>AdvancedSettingsPage.cs</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Update="Properties\Resources.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>

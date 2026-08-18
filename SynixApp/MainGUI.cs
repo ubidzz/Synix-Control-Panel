@@ -648,34 +648,8 @@ namespace Synix_Control_Panel
 		private async Task VersionCheck()
 		{
 			string currentVersion = "Unknown";
-			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
-			string[] resourceNames = assembly.GetManifestResourceNames();
-			string actualResourcePath = null;
-
-			foreach (string name in resourceNames)
-			{
-				if (name.EndsWith("version.txt"))
-				{
-					actualResourcePath = name;
-					break;
-				}
-			}
-
-			if (actualResourcePath != null)
-			{
-				using (Stream stream = assembly.GetManifestResourceStream(actualResourcePath))
-				{
-					if (stream != null)
-					{
-						using (StreamReader reader = new StreamReader(stream))
-						{
-							currentVersion = reader.ReadToEnd().Trim();
-						}
-					}
-				}
-			}
-
+			currentVersion = Application.ProductVersion;
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixApp/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
 			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
