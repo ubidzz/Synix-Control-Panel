@@ -330,6 +330,617 @@ namespace Synix_Control_Panel.SynixApp.Design
 		}
 	}
 
+	internal static class ModernComboBoxRenderer
+	{
+		public static void DrawArrowButton(
+			Graphics graphics,
+			Rectangle bounds,
+			Color backgroundColor,
+			Color borderColor,
+			Color arrowColor,
+			bool drawOuterBorder)
+		{
+			if (bounds.Width <= 2 || bounds.Height <= 2)
+			{
+				return;
+			}
+
+			int buttonWidth = Math.Min(
+				Math.Max(28, Math.Min(bounds.Height, 34)),
+				Math.Max(1, bounds.Width / 2));
+			Rectangle buttonBounds = new(
+				bounds.Right - buttonWidth,
+				bounds.Top + 1,
+				buttonWidth - 1,
+				bounds.Height - 2);
+
+			using SolidBrush backgroundBrush = new(backgroundColor);
+			graphics.FillRectangle(backgroundBrush, buttonBounds);
+
+			using Pen dividerPen = new(borderColor, 1F);
+			graphics.DrawLine(
+				dividerPen,
+				buttonBounds.Left,
+				buttonBounds.Top + 4,
+				buttonBounds.Left,
+				buttonBounds.Bottom - 4);
+
+			graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			int centerX = buttonBounds.Left + buttonBounds.Width / 2;
+			int centerY = buttonBounds.Top + buttonBounds.Height / 2;
+			using Pen arrowPen = new(arrowColor, 1.8F)
+			{
+				StartCap = LineCap.Round,
+				EndCap = LineCap.Round,
+				LineJoin = LineJoin.Round
+			};
+			graphics.DrawLines(
+				arrowPen,
+				new[]
+				{
+					new Point(centerX - 4, centerY - 2),
+					new Point(centerX, centerY + 2),
+					new Point(centerX + 4, centerY - 2)
+				});
+
+			if (drawOuterBorder)
+			{
+				using Pen outerBorderPen = new(borderColor, 1F);
+				graphics.DrawRectangle(
+					outerBorderPen,
+					bounds.X,
+					bounds.Y,
+					bounds.Width - 1,
+					bounds.Height - 1);
+			}
+		}
+	}
+
+	[DefaultEvent(nameof(SelectedIndexChanged))]
+	[ToolboxItem(true)]
+	public class ModernSettingsComboBox : ComboBox
+	{
+		private const int WmPaint = 0x000F;
+		private const int WmNcPaint = 0x0085;
+		private bool _mouseInside;
+
+		[Category("Synix Appearance")]
+		public Color BorderColor { get; set; } = SettingsPalette.BorderHover;
+
+		[Category("Synix Appearance")]
+		public Color FocusBorderColor { get; set; } = SettingsPalette.Accent;
+
+		[Category("Synix Appearance")]
+		public Color ArrowColor { get; set; } = SettingsPalette.SecondaryText;
+
+		[Category("Synix Appearance")]
+		public Color SelectedItemBackColor { get; set; } =
+			Color.FromArgb(24, 55, 73);
+
+		public ModernSettingsComboBox()
+		{
+			SetStyle(
+				ControlStyles.OptimizedDoubleBuffer |
+				ControlStyles.ResizeRedraw,
+				true);
+
+			BackColor = SettingsPalette.Input;
+			ForeColor = SettingsPalette.PrimaryText;
+			Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+			Cursor = Cursors.Hand;
+			DrawMode = DrawMode.OwnerDrawFixed;
+			DropDownStyle = ComboBoxStyle.DropDownList;
+			FlatStyle = FlatStyle.Flat;
+			IntegralHeight = true;
+			ItemHeight = 28;
+			MaxDropDownItems = 8;
+		}
+
+		protected override void OnDrawItem(DrawItemEventArgs eventArgs)
+		{
+			Color itemBackColor;
+			Color itemForeColor;
+			bool selected = (eventArgs.State & DrawItemState.Selected) != 0;
+
+			if (!Enabled)
+			{
+				itemBackColor = Color.FromArgb(25, 34, 48);
+				itemForeColor = SettingsPalette.MutedText;
+			}
+			else
+			{
+				itemBackColor = selected
+					? SelectedItemBackColor
+					: SettingsPalette.Input;
+				itemForeColor = selected
+					? SettingsPalette.Accent
+					: SettingsPalette.PrimaryText;
+			}
+
+			using SolidBrush backgroundBrush = new(itemBackColor);
+			eventArgs.Graphics.FillRectangle(backgroundBrush, eventArgs.Bounds);
+
+			string itemText = eventArgs.Index >= 0 && eventArgs.Index < Items.Count
+				? GetItemText(Items[eventArgs.Index])
+				: Text;
+			bool drawingEditArea =
+				(eventArgs.State & DrawItemState.ComboBoxEdit) != 0;
+			int rightPadding = drawingEditArea ? 44 : 18;
+			Rectangle textBounds = new(
+				eventArgs.Bounds.X + 10,
+				eventArgs.Bounds.Y,
+				Math.Max(0, eventArgs.Bounds.Width - rightPadding),
+				eventArgs.Bounds.Height);
+			TextRenderer.DrawText(
+				eventArgs.Graphics,
+				itemText,
+				Font,
+				textBounds,
+				itemForeColor,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPrefix);
+		}
+
+		protected override void OnMouseEnter(EventArgs eventArgs)
+		{
+			_mouseInside = true;
+			Invalidate();
+			base.OnMouseEnter(eventArgs);
+		}
+
+		protected override void OnMouseLeave(EventArgs eventArgs)
+		{
+			_mouseInside = false;
+			Invalidate();
+			base.OnMouseLeave(eventArgs);
+		}
+
+		protected override void OnGotFocus(EventArgs eventArgs)
+		{
+			Invalidate();
+			base.OnGotFocus(eventArgs);
+		}
+
+		protected override void OnLostFocus(EventArgs eventArgs)
+		{
+			Invalidate();
+			base.OnLostFocus(eventArgs);
+		}
+
+		protected override void OnDropDown(EventArgs eventArgs)
+		{
+			Invalidate();
+			base.OnDropDown(eventArgs);
+		}
+
+		protected override void OnDropDownClosed(EventArgs eventArgs)
+		{
+			Invalidate();
+			base.OnDropDownClosed(eventArgs);
+		}
+
+		protected override void OnSelectedIndexChanged(EventArgs eventArgs)
+		{
+			Invalidate();
+			base.OnSelectedIndexChanged(eventArgs);
+		}
+
+		protected override void WndProc(ref Message message)
+		{
+			base.WndProc(ref message);
+
+			if ((message.Msg == WmPaint || message.Msg == WmNcPaint) &&
+				IsHandleCreated &&
+				ClientSize.Width > 2 &&
+				ClientSize.Height > 2)
+			{
+				using Graphics graphics = CreateGraphics();
+				DrawModernChrome(graphics);
+			}
+		}
+
+		private void DrawModernChrome(Graphics graphics)
+		{
+			Color borderColor = Focused || DroppedDown
+				? FocusBorderColor
+				: BorderColor;
+			Color arrowColor = !Enabled
+				? SettingsPalette.MutedText
+				: Focused || DroppedDown || _mouseInside
+					? SettingsPalette.Accent
+					: ArrowColor;
+			Color arrowBackground = !Enabled
+				? Color.FromArgb(25, 34, 48)
+				: _mouseInside || DroppedDown
+					? SettingsPalette.CardHover
+					: SettingsPalette.Input;
+
+			ModernComboBoxRenderer.DrawArrowButton(
+				graphics,
+				ClientRectangle,
+				arrowBackground,
+				borderColor,
+				arrowColor,
+				true);
+		}
+	}
+
+	/// <summary>
+	/// Grid cell used by read-only label and badge columns. It deliberately removes
+	/// the Selected and Focus paint states so informational columns never look
+	/// interactive, even when WinForms temporarily makes one the current cell.
+	/// </summary>
+	[ToolboxItem(false)]
+	public sealed class ModernSettingsDataGridViewInformationalCell :
+		DataGridViewTextBoxCell
+	{
+		protected override void Paint(
+			Graphics graphics,
+			Rectangle clipBounds,
+			Rectangle cellBounds,
+			int rowIndex,
+			DataGridViewElementStates cellState,
+			object? value,
+			object? formattedValue,
+			string? errorText,
+			DataGridViewCellStyle cellStyle,
+			DataGridViewAdvancedBorderStyle advancedBorderStyle,
+			DataGridViewPaintParts paintParts)
+		{
+			DataGridViewElementStates informationalState =
+				cellState & ~DataGridViewElementStates.Selected;
+			DataGridViewPaintParts informationalPaintParts =
+				paintParts & ~DataGridViewPaintParts.Focus;
+
+			base.Paint(
+				graphics,
+				clipBounds,
+				cellBounds,
+				rowIndex,
+				informationalState,
+				value,
+				formattedValue,
+				errorText,
+				cellStyle,
+				advancedBorderStyle,
+				informationalPaintParts);
+		}
+	}
+
+	[ToolboxItem(false)]
+	public sealed class ModernSettingsDataGridViewComboBoxCell : DataGridViewComboBoxCell
+	{
+		public ModernSettingsDataGridViewComboBoxCell()
+		{
+			DisplayStyle = DataGridViewComboBoxDisplayStyle.ComboBox;
+			DisplayStyleForCurrentCellOnly = false;
+			FlatStyle = FlatStyle.Flat;
+			ValueType = typeof(string);
+			Style.BackColor = SettingsPalette.Input;
+			Style.ForeColor = SettingsPalette.PrimaryText;
+			Style.Padding = Padding.Empty;
+			Style.SelectionBackColor = SettingsPalette.Input;
+			Style.SelectionForeColor = SettingsPalette.PrimaryText;
+		}
+
+		public override Type EditType =>
+			typeof(ModernSettingsDataGridViewComboBoxEditingControl);
+
+		public override void InitializeEditingControl(
+			int rowIndex,
+			object? initialFormattedValue,
+			DataGridViewCellStyle dataGridViewCellStyle)
+		{
+			base.InitializeEditingControl(
+				rowIndex,
+				initialFormattedValue,
+				dataGridViewCellStyle);
+
+			if (DataGridView?.EditingControl is not
+				ModernSettingsDataGridViewComboBoxEditingControl editor)
+			{
+				return;
+			}
+
+			editor.BeginValueInitialization();
+			editor.BeginUpdate();
+			try
+			{
+				editor.Items.Clear();
+				foreach (object item in Items)
+				{
+					editor.Items.Add(item);
+				}
+
+				editor.DropDownWidth = DropDownWidth;
+				editor.MaxDropDownItems = MaxDropDownItems;
+				editor.Sorted = Sorted;
+				editor.EditingControlRowIndex = rowIndex;
+
+				string selectedText = Value?.ToString() ??
+					initialFormattedValue?.ToString() ??
+					string.Empty;
+				int selectedIndex = editor.FindStringExact(selectedText);
+				editor.SelectedIndex = selectedIndex;
+				editor.EditingControlValueChanged = false;
+			}
+			finally
+			{
+				editor.EndUpdate();
+				editor.EndValueInitialization();
+			}
+		}
+
+		public override void PositionEditingControl(
+			bool setLocation,
+			bool setSize,
+			Rectangle cellBounds,
+			Rectangle cellClip,
+			DataGridViewCellStyle cellStyle,
+			bool singleVerticalBorderAdded,
+			bool singleHorizontalBorderAdded,
+			bool isFirstDisplayedColumn,
+			bool isFirstDisplayedRow)
+		{
+			base.PositionEditingControl(
+				setLocation,
+				setSize,
+				cellBounds,
+				cellClip,
+				cellStyle,
+				singleVerticalBorderAdded,
+				singleHorizontalBorderAdded,
+				isFirstDisplayedColumn,
+				isFirstDisplayedRow);
+
+			DataGridView? owner = DataGridView;
+			if (owner?.EditingControl is not
+				ModernSettingsDataGridViewComboBoxEditingControl editor)
+			{
+				return;
+			}
+
+			Rectangle visibleCellBounds = Rectangle.Intersect(cellBounds, cellClip);
+			if (visibleCellBounds.Width <= 0 || visibleCellBounds.Height <= 0)
+			{
+				return;
+			}
+
+			Panel editingPanel = owner.EditingPanel;
+			editingPanel.SuspendLayout();
+			try
+			{
+				editingPanel.BackColor = SettingsPalette.Input;
+				editingPanel.BorderStyle = BorderStyle.None;
+				editingPanel.Margin = Padding.Empty;
+				editingPanel.Padding = Padding.Empty;
+				editingPanel.Bounds = visibleCellBounds;
+
+				editor.PrepareForFullCellHeight(cellBounds.Height);
+				editor.Dock = DockStyle.None;
+				editor.Margin = Padding.Empty;
+				editor.Padding = Padding.Empty;
+				editor.Bounds = new Rectangle(
+					cellBounds.X - visibleCellBounds.X,
+					cellBounds.Y - visibleCellBounds.Y,
+					cellBounds.Width,
+					cellBounds.Height);
+				editor.BringToFront();
+			}
+			finally
+			{
+				editingPanel.ResumeLayout(false);
+			}
+		}
+
+		protected override void Paint(
+			Graphics graphics,
+			Rectangle clipBounds,
+			Rectangle cellBounds,
+			int rowIndex,
+			DataGridViewElementStates cellState,
+			object? value,
+			object? formattedValue,
+			string? errorText,
+			DataGridViewCellStyle cellStyle,
+			DataGridViewAdvancedBorderStyle advancedBorderStyle,
+			DataGridViewPaintParts paintParts)
+		{
+			base.Paint(
+				graphics,
+				clipBounds,
+				cellBounds,
+				rowIndex,
+				cellState,
+				value,
+				formattedValue,
+				errorText,
+				cellStyle,
+				advancedBorderStyle,
+				paintParts);
+
+			if ((paintParts & DataGridViewPaintParts.ContentForeground) == 0)
+			{
+				return;
+			}
+
+			bool selected = (cellState & DataGridViewElementStates.Selected) != 0;
+			DataGridView? owner = DataGridView;
+			bool currentCell = owner != null &&
+				owner.CurrentCellAddress.X == ColumnIndex &&
+				owner.CurrentCellAddress.Y == rowIndex;
+			Color arrowBackground = selected
+				? cellStyle.SelectionBackColor
+				: cellStyle.BackColor;
+
+			ModernComboBoxRenderer.DrawArrowButton(
+				graphics,
+				cellBounds,
+				arrowBackground,
+				SettingsPalette.Border,
+				currentCell ? SettingsPalette.Accent : SettingsPalette.SecondaryText,
+				false);
+		}
+	}
+
+	[ToolboxItem(false)]
+	public sealed class ModernSettingsDataGridViewComboBoxEditingControl :
+		ModernSettingsComboBox,
+		IDataGridViewEditingControl
+	{
+		private DataGridView? _editingDataGridView;
+		private bool _initializingValue;
+
+		public ModernSettingsDataGridViewComboBoxEditingControl()
+		{
+			BackColor = SettingsPalette.Input;
+			ForeColor = SettingsPalette.PrimaryText;
+			FlatStyle = FlatStyle.Flat;
+			BorderColor = SettingsPalette.Border;
+			FocusBorderColor = SettingsPalette.Border;
+			ArrowColor = SettingsPalette.SecondaryText;
+			SelectedItemBackColor = Color.FromArgb(24, 55, 73);
+			Margin = Padding.Empty;
+		}
+
+		public object EditingControlFormattedValue
+		{
+			get => SelectedItem == null ? Text : GetItemText(SelectedItem);
+			set
+			{
+				string formattedValue = value?.ToString() ?? string.Empty;
+				bool wasInitializing = _initializingValue;
+				_initializingValue = true;
+				try
+				{
+					SelectedIndex = FindStringExact(formattedValue);
+					EditingControlValueChanged = false;
+				}
+				finally
+				{
+					_initializingValue = wasInitializing;
+				}
+			}
+		}
+
+		public object GetEditingControlFormattedValue(
+			DataGridViewDataErrorContexts context)
+		{
+			return EditingControlFormattedValue;
+		}
+
+		public void ApplyCellStyleToEditingControl(
+			DataGridViewCellStyle dataGridViewCellStyle)
+		{
+			Font = dataGridViewCellStyle.Font ?? Font;
+			BackColor = SettingsPalette.Input;
+			ForeColor = SettingsPalette.PrimaryText;
+			FlatStyle = FlatStyle.Flat;
+			BorderColor = SettingsPalette.Border;
+			FocusBorderColor = SettingsPalette.Border;
+			ArrowColor = SettingsPalette.SecondaryText;
+			SelectedItemBackColor = Color.FromArgb(24, 55, 73);
+			Margin = Padding.Empty;
+			dataGridViewCellStyle.BackColor = SettingsPalette.Input;
+			dataGridViewCellStyle.ForeColor = SettingsPalette.PrimaryText;
+			dataGridViewCellStyle.SelectionBackColor = SettingsPalette.Input;
+			dataGridViewCellStyle.SelectionForeColor = SettingsPalette.PrimaryText;
+			dataGridViewCellStyle.Padding = Padding.Empty;
+		}
+
+		public bool EditingControlWantsInputKey(
+			Keys keyData,
+			bool dataGridViewWantsInputKey)
+		{
+			switch (keyData & Keys.KeyCode)
+			{
+				case Keys.Down:
+				case Keys.Up:
+				case Keys.Home:
+				case Keys.End:
+				case Keys.PageDown:
+				case Keys.PageUp:
+				case Keys.F4:
+					return true;
+				default:
+					return !dataGridViewWantsInputKey;
+			}
+		}
+
+		public void PrepareEditingControlForEdit(bool selectAll)
+		{
+			// The user can open the list with the custom arrow, F4, or Alt+Down.
+		}
+
+		public int EditingControlRowIndex { get; set; }
+
+		public bool RepositionEditingControlOnValueChange => false;
+
+		public DataGridView? EditingControlDataGridView
+		{
+			get => _editingDataGridView;
+			set => _editingDataGridView = value;
+		}
+
+		public bool EditingControlValueChanged { get; set; }
+
+		public Cursor EditingPanelCursor => Cursors.Default;
+
+		internal void BeginValueInitialization()
+		{
+			_initializingValue = true;
+		}
+
+		internal void EndValueInitialization()
+		{
+			_initializingValue = false;
+		}
+
+		internal void PrepareForFullCellHeight(int cellHeight)
+		{
+			int chromeHeight = Math.Max(0, PreferredHeight - ItemHeight);
+			int desiredItemHeight = Math.Max(18, cellHeight - chromeHeight);
+			if (ItemHeight != desiredItemHeight)
+			{
+				ItemHeight = desiredItemHeight;
+			}
+
+			MinimumSize = Size.Empty;
+			MaximumSize = Size.Empty;
+			Margin = Padding.Empty;
+			Padding = Padding.Empty;
+		}
+
+		protected override void OnMouseDown(MouseEventArgs eventArgs)
+		{
+			bool wasDroppedDown = DroppedDown;
+			base.OnMouseDown(eventArgs);
+
+			if (eventArgs.Button == MouseButtons.Left &&
+				!wasDroppedDown &&
+				!DroppedDown)
+			{
+				DroppedDown = true;
+			}
+		}
+
+		protected override void OnSelectedIndexChanged(EventArgs eventArgs)
+		{
+			base.OnSelectedIndexChanged(eventArgs);
+
+			DataGridView? owner = EditingControlDataGridView;
+			if (_initializingValue || owner == null)
+			{
+				return;
+			}
+
+			EditingControlValueChanged = true;
+			owner.NotifyCurrentCellDirty(true);
+		}
+	}
+
 	[DefaultEvent(nameof(ValueChanged))]
 	[DesignerCategory("Code")]
 	internal sealed class ModernNumberStepper : Control
