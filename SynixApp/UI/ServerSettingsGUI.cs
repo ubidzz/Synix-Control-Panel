@@ -16,6 +16,7 @@ using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
 using System.Management;
@@ -34,10 +35,33 @@ namespace Synix_Control_Panel
 		private string _selectedTime = "04:00";
 		private System.Windows.Forms.Timer debounceTimer;
 		private bool _PrivacyMode = false;
+		private string _validationMessage =
+			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 		private const int EM_SETCUEBANNER = 0x1501;
+		private const int WmNcLeftButtonDown = 0x00A1;
+		private const int HtCaption = 0x0002;
+		private const int DwmWindowCornerPreference = 33;
+		private const int DwmRound = 2;
+
+		[DllImport("user32.dll")]
+		private static extern bool ReleaseCapture();
+
+		[DllImport("user32.dll", EntryPoint = "SendMessageW")]
+		private static extern IntPtr SendWindowMessage(
+			IntPtr windowHandle,
+			int message,
+			IntPtr parameter,
+			IntPtr additionalParameter);
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(
+			IntPtr windowHandle,
+			int attribute,
+			ref int value,
+			int valueSize);
 
 		public ServerSettingsGUI(GameServer? server = null)
 		{
@@ -46,11 +70,16 @@ namespace Synix_Control_Panel
 			_existingServer = server;
 			_isEditMode = server != null;
 			_PrivacyMode = Properties.Settings.Default.PrivacyMode;
+			ConfigureModernShell();
 
-			// UI Styling
-			UIStyleHelper.StyleWarningLabel(WarningLabel);
-			UIStyleHelper.InitializeToggles(this);
-			UIStyleHelper.StyleWarningLabel(lblConfigWarning);
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
+				DesignMode ||
+				Site?.DesignMode == true)
+			{
+				isPrivacyLoading = false;
+				return;
+			}
+
 			WireUpGatekeeperEvents();
 
 			// Tags for Pill logic
@@ -81,9 +110,187 @@ namespace Synix_Control_Panel
 			}
 
 			isPrivacyLoading = false;
-			lblConfigWarning.Visible = false;
 			PrivacyMode();
 			SyncGatekeeper();
+		}
+
+		private void ConfigureModernShell()
+		{
+			lblModeBadge.Text = _isEditMode ? "EDIT SERVER" : "NEW SERVER";
+			btnSave.Text = _isEditMode ? "Save Changes" : "Save Server";
+			Text = _isEditMode ? "Edit Server" : "Server Setup";
+			txtInstallPath.ReadOnly = true;
+			txtInstallPath.TabStop = false;
+			txtInstallPath.ShortcutsEnabled = false;
+			txtInstallPath.Cursor = Cursors.Default;
+			ShowSettingsPage(
+				pnlPageGeneral,
+				btnNavGeneral,
+				"General",
+				"Choose the game and define the server identity.");
+			UpdateModernStatus();
+		}
+
+		private void ShowSettingsPage(
+			Panel page,
+			ModernSettingsNavButton navigationButton,
+			string title,
+			string description)
+		{
+			Panel[] pages =
+			{
+				pnlPageGeneral,
+				pnlPageWorld,
+				pnlPageNetwork,
+				pnlPageAutomation,
+				pnlPageInstall
+			};
+			ModernSettingsNavButton[] navigationButtons =
+			{
+				btnNavGeneral,
+				btnNavWorld,
+				btnNavNetwork,
+				btnNavAutomation,
+				btnNavInstall
+			};
+
+			foreach (Panel candidate in pages)
+			{
+				candidate.Visible = ReferenceEquals(candidate, page);
+			}
+
+			foreach (ModernSettingsNavButton candidate in navigationButtons)
+			{
+				candidate.Selected = ReferenceEquals(candidate, navigationButton);
+			}
+
+			lblPageTitle.Text = title;
+			lblPageDescription.Text = description;
+			page.BringToFront();
+		}
+
+		private void UpdateModernStatus()
+		{
+			bool ready = btnSave.Enabled;
+			string validationMessage = string.IsNullOrWhiteSpace(_validationMessage)
+				? "Validation is waiting for the required server information."
+				: _validationMessage.Trim();
+
+			lblSidebarStatus.Text = ready ? "●  Ready to save" : "●  Action required";
+			lblSidebarStatus.ForeColor = ready
+				? SettingsPalette.Accent
+				: SettingsPalette.Warning;
+			lblSidebarStatusDetail.Text = ready
+				? "All required checks passed"
+				: "See the exact validation message below";
+			lblFooterStatus.Text = validationMessage;
+			lblFooterStatus.ForeColor = ready
+				? SettingsPalette.Accent
+				: SettingsPalette.Warning;
+		}
+
+		private void btnNavGeneral_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageGeneral,
+				btnNavGeneral,
+				"General",
+				"Choose the game and define the server identity.");
+		}
+
+		private void btnNavWorld_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageWorld,
+				btnNavWorld,
+				"World Generation",
+				"Configure world seed, size, and game-specific world options.");
+		}
+
+		private void btnNavNetwork_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageNetwork,
+				btnNavNetwork,
+				"Network & RCON",
+				"Assign service ports and secure remote administration.");
+		}
+
+		private void btnNavAutomation_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageAutomation,
+				btnNavAutomation,
+				"Automation",
+				"Control startup tasks, scheduled restarts, backups, and alerts.");
+		}
+
+		private void btnNavInstall_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageInstall,
+				btnNavInstall,
+				"Install & Launch",
+				"Choose server storage and customize launch arguments.");
+		}
+
+		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)
+		{
+			if (eventArgs.Button != MouseButtons.Left)
+			{
+				return;
+			}
+
+			_ = ReleaseCapture();
+			_ = SendWindowMessage(
+				Handle,
+				WmNcLeftButtonDown,
+				new IntPtr(HtCaption),
+				IntPtr.Zero);
+		}
+
+		private void btnTitleMinimize_Click(object? sender, EventArgs eventArgs)
+		{
+			WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnTitleClose_Click(object? sender, EventArgs eventArgs)
+		{
+			DialogResult = DialogResult.Cancel;
+			Close();
+		}
+
+		protected override void OnHandleCreated(EventArgs eventArgs)
+		{
+			base.OnHandleCreated(eventArgs);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
+				DesignMode ||
+				Site?.DesignMode == true)
+			{
+				return;
+			}
+
+			try
+			{
+				int preference = DwmRound;
+				_ = DwmSetWindowAttribute(
+					Handle,
+					DwmWindowCornerPreference,
+					ref preference,
+					sizeof(int));
+			}
+			catch
+			{
+				// Rounded corners are cosmetic; older Windows builds may not support them.
+			}
+		}
+
+		protected override void OnFormClosed(FormClosedEventArgs eventArgs)
+		{
+			debounceTimer?.Stop();
+			debounceTimer?.Dispose();
+			base.OnFormClosed(eventArgs);
 		}
 
 		private void PrivacyMode()
@@ -122,27 +329,27 @@ namespace Synix_Control_Panel
 			txtDiscordWebhook.Text = _existingServer.DiscordWebhook ?? "";
 			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
 
-			numPort.Value = Math.Clamp((decimal)_existingServer.Port, numPort.Minimum, numPort.Maximum);
-			numQueryPort.Value = Math.Clamp((decimal)_existingServer.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
-			if (numAppPort != null) numAppPort.Value = Math.Clamp((decimal)(_existingServer.AppPort ?? numAppPort.Minimum), numAppPort.Minimum, numAppPort.Maximum);
+			numPort.Value = Math.Clamp(_existingServer.Port, numPort.Minimum, numPort.Maximum);
+			numQueryPort.Value = Math.Clamp(_existingServer.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+			if (numAppPort != null) numAppPort.Value = Math.Clamp(_existingServer.AppPort ?? numAppPort.Minimum, numAppPort.Minimum, numAppPort.Maximum);
 
-			numMaxPlayers.Value = Math.Clamp((decimal)_existingServer.MaxPlayers, numMaxPlayers.Minimum, numMaxPlayers.Maximum);
+			numMaxPlayers.Value = Math.Clamp(_existingServer.MaxPlayers, numMaxPlayers.Minimum, numMaxPlayers.Maximum);
 			txtInstallPath.Text = _existingServer.InstallPath ?? "";
 			chkDefaultPath.Checked = _existingServer.IsDefaultPath;
 			txtExtraArgs.Text = _existingServer.ExtraArgs ?? "";
 			txtWorldSeed.Text = _existingServer.WorldSeed ?? "12345";
-			numWorldSize.Value = Math.Clamp((decimal)_existingServer.WorldSize, numWorldSize.Minimum, numWorldSize.Maximum);
+			numWorldSize.Value = Math.Clamp(_existingServer.WorldSize, numWorldSize.Minimum, numWorldSize.Maximum);
 
 			chkUpdateOnStart.Checked = _existingServer.UpdateOnStart;
 			chkEnableRcon.Checked = _existingServer.EnableRcon;
-			numRconPort.Value = Math.Clamp((decimal)_existingServer.RconPort, numRconPort.Minimum, numRconPort.Maximum);
+			numRconPort.Value = Math.Clamp(_existingServer.RconPort, numRconPort.Minimum, numRconPort.Maximum);
 			txtRconPassword.Text = _existingServer.RconPassword ?? "";
 			chkEnableSchedule.Checked = _existingServer.IsScheduledRestartEnabled;
 			if (_existingServer.RestartDays != null) _selectedDays = (bool[])_existingServer.RestartDays.Clone();
 			_selectedTime = _existingServer.RestartTime ?? "04:00";
 			chkBackupOnStart.Checked = _existingServer.BackupOnStart;
 			cmbGameVersion.Text = _existingServer.GameVersion ?? "latest";
-			numRam.Value = Math.Clamp((decimal)_existingServer.MaxRam, numRam.Minimum, numRam.Maximum);
+			numRam.Value = Math.Clamp(_existingServer.MaxRam, numRam.Minimum, numRam.Maximum);
 
 			var gameData = GameDatabase.GetGame(_existingServer.Game);
 			if (gameData != null)
@@ -221,20 +428,20 @@ namespace Synix_Control_Panel
 
 				chkEnableDiscord.Enabled = isBaseReady;
 				txtDiscordWebhook.Enabled = isBaseReady && chkEnableDiscord.Checked;
+				btnTestDiscord.Enabled = isBaseReady && chkEnableDiscord.Checked;
 
 				if (_isEditMode)
 				{
 					chkDefaultPath.Enabled = false;
 					btnBrowse.Enabled = false;
-					txtInstallPath.Enabled = false;
 				}
 				else
 				{
 					chkDefaultPath.Enabled = isBaseReady;
 					bool manualMode = isBaseReady && !chkDefaultPath.Checked;
 					btnBrowse.Enabled = manualMode;
-					txtInstallPath.Enabled = manualMode;
 				}
+				txtInstallPath.Enabled = true;
 
 				if (!_isEditMode && isBaseReady && chkDefaultPath.Checked)
 				{
@@ -272,110 +479,104 @@ namespace Synix_Control_Panel
 
 				if (!isBaseReady)
 				{
-					WarningLabel.Text = "  🔒 [LOCKED] Required: Server Name and Game Template selection.";
-					WarningLabel.ForeColor = Color.Gold;
-					WarningLabel.BackColor = Color.FromArgb(60, 45, 0);
+					if (!hasName && !hasGame)
+					{
+						_validationMessage = "  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
+					}
+					else if (!hasName)
+					{
+						_validationMessage = "  🔒 [REQUIRED] Enter a Server Name before this server can be saved.";
+					}
+					else
+					{
+						_validationMessage = "  🔒 [REQUIRED] Select a Game Template before this server can be saved.";
+					}
+
 					btnSave.Enabled = false;
 				}
 				// --- DUNE CHECK: Minimum RAM ---
 				else if (ramMissing)
 				{
-					WarningLabel.Text = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires at least 24GB of RAM (Detected: {sysRam:0.0} GB).";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires at least 24GB of RAM (Detected: {sysRam:0.0} GB).";
 					btnSave.Enabled = false;
 				}
 				// --- DUNE CHECK: AVX2 Processor Support ---
 				else if (avx2Missing)
 				{
-					WarningLabel.Text = "  ⚠️ [HARDWARE] 'Dune: Awakening' strictly requires a CPU with AVX2 support.";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = "  ⚠️ [HARDWARE] 'Dune: Awakening' strictly requires a CPU with AVX2 support.";
 					btnSave.Enabled = false;
 				}
 				// --- DUNE CHECK: Windows Pro/Enterprise ---
 				else if (isHomeEdition)
 				{
-					WarningLabel.Text = "  ⚠️ [OS CHECK] Windows Pro/Enterprise is required. Home editions do not support Hyper-V.";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = "  ⚠️ [OS CHECK] Windows Pro/Enterprise is required. Home editions do not support Hyper-V.";
 					btnSave.Enabled = false;
 				}
 				// --- DUNE CHECK: BIOS Virtualization ---
 				else if (virtMissing)
 				{
-					WarningLabel.Text = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires {missingTechName} to be enabled in your PC's BIOS.";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires {missingTechName} to be enabled in your PC's BIOS.";
 					btnSave.Enabled = false;
 				}
 				// --- DUNE CHECK: Hyper-V Enabled in Windows ---
 				else if (hyperVMissing)
 				{
-					WarningLabel.Text = "  ⚠️ [SYSTEM] Windows Hyper-V is disabled. Please turn it on in 'Windows Features'.";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = "  ⚠️ [SYSTEM] Windows Hyper-V is disabled. Please turn it on in 'Windows Features'.";
 					btnSave.Enabled = false;
 				}
 				// ------------------------------------------
 				else if (isNameTaken)
 				{
-					WarningLabel.Text = $"  ⚠️ [CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = $"  ⚠️ [CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
 					btnSave.Enabled = false;
 				}
 				else if (gOwner != null || gOS)
 				{
-					WarningLabel.Text = $"  ⚠️ [CONFLICT] Game Port {gPort} is blocked by: {gOwner ?? "System Process"}";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = $"  ⚠️ [CONFLICT] Game Port {gPort} is blocked by: {gOwner ?? "System Process"}";
 					btnSave.Enabled = false;
 				}
 				else if (qOwner != null || qOS)
 				{
-					WarningLabel.Text = $"  ⚠️ [CONFLICT] Query Port {qPort} is blocked by: {qOwner ?? "System Process"}";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = $"  ⚠️ [CONFLICT] Query Port {qPort} is blocked by: {qOwner ?? "System Process"}";
 					btnSave.Enabled = false;
 				}
 				else if (rOwner != null || rOS)
 				{
-					WarningLabel.Text = $"  ⚠️ [CONFLICT] RCON Port {rPort} is blocked by: {rOwner ?? "System Process"}";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = $"  ⚠️ [CONFLICT] RCON Port {rPort} is blocked by: {rOwner ?? "System Process"}";
 					btnSave.Enabled = false;
 				}
 				else if (aOwner != null || aOS)
 				{
-					WarningLabel.Text = $"  ⚠️ [CONFLICT] App Port {aPort} is blocked by: {aOwner ?? "System Process"}";
-					WarningLabel.ForeColor = Color.Red;
-					WarningLabel.BackColor = Color.FromArgb(60, 20, 20);
+					_validationMessage = $"  ⚠️ [CONFLICT] App Port {aPort} is blocked by: {aOwner ?? "System Process"}";
+					btnSave.Enabled = false;
+				}
+				else if (string.IsNullOrWhiteSpace(txtInstallPath.Text))
+				{
+					_validationMessage = "  🔒 [REQUIRED] Select an install folder or enable the default install path.";
 					btnSave.Enabled = false;
 				}
 				else
 				{
 					if (isDuneAwakening)
 					{
-						WarningLabel.Text = "  ✔ [READY] NOTE: Have your Self-Host Token ready for the battlegroup.bat prompt.";
-						WarningLabel.ForeColor = Color.Orange;
-						WarningLabel.BackColor = Color.FromArgb(20, 50, 20);
+						_validationMessage = "  ✔ [READY] NOTE: Have your Self-Host Token ready for the battlegroup.bat prompt.";
 					}
 					else
 					{
-						WarningLabel.Text = _isEditMode ? $"  ✔ [READY] Updating: {currentName}" : "  ✔ [READY] Configuration is valid and safe.";
-						WarningLabel.ForeColor = Color.SpringGreen;
-						WarningLabel.BackColor = Color.FromArgb(20, 50, 20);
+						_validationMessage = _isEditMode ? $"  ✔ [READY] Updating: {currentName}" : "  ✔ [READY] Configuration is valid and safe.";
 					}
 
-					btnSave.Enabled = !string.IsNullOrWhiteSpace(txtInstallPath.Text);
+					btnSave.Enabled = true;
 				}
 
-				WarningLabel.Invalidate();
+				UpdateModernStatus();
 			}
 			catch (Exception ex)
 			{
 				System.Diagnostics.Debug.WriteLine($"[GATEKEEPER CRASH] {ex.Message}");
+				_validationMessage = $"  ⚠️ [VALIDATION ERROR] Validation could not complete: {ex.Message}";
+				btnSave.Enabled = false;
+				UpdateModernStatus();
 			}
 		}
 
@@ -385,7 +586,6 @@ namespace Synix_Control_Panel
 			if (gameData == null)
 			{
 				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
-				lblConfigWarning.Visible = false;
 
 				SetupManagedPlaceholder(txtPassword, "Select a game...");
 				SetupManagedPlaceholder(txtAdminPassword, "Select a game...");
@@ -409,7 +609,7 @@ namespace Synix_Control_Panel
 					{
 						txtPassword.Text = "";
 					}
-					txtPassword.ForeColor = SystemColors.WindowText;
+					txtPassword.ForeColor = SettingsPalette.PrimaryText;
 					txtPassword.GotFocus -= Placeholder_GotFocus;
 					txtPassword.LostFocus -= Placeholder_LostFocus;
 				}
@@ -427,7 +627,7 @@ namespace Synix_Control_Panel
 					{
 						txtAdminPassword.Text = "";
 					}
-					txtAdminPassword.ForeColor = SystemColors.WindowText;
+					txtAdminPassword.ForeColor = SettingsPalette.PrimaryText;
 					txtAdminPassword.GotFocus -= Placeholder_GotFocus;
 					txtAdminPassword.LostFocus -= Placeholder_LostFocus;
 				}
@@ -445,7 +645,7 @@ namespace Synix_Control_Panel
 					{
 						txtWorldSeed.Text = "";
 					}
-					txtWorldSeed.ForeColor = SystemColors.WindowText;
+					txtWorldSeed.ForeColor = SettingsPalette.PrimaryText;
 					txtWorldSeed.GotFocus -= Placeholder_GotFocus;
 					txtWorldSeed.LostFocus -= Placeholder_LostFocus;
 				}
@@ -461,14 +661,6 @@ namespace Synix_Control_Panel
 				numPort.Tag = args.Contains("{port}") ? "Required" : "Disabled";
 				numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
 
-				if (gameData.NeedsConfigWarning == true)
-				{
-					lblConfigWarning.Visible = true;
-				}
-				else
-				{
-					lblConfigWarning.Visible = false;
-				}
 			}
 			SyncGatekeeper();
 		}
@@ -498,7 +690,7 @@ namespace Synix_Control_Panel
 			if (sender is TextBox txt && txt.Text == (string?)(txt.Tag ?? ""))
 			{
 				txt.Text = "";
-				txt.ForeColor = SystemColors.WindowText;
+				txt.ForeColor = SettingsPalette.PrimaryText;
 			}
 		}
 
@@ -694,8 +886,8 @@ namespace Synix_Control_Panel
 				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
 				if (gameData != null)
 				{
-					numPort.Value = Math.Clamp((decimal)gameData.Port, numPort.Minimum, numPort.Maximum);
-					numQueryPort.Value = Math.Clamp((decimal)gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+					numPort.Value = Math.Clamp(gameData.Port, numPort.Minimum, numPort.Maximum);
+					numQueryPort.Value = Math.Clamp(gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
 					PopulateGameModes(gameData, "PVE");
 
@@ -742,8 +934,15 @@ namespace Synix_Control_Panel
 				}
 			}
 
-			// Apply the previously saved version, or default to latest
-			if (cmbGameVersion.Items.Contains(selectedVersion))
+			// Preserve a previously saved/custom version while keeping the control
+			// as an opaque owner-drawn DropDownList.
+			if (!string.IsNullOrWhiteSpace(selectedVersion) &&
+				!cmbGameVersion.Items.Contains(selectedVersion))
+			{
+				cmbGameVersion.Items.Add(selectedVersion);
+			}
+
+			if (!string.IsNullOrWhiteSpace(selectedVersion))
 				cmbGameVersion.SelectedItem = selectedVersion;
 			else if (cmbGameVersion.Items.Count > 0)
 				cmbGameVersion.SelectedIndex = 0;
@@ -758,11 +957,50 @@ namespace Synix_Control_Panel
 		private void btnViewArgs_Click(object sender, EventArgs e) { var gameData = GameDatabase.GetGame(cmbGame.Text); if (gameData != null) { var display = new DefaultArgumentsDisplay(gameData.RequiredArgs); display.ShowDialog(); } }
 		private void btnEditSchedule_Click(object sender, EventArgs e) { using var scheduler = new ScheduleSettingsGUI(_selectedDays, _selectedTime); if (scheduler.ShowDialog() == DialogResult.OK) { _selectedDays = scheduler.SelectedDays; _selectedTime = scheduler.SelectedTime; } }
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
-		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; txtDiscordWebhook.Enabled = chkEnableDiscord.Checked; SyncGatekeeper(); }
+		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableDiscord.Checked; txtDiscordWebhook.Enabled = active; btnTestDiscord.Enabled = active; SyncGatekeeper(); }
 		private async void btnTestDiscord_Click(object sender, EventArgs e) { string url = txtDiscordWebhook.Text.Trim(); if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://discord.com/api/webhooks/")) return; await Core.Instance.SendDiscordAlert(new GameServer { ServerName = txtName.Text, DiscordWebhook = url, IsDiscordAlertEnabled = true }, "TEST CONNECTION", "Alert Success", Color.Lime); }
 		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
 
-		private void PopulateMaps(GameInfo gameData, string selectedMap) { cmbWorldName.Items.Clear(); if (gameData.Maps == null) return; foreach (var map in gameData.Maps) cmbWorldName.Items.Add(map); cmbWorldName.Text = selectedMap; }
-		private void PopulateGameModes(GameInfo gameData, string selectedMode) { cmbCompetitive.Items.Clear(); if (gameData.GameModes == null) return; foreach (var mode in gameData.GameModes) cmbCompetitive.Items.Add(mode); if (cmbCompetitive.Items.Contains(selectedMode)) cmbCompetitive.SelectedItem = selectedMode; else if (cmbCompetitive.Items.Count > 0) cmbCompetitive.SelectedIndex = 0; }
+		private void PopulateMaps(GameInfo gameData, string selectedMap)
+		{
+			cmbWorldName.Items.Clear();
+			if (gameData.Maps != null)
+			{
+				foreach (string map in gameData.Maps)
+					cmbWorldName.Items.Add(map);
+			}
+
+			if (!string.IsNullOrWhiteSpace(selectedMap) &&
+				!cmbWorldName.Items.Contains(selectedMap))
+			{
+				cmbWorldName.Items.Add(selectedMap);
+			}
+
+			if (!string.IsNullOrWhiteSpace(selectedMap))
+				cmbWorldName.SelectedItem = selectedMap;
+			else if (cmbWorldName.Items.Count > 0)
+				cmbWorldName.SelectedIndex = 0;
+		}
+
+		private void PopulateGameModes(GameInfo gameData, string selectedMode)
+		{
+			cmbCompetitive.Items.Clear();
+			if (gameData.GameModes != null)
+			{
+				foreach (string mode in gameData.GameModes)
+					cmbCompetitive.Items.Add(mode);
+			}
+
+			if (!string.IsNullOrWhiteSpace(selectedMode) &&
+				!cmbCompetitive.Items.Contains(selectedMode))
+			{
+				cmbCompetitive.Items.Add(selectedMode);
+			}
+
+			if (!string.IsNullOrWhiteSpace(selectedMode))
+				cmbCompetitive.SelectedItem = selectedMode;
+			else if (cmbCompetitive.Items.Count > 0)
+				cmbCompetitive.SelectedIndex = 0;
+		}
 	}
 }

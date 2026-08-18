@@ -222,42 +222,16 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		public static void WarningLabel_Paint(object sender, PaintEventArgs e)
 		{
-			Label lbl = (Label)sender;
-			if (lbl.Width <= 0 || lbl.Height <= 0) return;
+			if (sender is not Label lbl || lbl.Width <= 1 || lbl.Height <= 1)
+				return;
 
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			e.Graphics.Clear(lbl.Parent?.BackColor ?? SettingsPalette.Window);
 
-			if (Application.RenderWithVisualStyles)
-			{
-				ButtonRenderer.DrawParentBackground(e.Graphics, lbl.ClientRectangle, lbl);
-			}
-			else if (lbl.Parent != null)
-			{
-				using (SolidBrush bgBrush = new SolidBrush(lbl.Parent.BackColor))
-				{
-					e.Graphics.FillRectangle(bgBrush, lbl.ClientRectangle);
-				}
-			}
-
-			int radius = 15;
-			using (GraphicsPath path = new GraphicsPath())
-			{
-				path.AddArc(0, 0, radius, radius, 180, 90);
-				path.AddArc(lbl.Width - radius - 1, 0, radius, radius, 270, 90);
-				path.AddArc(lbl.Width - radius - 1, lbl.Height - radius - 1, radius, radius, 0, 90);
-				path.AddArc(0, lbl.Height - radius - 1, radius, radius, 90, 90);
-				path.CloseFigure();
-
-				if (lbl.Region == null || lbl.Region.GetBounds(e.Graphics).Width != lbl.Width)
-				{
-					var oldRegion = lbl.Region;
-					lbl.Region = new Region(path);
-					oldRegion?.Dispose();
-				}
-
-				using (SolidBrush brush = new SolidBrush(lbl.BackColor))
-					e.Graphics.FillPath(brush, path);
-			}
+			Rectangle bannerBounds = new(0, 0, lbl.ClientSize.Width - 1, lbl.ClientSize.Height - 1);
+			using GraphicsPath path = RoundedGeometry.Create(bannerBounds, 12);
+			using SolidBrush brush = new(lbl.BackColor);
+			e.Graphics.FillPath(brush, path);
 
 			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak;
 			string align = lbl.Tag?.ToString() ?? "MiddleCenter";
@@ -279,7 +253,32 @@ namespace Synix_Control_Panel.SynixApp.Design
 				flags = TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak;
 			}
 
-			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, lbl.ClientRectangle, lbl.ForeColor, flags);
+			flags |= TextFormatFlags.NoPrefix;
+			Rectangle textBounds = new(
+				lbl.Padding.Left,
+				lbl.Padding.Top,
+				Math.Max(0, lbl.ClientSize.Width - lbl.Padding.Horizontal),
+				Math.Max(0, lbl.ClientSize.Height - lbl.Padding.Vertical));
+			TextRenderer.DrawText(e.Graphics, lbl.Text, lbl.Font, textBounds, lbl.ForeColor, flags);
+		}
+
+		public static void RefreshWarningLabelShape(Label lbl, int cornerRadius = 12)
+		{
+			if (lbl == null || lbl.IsDisposed || lbl.Width <= 1 || lbl.Height <= 1)
+				return;
+
+			Rectangle bounds = new(0, 0, lbl.ClientSize.Width - 1, lbl.ClientSize.Height - 1);
+			using GraphicsPath path = RoundedGeometry.Create(bounds, cornerRadius);
+			Region? oldRegion = lbl.Region;
+			lbl.Region = new Region(path);
+			oldRegion?.Dispose();
+			lbl.Invalidate();
+		}
+
+		private static void WarningLabel_ShapeChanged(object? sender, EventArgs e)
+		{
+			if (sender is Label lbl)
+				RefreshWarningLabelShape(lbl);
 		}
 
 		public static void StyleWarningLabel(Label lbl, string alignment = "MiddleCenter")
@@ -292,8 +291,14 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			lbl.Paint -= WarningLabel_Paint;
 			lbl.Paint += WarningLabel_Paint;
+			lbl.SizeChanged -= WarningLabel_ShapeChanged;
+			lbl.SizeChanged += WarningLabel_ShapeChanged;
+			lbl.VisibleChanged -= WarningLabel_ShapeChanged;
+			lbl.VisibleChanged += WarningLabel_ShapeChanged;
+			lbl.BackColorChanged -= WarningLabel_ShapeChanged;
+			lbl.BackColorChanged += WarningLabel_ShapeChanged;
 
-			lbl.Invalidate();
+			RefreshWarningLabelShape(lbl);
 		}
 	}
 

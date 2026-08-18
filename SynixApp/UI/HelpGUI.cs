@@ -11,35 +11,77 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
+using Synix_Control_Panel.SynixApp.Design;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class HelpGUI : Form
 	{
-		private Dictionary<string, HelpItem> _helpData;
+		private const uint WdaExcludeFromCapture = 0x00000011;
+		private const int WmNcHitTest = 0x0084;
+		private const int WmNcLeftButtonDown = 0x00A1;
+		private const int HtCaption = 0x0002;
+		private const int HtLeft = 10;
+		private const int HtRight = 11;
+		private const int HtTop = 12;
+		private const int HtTopLeft = 13;
+		private const int HtTopRight = 14;
+		private const int HtBottom = 15;
+		private const int HtBottomLeft = 16;
+		private const int HtBottomRight = 17;
+		private const int DwmWindowCornerPreference = 33;
+		private const int DwmRound = 2;
+		private const int ResizeBorder = 7;
+		private const int EmSetCueBanner = 0x1501;
+
+		private static readonly (
+			string Key,
+			string DisplayName,
+			string Index)[] CategoryDefinitions =
+		[
+			("Start", "Getting Started & Setup", "01"),
+			("Dash", "Dashboard & Controls", "02"),
+			("Config", "Server Configuration", "03"),
+			("Net", "Networking & IP Rules", "04"),
+			("Maint", "Maintenance & Discord", "05"),
+			("Watch", "Watchdog & Safeguards", "06"),
+			("Trouble", "Troubleshooting & System", "07"),
+			("Games", "Game Engines & Custom Rules", "08"),
+			("Support", "Support, License & Donate", "09")
+		];
+
+		private Dictionary<string, HelpItem> _helpData =
+			new(StringComparer.OrdinalIgnoreCase);
+		private int _visibleArticleCount;
 
 		public HelpGUI()
 		{
 			InitializeComponent();
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+			{
+				return;
+			}
+
 			InitializeData();
 			PopulateTree();
+			ShowWelcome();
 
-			// Set initial heading text safely
-			if (lblTopicTitle != null)
-				lblTopicTitle.Text = "🛸 Synix Support & Command Knowledge Base";
-
-			if (lblAnswer != null)
-				lblAnswer.Text = "Welcome to the Synix Engine Knowledge Base.\n\nPlease select a topic from the navigation tree on the left or use the search bar above to query specific setup guides, networking protocols, automation rules, custom directory settings, or game launcher details.";
+			_ = SendMessageText(
+				txtSearch.Handle,
+				EmSetCueBanner,
+				IntPtr.Zero,
+				"Search topics, guides, or answers...");
 		}
 
 		private void InitializeData()
 		{
-			_helpData = new Dictionary<string, HelpItem>
+			_helpData = new Dictionary<string, HelpItem>(
+				StringComparer.OrdinalIgnoreCase)
 			{
 				// --- 1. GETTING STARTED (Category: "Start") ---
 				["First-Time Setup Guide"] = new HelpItem("Start",
@@ -427,95 +469,569 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void PopulateTree(string filter = "")
 		{
-			if (treeNavigation == null) return;
+			string normalizedFilter = filter.Trim();
+			string? selectedTopic = treeNavigation.SelectedNode?.Tag as string;
+			TreeNode? nodeToReselect = null;
+			TreeNode? firstTopicNode = null;
+			_visibleArticleCount = 0;
 
-			treeNavigation.Nodes.Clear();
-			TreeNode root = new TreeNode("🛸 Synix Knowledge Base");
-
-			var categories = new Dictionary<string, TreeNode>
+			treeNavigation.BeginUpdate();
+			try
 			{
-				["Start"] = new TreeNode("1. Getting Started & Setup"),
-				["Dash"] = new TreeNode("2. Dashboard & Controls"),
-				["Config"] = new TreeNode("3. Server Configuration"),
-				["Net"] = new TreeNode("4. Networking & IP Rules"),
-				["Maint"] = new TreeNode("5. Maintenance & Discord"),
-				["Watch"] = new TreeNode("6. Watchdog & Safeguards"),
-				["Trouble"] = new TreeNode("7. Troubleshooting & System"),
-				["Games"] = new TreeNode("8. Game Engines & Custom Rules"),
-				["Support"] = new TreeNode("9. Support, License & Donate")
+				treeNavigation.Nodes.Clear();
+
+				foreach ((string categoryKey, string displayName, string index)
+					in CategoryDefinitions)
+				{
+					TreeNode categoryNode = new(displayName)
+					{
+						Name = categoryKey,
+						ToolTipText = displayName
+					};
+
+					foreach (KeyValuePair<string, HelpItem> entry in _helpData)
+					{
+						if (!string.Equals(
+							entry.Value.Category,
+							categoryKey,
+							StringComparison.OrdinalIgnoreCase) ||
+							!MatchesFilter(entry, normalizedFilter))
+						{
+							continue;
+						}
+
+						TreeNode topicNode = new(CreateNavigationCaption(entry.Key))
+						{
+							Tag = entry.Key,
+							ToolTipText = entry.Key
+						};
+						categoryNode.Nodes.Add(topicNode);
+						firstTopicNode ??= topicNode;
+						_visibleArticleCount++;
+
+						if (string.Equals(
+							entry.Key,
+							selectedTopic,
+							StringComparison.OrdinalIgnoreCase))
+						{
+							nodeToReselect = topicNode;
+						}
+					}
+
+					if (categoryNode.Nodes.Count == 0)
+					{
+						continue;
+					}
+
+					treeNavigation.Nodes.Add(categoryNode);
+					categoryNode.Expand();
+				}
+
+				if (nodeToReselect != null)
+				{
+					treeNavigation.SelectedNode = nodeToReselect;
+				}
+				else if (!string.IsNullOrEmpty(normalizedFilter) &&
+					firstTopicNode != null)
+				{
+					treeNavigation.SelectedNode = firstTopicNode;
+					firstTopicNode.EnsureVisible();
+				}
+			}
+			finally
+			{
+				treeNavigation.EndUpdate();
+			}
+
+			UpdateSearchStatus(normalizedFilter);
+
+			if (_visibleArticleCount == 0)
+			{
+				ShowNoResults(normalizedFilter);
+			}
+			else if (string.IsNullOrEmpty(normalizedFilter) &&
+				selectedTopic == null)
+			{
+				ShowWelcome();
+			}
+		}
+
+		private static bool MatchesFilter(
+			KeyValuePair<string, HelpItem> entry,
+			string filter)
+		{
+			return string.IsNullOrEmpty(filter) ||
+				entry.Key.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+				entry.Value.Answer.Contains(filter, StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static string CreateNavigationCaption(string topicTitle)
+		{
+			const int MaximumCaptionLength = 34;
+			return topicTitle.Length <= MaximumCaptionLength
+				? topicTitle
+				: topicTitle[..(MaximumCaptionLength - 1)] + "…";
+		}
+
+		private void UpdateSearchStatus(string filter)
+		{
+			lblArticleCount.Text = string.IsNullOrEmpty(filter)
+				? $"{_visibleArticleCount} help articles"
+				: $"{_visibleArticleCount} matching article" +
+					(_visibleArticleCount == 1 ? string.Empty : "s");
+			lblFooterStatus.Text = string.IsNullOrEmpty(filter)
+				? "KNOWLEDGE BASE READY"
+				: $"{_visibleArticleCount} SEARCH RESULT" +
+					(_visibleArticleCount == 1 ? string.Empty : "S");
+			btnClearSearch.Visible = txtSearch.TextLength > 0;
+		}
+
+		private void ShowWelcome()
+		{
+			qrCard.Visible = false;
+			lblTopicCategory.Text = "SYNIX KNOWLEDGE BASE";
+			lblTopicTitle.Text = "How can we help?";
+			lblArticleBadge.Text = "WELCOME";
+			lblAnswer.Text =
+				"Welcome to the Synix Engine Knowledge Base.\n\n" +
+				"Choose a topic from the navigation panel or search for a game, " +
+				"feature, error, networking rule, or setup step. The search checks " +
+				"both article names and their full contents, so you can describe the " +
+				"problem you are trying to solve.\n\n" +
+				"QUICK START\n" +
+				"• Start with Getting Started & Setup for first-time installation.\n" +
+				"• Open Networking & IP Rules for port and connection guidance.\n" +
+				"• Use Troubleshooting & System when a server will not launch.\n" +
+				"• Press Ctrl+F at any time to jump directly to search.";
+			ResetAnswerScroll();
+		}
+
+		private void ShowNoResults(string filter)
+		{
+			qrCard.Visible = false;
+			lblTopicCategory.Text = "SEARCH";
+			lblTopicTitle.Text = "No matching help articles";
+			lblArticleBadge.Text = "NO RESULTS";
+			lblAnswer.Text = string.IsNullOrWhiteSpace(filter)
+				? "No help articles are currently available."
+				: $"Synix could not find a topic containing \"{filter}\".\n\n" +
+					"Try a shorter phrase or search for a related term such as " +
+					"ports, backup, watchdog, SteamCMD, RCON, or firewall.";
+			ResetAnswerScroll();
+		}
+
+		private void ShowTopic(string topicKey, HelpItem item)
+		{
+			bool isDonationTopic = string.Equals(
+				topicKey,
+				"Donate & Support Development",
+				StringComparison.OrdinalIgnoreCase) ||
+				string.Equals(
+					topicKey,
+					"Donate",
+					StringComparison.OrdinalIgnoreCase);
+
+			lblTopicCategory.Text =
+				GetCategoryDisplayName(item.Category).ToUpperInvariant();
+			lblTopicTitle.Text = topicKey;
+			lblArticleBadge.Text = isDonationTopic ? "SUPPORT" : "ARTICLE";
+			lblAnswer.Text = item.Answer;
+			qrCard.Visible = isDonationTopic;
+			if (isDonationTopic)
+			{
+				qrCard.BringToFront();
+			}
+
+			lblFooterStatus.Text = "VIEWING HELP ARTICLE";
+			ResetAnswerScroll();
+		}
+
+		private void ResetAnswerScroll()
+		{
+			lblAnswer.SelectionStart = 0;
+			lblAnswer.SelectionLength = 0;
+			lblAnswer.ScrollToCaret();
+		}
+
+		private static string GetCategoryDisplayName(string categoryKey)
+		{
+			foreach ((string key, string displayName, string index)
+				in CategoryDefinitions)
+			{
+				if (string.Equals(
+					key,
+					categoryKey,
+					StringComparison.OrdinalIgnoreCase))
+				{
+					return displayName;
+				}
+			}
+
+			return "Help & Support";
+		}
+
+		private static string GetCategoryIndex(string categoryKey)
+		{
+			foreach ((string key, string displayName, string index)
+				in CategoryDefinitions)
+			{
+				if (string.Equals(
+					key,
+					categoryKey,
+					StringComparison.OrdinalIgnoreCase))
+				{
+					return index;
+				}
+			}
+
+			return "•";
+		}
+
+		private void treeNavigation_AfterSelect(
+			object? sender,
+			TreeViewEventArgs eventArgs)
+		{
+			if (eventArgs.Node?.Tag is not string topicKey ||
+				!_helpData.TryGetValue(topicKey, out HelpItem item))
+			{
+				return;
+			}
+
+			ShowTopic(topicKey, item);
+			treeNavigation.Invalidate();
+		}
+
+		private void treeNavigation_NodeMouseClick(
+			object? sender,
+			TreeNodeMouseClickEventArgs eventArgs)
+		{
+			if (eventArgs.Node.Level != 0)
+			{
+				return;
+			}
+
+			if (eventArgs.Node.IsExpanded)
+			{
+				eventArgs.Node.Collapse();
+			}
+			else
+			{
+				eventArgs.Node.Expand();
+			}
+
+			treeNavigation.Invalidate();
+		}
+
+		private void treeNavigation_DrawNode(
+			object? sender,
+			DrawTreeNodeEventArgs eventArgs)
+		{
+			TreeNode node = eventArgs.Node;
+			Graphics graphics = eventArgs.Graphics;
+			graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			Rectangle rowBounds = new(
+				4,
+				eventArgs.Bounds.Y + 2,
+				Math.Max(1, treeNavigation.ClientSize.Width - 8),
+				Math.Max(1, eventArgs.Bounds.Height - 4));
+			using SolidBrush sidebarBrush = new(SettingsPalette.Sidebar);
+			graphics.FillRectangle(sidebarBrush, rowBounds);
+
+			if (node.Level == 0)
+			{
+				DrawCategoryNode(graphics, node, rowBounds);
+				return;
+			}
+
+			bool selected = ReferenceEquals(treeNavigation.SelectedNode, node);
+			if (selected)
+			{
+				using GraphicsPath selectedPath = CreateRoundedRectangle(rowBounds, 8);
+				using SolidBrush selectedBrush = new(SettingsPalette.AccentSoft);
+				graphics.FillPath(selectedBrush, selectedPath);
+
+				using SolidBrush accentBrush = new(SettingsPalette.Accent);
+				graphics.FillRectangle(
+					accentBrush,
+					rowBounds.Left,
+					rowBounds.Top + 7,
+					3,
+					Math.Max(4, rowBounds.Height - 14));
+			}
+
+			Rectangle textBounds = new(
+				rowBounds.Left + 34,
+				rowBounds.Top,
+				Math.Max(0, rowBounds.Width - 44),
+				rowBounds.Height);
+			string topicTitle = node.Tag as string ?? node.Text;
+			TextRenderer.DrawText(
+				graphics,
+				topicTitle,
+				treeNavigation.Font,
+				textBounds,
+				selected ? SettingsPalette.PrimaryText : SettingsPalette.SecondaryText,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPrefix);
+		}
+
+		private void DrawCategoryNode(
+			Graphics graphics,
+			TreeNode node,
+			Rectangle rowBounds)
+		{
+			string categoryIndex = GetCategoryIndex(node.Name);
+			Rectangle indexBounds = new(
+				rowBounds.Left + 10,
+				rowBounds.Top,
+				24,
+				rowBounds.Height);
+			TextRenderer.DrawText(
+				graphics,
+				categoryIndex,
+				lblSidebarEyebrow.Font,
+				indexBounds,
+				SettingsPalette.Accent,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.NoPrefix);
+
+			Rectangle textBounds = new(
+				rowBounds.Left + 40,
+				rowBounds.Top,
+				Math.Max(0, rowBounds.Width - 70),
+				rowBounds.Height);
+			TextRenderer.DrawText(
+				graphics,
+				node.Text,
+				lblSidebarEyebrow.Font,
+				textBounds,
+				SettingsPalette.PrimaryText,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPrefix);
+
+			int centerX = rowBounds.Right - 17;
+			int centerY = rowBounds.Top + (rowBounds.Height / 2);
+			using Pen arrowPen = new(SettingsPalette.MutedText, 1.5F)
+			{
+				StartCap = LineCap.Round,
+				EndCap = LineCap.Round
 			};
-
-			foreach (var entry in _helpData)
+			if (node.IsExpanded)
 			{
-				if (!string.IsNullOrEmpty(filter) && !entry.Key.ToLower().Contains(filter.ToLower()))
-					continue;
-
-				if (categories.ContainsKey(entry.Value.Category))
-				{
-					categories[entry.Value.Category].Nodes.Add(new TreeNode(entry.Key));
-				}
+				graphics.DrawLine(arrowPen, centerX - 4, centerY - 2, centerX, centerY + 2);
+				graphics.DrawLine(arrowPen, centerX, centerY + 2, centerX + 4, centerY - 2);
 			}
-
-			foreach (var node in categories.Values)
+			else
 			{
-				if (node.Nodes.Count > 0) root.Nodes.Add(node);
+				graphics.DrawLine(arrowPen, centerX - 2, centerY - 4, centerX + 2, centerY);
+				graphics.DrawLine(arrowPen, centerX + 2, centerY, centerX - 2, centerY + 4);
 			}
-
-			treeNavigation.Nodes.Add(root);
-			treeNavigation.ExpandAll();
 		}
 
-		private void treeNavigation_AfterSelect(object sender, TreeViewEventArgs e)
+		private static GraphicsPath CreateRoundedRectangle(
+			Rectangle bounds,
+			int radius)
 		{
-			if (e.Node == null) return;
-
-			if (pbQRCode != null) pbQRCode.Visible = false;
-			if (lblAnswer != null) lblAnswer.Dock = DockStyle.Fill;
-
-			if (_helpData.TryGetValue(e.Node.Text, out HelpItem item))
+			GraphicsPath path = new();
+			int diameter = Math.Min(
+				radius * 2,
+				Math.Min(bounds.Width, bounds.Height));
+			if (diameter <= 1)
 			{
-				if (lblTopicTitle != null) lblTopicTitle.Text = e.Node.Text;
-				if (lblAnswer != null) lblAnswer.Text = item.Answer;
-
-				if (e.Node.Text == "Donate & Support Development" || e.Node.Text == "Donate")
-				{
-					if (lblAnswer != null)
-					{
-						lblAnswer.Dock = DockStyle.Top;
-						lblAnswer.Height = 220;
-					}
-					if (pbQRCode != null)
-					{
-						pbQRCode.Visible = true;
-						pbQRCode.BringToFront();
-					}
-				}
+				path.AddRectangle(bounds);
+				return path;
 			}
+
+			Rectangle arc = new(bounds.X, bounds.Y, diameter, diameter);
+			path.AddArc(arc, 180, 90);
+			arc.X = bounds.Right - diameter;
+			path.AddArc(arc, 270, 90);
+			arc.Y = bounds.Bottom - diameter;
+			path.AddArc(arc, 0, 90);
+			arc.X = bounds.Left;
+			path.AddArc(arc, 90, 90);
+			path.CloseFigure();
+			return path;
 		}
 
-		private void txtSearch_TextChanged(object sender, EventArgs e)
+		private void txtSearch_TextChanged(object? sender, EventArgs eventArgs)
 		{
-			if (txtSearch != null)
-			{
-				PopulateTree(txtSearch.Text);
-			}
+			PopulateTree(txtSearch.Text);
 		}
 
-		private void lblAnswer_LinkClicked(object sender, LinkClickedEventArgs e)
+		private void btnClearSearch_Click(object? sender, EventArgs eventArgs)
+		{
+			txtSearch.Clear();
+			txtSearch.Focus();
+		}
+
+		private void lblAnswer_LinkClicked(
+			object? sender,
+			LinkClickedEventArgs eventArgs)
 		{
 			try
 			{
-				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+				if (!Uri.TryCreate(
+					eventArgs.LinkText,
+					UriKind.Absolute,
+					out Uri? linkUri) ||
+					(linkUri.Scheme != Uri.UriSchemeHttp &&
+						linkUri.Scheme != Uri.UriSchemeHttps))
 				{
-					FileName = e.LinkText,
+					throw new InvalidOperationException(
+						"Only secure web links can be opened from the help center.");
+				}
+
+				Process.Start(new ProcessStartInfo
+				{
+					FileName = linkUri.AbsoluteUri,
 					UseShellExecute = true
 				});
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Could not launch external web link: " + ex.Message, "Synix Link Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(
+					this,
+					"Could not launch external web link: " + ex.Message,
+					"Synix Link Error",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 			}
 		}
+
+		private void btnMinimize_Click(object? sender, EventArgs eventArgs)
+		{
+			WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnClose_Click(object? sender, EventArgs eventArgs)
+		{
+			Close();
+		}
+
+		private void TitleBar_MouseDown(
+			object? sender,
+			MouseEventArgs eventArgs)
+		{
+			if (eventArgs.Button != MouseButtons.Left)
+			{
+				return;
+			}
+
+			_ = ReleaseCapture();
+			_ = SendMessage(Handle, WmNcLeftButtonDown, HtCaption, 0);
+		}
+
+		protected override void OnHandleCreated(EventArgs eventArgs)
+		{
+			base.OnHandleCreated(eventArgs);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+			{
+				return;
+			}
+
+			if (Properties.Settings.Default.PrivacyMode)
+			{
+				_ = SetWindowDisplayAffinity(Handle, WdaExcludeFromCapture);
+			}
+
+			try
+			{
+				int preference = DwmRound;
+				_ = DwmSetWindowAttribute(
+					Handle,
+					DwmWindowCornerPreference,
+					ref preference,
+					sizeof(int));
+			}
+			catch
+			{
+				// Older Windows versions do not support rounded DWM corners.
+			}
+		}
+
+		protected override void WndProc(ref Message message)
+		{
+			base.WndProc(ref message);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
+				message.Msg != WmNcHitTest ||
+				WindowState == FormWindowState.Maximized)
+			{
+				return;
+			}
+
+			Point cursor = PointToClient(Cursor.Position);
+			bool left = cursor.X <= ResizeBorder;
+			bool right = cursor.X >= ClientSize.Width - ResizeBorder;
+			bool top = cursor.Y <= ResizeBorder;
+			bool bottom = cursor.Y >= ClientSize.Height - ResizeBorder;
+
+			if (left && top) message.Result = (IntPtr)HtTopLeft;
+			else if (right && top) message.Result = (IntPtr)HtTopRight;
+			else if (left && bottom) message.Result = (IntPtr)HtBottomLeft;
+			else if (right && bottom) message.Result = (IntPtr)HtBottomRight;
+			else if (left) message.Result = (IntPtr)HtLeft;
+			else if (right) message.Result = (IntPtr)HtRight;
+			else if (top) message.Result = (IntPtr)HtTop;
+			else if (bottom) message.Result = (IntPtr)HtBottom;
+		}
+
+		protected override bool ProcessCmdKey(
+			ref Message message,
+			Keys keyData)
+		{
+			if (keyData == (Keys.Control | Keys.F))
+			{
+				txtSearch.Focus();
+				txtSearch.SelectAll();
+				return true;
+			}
+
+			if (keyData == Keys.Escape)
+			{
+				Close();
+				return true;
+			}
+
+			return base.ProcessCmdKey(ref message, keyData);
+		}
+
+		[DllImport("user32.dll")]
+		private static extern uint SetWindowDisplayAffinity(
+			IntPtr windowHandle,
+			uint affinity);
+
+		[DllImport("user32.dll")]
+		private static extern bool ReleaseCapture();
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr SendMessage(
+			IntPtr windowHandle,
+			int message,
+			int wordParameter,
+			int longParameter);
+
+		[DllImport("user32.dll", EntryPoint = "SendMessageW", CharSet = CharSet.Unicode)]
+		private static extern IntPtr SendMessageText(
+			IntPtr windowHandle,
+			int message,
+			IntPtr wordParameter,
+			string text);
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(
+			IntPtr windowHandle,
+			int attribute,
+			ref int attributeValue,
+			int attributeSize);
 	}
 
 	public class HelpItem

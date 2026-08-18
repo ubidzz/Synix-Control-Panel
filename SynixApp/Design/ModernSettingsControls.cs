@@ -246,6 +246,19 @@ namespace Synix_Control_Panel.SynixApp.Design
 	{
 		private bool _hovered;
 		private bool _pressed;
+		private bool _useAccentStyle;
+
+		[DefaultValue(false)]
+		[Category("Synix Appearance")]
+		public bool UseAccentStyle
+		{
+			get => _useAccentStyle;
+			set
+			{
+				_useAccentStyle = value;
+				Invalidate();
+			}
+		}
 
 		public ModernSettingsButton()
 		{
@@ -301,32 +314,60 @@ namespace Synix_Control_Panel.SynixApp.Design
 			eventArgs.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			Rectangle bounds = new(0, 0, Width - 1, Height - 1);
-			Color fillColor = !Enabled
-				? Color.FromArgb(25, 34, 48)
-				: _pressed
+			Color fillColor;
+			if (!Enabled)
+			{
+				fillColor = Color.FromArgb(25, 34, 48);
+			}
+			else if (UseAccentStyle)
+			{
+				fillColor = _pressed
+					? Color.FromArgb(24, 176, 165)
+					: _hovered
+						? SettingsPalette.AccentHover
+						: SettingsPalette.Accent;
+			}
+			else
+			{
+				fillColor = _pressed
 					? Color.FromArgb(27, 48, 66)
 					: _hovered
 						? Color.FromArgb(25, 42, 60)
 						: SettingsPalette.Input;
+			}
 
 			using GraphicsPath path = RoundedGeometry.Create(bounds, 8);
 			using SolidBrush fillBrush = new(fillColor);
-			using Pen borderPen = new(
-				_hovered && Enabled ? SettingsPalette.Accent : SettingsPalette.BorderHover,
-				1F);
+			Color borderColor = UseAccentStyle && Enabled
+				? fillColor
+				: _hovered && Enabled
+					? SettingsPalette.Accent
+					: SettingsPalette.BorderHover;
+			using Pen borderPen = new(borderColor, 1F);
 
 			eventArgs.Graphics.FillPath(fillBrush, path);
 			eventArgs.Graphics.DrawPath(borderPen, path);
 
+			Rectangle textBounds = new(
+				Padding.Left,
+				Padding.Top,
+				Math.Max(0, Width - Padding.Horizontal),
+				Math.Max(0, Height - Padding.Vertical));
+			Color textColor = !Enabled
+				? SettingsPalette.MutedText
+				: UseAccentStyle
+					? SettingsPalette.Window
+					: ForeColor;
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
 				Text,
 				Font,
-				ClientRectangle,
-				Enabled ? ForeColor : SettingsPalette.MutedText,
+				textBounds,
+				textColor,
 				TextFormatFlags.HorizontalCenter |
 				TextFormatFlags.VerticalCenter |
-				TextFormatFlags.EndEllipsis);
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPrefix);
 		}
 	}
 
@@ -402,13 +443,16 @@ namespace Synix_Control_Panel.SynixApp.Design
 	{
 		private const int WmPaint = 0x000F;
 		private const int WmNcPaint = 0x0085;
+		private const int WmEraseBackground = 0x0014;
+		private const int WsBorder = 0x00800000;
+		private const int WsExClientEdge = 0x00000200;
 		private bool _mouseInside;
 
 		[Category("Synix Appearance")]
-		public Color BorderColor { get; set; } = SettingsPalette.BorderHover;
+		public Color BorderColor { get; set; } = SettingsPalette.Border;
 
 		[Category("Synix Appearance")]
-		public Color FocusBorderColor { get; set; } = SettingsPalette.Accent;
+		public Color FocusBorderColor { get; set; } = SettingsPalette.Border;
 
 		[Category("Synix Appearance")]
 		public Color ArrowColor { get; set; } = SettingsPalette.SecondaryText;
@@ -436,6 +480,17 @@ namespace Synix_Control_Panel.SynixApp.Design
 			MaxDropDownItems = 8;
 		}
 
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams parameters = base.CreateParams;
+				parameters.Style &= ~WsBorder;
+				parameters.ExStyle &= ~WsExClientEdge;
+				return parameters;
+			}
+		}
+
 		protected override void OnDrawItem(DrawItemEventArgs eventArgs)
 		{
 			Color itemBackColor;
@@ -444,7 +499,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			if (!Enabled)
 			{
-				itemBackColor = Color.FromArgb(25, 34, 48);
+				itemBackColor = SettingsPalette.Input;
 				itemForeColor = SettingsPalette.MutedText;
 			}
 			else
@@ -527,11 +582,39 @@ namespace Synix_Control_Panel.SynixApp.Design
 			base.OnSelectedIndexChanged(eventArgs);
 		}
 
+		protected override void OnEnabledChanged(EventArgs eventArgs)
+		{
+			base.OnEnabledChanged(eventArgs);
+			BackColor = SettingsPalette.Input;
+			Invalidate();
+		}
+
+		protected override void OnTextChanged(EventArgs eventArgs)
+		{
+			base.OnTextChanged(eventArgs);
+			Invalidate();
+		}
+
 		protected override void WndProc(ref Message message)
 		{
+			if (message.Msg == WmNcPaint)
+			{
+				// The native non-client frame is where Windows injects the bright
+				// focused/disabled border. The control paints its own dark frame.
+				message.Result = IntPtr.Zero;
+				return;
+			}
+
+			if (message.Msg == WmEraseBackground)
+			{
+				// Prevent a system-color flash before the owner-drawn frame appears.
+				message.Result = new IntPtr(1);
+				return;
+			}
+
 			base.WndProc(ref message);
 
-			if ((message.Msg == WmPaint || message.Msg == WmNcPaint) &&
+			if (message.Msg == WmPaint &&
 				IsHandleCreated &&
 				ClientSize.Width > 2 &&
 				ClientSize.Height > 2)
@@ -543,6 +626,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		private void DrawModernChrome(Graphics graphics)
 		{
+			using SolidBrush inputBrush = new(SettingsPalette.Input);
+			graphics.FillRectangle(inputBrush, ClientRectangle);
+
 			Color borderColor = Focused || DroppedDown
 				? FocusBorderColor
 				: BorderColor;
@@ -551,11 +637,25 @@ namespace Synix_Control_Panel.SynixApp.Design
 				: Focused || DroppedDown || _mouseInside
 					? SettingsPalette.Accent
 					: ArrowColor;
-			Color arrowBackground = !Enabled
-				? Color.FromArgb(25, 34, 48)
-				: _mouseInside || DroppedDown
-					? SettingsPalette.CardHover
-					: SettingsPalette.Input;
+			Color arrowBackground = SettingsPalette.Input;
+			int buttonWidth = Math.Min(
+				Math.Max(28, Math.Min(ClientSize.Height, 34)),
+				Math.Max(1, ClientSize.Width / 2));
+			Rectangle textBounds = new(
+				10,
+				0,
+				Math.Max(0, ClientSize.Width - buttonWidth - 16),
+				ClientSize.Height);
+			TextRenderer.DrawText(
+				graphics,
+				Text,
+				Font,
+				textBounds,
+				Enabled ? SettingsPalette.PrimaryText : SettingsPalette.MutedText,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPrefix);
 
 			ModernComboBoxRenderer.DrawArrowButton(
 				graphics,
@@ -942,15 +1042,28 @@ namespace Synix_Control_Panel.SynixApp.Design
 	}
 
 	[DefaultEvent(nameof(ValueChanged))]
-	[DesignerCategory("Code")]
-	internal sealed class ModernNumberStepper : Control
+	[ToolboxItem(true)]
+	public sealed class ModernSettingsNumericUpDown : Control, ISupportInitialize
 	{
 		private int _minimum = 1;
 		private int _maximum = 100;
 		private int _value = 1;
+		private int _increment = 1;
 		private int _hoveredButton;
+		private int _pressedButton;
+		private bool _mouseInside;
+		private bool _initializing;
+		private bool _replaceOnNextInput = true;
+		private string _editBuffer = "1";
 
 		public event EventHandler? ValueChanged;
+
+		[DefaultValue(1)]
+		public int Increment
+		{
+			get => _increment;
+			set => _increment = Math.Max(1, value);
+		}
 
 		[DefaultValue(1)]
 		public int Minimum
@@ -987,28 +1100,58 @@ namespace Synix_Control_Panel.SynixApp.Design
 					return;
 
 				_value = clampedValue;
+				if (!Focused)
+					_editBuffer = _value.ToString();
 				Invalidate();
-				ValueChanged?.Invoke(this, EventArgs.Empty);
+				if (!_initializing)
+					ValueChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
-		public ModernNumberStepper()
+		public ModernSettingsNumericUpDown()
 		{
 			SetStyle(
 				ControlStyles.UserPaint |
 				ControlStyles.AllPaintingInWmPaint |
 				ControlStyles.OptimizedDoubleBuffer |
+				ControlStyles.Opaque |
 				ControlStyles.ResizeRedraw |
 				ControlStyles.Selectable,
 				true);
 
 			AccessibleRole = AccessibleRole.SpinButton;
-			BackColor = SettingsPalette.Card;
-			Cursor = Cursors.Hand;
+			BackColor = SettingsPalette.Input;
+			Cursor = Cursors.IBeam;
 			Font = new Font("Segoe UI", 11F, FontStyle.Regular);
 			ForeColor = SettingsPalette.PrimaryText;
 			Size = new Size(112, 42);
 			TabStop = true;
+		}
+
+		protected override void OnPaintBackground(PaintEventArgs eventArgs)
+		{
+			// OnPaint covers every pixel. Suppressing the native background pass
+			// prevents disabled/focus states from flashing a system-white frame.
+		}
+
+		protected override void OnEnabledChanged(EventArgs eventArgs)
+		{
+			base.OnEnabledChanged(eventArgs);
+			BackColor = SettingsPalette.Input;
+			Invalidate();
+		}
+
+		public void BeginInit()
+		{
+			_initializing = true;
+		}
+
+		public void EndInit()
+		{
+			_initializing = false;
+			Value = _value;
+			_editBuffer = Value.ToString();
+			Invalidate();
 		}
 
 		protected override void OnMouseMove(MouseEventArgs eventArgs)
@@ -1016,6 +1159,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			int hoveredButton = 0;
 			if (eventArgs.X >= Width - 34)
 				hoveredButton = eventArgs.Y < Height / 2 ? 1 : 2;
+
+			Cursor = hoveredButton == 0 ? Cursors.IBeam : Cursors.Hand;
 
 			if (_hoveredButton != hoveredButton)
 			{
@@ -1028,9 +1173,19 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnMouseLeave(EventArgs eventArgs)
 		{
+			_mouseInside = false;
 			_hoveredButton = 0;
+			_pressedButton = 0;
+			Cursor = Cursors.IBeam;
 			Invalidate();
 			base.OnMouseLeave(eventArgs);
+		}
+
+		protected override void OnMouseEnter(EventArgs eventArgs)
+		{
+			_mouseInside = true;
+			Invalidate();
+			base.OnMouseEnter(eventArgs);
 		}
 
 		protected override void OnMouseDown(MouseEventArgs eventArgs)
@@ -1039,32 +1194,155 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			if (eventArgs.Button == MouseButtons.Left && eventArgs.X >= Width - 34)
 			{
-				Value += eventArgs.Y < Height / 2 ? 1 : -1;
+				_pressedButton = eventArgs.Y < Height / 2 ? 1 : 2;
+				Value += _pressedButton == 1 ? Increment : -Increment;
+				_editBuffer = Value.ToString();
+				_replaceOnNextInput = true;
+				Invalidate();
+			}
+			else if (eventArgs.Button == MouseButtons.Left)
+			{
+				_replaceOnNextInput = true;
+				Invalidate();
 			}
 
 			base.OnMouseDown(eventArgs);
 		}
 
+		protected override void OnMouseUp(MouseEventArgs eventArgs)
+		{
+			_pressedButton = 0;
+			Invalidate();
+			base.OnMouseUp(eventArgs);
+		}
+
 		protected override void OnMouseWheel(MouseEventArgs eventArgs)
 		{
-			Value += eventArgs.Delta > 0 ? 1 : -1;
+			if (Focused)
+			{
+				Value += eventArgs.Delta > 0 ? Increment : -Increment;
+				_editBuffer = Value.ToString();
+				_replaceOnNextInput = true;
+			}
 			base.OnMouseWheel(eventArgs);
+		}
+
+		protected override void OnGotFocus(EventArgs eventArgs)
+		{
+			_editBuffer = Value.ToString();
+			_replaceOnNextInput = true;
+			Invalidate();
+			base.OnGotFocus(eventArgs);
+		}
+
+		protected override void OnLostFocus(EventArgs eventArgs)
+		{
+			CommitEditBuffer();
+			_replaceOnNextInput = true;
+			Invalidate();
+			base.OnLostFocus(eventArgs);
+		}
+
+		protected override void OnKeyPress(KeyPressEventArgs eventArgs)
+		{
+			if (char.IsDigit(eventArgs.KeyChar))
+			{
+				if (_replaceOnNextInput)
+				{
+					_editBuffer = string.Empty;
+					_replaceOnNextInput = false;
+				}
+
+				if (_editBuffer.Length < 10)
+					_editBuffer += eventArgs.KeyChar;
+
+				ApplyValidEditBuffer();
+				Invalidate();
+				eventArgs.Handled = true;
+			}
+
+			base.OnKeyPress(eventArgs);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs eventArgs)
 		{
 			if (eventArgs.KeyCode == Keys.Up)
 			{
-				Value++;
+				Value += Increment;
+				_editBuffer = Value.ToString();
+				_replaceOnNextInput = true;
 				eventArgs.Handled = true;
 			}
 			else if (eventArgs.KeyCode == Keys.Down)
 			{
-				Value--;
+				Value -= Increment;
+				_editBuffer = Value.ToString();
+				_replaceOnNextInput = true;
+				eventArgs.Handled = true;
+			}
+			else if (eventArgs.KeyCode == Keys.Back)
+			{
+				if (_replaceOnNextInput)
+				{
+					_editBuffer = string.Empty;
+					_replaceOnNextInput = false;
+				}
+				else if (_editBuffer.Length > 0)
+				{
+					_editBuffer = _editBuffer[..^1];
+				}
+
+				ApplyValidEditBuffer();
+				Invalidate();
+				eventArgs.Handled = true;
+				eventArgs.SuppressKeyPress = true;
+			}
+			else if (eventArgs.KeyCode == Keys.Delete)
+			{
+				_editBuffer = string.Empty;
+				_replaceOnNextInput = false;
+				Invalidate();
+				eventArgs.Handled = true;
+			}
+			else if (eventArgs.KeyCode == Keys.Enter)
+			{
+				CommitEditBuffer();
+				_replaceOnNextInput = true;
+				eventArgs.Handled = true;
+				eventArgs.SuppressKeyPress = true;
+			}
+			else if (eventArgs.KeyCode == Keys.Escape)
+			{
+				_editBuffer = Value.ToString();
+				_replaceOnNextInput = true;
+				Invalidate();
+				eventArgs.Handled = true;
+			}
+			else if (eventArgs.Control && eventArgs.KeyCode == Keys.A)
+			{
+				_replaceOnNextInput = true;
 				eventArgs.Handled = true;
 			}
 
 			base.OnKeyDown(eventArgs);
+		}
+
+		private void ApplyValidEditBuffer()
+		{
+			if (int.TryParse(_editBuffer, out int parsedValue) &&
+				parsedValue >= Minimum &&
+				parsedValue <= Maximum)
+			{
+				Value = parsedValue;
+			}
+		}
+
+		private void CommitEditBuffer()
+		{
+			if (int.TryParse(_editBuffer, out int parsedValue))
+				Value = Math.Clamp(parsedValue, Minimum, Maximum);
+
+			_editBuffer = Value.ToString();
 		}
 
 		protected override void OnPaint(PaintEventArgs eventArgs)
@@ -1075,20 +1353,23 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			Rectangle bounds = new(0, 0, Width - 1, Height - 1);
 			using GraphicsPath path = RoundedGeometry.Create(bounds, 8);
-			using SolidBrush fillBrush = new(SettingsPalette.Input);
-			using Pen borderPen = new(
-				Focused ? SettingsPalette.Accent : SettingsPalette.BorderHover,
-				1F);
+			Color fillColor = SettingsPalette.Input;
+			using SolidBrush fillBrush = new(fillColor);
+			Color borderColor = SettingsPalette.Border;
+			using Pen borderPen = new(borderColor, 1F);
 			eventArgs.Graphics.FillPath(fillBrush, path);
 			eventArgs.Graphics.DrawPath(borderPen, path);
 
 			int buttonLeft = Width - 34;
-			if (_hoveredButton != 0)
+			if (Enabled && _hoveredButton != 0)
 			{
 				Rectangle hoverBounds = _hoveredButton == 1
 					? new Rectangle(buttonLeft + 1, 1, 32, Height / 2 - 1)
 					: new Rectangle(buttonLeft + 1, Height / 2, 32, Height / 2 - 1);
-				using SolidBrush hoverBrush = new(Color.FromArgb(30, SettingsPalette.Accent));
+				Color hoverColor = _pressedButton == _hoveredButton
+					? Color.FromArgb(52, SettingsPalette.Accent)
+					: Color.FromArgb(30, SettingsPalette.Accent);
+				using SolidBrush hoverBrush = new(hoverColor);
 				eventArgs.Graphics.FillRectangle(hoverBrush, hoverBounds);
 			}
 
@@ -1103,13 +1384,20 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
-				Value.ToString(),
+				Focused && !_replaceOnNextInput
+					? _editBuffer
+					: Value.ToString(),
 				Font,
 				new Rectangle(12, 0, buttonLeft - 16, Height),
-				ForeColor,
-				TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+				Enabled ? ForeColor : SettingsPalette.MutedText,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPrefix);
 
-			using Pen arrowPen = new(SettingsPalette.PrimaryText, 1.7F)
+			using Pen arrowPen = new(
+				Enabled ? SettingsPalette.PrimaryText : SettingsPalette.MutedText,
+				1.7F)
 			{
 				StartCap = LineCap.Round,
 				EndCap = LineCap.Round
@@ -1134,12 +1422,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 					new Point(centerX + 4, lowerY - 2)
 				});
 
-			if (Focused && ShowFocusCues)
-			{
-				Rectangle focusBounds = ClientRectangle;
-				focusBounds.Inflate(-3, -3);
-				ControlPaint.DrawFocusRectangle(eventArgs.Graphics, focusBounds);
-			}
 		}
 	}
 
@@ -1180,6 +1462,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			ForeColor = SettingsPalette.SecondaryText;
 			Font = new Font("Segoe UI", 10.5F, FontStyle.Regular);
 			TextAlign = ContentAlignment.MiddleLeft;
+			UseMnemonic = false;
 			Cursor = Cursors.Hand;
 			Size = new Size(180, 54);
 			Margin = new Padding(0, 0, 0, 8);
@@ -1252,7 +1535,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 				textColor,
 				TextFormatFlags.Left |
 				TextFormatFlags.VerticalCenter |
-				TextFormatFlags.EndEllipsis);
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPrefix);
 		}
 	}
 
