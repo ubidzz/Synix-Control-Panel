@@ -1548,8 +1548,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Myth of Empires",
 				AppID = "1794810",
-				ExeName = @"MOE\Binaries\Win64\MOEServer-Win64-Shipping.exe",
-				RequiredArgs = "{map}?Listen -server -log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -SteamAppId={steamAppID}",
+				ExeName = @"MOE\Binaries\Win64\MOEServer.exe",
+				RequiredArgs = "{map}?Listen -server -log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -PrivateServer -DataLocalFile -NotCheckServerSteamAuth -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
 				RelativeConfigPath = @"MOE\Saved\Config\WindowsServer\GameUserSettings.ini",

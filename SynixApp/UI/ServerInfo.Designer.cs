@@ -151,7 +151,7 @@ namespace Synix_Control_Panel.Help
 			shellLayout.RowCount = 2;
 			shellLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
 			shellLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-			shellLayout.Size = new Size(1118, 758);
+			shellLayout.Size = new Size(1118, 928);
 			shellLayout.TabIndex = 0;
 			// 
 			// titleBar
@@ -256,7 +256,7 @@ namespace Synix_Control_Panel.Help
 			contentScroll.Margin = new Padding(0);
 			contentScroll.Name = "contentScroll";
 			contentScroll.Padding = new Padding(28, 24, 28, 28);
-			contentScroll.Size = new Size(1118, 702);
+			contentScroll.Size = new Size(1118, 872);
 			contentScroll.TabIndex = 1;
 			// 
 			// contentLayout
@@ -281,7 +281,7 @@ namespace Synix_Control_Panel.Help
 			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
 			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 205F));
 			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-			contentLayout.Size = new Size(1045, 848);
+			contentLayout.Size = new Size(1062, 848);
 			contentLayout.TabIndex = 0;
 			// 
 			// headerPanel
@@ -294,7 +294,7 @@ namespace Synix_Control_Panel.Help
 			headerPanel.Location = new Point(0, 0);
 			headerPanel.Margin = new Padding(0);
 			headerPanel.Name = "headerPanel";
-			headerPanel.Size = new Size(1045, 80);
+			headerPanel.Size = new Size(1062, 80);
 			headerPanel.TabIndex = 0;
 			// 
 			// lblPageHeading
@@ -306,7 +306,7 @@ namespace Synix_Control_Panel.Help
 			lblPageHeading.ForeColor = Color.FromArgb(245, 247, 251);
 			lblPageHeading.Location = new Point(2, 3);
 			lblPageHeading.Name = "lblPageHeading";
-			lblPageHeading.Size = new Size(850, 43);
+			lblPageHeading.Size = new Size(867, 43);
 			lblPageHeading.TabIndex = 0;
 			lblPageHeading.Text = "Server Overview";
 			// 
@@ -319,7 +319,7 @@ namespace Synix_Control_Panel.Help
 			lblPageSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
 			lblPageSubtitle.Location = new Point(4, 49);
 			lblPageSubtitle.Name = "lblPageSubtitle";
-			lblPageSubtitle.Size = new Size(900, 24);
+			lblPageSubtitle.Size = new Size(917, 24);
 			lblPageSubtitle.TabIndex = 1;
 			lblPageSubtitle.Text = "Live performance and configuration details";
 			// 
@@ -329,7 +329,7 @@ namespace Synix_Control_Panel.Help
 			lblLiveIndicator.BackColor = Color.FromArgb(28, 75, 91);
 			lblLiveIndicator.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
 			lblLiveIndicator.ForeColor = Color.FromArgb(32, 214, 199);
-			lblLiveIndicator.Location = new Point(910, 10);
+			lblLiveIndicator.Location = new Point(927, 10);
 			lblLiveIndicator.Name = "lblLiveIndicator";
 			lblLiveIndicator.Size = new Size(128, 28);
 			lblLiveIndicator.TabIndex = 2;
@@ -352,7 +352,7 @@ namespace Synix_Control_Panel.Help
 			metricsLayout.Name = "metricsLayout";
 			metricsLayout.RowCount = 1;
 			metricsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-			metricsLayout.Size = new Size(1045, 132);
+			metricsLayout.Size = new Size(1062, 132);
 			metricsLayout.TabIndex = 1;
 			// 
 			// pnlCpuCard
@@ -369,7 +369,7 @@ namespace Synix_Control_Panel.Help
 			pnlCpuCard.Location = new Point(0, 0);
 			pnlCpuCard.Margin = new Padding(0, 0, 8, 0);
 			pnlCpuCard.Name = "pnlCpuCard";
-			pnlCpuCard.Size = new Size(340, 132);
+			pnlCpuCard.Size = new Size(345, 132);
 			pnlCpuCard.TabIndex = 0;
 			// 
 			// lblCpuTitle
@@ -405,7 +405,7 @@ namespace Synix_Control_Panel.Help
 			lblCpuCaption.ForeColor = Color.FromArgb(105, 124, 153);
 			lblCpuCaption.Location = new Point(22, 80);
 			lblCpuCaption.Name = "lblCpuCaption";
-			lblCpuCaption.Size = new Size(295, 19);
+			lblCpuCaption.Size = new Size(300, 19);
 			lblCpuCaption.TabIndex = 2;
 			lblCpuCaption.Text = "Waiting for a running server process";
 			// 
@@ -416,7 +416,7 @@ namespace Synix_Control_Panel.Help
 			pnlCpuTrack.Controls.Add(pnlCpuFill);
 			pnlCpuTrack.Location = new Point(22, 108);
 			pnlCpuTrack.Name = "pnlCpuTrack";
-			pnlCpuTrack.Size = new Size(295, 8);
+			pnlCpuTrack.Size = new Size(300, 8);
 			pnlCpuTrack.TabIndex = 3;
 			pnlCpuTrack.SizeChanged += MetricTrack_SizeChanged;
 			// 
@@ -439,10 +439,10 @@ namespace Synix_Control_Panel.Help
 			pnlRamCard.CornerRadius = 14;
 			pnlRamCard.Dock = DockStyle.Fill;
 			pnlRamCard.FillColor = Color.FromArgb(17, 27, 45);
-			pnlRamCard.Location = new Point(356, 0);
+			pnlRamCard.Location = new Point(361, 0);
 			pnlRamCard.Margin = new Padding(8, 0, 8, 0);
 			pnlRamCard.Name = "pnlRamCard";
-			pnlRamCard.Size = new Size(332, 132);
+			pnlRamCard.Size = new Size(337, 132);
 			pnlRamCard.TabIndex = 1;
 			// 
 			// lblRamTitle
@@ -478,7 +478,7 @@ namespace Synix_Control_Panel.Help
 			lblRamCaption.ForeColor = Color.FromArgb(105, 124, 153);
 			lblRamCaption.Location = new Point(22, 80);
 			lblRamCaption.Name = "lblRamCaption";
-			lblRamCaption.Size = new Size(287, 19);
+			lblRamCaption.Size = new Size(292, 19);
 			lblRamCaption.TabIndex = 2;
 			lblRamCaption.Text = "0.0% of system memory";
 			// 
@@ -489,7 +489,7 @@ namespace Synix_Control_Panel.Help
 			pnlRamTrack.Controls.Add(pnlRamFill);
 			pnlRamTrack.Location = new Point(22, 108);
 			pnlRamTrack.Name = "pnlRamTrack";
-			pnlRamTrack.Size = new Size(287, 8);
+			pnlRamTrack.Size = new Size(292, 8);
 			pnlRamTrack.TabIndex = 3;
 			pnlRamTrack.SizeChanged += MetricTrack_SizeChanged;
 			// 
@@ -514,10 +514,10 @@ namespace Synix_Control_Panel.Help
 			pnlStatusCard.CornerRadius = 14;
 			pnlStatusCard.Dock = DockStyle.Fill;
 			pnlStatusCard.FillColor = Color.FromArgb(17, 27, 45);
-			pnlStatusCard.Location = new Point(704, 0);
+			pnlStatusCard.Location = new Point(714, 0);
 			pnlStatusCard.Margin = new Padding(8, 0, 0, 0);
 			pnlStatusCard.Name = "pnlStatusCard";
-			pnlStatusCard.Size = new Size(341, 132);
+			pnlStatusCard.Size = new Size(348, 132);
 			pnlStatusCard.TabIndex = 2;
 			// 
 			// pnlStatusIndicator
@@ -549,7 +549,7 @@ namespace Synix_Control_Panel.Help
 			lblStatusCardValue.ForeColor = Color.FromArgb(248, 113, 113);
 			lblStatusCardValue.Location = new Point(19, 37);
 			lblStatusCardValue.Name = "lblStatusCardValue";
-			lblStatusCardValue.Size = new Size(299, 39);
+			lblStatusCardValue.Size = new Size(306, 39);
 			lblStatusCardValue.TabIndex = 2;
 			lblStatusCardValue.Text = "Stopped";
 			// 
@@ -562,7 +562,7 @@ namespace Synix_Control_Panel.Help
 			lblStatusCaption.ForeColor = Color.FromArgb(105, 124, 153);
 			lblStatusCaption.Location = new Point(22, 77);
 			lblStatusCaption.Name = "lblStatusCaption";
-			lblStatusCaption.Size = new Size(296, 18);
+			lblStatusCaption.Size = new Size(303, 18);
 			lblStatusCaption.TabIndex = 3;
 			lblStatusCaption.Text = "The game server process is not running";
 			// 
@@ -604,7 +604,7 @@ namespace Synix_Control_Panel.Help
 			detailsLayout.Name = "detailsLayout";
 			detailsLayout.RowCount = 1;
 			detailsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-			detailsLayout.Size = new Size(1045, 375);
+			detailsLayout.Size = new Size(1062, 375);
 			detailsLayout.TabIndex = 2;
 			// 
 			// pnlDetailsCard
@@ -620,7 +620,7 @@ namespace Synix_Control_Panel.Help
 			pnlDetailsCard.Location = new Point(0, 0);
 			pnlDetailsCard.Margin = new Padding(0, 0, 8, 0);
 			pnlDetailsCard.Name = "pnlDetailsCard";
-			pnlDetailsCard.Size = new Size(514, 375);
+			pnlDetailsCard.Size = new Size(523, 375);
 			pnlDetailsCard.TabIndex = 0;
 			// 
 			// lblDetailsTitle
@@ -644,7 +644,7 @@ namespace Synix_Control_Panel.Help
 			lblDetailsSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
 			lblDetailsSubtitle.Location = new Point(24, 49);
 			lblDetailsSubtitle.Name = "lblDetailsSubtitle";
-			lblDetailsSubtitle.Size = new Size(466, 20);
+			lblDetailsSubtitle.Size = new Size(475, 20);
 			lblDetailsSubtitle.TabIndex = 1;
 			lblDetailsSubtitle.Text = "Identity, world, player, and network information";
 			// 
@@ -689,7 +689,7 @@ namespace Synix_Control_Panel.Help
 			detailsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
 			detailsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
 			detailsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-			detailsTable.Size = new Size(470, 272);
+			detailsTable.Size = new Size(479, 272);
 			detailsTable.TabIndex = 2;
 			// 
 			// lblServerNameCaption
@@ -717,7 +717,7 @@ namespace Synix_Control_Panel.Help
 			lblServerNameText.Location = new Point(132, 0);
 			lblServerNameText.Margin = new Padding(0);
 			lblServerNameText.Name = "lblServerNameText";
-			lblServerNameText.Size = new Size(338, 27);
+			lblServerNameText.Size = new Size(347, 27);
 			lblServerNameText.TabIndex = 1;
 			lblServerNameText.Text = "My Dedicated Server";
 			lblServerNameText.TextAlign = ContentAlignment.MiddleLeft;
@@ -747,7 +747,7 @@ namespace Synix_Control_Panel.Help
 			lblGameServerText.Location = new Point(132, 27);
 			lblGameServerText.Margin = new Padding(0);
 			lblGameServerText.Name = "lblGameServerText";
-			lblGameServerText.Size = new Size(338, 27);
+			lblGameServerText.Size = new Size(347, 27);
 			lblGameServerText.TabIndex = 3;
 			lblGameServerText.Text = "Example Game";
 			lblGameServerText.TextAlign = ContentAlignment.MiddleLeft;
@@ -777,7 +777,7 @@ namespace Synix_Control_Panel.Help
 			lblGameVersion.Location = new Point(132, 54);
 			lblGameVersion.Margin = new Padding(0);
 			lblGameVersion.Name = "lblGameVersion";
-			lblGameVersion.Size = new Size(338, 27);
+			lblGameVersion.Size = new Size(347, 27);
 			lblGameVersion.TabIndex = 5;
 			lblGameVersion.Text = "N/A";
 			lblGameVersion.TextAlign = ContentAlignment.MiddleLeft;
@@ -807,7 +807,7 @@ namespace Synix_Control_Panel.Help
 			lblMapText.Location = new Point(132, 81);
 			lblMapText.Margin = new Padding(0);
 			lblMapText.Name = "lblMapText";
-			lblMapText.Size = new Size(338, 27);
+			lblMapText.Size = new Size(347, 27);
 			lblMapText.TabIndex = 7;
 			lblMapText.Text = "Main World";
 			lblMapText.TextAlign = ContentAlignment.MiddleLeft;
@@ -837,7 +837,7 @@ namespace Synix_Control_Panel.Help
 			lblSeedText.Location = new Point(132, 108);
 			lblSeedText.Margin = new Padding(0);
 			lblSeedText.Name = "lblSeedText";
-			lblSeedText.Size = new Size(338, 27);
+			lblSeedText.Size = new Size(347, 27);
 			lblSeedText.TabIndex = 9;
 			lblSeedText.Text = "12345";
 			lblSeedText.TextAlign = ContentAlignment.MiddleLeft;
@@ -867,7 +867,7 @@ namespace Synix_Control_Panel.Help
 			lblCompetitiveText.Location = new Point(132, 135);
 			lblCompetitiveText.Margin = new Padding(0);
 			lblCompetitiveText.Name = "lblCompetitiveText";
-			lblCompetitiveText.Size = new Size(338, 27);
+			lblCompetitiveText.Size = new Size(347, 27);
 			lblCompetitiveText.TabIndex = 11;
 			lblCompetitiveText.Text = "PVE";
 			lblCompetitiveText.TextAlign = ContentAlignment.MiddleLeft;
@@ -897,7 +897,7 @@ namespace Synix_Control_Panel.Help
 			lblMaxPlayersText.Location = new Point(132, 162);
 			lblMaxPlayersText.Margin = new Padding(0);
 			lblMaxPlayersText.Name = "lblMaxPlayersText";
-			lblMaxPlayersText.Size = new Size(338, 27);
+			lblMaxPlayersText.Size = new Size(347, 27);
 			lblMaxPlayersText.TabIndex = 13;
 			lblMaxPlayersText.Text = "10";
 			lblMaxPlayersText.TextAlign = ContentAlignment.MiddleLeft;
@@ -927,7 +927,7 @@ namespace Synix_Control_Panel.Help
 			lblGamePortText.Location = new Point(132, 189);
 			lblGamePortText.Margin = new Padding(0);
 			lblGamePortText.Name = "lblGamePortText";
-			lblGamePortText.Size = new Size(338, 27);
+			lblGamePortText.Size = new Size(347, 27);
 			lblGamePortText.TabIndex = 15;
 			lblGamePortText.Text = "7777";
 			lblGamePortText.TextAlign = ContentAlignment.MiddleLeft;
@@ -957,7 +957,7 @@ namespace Synix_Control_Panel.Help
 			lblQueryPortText.Location = new Point(132, 216);
 			lblQueryPortText.Margin = new Padding(0);
 			lblQueryPortText.Name = "lblQueryPortText";
-			lblQueryPortText.Size = new Size(338, 27);
+			lblQueryPortText.Size = new Size(347, 27);
 			lblQueryPortText.TabIndex = 17;
 			lblQueryPortText.Text = "27015";
 			lblQueryPortText.TextAlign = ContentAlignment.MiddleLeft;
@@ -987,7 +987,7 @@ namespace Synix_Control_Panel.Help
 			lblAppPortText.Location = new Point(132, 243);
 			lblAppPortText.Margin = new Padding(0);
 			lblAppPortText.Name = "lblAppPortText";
-			lblAppPortText.Size = new Size(338, 29);
+			lblAppPortText.Size = new Size(347, 29);
 			lblAppPortText.TabIndex = 19;
 			lblAppPortText.Text = "N/A";
 			lblAppPortText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1002,10 +1002,10 @@ namespace Synix_Control_Panel.Help
 			pnlConfigurationCard.CornerRadius = 14;
 			pnlConfigurationCard.Dock = DockStyle.Fill;
 			pnlConfigurationCard.FillColor = Color.FromArgb(17, 27, 45);
-			pnlConfigurationCard.Location = new Point(530, 0);
+			pnlConfigurationCard.Location = new Point(539, 0);
 			pnlConfigurationCard.Margin = new Padding(8, 0, 0, 0);
 			pnlConfigurationCard.Name = "pnlConfigurationCard";
-			pnlConfigurationCard.Size = new Size(515, 375);
+			pnlConfigurationCard.Size = new Size(523, 375);
 			pnlConfigurationCard.TabIndex = 1;
 			// 
 			// lblConfigurationTitle
@@ -1029,7 +1029,7 @@ namespace Synix_Control_Panel.Help
 			lblConfigurationSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
 			lblConfigurationSubtitle.Location = new Point(24, 49);
 			lblConfigurationSubtitle.Name = "lblConfigurationSubtitle";
-			lblConfigurationSubtitle.Size = new Size(467, 20);
+			lblConfigurationSubtitle.Size = new Size(475, 20);
 			lblConfigurationSubtitle.TabIndex = 1;
 			lblConfigurationSubtitle.Text = "Access controls, startup behavior, and integrations";
 			// 
@@ -1071,7 +1071,7 @@ namespace Synix_Control_Panel.Help
 			configurationTable.RowStyles.Add(new RowStyle(SizeType.Percent, 11.11111F));
 			configurationTable.RowStyles.Add(new RowStyle(SizeType.Percent, 11.11111F));
 			configurationTable.RowStyles.Add(new RowStyle(SizeType.Percent, 11.11112F));
-			configurationTable.Size = new Size(471, 272);
+			configurationTable.Size = new Size(479, 272);
 			configurationTable.TabIndex = 2;
 			// 
 			// lblServerPasswordCaption
@@ -1099,7 +1099,7 @@ namespace Synix_Control_Panel.Help
 			lblServerPasswordText.Location = new Point(150, 0);
 			lblServerPasswordText.Margin = new Padding(0);
 			lblServerPasswordText.Name = "lblServerPasswordText";
-			lblServerPasswordText.Size = new Size(321, 30);
+			lblServerPasswordText.Size = new Size(329, 30);
 			lblServerPasswordText.TabIndex = 1;
 			lblServerPasswordText.Text = "Not Required";
 			lblServerPasswordText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1129,7 +1129,7 @@ namespace Synix_Control_Panel.Help
 			lblServerAdminPasswordText.Location = new Point(150, 30);
 			lblServerAdminPasswordText.Margin = new Padding(0);
 			lblServerAdminPasswordText.Name = "lblServerAdminPasswordText";
-			lblServerAdminPasswordText.Size = new Size(321, 30);
+			lblServerAdminPasswordText.Size = new Size(329, 30);
 			lblServerAdminPasswordText.TabIndex = 3;
 			lblServerAdminPasswordText.Text = "Not Required";
 			lblServerAdminPasswordText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1159,7 +1159,7 @@ namespace Synix_Control_Panel.Help
 			lblRconActiveText.Location = new Point(150, 60);
 			lblRconActiveText.Margin = new Padding(0);
 			lblRconActiveText.Name = "lblRconActiveText";
-			lblRconActiveText.Size = new Size(321, 30);
+			lblRconActiveText.Size = new Size(329, 30);
 			lblRconActiveText.TabIndex = 5;
 			lblRconActiveText.Text = "Off";
 			lblRconActiveText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1189,7 +1189,7 @@ namespace Synix_Control_Panel.Help
 			lblRconPortText.Location = new Point(150, 90);
 			lblRconPortText.Margin = new Padding(0);
 			lblRconPortText.Name = "lblRconPortText";
-			lblRconPortText.Size = new Size(321, 30);
+			lblRconPortText.Size = new Size(329, 30);
 			lblRconPortText.TabIndex = 7;
 			lblRconPortText.Text = "27016";
 			lblRconPortText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1219,7 +1219,7 @@ namespace Synix_Control_Panel.Help
 			lblRconPasswordText.Location = new Point(150, 120);
 			lblRconPasswordText.Margin = new Padding(0);
 			lblRconPasswordText.Name = "lblRconPasswordText";
-			lblRconPasswordText.Size = new Size(321, 30);
+			lblRconPasswordText.Size = new Size(329, 30);
 			lblRconPasswordText.TabIndex = 9;
 			lblRconPasswordText.Text = "Not Required";
 			lblRconPasswordText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1249,7 +1249,7 @@ namespace Synix_Control_Panel.Help
 			lblBackupOnStartText.Location = new Point(150, 150);
 			lblBackupOnStartText.Margin = new Padding(0);
 			lblBackupOnStartText.Name = "lblBackupOnStartText";
-			lblBackupOnStartText.Size = new Size(321, 30);
+			lblBackupOnStartText.Size = new Size(329, 30);
 			lblBackupOnStartText.TabIndex = 11;
 			lblBackupOnStartText.Text = "Off";
 			lblBackupOnStartText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1279,7 +1279,7 @@ namespace Synix_Control_Panel.Help
 			lbllUpdateOnStartText.Location = new Point(150, 180);
 			lbllUpdateOnStartText.Margin = new Padding(0);
 			lbllUpdateOnStartText.Name = "lbllUpdateOnStartText";
-			lbllUpdateOnStartText.Size = new Size(321, 30);
+			lbllUpdateOnStartText.Size = new Size(329, 30);
 			lbllUpdateOnStartText.TabIndex = 13;
 			lbllUpdateOnStartText.Text = "Off";
 			lbllUpdateOnStartText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1309,7 +1309,7 @@ namespace Synix_Control_Panel.Help
 			lblDiscordActivateText.Location = new Point(150, 210);
 			lblDiscordActivateText.Margin = new Padding(0);
 			lblDiscordActivateText.Name = "lblDiscordActivateText";
-			lblDiscordActivateText.Size = new Size(321, 30);
+			lblDiscordActivateText.Size = new Size(329, 30);
 			lblDiscordActivateText.TabIndex = 15;
 			lblDiscordActivateText.Text = "Off";
 			lblDiscordActivateText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1339,7 +1339,7 @@ namespace Synix_Control_Panel.Help
 			lblAutoRestartText.Location = new Point(150, 240);
 			lblAutoRestartText.Margin = new Padding(0);
 			lblAutoRestartText.Name = "lblAutoRestartText";
-			lblAutoRestartText.Size = new Size(321, 32);
+			lblAutoRestartText.Size = new Size(329, 32);
 			lblAutoRestartText.TabIndex = 17;
 			lblAutoRestartText.Text = "No Days Scheduled";
 			lblAutoRestartText.TextAlign = ContentAlignment.MiddleLeft;
@@ -1357,7 +1357,7 @@ namespace Synix_Control_Panel.Help
 			pnlPathsCard.Location = new Point(0, 619);
 			pnlPathsCard.Margin = new Padding(0);
 			pnlPathsCard.Name = "pnlPathsCard";
-			pnlPathsCard.Size = new Size(1045, 205);
+			pnlPathsCard.Size = new Size(1062, 205);
 			pnlPathsCard.TabIndex = 3;
 			// 
 			// lblPathsTitle
@@ -1381,7 +1381,7 @@ namespace Synix_Control_Panel.Help
 			lblPathsSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
 			lblPathsSubtitle.Location = new Point(24, 49);
 			lblPathsSubtitle.Name = "lblPathsSubtitle";
-			lblPathsSubtitle.Size = new Size(997, 20);
+			lblPathsSubtitle.Size = new Size(1014, 20);
 			lblPathsSubtitle.TabIndex = 1;
 			lblPathsSubtitle.Text = "Read-only values can be selected and copied for diagnostics";
 			// 
@@ -1405,7 +1405,7 @@ namespace Synix_Control_Panel.Help
 			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33333F));
 			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33333F));
 			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33334F));
-			pathsTable.Size = new Size(1001, 105);
+			pathsTable.Size = new Size(1018, 105);
 			pathsTable.TabIndex = 2;
 			// 
 			// lblServerFolderCaption
@@ -1433,7 +1433,7 @@ namespace Synix_Control_Panel.Help
 			txtServerFolderValue.Margin = new Padding(0, 3, 0, 5);
 			txtServerFolderValue.Name = "txtServerFolderValue";
 			txtServerFolderValue.ReadOnly = true;
-			txtServerFolderValue.Size = new Size(859, 24);
+			txtServerFolderValue.Size = new Size(876, 24);
 			txtServerFolderValue.TabIndex = 1;
 			txtServerFolderValue.TabStop = false;
 			txtServerFolderValue.Text = "C:\\Synix\\Games\\Example Server";
@@ -1463,7 +1463,7 @@ namespace Synix_Control_Panel.Help
 			txtDiscordWebhookValue.Margin = new Padding(0, 3, 0, 5);
 			txtDiscordWebhookValue.Name = "txtDiscordWebhookValue";
 			txtDiscordWebhookValue.ReadOnly = true;
-			txtDiscordWebhookValue.Size = new Size(859, 24);
+			txtDiscordWebhookValue.Size = new Size(876, 24);
 			txtDiscordWebhookValue.TabIndex = 3;
 			txtDiscordWebhookValue.TabStop = false;
 			txtDiscordWebhookValue.Text = "Not Configured";
@@ -1493,7 +1493,7 @@ namespace Synix_Control_Panel.Help
 			txtExtraArgsValue.Margin = new Padding(0, 3, 0, 5);
 			txtExtraArgsValue.Name = "txtExtraArgsValue";
 			txtExtraArgsValue.ReadOnly = true;
-			txtExtraArgsValue.Size = new Size(859, 24);
+			txtExtraArgsValue.Size = new Size(876, 24);
 			txtExtraArgsValue.TabIndex = 5;
 			txtExtraArgsValue.TabStop = false;
 			txtExtraArgsValue.Text = "No extra arguments";
@@ -1503,7 +1503,7 @@ namespace Synix_Control_Panel.Help
 			AutoScaleDimensions = new SizeF(96F, 96F);
 			AutoScaleMode = AutoScaleMode.Dpi;
 			BackColor = Color.FromArgb(38, 52, 77);
-			ClientSize = new Size(1120, 760);
+			ClientSize = new Size(1120, 930);
 			Controls.Add(shellLayout);
 			Font = new Font("Segoe UI", 9F);
 			ForeColor = Color.FromArgb(245, 247, 251);

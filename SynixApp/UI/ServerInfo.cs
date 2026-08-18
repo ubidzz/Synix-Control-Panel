@@ -317,9 +317,7 @@ namespace Synix_Control_Panel.Help
 			_currentRamPercentage = Math.Clamp(ramGb / totalRam * 100.0, 0, 100);
 			lblRamCardValue.Text = $"{ramGb:0.00} GB";
 			lblRamCaption.Text = $"{_currentRamPercentage:0.0}% of {totalRam:0.#} GB system memory";
-			lblProcessIdValue.Text = _server.PID.HasValue && _server.PID.Value > 0
-				? _server.PID.Value.ToString("N0")
-				: "—";
+			lblProcessIdValue.Text = _server.PID.HasValue && _server.PID.Value > 0 ? _server.PID.Value.ToString() : "—";
 
 			UpdateMetricBar(pnlCpuTrack, pnlCpuFill, _currentCpuPercentage);
 			UpdateMetricBar(pnlRamTrack, pnlRamFill, _currentRamPercentage);
