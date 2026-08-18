@@ -2,181 +2,469 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
+using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel
 {
 	public partial class ResourceMonitorGUI : Form
 	{
-		private Bitmap? _scaledBackground;
+		private const uint WdaExcludeFromCapture = 0x00000011;
+		private const int WmNcHitTest = 0x0084;
+		private const int WmNcLeftButtonDown = 0x00A1;
+		private const int HtCaption = 0x0002;
+		private const int HtLeft = 10;
+		private const int HtRight = 11;
+		private const int HtTop = 12;
+		private const int HtTopLeft = 13;
+		private const int HtTopRight = 14;
+		private const int HtBottom = 15;
+		private const int HtBottomLeft = 16;
+		private const int HtBottomRight = 17;
+		private const int DwmWindowCornerPreference = 33;
+		private const int DwmRound = 2;
+		private const int ResizeBorder = 7;
+
+		private static readonly Color AccentColor = Color.FromArgb(32, 214, 199);
+		private static readonly Color RamColor = Color.FromArgb(167, 139, 250);
+		private static readonly Color SuccessColor = Color.FromArgb(52, 211, 153);
+		private static readonly Color WarningColor = Color.FromArgb(245, 185, 76);
+		private static readonly Color DangerColor = Color.FromArgb(248, 113, 113);
+		private static readonly Color TrackColor = Color.FromArgb(32, 45, 66);
+
+		private readonly Dictionary<int, DataGridViewRow> _rowsByProcessId = new();
+		private double _currentTotalCpuPercentage;
+		private double _currentTotalRamPercentage;
+		private bool _isRefreshing;
 
 		public ResourceMonitorGUI()
 		{
 			InitializeComponent();
+		}
 
-			PropertyInfo? cp = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
+		protected override void OnShown(EventArgs eventArgs)
+		{
+			base.OnShown(eventArgs);
 
-			cp?.SetValue(listViewResources, true, null);
+			PropertyInfo? doubleBufferedProperty = typeof(DataGridView).GetProperty(
+				"DoubleBuffered",
+				BindingFlags.NonPublic | BindingFlags.Instance);
+			doubleBufferedProperty?.SetValue(resourceGrid, true, null);
 
-			listViewResources.Columns[0].Width = 60;
-			listViewResources.Columns[1].Width = 180;
-			listViewResources.Columns[2].Width = 80;
-			listViewResources.Columns[3].Width = 80;
-			listViewResources.Columns[4].Width = 200;
-			listViewResources.OwnerDraw = true;
-
-			listViewResources_Resize(listViewResources, EventArgs.Empty);
-
+			UpdateMetricBars();
 			tmrRefresh_Tick(this, EventArgs.Empty);
+			tmrRefresh.Start();
 		}
 
-		private void tmrRefresh_Tick(object sender, EventArgs e)
+		protected override void OnHandleCreated(EventArgs eventArgs)
 		{
-			listViewResources.BeginUpdate();
-			listViewResources.Items.Clear();
+			base.OnHandleCreated(eventArgs);
 
-			var totalUsage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
-
-			foreach (var server in MainGUI.serverList.ToList())
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
 			{
-				if (server.RunningProcess == null || server.RunningProcess.HasExited) continue;
-
-				try
-				{
-					server.RunningProcess.Refresh();
-					string pid = server.RunningProcess.Id.ToString();
-					string name = server.ServerName;
-					string exe = server.RunningProcess.ProcessName + ".exe";
-
-					double currentCpuMillis = server.RunningProcess.TotalProcessorTime.TotalMilliseconds;
-					DateTime currentTime = DateTime.Now;
-					double cpuUsedMs = currentCpuMillis - server.LastCpuMillis;
-					double elapsedMs = (currentTime - server.LastSampleTime).TotalMilliseconds;
-					double cpuPercent = (cpuUsedMs / (elapsedMs * Environment.ProcessorCount)) * 100;
-					if (cpuPercent < 0 || server.LastCpuMillis == 0) cpuPercent = 0;
-					server.LastCpuMillis = currentCpuMillis;
-					server.LastSampleTime = currentTime;
-					string cpuDisplay = cpuPercent.ToString("N1") + "%";
-					string ramDisplay = (server.RunningProcess.WorkingSet64 / 1024.0 / 1024.0 / 1024.0).ToString("N2") + " GB";
-					ListViewItem row = new ListViewItem(pid);
-					row.SubItems.Add(name);
-					row.SubItems.Add(cpuDisplay);
-					row.SubItems.Add(ramDisplay);
-					row.SubItems.Add(exe);
-					row.Tag = true;
-
-					listViewResources.Items.Add(row);
-				}
-				catch { continue; }
+				return;
 			}
 
-			lblTotalCpu.Text = $"Total CPU Usage: {totalUsage.TotalCpuPercent:N1}%";
+			if (Properties.Settings.Default.PrivacyMode)
+			{
+				_ = SetWindowDisplayAffinity(Handle, WdaExcludeFromCapture);
+			}
+
+			try
+			{
+				int preference = DwmRound;
+				_ = DwmSetWindowAttribute(
+					Handle,
+					DwmWindowCornerPreference,
+					ref preference,
+					sizeof(int));
+			}
+			catch
+			{
+				// Older Windows versions do not support rounded DWM corners.
+			}
+		}
+
+		protected override void WndProc(ref Message message)
+		{
+			base.WndProc(ref message);
+
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
+				message.Msg != WmNcHitTest ||
+				WindowState == FormWindowState.Maximized)
+			{
+				return;
+			}
+
+			Point cursor = PointToClient(Cursor.Position);
+			bool left = cursor.X <= ResizeBorder;
+			bool right = cursor.X >= ClientSize.Width - ResizeBorder;
+			bool top = cursor.Y <= ResizeBorder;
+			bool bottom = cursor.Y >= ClientSize.Height - ResizeBorder;
+
+			if (left && top) message.Result = (IntPtr)HtTopLeft;
+			else if (right && top) message.Result = (IntPtr)HtTopRight;
+			else if (left && bottom) message.Result = (IntPtr)HtBottomLeft;
+			else if (right && bottom) message.Result = (IntPtr)HtBottomRight;
+			else if (left) message.Result = (IntPtr)HtLeft;
+			else if (right) message.Result = (IntPtr)HtRight;
+			else if (top) message.Result = (IntPtr)HtTop;
+			else if (bottom) message.Result = (IntPtr)HtBottom;
+		}
+
+		protected override bool ProcessCmdKey(ref Message message, Keys keyData)
+		{
+			if (keyData == Keys.Escape)
+			{
+				Close();
+				return true;
+			}
+
+			return base.ProcessCmdKey(ref message, keyData);
+		}
+
+		private void tmrRefresh_Tick(object? sender, EventArgs eventArgs)
+		{
+			if (_isRefreshing || IsDisposed || Disposing)
+			{
+				return;
+			}
+
+			_isRefreshing = true;
+			resourceGrid.SuspendLayout();
+
+			try
+			{
+				var serverSnapshot = MainGUI.serverList.ToList();
+				var totalUsage = ResourceMonitor.CalculateUsage(serverSnapshot);
+				HashSet<int> sampledProcessIds = new();
+
+				foreach (var server in serverSnapshot)
+				{
+					var process = server.RunningProcess;
+					if (process == null)
+					{
+						continue;
+					}
+
+					try
+					{
+						if (process.HasExited)
+						{
+							continue;
+						}
+
+						process.Refresh();
+						double currentCpuMilliseconds = process.TotalProcessorTime.TotalMilliseconds;
+						DateTime currentTime = DateTime.Now;
+						double elapsedMilliseconds =
+							(currentTime - server.LastSampleTime).TotalMilliseconds;
+						double cpuPercentage = 0;
+
+						if (server.LastCpuMillis > 0 && elapsedMilliseconds > 0)
+						{
+							double usedCpuMilliseconds =
+								currentCpuMilliseconds - server.LastCpuMillis;
+							cpuPercentage = usedCpuMilliseconds /
+								(elapsedMilliseconds * Environment.ProcessorCount) * 100.0;
+						}
+
+						server.LastCpuMillis = currentCpuMilliseconds;
+						server.LastSampleTime = currentTime;
+
+						cpuPercentage = Math.Clamp(cpuPercentage, 0, 100);
+						double ramGb = process.WorkingSet64 /
+							1024.0 / 1024.0 / 1024.0;
+						double totalSystemRamGb = GetTotalSystemRamGb();
+						double ramPercentage = Math.Clamp(
+							ramGb / totalSystemRamGb * 100.0,
+							0,
+							100);
+
+						int processId = process.Id;
+						string executableName = process.ProcessName + ".exe";
+						if (!sampledProcessIds.Add(processId))
+						{
+							continue;
+						}
+
+						if (!_rowsByProcessId.TryGetValue(processId, out DataGridViewRow? row))
+						{
+							int rowIndex = resourceGrid.Rows.Add();
+							row = resourceGrid.Rows[rowIndex];
+							row.Cells[colStatus.Index].Style.ForeColor = SuccessColor;
+							_rowsByProcessId.Add(processId, row);
+						}
+
+						row.SetValues(
+							"●  Running",
+							server.ServerName,
+							processId.ToString(),
+							executableName,
+							$"{cpuPercentage:N1}%",
+							$"{ramGb:N2} GB");
+
+						row.Cells[colCpuUsage.Index].Tag = cpuPercentage;
+						row.Cells[colRamUsage.Index].Tag = ramPercentage;
+					}
+					catch (InvalidOperationException)
+					{
+						// The process exited between the checks above.
+					}
+					catch (Win32Exception)
+					{
+						// Windows denied access to this process sample.
+					}
+				}
+
+				foreach (int staleProcessId in _rowsByProcessId.Keys
+					.Where(processId => !sampledProcessIds.Contains(processId))
+					.ToList())
+				{
+					DataGridViewRow staleRow = _rowsByProcessId[staleProcessId];
+					resourceGrid.Rows.Remove(staleRow);
+					_rowsByProcessId.Remove(staleProcessId);
+				}
+
+				UpdateSummaryCards(totalUsage, sampledProcessIds.Count);
+				resourceGrid.ClearSelection();
+				resourceGrid.CurrentCell = null;
+				resourceGrid.Invalidate();
+			}
+			catch (InvalidOperationException)
+			{
+				lblLastUpdated.Text =
+					"Server list changed during sampling  •  Retrying automatically";
+			}
+			finally
+			{
+				resourceGrid.ResumeLayout();
+				_isRefreshing = false;
+			}
+		}
+
+		private void UpdateSummaryCards(
+			ResourceMonitor.ServerUsage totalUsage,
+			int runningServerCount)
+		{
+			_currentTotalCpuPercentage = Math.Clamp(
+				totalUsage.TotalCpuPercent,
+				0,
+				100);
+
 			double totalRamGb = totalUsage.TotalRamMB / 1024.0;
-			double maxUsable = MainGUI.Instance?.systemTotalRamGb ?? 91.0;
-			double ramPercent = (totalRamGb / maxUsable) * 100;
-			lblTotalRam.Text = $"Total RAM Usage: {totalRamGb:N2} GB / {maxUsable:N1} GB ({ramPercent:N1}%)";
+			double totalSystemRamGb = GetTotalSystemRamGb();
+			_currentTotalRamPercentage = Math.Clamp(
+				totalRamGb / totalSystemRamGb * 100.0,
+				0,
+				100);
 
-			if (ramPercent >= 90) lblTotalRam.ForeColor = Color.Red;
-			else if (ramPercent >= 75) lblTotalRam.ForeColor = Color.Orange;
-			else lblTotalRam.ForeColor = Color.Lime;
-
-			listViewResources.EndUpdate();
-		}
-
-		private void listViewResources_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
-		{
-			e.DrawDefault = true;
-		}
-
-		private void listViewResources_DrawItem(object sender, DrawListViewItemEventArgs e)
-		{
-			e.DrawDefault = false;
-		}
-
-		private void listViewResources_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
-		{
-			bool isRunning = (e.Item.Tag is bool status) && status;
-
-			if (isRunning)
+			lblTotalCpuValue.Text = $"{_currentTotalCpuPercentage:N1}%";
+			lblTotalCpuCaption.Text = "Across all managed server processes";
+			lblTotalRamValue.Text = $"{totalRamGb:N2} GB";
+			lblTotalRamCaption.Text =
+				$"{_currentTotalRamPercentage:N1}% of {totalSystemRamGb:N1} GB system memory";
+			lblActiveServersValue.Text = runningServerCount.ToString();
+			lblActiveIndicator.ForeColor = runningServerCount > 0
+				? SuccessColor
+				: Color.FromArgb(66, 80, 101);
+			lblActiveServersCaption.Text = runningServerCount switch
 			{
-				using (SolidBrush brush = new SolidBrush(Color.FromArgb(50, 0, 255, 0)))
-				{
-					e.Graphics.FillRectangle(brush, e.Bounds);
-				}
-			}
+				0 => "No running server processes detected",
+				1 => "1 server process is currently online",
+				_ => $"{runningServerCount} server processes are currently online"
+			};
 
-			Color txtColor = Color.Lime;
-			if (e.ColumnIndex == 1 || e.ColumnIndex == 4) txtColor = Color.Cyan;
+			lblServerCount.Text = runningServerCount == 1
+				? "1 running server"
+				: $"{runningServerCount} running servers";
+			lblLastUpdated.Text =
+				$"Updated {DateTime.Now:h:mm:ss tt}  •  Auto-refresh every 1 second";
 
-			TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis;
-			if (e.ColumnIndex == 0 || e.ColumnIndex == 2 || e.ColumnIndex == 3)
-				flags |= TextFormatFlags.HorizontalCenter;
-			else
-				flags |= TextFormatFlags.Left;
+			pnlRamFill.BackColor = _currentTotalRamPercentage switch
+			{
+				>= 90 => DangerColor,
+				>= 75 => WarningColor,
+				_ => RamColor
+			};
 
-			TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.Font, e.Bounds, txtColor, flags);
+			UpdateMetricBars();
 		}
 
-		private void listViewResources_Resize(object? sender, EventArgs e)
+		private static double GetTotalSystemRamGb()
 		{
-			if (listViewResources.ClientSize.Width <= 0 ||
-				listViewResources.ClientSize.Height <= 0)
+			double totalRamGb = MainGUI.Instance?.systemTotalRamGb ?? 32.0;
+			return totalRamGb > 0 ? totalRamGb : 32.0;
+		}
+
+		private void UpdateMetricBars()
+		{
+			UpdateMetricBar(pnlCpuTrack, pnlCpuFill, _currentTotalCpuPercentage);
+			UpdateMetricBar(pnlRamTrack, pnlRamFill, _currentTotalRamPercentage);
+		}
+
+		private static void UpdateMetricBar(
+			Panel track,
+			Panel fill,
+			double percentage)
+		{
+			int availableWidth = Math.Max(0, track.ClientSize.Width);
+			fill.Width = (int)Math.Round(
+				Math.Clamp(percentage, 0, 100) / 100.0 * availableWidth);
+			fill.Height = track.ClientSize.Height;
+		}
+
+		private void MetricTrack_SizeChanged(object? sender, EventArgs eventArgs)
+		{
+			UpdateMetricBars();
+		}
+
+		private void resourceGrid_CellPainting(
+			object? sender,
+			DataGridViewCellPaintingEventArgs eventArgs)
+		{
+			if (eventArgs.RowIndex < 0 ||
+				(eventArgs.ColumnIndex != colCpuUsage.Index &&
+				eventArgs.ColumnIndex != colRamUsage.Index))
 			{
 				return;
 			}
 
-			int otherColumnsWidth =
-				listViewResources.Columns[0].Width +
-				listViewResources.Columns[1].Width +
-				listViewResources.Columns[2].Width +
-				listViewResources.Columns[3].Width;
+			eventArgs.Paint(
+				eventArgs.CellBounds,
+				DataGridViewPaintParts.Background |
+				DataGridViewPaintParts.Border |
+				DataGridViewPaintParts.SelectionBackground);
 
-			int remainingWidth =
-				listViewResources.ClientSize.Width - otherColumnsWidth;
+			double percentage = eventArgs.Value == null
+				? 0
+				: Convert.ToDouble(
+					resourceGrid.Rows[eventArgs.RowIndex]
+						.Cells[eventArgs.ColumnIndex].Tag ?? 0);
+			percentage = Math.Clamp(percentage, 0, 100);
 
-			if (remainingWidth > 100)
+			Rectangle barBounds = new(
+				eventArgs.CellBounds.Right - 82,
+				eventArgs.CellBounds.Top + (eventArgs.CellBounds.Height - 7) / 2,
+				62,
+				7);
+			Rectangle fillBounds = barBounds;
+			fillBounds.Width = (int)Math.Round(
+				barBounds.Width * percentage / 100.0);
+
+			using SolidBrush trackBrush = new(TrackColor);
+			using SolidBrush fillBrush = new(
+				eventArgs.ColumnIndex == colCpuUsage.Index
+					? AccentColor
+					: RamColor);
+			eventArgs.Graphics.FillRectangle(trackBrush, barBounds);
+			if (fillBounds.Width > 0)
 			{
-				listViewResources.Columns[4].Width = remainingWidth;
+				eventArgs.Graphics.FillRectangle(fillBrush, fillBounds);
 			}
 
-			Size targetSize = listViewResources.ClientSize;
+			Rectangle textBounds = new(
+				eventArgs.CellBounds.Left + 14,
+				eventArgs.CellBounds.Top,
+				Math.Max(0, barBounds.Left - eventArgs.CellBounds.Left - 20),
+				eventArgs.CellBounds.Height);
+			Color textColor = eventArgs.ColumnIndex == colCpuUsage.Index
+				? AccentColor
+				: RamColor;
 
-			if (_scaledBackground?.Size == targetSize)
+			TextRenderer.DrawText(
+				eventArgs.Graphics,
+				Convert.ToString(eventArgs.FormattedValue) ?? string.Empty,
+				resourceGrid.Font,
+				textBounds,
+				textColor,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis);
+
+			eventArgs.Handled = true;
+		}
+
+		private void resourceGrid_Paint(object? sender, PaintEventArgs eventArgs)
+		{
+			if (resourceGrid.Rows.Count > 0)
 			{
 				return;
 			}
 
-			Bitmap newBackground =
-				new Bitmap(Properties.Resources.logo, targetSize);
+			Rectangle messageBounds = resourceGrid.ClientRectangle;
+			messageBounds.Y += resourceGrid.ColumnHeadersHeight;
+			messageBounds.Height -= resourceGrid.ColumnHeadersHeight;
 
-			Bitmap? oldBackground = _scaledBackground;
-
-			_scaledBackground = newBackground;
-			listViewResources.BackgroundImage = newBackground;
-
-			oldBackground?.Dispose();
+			TextRenderer.DrawText(
+				eventArgs.Graphics,
+				"No running game servers detected",
+				resourceGrid.Font,
+				messageBounds,
+				Color.FromArgb(105, 124, 153),
+				TextFormatFlags.HorizontalCenter |
+				TextFormatFlags.VerticalCenter);
 		}
 
-		private void ResourceMonitorGUI_FormClosed(object? sender, FormClosedEventArgs e)
+		private void btnMinimize_Click(object? sender, EventArgs eventArgs)
+		{
+			WindowState = FormWindowState.Minimized;
+		}
+
+		private void btnClose_Click(object? sender, EventArgs eventArgs)
+		{
+			Close();
+		}
+
+		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)
+		{
+			if (eventArgs.Button != MouseButtons.Left)
+			{
+				return;
+			}
+
+			_ = ReleaseCapture();
+			_ = SendMessage(Handle, WmNcLeftButtonDown, HtCaption, 0);
+		}
+
+		private void ResourceMonitorGUI_FormClosed(object? sender, FormClosedEventArgs eventArgs)
 		{
 			tmrRefresh.Stop();
 			tmrRefresh.Tick -= tmrRefresh_Tick;
-
-			listViewResources.BackgroundImage = null;
-
-			_scaledBackground?.Dispose();
-			_scaledBackground = null;
-
-			listViewResources.Items.Clear();
+			_rowsByProcessId.Clear();
+			resourceGrid.Rows.Clear();
 		}
+
+		[DllImport("user32.dll")]
+		private static extern uint SetWindowDisplayAffinity(
+			IntPtr windowHandle,
+			uint affinity);
+
+		[DllImport("user32.dll")]
+		private static extern bool ReleaseCapture();
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr SendMessage(
+			IntPtr windowHandle,
+			int message,
+			int wordParameter,
+			int longParameter);
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(
+			IntPtr windowHandle,
+			int attribute,
+			ref int attributeValue,
+			int attributeSize);
 	}
 }

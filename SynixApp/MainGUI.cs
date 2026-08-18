@@ -662,7 +662,7 @@ namespace Synix_Control_Panel
 					client.Timeout = TimeSpan.FromSeconds(5);
 					string latestVersion = (await client.GetStringAsync(versionUrl)).Trim();
 
-					if (latestVersion == currentVersion)
+					if (Version.TryParse(currentVersion, out Version vLocal) && Version.TryParse(latestVersion, out Version vRemote))
 					{
 						lblUpdateStatus.Text = "★ You are running the latest version " + currentVersion;
 						lblUpdateStatus.ForeColor = Color.Black;
