@@ -649,7 +649,7 @@ namespace Synix_Control_Panel
 		{
 			string currentVersion = "Unknown";
 
-			currentVersion = Application.ProductVersion;
+			currentVersion = Application.ProductVersion.TrimEnd(".0".ToCharArray());
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixApp/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
 			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
