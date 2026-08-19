@@ -87,12 +87,11 @@ namespace Synix_Control_Panel.SynixEngine
 										{
 											try
 											{
-												if (server.Status ==
-													StatusManager.GetStatus(ServerState.Running))
+												if (server.Status == StatusManager.GetStatus(ServerState.Running))
 												{
 													await ExecuteStartSequence(server, "WATCHDOG");
 												}
-												else
+												else if (server.Status?.StartsWith(StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase) != true)
 												{
 													CleanupStoppedState(server);
 												}
@@ -263,7 +262,7 @@ namespace Synix_Control_Panel.SynixEngine
 					bool success = await UpdateMinecraftPlayerCount(server, ip);
 					if (success) return;
 				}
-				server.CurrentPlayers = 0; 
+				server.CurrentPlayers = 0;
 				return;
 			}
 

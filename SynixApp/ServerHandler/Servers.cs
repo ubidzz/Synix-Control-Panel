@@ -36,6 +36,39 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		delegate bool ConsoleCtrlDelegate(uint CtrlType);
 
 		const uint CTRL_C_EVENT = 0;
+
+		private const uint TH32CS_SNAPPROCESS = 0x00000002;
+		private const int MAX_PATH = 260;
+		private static readonly IntPtr InvalidHandleValue = new IntPtr(-1);
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		private struct ProcessEntry32
+		{
+			public uint Size;
+			public uint UsageCount;
+			public uint ProcessId;
+			public IntPtr DefaultHeapId;
+			public uint ModuleId;
+			public uint ThreadCount;
+			public uint ParentProcessId;
+			public int BasePriority;
+			public uint Flags;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
+			public string ExeFile;
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern IntPtr CreateToolhelp32Snapshot(uint flags, uint processId);
+
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		private static extern bool Process32First(IntPtr snapshot, ref ProcessEntry32 entry);
+
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		private static extern bool Process32Next(IntPtr snapshot, ref ProcessEntry32 entry);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool CloseHandle(IntPtr handle);
 		#endregion
 		private static readonly SemaphoreSlim _consoleLock = new SemaphoreSlim(1, 1);
 
@@ -276,6 +309,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					{
 						try
 						{
+							if (IsStoppingStatus(server.Status))
+							{
+								return;
+							}
+
 							if (server.Status == StatusManager.GetStatus(ServerState.Running))
 							{
 								await Core.Instance.ExecuteStartSequence(server, "WATCHDOG");
@@ -297,18 +335,40 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			catch (Exception ex) { logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red); }
 		}
 
-		public static async Task Stop(GameServer server, Action<string, Color> logCallback, bool isManual = true)
+		public static async Task<bool> Stop(GameServer server, Action<string, Color> logCallback, bool isManual = true)
 		{
+			Dictionary<int, DateTime?> trackedProcesses = [];
+			int targetPid = 0;
+
 			try
 			{
 				server.Status = StatusManager.GetStatus(ServerState.Stopping);
 				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 
-				int targetPid = server.RunningProcess?.Id ?? server.PID ?? 0;
-				if (targetPid <= 0)
+				targetPid = GetInitialTargetPid(server);
+				if (targetPid > 0)
 				{
-					logCallback?.Invoke($"[🚨 ERROR] {server.ServerName} has no valid PID to stop.", Color.Red);
-					return;
+					TrackProcessTree(targetPid, trackedProcesses);
+				}
+
+				TrackInstallDirectoryProcesses(server, trackedProcesses);
+				List<int> liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
+
+				if (targetPid <= 0 || !liveProcesses.Contains(targetPid))
+				{
+					targetPid = SelectPrimaryProcess(server, liveProcesses, 0);
+					if (targetPid > 0)
+					{
+						TrackProcessTree(targetPid, trackedProcesses);
+						liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
+					}
+				}
+
+				if (liveProcesses.Count == 0)
+				{
+					logCallback?.Invoke($"[SHUTDOWN] No live process remains for {server.ServerName}. State reconciled.", Color.Lime);
+					FinalizeStoppedState(server);
+					return true;
 				}
 
 				if (isManual)
@@ -319,64 +379,579 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
-				bool cleanExit = false;
-				await _consoleLock.WaitAsync();
-				try
+				bool signalSent = targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
+				if (signalSent)
 				{
-					if (AttachConsole((uint)targetPid))
-					{
-						SetConsoleCtrlHandler(null, true);
-						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-
-						if (server.RunningProcess != null && server.RunningProcess.StartInfo.RedirectStandardInput)
-						{
-							try
-							{
-								server.RunningProcess.StandardInput.WriteLine("Y");
-								server.RunningProcess.StandardInput.Flush();
-							}
-							catch { }
-						}
-
-						cleanExit = await Task.Run(() => server.RunningProcess?.WaitForExit(25000) ?? false);
-
-						FreeConsole();
-						SetConsoleCtrlHandler(null, false);
-					}
+					liveProcesses = await WaitForServerProcessesToExit(server, targetPid, trackedProcesses, TimeSpan.FromSeconds(25));
 				}
-				finally
+				else
 				{
-					_consoleLock.Release();
+					RefreshTrackedProcesses(server, targetPid, trackedProcesses);
+					liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
 				}
 
-				if (cleanExit)
+				if (liveProcesses.Count == 0)
 				{
 					logCallback?.Invoke($"[SYNIX] {server.ServerName} saved and closed cleanly.", Color.Lime);
 					FinalizeStoppedState(server);
-					return;
+					return true;
 				}
 
-				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} did not respond. Forcing taskkill...", Color.Violet);
-				ProcessStartInfo killInfo = new ProcessStartInfo
-				{
-					FileName = "taskkill",
-					Arguments = $"/F /T /PID {targetPid}",
-					CreateNoWindow = true,
-					UseShellExecute = false
-				};
+				logCallback?.Invoke(
+					$"[🛡️ WATCHDOG] {server.ServerName} did not close cleanly. Forcing {liveProcesses.Count} process(es) to stop...",
+					Color.Violet);
 
-				using (Process? killProcess = Process.Start(killInfo))
+				await ForceTerminateProcesses(liveProcesses, targetPid, trackedProcesses, logCallback);
+				liveProcesses = await WaitForServerProcessesToExit(server, targetPid, trackedProcesses, TimeSpan.FromSeconds(10));
+
+				if (liveProcesses.Count > 0)
 				{
-					if (killProcess != null)
-					{
-						await Task.Run(() => killProcess.WaitForExit());
-					}
+					RestoreLiveServerState(server, liveProcesses, targetPid);
+					logCallback?.Invoke(
+						$"[🚨 STOP FAILED] {server.ServerName} still has a live process (PID: {string.Join(", ", liveProcesses)}). Status was not changed to Stopped.",
+						Color.Red);
+					return false;
 				}
 
 				FinalizeStoppedState(server);
-				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} forced closed.", Color.Violet);
+				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} was force-closed and verified stopped.", Color.Violet);
+				return true;
 			}
-			catch (Exception ex) { logCallback?.Invoke($"[🚨 ERROR] Failed to stop {server.ServerName}: {ex.Message}", Color.Red); }
+			catch (Exception ex)
+			{
+				logCallback?.Invoke($"[🚨 ERROR] Failed to stop {server.ServerName}: {ex.Message}", Color.Red);
+
+				RefreshTrackedProcesses(server, targetPid, trackedProcesses);
+				List<int> liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
+				if (liveProcesses.Count == 0)
+				{
+					FinalizeStoppedState(server);
+					return true;
+				}
+
+				RestoreLiveServerState(server, liveProcesses, targetPid);
+				return false;
+			}
+		}
+
+		private static bool IsStoppingStatus(string? status)
+		{
+			return status?.StartsWith(
+				StatusManager.GetStatus(ServerState.Stopping),
+				StringComparison.OrdinalIgnoreCase) == true;
+		}
+
+		private static int GetInitialTargetPid(GameServer server)
+		{
+			try
+			{
+				if (server.RunningProcess != null && !server.RunningProcess.HasExited)
+				{
+					return server.RunningProcess.Id;
+				}
+			}
+			catch
+			{
+				// The Process object can be disposed between checks. Fall back to the saved PID.
+			}
+
+			int savedPid = server.PID.GetValueOrDefault();
+			return savedPid > 0 && IsExpectedServerProcess(server, savedPid) ? savedPid : 0;
+		}
+
+		private static bool IsExpectedServerProcess(GameServer server, int processId)
+		{
+			if (processId <= 0 || processId == Environment.ProcessId)
+			{
+				return false;
+			}
+
+			try
+			{
+				using Process process = Process.GetProcessById(processId);
+				if (process.HasExited)
+				{
+					return false;
+				}
+
+				GameInfo? game = GameDatabase.GetGame(server.Game);
+				string configuredExe = game?.ExeName ?? string.Empty;
+				string expectedName = Path.GetFileNameWithoutExtension(configuredExe);
+				bool launchesScript = configuredExe.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) ||
+					configuredExe.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase);
+
+				if ((!string.IsNullOrWhiteSpace(expectedName) &&
+					 process.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase)) ||
+					(launchesScript && process.ProcessName.Equals("cmd", StringComparison.OrdinalIgnoreCase)))
+				{
+					return true;
+				}
+
+				string? imagePath = TryGetProcessImagePath(process);
+				return imagePath != null && IsPathInsideDirectory(imagePath, server.InstallPath);
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static async Task<bool> TrySendConsoleShutdownSignal(int targetPid, GameServer server)
+		{
+			await _consoleLock.WaitAsync();
+			bool attached = false;
+			bool ignoreHandlerInstalled = false;
+
+			try
+			{
+				attached = AttachConsole((uint)targetPid);
+				if (!attached)
+				{
+					return false;
+				}
+
+				ignoreHandlerInstalled = SetConsoleCtrlHandler(null, true);
+				bool signalSent = GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+
+				if (server.RunningProcess != null && server.RunningProcess.StartInfo.RedirectStandardInput)
+				{
+					try
+					{
+						server.RunningProcess.StandardInput.WriteLine("Y");
+						server.RunningProcess.StandardInput.Flush();
+					}
+					catch
+					{
+						// Some servers do not expose standard input. CTRL+C is still valid.
+					}
+				}
+
+				// Give Windows time to dispatch the control event before detaching.
+				await Task.Delay(200);
+				return signalSent;
+			}
+			finally
+			{
+				if (attached)
+				{
+					FreeConsole();
+				}
+
+				if (ignoreHandlerInstalled)
+				{
+					SetConsoleCtrlHandler(null, false);
+				}
+
+				_consoleLock.Release();
+			}
+		}
+
+		private static async Task<List<int>> WaitForServerProcessesToExit(
+			GameServer server,
+			int targetPid,
+			Dictionary<int, DateTime?> trackedProcesses,
+			TimeSpan timeout)
+		{
+			DateTime deadline = DateTime.UtcNow.Add(timeout);
+
+			while (true)
+			{
+				RefreshTrackedProcesses(server, targetPid, trackedProcesses);
+				List<int> liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
+				if (liveProcesses.Count == 0 || DateTime.UtcNow >= deadline)
+				{
+					return liveProcesses;
+				}
+
+				await Task.Delay(500);
+			}
+		}
+
+		private static void RefreshTrackedProcesses(
+			GameServer server,
+			int targetPid,
+			Dictionary<int, DateTime?> trackedProcesses)
+		{
+			if (targetPid > 0 && IsTrackedProcessAlive(targetPid, trackedProcesses))
+			{
+				TrackProcessTree(targetPid, trackedProcesses);
+			}
+
+			TrackInstallDirectoryProcesses(server, trackedProcesses);
+		}
+
+		private static void TrackProcessTree(int rootPid, Dictionary<int, DateTime?> trackedProcesses)
+		{
+			foreach (int processId in GetProcessTreeIds(rootPid))
+			{
+				TrackProcess(processId, trackedProcesses);
+			}
+		}
+
+		private static HashSet<int> GetProcessTreeIds(int rootPid)
+		{
+			HashSet<int> processTree = [];
+			if (rootPid <= 0 || rootPid == Environment.ProcessId)
+			{
+				return processTree;
+			}
+
+			processTree.Add(rootPid);
+			IntPtr snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+			if (snapshot == InvalidHandleValue)
+			{
+				return processTree;
+			}
+
+			try
+			{
+				List<(int ProcessId, int ParentProcessId)> allProcesses = [];
+				ProcessEntry32 entry = new ProcessEntry32
+				{
+					Size = (uint)Marshal.SizeOf<ProcessEntry32>()
+				};
+
+				if (Process32First(snapshot, ref entry))
+				{
+					do
+					{
+						allProcesses.Add(((int)entry.ProcessId, (int)entry.ParentProcessId));
+						entry.Size = (uint)Marshal.SizeOf<ProcessEntry32>();
+					}
+					while (Process32Next(snapshot, ref entry));
+				}
+
+				Queue<int> pendingParents = new Queue<int>();
+				pendingParents.Enqueue(rootPid);
+				while (pendingParents.Count > 0)
+				{
+					int parentId = pendingParents.Dequeue();
+					foreach ((int processId, int parentProcessId) in allProcesses)
+					{
+						if (parentProcessId == parentId && processTree.Add(processId))
+						{
+							pendingParents.Enqueue(processId);
+						}
+					}
+				}
+			}
+			finally
+			{
+				CloseHandle(snapshot);
+			}
+
+			return processTree;
+		}
+
+		private static void TrackInstallDirectoryProcesses(
+			GameServer server,
+			Dictionary<int, DateTime?> trackedProcesses)
+		{
+			if (string.IsNullOrWhiteSpace(server.InstallPath))
+			{
+				return;
+			}
+
+			Process[] processes = Process.GetProcesses();
+			try
+			{
+				foreach (Process process in processes)
+				{
+					try
+					{
+						if (process.Id == Environment.ProcessId || process.HasExited)
+						{
+							continue;
+						}
+
+						string? imagePath = TryGetProcessImagePath(process);
+						if (imagePath != null && IsPathInsideDirectory(imagePath, server.InstallPath))
+						{
+							TrackProcess(process, trackedProcesses);
+						}
+					}
+					catch
+					{
+						// Access can disappear while the process list is being inspected.
+					}
+				}
+			}
+			finally
+			{
+				foreach (Process process in processes)
+				{
+					process.Dispose();
+				}
+			}
+		}
+
+		private static string? TryGetProcessImagePath(Process process)
+		{
+			try
+			{
+				return process.MainModule?.FileName;
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		private static bool IsPathInsideDirectory(string filePath, string directoryPath)
+		{
+			if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(directoryPath))
+			{
+				return false;
+			}
+
+			try
+			{
+				string normalizedDirectory = Path.GetFullPath(directoryPath)
+					.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+				string normalizedFile = Path.GetFullPath(filePath);
+				return normalizedFile.StartsWith(normalizedDirectory, StringComparison.OrdinalIgnoreCase);
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static void TrackProcess(int processId, Dictionary<int, DateTime?> trackedProcesses)
+		{
+			if (processId <= 0 || processId == Environment.ProcessId || trackedProcesses.ContainsKey(processId))
+			{
+				return;
+			}
+
+			try
+			{
+				using Process process = Process.GetProcessById(processId);
+				TrackProcess(process, trackedProcesses);
+			}
+			catch
+			{
+				// The process exited between the snapshot and this lookup.
+			}
+		}
+
+		private static void TrackProcess(Process process, Dictionary<int, DateTime?> trackedProcesses)
+		{
+			if (process.Id <= 0 || process.Id == Environment.ProcessId || trackedProcesses.ContainsKey(process.Id) || process.HasExited)
+			{
+				return;
+			}
+
+			DateTime? startTime = null;
+			try
+			{
+				startTime = process.StartTime.ToUniversalTime();
+			}
+			catch
+			{
+				// PID verification will still work if Windows denies StartTime access.
+			}
+
+			trackedProcesses[process.Id] = startTime;
+		}
+
+		private static bool IsTrackedProcessAlive(int processId, Dictionary<int, DateTime?> trackedProcesses)
+		{
+			if (!trackedProcesses.TryGetValue(processId, out DateTime? expectedStartTime))
+			{
+				return false;
+			}
+
+			try
+			{
+				using Process process = Process.GetProcessById(processId);
+				if (process.HasExited)
+				{
+					return false;
+				}
+
+				if (expectedStartTime.HasValue)
+				{
+					try
+					{
+						return process.StartTime.ToUniversalTime() == expectedStartTime.Value;
+					}
+					catch
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static List<int> GetLiveTrackedProcesses(Dictionary<int, DateTime?> trackedProcesses)
+		{
+			List<int> liveProcesses = [];
+			foreach (int processId in trackedProcesses.Keys.ToArray())
+			{
+				if (IsTrackedProcessAlive(processId, trackedProcesses))
+				{
+					liveProcesses.Add(processId);
+				}
+				else
+				{
+					trackedProcesses.Remove(processId);
+				}
+			}
+
+			return liveProcesses;
+		}
+
+		private static async Task ForceTerminateProcesses(
+			List<int> liveProcesses,
+			int targetPid,
+			Dictionary<int, DateTime?> trackedProcesses,
+			Action<string, Color> logCallback)
+		{
+			IEnumerable<int> orderedProcesses = liveProcesses
+				.OrderBy(processId => processId == targetPid ? 0 : 1)
+				.ThenBy(processId => processId);
+
+			foreach (int processId in orderedProcesses)
+			{
+				if (!IsTrackedProcessAlive(processId, trackedProcesses))
+				{
+					continue;
+				}
+
+				try
+				{
+					using Process process = Process.GetProcessById(processId);
+					process.Kill(entireProcessTree: true);
+				}
+				catch (Exception ex)
+				{
+					logCallback?.Invoke($"[⚠️ STOP] Direct process-tree kill failed for PID {processId}: {ex.Message}", Color.OrangeRed);
+				}
+			}
+
+			await Task.Delay(300);
+
+			foreach (int processId in GetLiveTrackedProcesses(trackedProcesses))
+			{
+				ProcessStartInfo killInfo = new ProcessStartInfo
+				{
+					FileName = "taskkill.exe",
+					CreateNoWindow = true,
+					UseShellExecute = false
+				};
+				killInfo.ArgumentList.Add("/F");
+				killInfo.ArgumentList.Add("/T");
+				killInfo.ArgumentList.Add("/PID");
+				killInfo.ArgumentList.Add(processId.ToString());
+
+				try
+				{
+					using Process? killProcess = Process.Start(killInfo);
+					if (killProcess != null)
+					{
+						await killProcess.WaitForExitAsync();
+						if (killProcess.ExitCode != 0 && IsTrackedProcessAlive(processId, trackedProcesses))
+						{
+							logCallback?.Invoke($"[⚠️ STOP] taskkill returned exit code {killProcess.ExitCode} for PID {processId}.", Color.OrangeRed);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					logCallback?.Invoke($"[⚠️ STOP] taskkill failed for PID {processId}: {ex.Message}", Color.OrangeRed);
+				}
+			}
+		}
+
+		private static int SelectPrimaryProcess(GameServer server, IReadOnlyCollection<int> liveProcesses, int preferredPid)
+		{
+			if (preferredPid > 0 && liveProcesses.Contains(preferredPid))
+			{
+				return preferredPid;
+			}
+
+			GameInfo? game = GameDatabase.GetGame(server.Game);
+			string configuredExe = game?.ExeName ?? string.Empty;
+			string expectedName = Path.GetFileNameWithoutExtension(configuredExe);
+			bool launchesScript = configuredExe.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) ||
+				configuredExe.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase);
+
+			foreach (int processId in liveProcesses)
+			{
+				try
+				{
+					using Process process = Process.GetProcessById(processId);
+					if ((!string.IsNullOrWhiteSpace(expectedName) &&
+						 process.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase)) ||
+						(launchesScript && process.ProcessName.Equals("cmd", StringComparison.OrdinalIgnoreCase)))
+					{
+						return processId;
+					}
+				}
+				catch
+				{
+					// Continue looking for another verified live process.
+				}
+			}
+
+			return liveProcesses.FirstOrDefault();
+		}
+
+		private static void RestoreLiveServerState(GameServer server, IReadOnlyCollection<int> liveProcesses, int preferredPid)
+		{
+			int survivingPid = SelectPrimaryProcess(server, liveProcesses, preferredPid);
+			if (survivingPid <= 0)
+			{
+				return;
+			}
+
+			Process? survivingProcess = null;
+			try
+			{
+				survivingProcess = Process.GetProcessById(survivingPid);
+				if (survivingProcess.HasExited)
+				{
+					survivingProcess.Dispose();
+					survivingProcess = null;
+					return;
+				}
+
+				bool alreadyBound = false;
+				try
+				{
+					alreadyBound = server.RunningProcess != null && server.RunningProcess.Id == survivingPid;
+				}
+				catch
+				{
+					// A disposed process object will be replaced below.
+				}
+
+				if (!alreadyBound)
+				{
+					server.RunningProcess?.Dispose();
+					server.RunningProcess = survivingProcess;
+					survivingProcess = null;
+				}
+			}
+			catch
+			{
+				// Keep the verified PID even if Windows denies reopening the Process object.
+			}
+			finally
+			{
+				survivingProcess?.Dispose();
+			}
+
+			server.PID = survivingPid;
+			server.Status = StatusManager.GetStatus(ServerState.Running);
+			MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 		}
 
 		private static void FinalizeStoppedState(GameServer server)

@@ -166,13 +166,13 @@ namespace Synix_Control_Panel.SynixEngine
 			lockMessage = string.Empty;
 			string status = server.Status ?? "";
 
-			bool isTransitioning = status == StatusManager.GetStatus(ServerState.Starting) ||
-								   status == StatusManager.GetStatus(ServerState.Stopping) ||
-								   status == StatusManager.GetStatus(ServerState.Installing) ||
-								   status == StatusManager.GetStatus(ServerState.Updating) ||
-								   status == StatusManager.GetStatus(ServerState.BackingUp) ||
-								   status == StatusManager.GetStatus(ServerState.Export) ||
-								   status == StatusManager.GetStatus(ServerState.Validating);
+			bool isTransitioning = status.StartsWith(StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Export), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Validating), StringComparison.OrdinalIgnoreCase);
 
 			bool isRunning = status == StatusManager.GetStatus(ServerState.Running);
 			bool isStopped = status == StatusManager.GetStatus(ServerState.Stopped);

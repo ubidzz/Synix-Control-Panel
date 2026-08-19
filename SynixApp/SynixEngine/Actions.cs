@@ -29,13 +29,16 @@ namespace Synix_Control_Panel.SynixEngine
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
 			Core.Instance.UpdateGridStatus();
 
-			await Servers.Stop(server, (msg, Color) =>
+			bool stopped = await Servers.Stop(server, (msg, logColor) =>
 			{
-				Log(msg);
+				Log(msg, logColor);
 			}, isManual);
 
-			server.Status = StatusManager.GetStatus(ServerState.Stopped);
-			server.PID = null;
+			if (!stopped)
+			{
+				Log($"[🚨 STOP FAILED] {server.ServerName} is still running. Synix kept its live PID and status.", Color.Red, true);
+			}
+
 			FileHandler.SaveServers();
 			Core.Instance.UpdateGridStatus();
 		}
