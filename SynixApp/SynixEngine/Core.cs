@@ -103,7 +103,11 @@ namespace Synix_Control_Panel.SynixEngine
 				PerformWatchdogCheck();
 				UpdateResourceStats();
 				_ = PerformMaintenanceCheckAsync();
-				CheckForDDoS();
+
+				if (Properties.Settings.Default.CheckDDoS)
+				{
+					CheckForDDoS();
+				}
 
 				foreach (GameServer server in MainGUI.serverList.ToList())
 				{

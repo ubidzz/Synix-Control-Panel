@@ -112,7 +112,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "ARK: Survival Ascended",
 				AppID = "2430930",
 				ExeName = @"ShooterGame\Binaries\Win64\ArkAscendedServer.exe",
-				RequiredArgs = "{map}?listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?QueryPort={query}?MaxPlayers={MaxPlayers} -Port={port} -server -log {rcon} -SteamAppId={steamAppID}",
+				RequiredArgs = "{map}?listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\" -WinLiveMaxPlayers={MaxPlayers} -port={port} -server -servergamelog -UserBattleEye -crossplay -game -SteamAppId={steamAppID}",
 				RconSyntax = "?RCONEnabled=True",
 				RelativeConfigPath = @"ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini",
 				Format = ConfigFormat.StandardINI,

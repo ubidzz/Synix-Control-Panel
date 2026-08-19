@@ -133,7 +133,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return true;
 			}
 
-			if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 25)
+			if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 60)
 			{
 				if (IsPortInUseLocally(server.Port))
 				{

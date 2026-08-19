@@ -134,6 +134,8 @@ namespace Synix_Control_Panel.SynixEngine
 				MaximumBackupsChanged;
 			privacySettingsPage.PrivacyModeChanged +=
 				PrivacyModeChanged;
+			privacySettingsPage.CheckForDDoSChanged +=
+				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
 				ElevatedSystemTasksChanged;
 		}
@@ -160,6 +162,8 @@ namespace Synix_Control_Panel.SynixEngine
 					Properties.Settings.Default.MaxBackups;
 				privacySettingsPage.PrivacyMode =
 					Properties.Settings.Default.PrivacyMode;
+				privacySettingsPage.CheckForDDoS =
+					Properties.Settings.Default.CheckDDoS;
 				advancedSettingsPage.ElevatedSystemTasks =
 					Properties.Settings.Default.enableRunAsAdmin;
 			}
@@ -374,5 +378,19 @@ namespace Synix_Control_Panel.SynixEngine
 			int attribute,
 			ref int attributeValue,
 			int attributeSize);
+
+		private void CheckForDDoSChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.CheckDDoS =
+				privacySettingsPage.CheckForDDoS;
+			Properties.Settings.Default.Save();
+		}
 	}
 }

@@ -193,7 +193,7 @@ namespace Synix_Control_Panel.SynixEngine
 					isLocked = isTransitioning || isRunning;
 					break;
 				case "Restart":
-					isLocked = isTransitioning;
+					isLocked = isTransitioning || isStopped;
 					break;
 				case "Stop":
 					isLocked = isTransitioning || isStopped || isCrashed;

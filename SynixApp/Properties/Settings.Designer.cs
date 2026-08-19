@@ -94,5 +94,17 @@ namespace Synix_Control_Panel.Properties {
                 this["ShowServerWindow"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CheckDDoS {
+            get {
+                return ((bool)(this["CheckDDoS"]));
+            }
+            set {
+                this["CheckDDoS"] = value;
+            }
+        }
     }
 }

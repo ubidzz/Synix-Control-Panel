@@ -28,5 +28,20 @@ namespace Synix_Control_Panel.SynixEngine
 			add => chkPrivacyMode.CheckedChanged += value;
 			remove => chkPrivacyMode.CheckedChanged -= value;
 		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool CheckForDDoS
+		{
+			get => chkCheckForDDoS.Checked;
+			set => chkCheckForDDoS.Checked = value;
+		}
+
+		[Browsable(false)]
+		public event EventHandler? CheckForDDoSChanged
+		{
+			add => chkCheckForDDoS.CheckedChanged += value;
+			remove => chkCheckForDDoS.CheckedChanged -= value;
+		}
 	}
 }
