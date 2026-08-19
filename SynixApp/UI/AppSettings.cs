@@ -148,6 +148,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				generalSettingsPage.ShowServerWindow =
 					Properties.Settings.Default.ShowServerWindow;
+				generalSettingsPage.DarkMode =
+					Properties.Settings.Default.DarkMode;
 				backupSettingsPage.UseCustomBackupPath =
 					Properties.Settings.Default.UseCustomBackupPath;
 
@@ -379,18 +381,22 @@ namespace Synix_Control_Panel.SynixEngine
 			ref int attributeValue,
 			int attributeSize);
 
-		private void CheckForDDoSChanged(
-			object? sender,
-			EventArgs eventArgs)
+		private void CheckForDDoSChanged(object? sender, EventArgs eventArgs)
 		{
-			if (_loadingSettings)
-			{
-				return;
-			}
+			if (_loadingSettings) return;
 
-			Properties.Settings.Default.CheckDDoS =
-				privacySettingsPage.CheckForDDoS;
+			Properties.Settings.Default.CheckDDoS = privacySettingsPage.CheckForDDoS;
 			Properties.Settings.Default.Save();
+		}
+
+		private async void DarkModeChanged(object? sender, EventArgs eventArgs)
+		{
+			if (_loadingSettings) return;
+
+			Properties.Settings.Default.DarkMode = generalSettingsPage.DarkMode;
+			Properties.Settings.Default.Save();
+
+			// You will likely want to trigger your theme re-render here!
 		}
 	}
 }
