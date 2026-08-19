@@ -227,18 +227,48 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				switch (server.Game)
 				{
 					case "Rust":
-						string rustCfg = @"// Synix Custom Rust Configuration
+						string rustCfg = @"# ============================================================================
+# RUST DEDICATED SERVER CONFIGURATION (server.cfg)
+# ============================================================================
+
+# --- SERVER DISPLAY & IDENTITY ---
 server.hostname ""{ServerName}""
-server.password ""{Password}""
-server.seed {WorldSeed}
-server.worldsize 4000
 server.description ""Welcome to {ServerName}!\n\nManaged via Synix Control Panel.""
 server.url ""https://github.com/ubidzz/Synix-Control-Panel""
+server.headerimage """"
+server.tags ""vanilla""
+server.maxplayers {MaxPlayers}
+
+# --- WORLD GENERATION ---
+server.seed {WorldSeed}
+server.worldsize {WorldSize}
+server.level ""Procedural Map""
 server.saveinterval 300
+
+# --- GAMEPLAY & CHAT ---
+server.pve false
 server.globalchat true
-server.secure true
+server.airdropminplayers 10
+server.stability true
 server.radiation true
-server.official true";
+craft.instant false
+
+# --- DECAY & UPKEEP ---
+decay.upkeep true
+decay.scale 1.0
+
+# --- PERFORMANCE & SECURITY ---
+fps.limit 60
+server.tickrate 30
+gc.buffer 256
+antihack.enabled true
+server.secure true
+server.official false
+
+# --- RCON (REMOTE CONSOLE) ---
+rcon.port {RCONPort}
+rcon.password ""{RCONPassword}""
+rcon.web {EnableRcon}";
 
 						string rustCfgPath = Path.Combine("server", cleanIdentity, "cfg", "server.cfg");
 						if (CreateGameConfig(server, rustCfgPath, rustCfg, cleanIdentity, localIp, publicIp)) applied = true;
@@ -851,7 +881,7 @@ gam_bAutoCycleMaps = 1";
 		private static bool CreateGameConfig(GameServer server, string relativeFilePath, string contentTemplate, string identity, string localIp, string publicIp)
 		{
 			string fullFilePath = Path.Combine(server.InstallPath, relativeFilePath);
-			string targetFolder = Path.GetDirectoryName(fullFilePath);
+			string? targetFolder = Path.GetDirectoryName(fullFilePath);
 			if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
 
 			if (!File.Exists(fullFilePath))
@@ -862,12 +892,15 @@ gam_bAutoCycleMaps = 1";
 					.Replace("{AdminPassword}", server.AdminPassword)
 					.Replace("{Port}", server.Port.ToString())
 					.Replace("{QueryPort}", server.QueryPort.ToString())
-					.Replace("{EnableRcon}", server.EnableRcon.ToString().ToLower())
+					.Replace("{EnableRcon}", server.Game == "Rust" ? (server.EnableRcon ? "1" : "0") : server.EnableRcon.ToString().ToLower())
 					.Replace("{RCONPort}", server.RconPort.ToString())
 					.Replace("{RCONPassword}", server.RconPassword)
 					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-					.Replace("{GameMode}", server.GameMode.ToString())
+					.Replace("{GameMode}", server.GameMode?.ToString() ?? "")
 					.Replace("{WorldSeed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
+					.Replace("{WorldSize}", server.WorldSize > 0 ? server.WorldSize.ToString() : "4000")
+					.Replace("{Map}", server.WorldName)
+					.Replace("{PVE}", server.GameMode != null && server.GameMode.ToString().Equals("PVE", StringComparison.OrdinalIgnoreCase) ? "true" : "false")
 					.Replace("{Identity}", identity)
 					.Replace("{LocalIP}", localIp)
 					.Replace("{PublicIP}", publicIp);

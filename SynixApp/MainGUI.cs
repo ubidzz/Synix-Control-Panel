@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -26,6 +26,7 @@ namespace Synix_Control_Panel
 	public partial class MainGUI : Form
 	{
 		public static BindingList<GameServer> serverList = [];
+		private readonly BindingList<GameServer> _visibleServers = [];
 		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		public bool isDownloadActive = false;
 		private static bool isInitializing = false;
@@ -38,7 +39,6 @@ namespace Synix_Control_Panel
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
-		private ToolTip? _resourceGraphToolTip;
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
 
@@ -50,11 +50,12 @@ namespace Synix_Control_Panel
 		public MainGUI()
 		{
 			InitializeComponent();
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+				return;
+
 			Instance = this;
 
 			FileHandler.LoadServers();
-			UIStyleHelper.InitializeToggles(this);
-			UIStyleHelper.StyleLogBox(rtbLog);
 
 			contextMenuStrip.Renderer = new Synix_Control_Panel.SynixApp.Design.SynixMenuRenderer();
 			contextMenuStrip.ShowImageMargin = false;
@@ -62,7 +63,7 @@ namespace Synix_Control_Panel
 			ApplyMenuRoundingAndSpacing(contextMenuStrip);
 
 			dataGridView1.AutoGenerateColumns = false;
-			dataGridView1.DataSource = serverList;
+			dataGridView1.DataSource = _visibleServers;
 			if (!dataGridView1.Columns.Contains("IconCol"))
 			{
 				DataGridViewImageColumn iconCol = new DataGridViewImageColumn();
@@ -70,37 +71,39 @@ namespace Synix_Control_Panel
 				iconCol.HeaderText = "";
 				iconCol.DataPropertyName = "DisplayIcon";
 				iconCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
-				iconCol.Width = 35;
-				iconCol.DefaultCellStyle.Padding = new Padding(6);
+				iconCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+				iconCol.Width = 46;
+				iconCol.MinimumWidth = 46;
+				iconCol.DefaultCellStyle.Padding = new Padding(8);
 
 				dataGridView1.Columns.Insert(0, iconCol);
 				dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-				dataGridView1.RowTemplate.Height = 35;
+				dataGridView1.RowTemplate.Height = 44;
 				foreach (DataGridViewRow row in dataGridView1.Rows)
 				{
-					row.Height = 35;
+					row.Height = 44;
 				}
 			}
 
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
-			GridStyler.ApplyTransparentTheme(dataGridView1);
+			GridStyler.ApplyDashboardTheme(dataGridView1);
 			GridStyler.StyleCloseButton(btnClose);
 			GridStyler.StyleMinimizeButton(btnMinimize);
 			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
+			ApplyServerFilter();
 
-			_resourceGraphToolTip = new ToolTip(components)
+			IntPtr roundedRegionHandle = CreateRoundRectRgn(0, 0, Width, Height, 15, 15);
+			if (roundedRegionHandle != IntPtr.Zero)
 			{
-				InitialDelay = 300,
-				ReshowDelay = 100,
-				AutoPopDelay = 8000,
-				ShowAlways = true
-			};
-
-			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
+				Region = System.Drawing.Region.FromHrgn(roundedRegionHandle);
+				DeleteObject(roundedRegionHandle);
+			}
+			UpdateDashboardSummary();
+			UpdateSelectedServerCard();
 			_ = Core.Instance;
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
@@ -156,6 +159,9 @@ namespace Synix_Control_Panel
 			cpuGauge.UpdateGauge((float)cpu, "CPU %");
 			ramGauge.MaxValue = (float)systemTotalRamGb;
 			ramGauge.UpdateGauge((float)ram, "RAM GB");
+			lblCpuValue.Text = $"{cpu:0.0}%";
+			lblRamValue.Text = $"{ram:0.00} GB";
+			UpdateDashboardSummary();
 
 			chartTickCounter++;
 		}
@@ -170,6 +176,10 @@ namespace Synix_Control_Panel
 			int nWidthEllipse,
 			int nHeightEllipse
 		);
+
+		[DllImport("Gdi32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool DeleteObject(IntPtr hObject);
 
 		private void Form_Drag_MouseDown(object sender, MouseEventArgs e)
 		{
@@ -334,19 +344,46 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
-			await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
+			try
+			{
+				await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
+				await Core.Instance.RebindProcesses();
+			}
+			catch (Exception ex)
+			{
+				AppendLog($"[🚨 REBIND ERROR] {ex.Message}", Color.Red, true);
+			}
 
-			await Core.Instance.RebindProcesses();
-			double physicalRam = 16.0;
-			await Task.Run(() => physicalRam = ResourceMonitor.GetTotalSystemRamGB());
+			try
+			{
+				double physicalRam = await Task.Run(ResourceMonitor.GetTotalSystemRamGB);
+				double reserved = Math.Max(physicalRam * 0.10, 5.0);
+				systemTotalRamGb = Math.Max(1.0, physicalRam - reserved);
+				ramGauge.MaxValue = (float)systemTotalRamGb;
+			}
+			catch (Exception ex)
+			{
+				AppendLog($"[⚠️ RESOURCE ERROR] {ex.Message}", Color.Orange);
+			}
 
-			double reserved = Math.Max(physicalRam * 0.10, 5.0);
-			systemTotalRamGb = physicalRam - reserved;
-
+			UpdateDashboardSummary();
 			chartTickCounter++;
 			tmrResourceUpdates.Start();
 
-			await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
+			try
+			{
+				lblSteamStatus.Text = "●  Initializing SteamCMD...";
+				lblSteamStatus.ForeColor = SettingsPalette.Warning;
+				await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
+				lblSteamStatus.Text = "●  SteamCMD ready";
+				lblSteamStatus.ForeColor = SettingsPalette.Accent;
+			}
+			catch (Exception ex)
+			{
+				lblSteamStatus.Text = "●  SteamCMD needs attention";
+				lblSteamStatus.ForeColor = Color.FromArgb(250, 116, 128);
+				AppendLog($"[🚨 STEAMCMD ERROR] {ex.Message}", Color.Red, true);
+			}
 		}
 
 		public void UpdateGrid()
@@ -357,6 +394,162 @@ namespace Synix_Control_Panel
 				return;
 			}
 			dataGridView1.Refresh();
+			ApplyServerFilter();
+			UpdateDashboardSummary();
+			UpdateSelectedServerCard();
+		}
+
+		private void UpdateDashboardSummary()
+		{
+			int installedCount = serverList.Count;
+			int runningCount = serverList.Count(server =>
+				string.Equals(
+					server.Status,
+					StatusManager.GetStatus(ServerState.Running),
+					StringComparison.OrdinalIgnoreCase));
+
+			lblInstalledValue.Text = installedCount.ToString();
+			lblRunningValue.Text = runningCount.ToString();
+			bool isFiltered = !string.IsNullOrWhiteSpace(txtServerSearch.Text) ||
+				!string.Equals(
+					cmbStatusFilter.SelectedItem?.ToString(),
+					"All Statuses",
+					StringComparison.OrdinalIgnoreCase);
+			lblServersCount.Text = isFiltered
+				? $"{_visibleServers.Count} of {installedCount} servers"
+				: installedCount == 1
+					? "1 server"
+					: $"{installedCount} servers";
+		}
+
+		private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+		{
+			UpdateSelectedServerCard();
+		}
+
+		private void dataGridView1_DataBindingComplete(
+			object sender,
+			DataGridViewBindingCompleteEventArgs e)
+		{
+			foreach (DataGridViewRow row in dataGridView1.Rows)
+			{
+				row.Height = 44;
+			}
+
+			ApplyServerFilter();
+			UpdateDashboardSummary();
+			UpdateSelectedServerCard();
+		}
+
+		private void UpdateSelectedServerCard()
+		{
+			DataGridViewRow? currentRow = dataGridView1.CurrentRow;
+			GameServer? server = currentRow?.DataBoundItem as GameServer;
+			bool hasSelection = server != null && currentRow != null;
+
+			btnServerActions.Enabled = hasSelection;
+			btnConfigure.Enabled = hasSelection;
+			btnStart.Enabled = hasSelection;
+			btnRestart.Enabled = hasSelection;
+			btnStop.Enabled = hasSelection;
+
+			if (!hasSelection || server == null)
+			{
+				picSelectedServer.Image = null;
+				lblSelectedGame.Text = "Select a game server";
+				lblSelectedServerName.Text = "Choose a row to unlock server controls";
+				return;
+			}
+
+			picSelectedServer.Image = server.DisplayIcon;
+			lblSelectedGame.Text = server.Game;
+			lblSelectedServerName.Text = $"{server.ServerName}  •  {server.Status}";
+		}
+
+		private void ServerFilterChanged(object sender, EventArgs e)
+		{
+			ApplyServerFilter();
+			UpdateDashboardSummary();
+		}
+
+		private void ApplyServerFilter()
+		{
+			if (dataGridView1.DataSource == null)
+				return;
+
+			string searchText = txtServerSearch.Text.Trim();
+			string statusFilter = cmbStatusFilter.SelectedItem?.ToString() ?? "All Statuses";
+			GameServer? selectedServer = dataGridView1.CurrentRow?.DataBoundItem as GameServer;
+			List<GameServer> matchingServers = serverList
+				.Where(server =>
+				{
+					bool searchMatch = string.IsNullOrWhiteSpace(searchText) ||
+					(server.Game ?? string.Empty).Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+					(server.ServerName ?? string.Empty).Contains(searchText, StringComparison.OrdinalIgnoreCase);
+					return searchMatch && MatchesStatusFilter(server.Status, statusFilter);
+				})
+				.ToList();
+
+			bool viewChanged = _visibleServers.Count != matchingServers.Count ||
+				!_visibleServers.SequenceEqual(matchingServers);
+			if (viewChanged)
+			{
+				_visibleServers.RaiseListChangedEvents = false;
+				_visibleServers.Clear();
+				foreach (GameServer server in matchingServers)
+				{
+					_visibleServers.Add(server);
+				}
+				_visibleServers.RaiseListChangedEvents = true;
+				_visibleServers.ResetBindings();
+			}
+
+			if (selectedServer != null)
+			{
+				DataGridViewRow? restoredRow = dataGridView1.Rows
+					.Cast<DataGridViewRow>()
+					.FirstOrDefault(row => ReferenceEquals(row.DataBoundItem, selectedServer));
+
+				if (restoredRow != null && restoredRow.Cells.Count > 0)
+					dataGridView1.CurrentCell = restoredRow.Cells[0];
+			}
+			else if (dataGridView1.Rows.Count > 0 && dataGridView1.Rows[0].Cells.Count > 0)
+			{
+				dataGridView1.CurrentCell = dataGridView1.Rows[0].Cells[0];
+			}
+
+			UpdateSelectedServerCard();
+		}
+
+		private static bool MatchesStatusFilter(string? status, string filter)
+		{
+			string currentStatus = status ?? string.Empty;
+			return filter switch
+			{
+				"Running" => currentStatus.Equals(
+					StatusManager.GetStatus(ServerState.Running),
+					StringComparison.OrdinalIgnoreCase),
+				"Stopped" => currentStatus.Equals(
+					StatusManager.GetStatus(ServerState.Stopped),
+					StringComparison.OrdinalIgnoreCase),
+				"In Progress" =>
+					currentStatus.StartsWith("Starting", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Stopping", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Updating", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase),
+				"Needs Attention" => currentStatus.Equals(
+					StatusManager.GetStatus(ServerState.Crashed),
+					StringComparison.OrdinalIgnoreCase),
+				_ => true
+			};
+		}
+
+		private void btnClearLog_Click(object sender, EventArgs e)
+		{
+			rtbLog.Clear();
 		}
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -368,11 +561,6 @@ namespace Synix_Control_Panel
 		{
 			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
 			monitor.Show();
-		}
-
-		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-		{
-			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 
 		private GameServer? GetSelectedServer()
@@ -453,9 +641,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 			Core.Instance.DeleteServerAndReport(selectedServer);
-			dataGridView1.CurrentCell = null;
-			dataGridView1.DataSource = null;
-			dataGridView1.DataSource = serverList;
+			ApplyServerFilter();
 		}
 
 		private async void btnBackup_Click(object sender, EventArgs e)
@@ -483,8 +669,10 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-
-			await Core.Instance.ExecuteStartSequence(selectedServer);
+			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Stopped))
+			{
+				await Core.Instance.ExecuteStartSequence(selectedServer);
+			}
 		}
 
 		private async void btnStop_Click(object sender, EventArgs e)
@@ -496,8 +684,10 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-
-			await Core.Instance.StopServerAndReport(selectedServer);
+			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Running))
+			{
+				await Core.Instance.StopServerAndReport(selectedServer);
+			}
 		}
 
 		private void btnOpenConfig_Click(object sender, EventArgs e)
@@ -611,8 +801,10 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-
-			await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
+			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Running))
+			{
+				await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
+			}
 		}
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -635,7 +827,7 @@ namespace Synix_Control_Panel
 
 		private void InitializeVersionCheckTimer()
 		{
-			versionTimer = new System.Windows.Forms.Timer();
+			versionTimer = new System.Windows.Forms.Timer(components);
 			versionTimer.Interval = 20 * 60 * 1000;
 			versionTimer.Tick += async (sender, e) =>
 			{
@@ -647,46 +839,58 @@ namespace Synix_Control_Panel
 
 		private async Task VersionCheck()
 		{
-			string currentVersion = "Unknown";
+			string productVersion = Application.ProductVersion;
+			string currentVersion = productVersion;
+			if (Version.TryParse(productVersion, out Version? parsedProductVersion))
+			{
+				currentVersion = parsedProductVersion.Build >= 0
+					? $"{parsedProductVersion.Major}.{parsedProductVersion.Minor}.{parsedProductVersion.Build}"
+					: $"{parsedProductVersion.Major}.{parsedProductVersion.Minor}";
+			}
 
-			currentVersion = Application.ProductVersion.TrimEnd(".0".ToCharArray());
 			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixApp/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
-			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
 			lblUpdateStatus.Text = "Checking for updates...";
+			lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
+			lblUpdateStatus.BackColor = SettingsPalette.TitleBar;
 
 			try
 			{
 				using (HttpClient client = new())
 				{
 					client.Timeout = TimeSpan.FromSeconds(5);
-					string latestVersion = (await client.GetStringAsync(versionUrl)).Trim();
+					string latestVersion = (await client.GetStringAsync(versionUrl))
+						.Trim()
+						.TrimStart('v', 'V');
 
-					if (Version.TryParse(currentVersion, out Version vLocal) && Version.TryParse(latestVersion, out Version vRemote))
+					if (Version.TryParse(currentVersion, out Version? vLocal) &&
+						Version.TryParse(latestVersion, out Version? vRemote) &&
+						vLocal != null &&
+						vRemote != null)
 					{
-						lblUpdateStatus.Text = "★ You are running the latest version " + currentVersion;
-						lblUpdateStatus.ForeColor = Color.Black;
-						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
-						lblUpdateStatus.BackColor = Color.Green;
+						if (vRemote > vLocal)
+						{
+							lblUpdateStatus.Text = $"Update {latestVersion} available  •  Running {currentVersion}";
+							lblUpdateStatus.ForeColor = SettingsPalette.Warning;
+							btnDownloadUpdate.Visible = true;
+						}
+						else
+						{
+							lblUpdateStatus.Text = $"✓  Latest version  •  v{currentVersion}";
+							lblUpdateStatus.ForeColor = SettingsPalette.Accent;
+						}
 					}
 					else
 					{
-						lblUpdateStatus.Text = "🚨 A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
-						lblUpdateStatus.ForeColor = Color.White;
-						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
-						lblUpdateStatus.BackColor = Color.Red;
-
-						btnDownloadUpdate.Visible = true;
-						btnDownloadUpdate.Text = "Download from GitHub";
+						lblUpdateStatus.Text = $"Version {currentVersion}";
+						lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
 					}
 				}
 			}
 			catch
 			{
-				lblUpdateStatus.Text = "[🚨 ERROR] Could not check for updates.";
-				lblUpdateStatus.ForeColor = Color.Black;
-				lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
-				lblUpdateStatus.BackColor = Color.Red;
+				lblUpdateStatus.Text = $"Version check unavailable  •  v{currentVersion}";
+				lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
 			}
 		}
 
