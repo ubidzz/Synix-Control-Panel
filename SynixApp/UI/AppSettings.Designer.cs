@@ -272,7 +272,7 @@ namespace Synix_Control_Panel.SynixEngine
 			btnPrivacy.Selected = false;
 			btnPrivacy.Size = new Size(185, 54);
 			btnPrivacy.TabIndex = 2;
-			btnPrivacy.Text = "Privacy && Security";
+			btnPrivacy.Text = "Privacy & Security";
 			btnPrivacy.TextAlign = ContentAlignment.MiddleLeft;
 			btnPrivacy.UseVisualStyleBackColor = false;
 			btnPrivacy.Click += btnPrivacy_Click;

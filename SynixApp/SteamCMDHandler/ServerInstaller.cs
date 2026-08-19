@@ -29,15 +29,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 		public static int Install(GameServer server, GameInfo blueprint, Action<string> logCallback, Action<int>? onPidStarted = null)
 		{
 			// Direct-download games do not use SteamCMD.
-			if (blueprint.AppID == "0" ||
-				blueprint.AppID.StartsWith(
-					"Minecraft",
-					StringComparison.OrdinalIgnoreCase))
+			if (blueprint.AppID == "0" || blueprint.AppID.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
-				return InstallDirectDownloadAsync(
-					server,
-					blueprint,
-					logCallback).GetAwaiter().GetResult();
+				return InstallDirectDownloadAsync(server, blueprint, logCallback).GetAwaiter().GetResult();
 			}
 
 			int hasInternalError = 0;

@@ -619,9 +619,23 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 				{
-					string translatedMode = (server.GameMode == "PVE" && ((server.Game?.Contains("ARK") ?? false) || server.Game == "Atlas" || server.Game == "Rust"))
-						? "True" : (server.GameMode == "PVP" && ((server.Game?.Contains("ARK") ?? false) || server.Game == "Atlas" || server.Game == "Rust"))
-						? "False" : server.GameMode;
+					bool usesBooleanMode =
+						server.Game.Equals("ARK: Survival Evolved", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("ARK: Survival Ascended", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("PixARK", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("Atlas", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("Rust", StringComparison.OrdinalIgnoreCase);
+
+					string translatedMode = server.GameMode;
+
+					if (usesBooleanMode)
+					{
+						if (server.GameMode.Equals("PVE", StringComparison.OrdinalIgnoreCase))
+							translatedMode = "True";
+						else if (server.GameMode.Equals("PVP", StringComparison.OrdinalIgnoreCase))
+							translatedMode = "False";
+					}
+
 					args = args.Replace("{mode}", translatedMode);
 				}
 
@@ -655,15 +669,9 @@ namespace Synix_Control_Panel.SynixEngine
 				batchContent.AppendLine($"set SteamAppId={invokedId}");
 				batchContent.AppendLine($"set SteamGameId={invokedId}");
 				batchContent.AppendLine();
-				batchContent.AppendLine($":: Execute the standalone server payload");
+				batchContent.AppendLine($":: Execute the standalone server payload and instantly close this script window");
 				batchContent.AppendLine($"start \"{server.ServerName}\" \"{exeNameOnly}\" {safeArgs}");
-				batchContent.AppendLine();
-				batchContent.AppendLine("echo.");
-				batchContent.AppendLine($"echo Starting the {server.ServerName} Server. Please wait...");
-				batchContent.AppendLine("timeout /t 5 /nobreak >nul");
-				batchContent.AppendLine("echo.");
-				batchContent.AppendLine("echo Press any key to close this window.");
-				batchContent.AppendLine("pause >nul");
+				batchContent.AppendLine("exit");
 
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
 				string fullOutputPath = Path.Combine(server.InstallPath, safeFileName);
