@@ -43,8 +43,6 @@ public class GameInfo
 	public string RequiredArgs { get; set; } = string.Empty;
 	[JsonIgnore]
 	public List<string> Maps { get; set; } = [];
-
-	// Restored to GameInfo so GameDatabase initialization compiles successfully
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
 
@@ -61,13 +59,12 @@ public class GameInfo
 	public string LastMaintenanceDate { get; set; } = "";
 	[JsonIgnore]
 	public int MaxPlayersFromQuery { get; set; } = 0;
-
-	// Restored for Watchdog tracking
 	[JsonIgnore]
 	public DateTime? LastProbeTime { get; set; }
-
 	[JsonIgnore]
 	public string IconUrl { get; init; } = string.Empty;
+	[JsonIgnore]
+	public bool IsQueryable { get; init; } = true;
 }
 
 //----------- Configured Server Instance ---------------

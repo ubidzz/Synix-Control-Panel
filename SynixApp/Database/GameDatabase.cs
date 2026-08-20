@@ -57,7 +57,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = ["Level01_Main", "DLC_Level01_Main"],
 				GameModes = ["PVP", "PVE"],
 				Format = ConfigFormat.JSON,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
 			},
 			new() {
 				Game = "7 Days to Die",
@@ -71,7 +71,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "serverconfig.xml",
 				Format = ConfigFormat.XML,
 				Maps = ["Navezgane", "Pregen6k", "Pregen8k", "Pregen10k", "RWG"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
 			},
 			new() {
 				Game = "Valheim",
@@ -93,7 +93,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				Maps = ["DefaultWorld"],
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "ARK: Survival Evolved",
@@ -120,7 +121,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				Maps = [ "TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP", "Extinction_WP", "Valguero_WP", "Ragnarok_WP", "LostColony_WP", "Astraeos_WP", "Genesis_WP"],
 				GameModes = ["PVE", "PVP"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Sons Of The Forest",
@@ -436,7 +438,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 2456,
 				QueryPort = 2457,
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Dedicated"]
+				Maps = ["Dedicated"],
+				IsQueryable = false
 			},
 			new()
 			{
@@ -514,7 +517,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 7230,
 				Maps = ["CustomServerconfig.txt"],
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new()
 			{
@@ -527,7 +531,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"configs\server.json",
 				Format = ConfigFormat.JSON,
 				Maps = ["server.json"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new()
 			{
@@ -631,7 +636,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["SylvanGlade"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new()
 			{
@@ -1912,7 +1918,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"Astro\Saved\Config\WindowsServer\AstroServerSettings.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["Dedicated"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Tower Unite",
@@ -1936,7 +1943,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "server_config.json",
 				Format = ConfigFormat.JSON,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Archean",
@@ -2487,7 +2495,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = ["Arrakis"],
 				GameModes = ["PVE", "PVP"],
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Hanako: Honor & Blade",
@@ -2588,7 +2597,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 25565,
 				RelativeConfigPath = "server.properties",
 				IconUrl = "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/png/minecraft.png",
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
 			},
 			new() {
 				Game = "BeamMP",

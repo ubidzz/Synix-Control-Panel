@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
+using Synix_Control_Panel.SynixApp.Database;
 
 namespace Synix_Control_Panel
 {
@@ -784,6 +785,8 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
 				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
+				bool isQueryable = selectedGameData.IsQueryable;
 
 				updateServerToolStripMenuItem.Enabled = !isMinecraft;
 				updateServerToolStripMenuItem.Visible = !isMinecraft;
@@ -791,6 +794,23 @@ namespace Synix_Control_Panel
 				fileValidationToolStripMenuItem.Visible = !isMinecraft;
 				btnExportBatch.Enabled = !isMinecraft;
 				btnExportBatch.Visible = !isMinecraft;
+
+				if (selectedServer.Status == "Running")
+				{
+					connectionTestToolStripMenuItem.Visible = isQueryable;
+					connectionTestToolStripMenuItem.Enabled = isQueryable;
+					connectionLocalTestToolStripMenuItem.Visible = isQueryable;
+					connectionLocalTestToolStripMenuItem.Enabled = isQueryable;
+					toolStripSeparator3.Visible = isQueryable;
+				}
+				else
+				{
+					connectionTestToolStripMenuItem.Visible = false;
+					connectionTestToolStripMenuItem.Enabled = false;
+					connectionLocalTestToolStripMenuItem.Visible = false;
+					connectionLocalTestToolStripMenuItem.Enabled = false;
+					toolStripSeparator3.Visible = false;
+				}
 			}
 
 			contextMenuStrip.Show(btnServerOptions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
