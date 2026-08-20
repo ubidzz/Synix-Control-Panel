@@ -10,11 +10,8 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-using System;
-using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using System.Windows.Forms;
 
 namespace Synix_Control_Panel.SynixApp.Design
 {

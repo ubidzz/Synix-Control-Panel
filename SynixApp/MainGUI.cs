@@ -13,7 +13,6 @@
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
-using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
@@ -91,9 +90,10 @@ namespace Synix_Control_Panel
 			GridStyler.ApplyDashboardTheme(dataGridView1);
 			GridStyler.StyleCloseButton(btnClose);
 			GridStyler.StyleMinimizeButton(btnMinimize);
-			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
+			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
+			GridStyler.StyleIconButton(btnHelp, Properties.Resources.help, Color.FromArgb(200, 200, 200));
 			ApplyServerFilter();
 
 			IntPtr roundedRegionHandle = CreateRoundRectRgn(0, 0, Width, Height, 15, 15);
@@ -447,11 +447,11 @@ namespace Synix_Control_Panel
 			GameServer? server = currentRow?.DataBoundItem as GameServer;
 			bool hasSelection = server != null && currentRow != null;
 
-			btnServerActions.Enabled = hasSelection;
-			btnConfigure.Enabled = hasSelection;
-			btnStart.Enabled = hasSelection;
-			btnRestart.Enabled = hasSelection;
-			btnStop.Enabled = hasSelection;
+			if (btnServerOptions != null) btnServerOptions.Enabled = hasSelection;
+			if (btnConfigure != null) btnConfigure.Enabled = hasSelection;
+			if (btnStart != null) btnStart.Enabled = hasSelection;
+			if (btnRestart != null) btnRestart.Enabled = hasSelection;
+			if (btnStop != null) btnStop.Enabled = hasSelection;
 
 			if (!hasSelection || server == null)
 			{
@@ -478,7 +478,7 @@ namespace Synix_Control_Panel
 				return;
 
 			string searchText = txtServerSearch.Text.Trim();
-			string statusFilter = cmbStatusFilter.SelectedItem?.ToString() ?? "All Statuses";
+			string statusFilter = cmbStatusFilter?.SelectedItem?.ToString() ?? "All Statuses";
 			GameServer? selectedServer = dataGridView1.CurrentRow?.DataBoundItem as GameServer;
 			List<GameServer> matchingServers = serverList
 				.Where(server =>
@@ -779,18 +779,21 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void btnServerActionsMenu_Click(object sender, EventArgs e)
+		private void btnServerOptionsMenu_Click(object sender, EventArgs e)
 		{
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
 				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
 
 				updateServerToolStripMenuItem.Enabled = !isMinecraft;
+				updateServerToolStripMenuItem.Visible = !isMinecraft;
 				fileValidationToolStripMenuItem.Enabled = !isMinecraft;
+				fileValidationToolStripMenuItem.Visible = !isMinecraft;
 				btnExportBatch.Enabled = !isMinecraft;
+				btnExportBatch.Visible = !isMinecraft;
 			}
 
-			contextMenuStrip.Show(btnServerActions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
+			contextMenuStrip.Show(btnServerOptions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
 		}
 
 		private async void btnRestart_Click(object sender, EventArgs e)

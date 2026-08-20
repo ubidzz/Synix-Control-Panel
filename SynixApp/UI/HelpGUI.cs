@@ -10,7 +10,6 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-
 using Synix_Control_Panel.SynixApp.Design;
 using System.ComponentModel;
 using System.Diagnostics;

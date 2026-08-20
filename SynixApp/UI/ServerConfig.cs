@@ -10,11 +10,11 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Synix_Control_Panel.SynixApp.Design;
-using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.ServerHandler
 {

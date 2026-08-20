@@ -17,10 +17,10 @@ using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
-using static Synix_Control_Panel.SynixEngine.Core;
 using System.Management;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
+using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
 {
@@ -453,7 +453,7 @@ namespace Synix_Control_Panel
 
 				GameInfo? selectedGameData = hasGame ? GameDatabase.GetGame(selectedGame) : null;
 
-				bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains( "{query}", StringComparison.OrdinalIgnoreCase) == true;
+				bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains("{query}", StringComparison.OrdinalIgnoreCase) == true;
 
 				int gPort = (int)numPort.Value;
 				int qPort = usesQueryPort ? (int)numQueryPort.Value : 0;
@@ -737,7 +737,7 @@ namespace Synix_Control_Panel
 			int? aPort = numAppPort.Enabled ? (int)numAppPort.Value : (int?)null;
 			if (!Core.Instance.ValidatePortsAndReport(_existingServer, gPort, qPort, rPort, chkEnableRcon.Checked, aPort ?? 0, numAppPort.Enabled, selectedGame)) return;
 			string newPath = txtInstallPath.Text.Trim();
-			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, MaxRam = (int)numRam.Value, GameVersion = cmbGameVersion.Text.Trim(),  IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
+			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, MaxRam = (int)numRam.Value, GameVersion = cmbGameVersion.Text.Trim(), IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{

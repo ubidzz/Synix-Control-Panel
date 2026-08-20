@@ -11,7 +11,6 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -133,7 +132,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return true;
 			}
 
-			if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 60)
+			if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 180)
 			{
 				if (IsPortInUseLocally(server.Port))
 				{

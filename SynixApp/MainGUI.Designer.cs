@@ -33,6 +33,7 @@ namespace Synix_Control_Panel
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
 			titleBar = new Panel();
+			btnHelp = new Button();
 			logo = new PictureBox();
 			lblAppName = new Label();
 			btnSettings = new Button();
@@ -88,7 +89,7 @@ namespace Synix_Control_Panel
 			picSelectedServer = new PictureBox();
 			lblSelectedGame = new Label();
 			lblSelectedServerName = new Label();
-			btnServerActions = new Synix_Control_Panel.SynixApp.Design.SynixButton();
+			btnServerOptions = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnConfigure = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnStart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnRestart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
@@ -98,8 +99,6 @@ namespace Synix_Control_Panel
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			contextMenuStrip = new ContextMenuStrip(components);
-			btnHelp = new ToolStripMenuItem();
-			openServerConfig = new ToolStripMenuItem();
 			openServerFolderToolStripMenuItem = new ToolStripMenuItem();
 			backupToolStripMenuItem = new ToolStripMenuItem();
 			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
@@ -113,8 +112,7 @@ namespace Synix_Control_Panel
 			connectionLocalTestToolStripMenuItem = new ToolStripMenuItem();
 			toolStripSeparator4 = new ToolStripSeparator();
 			deleteServerToolStripMenuItem = new ToolStripMenuItem();
-			installServer = new ToolStripMenuItem();
-			toolStripSeparator1 = new ToolStripSeparator();
+			openServerConfig = new ToolStripMenuItem();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			toolTip1 = new ToolTip(components);
 			titleBar.SuspendLayout();
@@ -138,6 +136,7 @@ namespace Synix_Control_Panel
 			// 
 			titleBar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			titleBar.BackColor = Color.FromArgb(6, 12, 22);
+			titleBar.Controls.Add(btnHelp);
 			titleBar.Controls.Add(logo);
 			titleBar.Controls.Add(lblAppName);
 			titleBar.Controls.Add(btnSettings);
@@ -151,6 +150,20 @@ namespace Synix_Control_Panel
 			titleBar.Size = new Size(1440, 56);
 			titleBar.TabIndex = 0;
 			titleBar.MouseDown += Form_Drag_MouseDown;
+			// 
+			// btnHelp
+			// 
+			btnHelp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			btnHelp.Cursor = Cursors.Hand;
+			btnHelp.FlatStyle = FlatStyle.Flat;
+			btnHelp.Location = new Point(1178, 10);
+			btnHelp.Name = "btnHelp";
+			btnHelp.Size = new Size(36, 36);
+			btnHelp.TabIndex = 7;
+			btnHelp.TabStop = false;
+			btnHelp.Text = "Help";
+			btnHelp.UseVisualStyleBackColor = false;
+			btnHelp.Click += btnHelp_Click;
 			// 
 			// logo
 			// 
@@ -864,7 +877,7 @@ namespace Synix_Control_Panel
 			actionCard.Controls.Add(picSelectedServer);
 			actionCard.Controls.Add(lblSelectedGame);
 			actionCard.Controls.Add(lblSelectedServerName);
-			actionCard.Controls.Add(btnServerActions);
+			actionCard.Controls.Add(btnServerOptions);
 			actionCard.Controls.Add(btnConfigure);
 			actionCard.Controls.Add(btnStart);
 			actionCard.Controls.Add(btnRestart);
@@ -911,25 +924,25 @@ namespace Synix_Control_Panel
 			lblSelectedServerName.TabIndex = 2;
 			lblSelectedServerName.Text = "Choose a row to unlock server controls";
 			// 
-			// btnServerActions
+			// btnServerOptions
 			// 
-			btnServerActions.BackColor = Color.FromArgb(17, 27, 45);
-			btnServerActions.BorderColor = Color.FromArgb(55, 76, 108);
-			btnServerActions.Cursor = Cursors.Hand;
-			btnServerActions.FillColor = Color.FromArgb(12, 21, 36);
-			btnServerActions.FillColorSecondary = Color.FromArgb(20, 33, 54);
-			btnServerActions.FlatStyle = FlatStyle.Flat;
-			btnServerActions.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
-			btnServerActions.ForeColor = Color.FromArgb(245, 247, 251);
-			btnServerActions.Location = new Point(698, 21);
-			btnServerActions.Name = "btnServerActions";
-			btnServerActions.Size = new Size(154, 44);
-			btnServerActions.TabIndex = 3;
-			btnServerActions.TabStop = false;
-			btnServerActions.Text = "Server Actions  ▴";
-			btnServerActions.UseMnemonic = false;
-			btnServerActions.UseVisualStyleBackColor = false;
-			btnServerActions.Click += btnServerActionsMenu_Click;
+			btnServerOptions.BackColor = Color.FromArgb(17, 27, 45);
+			btnServerOptions.BorderColor = Color.FromArgb(55, 76, 108);
+			btnServerOptions.Cursor = Cursors.Hand;
+			btnServerOptions.FillColor = Color.FromArgb(12, 21, 36);
+			btnServerOptions.FillColorSecondary = Color.FromArgb(20, 33, 54);
+			btnServerOptions.FlatStyle = FlatStyle.Flat;
+			btnServerOptions.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnServerOptions.ForeColor = Color.FromArgb(245, 247, 251);
+			btnServerOptions.Location = new Point(698, 21);
+			btnServerOptions.Name = "btnServerOptions";
+			btnServerOptions.Size = new Size(154, 44);
+			btnServerOptions.TabIndex = 3;
+			btnServerOptions.TabStop = false;
+			btnServerOptions.Text = "Server Options  ▴";
+			btnServerOptions.UseMnemonic = false;
+			btnServerOptions.UseVisualStyleBackColor = false;
+			btnServerOptions.Click += btnServerOptionsMenu_Click;
 			// 
 			// btnConfigure
 			// 
@@ -1075,23 +1088,9 @@ namespace Synix_Control_Panel
 			// 
 			// contextMenuStrip
 			// 
-			contextMenuStrip.Items.AddRange(new ToolStripItem[] { btnHelp, openServerConfig, installServer, toolStripSeparator1 });
+			contextMenuStrip.Items.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(181, 98);
-			// 
-			// btnHelp
-			// 
-			btnHelp.Name = "btnHelp";
-			btnHelp.Size = new Size(180, 22);
-			btnHelp.Text = "Help Center";
-			btnHelp.Click += btnHelp_Click;
-			// 
-			// openServerConfig
-			// 
-			openServerConfig.DropDownItems.AddRange(new ToolStripItem[] { openServerFolderToolStripMenuItem, backupToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem, toolStripSeparator4, deleteServerToolStripMenuItem });
-			openServerConfig.Name = "openServerConfig";
-			openServerConfig.Size = new Size(180, 22);
-			openServerConfig.Text = "Server Options";
+			contextMenuStrip.Size = new Size(197, 242);
 			// 
 			// openServerFolderToolStripMenuItem
 			// 
@@ -1178,17 +1177,10 @@ namespace Synix_Control_Panel
 			deleteServerToolStripMenuItem.Text = "Delete Server";
 			deleteServerToolStripMenuItem.Click += btnDelete_Click;
 			// 
-			// installServer
+			// openServerConfig
 			// 
-			installServer.Name = "installServer";
-			installServer.Size = new Size(180, 22);
-			installServer.Text = "Install New Server";
-			installServer.Click += btnAddServer_Click;
-			// 
-			// toolStripSeparator1
-			// 
-			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new Size(177, 6);
+			openServerConfig.Name = "openServerConfig";
+			openServerConfig.Size = new Size(32, 19);
 			// 
 			// tmrResourceUpdates
 			// 
@@ -1311,7 +1303,7 @@ namespace Synix_Control_Panel
 		private PictureBox picSelectedServer;
 		private Label lblSelectedGame;
 		private Label lblSelectedServerName;
-		private SynixApp.Design.SynixButton btnServerActions;
+		private SynixApp.Design.SynixButton btnServerOptions;
 		private SynixApp.Design.SynixButton btnConfigure;
 		private SynixApp.Design.SynixButton btnStart;
 		private SynixApp.Design.SynixButton btnRestart;
@@ -1321,7 +1313,6 @@ namespace Synix_Control_Panel
 		private Label lblUpdateStatus;
 		private SynixApp.Design.SynixButton btnDownloadUpdate;
 		private ContextMenuStrip contextMenuStrip;
-		private ToolStripMenuItem btnHelp;
 		private ToolStripMenuItem openServerConfig;
 		private ToolStripMenuItem openServerFolderToolStripMenuItem;
 		private ToolStripMenuItem backupToolStripMenuItem;
@@ -1336,9 +1327,8 @@ namespace Synix_Control_Panel
 		private ToolStripMenuItem connectionLocalTestToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator4;
 		private ToolStripMenuItem deleteServerToolStripMenuItem;
-		private ToolStripMenuItem installServer;
-		private ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.Timer tmrResourceUpdates;
 		private ToolTip toolTip1;
+		private Button btnHelp;
 	}
 }
