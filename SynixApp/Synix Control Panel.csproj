@@ -29,8 +29,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="SynixApp\**" />
+	  <Compile Remove="Tests\**" />
 	  <EmbeddedResource Remove="SynixApp\**" />
+	  <EmbeddedResource Remove="Tests\**" />
 	  <None Remove="SynixApp\**" />
+	  <None Remove="Tests\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="SynixEngine\version.txt" />
