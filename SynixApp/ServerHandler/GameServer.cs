@@ -92,6 +92,12 @@ public class GameInfo
 //----------- Configured Server Instance ---------------
 public class GameServer : GameInfo
 {
+	/// <summary>
+	/// Version 1 stores Synix-managed passwords with Windows DPAPI for the
+	/// current user. A missing/zero value identifies data written by an older
+	/// Synix release and is upgraded automatically when it is loaded.
+	/// </summary>
+	public int PasswordStorageVersion { get; set; }
 	public string InstallPath { get; set; } = string.Empty;
 	public string ServerName { get; set; } = string.Empty;
 	public string Password { get; set; } = string.Empty;

@@ -47,6 +47,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.Management" Version="10.0.7" />
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

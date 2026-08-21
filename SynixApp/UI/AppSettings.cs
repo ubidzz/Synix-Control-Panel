@@ -467,7 +467,9 @@ namespace Synix_Control_Panel.SynixEngine
 				DialogResult unencryptedConfirmation = MessageBox.Show(
 					this,
 					"A normal export is not encrypted. Anyone who gets the file can read " +
-					"your server passwords, RCON details, settings, and saved data.\n\n" +
+					"settings, saved data, and any passwords written inside game configuration files.\n\n" +
+					"Synix-managed passwords remain protected for this Windows user. If this " +
+					"export is imported on another PC, those passwords may need to be re-entered.\n\n" +
 					"The package will still be checked for accidental damage when imported.\n\n" +
 					"Do you want to create an unencrypted export?",
 					"Normal Export Is Not Private",
@@ -544,30 +546,53 @@ namespace Synix_Control_Panel.SynixEngine
 				transferPassword = passwordDialog.TransferPassword;
 			}
 
-			FileHandler.SaveServers();
+			if (!FileHandler.SaveServers())
+			{
+				MessageBox.Show(
+					this,
+					"Synix could not safely save the current server list. The export was not started.",
+					"Unable to Save Synix",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
+
 			await RunTransferOperationAsync(
 				async progress =>
 				{
-					if (passwordProtected)
+					SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
+					try
 					{
-						await SynixTransferPackage.ExportAsync(
-							Core.RootPath,
-							fileDialog.FileName,
-							transferPassword,
-							progress);
+						if (passwordProtected)
+						{
+							SynixPortablePasswordTransfer.PrepareEncryptedExport(
+								Core.RootPath,
+								transferPassword,
+								MainGUI.serverList);
+
+							await SynixTransferPackage.ExportAsync(
+								Core.RootPath,
+								fileDialog.FileName,
+								transferPassword,
+								progress);
+						}
+						else
+						{
+							await SynixTransferPackage.ExportUnencryptedAsync(
+								Core.RootPath,
+								fileDialog.FileName,
+								progress);
+						}
 					}
-					else
+					finally
 					{
-						await SynixTransferPackage.ExportUnencryptedAsync(
-							Core.RootPath,
-							fileDialog.FileName,
-							progress);
+						SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
 					}
 				},
 				"Export complete",
 				passwordProtected
-					? $"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nKeep the transfer password with this file. It cannot be recovered."
-					: $"Synix was exported to:\n\n{fileDialog.FileName}\n\nThis file is not encrypted, so keep it somewhere private.");
+					? $"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nSaved Synix passwords can be restored on the new PC with this transfer password. Keep it with the file; it cannot be recovered."
+					: $"Synix was exported to:\n\n{fileDialog.FileName}\n\nThis file is not encrypted, so keep it somewhere private. Synix-managed passwords may need to be re-entered on another PC.");
 		}
 
 		private async void ImportSynixRequested(
@@ -635,13 +660,30 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			bool imported = await RunTransferOperationAsync(
-				async progress => await SynixTransferPackage.ImportAsync(
-					packageFile,
-					Core.RootPath,
-					transferPassword,
-					progress),
+				async progress =>
+				{
+					SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
+					await SynixTransferPackage.ImportAsync(
+						packageFile,
+						Core.RootPath,
+						transferPassword,
+						progress);
+
+					if (_selectedImportPasswordProtected)
+					{
+						SynixPortablePasswordTransfer.RestoreEncryptedImport(
+							Core.RootPath,
+							transferPassword);
+					}
+					else
+					{
+						SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
+					}
+				},
 				"Import complete",
-				"Your Synix files were restored. Synix will reload the transferred server list now.");
+				_selectedImportPasswordProtected
+					? "Your Synix files and saved Synix passwords were restored for this Windows user. Synix will reload the transferred server list now."
+					: "Your Synix files were restored. Synix will reload the transferred server list now. Passwords protected on another PC may need to be re-entered.");
 
 			if (imported)
 			{

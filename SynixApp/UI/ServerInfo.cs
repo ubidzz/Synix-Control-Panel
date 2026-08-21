@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.Help
 {
@@ -144,6 +145,11 @@ namespace Synix_Control_Panel.Help
 
 		private void LoadServerData()
 		{
+			bool passwordsAvailable = SynixPasswordProtection
+				.TryRevealServerPasswords(
+					_server,
+					out SynixServerPasswords passwords);
+
 			lblPageHeading.Text = DisplayOrFallback(_server.ServerName, "Server Overview");
 			lblPageSubtitle.Text =
 				$"{DisplayOrFallback(_server.Game, "Dedicated server")}  •  Live performance and configuration details";
@@ -163,9 +169,15 @@ namespace Synix_Control_Panel.Help
 			lblMapText.Text = DisplayOrFallback(_server.WorldName, "Not Required");
 			lblSeedText.Text = DisplayOrFallback(_server.WorldSeed, "Not Required");
 			lblCompetitiveText.Text = DisplayOrFallback(_server.GameMode, "Not Required");
-			lblRconPasswordText.Text = DisplayOrFallback(_server.RconPassword, "Not Required");
-			lblServerPasswordText.Text = DisplayOrFallback(_server.Password, "Not Required");
-			lblServerAdminPasswordText.Text = DisplayOrFallback(_server.AdminPassword, "Not Required");
+			lblRconPasswordText.Text = passwordsAvailable
+				? DisplayOrFallback(passwords.RconPassword, "Not Required")
+				: "Password unavailable";
+			lblServerPasswordText.Text = passwordsAvailable
+				? DisplayOrFallback(passwords.ServerPassword, "Not Required")
+				: "Password unavailable";
+			lblServerAdminPasswordText.Text = passwordsAvailable
+				? DisplayOrFallback(passwords.AdminPassword, "Not Required")
+				: "Password unavailable";
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
 			lblGameVersion.Text = _server.Game == "Minecraft"
 				? DisplayOrFallback(_server.GameVersion, "Latest")

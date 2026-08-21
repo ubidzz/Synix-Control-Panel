@@ -877,6 +877,19 @@ gam_bAutoCycleMaps = 1";
 
 		private static bool CreateGameConfig(GameServer server, string relativeFilePath, string contentTemplate, string identity, string localIp, string publicIp)
 		{
+			SynixServerPasswords passwords;
+			try
+			{
+				passwords = SynixPasswordProtection.RevealServerPasswords(server);
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				Core.Instance.Log(
+					"[🚨 ERROR] Synix could not unlock the saved server passwords. Re-enter them in Server Settings before creating the game configuration.",
+					Color.Red);
+				return false;
+			}
+
 			string fullFilePath = Path.Combine(server.InstallPath, relativeFilePath);
 			string? targetFolder = Path.GetDirectoryName(fullFilePath);
 			if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
@@ -885,13 +898,13 @@ gam_bAutoCycleMaps = 1";
 			{
 				string finalContent = contentTemplate
 					.Replace("{ServerName}", server.ServerName)
-					.Replace("{Password}", server.Password)
-					.Replace("{AdminPassword}", server.AdminPassword)
+					.Replace("{Password}", passwords.ServerPassword)
+					.Replace("{AdminPassword}", passwords.AdminPassword)
 					.Replace("{Port}", server.Port.ToString())
 					.Replace("{QueryPort}", server.QueryPort.ToString())
 					.Replace("{EnableRcon}", server.Game == "Rust" ? (server.EnableRcon ? "1" : "0") : server.EnableRcon.ToString().ToLower())
 					.Replace("{RCONPort}", server.RconPort.ToString())
-					.Replace("{RCONPassword}", server.RconPassword)
+					.Replace("{RCONPassword}", passwords.RconPassword)
 					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
 					.Replace("{GameMode}", server.GameMode?.ToString() ?? "")
 					.Replace("{WorldSeed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)

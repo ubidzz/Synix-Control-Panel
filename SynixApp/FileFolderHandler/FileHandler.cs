@@ -12,7 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixEngine;
-using System.Text.Json;
+using System.Text;
 using System.Threading.Channels;
 
 namespace Synix_Control_Panel.SynixApp.FileFolderHandler
@@ -44,25 +44,25 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			_logWorkerTask = Task.Run(ProcessLogQueueAsync);
 		}
 
-		public static void SaveServers()
+		public static bool SaveServers()
 		{
 			try
 			{
-				var options = new JsonSerializerOptions { WriteIndented = true };
-				string jsonString = JsonSerializer.Serialize(MainGUI.serverList, options);
+				string jsonString = SynixPasswordProtection
+					.SerializeServersForStorage(MainGUI.serverList);
+				string savedPath = Path.Combine(Core.DataPath, FileName);
 
-				bool success = Create(Core.DataPath, FileName, jsonString);
+				WriteTextAtomically(savedPath, jsonString);
 
-				if (success)
-				{
-					string savedPath = Path.Combine(Core.DataPath, FileName);
-
-					MainGUI.Instance?.AppendLog($"[📜 INFO] JSON saved successfully to {savedPath}.", Color.DarkSeaGreen);
-				}
+				MainGUI.Instance?.AppendLog(
+					$"[📜 INFO] JSON saved successfully to {savedPath}.",
+					Color.DarkSeaGreen);
+				return true;
 			}
 			catch (Exception ex)
 			{
 				MainGUI.Instance?.AppendLog("[🚨 ERROR] Save Error: " + ex.Message);
+				return false;
 			}
 		}
 
@@ -75,7 +75,10 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				try
 				{
 					string jsonString = File.ReadAllText(fullPath);
-					var loadedServers = JsonSerializer.Deserialize<List<GameServer>>(jsonString);
+					List<GameServer> loadedServers = SynixPasswordProtection
+						.DeserializeServersAndMigrate(
+							jsonString,
+							out int migratedPasswordServerCount);
 
 					if (loadedServers != null)
 					{
@@ -122,18 +125,85 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 							MainGUI.serverList.Add(server);
 						}
 
-						if (migratedLegacyGameName)
+						if (migratedLegacyGameName || migratedPasswordServerCount > 0)
 						{
-							SaveServers();
-							MainGUI.Instance?.AppendLog(
-								"[MIGRATION] Updated legacy 'Minecraft Java' server entries to 'Minecraft'.",
-								Color.DarkSeaGreen);
+							if (SaveServers())
+							{
+								if (migratedLegacyGameName)
+								{
+									MainGUI.Instance?.AppendLog(
+										"[MIGRATION] Updated legacy 'Minecraft Java' server entries to 'Minecraft'.",
+										Color.DarkSeaGreen);
+								}
+
+								if (migratedPasswordServerCount > 0)
+								{
+									MainGUI.Instance?.AppendLog(
+										$"[MIGRATION] Protected saved passwords for {migratedPasswordServerCount} server(s) with Windows user encryption.",
+										Color.DarkSeaGreen);
+								}
+							}
 						}
 					}
 				}
 				catch (Exception ex)
 				{
 					MainGUI.Instance?.AppendLog($"[🚨 ERROR] Load failed: {ex.Message}");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Writes a complete replacement beside the destination, flushes it to disk,
+		/// and then swaps it into place. A failed migration therefore leaves the old
+		/// servers.json untouched and available for the next startup attempt.
+		/// </summary>
+		public static void WriteTextAtomically(string fullPath, string content)
+		{
+			string? directory = Path.GetDirectoryName(fullPath);
+			if (string.IsNullOrWhiteSpace(directory))
+				throw new ArgumentException("A destination folder is required.", nameof(fullPath));
+
+			Directory.CreateDirectory(directory);
+			string temporaryPath = Path.Combine(
+				directory,
+				$".{Path.GetFileName(fullPath)}.{Guid.NewGuid():N}.tmp");
+
+			try
+			{
+				using (FileStream stream = new(
+					temporaryPath,
+					FileMode.CreateNew,
+					FileAccess.Write,
+					FileShare.None,
+					4096,
+					FileOptions.WriteThrough))
+				using (StreamWriter writer = new(
+					stream,
+					new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+					4096,
+					leaveOpen: true))
+				{
+					writer.Write(content);
+					writer.Flush();
+					stream.Flush(flushToDisk: true);
+				}
+
+				if (File.Exists(fullPath))
+					File.Replace(temporaryPath, fullPath, null, ignoreMetadataErrors: true);
+				else
+					File.Move(temporaryPath, fullPath);
+			}
+			finally
+			{
+				try
+				{
+					if (File.Exists(temporaryPath))
+						File.Delete(temporaryPath);
+				}
+				catch
+				{
+					// A harmless leftover temp file must not hide the real save result.
 				}
 			}
 		}

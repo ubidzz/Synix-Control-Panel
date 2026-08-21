@@ -42,6 +42,7 @@ namespace Synix_Control_Panel
 		private int _minecraftMetadataRequestId = 0;
 		private int _resolvedMinecraftJavaVersion = 0;
 		private string _minecraftMetadataError = string.Empty;
+		private bool _passwordUnlockFailed;
 		private string _validationMessage =
 			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
 
@@ -301,6 +302,9 @@ namespace Synix_Control_Panel
 
 		protected override void OnFormClosed(FormClosedEventArgs eventArgs)
 		{
+			txtPassword.Clear();
+			txtAdminPassword.Clear();
+			txtRconPassword.Clear();
 			debounceTimer?.Stop();
 			debounceTimer?.Dispose();
 			base.OnFormClosed(eventArgs);
@@ -335,8 +339,22 @@ namespace Synix_Control_Panel
 			if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
 
-			txtPassword.Text = _existingServer.Password ?? "";
-			txtAdminPassword.Text = _existingServer.AdminPassword ?? "";
+			if (SynixPasswordProtection.TryRevealServerPasswords(
+				_existingServer,
+				out SynixServerPasswords passwords))
+			{
+				txtPassword.Text = passwords.ServerPassword;
+				txtAdminPassword.Text = passwords.AdminPassword;
+				txtRconPassword.Text = passwords.RconPassword;
+			}
+			else
+			{
+				_passwordUnlockFailed = true;
+				txtPassword.Clear();
+				txtAdminPassword.Clear();
+				txtRconPassword.Clear();
+				Shown += ShowPasswordUnlockWarning;
+			}
 			chkEnableDiscord.Checked = _existingServer.IsDiscordAlertEnabled;
 			txtDiscordWebhook.Text = _existingServer.DiscordWebhook ?? "";
 			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
@@ -358,7 +376,6 @@ namespace Synix_Control_Panel
 			chkUpdateOnStart.Checked = _existingServer.UpdateOnStart;
 			chkEnableRcon.Checked = _existingServer.EnableRcon;
 			numRconPort.Value = Math.Clamp(_existingServer.RconPort, numRconPort.Minimum, numRconPort.Maximum);
-			txtRconPassword.Text = _existingServer.RconPassword ?? "";
 			chkEnableSchedule.Checked = _existingServer.IsScheduledRestartEnabled;
 			if (_existingServer.RestartDays != null) _selectedDays = (bool[])_existingServer.RestartDays.Clone();
 			_selectedTime = _existingServer.RestartTime ?? "04:00";
@@ -375,6 +392,19 @@ namespace Synix_Control_Panel
 
 			cmbGame.Enabled = false;
 			isPrivacyLoading = false;
+		}
+
+		private void ShowPasswordUnlockWarning(object? sender, EventArgs eventArgs)
+		{
+			Shown -= ShowPasswordUnlockWarning;
+			if (!_passwordUnlockFailed)
+				return;
+
+			MessageBox.Show(
+				"Synix could not unlock this server's saved passwords. They may have come from another Windows user or computer.\n\nEnter the passwords again and press Save Changes to protect them for this Windows user.",
+				"Re-enter Server Passwords",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Warning);
 		}
 
 		private void SyncGatekeeper()
@@ -1046,6 +1076,13 @@ namespace Synix_Control_Panel
 
 			try
 			{
+				SynixPasswordProtection.SetServerPasswords(
+					NewServer,
+					new SynixServerPasswords(
+						txtPassword.Text,
+						txtAdminPassword.Text,
+						txtRconPassword.Text));
+
 				if (_isEditMode && _existingServer != null)
 				{
 					var existing = MainGUI.serverList.FirstOrDefault(s => s.ServerName == _existingServer.ServerName);

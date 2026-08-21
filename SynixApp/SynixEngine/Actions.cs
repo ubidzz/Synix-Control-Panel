@@ -537,6 +537,20 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
+			SynixServerPasswords batchPasswords;
+			try
+			{
+				batchPasswords = SynixPasswordProtection
+					.RevealServerPasswords(server);
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				Log(
+					"[🚨 ERROR] Synix could not unlock the saved passwords. Re-enter them in Server Settings before exporting a launch file.",
+					Color.Red);
+				return false;
+			}
+
 			if (server.Game == "Dune: Awakening")
 			{
 				Log("[⚠️ NOTICE] Dune: Awakening requires the official battlegroup.bat script. Export aborted.", Color.Orange);
@@ -603,8 +617,8 @@ namespace Synix_Control_Panel.SynixEngine
 						   .Replace("{port}", server.Port.ToString())
 						   .Replace("{query}", server.QueryPort.ToString())
 						   .Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-						   .Replace("{pass}", server.Password ?? "")
-						   .Replace("{adminpass}", server.AdminPassword ?? "")
+						   .Replace("{pass}", batchPasswords.ServerPassword)
+						   .Replace("{adminpass}", batchPasswords.AdminPassword)
 						   .Replace("{ServerName}", server.ServerName ?? "SynixServer")
 						   .Replace("{InstallPath}", server.InstallPath ?? "")
 						   .Replace("{Identity}", cleanIdentity)
@@ -614,7 +628,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (args.Contains("{rcon}"))
 				{
 					string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
-						? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", server.RconPassword ?? "")
+						? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", batchPasswords.RconPassword)
 						: "";
 					args = args.Replace("{rcon}", formattedRcon);
 				}

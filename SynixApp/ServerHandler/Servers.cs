@@ -108,6 +108,20 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			try
 			{
+				SynixServerPasswords launchPasswords;
+				try
+				{
+					launchPasswords = SynixPasswordProtection
+						.RevealServerPasswords(server);
+				}
+				catch (SynixPasswordProtectionException)
+				{
+					logCallback?.Invoke(
+						"[🚨 ERROR] Synix could not unlock this server's passwords. Open Server Settings, re-enter them, and save before starting the server.",
+						Color.Red);
+					return;
+				}
+
 				bool isSystemSafe = await Task.Run(() => IsSystemSafeToStart());
 				if (!isSystemSafe) return;
 
@@ -234,8 +248,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.Replace("{port}", server.Port.ToString())
 						.Replace("{query}", server.QueryPort.ToString())
 						.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-						.Replace("{pass}", server.Password ?? "")
-						.Replace("{adminpass}", server.AdminPassword ?? "")
+						.Replace("{pass}", launchPasswords.ServerPassword)
+						.Replace("{adminpass}", launchPasswords.AdminPassword)
 						.Replace("{ServerName}", server.ServerName)
 						.Replace("{InstallPath}", server.InstallPath)
 						.Replace("{world_size}", server.WorldSize.ToString())
@@ -260,7 +274,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						{
 							formattedRcon = dbEntry.RconSyntax
 								.Replace("{rcon_port}", server.RconPort.ToString())
-								.Replace("{rcon_pass}", server.RconPassword ?? "");
+								.Replace("{rcon_pass}", launchPasswords.RconPassword);
 
 							if (string.Equals(server.Game, "Rust", StringComparison.OrdinalIgnoreCase))
 							{
@@ -346,9 +360,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				// Scrub passwords from the UI log
 				string safeLogArgs = finalArgs;
-				if (!string.IsNullOrWhiteSpace(server.Password)) safeLogArgs = safeLogArgs.Replace(server.Password, "********");
-				if (!string.IsNullOrWhiteSpace(server.AdminPassword)) safeLogArgs = safeLogArgs.Replace(server.AdminPassword, "********");
-				if (!string.IsNullOrWhiteSpace(server.RconPassword)) safeLogArgs = safeLogArgs.Replace(server.RconPassword, "********");
+				if (!string.IsNullOrWhiteSpace(launchPasswords.ServerPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.ServerPassword, "********");
+				if (!string.IsNullOrWhiteSpace(launchPasswords.AdminPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.AdminPassword, "********");
+				if (!string.IsNullOrWhiteSpace(launchPasswords.RconPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.RconPassword, "********");
 
 				logCallback?.Invoke($"[ARGUMENT] {safeLogArgs}", Color.Cyan);
 
