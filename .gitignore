@@ -37,6 +37,50 @@ bld/
 /SynixApp/Packaging/MSI/bin/
 /SynixApp/Packaging/MSI/obj/
 
+# Synix generated build, test, publish, and release output
+/SynixApp/bin/
+/SynixApp/obj/
+/SynixApp/Tests/bin/
+/SynixApp/Tests/obj/
+/SynixApp/Tests/TestResults/
+/SynixApp/Properties/PublishProfiles/
+/SynixApp/publish/
+/SynixApp/artifacts/
+/SynixApp/release-audit/
+/SynixApp/SynixSetup.msi
+/SynixApp/SynixSetup.wixpdb
+/SynixApp/Synix Control Panel.exe
+/SynixApp/Synix.release-manifest.txt
+/SynixApp/Synix.release-manifest.backup.txt
+
+# Synix runtime data must stay on the user's computer
+/SynixApp/SynixData/
+/SynixApp/Games/
+/SynixApp/SteamCMD/
+/SynixApp/BackupGames/
+/SynixApp/servers.json
+/SynixApp/game-compatibility.json
+/SynixApp/github-connection.json
+/SynixApp/update-request.json
+/SynixApp/update-error.log
+/SynixApp/*.synix.bak
+/SynixApp/*.synix.tmp
+/SynixApp/.synix-*.tmp
+
+# Local credentials and environment configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets.json
+appsettings.*.local.json
+
+# WiX linker and Windows Installer output copied outside bin folders
+*.wixpdb
+*.msi
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
