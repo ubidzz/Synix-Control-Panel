@@ -109,6 +109,8 @@ namespace Synix_Control_Panel
 			_ = Core.Instance;
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
+
+			cmbStatusFilter.SelectedItem = "All Statuses";
 		}
 
 		[DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
