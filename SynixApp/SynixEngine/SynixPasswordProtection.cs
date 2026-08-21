@@ -18,6 +18,10 @@ namespace Synix_Control_Panel.SynixEngine
 		string AdminPassword,
 		string RconPassword);
 
+	public readonly record struct SynixServerSecrets(
+		SynixServerPasswords Passwords,
+		string DiscordWebhook);
+
 	public sealed class SynixPasswordProtectionException : Exception
 	{
 		public SynixPasswordProtectionException(string message, Exception? inner = null)
@@ -27,13 +31,13 @@ namespace Synix_Control_Panel.SynixEngine
 	}
 
 	/// <summary>
-	/// Protects Synix-managed server passwords with Windows DPAPI, scoped to the
-	/// Windows user running Synix. The prefix provides unambiguous versioning and
-	/// prevents old readable values from being encrypted more than once.
+	/// Protects Synix-managed server credentials with Windows DPAPI, scoped to
+	/// the Windows user running Synix. The prefix provides unambiguous versioning
+	/// and prevents old readable values from being encrypted more than once.
 	/// </summary>
 	public static class SynixPasswordProtection
 	{
-		public const int CurrentStorageVersion = 1;
+		public const int CurrentStorageVersion = 2;
 		public const string ProtectedValuePrefix = "synix-dpapi-v1:";
 
 		private static readonly byte[] AdditionalEntropy =
@@ -75,7 +79,7 @@ namespace Synix_Control_Panel.SynixEngine
 				exception is CryptographicException or PlatformNotSupportedException)
 			{
 				throw new SynixPasswordProtectionException(
-					"Windows could not protect the saved server passwords for this user.",
+					"Windows could not protect the saved server credentials for this user.",
 					exception);
 			}
 			finally
@@ -106,7 +110,7 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (FormatException exception)
 			{
 				throw new SynixPasswordProtectionException(
-					"The saved password data is damaged or incomplete.",
+					"The saved credential data is damaged or incomplete.",
 					exception);
 			}
 
@@ -130,7 +134,7 @@ namespace Synix_Control_Panel.SynixEngine
 				exception is CryptographicException or PlatformNotSupportedException)
 			{
 				throw new SynixPasswordProtectionException(
-					"These saved passwords belong to another Windows user or computer, or the password data is damaged.",
+					"These saved credentials belong to another Windows user or computer, or the credential data is damaged.",
 					exception);
 			}
 			finally
@@ -149,6 +153,28 @@ namespace Synix_Control_Panel.SynixEngine
 				Reveal(server.RconPassword));
 		}
 
+		/// <summary>
+		/// Storage version 0 and 1 predate webhook protection, so their webhook is
+		/// still readable legacy text until the automatic version 2 migration.
+		/// </summary>
+		public static string RevealDiscordWebhook(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+
+			return server.PasswordStorageVersion < CurrentStorageVersion
+				? server.DiscordWebhook ?? string.Empty
+				: Reveal(server.DiscordWebhook);
+		}
+
+		public static SynixServerSecrets RevealServerSecrets(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+
+			return new SynixServerSecrets(
+				RevealServerPasswords(server),
+				RevealDiscordWebhook(server));
+		}
+
 		public static bool TryRevealServerPasswords(
 			GameServer server,
 			out SynixServerPasswords passwords)
@@ -165,6 +191,22 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		public static bool TryRevealServerSecrets(
+			GameServer server,
+			out SynixServerSecrets secrets)
+		{
+			try
+			{
+				secrets = RevealServerSecrets(server);
+				return true;
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				secrets = default;
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// Replaces all three saved values together so a protection failure cannot
 		/// leave only part of a server entry migrated.
@@ -174,17 +216,38 @@ namespace Synix_Control_Panel.SynixEngine
 			SynixServerPasswords plaintextPasswords)
 		{
 			ArgumentNullException.ThrowIfNull(server);
+			string plaintextWebhook = RevealDiscordWebhook(server);
+
+			SetServerSecrets(
+				server,
+				new SynixServerSecrets(
+					plaintextPasswords,
+					plaintextWebhook));
+		}
+
+		/// <summary>
+		/// Replaces every Synix-managed credential together so a protection failure
+		/// cannot leave only part of a server entry upgraded.
+		/// </summary>
+		public static void SetServerSecrets(
+			GameServer server,
+			SynixServerSecrets plaintextSecrets)
+		{
+			ArgumentNullException.ThrowIfNull(server);
 
 			string protectedServerPassword = Protect(
-				plaintextPasswords.ServerPassword);
+				plaintextSecrets.Passwords.ServerPassword);
 			string protectedAdminPassword = Protect(
-				plaintextPasswords.AdminPassword);
+				plaintextSecrets.Passwords.AdminPassword);
 			string protectedRconPassword = Protect(
-				plaintextPasswords.RconPassword);
+				plaintextSecrets.Passwords.RconPassword);
+			string protectedDiscordWebhook = Protect(
+				plaintextSecrets.DiscordWebhook);
 
 			server.Password = protectedServerPassword;
 			server.AdminPassword = protectedAdminPassword;
 			server.RconPassword = protectedRconPassword;
+			server.DiscordWebhook = protectedDiscordWebhook;
 			server.PasswordStorageVersion = CurrentStorageVersion;
 		}
 
@@ -200,13 +263,15 @@ namespace Synix_Control_Panel.SynixEngine
 				server.PasswordStorageVersion < CurrentStorageVersion ||
 				NeedsProtection(server.Password) ||
 				NeedsProtection(server.AdminPassword) ||
-				NeedsProtection(server.RconPassword);
+				NeedsProtection(server.RconPassword) ||
+				NeedsProtection(server.DiscordWebhook);
 
 			if (!requiresMigration)
 				return false;
 
+			int previousStorageVersion = server.PasswordStorageVersion;
 			SynixServerPasswords plaintextPasswords =
-				server.PasswordStorageVersion < CurrentStorageVersion
+				previousStorageVersion == 0
 					? new SynixServerPasswords(
 						server.Password ?? string.Empty,
 						server.AdminPassword ?? string.Empty,
@@ -215,8 +280,15 @@ namespace Synix_Control_Panel.SynixEngine
 						Reveal(server.Password),
 						Reveal(server.AdminPassword),
 						Reveal(server.RconPassword));
+			string plaintextWebhook = previousStorageVersion < CurrentStorageVersion
+				? server.DiscordWebhook ?? string.Empty
+				: Reveal(server.DiscordWebhook);
 
-			SetServerPasswords(server, plaintextPasswords);
+			SetServerSecrets(
+				server,
+				new SynixServerSecrets(
+					plaintextPasswords,
+					plaintextWebhook));
 
 			return true;
 		}

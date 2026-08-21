@@ -93,9 +93,9 @@ public class GameInfo
 public class GameServer : GameInfo
 {
 	/// <summary>
-	/// Version 1 stores Synix-managed passwords with Windows DPAPI for the
-	/// current user. A missing/zero value identifies data written by an older
-	/// Synix release and is upgraded automatically when it is loaded.
+	/// Version 1 stores Synix-managed passwords with Windows DPAPI. Version 2
+	/// also protects the Discord webhook. Missing and older versions are
+	/// upgraded automatically when they are loaded.
 	/// </summary>
 	public int PasswordStorageVersion { get; set; }
 	public string InstallPath { get; set; } = string.Empty;

@@ -11,6 +11,8 @@ public sealed class SynixPasswordProtectionTests
 	private const string ServerPassword = "server-secret-98!";
 	private const string AdminPassword = "admin-secret-42!";
 	private const string RconPassword = "rcon-secret-73!";
+	private const string DiscordWebhook =
+		"https://discord.com/api/webhooks/123456789/test-webhook-token";
 
 	[Fact]
 	public void SetAndRevealPasswords_RoundTripsAllManagedValues()
@@ -42,7 +44,8 @@ public sealed class SynixPasswordProtectionTests
 			ServerName = "Legacy Server",
 			Password = ServerPassword,
 			AdminPassword = AdminPassword,
-			RconPassword = RconPassword
+			RconPassword = RconPassword,
+			DiscordWebhook = DiscordWebhook
 		};
 		string legacyJson = JsonSerializer.Serialize(new[] { legacyServer });
 
@@ -54,11 +57,12 @@ public sealed class SynixPasswordProtectionTests
 		GameServer result = Assert.Single(migrated);
 		Assert.Equal(1, migratedServerCount);
 		Assert.Equal(
-			PlaintextPasswords(),
-			SynixPasswordProtection.RevealServerPasswords(result));
+			PlaintextSecrets(),
+			SynixPasswordProtection.RevealServerSecrets(result));
 		Assert.True(SynixPasswordProtection.IsProtected(result.Password));
 		Assert.True(SynixPasswordProtection.IsProtected(result.AdminPassword));
 		Assert.True(SynixPasswordProtection.IsProtected(result.RconPassword));
+		Assert.True(SynixPasswordProtection.IsProtected(result.DiscordWebhook));
 	}
 
 	[Fact]
@@ -70,7 +74,8 @@ public sealed class SynixPasswordProtectionTests
 			ServerName = "Protected Server",
 			Password = ServerPassword,
 			AdminPassword = AdminPassword,
-			RconPassword = RconPassword
+			RconPassword = RconPassword,
+			DiscordWebhook = DiscordWebhook
 		};
 
 		string storageJson = SynixPasswordProtection
@@ -79,10 +84,38 @@ public sealed class SynixPasswordProtectionTests
 		Assert.DoesNotContain(ServerPassword, storageJson);
 		Assert.DoesNotContain(AdminPassword, storageJson);
 		Assert.DoesNotContain(RconPassword, storageJson);
+		Assert.DoesNotContain(DiscordWebhook, storageJson);
+		Assert.DoesNotContain("test-webhook-token", storageJson);
 		Assert.Contains(
 			SynixPasswordProtection.ProtectedValuePrefix,
 			storageJson);
-		Assert.Contains("\"PasswordStorageVersion\": 1", storageJson);
+		Assert.Contains("\"PasswordStorageVersion\": 2", storageJson);
+	}
+
+	[Fact]
+	public void VersionOneStorage_ProtectsWebhookWithoutLosingPasswords()
+	{
+		GameServer versionOneServer = new()
+		{
+			Game = "Palworld",
+			ServerName = "Version One Server",
+			PasswordStorageVersion = 1,
+			Password = SynixPasswordProtection.Protect(ServerPassword),
+			AdminPassword = SynixPasswordProtection.Protect(AdminPassword),
+			RconPassword = SynixPasswordProtection.Protect(RconPassword),
+			DiscordWebhook = DiscordWebhook
+		};
+
+		bool migrated = SynixPasswordProtection.MigrateLegacyServer(
+			versionOneServer);
+
+		Assert.True(migrated);
+		Assert.Equal(2, versionOneServer.PasswordStorageVersion);
+		Assert.True(SynixPasswordProtection.IsProtected(
+			versionOneServer.DiscordWebhook));
+		Assert.Equal(
+			PlaintextSecrets(),
+			SynixPasswordProtection.RevealServerSecrets(versionOneServer));
 	}
 
 	[Fact]
@@ -199,6 +232,8 @@ public sealed class SynixPasswordProtectionTests
 		Assert.DoesNotContain(ServerPassword, vaultAsText);
 		Assert.DoesNotContain(AdminPassword, vaultAsText);
 		Assert.DoesNotContain(RconPassword, vaultAsText);
+		Assert.DoesNotContain(DiscordWebhook, vaultAsText);
+		Assert.DoesNotContain("test-webhook-token", vaultAsText);
 
 		folders.PrepareImportedFiles(exportedServer, sourceVault);
 		bool restored = SynixPortablePasswordTransfer.RestoreEncryptedImport(
@@ -213,8 +248,8 @@ public sealed class SynixPasswordProtectionTests
 				File.ReadAllText(folders.ImportedServersPath))!);
 		Assert.NotEqual(oldProtectedPassword, importedServer.Password);
 		Assert.Equal(
-			PlaintextPasswords(),
-			SynixPasswordProtection.RevealServerPasswords(importedServer));
+			PlaintextSecrets(),
+			SynixPasswordProtection.RevealServerSecrets(importedServer));
 	}
 
 	[Fact]
@@ -280,8 +315,8 @@ public sealed class SynixPasswordProtectionTests
 			JsonSerializer.Deserialize<List<GameServer>>(
 				File.ReadAllText(folders.ImportedServersPath))!);
 		Assert.Equal(
-			PlaintextPasswords(),
-			SynixPasswordProtection.RevealServerPasswords(importedServer));
+			PlaintextSecrets(),
+			SynixPasswordProtection.RevealServerSecrets(importedServer));
 	}
 
 	private static SynixServerPasswords PlaintextPasswords()
@@ -292,6 +327,13 @@ public sealed class SynixPasswordProtectionTests
 			RconPassword);
 	}
 
+	private static SynixServerSecrets PlaintextSecrets()
+	{
+		return new SynixServerSecrets(
+			PlaintextPasswords(),
+			DiscordWebhook);
+	}
+
 	private static GameServer CreateProtectedServer()
 	{
 		GameServer server = new()
@@ -300,9 +342,9 @@ public sealed class SynixPasswordProtectionTests
 			ServerName = "Portable Server",
 			InstallPath = @"C:\Synix\Games\Portable Server"
 		};
-		SynixPasswordProtection.SetServerPasswords(
+		SynixPasswordProtection.SetServerSecrets(
 			server,
-			PlaintextPasswords());
+			PlaintextSecrets());
 		return server;
 	}
 

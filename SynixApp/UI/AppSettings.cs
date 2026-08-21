@@ -468,8 +468,9 @@ namespace Synix_Control_Panel.SynixEngine
 					this,
 					"A normal export is not encrypted. Anyone who gets the file can read " +
 					"settings, saved data, and any passwords written inside game configuration files.\n\n" +
-					"Synix-managed passwords remain protected for this Windows user. If this " +
-					"export is imported on another PC, those passwords may need to be re-entered.\n\n" +
+					"Synix-managed passwords and Discord webhooks remain protected for this Windows " +
+					"user. If this export is imported on another PC, those credentials may need " +
+					"to be re-entered.\n\n" +
 					"The package will still be checked for accidental damage when imported.\n\n" +
 					"Do you want to create an unencrypted export?",
 					"Normal Export Is Not Private",
@@ -591,8 +592,8 @@ namespace Synix_Control_Panel.SynixEngine
 				},
 				"Export complete",
 				passwordProtected
-					? $"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nSaved Synix passwords can be restored on the new PC with this transfer password. Keep it with the file; it cannot be recovered."
-					: $"Synix was exported to:\n\n{fileDialog.FileName}\n\nThis file is not encrypted, so keep it somewhere private. Synix-managed passwords may need to be re-entered on another PC.");
+					? $"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nSaved Synix passwords and Discord webhooks can be restored on the new PC with this transfer password. Keep it with the file; it cannot be recovered."
+					: $"Synix was exported to:\n\n{fileDialog.FileName}\n\nThis file is not encrypted, so keep it somewhere private. Synix-managed passwords and Discord webhooks may need to be re-entered on another PC.");
 		}
 
 		private async void ImportSynixRequested(
@@ -682,8 +683,8 @@ namespace Synix_Control_Panel.SynixEngine
 				},
 				"Import complete",
 				_selectedImportPasswordProtected
-					? "Your Synix files and saved Synix passwords were restored for this Windows user. Synix will reload the transferred server list now."
-					: "Your Synix files were restored. Synix will reload the transferred server list now. Passwords protected on another PC may need to be re-entered.");
+					? "Your Synix files, saved passwords, and Discord webhooks were restored for this Windows user. Synix will reload the transferred server list now."
+					: "Your Synix files were restored. Synix will reload the transferred server list now. Passwords and Discord webhooks protected on another PC may need to be re-entered.");
 
 			if (imported)
 			{

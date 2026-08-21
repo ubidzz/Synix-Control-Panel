@@ -44,7 +44,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (string.IsNullOrEmpty(transferPassword))
 			{
 				throw new ArgumentException(
-					"A transfer password is required for portable saved passwords.",
+					"A transfer password is required for portable saved credentials.",
 					nameof(transferPassword));
 			}
 
@@ -52,8 +52,9 @@ namespace Synix_Control_Panel.SynixEngine
 			int index = 0;
 			foreach (GameServer server in servers)
 			{
-				SynixServerPasswords passwords = SynixPasswordProtection
-					.RevealServerPasswords(server);
+				SynixServerSecrets secrets = SynixPasswordProtection
+					.RevealServerSecrets(server);
+				SynixServerPasswords passwords = secrets.Passwords;
 
 				entries.Add(new PortablePasswordEntry
 				{
@@ -63,7 +64,8 @@ namespace Synix_Control_Panel.SynixEngine
 					InstallPath = server.InstallPath ?? string.Empty,
 					ServerPassword = passwords.ServerPassword,
 					AdminPassword = passwords.AdminPassword,
-					RconPassword = passwords.RconPassword
+					RconPassword = passwords.RconPassword,
+					DiscordWebhook = secrets.DiscordWebhook
 				});
 			}
 
@@ -112,7 +114,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!File.Exists(serversPath))
 			{
 				throw new SynixPasswordProtectionException(
-					"The transfer contains saved passwords but no server list to restore them into.");
+					"The transfer contains saved credentials but no server list to restore them into.");
 			}
 
 			byte[] encryptedVault = File.ReadAllBytes(vaultPath);
@@ -122,12 +124,12 @@ namespace Synix_Control_Panel.SynixEngine
 				PortablePasswordBundle bundle =
 					JsonSerializer.Deserialize<PortablePasswordBundle>(plaintext) ??
 					throw new SynixPasswordProtectionException(
-						"The portable saved-password list is incomplete.");
+						"The portable saved-credential list is incomplete.");
 
 				if (bundle.Version != FormatVersion || bundle.Servers is null)
 				{
 					throw new SynixPasswordProtectionException(
-						"This saved-password transfer version is not supported.");
+						"This saved-credential transfer version is not supported.");
 				}
 
 				List<GameServer> importedServers =
@@ -137,12 +139,20 @@ namespace Synix_Control_Panel.SynixEngine
 				foreach (PortablePasswordEntry entry in bundle.Servers)
 				{
 					GameServer server = FindMatchingServer(importedServers, entry);
-					SynixPasswordProtection.SetServerPasswords(
+					// Older version-1 vaults did not contain the webhook. In that
+					// case, preserve the readable webhook from the imported server
+					// entry while upgrading it to current-user DPAPI protection.
+					string discordWebhook = entry.DiscordWebhook ??
+						SynixPasswordProtection.RevealDiscordWebhook(server);
+
+					SynixPasswordProtection.SetServerSecrets(
 						server,
-						new SynixServerPasswords(
-							entry.ServerPassword,
-							entry.AdminPassword,
-							entry.RconPassword));
+						new SynixServerSecrets(
+							new SynixServerPasswords(
+								entry.ServerPassword,
+								entry.AdminPassword,
+								entry.RconPassword),
+							discordWebhook));
 				}
 
 				string protectedJson = SynixPasswordProtection
@@ -159,7 +169,7 @@ namespace Synix_Control_Panel.SynixEngine
 				exception is JsonException or IOException or InvalidOperationException)
 			{
 				throw new SynixPasswordProtectionException(
-					"Synix could not restore the portable saved passwords.",
+					"Synix could not restore the portable saved credentials.",
 					exception);
 			}
 			finally
@@ -194,7 +204,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (matches.Count != 1)
 			{
 				throw new SynixPasswordProtectionException(
-					$"The saved passwords for '{entry.ServerName}' could not be matched safely to one imported server.");
+					$"The saved credentials for '{entry.ServerName}' could not be matched safely to one imported server.");
 			}
 
 			return matches[0];
@@ -223,7 +233,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (plaintext.Length > MaximumPayloadBytes)
 			{
 				throw new SynixPasswordProtectionException(
-					"The saved-password list is unexpectedly large.");
+					"The saved-credential list is unexpectedly large.");
 			}
 
 			byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
@@ -307,7 +317,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				CryptographicOperations.ZeroMemory(plaintext);
 				throw new SynixPasswordProtectionException(
-					"The portable saved passwords could not be unlocked with this transfer password.",
+					"The portable saved credentials could not be unlocked with this transfer password.",
 					exception);
 			}
 			finally
@@ -348,7 +358,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private static SynixPasswordProtectionException InvalidVault()
 		{
 			return new SynixPasswordProtectionException(
-				"The portable saved-password data is damaged or incomplete.");
+				"The portable saved-credential data is damaged or incomplete.");
 		}
 
 		private static void WriteBytesAtomically(
@@ -411,6 +421,8 @@ namespace Synix_Control_Panel.SynixEngine
 			public string ServerPassword { get; set; } = string.Empty;
 			public string AdminPassword { get; set; } = string.Empty;
 			public string RconPassword { get; set; } = string.Empty;
+			// Null identifies a vault made before webhook transfer support.
+			public string? DiscordWebhook { get; set; }
 		}
 	}
 }

@@ -139,7 +139,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 								if (migratedPasswordServerCount > 0)
 								{
 									MainGUI.Instance?.AppendLog(
-										$"[MIGRATION] Protected saved passwords for {migratedPasswordServerCount} server(s) with Windows user encryption.",
+										$"[MIGRATION] Protected saved passwords and Discord webhooks for {migratedPasswordServerCount} server(s) with Windows user encryption.",
 										Color.DarkSeaGreen);
 								}
 							}

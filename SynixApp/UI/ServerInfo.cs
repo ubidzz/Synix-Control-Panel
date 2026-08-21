@@ -145,10 +145,11 @@ namespace Synix_Control_Panel.Help
 
 		private void LoadServerData()
 		{
-			bool passwordsAvailable = SynixPasswordProtection
-				.TryRevealServerPasswords(
+			bool secretsAvailable = SynixPasswordProtection
+				.TryRevealServerSecrets(
 					_server,
-					out SynixServerPasswords passwords);
+					out SynixServerSecrets secrets);
+			SynixServerPasswords passwords = secrets.Passwords;
 
 			lblPageHeading.Text = DisplayOrFallback(_server.ServerName, "Server Overview");
 			lblPageSubtitle.Text =
@@ -169,13 +170,13 @@ namespace Synix_Control_Panel.Help
 			lblMapText.Text = DisplayOrFallback(_server.WorldName, "Not Required");
 			lblSeedText.Text = DisplayOrFallback(_server.WorldSeed, "Not Required");
 			lblCompetitiveText.Text = DisplayOrFallback(_server.GameMode, "Not Required");
-			lblRconPasswordText.Text = passwordsAvailable
+			lblRconPasswordText.Text = secretsAvailable
 				? DisplayOrFallback(passwords.RconPassword, "Not Required")
 				: "Password unavailable";
-			lblServerPasswordText.Text = passwordsAvailable
+			lblServerPasswordText.Text = secretsAvailable
 				? DisplayOrFallback(passwords.ServerPassword, "Not Required")
 				: "Password unavailable";
-			lblServerAdminPasswordText.Text = passwordsAvailable
+			lblServerAdminPasswordText.Text = secretsAvailable
 				? DisplayOrFallback(passwords.AdminPassword, "Not Required")
 				: "Password unavailable";
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
@@ -184,7 +185,9 @@ namespace Synix_Control_Panel.Help
 				: "N/A";
 
 			txtServerFolderValue.Text = DisplayOrFallback(_server.InstallPath);
-			txtDiscordWebhookValue.Text = DisplayOrFallback(_server.DiscordWebhook, "Not Configured");
+			txtDiscordWebhookValue.Text = secretsAvailable
+				? DisplayOrFallback(secrets.DiscordWebhook, "Not Configured")
+				: "Credential unavailable";
 			txtExtraArgsValue.Text = DisplayOrFallback(_server.ExtraArgs, "No extra arguments");
 		}
 

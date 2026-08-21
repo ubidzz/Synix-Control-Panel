@@ -305,6 +305,7 @@ namespace Synix_Control_Panel
 			txtPassword.Clear();
 			txtAdminPassword.Clear();
 			txtRconPassword.Clear();
+			txtDiscordWebhook.Clear();
 			debounceTimer?.Stop();
 			debounceTimer?.Dispose();
 			base.OnFormClosed(eventArgs);
@@ -339,13 +340,15 @@ namespace Synix_Control_Panel
 			if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
 
-			if (SynixPasswordProtection.TryRevealServerPasswords(
+			if (SynixPasswordProtection.TryRevealServerSecrets(
 				_existingServer,
-				out SynixServerPasswords passwords))
+				out SynixServerSecrets secrets))
 			{
+				SynixServerPasswords passwords = secrets.Passwords;
 				txtPassword.Text = passwords.ServerPassword;
 				txtAdminPassword.Text = passwords.AdminPassword;
 				txtRconPassword.Text = passwords.RconPassword;
+				txtDiscordWebhook.Text = secrets.DiscordWebhook;
 			}
 			else
 			{
@@ -353,10 +356,10 @@ namespace Synix_Control_Panel
 				txtPassword.Clear();
 				txtAdminPassword.Clear();
 				txtRconPassword.Clear();
+				txtDiscordWebhook.Clear();
 				Shown += ShowPasswordUnlockWarning;
 			}
 			chkEnableDiscord.Checked = _existingServer.IsDiscordAlertEnabled;
-			txtDiscordWebhook.Text = _existingServer.DiscordWebhook ?? "";
 			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
 
 			numPort.Value = Math.Clamp(_existingServer.Port, numPort.Minimum, numPort.Maximum);
@@ -401,8 +404,8 @@ namespace Synix_Control_Panel
 				return;
 
 			MessageBox.Show(
-				"Synix could not unlock this server's saved passwords. They may have come from another Windows user or computer.\n\nEnter the passwords again and press Save Changes to protect them for this Windows user.",
-				"Re-enter Server Passwords",
+				"Synix could not unlock this server's saved passwords or Discord webhook. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
+				"Re-enter Server Credentials",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Warning);
 		}
@@ -1076,12 +1079,14 @@ namespace Synix_Control_Panel
 
 			try
 			{
-				SynixPasswordProtection.SetServerPasswords(
+				SynixPasswordProtection.SetServerSecrets(
 					NewServer,
-					new SynixServerPasswords(
-						txtPassword.Text,
-						txtAdminPassword.Text,
-						txtRconPassword.Text));
+					new SynixServerSecrets(
+						new SynixServerPasswords(
+							txtPassword.Text,
+							txtAdminPassword.Text,
+							txtRconPassword.Text),
+						txtDiscordWebhook.Text.Trim()));
 
 				if (_isEditMode && _existingServer != null)
 				{

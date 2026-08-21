@@ -58,7 +58,24 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task SendDiscordAlert(GameServer server, string title, string message, Color color)
 		{
-			if (!server.IsDiscordAlertEnabled || string.IsNullOrWhiteSpace(server.DiscordWebhook))
+			if (!server.IsDiscordAlertEnabled)
+				return;
+
+			string discordWebhook;
+			try
+			{
+				discordWebhook = SynixPasswordProtection
+					.RevealDiscordWebhook(server);
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				Log(
+					"[👾 DISCORD ERROR] Synix could not unlock this server's saved Discord webhook. Re-enter it in Server Settings.",
+					Color.Red);
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(discordWebhook))
 				return;
 
 			int discordColor = (color.R << 16) | (color.G << 8) | color.B;
@@ -81,18 +98,20 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				string json = JsonSerializer.Serialize(payload);
-				var content = new StringContent(json, Encoding.UTF8, "application/json");
+				using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-				var response = await _discordClient.PostAsync(server.DiscordWebhook, content);
+				using var response = await _discordClient.PostAsync(discordWebhook, content);
 
 				if (!response.IsSuccessStatusCode)
 				{
 					Log($"[👾 DISCORD] Webhook failed: {response.StatusCode}", Color.Red);
 				}
 			}
-			catch (Exception ex)
+			catch (Exception exception)
 			{
-				Log($"[👾 DISCORD ERROR] {ex.Message}", Color.Red);
+				Log(
+					$"[👾 DISCORD ERROR] Discord delivery failed ({exception.GetType().Name}).",
+					Color.Red);
 			}
 		}
 
