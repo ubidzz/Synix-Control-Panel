@@ -497,7 +497,11 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 					logCallback?.Invoke("[SYSTEM] Generating Minecraft Start.bat bootstrapper...");
 					string batPath = Path.Combine(server.InstallPath, "Start.bat");
-					File.WriteAllText(batPath, $"@echo off\r\n{javaExeCmd} %* <NUL\r\nif %errorlevel% neq 0 pause\r\n");
+					// Keep Java's standard input connected so Synix can issue Minecraft's
+					// native "stop" command and let the server save every world cleanly.
+					// The wrapper exits with Java instead of pausing and leaving a stale
+					// cmd.exe that looks like a running server.
+					File.WriteAllText(batPath, $"@echo off\r\n{javaExeCmd} %*\r\nexit /b %errorlevel%\r\n");
 				}
 			}
 			catch (Exception ex)

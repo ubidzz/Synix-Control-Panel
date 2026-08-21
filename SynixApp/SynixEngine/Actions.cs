@@ -463,7 +463,9 @@ namespace Synix_Control_Panel.SynixEngine
 				if (stopServer && server.PID != null)
 				{
 					Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
-					await StopServerAndReport(server);
+					// Button-driven restarts remain manual. Scheduled maintenance and
+					// watchdog recovery must not be reported as a manual shutdown.
+					await StopServerAndReport(server, isManual: status == "RESTART");
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Stopped))

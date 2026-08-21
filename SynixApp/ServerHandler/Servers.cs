@@ -36,6 +36,38 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		delegate bool ConsoleCtrlDelegate(uint CtrlType);
 
 		const uint CTRL_C_EVENT = 0;
+		private const int STD_INPUT_HANDLE = -10;
+		private const ushort KEY_EVENT = 0x0001;
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		private struct KeyEventRecord
+		{
+			public int KeyDown;
+			public ushort RepeatCount;
+			public ushort VirtualKeyCode;
+			public ushort VirtualScanCode;
+			public char UnicodeChar;
+			public uint ControlKeyState;
+		}
+
+		[StructLayout(LayoutKind.Explicit)]
+		private struct InputRecord
+		{
+			[FieldOffset(0)]
+			public ushort EventType;
+			[FieldOffset(4)]
+			public KeyEventRecord KeyEvent;
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern IntPtr GetStdHandle(int standardHandle);
+
+		[DllImport("kernel32.dll", EntryPoint = "WriteConsoleInputW", CharSet = CharSet.Unicode, SetLastError = true)]
+		private static extern bool WriteConsoleInput(
+			IntPtr consoleInput,
+			InputRecord[] buffer,
+			uint numberOfEvents,
+			out uint numberOfEventsWritten);
 
 		private const uint TH32CS_SNAPPROCESS = 0x00000002;
 		private const int MAX_PATH = 260;
@@ -101,6 +133,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";
+				bool isMinecraft = false;
 
 				await Task.Run(() =>
 				{
@@ -119,6 +152,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}", Color.Red);
 						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
 						return;
+					}
+
+					isMinecraft = server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+					if (isMinecraft)
+					{
+						PrepareMinecraftLauncher(fullExePath, logCallback);
 					}
 
 					string targetId = dbEntry.AppID;
@@ -174,7 +213,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					// Calculate RAM for the launch argument WITHOUT overwriting the saved variable
 					int ramToUse = server.MaxRam;
-					if (server.Game == "Minecraft Java")
+					if (isMinecraft)
 					{
 						ramToUse = server.MaxRam * 1024;
 					}
@@ -270,6 +309,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						WorkingDirectory = binDir,
 						UseShellExecute = false,
 						CreateNoWindow = hideWindow,
+						// Hidden Minecraft servers need a pipe so Synix can send the
+						// native "stop" command. Visible servers keep their console input
+						// so administrators can still type commands in the server window.
+						RedirectStandardInput = isMinecraft && hideWindow,
 					};
 
 					if (server.Game == "Dune: Awakening")
@@ -297,6 +340,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				Process? proc = Process.Start(psi);
 				if (proc != null)
 				{
+					if (isMinecraft && psi.RedirectStandardInput)
+					{
+						proc.StandardInput.AutoFlush = true;
+					}
+
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
 
@@ -333,6 +381,29 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 			}
 			catch (Exception ex) { logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red); }
+		}
+
+		private static void PrepareMinecraftLauncher(string launcherPath, Action<string, Color> logCallback)
+		{
+			try
+			{
+				string original = File.ReadAllText(launcherPath);
+				string updated = original
+					.Replace(" %* <NUL", " %*", StringComparison.OrdinalIgnoreCase)
+					.Replace("if %errorlevel% neq 0 pause", "exit /b %errorlevel%", StringComparison.OrdinalIgnoreCase);
+
+				if (!string.Equals(original, updated, StringComparison.Ordinal))
+				{
+					File.WriteAllText(launcherPath, updated);
+					logCallback?.Invoke("[MINECRAFT] Updated the legacy launcher so clean console shutdown commands are accepted.", Color.Cyan);
+				}
+			}
+			catch (Exception ex)
+			{
+				// Starting remains possible, but Synix will have to use its verified
+				// process-tree fallback if this legacy launcher cannot be migrated.
+				logCallback?.Invoke($"[⚠️ MINECRAFT] Could not update Start.bat for graceful shutdown: {ex.Message}", Color.OrangeRed);
+			}
 		}
 
 		public static async Task<bool> Stop(GameServer server, Action<string, Color> logCallback, bool isManual = true)
@@ -379,10 +450,17 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
-				bool signalSent = targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
+				bool isMinecraft = server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+				bool signalSent = isMinecraft
+					? await TrySendMinecraftStopCommand(server, targetPid, logCallback)
+					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
+				TimeSpan gracefulTimeout = isMinecraft
+					? TimeSpan.FromSeconds(60)
+					: TimeSpan.FromSeconds(25);
+
 				if (signalSent)
 				{
-					liveProcesses = await WaitForServerProcessesToExit(server, targetPid, trackedProcesses, TimeSpan.FromSeconds(25));
+					liveProcesses = await WaitForServerProcessesToExit(server, targetPid, trackedProcesses, gracefulTimeout);
 				}
 				else
 				{
@@ -432,6 +510,138 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				RestoreLiveServerState(server, liveProcesses, targetPid);
 				return false;
 			}
+		}
+
+		private static async Task<bool> TrySendMinecraftStopCommand(
+			GameServer server,
+			int targetPid,
+			Action<string, Color> logCallback)
+		{
+			if (TryWriteRedirectedInput(server, "stop"))
+			{
+				logCallback?.Invoke("[MINECRAFT] Sent the native 'stop' command through Synix's managed console pipe.", Color.Aqua);
+				return true;
+			}
+
+			if (targetPid > 0 && await TryWriteConsoleCommand(targetPid, "stop\r"))
+			{
+				logCallback?.Invoke("[MINECRAFT] Sent the native 'stop' command to the visible server console.", Color.Aqua);
+				return true;
+			}
+
+			logCallback?.Invoke(
+				"[⚠️ MINECRAFT] The original console input channel is unavailable. Synix will use the verified process-tree fallback.",
+				Color.OrangeRed);
+			return false;
+		}
+
+		private static bool TryWriteRedirectedInput(GameServer server, string command)
+		{
+			try
+			{
+				Process? process = server.RunningProcess;
+				if (process == null || process.HasExited)
+				{
+					return false;
+				}
+
+				// StandardInput itself is the reliable test. Reading StartInfo on a
+				// process restored with Process.GetProcessById throws because Synix did
+				// not create that Process object.
+				process.StandardInput.WriteLine(command);
+				process.StandardInput.Flush();
+				return true;
+			}
+			catch (ObjectDisposedException)
+			{
+				return false;
+			}
+			catch (InvalidOperationException)
+			{
+				return false;
+			}
+			catch (IOException)
+			{
+				return false;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static async Task<bool> TryWriteConsoleCommand(int targetPid, string command)
+		{
+			await _consoleLock.WaitAsync();
+			bool attached = false;
+
+			try
+			{
+				attached = AttachConsole((uint)targetPid);
+				if (!attached)
+				{
+					return false;
+				}
+
+				IntPtr inputHandle = GetStdHandle(STD_INPUT_HANDLE);
+				if (inputHandle == IntPtr.Zero || inputHandle == InvalidHandleValue)
+				{
+					return false;
+				}
+
+				InputRecord[] inputRecords = CreateConsoleInputRecords(command);
+				return inputRecords.Length > 0 &&
+					WriteConsoleInput(inputHandle, inputRecords, (uint)inputRecords.Length, out uint written) &&
+					written == (uint)inputRecords.Length;
+			}
+			catch
+			{
+				// Console ownership can disappear while Windows Terminal or cmd.exe is
+				// closing. The caller will use the verified process-tree fallback.
+				return false;
+			}
+			finally
+			{
+				if (attached)
+				{
+					FreeConsole();
+				}
+
+				_consoleLock.Release();
+			}
+		}
+
+		private static InputRecord[] CreateConsoleInputRecords(string command)
+		{
+			List<InputRecord> records = new List<InputRecord>(command.Length * 2);
+			foreach (char character in command)
+			{
+				records.Add(CreateConsoleInputRecord(character, true));
+				records.Add(CreateConsoleInputRecord(character, false));
+			}
+
+			return records.ToArray();
+		}
+
+		private static InputRecord CreateConsoleInputRecord(char character, bool keyDown)
+		{
+			ushort virtualKey = character == '\r'
+				? (ushort)Keys.Enter
+				: (ushort)char.ToUpperInvariant(character);
+
+			return new InputRecord
+			{
+				EventType = KEY_EVENT,
+				KeyEvent = new KeyEventRecord
+				{
+					KeyDown = keyDown ? 1 : 0,
+					RepeatCount = 1,
+					VirtualKeyCode = virtualKey,
+					VirtualScanCode = 0,
+					UnicodeChar = character,
+					ControlKeyState = 0
+				}
+			};
 		}
 
 		private static bool IsStoppingStatus(string? status)
@@ -513,18 +723,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ignoreHandlerInstalled = SetConsoleCtrlHandler(null, true);
 				bool signalSent = GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 
-				if (server.RunningProcess != null && server.RunningProcess.StartInfo.RedirectStandardInput)
-				{
-					try
-					{
-						server.RunningProcess.StandardInput.WriteLine("Y");
-						server.RunningProcess.StandardInput.Flush();
-					}
-					catch
-					{
-						// Some servers do not expose standard input. CTRL+C is still valid.
-					}
-				}
+				TryWriteRedirectedInput(server, "Y");
 
 				// Give Windows time to dispatch the control event before detaching.
 				await Task.Delay(200);

@@ -716,7 +716,16 @@ namespace Synix_Control_Panel
 			}
 			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Running))
 			{
-				await Core.Instance.StopServerAndReport(selectedServer);
+				try
+				{
+					await Core.Instance.StopServerAndReport(selectedServer);
+				}
+				catch (Exception ex)
+				{
+					// Exceptions escaping an async WinForms event handler terminate the
+					// application. Keep Synix open and report the failed operation instead.
+					AppendLog($"[🚨 STOP ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
+				}
 			}
 		}
 
@@ -864,7 +873,14 @@ namespace Synix_Control_Panel
 			}
 			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Running))
 			{
-				await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
+				try
+				{
+					await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
+				}
+				catch (Exception ex)
+				{
+					AppendLog($"[🚨 RESTART ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
+				}
 			}
 		}
 
