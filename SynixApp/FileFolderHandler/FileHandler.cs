@@ -79,9 +79,17 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 					if (loadedServers != null)
 					{
+						bool migratedLegacyGameName = false;
 						MainGUI.serverList.Clear();
 						foreach (var server in loadedServers)
 						{
+							string canonicalGameName = GameDatabase.GetCanonicalGameName(server.Game);
+							if (!server.Game.Equals(canonicalGameName, StringComparison.Ordinal))
+							{
+								server.Game = canonicalGameName;
+								migratedLegacyGameName = true;
+							}
+
 							var masterData = GameDatabase.GetGame(server.Game);
 							if (masterData != null)
 							{
@@ -112,6 +120,14 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 								}
 							}
 							MainGUI.serverList.Add(server);
+						}
+
+						if (migratedLegacyGameName)
+						{
+							SaveServers();
+							MainGUI.Instance?.AppendLog(
+								"[MIGRATION] Updated legacy 'Minecraft Java' server entries to 'Minecraft'.",
+								Color.DarkSeaGreen);
 						}
 					}
 				}

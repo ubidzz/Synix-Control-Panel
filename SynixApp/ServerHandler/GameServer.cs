@@ -28,7 +28,7 @@ public enum ServerProbeProtocol
 //------- Database Blueprint Template -------
 public class GameInfo
 {
-	public string Game { get; init; } = string.Empty;
+	public string Game { get; set; } = string.Empty;
 	[JsonIgnore]
 	public System.Drawing.Image DisplayIcon { get; set; }
 	[JsonIgnore]

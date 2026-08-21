@@ -17,16 +17,26 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		private static Dictionary<string, string> _iconPathCache = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> _iconPathCache =
+			new(StringComparer.OrdinalIgnoreCase);
+		private static readonly HttpClient _iconHttpClient = new()
+		{
+			Timeout = TimeSpan.FromSeconds(20)
+		};
 
 
 		public static string GetLocalServerIcon(string gameName, string fullExePath)
 		{
-			string safeName = gameName.Replace(" ", "_").Replace(":", "");
+			GameInfo? blueprint = GameDatabase.GetGame(gameName);
+			string canonicalGameName = blueprint?.Game ?? GameDatabase.GetCanonicalGameName(gameName);
+			string safeName = canonicalGameName.Replace(" ", "_").Replace(":", "");
 
 			if (_iconPathCache.TryGetValue(safeName, out string memoryPath))
 			{
-				return memoryPath;
+				if (IsValidIconFile(memoryPath))
+					return memoryPath;
+
+				_iconPathCache.Remove(safeName);
 			}
 
 			FolderHandler.Create(Core.GameIconsPath);
@@ -34,31 +44,53 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (File.Exists(localIconPath))
 			{
-				_iconPathCache[safeName] = localIconPath;
-				return localIconPath;
+				if (IsValidIconFile(localIconPath))
+				{
+					_iconPathCache[safeName] = localIconPath;
+					return localIconPath;
+				}
+
+				TryDeleteFile(localIconPath);
 			}
 
-			var blueprint = GameDatabase.GetGame(gameName);
 			if (blueprint != null && !string.IsNullOrWhiteSpace(blueprint.IconUrl))
 			{
+				string temporaryIconPath = localIconPath + ".download";
 				try
 				{
-					using (var client = new System.Net.Http.HttpClient())
-					{
-						var imageBytes = Task.Run(() => client.GetByteArrayAsync(blueprint.IconUrl)).GetAwaiter().GetResult();
-						File.WriteAllBytes(localIconPath, imageBytes);
+					byte[] imageBytes = Task.Run(
+						() => _iconHttpClient.GetByteArrayAsync(blueprint.IconUrl))
+						.GetAwaiter()
+						.GetResult();
 
-						_iconPathCache[safeName] = localIconPath;
-						return localIconPath;
+					using (var stream = new MemoryStream(imageBytes))
+					using (var downloadedImage = Image.FromStream(
+						stream,
+						useEmbeddedColorManagement: false,
+						validateImageData: true))
+					using (var normalizedBitmap = new Bitmap(downloadedImage))
+					{
+						normalizedBitmap.Save(
+							temporaryIconPath,
+							System.Drawing.Imaging.ImageFormat.Png);
 					}
+
+					File.Move(temporaryIconPath, localIconPath, overwrite: true);
+					_iconPathCache[safeName] = localIconPath;
+					return localIconPath;
 				}
 				catch
 				{
-					// If the URL is dead, fall through to try normal extraction
+					TryDeleteFile(temporaryIconPath);
+					// If the URL is unavailable or not an image, try normal extraction.
 				}
 			}
 
-			if (File.Exists(fullExePath))
+			// Batch files only expose Windows' generic script icon. Saving that icon
+			// permanently masks a later successful IconUrl download, so skip it.
+			if (File.Exists(fullExePath) &&
+				!fullExePath.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) &&
+				!fullExePath.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
 			{
 				try
 				{
@@ -82,6 +114,43 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			return Path.Combine(GameIconsPath, "default_server.png");
+		}
+
+		private static bool IsValidIconFile(string path)
+		{
+			if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+				return false;
+
+			try
+			{
+				using FileStream stream = File.Open(
+					path,
+					FileMode.Open,
+					FileAccess.Read,
+					FileShare.ReadWrite);
+				using Image image = Image.FromStream(
+					stream,
+					useEmbeddedColorManagement: false,
+					validateImageData: true);
+				return image.Width > 0 && image.Height > 0;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static void TryDeleteFile(string path)
+		{
+			try
+			{
+				if (File.Exists(path))
+					File.Delete(path);
+			}
+			catch
+			{
+				// A locked cache file should not prevent the fallback icon path.
+			}
 		}
 	}
 }

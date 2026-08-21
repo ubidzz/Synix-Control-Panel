@@ -2694,10 +2694,46 @@ namespace Synix_Control_Panel.SynixApp.Database
 		}
 
 		private static readonly Dictionary<string, GameInfo> _gameDict = games.ToDictionary(g => g.Game, StringComparer.OrdinalIgnoreCase);
+		private const string CanonicalMinecraftName = "Minecraft";
+		private const string LegacyMinecraftName = "Minecraft Java";
+
+		/// <summary>
+		/// Maps names stored by older Synix releases to their current database name.
+		/// Keep this centralized so database lookup, icon loading, and JSON migration
+		/// all agree on the same identity.
+		/// </summary>
+		public static string GetCanonicalGameName(string? gameName)
+		{
+			string normalizedName = gameName?.Trim() ?? string.Empty;
+
+			return normalizedName.Equals(LegacyMinecraftName, StringComparison.OrdinalIgnoreCase)
+				? CanonicalMinecraftName
+				: normalizedName;
+		}
+
+		public static bool IsMinecraft(string? gameName)
+		{
+			return GetCanonicalGameName(gameName).Equals(
+				CanonicalMinecraftName,
+				StringComparison.OrdinalIgnoreCase);
+		}
 
 		public static GameInfo? GetGame(string gameName)
 		{
-			return _gameDict.TryGetValue(gameName, out var game) ? game : null;
+			string canonicalName = GetCanonicalGameName(gameName);
+
+			if (_gameDict.TryGetValue(canonicalName, out GameInfo? game))
+				return game;
+
+			// This fallback also keeps the helper safe if it is copied into a branch
+			// whose database entry has not yet been renamed.
+			if (IsMinecraft(canonicalName) &&
+				_gameDict.TryGetValue(LegacyMinecraftName, out game))
+			{
+				return game;
+			}
+
+			return null;
 		}
 
 		/// <summary>
