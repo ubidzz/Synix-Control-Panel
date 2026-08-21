@@ -67,6 +67,27 @@ public sealed class SynixUpdateServiceTests
 		Assert.False(installation.CanInstallUpdates);
 	}
 
+	[Fact]
+	public async Task DevelopmentBuild_UpdaterCannotCreateSelfCopy()
+	{
+		SynixUpdateCheckResult check = new(
+			new Version(1, 0, 21),
+			new Version(1, 0, 22),
+			new SynixInstallation(
+				SynixInstallationKind.Development,
+				@"C:\Build\Synix Control Panel.exe",
+				null),
+			null,
+			null,
+			null);
+		SynixUpdaterCoordinator coordinator = new(new SynixUpdateService());
+
+		InvalidOperationException exception = await Assert.ThrowsAsync<
+			InvalidOperationException>(() => coordinator.PrepareAsync(check));
+
+		Assert.Contains("official Stable", exception.Message);
+	}
+
 	[Theory]
 	[InlineData(null, SynixInstallationKind.Setup)]
 	[InlineData("Setup", SynixInstallationKind.Setup)]

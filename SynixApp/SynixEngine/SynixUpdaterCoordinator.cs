@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+#if SYNIX_STABLE_RELEASE
 namespace Synix_Control_Panel.SynixEngine
 {
 	internal enum SynixUpdateApplyMode
@@ -827,3 +828,70 @@ namespace Synix_Control_Panel.SynixEngine
 		}
 	}
 }
+#else
+namespace Synix_Control_Panel.SynixEngine
+{
+	public sealed record SynixPreparedUpdate(
+		string HelperPath,
+		string RequestPath,
+		string ReadyMarkerPath,
+		Version NewVersion);
+
+	public sealed class SynixUpdaterCoordinator
+	{
+		public const string ApplyUpdateArgument = "--synix-apply-update";
+		public const string UpdateStartedArgument = "--synix-update-started";
+		public const string UpdateRolledBackArgument = "--synix-update-rolled-back";
+
+		public SynixUpdaterCoordinator(SynixUpdateService updateService)
+		{
+			ArgumentNullException.ThrowIfNull(updateService);
+		}
+
+		public Task<SynixPreparedUpdate> PrepareAsync(
+			SynixUpdateCheckResult check,
+			IProgress<SynixUpdateDownloadProgress>? progress = null,
+			CancellationToken cancellationToken = default)
+		{
+			ArgumentNullException.ThrowIfNull(check);
+			return Task.FromException<SynixPreparedUpdate>(
+				new InvalidOperationException(
+					"Automatic updater operations are available only in an official Stable Synix release."));
+		}
+
+		public static void LaunchPreparedUpdate(
+			SynixPreparedUpdate preparedUpdate)
+		{
+			ArgumentNullException.ThrowIfNull(preparedUpdate);
+			throw new InvalidOperationException(
+				"Automatic updater operations are disabled in development builds.");
+		}
+
+		public static bool TryRunUpdateHelper(string[] args)
+		{
+			ArgumentNullException.ThrowIfNull(args);
+			return false;
+		}
+
+		public static string? GetStartupSuccessMarker(string[] args)
+		{
+			ArgumentNullException.ThrowIfNull(args);
+			return null;
+		}
+
+		public static string? GetRollbackVersion(string[] args)
+		{
+			ArgumentNullException.ThrowIfNull(args);
+			return null;
+		}
+
+		public static void MarkStartupSuccessful(string markerPath)
+		{
+		}
+
+		public static void CleanupStaleOperations()
+		{
+		}
+	}
+}
+#endif

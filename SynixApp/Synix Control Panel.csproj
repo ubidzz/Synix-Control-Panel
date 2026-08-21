@@ -21,6 +21,7 @@
 		<InformationalVersion>$(Version)</InformationalVersion>
 		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">Stable</SynixBuildChannel>
 		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == ''">Development</SynixBuildChannel>
+		<DefineConstants Condition="'$(SynixBuildChannel)' == 'Stable'">$(DefineConstants);SYNIX_STABLE_RELEASE</DefineConstants>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
@@ -116,9 +117,78 @@
 	</ItemGroup>
 
 	<Target Name="RunInnoAfterPublish" AfterTargets="Publish">
+		<PropertyGroup>
+			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
+			<_SynixSetupExe>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Output', 'SynixSetup.exe'))</_SynixSetupExe>
+			<_SynixInnoScript>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Synix.iss'))</_SynixInnoScript>
+			<_SynixTestsProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Tests', 'Synix.Tests.csproj'))</_SynixTestsProject>
+			<_SynixDotNetHost Condition="'$(DotNetHostPath)' != ''">$(DotNetHostPath)</_SynixDotNetHost>
+			<_SynixDotNetHost Condition="'$(_SynixDotNetHost)' == ''">$([System.IO.Path]::Combine('$(ProgramFiles)', 'dotnet', 'dotnet.exe'))</_SynixDotNetHost>
+		</PropertyGroup>
+		<Error Condition="'$(SynixBuildChannel)' != 'Stable'" Text="Synix Publish was not marked as a Stable release build." />
+		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
+		<Error Condition="!Exists('$(_SynixInnoScript)')" Text="The Inno Setup script was not found at $(_SynixInnoScript)." />
+		<Error Condition="!Exists('$(_SynixTestsProject)')" Text="The Synix automated test project was not found at $(_SynixTestsProject)." />
+		<Error Condition="!Exists('$(_SynixDotNetHost)')" Text="The 64-bit .NET host was not found at $(_SynixDotNetHost). Repair the Visual Studio .NET SDK before publishing." />
+		<Message Text="Running the complete Synix automated test suite before packaging..." Importance="high" />
+		<Exec
+			Command="&quot;$(_SynixDotNetHost)&quot; test &quot;$(_SynixTestsProject)&quot; --configuration Release --logger &quot;console;verbosity=minimal&quot;"
+			WorkingDirectory="$(MSBuildProjectDirectory)" />
+		<PropertyGroup>
+			<_SynixAutomatedTestsUtc>$([System.DateTime]::UtcNow.ToString('O'))</_SynixAutomatedTestsUtc>
+		</PropertyGroup>
 		<Exec Command="powershell -Command &quot;Start-Sleep -s 5&quot;" />
 		<Message Text="Windows metadata synced. Starting Inno Setup..." Importance="high" />
 		<Message Text="Sending Version $(Version) to Inno Setup..." Importance="high" />
-		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) /DSourcePath=&quot;$(PublishDir)&quot; &quot;$(PublishDir)package\Synix.iss&quot;" />
+		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) /DSourcePath=&quot;$(PublishDir)&quot; &quot;$(_SynixInnoScript)&quot;" />
+		<Error Condition="!Exists('$(_SynixSetupExe)')" Text="Inno Setup did not create $(_SynixSetupExe)." />
+	</Target>
+
+	<Target Name="WriteSynixReleaseManifest" AfterTargets="RunInnoAfterPublish">
+		<PropertyGroup>
+			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
+			<_SynixSetupExe>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Output', 'SynixSetup.exe'))</_SynixSetupExe>
+			<_SynixReleaseManifest>$([System.IO.Path]::Combine('$(PublishDir)', 'Synix.release-manifest.txt'))</_SynixReleaseManifest>
+			<_SynixReleaseManifestBackup>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Output', 'Synix.release-manifest.txt'))</_SynixReleaseManifestBackup>
+		</PropertyGroup>
+		<Error Condition="'$(_SynixAutomatedTestsUtc)' == ''" Text="The automated tests did not produce a passing release receipt." />
+		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
+		<Error Condition="!Exists('$(_SynixSetupExe)')" Text="The Synix installer was not found at $(_SynixSetupExe)." />
+		<ItemGroup>
+			<_SynixStandaloneFile Include="$(_SynixPublishedExe)" />
+			<_SynixSetupFile Include="$(_SynixSetupExe)" />
+		</ItemGroup>
+		<GetFileHash Files="@(_SynixStandaloneFile)" Algorithm="SHA256">
+			<Output TaskParameter="Items" ItemName="_SynixStandaloneHashed" />
+		</GetFileHash>
+		<GetFileHash Files="@(_SynixSetupFile)" Algorithm="SHA256">
+			<Output TaskParameter="Items" ItemName="_SynixSetupHashed" />
+		</GetFileHash>
+		<PropertyGroup>
+			<_SynixStandaloneSha256>@(_SynixStandaloneHashed-&gt;'%(FileHash)')</_SynixStandaloneSha256>
+			<_SynixSetupSha256>@(_SynixSetupHashed-&gt;'%(FileHash)')</_SynixSetupSha256>
+		</PropertyGroup>
+		<Error Condition="'$(_SynixStandaloneSha256)' == ''" Text="The standalone SHA-256 hash could not be created." />
+		<Error Condition="'$(_SynixSetupSha256)' == ''" Text="The installer SHA-256 hash could not be created." />
+		<ItemGroup>
+			<_SynixReleaseManifestLine Include="FormatVersion=1" />
+			<_SynixReleaseManifestLine Include="Version=$(Version)" />
+			<_SynixReleaseManifestLine Include="Channel=$(SynixBuildChannel)" />
+			<_SynixReleaseManifestLine Include="AutomatedTests=Passed" />
+			<_SynixReleaseManifestLine Include="AutomatedTestsUtc=$(_SynixAutomatedTestsUtc)" />
+			<_SynixReleaseManifestLine Include="StandaloneFile=$(AssemblyName).exe" />
+			<_SynixReleaseManifestLine Include="StandaloneSha256=$(_SynixStandaloneSha256)" />
+			<_SynixReleaseManifestLine Include="SetupFile=package\Output\SynixSetup.exe" />
+			<_SynixReleaseManifestLine Include="SetupSha256=$(_SynixSetupSha256)" />
+		</ItemGroup>
+		<WriteLinesToFile
+			File="$(_SynixReleaseManifest)"
+			Lines="@(_SynixReleaseManifestLine)"
+			Overwrite="true"
+			Encoding="UTF-8" />
+		<Copy SourceFiles="$(_SynixReleaseManifest)" DestinationFiles="$(_SynixReleaseManifestBackup)" />
+		<Error Condition="!Exists('$(_SynixReleaseManifest)')" Text="The Synix release manifest was not created at $(_SynixReleaseManifest)." />
+		<Error Condition="!Exists('$(_SynixReleaseManifestBackup)')" Text="The backup release manifest was not created at $(_SynixReleaseManifestBackup)." />
+		<Message Text="Synix release manifest created at $(_SynixReleaseManifest)." Importance="high" />
 	</Target>
 </Project>

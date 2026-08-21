@@ -165,6 +165,8 @@ namespace Synix_Control_Panel.SynixEngine
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
 				ElevatedSystemTasksChanged;
+			advancedSettingsPage.ReleaseReadinessRequested +=
+				ReleaseReadinessRequested;
 		}
 
 		private void LoadSavedSettings()
@@ -261,6 +263,14 @@ namespace Synix_Control_Panel.SynixEngine
 				btnAdvanced,
 				"Advanced",
 				"Configure elevated operations and advanced system behavior.");
+		}
+
+		private void ReleaseReadinessRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			using SynixReleaseReadinessDialog dialog = new();
+			dialog.ShowDialog(this);
 		}
 
 		private void btnMinimize_Click(object? sender, EventArgs eventArgs)
