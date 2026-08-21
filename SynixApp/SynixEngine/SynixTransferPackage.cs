@@ -483,7 +483,13 @@ namespace Synix_Control_Panel.SynixEngine
 
 				string destinationPath = Path.GetFullPath(
 					Path.Combine(destinationRoot, entry.FullName));
-				if (!IsInsideDirectory(destinationPath, destinationRoot))
+
+				// Keep this validation next to the filesystem operation. Besides
+				// preventing Zip Slip, this inline form allows CodeQL to verify
+				// that an archive entry can never escape the Synix destination.
+				if (!destinationPath.StartsWith(
+						destinationRoot,
+						StringComparison.OrdinalIgnoreCase))
 				{
 					throw new InvalidDataException(
 						"The package contains an unsafe file path.");
