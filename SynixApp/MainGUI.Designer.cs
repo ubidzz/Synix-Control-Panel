@@ -1080,7 +1080,7 @@ namespace Synix_Control_Panel
 			btnDownloadUpdate.Size = new Size(168, 26);
 			btnDownloadUpdate.TabIndex = 2;
 			btnDownloadUpdate.TabStop = false;
-			btnDownloadUpdate.Text = "Download Update";
+			btnDownloadUpdate.Text = "Install Update";
 			btnDownloadUpdate.UseMnemonic = false;
 			btnDownloadUpdate.UseVisualStyleBackColor = false;
 			btnDownloadUpdate.Visible = false;

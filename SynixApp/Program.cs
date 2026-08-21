@@ -25,8 +25,17 @@ namespace Synix_Control_Panel.SynixApp
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+		static void Main(string[] args)
 		{
+			if (SynixUpdaterCoordinator.TryRunUpdateHelper(args))
+				return;
+			SynixUpdaterCoordinator.CleanupStaleOperations();
+
+			string? updateSuccessMarker = SynixUpdaterCoordinator
+				.GetStartupSuccessMarker(args);
+			string? rolledBackVersion = SynixUpdaterCoordinator
+				.GetRollbackVersion(args);
+
 			_singleInstanceMutex = new Mutex(
 				initiallyOwned: true,
 				SingleInstanceMutexName,
@@ -46,7 +55,7 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
-				RunSynix();
+				RunSynix(updateSuccessMarker, rolledBackVersion);
 			}
 			finally
 			{
@@ -54,7 +63,9 @@ namespace Synix_Control_Panel.SynixApp
 			}
 		}
 
-		private static void RunSynix()
+		private static void RunSynix(
+			string? updateSuccessMarker,
+			string? rolledBackVersion)
 		{
 			// 🛡️ 1. CATCH UI THREAD CRASHES
 			// Catches things like bad button clicks or grid rendering errors
@@ -99,7 +110,24 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
-				Application.Run(new MainGUI());
+				MainGUI mainWindow = new();
+				if (!string.IsNullOrWhiteSpace(updateSuccessMarker))
+				{
+					mainWindow.Shown += (_, _) =>
+						SynixUpdaterCoordinator.MarkStartupSuccessful(
+							updateSuccessMarker);
+				}
+				if (!string.IsNullOrWhiteSpace(rolledBackVersion))
+				{
+					mainWindow.Shown += (_, _) => MessageBox.Show(
+						mainWindow,
+						$"Synix {rolledBackVersion} could not start successfully, so Synix restored the previous program version. Your C:\\Synix server data was not changed.",
+						"Synix Update Rolled Back",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
+				}
+
+				Application.Run(mainWindow);
 			}
 			finally
 			{

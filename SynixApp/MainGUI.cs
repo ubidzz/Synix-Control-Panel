@@ -38,6 +38,10 @@ namespace Synix_Control_Panel
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
+		private readonly SynixUpdateService _updateService = new();
+		private readonly SemaphoreSlim _versionCheckGate = new(1, 1);
+		private SynixUpdateCheckResult? _updateCheckResult;
+		private bool _updateShutdownRequested;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -252,6 +256,9 @@ namespace Synix_Control_Panel
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			if (_updateShutdownRequested)
+				return;
+
 			if (isDownloadActive || Core.Instance.isDownloadActive)
 			{
 				e.Cancel = true;
@@ -918,78 +925,158 @@ namespace Synix_Control_Panel
 
 		private async Task VersionCheck()
 		{
-			string productVersion = Application.ProductVersion;
-			string currentVersion = productVersion;
-			if (Version.TryParse(productVersion, out Version? parsedProductVersion))
-			{
-				currentVersion = parsedProductVersion.Build >= 0
-					? $"{parsedProductVersion.Major}.{parsedProductVersion.Minor}.{parsedProductVersion.Build}"
-					: $"{parsedProductVersion.Major}.{parsedProductVersion.Minor}";
-			}
+			Version currentVersion = SynixUpdateService.GetCurrentVersion();
+			if (!await _versionCheckGate.WaitAsync(0))
+				return;
 
-			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixApp/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
+			btnDownloadUpdate.Enabled = false;
 			lblUpdateStatus.Text = "Checking for updates...";
 			lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
 			lblUpdateStatus.BackColor = SettingsPalette.TitleBar;
 
 			try
 			{
-				using (HttpClient client = new())
-				{
-					client.Timeout = TimeSpan.FromSeconds(5);
-					string latestVersion = (await client.GetStringAsync(versionUrl))
-						.Trim()
-						.TrimStart('v', 'V');
+				using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(25));
+				_updateCheckResult = await _updateService.CheckAsync(
+					currentVersion,
+					timeout.Token);
 
-					if (Version.TryParse(currentVersion, out Version? vLocal) &&
-						Version.TryParse(latestVersion, out Version? vRemote) &&
-						vLocal != null &&
-						vRemote != null)
-					{
-						if (vRemote > vLocal)
-						{
-							lblUpdateStatus.Text = $"Update {latestVersion} available  •  Running {currentVersion}";
-							lblUpdateStatus.ForeColor = SettingsPalette.Warning;
-							btnDownloadUpdate.Visible = true;
-						}
-						else
-						{
-							lblUpdateStatus.Text = $"✓  Latest version  •  v{currentVersion}";
-							lblUpdateStatus.ForeColor = SettingsPalette.Accent;
-						}
-					}
-					else
-					{
-						lblUpdateStatus.Text = $"Version {currentVersion}";
-						lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
-					}
+				if (_updateCheckResult.UpdateAvailable)
+				{
+					string latestVersion = _updateCheckResult.AdvertisedVersion?.ToString(3) ?? "new";
+					lblUpdateStatus.Text = _updateCheckResult.ReleaseReady
+						? $"Update {latestVersion} available  •  Running {currentVersion.ToString(3)}"
+						: $"Update {latestVersion} is being prepared";
+					lblUpdateStatus.ForeColor = SettingsPalette.Warning;
+					btnDownloadUpdate.Text = _updateCheckResult.CanInstall
+						? "Install Update"
+						: "View Update";
+					btnDownloadUpdate.Visible = true;
+					btnDownloadUpdate.Enabled = true;
+				}
+				else
+				{
+					lblUpdateStatus.Text = $"✓  Latest version  •  v{currentVersion.ToString(3)}";
+					lblUpdateStatus.ForeColor = SettingsPalette.Accent;
 				}
 			}
-			catch
+			catch (Exception exception)
 			{
-				lblUpdateStatus.Text = $"Version check unavailable  •  v{currentVersion}";
+				_updateCheckResult = null;
+				lblUpdateStatus.Text = $"Version check unavailable  •  v{currentVersion.ToString(3)}";
 				lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
+				AppendLog(
+					$"[⚠️ UPDATE] Version check unavailable: {exception.Message}",
+					Color.Orange);
+			}
+			finally
+			{
+				_versionCheckGate.Release();
 			}
 		}
 
-		private void btnDownloadUpdate_Click(object sender, EventArgs e)
+		private async void btnDownloadUpdate_Click(object sender, EventArgs e)
 		{
+			if (_updateCheckResult?.ReleaseReady != true ||
+				_updateCheckResult.Release is null)
+			{
+				OpenUrl(SynixUpdateService.ReleasesUri.AbsoluteUri);
+				return;
+			}
+
+			using SynixUpdateDialog updateDialog = new(_updateCheckResult);
+			if (updateDialog.ShowDialog(this) != DialogResult.OK)
+				return;
+
+			if (!CanInstallSynixUpdate())
+				return;
+
+			isDownloadActive = true;
+			Core.Instance.isDownloadActive = true;
+			versionTimer?.Stop();
+			btnDownloadUpdate.Enabled = false;
 			try
 			{
-				string url = "https://github.com/ubidzz/Synix-Control-Panel/releases";
-
-				ProcessStartInfo psi = new ProcessStartInfo
+				Progress<SynixUpdateDownloadProgress> progress = new(download =>
 				{
-					FileName = url,
-					UseShellExecute = true
-				};
-				Process.Start(psi);
+					lblUpdateStatus.Text =
+						$"Downloading verified update... {download.Percent}%";
+					btnDownloadUpdate.Text = $"{download.Percent}%";
+				});
+
+				SynixUpdaterCoordinator coordinator = new(_updateService);
+				SynixPreparedUpdate prepared = await coordinator.PrepareAsync(
+					_updateCheckResult,
+					progress);
+
+				MessageBox.Show(
+					this,
+					$"Synix {prepared.NewVersion.ToString(3)} was downloaded and verified.\n\nSynix will now close, apply the update, and open again. Everything inside C:\\Synix will remain unchanged.",
+					"Update Ready to Install",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+
+				await FileHandler.FlushLogsAsync();
+				SynixUpdaterCoordinator.LaunchPreparedUpdate(prepared);
+				_updateShutdownRequested = true;
+				isDownloadActive = false;
+				Core.Instance.isDownloadActive = false;
+				Application.Exit();
 			}
-			catch (Exception ex)
+			catch (Exception exception)
 			{
-				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
+				lblUpdateStatus.Text = "Update did not start  •  Current Synix was not changed";
+				btnDownloadUpdate.Text = "Install Update";
+				btnDownloadUpdate.Enabled = true;
+				MessageBox.Show(
+					this,
+					exception.Message,
+					"Synix Update Did Not Start",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 			}
+			finally
+			{
+				if (!_updateShutdownRequested)
+				{
+					isDownloadActive = false;
+					Core.Instance.isDownloadActive = false;
+					versionTimer?.Start();
+				}
+			}
+		}
+
+		private bool CanInstallSynixUpdate()
+		{
+			bool serverBusy = serverList.Any(server =>
+				server.Status != Core.StatusManager.GetStatus(
+					Core.ServerState.Stopped));
+			bool maintenanceBusy = isDownloadActive ||
+				Core.Instance.isDownloadActive;
+			if (serverBusy || maintenanceBusy)
+			{
+				MessageBox.Show(
+					this,
+					"Stop every game server and wait for installations, updates, validations, backups, imports, and exports to finish before updating Synix.",
+					"Synix Is Busy",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return false;
+			}
+
+			if (!FileHandler.SaveServers())
+			{
+				MessageBox.Show(
+					this,
+					"Synix could not safely save the current server list. The update was not started.",
+					"Unable to Save Synix",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return false;
+			}
+
+			return true;
 		}
 		public async Task UpdatePrivacyMode(bool isEnabled)
 		{

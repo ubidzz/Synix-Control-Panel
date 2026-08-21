@@ -19,6 +19,8 @@
 		<AssemblyVersion>$(Version).0</AssemblyVersion>
 		<FileVersion>$(Version).0</FileVersion>
 		<InformationalVersion>$(Version)</InformationalVersion>
+		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">Stable</SynixBuildChannel>
+		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == ''">Development</SynixBuildChannel>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
@@ -46,6 +48,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<AssemblyMetadata Include="SynixBuildChannel" Value="$(SynixBuildChannel)" />
 		<PackageReference Include="System.Management" Version="10.0.7" />
 		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
 	</ItemGroup>
