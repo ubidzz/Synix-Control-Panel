@@ -2663,7 +2663,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 
 			//----------------- Java games ---------------------
 			new() {
-				Game = "Minecraft Java",
+				Game = "Minecraft",
 				AppID = "0",
 				ExeName = "Start.bat",
 				RequiredArgs = "-Xmx{ram}M -Xms{ram}M -jar server.jar nogui",

@@ -830,7 +830,7 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
-				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase);
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
 				bool supportsConnectionTesting =
 					GameDatabase.SupportsManualConnectionTesting(selectedGameData);

@@ -15,6 +15,7 @@ using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Management;
@@ -36,6 +37,11 @@ namespace Synix_Control_Panel
 		private System.Windows.Forms.Timer debounceTimer;
 		private bool _PrivacyMode = false;
 		private bool _isApplyingPortOffset = false;
+		private bool _suppressMinecraftMetadataEvents = false;
+		private bool _isLoadingMinecraftMetadata = false;
+		private int _minecraftMetadataRequestId = 0;
+		private int _resolvedMinecraftJavaVersion = 0;
+		private string _minecraftMetadataError = string.Empty;
 		private string _validationMessage =
 			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
 
@@ -114,6 +120,11 @@ namespace Synix_Control_Panel
 			isPrivacyLoading = false;
 			PrivacyMode();
 			SyncGatekeeper();
+
+			if (_isEditMode && _existingServer != null)
+			{
+				Shown += async (_, _) => await InitializeExistingMinecraftSelectionAsync();
+			}
 		}
 
 		private void ConfigureModernShell()
@@ -299,7 +310,6 @@ namespace Synix_Control_Panel
 		{
 			if (_PrivacyMode)
 			{
-				// Mask the textboxes with system password characters (dots)
 				txtPassword.UseSystemPasswordChar = true;
 				txtAdminPassword.UseSystemPasswordChar = true;
 				txtRconPassword.UseSystemPasswordChar = true;
@@ -308,7 +318,6 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				// Reveal text if Streamer Mode is off
 				txtPassword.UseSystemPasswordChar = false;
 				txtAdminPassword.UseSystemPasswordChar = false;
 				txtRconPassword.UseSystemPasswordChar = false;
@@ -379,6 +388,7 @@ namespace Synix_Control_Panel
 				bool hasGame = cmbGame != null && cmbGame.SelectedIndex > 0;
 				string selectedGame = hasGame ? cmbGame.Text : "";
 				bool isBaseReady = hasName && hasGame;
+				bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
 
 				// --- DUNE: AWAKENING HARDWARE & OS CHECKS ---
@@ -413,7 +423,12 @@ namespace Synix_Control_Panel
 				numQueryPort.Enabled = CanUnlock(numQueryPort);
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
 				numWorldSize.Enabled = CanUnlock(numWorldSize);
-				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion);
+				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion) && !_isLoadingMinecraftMetadata;
+				cmbMinecraftLoader.Enabled = isMinecraft && !_isLoadingMinecraftMetadata;
+				cmbMinecraftLoaderVersion.Enabled = isMinecraft &&
+					!_isLoadingMinecraftMetadata &&
+					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
+						.Equals(MinecraftMetadataService.VanillaLoader, StringComparison.OrdinalIgnoreCase);
 				numRam.Enabled = CanUnlock(numRam);
 				numPort.Enabled = CanUnlock(numPort);
 				numAppPort.Enabled = CanUnlock(numAppPort);
@@ -458,14 +473,20 @@ namespace Synix_Control_Panel
 
 				int gPort = (int)numPort.Value;
 				int qPort = (int)numQueryPort.Value;
+				bool checkGamePort = numPort.Enabled;
+				bool checkQueryPort = numQueryPort.Enabled;
 				int aPort = (numAppPort != null && numAppPort.Enabled) ? (int)numAppPort.Value : 0;
 				int rPort = rconActive ? (int)numRconPort.Value : 0;
 
-				string? gOwner = Core.Instance.GetPortCollisionOwner(gPort, _existingServer);
-				bool gOS = Core.Instance.IsPortInUseLocally(gPort);
+				string? gOwner = checkGamePort
+					? Core.Instance.GetPortCollisionOwner(gPort, _existingServer)
+					: null;
+				bool gOS = checkGamePort && Core.Instance.IsPortInUseLocally(gPort);
 
-				string? qOwner = (qPort > 0) ? Core.Instance.GetPortCollisionOwner(qPort, _existingServer) : null;
-				bool qOS = (qPort > 0) && Core.Instance.IsPortInUseLocally(qPort);
+				string? qOwner = (checkQueryPort && qPort > 0)
+					? Core.Instance.GetPortCollisionOwner(qPort, _existingServer)
+					: null;
+				bool qOS = checkQueryPort && qPort > 0 && Core.Instance.IsPortInUseLocally(qPort);
 
 				string? rOwner = (rPort > 0) ? Core.Instance.GetPortCollisionOwner(rPort, _existingServer) : null;
 				bool rOS = (rPort > 0) && Core.Instance.IsPortInUseLocally(rPort);
@@ -493,6 +514,29 @@ namespace Synix_Control_Panel
 						_validationMessage = "  🔒 [REQUIRED] Select a Game Template before this server can be saved.";
 					}
 
+					btnSave.Enabled = false;
+				}
+				else if (isMinecraft && _isLoadingMinecraftMetadata)
+				{
+					_validationMessage = "  ◌ [MINECRAFT] Loading compatible versions and Java requirements...";
+					btnSave.Enabled = false;
+				}
+				else if (isMinecraft && !string.IsNullOrWhiteSpace(_minecraftMetadataError))
+				{
+					_validationMessage = $"  ⚠️ [MINECRAFT] {_minecraftMetadataError}";
+					btnSave.Enabled = false;
+				}
+				else if (isMinecraft && string.IsNullOrWhiteSpace(cmbGameVersion.Text))
+				{
+					_validationMessage = "  🔒 [MINECRAFT] Select a Minecraft game version.";
+					btnSave.Enabled = false;
+				}
+				else if (isMinecraft &&
+					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
+						.Equals(MinecraftMetadataService.VanillaLoader, StringComparison.OrdinalIgnoreCase) &&
+					string.IsNullOrWhiteSpace(cmbMinecraftLoaderVersion.Text))
+				{
+					_validationMessage = "  🔒 [MINECRAFT] No compatible loader build is selected.";
 					btnSave.Enabled = false;
 				}
 				// --- DUNE CHECK: Minimum RAM ---
@@ -586,6 +630,7 @@ namespace Synix_Control_Panel
 			var controls = new Control[] { txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive, numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon };
 			if (gameData == null)
 			{
+				ConfigureMinecraftRuntimeCard(false);
 				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
 
 				SetupManagedPlaceholder(txtPassword, "Select a game...");
@@ -594,6 +639,8 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
+				ConfigureMinecraftRuntimeCard(
+					gameData.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase));
 				string args = (gameData.RequiredArgs ?? "").ToLower();
 				string rconTemp = (gameData.RconSyntax ?? "").ToLower();
 
@@ -653,14 +700,16 @@ namespace Synix_Control_Panel
 
 				cmbCompetitive.Tag = (args.Contains("{mode}") || (gameData.GameModes != null && gameData.GameModes.Count > 0)) ? "Required" : "Disabled";
 				numMaxPlayers.Tag = args.Contains("{maxplayers}") ? "Required" : "Disabled";
-				// QueryPort is monitoring metadata even when the launch template does not
-				// contain {query}. Some servers derive it from the game port or expose a
-				// separate REST/EOS endpoint, so it must always remain configurable.
-				numQueryPort.Tag = "Required";
+				bool isMinecraftTemplate = gameData.Game.Equals(
+					"Minecraft",
+					StringComparison.OrdinalIgnoreCase);
+				numQueryPort.Tag = isMinecraftTemplate && !args.Contains("{query}")
+					? "Disabled"
+					: "Required";
 				cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
 				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
 				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
-				cmbGameVersion.Tag = gameData.Game == "Minecraft Java" ? "Required" : "Disabled";
+				cmbGameVersion.Tag = gameData.Game == "Minecraft" ? "Required" : "Disabled";
 				numRam.Tag = args.Contains("{ram}") ? "Required" : "Disabled";
 				numPort.Tag = args.Contains("{port}") ? "Required" : "Disabled";
 				numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
@@ -721,13 +770,181 @@ namespace Synix_Control_Panel
 			chkEnableRcon.CheckedChanged += (s, e) => trigger();
 			chkDefaultPath.CheckedChanged += (s, e) => trigger();
 			numWorldSize.ValueChanged += (s, e) => trigger();
-			cmbGameVersion.SelectedIndexChanged += (s, e) => trigger();
+			cmbGameVersion.SelectedIndexChanged += async (s, e) =>
+			{
+				trigger();
+				if (!_suppressMinecraftMetadataEvents && IsMinecraftSelected())
+				{
+					await RefreshMinecraftRuntimeAsync(cmbMinecraftLoader.Text, "latest");
+				}
+			};
+			cmbMinecraftLoader.SelectedIndexChanged += async (s, e) =>
+			{
+				trigger();
+				if (!_suppressMinecraftMetadataEvents && IsMinecraftSelected())
+				{
+					await RefreshMinecraftRuntimeAsync(cmbMinecraftLoader.Text, "latest");
+				}
+			};
+			cmbMinecraftLoaderVersion.SelectedIndexChanged += (s, e) => trigger();
 			numRam.ValueChanged += (s, e) => trigger();
+		}
+
+		private bool IsMinecraftSelected()
+		{
+			return cmbGame.SelectedIndex > 0 &&
+				cmbGame.Text.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private void ConfigureMinecraftRuntimeCard(bool visible)
+		{
+			cardMinecraftRuntime.Visible = visible;
+			cardCredentials.Location = visible
+				? new Point(0, cardMinecraftRuntime.Bottom + 16)
+				: new Point(0, 242);
+
+			if (!visible)
+			{
+				_minecraftMetadataRequestId++;
+				_suppressMinecraftMetadataEvents = false;
+				_isLoadingMinecraftMetadata = false;
+				_minecraftMetadataError = string.Empty;
+				_resolvedMinecraftJavaVersion = 0;
+			}
+		}
+
+		private async Task InitializeExistingMinecraftSelectionAsync()
+		{
+			if (_existingServer == null || !IsMinecraftSelected() || IsDisposed)
+				return;
+
+			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
+			if (gameData == null)
+				return;
+
+			try
+			{
+				await PopulateVersionsAsync(gameData, _existingServer.GameVersion ?? "latest");
+				await RefreshMinecraftRuntimeAsync(
+					_existingServer.MinecraftLoader,
+					_existingServer.MinecraftLoaderVersion);
+			}
+			catch (Exception ex)
+			{
+				_minecraftMetadataError = $"Metadata could not be loaded: {ex.Message}";
+				SyncGatekeeper();
+			}
+		}
+
+		private async Task RefreshMinecraftRuntimeAsync(
+			string? preferredLoader,
+			string? preferredLoaderVersion)
+		{
+			if (!IsMinecraftSelected() || IsDisposed)
+				return;
+
+			int requestId = ++_minecraftMetadataRequestId;
+			_isLoadingMinecraftMetadata = true;
+			_minecraftMetadataError = string.Empty;
+			ConfigureMinecraftRuntimeCard(true);
+			SyncGatekeeper();
+
+			string loader = MinecraftMetadataService.NormalizeLoader(preferredLoader);
+			try
+			{
+				_suppressMinecraftMetadataEvents = true;
+				SelectComboBoxValue(cmbMinecraftLoader, loader, MinecraftMetadataService.VanillaLoader);
+
+				cmbMinecraftLoaderVersion.Items.Clear();
+				cmbMinecraftLoaderVersion.Items.Add("Loading compatible builds...");
+				cmbMinecraftLoaderVersion.SelectedIndex = 0;
+				cmbMinecraftLoaderVersion.Enabled = false;
+				lblMinecraftJavaValue.Text = "Resolving...";
+				lblMinecraftRuntimeHelper.Text = loader == MinecraftMetadataService.VanillaLoader
+					? "Synix installs the official server and matching portable Java."
+					: $"Synix installs the compatible {loader} server loader. Add your own mods after installation.";
+
+				Task<MinecraftMetadataService.MinecraftVersionMetadata> metadataTask =
+					MinecraftMetadataService.GetVersionMetadataAsync(cmbGameVersion.Text);
+				Task<IReadOnlyList<string>> loaderTask =
+					MinecraftMetadataService.GetLoaderVersionsAsync(loader, cmbGameVersion.Text);
+
+				await Task.WhenAll(metadataTask, loaderTask);
+				if (requestId != _minecraftMetadataRequestId || IsDisposed || !IsMinecraftSelected())
+					return;
+
+				MinecraftMetadataService.MinecraftVersionMetadata metadata = await metadataTask;
+				IReadOnlyList<string> compatibleBuilds = await loaderTask;
+				if (compatibleBuilds.Count == 0)
+				{
+					throw new InvalidOperationException(
+						$"No compatible {loader} server build exists for Minecraft {metadata.Version}.");
+				}
+
+				cmbMinecraftLoaderVersion.Items.Clear();
+				foreach (string build in compatibleBuilds)
+					cmbMinecraftLoaderVersion.Items.Add(build);
+
+				string requestedBuild = preferredLoaderVersion?.Trim() ?? "";
+				if (requestedBuild.Length == 0 ||
+					requestedBuild.Equals("latest", StringComparison.OrdinalIgnoreCase) ||
+					!cmbMinecraftLoaderVersion.Items.Contains(requestedBuild))
+				{
+					cmbMinecraftLoaderVersion.SelectedIndex = 0;
+				}
+				else
+				{
+					cmbMinecraftLoaderVersion.SelectedItem = requestedBuild;
+				}
+
+				_resolvedMinecraftJavaVersion = metadata.JavaMajorVersion;
+				lblMinecraftJavaValue.Text = $"Java {metadata.JavaMajorVersion}";
+				lblMinecraftRuntimeHelper.Text = loader == MinecraftMetadataService.VanillaLoader
+					? $"Minecraft {metadata.Version} uses the official Mojang server and Java {metadata.JavaMajorVersion}."
+					: $"Minecraft {metadata.Version} + {loader} {cmbMinecraftLoaderVersion.Text} uses Java {metadata.JavaMajorVersion}. Add mods after installation.";
+			}
+			catch (Exception ex)
+			{
+				if (requestId != _minecraftMetadataRequestId || IsDisposed)
+					return;
+
+				_resolvedMinecraftJavaVersion = 0;
+				_minecraftMetadataError = $"{ex.Message} Re-select the version or loader to retry.";
+				cmbMinecraftLoaderVersion.Items.Clear();
+				lblMinecraftJavaValue.Text = "Unavailable";
+				lblMinecraftRuntimeHelper.Text = "Synix could not verify this loader combination from the official metadata service.";
+			}
+			finally
+			{
+				if (requestId == _minecraftMetadataRequestId && !IsDisposed)
+				{
+					_suppressMinecraftMetadataEvents = false;
+					_isLoadingMinecraftMetadata = false;
+					SyncGatekeeper();
+				}
+			}
+		}
+
+		private static void SelectComboBoxValue(
+			ComboBox comboBox,
+			string value,
+			string fallback)
+		{
+			if (comboBox.Items.Contains(value))
+				comboBox.SelectedItem = value;
+			else if (comboBox.Items.Contains(fallback))
+				comboBox.SelectedItem = fallback;
+			else if (comboBox.Items.Count > 0)
+				comboBox.SelectedIndex = 0;
 		}
 
 		private void GamePort_TextChanged(object? sender, EventArgs e)
 		{
-			if (isPrivacyLoading || _isApplyingPortOffset || cmbGame.SelectedIndex <= 0)
+			if (isPrivacyLoading ||
+				_isApplyingPortOffset ||
+				cmbGame.SelectedIndex <= 0 ||
+				!numPort.Enabled ||
+				!numQueryPort.Enabled)
 				return;
 
 			GameInfo? gameData = GameDatabase.GetGame(cmbGame.Text);
@@ -767,9 +984,58 @@ namespace Synix_Control_Panel
 			int wSize = (int)numWorldSize.Value;
 
 			int? aPort = numAppPort.Enabled ? (int)numAppPort.Value : (int?)null;
-			if (!Core.Instance.ValidatePortsAndReport(_existingServer, gPort, qPort, rPort, chkEnableRcon.Checked, aPort ?? 0, numAppPort.Enabled, selectedGame)) return;
+			bool checkRconPort = chkEnableRcon.Enabled && chkEnableRcon.Checked;
+			if (!Core.Instance.ValidatePortsAndReport(
+				_existingServer,
+				gPort,
+				qPort,
+				rPort,
+				checkRconPort,
+				aPort ?? 0,
+				numAppPort.Enabled,
+				selectedGame,
+				numPort.Enabled,
+				numQueryPort.Enabled)) return;
 			string newPath = txtInstallPath.Text.Trim();
-			NewServer = new GameServer { Game = selectedGame, ServerName = newName, Port = gPort, QueryPort = qPort, RconPort = rPort, AppPort = aPort, Password = txtPassword.Text, AdminPassword = txtAdminPassword.Text, MaxPlayers = (int)numMaxPlayers.Value, WorldName = cmbWorldName.Text, GameMode = cmbCompetitive.Text, WorldSeed = txtWorldSeed.Text.Trim(), WorldSize = wSize, ExtraArgs = txtExtraArgs.Text, IsDefaultPath = chkDefaultPath.Checked, UpdateOnStart = chkUpdateOnStart.Checked, EnableRcon = chkEnableRcon.Checked, RconPassword = txtRconPassword.Text, InstallPath = newPath, MaxRam = (int)numRam.Value, GameVersion = cmbGameVersion.Text.Trim(), IsScheduledRestartEnabled = chkEnableSchedule.Checked, RestartTime = _selectedTime, RestartDays = (bool[])_selectedDays.Clone(), IsDiscordAlertEnabled = chkEnableDiscord.Checked, DiscordWebhook = txtDiscordWebhook.Text.Trim(), Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped), BackupOnStart = chkBackupOnStart.Checked };
+			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+			NewServer = new GameServer
+			{
+				Game = selectedGame,
+				ServerName = newName,
+				Port = gPort,
+				QueryPort = qPort,
+				RconPort = rPort,
+				AppPort = aPort,
+				Password = txtPassword.Text,
+				AdminPassword = txtAdminPassword.Text,
+				MaxPlayers = (int)numMaxPlayers.Value,
+				WorldName = cmbWorldName.Text,
+				GameMode = cmbCompetitive.Text,
+				WorldSeed = txtWorldSeed.Text.Trim(),
+				WorldSize = wSize,
+				ExtraArgs = txtExtraArgs.Text,
+				IsDefaultPath = chkDefaultPath.Checked,
+				UpdateOnStart = chkUpdateOnStart.Checked,
+				EnableRcon = chkEnableRcon.Checked,
+				RconPassword = txtRconPassword.Text,
+				InstallPath = newPath,
+				MaxRam = (int)numRam.Value,
+				GameVersion = cmbGameVersion.Text.Trim(),
+				MinecraftLoader = isMinecraft
+					? MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
+					: MinecraftMetadataService.VanillaLoader,
+				MinecraftLoaderVersion = isMinecraft
+					? cmbMinecraftLoaderVersion.Text.Trim()
+					: "Official",
+				RequiredJavaVersion = isMinecraft ? _resolvedMinecraftJavaVersion : 0,
+				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
+				RestartTime = _selectedTime,
+				RestartDays = (bool[])_selectedDays.Clone(),
+				IsDiscordAlertEnabled = chkEnableDiscord.Checked,
+				DiscordWebhook = txtDiscordWebhook.Text.Trim(),
+				Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped),
+				BackupOnStart = chkBackupOnStart.Checked
+			};
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{
@@ -926,6 +1192,12 @@ namespace Synix_Control_Panel
 					await PopulateVersionsAsync(gameData, _existingServer?.GameVersion ?? "latest");
 
 					ToggleGameSpecificFields(gameData);
+					if (gameData.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
+					{
+						await RefreshMinecraftRuntimeAsync(
+							_existingServer?.MinecraftLoader ?? MinecraftMetadataService.VanillaLoader,
+							_existingServer?.MinecraftLoaderVersion ?? "Official");
+					}
 				}
 			}
 			else ToggleGameSpecificFields(null);
@@ -934,50 +1206,54 @@ namespace Synix_Control_Panel
 
 		private async Task PopulateVersionsAsync(GameInfo gameData, string selectedVersion)
 		{
-			cmbGameVersion.Items.Clear();
-			cmbGameVersion.Items.Add("latest");
-
-			// If the game is Minecraft, ping the Mojang API to fill the dropdown!
-			if (gameData.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+			_suppressMinecraftMetadataEvents = true;
+			try
 			{
-				try
-				{
-					using HttpClient client = new HttpClient();
-					string manifestJson = await client.GetStringAsync("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-					var manifestNode = System.Text.Json.Nodes.JsonNode.Parse(manifestJson);
-					var versionsArray = manifestNode?["versions"]?.AsArray();
+				cmbGameVersion.Items.Clear();
+				cmbGameVersion.Items.Add("latest");
 
-					if (versionsArray != null)
+				// Minecraft releases and the installer use this same metadata service.
+				// That prevents the UI from showing versions the installer cannot resolve.
+				if (gameData.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+				{
+					try
 					{
-						foreach (var version in versionsArray)
-						{
-							// Only add stable releases to the dropdown
-							if (version?["type"]?.ToString() == "release")
-							{
-								string id = version?["id"]?.ToString() ?? "";
-								if (!string.IsNullOrEmpty(id)) cmbGameVersion.Items.Add(id);
-							}
-						}
+						MinecraftMetadataService.MinecraftVersionCatalog catalog =
+							await MinecraftMetadataService.GetVersionCatalogAsync();
+						if (IsDisposed || Disposing)
+							return;
+
+						foreach (string version in catalog.ReleaseVersions)
+							cmbGameVersion.Items.Add(version);
+					}
+					catch (Exception ex)
+					{
+						_minecraftMetadataError = $"Mojang versions could not be loaded: {ex.Message}";
 					}
 				}
-				catch
+
+				string versionToSelect = selectedVersion.Equals(
+					"latest",
+					StringComparison.OrdinalIgnoreCase)
+					? "latest"
+					: selectedVersion;
+
+				if (!string.IsNullOrWhiteSpace(versionToSelect) &&
+					!cmbGameVersion.Items.Contains(versionToSelect))
 				{
-					// If the API fails (no internet), it gracefully falls back to just "latest"
+					cmbGameVersion.Items.Add(versionToSelect);
 				}
-			}
 
-			// Preserve a previously saved/custom version while keeping the control
-			// as an opaque owner-drawn DropDownList.
-			if (!string.IsNullOrWhiteSpace(selectedVersion) &&
-				!cmbGameVersion.Items.Contains(selectedVersion))
+				if (!string.IsNullOrWhiteSpace(versionToSelect))
+					cmbGameVersion.SelectedItem = versionToSelect;
+				else if (cmbGameVersion.Items.Count > 0)
+					cmbGameVersion.SelectedIndex = 0;
+			}
+			finally
 			{
-				cmbGameVersion.Items.Add(selectedVersion);
+				if (!IsDisposed)
+					_suppressMinecraftMetadataEvents = false;
 			}
-
-			if (!string.IsNullOrWhiteSpace(selectedVersion))
-				cmbGameVersion.SelectedItem = selectedVersion;
-			else if (cmbGameVersion.Items.Count > 0)
-				cmbGameVersion.SelectedIndex = 0;
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e) { using var fbd = new FolderBrowserDialog(); if (fbd.ShowDialog() == DialogResult.OK) { txtInstallPath.Text = fbd.SelectedPath; SyncGatekeeper(); } }

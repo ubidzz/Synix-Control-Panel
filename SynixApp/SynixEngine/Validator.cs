@@ -57,13 +57,23 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
-		public bool ValidatePortsAndReport(GameServer? excluding, int game, int query, int rcon, bool checkRcon, int app, bool checkAppPort, string gameName)
+		public bool ValidatePortsAndReport(
+			GameServer? excluding,
+			int game,
+			int query,
+			int rcon,
+			bool checkRcon,
+			int app,
+			bool checkAppPort,
+			string gameName,
+			bool checkGamePort = true,
+			bool checkQueryPort = true)
 		{
-			var portChecks = new List<(int Value, string Name)>
-			{
-				(game, "Game Port"),
-				(query, "Query Port")
-			};
+			var portChecks = new List<(int Value, string Name)>();
+
+			if (checkGamePort) portChecks.Add((game, "Game Port"));
+
+			if (checkQueryPort) portChecks.Add((query, "Query Port"));
 
 			if (checkRcon) portChecks.Add((rcon, "RCON Port"));
 

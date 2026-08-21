@@ -11,7 +11,9 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Channels;
 
@@ -279,57 +281,71 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			string fileName = "";
 			int requiredJava = 8;
 			string javaExeCmd = "java";
+			string javaExecutable = "java";
+			string minecraftLoader = MinecraftMetadataService.VanillaLoader;
+			string minecraftLoaderVersion = "Official";
+			string forgeArtifactVersion = "";
+			string expectedDownloadSha1 = "";
+			MinecraftMetadataService.MinecraftVersionMetadata? minecraftMetadata = null;
 
-			if (blueprint.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+			if (blueprint.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
-				logCallback?.Invoke("Querying Mojang API for the latest Vanilla Java version...");
+				minecraftLoader = MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader);
+				logCallback?.Invoke($"Querying official metadata for Minecraft {minecraftLoader}...");
 				try
 				{
-					string manifestJson = await _httpClient.GetStringAsync("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-					var manifestNode = System.Text.Json.Nodes.JsonNode.Parse(manifestJson);
-					string targetVersion = server.GameVersion;
+					minecraftMetadata = await MinecraftMetadataService.GetVersionMetadataAsync(server.GameVersion);
+					server.GameVersion = minecraftMetadata.Version;
+					requiredJava = minecraftMetadata.JavaMajorVersion;
+					server.RequiredJavaVersion = requiredJava;
+					server.MinecraftLoader = minecraftLoader;
 
-					if (string.IsNullOrWhiteSpace(targetVersion) || targetVersion.Equals("Latest", StringComparison.OrdinalIgnoreCase))
+					minecraftLoaderVersion = await MinecraftMetadataService.ResolveLoaderVersionAsync(
+						minecraftLoader,
+						server.GameVersion,
+						server.MinecraftLoaderVersion);
+					server.MinecraftLoaderVersion = minecraftLoaderVersion;
+
+					if (minecraftLoader == MinecraftMetadataService.FabricLoader)
 					{
-						targetVersion = manifestNode?["latest"]?["release"]?.ToString() ?? "";
-						logCallback?.Invoke($"Resolved latest Minecraft version: {targetVersion}");
-						server.GameVersion = targetVersion;
+						downloadUrl = (await MinecraftMetadataService.GetFabricServerJarUriAsync(
+							server.GameVersion,
+							minecraftLoaderVersion)).AbsoluteUri;
+						fileName = "server.jar";
+					}
+					else if (minecraftLoader == MinecraftMetadataService.ForgeLoader)
+					{
+						Uri forgeInstallerUri = await MinecraftMetadataService.GetForgeInstallerUriAsync(
+							server.GameVersion,
+							minecraftLoaderVersion);
+						downloadUrl = forgeInstallerUri.AbsoluteUri;
+						forgeArtifactVersion = Uri.UnescapeDataString(
+							forgeInstallerUri.Segments[^2].TrimEnd('/'));
+						fileName = "forge-installer.jar";
+						try
+						{
+							expectedDownloadSha1 = (await _httpClient.GetStringAsync(downloadUrl + ".sha1"))
+								.Trim()
+								.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries)[0];
+						}
+						catch
+						{
+							logCallback?.Invoke("[WARNING] Forge checksum metadata was unavailable; HTTPS transport validation remains active.");
+						}
 					}
 					else
 					{
-						logCallback?.Invoke($"Using user-selected Minecraft version: {targetVersion}");
+						downloadUrl = minecraftMetadata.ServerDownloadUrl;
+						expectedDownloadSha1 = minecraftMetadata.ServerSha1;
+						fileName = "server.jar";
 					}
 
-					string versionUrl = "";
-					var versionsArray = manifestNode?["versions"]?.AsArray();
-					if (versionsArray != null)
-					{
-						foreach (var version in versionsArray)
-						{
-							if (version?["id"]?.ToString() == targetVersion)
-							{
-								versionUrl = version?["url"]?.ToString() ?? "";
-								break;
-							}
-						}
-					}
-
-					if (string.IsNullOrEmpty(versionUrl)) throw new Exception("Version not found in Mojang manifest.");
-
-					string versionJson = await _httpClient.GetStringAsync(versionUrl);
-					var versionNode = System.Text.Json.Nodes.JsonNode.Parse(versionJson);
-					downloadUrl = versionNode?["downloads"]?["server"]?["url"]?.ToString() ?? "";
-					fileName = "server.jar";
-
-					if (versionNode?["javaVersion"]?["majorVersion"] != null)
-					{
-						requiredJava = (int)versionNode["javaVersion"]["majorVersion"];
-					}
-					logCallback?.Invoke($"Target Minecraft version requires Java {requiredJava}.");
+					logCallback?.Invoke(
+						$"Resolved Minecraft {server.GameVersion}, {minecraftLoader} {minecraftLoaderVersion}, Java {requiredJava}.");
 				}
 				catch (Exception ex)
 				{
-					logCallback?.Invoke($"[CRITICAL] Failed to fetch Mojang API data: {ex.Message}");
+					logCallback?.Invoke($"[CRITICAL] Failed to resolve official Minecraft metadata: {ex.Message}");
 					return -1;
 				}
 			}
@@ -359,41 +375,61 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				fullFilePath = Path.Combine(server.InstallPath, fileName);
 				logCallback?.Invoke($"Starting download: {fileName}...");
 
-				using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, downloadUrl))
+				using (HttpRequestMessage request = new(HttpMethod.Get, downloadUrl))
 				{
 					request.Version = new Version(1, 1);
+					using HttpResponseMessage response = await _httpClient.SendAsync(
+						request,
+						HttpCompletionOption.ResponseHeadersRead);
+					response.EnsureSuccessStatusCode();
+					long? totalBytes = response.Content.Headers.ContentLength;
 
-					using (HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+					await using Stream contentStream = await response.Content.ReadAsStreamAsync();
+					await using FileStream fileStream = new(
+						fullFilePath,
+						FileMode.Create,
+						FileAccess.Write,
+						FileShare.None);
+					byte[] buffer = new byte[8192];
+					long totalRead = 0;
+					int bytesRead;
+					int lastReportedPercent = -1;
+
+					while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
 					{
-						response.EnsureSuccessStatusCode();
-						long? totalBytes = response.Content.Headers.ContentLength;
+						await fileStream.WriteAsync(buffer, 0, bytesRead);
+						totalRead += bytesRead;
 
-						using (Stream contentStream = await response.Content.ReadAsStreamAsync())
-						using (FileStream fileStream = new FileStream(fullFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+						if (totalBytes.HasValue)
 						{
-							byte[] buffer = new byte[8192];
-							long totalRead = 0;
-							int bytesRead;
-							int lastReportedPercent = -1;
-
-							while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+							int percent = (int)((double)totalRead / totalBytes.Value * 100);
+							if (percent > lastReportedPercent)
 							{
-								await fileStream.WriteAsync(buffer, 0, bytesRead);
-								totalRead += bytesRead;
-
-								if (totalBytes.HasValue)
-								{
-									int percent = (int)((double)totalRead / totalBytes.Value * 100);
-									if (percent > lastReportedPercent)
-									{
-										logCallback?.Invoke($"Downloading {fileName}... {percent}%");
-										lastReportedPercent = percent;
-									}
-								}
+								logCallback?.Invoke($"Downloading {fileName}... {percent}%");
+								lastReportedPercent = percent;
 							}
 						}
 					}
 				}
+
+				if (minecraftMetadata != null &&
+					minecraftLoader == MinecraftMetadataService.VanillaLoader &&
+					minecraftMetadata.ServerSize > 0 &&
+					new FileInfo(fullFilePath).Length != minecraftMetadata.ServerSize)
+				{
+					File.Delete(fullFilePath);
+					logCallback?.Invoke("[CRITICAL] Minecraft server download size did not match Mojang metadata.");
+					return -1;
+				}
+
+				if (!string.IsNullOrWhiteSpace(expectedDownloadSha1) &&
+					!VerifyFileSha1(fullFilePath, expectedDownloadSha1))
+				{
+					File.Delete(fullFilePath);
+					logCallback?.Invoke("[CRITICAL] Download checksum validation failed. The file was deleted.");
+					return -1;
+				}
+
 				logCallback?.Invoke($"Download complete! Saved to {fullFilePath}");
 			}
 			catch (Exception ex)
@@ -432,7 +468,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 					if (existingExecutables.Length > 0)
 					{
-						javaExeCmd = $"\"{existingExecutables[0]}\"";
+						javaExecutable = existingExecutables[0];
+						javaExeCmd = QuoteCommandArgument(javaExecutable);
 						logCallback?.Invoke($"[SYSTEM] Using previously cached Portable Java {requiredJava}.");
 					}
 					else
@@ -484,7 +521,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 								string[] newlyExtracted = Directory.GetFiles(runtimeFolder, "java.exe", SearchOption.AllDirectories);
 								if (newlyExtracted.Length > 0)
 								{
-									javaExeCmd = $"\"{newlyExtracted[0]}\"";
+									javaExecutable = newlyExtracted[0];
+									javaExeCmd = QuoteCommandArgument(javaExecutable);
 									logCallback?.Invoke("[SYSTEM] Portable Java installed successfully!");
 								}
 							}
@@ -495,22 +533,187 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						}
 					}
 
-					logCallback?.Invoke("[SYSTEM] Generating Minecraft Start.bat bootstrapper...");
+					if (minecraftLoader == MinecraftMetadataService.ForgeLoader)
+					{
+						if (Core.GetSystemJavaVersion() < requiredJava &&
+							javaExecutable.Equals("java", StringComparison.OrdinalIgnoreCase))
+						{
+							logCallback?.Invoke(
+								$"[CRITICAL] Forge installation requires Java {requiredJava}. Portable Java installation was not completed.");
+							return -1;
+						}
+
+						int forgeResult = await InstallForgeServerAsync(
+							server,
+							javaExecutable,
+							fullFilePath,
+							forgeArtifactVersion,
+							logCallback);
+						if (forgeResult != 0)
+							return forgeResult;
+					}
+
+					if (minecraftLoader != MinecraftMetadataService.VanillaLoader)
+					{
+						Directory.CreateDirectory(Path.Combine(server.InstallPath, "mods"));
+						logCallback?.Invoke("[MINECRAFT] Mods folder is ready. Synix leaves mod selection and installation to the user.");
+					}
+
+					logCallback?.Invoke($"[SYSTEM] Generating Minecraft {minecraftLoader} Start.bat bootstrapper...");
 					string batPath = Path.Combine(server.InstallPath, "Start.bat");
 					// Keep Java's standard input connected so Synix can issue Minecraft's
 					// native "stop" command and let the server save every world cleanly.
 					// The wrapper exits with Java instead of pausing and leaving a stale
 					// cmd.exe that looks like a running server.
-					File.WriteAllText(batPath, $"@echo off\r\n{javaExeCmd} %*\r\nexit /b %errorlevel%\r\n");
+					string launchCommand = minecraftLoader == MinecraftMetadataService.ForgeLoader
+						? BuildForgeLaunchCommand(server, javaExeCmd, forgeArtifactVersion)
+						: $"{javaExeCmd} %*";
+					File.WriteAllText(
+						batPath,
+						$"@echo off\r\n{launchCommand}\r\nexit /b %errorlevel%\r\n");
 				}
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke($"[WARNING] Failed to generate post-install files: {ex.Message}");
+				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+					return -1;
 			}
 
 			Core.Instance.UpdateGridStatus();
 			return 0;
+		}
+
+		private static async Task<int> InstallForgeServerAsync(
+			GameServer server,
+			string javaExecutable,
+			string installerPath,
+			string forgeArtifactVersion,
+			Action<string> logCallback)
+		{
+			if (!File.Exists(installerPath))
+			{
+				logCallback?.Invoke("[CRITICAL] The downloaded Forge installer is missing.");
+				return -1;
+			}
+
+			logCallback?.Invoke(
+				$"[FORGE] Installing Forge {server.MinecraftLoaderVersion} for Minecraft {server.GameVersion}...");
+			ProcessStartInfo startInfo = new()
+			{
+				FileName = javaExecutable,
+				WorkingDirectory = server.InstallPath,
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true
+			};
+			startInfo.ArgumentList.Add("-jar");
+			startInfo.ArgumentList.Add(installerPath);
+			startInfo.ArgumentList.Add("--installServer");
+
+			try
+			{
+				using Process installer = new() { StartInfo = startInfo };
+				if (!installer.Start())
+					throw new InvalidOperationException("Windows could not start the Forge installer.");
+
+				Task<string> outputTask = installer.StandardOutput.ReadToEndAsync();
+				Task<string> errorTask = installer.StandardError.ReadToEndAsync();
+				using CancellationTokenSource timeout = new(TimeSpan.FromMinutes(10));
+				try
+				{
+					await installer.WaitForExitAsync(timeout.Token);
+				}
+				catch (OperationCanceledException)
+				{
+					try { installer.Kill(entireProcessTree: true); } catch { }
+					throw new TimeoutException("The Forge installer did not finish within 10 minutes.");
+				}
+
+				string output = await outputTask;
+				string errors = await errorTask;
+				LogProcessOutput(output, "FORGE", logCallback);
+				LogProcessOutput(errors, "FORGE", logCallback);
+
+				if (installer.ExitCode != 0)
+				{
+					logCallback?.Invoke($"[CRITICAL] Forge installer exited with code {installer.ExitCode}.");
+					return installer.ExitCode;
+				}
+
+				// Validate the install before removing the downloaded installer. Modern
+				// Forge exposes win_args.txt; legacy builds expose a runnable forge jar.
+				_ = BuildForgeLaunchCommand(server, QuoteCommandArgument(javaExecutable), forgeArtifactVersion);
+				try { File.Delete(installerPath); } catch { }
+				logCallback?.Invoke("[FORGE] Server loader installed successfully.");
+				return 0;
+			}
+			catch (Exception ex)
+			{
+				logCallback?.Invoke($"[CRITICAL] Forge installation failed: {ex.Message}");
+				return -1;
+			}
+		}
+
+		private static string BuildForgeLaunchCommand(
+			GameServer server,
+			string javaExeCmd,
+			string forgeArtifactVersion)
+		{
+			string modernArgsPath = Path.Combine(
+				server.InstallPath,
+				"libraries",
+				"net",
+				"minecraftforge",
+				"forge",
+				forgeArtifactVersion,
+				"win_args.txt");
+
+			if (File.Exists(modernArgsPath))
+			{
+				string relativeArgsPath = Path.GetRelativePath(server.InstallPath, modernArgsPath);
+				return $"{javaExeCmd} %* @\"{relativeArgsPath}\" nogui";
+			}
+
+			string? legacyJar = Directory
+				.EnumerateFiles(server.InstallPath, "forge-*.jar", SearchOption.TopDirectoryOnly)
+				.Where(path => !path.EndsWith("-installer.jar", StringComparison.OrdinalIgnoreCase))
+				.OrderByDescending(path => Path.GetFileName(path).Contains(
+					forgeArtifactVersion,
+					StringComparison.OrdinalIgnoreCase))
+				.FirstOrDefault();
+
+			if (legacyJar != null)
+				return $"{javaExeCmd} %* -jar {QuoteCommandArgument(Path.GetFileName(legacyJar))} nogui";
+
+			throw new InvalidOperationException(
+				"Forge completed but no Windows argument file or legacy Forge server jar was created.");
+		}
+
+		private static void LogProcessOutput(
+			string output,
+			string source,
+			Action<string> logCallback)
+		{
+			foreach (string rawLine in output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
+			{
+				string line = rawLine.Trim();
+				if (line.Length > 0)
+					logCallback?.Invoke($"[{source}] {line}");
+			}
+		}
+
+		private static string QuoteCommandArgument(string value)
+		{
+			return $"\"{value.Replace("\"", "\"\"")}\"";
+		}
+
+		private static bool VerifyFileSha1(string filePath, string expectedSha1)
+		{
+			using FileStream stream = File.OpenRead(filePath);
+			string actualSha1 = Convert.ToHexString(SHA1.HashData(stream));
+			return actualSha1.Equals(expectedSha1.Trim(), StringComparison.OrdinalIgnoreCase);
 		}
 
 		private static async Task PumpStreamAsync(StreamReader reader, Action<string> queueLine)

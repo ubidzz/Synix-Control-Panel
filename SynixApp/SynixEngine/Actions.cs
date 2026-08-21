@@ -593,7 +593,7 @@ namespace Synix_Control_Panel.SynixEngine
 				string args = dbEntry.RequiredArgs ?? "";
 
 				int ramToUse = server.MaxRam;
-				if (server.Game == "Minecraft Java") ramToUse = server.MaxRam * 1024;
+				if (server.Game == "Minecraft") ramToUse = server.MaxRam * 1024;
 
 				args = args.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 						   .Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)

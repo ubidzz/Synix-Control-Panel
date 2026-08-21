@@ -167,7 +167,7 @@ namespace Synix_Control_Panel.Help
 			lblServerPasswordText.Text = DisplayOrFallback(_server.Password, "Not Required");
 			lblServerAdminPasswordText.Text = DisplayOrFallback(_server.AdminPassword, "Not Required");
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
-			lblGameVersion.Text = _server.Game == "Minecraft Java"
+			lblGameVersion.Text = _server.Game == "Minecraft"
 				? DisplayOrFallback(_server.GameVersion, "Latest")
 				: "N/A";
 

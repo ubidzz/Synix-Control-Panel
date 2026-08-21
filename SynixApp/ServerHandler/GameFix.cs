@@ -29,7 +29,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string localIp = await Core.Instance.GetLocalIP();
 			string cleanIdentity = server.ServerName.Replace(" ", "_");
 
-			if (server.Game == "Dune: Awakening" || server.Game == "Minecraft Java")
+			if (server.Game == "Dune: Awakening" || server.Game == "Minecraft")
 			{
 				ManualConfigWasCreated = true;
 				applied = true;

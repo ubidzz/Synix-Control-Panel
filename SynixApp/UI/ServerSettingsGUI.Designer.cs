@@ -84,6 +84,16 @@ namespace Synix_Control_Panel
 			label1 = new Label();
 			numRam = new ModernSettingsNumericUpDown();
 			lblGameplayHelper = new Label();
+			cardMinecraftRuntime = new ModernSettingsCard();
+			lblMinecraftRuntimeIcon = new Label();
+			lblMinecraftRuntimeTitle = new Label();
+			lblMinecraftLoader = new Label();
+			cmbMinecraftLoader = new ModernSettingsComboBox();
+			lblMinecraftLoaderVersion = new Label();
+			cmbMinecraftLoaderVersion = new ModernSettingsComboBox();
+			lblMinecraftJava = new Label();
+			lblMinecraftJavaValue = new Label();
+			lblMinecraftRuntimeHelper = new Label();
 			cardCredentials = new ModernSettingsCard();
 			lblCredentialsIcon = new Label();
 			lblCredentialsTitle = new Label();
@@ -180,6 +190,7 @@ namespace Synix_Control_Panel
 			pnlPageGeneral.SuspendLayout();
 			cardIdentity.SuspendLayout();
 			cardGameplay.SuspendLayout();
+			cardMinecraftRuntime.SuspendLayout();
 			cardCredentials.SuspendLayout();
 			pnlPageWorld.SuspendLayout();
 			cardWorldGeneration.SuspendLayout();
@@ -558,6 +569,7 @@ namespace Synix_Control_Panel
 			pnlPageGeneral.BackColor = Color.FromArgb(8, 13, 24);
 			pnlPageGeneral.Controls.Add(cardIdentity);
 			pnlPageGeneral.Controls.Add(cardGameplay);
+			pnlPageGeneral.Controls.Add(cardMinecraftRuntime);
 			pnlPageGeneral.Controls.Add(cardCredentials);
 			pnlPageGeneral.Dock = DockStyle.Fill;
 			pnlPageGeneral.Location = new Point(0, 0);
@@ -856,6 +868,143 @@ namespace Synix_Control_Panel
 			lblGameplayHelper.TabIndex = 10;
 			lblGameplayHelper.Text = "Map and mode choices come directly from the selected game template.";
 
+			// cardMinecraftRuntime
+			cardMinecraftRuntime.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			cardMinecraftRuntime.BackColor = Color.FromArgb(17, 27, 45);
+			cardMinecraftRuntime.BorderColor = Color.FromArgb(38, 52, 77);
+			cardMinecraftRuntime.Controls.Add(lblMinecraftRuntimeIcon);
+			cardMinecraftRuntime.Controls.Add(lblMinecraftRuntimeTitle);
+			cardMinecraftRuntime.Controls.Add(lblMinecraftLoader);
+			cardMinecraftRuntime.Controls.Add(cmbMinecraftLoader);
+			cardMinecraftRuntime.Controls.Add(lblMinecraftLoaderVersion);
+			cardMinecraftRuntime.Controls.Add(cmbMinecraftLoaderVersion);
+			cardMinecraftRuntime.Controls.Add(lblMinecraftJava);
+			cardMinecraftRuntime.Controls.Add(lblMinecraftJavaValue);
+			cardMinecraftRuntime.Controls.Add(lblMinecraftRuntimeHelper);
+			cardMinecraftRuntime.CornerRadius = 12;
+			cardMinecraftRuntime.FillColor = Color.FromArgb(17, 27, 45);
+			cardMinecraftRuntime.Location = new Point(0, 242);
+			cardMinecraftRuntime.Name = "cardMinecraftRuntime";
+			cardMinecraftRuntime.Size = new Size(914, 146);
+			cardMinecraftRuntime.TabIndex = 2;
+			cardMinecraftRuntime.Visible = true;
+
+			// lblMinecraftRuntimeIcon
+			lblMinecraftRuntimeIcon.BackColor = Color.FromArgb(17, 27, 45);
+			lblMinecraftRuntimeIcon.Font = new Font("Segoe UI Symbol", 16F);
+			lblMinecraftRuntimeIcon.ForeColor = Color.FromArgb(32, 214, 199);
+			lblMinecraftRuntimeIcon.Location = new Point(20, 12);
+			lblMinecraftRuntimeIcon.Name = "lblMinecraftRuntimeIcon";
+			lblMinecraftRuntimeIcon.Size = new Size(28, 30);
+			lblMinecraftRuntimeIcon.TabIndex = 0;
+			lblMinecraftRuntimeIcon.Text = "⬡";
+			lblMinecraftRuntimeIcon.TextAlign = ContentAlignment.MiddleCenter;
+
+			// lblMinecraftRuntimeTitle
+			lblMinecraftRuntimeTitle.AutoSize = true;
+			lblMinecraftRuntimeTitle.BackColor = Color.FromArgb(17, 27, 45);
+			lblMinecraftRuntimeTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblMinecraftRuntimeTitle.ForeColor = Color.FromArgb(245, 247, 251);
+			lblMinecraftRuntimeTitle.Location = new Point(54, 17);
+			lblMinecraftRuntimeTitle.Name = "lblMinecraftRuntimeTitle";
+			lblMinecraftRuntimeTitle.Size = new Size(145, 21);
+			lblMinecraftRuntimeTitle.TabIndex = 1;
+			lblMinecraftRuntimeTitle.Text = "Minecraft Runtime";
+
+			// lblMinecraftLoader
+			lblMinecraftLoader.AutoSize = true;
+			lblMinecraftLoader.BackColor = Color.FromArgb(17, 27, 45);
+			lblMinecraftLoader.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblMinecraftLoader.ForeColor = Color.FromArgb(245, 247, 251);
+			lblMinecraftLoader.Location = new Point(24, 52);
+			lblMinecraftLoader.Name = "lblMinecraftLoader";
+			lblMinecraftLoader.Size = new Size(43, 15);
+			lblMinecraftLoader.TabIndex = 2;
+			lblMinecraftLoader.Text = "Loader";
+
+			// cmbMinecraftLoader
+			cmbMinecraftLoader.BackColor = Color.FromArgb(12, 21, 36);
+			cmbMinecraftLoader.BorderColor = Color.FromArgb(38, 52, 77);
+			cmbMinecraftLoader.DrawMode = DrawMode.OwnerDrawFixed;
+			cmbMinecraftLoader.DropDownStyle = ComboBoxStyle.DropDownList;
+			cmbMinecraftLoader.FlatStyle = FlatStyle.Flat;
+			cmbMinecraftLoader.FocusBorderColor = Color.FromArgb(38, 52, 77);
+			cmbMinecraftLoader.Font = new Font("Segoe UI", 9.5F);
+			cmbMinecraftLoader.ForeColor = Color.FromArgb(245, 247, 251);
+			cmbMinecraftLoader.FormattingEnabled = true;
+			cmbMinecraftLoader.ItemHeight = 28;
+			cmbMinecraftLoader.Items.AddRange(new object[] { "Vanilla", "Fabric", "Forge" });
+			cmbMinecraftLoader.Location = new Point(24, 72);
+			cmbMinecraftLoader.Name = "cmbMinecraftLoader";
+			cmbMinecraftLoader.Size = new Size(260, 34);
+			cmbMinecraftLoader.TabIndex = 3;
+
+			// lblMinecraftLoaderVersion
+			lblMinecraftLoaderVersion.AutoSize = true;
+			lblMinecraftLoaderVersion.BackColor = Color.FromArgb(17, 27, 45);
+			lblMinecraftLoaderVersion.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblMinecraftLoaderVersion.ForeColor = Color.FromArgb(245, 247, 251);
+			lblMinecraftLoaderVersion.Location = new Point(310, 52);
+			lblMinecraftLoaderVersion.Name = "lblMinecraftLoaderVersion";
+			lblMinecraftLoaderVersion.Size = new Size(88, 15);
+			lblMinecraftLoaderVersion.TabIndex = 4;
+			lblMinecraftLoaderVersion.Text = "Loader Version";
+
+			// cmbMinecraftLoaderVersion
+			cmbMinecraftLoaderVersion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			cmbMinecraftLoaderVersion.BackColor = Color.FromArgb(12, 21, 36);
+			cmbMinecraftLoaderVersion.BorderColor = Color.FromArgb(38, 52, 77);
+			cmbMinecraftLoaderVersion.DrawMode = DrawMode.OwnerDrawFixed;
+			cmbMinecraftLoaderVersion.DropDownStyle = ComboBoxStyle.DropDownList;
+			cmbMinecraftLoaderVersion.FlatStyle = FlatStyle.Flat;
+			cmbMinecraftLoaderVersion.FocusBorderColor = Color.FromArgb(38, 52, 77);
+			cmbMinecraftLoaderVersion.Font = new Font("Segoe UI", 9.5F);
+			cmbMinecraftLoaderVersion.ForeColor = Color.FromArgb(245, 247, 251);
+			cmbMinecraftLoaderVersion.FormattingEnabled = true;
+			cmbMinecraftLoaderVersion.ItemHeight = 28;
+			cmbMinecraftLoaderVersion.Location = new Point(310, 72);
+			cmbMinecraftLoaderVersion.Name = "cmbMinecraftLoaderVersion";
+			cmbMinecraftLoaderVersion.Size = new Size(350, 34);
+			cmbMinecraftLoaderVersion.TabIndex = 5;
+
+			// lblMinecraftJava
+			lblMinecraftJava.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			lblMinecraftJava.AutoSize = true;
+			lblMinecraftJava.BackColor = Color.FromArgb(17, 27, 45);
+			lblMinecraftJava.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblMinecraftJava.ForeColor = Color.FromArgb(245, 247, 251);
+			lblMinecraftJava.Location = new Point(686, 52);
+			lblMinecraftJava.Name = "lblMinecraftJava";
+			lblMinecraftJava.Size = new Size(82, 15);
+			lblMinecraftJava.TabIndex = 6;
+			lblMinecraftJava.Text = "Portable Java";
+
+			// lblMinecraftJavaValue
+			lblMinecraftJavaValue.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			lblMinecraftJavaValue.BackColor = Color.FromArgb(12, 21, 36);
+			lblMinecraftJavaValue.BorderStyle = BorderStyle.FixedSingle;
+			lblMinecraftJavaValue.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			lblMinecraftJavaValue.ForeColor = Color.FromArgb(32, 214, 199);
+			lblMinecraftJavaValue.Location = new Point(686, 72);
+			lblMinecraftJavaValue.Name = "lblMinecraftJavaValue";
+			lblMinecraftJavaValue.Padding = new Padding(10, 0, 10, 0);
+			lblMinecraftJavaValue.Size = new Size(204, 34);
+			lblMinecraftJavaValue.TabIndex = 7;
+			lblMinecraftJavaValue.Text = "Resolved automatically";
+			lblMinecraftJavaValue.TextAlign = ContentAlignment.MiddleLeft;
+
+			// lblMinecraftRuntimeHelper
+			lblMinecraftRuntimeHelper.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lblMinecraftRuntimeHelper.AutoEllipsis = true;
+			lblMinecraftRuntimeHelper.BackColor = Color.FromArgb(17, 27, 45);
+			lblMinecraftRuntimeHelper.Font = new Font("Segoe UI", 8F);
+			lblMinecraftRuntimeHelper.ForeColor = Color.FromArgb(158, 172, 194);
+			lblMinecraftRuntimeHelper.Location = new Point(24, 116);
+			lblMinecraftRuntimeHelper.Name = "lblMinecraftRuntimeHelper";
+			lblMinecraftRuntimeHelper.Size = new Size(866, 18);
+			lblMinecraftRuntimeHelper.TabIndex = 8;
+			lblMinecraftRuntimeHelper.Text = "Synix installs the selected server loader and matching portable Java. Add your own mods after installation.";
+
 			// cardCredentials
 			cardCredentials.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			cardCredentials.BackColor = Color.FromArgb(17, 27, 45);
@@ -869,7 +1018,7 @@ namespace Synix_Control_Panel
 			cardCredentials.Controls.Add(lblCredentialsNote);
 			cardCredentials.CornerRadius = 12;
 			cardCredentials.FillColor = Color.FromArgb(17, 27, 45);
-			cardCredentials.Location = new Point(0, 242);
+			cardCredentials.Location = new Point(0, 404);
 			cardCredentials.Name = "cardCredentials";
 			cardCredentials.Size = new Size(914, 154);
 			cardCredentials.TabIndex = 2;
@@ -1847,6 +1996,8 @@ namespace Synix_Control_Panel
 			pnlPageWorld.ResumeLayout(false);
 			cardCredentials.ResumeLayout(false);
 			cardCredentials.PerformLayout();
+			cardMinecraftRuntime.ResumeLayout(false);
+			cardMinecraftRuntime.PerformLayout();
 			cardGameplay.ResumeLayout(false);
 			cardGameplay.PerformLayout();
 			cardIdentity.ResumeLayout(false);
@@ -1917,6 +2068,16 @@ namespace Synix_Control_Panel
 		private Label label1;
 		private ModernSettingsNumericUpDown numRam;
 		private Label lblGameplayHelper;
+		private ModernSettingsCard cardMinecraftRuntime;
+		private Label lblMinecraftRuntimeIcon;
+		private Label lblMinecraftRuntimeTitle;
+		private Label lblMinecraftLoader;
+		private ModernSettingsComboBox cmbMinecraftLoader;
+		private Label lblMinecraftLoaderVersion;
+		private ModernSettingsComboBox cmbMinecraftLoaderVersion;
+		private Label lblMinecraftJava;
+		private Label lblMinecraftJavaValue;
+		private Label lblMinecraftRuntimeHelper;
 		private ModernSettingsCard cardCredentials;
 		private Label lblCredentialsIcon;
 		private Label lblCredentialsTitle;

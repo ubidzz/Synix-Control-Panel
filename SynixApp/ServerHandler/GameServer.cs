@@ -125,6 +125,22 @@ public class GameServer : GameInfo
 	[JsonIgnore]
 	public bool IsProbing { get; set; } = false;
 	public string GameVersion { get; set; } = "Latest";
+	/// <summary>
+	/// Minecraft server distribution selected by the user. Existing server JSON
+	/// files omit this property and therefore continue to load as Vanilla.
+	/// </summary>
+	public string MinecraftLoader { get; set; } = "Vanilla";
+	/// <summary>
+	/// Compatible Fabric/Forge build selected for GameVersion. Vanilla uses
+	/// "Official". Keeping this separate prevents a loader version from being
+	/// mistaken for a Minecraft game version.
+	/// </summary>
+	public string MinecraftLoaderVersion { get; set; } = "Official";
+	/// <summary>
+	/// Java major resolved from Mojang's metadata when the server is configured
+	/// or installed. A value of zero means it will be resolved during install.
+	/// </summary>
+	public int RequiredJavaVersion { get; set; } = 0;
 	public int MaxRam { get; set; } = 4;
 
 	[JsonIgnore]

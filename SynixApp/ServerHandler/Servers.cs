@@ -159,7 +159,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						return;
 					}
 
-					isMinecraft = server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+					isMinecraft = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 					if (isMinecraft)
 					{
 						PrepareMinecraftLauncher(fullExePath, logCallback);
@@ -241,6 +241,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.Replace("{world_size}", server.WorldSize.ToString())
 						.Replace("{Identity}", cleanIdentity)
 						.Replace("{ram}", ramToUse.ToString());
+
+					// Modern Forge uses its generated win_args.txt instead of
+					// "-jar server.jar". Start.bat supplies the Forge argument file,
+					// while Synix still owns the selected heap size and optional args.
+					if (isMinecraft &&
+						MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader)
+							.Equals(MinecraftMetadataService.ForgeLoader, StringComparison.OrdinalIgnoreCase))
+					{
+						args = $"-Xmx{ramToUse}M -Xms{ramToUse}M";
+					}
 
 					if (args.Contains("{rcon}"))
 					{
@@ -455,7 +465,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
-				bool isMinecraft = server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+				bool isMinecraft = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 				bool signalSent = isMinecraft
 					? await TrySendMinecraftStopCommand(server, targetPid, logCallback)
 					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);

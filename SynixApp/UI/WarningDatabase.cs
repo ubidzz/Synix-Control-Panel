@@ -23,7 +23,7 @@ namespace Synix_Control_Panel.Database
 		private static readonly Dictionary<string, string> _messages = new()
 		{
 			{
-				"Minecraft Java",
+				"Minecraft",
 				"MINECRAFT EULA AGREEMENT REQUIRED:\n\n" +
 				"By starting this server, you agree to the Minecraft End User License Agreement (EULA).\n\n" +
 				"If you do not agree to these terms, click Decline and the server will not start.\n\n" +
@@ -1081,7 +1081,7 @@ namespace Synix_Control_Panel.Database
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			if (_server.Game.Equals("Minecraft Java", StringComparison.OrdinalIgnoreCase))
+			if (_server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
 				try
 				{
