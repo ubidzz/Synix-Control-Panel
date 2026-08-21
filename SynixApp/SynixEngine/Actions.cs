@@ -38,6 +38,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Log($"[🚨 STOP FAILED] {server.ServerName} is still running. Synix kept its live PID and status.", Color.Red, true);
 			}
+			else
+			{
+				RecordGameVerification(server.Game, GameVerificationKind.Stop);
+			}
 
 			FileHandler.SaveServers();
 			Core.Instance.UpdateGridStatus();
@@ -361,6 +365,7 @@ namespace Synix_Control_Panel.SynixEngine
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
 						newServer.IsFirstBoot = fixApplied;
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
+						RecordGameVerification(newServer.Game, GameVerificationKind.Install);
 					}
 					catch (Exception ex)
 					{

@@ -115,6 +115,7 @@ namespace Synix_Control_Panel
 				cmbGame.SelectedIndex = 0;
 				ToggleGameSpecificFields(null);
 			}
+			RefreshCompatibilityVerification(_existingServer?.Game);
 
 			isPrivacyLoading = false;
 			PrivacyMode();
@@ -829,6 +830,7 @@ namespace Synix_Control_Panel
 			cardCredentials.Location = visible
 				? new Point(0, cardMinecraftRuntime.Bottom + 16)
 				: new Point(0, 242);
+			cardCompatibility.Location = new Point(0, cardCredentials.Bottom + 16);
 
 			if (!visible)
 			{
@@ -1234,7 +1236,55 @@ namespace Synix_Control_Panel
 				}
 			}
 			else ToggleGameSpecificFields(null);
+			RefreshCompatibilityVerification(cmbGame.SelectedIndex > 0 ? cmbGame.Text : null);
 			SyncGatekeeper();
+		}
+
+		private void RefreshCompatibilityVerification(string? game)
+		{
+			GameCompatibilityVerification verification = Core.GetGameCompatibility(game);
+			UpdateCompatibilityLabel(
+				lblInstallVerification,
+				"Install",
+				verification.Install);
+			UpdateCompatibilityLabel(
+				lblStartVerification,
+				"Start",
+				verification.Start);
+			UpdateCompatibilityLabel(
+				lblStopVerification,
+				"Stop",
+				verification.Stop);
+			UpdateCompatibilityLabel(
+				lblMonitoringVerification,
+				"Monitoring",
+				verification.Monitoring);
+
+			GameVerificationEvidence? lastTested = verification.LastTested;
+			if (lastTested == null)
+			{
+				lblLastTestedVersion.Text = "Last-tested Synix version: Not verified yet";
+				lblLastTestedVersion.ForeColor = Color.FromArgb(158, 172, 194);
+				return;
+			}
+
+			lblLastTestedVersion.Text =
+				$"Last-tested Synix version: v{lastTested.SynixVersion}  •  {lastTested.VerifiedAtUtc.ToLocalTime():MMM d, yyyy}";
+			lblLastTestedVersion.ForeColor = Color.FromArgb(32, 214, 199);
+		}
+
+		private static void UpdateCompatibilityLabel(
+			Label label,
+			string action,
+			GameVerificationEvidence? evidence)
+		{
+			bool verified = evidence != null;
+			label.Text = verified
+				? $"{action}  ✓ Verified"
+				: $"{action}  — Not verified yet";
+			label.ForeColor = verified
+				? Color.FromArgb(32, 214, 199)
+				: Color.FromArgb(158, 172, 194);
 		}
 
 		private async Task PopulateVersionsAsync(GameInfo gameData, string selectedVersion)

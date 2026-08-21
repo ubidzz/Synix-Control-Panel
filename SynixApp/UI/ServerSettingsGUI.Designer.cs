@@ -102,6 +102,15 @@ namespace Synix_Control_Panel
 			lblAdminPassword = new Label();
 			txtAdminPassword = new TextBox();
 			lblCredentialsNote = new Label();
+			cardCompatibility = new ModernSettingsCard();
+			lblCompatibilityIcon = new Label();
+			lblCompatibilityTitle = new Label();
+			lblCompatibilityHelper = new Label();
+			lblInstallVerification = new Label();
+			lblStartVerification = new Label();
+			lblStopVerification = new Label();
+			lblMonitoringVerification = new Label();
+			lblLastTestedVersion = new Label();
 			pnlPageWorld = new Panel();
 			cardWorldGeneration = new ModernSettingsCard();
 			lblWorldIcon = new Label();
@@ -192,6 +201,7 @@ namespace Synix_Control_Panel
 			cardGameplay.SuspendLayout();
 			cardMinecraftRuntime.SuspendLayout();
 			cardCredentials.SuspendLayout();
+			cardCompatibility.SuspendLayout();
 			pnlPageWorld.SuspendLayout();
 			cardWorldGeneration.SuspendLayout();
 			pnlPageNetwork.SuspendLayout();
@@ -571,6 +581,7 @@ namespace Synix_Control_Panel
 			pnlPageGeneral.Controls.Add(cardGameplay);
 			pnlPageGeneral.Controls.Add(cardMinecraftRuntime);
 			pnlPageGeneral.Controls.Add(cardCredentials);
+			pnlPageGeneral.Controls.Add(cardCompatibility);
 			pnlPageGeneral.Dock = DockStyle.Fill;
 			pnlPageGeneral.Location = new Point(0, 0);
 			pnlPageGeneral.Name = "pnlPageGeneral";
@@ -1100,6 +1111,124 @@ namespace Synix_Control_Panel
 			lblCredentialsNote.Size = new Size(866, 22);
 			lblCredentialsNote.TabIndex = 6;
 			lblCredentialsNote.Text = "◇  Sensitive fields follow the Synix Privacy Mode setting.";
+
+			// cardCompatibility
+			cardCompatibility.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			cardCompatibility.BackColor = Color.FromArgb(17, 27, 45);
+			cardCompatibility.BorderColor = Color.FromArgb(38, 52, 77);
+			cardCompatibility.Controls.Add(lblCompatibilityIcon);
+			cardCompatibility.Controls.Add(lblCompatibilityTitle);
+			cardCompatibility.Controls.Add(lblCompatibilityHelper);
+			cardCompatibility.Controls.Add(lblInstallVerification);
+			cardCompatibility.Controls.Add(lblStartVerification);
+			cardCompatibility.Controls.Add(lblStopVerification);
+			cardCompatibility.Controls.Add(lblMonitoringVerification);
+			cardCompatibility.Controls.Add(lblLastTestedVersion);
+			cardCompatibility.CornerRadius = 12;
+			cardCompatibility.FillColor = Color.FromArgb(17, 27, 45);
+			cardCompatibility.Location = new Point(0, 574);
+			cardCompatibility.Name = "cardCompatibility";
+			cardCompatibility.Size = new Size(914, 146);
+			cardCompatibility.TabIndex = 3;
+
+			// lblCompatibilityIcon
+			lblCompatibilityIcon.BackColor = Color.FromArgb(17, 27, 45);
+			lblCompatibilityIcon.Font = new Font("Segoe UI Symbol", 16F);
+			lblCompatibilityIcon.ForeColor = Color.FromArgb(32, 214, 199);
+			lblCompatibilityIcon.Location = new Point(20, 12);
+			lblCompatibilityIcon.Name = "lblCompatibilityIcon";
+			lblCompatibilityIcon.Size = new Size(28, 30);
+			lblCompatibilityIcon.TabIndex = 0;
+			lblCompatibilityIcon.Text = "✓";
+			lblCompatibilityIcon.TextAlign = ContentAlignment.MiddleCenter;
+
+			// lblCompatibilityTitle
+			lblCompatibilityTitle.AutoSize = true;
+			lblCompatibilityTitle.BackColor = Color.FromArgb(17, 27, 45);
+			lblCompatibilityTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblCompatibilityTitle.ForeColor = Color.FromArgb(245, 247, 251);
+			lblCompatibilityTitle.Location = new Point(54, 17);
+			lblCompatibilityTitle.Name = "lblCompatibilityTitle";
+			lblCompatibilityTitle.Size = new Size(211, 21);
+			lblCompatibilityTitle.TabIndex = 1;
+			lblCompatibilityTitle.Text = "Compatibility Verification";
+
+			// lblCompatibilityHelper
+			lblCompatibilityHelper.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lblCompatibilityHelper.BackColor = Color.FromArgb(17, 27, 45);
+			lblCompatibilityHelper.Font = new Font("Segoe UI", 8F);
+			lblCompatibilityHelper.ForeColor = Color.FromArgb(158, 172, 194);
+			lblCompatibilityHelper.Location = new Point(280, 18);
+			lblCompatibilityHelper.Name = "lblCompatibilityHelper";
+			lblCompatibilityHelper.Size = new Size(610, 20);
+			lblCompatibilityHelper.TabIndex = 2;
+			lblCompatibilityHelper.Text = "Synix verifies each action automatically after it succeeds on this PC.";
+			lblCompatibilityHelper.TextAlign = ContentAlignment.MiddleRight;
+
+			// lblInstallVerification
+			lblInstallVerification.BackColor = Color.FromArgb(12, 21, 36);
+			lblInstallVerification.BorderStyle = BorderStyle.FixedSingle;
+			lblInstallVerification.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblInstallVerification.ForeColor = Color.FromArgb(158, 172, 194);
+			lblInstallVerification.Location = new Point(24, 52);
+			lblInstallVerification.Name = "lblInstallVerification";
+			lblInstallVerification.Padding = new Padding(10, 0, 10, 0);
+			lblInstallVerification.Size = new Size(200, 30);
+			lblInstallVerification.TabIndex = 3;
+			lblInstallVerification.Text = "Install  — Not verified yet";
+			lblInstallVerification.TextAlign = ContentAlignment.MiddleLeft;
+
+			// lblStartVerification
+			lblStartVerification.BackColor = Color.FromArgb(12, 21, 36);
+			lblStartVerification.BorderStyle = BorderStyle.FixedSingle;
+			lblStartVerification.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblStartVerification.ForeColor = Color.FromArgb(158, 172, 194);
+			lblStartVerification.Location = new Point(238, 52);
+			lblStartVerification.Name = "lblStartVerification";
+			lblStartVerification.Padding = new Padding(10, 0, 10, 0);
+			lblStartVerification.Size = new Size(200, 30);
+			lblStartVerification.TabIndex = 4;
+			lblStartVerification.Text = "Start  — Not verified yet";
+			lblStartVerification.TextAlign = ContentAlignment.MiddleLeft;
+
+			// lblStopVerification
+			lblStopVerification.BackColor = Color.FromArgb(12, 21, 36);
+			lblStopVerification.BorderStyle = BorderStyle.FixedSingle;
+			lblStopVerification.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblStopVerification.ForeColor = Color.FromArgb(158, 172, 194);
+			lblStopVerification.Location = new Point(452, 52);
+			lblStopVerification.Name = "lblStopVerification";
+			lblStopVerification.Padding = new Padding(10, 0, 10, 0);
+			lblStopVerification.Size = new Size(200, 30);
+			lblStopVerification.TabIndex = 5;
+			lblStopVerification.Text = "Stop  — Not verified yet";
+			lblStopVerification.TextAlign = ContentAlignment.MiddleLeft;
+
+			// lblMonitoringVerification
+			lblMonitoringVerification.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lblMonitoringVerification.BackColor = Color.FromArgb(12, 21, 36);
+			lblMonitoringVerification.BorderStyle = BorderStyle.FixedSingle;
+			lblMonitoringVerification.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblMonitoringVerification.ForeColor = Color.FromArgb(158, 172, 194);
+			lblMonitoringVerification.Location = new Point(666, 52);
+			lblMonitoringVerification.Name = "lblMonitoringVerification";
+			lblMonitoringVerification.Padding = new Padding(10, 0, 10, 0);
+			lblMonitoringVerification.Size = new Size(224, 30);
+			lblMonitoringVerification.TabIndex = 6;
+			lblMonitoringVerification.Text = "Monitoring  — Not verified yet";
+			lblMonitoringVerification.TextAlign = ContentAlignment.MiddleLeft;
+
+			// lblLastTestedVersion
+			lblLastTestedVersion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lblLastTestedVersion.BackColor = Color.FromArgb(17, 27, 45);
+			lblLastTestedVersion.Font = new Font("Segoe UI", 9F);
+			lblLastTestedVersion.ForeColor = Color.FromArgb(158, 172, 194);
+			lblLastTestedVersion.Location = new Point(24, 96);
+			lblLastTestedVersion.Name = "lblLastTestedVersion";
+			lblLastTestedVersion.Size = new Size(866, 28);
+			lblLastTestedVersion.TabIndex = 7;
+			lblLastTestedVersion.Text = "Last-tested Synix version: Not verified yet";
+			lblLastTestedVersion.TextAlign = ContentAlignment.MiddleLeft;
 
 			// pnlPageWorld
 			pnlPageWorld.AutoScroll = true;
@@ -1996,6 +2125,8 @@ namespace Synix_Control_Panel
 			pnlPageWorld.ResumeLayout(false);
 			cardCredentials.ResumeLayout(false);
 			cardCredentials.PerformLayout();
+			cardCompatibility.ResumeLayout(false);
+			cardCompatibility.PerformLayout();
 			cardMinecraftRuntime.ResumeLayout(false);
 			cardMinecraftRuntime.PerformLayout();
 			cardGameplay.ResumeLayout(false);
@@ -2086,6 +2217,15 @@ namespace Synix_Control_Panel
 		private Label lblAdminPassword;
 		private TextBox txtAdminPassword;
 		private Label lblCredentialsNote;
+		private ModernSettingsCard cardCompatibility;
+		private Label lblCompatibilityIcon;
+		private Label lblCompatibilityTitle;
+		private Label lblCompatibilityHelper;
+		private Label lblInstallVerification;
+		private Label lblStartVerification;
+		private Label lblStopVerification;
+		private Label lblMonitoringVerification;
+		private Label lblLastTestedVersion;
 		private Panel pnlPageWorld;
 		private ModernSettingsCard cardWorldGeneration;
 		private Label lblWorldIcon;

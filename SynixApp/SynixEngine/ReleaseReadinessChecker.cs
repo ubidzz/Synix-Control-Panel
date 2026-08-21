@@ -585,7 +585,7 @@ namespace Synix_Control_Panel.SynixEngine
 					StringComparer.OrdinalIgnoreCase);
 				while (true)
 				{
-					status = MsiViewoetch(view, out IntPtr record);
+					status = MsiViewFetch(view, out IntPtr record);
 					if (status == noMoreItems)
 						break;
 					if (status != success)
@@ -885,8 +885,8 @@ namespace Synix_Control_Panel.SynixEngine
 			IntPtr view,
 			IntPtr record);
 
-		[DllImport("msi.dll")]
-		private static extern uint MsiViewoetch(
+		[DllImport("msi.dll", EntryPoint = "MsiViewFetch")]
+		private static extern uint MsiViewFetch(
 			IntPtr view,
 			out IntPtr record);
 

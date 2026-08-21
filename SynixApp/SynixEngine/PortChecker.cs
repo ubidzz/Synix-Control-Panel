@@ -126,7 +126,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (supportsA2S && await TestServerConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> A2S (Steam UDP) on Port {server.QueryPort}");
-				return true;
+				return RecordSuccessfulProbe(server);
 			}
 
 			if (!supportsA2S)
@@ -135,12 +135,12 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					case ServerProbeProtocol.RestApi:
 						if (await TestRestApiConnectivity(server, ip, gameData?.ProbePath))
-							return true;
+							return RecordSuccessfulProbe(server);
 						break;
 
 					case ServerProbeProtocol.EpicOnlineServices:
 						if (await TestEOSWebAPI(server, ip))
-							return true;
+							return RecordSuccessfulProbe(server);
 						break;
 				}
 			}
@@ -148,20 +148,20 @@ namespace Synix_Control_Panel.SynixEngine
 			if (await TestTcpConnectivity(ip, server.Port))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.Port}");
-				return true;
+				return RecordSuccessfulProbe(server);
 			}
 
 			if (probeProtocol != ServerProbeProtocol.RestApi &&
 				await TestTcpConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.QueryPort}");
-				return true;
+				return RecordSuccessfulProbe(server);
 			}
 
 			if (supportsA2S && await TestServerConnectivity(ip, server.Port))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> UDP Check on Port {server.Port}");
-				return true;
+				return RecordSuccessfulProbe(server);
 			}
 
 			if (server.StartTime.HasValue &&
@@ -171,17 +171,26 @@ namespace Synix_Control_Panel.SynixEngine
 				if (IsPortInUseLocally(server.Port))
 				{
 					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Game Port {server.Port} In Use)");
-					return true;
+					return RecordSuccessfulProbe(server);
 				}
 
 				if (IsPortInUseLocally(server.QueryPort))
 				{
 					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Query Port {server.QueryPort} In Use)");
-					return true;
+					return RecordSuccessfulProbe(server);
 				}
 			}
 
 			return false;
+		}
+
+		private static bool RecordSuccessfulProbe(GameServer server)
+		{
+			RecordGameVerification(server.Game, GameVerificationKind.Monitoring);
+			if (server.Status == StatusManager.GetStatus(ServerState.Starting))
+				RecordGameVerification(server.Game, GameVerificationKind.Start);
+
+			return true;
 		}
 
 		public async Task<bool> TestRestApiConnectivity(

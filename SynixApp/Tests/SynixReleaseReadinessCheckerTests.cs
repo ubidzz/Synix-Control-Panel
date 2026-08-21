@@ -11,12 +11,27 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixEngine;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Synix_Control_Panel.Tests;
 
 public sealed class SynixReleaseReadinessCheckerTests
 {
+	[Fact]
+	public void MsiViewFetchImport_UsesTheWindowsInstallerEntryPoint()
+	{
+		MethodInfo? method = typeof(Core).GetMethod(
+			"MsiViewFetch",
+			BindingFlags.NonPublic | BindingFlags.Static);
+		DllImportAttribute? import = method?.GetCustomAttribute<DllImportAttribute>();
+
+		Assert.NotNull(method);
+		Assert.NotNull(import);
+		Assert.Equal("MsiViewFetch", import.EntryPoint);
+	}
+
 	[Fact]
 	public void Report_WithNoFailures_IsReady()
 	{
