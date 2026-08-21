@@ -44,6 +44,7 @@ namespace Synix_Control_Panel.SynixEngine
 			btnGeneral = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
 			btnBackups = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
 			btnPrivacy = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
+			btnReportProblem = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
 			btnAdvanced = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
 			lblVersion = new Label();
 			sidebarRightBorder = new Label();
@@ -52,6 +53,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblPageHeading = new Label();
 			lblPageSubtitle = new Label();
 			pageHost = new Panel();
+			problemReportSettingsPage = new ProblemReportSettingsPage();
 			advancedSettingsPage = new AdvancedSettingsPage();
 			privacySettingsPage = new PrivacySettingsPage();
 			backupSettingsPage = new BackupSettingsPage();
@@ -214,12 +216,13 @@ namespace Synix_Control_Panel.SynixEngine
 			navigationFlow.Controls.Add(btnGeneral);
 			navigationFlow.Controls.Add(btnBackups);
 			navigationFlow.Controls.Add(btnPrivacy);
+			navigationFlow.Controls.Add(btnReportProblem);
 			navigationFlow.Controls.Add(btnAdvanced);
 			navigationFlow.FlowDirection = FlowDirection.TopDown;
 			navigationFlow.Location = new Point(16, 24);
 			navigationFlow.Margin = new Padding(0);
 			navigationFlow.Name = "navigationFlow";
-			navigationFlow.Size = new Size(185, 286);
+			navigationFlow.Size = new Size(185, 348);
 			navigationFlow.TabIndex = 0;
 			navigationFlow.WrapContents = false;
 			//
@@ -283,6 +286,26 @@ namespace Synix_Control_Panel.SynixEngine
 			btnPrivacy.UseVisualStyleBackColor = false;
 			btnPrivacy.Click += btnPrivacy_Click;
 			//
+			// btnReportProblem
+			//
+			btnReportProblem.BackColor = Color.FromArgb(10, 18, 32);
+			btnReportProblem.Cursor = Cursors.Hand;
+			btnReportProblem.FlatAppearance.BorderSize = 0;
+			btnReportProblem.FlatStyle = FlatStyle.Flat;
+			btnReportProblem.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point);
+			btnReportProblem.ForeColor = Color.FromArgb(158, 172, 194);
+			btnReportProblem.IconGlyph = "!";
+			btnReportProblem.Location = new Point(0, 186);
+			btnReportProblem.Margin = new Padding(0, 0, 0, 8);
+			btnReportProblem.Name = "btnReportProblem";
+			btnReportProblem.Selected = false;
+			btnReportProblem.Size = new Size(185, 54);
+			btnReportProblem.TabIndex = 3;
+			btnReportProblem.Text = "Report a Problem";
+			btnReportProblem.TextAlign = ContentAlignment.MiddleLeft;
+			btnReportProblem.UseVisualStyleBackColor = false;
+			btnReportProblem.Click += btnReportProblem_Click;
+			//
 			// btnAdvanced
 			//
 			btnAdvanced.BackColor = Color.FromArgb(10, 18, 32);
@@ -292,12 +315,12 @@ namespace Synix_Control_Panel.SynixEngine
 			btnAdvanced.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point);
 			btnAdvanced.ForeColor = Color.FromArgb(158, 172, 194);
 			btnAdvanced.IconGlyph = "⚡";
-			btnAdvanced.Location = new Point(0, 186);
+			btnAdvanced.Location = new Point(0, 248);
 			btnAdvanced.Margin = new Padding(0, 0, 0, 8);
 			btnAdvanced.Name = "btnAdvanced";
 			btnAdvanced.Selected = false;
 			btnAdvanced.Size = new Size(185, 54);
-			btnAdvanced.TabIndex = 3;
+			btnAdvanced.TabIndex = 4;
 			btnAdvanced.Text = "Advanced";
 			btnAdvanced.TextAlign = ContentAlignment.MiddleLeft;
 			btnAdvanced.UseVisualStyleBackColor = false;
@@ -383,6 +406,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// pageHost
 			//
 			pageHost.BackColor = Color.FromArgb(8, 13, 24);
+			pageHost.Controls.Add(problemReportSettingsPage);
 			pageHost.Controls.Add(advancedSettingsPage);
 			pageHost.Controls.Add(privacySettingsPage);
 			pageHost.Controls.Add(backupSettingsPage);
@@ -394,6 +418,17 @@ namespace Synix_Control_Panel.SynixEngine
 			pageHost.Padding = new Padding(36, 0, 28, 30);
 			pageHost.Size = new Size(880, 550);
 			pageHost.TabIndex = 1;
+			//
+			// problemReportSettingsPage
+			//
+			problemReportSettingsPage.BackColor = Color.FromArgb(8, 13, 24);
+			problemReportSettingsPage.Dock = DockStyle.Fill;
+			problemReportSettingsPage.Location = new Point(36, 0);
+			problemReportSettingsPage.Margin = new Padding(0);
+			problemReportSettingsPage.Name = "problemReportSettingsPage";
+			problemReportSettingsPage.Size = new Size(816, 520);
+			problemReportSettingsPage.TabIndex = 4;
+			problemReportSettingsPage.Visible = false;
 			//
 			// advancedSettingsPage
 			//
@@ -487,6 +522,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnGeneral;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnBackups;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnPrivacy;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnReportProblem;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnAdvanced;
 		private Label lblVersion;
 		private Label sidebarRightBorder;
@@ -499,5 +535,6 @@ namespace Synix_Control_Panel.SynixEngine
 		private BackupSettingsPage backupSettingsPage;
 		private PrivacySettingsPage privacySettingsPage;
 		private AdvancedSettingsPage advancedSettingsPage;
+		private ProblemReportSettingsPage problemReportSettingsPage;
 	}
 }

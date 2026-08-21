@@ -1607,9 +1607,24 @@ namespace Synix_Control_Panel.SynixEngine
 						IgnoreInaccessible = false,
 						AttributesToSkip = FileAttributes.ReparsePoint
 					})
-				.Where(path => !IsInsideDirectory(path, recoveryRoot))
+				.Where(path =>
+					!IsInsideDirectory(path, recoveryRoot) &&
+					!IsGitHubConnectionFile(sourceRoot, path))
 				.Select(path => new FileInfo(path))
 				.ToList();
+		}
+
+		private static bool IsGitHubConnectionFile(
+			string sourceRoot,
+			string filePath)
+		{
+			string relativePath = Path.GetRelativePath(sourceRoot, filePath);
+			string connectionRelativePath = Path.Combine(
+				"SynixData",
+				"github-connection.json");
+			return relativePath.Equals(
+				connectionRelativePath,
+				StringComparison.OrdinalIgnoreCase);
 		}
 
 		private static void ThrowIfInsufficientExportSpace(

@@ -77,6 +77,29 @@ public sealed class SynixTransferPackageTests
 	}
 
 	[Fact]
+	public async Task Export_DoesNotCarryGitHubAuthorizationToAnotherComputer()
+	{
+		using TemporaryDirectory test = new();
+		string source = test.CreateSourceTree();
+		string connectionDirectory = Path.Combine(source, "SynixData");
+		Directory.CreateDirectory(connectionDirectory);
+		await File.WriteAllTextAsync(
+			Path.Combine(connectionDirectory, "github-connection.json"),
+			"encrypted GitHub authorization");
+		string package = test.PathFor("without-github.synixbackup");
+		string restored = test.PathFor("without-github-restored");
+
+		await Core.ExportUnencryptedAsync(source, package);
+		await Core.ImportAsync(package, restored, string.Empty);
+
+		Assert.False(File.Exists(Path.Combine(
+			restored,
+			"SynixData",
+			"github-connection.json")));
+		Assert.True(File.Exists(Path.Combine(restored, "settings.json")));
+	}
+
+	[Fact]
 	public async Task WrongPassword_IsRejectedBeforeDestinationIsChanged()
 	{
 		using TemporaryDirectory test = new();

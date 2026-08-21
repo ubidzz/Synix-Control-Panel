@@ -218,10 +218,14 @@ namespace Synix_Control_Panel.SynixEngine
 				ReferenceEquals(page, privacySettingsPage);
 			advancedSettingsPage.Visible =
 				ReferenceEquals(page, advancedSettingsPage);
+			problemReportSettingsPage.Visible =
+				ReferenceEquals(page, problemReportSettingsPage);
 
 			btnGeneral.Selected = ReferenceEquals(selectedButton, btnGeneral);
 			btnBackups.Selected = ReferenceEquals(selectedButton, btnBackups);
 			btnPrivacy.Selected = ReferenceEquals(selectedButton, btnPrivacy);
+			btnReportProblem.Selected =
+				ReferenceEquals(selectedButton, btnReportProblem);
 			btnAdvanced.Selected = ReferenceEquals(selectedButton, btnAdvanced);
 
 			lblPageHeading.Text = heading;
@@ -263,6 +267,17 @@ namespace Synix_Control_Panel.SynixEngine
 				btnAdvanced,
 				"Advanced",
 				"Configure elevated operations and advanced system behavior.");
+		}
+
+		private void btnReportProblem_Click(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			ShowPage(
+				problemReportSettingsPage,
+				btnReportProblem,
+				"Report a Problem",
+				"Create a privacy-filtered compatibility report for Synix support.");
 		}
 
 		private void ReleaseReadinessRequested(
