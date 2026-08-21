@@ -188,10 +188,10 @@ The help content is built directly into Synix, so users do not need to download 
 * **Concurrency:** Task-based Asynchronous Pattern (TAP) for non-blocking I/O
 * **Dependencies:** Framework-Dependent Deployment ([Requires the .NET 8.0 Desktop Runtime installed on the host PC](https://dotnet.microsoft.com/en-us/download/dotnet/8.0))
 * **Publishing:** Single-file ReadyToRun publishing
-* **Installer:** Inno Setup installer generated automatically during publishing
+* **Installer:** WiX-based MSI installer generated automatically during publishing
 * **Distribution:** GitHub Releases and WinGet
 * **UI & Rendering:** Pure GDI+ custom control painting (Zero third-party UI framework bloat)
-* **Data Storage:** Local JSON flat-file persistence via `Synix.Json` and a compiled internal C# database (No SQL overhead)
+* **Data Storage:** Local JSON flat-file persistence via `servers.json` and a compiled internal C# database (No SQL overhead)
 * **Hardware Telemetry:** Windows Management Instrumentation (WMI) integration for low-level OS, CPU, and RAM monitoring
 * **Networking:** Raw UDP socket probing for live A2S Steam Master Server synchronization
 

@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -12,10 +12,6 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -33,7 +29,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string localIp = await Core.Instance.GetLocalIP();
 			string cleanIdentity = server.ServerName.Replace(" ", "_");
 
-			if (server.Game == "Dune: Awakening" || server.Game == "Minecraft Java")
+			if (server.Game == "Dune: Awakening" || server.Game == "Minecraft")
 			{
 				ManualConfigWasCreated = true;
 				applied = true;
@@ -41,9 +37,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			try
 			{
-				// --------------------------------------------------------
-				// PHASE 1: STEAM API DLL INJECTIONS
-				// --------------------------------------------------------
+
 				switch (server.Game)
 				{
 					case "StarRupture":
@@ -222,24 +216,51 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
 				}
 
-				// --------------------------------------------------------
-				// PHASE 2: CONFIGURATION FILE CREATION & PARSING
-				// --------------------------------------------------------
 				switch (server.Game)
 				{
 					case "Rust":
-						string rustCfg = @"// Synix Custom Rust Configuration
+						string rustCfg = @"# ============================================================================
+# RUST DEDICATED SERVER CONFIGURATION (server.cfg)
+# ============================================================================
+
+# --- SERVER DISPLAY & IDENTITY ---
 server.hostname ""{ServerName}""
-server.password ""{Password}""
-server.seed {WorldSeed}
-server.worldsize 4000
 server.description ""Welcome to {ServerName}!\n\nManaged via Synix Control Panel.""
 server.url ""https://github.com/ubidzz/Synix-Control-Panel""
+server.headerimage """"
+server.tags ""vanilla""
+server.maxplayers {MaxPlayers}
+
+# --- WORLD GENERATION ---
+server.seed {WorldSeed}
+server.worldsize {WorldSize}
+server.level ""Procedural Map""
 server.saveinterval 300
+
+# --- GAMEPLAY & CHAT ---
+server.pve false
 server.globalchat true
-server.secure true
+server.airdropminplayers 10
+server.stability true
 server.radiation true
-server.official true";
+craft.instant false
+
+# --- DECAY & UPKEEP ---
+decay.upkeep true
+decay.scale 1.0
+
+# --- PERFORMANCE & SECURITY ---
+fps.limit 60
+server.tickrate 30
+gc.buffer 256
+antihack.enabled true
+server.secure true
+server.official false
+
+# --- RCON (REMOTE CONSOLE) ---
+rcon.port {RCONPort}
+rcon.password ""{RCONPassword}""
+rcon.web {EnableRcon}";
 
 						string rustCfgPath = Path.Combine("server", cleanIdentity, "cfg", "server.cfg");
 						if (CreateGameConfig(server, rustCfgPath, rustCfg, cleanIdentity, localIp, publicIp)) applied = true;
@@ -306,8 +327,103 @@ MaxPlayers={MaxPlayers}";
 						break;
 
 					case "Palworld":
-						string palIni = @"[/Script/Pal.PalGameWorldSettings]
-OptionSettings=(ServerName=""{ServerName}"",ServerPassword=""{Password}"",AdminPassword=""{AdminPassword}"")";
+						string palIni = "[/Script/Pal.PalGameWorldSettings]\n" +
+							"OptionSettings=(" +
+							"ServerName=\"{ServerName}\"," +
+							"ServerDescription=\"Managed via Synix Control Panel\"," +
+							"AdminPassword=\"{AdminPassword}\"," +
+							"ServerPassword=\"{Password}\"," +
+							"ServerPlayerMaxNum={MaxPlayers}," +
+							"PublicIP=\"{PublicIP}\"," +
+							"PublicPort={Port}," +
+							"RCONEnabled={EnableRcon}," +
+							"RCONPort={RCONPort}," +
+							"RESTAPIEnabled=False," +
+							"RESTAPIPort={QueryPort}," +
+							"ChatPostLimitPerMinute=10," +
+							"CrossplayPlatforms=(Steam,Xbox,PS5,Mac)," +
+							"LogFormatType=\"Text\"," +
+							"bIsShowJoinLeftMessage=True," +
+							"bIsUseBackupSaveData=True," +
+							"bEnableBuildingPlayerUIdDisplay=True," +
+							"bAllowClientMod=False," +
+							"BaseCampMaxNum=128," +
+							"BaseCampMaxNumInGuild=4," +
+							"BaseCampWorkerMaxNum=15," +
+							"ItemContainerForceMarkDirtyInterval=10.000000," +
+							"MaxBuildingLimitNum=0," +
+							"PhysicsActiveDropItemMaxNum=1000," +
+							"ServerReplicatePawnCullDistance=15000.000000," +
+							"AutoResetGuildTimeNoOnlinePlayers=72.000000," +
+							"bAllowEnemyCampSpawnNearBaseCamp=True," +
+							"bAllowEnhanceStat_Attack=True," +
+							"bAllowEnhanceStat_Health=True," +
+							"bAllowEnhanceStat_Stamina=True," +
+							"bAllowEnhanceStat_Weight=True," +
+							"bAllowEnhanceStat_WorkSpeed=True," +
+							"bAllowGlobalPalboxExport=False," +
+							"bAllowGlobalPalboxImport=False," +
+							"bAutoResetGuildNoOnlinePlayers=False," +
+							"bBuildAreaLimit=True," +
+							"bCharacterRecreateInHardcore=False," +
+							"bDisplayPvPItemNumOnWorldMap_BaseCamp=False," +
+							"bDisplayPvPItemNumOnWorldMap_Player=False," +
+							"bEnableFastTravel=True," +
+							"bEnableFastTravelOnlyBaseCamp=False," +
+							"bEnableInvaderEnemy=True," +
+							"bEnableVoiceChat=True," +
+							"bExistPlayerAfterLogout=False," +
+							"bHardcore=False," +
+							"bInvisibleOtherGuildBaseCampAreaFX=False," +
+							"bIsPvP=False," +
+							"bIsRandomizerPalLevelRandom=False," +
+							"bIsStartLocationSelectByMap=True," +
+							"bShowPlayerList=True," +
+							"RandomizerSeed=\"\"," +
+							"RandomizerType=\"None\"," +
+							"VoiceChatMaxVolumeDistance=2000.000000," +
+							"VoiceChatZeroVolumeDistance=3000.000000," +
+							"AdditionalDropItemNumWhenPlayerKillingInPvPMode=0," +
+							"AdditionalDropItemWhenPlayerKillingInPvPMode=\"\"," +
+							"bAdditionalDropItemWhenPlayerKillingInPvPMode=False," +
+							"BlockRespawnTime=10.000000," +
+							"bPalLost=False," +
+							"BuildObjectDamageRate=1.000000," +
+							"BuildObjectDeteriorationDamageRate=1.000000," +
+							"CollectionDropRate=1.000000," +
+							"CollectionObjectHpRate=1.000000," +
+							"CollectionObjectRespawnSpeedRate=1.000000," +
+							"DayTimeSpeedRate=1.000000," +
+							"DeathPenalty=\"All\"," +
+							"DenyTechnologyList=()," +
+							"EnemyDropItemRate=1.000000," +
+							"EquipmentDurabilityDamageRate=1.000000," +
+							"ExpRate=1.000000," +
+							"GuildPlayerMaxNum=20," +
+							"GuildRejoinCooldownMinutes=0," +
+							"ItemCorruptionMultiplier=1.000000," +
+							"ItemWeightRate=1.000000," +
+							"MonsterFarmActionSpeedRate=1.000000," +
+							"NightTimeSpeedRate=1.000000," +
+							"PalAutoHPRegeneRate=1.000000," +
+							"PalAutoHpRegeneRateInSleep=1.000000," +
+							"PalCaptureRate=1.000000," +
+							"PalDamageRateAttack=1.000000," +
+							"PalDamageRateDefense=1.000000," +
+							"PalEggDefaultHatchingTime=72.000000," +
+							"PalSpawnNumRate=1.000000," +
+							"PalStaminaDecreaceRate=1.000000," +
+							"PalStomachDecreaceRate=1.000000," +
+							"PlayerAutoHPRegeneRate=1.000000," +
+							"PlayerAutoHpRegeneRateInSleep=1.000000," +
+							"PlayerDamageRateAttack=1.000000," +
+							"PlayerDamageRateDefense=1.000000," +
+							"PlayerStaminaDecreaceRate=1.000000," +
+							"PlayerStomachDecreaceRate=1.000000," +
+							"RespawnPenaltyDurationThreshold=300.000000," +
+							"RespawnPenaltyTimeScale=1.000000," +
+							"SupplyDropSpan=180)";
+
 						if (CreateGameConfig(server, @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini", palIni, cleanIdentity, localIp, publicIp)) applied = true;
 						break;
 
@@ -728,8 +844,7 @@ gam_bAutoCycleMaps = 1";
 
 					case "Wreckfest":
 						{
-							// Synix launches Wreckfest.exe directly, so start_server.bat never gets a
-							// chance to copy the vendor-provided initial_server_config.cfg.
+
 							string sourceConfig = Path.Combine(server.InstallPath, "initial_server_config.cfg");
 							string targetConfig = Path.Combine(server.InstallPath, "server_config.cfg");
 
@@ -750,30 +865,42 @@ gam_bAutoCycleMaps = 1";
 			return applied;
 		}
 
-		// --------------------------------------------------------
-		// UNIFIED UTILITY FUNCTIONS
-		// --------------------------------------------------------
-
 		private static bool CreateGameConfig(GameServer server, string relativeFilePath, string contentTemplate, string identity, string localIp, string publicIp)
 		{
+			SynixServerPasswords passwords;
+			try
+			{
+				passwords = Core.RevealServerPasswords(server);
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				Core.Instance.Log(
+					"[🚨 ERROR] Synix could not unlock the saved server passwords. Re-enter them in Server Settings before creating the game configuration.",
+					Color.Red);
+				return false;
+			}
+
 			string fullFilePath = Path.Combine(server.InstallPath, relativeFilePath);
-			string targetFolder = Path.GetDirectoryName(fullFilePath);
+			string? targetFolder = Path.GetDirectoryName(fullFilePath);
 			if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
 
 			if (!File.Exists(fullFilePath))
 			{
 				string finalContent = contentTemplate
 					.Replace("{ServerName}", server.ServerName)
-					.Replace("{Password}", server.Password)
-					.Replace("{AdminPassword}", server.AdminPassword)
+					.Replace("{Password}", passwords.ServerPassword)
+					.Replace("{AdminPassword}", passwords.AdminPassword)
 					.Replace("{Port}", server.Port.ToString())
 					.Replace("{QueryPort}", server.QueryPort.ToString())
-					.Replace("{EnableRcon}", server.EnableRcon.ToString().ToLower())
+					.Replace("{EnableRcon}", server.Game == "Rust" ? (server.EnableRcon ? "1" : "0") : server.EnableRcon.ToString().ToLower())
 					.Replace("{RCONPort}", server.RconPort.ToString())
-					.Replace("{RCONPassword}", server.RconPassword)
+					.Replace("{RCONPassword}", passwords.RconPassword)
 					.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-					.Replace("{GameMode}", server.GameMode.ToString())
+					.Replace("{GameMode}", server.GameMode?.ToString() ?? "")
 					.Replace("{WorldSeed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
+					.Replace("{WorldSize}", server.WorldSize > 0 ? server.WorldSize.ToString() : "4000")
+					.Replace("{Map}", server.WorldName)
+					.Replace("{PVE}", server.GameMode != null && server.GameMode.ToString().Equals("PVE", StringComparison.OrdinalIgnoreCase) ? "true" : "false")
 					.Replace("{Identity}", identity)
 					.Replace("{LocalIP}", localIp)
 					.Replace("{PublicIP}", publicIp);
@@ -790,7 +917,7 @@ gam_bAutoCycleMaps = 1";
 			string[] dlls = { "steamclient64.dll", "tier0_s64.dll", "vstdlib_s64.dll" };
 
 			string targetDir = Path.Combine(installPath, BinariesDir);
-			string steamCmdPath = @"C:\Synix\SteamCMD";
+			string steamCmdPath = Core.SteamCmdPath;
 
 			if (!Directory.Exists(targetDir))
 			{

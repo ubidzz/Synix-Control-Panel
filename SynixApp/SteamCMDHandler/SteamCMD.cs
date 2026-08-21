@@ -2,14 +2,16 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixEngine;
 using System.Diagnostics;
 using System.IO.Compression;
 
@@ -17,12 +19,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 {
 	public static class SteamCMD
 	{
-		// 1. Centralized SteamCMD Paths
-		public static readonly string SteamCmdDir = @"C:\Synix\SteamCMD";
-		public static readonly string SteamCmdExe = Path.Combine(SteamCmdDir, "steamcmd.exe");
-		private static readonly string ZipPath = Path.Combine(SteamCmdDir, "steamcmd.zip");
+		private static readonly string ZipPath = Path.Combine(Core.SteamCmdPath, "steamcmd.zip");
 
-		// 2. The Download and Setup Engine
 		public static async Task EnsureSteamCMD(Action<string, Color> logCallback)
 		{
 			try
@@ -31,15 +29,13 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				MainGUI.Instance.isDownloadActive = true;
 				logCallback?.Invoke("[SYNIX] Checking SteamCMD dependencies...", Color.Cyan);
 
-				// 1. Create the Directory if it's missing
-				if (!Directory.Exists(SteamCmdDir))
+				if (!Directory.Exists(Core.SteamCmdPath))
 				{
 					logCallback?.Invoke("[SYNIX] Creating SteamCMD directory...", Color.Yellow);
-					Directory.CreateDirectory(SteamCmdDir);
+					FolderHandler.Create(Core.SteamCmdPath);
 				}
 
-				// 2. Download and Extract if the EXE is missing
-				if (!File.Exists(SteamCmdExe))
+				if (!File.Exists(Core.SteamCmdExe))
 				{
 					logCallback?.Invoke("[SYNIX] Downloading SteamCMD...", Color.Cyan);
 					using (var client = new HttpClient())
@@ -49,26 +45,24 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					}
 
 					logCallback?.Invoke("[SYNIX] Unzipping SteamCMD...", Color.Cyan);
-					ZipFile.ExtractToDirectory(ZipPath, SteamCmdDir, true);
+					ZipFile.ExtractToDirectory(ZipPath, Core.SteamCmdPath, true);
 
 					if (File.Exists(ZipPath)) File.Delete(ZipPath);
 				}
 
-				// 3. The "Deep Clean" Initialization (Only runs if the 'public' folder is missing)
-				string publicFolder = Path.Combine(SteamCmdDir, "public");
+				string publicFolder = Path.Combine(Core.SteamCmdPath, "public");
 				if (!Directory.Exists(publicFolder))
 				{
 					logCallback?.Invoke("[SYNIX] Starting first-run updates (this may take a few minutes)...", Color.Yellow);
 
-					// Clear out any corrupted 'package' folders from a failed previous run
-					string packageFolder = Path.Combine(SteamCmdDir, "package");
+					string packageFolder = Path.Combine(Core.SteamCmdPath, "package");
 					if (Directory.Exists(packageFolder)) Directory.Delete(packageFolder, true);
 
 					ProcessStartInfo startInfo = new()
 					{
-						FileName = SteamCmdExe,
+						FileName = Core.SteamCmdExe,
 						Arguments = "+quit",
-						WorkingDirectory = SteamCmdDir,
+						WorkingDirectory = Core.SteamCmdPath,
 						UseShellExecute = false,
 						CreateNoWindow = true,
 						RedirectStandardOutput = true,
@@ -80,7 +74,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						proc.OutputDataReceived += (s, ev) => { if (!string.IsNullOrEmpty(ev.Data)) logCallback?.Invoke(ev.Data, Color.White); };
 						proc.Start();
 						proc.BeginOutputReadLine();
-						await proc.WaitForExitAsync(); // Waits for SteamCMD to finish its first-run downloads
+						await proc.WaitForExitAsync();
 					}
 					logCallback?.Invoke("[SYNIX] SteamCMD is ready for action.", Color.Lime);
 				}
@@ -89,12 +83,15 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					logCallback?.Invoke("[SYNIX] SteamCMD already initialized.", Color.Cyan);
 				}
 				logCallback?.Invoke("[SYNIX] Initialization complete.", Color.LimeGreen);
-				MainGUI.Instance.isDownloadActive = false;
-				logCallback?.Invoke($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange);
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke($"[🚨 CRITICAL ERROR] SteamCMD Setup Failed: {ex.Message}", Color.Red);
+			}
+			finally
+			{
+				if (MainGUI.Instance != null) MainGUI.Instance.isDownloadActive = false;
+				logCallback?.Invoke($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange);
 			}
 		}
 	}

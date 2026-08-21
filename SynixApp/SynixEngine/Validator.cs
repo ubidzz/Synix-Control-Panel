@@ -2,15 +2,14 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-using Synix_Control_Panel.Database;
 using Synix_Control_Panel.SynixApp.Database;
 using System.Diagnostics;
 using System.Reflection;
@@ -20,7 +19,7 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		private static readonly Regex SafeRegex = new Regex(@"^[a-zA-Z0-9\s\-+:\""\\/._=?,]*$", RegexOptions.Compiled);
+		private static readonly Regex SafeRegex = new Regex(@"^[a-zA-Z0-9\s\-+:\""\\/._=?,!@#$%&*'()]*$", RegexOptions.Compiled);
 
 		public bool CanServerStart(GameServer server, out string errorMessage)
 		{
@@ -58,13 +57,23 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
-		public bool ValidatePortsAndReport(GameServer? excluding, int game, int query, int rcon, bool checkRcon, int app, bool checkAppPort, string gameName)
+		public bool ValidatePortsAndReport(
+			GameServer? excluding,
+			int game,
+			int query,
+			int rcon,
+			bool checkRcon,
+			int app,
+			bool checkAppPort,
+			string gameName,
+			bool checkGamePort = true,
+			bool checkQueryPort = true)
 		{
-			var portChecks = new List<(int Value, string Name)>
-			{
-				(game, "Game Port"),
-				(query, "Query Port")
-			};
+			var portChecks = new List<(int Value, string Name)>();
+
+			if (checkGamePort) portChecks.Add((game, "Game Port"));
+
+			if (checkQueryPort) portChecks.Add((query, "Query Port"));
 
 			if (checkRcon) portChecks.Add((rcon, "RCON Port"));
 
@@ -166,13 +175,13 @@ namespace Synix_Control_Panel.SynixEngine
 			lockMessage = string.Empty;
 			string status = server.Status ?? "";
 
-			bool isTransitioning = status == StatusManager.GetStatus(ServerState.Starting) ||
-								   status == StatusManager.GetStatus(ServerState.Stopping) ||
-								   status == StatusManager.GetStatus(ServerState.Installing) ||
-								   status == StatusManager.GetStatus(ServerState.Updating) ||
-								   status == StatusManager.GetStatus(ServerState.BackingUp) ||
-								   status == StatusManager.GetStatus(ServerState.Export) ||
-								   status == StatusManager.GetStatus(ServerState.Validating);
+			bool isTransitioning = status.StartsWith(StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Export), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Validating), StringComparison.OrdinalIgnoreCase);
 
 			bool isRunning = status == StatusManager.GetStatus(ServerState.Running);
 			bool isStopped = status == StatusManager.GetStatus(ServerState.Stopped);
@@ -193,7 +202,7 @@ namespace Synix_Control_Panel.SynixEngine
 					isLocked = isTransitioning || isRunning;
 					break;
 				case "Restart":
-					isLocked = isTransitioning;
+					isLocked = isTransitioning || isStopped;
 					break;
 				case "Stop":
 					isLocked = isTransitioning || isStopped || isCrashed;
@@ -223,9 +232,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (server.Port == port && requiredArgs.Contains("{port}", StringComparison.OrdinalIgnoreCase))
 					return true;
 
-				bool usesQueryPort = requiredArgs.Contains("{query}", StringComparison.OrdinalIgnoreCase);
-
-				if (usesQueryPort && server.QueryPort > 0 && server.QueryPort == port)
+				if (server.QueryPort > 0 && server.QueryPort == port)
 				{
 					return true;
 				}
@@ -319,7 +326,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					FileName = "java",
 					Arguments = "-version",
-					RedirectStandardError = true, // Java prints version info to the Error stream, not Output
+					RedirectStandardError = true,
 					UseShellExecute = false,
 					CreateNoWindow = true
 				};
@@ -328,11 +335,9 @@ namespace Synix_Control_Panel.SynixEngine
 				string output = proc.StandardError.ReadToEnd();
 				proc.WaitForExit();
 
-				// Older Java 8 formats like: java version "1.8.0_xxx"
 				if (output.Contains("version \"1.8")) return 8;
 				if (output.Contains("version \"1.7")) return 7;
 
-				// Modern Java 9+ formats like: openjdk version "21.0.2"
 				int startIndex = output.IndexOf("version \"") + 9;
 				if (startIndex > 8)
 				{
@@ -348,7 +353,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// Triggers if Java is completely missing or not added to Windows PATH
+
 			}
 			return 0;
 		}

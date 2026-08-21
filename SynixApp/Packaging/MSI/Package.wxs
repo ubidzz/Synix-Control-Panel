@@ -1,0 +1,86 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Package
+		Name="Synix Control Panel"
+		Manufacturer="ubidzz"
+		Version="$(var.SynixVersion)"
+		UpgradeCode="{e369556b-db95-4d9b-8e86-2b7d50dcd328}"
+		Scope="perUser"
+		Compressed="yes">
+
+		<MajorUpgrade
+			AllowSameVersionUpgrades="yes"
+			Schedule="afterInstallInitialize"
+			DowngradeErrorMessage="A newer version of Synix Control Panel is already installed." />
+
+		<MediaTemplate EmbedCab="yes" />
+
+		<Icon
+			Id="SynixIcon.ico"
+			SourceFile="$(var.SynixProjectDir)\Images\Synix_logo_Icon.ico" />
+		<Property Id="ARPPRODUCTICON" Value="SynixIcon.ico" />
+		<Property Id="ARPURLINFOABOUT" Value="https://github.com/ubidzz/Synix-Control-Panel" />
+		<Property Id="SYNIXINSTALLSOURCE" Value="Setup" Secure="yes" />
+		<SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLFOLDER]" After="CostFinalize" />
+
+		<StandardDirectory Id="LocalAppDataFolder">
+			<Directory Id="LocalProgramsFolder" Name="Programs">
+				<Directory Id="INSTALLFOLDER" Name="Synix">
+					<Component Id="SynixProgram" Guid="{015b398b-e6e1-48e6-b03a-f6ddb52f0998}">
+						<File
+							Id="SynixExecutable"
+							Source="$(var.SynixPublishDir)\$(var.SynixAssemblyName).exe">
+							<Shortcut
+								Id="SynixStartMenuShortcut"
+								Directory="ProgramMenuFolder"
+								Name="Synix Control Panel"
+								Description="Manage your game servers"
+								WorkingDirectory="INSTALLFOLDER" />
+							<Shortcut
+								Id="SynixDesktopShortcut"
+								Directory="DesktopFolder"
+								Name="Synix Control Panel"
+								Description="Manage your game servers"
+								WorkingDirectory="INSTALLFOLDER" />
+						</File>
+
+						<RegistryValue
+							Root="HKCU"
+							Key="Software\ubidzz\Synix Control Panel"
+							Name="Installed"
+							Type="integer"
+							Value="1"
+							KeyPath="yes" />
+						<RegistryValue
+							Root="HKCU"
+							Key="Software\ubidzz\Synix Control Panel"
+							Name="InstallLocation"
+							Type="string"
+							Value="[INSTALLFOLDER]" />
+						<RegistryValue
+							Root="HKCU"
+							Key="Software\ubidzz\Synix Control Panel"
+							Name="SynixInstallSource"
+							Type="string"
+							Value="[SYNIXINSTALLSOURCE]" />
+
+						<RemoveFolder
+							Id="RemoveSynixInstallFolder"
+							Directory="INSTALLFOLDER"
+							On="uninstall" />
+						<RemoveFolder
+							Id="TrackLocalProgramsFolder"
+							Directory="LocalProgramsFolder"
+							On="uninstall" />
+					</Component>
+				</Directory>
+			</Directory>
+		</StandardDirectory>
+
+		<StandardDirectory Id="ProgramMenuFolder" />
+		<StandardDirectory Id="DesktopFolder" />
+
+		<Feature Id="SynixFeature" Title="Synix Control Panel">
+			<ComponentRef Id="SynixProgram" />
+		</Feature>
+	</Package>
+</Wix>

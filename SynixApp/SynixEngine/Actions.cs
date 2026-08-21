@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -29,13 +29,20 @@ namespace Synix_Control_Panel.SynixEngine
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
 			Core.Instance.UpdateGridStatus();
 
-			await Servers.Stop(server, (msg, Color) =>
+			bool stopped = await Servers.Stop(server, (msg, logColor) =>
 			{
-				Log(msg);
+				Log(msg, logColor);
 			}, isManual);
 
-			server.Status = StatusManager.GetStatus(ServerState.Stopped);
-			server.PID = null;
+			if (!stopped)
+			{
+				Log($"[🚨 STOP FAILED] {server.ServerName} is still running. Synix kept its live PID and status.", Color.Red, true);
+			}
+			else
+			{
+				RecordGameVerification(server.Game, GameVerificationKind.Stop);
+			}
+
 			FileHandler.SaveServers();
 			Core.Instance.UpdateGridStatus();
 		}
@@ -131,7 +138,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 				try
 				{
-					// --- 🛡️ ADMIN TASKS (Firewall Cleanup) ---
 					if (Properties.Settings.Default.enableRunAsAdmin)
 					{
 						string serverExePath = Path.Combine(server.InstallPath, server.ExeName);
@@ -163,7 +169,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string cleanGame = Core.Instance.GetSafeName(selectedServer.Game);
 			string cleanServer = Core.Instance.GetSafeName(selectedServer.ServerName);
 
-			string fullPath = Path.Combine(@"C:\Synix\BackupGames", cleanGame, cleanServer);
+			string fullPath = Path.Combine(DefaultBackupPath, cleanGame, cleanServer);
 
 			if (Directory.Exists(fullPath))
 			{
@@ -222,7 +228,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 			var gameData = GameDatabase.GetGame(server.Game);
 
-			// Guard against null blueprint or missing AppID
 			if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 			{
 				Log($"Could not find the database blueprint or AppID for {server.Game}.", Color.Red, true);
@@ -254,9 +259,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 				Core.Instance.UpdateGridStatus();
 
-				// 🎯 THE AUTOMATED MANIFEST NUKE
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
-				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf"); // Used gameData object
+				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf");
 
 				if (File.Exists(manifestPath))
 				{
@@ -274,7 +278,7 @@ namespace Synix_Control_Panel.SynixEngine
 				int exitCode = await Task.Run(() =>
 				{
 					return ServerInstaller.Install(server, gameData,
-						msg => { MainGUI.Instance?.Invoke((Action)(() => Log(msg))); },
+						msg => { MainGUI.Instance?.BeginInvoke((Action)(() => Log(msg))); },
 						pid =>
 						{
 							server.SteamPID = pid;
@@ -306,11 +310,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				server.Status = StatusManager.GetStatus(ServerState.Stopped);
 				server.SteamPID = null;
+				isDownloadActive = false;
 				FileHandler.SaveServers();
 				Core.Instance.UpdateGridStatus();
+				Log("[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 			}
-			isDownloadActive = false;
-			Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 		}
 
 		public async Task AddServerAndReport()
@@ -323,7 +327,6 @@ namespace Synix_Control_Panel.SynixEngine
 					var gameData = GameDatabase.GetGame(newServer.Game);
 					GameFix.ManualConfigWasCreated = false;
 
-					// Guard against null blueprint or missing AppID
 					if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 					{
 						Log("Could not find the AppID for this game. Installation aborted.", Color.Red, true);
@@ -362,6 +365,7 @@ namespace Synix_Control_Panel.SynixEngine
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
 						newServer.IsFirstBoot = fixApplied;
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
+						RecordGameVerification(newServer.Game, GameVerificationKind.Install);
 					}
 					catch (Exception ex)
 					{
@@ -374,8 +378,8 @@ namespace Synix_Control_Panel.SynixEngine
 						isDownloadActive = false;
 						FileHandler.SaveServers();
 						Core.Instance.UpdateGridStatus();
+						Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 					}
-					Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 				}
 			}
 		}
@@ -464,7 +468,8 @@ namespace Synix_Control_Panel.SynixEngine
 				if (stopServer && server.PID != null)
 				{
 					Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
-					await StopServerAndReport(server);
+
+					await StopServerAndReport(server, isManual: status == "RESTART");
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
@@ -482,6 +487,10 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 				}
 				stopServer = false;
+			}
+			catch (Exception ex)
+			{
+				Log($"[🚨 CRITICAL ENGINE ERROR] Sequence failed for {server.ServerName}: {ex.Message}", Color.Red, true);
 			}
 			finally
 			{
@@ -512,7 +521,7 @@ namespace Synix_Control_Panel.SynixEngine
 							_ = ExecuteStartSequence(server, "WATCHDOG");
 						}
 					}
-					catch { /* Process might have closed during the check */ }
+					catch { }
 				}
 			}
 		}
@@ -532,6 +541,20 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
+			SynixServerPasswords batchPasswords;
+			try
+			{
+				batchPasswords = Core
+					.RevealServerPasswords(server);
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				Log(
+					"[🚨 ERROR] Synix could not unlock the saved passwords. Re-enter them in Server Settings before exporting a launch file.",
+					Color.Red);
+				return false;
+			}
+
 			if (server.Game == "Dune: Awakening")
 			{
 				Log("[⚠️ NOTICE] Dune: Awakening requires the official battlegroup.bat script. Export aborted.", Color.Orange);
@@ -545,7 +568,6 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
-				// 1. DYNAMIC IDENTITY & SEARCH
 				string targetId = dbEntry.AppID ?? "";
 				string invokedId = targetId;
 				string appidPath = "";
@@ -582,12 +604,14 @@ namespace Synix_Control_Panel.SynixEngine
 							invokedId = fileContent;
 						}
 					}
-					catch { /* Silent fail */ }
+					catch { }
 				}
 
-				// 2. EXACT ARGUMENT REPLACEMENT (1:1 with Servers.cs)
 				string cleanIdentity = GetSafeName(server.ServerName ?? "Server");
 				string args = dbEntry.RequiredArgs ?? "";
+
+				int ramToUse = server.MaxRam;
+				if (server.Game == "Minecraft") ramToUse = server.MaxRam * 1024;
 
 				args = args.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 						   .Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
@@ -597,26 +621,41 @@ namespace Synix_Control_Panel.SynixEngine
 						   .Replace("{port}", server.Port.ToString())
 						   .Replace("{query}", server.QueryPort.ToString())
 						   .Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-						   .Replace("{pass}", server.Password ?? "")
-						   .Replace("{adminpass}", server.AdminPassword ?? "")
+						   .Replace("{pass}", batchPasswords.ServerPassword)
+						   .Replace("{adminpass}", batchPasswords.AdminPassword)
 						   .Replace("{ServerName}", server.ServerName ?? "SynixServer")
 						   .Replace("{InstallPath}", server.InstallPath ?? "")
 						   .Replace("{Identity}", cleanIdentity)
-						   .Replace("{world_size}", server.WorldSize.ToString());
+						   .Replace("{world_size}", server.WorldSize.ToString())
+						   .Replace("{ram}", ramToUse.ToString());
 
 				if (args.Contains("{rcon}"))
 				{
 					string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
-						? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", server.RconPassword ?? "")
+						? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", batchPasswords.RconPassword)
 						: "";
 					args = args.Replace("{rcon}", formattedRcon);
 				}
 
 				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 				{
-					string translatedMode = (server.GameMode == "PVE" && ((server.Game?.Contains("ARK") ?? false) || server.Game == "Atlas" || server.Game == "Rust"))
-						? "True" : (server.GameMode == "PVP" && ((server.Game?.Contains("ARK") ?? false) || server.Game == "Atlas" || server.Game == "Rust"))
-						? "False" : server.GameMode;
+					bool usesBooleanMode =
+						server.Game.Equals("ARK: Survival Evolved", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("ARK: Survival Ascended", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("PixARK", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("Atlas", StringComparison.OrdinalIgnoreCase) ||
+						server.Game.Equals("Rust", StringComparison.OrdinalIgnoreCase);
+
+					string translatedMode = server.GameMode;
+
+					if (usesBooleanMode)
+					{
+						if (server.GameMode.Equals("PVE", StringComparison.OrdinalIgnoreCase))
+							translatedMode = "True";
+						else if (server.GameMode.Equals("PVP", StringComparison.OrdinalIgnoreCase))
+							translatedMode = "False";
+					}
+
 					args = args.Replace("{mode}", translatedMode);
 				}
 
@@ -627,11 +666,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				args = args.Replace("  ", " ").Trim();
 
+				string safeArgs = args.Replace("&", "^&");
+
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
 
-				// 4. CONSTRUCT ISOLATED BATCH SCRIPT
 				StringBuilder batchContent = new StringBuilder();
 				batchContent.AppendLine("@echo off");
 				batchContent.AppendLine($"echo :: ===========================================================================");
@@ -647,15 +687,9 @@ namespace Synix_Control_Panel.SynixEngine
 				batchContent.AppendLine($"set SteamAppId={invokedId}");
 				batchContent.AppendLine($"set SteamGameId={invokedId}");
 				batchContent.AppendLine();
-				batchContent.AppendLine($":: Execute the standalone server payload");
-				batchContent.AppendLine($"start \"{server.ServerName}\" \"{exeNameOnly}\" {args}");
-				batchContent.AppendLine();
-				batchContent.AppendLine("echo.");
-				batchContent.AppendLine($"echo Starting the {server.ServerName} Server. Please wait...");
-				batchContent.AppendLine("timeout /t 5 /nobreak >nul");
-				batchContent.AppendLine("echo.");
-				batchContent.AppendLine("echo Press any key to close this window.");
-				batchContent.AppendLine("pause >nul");
+				batchContent.AppendLine($":: Execute the standalone server payload and instantly close this script window");
+				batchContent.AppendLine($"start \"{server.ServerName}\" \"{exeNameOnly}\" {safeArgs}");
+				batchContent.AppendLine("exit");
 
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
 				string fullOutputPath = Path.Combine(server.InstallPath, safeFileName);

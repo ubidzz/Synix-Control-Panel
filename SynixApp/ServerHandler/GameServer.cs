@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -16,10 +16,18 @@ using System.Text.Json.Serialization;
 using static Synix_Control_Panel.SynixApp.Database.GameDatabase;
 using static Synix_Control_Panel.SynixEngine.Core;
 
-//------- Database -------
+public enum ServerProbeProtocol
+{
+	Auto,
+	A2S,
+	EpicOnlineServices,
+	RestApi,
+	Tcp
+}
+
 public class GameInfo
 {
-	public string Game { get; init; } = string.Empty;
+	public string Game { get; set; } = string.Empty;
 	[JsonIgnore]
 	public System.Drawing.Image DisplayIcon { get; set; }
 	[JsonIgnore]
@@ -45,6 +53,7 @@ public class GameInfo
 	public List<string> Maps { get; set; } = [];
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
+
 	public string ExtraArgs { get; set; } = string.Empty;
 	public List<string> GameModes { get; set; } = [];
 	public string RconSyntax { get; init; } = "";
@@ -58,14 +67,25 @@ public class GameInfo
 	public string LastMaintenanceDate { get; set; } = "";
 	[JsonIgnore]
 	public int MaxPlayersFromQuery { get; set; } = 0;
+	[JsonIgnore]
 	public DateTime? LastProbeTime { get; set; }
 	[JsonIgnore]
 	public string IconUrl { get; init; } = string.Empty;
+	[JsonIgnore]
+	public bool IsQueryable { get; init; } = true;
+	[JsonIgnore]
+	public ServerProbeProtocol ProbeProtocol { get; init; } = ServerProbeProtocol.Auto;
+	[JsonIgnore]
+	public bool SupportsManualConnectionTesting { get; init; } = true;
+	[JsonIgnore]
+	public string ProbePath { get; init; } = string.Empty;
+	[JsonIgnore]
+	public string EosDeploymentId { get; init; } = string.Empty;
 }
 
-//----------- json ---------------
 public class GameServer : GameInfo
 {
+	public int PasswordStorageVersion { get; set; }
 	public string InstallPath { get; set; } = string.Empty;
 	public string ServerName { get; set; } = string.Empty;
 	public string Password { get; set; } = string.Empty;
@@ -87,8 +107,6 @@ public class GameServer : GameInfo
 	public int RconPort { get; set; }
 	public string RconPassword { get; set; } = "";
 	public bool IsFirstBoot { get; set; } = true;
-	public string WorldSeed { get; set; } = "12345";
-	public int WorldSize { get; set; }
 	[JsonIgnore]
 	public string PlayerCount => $"{CurrentPlayers} / {MaxPlayers}";
 	public int? AppPort { get; set; } = 10777;
@@ -98,9 +116,13 @@ public class GameServer : GameInfo
 	public string DiscordWebhook { get; set; } = string.Empty;
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
+	[JsonIgnore]
 	public bool IsProbing { get; set; } = false;
-	public string GameVersion { get; set; }
-	public int MaxRam { get; set; }
+	public string GameVersion { get; set; } = "Latest";
+	public string MinecraftLoader { get; set; } = "Vanilla";
+	public string MinecraftLoaderVersion { get; set; } = "Official";
+	public int RequiredJavaVersion { get; set; } = 0;
+	public int MaxRam { get; set; } = 4;
 
 	[JsonIgnore]
 	public string Uptime

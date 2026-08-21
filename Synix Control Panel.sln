@@ -5,19 +5,53 @@ VisualStudioVersion = 18.4.11626.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synix Control Panel", "SynixApp\Synix Control Panel.csproj", "{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SynixApp", "SynixApp", "{FC7067F2-1E7E-2F83-5639-37DB67577261}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{68DBB5AF-0EDC-B49D-CC56-13E502FC8220}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synix.Tests", "SynixApp\Tests\Synix.Tests.csproj", "{7F77A959-05BB-4B8C-AEBD-1C72DC827893}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Debug|x64.Build.0 = Debug|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Debug|x86.Build.0 = Debug|Any CPU
 		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Release|x64.ActiveCfg = Release|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Release|x64.Build.0 = Release|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Release|x86.ActiveCfg = Release|Any CPU
+		{0AECDDC3-0077-4DA8-EC26-6A7FB0946147}.Release|x86.Build.0 = Release|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Debug|x64.Build.0 = Debug|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Debug|x86.Build.0 = Debug|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Release|x64.ActiveCfg = Release|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Release|x64.Build.0 = Release|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Release|x86.ActiveCfg = Release|Any CPU
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{68DBB5AF-0EDC-B49D-CC56-13E502FC8220} = {FC7067F2-1E7E-2F83-5639-37DB67577261}
+		{7F77A959-05BB-4B8C-AEBD-1C72DC827893} = {68DBB5AF-0EDC-B49D-CC56-13E502FC8220}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00828674-AF86-43E0-A6C2-F27A67A950E4}

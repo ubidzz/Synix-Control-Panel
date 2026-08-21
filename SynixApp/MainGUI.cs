@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -19,12 +19,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
+using Synix_Control_Panel.SynixApp.Database;
 
 namespace Synix_Control_Panel
 {
 	public partial class MainGUI : Form
 	{
 		public static BindingList<GameServer> serverList = [];
+		private readonly BindingList<GameServer> _visibleServers = [];
 		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		public bool isDownloadActive = false;
 		private static bool isInitializing = false;
@@ -36,9 +38,10 @@ namespace Synix_Control_Panel
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
+		private readonly SemaphoreSlim _versionCheckGate = new(1, 1);
+		private SynixUpdateCheckResult? _updateCheckResult;
+		private bool _updateShutdownRequested;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
-		private ToolTip? _resourceGraphToolTip;
-
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
 
@@ -50,13 +53,21 @@ namespace Synix_Control_Panel
 		public MainGUI()
 		{
 			InitializeComponent();
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+				return;
+			ThemeManager.Apply(this);
+
 			Instance = this;
 
 			FileHandler.LoadServers();
-			UIStyleHelper.InitializeToggles(this);
+
+			contextMenuStrip.Renderer = new Synix_Control_Panel.SynixApp.Design.SynixMenuRenderer();
+			contextMenuStrip.ShowImageMargin = false;
+			contextMenuStrip.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
+			ApplyMenuRoundingAndSpacing(contextMenuStrip);
 
 			dataGridView1.AutoGenerateColumns = false;
-			dataGridView1.DataSource = serverList;
+			dataGridView1.DataSource = _visibleServers;
 			if (!dataGridView1.Columns.Contains("IconCol"))
 			{
 				DataGridViewImageColumn iconCol = new DataGridViewImageColumn();
@@ -64,48 +75,80 @@ namespace Synix_Control_Panel
 				iconCol.HeaderText = "";
 				iconCol.DataPropertyName = "DisplayIcon";
 				iconCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
-				iconCol.Width = 35;
-				iconCol.DefaultCellStyle.Padding = new Padding(6);
+				iconCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+				iconCol.Width = 46;
+				iconCol.MinimumWidth = 46;
+				iconCol.DefaultCellStyle.Padding = new Padding(8);
 
 				dataGridView1.Columns.Insert(0, iconCol);
 				dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-				dataGridView1.RowTemplate.Height = 35;
+				dataGridView1.RowTemplate.Height = 44;
 				foreach (DataGridViewRow row in dataGridView1.Rows)
 				{
-					row.Height = 35;
+					row.Height = 44;
 				}
 			}
 
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
-			GridStyler.ApplyTransparentTheme(dataGridView1);
+			GridStyler.ApplyDashboardTheme(dataGridView1);
 			GridStyler.StyleCloseButton(btnClose);
 			GridStyler.StyleMinimizeButton(btnMinimize);
-			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(88, 101, 242));
+			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
+			GridStyler.StyleIconButton(btnHelp, Properties.Resources.help, Color.FromArgb(200, 200, 200));
+			ApplyServerFilter();
 
-			_resourceGraphToolTip = new ToolTip(components)
+			IntPtr roundedRegionHandle = CreateRoundRectRgn(0, 0, Width, Height, 15, 15);
+			if (roundedRegionHandle != IntPtr.Zero)
 			{
-				InitialDelay = 300,
-				ReshowDelay = 100,
-				AutoPopDelay = 8000,
-				ShowAlways = true
-			};
-
-			_resourceGraphToolTip.SetToolTip(
-				chartHeartbeat,
-				"Click to open detailed CPU and RAM usage for all running servers."
-			);
-
-			chartHeartbeat.Cursor = Cursors.Hand;
-			chartHeartbeat.MouseLeave += chartHeartbeat_MouseLeave;
-
-			this.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 15, 15));
+				Region = System.Drawing.Region.FromHrgn(roundedRegionHandle);
+				DeleteObject(roundedRegionHandle);
+			}
+			UpdateDashboardSummary();
+			UpdateSelectedServerCard();
 			_ = Core.Instance;
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
+
+			cmbStatusFilter.SelectedItem = "All Statuses";
+		}
+
+		[DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+		internal static extern void DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int pvAttribute, uint cbAttribute);
+
+		private void ApplyMenuRoundingAndSpacing(ToolStripDropDown menu)
+		{
+			void ApplyDwm()
+			{
+				if (Environment.OSVersion.Version.Build >= 22000)
+				{
+					int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+					int DWMWCP_ROUND = 2;
+					DwmSetWindowAttribute(menu.Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref DWMWCP_ROUND, sizeof(int));
+				}
+			}
+
+			if (menu.IsHandleCreated)
+			{
+				ApplyDwm();
+			}
+			else
+			{
+				menu.HandleCreated += (s, e) => ApplyDwm();
+			}
+
+			foreach (ToolStripItem item in menu.Items)
+			{
+				item.Padding = new Padding(0, 4, 0, 4);
+
+				if (item is ToolStripDropDownItem dropDownItem && dropDownItem.HasDropDownItems)
+				{
+					ApplyMenuRoundingAndSpacing(dropDownItem.DropDown);
+				}
+			}
 		}
 
 		private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -117,63 +160,33 @@ namespace Synix_Control_Panel
 		{
 			CheckRunningStatus();
 
-			// 1. Grab telemetry
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
-			lblTotalCpu.Text = $"CPU: {cpu:N1}%";
-			lblTotalRam.Text = $"RAM: {ram:N2} GB / {systemTotalRamGb:N1} GB (Usable)";
+			cpuGauge.UpdateGauge((float)cpu, "CPU %");
+			ramGauge.MaxValue = (float)systemTotalRamGb;
+			ramGauge.UpdateGauge((float)ram, "RAM GB");
+			lblCpuValue.Text = $"{cpu:0.0}%";
+			lblRamValue.Text = $"{ram:0.00} GB";
+			UpdateDashboardSummary();
 
-			if (chartHeartbeat.Series.FindByName("TotalCPU") == null)
-				GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
-
-			// 2. Manually append the new data directly to the existing chart collection
-			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, cpu);
-			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, ram);
-
-			// 3. Remove the oldest points to keep the collection size stable and prevent managed memory growth
-			if (chartHeartbeat.Series["TotalCPU"].Points.Count > 30)
-			{
-				chartHeartbeat.Series["TotalCPU"].Points.RemoveAt(0);
-				chartHeartbeat.Series["TotalRAM"].Points.RemoveAt(0);
-			}
-
-			// 4. Scroll the view dynamically based on the actual points
-			var chartArea = chartHeartbeat.ChartAreas[0];
-			chartArea.AxisX.Minimum = chartHeartbeat.Series["TotalCPU"].Points.First().XValue;
-			chartArea.AxisX.Maximum = chartHeartbeat.Series["TotalCPU"].Points.Last().XValue;
-
-			// 5. Restart Check
-			bool needsTimeCheck = serverList.Any(s => s.IsScheduledRestartEnabled);
-			if (needsTimeCheck)
-			{
-				string currentExactTime = DateTime.Now.ToString("HH:mm:ss");
-				int currentDayIndex = (int)DateTime.Now.DayOfWeek;
-
-				foreach (var server in serverList)
-				{
-					if (server.IsScheduledRestartEnabled &&
-						server.RestartDays != null &&
-						server.RestartDays[currentDayIndex] &&
-						currentExactTime == (server.RestartTime + ":00"))
-					{
-						_ = Core.Instance.ExecuteStartSequence(server, "MAINTENANCE");
-					}
-				}
-			}
 			chartTickCounter++;
 		}
 
 		[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
 		private static extern IntPtr CreateRoundRectRgn
 		(
-			int nLeftRect,     // x-coordinate of upper-left corner
-			int nTopRect,      // y-coordinate of upper-left corner
-			int nRightRect,    // x-coordinate of lower-right corner
-			int nBottomRect,   // y-coordinate of lower-right corner
-			int nWidthEllipse, // width of the rounded corner
-			int nHeightEllipse // height of the rounded corner
+			int nLeftRect,
+			int nTopRect,
+			int nRightRect,
+			int nBottomRect,
+			int nWidthEllipse,
+			int nHeightEllipse
 		);
+
+		[DllImport("Gdi32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool DeleteObject(IntPtr hObject);
 
 		private void Form_Drag_MouseDown(object sender, MouseEventArgs e)
 		{
@@ -242,7 +255,9 @@ namespace Synix_Control_Panel
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			// Use the variable that Heartbeat_Tick has been updating
+			if (_updateShutdownRequested)
+				return;
+
 			if (isDownloadActive || Core.Instance.isDownloadActive)
 			{
 				e.Cancel = true;
@@ -253,13 +268,11 @@ namespace Synix_Control_Panel
 
 		private async Task LoadNetworkInfo()
 		{
-			// 1. Get the LAN IP instantly
 			if (!isPrivacyLoading)
 			{
 				string localIP = await Core.Instance.GetLocalIP();
 				lblLocalIP1.Text = $"LAN IP: {localIP}";
 
-				// 2. Get the Public IP in the background
 				lblPublicIP.Text = "Public IP: Fetching...";
 				string publicIP = await Core.Instance.GetPublicIP();
 				lblPublicIP.Text = $"Public IP: {publicIP}";
@@ -268,7 +281,6 @@ namespace Synix_Control_Panel
 
 		private async void lblPublicIP_Click(object sender, EventArgs e)
 		{
-			// Strip the prefix and copy just the IP
 			string publicIP = await Core.Instance.GetPublicIP();
 			Clipboard.SetText(publicIP);
 			if (!isPrivacyLoading)
@@ -297,26 +309,33 @@ namespace Synix_Control_Panel
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
 		{
-			try
-			{
-				FileHandler.WriteLog("Synix_Log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
-			}
-			catch { /* Silent fail */ }
+			FileHandler.QueueLog(
+				"Synix_Log",
+				$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}");
 
-			if (!this.IsHandleCreated || this.IsDisposed) return;
+			if (!IsHandleCreated || IsDisposed)
+				return;
 
 			if (rtbLog.InvokeRequired)
 			{
-				rtbLog.BeginInvoke(new Action(() => AppendLog(message, textColor, isBold)));
+				rtbLog.BeginInvoke(
+					new Action(() => AppendLogToUi(message, textColor, isBold)));
 				return;
 			}
+
+			AppendLogToUi(message, textColor, isBold);
+		}
+
+		private void AppendLogToUi(string message, Color? textColor, bool isBold)
+		{
+			if (rtbLog.IsDisposed)
+				return;
 
 			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
 
 			rtbLog.SelectionStart = rtbLog.TextLength;
 			rtbLog.SelectionLength = 0;
-
-			rtbLog.SelectionColor = textColor ?? rtbLog.ForeColor;
+			rtbLog.SelectionColor = ResolveLogColor(textColor);
 
 			if (rtbLog.Lines.Length > 500)
 			{
@@ -331,30 +350,78 @@ namespace Synix_Control_Panel
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
-			rtbLog.Update();
+		}
+
+		private Color ResolveLogColor(Color? requestedColor)
+		{
+			if (!requestedColor.HasValue)
+				return rtbLog.ForeColor;
+			if (ThemeManager.IsDarkMode)
+				return requestedColor.Value;
+
+			Color color = requestedColor.Value;
+			if (color.ToArgb() == Color.White.ToArgb() ||
+				color.ToArgb() == Color.WhiteSmoke.ToArgb())
+			{
+				return SettingsPalette.PrimaryText;
+			}
+			if (color.ToArgb() == Color.Cyan.ToArgb())
+				return SettingsPalette.Accent;
+			if (color.ToArgb() == Color.Green.ToArgb())
+				return SettingsPalette.Success;
+			if (color.ToArgb() == Color.Red.ToArgb())
+				return SettingsPalette.Danger;
+			if (color.ToArgb() == Color.Yellow.ToArgb() ||
+				color.ToArgb() == Color.Orange.ToArgb())
+			{
+				return SettingsPalette.Warning;
+			}
+
+			return color;
 		}
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
-			await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
+			try
+			{
+				await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
+				await Core.Instance.RebindProcesses();
+			}
+			catch (Exception ex)
+			{
+				AppendLog($"[🚨 REBIND ERROR] {ex.Message}", Color.Red, true);
+			}
 
-			Core.Instance.RebindProcesses();
-			double physicalRam = 16.0;
-			await Task.Run(() => physicalRam = ResourceMonitor.GetTotalSystemRamGB());
+			try
+			{
+				double physicalRam = await Task.Run(ResourceMonitor.GetTotalSystemRamGB);
+				double reserved = Math.Max(physicalRam * 0.10, 5.0);
+				systemTotalRamGb = Math.Max(1.0, physicalRam - reserved);
+				ramGauge.MaxValue = (float)systemTotalRamGb;
+			}
+			catch (Exception ex)
+			{
+				AppendLog($"[⚠️ RESOURCE ERROR] {ex.Message}", Color.Orange);
+			}
 
-			double reserved = Math.Max(physicalRam * 0.10, 5.0);
-			systemTotalRamGb = physicalRam - reserved;
-
-			GridStyler.HeartbeatChart(chartHeartbeat, systemTotalRamGb);
-			GridStyler.DashboardLabels(lblTotalCpu, lblTotalRam);
-
-			chartHeartbeat.Series["TotalCPU"].Points.AddXY(chartTickCounter, 0);
-			chartHeartbeat.Series["TotalRAM"].Points.AddXY(chartTickCounter, 0);
-			chartHeartbeat.Update();
+			UpdateDashboardSummary();
 			chartTickCounter++;
 			tmrResourceUpdates.Start();
 
-			await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
+			try
+			{
+				lblSteamStatus.Text = "●  Initializing SteamCMD...";
+				lblSteamStatus.ForeColor = SettingsPalette.Warning;
+				await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
+				lblSteamStatus.Text = "●  SteamCMD ready";
+				lblSteamStatus.ForeColor = SettingsPalette.Accent;
+			}
+			catch (Exception ex)
+			{
+				lblSteamStatus.Text = "●  SteamCMD needs attention";
+				lblSteamStatus.ForeColor = SettingsPalette.Danger;
+				AppendLog($"[🚨 STEAMCMD ERROR] {ex.Message}", Color.Red, true);
+			}
 		}
 
 		public void UpdateGrid()
@@ -365,6 +432,162 @@ namespace Synix_Control_Panel
 				return;
 			}
 			dataGridView1.Refresh();
+			ApplyServerFilter();
+			UpdateDashboardSummary();
+			UpdateSelectedServerCard();
+		}
+
+		private void UpdateDashboardSummary()
+		{
+			int installedCount = serverList.Count;
+			int runningCount = serverList.Count(server =>
+				string.Equals(
+					server.Status,
+					StatusManager.GetStatus(ServerState.Running),
+					StringComparison.OrdinalIgnoreCase));
+
+			lblInstalledValue.Text = installedCount.ToString();
+			lblRunningValue.Text = runningCount.ToString();
+			bool isFiltered = !string.IsNullOrWhiteSpace(txtServerSearch.Text) ||
+				!string.Equals(
+					cmbStatusFilter.SelectedItem?.ToString(),
+					"All Statuses",
+					StringComparison.OrdinalIgnoreCase);
+			lblServersCount.Text = isFiltered
+				? $"{_visibleServers.Count} of {installedCount} servers"
+				: installedCount == 1
+					? "1 server"
+					: $"{installedCount} servers";
+		}
+
+		private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+		{
+			UpdateSelectedServerCard();
+		}
+
+		private void dataGridView1_DataBindingComplete(
+			object sender,
+			DataGridViewBindingCompleteEventArgs e)
+		{
+			foreach (DataGridViewRow row in dataGridView1.Rows)
+			{
+				row.Height = 44;
+			}
+
+			ApplyServerFilter();
+			UpdateDashboardSummary();
+			UpdateSelectedServerCard();
+		}
+
+		private void UpdateSelectedServerCard()
+		{
+			DataGridViewRow? currentRow = dataGridView1.CurrentRow;
+			GameServer? server = currentRow?.DataBoundItem as GameServer;
+			bool hasSelection = server != null && currentRow != null;
+
+			if (btnServerOptions != null) btnServerOptions.Enabled = hasSelection;
+			if (btnConfigure != null) btnConfigure.Enabled = hasSelection;
+			if (btnStart != null) btnStart.Enabled = hasSelection;
+			if (btnRestart != null) btnRestart.Enabled = hasSelection;
+			if (btnStop != null) btnStop.Enabled = hasSelection;
+
+			if (!hasSelection || server == null)
+			{
+				picSelectedServer.Image = null;
+				lblSelectedGame.Text = "Select a game server";
+				lblSelectedServerName.Text = "Choose a row to unlock server controls";
+				return;
+			}
+
+			picSelectedServer.Image = server.DisplayIcon;
+			lblSelectedGame.Text = server.Game;
+			lblSelectedServerName.Text = $"{server.ServerName}  •  {server.Status}";
+		}
+
+		private void ServerFilterChanged(object sender, EventArgs e)
+		{
+			ApplyServerFilter();
+			UpdateDashboardSummary();
+		}
+
+		private void ApplyServerFilter()
+		{
+			if (dataGridView1.DataSource == null)
+				return;
+
+			string searchText = txtServerSearch.Text.Trim();
+			string statusFilter = cmbStatusFilter?.SelectedItem?.ToString() ?? "All Statuses";
+			GameServer? selectedServer = dataGridView1.CurrentRow?.DataBoundItem as GameServer;
+			List<GameServer> matchingServers = serverList
+				.Where(server =>
+				{
+					bool searchMatch = string.IsNullOrWhiteSpace(searchText) ||
+					(server.Game ?? string.Empty).Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+					(server.ServerName ?? string.Empty).Contains(searchText, StringComparison.OrdinalIgnoreCase);
+					return searchMatch && MatchesStatusFilter(server.Status, statusFilter);
+				})
+				.ToList();
+
+			bool viewChanged = _visibleServers.Count != matchingServers.Count ||
+				!_visibleServers.SequenceEqual(matchingServers);
+			if (viewChanged)
+			{
+				_visibleServers.RaiseListChangedEvents = false;
+				_visibleServers.Clear();
+				foreach (GameServer server in matchingServers)
+				{
+					_visibleServers.Add(server);
+				}
+				_visibleServers.RaiseListChangedEvents = true;
+				_visibleServers.ResetBindings();
+			}
+
+			if (selectedServer != null)
+			{
+				DataGridViewRow? restoredRow = dataGridView1.Rows
+					.Cast<DataGridViewRow>()
+					.FirstOrDefault(row => ReferenceEquals(row.DataBoundItem, selectedServer));
+
+				if (restoredRow != null && restoredRow.Cells.Count > 0)
+					dataGridView1.CurrentCell = restoredRow.Cells[0];
+			}
+			else if (dataGridView1.Rows.Count > 0 && dataGridView1.Rows[0].Cells.Count > 0)
+			{
+				dataGridView1.CurrentCell = dataGridView1.Rows[0].Cells[0];
+			}
+
+			UpdateSelectedServerCard();
+		}
+
+		private static bool MatchesStatusFilter(string? status, string filter)
+		{
+			string currentStatus = status ?? string.Empty;
+			return filter switch
+			{
+				"Running" => currentStatus.Equals(
+					StatusManager.GetStatus(ServerState.Running),
+					StringComparison.OrdinalIgnoreCase),
+				"Stopped" => currentStatus.Equals(
+					StatusManager.GetStatus(ServerState.Stopped),
+					StringComparison.OrdinalIgnoreCase),
+				"In Progress" =>
+					currentStatus.StartsWith("Starting", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Stopping", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Updating", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase),
+				"Needs Attention" => currentStatus.Equals(
+					StatusManager.GetStatus(ServerState.Crashed),
+					StringComparison.OrdinalIgnoreCase),
+				_ => true
+			};
+		}
+
+		private void btnClearLog_Click(object sender, EventArgs e)
+		{
+			rtbLog.Clear();
 		}
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -376,17 +599,6 @@ namespace Synix_Control_Panel
 		{
 			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
 			monitor.Show();
-		}
-
-		private void chartHeartbeat_MouseLeave(object? sender, EventArgs e)
-		{
-			chartHeartbeat.BorderlineDashStyle =
-				System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.NotSet;
-		}
-
-		private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-		{
-			GridStyler.PaintTransparentRows(dataGridView1, e);
 		}
 
 		private GameServer? GetSelectedServer()
@@ -413,7 +625,6 @@ namespace Synix_Control_Panel
 
 		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
-			// UI-specific check
 			if (isInitializing) return;
 			await Core.Instance.AddServerAndReport();
 		}
@@ -468,9 +679,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 			Core.Instance.DeleteServerAndReport(selectedServer);
-			dataGridView1.CurrentCell = null;
-			dataGridView1.DataSource = null;
-			dataGridView1.DataSource = serverList;
+			ApplyServerFilter();
 		}
 
 		private async void btnBackup_Click(object sender, EventArgs e)
@@ -483,10 +692,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			await Task.Run(() =>
-			{
-				Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
-			});
+			await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
 		}
 
 		private async void btnStart_Click(object sender, EventArgs e)
@@ -498,8 +704,10 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-
-			await Core.Instance.ExecuteStartSequence(selectedServer);
+			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Stopped))
+			{
+				await Core.Instance.ExecuteStartSequence(selectedServer);
+			}
 		}
 
 		private async void btnStop_Click(object sender, EventArgs e)
@@ -511,8 +719,18 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
+			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Running))
+			{
+				try
+				{
+					await Core.Instance.StopServerAndReport(selectedServer);
+				}
+				catch (Exception ex)
+				{
 
-			await Core.Instance.StopServerAndReport(selectedServer);
+					AppendLog($"[🚨 STOP ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
+				}
+			}
 		}
 
 		private void btnOpenConfig_Click(object sender, EventArgs e)
@@ -543,79 +761,110 @@ namespace Synix_Control_Panel
 		private async void btnPublicConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
-			AppendLog($"[📡 NETWORK] Testing WAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
+			if (!GameDatabase.SupportsManualConnectionTesting(gameData))
+			{
+				AppendLog($"[🛡️ NETWORK] Manual WAN connection testing is not supported for {selectedServer.Game}.", Color.Yellow);
+				return;
+			}
+
+			AppendLog($"[📡 NETWORK] Running comprehensive WAN connectivity tests for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
 				string publicIp = await Core.Instance.GetPublicIP();
-				bool isResponding = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
-				string ipText = "[HIDDEN]";
+				string ipText = isPrivacyLoading ? "[HIDDEN]" : publicIp;
 
-				if (!isPrivacyLoading)
-				{
-					ipText = publicIp;
-				}
+				bool isReachable = await Core.Instance.ExecuteDynamicProbes(selectedServer, publicIp);
 
-				if (isResponding)
+				if (isReachable)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable at {ipText} using its configured probe protocol.", Color.Green);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] The configured connection probe failed for {selectedServer.ServerName} at {ipText} (Game Port {selectedServer.Port}, Query/Probe Port {selectedServer.QueryPort}). Check the server, router, firewall, and protocol-specific settings.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not complete Public connectivity test: {ex.Message}", Color.Yellow);
 			}
 		}
 
 		private async void btnLocalConnection_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
-			AppendLog($"[📡 NETWORK] Testing LAN Connectivity for {selectedServer.ServerName}...", Color.White);
+			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
+			if (!GameDatabase.SupportsManualConnectionTesting(gameData))
+			{
+				AppendLog($"[🛡️ NETWORK] Manual LAN connection testing is not supported for {selectedServer.Game}.", Color.Yellow);
+				return;
+			}
+
+			AppendLog($"[📡 NETWORK] Running comprehensive LAN connectivity tests for {selectedServer.ServerName}...", Color.White);
 
 			try
 			{
 				string localIp = await Core.Instance.GetLocalIP();
-				bool isResponding = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
-				string ipText = "[HIDDEN]";
+				string ipText = isPrivacyLoading ? "[HIDDEN]" : localIp;
 
-				if (!isPrivacyLoading)
-				{
-					ipText = localIp;
-				}
+				bool isReachable = await Core.Instance.ExecuteDynamicProbes(selectedServer, localIp);
 
-				if (isResponding)
+				if (isReachable)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is visible at {ipText}:{selectedServer.QueryPort}!", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable locally at {ipText} using its configured probe protocol.", Color.Green);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] {selectedServer.ServerName} is running but HIDDEN. Check Router/Firewall for UDP {selectedServer.QueryPort} or try setting a different query port.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] The configured local probe failed for {selectedServer.ServerName} at {ipText} (Game Port {selectedServer.Port}, Query/Probe Port {selectedServer.QueryPort}). Ensure the server and its query service are running.", Color.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[🚨 ERROR] Could not retrieve Public IP: {ex.Message}", Color.Yellow);
+				AppendLog($"[🚨 ERROR] Could not complete LAN connectivity test: {ex.Message}", Color.Yellow);
 			}
 		}
 
-		private void btnServerActionsMenu_Click(object sender, EventArgs e)
+		private void btnServerOptionsMenu_Click(object sender, EventArgs e)
 		{
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
-				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
+				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase);
+				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
+				bool supportsConnectionTesting =
+					GameDatabase.SupportsManualConnectionTesting(selectedGameData);
 
 				updateServerToolStripMenuItem.Enabled = !isMinecraft;
+				updateServerToolStripMenuItem.Visible = !isMinecraft;
 				fileValidationToolStripMenuItem.Enabled = !isMinecraft;
+				fileValidationToolStripMenuItem.Visible = !isMinecraft;
 				btnExportBatch.Enabled = !isMinecraft;
+				btnExportBatch.Visible = !isMinecraft;
+
+				if (selectedServer.Status == "Running")
+				{
+					connectionTestToolStripMenuItem.Visible = supportsConnectionTesting;
+					connectionTestToolStripMenuItem.Enabled = supportsConnectionTesting;
+					connectionLocalTestToolStripMenuItem.Visible = supportsConnectionTesting;
+					connectionLocalTestToolStripMenuItem.Enabled = supportsConnectionTesting;
+					toolStripSeparator3.Visible = supportsConnectionTesting;
+				}
+				else
+				{
+					connectionTestToolStripMenuItem.Visible = false;
+					connectionTestToolStripMenuItem.Enabled = false;
+					connectionLocalTestToolStripMenuItem.Visible = false;
+					connectionLocalTestToolStripMenuItem.Enabled = false;
+					toolStripSeparator3.Visible = false;
+				}
 			}
 
-			contextMenuStrip.Show(btnServerActions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
+			contextMenuStrip.Show(btnServerOptions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
 		}
 
 		private async void btnRestart_Click(object sender, EventArgs e)
@@ -626,8 +875,17 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-
-			await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
+			if (selectedServer.Status == StatusManager.GetStatus(ServerState.Running))
+			{
+				try
+				{
+					await Core.Instance.ExecuteStartSequence(selectedServer, "RESTART");
+				}
+				catch (Exception ex)
+				{
+					AppendLog($"[🚨 RESTART ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
+				}
+			}
 		}
 
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -650,14 +908,10 @@ namespace Synix_Control_Panel
 
 		private void InitializeVersionCheckTimer()
 		{
-			versionTimer = new System.Windows.Forms.Timer();
-
-			// 20 minutes * 60 seconds * 1000 milliseconds
+			versionTimer = new System.Windows.Forms.Timer(components);
 			versionTimer.Interval = 20 * 60 * 1000;
-
 			versionTimer.Tick += async (sender, e) =>
 			{
-				// This fires every 20 minutes in the background
 				await VersionCheck();
 			};
 
@@ -666,92 +920,157 @@ namespace Synix_Control_Panel
 
 		private async Task VersionCheck()
 		{
-			string currentVersion = "Unknown";
-			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+			Version currentVersion = Core.GetCurrentVersion();
+			if (!await _versionCheckGate.WaitAsync(0))
+				return;
 
-			string[] resourceNames = assembly.GetManifestResourceNames();
-			string actualResourcePath = null;
-
-			foreach (string name in resourceNames)
-			{
-				if (name.EndsWith("version.txt"))
-				{
-					actualResourcePath = name;
-					break;
-				}
-			}
-
-			if (actualResourcePath != null)
-			{
-				using (Stream stream = assembly.GetManifestResourceStream(actualResourcePath))
-				{
-					if (stream != null)
-					{
-						using (StreamReader reader = new StreamReader(stream))
-						{
-							currentVersion = reader.ReadToEnd().Trim();
-						}
-					}
-				}
-			}
-
-			string versionUrl = "https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixApp/SynixEngine/version.txt";
 			btnDownloadUpdate.Visible = false;
-			UIStyleHelper.StyleWarningLabel(lblUpdateStatus, "MiddleLeft");
+			btnDownloadUpdate.Enabled = false;
 			lblUpdateStatus.Text = "Checking for updates...";
+			lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
+			lblUpdateStatus.BackColor = SettingsPalette.TitleBar;
 
 			try
 			{
-				using (HttpClient client = new())
+				using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(25));
+				_updateCheckResult = await Core.CheckForUpdatesAsync(
+					currentVersion,
+					timeout.Token);
+
+				if (_updateCheckResult.UpdateAvailable)
 				{
-					client.Timeout = TimeSpan.FromSeconds(5);
-					string latestVersion = (await client.GetStringAsync(versionUrl)).Trim();
-
-					if (latestVersion == currentVersion)
-					{
-						lblUpdateStatus.Text = "★ You are running the latest version " + currentVersion;
-						lblUpdateStatus.ForeColor = Color.Black;
-						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
-						lblUpdateStatus.BackColor = Color.Green;
-					}
-					else
-					{
-						lblUpdateStatus.Text = "🚨 A newer Synix " + latestVersion + " version is available! Running Version: " + currentVersion + "";
-						lblUpdateStatus.ForeColor = Color.White;
-						lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
-						lblUpdateStatus.BackColor = Color.Red;
-
-						btnDownloadUpdate.Visible = true;
-						btnDownloadUpdate.Text = "Download from GitHub";
-					}
+					string latestVersion = _updateCheckResult.AdvertisedVersion?.ToString(3) ?? "new";
+					lblUpdateStatus.Text = _updateCheckResult.ReleaseReady
+						? $"Update {latestVersion} available  •  Running {currentVersion.ToString(3)}"
+						: $"Update {latestVersion} is being prepared";
+					lblUpdateStatus.ForeColor = SettingsPalette.Warning;
+					btnDownloadUpdate.Text = _updateCheckResult.CanInstall
+						? "Install Update"
+						: "View Update";
+					btnDownloadUpdate.Visible = true;
+					btnDownloadUpdate.Enabled = true;
+				}
+				else
+				{
+					lblUpdateStatus.Text = $"✓  Latest version  •  v{currentVersion.ToString(3)}";
+					lblUpdateStatus.ForeColor = SettingsPalette.Accent;
 				}
 			}
-			catch
+			catch (Exception exception)
 			{
-				lblUpdateStatus.Text = "[🚨 ERROR] Could not check for updates.";
-				lblUpdateStatus.ForeColor = Color.Black;
-				lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
-				lblUpdateStatus.BackColor = Color.Red;
+				_updateCheckResult = null;
+				lblUpdateStatus.Text = $"Version check unavailable  •  v{currentVersion.ToString(3)}";
+				lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
+				AppendLog(
+					$"[⚠️ UPDATE] Version check unavailable: {exception.Message}",
+					Color.Orange);
+			}
+			finally
+			{
+				_versionCheckGate.Release();
 			}
 		}
 
-		private void btnDownloadUpdate_Click(object sender, EventArgs e)
+		private async void btnDownloadUpdate_Click(object sender, EventArgs e)
 		{
+			if (_updateCheckResult?.ReleaseReady != true ||
+				_updateCheckResult.Release is null)
+			{
+				OpenUrl(Core.ReleasesUri.AbsoluteUri);
+				return;
+			}
+
+			using SynixUpdateDialog updateDialog = new(_updateCheckResult);
+			if (updateDialog.ShowDialog(this) != DialogResult.OK)
+				return;
+
+			if (!CanInstallSynixUpdate())
+				return;
+
+			isDownloadActive = true;
+			Core.Instance.isDownloadActive = true;
+			versionTimer?.Stop();
+			btnDownloadUpdate.Enabled = false;
 			try
 			{
-				string url = "https://github.com/ubidzz/Synix-Control-Panel/releases";
-
-				ProcessStartInfo psi = new ProcessStartInfo
+				Progress<SynixUpdateDownloadProgress> progress = new(download =>
 				{
-					FileName = url,
-					UseShellExecute = true
-				};
-				Process.Start(psi);
+					lblUpdateStatus.Text =
+						$"Downloading verified update... {download.Percent}%";
+					btnDownloadUpdate.Text = $"{download.Percent}%";
+				});
+
+				SynixPreparedUpdate prepared = await Core.PrepareUpdateAsync(
+					_updateCheckResult,
+					progress);
+
+				MessageBox.Show(
+					this,
+					$"Synix {prepared.NewVersion.ToString(3)} was downloaded and verified.\n\nSynix will now close, apply the update, and open again. Everything inside C:\\Synix will remain unchanged.",
+					"Update Ready to Install",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+
+				await FileHandler.FlushLogsAsync();
+				Core.LaunchPreparedUpdate(prepared);
+				_updateShutdownRequested = true;
+				isDownloadActive = false;
+				Core.Instance.isDownloadActive = false;
+				Application.Exit();
 			}
-			catch (Exception ex)
+			catch (Exception exception)
 			{
-				AppendLog($"[🚨 ERROR] Could not open browser: {ex.Message}", Color.Red);
+				lblUpdateStatus.Text = "Update did not start  •  Current Synix was not changed";
+				btnDownloadUpdate.Text = "Install Update";
+				btnDownloadUpdate.Enabled = true;
+				MessageBox.Show(
+					this,
+					exception.Message,
+					"Synix Update Did Not Start",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 			}
+			finally
+			{
+				if (!_updateShutdownRequested)
+				{
+					isDownloadActive = false;
+					Core.Instance.isDownloadActive = false;
+					versionTimer?.Start();
+				}
+			}
+		}
+
+		private bool CanInstallSynixUpdate()
+		{
+			bool serverBusy = serverList.Any(server =>
+				server.Status != Core.StatusManager.GetStatus(
+					Core.ServerState.Stopped));
+			bool maintenanceBusy = isDownloadActive ||
+				Core.Instance.isDownloadActive;
+			if (serverBusy || maintenanceBusy)
+			{
+				MessageBox.Show(
+					this,
+					"Stop every game server and wait for installations, updates, validations, backups, imports, and exports to finish before updating Synix.",
+					"Synix Is Busy",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return false;
+			}
+
+			if (!FileHandler.SaveServers())
+			{
+				MessageBox.Show(
+					this,
+					"Synix could not safely save the current server list. The update was not started.",
+					"Unable to Save Synix",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return false;
+			}
+
+			return true;
 		}
 		public async Task UpdatePrivacyMode(bool isEnabled)
 		{

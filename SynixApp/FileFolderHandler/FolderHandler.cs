@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -39,7 +39,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 						string cleanGame = SynixEngine.Core.Instance.GetSafeName(server.Game);
 						string cleanServer = SynixEngine.Core.Instance.GetSafeName(server.ServerName);
-						string baseBackupFolder = @"C:\Synix\BackupGames";
+						string baseBackupFolder = SynixEngine.Core.DefaultBackupPath;
 
 						if (Properties.Settings.Default.UseCustomBackupPath &&
 							!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&
@@ -72,13 +72,12 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 			public static bool Rename(GameServer oldServer, GameServer newServer)
 			{
-				// 1. GATEKEEPER: If they didn't use Default Location, DO NOT RENAME.
+
 				if (!oldServer.IsDefaultPath)
 				{
-					return false; // Exit early; no physical folder movement
+					return false;
 				}
 
-				// 2. Only move if the path actually changed
 				if (oldServer.InstallPath != newServer.InstallPath)
 				{
 					try

@@ -15,10 +15,13 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.20</Version>
+		<Version>1.0.21</Version>
 		<AssemblyVersion>$(Version).0</AssemblyVersion>
 		<FileVersion>$(Version).0</FileVersion>
 		<InformationalVersion>$(Version)</InformationalVersion>
+		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">Stable</SynixBuildChannel>
+		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == ''">Development</SynixBuildChannel>
+		<DefineConstants Condition="'$(SynixBuildChannel)' == 'Stable'">$(DefineConstants);SYNIX_STABLE_RELEASE</DefineConstants>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
@@ -29,8 +32,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="SynixApp\**" />
+	  <Compile Remove="Tests\**" />
 	  <EmbeddedResource Remove="SynixApp\**" />
+	  <EmbeddedResource Remove="Tests\**" />
 	  <None Remove="SynixApp\**" />
+	  <None Remove="Tests\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="SynixEngine\version.txt" />
@@ -43,8 +49,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<AssemblyMetadata Include="SynixBuildChannel" Value="$(SynixBuildChannel)" />
+		<InternalsVisibleTo Include="Synix.Tests" />
 		<PackageReference Include="System.Management" Version="10.0.7" />
-		<PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -57,6 +65,39 @@
 	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="UI\GeneralSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\GeneralSettingsPage.Designer.cs">
+	    <DependentUpon>GeneralSettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\BackupSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\BackupSettingsPage.Designer.cs">
+	    <DependentUpon>BackupSettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\PrivacySettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\PrivacySettingsPage.Designer.cs">
+	    <DependentUpon>PrivacySettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\AdvancedSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\AdvancedSettingsPage.Designer.cs">
+	    <DependentUpon>AdvancedSettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ProblemReportSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ProblemReportSettingsPage.Designer.cs">
+	    <DependentUpon>ProblemReportSettingsPage.cs</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -82,10 +123,80 @@
 		</None>
 	</ItemGroup>
 
-	<Target Name="RunInnoAfterPublish" AfterTargets="Publish">
-		<Exec Command="powershell -Command &quot;Start-Sleep -s 5&quot;" />
-		<Message Text="Windows metadata synced. Starting Inno Setup..." Importance="high" />
-		<Message Text="Sending Version $(Version) to Inno Setup..." Importance="high" />
-		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) /DSourcePath=&quot;$(PublishDir)&quot; &quot;$(PublishDir)package\Synix.iss&quot;" />
+	<Target Name="BuildMsiAfterPublish" AfterTargets="Publish">
+		<PropertyGroup>
+			<_SynixPublishDirectory>$([System.IO.Path]::GetFullPath('$(PublishDir)'))</_SynixPublishDirectory>
+			<_SynixPublishPathMarker>$([System.IO.Path]::Combine('$(_SynixPublishDirectory)', '_'))</_SynixPublishPathMarker>
+			<_SynixPublishDirectory>$([System.IO.Path]::GetDirectoryName('$(_SynixPublishPathMarker)'))</_SynixPublishDirectory>
+			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
+			<_SynixMsiProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'SynixInstaller.wixproj'))</_SynixMsiProject>
+			<_SynixMsiBuildOutput>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'bin', 'Release', 'SynixSetup.msi'))</_SynixMsiBuildOutput>
+			<_SynixMsiOutput>$([System.IO.Path]::Combine('$(PublishDir)', 'SynixSetup.msi'))</_SynixMsiOutput>
+			<_SynixTestsProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Tests', 'Synix.Tests.csproj'))</_SynixTestsProject>
+			<_SynixDotNetHost Condition="'$(DotNetHostPath)' != ''">$(DotNetHostPath)</_SynixDotNetHost>
+			<_SynixDotNetHost Condition="'$(_SynixDotNetHost)' == '' and '$(ProgramW6432)' != ''">$([System.IO.Path]::Combine('$(ProgramW6432)', 'dotnet', 'dotnet.exe'))</_SynixDotNetHost>
+			<_SynixDotNetHost Condition="'$(_SynixDotNetHost)' == ''">$([System.IO.Path]::Combine('$(ProgramFiles)', 'dotnet', 'dotnet.exe'))</_SynixDotNetHost>
+		</PropertyGroup>
+		<Error Condition="'$(SynixBuildChannel)' != 'Stable'" Text="Synix Publish was not marked as a Stable release build." />
+		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
+		<Error Condition="!Exists('$(_SynixMsiProject)')" Text="The Synix MSI project was not found at $(_SynixMsiProject)." />
+		<Error Condition="!Exists('$(_SynixTestsProject)')" Text="The Synix automated test project was not found at $(_SynixTestsProject)." />
+		<Error Condition="!Exists('$(_SynixDotNetHost)')" Text="The 64-bit .NET host was not found at $(_SynixDotNetHost). Repair the Visual Studio .NET SDK before publishing." />
+		<Message Text="Running the complete Synix automated test suite before packaging..." Importance="high" />
+		<Exec Command="&quot;$(_SynixDotNetHost)&quot; test &quot;$(_SynixTestsProject)&quot; --configuration Release --logger &quot;console;verbosity=minimal&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+		<PropertyGroup>
+			<_SynixAutomatedTestsUtc>$([System.DateTime]::UtcNow.ToString('O'))</_SynixAutomatedTestsUtc>
+		</PropertyGroup>
+		<Message Text="Building SynixSetup.msi with Version $(Version)..." Importance="high" />
+		<Exec Command="&quot;$(_SynixDotNetHost)&quot; build &quot;$(_SynixMsiProject)&quot; --configuration Release --nologo &quot;-p:Version=$(Version)&quot; &quot;-p:SynixPublishDir=$(_SynixPublishDirectory)&quot; &quot;-p:SynixProjectDir=$(MSBuildProjectDirectory)&quot; &quot;-p:SynixAssemblyName=$(AssemblyName)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+		<Error Condition="!Exists('$(_SynixMsiBuildOutput)')" Text="WiX did not create $(_SynixMsiBuildOutput)." />
+		<Delete Files="$(_SynixMsiOutput)" Condition="Exists('$(_SynixMsiOutput)')" />
+		<Copy SourceFiles="$(_SynixMsiBuildOutput)" DestinationFiles="$(_SynixMsiOutput)" />
+		<Error Condition="!Exists('$(_SynixMsiOutput)')" Text="The Synix MSI was not copied to $(_SynixMsiOutput)." />
+		<Message Text="Synix MSI created at $(_SynixMsiOutput)." Importance="high" />
+	</Target>
+
+	<Target Name="WriteSynixReleaseManifest" AfterTargets="BuildMsiAfterPublish">
+		<PropertyGroup>
+			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
+			<_SynixMsiOutput>$([System.IO.Path]::Combine('$(PublishDir)', 'SynixSetup.msi'))</_SynixMsiOutput>
+			<_SynixReleaseManifest>$([System.IO.Path]::Combine('$(PublishDir)', 'Synix.release-manifest.txt'))</_SynixReleaseManifest>
+			<_SynixReleaseManifestBackup>$([System.IO.Path]::Combine('$(PublishDir)', 'Synix.release-manifest.backup.txt'))</_SynixReleaseManifestBackup>
+		</PropertyGroup>
+		<Error Condition="'$(_SynixAutomatedTestsUtc)' == ''" Text="The automated tests did not produce a passing release receipt." />
+		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
+		<Error Condition="!Exists('$(_SynixMsiOutput)')" Text="The Synix MSI was not found at $(_SynixMsiOutput)." />
+		<ItemGroup>
+			<_SynixStandaloneFile Include="$(_SynixPublishedExe)" />
+			<_SynixMsiFile Include="$(_SynixMsiOutput)" />
+		</ItemGroup>
+		<GetFileHash Files="@(_SynixStandaloneFile)" Algorithm="SHA256">
+			<Output TaskParameter="Items" ItemName="_SynixStandaloneHashed" />
+		</GetFileHash>
+		<GetFileHash Files="@(_SynixMsiFile)" Algorithm="SHA256">
+			<Output TaskParameter="Items" ItemName="_SynixMsiHashed" />
+		</GetFileHash>
+		<PropertyGroup>
+			<_SynixStandaloneSha256>@(_SynixStandaloneHashed->'%(FileHash)')</_SynixStandaloneSha256>
+			<_SynixMsiSha256>@(_SynixMsiHashed->'%(FileHash)')</_SynixMsiSha256>
+		</PropertyGroup>
+		<Error Condition="'$(_SynixStandaloneSha256)' == ''" Text="The standalone SHA-256 hash could not be created." />
+		<Error Condition="'$(_SynixMsiSha256)' == ''" Text="The MSI SHA-256 hash could not be created." />
+		<ItemGroup>
+			<_SynixReleaseManifestLine Include="FormatVersion=2" />
+			<_SynixReleaseManifestLine Include="Version=$(Version)" />
+			<_SynixReleaseManifestLine Include="Channel=$(SynixBuildChannel)" />
+			<_SynixReleaseManifestLine Include="AutomatedTests=Passed" />
+			<_SynixReleaseManifestLine Include="AutomatedTestsUtc=$(_SynixAutomatedTestsUtc)" />
+			<_SynixReleaseManifestLine Include="StandaloneFile=$(AssemblyName).exe" />
+			<_SynixReleaseManifestLine Include="StandaloneSha256=$(_SynixStandaloneSha256)" />
+			<_SynixReleaseManifestLine Include="MsiFile=SynixSetup.msi" />
+			<_SynixReleaseManifestLine Include="MsiSha256=$(_SynixMsiSha256)" />
+		</ItemGroup>
+		<WriteLinesToFile File="$(_SynixReleaseManifest)" Lines="@(_SynixReleaseManifestLine)" Overwrite="true" Encoding="UTF-8" />
+		<Copy SourceFiles="$(_SynixReleaseManifest)" DestinationFiles="$(_SynixReleaseManifestBackup)" />
+		<Error Condition="!Exists('$(_SynixReleaseManifest)')" Text="The Synix release manifest was not created at $(_SynixReleaseManifest)." />
+		<Error Condition="!Exists('$(_SynixReleaseManifestBackup)')" Text="The backup release manifest was not created at $(_SynixReleaseManifestBackup)." />
+		<Message Text="Synix release manifest created at $(_SynixReleaseManifest)." Importance="high" />
 	</Target>
 </Project>

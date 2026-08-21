@@ -1,16 +1,17 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
+using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 
@@ -27,16 +28,24 @@ namespace Synix_Control_Panel.SynixEngine
 		public double TotalRamUsageGb { get; set; }
 		public bool isDownloadActive = false;
 		public static double TotalRamGb { get; set; }
-		private System.Windows.Forms.Timer _heartbeatTimer;
-		private Dictionary<string, bool> _activePlayerQueries = new Dictionary<string, bool>();
-		private Dictionary<string, DateTime> _lastRamWarning = new Dictionary<string, DateTime>();
+		private System.Threading.Timer _heartbeatTimer;
+		private readonly ConcurrentDictionary<string, byte> _activePlayerQueries = new(StringComparer.OrdinalIgnoreCase);
+		private readonly ConcurrentDictionary<string, DateTime> _lastRamWarning = new(StringComparer.OrdinalIgnoreCase);
+		private readonly SemaphoreSlim _maintenanceLock = new(1, 1);
+		public static readonly string RootPath = @"C:\Synix";
+		public static string DataPath => Path.Combine(RootPath, "SynixData");
+		public static string LogsPath => Path.Combine(DataPath, "logs");
+		public static string GameIconsPath => Path.Combine(DataPath, "GameIcons");
+		public static string RuntimesPath => Path.Combine(DataPath, "Runtimes");
+		public static string SteamCmdPath => Path.Combine(RootPath, "SteamCMD");
+		public static string SteamCmdExe => Path.Combine(SteamCmdPath, "steamcmd.exe");
+		public static string DefaultBackupPath => Path.Combine(RootPath, "BackupGames");
+		public static string GamesPath => Path.Combine(RootPath, "Games");
 
 		private Core()
 		{
 			_instance = this;
-			_heartbeatTimer = new System.Windows.Forms.Timer { Interval = 1000 };
-			_heartbeatTimer.Tick += Heartbeat_Tick;
-			_heartbeatTimer.Start();
+			_heartbeatTimer = new System.Threading.Timer(Heartbeat_Tick, null, 1000, Timeout.Infinite);
 		}
 
 		public void Log(string message, Color? color = null, bool bold = false)
@@ -49,7 +58,24 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task SendDiscordAlert(GameServer server, string title, string message, Color color)
 		{
-			if (!server.IsDiscordAlertEnabled || string.IsNullOrWhiteSpace(server.DiscordWebhook))
+			if (!server.IsDiscordAlertEnabled)
+				return;
+
+			string discordWebhook;
+			try
+			{
+				discordWebhook = Core
+					.RevealDiscordWebhook(server);
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				Log(
+					"[👾 DISCORD ERROR] Synix could not unlock this server's saved Discord webhook. Re-enter it in Server Settings.",
+					Color.Red);
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(discordWebhook))
 				return;
 
 			int discordColor = (color.R << 16) | (color.G << 8) | color.B;
@@ -72,46 +98,59 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				string json = JsonSerializer.Serialize(payload);
-				var content = new StringContent(json, Encoding.UTF8, "application/json");
+				using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-				var response = await _discordClient.PostAsync(server.DiscordWebhook, content);
+				using var response = await _discordClient.PostAsync(discordWebhook, content);
 
 				if (!response.IsSuccessStatusCode)
 				{
 					Log($"[👾 DISCORD] Webhook failed: {response.StatusCode}", Color.Red);
 				}
 			}
-			catch (Exception ex)
+			catch (Exception exception)
 			{
-				Log($"[👾 DISCORD ERROR] {ex.Message}", Color.Red);
+				Log(
+					$"[👾 DISCORD ERROR] Discord delivery failed ({exception.GetType().Name}).",
+					Color.Red);
 			}
 		}
 
-		private void Heartbeat_Tick(object? sender, EventArgs e)
+		private void Heartbeat_Tick(object? state)
 		{
-			_heartbeatTimer.Stop();
-
 			try
 			{
 				PerformWatchdogCheck();
 				UpdateResourceStats();
-				PerformMaintenanceCheck();
-				CheckForDDoS();
+				_ = PerformMaintenanceCheckAsync();
 
-				foreach (GameServer server in MainGUI.serverList)
+				if (Properties.Settings.Default.CheckDDoS)
+				{
+					CheckForDDoS();
+				}
+
+				foreach (GameServer server in MainGUI.serverList.ToList())
 				{
 					if (server.Status == StatusManager.GetStatus(ServerState.Running))
 					{
 						string srvId = server.ServerName ?? "unknown_server";
 
-						if (!_activePlayerQueries.TryGetValue(srvId, out bool isQuerying) || !isQuerying)
+						if (_activePlayerQueries.TryAdd(srvId, 0))
 						{
-							_activePlayerQueries[srvId] = true;
-
-							Task.Run(async () =>
+							_ = Task.Run(async () =>
 							{
-								try { await UpdatePlayerCount(server); }
-								finally { _activePlayerQueries[srvId] = false; }
+								try
+								{
+									await UpdatePlayerCount(server);
+								}
+								catch (Exception ex)
+								{
+									System.Diagnostics.Debug.WriteLine(
+										$"[PLAYER QUERY ERROR] {server.ServerName}: {ex}");
+								}
+								finally
+								{
+									_activePlayerQueries.TryRemove(srvId, out _);
+								}
 							});
 						}
 
@@ -133,41 +172,67 @@ namespace Synix_Control_Panel.SynixEngine
 
 				UpdateGridStatus();
 			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"[HEARTBEAT ERROR] {ex}");
+			}
 			finally
 			{
-				_heartbeatTimer.Start();
+				_heartbeatTimer?.Change(1000, Timeout.Infinite);
 			}
 		}
 
-		private async void PerformMaintenanceCheck()
+		private async Task PerformMaintenanceCheckAsync()
 		{
-			DateTime now = DateTime.Now;
-			string currentTime = now.ToString("HH:mm");
-			string todayBookmark = now.ToString("yyyy-MM-dd");
-			int dayIndex = (int)now.DayOfWeek;
+			if (!await _maintenanceLock.WaitAsync(0))
+				return;
 
-			foreach (GameServer server in MainGUI.serverList)
+			try
 			{
-				if (server.IsScheduledRestartEnabled &&
-					server.RestartDays[dayIndex] &&
-					server.RestartTime == currentTime &&
-					server.LastMaintenanceDate != todayBookmark)
+				DateTime now = DateTime.Now;
+				string currentTime = now.ToString("HH:mm");
+				string todayBookmark = now.ToString("yyyy-MM-dd");
+				int dayIndex = (int)now.DayOfWeek;
+
+				foreach (GameServer server in MainGUI.serverList.ToList())
 				{
-					server.LastMaintenanceDate = todayBookmark;
+					bool hasValidRestartDays =
+						server.RestartDays != null &&
+						server.RestartDays.Length > dayIndex;
 
-					_ = SendDiscordAlert(server, "SCHEDULED RESTART",
-						"Weekly maintenance is starting now. The server will be back online shortly.", Color.Cyan);
+					if (server.IsScheduledRestartEnabled &&
+						hasValidRestartDays &&
+						server.RestartDays[dayIndex] &&
+						server.RestartTime == currentTime &&
+						server.LastMaintenanceDate != todayBookmark)
+					{
+						server.LastMaintenanceDate = todayBookmark;
 
-					Log($"[SYNIX] Scheduled weekly maintenance triggered for {server.ServerName}.");
-					await ExecuteStartSequence(server);
+						_ = SendDiscordAlert(
+							server,
+							"SCHEDULED RESTART",
+							"Weekly maintenance is starting now. The server will be back online shortly.",
+							Color.Cyan);
+
+						Log($"[SYNIX] Scheduled weekly maintenance triggered for {server.ServerName}.");
+
+						await ExecuteStartSequence(server, "MAINTENANCE");
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"[MAINTENANCE ERROR] {ex}");
+			}
+			finally
+			{
+				_maintenanceLock.Release();
 			}
 		}
 
 		public static bool IsSystemSafeToStart()
 		{
-			// 🎯 1. CPU GUARD (85% Global Limit)
-			// We check the entire system load so Synix doesn't crash a busy host.
+
 			double globalCpu = ResourceMonitor.GetGlobalCpuUsage();
 
 			if (globalCpu >= 85.0)
@@ -181,22 +246,16 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			// 🎯 2. RAM GUARD (85% Usable Pool Limit)
-			// Get the REAL hardware total (e.g., 32GB)
 			double physicalRamGb = ResourceMonitor.GetTotalSystemRamGB();
 
-			// Apply your new 5GB Windows overhead
 			double usablePool = physicalRamGb - 5.0;
 			if (usablePool < 1) usablePool = physicalRamGb;
 
-			// Get the current usage from ALL running servers
 			var usage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
 			double usedGb = usage.TotalRamMB / 1024.0;
 
-			// THE MATH: Percentage of the usable pool used by servers
 			double ramUsagePercent = (usedGb / usablePool) * 100.0;
 
-			// Setting this to 85.0 RAM limit
 			if (ramUsagePercent >= 85.0)
 			{
 				MessageBox.Show(

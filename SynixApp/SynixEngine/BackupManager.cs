@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -20,7 +20,7 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		public async Task ExecuteBackup(GameServer server, StartContext context)
 		{
-			if (context == StartContext.CrashRecovery && server.BackupOnStart) return;
+			if (context == StartContext.CrashRecovery) return;
 
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
@@ -35,13 +35,11 @@ namespace Synix_Control_Panel.SynixEngine
 			server.Status = StatusManager.GetStatus(Core.ServerState.BackingUp);
 			UpdateGridStatus();
 
-			if (context == StartContext.CrashRecovery) return;
-
 			string sourceDir = server.InstallPath;
 
 			string cleanGame = GetSafeName(server.Game);
 			string cleanServer = GetSafeName(server.ServerName);
-			string baseBackupFolder = @"C:\Synix\BackupGames";
+			string baseBackupFolder = DefaultBackupPath;
 
 			if (Properties.Settings.Default.UseCustomBackupPath &&
 				!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&
@@ -85,6 +83,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				System.Diagnostics.Debug.WriteLine($"[BACKUP ERROR] {ex.Message}");
 			}
+
 			server.Status = StatusManager.GetStatus(Core.ServerState.Stopped);
 			isDownloadActive = false;
 			Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
@@ -96,7 +95,6 @@ namespace Synix_Control_Panel.SynixEngine
 			if (string.IsNullOrWhiteSpace(name)) return "Unknown";
 			string cleanName = name.Replace(" ", "_").Replace(":", "_");
 
-			// Strip out any illegal Windows path characters (like <, >, *, ?, ", \, |, /)
 			foreach (char c in System.IO.Path.GetInvalidFileNameChars())
 			{
 				cleanName = cleanName.Replace(c.ToString(), "");
