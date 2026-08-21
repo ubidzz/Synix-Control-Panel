@@ -6,6 +6,7 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -30,6 +31,27 @@ namespace Synix_Control_Panel.SynixEngine
 		private const int KeySize = 32;
 		private const int ChunkSize = 1024 * 1024;
 		private const int Pbkdf2Iterations = 600_000;
+		private const int RecoveryJournalVersion = 1;
+		private const string RecoveryFolderName = ".synix-transfer-recovery";
+		private const string RecoveryJournalFileName = "journal.json";
+		private const string RecoveryStatePrepared = "Prepared";
+		private const string RecoveryStateCommitting = "Committing";
+		private const string RecoveryStateCommitted = "Committed";
+
+		private sealed class ImportRecoveryJournal
+		{
+			public int Version { get; set; } = RecoveryJournalVersion;
+			public string DestinationRoot { get; set; } = string.Empty;
+			public string OperationId { get; set; } = string.Empty;
+			public string State { get; set; } = RecoveryStatePrepared;
+			public List<ImportRecoveryEntry> Entries { get; set; } = [];
+		}
+
+		private sealed class ImportRecoveryEntry
+		{
+			public string RelativePath { get; set; } = string.Empty;
+			public bool ExistedBeforeImport { get; set; }
+		}
 
 		public static async Task ExportAsync(
 			string sourceDirectory,
@@ -127,9 +149,13 @@ namespace Synix_Control_Panel.SynixEngine
 					packagePath);
 			}
 
+			string operationId = Guid.NewGuid().ToString("N");
 			string temporaryZip = Path.Combine(
 				Path.GetTempPath(),
-				$"synix-import-{Guid.NewGuid():N}.zip.tmp");
+				$"synix-import-{operationId}.zip.tmp");
+			string stagingDirectory = Path.Combine(
+				Path.GetTempPath(),
+				$"synix-import-{operationId}.stage");
 
 			try
 			{
@@ -145,12 +171,23 @@ namespace Synix_Control_Panel.SynixEngine
 					cancellationToken).ConfigureAwait(false);
 
 				progress?.Report(new(
-					"Restoring Synix files...",
+					"Preparing restored files...",
 					70));
 
 				await ExtractArchiveAsync(
 					temporaryZip,
+					stagingDirectory,
+					progress,
+					cancellationToken).ConfigureAwait(false);
+
+				progress?.Report(new(
+					"Safely applying restored files...",
+					90));
+
+				await CommitStagedImportAsync(
+					stagingDirectory,
 					destinationDirectory,
+					operationId,
 					progress,
 					cancellationToken).ConfigureAwait(false);
 
@@ -173,7 +210,71 @@ namespace Synix_Control_Panel.SynixEngine
 			finally
 			{
 				TryDeleteFile(temporaryZip);
+				TryDeleteDirectory(stagingDirectory);
 			}
+		}
+
+		/// <summary>
+		/// Rolls back any import that was interrupted after it began replacing
+		/// files. This must run before Synix loads servers from disk.
+		/// </summary>
+		public static async Task<bool> RecoverInterruptedImportAsync(
+			string destinationDirectory,
+			CancellationToken cancellationToken = default)
+		{
+			string destinationRoot = GetDirectoryRoot(destinationDirectory);
+			string recoveryRoot = Path.Combine(
+				destinationRoot,
+				RecoveryFolderName);
+			if (!Directory.Exists(recoveryRoot))
+			{
+				return false;
+			}
+
+			bool rollbackPerformed = false;
+			foreach (string operationDirectory in Directory
+				.EnumerateDirectories(recoveryRoot)
+				.OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				string journalPath = Path.Combine(
+					operationDirectory,
+					RecoveryJournalFileName);
+
+				if (!File.Exists(journalPath))
+				{
+					TryDeleteDirectory(operationDirectory);
+					continue;
+				}
+
+				ImportRecoveryJournal journal = await ReadJournalAsync(
+					journalPath,
+					cancellationToken).ConfigureAwait(false);
+				ValidateRecoveryJournal(
+					journal,
+					destinationRoot,
+					operationDirectory);
+
+				if (journal.State == RecoveryStateCommitting)
+				{
+					await RollBackImportAsync(
+						journal,
+						operationDirectory,
+						cancellationToken).ConfigureAwait(false);
+					rollbackPerformed = true;
+				}
+				else if (journal.State != RecoveryStatePrepared &&
+					journal.State != RecoveryStateCommitted)
+				{
+					throw new InvalidDataException(
+						"Synix found an invalid import recovery journal.");
+				}
+
+				TryDeleteDirectory(operationDirectory);
+			}
+
+			TryDeleteDirectoryIfEmpty(recoveryRoot);
+			return rollbackPerformed;
 		}
 
 		private static async Task CreateArchiveAsync(
@@ -182,6 +283,9 @@ namespace Synix_Control_Panel.SynixEngine
 			IProgress<SynixTransferProgress>? progress,
 			CancellationToken cancellationToken)
 		{
+			string recoveryRoot = Path.Combine(
+				sourceRoot,
+				RecoveryFolderName);
 			List<FileInfo> files = Directory
 				.EnumerateFiles(
 					sourceRoot,
@@ -192,6 +296,7 @@ namespace Synix_Control_Panel.SynixEngine
 						IgnoreInaccessible = false,
 						AttributesToSkip = FileAttributes.ReparsePoint
 					})
+				.Where(path => !IsInsideDirectory(path, recoveryRoot))
 				.Select(path => new FileInfo(path))
 				.ToList();
 
@@ -480,6 +585,17 @@ namespace Synix_Control_Panel.SynixEngine
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
+				string normalizedEntryName = entry.FullName.Replace('\\', '/');
+				string firstPathPart = normalizedEntryName
+					.Split('/', StringSplitOptions.RemoveEmptyEntries)
+					.FirstOrDefault() ?? string.Empty;
+				if (firstPathPart.Equals(
+					RecoveryFolderName,
+					StringComparison.OrdinalIgnoreCase))
+				{
+					throw new InvalidDataException(
+						"The package contains reserved Synix recovery files.");
+				}
 
 				string destinationPath = Path.GetFullPath(
 					Path.Combine(destinationRoot, entry.FullName));
@@ -519,8 +635,8 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						long current = completedBytes + bytesCopied;
 						int percent = 70 + (int)Math.Min(
-							29,
-							current * 29 / totalBytes);
+							19,
+							current * 19 / totalBytes);
 						progress?.Report(new(
 							$"Restoring {entry.FullName}...",
 							percent));
@@ -529,6 +645,493 @@ namespace Synix_Control_Panel.SynixEngine
 
 				completedBytes += entry.Length;
 				File.SetLastWriteTime(destinationPath, entry.LastWriteTime.LocalDateTime);
+			}
+		}
+
+		private static async Task CommitStagedImportAsync(
+			string stagingDirectory,
+			string destinationDirectory,
+			string operationId,
+			IProgress<SynixTransferProgress>? progress,
+			CancellationToken cancellationToken)
+		{
+			string stagingRoot = GetDirectoryRoot(stagingDirectory);
+			string destinationRoot = GetDirectoryRoot(destinationDirectory);
+			Directory.CreateDirectory(destinationRoot);
+
+			string recoveryRoot = Path.Combine(
+				destinationRoot,
+				RecoveryFolderName);
+			string operationDirectory = Path.Combine(
+				recoveryRoot,
+				operationId);
+			string rollbackDirectory = Path.Combine(
+				operationDirectory,
+				"rollback");
+			string journalPath = Path.Combine(
+				operationDirectory,
+				RecoveryJournalFileName);
+			Directory.CreateDirectory(rollbackDirectory);
+
+			List<FileInfo> stagedFiles = Directory
+				.EnumerateFiles(
+					stagingRoot,
+					"*",
+					SearchOption.AllDirectories)
+				.Select(path => new FileInfo(path))
+				.OrderBy(
+					file => Path.GetRelativePath(stagingRoot, file.FullName),
+					StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			ImportRecoveryJournal journal = new()
+			{
+				DestinationRoot = destinationRoot,
+				OperationId = operationId,
+				State = RecoveryStatePrepared
+			};
+
+			bool commitStarted = false;
+			bool commitCompleted = false;
+			bool safeToCleanRecovery = false;
+			try
+			{
+				foreach (FileInfo stagedFile in stagedFiles)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					string relativePath = Path.GetRelativePath(
+						stagingRoot,
+						stagedFile.FullName);
+					string destinationPath = GetSafeImportPath(
+						destinationRoot,
+						relativePath);
+					EnsureNoNestedReparsePoint(
+						destinationRoot,
+						destinationPath);
+
+					bool existed = File.Exists(destinationPath);
+					journal.Entries.Add(new()
+					{
+						RelativePath = relativePath,
+						ExistedBeforeImport = existed
+					});
+
+					if (!existed)
+					{
+						continue;
+					}
+
+					string rollbackPath = GetSafeImportPath(
+						GetDirectoryRoot(rollbackDirectory),
+						relativePath);
+					Directory.CreateDirectory(
+						Path.GetDirectoryName(rollbackPath)!);
+					await CopyFileDurablyAsync(
+						destinationPath,
+						rollbackPath,
+						FileMode.Create,
+						cancellationToken).ConfigureAwait(false);
+					File.SetLastWriteTimeUtc(
+						rollbackPath,
+						File.GetLastWriteTimeUtc(destinationPath));
+				}
+
+				await WriteJournalAsync(
+					journalPath,
+					journal,
+					cancellationToken).ConfigureAwait(false);
+
+				journal.State = RecoveryStateCommitting;
+				await WriteJournalAsync(
+					journalPath,
+					journal,
+					cancellationToken).ConfigureAwait(false);
+				commitStarted = true;
+
+				long totalBytes = Math.Max(
+					1,
+					stagedFiles.Sum(file => file.Length));
+				long completedBytes = 0;
+				foreach (FileInfo stagedFile in stagedFiles)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					string relativePath = Path.GetRelativePath(
+						stagingRoot,
+						stagedFile.FullName);
+					string destinationPath = GetSafeImportPath(
+						destinationRoot,
+						relativePath);
+					EnsureNoNestedReparsePoint(
+						destinationRoot,
+						destinationPath);
+					Directory.CreateDirectory(
+						Path.GetDirectoryName(destinationPath)!);
+
+					string temporaryPath = GetImportTemporaryPath(
+						destinationPath,
+						operationId);
+					TryDeleteFile(temporaryPath);
+					await CopyFileDurablyAsync(
+						stagedFile.FullName,
+						temporaryPath,
+						FileMode.CreateNew,
+						cancellationToken).ConfigureAwait(false);
+					File.SetLastWriteTimeUtc(
+						temporaryPath,
+						stagedFile.LastWriteTimeUtc);
+					File.Move(
+						temporaryPath,
+						destinationPath,
+						true);
+
+					completedBytes += stagedFile.Length;
+					int percent = 90 + (int)Math.Min(
+						9,
+						completedBytes * 9 / totalBytes);
+					progress?.Report(new(
+						$"Applying {relativePath}...",
+						percent));
+				}
+
+				journal.State = RecoveryStateCommitted;
+				await WriteJournalAsync(
+					journalPath,
+					journal,
+					cancellationToken).ConfigureAwait(false);
+				commitCompleted = true;
+				safeToCleanRecovery = true;
+			}
+			catch (Exception importException)
+			{
+				if (!commitStarted || commitCompleted)
+				{
+					safeToCleanRecovery = true;
+					throw;
+				}
+
+				try
+				{
+					await RollBackImportAsync(
+						journal,
+						operationDirectory,
+						CancellationToken.None).ConfigureAwait(false);
+					safeToCleanRecovery = true;
+				}
+				catch (Exception rollbackException)
+				{
+					throw new AggregateException(
+						"The import failed and Synix could not finish the immediate rollback. " +
+						"Do not remove the recovery folder; Synix will retry recovery the next time it starts.",
+						importException,
+						rollbackException);
+				}
+
+				throw;
+			}
+			finally
+			{
+				if (safeToCleanRecovery)
+				{
+					TryDeleteDirectory(operationDirectory);
+					TryDeleteDirectoryIfEmpty(recoveryRoot);
+				}
+			}
+		}
+
+		private static async Task RollBackImportAsync(
+			ImportRecoveryJournal journal,
+			string operationDirectory,
+			CancellationToken cancellationToken)
+		{
+			string destinationRoot = GetDirectoryRoot(journal.DestinationRoot);
+			string rollbackRoot = GetDirectoryRoot(
+				Path.Combine(operationDirectory, "rollback"));
+
+			foreach (ImportRecoveryEntry entry in journal.Entries
+				.AsEnumerable()
+				.Reverse())
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				string destinationPath = GetSafeImportPath(
+					destinationRoot,
+					entry.RelativePath);
+				EnsureNoNestedReparsePoint(
+					destinationRoot,
+					destinationPath);
+				TryDeleteFile(GetImportTemporaryPath(
+					destinationPath,
+					journal.OperationId));
+
+				if (!entry.ExistedBeforeImport)
+				{
+					if (File.Exists(destinationPath))
+					{
+						File.Delete(destinationPath);
+					}
+					continue;
+				}
+
+				string rollbackPath = GetSafeImportPath(
+					rollbackRoot,
+					entry.RelativePath);
+				if (!File.Exists(rollbackPath))
+				{
+					throw new InvalidDataException(
+						$"The rollback copy is missing for {entry.RelativePath}.");
+				}
+
+				Directory.CreateDirectory(
+					Path.GetDirectoryName(destinationPath)!);
+				string restoreTemporaryPath = GetImportTemporaryPath(
+					destinationPath,
+					journal.OperationId);
+				await CopyFileDurablyAsync(
+					rollbackPath,
+					restoreTemporaryPath,
+					FileMode.Create,
+					cancellationToken).ConfigureAwait(false);
+				File.SetLastWriteTimeUtc(
+					restoreTemporaryPath,
+					File.GetLastWriteTimeUtc(rollbackPath));
+				File.Move(
+					restoreTemporaryPath,
+					destinationPath,
+					true);
+			}
+
+			RemoveEmptyImportedDirectories(
+				destinationRoot,
+				journal.Entries.Where(entry => !entry.ExistedBeforeImport));
+		}
+
+		private static async Task CopyFileDurablyAsync(
+			string sourcePath,
+			string destinationPath,
+			FileMode destinationMode,
+			CancellationToken cancellationToken)
+		{
+			await using FileStream input = new(
+				sourcePath,
+				FileMode.Open,
+				FileAccess.Read,
+				FileShare.ReadWrite | FileShare.Delete,
+				131072,
+				FileOptions.Asynchronous | FileOptions.SequentialScan);
+			await using FileStream output = new(
+				destinationPath,
+				destinationMode,
+				FileAccess.Write,
+				FileShare.None,
+				131072,
+				FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+			await input.CopyToAsync(
+				output,
+				131072,
+				cancellationToken).ConfigureAwait(false);
+			await output.FlushAsync(cancellationToken).ConfigureAwait(false);
+			output.Flush(flushToDisk: true);
+		}
+
+		private static async Task WriteJournalAsync(
+			string journalPath,
+			ImportRecoveryJournal journal,
+			CancellationToken cancellationToken)
+		{
+			string temporaryPath = journalPath + ".tmp";
+			byte[] json = JsonSerializer.SerializeToUtf8Bytes(
+				journal,
+				new JsonSerializerOptions { WriteIndented = true });
+
+			try
+			{
+				await using FileStream output = new(
+					temporaryPath,
+					FileMode.Create,
+					FileAccess.Write,
+					FileShare.None,
+					4096,
+					FileOptions.Asynchronous | FileOptions.WriteThrough);
+				await output.WriteAsync(
+					json,
+					cancellationToken).ConfigureAwait(false);
+				await output.FlushAsync(cancellationToken).ConfigureAwait(false);
+				output.Flush(flushToDisk: true);
+			}
+			finally
+			{
+				CryptographicOperations.ZeroMemory(json);
+			}
+
+			File.Move(temporaryPath, journalPath, true);
+		}
+
+		private static async Task<ImportRecoveryJournal> ReadJournalAsync(
+			string journalPath,
+			CancellationToken cancellationToken)
+		{
+			await using FileStream input = new(
+				journalPath,
+				FileMode.Open,
+				FileAccess.Read,
+				FileShare.Read,
+				4096,
+				FileOptions.Asynchronous | FileOptions.SequentialScan);
+			ImportRecoveryJournal? journal = await JsonSerializer
+				.DeserializeAsync<ImportRecoveryJournal>(
+					input,
+					cancellationToken: cancellationToken)
+				.ConfigureAwait(false);
+			return journal ?? throw new InvalidDataException(
+				"Synix found an empty import recovery journal.");
+		}
+
+		private static void ValidateRecoveryJournal(
+			ImportRecoveryJournal journal,
+			string expectedDestinationRoot,
+			string operationDirectory)
+		{
+			if (journal.Version != RecoveryJournalVersion ||
+				string.IsNullOrWhiteSpace(journal.OperationId) ||
+				!Path.GetFileName(operationDirectory).Equals(
+					journal.OperationId,
+					StringComparison.OrdinalIgnoreCase) ||
+				!GetDirectoryRoot(journal.DestinationRoot).Equals(
+					expectedDestinationRoot,
+					StringComparison.OrdinalIgnoreCase))
+			{
+				throw new InvalidDataException(
+					"Synix found an invalid import recovery journal.");
+			}
+
+			HashSet<string> uniquePaths = new(
+				StringComparer.OrdinalIgnoreCase);
+			foreach (ImportRecoveryEntry entry in journal.Entries)
+			{
+				_ = GetSafeImportPath(
+					expectedDestinationRoot,
+					entry.RelativePath);
+				if (!uniquePaths.Add(entry.RelativePath))
+				{
+					throw new InvalidDataException(
+						"The import recovery journal contains duplicate files.");
+				}
+			}
+		}
+
+		private static string GetSafeImportPath(
+			string directoryRoot,
+			string relativePath)
+		{
+			if (string.IsNullOrWhiteSpace(relativePath) ||
+				Path.IsPathRooted(relativePath) ||
+				IsReservedRecoveryPath(relativePath))
+			{
+				throw new InvalidDataException(
+					"The import contains an unsafe or reserved file path.");
+			}
+
+			string fullRoot = GetDirectoryRoot(directoryRoot);
+			string fullPath = Path.GetFullPath(
+				Path.Combine(fullRoot, relativePath));
+			if (!fullPath.StartsWith(
+					fullRoot,
+					StringComparison.OrdinalIgnoreCase))
+			{
+				throw new InvalidDataException(
+					"The import contains a file outside its destination.");
+			}
+
+			return fullPath;
+		}
+
+		private static string GetDirectoryRoot(string directory)
+		{
+			return Path.GetFullPath(directory)
+				.TrimEnd(
+					Path.DirectorySeparatorChar,
+					Path.AltDirectorySeparatorChar) +
+				Path.DirectorySeparatorChar;
+		}
+
+		private static bool IsReservedRecoveryPath(string relativePath)
+		{
+			string firstPart = relativePath
+				.Replace('\\', '/')
+				.Split('/', StringSplitOptions.RemoveEmptyEntries)
+				.FirstOrDefault() ?? string.Empty;
+			return firstPart.Equals(
+				RecoveryFolderName,
+				StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static void EnsureNoNestedReparsePoint(
+			string destinationRoot,
+			string destinationPath)
+		{
+			if (File.Exists(destinationPath) &&
+				(File.GetAttributes(destinationPath) &
+				 FileAttributes.ReparsePoint) != 0)
+			{
+				throw new InvalidDataException(
+					"Synix cannot import through a linked file path.");
+			}
+
+			string rootWithoutSeparator = destinationRoot.TrimEnd(
+				Path.DirectorySeparatorChar,
+				Path.AltDirectorySeparatorChar);
+			string? current = Path.GetDirectoryName(destinationPath);
+			while (!string.IsNullOrEmpty(current) &&
+				!current.Equals(
+					rootWithoutSeparator,
+					StringComparison.OrdinalIgnoreCase))
+			{
+				if (Directory.Exists(current) &&
+					(File.GetAttributes(current) &
+					 FileAttributes.ReparsePoint) != 0)
+				{
+					throw new InvalidDataException(
+						"Synix cannot import through a linked folder path.");
+				}
+
+				current = Path.GetDirectoryName(current);
+			}
+		}
+
+		private static string GetImportTemporaryPath(
+			string destinationPath,
+			string operationId)
+		{
+			return destinationPath + $".synix-import-{operationId}.tmp";
+		}
+
+		private static void RemoveEmptyImportedDirectories(
+			string destinationRoot,
+			IEnumerable<ImportRecoveryEntry> newEntries)
+		{
+			foreach (string directory in newEntries
+				.Select(entry => Path.GetDirectoryName(
+					GetSafeImportPath(destinationRoot, entry.RelativePath)))
+				.Where(directory => !string.IsNullOrEmpty(directory))
+				.Cast<string>()
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.OrderByDescending(directory => directory.Length))
+			{
+				string? current = directory;
+				while (!string.IsNullOrEmpty(current) &&
+					!current.Equals(
+						destinationRoot.TrimEnd(Path.DirectorySeparatorChar),
+						StringComparison.OrdinalIgnoreCase))
+				{
+					if (!Directory.Exists(current) ||
+						Directory.EnumerateFileSystemEntries(current).Any())
+					{
+						break;
+					}
+
+					Directory.Delete(current);
+					current = Path.GetDirectoryName(current);
+				}
 			}
 		}
 
@@ -665,6 +1268,37 @@ namespace Synix_Control_Panel.SynixEngine
 			catch
 			{
 				// A failed cleanup must not hide the original operation result.
+			}
+		}
+
+		private static void TryDeleteDirectory(string path)
+		{
+			try
+			{
+				if (Directory.Exists(path))
+				{
+					Directory.Delete(path, recursive: true);
+				}
+			}
+			catch
+			{
+				// Recovery data is intentionally retained if cleanup cannot finish.
+			}
+		}
+
+		private static void TryDeleteDirectoryIfEmpty(string path)
+		{
+			try
+			{
+				if (Directory.Exists(path) &&
+					!Directory.EnumerateFileSystemEntries(path).Any())
+				{
+					Directory.Delete(path);
+				}
+			}
+			catch
+			{
+				// Leaving an empty recovery folder is harmless.
 			}
 		}
 	}

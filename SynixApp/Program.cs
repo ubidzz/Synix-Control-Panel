@@ -18,11 +18,43 @@ namespace Synix_Control_Panel.SynixApp
 {
 	static class Program
 	{
+		private const string SingleInstanceMutexName = @"Local\SynixControlPanel.SingleInstance";
+		private static Mutex? _singleInstanceMutex;
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
 		static void Main()
+		{
+			_singleInstanceMutex = new Mutex(
+				initiallyOwned: true,
+				SingleInstanceMutexName,
+				out bool isFirstInstance);
+
+			if (!isFirstInstance)
+			{
+				_singleInstanceMutex.Dispose();
+				_singleInstanceMutex = null;
+				MessageBox.Show(
+					"Synix is already running. Please use the existing Synix window.",
+					"Synix Already Running",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return;
+			}
+
+			try
+			{
+				RunSynix();
+			}
+			finally
+			{
+				ReleaseSingleInstanceMutex();
+			}
+		}
+
+		private static void RunSynix()
 		{
 			// 🛡️ 1. CATCH UI THREAD CRASHES
 			// Catches things like bad button clicks or grid rendering errors
@@ -39,6 +71,34 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
+				bool importRolledBack = SynixTransferPackage
+					.RecoverInterruptedImportAsync(Core.RootPath)
+					.GetAwaiter()
+					.GetResult();
+
+				if (importRolledBack)
+				{
+					MessageBox.Show(
+						"Synix detected an interrupted import and safely restored the previous files before starting.",
+						"Synix Import Recovered",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Information);
+				}
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					"Synix found an interrupted import but could not safely restore the previous files. " +
+					"Synix will not start to avoid using incomplete data.\n\n" +
+					exception.Message,
+					"Synix Import Recovery Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
+
+			try
+			{
 				Application.Run(new MainGUI());
 			}
 			finally
@@ -47,6 +107,23 @@ namespace Synix_Control_Panel.SynixApp
 				FileHandler.FlushLogsAsync()
 					.GetAwaiter()
 					.GetResult();
+			}
+		}
+
+		private static void ReleaseSingleInstanceMutex()
+		{
+			try
+			{
+				_singleInstanceMutex?.ReleaseMutex();
+			}
+			catch (ApplicationException)
+			{
+				// The operating system will release ownership when Synix exits.
+			}
+			finally
+			{
+				_singleInstanceMutex?.Dispose();
+				_singleInstanceMutex = null;
 			}
 		}
 
