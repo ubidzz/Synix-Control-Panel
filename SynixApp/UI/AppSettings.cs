@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
@@ -34,6 +35,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private const int ResizeBorder = 7;
 
 		private bool _loadingSettings;
+		private bool _transferInProgress;
 
 		public AppSettings()
 		{
@@ -116,6 +118,11 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (keyData == Keys.Escape)
 			{
+				if (_transferInProgress)
+				{
+					return true;
+				}
+
 				Close();
 				return true;
 			}
@@ -135,6 +142,10 @@ namespace Synix_Control_Panel.SynixEngine
 				BrowseBackupRequested;
 			backupSettingsPage.MaximumBackupsChanged +=
 				MaximumBackupsChanged;
+			backupSettingsPage.ExportSynixRequested +=
+				ExportSynixRequested;
+			backupSettingsPage.ImportSynixRequested +=
+				ImportSynixRequested;
 			privacySettingsPage.PrivacyModeChanged +=
 				PrivacyModeChanged;
 			privacySettingsPage.CheckForDDoSChanged +=
@@ -218,7 +229,7 @@ namespace Synix_Control_Panel.SynixEngine
 				backupSettingsPage,
 				btnBackups,
 				"Backups",
-				"Choose where backups are stored and how many Synix retains.");
+				"Manage server backups or move Synix to another computer.");
 		}
 
 		private void btnPrivacy_Click(object? sender, EventArgs eventArgs)
@@ -246,7 +257,23 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void btnClose_Click(object? sender, EventArgs eventArgs)
 		{
+			if (_transferInProgress)
+			{
+				return;
+			}
+
 			Close();
+		}
+
+		protected override void OnFormClosing(FormClosingEventArgs eventArgs)
+		{
+			if (_transferInProgress)
+			{
+				eventArgs.Cancel = true;
+				return;
+			}
+
+			base.OnFormClosing(eventArgs);
 		}
 
 		private void MaximumBackupsChanged(
@@ -399,6 +426,180 @@ namespace Synix_Control_Panel.SynixEngine
 			Properties.Settings.Default.DarkMode = generalSettingsPage.DarkMode;
 			Properties.Settings.Default.Save();
 			ThemeManager.SetDarkMode(generalSettingsPage.DarkMode);
+		}
+
+		private async void ExportSynixRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (!CanTransferSynix())
+			{
+				return;
+			}
+
+			using SaveFileDialog fileDialog = new()
+			{
+				Title = "Save Synix transfer package",
+				Filter = "Synix transfer package (*.synixbackup)|*.synixbackup",
+				DefaultExt = "synixbackup",
+				AddExtension = true,
+				FileName = $"Synix-Transfer-{DateTime.Now:yyyy-MM-dd}.synixbackup",
+				OverwritePrompt = true
+			};
+
+			if (fileDialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			using TransferPasswordDialog passwordDialog = new(
+				confirmPassword: true);
+			if (passwordDialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			FileHandler.SaveServers();
+			await RunTransferOperationAsync(
+				async progress => await SynixTransferPackage.ExportAsync(
+					Core.RootPath,
+					fileDialog.FileName,
+					passwordDialog.TransferPassword,
+					progress),
+				"Export complete",
+				$"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nKeep the transfer password with this file. It cannot be recovered.");
+		}
+
+		private async void ImportSynixRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (!CanTransferSynix())
+			{
+				return;
+			}
+
+			using OpenFileDialog fileDialog = new()
+			{
+				Title = "Open Synix transfer package",
+				Filter = "Synix transfer package (*.synixbackup)|*.synixbackup",
+				CheckFileExists = true,
+				Multiselect = false
+			};
+
+			if (fileDialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			bool existingFiles = Directory.Exists(Core.RootPath) &&
+				Directory.EnumerateFileSystemEntries(Core.RootPath).Any();
+			if (existingFiles)
+			{
+				DialogResult confirmation = MessageBox.Show(
+					this,
+					"Importing will replace files with the same names in C:\\Synix. " +
+					"Other files will be left in place.\n\n" +
+					"Do you want to continue?",
+					"Import Synix Transfer",
+					MessageBoxButtons.YesNo,
+					MessageBoxIcon.Warning,
+					MessageBoxDefaultButton.Button2);
+
+				if (confirmation != DialogResult.Yes)
+				{
+					return;
+				}
+			}
+
+			using TransferPasswordDialog passwordDialog = new(
+				confirmPassword: false);
+			if (passwordDialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			bool imported = await RunTransferOperationAsync(
+				async progress => await SynixTransferPackage.ImportAsync(
+					fileDialog.FileName,
+					Core.RootPath,
+					passwordDialog.TransferPassword,
+					progress),
+				"Import complete",
+				"Your Synix files were restored. Synix will reload the transferred server list now.");
+
+			if (imported)
+			{
+				FileHandler.LoadServers();
+				MainGUI.Instance?.UpdateGrid();
+			}
+		}
+
+		private bool CanTransferSynix()
+		{
+			bool serverBusy = MainGUI.serverList.Any(server =>
+				server.Status != Core.StatusManager.GetStatus(
+					Core.ServerState.Stopped));
+			bool maintenanceBusy = Core.Instance.isDownloadActive ||
+				(MainGUI.Instance?.isDownloadActive ?? false);
+
+			if (!serverBusy && !maintenanceBusy)
+			{
+				return true;
+			}
+
+			MessageBox.Show(
+				this,
+				"Stop every game server and wait for installations, updates, validations, and backups to finish before transferring Synix.",
+				"Synix is busy",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Information);
+			return false;
+		}
+
+		private async Task<bool> RunTransferOperationAsync(
+			Func<IProgress<SynixTransferProgress>, Task> operation,
+			string successTitle,
+			string successMessage)
+		{
+			_transferInProgress = true;
+			Core.Instance.isDownloadActive = true;
+			backupSettingsPage.SetTransferBusy(true);
+
+			Progress<SynixTransferProgress> progress = new(
+				backupSettingsPage.ReportTransferProgress);
+
+			try
+			{
+				await Task.Run(async () => await operation(progress));
+
+				MessageBox.Show(
+					this,
+					successMessage,
+					successTitle,
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return true;
+			}
+			catch (Exception exception)
+			{
+				backupSettingsPage.ReportTransferProgress(new(
+					"Transfer did not complete.",
+					0));
+				MessageBox.Show(
+					this,
+					exception.Message,
+					"Synix transfer failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return false;
+			}
+			finally
+			{
+				backupSettingsPage.SetTransferBusy(false);
+				Core.Instance.isDownloadActive = false;
+				_transferInProgress = false;
+			}
 		}
 	}
 }
