@@ -19,18 +19,32 @@ namespace Synix_Control_Panel.SynixEngine
 		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
 			_exportSynixButton;
 		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
+			_normalExportButton;
+		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
 			_importSynixButton;
+		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
+			_verifyPackageButton;
 		private readonly Label _transferStatusLabel;
+		private readonly Label _transferEtaLabel;
 		private readonly ProgressBar _transferProgressBar;
+		private readonly Label _exportEstimateLabel;
+		private readonly Label _importEstimateLabel;
+		private DateTime _transferStartedUtc;
+		private bool _verifyPackageReady;
 
 		public BackupSettingsPage()
 		{
 			InitializeComponent();
 			(
 				_exportSynixButton,
+				_normalExportButton,
 				_importSynixButton,
+				_verifyPackageButton,
 				_transferStatusLabel,
-				_transferProgressBar) = CreateTransferCard();
+				_transferEtaLabel,
+				_transferProgressBar,
+				_exportEstimateLabel,
+				_importEstimateLabel) = CreateTransferCard();
 			UpdatePathState();
 		}
 
@@ -98,17 +112,66 @@ namespace Synix_Control_Panel.SynixEngine
 		}
 
 		[Browsable(false)]
+		public event EventHandler? NormalExportRequested
+		{
+			add => _normalExportButton.Click += value;
+			remove => _normalExportButton.Click -= value;
+		}
+
+		[Browsable(false)]
 		public event EventHandler? ImportSynixRequested
 		{
 			add => _importSynixButton.Click += value;
 			remove => _importSynixButton.Click -= value;
 		}
 
+		[Browsable(false)]
+		public event EventHandler? VerifyPackageRequested
+		{
+			add => _verifyPackageButton.Click += value;
+			remove => _verifyPackageButton.Click -= value;
+		}
+
+		public void SetVerifyPackageReady(bool ready)
+		{
+			_verifyPackageReady = ready;
+			_verifyPackageButton.Enabled =
+				ready && !_transferProgressBar.Visible;
+		}
+
 		public void SetTransferBusy(bool busy)
 		{
 			_exportSynixButton.Enabled = !busy;
+			_normalExportButton.Enabled = !busy;
 			_importSynixButton.Enabled = !busy;
+			_verifyPackageButton.Enabled = !busy && _verifyPackageReady;
+			_exportSynixButton.Visible = !busy;
+			_normalExportButton.Visible = !busy;
+			_importSynixButton.Visible = !busy;
+			_verifyPackageButton.Visible = !busy;
 			_transferProgressBar.Visible = busy;
+			if (busy)
+			{
+				_transferStatusLabel.Location = new Point(22, 132);
+				_transferStatusLabel.Size = new Size(774, 19);
+				_transferEtaLabel.Location = new Point(22, 151);
+				_transferEtaLabel.Size = new Size(774, 17);
+				_transferProgressBar.Location = new Point(22, 169);
+				_transferProgressBar.Size = new Size(774, 9);
+				_transferStartedUtc = DateTime.UtcNow;
+				_transferEtaLabel.Text = string.Empty;
+				_transferEtaLabel.Visible = false;
+			}
+			else
+			{
+				_transferStatusLabel.Location = new Point(570, 132);
+				_transferStatusLabel.Size = new Size(226, 19);
+				_transferEtaLabel.Location = new Point(570, 151);
+				_transferEtaLabel.Size = new Size(226, 17);
+				_transferProgressBar.Location = new Point(570, 169);
+				_transferProgressBar.Size = new Size(226, 9);
+				_transferEtaLabel.Visible = false;
+			}
 
 			if (!busy && _transferProgressBar.Value < 100)
 			{
@@ -118,8 +181,107 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void ReportTransferProgress(SynixTransferProgress progress)
 		{
+			string etaText = string.Empty;
+			if (progress.TotalBytes > 0 &&
+				progress.BytesProcessed > 0 &&
+				progress.BytesProcessed < progress.TotalBytes)
+			{
+				double elapsedSeconds = Math.Max(
+					0,
+					(DateTime.UtcNow - _transferStartedUtc).TotalSeconds);
+				if (elapsedSeconds >= 3)
+				{
+					double bytesPerSecond =
+						progress.BytesProcessed / elapsedSeconds;
+					if (bytesPerSecond > 0)
+					{
+							double remainingSeconds =
+							(progress.TotalBytes - progress.BytesProcessed) /
+							bytesPerSecond;
+						etaText =
+							$"ETA: About {FormatDuration(remainingSeconds)} remaining";
+					}
+				}
+			}
+
 			_transferStatusLabel.Text = progress.Message;
+			_transferEtaLabel.Text = etaText;
+			_transferEtaLabel.Visible =
+				_transferProgressBar.Visible && etaText.Length > 0;
 			_transferProgressBar.Value = Math.Clamp(progress.Percent, 0, 100);
+		}
+
+		public void ShowExportEstimate(
+			long sourceBytes,
+			int fileCount,
+			long estimatedPackageBytes,
+			string encryptedTime,
+			string normalTime)
+		{
+			_exportEstimateLabel.Text =
+				$"EXPORT  {FormatBytes(sourceBytes)} • {fileCount:N0} files\n" +
+				$"Encrypted: ≤{FormatBytes(estimatedPackageBytes)} • {encryptedTime}\n" +
+				$"Normal: ≤{FormatBytes(estimatedPackageBytes)} • {normalTime}";
+		}
+
+		public void ShowImportEstimate(
+			string packageName,
+			long dataBytes,
+			long additionalSpaceBytes,
+			string estimatedTime,
+			bool lowDiskFormat,
+			bool passwordProtected)
+		{
+			_importEstimateLabel.Text =
+				$"IMPORT  {packageName}\n" +
+				$"{FormatBytes(dataBytes)} • +{FormatBytes(additionalSpaceBytes)} working space • {estimatedTime}" +
+				(passwordProtected ? " • Encrypted" : " • Unencrypted") +
+				(lowDiskFormat ? " • Low-disk" : " • Legacy");
+			_importSynixButton.Text = "Import Synix";
+		}
+
+		public void ShowImportSelectionPrompt()
+		{
+			_importEstimateLabel.Text =
+				"IMPORT  No package selected\nChoose a package to calculate space and time.";
+			_importSynixButton.Text = "Choose Package";
+		}
+
+		public void SetImportReady(bool ready)
+		{
+			_importSynixButton.Text = ready
+				? "Import Synix"
+				: "Choose Another";
+		}
+
+		private static string FormatBytes(long bytes)
+		{
+			string[] units = ["B", "KB", "MB", "GB", "TB", "PB"];
+			double value = Math.Max(0, bytes);
+			int unit = 0;
+			while (value >= 1024 && unit < units.Length - 1)
+			{
+				value /= 1024;
+				unit++;
+			}
+
+			return $"{value:0.##} {units[unit]}";
+		}
+
+		private static string FormatDuration(double seconds)
+		{
+			TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, seconds));
+			if (duration.TotalHours >= 1)
+			{
+				return $"{(int)duration.TotalHours} hr {duration.Minutes} min";
+			}
+
+			if (duration.TotalMinutes >= 1)
+			{
+				return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalMinutes))} min";
+			}
+
+			return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds))} sec";
 		}
 
 		private void chkCustomBackup_CheckedChanged(
@@ -144,9 +306,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private (
 			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton ExportButton,
+			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton NormalExportButton,
 			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton ImportButton,
+			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton VerifyButton,
 			Label StatusLabel,
-			ProgressBar ProgressBar) CreateTransferCard()
+			Label EtaLabel,
+			ProgressBar ProgressBar,
+			Label ExportEstimateLabel,
+			Label ImportEstimateLabel) CreateTransferCard()
 		{
 			Synix_Control_Panel.SynixApp.Design.ModernSettingsCard card = new()
 			{
@@ -172,54 +339,110 @@ namespace Synix_Control_Panel.SynixEngine
 			Label description = new()
 			{
 				AutoSize = false,
-				Location = new Point(22, 47),
-				Size = new Size(774, 42),
+				Location = new Point(22, 45),
+				Size = new Size(774, 34),
 				Font = new Font("Segoe UI", 9.5F),
 				ForeColor = Color.FromArgb(158, 172, 194),
-				Text = "Create one password-protected file containing everything in C:\\Synix, or restore it on a new computer.\n" +
+				Text = "Choose an encrypted or normal file containing everything in C:\\Synix, or restore it on a new computer.\n" +
 					"This process can take some time depending on how much data needs to be packaged."
+			};
+
+			Label exportEstimateLabel = new()
+			{
+				AutoEllipsis = true,
+				Location = new Point(22, 79),
+				Size = new Size(374, 51),
+				Font = new Font("Segoe UI", 8.2F),
+				ForeColor = Color.FromArgb(125, 230, 221),
+				Text = "EXPORT  Calculating Synix data..."
+			};
+			Label importEstimateLabel = new()
+			{
+				AutoEllipsis = true,
+				Location = new Point(410, 79),
+				Size = new Size(386, 51),
+				Font = new Font("Segoe UI", 8.5F),
+				ForeColor = Color.FromArgb(158, 172, 194),
+				Text = "IMPORT  No package selected\nChoose a package to calculate space and time."
 			};
 
 			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton exportButton = new()
 			{
-				Location = new Point(22, 98),
-				Size = new Size(148, 42),
-				Text = "Export Synix",
+				Location = new Point(22, 136),
+				Size = new Size(128, 36),
+				Text = "Encrypted Export",
 				UseAccentStyle = true
+			};
+			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton normalExportButton = new()
+			{
+				Location = new Point(158, 136),
+				Size = new Size(128, 36),
+				Text = "Normal Export"
 			};
 			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton importButton = new()
 			{
-				Location = new Point(182, 98),
-				Size = new Size(148, 42),
-				Text = "Import Synix"
+				Location = new Point(294, 136),
+				Size = new Size(128, 36),
+				Text = "Choose Package"
+			};
+			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton verifyButton = new()
+			{
+				Enabled = false,
+				Location = new Point(430, 136),
+				Size = new Size(128, 36),
+				Text = "Verify Package"
 			};
 			Label statusLabel = new()
 			{
 				AutoEllipsis = true,
-				Location = new Point(346, 98),
-				Size = new Size(450, 22),
+				Location = new Point(570, 132),
+				Size = new Size(226, 19),
 				Font = new Font("Segoe UI", 9F),
 				ForeColor = Color.FromArgb(158, 172, 194),
-				Text = "All servers must be stopped before transferring."
+				Text = "Stop servers before transferring."
+			};
+			Label etaLabel = new()
+			{
+				AutoEllipsis = false,
+				Location = new Point(570, 151),
+				Size = new Size(226, 17),
+				Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+				ForeColor = Color.FromArgb(125, 230, 221),
+				TextAlign = ContentAlignment.MiddleRight,
+				Visible = false
 			};
 			ProgressBar progressBar = new()
 			{
-				Location = new Point(346, 124),
-				Size = new Size(450, 16),
+				Location = new Point(570, 169),
+				Size = new Size(226, 9),
 				Style = ProgressBarStyle.Continuous,
 				Visible = false
 			};
 
 			card.Controls.Add(title);
 			card.Controls.Add(description);
+			card.Controls.Add(exportEstimateLabel);
+			card.Controls.Add(importEstimateLabel);
 			card.Controls.Add(exportButton);
+			card.Controls.Add(normalExportButton);
 			card.Controls.Add(importButton);
+			card.Controls.Add(verifyButton);
 			card.Controls.Add(statusLabel);
+			card.Controls.Add(etaLabel);
 			card.Controls.Add(progressBar);
 			Controls.Add(card);
 			card.BringToFront();
 
-			return (exportButton, importButton, statusLabel, progressBar);
+			return (
+				exportButton,
+				normalExportButton,
+				importButton,
+				verifyButton,
+				statusLabel,
+				etaLabel,
+				progressBar,
+				exportEstimateLabel,
+				importEstimateLabel);
 		}
 	}
 }

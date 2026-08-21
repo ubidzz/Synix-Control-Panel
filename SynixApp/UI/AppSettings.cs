@@ -14,6 +14,7 @@ using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -36,6 +37,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private bool _loadingSettings;
 		private bool _transferInProgress;
+		private string? _selectedImportPackage;
+		private bool _selectedImportPasswordProtected = true;
 
 		public AppSettings()
 		{
@@ -57,6 +60,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 			WireSettingsEvents();
 			LoadSavedSettings();
+		}
+
+		protected override async void OnShown(EventArgs eventArgs)
+		{
+			base.OnShown(eventArgs);
+			await RefreshExportSummaryAsync();
 		}
 
 		protected override void OnHandleCreated(EventArgs eventArgs)
@@ -144,8 +153,12 @@ namespace Synix_Control_Panel.SynixEngine
 				MaximumBackupsChanged;
 			backupSettingsPage.ExportSynixRequested +=
 				ExportSynixRequested;
+			backupSettingsPage.NormalExportRequested +=
+				NormalExportRequested;
 			backupSettingsPage.ImportSynixRequested +=
 				ImportSynixRequested;
+			backupSettingsPage.VerifyPackageRequested +=
+				VerifyPackageRequested;
 			privacySettingsPage.PrivacyModeChanged +=
 				PrivacyModeChanged;
 			privacySettingsPage.CheckForDDoSChanged +=
@@ -432,9 +445,39 @@ namespace Synix_Control_Panel.SynixEngine
 			object? sender,
 			EventArgs eventArgs)
 		{
+			await ExportSynixAsync(passwordProtected: true);
+		}
+
+		private async void NormalExportRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			await ExportSynixAsync(passwordProtected: false);
+		}
+
+		private async Task ExportSynixAsync(bool passwordProtected)
+		{
 			if (!CanTransferSynix())
 			{
 				return;
+			}
+
+			if (!passwordProtected)
+			{
+				DialogResult unencryptedConfirmation = MessageBox.Show(
+					this,
+					"A normal export is not encrypted. Anyone who gets the file can read " +
+					"your server passwords, RCON details, settings, and saved data.\n\n" +
+					"The package will still be checked for accidental damage when imported.\n\n" +
+					"Do you want to create an unencrypted export?",
+					"Normal Export Is Not Private",
+					MessageBoxButtons.YesNo,
+					MessageBoxIcon.Warning,
+					MessageBoxDefaultButton.Button2);
+				if (unencryptedConfirmation != DialogResult.Yes)
+				{
+					return;
+				}
 			}
 
 			using SaveFileDialog fileDialog = new()
@@ -443,7 +486,9 @@ namespace Synix_Control_Panel.SynixEngine
 				Filter = "Synix transfer package (*.synixbackup)|*.synixbackup",
 				DefaultExt = "synixbackup",
 				AddExtension = true,
-				FileName = $"Synix-Transfer-{DateTime.Now:yyyy-MM-dd}.synixbackup",
+				FileName = passwordProtected
+					? $"Synix-Encrypted-{DateTime.Now:yyyy-MM-dd}.synixbackup"
+					: $"Synix-Normal-{DateTime.Now:yyyy-MM-dd}.synixbackup",
 				OverwritePrompt = true
 			};
 
@@ -452,43 +497,107 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			using TransferPasswordDialog passwordDialog = new(
-				confirmPassword: true);
-			if (passwordDialog.ShowDialog(this) != DialogResult.OK)
+			SynixExportEstimate? estimate = await GetExportEstimateAsync(
+				fileDialog.FileName);
+			if (estimate is null)
 			{
 				return;
 			}
 
+			string estimateMessage = BuildExportEstimateMessage(estimate);
+			if (!estimate.HasEnoughSpace)
+			{
+				MessageBox.Show(
+					this,
+					estimateMessage,
+					"Not Enough Free Space",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			DialogResult continueExport = MessageBox.Show(
+				this,
+				estimateMessage +
+					(passwordProtected
+						? "\n\nDo you want to continue and create a transfer password?"
+						: "\n\nDo you want to continue with the normal unencrypted export?"),
+				"Synix Export Size Estimate",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Information,
+				MessageBoxDefaultButton.Button1);
+			if (continueExport != DialogResult.Yes)
+			{
+				return;
+			}
+
+			string transferPassword = string.Empty;
+			if (passwordProtected)
+			{
+				using TransferPasswordDialog passwordDialog = new(
+					confirmPassword: true);
+				if (passwordDialog.ShowDialog(this) != DialogResult.OK)
+				{
+					return;
+				}
+
+				transferPassword = passwordDialog.TransferPassword;
+			}
+
 			FileHandler.SaveServers();
 			await RunTransferOperationAsync(
-				async progress => await SynixTransferPackage.ExportAsync(
-					Core.RootPath,
-					fileDialog.FileName,
-					passwordDialog.TransferPassword,
-					progress),
+				async progress =>
+				{
+					if (passwordProtected)
+					{
+						await SynixTransferPackage.ExportAsync(
+							Core.RootPath,
+							fileDialog.FileName,
+							transferPassword,
+							progress);
+					}
+					else
+					{
+						await SynixTransferPackage.ExportUnencryptedAsync(
+							Core.RootPath,
+							fileDialog.FileName,
+							progress);
+					}
+				},
 				"Export complete",
-				$"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nKeep the transfer password with this file. It cannot be recovered.");
+				passwordProtected
+					? $"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nKeep the transfer password with this file. It cannot be recovered."
+					: $"Synix was exported to:\n\n{fileDialog.FileName}\n\nThis file is not encrypted, so keep it somewhere private.");
 		}
 
 		private async void ImportSynixRequested(
 			object? sender,
 			EventArgs eventArgs)
 		{
+			if (_selectedImportPackage is null)
+			{
+				await SelectImportPackageAsync();
+				return;
+			}
+
 			if (!CanTransferSynix())
 			{
 				return;
 			}
 
-			using OpenFileDialog fileDialog = new()
+			string packageFile = _selectedImportPackage;
+			if (!File.Exists(packageFile))
 			{
-				Title = "Open Synix transfer package",
-				Filter = "Synix transfer package (*.synixbackup)|*.synixbackup",
-				CheckFileExists = true,
-				Multiselect = false
-			};
-
-			if (fileDialog.ShowDialog(this) != DialogResult.OK)
-			{
+				_selectedImportPackage = null;
+				_selectedImportPasswordProtected = true;
+				backupSettingsPage.ShowImportSelectionPrompt();
+				backupSettingsPage.SetVerifyPackageReady(false);
+				MessageBox.Show(
+					this,
+					"The selected transfer package could not be found. Choose it again.",
+					"Transfer Package Not Found",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 				return;
 			}
 
@@ -512,18 +621,24 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 
-			using TransferPasswordDialog passwordDialog = new(
-				confirmPassword: false);
-			if (passwordDialog.ShowDialog(this) != DialogResult.OK)
+			string transferPassword = string.Empty;
+			if (_selectedImportPasswordProtected)
 			{
-				return;
+				using TransferPasswordDialog passwordDialog = new(
+					confirmPassword: false);
+				if (passwordDialog.ShowDialog(this) != DialogResult.OK)
+				{
+					return;
+				}
+
+				transferPassword = passwordDialog.TransferPassword;
 			}
 
 			bool imported = await RunTransferOperationAsync(
 				async progress => await SynixTransferPackage.ImportAsync(
-					fileDialog.FileName,
+					packageFile,
 					Core.RootPath,
-					passwordDialog.TransferPassword,
+					transferPassword,
 					progress),
 				"Import complete",
 				"Your Synix files were restored. Synix will reload the transferred server list now.");
@@ -532,7 +647,336 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				FileHandler.LoadServers();
 				MainGUI.Instance?.UpdateGrid();
+				_selectedImportPackage = null;
+				_selectedImportPasswordProtected = true;
+				backupSettingsPage.ShowImportSelectionPrompt();
+				backupSettingsPage.SetVerifyPackageReady(false);
 			}
+		}
+
+		private async void VerifyPackageRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_selectedImportPackage is null)
+			{
+				await SelectImportPackageAsync();
+				return;
+			}
+
+			if (Core.Instance.isDownloadActive ||
+				(MainGUI.Instance?.isDownloadActive ?? false))
+			{
+				MessageBox.Show(
+					this,
+					"Wait for the current installation, update, backup, or transfer to finish before verifying a package.",
+					"Synix is busy",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return;
+			}
+
+			string packageFile = _selectedImportPackage;
+			if (!File.Exists(packageFile))
+			{
+				_selectedImportPackage = null;
+				_selectedImportPasswordProtected = true;
+				backupSettingsPage.ShowImportSelectionPrompt();
+				backupSettingsPage.SetVerifyPackageReady(false);
+				MessageBox.Show(
+					this,
+					"The selected transfer package could not be found. Choose it again.",
+					"Transfer Package Not Found",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			string transferPassword = string.Empty;
+			if (_selectedImportPasswordProtected)
+			{
+				using TransferPasswordDialog passwordDialog = new(
+					confirmPassword: false);
+				if (passwordDialog.ShowDialog(this) != DialogResult.OK)
+				{
+					return;
+				}
+
+				transferPassword = passwordDialog.TransferPassword;
+			}
+
+			await RunTransferOperationAsync(
+				async progress => await SynixTransferPackage.VerifyAsync(
+					packageFile,
+					transferPassword,
+					progress),
+				"Package verified",
+				$"Synix read and checked the entire package:\n\n" +
+				$"{Path.GetFileName(packageFile)}\n\n" +
+				"No damage was found, and no files were imported.");
+		}
+
+		private async Task SelectImportPackageAsync()
+		{
+			using OpenFileDialog fileDialog = new()
+			{
+				Title = "Choose a Synix transfer package",
+				Filter = "Synix transfer package (*.synixbackup)|*.synixbackup",
+				CheckFileExists = true,
+				Multiselect = false
+			};
+			if (fileDialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			try
+			{
+				SynixImportEstimate estimate = await Task.Run(() =>
+					SynixTransferPackage.EstimateImport(
+						fileDialog.FileName,
+						Core.RootPath));
+				_selectedImportPackage = fileDialog.FileName;
+				_selectedImportPasswordProtected =
+					estimate.IsPasswordProtected;
+				backupSettingsPage.SetVerifyPackageReady(true);
+				long displayedDataBytes =
+					estimate.DataBytes ?? estimate.PackageBytes;
+				backupSettingsPage.ShowImportEstimate(
+					Path.GetFileName(fileDialog.FileName),
+					displayedDataBytes,
+					estimate.AdditionalSpaceRequiredBytes,
+					EstimateTransferTime(
+						displayedDataBytes,
+						estimate.FileCount ?? 0,
+						isImport: true,
+						passwordProtected: estimate.IsPasswordProtected),
+					estimate.UsesLowDiskFormat,
+					estimate.IsPasswordProtected);
+				backupSettingsPage.SetImportReady(estimate.HasEnoughSpace);
+
+				if (!estimate.HasEnoughSpace)
+				{
+					_selectedImportPackage = null;
+					_selectedImportPasswordProtected = true;
+					backupSettingsPage.SetVerifyPackageReady(false);
+					MessageBox.Show(
+						this,
+						$"This import may need about " +
+						$"{FormatBytes(estimate.AdditionalSpaceRequiredBytes)} of working space " +
+						$"on {estimate.DestinationVolume}, but only " +
+						$"{FormatBytes(estimate.AvailableBytes)} is available.\n\n" +
+						"Free up space before starting the import.",
+						"Not Enough Free Space",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
+				}
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					this,
+					exception.Message,
+					"Package Estimate Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+			}
+		}
+
+		private async Task RefreshExportSummaryAsync()
+		{
+			try
+			{
+				string estimateDestination = Path.Combine(
+					Path.GetTempPath(),
+					"Synix-size-estimate.synixbackup");
+				SynixExportEstimate estimate = await Task.Run(() =>
+					SynixTransferPackage.EstimateExport(
+						Core.RootPath,
+						estimateDestination));
+				if (IsDisposed)
+				{
+					return;
+				}
+
+				backupSettingsPage.ShowExportEstimate(
+					estimate.SourceBytes,
+					estimate.FileCount,
+					estimate.EstimatedPackageBytes,
+					EstimateTransferTime(
+						estimate.SourceBytes,
+						estimate.FileCount,
+						isImport: false,
+						passwordProtected: true),
+					EstimateTransferTime(
+						estimate.SourceBytes,
+						estimate.FileCount,
+						isImport: false,
+						passwordProtected: false));
+			}
+			catch (Exception exception)
+			{
+				if (!IsDisposed)
+				{
+					backupSettingsPage.ShowExportEstimate(
+						0,
+						0,
+						0,
+						$"Estimate unavailable: {exception.Message}",
+						"Estimate unavailable");
+				}
+			}
+		}
+
+		private async Task<SynixExportEstimate?> GetExportEstimateAsync(
+			string destinationFile)
+		{
+			_transferInProgress = true;
+			Core.Instance.isDownloadActive = true;
+			backupSettingsPage.SetTransferBusy(true);
+			backupSettingsPage.ReportTransferProgress(new(
+				"Calculating transfer size and checking free space...",
+				0));
+
+			try
+			{
+				SynixExportEstimate estimate = await Task.Run(() =>
+					SynixTransferPackage.EstimateExport(
+						Core.RootPath,
+						destinationFile));
+				backupSettingsPage.ShowExportEstimate(
+					estimate.SourceBytes,
+					estimate.FileCount,
+					estimate.EstimatedPackageBytes,
+					EstimateTransferTime(
+						estimate.SourceBytes,
+						estimate.FileCount,
+						isImport: false,
+						passwordProtected: true),
+					EstimateTransferTime(
+						estimate.SourceBytes,
+						estimate.FileCount,
+						isImport: false,
+						passwordProtected: false));
+				backupSettingsPage.ReportTransferProgress(new(
+					$"Estimated package: up to {FormatBytes(estimate.EstimatedPackageBytes)}.",
+					0));
+				return estimate;
+			}
+			catch (Exception exception)
+			{
+				backupSettingsPage.ReportTransferProgress(new(
+					"Synix could not calculate the transfer size.",
+					0));
+				MessageBox.Show(
+					this,
+					exception.Message,
+					"Export Size Check Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return null;
+			}
+			finally
+			{
+				backupSettingsPage.SetTransferBusy(false);
+				Core.Instance.isDownloadActive = false;
+				_transferInProgress = false;
+			}
+		}
+
+		private static string BuildExportEstimateMessage(
+			SynixExportEstimate estimate)
+		{
+			StringBuilder message = new();
+			message.AppendLine(
+				$"Synix found {FormatBytes(estimate.SourceBytes)} in " +
+				$"{estimate.FileCount:N0} files.");
+			message.AppendLine();
+			message.AppendLine(
+				$"Estimated transfer package: up to " +
+				$"{FormatBytes(estimate.EstimatedPackageBytes)}");
+			message.AppendLine();
+			message.AppendLine("Free-space check:");
+			foreach (SynixExportStorageRequirement requirement in
+				estimate.StorageRequirements)
+			{
+				message.AppendLine(
+					$"• {requirement.VolumeRoot} ({requirement.Purpose}): " +
+					$"about {FormatBytes(requirement.RequiredBytes)} needed, " +
+					$"{FormatBytes(requirement.AvailableBytes)} available");
+			}
+
+			message.AppendLine();
+			if (estimate.HasEnoughSpace)
+			{
+				message.Append(
+					"The final package may be smaller after compression.");
+			}
+			else
+			{
+				message.Append(
+					"There is not enough free space. Free up space or choose " +
+					"another save location, then try again.");
+			}
+
+			return message.ToString();
+		}
+
+		private static string FormatBytes(long bytes)
+		{
+			string[] units = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
+			double value = Math.Max(0, bytes);
+			int unitIndex = 0;
+			while (value >= 1024 && unitIndex < units.Length - 1)
+			{
+				value /= 1024;
+				unitIndex++;
+			}
+
+			return $"{value:0.##} {units[unitIndex]}";
+		}
+
+		private static string EstimateTransferTime(
+			long bytes,
+			int fileCount,
+			bool isImport,
+			bool passwordProtected)
+		{
+			double workBytes = isImport
+				? bytes * 2.0
+				: bytes;
+			double assumedBytesPerSecond = (isImport, passwordProtected) switch
+			{
+				(true, true) => 28 * 1024 * 1024,
+				(true, false) => 34 * 1024 * 1024,
+				(false, true) => 38 * 1024 * 1024,
+				_ => 46 * 1024 * 1024
+			};
+			double fileOverheadSeconds = fileCount *
+				(isImport ? 0.004 : 0.002);
+			double centerSeconds = Math.Max(
+				10,
+				workBytes / assumedBytesPerSecond + fileOverheadSeconds);
+			double minimumSeconds = Math.Max(5, centerSeconds * 0.65);
+			double maximumSeconds = Math.Max(15, centerSeconds * 1.75);
+			return $"about {FormatEstimatedDuration(minimumSeconds)}–" +
+				$"{FormatEstimatedDuration(maximumSeconds)}";
+		}
+
+		private static string FormatEstimatedDuration(double seconds)
+		{
+			TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, seconds));
+			if (duration.TotalHours >= 1)
+			{
+				return $"{(int)duration.TotalHours}h {duration.Minutes}m";
+			}
+
+			if (duration.TotalMinutes >= 1)
+			{
+				return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalMinutes))}m";
+			}
+
+			return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds))}s";
 		}
 
 		private bool CanTransferSynix()

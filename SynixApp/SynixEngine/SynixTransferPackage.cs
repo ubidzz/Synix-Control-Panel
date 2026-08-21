@@ -12,25 +12,57 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public sealed record SynixTransferProgress(
 		string Message,
-		int Percent);
+		int Percent,
+		long BytesProcessed = 0,
+		long TotalBytes = 0);
+
+	public enum SynixTransferProtection : byte
+	{
+		PasswordProtected = 1,
+		Unencrypted = 2
+	}
+
+	public sealed record SynixExportStorageRequirement(
+		string VolumeRoot,
+		string Purpose,
+		long RequiredBytes,
+		long AvailableBytes)
+	{
+		public bool HasEnoughSpace => AvailableBytes >= RequiredBytes;
+	}
+
+	public sealed record SynixExportEstimate(
+		long SourceBytes,
+		int FileCount,
+		long EstimatedPackageBytes,
+		IReadOnlyList<SynixExportStorageRequirement> StorageRequirements)
+	{
+		public bool HasEnoughSpace => StorageRequirements.All(
+			requirement => requirement.HasEnoughSpace);
+	}
 
 	/// <summary>
-	/// Creates and restores portable, password-protected copies of the Synix
-	/// data folder. The encrypted file is processed in chunks so large game
+	/// Creates and restores portable Synix data-folder copies. Both encrypted
+	/// and unencrypted packages are streamed in chunks so large game
 	/// installations are never loaded into memory at once.
 	/// </summary>
-	public static class SynixTransferPackage
+	public static partial class SynixTransferPackage
 	{
 		private static readonly byte[] Magic =
 			Encoding.ASCII.GetBytes("SYNIXPKG");
 
 		private const int FormatVersion = 1;
+		private const int LegacyStreamingFormatVersion = 2;
+		private const int StreamingFormatVersion = 3;
 		private const int SaltSize = 16;
 		private const int NonceSize = 12;
 		private const int TagSize = 16;
 		private const int KeySize = 32;
 		private const int ChunkSize = 1024 * 1024;
 		private const int Pbkdf2Iterations = 600_000;
+		private const long ExportSpaceSafetyReserve = 256L * 1024 * 1024;
+		private const long MinimumCompressionAllowance = 1024L * 1024;
+		private const long EstimatedZipMetadataPerFile = 1024;
 		private const int RecoveryJournalVersion = 1;
 		private const string RecoveryFolderName = ".synix-transfer-recovery";
 		private const string RecoveryJournalFileName = "journal.json";
@@ -53,7 +85,38 @@ namespace Synix_Control_Panel.SynixEngine
 			public bool ExistedBeforeImport { get; set; }
 		}
 
-		public static async Task ExportAsync(
+		public static Task ExportAsync(
+			string sourceDirectory,
+			string destinationFile,
+			string password,
+			IProgress<SynixTransferProgress>? progress = null,
+			CancellationToken cancellationToken = default)
+		{
+			return ExportStreamingAsync(
+				sourceDirectory,
+				destinationFile,
+				password,
+				SynixTransferProtection.PasswordProtected,
+				progress,
+				cancellationToken);
+		}
+
+		public static Task ExportUnencryptedAsync(
+			string sourceDirectory,
+			string destinationFile,
+			IProgress<SynixTransferProgress>? progress = null,
+			CancellationToken cancellationToken = default)
+		{
+			return ExportStreamingAsync(
+				sourceDirectory,
+				destinationFile,
+				string.Empty,
+				SynixTransferProtection.Unencrypted,
+				progress,
+				cancellationToken);
+		}
+
+		private static async Task ExportLegacyAsync(
 			string sourceDirectory,
 			string destinationFile,
 			string password,
@@ -62,9 +125,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ValidatePassword(password);
 
-			string sourceRoot = Path.GetFullPath(sourceDirectory)
-				.TrimEnd(Path.DirectorySeparatorChar) +
-				Path.DirectorySeparatorChar;
+			string sourceRoot = GetDirectoryRoot(sourceDirectory);
 			string destinationPath = Path.GetFullPath(destinationFile);
 
 			if (!Directory.Exists(sourceRoot))
@@ -85,9 +146,15 @@ namespace Synix_Control_Panel.SynixEngine
 					"The selected destination is not valid.");
 			Directory.CreateDirectory(destinationDirectory);
 
+			SynixExportEstimate estimate = EstimateExport(
+				sourceRoot,
+				destinationPath,
+				cancellationToken);
+			ThrowIfInsufficientExportSpace(estimate);
+
 			string operationId = Guid.NewGuid().ToString("N");
 			string temporaryZip = Path.Combine(
-				destinationDirectory,
+				Path.GetTempPath(),
 				$".synix-{operationId}.zip.tmp");
 			string temporaryEncrypted = Path.Combine(
 				destinationDirectory,
@@ -132,7 +199,224 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public static async Task ImportAsync(
+		/// <summary>
+		/// Calculates a conservative maximum package size and verifies the free
+		/// space needed for the temporary archive and final encrypted file.
+		/// </summary>
+		public static SynixExportEstimate EstimateExport(
+			string sourceDirectory,
+			string destinationFile,
+			CancellationToken cancellationToken = default)
+		{
+			string sourceRoot = GetDirectoryRoot(sourceDirectory);
+			string destinationPath = Path.GetFullPath(destinationFile);
+			if (!Directory.Exists(sourceRoot))
+			{
+				throw new DirectoryNotFoundException(
+					$"The Synix data folder was not found: {sourceDirectory}");
+			}
+
+			if (IsInsideDirectory(destinationPath, sourceRoot))
+			{
+				throw new InvalidOperationException(
+					"Save the transfer package outside the C:\\Synix folder.");
+			}
+
+			string destinationDirectory =
+				Path.GetDirectoryName(destinationPath) ??
+				throw new InvalidOperationException(
+					"The selected destination is not valid.");
+
+			List<FileInfo> files = GetExportFiles(sourceRoot);
+			long sourceBytes = 0;
+			long metadataBytes = 0;
+			foreach (FileInfo file in files)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				sourceBytes = AddWithLimit(sourceBytes, file.Length);
+				string relativePath = Path.GetRelativePath(
+					sourceRoot,
+					file.FullName);
+				long pathBytes = Encoding.UTF8.GetByteCount(relativePath);
+				metadataBytes = AddWithLimit(
+					metadataBytes,
+					AddWithLimit(
+						EstimatedZipMetadataPerFile,
+						MultiplyWithLimit(pathBytes, 2)));
+			}
+
+			long compressionAllowance = Math.Max(
+				MinimumCompressionAllowance,
+				sourceBytes / 100);
+			long estimatedArchiveBytes = AddWithLimit(
+				AddWithLimit(sourceBytes, metadataBytes),
+				compressionAllowance);
+			long encryptedBlocks = Math.Max(
+				1,
+				estimatedArchiveBytes / ChunkSize +
+				(estimatedArchiveBytes % ChunkSize == 0 ? 0 : 1));
+			long estimatedPackageBytes = AddWithLimit(
+				estimatedArchiveBytes,
+				AddWithLimit(
+					MultiplyWithLimit(encryptedBlocks, 32),
+					64));
+
+			string destinationVolume = GetVolumeRoot(destinationDirectory);
+			List<SynixExportStorageRequirement> requirements =
+			[
+				new(
+					destinationVolume,
+					"the streamed transfer package",
+					AddWithLimit(
+						estimatedPackageBytes,
+						ExportSpaceSafetyReserve),
+					GetAvailableFreeSpace(destinationVolume))
+			];
+
+			return new(
+				sourceBytes,
+				files.Count,
+				estimatedPackageBytes,
+				requirements.AsReadOnly());
+		}
+
+		public static Task ImportAsync(
+			string packageFile,
+			string destinationDirectory,
+			string password,
+			IProgress<SynixTransferProgress>? progress = null,
+			CancellationToken cancellationToken = default)
+		{
+			string packagePath = Path.GetFullPath(packageFile);
+			if (!File.Exists(packagePath))
+			{
+				throw new FileNotFoundException(
+					"The selected Synix transfer package was not found.",
+					packagePath);
+			}
+
+			int version = ReadPackageVersion(packagePath);
+			return version switch
+			{
+				LegacyStreamingFormatVersion => ImportStreamingAsync(
+					packagePath,
+					destinationDirectory,
+					password,
+					progress,
+					cancellationToken),
+				StreamingFormatVersion => ImportStreamingAsync(
+					packagePath,
+					destinationDirectory,
+					password,
+					progress,
+					cancellationToken),
+				FormatVersion => ImportLegacyAsync(
+					packagePath,
+					destinationDirectory,
+					password,
+					progress,
+					cancellationToken),
+				_ => Task.FromException(new InvalidDataException(
+					"This Synix transfer package version is not supported."))
+			};
+		}
+
+		public static Task VerifyAsync(
+			string packageFile,
+			string password,
+			IProgress<SynixTransferProgress>? progress = null,
+			CancellationToken cancellationToken = default)
+		{
+			string packagePath = Path.GetFullPath(packageFile);
+			if (!File.Exists(packagePath))
+			{
+				throw new FileNotFoundException(
+					"The selected Synix transfer package was not found.",
+					packagePath);
+			}
+
+			int version = ReadPackageVersion(packagePath);
+			return version switch
+			{
+				LegacyStreamingFormatVersion or StreamingFormatVersion =>
+					VerifyStreamingAsync(
+						packagePath,
+						password,
+						progress,
+						cancellationToken),
+				FormatVersion => VerifyLegacyAsync(
+					packagePath,
+					password,
+					progress,
+					cancellationToken),
+				_ => Task.FromException(new InvalidDataException(
+					"This Synix transfer package version is not supported."))
+			};
+		}
+
+		private static async Task VerifyLegacyAsync(
+			string packagePath,
+			string password,
+			IProgress<SynixTransferProgress>? progress,
+			CancellationToken cancellationToken)
+		{
+			ValidatePassword(password);
+			string temporaryVolume = GetVolumeRoot(Path.GetTempPath());
+			long temporarySpaceRequired = AddWithLimit(
+				new FileInfo(packagePath).Length,
+				ExportSpaceSafetyReserve);
+			long temporarySpaceAvailable = GetAvailableFreeSpace(
+				temporaryVolume);
+			if (temporarySpaceAvailable < temporarySpaceRequired)
+			{
+				throw new IOException(
+					$"Verifying this older package needs about " +
+					$"{FormatBytes(temporarySpaceRequired)} of temporary space on " +
+					$"{temporaryVolume}, but only " +
+					$"{FormatBytes(temporarySpaceAvailable)} is available.");
+			}
+
+			string temporaryZip = Path.Combine(
+				Path.GetTempPath(),
+				$"synix-verify-{Guid.NewGuid():N}.zip.tmp");
+			try
+			{
+				progress?.Report(new(
+					"Checking and decrypting the legacy package...",
+					0));
+				await DecryptFileAsync(
+					packagePath,
+					temporaryZip,
+					password,
+					progress,
+					cancellationToken).ConfigureAwait(false);
+				await VerifyLegacyArchiveAsync(
+					temporaryZip,
+					progress,
+					cancellationToken).ConfigureAwait(false);
+				progress?.Report(new(
+					"The transfer package passed verification.",
+					100));
+			}
+			catch (CryptographicException exception)
+			{
+				throw new InvalidDataException(
+					"The transfer password is incorrect, or the package is damaged.",
+					exception);
+			}
+			catch (EndOfStreamException exception)
+			{
+				throw new InvalidDataException(
+					"The Synix transfer package is incomplete or damaged.",
+					exception);
+			}
+			finally
+			{
+				TryDeleteFile(temporaryZip);
+			}
+		}
+
+		private static async Task ImportLegacyAsync(
 			string packageFile,
 			string destinationDirectory,
 			string password,
@@ -283,22 +567,7 @@ namespace Synix_Control_Panel.SynixEngine
 			IProgress<SynixTransferProgress>? progress,
 			CancellationToken cancellationToken)
 		{
-			string recoveryRoot = Path.Combine(
-				sourceRoot,
-				RecoveryFolderName);
-			List<FileInfo> files = Directory
-				.EnumerateFiles(
-					sourceRoot,
-					"*",
-					new EnumerationOptions
-					{
-						RecurseSubdirectories = true,
-						IgnoreInaccessible = false,
-						AttributesToSkip = FileAttributes.ReparsePoint
-					})
-				.Where(path => !IsInsideDirectory(path, recoveryRoot))
-				.Select(path => new FileInfo(path))
-				.ToList();
+			List<FileInfo> files = GetExportFiles(sourceRoot);
 
 			long totalBytes = Math.Max(1, files.Sum(file => file.Length));
 			long completedBytes = 0;
@@ -561,6 +830,104 @@ namespace Synix_Control_Panel.SynixEngine
 				CryptographicOperations.ZeroMemory(key);
 				CryptographicOperations.ZeroMemory(cipherBuffer);
 				CryptographicOperations.ZeroMemory(plainBuffer);
+			}
+		}
+
+		private static async Task VerifyLegacyArchiveAsync(
+			string archivePath,
+			IProgress<SynixTransferProgress>? progress,
+			CancellationToken cancellationToken)
+		{
+			string validationRoot = GetDirectoryRoot(Path.Combine(
+				Path.GetTempPath(),
+				"synix-package-verification"));
+			using ZipArchive archive = ZipFile.OpenRead(archivePath);
+			List<ZipArchiveEntry> files = archive.Entries
+				.Where(entry => !string.IsNullOrEmpty(entry.Name))
+				.ToList();
+			long totalBytes = Math.Max(
+				1,
+				files.Aggregate(
+					0L,
+					(total, entry) => AddWithLimit(total, entry.Length)));
+			long completedBytes = 0;
+			HashSet<string> uniquePaths = new(
+				StringComparer.OrdinalIgnoreCase);
+			byte[] buffer = new byte[131072];
+
+			try
+			{
+				foreach (ZipArchiveEntry entry in archive.Entries)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					string normalizedEntryName = entry.FullName.Replace('\\', '/');
+					string firstPathPart = normalizedEntryName
+						.Split('/', StringSplitOptions.RemoveEmptyEntries)
+						.FirstOrDefault() ?? string.Empty;
+					if (firstPathPart.Equals(
+						RecoveryFolderName,
+						StringComparison.OrdinalIgnoreCase))
+					{
+						throw new InvalidDataException(
+							"The package contains reserved Synix recovery files.");
+					}
+
+					_ = GetSafeImportPath(validationRoot, entry.FullName);
+					if (string.IsNullOrEmpty(entry.Name))
+					{
+						continue;
+					}
+
+					if (!uniquePaths.Add(normalizedEntryName))
+					{
+						throw new InvalidDataException(
+							"The transfer package contains duplicate files.");
+					}
+
+					await using Stream input = entry.Open();
+					long entryBytes = 0;
+					while (true)
+					{
+						int bytesRead = await input.ReadAsync(
+							buffer,
+							cancellationToken).ConfigureAwait(false);
+						if (bytesRead == 0)
+						{
+							break;
+						}
+
+						entryBytes = AddWithLimit(entryBytes, bytesRead);
+						if (entryBytes > entry.Length)
+						{
+							throw new InvalidDataException(
+								"The package contains an invalid file length.");
+						}
+
+						long current = AddWithLimit(completedBytes, entryBytes);
+						int percent = 70 + (int)Math.Min(
+							29,
+							current * 29 / totalBytes);
+						progress?.Report(new(
+							$"Verifying {entry.FullName}...",
+							percent,
+							current,
+							totalBytes));
+					}
+
+					if (entryBytes != entry.Length)
+					{
+						throw new InvalidDataException(
+							"The package contains an invalid file length.");
+					}
+
+					completedBytes = AddWithLimit(
+						completedBytes,
+						entryBytes);
+				}
+			}
+			finally
+			{
+				CryptographicOperations.ZeroMemory(buffer);
 			}
 		}
 
@@ -1232,6 +1599,124 @@ namespace Synix_Control_Panel.SynixEngine
 			return fullPath.StartsWith(
 				fullRoot,
 				StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static List<FileInfo> GetExportFiles(string sourceRoot)
+		{
+			string recoveryRoot = Path.Combine(
+				sourceRoot,
+				RecoveryFolderName);
+			return Directory
+				.EnumerateFiles(
+					sourceRoot,
+					"*",
+					new EnumerationOptions
+					{
+						RecurseSubdirectories = true,
+						IgnoreInaccessible = false,
+						AttributesToSkip = FileAttributes.ReparsePoint
+					})
+				.Where(path => !IsInsideDirectory(path, recoveryRoot))
+				.Select(path => new FileInfo(path))
+				.ToList();
+		}
+
+		private static void ThrowIfInsufficientExportSpace(
+			SynixExportEstimate estimate)
+		{
+			List<SynixExportStorageRequirement> insufficient = estimate
+				.StorageRequirements
+				.Where(requirement => !requirement.HasEnoughSpace)
+				.ToList();
+			if (insufficient.Count == 0)
+			{
+				return;
+			}
+
+			string details = string.Join(
+				Environment.NewLine,
+				insufficient.Select(requirement =>
+					$"{requirement.VolumeRoot} needs about " +
+					$"{FormatBytes(requirement.RequiredBytes)}, but only " +
+					$"{FormatBytes(requirement.AvailableBytes)} is available."));
+			throw new IOException(
+				"There is not enough free space to export Synix.\n\n" +
+				details +
+				"\n\nFree up space or choose another save location, then try again.");
+		}
+
+		private static string GetVolumeRoot(string path)
+		{
+			string fullPath = Path.GetFullPath(path);
+			string? volumeRoot = Path.GetPathRoot(fullPath);
+			if (string.IsNullOrWhiteSpace(volumeRoot))
+			{
+				throw new IOException(
+					"Synix could not identify the drive for the selected location.");
+			}
+
+			return volumeRoot;
+		}
+
+		private static long GetAvailableFreeSpace(string volumeRoot)
+		{
+			try
+			{
+				DriveInfo drive = new(volumeRoot);
+				if (!drive.IsReady)
+				{
+					throw new IOException(
+						$"The drive {volumeRoot} is not ready.");
+				}
+
+				return drive.AvailableFreeSpace;
+			}
+			catch (Exception exception) when (
+				exception is ArgumentException or UnauthorizedAccessException)
+			{
+				throw new IOException(
+					$"Synix could not check the free space on {volumeRoot}.",
+					exception);
+			}
+		}
+
+		private static long AddWithLimit(long left, long right)
+		{
+			if (left >= long.MaxValue - right)
+			{
+				return long.MaxValue;
+			}
+
+			return left + right;
+		}
+
+		private static long MultiplyWithLimit(long value, long multiplier)
+		{
+			if (value == 0 || multiplier == 0)
+			{
+				return 0;
+			}
+
+			if (value >= long.MaxValue / multiplier)
+			{
+				return long.MaxValue;
+			}
+
+			return value * multiplier;
+		}
+
+		private static string FormatBytes(long bytes)
+		{
+			string[] units = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
+			double value = Math.Max(0, bytes);
+			int unitIndex = 0;
+			while (value >= 1024 && unitIndex < units.Length - 1)
+			{
+				value /= 1024;
+				unitIndex++;
+			}
+
+			return $"{value:0.##} {units[unitIndex]}";
 		}
 
 		private static void ValidatePassword(string password)
