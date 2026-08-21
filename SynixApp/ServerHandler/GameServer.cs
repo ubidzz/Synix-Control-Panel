@@ -122,6 +122,7 @@ public class GameServer : GameInfo
 	public string DiscordWebhook { get; set; } = string.Empty;
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
+	[JsonIgnore]
 	public bool IsProbing { get; set; } = false;
 	public string GameVersion { get; set; } = "Latest";
 	public int MaxRam { get; set; } = 4;

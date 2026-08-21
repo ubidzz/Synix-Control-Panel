@@ -128,6 +128,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
 
+				// Probe coordination is runtime-only. A prior shutdown or serialized
+				// value must never leave a newly launched server stuck at Starting.
+				server.HasAnnouncedOnline = false;
+				server.IsProbing = false;
+				server.LastProbeTime = null;
 				server.Status = StatusManager.GetStatus(ServerState.Starting);
 				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
 

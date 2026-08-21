@@ -42,12 +42,26 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (isAlive)
 					{
+						if (server.IsProbing && server.LastProbeTime.HasValue &&
+							(DateTime.Now - server.LastProbeTime.Value).TotalSeconds >= 45)
+						{
+							// A cancelled or interrupted probe must not permanently block all
+							// future startup verification attempts.
+							server.IsProbing = false;
+							Log($"[PROBE] Reset a stale startup probe for {server.ServerName}.", Color.OrangeRed);
+						}
+
 						if (!server.HasAnnouncedOnline && !server.IsProbing)
 						{
 							if (server.LastProbeTime == null || (DateTime.Now - server.LastProbeTime.Value).TotalSeconds >= 5)
 							{
+								bool isFirstProbe = server.LastProbeTime == null;
 								server.LastProbeTime = DateTime.Now;
 								server.IsProbing = true;
+								if (isFirstProbe)
+								{
+									Log($"[PROBE] Startup verification active for {server.ServerName}; waiting for its network listener...", Color.Cyan);
+								}
 
 								_ = Task.Run(async () =>
 								{
