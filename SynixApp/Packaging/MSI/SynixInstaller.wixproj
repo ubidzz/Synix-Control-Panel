@@ -1,0 +1,27 @@
+<Project Sdk="WixToolset.Sdk/7.0.0">
+	<PropertyGroup>
+		<OutputType>Package</OutputType>
+		<OutputName>SynixSetup</OutputName>
+		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\</OutputPath>
+		<InstallerPlatform>x64</InstallerPlatform>
+		<AcceptEula>wix7</AcceptEula>
+		<!-- ICE validation needs the protected Windows Installer service. Synix performs
+		     its release validation without requiring Visual Studio to run as admin. -->
+		<SuppressValidation>true</SuppressValidation>
+		<Version>$(Version)</Version>
+		<DefineConstants>$(DefineConstants);SynixVersion=$(Version);SynixPublishDir=$(SynixPublishDir);SynixProjectDir=$(SynixProjectDir);SynixAssemblyName=$(SynixAssemblyName)</DefineConstants>
+	</PropertyGroup>
+
+	<Target Name="ValidateSynixMsiInputs" BeforeTargets="Build">
+		<PropertyGroup>
+			<_SynixPublishedExecutable>$([System.IO.Path]::Combine('$(SynixPublishDir)', '$(SynixAssemblyName).exe'))</_SynixPublishedExecutable>
+			<_SynixInstallerIcon>$([System.IO.Path]::Combine('$(SynixProjectDir)', 'Images', 'Synix_logo_Icon.ico'))</_SynixInstallerIcon>
+		</PropertyGroup>
+		<Error Condition="'$(Version)' == ''" Text="The Synix version was not supplied to the MSI project." />
+		<Error Condition="'$(SynixPublishDir)' == ''" Text="The Synix publish folder was not supplied to the MSI project." />
+		<Error Condition="'$(SynixProjectDir)' == ''" Text="The Synix project folder was not supplied to the MSI project." />
+		<Error Condition="'$(SynixAssemblyName)' == ''" Text="The Synix assembly name was not supplied to the MSI project." />
+		<Error Condition="!Exists('$(_SynixPublishedExecutable)')" Text="The published Synix executable was not found at $(_SynixPublishedExecutable)." />
+		<Error Condition="!Exists('$(_SynixInstallerIcon)')" Text="The Synix installer icon was not found at $(_SynixInstallerIcon)." />
+	</Target>
+</Project>

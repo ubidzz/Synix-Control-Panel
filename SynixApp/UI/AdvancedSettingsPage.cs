@@ -85,7 +85,7 @@ namespace Synix_Control_Panel.SynixEngine
 				Font = new Font("Segoe UI", 9.5F),
 				Location = new Point(80, 55),
 				Size = new Size(525, 76),
-				Text = "Developer-only check for matching versions, Stable publish files, Inno Setup safety, SHA-256 hashes, and the complete automated test suite."
+				Text = "Developer-only check for matching versions, Stable publish files, MSI upgrade safety, SHA-256 hashes, and the complete automated test suite."
 			};
 			ModernSettingsButton checkButton = new()
 			{

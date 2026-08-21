@@ -122,13 +122,15 @@ namespace Synix_Control_Panel.SynixEngine
 	public sealed class SynixUpdateService
 	{
 		public const string StandaloneAssetName = "Synix.Control.Panel.exe";
-		public const string SetupAssetName = "SynixSetup.exe";
+		public const string MsiAssetName = "SynixSetup.msi";
 		public const string WinGetPackageId = "ubidzz.Synix";
 		private const string InstalledExecutableName = "Synix Control Panel.exe";
 		public static readonly Uri ReleasesUri = new(
 			"https://github.com/ubidzz/Synix-Control-Panel/releases");
 
-		private const string SetupUninstallKey =
+		internal const string MsiInstallRegistryKey =
+			@"Software\ubidzz\Synix Control Panel";
+		private const string LegacySetupUninstallKey =
 			@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{D3E8B790-86E8-4485-B827-7A743AB72BDB}_is1";
 		private static readonly Uri VersionUri = new(
 			"https://raw.githubusercontent.com/ubidzz/Synix-Control-Panel/refs/heads/master/SynixApp/SynixEngine/version.txt");
@@ -202,35 +204,73 @@ namespace Synix_Control_Panel.SynixEngine
 			string executablePath = Environment.ProcessPath ??
 				throw new InvalidOperationException(
 					"Synix could not determine its executable path.");
-			string? installLocation = null;
-			string? installSource = null;
 
-			try
+			if (!SynixBuildInfo.IsOfficialRelease)
 			{
-				using RegistryKey? key = Registry.CurrentUser.OpenSubKey(
-					SetupUninstallKey,
-					writable: false);
-				installLocation = key?.GetValue("InstallLocation") as string;
-				installSource = key?.GetValue("SynixInstallSource") as string;
-
-				if (string.IsNullOrWhiteSpace(installLocation))
-				{
-					string? uninstallString = key?.GetValue("UninstallString") as string;
-					installLocation = TryGetDirectoryFromCommand(uninstallString);
-				}
+				return DetectInstallation(
+					executablePath,
+					null,
+					null,
+					officialRelease: false);
 			}
-			catch (Exception exception) when (
-				exception is SecurityException or UnauthorizedAccessException)
+
+			string[] registrationKeys =
+			[
+				MsiInstallRegistryKey,
+				LegacySetupUninstallKey
+			];
+			foreach (string registrationKey in registrationKeys)
 			{
-				installLocation = null;
-				installSource = null;
+				if (!TryReadInstallRegistration(
+					registrationKey,
+					out string? installLocation,
+					out string? installSource))
+				{
+					continue;
+				}
+
+				SynixInstallation candidate = DetectInstallation(
+					executablePath,
+					installLocation,
+					installSource,
+					officialRelease: true);
+				if (candidate.Kind is SynixInstallationKind.Setup or
+					SynixInstallationKind.WinGet)
+				{
+					return candidate;
+				}
 			}
 
 			return DetectInstallation(
 				executablePath,
-				installLocation,
-				installSource,
-				SynixBuildInfo.IsOfficialRelease);
+				null,
+				null,
+				officialRelease: true);
+		}
+
+		internal static string? GetMsiInstalledExecutablePath()
+		{
+			if (!TryReadInstallRegistration(
+				MsiInstallRegistryKey,
+				out string? installLocation,
+				out _))
+			{
+				return null;
+			}
+
+			try
+			{
+				return string.IsNullOrWhiteSpace(installLocation)
+					? null
+					: Path.GetFullPath(Path.Combine(
+						installLocation,
+						InstalledExecutableName));
+			}
+			catch (Exception exception) when (
+				exception is ArgumentException or NotSupportedException or PathTooLongException)
+			{
+				return null;
+			}
 		}
 
 		public static SynixInstallation DetectInstallation(
@@ -290,7 +330,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string expectedName = installationKind ==
 				SynixInstallationKind.Standalone
 					? StandaloneAssetName
-					: SetupAssetName;
+					: MsiAssetName;
 
 			return release.Assets.FirstOrDefault(asset =>
 				string.Equals(
@@ -653,6 +693,40 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				throw new InvalidDataException(
 					"The update download does not point to the official GitHub release host.");
+			}
+		}
+
+		private static bool TryReadInstallRegistration(
+			string registryPath,
+			out string? installLocation,
+			out string? installSource)
+		{
+			installLocation = null;
+			installSource = null;
+			try
+			{
+				using RegistryKey? key = Registry.CurrentUser.OpenSubKey(
+					registryPath,
+					writable: false);
+				if (key is null)
+					return false;
+
+				installLocation = key.GetValue("InstallLocation") as string;
+				installSource = key.GetValue("SynixInstallSource") as string;
+				if (string.IsNullOrWhiteSpace(installLocation))
+				{
+					string? uninstallString = key.GetValue("UninstallString") as string;
+					installLocation = TryGetDirectoryFromCommand(uninstallString);
+				}
+
+				return !string.IsNullOrWhiteSpace(installLocation);
+			}
+			catch (Exception exception) when (
+				exception is SecurityException or UnauthorizedAccessException)
+			{
+				installLocation = null;
+				installSource = null;
+				return false;
 			}
 		}
 

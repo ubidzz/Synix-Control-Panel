@@ -4,6 +4,7 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
@@ -27,7 +28,7 @@ namespace Synix_Control_Panel.SynixEngine
 		string ProjectDirectory,
 		string PublishDirectory,
 		string? StandaloneSha256,
-		string? SetupSha256,
+		string? MsiSha256,
 		IReadOnlyList<SynixReleaseCheckItem> Items)
 	{
 		public bool IsReady => Items.All(item =>
@@ -69,10 +70,10 @@ namespace Synix_Control_Panel.SynixEngine
 			report.AppendLine();
 			report.AppendLine("GITHUB RELEASE ASSETS");
 			report.AppendLine($"Synix.Control.Panel.exe  SHA-256: {StandaloneSha256 ?? "Unavailable"}");
-			report.AppendLine($"SynixSetup.exe           SHA-256: {SetupSha256 ?? "Unavailable"}");
+			report.AppendLine($"SynixSetup.msi           SHA-256: {MsiSha256 ?? "Unavailable"}");
 			report.AppendLine();
 			report.AppendLine("Upload the published 'Synix Control Panel.exe' as 'Synix.Control.Panel.exe'.");
-			report.AppendLine("Upload 'package\\Output\\SynixSetup.exe' as 'SynixSetup.exe'.");
+			report.AppendLine("Upload the published 'SynixSetup.msi' as 'SynixSetup.msi'.");
 			return report.ToString().TrimEnd();
 		}
 	}
@@ -80,13 +81,14 @@ namespace Synix_Control_Panel.SynixEngine
 	public sealed class SynixReleaseReadinessChecker
 	{
 		public const string ManifestFileName = "Synix.release-manifest.txt";
-		public const string ManifestBackupRelativePath = @"package\Output\Synix.release-manifest.txt";
+		public const string ManifestBackupRelativePath = "Synix.release-manifest.backup.txt";
 		public const string PublishedExecutableName = "Synix Control Panel.exe";
-		public const string SetupRelativePath = @"package\Output\SynixSetup.exe";
-		public const string InnoScriptRelativePath = @"package\Synix.iss";
+		public const string MsiFileName = "SynixSetup.msi";
+		public const string MsiProjectRelativePath = @"Packaging\MSI\SynixInstaller.wixproj";
+		public const string MsiSourceRelativePath = @"Packaging\MSI\Package.wxs";
 
 		private const long MinimumExecutableSize = 1024L * 1024L;
-		private const string ExpectedAppId = "D3E8B790-86E8-4485-B827-7A743AB72BDB";
+		private const string ExpectedUpgradeCode = "e369556b-db95-4d9b-8e86-2b7d50dcd328";
 
 		public async Task<SynixReleaseReadinessReport> CheckAsync(
 			string projectDirectory,
@@ -103,7 +105,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Version? projectVersion = null;
 			Version? versionFileVersion = null;
 			string? standaloneHash = null;
-			string? setupHash = null;
+			string? msiHash = null;
 
 			progress?.Report("Checking project versions...");
 			string projectFile = Path.Combine(
@@ -174,9 +176,9 @@ namespace Synix_Control_Panel.SynixEngine
 			string standalonePath = Path.Combine(
 				fullPublishDirectory,
 				PublishedExecutableName);
-			string setupPath = Path.Combine(
+			string msiPath = Path.Combine(
 				fullPublishDirectory,
-				SetupRelativePath);
+				MsiFileName);
 
 			standaloneHash = await CheckArtifactAsync(
 				items,
@@ -185,10 +187,9 @@ namespace Synix_Control_Panel.SynixEngine
 				projectVersion,
 				progress,
 				cancellationToken);
-			setupHash = await CheckArtifactAsync(
+			msiHash = await CheckMsiArtifactAsync(
 				items,
-				"Inno Setup installer",
-				setupPath,
+				msiPath,
 				projectVersion,
 				progress,
 				cancellationToken);
@@ -200,12 +201,12 @@ namespace Synix_Control_Panel.SynixEngine
 				manifestPath,
 				projectVersion,
 				standaloneHash,
-				setupHash);
+				msiHash);
 
-			progress?.Report("Checking Inno Setup safety settings...");
-			CheckInnoScript(
+			progress?.Report("Checking MSI package settings...");
+			CheckMsiProject(
 				items,
-				Path.Combine(fullPublishDirectory, InnoScriptRelativePath));
+				fullProjectDirectory);
 
 			progress?.Report("Checking the Publish test receipt...");
 			CheckAutomatedTestReceipt(
@@ -215,14 +216,14 @@ namespace Synix_Control_Panel.SynixEngine
 			items.Add(new SynixReleaseCheckItem(
 				SynixReleaseCheckLevel.Passed,
 				"GitHub asset names",
-				"Upload the standalone program as Synix.Control.Panel.exe and the installer as SynixSetup.exe."));
+				"Upload the standalone program as Synix.Control.Panel.exe and the installer as SynixSetup.msi."));
 
 			return new SynixReleaseReadinessReport(
 				projectVersion,
 				fullProjectDirectory,
 				fullPublishDirectory,
 				standaloneHash,
-				setupHash,
+				msiHash,
 				items);
 		}
 
@@ -454,12 +455,188 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		private static async Task<string?> CheckMsiArtifactAsync(
+			List<SynixReleaseCheckItem> items,
+			string path,
+			Version? expectedVersion,
+			IProgress<string>? progress,
+			CancellationToken cancellationToken)
+		{
+			const string checkName = "Windows Installer (MSI)";
+			if (!File.Exists(path))
+			{
+				AddFailure(items, checkName, $"Missing file: {path}");
+				return null;
+			}
+
+			try
+			{
+				FileInfo file = new(path);
+				if (file.Length < MinimumExecutableSize)
+				{
+					AddFailure(items, checkName, $"The file is unexpectedly small ({FormatBytes(file.Length)}).");
+					return null;
+				}
+
+				IReadOnlyDictionary<string, string> properties =
+					ReadMsiProperties(path);
+				properties.TryGetValue("ProductVersion", out string? versionText);
+				bool versionValid = SynixUpdateService.TryParseVersionText(
+					versionText,
+					out Version? msiVersion);
+				bool nameValid = ManifestValueMatches(
+					properties,
+					"ProductName",
+					"Synix Control Panel");
+				bool publisherValid = ManifestValueMatches(
+					properties,
+					"Manufacturer",
+					"ubidzz");
+				bool upgradeCodeValid = properties.TryGetValue(
+					"UpgradeCode",
+					out string? upgradeCode) &&
+					string.Equals(
+						upgradeCode.Trim().Trim('{', '}'),
+						ExpectedUpgradeCode,
+						StringComparison.OrdinalIgnoreCase);
+
+				List<string> problems = [];
+				if (!versionValid || expectedVersion is null || msiVersion != expectedVersion)
+					problems.Add($"expected v{FormatVersion(expectedVersion)}, but the MSI reports v{FormatVersion(msiVersion)}");
+				if (!nameValid)
+					problems.Add("the product name is incorrect");
+				if (!publisherValid)
+					problems.Add("the publisher is incorrect");
+				if (!upgradeCodeValid)
+					problems.Add("the upgrade code is incorrect");
+
+				if (problems.Count == 0)
+				{
+					AddPassed(
+						items,
+						checkName,
+						$"v{msiVersion!.ToString(3)} is present ({FormatBytes(file.Length)}) with the correct upgrade identity.");
+				}
+				else
+				{
+					AddFailure(
+						items,
+						checkName,
+						string.Join("; ", problems) + ".");
+				}
+
+				progress?.Report($"Calculating SHA-256 for {Path.GetFileName(path)}...");
+				await using FileStream stream = new(
+					path,
+					FileMode.Open,
+					FileAccess.Read,
+					FileShare.Read,
+					81920,
+					FileOptions.Asynchronous | FileOptions.SequentialScan);
+				byte[] hash = await SHA256.HashDataAsync(stream, cancellationToken);
+				string result = Convert.ToHexString(hash).ToLowerInvariant();
+				CryptographicOperations.ZeroMemory(hash);
+				return result;
+			}
+			catch (OperationCanceledException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				AddFailure(
+					items,
+					checkName,
+					$"The MSI could not be inspected: {exception.Message}");
+				return null;
+			}
+		}
+
+		private static IReadOnlyDictionary<string, string> ReadMsiProperties(
+			string path)
+		{
+			const uint success = 0;
+			const uint noMoreItems = 259;
+			uint status = MsiOpenDatabase(path, IntPtr.Zero, out IntPtr database);
+			if (status != success)
+				throw new InvalidDataException($"Windows Installer could not open the MSI (error {status}).");
+
+			IntPtr view = IntPtr.Zero;
+			try
+			{
+				status = MsiDatabaseOpenView(
+					database,
+					"SELECT `Property`, `Value` FROM `Property`",
+					out view);
+				if (status != success)
+					throw new InvalidDataException($"The MSI Property table could not be opened (error {status}).");
+				status = MsiViewExecute(view, IntPtr.Zero);
+				if (status != success)
+					throw new InvalidDataException($"The MSI Property table could not be read (error {status}).");
+
+				Dictionary<string, string> properties = new(
+					StringComparer.OrdinalIgnoreCase);
+				while (true)
+				{
+					status = MsiViewFetch(view, out IntPtr record);
+					if (status == noMoreItems)
+						break;
+					if (status != success)
+						throw new InvalidDataException($"The MSI Property table is incomplete (error {status}).");
+
+					try
+					{
+						string name = ReadMsiRecordString(record, 1);
+						if (name.Length > 0)
+							properties[name] = ReadMsiRecordString(record, 2);
+					}
+					finally
+					{
+						MsiCloseHandle(record);
+					}
+				}
+
+				return properties;
+			}
+			finally
+			{
+				if (view != IntPtr.Zero)
+					MsiCloseHandle(view);
+				MsiCloseHandle(database);
+			}
+		}
+
+		private static string ReadMsiRecordString(IntPtr record, uint field)
+		{
+			const uint success = 0;
+			const uint moreData = 234;
+			uint characterCount = 0;
+			uint status = MsiRecordGetString(
+				record,
+				field,
+				null,
+				ref characterCount);
+			if (status is not (success or moreData))
+				throw new InvalidDataException($"An MSI value could not be read (error {status}).");
+
+			StringBuilder value = new(checked((int)characterCount + 1));
+			uint capacity = (uint)value.Capacity;
+			status = MsiRecordGetString(
+				record,
+				field,
+				value,
+				ref capacity);
+			if (status != success)
+				throw new InvalidDataException($"An MSI value could not be read (error {status}).");
+			return value.ToString();
+		}
+
 		private static void CheckManifest(
 			List<SynixReleaseCheckItem> items,
 			string manifestPath,
 			Version? expectedVersion,
 			string? standaloneHash,
-			string? setupHash)
+			string? msiHash)
 		{
 			if (!File.Exists(manifestPath))
 			{
@@ -484,7 +661,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 			List<string> problems = [];
-			if (!manifest.TryGetValue("FormatVersion", out string? format) || format != "1")
+			if (!manifest.TryGetValue("FormatVersion", out string? format) || format != "2")
 				problems.Add("unsupported manifest format");
 			if (!manifest.TryGetValue("Channel", out string? channel) ||
 				!SynixBuildInfo.IsOfficialChannel(channel))
@@ -506,15 +683,15 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			if (!ManifestValueMatches(
 				manifest,
-				"SetupFile",
-				SetupRelativePath))
+				"MsiFile",
+				MsiFileName))
 			{
-				problems.Add("Setup filename is incorrect");
+				problems.Add("MSI filename is incorrect");
 			}
 			if (!HashMatches(manifest, "StandaloneSha256", standaloneHash))
 				problems.Add("standalone SHA-256 does not match the published file");
-			if (!HashMatches(manifest, "SetupSha256", setupHash))
-				problems.Add("Setup SHA-256 does not match the installer");
+			if (!HashMatches(manifest, "MsiSha256", msiHash))
+				problems.Add("MSI SHA-256 does not match the installer");
 
 			if (problems.Count == 0)
 			{
@@ -532,56 +709,77 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private static void CheckInnoScript(
+		private static void CheckMsiProject(
 			List<SynixReleaseCheckItem> items,
-			string scriptPath)
+			string projectDirectory)
 		{
-			if (!File.Exists(scriptPath))
+			string msiProjectPath = Path.Combine(
+				projectDirectory,
+				MsiProjectRelativePath);
+			string msiSourcePath = Path.Combine(
+				projectDirectory,
+				MsiSourceRelativePath);
+			if (!File.Exists(msiProjectPath) || !File.Exists(msiSourcePath))
 			{
-				AddFailure(items, "Inno Setup settings", $"Missing file: {scriptPath}");
+				AddFailure(
+					items,
+					"MSI package settings",
+					$"Missing MSI project file: {(!File.Exists(msiProjectPath) ? msiProjectPath : msiSourcePath)}");
 				return;
 			}
 
-			string script;
+			string msiProject;
+			string msiSource;
 			try
 			{
-				script = File.ReadAllText(scriptPath);
+				msiProject = File.ReadAllText(msiProjectPath);
+				msiSource = File.ReadAllText(msiSourcePath);
 			}
 			catch (Exception exception)
 			{
 				AddFailure(
 					items,
-					"Inno Setup settings",
-					$"The Inno Setup script could not be read: {exception.Message}");
+					"MSI package settings",
+					$"The MSI project could not be read: {exception.Message}");
 				return;
 			}
+
+			string combined = msiProject + Environment.NewLine + msiSource;
 			(string Text, string Description)[] requirements =
 			[
-				(ExpectedAppId, "fixed Synix AppId"),
-				("DefaultDirName={userappdata}\\Synix", "per-user install folder"),
-				("PrivilegesRequired=lowest", "non-administrator installation"),
-				("OutputBaseFilename=SynixSetup", "expected Setup filename"),
-				("CloseApplications=yes", "safe application closing")
+				(ExpectedUpgradeCode, "fixed MSI upgrade code"),
+				("<Version>$(Version)</Version>", "shared project version"),
+				("SynixVersion=$(Version)", "MSI version forwarding"),
+				("Version=\"$(var.SynixVersion)\"", "MSI package version"),
+				("Scope=\"perUser\"", "non-administrator per-user installation"),
+				("<MajorUpgrade", "automatic MSI upgrades"),
+				("AllowSameVersionUpgrades=\"yes\"", "safe same-version test upgrades"),
+				("<OutputName>SynixSetup</OutputName>", "expected MSI filename"),
+				("<InstallerPlatform>x64</InstallerPlatform>", "64-bit installer platform"),
+				(@"Software\ubidzz\Synix Control Panel", "stable install registration"),
+				("SynixInstallSource", "Setup and WinGet source registration")
 			];
 			List<string> missing = requirements
-				.Where(requirement => !script.Contains(
+				.Where(requirement => !combined.Contains(
 					requirement.Text,
 					StringComparison.OrdinalIgnoreCase))
 				.Select(requirement => requirement.Description)
 				.ToList();
+			if (combined.Contains(@"C:\Users\", StringComparison.OrdinalIgnoreCase))
+				missing.Add("portable paths without a personal user folder");
 
 			if (missing.Count == 0)
 			{
 				AddPassed(
 					items,
-					"Inno Setup settings",
-					"AppId, install location, permissions, filename, and close behavior are correct.");
+					"MSI package settings",
+					"Version forwarding, upgrade identity, per-user installation, filename, architecture, and portable paths are correct.");
 			}
 			else
 			{
 				AddFailure(
 					items,
-					"Inno Setup settings",
+					"MSI package settings",
 					"Missing or incorrect: " + string.Join(", ", missing) + ".");
 			}
 		}
@@ -662,6 +860,38 @@ namespace Synix_Control_Panel.SynixEngine
 			double megabytes = bytes / 1024d / 1024d;
 			return $"{megabytes:0.##} MB";
 		}
+
+		[DllImport("msi.dll", EntryPoint = "MsiOpenDatabaseW", CharSet = CharSet.Unicode)]
+		private static extern uint MsiOpenDatabase(
+			string databasePath,
+			IntPtr persist,
+			out IntPtr database);
+
+		[DllImport("msi.dll", EntryPoint = "MsiDatabaseOpenViewW", CharSet = CharSet.Unicode)]
+		private static extern uint MsiDatabaseOpenView(
+			IntPtr database,
+			string query,
+			out IntPtr view);
+
+		[DllImport("msi.dll")]
+		private static extern uint MsiViewExecute(
+			IntPtr view,
+			IntPtr record);
+
+		[DllImport("msi.dll")]
+		private static extern uint MsiViewFetch(
+			IntPtr view,
+			out IntPtr record);
+
+		[DllImport("msi.dll", EntryPoint = "MsiRecordGetStringW", CharSet = CharSet.Unicode)]
+		private static extern uint MsiRecordGetString(
+			IntPtr record,
+			uint field,
+			StringBuilder? value,
+			ref uint characterCount);
+
+		[DllImport("msi.dll")]
+		private static extern uint MsiCloseHandle(IntPtr handle);
 
 		private static void AddPassed(
 			List<SynixReleaseCheckItem> items,

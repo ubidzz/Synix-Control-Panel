@@ -16,7 +16,7 @@ namespace Synix_Control_Panel.SynixEngine
 	internal enum SynixUpdateApplyMode
 	{
 		Standalone,
-		Setup,
+		Msi,
 		WinGet
 	}
 
@@ -52,11 +52,11 @@ namespace Synix_Control_Panel.SynixEngine
 		public const string UpdateStartedArgument = "--synix-update-started";
 		public const string UpdateRolledBackArgument = "--synix-update-rolled-back";
 
-		private const int RequestFormatVersion = 1;
+		private const int RequestFormatVersion = 2;
 		private const int ParentExitTimeoutSeconds = 60;
 		private const int UpdatedStartupTimeoutSeconds = 90;
 		private const int InstallerTimeoutMinutes = 15;
-		private const string SetupUninstallKey =
+		private const string LegacySetupUninstallKey =
 			@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{D3E8B790-86E8-4485-B827-7A743AB72BDB}_is1";
 
 		private readonly SynixUpdateService _updateService;
@@ -95,7 +95,11 @@ namespace Synix_Control_Panel.SynixEngine
 				Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(operationDirectory);
 
-			string payloadPath = Path.Combine(operationDirectory, "SynixUpdatePayload.exe");
+			string payloadFileName = check.Installation.Kind ==
+				SynixInstallationKind.Standalone
+					? "SynixUpdatePayload.exe"
+					: "SynixUpdatePayload.msi";
+			string payloadPath = Path.Combine(operationDirectory, payloadFileName);
 			string helperPath = Path.Combine(operationDirectory, "SynixUpdater.exe");
 			string requestPath = Path.Combine(operationDirectory, "update-request.json");
 			string readyMarkerPath = Path.Combine(operationDirectory, "helper-ready.marker");
@@ -120,7 +124,7 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						SynixInstallationKind.Standalone => SynixUpdateApplyMode.Standalone,
 						SynixInstallationKind.WinGet => SynixUpdateApplyMode.WinGet,
-						_ => SynixUpdateApplyMode.Setup
+						_ => SynixUpdateApplyMode.Msi
 					},
 					ParentProcessId = Environment.ProcessId,
 					ExpectedSha256 = check.Asset.Sha256,
@@ -298,8 +302,8 @@ namespace Synix_Control_Panel.SynixEngine
 				bool applied = request.Mode switch
 				{
 					SynixUpdateApplyMode.Standalone => ApplyStandaloneUpdate(request),
-					SynixUpdateApplyMode.WinGet => ApplyWinGetOrSetupUpdate(request),
-					_ => ApplySetupUpdate(request)
+					SynixUpdateApplyMode.WinGet => ApplyWinGetOrMsiUpdate(request),
+					_ => ApplyMsiUpdate(request)
 				};
 				if (!applied)
 					throw new InvalidOperationException("The update installer did not complete successfully.");
@@ -362,7 +366,9 @@ namespace Synix_Control_Panel.SynixEngine
 			request.OperationDirectory = operationDirectory;
 			request.PayloadPath = Path.Combine(
 				operationDirectory,
-				"SynixUpdatePayload.exe");
+				request.Mode == SynixUpdateApplyMode.Standalone
+					? "SynixUpdatePayload.exe"
+					: "SynixUpdatePayload.msi");
 			request.ReadyMarkerPath = Path.Combine(
 				operationDirectory,
 				"helper-ready.marker");
@@ -411,34 +417,57 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private static bool ApplySetupUpdate(SynixUpdateRequest request)
+		private static bool ApplyMsiUpdate(SynixUpdateRequest request)
 		{
-			ProcessStartInfo startInfo = new(request.PayloadPath)
+			string msiexecPath = Path.Combine(
+				Environment.SystemDirectory,
+				"msiexec.exe");
+			if (!File.Exists(msiexecPath))
+				throw new FileNotFoundException("Windows Installer could not be found.", msiexecPath);
+
+			ProcessStartInfo startInfo = new(msiexecPath)
 			{
-				UseShellExecute = true,
+				UseShellExecute = false,
+				CreateNoWindow = true,
 				WorkingDirectory = request.OperationDirectory
 			};
-			startInfo.ArgumentList.Add("/VERYSILENT");
-			startInfo.ArgumentList.Add("/SUPPRESSMSGBOXES");
-			startInfo.ArgumentList.Add("/NORESTART");
-			startInfo.ArgumentList.Add("/CLOSEAPPLICATIONS");
+			startInfo.ArgumentList.Add("/i");
+			startInfo.ArgumentList.Add(request.PayloadPath);
+			startInfo.ArgumentList.Add("/qn");
+			startInfo.ArgumentList.Add("/norestart");
+			startInfo.ArgumentList.Add(
+				request.Mode == SynixUpdateApplyMode.WinGet
+					? "SYNIXINSTALLSOURCE=WinGet"
+					: "SYNIXINSTALLSOURCE=Setup");
 
 			using Process installer = Process.Start(startInfo) ??
-				throw new InvalidOperationException("Synix could not start its Setup update.");
+				throw new InvalidOperationException("Synix could not start its MSI update.");
 			if (!installer.WaitForExit(TimeSpan.FromMinutes(InstallerTimeoutMinutes)))
 			{
 				StopTimedOutProcess(installer);
 				return false;
 			}
 
-			return installer.ExitCode == 0 && File.Exists(request.DestinationPath);
+			if (installer.ExitCode is not (0 or 3010))
+				return false;
+
+			string? installedExecutable =
+				SynixUpdateService.GetMsiInstalledExecutablePath();
+			if (string.IsNullOrWhiteSpace(installedExecutable) ||
+				!File.Exists(installedExecutable))
+			{
+				return false;
+			}
+
+			request.DestinationPath = installedExecutable;
+			return true;
 		}
 
-		private static bool ApplyWinGetOrSetupUpdate(SynixUpdateRequest request)
+		private static bool ApplyWinGetOrMsiUpdate(SynixUpdateRequest request)
 		{
 			string? wingetPath = GetTrustedWinGetPath();
 			if (wingetPath is null)
-				return ApplySetupUpdate(request);
+				return ApplyMsiUpdate(request);
 
 			try
 			{
@@ -463,21 +492,27 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						StopTimedOutProcess(winget);
 					}
-					else if (winget.ExitCode == 0 &&
-						File.Exists(request.DestinationPath))
+					else if (winget.ExitCode == 0)
 					{
-						return true;
+						string? installedExecutable =
+							SynixUpdateService.GetMsiInstalledExecutablePath();
+						if (!string.IsNullOrWhiteSpace(installedExecutable) &&
+							File.Exists(installedExecutable))
+						{
+							request.DestinationPath = installedExecutable;
+							return true;
+						}
 					}
 				}
 			}
 			catch (Exception exception) when (
 				exception is System.ComponentModel.Win32Exception or InvalidOperationException)
 			{
-				// If WinGet is unavailable, the verified Setup asset is a safe
+				// If WinGet is unavailable, the verified MSI asset is a safe
 				// fallback because the WinGet package uses this same installer.
 			}
 
-			return ApplySetupUpdate(request);
+			return ApplyMsiUpdate(request);
 		}
 
 		private static string? GetTrustedWinGetPath()
@@ -610,7 +645,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				using RegistryKey? key = Registry.CurrentUser.OpenSubKey(
-					SetupUninstallKey,
+					LegacySetupUninstallKey,
 					writable: true);
 				key?.SetValue(
 					"DisplayVersion",

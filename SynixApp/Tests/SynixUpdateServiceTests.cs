@@ -8,7 +8,7 @@ public sealed class SynixUpdateServiceTests
 {
 	private static readonly string StandaloneDigest =
 		"sha256:" + new string('a', 64);
-	private static readonly string SetupDigest =
+	private static readonly string MsiDigest =
 		"sha256:" + new string('b', 64);
 
 	[Fact]
@@ -173,8 +173,8 @@ public sealed class SynixUpdateServiceTests
 				StandaloneDigest,
 				1024),
 			CreateAsset(
-				SynixUpdateService.SetupAssetName,
-				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/SynixSetup.exe",
+				SynixUpdateService.MsiAssetName,
+				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/SynixSetup.msi",
 				string.Empty,
 				1024),
 			CreateAsset(
@@ -192,8 +192,8 @@ public sealed class SynixUpdateServiceTests
 
 	[Theory]
 	[InlineData(SynixInstallationKind.Standalone, "Synix.Control.Panel.exe")]
-	[InlineData(SynixInstallationKind.Setup, "SynixSetup.exe")]
-	[InlineData(SynixInstallationKind.WinGet, "SynixSetup.exe")]
+	[InlineData(SynixInstallationKind.Setup, "SynixSetup.msi")]
+	[InlineData(SynixInstallationKind.WinGet, "SynixSetup.msi")]
 	public void Edition_SelectsItsExactVerifiedDownload(
 		SynixInstallationKind installationKind,
 		string expectedAsset)
@@ -292,9 +292,9 @@ public sealed class SynixUpdateServiceTests
 				StandaloneDigest,
 				9_345_994),
 			CreateAsset(
-				SynixUpdateService.SetupAssetName,
-				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/SynixSetup.exe",
-				SetupDigest,
+				SynixUpdateService.MsiAssetName,
+				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/SynixSetup.msi",
+				MsiDigest,
 				6_519_406)
 		];
 

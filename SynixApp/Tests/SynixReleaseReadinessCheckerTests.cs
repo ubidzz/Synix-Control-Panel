@@ -54,9 +54,12 @@ public sealed class SynixReleaseReadinessCheckerTests
 		string text = report.ToPlainText();
 
 		Assert.Contains("Synix.Control.Panel.exe  SHA-256: standalone-hash", text);
-		Assert.Contains("SynixSetup.exe           SHA-256: setup-hash", text);
+		Assert.Contains("SynixSetup.msi           SHA-256: setup-hash", text);
 		Assert.Contains(
 			"Upload the published 'Synix Control Panel.exe' as 'Synix.Control.Panel.exe'.",
+			text);
+		Assert.Contains(
+			"Upload the published 'SynixSetup.msi' as 'SynixSetup.msi'.",
 			text);
 	}
 
@@ -157,7 +160,7 @@ public sealed class SynixReleaseReadinessCheckerTests
 	}
 
 	[Fact]
-	public void ReleaseManifestFinder_UsesInstallerFolderBackupWhenPrimaryIsMissing()
+	public void ReleaseManifestFinder_UsesPublishFolderBackupWhenPrimaryIsMissing()
 	{
 		using TemporaryDirectory temporary = new();
 		string backupPath = Path.Combine(

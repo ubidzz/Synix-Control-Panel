@@ -116,18 +116,23 @@
 		</None>
 	</ItemGroup>
 
-	<Target Name="RunInnoAfterPublish" AfterTargets="Publish">
+	<Target Name="BuildMsiAfterPublish" AfterTargets="Publish">
 		<PropertyGroup>
+			<_SynixPublishDirectory>$([System.IO.Path]::GetFullPath('$(PublishDir)'))</_SynixPublishDirectory>
+			<_SynixPublishPathMarker>$([System.IO.Path]::Combine('$(_SynixPublishDirectory)', '_'))</_SynixPublishPathMarker>
+			<_SynixPublishDirectory>$([System.IO.Path]::GetDirectoryName('$(_SynixPublishPathMarker)'))</_SynixPublishDirectory>
 			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
-			<_SynixSetupExe>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Output', 'SynixSetup.exe'))</_SynixSetupExe>
-			<_SynixInnoScript>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Synix.iss'))</_SynixInnoScript>
+			<_SynixMsiProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'SynixInstaller.wixproj'))</_SynixMsiProject>
+			<_SynixMsiBuildOutput>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'bin', 'Release', 'SynixSetup.msi'))</_SynixMsiBuildOutput>
+			<_SynixMsiOutput>$([System.IO.Path]::Combine('$(PublishDir)', 'SynixSetup.msi'))</_SynixMsiOutput>
 			<_SynixTestsProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Tests', 'Synix.Tests.csproj'))</_SynixTestsProject>
 			<_SynixDotNetHost Condition="'$(DotNetHostPath)' != ''">$(DotNetHostPath)</_SynixDotNetHost>
+			<_SynixDotNetHost Condition="'$(_SynixDotNetHost)' == '' and '$(ProgramW6432)' != ''">$([System.IO.Path]::Combine('$(ProgramW6432)', 'dotnet', 'dotnet.exe'))</_SynixDotNetHost>
 			<_SynixDotNetHost Condition="'$(_SynixDotNetHost)' == ''">$([System.IO.Path]::Combine('$(ProgramFiles)', 'dotnet', 'dotnet.exe'))</_SynixDotNetHost>
 		</PropertyGroup>
 		<Error Condition="'$(SynixBuildChannel)' != 'Stable'" Text="Synix Publish was not marked as a Stable release build." />
 		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
-		<Error Condition="!Exists('$(_SynixInnoScript)')" Text="The Inno Setup script was not found at $(_SynixInnoScript)." />
+		<Error Condition="!Exists('$(_SynixMsiProject)')" Text="The Synix MSI project was not found at $(_SynixMsiProject)." />
 		<Error Condition="!Exists('$(_SynixTestsProject)')" Text="The Synix automated test project was not found at $(_SynixTestsProject)." />
 		<Error Condition="!Exists('$(_SynixDotNetHost)')" Text="The 64-bit .NET host was not found at $(_SynixDotNetHost). Repair the Visual Studio .NET SDK before publishing." />
 		<Message Text="Running the complete Synix automated test suite before packaging..." Importance="high" />
@@ -137,49 +142,53 @@
 		<PropertyGroup>
 			<_SynixAutomatedTestsUtc>$([System.DateTime]::UtcNow.ToString('O'))</_SynixAutomatedTestsUtc>
 		</PropertyGroup>
-		<Exec Command="powershell -Command &quot;Start-Sleep -s 5&quot;" />
-		<Message Text="Windows metadata synced. Starting Inno Setup..." Importance="high" />
-		<Message Text="Sending Version $(Version) to Inno Setup..." Importance="high" />
-		<Exec Command="&quot;C:\Program Files (x86)\Inno Setup 6\ISCC.exe&quot; /DAppProtoVersion=$(Version) /DSourcePath=&quot;$(PublishDir)&quot; &quot;$(_SynixInnoScript)&quot;" />
-		<Error Condition="!Exists('$(_SynixSetupExe)')" Text="Inno Setup did not create $(_SynixSetupExe)." />
+		<Message Text="Building SynixSetup.msi with Version $(Version)..." Importance="high" />
+		<Exec
+			Command="&quot;$(_SynixDotNetHost)&quot; build &quot;$(_SynixMsiProject)&quot; --configuration Release --nologo &quot;-p:Version=$(Version)&quot; &quot;-p:SynixPublishDir=$(_SynixPublishDirectory)&quot; &quot;-p:SynixProjectDir=$(MSBuildProjectDirectory)&quot; &quot;-p:SynixAssemblyName=$(AssemblyName)&quot;"
+			WorkingDirectory="$(MSBuildProjectDirectory)" />
+		<Error Condition="!Exists('$(_SynixMsiBuildOutput)')" Text="WiX did not create $(_SynixMsiBuildOutput)." />
+		<Delete Files="$(_SynixMsiOutput)" Condition="Exists('$(_SynixMsiOutput)')" />
+		<Copy SourceFiles="$(_SynixMsiBuildOutput)" DestinationFiles="$(_SynixMsiOutput)" />
+		<Error Condition="!Exists('$(_SynixMsiOutput)')" Text="The Synix MSI was not copied to $(_SynixMsiOutput)." />
+		<Message Text="Synix MSI created at $(_SynixMsiOutput)." Importance="high" />
 	</Target>
 
-	<Target Name="WriteSynixReleaseManifest" AfterTargets="RunInnoAfterPublish">
+	<Target Name="WriteSynixReleaseManifest" AfterTargets="BuildMsiAfterPublish">
 		<PropertyGroup>
 			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
-			<_SynixSetupExe>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Output', 'SynixSetup.exe'))</_SynixSetupExe>
+			<_SynixMsiOutput>$([System.IO.Path]::Combine('$(PublishDir)', 'SynixSetup.msi'))</_SynixMsiOutput>
 			<_SynixReleaseManifest>$([System.IO.Path]::Combine('$(PublishDir)', 'Synix.release-manifest.txt'))</_SynixReleaseManifest>
-			<_SynixReleaseManifestBackup>$([System.IO.Path]::Combine('$(PublishDir)', 'package', 'Output', 'Synix.release-manifest.txt'))</_SynixReleaseManifestBackup>
+			<_SynixReleaseManifestBackup>$([System.IO.Path]::Combine('$(PublishDir)', 'Synix.release-manifest.backup.txt'))</_SynixReleaseManifestBackup>
 		</PropertyGroup>
 		<Error Condition="'$(_SynixAutomatedTestsUtc)' == ''" Text="The automated tests did not produce a passing release receipt." />
 		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
-		<Error Condition="!Exists('$(_SynixSetupExe)')" Text="The Synix installer was not found at $(_SynixSetupExe)." />
+		<Error Condition="!Exists('$(_SynixMsiOutput)')" Text="The Synix MSI was not found at $(_SynixMsiOutput)." />
 		<ItemGroup>
 			<_SynixStandaloneFile Include="$(_SynixPublishedExe)" />
-			<_SynixSetupFile Include="$(_SynixSetupExe)" />
+			<_SynixMsiFile Include="$(_SynixMsiOutput)" />
 		</ItemGroup>
 		<GetFileHash Files="@(_SynixStandaloneFile)" Algorithm="SHA256">
 			<Output TaskParameter="Items" ItemName="_SynixStandaloneHashed" />
 		</GetFileHash>
-		<GetFileHash Files="@(_SynixSetupFile)" Algorithm="SHA256">
-			<Output TaskParameter="Items" ItemName="_SynixSetupHashed" />
+		<GetFileHash Files="@(_SynixMsiFile)" Algorithm="SHA256">
+			<Output TaskParameter="Items" ItemName="_SynixMsiHashed" />
 		</GetFileHash>
 		<PropertyGroup>
 			<_SynixStandaloneSha256>@(_SynixStandaloneHashed-&gt;'%(FileHash)')</_SynixStandaloneSha256>
-			<_SynixSetupSha256>@(_SynixSetupHashed-&gt;'%(FileHash)')</_SynixSetupSha256>
+			<_SynixMsiSha256>@(_SynixMsiHashed-&gt;'%(FileHash)')</_SynixMsiSha256>
 		</PropertyGroup>
 		<Error Condition="'$(_SynixStandaloneSha256)' == ''" Text="The standalone SHA-256 hash could not be created." />
-		<Error Condition="'$(_SynixSetupSha256)' == ''" Text="The installer SHA-256 hash could not be created." />
+		<Error Condition="'$(_SynixMsiSha256)' == ''" Text="The MSI SHA-256 hash could not be created." />
 		<ItemGroup>
-			<_SynixReleaseManifestLine Include="FormatVersion=1" />
+			<_SynixReleaseManifestLine Include="FormatVersion=2" />
 			<_SynixReleaseManifestLine Include="Version=$(Version)" />
 			<_SynixReleaseManifestLine Include="Channel=$(SynixBuildChannel)" />
 			<_SynixReleaseManifestLine Include="AutomatedTests=Passed" />
 			<_SynixReleaseManifestLine Include="AutomatedTestsUtc=$(_SynixAutomatedTestsUtc)" />
 			<_SynixReleaseManifestLine Include="StandaloneFile=$(AssemblyName).exe" />
 			<_SynixReleaseManifestLine Include="StandaloneSha256=$(_SynixStandaloneSha256)" />
-			<_SynixReleaseManifestLine Include="SetupFile=package\Output\SynixSetup.exe" />
-			<_SynixReleaseManifestLine Include="SetupSha256=$(_SynixSetupSha256)" />
+			<_SynixReleaseManifestLine Include="MsiFile=SynixSetup.msi" />
+			<_SynixReleaseManifestLine Include="MsiSha256=$(_SynixMsiSha256)" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="$(_SynixReleaseManifest)"
