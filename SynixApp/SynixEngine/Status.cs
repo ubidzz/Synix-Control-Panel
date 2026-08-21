@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -36,7 +36,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			foreach (var server in MainGUI.serverList)
 			{
-				// --- 1. GAME SERVER REBIND ---
+
 				if (server.PID.HasValue && server.PID.Value > 0)
 				{
 					bool isServerRunning = false;
@@ -137,7 +137,6 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 				}
 
-				// --- 2. STEAMCMD REBIND (Orphan Recovery) ---
 				if ((server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Updating)) && server.SteamPID.HasValue)
 				{
 					bool isSteamCmdActive = false;
@@ -191,7 +190,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public static class StatusManager
 		{
-			// This is your "one source of truth"
+
 			public static string GetStatus(ServerState state)
 			{
 				return state switch
@@ -219,7 +218,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (_cachedLocalIp != null) return _cachedLocalIp;
 			try
 			{
-				// Looks at the network card to find the internal (LAN) address
+
 				using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
 				{
 					socket.Connect("8.8.8.8", 65530);
@@ -276,7 +275,7 @@ namespace Synix_Control_Panel.SynixEngine
 			using var udpClient = new System.Net.Sockets.UdpClient();
 			try
 			{
-				// Windows ICMP Fix (Essential for UE5 servers)
+
 				if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
 				{
 					const int SIO_UDP_CONNRESET = -1744830452;
@@ -315,19 +314,17 @@ namespace Synix_Control_Panel.SynixEngine
 							data = result.Buffer;
 						}
 
-						// 2. Parse the actual data (Header 0x49)
 						if (data.Length > 5 && data[4] == 0x49)
 						{
-							int pointer = 6; // Skip Header, Type, Protocol
+							int pointer = 6;
 
-							// Skip the 4 strings: Name, Map, Folder, Game
 							for (int i = 0; i < 4; i++)
 							{
 								while (pointer < data.Length && data[pointer] != 0x00) pointer++;
 								pointer++;
 							}
 
-							pointer += 2; // Skip ID section
+							pointer += 2;
 
 							if (pointer + 1 < data.Length)
 							{

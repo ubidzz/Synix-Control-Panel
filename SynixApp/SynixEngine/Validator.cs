@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -232,8 +232,6 @@ namespace Synix_Control_Panel.SynixEngine
 				if (server.Port == port && requiredArgs.Contains("{port}", StringComparison.OrdinalIgnoreCase))
 					return true;
 
-				// QueryPort is reserved monitoring metadata even when it is not emitted
-				// into RequiredArgs. Games may derive or configure this endpoint elsewhere.
 				if (server.QueryPort > 0 && server.QueryPort == port)
 				{
 					return true;
@@ -328,7 +326,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					FileName = "java",
 					Arguments = "-version",
-					RedirectStandardError = true, // Java prints version info to the Error stream, not Output
+					RedirectStandardError = true,
 					UseShellExecute = false,
 					CreateNoWindow = true
 				};
@@ -337,11 +335,9 @@ namespace Synix_Control_Panel.SynixEngine
 				string output = proc.StandardError.ReadToEnd();
 				proc.WaitForExit();
 
-				// Older Java 8 formats like: java version "1.8.0_xxx"
 				if (output.Contains("version \"1.8")) return 8;
 				if (output.Contains("version \"1.7")) return 7;
 
-				// Modern Java 9+ formats like: openjdk version "21.0.2"
 				int startIndex = output.IndexOf("version \"") + 9;
 				if (startIndex > 8)
 				{
@@ -357,7 +353,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// Triggers if Java is completely missing or not added to Windows PATH
+
 			}
 			return 0;
 		}

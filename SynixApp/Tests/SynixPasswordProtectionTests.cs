@@ -1,3 +1,15 @@
+// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.Text;
@@ -19,20 +31,20 @@ public sealed class SynixPasswordProtectionTests
 	{
 		GameServer server = new();
 
-		SynixPasswordProtection.SetServerPasswords(
+		Core.SetServerPasswords(
 			server,
 			PlaintextPasswords());
 
 		Assert.Equal(
-			SynixPasswordProtection.CurrentStorageVersion,
+			Core.CurrentStorageVersion,
 			server.PasswordStorageVersion);
-		Assert.True(SynixPasswordProtection.IsProtected(server.Password));
-		Assert.True(SynixPasswordProtection.IsProtected(server.AdminPassword));
-		Assert.True(SynixPasswordProtection.IsProtected(server.RconPassword));
+		Assert.True(Core.IsProtected(server.Password));
+		Assert.True(Core.IsProtected(server.AdminPassword));
+		Assert.True(Core.IsProtected(server.RconPassword));
 		Assert.DoesNotContain(ServerPassword, server.Password);
 		Assert.Equal(
 			PlaintextPasswords(),
-			SynixPasswordProtection.RevealServerPasswords(server));
+			Core.RevealServerPasswords(server));
 	}
 
 	[Fact]
@@ -49,7 +61,7 @@ public sealed class SynixPasswordProtectionTests
 		};
 		string legacyJson = JsonSerializer.Serialize(new[] { legacyServer });
 
-		List<GameServer> migrated = SynixPasswordProtection
+		List<GameServer> migrated = Core
 			.DeserializeServersAndMigrate(
 				legacyJson,
 				out int migratedServerCount);
@@ -58,11 +70,11 @@ public sealed class SynixPasswordProtectionTests
 		Assert.Equal(1, migratedServerCount);
 		Assert.Equal(
 			PlaintextSecrets(),
-			SynixPasswordProtection.RevealServerSecrets(result));
-		Assert.True(SynixPasswordProtection.IsProtected(result.Password));
-		Assert.True(SynixPasswordProtection.IsProtected(result.AdminPassword));
-		Assert.True(SynixPasswordProtection.IsProtected(result.RconPassword));
-		Assert.True(SynixPasswordProtection.IsProtected(result.DiscordWebhook));
+			Core.RevealServerSecrets(result));
+		Assert.True(Core.IsProtected(result.Password));
+		Assert.True(Core.IsProtected(result.AdminPassword));
+		Assert.True(Core.IsProtected(result.RconPassword));
+		Assert.True(Core.IsProtected(result.DiscordWebhook));
 	}
 
 	[Fact]
@@ -78,7 +90,7 @@ public sealed class SynixPasswordProtectionTests
 			DiscordWebhook = DiscordWebhook
 		};
 
-		string storageJson = SynixPasswordProtection
+		string storageJson = Core
 			.SerializeServersForStorage(new[] { server });
 
 		Assert.DoesNotContain(ServerPassword, storageJson);
@@ -87,7 +99,7 @@ public sealed class SynixPasswordProtectionTests
 		Assert.DoesNotContain(DiscordWebhook, storageJson);
 		Assert.DoesNotContain("test-webhook-token", storageJson);
 		Assert.Contains(
-			SynixPasswordProtection.ProtectedValuePrefix,
+			Core.ProtectedValuePrefix,
 			storageJson);
 		Assert.Contains("\"PasswordStorageVersion\": 2", storageJson);
 	}
@@ -100,67 +112,67 @@ public sealed class SynixPasswordProtectionTests
 			Game = "Palworld",
 			ServerName = "Version One Server",
 			PasswordStorageVersion = 1,
-			Password = SynixPasswordProtection.Protect(ServerPassword),
-			AdminPassword = SynixPasswordProtection.Protect(AdminPassword),
-			RconPassword = SynixPasswordProtection.Protect(RconPassword),
+			Password = Core.Protect(ServerPassword),
+			AdminPassword = Core.Protect(AdminPassword),
+			RconPassword = Core.Protect(RconPassword),
 			DiscordWebhook = DiscordWebhook
 		};
 
-		bool migrated = SynixPasswordProtection.MigrateLegacyServer(
+		bool migrated = Core.MigrateLegacyServer(
 			versionOneServer);
 
 		Assert.True(migrated);
 		Assert.Equal(2, versionOneServer.PasswordStorageVersion);
-		Assert.True(SynixPasswordProtection.IsProtected(
+		Assert.True(Core.IsProtected(
 			versionOneServer.DiscordWebhook));
 		Assert.Equal(
 			PlaintextSecrets(),
-			SynixPasswordProtection.RevealServerSecrets(versionOneServer));
+			Core.RevealServerSecrets(versionOneServer));
 	}
 
 	[Fact]
 	public void AlreadyProtectedServer_IsNotEncryptedTwice()
 	{
 		GameServer server = new();
-		SynixPasswordProtection.SetServerPasswords(
+		Core.SetServerPasswords(
 			server,
 			PlaintextPasswords());
 		string firstProtectedValue = server.Password;
 
-		bool migrated = SynixPasswordProtection.MigrateLegacyServer(server);
+		bool migrated = Core.MigrateLegacyServer(server);
 
 		Assert.False(migrated);
 		Assert.Equal(firstProtectedValue, server.Password);
 		Assert.Equal(
 			ServerPassword,
-			SynixPasswordProtection.Reveal(server.Password));
+			Core.Reveal(server.Password));
 	}
 
 	[Fact]
 	public void LegacyPasswordThatLooksLikeAStoragePrefix_IsStillProtectedAsText()
 	{
 		string prefixLikePassword =
-			SynixPasswordProtection.ProtectedValuePrefix + "my-real-password";
+			Core.ProtectedValuePrefix + "my-real-password";
 		GameServer legacyServer = new()
 		{
 			PasswordStorageVersion = 0,
 			Password = prefixLikePassword
 		};
 
-		bool migrated = SynixPasswordProtection.MigrateLegacyServer(legacyServer);
+		bool migrated = Core.MigrateLegacyServer(legacyServer);
 
 		Assert.True(migrated);
 		Assert.NotEqual(prefixLikePassword, legacyServer.Password);
 		Assert.Equal(
 			prefixLikePassword,
-			SynixPasswordProtection.Reveal(legacyServer.Password));
+			Core.Reveal(legacyServer.Password));
 	}
 
 	[Fact]
 	public void EditingPasswords_ReplacesTheProtectedValues()
 	{
 		GameServer server = new();
-		SynixPasswordProtection.SetServerPasswords(
+		Core.SetServerPasswords(
 			server,
 			PlaintextPasswords());
 		string oldStoredPassword = server.Password;
@@ -169,22 +181,22 @@ public sealed class SynixPasswordProtectionTests
 			"new-admin-password!",
 			"new-rcon-password!");
 
-		SynixPasswordProtection.SetServerPasswords(server, edited);
+		Core.SetServerPasswords(server, edited);
 
 		Assert.NotEqual(oldStoredPassword, server.Password);
 		Assert.Equal(
 			edited,
-			SynixPasswordProtection.RevealServerPasswords(server));
+			Core.RevealServerPasswords(server));
 	}
 
 	[Fact]
 	public void DamagedProtectedValue_IsRejectedWithoutReturningText()
 	{
 		string damaged =
-			SynixPasswordProtection.ProtectedValuePrefix + "not-valid-base64***";
+			Core.ProtectedValuePrefix + "not-valid-base64***";
 
 		Assert.Throws<SynixPasswordProtectionException>(
-			() => SynixPasswordProtection.Reveal(damaged));
+			() => Core.Reveal(damaged));
 	}
 
 	[Fact]
@@ -220,12 +232,12 @@ public sealed class SynixPasswordProtectionTests
 		GameServer exportedServer = CreateProtectedServer();
 		string oldProtectedPassword = exportedServer.Password;
 
-		SynixPortablePasswordTransfer.PrepareEncryptedExport(
+		Core.PrepareEncryptedExport(
 			folders.SourceRoot,
 			transferPassword,
 			new[] { exportedServer });
 
-		string sourceVault = SynixPortablePasswordTransfer
+		string sourceVault = Core
 			.GetVaultPath(folders.SourceRoot);
 		byte[] vaultBytes = File.ReadAllBytes(sourceVault);
 		string vaultAsText = Encoding.UTF8.GetString(vaultBytes);
@@ -236,20 +248,20 @@ public sealed class SynixPasswordProtectionTests
 		Assert.DoesNotContain("test-webhook-token", vaultAsText);
 
 		folders.PrepareImportedFiles(exportedServer, sourceVault);
-		bool restored = SynixPortablePasswordTransfer.RestoreEncryptedImport(
+		bool restored = Core.RestoreEncryptedImport(
 			folders.ImportRoot,
 			transferPassword);
 
 		Assert.True(restored);
 		Assert.False(File.Exists(
-			SynixPortablePasswordTransfer.GetVaultPath(folders.ImportRoot)));
+			Core.GetVaultPath(folders.ImportRoot)));
 		GameServer importedServer = Assert.Single(
 			JsonSerializer.Deserialize<List<GameServer>>(
 				File.ReadAllText(folders.ImportedServersPath))!);
 		Assert.NotEqual(oldProtectedPassword, importedServer.Password);
 		Assert.Equal(
 			PlaintextSecrets(),
-			SynixPasswordProtection.RevealServerSecrets(importedServer));
+			Core.RevealServerSecrets(importedServer));
 	}
 
 	[Fact]
@@ -257,18 +269,18 @@ public sealed class SynixPasswordProtectionTests
 	{
 		using TransferFolders folders = new();
 		GameServer exportedServer = CreateProtectedServer();
-		SynixPortablePasswordTransfer.PrepareEncryptedExport(
+		Core.PrepareEncryptedExport(
 			folders.SourceRoot,
 			"correct-transfer-password-11!",
 			new[] { exportedServer });
 		folders.PrepareImportedFiles(
 			exportedServer,
-			SynixPortablePasswordTransfer.GetVaultPath(folders.SourceRoot));
+			Core.GetVaultPath(folders.SourceRoot));
 		string originalServersJson = File.ReadAllText(
 			folders.ImportedServersPath);
 
 		Assert.Throws<SynixPasswordProtectionException>(() =>
-			SynixPortablePasswordTransfer.RestoreEncryptedImport(
+			Core.RestoreEncryptedImport(
 				folders.ImportRoot,
 				"wrong-transfer-password-22!"));
 
@@ -276,7 +288,7 @@ public sealed class SynixPasswordProtectionTests
 			originalServersJson,
 			File.ReadAllText(folders.ImportedServersPath));
 		Assert.True(File.Exists(
-			SynixPortablePasswordTransfer.GetVaultPath(folders.ImportRoot)));
+			Core.GetVaultPath(folders.ImportRoot)));
 	}
 
 	[Fact]
@@ -292,23 +304,23 @@ public sealed class SynixPasswordProtectionTests
 		Directory.CreateDirectory(Path.GetDirectoryName(sourceServersPath)!);
 		File.WriteAllText(
 			sourceServersPath,
-			SynixPasswordProtection.SerializeServersForStorage(
+			Core.SerializeServersForStorage(
 				new[] { exportedServer }));
-		SynixPortablePasswordTransfer.PrepareEncryptedExport(
+		Core.PrepareEncryptedExport(
 			folders.SourceRoot,
 			transferPassword,
 			new[] { exportedServer });
 
-		await SynixTransferPackage.ExportAsync(
+		await Core.ExportAsync(
 			folders.SourceRoot,
 			folders.PackagePath,
 			transferPassword);
-		await SynixTransferPackage.ImportAsync(
+		await Core.ImportAsync(
 			folders.PackagePath,
 			folders.ImportRoot,
 			transferPassword);
 
-		Assert.True(SynixPortablePasswordTransfer.RestoreEncryptedImport(
+		Assert.True(Core.RestoreEncryptedImport(
 			folders.ImportRoot,
 			transferPassword));
 		GameServer importedServer = Assert.Single(
@@ -316,7 +328,7 @@ public sealed class SynixPasswordProtectionTests
 				File.ReadAllText(folders.ImportedServersPath))!);
 		Assert.Equal(
 			PlaintextSecrets(),
-			SynixPasswordProtection.RevealServerSecrets(importedServer));
+			Core.RevealServerSecrets(importedServer));
 	}
 
 	private static SynixServerPasswords PlaintextPasswords()
@@ -342,7 +354,7 @@ public sealed class SynixPasswordProtectionTests
 			ServerName = "Portable Server",
 			InstallPath = @"C:\Synix\Games\Portable Server"
 		};
-		SynixPasswordProtection.SetServerSecrets(
+		Core.SetServerSecrets(
 			server,
 			PlaintextSecrets());
 		return server;
@@ -373,7 +385,7 @@ public sealed class SynixPasswordProtectionTests
 				JsonSerializer.Serialize(new[] { server }));
 			File.Copy(
 				sourceVault,
-				SynixPortablePasswordTransfer.GetVaultPath(ImportRoot),
+				Core.GetVaultPath(ImportRoot),
 				overwrite: true);
 		}
 

@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -111,7 +111,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				SynixServerPasswords launchPasswords;
 				try
 				{
-					launchPasswords = SynixPasswordProtection
+					launchPasswords = Core
 						.RevealServerPasswords(server);
 				}
 				catch (SynixPasswordProtectionException)
@@ -142,8 +142,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
 
-				// Probe coordination is runtime-only. A prior shutdown or serialized
-				// value must never leave a newly launched server stuck at Starting.
 				server.HasAnnouncedOnline = false;
 				server.IsProbing = false;
 				server.LastProbeTime = null;
@@ -230,7 +228,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
 					}
 
-					// Calculate RAM for the launch argument WITHOUT overwriting the saved variable
 					int ramToUse = server.MaxRam;
 					if (isMinecraft)
 					{
@@ -256,9 +253,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.Replace("{Identity}", cleanIdentity)
 						.Replace("{ram}", ramToUse.ToString());
 
-					// Modern Forge uses its generated win_args.txt instead of
-					// "-jar server.jar". Start.bat supplies the Forge argument file,
-					// while Synix still owns the selected heap size and optional args.
 					if (isMinecraft &&
 						MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader)
 							.Equals(MinecraftMetadataService.ForgeLoader, StringComparison.OrdinalIgnoreCase))
@@ -320,13 +314,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 
 					args = args.Replace("  ", " ").Trim();
-					/*
-					if (!IsStringSafe(args))
-					{
-						logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected. Aborting startup.", Color.Red);
-						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
-						return;
-					}*/
 
 					finalArgs = args;
 					bool hideWindow = !Properties.Settings.Default.ShowServerWindow;
@@ -338,9 +325,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						WorkingDirectory = binDir,
 						UseShellExecute = false,
 						CreateNoWindow = hideWindow,
-						// Hidden Minecraft servers need a pipe so Synix can send the
-						// native "stop" command. Visible servers keep their console input
-						// so administrators can still type commands in the server window.
+
 						RedirectStandardInput = isMinecraft && hideWindow,
 					};
 
@@ -358,7 +343,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				if (psi == null) return;
 
-				// Scrub passwords from the UI log
 				string safeLogArgs = finalArgs;
 				if (!string.IsNullOrWhiteSpace(launchPasswords.ServerPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.ServerPassword, "********");
 				if (!string.IsNullOrWhiteSpace(launchPasswords.AdminPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.AdminPassword, "********");
@@ -429,8 +413,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch (Exception ex)
 			{
-				// Starting remains possible, but Synix will have to use its verified
-				// process-tree fallback if this legacy launcher cannot be migrated.
+
 				logCallback?.Invoke($"[⚠️ MINECRAFT] Could not update Start.bat for graceful shutdown: {ex.Message}", Color.OrangeRed);
 			}
 		}
@@ -574,9 +557,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					return false;
 				}
 
-				// StandardInput itself is the reliable test. Reading StartInfo on a
-				// process restored with Process.GetProcessById throws because Synix did
-				// not create that Process object.
 				process.StandardInput.WriteLine(command);
 				process.StandardInput.Flush();
 				return true;
@@ -625,8 +605,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch
 			{
-				// Console ownership can disappear while Windows Terminal or cmd.exe is
-				// closing. The caller will use the verified process-tree fallback.
+
 				return false;
 			}
 			finally
@@ -691,7 +670,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch
 			{
-				// The Process object can be disposed between checks. Fall back to the saved PID.
+
 			}
 
 			int savedPid = server.PID.GetValueOrDefault();
@@ -754,7 +733,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				TryWriteRedirectedInput(server, "Y");
 
-				// Give Windows time to dispatch the control event before detaching.
 				await Task.Delay(200);
 				return signalSent;
 			}
@@ -900,7 +878,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 					catch
 					{
-						// Access can disappear while the process list is being inspected.
+
 					}
 				}
 			}
@@ -959,7 +937,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch
 			{
-				// The process exited between the snapshot and this lookup.
+
 			}
 		}
 
@@ -977,7 +955,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch
 			{
-				// PID verification will still work if Windows denies StartTime access.
+
 			}
 
 			trackedProcesses[process.Id] = startTime;
@@ -1125,7 +1103,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 				catch
 				{
-					// Continue looking for another verified live process.
+
 				}
 			}
 
@@ -1158,7 +1136,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 				catch
 				{
-					// A disposed process object will be replaced below.
+
 				}
 
 				if (!alreadyBound)
@@ -1170,7 +1148,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch
 			{
-				// Keep the verified PID even if Windows denies reopening the Process object.
+
 			}
 			finally
 			{

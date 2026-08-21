@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -91,7 +91,6 @@ namespace Synix_Control_Panel
 
 			WireUpGatekeeperEvents();
 
-			// Tags for Pill logic
 			chkDefaultPath.Tag = "Default Folder";
 			chkEnableSchedule.Tag = "Activate Scheduler";
 			chkUpdateOnStart.Tag = "Update on Start";
@@ -101,7 +100,6 @@ namespace Synix_Control_Panel
 
 			SendMessage(txtDiscordWebhook.Handle, EM_SETCUEBANNER, 0, "Paste Discord Webhook URL here...");
 
-			// Game List Setup
 			cmbGame.Items.Clear();
 			cmbGame.Items.Add("-- Pick a Game --");
 			var sortedGames = GameDatabase.GetGameList().OrderBy(g => g.Game).ToList();
@@ -296,7 +294,7 @@ namespace Synix_Control_Panel
 			}
 			catch
 			{
-				// Rounded corners are cosmetic; older Windows builds may not support them.
+
 			}
 		}
 
@@ -340,7 +338,7 @@ namespace Synix_Control_Panel
 			if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
 
-			if (SynixPasswordProtection.TryRevealServerSecrets(
+			if (Core.TryRevealServerSecrets(
 				_existingServer,
 				out SynixServerSecrets secrets))
 			{
@@ -424,7 +422,6 @@ namespace Synix_Control_Panel
 				bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
 
-				// --- DUNE: AWAKENING HARDWARE & OS CHECKS ---
 				bool isDuneAwakening = selectedGame.Equals("Dune: Awakening", StringComparison.OrdinalIgnoreCase);
 				bool virtMissing = false;
 				string missingTechName = "";
@@ -445,7 +442,7 @@ namespace Synix_Control_Panel
 					avx2Missing = !Avx2.IsSupported;
 
 					sysRam = GetSystemRamGB();
-					ramMissing = sysRam < 23.0; // 24GB minimum, allowing a tiny margin for hardware reserved RAM
+					ramMissing = sysRam < 23.0;
 				}
 
 				txtPassword.Enabled = CanUnlock(txtPassword);
@@ -572,37 +569,37 @@ namespace Synix_Control_Panel
 					_validationMessage = "  🔒 [MINECRAFT] No compatible loader build is selected.";
 					btnSave.Enabled = false;
 				}
-				// --- DUNE CHECK: Minimum RAM ---
+
 				else if (ramMissing)
 				{
 					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires at least 24GB of RAM (Detected: {sysRam:0.0} GB).";
 					btnSave.Enabled = false;
 				}
-				// --- DUNE CHECK: AVX2 Processor Support ---
+
 				else if (avx2Missing)
 				{
 					_validationMessage = "  ⚠️ [HARDWARE] 'Dune: Awakening' strictly requires a CPU with AVX2 support.";
 					btnSave.Enabled = false;
 				}
-				// --- DUNE CHECK: Windows Pro/Enterprise ---
+
 				else if (isHomeEdition)
 				{
 					_validationMessage = "  ⚠️ [OS CHECK] Windows Pro/Enterprise is required. Home editions do not support Hyper-V.";
 					btnSave.Enabled = false;
 				}
-				// --- DUNE CHECK: BIOS Virtualization ---
+
 				else if (virtMissing)
 				{
 					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires {missingTechName} to be enabled in your PC's BIOS.";
 					btnSave.Enabled = false;
 				}
-				// --- DUNE CHECK: Hyper-V Enabled in Windows ---
+
 				else if (hyperVMissing)
 				{
 					_validationMessage = "  ⚠️ [SYSTEM] Windows Hyper-V is disabled. Please turn it on in 'Windows Features'.";
 					btnSave.Enabled = false;
 				}
-				// ------------------------------------------
+
 				else if (isNameTaken)
 				{
 					_validationMessage = $"  ⚠️ [CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
@@ -677,7 +674,6 @@ namespace Synix_Control_Panel
 				string args = (gameData.RequiredArgs ?? "").ToLower();
 				string rconTemp = (gameData.RconSyntax ?? "").ToLower();
 
-				// Password Field
 				bool needsPass = args.Contains("{pass}");
 				txtPassword.Tag = needsPass ? "Required" : "Disabled";
 				if (!needsPass)
@@ -695,7 +691,6 @@ namespace Synix_Control_Panel
 					txtPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				// Admin Password Field
 				bool needsAdminPass = args.Contains("{adminpass}");
 				txtAdminPassword.Tag = needsAdminPass ? "Required" : "Disabled";
 				if (!needsAdminPass)
@@ -713,7 +708,6 @@ namespace Synix_Control_Panel
 					txtAdminPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				// World Seed Field
 				bool needsSeed = args.Contains("{seed}");
 				txtWorldSeed.Tag = needsSeed ? "Required" : "Disabled";
 				if (!needsSeed)
@@ -1079,7 +1073,7 @@ namespace Synix_Control_Panel
 
 			try
 			{
-				SynixPasswordProtection.SetServerSecrets(
+				Core.SetServerSecrets(
 					NewServer,
 					new SynixServerSecrets(
 						new SynixServerPasswords(
@@ -1128,9 +1122,6 @@ namespace Synix_Control_Panel
 			catch (Exception ex) { MessageBox.Show(ex.Message); }
 		}
 
-		// ====================================================================
-		// HARDWARE & OS GATEKEEPER CHECKS
-		// ====================================================================
 		private (bool IsEnabled, string TechName) CheckVirtualizationStatus()
 		{
 			bool isEnabled = true;
@@ -1215,7 +1206,7 @@ namespace Synix_Control_Panel
 				}
 			}
 			catch { }
-			return 999.0; // Default to pass on WMI error so user isn't locked out
+			return 999.0;
 		}
 
 		private async void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
@@ -1254,8 +1245,6 @@ namespace Synix_Control_Panel
 				cmbGameVersion.Items.Clear();
 				cmbGameVersion.Items.Add("latest");
 
-				// Minecraft releases and the installer use this same metadata service.
-				// That prevents the UI from showing versions the installer cannot resolve.
 				if (gameData.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 				{
 					try

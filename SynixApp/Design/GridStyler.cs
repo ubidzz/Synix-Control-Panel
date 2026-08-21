@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -15,10 +15,6 @@ using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.SynixApp.Design
 {
-	/// <summary>
-	/// Shared dashboard grid and title-bar styling. Every surface is opaque so
-	/// WinForms never falls back to unsupported transparent control painting.
-	/// </summary>
 	public static class GridStyler
 	{
 		private static Color RowBackground => SettingsPalette.Input;

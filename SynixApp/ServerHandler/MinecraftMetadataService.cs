@@ -16,11 +16,6 @@ using System.Xml.Linq;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
-	/// <summary>
-	/// Dependency-free metadata client for Mojang, Fabric and Forge. Only official
-	/// HTTPS endpoints are used. The same service supplies the setup UI and the
-	/// installer so a loader build shown to the user is also installable by Synix.
-	/// </summary>
 	internal static class MinecraftMetadataService
 	{
 		internal const string VanillaLoader = "Vanilla";
@@ -406,8 +401,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return javaMajor;
 			}
 
-			// Mojang metadata is authoritative. These ranges are only a fallback for
-			// older manifests that did not include javaVersion.
 			string[] versionParts = version.Split('.');
 			if (versionParts.Length > 0 && int.TryParse(versionParts[0], out int calendarMajor) && calendarMajor >= 26)
 				return 25;
@@ -442,7 +435,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				Timeout = TimeSpan.FromSeconds(30)
 			};
-			client.DefaultRequestHeaders.UserAgent.ParseAdd("Synix-Control-Panel/1.0.21");
+			client.DefaultRequestHeaders.UserAgent.ParseAdd($"Synix-Control-Panel/{Application.ProductVersion}");
 			return client;
 		}
 	}

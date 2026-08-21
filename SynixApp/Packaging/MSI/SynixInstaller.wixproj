@@ -5,8 +5,6 @@
 		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\</OutputPath>
 		<InstallerPlatform>x64</InstallerPlatform>
 		<AcceptEula>wix7</AcceptEula>
-		<!-- ICE validation needs the protected Windows Installer service. Synix performs
-		     its release validation without requiring Visual Studio to run as admin. -->
 		<SuppressValidation>true</SuppressValidation>
 		<Version>$(Version)</Version>
 		<DefineConstants>$(DefineConstants);SynixVersion=$(Version);SynixPublishDir=$(SynixPublishDir);SynixProjectDir=$(SynixProjectDir);SynixAssemblyName=$(SynixAssemblyName)</DefineConstants>

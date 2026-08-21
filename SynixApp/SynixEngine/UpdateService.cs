@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Microsoft.Win32;
 using System.Net.Http.Headers;
@@ -87,7 +94,7 @@ namespace Synix_Control_Panel.SynixEngine
 				100);
 	}
 
-	public static class SynixBuildInfo
+	public partial class Core
 	{
 		public const string DevelopmentChannel = "Development";
 		public const string StableChannel = "Stable";
@@ -96,7 +103,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			get
 			{
-				Assembly assembly = typeof(SynixBuildInfo).Assembly;
+				Assembly assembly = typeof(Core).Assembly;
 				return assembly
 					.GetCustomAttributes<AssemblyMetadataAttribute>()
 					.FirstOrDefault(attribute => string.Equals(
@@ -119,7 +126,7 @@ namespace Synix_Control_Panel.SynixEngine
 		}
 	}
 
-	public sealed class SynixUpdateService
+	public partial class Core
 	{
 		public const string StandaloneAssetName = "Synix.Control.Panel.exe";
 		public const string MsiAssetName = "SynixSetup.msi";
@@ -142,7 +149,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static readonly HttpClient HttpClient = CreateHttpClient();
 
-		public async Task<SynixUpdateCheckResult> CheckAsync(
+		public static async Task<SynixUpdateCheckResult> CheckForUpdatesAsync(
 			Version currentVersion,
 			CancellationToken cancellationToken = default)
 		{
@@ -205,7 +212,7 @@ namespace Synix_Control_Panel.SynixEngine
 				throw new InvalidOperationException(
 					"Synix could not determine its executable path.");
 
-			if (!SynixBuildInfo.IsOfficialRelease)
+			if (!Core.IsOfficialRelease)
 			{
 				return DetectInstallation(
 					executablePath,
@@ -348,7 +355,7 @@ namespace Synix_Control_Panel.SynixEngine
 				: new Version(0, 0, 0);
 		}
 
-		public async Task DownloadAssetAsync(
+		public static async Task DownloadUpdateAssetAsync(
 			SynixReleaseAsset asset,
 			string destinationPath,
 			IProgress<SynixUpdateDownloadProgress>? progress = null,
@@ -415,7 +422,7 @@ namespace Synix_Control_Panel.SynixEngine
 				cancellationToken);
 		}
 
-		public async Task<SynixReleaseInfo> GetLatestReleaseAsync(
+		public static async Task<SynixReleaseInfo> GetLatestReleaseAsync(
 			CancellationToken cancellationToken = default)
 		{
 			string json = await DownloadSmallTextAsync(
@@ -566,7 +573,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return string.Join(Environment.NewLine, lines);
 		}
 
-		private async Task<Version> GetAdvertisedVersionAsync(
+		private static async Task<Version> GetAdvertisedVersionAsync(
 			CancellationToken cancellationToken)
 		{
 			string rawVersion = await DownloadSmallTextAsync(

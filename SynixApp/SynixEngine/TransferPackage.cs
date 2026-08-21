@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -41,12 +48,7 @@ namespace Synix_Control_Panel.SynixEngine
 			requirement => requirement.HasEnoughSpace);
 	}
 
-	/// <summary>
-	/// Creates and restores portable Synix data-folder copies. Both encrypted
-	/// and unencrypted packages are streamed in chunks so large game
-	/// installations are never loaded into memory at once.
-	/// </summary>
-	public static partial class SynixTransferPackage
+	public partial class Core
 	{
 		private static readonly byte[] Magic =
 			Encoding.ASCII.GetBytes("SYNIXPKG");
@@ -194,19 +196,15 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				TryDeleteFile(temporaryZip);
-				TryDeleteFile(temporaryEncrypted);
+				TryDeleteTransferFile(temporaryZip);
+				TryDeleteTransferFile(temporaryEncrypted);
 			}
 		}
 
-		/// <summary>
-		/// Calculates a conservative maximum package size and verifies the free
-		/// space needed for the temporary archive and final encrypted file.
-		/// </summary>
 		public static SynixExportEstimate EstimateExport(
-			string sourceDirectory,
-			string destinationFile,
-			CancellationToken cancellationToken = default)
+   string sourceDirectory,
+   string destinationFile,
+   CancellationToken cancellationToken = default)
 		{
 			string sourceRoot = GetDirectoryRoot(sourceDirectory);
 			string destinationPath = Path.GetFullPath(destinationFile);
@@ -371,9 +369,9 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				throw new IOException(
 					$"Verifying this older package needs about " +
-					$"{FormatBytes(temporarySpaceRequired)} of temporary space on " +
+					$"{FormatTransferBytes(temporarySpaceRequired)} of temporary space on " +
 					$"{temporaryVolume}, but only " +
-					$"{FormatBytes(temporarySpaceAvailable)} is available.");
+					$"{FormatTransferBytes(temporarySpaceAvailable)} is available.");
 			}
 
 			string temporaryZip = Path.Combine(
@@ -412,7 +410,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				TryDeleteFile(temporaryZip);
+				TryDeleteTransferFile(temporaryZip);
 			}
 		}
 
@@ -493,18 +491,14 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				TryDeleteFile(temporaryZip);
-				TryDeleteDirectory(stagingDirectory);
+				TryDeleteTransferFile(temporaryZip);
+				TryDeleteTransferDirectory(stagingDirectory);
 			}
 		}
 
-		/// <summary>
-		/// Rolls back any import that was interrupted after it began replacing
-		/// files. This must run before Synix loads servers from disk.
-		/// </summary>
 		public static async Task<bool> RecoverInterruptedImportAsync(
-			string destinationDirectory,
-			CancellationToken cancellationToken = default)
+   string destinationDirectory,
+   CancellationToken cancellationToken = default)
 		{
 			string destinationRoot = GetDirectoryRoot(destinationDirectory);
 			string recoveryRoot = Path.Combine(
@@ -527,7 +521,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (!File.Exists(journalPath))
 				{
-					TryDeleteDirectory(operationDirectory);
+					TryDeleteTransferDirectory(operationDirectory);
 					continue;
 				}
 
@@ -554,7 +548,7 @@ namespace Synix_Control_Panel.SynixEngine
 						"Synix found an invalid import recovery journal.");
 				}
 
-				TryDeleteDirectory(operationDirectory);
+				TryDeleteTransferDirectory(operationDirectory);
 			}
 
 			TryDeleteDirectoryIfEmpty(recoveryRoot);
@@ -967,9 +961,6 @@ namespace Synix_Control_Panel.SynixEngine
 				string destinationPath = Path.GetFullPath(
 					Path.Combine(destinationRoot, entry.FullName));
 
-				// Keep this validation next to the filesystem operation. Besides
-				// preventing Zip Slip, this inline form allows CodeQL to verify
-				// that an archive entry can never escape the Synix destination.
 				if (!destinationPath.StartsWith(
 						destinationRoot,
 						StringComparison.OrdinalIgnoreCase))
@@ -1137,7 +1128,7 @@ namespace Synix_Control_Panel.SynixEngine
 					string temporaryPath = GetImportTemporaryPath(
 						destinationPath,
 						operationId);
-					TryDeleteFile(temporaryPath);
+					TryDeleteTransferFile(temporaryPath);
 					await CopyFileDurablyAsync(
 						stagedFile.FullName,
 						temporaryPath,
@@ -1199,7 +1190,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (safeToCleanRecovery)
 				{
-					TryDeleteDirectory(operationDirectory);
+					TryDeleteTransferDirectory(operationDirectory);
 					TryDeleteDirectoryIfEmpty(recoveryRoot);
 				}
 			}
@@ -1225,7 +1216,7 @@ namespace Synix_Control_Panel.SynixEngine
 				EnsureNoNestedReparsePoint(
 					destinationRoot,
 					destinationPath);
-				TryDeleteFile(GetImportTemporaryPath(
+				TryDeleteTransferFile(GetImportTemporaryPath(
 					destinationPath,
 					journal.OperationId));
 
@@ -1637,8 +1628,8 @@ namespace Synix_Control_Panel.SynixEngine
 				Environment.NewLine,
 				insufficient.Select(requirement =>
 					$"{requirement.VolumeRoot} needs about " +
-					$"{FormatBytes(requirement.RequiredBytes)}, but only " +
-					$"{FormatBytes(requirement.AvailableBytes)} is available."));
+					$"{FormatTransferBytes(requirement.RequiredBytes)}, but only " +
+					$"{FormatTransferBytes(requirement.AvailableBytes)} is available."));
 			throw new IOException(
 				"There is not enough free space to export Synix.\n\n" +
 				details +
@@ -1705,7 +1696,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return value * multiplier;
 		}
 
-		private static string FormatBytes(long bytes)
+	private static string FormatTransferBytes(long bytes)
 		{
 			string[] units = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
 			double value = Math.Max(0, bytes);
@@ -1741,7 +1732,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return new DateTimeOffset(normalized);
 		}
 
-		private static void TryDeleteFile(string path)
+	private static void TryDeleteTransferFile(string path)
 		{
 			try
 			{
@@ -1752,11 +1743,11 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// A failed cleanup must not hide the original operation result.
+
 			}
 		}
 
-		private static void TryDeleteDirectory(string path)
+	private static void TryDeleteTransferDirectory(string path)
 		{
 			try
 			{
@@ -1767,7 +1758,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// Recovery data is intentionally retained if cleanup cannot finish.
+
 			}
 		}
 
@@ -1783,7 +1774,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// Leaving an empty recovery folder is harmless.
+
 			}
 		}
 	}

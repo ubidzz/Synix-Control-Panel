@@ -52,10 +52,6 @@ namespace Synix_Control_Panel.Help
 		private double _currentCpuPercentage;
 		private double _currentRamPercentage;
 
-		/// <summary>
-		/// Parameterless constructor used by the Windows Forms Designer.
-		/// The application should open this form with ServerInfo(GameServer).
-		/// </summary>
 		public ServerInfo()
 		{
 			InitializeComponent();
@@ -101,7 +97,7 @@ namespace Synix_Control_Panel.Help
 			}
 			catch
 			{
-				// Older Windows versions do not support rounded DWM corners.
+
 			}
 		}
 
@@ -145,7 +141,7 @@ namespace Synix_Control_Panel.Help
 
 		private void LoadServerData()
 		{
-			bool secretsAvailable = SynixPasswordProtection
+			bool secretsAvailable = Core
 				.TryRevealServerSecrets(
 					_server,
 					out SynixServerSecrets secrets);

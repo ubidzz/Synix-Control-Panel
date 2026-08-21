@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using System.Security.Cryptography;
@@ -10,21 +17,16 @@ using System.Text.Json;
 
 namespace Synix_Control_Panel.SynixEngine
 {
-	/// <summary>
-	/// Bridges current-user DPAPI protection across computers. The temporary
-	/// vault is itself password-encrypted and exists only while an encrypted
-	/// Synix transfer package is being created or restored.
-	/// </summary>
-	public static class SynixPortablePasswordTransfer
+	public partial class Core
 	{
-		private static readonly byte[] Magic =
+		private static readonly byte[] PortablePasswordMagic =
 			Encoding.ASCII.GetBytes("SXPASS01");
-		private const int FormatVersion = 1;
-		private const int Pbkdf2Iterations = 600_000;
-		private const int SaltSize = 16;
-		private const int NonceSize = 12;
-		private const int TagSize = 16;
-		private const int KeySize = 32;
+		private const int PortablePasswordFormatVersion = 1;
+		private const int PortablePasswordPbkdf2Iterations = 600_000;
+		private const int PortablePasswordSaltSize = 16;
+		private const int PortablePasswordNonceSize = 12;
+		private const int PortablePasswordTagSize = 16;
+		private const int PortablePasswordKeySize = 32;
 		private const int MaximumPayloadBytes = 16 * 1024 * 1024;
 		private const string VaultFileName = ".synix-password-transfer.vault";
 
@@ -52,7 +54,7 @@ namespace Synix_Control_Panel.SynixEngine
 			int index = 0;
 			foreach (GameServer server in servers)
 			{
-				SynixServerSecrets secrets = SynixPasswordProtection
+				SynixServerSecrets secrets = Core
 					.RevealServerSecrets(server);
 				SynixServerPasswords passwords = secrets.Passwords;
 
@@ -72,7 +74,7 @@ namespace Synix_Control_Panel.SynixEngine
 			byte[] plaintext = JsonSerializer.SerializeToUtf8Bytes(
 				new PortablePasswordBundle
 				{
-					Version = FormatVersion,
+					Version = PortablePasswordFormatVersion,
 					Servers = entries
 				});
 
@@ -94,14 +96,9 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		/// <summary>
-		/// Returns false for older encrypted packages that have no portable vault.
-		/// The imported servers.json is changed only after the vault is authenticated
-		/// and every entry has been matched successfully.
-		/// </summary>
 		public static bool RestoreEncryptedImport(
-			string synixRoot,
-			string transferPassword)
+   string synixRoot,
+   string transferPassword)
 		{
 			string vaultPath = GetVaultPath(synixRoot);
 			if (!File.Exists(vaultPath))
@@ -126,7 +123,7 @@ namespace Synix_Control_Panel.SynixEngine
 					throw new SynixPasswordProtectionException(
 						"The portable saved-credential list is incomplete.");
 
-				if (bundle.Version != FormatVersion || bundle.Servers is null)
+				if (bundle.Version != PortablePasswordFormatVersion || bundle.Servers is null)
 				{
 					throw new SynixPasswordProtectionException(
 						"This saved-credential transfer version is not supported.");
@@ -139,13 +136,11 @@ namespace Synix_Control_Panel.SynixEngine
 				foreach (PortablePasswordEntry entry in bundle.Servers)
 				{
 					GameServer server = FindMatchingServer(importedServers, entry);
-					// Older version-1 vaults did not contain the webhook. In that
-					// case, preserve the readable webhook from the imported server
-					// entry while upgrading it to current-user DPAPI protection.
-					string discordWebhook = entry.DiscordWebhook ??
-						SynixPasswordProtection.RevealDiscordWebhook(server);
 
-					SynixPasswordProtection.SetServerSecrets(
+					string discordWebhook = entry.DiscordWebhook ??
+						Core.RevealDiscordWebhook(server);
+
+					Core.SetServerSecrets(
 						server,
 						new SynixServerSecrets(
 							new SynixServerPasswords(
@@ -155,7 +150,7 @@ namespace Synix_Control_Panel.SynixEngine
 							discordWebhook));
 				}
 
-				string protectedJson = SynixPasswordProtection
+				string protectedJson = Core
 					.SerializeServersForStorage(importedServers);
 				FileHandler.WriteTextAtomically(serversPath, protectedJson);
 				DeleteVault(synixRoot);
@@ -236,16 +231,16 @@ namespace Synix_Control_Panel.SynixEngine
 					"The saved-credential list is unexpectedly large.");
 			}
 
-			byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
-			byte[] nonce = RandomNumberGenerator.GetBytes(NonceSize);
-			byte[] key = DeriveKey(password, salt);
+			byte[] salt = RandomNumberGenerator.GetBytes(PortablePasswordSaltSize);
+			byte[] nonce = RandomNumberGenerator.GetBytes(PortablePasswordNonceSize);
+			byte[] key = DerivePortablePasswordKey(password, salt);
 			byte[] ciphertext = new byte[plaintext.Length];
-			byte[] tag = new byte[TagSize];
+			byte[] tag = new byte[PortablePasswordTagSize];
 			byte[] header = BuildHeader(salt, nonce, ciphertext.Length);
 
 			try
 			{
-				using AesGcm aes = new(key, TagSize);
+				using AesGcm aes = new(key, PortablePasswordTagSize);
 				aes.Encrypt(nonce, plaintext, ciphertext, tag, header);
 
 				byte[] result = new byte[
@@ -275,41 +270,41 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static byte[] Decrypt(byte[] vaultBytes, string password)
 		{
-			int headerLength = Magic.Length + sizeof(int) * 3 +
-				SaltSize + NonceSize;
-			if (vaultBytes.Length < headerLength + TagSize)
+			int headerLength = PortablePasswordMagic.Length + sizeof(int) * 3 +
+				PortablePasswordSaltSize + PortablePasswordNonceSize;
+			if (vaultBytes.Length < headerLength + PortablePasswordTagSize)
 				throw InvalidVault();
 
 			using MemoryStream stream = new(vaultBytes, writable: false);
 			using BinaryReader reader = new(stream, Encoding.UTF8, leaveOpen: true);
-			if (!reader.ReadBytes(Magic.Length).SequenceEqual(Magic) ||
-				reader.ReadInt32() != FormatVersion ||
-				reader.ReadInt32() != Pbkdf2Iterations)
+			if (!reader.ReadBytes(PortablePasswordMagic.Length).SequenceEqual(PortablePasswordMagic) ||
+				reader.ReadInt32() != PortablePasswordFormatVersion ||
+				reader.ReadInt32() != PortablePasswordPbkdf2Iterations)
 			{
 				throw InvalidVault();
 			}
 
-			byte[] salt = reader.ReadBytes(SaltSize);
-			byte[] nonce = reader.ReadBytes(NonceSize);
+			byte[] salt = reader.ReadBytes(PortablePasswordSaltSize);
+			byte[] nonce = reader.ReadBytes(PortablePasswordNonceSize);
 			int ciphertextLength = reader.ReadInt32();
-			if (salt.Length != SaltSize ||
-				nonce.Length != NonceSize ||
+			if (salt.Length != PortablePasswordSaltSize ||
+				nonce.Length != PortablePasswordNonceSize ||
 				ciphertextLength < 0 ||
 				ciphertextLength > MaximumPayloadBytes ||
-				stream.Length - stream.Position != ciphertextLength + TagSize)
+				stream.Length - stream.Position != ciphertextLength + PortablePasswordTagSize)
 			{
 				throw InvalidVault();
 			}
 
 			byte[] header = vaultBytes[..headerLength];
 			byte[] ciphertext = reader.ReadBytes(ciphertextLength);
-			byte[] tag = reader.ReadBytes(TagSize);
-			byte[] key = DeriveKey(password, salt);
+			byte[] tag = reader.ReadBytes(PortablePasswordTagSize);
+			byte[] key = DerivePortablePasswordKey(password, salt);
 			byte[] plaintext = new byte[ciphertextLength];
 
 			try
 			{
-				using AesGcm aes = new(key, TagSize);
+				using AesGcm aes = new(key, PortablePasswordTagSize);
 				aes.Decrypt(nonce, ciphertext, tag, plaintext, header);
 				return plaintext;
 			}
@@ -335,9 +330,9 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			using MemoryStream stream = new();
 			using BinaryWriter writer = new(stream, Encoding.UTF8, leaveOpen: true);
-			writer.Write(Magic);
-			writer.Write(FormatVersion);
-			writer.Write(Pbkdf2Iterations);
+			writer.Write(PortablePasswordMagic);
+			writer.Write(PortablePasswordFormatVersion);
+			writer.Write(PortablePasswordPbkdf2Iterations);
 			writer.Write(salt);
 			writer.Write(nonce);
 			writer.Write(ciphertextLength);
@@ -345,14 +340,14 @@ namespace Synix_Control_Panel.SynixEngine
 			return stream.ToArray();
 		}
 
-		private static byte[] DeriveKey(string password, byte[] salt)
+		private static byte[] DerivePortablePasswordKey(string password, byte[] salt)
 		{
 			return Rfc2898DeriveBytes.Pbkdf2(
 				password,
 				salt,
-				Pbkdf2Iterations,
+				PortablePasswordPbkdf2Iterations,
 				HashAlgorithmName.SHA256,
-				KeySize);
+				PortablePasswordKeySize);
 		}
 
 		private static SynixPasswordProtectionException InvalidVault()
@@ -421,7 +416,7 @@ namespace Synix_Control_Panel.SynixEngine
 			public string ServerPassword { get; set; } = string.Empty;
 			public string AdminPassword { get; set; } = string.Empty;
 			public string RconPassword { get; set; } = string.Empty;
-			// Null identifies a vault made before webhook transfer support.
+
 			public string? DiscordWebhook { get; set; }
 		}
 	}

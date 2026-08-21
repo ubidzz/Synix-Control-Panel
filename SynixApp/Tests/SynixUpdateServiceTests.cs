@@ -1,3 +1,15 @@
+// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.SynixEngine;
 using System.Text.Json;
 using Xunit;
@@ -15,9 +27,9 @@ public sealed class SynixUpdateServiceTests
 	public void NormalBuilds_AreMarkedAsDevelopmentBuilds()
 	{
 		Assert.Equal(
-			SynixBuildInfo.DevelopmentChannel,
-			SynixBuildInfo.UpdateChannel);
-		Assert.False(SynixBuildInfo.IsOfficialRelease);
+			Core.DevelopmentChannel,
+			Core.UpdateChannel);
+		Assert.False(Core.IsOfficialRelease);
 	}
 
 	[Theory]
@@ -32,7 +44,7 @@ public sealed class SynixUpdateServiceTests
 	{
 		Assert.Equal(
 			expectedOfficial,
-			SynixBuildInfo.IsOfficialChannel(channel));
+			Core.IsOfficialChannel(channel));
 	}
 
 	[Theory]
@@ -46,7 +58,7 @@ public sealed class SynixUpdateServiceTests
 		int minor,
 		int build)
 	{
-		bool parsed = SynixUpdateService.TryParseVersionText(
+		bool parsed = Core.TryParseVersionText(
 			text,
 			out Version? version);
 
@@ -57,7 +69,7 @@ public sealed class SynixUpdateServiceTests
 	[Fact]
 	public void DevelopmentBuild_NeverUsesInstalledEditionDetection()
 	{
-		SynixInstallation installation = SynixUpdateService.DetectInstallation(
+		SynixInstallation installation = Core.DetectInstallation(
 			@"C:\Users\Player\AppData\Roaming\Synix\Synix Control Panel.exe",
 			@"C:\Users\Player\AppData\Roaming\Synix\",
 			"WinGet",
@@ -80,10 +92,8 @@ public sealed class SynixUpdateServiceTests
 			null,
 			null,
 			null);
-		SynixUpdaterCoordinator coordinator = new(new SynixUpdateService());
-
 		InvalidOperationException exception = await Assert.ThrowsAsync<
-			InvalidOperationException>(() => coordinator.PrepareAsync(check));
+			InvalidOperationException>(() => Core.PrepareUpdateAsync(check));
 
 		Assert.Contains("official Stable", exception.Message);
 	}
@@ -97,7 +107,7 @@ public sealed class SynixUpdateServiceTests
 		string? installSource,
 		SynixInstallationKind expectedKind)
 	{
-		SynixInstallation installation = SynixUpdateService.DetectInstallation(
+		SynixInstallation installation = Core.DetectInstallation(
 			@"C:\Users\Player\AppData\Roaming\Synix\Synix Control Panel.exe",
 			@"C:\Users\Player\AppData\Roaming\Synix\",
 			installSource,
@@ -110,7 +120,7 @@ public sealed class SynixUpdateServiceTests
 	[Fact]
 	public void StandaloneCopy_RemainsStandaloneWhenSetupIsAlsoInstalled()
 	{
-		SynixInstallation installation = SynixUpdateService.DetectInstallation(
+		SynixInstallation installation = Core.DetectInstallation(
 			@"D:\Portable Apps\Synix Control Panel.exe",
 			@"C:\Users\Player\AppData\Roaming\Synix\",
 			"WinGet",
@@ -125,7 +135,7 @@ public sealed class SynixUpdateServiceTests
 	[Fact]
 	public void DifferentlyNamedStandalone_InSetupFolderRemainsStandalone()
 	{
-		SynixInstallation installation = SynixUpdateService.DetectInstallation(
+		SynixInstallation installation = Core.DetectInstallation(
 			@"C:\Users\Player\AppData\Roaming\Synix\Synix.Control.Panel.exe",
 			@"C:\Users\Player\AppData\Roaming\Synix\",
 			"WinGet",
@@ -137,7 +147,7 @@ public sealed class SynixUpdateServiceTests
 	[Fact]
 	public void StableGitHubRelease_ParsesVerifiedAssets()
 	{
-		SynixReleaseInfo release = SynixUpdateService.ParseReleaseJson(
+		SynixReleaseInfo release = Core.ParseReleaseJson(
 			BuildReleaseJson());
 
 		Assert.Equal(new Version(1, 0, 22), release.Version);
@@ -147,7 +157,7 @@ public sealed class SynixUpdateServiceTests
 		Assert.Equal(new string('a', 64), release.Assets[0].Sha256);
 		Assert.Equal(new string('b', 64), release.Assets[1].Sha256);
 		Assert.Equal(
-			SynixUpdateService.StandaloneAssetName,
+			Core.StandaloneAssetName,
 			release.Assets[0].Name);
 	}
 
@@ -155,10 +165,10 @@ public sealed class SynixUpdateServiceTests
 	public void DraftAndPrereleaseUpdates_AreRejected()
 	{
 		Assert.Throws<InvalidDataException>(() =>
-			SynixUpdateService.ParseReleaseJson(
+			Core.ParseReleaseJson(
 				BuildReleaseJson(draft: true)));
 		Assert.Throws<InvalidDataException>(() =>
-			SynixUpdateService.ParseReleaseJson(
+			Core.ParseReleaseJson(
 				BuildReleaseJson(prerelease: true)));
 	}
 
@@ -168,12 +178,12 @@ public sealed class SynixUpdateServiceTests
 		object[] unsafeAssets =
 		[
 			CreateAsset(
-				SynixUpdateService.StandaloneAssetName,
+				Core.StandaloneAssetName,
 				"https://example.com/Synix.Control.Panel.exe",
 				StandaloneDigest,
 				1024),
 			CreateAsset(
-				SynixUpdateService.MsiAssetName,
+				Core.MsiAssetName,
 				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/SynixSetup.msi",
 				string.Empty,
 				1024),
@@ -184,7 +194,7 @@ public sealed class SynixUpdateServiceTests
 				600L * 1024 * 1024)
 		];
 
-		SynixReleaseInfo release = SynixUpdateService.ParseReleaseJson(
+		SynixReleaseInfo release = Core.ParseReleaseJson(
 			BuildReleaseJson(assets: unsafeAssets));
 
 		Assert.Empty(release.Assets);
@@ -198,10 +208,10 @@ public sealed class SynixUpdateServiceTests
 		SynixInstallationKind installationKind,
 		string expectedAsset)
 	{
-		SynixReleaseInfo release = SynixUpdateService.ParseReleaseJson(
+		SynixReleaseInfo release = Core.ParseReleaseJson(
 			BuildReleaseJson());
 
-		SynixReleaseAsset? asset = SynixUpdateService.SelectAsset(
+		SynixReleaseAsset? asset = Core.SelectAsset(
 			release,
 			installationKind);
 
@@ -212,11 +222,11 @@ public sealed class SynixUpdateServiceTests
 	[Fact]
 	public void UpdateReadiness_RequiresMatchingReleaseAndOfficialBuild()
 	{
-		SynixReleaseInfo release = SynixUpdateService.ParseReleaseJson(
+		SynixReleaseInfo release = Core.ParseReleaseJson(
 			BuildReleaseJson());
 		SynixReleaseAsset asset = Assert.Single(
 			release.Assets,
-			item => item.Name == SynixUpdateService.StandaloneAssetName);
+			item => item.Name == Core.StandaloneAssetName);
 		SynixInstallation development = new(
 			SynixInstallationKind.Development,
 			@"C:\Build\Synix Control Panel.exe",
@@ -257,7 +267,7 @@ public sealed class SynixUpdateServiceTests
 			- This seventh item should not appear.
 			""";
 
-		string highlights = SynixUpdateService.BuildHighlights(notes);
+		string highlights = Core.BuildHighlights(notes);
 
 		Assert.Equal(6, highlights.Split(Environment.NewLine).Length);
 		Assert.Contains("automatic updates", highlights);
@@ -273,7 +283,7 @@ public sealed class SynixUpdateServiceTests
 			- Verify the **SHA-256** digest.
 			""";
 
-		string formatted = SynixUpdateService.FormatReleaseNotes(notes);
+		string formatted = Core.FormatReleaseNotes(notes);
 
 		Assert.Contains("SAFETY", formatted);
 		Assert.Contains("• Verify the SHA-256 digest.", formatted);
@@ -287,12 +297,12 @@ public sealed class SynixUpdateServiceTests
 		assets ??=
 		[
 			CreateAsset(
-				SynixUpdateService.StandaloneAssetName,
+				Core.StandaloneAssetName,
 				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/Synix.Control.Panel.exe",
 				StandaloneDigest,
 				9_345_994),
 			CreateAsset(
-				SynixUpdateService.MsiAssetName,
+				Core.MsiAssetName,
 				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/SynixSetup.msi",
 				MsiDigest,
 				6_519_406)

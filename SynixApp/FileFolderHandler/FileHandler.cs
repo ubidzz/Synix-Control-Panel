@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -48,7 +48,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 		{
 			try
 			{
-				string jsonString = SynixPasswordProtection
+				string jsonString = Core
 					.SerializeServersForStorage(MainGUI.serverList);
 				string savedPath = Path.Combine(Core.DataPath, FileName);
 
@@ -75,7 +75,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				try
 				{
 					string jsonString = File.ReadAllText(fullPath);
-					List<GameServer> loadedServers = SynixPasswordProtection
+					List<GameServer> loadedServers = Core
 						.DeserializeServersAndMigrate(
 							jsonString,
 							out int migratedPasswordServerCount);
@@ -153,11 +153,6 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			}
 		}
 
-		/// <summary>
-		/// Writes a complete replacement beside the destination, flushes it to disk,
-		/// and then swaps it into place. A failed migration therefore leaves the old
-		/// servers.json untouched and available for the next startup attempt.
-		/// </summary>
 		public static void WriteTextAtomically(string fullPath, string content)
 		{
 			string? directory = Path.GetDirectoryName(fullPath);
@@ -203,7 +198,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				}
 				catch
 				{
-					// A harmless leftover temp file must not hide the real save result.
+
 				}
 			}
 		}
@@ -233,7 +228,6 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				return false;
 			}
 
-			// Do not accept more queued entries after application shutdown starts.
 			if (Volatile.Read(ref _loggingShutdownStarted) != 0)
 				return false;
 
@@ -252,10 +246,6 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			}
 		}
 
-		/// <summary>
-		/// Completes the logging queue and waits until every queued entry
-		/// has been processed. Call this after Application.Run returns.
-		/// </summary>
 		public static async Task FlushLogsAsync()
 		{
 			if (Interlocked.Exchange(
@@ -271,7 +261,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			}
 			catch
 			{
-				// Application shutdown must continue even if logging failed.
+
 			}
 		}
 
@@ -316,8 +306,6 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 						fullPath,
 						content.TrimEnd() + Environment.NewLine);
 
-					// Retention only needs to run when a new daily file
-					// is created, not after every individual log message.
 					if (isNewDailyFile)
 					{
 						CleanupOldLogFiles(safeLogFileName);
@@ -354,13 +342,13 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					}
 					catch
 					{
-						// A locked old log should not prevent current logging.
+
 					}
 				}
 			}
 			catch
 			{
-				// Retention failure should not make the current write fail.
+
 			}
 		}
 
@@ -390,7 +378,6 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			if (string.IsNullOrWhiteSpace(safeName))
 				safeName = "Synix";
 
-			// Prevent excessively long Windows paths.
 			if (safeName.Length > 80)
 				safeName = safeName[..80];
 

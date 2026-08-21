@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -256,7 +256,7 @@ namespace Synix_Control_Panel.SynixEngine
 				Core.Instance.UpdateGridStatus();
 
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
-				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf"); // Used gameData object
+				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf");
 
 				if (File.Exists(manifestPath))
 				{
@@ -463,8 +463,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (stopServer && server.PID != null)
 				{
 					Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
-					// Button-driven restarts remain manual. Scheduled maintenance and
-					// watchdog recovery must not be reported as a manual shutdown.
+
 					await StopServerAndReport(server, isManual: status == "RESTART");
 				}
 
@@ -517,7 +516,7 @@ namespace Synix_Control_Panel.SynixEngine
 							_ = ExecuteStartSequence(server, "WATCHDOG");
 						}
 					}
-					catch { /* Process might have closed during the check */ }
+					catch { }
 				}
 			}
 		}
@@ -540,7 +539,7 @@ namespace Synix_Control_Panel.SynixEngine
 			SynixServerPasswords batchPasswords;
 			try
 			{
-				batchPasswords = SynixPasswordProtection
+				batchPasswords = Core
 					.RevealServerPasswords(server);
 			}
 			catch (SynixPasswordProtectionException)
@@ -600,7 +599,7 @@ namespace Synix_Control_Panel.SynixEngine
 							invokedId = fileContent;
 						}
 					}
-					catch { /* Silent fail */ }
+					catch { }
 				}
 
 				string cleanIdentity = GetSafeName(server.ServerName ?? "Server");
@@ -662,14 +661,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				args = args.Replace("  ", " ").Trim();
 
-				// Escape ampersands so batch files don't interpret them as command separators (e.g. s&box)
 				string safeArgs = args.Replace("&", "^&");
 
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
 
-				// 4. CONSTRUCT ISOLATED BATCH SCRIPT
 				StringBuilder batchContent = new StringBuilder();
 				batchContent.AppendLine("@echo off");
 				batchContent.AppendLine($"echo :: ===========================================================================");

@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -78,7 +85,7 @@ namespace Synix_Control_Panel.SynixEngine
 		}
 	}
 
-	public sealed class SynixReleaseReadinessChecker
+	public partial class Core
 	{
 		public const string ManifestFileName = "Synix.release-manifest.txt";
 		public const string ManifestBackupRelativePath = "Synix.release-manifest.backup.txt";
@@ -90,7 +97,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private const long MinimumExecutableSize = 1024L * 1024L;
 		private const string ExpectedUpgradeCode = "e369556b-db95-4d9b-8e86-2b7d50dcd328";
 
-		public async Task<SynixReleaseReadinessReport> CheckAsync(
+		public static async Task<SynixReleaseReadinessReport> CheckReleaseReadinessAsync(
 			string projectDirectory,
 			string publishDirectory,
 			IProgress<string>? progress = null,
@@ -136,7 +143,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				try
 				{
-					if (!SynixUpdateService.TryParseVersionText(
+					if (!Core.TryParseVersionText(
 						File.ReadAllText(versionFile),
 						out versionFileVersion))
 					{
@@ -147,7 +154,7 @@ namespace Synix_Control_Panel.SynixEngine
 						AddFailure(
 							items,
 							"Version agreement",
-							$"The project is v{FormatVersion(projectVersion)}, but version.txt is v{FormatVersion(versionFileVersion)}.");
+							$"The project is v{FormatReleaseVersion(projectVersion)}, but version.txt is v{FormatReleaseVersion(versionFileVersion)}.");
 					}
 					else
 					{
@@ -293,7 +300,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				catch
 				{
-					// Ignore invalid or machine-specific publish profiles.
+
 				}
 			}
 
@@ -373,7 +380,7 @@ namespace Synix_Control_Panel.SynixEngine
 					.FirstOrDefault(element =>
 						element.Name.LocalName == "Version")
 					?.Value;
-				return SynixUpdateService.TryParseVersionText(
+				return Core.TryParseVersionText(
 					versionText,
 					out Version? version)
 						? version
@@ -404,12 +411,12 @@ namespace Synix_Control_Panel.SynixEngine
 				FileInfo file = new(path);
 				if (file.Length < MinimumExecutableSize)
 				{
-					AddFailure(items, checkName, $"The file is unexpectedly small ({FormatBytes(file.Length)}).");
+					AddFailure(items, checkName, $"The file is unexpectedly small ({FormatReleaseBytes(file.Length)}).");
 					return null;
 				}
 
 				FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(path);
-				bool versionValid = SynixUpdateService.TryParseVersionText(
+				bool versionValid = Core.TryParseVersionText(
 					versionInfo.ProductVersion,
 					out Version? artifactVersion);
 				if (!versionValid || expectedVersion is null ||
@@ -418,14 +425,14 @@ namespace Synix_Control_Panel.SynixEngine
 					AddFailure(
 						items,
 						checkName,
-						$"Expected v{FormatVersion(expectedVersion)}, but the file reports v{FormatVersion(artifactVersion)}.");
+						$"Expected v{FormatReleaseVersion(expectedVersion)}, but the file reports v{FormatReleaseVersion(artifactVersion)}.");
 				}
 				else
 				{
 					AddPassed(
 						items,
 						checkName,
-						$"v{artifactVersion!.ToString(3)} is present ({FormatBytes(file.Length)}).");
+						$"v{artifactVersion!.ToString(3)} is present ({FormatReleaseBytes(file.Length)}).");
 				}
 
 				progress?.Report($"Calculating SHA-256 for {Path.GetFileName(path)}...");
@@ -474,14 +481,14 @@ namespace Synix_Control_Panel.SynixEngine
 				FileInfo file = new(path);
 				if (file.Length < MinimumExecutableSize)
 				{
-					AddFailure(items, checkName, $"The file is unexpectedly small ({FormatBytes(file.Length)}).");
+					AddFailure(items, checkName, $"The file is unexpectedly small ({FormatReleaseBytes(file.Length)}).");
 					return null;
 				}
 
 				IReadOnlyDictionary<string, string> properties =
 					ReadMsiProperties(path);
 				properties.TryGetValue("ProductVersion", out string? versionText);
-				bool versionValid = SynixUpdateService.TryParseVersionText(
+				bool versionValid = Core.TryParseVersionText(
 					versionText,
 					out Version? msiVersion);
 				bool nameValid = ManifestValueMatches(
@@ -502,7 +509,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				List<string> problems = [];
 				if (!versionValid || expectedVersion is null || msiVersion != expectedVersion)
-					problems.Add($"expected v{FormatVersion(expectedVersion)}, but the MSI reports v{FormatVersion(msiVersion)}");
+					problems.Add($"expected v{FormatReleaseVersion(expectedVersion)}, but the MSI reports v{FormatReleaseVersion(msiVersion)}");
 				if (!nameValid)
 					problems.Add("the product name is incorrect");
 				if (!publisherValid)
@@ -515,7 +522,7 @@ namespace Synix_Control_Panel.SynixEngine
 					AddPassed(
 						items,
 						checkName,
-						$"v{msiVersion!.ToString(3)} is present ({FormatBytes(file.Length)}) with the correct upgrade identity.");
+						$"v{msiVersion!.ToString(3)} is present ({FormatReleaseBytes(file.Length)}) with the correct upgrade identity.");
 				}
 				else
 				{
@@ -578,7 +585,7 @@ namespace Synix_Control_Panel.SynixEngine
 					StringComparer.OrdinalIgnoreCase);
 				while (true)
 				{
-					status = MsiViewFetch(view, out IntPtr record);
+					status = MsiViewoetch(view, out IntPtr record);
 					if (status == noMoreItems)
 						break;
 					if (status != success)
@@ -664,12 +671,12 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!manifest.TryGetValue("FormatVersion", out string? format) || format != "2")
 				problems.Add("unsupported manifest format");
 			if (!manifest.TryGetValue("Channel", out string? channel) ||
-				!SynixBuildInfo.IsOfficialChannel(channel))
+				!Core.IsOfficialChannel(channel))
 			{
 				problems.Add("the published EXE is not marked Stable");
 			}
 			if (!manifest.TryGetValue("Version", out string? versionText) ||
-				!SynixUpdateService.TryParseVersionText(versionText, out Version? manifestVersion) ||
+				!Core.TryParseVersionText(versionText, out Version? manifestVersion) ||
 				expectedVersion is null || manifestVersion != expectedVersion)
 			{
 				problems.Add("manifest version does not match the project");
@@ -850,12 +857,12 @@ namespace Synix_Control_Panel.SynixEngine
 					StringComparison.OrdinalIgnoreCase);
 		}
 
-		private static string FormatVersion(Version? version)
+		private static string FormatReleaseVersion(Version? version)
 		{
 			return version?.ToString(3) ?? "Unknown";
 		}
 
-		private static string FormatBytes(long bytes)
+		private static string FormatReleaseBytes(long bytes)
 		{
 			double megabytes = bytes / 1024d / 1024d;
 			return $"{megabytes:0.##} MB";
@@ -879,7 +886,7 @@ namespace Synix_Control_Panel.SynixEngine
 			IntPtr record);
 
 		[DllImport("msi.dll")]
-		private static extern uint MsiViewFetch(
+		private static extern uint MsiViewoetch(
 			IntPtr view,
 			out IntPtr record);
 

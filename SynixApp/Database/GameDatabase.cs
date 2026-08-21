@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -20,7 +20,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 
 		private static readonly IReadOnlyList<GameInfo> games =
 		[
-			//----------------- Steam game servers ---------------------
+
 			new() {
 				Game = "Subsistence",
 				AppID = "1362640",
@@ -128,9 +128,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true,
 				IsQueryable = false,
 				ProbeProtocol = ServerProbeProtocol.EpicOnlineServices,
-				// ASA's EOS session lookup needs publisher-controlled credentials.
-				// Keep local watchdog socket verification, but do not offer a
-				// misleading manual LAN/WAN connection test to normal users.
+
 				SupportsManualConnectionTesting = false
 			},
 			new() {
@@ -2661,7 +2659,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 				IsQueryable = false
 			},
 
-			//----------------- Java games ---------------------
 			new() {
 				Game = "Minecraft",
 				AppID = "0",
@@ -2697,11 +2694,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 		private const string CanonicalMinecraftName = "Minecraft";
 		private const string LegacyMinecraftName = "Minecraft Java";
 
-		/// <summary>
-		/// Maps names stored by older Synix releases to their current database name.
-		/// Keep this centralized so database lookup, icon loading, and JSON migration
-		/// all agree on the same identity.
-		/// </summary>
 		public static string GetCanonicalGameName(string? gameName)
 		{
 			string normalizedName = gameName?.Trim() ?? string.Empty;
@@ -2725,8 +2717,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 			if (_gameDict.TryGetValue(canonicalName, out GameInfo? game))
 				return game;
 
-			// This fallback also keeps the helper safe if it is copied into a branch
-			// whose database entry has not yet been renamed.
 			if (IsMinecraft(canonicalName) &&
 				_gameDict.TryGetValue(LegacyMinecraftName, out game))
 			{
@@ -2736,12 +2726,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 			return null;
 		}
 
-		/// <summary>
-		/// Resolves the connection-test protocol for every database entry. Explicit
-		/// REST/EOS/TCP assignments win; otherwise IsQueryable selects the
-		/// A2S UDP query path even when the game derives its query port and therefore
-		/// does not expose a {query} launch placeholder.
-		/// </summary>
 		public static ServerProbeProtocol GetProbeProtocol(GameInfo? game)
 		{
 			if (game == null)
@@ -2755,18 +2739,11 @@ namespace Synix_Control_Panel.SynixApp.Database
 				: ServerProbeProtocol.Tcp;
 		}
 
-		/// <summary>
-		/// Returns whether the selected game has a dependable probe that can be
-		/// exposed as a user-triggered LAN/WAN connection test.
-		/// </summary>
 		public static bool SupportsManualConnectionTesting(GameInfo? game)
 		{
 			if (game?.SupportsManualConnectionTesting != true)
 				return false;
 
-			// Auto is only trustworthy for the database's established A2S games.
-			// Do not expose the UI merely because GetProbeProtocol can provide a
-			// generic TCP fallback for internal watchdog recovery.
 			if (game.ProbeProtocol == ServerProbeProtocol.Auto)
 				return game.IsQueryable;
 

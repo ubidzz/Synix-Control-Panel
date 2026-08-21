@@ -83,7 +83,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
 		{
-			// Leave this entirely blank! This kills those broken grey boxes on the left.
+
 		}
 
 		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)

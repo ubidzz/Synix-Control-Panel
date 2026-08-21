@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -1016,11 +1016,9 @@ namespace Synix_Control_Panel.Database
 			ThemeManager.Apply(this);
 			_server = server;
 
-			// Ensure LinkBehavior is set so links are properly formatted as hyperlinks
 			lblWarningText.Links.Clear();
 			lblWarningText.LinkClicked += LblWarningText_LinkClicked;
 
-			// Set the specific warning message and extract the link
 			if (_messages.TryGetValue(server.Game, out string customMessage))
 			{
 				lblWarningText.Text = customMessage;
@@ -1038,7 +1036,6 @@ namespace Synix_Control_Panel.Database
 			}
 		}
 
-		// Helper to find the URL in the text and set the active link area
 		private void FormatUrlLink(string text)
 		{
 			lblWarningText.Links.Clear();
@@ -1046,18 +1043,16 @@ namespace Synix_Control_Panel.Database
 			int linkIndex = text.IndexOf("http");
 			if (linkIndex != -1)
 			{
-				// Find where the URL ends (by looking for whitespace, newline, or end of string)
+
 				int spaceIndex = text.IndexOfAny(new char[] { ' ', '\n', '\r' }, linkIndex);
 				int linkLength = (spaceIndex != -1) ? spaceIndex - linkIndex : text.Length - linkIndex;
 
 				string url = text.Substring(linkIndex, linkLength).Trim();
 
-				// Add only the exact URL range to the LinkLabel
 				lblWarningText.Links.Add(linkIndex, linkLength, url);
 			}
 		}
 
-		// Event handler to open the URL in the default web browser
 		private void LblWarningText_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			if (e.Link.LinkData != null)

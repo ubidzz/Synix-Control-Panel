@@ -88,7 +88,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// Older Windows versions do not support rounded DWM corners.
+
 			}
 		}
 
@@ -571,17 +571,17 @@ namespace Synix_Control_Panel.SynixEngine
 			await RunTransferOperationAsync(
 				async progress =>
 				{
-					SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
+					Core.DeleteVault(Core.RootPath);
 					try
 					{
 						if (passwordProtected)
 						{
-							SynixPortablePasswordTransfer.PrepareEncryptedExport(
+							Core.PrepareEncryptedExport(
 								Core.RootPath,
 								transferPassword,
 								MainGUI.serverList);
 
-							await SynixTransferPackage.ExportAsync(
+							await Core.ExportAsync(
 								Core.RootPath,
 								fileDialog.FileName,
 								transferPassword,
@@ -589,7 +589,7 @@ namespace Synix_Control_Panel.SynixEngine
 						}
 						else
 						{
-							await SynixTransferPackage.ExportUnencryptedAsync(
+							await Core.ExportUnencryptedAsync(
 								Core.RootPath,
 								fileDialog.FileName,
 								progress);
@@ -597,7 +597,7 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					finally
 					{
-						SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
+						Core.DeleteVault(Core.RootPath);
 					}
 				},
 				"Export complete",
@@ -673,8 +673,8 @@ namespace Synix_Control_Panel.SynixEngine
 			bool imported = await RunTransferOperationAsync(
 				async progress =>
 				{
-					SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
-					await SynixTransferPackage.ImportAsync(
+					Core.DeleteVault(Core.RootPath);
+					await Core.ImportAsync(
 						packageFile,
 						Core.RootPath,
 						transferPassword,
@@ -682,13 +682,13 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (_selectedImportPasswordProtected)
 					{
-						SynixPortablePasswordTransfer.RestoreEncryptedImport(
+						Core.RestoreEncryptedImport(
 							Core.RootPath,
 							transferPassword);
 					}
 					else
 					{
-						SynixPortablePasswordTransfer.DeleteVault(Core.RootPath);
+						Core.DeleteVault(Core.RootPath);
 					}
 				},
 				"Import complete",
@@ -759,7 +759,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			await RunTransferOperationAsync(
-				async progress => await SynixTransferPackage.VerifyAsync(
+				async progress => await Core.VerifyAsync(
 					packageFile,
 					transferPassword,
 					progress),
@@ -786,7 +786,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				SynixImportEstimate estimate = await Task.Run(() =>
-					SynixTransferPackage.EstimateImport(
+					Core.EstimateImport(
 						fileDialog.FileName,
 						Core.RootPath));
 				_selectedImportPackage = fileDialog.FileName;
@@ -844,7 +844,7 @@ namespace Synix_Control_Panel.SynixEngine
 					Path.GetTempPath(),
 					"Synix-size-estimate.synixbackup");
 				SynixExportEstimate estimate = await Task.Run(() =>
-					SynixTransferPackage.EstimateExport(
+					Core.EstimateExport(
 						Core.RootPath,
 						estimateDestination));
 				if (IsDisposed)
@@ -894,7 +894,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				SynixExportEstimate estimate = await Task.Run(() =>
-					SynixTransferPackage.EstimateExport(
+					Core.EstimateExport(
 						Core.RootPath,
 						destinationFile));
 				backupSettingsPage.ShowExportEstimate(

@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -625,15 +625,14 @@ namespace Synix_Control_Panel.SynixApp.Design
 		{
 			if (message.Msg == WmNcPaint)
 			{
-				// The native non-client frame is where Windows injects the bright
-				// focused/disabled border. The control paints its own dark frame.
+
 				message.Result = IntPtr.Zero;
 				return;
 			}
 
 			if (message.Msg == WmEraseBackground)
 			{
-				// Prevent a system-color flash before the owner-drawn frame appears.
+
 				message.Result = new IntPtr(1);
 				return;
 			}
@@ -693,14 +692,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 		}
 	}
 
-	/// <summary>
-	/// Grid cell used by read-only label and badge columns. It deliberately removes
-	/// the Selected and Focus paint states so informational columns never look
-	/// interactive, even when WinForms temporarily makes one the current cell.
-	/// </summary>
 	[ToolboxItem(false)]
 	public sealed class ModernSettingsDataGridViewInformationalCell :
-		DataGridViewTextBoxCell
+   DataGridViewTextBoxCell
 	{
 		protected override void Paint(
 			Graphics graphics,
@@ -997,7 +991,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		public void PrepareEditingControlForEdit(bool selectAll)
 		{
-			// The user can open the list with the custom arrow, F4, or Alt+Down.
+
 		}
 
 		public int EditingControlRowIndex { get; set; }
@@ -1156,8 +1150,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnPaintBackground(PaintEventArgs eventArgs)
 		{
-			// OnPaint covers every pixel. Suppressing the native background pass
-			// prevents disabled/focus states from flashing a system-white frame.
+
 		}
 
 		protected override void OnEnabledChanged(EventArgs eventArgs)

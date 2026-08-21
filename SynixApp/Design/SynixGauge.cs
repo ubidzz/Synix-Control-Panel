@@ -15,11 +15,6 @@ using System.Drawing.Drawing2D;
 
 namespace Synix_Control_Panel.SynixApp.Design
 {
-	/// <summary>
-	/// Compact, opaque dashboard gauge. The old speedometer-style control was
-	/// visually heavy and relied on transparency; this ring gauge remains stable
-	/// inside WinForms cards and at high DPI.
-	/// </summary>
 	[ToolboxItem(true)]
 	public sealed class SynixGauge : Control
 	{

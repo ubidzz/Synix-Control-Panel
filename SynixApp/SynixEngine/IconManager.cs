@@ -24,7 +24,6 @@ namespace Synix_Control_Panel.SynixEngine
 			Timeout = TimeSpan.FromSeconds(20)
 		};
 
-
 		public static string GetLocalServerIcon(string gameName, string fullExePath)
 		{
 			GameInfo? blueprint = GameDatabase.GetGame(gameName);
@@ -82,12 +81,10 @@ namespace Synix_Control_Panel.SynixEngine
 				catch
 				{
 					TryDeleteFile(temporaryIconPath);
-					// If the URL is unavailable or not an image, try normal extraction.
+
 				}
 			}
 
-			// Batch files only expose Windows' generic script icon. Saving that icon
-			// permanently masks a later successful IconUrl download, so skip it.
 			if (File.Exists(fullExePath) &&
 				!fullExePath.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) &&
 				!fullExePath.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
@@ -109,7 +106,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				catch
 				{
-					// Fall through if file is locked, in use, or lacks permissions
+
 				}
 			}
 
@@ -149,7 +146,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// A locked cache file should not prevent the fallback icon path.
+
 			}
 		}
 	}

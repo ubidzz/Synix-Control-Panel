@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Microsoft.Win32;
 using System.Diagnostics;
@@ -46,7 +53,7 @@ namespace Synix_Control_Panel.SynixEngine
 		string ReadyMarkerPath,
 		Version NewVersion);
 
-	public sealed class SynixUpdaterCoordinator
+	public partial class Core
 	{
 		public const string ApplyUpdateArgument = "--synix-apply-update";
 		public const string UpdateStartedArgument = "--synix-update-started";
@@ -56,18 +63,10 @@ namespace Synix_Control_Panel.SynixEngine
 		private const int ParentExitTimeoutSeconds = 60;
 		private const int UpdatedStartupTimeoutSeconds = 90;
 		private const int InstallerTimeoutMinutes = 15;
-		private const string LegacySetupUninstallKey =
+		private const string LegacyUpdaterSetupUninstallKey =
 			@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{D3E8B790-86E8-4485-B827-7A743AB72BDB}_is1";
 
-		private readonly SynixUpdateService _updateService;
-
-		public SynixUpdaterCoordinator(SynixUpdateService updateService)
-		{
-			_updateService = updateService ??
-				throw new ArgumentNullException(nameof(updateService));
-		}
-
-		public async Task<SynixPreparedUpdate> PrepareAsync(
+		public static async Task<SynixPreparedUpdate> PrepareUpdateAsync(
 			SynixUpdateCheckResult check,
 			IProgress<SynixUpdateDownloadProgress>? progress = null,
 			CancellationToken cancellationToken = default)
@@ -106,7 +105,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
-				await _updateService.DownloadAssetAsync(
+				await DownloadUpdateAssetAsync(
 					check.Asset,
 					payloadPath,
 					progress,
@@ -147,7 +146,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				TryDeleteDirectory(operationDirectory);
+				TryDeleteUpdateDirectory(operationDirectory);
 				throw;
 			}
 		}
@@ -242,7 +241,7 @@ namespace Synix_Control_Panel.SynixEngine
 								if (File.Exists(readyMarker))
 									continue;
 
-								TryDeleteDirectory(operationDirectory);
+								TryDeleteUpdateDirectory(operationDirectory);
 								if (!Directory.Exists(operationDirectory))
 									return;
 							}
@@ -251,8 +250,6 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// A marker failure must not prevent a successfully updated Synix
-				// from starting. The helper treats a still-running process as safe.
 			}
 		}
 
@@ -266,7 +263,6 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// Housekeeping must never prevent Synix from starting.
 			}
 		}
 
@@ -322,10 +318,10 @@ namespace Synix_Control_Panel.SynixEngine
 					return;
 				}
 
-				TryDeleteFile(backupPath);
-				TryDeleteFile(request.PayloadPath);
-				TryDeleteFile(requestPath);
-				TryDeleteFile(request.ReadyMarkerPath);
+				TryDeleteUpdateFile(backupPath);
+				TryDeleteUpdateFile(request.PayloadPath);
+				TryDeleteUpdateFile(requestPath);
+				TryDeleteUpdateFile(request.ReadyMarkerPath);
 			}
 			catch (Exception updateException)
 			{
@@ -413,7 +409,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				TryDeleteFile(stagedPath);
+				TryDeleteUpdateFile(stagedPath);
 			}
 		}
 
@@ -452,7 +448,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 
 			string? installedExecutable =
-				SynixUpdateService.GetMsiInstalledExecutablePath();
+				Core.GetMsiInstalledExecutablePath();
 			if (string.IsNullOrWhiteSpace(installedExecutable) ||
 				!File.Exists(installedExecutable))
 			{
@@ -478,7 +474,7 @@ namespace Synix_Control_Panel.SynixEngine
 				};
 				startInfo.ArgumentList.Add("upgrade");
 				startInfo.ArgumentList.Add("--id");
-				startInfo.ArgumentList.Add(SynixUpdateService.WinGetPackageId);
+				startInfo.ArgumentList.Add(Core.WinGetPackageId);
 				startInfo.ArgumentList.Add("--exact");
 				startInfo.ArgumentList.Add("--silent");
 				startInfo.ArgumentList.Add("--accept-package-agreements");
@@ -495,7 +491,7 @@ namespace Synix_Control_Panel.SynixEngine
 					else if (winget.ExitCode == 0)
 					{
 						string? installedExecutable =
-							SynixUpdateService.GetMsiInstalledExecutablePath();
+							Core.GetMsiInstalledExecutablePath();
 						if (!string.IsNullOrWhiteSpace(installedExecutable) &&
 							File.Exists(installedExecutable))
 						{
@@ -508,8 +504,6 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception exception) when (
 				exception is System.ComponentModel.Win32Exception or InvalidOperationException)
 			{
-				// If WinGet is unavailable, the verified MSI asset is a safe
-				// fallback because the WinGet package uses this same installer.
 			}
 
 			return ApplyMsiUpdate(request);
@@ -558,9 +552,6 @@ namespace Synix_Control_Panel.SynixEngine
 					Thread.Sleep(250);
 				}
 
-				// Do not terminate or roll back a new Synix process that remains
-				// alive. A slow PC may have shown the UI but failed to write the
-				// optional success marker.
 				return !process.HasExited;
 			}
 		}
@@ -582,7 +573,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				TryDeleteFile(restoreStage);
+				TryDeleteUpdateFile(restoreStage);
 			}
 		}
 
@@ -616,9 +607,6 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception exception) when (
 				exception is IOException or PlatformNotSupportedException)
 			{
-				// File.Replace is not supported by every removable or network
-				// drive. A same-folder move still replaces the file without
-				// copying the update across the drive again.
 				File.Move(stagedPath, destinationPath, overwrite: true);
 			}
 		}
@@ -635,8 +623,6 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// The rollback will still restore the Synix executable when the
-				// operating system refuses to stop a timed-out installer.
 			}
 		}
 
@@ -645,7 +631,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				using RegistryKey? key = Registry.CurrentUser.OpenSubKey(
-					LegacySetupUninstallKey,
+					LegacyUpdaterSetupUninstallKey,
 					writable: true);
 				key?.SetValue(
 					"DisplayVersion",
@@ -654,8 +640,6 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// The executable rollback remains usable even if Windows refuses
-				// the optional Apps-list version correction.
 			}
 		}
 
@@ -721,7 +705,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			finally
 			{
-				TryDeleteFile(probePath);
+				TryDeleteUpdateFile(probePath);
 			}
 		}
 
@@ -733,7 +717,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (drive.AvailableFreeSpace < requiredBytes)
 			{
 				throw new IOException(
-					$"The update needs about {FormatBytes(requiredBytes)} free on {drive.Name}, but only {FormatBytes(drive.AvailableFreeSpace)} is available.");
+					$"The update needs about {FormatUpdateBytes(requiredBytes)} free on {drive.Name}, but only {FormatUpdateBytes(drive.AvailableFreeSpace)} is available.");
 			}
 		}
 
@@ -798,12 +782,11 @@ namespace Synix_Control_Panel.SynixEngine
 						continue;
 					DateTime lastWrite = Directory.GetLastWriteTimeUtc(directory);
 					if (lastWrite < DateTime.UtcNow.AddDays(-7))
-						TryDeleteDirectory(directory);
+						TryDeleteUpdateDirectory(directory);
 				}
 			}
 			catch
 			{
-				// Old updater cleanup is best effort only.
 			}
 		}
 
@@ -825,7 +808,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private static void TryDeleteFile(string path)
+		private static void TryDeleteUpdateFile(string path)
 		{
 			try
 			{
@@ -837,7 +820,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private static void TryDeleteDirectory(string path)
+		private static void TryDeleteUpdateDirectory(string path)
 		{
 			try
 			{
@@ -849,7 +832,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private static string FormatBytes(long bytes)
+		private static string FormatUpdateBytes(long bytes)
 		{
 			string[] units = ["B", "KB", "MB", "GB"];
 			double value = Math.Max(0, bytes);
@@ -872,18 +855,13 @@ namespace Synix_Control_Panel.SynixEngine
 		string ReadyMarkerPath,
 		Version NewVersion);
 
-	public sealed class SynixUpdaterCoordinator
+	public partial class Core
 	{
 		public const string ApplyUpdateArgument = "--synix-apply-update";
 		public const string UpdateStartedArgument = "--synix-update-started";
 		public const string UpdateRolledBackArgument = "--synix-update-rolled-back";
 
-		public SynixUpdaterCoordinator(SynixUpdateService updateService)
-		{
-			ArgumentNullException.ThrowIfNull(updateService);
-		}
-
-		public Task<SynixPreparedUpdate> PrepareAsync(
+		public static Task<SynixPreparedUpdate> PrepareUpdateAsync(
 			SynixUpdateCheckResult check,
 			IProgress<SynixUpdateDownloadProgress>? progress = null,
 			CancellationToken cancellationToken = default)

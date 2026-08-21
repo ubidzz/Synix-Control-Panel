@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -25,7 +25,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 		public static int Install(GameServer server, GameInfo blueprint, Action<string> logCallback, Action<int>? onPidStarted = null)
 		{
-			// Direct-download games do not use SteamCMD.
+
 			if (blueprint.AppID == "0" || blueprint.AppID.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
 				return InstallDirectDownloadAsync(server, blueprint, logCallback).GetAwaiter().GetResult();
@@ -54,8 +54,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				StartInfo = startInfo
 			};
 
-			// Prevent an extremely busy SteamCMD session from consuming
-			// unlimited memory while waiting for the dashboard.
 			Channel<string> logQueue = Channel.CreateBounded<string>(
 				new BoundedChannelOptions(4096)
 				{
@@ -76,7 +74,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					}
 					catch
 					{
-						// Dashboard logging must not stop SteamCMD.
+
 					}
 				}
 			});
@@ -114,7 +112,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						"downloading",
 						StringComparison.OrdinalIgnoreCase);
 
-				// Standard output and standard error call this concurrently.
 				lock (lineSync)
 				{
 					if (isProgressLine)
@@ -161,7 +158,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 				catch (InvalidOperationException)
 				{
-					// The application may be closing.
+
 				}
 			}
 
@@ -200,7 +197,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					catch (OperationCanceledException)
 						when (heartbeatCts.IsCancellationRequested)
 					{
-						// Normal shutdown of the heartbeat task.
+
 					}
 				});
 
@@ -214,7 +211,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 				process.WaitForExit();
 
-				// Drain both redirected streams before inspecting the result.
 				Task.WhenAll(outputReader, errorReader)
 					.GetAwaiter()
 					.GetResult();
@@ -233,7 +229,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 			finally
 			{
-				// This now executes for success and every exception path.
+
 				heartbeatCts.Cancel();
 
 				try
@@ -242,7 +238,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 				catch (OperationCanceledException)
 				{
-					// Expected during cancellation.
+
 				}
 				catch (Exception ex)
 				{
@@ -253,7 +249,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				installTimer.Stop();
 				heartbeatCts.Dispose();
 
-				// Complete and drain the dashboard log queue before returning.
 				logQueue.Writer.TryComplete();
 
 				try
@@ -262,7 +257,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 				catch
 				{
-					// Logging cleanup must not alter the SteamCMD result.
+
 				}
 
 				SetMainWindowTitle("Synix Control Panel");
@@ -272,9 +267,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			return resultCode;
 		}
 
-		// --------------------------------------------------------
-		// NEW: DIRECT DOWNLOAD ENGINE FOR NON-STEAM GAMES
-		// --------------------------------------------------------
 		private static async Task<int> InstallDirectDownloadAsync(GameServer server, GameInfo blueprint, Action<string> logCallback)
 		{
 			string downloadUrl = "";
@@ -561,10 +553,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 					logCallback?.Invoke($"[SYSTEM] Generating Minecraft {minecraftLoader} Start.bat bootstrapper...");
 					string batPath = Path.Combine(server.InstallPath, "Start.bat");
-					// Keep Java's standard input connected so Synix can issue Minecraft's
-					// native "stop" command and let the server save every world cleanly.
-					// The wrapper exits with Java instead of pausing and leaving a stale
-					// cmd.exe that looks like a running server.
+
 					string launchCommand = minecraftLoader == MinecraftMetadataService.ForgeLoader
 						? BuildForgeLaunchCommand(server, javaExeCmd, forgeArtifactVersion)
 						: $"{javaExeCmd} %*";
@@ -642,8 +631,6 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					return installer.ExitCode;
 				}
 
-				// Validate the install before removing the downloaded installer. Modern
-				// Forge exposes win_args.txt; legacy builds expose a runnable forge jar.
 				_ = BuildForgeLaunchCommand(server, QuoteCommandArgument(javaExecutable), forgeArtifactVersion);
 				try { File.Delete(installerPath); } catch { }
 				logCallback?.Invoke("[FORGE] Server loader installed successfully.");

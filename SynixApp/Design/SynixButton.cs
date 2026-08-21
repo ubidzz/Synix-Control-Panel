@@ -15,11 +15,6 @@ using System.Drawing.Drawing2D;
 
 namespace Synix_Control_Panel.SynixApp.Design
 {
-	/// <summary>
-	/// Opaque, owner-drawn dashboard button. It never asks Windows to paint a
-	/// native border, which keeps every normal, hover, focused, and disabled
-	/// state inside the Synix dark design system.
-	/// </summary>
 	[ToolboxItem(true)]
 	public class SynixButton : Button
 	{

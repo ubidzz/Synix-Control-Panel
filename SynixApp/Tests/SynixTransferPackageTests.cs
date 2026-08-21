@@ -1,3 +1,15 @@
+// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.SynixEngine;
 using Xunit;
 
@@ -16,22 +28,22 @@ public sealed class SynixTransferPackageTests
 		string package = test.PathFor("encrypted.synixbackup");
 		string restored = test.PathFor("encrypted-restored");
 
-		await SynixTransferPackage.ExportAsync(
+		await Core.ExportAsync(
 			source,
 			package,
 			TransferPassword);
 
-		SynixImportEstimate estimate = SynixTransferPackage.EstimateImport(
+		SynixImportEstimate estimate = Core.EstimateImport(
 			package,
 			restored);
 		Assert.True(estimate.IsPasswordProtected);
 		Assert.True(estimate.UsesLowDiskFormat);
 		Assert.Equal(3, estimate.FileCount);
 
-		await SynixTransferPackage.VerifyAsync(
+		await Core.VerifyAsync(
 			package,
 			TransferPassword);
-		await SynixTransferPackage.ImportAsync(
+		await Core.ImportAsync(
 			package,
 			restored,
 			TransferPassword);
@@ -47,16 +59,16 @@ public sealed class SynixTransferPackageTests
 		string package = test.PathFor("normal.synixbackup");
 		string restored = test.PathFor("normal-restored");
 
-		await SynixTransferPackage.ExportUnencryptedAsync(source, package);
+		await Core.ExportUnencryptedAsync(source, package);
 
-		SynixImportEstimate estimate = SynixTransferPackage.EstimateImport(
+		SynixImportEstimate estimate = Core.EstimateImport(
 			package,
 			restored);
 		Assert.False(estimate.IsPasswordProtected);
 		Assert.True(estimate.UsesLowDiskFormat);
 
-		await SynixTransferPackage.VerifyAsync(package, string.Empty);
-		await SynixTransferPackage.ImportAsync(
+		await Core.VerifyAsync(package, string.Empty);
+		await Core.ImportAsync(
 			package,
 			restored,
 			string.Empty);
@@ -72,13 +84,13 @@ public sealed class SynixTransferPackageTests
 		string package = test.PathFor("encrypted.synixbackup");
 		string destination = test.PathFor("destination");
 
-		await SynixTransferPackage.ExportAsync(
+		await Core.ExportAsync(
 			source,
 			package,
 			TransferPassword);
 
 		await Assert.ThrowsAsync<InvalidDataException>(() =>
-			SynixTransferPackage.ImportAsync(
+			Core.ImportAsync(
 				package,
 				destination,
 				"This password is incorrect"));
@@ -94,13 +106,13 @@ public sealed class SynixTransferPackageTests
 		string package = test.PathFor("normal.synixbackup");
 		string damagedPackage = test.PathFor("normal-damaged.synixbackup");
 
-		await SynixTransferPackage.ExportUnencryptedAsync(source, package);
+		await Core.ExportUnencryptedAsync(source, package);
 		byte[] packageBytes = await File.ReadAllBytesAsync(package);
 		packageBytes[packageBytes.Length / 2] ^= 0x5A;
 		await File.WriteAllBytesAsync(damagedPackage, packageBytes);
 
 		await Assert.ThrowsAsync<InvalidDataException>(() =>
-			SynixTransferPackage.VerifyAsync(
+			Core.VerifyAsync(
 				damagedPackage,
 				string.Empty));
 	}
@@ -120,8 +132,8 @@ public sealed class SynixTransferPackageTests
 			Path.Combine(destination, "keep-me.txt"),
 			"this file is not in the package");
 
-		await SynixTransferPackage.ExportUnencryptedAsync(source, package);
-		await SynixTransferPackage.ImportAsync(
+		await Core.ExportUnencryptedAsync(source, package);
+		await Core.ImportAsync(
 			package,
 			destination,
 			string.Empty);
@@ -144,7 +156,7 @@ public sealed class SynixTransferPackageTests
 			"recursive.synixbackup");
 
 		Assert.Throws<InvalidOperationException>(() =>
-			SynixTransferPackage.EstimateExport(
+			Core.EstimateExport(
 				source,
 				unsafeDestination));
 	}
@@ -159,7 +171,7 @@ public sealed class SynixTransferPackageTests
 		cancellation.Cancel();
 
 		await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-			SynixTransferPackage.ExportUnencryptedAsync(
+			Core.ExportUnencryptedAsync(
 				source,
 				package,
 				cancellationToken: cancellation.Token));

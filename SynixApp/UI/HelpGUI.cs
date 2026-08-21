@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -81,7 +81,7 @@ namespace Synix_Control_Panel.SynixEngine
 			btnDonateAction.Text = "Open PayPal Donation";
 			btnDonateAction.UseAccentStyle = true;
 			btnDonateAction.Size = new Size(176, 38);
-			// Position it inside the QR card right below lblQrCaption
+
 			btnDonateAction.Location = new Point(20, 304);
 			btnDonateAction.Click += (s, e) =>
 			{
@@ -99,7 +99,7 @@ namespace Synix_Control_Panel.SynixEngine
 			_helpData = new Dictionary<string, HelpItem>(
 				StringComparer.OrdinalIgnoreCase)
 			{
-				// --- 1. GETTING STARTED (Category: "Start") ---
+
 				["First-Time Setup Guide"] = new HelpItem("Start",
 					"WELCOME TO SYNIX CONTROL PANEL!\n\n" +
 					"Synix manages local dedicated game servers from one Windows desktop dashboard. Most day-to-day actions do not require administrator access.\n\n" +
@@ -160,7 +160,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"  winget uninstall synix\n\n" +
 					"Note: Winget automatically registers Synix in your Start Menu and Windows Settings 'Installed Apps' list."),
 
-				// --- 2. DASHBOARD & CONTROLS (Category: "Dash") ---
 				["Main Dashboard Operations"] = new HelpItem("Dash",
 					"USING THE SERVER DASHBOARD:\n\n" +
 					"1. Select a server row. The action bar at the bottom changes to that server and unlocks its controls.\n" +
@@ -213,7 +212,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Show Server Console Window OFF: runs supported servers silently in the background.\n\n" +
 					"Changing the visual theme does not restart game servers. If an already-open secondary window does not repaint immediately, close and reopen that window."),
 
-				// --- 3. SERVER CONFIGURATION (Category: "Config") ---
 				["Adding and Editing Servers"] = new HelpItem("Config",
 					"NEW SERVER VS EXISTING SERVER:\n\n" +
 					"• Add Server opens Server Setup in NEW SERVER mode. Choosing a game template fills its supported defaults and determines which controls are available.\n" +
@@ -251,7 +249,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"• If a game rejects a value, stop it, restore the previous backup or correct the value, and start it again.\n\n" +
 					"The editor protects file formatting, but it cannot guarantee that every value is valid for every game version. Refer to the game's official server documentation for valid ranges and names."),
 
-				// --- 4. NETWORKING & IP (Category: "Net") ---
 				["Local Link vs WAN Link Diagnostic"] = new HelpItem("Net",
 					"LAN AND WAN CONNECTION TESTING:\n\n" +
 					"Select a server, open Server Options, and use Test LAN Connectivity or Test WAN Connectivity when those actions are available.\n\n" +
@@ -297,7 +294,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"• False-Positive Suppression: Automatically suppresses network flood warnings when active SteamCMD downloads or game updates are detected.\n" +
 					"• Alert Overlay: Displays visual desktop notifications if network saturation occurs while you are tabbed out."),
 
-				// --- 5. AUTOMATION & DISCORD (Category: "Maint") ---
 				["Smart Backup on Start"] = new HelpItem("Maint",
 					"AUTOMATED WORLD BACKUPS:\n\n" +
 					"Enabling 'Backup on Start' in server settings triggers an automated archival process before the game boots.\n\n" +
@@ -336,7 +332,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"   • 🛑 Graceful Shutdowns\n" +
 					"   • ⚠️ Watchdog Recovery & Crash Reboots"),
 
-				// --- 6. WATCHDOG & RESOURCE GUARD (Category: "Watch") ---
 				["Autonomous Watchdog Loop"] = new HelpItem("Watch",
 					"AUTONOMOUS WATCHDOG HEALTH MONITORING:\n\n" +
 					"Synix tracks each managed server's process identity, PID, exit events, and supported health signals in the background.\n\n" +
@@ -359,7 +354,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"The engine queries active OS processes, matches them to saved server identities and executable information, and restores live monitoring without intentionally interrupting active players.\n\n" +
 					"After reopening Synix, watch Activity & Diagnostics for rebind success or a specific rebind error. Do not click Start on an instance that is visibly still running until the rebind check finishes."),
 
-				// --- 7. TROUBLESHOOTING & SYSTEM (Category: "Trouble") ---
 				["No-Admin Philosophy & Windows Firewall"] = new HelpItem("Trouble",
 					"USER-MODE SOVEREIGNTY (NO-ADMIN):\n\n" +
 					"Synix runs entirely in User-Mode without requesting Administrator (UAC) privileges by default. It will not edit your Windows registry or modify host system settings.\n\n" +
@@ -418,7 +412,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"• A second device on the LAN, followed by a player outside your home network for WAN testing.\n" +
 					"• The game's official port and hosting documentation."),
 
-				// --- 8. SUPPORTED GAMES (Category: "Games") ---
 				["Internal IReadOnlyList<GameInfo> Database"] = new HelpItem("Games",
 					"INTERNAL GAME DATABASE ARCHITECTURE:\n\n" +
 					"Synix does not use SQLite or external SQL databases. Instead, it relies entirely on a high-performance, compiled internal `IReadOnlyList<GameInfo>` database.\n\n" +
@@ -464,7 +457,6 @@ namespace Synix_Control_Panel.SynixEngine
 					"8. For Fabric, install Fabric API when required. For Forge/Fabric, use mods built for the exact Minecraft and loader versions you selected.\n\n" +
 					"To shut down safely, use Synix Stop. It sends Minecraft's native `stop` command, waits for world saves and the Java process to exit, and updates the status only after shutdown is verified."),
 
-				// --- 9. COMMUNITY & LEGAL (Category: "Support") ---
 				["Official Support Links"] = new HelpItem("Support",
 					"COMMUNITY & SUPPORT RESOURCES:\n\n" +
 					"• GitHub Issues: https://github.com/ubidzz/Synix-Control-Panel/issues \n" +
@@ -1108,7 +1100,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				// Older Windows versions do not support rounded DWM corners.
+
 			}
 		}
 

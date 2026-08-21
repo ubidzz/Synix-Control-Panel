@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.IO.Compression;
 using System.Runtime.InteropServices;
@@ -24,7 +31,7 @@ namespace Synix_Control_Panel.SynixEngine
 			AvailableBytes >= AdditionalSpaceRequiredBytes;
 	}
 
-	public static partial class SynixTransferPackage
+	public partial class Core
 	{
 		private static readonly byte[] StreamingPayloadMagic =
 			Encoding.ASCII.GetBytes("SYNIXV2D");
@@ -330,8 +337,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				throw new IOException(
 					$"There is not enough free space on {estimate.DestinationVolume}. " +
-					$"Synix needs about {FormatBytes(estimate.AdditionalSpaceRequiredBytes)}, " +
-					$"but only {FormatBytes(estimate.AvailableBytes)} is available.");
+					$"Synix needs about {FormatTransferBytes(estimate.AdditionalSpaceRequiredBytes)}, " +
+					$"but only {FormatTransferBytes(estimate.AvailableBytes)} is available.");
 			}
 
 			byte[] key = header.Protection ==
@@ -770,7 +777,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (safeToCleanRecovery)
 				{
-					TryDeleteDirectory(operationDirectory);
+					TryDeleteTransferDirectory(operationDirectory);
 					TryDeleteDirectoryIfEmpty(recoveryRoot);
 				}
 			}

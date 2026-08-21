@@ -57,10 +57,6 @@ namespace Synix_Control_Panel.ServerHandler
 		private bool _booleanDropDownOpenQueued;
 		private int _booleanDropDownRowIndex = -1;
 
-		/// <summary>
-		/// Parameterless constructor used by the Windows Forms Designer.
-		/// The application should open this form with ServerConfig(string, ConfigFormat).
-		/// </summary>
 		public ServerConfig()
 		{
 			InitializeComponent();
@@ -94,8 +90,6 @@ namespace Synix_Control_Panel.ServerHandler
 			colSetting.CellTemplate = new ModernSettingsDataGridViewInformationalCell();
 			colType.CellTemplate = new ModernSettingsDataGridViewInformationalCell();
 
-			// InitializeComponent may already contain Designer event wiring. Remove
-			// before adding so the reused grid/editor never receives duplicate calls.
 			dgvConfig.CellMouseDown -= dgvConfig_CellMouseDown;
 			dgvConfig.CellMouseDown += dgvConfig_CellMouseDown;
 			dgvConfig.CellEnter -= dgvConfig_CellEnter;
@@ -144,7 +138,7 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 			catch
 			{
-				// Rounded DWM corners are unavailable on older Windows versions.
+
 			}
 		}
 
@@ -703,18 +697,13 @@ namespace Synix_Control_Panel.ServerHandler
 				return;
 			}
 
-			// WinForms has no per-column Selectable property. Keep these read-only
-			// label/badge cells out of the SelectedCells collection, while their
-			// custom cell painter also suppresses the current-cell focus rectangle.
 			dgvConfig.ClearSelection();
 			dgvConfig.InvalidateCell(eventArgs.ColumnIndex, eventArgs.RowIndex);
 		}
 
 		private void dgvConfig_Scroll(object? sender, ScrollEventArgs eventArgs)
 		{
-			// A queued first-click request must not reopen a list after its row has
-			// moved. Closing and ending the active Boolean edit also removes the
-			// editing panel before WinForms reuses the viewport during scrolling.
+
 			_openBooleanDropDownOnEdit = false;
 			_booleanDropDownRowIndex = -1;
 

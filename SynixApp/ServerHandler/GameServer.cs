@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -25,7 +25,6 @@ public enum ServerProbeProtocol
 	Tcp
 }
 
-//------- Database Blueprint Template -------
 public class GameInfo
 {
 	public string Game { get; set; } = string.Empty;
@@ -76,11 +75,6 @@ public class GameInfo
 	public bool IsQueryable { get; init; } = true;
 	[JsonIgnore]
 	public ServerProbeProtocol ProbeProtocol { get; init; } = ServerProbeProtocol.Auto;
-	/// <summary>
-	/// Controls whether Synix exposes the user-triggered LAN/WAN connection tests.
-	/// This is separate from the watchdog probe because some games can be verified
-	/// locally by their process/socket but do not expose a reliable remote endpoint.
-	/// </summary>
 	[JsonIgnore]
 	public bool SupportsManualConnectionTesting { get; init; } = true;
 	[JsonIgnore]
@@ -89,14 +83,8 @@ public class GameInfo
 	public string EosDeploymentId { get; init; } = string.Empty;
 }
 
-//----------- Configured Server Instance ---------------
 public class GameServer : GameInfo
 {
-	/// <summary>
-	/// Version 1 stores Synix-managed passwords with Windows DPAPI. Version 2
-	/// also protects the Discord webhook. Missing and older versions are
-	/// upgraded automatically when they are loaded.
-	/// </summary>
 	public int PasswordStorageVersion { get; set; }
 	public string InstallPath { get; set; } = string.Empty;
 	public string ServerName { get; set; } = string.Empty;
@@ -131,21 +119,8 @@ public class GameServer : GameInfo
 	[JsonIgnore]
 	public bool IsProbing { get; set; } = false;
 	public string GameVersion { get; set; } = "Latest";
-	/// <summary>
-	/// Minecraft server distribution selected by the user. Existing server JSON
-	/// files omit this property and therefore continue to load as Vanilla.
-	/// </summary>
 	public string MinecraftLoader { get; set; } = "Vanilla";
-	/// <summary>
-	/// Compatible Fabric/Forge build selected for GameVersion. Vanilla uses
-	/// "Official". Keeping this separate prevents a loader version from being
-	/// mistaken for a Minecraft game version.
-	/// </summary>
 	public string MinecraftLoaderVersion { get; set; } = "Official";
-	/// <summary>
-	/// Java major resolved from Mojang's metadata when the server is configured
-	/// or installed. A value of zero means it will be resolved during install.
-	/// </summary>
 	public int RequiredJavaVersion { get; set; } = 0;
 	public int MaxRam { get; set; } = 4;
 

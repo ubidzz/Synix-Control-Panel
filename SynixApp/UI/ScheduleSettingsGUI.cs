@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -24,12 +24,10 @@ namespace Synix_Control_Panel.ServerHandler
 			InitializeComponent();
 			ThemeManager.Apply(this);
 
-			// 1. Setup Time Picker
 			dtpRestartTime.Format = DateTimePickerFormat.Custom;
 			dtpRestartTime.CustomFormat = "HH:mm";
 			dtpRestartTime.ShowUpDown = true;
 
-			// 2. Pre-fill Days
 			if (initialDays != null && initialDays.Length == 7)
 			{
 				chkSun.Checked = initialDays[0];

@@ -2,9 +2,9 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -209,7 +209,6 @@ namespace Synix_Control_Panel.SynixEngine
 					HttpCompletionOption.ResponseHeadersRead,
 					timeout.Token);
 
-				// A 401/403 response still proves that the expected REST listener is alive.
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> HTTP REST endpoint on Port {server.QueryPort} ({(int)response.StatusCode})");
 				return true;
 			}
@@ -260,9 +259,6 @@ namespace Synix_Control_Panel.SynixEngine
 			string appId = gameData?.AppID ?? server.AppID ?? string.Empty;
 			string deploymentId = gameData?.EosDeploymentId ?? string.Empty;
 
-			// Optional per-game environment variables use the Steam app ID suffix,
-			// for example SYNIX_EOS_DEPLOYMENT_ID_2430930 and
-			// SYNIX_EOS_ACCESS_TOKEN_2430930 for ARK: Survival Ascended.
 			if (string.IsNullOrWhiteSpace(deploymentId))
 				deploymentId = GetProbeEnvironmentValue("SYNIX_EOS_DEPLOYMENT_ID", appId);
 
@@ -308,9 +304,6 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 
-			// EOS session search requires publisher-owned credentials. When they are not
-			// supplied, socket ownership is the safe zero-dependency health check for a
-			// server hosted by this PC; no game secrets are embedded in Synix.
 			if (await IsLocalAddressAsync(ip) &&
 				(IsPortInUseLocally(server.Port) || IsPortInUseLocally(server.QueryPort)))
 			{
@@ -377,9 +370,6 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		// ========================================================================
-		// ⛏️ MINECRAFT NATIVE SERVER LIST PING (TCP PROTOCOL)
-		// ========================================================================
 		private async Task<bool> UpdateMinecraftPlayerCount(GameServer server, string ip)
 		{
 			try
@@ -393,7 +383,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				using var stream = tcpClient.GetStream();
 
-				List<byte> handshake = new List<byte> { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }; // PacketID (0) + Protocol (-1)
+				List<byte> handshake = new List<byte> { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F };
 
 				byte[] hostBytes = Encoding.UTF8.GetBytes(ip);
 				handshake.Add((byte)hostBytes.Length);

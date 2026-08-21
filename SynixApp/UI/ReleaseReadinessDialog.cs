@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
 
@@ -33,11 +40,11 @@ namespace Synix_Control_Panel.SynixEngine
 			BackColor = SettingsPalette.Window;
 			Font = new Font("Segoe UI", 10F);
 
-			_projectDirectory = SynixReleaseReadinessChecker.FindProjectDirectory(
+			_projectDirectory = Core.FindProjectDirectory(
 				AppContext.BaseDirectory);
 			_publishDirectory = _projectDirectory is null
 				? null
-				: SynixReleaseReadinessChecker.FindPublishDirectory(
+				: Core.FindPublishDirectory(
 					_projectDirectory);
 
 			Label title = new()
@@ -249,8 +256,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Progress<string> progress = new(message =>
 					_statusLabel.Text = message);
-				SynixReleaseReadinessChecker checker = new();
-				SynixReleaseReadinessReport report = await checker.CheckAsync(
+				SynixReleaseReadinessReport report = await Core.CheckReleaseReadinessAsync(
 					_projectDirectory,
 					_publishDirectory,
 					progress,

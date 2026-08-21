@@ -14,11 +14,6 @@ using System.Runtime.CompilerServices;
 
 namespace Synix_Control_Panel.SynixApp.Design
 {
-	/// <summary>
-	/// Dependency-free application theme service. Designer files keep literal,
-	/// opaque colors so the WinForms Designer can load them; this service applies
-	/// the selected palette at runtime and watches for controls added later.
-	/// </summary>
 	public static class ThemeManager
 	{
 		private sealed class ThemeRegistration
@@ -141,10 +136,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 			ThemeChanged?.Invoke(null, EventArgs.Empty);
 		}
 
-		/// <summary>
-		/// Called from Application.Idle. It applies the theme once per form and
-		/// theme version, rather than repainting the full tree on every idle cycle.
-		/// </summary>
 		public static void ApplyToOpenForms(bool force = false)
 		{
 			if (_isApplying)
@@ -584,7 +575,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 				if (argb == palette.Console.ToArgb()) return 21;
 			}
 
-			// Older designer aliases used by existing modern forms.
 			if (argb == Color.FromArgb(13, 23, 39).ToArgb()) return 6;
 			if (argb == Color.FromArgb(15, 25, 42).ToArgb()) return 6;
 			if (argb == Color.FromArgb(24, 55, 73).ToArgb()) return 16;

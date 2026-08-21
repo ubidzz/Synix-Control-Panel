@@ -21,19 +21,16 @@ namespace Synix_Control_Panel.SynixApp
 		private const string SingleInstanceMutexName = @"Local\SynixControlPanel.SingleInstance";
 		private static Mutex? _singleInstanceMutex;
 
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
 		[STAThread]
 		static void Main(string[] args)
 		{
-			if (SynixUpdaterCoordinator.TryRunUpdateHelper(args))
+			if (Core.TryRunUpdateHelper(args))
 				return;
-			SynixUpdaterCoordinator.CleanupStaleOperations();
+			Core.CleanupStaleOperations();
 
-			string? updateSuccessMarker = SynixUpdaterCoordinator
+			string? updateSuccessMarker = Core
 				.GetStartupSuccessMarker(args);
-			string? rolledBackVersion = SynixUpdaterCoordinator
+			string? rolledBackVersion = Core
 				.GetRollbackVersion(args);
 
 			_singleInstanceMutex = new Mutex(
@@ -67,12 +64,9 @@ namespace Synix_Control_Panel.SynixApp
 			string? updateSuccessMarker,
 			string? rolledBackVersion)
 		{
-			// 🛡️ 1. CATCH UI THREAD CRASHES
-			// Catches things like bad button clicks or grid rendering errors
+
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 
-			// 🛡️ 2. CATCH BACKGROUND THREAD CRASHES
-			// Catches things like Watchdog failures or Engine loop crashes
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
 			Application.EnableVisualStyles();
@@ -82,7 +76,7 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
-				bool importRolledBack = SynixTransferPackage
+				bool importRolledBack = Core
 					.RecoverInterruptedImportAsync(Core.RootPath)
 					.GetAwaiter()
 					.GetResult();
@@ -114,7 +108,7 @@ namespace Synix_Control_Panel.SynixApp
 				if (!string.IsNullOrWhiteSpace(updateSuccessMarker))
 				{
 					mainWindow.Shown += (_, _) =>
-						SynixUpdaterCoordinator.MarkStartupSuccessful(
+						Core.MarkStartupSuccessful(
 							updateSuccessMarker);
 				}
 				if (!string.IsNullOrWhiteSpace(rolledBackVersion))
@@ -131,7 +125,7 @@ namespace Synix_Control_Panel.SynixApp
 			}
 			finally
 			{
-				// Wait for queued log entries to reach disk before exiting.
+
 				FileHandler.FlushLogsAsync()
 					.GetAwaiter()
 					.GetResult();
@@ -146,7 +140,7 @@ namespace Synix_Control_Panel.SynixApp
 			}
 			catch (ApplicationException)
 			{
-				// The operating system will release ownership when Synix exits.
+
 			}
 			finally
 			{
@@ -180,7 +174,7 @@ namespace Synix_Control_Panel.SynixApp
 			}
 			catch
 			{
-				// Silent fail
+
 			}
 		}
 	}

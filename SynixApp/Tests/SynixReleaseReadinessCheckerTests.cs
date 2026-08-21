@@ -1,3 +1,15 @@
+// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
 using Synix_Control_Panel.SynixEngine;
 using Xunit;
 
@@ -69,13 +81,13 @@ public sealed class SynixReleaseReadinessCheckerTests
 		using TemporaryDirectory temporary = new();
 		string manifestPath = Path.Combine(
 			temporary.Path,
-			SynixReleaseReadinessChecker.ManifestFileName);
+			Core.ManifestFileName);
 		File.WriteAllText(
 			manifestPath,
 			"\uFEFFFormatVersion=1\n# generated\nChannel = Stable\nNote=value=with=equals\n");
 
 		IReadOnlyDictionary<string, string> manifest =
-			SynixReleaseReadinessChecker.ReadManifest(manifestPath);
+			Core.ReadManifest(manifestPath);
 
 		Assert.Equal("1", manifest["FormatVersion"]);
 		Assert.Equal("Stable", manifest["channel"]);
@@ -87,27 +99,27 @@ public sealed class SynixReleaseReadinessCheckerTests
 	{
 		Dictionary<string, string> valid = new(
 			StringComparer.OrdinalIgnoreCase)
-			{
-				["AutomatedTests"] = "Passed",
-				["AutomatedTestsUtc"] = "2026-08-21T12:30:00.0000000Z"
-			};
+		{
+			["AutomatedTests"] = "Passed",
+			["AutomatedTestsUtc"] = "2026-08-21T12:30:00.0000000Z"
+		};
 		Dictionary<string, string> failed = new(valid)
-			{
-				["AutomatedTests"] = "Failed"
-			};
+		{
+			["AutomatedTests"] = "Failed"
+		};
 		Dictionary<string, string> missingTime = new(valid);
 		missingTime.Remove("AutomatedTestsUtc");
 
-		Assert.True(SynixReleaseReadinessChecker.TryGetPassingTestReceipt(
+		Assert.True(Core.TryGetPassingTestReceipt(
 			valid,
 			out DateTimeOffset completedUtc));
 		Assert.Equal(
 			new DateTimeOffset(2026, 8, 21, 12, 30, 0, TimeSpan.Zero),
 			completedUtc);
-		Assert.False(SynixReleaseReadinessChecker.TryGetPassingTestReceipt(
+		Assert.False(Core.TryGetPassingTestReceipt(
 			failed,
 			out _));
-		Assert.False(SynixReleaseReadinessChecker.TryGetPassingTestReceipt(
+		Assert.False(Core.TryGetPassingTestReceipt(
 			missingTime,
 			out _));
 	}
@@ -127,7 +139,7 @@ public sealed class SynixReleaseReadinessCheckerTests
 		Directory.CreateDirectory(buildPath);
 		File.WriteAllText(projectPath, "<Project />");
 
-		string? found = SynixReleaseReadinessChecker.FindProjectDirectory(
+		string? found = Core.FindProjectDirectory(
 			buildPath);
 
 		Assert.Equal(Path.GetFullPath(temporary.Path), found);
@@ -147,13 +159,13 @@ public sealed class SynixReleaseReadinessCheckerTests
 		File.WriteAllText(
 			Path.Combine(
 				publish,
-				SynixReleaseReadinessChecker.PublishedExecutableName),
+				Core.PublishedExecutableName),
 			"test");
 		File.WriteAllText(
 			Path.Combine(profiles, "FolderProfile.pubxml"),
 			"<Project><PropertyGroup><PublishDir>publish-output</PublishDir></PropertyGroup></Project>");
 
-		string? found = SynixReleaseReadinessChecker.FindPublishDirectory(
+		string? found = Core.FindPublishDirectory(
 			temporary.Path);
 
 		Assert.Equal(Path.GetFullPath(publish), found);
@@ -165,11 +177,11 @@ public sealed class SynixReleaseReadinessCheckerTests
 		using TemporaryDirectory temporary = new();
 		string backupPath = Path.Combine(
 			temporary.Path,
-			SynixReleaseReadinessChecker.ManifestBackupRelativePath);
+			Core.ManifestBackupRelativePath);
 		Directory.CreateDirectory(Path.GetDirectoryName(backupPath)!);
 		File.WriteAllText(backupPath, "FormatVersion=1");
 
-		string found = SynixReleaseReadinessChecker.FindReleaseManifestPath(
+		string found = Core.FindReleaseManifestPath(
 			temporary.Path);
 
 		Assert.Equal(backupPath, found);
@@ -181,15 +193,15 @@ public sealed class SynixReleaseReadinessCheckerTests
 		using TemporaryDirectory temporary = new();
 		string primaryPath = Path.Combine(
 			temporary.Path,
-			SynixReleaseReadinessChecker.ManifestFileName);
+			Core.ManifestFileName);
 		string backupPath = Path.Combine(
 			temporary.Path,
-			SynixReleaseReadinessChecker.ManifestBackupRelativePath);
+			Core.ManifestBackupRelativePath);
 		Directory.CreateDirectory(Path.GetDirectoryName(backupPath)!);
 		File.WriteAllText(primaryPath, "primary");
 		File.WriteAllText(backupPath, "backup");
 
-		string found = SynixReleaseReadinessChecker.FindReleaseManifestPath(
+		string found = Core.FindReleaseManifestPath(
 			temporary.Path);
 
 		Assert.Equal(primaryPath, found);

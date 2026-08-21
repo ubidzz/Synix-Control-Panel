@@ -94,7 +94,7 @@ namespace Synix_Control_Panel
 			}
 			catch
 			{
-				// Older Windows versions do not support rounded DWM corners.
+
 			}
 		}
 
@@ -222,11 +222,11 @@ namespace Synix_Control_Panel
 					}
 					catch (InvalidOperationException)
 					{
-						// The process exited between the checks above.
+
 					}
 					catch (Win32Exception)
 					{
-						// Windows denied access to this process sample.
+
 					}
 				}
 

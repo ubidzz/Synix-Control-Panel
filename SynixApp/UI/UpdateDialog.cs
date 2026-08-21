@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
 using System.Diagnostics;
@@ -77,7 +84,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ReadOnly = true,
 				DetectUrls = false,
 				ScrollBars = RichTextBoxScrollBars.Vertical,
-				Text = SynixUpdateService.BuildHighlights(release.Notes)
+				Text = Core.BuildHighlights(release.Notes)
 			};
 			Label verification = new()
 			{
@@ -235,7 +242,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ReadOnly = true,
 				DetectUrls = true,
 				ScrollBars = RichTextBoxScrollBars.ForcedVertical,
-				Text = SynixUpdateService.FormatReleaseNotes(release.Notes),
+				Text = Core.FormatReleaseNotes(release.Notes),
 				WordWrap = true
 			};
 			Panel notesHost = new()

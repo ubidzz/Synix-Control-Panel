@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Security.Cryptography;
 using System.Text;
@@ -9,14 +16,10 @@ using System.Text.Json;
 
 namespace Synix_Control_Panel.SynixEngine
 {
-	/// <summary>
-	/// Plaintext copies returned by this type should be kept only for the short
-	/// operation that needs them (display, editing, launch, or config creation).
-	/// </summary>
 	public readonly record struct SynixServerPasswords(
-		string ServerPassword,
-		string AdminPassword,
-		string RconPassword);
+   string ServerPassword,
+   string AdminPassword,
+   string RconPassword);
 
 	public readonly record struct SynixServerSecrets(
 		SynixServerPasswords Passwords,
@@ -30,12 +33,7 @@ namespace Synix_Control_Panel.SynixEngine
 		}
 	}
 
-	/// <summary>
-	/// Protects Synix-managed server credentials with Windows DPAPI, scoped to
-	/// the Windows user running Synix. The prefix provides unambiguous versioning
-	/// and prevents old readable values from being encrypted more than once.
-	/// </summary>
-	public static class SynixPasswordProtection
+	public partial class Core
 	{
 		public const int CurrentStorageVersion = 2;
 		public const string ProtectedValuePrefix = "synix-dpapi-v1:";
@@ -88,11 +86,6 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		/// <summary>
-		/// Reveals both new protected values and legacy readable values. Supporting
-		/// the legacy case keeps an older file usable until its atomic migration has
-		/// completed successfully.
-		/// </summary>
 		public static string Reveal(string? storedValue)
 		{
 			if (string.IsNullOrEmpty(storedValue))
@@ -153,10 +146,6 @@ namespace Synix_Control_Panel.SynixEngine
 				Reveal(server.RconPassword));
 		}
 
-		/// <summary>
-		/// Storage version 0 and 1 predate webhook protection, so their webhook is
-		/// still readable legacy text until the automatic version 2 migration.
-		/// </summary>
 		public static string RevealDiscordWebhook(GameServer server)
 		{
 			ArgumentNullException.ThrowIfNull(server);
@@ -207,13 +196,9 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		/// <summary>
-		/// Replaces all three saved values together so a protection failure cannot
-		/// leave only part of a server entry migrated.
-		/// </summary>
 		public static void SetServerPasswords(
-			GameServer server,
-			SynixServerPasswords plaintextPasswords)
+   GameServer server,
+   SynixServerPasswords plaintextPasswords)
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			string plaintextWebhook = RevealDiscordWebhook(server);
@@ -225,13 +210,9 @@ namespace Synix_Control_Panel.SynixEngine
 					plaintextWebhook));
 		}
 
-		/// <summary>
-		/// Replaces every Synix-managed credential together so a protection failure
-		/// cannot leave only part of a server entry upgraded.
-		/// </summary>
 		public static void SetServerSecrets(
-			GameServer server,
-			SynixServerSecrets plaintextSecrets)
+   GameServer server,
+   SynixServerSecrets plaintextSecrets)
 		{
 			ArgumentNullException.ThrowIfNull(server);
 
@@ -251,10 +232,6 @@ namespace Synix_Control_Panel.SynixEngine
 			server.PasswordStorageVersion = CurrentStorageVersion;
 		}
 
-		/// <summary>
-		/// Upgrades a server loaded from an older Synix release. Returns true when
-		/// the JSON needs to be rewritten.
-		/// </summary>
 		public static bool MigrateLegacyServer(GameServer server)
 		{
 			ArgumentNullException.ThrowIfNull(server);

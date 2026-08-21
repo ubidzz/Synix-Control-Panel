@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
@@ -38,7 +38,6 @@ namespace Synix_Control_Panel
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
-		private readonly SynixUpdateService _updateService = new();
 		private readonly SemaphoreSlim _versionCheckGate = new(1, 1);
 		private SynixUpdateCheckResult? _updateCheckResult;
 		private bool _updateShutdownRequested;
@@ -693,10 +692,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			await Task.Run(() =>
-			{
-				Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
-			});
+			await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
 		}
 
 		private async void btnStart_Click(object sender, EventArgs e)
@@ -731,8 +727,7 @@ namespace Synix_Control_Panel
 				}
 				catch (Exception ex)
 				{
-					// Exceptions escaping an async WinForms event handler terminate the
-					// application. Keep Synix open and report the failed operation instead.
+
 					AppendLog($"[🚨 STOP ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
 				}
 			}
@@ -925,7 +920,7 @@ namespace Synix_Control_Panel
 
 		private async Task VersionCheck()
 		{
-			Version currentVersion = SynixUpdateService.GetCurrentVersion();
+			Version currentVersion = Core.GetCurrentVersion();
 			if (!await _versionCheckGate.WaitAsync(0))
 				return;
 
@@ -938,7 +933,7 @@ namespace Synix_Control_Panel
 			try
 			{
 				using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(25));
-				_updateCheckResult = await _updateService.CheckAsync(
+				_updateCheckResult = await Core.CheckForUpdatesAsync(
 					currentVersion,
 					timeout.Token);
 
@@ -981,7 +976,7 @@ namespace Synix_Control_Panel
 			if (_updateCheckResult?.ReleaseReady != true ||
 				_updateCheckResult.Release is null)
 			{
-				OpenUrl(SynixUpdateService.ReleasesUri.AbsoluteUri);
+				OpenUrl(Core.ReleasesUri.AbsoluteUri);
 				return;
 			}
 
@@ -1005,8 +1000,7 @@ namespace Synix_Control_Panel
 					btnDownloadUpdate.Text = $"{download.Percent}%";
 				});
 
-				SynixUpdaterCoordinator coordinator = new(_updateService);
-				SynixPreparedUpdate prepared = await coordinator.PrepareAsync(
+				SynixPreparedUpdate prepared = await Core.PrepareUpdateAsync(
 					_updateCheckResult,
 					progress);
 
@@ -1018,7 +1012,7 @@ namespace Synix_Control_Panel
 					MessageBoxIcon.Information);
 
 				await FileHandler.FlushLogsAsync();
-				SynixUpdaterCoordinator.LaunchPreparedUpdate(prepared);
+				Core.LaunchPreparedUpdate(prepared);
 				_updateShutdownRequested = true;
 				isDownloadActive = false;
 				Core.Instance.isDownloadActive = false;

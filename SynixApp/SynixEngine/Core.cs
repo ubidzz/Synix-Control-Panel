@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -64,7 +64,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string discordWebhook;
 			try
 			{
-				discordWebhook = SynixPasswordProtection
+				discordWebhook = Core
 					.RevealDiscordWebhook(server);
 			}
 			catch (SynixPasswordProtectionException)
@@ -232,8 +232,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public static bool IsSystemSafeToStart()
 		{
-			// 🎯 1. CPU GUARD (85% Global Limit)
-			// We check the entire system load so Synix doesn't crash a busy host.
+
 			double globalCpu = ResourceMonitor.GetGlobalCpuUsage();
 
 			if (globalCpu >= 85.0)
@@ -247,22 +246,16 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			// 🎯 2. RAM GUARD (85% Usable Pool Limit)
-			// Get the REAL hardware total (e.g., 32GB)
 			double physicalRamGb = ResourceMonitor.GetTotalSystemRamGB();
 
-			// Apply your new 5GB Windows overhead
 			double usablePool = physicalRamGb - 5.0;
 			if (usablePool < 1) usablePool = physicalRamGb;
 
-			// Get the current usage from ALL running servers
 			var usage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
 			double usedGb = usage.TotalRamMB / 1024.0;
 
-			// THE MATH: Percentage of the usable pool used by servers
 			double ramUsagePercent = (usedGb / usablePool) * 100.0;
 
-			// Setting this to 85.0 RAM limit
 			if (ramUsagePercent >= 85.0)
 			{
 				MessageBox.Show(

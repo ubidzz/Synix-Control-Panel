@@ -1,10 +1,10 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
-// 
+//
 // LEGAL NOTICE:
-// This source code is proprietary and confidential. 
+// This source code is proprietary and confidential.
 // 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
 // 2. You may modify this code for your own use, but you may NOT redistribute,
 //    rebrand, or sell this code or derivative works without written consent.
@@ -37,9 +37,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			try
 			{
-				// --------------------------------------------------------
-				// PHASE 1: STEAM API DLL INJECTIONS
-				// --------------------------------------------------------
+
 				switch (server.Game)
 				{
 					case "StarRupture":
@@ -218,9 +216,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
 				}
 
-				// --------------------------------------------------------
-				// PHASE 2: CONFIGURATION FILE CREATION & PARSING
-				// --------------------------------------------------------
 				switch (server.Game)
 				{
 					case "Rust":
@@ -849,8 +844,7 @@ gam_bAutoCycleMaps = 1";
 
 					case "Wreckfest":
 						{
-							// Synix launches Wreckfest.exe directly, so start_server.bat never gets a
-							// chance to copy the vendor-provided initial_server_config.cfg.
+
 							string sourceConfig = Path.Combine(server.InstallPath, "initial_server_config.cfg");
 							string targetConfig = Path.Combine(server.InstallPath, "server_config.cfg");
 
@@ -871,16 +865,12 @@ gam_bAutoCycleMaps = 1";
 			return applied;
 		}
 
-		// --------------------------------------------------------
-		// UNIFIED UTILITY FUNCTIONS
-		// --------------------------------------------------------
-
 		private static bool CreateGameConfig(GameServer server, string relativeFilePath, string contentTemplate, string identity, string localIp, string publicIp)
 		{
 			SynixServerPasswords passwords;
 			try
 			{
-				passwords = SynixPasswordProtection.RevealServerPasswords(server);
+				passwords = Core.RevealServerPasswords(server);
 			}
 			catch (SynixPasswordProtectionException)
 			{

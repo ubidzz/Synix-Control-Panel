@@ -48,12 +48,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		public ConfigValueType Type { get; set; } = ConfigValueType.Text;
 	}
 
-	/// <summary>
-	/// Loads and saves heterogeneous server configuration files without rebuilding
-	/// their original layout. Only scalar value spans are replaced during saves,
-	/// so comments, sections, key ordering, indentation, quoting, and surrounding
-	/// game-specific syntax remain untouched.
-	/// </summary>
 	public static class ConfigHandler
 	{
 		private enum ScalarStyle
@@ -619,7 +613,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			if (format == ConfigFormat.XML)
 			{
-				// Validation only: the DOM is never serialized or written back.
+
 				XmlDocument xmlDocument = new() { PreserveWhitespace = true };
 				xmlDocument.LoadXml(updatedText);
 			}
