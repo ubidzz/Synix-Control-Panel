@@ -757,18 +757,15 @@ namespace Synix_Control_Panel
 				string publicIp = await Core.Instance.GetPublicIP();
 				string ipText = isPrivacyLoading ? "[HIDDEN]" : publicIp;
 
-				bool gameTcp = await Core.Instance.TestTcpConnectivity(publicIp, selectedServer.Port);
-				bool queryTcp = await Core.Instance.TestTcpConnectivity(publicIp, selectedServer.QueryPort);
-				bool gameUdp = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.Port);
-				bool queryUdp = await Core.Instance.TestServerConnectivity(publicIp, selectedServer.QueryPort);
+				bool isReachable = await Core.Instance.ExecuteDynamicProbes(selectedServer, publicIp);
 
-				if (gameTcp || queryTcp || gameUdp || queryUdp)
+				if (isReachable)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable locally at {ipText}! (GamePort TCP:{gameTcp} UDP:{gameUdp} | QueryPort TCP:{queryTcp} UDP:{queryUdp})", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable at {ipText} using its configured probe protocol.", Color.Green);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] All connectivity tests failed for {selectedServer.ServerName} at {ipText} (Tested Game Port {selectedServer.Port} & Query Port {selectedServer.QueryPort} via TCP/UDP). Check Router/Firewall settings.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] The configured connection probe failed for {selectedServer.ServerName} at {ipText} (Game Port {selectedServer.Port}, Query/Probe Port {selectedServer.QueryPort}). Check the server, router, firewall, and protocol-specific settings.", Color.Red);
 				}
 			}
 			catch (Exception ex)
@@ -789,18 +786,15 @@ namespace Synix_Control_Panel
 				string localIp = await Core.Instance.GetLocalIP();
 				string ipText = isPrivacyLoading ? "[HIDDEN]" : localIp;
 
-				bool gameTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.Port);
-				bool queryTcp = await Core.Instance.TestTcpConnectivity(localIp, selectedServer.QueryPort);
-				bool gameUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.Port);
-				bool queryUdp = await Core.Instance.TestServerConnectivity(localIp, selectedServer.QueryPort);
+				bool isReachable = await Core.Instance.ExecuteDynamicProbes(selectedServer, localIp);
 
-				if (gameTcp || queryTcp || gameUdp || queryUdp)
+				if (isReachable)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable locally at {ipText}! (GamePort TCP:{gameTcp} | QueryPort UDP:{queryUdp})", Color.Green);
+					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable locally at {ipText} using its configured probe protocol.", Color.Green);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] All local connectivity tests failed for {selectedServer.ServerName} at {ipText} (Tested Game Port {selectedServer.Port} & Query Port {selectedServer.QueryPort} via TCP/UDP). Ensure the server is running.", Color.Red);
+					AppendLog($"[🛡️ BLOCK] The configured local probe failed for {selectedServer.ServerName} at {ipText} (Game Port {selectedServer.Port}, Query/Probe Port {selectedServer.QueryPort}). Ensure the server and its query service are running.", Color.Red);
 				}
 			}
 			catch (Exception ex)
@@ -815,7 +809,7 @@ namespace Synix_Control_Panel
 			{
 				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
-				bool isQueryable = selectedGameData.IsQueryable;
+				bool supportsConnectionTesting = selectedGameData != null;
 
 				updateServerToolStripMenuItem.Enabled = !isMinecraft;
 				updateServerToolStripMenuItem.Visible = !isMinecraft;
@@ -826,11 +820,11 @@ namespace Synix_Control_Panel
 
 				if (selectedServer.Status == "Running")
 				{
-					connectionTestToolStripMenuItem.Visible = isQueryable;
-					connectionTestToolStripMenuItem.Enabled = isQueryable;
-					connectionLocalTestToolStripMenuItem.Visible = isQueryable;
-					connectionLocalTestToolStripMenuItem.Enabled = isQueryable;
-					toolStripSeparator3.Visible = isQueryable;
+					connectionTestToolStripMenuItem.Visible = supportsConnectionTesting;
+					connectionTestToolStripMenuItem.Enabled = supportsConnectionTesting;
+					connectionLocalTestToolStripMenuItem.Visible = supportsConnectionTesting;
+					connectionLocalTestToolStripMenuItem.Enabled = supportsConnectionTesting;
+					toolStripSeparator3.Visible = supportsConnectionTesting;
 				}
 				else
 				{

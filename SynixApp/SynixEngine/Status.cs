@@ -266,6 +266,13 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			GameInfo? gameData = GameDatabase.GetGame(server.Game);
+			if (GameDatabase.GetProbeProtocol(gameData) != ServerProbeProtocol.A2S)
+			{
+				server.CurrentPlayers = 0;
+				return;
+			}
+
 			using var udpClient = new System.Net.Sockets.UdpClient();
 			try
 			{

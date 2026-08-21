@@ -35,6 +35,7 @@ namespace Synix_Control_Panel
 		private string _selectedTime = "04:00";
 		private System.Windows.Forms.Timer debounceTimer;
 		private bool _PrivacyMode = false;
+		private bool _isApplyingPortOffset = false;
 		private string _validationMessage =
 			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
 
@@ -323,6 +324,7 @@ namespace Synix_Control_Panel
 			txtName.Text = _existingServer.ServerName ?? "";
 			int gameIndex = cmbGame.FindStringExact(_existingServer.Game);
 			if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
+			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
 
 			txtPassword.Text = _existingServer.Password ?? "";
 			txtAdminPassword.Text = _existingServer.AdminPassword ?? "";
@@ -331,7 +333,10 @@ namespace Synix_Control_Panel
 			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
 
 			numPort.Value = Math.Clamp(_existingServer.Port, numPort.Minimum, numPort.Maximum);
-			numQueryPort.Value = Math.Clamp(_existingServer.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+			int queryPortToLoad = _existingServer.QueryPort > 0
+				? _existingServer.QueryPort
+				: gameData?.QueryPort ?? (int)numQueryPort.Minimum;
+			numQueryPort.Value = Math.Clamp(queryPortToLoad, numQueryPort.Minimum, numQueryPort.Maximum);
 			if (numAppPort != null) numAppPort.Value = Math.Clamp(_existingServer.AppPort ?? numAppPort.Minimum, numAppPort.Minimum, numAppPort.Maximum);
 
 			numMaxPlayers.Value = Math.Clamp(_existingServer.MaxPlayers, numMaxPlayers.Minimum, numMaxPlayers.Maximum);
@@ -352,7 +357,6 @@ namespace Synix_Control_Panel
 			cmbGameVersion.Text = _existingServer.GameVersion ?? "latest";
 			numRam.Value = Math.Clamp(_existingServer.MaxRam, numRam.Minimum, numRam.Maximum);
 
-			var gameData = GameDatabase.GetGame(_existingServer.Game);
 			if (gameData != null)
 			{
 				PopulateMaps(gameData, _existingServer.WorldName ?? "");
@@ -452,12 +456,8 @@ namespace Synix_Control_Panel
 					txtInstallPath.Text = Path.Combine(Core.GamesPath, safeFolderPath);
 				}
 
-				GameInfo? selectedGameData = hasGame ? GameDatabase.GetGame(selectedGame) : null;
-
-				bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains("{query}", StringComparison.OrdinalIgnoreCase) == true;
-
 				int gPort = (int)numPort.Value;
-				int qPort = usesQueryPort ? (int)numQueryPort.Value : 0;
+				int qPort = (int)numQueryPort.Value;
 				int aPort = (numAppPort != null && numAppPort.Enabled) ? (int)numAppPort.Value : 0;
 				int rPort = rconActive ? (int)numRconPort.Value : 0;
 
@@ -653,7 +653,10 @@ namespace Synix_Control_Panel
 
 				cmbCompetitive.Tag = (args.Contains("{mode}") || (gameData.GameModes != null && gameData.GameModes.Count > 0)) ? "Required" : "Disabled";
 				numMaxPlayers.Tag = args.Contains("{maxplayers}") ? "Required" : "Disabled";
-				numQueryPort.Tag = args.Contains("{query}") ? "Required" : "Disabled";
+				// QueryPort is monitoring metadata even when the launch template does not
+				// contain {query}. Some servers derive it from the game port or expose a
+				// separate REST/EOS endpoint, so it must always remain configurable.
+				numQueryPort.Tag = "Required";
 				cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
 				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
 				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
@@ -710,6 +713,7 @@ namespace Synix_Control_Panel
 			Action trigger = () => { debounceTimer.Stop(); debounceTimer.Start(); };
 			txtName.TextChanged += (s, e) => trigger();
 			cmbGame.SelectedIndexChanged += (s, e) => trigger();
+			numPort.TextChanged += GamePort_TextChanged;
 			numPort.ValueChanged += (s, e) => trigger();
 			numQueryPort.ValueChanged += (s, e) => trigger();
 			numAppPort.ValueChanged += (s, e) => trigger();
@@ -721,17 +725,44 @@ namespace Synix_Control_Panel
 			numRam.ValueChanged += (s, e) => trigger();
 		}
 
+		private void GamePort_TextChanged(object? sender, EventArgs e)
+		{
+			if (isPrivacyLoading || _isApplyingPortOffset || cmbGame.SelectedIndex <= 0)
+				return;
+
+			GameInfo? gameData = GameDatabase.GetGame(cmbGame.Text);
+			if (gameData == null ||
+				!int.TryParse(numPort.Text, out int gamePort))
+			{
+				return;
+			}
+
+			long defaultOffset = (long)gameData.QueryPort - gameData.Port;
+			long calculatedQueryPort = gamePort + defaultOffset;
+			int clampedQueryPort = (int)Math.Clamp(
+				calculatedQueryPort,
+				(long)numQueryPort.Minimum,
+				(long)numQueryPort.Maximum);
+
+			try
+			{
+				_isApplyingPortOffset = true;
+				numQueryPort.Value = clampedQueryPort;
+			}
+			finally
+			{
+				_isApplyingPortOffset = false;
+			}
+		}
+
 		private void btnSave_Click(object sender, EventArgs e)
 		{
 			string newName = txtName.Text.Trim();
 			string selectedGame = cmbGame.Text;
 			if (!Core.Instance.ValidateNameAndReport(newName, selectedGame, _existingServer)) return;
 
-			GameInfo? selectedGameData = GameDatabase.GetGame(selectedGame);
-			bool usesQueryPort = selectedGameData?.RequiredArgs?.Contains("{query}", StringComparison.OrdinalIgnoreCase) == true;
-
 			int gPort = (int)numPort.Value;
-			int qPort = usesQueryPort ? (int)numQueryPort.Value : 0;
+			int qPort = (int)numQueryPort.Value;
 			int rPort = (int)numRconPort.Value;
 			int wSize = (int)numWorldSize.Value;
 

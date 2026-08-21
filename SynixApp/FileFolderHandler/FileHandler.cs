@@ -89,6 +89,8 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 								server.ExeName = masterData.ExeName;
 								server.RequiredArgs = masterData.RequiredArgs;
 								server.Maps = masterData.Maps.ToList();
+								if (server.QueryPort <= 0)
+									server.QueryPort = masterData.QueryPort;
 
 								string fullExePath = Path.Combine(server.InstallPath, server.ExeName);
 

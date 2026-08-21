@@ -90,11 +90,13 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-publiclobby -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS -port={port} -publicport={port} -servername=\"{ServerName}\" -players={MaxPlayers} -serverpassword=\"{pass}\" -adminpassword=\"{adminpass}\" -SteamAppId={steamAppID}",
 				RelativeConfigPath = "Pal\\Saved\\Config\\WindowsServer\\PalWorldSettings.ini",
 				Port = 8211,
-				QueryPort = 27015,
+				QueryPort = 8212,
 				Maps = ["DefaultWorld"],
 				Format = ConfigFormat.StandardINI,
 				NeedsConfigWarning = true,
-				IsQueryable = false
+				IsQueryable = false,
+				ProbeProtocol = ServerProbeProtocol.RestApi,
+				ProbePath = "/v1/api/settings"
 			},
 			new() {
 				Game = "ARK: Survival Evolved",
@@ -122,7 +124,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = [ "TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP", "Aberration_WP", "Extinction_WP", "Valguero_WP", "Ragnarok_WP", "LostColony_WP", "Astraeos_WP", "Genesis_WP"],
 				GameModes = ["PVE", "PVP"],
 				NeedsConfigWarning = true,
-				IsQueryable = false
+				IsQueryable = false,
+				ProbeProtocol = ServerProbeProtocol.EpicOnlineServices
 			},
 			new() {
 				Game = "Sons Of The Forest",
@@ -2598,6 +2601,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "server.properties",
 				IconUrl = "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/png/minecraft.png",
 				NeedsConfigWarning = true,
+				IsQueryable = false,
+				ProbeProtocol = ServerProbeProtocol.Tcp
 			},
 			new() {
 				Game = "BeamMP",
@@ -2606,7 +2611,9 @@ namespace Synix_Control_Panel.SynixApp.Database
 				ExeName = "BeamMP-Server.exe",
 				RequiredArgs = "",
 				Port = 30814,
-				QueryPort = 30814
+				QueryPort = 30814,
+				IsQueryable = false,
+				ProbeProtocol = ServerProbeProtocol.Tcp
 			},
 		];
 
@@ -2620,6 +2627,25 @@ namespace Synix_Control_Panel.SynixApp.Database
 		public static GameInfo? GetGame(string gameName)
 		{
 			return _gameDict.TryGetValue(gameName, out var game) ? game : null;
+		}
+
+		/// <summary>
+		/// Resolves the connection-test protocol for every database entry. Explicit
+		/// REST/EOS/TCP assignments win; otherwise IsQueryable selects the
+		/// A2S UDP query path even when the game derives its query port and therefore
+		/// does not expose a {query} launch placeholder.
+		/// </summary>
+		public static ServerProbeProtocol GetProbeProtocol(GameInfo? game)
+		{
+			if (game == null)
+				return ServerProbeProtocol.Tcp;
+
+			if (game.ProbeProtocol != ServerProbeProtocol.Auto)
+				return game.ProbeProtocol;
+
+			return game.IsQueryable
+				? ServerProbeProtocol.A2S
+				: ServerProbeProtocol.Tcp;
 		}
 
 		public class PostInstallStep

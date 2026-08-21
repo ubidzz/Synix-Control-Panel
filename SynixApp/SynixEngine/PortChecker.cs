@@ -10,15 +10,26 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.Database;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
+		private static readonly HttpClient _probeHttpClient = new(new SocketsHttpHandler
+		{
+			AllowAutoRedirect = false
+		})
+		{
+			Timeout = Timeout.InfiniteTimeSpan
+		};
+
 		private readonly byte[] _a2sInfoRequest = new byte[]
 		{
 			0xFF, 0xFF, 0xFF, 0xFF, 0x54, 0x53, 0x6F, 0x75, 0x72, 0x63, 0x65,
@@ -108,10 +119,30 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> ExecuteDynamicProbes(GameServer server, string ip)
 		{
-			if (await TestServerConnectivity(ip, server.QueryPort))
+			GameInfo? gameData = GameDatabase.GetGame(server.Game);
+			ServerProbeProtocol probeProtocol = GameDatabase.GetProbeProtocol(gameData);
+			bool supportsA2S = probeProtocol == ServerProbeProtocol.A2S;
+
+			if (supportsA2S && await TestServerConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> A2S (Steam UDP) on Port {server.QueryPort}");
 				return true;
+			}
+
+			if (!supportsA2S)
+			{
+				switch (probeProtocol)
+				{
+					case ServerProbeProtocol.RestApi:
+						if (await TestRestApiConnectivity(server, ip, gameData?.ProbePath))
+							return true;
+						break;
+
+					case ServerProbeProtocol.EpicOnlineServices:
+						if (await TestEOSWebAPI(server, ip))
+							return true;
+						break;
+				}
 			}
 
 			if (await TestTcpConnectivity(ip, server.Port))
@@ -120,19 +151,22 @@ namespace Synix_Control_Panel.SynixEngine
 				return true;
 			}
 
-			if (await TestTcpConnectivity(ip, server.QueryPort))
+			if (probeProtocol != ServerProbeProtocol.RestApi &&
+				await TestTcpConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.QueryPort}");
 				return true;
 			}
 
-			if (await TestServerConnectivity(ip, server.Port))
+			if (supportsA2S && await TestServerConnectivity(ip, server.Port))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> UDP Check on Port {server.Port}");
 				return true;
 			}
 
-			if (server.StartTime.HasValue && (DateTime.Now - server.StartTime.Value).TotalSeconds >= 180)
+			if (server.StartTime.HasValue &&
+				(DateTime.Now - server.StartTime.Value).TotalSeconds >= 180 &&
+				await IsLocalAddressAsync(ip))
 			{
 				if (IsPortInUseLocally(server.Port))
 				{
@@ -145,6 +179,49 @@ namespace Synix_Control_Panel.SynixEngine
 					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Query Port {server.QueryPort} In Use)");
 					return true;
 				}
+			}
+
+			return false;
+		}
+
+		public async Task<bool> TestRestApiConnectivity(
+			GameServer server,
+			string ip,
+			string? probePath,
+			int timeoutMs = 2500)
+		{
+			if (server.QueryPort is < 1 or > 65535)
+				return false;
+
+			string normalizedPath = string.IsNullOrWhiteSpace(probePath)
+				? "/"
+				: probePath.StartsWith('/') ? probePath : $"/{probePath}";
+
+			try
+			{
+				Uri probeUri = new UriBuilder(Uri.UriSchemeHttp, ip, server.QueryPort, normalizedPath).Uri;
+				using var request = new HttpRequestMessage(HttpMethod.Get, probeUri);
+				request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+				using var timeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeoutMs));
+				using HttpResponseMessage response = await _probeHttpClient.SendAsync(
+					request,
+					HttpCompletionOption.ResponseHeadersRead,
+					timeout.Token);
+
+				// A 401/403 response still proves that the expected REST listener is alive.
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> HTTP REST endpoint on Port {server.QueryPort} ({(int)response.StatusCode})");
+				return true;
+			}
+			catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or UriFormatException)
+			{
+				System.Diagnostics.Debug.WriteLine($"[REST PROBE] {server.Game}: {ex.Message}");
+			}
+
+			if (await TestTcpConnectivity(ip, server.QueryPort, timeoutMs))
+			{
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> REST TCP listener on Port {server.QueryPort}");
+				return true;
 			}
 
 			return false;
@@ -177,62 +254,104 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 		}
-		/*
-		// This not used and only added for maybe used later on
-		public async Task<bool> TestEOSWebAPI(GameServer server)
+		public async Task<bool> TestEOSWebAPI(GameServer server, string ip, int timeoutMs = 3500)
 		{
-			// EOS requires specific Deployment IDs per game, which you would store in your GameDatabase
-			string eosDeploymentId = "GAME_SPECIFIC_DEPLOYMENT_ID";
+			GameInfo? gameData = GameDatabase.GetGame(server.Game);
+			string appId = gameData?.AppID ?? server.AppID ?? string.Empty;
+			string deploymentId = gameData?.EosDeploymentId ?? string.Empty;
 
-			// In a real scenario, you must retrieve an OAuth token first using your Epic Client ID & Secret
-			string eosOAuthToken = "YOUR_BEARER_TOKEN";
+			// Optional per-game environment variables use the Steam app ID suffix,
+			// for example SYNIX_EOS_DEPLOYMENT_ID_2430930 and
+			// SYNIX_EOS_ACCESS_TOKEN_2430930 for ARK: Survival Ascended.
+			if (string.IsNullOrWhiteSpace(deploymentId))
+				deploymentId = GetProbeEnvironmentValue("SYNIX_EOS_DEPLOYMENT_ID", appId);
 
-			if (string.IsNullOrEmpty(eosOAuthToken) || eosOAuthToken == "YOUR_BEARER_TOKEN")
+			string accessToken = GetProbeEnvironmentValue("SYNIX_EOS_ACCESS_TOKEN", appId);
+
+			if (!string.IsNullOrWhiteSpace(deploymentId) && !string.IsNullOrWhiteSpace(accessToken))
 			{
-				// Skip silently if no token is configured
-				return false;
-			}
-
-			try
-			{
-				using var client = new HttpClient();
-				client.Timeout = TimeSpan.FromSeconds(5);
-
-				// Epic's public sessions endpoint for matchmaking
-				string url = $"https://api.epicgames.dev/matchmaking/v1/public/sessions?deploymentId={eosDeploymentId}";
-
-				// Attach the required Bearer token to prove we are authorized to ask Epic for data
-				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", eosOAuthToken);
-				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				HttpResponseMessage response = await client.GetAsync(url);
-
-				if (response.IsSuccessStatusCode)
+				try
 				{
-					string jsonResponse = await response.Content.ReadAsStringAsync();
-
-					// The JSON response contains a massive list of all active servers for that game globally.
-					// We search the raw JSON text to see if our specific server's IP and Port are actively listed.
-
-					// Note: A more robust method would be using System.Text.Json to deserialize the payload,
-					// but a quick string check is highly efficient for the watchdog loop.
-					string targetIpPort = $"{await GetPublicIP()}:{server.Port}";
-
-					if (jsonResponse.Contains(targetIpPort) || jsonResponse.Contains(server.ServerName))
+					string encodedDeploymentId = Uri.EscapeDataString(deploymentId);
+					var endpoint = new Uri($"https://api.epicgames.dev/matchmaking/v1/{encodedDeploymentId}/filter");
+					string requestJson = JsonSerializer.Serialize(new
 					{
-						return true; // Epic confirms our server is alive and listed!
+						criteria = Array.Empty<object>(),
+						maxResults = 200
+					});
+
+					using var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
+					request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+					request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+					request.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+					using var timeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeoutMs));
+					using HttpResponseMessage response = await _probeHttpClient.SendAsync(request, timeout.Token);
+
+					if (response.IsSuccessStatusCode)
+					{
+						string jsonResponse = await response.Content.ReadAsStringAsync(timeout.Token);
+						string targetIpPort = $"{ip}:{server.Port}";
+
+						if (jsonResponse.Contains(targetIpPort, StringComparison.OrdinalIgnoreCase) ||
+							(!string.IsNullOrWhiteSpace(server.ServerName) &&
+							 jsonResponse.Contains(server.ServerName, StringComparison.OrdinalIgnoreCase)))
+						{
+							Log($"[PROBE SUCCESS] {server.Game} verified via -> Epic Online Services session listing");
+							return true;
+						}
 					}
 				}
-
-				return false;
+				catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+				{
+					System.Diagnostics.Debug.WriteLine($"[EOS API ERROR] {server.Game}: {ex.Message}");
+				}
 			}
-			catch (Exception ex)
+
+			// EOS session search requires publisher-owned credentials. When they are not
+			// supplied, socket ownership is the safe zero-dependency health check for a
+			// server hosted by this PC; no game secrets are embedded in Synix.
+			if (await IsLocalAddressAsync(ip) &&
+				(IsPortInUseLocally(server.Port) || IsPortInUseLocally(server.QueryPort)))
 			{
-				System.Diagnostics.Debug.WriteLine($"[EOS API Error] {server.Game}: {ex.Message}");
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> local EOS server socket binding");
+				return true;
+			}
+
+			return false;
+		}
+
+		private static string GetProbeEnvironmentValue(string baseName, string appId)
+		{
+			if (!string.IsNullOrWhiteSpace(appId))
+			{
+				string? gameValue = Environment.GetEnvironmentVariable($"{baseName}_{appId}");
+				if (!string.IsNullOrWhiteSpace(gameValue))
+					return gameValue;
+			}
+
+			return Environment.GetEnvironmentVariable(baseName) ?? string.Empty;
+		}
+
+		private static async Task<bool> IsLocalAddressAsync(string host)
+		{
+			try
+			{
+				IPAddress[] targetAddresses = IPAddress.TryParse(host, out IPAddress? parsed)
+					? [parsed]
+					: await Dns.GetHostAddressesAsync(host);
+
+				if (targetAddresses.Any(IPAddress.IsLoopback))
+					return true;
+
+				IPAddress[] localAddresses = await Dns.GetHostAddressesAsync(Dns.GetHostName());
+				return targetAddresses.Any(target => localAddresses.Contains(target));
+			}
+			catch
+			{
 				return false;
 			}
 		}
-		*/
 
 		public bool IsPortInUseLocally(int port)
 		{

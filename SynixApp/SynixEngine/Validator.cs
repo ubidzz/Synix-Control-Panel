@@ -222,9 +222,9 @@ namespace Synix_Control_Panel.SynixEngine
 				if (server.Port == port && requiredArgs.Contains("{port}", StringComparison.OrdinalIgnoreCase))
 					return true;
 
-				bool usesQueryPort = requiredArgs.Contains("{query}", StringComparison.OrdinalIgnoreCase);
-
-				if (usesQueryPort && server.QueryPort > 0 && server.QueryPort == port)
+				// QueryPort is reserved monitoring metadata even when it is not emitted
+				// into RequiredArgs. Games may derive or configure this endpoint elsewhere.
+				if (server.QueryPort > 0 && server.QueryPort == port)
 				{
 					return true;
 				}

@@ -16,6 +16,15 @@ using System.Text.Json.Serialization;
 using static Synix_Control_Panel.SynixApp.Database.GameDatabase;
 using static Synix_Control_Panel.SynixEngine.Core;
 
+public enum ServerProbeProtocol
+{
+	Auto,
+	A2S,
+	EpicOnlineServices,
+	RestApi,
+	Tcp
+}
+
 //------- Database Blueprint Template -------
 public class GameInfo
 {
@@ -65,6 +74,12 @@ public class GameInfo
 	public string IconUrl { get; init; } = string.Empty;
 	[JsonIgnore]
 	public bool IsQueryable { get; init; } = true;
+	[JsonIgnore]
+	public ServerProbeProtocol ProbeProtocol { get; init; } = ServerProbeProtocol.Auto;
+	[JsonIgnore]
+	public string ProbePath { get; init; } = string.Empty;
+	[JsonIgnore]
+	public string EosDeploymentId { get; init; } = string.Empty;
 }
 
 //----------- Configured Server Instance ---------------
