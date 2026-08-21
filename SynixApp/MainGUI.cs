@@ -750,6 +750,13 @@ namespace Synix_Control_Panel
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
 
+			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
+			if (!GameDatabase.SupportsManualConnectionTesting(gameData))
+			{
+				AppendLog($"[🛡️ NETWORK] Manual WAN connection testing is not supported for {selectedServer.Game}.", Color.Yellow);
+				return;
+			}
+
 			AppendLog($"[📡 NETWORK] Running comprehensive WAN connectivity tests for {selectedServer.ServerName}...", Color.White);
 
 			try
@@ -778,6 +785,13 @@ namespace Synix_Control_Panel
 		{
 			var selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
+
+			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
+			if (!GameDatabase.SupportsManualConnectionTesting(gameData))
+			{
+				AppendLog($"[🛡️ NETWORK] Manual LAN connection testing is not supported for {selectedServer.Game}.", Color.Yellow);
+				return;
+			}
 
 			AppendLog($"[📡 NETWORK] Running comprehensive LAN connectivity tests for {selectedServer.ServerName}...", Color.White);
 
@@ -809,7 +823,8 @@ namespace Synix_Control_Panel
 			{
 				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft Java", StringComparison.OrdinalIgnoreCase);
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
-				bool supportsConnectionTesting = selectedGameData != null;
+				bool supportsConnectionTesting =
+					GameDatabase.SupportsManualConnectionTesting(selectedGameData);
 
 				updateServerToolStripMenuItem.Enabled = !isMinecraft;
 				updateServerToolStripMenuItem.Visible = !isMinecraft;

@@ -76,6 +76,13 @@ public class GameInfo
 	public bool IsQueryable { get; init; } = true;
 	[JsonIgnore]
 	public ServerProbeProtocol ProbeProtocol { get; init; } = ServerProbeProtocol.Auto;
+	/// <summary>
+	/// Controls whether Synix exposes the user-triggered LAN/WAN connection tests.
+	/// This is separate from the watchdog probe because some games can be verified
+	/// locally by their process/socket but do not expose a reliable remote endpoint.
+	/// </summary>
+	[JsonIgnore]
+	public bool SupportsManualConnectionTesting { get; init; } = true;
 	[JsonIgnore]
 	public string ProbePath { get; init; } = string.Empty;
 	[JsonIgnore]

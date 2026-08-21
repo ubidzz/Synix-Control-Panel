@@ -32,7 +32,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Maps = ["coldmap1"],
 				GameModes = ["easy", "normal", "hardcore"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "HumanitZ",
@@ -96,6 +97,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				NeedsConfigWarning = true,
 				IsQueryable = false,
 				ProbeProtocol = ServerProbeProtocol.RestApi,
+				SupportsManualConnectionTesting = false,
 				ProbePath = "/v1/api/settings"
 			},
 			new() {
@@ -125,7 +127,11 @@ namespace Synix_Control_Panel.SynixApp.Database
 				GameModes = ["PVE", "PVP"],
 				NeedsConfigWarning = true,
 				IsQueryable = false,
-				ProbeProtocol = ServerProbeProtocol.EpicOnlineServices
+				ProbeProtocol = ServerProbeProtocol.EpicOnlineServices,
+				// ASA's EOS session lookup needs publisher-controlled credentials.
+				// Keep local watchdog socket verification, but do not offer a
+				// misleading manual LAN/WAN connection test to normal users.
+				SupportsManualConnectionTesting = false
 			},
 			new() {
 				Game = "Sons Of The Forest",
@@ -173,7 +179,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "serverconfig.txt",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["World1.wld"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Team Fortress 2",
@@ -209,7 +216,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27165,
 				RelativeConfigPath = @"SquadGame\ServerConfig\Server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Mutaha_AAS_v1", "Gorodok_RAAS_v1", "Fallujah_AAS_v1"]
+				Maps = ["Mutaha_AAS_v1", "Gorodok_RAAS_v1", "Fallujah_AAS_v1"],
+				IsQueryable = false
 			},
 			new() {
 				Game = "Stationeers",
@@ -220,7 +228,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				RelativeConfigPath = "default.ini",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Moon", "Mars", "Europa", "Mimas"]
+				Maps = ["Moon", "Mars", "Europa", "Mimas"],
+				IsQueryable = false
 			},
 			new() {
 				Game = "Empyrion - Galactic Survival",
@@ -241,7 +250,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 25564,
 				RelativeConfigPath = "server_config.xml",
 				Format = ConfigFormat.XML,
-				Maps = ["Default"]
+				Maps = ["Default"],
+				IsQueryable = false
 			},
 			new() {
 				Game = "The Forest",
@@ -336,7 +346,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 7777,
 				QueryPort = 27015,
 				Maps = ["Smalland"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Sunkenland",
@@ -347,7 +358,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				RelativeConfigPath = @"Worlds\{Identity}\ServerConfig.txt",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["World1"]
+				Maps = ["World1"],
+				IsQueryable = false
 			},
 			new() {
 				Game = "Risk of Rain 2",
@@ -455,7 +467,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"FactoryGame\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["Satisfactory"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new()
 			{
@@ -530,12 +543,11 @@ namespace Synix_Control_Panel.SynixApp.Database
 				ExeName = "ArmaReforgerServer.exe",
 				RequiredArgs = "-config \"{map}\" -profile \"{Identity}\" -SteamAppId={steamAppID}",
 				Port = 2001,
-				QueryPort = 2001,
+				QueryPort = 17777,
 				RelativeConfigPath = @"configs\server.json",
 				Format = ConfigFormat.JSON,
 				Maps = ["server.json"],
-				NeedsConfigWarning = true,
-				IsQueryable = false
+				NeedsConfigWarning = true
 			},
 			new()
 			{
@@ -602,7 +614,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 3001,
 				RelativeConfigPath = @"Configs\Network.eco",
 				Format = ConfigFormat.JSON,
-				Maps = ["DefaultWorld"]
+				Maps = ["DefaultWorld"],
+				IsQueryable = false
 			},
 			new()
 			{
@@ -613,7 +626,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 7777,
 				QueryPort = 7777,
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Facility"]
+				Maps = ["Facility"],
+				IsQueryable = false
 			},
 			new()
 			{
@@ -723,7 +737,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "miscreated.db",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["islands"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "American Truck Simulator",
@@ -745,7 +760,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "config_local.xml",
 				Format = ConfigFormat.XML,
 				Maps = ["yo_main"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Citadel: Forged with Fire",
@@ -769,7 +785,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "Settings.xml",
 				Format = ConfigFormat.XML,
 				Maps = ["Default"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Counter-Strike: Source",
@@ -851,7 +868,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 7707,
 				QueryPort = 7708,
 				Format = ConfigFormat.StandardINI,
-				Maps = ["KF-BioticsLab"]
+				Maps = ["KF-BioticsLab"],
+				IsQueryable = false
 			},
 			new() {
 				Game = "Black Mesa",
@@ -934,7 +952,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27016,
 				RelativeConfigPath = "server_config.cfg",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Assetto Corsa",
@@ -946,7 +965,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"cfg\server_cfg.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["imola", "monza", "spa"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Last Oasis",
@@ -1014,7 +1034,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 23073,
 				QueryPort = 23073,
 				RelativeConfigPath = "server.cfg",
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Project CARS 2",
@@ -1104,7 +1125,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"TheIsle\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["Gateway"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Pirates, Vikings, and Knights II",
@@ -1138,7 +1160,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = "GameServer.ini",
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Rising World",
@@ -1167,7 +1190,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = "ServerSettings.ini",
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Automobilista 2",
@@ -1177,7 +1201,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = "server_config.json",
-				Format = ConfigFormat.JSON
+				Format = ConfigFormat.JSON,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Assetto Corsa Competizione",
@@ -1188,7 +1213,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 9001,
 				RelativeConfigPath = @"cfg\settings.json",
 				Format = ConfigFormat.JSON,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "rFactor 2",
@@ -1207,7 +1233,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-port {port} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Quake Live",
@@ -1270,7 +1297,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 7777,
 				QueryPort = 27015,
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Reign of Kings",
@@ -1281,7 +1309,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 7350,
 				RelativeConfigPath = @"Configuration\ServerSettings.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["Stormhold"]
+				Maps = ["Stormhold"],
+				IsQueryable = false
 			},
 			new() {
 				Game = "Outlaws of the Old West",
@@ -1326,7 +1355,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 7758,
 				Format = ConfigFormat.StandardINI,
 				Maps = ["DH-Stonne"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Fortress Forever",
@@ -1427,7 +1457,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 7777,
 				RelativeConfigPath = "config.lua",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Out of Reach",
@@ -1438,7 +1469,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27016,
 				RelativeConfigPath = "ServerConfig.json",
 				Format = ConfigFormat.JSON,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Blackwake",
@@ -1448,7 +1480,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 27015,
 				QueryPort = 27016,
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Beyond the Wire",
@@ -1504,7 +1537,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-port {port} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
-				Format = ConfigFormat.StandardINI
+				Format = ConfigFormat.StandardINI,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Codename CURE",
@@ -1599,7 +1633,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27016,
 				RelativeConfigPath = @"Longvinter\Saved\Config\WindowsServer\Game.ini",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Frozen Flame",
@@ -1655,7 +1690,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 43531,
 				QueryPort = 43531,
 				RelativeConfigPath = "config.jecs",
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Serious Sam 2017",
@@ -1666,7 +1702,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				RelativeConfigPath = "server.cfg",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "D.I.P.R.I.P.",
@@ -1700,7 +1737,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Port = 60000,
 				QueryPort = 60002,
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Project CARS",
@@ -1724,7 +1762,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				WorldSize = 5,
 				Format = ConfigFormat.StandardINI,
 				Maps = ["0"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "DeadPoly",
@@ -1768,7 +1807,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 6587,
 				RelativeConfigPath = "ServerSetting.ini",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "HYPERCHARGE: Unboxed",
@@ -1814,7 +1854,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 15000,
 				RelativeConfigPath = @"SAS\Saved\Config\WindowsServer\DedicatedServerSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Warfork",
@@ -1826,7 +1867,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"basewf\dedicated_autoexec.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["wfdm1"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Night of the Dead",
@@ -1837,7 +1879,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				QueryPort = 27015,
 				RelativeConfigPath = "ServerSettings.ini",
 				Format = ConfigFormat.StandardINI,
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "No One Survived",
@@ -1946,8 +1989,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "server_config.json",
 				Format = ConfigFormat.JSON,
 				Maps = [],
-				NeedsConfigWarning = true,
-				IsQueryable = false
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Archean",
@@ -1959,7 +2001,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"Archean-game\server.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Re.Poly",
@@ -2065,7 +2108,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"UDKGame\Config\UDKGame.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["WLT-FrontEndTown"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Serious Sam HD: The Second Encounter",
@@ -2077,7 +2121,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "server.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Serious Sam HD: The First Encounter",
@@ -2089,7 +2134,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "server.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Eden Star",
@@ -2152,7 +2198,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Maps = [@"Levels\LevelsMP\1_1_Palenque.wld"],
 				GameModes = ["DefaultCoop","DefaultFragmatchSE","DefaultScorematchSE"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "RuneScape: Dragonwilds",
@@ -2165,6 +2212,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Silica",
@@ -2177,6 +2225,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.XML,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Nuclear Option",
@@ -2189,6 +2238,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.JSON,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "StarRupture",
@@ -2201,6 +2251,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.JSON,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Saleblazers",
@@ -2213,6 +2264,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.JSON,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Windrose",
@@ -2225,6 +2277,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.JSON,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Cubic Odyssey",
@@ -2238,6 +2291,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Maps = [],
 				GameModes = ["adventure"],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Wreckfest 2",
@@ -2250,6 +2304,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Blade Symphony",
@@ -2366,6 +2421,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Right to Rule",
@@ -2378,6 +2434,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Maps = ["LobbyMap"],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "The Riftbreaker",
@@ -2390,6 +2447,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
 				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Airmen",
@@ -2401,7 +2459,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Undoing",
@@ -2413,7 +2472,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "PlayerVs",
@@ -2425,7 +2485,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Zero World",
@@ -2437,7 +2498,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "ZeroWorld\\Saved\\Config\\WindowsServer\\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "DUCKSIDE",
@@ -2449,7 +2511,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Puck",
@@ -2461,7 +2524,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "HELL'S NEW WORLD",
@@ -2473,7 +2537,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "WindowsServer\\HellsNewWorld\\Saved\\Config\\WindowsServer\\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Sapiens",
@@ -2485,7 +2550,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.JSON,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Dune: Awakening",
@@ -2511,7 +2577,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "Hanako\\Saved\\Config\\WindowsServer\\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Starground",
@@ -2523,7 +2590,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.JSON,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Deadlived",
@@ -2535,7 +2603,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "Deadlived\\Saved\\Config\\WindowsServer\\Game.ini",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "Battle Splash 2.0",
@@ -2547,7 +2616,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = "",
 				Format = ConfigFormat.StandardINI,
 				Maps = [],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 			new() {
 				Game = "GROUND BRANCH CTE",
@@ -2587,7 +2657,8 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RelativeConfigPath = @"cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
 				Maps = ["world"],
-				NeedsConfigWarning = true
+				NeedsConfigWarning = true,
+				IsQueryable = false
 			},
 
 			//----------------- Java games ---------------------
@@ -2646,6 +2717,27 @@ namespace Synix_Control_Panel.SynixApp.Database
 			return game.IsQueryable
 				? ServerProbeProtocol.A2S
 				: ServerProbeProtocol.Tcp;
+		}
+
+		/// <summary>
+		/// Returns whether the selected game has a dependable probe that can be
+		/// exposed as a user-triggered LAN/WAN connection test.
+		/// </summary>
+		public static bool SupportsManualConnectionTesting(GameInfo? game)
+		{
+			if (game?.SupportsManualConnectionTesting != true)
+				return false;
+
+			// Auto is only trustworthy for the database's established A2S games.
+			// Do not expose the UI merely because GetProbeProtocol can provide a
+			// generic TCP fallback for internal watchdog recovery.
+			if (game.ProbeProtocol == ServerProbeProtocol.Auto)
+				return game.IsQueryable;
+
+			return game.ProbeProtocol is
+				ServerProbeProtocol.A2S or
+				ServerProbeProtocol.RestApi or
+				ServerProbeProtocol.Tcp;
 		}
 
 		public class PostInstallStep
