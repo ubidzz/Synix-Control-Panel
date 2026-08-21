@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.Design;
 using System.Diagnostics;
 
 namespace Synix_Control_Panel.Database
@@ -1012,6 +1013,7 @@ namespace Synix_Control_Panel.Database
 		public WarningDatabase(GameServer server)
 		{
 			InitializeComponent();
+			ThemeManager.Apply(this);
 			_server = server;
 
 			// Ensure LinkBehavior is set so links are properly formatted as hyperlinks

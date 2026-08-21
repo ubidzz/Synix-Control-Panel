@@ -79,6 +79,7 @@ namespace Synix_Control_Panel
 				isPrivacyLoading = false;
 				return;
 			}
+			ThemeManager.Apply(this);
 
 			WireUpGatekeeperEvents();
 

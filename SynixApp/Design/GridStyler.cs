@@ -21,10 +21,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 	/// </summary>
 	public static class GridStyler
 	{
-		private static readonly Color RowBackground = SettingsPalette.Input;
-		private static readonly Color AlternateRowBackground = Color.FromArgb(14, 24, 40);
-		private static readonly Color SelectionBackground = Color.FromArgb(24, 55, 73);
-		private static readonly Color Divider = Color.FromArgb(31, 45, 67);
+		private static Color RowBackground => SettingsPalette.Input;
+		private static Color AlternateRowBackground => SettingsPalette.AlternateInput;
+		private static Color SelectionBackground => SettingsPalette.Selection;
+		private static Color Divider => SettingsPalette.Divider;
 		private static Font? _statusFont;
 
 		public static void DarkTheme(DataGridView grid)
@@ -137,7 +137,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		public static void StyleIconButton(Button button, Image? icon, Color hoverColor)
 		{
-			StyleTitleButton(button, Color.FromArgb(20, 33, 54));
+			StyleTitleButton(button, SettingsPalette.CardHover);
 			button.Image = null;
 			button.Text = string.Empty;
 			button.Padding = Padding.Empty;
@@ -147,9 +147,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 				bool hovered = button.ClientRectangle.Contains(pointer);
 				bool pressed = hovered && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
 				Color surface = pressed
-					? Color.FromArgb(24, 55, 73)
+					? SettingsPalette.Selection
 					: hovered
-						? Color.FromArgb(20, 33, 54)
+						? SettingsPalette.CardHover
 						: SettingsPalette.TitleBar;
 				paintArgs.Graphics.Clear(surface);
 
@@ -164,7 +164,37 @@ namespace Synix_Control_Panel.SynixApp.Design
 					(button.Height - iconSize) / 2,
 					iconSize,
 					iconSize);
-				paintArgs.Graphics.DrawImage(icon, iconBounds);
+				if (ThemeManager.IsDarkMode)
+				{
+					paintArgs.Graphics.DrawImage(icon, iconBounds);
+				}
+				else
+				{
+					Color iconColor = SettingsPalette.SecondaryText;
+					float red = iconColor.R / 255F;
+					float green = iconColor.G / 255F;
+					float blue = iconColor.B / 255F;
+					using System.Drawing.Imaging.ImageAttributes imageAttributes = new();
+					imageAttributes.SetColorMatrix(
+						new System.Drawing.Imaging.ColorMatrix(
+							new[]
+							{
+								new[] { 0F, 0F, 0F, 0F, 0F },
+								new[] { 0F, 0F, 0F, 0F, 0F },
+								new[] { 0F, 0F, 0F, 0F, 0F },
+								new[] { 0F, 0F, 0F, 1F, 0F },
+								new[] { red, green, blue, 0F, 1F }
+							}));
+					paintArgs.Graphics.DrawImage(
+						icon,
+						iconBounds,
+						0,
+						0,
+						icon.Width,
+						icon.Height,
+						GraphicsUnit.Pixel,
+						imageAttributes);
+				}
 				if (hovered)
 				{
 					using Pen accentPen = new(
@@ -187,7 +217,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 		public static void DashboardLabels(Label cpuLabel, Label ramLabel)
 		{
 			cpuLabel.ForeColor = SettingsPalette.Accent;
-			ramLabel.ForeColor = Color.FromArgb(164, 125, 245);
+			ramLabel.ForeColor = SettingsPalette.Ram;
 		}
 
 		private static void StyleTitleButton(Button button, Color hoverColor)
@@ -196,7 +226,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			button.FlatStyle = FlatStyle.Flat;
 			button.FlatAppearance.BorderSize = 0;
 			button.FlatAppearance.MouseOverBackColor = hoverColor;
-			button.FlatAppearance.MouseDownBackColor = Color.FromArgb(24, 55, 73);
+			button.FlatAppearance.MouseDownBackColor = SettingsPalette.Selection;
 			button.ForeColor = SettingsPalette.PrimaryText;
 			button.TabStop = false;
 			button.UseVisualStyleBackColor = false;
@@ -205,11 +235,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private static Color GetStatusColor(string status)
 		{
 			if (status.Equals(StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase))
-				return Color.FromArgb(80, 230, 164);
+				return SettingsPalette.Success;
 			if (status.Equals(StatusManager.GetStatus(ServerState.Stopped), StringComparison.OrdinalIgnoreCase))
-				return Color.FromArgb(250, 116, 128);
+				return SettingsPalette.Danger;
 			if (status.Equals(StatusManager.GetStatus(ServerState.Crashed), StringComparison.OrdinalIgnoreCase))
-				return Color.FromArgb(242, 91, 103);
+				return SettingsPalette.Danger;
 			if (status.StartsWith("Starting", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Stopping", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||

@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			float ratio = _maxValue <= 0F ? 0F : Math.Clamp(_value / _maxValue, 0F, 1F);
 			Color progressColor = ratio >= 0.90F
-				? Color.FromArgb(242, 91, 103)
+				? SettingsPalette.Danger
 				: ratio >= 0.72F
 					? SettingsPalette.Warning
 					: SettingsPalette.Accent;

@@ -17,21 +17,38 @@ namespace Synix_Control_Panel.SynixApp.Design
 {
 	public static class SettingsPalette
 	{
-		public static readonly Color Window = Color.FromArgb(8, 13, 24);
-		public static readonly Color TitleBar = Color.FromArgb(6, 12, 22);
-		public static readonly Color Sidebar = Color.FromArgb(10, 18, 32);
-		public static readonly Color Card = Color.FromArgb(17, 27, 45);
-		public static readonly Color CardHover = Color.FromArgb(20, 33, 54);
-		public static readonly Color Input = Color.FromArgb(12, 21, 36);
-		public static readonly Color Border = Color.FromArgb(38, 52, 77);
-		public static readonly Color BorderHover = Color.FromArgb(55, 76, 108);
-		public static readonly Color PrimaryText = Color.FromArgb(245, 247, 251);
-		public static readonly Color SecondaryText = Color.FromArgb(158, 172, 194);
-		public static readonly Color MutedText = Color.FromArgb(105, 124, 153);
-		public static readonly Color Accent = Color.FromArgb(32, 214, 199);
-		public static readonly Color AccentHover = Color.FromArgb(50, 231, 216);
-		public static readonly Color AccentSoft = Color.FromArgb(28, 75, 91);
-		public static readonly Color Warning = Color.FromArgb(245, 185, 76);
+		public static Color Window => ThemeManager.Colors.Window;
+		public static Color TitleBar => ThemeManager.Colors.TitleBar;
+		public static Color Sidebar => ThemeManager.Colors.Sidebar;
+		public static Color Card => ThemeManager.Colors.Card;
+		public static Color CardHover => ThemeManager.Colors.CardHover;
+		public static Color Input => ThemeManager.Colors.Input;
+		public static Color AlternateInput => ThemeManager.Colors.AlternateInput;
+		public static Color Border => ThemeManager.Colors.Border;
+		public static Color BorderHover => ThemeManager.Colors.BorderHover;
+		public static Color PrimaryText => ThemeManager.Colors.PrimaryText;
+		public static Color SecondaryText => ThemeManager.Colors.SecondaryText;
+		public static Color MutedText => ThemeManager.Colors.MutedText;
+		public static Color Accent => ThemeManager.Colors.Accent;
+		public static Color AccentHover => ThemeManager.Colors.AccentHover;
+		public static Color AccentSoft => ThemeManager.Colors.AccentSoft;
+		public static Color Warning => ThemeManager.Colors.Warning;
+		public static Color Selection => ThemeManager.Colors.Selection;
+		public static Color Divider => ThemeManager.Colors.Divider;
+		public static Color InfoSurface => ThemeManager.Colors.InfoSurface;
+		public static Color DisabledSurface => ThemeManager.Colors.DisabledSurface;
+		public static Color DisabledText => ThemeManager.Colors.DisabledText;
+		public static Color Console => ThemeManager.Colors.Console;
+		public static Color AccentText => ThemeManager.IsDarkMode ? Window : Color.White;
+		public static Color Success => ThemeManager.IsDarkMode
+			? Color.FromArgb(80, 230, 164)
+			: Color.FromArgb(17, 124, 82);
+		public static Color Danger => ThemeManager.IsDarkMode
+			? Color.FromArgb(250, 116, 128)
+			: Color.FromArgb(190, 45, 60);
+		public static Color Ram => ThemeManager.IsDarkMode
+			? Color.FromArgb(167, 139, 250)
+			: Color.FromArgb(109, 72, 184);
 	}
 
 	internal static class RoundedGeometry
@@ -202,18 +219,20 @@ namespace Synix_Control_Panel.SynixApp.Design
 			Color trackColor;
 
 			if (!Enabled)
-				trackColor = Color.FromArgb(36, 45, 60);
+				trackColor = SettingsPalette.DisabledSurface;
 			else if (Checked)
 				trackColor = _hovered ? SettingsPalette.AccentHover : SettingsPalette.Accent;
 			else
-				trackColor = _hovered ? Color.FromArgb(66, 80, 101) : Color.FromArgb(48, 59, 78);
+				trackColor = _hovered
+					? SettingsPalette.BorderHover
+					: SettingsPalette.DisabledSurface;
 
 			using GraphicsPath trackPath = RoundedGeometry.Create(trackBounds, trackBounds.Height / 2);
 			using SolidBrush trackBrush = new(trackColor);
 			eventArgs.Graphics.FillPath(trackBrush, trackPath);
 
 			using Pen borderPen = new(
-				Checked ? Color.FromArgb(80, 255, 239) : SettingsPalette.BorderHover,
+				Checked ? SettingsPalette.AccentHover : SettingsPalette.BorderHover,
 				1F);
 			eventArgs.Graphics.DrawPath(borderPen, trackPath);
 
@@ -236,7 +255,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 				thumbBounds.Height);
 
 			using SolidBrush thumbBrush = new(
-				Enabled ? Color.WhiteSmoke : Color.FromArgb(150, 158, 170));
+				Enabled ? Color.WhiteSmoke : SettingsPalette.DisabledText);
 			eventArgs.Graphics.FillEllipse(thumbBrush, thumbBounds);
 
 			if (Focused && ShowFocusCues)
@@ -324,7 +343,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			Color fillColor;
 			if (!Enabled)
 			{
-				fillColor = Color.FromArgb(25, 34, 48);
+				fillColor = SettingsPalette.DisabledSurface;
 			}
 			else if (UseAccentStyle)
 			{
@@ -337,9 +356,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 			else
 			{
 				fillColor = _pressed
-					? Color.FromArgb(27, 48, 66)
+					? SettingsPalette.Selection
 					: _hovered
-						? Color.FromArgb(25, 42, 60)
+						? SettingsPalette.CardHover
 						: SettingsPalette.Input;
 			}
 
@@ -363,7 +382,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			Color textColor = !Enabled
 				? SettingsPalette.MutedText
 				: UseAccentStyle
-					? SettingsPalette.Window
+					? SettingsPalette.AccentText
 					: ForeColor;
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
@@ -466,7 +485,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		[Category("Synix Appearance")]
 		public Color SelectedItemBackColor { get; set; } =
-			Color.FromArgb(24, 55, 73);
+			SettingsPalette.Selection;
 
 		public ModernSettingsComboBox()
 		{
@@ -908,7 +927,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			BorderColor = SettingsPalette.Border;
 			FocusBorderColor = SettingsPalette.Border;
 			ArrowColor = SettingsPalette.SecondaryText;
-			SelectedItemBackColor = Color.FromArgb(24, 55, 73);
+			SelectedItemBackColor = SettingsPalette.Selection;
 			Margin = Padding.Empty;
 		}
 
@@ -948,7 +967,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			BorderColor = SettingsPalette.Border;
 			FocusBorderColor = SettingsPalette.Border;
 			ArrowColor = SettingsPalette.SecondaryText;
-			SelectedItemBackColor = Color.FromArgb(24, 55, 73);
+			SelectedItemBackColor = SettingsPalette.Selection;
 			Margin = Padding.Empty;
 			dataGridViewCellStyle.BackColor = SettingsPalette.Input;
 			dataGridViewCellStyle.ForeColor = SettingsPalette.PrimaryText;
@@ -1506,8 +1525,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (Selected || _hovered)
 			{
 				Color fill = Selected
-					? Color.FromArgb(22, 50, 67)
-					: Color.FromArgb(16, 30, 48);
+					? SettingsPalette.Selection
+					: SettingsPalette.CardHover;
 				using GraphicsPath path = RoundedGeometry.Create(bounds, 9);
 				using SolidBrush fillBrush = new(fill);
 				eventArgs.Graphics.FillPath(fillBrush, path);

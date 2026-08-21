@@ -24,8 +24,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (rtb == null) return;
 
 			rtb.BorderStyle = BorderStyle.None;
-			rtb.BackColor = Color.FromArgb(15, 15, 15);
-			rtb.ForeColor = Color.WhiteSmoke;
+			rtb.BackColor = SettingsPalette.Console;
+			rtb.ForeColor = SettingsPalette.PrimaryText;
 			rtb.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
 
 			Control parent = rtb.Parent;
@@ -49,7 +49,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 					container.Controls.Add(rtb);
 				}
 
-				container.BackColor = Color.FromArgb(15, 15, 15);
+				container.BackColor = SettingsPalette.Console;
 
 				int margin = 5;
 				rtb.Dock = DockStyle.None;
@@ -153,7 +153,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 		{
 			chk.Cursor = Cursors.Hand;
 			chk.AutoSize = false;
-			chk.BackColor = Color.Transparent;
+			chk.BackColor = SettingsPalette.Window;
 			chk.Tag = labelPrefix;
 			chk.Paint -= Chk_CustomPaint;
 			chk.Paint += Chk_CustomPaint;
@@ -191,14 +191,15 @@ namespace Synix_Control_Panel.SynixApp.Design
 				path.AddArc(rect.Width - diameter + rect.X, rect.Y, diameter, diameter, 270, 180);
 				path.CloseFigure();
 
-				// Changed from cyan to green when checked
-				Color trackColor = chk.Checked ? Color.FromArgb(40, 150, 40) : Color.FromArgb(45, 45, 45);
+				Color trackColor = chk.Checked
+					? SettingsPalette.Accent
+					: SettingsPalette.DisabledSurface;
 				using (var brush = new SolidBrush(trackColor))
 				{
 					g.FillPath(brush, path);
 				}
 
-				using (var pen = new Pen(Color.FromArgb(30, 30, 30), 2.2f))
+				using (var pen = new Pen(SettingsPalette.Border, 2.2f))
 				{
 					g.DrawPath(pen, path);
 				}
@@ -212,7 +213,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 				Rectangle textRect = chk.Checked ? new Rectangle(rect.X, rect.Y, rect.Width - 22, rect.Height)
 											   : new Rectangle(rect.X + 22, rect.Y, rect.Width - 22, rect.Height);
 
-				TextRenderer.DrawText(g, text, _sliderFont, textRect, Color.White,
+				Color textColor = chk.Checked
+					? SettingsPalette.AccentText
+					: SettingsPalette.PrimaryText;
+				TextRenderer.DrawText(g, text, _sliderFont, textRect, textColor,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 			}
 		}
@@ -306,10 +310,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 		{
 			this.SetStyle(ControlStyles.UserPaint |
 						  ControlStyles.AllPaintingInWmPaint |
-						  ControlStyles.OptimizedDoubleBuffer |
-						  ControlStyles.SupportsTransparentBackColor, true);
+						  ControlStyles.OptimizedDoubleBuffer, true);
 
-			this.BackColor = Color.Transparent;
+			this.BackColor = SettingsPalette.Window;
 			this.Size = new Size(60, 28);
 			this.Cursor = Cursors.Hand;
 		}

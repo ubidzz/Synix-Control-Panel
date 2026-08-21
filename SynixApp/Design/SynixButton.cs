@@ -120,7 +120,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			if (!Enabled)
 			{
-				fillColor = Color.FromArgb(22, 31, 45);
+				fillColor = SettingsPalette.DisabledSurface;
 				borderColor = SettingsPalette.Border;
 				textColor = SettingsPalette.MutedText;
 			}

@@ -52,6 +52,7 @@ namespace Synix_Control_Panel
 			InitializeComponent();
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
 				return;
+			ThemeManager.Apply(this);
 
 			Instance = this;
 
@@ -326,7 +327,7 @@ namespace Synix_Control_Panel
 
 			rtbLog.SelectionStart = rtbLog.TextLength;
 			rtbLog.SelectionLength = 0;
-			rtbLog.SelectionColor = textColor ?? rtbLog.ForeColor;
+			rtbLog.SelectionColor = ResolveLogColor(textColor);
 
 			if (rtbLog.Lines.Length > 500)
 			{
@@ -341,6 +342,34 @@ namespace Synix_Control_Panel
 			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
+		}
+
+		private Color ResolveLogColor(Color? requestedColor)
+		{
+			if (!requestedColor.HasValue)
+				return rtbLog.ForeColor;
+			if (ThemeManager.IsDarkMode)
+				return requestedColor.Value;
+
+			Color color = requestedColor.Value;
+			if (color.ToArgb() == Color.White.ToArgb() ||
+				color.ToArgb() == Color.WhiteSmoke.ToArgb())
+			{
+				return SettingsPalette.PrimaryText;
+			}
+			if (color.ToArgb() == Color.Cyan.ToArgb())
+				return SettingsPalette.Accent;
+			if (color.ToArgb() == Color.Green.ToArgb())
+				return SettingsPalette.Success;
+			if (color.ToArgb() == Color.Red.ToArgb())
+				return SettingsPalette.Danger;
+			if (color.ToArgb() == Color.Yellow.ToArgb() ||
+				color.ToArgb() == Color.Orange.ToArgb())
+			{
+				return SettingsPalette.Warning;
+			}
+
+			return color;
 		}
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
@@ -382,7 +411,7 @@ namespace Synix_Control_Panel
 			catch (Exception ex)
 			{
 				lblSteamStatus.Text = "●  SteamCMD needs attention";
-				lblSteamStatus.ForeColor = Color.FromArgb(250, 116, 128);
+				lblSteamStatus.ForeColor = SettingsPalette.Danger;
 				AppendLog($"[🚨 STEAMCMD ERROR] {ex.Message}", Color.Red, true);
 			}
 		}

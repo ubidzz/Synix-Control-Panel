@@ -48,6 +48,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return;
 			}
+			ThemeManager.Apply(this);
 
 			lblVersion.Text =
 				$"SYNIX CONTROL PANEL  •  v{Application.ProductVersion}";
@@ -126,6 +127,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			generalSettingsPage.ShowServerWindowChanged +=
 				ShowServerWindowChanged;
+			generalSettingsPage.DarkModeChanged +=
+				DarkModeChanged;
 			backupSettingsPage.CustomBackupChanged +=
 				CustomBackupChanged;
 			backupSettingsPage.BrowseRequested +=
@@ -389,14 +392,13 @@ namespace Synix_Control_Panel.SynixEngine
 			Properties.Settings.Default.Save();
 		}
 
-		private async void DarkModeChanged(object? sender, EventArgs eventArgs)
+		private void DarkModeChanged(object? sender, EventArgs eventArgs)
 		{
 			if (_loadingSettings) return;
 
 			Properties.Settings.Default.DarkMode = generalSettingsPage.DarkMode;
 			Properties.Settings.Default.Save();
-
-			// You will likely want to trigger your theme re-render here!
+			ThemeManager.SetDarkMode(generalSettingsPage.DarkMode);
 		}
 	}
 }

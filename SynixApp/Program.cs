@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.SynixApp
@@ -33,6 +34,8 @@ namespace Synix_Control_Panel.SynixApp
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			ThemeManager.Initialize(Properties.Settings.Default.DarkMode);
+			Application.Idle += (_, _) => ThemeManager.ApplyToOpenForms();
 
 			try
 			{

@@ -22,6 +22,7 @@ namespace Synix_Control_Panel.ServerHandler
 		public ScheduleSettingsGUI(bool[] initialDays, string initialTime)
 		{
 			InitializeComponent();
+			ThemeManager.Apply(this);
 
 			// 1. Setup Time Picker
 			dtpRestartTime.Format = DateTimePickerFormat.Custom;

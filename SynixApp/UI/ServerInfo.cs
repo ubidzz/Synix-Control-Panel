@@ -13,6 +13,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Synix_Control_Panel.SynixApp.Design;
 
 namespace Synix_Control_Panel.Help
 {
@@ -34,10 +35,12 @@ namespace Synix_Control_Panel.Help
 		private const int DwmRound = 2;
 		private const int ResizeBorder = 7;
 
-		private static readonly Color SuccessColor = Color.FromArgb(52, 211, 153);
-		private static readonly Color DangerColor = Color.FromArgb(248, 113, 113);
-		private static readonly Color BusyColor = Color.FromArgb(245, 185, 76);
-		private static readonly Color IdleColor = Color.FromArgb(96, 165, 250);
+		private static Color SuccessColor => SettingsPalette.Success;
+		private static Color DangerColor => SettingsPalette.Danger;
+		private static Color BusyColor => SettingsPalette.Warning;
+		private static Color IdleColor => ThemeManager.IsDarkMode
+			? Color.FromArgb(96, 165, 250)
+			: Color.FromArgb(37, 99, 168);
 
 		private readonly GameServer _server;
 		private Process? _serverProcess;
@@ -56,12 +59,15 @@ namespace Synix_Control_Panel.Help
 		{
 			InitializeComponent();
 			_server = new GameServer();
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+				ThemeManager.Apply(this);
 		}
 
 		public ServerInfo(GameServer server)
 		{
 			InitializeComponent();
 			_server = server ?? throw new ArgumentNullException(nameof(server));
+			ThemeManager.Apply(this);
 
 			LoadServerData();
 			UpdateStatusPresentation(_server.Status);

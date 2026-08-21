@@ -66,6 +66,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return;
 			}
+			ThemeManager.Apply(this);
 
 			InitializeData();
 			PopulateTree();

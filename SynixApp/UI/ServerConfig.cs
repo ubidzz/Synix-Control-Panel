@@ -36,11 +36,15 @@ namespace Synix_Control_Panel.ServerHandler
 		private const int DwmRound = 2;
 		private const int ResizeBorder = 7;
 
-		private static readonly Color TextTypeColor = Color.FromArgb(96, 165, 250);
-		private static readonly Color NumberTypeColor = Color.FromArgb(167, 139, 250);
-		private static readonly Color BooleanTypeColor = Color.FromArgb(32, 214, 199);
-		private static readonly Color SecretTypeColor = Color.FromArgb(245, 185, 76);
-		private static readonly Color NullTypeColor = Color.FromArgb(148, 163, 184);
+		private static Color TextTypeColor => ThemeManager.IsDarkMode
+			? Color.FromArgb(96, 165, 250)
+			: Color.FromArgb(37, 99, 168);
+		private static Color NumberTypeColor => ThemeManager.IsDarkMode
+			? Color.FromArgb(167, 139, 250)
+			: Color.FromArgb(109, 72, 184);
+		private static Color BooleanTypeColor => SettingsPalette.Accent;
+		private static Color SecretTypeColor => SettingsPalette.Warning;
+		private static Color NullTypeColor => SettingsPalette.MutedText;
 
 		private readonly string _path = string.Empty;
 		private readonly ConfigFormat _format = ConfigFormat.StandardINI;
@@ -61,12 +65,15 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			InitializeComponent();
 			ConfigureBooleanGridEditing();
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+				ThemeManager.Apply(this);
 		}
 
 		public ServerConfig(string filePath, ConfigFormat format)
 		{
 			InitializeComponent();
 			ConfigureBooleanGridEditing();
+			ThemeManager.Apply(this);
 
 			if (string.IsNullOrWhiteSpace(filePath))
 			{
@@ -577,6 +584,18 @@ namespace Synix_Control_Panel.ServerHandler
 
 		private static Color GetTypeBadgeColor(ConfigValueType type)
 		{
+			if (!ThemeManager.IsDarkMode)
+			{
+				return type switch
+				{
+					ConfigValueType.Boolean => Color.FromArgb(215, 240, 237),
+					ConfigValueType.Number => Color.FromArgb(236, 228, 251),
+					ConfigValueType.Secret => Color.FromArgb(248, 236, 208),
+					ConfigValueType.Null => Color.FromArgb(227, 232, 239),
+					_ => Color.FromArgb(221, 234, 248)
+				};
+			}
+
 			return type switch
 			{
 				ConfigValueType.Boolean => Color.FromArgb(15, 61, 66),
@@ -796,7 +815,7 @@ namespace Synix_Control_Panel.ServerHandler
 				modernComboBox.BorderColor = SettingsPalette.Border;
 				modernComboBox.FocusBorderColor = SettingsPalette.Border;
 				modernComboBox.ArrowColor = SettingsPalette.SecondaryText;
-				modernComboBox.SelectedItemBackColor = Color.FromArgb(24, 55, 73);
+				modernComboBox.SelectedItemBackColor = SettingsPalette.Selection;
 				modernComboBox.Invalidate();
 			}
 

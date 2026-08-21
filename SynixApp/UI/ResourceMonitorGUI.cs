@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
+using Synix_Control_Panel.SynixApp.Design;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -35,12 +36,12 @@ namespace Synix_Control_Panel
 		private const int DwmRound = 2;
 		private const int ResizeBorder = 7;
 
-		private static readonly Color AccentColor = Color.FromArgb(32, 214, 199);
-		private static readonly Color RamColor = Color.FromArgb(167, 139, 250);
-		private static readonly Color SuccessColor = Color.FromArgb(52, 211, 153);
-		private static readonly Color WarningColor = Color.FromArgb(245, 185, 76);
-		private static readonly Color DangerColor = Color.FromArgb(248, 113, 113);
-		private static readonly Color TrackColor = Color.FromArgb(32, 45, 66);
+		private static Color AccentColor => SettingsPalette.Accent;
+		private static Color RamColor => SettingsPalette.Ram;
+		private static Color SuccessColor => SettingsPalette.Success;
+		private static Color WarningColor => SettingsPalette.Warning;
+		private static Color DangerColor => SettingsPalette.Danger;
+		private static Color TrackColor => SettingsPalette.Divider;
 
 		private readonly Dictionary<int, DataGridViewRow> _rowsByProcessId = new();
 		private double _currentTotalCpuPercentage;
@@ -50,6 +51,8 @@ namespace Synix_Control_Panel
 		public ResourceMonitorGUI()
 		{
 			InitializeComponent();
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+				ThemeManager.Apply(this);
 		}
 
 		protected override void OnShown(EventArgs eventArgs)
@@ -277,7 +280,7 @@ namespace Synix_Control_Panel
 			lblActiveServersValue.Text = runningServerCount.ToString();
 			lblActiveIndicator.ForeColor = runningServerCount > 0
 				? SuccessColor
-				: Color.FromArgb(66, 80, 101);
+				: SettingsPalette.DisabledText;
 			lblActiveServersCaption.Text = runningServerCount switch
 			{
 				0 => "No running server processes detected",
@@ -411,7 +414,7 @@ namespace Synix_Control_Panel
 				"No running game servers detected",
 				resourceGrid.Font,
 				messageBounds,
-				Color.FromArgb(105, 124, 153),
+				SettingsPalette.MutedText,
 				TextFormatFlags.HorizontalCenter |
 				TextFormatFlags.VerticalCenter);
 		}

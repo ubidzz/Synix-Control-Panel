@@ -17,10 +17,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 {
 	public class SynixMenuRenderer : ToolStripProfessionalRenderer
 	{
-		private readonly Color bgColor = Color.FromArgb(25, 25, 30);
-		private readonly Color hoverTop = Color.FromArgb(20, 35, 50);
-		private readonly Color hoverBottom = Color.FromArgb(10, 20, 30);
-		private readonly Color cyanBorder = Color.FromArgb(0, 190, 255);
+		private static Color BackgroundColor => SettingsPalette.Card;
+		private static Color HoverTop => SettingsPalette.Selection;
+		private static Color HoverBottom => SettingsPalette.CardHover;
+		private static Color AccentBorder => SettingsPalette.Accent;
 
 		public SynixMenuRenderer()
 		{
@@ -78,7 +78,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 		protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
 		{
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			e.Graphics.Clear(bgColor);
+			e.Graphics.Clear(BackgroundColor);
 		}
 
 		protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
@@ -88,7 +88,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
 		{
-			using (Pen pen = new Pen(Color.FromArgb(50, 50, 60), 1))
+			using (Pen pen = new Pen(SettingsPalette.Divider, 1))
 			{
 				int y = e.Item.Height / 2;
 				e.Graphics.DrawLine(pen, 10, y, e.Item.Width - 10, y);
@@ -103,8 +103,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			{
 				Rectangle rect = new Rectangle(4, 2, e.Item.Width - 8, e.Item.Height - 4);
 				using (GraphicsPath path = GetRoundedRect(rect, 5))
-				using (LinearGradientBrush brushFill = new LinearGradientBrush(rect, hoverTop, hoverBottom, 90F))
-				using (Pen penBorder = new Pen(cyanBorder, 1))
+				using (LinearGradientBrush brushFill = new LinearGradientBrush(rect, HoverTop, HoverBottom, 90F))
+				using (Pen penBorder = new Pen(AccentBorder, 1))
 				{
 					e.Graphics.FillPath(brushFill, path);
 					e.Graphics.DrawPath(penBorder, path);
@@ -117,20 +117,24 @@ namespace Synix_Control_Panel.SynixApp.Design
 			e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
 			Rectangle textRect = new Rectangle(12, 0, e.Item.Width - 24, e.Item.Height);
-			Color textColor = (e.Item.Selected || e.Item.Pressed) ? cyanBorder : Color.White;
+			Color textColor = (e.Item.Selected || e.Item.Pressed)
+				? AccentBorder
+				: SettingsPalette.PrimaryText;
 
 			TextRenderer.DrawText(e.Graphics, e.Item.Text, e.Item.Font, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
 		}
 
 		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
 		{
-			e.ArrowColor = (e.Item.Selected || e.Item.Pressed) ? cyanBorder : Color.White;
+			e.ArrowColor = (e.Item.Selected || e.Item.Pressed)
+				? AccentBorder
+				: SettingsPalette.PrimaryText;
 			base.OnRenderArrow(e);
 		}
 
 		protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
 		{
-			using (Pen borderPen = new Pen(Color.FromArgb(15, 15, 18), 1))
+			using (Pen borderPen = new Pen(SettingsPalette.Border, 1))
 			{
 				Rectangle rect = new Rectangle(0, 0, e.ToolStrip.Width - 1, e.ToolStrip.Height - 1);
 				e.Graphics.DrawRectangle(borderPen, rect);

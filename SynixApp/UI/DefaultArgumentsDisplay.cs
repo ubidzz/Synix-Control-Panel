@@ -10,6 +10,8 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.Design;
+
 namespace Synix_Control_Panel.Help
 {
 	public partial class DefaultArgumentsDisplay : Form
@@ -17,6 +19,7 @@ namespace Synix_Control_Panel.Help
 		public DefaultArgumentsDisplay(string requiredArgs)
 		{
 			InitializeComponent();
+			ThemeManager.Apply(this);
 			txtArgs.Text = requiredArgs;
 		}
 
@@ -26,4 +29,3 @@ namespace Synix_Control_Panel.Help
 		}
 	}
 }
-
