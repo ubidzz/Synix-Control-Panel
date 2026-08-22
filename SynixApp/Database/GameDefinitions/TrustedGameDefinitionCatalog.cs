@@ -1,0 +1,473 @@
+// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+
+namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
+{
+	internal sealed class EmbeddedConfigurationTemplate
+	{
+		public string RelativePath { get; init; } = string.Empty;
+		public string TemplateFile { get; init; } = string.Empty;
+		public string Content { get; set; } = string.Empty;
+	}
+
+	internal sealed class EmbeddedConfigurationDefinition
+	{
+		public int SchemaVersion { get; init; } = 1;
+		public bool RequiresNetworkAddresses { get; init; }
+		public IReadOnlyList<EmbeddedConfigurationTemplate> Templates { get; init; } = [];
+	}
+
+	internal sealed class EmbeddedGameDefinition
+	{
+		public int SchemaVersion { get; init; } = 1;
+		public string Id { get; init; } = string.Empty;
+		public int CatalogOrder { get; init; } = int.MaxValue;
+		public string Game { get; init; } = string.Empty;
+		public IReadOnlyList<string> Aliases { get; init; } = [];
+		public string AppId { get; init; } = string.Empty;
+		public bool RequiresSteamLogin { get; init; }
+		public string Executable { get; init; } = string.Empty;
+		public string DownloadUrl { get; init; } = string.Empty;
+		public string Arguments { get; init; } = string.Empty;
+		public string RconSyntax { get; init; } = string.Empty;
+		public int Port { get; init; }
+		public int QueryPort { get; init; }
+		public int? AppPort { get; init; }
+		public int WorldSize { get; init; }
+		public string WorldSeed { get; init; } = "12345";
+		public IReadOnlyList<string> Maps { get; init; } = [];
+		public IReadOnlyList<string> GameModes { get; init; } = [];
+		public ConfigFileCreationMode ConfigFileCreation { get; init; } =
+			ConfigFileCreationMode.Unknown;
+		public string RelativeConfigPath { get; init; } = string.Empty;
+		public ConfigFormat Format { get; init; } = ConfigFormat.StandardINI;
+		public string ExternalDataFolderName { get; init; } = string.Empty;
+		public IReadOnlyList<string> RequiredLaunchFiles { get; init; } = [];
+		public IReadOnlyList<string> OptionalLaunchFiles { get; init; } = [];
+		public string LaunchFileSetupInstructions { get; init; } = string.Empty;
+		public bool NeedsConfigWarning { get; init; }
+		public string WarningMessage { get; init; } =
+			"This game requires configuration before it can boot properly.";
+		public string IconUrl { get; init; } = string.Empty;
+		public bool IsQueryable { get; init; } = true;
+		public ServerProbeProtocol ProbeProtocol { get; init; } = ServerProbeProtocol.Auto;
+		public bool SupportsManualConnectionTesting { get; init; } = true;
+		public string ProbePath { get; init; } = string.Empty;
+		public string EosDeploymentId { get; init; } = string.Empty;
+		public EmbeddedConfigurationDefinition? Configuration { get; init; }
+	}
+
+	internal sealed record EmbeddedGamePackage(
+		GameInfo Definition,
+		EmbeddedConfigurationDefinition? Configuration,
+		string ResourceName);
+
+	internal static partial class TrustedGameDefinitionCatalog
+	{
+		private const int MaximumDefinitionBytes = 1024 * 1024;
+		private const int MaximumTemplateCharacters = 512 * 1024;
+		private static readonly Regex PlaceholderPattern =
+			PlaceholderRegex();
+		private static readonly HashSet<string> SupportedPlaceholders =
+			new(StringComparer.Ordinal)
+			{
+				"ServerName",
+				"Password",
+				"AdminPassword",
+				"MaxPlayers",
+				"Port",
+				"QueryPort",
+				"RCONPort",
+				"RCONPassword",
+				"EnableRcon",
+				"Identity",
+				"WorldName",
+				"WorldSeed",
+				"WorldSize",
+				"AppPort",
+				"LocalIP",
+				"PublicIP",
+				"IsPvp",
+				"IsPve",
+				"GameMode"
+			};
+		private static readonly JsonSerializerOptions SerializerOptions =
+			new()
+			{
+				PropertyNameCaseInsensitive = false,
+				PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+				ReadCommentHandling = JsonCommentHandling.Disallow,
+				UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+				Converters = { new JsonStringEnumConverter() }
+			};
+		private static readonly Lazy<IReadOnlyList<EmbeddedGamePackage>> PackageCache =
+			new(LoadEmbeddedPackages, LazyThreadSafetyMode.ExecutionAndPublication);
+
+		internal static IReadOnlyList<EmbeddedGamePackage> Packages => PackageCache.Value;
+
+		internal static IReadOnlyList<GameInfo> LoadDefinitions()
+		{
+			GameInfo[] definitions = Packages
+				.Select(package => package.Definition)
+				.ToArray();
+			ValidateCatalog(definitions);
+			return definitions;
+		}
+
+		internal static EmbeddedGamePackage ParsePackage(
+			string json,
+			string resourceName,
+			Func<string, string, string?>? templateLoader = null)
+		{
+			if (string.IsNullOrWhiteSpace(json))
+				throw new InvalidDataException($"{resourceName} is empty.");
+			if (json.Length > MaximumDefinitionBytes)
+				throw new InvalidDataException($"{resourceName} is too large.");
+
+			EmbeddedGameDefinition manifest;
+			try
+			{
+				manifest = JsonSerializer.Deserialize<EmbeddedGameDefinition>(
+					json,
+					SerializerOptions) ?? throw new InvalidDataException(
+						$"{resourceName} did not contain a game definition.");
+			}
+			catch (JsonException exception)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} is not a valid Synix game definition: {exception.Message}",
+					exception);
+			}
+
+			LoadTemplateFiles(manifest, resourceName, templateLoader);
+			ValidateManifest(manifest, resourceName);
+			string relativeConfigPath = !string.IsNullOrWhiteSpace(manifest.RelativeConfigPath)
+				? manifest.RelativeConfigPath
+				: manifest.Configuration?.Templates.FirstOrDefault()?.RelativePath ?? string.Empty;
+
+			GameInfo definition = new()
+			{
+				DefinitionId = manifest.Id,
+				CatalogOrder = manifest.CatalogOrder,
+				Game = manifest.Game.Trim(),
+				Aliases = manifest.Aliases.Select(alias => alias.Trim()).ToArray(),
+				DefinitionSchemaVersion = manifest.SchemaVersion,
+				IsEmbeddedDefinition = true,
+				AppID = manifest.AppId.Trim(),
+				RequiresSteamLogin = manifest.RequiresSteamLogin,
+				ExeName = manifest.Executable.Trim(),
+				DownloadUrl = manifest.DownloadUrl.Trim(),
+				RequiredArgs = manifest.Arguments,
+				RconSyntax = manifest.RconSyntax,
+				Port = manifest.Port,
+				QueryPort = manifest.QueryPort,
+				AppPort = manifest.AppPort,
+				WorldSize = manifest.WorldSize,
+				WorldSeed = manifest.WorldSeed,
+				Maps = manifest.Maps.ToList(),
+				GameModes = manifest.GameModes.ToList(),
+				ConfigFileCreation = manifest.ConfigFileCreation,
+				RelativeConfigPath = relativeConfigPath,
+				Format = manifest.Format,
+				ExternalDataFolderName = manifest.ExternalDataFolderName,
+				RequiredLaunchFiles = manifest.RequiredLaunchFiles.ToArray(),
+				OptionalLaunchFiles = manifest.OptionalLaunchFiles.ToArray(),
+				LaunchFileSetupInstructions = manifest.LaunchFileSetupInstructions,
+				NeedsConfigWarning = manifest.NeedsConfigWarning,
+				WarningMessage = manifest.WarningMessage,
+				IconUrl = manifest.IconUrl,
+				IsQueryable = manifest.IsQueryable,
+				ProbeProtocol = manifest.ProbeProtocol,
+				SupportsManualConnectionTesting = manifest.SupportsManualConnectionTesting,
+				ProbePath = manifest.ProbePath,
+				EosDeploymentId = manifest.EosDeploymentId
+			};
+
+			return new EmbeddedGamePackage(
+				definition,
+				manifest.Configuration,
+				resourceName);
+		}
+
+		private static IReadOnlyList<EmbeddedGamePackage> LoadEmbeddedPackages()
+		{
+			Assembly assembly = typeof(TrustedGameDefinitionCatalog).Assembly;
+			List<EmbeddedGamePackage> packages = [];
+			foreach (string resourceName in assembly.GetManifestResourceNames()
+				.Where(name => name.EndsWith(".game.json", StringComparison.OrdinalIgnoreCase))
+				.OrderBy(name => name, StringComparer.Ordinal))
+			{
+				using Stream stream = assembly.GetManifestResourceStream(resourceName) ??
+					throw new InvalidDataException($"The embedded resource {resourceName} could not be opened.");
+				if (stream.Length > MaximumDefinitionBytes)
+					throw new InvalidDataException($"{resourceName} is too large.");
+				using StreamReader reader = new(stream);
+				packages.Add(ParsePackage(
+					reader.ReadToEnd(),
+					resourceName,
+					(manifestId, templateFile) => ReadEmbeddedTemplate(
+						assembly,
+						resourceName,
+						manifestId,
+						templateFile)));
+			}
+
+			HashSet<string> names = new(StringComparer.OrdinalIgnoreCase);
+			foreach (EmbeddedGamePackage package in packages)
+			{
+				if (!names.Add(package.Definition.Game))
+					throw new InvalidDataException($"Duplicate embedded game definition: {package.Definition.Game}.");
+			}
+
+			return packages
+				.OrderBy(package => package.Definition.CatalogOrder)
+				.ThenBy(package => package.Definition.Game, StringComparer.OrdinalIgnoreCase)
+				.ToArray();
+		}
+
+		private static void ValidateManifest(
+			EmbeddedGameDefinition manifest,
+			string resourceName)
+		{
+			if (manifest.SchemaVersion != 1)
+				throw new InvalidDataException($"{resourceName} uses unsupported schema version {manifest.SchemaVersion}.");
+			ValidateText(manifest.Id, "id", resourceName, 80, required: true);
+			if (manifest.CatalogOrder < 0)
+				throw new InvalidDataException($"{resourceName} has an invalid catalogOrder.");
+			if (!manifest.Id.All(character =>
+				char.IsAsciiLetterOrDigit(character) || character == '-'))
+			{
+				throw new InvalidDataException($"{resourceName} has an invalid game definition id.");
+			}
+			ValidateText(manifest.Game, "game", resourceName, 120, required: true);
+			ValidateText(manifest.AppId, "appId", resourceName, 32, required: true);
+			if (!manifest.AppId.All(char.IsDigit))
+				throw new InvalidDataException($"{resourceName} has a non-numeric Steam AppID.");
+			ValidateRelativePath(manifest.Executable, "executable", resourceName, required: true);
+			ValidateSingleLine(manifest.Arguments, "arguments", resourceName, 16_384);
+			ValidateSingleLine(manifest.RconSyntax, "rconSyntax", resourceName, 4_096);
+			ValidatePort(manifest.Port, "port", resourceName);
+			ValidatePort(manifest.QueryPort, "queryPort", resourceName);
+			if (manifest.AppPort.HasValue)
+				ValidatePort(manifest.AppPort.Value, "appPort", resourceName);
+			ValidateHttpsUrl(manifest.DownloadUrl, "downloadUrl", resourceName);
+			ValidateHttpsUrl(manifest.IconUrl, "iconUrl", resourceName);
+			ValidateRelativePath(manifest.RelativeConfigPath, "relativeConfigPath", resourceName);
+			ValidateRelativePath(manifest.ExternalDataFolderName, "externalDataFolderName", resourceName);
+			foreach (string path in manifest.RequiredLaunchFiles)
+				ValidateRelativePath(path, "requiredLaunchFiles", resourceName, required: true);
+			foreach (string path in manifest.OptionalLaunchFiles)
+				ValidateRelativePath(path, "optionalLaunchFiles", resourceName, required: true);
+			ValidateUniqueText(manifest.Aliases, "aliases", resourceName);
+			ValidateUniqueText(manifest.Maps, "maps", resourceName);
+			ValidateUniqueText(manifest.GameModes, "gameModes", resourceName);
+
+			if (manifest.Configuration != null)
+			{
+				if (manifest.ConfigFileCreation != ConfigFileCreationMode.SynixTemplate)
+					throw new InvalidDataException($"{resourceName} has templates but is not marked SynixTemplate.");
+				if (manifest.Configuration.SchemaVersion < 1)
+					throw new InvalidDataException($"{resourceName} has an invalid configuration schema version.");
+				HashSet<string> templatePaths = new(StringComparer.OrdinalIgnoreCase);
+				foreach (EmbeddedConfigurationTemplate template in manifest.Configuration.Templates)
+				{
+					ValidateRelativePath(template.RelativePath, "configuration.templates.relativePath", resourceName, required: true);
+					ValidateRelativePath(template.TemplateFile, "configuration.templates.templateFile", resourceName);
+					if (!templatePaths.Add(template.RelativePath))
+						throw new InvalidDataException($"{resourceName} contains duplicate configuration template paths.");
+					if (string.IsNullOrWhiteSpace(template.Content) || template.Content.Length > MaximumTemplateCharacters)
+						throw new InvalidDataException($"{resourceName} contains an empty or oversized configuration template.");
+					foreach (Match match in PlaceholderPattern.Matches(template.Content))
+					{
+						string placeholder = match.Groups[1].Value;
+						if (!SupportedPlaceholders.Contains(placeholder))
+							throw new InvalidDataException($"{resourceName} uses unsupported placeholder {{{placeholder}}}.");
+					}
+				}
+			}
+		}
+
+		private static void LoadTemplateFiles(
+			EmbeddedGameDefinition manifest,
+			string resourceName,
+			Func<string, string, string?>? templateLoader)
+		{
+			if (manifest.Configuration == null)
+				return;
+
+			foreach (EmbeddedConfigurationTemplate template in manifest.Configuration.Templates)
+			{
+				bool hasFile = !string.IsNullOrWhiteSpace(template.TemplateFile);
+				bool hasContent = !string.IsNullOrWhiteSpace(template.Content);
+				if (hasFile == hasContent)
+				{
+					throw new InvalidDataException(
+						$"{resourceName} must give each configuration template either templateFile or content, but not both.");
+				}
+
+				if (!hasFile)
+					continue;
+
+				ValidateRelativePath(
+					template.TemplateFile,
+					"configuration.templates.templateFile",
+					resourceName,
+					required: true);
+				string? content = templateLoader?.Invoke(
+					manifest.Id,
+					template.TemplateFile);
+				if (content == null)
+				{
+					throw new InvalidDataException(
+						$"{resourceName} references missing embedded template {template.TemplateFile}.");
+				}
+
+				template.Content = content;
+			}
+		}
+
+		private static string? ReadEmbeddedTemplate(
+			Assembly assembly,
+			string manifestResourceName,
+			string manifestId,
+			string templateFile)
+		{
+			string manifestFileName = $"{manifestId}.game.json";
+			if (!manifestResourceName.EndsWith(
+				manifestFileName,
+				StringComparison.OrdinalIgnoreCase))
+			{
+				return null;
+			}
+
+			string prefix = manifestResourceName[..^manifestFileName.Length];
+			string normalizedTemplate = templateFile
+				.Replace('\\', '.')
+				.Replace('/', '.');
+			string resourceName = $"{prefix}Templates.{normalizedTemplate}";
+			using Stream? stream = assembly.GetManifestResourceStream(resourceName);
+			if (stream == null || stream.Length > MaximumTemplateCharacters)
+				return null;
+			using StreamReader reader = new(stream);
+			return reader.ReadToEnd();
+		}
+
+		private static void ValidateCatalog(IReadOnlyList<GameInfo> definitions)
+		{
+			HashSet<string> names = new(StringComparer.OrdinalIgnoreCase);
+			foreach (GameInfo definition in definitions)
+			{
+				if (!names.Add(definition.Game))
+					throw new InvalidDataException($"Duplicate game definition: {definition.Game}.");
+				foreach (string alias in definition.Aliases)
+				{
+					if (!names.Add(alias))
+						throw new InvalidDataException($"Duplicate game name or alias: {alias}.");
+				}
+			}
+		}
+
+		private static void ValidateUniqueText(
+			IReadOnlyList<string>? values,
+			string field,
+			string resourceName)
+		{
+			if (values == null)
+				throw new InvalidDataException($"{resourceName} contains a null {field} collection.");
+
+			HashSet<string> unique = new(StringComparer.OrdinalIgnoreCase);
+			foreach (string value in values)
+			{
+				ValidateText(value, field, resourceName, 512, required: true);
+				if (!unique.Add(value.Trim()))
+					throw new InvalidDataException($"{resourceName} contains a duplicate {field} value.");
+			}
+		}
+
+		private static void ValidateRelativePath(
+			string path,
+			string field,
+			string resourceName,
+			bool required = false)
+		{
+			if (string.IsNullOrWhiteSpace(path))
+			{
+				if (required)
+					throw new InvalidDataException($"{resourceName} requires {field}.");
+				return;
+			}
+
+			if (path.Length > 512 ||
+				Path.IsPathRooted(path) ||
+				path.Contains(':') ||
+				path.IndexOfAny(['*', '?', '"', '<', '>', '|', '\0']) >= 0 ||
+				path.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries)
+					.Any(segment => segment is "." or ".."))
+			{
+				throw new InvalidDataException($"{resourceName} contains an unsafe {field} path.");
+			}
+		}
+
+		private static void ValidateHttpsUrl(
+			string value,
+			string field,
+			string resourceName)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return;
+			if (!Uri.TryCreate(value, UriKind.Absolute, out Uri? uri) ||
+				uri.Scheme != Uri.UriSchemeHttps ||
+				string.IsNullOrWhiteSpace(uri.Host) ||
+				!string.IsNullOrEmpty(uri.UserInfo))
+			{
+				throw new InvalidDataException($"{resourceName} contains an unsafe {field} URL.");
+			}
+		}
+
+		private static void ValidatePort(int port, string field, string resourceName)
+		{
+			if (port is < 1 or > 65535)
+				throw new InvalidDataException($"{resourceName} has an invalid {field}.");
+		}
+
+		private static void ValidateSingleLine(
+			string value,
+			string field,
+			string resourceName,
+			int maximumLength)
+		{
+			if (value.Length > maximumLength || value.IndexOfAny(['\r', '\n', '\0']) >= 0)
+				throw new InvalidDataException($"{resourceName} contains an invalid {field} value.");
+		}
+
+		private static void ValidateText(
+			string value,
+			string field,
+			string resourceName,
+			int maximumLength,
+			bool required)
+		{
+			if (required && string.IsNullOrWhiteSpace(value))
+				throw new InvalidDataException($"{resourceName} requires {field}.");
+			ValidateSingleLine(value, field, resourceName, maximumLength);
+		}
+
+		[GeneratedRegex(@"\{([A-Za-z][A-Za-z0-9]*)\}", RegexOptions.CultureInvariant)]
+		private static partial Regex PlaceholderRegex();
+	}
+}

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "pixark",
+  "catalogOrder": 43,
+  "game": "PixARK",
+  "aliases": [],
+  "appId": "824360",
+  "requiresSteamLogin": false,
+  "executable": "ShooterGame\\Binaries\\Win64\\PixARKServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} {rcon} -server -log -SteamAppId={steamAppID}",
+  "rconSyntax": "?RCONEnabled=True",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "CubeWorld_Light"
+  ],
+  "gameModes": [
+    "PVE",
+    "PVP"
+  ],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

@@ -1,0 +1,7 @@
+{
+  "SessionName": "{ServerName}",
+  "SaveGameInterval": "300",
+  "StartNewGame": "true",
+  "LoadSavedGame": "false",
+  "SaveGameName": "AutoSave0.sav"
+}

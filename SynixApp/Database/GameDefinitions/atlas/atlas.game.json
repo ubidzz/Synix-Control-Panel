@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "atlas",
+  "catalogOrder": 44,
+  "game": "Atlas",
+  "aliases": [],
+  "appId": "1006030",
+  "requiresSteamLogin": false,
+  "executable": "ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe",
+  "downloadUrl": "",
+  "arguments": "Ocean?ServerX=0?ServerY=0?AltSaveDirectoryName=\"{map}\"?ServerPVE={mode}?ServerAdminPassword=\"{adminpass}\"?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query} {rcon} ?SeamlessIP=0.0.0.0 -log -server -SteamAppId={steamAppID}",
+  "rconSyntax": "?RCONEnabled=True",
+  "port": 57555,
+  "queryPort": 57555,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "00"
+  ],
+  "gameModes": [
+    "True",
+    "False"
+  ],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

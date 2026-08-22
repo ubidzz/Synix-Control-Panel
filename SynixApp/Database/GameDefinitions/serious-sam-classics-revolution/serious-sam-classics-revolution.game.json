@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "serious-sam-classics-revolution",
+  "catalogOrder": 181,
+  "game": "Serious Sam Classics: Revolution",
+  "aliases": [],
+  "appId": "299310",
+  "requiresSteamLogin": false,
+  "executable": "Bin\\DedicatedServer.exe",
+  "downloadUrl": "",
+  "arguments": "{mode} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Levels\\LevelsMP\\1_1_Palenque.wld"
+  ],
+  "gameModes": [
+    "DefaultCoop",
+    "DefaultFragmatchSE",
+    "DefaultScorematchSE"
+  ],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "Scripts\\Dedicated\\DefaultCoop\\init",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": false,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

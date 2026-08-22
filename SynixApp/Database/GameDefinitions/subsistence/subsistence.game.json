@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "subsistence",
+  "catalogOrder": 0,
+  "game": "Subsistence",
+  "aliases": [],
+  "appId": "1362640",
+  "requiresSteamLogin": false,
+  "executable": "Binaries\\Win64\\UDK.exe",
+  "downloadUrl": "",
+  "arguments": "server {map}?steamsockets -log -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "coldmap1"
+  ],
+  "gameModes": [
+    "easy",
+    "normal",
+    "hardcore"
+  ],
+  "configFileCreation": "GameGenerated",
+  "relativeConfigPath": "UDKGame\\Config\\UDKDedServerSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": false,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

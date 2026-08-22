@@ -203,7 +203,8 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					if (Properties.Settings.Default.enableRunAsAdmin)
 					{
-						string serverExePath = Path.Combine(server.InstallPath, server.ExeName);
+						string executableName = GameDatabase.GetGame(server.Game)?.ExeName ?? string.Empty;
+						string serverExePath = Path.Combine(server.InstallPath, executableName);
 
 						if (File.Exists(serverExePath))
 						{

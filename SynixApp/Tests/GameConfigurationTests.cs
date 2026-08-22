@@ -68,6 +68,8 @@ public sealed class GameConfigurationTests : IDisposable
 		"DayZ",
 		"Arma 3",
 		"Arma Reforger",
+		"ARK: Survival Ascended",
+		"ARK: Survival Evolved",
 		"Mount & Blade II: Bannerlord",
 		"Dysterra",
 		"Serious Sam 2017",
@@ -109,6 +111,8 @@ public sealed class GameConfigurationTests : IDisposable
 		"DayZ",
 		"Arma 3",
 		"Arma Reforger",
+		"ARK: Survival Ascended",
+		"ARK: Survival Evolved",
 		"Mount & Blade II: Bannerlord",
 		"Dysterra",
 		"Wreckfest"
@@ -635,6 +639,55 @@ public sealed class GameConfigurationTests : IDisposable
 
 		Assert.False(result.Succeeded);
 		Assert.False(File.Exists(Path.Combine(_testRoot, "outside.cfg")));
+	}
+
+	[Theory]
+	[InlineData("ARK: Survival Ascended", 350)]
+	[InlineData("ARK: Survival Evolved", 200)]
+	public void ArkWorkingTemplates_CreateCompleteManagedConfigurations(
+		string gameName,
+		int minimumLineCount)
+	{
+		Assert.Equal(
+			ConfigFileCreationMode.SynixTemplate,
+			GameFix.GetConfigFileCreationMode(gameName));
+		Assert.True(GameFix.TryGetConfiguration(
+			gameName,
+			out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		Assert.True(definition.SupportsFullReset);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.ServerPassword);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.AdminPassword);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.MaxPlayers);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.GameMode);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.Rcon);
+
+		GameServer server = CreateServer(gameName);
+		server.ServerName = "Synix ARK Server";
+		server.MaxPlayers = 42;
+		server.RconPort = 28020;
+		server.EnableRcon = true;
+		server.GameMode = "PVE";
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.True(result.Complete, result.Message);
+		Assert.True(result.Created);
+		string path = definition.ResolveFullPath(server);
+		string content = File.ReadAllText(path);
+		Assert.True(File.ReadLines(path).Count() >= minimumLineCount);
+		Assert.Contains("[ServerSettings]", content);
+		Assert.Contains("[SessionSettings]", content);
+		Assert.Contains("[/Script/Engine.GameSession]", content);
+		Assert.Equal("Synix ARK Server", GetValue(path, definition.Format, "SessionName"));
+		Assert.Equal("server-secret", GetValue(path, definition.Format, "ServerPassword"));
+		Assert.Equal("admin-secret", GetValue(path, definition.Format, "ServerAdminPassword"));
+		Assert.Equal("42", GetValue(path, definition.Format, "MaxPlayers"));
+		Assert.Equal("28020", GetValue(path, definition.Format, "RCONPort"));
+		Assert.Equal("True", GetValue(path, definition.Format, "RCONEnabled"));
+		Assert.Equal("True", GetValue(path, definition.Format, "ServerPVE"));
+		Assert.False(definition.NeedsStructuralRepair(CreateContext(server)));
 	}
 
 	[Fact]

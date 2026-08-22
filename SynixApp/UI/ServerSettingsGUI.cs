@@ -673,16 +673,12 @@ namespace Synix_Control_Panel
 			{
 				ConfigureMinecraftRuntimeCard(
 					gameData.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase));
-				string args = (gameData.RequiredArgs ?? "").ToLower();
-				string rconTemp = (gameData.RconSyntax ?? "").ToLower();
-				ManagedConfigurationInput configInputs =
-					GameFix.GetManagedConfigurationInputs(gameData.Game);
-				bool ConfigUses(ManagedConfigurationInput input) =>
-					(configInputs & input) != ManagedConfigurationInput.None;
+				GameManagementCapability capabilities =
+					GameFix.GetManagementCapabilities(gameData);
+				bool Supports(GameManagementCapability capability) =>
+					(capabilities & capability) != GameManagementCapability.None;
 
-				bool needsPass =
-					args.Contains("{pass}") ||
-					ConfigUses(ManagedConfigurationInput.ServerPassword);
+				bool needsPass = Supports(GameManagementCapability.ServerPassword);
 				txtPassword.Tag = needsPass ? "Required" : "Disabled";
 				if (!needsPass)
 				{
@@ -699,9 +695,7 @@ namespace Synix_Control_Panel
 					txtPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				bool needsAdminPass =
-					args.Contains("{adminpass}") ||
-					ConfigUses(ManagedConfigurationInput.AdminPassword);
+				bool needsAdminPass = Supports(GameManagementCapability.AdminPassword);
 				txtAdminPassword.Tag = needsAdminPass ? "Required" : "Disabled";
 				if (!needsAdminPass)
 				{
@@ -718,9 +712,7 @@ namespace Synix_Control_Panel
 					txtAdminPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				bool needsSeed =
-					args.Contains("{seed}") ||
-					ConfigUses(ManagedConfigurationInput.WorldSeed);
+				bool needsSeed = Supports(GameManagementCapability.WorldSeed);
 				txtWorldSeed.Tag = needsSeed ? "Required" : "Disabled";
 				if (!needsSeed)
 				{
@@ -737,49 +729,35 @@ namespace Synix_Control_Panel
 					txtWorldSeed.LostFocus -= Placeholder_LostFocus;
 				}
 
-				cmbCompetitive.Tag =
-					args.Contains("{mode}") ||
-					ConfigUses(ManagedConfigurationInput.GameMode) ||
-					(gameData.GameModes != null && gameData.GameModes.Count > 0)
-						? "Required"
-						: "Disabled";
-				numMaxPlayers.Tag =
-					args.Contains("{maxplayers}") ||
-					ConfigUses(ManagedConfigurationInput.MaxPlayers)
-						? "Required"
-						: "Disabled";
-				bool usesQueryPort =
-					args.Contains("{query}") ||
-					ConfigUses(ManagedConfigurationInput.QueryPort);
+				cmbCompetitive.Tag = Supports(GameManagementCapability.GameMode)
+					? "Required"
+					: "Disabled";
+				numMaxPlayers.Tag = Supports(GameManagementCapability.MaxPlayers)
+					? "Required"
+					: "Disabled";
+				bool usesQueryPort = Supports(GameManagementCapability.QueryPort);
 				numQueryPort.Tag = usesQueryPort ? "Required" : "Disabled";
-				cmbWorldName.Tag =
-					args.Contains("{map}") ||
-					ConfigUses(ManagedConfigurationInput.WorldName)
-						? "Required"
-						: "Disabled";
-				chkEnableRcon.Tag =
-					args.Contains("{rcon}") ||
-					rconTemp.Contains("{rcon_port}") ||
-					ConfigUses(ManagedConfigurationInput.Rcon)
-						? "Required"
-						: "Disabled";
-				numWorldSize.Tag =
-					args.Contains("{world_size}") ||
-					ConfigUses(ManagedConfigurationInput.WorldSize)
-						? "Required"
-						: "Disabled";
-				cmbGameVersion.Tag = gameData.Game == "Minecraft" ? "Required" : "Disabled";
-				numRam.Tag = args.Contains("{ram}") ? "Required" : "Disabled";
-				numPort.Tag =
-					args.Contains("{port}") ||
-					ConfigUses(ManagedConfigurationInput.Port)
-						? "Required"
-						: "Disabled";
-				numAppPort.Tag =
-					args.Contains("{app_port}") ||
-					ConfigUses(ManagedConfigurationInput.AppPort)
-						? "Required"
-						: "Disabled";
+				cmbWorldName.Tag = Supports(GameManagementCapability.WorldName)
+					? "Required"
+					: "Disabled";
+				chkEnableRcon.Tag = Supports(GameManagementCapability.Rcon)
+					? "Required"
+					: "Disabled";
+				numWorldSize.Tag = Supports(GameManagementCapability.WorldSize)
+					? "Required"
+					: "Disabled";
+				cmbGameVersion.Tag = Supports(GameManagementCapability.GameVersion)
+					? "Required"
+					: "Disabled";
+				numRam.Tag = Supports(GameManagementCapability.Ram)
+					? "Required"
+					: "Disabled";
+				numPort.Tag = Supports(GameManagementCapability.Port)
+					? "Required"
+					: "Disabled";
+				numAppPort.Tag = Supports(GameManagementCapability.AppPort)
+					? "Required"
+					: "Disabled";
 
 			}
 			SyncGatekeeper();
@@ -1165,10 +1143,7 @@ namespace Synix_Control_Panel
 
 				if (masterData != null)
 				{
-					NewServer.AppID = masterData.AppID;
-					NewServer.ExeName = masterData.ExeName;
-
-					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, NewServer.ExeName);
+					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, masterData.ExeName);
 					string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(NewServer.Game, fullExePath);
 
 					if (System.IO.File.Exists(iconPath))

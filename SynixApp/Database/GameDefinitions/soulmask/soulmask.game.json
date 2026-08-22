@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "soulmask",
+  "catalogOrder": 2,
+  "game": "Soulmask",
+  "aliases": [],
+  "appId": "3017310",
+  "requiresSteamLogin": false,
+  "executable": "WS\\Binaries\\Win64\\WSServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "{map} -server -log -UTF8Output -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -EchoPort=18888 -SteamServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -{mode} -forcepassthrough -online=Steam -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 8777,
+  "queryPort": 27016,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Level01_Main",
+    "DLC_Level01_Main"
+  ],
+  "gameModes": [
+    "PVP",
+    "PVE"
+  ],
+  "configFileCreation": "GameGenerated",
+  "relativeConfigPath": "WS\\Saved\\GameplaySettings\\GameXishu.json",
+  "format": "JSON",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

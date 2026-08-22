@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "ark-survival-ascended",
+  "catalogOrder": 7,
+  "game": "ARK: Survival Ascended",
+  "aliases": [],
+  "appId": "2430930",
+  "requiresSteamLogin": false,
+  "executable": "ShooterGame\\Binaries\\Win64\\ArkAscendedServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\" -WinLiveMaxPlayers={MaxPlayers} -port={port} -server -servergamelog -UserBattleEye -crossplay -game -SteamAppId={steamAppID}",
+  "rconSyntax": "?RCONEnabled=True",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "TheIsland_WP",
+    "ScorchedEarth_WP",
+    "TheCenter_WP",
+    "Aberration_WP",
+    "Extinction_WP",
+    "Valguero_WP",
+    "Ragnarok_WP",
+    "LostColony_WP",
+    "Astraeos_WP",
+    "Genesis_WP"
+  ],
+  "gameModes": [
+    "PVE",
+    "PVP"
+  ],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": false,
+  "probeProtocol": "EpicOnlineServices",
+  "supportsManualConnectionTesting": false,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "templates": [
+      {
+        "relativePath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+        "templateFile": "GameUserSettings.ini"
+      }
+    ]
+  }
+}

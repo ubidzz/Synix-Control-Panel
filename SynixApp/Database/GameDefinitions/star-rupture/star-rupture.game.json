@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "star-rupture",
+  "catalogOrder": 185,
+  "game": "StarRupture",
+  "appId": "3809400",
+  "executable": "StarRuptureServerEOS.exe",
+  "arguments": "-Log -port={port} -SteamAppId={steamAppID}",
+  "port": 7777,
+  "queryPort": 27015,
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "DSSettings.txt",
+  "format": "JSON",
+  "needsConfigWarning": true,
+  "isQueryable": false,
+  "configuration": {
+    "schemaVersion": 1,
+    "templates": [
+      {
+        "relativePath": "DSSettings.txt",
+        "templateFile": "DSSettings.txt"
+      }
+    ]
+  }
+}

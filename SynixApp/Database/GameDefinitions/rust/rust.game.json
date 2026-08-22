@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "rust",
+  "catalogOrder": 216,
+  "game": "Rust",
+  "aliases": [],
+  "appId": "258550",
+  "requiresSteamLogin": false,
+  "executable": "RustDedicated.exe",
+  "downloadUrl": "",
+  "arguments": "-batchmode -nographics +server.port {port} +server.queryport {query} +app.port {app_port} +server.pve {mode} +server.level \"{map}\" +server.seed {seed} +server.worldsize {world_size} +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.password \"{pass}\" +server.identity \"{Identity}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
+  "port": 7777,
+  "queryPort": 28015,
+  "appPort": null,
+  "worldSize": 4000,
+  "worldSeed": "12345",
+  "maps": [
+    "Procedural Map",
+    "Barren",
+    "HapisIsland",
+    "SavasIsland"
+  ],
+  "gameModes": [
+    "PVP",
+    "PVE"
+  ],
+  "configFileCreation": "LaunchArgumentsOnly",
+  "relativeConfigPath": "server\\{Identity}\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

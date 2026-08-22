@@ -172,6 +172,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				.Replace("{LocalIP}", TextValue(RequireSingleLine(context.LocalIp, "LocalIP"), "local_ip"), StringComparison.Ordinal)
 				.Replace("{PublicIP}", TextValue(RequireSingleLine(context.PublicIp, "PublicIP"), "public_ip"), StringComparison.Ordinal)
 				.Replace("{IsPvp}", ProbeBoolean(string.Equals(server.GameMode, "PVP", StringComparison.OrdinalIgnoreCase)).ToString().ToLowerInvariant(), StringComparison.Ordinal)
+				.Replace("{IsPve}", ProbeBoolean(string.Equals(server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase)).ToString().ToLowerInvariant(), StringComparison.Ordinal)
 				.Replace("{GameMode}", TextValue(RequireSingleLine(server.GameMode, "GameMode").ToLowerInvariant(), "game_mode"), StringComparison.Ordinal);
 		}
 
@@ -260,7 +261,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				if (content.Contains("{WorldSeed}", StringComparison.Ordinal))
 					supported |= ManagedConfigurationInput.WorldSeed;
 				if (content.Contains("{GameMode}", StringComparison.Ordinal) ||
-					content.Contains("{IsPvp}", StringComparison.Ordinal))
+					content.Contains("{IsPvp}", StringComparison.Ordinal) ||
+					content.Contains("{IsPve}", StringComparison.Ordinal))
 					supported |= ManagedConfigurationInput.GameMode;
 				if (content.Contains("{MaxPlayers}", StringComparison.Ordinal))
 					supported |= ManagedConfigurationInput.MaxPlayers;

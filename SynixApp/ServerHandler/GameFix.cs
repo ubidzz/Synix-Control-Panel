@@ -12,8 +12,10 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
+using Synix_Control_Panel.SynixApp.Database.GameDefinitions;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixEngine;
+using System.Reflection;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -102,6 +104,85 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			return definition.SupportedInputs;
+		}
+
+		internal static GameManagementCapability GetManagementCapabilities(
+			GameInfo? game)
+		{
+			if (game == null)
+				return GameManagementCapability.None;
+
+			string arguments = game.RequiredArgs ?? string.Empty;
+			string rconSyntax = game.RconSyntax ?? string.Empty;
+			ManagedConfigurationInput configuration =
+				GetManagedConfigurationInputs(game.Game);
+			GameManagementCapability capabilities = GameManagementCapability.None;
+
+			void Include(
+				bool argumentUsesValue,
+				ManagedConfigurationInput configurationInput,
+				GameManagementCapability capability)
+			{
+				if (argumentUsesValue ||
+					(configuration & configurationInput) != ManagedConfigurationInput.None)
+				{
+					capabilities |= capability;
+				}
+			}
+
+			Include(
+				arguments.Contains("{pass}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.ServerPassword,
+				GameManagementCapability.ServerPassword);
+			Include(
+				arguments.Contains("{adminpass}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.AdminPassword,
+				GameManagementCapability.AdminPassword);
+			Include(
+				arguments.Contains("{seed}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.WorldSeed,
+				GameManagementCapability.WorldSeed);
+			Include(
+				arguments.Contains("{mode}", StringComparison.OrdinalIgnoreCase) ||
+				game.GameModes.Count > 0,
+				ManagedConfigurationInput.GameMode,
+				GameManagementCapability.GameMode);
+			Include(
+				arguments.Contains("{MaxPlayers}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.MaxPlayers,
+				GameManagementCapability.MaxPlayers);
+			Include(
+				arguments.Contains("{query}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.QueryPort,
+				GameManagementCapability.QueryPort);
+			Include(
+				arguments.Contains("{map}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.WorldName,
+				GameManagementCapability.WorldName);
+			Include(
+				arguments.Contains("{rcon}", StringComparison.OrdinalIgnoreCase) ||
+				rconSyntax.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.Rcon,
+				GameManagementCapability.Rcon);
+			Include(
+				arguments.Contains("{world_size}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.WorldSize,
+				GameManagementCapability.WorldSize);
+			Include(
+				arguments.Contains("{port}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.Port,
+				GameManagementCapability.Port);
+			Include(
+				arguments.Contains("{app_port}", StringComparison.OrdinalIgnoreCase),
+				ManagedConfigurationInput.AppPort,
+				GameManagementCapability.AppPort);
+
+			if (arguments.Contains("{ram}", StringComparison.OrdinalIgnoreCase))
+				capabilities |= GameManagementCapability.Ram;
+			if (GameDatabase.IsMinecraft(game.Game))
+				capabilities |= GameManagementCapability.GameVersion;
+
+			return capabilities;
 		}
 
 		internal static bool NeedsManagedConfiguration(GameServer server)
@@ -549,61 +630,60 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		private static IReadOnlyDictionary<string, ConfigurationDefinition> CreateConfigurationIndex()
 		{
-			ConfigurationDefinition[] definitions =
-			[
-				new SevenDaysToDieConfiguration(),
-				new SoulmaskConfiguration(),
-				new PalworldConfiguration(),
-				new RustConfiguration(),
-				new MinecraftConfiguration(),
-				new StarRuptureConfiguration(),
-				new SubsistenceConfiguration(),
-				new WindroseConfiguration(),
-				new AskaConfiguration(),
-				new JustCause3MultiplayerConfiguration(),
-				new SonsOfTheForestConfiguration(),
-				new EnshroudedConfiguration(),
-				new LongvinterConfiguration(),
-				new GroundBranchConfiguration(),
-				new HoldfastConfiguration(),
-				new VRisingConfiguration(),
-				new OutOfReachConfiguration(),
-				new Ns2CombatConfiguration(),
-				new JustCause2MultiplayerConfiguration(),
-				new BeyondTheWireConfiguration(),
-				new ColonySurvivalConfiguration(),
-				new CoreKeeperConfiguration(),
-				new FactorioConfiguration(),
-				new EcoConfiguration(),
-				new ProjectCars2Configuration(),
-				new AssettoCorsaCompetizioneConfiguration(),
-				new RFactor2Configuration(),
-				new SurviveTheNightsConfiguration(),
-				new FoundryConfiguration(),
-				new HumanitZConfiguration(),
-				new AstroneerConfiguration(),
-				new DayZConfiguration(),
-				new Arma3Configuration(),
-				new ArmaReforgerConfiguration(),
-				new BannerlordConfiguration(),
-				new DysterraConfiguration(),
-				new SeriousSam2017Configuration(),
-				new SeriousSamHdConfiguration(),
-				new WreckfestConfiguration()
-			];
-
 			Dictionary<string, ConfigurationDefinition> index =
 				new(StringComparer.OrdinalIgnoreCase);
-			foreach (ConfigurationDefinition definition in definitions)
+			foreach (ConfigurationDefinition definition in DiscoverCompiledConfigurations())
 			{
-				index.Add(definition.GameName, definition);
-				foreach (string alias in definition.Aliases)
-				{
-					index.Add(alias, definition);
-				}
+				AddConfiguration(index, definition);
+			}
+
+			foreach (EmbeddedGamePackage package in TrustedGameDefinitionCatalog.Packages)
+			{
+				if (package.Configuration == null)
+					continue;
+
+				AddConfiguration(
+					index,
+					new EmbeddedTemplateConfigurationDefinition(
+						package.Definition.Game,
+						package.Configuration));
 			}
 
 			return index;
+		}
+
+		private static IEnumerable<ConfigurationDefinition> DiscoverCompiledConfigurations()
+		{
+			Type definitionType = typeof(ConfigurationDefinition);
+			foreach (Type type in typeof(GameFix).Assembly.GetTypes()
+				.Where(type =>
+					type != definitionType &&
+					!type.IsAbstract &&
+					definitionType.IsAssignableFrom(type))
+				.OrderBy(type => type.FullName, StringComparer.Ordinal))
+			{
+				ConstructorInfo? constructor = type.GetConstructor(
+					BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+					binder: null,
+					Type.EmptyTypes,
+					modifiers: null);
+				if (constructor?.Invoke(null) is ConfigurationDefinition definition)
+					yield return definition;
+			}
+		}
+
+		private static void AddConfiguration(
+			Dictionary<string, ConfigurationDefinition> index,
+			ConfigurationDefinition definition)
+		{
+			if (!index.TryAdd(definition.GameName, definition))
+				throw new InvalidDataException($"Duplicate configuration definition: {definition.GameName}.");
+
+			foreach (string alias in definition.Aliases)
+			{
+				if (!index.TryAdd(alias, definition))
+					throw new InvalidDataException($"Duplicate configuration name or alias: {alias}.");
+			}
 		}
 
 		private static bool CopySteamDLLs(string installPath, string binariesDirectory)

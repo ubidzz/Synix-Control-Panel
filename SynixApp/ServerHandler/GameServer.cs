@@ -33,13 +33,13 @@ public enum ConfigFileCreationMode
 	LaunchArgumentsOnly
 }
 
-public class GameInfo
+public class GameDefinition
 {
+	[JsonIgnore]
+	public string DefinitionId { get; init; } = string.Empty;
+	[JsonIgnore]
+	public int CatalogOrder { get; init; } = int.MaxValue;
 	public string Game { get; set; } = string.Empty;
-	[JsonIgnore]
-	public System.Drawing.Image DisplayIcon { get; set; }
-	[JsonIgnore]
-	public bool HasAnnouncedOnline { get; set; } = false;
 	[JsonIgnore]
 	public bool NeedsConfigWarning { get; internal set; }
 	[JsonIgnore]
@@ -76,22 +76,8 @@ public class GameInfo
 	public int QueryPort { get; set; }
 	public int? AppPort { get; set; }
 
-	public string ExtraArgs { get; set; } = string.Empty;
 	public List<string> GameModes { get; set; } = [];
 	public string RconSyntax { get; init; } = "";
-	[JsonIgnore]
-	public PostInstallStep[]? PostInstallSteps { get; init; }
-	[JsonIgnore]
-	public int CurrentPlayers { get; set; } = 0;
-	public bool IsScheduledRestartEnabled { get; set; } = false;
-	public string RestartTime { get; set; } = "04:00";
-	public bool[] RestartDays { get; set; } = new bool[7] { true, true, true, true, true, true, true };
-	public string LastMaintenanceDate { get; set; } = "";
-	[JsonIgnore]
-	public int MaxPlayersFromQuery { get; set; } = 0;
-	[JsonIgnore]
-	public DateTime? LastProbeTime { get; set; }
-	[JsonIgnore]
 	public string IconUrl { get; init; } = string.Empty;
 	[JsonIgnore]
 	public bool IsQueryable { get; init; } = true;
@@ -103,10 +89,41 @@ public class GameInfo
 	public string ProbePath { get; init; } = string.Empty;
 	[JsonIgnore]
 	public string EosDeploymentId { get; init; } = string.Empty;
+	[JsonIgnore]
+	public IReadOnlyList<string> Aliases { get; init; } = [];
+	[JsonIgnore]
+	public int DefinitionSchemaVersion { get; init; } = 1;
+	[JsonIgnore]
+	public bool IsEmbeddedDefinition { get; internal set; }
 }
 
-public class GameServer : GameInfo
+public sealed class GameInfo : GameDefinition
 {
+}
+
+public class GameServer
+{
+	public string Game { get; set; } = string.Empty;
+	[JsonIgnore]
+	public System.Drawing.Image DisplayIcon { get; set; } = null!;
+	[JsonIgnore]
+	public bool HasAnnouncedOnline { get; set; }
+	public int WorldSize { get; set; }
+	public string WorldSeed { get; set; } = "12345";
+	public int Port { get; set; }
+	public int QueryPort { get; set; }
+	public int? AppPort { get; set; }
+	public string ExtraArgs { get; set; } = string.Empty;
+	[JsonIgnore]
+	public int CurrentPlayers { get; set; }
+	public bool IsScheduledRestartEnabled { get; set; }
+	public string RestartTime { get; set; } = "04:00";
+	public bool[] RestartDays { get; set; } = [true, true, true, true, true, true, true];
+	public string LastMaintenanceDate { get; set; } = string.Empty;
+	[JsonIgnore]
+	public int MaxPlayersFromQuery { get; set; }
+	[JsonIgnore]
+	public DateTime? LastProbeTime { get; set; }
 	public int PasswordStorageVersion { get; set; }
 	public string SteamAccountName { get; set; } = string.Empty;
 	public bool SteamAuthenticationRequired { get; set; }

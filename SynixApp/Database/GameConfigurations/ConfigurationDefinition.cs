@@ -33,6 +33,25 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		AppPort = 1 << 10
 	}
 
+	[Flags]
+	internal enum GameManagementCapability
+	{
+		None = 0,
+		ServerPassword = 1 << 0,
+		AdminPassword = 1 << 1,
+		WorldSeed = 1 << 2,
+		GameMode = 1 << 3,
+		MaxPlayers = 1 << 4,
+		QueryPort = 1 << 5,
+		WorldName = 1 << 6,
+		Rcon = 1 << 7,
+		WorldSize = 1 << 8,
+		Port = 1 << 9,
+		AppPort = 1 << 10,
+		Ram = 1 << 11,
+		GameVersion = 1 << 12
+	}
+
 	internal sealed class ConfigurationContext
 	{
 		public ConfigurationContext(

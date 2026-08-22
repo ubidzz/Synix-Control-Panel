@@ -118,7 +118,7 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(server);
 
 			GameInfo? blueprint = GameDatabase.GetGame(server.Game);
-			string executableName = blueprint?.ExeName ?? server.ExeName;
+			string executableName = blueprint?.ExeName ?? string.Empty;
 			if (string.IsNullOrWhiteSpace(server.InstallPath) ||
 				string.IsNullOrWhiteSpace(executableName))
 			{

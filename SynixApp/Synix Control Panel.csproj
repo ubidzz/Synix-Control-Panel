@@ -46,6 +46,8 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="SynixEngine\version.txt" />
+	  <EmbeddedResource Include="Database\GameDefinitions\**\*.game.json" />
+	  <EmbeddedResource Include="Database\GameDefinitions\**\Templates\**\*" />
 	</ItemGroup>
 
 	<ItemGroup>

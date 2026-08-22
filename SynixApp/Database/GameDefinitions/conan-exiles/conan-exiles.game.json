@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "conan-exiles",
+  "catalogOrder": 30,
+  "game": "Conan Exiles",
+  "aliases": [],
+  "appId": "443030",
+  "requiresSteamLogin": false,
+  "executable": "ConanSandbox\\Binaries\\Win64\\ConanSandboxServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -server -log -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "TheExiledLands"
+  ],
+  "gameModes": [
+    "PVE",
+    "PVP"
+  ],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "ConanSandbox\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

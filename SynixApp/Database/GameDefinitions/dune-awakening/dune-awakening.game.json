@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "dune-awakening",
+  "catalogOrder": 210,
+  "game": "Dune: Awakening",
+  "aliases": [],
+  "appId": "4754530",
+  "requiresSteamLogin": false,
+  "executable": "battlegroup.bat",
+  "downloadUrl": "",
+  "arguments": "",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 31982,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Arrakis"
+  ],
+  "gameModes": [
+    "PVE",
+    "PVP"
+  ],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "UserSettings\\DefaultGame.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": false,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

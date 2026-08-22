@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "ark-survival-evolved",
+  "catalogOrder": 6,
+  "game": "ARK: Survival Evolved",
+  "aliases": [],
+  "appId": "376030",
+  "requiresSteamLogin": false,
+  "executable": "ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query}?MaxPlayers={MaxPlayers} -server -log -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "TheIsland",
+    "ScorchedEarth_P",
+    "Aberration_P",
+    "Extinction",
+    "Genesis",
+    "Ragnarok",
+    "TheCenter",
+    "Valguero_P",
+    "CrystalIsles",
+    "Gen2",
+    "LostIsland",
+    "Fjordur"
+  ],
+  "gameModes": [
+    "PVE",
+    "PVP"
+  ],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "templates": [
+      {
+        "relativePath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+        "templateFile": "GameUserSettings.ini"
+      }
+    ]
+  }
+}
