@@ -1416,7 +1416,15 @@ namespace Synix_Control_Panel
 		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableRcon.Checked; numRconPort.Enabled = txtRconPassword.Enabled = active; SyncGatekeeper(); }
 		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked; SyncGatekeeper(); }
 		private void txtWorldSeed_KeyPress(object sender, KeyPressEventArgs e) { if (cmbGame.Text == "Rust" && !char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true; }
-		private void btnViewArgs_Click(object sender, EventArgs e) { var gameData = GameDatabase.GetGame(cmbGame.Text); if (gameData != null) { var display = new DefaultArgumentsDisplay(gameData.RequiredArgs); display.ShowDialog(); } }
+		private void btnViewArgs_Click(object sender, EventArgs e)
+		{
+			GameInfo? gameData = GameDatabase.GetGame(cmbGame.Text);
+			if (gameData == null)
+				return;
+
+			using DefaultArgumentsDisplay display = new(gameData.RequiredArgs);
+			display.ShowDialog(this);
+		}
 		private void btnEditSchedule_Click(object sender, EventArgs e) { using var scheduler = new ScheduleSettingsGUI(_selectedDays, _selectedTime); if (scheduler.ShowDialog() == DialogResult.OK) { _selectedDays = scheduler.SelectedDays; _selectedTime = scheduler.SelectedTime; } }
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
 		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableDiscord.Checked; txtDiscordWebhook.Enabled = active; btnTestDiscord.Enabled = active; SyncGatekeeper(); }

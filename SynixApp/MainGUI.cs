@@ -17,7 +17,6 @@ using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
 using Synix_Control_Panel.SynixApp.Database;
@@ -1179,25 +1178,6 @@ namespace Synix_Control_Panel
 			{
 				SynixSettings.ShowDialog(this);
 			}
-
-			ReleaseClosedSettingsMemory();
-		}
-
-		private static void ReleaseClosedSettingsMemory()
-		{
-			GCSettings.LargeObjectHeapCompactionMode =
-				GCLargeObjectHeapCompactionMode.CompactOnce;
-			GC.Collect(
-				GC.MaxGeneration,
-				GCCollectionMode.Aggressive,
-				blocking: true,
-				compacting: true);
-			GC.WaitForPendingFinalizers();
-			GC.Collect(
-				GC.MaxGeneration,
-				GCCollectionMode.Aggressive,
-				blocking: true,
-				compacting: true);
 		}
 	}
 }

@@ -14,11 +14,14 @@ using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Database;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel.Database
 {
 	public partial class WarningDatabase : Form
 	{
+		private const int WmNcLButtonDown = 0x00A1;
+		private const int HtCaption = 0x0002;
 		private GameServer _server;
 
 		private static readonly Dictionary<string, string> _messages = new()
@@ -1015,24 +1018,31 @@ namespace Synix_Control_Panel.Database
 		{
 			InitializeComponent();
 			ThemeManager.Apply(this);
+			headerGlyph.ForeColor = SettingsPalette.Warning;
 			_server = server;
 
-			lblWarningText.Links.Clear();
-			lblWarningText.LinkClicked += LblWarningText_LinkClicked;
-
 			string warningText = GetWarningText(server);
-			lblWarningText.Text = warningText;
-			FormatUrlLink(warningText);
+			txtWarningText.Text = warningText;
+			lblGameName.Text = server.Game;
 
 			GameInfo? game = GameDatabase.GetGame(server.Game);
 			if (game?.RequiredLaunchFiles.Length > 0)
 			{
+				lblWarningTitle.Text = "Additional files are required";
+				lblWarningSubtitle.Text = "Complete the player-file steps before the dedicated server can start.";
 				btnStart.Text = "I Understand";
 			}
 			else if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
+				lblWarningTitle.Text = "Agreement required";
+				lblWarningSubtitle.Text = "Review the license terms before allowing the first server launch.";
 				btnStart.Text = "I Agree";
 				btnNo.Text = "Decline";
+			}
+			else
+			{
+				lblWarningTitle.Text = "First-launch preparation";
+				lblWarningSubtitle.Text = "Review these setup requirements before continuing.";
 			}
 		}
 
@@ -1061,41 +1071,26 @@ namespace Synix_Control_Panel.Database
 				"3. Some games use their own server manager to complete setup.";
 		}
 
-		private void FormatUrlLink(string text)
+		private void TxtWarningText_LinkClicked(object? sender, LinkClickedEventArgs eventArgs)
 		{
-			lblWarningText.Links.Clear();
+			if (string.IsNullOrWhiteSpace(eventArgs.LinkText))
+				return;
 
-			int linkIndex = text.IndexOf("http");
-			if (linkIndex != -1)
+			try
 			{
-
-				int spaceIndex = text.IndexOfAny(new char[] { ' ', '\n', '\r' }, linkIndex);
-				int linkLength = (spaceIndex != -1) ? spaceIndex - linkIndex : text.Length - linkIndex;
-
-				string url = text.Substring(linkIndex, linkLength).Trim();
-
-				lblWarningText.Links.Add(linkIndex, linkLength, url);
+				Process.Start(new ProcessStartInfo
+				{
+					FileName = eventArgs.LinkText,
+					UseShellExecute = true
+				});
 			}
-		}
-
-		private void LblWarningText_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			if (e.Link.LinkData != null)
+			catch (Exception exception)
 			{
-				string targetUrl = e.Link.LinkData.ToString();
-
-				try
-				{
-					Process.Start(new ProcessStartInfo
-					{
-						FileName = targetUrl,
-						UseShellExecute = true
-					});
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show($"Failed to open link: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
+				MessageBox.Show(
+					$"Failed to open link: {exception.Message}",
+					"Link Error",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 			}
 		}
 
@@ -1133,5 +1128,25 @@ namespace Synix_Control_Panel.Database
 			this.DialogResult = DialogResult.Cancel;
 			this.Close();
 		}
+
+		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)
+		{
+			if (eventArgs.Button != MouseButtons.Left)
+				return;
+
+			_ = ReleaseCapture();
+			_ = SendMessage(Handle, WmNcLButtonDown, HtCaption, 0);
+		}
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool ReleaseCapture();
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr SendMessage(
+			IntPtr windowHandle,
+			int message,
+			int wordParameter,
+			int longParameter);
 	}
 }

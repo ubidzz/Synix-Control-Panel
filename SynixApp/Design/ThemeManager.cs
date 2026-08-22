@@ -169,6 +169,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (root.IsDisposed)
 				return;
 
+			if (root is Form form)
+				WindowMemoryReclaimer.Track(form);
+
 			root.SuspendLayout();
 			try
 			{
