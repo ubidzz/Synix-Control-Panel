@@ -31,6 +31,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 		public override string GameName => "Palworld";
 		public override bool RequiresNetworkAddresses => true;
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerPassword |
+			ManagedConfigurationInput.AdminPassword |
+			ManagedConfigurationInput.GameMode |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.QueryPort |
+			ManagedConfigurationInput.Rcon |
+			ManagedConfigurationInput.Port;
 		public override string RelativePath => @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini";
 		public override ConfigFormat Format => ConfigFormat.StandardINI;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;

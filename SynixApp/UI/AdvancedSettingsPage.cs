@@ -17,6 +17,8 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class AdvancedSettingsPage : UserControl
 	{
+		private ModernSettingsToggle? _usePremadeConfigurationsToggle;
+
 		public AdvancedSettingsPage()
 		{
 			InitializeComponent();
@@ -24,6 +26,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime &&
 				!Core.IsOfficialRelease)
 			{
+				AddPremadeConfigurationsCard();
 				AddReleaseReadinessCard();
 			}
 		}
@@ -46,6 +49,83 @@ namespace Synix_Control_Panel.SynixEngine
 		[Browsable(false)]
 		public event EventHandler? ReleaseReadinessRequested;
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool UsePremadeConfigurations
+		{
+			get => _usePremadeConfigurationsToggle?.Checked ?? true;
+			set
+			{
+				if (_usePremadeConfigurationsToggle != null)
+				{
+					_usePremadeConfigurationsToggle.Checked = value;
+				}
+			}
+		}
+
+		[Browsable(false)]
+		public event EventHandler? UsePremadeConfigurationsChanged;
+
+		private void AddPremadeConfigurationsCard()
+		{
+			ModernSettingsCard configurationCard = new()
+			{
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				BorderColor = SettingsPalette.Border,
+				FillColor = SettingsPalette.Card,
+				CornerRadius = 13,
+				Location = new Point(0, 146),
+				Size = new Size(818, 156)
+			};
+			ModernSettingsGlyph glyph = new()
+			{
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.Accent,
+				Font = new Font("Segoe UI Symbol", 15F),
+				Glyph = "⚙",
+				Location = new Point(22, 24),
+				Size = new Size(42, 42)
+			};
+			Label title = new()
+			{
+				AutoEllipsis = true,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+				Location = new Point(80, 22),
+				Size = new Size(590, 31),
+				Text = "Use Premade Game Configurations"
+			};
+			Label description = new()
+			{
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.SecondaryText,
+				Font = new Font("Segoe UI", 9.5F),
+				Location = new Point(80, 55),
+				Size = new Size(625, 76),
+				Text = "Development builds only. Turn this off to stop Synix from creating or updating premade game configuration files. Existing files are never deleted."
+			};
+			_usePremadeConfigurationsToggle = new ModernSettingsToggle
+			{
+				AccessibleName = "Use premade game configurations",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				Checked = true,
+				Location = new Point(739, 28),
+				Size = new Size(54, 30)
+			};
+			_usePremadeConfigurationsToggle.CheckedChanged += (_, eventArgs) =>
+				UsePremadeConfigurationsChanged?.Invoke(this, eventArgs);
+
+			configurationCard.Controls.Add(glyph);
+			configurationCard.Controls.Add(title);
+			configurationCard.Controls.Add(description);
+			configurationCard.Controls.Add(_usePremadeConfigurationsToggle);
+			Controls.Add(configurationCard);
+		}
+
 		private void AddReleaseReadinessCard()
 		{
 			ModernSettingsCard releaseCard = new()
@@ -55,7 +135,7 @@ namespace Synix_Control_Panel.SynixEngine
 				BorderColor = SettingsPalette.Border,
 				FillColor = SettingsPalette.Card,
 				CornerRadius = 13,
-				Location = new Point(0, 146),
+				Location = new Point(0, 322),
 				Size = new Size(818, 156)
 			};
 			ModernSettingsGlyph glyph = new()

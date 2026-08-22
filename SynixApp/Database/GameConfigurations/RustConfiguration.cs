@@ -30,6 +30,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "Rust";
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.WorldSeed |
+			ManagedConfigurationInput.GameMode |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.WorldName |
+			ManagedConfigurationInput.Rcon |
+			ManagedConfigurationInput.WorldSize;
 		public override string RelativePath => @"server\{Identity}\cfg\server.cfg";
 		public override ConfigFormat Format => ConfigFormat.Space;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;

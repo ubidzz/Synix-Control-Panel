@@ -316,6 +316,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					args = args.Replace("  ", " ").Trim();
 
 					finalArgs = args;
+					if (server.Game.Equals("Arma Reforger", StringComparison.OrdinalIgnoreCase))
+					{
+						string profilePath = Path.Combine(
+							server.InstallPath,
+							"profiles",
+							cleanIdentity);
+						Directory.CreateDirectory(profilePath);
+						logCallback?.Invoke(
+							$"[ARMA REFORGER] Profile and crash logs: {profilePath}",
+							Color.Cyan);
+					}
+
 					bool hideWindow = !Properties.Settings.Default.ShowServerWindow;
 
 					psi = new ProcessStartInfo

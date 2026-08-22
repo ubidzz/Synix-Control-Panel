@@ -13,6 +13,7 @@
 using Synix_Control_Panel.Help;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
@@ -674,8 +675,14 @@ namespace Synix_Control_Panel
 					gameData.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase));
 				string args = (gameData.RequiredArgs ?? "").ToLower();
 				string rconTemp = (gameData.RconSyntax ?? "").ToLower();
+				ManagedConfigurationInput configInputs =
+					GameFix.GetManagedConfigurationInputs(gameData.Game);
+				bool ConfigUses(ManagedConfigurationInput input) =>
+					(configInputs & input) != ManagedConfigurationInput.None;
 
-				bool needsPass = args.Contains("{pass}");
+				bool needsPass =
+					args.Contains("{pass}") ||
+					ConfigUses(ManagedConfigurationInput.ServerPassword);
 				txtPassword.Tag = needsPass ? "Required" : "Disabled";
 				if (!needsPass)
 				{
@@ -692,7 +699,9 @@ namespace Synix_Control_Panel
 					txtPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				bool needsAdminPass = args.Contains("{adminpass}");
+				bool needsAdminPass =
+					args.Contains("{adminpass}") ||
+					ConfigUses(ManagedConfigurationInput.AdminPassword);
 				txtAdminPassword.Tag = needsAdminPass ? "Required" : "Disabled";
 				if (!needsAdminPass)
 				{
@@ -709,7 +718,9 @@ namespace Synix_Control_Panel
 					txtAdminPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				bool needsSeed = args.Contains("{seed}");
+				bool needsSeed =
+					args.Contains("{seed}") ||
+					ConfigUses(ManagedConfigurationInput.WorldSeed);
 				txtWorldSeed.Tag = needsSeed ? "Required" : "Disabled";
 				if (!needsSeed)
 				{
@@ -726,21 +737,54 @@ namespace Synix_Control_Panel
 					txtWorldSeed.LostFocus -= Placeholder_LostFocus;
 				}
 
-				cmbCompetitive.Tag = (args.Contains("{mode}") || (gameData.GameModes != null && gameData.GameModes.Count > 0)) ? "Required" : "Disabled";
-				numMaxPlayers.Tag = args.Contains("{maxplayers}") ? "Required" : "Disabled";
+				cmbCompetitive.Tag =
+					args.Contains("{mode}") ||
+					ConfigUses(ManagedConfigurationInput.GameMode) ||
+					(gameData.GameModes != null && gameData.GameModes.Count > 0)
+						? "Required"
+						: "Disabled";
+				numMaxPlayers.Tag =
+					args.Contains("{maxplayers}") ||
+					ConfigUses(ManagedConfigurationInput.MaxPlayers)
+						? "Required"
+						: "Disabled";
 				bool isMinecraftTemplate = gameData.Game.Equals(
 					"Minecraft",
 					StringComparison.OrdinalIgnoreCase);
-				numQueryPort.Tag = isMinecraftTemplate && !args.Contains("{query}")
+				bool usesQueryPort =
+					args.Contains("{query}") ||
+					ConfigUses(ManagedConfigurationInput.QueryPort);
+				numQueryPort.Tag = isMinecraftTemplate && !usesQueryPort
 					? "Disabled"
 					: "Required";
-				cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
-				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
-				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
+				cmbWorldName.Tag =
+					args.Contains("{map}") ||
+					ConfigUses(ManagedConfigurationInput.WorldName)
+						? "Required"
+						: "Disabled";
+				chkEnableRcon.Tag =
+					args.Contains("{rcon}") ||
+					rconTemp.Contains("{rcon_port}") ||
+					ConfigUses(ManagedConfigurationInput.Rcon)
+						? "Required"
+						: "Disabled";
+				numWorldSize.Tag =
+					args.Contains("{world_size}") ||
+					ConfigUses(ManagedConfigurationInput.WorldSize)
+						? "Required"
+						: "Disabled";
 				cmbGameVersion.Tag = gameData.Game == "Minecraft" ? "Required" : "Disabled";
 				numRam.Tag = args.Contains("{ram}") ? "Required" : "Disabled";
-				numPort.Tag = args.Contains("{port}") ? "Required" : "Disabled";
-				numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
+				numPort.Tag =
+					args.Contains("{port}") ||
+					ConfigUses(ManagedConfigurationInput.Port)
+						? "Required"
+						: "Disabled";
+				numAppPort.Tag =
+					args.Contains("{app_port}") ||
+					ConfigUses(ManagedConfigurationInput.AppPort)
+						? "Required"
+						: "Disabled";
 
 			}
 			SyncGatekeeper();
@@ -782,6 +826,18 @@ namespace Synix_Control_Panel
 				txt.ForeColor = Color.Gray;
 				txt.Text = (string?)(txt.Tag ?? "");
 			}
+		}
+
+		private static string GetEnteredValue(TextBox textBox)
+		{
+			if (textBox.ForeColor == Color.Gray ||
+				textBox.Text == "Select a game..." ||
+				textBox.Text == "Not Required")
+			{
+				return string.Empty;
+			}
+
+			return textBox.Text;
 		}
 
 		private void WireUpGatekeeperEvents()
@@ -1051,18 +1107,18 @@ namespace Synix_Control_Panel
 				QueryPort = qPort,
 				RconPort = rPort,
 				AppPort = aPort,
-				Password = txtPassword.Text,
-				AdminPassword = txtAdminPassword.Text,
+				Password = GetEnteredValue(txtPassword),
+				AdminPassword = GetEnteredValue(txtAdminPassword),
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
 				GameMode = cmbCompetitive.Text,
-				WorldSeed = txtWorldSeed.Text.Trim(),
+				WorldSeed = GetEnteredValue(txtWorldSeed).Trim(),
 				WorldSize = wSize,
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
 				UpdateOnStart = chkUpdateOnStart.Checked,
 				EnableRcon = chkEnableRcon.Checked,
-				RconPassword = txtRconPassword.Text,
+				RconPassword = GetEnteredValue(txtRconPassword),
 				InstallPath = newPath,
 				MaxRam = (int)numRam.Value,
 				GameVersion = cmbGameVersion.Text.Trim(),
@@ -1095,9 +1151,9 @@ namespace Synix_Control_Panel
 					NewServer,
 					new SynixServerSecrets(
 						new SynixServerPasswords(
-							txtPassword.Text,
-							txtAdminPassword.Text,
-							txtRconPassword.Text),
+							GetEnteredValue(txtPassword),
+							GetEnteredValue(txtAdminPassword),
+							GetEnteredValue(txtRconPassword)),
 						txtDiscordWebhook.Text.Trim()));
 
 				if (_isEditMode && _existingServer != null)

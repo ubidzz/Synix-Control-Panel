@@ -129,5 +129,17 @@ namespace Synix_Control_Panel.Properties {
                 this["DarkMode"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisablePremadeConfigurationsForDevelopment {
+            get {
+                return ((bool)(this["DisablePremadeConfigurationsForDevelopment"]));
+            }
+            set {
+                this["DisablePremadeConfigurationsForDevelopment"] = value;
+            }
+        }
     }
 }

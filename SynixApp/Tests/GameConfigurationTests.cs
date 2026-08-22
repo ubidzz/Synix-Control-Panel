@@ -347,6 +347,90 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.False(File.Exists(Path.Combine(_testRoot, "outside.cfg")));
 	}
 
+	[Fact]
+	public void ManagedConfigurations_CanOnlyBeDisabledForDevelopmentBuilds()
+	{
+		Assert.False(GameFix.ShouldUseManagedConfigurations(false, true));
+		Assert.True(GameFix.ShouldUseManagedConfigurations(false, false));
+		Assert.True(GameFix.ShouldUseManagedConfigurations(true, true));
+	}
+
+	[Fact]
+	public void TemplateConfigurations_ReportInputsUsedByTheirTemplates()
+	{
+		Assert.True(GameFix.TryGetConfiguration(
+			"Arma 3",
+			out ConfigurationDefinition? definition));
+		Assert.NotNull(definition);
+
+		ManagedConfigurationInput inputs = definition.SupportedInputs;
+		AssertInput(inputs, ManagedConfigurationInput.ServerPassword);
+		AssertInput(inputs, ManagedConfigurationInput.AdminPassword);
+		AssertInput(inputs, ManagedConfigurationInput.MaxPlayers);
+		Assert.Equal(
+			ManagedConfigurationInput.None,
+			inputs & ManagedConfigurationInput.QueryPort);
+	}
+
+	[Fact]
+	public void KeyManagedConfigurations_ReportInputsUsedByTheirBindings()
+	{
+		Assert.True(GameFix.TryGetConfiguration(
+			"Minecraft",
+			out ConfigurationDefinition? minecraft));
+		Assert.True(GameFix.TryGetConfiguration(
+			"Arma Reforger",
+			out ConfigurationDefinition? reforger));
+		Assert.NotNull(minecraft);
+		Assert.NotNull(reforger);
+
+		AssertInput(minecraft.SupportedInputs, ManagedConfigurationInput.WorldSeed);
+		AssertInput(minecraft.SupportedInputs, ManagedConfigurationInput.WorldName);
+		AssertInput(minecraft.SupportedInputs, ManagedConfigurationInput.Rcon);
+		AssertInput(reforger.SupportedInputs, ManagedConfigurationInput.ServerPassword);
+		AssertInput(reforger.SupportedInputs, ManagedConfigurationInput.AdminPassword);
+		AssertInput(reforger.SupportedInputs, ManagedConfigurationInput.Port);
+	}
+
+	[Fact]
+	public void ArmaReforger_UsesManagedConfigAndProfileFolders()
+	{
+		GameInfo? game = GameDatabase.GetGame("Arma Reforger");
+
+		Assert.NotNull(game);
+		Assert.Contains("-config \".\\configs\\{map}\"", game.RequiredArgs);
+		Assert.Contains("-profile \".\\profiles\\{Identity}\"", game.RequiredArgs);
+		Assert.Contains("-maxFPS 60", game.RequiredArgs);
+	}
+
+	[Fact]
+	public void ArmaReforger_RepairsDisabledFieldPlaceholders()
+	{
+		ArmaReforgerConfiguration definition = new();
+		GameServer server = CreateServer("Arma Reforger");
+		server.Port = 2001;
+		server.QueryPort = 17777;
+
+		Assert.True(definition.Apply(CreateContext(server)).Succeeded);
+		string path = definition.ResolveFullPath(server);
+		SetValue(path, definition.Format, "game.password", "Not Required");
+		SetValue(path, definition.Format, "game.passwordAdmin", "Not Required");
+
+		ConfigurationApplyResult result = definition.Apply(
+			new ConfigurationContext(
+				server,
+				new SynixServerPasswords("Not Required", "Not Required", string.Empty),
+				Core.Instance.GetSafeName(server.ServerName),
+				string.Empty,
+				string.Empty));
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.Equal(string.Empty, GetValue(path, definition.Format, "game.password"));
+		Assert.Equal(string.Empty, GetValue(path, definition.Format, "game.passwordAdmin"));
+		Assert.Equal("2001", GetValue(path, definition.Format, "bindPort"));
+		Assert.Equal("17777", GetValue(path, definition.Format, "a2s.port"));
+	}
+
 	public void Dispose()
 	{
 		if (Directory.Exists(_testRoot))
@@ -403,6 +487,13 @@ public sealed class GameConfigurationTests : IDisposable
 		ConfigLine target = Assert.Single(values, item => item.Key == key);
 		target.Value = value;
 		ConfigHandler.SaveConfig(path, values, format);
+	}
+
+	private static void AssertInput(
+		ManagedConfigurationInput available,
+		ManagedConfigurationInput expected)
+	{
+		Assert.Equal(expected, available & expected);
 	}
 
 	private sealed class EscapingConfiguration : ConfigurationDefinition

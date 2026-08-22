@@ -542,7 +542,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				Game = "Arma Reforger",
 				AppID = "1874900",
 				ExeName = "ArmaReforgerServer.exe",
-				RequiredArgs = "-config \"{map}\" -profile \"{Identity}\" -SteamAppId={steamAppID}",
+				RequiredArgs = "-config \".\\configs\\{map}\" -profile \".\\profiles\\{Identity}\" -maxFPS 60 -SteamAppId={steamAppID}",
 				Port = 2001,
 				QueryPort = 17777,
 				RelativeConfigPath = @"configs\server.json",

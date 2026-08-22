@@ -24,6 +24,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		public static bool ManualConfigWasCreated { get; set; }
 
+		internal static bool ManagedConfigurationsEnabled =>
+			ShouldUseManagedConfigurations(
+				Core.IsOfficialRelease,
+				Properties.Settings.Default.DisablePremadeConfigurationsForDevelopment);
+
+		internal static bool ShouldUseManagedConfigurations(
+			bool isOfficialRelease,
+			bool disabledForDevelopment)
+		{
+			return isOfficialRelease || !disabledForDevelopment;
+		}
+
 		internal static bool TryGetConfiguration(
 			string gameName,
 			out ConfigurationDefinition? definition)
@@ -33,8 +45,26 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				out definition);
 		}
 
+		internal static ManagedConfigurationInput GetManagedConfigurationInputs(
+			string gameName)
+		{
+			if (!ManagedConfigurationsEnabled ||
+				!TryGetConfiguration(gameName, out ConfigurationDefinition? definition) ||
+				definition == null)
+			{
+				return ManagedConfigurationInput.None;
+			}
+
+			return definition.SupportedInputs;
+		}
+
 		internal static bool NeedsManagedConfiguration(GameServer server)
 		{
+			if (!ManagedConfigurationsEnabled)
+			{
+				return false;
+			}
+
 			if (!TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) ||
 				definition == null)
 			{
@@ -59,6 +89,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		internal static async Task<ConfigurationApplyResult> ApplyManagedConfiguration(
 			GameServer server)
 		{
+			if (!ManagedConfigurationsEnabled)
+			{
+				return new ConfigurationApplyResult(
+					true,
+					true,
+					false,
+					false,
+					"Premade game configurations are disabled for this development build.");
+			}
+
 			if (!TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) ||
 				definition == null)
 			{

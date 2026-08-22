@@ -165,6 +165,8 @@ namespace Synix_Control_Panel.SynixEngine
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
 				ElevatedSystemTasksChanged;
+			advancedSettingsPage.UsePremadeConfigurationsChanged +=
+				UsePremadeConfigurationsChanged;
 			advancedSettingsPage.ReleaseReadinessRequested +=
 				ReleaseReadinessRequested;
 		}
@@ -197,6 +199,8 @@ namespace Synix_Control_Panel.SynixEngine
 					Properties.Settings.Default.CheckDDoS;
 				advancedSettingsPage.ElevatedSystemTasks =
 					Properties.Settings.Default.enableRunAsAdmin;
+				advancedSettingsPage.UsePremadeConfigurations =
+					!Properties.Settings.Default.DisablePremadeConfigurationsForDevelopment;
 			}
 			finally
 			{
@@ -402,6 +406,20 @@ namespace Synix_Control_Panel.SynixEngine
 
 			Properties.Settings.Default.enableRunAsAdmin =
 				advancedSettingsPage.ElevatedSystemTasks;
+			Properties.Settings.Default.Save();
+		}
+
+		private void UsePremadeConfigurationsChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings || Core.IsOfficialRelease)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.DisablePremadeConfigurationsForDevelopment =
+				!advancedSettingsPage.UsePremadeConfigurations;
 			Properties.Settings.Default.Save();
 		}
 

@@ -30,6 +30,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "7 Days to Die";
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerPassword |
+			ManagedConfigurationInput.WorldSeed |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.WorldName |
+			ManagedConfigurationInput.WorldSize |
+			ManagedConfigurationInput.Port;
 		public override string RelativePath => "serverconfig.xml";
 		public override ConfigFormat Format => ConfigFormat.XML;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;

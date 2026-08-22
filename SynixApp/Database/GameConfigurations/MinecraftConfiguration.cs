@@ -30,6 +30,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "Minecraft";
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.WorldSeed |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.QueryPort |
+			ManagedConfigurationInput.WorldName |
+			ManagedConfigurationInput.Rcon |
+			ManagedConfigurationInput.Port;
 		public override string RelativePath => "server.properties";
 		public override ConfigFormat Format => ConfigFormat.StandardINI;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
