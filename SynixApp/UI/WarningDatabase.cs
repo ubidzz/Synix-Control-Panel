@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Database;
 using System.Diagnostics;
 
 namespace Synix_Control_Panel.Database
@@ -1019,21 +1020,45 @@ namespace Synix_Control_Panel.Database
 			lblWarningText.Links.Clear();
 			lblWarningText.LinkClicked += LblWarningText_LinkClicked;
 
-			if (_messages.TryGetValue(server.Game, out string customMessage))
-			{
-				lblWarningText.Text = customMessage;
-				FormatUrlLink(customMessage);
+			string warningText = GetWarningText(server);
+			lblWarningText.Text = warningText;
+			FormatUrlLink(warningText);
 
-				if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
-				{
-					btnStart.Text = "I Agree";
-					btnNo.Text = "Decline";
-				}
-			}
-			else
+			GameInfo? game = GameDatabase.GetGame(server.Game);
+			if (game?.RequiredLaunchFiles.Length > 0)
 			{
-				lblWarningText.Text = "Configuration required before the first launch. \n1. If the Config file is missing in the game then the server needs to run once to create the config file. \n2. Then shut the server down and go to `Server Actions -> Server Options -> Edit Config File` and edit the config file. \n3. Some Servers use their own server manager in the game to fully setup the server.";
+				btnStart.Text = "I Understand";
 			}
+			else if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+			{
+				btnStart.Text = "I Agree";
+				btnNo.Text = "Decline";
+			}
+		}
+
+		internal static string GetWarningText(GameServer server)
+		{
+			GameInfo? game = GameDatabase.GetGame(server.Game);
+			if (game?.RequiredLaunchFiles.Length > 0)
+			{
+				string requiredFiles = string.Join(", ", game.RequiredLaunchFiles);
+				return
+					"ADDITIONAL PLAYER FILES REQUIRED:\n\n" +
+					$"This dedicated server needs {requiredFiles}. These files must be created by the normal game before the server can start.\n\n" +
+					game.LaunchFileSetupInstructions + "\n\n" +
+					"If the files were created on another computer, copy them into this Synix server folder before starting it.";
+			}
+
+			if (_messages.TryGetValue(server.Game, out string? customMessage))
+			{
+				return customMessage;
+			}
+
+			return
+				"Configuration required before the first launch.\n\n" +
+				"1. If the configuration file is missing, the server may need to run once to create it.\n\n" +
+				"2. Shut down the server, then use Server Options > Edit Config File.\n\n" +
+				"3. Some games use their own server manager to complete setup.";
 		}
 
 		private void FormatUrlLink(string text)

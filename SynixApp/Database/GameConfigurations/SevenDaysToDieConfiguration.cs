@@ -11,8 +11,6 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.ServerHandler;
-using System.Security;
-
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class SevenDaysToDieConfiguration : ConfigurationDefinition
@@ -30,6 +28,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "7 Days to Die";
+		public override int SchemaVersion => 3;
+		public override bool SupportsFullReset => true;
+		public override bool PreservesInstalledTemplate => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.ServerPassword |
 			ManagedConfigurationInput.WorldSeed |
@@ -40,22 +41,5 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override string RelativePath => "serverconfig.xml";
 		public override ConfigFormat Format => ConfigFormat.XML;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
-
-		public override string CreateTemplate(ConfigurationContext context)
-		{
-			string Escape(string value) => SecurityElement.Escape(RequireSingleLine(value, "XML value")) ?? string.Empty;
-
-			return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-				"<ServerSettings>\n" +
-				$"  <property name=\"ServerName\" value=\"{Escape(context.Server.ServerName)}\"/>\n" +
-				$"  <property name=\"ServerPassword\" value=\"{Escape(context.Passwords.ServerPassword)}\"/>\n" +
-				$"  <property name=\"ServerPort\" value=\"{context.Server.Port}\"/>\n" +
-				$"  <property name=\"ServerMaxPlayerCount\" value=\"{context.Server.MaxPlayers}\"/>\n" +
-				$"  <property name=\"GameWorld\" value=\"{Escape(context.Server.WorldName)}\"/>\n" +
-				$"  <property name=\"GameName\" value=\"{Escape(context.Identity)}\"/>\n" +
-				$"  <property name=\"WorldGenSeed\" value=\"{Escape(string.IsNullOrWhiteSpace(context.Server.WorldSeed) ? "12345" : context.Server.WorldSeed)}\"/>\n" +
-				$"  <property name=\"WorldGenSize\" value=\"{(context.Server.WorldSize > 0 ? context.Server.WorldSize : 6144)}\"/>\n" +
-				"</ServerSettings>\n";
-		}
 	}
 }

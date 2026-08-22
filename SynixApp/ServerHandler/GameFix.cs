@@ -45,10 +45,56 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				out definition);
 		}
 
+		internal static ConfigFileCreationMode GetConfigFileCreationMode(
+			string gameName)
+		{
+			return GameDatabase.GetGame(gameName)?.ConfigFileCreation ??
+				ConfigFileCreationMode.Unknown;
+		}
+
+		internal static bool CanResetManagedConfiguration(GameServer server)
+		{
+			return server != null &&
+				GetConfigFileCreationMode(server.Game) is
+					ConfigFileCreationMode.SynixTemplate or
+					ConfigFileCreationMode.GameGenerated &&
+				TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) &&
+				definition?.SupportsFullReset == true;
+		}
+
+		internal static bool NeedsManagedConfigurationRepair(GameServer server)
+		{
+			if (GetConfigFileCreationMode(server.Game) is
+					ConfigFileCreationMode.Unknown or
+					ConfigFileCreationMode.LaunchArgumentsOnly ||
+				!TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) ||
+				definition?.SupportsFullReset != true)
+			{
+				return false;
+			}
+
+			try
+			{
+				ConfigurationContext context = new(
+					server,
+					new SynixServerPasswords("template", "template", "template"),
+					Core.Instance.GetSafeName(server.ServerName),
+					"0.0.0.0",
+					"0.0.0.0");
+				return definition.NeedsStructuralRepair(context);
+			}
+			catch
+			{
+				return true;
+			}
+		}
+
 		internal static ManagedConfigurationInput GetManagedConfigurationInputs(
 			string gameName)
 		{
-			if (!ManagedConfigurationsEnabled ||
+			if (GetConfigFileCreationMode(gameName) is
+					ConfigFileCreationMode.Unknown or
+					ConfigFileCreationMode.LaunchArgumentsOnly ||
 				!TryGetConfiguration(gameName, out ConfigurationDefinition? definition) ||
 				definition == null)
 			{
@@ -65,10 +111,33 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return false;
 			}
 
+			ConfigFileCreationMode creationMode =
+				GetConfigFileCreationMode(server.Game);
+			if (creationMode is ConfigFileCreationMode.Unknown or
+				ConfigFileCreationMode.LaunchArgumentsOnly)
+			{
+				return false;
+			}
+
 			if (!TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) ||
 				definition == null)
 			{
 				return false;
+			}
+
+			if (creationMode == ConfigFileCreationMode.GameGenerated)
+			{
+				try
+				{
+					if (!definition.ConfigurationFileExists(server))
+					{
+						return false;
+					}
+				}
+				catch
+				{
+					return false;
+				}
 			}
 
 			if (server.ManagedConfigurationVersion < definition.SchemaVersion)
@@ -97,6 +166,23 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					false,
 					false,
 					"Premade game configurations are disabled for this development build.");
+			}
+
+			ConfigFileCreationMode creationMode =
+				GetConfigFileCreationMode(server.Game);
+			if (creationMode == ConfigFileCreationMode.Unknown)
+			{
+				return new ConfigurationApplyResult(
+					true,
+					true,
+					false,
+					false,
+					"This game's configuration-file behavior has not been verified.");
+			}
+
+			if (creationMode == ConfigFileCreationMode.LaunchArgumentsOnly)
+			{
+				return ConfigurationApplyResult.ArgumentsOnly();
 			}
 
 			if (!TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) ||
@@ -151,6 +237,65 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				localIp,
 				publicIp);
 			ConfigurationApplyResult result = definition.Apply(context);
+			if (result.Succeeded && result.Complete)
+			{
+				server.ManagedConfigurationVersion = definition.SchemaVersion;
+			}
+
+			return result;
+		}
+
+		internal static async Task<ConfigurationApplyResult> ResetManagedConfiguration(
+			GameServer server)
+		{
+			if (GetConfigFileCreationMode(server.Game) is
+					ConfigFileCreationMode.Unknown or
+					ConfigFileCreationMode.LaunchArgumentsOnly ||
+				!TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) ||
+				definition == null ||
+				!definition.SupportsFullReset)
+			{
+				return ConfigurationApplyResult.Failure(
+					"Synix does not have a complete reset template for this game.");
+			}
+
+			string localIp = string.Empty;
+			string publicIp = string.Empty;
+			if (definition.RequiresNetworkAddresses)
+			{
+				try
+				{
+					localIp = await Core.Instance.GetLocalIP();
+					publicIp = await Core.Instance.GetPublicIP();
+				}
+				catch (Exception exception)
+				{
+					return ConfigurationApplyResult.Failure(
+						$"Synix could not obtain the network addresses required by this template. {exception.Message}");
+				}
+			}
+
+			SynixServerPasswords passwords = default;
+			if (definition.UsesConfigurationFile)
+			{
+				try
+				{
+					passwords = Core.RevealServerPasswords(server);
+				}
+				catch (SynixPasswordProtectionException)
+				{
+					return ConfigurationApplyResult.Failure(
+						"Synix could not unlock the saved passwords. Re-enter them in Server Settings before resetting the game configuration.");
+				}
+			}
+
+			ConfigurationContext context = new(
+				server,
+				passwords,
+				Core.Instance.GetSafeName(server.ServerName),
+				localIp,
+				publicIp);
+			ConfigurationApplyResult result = definition.ResetToTemplate(context);
 			if (result.Succeeded && result.Complete)
 			{
 				server.ManagedConfigurationVersion = definition.SchemaVersion;
@@ -293,8 +438,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"MeanGreens\Binaries\Win64")) applied = true; break;
 					case "Operation: Harsh Doorstop":
 						if (CopySteamDLLs(server.InstallPath, @"HarshDoorstop\Binaries\Win64")) applied = true; break;
-					case "America's Army: Proving Grounds":
-						if (CopySteamDLLs(server.InstallPath, @"AAGame\Binaries\Win64")) applied = true; break;
 					case "Monday Night Combat":
 						if (CopySteamDLLs(server.InstallPath, @"MNC\Binaries\Win64")) applied = true; break;
 					case "Chivalry 2":
@@ -354,29 +497,44 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						if (CopySteamDLLs(server.InstallPath, @"Binaries\Win64")) applied = true; break;
 				}
 
-				if (TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) &&
+				ConfigFileCreationMode configurationMode =
+					GetConfigFileCreationMode(server.Game);
+				if ((configurationMode is
+						ConfigFileCreationMode.SynixTemplate or
+						ConfigFileCreationMode.GameGenerated) &&
+					TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) &&
 					definition != null)
 				{
-					ConfigurationApplyResult result = await ApplyManagedConfiguration(server);
-					if (!result.Succeeded)
+					bool configurationAvailable =
+						configurationMode == ConfigFileCreationMode.SynixTemplate;
+					if (!configurationAvailable)
 					{
-						Core.Instance.Log($"[CONFIG ERROR] {result.Message}", Color.Red);
+						configurationAvailable = definition.ConfigurationFileExists(server);
 					}
-					else
+
+					if (configurationAvailable)
 					{
-						if (result.Created)
+						ConfigurationApplyResult result = await ApplyManagedConfiguration(server);
+						if (!result.Succeeded)
 						{
-							ManualConfigWasCreated = true;
+							Core.Instance.Log($"[CONFIG ERROR] {result.Message}", Color.Red);
 						}
-
-						if (result.Changed)
+						else
 						{
-							applied = true;
-						}
+							if (result.Created)
+							{
+								ManualConfigWasCreated = true;
+							}
 
-						if (!result.Complete)
-						{
-							Core.Instance.Log($"[CONFIG WARNING] {result.Message}", Color.Orange);
+							if (result.Changed)
+							{
+								applied = true;
+							}
+
+							if (!result.Complete)
+							{
+								Core.Instance.Log($"[CONFIG WARNING] {result.Message}", Color.Orange);
+							}
 						}
 					}
 				}

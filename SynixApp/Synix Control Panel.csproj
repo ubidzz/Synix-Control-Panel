@@ -93,6 +93,9 @@
 	  <Compile Update="UI\AdvancedSettingsPage.Designer.cs">
 	    <DependentUpon>AdvancedSettingsPage.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\DevelopmentSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
 	  <Compile Update="UI\ProblemReportSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>

@@ -23,6 +23,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 
 			new() {
 				Game = "Subsistence",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "1362640",
 				ExeName = @"Binaries\Win64\UDK.exe",
 				RequiredArgs = "server {map}?steamsockets -log -SteamAppId={steamAppID}",
@@ -37,6 +38,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "HumanitZ",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "2728330",
 				ExeName = @"HumanitZServer\Binaries\Win64\HumanitZServer-Win64-Shipping.exe",
 				RequiredArgs = "TSSGame -log -port={port} -queryport={query} -steamservername=\"{ServerName}\" -SteamAppId={steamAppID}",
@@ -49,6 +51,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Soulmask",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "3017310",
 				ExeName = @"WS\Binaries\Win64\WSServer-Win64-Shipping.exe",
 				RequiredArgs = "{map} -server -log -UTF8Output -MULTIHOME=0.0.0.0 -Port={port} -QueryPort={query} -EchoPort=18888 -SteamServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers} -PSW=\"{pass}\" -adminpsw=\"{adminpass}\" -{mode} -forcepassthrough -online=Steam -SteamAppId={steamAppID}",
@@ -62,6 +65,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "7 Days to Die",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "294420",
 				ExeName = "7DaysToDieServer.exe",
 				RequiredArgs = "-quit -batchmode -nographics -configfile=\"serverconfig.xml\" -ServerPort={port} -ServerName=\"{ServerName}\" -GameName=\"{Identity}\" -ServerPassword=\"{pass}\" -ServerMaxPlayerCount={MaxPlayers} -GameWorld=\"{map}\" -WorldGenSeed=\"{seed}\" -WorldGenSize={world_size} -dedicated -SteamAppId={steamAppID}",
@@ -86,6 +90,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Palworld",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "2394010",
 				ExeName = "Pal\\Binaries\\Win64\\PalServer-Win64-Shipping.exe",
 				RequiredArgs = "-publiclobby -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS -port={port} -publicport={port} -servername=\"{ServerName}\" -players={MaxPlayers} -serverpassword=\"{pass}\" -adminpassword=\"{adminpass}\" -SteamAppId={steamAppID}",
@@ -133,18 +138,22 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Sons Of The Forest",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "2465200",
 				ExeName = "SonsOfTheForestDS.exe",
 				RequiredArgs = "-userdatapath \"userdata\" -SteamAppId={steamAppID}",
 				Port = 8766,
 				QueryPort = 27016,
+				AppPort = 9700,
 				RelativeConfigPath = @"userdata\dedicated_server.cfg",
 				Format = ConfigFormat.JSON,
 				Maps = ["Default"],
+				GameModes = ["Normal", "Hard", "HardSurvival", "Peaceful", "Creative", "Custom"],
 				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Enshrouded",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "2278520",
 				ExeName = "enshrouded_server.exe",
 				RelativeConfigPath = "enshrouded_server.json",
@@ -157,6 +166,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Core Keeper",
+				ConfigFileCreation = ConfigFileCreationMode.LaunchArgumentsOnly,
 				AppID = "1963720",
 				ExeName = "CoreKeeperServer.exe",
 				RequiredArgs = "-batchmode -world {map} -worldname \"{ServerName}\" -port {port} -maxplayers {MaxPlayers} -SteamAppId={steamAppID}",
@@ -372,18 +382,20 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "V Rising",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "1829350",
 				ExeName = "VRisingServer.exe",
 				RequiredArgs = "-persistentDataPath \".\\save-data\" -serverName \"{ServerName}\" -saveName \"{map}\" -gamePort {port} -queryPort {query} -SteamAppId={steamAppID}",
 				Port = 9876,
 				QueryPort = 9877,
-				RelativeConfigPath = @"VRisingServer_Data\StreamingAssets\Settings\ServerHostSettings.json",
+				RelativeConfigPath = @"save-data\Settings\ServerHostSettings.json",
 				Format = ConfigFormat.JSON,
 				Maps = ["World1"],
 				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "DayZ",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "223350",
 				RequiresSteamLogin = true,
 				ExeName = "DayZServer_x64.exe",
@@ -500,6 +512,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new()
 			{
 				Game = "Arma 3",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "233780",
 				RequiresSteamLogin = true,
 				ExeName = "arma3server.exe",
@@ -527,11 +540,13 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new()
 			{
 				Game = "Mount & Blade II: Bannerlord",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "1863440",
 				ExeName = @"bin\Win64_Shipping_Server\Bannerlord.DedicatedServer.exe",
 				RequiredArgs = "_MODULES_*Native*Multiplayer*_MODULES_ /dedicatedcustomserverconfigfile \"{map}\" /port {port} -SteamAppId={steamAppID}",
 				Port = 7230,
 				QueryPort = 7230,
+				RelativeConfigPath = @"Modules\Native\CustomServerconfig.txt",
 				Maps = ["CustomServerconfig.txt"],
 				Format = ConfigFormat.StandardINI,
 				NeedsConfigWarning = true,
@@ -540,6 +555,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new()
 			{
 				Game = "Arma Reforger",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "1874900",
 				ExeName = "ArmaReforgerServer.exe",
 				RequiredArgs = "-config \".\\configs\\{map}\" -profile \".\\profiles\\{Identity}\" -maxFPS 60 -SteamAppId={steamAppID}",
@@ -608,6 +624,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new()
 			{
 				Game = "Eco",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "739590",
 				ExeName = "EcoServer.exe",
 				RequiredArgs = "-nogui -port {port} -SteamAppId={steamAppID}",
@@ -660,13 +677,14 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new()
 			{
 				Game = "Holdfast: Nations At War",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "1424230",
 				ExeName = "Holdfast NaW - Dedicated Server.exe",
 				RequiredArgs = "-batchmode -nographics -server_name=\"{ServerName}\" -port={port} -query_port={query} -map_name=\"{map}\" -SteamAppId={steamAppID}",
 				Port = 20101,
 				QueryPort = 27015,
 				RelativeConfigPath = @"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt",
-				Format = ConfigFormat.StandardINI,
+				Format = ConfigFormat.Space,
 				Maps = ["FortSchwarz", "CampNile"],
 				NeedsConfigWarning = true
 			},
@@ -743,13 +761,23 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "American Truck Simulator",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "2239530",
 				ExeName = @"bin\win_x64\amtrucks_server.exe",
-				RequiredArgs = "-dedicated -server_config \"server_config.sii\" -SteamAppId={steamAppID}",
+				RequiredArgs = "-nosingle -homedir \"{InstallPath}\" -server \"server_packages.sii\" -server_cfg \"server_config.sii\" -SteamAppId={steamAppID}",
 				Port = 27015,
 				QueryPort = 27016,
 				RelativeConfigPath = "server_config.sii",
-				Format = ConfigFormat.StandardINI
+				ExternalDataFolderName = "American Truck Simulator",
+				RequiredLaunchFiles = ["server_packages.sii", "server_packages.dat"],
+				OptionalLaunchFiles = ["server_config.sii"],
+				LaunchFileSetupInstructions =
+					"Open Documents\\American Truck Simulator\\config.cfg and set uset g_console \"1\". " +
+					"Launch the normal American Truck Simulator game, load your profile and map, " +
+					"press ~ to open the console, and run export_server_packages. Close the game, " +
+					"then click Start in Synix again. Synix will import the generated files automatically.",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Life is Feudal: Your Own",
@@ -948,6 +976,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Wreckfest",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "361580",
 				ExeName = "Wreckfest.exe",
 				RequiredArgs = "-s server_config.cfg -SteamAppId={steamAppID}",
@@ -1009,14 +1038,14 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Alien Swarm: Reactive Drop",
 				AppID = "582400",
-				ExeName = "srcds.exe",
-				RequiredArgs = "-game reactivedrop -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon} +sv_password \"{pass}\" -SteamAppId={steamAppID}",
+				ExeName = "srcds_console.exe",
+				RequiredArgs = "-console -condebug -game reactivedrop -ip 0.0.0.0 -port {port} -maxplayers {MaxPlayers} +hostname \"{ServerName}\" {rcon} +sv_password \"{pass}\" +exec server +map {map} -SteamAppId={steamAppID}",
 				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
-				Port = 27015,
-				QueryPort = 27015,
+				Port = 27050,
+				QueryPort = 27050,
 				RelativeConfigPath = @"reactivedrop\cfg\server.cfg",
 				Format = ConfigFormat.StandardINI,
-				Maps = ["asi-jac1-landingbay_01"]
+				Maps = ["lobby", "asi-jac1-landingbay_01"]
 			},
 			new() {
 				Game = "Half-Life Deathmatch: Source",
@@ -1043,24 +1072,27 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Project CARS 2",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "413770",
 				RequiresSteamLogin = true,
 				ExeName = "pCARS2AVServer.exe",
 				RequiredArgs = "",
 				Port = 27015,
 				QueryPort = 27016,
-				RelativeConfigPath = "server_config.json",
-				Format = ConfigFormat.JSON
+				RelativeConfigPath = "server.cfg",
+				Format = ConfigFormat.StandardINI,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "ASKA",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "3246670",
 				ExeName = "ASKAServer.exe",
-				RequiredArgs = "-batchmode -nographics -port {port} -queryport {query} -name \"{ServerName}\" -password \"{pass}\" -SteamAppId={steamAppID}",
+				RequiredArgs = "-propertiesPath \"server properties.txt\" -SteamAppId=1898300",
 				Port = 27015,
 				QueryPort = 27016,
-				RelativeConfigPath = "server_settings.json",
-				Format = ConfigFormat.JSON,
+				RelativeConfigPath = "server properties.txt",
+				Format = ConfigFormat.StandardINI,
 				NeedsConfigWarning = true
 			},
 			new() {
@@ -1088,12 +1120,13 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Ground Branch",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "476400",
 				ExeName = @"GroundBranch\Binaries\Win64\GroundBranchServer-Win64-Shipping.exe",
-				RequiredArgs = "-log -port={port} -queryport={query} -ServerName=\"{ServerName}\" -SteamAppId={steamAppID}",
+				RequiredArgs = "?MaxPlayers={MaxPlayers} MultiHome=0.0.0.0 Port={port} QueryPort={query} -log -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
-				RelativeConfigPath = @"GroundBranch\Saved\Config\WindowsServer\Game.ini",
+				RelativeConfigPath = @"GroundBranch\ServerConfig\Server.ini",
 				Format = ConfigFormat.StandardINI,
 				NeedsConfigWarning = true
 			},
@@ -1148,6 +1181,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Foundry",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "2915550",
 				ExeName = "FoundryDedicatedServer.exe",
 				RequiredArgs = "server_port={port} server_query_port={query} server_name=\"{ServerName}\" server_max_players={MaxPlayers} server_password=\"{pass}\" -SteamAppId={steamAppID}",
@@ -1212,6 +1246,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Assetto Corsa Competizione",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "1430110",
 				ExeName = "accServer.exe",
 				RequiredArgs = "",
@@ -1224,13 +1259,15 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "rFactor 2",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "400300",
 				ExeName = "rFactor2Dedicated.exe",
 				RequiredArgs = "",
 				Port = 54297,
 				QueryPort = 54297,
 				RelativeConfigPath = @"UserData\player\Multiplayer.json",
-				Format = ConfigFormat.JSON
+				Format = ConfigFormat.JSON,
+				NeedsConfigWarning = true
 			},
 			new() {
 				Game = "Painkiller: Hell & Damnation",
@@ -1420,6 +1457,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 				RequiredArgs = "-port {port} -name \"{ServerName}\" -SteamAppId={steamAppID}",
 				Port = 27015,
 				QueryPort = 27016,
+				RelativeConfigPath = "ServerConfig.json",
 				Format = ConfigFormat.JSON,
 				NeedsConfigWarning = true
 			},
@@ -1437,7 +1475,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "America's Army: Proving Grounds",
 				AppID = "203300",
-				ExeName = @"AAGame\Binaries\Win64\AAGameServer.exe",
+				ExeName = @"Binaries\Win32\AAGameServer.exe",
 				RequiredArgs = "server {map}?Port={port} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27015,
@@ -1459,6 +1497,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Just Cause 2: Multiplayer",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "261140",
 				ExeName = "JcmpServer.exe",
 				RequiredArgs = "-port {port} -SteamAppId={steamAppID}",
@@ -1494,6 +1533,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Beyond the Wire",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "1064780",
 				ExeName = @"BeyondTheWire\Binaries\Win64\BeyondTheWireServer-Win64-Shipping.exe",
 				RequiredArgs = "Port={port} QueryPort={query} FIXEDMAXPLAYERS={MaxPlayers} -log -SteamAppId={steamAppID}",
@@ -1506,12 +1546,13 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Colony Survival",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "748090",
 				ExeName = "colonyserver.exe",
 				RequiredArgs = "+server.port {port} +server.name \"{ServerName}\" -SteamAppId={steamAppID}",
 				Port = 27016,
 				QueryPort = 27016,
-				RelativeConfigPath = "config.json",
+				RelativeConfigPath = "server.config.json",
 				Format = ConfigFormat.JSON,
 				NeedsConfigWarning = true
 			},
@@ -1637,9 +1678,10 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Longvinter",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "1639880",
 				ExeName = @"Longvinter\Binaries\Win64\LongvinterServer-Win64-Shipping.exe",
-				RequiredArgs = "-log -SteamAppId={steamAppID}",
+				RequiredArgs = "-log -GamePort={port} -SteamAppId={steamAppID}",
 				Port = 7777,
 				QueryPort = 27016,
 				RelativeConfigPath = @"Longvinter\Saved\Config\WindowsServer\Game.ini",
@@ -1789,6 +1831,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Survive the Nights",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "1502300",
 				ExeName = "STN_Dedicated_Server.exe",
 				RequiredArgs = "-steamclientlaunch -nographics -SteamAppId={steamAppID}",
@@ -1835,6 +1878,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Dysterra",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "2214780",
 				ExeName = @"Dysterra\Binaries\Win64\DysterraServer-Win64-Shipping.exe",
 				RequiredArgs = "-log -customserver -QueryPort={query} -rconip=127.0.0.1 -rconpasswd=\"{adminpass}\" -EACServer -worldsettings=\"{map}.json\" -SteamAppId={steamAppID}",
@@ -1967,6 +2011,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "ASTRONEER",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "728470",
 				ExeName = "AstroServer.exe",
 				RequiredArgs = "",
@@ -2051,6 +2096,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Just Cause 3 Multiplayer",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "619960",
 				ExeName = "Server.exe",
 				RequiredArgs = "",
@@ -2256,6 +2302,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "StarRupture",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "3809400",
 				ExeName = "StarRuptureServerEOS.exe",
 				RequiredArgs = "-Log -port={port} -SteamAppId={steamAppID}",
@@ -2282,6 +2329,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Windrose",
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
 				AppID = "4129620",
 				ExeName = "WindroseServer.exe",
 				RequiredArgs = "-log -SteamAppId={steamAppID}",
@@ -2647,6 +2695,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			},
 			new() {
 				Game = "Rust",
+				ConfigFileCreation = ConfigFileCreationMode.LaunchArgumentsOnly,
 				AppID = "258550",
 				ExeName = "RustDedicated.exe",
 				RequiredArgs = "-batchmode -nographics +server.port {port} +server.queryport {query} +app.port {app_port} +server.pve {mode} +server.level \"{map}\" +server.seed {seed} +server.worldsize {world_size} +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.password \"{pass}\" +server.identity \"{Identity}\" {rcon} -SteamAppId={steamAppID}",
@@ -2677,6 +2726,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 
 			new() {
 				Game = "Minecraft",
+				ConfigFileCreation = ConfigFileCreationMode.SynixTemplate,
 				AppID = "0",
 				ExeName = "Start.bat",
 				RequiredArgs = "-Xmx{ram}M -Xms{ram}M -jar server.jar nogui",

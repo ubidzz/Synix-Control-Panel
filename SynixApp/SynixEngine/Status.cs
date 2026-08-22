@@ -156,6 +156,7 @@ namespace Synix_Control_Panel.SynixEngine
 						server.Status = StatusManager.GetStatus(ServerState.Stopped);
 						server.SteamPID = null;
 						await GameFix.PostInstall(server);
+						await RefreshServerIconAsync(server);
 						Log($"[🔧 RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes.", Color.Green, true);
 						FileHandler.SaveServers();
 						Core.Instance.UpdateGridStatus();

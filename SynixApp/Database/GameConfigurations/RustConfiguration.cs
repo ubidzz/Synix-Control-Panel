@@ -30,6 +30,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "Rust";
+		public override bool SupportsFullReset => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.WorldSeed |
 			ManagedConfigurationInput.GameMode |

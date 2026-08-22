@@ -141,5 +141,41 @@ namespace Synix_Control_Panel.Properties {
                 this["DisablePremadeConfigurationsForDevelopment"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CollectGeneratedConfigurationsForDevelopment {
+            get {
+                return ((bool)(this["CollectGeneratedConfigurationsForDevelopment"]));
+            }
+            set {
+                this["CollectGeneratedConfigurationsForDevelopment"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LimitSteamCmdDownloadSpeed {
+            get {
+                return ((bool)(this["LimitSteamCmdDownloadSpeed"]));
+            }
+            set {
+                this["LimitSteamCmdDownloadSpeed"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int SteamCmdDownloadLimitMbps {
+            get {
+                return ((int)(this["SteamCmdDownloadLimitMbps"]));
+            }
+            set {
+                this["SteamCmdDownloadLimitMbps"] = value;
+            }
+        }
     }
 }

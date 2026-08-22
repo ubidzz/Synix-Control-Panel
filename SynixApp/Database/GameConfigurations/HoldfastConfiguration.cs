@@ -10,18 +10,35 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class HoldfastConfiguration : TemplateConfigurationDefinition
+	internal sealed class HoldfastConfiguration : ConfigurationDefinition
 	{
-		private static readonly ConfigurationTemplate[] Files =
+		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new(@"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt",
-				"server_name {ServerName}")
+			new("server_name", context => context.Server.ServerName),
+			new("server_password", context => context.Passwords.ServerPassword),
+			new("server_admin_password", context => context.Passwords.AdminPassword),
+			new("server_port", context => context.Server.Port.ToString()),
+			new("steam_query_port", context => context.Server.QueryPort.ToString()),
+			new("maximum_players", context => context.Server.MaxPlayers.ToString())
 		];
 
 		public override string GameName => "Holdfast: Nations At War";
-		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+		public override int SchemaVersion => 3;
+		public override bool SupportsFullReset => true;
+		public override bool PreservesInstalledTemplate => true;
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerPassword |
+			ManagedConfigurationInput.AdminPassword |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.QueryPort |
+			ManagedConfigurationInput.Port;
+		public override string RelativePath =>
+			@"Holdfast NaW_Data\StreamingAssets\Config\serverConfig_Core.txt";
+		public override ConfigFormat Format => ConfigFormat.Space;
+		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
 	}
 }
-

@@ -10,32 +10,30 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class WindroseConfiguration : TemplateConfigurationDefinition
+	internal sealed class WindroseConfiguration : ConfigurationDefinition
 	{
-		private static readonly ConfigurationTemplate[] Files =
+		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new(@"R5\ServerDescription.json",
-				"""
-				{
-				    "Password": "{Password}",
-				    "ServerName": "{ServerName}",
-				    "MaxPlayerCount": "{MaxPlayers}",
-				    "UserSelectedRegion": "",
-				    "P2pProxyAddress": "{LocalIP}",
-				    "AutoRestart": true,
-				    "UseDirectConnection": false,
-				    "DirectConnectionServerAddress": "{PublicIP}",
-				    "DirectConnectionServerPort": "{Port}",
-				    "DirectConnectionProxyAddress": "0.0.0.0"
-				}
-				""")
+			new("Password", context => context.Passwords.ServerPassword),
+			new("ServerName", context => context.Server.ServerName),
+			new("MaxPlayerCount", context => context.Server.MaxPlayers.ToString()),
+			new("DirectConnectionServerPort", context => context.Server.Port.ToString())
 		];
 
 		public override string GameName => "Windrose";
-		public override bool RequiresNetworkAddresses => true;
-		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+		public override int SchemaVersion => 2;
+		public override bool SupportsFullReset => true;
+		public override bool PreservesInstalledTemplate => true;
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerPassword |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.Port;
+		public override string RelativePath => @"R5\ServerDescription.json";
+		public override ConfigFormat Format => ConfigFormat.JSON;
+		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
 	}
 }
-

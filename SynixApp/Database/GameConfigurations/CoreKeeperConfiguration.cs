@@ -12,16 +12,12 @@
 // ============================================================================
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class CoreKeeperConfiguration : TemplateConfigurationDefinition
+	internal sealed class CoreKeeperConfiguration : ConfigurationDefinition
 	{
-		private static readonly ConfigurationTemplate[] Files =
-		[
-			new(@"DedicatedServer\ServerConfig.json",
-				"""{ "serverName": "{ServerName}", "maxPlayers": {MaxPlayers} }""")
-		];
-
 		public override string GameName => "Core Keeper";
-		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+		public override bool UsesConfigurationFile => false;
+
+		public override ConfigurationApplyResult Apply(ConfigurationContext context) =>
+			ConfigurationApplyResult.ArgumentsOnly();
 	}
 }
-

@@ -17,6 +17,7 @@ using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
 using Synix_Control_Panel.SynixApp.Database;
@@ -38,6 +39,8 @@ namespace Synix_Control_Panel
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
+		private System.Windows.Forms.Timer? _busyStatusTimer;
+		private int _busyStatusFrame;
 		private readonly SemaphoreSlim _versionCheckGate = new(1, 1);
 		private SynixUpdateCheckResult? _updateCheckResult;
 		private bool _updateShutdownRequested;
@@ -99,6 +102,7 @@ namespace Synix_Control_Panel
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnHelp, Properties.Resources.help, Color.FromArgb(200, 200, 200));
+			InitializeBusyStatusAnimation();
 			ApplyServerFilter();
 
 			IntPtr roundedRegionHandle = CreateRoundRectRgn(0, 0, Width, Height, 15, 15);
@@ -158,8 +162,6 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			CheckRunningStatus();
-
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
@@ -197,51 +199,31 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void CheckRunningStatus()
+		private void InitializeBusyStatusAnimation()
 		{
-			string[] spinFrames = { "|", "/", "--", "\\" };
-
-			foreach (var server in serverList)
+			_busyStatusTimer = new System.Windows.Forms.Timer(components)
 			{
-				string status = server.Status ?? "";
+				Interval = 160
+			};
+			_busyStatusTimer.Tick += BusyStatusTimer_Tick;
+			_busyStatusTimer.Start();
+			dataGridView1.CellPainting += dataGridView1_CellPainting;
+		}
 
-				if (status.StartsWith("Updating"))
-				{
-					string currentFrame = status.Replace("Updating ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Updating " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Validating"))
-				{
-					string currentFrame = status.Replace("Validating ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Validating " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Installing"))
-				{
-					string currentFrame = status.Replace("Installing ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Installing " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Backing Up"))
-				{
-					string currentFrame = status.Replace("Backing Up ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Backing Up " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Stopping"))
-				{
-					string currentFrame = status.Replace("Stopping ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Stopping " + spinFrames[nextIndex];
-				}
+		private void BusyStatusTimer_Tick(object? sender, EventArgs eventArgs)
+		{
+			if (!serverList.Any(server =>
+				BusyStatusPresentation.TryGetBusyState(server.Status, out _)))
+			{
+				return;
 			}
-			UpdateGrid();
+
+			_busyStatusFrame =
+				(_busyStatusFrame + 1) % BusyStatusPresentation.FrameCount;
+			if (colStatus.Index >= 0)
+			{
+				dataGridView1.InvalidateColumn(colStatus.Index);
+			}
 		}
 
 		private void StreamerModeCheck()
@@ -501,7 +483,8 @@ namespace Synix_Control_Panel
 
 			picSelectedServer.Image = server.DisplayIcon;
 			lblSelectedGame.Text = server.Game;
-			lblSelectedServerName.Text = $"{server.ServerName}  •  {server.Status}";
+			lblSelectedServerName.Text =
+				$"{server.ServerName}  •  {BusyStatusPresentation.GetDisplayStatus(server.Status)}";
 		}
 
 		private void ServerFilterChanged(object sender, EventArgs e)
@@ -593,6 +576,53 @@ namespace Synix_Control_Panel
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			GridStyler.SetStatusColor(dataGridView1, e);
+		}
+
+		private void dataGridView1_CellPainting(
+			object? sender,
+			DataGridViewCellPaintingEventArgs eventArgs)
+		{
+			if (eventArgs.RowIndex < 0 ||
+				eventArgs.ColumnIndex != colStatus.Index ||
+				dataGridView1.Rows[eventArgs.RowIndex].DataBoundItem is not GameServer server ||
+				!BusyStatusPresentation.TryGetBusyState(server.Status, out string busyState))
+			{
+				return;
+			}
+
+			eventArgs.PaintBackground(eventArgs.CellBounds, true);
+			eventArgs.Paint(
+				eventArgs.CellBounds,
+				DataGridViewPaintParts.Border);
+
+			Rectangle indicatorBounds = new(
+				eventArgs.CellBounds.Left + 10,
+				eventArgs.CellBounds.Top + (eventArgs.CellBounds.Height - 18) / 2,
+				18,
+				18);
+			BusyStatusPresentation.DrawIndicator(
+				eventArgs.Graphics,
+				indicatorBounds,
+				SettingsPalette.Warning,
+				true,
+				_busyStatusFrame);
+
+			Rectangle textBounds = new(
+				indicatorBounds.Right + 7,
+				eventArgs.CellBounds.Top,
+				Math.Max(0, eventArgs.CellBounds.Right - indicatorBounds.Right - 11),
+				eventArgs.CellBounds.Height);
+			TextRenderer.DrawText(
+				eventArgs.Graphics,
+				busyState,
+				eventArgs.CellStyle.Font ?? dataGridView1.Font,
+				textBounds,
+				SettingsPalette.Warning,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPadding);
+			eventArgs.Handled = true;
 		}
 
 		private void ResourceGraph_Click(object sender, EventArgs e)
@@ -1147,8 +1177,27 @@ namespace Synix_Control_Panel
 		{
 			using (Synix_Control_Panel.SynixEngine.AppSettings SynixSettings = new Synix_Control_Panel.SynixEngine.AppSettings())
 			{
-				SynixSettings.ShowDialog();
+				SynixSettings.ShowDialog(this);
 			}
+
+			ReleaseClosedSettingsMemory();
+		}
+
+		private static void ReleaseClosedSettingsMemory()
+		{
+			GCSettings.LargeObjectHeapCompactionMode =
+				GCLargeObjectHeapCompactionMode.CompactOnce;
+			GC.Collect(
+				GC.MaxGeneration,
+				GCCollectionMode.Aggressive,
+				blocking: true,
+				compacting: true);
+			GC.WaitForPendingFinalizers();
+			GC.Collect(
+				GC.MaxGeneration,
+				GCCollectionMode.Aggressive,
+				blocking: true,
+				compacting: true);
 		}
 	}
 }

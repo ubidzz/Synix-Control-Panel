@@ -31,14 +31,25 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 
 			ProcessStartInfo startInfo;
+			int? downloadThrottleKbps = GetConfiguredDownloadThrottleKbps();
 			try
 			{
-				startInfo = CreateSteamProcessStartInfo(server, blueprint);
+				startInfo = CreateSteamProcessStartInfo(
+					server,
+					blueprint,
+					downloadThrottleKbps);
 			}
 			catch (InvalidOperationException ex)
 			{
 				logCallback?.Invoke($"[CRITICAL] {ex.Message}");
 				return 97;
+			}
+
+			if (downloadThrottleKbps.HasValue)
+			{
+				logCallback?.Invoke(
+					$"[STEAMCMD] Download speed limited to " +
+					$"{downloadThrottleKbps.Value / 1000} Mbps for this operation.");
 			}
 
 			if (blueprint.RequiresSteamLogin)
@@ -277,6 +288,17 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			GameServer server,
 			GameInfo blueprint)
 		{
+			return CreateSteamProcessStartInfo(
+				server,
+				blueprint,
+				GetConfiguredDownloadThrottleKbps());
+		}
+
+		internal static ProcessStartInfo CreateSteamProcessStartInfo(
+			GameServer server,
+			GameInfo blueprint,
+			int? downloadThrottleKbps)
+		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(blueprint);
 
@@ -307,12 +329,34 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			startInfo.ArgumentList.Add(authenticated
 				? server.SteamAccountName.Trim()
 				: "anonymous");
+			if (downloadThrottleKbps is > 0)
+			{
+				startInfo.ArgumentList.Add("+set_download_throttle");
+				startInfo.ArgumentList.Add(downloadThrottleKbps.Value.ToString());
+				startInfo.ArgumentList.Add("false");
+			}
 			startInfo.ArgumentList.Add("+app_update");
 			startInfo.ArgumentList.Add(blueprint.AppID);
 			startInfo.ArgumentList.Add("validate");
 			startInfo.ArgumentList.Add("+quit");
 
 			return startInfo;
+		}
+
+		internal static int ConvertDownloadLimitToKbps(int megabitsPerSecond)
+		{
+			return Math.Clamp(megabitsPerSecond, 1, 10000) * 1000;
+		}
+
+		private static int? GetConfiguredDownloadThrottleKbps()
+		{
+			if (!Properties.Settings.Default.LimitSteamCmdDownloadSpeed)
+			{
+				return null;
+			}
+
+			return ConvertDownloadLimitToKbps(
+				Properties.Settings.Default.SteamCmdDownloadLimitMbps);
 		}
 
 		internal static ProcessStartInfo CreateSteamAuthenticationStartInfo(

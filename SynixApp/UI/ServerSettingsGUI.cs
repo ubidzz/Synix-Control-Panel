@@ -748,15 +748,10 @@ namespace Synix_Control_Panel
 					ConfigUses(ManagedConfigurationInput.MaxPlayers)
 						? "Required"
 						: "Disabled";
-				bool isMinecraftTemplate = gameData.Game.Equals(
-					"Minecraft",
-					StringComparison.OrdinalIgnoreCase);
 				bool usesQueryPort =
 					args.Contains("{query}") ||
 					ConfigUses(ManagedConfigurationInput.QueryPort);
-				numQueryPort.Tag = isMinecraftTemplate && !usesQueryPort
-					? "Disabled"
-					: "Required";
+				numQueryPort.Tag = usesQueryPort ? "Required" : "Disabled";
 				cmbWorldName.Tag =
 					args.Contains("{map}") ||
 					ConfigUses(ManagedConfigurationInput.WorldName)
@@ -1292,6 +1287,13 @@ namespace Synix_Control_Panel
 				{
 					numPort.Value = Math.Clamp(gameData.Port, numPort.Minimum, numPort.Maximum);
 					numQueryPort.Value = Math.Clamp(gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+					if (gameData.AppPort.HasValue)
+					{
+						numAppPort.Value = Math.Clamp(
+							gameData.AppPort.Value,
+							numAppPort.Minimum,
+							numAppPort.Maximum);
+					}
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
 					PopulateGameModes(gameData, "PVE");
 

@@ -42,10 +42,45 @@ namespace Synix_Control_Panel.SynixEngine
 			else
 			{
 				RecordGameVerification(server.Game, GameVerificationKind.Stop);
+				await CollectGeneratedConfigurationAfterStop(server);
 			}
 
 			FileHandler.SaveServers();
 			Core.Instance.UpdateGridStatus();
+		}
+
+		private async Task CollectGeneratedConfigurationAfterStop(GameServer server)
+		{
+			if (!GeneratedConfigurationCollector.AutomaticCollectionEnabled ||
+				GameFix.GetConfigFileCreationMode(server.Game) is
+					ConfigFileCreationMode.SynixTemplate or
+					ConfigFileCreationMode.LaunchArgumentsOnly)
+			{
+				return;
+			}
+
+			try
+			{
+				GeneratedConfigurationCaptureResult result = await Task.Run(() =>
+					GeneratedConfigurationCollector.CollectServer(server));
+				if (result.CopiedFiles > 0)
+				{
+					Log(
+						$"[CONFIG CAPTURE] Copied {result.CopiedFiles} generated configuration file(s) for {server.ServerName} to {result.DestinationRoot}.",
+						Color.Cyan);
+				}
+
+				foreach (string error in result.Errors.Take(3))
+				{
+					Log($"[CONFIG CAPTURE] {error}", Color.OrangeRed);
+				}
+			}
+			catch (Exception exception)
+			{
+				Log(
+					$"[CONFIG CAPTURE] Could not collect the generated configuration for {server.ServerName}: {exception.Message}",
+					Color.OrangeRed);
+			}
 		}
 
 		public void OpenConfigEditor(GameServer server)
@@ -66,26 +101,53 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			string cleanIdentity = !string.IsNullOrWhiteSpace(server.ServerName)
-				? server.ServerName.Replace(" ", "_")
-				: "Server";
-
-			string worldName = server.WorldName ?? "";
-
-			string resolvedRelativePath = blueprint.RelativeConfigPath
-				.Replace("{Identity}", cleanIdentity)
-				.Replace("{ServerName}", cleanIdentity)
-				.Replace("{map}", worldName)
-				.Replace("{port}", server.Port.ToString())
-				.Replace("{query}", server.QueryPort.ToString())
-				.Replace('/', Path.DirectorySeparatorChar)
-				.Replace('\\', Path.DirectorySeparatorChar);
-
-			string fullPath = Path.Combine(server.InstallPath, resolvedRelativePath);
-
-			if (File.Exists(fullPath))
+			string fullPath;
+			ConfigFormat format = blueprint.Format;
+			if (GameFix.TryGetConfiguration(
+				server.Game,
+				out ConfigurationDefinition? definition) &&
+				definition?.UsesConfigurationFile == true)
 			{
-				using (ServerConfig editor = new ServerConfig(fullPath, blueprint.Format))
+				try
+				{
+					fullPath = definition.ResolveFullPath(server);
+					format = definition.Format;
+				}
+				catch (Exception exception)
+				{
+					Log($"Could not resolve the config file safely:\n{exception.Message}", Color.Red, true);
+					return;
+				}
+			}
+			else
+			{
+				string cleanIdentity = GetSafeName(server.ServerName);
+				string resolvedRelativePath = blueprint.RelativeConfigPath
+					.Replace("{Identity}", cleanIdentity)
+					.Replace("{ServerName}", cleanIdentity)
+					.Replace("{map}", server.WorldName ?? string.Empty)
+					.Replace("{port}", server.Port.ToString())
+					.Replace("{query}", server.QueryPort.ToString())
+					.Replace('/', Path.DirectorySeparatorChar)
+					.Replace('\\', Path.DirectorySeparatorChar);
+				string installRoot = Path.GetFullPath(server.InstallPath)
+					.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				fullPath = Path.GetFullPath(Path.Combine(installRoot, resolvedRelativePath));
+				if (!fullPath.StartsWith(
+					installRoot + Path.DirectorySeparatorChar,
+					StringComparison.OrdinalIgnoreCase))
+				{
+					Log("The config path leaves the server installation folder.", Color.Red, true);
+					return;
+				}
+			}
+
+			if (File.Exists(fullPath) || GameFix.CanResetManagedConfiguration(server))
+			{
+				using (ServerConfig editor = new ServerConfig(
+					fullPath,
+					format,
+					server))
 				{
 					editor.ShowDialog();
 				}
@@ -367,7 +429,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 						bool fixApplied = await GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
-						newServer.IsFirstBoot = fixApplied;
+						newServer.IsFirstBoot =
+							fixApplied ||
+							gameData.NeedsConfigWarning ||
+							gameData.RequiredLaunchFiles.Length > 0;
+						if (await RefreshServerIconAsync(newServer))
+						{
+							Core.Instance.UpdateGridStatus();
+							Log($"[ICON] Updated the dashboard icon for {newServer.Game}.", Color.Cyan);
+						}
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
 						RecordGameVerification(newServer.Game, GameVerificationKind.Install);
 					}
@@ -637,7 +707,16 @@ namespace Synix_Control_Panel.SynixEngine
 
 					FileHandler.SaveServers();
 				}
+				bool displayedFirstBootWarning = server.IsFirstBoot;
 				if (ShouldBlockForConfig(server)) return;
+				if (!EnsureRequiredLaunchFilesAndReport(
+					server,
+					showDialog:
+						!displayedFirstBootWarning &&
+						!status.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase)))
+				{
+					return;
+				}
 
 				if (status == "RESTART")
 				{

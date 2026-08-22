@@ -17,10 +17,29 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		private static readonly ConfigurationTemplate[] Files =
 		[
 			new(@"BeyondTheWire\ServerConfig\Server.cfg",
-				"ServerName=\"{ServerName}\"")
+				"""
+				ServerName="{ServerName}"
+				ServerPassword="{Password}"
+				MaxPlayers={MaxPlayers}
+				NumReservedSlots=0
+				IsLANMatch=false
+				ShouldAdvertise=true
+				NumPlayersDiffForTeamChanges=3
+				AllowTeamChanges=true
+				PreventTeamChangeIfUnbalanced=true
+				EnforceTeamBalance=true
+				RejoinSquadDelayAfterKick=180
+				RecordDemos=false
+				ServerMessageInterval=300
+				VehicleClaimingDisabled=false
+				AllowCommunityAdminAccess=false
+				AllowDevProfiling=false
+				PublicQueueLimit=10
+				""")
 		];
 
 		public override string GameName => "Beyond the Wire";
+		public override int SchemaVersion => 2;
 		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
 	}
 }

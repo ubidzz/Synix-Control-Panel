@@ -109,6 +109,61 @@ public sealed class SteamLoginInstallationTests
 	}
 
 	[Fact]
+	public void LimitedSteamDownloadAddsSessionOnlyThrottleBeforeUpdate()
+	{
+		GameInfo game = GameDatabase.GetGame("Palworld")!;
+		GameServer server = new()
+		{
+			InstallPath = @"C:\Synix\Games\Palworld\Test"
+		};
+
+		var startInfo = ServerInstaller.CreateSteamProcessStartInfo(
+			server,
+			game,
+			ServerInstaller.ConvertDownloadLimitToKbps(25));
+		List<string> arguments = startInfo.ArgumentList.ToList();
+		int throttleIndex = arguments.IndexOf("+set_download_throttle");
+		int updateIndex = arguments.IndexOf("+app_update");
+
+		Assert.True(throttleIndex >= 0);
+		Assert.Equal("25000", arguments[throttleIndex + 1]);
+		Assert.Equal("false", arguments[throttleIndex + 2]);
+		Assert.True(throttleIndex < updateIndex);
+	}
+
+	[Fact]
+	public void UnlimitedSteamDownloadDoesNotAddThrottle()
+	{
+		GameInfo game = GameDatabase.GetGame("Palworld")!;
+		GameServer server = new()
+		{
+			InstallPath = @"C:\Synix\Games\Palworld\Test"
+		};
+
+		var startInfo = ServerInstaller.CreateSteamProcessStartInfo(
+			server,
+			game,
+			downloadThrottleKbps: null);
+
+		Assert.DoesNotContain(
+			"+set_download_throttle",
+			startInfo.ArgumentList);
+	}
+
+	[Theory]
+	[InlineData(0, 1000)]
+	[InlineData(25, 25000)]
+	[InlineData(10001, 10000000)]
+	public void DownloadLimitConversionStaysInsideSupportedUiRange(
+		int megabitsPerSecond,
+		int expectedKbps)
+	{
+		Assert.Equal(
+			expectedKbps,
+			ServerInstaller.ConvertDownloadLimitToKbps(megabitsPerSecond));
+	}
+
+	[Fact]
 	public void ImportedServerAuthorizationUsesLoginWithoutReinstalling()
 	{
 		GameInfo game = GameDatabase.GetGame("Arma 3")!;

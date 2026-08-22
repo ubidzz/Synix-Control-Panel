@@ -528,10 +528,10 @@ namespace Synix_Control_Panel.Help
 			// 
 			// pnlStatusIndicator
 			// 
-			pnlStatusIndicator.BackColor = Color.FromArgb(248, 113, 113);
-			pnlStatusIndicator.Location = new Point(22, 20);
+			pnlStatusIndicator.BackColor = Color.FromArgb(17, 27, 45);
+			pnlStatusIndicator.Location = new Point(18, 13);
 			pnlStatusIndicator.Name = "pnlStatusIndicator";
-			pnlStatusIndicator.Size = new Size(10, 10);
+			pnlStatusIndicator.Size = new Size(24, 24);
 			pnlStatusIndicator.TabIndex = 0;
 			// 
 			// lblStatusTitle
@@ -540,7 +540,7 @@ namespace Synix_Control_Panel.Help
 			lblStatusTitle.BackColor = Color.FromArgb(17, 27, 45);
 			lblStatusTitle.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
 			lblStatusTitle.ForeColor = Color.FromArgb(158, 172, 194);
-			lblStatusTitle.Location = new Point(40, 15);
+			lblStatusTitle.Location = new Point(48, 15);
 			lblStatusTitle.Name = "lblStatusTitle";
 			lblStatusTitle.Size = new Size(111, 19);
 			lblStatusTitle.TabIndex = 1;

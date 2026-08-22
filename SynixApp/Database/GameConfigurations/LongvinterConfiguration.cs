@@ -18,13 +18,31 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		[
 			new(@"Longvinter\Saved\Config\WindowsServer\Game.ini",
 				"""
-				[/Script/Longvinter.LongvinterGameMode]
-				ServerName="{ServerName}"
+				[/Game/Blueprints/Server/GI_AdvancedSessions.GI_AdvancedSessions_C]
+				ServerName={ServerName}
+				ServerMOTD=Welcome to {ServerName}
+				MaxPlayers={MaxPlayers}
+				Password={Password}
+				CommunityWebsite=
+				CoopPlay=false
+				CheckVPN=true
+				CoopSpawn=0
+				Tag=none
+				ChestRespawnTime=600
+				DisableWanderingTraders=false
+				ServerRegion=
+
+				[/Game/Blueprints/Server/GM_Longvinter.GM_Longvinter_C]
+				AdminSteamID=
+				PVP={IsPvp}
+				TentDecay=true
+				MaxTents=2
+				SaveBackups=false
 				""")
 		];
 
 		public override string GameName => "Longvinter";
+		public override int SchemaVersion => 2;
 		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
 	}
 }
-

@@ -10,18 +10,45 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class EcoConfiguration : TemplateConfigurationDefinition
+	internal sealed class EcoConfiguration : ConfigurationDefinition
 	{
-		private static readonly ConfigurationTemplate[] Files =
+		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new(@"Configs\Network.eco",
-				"""{ "Description": "{ServerName}", "MaxConnections": {MaxPlayers} }""")
+			new("Name", context => context.Server.ServerName),
+			new("Password", context => context.Passwords.ServerPassword),
+			new("GameServerPort", context => context.Server.Port.ToString()),
+			new("WebServerPort", context => context.Server.QueryPort.ToString()),
+			new("RconServerPort", context => context.Server.RconPort.ToString()),
+			new("RconPassword", context =>
+				context.Server.EnableRcon ? context.Passwords.RconPassword : string.Empty),
+			new("DefaultSlots", context => context.Server.MaxPlayers.ToString())
 		];
 
 		public override string GameName => "Eco";
-		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+		public override int SchemaVersion => 2;
+		public override bool SupportsFullReset => true;
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerPassword |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.QueryPort |
+			ManagedConfigurationInput.Rcon |
+			ManagedConfigurationInput.Port;
+		public override string RelativePath => @"Configs\Network.eco";
+		public override ConfigFormat Format => ConfigFormat.JSON;
+		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
+
+		public override string? CreateTemplate(ConfigurationContext context)
+		{
+			string sourcePath = ResolveFullPath(
+				context.Server,
+				@"Configs\Network.eco.template");
+			return File.Exists(sourcePath)
+				? File.ReadAllText(sourcePath)
+				: null;
+		}
 	}
 }
-

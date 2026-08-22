@@ -10,12 +10,60 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class WreckfestConfiguration : ConfigurationDefinition
 	{
 		public override string GameName => "Wreckfest";
+		public override bool SupportsFullReset => true;
 		public override string RelativePath => "server_config.cfg";
+
+		public override bool NeedsStructuralRepair(ConfigurationContext context)
+		{
+			string sourcePath = ResolveFullPath(
+				context.Server,
+				"initial_server_config.cfg");
+			if (!File.Exists(sourcePath))
+			{
+				return false;
+			}
+
+			string targetPath = ResolveFullPath(context.Server);
+			return !ConfigHandler.HasRequiredStructure(
+				targetPath,
+				File.ReadAllText(sourcePath),
+				Format);
+		}
+
+		public override ConfigurationApplyResult ResetToTemplate(
+			ConfigurationContext context)
+		{
+			try
+			{
+				string sourcePath = ResolveFullPath(
+					context.Server,
+					"initial_server_config.cfg");
+				if (!File.Exists(sourcePath))
+				{
+					return ConfigurationApplyResult.Failure(
+						"Wreckfest has not generated its initial configuration yet.");
+				}
+
+				return ReplaceWithTemplates(
+					context,
+					[new ResetTemplate(
+						RelativePath,
+						File.ReadAllText(sourcePath),
+						Format)]);
+			}
+			catch (Exception exception)
+			{
+				return ConfigurationApplyResult.Failure(
+					$"The Wreckfest configuration could not be reset: {exception.Message}");
+			}
+		}
 
 		public override ConfigurationApplyResult Apply(ConfigurationContext context)
 		{
@@ -61,4 +109,3 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		}
 	}
 }
-

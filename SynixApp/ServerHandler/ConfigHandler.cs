@@ -280,8 +280,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
-			ParsedDocument document = ParseDocument(snapshot.Text, format);
+			return LoadConfigText(snapshot.Text, format);
+		}
 
+		internal static List<ConfigLine> LoadConfigText(
+			string text,
+			ConfigFormat format)
+		{
+			ArgumentNullException.ThrowIfNull(text);
+			ParsedDocument document = ParseDocument(text, format);
 			return document.Values.Select(value => new ConfigLine
 			{
 				Id = value.Id,
@@ -293,6 +300,34 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				HasOriginalValue = true,
 				Type = value.Type
 			}).ToList();
+		}
+
+		internal static bool HasRequiredStructure(
+			string path,
+			string template,
+			ConfigFormat format)
+		{
+			if (!File.Exists(path))
+			{
+				return false;
+			}
+
+			string existingText = TextFileSnapshot.Read(path).Text;
+			Dictionary<string, int> existingStructure =
+				BuildStructureSignature(existingText, format);
+			Dictionary<string, int> requiredStructure =
+				BuildStructureSignature(template, format);
+
+			foreach ((string key, int requiredCount) in requiredStructure)
+			{
+				if (!existingStructure.TryGetValue(key, out int existingCount) ||
+					existingCount < requiredCount)
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		public static string CreatePreview(
@@ -945,6 +980,57 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				_ => throw new NotSupportedException(
 					$"The configuration format '{format}' is not supported.")
 			};
+		}
+
+		private static Dictionary<string, int> BuildStructureSignature(
+			string text,
+			ConfigFormat format)
+		{
+			Dictionary<string, int> signature = new(StringComparer.Ordinal);
+			if (format == ConfigFormat.JSON)
+			{
+				using JsonDocument document = JsonDocument.Parse(text);
+				AddJsonStructure(document.RootElement, "$", signature);
+				return signature;
+			}
+
+			ParsedDocument parsed = ParseDocument(text, format);
+			foreach (ParsedValue value in parsed.Values)
+			{
+				AddStructureEntry(
+					signature,
+					$"{value.Path}\u001f{value.Type}");
+			}
+
+			return signature;
+		}
+
+		private static void AddJsonStructure(
+			JsonElement element,
+			string path,
+			Dictionary<string, int> signature)
+		{
+			AddStructureEntry(signature, $"{path}\u001f{element.ValueKind}");
+			if (element.ValueKind != JsonValueKind.Object)
+			{
+				return;
+			}
+
+			foreach (JsonProperty property in element.EnumerateObject())
+			{
+				string segment = property.Name
+					.Replace("~", "~0", StringComparison.Ordinal)
+					.Replace("/", "~1", StringComparison.Ordinal);
+				AddJsonStructure(property.Value, $"{path}/{segment}", signature);
+			}
+		}
+
+		private static void AddStructureEntry(
+			Dictionary<string, int> signature,
+			string key)
+		{
+			signature.TryGetValue(key, out int count);
+			signature[key] = count + 1;
 		}
 
 		private static ParsedDocument ParseIniDocument(string text)

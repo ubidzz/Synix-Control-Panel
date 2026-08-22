@@ -10,18 +10,30 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class AssettoCorsaCompetizioneConfiguration : TemplateConfigurationDefinition
+	internal sealed class AssettoCorsaCompetizioneConfiguration : ConfigurationDefinition
 	{
-		private static readonly ConfigurationTemplate[] Files =
+		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new(@"cfg\settings.json",
-				"""{ "serverName": "{ServerName}", "maxClients": {MaxPlayers} }""")
+			new("serverName", context => context.Server.ServerName),
+			new("password", context => context.Passwords.ServerPassword),
+			new("adminPassword", context => context.Passwords.AdminPassword),
+			new("maxCarSlots", context => context.Server.MaxPlayers.ToString())
 		];
 
 		public override string GameName => "Assetto Corsa Competizione";
-		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+		public override int SchemaVersion => 3;
+		public override bool SupportsFullReset => true;
+		public override bool PreservesInstalledTemplate => true;
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerPassword |
+			ManagedConfigurationInput.AdminPassword |
+			ManagedConfigurationInput.MaxPlayers;
+		public override string RelativePath => @"cfg\settings.json";
+		public override ConfigFormat Format => ConfigFormat.JSON;
+		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
 	}
 }
-

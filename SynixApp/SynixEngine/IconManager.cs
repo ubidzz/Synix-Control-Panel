@@ -113,6 +113,72 @@ namespace Synix_Control_Panel.SynixEngine
 			return Path.Combine(GameIconsPath, "default_server.png");
 		}
 
+		public static async Task<bool> RefreshServerIconAsync(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+
+			GameInfo? blueprint = GameDatabase.GetGame(server.Game);
+			string executableName = blueprint?.ExeName ?? server.ExeName;
+			if (string.IsNullOrWhiteSpace(server.InstallPath) ||
+				string.IsNullOrWhiteSpace(executableName))
+			{
+				return false;
+			}
+
+			string fullExePath = Path.Combine(server.InstallPath, executableName);
+			string iconPath = await Task.Run(() =>
+				GetLocalServerIcon(server.Game, fullExePath));
+			if (!IsValidIconFile(iconPath))
+			{
+				return false;
+			}
+
+			MainGUI? mainWindow = MainGUI.Instance;
+			if (mainWindow != null &&
+				!mainWindow.IsDisposed &&
+				mainWindow.IsHandleCreated &&
+				mainWindow.InvokeRequired)
+			{
+				return (bool)mainWindow.Invoke(
+					new Func<bool>(() => ApplyServerIcon(server, iconPath)));
+			}
+
+			return ApplyServerIcon(server, iconPath);
+		}
+
+		internal static bool ApplyServerIcon(GameServer server, string iconPath)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (!IsValidIconFile(iconPath))
+			{
+				return false;
+			}
+
+			Bitmap refreshedIcon;
+			using (MemoryStream stream = new(File.ReadAllBytes(iconPath)))
+			using (Image sourceImage = Image.FromStream(
+				stream,
+				useEmbeddedColorManagement: false,
+				validateImageData: true))
+			{
+				refreshedIcon = new Bitmap(sourceImage);
+			}
+
+			string canonicalGameName = GameDatabase.GetCanonicalGameName(server.Game);
+			MainGUI.ServerIconsCache[canonicalGameName] = refreshedIcon;
+			server.DisplayIcon = refreshedIcon;
+			foreach (GameServer installedServer in MainGUI.serverList.Where(item =>
+				string.Equals(
+					GameDatabase.GetCanonicalGameName(item.Game),
+					canonicalGameName,
+					StringComparison.OrdinalIgnoreCase)))
+			{
+				installedServer.DisplayIcon = refreshedIcon;
+			}
+
+			return true;
+		}
+
 		private static bool IsValidIconFile(string path)
 		{
 			if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))

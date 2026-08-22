@@ -48,13 +48,16 @@ namespace Synix_Control_Panel.Help
 		private System.Windows.Forms.Timer? _metricsTimer;
 		private DateTime _lastCpuCheckTime;
 		private TimeSpan _lastCpuTotalProcessorTime;
-		private int _spinnerFrame;
+		private int _busyStatusFrame;
+		private bool _statusIndicatorBusy;
+		private Color _statusIndicatorColor = SettingsPalette.Danger;
 		private double _currentCpuPercentage;
 		private double _currentRamPercentage;
 
 		public ServerInfo()
 		{
 			InitializeComponent();
+			InitializeStatusIndicator();
 			_server = new GameServer();
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 				ThemeManager.Apply(this);
@@ -63,6 +66,7 @@ namespace Synix_Control_Panel.Help
 		public ServerInfo(GameServer server)
 		{
 			InitializeComponent();
+			InitializeStatusIndicator();
 			_server = server ?? throw new ArgumentNullException(nameof(server));
 			ThemeManager.Apply(this);
 
@@ -231,6 +235,22 @@ namespace Synix_Control_Panel.Help
 			_metricsTimer.Start();
 		}
 
+		private void InitializeStatusIndicator()
+		{
+			pnlStatusIndicator.BackColor = SettingsPalette.Card;
+			pnlStatusIndicator.Paint += StatusIndicator_Paint;
+		}
+
+		private void StatusIndicator_Paint(object? sender, PaintEventArgs eventArgs)
+		{
+			BusyStatusPresentation.DrawIndicator(
+				eventArgs.Graphics,
+				pnlStatusIndicator.ClientRectangle,
+				_statusIndicatorColor,
+				_statusIndicatorBusy,
+				_busyStatusFrame);
+		}
+
 		private void MetricsTimer_Tick(object? sender, EventArgs eventArgs)
 		{
 			UpdateStatusPresentation(_server.Status);
@@ -354,28 +374,20 @@ namespace Synix_Control_Panel.Help
 		private void UpdateStatusPresentation(string? rawStatus)
 		{
 			string status = DisplayOrFallback(rawStatus, "Stopped");
-			string[] busyStates =
-			{
-				"Updating",
-				"Validating",
-				"Installing",
-				"Backing Up",
-				"Stopping",
-				"Starting"
-			};
-
-			string? busyState = busyStates.FirstOrDefault(
-				item => status.StartsWith(item, StringComparison.OrdinalIgnoreCase));
+			bool isBusy = BusyStatusPresentation.TryGetBusyState(
+				status,
+				out string busyState);
 
 			Color statusColor;
 			string displayedStatus;
 
-			if (busyState != null)
+			if (isBusy)
 			{
-				string[] frames = { "|", "/", "—", "\\" };
-				displayedStatus = $"{busyState} {frames[_spinnerFrame++ % frames.Length]}";
+				displayedStatus = busyState;
 				statusColor = BusyColor;
 				lblStatusCaption.Text = "A server operation is currently in progress";
+				_busyStatusFrame =
+					(_busyStatusFrame + 1) % BusyStatusPresentation.FrameCount;
 			}
 			else if (status.Equals("Running", StringComparison.OrdinalIgnoreCase))
 			{
@@ -399,7 +411,9 @@ namespace Synix_Control_Panel.Help
 
 			lblStatusCardValue.Text = displayedStatus;
 			lblStatusCardValue.ForeColor = statusColor;
-			pnlStatusIndicator.BackColor = statusColor;
+			_statusIndicatorBusy = isBusy;
+			_statusIndicatorColor = statusColor;
+			pnlStatusIndicator.Invalidate();
 		}
 
 		private void MetricTrack_SizeChanged(object? sender, EventArgs eventArgs)

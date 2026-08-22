@@ -10,6 +10,8 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class SubsistenceConfiguration : TemplateConfigurationDefinition
@@ -38,7 +40,99 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "Subsistence";
+		public override int SchemaVersion => 2;
 		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+
+		public override ConfigurationApplyResult Apply(ConfigurationContext context)
+		{
+			foreach (ConfigurationTemplate template in Templates)
+			{
+				string path = ResolveFullPath(context.Server, template.RelativePath);
+				string snapshotPath = path + ".synix.template";
+				if (File.Exists(path) && !File.Exists(snapshotPath))
+				{
+					WriteNewFile(snapshotPath, File.ReadAllText(path));
+				}
+			}
+
+			return base.Apply(context);
+		}
+
+		public override bool NeedsStructuralRepair(ConfigurationContext context)
+		{
+			foreach (ConfigurationTemplate template in Templates)
+			{
+				string path = ResolveFullPath(context.Server, template.RelativePath);
+				string snapshotPath = path + ".synix.template";
+				if (File.Exists(snapshotPath) &&
+					!ConfigHandler.HasRequiredStructure(
+						path,
+						File.ReadAllText(snapshotPath),
+						Format))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public override ConfigurationApplyResult ResetToTemplate(
+			ConfigurationContext context)
+		{
+			List<ResetTemplate> snapshots = [];
+			foreach (ConfigurationTemplate template in Templates)
+			{
+				string path = ResolveFullPath(context.Server, template.RelativePath);
+				string snapshotPath = path + ".synix.template";
+				if (!File.Exists(snapshotPath))
+				{
+					return ConfigurationApplyResult.Failure(
+						"Subsistence must generate its complete configuration files before Synix can reset them.");
+				}
+
+				snapshots.Add(new ResetTemplate(
+					template.RelativePath,
+					File.ReadAllText(snapshotPath),
+					Format));
+			}
+
+			ConfigurationApplyResult reset = ReplaceWithTemplates(context, snapshots);
+			if (!reset.Succeeded)
+			{
+				return reset;
+			}
+
+			Dictionary<string, byte[]> originalBackups = snapshots
+				.Select(snapshot => ResolveFullPath(context.Server, snapshot.RelativePath) + ".synix.bak")
+				.Where(File.Exists)
+				.ToDictionary(path => path, File.ReadAllBytes, StringComparer.OrdinalIgnoreCase);
+			ConfigurationApplyResult applied;
+			try
+			{
+				applied = Apply(context);
+			}
+			finally
+			{
+				foreach ((string path, byte[] content) in originalBackups)
+				{
+					File.WriteAllBytes(path, content);
+				}
+			}
+			if (!applied.Succeeded || !applied.Complete)
+			{
+				return new ConfigurationApplyResult(
+					applied.Succeeded,
+					applied.Complete,
+					true,
+					reset.Created,
+					$"The complete Subsistence configuration files were restored, but the saved Synix settings could not all be reapplied. {applied.Message}");
+			}
+
+			return reset with
+			{
+				Message = $"{reset.Message} Reapplied the saved Synix server settings."
+			};
+		}
 	}
 }
-

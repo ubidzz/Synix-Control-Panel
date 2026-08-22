@@ -44,12 +44,27 @@ namespace Synix_Control_Panel.SynixEngine
 			lblTitleDarkMode = new Label();
 			lblDescriptionDarkMode = new Label();
 			chkDarkMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
+			settingsCardSteamDownloads = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			cardLayoutSteamDownloads = new TableLayoutPanel();
+			settingGlyphSteamDownloads = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			textLayoutSteamDownloads = new TableLayoutPanel();
+			lblTitleSteamDownloads = new Label();
+			lblDescriptionSteamDownloads = new Label();
+			downloadControlsLayout = new TableLayoutPanel();
+			cmbSteamCmdDownloadMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
+			numSteamCmdDownloadLimit = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown();
+			lblSteamCmdDownloadUnit = new Label();
 			settingsCard.SuspendLayout();
 			cardLayout.SuspendLayout();
 			textLayout.SuspendLayout();
 			settingsCardDarkMode.SuspendLayout();
 			cardLayoutDarkMode.SuspendLayout();
 			textLayoutDarkMode.SuspendLayout();
+			settingsCardSteamDownloads.SuspendLayout();
+			cardLayoutSteamDownloads.SuspendLayout();
+			textLayoutSteamDownloads.SuspendLayout();
+			downloadControlsLayout.SuspendLayout();
+			(numSteamCmdDownloadLimit).BeginInit();
 			SuspendLayout();
 			//
 			// settingsCard
@@ -264,11 +279,162 @@ namespace Synix_Control_Panel.SynixEngine
 			chkDarkMode.TabIndex = 2;
 			chkDarkMode.UseVisualStyleBackColor = false;
 			//
+			// settingsCardSteamDownloads
+			//
+			settingsCardSteamDownloads.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			settingsCardSteamDownloads.BackColor = Color.FromArgb(17, 27, 45);
+			settingsCardSteamDownloads.BorderColor = Color.FromArgb(38, 52, 77);
+			settingsCardSteamDownloads.Controls.Add(cardLayoutSteamDownloads);
+			settingsCardSteamDownloads.CornerRadius = 13;
+			settingsCardSteamDownloads.FillColor = Color.FromArgb(17, 27, 45);
+			settingsCardSteamDownloads.Location = new Point(0, 270);
+			settingsCardSteamDownloads.Margin = new Padding(0);
+			settingsCardSteamDownloads.Name = "settingsCardSteamDownloads";
+			settingsCardSteamDownloads.Size = new Size(818, 128);
+			settingsCardSteamDownloads.TabIndex = 2;
+			//
+			// cardLayoutSteamDownloads
+			//
+			cardLayoutSteamDownloads.BackColor = Color.FromArgb(17, 27, 45);
+			cardLayoutSteamDownloads.ColumnCount = 3;
+			cardLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));
+			cardLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			cardLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 304F));
+			cardLayoutSteamDownloads.Controls.Add(settingGlyphSteamDownloads, 0, 0);
+			cardLayoutSteamDownloads.Controls.Add(textLayoutSteamDownloads, 1, 0);
+			cardLayoutSteamDownloads.Controls.Add(downloadControlsLayout, 2, 0);
+			cardLayoutSteamDownloads.Dock = DockStyle.Fill;
+			cardLayoutSteamDownloads.Location = new Point(0, 0);
+			cardLayoutSteamDownloads.Margin = new Padding(0);
+			cardLayoutSteamDownloads.Name = "cardLayoutSteamDownloads";
+			cardLayoutSteamDownloads.Padding = new Padding(22, 18, 20, 18);
+			cardLayoutSteamDownloads.RowCount = 1;
+			cardLayoutSteamDownloads.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			cardLayoutSteamDownloads.Size = new Size(818, 128);
+			cardLayoutSteamDownloads.TabIndex = 0;
+			//
+			// settingGlyphSteamDownloads
+			//
+			settingGlyphSteamDownloads.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			settingGlyphSteamDownloads.BackColor = Color.FromArgb(17, 27, 45);
+			settingGlyphSteamDownloads.Font = new Font("Segoe UI Symbol", 15F);
+			settingGlyphSteamDownloads.ForeColor = Color.FromArgb(32, 214, 199);
+			settingGlyphSteamDownloads.Glyph = "↓";
+			settingGlyphSteamDownloads.Location = new Point(22, 22);
+			settingGlyphSteamDownloads.Margin = new Padding(0, 4, 12, 0);
+			settingGlyphSteamDownloads.Name = "settingGlyphSteamDownloads";
+			settingGlyphSteamDownloads.Size = new Size(42, 42);
+			settingGlyphSteamDownloads.TabIndex = 0;
+			//
+			// textLayoutSteamDownloads
+			//
+			textLayoutSteamDownloads.BackColor = Color.FromArgb(17, 27, 45);
+			textLayoutSteamDownloads.ColumnCount = 1;
+			textLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			textLayoutSteamDownloads.Controls.Add(lblTitleSteamDownloads, 0, 0);
+			textLayoutSteamDownloads.Controls.Add(lblDescriptionSteamDownloads, 0, 1);
+			textLayoutSteamDownloads.Dock = DockStyle.Fill;
+			textLayoutSteamDownloads.Location = new Point(80, 18);
+			textLayoutSteamDownloads.Margin = new Padding(0);
+			textLayoutSteamDownloads.Name = "textLayoutSteamDownloads";
+			textLayoutSteamDownloads.RowCount = 2;
+			textLayoutSteamDownloads.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
+			textLayoutSteamDownloads.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			textLayoutSteamDownloads.Size = new Size(392, 92);
+			textLayoutSteamDownloads.TabIndex = 1;
+			//
+			// lblTitleSteamDownloads
+			//
+			lblTitleSteamDownloads.AutoEllipsis = true;
+			lblTitleSteamDownloads.BackColor = Color.FromArgb(17, 27, 45);
+			lblTitleSteamDownloads.Dock = DockStyle.Fill;
+			lblTitleSteamDownloads.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblTitleSteamDownloads.ForeColor = Color.FromArgb(245, 247, 251);
+			lblTitleSteamDownloads.Margin = new Padding(0);
+			lblTitleSteamDownloads.Name = "lblTitleSteamDownloads";
+			lblTitleSteamDownloads.Size = new Size(392, 31);
+			lblTitleSteamDownloads.TabIndex = 0;
+			lblTitleSteamDownloads.Text = "SteamCMD Download Speed";
+			lblTitleSteamDownloads.TextAlign = ContentAlignment.MiddleLeft;
+			//
+			// lblDescriptionSteamDownloads
+			//
+			lblDescriptionSteamDownloads.AutoEllipsis = true;
+			lblDescriptionSteamDownloads.BackColor = Color.FromArgb(17, 27, 45);
+			lblDescriptionSteamDownloads.Dock = DockStyle.Fill;
+			lblDescriptionSteamDownloads.Font = new Font("Segoe UI", 9.5F);
+			lblDescriptionSteamDownloads.ForeColor = Color.FromArgb(158, 172, 194);
+			lblDescriptionSteamDownloads.Margin = new Padding(0);
+			lblDescriptionSteamDownloads.Name = "lblDescriptionSteamDownloads";
+			lblDescriptionSteamDownloads.Size = new Size(392, 61);
+			lblDescriptionSteamDownloads.TabIndex = 1;
+			lblDescriptionSteamDownloads.Text = "Use full speed or limit game-server installs, updates, repairs, and validations.";
+			//
+			// downloadControlsLayout
+			//
+			downloadControlsLayout.ColumnCount = 3;
+			downloadControlsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 126F));
+			downloadControlsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 106F));
+			downloadControlsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			downloadControlsLayout.Controls.Add(cmbSteamCmdDownloadMode, 0, 0);
+			downloadControlsLayout.Controls.Add(numSteamCmdDownloadLimit, 1, 0);
+			downloadControlsLayout.Controls.Add(lblSteamCmdDownloadUnit, 2, 0);
+			downloadControlsLayout.Dock = DockStyle.Fill;
+			downloadControlsLayout.Location = new Point(472, 18);
+			downloadControlsLayout.Margin = new Padding(0);
+			downloadControlsLayout.Name = "downloadControlsLayout";
+			downloadControlsLayout.RowCount = 1;
+			downloadControlsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			downloadControlsLayout.Size = new Size(326, 92);
+			downloadControlsLayout.TabIndex = 2;
+			//
+			// cmbSteamCmdDownloadMode
+			//
+			cmbSteamCmdDownloadMode.AccessibleName = "SteamCMD download speed mode";
+			cmbSteamCmdDownloadMode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			cmbSteamCmdDownloadMode.BackColor = Color.FromArgb(12, 21, 36);
+			cmbSteamCmdDownloadMode.Font = new Font("Segoe UI", 10F);
+			cmbSteamCmdDownloadMode.ForeColor = Color.FromArgb(245, 247, 251);
+			cmbSteamCmdDownloadMode.Location = new Point(0, 20);
+			cmbSteamCmdDownloadMode.Margin = new Padding(0, 20, 10, 0);
+			cmbSteamCmdDownloadMode.Name = "cmbSteamCmdDownloadMode";
+			cmbSteamCmdDownloadMode.Size = new Size(116, 36);
+			cmbSteamCmdDownloadMode.TabIndex = 0;
+			//
+			// numSteamCmdDownloadLimit
+			//
+			numSteamCmdDownloadLimit.AccessibleName = "SteamCMD download speed in megabits per second";
+			numSteamCmdDownloadLimit.BackColor = Color.FromArgb(12, 21, 36);
+			numSteamCmdDownloadLimit.Font = new Font("Segoe UI", 10.5F);
+			numSteamCmdDownloadLimit.ForeColor = Color.FromArgb(245, 247, 251);
+			numSteamCmdDownloadLimit.Location = new Point(126, 17);
+			numSteamCmdDownloadLimit.Margin = new Padding(0, 17, 10, 0);
+			numSteamCmdDownloadLimit.Maximum = 10000;
+			numSteamCmdDownloadLimit.Minimum = 1;
+			numSteamCmdDownloadLimit.Name = "numSteamCmdDownloadLimit";
+			numSteamCmdDownloadLimit.Size = new Size(96, 42);
+			numSteamCmdDownloadLimit.TabIndex = 1;
+			numSteamCmdDownloadLimit.Value = 100;
+			//
+			// lblSteamCmdDownloadUnit
+			//
+			lblSteamCmdDownloadUnit.BackColor = Color.FromArgb(17, 27, 45);
+			lblSteamCmdDownloadUnit.Dock = DockStyle.Fill;
+			lblSteamCmdDownloadUnit.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			lblSteamCmdDownloadUnit.ForeColor = Color.FromArgb(158, 172, 194);
+			lblSteamCmdDownloadUnit.Margin = new Padding(0);
+			lblSteamCmdDownloadUnit.Name = "lblSteamCmdDownloadUnit";
+			lblSteamCmdDownloadUnit.Size = new Size(94, 92);
+			lblSteamCmdDownloadUnit.TabIndex = 2;
+			lblSteamCmdDownloadUnit.Text = "Mbps";
+			lblSteamCmdDownloadUnit.TextAlign = ContentAlignment.MiddleLeft;
+			//
 			// GeneralSettingsPage
 			//
 			AutoScaleDimensions = new SizeF(96F, 96F);
 			AutoScaleMode = AutoScaleMode.Dpi;
 			BackColor = Color.FromArgb(8, 13, 24);
+			Controls.Add(settingsCardSteamDownloads);
 			Controls.Add(settingsCardDarkMode);
 			Controls.Add(settingsCard);
 			Name = "GeneralSettingsPage";
@@ -279,6 +445,11 @@ namespace Synix_Control_Panel.SynixEngine
 			settingsCardDarkMode.ResumeLayout(false);
 			cardLayoutDarkMode.ResumeLayout(false);
 			textLayoutDarkMode.ResumeLayout(false);
+			settingsCardSteamDownloads.ResumeLayout(false);
+			cardLayoutSteamDownloads.ResumeLayout(false);
+			textLayoutSteamDownloads.ResumeLayout(false);
+			downloadControlsLayout.ResumeLayout(false);
+			(numSteamCmdDownloadLimit).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -298,5 +469,15 @@ namespace Synix_Control_Panel.SynixEngine
 		private Label lblTitleDarkMode;
 		private Label lblDescriptionDarkMode;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkDarkMode;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCardSteamDownloads;
+		private TableLayoutPanel cardLayoutSteamDownloads;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyphSteamDownloads;
+		private TableLayoutPanel textLayoutSteamDownloads;
+		private Label lblTitleSteamDownloads;
+		private Label lblDescriptionSteamDownloads;
+		private TableLayoutPanel downloadControlsLayout;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbSteamCmdDownloadMode;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown numSteamCmdDownloadLimit;
+		private Label lblSteamCmdDownloadUnit;
 	}
 }

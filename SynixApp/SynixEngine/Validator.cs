@@ -37,8 +37,59 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
+			foreach ((int port, string name) in GetRequiredServerPorts(server, dbEntry))
+			{
+				if (!IsPortInUseLocally(port))
+					continue;
+
+				errorMessage =
+					$"The {name} ({port}) is already being used by another program. " +
+					"Close the other program or edit this server and choose a free port.";
+				return false;
+			}
+
 			errorMessage = "";
 			return true;
+		}
+
+		internal static IReadOnlyList<(int Port, string Name)> GetRequiredServerPorts(
+			GameServer server,
+			GameInfo game)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(game);
+
+			List<(int Port, string Name)> ports = [];
+			HashSet<int> added = [];
+			string arguments = game.RequiredArgs ?? string.Empty;
+
+			void Add(int port, string name)
+			{
+				if (port is >= 1 and <= 65535 && added.Add(port))
+					ports.Add((port, name));
+			}
+
+			if (arguments.Contains("{port}", StringComparison.OrdinalIgnoreCase))
+				Add(server.Port, "game port");
+
+			if (arguments.Contains("{query}", StringComparison.OrdinalIgnoreCase))
+				Add(server.QueryPort, "query port");
+
+			if (server.EnableRcon &&
+				(game.RconSyntax ?? string.Empty).Contains(
+					"{rcon_port}",
+					StringComparison.OrdinalIgnoreCase))
+			{
+				Add(server.RconPort, "RCON port");
+			}
+
+			if (arguments.Contains("{app_port}", StringComparison.OrdinalIgnoreCase) &&
+				server.AppPort.HasValue)
+			{
+				Add(server.AppPort.Value, "app port");
+			}
+
+			return ports;
 		}
 
 		public bool ValidateNameAndReport(string name, string game, GameServer? excluding = null)

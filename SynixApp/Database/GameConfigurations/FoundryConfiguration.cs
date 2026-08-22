@@ -18,22 +18,22 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		[
 			new("app.cfg",
 				"""
-				server_name={ServerName}
-				server_description=Hosted using Synix
 				server_world_name={Identity}
+				server_password={Password}
+				pause_server_when_empty=true
+				autosave_interval=300
+				server_is_public=true
 				server_port={Port}
 				server_query_port={QueryPort}
-				server_is_public=true
+				mapseed={WorldSeed}
+				server_persistent_data_override_folder=
+				server_name={ServerName}
 				server_max_players={MaxPlayers}
-				server_password={Password}
-				server_autosave_interval=300
-				server_save_slots=10
-				server_pause_when_empty=true
 				""")
 		];
 
 		public override string GameName => "Foundry";
+		public override int SchemaVersion => 2;
 		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
 	}
 }
-

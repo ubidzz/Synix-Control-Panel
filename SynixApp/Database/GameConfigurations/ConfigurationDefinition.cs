@@ -89,10 +89,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 	internal abstract class ConfigurationDefinition
 	{
+		protected readonly record struct ResetTemplate(
+			string RelativePath,
+			string Content,
+			ConfigFormat Format);
+
 		public abstract string GameName { get; }
 		public virtual IReadOnlyList<string> Aliases => [];
 		public virtual int SchemaVersion => 1;
 		public virtual bool UsesConfigurationFile => true;
+		public virtual bool SupportsFullReset => false;
+		public virtual bool PreservesInstalledTemplate => false;
 		public virtual bool RequiresNetworkAddresses => false;
 		public virtual ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.None;
@@ -100,7 +107,92 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public virtual ConfigFormat Format => ConfigFormat.StandardINI;
 		public virtual IReadOnlyList<ConfigurationBinding> Bindings => [];
 
-		public virtual string? CreateTemplate(ConfigurationContext context) => null;
+		public virtual string? CreateTemplate(ConfigurationContext context)
+		{
+			if (!PreservesInstalledTemplate)
+			{
+				return null;
+			}
+
+			string templatePath = GetPreservedTemplatePath(
+				ResolveFullPath(context.Server));
+			return File.Exists(templatePath)
+				? File.ReadAllText(templatePath)
+				: null;
+		}
+
+		public virtual bool NeedsStructuralRepair(ConfigurationContext context)
+		{
+			if (!SupportsFullReset)
+			{
+				return false;
+			}
+
+			string? template = CreateTemplate(context);
+			if (template == null)
+			{
+				return false;
+			}
+
+			string path = ResolveFullPath(context.Server);
+			return !ConfigHandler.HasRequiredStructure(path, template, Format);
+		}
+
+		public virtual ConfigurationApplyResult ResetToTemplate(
+			ConfigurationContext context)
+		{
+			if (!SupportsFullReset)
+			{
+				return ConfigurationApplyResult.Failure(
+					$"Synix does not have a complete reset template for {GameName}.");
+			}
+
+			string? template = CreateTemplate(context);
+			if (template == null)
+			{
+				return ConfigurationApplyResult.Failure(
+					$"The {GameName} reset template is unavailable.");
+			}
+
+			ConfigurationApplyResult reset = ReplaceWithTemplates(
+				context,
+				[new ResetTemplate(RelativePath, template, Format)]);
+			if (!reset.Succeeded)
+			{
+				return reset;
+			}
+
+			string backupPath = ResolveFullPath(context.Server) + ".synix.bak";
+			byte[]? originalBackup = File.Exists(backupPath)
+				? File.ReadAllBytes(backupPath)
+				: null;
+			ConfigurationApplyResult applied;
+			try
+			{
+				applied = Apply(context);
+			}
+			finally
+			{
+				if (originalBackup != null)
+				{
+					File.WriteAllBytes(backupPath, originalBackup);
+				}
+			}
+			if (!applied.Succeeded || !applied.Complete)
+			{
+				return new ConfigurationApplyResult(
+					applied.Succeeded,
+					applied.Complete,
+					true,
+					reset.Created,
+					$"The full {GameName} configuration was restored, but the saved Synix settings could not all be reapplied. {applied.Message}");
+			}
+
+			return reset with
+			{
+				Message = $"{reset.Message} Reapplied the saved Synix server settings."
+			};
+		}
 
 		public virtual ConfigurationApplyResult Apply(ConfigurationContext context)
 		{
@@ -113,6 +205,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			{
 				string fullPath = ResolveFullPath(context.Server);
 				bool created = false;
+				if (File.Exists(fullPath) && PreservesInstalledTemplate)
+				{
+					PreserveInstalledTemplate(fullPath);
+				}
+
 				if (!File.Exists(fullPath))
 				{
 					string? template = CreateTemplate(context);
@@ -189,6 +286,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public virtual bool ConfigurationFileExists(GameServer server)
 		{
 			return !UsesConfigurationFile || File.Exists(ResolveFullPath(server));
+		}
+
+		internal virtual IReadOnlyList<string> ResolveConfigurationPaths(
+			GameServer server)
+		{
+			return UsesConfigurationFile && !string.IsNullOrWhiteSpace(RelativePath)
+				? [ResolveFullPath(server)]
+				: [];
 		}
 
 		internal string ResolveFullPath(GameServer server)
@@ -282,6 +387,141 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				if (File.Exists(temporaryPath))
 				{
 					File.Delete(temporaryPath);
+				}
+			}
+		}
+
+		private static string GetPreservedTemplatePath(string path)
+		{
+			return path + ".synix.template";
+		}
+
+		private static void PreserveInstalledTemplate(string path)
+		{
+			string templatePath = GetPreservedTemplatePath(path);
+			if (File.Exists(templatePath))
+			{
+				return;
+			}
+
+			WriteNewFile(templatePath, File.ReadAllText(path));
+		}
+
+		protected ConfigurationApplyResult ReplaceWithTemplates(
+			ConfigurationContext context,
+			IReadOnlyList<ResetTemplate> templates)
+		{
+			if (templates.Count == 0)
+			{
+				return ConfigurationApplyResult.Failure(
+					$"The {GameName} reset template is empty.");
+			}
+
+			List<(string TargetPath, string StagedPath, string? RollbackPath, bool Existed)> stagedFiles = [];
+			List<(string TargetPath, string? RollbackPath, bool Existed)> replacedFiles = [];
+
+			try
+			{
+				foreach (ResetTemplate template in templates)
+				{
+					string targetPath = ResolveFullPath(context.Server, template.RelativePath);
+					string? directory = Path.GetDirectoryName(targetPath);
+					if (string.IsNullOrWhiteSpace(directory))
+					{
+						throw new InvalidOperationException(
+							"The configuration directory is unavailable.");
+					}
+
+					Directory.CreateDirectory(directory);
+					string stagedPath = Path.Combine(
+						directory,
+						$".{Path.GetFileName(targetPath)}.{Guid.NewGuid():N}.synix.reset.tmp");
+					bool existed = File.Exists(targetPath);
+					string? rollbackPath = null;
+					stagedFiles.Add((targetPath, stagedPath, rollbackPath, existed));
+					File.WriteAllText(
+						stagedPath,
+						template.Content,
+						new UTF8Encoding(false, true));
+					_ = ConfigHandler.LoadConfig(stagedPath, template.Format);
+
+					if (existed)
+					{
+						rollbackPath = Path.Combine(
+							directory,
+							$".{Path.GetFileName(targetPath)}.{Guid.NewGuid():N}.synix.rollback.tmp");
+						stagedFiles[^1] = (targetPath, stagedPath, rollbackPath, existed);
+						File.Copy(targetPath, rollbackPath, false);
+					}
+				}
+
+				foreach ((string targetPath, string stagedPath, string? rollbackPath, bool existed) in stagedFiles)
+				{
+					replacedFiles.Add((targetPath, rollbackPath, existed));
+					if (existed)
+					{
+						File.Copy(targetPath, targetPath + ".synix.bak", true);
+						File.Move(stagedPath, targetPath, true);
+					}
+					else
+					{
+						File.Move(stagedPath, targetPath, false);
+					}
+				}
+
+				bool created = stagedFiles.Any(file => !file.Existed);
+				return new ConfigurationApplyResult(
+					true,
+					true,
+					true,
+					created,
+					created
+						? $"Rebuilt the required {GameName} configuration files from Synix defaults."
+						: $"Reset the {GameName} configuration files to Synix defaults.");
+			}
+			catch (Exception exception)
+			{
+				for (int index = replacedFiles.Count - 1; index >= 0; index--)
+				{
+					(string targetPath, string? rollbackPath, bool existed) = replacedFiles[index];
+					try
+					{
+						if (existed && rollbackPath != null && File.Exists(rollbackPath))
+						{
+							File.Copy(rollbackPath, targetPath, true);
+						}
+						else if (!existed && File.Exists(targetPath))
+						{
+							File.Delete(targetPath);
+						}
+					}
+					catch
+					{
+					}
+				}
+
+				return ConfigurationApplyResult.Failure(
+					$"The {GameName} configuration could not be reset. Existing files were restored when possible. {exception.Message}");
+			}
+			finally
+			{
+				foreach ((string _, string stagedPath, string? rollbackPath, bool _) in stagedFiles)
+				{
+					try
+					{
+						if (File.Exists(stagedPath))
+						{
+							File.Delete(stagedPath);
+						}
+
+						if (rollbackPath != null && File.Exists(rollbackPath))
+						{
+							File.Delete(rollbackPath);
+						}
+					}
+					catch
+					{
+					}
 				}
 			}
 		}

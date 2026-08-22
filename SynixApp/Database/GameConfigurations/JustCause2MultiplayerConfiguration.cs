@@ -10,16 +10,148 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using System.Text.RegularExpressions;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class JustCause2MultiplayerConfiguration : TemplateConfigurationDefinition
+	internal sealed class JustCause2MultiplayerConfiguration : ConfigurationDefinition
 	{
-		private static readonly ConfigurationTemplate[] Files =
-		[
-			new("config.lua", "ServerName = \"{ServerName}\"")
-		];
+		private static readonly Regex PropertyPattern = new(
+			@"(?m)^[ \t]*(?<key>[A-Za-z_][A-Za-z0-9_]*)[ \t]*=",
+			RegexOptions.CultureInvariant);
 
 		public override string GameName => "Just Cause 2: Multiplayer";
-		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+		public override int SchemaVersion => 2;
+		public override bool SupportsFullReset => true;
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerPassword |
+			ManagedConfigurationInput.MaxPlayers |
+			ManagedConfigurationInput.Port;
+		public override string RelativePath => "config.lua";
+
+		public override string? CreateTemplate(ConfigurationContext context)
+		{
+			string sourcePath = ResolveFullPath(context.Server, "default_config.lua");
+			return File.Exists(sourcePath)
+				? File.ReadAllText(sourcePath)
+				: null;
+		}
+
+		public override ConfigurationApplyResult Apply(ConfigurationContext context)
+		{
+			try
+			{
+				string path = ResolveFullPath(context.Server);
+				bool created = false;
+				if (!File.Exists(path))
+				{
+					string? template = CreateTemplate(context);
+					if (template == null)
+					{
+						return ConfigurationApplyResult.Failure(
+							"The complete Just Cause 2 default_config.lua is missing from the server installation.");
+					}
+
+					WriteNewFile(path, template);
+					created = true;
+				}
+
+				string text = File.ReadAllText(path);
+				List<string> missing = [];
+				bool changed = false;
+				text = ReplaceValue(text, "MaxPlayers", context.Server.MaxPlayers.ToString(), missing, ref changed);
+				text = ReplaceValue(text, "BindPort", context.Server.Port.ToString(), missing, ref changed);
+				text = ReplaceValue(text, "Name", Quote(context.Server.ServerName), missing, ref changed);
+				text = ReplaceValue(text, "Password", Quote(context.Passwords.ServerPassword), missing, ref changed);
+				if (changed)
+				{
+					File.WriteAllText(path, text);
+				}
+
+				if (missing.Count > 0)
+				{
+					return new ConfigurationApplyResult(
+						true,
+						false,
+						changed,
+						created,
+						$"The complete file was preserved, but these settings were not found: {string.Join(", ", missing)}.");
+				}
+
+				return new ConfigurationApplyResult(
+					true,
+					true,
+					created || changed,
+					created,
+					created
+						? "Created the complete Just Cause 2 configuration from its installed default file."
+						: changed
+							? "Updated the managed Just Cause 2 settings."
+							: "The Just Cause 2 configuration is already current.");
+			}
+			catch (Exception exception)
+			{
+				return ConfigurationApplyResult.Failure(
+					$"The Just Cause 2 configuration could not be applied: {exception.Message}");
+			}
+		}
+
+		public override bool NeedsStructuralRepair(ConfigurationContext context)
+		{
+			string? template = CreateTemplate(context);
+			string path = ResolveFullPath(context.Server);
+			if (template == null || !File.Exists(path))
+			{
+				return template != null;
+			}
+
+			Dictionary<string, int> expected = GetPropertyCounts(template);
+			Dictionary<string, int> existing = GetPropertyCounts(File.ReadAllText(path));
+			return expected.Any(pair =>
+				!existing.TryGetValue(pair.Key, out int count) || count < pair.Value);
+		}
+
+		private static string ReplaceValue(
+			string text,
+			string key,
+			string value,
+			List<string> missing,
+			ref bool changed)
+		{
+			Regex pattern = new(
+				@"(?m)^(?<prefix>[ \t]*" + Regex.Escape(key) +
+				@"[ \t]*=[ \t]*)(?<value>""(?:\\.|[^""])*""|[-+]?\d+(?:\.\d+)?|true|false)(?<suffix>[ \t]*,?[ \t]*(?:--.*)?\r?$)",
+				RegexOptions.CultureInvariant);
+			MatchCollection matches = pattern.Matches(text);
+			if (matches.Count != 1)
+			{
+				missing.Add(key);
+				return text;
+			}
+
+			if (string.Equals(matches[0].Groups["value"].Value, value, StringComparison.Ordinal))
+			{
+				return text;
+			}
+
+			changed = true;
+			return pattern.Replace(
+				text,
+				match => match.Groups["prefix"].Value + value + match.Groups["suffix"].Value,
+				1);
+		}
+
+		private static Dictionary<string, int> GetPropertyCounts(string text)
+		{
+			return PropertyPattern.Matches(text)
+				.Select(match => match.Groups["key"].Value)
+				.GroupBy(key => key, StringComparer.Ordinal)
+				.ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+		}
+
+		private static string Quote(string value)
+		{
+			return $"\"{EscapeQuoted(value)}\"";
+		}
 	}
 }

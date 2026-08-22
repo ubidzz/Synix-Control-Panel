@@ -10,18 +10,27 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class RFactor2Configuration : TemplateConfigurationDefinition
+	internal sealed class RFactor2Configuration : ConfigurationDefinition
 	{
-		private static readonly ConfigurationTemplate[] Files =
+		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new(@"UserData\player\Multiplayer.json",
-				"""{ "ServerName": "{ServerName}" }""")
+			new("Simulation Port", context => context.Server.Port.ToString()),
+			new("HTTP Server Port", context => context.Server.QueryPort.ToString())
 		];
 
 		public override string GameName => "rFactor 2";
-		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+		public override int SchemaVersion => 2;
+		public override bool SupportsFullReset => true;
+		public override bool PreservesInstalledTemplate => true;
+		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.QueryPort |
+			ManagedConfigurationInput.Port;
+		public override string RelativePath => @"UserData\player\Multiplayer.json";
+		public override ConfigFormat Format => ConfigFormat.JSON;
+		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
 	}
 }
-

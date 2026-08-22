@@ -25,6 +25,14 @@ public enum ServerProbeProtocol
 	Tcp
 }
 
+public enum ConfigFileCreationMode
+{
+	Unknown,
+	GameGenerated,
+	SynixTemplate,
+	LaunchArgumentsOnly
+}
+
 public class GameInfo
 {
 	public string Game { get; set; } = string.Empty;
@@ -38,7 +46,18 @@ public class GameInfo
 	public string WarningMessage { get; set; } = "This game requires configuration before it can boot properly.";
 	public ConfigFormat Format { get; set; }
 	[JsonIgnore]
+	public ConfigFileCreationMode ConfigFileCreation { get; init; } =
+		ConfigFileCreationMode.Unknown;
+	[JsonIgnore]
 	public string RelativeConfigPath { get; init; } = string.Empty;
+	[JsonIgnore]
+	public string ExternalDataFolderName { get; init; } = string.Empty;
+	[JsonIgnore]
+	public string[] RequiredLaunchFiles { get; init; } = [];
+	[JsonIgnore]
+	public string[] OptionalLaunchFiles { get; init; } = [];
+	[JsonIgnore]
+	public string LaunchFileSetupInstructions { get; init; } = string.Empty;
 	[JsonIgnore]
 	public string AppID { get; set; } = string.Empty;
 	[JsonIgnore]
@@ -55,6 +74,7 @@ public class GameInfo
 	public List<string> Maps { get; set; } = [];
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
+	public int? AppPort { get; set; }
 
 	public string ExtraArgs { get; set; } = string.Empty;
 	public List<string> GameModes { get; set; } = [];
@@ -113,7 +133,6 @@ public class GameServer : GameInfo
 	public bool IsFirstBoot { get; set; } = true;
 	[JsonIgnore]
 	public string PlayerCount => $"{CurrentPlayers} / {MaxPlayers}";
-	public int? AppPort { get; set; } = 10777;
 	public bool UpdateOnStart { get; set; } = false;
 	public bool BackupOnStart { get; set; } = false;
 	public int ManagedConfigurationVersion { get; set; }

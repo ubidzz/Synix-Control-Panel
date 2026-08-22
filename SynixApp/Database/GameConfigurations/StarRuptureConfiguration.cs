@@ -16,7 +16,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationTemplate[] Files =
 		[
-			new(@"StarRupture\Binaries\Win64\DSSettings.txt",
+			new("DSSettings.txt",
 				"""{ "SessionName": "{ServerName}", "SaveGameInterval": "300", "StartNewGame": "true", "LoadSavedGame": "false", "SaveGameName": "AutoSave0.sav" }""")
 		];
 
@@ -24,4 +24,3 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
 	}
 }
-
