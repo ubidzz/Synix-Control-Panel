@@ -170,6 +170,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Terraria",
 				AppID = "105610",
+				RequiresSteamLogin = true,
 				ExeName = "TerrariaServer.exe",
 				RequiredArgs = "-port {port} -maxplayers {MaxPlayers} -world \"{map}\" -password \"{pass}\" -SteamAppId={steamAppID}",
 				Port = 7777,
@@ -384,6 +385,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "DayZ",
 				AppID = "223350",
+				RequiresSteamLogin = true,
 				ExeName = "DayZServer_x64.exe",
 				RequiredArgs = "-config=\"serverDZ.cfg\" -port={port} -profiles=\"{Identity}\" -doLogs -adminLog -netLog -freezeCheck -SteamAppId={steamAppID}",
 				Port = 2302,
@@ -499,6 +501,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			{
 				Game = "Arma 3",
 				AppID = "233780",
+				RequiresSteamLogin = true,
 				ExeName = "arma3server.exe",
 				RequiredArgs = "-port={port} -name=\"{Identity}\" -profiles=\"{Identity}\" -config=\"server.cfg\" -world=\"{map}\" -SteamAppId={steamAppID}",
 				Port = 2302,
@@ -861,6 +864,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Killing Floor",
 				AppID = "215350",
+				RequiresSteamLogin = true,
 				ExeName = "ucc.exe",
 				RequiredArgs = "server {map}.rom?game=KFmod.KFGameType?VACProtected=true -port={port} -SteamAppId={steamAppID}",
 				Port = 7707,
@@ -896,6 +900,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Dino D-Day",
 				AppID = "70010",
+				RequiresSteamLogin = true,
 				ExeName = "srcds.exe",
 				RequiredArgs = "-game dinodday -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon} +sv_password \"{pass}\" -SteamAppId={steamAppID}",
 				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
@@ -956,6 +961,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Assetto Corsa",
 				AppID = "302550",
+				RequiresSteamLogin = true,
 				ExeName = "acServer.exe",
 				RequiredArgs = "",
 				Port = 9600,
@@ -1038,6 +1044,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Project CARS 2",
 				AppID = "413770",
+				RequiresSteamLogin = true,
 				ExeName = "pCARS2AVServer.exe",
 				RequiredArgs = "",
 				Port = 27015,
@@ -1093,6 +1100,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Red Orchestra 2: Heroes of Stalingrad",
 				AppID = "212542",
+				RequiresSteamLogin = true,
 				ExeName = @"Binaries\Win64\ROGame.exe",
 				RequiredArgs = "{map}?MaxPlayers={MaxPlayers} -Port={port} -QueryPort={query} -SteamAppId={steamAppID}",
 				Port = 7777,
@@ -1227,6 +1235,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Painkiller: Hell & Damnation",
 				AppID = "230030",
+				RequiresSteamLogin = true,
 				ExeName = "PainkillerServer.exe",
 				RequiredArgs = "-port {port} -SteamAppId={steamAppID}",
 				Port = 7777,
@@ -1347,6 +1356,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Darkest Hour: Europe '44-'45",
 				AppID = "1290",
+				RequiresSteamLogin = true,
 				ExeName = "RedOrchestra.exe",
 				RequiredArgs = "server {map}?Listen -port={port} -SteamAppId={steamAppID}",
 				Port = 7757,
@@ -1394,6 +1404,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Monday Night Combat",
 				AppID = "63220",
+				RequiresSteamLogin = true,
 				ExeName = "MNC.exe",
 				RequiredArgs = "server {map}?Listen -port={port} -SteamAppId={steamAppID}",
 				Port = 7777,
@@ -1531,6 +1542,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "The Haunted: Hell's Reach",
 				AppID = "43210",
+				RequiresSteamLogin = true,
 				ExeName = @"UDKGame\Binaries\Win64\HauntedServer.exe",
 				RequiredArgs = "-port {port} -SteamAppId={steamAppID}",
 				Port = 7777,
@@ -1577,6 +1589,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "E.Y.E: Divine Cybermancy",
 				AppID = "91720",
+				RequiresSteamLogin = true,
 				ExeName = "srcds.exe",
 				RequiredArgs = "-game eye -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" +rcon_password \"{adminpass}\" {rcon} -SteamAppId={steamAppID}",
 				RconSyntax = "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
@@ -2087,6 +2100,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Chivalry: Deadliest Warrior",
 				AppID = "258680",
+				RequiresSteamLogin = true,
 				ExeName = @"Binaries\Win32\CDWLogging.exe",
 				RequiredArgs = "{map}?steamsockets -dedicated=true -seekfreeloadingserver -Port={port} -QueryPort={query} -maxplayers={MaxPlayers} -SteamAppId={steamAppID}",
 				Port = 7777,
@@ -2125,6 +2139,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Serious Sam HD: The First Encounter",
 				AppID = "41005",
+				RequiresSteamLogin = true,
 				ExeName = @"Bin\SamHD_DedicatedServer.exe",
 				RequiredArgs = "+exec server.cfg +port {port} +maxplayers {MaxPlayers} +sessionname \"{ServerName}\" -SteamAppId={steamAppID}",
 				Port = 27015,
@@ -2163,6 +2178,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			new() {
 				Game = "Takedown: Red Sabre",
 				AppID = "261020",
+				RequiresSteamLogin = true,
 				ExeName = @"Binaries\Win32\TakedownGameServer-Win32-Shipping.exe",
 				RequiredArgs = "{map}?game=TakedownGame.{mode}?listen=1?bIsLanMatch=0?NumPublicConnections={MaxPlayers} -seekfreeloadingserver -Port={port} -QueryPort={query} -SteamAppId={steamAppID}",
 				Port = 7777,

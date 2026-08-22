@@ -1027,9 +1027,25 @@ namespace Synix_Control_Panel
 				numQueryPort.Enabled)) return;
 			string newPath = txtInstallPath.Text.Trim();
 			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+			GameInfo? masterData = GameDatabase.GetGame(selectedGame);
+			string steamAccountName = masterData?.RequiresSteamLogin == true
+				? _existingServer?.SteamAccountName ?? string.Empty
+				: string.Empty;
+
+			if (masterData?.RequiresSteamLogin == true &&
+				string.IsNullOrWhiteSpace(steamAccountName))
+			{
+				using SteamAccountLoginDialog loginDialog = new(selectedGame);
+				if (loginDialog.ShowDialog(this) != DialogResult.OK)
+					return;
+
+				steamAccountName = loginDialog.SteamAccountName;
+			}
+
 			NewServer = new GameServer
 			{
 				Game = selectedGame,
+				SteamAccountName = steamAccountName,
 				ServerName = newName,
 				Port = gPort,
 				QueryPort = qPort,
@@ -1096,7 +1112,6 @@ namespace Synix_Control_Panel
 				}
 				else MainGUI.serverList.Add(NewServer);
 
-				var masterData = GameDatabase.GetGame(NewServer.Game);
 				if (masterData != null)
 				{
 					NewServer.AppID = masterData.AppID;

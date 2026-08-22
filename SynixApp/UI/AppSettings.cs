@@ -708,12 +708,14 @@ namespace Synix_Control_Panel.SynixEngine
 				},
 				"Import complete",
 				_selectedImportPasswordProtected
-					? "Your Synix files, saved passwords, and Discord webhooks were restored for this Windows user. Synix will reload the transferred server list now."
-					: "Your Synix files were restored. Synix will reload the transferred server list now. Passwords and Discord webhooks protected on another PC may need to be re-entered.");
+					? "Your Synix files, saved passwords, and Discord webhooks were restored for this Windows user. Servers that require a Steam account will ask for authorization the first time you start them on this PC."
+					: "Your Synix files were restored. Passwords and Discord webhooks protected on another PC may need to be re-entered. Servers that require a Steam account will ask for authorization the first time you start them on this PC.");
 
 			if (imported)
 			{
 				FileHandler.LoadServers();
+				Core.MarkImportedSteamAuthenticationRequired(MainGUI.serverList);
+				FileHandler.SaveServers();
 				MainGUI.Instance?.UpdateGrid();
 				_selectedImportPackage = null;
 				_selectedImportPasswordProtected = true;

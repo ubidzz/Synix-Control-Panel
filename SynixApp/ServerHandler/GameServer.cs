@@ -42,6 +42,8 @@ public class GameInfo
 	[JsonIgnore]
 	public string AppID { get; set; } = string.Empty;
 	[JsonIgnore]
+	public bool RequiresSteamLogin { get; init; }
+	[JsonIgnore]
 	public string ExeName { get; set; } = string.Empty;
 	[JsonIgnore]
 	public string DownloadUrl { get; init; } = string.Empty;
@@ -86,6 +88,8 @@ public class GameInfo
 public class GameServer : GameInfo
 {
 	public int PasswordStorageVersion { get; set; }
+	public string SteamAccountName { get; set; } = string.Empty;
+	public bool SteamAuthenticationRequired { get; set; }
 	public string InstallPath { get; set; } = string.Empty;
 	public string ServerName { get; set; } = string.Empty;
 	public string Password { get; set; } = string.Empty;
@@ -112,6 +116,7 @@ public class GameServer : GameInfo
 	public int? AppPort { get; set; } = 10777;
 	public bool UpdateOnStart { get; set; } = false;
 	public bool BackupOnStart { get; set; } = false;
+	public int ManagedConfigurationVersion { get; set; }
 	public bool IsDiscordAlertEnabled { get; set; } = false;
 	public string DiscordWebhook { get; set; } = string.Empty;
 	public DateTime? StartTime { get; set; }

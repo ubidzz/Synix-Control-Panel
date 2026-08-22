@@ -99,6 +99,8 @@ namespace Synix_Control_Panel
 			lblUpdateStatus = new Label();
 			btnDownloadUpdate = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			contextMenuStrip = new ContextMenuStrip(components);
+			deleteServerToolStripMenuItem = new ToolStripMenuItem();
+			toolStripSeparator4 = new ToolStripSeparator();
 			openServerFolderToolStripMenuItem = new ToolStripMenuItem();
 			backupToolStripMenuItem = new ToolStripMenuItem();
 			openServerConfigFileToolStripMenuItem = new ToolStripMenuItem();
@@ -110,8 +112,6 @@ namespace Synix_Control_Panel
 			toolStripSeparator3 = new ToolStripSeparator();
 			connectionTestToolStripMenuItem = new ToolStripMenuItem();
 			connectionLocalTestToolStripMenuItem = new ToolStripMenuItem();
-			toolStripSeparator4 = new ToolStripSeparator();
-			deleteServerToolStripMenuItem = new ToolStripMenuItem();
 			openServerConfig = new ToolStripMenuItem();
 			tmrResourceUpdates = new System.Windows.Forms.Timer(components);
 			toolTip1 = new ToolTip(components);
@@ -528,9 +528,9 @@ namespace Synix_Control_Panel
 			lblRamHint.ForeColor = Color.FromArgb(105, 124, 153);
 			lblRamHint.Location = new Point(19, 84);
 			lblRamHint.Name = "lblRamHint";
-			lblRamHint.Size = new Size(153, 15);
+			lblRamHint.Size = new Size(136, 15);
 			lblRamHint.TabIndex = 2;
-			lblRamHint.Text = "Available game-server RAM";
+			lblRamHint.Text = "Total system RAM in use";
 			// 
 			// ramGauge
 			// 
@@ -1090,7 +1090,19 @@ namespace Synix_Control_Panel
 			// 
 			contextMenuStrip.Items.AddRange(new ToolStripItem[] { deleteServerToolStripMenuItem, toolStripSeparator4, openServerFolderToolStripMenuItem, backupToolStripMenuItem, openServerConfigFileToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem });
 			contextMenuStrip.Name = "contextMenuStrip";
-			contextMenuStrip.Size = new Size(197, 264);
+			contextMenuStrip.Size = new Size(197, 242);
+			// 
+			// deleteServerToolStripMenuItem
+			// 
+			deleteServerToolStripMenuItem.Name = "deleteServerToolStripMenuItem";
+			deleteServerToolStripMenuItem.Size = new Size(196, 22);
+			deleteServerToolStripMenuItem.Text = "Delete Server";
+			deleteServerToolStripMenuItem.Click += btnDelete_Click;
+			// 
+			// toolStripSeparator4
+			// 
+			toolStripSeparator4.Name = "toolStripSeparator4";
+			toolStripSeparator4.Size = new Size(193, 6);
 			// 
 			// openServerFolderToolStripMenuItem
 			// 
@@ -1164,18 +1176,6 @@ namespace Synix_Control_Panel
 			connectionLocalTestToolStripMenuItem.Size = new Size(196, 22);
 			connectionLocalTestToolStripMenuItem.Text = "Test LAN Connectivity";
 			connectionLocalTestToolStripMenuItem.Click += btnLocalConnection_Click;
-			// 
-			// toolStripSeparator4
-			// 
-			toolStripSeparator4.Name = "toolStripSeparator4";
-			toolStripSeparator4.Size = new Size(193, 6);
-			// 
-			// deleteServerToolStripMenuItem
-			// 
-			deleteServerToolStripMenuItem.Name = "deleteServerToolStripMenuItem";
-			deleteServerToolStripMenuItem.Size = new Size(196, 22);
-			deleteServerToolStripMenuItem.Text = "Delete Server";
-			deleteServerToolStripMenuItem.Click += btnDelete_Click;
 			// 
 			// openServerConfig
 			// 

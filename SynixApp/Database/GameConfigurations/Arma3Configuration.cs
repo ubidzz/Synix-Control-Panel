@@ -1,0 +1,38 @@
+// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
+namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
+{
+	internal sealed class Arma3Configuration : TemplateConfigurationDefinition
+	{
+		private static readonly ConfigurationTemplate[] Files =
+		[
+			new("server.cfg",
+				"""
+				hostname = "{ServerName}";
+				password = "{Password}";
+				passwordAdmin = "{AdminPassword}";
+				maxPlayers = {MaxPlayers};
+				verifySignatures = 2;
+				BattlEye = 1;
+				persistent = 1;
+				kickDuplicate = 1;
+				disableVoN = 0;
+				vonCodecQuality = 20;
+				""")
+		];
+
+		public override string GameName => "Arma 3";
+		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
+	}
+}
+

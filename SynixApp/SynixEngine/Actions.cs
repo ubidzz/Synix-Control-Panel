@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
@@ -234,6 +235,9 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			if (!EnsureSteamAccountName(server, gameData))
+				return;
+
 			try
 			{
 				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
@@ -384,7 +388,155 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public void EditServerAndReport(GameServer server)
+		private bool EnsureSteamAccountName(
+			GameServer server,
+			GameInfo blueprint,
+			bool forcePrompt = false,
+			bool restoringImportedServer = false)
+		{
+			if (!blueprint.RequiresSteamLogin ||
+				(!forcePrompt &&
+				 !string.IsNullOrWhiteSpace(server.SteamAccountName)))
+			{
+				return true;
+			}
+
+			using SteamAccountLoginDialog loginDialog = new(
+				blueprint.Game,
+				server.SteamAccountName,
+				restoringImportedServer);
+			if (loginDialog.ShowDialog(MainGUI.Instance) != DialogResult.OK)
+			{
+				Log(
+					restoringImportedServer
+						? "Steam authorization was cancelled. The server was not started."
+						: "Steam account login was cancelled. No files were changed.",
+					Color.Orange,
+					true);
+				return false;
+			}
+
+			server.SteamAccountName = loginDialog.SteamAccountName;
+			FileHandler.SaveServers();
+			return true;
+		}
+
+		private async Task<bool> EnsureSteamAuthenticationAfterImport(
+			GameServer server,
+			string status)
+		{
+			if (!server.SteamAuthenticationRequired)
+				return true;
+
+			GameInfo? blueprint = GameDatabase.GetGame(server.Game);
+			if (blueprint?.RequiresSteamLogin != true)
+			{
+				server.SteamAuthenticationRequired = false;
+				FileHandler.SaveServers();
+				return true;
+			}
+
+			if (status is "WATCHDOG" or "MAINTENANCE")
+			{
+				Log(
+					$"[STEAM LOGIN] {server.ServerName} was imported and needs Steam authorization on this PC. Start it manually once to complete the login.",
+					Color.Orange,
+					true);
+				return false;
+			}
+
+			if (!EnsureSteamAccountName(
+					server,
+					blueprint,
+					forcePrompt: true,
+					restoringImportedServer: true))
+			{
+				return false;
+			}
+
+			if (!File.Exists(Core.SteamCmdExe))
+			{
+				await SteamCMD.EnsureSteamCMD((message, color) => Log(message, color));
+				if (!File.Exists(Core.SteamCmdExe))
+				{
+					Log(
+						"SteamCMD could not be prepared, so Steam authorization could not start.",
+						Color.Red,
+						true);
+					return false;
+				}
+			}
+
+			try
+			{
+				isDownloadActive = true;
+				Log(
+					"[LOCKED] Synix cannot close while Steam authorization is running.",
+					Color.Orange,
+					true);
+
+				int exitCode = await Task.Run(() =>
+					ServerInstaller.AuthenticateSteamAccount(
+						server,
+						blueprint,
+						message => MainGUI.Instance?.BeginInvoke(
+							(Action)(() => Log(message))),
+						pid =>
+						{
+							server.SteamPID = pid;
+							FileHandler.SaveServers();
+						}));
+
+				if (exitCode != 0)
+				{
+					Log(
+						$"Steam authorization was not completed. {ServerInstaller.GetSteamError(exitCode)} The server was not started.",
+						Color.Red,
+						true);
+					return false;
+				}
+
+				server.SteamAuthenticationRequired = false;
+				FileHandler.SaveServers();
+				Log(
+					$"[STEAM LOGIN] {server.ServerName} is authorized on this PC.",
+					Color.Green,
+					true);
+				return true;
+			}
+			finally
+			{
+				server.SteamPID = null;
+				isDownloadActive = false;
+				FileHandler.SaveServers();
+				Core.Instance.UpdateGridStatus();
+				Log(
+					"[UNLOCKED] Synix can close again.",
+					Color.Orange,
+					true);
+			}
+		}
+
+		internal static int MarkImportedSteamAuthenticationRequired(
+			IEnumerable<GameServer> servers)
+		{
+			ArgumentNullException.ThrowIfNull(servers);
+
+			int authenticationCount = 0;
+			foreach (GameServer server in servers)
+			{
+				GameInfo? blueprint = GameDatabase.GetGame(server.Game);
+				server.SteamAuthenticationRequired =
+					blueprint?.RequiresSteamLogin == true;
+
+				if (server.SteamAuthenticationRequired)
+					authenticationCount++;
+			}
+
+			return authenticationCount;
+		}
+
+		public async Task EditServerAndReport(GameServer server)
 		{
 			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
@@ -404,9 +556,27 @@ namespace Synix_Control_Panel.SynixEngine
 
 			using (var editForm = new ServerSettingsGUI(server))
 			{
-				if (editForm.ShowDialog() == DialogResult.OK)
+				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
 				{
-					Log($"[✔️ SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
+					GameServer updatedServer = editForm.NewServer;
+					ConfigurationApplyResult configurationResult =
+						await GameFix.ApplyManagedConfiguration(updatedServer);
+
+					if (!configurationResult.Succeeded)
+					{
+						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
+					}
+					else if (!configurationResult.Complete)
+					{
+						Log($"[CONFIG WARNING] {configurationResult.Message}", Color.Orange, true);
+					}
+					else if (configurationResult.Changed)
+					{
+						Log($"[CONFIG] {configurationResult.Message}", Color.Green);
+					}
+
+					FileHandler.SaveServers();
+					Log($"[✔️ SUCCESS] {updatedServer.ServerName} settings updated and saved.", Color.Green);
 					Core.Instance.UpdateGridStatus();
 				}
 			}
@@ -436,7 +606,37 @@ namespace Synix_Control_Panel.SynixEngine
 					return;
 				}
 
+				if (!await EnsureSteamAuthenticationAfterImport(server, status))
+					return;
+
 				if (!ValidateIntegrityAndReport(server)) return;
+				if (GameFix.NeedsManagedConfiguration(server))
+				{
+					ConfigurationApplyResult configurationResult =
+						await GameFix.ApplyManagedConfiguration(server);
+
+					if (!configurationResult.Succeeded)
+					{
+						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
+						MessageBox.Show(
+							configurationResult.Message,
+							"Configuration Could Not Be Applied",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+						return;
+					}
+
+					if (!configurationResult.Complete)
+					{
+						Log($"[CONFIG WARNING] {configurationResult.Message}", Color.Orange, true);
+					}
+					else if (configurationResult.Changed)
+					{
+						Log($"[CONFIG] {configurationResult.Message}", Color.Green);
+					}
+
+					FileHandler.SaveServers();
+				}
 				if (ShouldBlockForConfig(server)) return;
 
 				if (status == "RESTART")

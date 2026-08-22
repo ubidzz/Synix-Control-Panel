@@ -629,7 +629,7 @@ namespace Synix_Control_Panel
 			await Core.Instance.AddServerAndReport();
 		}
 
-		private void btnEdit_Click(object sender, EventArgs e)
+		private async void btnEdit_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
 			var selectedServer = GetSelectedServer();
@@ -638,7 +638,7 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-			Core.Instance.EditServerAndReport(selectedServer);
+			await Core.Instance.EditServerAndReport(selectedServer);
 		}
 
 		private async void btnUpdate_Click(object sender, EventArgs e)
