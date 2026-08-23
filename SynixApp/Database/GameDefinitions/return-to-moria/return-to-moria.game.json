@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "return-to-moria",
   "catalogOrder": 105,
   "game": "Return to Moria",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Moria\\Binaries\\Win64"
+    }
+  ]
 }

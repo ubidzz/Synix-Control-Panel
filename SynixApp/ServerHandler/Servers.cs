@@ -268,12 +268,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						{
 							formattedRcon = dbEntry.RconSyntax
 								.Replace("{rcon_port}", server.RconPort.ToString())
-								.Replace("{rcon_pass}", launchPasswords.RconPassword);
-
-							if (string.Equals(server.Game, "Rust", StringComparison.OrdinalIgnoreCase))
-							{
-								formattedRcon += " +rcon.web 1";
-							}
+								.Replace("{rcon_pass}", launchPasswords.RconPassword)
+								.Replace("{rcon_enabled}", GameFix.ResolveBooleanValue(dbEntry, true))
+								.Replace("{adminpass}", launchPasswords.AdminPassword)
+								.Replace("{steamAppID}", invokedId);
 						}
 
 						args = args.Replace("{rcon}", formattedRcon);
@@ -281,24 +279,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
 					{
-						bool usesBooleanMode =
-							server.Game.Equals("ARK: Survival Evolved", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("ARK: Survival Ascended", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("PixARK", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("Atlas", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("Rust", StringComparison.OrdinalIgnoreCase);
-
-						string translatedMode = server.GameMode;
-
-						if (usesBooleanMode)
-						{
-							if (server.GameMode.Equals("PVE", StringComparison.OrdinalIgnoreCase))
-								translatedMode = "True";
-							else if (server.GameMode.Equals("PVP", StringComparison.OrdinalIgnoreCase))
-								translatedMode = "False";
-						}
-
-						args = args.Replace("{mode}", translatedMode);
+						args = args.Replace(
+							"{mode}",
+							GameFix.ResolveGameModeValue(dbEntry, server.GameMode));
 					}
 
 					if (!string.IsNullOrWhiteSpace(server.ExtraArgs))

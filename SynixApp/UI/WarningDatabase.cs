@@ -1064,6 +1064,12 @@ namespace Synix_Control_Panel.Database
 				return customMessage;
 			}
 
+			if (game?.NeedsConfigWarning == true &&
+				!string.IsNullOrWhiteSpace(game.WarningMessage))
+			{
+				return game.WarningMessage;
+			}
+
 			return
 				"Configuration required before the first launch.\n\n" +
 				"1. If the configuration file is missing, the server may need to run once to create it.\n\n" +

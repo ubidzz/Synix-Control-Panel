@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "scum",
   "catalogOrder": 45,
   "game": "SCUM",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "SCUM\\Binaries\\Win64"
+    }
+  ]
 }

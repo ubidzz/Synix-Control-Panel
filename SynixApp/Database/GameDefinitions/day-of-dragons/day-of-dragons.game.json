@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "day-of-dragons",
   "catalogOrder": 55,
   "game": "Day of Dragons",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Dragons\\Binaries\\Win64"
+    }
+  ]
 }

@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "icarus",
   "catalogOrder": 21,
   "game": "Icarus",
@@ -37,4 +38,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Icarus\\Binaries\\Win64"
+    }
+  ]
 }

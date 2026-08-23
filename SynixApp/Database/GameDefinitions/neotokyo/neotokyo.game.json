@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "neotokyo",
   "catalogOrder": 118,
   "game": "NEOTOKYO",
@@ -8,8 +9,8 @@
   "requiresSteamLogin": false,
   "executable": "srcds.exe",
   "downloadUrl": "",
-  "arguments": "-game neotokyo -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" +rcon_password \"{adminpass}\" {rcon} -SteamAppId={steamAppID}",
-  "rconSyntax": "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
+  "arguments": "-game neotokyo -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

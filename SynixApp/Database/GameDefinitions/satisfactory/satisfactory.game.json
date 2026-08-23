@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "satisfactory",
   "catalogOrder": 35,
   "game": "Satisfactory",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "FactoryGame\\Binaries\\Win64"
+    }
+  ]
 }

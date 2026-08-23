@@ -16,6 +16,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class PalworldConfiguration : ConfigurationDefinition
 	{
+		private static readonly IReadOnlyDictionary<string, string> RequiredPvpSettings =
+			new Dictionary<string, string>(StringComparer.Ordinal)
+			{
+				["bEnablePlayerToPlayerDamage"] = "False",
+				["bEnableDefenseOtherGuildPlayer"] = "False"
+			};
+
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
 			new("ServerName", context => context.Server.ServerName),
@@ -26,11 +33,19 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("RCONEnabled", context => context.Server.EnableRcon.ToString()),
 			new("RCONPort", context => context.Server.RconPort.ToString()),
 			new("RESTAPIPort", context => context.Server.QueryPort.ToString()),
-			new("bIsPvP", context => string.Equals(context.Server.GameMode, "PVP", StringComparison.OrdinalIgnoreCase).ToString())
+			new("bIsPvP", PvpEnabled),
+			new("bEnablePlayerToPlayerDamage", PvpEnabled),
+			new("bEnableDefenseOtherGuildPlayer", PvpEnabled)
 		];
 
+		private static string PvpEnabled(ConfigurationContext context) =>
+			string.Equals(
+				context.Server.GameMode,
+				"PVP",
+				StringComparison.OrdinalIgnoreCase).ToString();
+
 		public override string GameName => "Palworld";
-		public override int SchemaVersion => 3;
+		public override int SchemaVersion => 4;
 		public override bool SupportsFullReset => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.ServerPassword |
@@ -43,6 +58,48 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override string RelativePath => @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini";
 		public override ConfigFormat Format => ConfigFormat.StandardINI;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
+
+		public override ConfigurationApplyResult Apply(ConfigurationContext context)
+		{
+			ConfigurationApplyResult first = base.Apply(context);
+			if (!first.Succeeded)
+				return first;
+
+			string path = ResolveFullPath(context.Server);
+			List<ConfigLine> values = ConfigHandler.LoadConfig(path, Format);
+			if (RequiredPvpSettings.Keys.All(key => values.Any(value =>
+				string.Equals(value.Key, key, StringComparison.Ordinal))))
+			{
+				return first;
+			}
+
+			string backupPath = path + ".synix.bak";
+			byte[] preservedBackup = File.Exists(backupPath)
+				? File.ReadAllBytes(backupPath)
+				: File.ReadAllBytes(path);
+			try
+			{
+				ConfigHandler.EnsureStandardIniTupleValues(
+					path,
+					"OptionSettings",
+					RequiredPvpSettings);
+				ConfigurationApplyResult second = base.Apply(context);
+				return second with
+				{
+					Changed = true,
+					Created = first.Created || second.Created
+				};
+			}
+			catch (Exception exception)
+			{
+				return ConfigurationApplyResult.Failure(
+					$"The Palworld PvP settings could not be upgraded safely: {exception.Message}");
+			}
+			finally
+			{
+				File.WriteAllBytes(backupPath, preservedBackup);
+			}
+		}
 
 		public override string? CreateTemplate(ConfigurationContext context)
 		{

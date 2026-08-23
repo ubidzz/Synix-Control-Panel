@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "counter-strike-source",
   "catalogOrder": 61,
   "game": "Counter-Strike: Source",
@@ -8,8 +9,8 @@
   "requiresSteamLogin": false,
   "executable": "srcds.exe",
   "downloadUrl": "",
-  "arguments": "-game cstrike -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon} +sv_password \"{pass}\"",
-  "rconSyntax": "+rcon_password \"{adminpass}\" -SteamAppId={steamAppID}",
+  "arguments": "-game cstrike -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon} +sv_password \"{pass}\" -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

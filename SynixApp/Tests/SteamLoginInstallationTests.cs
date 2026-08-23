@@ -28,6 +28,7 @@ public sealed class SteamLoginInstallationTests
 			["Arma 3"] = "233780",
 			["Assetto Corsa"] = "302550",
 			["Chivalry: Deadliest Warrior"] = "258680",
+			["Dark Messiah of Might & Magic Dedicated Server"] = "2145",
 			["Darkest Hour: Europe '44-'45"] = "1290",
 			["DayZ"] = "223350",
 			["Dino D-Day"] = "70010",
@@ -148,6 +149,33 @@ public sealed class SteamLoginInstallationTests
 		Assert.DoesNotContain(
 			"+set_download_throttle",
 			startInfo.ArgumentList);
+	}
+
+	[Fact]
+	public void SharedSteamAppAddsSafeAppConfigurationBeforeUpdate()
+	{
+		GameInfo game = new()
+		{
+			Game = "Counter-Strike 1.6",
+			AppID = "90",
+			SteamAppConfig = "90 mod cstrike"
+		};
+		GameServer server = new()
+		{
+			InstallPath = @"C:\Synix\Games\Counter_Strike_1_6\Test"
+		};
+
+		var startInfo = ServerInstaller.CreateSteamProcessStartInfo(
+			server,
+			game,
+			downloadThrottleKbps: null);
+		List<string> arguments = startInfo.ArgumentList.ToList();
+		int configIndex = arguments.IndexOf("+app_set_config");
+		int updateIndex = arguments.IndexOf("+app_update");
+
+		Assert.True(configIndex >= 0);
+		Assert.Equal("90 mod cstrike", arguments[configIndex + 1]);
+		Assert.True(configIndex < updateIndex);
 	}
 
 	[Theory]

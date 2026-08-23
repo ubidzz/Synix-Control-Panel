@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "team-fortress-2-gold-rush",
   "catalogOrder": 193,
   "game": "Team Fortress 2: Gold Rush",
@@ -8,8 +9,8 @@
   "requiresSteamLogin": false,
   "executable": "srcds_win64.exe",
   "downloadUrl": "",
-  "arguments": "-game tf_goldrush -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" +rcon_password \"{adminpass}\" -SteamAppId={steamAppID}",
-  "rconSyntax": "",
+  "arguments": "-game tf_goldrush -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

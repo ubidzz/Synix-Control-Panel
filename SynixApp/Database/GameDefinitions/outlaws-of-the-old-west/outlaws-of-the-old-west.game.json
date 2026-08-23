@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "outlaws-of-the-old-west",
   "catalogOrder": 107,
   "game": "Outlaws of the Old West",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Outlaws\\Binaries\\Win64"
+    }
+  ]
 }

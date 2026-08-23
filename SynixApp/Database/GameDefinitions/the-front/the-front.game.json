@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "the-front",
   "catalogOrder": 24,
   "game": "The Front",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "ProjectWar\\Binaries\\Win64"
+    }
+  ]
 }

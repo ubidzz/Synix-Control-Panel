@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "day-of-defeat",
+  "catalogOrder": 223,
+  "game": "Day of Defeat",
+  "aliases": [],
+  "appId": "90",
+  "requiresSteamLogin": false,
+  "steamAppConfig": "90 mod dod",
+  "executable": "hlds.exe",
+  "downloadUrl": "",
+  "arguments": "-console -game dod -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "dod_anzio",
+    "dod_avalanche",
+    "dod_caen"
+  ],
+  "gameModes": [
+    "Territorial Control"
+  ],
+  "configFileCreation": "LaunchArgumentsOnly",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "A2S",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

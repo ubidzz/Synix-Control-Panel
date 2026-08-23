@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "beasts-of-bermuda",
   "catalogOrder": 88,
   "game": "Beasts of Bermuda",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "BeastsOfBermuda\\Binaries\\Win64"
+    }
+  ]
 }

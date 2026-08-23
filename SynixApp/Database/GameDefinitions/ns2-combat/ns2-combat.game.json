@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "ns2-combat",
   "catalogOrder": 115,
   "game": "NS2: Combat",

@@ -23,10 +23,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("server.seed", context => string.IsNullOrWhiteSpace(context.Server.WorldSeed) ? "12345" : context.Server.WorldSeed),
 			new("server.worldsize", context => (context.Server.WorldSize > 0 ? context.Server.WorldSize : 4000).ToString()),
 			new("server.level", context => string.IsNullOrWhiteSpace(context.Server.WorldName) ? "Procedural Map" : context.Server.WorldName),
-			new("server.pve", context => string.Equals(context.Server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase).ToString()),
+			new("server.pve", context => string.Equals(context.Server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase).ToString().ToLowerInvariant()),
 			new("rcon.port", context => context.Server.RconPort.ToString()),
 			new("rcon.password", context => context.Server.EnableRcon ? context.Passwords.RconPassword : string.Empty),
-			new("rcon.web", context => bool.TrueString)
+			new("rcon.web", context => bool.TrueString.ToLowerInvariant())
 		];
 
 		public override string GameName => "Rust";

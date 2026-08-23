@@ -368,6 +368,66 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			WriteAtomically(path, snapshot.Encode(updatedText));
 		}
 
+		internal static bool EnsureStandardIniTupleValues(
+			string path,
+			string tupleKey,
+			IReadOnlyDictionary<string, string> requiredValues)
+		{
+			if (!File.Exists(path))
+				throw new FileNotFoundException("The configuration file could not be found.", path);
+			if (string.IsNullOrWhiteSpace(tupleKey) ||
+				tupleKey.IndexOfAny(['=', '(', ')', '\r', '\n']) >= 0)
+			{
+				throw new InvalidDataException("The INI tuple key is invalid.");
+			}
+
+			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
+			ParsedDocument document = ParseDocument(snapshot.Text, ConfigFormat.StandardINI);
+			List<KeyValuePair<string, string>> missing = requiredValues
+				.Where(required => !document.Values.Any(value =>
+					string.Equals(value.Key, required.Key, StringComparison.Ordinal)))
+				.ToList();
+			if (missing.Count == 0)
+				return false;
+
+			foreach ((string key, string value) in missing)
+			{
+				if (string.IsNullOrWhiteSpace(key) ||
+					key.IndexOfAny(['=', ',', '(', ')', '\r', '\n']) >= 0 ||
+					value.IndexOfAny([',', '(', ')', '\r', '\n']) >= 0)
+				{
+					throw new InvalidDataException("A requested INI tuple value is invalid.");
+				}
+			}
+
+			string marker = tupleKey + "=(";
+			int markerIndex = snapshot.Text.IndexOf(marker, StringComparison.Ordinal);
+			if (markerIndex < 0 ||
+				snapshot.Text.IndexOf(marker, markerIndex + marker.Length, StringComparison.Ordinal) >= 0)
+			{
+				throw new InvalidDataException(
+					$"The configuration must contain exactly one {tupleKey} tuple.");
+			}
+
+			int lineEnd = snapshot.Text.IndexOfAny(['\r', '\n'], markerIndex);
+			if (lineEnd < 0)
+				lineEnd = snapshot.Text.Length;
+			int closingIndex = snapshot.Text.LastIndexOf(
+				')',
+				lineEnd - 1,
+				lineEnd - markerIndex);
+			if (closingIndex < markerIndex + marker.Length)
+				throw new InvalidDataException($"The {tupleKey} tuple is incomplete.");
+
+			string separator = closingIndex > markerIndex + marker.Length ? "," : string.Empty;
+			string insertion = separator + string.Join(
+				",",
+				missing.Select(required => $"{required.Key}={required.Value}"));
+			string updated = snapshot.Text.Insert(closingIndex, insertion);
+			WriteAtomically(path, snapshot.Encode(updated));
+			return true;
+		}
+
 		public static string GetFormatDisplayName(ConfigFormat format)
 		{
 			return format switch

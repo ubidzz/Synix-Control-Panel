@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "pixark",
   "catalogOrder": 43,
   "game": "PixARK",
@@ -9,7 +10,7 @@
   "executable": "ShooterGame\\Binaries\\Win64\\PixARKServer.exe",
   "downloadUrl": "",
   "arguments": "{map}?Listen?SessionName=\"{ServerName}\"?ServerPVE={mode}?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\"?Port={port}?QueryPort={query} {rcon} -server -log -SteamAppId={steamAppID}",
-  "rconSyntax": "?RCONEnabled=True",
+  "rconSyntax": "?RCONEnabled={rcon_enabled}?RCONPort={rcon_port}",
   "port": 7777,
   "queryPort": 27015,
   "appPort": null,
@@ -22,6 +23,10 @@
     "PVE",
     "PVP"
   ],
+  "pvpValue": "False",
+  "pveValue": "True",
+  "booleanTrueValue": "True",
+  "booleanFalseValue": "False",
   "configFileCreation": "Unknown",
   "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
   "format": "StandardINI",
@@ -37,4 +42,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "ShooterGame\\Binaries\\Win64"
+    }
+  ]
 }

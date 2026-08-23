@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "killing-floor-2",
   "catalogOrder": 23,
   "game": "Killing Floor 2",
@@ -40,4 +41,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Binaries\\Win64"
+    }
+  ]
 }

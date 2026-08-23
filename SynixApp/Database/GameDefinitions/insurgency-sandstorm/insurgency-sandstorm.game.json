@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "insurgency-sandstorm",
   "catalogOrder": 39,
   "game": "Insurgency: Sandstorm",
@@ -37,4 +38,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Insurgency\\Binaries\\Win64"
+    }
+  ]
 }

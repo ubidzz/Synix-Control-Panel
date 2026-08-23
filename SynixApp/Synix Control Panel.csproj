@@ -110,6 +110,18 @@
 	  <Compile Update="UI\SteamAccountLoginDialog.Designer.cs">
 	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\GameDefinitionBuilder.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitionBuilder.Designer.cs">
+	    <DependentUpon>GameDefinitionBuilder.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitionValidationDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitionValidationDialog.Designer.cs">
+	    <DependentUpon>GameDefinitionValidationDialog.cs</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -27,12 +27,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			EmbeddedConfigurationDefinition definition)
 		{
 			_gameName = gameName;
-			_schemaVersion = definition.SchemaVersion;
+			_schemaVersion = definition.Revision;
 			_requiresNetworkAddresses = definition.RequiresNetworkAddresses;
 			_templates = definition.Templates
 				.Select(template => new ConfigurationTemplate(
 					template.RelativePath,
-					template.Content))
+					template.Content,
+					template.Revision))
 				.ToArray();
 		}
 

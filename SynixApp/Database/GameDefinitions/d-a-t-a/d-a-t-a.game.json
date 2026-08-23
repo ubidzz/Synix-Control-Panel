@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "d-a-t-a",
   "catalogOrder": 157,
   "game": "D.A.T.A",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "WindowsServer\\ABYSS421\\Binaries\\Win64"
+    }
+  ]
 }

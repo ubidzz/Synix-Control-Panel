@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "deathmatch-classic",
+  "catalogOrder": 224,
+  "game": "Deathmatch Classic",
+  "aliases": [],
+  "appId": "90",
+  "requiresSteamLogin": false,
+  "steamAppConfig": "90 mod dmc",
+  "executable": "hlds.exe",
+  "downloadUrl": "",
+  "arguments": "-console -game dmc -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "dmc_dm2",
+    "dmc_dm4",
+    "dmc_dm6"
+  ],
+  "gameModes": [
+    "Deathmatch"
+  ],
+  "configFileCreation": "LaunchArgumentsOnly",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "A2S",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

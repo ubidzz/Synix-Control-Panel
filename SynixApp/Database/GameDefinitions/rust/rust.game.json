@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "rust",
   "catalogOrder": 216,
   "game": "Rust",
@@ -9,7 +10,7 @@
   "executable": "RustDedicated.exe",
   "downloadUrl": "",
   "arguments": "-batchmode -nographics +server.port {port} +server.queryport {query} +app.port {app_port} +server.pve {mode} +server.level \"{map}\" +server.seed {seed} +server.worldsize {world_size} +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.password \"{pass}\" +server.identity \"{Identity}\" {rcon} -SteamAppId={steamAppID}",
-  "rconSyntax": "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
+  "rconSyntax": "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
   "port": 7777,
   "queryPort": 28015,
   "appPort": null,
@@ -25,6 +26,8 @@
     "PVP",
     "PVE"
   ],
+  "pvpValue": "false",
+  "pveValue": "true",
   "configFileCreation": "LaunchArgumentsOnly",
   "relativeConfigPath": "server\\{Identity}\\cfg\\server.cfg",
   "format": "Space",

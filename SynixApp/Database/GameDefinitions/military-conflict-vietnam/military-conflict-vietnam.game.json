@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "military-conflict-vietnam",
   "catalogOrder": 113,
   "game": "Military Conflict: Vietnam",
@@ -8,8 +9,8 @@
   "requiresSteamLogin": false,
   "executable": "srcds.exe",
   "downloadUrl": "",
-  "arguments": "-game vietnam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" +rcon_password \"{adminpass}\" {rcon} -SteamAppId={steamAppID}",
-  "rconSyntax": "",
+  "arguments": "-game vietnam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

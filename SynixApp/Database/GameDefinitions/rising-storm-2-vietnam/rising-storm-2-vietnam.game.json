@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "rising-storm-2-vietnam",
   "catalogOrder": 53,
   "game": "Rising Storm 2: Vietnam",
@@ -35,4 +36,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Binaries\\Win64"
+    }
+  ]
 }

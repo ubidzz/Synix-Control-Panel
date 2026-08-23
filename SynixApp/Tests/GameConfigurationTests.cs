@@ -352,6 +352,8 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.Equal("Pal Two", GetValue(path, definition.Format, "ServerName"));
 		Assert.Equal("24", GetValue(path, definition.Format, "ServerPlayerMaxNum"));
 		Assert.Equal("True", GetValue(path, definition.Format, "bIsPvP"));
+		Assert.Equal("True", GetValue(path, definition.Format, "bEnablePlayerToPlayerDamage"));
+		Assert.Equal("True", GetValue(path, definition.Format, "bEnableDefenseOtherGuildPlayer"));
 		Assert.Equal("True", GetValue(path, definition.Format, "RCONEnabled"));
 		Assert.Equal("2.500000", GetValue(path, definition.Format, "ExpRate"));
 	}
@@ -426,6 +428,31 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.True(result.Succeeded);
 		Assert.Equal(string.Empty, GetValue(path, definition.Format, "rcon.password"));
 		Assert.Equal("True", GetValue(path, definition.Format, "rcon.web"));
+	}
+
+	[Fact]
+	public void HumanitZ_MapsFriendlyModeAndRconToBooleanConfigurationValues()
+	{
+		HumanitZConfiguration definition = new();
+		GameServer server = CreateServer("HumanitZ");
+		server.GameMode = "PVE";
+		server.EnableRcon = false;
+		server.RconPort = 27020;
+
+		ConfigurationApplyResult created = definition.Apply(CreateContext(server));
+		string path = definition.ResolveFullPath(server);
+
+		Assert.True(created.Succeeded, created.Message);
+		Assert.Equal("false", GetValue(path, definition.Format, "PVP").ToLowerInvariant());
+		Assert.Equal("false", GetValue(path, definition.Format, "RCONEnabled").ToLowerInvariant());
+
+		server.GameMode = "PVP";
+		server.EnableRcon = true;
+		ConfigurationApplyResult updated = definition.Apply(CreateContext(server));
+
+		Assert.True(updated.Succeeded, updated.Message);
+		Assert.Equal("true", GetValue(path, definition.Format, "PVP").ToLowerInvariant());
+		Assert.Equal("true", GetValue(path, definition.Format, "RCONEnabled").ToLowerInvariant());
 	}
 
 	[Fact]

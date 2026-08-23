@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "scp-5k",
   "catalogOrder": 109,
   "game": "SCP: 5K",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Pandemic\\Binaries\\Win64"
+    }
+  ]
 }

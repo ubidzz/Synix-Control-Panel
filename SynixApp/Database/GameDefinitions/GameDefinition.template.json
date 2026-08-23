@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "game-id",
+  "catalogOrder": 220,
+  "game": "Game Name",
+  "aliases": [],
+  "appId": "000000",
+  "requiresSteamLogin": false,
+  "steamAppConfig": "",
+  "executable": "Server.exe",
+  "downloadUrl": "",
+  "arguments": "-port {port} -queryport {query} -maxplayers {MaxPlayers}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "pvpValue": "PVP",
+  "pveValue": "PVE",
+  "booleanTrueValue": "true",
+  "booleanFalseValue": "false",
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "Saved/Config/server.cfg",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "Review the server configuration before the first start.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Binaries/Win64"
+    }
+  ],
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "requiresNetworkAddresses": false,
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "Saved/Config/server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

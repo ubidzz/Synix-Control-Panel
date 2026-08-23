@@ -335,6 +335,11 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				startInfo.ArgumentList.Add(downloadThrottleKbps.Value.ToString());
 				startInfo.ArgumentList.Add("false");
 			}
+			if (!string.IsNullOrWhiteSpace(blueprint.SteamAppConfig))
+			{
+				startInfo.ArgumentList.Add("+app_set_config");
+				startInfo.ArgumentList.Add(blueprint.SteamAppConfig);
+			}
 			startInfo.ArgumentList.Add("+app_update");
 			startInfo.ArgumentList.Add(blueprint.AppID);
 			startInfo.ArgumentList.Add("validate");

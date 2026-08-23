@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "smalland-survive-the-wilds",
   "catalogOrder": 25,
   "game": "Smalland: Survive the Wilds",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "SMALLAND\\Binaries\\Win64"
+    }
+  ]
 }

@@ -29,9 +29,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				AdminPass="{AdminPassword}"
 				MaxPlayers={MaxPlayers}
 				;Used to reserve slots for certain players. Add their NetID to F_ReservedSlots.txt file. Set to 0 to disable reserving slots.
-				ReserveSlots={EnableRcon}
+				ReserveSlots=0
 				;Use it to execute remote command, use any rcon compatible program. Enabling this will allow server ping being displayed in server browser
-				RCONEnabled=true
+				RCONEnabled={EnableRcon}
 				;TCP port for rcon
 				RConPort={RCONPort}
 				RCONPass="{RCONPassword}"
@@ -60,7 +60,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				;Time in second to be able to spawn again after death
 				RespawnTimer=15
 				;false/true=Off/On. This will also affect the ability to interact with player items such as cars and containers
-				PVP={GameMode}
+				PVP={IsPvp}
 				;Time in seconds before player is allowed to log out if PVP is enabled. Set to 0 to disable logout timer.
 				LogoutTimer=30
 				; Set whether air drops are enabled or not
@@ -190,4 +190,3 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		protected override IReadOnlyList<ConfigurationTemplate> Templates => Files;
 	}
 }
-

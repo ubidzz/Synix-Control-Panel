@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "treason",
   "catalogOrder": 194,
   "game": "Treason",
@@ -8,8 +9,8 @@
   "requiresSteamLogin": false,
   "executable": "srcds.exe",
   "downloadUrl": "",
-  "arguments": "-game treason -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" +rcon_password \"{adminpass}\" -SteamAppId={steamAppID}",
-  "rconSyntax": "",
+  "arguments": "-game treason -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

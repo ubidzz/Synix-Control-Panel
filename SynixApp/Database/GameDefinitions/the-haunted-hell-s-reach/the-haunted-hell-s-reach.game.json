@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "the-haunted-hell-s-reach",
   "catalogOrder": 126,
   "game": "The Haunted: Hell's Reach",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "UDKGame\\Binaries\\Win64"
+    }
+  ]
 }

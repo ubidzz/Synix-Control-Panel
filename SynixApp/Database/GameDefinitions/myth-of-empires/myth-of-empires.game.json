@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "myth-of-empires",
   "catalogOrder": 131,
   "game": "Myth of Empires",
@@ -19,10 +20,7 @@
     "ZhongZhou",
     "DongZhou"
   ],
-  "gameModes": [
-    "PVE",
-    "PVP"
-  ],
+  "gameModes": [],
   "configFileCreation": "Unknown",
   "relativeConfigPath": "MOE\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
   "format": "StandardINI",
@@ -38,4 +36,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "MOE\\Binaries\\Win64"
+    }
+  ]
 }

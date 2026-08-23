@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "ground-branch-cte",
   "catalogOrder": 215,
   "game": "GROUND BRANCH CTE",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "GroundBranch\\Binaries\\Win64"
+    }
+  ]
 }

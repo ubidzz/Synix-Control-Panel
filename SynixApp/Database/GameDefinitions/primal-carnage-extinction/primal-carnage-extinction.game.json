@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "primal-carnage-extinction",
   "catalogOrder": 71,
   "game": "Primal Carnage: Extinction",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "PrimalCarnage\\Binaries\\Win64"
+    }
+  ]
 }

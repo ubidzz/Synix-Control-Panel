@@ -17,7 +17,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal readonly record struct ConfigurationTemplate(
 		string RelativePath,
-		string Content);
+		string Content,
+		int Revision = 1);
 
 	internal abstract class TemplateConfigurationDefinition : ConfigurationDefinition
 	{
@@ -40,6 +41,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				bool created = false;
 				bool changed = false;
 				List<string> missing = [];
+				List<string> upgradeBackups = [];
 				foreach (ConfigurationTemplate template in Templates)
 				{
 					string fullPath = ResolveFullPath(context.Server, template.RelativePath);
@@ -50,6 +52,15 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						created = true;
 						changed = true;
 						continue;
+					}
+
+					if (context.Server.ManagedConfigurationVersion < SchemaVersion)
+					{
+						string? backup = CreateUpgradeBackup(
+							fullPath,
+							template.Revision);
+						if (backup != null)
+							upgradeBackups.Add(backup);
 					}
 
 					(bool fileChanged, IReadOnlyList<string> fileMissing) =
@@ -63,6 +74,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						$"{template.RelativePath}: {setting}"));
 				}
 
+				string backupMessage = upgradeBackups.Count > 0
+					? $" Preserved {upgradeBackups.Count} pre-upgrade configuration backup(s)."
+					: string.Empty;
 				if (missing.Count > 0)
 				{
 					return new ConfigurationApplyResult(
@@ -70,7 +84,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						false,
 						changed,
 						created,
-						$"The existing files were preserved, but these managed settings were not found: {string.Join(", ", missing)}.");
+						$"The existing files were preserved, but these managed settings were not found: {string.Join(", ", missing)}." +
+						backupMessage);
 				}
 
 				return new ConfigurationApplyResult(
@@ -78,11 +93,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					true,
 					changed,
 					created,
-					created
+					(created
 						? $"Created the required {GameName} configuration files."
 						: changed
 							? $"Updated the managed {GameName} configuration settings."
-							: $"The {GameName} configuration files are already current.");
+							: $"The {GameName} configuration files are already current.") +
+					backupMessage);
 			}
 			catch (Exception ex)
 			{
@@ -153,6 +169,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				? value == int.MaxValue ? value - 1 : value + 1
 				: value;
 			bool ProbeBoolean(bool value) => useProbeValues ? !value : value;
+			GameInfo? game = GameDatabase.GetGame(GameName);
+			string BooleanValue(bool value) =>
+				GameFix.ResolveBooleanValue(game, ProbeBoolean(value));
+			string GameModeValue() => GameFix.ResolveGameModeValue(
+				game,
+				RequireSingleLine(server.GameMode, "GameMode"));
 
 			return template
 				.Replace("{ServerName}", TextValue(RequireSingleLine(server.ServerName, "ServerName"), "server_name"), StringComparison.Ordinal)
@@ -163,7 +185,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				.Replace("{QueryPort}", ProbeNumber(server.QueryPort).ToString(), StringComparison.Ordinal)
 				.Replace("{RCONPort}", ProbeNumber(server.RconPort).ToString(), StringComparison.Ordinal)
 				.Replace("{RCONPassword}", TextValue(RequireSingleLine(context.Passwords.RconPassword, "RCONPassword"), "rcon_password"), StringComparison.Ordinal)
-				.Replace("{EnableRcon}", ProbeBoolean(server.EnableRcon).ToString().ToLowerInvariant(), StringComparison.Ordinal)
+				.Replace("{EnableRcon}", BooleanValue(server.EnableRcon), StringComparison.Ordinal)
 				.Replace("{Identity}", TextValue(context.Identity, "identity"), StringComparison.Ordinal)
 				.Replace("{WorldName}", TextValue(RequireSingleLine(server.WorldName, "WorldName"), "world_name"), StringComparison.Ordinal)
 				.Replace("{WorldSeed}", TextValue(RequireSingleLine(server.WorldSeed, "WorldSeed"), "world_seed"), StringComparison.Ordinal)
@@ -171,9 +193,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				.Replace("{AppPort}", ProbeNumber(server.AppPort ?? 0).ToString(), StringComparison.Ordinal)
 				.Replace("{LocalIP}", TextValue(RequireSingleLine(context.LocalIp, "LocalIP"), "local_ip"), StringComparison.Ordinal)
 				.Replace("{PublicIP}", TextValue(RequireSingleLine(context.PublicIp, "PublicIP"), "public_ip"), StringComparison.Ordinal)
-				.Replace("{IsPvp}", ProbeBoolean(string.Equals(server.GameMode, "PVP", StringComparison.OrdinalIgnoreCase)).ToString().ToLowerInvariant(), StringComparison.Ordinal)
-				.Replace("{IsPve}", ProbeBoolean(string.Equals(server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase)).ToString().ToLowerInvariant(), StringComparison.Ordinal)
-				.Replace("{GameMode}", TextValue(RequireSingleLine(server.GameMode, "GameMode").ToLowerInvariant(), "game_mode"), StringComparison.Ordinal);
+				.Replace("{IsPvp}", BooleanValue(string.Equals(server.GameMode, "PVP", StringComparison.OrdinalIgnoreCase)), StringComparison.Ordinal)
+				.Replace("{IsPve}", BooleanValue(string.Equals(server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase)), StringComparison.Ordinal)
+				.Replace("{GameMode}", TextValue(GameModeValue(), "game_mode"), StringComparison.Ordinal);
 		}
 
 		private (bool Changed, IReadOnlyList<string> Missing) UpdateManagedValues(
@@ -285,6 +307,18 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			}
 
 			return supported;
+		}
+
+		private static string? CreateUpgradeBackup(
+			string path,
+			int templateRevision)
+		{
+			string backupPath = $"{path}.synix.before-template-v{templateRevision}.bak";
+			if (File.Exists(backupPath))
+				return null;
+
+			File.Copy(path, backupPath, false);
+			return backupPath;
 		}
 	}
 }

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "counter-strike-1-6",
+  "catalogOrder": 221,
+  "game": "Counter-Strike 1.6",
+  "aliases": [
+    "Counter-Strike"
+  ],
+  "appId": "90",
+  "requiresSteamLogin": false,
+  "steamAppConfig": "90 mod cstrike",
+  "executable": "hlds.exe",
+  "downloadUrl": "",
+  "arguments": "-console -game cstrike -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "de_dust2",
+    "de_inferno",
+    "cs_office"
+  ],
+  "gameModes": [
+    "Classic"
+  ],
+  "configFileCreation": "LaunchArgumentsOnly",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "A2S",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

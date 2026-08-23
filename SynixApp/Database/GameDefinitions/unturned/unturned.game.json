@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "unturned",
   "catalogOrder": 36,
   "game": "Unturned",
@@ -26,6 +27,8 @@
     "PVP",
     "PVE"
   ],
+  "pvpValue": "PvP",
+  "pveValue": "PvE",
   "configFileCreation": "Unknown",
   "relativeConfigPath": "Servers\\{Identity}\\Server\\Commands.dat",
   "format": "Space",

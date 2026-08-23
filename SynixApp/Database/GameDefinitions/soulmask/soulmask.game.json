@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "soulmask",
   "catalogOrder": 2,
   "game": "Soulmask",
@@ -23,6 +24,8 @@
     "PVP",
     "PVE"
   ],
+  "pvpValue": "pvp",
+  "pveValue": "pve",
   "configFileCreation": "GameGenerated",
   "relativeConfigPath": "WS\\Saved\\GameplaySettings\\GameXishu.json",
   "format": "JSON",
@@ -38,4 +41,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "WS\\Binaries\\Win64"
+    }
+  ]
 }

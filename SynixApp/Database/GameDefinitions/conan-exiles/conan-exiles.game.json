@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "conan-exiles",
   "catalogOrder": 30,
   "game": "Conan Exiles",
@@ -18,10 +19,7 @@
   "maps": [
     "TheExiledLands"
   ],
-  "gameModes": [
-    "PVE",
-    "PVP"
-  ],
+  "gameModes": [],
   "configFileCreation": "Unknown",
   "relativeConfigPath": "ConanSandbox\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
   "format": "StandardINI",
@@ -37,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "ConanSandbox\\Binaries\\Win64"
+    }
+  ]
 }

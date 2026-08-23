@@ -181,6 +181,10 @@ namespace Synix_Control_Panel.SynixEngine
 				CollectGeneratedConfigurationsRequested;
 			developmentSettingsPage.ReleaseReadinessRequested +=
 				ReleaseReadinessRequested;
+			developmentSettingsPage.GameDefinitionValidationRequested +=
+				GameDefinitionValidationRequested;
+			developmentSettingsPage.GameDefinitionBuilderRequested +=
+				GameDefinitionBuilderRequested;
 		}
 
 		private void LoadSavedSettings()
@@ -312,6 +316,28 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			using SynixReleaseReadinessDialog dialog = new();
 			dialog.ShowDialog(this);
+		}
+
+		private void GameDefinitionValidationRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+
+			using GameDefinitionValidationDialog dialog = new();
+			dialog.ShowDialog(this);
+		}
+
+		private void GameDefinitionBuilderRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+
+			using GameDefinitionBuilder builder = new();
+			builder.ShowDialog(this);
 		}
 
 		private void btnMinimize_Click(object? sender, EventArgs eventArgs)

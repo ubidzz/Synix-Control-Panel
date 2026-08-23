@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "mordhau",
   "catalogOrder": 33,
   "game": "Mordhau",
@@ -35,4 +36,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Mordhau\\Binaries\\Win64"
+    }
+  ]
 }

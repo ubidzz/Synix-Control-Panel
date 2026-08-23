@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "ark-survival-ascended",
   "catalogOrder": 7,
   "game": "ARK: Survival Ascended",
@@ -9,7 +10,7 @@
   "executable": "ShooterGame\\Binaries\\Win64\\ArkAscendedServer.exe",
   "downloadUrl": "",
   "arguments": "{map}?listen?SessionName=\"{ServerName}\"?ServerPassword=\"{pass}\"?ServerAdminPassword=\"{adminpass}\" -WinLiveMaxPlayers={MaxPlayers} -port={port} -server -servergamelog -UserBattleEye -crossplay -game -SteamAppId={steamAppID}",
-  "rconSyntax": "?RCONEnabled=True",
+  "rconSyntax": "",
   "port": 7777,
   "queryPort": 27015,
   "appPort": null,
@@ -31,6 +32,12 @@
     "PVE",
     "PVP"
   ],
+  "pvpValue": "False",
+  "pveValue": "True",
+  "booleanTrueValue": "True",
+  "booleanFalseValue": "False",
+  "booleanTrueValue": "True",
+  "booleanFalseValue": "False",
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
   "format": "StandardINI",
@@ -46,10 +53,18 @@
   "supportsManualConnectionTesting": false,
   "probePath": "",
   "eosDeploymentId": "",
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "ShooterGame\\Binaries\\Win64"
+    }
+  ],
   "configuration": {
     "schemaVersion": 1,
+    "revision": 1,
     "templates": [
       {
+        "revision": 1,
         "relativePath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
         "templateFile": "GameUserSettings.ini"
       }

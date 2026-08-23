@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "dune-awakening",
   "catalogOrder": 210,
   "game": "Dune: Awakening",
@@ -18,10 +19,7 @@
   "maps": [
     "Arrakis"
   ],
-  "gameModes": [
-    "PVE",
-    "PVP"
-  ],
+  "gameModes": [],
   "configFileCreation": "Unknown",
   "relativeConfigPath": "UserSettings\\DefaultGame.ini",
   "format": "StandardINI",
@@ -37,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": ""
+    }
+  ]
 }

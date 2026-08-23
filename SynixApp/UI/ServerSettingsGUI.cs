@@ -1270,7 +1270,9 @@ namespace Synix_Control_Panel
 							numAppPort.Maximum);
 					}
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
-					PopulateGameModes(gameData, "PVE");
+					PopulateGameModes(
+						gameData,
+						gameData.GameModes?.FirstOrDefault() ?? "PVE");
 
 					await PopulateVersionsAsync(gameData, _existingServer?.GameVersion ?? "latest");
 

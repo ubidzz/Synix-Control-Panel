@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "operation-harsh-doorstop",
   "catalogOrder": 116,
   "game": "Operation: Harsh Doorstop",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "HarshDoorstop\\Binaries\\Win64"
+    }
+  ]
 }

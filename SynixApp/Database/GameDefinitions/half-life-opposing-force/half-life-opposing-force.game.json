@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "half-life-opposing-force",
+  "catalogOrder": 225,
+  "game": "Half-Life: Opposing Force",
+  "aliases": [
+    "Opposing Force"
+  ],
+  "appId": "90",
+  "requiresSteamLogin": false,
+  "steamAppConfig": "90 mod gearbox",
+  "executable": "hlds.exe",
+  "downloadUrl": "",
+  "arguments": "-console -game gearbox -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "crossfire"
+  ],
+  "gameModes": [
+    "Deathmatch"
+  ],
+  "configFileCreation": "LaunchArgumentsOnly",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "A2S",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

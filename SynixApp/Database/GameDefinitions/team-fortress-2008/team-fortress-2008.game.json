@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "team-fortress-2008",
   "catalogOrder": 195,
   "game": "Team Fortress 2008",
@@ -8,8 +9,8 @@
   "requiresSteamLogin": false,
   "executable": "srcds.exe",
   "downloadUrl": "",
-  "arguments": "-game tf2008 -steam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" +rcon_password \"{adminpass}\" -SteamAppId={steamAppID}",
-  "rconSyntax": "",
+  "arguments": "-game tf2008 -steam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

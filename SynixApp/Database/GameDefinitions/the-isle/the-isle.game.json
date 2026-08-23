@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "the-isle",
   "catalogOrder": 52,
   "game": "The Isle",
@@ -35,4 +36,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "TheIsle\\Binaries\\Win64"
+    }
+  ]
 }

@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
+using Synix_Control_Panel.SynixApp.Database.GameDefinitions;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -219,6 +220,34 @@ namespace Synix_Control_Panel.SynixEngine
 			CheckAutomatedTestReceipt(
 				items,
 				manifestPath);
+
+			progress?.Report("Validating the built-in game definition library...");
+			GameDefinitionValidationReport definitionReport =
+				GameDefinitionValidator.ValidateSourceDirectory(
+					fullProjectDirectory);
+			if (!definitionReport.IsValid)
+			{
+				string problems = string.Join(
+					" ",
+					definitionReport.Items
+						.Where(item =>
+							item.Level == GameDefinitionValidationLevel.Failed)
+						.Take(3)
+						.Select(item => $"{item.Definition}: {item.Details}"));
+				AddFailure(
+					items,
+					"Game definition library",
+					$"{definitionReport.FailedCount} definition problem(s) must be fixed. {problems}");
+			}
+			else
+			{
+				AddPassed(
+					items,
+					"Game definition library",
+					$"Validated {definitionReport.DefinitionCount} definitions, " +
+					$"{definitionReport.TemplateCount} complete template(s), and " +
+					$"{definitionReport.PostInstallActionCount} safe post-install action(s).");
+			}
 
 			items.Add(new SynixReleaseCheckItem(
 				SynixReleaseCheckLevel.Passed,

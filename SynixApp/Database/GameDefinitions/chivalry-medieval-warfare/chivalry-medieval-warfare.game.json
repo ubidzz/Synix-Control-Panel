@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "chivalry-medieval-warfare",
   "catalogOrder": 170,
   "game": "Chivalry: Medieval Warfare",
@@ -37,4 +38,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "UDKGame\\Binaries\\Win64"
+    }
+  ]
 }

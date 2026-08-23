@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "atlas",
   "catalogOrder": 44,
   "game": "Atlas",
@@ -9,7 +10,7 @@
   "executable": "ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe",
   "downloadUrl": "",
   "arguments": "Ocean?ServerX=0?ServerY=0?AltSaveDirectoryName=\"{map}\"?ServerPVE={mode}?ServerAdminPassword=\"{adminpass}\"?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query} {rcon} ?SeamlessIP=0.0.0.0 -log -server -SteamAppId={steamAppID}",
-  "rconSyntax": "?RCONEnabled=True",
+  "rconSyntax": "?RCONEnabled={rcon_enabled}?RCONPort={rcon_port}",
   "port": 57555,
   "queryPort": 57555,
   "appPort": null,
@@ -19,9 +20,13 @@
     "00"
   ],
   "gameModes": [
-    "True",
-    "False"
+    "PVP",
+    "PVE"
   ],
+  "pvpValue": "False",
+  "pveValue": "True",
+  "booleanTrueValue": "True",
+  "booleanFalseValue": "False",
   "configFileCreation": "Unknown",
   "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
   "format": "StandardINI",
@@ -37,4 +42,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "ShooterGame\\Binaries\\Win64"
+    }
+  ]
 }

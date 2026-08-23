@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "eden-star",
   "catalogOrder": 177,
   "game": "Eden Star",
@@ -9,7 +10,7 @@
   "executable": "EdenGame\\Binaries\\Win64\\EdenGameServer.exe",
   "downloadUrl": "",
   "arguments": "-log -ServerName=\"{ServerName}\" -ServerMaxPlayers={MaxPlayers} -Port={port} -QueryPort={query} {rcon} -SteamAppId={steamAppID}",
-  "rconSyntax": "-RCONPassword=\"{adminpass}\"",
+  "rconSyntax": "-RCONPassword=\"{rcon_pass}\"",
   "port": 7777,
   "queryPort": 27017,
   "appPort": null,
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "EdenGame\\Binaries\\Win64"
+    }
+  ]
 }

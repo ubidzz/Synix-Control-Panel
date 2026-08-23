@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "longvinter",
   "catalogOrder": 134,
   "game": "Longvinter",
@@ -16,7 +17,14 @@
   "worldSize": 0,
   "worldSeed": "12345",
   "maps": [],
-  "gameModes": [],
+  "gameModes": [
+    "PVP",
+    "PVE"
+  ],
+  "pvpValue": "false",
+  "pveValue": "true",
+  "booleanTrueValue": "true",
+  "booleanFalseValue": "false",
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "Longvinter\\Saved\\Config\\WindowsServer\\Game.ini",
   "format": "StandardINI",
@@ -32,4 +40,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Longvinter\\Binaries\\Win64"
+    }
+  ]
 }

@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "citadel-forged-with-fire",
   "catalogOrder": 59,
   "game": "Citadel: Forged with Fire",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Citadel\\Binaries\\Win64"
+    }
+  ]
 }

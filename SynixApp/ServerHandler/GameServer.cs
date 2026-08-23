@@ -63,6 +63,8 @@ public class GameDefinition
 	[JsonIgnore]
 	public bool RequiresSteamLogin { get; init; }
 	[JsonIgnore]
+	public string SteamAppConfig { get; init; } = string.Empty;
+	[JsonIgnore]
 	public string ExeName { get; set; } = string.Empty;
 	[JsonIgnore]
 	public string DownloadUrl { get; init; } = string.Empty;
@@ -77,6 +79,14 @@ public class GameDefinition
 	public int? AppPort { get; set; }
 
 	public List<string> GameModes { get; set; } = [];
+	[JsonIgnore]
+	public string PvpValue { get; init; } = "PVP";
+	[JsonIgnore]
+	public string PveValue { get; init; } = "PVE";
+	[JsonIgnore]
+	public string BooleanTrueValue { get; init; } = "true";
+	[JsonIgnore]
+	public string BooleanFalseValue { get; init; } = "false";
 	public string RconSyntax { get; init; } = "";
 	public string IconUrl { get; init; } = string.Empty;
 	[JsonIgnore]
@@ -93,6 +103,8 @@ public class GameDefinition
 	public IReadOnlyList<string> Aliases { get; init; } = [];
 	[JsonIgnore]
 	public int DefinitionSchemaVersion { get; init; } = 1;
+	[JsonIgnore]
+	public int DefinitionRevision { get; init; } = 1;
 	[JsonIgnore]
 	public bool IsEmbeddedDefinition { get; internal set; }
 }

@@ -20,6 +20,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 {
 	internal sealed class EmbeddedConfigurationTemplate
 	{
+		public int Revision { get; init; } = 1;
 		public string RelativePath { get; init; } = string.Empty;
 		public string TemplateFile { get; init; } = string.Empty;
 		public string Content { get; set; } = string.Empty;
@@ -28,19 +29,35 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 	internal sealed class EmbeddedConfigurationDefinition
 	{
 		public int SchemaVersion { get; init; } = 1;
+		public int Revision { get; init; } = 1;
 		public bool RequiresNetworkAddresses { get; init; }
 		public IReadOnlyList<EmbeddedConfigurationTemplate> Templates { get; init; } = [];
+	}
+
+	internal enum TrustedPostInstallActionType
+	{
+		Unknown,
+		CopySteamRuntimeFiles,
+		EnsureDirectory
+	}
+
+	internal sealed class EmbeddedPostInstallAction
+	{
+		public TrustedPostInstallActionType Type { get; init; }
+		public string TargetDirectory { get; init; } = string.Empty;
 	}
 
 	internal sealed class EmbeddedGameDefinition
 	{
 		public int SchemaVersion { get; init; } = 1;
+		public int DefinitionRevision { get; init; } = 1;
 		public string Id { get; init; } = string.Empty;
 		public int CatalogOrder { get; init; } = int.MaxValue;
 		public string Game { get; init; } = string.Empty;
 		public IReadOnlyList<string> Aliases { get; init; } = [];
 		public string AppId { get; init; } = string.Empty;
 		public bool RequiresSteamLogin { get; init; }
+		public string SteamAppConfig { get; init; } = string.Empty;
 		public string Executable { get; init; } = string.Empty;
 		public string DownloadUrl { get; init; } = string.Empty;
 		public string Arguments { get; init; } = string.Empty;
@@ -52,6 +69,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string WorldSeed { get; init; } = "12345";
 		public IReadOnlyList<string> Maps { get; init; } = [];
 		public IReadOnlyList<string> GameModes { get; init; } = [];
+		public string PvpValue { get; init; } = "PVP";
+		public string PveValue { get; init; } = "PVE";
+		public string BooleanTrueValue { get; init; } = "true";
+		public string BooleanFalseValue { get; init; } = "false";
 		public ConfigFileCreationMode ConfigFileCreation { get; init; } =
 			ConfigFileCreationMode.Unknown;
 		public string RelativeConfigPath { get; init; } = string.Empty;
@@ -69,12 +90,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public bool SupportsManualConnectionTesting { get; init; } = true;
 		public string ProbePath { get; init; } = string.Empty;
 		public string EosDeploymentId { get; init; } = string.Empty;
+		public IReadOnlyList<EmbeddedPostInstallAction> PostInstallActions { get; init; } = [];
 		public EmbeddedConfigurationDefinition? Configuration { get; init; }
 	}
 
 	internal sealed record EmbeddedGamePackage(
 		GameInfo Definition,
 		EmbeddedConfigurationDefinition? Configuration,
+		IReadOnlyList<EmbeddedPostInstallAction> PostInstallActions,
 		string ResourceName);
 
 	internal static partial class TrustedGameDefinitionCatalog
@@ -113,12 +136,30 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 				ReadCommentHandling = JsonCommentHandling.Disallow,
 				UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
-				Converters = { new JsonStringEnumConverter() }
+				Converters =
+				{
+					new JsonStringEnumConverter(
+						namingPolicy: null,
+						allowIntegerValues: false)
+				}
 			};
 		private static readonly Lazy<IReadOnlyList<EmbeddedGamePackage>> PackageCache =
 			new(LoadEmbeddedPackages, LazyThreadSafetyMode.ExecutionAndPublication);
 
 		internal static IReadOnlyList<EmbeddedGamePackage> Packages => PackageCache.Value;
+
+		internal static bool TryGetPackage(
+			string gameName,
+			out EmbeddedGamePackage? package)
+		{
+			string canonicalName = GameDatabase.GetCanonicalGameName(gameName);
+			package = Packages.FirstOrDefault(candidate =>
+				string.Equals(
+					candidate.Definition.Game,
+					canonicalName,
+					StringComparison.OrdinalIgnoreCase));
+			return package != null;
+		}
 
 		internal static IReadOnlyList<GameInfo> LoadDefinitions()
 		{
@@ -167,9 +208,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				Game = manifest.Game.Trim(),
 				Aliases = manifest.Aliases.Select(alias => alias.Trim()).ToArray(),
 				DefinitionSchemaVersion = manifest.SchemaVersion,
+				DefinitionRevision = manifest.DefinitionRevision,
 				IsEmbeddedDefinition = true,
 				AppID = manifest.AppId.Trim(),
 				RequiresSteamLogin = manifest.RequiresSteamLogin,
+				SteamAppConfig = manifest.SteamAppConfig,
 				ExeName = manifest.Executable.Trim(),
 				DownloadUrl = manifest.DownloadUrl.Trim(),
 				RequiredArgs = manifest.Arguments,
@@ -181,6 +224,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				WorldSeed = manifest.WorldSeed,
 				Maps = manifest.Maps.ToList(),
 				GameModes = manifest.GameModes.ToList(),
+				PvpValue = manifest.PvpValue,
+				PveValue = manifest.PveValue,
+				BooleanTrueValue = manifest.BooleanTrueValue,
+				BooleanFalseValue = manifest.BooleanFalseValue,
 				ConfigFileCreation = manifest.ConfigFileCreation,
 				RelativeConfigPath = relativeConfigPath,
 				Format = manifest.Format,
@@ -201,6 +248,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			return new EmbeddedGamePackage(
 				definition,
 				manifest.Configuration,
+				manifest.PostInstallActions.ToArray(),
 				resourceName);
 		}
 
@@ -246,6 +294,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		{
 			if (manifest.SchemaVersion != 1)
 				throw new InvalidDataException($"{resourceName} uses unsupported schema version {manifest.SchemaVersion}.");
+			if (manifest.DefinitionRevision < 1)
+				throw new InvalidDataException($"{resourceName} has an invalid definitionRevision.");
 			ValidateText(manifest.Id, "id", resourceName, 80, required: true);
 			if (manifest.CatalogOrder < 0)
 				throw new InvalidDataException($"{resourceName} has an invalid catalogOrder.");
@@ -258,9 +308,29 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			ValidateText(manifest.AppId, "appId", resourceName, 32, required: true);
 			if (!manifest.AppId.All(char.IsDigit))
 				throw new InvalidDataException($"{resourceName} has a non-numeric Steam AppID.");
+			ValidateSteamAppConfig(manifest.SteamAppConfig, manifest.AppId, resourceName);
 			ValidateRelativePath(manifest.Executable, "executable", resourceName, required: true);
 			ValidateSingleLine(manifest.Arguments, "arguments", resourceName, 16_384);
 			ValidateSingleLine(manifest.RconSyntax, "rconSyntax", resourceName, 4_096);
+			GameDefinitionArgumentTags.ValidateLaunchArguments(
+				manifest.Arguments,
+				resourceName);
+			GameDefinitionArgumentTags.ValidateRconSyntax(
+				manifest.RconSyntax,
+				resourceName);
+			bool usesRconTag = manifest.Arguments.Contains(
+				"{rcon}",
+				StringComparison.Ordinal);
+			if (!string.IsNullOrWhiteSpace(manifest.RconSyntax) && !usesRconTag)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} defines rconSyntax but its launch arguments do not contain {{rcon}}.");
+			}
+			if (usesRconTag && string.IsNullOrWhiteSpace(manifest.RconSyntax))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} contains {{rcon}} but does not define rconSyntax.");
+			}
 			ValidatePort(manifest.Port, "port", resourceName);
 			ValidatePort(manifest.QueryPort, "queryPort", resourceName);
 			if (manifest.AppPort.HasValue)
@@ -276,6 +346,32 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			ValidateUniqueText(manifest.Aliases, "aliases", resourceName);
 			ValidateUniqueText(manifest.Maps, "maps", resourceName);
 			ValidateUniqueText(manifest.GameModes, "gameModes", resourceName);
+			ValidateDefinitionValue(manifest.PvpValue, "pvpValue", resourceName);
+			ValidateDefinitionValue(manifest.PveValue, "pveValue", resourceName);
+			ValidateDefinitionValue(manifest.BooleanTrueValue, "booleanTrueValue", resourceName);
+			ValidateDefinitionValue(manifest.BooleanFalseValue, "booleanFalseValue", resourceName);
+			if (manifest.PostInstallActions == null)
+				throw new InvalidDataException($"{resourceName} contains a null postInstallActions collection.");
+			if (manifest.PostInstallActions.Count > 16)
+				throw new InvalidDataException($"{resourceName} contains too many post-install actions.");
+			HashSet<string> postInstallActions = new(StringComparer.OrdinalIgnoreCase);
+			foreach (EmbeddedPostInstallAction action in manifest.PostInstallActions)
+			{
+				if (action.Type is not TrustedPostInstallActionType.CopySteamRuntimeFiles and
+					not TrustedPostInstallActionType.EnsureDirectory)
+				{
+					throw new InvalidDataException(
+						$"{resourceName} contains an unsupported post-install action type.");
+				}
+				ValidateRelativePath(
+					action.TargetDirectory,
+					"postInstallActions.targetDirectory",
+					resourceName,
+					required: action.Type == TrustedPostInstallActionType.EnsureDirectory);
+				string identity = $"{action.Type}\u001f{action.TargetDirectory}";
+				if (!postInstallActions.Add(identity))
+					throw new InvalidDataException($"{resourceName} contains a duplicate post-install action.");
+			}
 
 			if (manifest.Configuration != null)
 			{
@@ -283,9 +379,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					throw new InvalidDataException($"{resourceName} has templates but is not marked SynixTemplate.");
 				if (manifest.Configuration.SchemaVersion < 1)
 					throw new InvalidDataException($"{resourceName} has an invalid configuration schema version.");
+				if (manifest.Configuration.Revision < 1)
+					throw new InvalidDataException($"{resourceName} has an invalid configuration revision.");
 				HashSet<string> templatePaths = new(StringComparer.OrdinalIgnoreCase);
 				foreach (EmbeddedConfigurationTemplate template in manifest.Configuration.Templates)
 				{
+					if (template.Revision < 1 ||
+						template.Revision > manifest.Configuration.Revision)
+					{
+						throw new InvalidDataException(
+							$"{resourceName} contains an invalid template revision.");
+					}
 					ValidateRelativePath(template.RelativePath, "configuration.templates.relativePath", resourceName, required: true);
 					ValidateRelativePath(template.TemplateFile, "configuration.templates.templateFile", resourceName);
 					if (!templatePaths.Add(template.RelativePath))
@@ -411,6 +515,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					throw new InvalidDataException($"{resourceName} requires {field}.");
 				return;
 			}
+			if (!string.Equals(path, path.Trim(), StringComparison.Ordinal) ||
+				path.Any(char.IsControl))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} contains an invalid {field} path.");
+			}
 
 			if (path.Length > 512 ||
 				Path.IsPathRooted(path) ||
@@ -445,6 +555,25 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				throw new InvalidDataException($"{resourceName} has an invalid {field}.");
 		}
 
+		private static void ValidateSteamAppConfig(
+			string value,
+			string appId,
+			string resourceName)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return;
+			if (!string.Equals(value, value.Trim(), StringComparison.Ordinal) ||
+				!Regex.IsMatch(
+					value,
+					@"^[0-9]{1,10} mod [A-Za-z0-9_-]{1,64}$",
+					RegexOptions.CultureInvariant) ||
+				!value.StartsWith(appId + " mod ", StringComparison.Ordinal))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} contains an unsafe steamAppConfig. Use only '<AppID> mod <folder>'.");
+			}
+		}
+
 		private static void ValidateSingleLine(
 			string value,
 			string field,
@@ -453,6 +582,23 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		{
 			if (value.Length > maximumLength || value.IndexOfAny(['\r', '\n', '\0']) >= 0)
 				throw new InvalidDataException($"{resourceName} contains an invalid {field} value.");
+		}
+
+		private static void ValidateDefinitionValue(
+			string value,
+			string field,
+			string resourceName)
+		{
+			ValidateText(value, field, resourceName, 64, required: true);
+			if (!string.Equals(value, value.Trim(), StringComparison.Ordinal) ||
+				value.Any(character =>
+					char.IsControl(character) ||
+					char.IsWhiteSpace(character) ||
+					character is '"' or '\'' or '{' or '}' or '&' or '|' or ';'))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} contains an unsafe {field} value.");
+			}
 		}
 
 		private static void ValidateText(

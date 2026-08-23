@@ -25,7 +25,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("max-players", context => context.Server.MaxPlayers.ToString()),
 			new("level-name", context => EscapeProperty(string.IsNullOrWhiteSpace(context.Server.WorldName) ? "world" : context.Server.WorldName)),
 			new("level-seed", context => EscapeProperty(context.Server.WorldSeed)),
-			new("enable-rcon", context => context.Server.EnableRcon.ToString()),
+			new("enable-rcon", context => context.Server.EnableRcon.ToString().ToLowerInvariant()),
 			new("rcon.port", context => context.Server.RconPort.ToString()),
 			new("rcon.password", context => EscapeProperty(context.Passwords.RconPassword))
 		];

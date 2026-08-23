@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "jabroni-brawl-episode-3",
   "catalogOrder": 191,
   "game": "Jabroni Brawl: Episode 3",
@@ -9,7 +10,7 @@
   "executable": "bin\\win64\\jbep3.exe",
   "downloadUrl": "",
   "arguments": "-game jbep3 -steam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
-  "rconSyntax": "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

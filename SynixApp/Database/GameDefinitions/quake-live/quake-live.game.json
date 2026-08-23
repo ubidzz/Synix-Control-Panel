@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "quake-live",
   "catalogOrder": 100,
   "game": "Quake Live",

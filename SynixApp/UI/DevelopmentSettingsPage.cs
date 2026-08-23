@@ -25,10 +25,11 @@ namespace Synix_Control_Panel.SynixEngine
 			BackColor = SettingsPalette.Window;
 			Size = new Size(818, 520);
 			AutoScroll = true;
-			AutoScrollMinSize = new Size(0, 548);
+			AutoScrollMinSize = new Size(0, 768);
 			AddPremadeConfigurationsCard();
 			AddGeneratedConfigurationsCard();
 			AddReleaseReadinessCard();
+			AddGameDefinitionsCard();
 		}
 
 		[Browsable(false)]
@@ -66,6 +67,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 		[Browsable(false)]
 		public event EventHandler? ReleaseReadinessRequested;
+
+		[Browsable(false)]
+		public event EventHandler? GameDefinitionValidationRequested;
+
+		[Browsable(false)]
+		public event EventHandler? GameDefinitionBuilderRequested;
 
 		private void AddPremadeConfigurationsCard()
 		{
@@ -150,6 +157,43 @@ namespace Synix_Control_Panel.SynixEngine
 				ReleaseReadinessRequested?.Invoke(this, eventArgs);
 
 			card.Controls.Add(checkButton);
+			Controls.Add(card);
+		}
+
+		private void AddGameDefinitionsCard()
+		{
+			ModernSettingsCard card = CreateCard(548, 196);
+			card.Controls.Add(CreateGlyph("◇"));
+			card.Controls.Add(CreateTitle("Built-in Game Definitions"));
+			card.Controls.Add(CreateDescription(
+				"Validate every built-in game, full configuration template, revision, path, and allowlisted post-install action. The builder creates project files only and cannot load plugins or run scripts.",
+				72));
+
+			ModernSettingsButton validateButton = new()
+			{
+				AccessibleName = "Validate built-in game definitions",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 345, 136),
+				Size = new Size(150, 42),
+				Text = "Validate Library"
+			};
+			validateButton.Click += (_, eventArgs) =>
+				GameDefinitionValidationRequested?.Invoke(this, eventArgs);
+
+			ModernSettingsButton builderButton = new()
+			{
+				AccessibleName = "Open the game definition builder",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 185, 136),
+				Size = new Size(160, 42),
+				Text = "Definition Builder",
+				UseAccentStyle = true
+			};
+			builderButton.Click += (_, eventArgs) =>
+				GameDefinitionBuilderRequested?.Invoke(this, eventArgs);
+
+			card.Controls.Add(validateButton);
+			card.Controls.Add(builderButton);
 			Controls.Add(card);
 		}
 

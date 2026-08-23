@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "red-orchestra-2-heroes-of-stalingrad",
   "catalogOrder": 87,
   "game": "Red Orchestra 2: Heroes of Stalingrad",
@@ -35,4 +36,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Binaries\\Win64"
+    }
+  ]
 }

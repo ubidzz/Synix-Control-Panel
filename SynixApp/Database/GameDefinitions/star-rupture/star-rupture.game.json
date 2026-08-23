@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "star-rupture",
   "catalogOrder": 185,
   "game": "StarRupture",
@@ -15,10 +16,18 @@
   "format": "JSON",
   "needsConfigWarning": true,
   "isQueryable": false,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "StarRupture\\Binaries\\Win64"
+    }
+  ],
   "configuration": {
     "schemaVersion": 1,
+    "revision": 1,
     "templates": [
       {
+        "revision": 1,
         "relativePath": "DSSettings.txt",
         "templateFile": "DSSettings.txt"
       }

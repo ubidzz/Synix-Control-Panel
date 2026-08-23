@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 2,
   "id": "e-y-e-divine-cybermancy",
   "catalogOrder": 130,
   "game": "E.Y.E: Divine Cybermancy",
@@ -8,8 +9,8 @@
   "requiresSteamLogin": true,
   "executable": "srcds.exe",
   "downloadUrl": "",
-  "arguments": "-game eye -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" +rcon_password \"{adminpass}\" {rcon} -SteamAppId={steamAppID}",
-  "rconSyntax": "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"",
+  "arguments": "-game eye -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
   "appPort": null,

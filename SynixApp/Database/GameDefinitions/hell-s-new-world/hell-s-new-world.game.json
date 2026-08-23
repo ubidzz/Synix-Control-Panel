@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "hell-s-new-world",
   "catalogOrder": 208,
   "game": "HELL'S NEW WORLD",
@@ -32,4 +33,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "WindowsServer\\HellsNewWorld\\Binaries\\Win64"
+    }
+  ]
 }

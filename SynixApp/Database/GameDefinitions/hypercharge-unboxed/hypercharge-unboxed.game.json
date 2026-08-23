@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "definitionRevision": 1,
   "id": "hypercharge-unboxed",
   "catalogOrder": 150,
   "game": "HYPERCHARGE: Unboxed",
@@ -34,4 +35,11 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Unboxed\\Binaries\\Win64"
+    }
+  ]
 }
