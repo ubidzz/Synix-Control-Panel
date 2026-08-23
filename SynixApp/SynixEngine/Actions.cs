@@ -363,6 +363,38 @@ namespace Synix_Control_Panel.SynixEngine
 					return;
 				}
 
+				bool fixApplied = await GameFix.PostInstall(server);
+				if (fixApplied)
+					Log($"[✔️ SUCCESS] Re-applied required files to the {server.Game} server.", Color.Green);
+				if (OxideRuntimeManager.RequiresVanillaRestore(server, gameData))
+				{
+					server.ServerFrameworkVersion = "Official";
+					Log(
+						"[OXIDE] Steam restored the official Rust server files. The server is now set to Vanilla; user plugin files were left untouched.",
+						Color.LimeGreen,
+						true);
+				}
+				if (OxideRuntimeManager.IsEnabled(server, gameData))
+				{
+					try
+					{
+						await OxideRuntimeManager.InstallOrUpdateAsync(
+							server,
+							gameData,
+							(message, color) => Log(message, color, true));
+					}
+					catch (Exception exception)
+					{
+						Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+						MessageBox.Show(
+							$"The Rust {ManifestMessage} completed, but Oxide could not be reapplied. Synix will block the modded server from starting until you retry with Update or Validate.\n\n{exception.Message}",
+							"Oxide Update Failed",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+						return;
+					}
+				}
+
 				if (ServerUpdating)
 				{
 					Log($"[SYNIX] UPDATE FINISHED: {server.Game}", Color.Green, true);
@@ -430,6 +462,26 @@ namespace Synix_Control_Panel.SynixEngine
 
 						bool fixApplied = await GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
+						if (OxideRuntimeManager.IsEnabled(newServer, gameData))
+						{
+							try
+							{
+								await OxideRuntimeManager.InstallOrUpdateAsync(
+									newServer,
+									gameData,
+									(message, color) => Log(message, color, true));
+							}
+							catch (Exception exception)
+							{
+								Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+								MessageBox.Show(
+									"The Rust server installed, but Oxide could not be installed. Synix will block the modded server from starting until you retry with Update or Validate.\n\n" + exception.Message,
+									"Oxide Installation Failed",
+									MessageBoxButtons.OK,
+									MessageBoxIcon.Error);
+								return;
+							}
+						}
 						newServer.IsFirstBoot =
 							fixApplied ||
 							gameData.NeedsConfigWarning ||
@@ -625,6 +677,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			string previousFramework = server.ServerFramework ?? "Vanilla";
 			using (var editForm = new ServerSettingsGUI(server))
 			{
 				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
@@ -644,6 +697,58 @@ namespace Synix_Control_Panel.SynixEngine
 					else if (configurationResult.Changed)
 					{
 						Log($"[CONFIG] {configurationResult.Message}", Color.Green);
+					}
+
+					GameInfo? definition = GameDatabase.GetGame(updatedServer.Game);
+					if (definition != null &&
+						OxideRuntimeManager.IsEnabled(updatedServer, definition) &&
+						!previousFramework.Equals(
+							OxideRuntimeManager.FrameworkName,
+							StringComparison.OrdinalIgnoreCase))
+					{
+						try
+						{
+							isDownloadActive = true;
+							await OxideRuntimeManager.InstallOrUpdateAsync(
+								updatedServer,
+								definition,
+								(message, color) => Log(message, color, true));
+						}
+						catch (Exception exception)
+						{
+							updatedServer.ServerFramework = OxideRuntimeManager.VanillaFrameworkName;
+							updatedServer.ServerFrameworkVersion = "Official";
+							Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+							MessageBox.Show(
+								"Oxide could not be installed. The server has been left set to Vanilla.\n\n" + exception.Message,
+								"Oxide Installation Failed",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Error);
+						}
+						finally
+						{
+							isDownloadActive = false;
+						}
+					}
+					else if (previousFramework.Equals(
+						OxideRuntimeManager.FrameworkName,
+						StringComparison.OrdinalIgnoreCase) &&
+						string.Equals(
+							updatedServer.ServerFramework,
+							OxideRuntimeManager.VanillaFrameworkName,
+							StringComparison.OrdinalIgnoreCase))
+					{
+						updatedServer.ServerFrameworkVersion =
+							OxideRuntimeManager.VanillaRestoreRequiredVersion;
+						Log(
+							"[OXIDE] Framework set to Vanilla. Start is blocked until Update or Validate restores the official Rust server files.",
+							Color.Orange,
+							true);
+						MessageBox.Show(
+							"Rust is now set to Vanilla. Run Update or Validate before starting so Steam can restore the official server files.\n\nSynix will not delete your oxide folder or plugins.",
+							"Validation Required",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Information);
 					}
 
 					FileHandler.SaveServers();
@@ -835,11 +940,11 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			if (server.Game == "Dune: Awakening")
+			if (!dbEntry.LaunchBehavior.AllowLaunchFileExport)
 			{
-				Log("[⚠️ NOTICE] Dune: Awakening requires the official battlegroup.bat script. Export aborted.", Color.Orange);
+				Log($"[⚠️ NOTICE] {server.Game} does not allow generated launch files. Export aborted.", Color.Orange);
 				MessageBox.Show(
-					"Dune: Awakening relies on a dedicated Hyper-V deployment script (battlegroup.bat) to initialize its virtual machine cluster.\n\nA standard batch file cannot be generated for this game.",
+					$"{server.Game} relies on its official launch or deployment file. A separate launch file cannot be safely generated for this game.",
 					"Export Disabled",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);

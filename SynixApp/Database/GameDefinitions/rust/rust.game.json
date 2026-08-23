@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 4,
   "id": "rust",
   "catalogOrder": 216,
   "game": "Rust",
@@ -28,7 +28,7 @@
   ],
   "pvpValue": "false",
   "pveValue": "true",
-  "configFileCreation": "LaunchArgumentsOnly",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "server\\{Identity}\\cfg\\server.cfg",
   "format": "Space",
   "externalDataFolderName": "",
@@ -36,11 +36,14 @@
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
   "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "warningMessage": "Rust is ready to start. If Oxide was selected, Synix installed only the official Oxide runtime after the Steam files. Synix does not download, install, update, or trust plugins; add and manage your own plugins in oxide\\plugins. After each Rust update or validation, Synix reapplies the latest official Oxide runtime before the server is started.",
   "iconUrl": "",
   "isQueryable": true,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "supportedServerFrameworks": [
+    "Oxide"
+  ]
 }

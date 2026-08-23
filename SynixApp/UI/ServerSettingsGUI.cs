@@ -421,10 +421,14 @@ namespace Synix_Control_Panel
 				bool hasGame = cmbGame != null && cmbGame.SelectedIndex > 0;
 				string selectedGame = hasGame ? cmbGame.Text : "";
 				bool isBaseReady = hasName && hasGame;
+				GameInfo? selectedDefinition = hasGame
+					? GameDatabase.GetGame(selectedGame)
+					: null;
 				bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+				bool supportsServerFramework =
+					selectedDefinition?.SupportedServerFrameworks.Count > 0;
 				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
 
-				bool isDuneAwakening = selectedGame.Equals("Dune: Awakening", StringComparison.OrdinalIgnoreCase);
 				bool virtMissing = false;
 				string missingTechName = "";
 				bool isHomeEdition = false;
@@ -433,18 +437,22 @@ namespace Synix_Control_Panel
 				bool ramMissing = false;
 				double sysRam = 0;
 
-				if (isDuneAwakening)
+				GameRuntimeRequirements requirements =
+					selectedDefinition?.RuntimeRequirements ?? new GameRuntimeRequirements();
+				if (requirements.RequiresHardwareVirtualization)
 				{
 					var virtData = CheckVirtualizationStatus();
 					virtMissing = !virtData.IsEnabled;
 					missingTechName = virtData.TechName;
-
-					isHomeEdition = !IsWindowsProOrBetter();
-					hyperVMissing = !IsHypervisorPresent();
-					avx2Missing = !Avx2.IsSupported;
-
+				}
+				isHomeEdition = requirements.RequiresWindowsProfessionalOrHigher &&
+					!IsWindowsProOrBetter();
+				hyperVMissing = requirements.RequiresHyperV && !IsHypervisorPresent();
+				avx2Missing = requirements.RequiresAvx2 && !Avx2.IsSupported;
+				if (requirements.MinimumSystemMemoryGb > 0)
+				{
 					sysRam = GetSystemRamGB();
-					ramMissing = sysRam < 23.0;
+					ramMissing = sysRam < requirements.MinimumSystemMemoryGb;
 				}
 
 				txtPassword.Enabled = CanUnlock(txtPassword);
@@ -456,7 +464,8 @@ namespace Synix_Control_Panel
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
 				numWorldSize.Enabled = CanUnlock(numWorldSize);
 				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion) && !_isLoadingMinecraftMetadata;
-				cmbMinecraftLoader.Enabled = isMinecraft && !_isLoadingMinecraftMetadata;
+				cmbMinecraftLoader.Enabled =
+					(isMinecraft || supportsServerFramework) && !_isLoadingMinecraftMetadata;
 				cmbMinecraftLoaderVersion.Enabled = isMinecraft &&
 					!_isLoadingMinecraftMetadata &&
 					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
@@ -574,13 +583,13 @@ namespace Synix_Control_Panel
 
 				else if (ramMissing)
 				{
-					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires at least 24GB of RAM (Detected: {sysRam:0.0} GB).";
+					_validationMessage = $"  ⚠️ [HARDWARE] '{selectedGame}' requires at least {requirements.MinimumSystemMemoryGb}GB of RAM (Detected: {sysRam:0.0} GB).";
 					btnSave.Enabled = false;
 				}
 
 				else if (avx2Missing)
 				{
-					_validationMessage = "  ⚠️ [HARDWARE] 'Dune: Awakening' strictly requires a CPU with AVX2 support.";
+					_validationMessage = $"  ⚠️ [HARDWARE] '{selectedGame}' requires a CPU with AVX2 support.";
 					btnSave.Enabled = false;
 				}
 
@@ -592,7 +601,7 @@ namespace Synix_Control_Panel
 
 				else if (virtMissing)
 				{
-					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires {missingTechName} to be enabled in your PC's BIOS.";
+					_validationMessage = $"  ⚠️ [HARDWARE] '{selectedGame}' requires {missingTechName} to be enabled in your PC's BIOS.";
 					btnSave.Enabled = false;
 				}
 
@@ -634,9 +643,11 @@ namespace Synix_Control_Panel
 				}
 				else
 				{
-					if (isDuneAwakening)
+					if (!string.IsNullOrWhiteSpace(
+						selectedDefinition?.LaunchBehavior.ReadyMessage))
 					{
-						_validationMessage = "  ✔ [READY] NOTE: Have your Self-Host Token ready for the battlegroup.bat prompt.";
+						_validationMessage =
+							$"  ✔ [READY] NOTE: {selectedDefinition.LaunchBehavior.ReadyMessage}";
 					}
 					else
 					{
@@ -662,7 +673,7 @@ namespace Synix_Control_Panel
 			var controls = new Control[] { txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive, numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon };
 			if (gameData == null)
 			{
-				ConfigureMinecraftRuntimeCard(false);
+				ConfigureRuntimeCard(null);
 				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
 
 				SetupManagedPlaceholder(txtPassword, "Select a game...");
@@ -671,8 +682,7 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				ConfigureMinecraftRuntimeCard(
-					gameData.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase));
+				ConfigureRuntimeCard(gameData);
 				GameManagementCapability capabilities =
 					GameFix.GetManagementCapabilities(gameData);
 				bool Supports(GameManagementCapability capability) =>
@@ -853,13 +863,47 @@ namespace Synix_Control_Panel
 				cmbGame.Text.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 		}
 
-		private void ConfigureMinecraftRuntimeCard(bool visible)
+		private void ConfigureRuntimeCard(GameInfo? gameData)
 		{
+			bool isMinecraft = gameData?.Game.Equals(
+				"Minecraft",
+				StringComparison.OrdinalIgnoreCase) == true;
+			bool supportsServerFramework = gameData?.SupportedServerFrameworks.Count > 0;
+			bool visible = isMinecraft || supportsServerFramework;
 			cardMinecraftRuntime.Visible = visible;
 			cardCredentials.Location = visible
 				? new Point(0, cardMinecraftRuntime.Bottom + 16)
 				: new Point(0, 242);
 			cardCompatibility.Location = new Point(0, cardCredentials.Bottom + 16);
+
+			if (isMinecraft)
+			{
+				lblMinecraftRuntimeTitle.Text = "Minecraft Runtime";
+				lblMinecraftLoader.Text = "Loader";
+				lblMinecraftLoaderVersion.Visible = true;
+				cmbMinecraftLoaderVersion.Visible = true;
+				lblMinecraftJava.Visible = true;
+				lblMinecraftJavaValue.Visible = true;
+				cmbMinecraftLoader.Items.Clear();
+				cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge"]);
+			}
+			else if (supportsServerFramework && gameData != null)
+			{
+				lblMinecraftRuntimeTitle.Text = "Server Framework";
+				lblMinecraftLoader.Text = "Framework";
+				lblMinecraftLoaderVersion.Visible = false;
+				cmbMinecraftLoaderVersion.Visible = false;
+				lblMinecraftJava.Visible = false;
+				lblMinecraftJavaValue.Visible = false;
+				cmbMinecraftLoader.Items.Clear();
+				cmbMinecraftLoader.Items.Add("Vanilla");
+				foreach (string framework in gameData.SupportedServerFrameworks)
+					cmbMinecraftLoader.Items.Add(framework);
+				string preferred = _existingServer?.ServerFramework ?? "Vanilla";
+				SelectComboBoxValue(cmbMinecraftLoader, preferred, "Vanilla");
+				lblMinecraftRuntimeHelper.Text =
+					"Synix installs the official Oxide runtime only. Plugins remain user-managed in the server's oxide\\plugins folder.";
+			}
 
 			if (!visible)
 			{
@@ -904,7 +948,7 @@ namespace Synix_Control_Panel
 			int requestId = ++_minecraftMetadataRequestId;
 			_isLoadingMinecraftMetadata = true;
 			_minecraftMetadataError = string.Empty;
-			ConfigureMinecraftRuntimeCard(true);
+			ConfigureRuntimeCard(GameDatabase.GetGame("Minecraft"));
 			SyncGatekeeper();
 
 			string loader = MinecraftMetadataService.NormalizeLoader(preferredLoader);
@@ -1057,6 +1101,7 @@ namespace Synix_Control_Panel
 			string newPath = txtInstallPath.Text.Trim();
 			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 			GameInfo? masterData = GameDatabase.GetGame(selectedGame);
+			bool supportsServerFramework = masterData?.SupportedServerFrameworks.Count > 0;
 			string steamAccountName = masterData?.RequiresSteamLogin == true
 				? _existingServer?.SteamAccountName ?? string.Empty
 				: string.Empty;
@@ -1101,6 +1146,16 @@ namespace Synix_Control_Panel
 				MinecraftLoaderVersion = isMinecraft
 					? cmbMinecraftLoaderVersion.Text.Trim()
 					: "Official",
+				ServerFramework = supportsServerFramework
+					? cmbMinecraftLoader.Text.Trim()
+					: "Vanilla",
+				ServerFrameworkVersion = supportsServerFramework &&
+					string.Equals(
+						_existingServer?.ServerFramework,
+						cmbMinecraftLoader.Text.Trim(),
+						StringComparison.OrdinalIgnoreCase)
+						? _existingServer?.ServerFrameworkVersion ?? "Official"
+						: "Official",
 				RequiredJavaVersion = isMinecraft ? _resolvedMinecraftJavaVersion : 0,
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = _selectedTime,

@@ -49,6 +49,11 @@ namespace Synix_Control_Panel.SynixEngine
 				new("JSON", ConfigFormat.JSON),
 				new("Space-separated values", ConfigFormat.Space)
 			};
+			cmbLifecycleTracking.DataSource = new BuilderOption<GameLifecycleTrackingMode>[]
+			{
+				new("Track the launched server process", GameLifecycleTrackingMode.Process),
+				new("External deployment controls the server", GameLifecycleTrackingMode.ExternalDeployment)
+			};
 			cmbArgumentTag.DataSource = GameDefinitionArgumentTags.LaunchArguments
 				.Select(tag => new BuilderOption<GameDefinitionArgumentTag>(
 					$"{tag.Token} — {tag.Name}",
@@ -59,6 +64,7 @@ namespace Synix_Control_Panel.SynixEngine
 				GameDefinitionAuthoring.GetNextCatalogOrder());
 			SelectOption(cmbConfigMode, ConfigFileCreationMode.Unknown);
 			SelectOption(cmbFormat, ConfigFormat.StandardINI);
+			SelectOption(cmbLifecycleTracking, GameLifecycleTrackingMode.Process);
 			rtbGuide.Text = BuildGuideText();
 			RefreshConfigurationControls();
 			RefreshPostInstallControls();
@@ -285,7 +291,24 @@ namespace Synix_Control_Panel.SynixEngine
 				IconUrl = txtIconUrl.Text,
 				CopySteamRuntimeFiles = chkSteamRuntime.Checked,
 				SteamRuntimeTargetDirectory = txtSteamRuntimeTarget.Text,
-				IsQueryable = chkQueryable.Checked
+				IsQueryable = chkQueryable.Checked,
+				RuntimeRequirements = new GameRuntimeRequirements
+				{
+					MinimumSystemMemoryGb = numMinimumRam.Value,
+					RequiresAvx2 = chkRequiresAvx2.Checked,
+					RequiresHardwareVirtualization = chkRequiresVirtualization.Checked,
+					RequiresHyperV = chkRequiresHyperV.Checked,
+					RequiresWindowsProfessionalOrHigher = chkRequiresWindowsPro.Checked
+				},
+				LaunchBehavior = new GameLaunchBehavior
+				{
+					RunElevated = chkRunElevated.Checked,
+					LifecycleTracking = GetSelectedValue(
+						cmbLifecycleTracking,
+						GameLifecycleTrackingMode.Process),
+					AllowLaunchFileExport = chkAllowLaunchExport.Checked,
+					ReadyMessage = txtReadyMessage.Text
+				}
 			};
 		}
 
@@ -319,6 +342,27 @@ namespace Synix_Control_Panel.SynixEngine
 		private void RefreshPostInstallControls()
 		{
 			txtSteamRuntimeTarget.Enabled = chkSteamRuntime.Checked;
+		}
+
+		private void chkRequiresHyperV_CheckedChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (chkRequiresHyperV.Checked)
+				chkRequiresWindowsPro.Checked = true;
+		}
+
+		private void cmbLifecycleTracking_SelectedIndexChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (GetSelectedValue(
+				cmbLifecycleTracking,
+				GameLifecycleTrackingMode.Process) ==
+				GameLifecycleTrackingMode.ExternalDeployment)
+			{
+				chkQueryable.Checked = false;
+			}
 		}
 
 		private IReadOnlyList<GameDefinitionTemplateDraft> ReadAdditionalTemplates()
@@ -447,6 +491,15 @@ namespace Synix_Control_Panel.SynixEngine
 			guide.AppendLine();
 			guide.AppendLine("POST-INSTALL OPTION");
 			guide.AppendLine("Enable Steam runtime copying only when the server has been verified to require it. The target must be a relative folder inside that server installation. Synix copies only its three allowlisted Steam runtime DLLs.");
+			guide.AppendLine();
+			guide.AppendLine("RUNTIME REQUIREMENTS");
+			guide.AppendLine("Set minimum system RAM to 0 when the game has no verified minimum. Hardware checks explain missing requirements before install or launch; they do not change Windows settings.");
+			guide.AppendLine("Hyper-V requires Windows Professional or higher, so selecting Hyper-V also selects that Windows requirement.");
+			guide.AppendLine();
+			guide.AppendLine("LAUNCH BEHAVIOR");
+			guide.AppendLine("Use normal process tracking for standard dedicated servers. External deployment is only for a launcher, virtual machine, or other deployment that owns the server lifecycle; it automatically disables query monitoring.");
+			guide.AppendLine("Elevated launch is supported only for .exe, .bat, and .cmd launch files. Enable launch-file export only when the user can safely create and run a reviewed launch file outside Synix.");
+			guide.AppendLine("The ready message is shown after the game's special readiness checks succeed. These fields select built-in, allowlisted Synix behavior and cannot run arbitrary scripts or plugins.");
 			return guide.ToString();
 		}
 

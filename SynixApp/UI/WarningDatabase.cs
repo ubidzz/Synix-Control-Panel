@@ -69,15 +69,6 @@ namespace Synix_Control_Panel.Database
 				"3. Official Documentation: https://soulmask.wiki.gg/wiki/Server_Hosting"
 			},
 			{
-				"Dune: Awakening",
-				"CRITICAL SETUP REQUIRED:\n\n" +
-				"1. Ensure Windows Hyper-V and hardware virtualization are enabled on your host machine.\n\n" +
-				"2. You MUST run 'battlegroup.bat' as Administrator to launch the server deployment menu. (This is done automatically)\n\n" +
-				"3. Select 'initial-setup' to build the VM and input your Self-Host Service Token.\n\n" +
-				"4. Official Documentation:\n https://duneawakening.com/self-hosted-servers/ \n\n" +
-				"5. Synix cannot control Dune: Awakening servers and is only good for installing, updating, backup and start the server."
-			},
-			{
 				"Cepheus Protocol",
 				"CRITICAL SETUP REQUIRED:\n\n" +
 				"1. Start the server completely for its initial startup, shut it down, and then configure your server settings!\n\n" +

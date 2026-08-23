@@ -419,18 +419,23 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Absolute Thread Safety: Compiled directly into the engine, guaranteeing instant lookups with zero database corruption risks.\n" +
 					"• Strict Parameter Enforced: Because game executables and Steam AppIDs require strict arguments, manual custom game plugins or third-party database tables are not supported."),
 
-				["Dune: Awakening Setup & Custom Rules"] = new HelpItem("Games",
-					"DUNE: AWAKENING ENGINE INTEGRATION:\n\n" +
-					"Dune: Awakening requires unique engine execution rules:\n\n" +
-					"1. Admin Execution: Dune: Awakening dedicated launchers require Administrator privileges to execute their startup scripts properly.\n" +
-					"2. Custom Batch File Handling: Synix disables standard batch file creation for Dune: Awakening, as the game utilizes its own internal launcher structure.\n" +
-					"3. Folder Sanitization: Ensure paths contain no illegal characters prior to initial download."),
+				["Dune: Awakening Setup & Definition Rules"] = new HelpItem("Games",
+					"DUNE: AWAKENING DEFINITION-DRIVEN INTEGRATION:\n\n" +
+					"Dune's built-in game definition declares its hardware requirements, elevated launcher, external deployment lifecycle, and launch-file export restriction. The shared Synix engine reads those fields instead of relying on game-name checks.\n\n" +
+					"1. Admin Execution: Synix launches the official battlegroup script with the required permission.\n" +
+					"2. Deployment Tracking: Dune owns the Hyper-V virtual machines, so Synix does not mistake the launcher process for the complete server lifecycle.\n" +
+					"3. Launch Export: Synix does not replace the official deployment script with a generated launch file."),
 
 				["Rust & Rust+ Mobile App Integration"] = new HelpItem("Games",
 					"RUST SERVER & RUST+ MOBILE CONFIGURATION:\n\n" +
 					"• Steam AppID: 258550\n" +
 					"• App Port (Rust+): Set to a unique port above 10000 (e.g., 28082 TCP).\n" +
-					"• Identity Isolation: Synix enforces `+server.identity \"{Server_Name}\"` automatically to isolate world save files and blueprints cleanly."),
+					"• Identity Isolation: Synix enforces `+server.identity \"{Server_Name}\"` automatically to isolate world save files and blueprints cleanly.\n\n" +
+					"RUST SERVER FRAMEWORK:\n" +
+					"• Vanilla: Uses the official Steam server files.\n" +
+					"• Oxide: Synix downloads and verifies only the latest official Oxide.Rust runtime.\n" +
+					"• Plugins: Synix never installs or manages plugins. Add your own files to oxide\\plugins.\n" +
+					"• Updates: Synix reapplies Oxide after Steam updates and validations. Switching back to Vanilla requires one Update or Validate to restore the official files."),
 
 				["Minecraft Vanilla, Fabric, and Forge"] = new HelpItem("Games",
 					"MINECRAFT SERVER AUTOMATION:\n\n" +

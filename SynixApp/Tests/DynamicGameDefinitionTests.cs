@@ -67,6 +67,71 @@ public sealed class DynamicGameDefinitionTests
 		Assert.False(string.IsNullOrWhiteSpace(game.RequiredArgs));
 	}
 
+	[Fact]
+	public void DuneSpecialBehaviorComesFromItsValidatedDefinition()
+	{
+		GameInfo dune = GameDatabase.GetGame("Dune: Awakening")!;
+
+		Assert.Equal(24, dune.RuntimeRequirements.MinimumSystemMemoryGb);
+		Assert.True(dune.RuntimeRequirements.RequiresAvx2);
+		Assert.True(dune.RuntimeRequirements.RequiresHardwareVirtualization);
+		Assert.True(dune.RuntimeRequirements.RequiresHyperV);
+		Assert.True(dune.RuntimeRequirements.RequiresWindowsProfessionalOrHigher);
+		Assert.True(dune.LaunchBehavior.RunElevated);
+		Assert.Equal(
+			GameLifecycleTrackingMode.ExternalDeployment,
+			dune.LaunchBehavior.LifecycleTracking);
+		Assert.False(dune.LaunchBehavior.AllowLaunchFileExport);
+		Assert.Contains("Self-Host Token", dune.LaunchBehavior.ReadyMessage);
+	}
+
+	[Fact]
+	public void RustDefinitionOffersOnlyTheTrustedOxideRuntime()
+	{
+		GameInfo rust = GameDatabase.GetGame("Rust")!;
+		GameServer oxideServer = new()
+		{
+			Game = rust.Game,
+			ServerFramework = "Oxide"
+		};
+
+		Assert.Equal(["Oxide"], rust.SupportedServerFrameworks);
+		Assert.Equal(
+			ConfigFileCreationMode.SynixTemplate,
+			rust.ConfigFileCreation);
+		Assert.True(GameFix.CanResetManagedConfiguration(oxideServer));
+		Assert.True(OxideRuntimeManager.IsEnabled(oxideServer, rust));
+		oxideServer.ServerFramework = OxideRuntimeManager.VanillaFrameworkName;
+		Assert.False(OxideRuntimeManager.IsEnabled(oxideServer, rust));
+		oxideServer.ServerFrameworkVersion =
+			OxideRuntimeManager.VanillaRestoreRequiredVersion;
+		Assert.True(OxideRuntimeManager.RequiresVanillaRestore(oxideServer, rust));
+	}
+
+	[Fact]
+	public void OxideCannotBeEnabledByAnotherGameDefinition()
+	{
+		InvalidDataException exception = Assert.Throws<InvalidDataException>(() =>
+			TrustedGameDefinitionCatalog.ParsePackage(
+				"""
+				{
+				  "schemaVersion": 1,
+				  "definitionRevision": 1,
+				  "id": "not-rust",
+				  "catalogOrder": 0,
+				  "game": "Not Rust",
+				  "appId": "1",
+				  "executable": "server.exe",
+				  "port": 7777,
+				  "queryPort": 7778,
+				  "supportedServerFrameworks": ["Oxide"]
+				}
+				""",
+				"not-rust.game.json"));
+
+		Assert.Contains("trusted Rust definition", exception.Message);
+	}
+
 	[Theory]
 	[InlineData("Atlas", "PVP", "False")]
 	[InlineData("Atlas", "PVE", "True")]
@@ -563,7 +628,23 @@ public sealed class DynamicGameDefinitionTests
 				WarningMessage = "The user must supply files from their own game installation.",
 				IconUrl = "https://example.com/game.png",
 				CopySteamRuntimeFiles = true,
-				SteamRuntimeTargetDirectory = "Binaries/Win64"
+				SteamRuntimeTargetDirectory = "Binaries/Win64",
+				IsQueryable = false,
+				RuntimeRequirements = new GameRuntimeRequirements
+				{
+					MinimumSystemMemoryGb = 24,
+					RequiresAvx2 = true,
+					RequiresHardwareVirtualization = true,
+					RequiresHyperV = true,
+					RequiresWindowsProfessionalOrHigher = true
+				},
+				LaunchBehavior = new GameLaunchBehavior
+				{
+					RunElevated = true,
+					LifecycleTracking = GameLifecycleTrackingMode.ExternalDeployment,
+					AllowLaunchFileExport = false,
+					ReadyMessage = "The deployment passed its readiness checks."
+				}
 			};
 
 			GameDefinitionSaveResult result =
@@ -586,6 +667,19 @@ public sealed class DynamicGameDefinitionTests
 				"The user must supply files from their own game installation.",
 				parsed.Definition.WarningMessage);
 			Assert.Equal("https://example.com/game.png", parsed.Definition.IconUrl);
+			Assert.Equal(24, parsed.Definition.RuntimeRequirements.MinimumSystemMemoryGb);
+			Assert.True(parsed.Definition.RuntimeRequirements.RequiresAvx2);
+			Assert.True(parsed.Definition.RuntimeRequirements.RequiresHardwareVirtualization);
+			Assert.True(parsed.Definition.RuntimeRequirements.RequiresHyperV);
+			Assert.True(parsed.Definition.RuntimeRequirements.RequiresWindowsProfessionalOrHigher);
+			Assert.True(parsed.Definition.LaunchBehavior.RunElevated);
+			Assert.Equal(
+				GameLifecycleTrackingMode.ExternalDeployment,
+				parsed.Definition.LaunchBehavior.LifecycleTracking);
+			Assert.False(parsed.Definition.LaunchBehavior.AllowLaunchFileExport);
+			Assert.Equal(
+				"The deployment passed its readiness checks.",
+				parsed.Definition.LaunchBehavior.ReadyMessage);
 			Assert.Single(parsed.PostInstallActions);
 			Assert.Contains("\"definitionRevision\": 2", result.Json);
 			Assert.Contains("\"pvpValue\": \"PVP\"", result.Json);

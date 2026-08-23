@@ -17,6 +17,10 @@ Most Steam applications leave **SteamCMD app configuration** blank. Shared GoldS
 
 Keep `gameModes` friendly for the user. For games that show PVP/PVE but require another launch or configuration value, set `pvpValue` and `pveValue` to the exact values the server accepts, such as `False`/`True` or `0`/`1`. Set `booleanTrueValue` and `booleanFalseValue` to the exact boolean representation used by the game's configuration and RCON settings. Synix validates these as single safe values before they can reach a server process or configuration file.
 
+Special hardware and launch behavior belongs in `runtimeRequirements` and `launchBehavior`, not in game-name checks. Definitions can require minimum system RAM, AVX2, hardware virtualization, Hyper-V, and a Windows edition that supports Hyper-V. They can also request an elevated launch, external lifecycle tracking, disable generated launch-file export, and provide a ready message. These values are validated before the game enters the catalog.
+
+`supportedServerFrameworks` exposes only frameworks with a fixed implementation compiled into Synix. Rust may list `Oxide`. Synix downloads only the official Windows Oxide.Rust release, requires GitHub's published SHA-256 digest, performs guarded extraction with rollback, and reapplies Oxide after Rust updates. Plugins are never installed or managed by Synix and remain the user's responsibility.
+
 The builder is a development tool. It writes validated source files into this project but cannot add games to an already released Synix executable.
 
 ## Revisions and safe upgrades
@@ -49,6 +53,7 @@ The development validator checks every source definition for:
 - Existing complete template files and supported placeholders.
 - HTTPS-only download and icon addresses.
 - Allowlisted declarative post-install actions.
+- Declarative runtime requirements, elevated/external launch behavior, and supported server frameworks.
 
 The same validation is included in the Release Readiness Checker, so an invalid game definition blocks a release.
 

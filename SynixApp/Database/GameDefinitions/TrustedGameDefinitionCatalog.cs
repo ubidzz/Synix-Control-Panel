@@ -90,6 +90,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public bool SupportsManualConnectionTesting { get; init; } = true;
 		public string ProbePath { get; init; } = string.Empty;
 		public string EosDeploymentId { get; init; } = string.Empty;
+		public GameRuntimeRequirements RuntimeRequirements { get; init; } = new();
+		public GameLaunchBehavior LaunchBehavior { get; init; } = new();
+		public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
 		public IReadOnlyList<EmbeddedPostInstallAction> PostInstallActions { get; init; } = [];
 		public EmbeddedConfigurationDefinition? Configuration { get; init; }
 	}
@@ -242,7 +245,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				ProbeProtocol = manifest.ProbeProtocol,
 				SupportsManualConnectionTesting = manifest.SupportsManualConnectionTesting,
 				ProbePath = manifest.ProbePath,
-				EosDeploymentId = manifest.EosDeploymentId
+				EosDeploymentId = manifest.EosDeploymentId,
+				RuntimeRequirements = manifest.RuntimeRequirements,
+				LaunchBehavior = manifest.LaunchBehavior,
+				SupportedServerFrameworks = manifest.SupportedServerFrameworks
+					.Select(framework => framework.Trim())
+					.ToArray()
 			};
 
 			return new EmbeddedGamePackage(
@@ -350,6 +358,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			ValidateDefinitionValue(manifest.PveValue, "pveValue", resourceName);
 			ValidateDefinitionValue(manifest.BooleanTrueValue, "booleanTrueValue", resourceName);
 			ValidateDefinitionValue(manifest.BooleanFalseValue, "booleanFalseValue", resourceName);
+			ValidateRuntimeRequirements(manifest.RuntimeRequirements, resourceName);
+			ValidateLaunchBehavior(manifest, resourceName);
+			ValidateSupportedServerFrameworks(manifest, resourceName);
 			if (manifest.PostInstallActions == null)
 				throw new InvalidDataException($"{resourceName} contains a null postInstallActions collection.");
 			if (manifest.PostInstallActions.Count > 16)
@@ -402,6 +413,74 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 						if (!SupportedPlaceholders.Contains(placeholder))
 							throw new InvalidDataException($"{resourceName} uses unsupported placeholder {{{placeholder}}}.");
 					}
+				}
+			}
+		}
+
+		private static void ValidateRuntimeRequirements(
+			GameRuntimeRequirements requirements,
+			string resourceName)
+		{
+			if (requirements == null)
+				throw new InvalidDataException($"{resourceName} contains null runtimeRequirements.");
+			if (requirements.MinimumSystemMemoryGb is < 0 or > 1024)
+				throw new InvalidDataException($"{resourceName} has an invalid minimumSystemMemoryGb.");
+			if (requirements.RequiresHyperV &&
+				!requirements.RequiresWindowsProfessionalOrHigher)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} requires Hyper-V but does not require a Windows edition that supports Hyper-V.");
+			}
+		}
+
+		private static void ValidateLaunchBehavior(
+			EmbeddedGameDefinition manifest,
+			string resourceName)
+		{
+			GameLaunchBehavior behavior = manifest.LaunchBehavior ??
+				throw new InvalidDataException($"{resourceName} contains null launchBehavior.");
+			ValidateText(
+				behavior.ReadyMessage,
+				"launchBehavior.readyMessage",
+				resourceName,
+				512,
+				required: false);
+			if (behavior.RunElevated &&
+				!manifest.Executable.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
+				!manifest.Executable.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) &&
+				!manifest.Executable.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} requests an elevated launch for an unsupported executable type.");
+			}
+			if (behavior.LifecycleTracking == GameLifecycleTrackingMode.ExternalDeployment &&
+				manifest.IsQueryable)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} cannot use external lifecycle tracking while isQueryable is true.");
+			}
+		}
+
+		private static void ValidateSupportedServerFrameworks(
+			EmbeddedGameDefinition manifest,
+			string resourceName)
+		{
+			ValidateUniqueText(
+				manifest.SupportedServerFrameworks,
+				"supportedServerFrameworks",
+				resourceName);
+			foreach (string framework in manifest.SupportedServerFrameworks)
+			{
+				if (!framework.Equals("Oxide", StringComparison.OrdinalIgnoreCase))
+				{
+					throw new InvalidDataException(
+						$"{resourceName} contains an unsupported server framework.");
+				}
+				if (!manifest.Id.Equals("rust", StringComparison.OrdinalIgnoreCase) ||
+					manifest.AppId != "258550")
+				{
+					throw new InvalidDataException(
+						$"{resourceName} may only enable Oxide for the trusted Rust definition.");
 				}
 			}
 		}

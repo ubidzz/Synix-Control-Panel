@@ -415,7 +415,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			bool applied = false;
-			if (server.Game == "Dune: Awakening" || server.Game == "Minecraft")
+			if (server.Game == "Minecraft")
 			{
 				ManualConfigWasCreated = true;
 				applied = true;

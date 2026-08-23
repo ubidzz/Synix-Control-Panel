@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "dune-awakening",
   "catalogOrder": 210,
   "game": "Dune: Awakening",
@@ -28,14 +28,27 @@
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
   "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "warningMessage": "Dune: Awakening uses the official dedicated-server deployment system. Hyper-V and hardware virtualization must be enabled, and Windows Pro or Enterprise is required. On first launch, Synix starts battlegroup.bat as Administrator. Select initial-setup and have your Self-Host Token ready. Synix can install, update, back up, and launch the deployment, but the game owns the virtual machines and their running state. Official guide: https://duneawakening.com/en/news/dedicated-server-how-to-guide",
   "iconUrl": "",
   "isQueryable": false,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
-,
+  "eosDeploymentId": "",
+  "runtimeRequirements": {
+    "minimumSystemMemoryGb": 24,
+    "requiresAvx2": true,
+    "requiresHardwareVirtualization": true,
+    "requiresHyperV": true,
+    "requiresWindowsProfessionalOrHigher": true
+  },
+  "launchBehavior": {
+    "runElevated": true,
+    "lifecycleTracking": "ExternalDeployment",
+    "allowLaunchFileExport": false,
+    "readyMessage": "Have your Self-Host Token ready for the battlegroup.bat initial-setup prompt."
+  },
+  "supportedServerFrameworks": [],
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",

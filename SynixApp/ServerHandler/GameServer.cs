@@ -33,6 +33,30 @@ public enum ConfigFileCreationMode
 	LaunchArgumentsOnly
 }
 
+public enum GameLifecycleTrackingMode
+{
+	Process,
+	ExternalDeployment
+}
+
+public sealed class GameRuntimeRequirements
+{
+	public int MinimumSystemMemoryGb { get; init; }
+	public bool RequiresAvx2 { get; init; }
+	public bool RequiresHardwareVirtualization { get; init; }
+	public bool RequiresHyperV { get; init; }
+	public bool RequiresWindowsProfessionalOrHigher { get; init; }
+}
+
+public sealed class GameLaunchBehavior
+{
+	public bool RunElevated { get; init; }
+	public GameLifecycleTrackingMode LifecycleTracking { get; init; } =
+		GameLifecycleTrackingMode.Process;
+	public bool AllowLaunchFileExport { get; init; } = true;
+	public string ReadyMessage { get; init; } = string.Empty;
+}
+
 public class GameDefinition
 {
 	[JsonIgnore]
@@ -107,6 +131,12 @@ public class GameDefinition
 	public int DefinitionRevision { get; init; } = 1;
 	[JsonIgnore]
 	public bool IsEmbeddedDefinition { get; internal set; }
+	[JsonIgnore]
+	public GameRuntimeRequirements RuntimeRequirements { get; init; } = new();
+	[JsonIgnore]
+	public GameLaunchBehavior LaunchBehavior { get; init; } = new();
+	[JsonIgnore]
+	public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
 }
 
 public sealed class GameInfo : GameDefinition
@@ -174,6 +204,8 @@ public class GameServer
 	public string GameVersion { get; set; } = "Latest";
 	public string MinecraftLoader { get; set; } = "Vanilla";
 	public string MinecraftLoaderVersion { get; set; } = "Official";
+	public string ServerFramework { get; set; } = "Vanilla";
+	public string ServerFrameworkVersion { get; set; } = "Official";
 	public int RequiredJavaVersion { get; set; } = 0;
 	public int MaxRam { get; set; } = 4;
 

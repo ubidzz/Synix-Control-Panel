@@ -58,6 +58,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public bool CopySteamRuntimeFiles { get; init; }
 		public string SteamRuntimeTargetDirectory { get; init; } = string.Empty;
 		public bool IsQueryable { get; init; } = true;
+		public GameRuntimeRequirements RuntimeRequirements { get; init; } = new();
+		public GameLaunchBehavior LaunchBehavior { get; init; } = new();
+		public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
 	}
 
 	internal sealed record GameDefinitionSaveResult(
@@ -129,7 +132,24 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				["probeProtocol"] = ServerProbeProtocol.Auto.ToString(),
 				["supportsManualConnectionTesting"] = draft.IsQueryable,
 				["probePath"] = string.Empty,
-				["eosDeploymentId"] = string.Empty
+				["eosDeploymentId"] = string.Empty,
+				["runtimeRequirements"] = new JsonObject
+				{
+					["minimumSystemMemoryGb"] = draft.RuntimeRequirements.MinimumSystemMemoryGb,
+					["requiresAvx2"] = draft.RuntimeRequirements.RequiresAvx2,
+					["requiresHardwareVirtualization"] = draft.RuntimeRequirements.RequiresHardwareVirtualization,
+					["requiresHyperV"] = draft.RuntimeRequirements.RequiresHyperV,
+					["requiresWindowsProfessionalOrHigher"] = draft.RuntimeRequirements.RequiresWindowsProfessionalOrHigher
+				},
+				["launchBehavior"] = new JsonObject
+				{
+					["runElevated"] = draft.LaunchBehavior.RunElevated,
+					["lifecycleTracking"] = draft.LaunchBehavior.LifecycleTracking.ToString(),
+					["allowLaunchFileExport"] = draft.LaunchBehavior.AllowLaunchFileExport,
+					["readyMessage"] = draft.LaunchBehavior.ReadyMessage.Trim()
+				},
+				["supportedServerFrameworks"] =
+					CreateStringArray(draft.SupportedServerFrameworks)
 			};
 
 			if (draft.CopySteamRuntimeFiles)

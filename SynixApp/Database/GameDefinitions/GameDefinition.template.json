@@ -38,6 +38,20 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": "",
+  "runtimeRequirements": {
+    "minimumSystemMemoryGb": 0,
+    "requiresAvx2": false,
+    "requiresHardwareVirtualization": false,
+    "requiresHyperV": false,
+    "requiresWindowsProfessionalOrHigher": false
+  },
+  "launchBehavior": {
+    "runElevated": false,
+    "lifecycleTracking": "Process",
+    "allowLaunchFileExport": true,
+    "readyMessage": ""
+  },
+  "supportedServerFrameworks": [],
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",

@@ -141,6 +141,27 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
+				GameInfo? selectedDefinition = GameDatabase.GetGame(server.Game);
+				if (selectedDefinition != null &&
+					OxideRuntimeManager.IsEnabled(server, selectedDefinition) &&
+					string.Equals(
+						server.ServerFrameworkVersion,
+						OxideRuntimeManager.FailedVersion,
+						StringComparison.OrdinalIgnoreCase))
+				{
+					logCallback?.Invoke(
+						"[OXIDE ERROR] Start blocked because Oxide was not installed successfully. Run Update or Validate to retry.",
+						Color.Red);
+					return;
+				}
+				if (selectedDefinition != null &&
+					OxideRuntimeManager.RequiresVanillaRestore(server, selectedDefinition))
+				{
+					logCallback?.Invoke(
+						"[OXIDE] Start blocked because Rust was changed to Vanilla. Run Update or Validate to restore the official files first.",
+						Color.Orange);
+					return;
+				}
 
 				server.HasAnnouncedOnline = false;
 				server.IsProbing = false;
@@ -324,7 +345,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						RedirectStandardInput = isMinecraft && hideWindow,
 					};
 
-					if (server.Game == "Dune: Awakening")
+					if (dbEntry.LaunchBehavior.RunElevated)
 					{
 						psi.UseShellExecute = true;
 						psi.Verb = "runas";
