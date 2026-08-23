@@ -29,6 +29,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		static extern bool FreeConsole();
 
 		[DllImport("kernel32.dll")]
+		static extern IntPtr GetConsoleWindow();
+
+		[DllImport("user32.dll")]
+		static extern bool ShowWindowAsync(IntPtr windowHandle, int command);
+
+		[DllImport("kernel32.dll")]
 		static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
 
 		[DllImport("kernel32.dll")]
@@ -36,6 +42,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		delegate bool ConsoleCtrlDelegate(uint CtrlType);
 
 		const uint CTRL_C_EVENT = 0;
+		private const int SW_HIDE = 0;
 		private const int STD_INPUT_HANDLE = -10;
 		private const ushort KEY_EVENT = 0x0001;
 
@@ -172,6 +179,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";
 				bool isMinecraft = false;
+				bool hideWindow = !Properties.Settings.Default.ShowServerWindow;
 
 				await Task.Run(() =>
 				{
@@ -192,7 +200,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						return;
 					}
 
-					isMinecraft = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+					isMinecraft = GameDatabase.IsMinecraft(server.Game);
 					if (isMinecraft)
 					{
 						PrepareMinecraftLauncher(fullExePath, logCallback);
@@ -249,75 +257,21 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
 					}
 
-					int ramToUse = server.MaxRam;
-					if (isMinecraft)
-					{
-						ramToUse = server.MaxRam * 1024;
-					}
-
 					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
-
-					string args = dbEntry.RequiredArgs
-						.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
-						.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
-						.Replace("{map}", server.WorldName)
-						.Replace("{steamAppID}", invokedId)
-						.Replace("{appid}", targetId)
-						.Replace("{port}", server.Port.ToString())
-						.Replace("{query}", server.QueryPort.ToString())
-						.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-						.Replace("{pass}", launchPasswords.ServerPassword)
-						.Replace("{adminpass}", launchPasswords.AdminPassword)
-						.Replace("{ServerName}", server.ServerName)
-						.Replace("{InstallPath}", server.InstallPath)
-						.Replace("{world_size}", server.WorldSize.ToString())
-						.Replace("{Identity}", cleanIdentity)
-						.Replace("{ram}", ramToUse.ToString());
-
-					if (isMinecraft &&
-						MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader)
-							.Equals(MinecraftMetadataService.ForgeLoader, StringComparison.OrdinalIgnoreCase))
+					if (!GameLaunchCommandBuilder.TryBuildArguments(
+						server,
+						dbEntry,
+						invokedId,
+						launchPasswords,
+						out string args,
+						out string argumentError))
 					{
-						args = $"-Xmx{ramToUse}M -Xms{ramToUse}M";
+						logCallback?.Invoke(
+							$"[🚨 SECURITY] {argumentError} Startup was blocked.",
+							Color.Red);
+						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
+						return;
 					}
-
-					if (args.Contains("{rcon}"))
-					{
-						string formattedRcon = "";
-
-						if (server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax))
-						{
-							formattedRcon = dbEntry.RconSyntax
-								.Replace("{rcon_port}", server.RconPort.ToString())
-								.Replace("{rcon_pass}", launchPasswords.RconPassword)
-								.Replace("{rcon_enabled}", GameFix.ResolveBooleanValue(dbEntry, true))
-								.Replace("{adminpass}", launchPasswords.AdminPassword)
-								.Replace("{steamAppID}", invokedId);
-						}
-
-						args = args.Replace("{rcon}", formattedRcon);
-					}
-
-					if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
-					{
-						args = args.Replace(
-							"{mode}",
-							GameFix.ResolveGameModeValue(dbEntry, server.GameMode));
-					}
-
-					if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
-					{
-						if (!IsGameServerConfigSafe(server.ExtraArgs))
-						{
-							logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected in the extra arguments. Aborting startup.", Color.Red);
-							MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
-							return;
-						}
-
-						args = $"{args} \"{server.ExtraArgs.Trim()}\"";
-					}
-
-					args = args.Replace("  ", " ").Trim();
 
 					finalArgs = args;
 					if (server.Game.Equals("Arma Reforger", StringComparison.OrdinalIgnoreCase))
@@ -332,25 +286,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							Color.Cyan);
 					}
 
-					bool hideWindow = !Properties.Settings.Default.ShowServerWindow;
+					psi = GameLaunchCommandBuilder.CreateProcessStartInfo(
+						fullExePath,
+						finalArgs,
+						binDir,
+						dbEntry.LaunchBehavior.RunElevated,
+						hideWindow,
+						isMinecraft && hideWindow);
 
-					psi = new ProcessStartInfo
-					{
-						FileName = fullExePath,
-						Arguments = finalArgs,
-						WorkingDirectory = binDir,
-						UseShellExecute = false,
-						CreateNoWindow = hideWindow,
-
-						RedirectStandardInput = isMinecraft && hideWindow,
-					};
-
-					if (dbEntry.LaunchBehavior.RunElevated)
-					{
-						psi.UseShellExecute = true;
-						psi.Verb = "runas";
-					}
-					else
+					if (!psi.UseShellExecute)
 					{
 						psi.EnvironmentVariables["SteamAppId"] = invokedId;
 						psi.EnvironmentVariables["SteamGameId"] = invokedId;
@@ -376,6 +320,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
+					if (hideWindow && !psi.UseShellExecute)
+					{
+						_ = HideServerWindowAfterLaunch(proc);
+					}
 
 					server.StartTime = DateTime.Now;
 
@@ -539,6 +487,79 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				RestoreLiveServerState(server, liveProcesses, targetPid);
 				return false;
+			}
+		}
+
+		private static Task HideServerWindowAfterLaunch(Process process)
+		{
+			return Task.Run(async () =>
+			{
+				DateTime? firstHiddenAt = null;
+				for (int attempt = 0; attempt < 60; attempt++)
+				{
+					try
+					{
+						if (Properties.Settings.Default.ShowServerWindow || process.HasExited)
+							return;
+
+						if (await TryHideServerWindow(process).ConfigureAwait(false))
+						{
+							firstHiddenAt ??= DateTime.UtcNow;
+						}
+
+						if (firstHiddenAt.HasValue &&
+							DateTime.UtcNow - firstHiddenAt.Value >= TimeSpan.FromSeconds(3))
+						{
+							return;
+						}
+					}
+					catch
+					{
+						return;
+					}
+
+					await Task.Delay(250).ConfigureAwait(false);
+				}
+			});
+		}
+
+		private static async Task<bool> TryHideServerWindow(Process process)
+		{
+			bool hidden = false;
+			try
+			{
+				process.Refresh();
+				IntPtr mainWindow = process.MainWindowHandle;
+				if (mainWindow != IntPtr.Zero)
+				{
+					ShowWindowAsync(mainWindow, SW_HIDE);
+					hidden = true;
+				}
+			}
+			catch
+			{
+			}
+
+			await _consoleLock.WaitAsync().ConfigureAwait(false);
+			bool attached = false;
+			try
+			{
+				attached = AttachConsole((uint)process.Id);
+				if (!attached)
+					return hidden;
+
+				IntPtr consoleWindow = GetConsoleWindow();
+				if (consoleWindow == IntPtr.Zero)
+					return hidden;
+
+				ShowWindowAsync(consoleWindow, SW_HIDE);
+				return true;
+			}
+			finally
+			{
+				if (attached)
+					FreeConsole();
+				_consoleLock.Release();
 			}
 		}
 

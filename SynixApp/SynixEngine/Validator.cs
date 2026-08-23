@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Database;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -20,6 +21,7 @@ namespace Synix_Control_Panel.SynixEngine
 	public partial class Core
 	{
 		private static readonly Regex SafeRegex = new Regex(@"^[a-zA-Z0-9\s\-+:\""\\/._=?,!@#$%&*'()]*$", RegexOptions.Compiled);
+		private const int MaximumExtraArgumentsLength = 16_384;
 
 		public bool CanServerStart(GameServer server, out string errorMessage)
 		{
@@ -342,6 +344,156 @@ namespace Synix_Control_Panel.SynixEngine
 			return SafeRegex.IsMatch(input);
 		}
 
+		public static bool TryValidateExtraArguments(
+			string? arguments,
+			out string errorMessage)
+		{
+			errorMessage = string.Empty;
+			if (string.IsNullOrWhiteSpace(arguments))
+				return true;
+
+			if (arguments.Length > MaximumExtraArgumentsLength)
+			{
+				errorMessage = $"Extra Arguments cannot exceed {MaximumExtraArgumentsLength:N0} characters.";
+				return false;
+			}
+
+			if (arguments.IndexOfAny(['\0', '\r', '\n']) >= 0)
+			{
+				errorMessage = "Extra Arguments cannot contain line breaks or null characters.";
+				return false;
+			}
+
+			if (ContainsBatchVariableExpansion(arguments, '%'))
+			{
+				errorMessage = "Extra Arguments cannot contain Windows batch variable expansion such as %VARIABLE%.";
+				return false;
+			}
+
+			if (ContainsBatchVariableExpansion(arguments, '!'))
+			{
+				errorMessage = "Extra Arguments cannot contain delayed Windows batch variable expansion such as !VARIABLE!.";
+				return false;
+			}
+
+			bool insideQuotes = false;
+			for (int index = 0; index < arguments.Length; index++)
+			{
+				char character = arguments[index];
+				if (!insideQuotes && character == '^')
+				{
+					errorMessage =
+						"Extra Arguments contain the Windows batch escape operator '^' outside quotes.";
+					return false;
+				}
+
+				if (character == '"')
+				{
+					insideQuotes = !insideQuotes;
+					continue;
+				}
+
+				if (!insideQuotes && character is '&' or '|' or '<' or '>')
+				{
+					string commandOperator = index + 1 < arguments.Length &&
+						arguments[index + 1] == character &&
+						character is '&' or '|'
+							? new string(character, 2)
+							: character.ToString();
+					errorMessage =
+						$"Extra Arguments contain the Windows command operator '{commandOperator}' outside quotes.";
+					return false;
+				}
+			}
+
+			if (insideQuotes)
+			{
+				errorMessage = "Extra Arguments contain an unclosed double quote.";
+				return false;
+			}
+
+			return true;
+		}
+
+		public static string EscapeWindowsBatchCommandLine(string commandLine)
+		{
+			ArgumentNullException.ThrowIfNull(commandLine);
+			if (commandLine.IndexOfAny(['\0', '\r', '\n']) >= 0)
+				throw new ArgumentException(
+					"Windows batch command lines cannot contain line breaks or null characters.",
+					nameof(commandLine));
+
+			StringBuilder escaped = new(commandLine.Length + 16);
+			bool insideQuotes = false;
+			foreach (char character in commandLine)
+			{
+				if (character == '"')
+				{
+					insideQuotes = !insideQuotes;
+					escaped.Append(character);
+					continue;
+				}
+
+				if (character == '%')
+				{
+					escaped.Append("%%");
+					continue;
+				}
+
+				if (!insideQuotes && character == '^')
+				{
+					escaped.Append("^^");
+					continue;
+				}
+
+				if (!insideQuotes && character is '&' or '|' or '<' or '>')
+					escaped.Append('^');
+
+				escaped.Append(character);
+			}
+
+			return escaped.ToString();
+		}
+
+		private static bool ContainsBatchVariableExpansion(string value, char delimiter)
+		{
+			for (int opening = 0; opening < value.Length; opening++)
+			{
+				if (value[opening] != delimiter)
+					continue;
+
+				if (delimiter == '%' && opening + 1 < value.Length)
+				{
+					char parameter = value[opening + 1];
+					if (char.IsDigit(parameter) || parameter == '*' ||
+						(parameter == '~' && opening + 2 < value.Length &&
+						 (char.IsDigit(value[opening + 2]) || value[opening + 2] == '*')))
+					{
+						return true;
+					}
+				}
+
+				int closing = value.IndexOf(delimiter, opening + 1);
+				if (closing <= opening + 1)
+					continue;
+
+				bool looksLikeVariable = true;
+				for (int index = opening + 1; index < closing; index++)
+				{
+					if (char.IsWhiteSpace(value[index]) || value[index] is '"' or '\'')
+					{
+						looksLikeVariable = false;
+						break;
+					}
+				}
+
+				if (looksLikeVariable)
+					return true;
+			}
+
+			return false;
+		}
+
 		public static bool IsGameServerConfigSafe(object obj)
 		{
 			if (obj == null) return false;
@@ -357,9 +509,14 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (prop.PropertyType == typeof(string))
 				{
-					string value = (string)prop.GetValue(obj);
+					string value = (string?)prop.GetValue(obj) ?? string.Empty;
+					bool isSafe = prop.Name.Equals(
+						nameof(GameServer.ExtraArgs),
+						StringComparison.Ordinal)
+						? TryValidateExtraArguments(value, out _)
+						: IsStringSafe(value);
 
-					if (!IsStringSafe(value))
+					if (!isSafe)
 					{
 						Core.Instance.Log($"[🚨 SECURITY] Illegal characters found in property: {prop.Name}");
 						return false;

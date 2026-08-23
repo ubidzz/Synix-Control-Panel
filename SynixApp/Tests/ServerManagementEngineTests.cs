@@ -177,6 +177,75 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Theory]
+	[InlineData("")]
+	[InlineData("-log -port 7777 +maxplayers 20")]
+	[InlineData("/Config=server.json -Map=\"My Map\"")]
+	[InlineData("-url \"https://example.com/?one=1&two=2\"")]
+	[InlineData("-password \"one!two\"")]
+	[InlineData("-message \"Hello!\" -other \"Okay!\"")]
+	[InlineData("-rates 10% 20%")]
+	[InlineData("-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Dterminal.jline=false")]
+	[InlineData("@user_jvm_args.txt @libraries/net/minecraftforge/forge/win_args.txt nogui")]
+	[InlineData("-javaagent:\"mods/example agent.jar\" -Dfml.readTimeout=180")]
+	public void ExtraArguments_AcceptsNormalGameServerSyntax(string arguments)
+	{
+		Assert.True(Core.TryValidateExtraArguments(arguments, out string error));
+		Assert.Empty(error);
+	}
+
+	[Theory]
+	[InlineData("arg & shutdown /s /t 0", "'&'")]
+	[InlineData("arg && shutdown /s /t 0", "'&&'")]
+	[InlineData("arg | powershell", "'|'")]
+	[InlineData("arg || powershell", "'||'")]
+	[InlineData("arg > overwritten.txt", "'>'")]
+	[InlineData("arg < commands.txt", "'<'")]
+	[InlineData("arg\r\nshutdown /s /t 0", "line breaks")]
+	[InlineData("arg %COMSPEC%", "%VARIABLE%")]
+	[InlineData("arg !COMSPEC!", "!VARIABLE!")]
+	[InlineData("arg %1", "%VARIABLE%")]
+	[InlineData("arg ^& shutdown /s /t 0", "'^'")]
+	[InlineData("arg \"unclosed", "unclosed")]
+	public void ExtraArguments_BlocksWindowsCommandInjection(
+		string arguments,
+		string expectedReason)
+	{
+		Assert.False(Core.TryValidateExtraArguments(arguments, out string error));
+		Assert.Contains(expectedReason, error, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Fact]
+	public void ServerConfiguration_UsesTheDedicatedExtraArgumentValidator()
+	{
+		GameServer safeServer = new()
+		{
+			Game = "Test",
+			ServerName = "Test",
+			ExtraArgs = "/Config=server.json -Map=\"My Map\""
+		};
+		GameServer unsafeServer = new()
+		{
+			Game = "Test",
+			ServerName = "Test",
+			ExtraArgs = "arg & shutdown /s /t 0"
+		};
+
+		Assert.True(Core.IsGameServerConfigSafe(safeServer));
+		Assert.False(Core.IsGameServerConfigSafe(unsafeServer));
+	}
+
+	[Fact]
+	public void BatchCommandEscaping_PreservesQuotedValuesAndNeutralizesOperators()
+	{
+		string escaped = Core.EscapeWindowsBatchCommandLine(
+			"-url \"https://example.com/?one=1&two=2\" arg & shutdown /s /t 0 %VALUE%");
+
+		Assert.Contains("\"https://example.com/?one=1&two=2\"", escaped);
+		Assert.Contains("arg ^& shutdown", escaped);
+		Assert.Contains("%%VALUE%%", escaped);
+	}
+
+	[Theory]
 	[InlineData(Core.ServerState.Stopped, "Stopped")]
 	[InlineData(Core.ServerState.Running, "Running")]
 	[InlineData(Core.ServerState.Starting, "Starting")]

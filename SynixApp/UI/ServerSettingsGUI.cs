@@ -1098,6 +1098,18 @@ namespace Synix_Control_Panel
 				selectedGame,
 				numPort.Enabled,
 				numQueryPort.Enabled)) return;
+			if (!Core.TryValidateExtraArguments(
+				txtExtraArgs.Text,
+				out string extraArgumentsError))
+			{
+				MessageBox.Show(
+					extraArgumentsError,
+					"Extra Arguments Blocked",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				txtExtraArgs.Focus();
+				return;
+			}
 			string newPath = txtInstallPath.Text.Trim();
 			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 			GameInfo? masterData = GameDatabase.GetGame(selectedGame);

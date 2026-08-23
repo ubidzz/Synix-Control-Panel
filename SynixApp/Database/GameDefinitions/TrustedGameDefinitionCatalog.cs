@@ -449,6 +449,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		{
 			GameLaunchBehavior behavior = manifest.LaunchBehavior ??
 				throw new InvalidDataException($"{resourceName} contains null launchBehavior.");
+			if (!GameLaunchCommandBuilder.TryGetLauncherKind(
+				manifest.Executable,
+				out _))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} uses an unsupported launch file type. Use an .exe, .bat, or .cmd file.");
+			}
 			ValidateText(
 				behavior.ReadyMessage,
 				"launchBehavior.readyMessage",

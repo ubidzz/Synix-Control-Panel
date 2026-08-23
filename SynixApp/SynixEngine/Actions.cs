@@ -1025,77 +1025,49 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				string cleanIdentity = GetSafeName(server.ServerName ?? "Server");
-				string args = dbEntry.RequiredArgs ?? "";
-
-				int ramToUse = server.MaxRam;
-				if (server.Game == "Minecraft") ramToUse = server.MaxRam * 1024;
-
-				args = args.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
-						   .Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
-						   .Replace("{map}", server.WorldName ?? "")
-						   .Replace("{steamAppID}", invokedId)
-						   .Replace("{appid}", targetId)
-						   .Replace("{port}", server.Port.ToString())
-						   .Replace("{query}", server.QueryPort.ToString())
-						   .Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-						   .Replace("{pass}", batchPasswords.ServerPassword)
-						   .Replace("{adminpass}", batchPasswords.AdminPassword)
-						   .Replace("{ServerName}", server.ServerName ?? "SynixServer")
-						   .Replace("{InstallPath}", server.InstallPath ?? "")
-						   .Replace("{Identity}", cleanIdentity)
-						   .Replace("{world_size}", server.WorldSize.ToString())
-						   .Replace("{ram}", ramToUse.ToString());
-
-				if (args.Contains("{rcon}"))
+				if (!GameLaunchCommandBuilder.TryBuildArguments(
+					server,
+					dbEntry,
+					invokedId,
+					batchPasswords,
+					out string args,
+					out string argumentError))
 				{
-					string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
-						? dbEntry.RconSyntax
-							.Replace("{rcon_port}", server.RconPort.ToString())
-							.Replace("{rcon_pass}", batchPasswords.RconPassword)
-							.Replace("{rcon_enabled}", GameFix.ResolveBooleanValue(dbEntry, true))
-							.Replace("{adminpass}", batchPasswords.AdminPassword)
-							.Replace("{steamAppID}", invokedId)
-						: "";
-					args = args.Replace("{rcon}", formattedRcon);
+					Log(
+						$"[🚨 SECURITY] Launch file export blocked: {argumentError}",
+						Color.Red,
+						true);
+					return false;
 				}
 
-				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
-				{
-					args = args.Replace(
-						"{mode}",
-						GameFix.ResolveGameModeValue(dbEntry, server.GameMode));
-				}
-
-				if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
-				{
-					args = args + " " + server.ExtraArgs.Trim();
-				}
-
-				args = args.Replace("  ", " ").Trim();
-
-				string safeArgs = args.Replace("&", "^&");
+				string safeArgs = EscapeWindowsBatchCommandLine(args);
 
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
+				string safeIdentity = EscapeWindowsBatchCommandLine(cleanIdentity);
+				string safeBinDir = EscapeWindowsBatchCommandLine(binDir);
+				string safeExeName = EscapeWindowsBatchCommandLine(exeNameOnly);
+				string safeInvokedId = EscapeWindowsBatchCommandLine(invokedId);
 
 				StringBuilder batchContent = new StringBuilder();
 				batchContent.AppendLine("@echo off");
+				batchContent.AppendLine("setlocal DisableDelayedExpansion");
 				batchContent.AppendLine($"echo :: ===========================================================================");
 				batchContent.AppendLine($"echo :: SYNIX AUTOMATICALLY GENERATED LAUNCH SCRIPT");
-				batchContent.AppendLine($"echo :: Server: {server.ServerName} ({server.Game})");
+				batchContent.AppendLine($"echo :: Server: {safeIdentity}");
 				batchContent.AppendLine($"echo :: Generated on: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
 				batchContent.AppendLine($"echo :: ===========================================================================");
 				batchContent.AppendLine();
 				batchContent.AppendLine($":: Move execution context to the actual binaries directory");
-				batchContent.AppendLine($"cd /d \"{binDir}\"");
+				batchContent.AppendLine($"cd /d \"{safeBinDir}\"");
 				batchContent.AppendLine();
 				batchContent.AppendLine($":: Inject Steam App Variables into Windows Memory");
-				batchContent.AppendLine($"set SteamAppId={invokedId}");
-				batchContent.AppendLine($"set SteamGameId={invokedId}");
+				batchContent.AppendLine($"set \"SteamAppId={safeInvokedId}\"");
+				batchContent.AppendLine($"set \"SteamGameId={safeInvokedId}\"");
 				batchContent.AppendLine();
 				batchContent.AppendLine($":: Execute the standalone server payload and instantly close this script window");
-				batchContent.AppendLine($"start \"{server.ServerName}\" \"{exeNameOnly}\" {safeArgs}");
+				batchContent.AppendLine($"start \"\" \"{safeExeName}\" {safeArgs}");
 				batchContent.AppendLine("exit");
 
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
