@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "terraria",
   "catalogOrder": 11,
   "game": "Terraria",
@@ -9,7 +9,7 @@
   "requiresSteamLogin": true,
   "executable": "TerrariaServer.exe",
   "downloadUrl": "",
-  "arguments": "-port {port} -maxplayers {MaxPlayers} -world \"{map}\" -password \"{pass}\" -SteamAppId={steamAppID}",
+  "arguments": "-config \"serverconfig.txt\" -SteamAppId={steamAppID}",
   "rconSyntax": "",
   "port": 7777,
   "queryPort": 7777,
@@ -20,19 +20,38 @@
     "World1.wld"
   ],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "serverconfig.txt",
   "format": "StandardINI",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
-  "needsConfigWarning": true,
+  "needsConfigWarning": false,
   "warningMessage": "This game requires configuration before it can boot properly.",
   "iconUrl": "",
   "isQueryable": false,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "MaxPlayers",
+      "Port",
+      "WorldName",
+      "WorldSeed"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "serverconfig.txt",
+        "templateFile": "serverconfig.txt"
+      }
+    ]
+  }
 }

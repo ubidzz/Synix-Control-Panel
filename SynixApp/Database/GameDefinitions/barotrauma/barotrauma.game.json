@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "barotrauma",
   "catalogOrder": 19,
   "game": "Barotrauma",
@@ -20,7 +20,7 @@
     "Campaign"
   ],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "serversettings.xml",
   "format": "XML",
   "externalDataFolderName": "",
@@ -34,5 +34,23 @@
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "MaxPlayers",
+      "Port",
+      "QueryPort"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "serversettings.xml",
+        "templateFile": "serversettings.xml"
+      }
+    ]
+  }
 }

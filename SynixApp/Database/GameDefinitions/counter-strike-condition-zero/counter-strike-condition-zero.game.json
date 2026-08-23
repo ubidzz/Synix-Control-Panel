@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "counter-strike-condition-zero",
   "catalogOrder": 222,
   "game": "Counter-Strike: Condition Zero",
@@ -25,9 +25,9 @@
   "gameModes": [
     "Classic"
   ],
-  "configFileCreation": "LaunchArgumentsOnly",
-  "relativeConfigPath": "",
-  "format": "StandardINI",
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "czero\\server.cfg",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
@@ -39,5 +39,21 @@
   "probeProtocol": "A2S",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "czero\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
 }

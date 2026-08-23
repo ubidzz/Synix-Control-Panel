@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "sven-co-op",
   "catalogOrder": 51,
   "game": "Sven Co-op",
@@ -9,7 +9,7 @@
   "requiresSteamLogin": false,
   "executable": "svends.exe",
   "downloadUrl": "",
-  "arguments": "-console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" {rcon} -SteamAppId={steamAppID}",
+  "arguments": "-console -port {port} +maxplayers {MaxPlayers} +map {map} +servercfgfile server.cfg {rcon} -SteamAppId={steamAppID}",
   "rconSyntax": "+rcon_password \"{rcon_pass}\"",
   "port": 27015,
   "queryPort": 27015,
@@ -20,9 +20,9 @@
     "stadium4"
   ],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "svencoop\\server.cfg",
-  "format": "StandardINI",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
@@ -34,5 +34,21 @@
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "svencoop\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
 }

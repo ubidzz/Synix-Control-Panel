@@ -32,6 +32,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override bool SupportsFullReset => true;
 		public override bool PreservesInstalledTemplate => true;
 		public override ManagedConfigurationInput SupportedInputs =>
+			ManagedConfigurationInput.ServerName |
 			ManagedConfigurationInput.ServerPassword |
 			ManagedConfigurationInput.WorldSeed |
 			ManagedConfigurationInput.MaxPlayers |

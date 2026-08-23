@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "valheim",
   "catalogOrder": 4,
   "game": "Valheim",
@@ -20,7 +20,7 @@
     "Dedicated"
   ],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "LaunchArgumentsOnly",
   "relativeConfigPath": "",
   "format": "StandardINI",
   "externalDataFolderName": "",

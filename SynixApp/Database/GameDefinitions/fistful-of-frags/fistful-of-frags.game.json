@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "fistful-of-frags",
   "catalogOrder": 73,
   "game": "Fistful of Frags",
@@ -21,9 +21,9 @@
     "fof_desperados"
   ],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "fof\\cfg\\server.cfg",
-  "format": "StandardINI",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
@@ -35,5 +35,21 @@
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "fof\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
 }

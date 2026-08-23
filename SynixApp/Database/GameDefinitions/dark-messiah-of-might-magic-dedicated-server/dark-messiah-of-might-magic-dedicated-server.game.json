@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "dark-messiah-of-might-magic-dedicated-server",
   "catalogOrder": 220,
   "game": "Dark Messiah of Might & Magic Dedicated Server",
@@ -40,7 +40,7 @@
   ],
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "cfg\\server.cfg",
-  "format": "StandardINI",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],

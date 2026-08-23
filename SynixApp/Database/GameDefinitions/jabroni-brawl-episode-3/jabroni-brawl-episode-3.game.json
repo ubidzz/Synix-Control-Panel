@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "jabroni-brawl-episode-3",
   "catalogOrder": 191,
   "game": "Jabroni Brawl: Episode 3",
@@ -18,9 +18,9 @@
   "worldSeed": "12345",
   "maps": [],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "jbep3\\cfg\\server.cfg",
-  "format": "StandardINI",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
@@ -32,5 +32,21 @@
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "jbep3\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
 }

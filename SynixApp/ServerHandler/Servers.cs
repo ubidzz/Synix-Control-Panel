@@ -398,6 +398,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							else
 							{
 								FinalizeStoppedState(server);
+								await Core.Instance.SynchronizeFirstGeneratedConfiguration(server);
+								FileHandler.SaveServers();
 							}
 						}
 						catch (Exception ex)

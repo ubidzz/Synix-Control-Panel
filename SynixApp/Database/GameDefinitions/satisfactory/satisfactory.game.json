@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "satisfactory",
   "catalogOrder": 35,
   "game": "Satisfactory",
@@ -20,7 +20,7 @@
     "Satisfactory"
   ],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "FactoryGame\\Saved\\Config\\WindowsServer\\Game.ini",
   "format": "StandardINI",
   "externalDataFolderName": "",
@@ -28,7 +28,7 @@
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
   "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "warningMessage": "Satisfactory uses its in-game Server Manager or HTTPS API to claim the server, set the administrator password, create a session, and load saves. Synix manages the launch port and the supported MaxPlayers value in Game.ini, but the server must still be claimed by the user after its first start.",
   "iconUrl": "",
   "isQueryable": false,
   "probeProtocol": "Auto",
@@ -41,5 +41,19 @@
       "type": "CopySteamRuntimeFiles",
       "targetDirectory": "FactoryGame\\Binaries\\Win64"
     }
-  ]
+  ],
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "MaxPlayers"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "FactoryGame\\Saved\\Config\\WindowsServer\\Game.ini",
+        "templateFile": "Game.ini"
+      }
+    ]
+  }
 }

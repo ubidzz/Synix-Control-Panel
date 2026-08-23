@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "conan-exiles",
   "catalogOrder": 30,
   "game": "Conan Exiles",
@@ -20,26 +20,53 @@
     "TheExiledLands"
   ],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "ConanSandbox\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
   "format": "StandardINI",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
-  "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "needsConfigWarning": false,
+  "warningMessage": "Synix creates the official Conan Exiles Engine.ini, Game.ini, and ServerSettings.ini sections for the server name, passwords, player limit, and RCON settings. Other gameplay values continue to use the game defaults and remain editable in the configuration editor.",
   "iconUrl": "",
   "isQueryable": true,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
-,
+  "eosDeploymentId": "",
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",
       "targetDirectory": "ConanSandbox\\Binaries\\Win64"
     }
-  ]
+  ],
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "AdminPassword",
+      "MaxPlayers",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "ConanSandbox\\Saved\\Config\\WindowsServer\\Engine.ini",
+        "templateFile": "Engine.ini"
+      },
+      {
+        "revision": 1,
+        "relativePath": "ConanSandbox\\Saved\\Config\\WindowsServer\\Game.ini",
+        "templateFile": "Game.ini"
+      },
+      {
+        "revision": 1,
+        "relativePath": "ConanSandbox\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
+        "templateFile": "ServerSettings.ini"
+      }
+    ]
+  }
 }

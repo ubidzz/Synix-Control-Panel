@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "team-fortress-classic",
   "catalogOrder": 227,
   "game": "Team Fortress Classic",
@@ -28,9 +28,9 @@
     "Capture the Flag",
     "Attack/Defend"
   ],
-  "configFileCreation": "LaunchArgumentsOnly",
-  "relativeConfigPath": "",
-  "format": "StandardINI",
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "tfc\\server.cfg",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
@@ -42,5 +42,21 @@
   "probeProtocol": "A2S",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "tfc\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
 }

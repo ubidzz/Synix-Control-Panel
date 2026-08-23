@@ -383,6 +383,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			return result;
 		}
 
+		internal static async Task<ConfigurationApplyResult?> ApplyFirstGeneratedConfiguration(
+			GameServer server)
+		{
+			if (GetConfigFileCreationMode(server.Game) != ConfigFileCreationMode.GameGenerated ||
+				!NeedsManagedConfiguration(server))
+			{
+				return null;
+			}
+
+			return await ApplyManagedConfiguration(server);
+		}
+
 		internal static async Task<ConfigurationApplyResult> ResetManagedConfiguration(
 			GameServer server)
 		{

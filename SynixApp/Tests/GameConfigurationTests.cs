@@ -387,6 +387,42 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public async Task SevenDaysToDie_FirstGeneratedConfigurationReceivesSavedSynixSettings()
+	{
+		GameServer server = CreateServer("7 Days to Die");
+		server.ServerName = "Saved Seven Server";
+		server.Port = 26942;
+		server.MaxPlayers = 14;
+		server.WorldName = "Pregen8k";
+		server.WorldSeed = "saved-seed";
+		server.WorldSize = 8192;
+		Core.SetServerPasswords(
+			server,
+			new SynixServerPasswords("saved-password", string.Empty, string.Empty));
+		PrepareGeneratedConfiguration("7 Days to Die", server);
+
+		ConfigurationApplyResult? result =
+			await GameFix.ApplyFirstGeneratedConfiguration(server);
+		SevenDaysToDieConfiguration definition = new();
+		string path = definition.ResolveFullPath(server);
+
+		Assert.NotNull(result);
+		ConfigurationApplyResult applied = result.Value;
+		Assert.True(applied.Succeeded);
+		Assert.True(applied.Complete);
+		Assert.True(applied.Changed);
+		Assert.Equal("Saved Seven Server", GetValue(path, definition.Format, "ServerName"));
+		Assert.Equal("saved-password", GetValue(path, definition.Format, "ServerPassword"));
+		Assert.Equal("26942", GetValue(path, definition.Format, "ServerPort"));
+		Assert.Equal("14", GetValue(path, definition.Format, "ServerMaxPlayerCount"));
+		Assert.Equal("Pregen8k", GetValue(path, definition.Format, "GameWorld"));
+		Assert.Equal("saved-seed", GetValue(path, definition.Format, "WorldGenSeed"));
+		Assert.Equal("8192", GetValue(path, definition.Format, "WorldGenSize"));
+		Assert.Equal(definition.SchemaVersion, server.ManagedConfigurationVersion);
+		Assert.Null(await GameFix.ApplyFirstGeneratedConfiguration(server));
+	}
+
+	[Fact]
 	public void Rust_UpdatesConfigurationWhenIdentityDoesNotChange()
 	{
 		RustConfiguration definition = new();

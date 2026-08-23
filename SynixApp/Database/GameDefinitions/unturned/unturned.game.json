@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "unturned",
   "catalogOrder": 36,
   "game": "Unturned",
@@ -29,7 +29,7 @@
   ],
   "pvpValue": "PvP",
   "pveValue": "PvE",
-  "configFileCreation": "Unknown",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "Servers\\{Identity}\\Server\\Commands.dat",
   "format": "Space",
   "externalDataFolderName": "",
@@ -43,5 +43,23 @@
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "MaxPlayers",
+      "Port",
+      "WorldName"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "Servers\\{Identity}\\Server\\Commands.dat",
+        "templateFile": "Commands.dat"
+      }
+    ]
+  }
 }

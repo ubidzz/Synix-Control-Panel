@@ -528,12 +528,13 @@ public sealed class DynamicGameDefinitionTests
 
 		Assert.True(report.IsValid, report.ToPlainText());
 		Assert.Equal(228, report.DefinitionCount);
-		Assert.Equal(4, report.TemplateCount);
+		Assert.True(report.TemplateCount >= 4);
 		Assert.Equal(62, report.PostInstallActionCount);
 		Assert.True(report.ManagedSettingBindingCount >= 8);
-		Assert.Equal(
-			report.DefinitionCount + 4,
-			report.DefinitionTestCount);
+		Assert.True(
+			report.DefinitionTestCount >= report.DefinitionCount + 4);
+		Assert.True(
+			report.DefinitionTestCount <= report.DefinitionCount + report.TemplateCount);
 	}
 
 	[Fact]

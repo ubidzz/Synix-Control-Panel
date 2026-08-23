@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "half-life-opposing-force",
   "catalogOrder": 225,
   "game": "Half-Life: Opposing Force",
@@ -25,9 +25,9 @@
   "gameModes": [
     "Deathmatch"
   ],
-  "configFileCreation": "LaunchArgumentsOnly",
-  "relativeConfigPath": "",
-  "format": "StandardINI",
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "gearbox\\server.cfg",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
@@ -39,5 +39,21 @@
   "probeProtocol": "A2S",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "gearbox\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
 }

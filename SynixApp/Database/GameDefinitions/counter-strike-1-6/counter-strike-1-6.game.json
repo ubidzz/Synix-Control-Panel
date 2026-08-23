@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "counter-strike-1-6",
   "catalogOrder": 221,
   "game": "Counter-Strike 1.6",
@@ -27,9 +27,9 @@
   "gameModes": [
     "Classic"
   ],
-  "configFileCreation": "LaunchArgumentsOnly",
-  "relativeConfigPath": "",
-  "format": "StandardINI",
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "cstrike\\server.cfg",
+  "format": "Space",
   "externalDataFolderName": "",
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
@@ -41,5 +41,21 @@
   "probeProtocol": "A2S",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "cstrike\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
 }

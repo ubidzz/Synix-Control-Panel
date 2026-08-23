@@ -43,10 +43,42 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				RecordGameVerification(server.Game, GameVerificationKind.Stop);
 				await CollectGeneratedConfigurationAfterStop(server);
+				await SynchronizeFirstGeneratedConfiguration(server);
 			}
 
 			FileHandler.SaveServers();
 			Core.Instance.UpdateGridStatus();
+		}
+
+		internal async Task SynchronizeFirstGeneratedConfiguration(GameServer server)
+		{
+			ConfigurationApplyResult? optionalResult =
+				await GameFix.ApplyFirstGeneratedConfiguration(server);
+			if (!optionalResult.HasValue)
+			{
+				return;
+			}
+			ConfigurationApplyResult result = optionalResult.Value;
+
+			if (!result.Succeeded)
+			{
+				Log($"[CONFIG ERROR] {result.Message}", Color.Red, true);
+				return;
+			}
+
+			if (!result.Complete)
+			{
+				Log($"[CONFIG WARNING] {result.Message}", Color.Orange, true);
+				return;
+			}
+
+			if (result.Changed)
+			{
+				Log(
+					$"[CONFIG] Applied the saved Synix settings to the newly generated {server.Game} configuration.",
+					Color.LimeGreen,
+					true);
+			}
 		}
 
 		private async Task CollectGeneratedConfigurationAfterStop(GameServer server)
