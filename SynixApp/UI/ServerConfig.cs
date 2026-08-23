@@ -14,6 +14,7 @@ using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixApp.UI;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Reflection;
@@ -254,6 +255,8 @@ namespace Synix_Control_Panel.ServerHandler
 			btnFixConfig.Visible = _server != null &&
 				GameFix.CanResetManagedConfiguration(_server);
 			btnRestoreBackup.Visible = _server != null;
+			btnValidateConfig.Visible = _server != null;
+			btnValidateConfig.Enabled = _server != null;
 			UpdateFixConfigAvailability();
 			UpdateRestoreBackupAvailability();
 		}
@@ -346,6 +349,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnSave.Enabled = false;
 			btnReset.Enabled = false;
 			btnFixConfig.Enabled = true;
+			btnValidateConfig.Enabled = _server != null;
 			lblSettingCount.Text = "Config unavailable";
 			lblFormatState.Text = "Repair available";
 			lblPreservationTitle.Text = "Configuration repair is available";
@@ -736,6 +740,47 @@ namespace Synix_Control_Panel.ServerHandler
 					btnSave.Enabled = true;
 					UpdateChangePresentation();
 				}
+			}
+		}
+
+		private async Task ValidateSynixConfiguration()
+		{
+			if (_server == null)
+				return;
+
+			if (HasUnsavedChanges())
+			{
+				MessageBox.Show(
+					this,
+					"Save or undo the changes in the editor before checking the values stored on disk.",
+					"Unsaved Changes",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return;
+			}
+
+			UseWaitCursor = true;
+			btnValidateConfig.Enabled = false;
+			try
+			{
+				ConfigurationValidationReport report =
+					await GameFix.ValidateManagedConfiguration(_server);
+				using ConfigurationValidationDialog dialog = new(report);
+				dialog.ShowDialog(this);
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					this,
+					$"Synix could not finish the configuration check.\n\n{exception.Message}",
+					"Configuration Check Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+			}
+			finally
+			{
+				UseWaitCursor = false;
+				btnValidateConfig.Enabled = _server != null;
 			}
 		}
 
@@ -1169,6 +1214,11 @@ namespace Synix_Control_Panel.ServerHandler
 		private async void btnFixConfig_Click(object? sender, EventArgs eventArgs)
 		{
 			await ResetConfigurationFromTemplate();
+		}
+
+		private async void btnValidateConfig_Click(object? sender, EventArgs eventArgs)
+		{
+			await ValidateSynixConfiguration();
 		}
 
 		private void btnRestoreBackup_Click(object? sender, EventArgs eventArgs)

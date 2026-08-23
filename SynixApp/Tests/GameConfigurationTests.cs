@@ -423,6 +423,97 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void ConfigurationValidator_PassesWhenSavedValuesMatchTheFile()
+	{
+		SevenDaysToDieConfiguration definition = new();
+		GameServer server = CreateServer("7 Days to Die");
+		PrepareGeneratedConfiguration("7 Days to Die", server);
+		ConfigurationContext context = CreateContext(server);
+
+		ConfigurationApplyResult applied = definition.Apply(context);
+		IReadOnlyList<ConfigurationValidationItem> items =
+			definition.Validate(context);
+
+		Assert.True(applied.Succeeded);
+		Assert.DoesNotContain(items, item =>
+			item.State == ConfigurationValidationState.Failed);
+		Assert.Contains(items, item =>
+			item.Setting == "ServerName" &&
+			item.State == ConfigurationValidationState.Passed);
+	}
+
+	[Fact]
+	public void ConfigurationValidator_FailsWhenSavedValueWasNotApplied()
+	{
+		SevenDaysToDieConfiguration definition = new();
+		GameServer server = CreateServer("7 Days to Die");
+		PrepareGeneratedConfiguration("7 Days to Die", server);
+		ConfigurationContext originalContext = CreateContext(server);
+		Assert.True(definition.Apply(originalContext).Succeeded);
+
+		server.ServerName = "A newer saved server name";
+		IReadOnlyList<ConfigurationValidationItem> items =
+			definition.Validate(CreateContext(server));
+
+		Assert.Contains(items, item =>
+			item.Setting == "ServerName" &&
+			item.State == ConfigurationValidationState.Failed &&
+			item.Message.Contains("does not match", StringComparison.Ordinal));
+	}
+
+	[Fact]
+	public void ConfigurationValidator_FailsWhenManagedTagIsMissing()
+	{
+		SevenDaysToDieConfiguration definition = new();
+		GameServer server = CreateServer("7 Days to Die");
+		PrepareGeneratedConfiguration("7 Days to Die", server);
+		ConfigurationContext context = CreateContext(server);
+		Assert.True(definition.Apply(context).Succeeded);
+		string path = definition.ResolveFullPath(server);
+		string text = File.ReadAllText(path);
+		text = text.Replace(
+			"  <property name=\"ServerName\" value=\"Test Server\"/>\r\n",
+			string.Empty,
+			StringComparison.Ordinal);
+		text = text.Replace(
+			"  <property name=\"ServerName\" value=\"Test Server\"/>\n",
+			string.Empty,
+			StringComparison.Ordinal);
+		File.WriteAllText(path, text);
+
+		IReadOnlyList<ConfigurationValidationItem> items =
+			definition.Validate(context);
+
+		Assert.Contains(items, item =>
+			item.Setting == "ServerName" &&
+			item.State == ConfigurationValidationState.Failed &&
+			item.Message.Contains("missing", StringComparison.OrdinalIgnoreCase));
+	}
+
+	[Fact]
+	public void ConfigurationValidationReport_DoesNotExposePasswordValues()
+	{
+		ConfigurationValidationReport report = new(
+			"Test Game",
+			1,
+			2,
+			true,
+			[
+				new ConfigurationValidationItem(
+					ConfigurationValidationState.Failed,
+					"ServerPassword",
+					"The file value does not match the value saved in Synix.")
+			]);
+
+		string text = report.ToPlainText();
+
+		Assert.Contains("ServerPassword", text, StringComparison.Ordinal);
+		Assert.DoesNotContain("server-secret", text, StringComparison.Ordinal);
+		Assert.DoesNotContain("admin-secret", text, StringComparison.Ordinal);
+		Assert.DoesNotContain("rcon-secret", text, StringComparison.Ordinal);
+	}
+
+	[Fact]
 	public void Rust_UpdatesConfigurationWhenIdentityDoesNotChange()
 	{
 		RustConfiguration definition = new();

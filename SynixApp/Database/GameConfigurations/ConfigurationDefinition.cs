@@ -214,6 +214,106 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			};
 		}
 
+		public virtual IReadOnlyList<ConfigurationValidationItem> Validate(
+			ConfigurationContext context)
+		{
+			List<ConfigurationValidationItem> items = [];
+			if (!UsesConfigurationFile)
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Passed,
+					"Launch arguments",
+					"This game applies its supported Synix values through launch arguments instead of a configuration file."));
+				return items;
+			}
+
+			try
+			{
+				string fullPath = ResolveFullPath(context.Server);
+				if (!File.Exists(fullPath))
+				{
+					items.Add(new ConfigurationValidationItem(
+						ConfigurationValidationState.Failed,
+						Path.GetFileName(fullPath),
+						"The managed configuration file is missing."));
+					return items;
+				}
+
+				if (SupportsFullReset)
+				{
+					bool structuralRepairRequired = NeedsStructuralRepair(context);
+					items.Add(new ConfigurationValidationItem(
+						structuralRepairRequired
+							? ConfigurationValidationState.Failed
+							: ConfigurationValidationState.Passed,
+						"Template structure",
+						structuralRepairRequired
+							? "One or more required template tags are missing or invalid. Fix Config can rebuild the complete structure."
+							: "The required template structure is present."));
+				}
+
+				if (Bindings.Count == 0)
+				{
+					items.Add(new ConfigurationValidationItem(
+						ConfigurationValidationState.Passed,
+						"Managed values",
+						"Synix does not replace individual values in this configuration file."));
+					return items;
+				}
+
+				List<ConfigLine> values = ConfigHandler.LoadConfig(fullPath, Format);
+				foreach (ConfigurationBinding binding in Bindings)
+				{
+					string setting = binding.Path ?? binding.Key;
+					List<ConfigLine> matches = values.Where(value =>
+						string.Equals(value.Key, binding.Key, StringComparison.Ordinal) &&
+						(binding.Path == null ||
+						 string.Equals(value.Path, binding.Path, StringComparison.Ordinal)))
+						.ToList();
+
+					if (matches.Count == 0)
+					{
+						items.Add(new ConfigurationValidationItem(
+							ConfigurationValidationState.Failed,
+							setting,
+							"The managed configuration tag is missing."));
+						continue;
+					}
+
+					if (matches.Count > 1)
+					{
+						items.Add(new ConfigurationValidationItem(
+							ConfigurationValidationState.Failed,
+							setting,
+							"The managed tag appears more than once, so Synix cannot safely identify one value."));
+						continue;
+					}
+
+					string expected = RequireSingleLine(
+						binding.Value(context),
+						binding.Key);
+					bool matchesSavedValue = ValuesMatch(matches[0].Value, expected);
+					items.Add(new ConfigurationValidationItem(
+						matchesSavedValue
+							? ConfigurationValidationState.Passed
+							: ConfigurationValidationState.Failed,
+						setting,
+						matchesSavedValue
+							? "The file value matches the value saved in Synix."
+							: "The file value does not match the value saved in Synix."));
+				}
+			}
+			catch (Exception exception)
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Failed,
+					"Configuration read",
+					$"Synix could not safely inspect this configuration: {exception.Message}"));
+			}
+
+			return items;
+		}
+
 		public virtual ConfigurationApplyResult Apply(ConfigurationContext context)
 		{
 			if (!UsesConfigurationFile)
@@ -373,7 +473,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				.Replace("\\", "\\\\", StringComparison.Ordinal);
 		}
 
-		private static bool ValuesMatch(string currentValue, string requestedValue)
+		protected static bool ValuesMatch(string currentValue, string requestedValue)
 		{
 			if (bool.TryParse(currentValue, out bool currentBoolean) &&
 				bool.TryParse(requestedValue, out bool requestedBoolean))

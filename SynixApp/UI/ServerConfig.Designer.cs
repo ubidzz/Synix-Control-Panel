@@ -57,6 +57,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblSearchGlyph = new Label();
 			txtSearch = new TextBox();
 			cmbTypeFilter = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
+			btnValidateConfig = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnStructured = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnRawPreview = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			pnlPreservationBanner = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
@@ -321,15 +322,17 @@ namespace Synix_Control_Panel.ServerHandler
 			// toolbarLayout
 			//
 			toolbarLayout.BackColor = Color.FromArgb(8, 13, 24);
-			toolbarLayout.ColumnCount = 4;
+			toolbarLayout.ColumnCount = 5;
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170F));
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170F));
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 144F));
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 144F));
 			toolbarLayout.Controls.Add(pnlSearch, 0, 0);
 			toolbarLayout.Controls.Add(cmbTypeFilter, 1, 0);
-			toolbarLayout.Controls.Add(btnStructured, 2, 0);
-			toolbarLayout.Controls.Add(btnRawPreview, 3, 0);
+			toolbarLayout.Controls.Add(btnValidateConfig, 2, 0);
+			toolbarLayout.Controls.Add(btnStructured, 3, 0);
+			toolbarLayout.Controls.Add(btnRawPreview, 4, 0);
 			toolbarLayout.Dock = DockStyle.Fill;
 			toolbarLayout.Location = new Point(0, 76);
 			toolbarLayout.Margin = new Padding(0);
@@ -351,7 +354,7 @@ namespace Synix_Control_Panel.ServerHandler
 			pnlSearch.Location = new Point(0, 2);
 			pnlSearch.Margin = new Padding(0, 2, 12, 10);
 			pnlSearch.Name = "pnlSearch";
-			pnlSearch.Size = new Size(672, 46);
+			pnlSearch.Size = new Size(502, 46);
 			pnlSearch.TabIndex = 0;
 			//
 			// lblSearchGlyph
@@ -376,7 +379,7 @@ namespace Synix_Control_Panel.ServerHandler
 			txtSearch.Location = new Point(44, 13);
 			txtSearch.Name = "txtSearch";
 			txtSearch.PlaceholderText = "Search settings, paths, or values...";
-			txtSearch.Size = new Size(610, 19);
+			txtSearch.Size = new Size(440, 19);
 			txtSearch.TabIndex = 1;
 			txtSearch.TextChanged += txtSearch_TextChanged;
 			//
@@ -395,13 +398,31 @@ namespace Synix_Control_Panel.ServerHandler
 			cmbTypeFilter.FormattingEnabled = true;
 			cmbTypeFilter.ItemHeight = 28;
 			cmbTypeFilter.Items.AddRange(new object[] { "All types", "TEXT", "NUMBER", "BOOLEAN", "SECRET", "NULL" });
-			cmbTypeFilter.Location = new Point(696, 7);
+			cmbTypeFilter.Location = new Point(526, 7);
 			cmbTypeFilter.Margin = new Padding(12, 7, 12, 13);
 			cmbTypeFilter.Name = "cmbTypeFilter";
 			cmbTypeFilter.SelectedItemBackColor = Color.FromArgb(24, 55, 73);
 			cmbTypeFilter.Size = new Size(146, 34);
 			cmbTypeFilter.TabIndex = 1;
 			cmbTypeFilter.SelectedIndexChanged += cmbTypeFilter_SelectedIndexChanged;
+			//
+			// btnValidateConfig
+			//
+			btnValidateConfig.BackColor = Color.FromArgb(12, 21, 36);
+			btnValidateConfig.Cursor = Cursors.Hand;
+			btnValidateConfig.Dock = DockStyle.Fill;
+			btnValidateConfig.FlatAppearance.BorderSize = 0;
+			btnValidateConfig.FlatStyle = FlatStyle.Flat;
+			btnValidateConfig.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnValidateConfig.ForeColor = Color.FromArgb(245, 181, 74);
+			btnValidateConfig.Location = new Point(690, 2);
+			btnValidateConfig.Margin = new Padding(6, 2, 6, 10);
+			btnValidateConfig.Name = "btnValidateConfig";
+			btnValidateConfig.Size = new Size(158, 46);
+			btnValidateConfig.TabIndex = 2;
+			btnValidateConfig.Text = "Check Synix Values";
+			btnValidateConfig.UseVisualStyleBackColor = false;
+			btnValidateConfig.Click += btnValidateConfig_Click;
 			//
 			// btnStructured
 			//
@@ -416,7 +437,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnStructured.Margin = new Padding(12, 2, 6, 10);
 			btnStructured.Name = "btnStructured";
 			btnStructured.Size = new Size(126, 46);
-			btnStructured.TabIndex = 2;
+			btnStructured.TabIndex = 3;
 			btnStructured.Text = "Structured View";
 			btnStructured.UseVisualStyleBackColor = false;
 			btnStructured.Click += btnStructured_Click;
@@ -434,7 +455,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnRawPreview.Margin = new Padding(6, 2, 0, 10);
 			btnRawPreview.Name = "btnRawPreview";
 			btnRawPreview.Size = new Size(138, 46);
-			btnRawPreview.TabIndex = 3;
+			btnRawPreview.TabIndex = 4;
 			btnRawPreview.Text = "Raw Preview";
 			btnRawPreview.UseVisualStyleBackColor = false;
 			btnRawPreview.Click += btnRawPreview_Click;
@@ -841,6 +862,7 @@ namespace Synix_Control_Panel.ServerHandler
 		private Label lblSearchGlyph;
 		private TextBox txtSearch;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbTypeFilter;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnValidateConfig;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnStructured;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnRawPreview;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard pnlPreservationBanner;

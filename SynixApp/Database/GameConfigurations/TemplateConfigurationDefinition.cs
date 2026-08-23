@@ -34,6 +34,114 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override ManagedConfigurationInput SupportedInputs =>
 			GetSupportedInputs();
 
+		public override IReadOnlyList<ConfigurationValidationItem> Validate(
+			ConfigurationContext context)
+		{
+			List<ConfigurationValidationItem> items = [];
+			foreach (ConfigurationTemplate template in Templates)
+			{
+				string fullPath = ResolveFullPath(context.Server, template.RelativePath);
+				if (!File.Exists(fullPath))
+				{
+					items.Add(new ConfigurationValidationItem(
+						ConfigurationValidationState.Failed,
+						template.RelativePath,
+						"The required configuration file is missing."));
+					continue;
+				}
+
+				try
+				{
+					string expandedTemplate = ExpandTemplate(template.Content, context);
+					bool structureMatches = ConfigHandler.HasRequiredStructure(
+						fullPath,
+						expandedTemplate,
+						Format);
+					items.Add(new ConfigurationValidationItem(
+						structureMatches
+							? ConfigurationValidationState.Passed
+							: ConfigurationValidationState.Failed,
+						$"{template.RelativePath} structure",
+						structureMatches
+							? "The required template structure is present."
+							: "One or more required template tags are missing or invalid."));
+
+					List<ConfigLine> desiredValues =
+						ConfigHandler.LoadConfigText(expandedTemplate, Format);
+					Dictionary<string, ConfigLine> probeValues =
+						ConfigHandler.LoadConfigText(
+							ExpandTemplate(template.Content, context, true),
+							Format)
+						.ToDictionary(value => value.Id, StringComparer.Ordinal);
+					List<ConfigLine> managedValues = desiredValues
+						.Where(value =>
+							probeValues.TryGetValue(value.Id, out ConfigLine? probe) &&
+							!TemplateValuesMatch(value, probe))
+						.ToList();
+					List<ConfigLine> existingValues = ConfigHandler.LoadConfig(fullPath, Format);
+
+					foreach (ConfigLine desired in managedValues)
+					{
+						string settingName = string.IsNullOrWhiteSpace(desired.Path)
+							? desired.Key
+							: desired.Path;
+						string displayName = $"{template.RelativePath}: {settingName}";
+						List<ConfigLine> matches = existingValues.Where(existing =>
+							string.Equals(existing.Id, desired.Id, StringComparison.Ordinal) &&
+							string.Equals(existing.Key, desired.Key, StringComparison.Ordinal) &&
+							string.Equals(existing.Path, desired.Path, StringComparison.Ordinal) &&
+							existing.Type == desired.Type)
+							.ToList();
+
+						if (matches.Count == 0)
+						{
+							items.Add(new ConfigurationValidationItem(
+								ConfigurationValidationState.Failed,
+								displayName,
+								"The managed configuration tag is missing or has the wrong data type."));
+							continue;
+						}
+
+						if (matches.Count > 1)
+						{
+							items.Add(new ConfigurationValidationItem(
+								ConfigurationValidationState.Failed,
+								displayName,
+								"The managed tag appears more than once, so Synix cannot safely identify one value."));
+							continue;
+						}
+
+						bool valueMatches = TemplateValuesMatch(matches[0], desired);
+						items.Add(new ConfigurationValidationItem(
+							valueMatches
+								? ConfigurationValidationState.Passed
+								: ConfigurationValidationState.Failed,
+							displayName,
+							valueMatches
+								? "The file value matches the value saved in Synix."
+								: "The file value does not match the value saved in Synix."));
+					}
+
+					if (managedValues.Count == 0)
+					{
+						items.Add(new ConfigurationValidationItem(
+							ConfigurationValidationState.Passed,
+							$"{template.RelativePath} managed values",
+							"This template does not replace values from Server Settings."));
+					}
+				}
+				catch (Exception exception)
+				{
+					items.Add(new ConfigurationValidationItem(
+						ConfigurationValidationState.Failed,
+						template.RelativePath,
+						$"Synix could not safely inspect this file: {exception.Message}"));
+				}
+			}
+
+			return items;
+		}
+
 		public override ConfigurationApplyResult Apply(ConfigurationContext context)
 		{
 			try
@@ -149,7 +257,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				.ToArray();
 		}
 
-		private string ExpandTemplate(
+		protected string ExpandTemplate(
 			string template,
 			ConfigurationContext context,
 			bool useProbeValues = false)
@@ -258,7 +366,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			return (changed, missing);
 		}
 
-		private static bool TemplateValuesMatch(ConfigLine first, ConfigLine second)
+		protected static bool TemplateValuesMatch(ConfigLine first, ConfigLine second)
 		{
 			if (first.Type == ConfigValueType.Boolean &&
 				bool.TryParse(first.Value, out bool firstBoolean) &&

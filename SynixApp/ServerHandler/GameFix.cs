@@ -141,6 +141,151 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 		}
 
+		internal static async Task<ConfigurationValidationReport>
+			ValidateManagedConfiguration(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			List<ConfigurationValidationItem> items = [];
+			ConfigFileCreationMode creationMode =
+				GetConfigFileCreationMode(server.Game);
+
+			if (creationMode == ConfigFileCreationMode.Unknown)
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Warning,
+					"Configuration behavior",
+					"This game's configuration-file behavior has not been verified."));
+				return new ConfigurationValidationReport(
+					server.Game,
+					server.ManagedConfigurationVersion,
+					0,
+					false,
+					items);
+			}
+
+			if (!TryGetConfiguration(
+				server.Game,
+				out ConfigurationDefinition? definition) ||
+				definition == null)
+			{
+				ConfigurationValidationState state =
+					creationMode == ConfigFileCreationMode.LaunchArgumentsOnly
+						? ConfigurationValidationState.Passed
+						: ConfigurationValidationState.Failed;
+				items.Add(new ConfigurationValidationItem(
+					state,
+					creationMode == ConfigFileCreationMode.LaunchArgumentsOnly
+						? "Launch arguments"
+						: "Managed definition",
+					creationMode == ConfigFileCreationMode.LaunchArgumentsOnly
+						? "This game applies its supported values through launch arguments instead of a configuration file."
+						: "Synix does not have a managed configuration definition for this game."));
+				return new ConfigurationValidationReport(
+					server.Game,
+					server.ManagedConfigurationVersion,
+					0,
+					false,
+					items);
+			}
+
+			if (!ManagedConfigurationsEnabled)
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Warning,
+					"Development setting",
+					"Premade game configurations are disabled for this development build. Validation remains read-only."));
+			}
+
+			if (server.ManagedConfigurationVersion == definition.SchemaVersion)
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Passed,
+					"Template revision",
+					$"The server is recorded with the current template revision {definition.SchemaVersion}."));
+			}
+			else if (server.ManagedConfigurationVersion < definition.SchemaVersion)
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Warning,
+					"Template revision",
+					$"The server is recorded with revision {server.ManagedConfigurationVersion}, but Synix now uses revision {definition.SchemaVersion}. Save Server Settings to apply the newer managed values."));
+			}
+			else
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Warning,
+					"Template revision",
+					$"The server was last managed by revision {server.ManagedConfigurationVersion}, which is newer than this Synix definition revision {definition.SchemaVersion}."));
+			}
+
+			string localIp = string.Empty;
+			string publicIp = string.Empty;
+			if (definition.RequiresNetworkAddresses)
+			{
+				try
+				{
+					localIp = await Core.Instance.GetLocalIP();
+					publicIp = await Core.Instance.GetPublicIP();
+				}
+				catch (Exception exception)
+				{
+					items.Add(new ConfigurationValidationItem(
+						ConfigurationValidationState.Failed,
+						"Network values",
+						$"Synix could not obtain the network addresses required to validate this template: {exception.Message}"));
+					return new ConfigurationValidationReport(
+						server.Game,
+						server.ManagedConfigurationVersion,
+						definition.SchemaVersion,
+						definition.SupportsFullReset,
+						items);
+				}
+			}
+
+			SynixServerPasswords passwords = default;
+			if (definition.UsesConfigurationFile)
+			{
+				try
+				{
+					passwords = Core.RevealServerPasswords(server);
+				}
+				catch (SynixPasswordProtectionException)
+				{
+					items.Add(new ConfigurationValidationItem(
+						ConfigurationValidationState.Failed,
+						"Protected passwords",
+						"Synix could not unlock the saved passwords. Re-enter them in Server Settings before validating the configuration."));
+					return new ConfigurationValidationReport(
+						server.Game,
+						server.ManagedConfigurationVersion,
+						definition.SchemaVersion,
+						definition.SupportsFullReset,
+						items);
+				}
+			}
+
+			ConfigurationContext context = new(
+				server,
+				passwords,
+				Core.Instance.GetSafeName(server.ServerName),
+				localIp,
+				publicIp);
+			items.AddRange(definition.Validate(context));
+			items.Add(new ConfigurationValidationItem(
+				ConfigurationValidationState.Passed,
+				"Fix Config",
+				definition.SupportsFullReset
+					? "A complete trusted template is available. Fix Config creates a backup before replacing the file and reapplying the saved Synix values."
+					: "Validation is available, but Synix will not offer a full rebuild because this game does not have a complete trusted reset template."));
+
+			return new ConfigurationValidationReport(
+				server.Game,
+				server.ManagedConfigurationVersion,
+				definition.SchemaVersion,
+				definition.SupportsFullReset,
+				items);
+		}
+
 		internal static ManagedConfigurationInput GetManagedConfigurationInputs(
 			string gameName)
 		{

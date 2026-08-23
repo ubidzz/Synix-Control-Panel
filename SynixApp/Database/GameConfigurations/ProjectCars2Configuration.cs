@@ -28,8 +28,50 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			ManagedConfigurationInput.ServerPassword |
 			ManagedConfigurationInput.MaxPlayers |
 			ManagedConfigurationInput.QueryPort |
-			ManagedConfigurationInput.Port;
+			ManagedConfigurationInput.Port |
+			ManagedConfigurationInput.ServerName;
 		public override string RelativePath => "server.cfg";
+
+		public override IReadOnlyList<ConfigurationValidationItem> Validate(
+			ConfigurationContext context)
+		{
+			string path = ResolveFullPath(context.Server);
+			if (!File.Exists(path))
+			{
+				return [new ConfigurationValidationItem(
+					ConfigurationValidationState.Failed,
+					RelativePath,
+					"The managed configuration file is missing.")];
+			}
+
+			try
+			{
+				List<ConfigurationValidationItem> items = [];
+				bool structureMatches = !NeedsStructuralRepair(context);
+				items.Add(new ConfigurationValidationItem(
+					structureMatches
+						? ConfigurationValidationState.Passed
+						: ConfigurationValidationState.Failed,
+					"Template structure",
+					structureMatches
+						? "The required template structure is present."
+						: "One or more required template tags are missing or invalid."));
+				string text = File.ReadAllText(path);
+				items.Add(ValidateValue(text, "name", Quote(context.Server.ServerName)));
+				items.Add(ValidateValue(text, "password", Quote(context.Passwords.ServerPassword)));
+				items.Add(ValidateValue(text, "maxPlayerCount", context.Server.MaxPlayers.ToString()));
+				items.Add(ValidateValue(text, "hostPort", context.Server.Port.ToString()));
+				items.Add(ValidateValue(text, "queryPort", context.Server.QueryPort.ToString()));
+				return items;
+			}
+			catch (Exception exception)
+			{
+				return [new ConfigurationValidationItem(
+					ConfigurationValidationState.Failed,
+					"Configuration read",
+					$"Synix could not safely inspect this configuration: {exception.Message}")];
+			}
+		}
 
 		public override string? CreateTemplate(ConfigurationContext context)
 		{
@@ -144,6 +186,40 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				text,
 				match => match.Groups["prefix"].Value + value + match.Groups["suffix"].Value,
 				1);
+		}
+
+		private static ConfigurationValidationItem ValidateValue(
+			string text,
+			string key,
+			string expectedValue)
+		{
+			Regex pattern = new(
+				@"(?m)^(?<prefix>[ \t]*" + Regex.Escape(key) +
+				@"[ \t]*:[ \t]*)(?<value>""(?:\\.|[^""])*""|[-+]?\d+(?:\.\d+)?|true|false)(?<suffix>[ \t]*(?://.*)?\r?$)",
+				RegexOptions.CultureInvariant);
+			MatchCollection matches = pattern.Matches(text);
+			if (matches.Count != 1)
+			{
+				return new ConfigurationValidationItem(
+					ConfigurationValidationState.Failed,
+					key,
+					matches.Count == 0
+						? "The managed configuration tag is missing."
+						: "The managed tag appears more than once, so Synix cannot safely identify one value.");
+			}
+
+			bool matchesSavedValue = string.Equals(
+				matches[0].Groups["value"].Value,
+				expectedValue,
+				StringComparison.Ordinal);
+			return new ConfigurationValidationItem(
+				matchesSavedValue
+					? ConfigurationValidationState.Passed
+					: ConfigurationValidationState.Failed,
+				key,
+				matchesSavedValue
+					? "The file value matches the value saved in Synix."
+					: "The file value does not match the value saved in Synix.");
 		}
 
 		private static Dictionary<string, int> GetPropertyCounts(string text)

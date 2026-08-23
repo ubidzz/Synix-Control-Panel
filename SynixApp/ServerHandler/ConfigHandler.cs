@@ -1059,7 +1059,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				AddStructureEntry(
 					signature,
-					$"{value.Path}\u001f{value.Type}");
+					value.Path);
 			}
 
 			return signature;

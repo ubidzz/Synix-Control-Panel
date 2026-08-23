@@ -54,6 +54,59 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override ConfigFormat Format => ConfigFormat.JSON;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
 
+		public override IReadOnlyList<ConfigurationValidationItem> Validate(
+			ConfigurationContext context)
+		{
+			List<ConfigurationValidationItem> items = base.Validate(context).ToList();
+			string path = ResolveFullPath(context.Server);
+			if (!File.Exists(path))
+				return items;
+
+			try
+			{
+				JsonNode? parsed = JsonNode.Parse(File.ReadAllText(path));
+				if (parsed is not JsonObject root)
+				{
+					items.Add(new ConfigurationValidationItem(
+						ConfigurationValidationState.Failed,
+						"rcon",
+						"The root of server.json is not a JSON object."));
+					return items;
+				}
+
+				bool matchesSavedValue;
+				if (context.Server.EnableRcon)
+				{
+					JsonNode expected = JsonSerializer.SerializeToNode(
+						CreateRconConfiguration(context),
+						TemplateJsonOptions)!;
+					matchesSavedValue = JsonNode.DeepEquals(root["rcon"], expected);
+				}
+				else
+				{
+					matchesSavedValue = !root.ContainsKey("rcon");
+				}
+
+				items.Add(new ConfigurationValidationItem(
+					matchesSavedValue
+						? ConfigurationValidationState.Passed
+						: ConfigurationValidationState.Failed,
+					"rcon",
+					matchesSavedValue
+						? "The RCON section matches the values saved in Synix."
+						: "The RCON section does not match the enabled state, port, or password saved in Synix."));
+			}
+			catch (Exception exception)
+			{
+				items.Add(new ConfigurationValidationItem(
+					ConfigurationValidationState.Failed,
+					"rcon",
+					$"Synix could not inspect the RCON section: {exception.Message}"));
+			}
+
+			return items;
+		}
+
 		public override string CreateTemplate(ConfigurationContext context)
 		{
 			object? rcon = context.Server.EnableRcon
