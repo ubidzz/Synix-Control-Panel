@@ -164,18 +164,18 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ModernSettingsCard card = CreateCard(548, 196);
 			card.Controls.Add(CreateGlyph("◇"));
-			card.Controls.Add(CreateTitle("Built-in Game Definitions"));
+			card.Controls.Add(CreateTitle("Built-in Game Definition Tests"));
 			card.Controls.Add(CreateDescription(
-				"Validate every built-in game, full configuration template, revision, path, and allowlisted post-install action. The builder creates project files only and cannot load plugins or run scripts.",
+				"Test every built-in game, managed setting binding, full configuration template, revision, log path, and allowlisted post-install action. Tests use isolated temporary files and never change installed servers.",
 				72));
 
 			ModernSettingsButton validateButton = new()
 			{
-				AccessibleName = "Validate built-in game definitions",
+				AccessibleName = "Test built-in game definitions",
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				Location = new Point(card.Width - 345, 136),
 				Size = new Size(150, 42),
-				Text = "Validate Library"
+				Text = "Run Tests"
 			};
 			validateButton.Click += (_, eventArgs) =>
 				GameDefinitionValidationRequested?.Invoke(this, eventArgs);

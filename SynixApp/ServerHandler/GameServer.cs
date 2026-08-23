@@ -39,6 +39,15 @@ public enum GameLifecycleTrackingMode
 	ExternalDeployment
 }
 
+public enum GameCompatibilityStatus
+{
+	NeedsCommunityTesting,
+	NeedsConfigurationTemplate,
+	InstallationVerifiedOnly,
+	PartiallyVerified,
+	FullyVerified
+}
+
 public sealed class GameRuntimeRequirements
 {
 	public int MinimumSystemMemoryGb { get; init; }
@@ -137,6 +146,8 @@ public class GameDefinition
 	public GameLaunchBehavior LaunchBehavior { get; init; } = new();
 	[JsonIgnore]
 	public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
+	[JsonIgnore]
+	public IReadOnlyList<string> LogPaths { get; init; } = [];
 }
 
 public sealed class GameInfo : GameDefinition

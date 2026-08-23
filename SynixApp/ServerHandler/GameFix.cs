@@ -85,6 +85,35 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				definition?.SupportsFullReset == true;
 		}
 
+		internal static ConfigurationBackupSnapshot? BackupManagedConfiguration(
+			GameServer server,
+			string reason)
+		{
+			return TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) &&
+				definition != null
+				? ConfigurationBackupManager.CreateSnapshot(server, definition, reason)
+				: null;
+		}
+
+		internal static bool HasManagedConfigurationBackup(GameServer server)
+		{
+			return TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) &&
+				definition != null &&
+				ConfigurationBackupManager.HasSnapshot(server, definition);
+		}
+
+		internal static ConfigurationRestoreResult RestorePreviousManagedConfiguration(
+			GameServer server)
+		{
+			return TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) &&
+				definition != null
+				? ConfigurationBackupManager.RestoreLatest(server, definition)
+				: new ConfigurationRestoreResult(
+					false,
+					0,
+					"This game does not have a managed configuration definition.");
+		}
+
 		internal static bool NeedsManagedConfigurationRepair(GameServer server)
 		{
 			if (GetConfigFileCreationMode(server.Game) is
@@ -338,7 +367,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				Core.Instance.GetSafeName(server.ServerName),
 				localIp,
 				publicIp);
+			ConfigurationBackupSnapshot? snapshot =
+				ConfigurationBackupManager.CreateSnapshot(
+					server,
+					definition,
+					"Before applying saved Synix server settings");
 			ConfigurationApplyResult result = definition.Apply(context);
+			if (!result.Changed)
+				ConfigurationBackupManager.Discard(snapshot);
 			if (result.Succeeded && result.Complete)
 			{
 				server.ManagedConfigurationVersion = definition.SchemaVersion;
@@ -397,7 +433,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				Core.Instance.GetSafeName(server.ServerName),
 				localIp,
 				publicIp);
+			ConfigurationBackupSnapshot? snapshot =
+				ConfigurationBackupManager.CreateSnapshot(
+					server,
+					definition,
+					"Before resetting from the Synix template");
 			ConfigurationApplyResult result = definition.ResetToTemplate(context);
+			if (!result.Changed)
+				ConfigurationBackupManager.Discard(snapshot);
 			if (result.Succeeded && result.Complete)
 			{
 				server.ManagedConfigurationVersion = definition.SchemaVersion;

@@ -42,19 +42,19 @@ namespace Synix_Control_Panel.SynixEngine
 			titleLabel.ForeColor = SettingsPalette.PrimaryText;
 			titleLabel.Location = new Point(24, 20);
 			titleLabel.Size = new Size(852, 36);
-			titleLabel.Text = "Game Definition Validator";
+			titleLabel.Text = "Game Definition Test Runner";
 			subtitleLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			subtitleLabel.Font = new Font("Segoe UI", 9.5F);
 			subtitleLabel.ForeColor = SettingsPalette.SecondaryText;
 			subtitleLabel.Location = new Point(24, 58);
 			subtitleLabel.Size = new Size(852, 46);
-			subtitleLabel.Text = "Checks every built-in game, full configuration template, revision, path, alias, catalog position, and allowlisted post-install action. Nothing is downloaded or executed.";
+			subtitleLabel.Text = "Tests every built-in game, managed setting binding, full configuration template, revision, path, log location, and allowlisted post-install action. Installed servers are never changed.";
 			_statusLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			_statusLabel.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
 			_statusLabel.ForeColor = SettingsPalette.SecondaryText;
 			_statusLabel.Location = new Point(24, 112);
 			_statusLabel.Size = new Size(852, 30);
-			_statusLabel.Text = "Ready to validate the game-definition library.";
+			_statusLabel.Text = "Ready to test the built-in game-definition library.";
 			_reportBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			_reportBox.BackColor = SettingsPalette.Input;
 			_reportBox.BorderStyle = BorderStyle.None;
@@ -81,7 +81,7 @@ namespace Synix_Control_Panel.SynixEngine
 			_runButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			_runButton.Location = new Point(714, 642);
 			_runButton.Size = new Size(162, 42);
-			_runButton.Text = "Run Validation";
+			_runButton.Text = "Run Tests";
 			_runButton.UseAccentStyle = true;
 			_runButton.Click += RunButton_Click;
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -102,7 +102,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Name = "GameDefinitionValidationDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Game Definition Validator";
+			Text = "Synix Game Definition Test Runner";
 			ResumeLayout(false);
 		}
 

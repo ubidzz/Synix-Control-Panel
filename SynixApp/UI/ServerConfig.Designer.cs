@@ -76,6 +76,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblStatusGlyph = new Label();
 			lblFormatState = new Label();
 			btnFixConfig = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			btnRestoreBackup = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnReset = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnCancel = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnSave = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
@@ -625,6 +626,7 @@ namespace Synix_Control_Panel.ServerHandler
 			footerPanel.Controls.Add(lblStatusGlyph);
 			footerPanel.Controls.Add(lblFormatState);
 			footerPanel.Controls.Add(btnFixConfig);
+			footerPanel.Controls.Add(btnRestoreBackup);
 			footerPanel.Controls.Add(btnReset);
 			footerPanel.Controls.Add(btnCancel);
 			footerPanel.Controls.Add(btnSave);
@@ -707,6 +709,21 @@ namespace Synix_Control_Panel.ServerHandler
 			btnFixConfig.Text = "Fix Config";
 			btnFixConfig.UseVisualStyleBackColor = false;
 			btnFixConfig.Click += btnFixConfig_Click;
+			btnRestoreBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			btnRestoreBackup.BackColor = Color.FromArgb(12, 21, 36);
+			btnRestoreBackup.Cursor = Cursors.Hand;
+			btnRestoreBackup.Enabled = false;
+			btnRestoreBackup.FlatAppearance.BorderSize = 0;
+			btnRestoreBackup.FlatStyle = FlatStyle.Flat;
+			btnRestoreBackup.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnRestoreBackup.ForeColor = Color.FromArgb(96, 165, 250);
+			btnRestoreBackup.Location = new Point(462, 14);
+			btnRestoreBackup.Name = "btnRestoreBackup";
+			btnRestoreBackup.Size = new Size(140, 44);
+			btnRestoreBackup.TabIndex = 4;
+			btnRestoreBackup.Text = "Restore Backup";
+			btnRestoreBackup.UseVisualStyleBackColor = false;
+			btnRestoreBackup.Click += btnRestoreBackup_Click;
 			//
 			// btnReset
 			//
@@ -843,6 +860,7 @@ namespace Synix_Control_Panel.ServerHandler
 		private Label lblStatusGlyph;
 		private Label lblFormatState;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnFixConfig;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnRestoreBackup;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnReset;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnCancel;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnSave;

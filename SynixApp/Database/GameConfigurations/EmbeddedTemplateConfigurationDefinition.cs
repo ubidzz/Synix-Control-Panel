@@ -20,6 +20,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		private readonly string _gameName;
 		private readonly int _schemaVersion;
 		private readonly bool _requiresNetworkAddresses;
+		private readonly ManagedConfigurationInput _managedInputs;
 		private readonly ConfigurationTemplate[] _templates;
 
 		internal EmbeddedTemplateConfigurationDefinition(
@@ -29,6 +30,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			_gameName = gameName;
 			_schemaVersion = definition.Revision;
 			_requiresNetworkAddresses = definition.RequiresNetworkAddresses;
+			_managedInputs = definition.ManagedInputs.Aggregate(
+				ManagedConfigurationInput.None,
+				(current, input) => current | input);
 			_templates = definition.Templates
 				.Select(template => new ConfigurationTemplate(
 					template.RelativePath,
@@ -40,6 +44,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override string GameName => _gameName;
 		public override int SchemaVersion => _schemaVersion;
 		public override bool RequiresNetworkAddresses => _requiresNetworkAddresses;
+		public override ManagedConfigurationInput SupportedInputs =>
+			_managedInputs == ManagedConfigurationInput.None
+				? base.SupportedInputs
+				: _managedInputs;
 		protected override IReadOnlyList<ConfigurationTemplate> Templates => _templates;
 	}
 }

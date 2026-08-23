@@ -181,6 +181,54 @@ public sealed class GameCompatibilityTests
 		}
 	}
 
+	[Fact]
+	public void CompatibilitySummary_ProgressesFromCommunityTestingToFullyVerified()
+	{
+		string directory = CreateTestDirectory();
+		try
+		{
+			string path = Path.Combine(directory, "compatibility.json");
+			GameCompatibilitySummary initial =
+				Core.GetGameCompatibilitySummary("Palworld", path);
+			Assert.Equal(
+				GameCompatibilityStatus.NeedsCommunityTesting,
+				initial.Status);
+
+			Assert.True(Core.RecordGameVerification(
+				"Palworld",
+				GameVerificationKind.Install,
+				"1.0.22",
+				DateTimeOffset.UtcNow,
+				path));
+			Assert.Equal(
+				GameCompatibilityStatus.InstallationVerifiedOnly,
+				Core.GetGameCompatibilitySummary("Palworld", path).Status);
+
+			foreach (GameVerificationKind kind in new[]
+				{
+					GameVerificationKind.Start,
+					GameVerificationKind.Stop,
+					GameVerificationKind.Monitoring
+				})
+			{
+				Assert.True(Core.RecordGameVerification(
+					"Palworld",
+					kind,
+					"1.0.22",
+					DateTimeOffset.UtcNow,
+					path));
+			}
+
+			Assert.Equal(
+				GameCompatibilityStatus.FullyVerified,
+				Core.GetGameCompatibilitySummary("Palworld", path).Status);
+		}
+		finally
+		{
+			Directory.Delete(directory, true);
+		}
+	}
+
 	private static string CreateTestDirectory()
 	{
 		string directory = Path.Combine(

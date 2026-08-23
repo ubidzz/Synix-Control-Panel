@@ -52,6 +52,9 @@
     "readyMessage": ""
   },
   "supportedServerFrameworks": [],
+  "logPaths": [
+    "Logs\\*.log"
+  ],
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",
@@ -62,6 +65,12 @@
     "schemaVersion": 1,
     "revision": 1,
     "requiresNetworkAddresses": false,
+    "managedInputs": [
+      "ServerPassword",
+      "MaxPlayers",
+      "Port",
+      "QueryPort"
+    ],
     "templates": [
       {
         "revision": 1,

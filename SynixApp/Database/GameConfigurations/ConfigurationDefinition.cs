@@ -30,7 +30,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		Rcon = 1 << 7,
 		WorldSize = 1 << 8,
 		Port = 1 << 9,
-		AppPort = 1 << 10
+		AppPort = 1 << 10,
+		ServerName = 1 << 11
 	}
 
 	[Flags]

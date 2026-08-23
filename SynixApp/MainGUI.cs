@@ -874,6 +874,9 @@ namespace Synix_Control_Panel
 				fileValidationToolStripMenuItem.Visible = !isMinecraft;
 				btnExportBatch.Enabled = !isMinecraft;
 				btnExportBatch.Visible = !isMinecraft;
+				bool hasDeclaredLogs = GameLogDiscovery.HasDeclaredLogs(selectedServer.Game);
+				openLatestGameLogToolStripMenuItem.Visible = hasDeclaredLogs;
+				openLatestGameLogToolStripMenuItem.Enabled = hasDeclaredLogs;
 
 				if (selectedServer.Status == "Running")
 				{
@@ -1178,6 +1181,14 @@ namespace Synix_Control_Panel
 			{
 				SynixSettings.ShowDialog(this);
 			}
+		}
+
+		private void btnOpenLatestGameLog_Click(object sender, EventArgs e)
+		{
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null)
+				return;
+			Core.Instance.OpenLatestGameLog(selectedServer);
 		}
 	}
 }

@@ -292,6 +292,7 @@ namespace Synix_Control_Panel.SynixEngine
 				CopySteamRuntimeFiles = chkSteamRuntime.Checked,
 				SteamRuntimeTargetDirectory = txtSteamRuntimeTarget.Text,
 				IsQueryable = chkQueryable.Checked,
+				LogPaths = ParseList(txtLogPaths.Text),
 				RuntimeRequirements = new GameRuntimeRequirements
 				{
 					MinimumSystemMemoryGb = numMinimumRam.Value,
@@ -500,6 +501,10 @@ namespace Synix_Control_Panel.SynixEngine
 			guide.AppendLine("Use normal process tracking for standard dedicated servers. External deployment is only for a launcher, virtual machine, or other deployment that owns the server lifecycle; it automatically disables query monitoring.");
 			guide.AppendLine("Elevated launch is supported only for .exe, .bat, and .cmd launch files. Enable launch-file export only when the user can safely create and run a reviewed launch file outside Synix.");
 			guide.AppendLine("The ready message is shown after the game's special readiness checks succeed. These fields select built-in, allowlisted Synix behavior and cannot run arbitrary scripts or plugins.");
+			guide.AppendLine();
+			guide.AppendLine("LOG DISCOVERY");
+			guide.AppendLine("Enter safe paths relative to the installed server folder. Use * for one path segment or file name and ** for nested folders. Supported placeholders are {Identity}, {ServerName}, {WorldName}, {Port}, and {QueryPort}.");
+			guide.AppendLine("Examples: logs\\latest.log, Saved\\Logs\\*.log, profiles\\{Identity}\\logs\\**\\*.log. Synix searches these paths only when the user asks to open the newest game log.");
 			return guide.ToString();
 		}
 

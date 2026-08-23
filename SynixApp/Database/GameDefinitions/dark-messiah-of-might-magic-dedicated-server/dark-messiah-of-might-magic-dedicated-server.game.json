@@ -56,6 +56,12 @@
   "configuration": {
     "schemaVersion": 1,
     "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "GameMode",
+      "Rcon"
+    ],
     "templates": [
       {
         "revision": 1,

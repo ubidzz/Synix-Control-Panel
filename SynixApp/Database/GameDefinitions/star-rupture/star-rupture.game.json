@@ -25,6 +25,9 @@
   "configuration": {
     "schemaVersion": 1,
     "revision": 1,
+    "managedInputs": [
+      "ServerName"
+    ],
     "templates": [
       {
         "revision": 1,

@@ -145,6 +145,8 @@ namespace Synix_Control_Panel.Help
 
 		private void LoadServerData()
 		{
+			GameCompatibilitySummary compatibility =
+				Core.GetGameCompatibilitySummary(_server.Game);
 			bool secretsAvailable = Core
 				.TryRevealServerSecrets(
 					_server,
@@ -153,7 +155,8 @@ namespace Synix_Control_Panel.Help
 
 			lblPageHeading.Text = DisplayOrFallback(_server.ServerName, "Server Overview");
 			lblPageSubtitle.Text =
-				$"{DisplayOrFallback(_server.Game, "Dedicated server")}  •  Live performance and configuration details";
+				$"{DisplayOrFallback(_server.Game, "Dedicated server")}  •  " +
+				$"{compatibility.DisplayName}  •  Live performance and configuration details";
 
 			SetStatusColor(lblRconActiveText, _server.EnableRcon);
 			SetStatusColor(lblBackupOnStartText, _server.BackupOnStart);

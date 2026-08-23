@@ -12,6 +12,9 @@
 // ============================================================================
 using System.Text;
 using System.Text.Json;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
+using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 {
@@ -31,6 +34,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		int DefinitionCount,
 		int TemplateCount,
 		int PostInstallActionCount,
+		int ManagedSettingBindingCount,
+		int DefinitionTestCount,
 		IReadOnlyList<GameDefinitionValidationItem> Items)
 	{
 		public int FailedCount => Items.Count(item =>
@@ -42,12 +47,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string ToPlainText()
 		{
 			StringBuilder text = new();
-			text.AppendLine("SYNIX GAME DEFINITION VALIDATION");
+			text.AppendLine("SYNIX GAME DEFINITION TEST REPORT");
 			text.AppendLine(new string('=', 34));
 			text.AppendLine($"Result: {(IsValid ? "VALID" : "FAILED")}");
 			text.AppendLine($"Definitions: {DefinitionCount}");
 			text.AppendLine($"Templates: {TemplateCount}");
+			text.AppendLine($"Managed setting bindings: {ManagedSettingBindingCount}");
 			text.AppendLine($"Safe post-install actions: {PostInstallActionCount}");
+			text.AppendLine($"Definition tests completed: {DefinitionTestCount}");
 			text.AppendLine($"Warnings: {WarningCount}  Failed: {FailedCount}");
 			foreach (GameDefinitionValidationItem item in Items)
 			{
@@ -80,6 +87,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					0,
 					0,
 					0,
+					0,
+					0,
 					[new GameDefinitionValidationItem(
 						GameDefinitionValidationLevel.Failed,
 						"Embedded game library",
@@ -97,6 +106,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			if (!Directory.Exists(definitionsDirectory))
 			{
 				return new GameDefinitionValidationReport(
+					0,
+					0,
 					0,
 					0,
 					0,
@@ -185,19 +196,154 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				package.Configuration?.Templates.Count ?? 0);
 			int actionCount = packages.Sum(package =>
 				package.PostInstallActions.Count);
+			(int managedBindingCount, int definitionTestCount) =
+				RunDefinitionTests(packages, items);
 			if (items.All(item => item.Level != GameDefinitionValidationLevel.Failed))
 			{
 				items.Add(new GameDefinitionValidationItem(
 					GameDefinitionValidationLevel.Passed,
 					"Game definition library",
-					$"Validated {packages.Count} definitions, {templateCount} complete template(s), and {actionCount} allowlisted post-install action(s)."));
+					$"Validated {packages.Count} definitions, {templateCount} complete template(s), {managedBindingCount} managed setting binding(s), and {actionCount} allowlisted post-install action(s)."));
+				items.Add(new GameDefinitionValidationItem(
+					GameDefinitionValidationLevel.Passed,
+					"Definition test runner",
+					$"Completed {definitionTestCount} isolated definition and configuration test(s) without changing installed servers."));
 			}
 
 			return new GameDefinitionValidationReport(
 				packages.Count,
 				templateCount,
 				actionCount,
+				managedBindingCount,
+				definitionTestCount,
 				items);
+		}
+
+		private static (int ManagedBindingCount, int DefinitionTestCount)
+			RunDefinitionTests(
+				IReadOnlyList<EmbeddedGamePackage> packages,
+				List<GameDefinitionValidationItem> items)
+		{
+			int managedBindingCount = 0;
+			int testCount = packages.Count;
+			foreach (EmbeddedGamePackage package in packages)
+			{
+				if (package.Configuration == null)
+					continue;
+
+				EmbeddedTemplateConfigurationDefinition definition = new(
+					package.Definition.Game,
+					package.Configuration);
+				managedBindingCount += CountFlags(definition.SupportedInputs);
+				testCount++;
+				RunConfigurationTest(package, definition, items);
+			}
+
+			return (managedBindingCount, testCount);
+		}
+
+		private static void RunConfigurationTest(
+			EmbeddedGamePackage package,
+			EmbeddedTemplateConfigurationDefinition definition,
+			List<GameDefinitionValidationItem> items)
+		{
+			string root = Path.Combine(
+				Path.GetTempPath(),
+				"Synix.DefinitionTests",
+				Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(root);
+			try
+			{
+				GameServer server = new()
+				{
+					Game = package.Definition.Game,
+					InstallPath = root,
+					ServerName = "Synix Definition Test",
+					WorldName = "SynixWorld",
+					WorldSeed = "12345",
+					GameMode = "PVE",
+					MaxPlayers = 12,
+					Port = package.Definition.Port,
+					QueryPort = package.Definition.QueryPort,
+					AppPort = package.Definition.AppPort,
+					RconPort = package.Definition.QueryPort + 1,
+					EnableRcon = true
+				};
+				ConfigurationContext context = new(
+					server,
+					new SynixServerPasswords(
+						"server-password",
+						"admin-password",
+						"rcon-password"),
+					"synix-definition-test",
+					"127.0.0.1",
+					"203.0.113.10");
+				ConfigurationApplyResult result = definition.ResetToTemplate(context);
+				if (!result.Succeeded || !result.Complete)
+				{
+					AddFailure(items, package.Definition.Game, result.Message);
+					return;
+				}
+
+				IReadOnlyList<string> paths = definition.ResolveConfigurationPaths(server);
+				if (paths.Count != package.Configuration!.Templates.Count ||
+					paths.Any(path => !File.Exists(path)))
+				{
+					AddFailure(
+						items,
+						package.Definition.Game,
+						"The isolated template test did not create every declared configuration file.");
+					return;
+				}
+
+				foreach (string path in paths)
+				{
+					_ = ConfigHandler.LoadConfig(path, package.Definition.Format);
+					string content = File.ReadAllText(path);
+					if (content.Contains("{ServerName}", StringComparison.Ordinal) ||
+						content.Contains("{Port}", StringComparison.Ordinal) ||
+						content.Contains("{Password}", StringComparison.Ordinal))
+					{
+						AddFailure(
+							items,
+							package.Definition.Game,
+							"The isolated template test found an unresolved managed placeholder.");
+						return;
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				AddFailure(
+					items,
+					package.Definition.Game,
+					$"The isolated definition test failed: {exception.Message}");
+			}
+			finally
+			{
+				try
+				{
+					if (Directory.Exists(root))
+						Directory.Delete(root, true);
+				}
+				catch (IOException)
+				{
+				}
+				catch (UnauthorizedAccessException)
+				{
+				}
+			}
+		}
+
+		private static int CountFlags(ManagedConfigurationInput inputs)
+		{
+			int count = 0;
+			foreach (ManagedConfigurationInput value in Enum.GetValues<ManagedConfigurationInput>())
+			{
+				if (value != ManagedConfigurationInput.None && inputs.HasFlag(value))
+					count++;
+			}
+			return count;
 		}
 
 		private static void ValidateExplicitRevisionProperties(

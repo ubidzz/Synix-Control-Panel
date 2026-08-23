@@ -150,6 +150,8 @@ namespace Synix_Control_Panel.SynixEngine
 			lblAllowLaunchExportHelp = new Label();
 			lblReadyMessage = new Label();
 			txtReadyMessage = new TextBox();
+			lblLogPaths = new Label();
+			txtLogPaths = new TextBox();
 
 			lblRightPane = new Label();
 			btnShowGuide = new ModernSettingsButton();
@@ -179,7 +181,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			pnlInputs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
 			pnlInputs.AutoScroll = true;
-			pnlInputs.AutoScrollMinSize = new Size(0, 3760);
+			pnlInputs.AutoScrollMinSize = new Size(0, 3880);
 			pnlInputs.BackColor = SettingsPalette.Card;
 			pnlInputs.Location = new Point(28, 112);
 			pnlInputs.Size = new Size(558, 606);
@@ -764,6 +766,22 @@ namespace Synix_Control_Panel.SynixEngine
 			txtReadyMessage.ScrollBars = ScrollBars.Vertical;
 			txtReadyMessage.Size = new Size(516, 74);
 
+			lblLogPaths.AutoSize = true;
+			lblLogPaths.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblLogPaths.ForeColor = SettingsPalette.SecondaryText;
+			lblLogPaths.Location = new Point(12, 3750);
+			lblLogPaths.Text = "Server log locations (one relative path or wildcard pattern per line)";
+			txtLogPaths.AcceptsReturn = true;
+			txtLogPaths.BackColor = SettingsPalette.Input;
+			txtLogPaths.BorderStyle = BorderStyle.FixedSingle;
+			txtLogPaths.Font = new Font("Segoe UI", 9.5F);
+			txtLogPaths.ForeColor = SettingsPalette.PrimaryText;
+			txtLogPaths.Location = new Point(12, 3776);
+			txtLogPaths.Multiline = true;
+			txtLogPaths.PlaceholderText = "Logs\\*.log\r\nSaved\\Logs\\**\\*.log";
+			txtLogPaths.ScrollBars = ScrollBars.Vertical;
+			txtLogPaths.Size = new Size(516, 76);
+
 			pnlInputs.Controls.Add(lblGame);
 			pnlInputs.Controls.Add(txtGame);
 			pnlInputs.Controls.Add(lblId);
@@ -865,6 +883,8 @@ namespace Synix_Control_Panel.SynixEngine
 			pnlInputs.Controls.Add(lblAllowLaunchExportHelp);
 			pnlInputs.Controls.Add(lblReadyMessage);
 			pnlInputs.Controls.Add(txtReadyMessage);
+			pnlInputs.Controls.Add(lblLogPaths);
+			pnlInputs.Controls.Add(txtLogPaths);
 
 			lblRightPane.AutoSize = true;
 			lblRightPane.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
@@ -1062,6 +1082,8 @@ namespace Synix_Control_Panel.SynixEngine
 		private Label lblAllowLaunchExportHelp = null!;
 		private Label lblReadyMessage = null!;
 		private TextBox txtReadyMessage = null!;
+		private Label lblLogPaths = null!;
+		private TextBox txtLogPaths = null!;
 		private Label lblRightPane = null!;
 		private ModernSettingsButton btnShowGuide = null!;
 		private ModernSettingsButton btnShowPreview = null!;

@@ -46,8 +46,8 @@ namespace Synix_Control_Panel.SynixEngine
 			_copyButton.Enabled = false;
 			_closeButton.Enabled = false;
 			_statusLabel.ForeColor = SettingsPalette.SecondaryText;
-			_statusLabel.Text = "Validating every built-in definition and template...";
-			_reportBox.Text = "Reading the project game-definition library...";
+			_statusLabel.Text = "Testing every built-in definition and template safely...";
+			_reportBox.Text = "Reading and testing the project game-definition library...";
 
 			try
 			{
@@ -63,9 +63,10 @@ namespace Synix_Control_Panel.SynixEngine
 				_reportBox.SelectionStart = 0;
 				_reportBox.ScrollToCaret();
 				_statusLabel.Text = report.IsValid
-					? $"VALID  •  {report.DefinitionCount} games  •  " +
+					? $"PASSED  •  {report.DefinitionCount} games  •  " +
 						$"{report.TemplateCount} templates  •  " +
-						$"{report.PostInstallActionCount} safe actions"
+						$"{report.ManagedSettingBindingCount} setting bindings  •  " +
+						$"{report.DefinitionTestCount} tests"
 					: $"FAILED  •  {report.FailedCount} problem(s) must be corrected";
 				_statusLabel.ForeColor = report.IsValid
 					? SettingsPalette.Success
@@ -76,7 +77,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				_reportBox.Text = exception.Message;
 				_statusLabel.ForeColor = SettingsPalette.Danger;
-				_statusLabel.Text = "The game-definition check could not finish.";
+				_statusLabel.Text = "The game-definition tests could not finish.";
 			}
 			finally
 			{
@@ -91,7 +92,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				Clipboard.SetText(_reportBox.Text);
-				_statusLabel.Text = "Validation report copied to the clipboard.";
+				_statusLabel.Text = "Definition test report copied to the clipboard.";
 			}
 			catch
 			{

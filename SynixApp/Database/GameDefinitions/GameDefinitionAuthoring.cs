@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -58,6 +59,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public bool CopySteamRuntimeFiles { get; init; }
 		public string SteamRuntimeTargetDirectory { get; init; } = string.Empty;
 		public bool IsQueryable { get; init; } = true;
+		public IReadOnlyList<string> LogPaths { get; init; } = [];
 		public GameRuntimeRequirements RuntimeRequirements { get; init; } = new();
 		public GameLaunchBehavior LaunchBehavior { get; init; } = new();
 		public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
@@ -149,7 +151,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					["readyMessage"] = draft.LaunchBehavior.ReadyMessage.Trim()
 				},
 				["supportedServerFrameworks"] =
-					CreateStringArray(draft.SupportedServerFrameworks)
+					CreateStringArray(draft.SupportedServerFrameworks),
+				["logPaths"] = CreateStringArray(draft.LogPaths)
 			};
 
 			if (draft.CopySteamRuntimeFiles)
@@ -169,10 +172,21 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				GetManagedTemplates(draft);
 			if (templates.Count > 0)
 			{
+				IReadOnlyList<string> templateContents = templates
+					.Where(template => File.Exists(template.SourcePath))
+					.Select(template => File.ReadAllText(template.SourcePath))
+					.ToArray();
+				ManagedConfigurationInput managedInputs =
+					TrustedGameDefinitionCatalog.GetTemplateManagedInputs(templateContents);
 				root["configuration"] = new JsonObject
 				{
 					["schemaVersion"] = 1,
 					["revision"] = draft.ConfigurationRevision,
+					["managedInputs"] = CreateStringArray(
+						Enum.GetValues<ManagedConfigurationInput>()
+							.Where(input => input != ManagedConfigurationInput.None &&
+								(managedInputs & input) != ManagedConfigurationInput.None)
+							.Select(input => input.ToString())),
 					["templates"] = new JsonArray(templates
 						.Select(template => (JsonNode)new JsonObject
 						{

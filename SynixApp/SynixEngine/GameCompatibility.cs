@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -28,6 +29,11 @@ namespace Synix_Control_Panel.SynixEngine
 	public sealed record GameVerificationEvidence(
 		string SynixVersion,
 		DateTimeOffset VerifiedAtUtc);
+
+	public sealed record GameCompatibilitySummary(
+		GameCompatibilityStatus Status,
+		string DisplayName,
+		GameCompatibilityVerification Verification);
 
 	public sealed class GameCompatibilityVerification
 	{
@@ -69,6 +75,65 @@ namespace Synix_Control_Panel.SynixEngine
 		public static GameCompatibilityVerification GetGameCompatibility(string? game)
 		{
 			return GetGameCompatibility(game, GameCompatibilityPath);
+		}
+
+		public static GameCompatibilitySummary GetGameCompatibilitySummary(string? game)
+		{
+			return GetGameCompatibilitySummary(game, GameCompatibilityPath);
+		}
+
+		internal static GameCompatibilitySummary GetGameCompatibilitySummary(
+			string? game,
+			string compatibilityPath)
+		{
+			GameCompatibilityVerification verification = GetGameCompatibility(
+				game,
+				compatibilityPath);
+			bool install = verification.Install != null;
+			bool start = verification.Start != null;
+			bool stop = verification.Stop != null;
+			bool monitoring = verification.Monitoring != null;
+			GameCompatibilityStatus status;
+
+			if (install && start && stop && monitoring)
+			{
+				status = GameCompatibilityStatus.FullyVerified;
+			}
+			else if (GameFix.GetConfigFileCreationMode(game ?? string.Empty) ==
+				ConfigFileCreationMode.Unknown)
+			{
+				status = GameCompatibilityStatus.NeedsConfigurationTemplate;
+			}
+			else if (install && !start && !stop && !monitoring)
+			{
+				status = GameCompatibilityStatus.InstallationVerifiedOnly;
+			}
+			else if (install || start || stop || monitoring)
+			{
+				status = GameCompatibilityStatus.PartiallyVerified;
+			}
+			else
+			{
+				status = GameCompatibilityStatus.NeedsCommunityTesting;
+			}
+
+			return new GameCompatibilitySummary(
+				status,
+				GetCompatibilityStatusDisplayName(status),
+				verification);
+		}
+
+		public static string GetCompatibilityStatusDisplayName(
+			GameCompatibilityStatus status)
+		{
+			return status switch
+			{
+				GameCompatibilityStatus.FullyVerified => "Fully verified",
+				GameCompatibilityStatus.PartiallyVerified => "Partially verified",
+				GameCompatibilityStatus.InstallationVerifiedOnly => "Install verified",
+				GameCompatibilityStatus.NeedsConfigurationTemplate => "Needs configuration template",
+				_ => "Needs community testing"
+			};
 		}
 
 		public static bool RecordGameVerification(

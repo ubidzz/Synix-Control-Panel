@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "ark-survival-evolved",
   "catalogOrder": 6,
   "game": "ARK: Survival Evolved",
@@ -38,8 +38,6 @@
   "pveValue": "True",
   "booleanTrueValue": "True",
   "booleanFalseValue": "False",
-  "booleanTrueValue": "True",
-  "booleanFalseValue": "False",
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
   "format": "StandardINI",
@@ -55,6 +53,9 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": "",
+  "logPaths": [
+    "ShooterGame\\Saved\\Logs\\*.log"
+  ],
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",
@@ -64,6 +65,14 @@
   "configuration": {
     "schemaVersion": 1,
     "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "AdminPassword",
+      "GameMode",
+      "MaxPlayers",
+      "Rcon"
+    ],
     "templates": [
       {
         "revision": 1,

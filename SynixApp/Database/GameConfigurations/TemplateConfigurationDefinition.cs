@@ -276,6 +276,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			foreach (ConfigurationTemplate template in Templates)
 			{
 				string content = template.Content;
+				if (content.Contains("{ServerName}", StringComparison.Ordinal))
+					supported |= ManagedConfigurationInput.ServerName;
 				if (content.Contains("{Password}", StringComparison.Ordinal))
 					supported |= ManagedConfigurationInput.ServerPassword;
 				if (content.Contains("{AdminPassword}", StringComparison.Ordinal))

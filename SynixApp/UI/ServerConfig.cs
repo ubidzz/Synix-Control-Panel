@@ -253,7 +253,9 @@ namespace Synix_Control_Panel.ServerHandler
 			lblFormatState.Text = $"{formatName} structure preserved";
 			btnFixConfig.Visible = _server != null &&
 				GameFix.CanResetManagedConfiguration(_server);
+			btnRestoreBackup.Visible = _server != null;
 			UpdateFixConfigAvailability();
+			UpdateRestoreBackupAvailability();
 		}
 
 		private void LoadConfiguration()
@@ -321,6 +323,14 @@ namespace Synix_Control_Panel.ServerHandler
 			btnFixConfig.Enabled = btnFixConfig.Visible &&
 				_server != null &&
 				GameFix.NeedsManagedConfigurationRepair(_server);
+		}
+
+		private void UpdateRestoreBackupAvailability()
+		{
+			btnRestoreBackup.Enabled = btnRestoreBackup.Visible &&
+				_server != null &&
+				!IsServerBusy(_server) &&
+				GameFix.HasManagedConfigurationBackup(_server);
 		}
 
 		private void ShowConfigurationRepairState(string message)
@@ -616,6 +626,10 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			try
 			{
+				if (_server != null && HasUnsavedChanges())
+					_ = GameFix.BackupManagedConfiguration(
+						_server,
+						"Before saving changes from the configuration editor");
 				ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
 				_allowClose = true;
 				DialogResult = DialogResult.OK;
@@ -716,12 +730,55 @@ namespace Synix_Control_Panel.ServerHandler
 				UseWaitCursor = false;
 				btnCancel.Enabled = true;
 				UpdateFixConfigAvailability();
+				UpdateRestoreBackupAvailability();
 				if (File.Exists(_path) && _fileData.Count > 0)
 				{
 					btnSave.Enabled = true;
 					UpdateChangePresentation();
 				}
 			}
+		}
+
+		private void RestorePreviousConfiguration()
+		{
+			if (_server == null || IsServerBusy(_server))
+			{
+				MessageBox.Show(
+					"Stop this server before restoring a configuration backup.",
+					"Server Must Be Stopped",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			DialogResult confirmation = MessageBox.Show(
+				"Restore the newest Synix configuration backup?\n\nSynix will first preserve the current files so this restore can also be undone.",
+				"Restore Previous Configuration?",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation != DialogResult.Yes)
+				return;
+
+			ConfigurationRestoreResult result =
+				GameFix.RestorePreviousManagedConfiguration(_server);
+			if (!result.Succeeded)
+			{
+				MessageBox.Show(
+					result.Message,
+					"Configuration Restore Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
+
+			LoadConfiguration();
+			UpdateRestoreBackupAvailability();
+			MessageBox.Show(
+				result.Message,
+				"Configuration Restored",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Information);
 		}
 
 		private static bool IsServerBusy(GameServer server)
@@ -1112,6 +1169,11 @@ namespace Synix_Control_Panel.ServerHandler
 		private async void btnFixConfig_Click(object? sender, EventArgs eventArgs)
 		{
 			await ResetConfigurationFromTemplate();
+		}
+
+		private void btnRestoreBackup_Click(object? sender, EventArgs eventArgs)
+		{
+			RestorePreviousConfiguration();
 		}
 
 		private void btnCancel_Click(object? sender, EventArgs eventArgs)

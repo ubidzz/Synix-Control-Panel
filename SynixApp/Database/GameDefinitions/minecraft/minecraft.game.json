@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "minecraft",
   "catalogOrder": 218,
   "game": "Minecraft",
@@ -34,5 +34,9 @@
   "probeProtocol": "Tcp",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "logPaths": [
+    "logs\\latest.log",
+    "logs\\*.log.gz"
+  ]
 }

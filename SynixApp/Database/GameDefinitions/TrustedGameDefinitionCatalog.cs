@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -31,6 +32,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public int SchemaVersion { get; init; } = 1;
 		public int Revision { get; init; } = 1;
 		public bool RequiresNetworkAddresses { get; init; }
+		public IReadOnlyList<ManagedConfigurationInput> ManagedInputs { get; init; } = [];
 		public IReadOnlyList<EmbeddedConfigurationTemplate> Templates { get; init; } = [];
 	}
 
@@ -93,6 +95,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public GameRuntimeRequirements RuntimeRequirements { get; init; } = new();
 		public GameLaunchBehavior LaunchBehavior { get; init; } = new();
 		public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
+		public IReadOnlyList<string> LogPaths { get; init; } = [];
 		public IReadOnlyList<EmbeddedPostInstallAction> PostInstallActions { get; init; } = [];
 		public EmbeddedConfigurationDefinition? Configuration { get; init; }
 	}
@@ -250,6 +253,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				LaunchBehavior = manifest.LaunchBehavior,
 				SupportedServerFrameworks = manifest.SupportedServerFrameworks
 					.Select(framework => framework.Trim())
+					.ToArray(),
+				LogPaths = manifest.LogPaths
+					.Select(path => path.Trim())
 					.ToArray()
 			};
 
@@ -361,6 +367,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			ValidateRuntimeRequirements(manifest.RuntimeRequirements, resourceName);
 			ValidateLaunchBehavior(manifest, resourceName);
 			ValidateSupportedServerFrameworks(manifest, resourceName);
+			ValidateUniqueText(manifest.LogPaths, "logPaths", resourceName);
+			foreach (string path in manifest.LogPaths)
+				ValidateRelativePattern(path, "logPaths", resourceName);
 			if (manifest.PostInstallActions == null)
 				throw new InvalidDataException($"{resourceName} contains a null postInstallActions collection.");
 			if (manifest.PostInstallActions.Count > 16)
@@ -392,6 +401,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					throw new InvalidDataException($"{resourceName} has an invalid configuration schema version.");
 				if (manifest.Configuration.Revision < 1)
 					throw new InvalidDataException($"{resourceName} has an invalid configuration revision.");
+				ValidateManagedInputs(manifest.Configuration, resourceName);
 				HashSet<string> templatePaths = new(StringComparer.OrdinalIgnoreCase);
 				foreach (EmbeddedConfigurationTemplate template in manifest.Configuration.Templates)
 				{
@@ -483,6 +493,77 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 						$"{resourceName} may only enable Oxide for the trusted Rust definition.");
 				}
 			}
+		}
+
+		private static void ValidateManagedInputs(
+			EmbeddedConfigurationDefinition configuration,
+			string resourceName)
+		{
+			if (configuration.ManagedInputs == null)
+				throw new InvalidDataException($"{resourceName} contains a null configuration.managedInputs collection.");
+
+			ManagedConfigurationInput declared = ManagedConfigurationInput.None;
+			foreach (ManagedConfigurationInput input in configuration.ManagedInputs)
+			{
+				if (input == ManagedConfigurationInput.None ||
+					!Enum.IsDefined(input) ||
+					(declared & input) != ManagedConfigurationInput.None)
+				{
+					throw new InvalidDataException(
+						$"{resourceName} contains an invalid or duplicate configuration managed input.");
+				}
+				declared |= input;
+			}
+
+			if (configuration.ManagedInputs.Count == 0)
+				return;
+
+			ManagedConfigurationInput discovered = GetTemplateManagedInputs(
+				configuration.Templates.Select(template => template.Content));
+			if (declared != discovered)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} configuration.managedInputs does not match the placeholders used by its templates. " +
+					$"Declared: {declared}. Template fields: {discovered}.");
+			}
+		}
+
+		internal static ManagedConfigurationInput GetTemplateManagedInputs(
+			IEnumerable<string> templates)
+		{
+			ManagedConfigurationInput inputs = ManagedConfigurationInput.None;
+			foreach (string content in templates)
+			{
+				if (content.Contains("{ServerName}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.ServerName;
+				if (content.Contains("{Password}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.ServerPassword;
+				if (content.Contains("{AdminPassword}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.AdminPassword;
+				if (content.Contains("{WorldSeed}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.WorldSeed;
+				if (content.Contains("{GameMode}", StringComparison.Ordinal) ||
+					content.Contains("{IsPvp}", StringComparison.Ordinal) ||
+					content.Contains("{IsPve}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.GameMode;
+				if (content.Contains("{MaxPlayers}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.MaxPlayers;
+				if (content.Contains("{QueryPort}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.QueryPort;
+				if (content.Contains("{WorldName}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.WorldName;
+				if (content.Contains("{RCONPort}", StringComparison.Ordinal) ||
+					content.Contains("{RCONPassword}", StringComparison.Ordinal) ||
+					content.Contains("{EnableRcon}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.Rcon;
+				if (content.Contains("{WorldSize}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.WorldSize;
+				if (content.Contains("{Port}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.Port;
+				if (content.Contains("{AppPort}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.AppPort;
+			}
+			return inputs;
 		}
 
 		private static void LoadTemplateFiles(
@@ -609,6 +690,36 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					.Any(segment => segment is "." or ".."))
 			{
 				throw new InvalidDataException($"{resourceName} contains an unsafe {field} path.");
+			}
+		}
+
+		private static void ValidateRelativePattern(
+			string path,
+			string field,
+			string resourceName)
+		{
+			if (string.IsNullOrWhiteSpace(path) ||
+				!string.Equals(path, path.Trim(), StringComparison.Ordinal) ||
+				path.Any(char.IsControl) ||
+				path.Length > 512 ||
+				Path.IsPathRooted(path) ||
+				path.Contains(':') ||
+				path.IndexOfAny(['"', '<', '>', '|', '\0']) >= 0 ||
+				path.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries)
+					.Any(segment => segment is "." or ".."))
+			{
+				throw new InvalidDataException($"{resourceName} contains an unsafe {field} pattern.");
+			}
+
+			foreach (Match match in PlaceholderPattern.Matches(path))
+			{
+				string placeholder = match.Groups[1].Value;
+				if (placeholder is not "Identity" and not "ServerName" and
+					not "WorldName" and not "Port" and not "QueryPort")
+				{
+					throw new InvalidDataException(
+						$"{resourceName} uses unsupported log-path placeholder {{{placeholder}}}.");
+				}
 			}
 		}
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "arma-reforger",
   "catalogOrder": 41,
   "game": "Arma Reforger",
@@ -34,5 +34,8 @@
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "logPaths": [
+    "profiles\\{Identity}\\logs\\**\\*.log"
+  ]
 }
