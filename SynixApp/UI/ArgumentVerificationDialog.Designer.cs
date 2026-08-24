@@ -190,11 +190,12 @@ namespace Synix_Control_Panel.SynixEngine
 			_detailsColumn.Name = "_detailsColumn";
 			_detailsColumn.ReadOnly = true;
 			_confirmationCheck.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			_confirmationCheck.Enabled = false;
+			_confirmationCheck.AutoCheck = false;
 			_confirmationCheck.ForeColor = Color.FromArgb(245, 247, 251);
 			_confirmationCheck.Location = new Point(28, 570);
 			_confirmationCheck.Name = "_confirmationCheck";
 			_confirmationCheck.Size = new Size(928, 44);
+			_confirmationCheck.TabStop = false;
 			_confirmationCheck.TabIndex = 11;
 			_confirmationCheck.Text = "I confirmed the displayed server name, ports, player limit, and all other values used by this definition, including passwords, RCON, mode, and map/world where applicable.";
 			_confirmationCheck.UseVisualStyleBackColor = true;

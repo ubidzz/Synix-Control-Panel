@@ -45,6 +45,69 @@ public sealed class TroubleshooterAndRecoveryTests
 	}
 
 	[Fact]
+	public void StandardDialogs_ReceiveSharedSynixWindowHeader()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerBackupRestoreDialog dialog = new();
+				Assert.Equal(
+					System.Windows.Forms.FormBorderStyle.None,
+					dialog.FormBorderStyle);
+				Assert.Single(dialog.Controls.Find("synixWindowHeader", true));
+				Assert.Single(dialog.Controls.Find("synixWindowLogo", true));
+				Assert.Single(dialog.Controls.Find("synixWindowTitle", true));
+				Assert.Single(dialog.Controls.Find("synixWindowCloseButton", true));
+				System.Windows.Forms.Control header =
+					dialog.Controls.Find("synixWindowHeader", true).Single();
+				System.Windows.Forms.Control content =
+					dialog.Controls.Find("synixWindowContent", true).Single();
+				Assert.Equal(56, header.Height);
+				Assert.Equal(header.Bottom, content.Top);
+				Assert.Equal(dialog.ClientSize.Height - header.Height, content.Height);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void ArgumentVerificationConfirmation_IsReadableBeforeLaunchTest()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ArgumentVerificationDialog dialog = new();
+				System.Windows.Forms.CheckBox confirmation =
+					Assert.IsType<System.Windows.Forms.CheckBox>(
+						dialog.Controls.Find("_confirmationCheck", true).Single());
+				Assert.True(confirmation.Enabled);
+				Assert.False(confirmation.AutoCheck);
+				Assert.False(confirmation.TabStop);
+				Assert.NotEqual(System.Drawing.Color.Black, confirmation.ForeColor);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+		Assert.Null(failure);
+	}
+
+	[Fact]
 	public void HealthReport_CountsEveryResultLevel()
 	{
 		SynixHealthReport report = new(

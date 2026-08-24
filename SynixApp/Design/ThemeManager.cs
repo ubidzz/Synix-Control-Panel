@@ -170,7 +170,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 				return;
 
 			if (root is Form form)
+			{
+				SynixWindowHeader.Apply(form);
 				WindowMemoryReclaimer.Track(form);
+			}
 
 			root.SuspendLayout();
 			try

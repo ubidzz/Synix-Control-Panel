@@ -1,6 +1,412 @@
 {
   "schemaVersion": 1,
-  "exportedBySynixVersion": "",
-  "exportedAtUtc": "0001-01-01T00:00:00+00:00",
-  "games": []
+  "exportedBySynixVersion": "1.0.21",
+  "exportedAtUtc": "2026-08-24T11:23:10.6845704+00:00",
+  "games": [
+    {
+      "game": "7 Days to Die",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-23T02:39:55.3708814+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T06:30:57.0709127+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T07:13:51.570526+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T06:30:57.0626727+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Abiotic Factor",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:11:34.3257781+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:11:59.1610446+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:12:28.3448734+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:11:59.1508559+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Action: Source",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:23:55.9593459+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:24:12.636768+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:25:37.6273181+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:24:12.6311467+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Age of Chivalry",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:29:41.7667451+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:32:35.5558716+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:35:36.2181346+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:32:35.5494152+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Airmen",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:36:57.0613036+00:00"
+      },
+      "start": null,
+      "stop": null,
+      "monitoring": null,
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Alien Swarm: Reactive Drop",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:41:03.1376297+00:00"
+      },
+      "start": null,
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:47:26.3347668+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:47:10.4134681+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "America\u0027s Army: Proving Grounds",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T16:57:30.1980575+00:00"
+      },
+      "start": null,
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:14:41.6179734+00:00"
+      },
+      "monitoring": null,
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "American Truck Simulator",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:06:00.2955678+00:00"
+      },
+      "start": null,
+      "stop": null,
+      "monitoring": null,
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Angels Fall First",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:51:27.0732344+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:54:52.4209965+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:56:05.1160376+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:54:52.4148783+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Archean",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:57:28.1433698+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:58:27.0589504+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:59:19.9439289+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T17:58:27.0520881+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "ARK: Survival Ascended",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:03:12.8468737+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:13:28.5205717+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:24:25.0671577+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:13:28.5139671+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "ARK: Survival Evolved",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:30:24.7492609+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:35:17.3467034+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:36:46.9056112+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T18:35:17.3393687+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Arma 3",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T09:48:05.564463+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T10:52:06.0254632+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T10:52:44.7164552+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T10:52:06.0162945+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Arma Reforger",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T10:52:55.0753842+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T13:03:42.4164891+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T13:13:46.907652+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T13:03:42.4039243+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "ASTRONEER",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-23T16:08:23.9773982+00:00"
+      },
+      "start": null,
+      "stop": null,
+      "monitoring": null,
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Atlas",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T05:08:17.4024147+00:00"
+      },
+      "start": null,
+      "stop": null,
+      "monitoring": null,
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Craftopia",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T05:24:46.7717264+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T05:33:27.068298+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T05:35:27.6979819+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T05:33:27.0598974+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Minecraft",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T06:46:01.0244639+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:51:58.1495435+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T20:14:55.6675767+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:51:58.137553+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T11:06:43.1993638+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T11:12:41.6073164+00:00"
+      }
+    },
+    {
+      "game": "Palworld",
+      "install": null,
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T06:33:31.4796108+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T07:14:06.1815394+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T06:33:31.4755674+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Rust",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-23T00:55:48.9784249+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T06:36:29.4166769+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T07:14:13.7739541+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T06:36:29.4112945+00:00"
+      },
+      "arguments": null,
+      "configuration": null
+    },
+    {
+      "game": "Soulmask",
+      "install": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-22T12:18:34.7461427+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:54:23.6462456+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T20:15:06.7589459+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-21T19:54:23.640702+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T11:22:36.0542306+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T11:23:03.4639199+00:00"
+      }
+    }
+  ]
 }

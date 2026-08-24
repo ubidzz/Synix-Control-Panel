@@ -161,7 +161,7 @@ namespace Synix_Control_Panel.SynixEngine
 			_testStartedAtUtc = DateTimeOffset.UtcNow;
 			_launchVerified = false;
 			_confirmationCheck.Checked = false;
-			_confirmationCheck.Enabled = false;
+			SetConfirmationAvailable(false);
 			_statusLabel.Text =
 				"Starting the server through Synix. Waiting for its configured listener to respond...";
 			_statusLabel.ForeColor = SettingsPalette.Accent;
@@ -285,7 +285,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			_launchVerified = true;
 			_probeTimer.Stop();
-			_confirmationCheck.Enabled = true;
+			SetConfirmationAvailable(true);
 			_statusLabel.Text = details +
 				" Confirm the visible in-game values before recording the verification.";
 			_statusLabel.ForeColor = SettingsPalette.Success;
@@ -349,8 +349,19 @@ namespace Synix_Control_Panel.SynixEngine
 			_testLaunchRequested = false;
 			_launchVerified = false;
 			_confirmationCheck.Checked = false;
-			_confirmationCheck.Enabled = false;
+			SetConfirmationAvailable(false);
 			VerificationRecorded = false;
+		}
+
+		private void SetConfirmationAvailable(bool available)
+		{
+			_confirmationCheck.Enabled = true;
+			_confirmationCheck.AutoCheck = available;
+			_confirmationCheck.TabStop = available;
+			_confirmationCheck.Cursor = available
+				? Cursors.Hand
+				: Cursors.Default;
+			_confirmationCheck.ForeColor = SettingsPalette.PrimaryText;
 		}
 
 		private void UpdateButtons()
