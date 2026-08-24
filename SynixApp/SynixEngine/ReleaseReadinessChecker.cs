@@ -220,6 +220,8 @@ namespace Synix_Control_Panel.SynixEngine
 			CheckAutomatedTestReceipt(
 				items,
 				manifestPath);
+			progress?.Report("Checking the security regression receipt...");
+			CheckSecurityRegressionReceipt(items, manifestPath);
 
 			progress?.Report("Validating the built-in game definition library...");
 			GameDefinitionValidationReport definitionReport =
@@ -391,6 +393,23 @@ namespace Synix_Control_Panel.SynixEngine
 				manifest.TryGetValue(
 					"AutomatedTestsUtc",
 					out string? completedText) &&
+				DateTimeOffset.TryParse(
+					completedText,
+					System.Globalization.CultureInfo.InvariantCulture,
+					System.Globalization.DateTimeStyles.AssumeUniversal |
+						System.Globalization.DateTimeStyles.AdjustToUniversal,
+					out completedUtc);
+		}
+
+		public static bool TryGetPassingSecurityReceipt(
+			IReadOnlyDictionary<string, string> manifest,
+			out DateTimeOffset completedUtc)
+		{
+			ArgumentNullException.ThrowIfNull(manifest);
+			completedUtc = default;
+			return manifest.TryGetValue("SecurityRegressionReview", out string? result) &&
+				string.Equals(result, "Passed", StringComparison.OrdinalIgnoreCase) &&
+				manifest.TryGetValue("SecurityRegressionReviewUtc", out string? completedText) &&
 				DateTimeOffset.TryParse(
 					completedText,
 					System.Globalization.CultureInfo.InvariantCulture,
@@ -697,7 +716,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 			List<string> problems = [];
-			if (!manifest.TryGetValue("FormatVersion", out string? format) || format != "2")
+			if (!manifest.TryGetValue("FormatVersion", out string? format) || format != "3")
 				problems.Add("unsupported manifest format");
 			if (!manifest.TryGetValue("Channel", out string? channel) ||
 				!Core.IsOfficialChannel(channel))
@@ -858,6 +877,43 @@ namespace Synix_Control_Panel.SynixEngine
 					items,
 					"Automated tests",
 					$"The Publish test receipt could not be read: {exception.Message}");
+			}
+		}
+
+		private static void CheckSecurityRegressionReceipt(
+			List<SynixReleaseCheckItem> items,
+			string manifestPath)
+		{
+			if (!File.Exists(manifestPath))
+			{
+				AddFailure(
+					items,
+					"Security regression suite",
+					"The Publish security receipt is missing. Publish Synix again before releasing.");
+				return;
+			}
+
+			try
+			{
+				IReadOnlyDictionary<string, string> manifest = ReadManifest(manifestPath);
+				if (TryGetPassingSecurityReceipt(manifest, out DateTimeOffset completedUtc))
+				{
+					AddPassed(
+						items,
+						"Security regression suite",
+						$"Security-sensitive argument, path, archive, password, definition, and update tests passed during Publish at {completedUtc.ToLocalTime():g}.");
+				}
+				else
+				{
+					AddFailure(
+						items,
+						"Security regression suite",
+						"The manifest does not contain a valid passing security receipt. Publish Synix again.");
+				}
+			}
+			catch (Exception exception)
+			{
+				AddFailure(items, "Security regression suite", $"The security receipt could not be read: {exception.Message}");
 			}
 		}
 

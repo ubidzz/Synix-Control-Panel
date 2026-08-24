@@ -73,7 +73,6 @@ namespace Synix_Control_Panel.SynixApp
 			Application.SetCompatibleTextRenderingDefault(false);
 			ThemeManager.Initialize(Properties.Settings.Default.DarkMode);
 			Application.Idle += (_, _) => ThemeManager.ApplyToOpenForms();
-
 			try
 			{
 				bool importRolledBack = Core
@@ -104,6 +103,14 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
+				SynixSessionRecovery.BeginSession();
+			}
+			catch
+			{
+			}
+
+			try
+			{
 				MainGUI mainWindow = new();
 				if (!string.IsNullOrWhiteSpace(updateSuccessMarker))
 				{
@@ -125,7 +132,7 @@ namespace Synix_Control_Panel.SynixApp
 			}
 			finally
 			{
-
+				SynixSessionRecovery.EndSession();
 				FileHandler.FlushLogsAsync()
 					.GetAwaiter()
 					.GetResult();

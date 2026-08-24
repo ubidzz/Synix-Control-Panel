@@ -363,6 +363,10 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
+			if (SynixSessionRecovery.PreviousSessionWasInterrupted)
+			{
+				AppendLog("[🔧 CRASH RECOVERY] Synix detected an interrupted previous session and is reconnecting any server processes that are still running.", Color.Orange, true);
+			}
 			try
 			{
 				await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
@@ -402,6 +406,22 @@ namespace Synix_Control_Panel
 				lblSteamStatus.Text = "●  SteamCMD needs attention";
 				lblSteamStatus.ForeColor = SettingsPalette.Danger;
 				AppendLog($"[🚨 STEAMCMD ERROR] {ex.Message}", Color.Red, true);
+			}
+
+			if (SynixSessionRecovery.ShouldShowFirstRunGuide())
+			{
+				using FirstRunGuideDialog guide = new();
+				if (guide.ShowDialog(this) == DialogResult.OK)
+				{
+					try
+					{
+						SynixSessionRecovery.CompleteFirstRunGuide();
+					}
+					catch (Exception exception)
+					{
+						AppendLog($"[⚠️ FIRST RUN] The completion marker could not be saved: {exception.Message}", Color.Orange);
+					}
+				}
 			}
 		}
 

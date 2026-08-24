@@ -34,137 +34,126 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task RebindProcesses()
 		{
+			bool stateChanged = false;
 			foreach (var server in MainGUI.serverList)
 			{
-
-				if (server.PID.HasValue && server.PID.Value > 0)
+				GameInfo? gameData = GameDatabase.GetGame(server.Game);
+				Process? recoveredProcess = null;
+				bool discoveredByPath = false;
+				if (gameData != null && ProcessRecovery.IsRecordedProcessValid(server, gameData))
 				{
-					bool isServerRunning = false;
-
 					try
 					{
-						Process? process = null;
-
-						try
-						{
-							process = Process.GetProcessById(server.PID.Value);
-
-							if (!process.HasExited)
-							{
-								var gameData = GameDatabase.GetGame(server.Game);
-
-								if (gameData != null && !string.IsNullOrEmpty(gameData.ExeName))
-								{
-									string expectedProcessName =
-										Path.GetFileNameWithoutExtension(gameData.ExeName);
-
-									bool processMatches =
-										process.ProcessName.Equals(
-											expectedProcessName,
-											StringComparison.OrdinalIgnoreCase) ||
-										(gameData.ExeName.EndsWith(
-											".bat",
-											StringComparison.OrdinalIgnoreCase) &&
-										 process.ProcessName.Equals(
-											"cmd",
-											StringComparison.OrdinalIgnoreCase));
-
-									if (processMatches)
-									{
-										Process reboundProcess = process;
-
-										server.RunningProcess?.Dispose();
-										server.RunningProcess = reboundProcess;
-										process = null;
-
-										server.Status =
-											StatusManager.GetStatus(ServerState.Running);
-
-										if (server.StartTime == null)
-											server.StartTime = reboundProcess.StartTime;
-
-										reboundProcess.Exited += async (s, e) =>
-										{
-											try
-											{
-												if (server.Status == StatusManager.GetStatus(ServerState.Running))
-												{
-													await ExecuteStartSequence(server, "WATCHDOG");
-												}
-												else if (server.Status?.StartsWith(StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase) != true)
-												{
-													CleanupStoppedState(server);
-												}
-											}
-											catch (Exception ex)
-											{
-												Log(
-													$"[🚨 CRASH HANDLER ERROR] {ex.Message}",
-													Color.Red);
-
-												CleanupStoppedState(server);
-											}
-										};
-
-										reboundProcess.EnableRaisingEvents = true;
-										isServerRunning = true;
-
-										Log(
-											$"[🔗 REBIND] Found {server.Game} still running " +
-											$"(PID: {server.PID})",
-											Color.BlueViolet,
-											true);
-									}
-								}
-							}
-						}
-						catch (Exception ex)
-						{
-							Log(
-								$"[⚠️ REBIND ERROR] Could not rebind {server.Game}: {ex.Message}",
-								Color.OrangeRed);
-						}
-						finally
-						{
-							process?.Dispose();
-						}
+						recoveredProcess = Process.GetProcessById(server.PID!.Value);
 					}
-					catch { }
-
-					if (!isServerRunning)
+					catch
 					{
-						CleanupStoppedState(server);
 					}
 				}
+				else if (gameData != null)
+				{
+					recoveredProcess = ProcessRecovery.FindInstalledServerProcess(server, gameData);
+					discoveredByPath = recoveredProcess != null;
+				}
 
-				if ((server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Updating)) && server.SteamPID.HasValue)
+				if (recoveredProcess != null)
+				{
+					BindRecoveredProcess(server, recoveredProcess, discoveredByPath);
+					stateChanged = true;
+				}
+				else if (server.PID.HasValue || IsInterruptedRuntimeStatus(server.Status))
+				{
+					string interruptedStatus = server.Status;
+					CleanupStoppedState(server);
+					stateChanged = true;
+					Log($"[🔧 RECOVERY] Cleared an interrupted {interruptedStatus} state for {server.ServerName}.", Color.Orange, true);
+				}
+
+				if (IsSteamOperationStatus(server.Status))
 				{
 					bool isSteamCmdActive = false;
-					try
+					if (server.SteamPID.HasValue)
 					{
-						using var installer = Process.GetProcessById(server.SteamPID.Value);
-						if (!installer.HasExited && installer.ProcessName.Contains("steamcmd", StringComparison.OrdinalIgnoreCase))
+						try
 						{
-							isSteamCmdActive = true;
-							Log($"[🔗 REBIND] Found {server.Game} install still active (PID: {server.SteamPID})", Color.BlueViolet, true);
+							using var installer = Process.GetProcessById(server.SteamPID.Value);
+							isSteamCmdActive = !installer.HasExited && installer.ProcessName.Contains("steamcmd", StringComparison.OrdinalIgnoreCase);
 						}
+						catch { }
 					}
-					catch { }
 
-					if (!isSteamCmdActive)
+					if (isSteamCmdActive)
 					{
+						Log($"[🔗 REBIND] Found {server.Game} SteamCMD operation still active (PID: {server.SteamPID})", Color.BlueViolet, true);
+					}
+					else
+					{
+						bool postInstallNeeded = server.Status == StatusManager.GetStatus(ServerState.Installing) ||
+							server.Status == StatusManager.GetStatus(ServerState.Updating);
 						server.Status = StatusManager.GetStatus(ServerState.Stopped);
 						server.SteamPID = null;
-						await GameFix.PostInstall(server);
-						await RefreshServerIconAsync(server);
-						Log($"[🔧 RECOVERY] {server.Game} install finished while Synix was closed. Applied fixes.", Color.Green, true);
-						FileHandler.SaveServers();
-						Core.Instance.UpdateGridStatus();
+						if (postInstallNeeded)
+						{
+							await GameFix.PostInstall(server);
+							await RefreshServerIconAsync(server);
+							Log($"[🔧 RECOVERY] {server.Game} finished while Synix was closed. Applied its safe post-install actions.", Color.Green, true);
+						}
+						stateChanged = true;
 					}
 				}
 			}
+			if (stateChanged)
+				FileHandler.SaveServers();
 			UpdateGridStatus();
 		}
+
+		private void BindRecoveredProcess(GameServer server, Process process, bool discoveredByPath)
+		{
+			server.RunningProcess?.Dispose();
+			server.RunningProcess = process;
+			server.PID = process.Id;
+			server.Status = StatusManager.GetStatus(ServerState.Running);
+			try
+			{
+				server.StartTime ??= process.StartTime;
+			}
+			catch { }
+			process.Exited += async (_, _) =>
+			{
+				try
+				{
+					if (server.Status == StatusManager.GetStatus(ServerState.Running))
+						await ExecuteStartSequence(server, "WATCHDOG");
+					else if (!server.Status.StartsWith(StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase))
+						CleanupStoppedState(server);
+				}
+				catch (Exception exception)
+				{
+					Log($"[🚨 CRASH HANDLER ERROR] {exception.Message}", Color.Red);
+					CleanupStoppedState(server);
+				}
+			};
+			process.EnableRaisingEvents = true;
+			Log(
+				discoveredByPath
+					? $"[🔗 CRASH RECOVERY] Reconnected {server.ServerName} by its exact installed executable path (PID: {process.Id})."
+					: $"[🔗 REBIND] Reconnected {server.ServerName} (PID: {process.Id}).",
+				Color.BlueViolet,
+				true);
+		}
+
+		private static bool IsSteamOperationStatus(string? status) =>
+			status == StatusManager.GetStatus(ServerState.Installing) ||
+			status == StatusManager.GetStatus(ServerState.Updating) ||
+			status == StatusManager.GetStatus(ServerState.Validating);
+
+		private static bool IsInterruptedRuntimeStatus(string? status) =>
+			status == StatusManager.GetStatus(ServerState.Running) ||
+			status == StatusManager.GetStatus(ServerState.Starting) ||
+			status == StatusManager.GetStatus(ServerState.Stopping) ||
+			status == StatusManager.GetStatus(ServerState.Crashed) ||
+			status == StatusManager.GetStatus(ServerState.BackingUp) ||
+			status == StatusManager.GetStatus(ServerState.Export);
 
 		private void CleanupStoppedState(GameServer server)
 		{

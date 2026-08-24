@@ -173,6 +173,8 @@ namespace Synix_Control_Panel.SynixEngine
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
 				ElevatedSystemTasksChanged;
+			advancedSettingsPage.TroubleshooterRequested +=
+				TroubleshooterRequested;
 			developmentSettingsPage.UsePremadeConfigurationsChanged +=
 				UsePremadeConfigurationsChanged;
 			developmentSettingsPage.CollectGeneratedConfigurationsChanged +=
@@ -187,6 +189,8 @@ namespace Synix_Control_Panel.SynixEngine
 				GameDefinitionBuilderRequested;
 			developmentSettingsPage.GameVerificationQueueRequested +=
 				GameVerificationQueueRequested;
+			developmentSettingsPage.ReliabilityTestRequested +=
+				ReliabilityTestRequested;
 		}
 
 		private void LoadSavedSettings()
@@ -320,6 +324,14 @@ namespace Synix_Control_Panel.SynixEngine
 			dialog.ShowDialog(this);
 		}
 
+		private void TroubleshooterRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			using TroubleshooterDialog dialog = new();
+			dialog.ShowDialog(this);
+		}
+
 		private void GameDefinitionValidationRequested(
 			object? sender,
 			EventArgs eventArgs)
@@ -351,6 +363,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 			using GameVerificationQueue queue = new();
 			queue.ShowDialog(this);
+		}
+
+		private void ReliabilityTestRequested(object? sender, EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+			using ReliabilityTestDialog dialog = new();
+			dialog.ShowDialog(this);
 		}
 
 		private void btnMinimize_Click(object? sender, EventArgs eventArgs)

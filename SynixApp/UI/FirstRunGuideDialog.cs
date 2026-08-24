@@ -10,39 +10,22 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
-using System.ComponentModel;
 using Synix_Control_Panel.SynixApp.Design;
 
 namespace Synix_Control_Panel.SynixEngine
 {
-	public partial class AdvancedSettingsPage : UserControl
+	internal sealed partial class FirstRunGuideDialog : Form
 	{
-		public AdvancedSettingsPage()
+		internal FirstRunGuideDialog()
 		{
 			InitializeComponent();
+			ThemeManager.Apply(this);
 		}
 
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public bool ElevatedSystemTasks
+		private void TroubleshooterButton_Click(object? sender, EventArgs eventArgs)
 		{
-			get => chkElevatedTasks.Checked;
-			set => chkElevatedTasks.Checked = value;
+			using TroubleshooterDialog dialog = new();
+			dialog.ShowDialog(this);
 		}
-
-		[Browsable(false)]
-		public event EventHandler? ElevatedSystemTasksChanged
-		{
-			add => chkElevatedTasks.CheckedChanged += value;
-			remove => chkElevatedTasks.CheckedChanged -= value;
-		}
-
-		[Browsable(false)]
-		public event EventHandler? TroubleshooterRequested
-		{
-			add => btnTroubleshooter.Click += value;
-			remove => btnTroubleshooter.Click -= value;
-		}
-
 	}
 }

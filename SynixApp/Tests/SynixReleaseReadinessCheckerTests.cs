@@ -140,6 +140,24 @@ public sealed class SynixReleaseReadinessCheckerTests
 	}
 
 	[Fact]
+	public void PassingSecurityReceipt_RequiresPassedResultAndUtcTime()
+	{
+		Dictionary<string, string> valid = new(StringComparer.OrdinalIgnoreCase)
+		{
+			["SecurityRegressionReview"] = "Passed",
+			["SecurityRegressionReviewUtc"] = "2026-08-24T12:30:00.0000000Z"
+		};
+		Dictionary<string, string> failed = new(valid)
+		{
+			["SecurityRegressionReview"] = "Failed"
+		};
+
+		Assert.True(Core.TryGetPassingSecurityReceipt(valid, out DateTimeOffset completedUtc));
+		Assert.Equal(new DateTimeOffset(2026, 8, 24, 12, 30, 0, TimeSpan.Zero), completedUtc);
+		Assert.False(Core.TryGetPassingSecurityReceipt(failed, out _));
+	}
+
+	[Fact]
 	public void ProjectFolderFinder_WalksUpFromBuildFolder()
 	{
 		using TemporaryDirectory temporary = new();

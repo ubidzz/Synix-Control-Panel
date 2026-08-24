@@ -25,11 +25,12 @@ namespace Synix_Control_Panel.SynixEngine
 			BackColor = SettingsPalette.Window;
 			Size = new Size(818, 520);
 			AutoScroll = true;
-			AutoScrollMinSize = new Size(0, 768);
+			AutoScrollMinSize = new Size(0, 936);
 			AddPremadeConfigurationsCard();
 			AddGeneratedConfigurationsCard();
 			AddReleaseReadinessCard();
 			AddGameDefinitionsCard();
+			AddReliabilityTestCard();
 		}
 
 		[Browsable(false)]
@@ -76,6 +77,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 		[Browsable(false)]
 		public event EventHandler? GameVerificationQueueRequested;
+
+		[Browsable(false)]
+		public event EventHandler? ReliabilityTestRequested;
 
 		private void AddPremadeConfigurationsCard()
 		{
@@ -209,6 +213,29 @@ namespace Synix_Control_Panel.SynixEngine
 			card.Controls.Add(validateButton);
 			card.Controls.Add(queueButton);
 			card.Controls.Add(builderButton);
+			Controls.Add(card);
+		}
+
+		private void AddReliabilityTestCard()
+		{
+			ModernSettingsCard card = CreateCard(764, 156);
+			card.Controls.Add(CreateGlyph("⌁"));
+			card.Controls.Add(CreateTitle("Long-Duration Reliability Test"));
+			card.Controls.Add(CreateDescription(
+				"Sample Synix memory, handles, threads, and read-only health checks over time. This development tool never starts, stops, installs, or changes a server.",
+				76));
+
+			ModernSettingsButton runButton = new()
+			{
+				AccessibleName = "Open the long-duration reliability test",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 185, 54),
+				Size = new Size(160, 42),
+				Text = "Reliability Test",
+				UseAccentStyle = true
+			};
+			runButton.Click += (_, eventArgs) => ReliabilityTestRequested?.Invoke(this, eventArgs);
+			card.Controls.Add(runButton);
 			Controls.Add(card);
 		}
 
