@@ -7,13 +7,13 @@
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Privilege](https://img.shields.io/badge/Admin-Not%20Required-blueviolet.svg?style=for-the-badge)
-[![Downloads](https://img.shields.io/github/downloads/ubidzz/Synix-Control-Panel/total?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/releases)
 [![Supported Profiles](https://img.shields.io/badge/Game%20Server%20Profiles-210%2B-00c8ff.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List)
 [![CodeQL](https://img.shields.io/badge/Security-CodeQL-2088FF?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/security/code-scanning)
 [![License](https://img.shields.io/badge/License-Personal%20Use-red.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md)
 [![Donate with PayPal](https://img.shields.io/badge/PayPal-Donate-0079C1?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8)
 [![Discord](https://img.shields.io/badge/Discord-Join%20the%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/WduKEU3j8s)
 [![YouTube](https://img.shields.io/badge/YouTube-Watch%20the%20Showcase-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/EcVLT4kgdb8)
+[![Downloads](https://img.shields.io/github/downloads/ubidzz/Synix-Control-Panel/total?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/releases)
 
 **Synix Control Panel makes hosting personal game servers approachable for people who do not want to learn command-line tools, write batch files, or manually manage SteamCMD.**
 
