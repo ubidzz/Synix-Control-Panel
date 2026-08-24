@@ -395,8 +395,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 
 			if (manifest.Configuration != null)
 			{
-				if (manifest.ConfigFileCreation != ConfigFileCreationMode.SynixTemplate)
-					throw new InvalidDataException($"{resourceName} has templates but is not marked SynixTemplate.");
+				if (manifest.ConfigFileCreation is not
+						(ConfigFileCreationMode.SynixTemplate or
+						 ConfigFileCreationMode.GameGenerated))
+				{
+					throw new InvalidDataException(
+						$"{resourceName} has templates but is not marked SynixTemplate or GameGenerated.");
+				}
 				if (manifest.Configuration.SchemaVersion < 1)
 					throw new InvalidDataException($"{resourceName} has an invalid configuration schema version.");
 				if (manifest.Configuration.Revision < 1)
@@ -435,6 +440,21 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				throw new InvalidDataException($"{resourceName} contains null runtimeRequirements.");
 			if (requirements.MinimumSystemMemoryGb is < 0 or > 1024)
 				throw new InvalidDataException($"{resourceName} has an invalid minimumSystemMemoryGb.");
+			if (!Enum.IsDefined(requirements.MinimumDotNetFramework))
+				throw new InvalidDataException($"{resourceName} has an invalid minimumDotNetFramework.");
+			if (requirements.VisualCppRedistributables == null)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} contains null runtimeRequirements.visualCppRedistributables.");
+			}
+			if (requirements.VisualCppRedistributables.Any(requirement =>
+				!Enum.IsDefined(requirement)) ||
+				requirements.VisualCppRedistributables.Count !=
+				requirements.VisualCppRedistributables.Distinct().Count())
+			{
+				throw new InvalidDataException(
+					$"{resourceName} contains an invalid or duplicate Visual C++ runtime requirement.");
+			}
 			if (requirements.RequiresHyperV &&
 				!requirements.RequiresWindowsProfessionalOrHigher)
 			{

@@ -19,9 +19,7 @@ using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
-using System.Management;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics.X86;
 using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
@@ -429,31 +427,11 @@ namespace Synix_Control_Panel
 					selectedDefinition?.SupportedServerFrameworks.Count > 0;
 				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
 
-				bool virtMissing = false;
-				string missingTechName = "";
-				bool isHomeEdition = false;
-				bool hyperVMissing = false;
-				bool avx2Missing = false;
-				bool ramMissing = false;
-				double sysRam = 0;
-
-				GameRuntimeRequirements requirements =
-					selectedDefinition?.RuntimeRequirements ?? new GameRuntimeRequirements();
-				if (requirements.RequiresHardwareVirtualization)
-				{
-					var virtData = CheckVirtualizationStatus();
-					virtMissing = !virtData.IsEnabled;
-					missingTechName = virtData.TechName;
-				}
-				isHomeEdition = requirements.RequiresWindowsProfessionalOrHigher &&
-					!IsWindowsProOrBetter();
-				hyperVMissing = requirements.RequiresHyperV && !IsHypervisorPresent();
-				avx2Missing = requirements.RequiresAvx2 && !Avx2.IsSupported;
-				if (requirements.MinimumSystemMemoryGb > 0)
-				{
-					sysRam = GetSystemRamGB();
-					ramMissing = sysRam < requirements.MinimumSystemMemoryGb;
-				}
+				GamePrerequisiteItem? missingRequirement = selectedDefinition == null
+					? null
+					: GamePrerequisiteChecker
+						.CheckCurrentSystem(selectedDefinition)
+						.FirstFailure;
 
 				txtPassword.Enabled = CanUnlock(txtPassword);
 				txtAdminPassword.Enabled = CanUnlock(txtAdminPassword);
@@ -581,33 +559,9 @@ namespace Synix_Control_Panel
 					btnSave.Enabled = false;
 				}
 
-				else if (ramMissing)
+				else if (missingRequirement != null)
 				{
-					_validationMessage = $"  ⚠️ [HARDWARE] '{selectedGame}' requires at least {requirements.MinimumSystemMemoryGb}GB of RAM (Detected: {sysRam:0.0} GB).";
-					btnSave.Enabled = false;
-				}
-
-				else if (avx2Missing)
-				{
-					_validationMessage = $"  ⚠️ [HARDWARE] '{selectedGame}' requires a CPU with AVX2 support.";
-					btnSave.Enabled = false;
-				}
-
-				else if (isHomeEdition)
-				{
-					_validationMessage = "  ⚠️ [OS CHECK] Windows Pro/Enterprise is required. Home editions do not support Hyper-V.";
-					btnSave.Enabled = false;
-				}
-
-				else if (virtMissing)
-				{
-					_validationMessage = $"  ⚠️ [HARDWARE] '{selectedGame}' requires {missingTechName} to be enabled in your PC's BIOS.";
-					btnSave.Enabled = false;
-				}
-
-				else if (hyperVMissing)
-				{
-					_validationMessage = "  ⚠️ [SYSTEM] Windows Hyper-V is disabled. Please turn it on in 'Windows Features'.";
+					_validationMessage = $"  ⚠️ [REQUIREMENT] {missingRequirement.Message}";
 					btnSave.Enabled = false;
 				}
 
@@ -1230,93 +1184,6 @@ namespace Synix_Control_Panel
 				FileHandler.SaveServers(); this.DialogResult = DialogResult.OK; this.Close();
 			}
 			catch (Exception ex) { MessageBox.Show(ex.Message); }
-		}
-
-		private (bool IsEnabled, string TechName) CheckVirtualizationStatus()
-		{
-			bool isEnabled = true;
-			string techName = "Hardware Virtualization";
-
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("Select VirtualizationFirmwareEnabled, Manufacturer FROM Win32_Processor"))
-				{
-					foreach (var obj in searcher.Get())
-					{
-						if (obj["Manufacturer"] != null)
-						{
-							string manufacturer = obj["Manufacturer"].ToString();
-							if (manufacturer.Contains("Intel", StringComparison.OrdinalIgnoreCase))
-								techName = "Intel VT-x";
-							else if (manufacturer.Contains("AMD", StringComparison.OrdinalIgnoreCase))
-								techName = "AMD-V (SVM)";
-						}
-
-						if (obj["VirtualizationFirmwareEnabled"] != null)
-							isEnabled = (bool)obj["VirtualizationFirmwareEnabled"];
-
-						break;
-					}
-				}
-			}
-			catch { }
-			return (isEnabled, techName);
-		}
-
-		private bool IsWindowsProOrBetter()
-		{
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
-				using (var collection = searcher.Get())
-				{
-					foreach (ManagementObject obj in collection)
-					{
-						string caption = obj["Caption"]?.ToString() ?? "";
-						obj.Dispose();
-
-						if (caption.Contains("Home", StringComparison.OrdinalIgnoreCase)) return false;
-					}
-				}
-			}
-			catch { }
-			return true;
-		}
-
-		private bool IsHypervisorPresent()
-		{
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("SELECT HypervisorPresent FROM Win32_ComputerSystem"))
-				{
-					foreach (var obj in searcher.Get())
-					{
-						if (obj["HypervisorPresent"] != null) return (bool)obj["HypervisorPresent"];
-					}
-				}
-			}
-			catch { }
-			return true;
-		}
-
-		private double GetSystemRamGB()
-		{
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
-				{
-					foreach (var obj in searcher.Get())
-					{
-						if (obj["TotalPhysicalMemory"] != null)
-						{
-							ulong bytes = Convert.ToUInt64(obj["TotalPhysicalMemory"]);
-							return bytes / (1024.0 * 1024.0 * 1024.0);
-						}
-					}
-				}
-			}
-			catch { }
-			return 999.0;
 		}
 
 		private async void cmbGame_SelectedIndexChanged(object sender, EventArgs e)

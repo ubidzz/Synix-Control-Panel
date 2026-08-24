@@ -106,6 +106,15 @@ public sealed class DynamicGameDefinitionTests
 			"Instance\\SpaceEngineers-Dedicated.cfg",
 			spaceEngineers.RelativeConfigPath);
 		Assert.Equal(6, spaceEngineers.RuntimeRequirements.MinimumSystemMemoryGb);
+		Assert.Equal(
+			DotNetFrameworkRequirement.NetFramework48,
+			spaceEngineers.RuntimeRequirements.MinimumDotNetFramework);
+		Assert.Contains(
+			VisualCppRedistributableRequirement.VisualCpp2013X64,
+			spaceEngineers.RuntimeRequirements.VisualCppRedistributables);
+		Assert.Contains(
+			VisualCppRedistributableRequirement.VisualCpp2015To2022X64,
+			spaceEngineers.RuntimeRequirements.VisualCppRedistributables);
 		Assert.True(spaceEngineers.LaunchBehavior.RequiresVisibleWindow);
 		Assert.False(spaceEngineers.LaunchBehavior.RunElevated);
 		Assert.Contains("Local/Console", spaceEngineers.WarningMessage);
@@ -674,7 +683,14 @@ public sealed class DynamicGameDefinitionTests
 					RequiresAvx2 = true,
 					RequiresHardwareVirtualization = true,
 					RequiresHyperV = true,
-					RequiresWindowsProfessionalOrHigher = true
+					RequiresWindowsProfessionalOrHigher = true,
+					MinimumDotNetFramework =
+						DotNetFrameworkRequirement.NetFramework481,
+					VisualCppRedistributables =
+					[
+						VisualCppRedistributableRequirement.VisualCpp2013X64,
+						VisualCppRedistributableRequirement.VisualCpp2015To2022X64
+					]
 				},
 				LaunchBehavior = new GameLaunchBehavior
 				{
@@ -711,6 +727,12 @@ public sealed class DynamicGameDefinitionTests
 			Assert.True(parsed.Definition.RuntimeRequirements.RequiresHardwareVirtualization);
 			Assert.True(parsed.Definition.RuntimeRequirements.RequiresHyperV);
 			Assert.True(parsed.Definition.RuntimeRequirements.RequiresWindowsProfessionalOrHigher);
+			Assert.Equal(
+				DotNetFrameworkRequirement.NetFramework481,
+				parsed.Definition.RuntimeRequirements.MinimumDotNetFramework);
+			Assert.Equal(
+				2,
+				parsed.Definition.RuntimeRequirements.VisualCppRedistributables.Count);
 			Assert.True(parsed.Definition.LaunchBehavior.RunElevated);
 			Assert.True(parsed.Definition.LaunchBehavior.RequiresVisibleWindow);
 			Assert.Equal(
@@ -723,8 +745,60 @@ public sealed class DynamicGameDefinitionTests
 			Assert.Single(parsed.PostInstallActions);
 			Assert.Contains("\"definitionRevision\": 2", result.Json);
 			Assert.Contains("\"requiresVisibleWindow\": true", result.Json);
+			Assert.Contains("\"minimumDotNetFramework\": \"NetFramework481\"", result.Json);
+			Assert.Contains("\"VisualCpp2015To2022X64\"", result.Json);
 			Assert.Contains("\"pvpValue\": \"PVP\"", result.Json);
 			Assert.Contains("\"booleanTrueValue\": \"true\"", result.Json);
+		}
+		finally
+		{
+			if (Directory.Exists(root))
+				Directory.Delete(root, true);
+		}
+	}
+
+	[Fact]
+	public void DefinitionBuilderCanManageACompleteGameGeneratedConfiguration()
+	{
+		string root = Path.Combine(
+			Path.GetTempPath(),
+			$"SynixGeneratedTemplateBuilderTests-{Guid.NewGuid():N}");
+		Directory.CreateDirectory(root);
+		try
+		{
+			string templateSource = Path.Combine(root, "serverconfig.xml");
+			File.WriteAllText(
+				templateSource,
+				"<Server Name=\"{ServerName}\" Port=\"{Port}\" Players=\"{MaxPlayers}\" />");
+			GameDefinitionDraft draft = new()
+			{
+				Id = "generated-template-builder-test",
+				CatalogOrder = GameDefinitionAuthoring.GetNextCatalogOrder(),
+				Game = "Generated Template Builder Test",
+				AppId = "3",
+				Executable = "server.exe",
+				Port = 26900,
+				QueryPort = 26901,
+				ConfigFileCreation = ConfigFileCreationMode.GameGenerated,
+				Format = ConfigFormat.XML,
+				RelativeConfigPath = "serverconfig.xml",
+				TemplateSourcePath = templateSource
+			};
+
+			EmbeddedGamePackage parsed =
+				GameDefinitionAuthoring.ValidateDraft(draft);
+
+			Assert.NotNull(parsed.Configuration);
+			Assert.Contains(
+				ManagedConfigurationInput.ServerName,
+				parsed.Configuration!.ManagedInputs);
+			Assert.Contains(
+				ManagedConfigurationInput.Port,
+				parsed.Configuration.ManagedInputs);
+			Assert.Contains(
+				ManagedConfigurationInput.MaxPlayers,
+				parsed.Configuration.ManagedInputs);
+			Assert.Single(parsed.Configuration.Templates);
 		}
 		finally
 		{

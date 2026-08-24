@@ -54,6 +54,12 @@ namespace Synix_Control_Panel.SynixEngine
 				new("Track the launched server process", GameLifecycleTrackingMode.Process),
 				new("External deployment controls the server", GameLifecycleTrackingMode.ExternalDeployment)
 			};
+			cmbDotNetFramework.DataSource = new BuilderOption<DotNetFrameworkRequirement>[]
+			{
+				new("No verified .NET Framework requirement", DotNetFrameworkRequirement.None),
+				new(".NET Framework 4.8 or newer", DotNetFrameworkRequirement.NetFramework48),
+				new(".NET Framework 4.8.1 or newer", DotNetFrameworkRequirement.NetFramework481)
+			};
 			cmbArgumentTag.DataSource = GameDefinitionArgumentTags.LaunchArguments
 				.Select(tag => new BuilderOption<GameDefinitionArgumentTag>(
 					$"{tag.Token} — {tag.Name}",
@@ -65,6 +71,7 @@ namespace Synix_Control_Panel.SynixEngine
 			SelectOption(cmbConfigMode, ConfigFileCreationMode.Unknown);
 			SelectOption(cmbFormat, ConfigFormat.StandardINI);
 			SelectOption(cmbLifecycleTracking, GameLifecycleTrackingMode.Process);
+			SelectOption(cmbDotNetFramework, DotNetFrameworkRequirement.None);
 			rtbGuide.Text = BuildGuideText();
 			RefreshConfigurationControls();
 			RefreshPostInstallControls();
@@ -299,11 +306,16 @@ namespace Synix_Control_Panel.SynixEngine
 					RequiresAvx2 = chkRequiresAvx2.Checked,
 					RequiresHardwareVirtualization = chkRequiresVirtualization.Checked,
 					RequiresHyperV = chkRequiresHyperV.Checked,
-					RequiresWindowsProfessionalOrHigher = chkRequiresWindowsPro.Checked
+					RequiresWindowsProfessionalOrHigher = chkRequiresWindowsPro.Checked,
+					MinimumDotNetFramework = GetSelectedValue(
+						cmbDotNetFramework,
+						DotNetFrameworkRequirement.None),
+					VisualCppRedistributables = GetVisualCppRequirements()
 				},
 				LaunchBehavior = new GameLaunchBehavior
 				{
 					RunElevated = chkRunElevated.Checked,
+					RequiresVisibleWindow = chkRequiresVisibleWindow.Checked,
 					LifecycleTracking = GetSelectedValue(
 						cmbLifecycleTracking,
 						GameLifecycleTrackingMode.Process),
@@ -318,7 +330,9 @@ namespace Synix_Control_Panel.SynixEngine
 			ConfigFileCreationMode mode = GetSelectedValue(
 				cmbConfigMode,
 				ConfigFileCreationMode.Unknown);
-			bool enabled = mode == ConfigFileCreationMode.SynixTemplate;
+			bool enabled = mode is
+				ConfigFileCreationMode.SynixTemplate or
+				ConfigFileCreationMode.GameGenerated;
 			txtConfigPath.Enabled = enabled;
 			cmbFormat.Enabled = enabled;
 			txtTemplate.Enabled = enabled;
@@ -332,7 +346,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ConfigFileCreationMode.SynixTemplate =>
 					"Synix writes this complete template before the first start and manages its supported values.",
 				ConfigFileCreationMode.GameGenerated =>
-					"The game creates the file first. The captured complete file becomes Synix's repair and editing template.",
+					"The game creates the file first. Add the complete captured file so Synix can apply saved values and safely repair it after the first run.",
 				ConfigFileCreationMode.LaunchArgumentsOnly =>
 					"The required user settings are passed through launch arguments; no managed configuration is needed.",
 				_ =>
@@ -343,6 +357,23 @@ namespace Synix_Control_Panel.SynixEngine
 		private void RefreshPostInstallControls()
 		{
 			txtSteamRuntimeTarget.Enabled = chkSteamRuntime.Checked;
+		}
+
+		private IReadOnlyList<VisualCppRedistributableRequirement>
+			GetVisualCppRequirements()
+		{
+			List<VisualCppRedistributableRequirement> requirements = [];
+			if (chkRequiresVisualCpp2013.Checked)
+			{
+				requirements.Add(
+					VisualCppRedistributableRequirement.VisualCpp2013X64);
+			}
+			if (chkRequiresVisualCpp2015To2022.Checked)
+			{
+				requirements.Add(
+					VisualCppRedistributableRequirement.VisualCpp2015To2022X64);
+			}
+			return requirements;
 		}
 
 		private void chkRequiresHyperV_CheckedChanged(
@@ -494,11 +525,13 @@ namespace Synix_Control_Panel.SynixEngine
 			guide.AppendLine("Enable Steam runtime copying only when the server has been verified to require it. The target must be a relative folder inside that server installation. Synix copies only its three allowlisted Steam runtime DLLs.");
 			guide.AppendLine();
 			guide.AppendLine("RUNTIME REQUIREMENTS");
-			guide.AppendLine("Set minimum system RAM to 0 when the game has no verified minimum. Hardware checks explain missing requirements before install or launch; they do not change Windows settings.");
+			guide.AppendLine("Set minimum system RAM to 0 when the game has no verified minimum. Hardware and Windows-runtime checks explain missing requirements before setup and block an unsafe launch; they do not change Windows settings.");
+			guide.AppendLine("Select a .NET Framework or Visual C++ runtime only when the game's official requirements identify it. Synix checks the Windows registry but never installs or downloads prerequisites silently.");
 			guide.AppendLine("Hyper-V requires Windows Professional or higher, so selecting Hyper-V also selects that Windows requirement.");
 			guide.AppendLine();
 			guide.AppendLine("LAUNCH BEHAVIOR");
 			guide.AppendLine("Use normal process tracking for standard dedicated servers. External deployment is only for a launcher, virtual machine, or other deployment that owns the server lifecycle; it automatically disables query monitoring.");
+			guide.AppendLine("Enable Required visible manager for games whose official server manager must stay open. This overrides the user's global hide-console preference only for that definition.");
 			guide.AppendLine("Elevated launch is supported only for .exe, .bat, and .cmd launch files. Enable launch-file export only when the user can safely create and run a reviewed launch file outside Synix.");
 			guide.AppendLine("The ready message is shown after the game's special readiness checks succeed. These fields select built-in, allowlisted Synix behavior and cannot run arbitrary scripts or plugins.");
 			guide.AppendLine();

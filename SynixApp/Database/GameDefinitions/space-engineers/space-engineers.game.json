@@ -38,7 +38,12 @@
     "requiresAvx2": false,
     "requiresHardwareVirtualization": false,
     "requiresHyperV": false,
-    "requiresWindowsProfessionalOrHigher": false
+    "requiresWindowsProfessionalOrHigher": false,
+    "minimumDotNetFramework": "NetFramework48",
+    "visualCppRedistributables": [
+      "VisualCpp2013X64",
+      "VisualCpp2015To2022X64"
+    ]
   },
   "launchBehavior": {
     "runElevated": false,

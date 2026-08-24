@@ -115,6 +115,41 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			try
 			{
+				GameInfo? selectedDefinition = GameDatabase.GetGame(server.Game);
+				if (selectedDefinition == null)
+				{
+					logCallback?.Invoke(
+						$"[START ERROR] The built-in definition for '{server.Game}' could not be loaded.",
+						Color.Red);
+					return;
+				}
+
+				GamePrerequisiteReport prerequisites = await Task.Run(() =>
+					GamePrerequisiteChecker.CheckCurrentSystem(
+						selectedDefinition,
+						server,
+						port => Core.Instance.GetPortCollisionOwner(port, server),
+						Core.Instance.IsPortInUseLocally));
+				foreach (GamePrerequisiteItem warning in prerequisites.Items.Where(item =>
+					item.State == GamePrerequisiteState.Warning))
+				{
+					logCallback?.Invoke($"[REQUIREMENT WARNING] {warning.Message}", Color.Orange);
+				}
+				if (!prerequisites.CanStart)
+				{
+					string message = prerequisites.ToDisplayText();
+					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
+					if (context == StartContext.Manual)
+					{
+						MessageBox.Show(
+							message,
+							"Server Requirements Not Met",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Warning);
+					}
+					return;
+				}
+
 				SynixServerPasswords launchPasswords;
 				try
 				{
@@ -148,9 +183,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
-				GameInfo? selectedDefinition = GameDatabase.GetGame(server.Game);
-				if (selectedDefinition != null &&
-					OxideRuntimeManager.IsEnabled(server, selectedDefinition) &&
+				if (OxideRuntimeManager.IsEnabled(server, selectedDefinition) &&
 					string.Equals(
 						server.ServerFrameworkVersion,
 						OxideRuntimeManager.FailedVersion,
@@ -161,8 +194,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						Color.Red);
 					return;
 				}
-				if (selectedDefinition != null &&
-					OxideRuntimeManager.RequiresVanillaRestore(server, selectedDefinition))
+				if (OxideRuntimeManager.RequiresVanillaRestore(server, selectedDefinition))
 				{
 					logCallback?.Invoke(
 						"[OXIDE] Start blocked because Rust was changed to Vanilla. Run Update or Validate to restore the official files first.",

@@ -8,7 +8,7 @@ Each supported game has its own folder and `.game.json` definition. Synix embeds
 2. Use **Definition Builder** or copy `GameDefinition.template.json` as a starting layout.
 3. Give the definition a unique lowercase `id`, continuous `catalogOrder`, and `definitionRevision`.
 4. Add the executable, Steam AppID, launch arguments, ports, maps, modes, probing behavior, and configuration information.
-5. If Synix must create configuration files, add every complete game-provided template under the game's `Templates` folder and give each template its exact installed-server location.
+5. If Synix creates the configuration or manages a complete game-generated configuration after first start, add every complete game-provided template under the game's `Templates` folder and give each template its exact installed-server location.
 6. Run **Validate Library**, build Synix, and run the automated tests.
 
 The Definition Builder accepts one or many configuration files. Use **Add files** for every additional file, then edit its **Installed location** in the table. Locations are relative to the installed server folder; for example, `Saved\Config\WindowsServer\Game.ini`. Synix rejects missing files, duplicate destinations, duplicate embedded filenames, and paths that escape the server folder.
@@ -17,7 +17,9 @@ Most Steam applications leave **SteamCMD app configuration** blank. Shared GoldS
 
 Keep `gameModes` friendly for the user. For games that show PVP/PVE but require another launch or configuration value, set `pvpValue` and `pveValue` to the exact values the server accepts, such as `False`/`True` or `0`/`1`. Set `booleanTrueValue` and `booleanFalseValue` to the exact boolean representation used by the game's configuration and RCON settings. Synix validates these as single safe values before they can reach a server process or configuration file.
 
-Special hardware and launch behavior belongs in `runtimeRequirements` and `launchBehavior`, not in game-name checks. Definitions can require minimum system RAM, AVX2, hardware virtualization, Hyper-V, and a Windows edition that supports Hyper-V. They can also request an elevated launch, external lifecycle tracking, disable generated launch-file export, and provide a ready message. These values are validated before the game enters the catalog.
+Special hardware and launch behavior belongs in `runtimeRequirements` and `launchBehavior`, not in game-name checks. Definitions can require minimum system RAM, AVX2, hardware virtualization, Hyper-V, a supported Windows edition, .NET Framework 4.8/4.8.1, and allowlisted Microsoft Visual C++ x64 runtimes. They can also request an elevated launch, force a required server-manager window to remain visible, select external lifecycle tracking, disable generated launch-file export, and provide a ready message. These values are validated before the game enters the catalog. Synix checks declared prerequisites and occupied server ports before launch but does not silently install Windows components or runtimes.
+
+Complete templates may use either `SynixTemplate` or `GameGenerated`. `SynixTemplate` writes the complete file before first start. `GameGenerated` is for an official complete configuration captured after the server creates it; Synix then uses that built-in copy for managed values, validation, repair, and full reset. In both modes, placeholders automatically expose matching common fields in Server Settings without another game-name switch.
 
 `supportedServerFrameworks` exposes only frameworks with a fixed implementation compiled into Synix. Rust may list `Oxide`. Synix downloads only the official Windows Oxide.Rust release, requires GitHub's published SHA-256 digest, performs guarded extraction with rollback, and reapplies Oxide after Rust updates. Plugins are never installed or managed by Synix and remain the user's responsibility.
 
@@ -53,7 +55,7 @@ The development validator checks every source definition for:
 - Existing complete template files and supported placeholders.
 - HTTPS-only download and icon addresses.
 - Allowlisted declarative post-install actions.
-- Declarative runtime requirements, elevated/external launch behavior, and supported server frameworks.
+- Declarative hardware and Windows runtime requirements, visible/elevated/external launch behavior, and supported server frameworks.
 
 The same validation is included in the Release Readiness Checker, so an invalid game definition blocks a release.
 

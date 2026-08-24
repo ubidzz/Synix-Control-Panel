@@ -43,10 +43,13 @@
     "requiresAvx2": false,
     "requiresHardwareVirtualization": false,
     "requiresHyperV": false,
-    "requiresWindowsProfessionalOrHigher": false
+    "requiresWindowsProfessionalOrHigher": false,
+    "minimumDotNetFramework": "None",
+    "visualCppRedistributables": []
   },
   "launchBehavior": {
     "runElevated": false,
+    "requiresVisibleWindow": false,
     "lifecycleTracking": "Process",
     "allowLaunchFileExport": true,
     "readyMessage": ""

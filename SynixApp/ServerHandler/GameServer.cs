@@ -48,6 +48,19 @@ public enum GameCompatibilityStatus
 	FullyVerified
 }
 
+public enum DotNetFrameworkRequirement
+{
+	None,
+	NetFramework48,
+	NetFramework481
+}
+
+public enum VisualCppRedistributableRequirement
+{
+	VisualCpp2013X64,
+	VisualCpp2015To2022X64
+}
+
 public sealed class GameRuntimeRequirements
 {
 	public int MinimumSystemMemoryGb { get; init; }
@@ -55,6 +68,9 @@ public sealed class GameRuntimeRequirements
 	public bool RequiresHardwareVirtualization { get; init; }
 	public bool RequiresHyperV { get; init; }
 	public bool RequiresWindowsProfessionalOrHigher { get; init; }
+	public DotNetFrameworkRequirement MinimumDotNetFramework { get; init; }
+	public IReadOnlyList<VisualCppRedistributableRequirement>
+		VisualCppRedistributables { get; init; } = [];
 }
 
 public sealed class GameLaunchBehavior
