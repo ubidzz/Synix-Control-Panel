@@ -176,6 +176,24 @@ public sealed class ServerManagementEngineTests
 		Assert.Equal(27050, ports[0].Port);
 	}
 
+	[Fact]
+	public void RequiredServerPorts_UsesManagedConfigurationCapabilities()
+	{
+		GameInfo astroneer = GameDatabase.GetGame("ASTRONEER")!;
+		GameServer server = new()
+		{
+			Game = astroneer.Game,
+			Port = 8778,
+			QueryPort = 8777
+		};
+
+		IReadOnlyList<(int Port, string Name)> ports =
+			Core.GetRequiredServerPorts(server, astroneer);
+
+		Assert.Single(ports);
+		Assert.Equal((8778, "game port"), ports[0]);
+	}
+
 	[Theory]
 	[InlineData("")]
 	[InlineData("-log -port 7777 +maxplayers 20")]

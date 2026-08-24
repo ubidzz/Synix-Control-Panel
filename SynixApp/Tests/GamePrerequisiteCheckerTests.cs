@@ -100,6 +100,29 @@ public sealed class GamePrerequisiteCheckerTests
 			item => item.State == GamePrerequisiteState.Failed);
 	}
 
+	[Fact]
+	public void StartCheckIgnoresAnUnusedQueryPort()
+	{
+		GameInfo astroneer =
+			Synix_Control_Panel.SynixApp.Database.GameDatabase.GetGame("ASTRONEER")!;
+		GameServer server = new()
+		{
+			Game = astroneer.Game,
+			Port = 8778,
+			QueryPort = 8777
+		};
+
+		GamePrerequisiteReport report =
+			GamePrerequisiteChecker.CheckCurrentSystem(
+				astroneer,
+				server,
+				port => port == 8777 ? "Another Server" : null,
+				_ => false);
+
+		Assert.True(report.CanStart);
+		Assert.DoesNotContain(report.Items, item => item.Name == "Port 8777");
+	}
+
 	private static GameInfo CreateDefinition() => new()
 	{
 		Game = "Prerequisite Test",

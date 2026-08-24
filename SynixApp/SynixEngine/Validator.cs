@@ -11,6 +11,8 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -63,7 +65,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 			List<(int Port, string Name)> ports = [];
 			HashSet<int> added = [];
-			string arguments = game.RequiredArgs ?? string.Empty;
+			GameManagementCapability capabilities =
+				GameFix.GetManagementCapabilities(game);
+			bool Supports(GameManagementCapability capability) =>
+				(capabilities & capability) != GameManagementCapability.None;
 
 			void Add(int port, string name)
 			{
@@ -71,21 +76,18 @@ namespace Synix_Control_Panel.SynixEngine
 					ports.Add((port, name));
 			}
 
-			if (arguments.Contains("{port}", StringComparison.OrdinalIgnoreCase))
+			if (Supports(GameManagementCapability.Port))
 				Add(server.Port, "game port");
 
-			if (arguments.Contains("{query}", StringComparison.OrdinalIgnoreCase))
+			if (Supports(GameManagementCapability.QueryPort))
 				Add(server.QueryPort, "query port");
 
-			if (server.EnableRcon &&
-				(game.RconSyntax ?? string.Empty).Contains(
-					"{rcon_port}",
-					StringComparison.OrdinalIgnoreCase))
+			if (server.EnableRcon && Supports(GameManagementCapability.Rcon))
 			{
 				Add(server.RconPort, "RCON port");
 			}
 
-			if (arguments.Contains("{app_port}", StringComparison.OrdinalIgnoreCase) &&
+			if (Supports(GameManagementCapability.AppPort) &&
 				server.AppPort.HasValue)
 			{
 				Add(server.AppPort.Value, "app port");

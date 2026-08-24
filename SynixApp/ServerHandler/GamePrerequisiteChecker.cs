@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Microsoft.Win32;
+using Synix_Control_Panel.SynixEngine;
 using System.Management;
 using System.Runtime.Intrinsics.X86;
 
@@ -77,7 +78,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			List<GamePrerequisiteItem> items = [.. Evaluate(definition, snapshot).Items];
 			if (server != null && getPortOwner != null && isPortInUse != null)
 			{
-				items.AddRange(EvaluatePorts(server, getPortOwner, isPortInUse));
+				items.AddRange(EvaluatePorts(
+					definition,
+					server,
+					getPortOwner,
+					isPortInUse));
 			}
 			return new GamePrerequisiteReport(items);
 		}
@@ -194,19 +199,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		};
 
 		private static IReadOnlyList<GamePrerequisiteItem> EvaluatePorts(
+			GameInfo definition,
 			GameServer server,
 			Func<int, string?> getPortOwner,
 			Func<int, bool> isPortInUse)
 		{
-			List<(int Port, string Name)> candidates =
-			[
-				(server.Port, "game port"),
-				(server.QueryPort, "query port")
-			];
-			if (server.AppPort is > 0)
-				candidates.Add((server.AppPort.Value, "application port"));
-			if (server.EnableRcon && server.RconPort > 0)
-				candidates.Add((server.RconPort, "RCON port"));
+			IReadOnlyList<(int Port, string Name)> candidates =
+				Core.GetRequiredServerPorts(server, definition);
 
 			List<GamePrerequisiteItem> items = [];
 			foreach ((int port, string name) in candidates
