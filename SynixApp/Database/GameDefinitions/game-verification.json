@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "exportedBySynixVersion": "1.0.21",
-  "exportedAtUtc": "2026-08-24T11:23:10.6845704+00:00",
+  "exportedAtUtc": "2026-08-24T11:32:11.7218398+00:00",
   "games": [
     {
       "game": "7 Days to Die",
@@ -378,8 +378,14 @@
         "synixVersion": "1.0.21",
         "verifiedAtUtc": "2026-08-22T06:36:29.4112945+00:00"
       },
-      "arguments": null,
-      "configuration": null
+      "arguments": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T11:31:52.6214735+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.21",
+        "verifiedAtUtc": "2026-08-24T11:32:02.9672376+00:00"
+      }
     },
     {
       "game": "Soulmask",
