@@ -146,6 +146,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				["launchBehavior"] = new JsonObject
 				{
 					["runElevated"] = draft.LaunchBehavior.RunElevated,
+					["requiresVisibleWindow"] =
+						draft.LaunchBehavior.RequiresVisibleWindow,
 					["lifecycleTracking"] = draft.LaunchBehavior.LifecycleTracking.ToString(),
 					["allowLaunchFileExport"] = draft.LaunchBehavior.AllowLaunchFileExport,
 					["readyMessage"] = draft.LaunchBehavior.ReadyMessage.Trim()

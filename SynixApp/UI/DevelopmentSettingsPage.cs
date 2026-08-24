@@ -74,6 +74,9 @@ namespace Synix_Control_Panel.SynixEngine
 		[Browsable(false)]
 		public event EventHandler? GameDefinitionBuilderRequested;
 
+		[Browsable(false)]
+		public event EventHandler? GameVerificationQueueRequested;
+
 		private void AddPremadeConfigurationsCard()
 		{
 			ModernSettingsCard card = CreateCard(0, 156);
@@ -173,12 +176,23 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				AccessibleName = "Test built-in game definitions",
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
-				Location = new Point(card.Width - 345, 136),
+				Location = new Point(card.Width - 505, 136),
 				Size = new Size(150, 42),
 				Text = "Run Tests"
 			};
 			validateButton.Click += (_, eventArgs) =>
 				GameDefinitionValidationRequested?.Invoke(this, eventArgs);
+
+			ModernSettingsButton queueButton = new()
+			{
+				AccessibleName = "Open the game verification queue",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 345, 136),
+				Size = new Size(150, 42),
+				Text = "Verification Queue"
+			};
+			queueButton.Click += (_, eventArgs) =>
+				GameVerificationQueueRequested?.Invoke(this, eventArgs);
 
 			ModernSettingsButton builderButton = new()
 			{
@@ -193,6 +207,7 @@ namespace Synix_Control_Panel.SynixEngine
 				GameDefinitionBuilderRequested?.Invoke(this, eventArgs);
 
 			card.Controls.Add(validateButton);
+			card.Controls.Add(queueButton);
 			card.Controls.Add(builderButton);
 			Controls.Add(card);
 		}

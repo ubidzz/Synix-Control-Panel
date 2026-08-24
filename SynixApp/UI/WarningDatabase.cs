@@ -231,9 +231,12 @@ namespace Synix_Control_Panel.Database
 			{
 				"Space Engineers",
 				"CRITICAL SETUP REQUIRED:\n\n" +
-				"1. Run the dedicated server utility once to generate 'SpaceEngineers-Dedicated.cfg', then shut it down.\n\n" +
-				"2. Edit the XML configuration file to define world parameters, mods, and admin lists.\n\n" +
-				"3. Official Documentation: https://spaceengineers.wiki.gg/wiki/Dedicated_Servers"
+				"1. Synix opens the official Space Engineers Dedicated Server Manager and always keeps it visible.\n\n" +
+				"2. Select 'Local/Console', choose 'Continue to server configuration', enter the server and world settings, then select 'Save & start'.\n\n" +
+				"3. Use the manager for advanced settings, worlds, mods, administrators, and the live console. The server data is kept inside this Synix server's Instance folder.\n\n" +
+				"4. Foreground Local/Console mode does not require administrator rights. Windows service mode does.\n\n" +
+				"5. Requirements: .NET Framework 4.8 or newer, Visual C++ Redistributables 2013 and 2017, at least 6 GB of system RAM, and UDP port 27016 allowed through Windows Firewall and forwarded for Internet players.\n\n" +
+				"6. Official Documentation: https://www.spaceengineersgame.com/dedicated-servers/"
 			},
 			{
 				"Insurgency: Sandstorm",

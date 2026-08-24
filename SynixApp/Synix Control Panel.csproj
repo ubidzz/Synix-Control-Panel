@@ -122,6 +122,12 @@
 	  <Compile Update="UI\GameDefinitionValidationDialog.Designer.cs">
 	    <DependentUpon>GameDefinitionValidationDialog.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\GameVerificationQueue.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\GameVerificationQueue.Designer.cs">
+	    <DependentUpon>GameVerificationQueue.cs</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>

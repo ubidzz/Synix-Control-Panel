@@ -209,7 +209,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Dark Mode ON: uses the original navy Synix theme.\n" +
 					"• Dark Mode OFF: switches supported forms and controls to the light card-based theme.\n" +
 					"• Show Server Console Window ON: opens the game's native command window when a server starts. This is useful for live console interaction and troubleshooting.\n" +
-					"• Show Server Console Window OFF: runs supported servers silently in the background.\n\n" +
+					"• Show Server Console Window OFF: runs supported servers silently in the background. Games that require an interactive manager, including Space Engineers, keep that required window visible.\n\n" +
 					"Changing the visual theme does not restart game servers. If an already-open secondary window does not repaint immediately, close and reopen that window."),
 
 				["Adding and Editing Servers"] = new HelpItem("Config",

@@ -179,7 +179,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";
 				bool isMinecraft = false;
-				bool hideWindow = !Properties.Settings.Default.ShowServerWindow;
+				bool hideWindow = selectedDefinition != null &&
+					GameLaunchCommandBuilder.ShouldHideServerWindow(
+						selectedDefinition,
+						Properties.Settings.Default.ShowServerWindow);
 
 				await Task.Run(() =>
 				{

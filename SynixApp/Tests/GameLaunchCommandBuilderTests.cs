@@ -101,6 +101,26 @@ public sealed class GameLaunchCommandBuilderTests
 	}
 
 	[Fact]
+	public void RequiredManagerWindowOverridesTheGlobalHideSetting()
+	{
+		GameInfo spaceEngineers = GameDatabase.GetGame("Space Engineers")!;
+		GameInfo rust = GameDatabase.GetGame("Rust")!;
+
+		Assert.False(GameLaunchCommandBuilder.ShouldHideServerWindow(
+			spaceEngineers,
+			showServerWindowSetting: false));
+		Assert.False(GameLaunchCommandBuilder.ShouldHideServerWindow(
+			spaceEngineers,
+			showServerWindowSetting: true));
+		Assert.True(GameLaunchCommandBuilder.ShouldHideServerWindow(
+			rust,
+			showServerWindowSetting: false));
+		Assert.False(GameLaunchCommandBuilder.ShouldHideServerWindow(
+			rust,
+			showServerWindowSetting: true));
+	}
+
+	[Fact]
 	public void MinecraftBatchLaunchUsesHardenedCmdAndKeepsItsInputChannel()
 	{
 		string scriptPath = @"C:\Synix\Games\Minecraft Java\Start.bat";

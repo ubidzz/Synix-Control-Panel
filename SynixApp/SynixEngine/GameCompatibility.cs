@@ -23,7 +23,9 @@ namespace Synix_Control_Panel.SynixEngine
 		Install,
 		Start,
 		Stop,
-		Monitoring
+		Monitoring,
+		Arguments,
+		Configuration
 	}
 
 	public sealed record GameVerificationEvidence(
@@ -35,6 +37,31 @@ namespace Synix_Control_Panel.SynixEngine
 		string DisplayName,
 		GameCompatibilityVerification Verification);
 
+	public sealed record GameVerificationQueueItem(
+		string Game,
+		ConfigFileCreationMode ConfigurationMode,
+		GameCompatibilityVerification Verification)
+	{
+		public bool ConfigurationApplicable =>
+			ConfigurationMode != ConfigFileCreationMode.LaunchArgumentsOnly;
+
+		public int RequiredSteps => ConfigurationApplicable ? 6 : 5;
+
+		public int CompletedSteps =>
+			(Verification.Install != null ? 1 : 0) +
+			(Verification.Start != null ? 1 : 0) +
+			(Verification.Stop != null ? 1 : 0) +
+			(Verification.Monitoring != null ? 1 : 0) +
+			(Verification.Arguments != null ? 1 : 0) +
+			(ConfigurationApplicable && Verification.Configuration != null ? 1 : 0);
+
+		public bool HasKnownConfigurationBehavior =>
+			ConfigurationMode != ConfigFileCreationMode.Unknown;
+
+		public bool IsFullyVerified =>
+			HasKnownConfigurationBehavior && CompletedSteps == RequiredSteps;
+	}
+
 	public sealed class GameCompatibilityVerification
 	{
 		public string Game { get; set; } = string.Empty;
@@ -42,10 +69,12 @@ namespace Synix_Control_Panel.SynixEngine
 		public GameVerificationEvidence? Start { get; set; }
 		public GameVerificationEvidence? Stop { get; set; }
 		public GameVerificationEvidence? Monitoring { get; set; }
+		public GameVerificationEvidence? Arguments { get; set; }
+		public GameVerificationEvidence? Configuration { get; set; }
 
 		[JsonIgnore]
 		public GameVerificationEvidence? LastTested =>
-			new[] { Install, Start, Stop, Monitoring }
+			new[] { Install, Start, Stop, Monitoring, Arguments, Configuration }
 				.Where(evidence => evidence != null)
 				.Cast<GameVerificationEvidence>()
 				.OrderByDescending(evidence => ParseVersion(evidence.SynixVersion))
@@ -80,6 +109,11 @@ namespace Synix_Control_Panel.SynixEngine
 		public static GameCompatibilitySummary GetGameCompatibilitySummary(string? game)
 		{
 			return GetGameCompatibilitySummary(game, GameCompatibilityPath);
+		}
+
+		public static IReadOnlyList<GameVerificationQueueItem> GetGameVerificationQueue()
+		{
+			return GetGameVerificationQueue(GameCompatibilityPath);
 		}
 
 		internal static GameCompatibilitySummary GetGameCompatibilitySummary(
@@ -148,6 +182,57 @@ namespace Synix_Control_Panel.SynixEngine
 				GameCompatibilityPath);
 		}
 
+		public static bool ClearGameVerification(
+			string? game,
+			GameVerificationKind verificationKind)
+		{
+			return ClearGameVerification(
+				game,
+				verificationKind,
+				GameCompatibilityPath);
+		}
+
+		internal static IReadOnlyList<GameVerificationQueueItem>
+			GetGameVerificationQueue(string compatibilityPath)
+		{
+			lock (_gameCompatibilityLock)
+			{
+				List<GameCompatibilityVerification> records =
+					LoadGameCompatibilityRecords(compatibilityPath);
+				Dictionary<string, GameCompatibilityVerification> recordsByGame =
+					records
+						.GroupBy(
+							record => NormalizeCompatibilityGameName(record.Game),
+							StringComparer.OrdinalIgnoreCase)
+						.ToDictionary(
+							group => group.Key,
+							group => group.First(),
+							StringComparer.OrdinalIgnoreCase);
+
+				return GameDatabase.GetGameList()
+					.OrderBy(game => game.CatalogOrder)
+					.ThenBy(game => game.Game, StringComparer.OrdinalIgnoreCase)
+					.Select(game =>
+					{
+						if (!recordsByGame.TryGetValue(
+							game.Game,
+							out GameCompatibilityVerification? verification))
+						{
+							verification = new GameCompatibilityVerification
+							{
+								Game = game.Game
+							};
+						}
+
+						return new GameVerificationQueueItem(
+							game.Game,
+							game.ConfigFileCreation,
+							verification);
+					})
+					.ToArray();
+			}
+		}
+
 		internal static GameCompatibilityVerification GetGameCompatibility(
 			string? game,
 			string compatibilityPath)
@@ -207,6 +292,8 @@ namespace Synix_Control_Panel.SynixEngine
 						GameVerificationKind.Start => record.Start,
 						GameVerificationKind.Stop => record.Stop,
 						GameVerificationKind.Monitoring => record.Monitoring,
+						GameVerificationKind.Arguments => record.Arguments,
+						GameVerificationKind.Configuration => record.Configuration,
 						_ => null
 					};
 
@@ -231,6 +318,12 @@ namespace Synix_Control_Panel.SynixEngine
 						case GameVerificationKind.Monitoring:
 							record.Monitoring = newEvidence;
 							break;
+						case GameVerificationKind.Arguments:
+							record.Arguments = newEvidence;
+							break;
+						case GameVerificationKind.Configuration:
+							record.Configuration = newEvidence;
+							break;
 					}
 
 					records = records
@@ -247,6 +340,80 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					System.Diagnostics.Debug.WriteLine(
 						$"[COMPATIBILITY RECORD] {exception.Message}");
+					return false;
+				}
+			}
+		}
+
+		internal static bool ClearGameVerification(
+			string? game,
+			GameVerificationKind verificationKind,
+			string compatibilityPath)
+		{
+			string canonicalGame = NormalizeCompatibilityGameName(game);
+			if (canonicalGame.Length == 0 ||
+				string.IsNullOrWhiteSpace(compatibilityPath))
+			{
+				return false;
+			}
+
+			lock (_gameCompatibilityLock)
+			{
+				try
+				{
+					List<GameCompatibilityVerification> records =
+						LoadGameCompatibilityRecords(compatibilityPath);
+					GameCompatibilityVerification? record = records.FirstOrDefault(
+						candidate => string.Equals(
+							candidate.Game,
+							canonicalGame,
+							StringComparison.OrdinalIgnoreCase));
+					if (record == null || !HasVerification(record, verificationKind))
+						return false;
+
+					switch (verificationKind)
+					{
+						case GameVerificationKind.Install:
+							record.Install = null;
+							break;
+						case GameVerificationKind.Start:
+							record.Start = null;
+							break;
+						case GameVerificationKind.Stop:
+							record.Stop = null;
+							break;
+						case GameVerificationKind.Monitoring:
+							record.Monitoring = null;
+							break;
+						case GameVerificationKind.Arguments:
+							record.Arguments = null;
+							break;
+						case GameVerificationKind.Configuration:
+							record.Configuration = null;
+							break;
+					}
+
+					if (!Enum.GetValues<GameVerificationKind>()
+						.Any(kind => HasVerification(record, kind)))
+					{
+						records.Remove(record);
+					}
+
+					string json = JsonSerializer.Serialize(
+						records.OrderBy(
+							candidate => candidate.Game,
+							StringComparer.OrdinalIgnoreCase),
+						_gameCompatibilityJsonOptions);
+					FileHandler.WriteTextAtomically(compatibilityPath, json);
+					return true;
+				}
+				catch (Exception exception) when (exception is IOException or
+					UnauthorizedAccessException or
+					JsonException or
+					NotSupportedException)
+				{
+					System.Diagnostics.Debug.WriteLine(
+						$"[COMPATIBILITY CLEAR] {exception.Message}");
 					return false;
 				}
 			}
@@ -301,6 +468,22 @@ namespace Synix_Control_Panel.SynixEngine
 				return true;
 
 			return newVersion > currentVersion;
+		}
+
+		private static bool HasVerification(
+			GameCompatibilityVerification verification,
+			GameVerificationKind verificationKind)
+		{
+			return verificationKind switch
+			{
+				GameVerificationKind.Install => verification.Install != null,
+				GameVerificationKind.Start => verification.Start != null,
+				GameVerificationKind.Stop => verification.Stop != null,
+				GameVerificationKind.Monitoring => verification.Monitoring != null,
+				GameVerificationKind.Arguments => verification.Arguments != null,
+				GameVerificationKind.Configuration => verification.Configuration != null,
+				_ => false
+			};
 		}
 	}
 }

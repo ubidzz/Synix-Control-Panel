@@ -24,6 +24,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 	internal static class GameLaunchCommandBuilder
 	{
+		internal static bool ShouldHideServerWindow(
+			GameInfo definition,
+			bool showServerWindowSetting)
+		{
+			ArgumentNullException.ThrowIfNull(definition);
+			return !showServerWindowSetting &&
+				!definition.LaunchBehavior.RequiresVisibleWindow;
+		}
+
 		internal static bool TryGetLauncherKind(
 			string? executablePath,
 			out GameLauncherKind launcherKind)

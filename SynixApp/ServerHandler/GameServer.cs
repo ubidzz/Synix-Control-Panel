@@ -60,6 +60,7 @@ public sealed class GameRuntimeRequirements
 public sealed class GameLaunchBehavior
 {
 	public bool RunElevated { get; init; }
+	public bool RequiresVisibleWindow { get; init; }
 	public GameLifecycleTrackingMode LifecycleTracking { get; init; } =
 		GameLifecycleTrackingMode.Process;
 	public bool AllowLaunchFileExport { get; init; } = true;

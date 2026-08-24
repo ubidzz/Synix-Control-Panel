@@ -67,8 +67,10 @@ public sealed class GameCompatibilityTests
 			Assert.Equal("1.0.21", verification.Start?.SynixVersion);
 			Assert.Equal("1.0.21", verification.Stop?.SynixVersion);
 			Assert.Equal("1.0.21", verification.Monitoring?.SynixVersion);
+			Assert.Equal("1.0.21", verification.Arguments?.SynixVersion);
+			Assert.Equal("1.0.21", verification.Configuration?.SynixVersion);
 			Assert.Equal(
-				verifiedAt.AddMinutes((int)GameVerificationKind.Monitoring),
+				verifiedAt.AddMinutes((int)GameVerificationKind.Configuration),
 				verification.LastTested?.VerifiedAtUtc);
 		}
 		finally
@@ -178,6 +180,89 @@ public sealed class GameCompatibilityTests
 		finally
 		{
 			Directory.Delete(directory, recursive: true);
+		}
+	}
+
+	[Fact]
+	public void VerificationQueue_IncludesEveryBuiltInGameAndManualChecks()
+	{
+		string directory = CreateTestDirectory();
+		try
+		{
+			string path = Path.Combine(directory, "compatibility.json");
+			IReadOnlyList<GameVerificationQueueItem> initial =
+				Core.GetGameVerificationQueue(path);
+			Assert.True(initial.Count >= 200);
+
+			GameVerificationQueueItem palworld = Assert.Single(
+				initial,
+				item => item.Game == "Palworld");
+			Assert.False(palworld.IsFullyVerified);
+			Assert.Null(palworld.Verification.Arguments);
+			Assert.Null(palworld.Verification.Configuration);
+
+			Assert.True(Core.RecordGameVerification(
+				"Palworld",
+				GameVerificationKind.Arguments,
+				"1.0.22",
+				DateTimeOffset.UtcNow,
+				path));
+			Assert.True(Core.RecordGameVerification(
+				"Palworld",
+				GameVerificationKind.Configuration,
+				"1.0.22",
+				DateTimeOffset.UtcNow,
+				path));
+
+			GameVerificationQueueItem updated = Assert.Single(
+				Core.GetGameVerificationQueue(path),
+				item => item.Game == "Palworld");
+			Assert.Equal("1.0.22", updated.Verification.Arguments?.SynixVersion);
+			Assert.Equal("1.0.22", updated.Verification.Configuration?.SynixVersion);
+			Assert.Equal(2, updated.CompletedSteps);
+		}
+		finally
+		{
+			Directory.Delete(directory, true);
+		}
+	}
+
+	[Fact]
+	public void VerificationEvidence_CanBeClearedWithoutRemovingOtherSteps()
+	{
+		string directory = CreateTestDirectory();
+		try
+		{
+			string path = Path.Combine(directory, "compatibility.json");
+			Assert.True(Core.RecordGameVerification(
+				"Rust",
+				GameVerificationKind.Arguments,
+				"1.0.22",
+				DateTimeOffset.UtcNow,
+				path));
+			Assert.True(Core.RecordGameVerification(
+				"Rust",
+				GameVerificationKind.Configuration,
+				"1.0.22",
+				DateTimeOffset.UtcNow,
+				path));
+
+			Assert.True(Core.ClearGameVerification(
+				"Rust",
+				GameVerificationKind.Arguments,
+				path));
+			GameCompatibilityVerification verification =
+				Core.GetGameCompatibility("Rust", path);
+			Assert.Null(verification.Arguments);
+			Assert.NotNull(verification.Configuration);
+			Assert.False(Core.ClearGameVerification(
+				"Rust",
+				GameVerificationKind.Arguments,
+				path));
+		}
+		finally
+		{
+			Directory.Delete(directory, true);
 		}
 	}
 

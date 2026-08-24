@@ -86,6 +86,39 @@ public sealed class DynamicGameDefinitionTests
 	}
 
 	[Fact]
+	public void SpaceEngineersUsesItsVisibleOfficialServerManager()
+	{
+		GameInfo spaceEngineers = GameDatabase.GetGame("Space Engineers")!;
+
+		Assert.Equal("298740", spaceEngineers.AppID);
+		Assert.False(spaceEngineers.RequiresSteamLogin);
+		Assert.Equal(
+			"DedicatedServer64\\SpaceEngineersDedicated.exe",
+			spaceEngineers.ExeName);
+		Assert.Contains("-path", spaceEngineers.RequiredArgs);
+		Assert.Contains("{InstallPath}\\Instance", spaceEngineers.RequiredArgs);
+		Assert.DoesNotContain("-console", spaceEngineers.RequiredArgs);
+		Assert.DoesNotContain("-noconsole", spaceEngineers.RequiredArgs);
+		Assert.Equal(
+			ConfigFileCreationMode.GameGenerated,
+			spaceEngineers.ConfigFileCreation);
+		Assert.Equal(
+			"Instance\\SpaceEngineers-Dedicated.cfg",
+			spaceEngineers.RelativeConfigPath);
+		Assert.Equal(6, spaceEngineers.RuntimeRequirements.MinimumSystemMemoryGb);
+		Assert.True(spaceEngineers.LaunchBehavior.RequiresVisibleWindow);
+		Assert.False(spaceEngineers.LaunchBehavior.RunElevated);
+		Assert.Contains("Local/Console", spaceEngineers.WarningMessage);
+
+		Assert.True(TrustedGameDefinitionCatalog.TryGetPackage(
+			spaceEngineers.Game,
+			out EmbeddedGamePackage? package));
+		EmbeddedPostInstallAction action = Assert.Single(package!.PostInstallActions);
+		Assert.Equal(TrustedPostInstallActionType.EnsureDirectory, action.Type);
+		Assert.Equal("Instance", action.TargetDirectory);
+	}
+
+	[Fact]
 	public void RustDefinitionOffersOnlyTheTrustedOxideRuntime()
 	{
 		GameInfo rust = GameDatabase.GetGame("Rust")!;
@@ -529,7 +562,7 @@ public sealed class DynamicGameDefinitionTests
 		Assert.True(report.IsValid, report.ToPlainText());
 		Assert.Equal(228, report.DefinitionCount);
 		Assert.True(report.TemplateCount >= 4);
-		Assert.Equal(62, report.PostInstallActionCount);
+		Assert.Equal(63, report.PostInstallActionCount);
 		Assert.True(report.ManagedSettingBindingCount >= 8);
 		Assert.True(
 			report.DefinitionTestCount >= report.DefinitionCount + 4);
@@ -646,6 +679,7 @@ public sealed class DynamicGameDefinitionTests
 				LaunchBehavior = new GameLaunchBehavior
 				{
 					RunElevated = true,
+					RequiresVisibleWindow = true,
 					LifecycleTracking = GameLifecycleTrackingMode.ExternalDeployment,
 					AllowLaunchFileExport = false,
 					ReadyMessage = "The deployment passed its readiness checks."
@@ -678,6 +712,7 @@ public sealed class DynamicGameDefinitionTests
 			Assert.True(parsed.Definition.RuntimeRequirements.RequiresHyperV);
 			Assert.True(parsed.Definition.RuntimeRequirements.RequiresWindowsProfessionalOrHigher);
 			Assert.True(parsed.Definition.LaunchBehavior.RunElevated);
+			Assert.True(parsed.Definition.LaunchBehavior.RequiresVisibleWindow);
 			Assert.Equal(
 				GameLifecycleTrackingMode.ExternalDeployment,
 				parsed.Definition.LaunchBehavior.LifecycleTracking);
@@ -687,6 +722,7 @@ public sealed class DynamicGameDefinitionTests
 				parsed.Definition.LaunchBehavior.ReadyMessage);
 			Assert.Single(parsed.PostInstallActions);
 			Assert.Contains("\"definitionRevision\": 2", result.Json);
+			Assert.Contains("\"requiresVisibleWindow\": true", result.Json);
 			Assert.Contains("\"pvpValue\": \"PVP\"", result.Json);
 			Assert.Contains("\"booleanTrueValue\": \"true\"", result.Json);
 		}

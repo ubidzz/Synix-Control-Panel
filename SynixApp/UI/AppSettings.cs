@@ -185,6 +185,8 @@ namespace Synix_Control_Panel.SynixEngine
 				GameDefinitionValidationRequested;
 			developmentSettingsPage.GameDefinitionBuilderRequested +=
 				GameDefinitionBuilderRequested;
+			developmentSettingsPage.GameVerificationQueueRequested +=
+				GameVerificationQueueRequested;
 		}
 
 		private void LoadSavedSettings()
@@ -338,6 +340,17 @@ namespace Synix_Control_Panel.SynixEngine
 
 			using GameDefinitionBuilder builder = new();
 			builder.ShowDialog(this);
+		}
+
+		private void GameVerificationQueueRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+
+			using GameVerificationQueue queue = new();
+			queue.ShowDialog(this);
 		}
 
 		private void btnMinimize_Click(object? sender, EventArgs eventArgs)
