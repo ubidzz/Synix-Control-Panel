@@ -168,7 +168,7 @@ public sealed class SynixReleaseReadinessCheckerTests
 			temporary.Path,
 			"bin",
 			"Release",
-			"net8.0-windows");
+			"net10.0-windows");
 		Directory.CreateDirectory(buildPath);
 		File.WriteAllText(projectPath, "<Project />");
 

@@ -98,9 +98,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 		}
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color FillColor { get; set; } = SettingsPalette.Card;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color BorderColor { get; set; } = SettingsPalette.Border;
 
 		public ModernSettingsCard()
@@ -475,15 +477,19 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private bool _mouseInside;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color BorderColor { get; set; } = SettingsPalette.Border;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color FocusBorderColor { get; set; } = SettingsPalette.Border;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color ArrowColor { get; set; } = SettingsPalette.SecondaryText;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color SelectedItemBackColor { get; set; } =
 			SettingsPalette.Selection;
 
@@ -925,6 +931,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			Margin = Padding.Empty;
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public object EditingControlFormattedValue
 		{
 			get => SelectedItem == null ? Text : GetItemText(SelectedItem);
@@ -994,16 +1002,22 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int EditingControlRowIndex { get; set; }
 
 		public bool RepositionEditingControlOnValueChange => false;
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridView? EditingControlDataGridView
 		{
 			get => _editingDataGridView;
 			set => _editingDataGridView = value;
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool EditingControlValueChanged { get; set; }
 
 		public Cursor EditingPanelCursor => Cursors.Default;
@@ -1453,9 +1467,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 			new("Segoe UI Symbol", 14F, FontStyle.Regular);
 
 		[Category("Synix Appearance")]
+		[DefaultValue("•")]
 		public string IconGlyph { get; set; } = "•";
 
 		[Category("Synix Appearance")]
+		[DefaultValue(false)]
 		public bool Selected
 		{
 			get => _selected;
@@ -1563,6 +1579,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 	public sealed class ModernSettingsGlyph : Control
 	{
 		[Category("Synix Appearance")]
+		[DefaultValue("•")]
 		public string Glyph { get; set; } = "•";
 
 		public ModernSettingsGlyph()

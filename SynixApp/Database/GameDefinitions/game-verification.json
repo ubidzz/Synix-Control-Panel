@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "exportedBySynixVersion": "1.0.21",
-  "exportedAtUtc": "2026-08-24T11:32:11.7218398+00:00",
+  "exportedBySynixVersion": "1.0.22",
+  "exportedAtUtc": "2026-08-24T18:22:46.78551+00:00",
   "games": [
     {
       "game": "7 Days to Die",
@@ -413,6 +413,30 @@
         "synixVersion": "1.0.21",
         "verifiedAtUtc": "2026-08-24T11:23:03.4639199+00:00"
       }
+    },
+    {
+      "game": "Subsistence",
+      "install": {
+        "synixVersion": "1.0.22",
+        "verifiedAtUtc": "2026-08-24T18:15:12.3947649+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.22",
+        "verifiedAtUtc": "2026-08-24T18:18:52.3210837+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.22",
+        "verifiedAtUtc": "2026-08-24T18:20:28.0919426+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.22",
+        "verifiedAtUtc": "2026-08-24T18:18:52.3160884+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.22",
+        "verifiedAtUtc": "2026-08-24T18:22:34.8416718+00:00"
+      },
+      "configuration": null
     }
   ]
 }

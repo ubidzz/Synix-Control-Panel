@@ -232,7 +232,7 @@ The Synix knowledge base is included directly in the application and covers:
 
 ## 💻 Technical Overview
 
-- **Application:** C# with .NET 8 and Windows Forms
+- **Application:** C# with .NET 10 and Windows Forms
 - **Architecture:** Shared, asynchronous server-management engine with a local desktop interface
 - **Installer:** WiX-based per-user MSI
 - **Distribution:** GitHub Releases and WinGet
@@ -243,7 +243,7 @@ The Synix knowledge base is included directly in the application and covers:
 - **Networking:** A2S and additional UDP, TCP, HTTP, and local process checks
 - **Quality checks:** Automated tests, CodeQL scanning, package hashes, and a release-readiness report
 
-Synix requires the [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) when it is not already installed.
+Synix requires the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) when it is not already installed.
 
 ## 🖼️ Gallery
 
