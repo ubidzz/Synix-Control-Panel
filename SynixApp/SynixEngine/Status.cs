@@ -153,6 +153,7 @@ namespace Synix_Control_Panel.SynixEngine
 			status == StatusManager.GetStatus(ServerState.Stopping) ||
 			status == StatusManager.GetStatus(ServerState.Crashed) ||
 			status == StatusManager.GetStatus(ServerState.BackingUp) ||
+			status == StatusManager.GetStatus(ServerState.Restoring) ||
 			status == StatusManager.GetStatus(ServerState.Export);
 
 		private void CleanupStoppedState(GameServer server)
@@ -175,7 +176,8 @@ namespace Synix_Control_Panel.SynixEngine
 			Updating = 6,
 			BackingUp = 7,
 			Validating = 8,
-			Export = 9
+			Export = 9,
+			Restoring = 10
 		}
 
 		public static class StatusManager
@@ -195,6 +197,7 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerState.BackingUp => "Backing Up",
 					ServerState.Validating => "Validating",
 					ServerState.Export => "Exporting",
+					ServerState.Restoring => "Restoring",
 					_ => "Unknown"
 				};
 			}

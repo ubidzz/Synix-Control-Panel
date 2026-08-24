@@ -28,6 +28,9 @@ public sealed class TroubleshooterAndRecoveryTests
 				using TroubleshooterDialog troubleshooter = new();
 				using FirstRunGuideDialog firstRun = new();
 				using ReliabilityTestDialog reliability = new();
+				using ServerBackupRestoreDialog restoreBackup = new();
+				using GameVerificationQueue verificationQueue = new();
+				using ArgumentVerificationDialog argumentVerification = new();
 				using AdvancedSettingsPage advanced = new();
 			}
 			catch (Exception exception)

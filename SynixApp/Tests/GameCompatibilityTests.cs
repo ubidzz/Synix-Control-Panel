@@ -11,6 +11,8 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixEngine;
+using System.Reflection;
+using System.Text.Json;
 using Xunit;
 
 namespace Synix_Control_Panel.Tests;
@@ -312,6 +314,97 @@ public sealed class GameCompatibilityTests
 		{
 			Directory.Delete(directory, true);
 		}
+	}
+
+	[Fact]
+	public void ProjectExportWritesOnlyVersionedVerificationEvidence()
+	{
+		string directory = CreateTestDirectory();
+		try
+		{
+			string projectFile = Path.Combine(directory, "Synix Control Panel.csproj");
+			string definitionsDirectory = Path.Combine(
+				directory,
+				"Database",
+				"GameDefinitions");
+			Directory.CreateDirectory(definitionsDirectory);
+			File.WriteAllText(projectFile, "<Project />");
+			string compatibilityPath = Path.Combine(directory, "compatibility.json");
+			DateTimeOffset verifiedAt = new(
+				2026,
+				8,
+				24,
+				16,
+				0,
+				0,
+				TimeSpan.Zero);
+
+			Assert.True(Core.RecordGameVerification(
+				"Rust",
+				GameVerificationKind.Arguments,
+				"1.0.22",
+				verifiedAt,
+				compatibilityPath));
+			Assert.True(Core.RecordGameVerification(
+				"Rust",
+				GameVerificationKind.Configuration,
+				"1.0.22",
+				verifiedAt.AddMinutes(1),
+				compatibilityPath));
+
+			GameVerificationProjectExportResult result =
+				Core.ExportGameVerificationToProject(
+					directory,
+					compatibilityPath);
+
+			Assert.Equal(
+				Path.Combine(definitionsDirectory, "game-verification.json"),
+				result.FilePath);
+			Assert.True(result.GameCount >= 1);
+			Assert.True(result.EvidenceCount >= 2);
+			using JsonDocument document = JsonDocument.Parse(
+				File.ReadAllText(result.FilePath));
+			Assert.Equal(
+				1,
+				document.RootElement.GetProperty("schemaVersion").GetInt32());
+			JsonElement rust = document.RootElement
+				.GetProperty("games")
+				.EnumerateArray()
+				.Single(item => item.GetProperty("game").GetString() == "Rust");
+			Assert.Equal(
+				"1.0.22",
+				rust.GetProperty("arguments")
+					.GetProperty("synixVersion")
+					.GetString());
+			Assert.Equal(
+				"1.0.22",
+				rust.GetProperty("configuration")
+					.GetProperty("synixVersion")
+					.GetString());
+			string exportedJson = File.ReadAllText(result.FilePath);
+			Assert.DoesNotContain("password", exportedJson, StringComparison.OrdinalIgnoreCase);
+			Assert.DoesNotContain("installPath", exportedJson, StringComparison.OrdinalIgnoreCase);
+		}
+		finally
+		{
+			Directory.Delete(directory, true);
+		}
+	}
+
+	[Fact]
+	public void ProjectVerificationManifestIsEmbeddedInTheApplication()
+	{
+		Assembly assembly = typeof(Core).Assembly;
+		string resourceName = Assert.Single(
+			assembly.GetManifestResourceNames(),
+			name => name.EndsWith(
+				".GameDefinitions.game-verification.json",
+				StringComparison.OrdinalIgnoreCase));
+		using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
+		using JsonDocument document = JsonDocument.Parse(stream);
+		Assert.Equal(
+			1,
+			document.RootElement.GetProperty("schemaVersion").GetInt32());
 	}
 
 	private static string CreateTestDirectory()

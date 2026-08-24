@@ -29,6 +29,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SynixReleaseReadinessDialog));
 			titleLabel = new Label();
 			subtitleLabel = new Label();
 			folderCard = new ModernSettingsCard();
@@ -47,7 +48,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			titleLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			titleLabel.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
-			titleLabel.ForeColor = SettingsPalette.PrimaryText;
+			titleLabel.ForeColor = Color.FromArgb(245, 247, 251);
 			titleLabel.Location = new Point(24, 20);
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(852, 34);
@@ -57,7 +58,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// subtitleLabel
 			// 
 			subtitleLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			subtitleLabel.ForeColor = SettingsPalette.SecondaryText;
+			subtitleLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			subtitleLabel.Location = new Point(24, 56);
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(852, 24);
@@ -67,12 +68,14 @@ namespace Synix_Control_Panel.SynixEngine
 			// folderCard
 			// 
 			folderCard.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			folderCard.BorderColor = SettingsPalette.Border;
+			folderCard.BackColor = Color.FromArgb(17, 27, 45);
+			folderCard.BorderColor = Color.FromArgb(38, 52, 77);
 			folderCard.Controls.Add(folderTitleLabel);
 			folderCard.Controls.Add(_publishPathLabel);
 			folderCard.Controls.Add(_browseButton);
-			folderCard.FillColor = SettingsPalette.Card;
+			folderCard.FillColor = Color.FromArgb(17, 27, 45);
 			folderCard.Location = new Point(24, 94);
+			folderCard.Margin = new Padding(0, 0, 0, 16);
 			folderCard.Name = "folderCard";
 			folderCard.Size = new Size(852, 92);
 			folderCard.TabIndex = 2;
@@ -80,7 +83,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// folderTitleLabel
 			// 
 			folderTitleLabel.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-			folderTitleLabel.ForeColor = SettingsPalette.PrimaryText;
+			folderTitleLabel.ForeColor = Color.FromArgb(245, 247, 251);
 			folderTitleLabel.Location = new Point(18, 12);
 			folderTitleLabel.Name = "folderTitleLabel";
 			folderTitleLabel.Size = new Size(620, 25);
@@ -91,7 +94,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			_publishPathLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			_publishPathLabel.AutoEllipsis = true;
-			_publishPathLabel.ForeColor = SettingsPalette.SecondaryText;
+			_publishPathLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			_publishPathLabel.Location = new Point(18, 44);
 			_publishPathLabel.Name = "_publishPathLabel";
 			_publishPathLabel.Size = new Size(635, 28);
@@ -101,17 +104,22 @@ namespace Synix_Control_Panel.SynixEngine
 			// _browseButton
 			// 
 			_browseButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			_browseButton.BackColor = Color.FromArgb(12, 21, 36);
+			_browseButton.FlatStyle = FlatStyle.Flat;
+			_browseButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			_browseButton.ForeColor = Color.FromArgb(245, 247, 251);
 			_browseButton.Location = new Point(688, 25);
 			_browseButton.Name = "_browseButton";
 			_browseButton.Size = new Size(142, 42);
 			_browseButton.TabIndex = 2;
 			_browseButton.Text = "Choose Folder";
+			_browseButton.UseVisualStyleBackColor = false;
 			_browseButton.Click += BrowseButton_Click;
 			// 
 			// _statusLabel
 			// 
 			_statusLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			_statusLabel.ForeColor = SettingsPalette.SecondaryText;
+			_statusLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			_statusLabel.Location = new Point(24, 200);
 			_statusLabel.Name = "_statusLabel";
 			_statusLabel.Size = new Size(852, 28);
@@ -121,11 +129,11 @@ namespace Synix_Control_Panel.SynixEngine
 			// _reportBox
 			// 
 			_reportBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			_reportBox.BackColor = SettingsPalette.Input;
+			_reportBox.BackColor = Color.FromArgb(12, 21, 36);
 			_reportBox.BorderStyle = BorderStyle.None;
 			_reportBox.DetectUrls = false;
 			_reportBox.Font = new Font("Cascadia Mono", 9.5F);
-			_reportBox.ForeColor = SettingsPalette.SecondaryText;
+			_reportBox.ForeColor = Color.FromArgb(158, 172, 194);
 			_reportBox.Location = new Point(24, 236);
 			_reportBox.Name = "_reportBox";
 			_reportBox.ReadOnly = true;
@@ -138,40 +146,55 @@ namespace Synix_Control_Panel.SynixEngine
 			// _closeButton
 			// 
 			_closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			_closeButton.BackColor = Color.FromArgb(12, 21, 36);
 			_closeButton.DialogResult = DialogResult.Cancel;
+			_closeButton.FlatStyle = FlatStyle.Flat;
+			_closeButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			_closeButton.ForeColor = Color.FromArgb(245, 247, 251);
 			_closeButton.Location = new Point(24, 642);
 			_closeButton.Name = "_closeButton";
 			_closeButton.Size = new Size(110, 42);
 			_closeButton.TabIndex = 5;
 			_closeButton.Text = "Close";
+			_closeButton.UseVisualStyleBackColor = false;
 			// 
 			// _copyButton
 			// 
 			_copyButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			_copyButton.BackColor = Color.FromArgb(12, 21, 36);
 			_copyButton.Enabled = false;
+			_copyButton.FlatStyle = FlatStyle.Flat;
+			_copyButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			_copyButton.ForeColor = Color.FromArgb(245, 247, 251);
 			_copyButton.Location = new Point(526, 642);
 			_copyButton.Name = "_copyButton";
 			_copyButton.Size = new Size(152, 42);
 			_copyButton.TabIndex = 6;
 			_copyButton.Text = "Copy Report";
+			_copyButton.UseVisualStyleBackColor = false;
 			_copyButton.Click += CopyButton_Click;
 			// 
 			// _runButton
 			// 
 			_runButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			_runButton.BackColor = Color.FromArgb(12, 21, 36);
+			_runButton.FlatStyle = FlatStyle.Flat;
+			_runButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			_runButton.ForeColor = Color.FromArgb(245, 247, 251);
 			_runButton.Location = new Point(690, 642);
 			_runButton.Name = "_runButton";
 			_runButton.Size = new Size(186, 42);
 			_runButton.TabIndex = 7;
 			_runButton.Text = "Run Release Check";
 			_runButton.UseAccentStyle = true;
+			_runButton.UseVisualStyleBackColor = false;
 			_runButton.Click += RunButton_Click;
 			// 
 			// SynixReleaseReadinessDialog
 			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
-			BackColor = SettingsPalette.Window;
+			BackColor = Color.FromArgb(8, 13, 24);
 			CancelButton = _closeButton;
 			ClientSize = new Size(900, 700);
 			Controls.Add(titleLabel);
@@ -183,7 +206,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(_copyButton);
 			Controls.Add(_runButton);
 			Font = new Font("Segoe UI", 10F);
-			FormBorderStyle = FormBorderStyle.Sizable;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
 			MinimumSize = new Size(720, 560);
 			Name = "SynixReleaseReadinessDialog";

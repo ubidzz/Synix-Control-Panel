@@ -173,7 +173,7 @@ namespace Synix_Control_Panel.SynixEngine
 			card.Controls.Add(CreateGlyph("◇"));
 			card.Controls.Add(CreateTitle("Built-in Game Definition Tests"));
 			card.Controls.Add(CreateDescription(
-				"Test every built-in game, managed setting binding, full configuration template, revision, log path, and allowlisted post-install action. Tests use isolated temporary files and never change installed servers.",
+				"Test every built-in definition, then use the Verification Queue to prove real launch arguments against an installed server and export approved evidence into the project. Definition tests use isolated temporary files and never change installed servers.",
 				72));
 
 			ModernSettingsButton validateButton = new()

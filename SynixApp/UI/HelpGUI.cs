@@ -132,7 +132,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"4. Wait for the status to change from Starting to Running. Some games create their configuration files only after the first complete boot.\n" +
 					"5. Stop the server cleanly before editing generated files. Use Configure or Server Options -> Open Config Editor when that template exposes a config file.\n" +
 					"6. Start the server again and test joining through the LAN address before troubleshooting public access.\n\n" +
-					"Do not close an installer or server console while Synix reports Starting, Updating, Backing Up, or Stopping."),
+					"Do not close an installer or server console while Synix reports Starting, Updating, Backing Up, Restoring, or Stopping."),
 
 				["Understanding Server {Identity}"] = new HelpItem("Start",
 					"WHAT IS AN {IDENTITY}?\n\n" +
@@ -179,6 +179,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Validate Game Files: asks the supported installer to verify/repair game files.\n" +
 					"• Create Batch File: exports the resolved launch command for supported templates.\n" +
 					"• Backup Server: creates a manual archive.\n" +
+					"• Restore Server Backup: appears when saved backups exist and lets you choose which archive to restore.\n" +
 					"• Test LAN/WAN Connectivity: appears only for games with a reliable supported probe.\n" +
 					"• Delete Server: removes the Synix server entry and, after confirmation, can remove associated files/backups.\n\n" +
 					"Some actions are intentionally hidden or disabled for templates that use a different installer, generate settings only after first boot, or cannot be tested reliably."),
@@ -311,9 +312,11 @@ namespace Synix_Control_Panel.SynixEngine
 					"3. Wait for Activity & Diagnostics to confirm completion. Do not start or delete the server while the backup state is active.\n" +
 					"4. Use Open Backup Folder to locate the timestamped ZIP archive.\n\n" +
 					"RESTORE A BACKUP:\n" +
-					"1. Stop the server and make a separate copy of the current server folder.\n" +
-					"2. Extract the selected archive to the correct active server/save location, preserving its folder structure.\n" +
-					"3. Start the server and verify the world before removing the safety copy.\n\n" +
+					"1. Stop the server, select it, and open Server Options.\n" +
+					"2. Choose Restore Server Backup. This action only appears when Synix finds backups for that server.\n" +
+					"3. Select the timestamped backup you want and confirm the warning.\n" +
+					"4. Synix safely unpacks the backup, preserves the current server folder, and automatically rolls back if activation fails.\n" +
+					"5. Wait for the completion message, then start the server and verify its world and settings.\n\n" +
 					"A custom backup path changes where new archives are written; Synix does not move or delete archives left in the previous location."),
 
 				["Smart Update on Start & Manifest Validation"] = new HelpItem("Maint",

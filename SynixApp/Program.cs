@@ -103,6 +103,29 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
+				int recoveredRestores = Core.RecoverInterruptedServerRestores();
+				if (recoveredRestores > 0)
+				{
+					MessageBox.Show(
+						$"Synix detected {recoveredRestores} interrupted server backup restore operation(s) and safely returned the affected server folders to their previous state.",
+						"Server Restore Recovered",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Information);
+				}
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					"Synix found an interrupted server backup restore but could not safely recover its files. Synix will not start to avoid using incomplete server data.\n\n" +
+					exception.Message,
+					"Server Restore Recovery Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
+
+			try
+			{
 				SynixSessionRecovery.BeginSession();
 			}
 			catch

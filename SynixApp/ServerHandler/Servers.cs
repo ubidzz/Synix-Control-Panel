@@ -244,56 +244,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						PrepareMinecraftLauncher(fullExePath, logCallback);
 					}
 
-					string targetId = dbEntry.AppID;
-					string invokedId = targetId;
-
-					string rootAppIdPath = Path.Combine(server.InstallPath, "steam_appid.txt");
-					string binAppIdPath = Path.Combine(binDir, "steam_appid.txt");
-					string appidPath = rootAppIdPath;
-
-					if (File.Exists(rootAppIdPath))
-					{
-						appidPath = rootAppIdPath;
-					}
-					else if (File.Exists(binAppIdPath))
-					{
-						appidPath = binAppIdPath;
-					}
-					else
-					{
-						try
-						{
-							var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
-							{
-								RecurseSubdirectories = true,
-								IgnoreInaccessible = true,
-								MaxRecursionDepth = 15,
-								AttributesToSkip = FileAttributes.ReparsePoint
-							});
-
-							appidPath = scanner.FirstOrDefault() ?? rootAppIdPath;
-						}
-						catch
-						{
-							appidPath = rootAppIdPath;
-						}
-					}
-
-					if (File.Exists(appidPath))
-					{
-						try
-						{
-							string fileContent = File.ReadAllText(appidPath).Trim();
-
-							fileContent = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim() ?? "";
-
-							if (!string.IsNullOrWhiteSpace(fileContent))
-							{
-								invokedId = fileContent;
-							}
-						}
-						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
-					}
+					string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
+						server,
+						dbEntry,
+						fullExePath);
 
 					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
 					if (!GameLaunchCommandBuilder.TryBuildArguments(
@@ -341,10 +295,27 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				if (psi == null) return;
 
-				string safeLogArgs = finalArgs;
-				if (!string.IsNullOrWhiteSpace(launchPasswords.ServerPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.ServerPassword, "********");
-				if (!string.IsNullOrWhiteSpace(launchPasswords.AdminPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.AdminPassword, "********");
-				if (!string.IsNullOrWhiteSpace(launchPasswords.RconPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.RconPassword, "********");
+				string safeLogArgs = "[arguments unavailable]";
+				if (selectedDefinition != null)
+				{
+					string fullExePath = Path.Combine(
+						server.InstallPath,
+						selectedDefinition.ExeName);
+					string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
+						server,
+						selectedDefinition,
+						fullExePath);
+					if (!GameLaunchCommandBuilder.TryBuildArguments(
+						server,
+						selectedDefinition,
+						invokedId,
+						GameLaunchCommandBuilder.CreateRedactedPasswords(launchPasswords),
+						out safeLogArgs,
+						out _))
+					{
+						safeLogArgs = "[arguments passed securely; preview unavailable]";
+					}
+				}
 
 				logCallback?.Invoke($"[ARGUMENT] {safeLogArgs}", Color.Cyan);
 

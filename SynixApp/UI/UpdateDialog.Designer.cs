@@ -29,6 +29,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SynixUpdateDialog));
 			titleLabel = new Label();
 			subtitleLabel = new Label();
 			summaryCard = new ModernSettingsCard();
@@ -46,7 +47,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// titleLabel
 			// 
 			titleLabel.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
-			titleLabel.ForeColor = SettingsPalette.PrimaryText;
+			titleLabel.ForeColor = Color.FromArgb(245, 247, 251);
 			titleLabel.Location = new Point(26, 22);
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(668, 34);
@@ -55,7 +56,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// subtitleLabel
 			// 
-			subtitleLabel.ForeColor = SettingsPalette.SecondaryText;
+			subtitleLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			subtitleLabel.Location = new Point(26, 58);
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(668, 25);
@@ -64,12 +65,14 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// summaryCard
 			// 
-			summaryCard.BorderColor = SettingsPalette.Border;
+			summaryCard.BackColor = Color.FromArgb(17, 27, 45);
+			summaryCard.BorderColor = Color.FromArgb(38, 52, 77);
 			summaryCard.Controls.Add(highlightsTitleLabel);
 			summaryCard.Controls.Add(highlightsTextBox);
 			summaryCard.Controls.Add(verificationLabel);
-			summaryCard.FillColor = SettingsPalette.Card;
+			summaryCard.FillColor = Color.FromArgb(17, 27, 45);
 			summaryCard.Location = new Point(26, 96);
+			summaryCard.Margin = new Padding(0, 0, 0, 16);
 			summaryCard.Name = "summaryCard";
 			summaryCard.Size = new Size(668, 256);
 			summaryCard.TabIndex = 2;
@@ -77,7 +80,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// highlightsTitleLabel
 			// 
 			highlightsTitleLabel.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
-			highlightsTitleLabel.ForeColor = SettingsPalette.PrimaryText;
+			highlightsTitleLabel.ForeColor = Color.FromArgb(245, 247, 251);
 			highlightsTitleLabel.Location = new Point(18, 14);
 			highlightsTitleLabel.Name = "highlightsTitleLabel";
 			highlightsTitleLabel.Size = new Size(632, 26);
@@ -86,10 +89,10 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// highlightsTextBox
 			// 
-			highlightsTextBox.BackColor = SettingsPalette.Input;
+			highlightsTextBox.BackColor = Color.FromArgb(12, 21, 36);
 			highlightsTextBox.BorderStyle = BorderStyle.None;
 			highlightsTextBox.DetectUrls = false;
-			highlightsTextBox.ForeColor = SettingsPalette.SecondaryText;
+			highlightsTextBox.ForeColor = Color.FromArgb(158, 172, 194);
 			highlightsTextBox.Location = new Point(18, 44);
 			highlightsTextBox.Name = "highlightsTextBox";
 			highlightsTextBox.ReadOnly = true;
@@ -101,7 +104,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// verificationLabel
 			// 
 			verificationLabel.AutoEllipsis = true;
-			verificationLabel.ForeColor = SettingsPalette.Success;
+			verificationLabel.ForeColor = Color.FromArgb(80, 230, 164);
 			verificationLabel.Location = new Point(18, 215);
 			verificationLabel.Name = "verificationLabel";
 			verificationLabel.Size = new Size(632, 25);
@@ -110,7 +113,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// safetyMessageLabel
 			// 
-			safetyMessageLabel.ForeColor = SettingsPalette.SecondaryText;
+			safetyMessageLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			safetyMessageLabel.Location = new Point(26, 365);
 			safetyMessageLabel.Name = "safetyMessageLabel";
 			safetyMessageLabel.Size = new Size(668, 52);
@@ -119,44 +122,64 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// laterButton
 			// 
+			laterButton.BackColor = Color.FromArgb(12, 21, 36);
 			laterButton.DialogResult = DialogResult.Cancel;
+			laterButton.FlatStyle = FlatStyle.Flat;
+			laterButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			laterButton.ForeColor = Color.FromArgb(245, 247, 251);
 			laterButton.Location = new Point(26, 440);
 			laterButton.Name = "laterButton";
 			laterButton.Size = new Size(90, 40);
 			laterButton.TabIndex = 4;
 			laterButton.Text = "Later";
+			laterButton.UseVisualStyleBackColor = false;
 			// 
 			// githubButton
 			// 
+			githubButton.BackColor = Color.FromArgb(12, 21, 36);
+			githubButton.FlatStyle = FlatStyle.Flat;
+			githubButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			githubButton.ForeColor = Color.FromArgb(245, 247, 251);
 			githubButton.Location = new Point(124, 440);
 			githubButton.Name = "githubButton";
 			githubButton.Size = new Size(116, 40);
 			githubButton.TabIndex = 5;
 			githubButton.Text = "Open GitHub";
+			githubButton.UseVisualStyleBackColor = false;
 			// 
 			// fullNotesButton
 			// 
+			fullNotesButton.BackColor = Color.FromArgb(12, 21, 36);
+			fullNotesButton.FlatStyle = FlatStyle.Flat;
+			fullNotesButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			fullNotesButton.ForeColor = Color.FromArgb(245, 247, 251);
 			fullNotesButton.Location = new Point(248, 440);
 			fullNotesButton.Name = "fullNotesButton";
 			fullNotesButton.Size = new Size(160, 40);
 			fullNotesButton.TabIndex = 6;
 			fullNotesButton.Text = "Full Release Notes";
+			fullNotesButton.UseVisualStyleBackColor = false;
 			// 
 			// installButton
 			// 
+			installButton.BackColor = Color.FromArgb(12, 21, 36);
+			installButton.FlatStyle = FlatStyle.Flat;
+			installButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			installButton.ForeColor = Color.FromArgb(245, 247, 251);
 			installButton.Location = new Point(530, 440);
 			installButton.Name = "installButton";
 			installButton.Size = new Size(164, 40);
 			installButton.TabIndex = 7;
 			installButton.Text = "Install Update";
 			installButton.UseAccentStyle = true;
+			installButton.UseVisualStyleBackColor = false;
 			// 
 			// SynixUpdateDialog
 			// 
 			AcceptButton = installButton;
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
-			BackColor = SettingsPalette.Window;
+			BackColor = Color.FromArgb(8, 13, 24);
 			CancelButton = laterButton;
 			ClientSize = new Size(720, 500);
 			Controls.Add(titleLabel);
@@ -169,6 +192,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(installButton);
 			Font = new Font("Segoe UI", 10F);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MaximumSize = new Size(736, 539);
 			MinimizeBox = false;

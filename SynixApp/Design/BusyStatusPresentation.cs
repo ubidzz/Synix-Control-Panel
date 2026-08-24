@@ -25,6 +25,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			StatusManager.GetStatus(ServerState.Installing),
 			StatusManager.GetStatus(ServerState.Updating),
 			StatusManager.GetStatus(ServerState.BackingUp),
+			StatusManager.GetStatus(ServerState.Restoring),
 			StatusManager.GetStatus(ServerState.Validating),
 			StatusManager.GetStatus(ServerState.Export)
 		};

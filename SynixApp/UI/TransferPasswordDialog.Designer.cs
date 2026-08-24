@@ -29,6 +29,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TransferPasswordDialog));
 			titleLabel = new Label();
 			descriptionLabel = new Label();
 			passwordTextBox = new TextBox();
@@ -41,7 +42,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// titleLabel
 			// 
 			titleLabel.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-			titleLabel.ForeColor = SettingsPalette.PrimaryText;
+			titleLabel.ForeColor = Color.FromArgb(245, 247, 251);
 			titleLabel.Location = new Point(24, 20);
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(392, 30);
@@ -50,7 +51,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// descriptionLabel
 			// 
-			descriptionLabel.ForeColor = SettingsPalette.SecondaryText;
+			descriptionLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			descriptionLabel.Location = new Point(24, 54);
 			descriptionLabel.Name = "descriptionLabel";
 			descriptionLabel.Size = new Size(392, 42);
@@ -59,9 +60,9 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// passwordTextBox
 			// 
-			passwordTextBox.BackColor = SettingsPalette.Input;
+			passwordTextBox.BackColor = Color.FromArgb(12, 21, 36);
 			passwordTextBox.BorderStyle = BorderStyle.FixedSingle;
-			passwordTextBox.ForeColor = SettingsPalette.PrimaryText;
+			passwordTextBox.ForeColor = Color.FromArgb(245, 247, 251);
 			passwordTextBox.Location = new Point(24, 102);
 			passwordTextBox.Name = "passwordTextBox";
 			passwordTextBox.PlaceholderText = "Password (at least 8 characters)";
@@ -71,9 +72,9 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// confirmTextBox
 			// 
-			confirmTextBox.BackColor = SettingsPalette.Input;
+			confirmTextBox.BackColor = Color.FromArgb(12, 21, 36);
 			confirmTextBox.BorderStyle = BorderStyle.FixedSingle;
-			confirmTextBox.ForeColor = SettingsPalette.PrimaryText;
+			confirmTextBox.ForeColor = Color.FromArgb(245, 247, 251);
 			confirmTextBox.Location = new Point(24, 158);
 			confirmTextBox.Name = "confirmTextBox";
 			confirmTextBox.PlaceholderText = "Confirm password";
@@ -83,7 +84,7 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// validationLabel
 			// 
-			validationLabel.ForeColor = SettingsPalette.Danger;
+			validationLabel.ForeColor = Color.FromArgb(250, 116, 128);
 			validationLabel.Location = new Point(24, 197);
 			validationLabel.Name = "validationLabel";
 			validationLabel.Size = new Size(200, 22);
@@ -91,28 +92,38 @@ namespace Synix_Control_Panel.SynixEngine
 			// 
 			// cancelButton
 			// 
+			cancelButton.BackColor = Color.FromArgb(12, 21, 36);
 			cancelButton.DialogResult = DialogResult.Cancel;
+			cancelButton.FlatStyle = FlatStyle.Flat;
+			cancelButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			cancelButton.ForeColor = Color.FromArgb(245, 247, 251);
 			cancelButton.Location = new Point(232, 222);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(88, 40);
 			cancelButton.TabIndex = 5;
 			cancelButton.Text = "Cancel";
+			cancelButton.UseVisualStyleBackColor = false;
 			// 
 			// continueButton
 			// 
+			continueButton.BackColor = Color.FromArgb(12, 21, 36);
+			continueButton.FlatStyle = FlatStyle.Flat;
+			continueButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			continueButton.ForeColor = Color.FromArgb(245, 247, 251);
 			continueButton.Location = new Point(328, 222);
 			continueButton.Name = "continueButton";
 			continueButton.Size = new Size(88, 40);
 			continueButton.TabIndex = 6;
 			continueButton.Text = "Export";
 			continueButton.UseAccentStyle = true;
+			continueButton.UseVisualStyleBackColor = false;
 			// 
 			// TransferPasswordDialog
 			// 
 			AcceptButton = continueButton;
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
-			BackColor = SettingsPalette.Window;
+			BackColor = Color.FromArgb(8, 13, 24);
 			CancelButton = cancelButton;
 			ClientSize = new Size(440, 282);
 			Controls.Add(titleLabel);
@@ -124,6 +135,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(continueButton);
 			Font = new Font("Segoe UI", 10F);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "TransferPasswordDialog";

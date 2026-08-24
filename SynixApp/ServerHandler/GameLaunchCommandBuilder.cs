@@ -24,6 +24,80 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 	internal static class GameLaunchCommandBuilder
 	{
+		internal static string ResolveInvokedAppId(
+			GameServer server,
+			GameInfo definition,
+			string executablePath)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(definition);
+
+			string invokedAppId = definition.AppID;
+			string executableDirectory = Path.GetDirectoryName(executablePath) ?? string.Empty;
+			string rootAppIdPath = Path.Combine(server.InstallPath, "steam_appid.txt");
+			string executableAppIdPath = Path.Combine(executableDirectory, "steam_appid.txt");
+			string appIdPath = rootAppIdPath;
+
+			if (File.Exists(rootAppIdPath))
+			{
+				appIdPath = rootAppIdPath;
+			}
+			else if (File.Exists(executableAppIdPath))
+			{
+				appIdPath = executableAppIdPath;
+			}
+			else
+			{
+				try
+				{
+					appIdPath = Directory.EnumerateFiles(
+						server.InstallPath,
+						"steam_appid.txt",
+						new EnumerationOptions
+						{
+							RecurseSubdirectories = true,
+							IgnoreInaccessible = true,
+							MaxRecursionDepth = 15,
+							AttributesToSkip = FileAttributes.ReparsePoint
+						})
+						.FirstOrDefault() ?? rootAppIdPath;
+				}
+				catch (Exception exception) when (exception is IOException or
+					UnauthorizedAccessException or
+					DirectoryNotFoundException)
+				{
+					appIdPath = rootAppIdPath;
+				}
+			}
+
+			if (!File.Exists(appIdPath))
+				return invokedAppId;
+
+			try
+			{
+				string fileContent = File.ReadLines(appIdPath)
+					.FirstOrDefault(line => !string.IsNullOrWhiteSpace(line))
+					?.Trim() ?? string.Empty;
+				if (fileContent.All(char.IsDigit) && fileContent.Length > 0)
+					invokedAppId = fileContent;
+			}
+			catch (Exception exception) when (exception is IOException or
+				UnauthorizedAccessException)
+			{
+			}
+
+			return invokedAppId;
+		}
+
+		internal static SynixServerPasswords CreateRedactedPasswords(
+			SynixServerPasswords passwords)
+		{
+			return new SynixServerPasswords(
+				string.IsNullOrEmpty(passwords.ServerPassword) ? string.Empty : "********",
+				string.IsNullOrEmpty(passwords.AdminPassword) ? string.Empty : "********",
+				string.IsNullOrEmpty(passwords.RconPassword) ? string.Empty : "********");
+		}
+
 		internal static bool ShouldHideServerWindow(
 			GameInfo definition,
 			bool showServerWindowSetting)

@@ -103,17 +103,36 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public static GameCompatibilityVerification GetGameCompatibility(string? game)
 		{
-			return GetGameCompatibility(game, GameCompatibilityPath);
+			return MergeGameVerification(
+				game,
+				GetBuiltInGameCompatibility(game),
+				GetGameCompatibility(game, GameCompatibilityPath));
 		}
 
 		public static GameCompatibilitySummary GetGameCompatibilitySummary(string? game)
 		{
-			return GetGameCompatibilitySummary(game, GameCompatibilityPath);
+			return BuildGameCompatibilitySummary(
+				game,
+				GetGameCompatibility(game));
 		}
 
 		public static IReadOnlyList<GameVerificationQueueItem> GetGameVerificationQueue()
 		{
-			return GetGameVerificationQueue(GameCompatibilityPath);
+			return GetEffectiveGameVerificationQueue(GameCompatibilityPath);
+		}
+
+		private static IReadOnlyList<GameVerificationQueueItem>
+			GetEffectiveGameVerificationQueue(string compatibilityPath)
+		{
+			return GetGameVerificationQueue(compatibilityPath)
+				.Select(item => item with
+				{
+					Verification = MergeGameVerification(
+						item.Game,
+						GetBuiltInGameCompatibility(item.Game),
+						item.Verification)
+				})
+				.ToArray();
 		}
 
 		internal static GameCompatibilitySummary GetGameCompatibilitySummary(
@@ -123,6 +142,13 @@ namespace Synix_Control_Panel.SynixEngine
 			GameCompatibilityVerification verification = GetGameCompatibility(
 				game,
 				compatibilityPath);
+			return BuildGameCompatibilitySummary(game, verification);
+		}
+
+		private static GameCompatibilitySummary BuildGameCompatibilitySummary(
+			string? game,
+			GameCompatibilityVerification verification)
+		{
 			bool install = verification.Install != null;
 			bool start = verification.Start != null;
 			bool stop = verification.Stop != null;
@@ -155,6 +181,51 @@ namespace Synix_Control_Panel.SynixEngine
 				status,
 				GetCompatibilityStatusDisplayName(status),
 				verification);
+		}
+
+		private static GameCompatibilityVerification MergeGameVerification(
+			string? game,
+			GameCompatibilityVerification builtIn,
+			GameCompatibilityVerification local)
+		{
+			return new GameCompatibilityVerification
+			{
+				Game = NormalizeCompatibilityGameName(game),
+				Install = SelectNewestEvidence(builtIn.Install, local.Install),
+				Start = SelectNewestEvidence(builtIn.Start, local.Start),
+				Stop = SelectNewestEvidence(builtIn.Stop, local.Stop),
+				Monitoring = SelectNewestEvidence(builtIn.Monitoring, local.Monitoring),
+				Arguments = SelectNewestEvidence(builtIn.Arguments, local.Arguments),
+				Configuration = SelectNewestEvidence(
+					builtIn.Configuration,
+					local.Configuration)
+			};
+		}
+
+		private static GameVerificationEvidence? SelectNewestEvidence(
+			GameVerificationEvidence? first,
+			GameVerificationEvidence? second)
+		{
+			if (first == null)
+				return second;
+			if (second == null)
+				return first;
+
+			Version firstVersion = Version.TryParse(
+				first.SynixVersion,
+				out Version? parsedFirst)
+				? parsedFirst
+				: new Version(0, 0, 0);
+			Version secondVersion = Version.TryParse(
+				second.SynixVersion,
+				out Version? parsedSecond)
+				? parsedSecond
+				: new Version(0, 0, 0);
+			int comparison = firstVersion.CompareTo(secondVersion);
+			if (comparison != 0)
+				return comparison > 0 ? first : second;
+
+			return first.VerifiedAtUtc >= second.VerifiedAtUtc ? first : second;
 		}
 
 		public static string GetCompatibilityStatusDisplayName(

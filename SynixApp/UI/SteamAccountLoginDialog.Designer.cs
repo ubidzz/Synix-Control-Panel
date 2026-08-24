@@ -28,14 +28,15 @@ namespace Synix_Control_Panel
 
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SteamAccountLoginDialog));
 			titleLabel = new Label();
 			descriptionLabel = new Label();
 			accountNameLabel = new Label();
 			accountNameTextBox = new TextBox();
 			privacyMessageLabel = new Label();
 			validationLabel = new Label();
-			cancelButton = new SynixApp.Design.ModernSettingsButton();
-			continueButton = new SynixApp.Design.ModernSettingsButton();
+			cancelButton = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			continueButton = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			SuspendLayout();
 			// 
 			// titleLabel
@@ -75,7 +76,7 @@ namespace Synix_Control_Panel
 			accountNameTextBox.Location = new Point(26, 162);
 			accountNameTextBox.Name = "accountNameTextBox";
 			accountNameTextBox.PlaceholderText = "Account name, not your Steam display name";
-			accountNameTextBox.Size = new Size(468, 30);
+			accountNameTextBox.Size = new Size(468, 25);
 			accountNameTextBox.TabIndex = 3;
 			// 
 			// privacyMessageLabel
@@ -85,7 +86,7 @@ namespace Synix_Control_Panel
 			privacyMessageLabel.Name = "privacyMessageLabel";
 			privacyMessageLabel.Size = new Size(468, 108);
 			privacyMessageLabel.TabIndex = 4;
-			privacyMessageLabel.Text = "SteamCMD will open next. If authorization is still valid, it will finish automatically. Otherwise, enter your password and approve the login in the Steam Mobile app. If requested, enter the Steam Guard code from the app or your email. Synix saves only the account name.";
+			privacyMessageLabel.Text = resources.GetString("privacyMessageLabel.Text");
 			// 
 			// validationLabel
 			// 
@@ -131,7 +132,7 @@ namespace Synix_Control_Panel
 			// SteamAccountLoginDialog
 			// 
 			AcceptButton = continueButton;
-			AutoScaleDimensions = new SizeF(8F, 20F);
+			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.FromArgb(8, 13, 24);
 			CancelButton = cancelButton;
@@ -146,6 +147,7 @@ namespace Synix_Control_Panel
 			Controls.Add(titleLabel);
 			Font = new Font("Segoe UI", 10F);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "SteamAccountLoginDialog";

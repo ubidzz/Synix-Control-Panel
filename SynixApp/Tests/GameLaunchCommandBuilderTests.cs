@@ -225,6 +225,82 @@ public sealed class GameLaunchCommandBuilderTests
 		Assert.False(GameLaunchCommandBuilder.TryGetLauncherKind(executable, out _));
 	}
 
+	[Fact]
+	public void ArgumentPreviewUsesTheInstalledAppIdAndNeverDisplaysPasswords()
+	{
+		string directory = Path.Combine(
+			Path.GetTempPath(),
+			"Synix.Tests",
+			Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(directory);
+		try
+		{
+			GameInfo definition = GameDatabase.GetGame("Rust")!;
+			string executablePath = Path.Combine(directory, definition.ExeName);
+			File.WriteAllBytes(executablePath, []);
+			File.WriteAllText(Path.Combine(directory, "steam_appid.txt"), "123456\r\n");
+
+			GameServer server = CreateServer(definition.Game);
+			server.InstallPath = directory;
+			server.ExtraArgs = "-logfile \"synix test.log\"";
+			Core.SetServerPasswords(
+				server,
+				new SynixServerPasswords(
+					"x",
+					"PrivateAdmin-9f84",
+					"PrivateRcon-31bd"));
+
+			GameArgumentTestPreview preview =
+				Core.BuildGameArgumentTestPreview(server);
+
+			Assert.True(
+				preview.IsValid,
+				string.Join(
+					Environment.NewLine,
+					preview.Checks.Where(check => !check.Passed)
+						.Select(check => $"{check.Name}: {check.Details}")));
+			Assert.Equal("123456", preview.InvokedAppId);
+			Assert.Contains("-SteamAppId=123456", preview.SanitizedArguments);
+			Assert.Contains("-logfile \"synix test.log\"", preview.SanitizedArguments);
+			Assert.DoesNotContain("PrivateAdmin-9f84", preview.SanitizedCommand);
+			Assert.DoesNotContain("PrivateRcon-31bd", preview.SanitizedCommand);
+			Assert.DoesNotContain("+server.password \"x\"", preview.SanitizedCommand);
+			Assert.Contains("********", preview.SanitizedCommand);
+		}
+		finally
+		{
+			Directory.Delete(directory, recursive: true);
+		}
+	}
+
+	[Fact]
+	public void InvokedAppIdIgnoresDamagedSteamAppIdFiles()
+	{
+		string directory = Path.Combine(
+			Path.GetTempPath(),
+			"Synix.Tests",
+			Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(directory);
+		try
+		{
+			GameInfo definition = GameDatabase.GetGame("Rust")!;
+			GameServer server = CreateServer(definition.Game);
+			server.InstallPath = directory;
+			File.WriteAllText(Path.Combine(directory, "steam_appid.txt"), "not-an-app-id");
+
+			Assert.Equal(
+				definition.AppID,
+				GameLaunchCommandBuilder.ResolveInvokedAppId(
+					server,
+					definition,
+					Path.Combine(directory, definition.ExeName)));
+		}
+		finally
+		{
+			Directory.Delete(directory, recursive: true);
+		}
+	}
+
 	private static GameServer CreateServer(string game) => new()
 	{
 		Game = game,

@@ -235,6 +235,7 @@ namespace Synix_Control_Panel.SynixEngine
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Restoring), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Export), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Validating), StringComparison.OrdinalIgnoreCase);
 
@@ -255,6 +256,9 @@ namespace Synix_Control_Panel.SynixEngine
 				case "Start":
 				case "Export":
 					isLocked = isTransitioning || isRunning;
+					break;
+				case "Restore":
+					isLocked = !isStopped || server.PID.HasValue;
 					break;
 				case "Restart":
 					isLocked = isTransitioning || isStopped;

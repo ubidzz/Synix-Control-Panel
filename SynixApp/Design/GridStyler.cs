@@ -241,6 +241,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 				status.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Updating", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
+				status.StartsWith("Restoring", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase))
 			{

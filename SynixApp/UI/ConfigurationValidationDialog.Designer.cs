@@ -29,6 +29,7 @@ namespace Synix_Control_Panel.SynixApp.UI
 
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigurationValidationDialog));
 			_titleLabel = new Label();
 			_subtitleLabel = new Label();
 			_summaryLabel = new Label();
@@ -41,7 +42,7 @@ namespace Synix_Control_Panel.SynixApp.UI
 			// 
 			_titleLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			_titleLabel.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
-			_titleLabel.ForeColor = SettingsPalette.PrimaryText;
+			_titleLabel.ForeColor = Color.FromArgb(245, 247, 251);
 			_titleLabel.Location = new Point(24, 20);
 			_titleLabel.Name = "_titleLabel";
 			_titleLabel.Size = new Size(852, 36);
@@ -51,7 +52,7 @@ namespace Synix_Control_Panel.SynixApp.UI
 			// _subtitleLabel
 			// 
 			_subtitleLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			_subtitleLabel.ForeColor = SettingsPalette.SecondaryText;
+			_subtitleLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			_subtitleLabel.Location = new Point(24, 58);
 			_subtitleLabel.Name = "_subtitleLabel";
 			_subtitleLabel.Size = new Size(852, 42);
@@ -62,7 +63,7 @@ namespace Synix_Control_Panel.SynixApp.UI
 			// 
 			_summaryLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			_summaryLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-			_summaryLabel.ForeColor = SettingsPalette.SecondaryText;
+			_summaryLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			_summaryLabel.Location = new Point(24, 108);
 			_summaryLabel.Name = "_summaryLabel";
 			_summaryLabel.Size = new Size(852, 28);
@@ -72,11 +73,11 @@ namespace Synix_Control_Panel.SynixApp.UI
 			// _reportBox
 			// 
 			_reportBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			_reportBox.BackColor = SettingsPalette.Input;
+			_reportBox.BackColor = Color.FromArgb(12, 21, 36);
 			_reportBox.BorderStyle = BorderStyle.None;
 			_reportBox.DetectUrls = false;
 			_reportBox.Font = new Font("Cascadia Mono", 9.5F);
-			_reportBox.ForeColor = SettingsPalette.SecondaryText;
+			_reportBox.ForeColor = Color.FromArgb(158, 172, 194);
 			_reportBox.Location = new Point(24, 144);
 			_reportBox.Name = "_reportBox";
 			_reportBox.ReadOnly = true;
@@ -89,29 +90,39 @@ namespace Synix_Control_Panel.SynixApp.UI
 			// _closeButton
 			// 
 			_closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			_closeButton.BackColor = Color.FromArgb(12, 21, 36);
 			_closeButton.DialogResult = DialogResult.Cancel;
+			_closeButton.FlatStyle = FlatStyle.Flat;
+			_closeButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			_closeButton.ForeColor = Color.FromArgb(245, 247, 251);
 			_closeButton.Location = new Point(24, 636);
 			_closeButton.Name = "_closeButton";
 			_closeButton.Size = new Size(120, 42);
 			_closeButton.TabIndex = 4;
 			_closeButton.Text = "Close";
+			_closeButton.UseVisualStyleBackColor = false;
 			// 
 			// _copyButton
 			// 
 			_copyButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			_copyButton.BackColor = Color.FromArgb(12, 21, 36);
+			_copyButton.FlatStyle = FlatStyle.Flat;
+			_copyButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			_copyButton.ForeColor = Color.FromArgb(245, 247, 251);
 			_copyButton.Location = new Point(706, 636);
 			_copyButton.Name = "_copyButton";
 			_copyButton.Size = new Size(170, 42);
 			_copyButton.TabIndex = 5;
 			_copyButton.Text = "Copy Report";
 			_copyButton.UseAccentStyle = true;
+			_copyButton.UseVisualStyleBackColor = false;
 			_copyButton.Click += CopyButton_Click;
 			// 
 			// ConfigurationValidationDialog
 			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
-			BackColor = SettingsPalette.Window;
+			BackColor = Color.FromArgb(8, 13, 24);
 			CancelButton = _closeButton;
 			ClientSize = new Size(900, 700);
 			Controls.Add(_titleLabel);
@@ -121,7 +132,7 @@ namespace Synix_Control_Panel.SynixApp.UI
 			Controls.Add(_closeButton);
 			Controls.Add(_copyButton);
 			Font = new Font("Segoe UI", 10F);
-			FormBorderStyle = FormBorderStyle.Sizable;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
 			MinimumSize = new Size(720, 560);
 			Name = "ConfigurationValidationDialog";

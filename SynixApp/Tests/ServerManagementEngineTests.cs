@@ -370,6 +370,7 @@ public sealed class ServerManagementEngineTests
 	[InlineData(Core.ServerState.BackingUp, "Backing Up")]
 	[InlineData(Core.ServerState.Validating, "Validating")]
 	[InlineData(Core.ServerState.Export, "Exporting")]
+	[InlineData(Core.ServerState.Restoring, "Restoring")]
 	public void ServerStates_UseTheExpectedUserFacingText(
 		Core.ServerState state,
 		string expectedText)
@@ -391,6 +392,7 @@ public sealed class ServerManagementEngineTests
 	[InlineData("Backing Up |", "Backing Up")]
 	[InlineData("Validating", "Validating")]
 	[InlineData("Exporting", "Exporting")]
+	[InlineData("Restoring /", "Restoring")]
 	public void BusyStatusPresentation_RecognizesCurrentAndLegacyBusyText(
 		string status,
 		string expectedState)

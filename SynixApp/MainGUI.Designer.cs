@@ -110,6 +110,7 @@ namespace Synix_Control_Panel
 			fileValidationToolStripMenuItem = new ToolStripMenuItem();
 			btnExportBatch = new ToolStripMenuItem();
 			backupServerToolStripMenuItem = new ToolStripMenuItem();
+			restoreServerBackupToolStripMenuItem = new ToolStripMenuItem();
 			toolStripSeparator3 = new ToolStripSeparator();
 			connectionTestToolStripMenuItem = new ToolStripMenuItem();
 			connectionLocalTestToolStripMenuItem = new ToolStripMenuItem();
@@ -1089,7 +1090,7 @@ namespace Synix_Control_Panel
 			// 
 			// contextMenuStrip
 			// 
-			contextMenuStrip.Items.AddRange(new ToolStripItem[] { deleteServerToolStripMenuItem, toolStripSeparator4, openServerFolderToolStripMenuItem, backupToolStripMenuItem, openServerConfigFileToolStripMenuItem, openLatestGameLogToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem });
+			contextMenuStrip.Items.AddRange(new ToolStripItem[] { deleteServerToolStripMenuItem, toolStripSeparator4, openServerFolderToolStripMenuItem, backupToolStripMenuItem, openServerConfigFileToolStripMenuItem, openLatestGameLogToolStripMenuItem, toolStripSeparator5, updateServerToolStripMenuItem, fileValidationToolStripMenuItem, btnExportBatch, backupServerToolStripMenuItem, restoreServerBackupToolStripMenuItem, toolStripSeparator3, connectionTestToolStripMenuItem, connectionLocalTestToolStripMenuItem });
 			contextMenuStrip.Name = "contextMenuStrip";
 			contextMenuStrip.Size = new Size(197, 242);
 			// 
@@ -1165,6 +1166,11 @@ namespace Synix_Control_Panel
 			backupServerToolStripMenuItem.Size = new Size(196, 22);
 			backupServerToolStripMenuItem.Text = "Backup Server";
 			backupServerToolStripMenuItem.Click += btnBackup_Click;
+			restoreServerBackupToolStripMenuItem.Name = "restoreServerBackupToolStripMenuItem";
+			restoreServerBackupToolStripMenuItem.Size = new Size(196, 22);
+			restoreServerBackupToolStripMenuItem.Text = "Restore Server Backup";
+			restoreServerBackupToolStripMenuItem.Visible = false;
+			restoreServerBackupToolStripMenuItem.Click += btnRestoreServerBackup_Click;
 			// 
 			// toolStripSeparator3
 			// 
@@ -1331,6 +1337,7 @@ namespace Synix_Control_Panel
 		private ToolStripMenuItem fileValidationToolStripMenuItem;
 		private ToolStripMenuItem btnExportBatch;
 		private ToolStripMenuItem backupServerToolStripMenuItem;
+		private ToolStripMenuItem restoreServerBackupToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator3;
 		private ToolStripMenuItem connectionTestToolStripMenuItem;
 		private ToolStripMenuItem connectionLocalTestToolStripMenuItem;

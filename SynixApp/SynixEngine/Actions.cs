@@ -262,10 +262,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void OpenBackFolder(GameServer selectedServer)
 		{
-			string cleanGame = Core.Instance.GetSafeName(selectedServer.Game);
-			string cleanServer = Core.Instance.GetSafeName(selectedServer.ServerName);
-
-			string fullPath = Path.Combine(DefaultBackupPath, cleanGame, cleanServer);
+			IReadOnlyList<ServerBackupArchive> backups = GetServerBackups(selectedServer);
+			string fullPath = backups.Count > 0
+				? Path.GetDirectoryName(backups[0].ArchivePath) ?? GetActiveServerBackupFolder(selectedServer)
+				: GetActiveServerBackupFolder(selectedServer);
 
 			if (Directory.Exists(fullPath))
 			{

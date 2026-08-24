@@ -29,6 +29,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScheduleSettingsGUI));
 			headerGlyph = new ModernSettingsGlyph();
 			lblHeading = new Label();
 			lblSubtitle = new Label();
@@ -54,14 +55,17 @@ namespace Synix_Control_Panel.ServerHandler
 			btnCancel = new ModernSettingsButton();
 			btnSaveSchedule = new ModernSettingsButton();
 			timeCard.SuspendLayout();
-			daysCard.SuspendLayout();
 			(numRestartHour).BeginInit();
 			(numRestartMinute).BeginInit();
+			daysCard.SuspendLayout();
 			SuspendLayout();
 			// 
 			// headerGlyph
 			// 
-			headerGlyph.ForeColor = SettingsPalette.Accent;
+			headerGlyph.BackColor = Color.FromArgb(17, 27, 45);
+			headerGlyph.Font = new Font("Segoe UI Symbol", 15F);
+			headerGlyph.ForeColor = Color.FromArgb(32, 214, 199);
+			headerGlyph.Glyph = "•";
 			headerGlyph.Location = new Point(24, 24);
 			headerGlyph.Name = "headerGlyph";
 			headerGlyph.Size = new Size(52, 52);
@@ -71,7 +75,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// lblHeading
 			// 
 			lblHeading.Font = new Font("Segoe UI", 19F, FontStyle.Bold);
-			lblHeading.ForeColor = SettingsPalette.PrimaryText;
+			lblHeading.ForeColor = Color.FromArgb(245, 247, 251);
 			lblHeading.Location = new Point(92, 22);
 			lblHeading.Name = "lblHeading";
 			lblHeading.Size = new Size(570, 39);
@@ -80,7 +84,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// 
 			// lblSubtitle
 			// 
-			lblSubtitle.ForeColor = SettingsPalette.SecondaryText;
+			lblSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
 			lblSubtitle.Location = new Point(94, 62);
 			lblSubtitle.Name = "lblSubtitle";
 			lblSubtitle.Size = new Size(568, 28);
@@ -89,7 +93,8 @@ namespace Synix_Control_Panel.ServerHandler
 			// 
 			// timeCard
 			// 
-			timeCard.BorderColor = SettingsPalette.Border;
+			timeCard.BackColor = Color.FromArgb(17, 27, 45);
+			timeCard.BorderColor = Color.FromArgb(38, 52, 77);
 			timeCard.Controls.Add(lblTimeTitle);
 			timeCard.Controls.Add(lblTimeHelp);
 			timeCard.Controls.Add(lblHour);
@@ -97,8 +102,9 @@ namespace Synix_Control_Panel.ServerHandler
 			timeCard.Controls.Add(lblTimeSeparator);
 			timeCard.Controls.Add(numRestartHour);
 			timeCard.Controls.Add(numRestartMinute);
-			timeCard.FillColor = SettingsPalette.Card;
+			timeCard.FillColor = Color.FromArgb(17, 27, 45);
 			timeCard.Location = new Point(24, 108);
+			timeCard.Margin = new Padding(0, 0, 0, 16);
 			timeCard.Name = "timeCard";
 			timeCard.Size = new Size(652, 108);
 			timeCard.TabIndex = 3;
@@ -106,7 +112,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// lblTimeTitle
 			// 
 			lblTimeTitle.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
-			lblTimeTitle.ForeColor = SettingsPalette.PrimaryText;
+			lblTimeTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblTimeTitle.Location = new Point(20, 18);
 			lblTimeTitle.Name = "lblTimeTitle";
 			lblTimeTitle.Size = new Size(360, 26);
@@ -115,7 +121,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// 
 			// lblTimeHelp
 			// 
-			lblTimeHelp.ForeColor = SettingsPalette.SecondaryText;
+			lblTimeHelp.ForeColor = Color.FromArgb(158, 172, 194);
 			lblTimeHelp.Location = new Point(20, 50);
 			lblTimeHelp.Name = "lblTimeHelp";
 			lblTimeHelp.Size = new Size(394, 38);
@@ -125,7 +131,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// lblHour
 			// 
 			lblHour.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-			lblHour.ForeColor = SettingsPalette.SecondaryText;
+			lblHour.ForeColor = Color.FromArgb(158, 172, 194);
 			lblHour.Location = new Point(426, 15);
 			lblHour.Name = "lblHour";
 			lblHour.Size = new Size(100, 22);
@@ -136,7 +142,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// lblMinute
 			// 
 			lblMinute.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-			lblMinute.ForeColor = SettingsPalette.SecondaryText;
+			lblMinute.ForeColor = Color.FromArgb(158, 172, 194);
 			lblMinute.Location = new Point(548, 15);
 			lblMinute.Name = "lblMinute";
 			lblMinute.Size = new Size(84, 22);
@@ -147,7 +153,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// lblTimeSeparator
 			// 
 			lblTimeSeparator.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
-			lblTimeSeparator.ForeColor = SettingsPalette.PrimaryText;
+			lblTimeSeparator.ForeColor = Color.FromArgb(245, 247, 251);
 			lblTimeSeparator.Location = new Point(526, 46);
 			lblTimeSeparator.Name = "lblTimeSeparator";
 			lblTimeSeparator.Size = new Size(22, 32);
@@ -158,9 +164,10 @@ namespace Synix_Control_Panel.ServerHandler
 			// numRestartHour
 			// 
 			numRestartHour.AccessibleName = "Restart hour using a 24-hour clock";
-			numRestartHour.BackColor = SettingsPalette.Input;
+			numRestartHour.AccessibleRole = AccessibleRole.SpinButton;
+			numRestartHour.BackColor = Color.FromArgb(12, 21, 36);
 			numRestartHour.Font = new Font("Segoe UI", 11F);
-			numRestartHour.ForeColor = SettingsPalette.PrimaryText;
+			numRestartHour.ForeColor = Color.FromArgb(245, 247, 251);
 			numRestartHour.Location = new Point(426, 40);
 			numRestartHour.Maximum = 23;
 			numRestartHour.Minimum = 0;
@@ -172,9 +179,10 @@ namespace Synix_Control_Panel.ServerHandler
 			// numRestartMinute
 			// 
 			numRestartMinute.AccessibleName = "Restart minute";
-			numRestartMinute.BackColor = SettingsPalette.Input;
+			numRestartMinute.AccessibleRole = AccessibleRole.SpinButton;
+			numRestartMinute.BackColor = Color.FromArgb(12, 21, 36);
 			numRestartMinute.Font = new Font("Segoe UI", 11F);
-			numRestartMinute.ForeColor = SettingsPalette.PrimaryText;
+			numRestartMinute.ForeColor = Color.FromArgb(245, 247, 251);
 			numRestartMinute.Location = new Point(548, 40);
 			numRestartMinute.Maximum = 59;
 			numRestartMinute.Minimum = 0;
@@ -185,7 +193,8 @@ namespace Synix_Control_Panel.ServerHandler
 			// 
 			// daysCard
 			// 
-			daysCard.BorderColor = SettingsPalette.Border;
+			daysCard.BackColor = Color.FromArgb(17, 27, 45);
+			daysCard.BorderColor = Color.FromArgb(38, 52, 77);
 			daysCard.Controls.Add(lblDaysTitle);
 			daysCard.Controls.Add(lblDaysHelp);
 			daysCard.Controls.Add(chkSun);
@@ -195,8 +204,9 @@ namespace Synix_Control_Panel.ServerHandler
 			daysCard.Controls.Add(chkThu);
 			daysCard.Controls.Add(chkFri);
 			daysCard.Controls.Add(chkSa);
-			daysCard.FillColor = SettingsPalette.Card;
+			daysCard.FillColor = Color.FromArgb(17, 27, 45);
 			daysCard.Location = new Point(24, 232);
+			daysCard.Margin = new Padding(0, 0, 0, 16);
 			daysCard.Name = "daysCard";
 			daysCard.Size = new Size(652, 220);
 			daysCard.TabIndex = 4;
@@ -204,7 +214,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// lblDaysTitle
 			// 
 			lblDaysTitle.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
-			lblDaysTitle.ForeColor = SettingsPalette.PrimaryText;
+			lblDaysTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblDaysTitle.Location = new Point(20, 16);
 			lblDaysTitle.Name = "lblDaysTitle";
 			lblDaysTitle.Size = new Size(612, 26);
@@ -213,7 +223,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// 
 			// lblDaysHelp
 			// 
-			lblDaysHelp.ForeColor = SettingsPalette.SecondaryText;
+			lblDaysHelp.ForeColor = Color.FromArgb(158, 172, 194);
 			lblDaysHelp.Location = new Point(20, 43);
 			lblDaysHelp.Name = "lblDaysHelp";
 			lblDaysHelp.Size = new Size(612, 24);
@@ -292,7 +302,7 @@ namespace Synix_Control_Panel.ServerHandler
 			// 
 			// lblScheduleHint
 			// 
-			lblScheduleHint.ForeColor = SettingsPalette.SecondaryText;
+			lblScheduleHint.ForeColor = Color.FromArgb(158, 172, 194);
 			lblScheduleHint.Location = new Point(24, 474);
 			lblScheduleHint.Name = "lblScheduleHint";
 			lblScheduleHint.Size = new Size(390, 40);
@@ -301,30 +311,40 @@ namespace Synix_Control_Panel.ServerHandler
 			// 
 			// btnCancel
 			// 
+			btnCancel.BackColor = Color.FromArgb(12, 21, 36);
 			btnCancel.DialogResult = DialogResult.Cancel;
+			btnCancel.FlatStyle = FlatStyle.Flat;
+			btnCancel.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnCancel.ForeColor = Color.FromArgb(245, 247, 251);
 			btnCancel.Location = new Point(460, 478);
 			btnCancel.Name = "btnCancel";
 			btnCancel.Size = new Size(102, 42);
 			btnCancel.TabIndex = 6;
 			btnCancel.Text = "Cancel";
+			btnCancel.UseVisualStyleBackColor = false;
 			btnCancel.Click += btnCancel_Click;
 			// 
 			// btnSaveSchedule
 			// 
+			btnSaveSchedule.BackColor = Color.FromArgb(12, 21, 36);
+			btnSaveSchedule.FlatStyle = FlatStyle.Flat;
+			btnSaveSchedule.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnSaveSchedule.ForeColor = Color.FromArgb(245, 247, 251);
 			btnSaveSchedule.Location = new Point(574, 478);
 			btnSaveSchedule.Name = "btnSaveSchedule";
 			btnSaveSchedule.Size = new Size(102, 42);
 			btnSaveSchedule.TabIndex = 7;
 			btnSaveSchedule.Text = "Save";
 			btnSaveSchedule.UseAccentStyle = true;
+			btnSaveSchedule.UseVisualStyleBackColor = false;
 			btnSaveSchedule.Click += btnSaveSchedule_Click;
 			// 
 			// ScheduleSettingsGUI
 			// 
 			AcceptButton = btnSaveSchedule;
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
-			BackColor = SettingsPalette.Window;
+			BackColor = Color.FromArgb(8, 13, 24);
 			CancelButton = btnCancel;
 			ClientSize = new Size(700, 542);
 			Controls.Add(headerGlyph);
@@ -337,6 +357,7 @@ namespace Synix_Control_Panel.ServerHandler
 			Controls.Add(btnSaveSchedule);
 			Font = new Font("Segoe UI", 10F);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "ScheduleSettingsGUI";
@@ -344,9 +365,9 @@ namespace Synix_Control_Panel.ServerHandler
 			StartPosition = FormStartPosition.CenterParent;
 			Text = "Maintenance Schedule";
 			timeCard.ResumeLayout(false);
-			daysCard.ResumeLayout(false);
 			(numRestartHour).EndInit();
 			(numRestartMinute).EndInit();
+			daysCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 

@@ -48,6 +48,7 @@
 	  <EmbeddedResource Include="SynixEngine\version.txt" />
 	  <EmbeddedResource Include="Database\GameDefinitions\**\*.game.json" />
 	  <EmbeddedResource Include="Database\GameDefinitions\**\Templates\**\*" />
+	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -128,6 +129,12 @@
 	  <Compile Update="UI\GameVerificationQueue.Designer.cs">
 	    <DependentUpon>GameVerificationQueue.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\ArgumentVerificationDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ArgumentVerificationDialog.Designer.cs">
+	    <DependentUpon>ArgumentVerificationDialog.cs</DependentUpon>
+	  </Compile>
 	  <Compile Update="UI\TroubleshooterDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
@@ -146,6 +153,12 @@
 	  <Compile Update="UI\ReliabilityTestDialog.Designer.cs">
 	    <DependentUpon>ReliabilityTestDialog.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\ServerBackupRestoreDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerBackupRestoreDialog.Designer.cs">
+	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -155,6 +168,10 @@
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="UI\SteamAccountLoginDialog.resx">
 	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="UI\ServerBackupRestoreDialog.resx">
+	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	</ItemGroup>

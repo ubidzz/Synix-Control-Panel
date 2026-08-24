@@ -242,7 +242,7 @@ namespace Synix_Control_Panel
 			if (isDownloadActive || Core.Instance.isDownloadActive)
 			{
 				e.Cancel = true;
-				MessageBox.Show("Cannot close Synix while a server is installing, updating or Backing Up!",
+				MessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, or restoring!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
@@ -578,6 +578,7 @@ namespace Synix_Control_Panel
 					currentStatus.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Updating", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Restoring", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase),
 				"Needs Attention" => currentStatus.Equals(
@@ -744,6 +745,61 @@ namespace Synix_Control_Panel
 			await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
 		}
 
+		private async void btnRestoreServerBackup_Click(object sender, EventArgs e)
+		{
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null)
+				return;
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMessage, "Restore"))
+			{
+				AppendLog(lockMessage, Color.Orange);
+				return;
+			}
+
+			IReadOnlyList<ServerBackupArchive> backups =
+				Core.Instance.GetServerBackups(selectedServer);
+			if (backups.Count == 0)
+			{
+				AppendLog($"[♻ RESTORE] No backups were found for {selectedServer.ServerName}.", Color.Yellow);
+				return;
+			}
+
+			using ServerBackupRestoreDialog dialog = new(selectedServer, backups);
+			if (dialog.ShowDialog(this) != DialogResult.OK || dialog.SelectedBackup == null)
+				return;
+
+			ServerBackupArchive selectedBackup = dialog.SelectedBackup;
+			DialogResult confirmation = MessageBox.Show(
+				this,
+				$"Restore {selectedServer.ServerName} from this backup?\n\n" +
+				$"Created: {selectedBackup.CreatedLocal:f}\n" +
+				$"File: {selectedBackup.FileName}\n\n" +
+				"The current server files will be replaced. Synix will stage the backup first and automatically return the current files if restoration fails. The saved Synix server entry and settings will not be changed.",
+				"Confirm Server Restore",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation != DialogResult.Yes)
+				return;
+
+			Progress<string> progress = new(message =>
+			{
+				if (!message.StartsWith("Unpacking backup file", StringComparison.OrdinalIgnoreCase))
+					AppendLog($"[♻ RESTORE] {message}", Color.Cyan);
+			});
+			ServerBackupRestoreResult result = await Core.Instance.RestoreServerBackupAsync(
+				selectedServer,
+				selectedBackup,
+				progress);
+
+			MessageBox.Show(
+				this,
+				result.Message,
+				result.Succeeded ? "Server Backup Restored" : "Server Restore Failed",
+				MessageBoxButtons.OK,
+				result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+		}
+
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
 			var selectedServer = GetSelectedServer();
@@ -897,6 +953,9 @@ namespace Synix_Control_Panel
 				bool hasDeclaredLogs = GameLogDiscovery.HasDeclaredLogs(selectedServer.Game);
 				openLatestGameLogToolStripMenuItem.Visible = hasDeclaredLogs;
 				openLatestGameLogToolStripMenuItem.Enabled = hasDeclaredLogs;
+				bool hasBackups = Core.Instance.HasServerBackups(selectedServer);
+				restoreServerBackupToolStripMenuItem.Visible = hasBackups;
+				restoreServerBackupToolStripMenuItem.Enabled = hasBackups;
 
 				if (selectedServer.Status == "Running")
 				{
