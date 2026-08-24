@@ -845,6 +845,65 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void CraftopiaTemplate_CreatesTheCompleteConfigurationAndAppliesSavedValues()
+	{
+		Assert.Equal(
+			ConfigFileCreationMode.SynixTemplate,
+			GameFix.GetConfigFileCreationMode("Craftopia"));
+		Assert.True(GameFix.TryGetConfiguration(
+			"Craftopia",
+			out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		Assert.True(definition.SupportsFullReset);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.ServerPassword);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.MaxPlayers);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.WorldName);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.Port);
+
+		GameServer server = CreateServer("Craftopia");
+		server.WorldName = "Synix Craftopia World";
+		server.MaxPlayers = 12;
+		server.Port = 7000;
+		ConfigurationContext protectedContext = new(
+			server,
+			new SynixServerPasswords("12345678", string.Empty, string.Empty),
+			Core.Instance.GetSafeName(server.ServerName),
+			string.Empty,
+			string.Empty);
+
+		ConfigurationApplyResult created = definition.Apply(protectedContext);
+
+		Assert.True(created.Succeeded, created.Message);
+		Assert.True(created.Complete, created.Message);
+		Assert.True(created.Created);
+		string path = definition.ResolveFullPath(server);
+		string content = File.ReadAllText(path);
+		Assert.Contains("[GameWorld]", content);
+		Assert.Contains("[Host]", content);
+		Assert.Contains("[Graphics]", content);
+		Assert.Contains("[Save]", content);
+		Assert.Contains("[CreativeModeSetting]", content);
+		Assert.Contains("[CreativeModePlStatus]", content);
+		Assert.Equal("Synix Craftopia World", GetValue(path, definition.Format, "name"));
+		Assert.Equal("7000", GetValue(path, definition.Format, "port"));
+		Assert.Equal("12", GetValue(path, definition.Format, "maxPlayerNumber"));
+		Assert.Equal("1", GetValue(path, definition.Format, "usePassword"));
+		Assert.Equal("12345678", GetValue(path, definition.Format, "serverPassword"));
+
+		ConfigurationContext publicContext = new(
+			server,
+			new SynixServerPasswords(string.Empty, string.Empty, string.Empty),
+			Core.Instance.GetSafeName(server.ServerName),
+			string.Empty,
+			string.Empty);
+		ConfigurationApplyResult reset = definition.ResetToTemplate(publicContext);
+
+		Assert.True(reset.Succeeded, reset.Message);
+		Assert.Equal("0", GetValue(path, definition.Format, "usePassword"));
+		Assert.Equal(string.Empty, GetValue(path, definition.Format, "serverPassword"));
+	}
+
+	[Fact]
 	public void ManagedConfigurations_CanOnlyBeDisabledForDevelopmentBuilds()
 	{
 		Assert.False(GameFix.ShouldUseManagedConfigurations(false, true));

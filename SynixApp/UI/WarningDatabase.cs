@@ -1023,7 +1023,7 @@ namespace Synix_Control_Panel.Database
 			if (game?.RequiredLaunchFiles.Length > 0)
 			{
 				lblWarningTitle.Text = "Additional files are required";
-				lblWarningSubtitle.Text = "Complete the player-file steps before the dedicated server can start.";
+				lblWarningSubtitle.Text = "Complete the required file setup before the dedicated server can start.";
 				btnStart.Text = "I Understand";
 			}
 			else if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
@@ -1047,8 +1047,8 @@ namespace Synix_Control_Panel.Database
 			{
 				string requiredFiles = string.Join(", ", game.RequiredLaunchFiles);
 				return
-					"ADDITIONAL PLAYER FILES REQUIRED:\n\n" +
-					$"This dedicated server needs {requiredFiles}. These files must be created by the normal game before the server can start.\n\n" +
+					"ADDITIONAL SETUP FILES REQUIRED:\n\n" +
+					$"This dedicated server needs {requiredFiles}. These files must be created or exported by the game or its official setup tool before the server can start.\n\n" +
 					game.LaunchFileSetupInstructions + "\n\n" +
 					"If the files were created on another computer, copy them into this Synix server folder before starting it.";
 			}

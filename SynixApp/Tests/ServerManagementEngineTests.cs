@@ -108,6 +108,32 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Fact]
+	public void Atlas_RequiresItsExportedGridBeforeStarting()
+	{
+		GameInfo game = GameDatabase.GetGame("Atlas")!;
+
+		Assert.Equal(
+			[
+				@"ShooterGame\ServerGrid.json",
+				@"ShooterGame\ServerGrid.ServerOnly.json"
+			],
+			game.RequiredLaunchFiles);
+		Assert.Equal("Synix ATLAS Grid", game.ExternalDataFolderName);
+		Assert.Contains("ServerGridEditor", game.LaunchFileSetupInstructions);
+		Assert.Contains("redis-server_start.bat", game.LaunchFileSetupInstructions);
+		Assert.Contains("127.0.0.1", game.LaunchFileSetupInstructions);
+
+		string warning = WarningDatabase.GetWarningText(new GameServer
+		{
+			Game = game.Game,
+			ServerName = "Test"
+		});
+		Assert.Contains("ADDITIONAL SETUP FILES REQUIRED", warning);
+		Assert.Contains("ServerGrid.ServerOnly.json", warning);
+		Assert.Contains("official setup tool", warning);
+	}
+
+	[Fact]
 	public void RequiredLaunchFiles_AreImportedWithoutOverwritingServerFiles()
 	{
 		string testRoot = Path.Combine(
@@ -157,6 +183,58 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Fact]
+	public void RequiredLaunchFiles_CanImportFlatUserFilesIntoNestedDestinations()
+	{
+		string testRoot = Path.Combine(
+			Path.GetTempPath(),
+			"SynixNestedLaunchFileTests",
+			Guid.NewGuid().ToString("N"));
+		string source = Path.Combine(testRoot, "source");
+		string serverRoot = Path.Combine(testRoot, "server");
+		Directory.CreateDirectory(source);
+		File.WriteAllText(Path.Combine(source, "ServerGrid.json"), "grid");
+		File.WriteAllText(
+			Path.Combine(source, "ServerGrid.ServerOnly.json"),
+			"database");
+
+		try
+		{
+			GameInfo game = GameDatabase.GetGame("Atlas")!;
+			GameServer server = new()
+			{
+				Game = game.Game,
+				InstallPath = serverRoot,
+				ServerName = "Test"
+			};
+
+			RequiredLaunchFileResult result = Core.PrepareRequiredLaunchFiles(
+				server,
+				game,
+				[source]);
+
+			Assert.Empty(result.MissingFiles);
+			Assert.Equal(2, result.CopiedFiles.Count);
+			Assert.Equal(
+				"grid",
+				File.ReadAllText(Path.Combine(
+					serverRoot,
+					"ShooterGame",
+					"ServerGrid.json")));
+			Assert.Equal(
+				"database",
+				File.ReadAllText(Path.Combine(
+					serverRoot,
+					"ShooterGame",
+					"ServerGrid.ServerOnly.json")));
+		}
+		finally
+		{
+			if (Directory.Exists(testRoot))
+				Directory.Delete(testRoot, true);
+		}
+	}
+
+	[Fact]
 	public void RequiredServerPorts_DoesNotCheckOneSharedPortTwice()
 	{
 		GameInfo game = new()
@@ -192,6 +270,24 @@ public sealed class ServerManagementEngineTests
 
 		Assert.Single(ports);
 		Assert.Equal((8778, "game port"), ports[0]);
+	}
+
+	[Theory]
+	[InlineData(Core.ServerState.Stopped, false)]
+	[InlineData(Core.ServerState.Crashed, false)]
+	[InlineData(Core.ServerState.Running, true)]
+	[InlineData(Core.ServerState.Starting, true)]
+	[InlineData(Core.ServerState.Stopping, true)]
+	public void ActivePortReservation_OnlyIncludesServersThatCanOwnTheSocket(
+		Core.ServerState state,
+		bool expected)
+	{
+		GameServer server = new()
+		{
+			Status = Core.StatusManager.GetStatus(state)
+		};
+
+		Assert.Equal(expected, Core.IsActivePortReservation(server));
 	}
 
 	[Theory]

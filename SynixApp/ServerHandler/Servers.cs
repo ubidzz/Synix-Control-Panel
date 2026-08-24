@@ -128,7 +128,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					GamePrerequisiteChecker.CheckCurrentSystem(
 						selectedDefinition,
 						server,
-						port => Core.Instance.GetPortCollisionOwner(port, server),
+						port => Core.Instance.GetPortCollisionOwner(
+							port,
+							server,
+							activeOnly: true),
 						Core.Instance.IsPortInUseLocally));
 				foreach (GamePrerequisiteItem warning in prerequisites.Items.Where(item =>
 					item.State == GamePrerequisiteState.Warning))

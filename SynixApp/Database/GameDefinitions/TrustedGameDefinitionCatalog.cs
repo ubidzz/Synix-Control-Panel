@@ -117,6 +117,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			{
 				"ServerName",
 				"Password",
+				"HasPassword",
 				"AdminPassword",
 				"MaxPlayers",
 				"Port",
@@ -563,7 +564,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			{
 				if (content.Contains("{ServerName}", StringComparison.Ordinal))
 					inputs |= ManagedConfigurationInput.ServerName;
-				if (content.Contains("{Password}", StringComparison.Ordinal))
+				if (content.Contains("{Password}", StringComparison.Ordinal) ||
+					content.Contains("{HasPassword}", StringComparison.Ordinal))
 					inputs |= ManagedConfigurationInput.ServerPassword;
 				if (content.Contains("{AdminPassword}", StringComparison.Ordinal))
 					inputs |= ManagedConfigurationInput.AdminPassword;

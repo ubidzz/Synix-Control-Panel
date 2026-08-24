@@ -506,7 +506,8 @@ namespace Synix_Control_Panel.SynixEngine
 			guide.AppendLine("• Launch arguments only: the game does not require a managed config for these settings.");
 			guide.AppendLine();
 			guide.AppendLine("CONFIGURATION TEMPLATE TAGS");
-			guide.AppendLine("{ServerName}, {Password}, {AdminPassword}, {MaxPlayers}, {Port}, {QueryPort}, {RCONPort}, {RCONPassword}, {EnableRcon}, {Identity}, {WorldName}, {WorldSeed}, {WorldSize}, {AppPort}, {LocalIP}, {PublicIP}, {IsPvp}, {IsPve}, {GameMode}");
+			guide.AppendLine("{ServerName}, {Password}, {HasPassword}, {AdminPassword}, {MaxPlayers}, {Port}, {QueryPort}, {RCONPort}, {RCONPassword}, {EnableRcon}, {Identity}, {WorldName}, {WorldSeed}, {WorldSize}, {AppPort}, {LocalIP}, {PublicIP}, {IsPvp}, {IsPve}, {GameMode}");
+			guide.AppendLine("{HasPassword} writes the definition's true value when a server password exists and its false value when the password is empty.");
 			guide.AppendLine("Use Add configuration files when a server needs more than one file. Select each complete source file, then edit its Installed location in the table so the path is relative to the server folder. Synix validates, embeds, writes, repairs, and upgrades every listed file together.");
 			guide.AppendLine();
 			guide.AppendLine("REQUIRED USER-SUPPLIED FILES");

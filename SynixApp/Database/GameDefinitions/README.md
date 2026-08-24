@@ -21,6 +21,8 @@ Special hardware and launch behavior belongs in `runtimeRequirements` and `launc
 
 Complete templates may use either `SynixTemplate` or `GameGenerated`. `SynixTemplate` writes the complete file before first start. `GameGenerated` is for an official complete configuration captured after the server creates it; Synix then uses that built-in copy for managed values, validation, repair, and full reset. In both modes, placeholders automatically expose matching common fields in Server Settings without another game-name switch.
 
+Use `{HasPassword}` when a configuration has a separate password-enabled field. It expands to the definition's `booleanTrueValue` when `{Password}` is not empty and `booleanFalseValue` when it is empty.
+
 `supportedServerFrameworks` exposes only frameworks with a fixed implementation compiled into Synix. Rust may list `Oxide`. Synix downloads only the official Windows Oxide.Rust release, requires GitHub's published SHA-256 digest, performs guarded extraction with rollback, and reapplies Oxide after Rust updates. Plugins are never installed or managed by Synix and remain the user's responsibility.
 
 The builder is a development tool. It writes validated source files into this project but cannot add games to an already released Synix executable.

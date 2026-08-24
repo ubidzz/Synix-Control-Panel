@@ -273,47 +273,40 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
-		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
+		public string? GetPortCollisionOwner(
+			int port,
+			GameServer? excluding = null,
+			bool activeOnly = false)
 		{
 			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
 			{
-				GameInfo? gameData = GameDatabase.GetGame(server.Game);
-				string requiredArgs = gameData?.RequiredArgs ?? "";
-				string rconSyntax = gameData?.RconSyntax ?? "";
-
 				if (server == excluding)
 					return false;
+				if (activeOnly && !IsActivePortReservation(server))
+					return false;
 
-				if (server.Port == port && requiredArgs.Contains("{port}", StringComparison.OrdinalIgnoreCase))
-					return true;
-
-				if (server.QueryPort > 0 && server.QueryPort == port)
-				{
-					return true;
-				}
-
-				bool usesAppPort = requiredArgs.Contains("{app_port}", StringComparison.OrdinalIgnoreCase);
-
-				if (usesAppPort &&
-					server.AppPort.HasValue &&
-					server.AppPort.Value > 0 &&
-					server.AppPort.Value == port)
-				{
-					return true;
-				}
-
-				bool usesRconPort =
-					requiredArgs.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase) ||
-					requiredArgs.Contains("{rcon}", StringComparison.OrdinalIgnoreCase) ||
-					rconSyntax.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase);
-
-				return server.EnableRcon &&
-					usesRconPort &&
-					server.RconPort > 0 &&
-					server.RconPort == port;
+				GameInfo? gameData = GameDatabase.GetGame(server.Game);
+				return gameData != null &&
+					GetRequiredServerPorts(server, gameData).Any(required =>
+						required.Port == port);
 			});
 
 			return owner?.ServerName;
+		}
+
+		internal static bool IsActivePortReservation(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			string status = server.Status ?? string.Empty;
+			return status.Equals(
+					StatusManager.GetStatus(ServerState.Running),
+					StringComparison.OrdinalIgnoreCase) ||
+				status.StartsWith(
+					StatusManager.GetStatus(ServerState.Starting),
+					StringComparison.OrdinalIgnoreCase) ||
+				status.StartsWith(
+					StatusManager.GetStatus(ServerState.Stopping),
+					StringComparison.OrdinalIgnoreCase);
 		}
 
 		public bool PassResourceGuard(out string message)

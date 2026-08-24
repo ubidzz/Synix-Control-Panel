@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "atlas",
   "catalogOrder": 44,
   "game": "Atlas",
@@ -30,12 +30,15 @@
   "configFileCreation": "Unknown",
   "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
   "format": "StandardINI",
-  "externalDataFolderName": "",
-  "requiredLaunchFiles": [],
+  "externalDataFolderName": "Synix ATLAS Grid",
+  "requiredLaunchFiles": [
+    "ShooterGame\\ServerGrid.json",
+    "ShooterGame\\ServerGrid.ServerOnly.json"
+  ],
   "optionalLaunchFiles": [],
-  "launchFileSetupInstructions": "",
+  "launchFileSetupInstructions": "ATLAS is a clustered server and cannot create these files by starting the server. Use the official Grapeshot Games ServerGridEditor to create and export a grid. Copy ServerGrid.json and ServerGrid.ServerOnly.json into the server's ShooterGame folder. Before starting ATLAS, run AtlasTools\\RedisDatabase\\redis-server_start.bat and leave Redis running. Keep Redis bound to 127.0.0.1; do not expose port 6379 to the LAN, router, or Internet. Official editor: https://github.com/GrapeshotGames/ServerGridEditor",
   "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "warningMessage": "ATLAS requires an exported server grid and its included Redis database before ShooterGameServer.exe can start. Synix will block startup until ShooterGame\\ServerGrid.json and ShooterGame\\ServerGrid.ServerOnly.json are present. Create the grid with the official Grapeshot Games ServerGridEditor, place both files in the ShooterGame folder, and start AtlasTools\\RedisDatabase\\redis-server_start.bat before starting the ATLAS server. Redis must remain local to 127.0.0.1 and port 6379 must not be exposed to the Internet.",
   "iconUrl": "",
   "isQueryable": true,
   "probeProtocol": "Auto",

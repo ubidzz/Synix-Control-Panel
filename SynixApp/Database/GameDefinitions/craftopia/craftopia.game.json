@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "craftopia",
   "catalogOrder": 149,
   "game": "Craftopia",
@@ -18,7 +18,9 @@
   "worldSeed": "12345",
   "maps": [],
   "gameModes": [],
-  "configFileCreation": "Unknown",
+  "booleanTrueValue": "1",
+  "booleanFalseValue": "0",
+  "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "ServerSetting.ini",
   "format": "StandardINI",
   "externalDataFolderName": "",
@@ -26,11 +28,28 @@
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
   "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "warningMessage": "Synix creates Craftopia's complete ServerSetting.ini before the first start and applies the world name, port, player limit, and server password selected in Server Settings. Craftopia server passwords must be numeric PINs no longer than 8 digits. Leave the password empty to disable password protection.",
   "iconUrl": "",
   "isQueryable": false,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerPassword",
+      "MaxPlayers",
+      "WorldName",
+      "Port"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "ServerSetting.ini",
+        "templateFile": "ServerSetting.ini"
+      }
+    ]
+  }
 }

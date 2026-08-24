@@ -302,7 +302,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					string content = File.ReadAllText(path);
 					if (content.Contains("{ServerName}", StringComparison.Ordinal) ||
 						content.Contains("{Port}", StringComparison.Ordinal) ||
-						content.Contains("{Password}", StringComparison.Ordinal))
+						content.Contains("{Password}", StringComparison.Ordinal) ||
+						content.Contains("{HasPassword}", StringComparison.Ordinal))
 					{
 						AddFailure(
 							items,

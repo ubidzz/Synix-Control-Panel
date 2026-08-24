@@ -287,6 +287,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			return template
 				.Replace("{ServerName}", TextValue(RequireSingleLine(server.ServerName, "ServerName"), "server_name"), StringComparison.Ordinal)
 				.Replace("{Password}", TextValue(RequireSingleLine(context.Passwords.ServerPassword, "Password"), "password"), StringComparison.Ordinal)
+				.Replace("{HasPassword}", BooleanValue(!string.IsNullOrWhiteSpace(context.Passwords.ServerPassword)), StringComparison.Ordinal)
 				.Replace("{AdminPassword}", TextValue(RequireSingleLine(context.Passwords.AdminPassword, "AdminPassword"), "admin_password"), StringComparison.Ordinal)
 				.Replace("{MaxPlayers}", ProbeNumber(server.MaxPlayers).ToString(), StringComparison.Ordinal)
 				.Replace("{Port}", ProbeNumber(server.Port).ToString(), StringComparison.Ordinal)

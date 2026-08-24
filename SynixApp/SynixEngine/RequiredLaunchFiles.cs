@@ -44,11 +44,15 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			string missingFiles = string.Join(", ", result.MissingFiles);
+			string destinations = string.Join(
+				Environment.NewLine,
+				result.MissingFiles.Select(relativeFile =>
+					$"• {Path.GetFullPath(Path.Combine(server.InstallPath, relativeFile))}"));
 			string message =
 				$"{server.Game} needs these files before its dedicated server can start:\n\n" +
 				$"{missingFiles}\n\n" +
 				game.LaunchFileSetupInstructions + "\n\n" +
-				$"You can also copy both files directly into:\n{server.InstallPath}";
+				$"Required destinations:\n{destinations}";
 
 			Log($"[SETUP REQUIRED] Missing {missingFiles}. {game.LaunchFileSetupInstructions}", Color.Orange, true);
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
@@ -106,8 +110,20 @@ namespace Synix_Control_Panel.SynixEngine
 
 				foreach (string sourceFolder in sourceFolders)
 				{
-					if (!TryResolveInside(sourceFolder, relativeFile, out string source) ||
-						!File.Exists(source))
+					string source = string.Empty;
+					bool foundSource =
+						TryResolveInside(sourceFolder, relativeFile, out source) &&
+						File.Exists(source);
+					if (!foundSource)
+					{
+						foundSource =
+							TryResolveInside(
+								sourceFolder,
+								Path.GetFileName(relativeFile),
+								out source) &&
+							File.Exists(source);
+					}
+					if (!foundSource)
 					{
 						continue;
 					}
