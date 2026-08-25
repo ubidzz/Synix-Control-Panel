@@ -33,7 +33,7 @@ namespace Synix_Control_Panel
 		private string _oldPath = string.Empty;
 		private bool[] _selectedDays = new bool[7] { false, false, false, false, false, false, false };
 		private string _selectedTime = "04:00";
-		private System.Windows.Forms.Timer debounceTimer;
+		private System.Windows.Forms.Timer? debounceTimer;
 		private bool _PrivacyMode = false;
 		private bool _isApplyingPortOffset = false;
 		private bool _suppressMinecraftMetadataEvents = false;
@@ -416,8 +416,8 @@ namespace Synix_Control_Panel
 			{
 				string currentName = txtName?.Text?.Trim() ?? "";
 				bool hasName = !string.IsNullOrWhiteSpace(currentName);
-				bool hasGame = cmbGame != null && cmbGame.SelectedIndex > 0;
-				string selectedGame = hasGame ? cmbGame.Text : "";
+				bool hasGame = cmbGame?.SelectedIndex > 0;
+				string selectedGame = hasGame ? cmbGame?.Text ?? string.Empty : string.Empty;
 				bool isBaseReady = hasName && hasGame;
 				GameInfo? selectedDefinition = hasGame
 					? GameDatabase.GetGame(selectedGame)
@@ -1191,7 +1191,10 @@ namespace Synix_Control_Panel
 			if (isPrivacyLoading) return;
 			if (cmbGame.SelectedIndex > 0)
 			{
-				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
+				string? selectedGame = cmbGame.SelectedItem?.ToString();
+				if (string.IsNullOrWhiteSpace(selectedGame))
+					return;
+				var gameData = GameDatabase.GetGame(selectedGame);
 				if (gameData != null)
 				{
 					numPort.Value = Math.Clamp(gameData.Port, numPort.Minimum, numPort.Maximum);

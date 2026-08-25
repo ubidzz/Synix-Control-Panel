@@ -25,6 +25,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 		public static int Install(GameServer server, GameInfo blueprint, Action<string> logCallback, Action<int>? onPidStarted = null)
 		{
+			ArgumentNullException.ThrowIfNull(logCallback);
 			if (blueprint.AppID == "0" || blueprint.AppID.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
 				return InstallDirectDownloadAsync(server, blueprint, logCallback).GetAwaiter().GetResult();
@@ -58,7 +59,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					server,
 					blueprint,
 					startInfo,
-					logCallback,
+					logCallback!,
 					onPidStarted);
 			}
 
@@ -916,7 +917,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 							javaExecutable,
 							fullFilePath,
 							forgeArtifactVersion,
-							logCallback);
+							logCallback!);
 						if (forgeResult != 0)
 							return forgeResult;
 					}
@@ -998,8 +999,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 				string output = await outputTask;
 				string errors = await errorTask;
-				LogProcessOutput(output, "FORGE", logCallback);
-				LogProcessOutput(errors, "FORGE", logCallback);
+				LogProcessOutput(output, "FORGE", logCallback!);
+				LogProcessOutput(errors, "FORGE", logCallback!);
 
 				if (installer.ExitCode != 0)
 				{

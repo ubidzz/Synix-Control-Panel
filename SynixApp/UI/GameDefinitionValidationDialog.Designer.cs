@@ -151,7 +151,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(_copyButton);
 			Controls.Add(_runButton);
 			Font = new Font("Segoe UI", 10F);
-			Icon = (Icon)resources.GetObject("$this.Icon");
+			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
 			MinimizeBox = false;
 			MinimumSize = new Size(720, 560);
 			Name = "GameDefinitionValidationDialog";

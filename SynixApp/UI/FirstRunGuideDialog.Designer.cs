@@ -195,7 +195,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(finishButton);
 			Font = new Font("Segoe UI", 10F);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
-			Icon = (Icon)resources.GetObject("$this.Icon");
+			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "FirstRunGuideDialog";

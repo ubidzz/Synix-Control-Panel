@@ -1186,6 +1186,8 @@ namespace Synix_Control_Panel.ServerHandler
 				Math.Min(92, eventArgs.CellBounds.Width - 24),
 				26);
 			using SolidBrush badgeBrush = new(GetTypeBadgeColor(line.Type));
+			if (eventArgs.Graphics == null)
+				return;
 			eventArgs.Graphics.FillRectangle(badgeBrush, badgeBounds);
 			TextRenderer.DrawText(
 				eventArgs.Graphics,

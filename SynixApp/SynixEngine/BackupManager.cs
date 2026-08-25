@@ -30,10 +30,13 @@ namespace Synix_Control_Panel.SynixEngine
 		string ArchivePath,
 		DateTime CreatedUtc,
 		long CompressedBytes,
-		ServerBackupIntegrity Integrity)
+		long UncompressedBytes,
+		ServerBackupIntegrity Integrity,
+		DateTime? LastVerifiedUtc)
 	{
 		public string FileName => Path.GetFileName(ArchivePath);
 		public DateTime CreatedLocal => CreatedUtc.ToLocalTime();
+		public DateTime? LastVerifiedLocal => LastVerifiedUtc?.ToLocalTime();
 		public string IntegrityText => Integrity switch
 		{
 			ServerBackupIntegrity.Recorded => "SHA-256 receipt",
@@ -41,6 +44,22 @@ namespace Synix_Control_Panel.SynixEngine
 			_ => "Invalid receipt"
 		};
 	}
+
+	internal sealed record ServerBackupPreflight(
+		bool Succeeded,
+		string Message,
+		string BackupFolder,
+		long SourceBytes,
+		long FileCount,
+		long RequiredBytes,
+		long AvailableBytes)
+	{
+		public bool HasEnoughSpace => Succeeded && AvailableBytes >= RequiredBytes;
+	}
+
+	internal sealed record ServerBackupManagementResult(
+		bool Succeeded,
+		string Message);
 
 	internal sealed record ServerBackupRestoreResult(
 		bool Succeeded,
@@ -53,6 +72,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private const string RestoreRollbackMarker = ".synix-restore-rollback-";
 		private const string BackupReceiptExtension = ".sha256";
 		private const int MaximumReceiptBytes = 4096;
+		private const long BackupSpaceSafetyMargin = 256L * 1024 * 1024;
 		internal static string? RestoreJournalFolderOverride { get; set; }
 		private static string RestoreJournalFolder =>
 			RestoreJournalFolderOverride ??
@@ -64,10 +84,32 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task ExecuteBackup(GameServer server, StartContext context)
 		{
 			if (context == StartContext.CrashRecovery) return;
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Backup);
+			if (!operation.Acquired)
+			{
+				Log($"[BACKUP BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return;
+			}
 
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
 				Log($"[🚨 ERROR] {server.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				return;
+			}
+
+			ServerBackupPreflight preflight = await CreateServerBackupPreflightAsync(server);
+			if (!preflight.Succeeded)
+			{
+				Log($"[🚨 BACKUP ERROR] {preflight.Message}", Color.Red, true);
+				return;
+			}
+			if (!preflight.HasEnoughSpace)
+			{
+				Log(
+					$"[🚨 BACKUP ERROR] The backup drive needs up to {FormatBytes(preflight.RequiredBytes)} free, but only {FormatBytes(preflight.AvailableBytes)} is available.",
+					Color.Red,
+					true);
 				return;
 			}
 
@@ -109,7 +151,10 @@ namespace Synix_Control_Panel.SynixEngine
 					WriteBackupReceipt(
 						temporaryReceiptPath,
 						hash,
-						Path.GetFileName(zipPath));
+						Path.GetFileName(zipPath),
+						preflight.SourceBytes,
+						DateTimeOffset.UtcNow,
+						DateTimeOffset.UtcNow);
 					File.Move(temporaryReceiptPath, receiptPath);
 					receiptPublished = true;
 					File.Move(temporaryZipPath, zipPath);
@@ -152,6 +197,97 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		internal Task<ServerBackupPreflight> CreateServerBackupPreflightAsync(
+			GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			return Task.Run(() => CreateServerBackupPreflight(server));
+		}
+
+		private ServerBackupPreflight CreateServerBackupPreflight(GameServer server)
+		{
+			string sourcePath;
+			string backupFolder;
+			try
+			{
+				sourcePath = Path.GetFullPath(server.InstallPath);
+				backupFolder = Path.GetFullPath(GetActiveServerBackupFolder(server));
+				if (!Directory.Exists(sourcePath))
+				{
+					return new ServerBackupPreflight(
+						false,
+						$"The server folder does not exist: {sourcePath}",
+						backupFolder,
+						0,
+						0,
+						0,
+						0);
+				}
+				if (IsSameOrDescendantPath(backupFolder, sourcePath))
+				{
+					return new ServerBackupPreflight(
+						false,
+						"The backup folder cannot be stored inside the server installation folder.",
+						backupFolder,
+						0,
+						0,
+						0,
+						0);
+				}
+
+				long sourceBytes = 0;
+				long fileCount = 0;
+				foreach (string filePath in Directory.EnumerateFiles(
+					sourcePath,
+					"*",
+					SearchOption.AllDirectories))
+				{
+					sourceBytes = checked(sourceBytes + new FileInfo(filePath).Length);
+					fileCount++;
+				}
+
+				if (fileCount == 0)
+				{
+					return new ServerBackupPreflight(
+						false,
+						"The server folder contains no files to back up.",
+						backupFolder,
+						0,
+						0,
+						0,
+						0);
+				}
+
+				long requiredBytes = sourceBytes >= long.MaxValue - BackupSpaceSafetyMargin
+					? long.MaxValue
+					: sourceBytes + BackupSpaceSafetyMargin;
+				long availableBytes = GetAvailableFreeSpace(GetVolumeRoot(backupFolder));
+				return new ServerBackupPreflight(
+					true,
+					string.Empty,
+					backupFolder,
+					sourceBytes,
+					fileCount,
+					requiredBytes,
+					availableBytes);
+			}
+			catch (Exception exception) when (exception is IOException or
+				UnauthorizedAccessException or
+				ArgumentException or
+				NotSupportedException or
+				OverflowException)
+			{
+				return new ServerBackupPreflight(
+					false,
+					$"Synix could not measure the server backup: {exception.Message}",
+					string.Empty,
+					0,
+					0,
+					0,
+					0);
+			}
+		}
+
 		internal string GetActiveServerBackupFolder(GameServer server)
 		{
 			string cleanGame = GetSafeName(server.Game);
@@ -179,11 +315,18 @@ namespace Synix_Control_Panel.SynixEngine
 
 					foreach (FileInfo file in new DirectoryInfo(folder).GetFiles("*.zip"))
 					{
+						ServerBackupIntegrity integrity = InspectBackupIntegrity(
+							file.FullName,
+							out BackupReceipt? receipt);
+						long uncompressedBytes = receipt?.UncompressedBytes ??
+							TryReadArchiveUncompressedBytes(file.FullName);
 						backups.Add(new ServerBackupArchive(
 							file.FullName,
 							file.LastWriteTimeUtc,
 							file.Length,
-							InspectBackupIntegrity(file.FullName)));
+							uncompressedBytes,
+							integrity,
+							receipt?.VerifiedUtc?.UtcDateTime));
 					}
 				}
 				catch (IOException)
@@ -204,6 +347,91 @@ namespace Synix_Control_Panel.SynixEngine
 		internal bool HasServerBackups(GameServer server) =>
 			GetServerBackups(server).Count > 0;
 
+		internal async Task<ServerBackupManagementResult> VerifyServerBackupAsync(
+			GameServer server,
+			ServerBackupArchive backup)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(backup);
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Backup);
+			if (!operation.Acquired)
+				return new ServerBackupManagementResult(false, operation.FailureReason);
+			if (!IsKnownServerBackup(server, backup.ArchivePath))
+			{
+				return new ServerBackupManagementResult(
+					false,
+					"The selected backup is missing or is not stored in this server's backup folder.");
+			}
+			if (backup.Integrity == ServerBackupIntegrity.Invalid)
+			{
+				return new ServerBackupManagementResult(
+					false,
+					"The selected backup has an invalid integrity receipt. Synix will not replace that receipt or trust the archive.");
+			}
+
+			try
+			{
+				await Task.Run(() =>
+				{
+					long uncompressedBytes = ValidateBackupArchive(backup.ArchivePath);
+					string hash = ComputeFileSha256(backup.ArchivePath);
+					if (backup.Integrity == ServerBackupIntegrity.Recorded)
+					{
+						BackupReceipt receipt = ReadRequiredBackupReceipt(backup.ArchivePath);
+						EnsureMatchingBackupHash(receipt.Hash, hash);
+					}
+
+					DateTimeOffset now = DateTimeOffset.UtcNow;
+					WriteBackupReceiptAtomically(
+						backup.ArchivePath,
+						hash,
+						uncompressedBytes,
+						new DateTimeOffset(File.GetLastWriteTimeUtc(backup.ArchivePath), TimeSpan.Zero),
+						now);
+				});
+				return new ServerBackupManagementResult(
+					true,
+					"The backup archive, safe paths, and SHA-256 integrity check passed.");
+			}
+			catch (Exception exception)
+			{
+				return new ServerBackupManagementResult(false, exception.Message);
+			}
+		}
+
+		internal ServerBackupManagementResult DeleteServerBackup(
+			GameServer server,
+			ServerBackupArchive backup)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(backup);
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Backup);
+			if (!operation.Acquired)
+				return new ServerBackupManagementResult(false, operation.FailureReason);
+			if (!IsKnownServerBackup(server, backup.ArchivePath))
+			{
+				return new ServerBackupManagementResult(
+					false,
+					"The selected backup is missing or is not stored in this server's backup folder.");
+			}
+
+			try
+			{
+				File.Delete(backup.ArchivePath);
+				TryDeleteBackupRestoreFile(GetBackupReceiptPath(backup.ArchivePath));
+				return new ServerBackupManagementResult(true, "The selected backup was deleted.");
+			}
+			catch (Exception exception) when (exception is IOException or
+				UnauthorizedAccessException)
+			{
+				return new ServerBackupManagementResult(
+					false,
+					$"Synix could not delete the selected backup: {exception.Message}");
+			}
+		}
+
 		internal async Task<ServerBackupRestoreResult> RestoreServerBackupAsync(
 			GameServer server,
 			ServerBackupArchive backup,
@@ -211,6 +439,10 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(backup);
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Restore);
+			if (!operation.Acquired)
+				return new ServerBackupRestoreResult(false, operation.FailureReason);
 
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped) ||
 				server.PID.HasValue)
@@ -221,12 +453,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			string selectedPath = Path.GetFullPath(backup.ArchivePath);
-			bool isKnownBackup = GetServerBackups(server).Any(candidate =>
-				string.Equals(
-					Path.GetFullPath(candidate.ArchivePath),
-					selectedPath,
-					StringComparison.OrdinalIgnoreCase));
-			if (!isKnownBackup || !File.Exists(selectedPath))
+			if (!IsKnownServerBackup(server, selectedPath))
 			{
 				return new ServerBackupRestoreResult(
 					false,
@@ -510,8 +737,11 @@ namespace Synix_Control_Panel.SynixEngine
 			return copiedBytes;
 		}
 
-		private static ServerBackupIntegrity InspectBackupIntegrity(string archivePath)
+		private static ServerBackupIntegrity InspectBackupIntegrity(
+			string archivePath,
+			out BackupReceipt? receipt)
 		{
+			receipt = null;
 			string receiptPath = GetBackupReceiptPath(archivePath);
 			if (!File.Exists(receiptPath))
 				return ServerBackupIntegrity.Legacy;
@@ -519,9 +749,19 @@ namespace Synix_Control_Panel.SynixEngine
 			return TryReadBackupReceipt(
 				receiptPath,
 				Path.GetFileName(archivePath),
-				out _)
+				out receipt)
 				? ServerBackupIntegrity.Recorded
 				: ServerBackupIntegrity.Invalid;
+		}
+
+		private bool IsKnownServerBackup(GameServer server, string archivePath)
+		{
+			string selectedPath = Path.GetFullPath(archivePath);
+			return File.Exists(selectedPath) && GetServerBackups(server).Any(candidate =>
+				string.Equals(
+					Path.GetFullPath(candidate.ArchivePath),
+					selectedPath,
+					StringComparison.OrdinalIgnoreCase));
 		}
 
 		private static void CleanupIncompleteBackupFiles(string backupRoot)
@@ -561,13 +801,30 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!TryReadBackupReceipt(
 				receiptPath,
 				Path.GetFileName(archivePath),
-				out string expectedHash))
+				out BackupReceipt? receipt) || receipt == null)
 			{
 				throw new InvalidDataException(
 					"The selected backup has an invalid SHA-256 integrity receipt.");
 			}
 
 			string actualHash = ComputeFileSha256(archivePath);
+			EnsureMatchingBackupHash(receipt.Hash, actualHash);
+			WriteBackupReceiptAtomically(
+				archivePath,
+				actualHash,
+				receipt.UncompressedBytes > 0
+					? receipt.UncompressedBytes
+					: TryReadArchiveUncompressedBytes(archivePath),
+				receipt.CreatedUtc ?? new DateTimeOffset(
+					File.GetLastWriteTimeUtc(archivePath),
+					TimeSpan.Zero),
+				DateTimeOffset.UtcNow);
+		}
+
+		private static void EnsureMatchingBackupHash(
+			string expectedHash,
+			string actualHash)
+		{
 			byte[] expectedBytes = Convert.FromHexString(expectedHash);
 			byte[] actualBytes = Convert.FromHexString(actualHash);
 			if (!CryptographicOperations.FixedTimeEquals(expectedBytes, actualBytes))
@@ -592,27 +849,60 @@ namespace Synix_Control_Panel.SynixEngine
 		private static void WriteBackupReceipt(
 			string path,
 			string hash,
-			string archiveFileName)
+			string archiveFileName,
+			long uncompressedBytes,
+			DateTimeOffset createdUtc,
+			DateTimeOffset verifiedUtc)
 		{
 			File.WriteAllText(
 				path,
-				$"{hash}  {archiveFileName}{Environment.NewLine}",
+				$"{hash}  {archiveFileName}{Environment.NewLine}" +
+				$"UncompressedBytes={Math.Max(0, uncompressedBytes)}{Environment.NewLine}" +
+				$"CreatedUtc={createdUtc:O}{Environment.NewLine}" +
+				$"VerifiedUtc={verifiedUtc:O}{Environment.NewLine}",
 				new UTF8Encoding(false));
+		}
+
+		private static void WriteBackupReceiptAtomically(
+			string archivePath,
+			string hash,
+			long uncompressedBytes,
+			DateTimeOffset createdUtc,
+			DateTimeOffset verifiedUtc)
+		{
+			string receiptPath = GetBackupReceiptPath(archivePath);
+			string temporaryPath = receiptPath + ".partial";
+			try
+			{
+				WriteBackupReceipt(
+					temporaryPath,
+					hash,
+					Path.GetFileName(archivePath),
+					uncompressedBytes,
+					createdUtc,
+					verifiedUtc);
+				File.Move(temporaryPath, receiptPath, true);
+			}
+			finally
+			{
+				TryDeleteBackupRestoreFile(temporaryPath);
+			}
 		}
 
 		private static bool TryReadBackupReceipt(
 			string receiptPath,
 			string archiveFileName,
-			out string hash)
+			out BackupReceipt? receiptData)
 		{
-			hash = string.Empty;
+			receiptData = null;
 			try
 			{
 				FileInfo receipt = new(receiptPath);
 				if (receipt.Length is <= 0 or > MaximumReceiptBytes)
 					return false;
 
-				string line = File.ReadLines(receiptPath).FirstOrDefault()?.Trim() ?? string.Empty;
+				string[] lines = File.ReadAllLines(receiptPath);
+				string line = lines.FirstOrDefault()?.Trim() ?? string.Empty;
 				int separator = line.IndexOf("  ", StringComparison.Ordinal);
 				if (separator != 64)
 					return false;
@@ -628,7 +918,39 @@ namespace Synix_Control_Panel.SynixEngine
 					return false;
 				}
 
-				hash = candidateHash.ToLowerInvariant();
+				long uncompressedBytes = 0;
+				DateTimeOffset? createdUtc = null;
+				DateTimeOffset? verifiedUtc = null;
+				foreach (string metadataLine in lines.Skip(1))
+				{
+					int equalsIndex = metadataLine.IndexOf('=');
+					if (equalsIndex <= 0)
+						continue;
+					string key = metadataLine[..equalsIndex].Trim();
+					string value = metadataLine[(equalsIndex + 1)..].Trim();
+					if (key.Equals("UncompressedBytes", StringComparison.OrdinalIgnoreCase) &&
+						long.TryParse(value, out long parsedBytes) &&
+						parsedBytes >= 0)
+					{
+						uncompressedBytes = parsedBytes;
+					}
+					else if (key.Equals("CreatedUtc", StringComparison.OrdinalIgnoreCase) &&
+						DateTimeOffset.TryParse(value, out DateTimeOffset parsedCreated))
+					{
+						createdUtc = parsedCreated.ToUniversalTime();
+					}
+					else if (key.Equals("VerifiedUtc", StringComparison.OrdinalIgnoreCase) &&
+						DateTimeOffset.TryParse(value, out DateTimeOffset parsedVerified))
+					{
+						verifiedUtc = parsedVerified.ToUniversalTime();
+					}
+				}
+
+				receiptData = new BackupReceipt(
+					candidateHash.ToLowerInvariant(),
+					uncompressedBytes,
+					createdUtc,
+					verifiedUtc);
 				return true;
 			}
 			catch (Exception exception) when (exception is IOException or
@@ -637,6 +959,74 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return false;
 			}
+		}
+
+		private static BackupReceipt ReadRequiredBackupReceipt(string archivePath)
+		{
+			if (!TryReadBackupReceipt(
+				GetBackupReceiptPath(archivePath),
+				Path.GetFileName(archivePath),
+				out BackupReceipt? receipt) || receipt == null)
+			{
+				throw new InvalidDataException(
+					"The selected backup has an invalid SHA-256 integrity receipt.");
+			}
+			return receipt;
+		}
+
+		private static long TryReadArchiveUncompressedBytes(string archivePath)
+		{
+			try
+			{
+				using ZipArchive archive = ZipFile.OpenRead(archivePath);
+				long totalBytes = 0;
+				foreach (ZipArchiveEntry entry in archive.Entries)
+					totalBytes = checked(totalBytes + entry.Length);
+				return totalBytes;
+			}
+			catch
+			{
+				return 0;
+			}
+		}
+
+		private static long ValidateBackupArchive(string archivePath)
+		{
+			using ZipArchive archive = ZipFile.OpenRead(archivePath);
+			if (archive.Entries.Count == 0)
+				throw new InvalidDataException("The selected backup is empty.");
+
+			string validationRoot = Path.Combine(
+				Path.GetTempPath(),
+				"SynixBackupValidation",
+				Guid.NewGuid().ToString("N"));
+			string safeRoot = Path.GetFullPath(validationRoot)
+				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) +
+				Path.DirectorySeparatorChar;
+			long totalBytes = 0;
+			int fileCount = 0;
+			foreach (ZipArchiveEntry entry in archive.Entries)
+			{
+				if (IsSymbolicLink(entry) || Path.IsPathRooted(entry.FullName))
+					throw new InvalidDataException("The backup contains an unsafe path or symbolic link.");
+				if (entry.FullName.Split('/', '\\').Any(segment => segment.Contains(':')))
+					throw new InvalidDataException("The backup contains an unsupported alternate file stream path.");
+
+				string destinationPath = Path.GetFullPath(Path.Combine(validationRoot, entry.FullName));
+				if (!destinationPath.StartsWith(safeRoot, StringComparison.OrdinalIgnoreCase))
+					throw new InvalidDataException("The backup contains an unsafe path.");
+				totalBytes = checked(totalBytes + entry.Length);
+				if (!string.IsNullOrEmpty(entry.Name))
+				{
+					fileCount++;
+					using Stream entryStream = entry.Open();
+					entryStream.CopyTo(Stream.Null);
+				}
+			}
+
+			if (fileCount == 0)
+				throw new InvalidDataException("The selected backup contains no server files.");
+			return totalBytes;
 		}
 
 		private static string GetBackupReceiptPath(string archivePath) =>
@@ -717,7 +1107,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return unixFileType == 0xA000;
 		}
 
-		private static string FormatBytes(long bytes)
+		internal static string FormatBytes(long bytes)
 		{
 			string[] units = ["B", "KB", "MB", "GB", "TB"];
 			double value = Math.Max(0, bytes);
@@ -804,5 +1194,11 @@ namespace Synix_Control_Panel.SynixEngine
 			public string RollbackPath { get; set; } = string.Empty;
 			public string Phase { get; set; } = string.Empty;
 		}
+
+		private sealed record BackupReceipt(
+			string Hash,
+			long UncompressedBytes,
+			DateTimeOffset? CreatedUtc,
+			DateTimeOffset? VerifiedUtc);
 	}
 }

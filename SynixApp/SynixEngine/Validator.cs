@@ -181,14 +181,15 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				DialogResult result = DialogResult.Cancel;
 
-				if (MainGUI.Instance != null && MainGUI.Instance.InvokeRequired)
+				MainGUI? mainWindow = MainGUI.Instance;
+				if (mainWindow != null && mainWindow.InvokeRequired)
 				{
-					MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
-					MainGUI.Instance.Invoke((Action)(() =>
+					mainWindow.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
+					mainWindow.Invoke((Action)(() =>
 					{
 						using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
 						{
-							result = warningForm.ShowDialog(MainGUI.Instance);
+							result = warningForm.ShowDialog(mainWindow);
 						}
 					}));
 				}
@@ -538,7 +539,8 @@ namespace Synix_Control_Panel.SynixEngine
 					CreateNoWindow = true
 				};
 
-				using Process proc = Process.Start(psi);
+				using Process proc = Process.Start(psi) ??
+					throw new InvalidOperationException("Java did not start.");
 				string output = proc.StandardError.ReadToEnd();
 				proc.WaitForExit();
 

@@ -847,7 +847,8 @@ namespace Synix_Control_Panel.SynixEngine
 			TreeViewEventArgs eventArgs)
 		{
 			if (eventArgs.Node?.Tag is not string topicKey ||
-				!_helpData.TryGetValue(topicKey, out HelpItem item))
+				!_helpData.TryGetValue(topicKey, out HelpItem? item) ||
+				item == null)
 			{
 				return;
 			}
@@ -860,18 +861,19 @@ namespace Synix_Control_Panel.SynixEngine
 			object? sender,
 			TreeNodeMouseClickEventArgs eventArgs)
 		{
-			if (eventArgs.Node.Level != 0)
+			TreeNode? node = eventArgs.Node;
+			if (node == null || node.Level != 0)
 			{
 				return;
 			}
 
-			if (eventArgs.Node.IsExpanded)
+			if (node.IsExpanded)
 			{
-				eventArgs.Node.Collapse();
+				node.Collapse();
 			}
 			else
 			{
-				eventArgs.Node.Expand();
+				node.Expand();
 			}
 
 			treeNavigation.Invalidate();
@@ -881,8 +883,10 @@ namespace Synix_Control_Panel.SynixEngine
 			object? sender,
 			DrawTreeNodeEventArgs eventArgs)
 		{
-			TreeNode node = eventArgs.Node;
-			Graphics graphics = eventArgs.Graphics;
+			TreeNode? node = eventArgs.Node;
+			Graphics? graphics = eventArgs.Graphics;
+			if (node == null || graphics == null)
+				return;
 			graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			Rectangle rowBounds = new(

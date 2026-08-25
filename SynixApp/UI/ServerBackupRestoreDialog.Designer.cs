@@ -40,9 +40,13 @@ namespace Synix_Control_Panel.SynixEngine
 			createdColumn = new DataGridViewTextBoxColumn();
 			fileColumn = new DataGridViewTextBoxColumn();
 			sizeColumn = new DataGridViewTextBoxColumn();
+			uncompressedColumn = new DataGridViewTextBoxColumn();
 			integrityColumn = new DataGridViewTextBoxColumn();
+			verifiedColumn = new DataGridViewTextBoxColumn();
 			locationColumn = new DataGridViewTextBoxColumn();
 			selectionLabel = new Label();
+			deleteButton = new ModernSettingsButton();
+			verifyButton = new ModernSettingsButton();
 			cancelButton = new ModernSettingsButton();
 			restoreButton = new ModernSettingsButton();
 			warningCard.SuspendLayout();
@@ -56,7 +60,7 @@ namespace Synix_Control_Panel.SynixEngine
 			titleLabel.ForeColor = Color.FromArgb(245, 247, 251);
 			titleLabel.Location = new Point(28, 22);
 			titleLabel.Name = "titleLabel";
-			titleLabel.Size = new Size(884, 38);
+			titleLabel.Size = new Size(1104, 38);
 			titleLabel.TabIndex = 0;
 			titleLabel.Text = "Restore Server Backup";
 			// 
@@ -67,7 +71,7 @@ namespace Synix_Control_Panel.SynixEngine
 			subtitleLabel.ForeColor = Color.FromArgb(158, 172, 194);
 			subtitleLabel.Location = new Point(28, 62);
 			subtitleLabel.Name = "subtitleLabel";
-			subtitleLabel.Size = new Size(884, 40);
+			subtitleLabel.Size = new Size(1104, 40);
 			subtitleLabel.TabIndex = 1;
 			subtitleLabel.Text = "Choose the backup that should replace the server's current files.";
 			// 
@@ -83,7 +87,7 @@ namespace Synix_Control_Panel.SynixEngine
 			warningCard.Location = new Point(28, 108);
 			warningCard.Margin = new Padding(0, 0, 0, 16);
 			warningCard.Name = "warningCard";
-			warningCard.Size = new Size(884, 102);
+			warningCard.Size = new Size(1104, 102);
 			warningCard.TabIndex = 2;
 			// 
 			// warningIcon
@@ -105,7 +109,7 @@ namespace Synix_Control_Panel.SynixEngine
 			warningTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			warningTitle.Location = new Point(88, 17);
 			warningTitle.Name = "warningTitle";
-			warningTitle.Size = new Size(770, 25);
+			warningTitle.Size = new Size(990, 25);
 			warningTitle.TabIndex = 1;
 			warningTitle.Text = "The server must remain stopped during restoration";
 			// 
@@ -116,7 +120,7 @@ namespace Synix_Control_Panel.SynixEngine
 			warningText.ForeColor = Color.FromArgb(158, 172, 194);
 			warningText.Location = new Point(88, 43);
 			warningText.Name = "warningText";
-			warningText.Size = new Size(770, 46);
+			warningText.Size = new Size(990, 46);
 			warningText.TabIndex = 2;
 			warningText.Text = "Synix verifies backups with integrity receipts, safely stages the selected archive, and automatically rolls back if restoration fails. The saved Synix server entry and its settings are not changed.";
 			// 
@@ -128,14 +132,14 @@ namespace Synix_Control_Panel.SynixEngine
 			backupGrid.BackgroundColor = Color.FromArgb(12, 21, 36);
 			backupGrid.BorderStyle = BorderStyle.None;
 			backupGrid.ColumnHeadersHeight = 40;
-			backupGrid.Columns.AddRange(new DataGridViewColumn[] { createdColumn, fileColumn, sizeColumn, integrityColumn, locationColumn });
+			backupGrid.Columns.AddRange(new DataGridViewColumn[] { createdColumn, fileColumn, sizeColumn, uncompressedColumn, integrityColumn, verifiedColumn, locationColumn });
 			backupGrid.Location = new Point(28, 226);
 			backupGrid.MultiSelect = false;
 			backupGrid.Name = "backupGrid";
 			backupGrid.ReadOnly = true;
 			backupGrid.RowHeadersVisible = false;
 			backupGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-			backupGrid.Size = new Size(884, 314);
+			backupGrid.Size = new Size(1104, 334);
 			backupGrid.TabIndex = 0;
 			backupGrid.CellDoubleClick += BackupGrid_CellDoubleClick;
 			backupGrid.SelectionChanged += BackupGrid_SelectionChanged;
@@ -162,6 +166,15 @@ namespace Synix_Control_Panel.SynixEngine
 			sizeColumn.MinimumWidth = 90;
 			sizeColumn.Name = "sizeColumn";
 			sizeColumn.ReadOnly = true;
+			sizeColumn.Width = 100;
+			//
+			// uncompressedColumn
+			//
+			uncompressedColumn.HeaderText = "ORIGINAL";
+			uncompressedColumn.MinimumWidth = 100;
+			uncompressedColumn.Name = "uncompressedColumn";
+			uncompressedColumn.ReadOnly = true;
+			uncompressedColumn.Width = 110;
 			//
 			// integrityColumn
 			//
@@ -170,6 +183,14 @@ namespace Synix_Control_Panel.SynixEngine
 			integrityColumn.Name = "integrityColumn";
 			integrityColumn.ReadOnly = true;
 			integrityColumn.Width = 145;
+			//
+			// verifiedColumn
+			//
+			verifiedColumn.HeaderText = "LAST VERIFIED";
+			verifiedColumn.MinimumWidth = 180;
+			verifiedColumn.Name = "verifiedColumn";
+			verifiedColumn.ReadOnly = true;
+			verifiedColumn.Width = 190;
 			//
 			// locationColumn
 			// 
@@ -184,11 +205,43 @@ namespace Synix_Control_Panel.SynixEngine
 			selectionLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			selectionLabel.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
 			selectionLabel.ForeColor = Color.FromArgb(158, 172, 194);
-			selectionLabel.Location = new Point(28, 552);
+			selectionLabel.Location = new Point(28, 572);
 			selectionLabel.Name = "selectionLabel";
-			selectionLabel.Size = new Size(884, 28);
+			selectionLabel.Size = new Size(1104, 28);
 			selectionLabel.TabIndex = 3;
 			selectionLabel.Text = "Select a backup to continue.";
+			//
+			// deleteButton
+			//
+			deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			deleteButton.BackColor = Color.FromArgb(12, 21, 36);
+			deleteButton.Enabled = false;
+			deleteButton.FlatStyle = FlatStyle.Flat;
+			deleteButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			deleteButton.ForeColor = Color.FromArgb(245, 247, 251);
+			deleteButton.Location = new Point(28, 612);
+			deleteButton.Name = "deleteButton";
+			deleteButton.Size = new Size(128, 42);
+			deleteButton.TabIndex = 4;
+			deleteButton.Text = "Delete Backup";
+			deleteButton.UseVisualStyleBackColor = false;
+			deleteButton.Click += DeleteButton_Click;
+			//
+			// verifyButton
+			//
+			verifyButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			verifyButton.BackColor = Color.FromArgb(12, 21, 36);
+			verifyButton.Enabled = false;
+			verifyButton.FlatStyle = FlatStyle.Flat;
+			verifyButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			verifyButton.ForeColor = Color.FromArgb(245, 247, 251);
+			verifyButton.Location = new Point(168, 612);
+			verifyButton.Name = "verifyButton";
+			verifyButton.Size = new Size(136, 42);
+			verifyButton.TabIndex = 5;
+			verifyButton.Text = "Verify Backup";
+			verifyButton.UseVisualStyleBackColor = false;
+			verifyButton.Click += VerifyButton_Click;
 			// 
 			// cancelButton
 			// 
@@ -198,10 +251,10 @@ namespace Synix_Control_Panel.SynixEngine
 			cancelButton.FlatStyle = FlatStyle.Flat;
 			cancelButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
 			cancelButton.ForeColor = Color.FromArgb(245, 247, 251);
-			cancelButton.Location = new Point(652, 592);
+			cancelButton.Location = new Point(872, 612);
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(120, 42);
-			cancelButton.TabIndex = 4;
+			cancelButton.TabIndex = 6;
 			cancelButton.Text = "Cancel";
 			cancelButton.UseVisualStyleBackColor = false;
 			// 
@@ -213,10 +266,10 @@ namespace Synix_Control_Panel.SynixEngine
 			restoreButton.FlatStyle = FlatStyle.Flat;
 			restoreButton.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
 			restoreButton.ForeColor = Color.FromArgb(245, 247, 251);
-			restoreButton.Location = new Point(784, 592);
+			restoreButton.Location = new Point(1004, 612);
 			restoreButton.Name = "restoreButton";
 			restoreButton.Size = new Size(128, 42);
-			restoreButton.TabIndex = 5;
+			restoreButton.TabIndex = 7;
 			restoreButton.Text = "Restore Backup";
 			restoreButton.UseAccentStyle = true;
 			restoreButton.UseVisualStyleBackColor = false;
@@ -229,18 +282,20 @@ namespace Synix_Control_Panel.SynixEngine
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.FromArgb(8, 13, 24);
 			CancelButton = cancelButton;
-			ClientSize = new Size(940, 656);
+			ClientSize = new Size(1160, 676);
 			Controls.Add(titleLabel);
 			Controls.Add(subtitleLabel);
 			Controls.Add(warningCard);
 			Controls.Add(backupGrid);
 			Controls.Add(selectionLabel);
+			Controls.Add(deleteButton);
+			Controls.Add(verifyButton);
 			Controls.Add(cancelButton);
 			Controls.Add(restoreButton);
 			Font = new Font("Segoe UI", 10F);
-			Icon = (Icon)resources.GetObject("$this.Icon");
+			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
 			MinimizeBox = false;
-			MinimumSize = new Size(760, 560);
+			MinimumSize = new Size(1000, 620);
 			Name = "ServerBackupRestoreDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
@@ -260,9 +315,13 @@ namespace Synix_Control_Panel.SynixEngine
 		private DataGridViewTextBoxColumn createdColumn = null!;
 		private DataGridViewTextBoxColumn fileColumn = null!;
 		private DataGridViewTextBoxColumn sizeColumn = null!;
+		private DataGridViewTextBoxColumn uncompressedColumn = null!;
 		private DataGridViewTextBoxColumn integrityColumn = null!;
+		private DataGridViewTextBoxColumn verifiedColumn = null!;
 		private DataGridViewTextBoxColumn locationColumn = null!;
 		private Label selectionLabel = null!;
+		private ModernSettingsButton deleteButton = null!;
+		private ModernSettingsButton verifyButton = null!;
 		private ModernSettingsButton cancelButton = null!;
 		private ModernSettingsButton restoreButton = null!;
 	}

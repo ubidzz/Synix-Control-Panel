@@ -30,7 +30,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string canonicalGameName = blueprint?.Game ?? GameDatabase.GetCanonicalGameName(gameName);
 			string safeName = canonicalGameName.Replace(" ", "_").Replace(":", "");
 
-			if (_iconPathCache.TryGetValue(safeName, out string memoryPath))
+			if (_iconPathCache.TryGetValue(safeName, out string? memoryPath))
 			{
 				if (IsValidIconFile(memoryPath))
 					return memoryPath;
@@ -91,7 +91,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				try
 				{
-					using (Icon extractedIcon = Icon.ExtractAssociatedIcon(fullExePath))
+					using (Icon? extractedIcon = Icon.ExtractAssociatedIcon(fullExePath))
 					{
 						if (extractedIcon != null)
 						{

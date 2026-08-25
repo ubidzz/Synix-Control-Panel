@@ -246,7 +246,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(cancelButton);
 			Controls.Add(startButton);
 			Font = new Font("Segoe UI", 10F);
-			Icon = (Icon)resources.GetObject("$this.Icon");
+			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
 			MinimizeBox = false;
 			MinimumSize = new Size(760, 580);
 			Name = "ReliabilityTestDialog";

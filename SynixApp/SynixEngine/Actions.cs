@@ -23,10 +23,16 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		private static readonly HashSet<string> _activeSequences = new HashSet<string>();
-
 		public async Task StopServerAndReport(GameServer server, bool isManual = true)
 		{
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Stop);
+			if (!operation.Acquired)
+			{
+				Log($"[STOP BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return;
+			}
+
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
 			Core.Instance.UpdateGridStatus();
 
@@ -225,7 +231,9 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			};
 
-			TaskDialogButton result = TaskDialog.ShowDialog(MainGUI.Instance, page);
+			TaskDialogButton result = MainGUI.Instance == null
+				? TaskDialog.ShowDialog(page)
+				: TaskDialog.ShowDialog(MainGUI.Instance, page);
 
 			if (result == TaskDialogButton.Yes)
 			{
@@ -332,6 +340,17 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!EnsureSteamAccountName(server, gameData))
 				return;
+
+			ServerOperationKind operationKind = ServerUpdating
+				? ServerOperationKind.Update
+				: ServerOperationKind.Validate;
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, operationKind);
+			if (!operation.Acquired)
+			{
+				Log($"[STEAMCMD BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return;
+			}
 
 			try
 			{
@@ -461,6 +480,16 @@ namespace Synix_Control_Panel.SynixEngine
 					if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 					{
 						Log("Could not find the AppID for this game. Installation aborted.", Color.Red, true);
+						return;
+					}
+
+					using ServerOperationLease operation =
+						ServerOperationCoordinator.TryBegin(
+							newServer,
+							ServerOperationKind.Install);
+					if (!operation.Acquired)
+					{
+						Log($"[INSTALL BLOCKED] {operation.FailureReason}", Color.Orange, true);
 						return;
 					}
 
@@ -792,13 +821,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task ExecuteStartSequence(GameServer server, string status = "")
 		{
-			lock (_activeSequences)
+			ServerOperationKind operationKind = string.IsNullOrWhiteSpace(status)
+				? ServerOperationKind.Start
+				: ServerOperationKind.Restart;
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, operationKind);
+			if (!operation.Acquired)
 			{
-				if (_activeSequences.Contains(server.ServerName))
-				{
-					return;
-				}
-				_activeSequences.Add(server.ServerName);
+				Log($"[START BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return;
 			}
 
 			try
@@ -908,13 +939,6 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception ex)
 			{
 				Log($"[🚨 CRITICAL ENGINE ERROR] Sequence failed for {server.ServerName}: {ex.Message}", Color.Red, true);
-			}
-			finally
-			{
-				lock (_activeSequences)
-				{
-					_activeSequences.Remove(server.ServerName);
-				}
 			}
 		}
 
@@ -1098,7 +1122,7 @@ namespace Synix_Control_Panel.SynixEngine
 					WindowStyle = ProcessWindowStyle.Hidden
 				};
 
-				Process cleanup = Process.Start(psi);
+				Process? cleanup = Process.Start(psi);
 				cleanup?.WaitForExit();
 
 				Log($"[FIREWALL] Successfully removed rules for {executablePath}", Color.LimeGreen);

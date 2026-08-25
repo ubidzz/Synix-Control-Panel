@@ -113,6 +113,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		public static async Task Start(GameServer server, Action<string, Color> logCallback, StartContext context = StartContext.Manual)
 		{
+			ArgumentNullException.ThrowIfNull(logCallback);
 			try
 			{
 				GameInfo? selectedDefinition = GameDatabase.GetGame(server.Game);
@@ -241,7 +242,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					isMinecraft = GameDatabase.IsMinecraft(server.Game);
 					if (isMinecraft)
 					{
-						PrepareMinecraftLauncher(fullExePath, logCallback);
+						PrepareMinecraftLauncher(fullExePath, logCallback!);
 					}
 
 					string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
@@ -395,6 +396,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		public static async Task<bool> Stop(GameServer server, Action<string, Color> logCallback, bool isManual = true)
 		{
+			ArgumentNullException.ThrowIfNull(logCallback);
 			Dictionary<int, DateTime?> trackedProcesses = [];
 			int targetPid = 0;
 
@@ -439,7 +441,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				bool isMinecraft = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 				bool signalSent = isMinecraft
-					? await TrySendMinecraftStopCommand(server, targetPid, logCallback)
+					? await TrySendMinecraftStopCommand(server, targetPid, logCallback!)
 					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
 				TimeSpan gracefulTimeout = isMinecraft
 					? TimeSpan.FromSeconds(60)
@@ -466,7 +468,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					$"[🛡️ WATCHDOG] {server.ServerName} did not close cleanly. Forcing {liveProcesses.Count} process(es) to stop...",
 					Color.Violet);
 
-				await ForceTerminateProcesses(liveProcesses, targetPid, trackedProcesses, logCallback);
+				await ForceTerminateProcesses(liveProcesses, targetPid, trackedProcesses, logCallback!);
 				liveProcesses = await WaitForServerProcessesToExit(server, targetPid, trackedProcesses, TimeSpan.FromSeconds(10));
 
 				if (liveProcesses.Count > 0)

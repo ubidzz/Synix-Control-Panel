@@ -547,9 +547,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 			using SolidBrush backgroundBrush = new(itemBackColor);
 			eventArgs.Graphics.FillRectangle(backgroundBrush, eventArgs.Bounds);
 
-			string itemText = eventArgs.Index >= 0 && eventArgs.Index < Items.Count
+			string itemText = (eventArgs.Index >= 0 && eventArgs.Index < Items.Count
 				? GetItemText(Items[eventArgs.Index])
-				: Text;
+				: Text) ?? string.Empty;
 			bool drawingEditArea =
 				(eventArgs.State & DrawItemState.ComboBoxEdit) != 0;
 			int rightPadding = drawingEditArea ? 44 : 18;
@@ -933,9 +933,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[System.Diagnostics.CodeAnalysis.AllowNull]
 		public object EditingControlFormattedValue
 		{
-			get => SelectedItem == null ? Text : GetItemText(SelectedItem);
+			get => (SelectedItem == null ? Text : GetItemText(SelectedItem)) ?? string.Empty;
 			set
 			{
 				string formattedValue = value?.ToString() ?? string.Empty;
@@ -956,7 +957,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 		public object GetEditingControlFormattedValue(
 			DataGridViewDataErrorContexts context)
 		{
-			return EditingControlFormattedValue;
+			return EditingControlFormattedValue ?? string.Empty;
 		}
 
 		public void ApplyCellStyleToEditingControl(
@@ -1085,7 +1086,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private int _increment = 1;
 		private int _hoveredButton;
 		private int _pressedButton;
-		private bool _mouseInside;
 		private bool _initializing;
 		private bool _replaceOnNextInput = true;
 		private string _editBuffer = "1";
@@ -1206,7 +1206,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnMouseLeave(EventArgs eventArgs)
 		{
-			_mouseInside = false;
 			_hoveredButton = 0;
 			_pressedButton = 0;
 			Cursor = Cursors.IBeam;
@@ -1216,7 +1215,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnMouseEnter(EventArgs eventArgs)
 		{
-			_mouseInside = true;
 			Invalidate();
 			base.OnMouseEnter(eventArgs);
 		}

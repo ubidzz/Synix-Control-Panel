@@ -196,13 +196,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 				foreach (GameServer server in MainGUI.serverList.ToList())
 				{
-					bool hasValidRestartDays =
-						server.RestartDays != null &&
-						server.RestartDays.Length > dayIndex;
+					bool[]? restartDays = server.RestartDays;
+					bool hasValidRestartDay =
+						restartDays != null &&
+						restartDays.Length > dayIndex &&
+						restartDays[dayIndex];
 
 					if (server.IsScheduledRestartEnabled &&
-						hasValidRestartDays &&
-						server.RestartDays[dayIndex] &&
+						hasValidRestartDay &&
 						server.RestartTime == currentTime &&
 						server.LastMaintenanceDate != todayBookmark)
 					{

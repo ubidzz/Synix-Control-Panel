@@ -215,7 +215,7 @@ namespace Synix_Control_Panel.SynixEngine
 				using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
 				{
 					socket.Connect("8.8.8.8", 65530);
-					IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+					IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
 					_cachedLocalIp = endPoint?.Address.ToString() ?? "127.0.0.1";
 					return _cachedLocalIp;
 				}

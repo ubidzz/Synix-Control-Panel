@@ -370,6 +370,8 @@ namespace Synix_Control_Panel
 				eventArgs.ColumnIndex == colCpuUsage.Index
 					? AccentColor
 					: RamColor);
+			if (eventArgs.Graphics == null)
+				return;
 			eventArgs.Graphics.FillRectangle(trackBrush, barBounds);
 			if (fillBounds.Width > 0)
 			{

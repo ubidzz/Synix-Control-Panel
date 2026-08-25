@@ -27,7 +27,6 @@ namespace Synix_Control_Panel
 	{
 		public static BindingList<GameServer> serverList = [];
 		private readonly BindingList<GameServer> _visibleServers = [];
-		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		public bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
@@ -603,6 +602,7 @@ namespace Synix_Control_Panel
 			DataGridViewCellPaintingEventArgs eventArgs)
 		{
 			if (eventArgs.RowIndex < 0 ||
+				eventArgs.Graphics == null ||
 				eventArgs.ColumnIndex != colStatus.Index ||
 				dataGridView1.Rows[eventArgs.RowIndex].DataBoundItem is not GameServer server ||
 				!BusyStatusPresentation.TryGetBusyState(server.Status, out string busyState))
@@ -635,7 +635,7 @@ namespace Synix_Control_Panel
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
 				busyState,
-				eventArgs.CellStyle.Font ?? dataGridView1.Font,
+				eventArgs.CellStyle?.Font ?? dataGridView1.Font,
 				textBounds,
 				SettingsPalette.Warning,
 				TextFormatFlags.Left |
@@ -660,17 +660,13 @@ namespace Synix_Control_Panel
 				return null;
 			}
 
-			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
+			if (dataGridView1.CurrentRow.DataBoundItem is not GameServer selectedServer)
 			{
 				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
 				return null;
 			}
 
-			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer server)
-			{
-				return server;
-			}
-			return null;
+			return selectedServer;
 		}
 
 		private async void btnAddServer_Click(object sender, EventArgs e)
@@ -682,7 +678,8 @@ namespace Synix_Control_Panel
 		private async void btnEdit_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "EditConfig"))
 			{
 				AppendLog(lockMsg, Color.Orange);
@@ -694,7 +691,8 @@ namespace Synix_Control_Panel
 		private async void btnUpdate_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Update"))
 			{
@@ -708,7 +706,8 @@ namespace Synix_Control_Panel
 		private async void btnFileValidation_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Validate"))
 			{
@@ -722,7 +721,8 @@ namespace Synix_Control_Panel
 		private void btnDelete_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Delete"))
 			{
 				AppendLog(lockMsg, Color.Orange);
@@ -734,7 +734,9 @@ namespace Synix_Control_Panel
 
 		private async void btnBackup_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null)
+				return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Backup"))
 			{
@@ -742,7 +744,47 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
+			ServerBackupPreflight preflight =
+				await Core.Instance.CreateServerBackupPreflightAsync(selectedServer);
+			if (!preflight.Succeeded)
+			{
+				MessageBox.Show(
+					this,
+					preflight.Message,
+					"Backup Check Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
+			if (!preflight.HasEnoughSpace)
+			{
+				MessageBox.Show(
+					this,
+					$"There is not enough space to safely create this backup.\n\n" +
+					$"Server data: {Core.FormatBytes(preflight.SourceBytes)}\n" +
+					$"Maximum space needed: {Core.FormatBytes(preflight.RequiredBytes)}\n" +
+					$"Free on backup drive: {Core.FormatBytes(preflight.AvailableBytes)}\n\n" +
+					$"Backup folder: {preflight.BackupFolder}",
+					"Not Enough Backup Space",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			DialogResult confirmation = MessageBox.Show(
+				this,
+				$"Create a backup of {selectedServer.ServerName}?\n\n" +
+				$"Files: {preflight.FileCount:N0}\n" +
+				$"Server data: {Core.FormatBytes(preflight.SourceBytes)}\n" +
+				$"Maximum space needed: {Core.FormatBytes(preflight.RequiredBytes)}\n" +
+				$"Free on backup drive: {Core.FormatBytes(preflight.AvailableBytes)}\n\n" +
+				"Large servers can take some time to package. The final compressed backup will usually be smaller than the maximum shown.",
+				"Confirm Server Backup",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Information,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation == DialogResult.Yes)
+				await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
 		}
 
 		private async void btnRestoreServerBackup_Click(object sender, EventArgs e)
@@ -802,7 +844,8 @@ namespace Synix_Control_Panel
 
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Start"))
 			{
@@ -817,7 +860,8 @@ namespace Synix_Control_Panel
 
 		private async void btnStop_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Stop"))
 			{
@@ -842,7 +886,8 @@ namespace Synix_Control_Panel
 		{
 			StreamerModeCheck();
 			if (isPrivacyLoading) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Config"))
 			{
 				AppendLog(lockMsg, Color.Orange);
@@ -853,19 +898,22 @@ namespace Synix_Control_Panel
 
 		private void btnOpenFolder_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			Core.Instance.OpenServerFolder(selectedServer);
 		}
 
 		private void btnOpenBackup_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			Core.Instance.OpenBackFolder(selectedServer);
 		}
 
 		private async void btnPublicConnection_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (selectedServer == null) return;
 
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
@@ -901,7 +949,8 @@ namespace Synix_Control_Panel
 
 		private async void btnLocalConnection_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (selectedServer == null) return;
 
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
@@ -980,7 +1029,8 @@ namespace Synix_Control_Panel
 
 		private async void btnRestart_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Restart"))
 			{
 				AppendLog(lockMsg, Color.Orange);
@@ -1003,7 +1053,8 @@ namespace Synix_Control_Panel
 		{
 			if (e.RowIndex >= 0)
 			{
-				var selectedServer = GetSelectedServer();
+				GameServer? selectedServer = GetSelectedServer();
+				if (selectedServer == null) return;
 				Help.ServerInfo infoForm = new Help.ServerInfo(selectedServer);
 				infoForm.Show();
 			}

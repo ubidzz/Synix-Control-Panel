@@ -28,7 +28,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			rtb.ForeColor = SettingsPalette.PrimaryText;
 			rtb.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
 
-			Control parent = rtb.Parent;
+			Control? parent = rtb.Parent;
 			if (parent != null)
 			{
 				Panel container;
@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 		}
 
-		private static void LogContainer_Resize(object sender, EventArgs e)
+		private static void LogContainer_Resize(object? sender, EventArgs e)
 		{
 			if (sender is Panel container)
 			{
@@ -102,15 +102,15 @@ namespace Synix_Control_Panel.SynixApp.Design
 				path.AddArc(new Rectangle(0, container.Height - d, d, d), 90, 90);
 				path.CloseFigure();
 
-				Region oldRegion = container.Region;
+				Region? oldRegion = container.Region;
 				container.Region = new Region(path);
 				oldRegion?.Dispose();
 			}
 		}
 
-		private static void LogContainer_Paint(object sender, PaintEventArgs e)
+		private static void LogContainer_Paint(object? sender, PaintEventArgs e)
 		{
-			Panel p = sender as Panel;
+			Panel? p = sender as Panel;
 			if (p == null || p.Width <= 0 || p.Height <= 0) return;
 
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -161,7 +161,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			chk.Invalidate();
 		}
 
-		private static void Chk_CustomPaint(object sender, PaintEventArgs e)
+		private static void Chk_CustomPaint(object? sender, PaintEventArgs e)
 		{
 			if (sender is CheckBox chk)
 			{
@@ -221,7 +221,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 		}
 
-		public static void WarningLabel_Paint(object sender, PaintEventArgs e)
+		public static void WarningLabel_Paint(object? sender, PaintEventArgs e)
 		{
 			if (sender is not Label lbl || lbl.Width <= 1 || lbl.Height <= 1)
 				return;

@@ -16,6 +16,7 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	internal sealed partial class ServerBackupRestoreDialog : Form
 	{
+		private GameServer? _server;
 		internal ServerBackupArchive? SelectedBackup { get; private set; }
 
 		internal ServerBackupRestoreDialog()
@@ -34,16 +35,28 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(backups);
 
-			titleLabel.Text = $"Restore {server.ServerName}";
-			subtitleLabel.Text =
-				$"Choose one of the {backups.Count} saved server backups below. Newest backups are shown first.";
+			_server = server;
+			titleLabel.Text = $"Backups for {server.ServerName}";
+			LoadBackups(backups);
+		}
+
+		private void LoadBackups(IReadOnlyList<ServerBackupArchive> backups)
+		{
+			backupGrid.Rows.Clear();
+			subtitleLabel.Text = backups.Count == 0
+				? "No saved backups remain for this server."
+				: $"Manage or restore one of the {backups.Count} saved backups below. Newest backups are shown first.";
 			foreach (ServerBackupArchive backup in backups)
 			{
 				int rowIndex = backupGrid.Rows.Add(
 					backup.CreatedLocal.ToString("MMM d, yyyy  h:mm:ss tt"),
 					backup.FileName,
 					FormatBytes(backup.CompressedBytes),
+					backup.UncompressedBytes > 0
+						? FormatBytes(backup.UncompressedBytes)
+						: "Unknown",
 					backup.IntegrityText,
+					backup.LastVerifiedLocal?.ToString("MMM d, yyyy  h:mm tt") ?? "Never",
 					Path.GetDirectoryName(backup.ArchivePath) ?? string.Empty);
 				DataGridViewRow row = backupGrid.Rows[rowIndex];
 				row.Tag = backup;
@@ -58,7 +71,10 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			if (backupGrid.Rows.Count > 0)
+			{
 				backupGrid.Rows[0].Selected = true;
+				backupGrid.CurrentCell = backupGrid.Rows[0].Cells[0];
+			}
 			UpdateSelection();
 		}
 
@@ -77,6 +93,57 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void RestoreButton_Click(object? sender, EventArgs eventArgs) =>
 			ConfirmSelection();
+
+		private async void VerifyButton_Click(object? sender, EventArgs eventArgs)
+		{
+			UpdateSelection();
+			if (_server == null || SelectedBackup == null)
+				return;
+
+			SetManagementButtonsEnabled(false);
+			selectionLabel.ForeColor = SettingsPalette.SecondaryText;
+			selectionLabel.Text = "Verifying archive paths and SHA-256 integrity...";
+			ServerBackupManagementResult result =
+				await Core.Instance.VerifyServerBackupAsync(_server, SelectedBackup);
+			MessageBox.Show(
+				this,
+				result.Message,
+				result.Succeeded ? "Backup Verified" : "Backup Verification Failed",
+				MessageBoxButtons.OK,
+				result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+			LoadBackups(Core.Instance.GetServerBackups(_server));
+			SetManagementButtonsEnabled(true);
+		}
+
+		private void DeleteButton_Click(object? sender, EventArgs eventArgs)
+		{
+			UpdateSelection();
+			if (_server == null || SelectedBackup == null)
+				return;
+
+			DialogResult confirmation = MessageBox.Show(
+				this,
+				$"Permanently delete this saved backup?\n\n{SelectedBackup.FileName}\n{SelectedBackup.CreatedLocal:f}\n\nThe running server files will not be changed.",
+				"Delete Server Backup",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation != DialogResult.Yes)
+				return;
+
+			ServerBackupManagementResult result =
+				Core.Instance.DeleteServerBackup(_server, SelectedBackup);
+			if (!result.Succeeded)
+			{
+				MessageBox.Show(
+					this,
+					result.Message,
+					"Backup Could Not Be Deleted",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+			}
+			LoadBackups(Core.Instance.GetServerBackups(_server));
+		}
 
 		private void ConfirmSelection()
 		{
@@ -105,10 +172,13 @@ namespace Synix_Control_Panel.SynixEngine
 				: null;
 			restoreButton.Enabled = SelectedBackup != null &&
 				SelectedBackup.Integrity != ServerBackupIntegrity.Invalid;
+			verifyButton.Enabled = SelectedBackup != null &&
+				SelectedBackup.Integrity != ServerBackupIntegrity.Invalid;
+			deleteButton.Enabled = SelectedBackup != null;
 			selectionLabel.Text = SelectedBackup == null
 				? "Select a backup to continue."
 				: $"Selected: {SelectedBackup.CreatedLocal:f}  •  " +
-					$"{FormatBytes(SelectedBackup.CompressedBytes)}  •  {SelectedBackup.IntegrityText}";
+					$"{FormatBytes(SelectedBackup.CompressedBytes)} compressed  •  {SelectedBackup.IntegrityText}";
 			selectionLabel.ForeColor = SelectedBackup?.Integrity switch
 			{
 				ServerBackupIntegrity.Recorded => SettingsPalette.Success,
@@ -116,6 +186,20 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerBackupIntegrity.Invalid => SettingsPalette.Danger,
 				_ => SettingsPalette.SecondaryText
 			};
+		}
+
+		private void SetManagementButtonsEnabled(bool enabled)
+		{
+			backupGrid.Enabled = enabled;
+			cancelButton.Enabled = enabled;
+			if (enabled)
+				UpdateSelection();
+			else
+			{
+				restoreButton.Enabled = false;
+				verifyButton.Enabled = false;
+				deleteButton.Enabled = false;
+			}
 		}
 
 		private static string FormatBytes(long bytes)

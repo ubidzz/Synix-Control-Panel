@@ -26,7 +26,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			try
 			{
 				logCallback?.Invoke($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange);
-				MainGUI.Instance.isDownloadActive = true;
+				if (MainGUI.Instance != null)
+					MainGUI.Instance.isDownloadActive = true;
 				logCallback?.Invoke("[SYNIX] Checking SteamCMD dependencies...", Color.Cyan);
 
 				if (!Directory.Exists(Core.SteamCmdPath))

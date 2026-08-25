@@ -50,6 +50,8 @@ public sealed class ServerBackupRestoreTests
 			Assert.Single(backups);
 			Assert.True(Core.Instance.HasServerBackups(server));
 			Assert.Equal(ServerBackupIntegrity.Recorded, backups[0].Integrity);
+			Assert.True(backups[0].UncompressedBytes > 0);
+			Assert.NotNull(backups[0].LastVerifiedUtc);
 			Assert.True(File.Exists(backups[0].ArchivePath + ".sha256"));
 			Assert.Empty(Directory.GetFiles(backupPath, "*.partial", SearchOption.AllDirectories));
 			Assert.False(File.Exists(Path.Combine(serverBackupPath, "backup_orphan.zip.sha256")));
@@ -71,6 +73,97 @@ public sealed class ServerBackupRestoreTests
 			Settings.Default.CustomBackupPath = originalCustomPath;
 			Settings.Default.MaxBackups = originalMaximum;
 			Core.RestoreJournalFolderOverride = originalJournalOverride;
+			TryDeleteDirectory(testRoot);
+		}
+	}
+
+	[Fact]
+	public async Task BackupPreflight_VerifyAndDelete_ManageTheArchiveSafely()
+	{
+		string testRoot = CreateTestRoot();
+		string installPath = Path.Combine(testRoot, "server");
+		string backupPath = Path.Combine(testRoot, "backups");
+		bool originalCustomSetting = Settings.Default.UseCustomBackupPath;
+		string originalCustomPath = Settings.Default.CustomBackupPath;
+
+		try
+		{
+			Directory.CreateDirectory(installPath);
+			Directory.CreateDirectory(backupPath);
+			byte[] content = new byte[32 * 1024];
+			Random.Shared.NextBytes(content);
+			File.WriteAllBytes(Path.Combine(installPath, "world.dat"), content);
+			Settings.Default.UseCustomBackupPath = true;
+			Settings.Default.CustomBackupPath = backupPath;
+			GameServer server = CreateServer(installPath);
+
+			ServerBackupPreflight preflight =
+				await Core.Instance.CreateServerBackupPreflightAsync(server);
+			Assert.True(preflight.Succeeded, preflight.Message);
+			Assert.True(preflight.HasEnoughSpace);
+			Assert.Equal(content.Length, preflight.SourceBytes);
+			Assert.Equal(1, preflight.FileCount);
+
+			await Core.Instance.ExecuteBackup(server, StartContext.Manual);
+			ServerBackupArchive backup = Assert.Single(Core.Instance.GetServerBackups(server));
+			ServerBackupManagementResult verification =
+				await Core.Instance.VerifyServerBackupAsync(server, backup);
+			Assert.True(verification.Succeeded, verification.Message);
+			ServerBackupArchive verified = Assert.Single(Core.Instance.GetServerBackups(server));
+			Assert.Equal(content.Length, verified.UncompressedBytes);
+			Assert.NotNull(verified.LastVerifiedUtc);
+
+			ServerBackupManagementResult deletion =
+				Core.Instance.DeleteServerBackup(server, verified);
+			Assert.True(deletion.Succeeded, deletion.Message);
+			Assert.Empty(Core.Instance.GetServerBackups(server));
+			Assert.False(File.Exists(verified.ArchivePath));
+			Assert.False(File.Exists(verified.ArchivePath + ".sha256"));
+		}
+		finally
+		{
+			Settings.Default.UseCustomBackupPath = originalCustomSetting;
+			Settings.Default.CustomBackupPath = originalCustomPath;
+			TryDeleteDirectory(testRoot);
+		}
+	}
+
+	[Fact]
+	public async Task VerifyLegacyBackup_CreatesAProtectedIntegrityReceipt()
+	{
+		string testRoot = CreateTestRoot();
+		string installPath = Path.Combine(testRoot, "server");
+		string backupPath = Path.Combine(testRoot, "backups");
+		bool originalCustomSetting = Settings.Default.UseCustomBackupPath;
+		string originalCustomPath = Settings.Default.CustomBackupPath;
+
+		try
+		{
+			Directory.CreateDirectory(installPath);
+			Directory.CreateDirectory(backupPath);
+			File.WriteAllText(Path.Combine(installPath, "world.dat"), "legacy");
+			Settings.Default.UseCustomBackupPath = true;
+			Settings.Default.CustomBackupPath = backupPath;
+			GameServer server = CreateServer(installPath);
+			string serverBackupPath = Core.Instance.GetActiveServerBackupFolder(server);
+			Directory.CreateDirectory(serverBackupPath);
+			string archivePath = Path.Combine(serverBackupPath, "backup_legacy_verify.zip");
+			ZipFile.CreateFromDirectory(installPath, archivePath);
+
+			ServerBackupArchive legacy = Assert.Single(Core.Instance.GetServerBackups(server));
+			Assert.Equal(ServerBackupIntegrity.Legacy, legacy.Integrity);
+			ServerBackupManagementResult result =
+				await Core.Instance.VerifyServerBackupAsync(server, legacy);
+			Assert.True(result.Succeeded, result.Message);
+			ServerBackupArchive protectedBackup =
+				Assert.Single(Core.Instance.GetServerBackups(server));
+			Assert.Equal(ServerBackupIntegrity.Recorded, protectedBackup.Integrity);
+			Assert.True(File.Exists(archivePath + ".sha256"));
+		}
+		finally
+		{
+			Settings.Default.UseCustomBackupPath = originalCustomSetting;
+			Settings.Default.CustomBackupPath = originalCustomPath;
 			TryDeleteDirectory(testRoot);
 		}
 	}

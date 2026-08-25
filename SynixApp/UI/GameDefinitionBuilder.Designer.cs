@@ -1806,7 +1806,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(lblStatus);
 			Controls.Add(btnValidate);
 			Controls.Add(btnSave);
-			Icon = (Icon)resources.GetObject("$this.Icon");
+			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
 			MinimumSize = new Size(1040, 720);
 			Name = "GameDefinitionBuilder";
 			StartPosition = FormStartPosition.CenterParent;

@@ -10,11 +10,12 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+
 namespace Synix_Control_Panel.ServerHandler
 {
 	partial class ServerConfig
 	{
-		private System.ComponentModel.IContainer? components = null;
+		private System.ComponentModel.IContainer components = null;
 
 		protected override void Dispose(bool disposing)
 		{
