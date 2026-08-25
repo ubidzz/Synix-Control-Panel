@@ -151,7 +151,13 @@ namespace Synix_Control_Panel.Help
 				.TryRevealServerSecrets(
 					_server,
 					out SynixServerSecrets secrets);
+			bool routesAvailable = Core.TryRevealDiscordWebhookRoutes(
+				_server,
+				out IReadOnlyList<DiscordWebhookRoute> discordRoutes);
 			SynixServerPasswords passwords = secrets.Passwords;
+			int enabledDiscordRoutes = routesAvailable
+				? discordRoutes.Count(route => route.Enabled)
+				: 0;
 
 			lblPageHeading.Text = DisplayOrFallback(_server.ServerName, "Server Overview");
 			lblPageSubtitle.Text =
@@ -161,7 +167,9 @@ namespace Synix_Control_Panel.Help
 			SetStatusColor(lblRconActiveText, _server.EnableRcon);
 			SetStatusColor(lblBackupOnStartText, _server.BackupOnStart);
 			SetStatusColor(lbllUpdateOnStartText, _server.UpdateOnStart);
-			SetStatusColor(lblDiscordActivateText, _server.IsDiscordAlertEnabled);
+			SetStatusColor(
+				lblDiscordActivateText,
+				_server.IsDiscordAlertEnabled || enabledDiscordRoutes > 0);
 
 			lblMaxPlayersText.Text = _server.MaxPlayers.ToString();
 			lblGamePortText.Text = _server.Port.ToString();
@@ -188,9 +196,9 @@ namespace Synix_Control_Panel.Help
 				: "N/A";
 
 			txtServerFolderValue.Text = DisplayOrFallback(_server.InstallPath);
-			txtDiscordWebhookValue.Text = secretsAvailable
-				? DisplayOrFallback(secrets.DiscordWebhook, "Not Configured")
-				: "Credential unavailable";
+			btnDiscordRoutes.Visible = secretsAvailable &&
+				routesAvailable &&
+				(!string.IsNullOrWhiteSpace(secrets.DiscordWebhook) || discordRoutes.Count > 0);
 			txtExtraArgsValue.Text = DisplayOrFallback(_server.ExtraArgs, "No extra arguments");
 		}
 
@@ -457,6 +465,35 @@ namespace Synix_Control_Panel.Help
 		private void btnClose_Click(object? sender, EventArgs eventArgs)
 		{
 			Close();
+		}
+
+		private void btnDiscordRoutes_Click(object? sender, EventArgs eventArgs)
+		{
+			if (!Core.TryRevealServerSecrets(_server, out SynixServerSecrets secrets) ||
+				!Core.TryRevealDiscordWebhookRoutes(
+					_server,
+					out IReadOnlyList<DiscordWebhookRoute> routes))
+			{
+				MessageBox.Show(
+					this,
+					"Synix could not unlock the saved Discord webhook information. Open Server Settings and save the webhooks again.",
+					"Discord Webhooks Unavailable",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(secrets.DiscordWebhook) && routes.Count == 0)
+			{
+				btnDiscordRoutes.Visible = false;
+				return;
+			}
+
+			using DiscordRoutingInfoDialog dialog = new(
+				_server,
+				secrets.DiscordWebhook,
+				routes);
+			dialog.ShowDialog(this);
 		}
 
 		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)

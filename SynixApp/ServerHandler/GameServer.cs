@@ -171,6 +171,48 @@ public sealed class GameInfo : GameDefinition
 {
 }
 
+[Flags]
+public enum DiscordNotificationEvent : long
+{
+	None = 0,
+	ServerStarting = 1L << 0,
+	ServerOnline = 1L << 1,
+	ServerStopping = 1L << 2,
+	ServerStopped = 1L << 3,
+	ServerRestarting = 1L << 4,
+	ServerCrashed = 1L << 5,
+	InstallStarted = 1L << 6,
+	InstallCompleted = 1L << 7,
+	InstallFailed = 1L << 8,
+	UpdateStarted = 1L << 9,
+	UpdateCompleted = 1L << 10,
+	UpdateFailed = 1L << 11,
+	VerificationStarted = 1L << 12,
+	VerificationCompleted = 1L << 13,
+	VerificationFailed = 1L << 14,
+	BackupStarted = 1L << 15,
+	BackupCompleted = 1L << 16,
+	BackupFailed = 1L << 17,
+	RestoreStarted = 1L << 18,
+	RestoreCompleted = 1L << 19,
+	RestoreFailed = 1L << 20,
+	ResourceWarning = 1L << 21,
+	MonitoringWarning = 1L << 22,
+	ConfigurationWarning = 1L << 23,
+	SecurityWarning = 1L << 24,
+	All = (1L << 25) - 1
+}
+
+public sealed class DiscordWebhookRoute
+{
+	public string Id { get; set; } = Guid.NewGuid().ToString("N");
+	public string Name { get; set; } = "Discord Channel";
+	public bool Enabled { get; set; } = true;
+	public string WebhookUrl { get; set; } = string.Empty;
+	public DiscordNotificationEvent Events { get; set; } =
+		DiscordNotificationEvent.All;
+}
+
 public class GameServer
 {
 	public string Game { get; set; } = string.Empty;
@@ -225,6 +267,9 @@ public class GameServer
 	public int ManagedConfigurationVersion { get; set; }
 	public bool IsDiscordAlertEnabled { get; set; } = false;
 	public string DiscordWebhook { get; set; } = string.Empty;
+	public DiscordNotificationEvent DiscordEvents { get; set; } =
+		DiscordNotificationEvent.All;
+	public List<DiscordWebhookRoute> DiscordWebhookRoutes { get; set; } = [];
 	public DateTime? StartTime { get; set; }
 	public double RamUsage { get; set; }
 	[JsonIgnore]

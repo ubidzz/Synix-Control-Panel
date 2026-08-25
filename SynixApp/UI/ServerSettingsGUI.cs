@@ -45,9 +45,6 @@ namespace Synix_Control_Panel
 		private string _validationMessage =
 			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
 
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
-		private const int EM_SETCUEBANNER = 0x1501;
 		private const int WmNcLeftButtonDown = 0x00A1;
 		private const int HtCaption = 0x0002;
 		private const int DwmWindowCornerPreference = 33;
@@ -95,9 +92,7 @@ namespace Synix_Control_Panel
 			chkUpdateOnStart.Tag = "Update on Start";
 			chkEnableRcon.Tag = "RCON";
 			chkBackupOnStart.Tag = "Backup on Start";
-			chkEnableDiscord.Tag = "Discord Alerts";
-
-			SendMessage(txtDiscordWebhook.Handle, EM_SETCUEBANNER, 0, "Paste Discord Webhook URL here...");
+			discordSettingsPage.SettingsChanged += (_, _) => SyncGatekeeper();
 
 			cmbGame.Items.Clear();
 			cmbGame.Items.Add("-- Pick a Game --");
@@ -155,6 +150,7 @@ namespace Synix_Control_Panel
 				pnlPageWorld,
 				pnlPageNetwork,
 				pnlPageAutomation,
+				pnlPageDiscord,
 				pnlPageInstall
 			};
 			ModernSettingsNavButton[] navigationButtons =
@@ -163,6 +159,7 @@ namespace Synix_Control_Panel
 				btnNavWorld,
 				btnNavNetwork,
 				btnNavAutomation,
+				btnNavDiscord,
 				btnNavInstall
 			};
 
@@ -303,7 +300,7 @@ namespace Synix_Control_Panel
 			txtPassword.Clear();
 			txtAdminPassword.Clear();
 			txtRconPassword.Clear();
-			txtDiscordWebhook.Clear();
+			discordSettingsPage.ClearSecrets();
 			debounceTimer?.Stop();
 			debounceTimer?.Dispose();
 			base.OnFormClosed(eventArgs);
@@ -316,15 +313,14 @@ namespace Synix_Control_Panel
 				txtPassword.UseSystemPasswordChar = true;
 				txtAdminPassword.UseSystemPasswordChar = true;
 				txtRconPassword.UseSystemPasswordChar = true;
-				txtDiscordWebhook.UseSystemPasswordChar = true;
-
+				discordSettingsPage.SetPrivacyMode(true);
 			}
 			else
 			{
 				txtPassword.UseSystemPasswordChar = false;
 				txtAdminPassword.UseSystemPasswordChar = false;
 				txtRconPassword.UseSystemPasswordChar = false;
-				txtDiscordWebhook.UseSystemPasswordChar = false;
+				discordSettingsPage.SetPrivacyMode(false);
 			}
 		}
 
@@ -339,14 +335,21 @@ namespace Synix_Control_Panel
 			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
 
 			if (Core.TryRevealServerSecrets(
-				_existingServer,
-				out SynixServerSecrets secrets))
+					_existingServer,
+					out SynixServerSecrets secrets) &&
+				Core.TryRevealDiscordWebhookRoutes(
+					_existingServer,
+					out IReadOnlyList<DiscordWebhookRoute> discordRoutes))
 			{
 				SynixServerPasswords passwords = secrets.Passwords;
 				txtPassword.Text = passwords.ServerPassword;
 				txtAdminPassword.Text = passwords.AdminPassword;
 				txtRconPassword.Text = passwords.RconPassword;
-				txtDiscordWebhook.Text = secrets.DiscordWebhook;
+				discordSettingsPage.LoadSettings(
+					_existingServer.IsDiscordAlertEnabled,
+					secrets.DiscordWebhook,
+					_existingServer.DiscordEvents,
+					discordRoutes);
 			}
 			else
 			{
@@ -354,11 +357,14 @@ namespace Synix_Control_Panel
 				txtPassword.Clear();
 				txtAdminPassword.Clear();
 				txtRconPassword.Clear();
-				txtDiscordWebhook.Clear();
+				discordSettingsPage.LoadSettings(
+					false,
+					string.Empty,
+					DiscordNotificationEvent.All,
+					[]);
 				Shown += ShowPasswordUnlockWarning;
 			}
-			chkEnableDiscord.Checked = _existingServer.IsDiscordAlertEnabled;
-			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
+			discordSettingsPage.SetServerName(_existingServer.ServerName);
 
 			numPort.Value = Math.Clamp(_existingServer.Port, numPort.Minimum, numPort.Maximum);
 			int queryPortToLoad = _existingServer.QueryPort > 0
@@ -402,7 +408,7 @@ namespace Synix_Control_Panel
 				return;
 
 			MessageBox.Show(
-				"Synix could not unlock this server's saved passwords or Discord webhook. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
+				"Synix could not unlock this server's saved passwords or Discord webhooks. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
 				"Re-enter Server Credentials",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Warning);
@@ -465,9 +471,8 @@ namespace Synix_Control_Panel
 				chkEnableSchedule.Enabled = isBaseReady;
 				if (btnEditSchedule != null) btnEditSchedule.Enabled = isBaseReady && chkEnableSchedule.Checked;
 
-				chkEnableDiscord.Enabled = isBaseReady;
-				txtDiscordWebhook.Enabled = isBaseReady && chkEnableDiscord.Checked;
-				btnTestDiscord.Enabled = isBaseReady && chkEnableDiscord.Checked;
+				discordSettingsPage.SetServerName(currentName);
+				discordSettingsPage.SetEditingEnabled(isBaseReady);
 
 				if (_isEditMode)
 				{
@@ -763,6 +768,15 @@ namespace Synix_Control_Panel
 				txt.ForeColor = Color.Gray;
 				txt.Text = (string?)(txt.Tag ?? "");
 			}
+		}
+
+		private void btnNavDiscord_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageDiscord,
+				btnNavDiscord,
+				"Discord Notifications",
+				"Use one master webhook or route different Synix events to multiple Discord channels.");
 		}
 
 		private static string GetEnteredValue(TextBox textBox)
@@ -1064,6 +1078,18 @@ namespace Synix_Control_Panel
 				txtExtraArgs.Focus();
 				return;
 			}
+			if (!discordSettingsPage.TryGetSettings(
+				out DiscordSettingsSnapshot discordSettings,
+				out string discordSettingsError))
+			{
+				MessageBox.Show(
+					discordSettingsError,
+					"Discord Settings Need Attention",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				btnNavDiscord.PerformClick();
+				return;
+			}
 			string newPath = txtInstallPath.Text.Trim();
 			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 			GameInfo? masterData = GameDatabase.GetGame(selectedGame);
@@ -1126,8 +1152,19 @@ namespace Synix_Control_Panel
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = _selectedTime,
 				RestartDays = (bool[])_selectedDays.Clone(),
-				IsDiscordAlertEnabled = chkEnableDiscord.Checked,
-				DiscordWebhook = txtDiscordWebhook.Text.Trim(),
+				IsDiscordAlertEnabled = discordSettings.MasterEnabled,
+				DiscordWebhook = discordSettings.MasterWebhook,
+				DiscordEvents = discordSettings.MasterEvents,
+				DiscordWebhookRoutes = discordSettings.Routes
+					.Select(route => new DiscordWebhookRoute
+					{
+						Id = route.Id,
+						Name = route.Name,
+						Enabled = route.Enabled,
+						WebhookUrl = route.WebhookUrl,
+						Events = route.Events
+					})
+					.ToList(),
 				Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped),
 				BackupOnStart = chkBackupOnStart.Checked
 			};
@@ -1148,7 +1185,8 @@ namespace Synix_Control_Panel
 							GetEnteredValue(txtPassword),
 							GetEnteredValue(txtAdminPassword),
 							GetEnteredValue(txtRconPassword)),
-						txtDiscordWebhook.Text.Trim()));
+						discordSettings.MasterWebhook));
+				Core.SetDiscordWebhookRoutes(NewServer, discordSettings.Routes);
 
 				if (_isEditMode && _existingServer != null)
 				{
@@ -1341,8 +1379,6 @@ namespace Synix_Control_Panel
 		}
 		private void btnEditSchedule_Click(object sender, EventArgs e) { using var scheduler = new ScheduleSettingsGUI(_selectedDays, _selectedTime); if (scheduler.ShowDialog() == DialogResult.OK) { _selectedDays = scheduler.SelectedDays; _selectedTime = scheduler.SelectedTime; } }
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
-		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableDiscord.Checked; txtDiscordWebhook.Enabled = active; btnTestDiscord.Enabled = active; SyncGatekeeper(); }
-		private async void btnTestDiscord_Click(object sender, EventArgs e) { string url = txtDiscordWebhook.Text.Trim(); if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://discord.com/api/webhooks/")) return; await Core.Instance.SendDiscordAlert(new GameServer { ServerName = txtName.Text, DiscordWebhook = url, IsDiscordAlertEnabled = true }, "TEST CONNECTION", "Alert Success", Color.Lime); }
 		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
 
 		private void PopulateMaps(GameInfo gameData, string selectedMap)

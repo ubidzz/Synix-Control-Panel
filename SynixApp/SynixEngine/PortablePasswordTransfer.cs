@@ -21,7 +21,7 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private static readonly byte[] PortablePasswordMagic =
 			Encoding.ASCII.GetBytes("SXPASS01");
-		private const int PortablePasswordFormatVersion = 1;
+		private const int PortablePasswordFormatVersion = 2;
 		private const int PortablePasswordPbkdf2Iterations = 600_000;
 		private const int PortablePasswordSaltSize = 16;
 		private const int PortablePasswordNonceSize = 12;
@@ -67,7 +67,10 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerPassword = passwords.ServerPassword,
 					AdminPassword = passwords.AdminPassword,
 					RconPassword = passwords.RconPassword,
-					DiscordWebhook = secrets.DiscordWebhook
+					DiscordWebhook = secrets.DiscordWebhook,
+					DiscordWebhookRoutes = Core
+						.RevealDiscordWebhookRoutes(server)
+						.ToList()
 				});
 			}
 
@@ -123,7 +126,8 @@ namespace Synix_Control_Panel.SynixEngine
 					throw new SynixPasswordProtectionException(
 						"The portable saved-credential list is incomplete.");
 
-				if (bundle.Version != PortablePasswordFormatVersion || bundle.Servers is null)
+				if (bundle.Version is < 1 or > PortablePasswordFormatVersion ||
+					bundle.Servers is null)
 				{
 					throw new SynixPasswordProtectionException(
 						"This saved-credential transfer version is not supported.");
@@ -148,6 +152,9 @@ namespace Synix_Control_Panel.SynixEngine
 								entry.AdminPassword,
 								entry.RconPassword),
 							discordWebhook));
+					Core.SetDiscordWebhookRoutes(
+						server,
+						entry.DiscordWebhookRoutes ?? []);
 				}
 
 				string protectedJson = Core
@@ -277,9 +284,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 			using MemoryStream stream = new(vaultBytes, writable: false);
 			using BinaryReader reader = new(stream, Encoding.UTF8, leaveOpen: true);
-			if (!reader.ReadBytes(PortablePasswordMagic.Length).SequenceEqual(PortablePasswordMagic) ||
-				reader.ReadInt32() != PortablePasswordFormatVersion ||
-				reader.ReadInt32() != PortablePasswordPbkdf2Iterations)
+			byte[] magic = reader.ReadBytes(PortablePasswordMagic.Length);
+			int formatVersion = reader.ReadInt32();
+			int iterations = reader.ReadInt32();
+			if (!magic.SequenceEqual(PortablePasswordMagic) ||
+				formatVersion is < 1 or > PortablePasswordFormatVersion ||
+				iterations != PortablePasswordPbkdf2Iterations)
 			{
 				throw InvalidVault();
 			}
@@ -418,6 +428,7 @@ namespace Synix_Control_Panel.SynixEngine
 			public string RconPassword { get; set; } = string.Empty;
 
 			public string? DiscordWebhook { get; set; }
+			public List<DiscordWebhookRoute>? DiscordWebhookRoutes { get; set; }
 		}
 	}
 }

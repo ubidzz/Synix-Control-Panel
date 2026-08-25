@@ -122,6 +122,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					logCallback?.Invoke(
 						$"[START ERROR] The built-in definition for '{server.Game}' could not be loaded.",
 						Color.Red);
+					_ = Core.Instance.SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.ConfigurationWarning,
+						"START CONFIGURATION ERROR",
+						$"The built-in definition for {server.Game} could not be loaded.",
+						Color.Red);
 					return;
 				}
 
@@ -143,6 +149,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					string message = prerequisites.ToDisplayText();
 					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
+					_ = Core.Instance.SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.MonitoringWarning,
+						"START BLOCKED",
+						message,
+						Color.Red);
 					if (context == StartContext.Manual)
 					{
 						MessageBox.Show(
@@ -235,6 +247,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					if (!File.Exists(fullExePath))
 					{
 						logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}", Color.Red);
+						_ = Core.Instance.SendDiscordNotification(
+							server,
+							DiscordNotificationEvent.ConfigurationWarning,
+							"SERVER FILE MISSING",
+							"The configured server launch file is missing. Run Update or Validate before starting.",
+							Color.Red);
 						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
 						return;
 					}
@@ -261,6 +279,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					{
 						logCallback?.Invoke(
 							$"[🚨 SECURITY] {argumentError} Startup was blocked.",
+							Color.Red);
+						_ = Core.Instance.SendDiscordNotification(
+							server,
+							DiscordNotificationEvent.SecurityWarning,
+							"UNSAFE STARTUP BLOCKED",
+							argumentError,
 							Color.Red);
 						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
 						return;
@@ -337,7 +361,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					server.StartTime = DateTime.Now;
 
-					_ = Core.Instance.SendDiscordAlert(server, "SERVER STARTING", $"{server.ServerName} process has been initiated.", Color.Cyan);
+					_ = Core.Instance.SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.ServerStarting,
+						"SERVER STARTING",
+						$"{server.ServerName} process has been initiated.",
+						Color.Cyan);
 
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) =>
@@ -369,7 +398,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					FileHandler.SaveServers();
 				}
 			}
-			catch (Exception ex) { logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red); }
+			catch (Exception ex)
+			{
+				logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red);
+				_ = Core.Instance.SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.MonitoringWarning,
+					"START FAILED",
+					ex.Message,
+					Color.Red);
+			}
 		}
 
 		private static void PrepareMinecraftLauncher(string launcherPath, Action<string, Color> logCallback)
@@ -429,12 +467,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					logCallback?.Invoke($"[SHUTDOWN] No live process remains for {server.ServerName}. State reconciled.", Color.Lime);
 					FinalizeStoppedState(server);
 					return true;
-				}
-
-				if (isManual)
-				{
-					_ = Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
-						"A shutdown command was issued via the Synix Control Panel.", Color.Orange);
 				}
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
@@ -1214,6 +1246,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
+			server.HasAnnouncedOnline = false;
+			server.IsProbing = false;
+			server.LastProbeTime = null;
 			server.RunningProcess?.Dispose();
 			server.RunningProcess = null;
 			MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));

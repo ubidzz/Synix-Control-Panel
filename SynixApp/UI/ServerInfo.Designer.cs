@@ -118,8 +118,7 @@ namespace Synix_Control_Panel.Help
 			pathsTable = new TableLayoutPanel();
 			lblServerFolderCaption = new Label();
 			txtServerFolderValue = new TextBox();
-			lblDiscordWebhookCaption = new Label();
-			txtDiscordWebhookValue = new TextBox();
+			btnDiscordRoutes = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			lblExtraArgsCaption = new Label();
 			txtExtraArgsValue = new TextBox();
 			shellLayout.SuspendLayout();
@@ -286,9 +285,9 @@ namespace Synix_Control_Panel.Help
 			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
 			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 375F));
 			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
-			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 205F));
+			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 180F));
 			contentLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-			contentLayout.Size = new Size(1062, 848);
+			contentLayout.Size = new Size(1062, 823);
 			contentLayout.TabIndex = 0;
 			// 
 			// headerPanel
@@ -1026,6 +1025,7 @@ namespace Synix_Control_Panel.Help
 			lblConfigurationTitle.Size = new Size(232, 28);
 			lblConfigurationTitle.TabIndex = 0;
 			lblConfigurationTitle.Text = "Configuration & Security";
+			lblConfigurationTitle.UseMnemonic = false;
 			// 
 			// lblConfigurationSubtitle
 			// 
@@ -1357,6 +1357,7 @@ namespace Synix_Control_Panel.Help
 			pnlPathsCard.BorderColor = Color.FromArgb(38, 52, 77);
 			pnlPathsCard.Controls.Add(lblPathsTitle);
 			pnlPathsCard.Controls.Add(lblPathsSubtitle);
+			pnlPathsCard.Controls.Add(btnDiscordRoutes);
 			pnlPathsCard.Controls.Add(pathsTable);
 			pnlPathsCard.CornerRadius = 14;
 			pnlPathsCard.Dock = DockStyle.Fill;
@@ -1364,7 +1365,7 @@ namespace Synix_Control_Panel.Help
 			pnlPathsCard.Location = new Point(0, 619);
 			pnlPathsCard.Margin = new Padding(0);
 			pnlPathsCard.Name = "pnlPathsCard";
-			pnlPathsCard.Size = new Size(1062, 205);
+			pnlPathsCard.Size = new Size(1062, 180);
 			pnlPathsCard.TabIndex = 3;
 			// 
 			// lblPathsTitle
@@ -1378,6 +1379,7 @@ namespace Synix_Control_Panel.Help
 			lblPathsTitle.Size = new Size(215, 28);
 			lblPathsTitle.TabIndex = 0;
 			lblPathsTitle.Text = "Paths & Launch Details";
+			lblPathsTitle.UseMnemonic = false;
 			// 
 			// lblPathsSubtitle
 			// 
@@ -1388,10 +1390,21 @@ namespace Synix_Control_Panel.Help
 			lblPathsSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
 			lblPathsSubtitle.Location = new Point(24, 49);
 			lblPathsSubtitle.Name = "lblPathsSubtitle";
-			lblPathsSubtitle.Size = new Size(1014, 20);
+			lblPathsSubtitle.Size = new Size(760, 20);
 			lblPathsSubtitle.TabIndex = 1;
 			lblPathsSubtitle.Text = "Read-only values can be selected and copied for diagnostics";
-			// 
+			//
+			// btnDiscordRoutes
+			//
+			btnDiscordRoutes.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			btnDiscordRoutes.Location = new Point(816, 20);
+			btnDiscordRoutes.Name = "btnDiscordRoutes";
+			btnDiscordRoutes.Size = new Size(222, 42);
+			btnDiscordRoutes.TabIndex = 2;
+			btnDiscordRoutes.Text = "View Discord Webhooks";
+			btnDiscordRoutes.Visible = false;
+			btnDiscordRoutes.Click += btnDiscordRoutes_Click;
+			//
 			// pathsTable
 			// 
 			pathsTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -1401,18 +1414,15 @@ namespace Synix_Control_Panel.Help
 			pathsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			pathsTable.Controls.Add(lblServerFolderCaption, 0, 0);
 			pathsTable.Controls.Add(txtServerFolderValue, 1, 0);
-			pathsTable.Controls.Add(lblDiscordWebhookCaption, 0, 1);
-			pathsTable.Controls.Add(txtDiscordWebhookValue, 1, 1);
-			pathsTable.Controls.Add(lblExtraArgsCaption, 0, 2);
-			pathsTable.Controls.Add(txtExtraArgsValue, 1, 2);
+			pathsTable.Controls.Add(lblExtraArgsCaption, 0, 1);
+			pathsTable.Controls.Add(txtExtraArgsValue, 1, 1);
 			pathsTable.Location = new Point(22, 78);
 			pathsTable.Margin = new Padding(0);
 			pathsTable.Name = "pathsTable";
-			pathsTable.RowCount = 3;
-			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33333F));
-			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33333F));
-			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33334F));
-			pathsTable.Size = new Size(1018, 105);
+			pathsTable.RowCount = 2;
+			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+			pathsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+			pathsTable.Size = new Size(1018, 70);
 			pathsTable.TabIndex = 2;
 			// 
 			// lblServerFolderCaption
@@ -1445,46 +1455,16 @@ namespace Synix_Control_Panel.Help
 			txtServerFolderValue.TabStop = false;
 			txtServerFolderValue.Text = "C:\\Synix\\Games\\Example Server";
 			// 
-			// lblDiscordWebhookCaption
-			// 
-			lblDiscordWebhookCaption.BackColor = Color.FromArgb(17, 27, 45);
-			lblDiscordWebhookCaption.Dock = DockStyle.Fill;
-			lblDiscordWebhookCaption.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Bold);
-			lblDiscordWebhookCaption.ForeColor = Color.FromArgb(158, 172, 194);
-			lblDiscordWebhookCaption.Location = new Point(0, 34);
-			lblDiscordWebhookCaption.Margin = new Padding(0);
-			lblDiscordWebhookCaption.Name = "lblDiscordWebhookCaption";
-			lblDiscordWebhookCaption.Size = new Size(142, 34);
-			lblDiscordWebhookCaption.TabIndex = 2;
-			lblDiscordWebhookCaption.Text = "Discord Webhook";
-			lblDiscordWebhookCaption.TextAlign = ContentAlignment.MiddleLeft;
-			// 
-			// txtDiscordWebhookValue
-			// 
-			txtDiscordWebhookValue.BackColor = Color.FromArgb(12, 21, 36);
-			txtDiscordWebhookValue.BorderStyle = BorderStyle.FixedSingle;
-			txtDiscordWebhookValue.Dock = DockStyle.Fill;
-			txtDiscordWebhookValue.Font = new Font("Segoe UI", 9.25F);
-			txtDiscordWebhookValue.ForeColor = Color.FromArgb(245, 247, 251);
-			txtDiscordWebhookValue.Location = new Point(142, 37);
-			txtDiscordWebhookValue.Margin = new Padding(0, 3, 0, 5);
-			txtDiscordWebhookValue.Name = "txtDiscordWebhookValue";
-			txtDiscordWebhookValue.ReadOnly = true;
-			txtDiscordWebhookValue.Size = new Size(876, 24);
-			txtDiscordWebhookValue.TabIndex = 3;
-			txtDiscordWebhookValue.TabStop = false;
-			txtDiscordWebhookValue.Text = "Not Configured";
-			// 
 			// lblExtraArgsCaption
 			// 
 			lblExtraArgsCaption.BackColor = Color.FromArgb(17, 27, 45);
 			lblExtraArgsCaption.Dock = DockStyle.Fill;
 			lblExtraArgsCaption.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Bold);
 			lblExtraArgsCaption.ForeColor = Color.FromArgb(158, 172, 194);
-			lblExtraArgsCaption.Location = new Point(0, 68);
+			lblExtraArgsCaption.Location = new Point(0, 35);
 			lblExtraArgsCaption.Margin = new Padding(0);
 			lblExtraArgsCaption.Name = "lblExtraArgsCaption";
-			lblExtraArgsCaption.Size = new Size(142, 37);
+			lblExtraArgsCaption.Size = new Size(142, 35);
 			lblExtraArgsCaption.TabIndex = 4;
 			lblExtraArgsCaption.Text = "Extra Arguments";
 			lblExtraArgsCaption.TextAlign = ContentAlignment.MiddleLeft;
@@ -1496,7 +1476,7 @@ namespace Synix_Control_Panel.Help
 			txtExtraArgsValue.Dock = DockStyle.Fill;
 			txtExtraArgsValue.Font = new Font("Segoe UI", 9.25F);
 			txtExtraArgsValue.ForeColor = Color.FromArgb(245, 247, 251);
-			txtExtraArgsValue.Location = new Point(142, 71);
+			txtExtraArgsValue.Location = new Point(142, 38);
 			txtExtraArgsValue.Margin = new Padding(0, 3, 0, 5);
 			txtExtraArgsValue.Name = "txtExtraArgsValue";
 			txtExtraArgsValue.ReadOnly = true;
@@ -1641,8 +1621,7 @@ namespace Synix_Control_Panel.Help
 		private TableLayoutPanel pathsTable;
 		private Label lblServerFolderCaption;
 		private TextBox txtServerFolderValue;
-		private Label lblDiscordWebhookCaption;
-		private TextBox txtDiscordWebhookValue;
+		private SynixApp.Design.ModernSettingsButton btnDiscordRoutes;
 		private Label lblExtraArgsCaption;
 		private TextBox txtExtraArgsValue;
 	}

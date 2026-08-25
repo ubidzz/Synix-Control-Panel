@@ -95,6 +95,12 @@ namespace Synix_Control_Panel.SynixEngine
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
 				Log($"[🚨 ERROR] {server.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.BackupFailed,
+					"BACKUP BLOCKED",
+					"The server must be stopped before a backup can begin.",
+					Color.Orange);
 				return;
 			}
 
@@ -102,6 +108,12 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!preflight.Succeeded)
 			{
 				Log($"[🚨 BACKUP ERROR] {preflight.Message}", Color.Red, true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.BackupFailed,
+					"BACKUP FAILED",
+					preflight.Message,
+					Color.Red);
 				return;
 			}
 			if (!preflight.HasEnoughSpace)
@@ -110,12 +122,24 @@ namespace Synix_Control_Panel.SynixEngine
 					$"[🚨 BACKUP ERROR] The backup drive needs up to {FormatBytes(preflight.RequiredBytes)} free, but only {FormatBytes(preflight.AvailableBytes)} is available.",
 					Color.Red,
 					true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.BackupFailed,
+					"BACKUP FAILED",
+					$"Not enough free space. Up to {FormatBytes(preflight.RequiredBytes)} is needed, but {FormatBytes(preflight.AvailableBytes)} is available.",
+					Color.Red);
 				return;
 			}
 
 			Log("[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			isDownloadActive = true;
 			Log($"[💾 BACKUP] Starting backup compression for {server.ServerName}...", Color.Cyan);
+			_ = SendDiscordNotification(
+				server,
+				DiscordNotificationEvent.BackupStarted,
+				"BACKUP STARTED",
+				$"Synix is backing up {FormatBytes(preflight.SourceBytes)} across {preflight.FileCount:N0} files.",
+				Color.Cyan);
 
 			server.Status = StatusManager.GetStatus(ServerState.BackingUp);
 			UpdateGridStatus();
@@ -177,6 +201,12 @@ namespace Synix_Control_Panel.SynixEngine
 				Log($"[💾 BACKUP] SHA-256 integrity receipt created for {Path.GetFileName(zipPath)}.", Color.LimeGreen);
 				Log($"[💾 BACKUP] Backup location: {zipPath}.", Color.LimeGreen);
 				Log($"[💾 BACKUP] Finished backing up {server.ServerName}.", Color.LimeGreen);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.BackupCompleted,
+					"BACKUP COMPLETED",
+					$"Created {Path.GetFileName(zipPath)} with a SHA-256 integrity receipt.",
+					Color.LimeGreen);
 			}
 			catch (Exception exception)
 			{
@@ -187,6 +217,12 @@ namespace Synix_Control_Panel.SynixEngine
 				if (receiptPublished)
 					TryDeleteBackupRestoreFile(receiptPath);
 				Log($"[🚨 BACKUP ERROR] {exception.Message}", Color.Red, true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.BackupFailed,
+					"BACKUP FAILED",
+					exception.Message,
+					Color.Red);
 			}
 			finally
 			{
@@ -465,6 +501,12 @@ namespace Synix_Control_Panel.SynixEngine
 			UpdateGridStatus();
 			Log("[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
 			Log($"[♻ RESTORE] Preparing {backup.FileName} for {server.ServerName}...", Color.Cyan, true);
+			_ = SendDiscordNotification(
+				server,
+				DiscordNotificationEvent.RestoreStarted,
+				"RESTORE STARTED",
+				$"Synix is restoring {backup.FileName}.",
+				Color.Cyan);
 
 			try
 			{
@@ -476,11 +518,27 @@ namespace Synix_Control_Panel.SynixEngine
 						: $"[🚨 RESTORE ERROR] {result.Message}",
 					result.Succeeded ? Color.LimeGreen : Color.Red,
 					true);
+				_ = SendDiscordNotification(
+					server,
+					result.Succeeded
+						? DiscordNotificationEvent.RestoreCompleted
+						: DiscordNotificationEvent.RestoreFailed,
+					result.Succeeded ? "RESTORE COMPLETED" : "RESTORE FAILED",
+					result.Succeeded
+						? $"Restored {backup.FileName} successfully."
+						: result.Message,
+					result.Succeeded ? Color.LimeGreen : Color.Red);
 				return result;
 			}
 			catch (Exception exception)
 			{
 				Log($"[🚨 RESTORE ERROR] {exception.Message}", Color.Red, true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.RestoreFailed,
+					"RESTORE FAILED",
+					exception.Message,
+					Color.Red);
 				return new ServerBackupRestoreResult(false, exception.Message);
 			}
 			finally

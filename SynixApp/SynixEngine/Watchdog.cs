@@ -91,8 +91,12 @@ namespace Synix_Control_Panel.SynixEngine
 										{
 											MainGUI.Instance?.Invoke((Action)(() =>
 											{
-												_ = SendDiscordAlert(server, "SERVER ONLINE",
-													$"Successfully verified server connectivity!",
+												server.HasAnnouncedOnline = true;
+												_ = SendDiscordNotification(
+													server,
+													DiscordNotificationEvent.ServerOnline,
+													"SERVER ONLINE",
+													"Synix successfully verified server connectivity.",
 													Color.LimeGreen);
 
 												server.Status = StatusManager.GetStatus(ServerState.Running);

@@ -49,6 +49,7 @@ namespace Synix_Control_Panel
 			btnNavWorld = new ModernSettingsNavButton();
 			btnNavNetwork = new ModernSettingsNavButton();
 			btnNavAutomation = new ModernSettingsNavButton();
+			btnNavDiscord = new ModernSettingsNavButton();
 			btnNavInstall = new ModernSettingsNavButton();
 			pnlSidebarStatus = new Panel();
 			pnlSidebarDivider = new Panel();
@@ -157,13 +158,8 @@ namespace Synix_Control_Panel
 			lblScheduleDescription = new Label();
 			chkEnableSchedule = new ModernSettingsToggle();
 			btnEditSchedule = new ModernSettingsButton();
-			cardDiscord = new ModernSettingsCard();
-			lblDiscordIcon = new Label();
-			lblDiscordTitle = new Label();
-			lblDiscordDescription = new Label();
-			chkEnableDiscord = new ModernSettingsToggle();
-			txtDiscordWebhook = new TextBox();
-			btnTestDiscord = new ModernSettingsButton();
+			pnlPageDiscord = new Panel();
+			discordSettingsPage = new DiscordSettingsPage();
 			pnlPageInstall = new Panel();
 			cardInstallLocation = new ModernSettingsCard();
 			lblInstallIcon = new Label();
@@ -210,7 +206,7 @@ namespace Synix_Control_Panel
 			pnlPageAutomation.SuspendLayout();
 			cardStartup.SuspendLayout();
 			cardSchedule.SuspendLayout();
-			cardDiscord.SuspendLayout();
+			pnlPageDiscord.SuspendLayout();
 			pnlPageInstall.SuspendLayout();
 			cardInstallLocation.SuspendLayout();
 			cardLaunchArguments.SuspendLayout();
@@ -369,6 +365,7 @@ namespace Synix_Control_Panel
 			pnlSidebar.Controls.Add(btnNavWorld);
 			pnlSidebar.Controls.Add(btnNavNetwork);
 			pnlSidebar.Controls.Add(btnNavAutomation);
+			pnlSidebar.Controls.Add(btnNavDiscord);
 			pnlSidebar.Controls.Add(btnNavInstall);
 			pnlSidebar.Controls.Add(pnlSidebarStatus);
 			pnlSidebar.Dock = DockStyle.Left;
@@ -436,15 +433,27 @@ namespace Synix_Control_Panel
 			btnNavAutomation.Text = "Automation";
 			btnNavAutomation.Click += btnNavAutomation_Click;
 
+			// btnNavDiscord
+			btnNavDiscord.BackColor = Color.FromArgb(10, 18, 32);
+			btnNavDiscord.Font = new Font("Segoe UI", 10F);
+			btnNavDiscord.ForeColor = Color.FromArgb(158, 172, 194);
+			btnNavDiscord.IconGlyph = "✉";
+			btnNavDiscord.Location = new Point(12, 298);
+			btnNavDiscord.Name = "btnNavDiscord";
+			btnNavDiscord.Size = new Size(186, 52);
+			btnNavDiscord.TabIndex = 5;
+			btnNavDiscord.Text = "Discord";
+			btnNavDiscord.Click += btnNavDiscord_Click;
+
 			// btnNavInstall
 			btnNavInstall.BackColor = Color.FromArgb(10, 18, 32);
 			btnNavInstall.Font = new Font("Segoe UI", 10F);
 			btnNavInstall.ForeColor = Color.FromArgb(158, 172, 194);
 			btnNavInstall.IconGlyph = "➜";
-			btnNavInstall.Location = new Point(12, 298);
+			btnNavInstall.Location = new Point(12, 358);
 			btnNavInstall.Name = "btnNavInstall";
 			btnNavInstall.Size = new Size(186, 52);
-			btnNavInstall.TabIndex = 5;
+			btnNavInstall.TabIndex = 6;
 			btnNavInstall.Text = "Install & Launch";
 			btnNavInstall.Click += btnNavInstall_Click;
 
@@ -568,6 +577,7 @@ namespace Synix_Control_Panel
 			pnlPageHost.Controls.Add(pnlPageWorld);
 			pnlPageHost.Controls.Add(pnlPageNetwork);
 			pnlPageHost.Controls.Add(pnlPageAutomation);
+			pnlPageHost.Controls.Add(pnlPageDiscord);
 			pnlPageHost.Controls.Add(pnlPageInstall);
 			pnlPageHost.Location = new Point(28, 136);
 			pnlPageHost.Name = "pnlPageHost";
@@ -1598,7 +1608,6 @@ namespace Synix_Control_Panel
 			pnlPageAutomation.BackColor = Color.FromArgb(8, 13, 24);
 			pnlPageAutomation.Controls.Add(cardStartup);
 			pnlPageAutomation.Controls.Add(cardSchedule);
-			pnlPageAutomation.Controls.Add(cardDiscord);
 			pnlPageAutomation.Dock = DockStyle.Fill;
 			pnlPageAutomation.Location = new Point(0, 0);
 			pnlPageAutomation.Name = "pnlPageAutomation";
@@ -1772,88 +1781,23 @@ namespace Synix_Control_Panel
 			btnEditSchedule.Text = "Configure Schedule";
 			btnEditSchedule.Click += btnEditSchedule_Click;
 
-			// cardDiscord
-			cardDiscord.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			cardDiscord.BackColor = Color.FromArgb(17, 27, 45);
-			cardDiscord.BorderColor = Color.FromArgb(38, 52, 77);
-			cardDiscord.Controls.Add(lblDiscordIcon);
-			cardDiscord.Controls.Add(lblDiscordTitle);
-			cardDiscord.Controls.Add(lblDiscordDescription);
-			cardDiscord.Controls.Add(chkEnableDiscord);
-			cardDiscord.Controls.Add(txtDiscordWebhook);
-			cardDiscord.Controls.Add(btnTestDiscord);
-			cardDiscord.CornerRadius = 12;
-			cardDiscord.FillColor = Color.FromArgb(17, 27, 45);
-			cardDiscord.Location = new Point(0, 292);
-			cardDiscord.Name = "cardDiscord";
-			cardDiscord.Size = new Size(914, 154);
-			cardDiscord.TabIndex = 2;
+			// pnlPageDiscord
+			pnlPageDiscord.BackColor = Color.FromArgb(8, 13, 24);
+			pnlPageDiscord.Controls.Add(discordSettingsPage);
+			pnlPageDiscord.Dock = DockStyle.Fill;
+			pnlPageDiscord.Location = new Point(0, 0);
+			pnlPageDiscord.Name = "pnlPageDiscord";
+			pnlPageDiscord.Size = new Size(914, 440);
+			pnlPageDiscord.TabIndex = 4;
+			pnlPageDiscord.Visible = false;
 
-			// lblDiscordIcon
-			lblDiscordIcon.BackColor = Color.FromArgb(17, 27, 45);
-			lblDiscordIcon.Font = new Font("Segoe UI Symbol", 16F);
-			lblDiscordIcon.ForeColor = Color.FromArgb(32, 214, 199);
-			lblDiscordIcon.Location = new Point(20, 14);
-			lblDiscordIcon.Name = "lblDiscordIcon";
-			lblDiscordIcon.Size = new Size(28, 30);
-			lblDiscordIcon.TabIndex = 0;
-			lblDiscordIcon.Text = "✉";
-			lblDiscordIcon.TextAlign = ContentAlignment.MiddleCenter;
-
-			// lblDiscordTitle
-			lblDiscordTitle.AutoSize = true;
-			lblDiscordTitle.BackColor = Color.FromArgb(17, 27, 45);
-			lblDiscordTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			lblDiscordTitle.ForeColor = Color.FromArgb(245, 247, 251);
-			lblDiscordTitle.Location = new Point(54, 19);
-			lblDiscordTitle.Name = "lblDiscordTitle";
-			lblDiscordTitle.Size = new Size(116, 21);
-			lblDiscordTitle.TabIndex = 1;
-			lblDiscordTitle.Text = "Discord Alerts";
-
-			// lblDiscordDescription
-			lblDiscordDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			lblDiscordDescription.BackColor = Color.FromArgb(17, 27, 45);
-			lblDiscordDescription.Font = new Font("Segoe UI", 8.5F);
-			lblDiscordDescription.ForeColor = Color.FromArgb(158, 172, 194);
-			lblDiscordDescription.Location = new Point(24, 49);
-			lblDiscordDescription.Name = "lblDiscordDescription";
-			lblDiscordDescription.Size = new Size(720, 22);
-			lblDiscordDescription.TabIndex = 2;
-			lblDiscordDescription.Text = "Send server status notifications through an existing Discord webhook.";
-
-			// chkEnableDiscord
-			chkEnableDiscord.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			chkEnableDiscord.BackColor = Color.FromArgb(17, 27, 45);
-			chkEnableDiscord.Location = new Point(836, 18);
-			chkEnableDiscord.Name = "chkEnableDiscord";
-			chkEnableDiscord.Size = new Size(54, 30);
-			chkEnableDiscord.TabIndex = 3;
-			chkEnableDiscord.CheckedChanged += chkEnableDiscord_CheckedChanged;
-
-			// txtDiscordWebhook
-			txtDiscordWebhook.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			txtDiscordWebhook.AutoSize = false;
-			txtDiscordWebhook.BackColor = Color.FromArgb(12, 21, 36);
-			txtDiscordWebhook.BorderStyle = BorderStyle.FixedSingle;
-			txtDiscordWebhook.Font = new Font("Segoe UI", 10F);
-			txtDiscordWebhook.ForeColor = Color.FromArgb(245, 247, 251);
-			txtDiscordWebhook.Location = new Point(24, 87);
-			txtDiscordWebhook.Name = "txtDiscordWebhook";
-			txtDiscordWebhook.Size = new Size(690, 36);
-			txtDiscordWebhook.TabIndex = 4;
-
-			// btnTestDiscord
-			btnTestDiscord.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			btnTestDiscord.BackColor = Color.FromArgb(12, 21, 36);
-			btnTestDiscord.Enabled = false;
-			btnTestDiscord.ForeColor = Color.FromArgb(245, 247, 251);
-			btnTestDiscord.Location = new Point(735, 84);
-			btnTestDiscord.Name = "btnTestDiscord";
-			btnTestDiscord.Size = new Size(155, 42);
-			btnTestDiscord.TabIndex = 5;
-			btnTestDiscord.Text = "Test Connection";
-			btnTestDiscord.Click += btnTestDiscord_Click;
+			// discordSettingsPage
+			discordSettingsPage.BackColor = Color.FromArgb(8, 13, 24);
+			discordSettingsPage.Dock = DockStyle.Fill;
+			discordSettingsPage.Location = new Point(0, 0);
+			discordSettingsPage.Name = "discordSettingsPage";
+			discordSettingsPage.Size = new Size(914, 440);
+			discordSettingsPage.TabIndex = 0;
 
 			// pnlPageInstall
 			pnlPageInstall.AutoScroll = true;
@@ -1864,7 +1808,7 @@ namespace Synix_Control_Panel
 			pnlPageInstall.Location = new Point(0, 0);
 			pnlPageInstall.Name = "pnlPageInstall";
 			pnlPageInstall.Size = new Size(914, 440);
-			pnlPageInstall.TabIndex = 4;
+			pnlPageInstall.TabIndex = 5;
 			pnlPageInstall.Visible = false;
 
 			// cardInstallLocation
@@ -2108,8 +2052,7 @@ namespace Synix_Control_Panel
 			cardInstallLocation.ResumeLayout(false);
 			cardInstallLocation.PerformLayout();
 			pnlPageInstall.ResumeLayout(false);
-			cardDiscord.ResumeLayout(false);
-			cardDiscord.PerformLayout();
+			pnlPageDiscord.ResumeLayout(false);
 			cardSchedule.ResumeLayout(false);
 			cardSchedule.PerformLayout();
 			cardStartup.ResumeLayout(false);
@@ -2164,6 +2107,7 @@ namespace Synix_Control_Panel
 		private ModernSettingsNavButton btnNavWorld;
 		private ModernSettingsNavButton btnNavNetwork;
 		private ModernSettingsNavButton btnNavAutomation;
+		private ModernSettingsNavButton btnNavDiscord;
 		private ModernSettingsNavButton btnNavInstall;
 		private Panel pnlSidebarStatus;
 		private Panel pnlSidebarDivider;
@@ -2272,13 +2216,8 @@ namespace Synix_Control_Panel
 		private Label lblScheduleDescription;
 		private ModernSettingsToggle chkEnableSchedule;
 		private ModernSettingsButton btnEditSchedule;
-		private ModernSettingsCard cardDiscord;
-		private Label lblDiscordIcon;
-		private Label lblDiscordTitle;
-		private Label lblDiscordDescription;
-		private ModernSettingsToggle chkEnableDiscord;
-		private TextBox txtDiscordWebhook;
-		private ModernSettingsButton btnTestDiscord;
+		private Panel pnlPageDiscord;
+		private DiscordSettingsPage discordSettingsPage;
 		private Panel pnlPageInstall;
 		private ModernSettingsCard cardInstallLocation;
 		private Label lblInstallIcon;

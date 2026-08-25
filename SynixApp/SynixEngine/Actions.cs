@@ -35,6 +35,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
 			Core.Instance.UpdateGridStatus();
+			_ = SendDiscordNotification(
+				server,
+				DiscordNotificationEvent.ServerStopping,
+				isManual ? "SERVER STOPPING" : "AUTOMATIC STOP",
+				isManual
+					? "A shutdown command was issued from Synix."
+					: "Synix is stopping the server as part of an automatic operation.",
+				Color.Orange);
 
 			bool stopped = await Servers.Stop(server, (msg, logColor) =>
 			{
@@ -50,6 +58,12 @@ namespace Synix_Control_Panel.SynixEngine
 				RecordGameVerification(server.Game, GameVerificationKind.Stop);
 				await CollectGeneratedConfigurationAfterStop(server);
 				await SynchronizeFirstGeneratedConfiguration(server);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.ServerStopped,
+					"SERVER STOPPED",
+					$"{server.ServerName} is fully stopped.",
+					Color.LimeGreen);
 			}
 
 			FileHandler.SaveServers();
@@ -69,12 +83,24 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!result.Succeeded)
 			{
 				Log($"[CONFIG ERROR] {result.Message}", Color.Red, true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.ConfigurationWarning,
+					"CONFIGURATION ERROR",
+					result.Message,
+					Color.Red);
 				return;
 			}
 
 			if (!result.Complete)
 			{
 				Log($"[CONFIG WARNING] {result.Message}", Color.Orange, true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.ConfigurationWarning,
+					"CONFIGURATION WARNING",
+					result.Message,
+					Color.Orange);
 				return;
 			}
 
@@ -351,6 +377,16 @@ namespace Synix_Control_Panel.SynixEngine
 				Log($"[STEAMCMD BLOCKED] {operation.FailureReason}", Color.Orange, true);
 				return;
 			}
+			DiscordNotificationEvent startedEvent = ServerUpdating
+				? DiscordNotificationEvent.UpdateStarted
+				: DiscordNotificationEvent.VerificationStarted;
+			DiscordNotificationEvent completedEvent = ServerUpdating
+				? DiscordNotificationEvent.UpdateCompleted
+				: DiscordNotificationEvent.VerificationCompleted;
+			DiscordNotificationEvent failedEvent = ServerUpdating
+				? DiscordNotificationEvent.UpdateFailed
+				: DiscordNotificationEvent.VerificationFailed;
+			string operationName = ServerUpdating ? "UPDATE" : "FILE VERIFICATION";
 
 			try
 			{
@@ -376,6 +412,12 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				Core.Instance.UpdateGridStatus();
+				_ = SendDiscordNotification(
+					server,
+					startedEvent,
+					$"{operationName} STARTED",
+					$"SteamCMD is processing {server.ServerName}.",
+					Color.Cyan);
 
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
 				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf");
@@ -409,6 +451,12 @@ namespace Synix_Control_Panel.SynixEngine
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
 					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
 					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
+					_ = SendDiscordNotification(
+						server,
+						failedEvent,
+						$"{operationName} FAILED",
+						errorDetail,
+						Color.Red);
 					isDownloadActive = false;
 					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 					return;
@@ -442,6 +490,12 @@ namespace Synix_Control_Panel.SynixEngine
 							"Oxide Update Failed",
 							MessageBoxButtons.OK,
 							MessageBoxIcon.Error);
+						_ = SendDiscordNotification(
+							server,
+							failedEvent,
+							$"{operationName} FAILED",
+							$"SteamCMD completed, but Oxide could not be reapplied: {exception.Message}",
+							Color.Red);
 						return;
 					}
 				}
@@ -454,7 +508,23 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					Log($"[SYNIX] Validating FINISHED: {server.Game}", Color.Green, true);
 				}
+				_ = SendDiscordNotification(
+					server,
+					completedEvent,
+					$"{operationName} COMPLETED",
+					$"{server.ServerName} completed successfully.",
+					Color.LimeGreen);
 				ManifestMessage = "";
+			}
+			catch (Exception exception)
+			{
+				Log($"[🚨 {operationName} ERROR] {exception.Message}", Color.Red, true);
+				_ = SendDiscordNotification(
+					server,
+					failedEvent,
+					$"{operationName} FAILED",
+					exception.Message,
+					Color.Red);
 			}
 			finally
 			{
@@ -501,6 +571,12 @@ namespace Synix_Control_Panel.SynixEngine
 						Log($"[SYNIX] AUTO-INSTALL STARTED: {newServer.Game}", Color.LightCyan, true);
 						newServer.Status = StatusManager.GetStatus(ServerState.Installing);
 						Core.Instance.UpdateGridStatus();
+						_ = SendDiscordNotification(
+							newServer,
+							DiscordNotificationEvent.InstallStarted,
+							"INSTALL STARTED",
+							$"SteamCMD is installing {newServer.Game}.",
+							Color.Cyan);
 
 						int exitCode = await Task.Run(() =>
 						{
@@ -518,6 +594,12 @@ namespace Synix_Control_Panel.SynixEngine
 							string errorMsg = ServerInstaller.GetSteamError(exitCode);
 							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red, true);
 							newServer.Status = "Failed";
+							_ = SendDiscordNotification(
+								newServer,
+								DiscordNotificationEvent.InstallFailed,
+								"INSTALL FAILED",
+								errorMsg,
+								Color.Red);
 							return;
 						}
 
@@ -540,6 +622,12 @@ namespace Synix_Control_Panel.SynixEngine
 									"Oxide Installation Failed",
 									MessageBoxButtons.OK,
 									MessageBoxIcon.Error);
+								_ = SendDiscordNotification(
+									newServer,
+									DiscordNotificationEvent.InstallFailed,
+									"INSTALL FAILED",
+									$"The server files installed, but Oxide could not be installed: {exception.Message}",
+									Color.Red);
 								return;
 							}
 						}
@@ -553,11 +641,23 @@ namespace Synix_Control_Panel.SynixEngine
 							Log($"[ICON] Updated the dashboard icon for {newServer.Game}.", Color.Cyan);
 						}
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
+						_ = SendDiscordNotification(
+							newServer,
+							DiscordNotificationEvent.InstallCompleted,
+							"INSTALL COMPLETED",
+							$"{newServer.Game} is installed and ready for its first start.",
+							Color.LimeGreen);
 						RecordGameVerification(newServer.Game, GameVerificationKind.Install);
 					}
 					catch (Exception ex)
 					{
 						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red, true);
+						_ = SendDiscordNotification(
+							newServer,
+							DiscordNotificationEvent.InstallFailed,
+							"INSTALL FAILED",
+							ex.Message,
+							Color.Red);
 					}
 					finally
 					{
@@ -904,9 +1004,12 @@ namespace Synix_Control_Panel.SynixEngine
 					string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
 					Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
 
-					_ = SendDiscordAlert(server, "🚨 CRASH DETECTED",
-					$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
-					Color.Red);
+					_ = SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.ServerCrashed,
+						"CRASH DETECTED",
+						$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
+						Color.Red);
 
 					stopServer = true;
 					currentContext = StartContext.CrashRecovery;
