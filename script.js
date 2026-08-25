@@ -48,3 +48,27 @@ document.querySelectorAll('[data-copy]').forEach((button) => {
 
 const year = document.querySelector('#year');
 if (year) year.textContent = String(new Date().getFullYear());
+
+const gameSearch = document.querySelector('[data-game-search]');
+gameSearch?.addEventListener('input', () => {
+  const query = gameSearch.value.trim().toLowerCase();
+  document.querySelectorAll('[data-game]').forEach((card) => {
+    card.hidden = query.length > 0 && !card.dataset.game.includes(query);
+  });
+});
+
+const helpSearch = document.querySelector('[data-help-search]');
+const helpCount = document.querySelector('[data-help-count]');
+helpSearch?.addEventListener('input', () => {
+  const query = helpSearch.value.trim().toLowerCase();
+  let matches = 0;
+  document.querySelectorAll('[data-help-article]').forEach((article) => {
+    const visible = query.length === 0 || article.textContent.toLowerCase().includes(query);
+    article.hidden = !visible;
+    if (visible) matches += 1;
+  });
+  document.querySelectorAll('[data-help-category]').forEach((category) => {
+    category.hidden = !category.querySelector('[data-help-article]:not([hidden])');
+  });
+  if (helpCount) helpCount.textContent = `${matches} help article${matches === 1 ? '' : 's'}`;
+});
