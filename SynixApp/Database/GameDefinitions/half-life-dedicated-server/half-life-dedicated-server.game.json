@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "half-life-dedicated-server",
+  "catalogOrder": 85,
+  "game": "Half-Life Dedicated Server",
+  "aliases": [],
+  "appId": "90",
+  "requiresSteamLogin": false,
+  "executable": "hlds.exe",
+  "downloadUrl": "",
+  "arguments": "-console -game valve -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "crossfire",
+    "bounce",
+    "data-core"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "valve\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "valve\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

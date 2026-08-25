@@ -12,12 +12,16 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Database;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Synix_Control_Panel.Database
 {
 	public partial class WarningDatabase : Form
 	{
+		private const int WmNcLButtonDown = 0x00A1;
+		private const int HtCaption = 0x0002;
 		private GameServer _server;
 
 		private static readonly Dictionary<string, string> _messages = new()
@@ -63,15 +67,6 @@ namespace Synix_Control_Panel.Database
 				"1. Boot the server for the first time to build the target folder hierarchy, then shut it down.\n\n" +
 				"2. Open the JSON configuration file to verify your security passwords and player limits.\n\n" +
 				"3. Official Documentation: https://soulmask.wiki.gg/wiki/Server_Hosting"
-			},
-			{
-				"Dune: Awakening",
-				"CRITICAL SETUP REQUIRED:\n\n" +
-				"1. Ensure Windows Hyper-V and hardware virtualization are enabled on your host machine.\n\n" +
-				"2. You MUST run 'battlegroup.bat' as Administrator to launch the server deployment menu. (This is done automatically)\n\n" +
-				"3. Select 'initial-setup' to build the VM and input your Self-Host Service Token.\n\n" +
-				"4. Official Documentation:\n https://duneawakening.com/self-hosted-servers/ \n\n" +
-				"5. Synix cannot control Dune: Awakening servers and is only good for installing, updating, backup and start the server."
 			},
 			{
 				"Cepheus Protocol",
@@ -236,9 +231,12 @@ namespace Synix_Control_Panel.Database
 			{
 				"Space Engineers",
 				"CRITICAL SETUP REQUIRED:\n\n" +
-				"1. Run the dedicated server utility once to generate 'SpaceEngineers-Dedicated.cfg', then shut it down.\n\n" +
-				"2. Edit the XML configuration file to define world parameters, mods, and admin lists.\n\n" +
-				"3. Official Documentation: https://spaceengineers.wiki.gg/wiki/Dedicated_Servers"
+				"1. Synix opens the official Space Engineers Dedicated Server Manager and always keeps it visible.\n\n" +
+				"2. Select 'Local/Console', choose 'Continue to server configuration', enter the server and world settings, then select 'Save & start'.\n\n" +
+				"3. Use the manager for advanced settings, worlds, mods, administrators, and the live console. The server data is kept inside this Synix server's Instance folder.\n\n" +
+				"4. Foreground Local/Console mode does not require administrator rights. Windows service mode does.\n\n" +
+				"5. Requirements: .NET Framework 4.8 or newer, Visual C++ Redistributables 2013 and 2017, at least 6 GB of system RAM, and UDP port 27016 allowed through Windows Firewall and forwarded for Internet players.\n\n" +
+				"6. Official Documentation: https://www.spaceengineersgame.com/dedicated-servers/"
 			},
 			{
 				"Insurgency: Sandstorm",
@@ -1014,63 +1012,85 @@ namespace Synix_Control_Panel.Database
 		{
 			InitializeComponent();
 			ThemeManager.Apply(this);
+			headerGlyph.ForeColor = SettingsPalette.Warning;
 			_server = server;
 
-			lblWarningText.Links.Clear();
-			lblWarningText.LinkClicked += LblWarningText_LinkClicked;
+			string warningText = GetWarningText(server);
+			txtWarningText.Text = warningText;
+			lblGameName.Text = server.Game;
 
-			if (_messages.TryGetValue(server.Game, out string customMessage))
+			GameInfo? game = GameDatabase.GetGame(server.Game);
+			if (game?.RequiredLaunchFiles.Length > 0)
 			{
-				lblWarningText.Text = customMessage;
-				FormatUrlLink(customMessage);
-
-				if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
-				{
-					btnStart.Text = "I Agree";
-					btnNo.Text = "Decline";
-				}
+				lblWarningTitle.Text = "Additional files are required";
+				lblWarningSubtitle.Text = "Complete the required file setup before the dedicated server can start.";
+				btnStart.Text = "I Understand";
+			}
+			else if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+			{
+				lblWarningTitle.Text = "Agreement required";
+				lblWarningSubtitle.Text = "Review the license terms before allowing the first server launch.";
+				btnStart.Text = "I Agree";
+				btnNo.Text = "Decline";
 			}
 			else
 			{
-				lblWarningText.Text = "Configuration required before the first launch. \n1. If the Config file is missing in the game then the server needs to run once to create the config file. \n2. Then shut the server down and go to `Server Actions -> Server Options -> Edit Config File` and edit the config file. \n3. Some Servers use their own server manager in the game to fully setup the server.";
+				lblWarningTitle.Text = "First-launch preparation";
+				lblWarningSubtitle.Text = "Review these setup requirements before continuing.";
 			}
 		}
 
-		private void FormatUrlLink(string text)
+		internal static string GetWarningText(GameServer server)
 		{
-			lblWarningText.Links.Clear();
-
-			int linkIndex = text.IndexOf("http");
-			if (linkIndex != -1)
+			GameInfo? game = GameDatabase.GetGame(server.Game);
+			if (game?.RequiredLaunchFiles.Length > 0)
 			{
-
-				int spaceIndex = text.IndexOfAny(new char[] { ' ', '\n', '\r' }, linkIndex);
-				int linkLength = (spaceIndex != -1) ? spaceIndex - linkIndex : text.Length - linkIndex;
-
-				string url = text.Substring(linkIndex, linkLength).Trim();
-
-				lblWarningText.Links.Add(linkIndex, linkLength, url);
+				string requiredFiles = string.Join(", ", game.RequiredLaunchFiles);
+				return
+					"ADDITIONAL SETUP FILES REQUIRED:\n\n" +
+					$"This dedicated server needs {requiredFiles}. These files must be created or exported by the game or its official setup tool before the server can start.\n\n" +
+					game.LaunchFileSetupInstructions + "\n\n" +
+					"If the files were created on another computer, copy them into this Synix server folder before starting it.";
 			}
+
+			if (_messages.TryGetValue(server.Game, out string? customMessage))
+			{
+				return customMessage;
+			}
+
+			if (game?.NeedsConfigWarning == true &&
+				!string.IsNullOrWhiteSpace(game.WarningMessage))
+			{
+				return game.WarningMessage;
+			}
+
+			return
+				"Configuration required before the first launch.\n\n" +
+				"1. If the configuration file is missing, the server may need to run once to create it.\n\n" +
+				"2. Shut down the server, then use Server Options > Edit Config File.\n\n" +
+				"3. Some games use their own server manager to complete setup.";
 		}
 
-		private void LblWarningText_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void TxtWarningText_LinkClicked(object? sender, LinkClickedEventArgs eventArgs)
 		{
-			if (e.Link.LinkData != null)
-			{
-				string targetUrl = e.Link.LinkData.ToString();
+			if (string.IsNullOrWhiteSpace(eventArgs.LinkText))
+				return;
 
-				try
+			try
+			{
+				Process.Start(new ProcessStartInfo
 				{
-					Process.Start(new ProcessStartInfo
-					{
-						FileName = targetUrl,
-						UseShellExecute = true
-					});
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show($"Failed to open link: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
+					FileName = eventArgs.LinkText,
+					UseShellExecute = true
+				});
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					$"Failed to open link: {exception.Message}",
+					"Link Error",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 			}
 		}
 
@@ -1108,5 +1128,25 @@ namespace Synix_Control_Panel.Database
 			this.DialogResult = DialogResult.Cancel;
 			this.Close();
 		}
+
+		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)
+		{
+			if (eventArgs.Button != MouseButtons.Left)
+				return;
+
+			_ = ReleaseCapture();
+			_ = SendMessage(Handle, WmNcLButtonDown, HtCaption, 0);
+		}
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool ReleaseCapture();
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr SendMessage(
+			IntPtr windowHandle,
+			int message,
+			int wordParameter,
+			int longParameter);
 	}
 }

@@ -132,7 +132,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"4. Wait for the status to change from Starting to Running. Some games create their configuration files only after the first complete boot.\n" +
 					"5. Stop the server cleanly before editing generated files. Use Configure or Server Options -> Open Config Editor when that template exposes a config file.\n" +
 					"6. Start the server again and test joining through the LAN address before troubleshooting public access.\n\n" +
-					"Do not close an installer or server console while Synix reports Starting, Updating, Backing Up, or Stopping."),
+					"Do not close an installer or server console while Synix reports Starting, Updating, Backing Up, Restoring, or Stopping."),
 
 				["Understanding Server {Identity}"] = new HelpItem("Start",
 					"WHAT IS AN {IDENTITY}?\n\n" +
@@ -179,6 +179,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Validate Game Files: asks the supported installer to verify/repair game files.\n" +
 					"• Create Batch File: exports the resolved launch command for supported templates.\n" +
 					"• Backup Server: creates a manual archive.\n" +
+					"• Restore Server Backup: appears when saved backups exist and lets you choose which archive to restore.\n" +
 					"• Test LAN/WAN Connectivity: appears only for games with a reliable supported probe.\n" +
 					"• Delete Server: removes the Synix server entry and, after confirmation, can remove associated files/backups.\n\n" +
 					"Some actions are intentionally hidden or disabled for templates that use a different installer, generate settings only after first boot, or cannot be tested reliably."),
@@ -209,7 +210,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Dark Mode ON: uses the original navy Synix theme.\n" +
 					"• Dark Mode OFF: switches supported forms and controls to the light card-based theme.\n" +
 					"• Show Server Console Window ON: opens the game's native command window when a server starts. This is useful for live console interaction and troubleshooting.\n" +
-					"• Show Server Console Window OFF: runs supported servers silently in the background.\n\n" +
+					"• Show Server Console Window OFF: runs supported servers silently in the background. Games that require an interactive manager, including Space Engineers, keep that required window visible.\n\n" +
 					"Changing the visual theme does not restart game servers. If an already-open secondary window does not repaint immediately, close and reopen that window."),
 
 				["Adding and Editing Servers"] = new HelpItem("Config",
@@ -311,9 +312,11 @@ namespace Synix_Control_Panel.SynixEngine
 					"3. Wait for Activity & Diagnostics to confirm completion. Do not start or delete the server while the backup state is active.\n" +
 					"4. Use Open Backup Folder to locate the timestamped ZIP archive.\n\n" +
 					"RESTORE A BACKUP:\n" +
-					"1. Stop the server and make a separate copy of the current server folder.\n" +
-					"2. Extract the selected archive to the correct active server/save location, preserving its folder structure.\n" +
-					"3. Start the server and verify the world before removing the safety copy.\n\n" +
+					"1. Stop the server, select it, and open Server Options.\n" +
+					"2. Choose Restore Server Backup. This action only appears when Synix finds backups for that server.\n" +
+					"3. Select the timestamped backup you want and confirm the warning.\n" +
+					"4. Synix safely unpacks the backup, preserves the current server folder, and automatically rolls back if activation fails.\n" +
+					"5. Wait for the completion message, then start the server and verify its world and settings.\n\n" +
 					"A custom backup path changes where new archives are written; Synix does not move or delete archives left in the previous location."),
 
 				["Smart Update on Start & Manifest Validation"] = new HelpItem("Maint",
@@ -419,18 +422,23 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Absolute Thread Safety: Compiled directly into the engine, guaranteeing instant lookups with zero database corruption risks.\n" +
 					"• Strict Parameter Enforced: Because game executables and Steam AppIDs require strict arguments, manual custom game plugins or third-party database tables are not supported."),
 
-				["Dune: Awakening Setup & Custom Rules"] = new HelpItem("Games",
-					"DUNE: AWAKENING ENGINE INTEGRATION:\n\n" +
-					"Dune: Awakening requires unique engine execution rules:\n\n" +
-					"1. Admin Execution: Dune: Awakening dedicated launchers require Administrator privileges to execute their startup scripts properly.\n" +
-					"2. Custom Batch File Handling: Synix disables standard batch file creation for Dune: Awakening, as the game utilizes its own internal launcher structure.\n" +
-					"3. Folder Sanitization: Ensure paths contain no illegal characters prior to initial download."),
+				["Dune: Awakening Setup & Definition Rules"] = new HelpItem("Games",
+					"DUNE: AWAKENING DEFINITION-DRIVEN INTEGRATION:\n\n" +
+					"Dune's built-in game definition declares its hardware requirements, elevated launcher, external deployment lifecycle, and launch-file export restriction. The shared Synix engine reads those fields instead of relying on game-name checks.\n\n" +
+					"1. Admin Execution: Synix launches the official battlegroup script with the required permission.\n" +
+					"2. Deployment Tracking: Dune owns the Hyper-V virtual machines, so Synix does not mistake the launcher process for the complete server lifecycle.\n" +
+					"3. Launch Export: Synix does not replace the official deployment script with a generated launch file."),
 
 				["Rust & Rust+ Mobile App Integration"] = new HelpItem("Games",
 					"RUST SERVER & RUST+ MOBILE CONFIGURATION:\n\n" +
 					"• Steam AppID: 258550\n" +
 					"• App Port (Rust+): Set to a unique port above 10000 (e.g., 28082 TCP).\n" +
-					"• Identity Isolation: Synix enforces `+server.identity \"{Server_Name}\"` automatically to isolate world save files and blueprints cleanly."),
+					"• Identity Isolation: Synix enforces `+server.identity \"{Server_Name}\"` automatically to isolate world save files and blueprints cleanly.\n\n" +
+					"RUST SERVER FRAMEWORK:\n" +
+					"• Vanilla: Uses the official Steam server files.\n" +
+					"• Oxide: Synix downloads and verifies only the latest official Oxide.Rust runtime.\n" +
+					"• Plugins: Synix never installs or manages plugins. Add your own files to oxide\\plugins.\n" +
+					"• Updates: Synix reapplies Oxide after Steam updates and validations. Switching back to Vanilla requires one Update or Validate to restore the official files."),
 
 				["Minecraft Vanilla, Fabric, and Forge"] = new HelpItem("Games",
 					"MINECRAFT SERVER AUTOMATION:\n\n" +
@@ -839,7 +847,8 @@ namespace Synix_Control_Panel.SynixEngine
 			TreeViewEventArgs eventArgs)
 		{
 			if (eventArgs.Node?.Tag is not string topicKey ||
-				!_helpData.TryGetValue(topicKey, out HelpItem item))
+				!_helpData.TryGetValue(topicKey, out HelpItem? item) ||
+				item == null)
 			{
 				return;
 			}
@@ -852,18 +861,19 @@ namespace Synix_Control_Panel.SynixEngine
 			object? sender,
 			TreeNodeMouseClickEventArgs eventArgs)
 		{
-			if (eventArgs.Node.Level != 0)
+			TreeNode? node = eventArgs.Node;
+			if (node == null || node.Level != 0)
 			{
 				return;
 			}
 
-			if (eventArgs.Node.IsExpanded)
+			if (node.IsExpanded)
 			{
-				eventArgs.Node.Collapse();
+				node.Collapse();
 			}
 			else
 			{
-				eventArgs.Node.Expand();
+				node.Expand();
 			}
 
 			treeNavigation.Invalidate();
@@ -873,8 +883,10 @@ namespace Synix_Control_Panel.SynixEngine
 			object? sender,
 			DrawTreeNodeEventArgs eventArgs)
 		{
-			TreeNode node = eventArgs.Node;
-			Graphics graphics = eventArgs.Graphics;
+			TreeNode? node = eventArgs.Node;
+			Graphics? graphics = eventArgs.Graphics;
+			if (node == null || graphics == null)
+				return;
 			graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			Rectangle rowBounds = new(

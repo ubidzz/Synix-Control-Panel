@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "the-isle",
+  "catalogOrder": 52,
+  "game": "The Isle",
+  "aliases": [],
+  "appId": "412680",
+  "requiresSteamLogin": false,
+  "executable": "TheIsle\\Binaries\\Win64\\TheIsleServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?Listen?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -log -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Spiro",
+    "Gateway"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "TheIsle\\Saved\\Config\\WindowsServer\\Game.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "TheIsle\\Binaries\\Win64"
+    }
+  ]
+}

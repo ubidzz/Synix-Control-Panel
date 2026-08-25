@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "primal-carnage-extinction",
+  "catalogOrder": 71,
+  "game": "Primal Carnage: Extinction",
+  "aliases": [],
+  "appId": "336400",
+  "requiresSteamLogin": false,
+  "executable": "Binaries\\Win64\\PrimalCarnageServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?MaxPlayers={MaxPlayers}?Port={port}?QueryPort={query} -server -log -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "PC-Docks"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "PrimalCarnage\\Saved\\Config\\WindowsServer\\Game.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "PrimalCarnage\\Binaries\\Win64"
+    }
+  ]
+}

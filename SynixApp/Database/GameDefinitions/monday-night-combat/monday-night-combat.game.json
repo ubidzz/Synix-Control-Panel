@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "monday-night-combat",
+  "catalogOrder": 114,
+  "game": "Monday Night Combat",
+  "aliases": [],
+  "appId": "63220",
+  "requiresSteamLogin": true,
+  "executable": "MNC.exe",
+  "downloadUrl": "",
+  "arguments": "server {map}?Listen -port={port} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "MNC-Crossfire"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "MNC\\Binaries\\Win64"
+    }
+  ]
+}

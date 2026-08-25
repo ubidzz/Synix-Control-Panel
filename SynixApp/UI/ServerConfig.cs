@@ -11,7 +11,11 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixApp.UI;
+using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -48,6 +52,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 		private readonly string _path = string.Empty;
 		private readonly ConfigFormat _format = ConfigFormat.StandardINI;
+		private readonly GameServer? _server;
 		private readonly bool _isRuntimeInstance;
 		private List<ConfigLine> _fileData = new();
 		private bool _rowsAreLoading;
@@ -55,6 +60,7 @@ namespace Synix_Control_Panel.ServerHandler
 		private bool _allowClose;
 		private bool _openBooleanDropDownOnEdit;
 		private bool _booleanDropDownOpenQueued;
+		private bool _templateResetInProgress;
 		private int _booleanDropDownRowIndex = -1;
 
 		public ServerConfig()
@@ -66,6 +72,14 @@ namespace Synix_Control_Panel.ServerHandler
 		}
 
 		public ServerConfig(string filePath, ConfigFormat format)
+			: this(filePath, format, null)
+		{
+		}
+
+		public ServerConfig(
+			string filePath,
+			ConfigFormat format,
+			GameServer? server)
 		{
 			InitializeComponent();
 			ConfigureBooleanGridEditing();
@@ -78,6 +92,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 			_path = filePath;
 			_format = format;
+			_server = server;
 			_isRuntimeInstance = true;
 			ConfigureFilePresentation();
 		}
@@ -103,7 +118,6 @@ namespace Synix_Control_Panel.ServerHandler
 		protected override void OnShown(EventArgs eventArgs)
 		{
 			base.OnShown(eventArgs);
-
 			EnableGridDoubleBuffering();
 			if (_isRuntimeInstance && !_dataLoaded)
 			{
@@ -197,6 +211,12 @@ namespace Synix_Control_Panel.ServerHandler
 
 		protected override void OnFormClosing(FormClosingEventArgs eventArgs)
 		{
+			if (_templateResetInProgress)
+			{
+				eventArgs.Cancel = true;
+				return;
+			}
+
 			dgvConfig.EndEdit();
 
 			if (_isRuntimeInstance && !_allowClose && HasUnsavedChanges())
@@ -232,6 +252,13 @@ namespace Synix_Control_Panel.ServerHandler
 			lblPageSubtitle.Text =
 				$"Edit {fileName} safely without changing its {formatName} structure.";
 			lblFormatState.Text = $"{formatName} structure preserved";
+			btnFixConfig.Visible = _server != null &&
+				GameFix.CanResetManagedConfiguration(_server);
+			btnRestoreBackup.Visible = _server != null;
+			btnValidateConfig.Visible = _server != null;
+			btnValidateConfig.Enabled = _server != null;
+			UpdateFixConfigAvailability();
+			UpdateRestoreBackupAvailability();
 		}
 
 		private void LoadConfiguration()
@@ -242,6 +269,13 @@ namespace Synix_Control_Panel.ServerHandler
 			{
 				if (!File.Exists(_path))
 				{
+					if (CanFixConfiguration())
+					{
+						ShowConfigurationRepairState(
+							"The configuration file is missing. Use Fix Config to rebuild it from the Synix template.");
+						return;
+					}
+
 					MessageBox.Show(
 						$"The configuration file does not exist:\n\n{_path}",
 						"File Not Found",
@@ -253,10 +287,25 @@ namespace Synix_Control_Panel.ServerHandler
 				}
 
 				_fileData = ConfigHandler.LoadConfig(_path, _format);
+				dgvConfig.Enabled = true;
+				btnStructured.Enabled = true;
+				btnRawPreview.Enabled = true;
+				lblPreservationTitle.Text = "Original formatting is protected";
+				lblPreservationText.Text =
+					"Only the value you change is replaced; comments, sections, nesting, quotes, spacing, and key order remain intact.";
 				PopulateGrid();
+				ShowStructuredView();
+				UpdateFixConfigAvailability();
 			}
 			catch (Exception exception)
 			{
+				if (CanFixConfiguration())
+				{
+					ShowConfigurationRepairState(
+						$"Synix could not read this configuration. Use Fix Config to rebuild it. {exception.Message}");
+					return;
+				}
+
 				MessageBox.Show(
 					$"Synix could not read this configuration file.\n\n{exception.Message}",
 					"Config Load Error",
@@ -265,6 +314,46 @@ namespace Synix_Control_Panel.ServerHandler
 				_allowClose = true;
 				Close();
 			}
+		}
+
+		private bool CanFixConfiguration()
+		{
+			return _server != null && GameFix.CanResetManagedConfiguration(_server);
+		}
+
+		private void UpdateFixConfigAvailability()
+		{
+			btnFixConfig.Enabled = btnFixConfig.Visible &&
+				_server != null &&
+				GameFix.NeedsManagedConfigurationRepair(_server);
+		}
+
+		private void UpdateRestoreBackupAvailability()
+		{
+			btnRestoreBackup.Enabled = btnRestoreBackup.Visible &&
+				_server != null &&
+				!IsServerBusy(_server) &&
+				GameFix.HasManagedConfigurationBackup(_server);
+		}
+
+		private void ShowConfigurationRepairState(string message)
+		{
+			_fileData = [];
+			PopulateGrid();
+			ShowStructuredView();
+			dgvConfig.Enabled = false;
+			txtSearch.Enabled = false;
+			cmbTypeFilter.Enabled = false;
+			btnStructured.Enabled = false;
+			btnRawPreview.Enabled = false;
+			btnSave.Enabled = false;
+			btnReset.Enabled = false;
+			btnFixConfig.Enabled = true;
+			btnValidateConfig.Enabled = _server != null;
+			lblSettingCount.Text = "Config unavailable";
+			lblFormatState.Text = "Repair available";
+			lblPreservationTitle.Text = "Configuration repair is available";
+			lblPreservationText.Text = message;
 		}
 
 		private void PopulateGrid()
@@ -541,6 +630,10 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			try
 			{
+				if (_server != null && HasUnsavedChanges())
+					_ = GameFix.BackupManagedConfiguration(
+						_server,
+						"Before saving changes from the configuration editor");
 				ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
 				_allowClose = true;
 				DialogResult = DialogResult.OK;
@@ -554,6 +647,196 @@ namespace Synix_Control_Panel.ServerHandler
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
+		}
+
+		private async Task ResetConfigurationFromTemplate()
+		{
+			if (_server == null || !CanFixConfiguration())
+			{
+				MessageBox.Show(
+					"Synix does not have a complete reset template for this game.",
+					"Config Template Unavailable",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return;
+			}
+
+			if (IsServerBusy(_server))
+			{
+				MessageBox.Show(
+					"Stop this server before resetting its configuration.",
+					"Server Must Be Stopped",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			bool fileExists = File.Exists(_path);
+			string backupText = fileExists
+				? "\n\nSynix will keep a .synix.bak copy of each configuration file it replaces."
+				: string.Empty;
+			DialogResult confirmation = MessageBox.Show(
+				"This will rebuild the game configuration from the Synix default template and apply the values saved in Server Settings.\n\nAny other custom configuration values will be removed." +
+				backupText +
+				"\n\nContinue?",
+				"Reset Config to Synix Defaults?",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation != DialogResult.Yes)
+			{
+				return;
+			}
+
+			_templateResetInProgress = true;
+			UseWaitCursor = true;
+			btnFixConfig.Enabled = false;
+			btnReset.Enabled = false;
+			btnCancel.Enabled = false;
+			btnSave.Enabled = false;
+
+			try
+			{
+				ConfigurationApplyResult result =
+					await GameFix.ResetManagedConfiguration(_server);
+				if (!result.Succeeded || !result.Complete)
+				{
+					MessageBox.Show(
+						result.Message,
+						"Config Reset Failed",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+					return;
+				}
+
+				_ = FileHandler.SaveServers();
+				LoadConfiguration();
+				MessageBox.Show(
+					result.Message +
+					(fileExists
+						? "\n\nThe previous configuration was saved with a .synix.bak extension."
+						: string.Empty),
+					"Config Reset Complete",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					$"Synix could not reset the configuration. The existing files were preserved when possible.\n\n{exception.Message}",
+					"Config Reset Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+			}
+			finally
+			{
+				_templateResetInProgress = false;
+				UseWaitCursor = false;
+				btnCancel.Enabled = true;
+				UpdateFixConfigAvailability();
+				UpdateRestoreBackupAvailability();
+				if (File.Exists(_path) && _fileData.Count > 0)
+				{
+					btnSave.Enabled = true;
+					UpdateChangePresentation();
+				}
+			}
+		}
+
+		private async Task ValidateSynixConfiguration()
+		{
+			if (_server == null)
+				return;
+
+			if (HasUnsavedChanges())
+			{
+				MessageBox.Show(
+					this,
+					"Save or undo the changes in the editor before checking the values stored on disk.",
+					"Unsaved Changes",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+				return;
+			}
+
+			UseWaitCursor = true;
+			btnValidateConfig.Enabled = false;
+			try
+			{
+				ConfigurationValidationReport report =
+					await GameFix.ValidateManagedConfiguration(_server);
+				using ConfigurationValidationDialog dialog = new(report);
+				dialog.ShowDialog(this);
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					this,
+					$"Synix could not finish the configuration check.\n\n{exception.Message}",
+					"Configuration Check Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+			}
+			finally
+			{
+				UseWaitCursor = false;
+				btnValidateConfig.Enabled = _server != null;
+			}
+		}
+
+		private void RestorePreviousConfiguration()
+		{
+			if (_server == null || IsServerBusy(_server))
+			{
+				MessageBox.Show(
+					"Stop this server before restoring a configuration backup.",
+					"Server Must Be Stopped",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			DialogResult confirmation = MessageBox.Show(
+				"Restore the newest Synix configuration backup?\n\nSynix will first preserve the current files so this restore can also be undone.",
+				"Restore Previous Configuration?",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation != DialogResult.Yes)
+				return;
+
+			ConfigurationRestoreResult result =
+				GameFix.RestorePreviousManagedConfiguration(_server);
+			if (!result.Succeeded)
+			{
+				MessageBox.Show(
+					result.Message,
+					"Configuration Restore Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
+
+			LoadConfiguration();
+			UpdateRestoreBackupAvailability();
+			MessageBox.Show(
+				result.Message,
+				"Configuration Restored",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Information);
+		}
+
+		private static bool IsServerBusy(GameServer server)
+		{
+			string status = server.Status ?? string.Empty;
+			return (server.PID.HasValue && server.PID.Value > 0) ||
+				(server.SteamPID.HasValue && server.SteamPID.Value > 0) ||
+				status == Core.StatusManager.GetStatus(Core.ServerState.Running) ||
+				status == Core.StatusManager.GetStatus(Core.ServerState.Starting) ||
+				status == Core.StatusManager.GetStatus(Core.ServerState.Stopping) ||
+				status == Core.StatusManager.GetStatus(Core.ServerState.Installing) ||
+				status == Core.StatusManager.GetStatus(Core.ServerState.Updating) ||
+				status == Core.StatusManager.GetStatus(Core.ServerState.Validating);
 		}
 
 		private void EnableGridDoubleBuffering()
@@ -903,6 +1186,8 @@ namespace Synix_Control_Panel.ServerHandler
 				Math.Min(92, eventArgs.CellBounds.Width - 24),
 				26);
 			using SolidBrush badgeBrush = new(GetTypeBadgeColor(line.Type));
+			if (eventArgs.Graphics == null)
+				return;
 			eventArgs.Graphics.FillRectangle(badgeBrush, badgeBounds);
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
@@ -926,6 +1211,21 @@ namespace Synix_Control_Panel.ServerHandler
 		private void btnReset_Click(object? sender, EventArgs eventArgs)
 		{
 			ResetChanges();
+		}
+
+		private async void btnFixConfig_Click(object? sender, EventArgs eventArgs)
+		{
+			await ResetConfigurationFromTemplate();
+		}
+
+		private async void btnValidateConfig_Click(object? sender, EventArgs eventArgs)
+		{
+			await ValidateSynixConfiguration();
+		}
+
+		private void btnRestoreBackup_Click(object? sender, EventArgs eventArgs)
+		{
+			RestorePreviousConfiguration();
 		}
 
 		private void btnCancel_Click(object? sender, EventArgs eventArgs)

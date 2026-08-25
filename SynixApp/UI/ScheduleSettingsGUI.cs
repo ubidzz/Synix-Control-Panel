@@ -16,17 +16,21 @@ namespace Synix_Control_Panel.ServerHandler
 {
 	public partial class ScheduleSettingsGUI : Form
 	{
-		public bool[] SelectedDays { get; private set; }
-		public string SelectedTime { get; private set; }
+		public bool[] SelectedDays { get; private set; } = new bool[7];
+		public string SelectedTime { get; private set; } = "04:00";
 
-		public ScheduleSettingsGUI(bool[] initialDays, string initialTime)
+		public ScheduleSettingsGUI()
 		{
 			InitializeComponent();
 			ThemeManager.Apply(this);
+			numRestartHour.Value = 4;
+			numRestartMinute.Value = 0;
 
-			dtpRestartTime.Format = DateTimePickerFormat.Custom;
-			dtpRestartTime.CustomFormat = "HH:mm";
-			dtpRestartTime.ShowUpDown = true;
+			UIStyleHelper.InitializeToggles(this);
+		}
+
+		public ScheduleSettingsGUI(bool[] initialDays, string initialTime) : this()
+		{
 
 			if (initialDays != null && initialDays.Length == 7)
 			{
@@ -40,11 +44,15 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 
 			if (DateTime.TryParseExact(initialTime, "HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime parsedTime))
-				dtpRestartTime.Value = parsedTime;
+			{
+				numRestartHour.Value = parsedTime.Hour;
+				numRestartMinute.Value = parsedTime.Minute;
+			}
 			else
-				dtpRestartTime.Value = DateTime.Today.AddHours(4);
-
-			UIStyleHelper.InitializeToggles(this);
+			{
+				numRestartHour.Value = 4;
+				numRestartMinute.Value = 0;
+			}
 		}
 
 		private void btnSaveSchedule_Click(object sender, EventArgs e)
@@ -55,15 +63,15 @@ namespace Synix_Control_Panel.ServerHandler
 				chkWed.Checked, chkThu.Checked, chkFri.Checked, chkSa.Checked
 			};
 
-			SelectedTime = dtpRestartTime.Value.ToString("HH:mm");
-			this.DialogResult = DialogResult.OK;
-			this.Close();
+			SelectedTime = $"{numRestartHour.Value:00}:{numRestartMinute.Value:00}";
+			DialogResult = DialogResult.OK;
+			Close();
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Close();
+			DialogResult = DialogResult.Cancel;
+			Close();
 		}
 	}
 }

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "no-one-survived",
+  "catalogOrder": 156,
+  "game": "No One Survived",
+  "aliases": [],
+  "appId": "2329680",
+  "requiresSteamLogin": false,
+  "executable": "WRSHServer.exe",
+  "downloadUrl": "",
+  "arguments": "-server -log -Port={port} -QueryPort={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "WRSH\\Saved\\Config\\WindowsServer\\Game.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "NoOneSurvived\\Binaries\\Win64"
+    }
+  ]
+}

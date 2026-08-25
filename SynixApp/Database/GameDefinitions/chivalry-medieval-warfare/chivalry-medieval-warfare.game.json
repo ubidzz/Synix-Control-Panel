@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "chivalry-medieval-warfare",
+  "catalogOrder": 170,
+  "game": "Chivalry: Medieval Warfare",
+  "aliases": [],
+  "appId": "220070",
+  "requiresSteamLogin": false,
+  "executable": "Binaries\\Win32\\UDK.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?steamsockets -dedicated=true -seekfreeloadingserver -Port={port} -QueryPort={query} -maxplayers={MaxPlayers} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "AOCFFA-Arena3_P",
+    "AOCTO-Battlegrounds_v3_P",
+    "AOCCTF-Moor_p",
+    "AOCLTS-Hillside_P"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "UDKGame\\Config\\PCServer-UDKGame.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "UDKGame\\Binaries\\Win64"
+    }
+  ]
+}

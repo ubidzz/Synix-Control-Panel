@@ -1,0 +1,66 @@
+name: Feature request
+description: Suggest an improvement that fits Synix's local-first and low-dependency design.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Synix prioritizes normal Windows users, local control, visible behavior, security, low resource use, and minimal dependencies.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user problem before describing the proposed feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Explain how the feature should work from the user's point of view.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Feature area
+      options:
+        - Server setup
+        - Installation or updating
+        - Starting, stopping, or scheduling
+        - Configuration editing
+        - Backup, restore, import, or export
+        - Monitoring or diagnostics
+        - Discord notifications
+        - Privacy or security
+        - User interface or accessibility
+        - Game-definition development
+        - Documentation or help
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any current workaround or simpler option.
+
+  - type: textarea
+    id: security
+    attributes:
+      label: Security, privacy, and dependency impact
+      description: Explain whether this requires network access, administrator rights, a hosted service, another dependency, or access to sensitive data.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues for a similar request.
+          required: true
+        - label: This request is compatible with personal, non-commercial Synix use.
+          required: true

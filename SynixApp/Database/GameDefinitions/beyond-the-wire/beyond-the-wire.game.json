@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "beyond-the-wire",
+  "catalogOrder": 122,
+  "game": "Beyond the Wire",
+  "aliases": [],
+  "appId": "1064780",
+  "requiresSteamLogin": false,
+  "executable": "BeyondTheWire\\Binaries\\Win64\\BeyondTheWireServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "Port={port} QueryPort={query} FIXEDMAXPLAYERS={MaxPlayers} -log -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7787,
+  "queryPort": 27165,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Ancre_AAS_v1"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "BeyondTheWire\\ServerConfig\\Server.cfg",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "BeyondTheWire\\Binaries\\Win64"
+    }
+  ]
+}

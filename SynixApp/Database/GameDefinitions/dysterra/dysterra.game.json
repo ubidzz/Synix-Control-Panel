@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "dysterra",
+  "catalogOrder": 151,
+  "game": "Dysterra",
+  "aliases": [],
+  "appId": "2214780",
+  "requiresSteamLogin": false,
+  "executable": "Dysterra\\Binaries\\Win64\\DysterraServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "-log -customserver -QueryPort={query} -rconip=127.0.0.1 -rconpasswd=\"{adminpass}\" -EACServer -worldsettings=\"{map}.json\" -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "MyServer"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "Dysterra\\WorldSettings\\MyServer.json",
+  "format": "JSON",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Dysterra\\Binaries\\Win64"
+    }
+  ]
+}

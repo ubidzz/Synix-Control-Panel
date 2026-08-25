@@ -100,6 +100,30 @@ public sealed class SynixTransferPackageTests
 	}
 
 	[Fact]
+	public async Task Export_DoesNotCarrySteamCmdRuntimeOrCachedAuthorization()
+	{
+		using TemporaryDirectory test = new();
+		string source = test.CreateSourceTree();
+		string steamCmdDirectory = Path.Combine(source, "SteamCMD");
+		string steamConfigDirectory = Path.Combine(steamCmdDirectory, "config");
+		Directory.CreateDirectory(steamConfigDirectory);
+		await File.WriteAllTextAsync(
+			Path.Combine(steamCmdDirectory, "steamcmd.exe"),
+			"replaceable runtime");
+		await File.WriteAllTextAsync(
+			Path.Combine(steamConfigDirectory, "config.vdf"),
+			"cached Steam authorization");
+		string package = test.PathFor("without-steam-auth.synixbackup");
+		string restored = test.PathFor("without-steam-auth-restored");
+
+		await Core.ExportUnencryptedAsync(source, package);
+		await Core.ImportAsync(package, restored, string.Empty);
+
+		Assert.False(Directory.Exists(Path.Combine(restored, "SteamCMD")));
+		Assert.True(File.Exists(Path.Combine(restored, "settings.json")));
+	}
+
+	[Fact]
 	public async Task WrongPassword_IsRejectedBeforeDestinationIsChanged()
 	{
 		using TemporaryDirectory test = new();

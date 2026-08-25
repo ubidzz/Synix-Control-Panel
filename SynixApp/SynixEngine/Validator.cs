@@ -11,8 +11,11 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -20,6 +23,7 @@ namespace Synix_Control_Panel.SynixEngine
 	public partial class Core
 	{
 		private static readonly Regex SafeRegex = new Regex(@"^[a-zA-Z0-9\s\-+:\""\\/._=?,!@#$%&*'()]*$", RegexOptions.Compiled);
+		private const int MaximumExtraArgumentsLength = 16_384;
 
 		public bool CanServerStart(GameServer server, out string errorMessage)
 		{
@@ -37,8 +41,59 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
+			foreach ((int port, string name) in GetRequiredServerPorts(server, dbEntry))
+			{
+				if (!IsPortInUseLocally(port))
+					continue;
+
+				errorMessage =
+					$"The {name} ({port}) is already being used by another program. " +
+					"Close the other program or edit this server and choose a free port.";
+				return false;
+			}
+
 			errorMessage = "";
 			return true;
+		}
+
+		internal static IReadOnlyList<(int Port, string Name)> GetRequiredServerPorts(
+			GameServer server,
+			GameInfo game)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(game);
+
+			List<(int Port, string Name)> ports = [];
+			HashSet<int> added = [];
+			GameManagementCapability capabilities =
+				GameFix.GetManagementCapabilities(game);
+			bool Supports(GameManagementCapability capability) =>
+				(capabilities & capability) != GameManagementCapability.None;
+
+			void Add(int port, string name)
+			{
+				if (port is >= 1 and <= 65535 && added.Add(port))
+					ports.Add((port, name));
+			}
+
+			if (Supports(GameManagementCapability.Port))
+				Add(server.Port, "game port");
+
+			if (Supports(GameManagementCapability.QueryPort))
+				Add(server.QueryPort, "query port");
+
+			if (server.EnableRcon && Supports(GameManagementCapability.Rcon))
+			{
+				Add(server.RconPort, "RCON port");
+			}
+
+			if (Supports(GameManagementCapability.AppPort) &&
+				server.AppPort.HasValue)
+			{
+				Add(server.AppPort.Value, "app port");
+			}
+
+			return ports;
 		}
 
 		public bool ValidateNameAndReport(string name, string game, GameServer? excluding = null)
@@ -126,14 +181,15 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				DialogResult result = DialogResult.Cancel;
 
-				if (MainGUI.Instance != null && MainGUI.Instance.InvokeRequired)
+				MainGUI? mainWindow = MainGUI.Instance;
+				if (mainWindow != null && mainWindow.InvokeRequired)
 				{
-					MainGUI.Instance?.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
-					MainGUI.Instance.Invoke((Action)(() =>
+					mainWindow.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
+					mainWindow.Invoke((Action)(() =>
 					{
 						using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
 						{
-							result = warningForm.ShowDialog(MainGUI.Instance);
+							result = warningForm.ShowDialog(mainWindow);
 						}
 					}));
 				}
@@ -180,6 +236,7 @@ namespace Synix_Control_Panel.SynixEngine
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Installing), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Updating), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.BackingUp), StringComparison.OrdinalIgnoreCase) ||
+								   status.StartsWith(StatusManager.GetStatus(ServerState.Restoring), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Export), StringComparison.OrdinalIgnoreCase) ||
 								   status.StartsWith(StatusManager.GetStatus(ServerState.Validating), StringComparison.OrdinalIgnoreCase);
 
@@ -201,6 +258,9 @@ namespace Synix_Control_Panel.SynixEngine
 				case "Export":
 					isLocked = isTransitioning || isRunning;
 					break;
+				case "Restore":
+					isLocked = !isStopped || server.PID.HasValue;
+					break;
 				case "Restart":
 					isLocked = isTransitioning || isStopped;
 					break;
@@ -218,47 +278,40 @@ namespace Synix_Control_Panel.SynixEngine
 			return true;
 		}
 
-		public string? GetPortCollisionOwner(int port, GameServer? excluding = null)
+		public string? GetPortCollisionOwner(
+			int port,
+			GameServer? excluding = null,
+			bool activeOnly = false)
 		{
 			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
 			{
-				GameInfo? gameData = GameDatabase.GetGame(server.Game);
-				string requiredArgs = gameData?.RequiredArgs ?? "";
-				string rconSyntax = gameData?.RconSyntax ?? "";
-
 				if (server == excluding)
 					return false;
+				if (activeOnly && !IsActivePortReservation(server))
+					return false;
 
-				if (server.Port == port && requiredArgs.Contains("{port}", StringComparison.OrdinalIgnoreCase))
-					return true;
-
-				if (server.QueryPort > 0 && server.QueryPort == port)
-				{
-					return true;
-				}
-
-				bool usesAppPort = requiredArgs.Contains("{app_port}", StringComparison.OrdinalIgnoreCase);
-
-				if (usesAppPort &&
-					server.AppPort.HasValue &&
-					server.AppPort.Value > 0 &&
-					server.AppPort.Value == port)
-				{
-					return true;
-				}
-
-				bool usesRconPort =
-					requiredArgs.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase) ||
-					requiredArgs.Contains("{rcon}", StringComparison.OrdinalIgnoreCase) ||
-					rconSyntax.Contains("{rcon_port}", StringComparison.OrdinalIgnoreCase);
-
-				return server.EnableRcon &&
-					usesRconPort &&
-					server.RconPort > 0 &&
-					server.RconPort == port;
+				GameInfo? gameData = GameDatabase.GetGame(server.Game);
+				return gameData != null &&
+					GetRequiredServerPorts(server, gameData).Any(required =>
+						required.Port == port);
 			});
 
 			return owner?.ServerName;
+		}
+
+		internal static bool IsActivePortReservation(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			string status = server.Status ?? string.Empty;
+			return status.Equals(
+					StatusManager.GetStatus(ServerState.Running),
+					StringComparison.OrdinalIgnoreCase) ||
+				status.StartsWith(
+					StatusManager.GetStatus(ServerState.Starting),
+					StringComparison.OrdinalIgnoreCase) ||
+				status.StartsWith(
+					StatusManager.GetStatus(ServerState.Stopping),
+					StringComparison.OrdinalIgnoreCase);
 		}
 
 		public bool PassResourceGuard(out string message)
@@ -291,6 +344,156 @@ namespace Synix_Control_Panel.SynixEngine
 			return SafeRegex.IsMatch(input);
 		}
 
+		public static bool TryValidateExtraArguments(
+			string? arguments,
+			out string errorMessage)
+		{
+			errorMessage = string.Empty;
+			if (string.IsNullOrWhiteSpace(arguments))
+				return true;
+
+			if (arguments.Length > MaximumExtraArgumentsLength)
+			{
+				errorMessage = $"Extra Arguments cannot exceed {MaximumExtraArgumentsLength:N0} characters.";
+				return false;
+			}
+
+			if (arguments.IndexOfAny(['\0', '\r', '\n']) >= 0)
+			{
+				errorMessage = "Extra Arguments cannot contain line breaks or null characters.";
+				return false;
+			}
+
+			if (ContainsBatchVariableExpansion(arguments, '%'))
+			{
+				errorMessage = "Extra Arguments cannot contain Windows batch variable expansion such as %VARIABLE%.";
+				return false;
+			}
+
+			if (ContainsBatchVariableExpansion(arguments, '!'))
+			{
+				errorMessage = "Extra Arguments cannot contain delayed Windows batch variable expansion such as !VARIABLE!.";
+				return false;
+			}
+
+			bool insideQuotes = false;
+			for (int index = 0; index < arguments.Length; index++)
+			{
+				char character = arguments[index];
+				if (!insideQuotes && character == '^')
+				{
+					errorMessage =
+						"Extra Arguments contain the Windows batch escape operator '^' outside quotes.";
+					return false;
+				}
+
+				if (character == '"')
+				{
+					insideQuotes = !insideQuotes;
+					continue;
+				}
+
+				if (!insideQuotes && character is '&' or '|' or '<' or '>')
+				{
+					string commandOperator = index + 1 < arguments.Length &&
+						arguments[index + 1] == character &&
+						character is '&' or '|'
+							? new string(character, 2)
+							: character.ToString();
+					errorMessage =
+						$"Extra Arguments contain the Windows command operator '{commandOperator}' outside quotes.";
+					return false;
+				}
+			}
+
+			if (insideQuotes)
+			{
+				errorMessage = "Extra Arguments contain an unclosed double quote.";
+				return false;
+			}
+
+			return true;
+		}
+
+		public static string EscapeWindowsBatchCommandLine(string commandLine)
+		{
+			ArgumentNullException.ThrowIfNull(commandLine);
+			if (commandLine.IndexOfAny(['\0', '\r', '\n']) >= 0)
+				throw new ArgumentException(
+					"Windows batch command lines cannot contain line breaks or null characters.",
+					nameof(commandLine));
+
+			StringBuilder escaped = new(commandLine.Length + 16);
+			bool insideQuotes = false;
+			foreach (char character in commandLine)
+			{
+				if (character == '"')
+				{
+					insideQuotes = !insideQuotes;
+					escaped.Append(character);
+					continue;
+				}
+
+				if (character == '%')
+				{
+					escaped.Append("%%");
+					continue;
+				}
+
+				if (!insideQuotes && character == '^')
+				{
+					escaped.Append("^^");
+					continue;
+				}
+
+				if (!insideQuotes && character is '&' or '|' or '<' or '>')
+					escaped.Append('^');
+
+				escaped.Append(character);
+			}
+
+			return escaped.ToString();
+		}
+
+		private static bool ContainsBatchVariableExpansion(string value, char delimiter)
+		{
+			for (int opening = 0; opening < value.Length; opening++)
+			{
+				if (value[opening] != delimiter)
+					continue;
+
+				if (delimiter == '%' && opening + 1 < value.Length)
+				{
+					char parameter = value[opening + 1];
+					if (char.IsDigit(parameter) || parameter == '*' ||
+						(parameter == '~' && opening + 2 < value.Length &&
+						 (char.IsDigit(value[opening + 2]) || value[opening + 2] == '*')))
+					{
+						return true;
+					}
+				}
+
+				int closing = value.IndexOf(delimiter, opening + 1);
+				if (closing <= opening + 1)
+					continue;
+
+				bool looksLikeVariable = true;
+				for (int index = opening + 1; index < closing; index++)
+				{
+					if (char.IsWhiteSpace(value[index]) || value[index] is '"' or '\'')
+					{
+						looksLikeVariable = false;
+						break;
+					}
+				}
+
+				if (looksLikeVariable)
+					return true;
+			}
+
+			return false;
+		}
+
 		public static bool IsGameServerConfigSafe(object obj)
 		{
 			if (obj == null) return false;
@@ -306,9 +509,14 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (prop.PropertyType == typeof(string))
 				{
-					string value = (string)prop.GetValue(obj);
+					string value = (string?)prop.GetValue(obj) ?? string.Empty;
+					bool isSafe = prop.Name.Equals(
+						nameof(GameServer.ExtraArgs),
+						StringComparison.Ordinal)
+						? TryValidateExtraArguments(value, out _)
+						: IsStringSafe(value);
 
-					if (!IsStringSafe(value))
+					if (!isSafe)
 					{
 						Core.Instance.Log($"[🚨 SECURITY] Illegal characters found in property: {prop.Name}");
 						return false;
@@ -331,7 +539,8 @@ namespace Synix_Control_Panel.SynixEngine
 					CreateNoWindow = true
 				};
 
-				using Process proc = Process.Start(psi);
+				using Process proc = Process.Start(psi) ??
+					throw new InvalidOperationException("Java did not start.");
 				string output = proc.StandardError.ReadToEnd();
 				proc.WaitForExit();
 

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 2,
+  "id": "myth-of-empires",
+  "catalogOrder": 131,
+  "game": "Myth of Empires",
+  "aliases": [],
+  "appId": "1794810",
+  "requiresSteamLogin": false,
+  "executable": "MOE\\Binaries\\Win64\\MOEServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?Listen -server -log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -ServerPassword=\"{pass}\" -PrivateServer -DataLocalFile -NotCheckServerSteamAuth -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "ZhongZhou",
+    "DongZhou"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "MOE\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "MOE\\Binaries\\Win64"
+    }
+  ]
+}

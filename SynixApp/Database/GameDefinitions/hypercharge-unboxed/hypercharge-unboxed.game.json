@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "hypercharge-unboxed",
+  "catalogOrder": 150,
+  "game": "HYPERCHARGE: Unboxed",
+  "aliases": [],
+  "appId": "1045940",
+  "requiresSteamLogin": false,
+  "executable": "Unboxed\\Binaries\\Win64\\UnboxedServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "-log -Port={port} -QueryPort={query} -ServerName=\"{ServerName}\" -MaxPlayers={MaxPlayers} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "ToyPalace"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "Unboxed\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Unboxed\\Binaries\\Win64"
+    }
+  ]
+}

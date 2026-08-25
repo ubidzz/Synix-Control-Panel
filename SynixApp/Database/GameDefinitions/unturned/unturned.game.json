@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "unturned",
+  "catalogOrder": 36,
+  "game": "Unturned",
+  "aliases": [],
+  "appId": "1110390",
+  "requiresSteamLogin": false,
+  "executable": "Unturned.exe",
+  "downloadUrl": "",
+  "arguments": "-batchmode -nographics \"+InternetServer/{Identity}\" +map {map} -port {port} -password \"{pass}\" {mode} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 27015,
+  "queryPort": 27016,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "PEI",
+    "Washington",
+    "Russia",
+    "Germany",
+    "Hawaii"
+  ],
+  "gameModes": [
+    "PVP",
+    "PVE"
+  ],
+  "pvpValue": "PvP",
+  "pveValue": "PvE",
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "Servers\\{Identity}\\Server\\Commands.dat",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "MaxPlayers",
+      "Port",
+      "WorldName"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "Servers\\{Identity}\\Server\\Commands.dat",
+        "templateFile": "Commands.dat"
+      }
+    ]
+  }
+}

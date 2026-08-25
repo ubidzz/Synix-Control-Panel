@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "team-fortress-2008",
+  "catalogOrder": 195,
+  "game": "Team Fortress 2008",
+  "aliases": [],
+  "appId": "955080",
+  "requiresSteamLogin": false,
+  "executable": "srcds.exe",
+  "downloadUrl": "",
+  "arguments": "-game tf2008 -steam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "ctf_2fort",
+    "cp_dustbowl"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "tf2008\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "tf2008\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

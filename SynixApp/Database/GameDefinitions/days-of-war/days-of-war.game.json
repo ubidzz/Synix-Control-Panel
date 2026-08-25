@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "days-of-war",
+  "catalogOrder": 161,
+  "game": "Days of War",
+  "aliases": [],
+  "appId": "541790",
+  "requiresSteamLogin": false,
+  "executable": "DaysOfWar\\Binaries\\Win64\\DaysOfWarServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "{map} -log Port={port} QueryPort={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "dow_carentan"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "DaysOfWar\\Saved\\Config\\WindowsServer\\Game.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "DaysOfWar\\Binaries\\Win64"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "citadel-forged-with-fire",
+  "catalogOrder": 59,
+  "game": "Citadel: Forged with Fire",
+  "aliases": [],
+  "appId": "489650",
+  "requiresSteamLogin": false,
+  "executable": "Citadel\\Binaries\\Win64\\CitadelServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "-log -port={port} -queryport={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Ignus"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "Citadel\\Saved\\Config\\WindowsServer\\Game.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Citadel\\Binaries\\Win64"
+    }
+  ]
+}

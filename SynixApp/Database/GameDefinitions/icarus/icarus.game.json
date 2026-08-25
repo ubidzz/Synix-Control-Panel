@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 2,
+  "id": "icarus",
+  "catalogOrder": 21,
+  "game": "Icarus",
+  "aliases": [],
+  "appId": "2089300",
+  "requiresSteamLogin": false,
+  "executable": "Icarus\\Binaries\\Win64\\IcarusServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "-Log -UserDir=\"..\\..\" -SteamServerName=\"{ServerName}\" -PORT={port} -QueryPort={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 17777,
+  "queryPort": 27016,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Olympus",
+    "Styx",
+    "Prometheus",
+    "Elysium"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "Icarus\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "Icarus starts in its dedicated-server lobby. Join the server and load, resume, or create a prospect. Synix stores ServerSettings.ini inside this server folder and applies the server password, administrator password, and player limit.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Icarus\\Binaries\\Win64"
+    }
+  ],
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "AdminPassword",
+      "MaxPlayers"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "Icarus\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
+        "templateFile": "ServerSettings.ini"
+      }
+    ]
+  }
+}

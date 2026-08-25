@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "beammp",
+  "catalogOrder": 219,
+  "game": "BeamMP",
+  "appId": "0",
+  "executable": "BeamMP-Server.exe",
+  "downloadUrl": "https://github.com/BeamMP/BeamMP-Server/releases/latest/download/BeamMP-Server.zip",
+  "arguments": "",
+  "port": 30814,
+  "queryPort": 30814,
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "format": "StandardINI",
+  "isQueryable": false,
+  "probeProtocol": "Tcp"
+}

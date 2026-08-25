@@ -60,7 +60,7 @@ namespace Synix_Control_Panel.SynixEngine
 					udpClient.Client.IOControl(SIO_UDP_CONNRESET, new byte[] { 0 }, null);
 				}
 
-				if (!IPAddress.TryParse(ip, out IPAddress address))
+				if (!IPAddress.TryParse(ip, out IPAddress? address))
 				{
 					var hostAddresses = await Dns.GetHostAddressesAsync(ip);
 					if (hostAddresses.Length == 0) return false;
@@ -239,7 +239,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			try
 			{
-				if (!IPAddress.TryParse(ip, out IPAddress address))
+				if (!IPAddress.TryParse(ip, out IPAddress? address))
 				{
 					var hostAddresses = await Dns.GetHostAddressesAsync(ip);
 					if (hostAddresses.Length == 0) return false;
@@ -265,7 +265,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task<bool> TestEOSWebAPI(GameServer server, string ip, int timeoutMs = 3500)
 		{
 			GameInfo? gameData = GameDatabase.GetGame(server.Game);
-			string appId = gameData?.AppID ?? server.AppID ?? string.Empty;
+			string appId = gameData?.AppID ?? string.Empty;
 			string deploymentId = gameData?.EosDeploymentId ?? string.Empty;
 
 			if (string.IsNullOrWhiteSpace(deploymentId))

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 5,
+  "id": "rust",
+  "catalogOrder": 216,
+  "game": "Rust",
+  "aliases": [],
+  "appId": "258550",
+  "requiresSteamLogin": false,
+  "executable": "RustDedicated.exe",
+  "downloadUrl": "",
+  "arguments": "-batchmode -nographics +server.port {port} +server.queryport {query} +app.port {app_port} +server.pve {mode} +server.level \"{map}\" +server.seed {seed} +server.worldsize {world_size} +server.maxplayers {MaxPlayers} +server.hostname \"{ServerName}\" +server.password \"{pass}\" +server.identity \"{Identity}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\" +rcon.web 1",
+  "port": 7777,
+  "queryPort": 28015,
+  "appPort": null,
+  "worldSize": 4000,
+  "worldSeed": "12345",
+  "maps": [
+    "Procedural Map",
+    "Barren",
+    "HapisIsland",
+    "SavasIsland"
+  ],
+  "gameModes": [
+    "PVP",
+    "PVE"
+  ],
+  "pvpValue": "false",
+  "pveValue": "true",
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "server\\{Identity}\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "Rust is ready to start. If Oxide was selected, Synix installed only the official Oxide runtime after the Steam files. Synix does not download, install, update, or trust plugins; add and manage your own plugins in oxide\\plugins. After each Rust update or validation, Synix reapplies the latest official Oxide runtime before the server is started.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "supportedServerFrameworks": [
+    "Oxide"
+  ],
+  "logPaths": [
+    "server\\{Identity}\\*.log",
+    "server\\{Identity}\\logs\\**\\*.log",
+    "oxide\\logs\\**\\*.txt"
+  ]
+}

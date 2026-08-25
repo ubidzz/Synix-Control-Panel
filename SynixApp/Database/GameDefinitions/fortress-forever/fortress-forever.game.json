@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "fortress-forever",
+  "catalogOrder": 111,
+  "game": "Fortress Forever",
+  "aliases": [],
+  "appId": "329710",
+  "requiresSteamLogin": false,
+  "executable": "srcds.exe",
+  "downloadUrl": "",
+  "arguments": "-game fortressforever -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "ff_2fort",
+    "ff_well"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "fortressforever\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "fortressforever\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

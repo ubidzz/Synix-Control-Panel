@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Synix community help
+    url: https://discord.gg/pTeMSsYDM
+    about: Ask general setup questions and get community help in the official Synix Discord.
+  - name: Private security report
+    url: https://github.com/ubidzz/Synix-Control-Panel/security/advisories/new
+    about: Report a security vulnerability privately. Never place secrets or exploit details in a public issue.
+

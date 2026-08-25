@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "desynced",
+  "catalogOrder": 142,
+  "game": "Desynced",
+  "aliases": [],
+  "appId": "2943070",
+  "requiresSteamLogin": false,
+  "executable": "Desynced\\Binaries\\Win64\\DesyncedServer.exe",
+  "downloadUrl": "",
+  "arguments": "\"{map}.desynced\" -log -Port={port} -QueryPort={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 27015,
+  "queryPort": 27016,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "server"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Desynced\\Binaries\\Win64"
+    }
+  ]
+}

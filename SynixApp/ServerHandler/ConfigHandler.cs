@@ -280,8 +280,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
-			ParsedDocument document = ParseDocument(snapshot.Text, format);
+			return LoadConfigText(snapshot.Text, format);
+		}
 
+		internal static List<ConfigLine> LoadConfigText(
+			string text,
+			ConfigFormat format)
+		{
+			ArgumentNullException.ThrowIfNull(text);
+			ParsedDocument document = ParseDocument(text, format);
 			return document.Values.Select(value => new ConfigLine
 			{
 				Id = value.Id,
@@ -293,6 +300,34 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				HasOriginalValue = true,
 				Type = value.Type
 			}).ToList();
+		}
+
+		internal static bool HasRequiredStructure(
+			string path,
+			string template,
+			ConfigFormat format)
+		{
+			if (!File.Exists(path))
+			{
+				return false;
+			}
+
+			string existingText = TextFileSnapshot.Read(path).Text;
+			Dictionary<string, int> existingStructure =
+				BuildStructureSignature(existingText, format);
+			Dictionary<string, int> requiredStructure =
+				BuildStructureSignature(template, format);
+
+			foreach ((string key, int requiredCount) in requiredStructure)
+			{
+				if (!existingStructure.TryGetValue(key, out int existingCount) ||
+					existingCount < requiredCount)
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		public static string CreatePreview(
@@ -331,6 +366,66 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			WriteAtomically(path, snapshot.Encode(updatedText));
+		}
+
+		internal static bool EnsureStandardIniTupleValues(
+			string path,
+			string tupleKey,
+			IReadOnlyDictionary<string, string> requiredValues)
+		{
+			if (!File.Exists(path))
+				throw new FileNotFoundException("The configuration file could not be found.", path);
+			if (string.IsNullOrWhiteSpace(tupleKey) ||
+				tupleKey.IndexOfAny(['=', '(', ')', '\r', '\n']) >= 0)
+			{
+				throw new InvalidDataException("The INI tuple key is invalid.");
+			}
+
+			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
+			ParsedDocument document = ParseDocument(snapshot.Text, ConfigFormat.StandardINI);
+			List<KeyValuePair<string, string>> missing = requiredValues
+				.Where(required => !document.Values.Any(value =>
+					string.Equals(value.Key, required.Key, StringComparison.Ordinal)))
+				.ToList();
+			if (missing.Count == 0)
+				return false;
+
+			foreach ((string key, string value) in missing)
+			{
+				if (string.IsNullOrWhiteSpace(key) ||
+					key.IndexOfAny(['=', ',', '(', ')', '\r', '\n']) >= 0 ||
+					value.IndexOfAny([',', '(', ')', '\r', '\n']) >= 0)
+				{
+					throw new InvalidDataException("A requested INI tuple value is invalid.");
+				}
+			}
+
+			string marker = tupleKey + "=(";
+			int markerIndex = snapshot.Text.IndexOf(marker, StringComparison.Ordinal);
+			if (markerIndex < 0 ||
+				snapshot.Text.IndexOf(marker, markerIndex + marker.Length, StringComparison.Ordinal) >= 0)
+			{
+				throw new InvalidDataException(
+					$"The configuration must contain exactly one {tupleKey} tuple.");
+			}
+
+			int lineEnd = snapshot.Text.IndexOfAny(['\r', '\n'], markerIndex);
+			if (lineEnd < 0)
+				lineEnd = snapshot.Text.Length;
+			int closingIndex = snapshot.Text.LastIndexOf(
+				')',
+				lineEnd - 1,
+				lineEnd - markerIndex);
+			if (closingIndex < markerIndex + marker.Length)
+				throw new InvalidDataException($"The {tupleKey} tuple is incomplete.");
+
+			string separator = closingIndex > markerIndex + marker.Length ? "," : string.Empty;
+			string insertion = separator + string.Join(
+				",",
+				missing.Select(required => $"{required.Key}={required.Value}"));
+			string updated = snapshot.Text.Insert(closingIndex, insertion);
+			WriteAtomically(path, snapshot.Encode(updated));
+			return true;
 		}
 
 		public static string GetFormatDisplayName(ConfigFormat format)
@@ -945,6 +1040,57 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				_ => throw new NotSupportedException(
 					$"The configuration format '{format}' is not supported.")
 			};
+		}
+
+		private static Dictionary<string, int> BuildStructureSignature(
+			string text,
+			ConfigFormat format)
+		{
+			Dictionary<string, int> signature = new(StringComparer.Ordinal);
+			if (format == ConfigFormat.JSON)
+			{
+				using JsonDocument document = JsonDocument.Parse(text);
+				AddJsonStructure(document.RootElement, "$", signature);
+				return signature;
+			}
+
+			ParsedDocument parsed = ParseDocument(text, format);
+			foreach (ParsedValue value in parsed.Values)
+			{
+				AddStructureEntry(
+					signature,
+					value.Path);
+			}
+
+			return signature;
+		}
+
+		private static void AddJsonStructure(
+			JsonElement element,
+			string path,
+			Dictionary<string, int> signature)
+		{
+			AddStructureEntry(signature, $"{path}\u001f{element.ValueKind}");
+			if (element.ValueKind != JsonValueKind.Object)
+			{
+				return;
+			}
+
+			foreach (JsonProperty property in element.EnumerateObject())
+			{
+				string segment = property.Name
+					.Replace("~", "~0", StringComparison.Ordinal)
+					.Replace("/", "~1", StringComparison.Ordinal);
+				AddJsonStructure(property.Value, $"{path}/{segment}", signature);
+			}
+		}
+
+		private static void AddStructureEntry(
+			Dictionary<string, int> signature,
+			string key)
+		{
+			signature.TryGetValue(key, out int count);
+			signature[key] = count + 1;
 		}
 
 		private static ParsedDocument ParseIniDocument(string text)

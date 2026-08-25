@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "killing-floor-2",
+  "catalogOrder": 23,
+  "game": "Killing Floor 2",
+  "aliases": [],
+  "appId": "232130",
+  "requiresSteamLogin": false,
+  "executable": "Binaries\\Win64\\KFServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?Game=KFGameContent.KFGameInfo_{mode}?AdminPassword=\"{adminpass}\"?GamePassword=\"{pass}\" -Port={port} -QueryPort={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "KF-BioticsLab",
+    "KF-BurningParis",
+    "KF-Outpost",
+    "KF-ZedLanding"
+  ],
+  "gameModes": [
+    "Survival",
+    "VersusSurvival"
+  ],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "KFGame\\Config\\PCServer-KFGame.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Binaries\\Win64"
+    }
+  ]
+}

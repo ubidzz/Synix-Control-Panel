@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "nightingale",
+  "catalogOrder": 49,
+  "game": "Nightingale",
+  "aliases": [],
+  "appId": "3796810",
+  "requiresSteamLogin": false,
+  "executable": "NWXServer.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?Listen -log -ServerName=\"{ServerName}\" -Password=\"{pass}\" -Port={port} -QueryPort={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "SylvanGlade"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "NWX\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": false,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "NWX\\Binaries\\Win64"
+    }
+  ]
+}

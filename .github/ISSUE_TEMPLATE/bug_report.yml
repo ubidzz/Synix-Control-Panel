@@ -1,0 +1,112 @@
+name: Synix bug report
+description: Report a repeatable problem with the Synix application.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve Synix. Do not include passwords, tokens, webhooks, public IP addresses, private configuration, or complete secret-bearing launch commands.
+
+        Security vulnerabilities must be reported through the private security route instead of this form.
+
+  - type: input
+    id: synix-version
+    attributes:
+      label: Synix version
+      description: Find this in the Synix footer or executable properties.
+      placeholder: "Example: 1.0.22"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation-type
+    attributes:
+      label: Installation type
+      options:
+        - MSI installer
+        - Winget
+        - Standalone executable
+        - Development build
+        - Unknown
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: Windows version
+      placeholder: "Example: Windows 11 24H2"
+    validations:
+      required: true
+
+  - type: input
+    id: server-type
+    attributes:
+      label: Affected server type
+      description: Leave blank if the problem is not connected to a specific server definition.
+      placeholder: "Example: Palworld"
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Installation or repair
+        - Starting, restarting, or stopping
+        - Updating
+        - Configuration
+        - Backup or restore
+        - Import, export, or package verification
+        - Monitoring or diagnostics
+        - Discord notifications
+        - Synix updater or installer
+        - User interface or settings
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the exact safe steps that make the problem happen.
+      placeholder: |
+        1. Open...
+        2. Select...
+        3. Click...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include the visible error message, but remove all private information.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sanitized-logs
+    attributes:
+      label: Sanitized logs or screenshots
+      description: Drag screenshots here or paste only the relevant log lines after removing secrets and private addresses.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety and duplicate checks
+      options:
+        - label: I searched existing issues for this problem.
+          required: true
+        - label: I removed passwords, tokens, webhooks, public IP addresses, and private server data.
+          required: true
+        - label: This is not a confidential security vulnerability.
+          required: true
+

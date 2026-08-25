@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
@@ -22,12 +23,26 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		private static readonly HashSet<string> _activeSequences = new HashSet<string>();
-
 		public async Task StopServerAndReport(GameServer server, bool isManual = true)
 		{
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Stop);
+			if (!operation.Acquired)
+			{
+				Log($"[STOP BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return;
+			}
+
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
 			Core.Instance.UpdateGridStatus();
+			_ = SendDiscordNotification(
+				server,
+				DiscordNotificationEvent.ServerStopping,
+				isManual ? "SERVER STOPPING" : "AUTOMATIC STOP",
+				isManual
+					? "A shutdown command was issued from Synix."
+					: "Synix is stopping the server as part of an automatic operation.",
+				Color.Orange);
 
 			bool stopped = await Servers.Stop(server, (msg, logColor) =>
 			{
@@ -41,10 +56,95 @@ namespace Synix_Control_Panel.SynixEngine
 			else
 			{
 				RecordGameVerification(server.Game, GameVerificationKind.Stop);
+				await CollectGeneratedConfigurationAfterStop(server);
+				await SynchronizeFirstGeneratedConfiguration(server);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.ServerStopped,
+					"SERVER STOPPED",
+					$"{server.ServerName} is fully stopped.",
+					Color.LimeGreen);
 			}
 
 			FileHandler.SaveServers();
 			Core.Instance.UpdateGridStatus();
+		}
+
+		internal async Task SynchronizeFirstGeneratedConfiguration(GameServer server)
+		{
+			ConfigurationApplyResult? optionalResult =
+				await GameFix.ApplyFirstGeneratedConfiguration(server);
+			if (!optionalResult.HasValue)
+			{
+				return;
+			}
+			ConfigurationApplyResult result = optionalResult.Value;
+
+			if (!result.Succeeded)
+			{
+				Log($"[CONFIG ERROR] {result.Message}", Color.Red, true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.ConfigurationWarning,
+					"CONFIGURATION ERROR",
+					result.Message,
+					Color.Red);
+				return;
+			}
+
+			if (!result.Complete)
+			{
+				Log($"[CONFIG WARNING] {result.Message}", Color.Orange, true);
+				_ = SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.ConfigurationWarning,
+					"CONFIGURATION WARNING",
+					result.Message,
+					Color.Orange);
+				return;
+			}
+
+			if (result.Changed)
+			{
+				Log(
+					$"[CONFIG] Applied the saved Synix settings to the newly generated {server.Game} configuration.",
+					Color.LimeGreen,
+					true);
+			}
+		}
+
+		private async Task CollectGeneratedConfigurationAfterStop(GameServer server)
+		{
+			if (!GeneratedConfigurationCollector.AutomaticCollectionEnabled ||
+				GameFix.GetConfigFileCreationMode(server.Game) is
+					ConfigFileCreationMode.SynixTemplate or
+					ConfigFileCreationMode.LaunchArgumentsOnly)
+			{
+				return;
+			}
+
+			try
+			{
+				GeneratedConfigurationCaptureResult result = await Task.Run(() =>
+					GeneratedConfigurationCollector.CollectServer(server));
+				if (result.CopiedFiles > 0)
+				{
+					Log(
+						$"[CONFIG CAPTURE] Copied {result.CopiedFiles} generated configuration file(s) for {server.ServerName} to {result.DestinationRoot}.",
+						Color.Cyan);
+				}
+
+				foreach (string error in result.Errors.Take(3))
+				{
+					Log($"[CONFIG CAPTURE] {error}", Color.OrangeRed);
+				}
+			}
+			catch (Exception exception)
+			{
+				Log(
+					$"[CONFIG CAPTURE] Could not collect the generated configuration for {server.ServerName}: {exception.Message}",
+					Color.OrangeRed);
+			}
 		}
 
 		public void OpenConfigEditor(GameServer server)
@@ -65,26 +165,53 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			string cleanIdentity = !string.IsNullOrWhiteSpace(server.ServerName)
-				? server.ServerName.Replace(" ", "_")
-				: "Server";
-
-			string worldName = server.WorldName ?? "";
-
-			string resolvedRelativePath = blueprint.RelativeConfigPath
-				.Replace("{Identity}", cleanIdentity)
-				.Replace("{ServerName}", cleanIdentity)
-				.Replace("{map}", worldName)
-				.Replace("{port}", server.Port.ToString())
-				.Replace("{query}", server.QueryPort.ToString())
-				.Replace('/', Path.DirectorySeparatorChar)
-				.Replace('\\', Path.DirectorySeparatorChar);
-
-			string fullPath = Path.Combine(server.InstallPath, resolvedRelativePath);
-
-			if (File.Exists(fullPath))
+			string fullPath;
+			ConfigFormat format = blueprint.Format;
+			if (GameFix.TryGetConfiguration(
+				server.Game,
+				out ConfigurationDefinition? definition) &&
+				definition?.UsesConfigurationFile == true)
 			{
-				using (ServerConfig editor = new ServerConfig(fullPath, blueprint.Format))
+				try
+				{
+					fullPath = definition.ResolveFullPath(server);
+					format = definition.Format;
+				}
+				catch (Exception exception)
+				{
+					Log($"Could not resolve the config file safely:\n{exception.Message}", Color.Red, true);
+					return;
+				}
+			}
+			else
+			{
+				string cleanIdentity = GetSafeName(server.ServerName);
+				string resolvedRelativePath = blueprint.RelativeConfigPath
+					.Replace("{Identity}", cleanIdentity)
+					.Replace("{ServerName}", cleanIdentity)
+					.Replace("{map}", server.WorldName ?? string.Empty)
+					.Replace("{port}", server.Port.ToString())
+					.Replace("{query}", server.QueryPort.ToString())
+					.Replace('/', Path.DirectorySeparatorChar)
+					.Replace('\\', Path.DirectorySeparatorChar);
+				string installRoot = Path.GetFullPath(server.InstallPath)
+					.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				fullPath = Path.GetFullPath(Path.Combine(installRoot, resolvedRelativePath));
+				if (!fullPath.StartsWith(
+					installRoot + Path.DirectorySeparatorChar,
+					StringComparison.OrdinalIgnoreCase))
+				{
+					Log("The config path leaves the server installation folder.", Color.Red, true);
+					return;
+				}
+			}
+
+			if (File.Exists(fullPath) || GameFix.CanResetManagedConfiguration(server))
+			{
+				using (ServerConfig editor = new ServerConfig(
+					fullPath,
+					format,
+					server))
 				{
 					editor.ShowDialog();
 				}
@@ -130,7 +257,9 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			};
 
-			TaskDialogButton result = TaskDialog.ShowDialog(MainGUI.Instance, page);
+			TaskDialogButton result = MainGUI.Instance == null
+				? TaskDialog.ShowDialog(page)
+				: TaskDialog.ShowDialog(MainGUI.Instance, page);
 
 			if (result == TaskDialogButton.Yes)
 			{
@@ -140,7 +269,8 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					if (Properties.Settings.Default.enableRunAsAdmin)
 					{
-						string serverExePath = Path.Combine(server.InstallPath, server.ExeName);
+						string executableName = GameDatabase.GetGame(server.Game)?.ExeName ?? string.Empty;
+						string serverExePath = Path.Combine(server.InstallPath, executableName);
 
 						if (File.Exists(serverExePath))
 						{
@@ -166,10 +296,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void OpenBackFolder(GameServer selectedServer)
 		{
-			string cleanGame = Core.Instance.GetSafeName(selectedServer.Game);
-			string cleanServer = Core.Instance.GetSafeName(selectedServer.ServerName);
-
-			string fullPath = Path.Combine(DefaultBackupPath, cleanGame, cleanServer);
+			IReadOnlyList<ServerBackupArchive> backups = GetServerBackups(selectedServer);
+			string fullPath = backups.Count > 0
+				? Path.GetDirectoryName(backups[0].ArchivePath) ?? GetActiveServerBackupFolder(selectedServer)
+				: GetActiveServerBackupFolder(selectedServer);
 
 			if (Directory.Exists(fullPath))
 			{
@@ -234,6 +364,30 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			if (!EnsureSteamAccountName(server, gameData))
+				return;
+
+			ServerOperationKind operationKind = ServerUpdating
+				? ServerOperationKind.Update
+				: ServerOperationKind.Validate;
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, operationKind);
+			if (!operation.Acquired)
+			{
+				Log($"[STEAMCMD BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return;
+			}
+			DiscordNotificationEvent startedEvent = ServerUpdating
+				? DiscordNotificationEvent.UpdateStarted
+				: DiscordNotificationEvent.VerificationStarted;
+			DiscordNotificationEvent completedEvent = ServerUpdating
+				? DiscordNotificationEvent.UpdateCompleted
+				: DiscordNotificationEvent.VerificationCompleted;
+			DiscordNotificationEvent failedEvent = ServerUpdating
+				? DiscordNotificationEvent.UpdateFailed
+				: DiscordNotificationEvent.VerificationFailed;
+			string operationName = ServerUpdating ? "UPDATE" : "FILE VERIFICATION";
+
 			try
 			{
 				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
@@ -258,6 +412,12 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				Core.Instance.UpdateGridStatus();
+				_ = SendDiscordNotification(
+					server,
+					startedEvent,
+					$"{operationName} STARTED",
+					$"SteamCMD is processing {server.ServerName}.",
+					Color.Cyan);
 
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
 				string manifestPath = Path.Combine(steamAppsPath, $"appmanifest_{gameData.AppID}.acf");
@@ -291,9 +451,53 @@ namespace Synix_Control_Panel.SynixEngine
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
 					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
 					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
+					_ = SendDiscordNotification(
+						server,
+						failedEvent,
+						$"{operationName} FAILED",
+						errorDetail,
+						Color.Red);
 					isDownloadActive = false;
 					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
 					return;
+				}
+
+				bool fixApplied = await GameFix.PostInstall(server);
+				if (fixApplied)
+					Log($"[✔️ SUCCESS] Re-applied required files to the {server.Game} server.", Color.Green);
+				if (OxideRuntimeManager.RequiresVanillaRestore(server, gameData))
+				{
+					server.ServerFrameworkVersion = "Official";
+					Log(
+						"[OXIDE] Steam restored the official Rust server files. The server is now set to Vanilla; user plugin files were left untouched.",
+						Color.LimeGreen,
+						true);
+				}
+				if (OxideRuntimeManager.IsEnabled(server, gameData))
+				{
+					try
+					{
+						await OxideRuntimeManager.InstallOrUpdateAsync(
+							server,
+							gameData,
+							(message, color) => Log(message, color, true));
+					}
+					catch (Exception exception)
+					{
+						Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+						MessageBox.Show(
+							$"The Rust {ManifestMessage} completed, but Oxide could not be reapplied. Synix will block the modded server from starting until you retry with Update or Validate.\n\n{exception.Message}",
+							"Oxide Update Failed",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+						_ = SendDiscordNotification(
+							server,
+							failedEvent,
+							$"{operationName} FAILED",
+							$"SteamCMD completed, but Oxide could not be reapplied: {exception.Message}",
+							Color.Red);
+						return;
+					}
 				}
 
 				if (ServerUpdating)
@@ -304,7 +508,23 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					Log($"[SYNIX] Validating FINISHED: {server.Game}", Color.Green, true);
 				}
+				_ = SendDiscordNotification(
+					server,
+					completedEvent,
+					$"{operationName} COMPLETED",
+					$"{server.ServerName} completed successfully.",
+					Color.LimeGreen);
 				ManifestMessage = "";
+			}
+			catch (Exception exception)
+			{
+				Log($"[🚨 {operationName} ERROR] {exception.Message}", Color.Red, true);
+				_ = SendDiscordNotification(
+					server,
+					failedEvent,
+					$"{operationName} FAILED",
+					exception.Message,
+					Color.Red);
 			}
 			finally
 			{
@@ -333,6 +553,16 @@ namespace Synix_Control_Panel.SynixEngine
 						return;
 					}
 
+					using ServerOperationLease operation =
+						ServerOperationCoordinator.TryBegin(
+							newServer,
+							ServerOperationKind.Install);
+					if (!operation.Acquired)
+					{
+						Log($"[INSTALL BLOCKED] {operation.FailureReason}", Color.Orange, true);
+						return;
+					}
+
 					try
 					{
 						isDownloadActive = true;
@@ -341,6 +571,12 @@ namespace Synix_Control_Panel.SynixEngine
 						Log($"[SYNIX] AUTO-INSTALL STARTED: {newServer.Game}", Color.LightCyan, true);
 						newServer.Status = StatusManager.GetStatus(ServerState.Installing);
 						Core.Instance.UpdateGridStatus();
+						_ = SendDiscordNotification(
+							newServer,
+							DiscordNotificationEvent.InstallStarted,
+							"INSTALL STARTED",
+							$"SteamCMD is installing {newServer.Game}.",
+							Color.Cyan);
 
 						int exitCode = await Task.Run(() =>
 						{
@@ -358,18 +594,70 @@ namespace Synix_Control_Panel.SynixEngine
 							string errorMsg = ServerInstaller.GetSteamError(exitCode);
 							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red, true);
 							newServer.Status = "Failed";
+							_ = SendDiscordNotification(
+								newServer,
+								DiscordNotificationEvent.InstallFailed,
+								"INSTALL FAILED",
+								errorMsg,
+								Color.Red);
 							return;
 						}
 
 						bool fixApplied = await GameFix.PostInstall(newServer);
 						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
-						newServer.IsFirstBoot = fixApplied;
+						if (OxideRuntimeManager.IsEnabled(newServer, gameData))
+						{
+							try
+							{
+								await OxideRuntimeManager.InstallOrUpdateAsync(
+									newServer,
+									gameData,
+									(message, color) => Log(message, color, true));
+							}
+							catch (Exception exception)
+							{
+								Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+								MessageBox.Show(
+									"The Rust server installed, but Oxide could not be installed. Synix will block the modded server from starting until you retry with Update or Validate.\n\n" + exception.Message,
+									"Oxide Installation Failed",
+									MessageBoxButtons.OK,
+									MessageBoxIcon.Error);
+								_ = SendDiscordNotification(
+									newServer,
+									DiscordNotificationEvent.InstallFailed,
+									"INSTALL FAILED",
+									$"The server files installed, but Oxide could not be installed: {exception.Message}",
+									Color.Red);
+								return;
+							}
+						}
+						newServer.IsFirstBoot =
+							fixApplied ||
+							gameData.NeedsConfigWarning ||
+							gameData.RequiredLaunchFiles.Length > 0;
+						if (await RefreshServerIconAsync(newServer))
+						{
+							Core.Instance.UpdateGridStatus();
+							Log($"[ICON] Updated the dashboard icon for {newServer.Game}.", Color.Cyan);
+						}
 						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
+						_ = SendDiscordNotification(
+							newServer,
+							DiscordNotificationEvent.InstallCompleted,
+							"INSTALL COMPLETED",
+							$"{newServer.Game} is installed and ready for its first start.",
+							Color.LimeGreen);
 						RecordGameVerification(newServer.Game, GameVerificationKind.Install);
 					}
 					catch (Exception ex)
 					{
 						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red, true);
+						_ = SendDiscordNotification(
+							newServer,
+							DiscordNotificationEvent.InstallFailed,
+							"INSTALL FAILED",
+							ex.Message,
+							Color.Red);
 					}
 					finally
 					{
@@ -384,7 +672,155 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public void EditServerAndReport(GameServer server)
+		private bool EnsureSteamAccountName(
+			GameServer server,
+			GameInfo blueprint,
+			bool forcePrompt = false,
+			bool restoringImportedServer = false)
+		{
+			if (!blueprint.RequiresSteamLogin ||
+				(!forcePrompt &&
+				 !string.IsNullOrWhiteSpace(server.SteamAccountName)))
+			{
+				return true;
+			}
+
+			using SteamAccountLoginDialog loginDialog = new(
+				blueprint.Game,
+				server.SteamAccountName,
+				restoringImportedServer);
+			if (loginDialog.ShowDialog(MainGUI.Instance) != DialogResult.OK)
+			{
+				Log(
+					restoringImportedServer
+						? "Steam authorization was cancelled. The server was not started."
+						: "Steam account login was cancelled. No files were changed.",
+					Color.Orange,
+					true);
+				return false;
+			}
+
+			server.SteamAccountName = loginDialog.SteamAccountName;
+			FileHandler.SaveServers();
+			return true;
+		}
+
+		private async Task<bool> EnsureSteamAuthenticationAfterImport(
+			GameServer server,
+			string status)
+		{
+			if (!server.SteamAuthenticationRequired)
+				return true;
+
+			GameInfo? blueprint = GameDatabase.GetGame(server.Game);
+			if (blueprint?.RequiresSteamLogin != true)
+			{
+				server.SteamAuthenticationRequired = false;
+				FileHandler.SaveServers();
+				return true;
+			}
+
+			if (status is "WATCHDOG" or "MAINTENANCE")
+			{
+				Log(
+					$"[STEAM LOGIN] {server.ServerName} was imported and needs Steam authorization on this PC. Start it manually once to complete the login.",
+					Color.Orange,
+					true);
+				return false;
+			}
+
+			if (!EnsureSteamAccountName(
+					server,
+					blueprint,
+					forcePrompt: true,
+					restoringImportedServer: true))
+			{
+				return false;
+			}
+
+			if (!File.Exists(Core.SteamCmdExe))
+			{
+				await SteamCMD.EnsureSteamCMD((message, color) => Log(message, color));
+				if (!File.Exists(Core.SteamCmdExe))
+				{
+					Log(
+						"SteamCMD could not be prepared, so Steam authorization could not start.",
+						Color.Red,
+						true);
+					return false;
+				}
+			}
+
+			try
+			{
+				isDownloadActive = true;
+				Log(
+					"[LOCKED] Synix cannot close while Steam authorization is running.",
+					Color.Orange,
+					true);
+
+				int exitCode = await Task.Run(() =>
+					ServerInstaller.AuthenticateSteamAccount(
+						server,
+						blueprint,
+						message => MainGUI.Instance?.BeginInvoke(
+							(Action)(() => Log(message))),
+						pid =>
+						{
+							server.SteamPID = pid;
+							FileHandler.SaveServers();
+						}));
+
+				if (exitCode != 0)
+				{
+					Log(
+						$"Steam authorization was not completed. {ServerInstaller.GetSteamError(exitCode)} The server was not started.",
+						Color.Red,
+						true);
+					return false;
+				}
+
+				server.SteamAuthenticationRequired = false;
+				FileHandler.SaveServers();
+				Log(
+					$"[STEAM LOGIN] {server.ServerName} is authorized on this PC.",
+					Color.Green,
+					true);
+				return true;
+			}
+			finally
+			{
+				server.SteamPID = null;
+				isDownloadActive = false;
+				FileHandler.SaveServers();
+				Core.Instance.UpdateGridStatus();
+				Log(
+					"[UNLOCKED] Synix can close again.",
+					Color.Orange,
+					true);
+			}
+		}
+
+		internal static int MarkImportedSteamAuthenticationRequired(
+			IEnumerable<GameServer> servers)
+		{
+			ArgumentNullException.ThrowIfNull(servers);
+
+			int authenticationCount = 0;
+			foreach (GameServer server in servers)
+			{
+				GameInfo? blueprint = GameDatabase.GetGame(server.Game);
+				server.SteamAuthenticationRequired =
+					blueprint?.RequiresSteamLogin == true;
+
+				if (server.SteamAuthenticationRequired)
+					authenticationCount++;
+			}
+
+			return authenticationCount;
+		}
+
+		public async Task EditServerAndReport(GameServer server)
 		{
 			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
@@ -402,11 +838,82 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			string previousFramework = server.ServerFramework ?? "Vanilla";
 			using (var editForm = new ServerSettingsGUI(server))
 			{
-				if (editForm.ShowDialog() == DialogResult.OK)
+				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
 				{
-					Log($"[✔️ SUCCESS] {server.ServerName} settings updated and saved.", Color.Green);
+					GameServer updatedServer = editForm.NewServer;
+					ConfigurationApplyResult configurationResult =
+						await GameFix.ApplyManagedConfiguration(updatedServer);
+
+					if (!configurationResult.Succeeded)
+					{
+						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
+					}
+					else if (!configurationResult.Complete)
+					{
+						Log($"[CONFIG WARNING] {configurationResult.Message}", Color.Orange, true);
+					}
+					else if (configurationResult.Changed)
+					{
+						Log($"[CONFIG] {configurationResult.Message}", Color.Green);
+					}
+
+					GameInfo? definition = GameDatabase.GetGame(updatedServer.Game);
+					if (definition != null &&
+						OxideRuntimeManager.IsEnabled(updatedServer, definition) &&
+						!previousFramework.Equals(
+							OxideRuntimeManager.FrameworkName,
+							StringComparison.OrdinalIgnoreCase))
+					{
+						try
+						{
+							isDownloadActive = true;
+							await OxideRuntimeManager.InstallOrUpdateAsync(
+								updatedServer,
+								definition,
+								(message, color) => Log(message, color, true));
+						}
+						catch (Exception exception)
+						{
+							updatedServer.ServerFramework = OxideRuntimeManager.VanillaFrameworkName;
+							updatedServer.ServerFrameworkVersion = "Official";
+							Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+							MessageBox.Show(
+								"Oxide could not be installed. The server has been left set to Vanilla.\n\n" + exception.Message,
+								"Oxide Installation Failed",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Error);
+						}
+						finally
+						{
+							isDownloadActive = false;
+						}
+					}
+					else if (previousFramework.Equals(
+						OxideRuntimeManager.FrameworkName,
+						StringComparison.OrdinalIgnoreCase) &&
+						string.Equals(
+							updatedServer.ServerFramework,
+							OxideRuntimeManager.VanillaFrameworkName,
+							StringComparison.OrdinalIgnoreCase))
+					{
+						updatedServer.ServerFrameworkVersion =
+							OxideRuntimeManager.VanillaRestoreRequiredVersion;
+						Log(
+							"[OXIDE] Framework set to Vanilla. Start is blocked until Update or Validate restores the official Rust server files.",
+							Color.Orange,
+							true);
+						MessageBox.Show(
+							"Rust is now set to Vanilla. Run Update or Validate before starting so Steam can restore the official server files.\n\nSynix will not delete your oxide folder or plugins.",
+							"Validation Required",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Information);
+					}
+
+					FileHandler.SaveServers();
+					Log($"[✔️ SUCCESS] {updatedServer.ServerName} settings updated and saved.", Color.Green);
 					Core.Instance.UpdateGridStatus();
 				}
 			}
@@ -414,13 +921,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task ExecuteStartSequence(GameServer server, string status = "")
 		{
-			lock (_activeSequences)
+			ServerOperationKind operationKind = string.IsNullOrWhiteSpace(status)
+				? ServerOperationKind.Start
+				: ServerOperationKind.Restart;
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, operationKind);
+			if (!operation.Acquired)
 			{
-				if (_activeSequences.Contains(server.ServerName))
-				{
-					return;
-				}
-				_activeSequences.Add(server.ServerName);
+				Log($"[START BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return;
 			}
 
 			try
@@ -436,8 +945,47 @@ namespace Synix_Control_Panel.SynixEngine
 					return;
 				}
 
+				if (!await EnsureSteamAuthenticationAfterImport(server, status))
+					return;
+
 				if (!ValidateIntegrityAndReport(server)) return;
+				if (GameFix.NeedsManagedConfiguration(server))
+				{
+					ConfigurationApplyResult configurationResult =
+						await GameFix.ApplyManagedConfiguration(server);
+
+					if (!configurationResult.Succeeded)
+					{
+						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
+						MessageBox.Show(
+							configurationResult.Message,
+							"Configuration Could Not Be Applied",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+						return;
+					}
+
+					if (!configurationResult.Complete)
+					{
+						Log($"[CONFIG WARNING] {configurationResult.Message}", Color.Orange, true);
+					}
+					else if (configurationResult.Changed)
+					{
+						Log($"[CONFIG] {configurationResult.Message}", Color.Green);
+					}
+
+					FileHandler.SaveServers();
+				}
+				bool displayedFirstBootWarning = server.IsFirstBoot;
 				if (ShouldBlockForConfig(server)) return;
+				if (!EnsureRequiredLaunchFilesAndReport(
+					server,
+					showDialog:
+						!displayedFirstBootWarning &&
+						!status.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase)))
+				{
+					return;
+				}
 
 				if (status == "RESTART")
 				{
@@ -456,9 +1004,12 @@ namespace Synix_Control_Panel.SynixEngine
 					string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
 					Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
 
-					_ = SendDiscordAlert(server, "🚨 CRASH DETECTED",
-					$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
-					Color.Red);
+					_ = SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.ServerCrashed,
+						"CRASH DETECTED",
+						$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
+						Color.Red);
 
 					stopServer = true;
 					currentContext = StartContext.CrashRecovery;
@@ -491,13 +1042,6 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception ex)
 			{
 				Log($"[🚨 CRITICAL ENGINE ERROR] Sequence failed for {server.ServerName}: {ex.Message}", Color.Red, true);
-			}
-			finally
-			{
-				lock (_activeSequences)
-				{
-					_activeSequences.Remove(server.ServerName);
-				}
 			}
 		}
 
@@ -555,11 +1099,11 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			if (server.Game == "Dune: Awakening")
+			if (!dbEntry.LaunchBehavior.AllowLaunchFileExport)
 			{
-				Log("[⚠️ NOTICE] Dune: Awakening requires the official battlegroup.bat script. Export aborted.", Color.Orange);
+				Log($"[⚠️ NOTICE] {server.Game} does not allow generated launch files. Export aborted.", Color.Orange);
 				MessageBox.Show(
-					"Dune: Awakening relies on a dedicated Hyper-V deployment script (battlegroup.bat) to initialize its virtual machine cluster.\n\nA standard batch file cannot be generated for this game.",
+					$"{server.Game} relies on its official launch or deployment file. A separate launch file cannot be safely generated for this game.",
 					"Export Disabled",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
@@ -608,87 +1152,49 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				string cleanIdentity = GetSafeName(server.ServerName ?? "Server");
-				string args = dbEntry.RequiredArgs ?? "";
-
-				int ramToUse = server.MaxRam;
-				if (server.Game == "Minecraft") ramToUse = server.MaxRam * 1024;
-
-				args = args.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
-						   .Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
-						   .Replace("{map}", server.WorldName ?? "")
-						   .Replace("{steamAppID}", invokedId)
-						   .Replace("{appid}", targetId)
-						   .Replace("{port}", server.Port.ToString())
-						   .Replace("{query}", server.QueryPort.ToString())
-						   .Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-						   .Replace("{pass}", batchPasswords.ServerPassword)
-						   .Replace("{adminpass}", batchPasswords.AdminPassword)
-						   .Replace("{ServerName}", server.ServerName ?? "SynixServer")
-						   .Replace("{InstallPath}", server.InstallPath ?? "")
-						   .Replace("{Identity}", cleanIdentity)
-						   .Replace("{world_size}", server.WorldSize.ToString())
-						   .Replace("{ram}", ramToUse.ToString());
-
-				if (args.Contains("{rcon}"))
+				if (!GameLaunchCommandBuilder.TryBuildArguments(
+					server,
+					dbEntry,
+					invokedId,
+					batchPasswords,
+					out string args,
+					out string argumentError))
 				{
-					string formattedRcon = server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax)
-						? dbEntry.RconSyntax.Replace("{rcon_port}", server.RconPort.ToString()).Replace("{rcon_pass}", batchPasswords.RconPassword)
-						: "";
-					args = args.Replace("{rcon}", formattedRcon);
+					Log(
+						$"[🚨 SECURITY] Launch file export blocked: {argumentError}",
+						Color.Red,
+						true);
+					return false;
 				}
 
-				if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
-				{
-					bool usesBooleanMode =
-						server.Game.Equals("ARK: Survival Evolved", StringComparison.OrdinalIgnoreCase) ||
-						server.Game.Equals("ARK: Survival Ascended", StringComparison.OrdinalIgnoreCase) ||
-						server.Game.Equals("PixARK", StringComparison.OrdinalIgnoreCase) ||
-						server.Game.Equals("Atlas", StringComparison.OrdinalIgnoreCase) ||
-						server.Game.Equals("Rust", StringComparison.OrdinalIgnoreCase);
-
-					string translatedMode = server.GameMode;
-
-					if (usesBooleanMode)
-					{
-						if (server.GameMode.Equals("PVE", StringComparison.OrdinalIgnoreCase))
-							translatedMode = "True";
-						else if (server.GameMode.Equals("PVP", StringComparison.OrdinalIgnoreCase))
-							translatedMode = "False";
-					}
-
-					args = args.Replace("{mode}", translatedMode);
-				}
-
-				if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
-				{
-					args = args + " " + server.ExtraArgs.Trim();
-				}
-
-				args = args.Replace("  ", " ").Trim();
-
-				string safeArgs = args.Replace("&", "^&");
+				string safeArgs = EscapeWindowsBatchCommandLine(args);
 
 				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
+				string safeIdentity = EscapeWindowsBatchCommandLine(cleanIdentity);
+				string safeBinDir = EscapeWindowsBatchCommandLine(binDir);
+				string safeExeName = EscapeWindowsBatchCommandLine(exeNameOnly);
+				string safeInvokedId = EscapeWindowsBatchCommandLine(invokedId);
 
 				StringBuilder batchContent = new StringBuilder();
 				batchContent.AppendLine("@echo off");
+				batchContent.AppendLine("setlocal DisableDelayedExpansion");
 				batchContent.AppendLine($"echo :: ===========================================================================");
 				batchContent.AppendLine($"echo :: SYNIX AUTOMATICALLY GENERATED LAUNCH SCRIPT");
-				batchContent.AppendLine($"echo :: Server: {server.ServerName} ({server.Game})");
+				batchContent.AppendLine($"echo :: Server: {safeIdentity}");
 				batchContent.AppendLine($"echo :: Generated on: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
 				batchContent.AppendLine($"echo :: ===========================================================================");
 				batchContent.AppendLine();
 				batchContent.AppendLine($":: Move execution context to the actual binaries directory");
-				batchContent.AppendLine($"cd /d \"{binDir}\"");
+				batchContent.AppendLine($"cd /d \"{safeBinDir}\"");
 				batchContent.AppendLine();
 				batchContent.AppendLine($":: Inject Steam App Variables into Windows Memory");
-				batchContent.AppendLine($"set SteamAppId={invokedId}");
-				batchContent.AppendLine($"set SteamGameId={invokedId}");
+				batchContent.AppendLine($"set \"SteamAppId={safeInvokedId}\"");
+				batchContent.AppendLine($"set \"SteamGameId={safeInvokedId}\"");
 				batchContent.AppendLine();
 				batchContent.AppendLine($":: Execute the standalone server payload and instantly close this script window");
-				batchContent.AppendLine($"start \"{server.ServerName}\" \"{exeNameOnly}\" {safeArgs}");
+				batchContent.AppendLine($"start \"\" \"{safeExeName}\" {safeArgs}");
 				batchContent.AppendLine("exit");
 
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
@@ -719,7 +1225,7 @@ namespace Synix_Control_Panel.SynixEngine
 					WindowStyle = ProcessWindowStyle.Hidden
 				};
 
-				Process cleanup = Process.Start(psi);
+				Process? cleanup = Process.Start(psi);
 				cleanup?.WaitForExit();
 
 				Log($"[FIREWALL] Successfully removed rules for {executablePath}", Color.LimeGreen);

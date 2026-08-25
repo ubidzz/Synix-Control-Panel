@@ -10,11 +10,12 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+
 namespace Synix_Control_Panel.ServerHandler
 {
 	partial class ServerConfig
 	{
-		private System.ComponentModel.IContainer? components = null;
+		private System.ComponentModel.IContainer components = null;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -30,13 +31,13 @@ namespace Synix_Control_Panel.ServerHandler
 
 		private void InitializeComponent()
 		{
+			DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+			DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+			DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+			DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+			DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+			DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerConfig));
-			DataGridViewCellStyle headerStyle = new DataGridViewCellStyle();
-			DataGridViewCellStyle defaultStyle = new DataGridViewCellStyle();
-			DataGridViewCellStyle alternatingStyle = new DataGridViewCellStyle();
-			DataGridViewCellStyle settingStyle = new DataGridViewCellStyle();
-			DataGridViewCellStyle typeStyle = new DataGridViewCellStyle();
-			DataGridViewCellStyle valueStyle = new DataGridViewCellStyle();
 			shellLayout = new TableLayoutPanel();
 			titleBar = new Panel();
 			picLogo = new PictureBox();
@@ -57,6 +58,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblSearchGlyph = new Label();
 			txtSearch = new TextBox();
 			cmbTypeFilter = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
+			btnValidateConfig = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnStructured = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnRawPreview = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			pnlPreservationBanner = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
@@ -75,6 +77,8 @@ namespace Synix_Control_Panel.ServerHandler
 			lblModifiedCount = new Label();
 			lblStatusGlyph = new Label();
 			lblFormatState = new Label();
+			btnFixConfig = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			btnRestoreBackup = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnReset = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnCancel = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			btnSave = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
@@ -148,7 +152,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblWindowTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblWindowTitle.Location = new Point(58, 17);
 			lblWindowTitle.Name = "lblWindowTitle";
-			lblWindowTitle.Size = new Size(108, 21);
+			lblWindowTitle.Size = new Size(111, 21);
 			lblWindowTitle.TabIndex = 1;
 			lblWindowTitle.Text = "Config Editor";
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
@@ -157,7 +161,7 @@ namespace Synix_Control_Panel.ServerHandler
 			//
 			lblFileName.AutoEllipsis = true;
 			lblFileName.BackColor = Color.FromArgb(17, 27, 45);
-			lblFileName.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+			lblFileName.Font = new Font("Segoe UI", 9F);
 			lblFileName.ForeColor = Color.FromArgb(158, 172, 194);
 			lblFileName.Location = new Point(184, 14);
 			lblFileName.Name = "lblFileName";
@@ -287,7 +291,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblPageTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblPageTitle.Location = new Point(0, 0);
 			lblPageTitle.Name = "lblPageTitle";
-			lblPageTitle.Size = new Size(322, 41);
+			lblPageTitle.Size = new Size(310, 41);
 			lblPageTitle.TabIndex = 0;
 			lblPageTitle.Text = "Configuration Editor";
 			//
@@ -319,15 +323,17 @@ namespace Synix_Control_Panel.ServerHandler
 			// toolbarLayout
 			//
 			toolbarLayout.BackColor = Color.FromArgb(8, 13, 24);
-			toolbarLayout.ColumnCount = 4;
+			toolbarLayout.ColumnCount = 5;
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170F));
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170F));
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 144F));
 			toolbarLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 144F));
 			toolbarLayout.Controls.Add(pnlSearch, 0, 0);
 			toolbarLayout.Controls.Add(cmbTypeFilter, 1, 0);
-			toolbarLayout.Controls.Add(btnStructured, 2, 0);
-			toolbarLayout.Controls.Add(btnRawPreview, 3, 0);
+			toolbarLayout.Controls.Add(btnValidateConfig, 2, 0);
+			toolbarLayout.Controls.Add(btnStructured, 3, 0);
+			toolbarLayout.Controls.Add(btnRawPreview, 4, 0);
 			toolbarLayout.Dock = DockStyle.Fill;
 			toolbarLayout.Location = new Point(0, 76);
 			toolbarLayout.Margin = new Padding(0);
@@ -349,7 +355,7 @@ namespace Synix_Control_Panel.ServerHandler
 			pnlSearch.Location = new Point(0, 2);
 			pnlSearch.Margin = new Padding(0, 2, 12, 10);
 			pnlSearch.Name = "pnlSearch";
-			pnlSearch.Size = new Size(672, 46);
+			pnlSearch.Size = new Size(502, 46);
 			pnlSearch.TabIndex = 0;
 			//
 			// lblSearchGlyph
@@ -374,27 +380,50 @@ namespace Synix_Control_Panel.ServerHandler
 			txtSearch.Location = new Point(44, 13);
 			txtSearch.Name = "txtSearch";
 			txtSearch.PlaceholderText = "Search settings, paths, or values...";
-			txtSearch.Size = new Size(610, 19);
+			txtSearch.Size = new Size(440, 19);
 			txtSearch.TabIndex = 1;
 			txtSearch.TextChanged += txtSearch_TextChanged;
 			//
 			// cmbTypeFilter
 			//
+			cmbTypeFilter.ArrowColor = Color.FromArgb(158, 172, 194);
 			cmbTypeFilter.BackColor = Color.FromArgb(12, 21, 36);
+			cmbTypeFilter.BorderColor = Color.FromArgb(38, 52, 77);
 			cmbTypeFilter.Dock = DockStyle.Fill;
+			cmbTypeFilter.DrawMode = DrawMode.OwnerDrawFixed;
 			cmbTypeFilter.DropDownStyle = ComboBoxStyle.DropDownList;
 			cmbTypeFilter.FlatStyle = FlatStyle.Flat;
+			cmbTypeFilter.FocusBorderColor = Color.FromArgb(38, 52, 77);
 			cmbTypeFilter.Font = new Font("Segoe UI", 10F);
 			cmbTypeFilter.ForeColor = Color.FromArgb(245, 247, 251);
 			cmbTypeFilter.FormattingEnabled = true;
+			cmbTypeFilter.ItemHeight = 28;
 			cmbTypeFilter.Items.AddRange(new object[] { "All types", "TEXT", "NUMBER", "BOOLEAN", "SECRET", "NULL" });
-			cmbTypeFilter.Location = new Point(696, 7);
+			cmbTypeFilter.Location = new Point(526, 7);
 			cmbTypeFilter.Margin = new Padding(12, 7, 12, 13);
 			cmbTypeFilter.Name = "cmbTypeFilter";
-			cmbTypeFilter.SelectedIndex = 0;
-			cmbTypeFilter.Size = new Size(146, 38);
+			cmbTypeFilter.SelectedItemBackColor = Color.FromArgb(24, 55, 73);
+			cmbTypeFilter.Size = new Size(146, 34);
 			cmbTypeFilter.TabIndex = 1;
 			cmbTypeFilter.SelectedIndexChanged += cmbTypeFilter_SelectedIndexChanged;
+			//
+			// btnValidateConfig
+			//
+			btnValidateConfig.BackColor = Color.FromArgb(12, 21, 36);
+			btnValidateConfig.Cursor = Cursors.Hand;
+			btnValidateConfig.Dock = DockStyle.Fill;
+			btnValidateConfig.FlatAppearance.BorderSize = 0;
+			btnValidateConfig.FlatStyle = FlatStyle.Flat;
+			btnValidateConfig.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnValidateConfig.ForeColor = Color.FromArgb(245, 181, 74);
+			btnValidateConfig.Location = new Point(690, 2);
+			btnValidateConfig.Margin = new Padding(6, 2, 6, 10);
+			btnValidateConfig.Name = "btnValidateConfig";
+			btnValidateConfig.Size = new Size(158, 46);
+			btnValidateConfig.TabIndex = 2;
+			btnValidateConfig.Text = "Check Synix Values";
+			btnValidateConfig.UseVisualStyleBackColor = false;
+			btnValidateConfig.Click += btnValidateConfig_Click;
 			//
 			// btnStructured
 			//
@@ -409,7 +438,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnStructured.Margin = new Padding(12, 2, 6, 10);
 			btnStructured.Name = "btnStructured";
 			btnStructured.Size = new Size(126, 46);
-			btnStructured.TabIndex = 2;
+			btnStructured.TabIndex = 3;
 			btnStructured.Text = "Structured View";
 			btnStructured.UseVisualStyleBackColor = false;
 			btnStructured.Click += btnStructured_Click;
@@ -427,7 +456,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnRawPreview.Margin = new Padding(6, 2, 0, 10);
 			btnRawPreview.Name = "btnRawPreview";
 			btnRawPreview.Size = new Size(138, 46);
-			btnRawPreview.TabIndex = 3;
+			btnRawPreview.TabIndex = 4;
 			btnRawPreview.Text = "Raw Preview";
 			btnRawPreview.UseVisualStyleBackColor = false;
 			btnRawPreview.Click += btnRawPreview_Click;
@@ -468,7 +497,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblPreservationTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblPreservationTitle.Location = new Point(68, 10);
 			lblPreservationTitle.Name = "lblPreservationTitle";
-			lblPreservationTitle.Size = new Size(213, 19);
+			lblPreservationTitle.Size = new Size(223, 19);
 			lblPreservationTitle.TabIndex = 1;
 			lblPreservationTitle.Text = "Original formatting is protected";
 			//
@@ -506,36 +535,35 @@ namespace Synix_Control_Panel.ServerHandler
 			dgvConfig.AllowUserToAddRows = false;
 			dgvConfig.AllowUserToDeleteRows = false;
 			dgvConfig.AllowUserToResizeRows = false;
-			alternatingStyle.BackColor = Color.FromArgb(15, 25, 42);
-			alternatingStyle.ForeColor = Color.FromArgb(245, 247, 251);
-			dgvConfig.AlternatingRowsDefaultCellStyle = alternatingStyle;
+			dataGridViewCellStyle1.BackColor = Color.FromArgb(15, 25, 42);
+			dataGridViewCellStyle1.ForeColor = Color.FromArgb(245, 247, 251);
+			dgvConfig.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
 			dgvConfig.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			dgvConfig.BackgroundColor = Color.FromArgb(17, 27, 45);
 			dgvConfig.BorderStyle = BorderStyle.None;
 			dgvConfig.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
 			dgvConfig.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-			headerStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-			headerStyle.BackColor = Color.FromArgb(12, 21, 36);
-			headerStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-			headerStyle.ForeColor = Color.FromArgb(158, 172, 194);
-			headerStyle.Padding = new Padding(12, 0, 0, 0);
-			headerStyle.SelectionBackColor = Color.FromArgb(12, 21, 36);
-			headerStyle.SelectionForeColor = Color.FromArgb(158, 172, 194);
-			headerStyle.WrapMode = DataGridViewTriState.True;
-			dgvConfig.ColumnHeadersDefaultCellStyle = headerStyle;
+			dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = Color.FromArgb(12, 21, 36);
+			dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			dataGridViewCellStyle2.ForeColor = Color.FromArgb(158, 172, 194);
+			dataGridViewCellStyle2.Padding = new Padding(12, 0, 0, 0);
+			dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(12, 21, 36);
+			dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(158, 172, 194);
+			dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+			dgvConfig.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
 			dgvConfig.ColumnHeadersHeight = 44;
 			dgvConfig.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 			dgvConfig.Columns.AddRange(new DataGridViewColumn[] { colSetting, colType, colValue });
-			dgvConfig.Cursor = Cursors.Default;
-			defaultStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-			defaultStyle.BackColor = Color.FromArgb(17, 27, 45);
-			defaultStyle.Font = new Font("Segoe UI", 10F);
-			defaultStyle.ForeColor = Color.FromArgb(245, 247, 251);
-			defaultStyle.Padding = new Padding(12, 0, 12, 0);
-			defaultStyle.SelectionBackColor = Color.FromArgb(24, 55, 73);
-			defaultStyle.SelectionForeColor = Color.FromArgb(245, 247, 251);
-			defaultStyle.WrapMode = DataGridViewTriState.False;
-			dgvConfig.DefaultCellStyle = defaultStyle;
+			dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle6.BackColor = Color.FromArgb(17, 27, 45);
+			dataGridViewCellStyle6.Font = new Font("Segoe UI", 10F);
+			dataGridViewCellStyle6.ForeColor = Color.FromArgb(245, 247, 251);
+			dataGridViewCellStyle6.Padding = new Padding(12, 0, 12, 0);
+			dataGridViewCellStyle6.SelectionBackColor = Color.FromArgb(24, 55, 73);
+			dataGridViewCellStyle6.SelectionForeColor = Color.FromArgb(245, 247, 251);
+			dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+			dgvConfig.DefaultCellStyle = dataGridViewCellStyle6;
 			dgvConfig.Dock = DockStyle.Fill;
 			dgvConfig.EditMode = DataGridViewEditMode.EditOnEnter;
 			dgvConfig.EnableHeadersVisualStyles = false;
@@ -546,7 +574,6 @@ namespace Synix_Control_Panel.ServerHandler
 			dgvConfig.Name = "dgvConfig";
 			dgvConfig.RowHeadersVisible = false;
 			dgvConfig.RowTemplate.Height = 52;
-			dgvConfig.ShowCellToolTips = true;
 			dgvConfig.SelectionMode = DataGridViewSelectionMode.CellSelect;
 			dgvConfig.Size = new Size(1140, 390);
 			dgvConfig.TabIndex = 0;
@@ -559,9 +586,9 @@ namespace Synix_Control_Panel.ServerHandler
 			//
 			// colSetting
 			//
-			settingStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
-			settingStyle.ForeColor = Color.FromArgb(245, 247, 251);
-			colSetting.DefaultCellStyle = settingStyle;
+			dataGridViewCellStyle3.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			dataGridViewCellStyle3.ForeColor = Color.FromArgb(245, 247, 251);
+			colSetting.DefaultCellStyle = dataGridViewCellStyle3;
 			colSetting.FillWeight = 44F;
 			colSetting.HeaderText = "SETTING";
 			colSetting.MinimumWidth = 280;
@@ -572,9 +599,9 @@ namespace Synix_Control_Panel.ServerHandler
 			// colType
 			//
 			colType.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-			typeStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-			typeStyle.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-			colType.DefaultCellStyle = typeStyle;
+			dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+			colType.DefaultCellStyle = dataGridViewCellStyle4;
 			colType.HeaderText = "TYPE";
 			colType.MinimumWidth = 120;
 			colType.Name = "colType";
@@ -584,11 +611,11 @@ namespace Synix_Control_Panel.ServerHandler
 			//
 			// colValue
 			//
-			valueStyle.BackColor = Color.FromArgb(12, 21, 36);
-			valueStyle.ForeColor = Color.FromArgb(245, 247, 251);
-			valueStyle.SelectionBackColor = Color.FromArgb(29, 63, 80);
-			valueStyle.SelectionForeColor = Color.FromArgb(245, 247, 251);
-			colValue.DefaultCellStyle = valueStyle;
+			dataGridViewCellStyle5.BackColor = Color.FromArgb(12, 21, 36);
+			dataGridViewCellStyle5.ForeColor = Color.FromArgb(245, 247, 251);
+			dataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(29, 63, 80);
+			dataGridViewCellStyle5.SelectionForeColor = Color.FromArgb(245, 247, 251);
+			colValue.DefaultCellStyle = dataGridViewCellStyle5;
 			colValue.FillWeight = 56F;
 			colValue.HeaderText = "VALUE";
 			colValue.MinimumWidth = 300;
@@ -620,6 +647,8 @@ namespace Synix_Control_Panel.ServerHandler
 			footerPanel.Controls.Add(lblModifiedCount);
 			footerPanel.Controls.Add(lblStatusGlyph);
 			footerPanel.Controls.Add(lblFormatState);
+			footerPanel.Controls.Add(btnFixConfig);
+			footerPanel.Controls.Add(btnRestoreBackup);
 			footerPanel.Controls.Add(btnReset);
 			footerPanel.Controls.Add(btnCancel);
 			footerPanel.Controls.Add(btnSave);
@@ -647,7 +676,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblSettingCount.ForeColor = Color.FromArgb(245, 247, 251);
 			lblSettingCount.Location = new Point(0, 15);
 			lblSettingCount.Name = "lblSettingCount";
-			lblSettingCount.Size = new Size(82, 17);
+			lblSettingCount.Size = new Size(68, 17);
 			lblSettingCount.TabIndex = 1;
 			lblSettingCount.Text = "0 settings";
 			//
@@ -658,7 +687,7 @@ namespace Synix_Control_Panel.ServerHandler
 			lblModifiedCount.ForeColor = Color.FromArgb(105, 124, 153);
 			lblModifiedCount.Location = new Point(0, 38);
 			lblModifiedCount.Name = "lblModifiedCount";
-			lblModifiedCount.Size = new Size(112, 15);
+			lblModifiedCount.Size = new Size(107, 15);
 			lblModifiedCount.TabIndex = 2;
 			lblModifiedCount.Text = "0 unsaved changes";
 			//
@@ -681,9 +710,42 @@ namespace Synix_Control_Panel.ServerHandler
 			lblFormatState.ForeColor = Color.FromArgb(158, 172, 194);
 			lblFormatState.Location = new Point(202, 18);
 			lblFormatState.Name = "lblFormatState";
-			lblFormatState.Size = new Size(142, 15);
+			lblFormatState.Size = new Size(135, 15);
 			lblFormatState.TabIndex = 4;
 			lblFormatState.Text = "XML structure preserved";
+			//
+			// btnFixConfig
+			//
+			btnFixConfig.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			btnFixConfig.BackColor = Color.FromArgb(12, 21, 36);
+			btnFixConfig.Cursor = Cursors.Hand;
+			btnFixConfig.Enabled = false;
+			btnFixConfig.FlatAppearance.BorderSize = 0;
+			btnFixConfig.FlatStyle = FlatStyle.Flat;
+			btnFixConfig.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnFixConfig.ForeColor = Color.FromArgb(245, 181, 74);
+			btnFixConfig.Location = new Point(612, 14);
+			btnFixConfig.Name = "btnFixConfig";
+			btnFixConfig.Size = new Size(140, 44);
+			btnFixConfig.TabIndex = 5;
+			btnFixConfig.Text = "Fix Config";
+			btnFixConfig.UseVisualStyleBackColor = false;
+			btnFixConfig.Click += btnFixConfig_Click;
+			btnRestoreBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			btnRestoreBackup.BackColor = Color.FromArgb(12, 21, 36);
+			btnRestoreBackup.Cursor = Cursors.Hand;
+			btnRestoreBackup.Enabled = false;
+			btnRestoreBackup.FlatAppearance.BorderSize = 0;
+			btnRestoreBackup.FlatStyle = FlatStyle.Flat;
+			btnRestoreBackup.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnRestoreBackup.ForeColor = Color.FromArgb(96, 165, 250);
+			btnRestoreBackup.Location = new Point(462, 14);
+			btnRestoreBackup.Name = "btnRestoreBackup";
+			btnRestoreBackup.Size = new Size(140, 44);
+			btnRestoreBackup.TabIndex = 4;
+			btnRestoreBackup.Text = "Restore Backup";
+			btnRestoreBackup.UseVisualStyleBackColor = false;
+			btnRestoreBackup.Click += btnRestoreBackup_Click;
 			//
 			// btnReset
 			//
@@ -698,8 +760,8 @@ namespace Synix_Control_Panel.ServerHandler
 			btnReset.Location = new Point(762, 14);
 			btnReset.Name = "btnReset";
 			btnReset.Size = new Size(110, 44);
-			btnReset.TabIndex = 5;
-			btnReset.Text = "Reset";
+			btnReset.TabIndex = 6;
+			btnReset.Text = "Undo Edits";
 			btnReset.UseVisualStyleBackColor = false;
 			btnReset.Click += btnReset_Click;
 			//
@@ -715,7 +777,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnCancel.Location = new Point(882, 14);
 			btnCancel.Name = "btnCancel";
 			btnCancel.Size = new Size(110, 44);
-			btnCancel.TabIndex = 6;
+			btnCancel.TabIndex = 7;
 			btnCancel.Text = "Cancel";
 			btnCancel.UseVisualStyleBackColor = false;
 			btnCancel.Click += btnCancel_Click;
@@ -733,7 +795,7 @@ namespace Synix_Control_Panel.ServerHandler
 			btnSave.Location = new Point(1002, 14);
 			btnSave.Name = "btnSave";
 			btnSave.Size = new Size(140, 44);
-			btnSave.TabIndex = 7;
+			btnSave.TabIndex = 8;
 			btnSave.Text = "Save Changes";
 			btnSave.UseVisualStyleBackColor = false;
 			btnSave.Click += btnSave_Click;
@@ -801,6 +863,7 @@ namespace Synix_Control_Panel.ServerHandler
 		private Label lblSearchGlyph;
 		private TextBox txtSearch;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbTypeFilter;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnValidateConfig;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnStructured;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnRawPreview;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard pnlPreservationBanner;
@@ -819,6 +882,8 @@ namespace Synix_Control_Panel.ServerHandler
 		private Label lblModifiedCount;
 		private Label lblStatusGlyph;
 		private Label lblFormatState;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnFixConfig;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnRestoreBackup;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnReset;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnCancel;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnSave;

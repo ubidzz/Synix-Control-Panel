@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 2,
+  "id": "euro-truck-simulator-2",
+  "catalogOrder": 103,
+  "game": "Euro Truck Simulator 2",
+  "aliases": [],
+  "appId": "1948160",
+  "requiresSteamLogin": false,
+  "executable": "bin\\win_x64\\eurotrucks2_server.exe",
+  "downloadUrl": "",
+  "arguments": "-nosingle -homedir \"{InstallPath}\" -server \"server_packages.sii\" -server_cfg \"server_config.sii\" -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 27015,
+  "queryPort": 27016,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "GameGenerated",
+  "relativeConfigPath": "server_config.sii",
+  "format": "StandardINI",
+  "externalDataFolderName": "Euro Truck Simulator 2",
+  "requiredLaunchFiles": [
+    "server_packages.sii",
+    "server_packages.dat"
+  ],
+  "optionalLaunchFiles": [
+    "server_config.sii"
+  ],
+  "launchFileSetupInstructions": "Open Documents\\Euro Truck Simulator 2\\config.cfg and set uset g_console \"1\". Launch the normal Euro Truck Simulator 2 game, load your profile and map, press ~ to open the console, and run export_server_packages. Close the game, then click Start in Synix again. Synix will import the generated files automatically.",
+  "needsConfigWarning": true,
+  "warningMessage": "Euro Truck Simulator 2 must export its map, DLC, and mod package files from the normal game before the dedicated server can start. Follow the displayed setup steps; Synix will import the generated files into this server.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+}

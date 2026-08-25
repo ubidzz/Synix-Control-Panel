@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 2,
+  "id": "barotrauma",
+  "catalogOrder": 19,
+  "game": "Barotrauma",
+  "aliases": [],
+  "appId": "1026340",
+  "requiresSteamLogin": false,
+  "executable": "DedicatedServer.exe",
+  "downloadUrl": "",
+  "arguments": "-port {port} -queryport {query} -name \"{ServerName}\" -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 27015,
+  "queryPort": 27016,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "Campaign"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "serversettings.xml",
+  "format": "XML",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "MaxPlayers",
+      "Port",
+      "QueryPort"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "serversettings.xml",
+        "templateFile": "serversettings.xml"
+      }
+    ]
+  }
+}

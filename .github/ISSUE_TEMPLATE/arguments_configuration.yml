@@ -1,0 +1,84 @@
+name: Arguments or configuration correction
+description: Report an incorrect launch argument, configuration field, template, path, port mapping, or server option.
+title: "[Definition]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Provide only sanitized values. Replace passwords, tokens, webhooks, public IP addresses, and private paths before submitting.
+
+  - type: input
+    id: server-type
+    attributes:
+      label: Server type
+      placeholder: "Example: 7 Days to Die"
+    validations:
+      required: true
+
+  - type: input
+    id: synix-version
+    attributes:
+      label: Synix version
+      placeholder: "Example: 1.0.22"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: correction-type
+    attributes:
+      label: Correction type
+      options:
+        - Incorrect launch argument
+        - Missing launch argument
+        - Incorrect configuration path
+        - Incorrect configuration field or value
+        - Missing or incomplete configuration template
+        - Incorrect port mapping
+        - RCON behavior
+        - PVP or PVE value mapping
+        - Steam runtime or DLL handling
+        - Other definition problem
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Synix behavior
+      description: Explain the current behavior using sanitized examples.
+    validations:
+      required: true
+
+  - type: textarea
+    id: correct-behavior
+    attributes:
+      label: Correct behavior
+      description: Show the correct argument, field, path, or value and explain how it should be applied.
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Authoritative source
+      description: Link official documentation or a developer-maintained source confirming the correction.
+      placeholder: "https://..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation performed
+      description: Explain how the corrected value was tested on a real dedicated server.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: The examples contain no passwords, tokens, webhooks, public IP addresses, or private server data.
+          required: true
+        - label: The linked source applies to the dedicated-server version identified above.
+          required: true
+

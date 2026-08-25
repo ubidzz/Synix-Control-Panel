@@ -35,7 +35,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 	public partial class Core
 	{
-		public const int CurrentStorageVersion = 2;
+		public const int CurrentStorageVersion = 3;
+		private const int DiscordWebhookStorageVersion = 2;
+		private const int DiscordRouteStorageVersion = 3;
 		public const string ProtectedValuePrefix = "synix-dpapi-v1:";
 
 		private static readonly byte[] AdditionalEntropy =
@@ -150,9 +152,33 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(server);
 
-			return server.PasswordStorageVersion < CurrentStorageVersion
+			return server.PasswordStorageVersion < DiscordWebhookStorageVersion
 				? server.DiscordWebhook ?? string.Empty
 				: Reveal(server.DiscordWebhook);
+		}
+
+		public static IReadOnlyList<DiscordWebhookRoute> RevealDiscordWebhookRoutes(
+			GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			List<DiscordWebhookRoute> routes = [];
+			foreach (DiscordWebhookRoute route in server.DiscordWebhookRoutes ?? [])
+			{
+				routes.Add(new DiscordWebhookRoute
+				{
+					Id = string.IsNullOrWhiteSpace(route.Id)
+						? Guid.NewGuid().ToString("N")
+						: route.Id,
+					Name = route.Name ?? string.Empty,
+					Enabled = route.Enabled,
+					WebhookUrl = server.PasswordStorageVersion < DiscordRouteStorageVersion
+						? route.WebhookUrl ?? string.Empty
+						: Reveal(route.WebhookUrl),
+					Events = route.Events
+				});
+			}
+
+			return routes;
 		}
 
 		public static SynixServerSecrets RevealServerSecrets(GameServer server)
@@ -196,6 +222,22 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		public static bool TryRevealDiscordWebhookRoutes(
+			GameServer server,
+			out IReadOnlyList<DiscordWebhookRoute> routes)
+		{
+			try
+			{
+				routes = RevealDiscordWebhookRoutes(server);
+				return true;
+			}
+			catch (SynixPasswordProtectionException)
+			{
+				routes = [];
+				return false;
+			}
+		}
+
 		public static void SetServerPasswords(
    GameServer server,
    SynixServerPasswords plaintextPasswords)
@@ -232,6 +274,30 @@ namespace Synix_Control_Panel.SynixEngine
 			server.PasswordStorageVersion = CurrentStorageVersion;
 		}
 
+		public static void SetDiscordWebhookRoutes(
+			GameServer server,
+			IEnumerable<DiscordWebhookRoute>? plaintextRoutes)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			List<DiscordWebhookRoute> protectedRoutes = [];
+			foreach (DiscordWebhookRoute route in plaintextRoutes ?? [])
+			{
+				protectedRoutes.Add(new DiscordWebhookRoute
+				{
+					Id = string.IsNullOrWhiteSpace(route.Id)
+						? Guid.NewGuid().ToString("N")
+						: route.Id,
+					Name = (route.Name ?? string.Empty).Trim(),
+					Enabled = route.Enabled,
+					WebhookUrl = Protect(route.WebhookUrl),
+					Events = route.Events
+				});
+			}
+
+			server.DiscordWebhookRoutes = protectedRoutes;
+			server.PasswordStorageVersion = CurrentStorageVersion;
+		}
+
 		public static bool MigrateLegacyServer(GameServer server)
 		{
 			ArgumentNullException.ThrowIfNull(server);
@@ -241,7 +307,9 @@ namespace Synix_Control_Panel.SynixEngine
 				NeedsProtection(server.Password) ||
 				NeedsProtection(server.AdminPassword) ||
 				NeedsProtection(server.RconPassword) ||
-				NeedsProtection(server.DiscordWebhook);
+				NeedsProtection(server.DiscordWebhook) ||
+				(server.DiscordWebhookRoutes ?? []).Any(route =>
+					NeedsProtection(route.WebhookUrl));
 
 			if (!requiresMigration)
 				return false;
@@ -257,15 +325,28 @@ namespace Synix_Control_Panel.SynixEngine
 						Reveal(server.Password),
 						Reveal(server.AdminPassword),
 						Reveal(server.RconPassword));
-			string plaintextWebhook = previousStorageVersion < CurrentStorageVersion
+			string plaintextWebhook = previousStorageVersion < DiscordWebhookStorageVersion
 				? server.DiscordWebhook ?? string.Empty
 				: Reveal(server.DiscordWebhook);
+			List<DiscordWebhookRoute> plaintextRoutes = (server.DiscordWebhookRoutes ?? [])
+				.Select(route => new DiscordWebhookRoute
+				{
+					Id = route.Id,
+					Name = route.Name,
+					Enabled = route.Enabled,
+					WebhookUrl = previousStorageVersion < DiscordRouteStorageVersion
+						? route.WebhookUrl ?? string.Empty
+						: Reveal(route.WebhookUrl),
+					Events = route.Events
+				})
+				.ToList();
 
 			SetServerSecrets(
 				server,
 				new SynixServerSecrets(
 					plaintextPasswords,
 					plaintextWebhook));
+			SetDiscordWebhookRoutes(server, plaintextRoutes);
 
 			return true;
 		}

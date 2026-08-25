@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "nuclear-dawn",
+  "catalogOrder": 112,
+  "game": "Nuclear Dawn",
+  "aliases": [],
+  "appId": "111710",
+  "requiresSteamLogin": false,
+  "executable": "srcds.exe",
+  "downloadUrl": "",
+  "arguments": "-game nucleardawn -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "nd_hydro",
+    "nd_metro"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "nucleardawn\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "nucleardawn\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

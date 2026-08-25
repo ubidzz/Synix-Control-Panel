@@ -1,0 +1,87 @@
+name: Game compatibility report
+description: Report install, launch, stop, monitoring, argument, or configuration behavior for a built-in server definition.
+title: "[Compatibility]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for a server definition that fails, needs correction, or has been successfully tested. Never include passwords, tokens, webhooks, public IP addresses, or private server data.
+
+  - type: input
+    id: server-type
+    attributes:
+      label: Server type
+      placeholder: "Example: Arma Reforger"
+    validations:
+      required: true
+
+  - type: input
+    id: synix-version
+    attributes:
+      label: Synix version
+      placeholder: "Example: 1.0.22"
+    validations:
+      required: true
+
+  - type: input
+    id: server-version
+    attributes:
+      label: Dedicated-server version
+      description: Enter the game-server build or version when known.
+
+  - type: checkboxes
+    id: operations
+    attributes:
+      label: Operations checked
+      description: Select every operation you personally tested.
+      options:
+        - label: Installation or repair
+        - label: Start
+        - label: Stop
+        - label: Monitoring
+        - label: Launch arguments
+        - label: Configuration generation or editing
+
+  - type: dropdown
+    id: result
+    attributes:
+      label: Overall result
+      options:
+        - Working correctly
+        - Partially working
+        - Not working
+        - Needs more research
+    validations:
+      required: true
+
+  - type: textarea
+    id: findings
+    attributes:
+      label: Findings
+      description: Explain what worked, what failed, and the safe steps used to test it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: official-sources
+    attributes:
+      label: Authoritative sources
+      description: Link official documentation or a developer-maintained source supporting the required arguments or configuration.
+      placeholder: "https://..."
+
+  - type: textarea
+    id: sanitized-evidence
+    attributes:
+      label: Sanitized logs or screenshots
+      description: Remove credentials, IP addresses, private paths, and other sensitive information first.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I personally tested the operations selected above.
+          required: true
+        - label: I removed passwords, tokens, webhooks, public IP addresses, and private server data.
+          required: true
+

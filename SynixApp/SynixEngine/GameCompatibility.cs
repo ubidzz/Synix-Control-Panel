@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -22,12 +23,44 @@ namespace Synix_Control_Panel.SynixEngine
 		Install,
 		Start,
 		Stop,
-		Monitoring
+		Monitoring,
+		Arguments,
+		Configuration
 	}
 
 	public sealed record GameVerificationEvidence(
 		string SynixVersion,
 		DateTimeOffset VerifiedAtUtc);
+
+	public sealed record GameCompatibilitySummary(
+		GameCompatibilityStatus Status,
+		string DisplayName,
+		GameCompatibilityVerification Verification);
+
+	public sealed record GameVerificationQueueItem(
+		string Game,
+		ConfigFileCreationMode ConfigurationMode,
+		GameCompatibilityVerification Verification)
+	{
+		public bool ConfigurationApplicable =>
+			ConfigurationMode != ConfigFileCreationMode.LaunchArgumentsOnly;
+
+		public int RequiredSteps => ConfigurationApplicable ? 6 : 5;
+
+		public int CompletedSteps =>
+			(Verification.Install != null ? 1 : 0) +
+			(Verification.Start != null ? 1 : 0) +
+			(Verification.Stop != null ? 1 : 0) +
+			(Verification.Monitoring != null ? 1 : 0) +
+			(Verification.Arguments != null ? 1 : 0) +
+			(ConfigurationApplicable && Verification.Configuration != null ? 1 : 0);
+
+		public bool HasKnownConfigurationBehavior =>
+			ConfigurationMode != ConfigFileCreationMode.Unknown;
+
+		public bool IsFullyVerified =>
+			HasKnownConfigurationBehavior && CompletedSteps == RequiredSteps;
+	}
 
 	public sealed class GameCompatibilityVerification
 	{
@@ -36,10 +69,12 @@ namespace Synix_Control_Panel.SynixEngine
 		public GameVerificationEvidence? Start { get; set; }
 		public GameVerificationEvidence? Stop { get; set; }
 		public GameVerificationEvidence? Monitoring { get; set; }
+		public GameVerificationEvidence? Arguments { get; set; }
+		public GameVerificationEvidence? Configuration { get; set; }
 
 		[JsonIgnore]
 		public GameVerificationEvidence? LastTested =>
-			new[] { Install, Start, Stop, Monitoring }
+			new[] { Install, Start, Stop, Monitoring, Arguments, Configuration }
 				.Where(evidence => evidence != null)
 				.Cast<GameVerificationEvidence>()
 				.OrderByDescending(evidence => ParseVersion(evidence.SynixVersion))
@@ -68,7 +103,142 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public static GameCompatibilityVerification GetGameCompatibility(string? game)
 		{
-			return GetGameCompatibility(game, GameCompatibilityPath);
+			return MergeGameVerification(
+				game,
+				GetBuiltInGameCompatibility(game),
+				GetGameCompatibility(game, GameCompatibilityPath));
+		}
+
+		public static GameCompatibilitySummary GetGameCompatibilitySummary(string? game)
+		{
+			return BuildGameCompatibilitySummary(
+				game,
+				GetGameCompatibility(game));
+		}
+
+		public static IReadOnlyList<GameVerificationQueueItem> GetGameVerificationQueue()
+		{
+			return GetEffectiveGameVerificationQueue(GameCompatibilityPath);
+		}
+
+		private static IReadOnlyList<GameVerificationQueueItem>
+			GetEffectiveGameVerificationQueue(string compatibilityPath)
+		{
+			return GetGameVerificationQueue(compatibilityPath)
+				.Select(item => item with
+				{
+					Verification = MergeGameVerification(
+						item.Game,
+						GetBuiltInGameCompatibility(item.Game),
+						item.Verification)
+				})
+				.ToArray();
+		}
+
+		internal static GameCompatibilitySummary GetGameCompatibilitySummary(
+			string? game,
+			string compatibilityPath)
+		{
+			GameCompatibilityVerification verification = GetGameCompatibility(
+				game,
+				compatibilityPath);
+			return BuildGameCompatibilitySummary(game, verification);
+		}
+
+		private static GameCompatibilitySummary BuildGameCompatibilitySummary(
+			string? game,
+			GameCompatibilityVerification verification)
+		{
+			bool install = verification.Install != null;
+			bool start = verification.Start != null;
+			bool stop = verification.Stop != null;
+			bool monitoring = verification.Monitoring != null;
+			GameCompatibilityStatus status;
+
+			if (install && start && stop && monitoring)
+			{
+				status = GameCompatibilityStatus.FullyVerified;
+			}
+			else if (GameFix.GetConfigFileCreationMode(game ?? string.Empty) ==
+				ConfigFileCreationMode.Unknown)
+			{
+				status = GameCompatibilityStatus.NeedsConfigurationTemplate;
+			}
+			else if (install && !start && !stop && !monitoring)
+			{
+				status = GameCompatibilityStatus.InstallationVerifiedOnly;
+			}
+			else if (install || start || stop || monitoring)
+			{
+				status = GameCompatibilityStatus.PartiallyVerified;
+			}
+			else
+			{
+				status = GameCompatibilityStatus.NeedsCommunityTesting;
+			}
+
+			return new GameCompatibilitySummary(
+				status,
+				GetCompatibilityStatusDisplayName(status),
+				verification);
+		}
+
+		private static GameCompatibilityVerification MergeGameVerification(
+			string? game,
+			GameCompatibilityVerification builtIn,
+			GameCompatibilityVerification local)
+		{
+			return new GameCompatibilityVerification
+			{
+				Game = NormalizeCompatibilityGameName(game),
+				Install = SelectNewestEvidence(builtIn.Install, local.Install),
+				Start = SelectNewestEvidence(builtIn.Start, local.Start),
+				Stop = SelectNewestEvidence(builtIn.Stop, local.Stop),
+				Monitoring = SelectNewestEvidence(builtIn.Monitoring, local.Monitoring),
+				Arguments = SelectNewestEvidence(builtIn.Arguments, local.Arguments),
+				Configuration = SelectNewestEvidence(
+					builtIn.Configuration,
+					local.Configuration)
+			};
+		}
+
+		private static GameVerificationEvidence? SelectNewestEvidence(
+			GameVerificationEvidence? first,
+			GameVerificationEvidence? second)
+		{
+			if (first == null)
+				return second;
+			if (second == null)
+				return first;
+
+			Version firstVersion = Version.TryParse(
+				first.SynixVersion,
+				out Version? parsedFirst)
+				? parsedFirst
+				: new Version(0, 0, 0);
+			Version secondVersion = Version.TryParse(
+				second.SynixVersion,
+				out Version? parsedSecond)
+				? parsedSecond
+				: new Version(0, 0, 0);
+			int comparison = firstVersion.CompareTo(secondVersion);
+			if (comparison != 0)
+				return comparison > 0 ? first : second;
+
+			return first.VerifiedAtUtc >= second.VerifiedAtUtc ? first : second;
+		}
+
+		public static string GetCompatibilityStatusDisplayName(
+			GameCompatibilityStatus status)
+		{
+			return status switch
+			{
+				GameCompatibilityStatus.FullyVerified => "Fully verified",
+				GameCompatibilityStatus.PartiallyVerified => "Partially verified",
+				GameCompatibilityStatus.InstallationVerifiedOnly => "Install verified",
+				GameCompatibilityStatus.NeedsConfigurationTemplate => "Needs configuration template",
+				_ => "Needs community testing"
+			};
 		}
 
 		public static bool RecordGameVerification(
@@ -81,6 +251,57 @@ namespace Synix_Control_Panel.SynixEngine
 				GetCurrentVersion().ToString(3),
 				DateTimeOffset.UtcNow,
 				GameCompatibilityPath);
+		}
+
+		public static bool ClearGameVerification(
+			string? game,
+			GameVerificationKind verificationKind)
+		{
+			return ClearGameVerification(
+				game,
+				verificationKind,
+				GameCompatibilityPath);
+		}
+
+		internal static IReadOnlyList<GameVerificationQueueItem>
+			GetGameVerificationQueue(string compatibilityPath)
+		{
+			lock (_gameCompatibilityLock)
+			{
+				List<GameCompatibilityVerification> records =
+					LoadGameCompatibilityRecords(compatibilityPath);
+				Dictionary<string, GameCompatibilityVerification> recordsByGame =
+					records
+						.GroupBy(
+							record => NormalizeCompatibilityGameName(record.Game),
+							StringComparer.OrdinalIgnoreCase)
+						.ToDictionary(
+							group => group.Key,
+							group => group.First(),
+							StringComparer.OrdinalIgnoreCase);
+
+				return GameDatabase.GetGameList()
+					.OrderBy(game => game.CatalogOrder)
+					.ThenBy(game => game.Game, StringComparer.OrdinalIgnoreCase)
+					.Select(game =>
+					{
+						if (!recordsByGame.TryGetValue(
+							game.Game,
+							out GameCompatibilityVerification? verification))
+						{
+							verification = new GameCompatibilityVerification
+							{
+								Game = game.Game
+							};
+						}
+
+						return new GameVerificationQueueItem(
+							game.Game,
+							game.ConfigFileCreation,
+							verification);
+					})
+					.ToArray();
+			}
 		}
 
 		internal static GameCompatibilityVerification GetGameCompatibility(
@@ -142,6 +363,8 @@ namespace Synix_Control_Panel.SynixEngine
 						GameVerificationKind.Start => record.Start,
 						GameVerificationKind.Stop => record.Stop,
 						GameVerificationKind.Monitoring => record.Monitoring,
+						GameVerificationKind.Arguments => record.Arguments,
+						GameVerificationKind.Configuration => record.Configuration,
 						_ => null
 					};
 
@@ -166,6 +389,12 @@ namespace Synix_Control_Panel.SynixEngine
 						case GameVerificationKind.Monitoring:
 							record.Monitoring = newEvidence;
 							break;
+						case GameVerificationKind.Arguments:
+							record.Arguments = newEvidence;
+							break;
+						case GameVerificationKind.Configuration:
+							record.Configuration = newEvidence;
+							break;
 					}
 
 					records = records
@@ -182,6 +411,80 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					System.Diagnostics.Debug.WriteLine(
 						$"[COMPATIBILITY RECORD] {exception.Message}");
+					return false;
+				}
+			}
+		}
+
+		internal static bool ClearGameVerification(
+			string? game,
+			GameVerificationKind verificationKind,
+			string compatibilityPath)
+		{
+			string canonicalGame = NormalizeCompatibilityGameName(game);
+			if (canonicalGame.Length == 0 ||
+				string.IsNullOrWhiteSpace(compatibilityPath))
+			{
+				return false;
+			}
+
+			lock (_gameCompatibilityLock)
+			{
+				try
+				{
+					List<GameCompatibilityVerification> records =
+						LoadGameCompatibilityRecords(compatibilityPath);
+					GameCompatibilityVerification? record = records.FirstOrDefault(
+						candidate => string.Equals(
+							candidate.Game,
+							canonicalGame,
+							StringComparison.OrdinalIgnoreCase));
+					if (record == null || !HasVerification(record, verificationKind))
+						return false;
+
+					switch (verificationKind)
+					{
+						case GameVerificationKind.Install:
+							record.Install = null;
+							break;
+						case GameVerificationKind.Start:
+							record.Start = null;
+							break;
+						case GameVerificationKind.Stop:
+							record.Stop = null;
+							break;
+						case GameVerificationKind.Monitoring:
+							record.Monitoring = null;
+							break;
+						case GameVerificationKind.Arguments:
+							record.Arguments = null;
+							break;
+						case GameVerificationKind.Configuration:
+							record.Configuration = null;
+							break;
+					}
+
+					if (!Enum.GetValues<GameVerificationKind>()
+						.Any(kind => HasVerification(record, kind)))
+					{
+						records.Remove(record);
+					}
+
+					string json = JsonSerializer.Serialize(
+						records.OrderBy(
+							candidate => candidate.Game,
+							StringComparer.OrdinalIgnoreCase),
+						_gameCompatibilityJsonOptions);
+					FileHandler.WriteTextAtomically(compatibilityPath, json);
+					return true;
+				}
+				catch (Exception exception) when (exception is IOException or
+					UnauthorizedAccessException or
+					JsonException or
+					NotSupportedException)
+				{
+					System.Diagnostics.Debug.WriteLine(
+						$"[COMPATIBILITY CLEAR] {exception.Message}");
 					return false;
 				}
 			}
@@ -236,6 +539,22 @@ namespace Synix_Control_Panel.SynixEngine
 				return true;
 
 			return newVersion > currentVersion;
+		}
+
+		private static bool HasVerification(
+			GameCompatibilityVerification verification,
+			GameVerificationKind verificationKind)
+		{
+			return verificationKind switch
+			{
+				GameVerificationKind.Install => verification.Install != null,
+				GameVerificationKind.Start => verification.Start != null,
+				GameVerificationKind.Stop => verification.Stop != null,
+				GameVerificationKind.Monitoring => verification.Monitoring != null,
+				GameVerificationKind.Arguments => verification.Arguments != null,
+				GameVerificationKind.Configuration => verification.Configuration != null,
+				_ => false
+			};
 		}
 	}
 }

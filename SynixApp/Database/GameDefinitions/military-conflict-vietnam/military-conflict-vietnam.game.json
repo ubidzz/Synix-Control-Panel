@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "military-conflict-vietnam",
+  "catalogOrder": 113,
+  "game": "Military Conflict: Vietnam",
+  "aliases": [],
+  "appId": "1136190",
+  "requiresSteamLogin": false,
+  "executable": "srcds.exe",
+  "downloadUrl": "",
+  "arguments": "-game vietnam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "vdm_hue"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "vietnam\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "vietnam\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

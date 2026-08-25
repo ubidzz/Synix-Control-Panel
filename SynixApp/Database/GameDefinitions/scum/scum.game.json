@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "scum",
+  "catalogOrder": 45,
+  "game": "SCUM",
+  "aliases": [],
+  "appId": "3792580",
+  "requiresSteamLogin": false,
+  "executable": "SCUM\\Binaries\\Win64\\SCUMServer.exe",
+  "downloadUrl": "",
+  "arguments": "Port={port} QueryPort={query} -ServerName=\"{ServerName}\" -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7042,
+  "queryPort": 7043,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "SCUM_Island"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "SCUM\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "SCUM\\Binaries\\Win64"
+    }
+  ]
+}

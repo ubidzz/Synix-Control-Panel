@@ -1,0 +1,8 @@
+Name {ServerName}
+Map {WorldName}
+Port {Port}
+Password {Password}
+MaxPlayers {MaxPlayers}
+Mode Normal
+Perspective Both
+Cheats Disabled

@@ -26,6 +26,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 		public int BorderRadius { get; set; } = 8;
 
 		[Category("Synix Design")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color BorderColor { get; set; } = SettingsPalette.BorderHover;
 
 		[Category("Synix Design")]
@@ -33,9 +34,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 		public int BorderSize { get; set; } = 1;
 
 		[Category("Synix Design")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color FillColor { get; set; } = SettingsPalette.Input;
 
 		[Category("Synix Design")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color FillColorSecondary { get; set; } = SettingsPalette.CardHover;
 
 		public SynixButton()

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 2,
+  "id": "space-engineers",
+  "catalogOrder": 37,
+  "game": "Space Engineers",
+  "aliases": [],
+  "appId": "298740",
+  "requiresSteamLogin": false,
+  "executable": "DedicatedServer64\\SpaceEngineersDedicated.exe",
+  "downloadUrl": "",
+  "arguments": "-path \"{InstallPath}\\Instance\"",
+  "rconSyntax": "",
+  "port": 27016,
+  "queryPort": 27016,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "GameGenerated",
+  "relativeConfigPath": "Instance\\SpaceEngineers-Dedicated.cfg",
+  "format": "XML",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "Space Engineers uses its official Dedicated Server Manager, which Synix must keep visible. The first time it opens, select Local/Console, choose Continue to server configuration, enter the server and world settings, and select Save & start. Use the manager for advanced settings, worlds, mods, administrators, and its console. Synix keeps this instance under the server's Instance folder. The foreground Local/Console mode does not require administrator rights; creating a Windows service does. The official requirements are .NET Framework 4.8 or newer, Visual C++ Redistributables 2013 and 2017, at least 6 GB of system RAM, and UDP port 27016 allowed through Windows Firewall and forwarded in the router for Internet players. Official guide: https://www.spaceengineersgame.com/dedicated-servers/",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "runtimeRequirements": {
+    "minimumSystemMemoryGb": 6,
+    "requiresAvx2": false,
+    "requiresHardwareVirtualization": false,
+    "requiresHyperV": false,
+    "requiresWindowsProfessionalOrHigher": false,
+    "minimumDotNetFramework": "NetFramework48",
+    "visualCppRedistributables": [
+      "VisualCpp2013X64",
+      "VisualCpp2015To2022X64"
+    ]
+  },
+  "launchBehavior": {
+    "runElevated": false,
+    "requiresVisibleWindow": true,
+    "lifecycleTracking": "Process",
+    "allowLaunchFileExport": true,
+    "readyMessage": "The official Space Engineers manager will remain visible. Select Local/Console and use Save & start to launch the server."
+  },
+  "supportedServerFrameworks": [],
+  "logPaths": [
+    "Instance\\*.log",
+    "Instance\\Logs\\*.log"
+  ],
+  "postInstallActions": [
+    {
+      "type": "EnsureDirectory",
+      "targetDirectory": "Instance"
+    }
+  ]
+}

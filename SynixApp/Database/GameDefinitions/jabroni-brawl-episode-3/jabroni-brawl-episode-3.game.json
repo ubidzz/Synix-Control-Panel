@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "jabroni-brawl-episode-3",
+  "catalogOrder": 191,
+  "game": "Jabroni Brawl: Episode 3",
+  "aliases": [],
+  "appId": "869800",
+  "requiresSteamLogin": false,
+  "executable": "bin\\win64\\jbep3.exe",
+  "downloadUrl": "",
+  "arguments": "-game jbep3 -steam -console -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "jbep3\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "jbep3\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

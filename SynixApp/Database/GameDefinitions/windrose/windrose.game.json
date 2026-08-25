@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "windrose",
+  "catalogOrder": 187,
+  "game": "Windrose",
+  "aliases": [],
+  "appId": "4129620",
+  "requiresSteamLogin": false,
+  "executable": "WindroseServer.exe",
+  "downloadUrl": "",
+  "arguments": "-log -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "GameGenerated",
+  "relativeConfigPath": "R5\\ServerDescription.json",
+  "format": "JSON",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": false,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "R5\\Binaries\\Win64"
+    }
+  ]
+}

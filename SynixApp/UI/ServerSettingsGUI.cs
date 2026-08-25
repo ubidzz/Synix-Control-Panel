@@ -13,14 +13,13 @@
 using Synix_Control_Panel.Help;
 using Synix_Control_Panel.ServerHandler;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
-using System.Management;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics.X86;
 using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel
@@ -34,7 +33,7 @@ namespace Synix_Control_Panel
 		private string _oldPath = string.Empty;
 		private bool[] _selectedDays = new bool[7] { false, false, false, false, false, false, false };
 		private string _selectedTime = "04:00";
-		private System.Windows.Forms.Timer debounceTimer;
+		private System.Windows.Forms.Timer? debounceTimer;
 		private bool _PrivacyMode = false;
 		private bool _isApplyingPortOffset = false;
 		private bool _suppressMinecraftMetadataEvents = false;
@@ -46,9 +45,6 @@ namespace Synix_Control_Panel
 		private string _validationMessage =
 			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
 
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
-		private const int EM_SETCUEBANNER = 0x1501;
 		private const int WmNcLeftButtonDown = 0x00A1;
 		private const int HtCaption = 0x0002;
 		private const int DwmWindowCornerPreference = 33;
@@ -96,9 +92,7 @@ namespace Synix_Control_Panel
 			chkUpdateOnStart.Tag = "Update on Start";
 			chkEnableRcon.Tag = "RCON";
 			chkBackupOnStart.Tag = "Backup on Start";
-			chkEnableDiscord.Tag = "Discord Alerts";
-
-			SendMessage(txtDiscordWebhook.Handle, EM_SETCUEBANNER, 0, "Paste Discord Webhook URL here...");
+			discordSettingsPage.SettingsChanged += (_, _) => SyncGatekeeper();
 
 			cmbGame.Items.Clear();
 			cmbGame.Items.Add("-- Pick a Game --");
@@ -156,6 +150,7 @@ namespace Synix_Control_Panel
 				pnlPageWorld,
 				pnlPageNetwork,
 				pnlPageAutomation,
+				pnlPageDiscord,
 				pnlPageInstall
 			};
 			ModernSettingsNavButton[] navigationButtons =
@@ -164,6 +159,7 @@ namespace Synix_Control_Panel
 				btnNavWorld,
 				btnNavNetwork,
 				btnNavAutomation,
+				btnNavDiscord,
 				btnNavInstall
 			};
 
@@ -304,7 +300,7 @@ namespace Synix_Control_Panel
 			txtPassword.Clear();
 			txtAdminPassword.Clear();
 			txtRconPassword.Clear();
-			txtDiscordWebhook.Clear();
+			discordSettingsPage.ClearSecrets();
 			debounceTimer?.Stop();
 			debounceTimer?.Dispose();
 			base.OnFormClosed(eventArgs);
@@ -317,15 +313,14 @@ namespace Synix_Control_Panel
 				txtPassword.UseSystemPasswordChar = true;
 				txtAdminPassword.UseSystemPasswordChar = true;
 				txtRconPassword.UseSystemPasswordChar = true;
-				txtDiscordWebhook.UseSystemPasswordChar = true;
-
+				discordSettingsPage.SetPrivacyMode(true);
 			}
 			else
 			{
 				txtPassword.UseSystemPasswordChar = false;
 				txtAdminPassword.UseSystemPasswordChar = false;
 				txtRconPassword.UseSystemPasswordChar = false;
-				txtDiscordWebhook.UseSystemPasswordChar = false;
+				discordSettingsPage.SetPrivacyMode(false);
 			}
 		}
 
@@ -340,14 +335,21 @@ namespace Synix_Control_Panel
 			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
 
 			if (Core.TryRevealServerSecrets(
-				_existingServer,
-				out SynixServerSecrets secrets))
+					_existingServer,
+					out SynixServerSecrets secrets) &&
+				Core.TryRevealDiscordWebhookRoutes(
+					_existingServer,
+					out IReadOnlyList<DiscordWebhookRoute> discordRoutes))
 			{
 				SynixServerPasswords passwords = secrets.Passwords;
 				txtPassword.Text = passwords.ServerPassword;
 				txtAdminPassword.Text = passwords.AdminPassword;
 				txtRconPassword.Text = passwords.RconPassword;
-				txtDiscordWebhook.Text = secrets.DiscordWebhook;
+				discordSettingsPage.LoadSettings(
+					_existingServer.IsDiscordAlertEnabled,
+					secrets.DiscordWebhook,
+					_existingServer.DiscordEvents,
+					discordRoutes);
 			}
 			else
 			{
@@ -355,11 +357,14 @@ namespace Synix_Control_Panel
 				txtPassword.Clear();
 				txtAdminPassword.Clear();
 				txtRconPassword.Clear();
-				txtDiscordWebhook.Clear();
+				discordSettingsPage.LoadSettings(
+					false,
+					string.Empty,
+					DiscordNotificationEvent.All,
+					[]);
 				Shown += ShowPasswordUnlockWarning;
 			}
-			chkEnableDiscord.Checked = _existingServer.IsDiscordAlertEnabled;
-			txtDiscordWebhook.Enabled = chkEnableDiscord.Checked;
+			discordSettingsPage.SetServerName(_existingServer.ServerName);
 
 			numPort.Value = Math.Clamp(_existingServer.Port, numPort.Minimum, numPort.Maximum);
 			int queryPortToLoad = _existingServer.QueryPort > 0
@@ -403,7 +408,7 @@ namespace Synix_Control_Panel
 				return;
 
 			MessageBox.Show(
-				"Synix could not unlock this server's saved passwords or Discord webhook. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
+				"Synix could not unlock this server's saved passwords or Discord webhooks. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
 				"Re-enter Server Credentials",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Warning);
@@ -417,34 +422,22 @@ namespace Synix_Control_Panel
 			{
 				string currentName = txtName?.Text?.Trim() ?? "";
 				bool hasName = !string.IsNullOrWhiteSpace(currentName);
-				bool hasGame = cmbGame != null && cmbGame.SelectedIndex > 0;
-				string selectedGame = hasGame ? cmbGame.Text : "";
+				bool hasGame = cmbGame?.SelectedIndex > 0;
+				string selectedGame = hasGame ? cmbGame?.Text ?? string.Empty : string.Empty;
 				bool isBaseReady = hasName && hasGame;
+				GameInfo? selectedDefinition = hasGame
+					? GameDatabase.GetGame(selectedGame)
+					: null;
 				bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+				bool supportsServerFramework =
+					selectedDefinition?.SupportedServerFrameworks.Count > 0;
 				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
 
-				bool isDuneAwakening = selectedGame.Equals("Dune: Awakening", StringComparison.OrdinalIgnoreCase);
-				bool virtMissing = false;
-				string missingTechName = "";
-				bool isHomeEdition = false;
-				bool hyperVMissing = false;
-				bool avx2Missing = false;
-				bool ramMissing = false;
-				double sysRam = 0;
-
-				if (isDuneAwakening)
-				{
-					var virtData = CheckVirtualizationStatus();
-					virtMissing = !virtData.IsEnabled;
-					missingTechName = virtData.TechName;
-
-					isHomeEdition = !IsWindowsProOrBetter();
-					hyperVMissing = !IsHypervisorPresent();
-					avx2Missing = !Avx2.IsSupported;
-
-					sysRam = GetSystemRamGB();
-					ramMissing = sysRam < 23.0;
-				}
+				GamePrerequisiteItem? missingRequirement = selectedDefinition == null
+					? null
+					: GamePrerequisiteChecker
+						.CheckCurrentSystem(selectedDefinition)
+						.FirstFailure;
 
 				txtPassword.Enabled = CanUnlock(txtPassword);
 				txtAdminPassword.Enabled = CanUnlock(txtAdminPassword);
@@ -455,7 +448,8 @@ namespace Synix_Control_Panel
 				cmbWorldName.Enabled = CanUnlock(cmbWorldName);
 				numWorldSize.Enabled = CanUnlock(numWorldSize);
 				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion) && !_isLoadingMinecraftMetadata;
-				cmbMinecraftLoader.Enabled = isMinecraft && !_isLoadingMinecraftMetadata;
+				cmbMinecraftLoader.Enabled =
+					(isMinecraft || supportsServerFramework) && !_isLoadingMinecraftMetadata;
 				cmbMinecraftLoaderVersion.Enabled = isMinecraft &&
 					!_isLoadingMinecraftMetadata &&
 					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
@@ -477,9 +471,8 @@ namespace Synix_Control_Panel
 				chkEnableSchedule.Enabled = isBaseReady;
 				if (btnEditSchedule != null) btnEditSchedule.Enabled = isBaseReady && chkEnableSchedule.Checked;
 
-				chkEnableDiscord.Enabled = isBaseReady;
-				txtDiscordWebhook.Enabled = isBaseReady && chkEnableDiscord.Checked;
-				btnTestDiscord.Enabled = isBaseReady && chkEnableDiscord.Checked;
+				discordSettingsPage.SetServerName(currentName);
+				discordSettingsPage.SetEditingEnabled(isBaseReady);
 
 				if (_isEditMode)
 				{
@@ -571,33 +564,9 @@ namespace Synix_Control_Panel
 					btnSave.Enabled = false;
 				}
 
-				else if (ramMissing)
+				else if (missingRequirement != null)
 				{
-					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires at least 24GB of RAM (Detected: {sysRam:0.0} GB).";
-					btnSave.Enabled = false;
-				}
-
-				else if (avx2Missing)
-				{
-					_validationMessage = "  ⚠️ [HARDWARE] 'Dune: Awakening' strictly requires a CPU with AVX2 support.";
-					btnSave.Enabled = false;
-				}
-
-				else if (isHomeEdition)
-				{
-					_validationMessage = "  ⚠️ [OS CHECK] Windows Pro/Enterprise is required. Home editions do not support Hyper-V.";
-					btnSave.Enabled = false;
-				}
-
-				else if (virtMissing)
-				{
-					_validationMessage = $"  ⚠️ [HARDWARE] 'Dune: Awakening' requires {missingTechName} to be enabled in your PC's BIOS.";
-					btnSave.Enabled = false;
-				}
-
-				else if (hyperVMissing)
-				{
-					_validationMessage = "  ⚠️ [SYSTEM] Windows Hyper-V is disabled. Please turn it on in 'Windows Features'.";
+					_validationMessage = $"  ⚠️ [REQUIREMENT] {missingRequirement.Message}";
 					btnSave.Enabled = false;
 				}
 
@@ -633,9 +602,11 @@ namespace Synix_Control_Panel
 				}
 				else
 				{
-					if (isDuneAwakening)
+					if (!string.IsNullOrWhiteSpace(
+						selectedDefinition?.LaunchBehavior.ReadyMessage))
 					{
-						_validationMessage = "  ✔ [READY] NOTE: Have your Self-Host Token ready for the battlegroup.bat prompt.";
+						_validationMessage =
+							$"  ✔ [READY] NOTE: {selectedDefinition.LaunchBehavior.ReadyMessage}";
 					}
 					else
 					{
@@ -661,7 +632,7 @@ namespace Synix_Control_Panel
 			var controls = new Control[] { txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive, numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon };
 			if (gameData == null)
 			{
-				ConfigureMinecraftRuntimeCard(false);
+				ConfigureRuntimeCard(null);
 				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
 
 				SetupManagedPlaceholder(txtPassword, "Select a game...");
@@ -670,12 +641,13 @@ namespace Synix_Control_Panel
 			}
 			else
 			{
-				ConfigureMinecraftRuntimeCard(
-					gameData.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase));
-				string args = (gameData.RequiredArgs ?? "").ToLower();
-				string rconTemp = (gameData.RconSyntax ?? "").ToLower();
+				ConfigureRuntimeCard(gameData);
+				GameManagementCapability capabilities =
+					GameFix.GetManagementCapabilities(gameData);
+				bool Supports(GameManagementCapability capability) =>
+					(capabilities & capability) != GameManagementCapability.None;
 
-				bool needsPass = args.Contains("{pass}");
+				bool needsPass = Supports(GameManagementCapability.ServerPassword);
 				txtPassword.Tag = needsPass ? "Required" : "Disabled";
 				if (!needsPass)
 				{
@@ -692,7 +664,7 @@ namespace Synix_Control_Panel
 					txtPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				bool needsAdminPass = args.Contains("{adminpass}");
+				bool needsAdminPass = Supports(GameManagementCapability.AdminPassword);
 				txtAdminPassword.Tag = needsAdminPass ? "Required" : "Disabled";
 				if (!needsAdminPass)
 				{
@@ -709,7 +681,7 @@ namespace Synix_Control_Panel
 					txtAdminPassword.LostFocus -= Placeholder_LostFocus;
 				}
 
-				bool needsSeed = args.Contains("{seed}");
+				bool needsSeed = Supports(GameManagementCapability.WorldSeed);
 				txtWorldSeed.Tag = needsSeed ? "Required" : "Disabled";
 				if (!needsSeed)
 				{
@@ -726,21 +698,35 @@ namespace Synix_Control_Panel
 					txtWorldSeed.LostFocus -= Placeholder_LostFocus;
 				}
 
-				cmbCompetitive.Tag = (args.Contains("{mode}") || (gameData.GameModes != null && gameData.GameModes.Count > 0)) ? "Required" : "Disabled";
-				numMaxPlayers.Tag = args.Contains("{maxplayers}") ? "Required" : "Disabled";
-				bool isMinecraftTemplate = gameData.Game.Equals(
-					"Minecraft",
-					StringComparison.OrdinalIgnoreCase);
-				numQueryPort.Tag = isMinecraftTemplate && !args.Contains("{query}")
-					? "Disabled"
-					: "Required";
-				cmbWorldName.Tag = args.Contains("{map}") ? "Required" : "Disabled";
-				chkEnableRcon.Tag = (args.Contains("{rcon}") || rconTemp.Contains("{rcon_port}")) ? "Required" : "Disabled";
-				numWorldSize.Tag = args.Contains("{world_size}") ? "Required" : "Disabled";
-				cmbGameVersion.Tag = gameData.Game == "Minecraft" ? "Required" : "Disabled";
-				numRam.Tag = args.Contains("{ram}") ? "Required" : "Disabled";
-				numPort.Tag = args.Contains("{port}") ? "Required" : "Disabled";
-				numAppPort.Tag = args.Contains("{app_port}") ? "Required" : "Disabled";
+				cmbCompetitive.Tag = Supports(GameManagementCapability.GameMode)
+					? "Required"
+					: "Disabled";
+				numMaxPlayers.Tag = Supports(GameManagementCapability.MaxPlayers)
+					? "Required"
+					: "Disabled";
+				bool usesQueryPort = Supports(GameManagementCapability.QueryPort);
+				numQueryPort.Tag = usesQueryPort ? "Required" : "Disabled";
+				cmbWorldName.Tag = Supports(GameManagementCapability.WorldName)
+					? "Required"
+					: "Disabled";
+				chkEnableRcon.Tag = Supports(GameManagementCapability.Rcon)
+					? "Required"
+					: "Disabled";
+				numWorldSize.Tag = Supports(GameManagementCapability.WorldSize)
+					? "Required"
+					: "Disabled";
+				cmbGameVersion.Tag = Supports(GameManagementCapability.GameVersion)
+					? "Required"
+					: "Disabled";
+				numRam.Tag = Supports(GameManagementCapability.Ram)
+					? "Required"
+					: "Disabled";
+				numPort.Tag = Supports(GameManagementCapability.Port)
+					? "Required"
+					: "Disabled";
+				numAppPort.Tag = Supports(GameManagementCapability.AppPort)
+					? "Required"
+					: "Disabled";
 
 			}
 			SyncGatekeeper();
@@ -784,6 +770,27 @@ namespace Synix_Control_Panel
 			}
 		}
 
+		private void btnNavDiscord_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageDiscord,
+				btnNavDiscord,
+				"Discord Notifications",
+				"Use one master webhook or route different Synix events to multiple Discord channels.");
+		}
+
+		private static string GetEnteredValue(TextBox textBox)
+		{
+			if (textBox.ForeColor == Color.Gray ||
+				textBox.Text == "Select a game..." ||
+				textBox.Text == "Not Required")
+			{
+				return string.Empty;
+			}
+
+			return textBox.Text;
+		}
+
 		private void WireUpGatekeeperEvents()
 		{
 			if (debounceTimer == null) { debounceTimer = new System.Windows.Forms.Timer(); debounceTimer.Interval = 300; debounceTimer.Tick += (s, e) => { debounceTimer.Stop(); SyncGatekeeper(); }; }
@@ -824,13 +831,47 @@ namespace Synix_Control_Panel
 				cmbGame.Text.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 		}
 
-		private void ConfigureMinecraftRuntimeCard(bool visible)
+		private void ConfigureRuntimeCard(GameInfo? gameData)
 		{
+			bool isMinecraft = gameData?.Game.Equals(
+				"Minecraft",
+				StringComparison.OrdinalIgnoreCase) == true;
+			bool supportsServerFramework = gameData?.SupportedServerFrameworks.Count > 0;
+			bool visible = isMinecraft || supportsServerFramework;
 			cardMinecraftRuntime.Visible = visible;
 			cardCredentials.Location = visible
 				? new Point(0, cardMinecraftRuntime.Bottom + 16)
 				: new Point(0, 242);
 			cardCompatibility.Location = new Point(0, cardCredentials.Bottom + 16);
+
+			if (isMinecraft)
+			{
+				lblMinecraftRuntimeTitle.Text = "Minecraft Runtime";
+				lblMinecraftLoader.Text = "Loader";
+				lblMinecraftLoaderVersion.Visible = true;
+				cmbMinecraftLoaderVersion.Visible = true;
+				lblMinecraftJava.Visible = true;
+				lblMinecraftJavaValue.Visible = true;
+				cmbMinecraftLoader.Items.Clear();
+				cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge"]);
+			}
+			else if (supportsServerFramework && gameData != null)
+			{
+				lblMinecraftRuntimeTitle.Text = "Server Framework";
+				lblMinecraftLoader.Text = "Framework";
+				lblMinecraftLoaderVersion.Visible = false;
+				cmbMinecraftLoaderVersion.Visible = false;
+				lblMinecraftJava.Visible = false;
+				lblMinecraftJavaValue.Visible = false;
+				cmbMinecraftLoader.Items.Clear();
+				cmbMinecraftLoader.Items.Add("Vanilla");
+				foreach (string framework in gameData.SupportedServerFrameworks)
+					cmbMinecraftLoader.Items.Add(framework);
+				string preferred = _existingServer?.ServerFramework ?? "Vanilla";
+				SelectComboBoxValue(cmbMinecraftLoader, preferred, "Vanilla");
+				lblMinecraftRuntimeHelper.Text =
+					"Synix installs the official Oxide runtime only. Plugins remain user-managed in the server's oxide\\plugins folder.";
+			}
 
 			if (!visible)
 			{
@@ -875,7 +916,7 @@ namespace Synix_Control_Panel
 			int requestId = ++_minecraftMetadataRequestId;
 			_isLoadingMinecraftMetadata = true;
 			_minecraftMetadataError = string.Empty;
-			ConfigureMinecraftRuntimeCard(true);
+			ConfigureRuntimeCard(GameDatabase.GetGame("Minecraft"));
 			SyncGatekeeper();
 
 			string loader = MinecraftMetadataService.NormalizeLoader(preferredLoader);
@@ -1025,28 +1066,69 @@ namespace Synix_Control_Panel
 				selectedGame,
 				numPort.Enabled,
 				numQueryPort.Enabled)) return;
+			if (!Core.TryValidateExtraArguments(
+				txtExtraArgs.Text,
+				out string extraArgumentsError))
+			{
+				MessageBox.Show(
+					extraArgumentsError,
+					"Extra Arguments Blocked",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				txtExtraArgs.Focus();
+				return;
+			}
+			if (!discordSettingsPage.TryGetSettings(
+				out DiscordSettingsSnapshot discordSettings,
+				out string discordSettingsError))
+			{
+				MessageBox.Show(
+					discordSettingsError,
+					"Discord Settings Need Attention",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				btnNavDiscord.PerformClick();
+				return;
+			}
 			string newPath = txtInstallPath.Text.Trim();
 			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+			GameInfo? masterData = GameDatabase.GetGame(selectedGame);
+			bool supportsServerFramework = masterData?.SupportedServerFrameworks.Count > 0;
+			string steamAccountName = masterData?.RequiresSteamLogin == true
+				? _existingServer?.SteamAccountName ?? string.Empty
+				: string.Empty;
+
+			if (masterData?.RequiresSteamLogin == true &&
+				string.IsNullOrWhiteSpace(steamAccountName))
+			{
+				using SteamAccountLoginDialog loginDialog = new(selectedGame);
+				if (loginDialog.ShowDialog(this) != DialogResult.OK)
+					return;
+
+				steamAccountName = loginDialog.SteamAccountName;
+			}
+
 			NewServer = new GameServer
 			{
 				Game = selectedGame,
+				SteamAccountName = steamAccountName,
 				ServerName = newName,
 				Port = gPort,
 				QueryPort = qPort,
 				RconPort = rPort,
 				AppPort = aPort,
-				Password = txtPassword.Text,
-				AdminPassword = txtAdminPassword.Text,
+				Password = GetEnteredValue(txtPassword),
+				AdminPassword = GetEnteredValue(txtAdminPassword),
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
 				GameMode = cmbCompetitive.Text,
-				WorldSeed = txtWorldSeed.Text.Trim(),
+				WorldSeed = GetEnteredValue(txtWorldSeed).Trim(),
 				WorldSize = wSize,
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
 				UpdateOnStart = chkUpdateOnStart.Checked,
 				EnableRcon = chkEnableRcon.Checked,
-				RconPassword = txtRconPassword.Text,
+				RconPassword = GetEnteredValue(txtRconPassword),
 				InstallPath = newPath,
 				MaxRam = (int)numRam.Value,
 				GameVersion = cmbGameVersion.Text.Trim(),
@@ -1056,12 +1138,33 @@ namespace Synix_Control_Panel
 				MinecraftLoaderVersion = isMinecraft
 					? cmbMinecraftLoaderVersion.Text.Trim()
 					: "Official",
+				ServerFramework = supportsServerFramework
+					? cmbMinecraftLoader.Text.Trim()
+					: "Vanilla",
+				ServerFrameworkVersion = supportsServerFramework &&
+					string.Equals(
+						_existingServer?.ServerFramework,
+						cmbMinecraftLoader.Text.Trim(),
+						StringComparison.OrdinalIgnoreCase)
+						? _existingServer?.ServerFrameworkVersion ?? "Official"
+						: "Official",
 				RequiredJavaVersion = isMinecraft ? _resolvedMinecraftJavaVersion : 0,
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = _selectedTime,
 				RestartDays = (bool[])_selectedDays.Clone(),
-				IsDiscordAlertEnabled = chkEnableDiscord.Checked,
-				DiscordWebhook = txtDiscordWebhook.Text.Trim(),
+				IsDiscordAlertEnabled = discordSettings.MasterEnabled,
+				DiscordWebhook = discordSettings.MasterWebhook,
+				DiscordEvents = discordSettings.MasterEvents,
+				DiscordWebhookRoutes = discordSettings.Routes
+					.Select(route => new DiscordWebhookRoute
+					{
+						Id = route.Id,
+						Name = route.Name,
+						Enabled = route.Enabled,
+						WebhookUrl = route.WebhookUrl,
+						Events = route.Events
+					})
+					.ToList(),
 				Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped),
 				BackupOnStart = chkBackupOnStart.Checked
 			};
@@ -1079,10 +1182,11 @@ namespace Synix_Control_Panel
 					NewServer,
 					new SynixServerSecrets(
 						new SynixServerPasswords(
-							txtPassword.Text,
-							txtAdminPassword.Text,
-							txtRconPassword.Text),
-						txtDiscordWebhook.Text.Trim()));
+							GetEnteredValue(txtPassword),
+							GetEnteredValue(txtAdminPassword),
+							GetEnteredValue(txtRconPassword)),
+						discordSettings.MasterWebhook));
+				Core.SetDiscordWebhookRoutes(NewServer, discordSettings.Routes);
 
 				if (_isEditMode && _existingServer != null)
 				{
@@ -1096,13 +1200,9 @@ namespace Synix_Control_Panel
 				}
 				else MainGUI.serverList.Add(NewServer);
 
-				var masterData = GameDatabase.GetGame(NewServer.Game);
 				if (masterData != null)
 				{
-					NewServer.AppID = masterData.AppID;
-					NewServer.ExeName = masterData.ExeName;
-
-					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, NewServer.ExeName);
+					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, masterData.ExeName);
 					string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(NewServer.Game, fullExePath);
 
 					if (System.IO.File.Exists(iconPath))
@@ -1124,105 +1224,30 @@ namespace Synix_Control_Panel
 			catch (Exception ex) { MessageBox.Show(ex.Message); }
 		}
 
-		private (bool IsEnabled, string TechName) CheckVirtualizationStatus()
-		{
-			bool isEnabled = true;
-			string techName = "Hardware Virtualization";
-
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("Select VirtualizationFirmwareEnabled, Manufacturer FROM Win32_Processor"))
-				{
-					foreach (var obj in searcher.Get())
-					{
-						if (obj["Manufacturer"] != null)
-						{
-							string manufacturer = obj["Manufacturer"].ToString();
-							if (manufacturer.Contains("Intel", StringComparison.OrdinalIgnoreCase))
-								techName = "Intel VT-x";
-							else if (manufacturer.Contains("AMD", StringComparison.OrdinalIgnoreCase))
-								techName = "AMD-V (SVM)";
-						}
-
-						if (obj["VirtualizationFirmwareEnabled"] != null)
-							isEnabled = (bool)obj["VirtualizationFirmwareEnabled"];
-
-						break;
-					}
-				}
-			}
-			catch { }
-			return (isEnabled, techName);
-		}
-
-		private bool IsWindowsProOrBetter()
-		{
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
-				using (var collection = searcher.Get())
-				{
-					foreach (ManagementObject obj in collection)
-					{
-						string caption = obj["Caption"]?.ToString() ?? "";
-						obj.Dispose();
-
-						if (caption.Contains("Home", StringComparison.OrdinalIgnoreCase)) return false;
-					}
-				}
-			}
-			catch { }
-			return true;
-		}
-
-		private bool IsHypervisorPresent()
-		{
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("SELECT HypervisorPresent FROM Win32_ComputerSystem"))
-				{
-					foreach (var obj in searcher.Get())
-					{
-						if (obj["HypervisorPresent"] != null) return (bool)obj["HypervisorPresent"];
-					}
-				}
-			}
-			catch { }
-			return true;
-		}
-
-		private double GetSystemRamGB()
-		{
-			try
-			{
-				using (var searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
-				{
-					foreach (var obj in searcher.Get())
-					{
-						if (obj["TotalPhysicalMemory"] != null)
-						{
-							ulong bytes = Convert.ToUInt64(obj["TotalPhysicalMemory"]);
-							return bytes / (1024.0 * 1024.0 * 1024.0);
-						}
-					}
-				}
-			}
-			catch { }
-			return 999.0;
-		}
-
 		private async void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (isPrivacyLoading) return;
 			if (cmbGame.SelectedIndex > 0)
 			{
-				var gameData = GameDatabase.GetGame(cmbGame.SelectedItem.ToString());
+				string? selectedGame = cmbGame.SelectedItem?.ToString();
+				if (string.IsNullOrWhiteSpace(selectedGame))
+					return;
+				var gameData = GameDatabase.GetGame(selectedGame);
 				if (gameData != null)
 				{
 					numPort.Value = Math.Clamp(gameData.Port, numPort.Minimum, numPort.Maximum);
 					numQueryPort.Value = Math.Clamp(gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+					if (gameData.AppPort.HasValue)
+					{
+						numAppPort.Value = Math.Clamp(
+							gameData.AppPort.Value,
+							numAppPort.Minimum,
+							numAppPort.Maximum);
+					}
 					PopulateMaps(gameData, gameData.Maps?.FirstOrDefault() ?? "");
-					PopulateGameModes(gameData, "PVE");
+					PopulateGameModes(
+						gameData,
+						gameData.GameModes?.FirstOrDefault() ?? "PVE");
 
 					await PopulateVersionsAsync(gameData, _existingServer?.GameVersion ?? "latest");
 
@@ -1343,11 +1368,17 @@ namespace Synix_Control_Panel
 		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableRcon.Checked; numRconPort.Enabled = txtRconPassword.Enabled = active; SyncGatekeeper(); }
 		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked; SyncGatekeeper(); }
 		private void txtWorldSeed_KeyPress(object sender, KeyPressEventArgs e) { if (cmbGame.Text == "Rust" && !char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true; }
-		private void btnViewArgs_Click(object sender, EventArgs e) { var gameData = GameDatabase.GetGame(cmbGame.Text); if (gameData != null) { var display = new DefaultArgumentsDisplay(gameData.RequiredArgs); display.ShowDialog(); } }
+		private void btnViewArgs_Click(object sender, EventArgs e)
+		{
+			GameInfo? gameData = GameDatabase.GetGame(cmbGame.Text);
+			if (gameData == null)
+				return;
+
+			using DefaultArgumentsDisplay display = new(gameData.RequiredArgs);
+			display.ShowDialog(this);
+		}
 		private void btnEditSchedule_Click(object sender, EventArgs e) { using var scheduler = new ScheduleSettingsGUI(_selectedDays, _selectedTime); if (scheduler.ShowDialog() == DialogResult.OK) { _selectedDays = scheduler.SelectedDays; _selectedTime = scheduler.SelectedTime; } }
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
-		private void chkEnableDiscord_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableDiscord.Checked; txtDiscordWebhook.Enabled = active; btnTestDiscord.Enabled = active; SyncGatekeeper(); }
-		private async void btnTestDiscord_Click(object sender, EventArgs e) { string url = txtDiscordWebhook.Text.Trim(); if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://discord.com/api/webhooks/")) return; await Core.Instance.SendDiscordAlert(new GameServer { ServerName = txtName.Text, DiscordWebhook = url, IsDiscordAlertEnabled = true }, "TEST CONNECTION", "Alert Success", Color.Lime); }
 		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
 
 		private void PopulateMaps(GameInfo gameData, string selectedMap)

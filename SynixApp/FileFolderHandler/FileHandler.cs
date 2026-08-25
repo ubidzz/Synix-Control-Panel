@@ -96,14 +96,10 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 							var masterData = GameDatabase.GetGame(server.Game);
 							if (masterData != null)
 							{
-								server.AppID = masterData.AppID;
-								server.ExeName = masterData.ExeName;
-								server.RequiredArgs = masterData.RequiredArgs;
-								server.Maps = masterData.Maps.ToList();
 								if (server.QueryPort <= 0)
 									server.QueryPort = masterData.QueryPort;
 
-								string fullExePath = Path.Combine(server.InstallPath, server.ExeName);
+								string fullExePath = Path.Combine(server.InstallPath, masterData.ExeName);
 
 								string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(server.Game, fullExePath);
 

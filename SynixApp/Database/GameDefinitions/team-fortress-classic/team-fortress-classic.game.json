@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 2,
+  "id": "team-fortress-classic",
+  "catalogOrder": 227,
+  "game": "Team Fortress Classic",
+  "aliases": [
+    "TFC"
+  ],
+  "appId": "90",
+  "requiresSteamLogin": false,
+  "steamAppConfig": "90 mod tfc",
+  "executable": "hlds.exe",
+  "downloadUrl": "",
+  "arguments": "-console -game tfc -port {port} +maxplayers {MaxPlayers} +map {map} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "2fort",
+    "well",
+    "dustbowl"
+  ],
+  "gameModes": [
+    "Capture the Flag",
+    "Attack/Defend"
+  ],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "tfc\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "A2S",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "tfc\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

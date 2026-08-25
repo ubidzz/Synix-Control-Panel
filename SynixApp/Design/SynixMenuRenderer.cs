@@ -38,11 +38,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 			item.MouseLeave += Item_MouseLeave;
 		}
 
-		private void Item_MouseEnter(object sender, EventArgs e)
+		private void Item_MouseEnter(object? sender, EventArgs e)
 		{
 			if (sender is ToolStripItem item && !(item is ToolStripSeparator))
 			{
-				ToolStrip parent = item.GetCurrentParent();
+				ToolStrip? parent = item.GetCurrentParent();
 				if (parent != null)
 				{
 					parent.Cursor = Cursors.Hand;
@@ -50,11 +50,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 		}
 
-		private void Item_MouseLeave(object sender, EventArgs e)
+		private void Item_MouseLeave(object? sender, EventArgs e)
 		{
 			if (sender is ToolStripItem item)
 			{
-				ToolStrip parent = item.GetCurrentParent();
+				ToolStrip? parent = item.GetCurrentParent();
 				if (parent != null)
 				{
 					parent.Cursor = Cursors.Default;
@@ -121,11 +121,13 @@ namespace Synix_Control_Panel.SynixApp.Design
 				? AccentBorder
 				: SettingsPalette.PrimaryText;
 
-			TextRenderer.DrawText(e.Graphics, e.Item.Text, e.Item.Font, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
+			TextRenderer.DrawText(e.Graphics, e.Item.Text, e.Item.Font ?? SystemFonts.MenuFont, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
 		}
 
 		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
 		{
+			if (e.Item == null)
+				return;
 			e.ArrowColor = (e.Item.Selected || e.Item.Pressed)
 				? AccentBorder
 				: SettingsPalette.PrimaryText;

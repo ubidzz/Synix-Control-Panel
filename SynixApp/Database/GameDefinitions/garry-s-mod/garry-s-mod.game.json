@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "garry-s-mod",
+  "catalogOrder": 31,
+  "game": "Garry's Mod",
+  "aliases": [],
+  "appId": "4020",
+  "requiresSteamLogin": false,
+  "executable": "srcds.exe",
+  "downloadUrl": "",
+  "arguments": "-game garrysmod -console -port {port} +maxplayers {MaxPlayers} +map {map} +gamemode {mode} +hostname \"{ServerName}\" +sv_password \"{pass}\" {rcon} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "gm_construct",
+    "gm_flatgrass",
+    "ttt_67thway_v3",
+    "ttt_clue",
+    "rp_downtown_v4c_v2",
+    "zs_obj_vertigo",
+    "ph_office",
+    "mu_clue",
+    "dr_playstation"
+  ],
+  "gameModes": [
+    "sandbox",
+    "ttt",
+    "darkrp",
+    "zombiesurvival",
+    "prophunt",
+    "murder",
+    "deathrun",
+    "basewars"
+  ],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "garrysmod\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "garrysmod\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

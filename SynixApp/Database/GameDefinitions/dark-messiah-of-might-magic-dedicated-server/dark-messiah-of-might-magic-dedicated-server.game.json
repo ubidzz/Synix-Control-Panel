@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 2,
+  "id": "dark-messiah-of-might-magic-dedicated-server",
+  "catalogOrder": 220,
+  "game": "Dark Messiah of Might & Magic Dedicated Server",
+  "aliases": [
+    "Dark Messiah of Might & Magic"
+  ],
+  "appId": "2145",
+  "requiresSteamLogin": true,
+  "executable": "srcds.exe",
+  "downloadUrl": "",
+  "arguments": "-console +maxplayers {MaxPlayers} +map {map} -port {port} +exec server.cfg",
+  "rconSyntax": "",
+  "port": 27015,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "ctf_3",
+    "clsm_circus",
+    "ctf_2",
+    "ctf_mp2",
+    "ctf_mp3",
+    "ctf_mp4",
+    "l_mp1",
+    "l_mp2",
+    "l_mp3",
+    "l_mp4",
+    "l_mp5"
+  ],
+  "gameModes": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+  ],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "MULTIPLAYER GAME FILES MAY BE REQUIRED:\n\nSynix installs the dedicated-server package but cannot download, copy, or redistribute licensed files from the normal game. If the server reports missing multiplayer content or crashes while loading or changing maps, install Dark Messiah of Might & Magic Multiplayer through Steam using an account that owns it. Copy the mpsrc multiplayer content from that game installation into this dedicated-server folder, and make sure mapcycle.txt and maplist.txt contain the maps you want to run.\n\nThis step must be completed by the user installing the server. Game-type values are 0 Deathmatch, 1 Team Deathmatch, 2 Crusade, 3 Capture the Flag, and 4 Colosseum.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "A2S",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "GameMode",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

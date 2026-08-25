@@ -27,7 +27,6 @@ namespace Synix_Control_Panel
 	{
 		public static BindingList<GameServer> serverList = [];
 		private readonly BindingList<GameServer> _visibleServers = [];
-		private static System.Net.NetworkInformation.NetworkInterface[]? _activeInterfaces = null;
 		public bool isDownloadActive = false;
 		private static bool isInitializing = false;
 		public static MainGUI? Instance { get; private set; }
@@ -38,6 +37,8 @@ namespace Synix_Control_Panel
 		private static Font regularFont = new Font("Segoe UI", 9, FontStyle.Regular);
 		private bool isPrivacyLoading = false;
 		private System.Windows.Forms.Timer? versionTimer;
+		private System.Windows.Forms.Timer? _busyStatusTimer;
+		private int _busyStatusFrame;
 		private readonly SemaphoreSlim _versionCheckGate = new(1, 1);
 		private SynixUpdateCheckResult? _updateCheckResult;
 		private bool _updateShutdownRequested;
@@ -99,6 +100,7 @@ namespace Synix_Control_Panel
 			GridStyler.StyleIconButton(btnGithub, Properties.Resources.github_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnSettings, Properties.Resources.gear_icon, Color.FromArgb(200, 200, 200));
 			GridStyler.StyleIconButton(btnHelp, Properties.Resources.help, Color.FromArgb(200, 200, 200));
+			InitializeBusyStatusAnimation();
 			ApplyServerFilter();
 
 			IntPtr roundedRegionHandle = CreateRoundRectRgn(0, 0, Width, Height, 15, 15);
@@ -158,8 +160,6 @@ namespace Synix_Control_Panel
 
 		private void tmrResourceUpdates_Tick(object sender, EventArgs e)
 		{
-			CheckRunningStatus();
-
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
@@ -197,51 +197,31 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void CheckRunningStatus()
+		private void InitializeBusyStatusAnimation()
 		{
-			string[] spinFrames = { "|", "/", "--", "\\" };
-
-			foreach (var server in serverList)
+			_busyStatusTimer = new System.Windows.Forms.Timer(components)
 			{
-				string status = server.Status ?? "";
+				Interval = 160
+			};
+			_busyStatusTimer.Tick += BusyStatusTimer_Tick;
+			_busyStatusTimer.Start();
+			dataGridView1.CellPainting += dataGridView1_CellPainting;
+		}
 
-				if (status.StartsWith("Updating"))
-				{
-					string currentFrame = status.Replace("Updating ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Updating " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Validating"))
-				{
-					string currentFrame = status.Replace("Validating ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Validating " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Installing"))
-				{
-					string currentFrame = status.Replace("Installing ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Installing " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Backing Up"))
-				{
-					string currentFrame = status.Replace("Backing Up ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Backing Up " + spinFrames[nextIndex];
-				}
-				else if (status.StartsWith("Stopping"))
-				{
-					string currentFrame = status.Replace("Stopping ", "");
-					int currentIndex = Array.IndexOf(spinFrames, currentFrame);
-					int nextIndex = (currentIndex + 1) % spinFrames.Length;
-					server.Status = "Stopping " + spinFrames[nextIndex];
-				}
+		private void BusyStatusTimer_Tick(object? sender, EventArgs eventArgs)
+		{
+			if (!serverList.Any(server =>
+				BusyStatusPresentation.TryGetBusyState(server.Status, out _)))
+			{
+				return;
 			}
-			UpdateGrid();
+
+			_busyStatusFrame =
+				(_busyStatusFrame + 1) % BusyStatusPresentation.FrameCount;
+			if (colStatus.Index >= 0)
+			{
+				dataGridView1.InvalidateColumn(colStatus.Index);
+			}
 		}
 
 		private void StreamerModeCheck()
@@ -261,7 +241,7 @@ namespace Synix_Control_Panel
 			if (isDownloadActive || Core.Instance.isDownloadActive)
 			{
 				e.Cancel = true;
-				MessageBox.Show("Cannot close Synix while a server is installing, updating or Backing Up!",
+				MessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, or restoring!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
@@ -382,6 +362,10 @@ namespace Synix_Control_Panel
 
 		private async void MainGUI_Shown(object sender, EventArgs e)
 		{
+			if (SynixSessionRecovery.PreviousSessionWasInterrupted)
+			{
+				AppendLog("[🔧 CRASH RECOVERY] Synix detected an interrupted previous session and is reconnecting any server processes that are still running.", Color.Orange, true);
+			}
 			try
 			{
 				await UpdatePrivacyMode(Properties.Settings.Default.PrivacyMode);
@@ -421,6 +405,22 @@ namespace Synix_Control_Panel
 				lblSteamStatus.Text = "●  SteamCMD needs attention";
 				lblSteamStatus.ForeColor = SettingsPalette.Danger;
 				AppendLog($"[🚨 STEAMCMD ERROR] {ex.Message}", Color.Red, true);
+			}
+
+			if (SynixSessionRecovery.ShouldShowFirstRunGuide())
+			{
+				using FirstRunGuideDialog guide = new();
+				if (guide.ShowDialog(this) == DialogResult.OK)
+				{
+					try
+					{
+						SynixSessionRecovery.CompleteFirstRunGuide();
+					}
+					catch (Exception exception)
+					{
+						AppendLog($"[⚠️ FIRST RUN] The completion marker could not be saved: {exception.Message}", Color.Orange);
+					}
+				}
 			}
 		}
 
@@ -501,7 +501,8 @@ namespace Synix_Control_Panel
 
 			picSelectedServer.Image = server.DisplayIcon;
 			lblSelectedGame.Text = server.Game;
-			lblSelectedServerName.Text = $"{server.ServerName}  •  {server.Status}";
+			lblSelectedServerName.Text =
+				$"{server.ServerName}  •  {BusyStatusPresentation.GetDisplayStatus(server.Status)}";
 		}
 
 		private void ServerFilterChanged(object sender, EventArgs e)
@@ -576,6 +577,7 @@ namespace Synix_Control_Panel
 					currentStatus.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Updating", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Restoring", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase),
 				"Needs Attention" => currentStatus.Equals(
@@ -595,6 +597,54 @@ namespace Synix_Control_Panel
 			GridStyler.SetStatusColor(dataGridView1, e);
 		}
 
+		private void dataGridView1_CellPainting(
+			object? sender,
+			DataGridViewCellPaintingEventArgs eventArgs)
+		{
+			if (eventArgs.RowIndex < 0 ||
+				eventArgs.Graphics == null ||
+				eventArgs.ColumnIndex != colStatus.Index ||
+				dataGridView1.Rows[eventArgs.RowIndex].DataBoundItem is not GameServer server ||
+				!BusyStatusPresentation.TryGetBusyState(server.Status, out string busyState))
+			{
+				return;
+			}
+
+			eventArgs.PaintBackground(eventArgs.CellBounds, true);
+			eventArgs.Paint(
+				eventArgs.CellBounds,
+				DataGridViewPaintParts.Border);
+
+			Rectangle indicatorBounds = new(
+				eventArgs.CellBounds.Left + 10,
+				eventArgs.CellBounds.Top + (eventArgs.CellBounds.Height - 18) / 2,
+				18,
+				18);
+			BusyStatusPresentation.DrawIndicator(
+				eventArgs.Graphics,
+				indicatorBounds,
+				SettingsPalette.Warning,
+				true,
+				_busyStatusFrame);
+
+			Rectangle textBounds = new(
+				indicatorBounds.Right + 7,
+				eventArgs.CellBounds.Top,
+				Math.Max(0, eventArgs.CellBounds.Right - indicatorBounds.Right - 11),
+				eventArgs.CellBounds.Height);
+			TextRenderer.DrawText(
+				eventArgs.Graphics,
+				busyState,
+				eventArgs.CellStyle?.Font ?? dataGridView1.Font,
+				textBounds,
+				SettingsPalette.Warning,
+				TextFormatFlags.Left |
+				TextFormatFlags.VerticalCenter |
+				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.NoPadding);
+			eventArgs.Handled = true;
+		}
+
 		private void ResourceGraph_Click(object sender, EventArgs e)
 		{
 			ResourceMonitorGUI monitor = new ResourceMonitorGUI();
@@ -610,17 +660,13 @@ namespace Synix_Control_Panel
 				return null;
 			}
 
-			if (!(dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer))
+			if (dataGridView1.CurrentRow.DataBoundItem is not GameServer selectedServer)
 			{
 				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
 				return null;
 			}
 
-			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer server)
-			{
-				return server;
-			}
-			return null;
+			return selectedServer;
 		}
 
 		private async void btnAddServer_Click(object sender, EventArgs e)
@@ -629,22 +675,24 @@ namespace Synix_Control_Panel
 			await Core.Instance.AddServerAndReport();
 		}
 
-		private void btnEdit_Click(object sender, EventArgs e)
+		private async void btnEdit_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "EditConfig"))
 			{
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-			Core.Instance.EditServerAndReport(selectedServer);
+			await Core.Instance.EditServerAndReport(selectedServer);
 		}
 
 		private async void btnUpdate_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Update"))
 			{
@@ -658,7 +706,8 @@ namespace Synix_Control_Panel
 		private async void btnFileValidation_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Validate"))
 			{
@@ -672,7 +721,8 @@ namespace Synix_Control_Panel
 		private void btnDelete_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Delete"))
 			{
 				AppendLog(lockMsg, Color.Orange);
@@ -684,7 +734,9 @@ namespace Synix_Control_Panel
 
 		private async void btnBackup_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null)
+				return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Backup"))
 			{
@@ -692,12 +744,108 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
+			ServerBackupPreflight preflight =
+				await Core.Instance.CreateServerBackupPreflightAsync(selectedServer);
+			if (!preflight.Succeeded)
+			{
+				MessageBox.Show(
+					this,
+					preflight.Message,
+					"Backup Check Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
+			if (!preflight.HasEnoughSpace)
+			{
+				MessageBox.Show(
+					this,
+					$"There is not enough space to safely create this backup.\n\n" +
+					$"Server data: {Core.FormatBytes(preflight.SourceBytes)}\n" +
+					$"Maximum space needed: {Core.FormatBytes(preflight.RequiredBytes)}\n" +
+					$"Free on backup drive: {Core.FormatBytes(preflight.AvailableBytes)}\n\n" +
+					$"Backup folder: {preflight.BackupFolder}",
+					"Not Enough Backup Space",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			DialogResult confirmation = MessageBox.Show(
+				this,
+				$"Create a backup of {selectedServer.ServerName}?\n\n" +
+				$"Files: {preflight.FileCount:N0}\n" +
+				$"Server data: {Core.FormatBytes(preflight.SourceBytes)}\n" +
+				$"Maximum space needed: {Core.FormatBytes(preflight.RequiredBytes)}\n" +
+				$"Free on backup drive: {Core.FormatBytes(preflight.AvailableBytes)}\n\n" +
+				"Large servers can take some time to package. The final compressed backup will usually be smaller than the maximum shown.",
+				"Confirm Server Backup",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Information,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation == DialogResult.Yes)
+				await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
+		}
+
+		private async void btnRestoreServerBackup_Click(object sender, EventArgs e)
+		{
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null)
+				return;
+			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMessage, "Restore"))
+			{
+				AppendLog(lockMessage, Color.Orange);
+				return;
+			}
+
+			IReadOnlyList<ServerBackupArchive> backups =
+				Core.Instance.GetServerBackups(selectedServer);
+			if (backups.Count == 0)
+			{
+				AppendLog($"[♻ RESTORE] No backups were found for {selectedServer.ServerName}.", Color.Yellow);
+				return;
+			}
+
+			using ServerBackupRestoreDialog dialog = new(selectedServer, backups);
+			if (dialog.ShowDialog(this) != DialogResult.OK || dialog.SelectedBackup == null)
+				return;
+
+			ServerBackupArchive selectedBackup = dialog.SelectedBackup;
+			DialogResult confirmation = MessageBox.Show(
+				this,
+				$"Restore {selectedServer.ServerName} from this backup?\n\n" +
+				$"Created: {selectedBackup.CreatedLocal:f}\n" +
+				$"File: {selectedBackup.FileName}\n\n" +
+				"The current server files will be replaced. Synix will stage the backup first and automatically return the current files if restoration fails. The saved Synix server entry and settings will not be changed.",
+				"Confirm Server Restore",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button2);
+			if (confirmation != DialogResult.Yes)
+				return;
+
+			Progress<string> progress = new(message =>
+			{
+				if (!message.StartsWith("Unpacking backup file", StringComparison.OrdinalIgnoreCase))
+					AppendLog($"[♻ RESTORE] {message}", Color.Cyan);
+			});
+			ServerBackupRestoreResult result = await Core.Instance.RestoreServerBackupAsync(
+				selectedServer,
+				selectedBackup,
+				progress);
+
+			MessageBox.Show(
+				this,
+				result.Message,
+				result.Succeeded ? "Server Backup Restored" : "Server Restore Failed",
+				MessageBoxButtons.OK,
+				result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
 		}
 
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Start"))
 			{
@@ -712,7 +860,8 @@ namespace Synix_Control_Panel
 
 		private async void btnStop_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Stop"))
 			{
@@ -737,7 +886,8 @@ namespace Synix_Control_Panel
 		{
 			StreamerModeCheck();
 			if (isPrivacyLoading) return;
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Config"))
 			{
 				AppendLog(lockMsg, Color.Orange);
@@ -748,19 +898,22 @@ namespace Synix_Control_Panel
 
 		private void btnOpenFolder_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			Core.Instance.OpenServerFolder(selectedServer);
 		}
 
 		private void btnOpenBackup_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			Core.Instance.OpenBackFolder(selectedServer);
 		}
 
 		private async void btnPublicConnection_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (selectedServer == null) return;
 
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
@@ -796,7 +949,8 @@ namespace Synix_Control_Panel
 
 		private async void btnLocalConnection_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (selectedServer == null) return;
 
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
@@ -845,6 +999,12 @@ namespace Synix_Control_Panel
 				fileValidationToolStripMenuItem.Visible = !isMinecraft;
 				btnExportBatch.Enabled = !isMinecraft;
 				btnExportBatch.Visible = !isMinecraft;
+				bool hasDeclaredLogs = GameLogDiscovery.HasDeclaredLogs(selectedServer.Game);
+				openLatestGameLogToolStripMenuItem.Visible = hasDeclaredLogs;
+				openLatestGameLogToolStripMenuItem.Enabled = hasDeclaredLogs;
+				bool hasBackups = Core.Instance.HasServerBackups(selectedServer);
+				restoreServerBackupToolStripMenuItem.Visible = hasBackups;
+				restoreServerBackupToolStripMenuItem.Enabled = hasBackups;
 
 				if (selectedServer.Status == "Running")
 				{
@@ -869,7 +1029,8 @@ namespace Synix_Control_Panel
 
 		private async void btnRestart_Click(object sender, EventArgs e)
 		{
-			var selectedServer = GetSelectedServer();
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null) return;
 			if (!Core.Instance.PassSpamLock(selectedServer, out string lockMsg, "Restart"))
 			{
 				AppendLog(lockMsg, Color.Orange);
@@ -892,7 +1053,8 @@ namespace Synix_Control_Panel
 		{
 			if (e.RowIndex >= 0)
 			{
-				var selectedServer = GetSelectedServer();
+				GameServer? selectedServer = GetSelectedServer();
+				if (selectedServer == null) return;
 				Help.ServerInfo infoForm = new Help.ServerInfo(selectedServer);
 				infoForm.Show();
 			}
@@ -1147,8 +1309,16 @@ namespace Synix_Control_Panel
 		{
 			using (Synix_Control_Panel.SynixEngine.AppSettings SynixSettings = new Synix_Control_Panel.SynixEngine.AppSettings())
 			{
-				SynixSettings.ShowDialog();
+				SynixSettings.ShowDialog(this);
 			}
+		}
+
+		private void btnOpenLatestGameLog_Click(object sender, EventArgs e)
+		{
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null)
+				return;
+			Core.Instance.OpenLatestGameLog(selectedServer);
 		}
 	}
 }

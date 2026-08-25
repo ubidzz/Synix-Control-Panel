@@ -10,11 +10,12 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+
 namespace Synix_Control_Panel.SynixEngine
 {
 	partial class AdvancedSettingsPage
 	{
-		private System.ComponentModel.IContainer? components = null;
+		private System.ComponentModel.IContainer components = null;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -37,9 +38,15 @@ namespace Synix_Control_Panel.SynixEngine
 			lblTitle = new Label();
 			lblDescription = new Label();
 			chkElevatedTasks = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
+			troubleshooterCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			troubleshooterGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			lblTroubleshooterTitle = new Label();
+			lblTroubleshooterDescription = new Label();
+			btnTroubleshooter = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
 			settingsCard.SuspendLayout();
 			cardLayout.SuspendLayout();
 			textLayout.SuspendLayout();
+			troubleshooterCard.SuspendLayout();
 			SuspendLayout();
 			//
 			// settingsCard
@@ -148,17 +155,76 @@ namespace Synix_Control_Panel.SynixEngine
 			chkElevatedTasks.TabIndex = 2;
 			chkElevatedTasks.UseVisualStyleBackColor = false;
 			//
+			// troubleshooterCard
+			//
+			troubleshooterCard.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			troubleshooterCard.BackColor = Color.FromArgb(17, 27, 45);
+			troubleshooterCard.BorderColor = Color.FromArgb(38, 52, 77);
+			troubleshooterCard.Controls.Add(troubleshooterGlyph);
+			troubleshooterCard.Controls.Add(lblTroubleshooterTitle);
+			troubleshooterCard.Controls.Add(lblTroubleshooterDescription);
+			troubleshooterCard.Controls.Add(btnTroubleshooter);
+			troubleshooterCard.CornerRadius = 13;
+			troubleshooterCard.FillColor = Color.FromArgb(17, 27, 45);
+			troubleshooterCard.Location = new Point(0, 146);
+			troubleshooterCard.Name = "troubleshooterCard";
+			troubleshooterCard.Size = new Size(818, 148);
+			troubleshooterCard.TabIndex = 1;
+			//
+			// troubleshooterGlyph
+			//
+			troubleshooterGlyph.BackColor = Color.FromArgb(17, 27, 45);
+			troubleshooterGlyph.Font = new Font("Segoe UI Symbol", 15F);
+			troubleshooterGlyph.ForeColor = Color.FromArgb(32, 214, 199);
+			troubleshooterGlyph.Glyph = "✓";
+			troubleshooterGlyph.Location = new Point(22, 24);
+			troubleshooterGlyph.Size = new Size(42, 42);
+			troubleshooterGlyph.TabIndex = 0;
+			//
+			// lblTroubleshooterTitle
+			//
+			lblTroubleshooterTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lblTroubleshooterTitle.AutoEllipsis = true;
+			lblTroubleshooterTitle.BackColor = Color.FromArgb(17, 27, 45);
+			lblTroubleshooterTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblTroubleshooterTitle.ForeColor = Color.FromArgb(245, 247, 251);
+			lblTroubleshooterTitle.Location = new Point(80, 22);
+			lblTroubleshooterTitle.Size = new Size(520, 31);
+			lblTroubleshooterTitle.Text = "System & Server Troubleshooter";
+			//
+			// lblTroubleshooterDescription
+			//
+			lblTroubleshooterDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lblTroubleshooterDescription.BackColor = Color.FromArgb(17, 27, 45);
+			lblTroubleshooterDescription.Font = new Font("Segoe UI", 9.5F);
+			lblTroubleshooterDescription.ForeColor = Color.FromArgb(158, 172, 194);
+			lblTroubleshooterDescription.Location = new Point(80, 54);
+			lblTroubleshooterDescription.Size = new Size(520, 72);
+			lblTroubleshooterDescription.Text = "Check SteamCMD, runtimes, server files, configs, ports, Windows Firewall, disk space, interrupted processes, recent logs, and update health.";
+			//
+			// btnTroubleshooter
+			//
+			btnTroubleshooter.AccessibleName = "Open the Synix troubleshooter";
+			btnTroubleshooter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			btnTroubleshooter.Location = new Point(628, 52);
+			btnTroubleshooter.Name = "btnTroubleshooter";
+			btnTroubleshooter.Size = new Size(165, 42);
+			btnTroubleshooter.Text = "Run Health Check";
+			btnTroubleshooter.UseAccentStyle = true;
+			//
 			// AdvancedSettingsPage
 			//
 			AutoScaleDimensions = new SizeF(96F, 96F);
 			AutoScaleMode = AutoScaleMode.Dpi;
 			BackColor = Color.FromArgb(8, 13, 24);
+			Controls.Add(troubleshooterCard);
 			Controls.Add(settingsCard);
 			Name = "AdvancedSettingsPage";
 			Size = new Size(818, 520);
 			settingsCard.ResumeLayout(false);
 			cardLayout.ResumeLayout(false);
 			textLayout.ResumeLayout(false);
+			troubleshooterCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -171,5 +237,10 @@ namespace Synix_Control_Panel.SynixEngine
 		private Label lblTitle;
 		private Label lblDescription;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkElevatedTasks;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard troubleshooterCard;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph troubleshooterGlyph;
+		private Label lblTroubleshooterTitle;
+		private Label lblTroubleshooterDescription;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnTroubleshooter;
 	}
 }

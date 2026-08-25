@@ -29,15 +29,17 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				string exePathFromDB = dbEntry?.ExeName ?? "";
+				bool usesExternalLifecycle = dbEntry?.LaunchBehavior.LifecycleTracking ==
+					GameLifecycleTrackingMode.ExternalDeployment;
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Starting))
 				{
-					if (!server.PID.HasValue && server.Game != "Dune: Awakening")
+					if (!server.PID.HasValue && !usesExternalLifecycle)
 					{
 						continue;
 					}
 
-					bool isAlive = server.Game == "Dune: Awakening" ||
+					bool isAlive = usesExternalLifecycle ||
 								   (server.PID.HasValue && IsProcessAlive(server.PID.Value, exePathFromDB));
 
 					if (isAlive)
@@ -89,8 +91,12 @@ namespace Synix_Control_Panel.SynixEngine
 										{
 											MainGUI.Instance?.Invoke((Action)(() =>
 											{
-												_ = SendDiscordAlert(server, "SERVER ONLINE",
-													$"Successfully verified server connectivity!",
+												server.HasAnnouncedOnline = true;
+												_ = SendDiscordNotification(
+													server,
+													DiscordNotificationEvent.ServerOnline,
+													"SERVER ONLINE",
+													"Synix successfully verified server connectivity.",
 													Color.LimeGreen);
 
 												server.Status = StatusManager.GetStatus(ServerState.Running);
@@ -127,7 +133,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					if (server.Game != "Dune: Awakening" && server.PID.HasValue)
+					if (!usesExternalLifecycle && server.PID.HasValue)
 					{
 						if (!IsProcessAlive(server.PID.Value, exePathFromDB))
 						{

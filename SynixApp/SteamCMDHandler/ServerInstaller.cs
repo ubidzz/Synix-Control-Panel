@@ -25,29 +25,47 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 		public static int Install(GameServer server, GameInfo blueprint, Action<string> logCallback, Action<int>? onPidStarted = null)
 		{
-
+			ArgumentNullException.ThrowIfNull(logCallback);
 			if (blueprint.AppID == "0" || blueprint.AppID.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
 				return InstallDirectDownloadAsync(server, blueprint, logCallback).GetAwaiter().GetResult();
 			}
 
+			ProcessStartInfo startInfo;
+			int? downloadThrottleKbps = GetConfiguredDownloadThrottleKbps();
+			try
+			{
+				startInfo = CreateSteamProcessStartInfo(
+					server,
+					blueprint,
+					downloadThrottleKbps);
+			}
+			catch (InvalidOperationException ex)
+			{
+				logCallback?.Invoke($"[CRITICAL] {ex.Message}");
+				return 97;
+			}
+
+			if (downloadThrottleKbps.HasValue)
+			{
+				logCallback?.Invoke(
+					$"[STEAMCMD] Download speed limited to " +
+					$"{downloadThrottleKbps.Value / 1000} Mbps for this operation.");
+			}
+
+			if (blueprint.RequiresSteamLogin)
+			{
+				return InstallWithSteamAccount(
+					server,
+					blueprint,
+					startInfo,
+					logCallback!,
+					onPidStarted);
+			}
+
 			int hasInternalError = 0;
 			string lastLoggedLine = "";
 			object lineSync = new();
-
-			ProcessStartInfo startInfo = new()
-			{
-				FileName = Core.SteamCmdExe,
-				Arguments =
-					$"+force_install_dir \"{server.InstallPath}\" " +
-					$"+login anonymous " +
-					$"+app_update {blueprint.AppID} validate +quit",
-				WorkingDirectory = Core.SteamCmdPath,
-				UseShellExecute = false,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-				CreateNoWindow = true
-			};
 
 			using Process process = new()
 			{
@@ -265,6 +283,365 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 
 			return resultCode;
+		}
+
+		internal static ProcessStartInfo CreateSteamProcessStartInfo(
+			GameServer server,
+			GameInfo blueprint)
+		{
+			return CreateSteamProcessStartInfo(
+				server,
+				blueprint,
+				GetConfiguredDownloadThrottleKbps());
+		}
+
+		internal static ProcessStartInfo CreateSteamProcessStartInfo(
+			GameServer server,
+			GameInfo blueprint,
+			int? downloadThrottleKbps)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(blueprint);
+
+			if (blueprint.RequiresSteamLogin &&
+				string.IsNullOrWhiteSpace(server.SteamAccountName))
+			{
+				throw new InvalidOperationException(
+					$"{blueprint.Game} requires a Steam account name before installation.");
+			}
+
+			bool authenticated = blueprint.RequiresSteamLogin;
+			ProcessStartInfo startInfo = new()
+			{
+				FileName = Core.SteamCmdExe,
+				WorkingDirectory = Core.SteamCmdPath,
+				UseShellExecute = false,
+				RedirectStandardOutput = !authenticated,
+				RedirectStandardError = !authenticated,
+				CreateNoWindow = !authenticated,
+				WindowStyle = authenticated
+					? ProcessWindowStyle.Normal
+					: ProcessWindowStyle.Hidden
+			};
+
+			startInfo.ArgumentList.Add("+force_install_dir");
+			startInfo.ArgumentList.Add(server.InstallPath);
+			startInfo.ArgumentList.Add("+login");
+			startInfo.ArgumentList.Add(authenticated
+				? server.SteamAccountName.Trim()
+				: "anonymous");
+			if (downloadThrottleKbps is > 0)
+			{
+				startInfo.ArgumentList.Add("+set_download_throttle");
+				startInfo.ArgumentList.Add(downloadThrottleKbps.Value.ToString());
+				startInfo.ArgumentList.Add("false");
+			}
+			if (!string.IsNullOrWhiteSpace(blueprint.SteamAppConfig))
+			{
+				startInfo.ArgumentList.Add("+app_set_config");
+				startInfo.ArgumentList.Add(blueprint.SteamAppConfig);
+			}
+			startInfo.ArgumentList.Add("+app_update");
+			startInfo.ArgumentList.Add(blueprint.AppID);
+			startInfo.ArgumentList.Add("validate");
+			startInfo.ArgumentList.Add("+quit");
+
+			return startInfo;
+		}
+
+		internal static int ConvertDownloadLimitToKbps(int megabitsPerSecond)
+		{
+			return Math.Clamp(megabitsPerSecond, 1, 10000) * 1000;
+		}
+
+		private static int? GetConfiguredDownloadThrottleKbps()
+		{
+			if (!Properties.Settings.Default.LimitSteamCmdDownloadSpeed)
+			{
+				return null;
+			}
+
+			return ConvertDownloadLimitToKbps(
+				Properties.Settings.Default.SteamCmdDownloadLimitMbps);
+		}
+
+		internal static ProcessStartInfo CreateSteamAuthenticationStartInfo(
+			GameServer server,
+			GameInfo blueprint)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(blueprint);
+
+			if (!blueprint.RequiresSteamLogin)
+			{
+				throw new InvalidOperationException(
+					$"{blueprint.Game} does not require Steam account authorization.");
+			}
+
+			if (string.IsNullOrWhiteSpace(server.SteamAccountName))
+			{
+				throw new InvalidOperationException(
+					$"{blueprint.Game} requires a Steam account name before authorization.");
+			}
+
+			ProcessStartInfo startInfo = new()
+			{
+				FileName = Core.SteamCmdExe,
+				WorkingDirectory = Core.SteamCmdPath,
+				UseShellExecute = false,
+				RedirectStandardOutput = false,
+				RedirectStandardError = false,
+				CreateNoWindow = false,
+				WindowStyle = ProcessWindowStyle.Normal
+			};
+
+			startInfo.ArgumentList.Add("+login");
+			startInfo.ArgumentList.Add(server.SteamAccountName.Trim());
+			startInfo.ArgumentList.Add("+quit");
+
+			return startInfo;
+		}
+
+		public static int AuthenticateSteamAccount(
+			GameServer server,
+			GameInfo blueprint,
+			Action<string> logCallback,
+			Action<int>? onPidStarted = null)
+		{
+			ProcessStartInfo startInfo;
+			try
+			{
+				startInfo = CreateSteamAuthenticationStartInfo(server, blueprint);
+			}
+			catch (InvalidOperationException ex)
+			{
+				logCallback?.Invoke($"[CRITICAL] {ex.Message}");
+				return 97;
+			}
+
+			string consoleLogPath = Path.Combine(
+				Core.SteamCmdPath,
+				"logs",
+				"console_log.txt");
+			long consoleLogStart = GetFileLength(consoleLogPath);
+			Stopwatch authenticationTimer = Stopwatch.StartNew();
+
+			using Process process = new()
+			{
+				StartInfo = startInfo
+			};
+
+			try
+			{
+				logCallback?.Invoke(
+					$"[STEAM LOGIN] Checking Steam authorization for {blueprint.Game}.");
+				logCallback?.Invoke(
+					"If SteamCMD requests authorization, enter your password there and " +
+					"approve the login in the Steam Mobile app. Synix does not receive " +
+					"or save your password or Steam Guard code.");
+
+				process.Start();
+				onPidStarted?.Invoke(process.Id);
+
+				while (!process.WaitForExit(1000))
+				{
+					TimeSpan elapsed = authenticationTimer.Elapsed;
+					SetMainWindowTitle(
+						"Synix Control Panel - Steam authorization... " +
+						$"[{elapsed.Minutes:D2}m {elapsed.Seconds:D2}s]");
+				}
+
+				string newConsoleLog = ReadFileSince(
+					consoleLogPath,
+					consoleLogStart);
+
+				if (ContainsSteamFailure(newConsoleLog) || process.ExitCode != 0)
+				{
+					logCallback?.Invoke(
+						"[CRITICAL] Steam authorization was cancelled, rejected, or did not finish.");
+					return 96;
+				}
+
+				logCallback?.Invoke(
+					$"[STEAM LOGIN] Steam authorization for {blueprint.Game} is ready on this PC.");
+				return 0;
+			}
+			catch (Exception ex)
+			{
+				logCallback?.Invoke(
+					$"[CRITICAL] Steam authorization error: {ex.Message}");
+				return 96;
+			}
+			finally
+			{
+				authenticationTimer.Stop();
+				SetMainWindowTitle("Synix Control Panel");
+				Core.Instance.UpdateGridStatus();
+			}
+		}
+
+		private static int InstallWithSteamAccount(
+			GameServer server,
+			GameInfo blueprint,
+			ProcessStartInfo startInfo,
+			Action<string> logCallback,
+			Action<int>? onPidStarted)
+		{
+			string consoleLogPath = Path.Combine(
+				Core.SteamCmdPath,
+				"logs",
+				"console_log.txt");
+			long consoleLogStart = GetFileLength(consoleLogPath);
+			Stopwatch installTimer = Stopwatch.StartNew();
+
+			using Process process = new()
+			{
+				StartInfo = startInfo
+			};
+
+			try
+			{
+				logCallback?.Invoke(
+					$"[STEAM LOGIN] Opening SteamCMD for {blueprint.Game}.");
+				logCallback?.Invoke(
+					"Enter your Steam password directly in the SteamCMD window. " +
+					"Approve the login in the Steam Mobile app, or enter the " +
+					"Steam Guard code from the app or your Steam email if requested.");
+
+				process.Start();
+				onPidStarted?.Invoke(process.Id);
+
+				while (!process.WaitForExit(1000))
+				{
+					TimeSpan elapsed = installTimer.Elapsed;
+					SetMainWindowTitle(
+						"Synix Control Panel - Steam login/install... " +
+						$"[{elapsed.Minutes:D2}m {elapsed.Seconds:D2}s]");
+				}
+
+				string newConsoleLog = ReadFileSince(
+					consoleLogPath,
+					consoleLogStart);
+
+				string successMarker =
+					$"Success! App '{blueprint.AppID}' fully installed.";
+				if (newConsoleLog.Contains(
+						successMarker,
+						StringComparison.OrdinalIgnoreCase))
+				{
+					logCallback?.Invoke(
+						$"[STEAM LOGIN] {blueprint.Game} was downloaded successfully.");
+					return 0;
+				}
+
+				if (ContainsSteamFailure(newConsoleLog))
+				{
+					logCallback?.Invoke(
+						"[CRITICAL] SteamCMD reported that the authenticated installation failed.");
+					return 98;
+				}
+
+				if (process.ExitCode != 0)
+					return process.ExitCode;
+
+				string installedExecutable = Path.Combine(
+					server.InstallPath,
+					blueprint.ExeName);
+				if (File.Exists(installedExecutable))
+				{
+					logCallback?.Invoke(
+						"[WARNING] SteamCMD closed without a completion message, " +
+						"but the server executable is present.");
+					return 0;
+				}
+
+				logCallback?.Invoke(
+					"[CRITICAL] SteamCMD closed before Synix could verify the installation.");
+				return 98;
+			}
+			catch (Exception ex)
+			{
+				logCallback?.Invoke(
+					$"[CRITICAL] Steam login installer error: {ex.Message}");
+				return -1;
+			}
+			finally
+			{
+				installTimer.Stop();
+				SetMainWindowTitle("Synix Control Panel");
+				Core.Instance.UpdateGridStatus();
+			}
+		}
+
+		private static long GetFileLength(string filePath)
+		{
+			try
+			{
+				return File.Exists(filePath)
+					? new FileInfo(filePath).Length
+					: 0;
+			}
+			catch
+			{
+				return 0;
+			}
+		}
+
+		private static string ReadFileSince(string filePath, long offset)
+		{
+			try
+			{
+				using FileStream stream = new(
+					filePath,
+					FileMode.Open,
+					FileAccess.Read,
+					FileShare.ReadWrite | FileShare.Delete);
+
+				if (offset > 0 && offset <= stream.Length)
+					stream.Seek(offset, SeekOrigin.Begin);
+
+				using StreamReader reader = new(stream, Encoding.UTF8, true);
+				return reader.ReadToEnd();
+			}
+			catch
+			{
+				return string.Empty;
+			}
+		}
+
+		private static bool ContainsSteamFailure(string output)
+		{
+			return output.Contains("ERROR!", StringComparison.OrdinalIgnoreCase) ||
+				output.Contains("FAILED", StringComparison.OrdinalIgnoreCase) ||
+				output.Contains("No subscription", StringComparison.OrdinalIgnoreCase) ||
+				output.Contains("AppID not found", StringComparison.OrdinalIgnoreCase) ||
+				output.Contains("Invalid Password", StringComparison.OrdinalIgnoreCase) ||
+				output.Contains("Account Logon Denied", StringComparison.OrdinalIgnoreCase) ||
+				output.Contains("Login Failure", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static void SetMainWindowTitle(string title)
+		{
+			MainGUI? mainWindow = MainGUI.Instance;
+
+			if (mainWindow == null ||
+				mainWindow.IsDisposed ||
+				!mainWindow.IsHandleCreated)
+			{
+				return;
+			}
+
+			try
+			{
+				mainWindow.BeginInvoke(new Action(() =>
+				{
+					if (!mainWindow.IsDisposed)
+						mainWindow.Text = title;
+				}));
+			}
+			catch (InvalidOperationException)
+			{
+			}
 		}
 
 		private static async Task<int> InstallDirectDownloadAsync(GameServer server, GameInfo blueprint, Action<string> logCallback)
@@ -540,7 +917,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 							javaExecutable,
 							fullFilePath,
 							forgeArtifactVersion,
-							logCallback);
+							logCallback!);
 						if (forgeResult != 0)
 							return forgeResult;
 					}
@@ -622,8 +999,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 				string output = await outputTask;
 				string errors = await errorTask;
-				LogProcessOutput(output, "FORGE", logCallback);
-				LogProcessOutput(errors, "FORGE", logCallback);
+				LogProcessOutput(output, "FORGE", logCallback!);
+				LogProcessOutput(errors, "FORGE", logCallback!);
 
 				if (installer.ExitCode != 0)
 				{
@@ -761,6 +1138,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			return code switch
 			{
 				0 => "Success",
+				96 => "Steam account authorization was cancelled, rejected, or could not be completed.",
+				97 => "A Steam account name is required for this game.",
+				98 => "Steam login was cancelled, rejected, or the authenticated installation could not be verified.",
 				99 => "Steam Error: AppID not found, no subscription, or SteamCMD reported a failure.",
 				5 => "Invalid Arguments",
 				7 => "Disk Space Full",

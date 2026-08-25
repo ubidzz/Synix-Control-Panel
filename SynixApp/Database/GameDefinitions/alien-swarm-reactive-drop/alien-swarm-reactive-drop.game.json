@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 3,
+  "id": "alien-swarm-reactive-drop",
+  "catalogOrder": 79,
+  "game": "Alien Swarm: Reactive Drop",
+  "aliases": [],
+  "appId": "582400",
+  "requiresSteamLogin": false,
+  "executable": "srcds_console.exe",
+  "downloadUrl": "",
+  "arguments": "-console -condebug -game reactivedrop -ip 0.0.0.0 -port {port} -maxplayers {MaxPlayers} +hostname \"{ServerName}\" {rcon} +sv_password \"{pass}\" +exec server +map {map} -SteamAppId={steamAppID}",
+  "rconSyntax": "+rcon_password \"{rcon_pass}\"",
+  "port": 27050,
+  "queryPort": 27050,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "lobby",
+    "asi-jac1-landingbay_01"
+  ],
+  "gameModes": [],
+  "configFileCreation": "SynixTemplate",
+  "relativeConfigPath": "reactivedrop\\cfg\\server.cfg",
+  "format": "Space",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": false,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 1,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 1,
+        "relativePath": "reactivedrop\\cfg\\server.cfg",
+        "templateFile": "server.cfg"
+      }
+    ]
+  }
+}

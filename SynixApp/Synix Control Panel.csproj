@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<RootNamespace>Synix_Control_Panel</RootNamespace>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -15,7 +15,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.21</Version>
+		<Version>1.0.22</Version>
 		<AssemblyVersion>$(Version).0</AssemblyVersion>
 		<FileVersion>$(Version).0</FileVersion>
 		<InformationalVersion>$(Version)</InformationalVersion>
@@ -46,13 +46,15 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="SynixEngine\version.txt" />
+	  <EmbeddedResource Include="Database\GameDefinitions\**\*.game.json" />
+	  <EmbeddedResource Include="Database\GameDefinitions\**\Templates\**\*" />
+	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<AssemblyMetadata Include="SynixBuildChannel" Value="$(SynixBuildChannel)" />
 		<InternalsVisibleTo Include="Synix.Tests" />
 		<PackageReference Include="System.Management" Version="10.0.7" />
-		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -93,11 +95,68 @@
 	  <Compile Update="UI\AdvancedSettingsPage.Designer.cs">
 	    <DependentUpon>AdvancedSettingsPage.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\DevelopmentSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
 	  <Compile Update="UI\ProblemReportSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
 	  <Compile Update="UI\ProblemReportSettingsPage.Designer.cs">
 	    <DependentUpon>ProblemReportSettingsPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\SteamAccountLoginDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\SteamAccountLoginDialog.Designer.cs">
+	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitionBuilder.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitionBuilder.Designer.cs">
+	    <DependentUpon>GameDefinitionBuilder.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitionValidationDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitionValidationDialog.Designer.cs">
+	    <DependentUpon>GameDefinitionValidationDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\GameVerificationQueue.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\GameVerificationQueue.Designer.cs">
+	    <DependentUpon>GameVerificationQueue.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ArgumentVerificationDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ArgumentVerificationDialog.Designer.cs">
+	    <DependentUpon>ArgumentVerificationDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\TroubleshooterDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\TroubleshooterDialog.Designer.cs">
+	    <DependentUpon>TroubleshooterDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\FirstRunGuideDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\FirstRunGuideDialog.Designer.cs">
+	    <DependentUpon>FirstRunGuideDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ReliabilityTestDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ReliabilityTestDialog.Designer.cs">
+	    <DependentUpon>ReliabilityTestDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerBackupRestoreDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerBackupRestoreDialog.Designer.cs">
+	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -105,6 +164,14 @@
 	  <EmbeddedResource Update="Properties\Resources.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="UI\SteamAccountLoginDialog.resx">
+	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="UI\ServerBackupRestoreDialog.resx">
+	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
+	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	</ItemGroup>
 
@@ -183,11 +250,13 @@
 		<Error Condition="'$(_SynixStandaloneSha256)' == ''" Text="The standalone SHA-256 hash could not be created." />
 		<Error Condition="'$(_SynixMsiSha256)' == ''" Text="The MSI SHA-256 hash could not be created." />
 		<ItemGroup>
-			<_SynixReleaseManifestLine Include="FormatVersion=2" />
+			<_SynixReleaseManifestLine Include="FormatVersion=3" />
 			<_SynixReleaseManifestLine Include="Version=$(Version)" />
 			<_SynixReleaseManifestLine Include="Channel=$(SynixBuildChannel)" />
 			<_SynixReleaseManifestLine Include="AutomatedTests=Passed" />
 			<_SynixReleaseManifestLine Include="AutomatedTestsUtc=$(_SynixAutomatedTestsUtc)" />
+			<_SynixReleaseManifestLine Include="SecurityRegressionReview=Passed" />
+			<_SynixReleaseManifestLine Include="SecurityRegressionReviewUtc=$(_SynixAutomatedTestsUtc)" />
 			<_SynixReleaseManifestLine Include="StandaloneFile=$(AssemblyName).exe" />
 			<_SynixReleaseManifestLine Include="StandaloneSha256=$(_SynixStandaloneSha256)" />
 			<_SynixReleaseManifestLine Include="MsiFile=SynixSetup.msi" />

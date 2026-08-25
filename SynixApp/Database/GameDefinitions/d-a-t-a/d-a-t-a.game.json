@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "d-a-t-a",
+  "catalogOrder": 157,
+  "game": "D.A.T.A",
+  "aliases": [],
+  "appId": "965690",
+  "requiresSteamLogin": false,
+  "executable": "WindowsServer\\ABYSS421\\Binaries\\Win64\\ABYSS421Server.exe",
+  "downloadUrl": "",
+  "arguments": "?AdminPassword=\"{adminpass}\" -server -log -SteamServerName=\"{ServerName}\" -QueryPort={query} -Port={port} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27105,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "WindowsServer\\ABYSS421\\Binaries\\Win64"
+    }
+  ]
+}

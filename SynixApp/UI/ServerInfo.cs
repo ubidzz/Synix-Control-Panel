@@ -48,13 +48,16 @@ namespace Synix_Control_Panel.Help
 		private System.Windows.Forms.Timer? _metricsTimer;
 		private DateTime _lastCpuCheckTime;
 		private TimeSpan _lastCpuTotalProcessorTime;
-		private int _spinnerFrame;
+		private int _busyStatusFrame;
+		private bool _statusIndicatorBusy;
+		private Color _statusIndicatorColor = SettingsPalette.Danger;
 		private double _currentCpuPercentage;
 		private double _currentRamPercentage;
 
 		public ServerInfo()
 		{
 			InitializeComponent();
+			InitializeStatusIndicator();
 			_server = new GameServer();
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 				ThemeManager.Apply(this);
@@ -63,6 +66,7 @@ namespace Synix_Control_Panel.Help
 		public ServerInfo(GameServer server)
 		{
 			InitializeComponent();
+			InitializeStatusIndicator();
 			_server = server ?? throw new ArgumentNullException(nameof(server));
 			ThemeManager.Apply(this);
 
@@ -141,20 +145,31 @@ namespace Synix_Control_Panel.Help
 
 		private void LoadServerData()
 		{
+			GameCompatibilitySummary compatibility =
+				Core.GetGameCompatibilitySummary(_server.Game);
 			bool secretsAvailable = Core
 				.TryRevealServerSecrets(
 					_server,
 					out SynixServerSecrets secrets);
+			bool routesAvailable = Core.TryRevealDiscordWebhookRoutes(
+				_server,
+				out IReadOnlyList<DiscordWebhookRoute> discordRoutes);
 			SynixServerPasswords passwords = secrets.Passwords;
+			int enabledDiscordRoutes = routesAvailable
+				? discordRoutes.Count(route => route.Enabled)
+				: 0;
 
 			lblPageHeading.Text = DisplayOrFallback(_server.ServerName, "Server Overview");
 			lblPageSubtitle.Text =
-				$"{DisplayOrFallback(_server.Game, "Dedicated server")}  •  Live performance and configuration details";
+				$"{DisplayOrFallback(_server.Game, "Dedicated server")}  •  " +
+				$"{compatibility.DisplayName}  •  Live performance and configuration details";
 
 			SetStatusColor(lblRconActiveText, _server.EnableRcon);
 			SetStatusColor(lblBackupOnStartText, _server.BackupOnStart);
 			SetStatusColor(lbllUpdateOnStartText, _server.UpdateOnStart);
-			SetStatusColor(lblDiscordActivateText, _server.IsDiscordAlertEnabled);
+			SetStatusColor(
+				lblDiscordActivateText,
+				_server.IsDiscordAlertEnabled || enabledDiscordRoutes > 0);
 
 			lblMaxPlayersText.Text = _server.MaxPlayers.ToString();
 			lblGamePortText.Text = _server.Port.ToString();
@@ -181,9 +196,9 @@ namespace Synix_Control_Panel.Help
 				: "N/A";
 
 			txtServerFolderValue.Text = DisplayOrFallback(_server.InstallPath);
-			txtDiscordWebhookValue.Text = secretsAvailable
-				? DisplayOrFallback(secrets.DiscordWebhook, "Not Configured")
-				: "Credential unavailable";
+			btnDiscordRoutes.Visible = secretsAvailable &&
+				routesAvailable &&
+				(!string.IsNullOrWhiteSpace(secrets.DiscordWebhook) || discordRoutes.Count > 0);
 			txtExtraArgsValue.Text = DisplayOrFallback(_server.ExtraArgs, "No extra arguments");
 		}
 
@@ -229,6 +244,22 @@ namespace Synix_Control_Panel.Help
 			};
 			_metricsTimer.Tick += MetricsTimer_Tick;
 			_metricsTimer.Start();
+		}
+
+		private void InitializeStatusIndicator()
+		{
+			pnlStatusIndicator.BackColor = SettingsPalette.Card;
+			pnlStatusIndicator.Paint += StatusIndicator_Paint;
+		}
+
+		private void StatusIndicator_Paint(object? sender, PaintEventArgs eventArgs)
+		{
+			BusyStatusPresentation.DrawIndicator(
+				eventArgs.Graphics,
+				pnlStatusIndicator.ClientRectangle,
+				_statusIndicatorColor,
+				_statusIndicatorBusy,
+				_busyStatusFrame);
 		}
 
 		private void MetricsTimer_Tick(object? sender, EventArgs eventArgs)
@@ -354,28 +385,20 @@ namespace Synix_Control_Panel.Help
 		private void UpdateStatusPresentation(string? rawStatus)
 		{
 			string status = DisplayOrFallback(rawStatus, "Stopped");
-			string[] busyStates =
-			{
-				"Updating",
-				"Validating",
-				"Installing",
-				"Backing Up",
-				"Stopping",
-				"Starting"
-			};
-
-			string? busyState = busyStates.FirstOrDefault(
-				item => status.StartsWith(item, StringComparison.OrdinalIgnoreCase));
+			bool isBusy = BusyStatusPresentation.TryGetBusyState(
+				status,
+				out string busyState);
 
 			Color statusColor;
 			string displayedStatus;
 
-			if (busyState != null)
+			if (isBusy)
 			{
-				string[] frames = { "|", "/", "—", "\\" };
-				displayedStatus = $"{busyState} {frames[_spinnerFrame++ % frames.Length]}";
+				displayedStatus = busyState;
 				statusColor = BusyColor;
 				lblStatusCaption.Text = "A server operation is currently in progress";
+				_busyStatusFrame =
+					(_busyStatusFrame + 1) % BusyStatusPresentation.FrameCount;
 			}
 			else if (status.Equals("Running", StringComparison.OrdinalIgnoreCase))
 			{
@@ -399,7 +422,9 @@ namespace Synix_Control_Panel.Help
 
 			lblStatusCardValue.Text = displayedStatus;
 			lblStatusCardValue.ForeColor = statusColor;
-			pnlStatusIndicator.BackColor = statusColor;
+			_statusIndicatorBusy = isBusy;
+			_statusIndicatorColor = statusColor;
+			pnlStatusIndicator.Invalidate();
 		}
 
 		private void MetricTrack_SizeChanged(object? sender, EventArgs eventArgs)
@@ -440,6 +465,35 @@ namespace Synix_Control_Panel.Help
 		private void btnClose_Click(object? sender, EventArgs eventArgs)
 		{
 			Close();
+		}
+
+		private void btnDiscordRoutes_Click(object? sender, EventArgs eventArgs)
+		{
+			if (!Core.TryRevealServerSecrets(_server, out SynixServerSecrets secrets) ||
+				!Core.TryRevealDiscordWebhookRoutes(
+					_server,
+					out IReadOnlyList<DiscordWebhookRoute> routes))
+			{
+				MessageBox.Show(
+					this,
+					"Synix could not unlock the saved Discord webhook information. Open Server Settings and save the webhooks again.",
+					"Discord Webhooks Unavailable",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(secrets.DiscordWebhook) && routes.Count == 0)
+			{
+				btnDiscordRoutes.Visible = false;
+				return;
+			}
+
+			using DiscordRoutingInfoDialog dialog = new(
+				_server,
+				secrets.DiscordWebhook,
+				routes);
+			dialog.ShowDialog(this);
 		}
 
 		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)

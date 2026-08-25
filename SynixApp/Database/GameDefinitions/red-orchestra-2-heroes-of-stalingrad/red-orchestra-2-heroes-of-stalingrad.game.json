@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "red-orchestra-2-heroes-of-stalingrad",
+  "catalogOrder": 87,
+  "game": "Red Orchestra 2: Heroes of Stalingrad",
+  "aliases": [],
+  "appId": "212542",
+  "requiresSteamLogin": true,
+  "executable": "Binaries\\Win64\\ROGame.exe",
+  "downloadUrl": "",
+  "arguments": "{map}?MaxPlayers={MaxPlayers} -Port={port} -QueryPort={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [
+    "TE-Apartments",
+    "TE-Gumrak"
+  ],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "ROGame\\Config\\ROGame.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "Binaries\\Win64"
+    }
+  ]
+}

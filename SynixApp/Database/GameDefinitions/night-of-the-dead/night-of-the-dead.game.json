@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "night-of-the-dead",
+  "catalogOrder": 155,
+  "game": "Night of the Dead",
+  "aliases": [],
+  "appId": "1420710",
+  "requiresSteamLogin": false,
+  "executable": "StartServer.bat",
+  "downloadUrl": "",
+  "arguments": "",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "ServerSettings.ini",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": false,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "LF\\Binaries\\Win64"
+    }
+  ]
+}

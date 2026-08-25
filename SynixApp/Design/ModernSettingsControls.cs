@@ -98,9 +98,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 		}
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color FillColor { get; set; } = SettingsPalette.Card;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color BorderColor { get; set; } = SettingsPalette.Border;
 
 		public ModernSettingsCard()
@@ -475,15 +477,19 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private bool _mouseInside;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color BorderColor { get; set; } = SettingsPalette.Border;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color FocusBorderColor { get; set; } = SettingsPalette.Border;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color ArrowColor { get; set; } = SettingsPalette.SecondaryText;
 
 		[Category("Synix Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color SelectedItemBackColor { get; set; } =
 			SettingsPalette.Selection;
 
@@ -541,9 +547,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 			using SolidBrush backgroundBrush = new(itemBackColor);
 			eventArgs.Graphics.FillRectangle(backgroundBrush, eventArgs.Bounds);
 
-			string itemText = eventArgs.Index >= 0 && eventArgs.Index < Items.Count
+			string itemText = (eventArgs.Index >= 0 && eventArgs.Index < Items.Count
 				? GetItemText(Items[eventArgs.Index])
-				: Text;
+				: Text) ?? string.Empty;
 			bool drawingEditArea =
 				(eventArgs.State & DrawItemState.ComboBoxEdit) != 0;
 			int rightPadding = drawingEditArea ? 44 : 18;
@@ -925,9 +931,12 @@ namespace Synix_Control_Panel.SynixApp.Design
 			Margin = Padding.Empty;
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[System.Diagnostics.CodeAnalysis.AllowNull]
 		public object EditingControlFormattedValue
 		{
-			get => SelectedItem == null ? Text : GetItemText(SelectedItem);
+			get => (SelectedItem == null ? Text : GetItemText(SelectedItem)) ?? string.Empty;
 			set
 			{
 				string formattedValue = value?.ToString() ?? string.Empty;
@@ -948,7 +957,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 		public object GetEditingControlFormattedValue(
 			DataGridViewDataErrorContexts context)
 		{
-			return EditingControlFormattedValue;
+			return EditingControlFormattedValue ?? string.Empty;
 		}
 
 		public void ApplyCellStyleToEditingControl(
@@ -994,16 +1003,22 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int EditingControlRowIndex { get; set; }
 
 		public bool RepositionEditingControlOnValueChange => false;
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridView? EditingControlDataGridView
 		{
 			get => _editingDataGridView;
 			set => _editingDataGridView = value;
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool EditingControlValueChanged { get; set; }
 
 		public Cursor EditingPanelCursor => Cursors.Default;
@@ -1071,7 +1086,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private int _increment = 1;
 		private int _hoveredButton;
 		private int _pressedButton;
-		private bool _mouseInside;
 		private bool _initializing;
 		private bool _replaceOnNextInput = true;
 		private string _editBuffer = "1";
@@ -1192,7 +1206,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnMouseLeave(EventArgs eventArgs)
 		{
-			_mouseInside = false;
 			_hoveredButton = 0;
 			_pressedButton = 0;
 			Cursor = Cursors.IBeam;
@@ -1202,7 +1215,6 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		protected override void OnMouseEnter(EventArgs eventArgs)
 		{
-			_mouseInside = true;
 			Invalidate();
 			base.OnMouseEnter(eventArgs);
 		}
@@ -1453,9 +1465,11 @@ namespace Synix_Control_Panel.SynixApp.Design
 			new("Segoe UI Symbol", 14F, FontStyle.Regular);
 
 		[Category("Synix Appearance")]
+		[DefaultValue("•")]
 		public string IconGlyph { get; set; } = "•";
 
 		[Category("Synix Appearance")]
+		[DefaultValue(false)]
 		public bool Selected
 		{
 			get => _selected;
@@ -1563,6 +1577,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 	public sealed class ModernSettingsGlyph : Control
 	{
 		[Category("Synix Appearance")]
+		[DefaultValue("•")]
 		public string Glyph { get; set; } = "•";
 
 		public ModernSettingsGlyph()

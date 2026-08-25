@@ -29,6 +29,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		static extern bool FreeConsole();
 
 		[DllImport("kernel32.dll")]
+		static extern IntPtr GetConsoleWindow();
+
+		[DllImport("user32.dll")]
+		static extern bool ShowWindowAsync(IntPtr windowHandle, int command);
+
+		[DllImport("kernel32.dll")]
 		static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
 
 		[DllImport("kernel32.dll")]
@@ -36,6 +42,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		delegate bool ConsoleCtrlDelegate(uint CtrlType);
 
 		const uint CTRL_C_EVENT = 0;
+		private const int SW_HIDE = 0;
 		private const int STD_INPUT_HANDLE = -10;
 		private const ushort KEY_EVENT = 0x0001;
 
@@ -106,8 +113,59 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		public static async Task Start(GameServer server, Action<string, Color> logCallback, StartContext context = StartContext.Manual)
 		{
+			ArgumentNullException.ThrowIfNull(logCallback);
 			try
 			{
+				GameInfo? selectedDefinition = GameDatabase.GetGame(server.Game);
+				if (selectedDefinition == null)
+				{
+					logCallback?.Invoke(
+						$"[START ERROR] The built-in definition for '{server.Game}' could not be loaded.",
+						Color.Red);
+					_ = Core.Instance.SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.ConfigurationWarning,
+						"START CONFIGURATION ERROR",
+						$"The built-in definition for {server.Game} could not be loaded.",
+						Color.Red);
+					return;
+				}
+
+				GamePrerequisiteReport prerequisites = await Task.Run(() =>
+					GamePrerequisiteChecker.CheckCurrentSystem(
+						selectedDefinition,
+						server,
+						port => Core.Instance.GetPortCollisionOwner(
+							port,
+							server,
+							activeOnly: true),
+						Core.Instance.IsPortInUseLocally));
+				foreach (GamePrerequisiteItem warning in prerequisites.Items.Where(item =>
+					item.State == GamePrerequisiteState.Warning))
+				{
+					logCallback?.Invoke($"[REQUIREMENT WARNING] {warning.Message}", Color.Orange);
+				}
+				if (!prerequisites.CanStart)
+				{
+					string message = prerequisites.ToDisplayText();
+					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
+					_ = Core.Instance.SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.MonitoringWarning,
+						"START BLOCKED",
+						message,
+						Color.Red);
+					if (context == StartContext.Manual)
+					{
+						MessageBox.Show(
+							message,
+							"Server Requirements Not Met",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Warning);
+					}
+					return;
+				}
+
 				SynixServerPasswords launchPasswords;
 				try
 				{
@@ -141,6 +199,24 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
+				if (OxideRuntimeManager.IsEnabled(server, selectedDefinition) &&
+					string.Equals(
+						server.ServerFrameworkVersion,
+						OxideRuntimeManager.FailedVersion,
+						StringComparison.OrdinalIgnoreCase))
+				{
+					logCallback?.Invoke(
+						"[OXIDE ERROR] Start blocked because Oxide was not installed successfully. Run Update or Validate to retry.",
+						Color.Red);
+					return;
+				}
+				if (OxideRuntimeManager.RequiresVanillaRestore(server, selectedDefinition))
+				{
+					logCallback?.Invoke(
+						"[OXIDE] Start blocked because Rust was changed to Vanilla. Run Update or Validate to restore the official files first.",
+						Color.Orange);
+					return;
+				}
 
 				server.HasAnnouncedOnline = false;
 				server.IsProbing = false;
@@ -151,6 +227,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";
 				bool isMinecraft = false;
+				bool hideWindow = selectedDefinition != null &&
+					GameLaunchCommandBuilder.ShouldHideServerWindow(
+						selectedDefinition,
+						Properties.Settings.Default.ShowServerWindow);
 
 				await Task.Run(() =>
 				{
@@ -167,174 +247,71 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					if (!File.Exists(fullExePath))
 					{
 						logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}", Color.Red);
+						_ = Core.Instance.SendDiscordNotification(
+							server,
+							DiscordNotificationEvent.ConfigurationWarning,
+							"SERVER FILE MISSING",
+							"The configured server launch file is missing. Run Update or Validate before starting.",
+							Color.Red);
 						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
 						return;
 					}
 
-					isMinecraft = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+					isMinecraft = GameDatabase.IsMinecraft(server.Game);
 					if (isMinecraft)
 					{
-						PrepareMinecraftLauncher(fullExePath, logCallback);
+						PrepareMinecraftLauncher(fullExePath, logCallback!);
 					}
 
-					string targetId = dbEntry.AppID;
-					string invokedId = targetId;
-
-					string rootAppIdPath = Path.Combine(server.InstallPath, "steam_appid.txt");
-					string binAppIdPath = Path.Combine(binDir, "steam_appid.txt");
-					string appidPath = rootAppIdPath;
-
-					if (File.Exists(rootAppIdPath))
-					{
-						appidPath = rootAppIdPath;
-					}
-					else if (File.Exists(binAppIdPath))
-					{
-						appidPath = binAppIdPath;
-					}
-					else
-					{
-						try
-						{
-							var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
-							{
-								RecurseSubdirectories = true,
-								IgnoreInaccessible = true,
-								MaxRecursionDepth = 15,
-								AttributesToSkip = FileAttributes.ReparsePoint
-							});
-
-							appidPath = scanner.FirstOrDefault() ?? rootAppIdPath;
-						}
-						catch
-						{
-							appidPath = rootAppIdPath;
-						}
-					}
-
-					if (File.Exists(appidPath))
-					{
-						try
-						{
-							string fileContent = File.ReadAllText(appidPath).Trim();
-
-							fileContent = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim() ?? "";
-
-							if (!string.IsNullOrWhiteSpace(fileContent))
-							{
-								invokedId = fileContent;
-							}
-						}
-						catch (Exception ex) { logCallback?.Invoke($"[⚠️ WARNING] File Read Error: {ex.Message}", Color.OrangeRed); }
-					}
-
-					int ramToUse = server.MaxRam;
-					if (isMinecraft)
-					{
-						ramToUse = server.MaxRam * 1024;
-					}
+					string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
+						server,
+						dbEntry,
+						fullExePath);
 
 					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
-
-					string args = dbEntry.RequiredArgs
-						.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
-						.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
-						.Replace("{map}", server.WorldName)
-						.Replace("{steamAppID}", invokedId)
-						.Replace("{appid}", targetId)
-						.Replace("{port}", server.Port.ToString())
-						.Replace("{query}", server.QueryPort.ToString())
-						.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
-						.Replace("{pass}", launchPasswords.ServerPassword)
-						.Replace("{adminpass}", launchPasswords.AdminPassword)
-						.Replace("{ServerName}", server.ServerName)
-						.Replace("{InstallPath}", server.InstallPath)
-						.Replace("{world_size}", server.WorldSize.ToString())
-						.Replace("{Identity}", cleanIdentity)
-						.Replace("{ram}", ramToUse.ToString());
-
-					if (isMinecraft &&
-						MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader)
-							.Equals(MinecraftMetadataService.ForgeLoader, StringComparison.OrdinalIgnoreCase))
+					if (!GameLaunchCommandBuilder.TryBuildArguments(
+						server,
+						dbEntry,
+						invokedId,
+						launchPasswords,
+						out string args,
+						out string argumentError))
 					{
-						args = $"-Xmx{ramToUse}M -Xms{ramToUse}M";
+						logCallback?.Invoke(
+							$"[🚨 SECURITY] {argumentError} Startup was blocked.",
+							Color.Red);
+						_ = Core.Instance.SendDiscordNotification(
+							server,
+							DiscordNotificationEvent.SecurityWarning,
+							"UNSAFE STARTUP BLOCKED",
+							argumentError,
+							Color.Red);
+						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
+						return;
 					}
-
-					if (args.Contains("{rcon}"))
-					{
-						string formattedRcon = "";
-
-						if (server.EnableRcon && !string.IsNullOrWhiteSpace(dbEntry.RconSyntax))
-						{
-							formattedRcon = dbEntry.RconSyntax
-								.Replace("{rcon_port}", server.RconPort.ToString())
-								.Replace("{rcon_pass}", launchPasswords.RconPassword);
-
-							if (string.Equals(server.Game, "Rust", StringComparison.OrdinalIgnoreCase))
-							{
-								formattedRcon += " +rcon.web 1";
-							}
-						}
-
-						args = args.Replace("{rcon}", formattedRcon);
-					}
-
-					if (args.Contains("{mode}") && !string.IsNullOrWhiteSpace(server.GameMode))
-					{
-						bool usesBooleanMode =
-							server.Game.Equals("ARK: Survival Evolved", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("ARK: Survival Ascended", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("PixARK", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("Atlas", StringComparison.OrdinalIgnoreCase) ||
-							server.Game.Equals("Rust", StringComparison.OrdinalIgnoreCase);
-
-						string translatedMode = server.GameMode;
-
-						if (usesBooleanMode)
-						{
-							if (server.GameMode.Equals("PVE", StringComparison.OrdinalIgnoreCase))
-								translatedMode = "True";
-							else if (server.GameMode.Equals("PVP", StringComparison.OrdinalIgnoreCase))
-								translatedMode = "False";
-						}
-
-						args = args.Replace("{mode}", translatedMode);
-					}
-
-					if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
-					{
-						if (!IsGameServerConfigSafe(server.ExtraArgs))
-						{
-							logCallback?.Invoke("[🚨 SECURITY] Illegal characters detected in the extra arguments. Aborting startup.", Color.Red);
-							MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
-							return;
-						}
-
-						args = $"{args} \"{server.ExtraArgs.Trim()}\"";
-					}
-
-					args = args.Replace("  ", " ").Trim();
 
 					finalArgs = args;
-					bool hideWindow = !Properties.Settings.Default.ShowServerWindow;
-
-					psi = new ProcessStartInfo
+					if (server.Game.Equals("Arma Reforger", StringComparison.OrdinalIgnoreCase))
 					{
-						FileName = fullExePath,
-						Arguments = finalArgs,
-						WorkingDirectory = binDir,
-						UseShellExecute = false,
-						CreateNoWindow = hideWindow,
-
-						RedirectStandardInput = isMinecraft && hideWindow,
-					};
-
-					if (server.Game == "Dune: Awakening")
-					{
-						psi.UseShellExecute = true;
-						psi.Verb = "runas";
+						string profilePath = Path.Combine(
+							server.InstallPath,
+							"profiles",
+							cleanIdentity);
+						Directory.CreateDirectory(profilePath);
+						logCallback?.Invoke(
+							$"[ARMA REFORGER] Profile and crash logs: {profilePath}",
+							Color.Cyan);
 					}
-					else
+
+					psi = GameLaunchCommandBuilder.CreateProcessStartInfo(
+						fullExePath,
+						finalArgs,
+						binDir,
+						dbEntry.LaunchBehavior.RunElevated,
+						hideWindow,
+						isMinecraft && hideWindow);
+
+					if (!psi.UseShellExecute)
 					{
 						psi.EnvironmentVariables["SteamAppId"] = invokedId;
 						psi.EnvironmentVariables["SteamGameId"] = invokedId;
@@ -343,10 +320,27 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				if (psi == null) return;
 
-				string safeLogArgs = finalArgs;
-				if (!string.IsNullOrWhiteSpace(launchPasswords.ServerPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.ServerPassword, "********");
-				if (!string.IsNullOrWhiteSpace(launchPasswords.AdminPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.AdminPassword, "********");
-				if (!string.IsNullOrWhiteSpace(launchPasswords.RconPassword)) safeLogArgs = safeLogArgs.Replace(launchPasswords.RconPassword, "********");
+				string safeLogArgs = "[arguments unavailable]";
+				if (selectedDefinition != null)
+				{
+					string fullExePath = Path.Combine(
+						server.InstallPath,
+						selectedDefinition.ExeName);
+					string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
+						server,
+						selectedDefinition,
+						fullExePath);
+					if (!GameLaunchCommandBuilder.TryBuildArguments(
+						server,
+						selectedDefinition,
+						invokedId,
+						GameLaunchCommandBuilder.CreateRedactedPasswords(launchPasswords),
+						out safeLogArgs,
+						out _))
+					{
+						safeLogArgs = "[arguments passed securely; preview unavailable]";
+					}
+				}
 
 				logCallback?.Invoke($"[ARGUMENT] {safeLogArgs}", Color.Cyan);
 
@@ -360,10 +354,19 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
+					if (hideWindow && !psi.UseShellExecute)
+					{
+						_ = HideServerWindowAfterLaunch(proc);
+					}
 
 					server.StartTime = DateTime.Now;
 
-					_ = Core.Instance.SendDiscordAlert(server, "SERVER STARTING", $"{server.ServerName} process has been initiated.", Color.Cyan);
+					_ = Core.Instance.SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.ServerStarting,
+						"SERVER STARTING",
+						$"{server.ServerName} process has been initiated.",
+						Color.Cyan);
 
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) =>
@@ -382,6 +385,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							else
 							{
 								FinalizeStoppedState(server);
+								await Core.Instance.SynchronizeFirstGeneratedConfiguration(server);
+								FileHandler.SaveServers();
 							}
 						}
 						catch (Exception ex)
@@ -393,7 +398,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					FileHandler.SaveServers();
 				}
 			}
-			catch (Exception ex) { logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red); }
+			catch (Exception ex)
+			{
+				logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red);
+				_ = Core.Instance.SendDiscordNotification(
+					server,
+					DiscordNotificationEvent.MonitoringWarning,
+					"START FAILED",
+					ex.Message,
+					Color.Red);
+			}
 		}
 
 		private static void PrepareMinecraftLauncher(string launcherPath, Action<string, Color> logCallback)
@@ -420,6 +434,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		public static async Task<bool> Stop(GameServer server, Action<string, Color> logCallback, bool isManual = true)
 		{
+			ArgumentNullException.ThrowIfNull(logCallback);
 			Dictionary<int, DateTime?> trackedProcesses = [];
 			int targetPid = 0;
 
@@ -454,17 +469,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					return true;
 				}
 
-				if (isManual)
-				{
-					_ = Core.Instance.SendDiscordAlert(server, "MANUAL SHUTDOWN",
-						"A shutdown command was issued via the Synix Control Panel.", Color.Orange);
-				}
-
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
 				bool isMinecraft = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 				bool signalSent = isMinecraft
-					? await TrySendMinecraftStopCommand(server, targetPid, logCallback)
+					? await TrySendMinecraftStopCommand(server, targetPid, logCallback!)
 					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
 				TimeSpan gracefulTimeout = isMinecraft
 					? TimeSpan.FromSeconds(60)
@@ -491,7 +500,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					$"[🛡️ WATCHDOG] {server.ServerName} did not close cleanly. Forcing {liveProcesses.Count} process(es) to stop...",
 					Color.Violet);
 
-				await ForceTerminateProcesses(liveProcesses, targetPid, trackedProcesses, logCallback);
+				await ForceTerminateProcesses(liveProcesses, targetPid, trackedProcesses, logCallback!);
 				liveProcesses = await WaitForServerProcessesToExit(server, targetPid, trackedProcesses, TimeSpan.FromSeconds(10));
 
 				if (liveProcesses.Count > 0)
@@ -521,6 +530,79 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				RestoreLiveServerState(server, liveProcesses, targetPid);
 				return false;
+			}
+		}
+
+		private static Task HideServerWindowAfterLaunch(Process process)
+		{
+			return Task.Run(async () =>
+			{
+				DateTime? firstHiddenAt = null;
+				for (int attempt = 0; attempt < 60; attempt++)
+				{
+					try
+					{
+						if (Properties.Settings.Default.ShowServerWindow || process.HasExited)
+							return;
+
+						if (await TryHideServerWindow(process).ConfigureAwait(false))
+						{
+							firstHiddenAt ??= DateTime.UtcNow;
+						}
+
+						if (firstHiddenAt.HasValue &&
+							DateTime.UtcNow - firstHiddenAt.Value >= TimeSpan.FromSeconds(3))
+						{
+							return;
+						}
+					}
+					catch
+					{
+						return;
+					}
+
+					await Task.Delay(250).ConfigureAwait(false);
+				}
+			});
+		}
+
+		private static async Task<bool> TryHideServerWindow(Process process)
+		{
+			bool hidden = false;
+			try
+			{
+				process.Refresh();
+				IntPtr mainWindow = process.MainWindowHandle;
+				if (mainWindow != IntPtr.Zero)
+				{
+					ShowWindowAsync(mainWindow, SW_HIDE);
+					hidden = true;
+				}
+			}
+			catch
+			{
+			}
+
+			await _consoleLock.WaitAsync().ConfigureAwait(false);
+			bool attached = false;
+			try
+			{
+				attached = AttachConsole((uint)process.Id);
+				if (!attached)
+					return hidden;
+
+				IntPtr consoleWindow = GetConsoleWindow();
+				if (consoleWindow == IntPtr.Zero)
+					return hidden;
+
+				ShowWindowAsync(consoleWindow, SW_HIDE);
+				return true;
+			}
+			finally
+			{
+				if (attached)
+					FreeConsole();
+				_consoleLock.Release();
 			}
 		}
 
@@ -1164,6 +1246,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
+			server.HasAnnouncedOnline = false;
+			server.IsProbing = false;
+			server.LastProbeTime = null;
 			server.RunningProcess?.Dispose();
 			server.RunningProcess = null;
 			MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));

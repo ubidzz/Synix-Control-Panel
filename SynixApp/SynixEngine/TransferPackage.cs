@@ -1609,9 +1609,21 @@ namespace Synix_Control_Panel.SynixEngine
 					})
 				.Where(path =>
 					!IsInsideDirectory(path, recoveryRoot) &&
-					!IsGitHubConnectionFile(sourceRoot, path))
+					!IsGitHubConnectionFile(sourceRoot, path) &&
+					!IsSteamCmdRuntimeFile(sourceRoot, path))
 				.Select(path => new FileInfo(path))
 				.ToList();
+		}
+
+		private static bool IsSteamCmdRuntimeFile(
+			string sourceRoot,
+			string filePath)
+		{
+			string relativePath = Path.GetRelativePath(sourceRoot, filePath);
+			string steamCmdPrefix = "SteamCMD" + Path.DirectorySeparatorChar;
+			return relativePath.StartsWith(
+				steamCmdPrefix,
+				StringComparison.OrdinalIgnoreCase);
 		}
 
 		private static bool IsGitHubConnectionFile(

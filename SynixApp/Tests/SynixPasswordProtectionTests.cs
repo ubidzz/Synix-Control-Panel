@@ -25,6 +25,8 @@ public sealed class SynixPasswordProtectionTests
 	private const string RconPassword = "rcon-secret-73!";
 	private const string DiscordWebhook =
 		"https://discord.com/api/webhooks/123456789/test-webhook-token";
+	private const string BackupWebhook =
+		"https://discord.com/api/webhooks/987654321/backup-webhook-token";
 
 	[Fact]
 	public void SetAndRevealPasswords_RoundTripsAllManagedValues()
@@ -101,7 +103,7 @@ public sealed class SynixPasswordProtectionTests
 		Assert.Contains(
 			Core.ProtectedValuePrefix,
 			storageJson);
-		Assert.Contains("\"PasswordStorageVersion\": 2", storageJson);
+		Assert.Contains("\"PasswordStorageVersion\": 3", storageJson);
 	}
 
 	[Fact]
@@ -122,12 +124,30 @@ public sealed class SynixPasswordProtectionTests
 			versionOneServer);
 
 		Assert.True(migrated);
-		Assert.Equal(2, versionOneServer.PasswordStorageVersion);
+		Assert.Equal(3, versionOneServer.PasswordStorageVersion);
 		Assert.True(Core.IsProtected(
 			versionOneServer.DiscordWebhook));
 		Assert.Equal(
 			PlaintextSecrets(),
 			Core.RevealServerSecrets(versionOneServer));
+	}
+
+	[Fact]
+	public void VersionTwoStorage_MigratesEncryptedMasterWebhookToRouteStorage()
+	{
+		GameServer versionTwoServer = new()
+		{
+			PasswordStorageVersion = 2,
+			Password = Core.Protect(ServerPassword),
+			AdminPassword = Core.Protect(AdminPassword),
+			RconPassword = Core.Protect(RconPassword),
+			DiscordWebhook = Core.Protect(DiscordWebhook)
+		};
+
+		Assert.True(Core.MigrateLegacyServer(versionTwoServer));
+		Assert.Equal(Core.CurrentStorageVersion, versionTwoServer.PasswordStorageVersion);
+		Assert.Equal(DiscordWebhook, Core.RevealDiscordWebhook(versionTwoServer));
+		Assert.Empty(Core.RevealDiscordWebhookRoutes(versionTwoServer));
 	}
 
 	[Fact]
@@ -246,6 +266,8 @@ public sealed class SynixPasswordProtectionTests
 		Assert.DoesNotContain(RconPassword, vaultAsText);
 		Assert.DoesNotContain(DiscordWebhook, vaultAsText);
 		Assert.DoesNotContain("test-webhook-token", vaultAsText);
+		Assert.DoesNotContain(BackupWebhook, vaultAsText);
+		Assert.DoesNotContain("backup-webhook-token", vaultAsText);
 
 		folders.PrepareImportedFiles(exportedServer, sourceVault);
 		bool restored = Core.RestoreEncryptedImport(
@@ -262,6 +284,15 @@ public sealed class SynixPasswordProtectionTests
 		Assert.Equal(
 			PlaintextSecrets(),
 			Core.RevealServerSecrets(importedServer));
+		DiscordWebhookRoute importedRoute = Assert.Single(
+			Core.RevealDiscordWebhookRoutes(importedServer));
+		Assert.Equal("Backups", importedRoute.Name);
+		Assert.Equal(BackupWebhook, importedRoute.WebhookUrl);
+		Assert.Equal(
+			DiscordNotificationEvent.BackupStarted |
+			DiscordNotificationEvent.BackupCompleted |
+			DiscordNotificationEvent.BackupFailed,
+			importedRoute.Events);
 	}
 
 	[Fact]
@@ -357,6 +388,18 @@ public sealed class SynixPasswordProtectionTests
 		Core.SetServerSecrets(
 			server,
 			PlaintextSecrets());
+		Core.SetDiscordWebhookRoutes(
+			server,
+			[
+				new DiscordWebhookRoute
+				{
+					Name = "Backups",
+					WebhookUrl = BackupWebhook,
+					Events = DiscordNotificationEvent.BackupStarted |
+						DiscordNotificationEvent.BackupCompleted |
+						DiscordNotificationEvent.BackupFailed
+				}
+			]);
 		return server;
 	}
 

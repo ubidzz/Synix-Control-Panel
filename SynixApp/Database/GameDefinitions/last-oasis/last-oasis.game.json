@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "definitionRevision": 1,
+  "id": "last-oasis",
+  "catalogOrder": 76,
+  "game": "Last Oasis",
+  "aliases": [],
+  "appId": "920720",
+  "requiresSteamLogin": false,
+  "executable": "OasisServer\\Binaries\\Win64\\OasisServer-Win64-Shipping.exe",
+  "downloadUrl": "",
+  "arguments": "-log -port={port} -queryport={query} -SteamAppId={steamAppID}",
+  "rconSyntax": "",
+  "port": 7777,
+  "queryPort": 27015,
+  "appPort": null,
+  "worldSize": 0,
+  "worldSeed": "12345",
+  "maps": [],
+  "gameModes": [],
+  "configFileCreation": "Unknown",
+  "relativeConfigPath": "",
+  "format": "StandardINI",
+  "externalDataFolderName": "",
+  "requiredLaunchFiles": [],
+  "optionalLaunchFiles": [],
+  "launchFileSetupInstructions": "",
+  "needsConfigWarning": true,
+  "warningMessage": "This game requires configuration before it can boot properly.",
+  "iconUrl": "",
+  "isQueryable": true,
+  "probeProtocol": "Auto",
+  "supportsManualConnectionTesting": true,
+  "probePath": "",
+  "eosDeploymentId": ""
+,
+  "postInstallActions": [
+    {
+      "type": "CopySteamRuntimeFiles",
+      "targetDirectory": "OasisServer\\Binaries\\Win64"
+    }
+  ]
+}

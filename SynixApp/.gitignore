@@ -1,0 +1,2 @@
+# Development-only game-definition builder backups
+Database/GameDefinitions/**/*.bak

@@ -11,8 +11,10 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -37,12 +39,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private bool _loadingSettings;
 		private bool _transferInProgress;
+		private bool _configurationCollectionInProgress;
 		private string? _selectedImportPackage;
 		private bool _selectedImportPasswordProtected = true;
 
 		public AppSettings()
 		{
 			InitializeComponent();
+			btnDevelopment.Visible = !Core.IsOfficialRelease;
 			ShowPage(
 				generalSettingsPage,
 				btnGeneral,
@@ -145,6 +149,10 @@ namespace Synix_Control_Panel.SynixEngine
 				ShowServerWindowChanged;
 			generalSettingsPage.DarkModeChanged +=
 				DarkModeChanged;
+			generalSettingsPage.SteamCmdDownloadModeChanged +=
+				SteamCmdDownloadModeChanged;
+			generalSettingsPage.SteamCmdDownloadLimitChanged +=
+				SteamCmdDownloadLimitChanged;
 			backupSettingsPage.CustomBackupChanged +=
 				CustomBackupChanged;
 			backupSettingsPage.BrowseRequested +=
@@ -165,8 +173,24 @@ namespace Synix_Control_Panel.SynixEngine
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
 				ElevatedSystemTasksChanged;
-			advancedSettingsPage.ReleaseReadinessRequested +=
+			advancedSettingsPage.TroubleshooterRequested +=
+				TroubleshooterRequested;
+			developmentSettingsPage.UsePremadeConfigurationsChanged +=
+				UsePremadeConfigurationsChanged;
+			developmentSettingsPage.CollectGeneratedConfigurationsChanged +=
+				CollectGeneratedConfigurationsChanged;
+			developmentSettingsPage.CollectGeneratedConfigurationsRequested +=
+				CollectGeneratedConfigurationsRequested;
+			developmentSettingsPage.ReleaseReadinessRequested +=
 				ReleaseReadinessRequested;
+			developmentSettingsPage.GameDefinitionValidationRequested +=
+				GameDefinitionValidationRequested;
+			developmentSettingsPage.GameDefinitionBuilderRequested +=
+				GameDefinitionBuilderRequested;
+			developmentSettingsPage.GameVerificationQueueRequested +=
+				GameVerificationQueueRequested;
+			developmentSettingsPage.ReliabilityTestRequested +=
+				ReliabilityTestRequested;
 		}
 
 		private void LoadSavedSettings()
@@ -179,6 +203,10 @@ namespace Synix_Control_Panel.SynixEngine
 					Properties.Settings.Default.ShowServerWindow;
 				generalSettingsPage.DarkMode =
 					Properties.Settings.Default.DarkMode;
+				generalSettingsPage.SteamCmdDownloadLimitMbps =
+					Properties.Settings.Default.SteamCmdDownloadLimitMbps;
+				generalSettingsPage.LimitSteamCmdDownloadSpeed =
+					Properties.Settings.Default.LimitSteamCmdDownloadSpeed;
 				backupSettingsPage.UseCustomBackupPath =
 					Properties.Settings.Default.UseCustomBackupPath;
 
@@ -197,6 +225,10 @@ namespace Synix_Control_Panel.SynixEngine
 					Properties.Settings.Default.CheckDDoS;
 				advancedSettingsPage.ElevatedSystemTasks =
 					Properties.Settings.Default.enableRunAsAdmin;
+				developmentSettingsPage.UsePremadeConfigurations =
+					!Properties.Settings.Default.DisablePremadeConfigurationsForDevelopment;
+				developmentSettingsPage.CollectGeneratedConfigurations =
+					Properties.Settings.Default.CollectGeneratedConfigurationsForDevelopment;
 			}
 			finally
 			{
@@ -218,6 +250,8 @@ namespace Synix_Control_Panel.SynixEngine
 				ReferenceEquals(page, privacySettingsPage);
 			advancedSettingsPage.Visible =
 				ReferenceEquals(page, advancedSettingsPage);
+			developmentSettingsPage.Visible =
+				ReferenceEquals(page, developmentSettingsPage);
 			problemReportSettingsPage.Visible =
 				ReferenceEquals(page, problemReportSettingsPage);
 
@@ -227,6 +261,8 @@ namespace Synix_Control_Panel.SynixEngine
 			btnReportProblem.Selected =
 				ReferenceEquals(selectedButton, btnReportProblem);
 			btnAdvanced.Selected = ReferenceEquals(selectedButton, btnAdvanced);
+			btnDevelopment.Selected =
+				ReferenceEquals(selectedButton, btnDevelopment);
 
 			lblPageHeading.Text = heading;
 			lblPageSubtitle.Text = subtitle;
@@ -285,6 +321,55 @@ namespace Synix_Control_Panel.SynixEngine
 			EventArgs eventArgs)
 		{
 			using SynixReleaseReadinessDialog dialog = new();
+			dialog.ShowDialog(this);
+		}
+
+		private void TroubleshooterRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			using TroubleshooterDialog dialog = new();
+			dialog.ShowDialog(this);
+		}
+
+		private void GameDefinitionValidationRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+
+			using GameDefinitionValidationDialog dialog = new();
+			dialog.ShowDialog(this);
+		}
+
+		private void GameDefinitionBuilderRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+
+			using GameDefinitionBuilder builder = new();
+			builder.ShowDialog(this);
+		}
+
+		private void GameVerificationQueueRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+
+			using GameVerificationQueue queue = new();
+			queue.ShowDialog(this);
+		}
+
+		private void ReliabilityTestRequested(object? sender, EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+			using ReliabilityTestDialog dialog = new();
 			dialog.ShowDialog(this);
 		}
 
@@ -405,6 +490,139 @@ namespace Synix_Control_Panel.SynixEngine
 			Properties.Settings.Default.Save();
 		}
 
+		private void btnDevelopment_Click(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease)
+				return;
+
+			ShowPage(
+				developmentSettingsPage,
+				btnDevelopment,
+				"Development",
+				"Manage configuration capture and release testing tools.");
+		}
+
+		private void UsePremadeConfigurationsChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings || Core.IsOfficialRelease)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.DisablePremadeConfigurationsForDevelopment =
+				!developmentSettingsPage.UsePremadeConfigurations;
+			Properties.Settings.Default.Save();
+		}
+
+		private void CollectGeneratedConfigurationsChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings || Core.IsOfficialRelease)
+			{
+				return;
+			}
+
+			Properties.Settings.Default.CollectGeneratedConfigurationsForDevelopment =
+				developmentSettingsPage.CollectGeneratedConfigurations;
+			Properties.Settings.Default.Save();
+		}
+
+		private async void CollectGeneratedConfigurationsRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (Core.IsOfficialRelease || _configurationCollectionInProgress)
+			{
+				return;
+			}
+
+			_configurationCollectionInProgress = true;
+			UseWaitCursor = true;
+			try
+			{
+				GameServer[] servers = MainGUI.serverList.ToArray();
+				GeneratedConfigurationCaptureResult result = await Task.Run(() =>
+					GeneratedConfigurationCollector.Collect(servers));
+				StringBuilder message = new();
+				if (result.FoundFiles)
+				{
+					message.AppendLine(
+						$"Copied {result.CopiedFiles} configuration file(s). " +
+						$"{result.UnchangedFiles} file(s) were already current.");
+					message.AppendLine();
+					message.AppendLine(result.DestinationRoot);
+					message.AppendLine();
+					message.AppendLine(
+						"Synix replaced recognized secret fields with template placeholders. Review every captured file before adding it to source control because a game may use an unusual credential name.");
+				}
+				else
+				{
+					message.AppendLine(
+						"No existing game-generated configuration files were found. Start and stop an installed server once, then try again.");
+				}
+
+				if (result.Errors.Count > 0)
+				{
+					message.AppendLine();
+					message.AppendLine("Files that could not be collected:");
+					foreach (string error in result.Errors.Take(5))
+					{
+						message.AppendLine($"• {error}");
+					}
+					if (result.Errors.Count > 5)
+					{
+						message.AppendLine(
+							$"• {result.Errors.Count - 5} additional file(s)");
+					}
+				}
+
+				MessageBoxButtons buttons = result.FoundFiles
+					? MessageBoxButtons.YesNo
+					: MessageBoxButtons.OK;
+				if (result.FoundFiles)
+				{
+					message.AppendLine();
+					message.Append("Open the capture folder now?");
+				}
+
+				DialogResult response = MessageBox.Show(
+					this,
+					message.ToString(),
+					"Generated configuration collection",
+					buttons,
+					result.Errors.Count == 0
+						? MessageBoxIcon.Information
+						: MessageBoxIcon.Warning);
+				if (result.FoundFiles && response == DialogResult.Yes)
+				{
+					Process.Start(new ProcessStartInfo
+					{
+						FileName = result.DestinationRoot,
+						UseShellExecute = true
+					});
+				}
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(
+					this,
+					exception.Message,
+					"Configuration collection failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+			}
+			finally
+			{
+				UseWaitCursor = false;
+				_configurationCollectionInProgress = false;
+			}
+		}
+
 		private void ShowServerWindowChanged(
 			object? sender,
 			EventArgs eventArgs)
@@ -464,6 +682,28 @@ namespace Synix_Control_Panel.SynixEngine
 			Properties.Settings.Default.DarkMode = generalSettingsPage.DarkMode;
 			Properties.Settings.Default.Save();
 			ThemeManager.SetDarkMode(generalSettingsPage.DarkMode);
+		}
+
+		private void SteamCmdDownloadModeChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings) return;
+
+			Properties.Settings.Default.LimitSteamCmdDownloadSpeed =
+				generalSettingsPage.LimitSteamCmdDownloadSpeed;
+			Properties.Settings.Default.Save();
+		}
+
+		private void SteamCmdDownloadLimitChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings) return;
+
+			Properties.Settings.Default.SteamCmdDownloadLimitMbps =
+				generalSettingsPage.SteamCmdDownloadLimitMbps;
+			Properties.Settings.Default.Save();
 		}
 
 		private async void ExportSynixRequested(
@@ -708,12 +948,14 @@ namespace Synix_Control_Panel.SynixEngine
 				},
 				"Import complete",
 				_selectedImportPasswordProtected
-					? "Your Synix files, saved passwords, and Discord webhooks were restored for this Windows user. Synix will reload the transferred server list now."
-					: "Your Synix files were restored. Synix will reload the transferred server list now. Passwords and Discord webhooks protected on another PC may need to be re-entered.");
+					? "Your Synix files, saved passwords, and Discord webhooks were restored for this Windows user. Servers that require a Steam account will ask for authorization the first time you start them on this PC."
+					: "Your Synix files were restored. Passwords and Discord webhooks protected on another PC may need to be re-entered. Servers that require a Steam account will ask for authorization the first time you start them on this PC.");
 
 			if (imported)
 			{
 				FileHandler.LoadServers();
+				Core.MarkImportedSteamAuthenticationRequired(MainGUI.serverList);
+				FileHandler.SaveServers();
 				MainGUI.Instance?.UpdateGrid();
 				_selectedImportPackage = null;
 				_selectedImportPasswordProtected = true;

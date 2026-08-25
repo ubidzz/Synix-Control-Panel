@@ -10,11 +10,12 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+
 namespace Synix_Control_Panel.SynixEngine
 {
 	partial class AppSettings
 	{
-		private System.ComponentModel.IContainer? components = null;
+		private System.ComponentModel.IContainer components = null;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -46,6 +47,7 @@ namespace Synix_Control_Panel.SynixEngine
 			btnPrivacy = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
 			btnReportProblem = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
 			btnAdvanced = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
+			btnDevelopment = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton();
 			lblVersion = new Label();
 			sidebarRightBorder = new Label();
 			contentLayout = new TableLayoutPanel();
@@ -54,6 +56,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblPageSubtitle = new Label();
 			pageHost = new Panel();
 			problemReportSettingsPage = new ProblemReportSettingsPage();
+			developmentSettingsPage = new DevelopmentSettingsPage();
 			advancedSettingsPage = new AdvancedSettingsPage();
 			privacySettingsPage = new PrivacySettingsPage();
 			backupSettingsPage = new BackupSettingsPage();
@@ -218,11 +221,12 @@ namespace Synix_Control_Panel.SynixEngine
 			navigationFlow.Controls.Add(btnPrivacy);
 			navigationFlow.Controls.Add(btnReportProblem);
 			navigationFlow.Controls.Add(btnAdvanced);
+			navigationFlow.Controls.Add(btnDevelopment);
 			navigationFlow.FlowDirection = FlowDirection.TopDown;
 			navigationFlow.Location = new Point(16, 24);
 			navigationFlow.Margin = new Padding(0);
 			navigationFlow.Name = "navigationFlow";
-			navigationFlow.Size = new Size(185, 348);
+			navigationFlow.Size = new Size(185, 390);
 			navigationFlow.TabIndex = 0;
 			navigationFlow.WrapContents = false;
 			//
@@ -326,6 +330,27 @@ namespace Synix_Control_Panel.SynixEngine
 			btnAdvanced.UseVisualStyleBackColor = false;
 			btnAdvanced.Click += btnAdvanced_Click;
 			//
+			// btnDevelopment
+			//
+			btnDevelopment.BackColor = Color.FromArgb(10, 18, 32);
+			btnDevelopment.Cursor = Cursors.Hand;
+			btnDevelopment.FlatAppearance.BorderSize = 0;
+			btnDevelopment.FlatStyle = FlatStyle.Flat;
+			btnDevelopment.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point);
+			btnDevelopment.ForeColor = Color.FromArgb(158, 172, 194);
+			btnDevelopment.IconGlyph = "⌘";
+			btnDevelopment.Location = new Point(0, 310);
+			btnDevelopment.Margin = new Padding(0, 0, 0, 8);
+			btnDevelopment.Name = "btnDevelopment";
+			btnDevelopment.Selected = false;
+			btnDevelopment.Size = new Size(185, 54);
+			btnDevelopment.TabIndex = 5;
+			btnDevelopment.Text = "Development";
+			btnDevelopment.TextAlign = ContentAlignment.MiddleLeft;
+			btnDevelopment.UseVisualStyleBackColor = false;
+			btnDevelopment.Visible = false;
+			btnDevelopment.Click += btnDevelopment_Click;
+			//
 			// lblVersion
 			//
 			lblVersion.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -407,6 +432,7 @@ namespace Synix_Control_Panel.SynixEngine
 			//
 			pageHost.BackColor = Color.FromArgb(8, 13, 24);
 			pageHost.Controls.Add(problemReportSettingsPage);
+			pageHost.Controls.Add(developmentSettingsPage);
 			pageHost.Controls.Add(advancedSettingsPage);
 			pageHost.Controls.Add(privacySettingsPage);
 			pageHost.Controls.Add(backupSettingsPage);
@@ -429,6 +455,17 @@ namespace Synix_Control_Panel.SynixEngine
 			problemReportSettingsPage.Size = new Size(816, 520);
 			problemReportSettingsPage.TabIndex = 4;
 			problemReportSettingsPage.Visible = false;
+			//
+			// developmentSettingsPage
+			//
+			developmentSettingsPage.BackColor = Color.FromArgb(8, 13, 24);
+			developmentSettingsPage.Dock = DockStyle.Fill;
+			developmentSettingsPage.Location = new Point(36, 0);
+			developmentSettingsPage.Margin = new Padding(0);
+			developmentSettingsPage.Name = "developmentSettingsPage";
+			developmentSettingsPage.Size = new Size(816, 520);
+			developmentSettingsPage.TabIndex = 5;
+			developmentSettingsPage.Visible = false;
 			//
 			// advancedSettingsPage
 			//
@@ -524,6 +561,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnPrivacy;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnReportProblem;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnAdvanced;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNavButton btnDevelopment;
 		private Label lblVersion;
 		private Label sidebarRightBorder;
 		private TableLayoutPanel contentLayout;
@@ -535,6 +573,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private BackupSettingsPage backupSettingsPage;
 		private PrivacySettingsPage privacySettingsPage;
 		private AdvancedSettingsPage advancedSettingsPage;
+		private DevelopmentSettingsPage developmentSettingsPage;
 		private ProblemReportSettingsPage problemReportSettingsPage;
 	}
 }

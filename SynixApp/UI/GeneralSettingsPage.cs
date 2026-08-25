@@ -19,6 +19,13 @@ namespace Synix_Control_Panel.SynixEngine
 		public GeneralSettingsPage()
 		{
 			InitializeComponent();
+			cmbSteamCmdDownloadMode.Items.AddRange(["Unlimited", "Limited"]);
+			cmbSteamCmdDownloadMode.SelectedIndex = 0;
+			cmbSteamCmdDownloadMode.SelectedIndexChanged +=
+				SteamCmdDownloadModeSelectionChanged;
+			numSteamCmdDownloadLimit.ValueChanged +=
+				SteamCmdDownloadLimitValueChanged;
+			UpdateSteamCmdDownloadControls();
 		}
 
 		[Browsable(false)]
@@ -49,6 +56,54 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			add => chkDarkMode.CheckedChanged += value;
 			remove => chkDarkMode.CheckedChanged -= value;
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool LimitSteamCmdDownloadSpeed
+		{
+			get => cmbSteamCmdDownloadMode.SelectedIndex == 1;
+			set
+			{
+				cmbSteamCmdDownloadMode.SelectedIndex = value ? 1 : 0;
+				UpdateSteamCmdDownloadControls();
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int SteamCmdDownloadLimitMbps
+		{
+			get => numSteamCmdDownloadLimit.Value;
+			set => numSteamCmdDownloadLimit.Value = value;
+		}
+
+		[Browsable(false)]
+		public event EventHandler? SteamCmdDownloadModeChanged;
+
+		[Browsable(false)]
+		public event EventHandler? SteamCmdDownloadLimitChanged;
+
+		private void SteamCmdDownloadModeSelectionChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			UpdateSteamCmdDownloadControls();
+			SteamCmdDownloadModeChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		private void SteamCmdDownloadLimitValueChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			SteamCmdDownloadLimitChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		private void UpdateSteamCmdDownloadControls()
+		{
+			bool limited = LimitSteamCmdDownloadSpeed;
+			numSteamCmdDownloadLimit.Enabled = limited;
+			lblSteamCmdDownloadUnit.Enabled = limited;
 		}
 	}
 }
