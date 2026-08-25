@@ -40,6 +40,7 @@ namespace Synix_Control_Panel.SynixEngine
 			createdColumn = new DataGridViewTextBoxColumn();
 			fileColumn = new DataGridViewTextBoxColumn();
 			sizeColumn = new DataGridViewTextBoxColumn();
+			integrityColumn = new DataGridViewTextBoxColumn();
 			locationColumn = new DataGridViewTextBoxColumn();
 			selectionLabel = new Label();
 			cancelButton = new ModernSettingsButton();
@@ -117,7 +118,7 @@ namespace Synix_Control_Panel.SynixEngine
 			warningText.Name = "warningText";
 			warningText.Size = new Size(770, 46);
 			warningText.TabIndex = 2;
-			warningText.Text = "Synix safely stages the selected archive and automatically rolls back if restoration fails. The saved Synix server entry and its settings are not changed.";
+			warningText.Text = "Synix verifies backups with integrity receipts, safely stages the selected archive, and automatically rolls back if restoration fails. The saved Synix server entry and its settings are not changed.";
 			// 
 			// backupGrid
 			// 
@@ -127,7 +128,7 @@ namespace Synix_Control_Panel.SynixEngine
 			backupGrid.BackgroundColor = Color.FromArgb(12, 21, 36);
 			backupGrid.BorderStyle = BorderStyle.None;
 			backupGrid.ColumnHeadersHeight = 40;
-			backupGrid.Columns.AddRange(new DataGridViewColumn[] { createdColumn, fileColumn, sizeColumn, locationColumn });
+			backupGrid.Columns.AddRange(new DataGridViewColumn[] { createdColumn, fileColumn, sizeColumn, integrityColumn, locationColumn });
 			backupGrid.Location = new Point(28, 226);
 			backupGrid.MultiSelect = false;
 			backupGrid.Name = "backupGrid";
@@ -161,7 +162,15 @@ namespace Synix_Control_Panel.SynixEngine
 			sizeColumn.MinimumWidth = 90;
 			sizeColumn.Name = "sizeColumn";
 			sizeColumn.ReadOnly = true;
-			// 
+			//
+			// integrityColumn
+			//
+			integrityColumn.HeaderText = "INTEGRITY";
+			integrityColumn.MinimumWidth = 130;
+			integrityColumn.Name = "integrityColumn";
+			integrityColumn.ReadOnly = true;
+			integrityColumn.Width = 145;
+			//
 			// locationColumn
 			// 
 			locationColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -251,6 +260,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private DataGridViewTextBoxColumn createdColumn = null!;
 		private DataGridViewTextBoxColumn fileColumn = null!;
 		private DataGridViewTextBoxColumn sizeColumn = null!;
+		private DataGridViewTextBoxColumn integrityColumn = null!;
 		private DataGridViewTextBoxColumn locationColumn = null!;
 		private Label selectionLabel = null!;
 		private ModernSettingsButton cancelButton = null!;

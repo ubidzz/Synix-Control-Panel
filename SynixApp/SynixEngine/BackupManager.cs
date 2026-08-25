@@ -11,19 +11,35 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	public enum StartContext { Manual, Scheduled, CrashRecovery }
 
+	internal enum ServerBackupIntegrity
+	{
+		Recorded,
+		Legacy,
+		Invalid
+	}
+
 	internal sealed record ServerBackupArchive(
 		string ArchivePath,
 		DateTime CreatedUtc,
-		long CompressedBytes)
+		long CompressedBytes,
+		ServerBackupIntegrity Integrity)
 	{
 		public string FileName => Path.GetFileName(ArchivePath);
 		public DateTime CreatedLocal => CreatedUtc.ToLocalTime();
+		public string IntegrityText => Integrity switch
+		{
+			ServerBackupIntegrity.Recorded => "SHA-256 receipt",
+			ServerBackupIntegrity.Legacy => "Legacy backup",
+			_ => "Invalid receipt"
+		};
 	}
 
 	internal sealed record ServerBackupRestoreResult(
@@ -35,6 +51,8 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private const string RestoreOperationPrefix = ".synix-restore-";
 		private const string RestoreRollbackMarker = ".synix-restore-rollback-";
+		private const string BackupReceiptExtension = ".sha256";
+		private const int MaximumReceiptBytes = 4096;
 		internal static string? RestoreJournalFolderOverride { get; set; }
 		private static string RestoreJournalFolder =>
 			RestoreJournalFolderOverride ??
@@ -64,21 +82,39 @@ namespace Synix_Control_Panel.SynixEngine
 			string backupRoot = GetActiveServerBackupFolder(server);
 			string timestamp = DateTime.UtcNow.ToString("yyyy_MM_dd_HHmmss_fff");
 			string zipPath = Path.Combine(backupRoot, $"backup_{timestamp}.zip");
+			string temporaryZipPath = zipPath + ".partial";
+			string receiptPath = GetBackupReceiptPath(zipPath);
+			string temporaryReceiptPath = receiptPath + ".partial";
+			bool receiptPublished = false;
+			bool backupPublished = false;
 
 			try
 			{
 				Directory.CreateDirectory(backupRoot);
+				CleanupIncompleteBackupFiles(backupRoot);
 
 				if (!Directory.Exists(sourceDir))
 					throw new DirectoryNotFoundException($"The server folder does not exist: {sourceDir}");
 				if (IsSameOrDescendantPath(zipPath, sourceDir))
 					throw new InvalidOperationException("The backup folder cannot be stored inside the server installation folder.");
 
-				await Task.Run(() => ZipFile.CreateFromDirectory(
-					sourceDirectoryName: sourceDir,
-					destinationArchiveFileName: zipPath,
-					compressionLevel: CompressionLevel.Optimal,
-					includeBaseDirectory: true));
+				await Task.Run(() =>
+				{
+					ZipFile.CreateFromDirectory(
+						sourceDirectoryName: sourceDir,
+						destinationArchiveFileName: temporaryZipPath,
+						compressionLevel: CompressionLevel.Optimal,
+						includeBaseDirectory: true);
+					string hash = ComputeFileSha256(temporaryZipPath);
+					WriteBackupReceipt(
+						temporaryReceiptPath,
+						hash,
+						Path.GetFileName(zipPath));
+					File.Move(temporaryReceiptPath, receiptPath);
+					receiptPublished = true;
+					File.Move(temporaryZipPath, zipPath);
+					backupPublished = true;
+				});
 
 				List<FileInfo> files = new DirectoryInfo(backupRoot)
 					.GetFiles("*.zip")
@@ -87,16 +123,24 @@ namespace Synix_Control_Panel.SynixEngine
 				int maximumBackups = Math.Max(1, Properties.Settings.Default.MaxBackups);
 				while (files.Count > maximumBackups)
 				{
-					files.Last().Delete();
+					FileInfo expiredBackup = files.Last();
+					expiredBackup.Delete();
+					TryDeleteBackupRestoreFile(GetBackupReceiptPath(expiredBackup.FullName));
 					files.RemoveAt(files.Count - 1);
 				}
 
+				Log($"[💾 BACKUP] SHA-256 integrity receipt created for {Path.GetFileName(zipPath)}.", Color.LimeGreen);
 				Log($"[💾 BACKUP] Backup location: {zipPath}.", Color.LimeGreen);
 				Log($"[💾 BACKUP] Finished backing up {server.ServerName}.", Color.LimeGreen);
 			}
 			catch (Exception exception)
 			{
-				TryDeleteBackupRestoreFile(zipPath);
+				TryDeleteBackupRestoreFile(temporaryZipPath);
+				TryDeleteBackupRestoreFile(temporaryReceiptPath);
+				if (backupPublished)
+					TryDeleteBackupRestoreFile(zipPath);
+				if (receiptPublished)
+					TryDeleteBackupRestoreFile(receiptPath);
 				Log($"[🚨 BACKUP ERROR] {exception.Message}", Color.Red, true);
 			}
 			finally
@@ -138,7 +182,8 @@ namespace Synix_Control_Panel.SynixEngine
 						backups.Add(new ServerBackupArchive(
 							file.FullName,
 							file.LastWriteTimeUtc,
-							file.Length));
+							file.Length,
+							InspectBackupIntegrity(file.FullName)));
 					}
 				}
 				catch (IOException)
@@ -274,6 +319,8 @@ namespace Synix_Control_Panel.SynixEngine
 			string installPath = ValidateInstallPath(server.InstallPath);
 			if (IsSameOrDescendantPath(backup.ArchivePath, installPath))
 				throw new InvalidOperationException("A backup stored inside the server folder cannot be restored safely. Move the backup folder outside the server installation first.");
+			progress?.Report("Verifying the selected backup...");
+			VerifyBackupIntegrity(backup.ArchivePath);
 			string parentPath = Path.GetDirectoryName(installPath)!;
 			Directory.CreateDirectory(parentPath);
 
@@ -462,6 +509,138 @@ namespace Synix_Control_Panel.SynixEngine
 				throw new InvalidDataException("The selected backup contains no server files.");
 			return copiedBytes;
 		}
+
+		private static ServerBackupIntegrity InspectBackupIntegrity(string archivePath)
+		{
+			string receiptPath = GetBackupReceiptPath(archivePath);
+			if (!File.Exists(receiptPath))
+				return ServerBackupIntegrity.Legacy;
+
+			return TryReadBackupReceipt(
+				receiptPath,
+				Path.GetFileName(archivePath),
+				out _)
+				? ServerBackupIntegrity.Recorded
+				: ServerBackupIntegrity.Invalid;
+		}
+
+		private static void CleanupIncompleteBackupFiles(string backupRoot)
+		{
+			foreach (string pattern in new[]
+			{
+				"backup_*.zip.partial",
+				"backup_*.zip.sha256.partial"
+			})
+			{
+				foreach (string path in Directory.EnumerateFiles(
+					backupRoot,
+					pattern,
+					SearchOption.TopDirectoryOnly))
+				{
+					TryDeleteBackupRestoreFile(path);
+				}
+			}
+
+			foreach (string receiptPath in Directory.EnumerateFiles(
+				backupRoot,
+				"backup_*.zip.sha256",
+				SearchOption.TopDirectoryOnly))
+			{
+				string archivePath = receiptPath[..^BackupReceiptExtension.Length];
+				if (!File.Exists(archivePath))
+					TryDeleteBackupRestoreFile(receiptPath);
+			}
+		}
+
+		private static void VerifyBackupIntegrity(string archivePath)
+		{
+			string receiptPath = GetBackupReceiptPath(archivePath);
+			if (!File.Exists(receiptPath))
+				return;
+
+			if (!TryReadBackupReceipt(
+				receiptPath,
+				Path.GetFileName(archivePath),
+				out string expectedHash))
+			{
+				throw new InvalidDataException(
+					"The selected backup has an invalid SHA-256 integrity receipt.");
+			}
+
+			string actualHash = ComputeFileSha256(archivePath);
+			byte[] expectedBytes = Convert.FromHexString(expectedHash);
+			byte[] actualBytes = Convert.FromHexString(actualHash);
+			if (!CryptographicOperations.FixedTimeEquals(expectedBytes, actualBytes))
+			{
+				throw new InvalidDataException(
+					"The selected backup failed its SHA-256 integrity check. The archive may be damaged or may have changed after Synix created it.");
+			}
+		}
+
+		private static string ComputeFileSha256(string path)
+		{
+			using FileStream stream = new(
+				path,
+				FileMode.Open,
+				FileAccess.Read,
+				FileShare.Read,
+				bufferSize: 1024 * 1024,
+				FileOptions.SequentialScan);
+			return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+		}
+
+		private static void WriteBackupReceipt(
+			string path,
+			string hash,
+			string archiveFileName)
+		{
+			File.WriteAllText(
+				path,
+				$"{hash}  {archiveFileName}{Environment.NewLine}",
+				new UTF8Encoding(false));
+		}
+
+		private static bool TryReadBackupReceipt(
+			string receiptPath,
+			string archiveFileName,
+			out string hash)
+		{
+			hash = string.Empty;
+			try
+			{
+				FileInfo receipt = new(receiptPath);
+				if (receipt.Length is <= 0 or > MaximumReceiptBytes)
+					return false;
+
+				string line = File.ReadLines(receiptPath).FirstOrDefault()?.Trim() ?? string.Empty;
+				int separator = line.IndexOf("  ", StringComparison.Ordinal);
+				if (separator != 64)
+					return false;
+
+				string candidateHash = line[..separator];
+				string candidateFileName = line[(separator + 2)..].TrimStart('*');
+				if (!string.Equals(
+					candidateFileName,
+					archiveFileName,
+					StringComparison.OrdinalIgnoreCase) ||
+					candidateHash.Any(character => !Uri.IsHexDigit(character)))
+				{
+					return false;
+				}
+
+				hash = candidateHash.ToLowerInvariant();
+				return true;
+			}
+			catch (Exception exception) when (exception is IOException or
+				UnauthorizedAccessException or
+				NotSupportedException)
+			{
+				return false;
+			}
+		}
+
+		private static string GetBackupReceiptPath(string archivePath) =>
+			archivePath + BackupReceiptExtension;
 
 		private static void PrepareExtractedFolder(
 			string extractionRoot,

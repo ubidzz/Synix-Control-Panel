@@ -43,8 +43,18 @@ namespace Synix_Control_Panel.SynixEngine
 					backup.CreatedLocal.ToString("MMM d, yyyy  h:mm:ss tt"),
 					backup.FileName,
 					FormatBytes(backup.CompressedBytes),
+					backup.IntegrityText,
 					Path.GetDirectoryName(backup.ArchivePath) ?? string.Empty);
-				backupGrid.Rows[rowIndex].Tag = backup;
+				DataGridViewRow row = backupGrid.Rows[rowIndex];
+				row.Tag = backup;
+				Color integrityColor = backup.Integrity switch
+				{
+					ServerBackupIntegrity.Recorded => SettingsPalette.Success,
+					ServerBackupIntegrity.Legacy => SettingsPalette.Warning,
+					_ => SettingsPalette.Danger
+				};
+				row.Cells[integrityColumn.Index].Style.ForeColor = integrityColor;
+				row.Cells[integrityColumn.Index].Style.SelectionForeColor = integrityColor;
 			}
 
 			if (backupGrid.Rows.Count > 0)
@@ -73,6 +83,16 @@ namespace Synix_Control_Panel.SynixEngine
 			UpdateSelection();
 			if (SelectedBackup == null)
 				return;
+			if (SelectedBackup.Integrity == ServerBackupIntegrity.Invalid)
+			{
+				MessageBox.Show(
+					this,
+					"This backup has an invalid SHA-256 receipt and cannot be restored. Choose a different backup.",
+					"Backup Integrity Failed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				return;
+			}
 
 			DialogResult = DialogResult.OK;
 			Close();
@@ -83,10 +103,19 @@ namespace Synix_Control_Panel.SynixEngine
 			SelectedBackup = backupGrid.SelectedRows.Count > 0
 				? backupGrid.SelectedRows[0].Tag as ServerBackupArchive
 				: null;
-			restoreButton.Enabled = SelectedBackup != null;
+			restoreButton.Enabled = SelectedBackup != null &&
+				SelectedBackup.Integrity != ServerBackupIntegrity.Invalid;
 			selectionLabel.Text = SelectedBackup == null
 				? "Select a backup to continue."
-				: $"Selected: {SelectedBackup.CreatedLocal:f}  •  {FormatBytes(SelectedBackup.CompressedBytes)}";
+				: $"Selected: {SelectedBackup.CreatedLocal:f}  •  " +
+					$"{FormatBytes(SelectedBackup.CompressedBytes)}  •  {SelectedBackup.IntegrityText}";
+			selectionLabel.ForeColor = SelectedBackup?.Integrity switch
+			{
+				ServerBackupIntegrity.Recorded => SettingsPalette.Success,
+				ServerBackupIntegrity.Legacy => SettingsPalette.Warning,
+				ServerBackupIntegrity.Invalid => SettingsPalette.Danger,
+				_ => SettingsPalette.SecondaryText
+			};
 		}
 
 		private static string FormatBytes(long bytes)
