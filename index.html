@@ -15,7 +15,7 @@
   <meta name="twitter:title" content="Synix Control Panel">
   <meta name="twitter:description" content="Easy personal game server hosting for Windows.">
   <meta name="twitter:image" content="https://ubidzz.github.io/Synix-Control-Panel/assets/screenshots/dashboard-private.png">
-  <link rel="icon" href="./favicon.ico">
+  <link rel="icon" type="image/x-icon" href="./assets/Synix_logo_Icon.ico">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -34,17 +34,17 @@
       <a href="#install">Install</a>
       <a href="#support">Support</a>
     </nav>
-    <a class="button button-small button-outline header-download" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest">Download</a>
+    <a class="button button-small button-primary header-download" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi" aria-label="Download the latest Synix MSI installer">Download MSI</a>
   </header>
 
   <main id="main">
     <section id="top" class="hero section-shell">
       <div class="hero-copy">
         <div class="eyebrow"><span></span> Built for personal Windows servers</div>
-        <h1>Run your game servers.<br><em>Skip the command-line headache.</em></h1>
+        <h1><span>Run your game servers.</span><em>Skip the command-line headache.</em></h1>
         <p class="hero-lede">Synix brings installation, configuration, monitoring, backups, updates, and common maintenance into one clear Windows application.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest">Get Synix</a>
+          <a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi">Download the latest MSI</a>
           <a class="button button-secondary" href="#gallery">See it in action</a>
         </div>
         <ul class="hero-points" aria-label="Key benefits">
@@ -57,7 +57,15 @@
       <div class="hero-visual">
         <div class="glow glow-one"></div>
         <div class="glow glow-two"></div>
-        <img class="hero-screenshot" src="./assets/screenshots/dashboard-private.png" alt="Synix dashboard monitoring six game servers" width="1584" height="992">
+        <div class="product-window hero-window">
+          <div class="product-window-bar" aria-hidden="true">
+            <span></span><span></span><span></span>
+            <strong>Synix Control Panel</strong>
+          </div>
+          <div class="product-screen">
+            <img class="hero-screenshot" src="./assets/screenshots/dashboard-private.png" alt="Synix dashboard monitoring six game servers" width="1584" height="992">
+          </div>
+        </div>
         <div class="floating-stat stat-profiles"><strong>210+</strong><span>server profiles</span></div>
         <div class="floating-stat stat-local"><strong>Local</strong><span>your data stays yours</span></div>
       </div>
@@ -129,8 +137,11 @@
             <div><span>✓</span><p><strong>Selective elevation</strong>Windows-level tasks request permission only when required.</p></div>
           </div>
         </div>
-        <figure class="privacy-image">
-          <img src="./assets/screenshots/settings-privacy.png" alt="Synix Privacy and Security settings" loading="lazy" width="1100" height="720">
+        <figure class="privacy-image product-window media-window">
+          <div class="product-window-bar" aria-hidden="true"><span></span><span></span><span></span><strong>Privacy &amp; Security</strong></div>
+          <div class="product-screen">
+            <img src="./assets/screenshots/settings-privacy.png" alt="Synix Privacy and Security settings" loading="lazy" width="1100" height="720">
+          </div>
           <figcaption>Privacy and security controls are built into the application.</figcaption>
         </figure>
       </div>
@@ -156,8 +167,11 @@
         <p>The dashboard summarizes every server while the detailed monitor shows the processes and resources behind the numbers.</p>
         <a class="text-link" href="#gallery">Explore the complete gallery <span>→</span></a>
       </div>
-      <figure class="showcase-image">
-        <img src="./assets/screenshots/resource-monitor.png" alt="Synix Resource Monitor showing one active server" loading="lazy" width="1180" height="760">
+      <figure class="showcase-image product-window media-window">
+        <div class="product-window-bar" aria-hidden="true"><span></span><span></span><span></span><strong>Live Resource Monitor</strong></div>
+        <div class="product-screen">
+          <img src="./assets/screenshots/resource-monitor.png" alt="Synix Resource Monitor showing one active server" loading="lazy" width="1180" height="760">
+        </div>
       </figure>
     </section>
 
@@ -229,7 +243,8 @@
           <span class="tag">Recommended</span>
           <h3>Windows Installer</h3>
           <p>Normal Windows installation with Start Menu and Apps list entries.</p>
-          <a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest">Download MSI</a>
+          <a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi">Download latest MSI</a>
+          <small class="latest-download-note">Automatically follows the newest GitHub release.</small>
         </article>
         <article class="install-card">
           <h3>WinGet</h3>
@@ -239,7 +254,7 @@
         <article class="install-card">
           <h3>Standalone</h3>
           <p>Download the executable and run it from a folder of your choice.</p>
-          <a class="button button-secondary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest">Get standalone</a>
+          <a class="button button-secondary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/Synix.Control.Panel.exe">Get latest standalone</a>
         </article>
       </div>
       <aside class="notice">
