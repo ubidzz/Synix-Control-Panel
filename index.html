@@ -3,18 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Synix Control Panel | Personal Game Server Hosting for Windows</title>
-  <meta name="description" content="Install, configure, monitor, back up, and maintain personal dedicated game servers from one lightweight Windows application.">
-  <meta name="theme-color" content="#07101f">
+  <title>Synix Control Panel | Windows Game Server Manager</title>
+  <meta name="description" content="Install, configure, run, monitor, back up, and maintain personal dedicated game servers from one Windows application.">
+  <meta name="theme-color" content="#07101d">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Synix Control Panel">
-  <meta property="og:description" content="Easy personal game server hosting for Windows—without subscriptions, artificial instance limits, or permanent administrator access.">
+  <meta property="og:description" content="Personal dedicated game server management for Windows, without subscriptions or artificial server limits.">
   <meta property="og:url" content="https://ubidzz.github.io/Synix-Control-Panel/">
   <meta property="og:image" content="https://ubidzz.github.io/Synix-Control-Panel/assets/screenshots/dashboard-private.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Synix Control Panel">
-  <meta name="twitter:description" content="Easy personal game server hosting for Windows.">
-  <meta name="twitter:image" content="https://ubidzz.github.io/Synix-Control-Panel/assets/screenshots/dashboard-private.png">
   <link rel="icon" type="image/x-icon" href="./assets/Synix_logo_Icon.ico">
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -22,253 +19,151 @@
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
-    <a class="brand" href="./" aria-label="Synix home">
-      <img src="./assets/synix-logo.png" alt="" width="38" height="38">
-      <span>Synix</span>
+    <a class="brand" href="./" aria-label="Synix Control Panel home">
+      <img src="./assets/synix-logo.png" alt="" width="36" height="36">
+      <span>Synix Control Panel</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
       <a href="./features/">Features</a>
       <a href="./games/">Games</a>
-      <a href="./security/">Security</a>
       <a href="./help/">Help</a>
       <a href="./screenshots/">Screenshots</a>
     </nav>
-    <a class="button button-small button-primary header-download" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi" aria-label="Download the latest Synix MSI installer">Download MSI</a>
+    <div class="header-actions">
+      <a class="project-link" href="https://github.com/ubidzz/Synix-Control-Panel">GitHub Project ↗</a>
+      <a class="button button-small button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi">Download MSI</a>
+    </div>
   </header>
 
   <main id="main">
-    <section id="top" class="hero section-shell hero-refined">
-      <div class="hero-copy">
-        <div class="eyebrow"><span></span> Personal game-server hosting, simplified</div>
-        <h1><span>Your servers.</span><em>One calm control panel.</em></h1>
-        <p class="hero-lede">Install, configure, monitor, protect, and maintain dedicated game servers from a lightweight Windows app built for normal people.</p>
+    <section class="home-hero section-shell">
+      <div class="home-hero-copy">
+        <p class="eyebrow">SYNIX v1.0.22 · WINDOWS 10 &amp; 11</p>
+        <h1>Run dedicated game servers from one Windows app.</h1>
+        <p class="hero-lede">Choose a game and the settings you want. Synix handles installation, startup, monitoring, backups, updates, and common maintenance without making you build command files by hand.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi">Download latest MSI</a>
-          <a class="button button-secondary" href="./features/">Explore Synix</a>
+          <a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi">Download the MSI</a>
+          <a class="button button-secondary" href="./screenshots/">View the application</a>
         </div>
-        <ul class="hero-points" aria-label="Key benefits">
-          <li>No subscription</li>
-          <li>No artificial server limit</li>
-          <li>Runs without permanent admin access</li>
-          <li>Local-first and transparent</li>
-        </ul>
+        <p class="release-note">Free for personal, non-commercial use. No subscription and no artificial server-instance limit.</p>
       </div>
-      <div class="hero-visual">
-        <div class="glow glow-one"></div>
-        <div class="glow glow-two"></div>
-        <div class="product-window hero-window">
-          <div class="product-window-bar" aria-hidden="true">
-            <span></span><span></span><span></span>
-            <strong>Synix Control Panel</strong>
-          </div>
-          <div class="product-screen">
-            <img class="hero-screenshot" src="./assets/screenshots/dashboard-private.png" alt="Synix dashboard monitoring six game servers" width="1584" height="992">
-          </div>
-        </div>
-        <div class="floating-stat stat-profiles"><strong>228</strong><span>built-in game definitions</span></div>
-        <div class="floating-stat stat-local"><strong>Local</strong><span>your data stays yours</span></div>
-      </div>
+      <button class="plain-image-button" type="button" data-image="./assets/screenshots/dashboard-private.png" data-caption="Synix Server Dashboard">
+        <img src="./assets/screenshots/dashboard-private.png" alt="Synix dashboard showing installed game servers, status, diagnostics, and resource use" width="1440" height="900">
+      </button>
     </section>
 
-    <section class="trust-strip" aria-label="Synix highlights">
-      <div><strong>228 game definitions</strong><span>Built into Synix—not downloaded as plugins</span></div>
-      <div><strong>SteamCMD ready</strong><span>Checked and prepared automatically</span></div>
-      <div><strong>Local-first</strong><span>No hosted Synix account or web panel required</span></div>
-      <div><strong>Personal use</strong><span>Free without server-instance fees</span></div>
+    <section class="quick-facts" aria-label="Synix facts">
+      <div><strong>228</strong><span>built-in game definitions</span></div>
+      <div><strong>$0</strong><span>subscription cost</span></div>
+      <div><strong>No cap</strong><span>on personal server instances</span></div>
+      <div><strong>Local</strong><span>Windows desktop application</span></div>
     </section>
 
-    <section id="features" class="section section-shell">
-      <div class="section-heading">
-        <div class="eyebrow"><span></span> One place for the work that matters</div>
-        <h2>A server manager made for people,<br>not just command-line experts.</h2>
-        <p>Synix keeps important details visible while guiding routine server jobs through normal controls.</p>
-      </div>
-
-      <div class="feature-grid">
-        <article class="feature-card feature-wide">
-          <span class="feature-number">01</span>
-          <h3>Guided server setup</h3>
-          <p>Choose a built-in game profile, enter the settings you want, and let template-aware controls show only the options that apply.</p>
-          <ul>
-            <li>Ports, worlds, players, passwords, RCON, and launch options</li>
-            <li>Config templates and validated game definitions</li>
-            <li>Authenticated Steam installation when a title requires it</li>
+    <section class="homepage-section section-shell" aria-labelledby="setup-heading">
+      <div class="feature-row">
+        <div class="feature-copy">
+          <p class="eyebrow">SERVER SETUP</p>
+          <h2 id="setup-heading">Pick the game. Enter the settings. Save the server.</h2>
+          <p>Synix reads its built-in game definition and displays the options that apply to that server. Ports, players, worlds, passwords, RCON, automation, and launch settings stay in normal form controls.</p>
+          <ul class="check-list">
+            <li>SteamCMD installation and repair</li>
+            <li>Template-aware configuration fields</li>
+            <li>Port-conflict and argument checks</li>
+            <li>Steam account sign-in when a title requires it</li>
           </ul>
-        </article>
-        <article class="feature-card">
-          <span class="feature-number">02</span>
-          <h3>Install &amp; maintain</h3>
-          <p>SteamCMD is checked automatically. Install, update, repair, and validate supported servers without building the process by hand.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-number">03</span>
-          <h3>Live monitoring</h3>
-          <p>See server state, uptime, player counts, CPU, RAM, diagnostics, and verification results from one dashboard.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-number">04</span>
-          <h3>Backups &amp; recovery</h3>
-          <p>Create and restore server backups, set retention limits, and move Synix to another computer with verified encrypted or normal transfer packages.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-number">05</span>
-          <h3>Automation &amp; alerts</h3>
-          <p>Schedule restarts, update or back up before launch, and route different server events to one or several Discord webhooks.</p>
-        </article>
-        <article class="feature-card feature-accent">
-          <span class="feature-number">06</span>
-          <h3>Transparent by design</h3>
-          <p>View launch arguments, activity, diagnostics, config health, verification history, and troubleshooting results instead of trusting a black box.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="privacy-section">
-      <div class="section-shell privacy-layout">
-        <div class="privacy-copy">
-          <div class="eyebrow"><span></span> Local-first control</div>
-          <h2>Your servers stay on your PC.</h2>
-          <p>Synix does not require a hosted Synix account, a paid server slot, or a cloud control service. Routine management is designed to run as a normal Windows user.</p>
-          <div class="privacy-list">
-            <div><span>✓</span><p><strong>Local data</strong>Your server list and settings remain on your computer.</p></div>
-            <div><span>✓</span><p><strong>Protected values</strong>Saved passwords and webhooks are protected for the current Windows user.</p></div>
-            <div><span>✓</span><p><strong>Privacy mode</strong>Hide IP addresses and sensitive details while screen sharing.</p></div>
-            <div><span>✓</span><p><strong>Selective elevation</strong>Windows-level tasks request permission only when required.</p></div>
-          </div>
+          <a class="text-link" href="./features/">See all setup and configuration features →</a>
         </div>
-        <figure class="privacy-image product-window media-window">
-          <div class="product-window-bar" aria-hidden="true"><span></span><span></span><span></span><strong>Privacy &amp; Security</strong></div>
-          <div class="product-screen">
-            <img src="./assets/screenshots/settings-privacy.png" alt="Synix Privacy and Security settings" loading="lazy" width="1100" height="720">
-          </div>
-          <figcaption>Privacy and security controls are built into the application.</figcaption>
-        </figure>
+        <button class="plain-image-button" type="button" data-image="./assets/screenshots/setup-general.png" data-caption="Template-aware server setup">
+          <img src="./assets/screenshots/setup-general.png" alt="Synix server setup General page" loading="lazy" width="1180" height="780">
+        </button>
       </div>
     </section>
 
-    <section id="how-it-works" class="section section-shell">
-      <div class="section-heading centered">
-        <div class="eyebrow"><span></span> From download to running server</div>
-        <h2>Four straightforward steps.</h2>
-      </div>
-      <ol class="steps">
-        <li><span>1</span><div><h3>Open Synix</h3><p>Install with WinGet or MSI, or use the standalone application.</p></div></li>
-        <li><span>2</span><div><h3>Choose a server</h3><p>Select one of 228 built-in dedicated server definitions.</p></div></li>
-        <li><span>3</span><div><h3>Pick your settings</h3><p>Set the available ports, world, player, security, automation, and notification options.</p></div></li>
-        <li><span>4</span><div><h3>Install and run</h3><p>Synix prepares the server, launches it, verifies startup, and begins monitoring.</p></div></li>
-      </ol>
-    </section>
-
-    <section class="showcase section-shell">
-      <div class="showcase-copy">
-        <div class="eyebrow"><span></span> See what your servers are doing</div>
-        <h2>Monitoring that stays readable.</h2>
-        <p>The dashboard summarizes every server while the detailed monitor shows the processes and resources behind the numbers.</p>
-        <a class="text-link" href="./screenshots/">Explore the complete gallery <span>→</span></a>
-      </div>
-      <figure class="showcase-image product-window media-window">
-        <div class="product-window-bar" aria-hidden="true"><span></span><span></span><span></span><strong>Live Resource Monitor</strong></div>
-        <div class="product-screen">
-          <img src="./assets/screenshots/resource-monitor.png" alt="Synix Resource Monitor showing one active server" loading="lazy" width="1180" height="760">
+    <section class="homepage-section section-shell" aria-labelledby="monitor-heading">
+      <div class="feature-row feature-row-reverse">
+        <div class="feature-copy">
+          <p class="eyebrow">RUN &amp; MONITOR</p>
+          <h2 id="monitor-heading">See what every managed server is doing.</h2>
+          <p>The dashboard shows server state, uptime, players, CPU, RAM, and current activity. The Resource Monitor identifies the exact server process behind the totals.</p>
+          <ul class="check-list">
+            <li>Verified start, stop, and monitoring results</li>
+            <li>Live process CPU and memory use</li>
+            <li>Activity and diagnostic messages</li>
+            <li>Per-server Discord event routing</li>
+          </ul>
+          <a class="text-link" href="./screenshots/">Open the full screenshot gallery →</a>
         </div>
-      </figure>
+        <button class="plain-image-button" type="button" data-image="./assets/screenshots/resource-monitor.png" data-caption="Live Resource Monitor">
+          <img src="./assets/screenshots/resource-monitor.png" alt="Synix Resource Monitor showing an active game server process" loading="lazy" width="1180" height="760">
+        </button>
+      </div>
     </section>
 
-    <section id="gallery" class="section gallery-section">
-      <div class="section-shell">
-        <div class="section-heading">
-          <div class="eyebrow"><span></span> Real Synix screens</div>
-          <h2>Take a closer look.</h2>
-          <p>Select any image to open the full-size screenshot. Sensitive IP addresses and passwords have been hidden.</p>
+    <section class="homepage-section section-shell" aria-labelledby="maintain-heading">
+      <div class="feature-row">
+        <div class="feature-copy">
+          <p class="eyebrow">MAINTAIN &amp; RECOVER</p>
+          <h2 id="maintain-heading">Back up servers and move Synix without rebuilding everything.</h2>
+          <p>Create server backups, restore a selected backup, set retention limits, or package the entire <code>C:\Synix</code> folder for another PC. Transfer packages can be encrypted and verified before import.</p>
+          <ul class="check-list">
+            <li>Server backup and staged restore</li>
+            <li>Encrypted or normal whole-app transfer</li>
+            <li>Transfer size, free-space, and time estimates</li>
+            <li>Update, repair, and verification queue</li>
+          </ul>
+          <a class="text-link" href="./features/#maintenance">See backup and maintenance tools →</a>
         </div>
-        <div class="gallery-grid gallery-preview-grid">
-          <button class="gallery-card gallery-large" type="button" data-image="./assets/screenshots/dashboard-private.png" data-caption="Server Dashboard">
-            <img src="./assets/screenshots/dashboard-private.png" alt="Synix Server Dashboard" loading="lazy">
-            <span><strong>Server Dashboard</strong><small>Monitor servers, activity, resources, and status</small></span>
-          </button>
-          <button class="gallery-card" type="button" data-image="./assets/screenshots/setup-general.png" data-caption="Template-aware server setup">
-            <img src="./assets/screenshots/setup-general.png" alt="General server setup page" loading="lazy">
-            <span><strong>Guided Setup</strong><small>Game-aware controls</small></span>
-          </button>
-          <button class="gallery-card" type="button" data-image="./assets/screenshots/server-info-private.png" data-caption="Detailed server information">
-            <img src="./assets/screenshots/server-info-private.png" alt="Server details and live telemetry with passwords hidden" loading="lazy">
-            <span><strong>Server Details</strong><small>Live telemetry and configuration</small></span>
-          </button>
-        </div>
-        <div class="gallery-preview-action"><a class="button button-secondary" href="./screenshots/">View all screenshots</a></div>
+        <button class="plain-image-button" type="button" data-image="./assets/screenshots/settings-backups.png" data-caption="Backup and transfer settings">
+          <img src="./assets/screenshots/settings-backups.png" alt="Synix backup and transfer settings" loading="lazy" width="1100" height="720">
+        </button>
       </div>
     </section>
 
-    <section id="install" class="section section-shell install-section">
-      <div class="install-copy">
-        <div class="eyebrow"><span></span> Choose how you want Synix</div>
-        <h2>One application. Three ways to start.</h2>
-        <p>Your server data stays separate inside <code>C:\Synix</code>, whether you install Synix or run the standalone file.</p>
-      </div>
-      <div class="install-grid">
-        <article class="install-card recommended">
-          <span class="tag">Recommended</span>
-          <h3>Windows Installer</h3>
-          <p>Normal Windows installation with Start Menu and Apps list entries.</p>
-          <a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi">Download latest MSI</a>
-          <small class="latest-download-note">Automatically follows the newest GitHub release.</small>
-        </article>
-        <article class="install-card">
-          <h3>WinGet</h3>
-          <p>Install and update from Windows Package Manager.</p>
-          <div class="command"><code>winget install --exact --id ubidzz.Synix</code><button type="button" data-copy="winget install --exact --id ubidzz.Synix">Copy</button></div>
-        </article>
-        <article class="install-card">
-          <h3>Standalone</h3>
-          <p>Download the executable and run it from a folder of your choice.</p>
-          <a class="button button-secondary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/Synix.Control.Panel.exe">Get latest standalone</a>
-        </article>
-      </div>
-      <aside class="notice">
-        <strong>Windows SmartScreen</strong>
-        <p>Synix is independently developed and does not currently have a paid code-signing certificate. Download only from the official GitHub release page and review any Windows warning before choosing to continue.</p>
-      </aside>
-    </section>
-
-    <section id="support" class="support-section">
-      <div class="section-shell support-layout">
+    <section class="security-band">
+      <div class="security-band-inner section-shell">
         <div>
-          <div class="eyebrow"><span></span> Built independently</div>
-          <h2>Help Synix keep growing.</h2>
-          <p>Testing feedback, clear bug reports, game-server documentation, and donations all help one independent developer improve Synix.</p>
+          <p class="eyebrow">LOCAL-FIRST BY DESIGN</p>
+          <h2>Synix manages your servers on your PC.</h2>
+          <p>There is no Synix cloud account or public web panel to expose. Routine use does not require permanent administrator access, and the source is available to inspect on GitHub.</p>
         </div>
-        <div class="support-actions">
-          <a class="button button-primary" href="https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8">Donate with PayPal</a>
-          <a class="button button-secondary" href="https://discord.gg/pTeMSsYDM">Join Discord</a>
-          <a class="button button-secondary" href="https://github.com/ubidzz/Synix-Control-Panel/issues">Report an issue</a>
-          <a class="button button-secondary" href="https://youtu.be/EcVLT4kgdb8">Watch on YouTube</a>
+        <div class="security-points">
+          <div><strong>Protected values</strong><span>Saved passwords and webhooks are protected for the current Windows user.</span></div>
+          <div><strong>Privacy mode</strong><span>Hide IP addresses and sensitive details during screen sharing.</span></div>
+          <div><strong>Visible commands</strong><span>Review default arguments, extra arguments, activity, and verification results.</span></div>
+          <div><strong>No plugin loading</strong><span>Game definitions are built into the application instead of loading executable plugins.</span></div>
         </div>
       </div>
+    </section>
+
+    <section class="homepage-section section-shell" aria-labelledby="tools-heading">
+      <div class="section-heading compact-heading">
+        <p class="eyebrow">BUILT-IN TOOLS</p>
+        <h2 id="tools-heading">The work around the server is managed too.</h2>
+      </div>
+      <div class="core-grid">
+        <article class="core-card"><span>01</span><h3>Config Editor</h3><p>Edit supported INI, XML, JSON, properties, and CFG files while preserving their structure.</p></article>
+        <article class="core-card"><span>02</span><h3>Health Check</h3><p>Check SteamCMD, runtimes, files, configs, ports, firewall rules, space, processes, logs, and update health.</p></article>
+        <article class="core-card"><span>03</span><h3>Recovery</h3><p>Restore backups, repair server files, fix template-backed configs, and recover interrupted work.</p></article>
+        <article class="core-card"><span>04</span><h3>Help Center</h3><p>Search 43 built-in articles covering setup, controls, maintenance, security, troubleshooting, and reporting.</p></article>
+      </div>
+    </section>
+
+    <section class="section-shell cta-panel">
+      <div><p class="eyebrow">LATEST RELEASE</p><h2>Download Synix for Windows.</h2><p>The button always follows the newest <code>SynixSetup.msi</code> published in the official GitHub release.</p></div>
+      <div class="cta-actions"><a class="button button-primary" href="https://github.com/ubidzz/Synix-Control-Panel/releases/latest/download/SynixSetup.msi">Download latest MSI</a><a class="button button-secondary" href="./downloads/">Other install choices</a></div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="footer-main">
-      <a class="brand" href="./"><img src="./assets/synix-logo.png" alt="" width="34" height="34"><span>Synix</span></a>
-      <p>Personal game server management for Windows.</p>
-      <nav aria-label="Footer navigation">
-        <a href="./features/">Features</a>
-        <a href="./games/">Games</a>
-        <a href="./downloads/">Downloads</a>
-        <a href="./help/">Help</a>
-        <a href="./about/">About</a>
-      </nav>
+      <div><a class="brand" href="./"><img src="./assets/synix-logo.png" alt="" width="32" height="32"><span>Synix Control Panel</span></a><p>Personal game server management for Windows.</p></div>
+      <nav aria-label="Footer navigation"><a href="./features/">Features</a><a href="./games/">Games</a><a href="./downloads/">Downloads</a><a href="./help/">Help</a><a href="./about/">About</a><a href="https://github.com/ubidzz/Synix-Control-Panel">GitHub Project ↗</a></nav>
     </div>
-    <div class="footer-bottom"><span>© <span id="year">2026</span> Jason Turner (ubidzz). All rights reserved.</span><span>Personal, non-commercial use.</span></div>
+    <div class="footer-bottom"><span>© <span id="year">2026</span> Jason Turner (ubidzz).</span><span>Personal, non-commercial use.</span></div>
   </footer>
 
-  <dialog id="lightbox" class="lightbox">
-    <button class="lightbox-close" type="button" aria-label="Close image">×</button>
-    <img src="" alt="">
-    <p></p>
-  </dialog>
-
+  <dialog id="lightbox" class="lightbox"><button class="lightbox-close" type="button" aria-label="Close image">×</button><img src="" alt=""><p></p></dialog>
   <script src="./script.js"></script>
 </body>
 </html>

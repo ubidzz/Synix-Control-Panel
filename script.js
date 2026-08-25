@@ -17,7 +17,7 @@ const lightbox = document.querySelector('#lightbox');
 const lightboxImage = lightbox?.querySelector('img');
 const lightboxCaption = lightbox?.querySelector('p');
 
-document.querySelectorAll('.gallery-card').forEach((card) => {
+document.querySelectorAll('.gallery-card, .plain-image-button').forEach((card) => {
   card.addEventListener('click', () => {
     if (!(lightbox instanceof HTMLDialogElement) || !(lightboxImage instanceof HTMLImageElement)) return;
     lightboxImage.src = card.dataset.image ?? '';
