@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixEngine;
 using System.Diagnostics;
+using System.Net;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -137,6 +138,25 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			out string arguments,
 			out string errorMessage)
 		{
+			return TryBuildArguments(
+				server,
+				definition,
+				invokedAppId,
+				passwords,
+				string.Empty,
+				out arguments,
+				out errorMessage);
+		}
+
+		internal static bool TryBuildArguments(
+			GameServer server,
+			GameInfo definition,
+			string invokedAppId,
+			SynixServerPasswords passwords,
+			string? publicIp,
+			out string arguments,
+			out string errorMessage)
+		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(definition);
 
@@ -150,7 +170,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string targetAppId = definition.AppID ?? string.Empty;
 			string cleanIdentity = Core.Instance.GetSafeName(server.ServerName ?? string.Empty);
 
-			arguments = (definition.RequiredArgs ?? string.Empty)
+			arguments = PreparePublicIpArgument(
+				definition.RequiredArgs ?? string.Empty,
+				publicIp)
 				.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
 				.Replace("{seed}", string.IsNullOrWhiteSpace(server.WorldSeed) ? "12345" : server.WorldSeed)
 				.Replace("{map}", server.WorldName ?? string.Empty)
@@ -165,6 +187,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				.Replace("{InstallPath}", server.InstallPath ?? string.Empty)
 				.Replace("{world_size}", server.WorldSize.ToString())
 				.Replace("{Identity}", cleanIdentity)
+				.Replace("{crossplay}", GameFix.ResolveCrossplayValue(definition, server.CrossplayEnabled))
+				.Replace("{crossplay_public_ip}", ResolveCrossplayPublicIp(server.CrossplayEnabled, publicIp))
 				.Replace("{ram}", ramToUse.ToString());
 
 			if (isMinecraft &&
@@ -203,6 +227,46 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			arguments = arguments.Replace("  ", " ").Trim();
 			return true;
+		}
+
+		private static string PreparePublicIpArgument(
+			string arguments,
+			string? publicIp)
+		{
+			if (!arguments.Contains("{PublicIP}", StringComparison.Ordinal))
+				return arguments;
+
+			string normalized = publicIp?.Trim() ?? string.Empty;
+			if (!IPAddress.TryParse(normalized, out IPAddress? address) ||
+				address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+			{
+				return arguments
+					.Replace("-PublicIPForEpic={PublicIP}", string.Empty, StringComparison.OrdinalIgnoreCase)
+					.Replace("-publicip={PublicIP}", string.Empty, StringComparison.OrdinalIgnoreCase)
+					.Replace("{PublicIP}", string.Empty, StringComparison.Ordinal);
+			}
+
+			return arguments.Replace(
+				"{PublicIP}",
+				address.ToString(),
+				StringComparison.Ordinal);
+		}
+
+		private static string ResolveCrossplayPublicIp(
+			bool crossplayEnabled,
+			string? publicIp)
+		{
+			if (!crossplayEnabled)
+				return string.Empty;
+
+			string normalized = publicIp?.Trim() ?? string.Empty;
+			if (!IPAddress.TryParse(normalized, out IPAddress? address) ||
+				address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+			{
+				return string.Empty;
+			}
+
+			return $"-PublicIPForEpic={address}";
 		}
 
 		internal static ProcessStartInfo CreateProcessStartInfo(

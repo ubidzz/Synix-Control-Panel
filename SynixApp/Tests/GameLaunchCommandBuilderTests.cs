@@ -22,7 +22,7 @@ namespace Synix_Control_Panel.Tests;
 public sealed class GameLaunchCommandBuilderTests
 {
 	private static readonly Regex UnresolvedLaunchPlaceholder = new(
-		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|ram|rcon|mode)\\}",
+		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|crossplay|crossplay_public_ip|ram|rcon|mode|PublicIP)\\}",
 		RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 	[Fact]
@@ -98,6 +98,123 @@ public sealed class GameLaunchCommandBuilderTests
 		Assert.True(startInfo.CreateNoWindow);
 		Assert.Equal(ProcessWindowStyle.Hidden, startInfo.WindowStyle);
 		Assert.False(startInfo.RedirectStandardInput);
+	}
+
+	[Fact]
+	public void PalworldCommunityListingUsesCurrentPublicAddressAndSelectedPort()
+	{
+		GameInfo definition = GameDatabase.GetGame("Palworld")!;
+		GameServer server = CreateServer(definition.Game);
+		server.Port = 8777;
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			"203.0.113.25",
+			out string arguments,
+			out string error), error);
+		Assert.Contains("-publiclobby", arguments);
+		Assert.Contains("-publicip=203.0.113.25", arguments);
+		Assert.Contains("-port=8777", arguments);
+		Assert.Contains("-publicport=8777", arguments);
+		Assert.DoesNotContain("-useperfthreads", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-NoAsyncLoadingThread", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-UseMultithreadForDS", arguments, StringComparison.OrdinalIgnoreCase);
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			string.Empty,
+			out string automaticArguments,
+			out error), error);
+		Assert.Contains("-publiclobby", automaticArguments);
+		Assert.DoesNotContain("-publicip=", automaticArguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{PublicIP}", automaticArguments, StringComparison.Ordinal);
+	}
+
+	[Theory]
+	[InlineData("ARK: Survival Ascended", "-ServerPlatform=ALL", "-ServerPlatform=PC")]
+	[InlineData("ARK: Survival Evolved", "-crossplay", "")]
+	[InlineData("Valheim (Crossplay)", "-crossplay", "")]
+	public void CrossplayFlagIsIncludedOnlyWhenSelected(
+		string game,
+		string enabledValue,
+		string disabledValue)
+	{
+		GameInfo definition = GameDatabase.GetGame(game)!;
+		GameServer server = CreateServer(definition.Game);
+
+		server.CrossplayEnabled = true;
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			out string enabledArguments,
+			out string error), error);
+		Assert.Contains(enabledValue, enabledArguments, StringComparison.OrdinalIgnoreCase);
+
+		server.CrossplayEnabled = false;
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			out string disabledArguments,
+			out error), error);
+		if (string.IsNullOrEmpty(disabledValue))
+			Assert.DoesNotContain(enabledValue, disabledArguments, StringComparison.OrdinalIgnoreCase);
+		else
+			Assert.Contains(disabledValue, disabledArguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{crossplay}", disabledArguments, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Fact]
+	public void ArkSurvivalEvolvedCrossplayAddsEpicPublicIpOnlyWhenAvailable()
+	{
+		GameInfo definition = GameDatabase.GetGame("ARK: Survival Evolved")!;
+		GameServer server = CreateServer(definition.Game);
+		server.CrossplayEnabled = true;
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			"203.0.113.25",
+			out string arguments,
+			out string error), error);
+		Assert.Contains("-crossplay", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.Contains("-PublicIPForEpic=203.0.113.25", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{PublicIP}", arguments, StringComparison.Ordinal);
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			string.Empty,
+			out arguments,
+			out error), error);
+		Assert.DoesNotContain("PublicIPForEpic", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{PublicIP}", arguments, StringComparison.Ordinal);
+
+		server.CrossplayEnabled = false;
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			"203.0.113.25",
+			out arguments,
+			out error), error);
+		Assert.DoesNotContain("-crossplay", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("PublicIPForEpic", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{crossplay_public_ip}", arguments, StringComparison.Ordinal);
 	}
 
 	[Fact]

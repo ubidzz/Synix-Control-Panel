@@ -137,6 +137,10 @@ public class GameDefinition
 	public string BooleanTrueValue { get; init; } = "true";
 	[JsonIgnore]
 	public string BooleanFalseValue { get; init; } = "false";
+	[JsonIgnore]
+	public string CrossplayEnabledValue { get; init; } = "true";
+	[JsonIgnore]
+	public string CrossplayDisabledValue { get; init; } = "false";
 	public string RconSyntax { get; init; } = "";
 	public string IconUrl { get; init; } = string.Empty;
 	[JsonIgnore]
@@ -252,6 +256,7 @@ public class GameServer
 	[JsonIgnore]
 	public Process? RunningProcess { get; set; }
 	public string GameMode { get; set; } = "PVE";
+	public bool CrossplayEnabled { get; set; } = true;
 	[JsonIgnore]
 	public double LastCpuMillis { get; set; } = 0;
 	[JsonIgnore]

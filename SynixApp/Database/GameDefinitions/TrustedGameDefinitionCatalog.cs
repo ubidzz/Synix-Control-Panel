@@ -75,6 +75,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string PveValue { get; init; } = "PVE";
 		public string BooleanTrueValue { get; init; } = "true";
 		public string BooleanFalseValue { get; init; } = "false";
+		public string CrossplayEnabledValue { get; init; } = "true";
+		public string CrossplayDisabledValue { get; init; } = "false";
 		public ConfigFileCreationMode ConfigFileCreation { get; init; } =
 			ConfigFileCreationMode.Unknown;
 		public string RelativeConfigPath { get; init; } = string.Empty;
@@ -134,6 +136,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				"PublicIP",
 				"IsPvp",
 				"IsPve",
+				"Crossplay",
 				"GameMode"
 			};
 		private static readonly JsonSerializerOptions SerializerOptions =
@@ -235,6 +238,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				PveValue = manifest.PveValue,
 				BooleanTrueValue = manifest.BooleanTrueValue,
 				BooleanFalseValue = manifest.BooleanFalseValue,
+				CrossplayEnabledValue = manifest.CrossplayEnabledValue,
+				CrossplayDisabledValue = manifest.CrossplayDisabledValue,
 				ConfigFileCreation = manifest.ConfigFileCreation,
 				RelativeConfigPath = relativeConfigPath,
 				Format = manifest.Format,
@@ -365,6 +370,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			ValidateDefinitionValue(manifest.PveValue, "pveValue", resourceName);
 			ValidateDefinitionValue(manifest.BooleanTrueValue, "booleanTrueValue", resourceName);
 			ValidateDefinitionValue(manifest.BooleanFalseValue, "booleanFalseValue", resourceName);
+			ValidateDefinitionValue(manifest.CrossplayEnabledValue, "crossplayEnabledValue", resourceName);
+			if (!string.IsNullOrEmpty(manifest.CrossplayDisabledValue))
+				ValidateDefinitionValue(manifest.CrossplayDisabledValue, "crossplayDisabledValue", resourceName);
 			ValidateRuntimeRequirements(manifest.RuntimeRequirements, resourceName);
 			ValidateLaunchBehavior(manifest, resourceName);
 			ValidateSupportedServerFrameworks(manifest, resourceName);
@@ -591,6 +599,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					inputs |= ManagedConfigurationInput.Port;
 				if (content.Contains("{AppPort}", StringComparison.Ordinal))
 					inputs |= ManagedConfigurationInput.AppPort;
+				if (content.Contains("{Crossplay}", StringComparison.Ordinal))
+					inputs |= ManagedConfigurationInput.Crossplay;
 			}
 			return inputs;
 		}
