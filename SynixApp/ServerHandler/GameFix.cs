@@ -75,6 +75,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			return enabled ? game.BooleanTrueValue : game.BooleanFalseValue;
 		}
 
+		internal static string ResolveCrossplayValue(
+			GameInfo? game,
+			bool enabled)
+		{
+			if (game == null)
+				return enabled ? "true" : "false";
+			return enabled ? game.CrossplayEnabledValue : game.CrossplayDisabledValue;
+		}
+
 		internal static bool CanResetManagedConfiguration(GameServer server)
 		{
 			return server != null &&
@@ -371,6 +380,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				arguments.Contains("{app_port}", StringComparison.OrdinalIgnoreCase),
 				ManagedConfigurationInput.AppPort,
 				GameManagementCapability.AppPort);
+			Include(
+				arguments.Contains("{crossplay}", StringComparison.Ordinal),
+				ManagedConfigurationInput.Crossplay,
+				GameManagementCapability.Crossplay);
 
 			if (arguments.Contains("{ram}", StringComparison.OrdinalIgnoreCase))
 				capabilities |= GameManagementCapability.Ram;

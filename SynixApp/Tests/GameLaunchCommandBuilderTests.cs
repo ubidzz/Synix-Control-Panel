@@ -22,7 +22,7 @@ namespace Synix_Control_Panel.Tests;
 public sealed class GameLaunchCommandBuilderTests
 {
 	private static readonly Regex UnresolvedLaunchPlaceholder = new(
-		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|ram|rcon|mode|PublicIP)\\}",
+		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|crossplay|ram|rcon|mode|PublicIP)\\}",
 		RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 	[Fact]
@@ -134,6 +134,36 @@ public sealed class GameLaunchCommandBuilderTests
 		Assert.Contains("-publiclobby", automaticArguments);
 		Assert.DoesNotContain("-publicip=", automaticArguments, StringComparison.OrdinalIgnoreCase);
 		Assert.DoesNotContain("{PublicIP}", automaticArguments, StringComparison.Ordinal);
+	}
+
+	[Theory]
+	[InlineData("ARK: Survival Ascended")]
+	[InlineData("Valheim (Crossplay)")]
+	public void CrossplayFlagIsIncludedOnlyWhenSelected(string game)
+	{
+		GameInfo definition = GameDatabase.GetGame(game)!;
+		GameServer server = CreateServer(definition.Game);
+
+		server.CrossplayEnabled = true;
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			out string enabledArguments,
+			out string error), error);
+		Assert.Contains("-crossplay", enabledArguments, StringComparison.OrdinalIgnoreCase);
+
+		server.CrossplayEnabled = false;
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			out string disabledArguments,
+			out error), error);
+		Assert.DoesNotContain("-crossplay", disabledArguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{crossplay}", disabledArguments, StringComparison.OrdinalIgnoreCase);
 	}
 
 	[Fact]

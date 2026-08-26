@@ -35,6 +35,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			new("{seed}", "World seed", "The selected world-generation seed."),
 			new("{world_size}", "World size", "The selected world size."),
 			new("{mode}", "Game mode", "The selected game mode or PVE/PVP value."),
+			new("{crossplay}", "Crossplay", "The game-specific enabled value, flag, or no argument when Crossplay is disabled."),
 			new("{ram}", "Memory limit", "The configured memory value in megabytes."),
 			new("{rcon}", "Optional RCON arguments", "The RCON recipe below, or nothing when RCON is disabled."),
 			new("{steamAppID}", "Installed Steam AppID", "The AppID Synix determined for the installed server."),

@@ -412,28 +412,53 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			string executable;
+			string launchFile;
 			try
 			{
-				executable = Path.GetFullPath(Path.Combine(server.InstallPath, game.ExeName));
+				launchFile = Path.GetFullPath(Path.Combine(server.InstallPath, game.ExeName));
 			}
 			catch
 			{
 				return;
 			}
-			if (!File.Exists(executable))
+			if (!File.Exists(launchFile))
 				return;
 
-			bool allowed = firewall.AllowedExecutables.Contains(executable);
+			string? allowedExecutable = WindowsFirewallInspector.FindAllowedExecutable(
+				server.InstallPath,
+				launchFile,
+				firewall.AllowedExecutables);
+			bool allowed = allowedExecutable != null;
+			string checkedFile = GetInstalledRelativePath(server.InstallPath, launchFile);
+			string matchedFile = allowedExecutable == null
+				? string.Empty
+				: GetInstalledRelativePath(server.InstallPath, allowedExecutable);
 			items.Add(new SynixHealthItem(
 				allowed ? SynixHealthLevel.Passed : SynixHealthLevel.Warning,
 				"Windows Firewall",
 				server.ServerName,
 				allowed
-					? "An enabled inbound allow rule exists for the server executable."
-					: "No enabled inbound allow rule was found for this executable. Windows may prompt when it starts; router port forwarding is separate.",
+					? $"An enabled inbound program rule targets the installed server executable '{matchedFile}'."
+					: $"No enabled inbound program rule points to an executable inside this server's install folder. The configured launch file is '{checkedFile}'. This check does not use ports; Windows may prompt when the server starts, and router port forwarding is separate.",
 				allowed ? SynixHealthAction.None : SynixHealthAction.OpenFirewallSettings,
 				server));
+		}
+
+		private static string GetInstalledRelativePath(string installPath, string path)
+		{
+			try
+			{
+				string relative = Path.GetRelativePath(
+					Path.GetFullPath(installPath),
+					Path.GetFullPath(path));
+				return relative.StartsWith("..", StringComparison.Ordinal)
+					? Path.GetFileName(path)
+					: relative;
+			}
+			catch
+			{
+				return Path.GetFileName(path);
+			}
 		}
 
 		private static void CheckProcessRecovery(
@@ -674,6 +699,64 @@ namespace Synix_Control_Panel.SynixEngine
 
 	internal static class WindowsFirewallInspector
 	{
+		internal static string? FindAllowedExecutable(
+			string installPath,
+			string configuredLaunchPath,
+			IEnumerable<string> allowedExecutables)
+		{
+			if (!TryNormalizePath(installPath, out string normalizedInstallPath))
+				return null;
+
+			TryNormalizePath(configuredLaunchPath, out string normalizedLaunchPath);
+			List<string> normalizedRules = [];
+			foreach (string allowedExecutable in allowedExecutables)
+			{
+				if (TryNormalizePath(allowedExecutable, out string normalizedRule) &&
+					normalizedRule.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+				{
+					normalizedRules.Add(normalizedRule);
+				}
+			}
+
+			string? exactMatch = normalizedRules.FirstOrDefault(path =>
+				!string.IsNullOrWhiteSpace(normalizedLaunchPath) &&
+				string.Equals(path, normalizedLaunchPath, StringComparison.OrdinalIgnoreCase));
+			if (exactMatch != null)
+				return exactMatch;
+
+			return normalizedRules.FirstOrDefault(path =>
+				IsPathInsideDirectory(path, normalizedInstallPath));
+		}
+
+		private static bool TryNormalizePath(string path, out string normalizedPath)
+		{
+			normalizedPath = string.Empty;
+			if (string.IsNullOrWhiteSpace(path))
+				return false;
+
+			try
+			{
+				string expanded = Environment.ExpandEnvironmentVariables(path.Trim().Trim('"'));
+				normalizedPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(expanded));
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static bool IsPathInsideDirectory(string path, string directory)
+		{
+			if (string.Equals(path, directory, StringComparison.OrdinalIgnoreCase))
+				return false;
+
+			string directoryPrefix = Path.EndsInDirectorySeparator(directory)
+				? directory
+				: directory + Path.DirectorySeparatorChar;
+			return path.StartsWith(directoryPrefix, StringComparison.OrdinalIgnoreCase);
+		}
+
 		internal static FirewallSnapshot Capture()
 		{
 			if (!OperatingSystem.IsWindows())
@@ -713,8 +796,12 @@ namespace Synix_Control_Panel.SynixEngine
 						int direction = Convert.ToInt32(rule.Direction);
 						int action = Convert.ToInt32(rule.Action);
 						string applicationName = Convert.ToString(rule.ApplicationName) ?? string.Empty;
-						if (ruleEnabled && direction == 1 && action == 1 && applicationName.Length > 0)
-							allowed.Add(Path.GetFullPath(applicationName));
+						if (ruleEnabled && direction == 1 && action == 1 &&
+							TryNormalizePath(applicationName, out string executablePath) &&
+							executablePath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+						{
+							allowed.Add(executablePath);
+						}
 					}
 					catch
 					{

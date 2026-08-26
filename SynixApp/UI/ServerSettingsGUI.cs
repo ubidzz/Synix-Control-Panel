@@ -91,6 +91,7 @@ namespace Synix_Control_Panel
 			chkEnableSchedule.Tag = "Activate Scheduler";
 			chkUpdateOnStart.Tag = "Update on Start";
 			chkEnableRcon.Tag = "RCON";
+			chkCrossplay.Tag = "Crossplay";
 			chkBackupOnStart.Tag = "Backup on Start";
 			discordSettingsPage.SettingsChanged += (_, _) => SyncGatekeeper();
 
@@ -382,6 +383,7 @@ namespace Synix_Control_Panel
 
 			chkUpdateOnStart.Checked = _existingServer.UpdateOnStart;
 			chkEnableRcon.Checked = _existingServer.EnableRcon;
+			chkCrossplay.Checked = _existingServer.CrossplayEnabled;
 			numRconPort.Value = Math.Clamp(_existingServer.RconPort, numRconPort.Minimum, numRconPort.Maximum);
 			chkEnableSchedule.Checked = _existingServer.IsScheduledRestartEnabled;
 			if (_existingServer.RestartDays != null) _selectedDays = (bool[])_existingServer.RestartDays.Clone();
@@ -462,6 +464,7 @@ namespace Synix_Control_Panel
 					numAppPort.Tag = CanUnlock(numAppPort) ? "Required" : "Disabled";
 
 				chkEnableRcon.Enabled = CanUnlock(chkEnableRcon);
+				chkCrossplay.Enabled = CanUnlock(chkCrossplay);
 				bool rconActive = chkEnableRcon.Enabled && chkEnableRcon.Checked;
 				numRconPort.Enabled = rconActive;
 				txtRconPassword.Enabled = rconActive;
@@ -629,11 +632,13 @@ namespace Synix_Control_Panel
 
 		private void ToggleGameSpecificFields(GameInfo? gameData)
 		{
-			var controls = new Control[] { txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive, numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon };
+			var controls = new Control[] { txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive, numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon, chkCrossplay };
 			if (gameData == null)
 			{
 				ConfigureRuntimeCard(null);
 				foreach (var c in controls) if (c != null) c.Tag = "Disabled";
+				lblCrossplay.Visible = false;
+				chkCrossplay.Visible = false;
 
 				SetupManagedPlaceholder(txtPassword, "Select a game...");
 				SetupManagedPlaceholder(txtAdminPassword, "Select a game...");
@@ -712,6 +717,10 @@ namespace Synix_Control_Panel
 				chkEnableRcon.Tag = Supports(GameManagementCapability.Rcon)
 					? "Required"
 					: "Disabled";
+				bool supportsCrossplay = Supports(GameManagementCapability.Crossplay);
+				chkCrossplay.Tag = supportsCrossplay ? "Required" : "Disabled";
+				lblCrossplay.Visible = supportsCrossplay;
+				chkCrossplay.Visible = supportsCrossplay;
 				numWorldSize.Tag = Supports(GameManagementCapability.WorldSize)
 					? "Required"
 					: "Disabled";
@@ -803,6 +812,7 @@ namespace Synix_Control_Panel
 			numAppPort.ValueChanged += (s, e) => trigger();
 			numRconPort.ValueChanged += (s, e) => trigger();
 			chkEnableRcon.CheckedChanged += (s, e) => trigger();
+			chkCrossplay.CheckedChanged += (s, e) => trigger();
 			chkDefaultPath.CheckedChanged += (s, e) => trigger();
 			numWorldSize.ValueChanged += (s, e) => trigger();
 			cmbGameVersion.SelectedIndexChanged += async (s, e) =>
@@ -1122,6 +1132,7 @@ namespace Synix_Control_Panel
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = cmbWorldName.Text,
 				GameMode = cmbCompetitive.Text,
+				CrossplayEnabled = chkCrossplay.Checked,
 				WorldSeed = GetEnteredValue(txtWorldSeed).Trim(),
 				WorldSize = wSize,
 				ExtraArgs = txtExtraArgs.Text,

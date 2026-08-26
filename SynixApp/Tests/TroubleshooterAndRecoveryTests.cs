@@ -146,6 +146,59 @@ public sealed class TroubleshooterAndRecoveryTests
 	}
 
 	[Fact]
+	public void FirewallCheck_MatchesConfiguredExecutableByExactPath()
+	{
+		string installPath = Path.Combine("C:\\Synix\\Games", "Example", "ServerOne");
+		string executable = Path.Combine(installPath, "Server.exe");
+
+		string? match = WindowsFirewallInspector.FindAllowedExecutable(
+			installPath,
+			executable,
+			[executable]);
+
+		Assert.Equal(Path.GetFullPath(executable), match, ignoreCase: true);
+	}
+
+	[Fact]
+	public void FirewallCheck_MatchesChildServerExecutableInsideInstallFolder()
+	{
+		string installPath = Path.Combine("C:\\Synix\\Games", "Palworld", "ServerOne");
+		string launcher = Path.Combine(installPath, "PalServer.exe");
+		string childExecutable = Path.Combine(
+			installPath,
+			"Pal",
+			"Binaries",
+			"Win64",
+			"PalServer-Win64-Test-Cmd.exe");
+
+		string? match = WindowsFirewallInspector.FindAllowedExecutable(
+			installPath,
+			launcher,
+			[childExecutable]);
+
+		Assert.Equal(Path.GetFullPath(childExecutable), match, ignoreCase: true);
+	}
+
+	[Fact]
+	public void FirewallCheck_RejectsPortRulesAndExecutablesOutsideInstallFolder()
+	{
+		string installPath = Path.Combine("C:\\Synix\\Games", "Example", "ServerOne");
+		string executable = Path.Combine(installPath, "Server.exe");
+		string unrelatedExecutable = Path.Combine(
+			"C:\\Synix\\Games",
+			"Example",
+			"AnotherServer",
+			"Server.exe");
+
+		string? match = WindowsFirewallInspector.FindAllowedExecutable(
+			installPath,
+			executable,
+			[unrelatedExecutable, string.Empty]);
+
+		Assert.Null(match);
+	}
+
+	[Fact]
 	public void SessionMarker_DistinguishesCleanAndInterruptedRuns()
 	{
 		string folder = Path.Combine(Path.GetTempPath(), $"SynixSessionTest-{Guid.NewGuid():N}");

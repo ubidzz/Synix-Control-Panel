@@ -76,6 +76,8 @@ namespace Synix_Control_Panel
 			cardGameplay = new ModernSettingsCard();
 			lblGameplayIcon = new Label();
 			lblGameplayTitle = new Label();
+			lblCrossplay = new Label();
+			chkCrossplay = new ModernSettingsToggle();
 			MapLabel = new Label();
 			cmbWorldName = new ModernSettingsComboBox();
 			lblCompetitive = new Label();
@@ -737,6 +739,8 @@ namespace Synix_Control_Panel
 			cardGameplay.BorderColor = Color.FromArgb(38, 52, 77);
 			cardGameplay.Controls.Add(lblGameplayIcon);
 			cardGameplay.Controls.Add(lblGameplayTitle);
+			cardGameplay.Controls.Add(lblCrossplay);
+			cardGameplay.Controls.Add(chkCrossplay);
 			cardGameplay.Controls.Add(MapLabel);
 			cardGameplay.Controls.Add(cmbWorldName);
 			cardGameplay.Controls.Add(lblCompetitive);
@@ -774,6 +778,29 @@ namespace Synix_Control_Panel
 			lblGameplayTitle.Size = new Size(144, 21);
 			lblGameplayTitle.TabIndex = 1;
 			lblGameplayTitle.Text = "Gameplay Profile";
+
+			// lblCrossplay
+			lblCrossplay.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			lblCrossplay.AutoSize = true;
+			lblCrossplay.BackColor = Color.FromArgb(17, 27, 45);
+			lblCrossplay.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblCrossplay.ForeColor = Color.FromArgb(245, 247, 251);
+			lblCrossplay.Location = new Point(300, 22);
+			lblCrossplay.Name = "lblCrossplay";
+			lblCrossplay.Size = new Size(59, 15);
+			lblCrossplay.TabIndex = 2;
+			lblCrossplay.Text = "Crossplay";
+			lblCrossplay.Visible = false;
+
+			// chkCrossplay
+			chkCrossplay.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			chkCrossplay.BackColor = Color.FromArgb(17, 27, 45);
+			chkCrossplay.Checked = true;
+			chkCrossplay.Location = new Point(382, 14);
+			chkCrossplay.Name = "chkCrossplay";
+			chkCrossplay.Size = new Size(54, 30);
+			chkCrossplay.TabIndex = 3;
+			chkCrossplay.Visible = false;
 
 			// MapLabel
 			MapLabel.AutoSize = true;
@@ -2134,6 +2161,8 @@ namespace Synix_Control_Panel
 		private ModernSettingsCard cardGameplay;
 		private Label lblGameplayIcon;
 		private Label lblGameplayTitle;
+		private Label lblCrossplay;
+		private ModernSettingsToggle chkCrossplay;
 		private Label MapLabel;
 		private ModernSettingsComboBox cmbWorldName;
 		private Label lblCompetitive;

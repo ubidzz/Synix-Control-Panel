@@ -37,7 +37,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("game.name", context => context.Server.ServerName),
 			new("game.password", context => NormalizeOptionalValue(context.Passwords.ServerPassword)),
 			new("game.passwordAdmin", context => NormalizeAdminPassword(context.Passwords.AdminPassword)),
-			new("game.maxPlayers", context => context.Server.MaxPlayers.ToString())
+			new("game.maxPlayers", context => context.Server.MaxPlayers.ToString()),
+			new("game.crossPlatform", context => context.Server.CrossplayEnabled.ToString().ToLowerInvariant())
 		];
 
 		public override string GameName => "Arma Reforger";
@@ -49,7 +50,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			ManagedConfigurationInput.MaxPlayers |
 			ManagedConfigurationInput.QueryPort |
 			ManagedConfigurationInput.Port |
-			ManagedConfigurationInput.Rcon;
+			ManagedConfigurationInput.Rcon |
+			ManagedConfigurationInput.Crossplay;
 		public override string RelativePath => @"configs\server.json";
 		public override ConfigFormat Format => ConfigFormat.JSON;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
@@ -134,7 +136,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					scenarioId = DefaultScenario,
 					maxPlayers = context.Server.MaxPlayers,
 					visible = true,
-					crossPlatform = true,
+					crossPlatform = context.Server.CrossplayEnabled,
 					modsRequiredByDefault = true,
 					gameProperties = new
 					{

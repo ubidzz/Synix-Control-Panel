@@ -1061,6 +1061,25 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void ArmaReforger_UsesTheSelectedCrossplaySetting()
+	{
+		ArmaReforgerConfiguration definition = new();
+		GameServer server = CreateServer("Arma Reforger");
+		server.CrossplayEnabled = false;
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+		using JsonDocument document = JsonDocument.Parse(
+			File.ReadAllText(definition.ResolveFullPath(server)));
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.False(
+			document.RootElement
+				.GetProperty("game")
+				.GetProperty("crossPlatform")
+				.GetBoolean());
+	}
+
+	[Fact]
 	public void ArmaReforger_CreatesAndRemovesCompleteRconConfiguration()
 	{
 		ArmaReforgerConfiguration definition = new();

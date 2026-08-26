@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "valheim-crossplay",
   "catalogOrder": 34,
   "game": "Valheim (Crossplay)",
@@ -9,7 +9,9 @@
   "requiresSteamLogin": false,
   "executable": "valheim_server.exe",
   "downloadUrl": "",
-  "arguments": "-nographics -batchmode -name \"{ServerName}\" -port {port} -world \"{map}\" -password \"{pass}\" -crossplay -SteamAppId={steamAppID}",
+  "arguments": "-nographics -batchmode -name \"{ServerName}\" -port {port} -world \"{map}\" -password \"{pass}\" {crossplay} -SteamAppId={steamAppID}",
+  "crossplayEnabledValue": "-crossplay",
+  "crossplayDisabledValue": "",
   "rconSyntax": "",
   "port": 2456,
   "queryPort": 2457,

@@ -187,6 +187,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				.Replace("{InstallPath}", server.InstallPath ?? string.Empty)
 				.Replace("{world_size}", server.WorldSize.ToString())
 				.Replace("{Identity}", cleanIdentity)
+				.Replace("{crossplay}", GameFix.ResolveCrossplayValue(definition, server.CrossplayEnabled))
 				.Replace("{ram}", ramToUse.ToString());
 
 			if (isMinecraft &&
