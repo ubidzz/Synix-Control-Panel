@@ -334,16 +334,19 @@ public sealed class GameConfigurationTests : IDisposable
 		server.QueryPort = 8212;
 		server.MaxPlayers = 10;
 		server.GameMode = "PVE";
+		server.CrossplayEnabled = false;
 		server.EnableRcon = false;
 		server.RconPort = 25575;
 
 		ConfigurationApplyResult created = definition.Apply(CreateContext(server));
 		string path = definition.ResolveFullPath(server);
+		Assert.Equal("(Steam)", GetValue(path, definition.Format, "CrossplayPlatforms"));
 		SetValue(path, definition.Format, "ExpRate", "2.500000");
 
 		server.ServerName = "Pal Two";
 		server.MaxPlayers = 24;
 		server.GameMode = "PVP";
+		server.CrossplayEnabled = true;
 		server.EnableRcon = true;
 		ConfigurationApplyResult updated = definition.Apply(CreateContext(server));
 
@@ -355,6 +358,8 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.Equal("True", GetValue(path, definition.Format, "bEnablePlayerToPlayerDamage"));
 		Assert.Equal("True", GetValue(path, definition.Format, "bEnableDefenseOtherGuildPlayer"));
 		Assert.Equal("True", GetValue(path, definition.Format, "RCONEnabled"));
+		Assert.Equal("(Steam,Xbox,PS5,Mac)", GetValue(path, definition.Format, "CrossplayPlatforms"));
+		Assert.Equal(string.Empty, GetValue(path, definition.Format, "PublicIP"));
 		Assert.Equal("2.500000", GetValue(path, definition.Format, "ExpRate"));
 	}
 
@@ -1060,6 +1065,25 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void ArmaReforger_UsesTheSelectedCrossplaySetting()
+	{
+		ArmaReforgerConfiguration definition = new();
+		GameServer server = CreateServer("Arma Reforger");
+		server.CrossplayEnabled = false;
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+		using JsonDocument document = JsonDocument.Parse(
+			File.ReadAllText(definition.ResolveFullPath(server)));
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.False(
+			document.RootElement
+				.GetProperty("game")
+				.GetProperty("crossPlatform")
+				.GetBoolean());
+	}
+
+	[Fact]
 	public void ArmaReforger_CreatesAndRemovesCompleteRconConfiguration()
 	{
 		ArmaReforgerConfiguration definition = new();
@@ -1260,7 +1284,7 @@ public sealed class GameConfigurationTests : IDisposable
 				Path.Combine(server.InstallPath, "DefaultPalWorldSettings.ini"),
 				"""
 				[/Script/Pal.PalGameWorldSettings]
-				OptionSettings=(Difficulty=None,bIsPvP=False,ExpRate=1.000000,DayTimeSpeedRate=1.000000,ServerPlayerMaxNum=32,ServerName="Default Palworld Server",AdminPassword="",ServerPassword="",PublicPort=8211,RCONEnabled=False,RCONPort=25575,RESTAPIPort=8212)
+				OptionSettings=(Difficulty=None,bIsPvP=False,ExpRate=1.000000,DayTimeSpeedRate=1.000000,ServerPlayerMaxNum=32,ServerName="Default Palworld Server",AdminPassword="",ServerPassword="",PublicPort=8211,PublicIP="0.0.0.0",RCONEnabled=False,RCONPort=25575,RESTAPIPort=8212)
 				""");
 			return;
 		}

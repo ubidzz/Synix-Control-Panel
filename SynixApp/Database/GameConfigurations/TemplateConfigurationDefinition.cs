@@ -304,6 +304,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				.Replace("{PublicIP}", TextValue(RequireSingleLine(context.PublicIp, "PublicIP"), "public_ip"), StringComparison.Ordinal)
 				.Replace("{IsPvp}", BooleanValue(string.Equals(server.GameMode, "PVP", StringComparison.OrdinalIgnoreCase)), StringComparison.Ordinal)
 				.Replace("{IsPve}", BooleanValue(string.Equals(server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase)), StringComparison.Ordinal)
+				.Replace("{Crossplay}", BooleanValue(server.CrossplayEnabled), StringComparison.Ordinal)
 				.Replace("{GameMode}", TextValue(GameModeValue(), "game_mode"), StringComparison.Ordinal);
 		}
 
@@ -415,6 +416,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					supported |= ManagedConfigurationInput.Port;
 				if (content.Contains("{AppPort}", StringComparison.Ordinal))
 					supported |= ManagedConfigurationInput.AppPort;
+				if (content.Contains("{Crossplay}", StringComparison.Ordinal))
+					supported |= ManagedConfigurationInput.Crossplay;
 			}
 
 			return supported;

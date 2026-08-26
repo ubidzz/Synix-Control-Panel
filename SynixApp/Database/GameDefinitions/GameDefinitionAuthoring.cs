@@ -42,6 +42,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string PveValue { get; init; } = "PVE";
 		public string BooleanTrueValue { get; init; } = "true";
 		public string BooleanFalseValue { get; init; } = "false";
+		public string CrossplayEnabledValue { get; init; } = "true";
+		public string CrossplayDisabledValue { get; init; } = "false";
 		public ConfigFileCreationMode ConfigFileCreation { get; init; } =
 			ConfigFileCreationMode.Unknown;
 		public ConfigFormat Format { get; init; } = ConfigFormat.StandardINI;
@@ -114,6 +116,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				["pveValue"] = draft.PveValue.Trim(),
 				["booleanTrueValue"] = draft.BooleanTrueValue.Trim(),
 				["booleanFalseValue"] = draft.BooleanFalseValue.Trim(),
+				["crossplayEnabledValue"] = draft.CrossplayEnabledValue.Trim(),
+				["crossplayDisabledValue"] = draft.CrossplayDisabledValue.Trim(),
 				["configFileCreation"] = draft.ConfigFileCreation.ToString(),
 				["relativeConfigPath"] = draft.RelativeConfigPath.Trim(),
 				["format"] = draft.Format.ToString(),

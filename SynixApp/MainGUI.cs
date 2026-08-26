@@ -1102,13 +1102,13 @@ namespace Synix_Control_Panel
 				if (_updateCheckResult.UpdateAvailable)
 				{
 					string latestVersion = _updateCheckResult.AdvertisedVersion?.ToString(3) ?? "new";
-					lblUpdateStatus.Text = _updateCheckResult.ReleaseReady
+					lblUpdateStatus.Text = _updateCheckResult.Release is not null
 						? $"Update {latestVersion} available  •  Running {currentVersion.ToString(3)}"
-						: $"Update {latestVersion} is being prepared";
+						: $"Update {latestVersion} detected  •  Details unavailable";
 					lblUpdateStatus.ForeColor = SettingsPalette.Warning;
 					btnDownloadUpdate.Text = _updateCheckResult.CanInstall
 						? "Install Update"
-						: "View Update";
+						: "Update Details";
 					btnDownloadUpdate.Visible = true;
 					btnDownloadUpdate.Enabled = true;
 				}
@@ -1135,11 +1135,19 @@ namespace Synix_Control_Panel
 
 		private async void btnDownloadUpdate_Click(object sender, EventArgs e)
 		{
-			if (_updateCheckResult?.ReleaseReady != true ||
-				_updateCheckResult.Release is null)
+			if (_updateCheckResult?.Release is null)
 			{
-				OpenUrl(Core.ReleasesUri.AbsoluteUri);
-				return;
+				await VersionCheck();
+				if (_updateCheckResult?.Release is null)
+				{
+					MessageBox.Show(
+						this,
+						_updateCheckResult?.Problem ?? "Synix could not load the verified update details. Check your internet connection and try again.",
+						"Update Details Unavailable",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
+					return;
+				}
 			}
 
 			using SynixUpdateDialog updateDialog = new(_updateCheckResult);

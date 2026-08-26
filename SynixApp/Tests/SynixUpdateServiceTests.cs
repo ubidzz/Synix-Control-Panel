@@ -162,6 +162,54 @@ public sealed class SynixUpdateServiceTests
 	}
 
 	[Fact]
+	public void ReleaseName_RepairsMalformedTwoPartTag()
+	{
+		SynixReleaseInfo release = Core.ParseReleaseJson(
+			BuildReleaseJson(
+				tagName: "v1.023",
+				releaseName: "v1.0.23"));
+
+		Assert.Equal(new Version(1, 0, 23), release.Version);
+		Assert.Equal("1.0.23", release.VersionText);
+	}
+
+	[Fact]
+	public void ValidThreePartTag_RemainsAuthoritative()
+	{
+		SynixReleaseInfo release = Core.ParseReleaseJson(
+			BuildReleaseJson(
+				tagName: "v1.0.22",
+				releaseName: "Synix v9.9.9"));
+
+		Assert.Equal(new Version(1, 0, 22), release.Version);
+	}
+
+	[Theory]
+	[InlineData("Synix.Control.Panel.exe", "4D5A000000000000")]
+	[InlineData("SynixSetup.msi", "D0CF11E0A1B11AE1")]
+	public void UpdateDownloads_AcceptExpectedWindowsPackageHeader(
+		string assetName,
+		string headerHex)
+	{
+		using MemoryStream stream = new(Convert.FromHexString(headerHex));
+
+		Core.ValidateDownloadedAssetHeader(stream, assetName);
+	}
+
+	[Theory]
+	[InlineData("Synix.Control.Panel.exe", "D0CF11E0A1B11AE1")]
+	[InlineData("SynixSetup.msi", "4D5A000000000000")]
+	public void UpdateDownloads_RejectWrongWindowsPackageHeader(
+		string assetName,
+		string headerHex)
+	{
+		using MemoryStream stream = new(Convert.FromHexString(headerHex));
+
+		Assert.Throws<InvalidDataException>(() =>
+			Core.ValidateDownloadedAssetHeader(stream, assetName));
+	}
+
+	[Fact]
 	public void DraftAndPrereleaseUpdates_AreRejected()
 	{
 		Assert.Throws<InvalidDataException>(() =>
@@ -292,7 +340,9 @@ public sealed class SynixUpdateServiceTests
 	private static string BuildReleaseJson(
 		bool draft = false,
 		bool prerelease = false,
-		object[]? assets = null)
+		object[]? assets = null,
+		string tagName = "v1.0.22",
+		string releaseName = "Synix v1.0.22")
 	{
 		assets ??=
 		[
@@ -312,9 +362,9 @@ public sealed class SynixUpdateServiceTests
 		{
 			draft,
 			prerelease,
-			tag_name = "v1.0.22",
+			tag_name = tagName,
 			html_url = "https://github.com/ubidzz/Synix-Control-Panel/releases/tag/v1.0.22",
-			name = "Synix v1.0.22",
+			name = releaseName,
 			body = "## Update\n- Safer automatic updates.",
 			published_at = "2026-08-21T12:00:00Z",
 			assets

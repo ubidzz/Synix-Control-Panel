@@ -16,11 +16,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class PalworldConfiguration : ConfigurationDefinition
 	{
-		private static readonly IReadOnlyDictionary<string, string> RequiredPvpSettings =
+		private static readonly IReadOnlyDictionary<string, string> RequiredManagedSettings =
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				["bEnablePlayerToPlayerDamage"] = "False",
-				["bEnableDefenseOtherGuildPlayer"] = "False"
+				["bEnableDefenseOtherGuildPlayer"] = "False",
+				["CrossplayPlatforms"] = "(Steam,Xbox,PS5,Mac)"
 			};
 
 		private static readonly ConfigurationBinding[] ManagedBindings =
@@ -30,9 +31,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("ServerPassword", context => context.Passwords.ServerPassword),
 			new("ServerPlayerMaxNum", context => context.Server.MaxPlayers.ToString()),
 			new("PublicPort", context => context.Server.Port.ToString()),
+			new("PublicIP", _ => string.Empty),
 			new("RCONEnabled", context => context.Server.EnableRcon.ToString()),
 			new("RCONPort", context => context.Server.RconPort.ToString()),
 			new("RESTAPIPort", context => context.Server.QueryPort.ToString()),
+			new("CrossplayPlatforms", CrossplayPlatforms),
 			new("bIsPvP", PvpEnabled),
 			new("bEnablePlayerToPlayerDamage", PvpEnabled),
 			new("bEnableDefenseOtherGuildPlayer", PvpEnabled)
@@ -44,8 +47,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				"PVP",
 				StringComparison.OrdinalIgnoreCase).ToString();
 
+		private static string CrossplayPlatforms(ConfigurationContext context) =>
+			context.Server.CrossplayEnabled
+				? "(Steam,Xbox,PS5,Mac)"
+				: "(Steam)";
+
 		public override string GameName => "Palworld";
-		public override int SchemaVersion => 4;
+		public override int SchemaVersion => 6;
 		public override bool SupportsFullReset => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.ServerPassword |
@@ -54,6 +62,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			ManagedConfigurationInput.MaxPlayers |
 			ManagedConfigurationInput.QueryPort |
 			ManagedConfigurationInput.Rcon |
+			ManagedConfigurationInput.Crossplay |
 			ManagedConfigurationInput.Port;
 		public override string RelativePath => @"Pal\Saved\Config\WindowsServer\PalWorldSettings.ini";
 		public override ConfigFormat Format => ConfigFormat.StandardINI;
@@ -67,7 +76,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 			string path = ResolveFullPath(context.Server);
 			List<ConfigLine> values = ConfigHandler.LoadConfig(path, Format);
-			if (RequiredPvpSettings.Keys.All(key => values.Any(value =>
+			if (RequiredManagedSettings.Keys.All(key => values.Any(value =>
 				string.Equals(value.Key, key, StringComparison.Ordinal))))
 			{
 				return first;
@@ -82,7 +91,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				ConfigHandler.EnsureStandardIniTupleValues(
 					path,
 					"OptionSettings",
-					RequiredPvpSettings);
+					RequiredManagedSettings);
 				ConfigurationApplyResult second = base.Apply(context);
 				return second with
 				{
@@ -93,7 +102,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			catch (Exception exception)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The Palworld PvP settings could not be upgraded safely: {exception.Message}");
+					$"The Palworld managed settings could not be upgraded safely: {exception.Message}");
 			}
 			finally
 			{

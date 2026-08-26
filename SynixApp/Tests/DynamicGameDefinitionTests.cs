@@ -67,6 +67,58 @@ public sealed class DynamicGameDefinitionTests
 		Assert.False(string.IsNullOrWhiteSpace(game.RequiredArgs));
 	}
 
+	[Theory]
+	[InlineData("Automobilista 2", "DedicatedServerCmd.exe", 2)]
+	[InlineData("Contagion", "contagionds.exe", 4)]
+	[InlineData("Heat", "Server.exe", 2)]
+	[InlineData("Hellion", "HELLION_Dedicated.exe", 2)]
+	[InlineData("Insurgency: Sandstorm", "InsurgencyServer.exe", 2)]
+	[InlineData("Last Oasis", "MistServer.exe", 2)]
+	[InlineData("Life is Feudal: Your Own", "ddctd_cm_yo_server.exe", 2)]
+	[InlineData("Military Conflict: Vietnam", "srcds_x64.exe", 4)]
+	[InlineData("Mordhau", "MordhauServer.exe", 2)]
+	[InlineData("Nuclear Dawn", "ndsrv.exe", 4)]
+	[InlineData("Project CARS 2", "DedicatedServerCmd.exe", 2)]
+	[InlineData("Reign of Kings", "Server.exe", 2)]
+	[InlineData("Return to Moria", "MoriaServer.exe", 2)]
+	[InlineData("rFactor 2", "Bin64\\rFactor2 Dedicated.exe", 2)]
+	[InlineData("Squad", "SquadServer.exe", 2)]
+	[InlineData("The Front", "ProjectWar\\Binaries\\Win64\\TheFrontServer.exe", 2)]
+	[InlineData("The Isle", "TheIsleServer.exe", 2)]
+	public void OfficialWindowsServerLaunchTargetsRemainIntact(
+		string gameName,
+		string executable,
+		int minimumRevision)
+	{
+		GameInfo game = GameDatabase.GetGame(gameName)!;
+
+		Assert.True(game.IsEmbeddedDefinition);
+		Assert.Equal(executable, game.ExeName);
+		Assert.True(game.DefinitionRevision >= minimumRevision);
+	}
+
+	[Fact]
+	public void NuclearDawnUsesTheRequiredSteamLaunchMode()
+	{
+		GameInfo nuclearDawn = GameDatabase.GetGame("Nuclear Dawn")!;
+
+		Assert.Contains("-steam", nuclearDawn.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+		Assert.Contains("-game nucleardawn", nuclearDawn.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Fact]
+	public void PalworldDefinitionRegistersCommunityServersWithoutLegacyPerformanceFlags()
+	{
+		GameInfo palworld = GameDatabase.GetGame("Palworld")!;
+
+		Assert.Contains("-publiclobby", palworld.RequiredArgs);
+		Assert.Contains("-publicip={PublicIP}", palworld.RequiredArgs);
+		Assert.Contains("-publicport={port}", palworld.RequiredArgs);
+		Assert.DoesNotContain("-useperfthreads", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-NoAsyncLoadingThread", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-UseMultithreadForDS", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+	}
+
 	[Fact]
 	public void DuneSpecialBehaviorComesFromItsValidatedDefinition()
 	{
@@ -321,6 +373,20 @@ public sealed class DynamicGameDefinitionTests
 		GameManagementCapability capabilities =
 			GameFix.GetManagementCapabilities(GameDatabase.GetGame("StarRupture"));
 		Assert.True((capabilities & GameManagementCapability.Port) != 0);
+	}
+
+	[Theory]
+	[InlineData("Palworld")]
+	[InlineData("ARK: Survival Evolved")]
+	[InlineData("ARK: Survival Ascended")]
+	[InlineData("Valheim (Crossplay)")]
+	[InlineData("Arma Reforger")]
+	public void DocumentedDedicatedServerCrossplayControlsAreExposed(string game)
+	{
+		GameManagementCapability capabilities =
+			GameFix.GetManagementCapabilities(GameDatabase.GetGame(game));
+
+		Assert.True((capabilities & GameManagementCapability.Crossplay) != 0);
 	}
 
 	[Fact]

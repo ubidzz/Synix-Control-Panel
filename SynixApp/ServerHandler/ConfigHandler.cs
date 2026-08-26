@@ -394,7 +394,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				if (string.IsNullOrWhiteSpace(key) ||
 					key.IndexOfAny(['=', ',', '(', ')', '\r', '\n']) >= 0 ||
-					value.IndexOfAny([',', '(', ')', '\r', '\n']) >= 0)
+					!IsSafeIniTupleValue(value))
 				{
 					throw new InvalidDataException("A requested INI tuple value is invalid.");
 				}
@@ -425,6 +425,30 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				missing.Select(required => $"{required.Key}={required.Value}"));
 			string updated = snapshot.Text.Insert(closingIndex, insertion);
 			WriteAtomically(path, snapshot.Encode(updated));
+			return true;
+		}
+
+		private static bool IsSafeIniTupleValue(string value)
+		{
+			if (value.IndexOfAny(['=', '\r', '\n', '\0']) >= 0)
+				return false;
+			if (!value.Contains(',') && !value.Contains('(') && !value.Contains(')'))
+				return true;
+			if (value.Length < 3 || value[0] != '(' || value[^1] != ')')
+				return false;
+
+			string entries = value[1..^1];
+			if (entries.Length == 0)
+				return false;
+			foreach (string entry in entries.Split(','))
+			{
+				if (entry.Length == 0 || entry.Any(character =>
+					!char.IsAsciiLetterOrDigit(character) && character is not '_' and not '-'))
+				{
+					return false;
+				}
+			}
+
 			return true;
 		}
 
@@ -1315,6 +1339,21 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			if (IsWrappedContainer(text, valueStart, valueEnd, '(', ')'))
 			{
+				if (FindTopLevelCharacter(text, valueStart + 1, valueEnd - 1, '=') < 0)
+				{
+					AddIniValue(
+						text,
+						valueStart,
+						valueEnd,
+						key,
+						valuePath,
+						section,
+						true,
+						document,
+						identities);
+					return;
+				}
+
 				int previousCount = document.Values.Count;
 				ParseIniComposite(
 					text,

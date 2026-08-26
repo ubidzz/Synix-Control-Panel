@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 using System.Security;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -154,33 +155,18 @@ namespace Synix_Control_Panel.SynixEngine
 			CancellationToken cancellationToken = default)
 		{
 			SynixInstallation installation = DetectCurrentInstallation();
-			Version advertisedVersion = await GetAdvertisedVersionAsync(
-				cancellationToken);
-
-			if (advertisedVersion <= currentVersion)
-			{
-				return new SynixUpdateCheckResult(
-					currentVersion,
-					advertisedVersion,
-					installation,
-					null,
-					null,
-					null);
-			}
-
 			try
 			{
 				SynixReleaseInfo release = await GetLatestReleaseAsync(
 					cancellationToken);
-				SynixReleaseAsset? asset = release.Version == advertisedVersion
+				Version advertisedVersion = release.Version;
+				SynixReleaseAsset? asset = advertisedVersion > currentVersion
 					? SelectAsset(release, installation.Kind)
 					: null;
 
-				string? problem = release.Version != advertisedVersion
-					? "The matching GitHub release is still being prepared."
-					: asset is null
-						? "The correct download is not attached to this release yet."
-						: null;
+				string? problem = advertisedVersion > currentVersion && asset is null
+					? $"The verified {GetExpectedAssetName(installation.Kind)} download is not attached to this release yet."
+					: null;
 
 				return new SynixUpdateCheckResult(
 					currentVersion,
@@ -196,13 +182,17 @@ namespace Synix_Control_Panel.SynixEngine
 				JsonException or
 				InvalidDataException)
 			{
+				Version advertisedVersion = await GetAdvertisedVersionAsync(
+					cancellationToken);
 				return new SynixUpdateCheckResult(
 					currentVersion,
 					advertisedVersion,
 					installation,
 					null,
 					null,
-					"The release details could not be loaded. Open GitHub to download it manually.");
+					advertisedVersion > currentVersion
+						? "The update was detected, but its verified release details could not be loaded. Try again in a moment."
+						: null);
 			}
 		}
 
@@ -334,10 +324,7 @@ namespace Synix_Control_Panel.SynixEngine
 			SynixReleaseInfo release,
 			SynixInstallationKind installationKind)
 		{
-			string expectedName = installationKind ==
-				SynixInstallationKind.Standalone
-					? StandaloneAssetName
-					: MsiAssetName;
+			string expectedName = GetExpectedAssetName(installationKind);
 
 			return release.Assets.FirstOrDefault(asset =>
 				string.Equals(
@@ -418,6 +405,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			await VerifyDownloadedAssetAsync(
 				fullDestinationPath,
+				asset.Name,
 				asset.Sha256,
 				cancellationToken);
 		}
@@ -444,7 +432,10 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			string tagName = root.GetProperty("tag_name").GetString() ?? string.Empty;
-			if (!TryParseVersionText(tagName, out Version? version))
+			string releaseName = root.TryGetProperty("name", out JsonElement nameElement)
+				? nameElement.GetString() ?? string.Empty
+				: string.Empty;
+			if (!TryResolveReleaseVersion(tagName, releaseName, out Version? version))
 				throw new InvalidDataException("The GitHub release has an invalid version.");
 
 			string htmlUrl = root.GetProperty("html_url").GetString() ?? string.Empty;
@@ -505,7 +496,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return new SynixReleaseInfo(
 				version!,
 				version!.ToString(3),
-				root.GetProperty("name").GetString() ?? tagName,
+				string.IsNullOrWhiteSpace(releaseName) ? tagName : releaseName,
 				notes,
 				releaseUri,
 				publishedAt,
@@ -620,6 +611,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static async Task VerifyDownloadedAssetAsync(
 			string path,
+			string assetName,
 			string expectedSha256,
 			CancellationToken cancellationToken)
 		{
@@ -642,10 +634,82 @@ namespace Synix_Control_Panel.SynixEngine
 				throw new InvalidDataException("The update failed its SHA-256 safety check.");
 
 			stream.Position = 0;
-			int firstByte = stream.ReadByte();
-			int secondByte = stream.ReadByte();
-			if (firstByte != 'M' || secondByte != 'Z')
-				throw new InvalidDataException("The downloaded update is not a Windows executable.");
+			ValidateDownloadedAssetHeader(stream, assetName);
+		}
+
+		internal static void ValidateDownloadedAssetHeader(
+			Stream stream,
+			string assetName)
+		{
+			Span<byte> header = stackalloc byte[8];
+			int bytesRead = stream.Read(header);
+			string extension = Path.GetExtension(assetName);
+			if (string.Equals(extension, ".exe", StringComparison.OrdinalIgnoreCase))
+			{
+				if (bytesRead < 2 || header[0] != (byte)'M' || header[1] != (byte)'Z')
+					throw new InvalidDataException("The downloaded standalone update is not a valid Windows executable.");
+				return;
+			}
+
+			ReadOnlySpan<byte> msiHeader = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1];
+			if (string.Equals(extension, ".msi", StringComparison.OrdinalIgnoreCase))
+			{
+				if (bytesRead < msiHeader.Length || !header.SequenceEqual(msiHeader))
+					throw new InvalidDataException("The downloaded Setup update is not a valid Windows Installer package.");
+				return;
+			}
+
+			throw new InvalidDataException("The update uses an unsupported file type.");
+		}
+
+		internal static bool TryResolveReleaseVersion(
+			string? tagName,
+			string? releaseName,
+			out Version? version)
+		{
+			string cleanedTag = (tagName ?? string.Empty)
+				.Trim()
+				.TrimStart('v', 'V');
+			Match tagMatch = Regex.Match(
+				cleanedTag,
+				@"^(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)$",
+				RegexOptions.CultureInvariant);
+			if (TryCreateThreePartVersion(tagMatch, out version))
+				return true;
+
+			Match nameMatch = Regex.Match(
+				releaseName ?? string.Empty,
+				@"(?<!\d)(?<major>\d+)\.(?<minor>\d+)\.(?<build>\d+)(?!\d)",
+				RegexOptions.CultureInvariant);
+			if (TryCreateThreePartVersion(nameMatch, out version))
+				return true;
+
+			return TryParseVersionText(tagName, out version);
+		}
+
+		private static bool TryCreateThreePartVersion(
+			Match match,
+			out Version? version)
+		{
+			if (match.Success &&
+				int.TryParse(match.Groups["major"].Value, out int major) &&
+				int.TryParse(match.Groups["minor"].Value, out int minor) &&
+				int.TryParse(match.Groups["build"].Value, out int build))
+			{
+				version = new Version(major, minor, build);
+				return true;
+			}
+
+			version = null;
+			return false;
+		}
+
+		private static string GetExpectedAssetName(
+			SynixInstallationKind installationKind)
+		{
+			return installationKind == SynixInstallationKind.Standalone
+				? StandaloneAssetName
+				: MsiAssetName;
 		}
 
 		public static bool TryParseVersionText(

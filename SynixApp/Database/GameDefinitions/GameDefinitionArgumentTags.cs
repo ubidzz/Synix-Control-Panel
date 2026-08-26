@@ -35,10 +35,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			new("{seed}", "World seed", "The selected world-generation seed."),
 			new("{world_size}", "World size", "The selected world size."),
 			new("{mode}", "Game mode", "The selected game mode or PVE/PVP value."),
+			new("{crossplay}", "Crossplay", "The game-specific enabled value, flag, or no argument when Crossplay is disabled."),
+			new("{crossplay_public_ip}", "Crossplay public IPv4 argument", "The ARK: Survival Evolved Epic public-IP argument when Crossplay is enabled and the address is available."),
 			new("{ram}", "Memory limit", "The configured memory value in megabytes."),
 			new("{rcon}", "Optional RCON arguments", "The RCON recipe below, or nothing when RCON is disabled."),
 			new("{steamAppID}", "Installed Steam AppID", "The AppID Synix determined for the installed server."),
 			new("{appid}", "Definition Steam AppID", "The Steam AppID stored in this game definition."),
+			new("{PublicIP}", "Current public IPv4 address", "The current public IPv4 address, or no argument when it cannot be determined."),
 			new("{InstallPath}", "Server install folder", "The complete server installation folder.")
 		];
 
