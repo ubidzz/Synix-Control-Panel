@@ -30,6 +30,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("ServerPassword", context => context.Passwords.ServerPassword),
 			new("ServerPlayerMaxNum", context => context.Server.MaxPlayers.ToString()),
 			new("PublicPort", context => context.Server.Port.ToString()),
+			new("PublicIP", _ => string.Empty),
 			new("RCONEnabled", context => context.Server.EnableRcon.ToString()),
 			new("RCONPort", context => context.Server.RconPort.ToString()),
 			new("RESTAPIPort", context => context.Server.QueryPort.ToString()),
@@ -45,7 +46,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				StringComparison.OrdinalIgnoreCase).ToString();
 
 		public override string GameName => "Palworld";
-		public override int SchemaVersion => 4;
+		public override int SchemaVersion => 5;
 		public override bool SupportsFullReset => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.ServerPassword |

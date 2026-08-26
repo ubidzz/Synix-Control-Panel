@@ -39,6 +39,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			new("{rcon}", "Optional RCON arguments", "The RCON recipe below, or nothing when RCON is disabled."),
 			new("{steamAppID}", "Installed Steam AppID", "The AppID Synix determined for the installed server."),
 			new("{appid}", "Definition Steam AppID", "The Steam AppID stored in this game definition."),
+			new("{PublicIP}", "Current public IPv4 address", "The current public IPv4 address, or no argument when it cannot be determined."),
 			new("{InstallPath}", "Server install folder", "The complete server installation folder.")
 		];
 

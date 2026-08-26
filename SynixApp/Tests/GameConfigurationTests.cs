@@ -355,6 +355,7 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.Equal("True", GetValue(path, definition.Format, "bEnablePlayerToPlayerDamage"));
 		Assert.Equal("True", GetValue(path, definition.Format, "bEnableDefenseOtherGuildPlayer"));
 		Assert.Equal("True", GetValue(path, definition.Format, "RCONEnabled"));
+		Assert.Equal(string.Empty, GetValue(path, definition.Format, "PublicIP"));
 		Assert.Equal("2.500000", GetValue(path, definition.Format, "ExpRate"));
 	}
 
@@ -1260,7 +1261,7 @@ public sealed class GameConfigurationTests : IDisposable
 				Path.Combine(server.InstallPath, "DefaultPalWorldSettings.ini"),
 				"""
 				[/Script/Pal.PalGameWorldSettings]
-				OptionSettings=(Difficulty=None,bIsPvP=False,ExpRate=1.000000,DayTimeSpeedRate=1.000000,ServerPlayerMaxNum=32,ServerName="Default Palworld Server",AdminPassword="",ServerPassword="",PublicPort=8211,RCONEnabled=False,RCONPort=25575,RESTAPIPort=8212)
+				OptionSettings=(Difficulty=None,bIsPvP=False,ExpRate=1.000000,DayTimeSpeedRate=1.000000,ServerPlayerMaxNum=32,ServerName="Default Palworld Server",AdminPassword="",ServerPassword="",PublicPort=8211,PublicIP="0.0.0.0",RCONEnabled=False,RCONPort=25575,RESTAPIPort=8212)
 				""");
 			return;
 		}

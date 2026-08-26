@@ -68,6 +68,19 @@ public sealed class DynamicGameDefinitionTests
 	}
 
 	[Fact]
+	public void PalworldDefinitionRegistersCommunityServersWithoutLegacyPerformanceFlags()
+	{
+		GameInfo palworld = GameDatabase.GetGame("Palworld")!;
+
+		Assert.Contains("-publiclobby", palworld.RequiredArgs);
+		Assert.Contains("-publicip={PublicIP}", palworld.RequiredArgs);
+		Assert.Contains("-publicport={port}", palworld.RequiredArgs);
+		Assert.DoesNotContain("-useperfthreads", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-NoAsyncLoadingThread", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-UseMultithreadForDS", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Fact]
 	public void DuneSpecialBehaviorComesFromItsValidatedDefinition()
 	{
 		GameInfo dune = GameDatabase.GetGame("Dune: Awakening")!;

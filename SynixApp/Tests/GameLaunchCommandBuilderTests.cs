@@ -22,7 +22,7 @@ namespace Synix_Control_Panel.Tests;
 public sealed class GameLaunchCommandBuilderTests
 {
 	private static readonly Regex UnresolvedLaunchPlaceholder = new(
-		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|ram|rcon|mode)\\}",
+		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|ram|rcon|mode|PublicIP)\\}",
 		RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 	[Fact]
@@ -98,6 +98,42 @@ public sealed class GameLaunchCommandBuilderTests
 		Assert.True(startInfo.CreateNoWindow);
 		Assert.Equal(ProcessWindowStyle.Hidden, startInfo.WindowStyle);
 		Assert.False(startInfo.RedirectStandardInput);
+	}
+
+	[Fact]
+	public void PalworldCommunityListingUsesCurrentPublicAddressAndSelectedPort()
+	{
+		GameInfo definition = GameDatabase.GetGame("Palworld")!;
+		GameServer server = CreateServer(definition.Game);
+		server.Port = 8777;
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			"203.0.113.25",
+			out string arguments,
+			out string error), error);
+		Assert.Contains("-publiclobby", arguments);
+		Assert.Contains("-publicip=203.0.113.25", arguments);
+		Assert.Contains("-port=8777", arguments);
+		Assert.Contains("-publicport=8777", arguments);
+		Assert.DoesNotContain("-useperfthreads", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-NoAsyncLoadingThread", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-UseMultithreadForDS", arguments, StringComparison.OrdinalIgnoreCase);
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			string.Empty,
+			out string automaticArguments,
+			out error), error);
+		Assert.Contains("-publiclobby", automaticArguments);
+		Assert.DoesNotContain("-publicip=", automaticArguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{PublicIP}", automaticArguments, StringComparison.Ordinal);
 	}
 
 	[Fact]

@@ -218,6 +218,20 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					return;
 				}
 
+				string launchPublicIp = string.Empty;
+				if (selectedDefinition.RequiredArgs.Contains(
+					"{PublicIP}",
+					StringComparison.Ordinal))
+				{
+					launchPublicIp = (await Core.Instance.GetPublicIP()).Trim();
+					if (string.IsNullOrWhiteSpace(launchPublicIp))
+					{
+						logCallback?.Invoke(
+							"[PUBLIC LISTING] Synix could not detect the current public address. The server will use its own automatic address detection.",
+							Color.Orange);
+					}
+				}
+
 				server.HasAnnouncedOnline = false;
 				server.IsProbing = false;
 				server.LastProbeTime = null;
@@ -274,6 +288,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						dbEntry,
 						invokedId,
 						launchPasswords,
+						launchPublicIp,
 						out string args,
 						out string argumentError))
 					{
@@ -335,10 +350,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						selectedDefinition,
 						invokedId,
 						GameLaunchCommandBuilder.CreateRedactedPasswords(launchPasswords),
+						launchPublicIp,
 						out safeLogArgs,
 						out _))
 					{
 						safeLogArgs = "[arguments passed securely; preview unavailable]";
+					}
+					else if (!string.IsNullOrWhiteSpace(launchPublicIp))
+					{
+						safeLogArgs = safeLogArgs.Replace(
+							launchPublicIp,
+							"[PUBLIC IP]",
+							StringComparison.Ordinal);
 					}
 				}
 
