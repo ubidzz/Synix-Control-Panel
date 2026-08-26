@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 4,
+  "definitionRevision": 5,
   "id": "ark-survival-ascended",
   "catalogOrder": 7,
   "game": "ARK: Survival Ascended",
@@ -36,8 +36,8 @@
   "pveValue": "True",
   "booleanTrueValue": "True",
   "booleanFalseValue": "False",
-  "crossplayEnabledValue": "-crossplay",
-  "crossplayDisabledValue": "",
+  "crossplayEnabledValue": "-ServerPlatform=ALL",
+  "crossplayDisabledValue": "-ServerPlatform=PC",
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "ShooterGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
   "format": "StandardINI",

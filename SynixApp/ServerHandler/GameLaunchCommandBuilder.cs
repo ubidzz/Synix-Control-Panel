@@ -188,6 +188,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				.Replace("{world_size}", server.WorldSize.ToString())
 				.Replace("{Identity}", cleanIdentity)
 				.Replace("{crossplay}", GameFix.ResolveCrossplayValue(definition, server.CrossplayEnabled))
+				.Replace("{crossplay_public_ip}", ResolveCrossplayPublicIp(server.CrossplayEnabled, publicIp))
 				.Replace("{ram}", ramToUse.ToString());
 
 			if (isMinecraft &&
@@ -240,6 +241,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
 			{
 				return arguments
+					.Replace("-PublicIPForEpic={PublicIP}", string.Empty, StringComparison.OrdinalIgnoreCase)
 					.Replace("-publicip={PublicIP}", string.Empty, StringComparison.OrdinalIgnoreCase)
 					.Replace("{PublicIP}", string.Empty, StringComparison.Ordinal);
 			}
@@ -248,6 +250,23 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				"{PublicIP}",
 				address.ToString(),
 				StringComparison.Ordinal);
+		}
+
+		private static string ResolveCrossplayPublicIp(
+			bool crossplayEnabled,
+			string? publicIp)
+		{
+			if (!crossplayEnabled)
+				return string.Empty;
+
+			string normalized = publicIp?.Trim() ?? string.Empty;
+			if (!IPAddress.TryParse(normalized, out IPAddress? address) ||
+				address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+			{
+				return string.Empty;
+			}
+
+			return $"-PublicIPForEpic={address}";
 		}
 
 		internal static ProcessStartInfo CreateProcessStartInfo(

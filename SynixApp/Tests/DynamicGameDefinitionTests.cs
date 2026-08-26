@@ -375,6 +375,20 @@ public sealed class DynamicGameDefinitionTests
 		Assert.True((capabilities & GameManagementCapability.Port) != 0);
 	}
 
+	[Theory]
+	[InlineData("Palworld")]
+	[InlineData("ARK: Survival Evolved")]
+	[InlineData("ARK: Survival Ascended")]
+	[InlineData("Valheim (Crossplay)")]
+	[InlineData("Arma Reforger")]
+	public void DocumentedDedicatedServerCrossplayControlsAreExposed(string game)
+	{
+		GameManagementCapability capabilities =
+			GameFix.GetManagementCapabilities(GameDatabase.GetGame(game));
+
+		Assert.True((capabilities & GameManagementCapability.Crossplay) != 0);
+	}
+
 	[Fact]
 	public void TemplatePlaceholdersAutomaticallyExposeSettingsCapabilities()
 	{

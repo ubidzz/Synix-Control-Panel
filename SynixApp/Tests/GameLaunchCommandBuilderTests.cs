@@ -22,7 +22,7 @@ namespace Synix_Control_Panel.Tests;
 public sealed class GameLaunchCommandBuilderTests
 {
 	private static readonly Regex UnresolvedLaunchPlaceholder = new(
-		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|crossplay|ram|rcon|mode|PublicIP)\\}",
+		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|crossplay|crossplay_public_ip|ram|rcon|mode|PublicIP)\\}",
 		RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 	[Fact]
@@ -137,9 +137,13 @@ public sealed class GameLaunchCommandBuilderTests
 	}
 
 	[Theory]
-	[InlineData("ARK: Survival Ascended")]
-	[InlineData("Valheim (Crossplay)")]
-	public void CrossplayFlagIsIncludedOnlyWhenSelected(string game)
+	[InlineData("ARK: Survival Ascended", "-ServerPlatform=ALL", "-ServerPlatform=PC")]
+	[InlineData("ARK: Survival Evolved", "-crossplay", "")]
+	[InlineData("Valheim (Crossplay)", "-crossplay", "")]
+	public void CrossplayFlagIsIncludedOnlyWhenSelected(
+		string game,
+		string enabledValue,
+		string disabledValue)
 	{
 		GameInfo definition = GameDatabase.GetGame(game)!;
 		GameServer server = CreateServer(definition.Game);
@@ -152,7 +156,7 @@ public sealed class GameLaunchCommandBuilderTests
 			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
 			out string enabledArguments,
 			out string error), error);
-		Assert.Contains("-crossplay", enabledArguments, StringComparison.OrdinalIgnoreCase);
+		Assert.Contains(enabledValue, enabledArguments, StringComparison.OrdinalIgnoreCase);
 
 		server.CrossplayEnabled = false;
 		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
@@ -162,8 +166,55 @@ public sealed class GameLaunchCommandBuilderTests
 			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
 			out string disabledArguments,
 			out error), error);
-		Assert.DoesNotContain("-crossplay", disabledArguments, StringComparison.OrdinalIgnoreCase);
+		if (string.IsNullOrEmpty(disabledValue))
+			Assert.DoesNotContain(enabledValue, disabledArguments, StringComparison.OrdinalIgnoreCase);
+		else
+			Assert.Contains(disabledValue, disabledArguments, StringComparison.OrdinalIgnoreCase);
 		Assert.DoesNotContain("{crossplay}", disabledArguments, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Fact]
+	public void ArkSurvivalEvolvedCrossplayAddsEpicPublicIpOnlyWhenAvailable()
+	{
+		GameInfo definition = GameDatabase.GetGame("ARK: Survival Evolved")!;
+		GameServer server = CreateServer(definition.Game);
+		server.CrossplayEnabled = true;
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			"203.0.113.25",
+			out string arguments,
+			out string error), error);
+		Assert.Contains("-crossplay", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.Contains("-PublicIPForEpic=203.0.113.25", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{PublicIP}", arguments, StringComparison.Ordinal);
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			string.Empty,
+			out arguments,
+			out error), error);
+		Assert.DoesNotContain("PublicIPForEpic", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{PublicIP}", arguments, StringComparison.Ordinal);
+
+		server.CrossplayEnabled = false;
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			new SynixServerPasswords("server-pass", "admin-pass", string.Empty),
+			"203.0.113.25",
+			out arguments,
+			out error), error);
+		Assert.DoesNotContain("-crossplay", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("PublicIPForEpic", arguments, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("{crossplay_public_ip}", arguments, StringComparison.Ordinal);
 	}
 
 	[Fact]
