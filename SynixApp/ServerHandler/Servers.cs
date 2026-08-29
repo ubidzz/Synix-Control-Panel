@@ -863,18 +863,54 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			Dictionary<int, DateTime?> trackedProcesses,
 			TimeSpan timeout)
 		{
+			return await WaitForStableProcessExit(
+				() =>
+				{
+					RefreshTrackedProcesses(server, targetPid, trackedProcesses);
+					return GetLiveTrackedProcesses(trackedProcesses);
+				},
+				timeout,
+				TimeSpan.FromSeconds(3),
+				TimeSpan.FromMilliseconds(500));
+		}
+
+		internal static async Task<List<int>> WaitForStableProcessExit(
+			Func<List<int>> getLiveProcesses,
+			TimeSpan timeout,
+			TimeSpan quietPeriod,
+			TimeSpan pollInterval)
+		{
+			ArgumentNullException.ThrowIfNull(getLiveProcesses);
+			if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
+			if (quietPeriod < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(quietPeriod));
+			if (pollInterval <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(pollInterval));
+
 			DateTime deadline = DateTime.UtcNow.Add(timeout);
+			DateTime? quietSince = null;
 
 			while (true)
 			{
-				RefreshTrackedProcesses(server, targetPid, trackedProcesses);
-				List<int> liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
-				if (liveProcesses.Count == 0 || DateTime.UtcNow >= deadline)
+				List<int> liveProcesses = getLiveProcesses();
+				DateTime now = DateTime.UtcNow;
+
+				if (liveProcesses.Count > 0)
 				{
-					return liveProcesses;
+					quietSince = null;
+					if (now >= deadline)
+					{
+						return liveProcesses;
+					}
+				}
+				else
+				{
+					quietSince ??= now;
+					if (now - quietSince.Value >= quietPeriod)
+					{
+						return liveProcesses;
+					}
 				}
 
-				await Task.Delay(500);
+				await Task.Delay(pollInterval);
 			}
 		}
 

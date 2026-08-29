@@ -23,14 +23,14 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class Core
 	{
-		public async Task StopServerAndReport(GameServer server, bool isManual = true)
+		public async Task<bool> StopServerAndReport(GameServer server, bool isManual = true)
 		{
 			using ServerOperationLease operation =
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Stop);
 			if (!operation.Acquired)
 			{
 				Log($"[STOP BLOCKED] {operation.FailureReason}", Color.Orange, true);
-				return;
+				return false;
 			}
 
 			server.Status = StatusManager.GetStatus(ServerState.Stopping);
@@ -68,6 +68,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			FileHandler.SaveServers();
 			Core.Instance.UpdateGridStatus();
+			return stopped;
 		}
 
 		internal async Task SynchronizeFirstGeneratedConfiguration(GameServer server)
@@ -1016,11 +1017,19 @@ namespace Synix_Control_Panel.SynixEngine
 					Core.Instance.UpdateGridStatus();
 				}
 
-				if (stopServer && server.PID != null)
+				if (stopServer)
 				{
-					Log($"[SYNIX] Stoping the {server.ServerName} server.", Color.Cyan, true);
+					Log($"[SYNIX] Stopping the {server.ServerName} server and verifying its installed process is fully closed.", Color.Cyan, true);
 
-					await StopServerAndReport(server, isManual: status == "RESTART");
+					bool stopped = await StopServerAndReport(server, isManual: status == "RESTART");
+					if (!stopped)
+					{
+						Log(
+							$"[RESTART BLOCKED] {server.ServerName} was not fully shut down, so Synix will not launch a second copy.",
+							Color.Red,
+							true);
+						return;
+					}
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Stopped))

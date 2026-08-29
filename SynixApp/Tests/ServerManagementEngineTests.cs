@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using Synix_Control_Panel.Database;
 using System.Drawing;
@@ -21,6 +22,34 @@ namespace Synix_Control_Panel.Tests;
 
 public sealed class ServerManagementEngineTests
 {
+	[Fact]
+	public async Task ShutdownVerification_RequiresAContinuousQuietPeriod()
+	{
+		Queue<List<int>> processSnapshots = new(
+		[
+			[101],
+			[],
+			[202],
+			[],
+			[],
+			[]
+		]);
+		int checks = 0;
+
+		List<int> survivors = await Servers.WaitForStableProcessExit(
+			() =>
+			{
+				checks++;
+				return processSnapshots.Count > 0 ? processSnapshots.Dequeue() : [];
+			},
+			TimeSpan.FromSeconds(1),
+			TimeSpan.FromMilliseconds(20),
+			TimeSpan.FromMilliseconds(10));
+
+		Assert.Empty(survivors);
+		Assert.True(checks >= 6, "A temporary zero-process gap must not be treated as a completed shutdown.");
+	}
+
 	[Fact]
 	public void GameDatabase_HasUniqueNamesAndEveryGameCanBeLookedUp()
 	{
