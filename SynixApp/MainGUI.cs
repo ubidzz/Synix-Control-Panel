@@ -95,6 +95,7 @@ namespace Synix_Control_Panel
 			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyDashboardTheme(dataGridView1);
+			GridStyler.EnableServerDetailsInteraction(dataGridView1);
 			GridStyler.StyleCloseButton(btnClose);
 			GridStyler.StyleMinimizeButton(btnMinimize);
 			GridStyler.StyleIconButton(btnDiscord, Properties.Resources.discord_icon, Color.FromArgb(200, 200, 200));
@@ -121,6 +122,16 @@ namespace Synix_Control_Panel
 
 		private void AddGuidanceMenuItems()
 		{
+			ToolStripMenuItem modPluginManager = new("Mod & Plugin Manager");
+			modPluginManager.Click += (_, _) =>
+			{
+				GameServer? server = GetSelectedServer();
+				if (server == null)
+					return;
+				using ModPluginManager dialog = new(server);
+				dialog.ShowDialog(this);
+			};
+
 			ToolStripMenuItem playerManagement = new("Player Management Center");
 			playerManagement.Click += (_, _) =>
 			{
@@ -154,6 +165,7 @@ namespace Synix_Control_Panel
 			int insertAt = contextMenuStrip.Items.IndexOf(toolStripSeparator3);
 			if (insertAt < 0)
 				insertAt = contextMenuStrip.Items.Count;
+			contextMenuStrip.Items.Insert(insertAt++, modPluginManager);
 			contextMenuStrip.Items.Insert(insertAt++, playerManagement);
 			contextMenuStrip.Items.Insert(insertAt++, liveProcessDetails);
 			contextMenuStrip.Items.Insert(insertAt, connectionInformation);

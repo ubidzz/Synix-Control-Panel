@@ -33,6 +33,22 @@ public sealed class UserGuidanceTests
 	}
 
 	[Fact]
+	public void AddOnSecurityReview_IsNotMisreportedAsAFilePermissionProblem()
+	{
+		const string technicalDetails =
+			"Synix blocked this package. Microsoft Defender blocked the security review. " +
+			"Add-on code inherits the game server's Windows permissions.";
+
+		PlainEnglishError error = UserGuidance.TranslateError(
+			"install the selected add-on",
+			technicalDetails);
+
+		Assert.Contains("security review", error.Explanation, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("Windows would not allow", error.Explanation, StringComparison.OrdinalIgnoreCase);
+		Assert.Equal(technicalDetails, error.TechnicalDetails);
+	}
+
+	[Fact]
 	public void SetupCompletion_ReachesOneHundredOnlyWhenReady()
 	{
 		Assert.Equal(90, UserGuidance.CalculateSetupCompletion(new SetupCompletionState(

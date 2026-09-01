@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "rust-umod",
+      "displayName": "Oxide/uMod",
+      "description": "Rust plugins loaded by the Oxide/uMod framework.",
+      "supportLevel": "Managed",
+      "gameNames": [ "Rust" ],
+      "frameworkName": "Oxide",
+      "frameworkMarkers": [ "oxide", "RustDedicated_Data/Managed/Oxide.Core.dll" ],
+      "catalogUrl": "https://umod.org/plugins",
+      "restartRequired": false,
+      "targets": [
+        {
+          "id": "plugins",
+          "displayName": "Oxide plugins",
+          "kind": "Plugin",
+          "mode": "FileImport",
+          "providerName": "uMod",
+          "relativePath": "oxide/plugins",
+          "allowedExtensions": [ ".cs", ".dll" ],
+          "markerPaths": [ "oxide/plugins" ],
+          "frameworkNames": [ "Oxide", "uMod" ],
+          "allowArchives": true,
+          "scanDirectories": false,
+          "recursive": true
+        }
+      ]
+    },
+    {
+      "id": "minecraft-addons",
+      "displayName": "Minecraft add-ons",
+      "description": "JAR plugins or mods selected from the server loader and folders already on disk.",
+      "supportLevel": "Managed",
+      "gameNames": [ "Minecraft" ],
+      "frameworkName": "",
+      "frameworkMarkers": [],
+      "catalogUrl": "https://modrinth.com/",
+      "restartRequired": true,
+      "targets": [
+        {
+          "id": "mods",
+          "displayName": "Loader mods",
+          "kind": "Mod",
+          "mode": "FileImport",
+          "providerName": "Local package",
+          "relativePath": "mods",
+          "allowedExtensions": [ ".jar" ],
+          "markerPaths": [ "mods" ],
+          "frameworkNames": [ "Fabric", "Forge", "NeoForge", "Quilt" ],
+          "allowArchives": false,
+          "scanDirectories": false,
+          "recursive": false
+        },
+        {
+          "id": "plugins",
+          "displayName": "Server plugins",
+          "kind": "Plugin",
+          "mode": "FileImport",
+          "providerName": "Local package",
+          "relativePath": "plugins",
+          "allowedExtensions": [ ".jar" ],
+          "markerPaths": [ "plugins" ],
+          "frameworkNames": [ "Paper", "Spigot", "Purpur", "Bukkit", "Sponge" ],
+          "allowArchives": false,
+          "scanDirectories": false,
+          "recursive": false
+        }
+      ]
+    },
+    {
+      "id": "ark-survival-evolved-workshop",
+      "displayName": "Steam Workshop mods",
+      "description": "Synix manages the ordered Steam Workshop IDs; ARK and Steam download and update the actual content.",
+      "supportLevel": "Managed",
+      "gameNames": [ "ARK: Survival Evolved" ],
+      "frameworkName": "Steam Workshop",
+      "frameworkMarkers": [ "ShooterGame/Content/Mods" ],
+      "catalogUrl": "https://steamcommunity.com/app/346110/workshop/",
+      "restartRequired": true,
+      "targets": [
+        {
+          "id": "workshop",
+          "displayName": "Ordered Steam Workshop IDs",
+          "kind": "Mod",
+          "mode": "ConfigurationIds",
+          "providerName": "Steam Workshop",
+          "relativePath": "",
+          "allowedExtensions": [],
+          "markerPaths": [],
+          "frameworkNames": [],
+          "allowArchives": false,
+          "scanDirectories": false,
+          "recursive": false,
+          "argumentName": "",
+          "maximumIds": 100,
+          "requiredArguments": [ "-automanagedmods" ],
+          "idStores": [
+            {
+              "relativePath": "ShooterGame/Saved/Config/WindowsServer/GameUserSettings.ini",
+              "section": "ServerSettings",
+              "key": "ActiveMods",
+              "style": "Csv"
+            },
+            {
+              "relativePath": "ShooterGame/Saved/Config/WindowsServer/Game.ini",
+              "section": "ModInstaller",
+              "key": "ModIDS",
+              "style": "RepeatedKey"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ark-survival-ascended-curseforge",
+      "displayName": "CurseForge server mods",
+      "description": "Synix manages the ordered mod ID list; ARK downloads and updates the actual CurseForge content when the server starts.",
+      "supportLevel": "Managed",
+      "gameNames": [ "ARK: Survival Ascended" ],
+      "frameworkName": "ARK built-in mod installer",
+      "frameworkMarkers": [],
+      "catalogUrl": "https://www.curseforge.com/ark-survival-ascended/search?class=mods",
+      "restartRequired": true,
+      "targets": [
+        {
+          "id": "launch-mod-ids",
+          "displayName": "Ordered CurseForge mod IDs",
+          "kind": "Mod",
+          "mode": "ArgumentIds",
+          "providerName": "CurseForge",
+          "relativePath": "",
+          "allowedExtensions": [],
+          "markerPaths": [],
+          "frameworkNames": [],
+          "allowArchives": false,
+          "scanDirectories": false,
+          "recursive": false,
+          "argumentName": "-mods",
+          "maximumIds": 100
+        }
+      ]
+    }
+  ]
+}

@@ -51,6 +51,7 @@
 	  <EmbeddedResource Include="Database\GameDefinitions\**\*.game.json" />
 	  <EmbeddedResource Include="Database\GameDefinitions\**\Templates\**\*" />
 	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
+	  <EmbeddedResource Include="Database\ModSystems\**\*.modsystem.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -143,6 +144,9 @@
 	    <DependentUpon>TroubleshooterDialog.cs</DependentUpon>
 	  </Compile>
 	  <Compile Update="UI\ConnectionInformationDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ModPluginManager.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
 	  <Compile Update="UI\PlainEnglishErrorDialog.cs">

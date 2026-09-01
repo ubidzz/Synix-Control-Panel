@@ -181,11 +181,24 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Create Batch File: exports the resolved launch command for supported templates.\n" +
 					"• Backup Server: creates a manual archive.\n" +
 					"• Restore Server Backup: appears when saved backups exist and lets you choose which archive to restore.\n" +
+					"• Mod & Plugin Manager: discovers installed add-ons and opens the safe workflow supported by that game's framework or provider.\n" +
 					"• Live Process Details: shows every verified launcher, console host, child, and worker PID in this server group.\n" +
 					"• Connection Information: shows the correct same-network and internet addresses with copy buttons and the ports that may need forwarding.\n" +
 					"• Test LAN/WAN Connectivity: appears only for games with a reliable supported probe.\n" +
 					"• Delete Server: removes the Synix server entry and, after confirmation, can remove associated files/backups.\n\n" +
 					"Some actions are intentionally hidden or disabled for templates that use a different installer, generate settings only after first boot, or cannot be tested reliably."),
+
+				["Mod & Plugin Manager"] = new HelpItem("Dash",
+					"MANAGING ADD-ONS WITHOUT A DATABASE OF EVERY MOD:\n\n" +
+					"1. Select a server and open Server Options -> Mod & Plugin Manager.\n" +
+					"2. Read the support banner. Ready means Synix has a verified installation rule. Detection Only means Synix can show provider-owned content but will not copy or delete it.\n" +
+					"3. Stop the server before changing add-ons. Synix checks for the server's full process group so files are not changed while a child process is still using them.\n" +
+					"4. File-based systems such as Oxide/uMod, Fabric, or Forge accept only the file types declared by their profile. Replaced files receive a rollback copy and Synix verifies their SHA-256 hashes.\n" +
+					"   Before installation, Synix rejects unsafe archive paths, symbolic links, disguised libraries, scripts, and executable payloads. It requests a Microsoft Defender custom scan when available and warns when source code requests powerful file, process, registry, or network capabilities. The approved SHA-256 must still match the exact package copied into the server.\n" +
+					"5. Provider systems use IDs instead of copied files when the game supports it. ARK: Survival Ascended stores ordered CurseForge IDs in its -mods argument. ARK: Survival Evolved stores ordered Steam Workshop IDs in its ARK configuration files and enables automatic mod management. The game provider still downloads and updates the content.\n" +
+					"6. Browse Catalog opens the provider's website. Synix does not keep a hardcoded list of individual mods, so the provider remains the source of current names, versions, and downloads. Provider-downloaded content cannot be scanned before the provider installs it, so use only mod IDs from sources you trust.\n\n" +
+					"IMPORTANT: no antivirus or automated review can prove that a mod is safe. Mods and plugins run with the game server's Windows permissions. Run Synix and game servers as a standard Windows user, never as an administrator, unless a specific operation requires elevation.\n\n" +
+					"Unknown games remain safe: if Synix recognizes a common plugins or mods folder, it can show its contents read-only until a verified profile is added."),
 
 				["Server Readiness Center"] = new HelpItem("Dash",
 					"CHECK ONE SERVER BEFORE YOU START IT:\n\n" +

@@ -62,10 +62,20 @@ namespace Synix_Control_Panel.SynixApp.Design
 				SelectionForeColor = SettingsPalette.PrimaryText
 			};
 
-			grid.CellMouseEnter -= Grid_CellMouseEnter;
-			grid.CellMouseEnter += Grid_CellMouseEnter;
-			grid.CellMouseLeave -= Grid_CellMouseLeave;
-			grid.CellMouseLeave += Grid_CellMouseLeave;
+			// DarkTheme is shared by every grid. Dashboard-only behavior must be
+			// enabled explicitly so unrelated grids keep their own interaction model.
+			grid.CellMouseEnter -= ServerGrid_CellMouseEnter;
+			grid.CellMouseLeave -= ServerGrid_CellMouseLeave;
+			if (grid.Cursor == Cursors.Hand)
+				grid.Cursor = Cursors.Default;
+		}
+
+		public static void EnableServerDetailsInteraction(DataGridView grid)
+		{
+			grid.CellMouseEnter -= ServerGrid_CellMouseEnter;
+			grid.CellMouseEnter += ServerGrid_CellMouseEnter;
+			grid.CellMouseLeave -= ServerGrid_CellMouseLeave;
+			grid.CellMouseLeave += ServerGrid_CellMouseLeave;
 		}
 
 		public static void ApplyDashboardTheme(DataGridView grid)
@@ -251,7 +261,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			return SettingsPalette.SecondaryText;
 		}
 
-		private static void Grid_CellMouseEnter(object? sender, DataGridViewCellEventArgs eventArgs)
+		private static void ServerGrid_CellMouseEnter(object? sender, DataGridViewCellEventArgs eventArgs)
 		{
 			if (sender is not DataGridView grid || eventArgs.RowIndex < 0 || eventArgs.ColumnIndex < 0)
 				return;
@@ -261,7 +271,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 				"Double-click to view server details";
 		}
 
-		private static void Grid_CellMouseLeave(object? sender, DataGridViewCellEventArgs eventArgs)
+		private static void ServerGrid_CellMouseLeave(object? sender, DataGridViewCellEventArgs eventArgs)
 		{
 			if (sender is DataGridView grid)
 				grid.Cursor = Cursors.Default;

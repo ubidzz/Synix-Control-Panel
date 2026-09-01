@@ -186,6 +186,17 @@ namespace Synix_Control_Panel.SynixEngine
 					details);
 			}
 
+			if (searchable.Contains("blocked this package") ||
+				searchable.Contains("security review") ||
+				searchable.Contains("antivirus:"))
+			{
+				return new(
+					$"Synix could not {operation}",
+					"The selected add-on did not pass Synix's security review.",
+					"Do not bypass a confirmed threat. If the scan was only unavailable or inconclusive, review the warning and install only when you trust the exact source and SHA-256 shown.",
+					details);
+			}
+
 			if (searchable.Contains("port") &&
 				(searchable.Contains("use") || searchable.Contains("occup") || searchable.Contains("bind")))
 			{
