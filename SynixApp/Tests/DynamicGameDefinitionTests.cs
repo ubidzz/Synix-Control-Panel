@@ -120,6 +120,40 @@ public sealed class DynamicGameDefinitionTests
 	}
 
 	[Fact]
+	public void EosGamesDoNotAdvertiseUnsupportedPlayerMonitoring()
+	{
+		GameInfo game = GameDatabase.GetGame("ARK: Survival Ascended")!;
+		GameServer server = new()
+		{
+			Game = game.Game,
+			CurrentPlayers = 0,
+			MaxPlayers = 70
+		};
+
+		Assert.Equal(ServerProbeProtocol.EpicOnlineServices, game.ProbeProtocol);
+		Assert.False(GameDatabase.SupportsManualConnectionTesting(game));
+		Assert.False(GameDatabase.SupportsPlayerCountMonitoring(game));
+		Assert.False(GameDatabase.SupportsPlayerManagement(game));
+		Assert.Equal("N/A", server.PlayerCount);
+	}
+
+	[Fact]
+	public void A2sGamesKeepPlayerMonitoringFeatures()
+	{
+		GameInfo game = GameDatabase.GetGame("Soulmask")!;
+		GameServer server = new()
+		{
+			Game = game.Game,
+			CurrentPlayers = 3,
+			MaxPlayers = 16
+		};
+
+		Assert.True(GameDatabase.SupportsPlayerCountMonitoring(game));
+		Assert.True(GameDatabase.SupportsPlayerManagement(game));
+		Assert.Equal("3 / 16", server.PlayerCount);
+	}
+
+	[Fact]
 	public void SevenDaysToDieUsesTheInstalledDedicatedServerLaunchContract()
 	{
 		GameInfo sevenDays = GameDatabase.GetGame("7 Days to Die")!;

@@ -42,6 +42,7 @@ namespace Synix_Control_Panel
 		private readonly SemaphoreSlim _versionCheckGate = new(1, 1);
 		private SynixUpdateCheckResult? _updateCheckResult;
 		private bool _updateShutdownRequested;
+		private ToolStripMenuItem? _playerManagementMenuItem;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -129,12 +130,17 @@ namespace Synix_Control_Panel
 				dialog.ShowDialog(this);
 			};
 
-			ToolStripMenuItem playerManagement = new("Player Management Center");
-			playerManagement.Click += (_, _) =>
+			_playerManagementMenuItem = new ToolStripMenuItem("Player Management Center");
+			_playerManagementMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
 				if (server == null)
 					return;
+				if (!GameDatabase.SupportsPlayerManagement(
+					GameDatabase.GetGame(server.Game)))
+				{
+					return;
+				}
 				using PlayerManagementCenter dialog = new(server);
 				dialog.ShowDialog(this);
 			};
@@ -163,7 +169,7 @@ namespace Synix_Control_Panel
 			if (insertAt < 0)
 				insertAt = contextMenuStrip.Items.Count;
 			contextMenuStrip.Items.Insert(insertAt++, modPluginManager);
-			contextMenuStrip.Items.Insert(insertAt++, playerManagement);
+			contextMenuStrip.Items.Insert(insertAt++, _playerManagementMenuItem);
 			contextMenuStrip.Items.Insert(insertAt++, liveProcessDetails);
 			contextMenuStrip.Items.Insert(insertAt, connectionInformation);
 		}
@@ -1032,6 +1038,13 @@ namespace Synix_Control_Panel
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
 				bool supportsConnectionTesting =
 					GameDatabase.SupportsManualConnectionTesting(selectedGameData);
+				bool supportsPlayerManagement =
+					GameDatabase.SupportsPlayerManagement(selectedGameData);
+				if (_playerManagementMenuItem != null)
+				{
+					_playerManagementMenuItem.Visible = supportsPlayerManagement;
+					_playerManagementMenuItem.Enabled = supportsPlayerManagement;
+				}
 
 				updateServerToolStripMenuItem.Enabled = !isMinecraft;
 				updateServerToolStripMenuItem.Visible = !isMinecraft;

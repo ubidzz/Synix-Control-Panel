@@ -110,5 +110,20 @@ namespace Synix_Control_Panel.SynixApp.Database
 				ServerProbeProtocol.Tcp;
 		}
 
+		public static bool SupportsPlayerCountMonitoring(GameInfo? game)
+		{
+			if (game == null)
+				return false;
+
+			return IsMinecraft(game.Game) ||
+				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
+		}
+
+		public static bool SupportsPlayerManagement(GameInfo? game)
+		{
+			return game != null &&
+				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
+		}
+
 	}
 }

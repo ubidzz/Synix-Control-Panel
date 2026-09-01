@@ -285,7 +285,16 @@ public class GameServer
 	public string RconPassword { get; set; } = "";
 	public bool IsFirstBoot { get; set; } = true;
 	[JsonIgnore]
-	public string PlayerCount => $"{CurrentPlayers} / {MaxPlayers}";
+	public string PlayerCount
+	{
+		get
+		{
+			GameInfo? game = GetGame(Game);
+			return SupportsPlayerCountMonitoring(game)
+				? $"{CurrentPlayers} / {MaxPlayers}"
+				: "N/A";
+		}
+	}
 	public bool UpdateOnStart { get; set; } = false;
 	public bool BackupOnStart { get; set; } = false;
 	public bool PreserveImportedConfiguration { get; set; } = false;
