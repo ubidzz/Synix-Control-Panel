@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 4,
+  "definitionRevision": 5,
   "id": "minecraft",
   "catalogOrder": 218,
   "game": "Minecraft",
@@ -20,7 +20,11 @@
   "worldSize": 0,
   "worldSeed": "12345",
   "maps": [],
-  "gameModes": [],
+  "gameModes": [
+    "Survival",
+    "Creative",
+    "Adventure"
+  ],
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "server.properties",
   "format": "StandardINI",

@@ -182,7 +182,11 @@ namespace Synix_Control_Panel.Help
 			lblGameServerText.Text = DisplayOrFallback(_server.DisplayGameName);
 			lblMapText.Text = DisplayOrFallback(_server.WorldName, "Not Required");
 			lblSeedText.Text = DisplayOrFallback(_server.WorldSeed, "Not Required");
-			lblCompetitiveText.Text = DisplayOrFallback(_server.GameMode, "Not Required");
+			lblCompetitiveText.Text = DisplayOrFallback(
+				GameDatabase.IsMinecraft(_server.Game)
+					? MinecraftControlProfile.NormalizeGameMode(_server.GameMode)
+					: _server.GameMode,
+				"Not Required");
 			lblRconPasswordText.Text = secretsAvailable
 				? DisplayOrFallback(passwords.RconPassword, "Not Required")
 				: "Password unavailable";

@@ -28,7 +28,7 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowInTaskbar = false;
 			MinimizeBox = false;
 			MaximizeBox = true;
-			MinimumSize = new Size(760, 520);
+			MinimumSize = new Size(840, 600);
 			ClientSize = new Size(900, 620);
 			BackColor = SettingsPalette.Window;
 			ForeColor = SettingsPalette.PrimaryText;
@@ -55,8 +55,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			_grid = new DataGridView
 			{
+				Name = "playerManagementGrid",
 				Location = new Point(28, 112),
-				Size = new Size(844, 388),
+				Size = new Size(844, 372),
 				Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
 				ReadOnly = true,
 				AllowUserToAddRows = false,
@@ -94,9 +95,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 			_status = new Label
 			{
+				Name = "playerManagementStatus",
 				Text = "Refresh to load player details directly from the local server.",
-				Location = new Point(28, 516),
-				Size = new Size(520, 54),
+				Location = new Point(28, 496),
+				Size = new Size(844, 48),
 				ForeColor = SettingsPalette.SecondaryText,
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
 			};
@@ -115,8 +117,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			_refresh = new ModernSettingsButton
 			{
+				Name = "playerManagementRefresh",
 				Text = "Refresh Players",
-				Location = new Point(566, 532),
+				Location = new Point(566, 560),
 				Size = new Size(148, 44),
 				UseAccentStyle = true,
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Right
@@ -124,8 +127,9 @@ namespace Synix_Control_Panel.SynixEngine
 			_refresh.Click += async (_, _) => await RefreshPlayersAsync();
 			ModernSettingsButton close = new()
 			{
+				Name = "playerManagementClose",
 				Text = "Close",
-				Location = new Point(726, 532),
+				Location = new Point(726, 560),
 				Size = new Size(146, 44),
 				DialogResult = DialogResult.OK,
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Right
@@ -179,8 +183,10 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			return new ModernSettingsButton
 			{
+				Name = "playerManagement" + new string(
+					text.Where(char.IsAsciiLetterOrDigit).ToArray()),
 				Text = text,
-				Location = new Point(left, 532),
+				Location = new Point(left, 560),
 				Size = new Size(text == "Kick" ? 108 : 148, 44),
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
 				Visible = visible,

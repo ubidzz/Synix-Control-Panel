@@ -1446,7 +1446,9 @@ namespace Synix_Control_Panel
 				AdminPassword = GetEnteredValue(txtAdminPassword),
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = worldName,
-				GameMode = cmbCompetitive.Text,
+				GameMode = isMinecraft
+					? MinecraftControlProfile.NormalizeGameMode(cmbCompetitive.Text)
+					: cmbCompetitive.Text,
 				CrossplayEnabled = chkCrossplay.Checked,
 				WorldSeed = GetEnteredValue(txtWorldSeed).Trim(),
 				WorldSize = wSize,
@@ -1809,14 +1811,9 @@ namespace Synix_Control_Panel
 			{
 				chkEnableRcon.Checked = false;
 				chkEnableRcon.Tag = "Disabled";
-				cmbCompetitive.Items.Clear();
-				cmbCompetitive.Items.AddRange(["Survival", "Creative", "Adventure"]);
-				cmbCompetitive.SelectedItem = "Survival";
 			}
-			else if (GameDatabase.GetGame("Minecraft") is GameInfo minecraft)
-			{
-				PopulateGameModes(minecraft, _existingServer?.GameMode ?? "PVE");
-			}
+			if (GameDatabase.GetGame("Minecraft") is GameInfo minecraft)
+				PopulateGameModes(minecraft, _existingServer?.GameMode ?? MinecraftControlProfile.SurvivalGameMode);
 			ToggleGameSpecificFields(GameDatabase.GetGame("Minecraft"));
 		}
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
@@ -1866,7 +1863,13 @@ namespace Synix_Control_Panel
 		private void PopulateGameModes(GameInfo gameData, string selectedMode)
 		{
 			cmbCompetitive.Items.Clear();
-			if (gameData.GameModes != null)
+			if (GameDatabase.IsMinecraft(gameData.Game))
+			{
+				selectedMode = MinecraftControlProfile.NormalizeGameMode(selectedMode);
+				foreach (string mode in MinecraftControlProfile.GameModes)
+					cmbCompetitive.Items.Add(mode);
+			}
+			else if (gameData.GameModes != null)
 			{
 				foreach (string mode in gameData.GameModes)
 					cmbCompetitive.Items.Add(mode);

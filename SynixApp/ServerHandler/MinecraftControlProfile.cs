@@ -21,9 +21,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 	{
 		internal const string JavaEdition = "Java";
 		internal const string BedrockEdition = "Bedrock";
+		internal const string SurvivalGameMode = "Survival";
+		internal const string CreativeGameMode = "Creative";
+		internal const string AdventureGameMode = "Adventure";
 		internal const string BedrockExecutableName = "bedrock_server.exe";
 		internal const int BedrockDefaultPort = 19132;
 		internal const int BedrockDefaultIpv6Port = 19133;
+		internal static readonly IReadOnlyList<string> GameModes =
+			[SurvivalGameMode, CreativeGameMode, AdventureGameMode];
 		private const int FirstManagementProtocolMajor = 1;
 		private const int FirstManagementProtocolMinor = 21;
 		private const int FirstManagementProtocolPatch = 9;
@@ -37,6 +42,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string.Equals(edition, BedrockEdition, StringComparison.OrdinalIgnoreCase)
 				? BedrockEdition
 				: JavaEdition;
+
+		internal static string NormalizeGameMode(string? gameMode)
+		{
+			string value = gameMode?.Trim() ?? string.Empty;
+			if (value.Equals(CreativeGameMode, StringComparison.OrdinalIgnoreCase))
+				return CreativeGameMode;
+			if (value.Equals(AdventureGameMode, StringComparison.OrdinalIgnoreCase))
+				return AdventureGameMode;
+
+			// PVE and PVP are legacy Synix values, not Minecraft game modes.
+			return SurvivalGameMode;
+		}
 
 		internal static bool IsBedrock(GameServer server) =>
 			GameDatabase.IsMinecraft(server.Game) &&

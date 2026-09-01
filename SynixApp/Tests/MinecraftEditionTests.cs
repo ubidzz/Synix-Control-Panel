@@ -162,6 +162,34 @@ public sealed class MinecraftEditionTests : IDisposable
 	}
 
 	[Fact]
+	public void PlayerManagementStatusDoesNotCoverTheActionButtons()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				GameServer server = CreateMinecraft(MinecraftControlProfile.JavaEdition);
+				using PlayerManagementCenter dialog = new(server);
+				AssertPlayerManagementFooter(dialog);
+
+				dialog.Size = dialog.MinimumSize;
+				dialog.PerformLayout();
+				AssertPlayerManagementFooter(dialog);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+		Assert.Null(failure);
+	}
+
+	[Fact]
 	public void FabricGeneratedJavaTemplateKeepsTheCompleteVerifiedKeySet()
 	{
 		GameServer server = CreateMinecraft(MinecraftControlProfile.JavaEdition);
@@ -170,6 +198,7 @@ public sealed class MinecraftEditionTests : IDisposable
 		server.Port = 25570;
 		server.QueryPort = 25571;
 		server.MaxPlayers = 24;
+		server.GameMode = MinecraftControlProfile.CreativeGameMode;
 		server.EnableRcon = true;
 		server.RconPort = 25572;
 		MinecraftConfiguration configuration = new();
@@ -190,10 +219,66 @@ public sealed class MinecraftEditionTests : IDisposable
 		Assert.Contains("server-port=25570", content);
 		Assert.Contains("query.port=25571", content);
 		Assert.Contains("max-players=24", content);
+		Assert.Contains("gamemode=creative", content);
 		Assert.Contains("motd=Fabric Home", content);
 		Assert.Contains("rcon.password=local-rcon-secret", content);
 		Assert.DoesNotContain("{Secret}", content);
 		Assert.DoesNotContain("{Password}", content);
+	}
+
+	[Theory]
+	[InlineData("Survival", "Survival")]
+	[InlineData("survival", "Survival")]
+	[InlineData("Creative", "Creative")]
+	[InlineData("creative", "Creative")]
+	[InlineData("Adventure", "Adventure")]
+	[InlineData("PVE", "Survival")]
+	[InlineData("PVP", "Survival")]
+	[InlineData("", "Survival")]
+	public void MinecraftGameModesReplaceLegacyPveAndPvpValues(
+		string savedValue,
+		string expected)
+	{
+		Assert.Equal(expected, MinecraftControlProfile.NormalizeGameMode(savedValue));
+	}
+
+	[Fact]
+	public void MinecraftDefinitionOffersOnlyNativeGameModes()
+	{
+		GameInfo definition = GameDatabase.GetGame("Minecraft")!;
+
+		Assert.Equal(
+			MinecraftControlProfile.GameModes,
+			definition.GameModes);
+		Assert.DoesNotContain("PVE", definition.GameModes);
+		Assert.DoesNotContain("PVP", definition.GameModes);
+		Assert.True(
+			(GameFix.GetManagedConfigurationInputs("Minecraft") &
+			 ManagedConfigurationInput.GameMode) != ManagedConfigurationInput.None);
+	}
+
+	[Theory]
+	[InlineData(MinecraftMetadataService.VanillaLoader)]
+	[InlineData(MinecraftMetadataService.FabricLoader)]
+	[InlineData(MinecraftMetadataService.ForgeLoader)]
+	[InlineData(MinecraftMetadataService.NeoForgeLoader)]
+	public void EveryJavaLoaderUsesTheSharedMinecraftServerProperties(string loader)
+	{
+		GameServer server = CreateMinecraft(MinecraftControlProfile.JavaEdition);
+		server.MinecraftLoader = loader;
+		server.GameMode = MinecraftControlProfile.AdventureGameMode;
+		MinecraftConfiguration configuration = new();
+
+		ConfigurationApplyResult result = configuration.Apply(new ConfigurationContext(
+			server,
+			new SynixServerPasswords(string.Empty, string.Empty, string.Empty),
+			"loader-test",
+			"127.0.0.1",
+			"127.0.0.1"));
+		string content = File.ReadAllText(Path.Combine(server.InstallPath, "server.properties"));
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.Contains("gamemode=adventure", content);
 	}
 
 	[Fact]
@@ -278,4 +363,25 @@ public sealed class MinecraftEditionTests : IDisposable
 		WorldName = "world",
 		WorldSeed = "12345"
 	};
+
+	private static void AssertPlayerManagementFooter(PlayerManagementCenter dialog)
+	{
+		Control grid = dialog.Controls.Find("playerManagementGrid", true).Single();
+		Control status = dialog.Controls.Find("playerManagementStatus", true).Single();
+		Control refresh = dialog.Controls.Find("playerManagementRefresh", true).Single();
+		Control close = dialog.Controls.Find("playerManagementClose", true).Single();
+		Control kick = dialog.Controls.Find("playerManagementKick", true).Single();
+		Control allowlist = dialog.Controls.Find("playerManagementAddtoAllowlist", true).Single();
+		Control makeOperator = dialog.Controls.Find("playerManagementMakeOperator", true).Single();
+
+		Assert.True(grid.Bottom < status.Top);
+		Assert.All(
+			new[] { kick, allowlist, makeOperator, refresh, close },
+			button =>
+			{
+				Assert.True(status.Bottom <= button.Top);
+				Assert.True(button.Bottom <= dialog.ClientSize.Height);
+			});
+		Assert.True(makeOperator.Right < refresh.Left);
+	}
 }

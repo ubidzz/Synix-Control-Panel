@@ -24,6 +24,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
 			new("motd", context => EscapeProperty(context.Server.ServerName)),
+			new("gamemode", context => MinecraftControlProfile
+				.NormalizeGameMode(context.Server.GameMode)
+				.ToLowerInvariant()),
 			new("server-port", context => context.Server.Port.ToString()),
 			new("enable-query", _ => bool.TrueString),
 			new("query.port", context => context.Server.QueryPort.ToString()),
@@ -46,10 +49,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "Minecraft";
-		public override int SchemaVersion => 5;
+		public override int SchemaVersion => 6;
 		public override bool SupportsFullReset => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.WorldSeed |
+			ManagedConfigurationInput.GameMode |
 			ManagedConfigurationInput.MaxPlayers |
 			ManagedConfigurationInput.QueryPort |
 			ManagedConfigurationInput.WorldName |
@@ -128,7 +132,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("level-name", context => EscapeProperty(
 				string.IsNullOrWhiteSpace(context.Server.WorldName) ? "Bedrock level" : context.Server.WorldName)),
 			new("level-seed", context => EscapeProperty(context.Server.WorldSeed)),
-			new("gamemode", context => NormalizeGameMode(context.Server.GameMode))
+			new("gamemode", context => MinecraftControlProfile
+				.NormalizeGameMode(context.Server.GameMode)
+				.ToLowerInvariant())
 		];
 
 		public override string GameName => "Minecraft Bedrock";
@@ -150,7 +156,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		{
 			return string.Join("\n",
 				$"server-name={EscapeProperty(context.Server.ServerName)}",
-				$"gamemode={NormalizeGameMode(context.Server.GameMode)}",
+				$"gamemode={MinecraftControlProfile.NormalizeGameMode(context.Server.GameMode).ToLowerInvariant()}",
 				"force-gamemode=false",
 				"difficulty=easy",
 				"allow-cheats=false",
@@ -179,14 +185,5 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				string.Empty);
 		}
 
-		private static string NormalizeGameMode(string? value)
-		{
-			string mode = value?.Trim() ?? string.Empty;
-			return mode.Equals("creative", StringComparison.OrdinalIgnoreCase)
-				? "creative"
-				: mode.Equals("adventure", StringComparison.OrdinalIgnoreCase)
-					? "adventure"
-					: "survival";
-		}
 	}
 }
