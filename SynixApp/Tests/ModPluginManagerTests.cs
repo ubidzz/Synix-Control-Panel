@@ -98,11 +98,63 @@ public sealed class ModPluginManagerTests
 			Assert.True(sevenDaysTarget.ArchiveOnly);
 			Assert.True(sevenDaysTarget.PreserveArchiveContents);
 			Assert.Equal("ModInfo.xml", sevenDaysTarget.RequiredArchiveFileName);
-			Assert.Contains("thefunpimps.com", sevenDays.CatalogUrl);
+			Assert.Equal(2, sevenDays.Catalogs.Count);
+			Assert.Contains(sevenDays.Catalogs, catalog =>
+				catalog.Name == "Nexus Mods" && catalog.Url.Contains("nexusmods.com"));
+			Assert.Contains(sevenDays.Catalogs, catalog =>
+				catalog.Name == "The Fun Pimps" && catalog.Url.Contains("thefunpimps.com"));
 		}
 		finally
 		{
 			ModSystemCatalog.ExternalProfileRootOverride = previousRoot;
+			Directory.Delete(profileRoot, true);
+		}
+	}
+
+	[Fact]
+	public void SevenDaysManagerOffersBothCatalogsWithoutApiIntegration()
+	{
+		string root = CreateTestDirectory();
+		string profileRoot = CreateTestDirectory();
+		string? previousRoot = ModSystemCatalog.ExternalProfileRootOverride;
+		try
+		{
+			ModSystemCatalog.ExternalProfileRootOverride = profileRoot;
+			File.WriteAllText(Path.Combine(root, "7DaysToDieServer.exe"), "server");
+			Exception? failure = null;
+			Thread thread = new(() =>
+			{
+				try
+				{
+					using ModPluginManager manager = new(new GameServer
+					{
+						Game = "7 Days to Die",
+						ServerName = "catalog-test",
+						InstallPath = root,
+						Status = "Stopped"
+					});
+					Button browse = Assert.IsAssignableFrom<Button>(
+						manager.Controls.Find("browseAddOnCatalog", true).Single());
+					Assert.True(browse.Enabled);
+					Assert.Equal("Browse Catalogs", browse.Text);
+				}
+				catch (Exception exception)
+				{
+					failure = exception;
+				}
+			})
+			{
+				IsBackground = true
+			};
+			thread.SetApartmentState(ApartmentState.STA);
+			thread.Start();
+			Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "The catalog UI did not finish constructing.");
+			Assert.Null(failure);
+		}
+		finally
+		{
+			ModSystemCatalog.ExternalProfileRootOverride = previousRoot;
+			Directory.Delete(root, true);
 			Directory.Delete(profileRoot, true);
 		}
 	}

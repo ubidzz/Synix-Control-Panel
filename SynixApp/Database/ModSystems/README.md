@@ -42,6 +42,7 @@ A profile contains:
 - `frameworkName`: framework name Synix can compare with the server settings; may be blank.
 - `frameworkMarkers`: relative files or folders that prove the framework exists.
 - `catalogUrl`: optional HTTPS page that users can open themselves. It is not a list of individual mods.
+- `catalogs`: optional named HTTPS choices when a game has more than one useful catalog. Synix only opens these pages in the user's browser; it does not authenticate with or download from them.
 - `restartRequired`: whether the user should restart after a change.
 - `targets`: one or more target objects.
 

@@ -77,7 +77,17 @@
       "gameNames": [ "7 Days to Die" ],
       "frameworkName": "Built-in mod loader",
       "frameworkMarkers": [ "7DaysToDieServer.exe" ],
-      "catalogUrl": "https://community.thefunpimps.com/resources/categories/7-days-to-die-mods.1/",
+      "catalogUrl": "",
+      "catalogs": [
+        {
+          "name": "Nexus Mods",
+          "url": "https://www.nexusmods.com/7daystodie/mods/"
+        },
+        {
+          "name": "The Fun Pimps",
+          "url": "https://community.thefunpimps.com/resources/categories/7-days-to-die-mods.1/"
+        }
+      ],
       "restartRequired": true,
       "targets": [
         {

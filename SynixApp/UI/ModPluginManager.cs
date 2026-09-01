@@ -211,6 +211,7 @@ namespace Synix_Control_Panel.SynixEngine
 			_installFramework = Button("Install Framework", 194, 702, 164);
 			_installFramework.Click += async (_, _) => await InstallFrameworkAsync();
 			_browseCatalog = Button("Browse Catalog", 368, 702, 150);
+			_browseCatalog.Name = "browseAddOnCatalog";
 			_browseCatalog.Click += (_, _) => BrowseCatalog();
 			_openFolder = Button("Open Add-ons Folder", 528, 702, 172);
 			_openFolder.Click += (_, _) => OpenAddOnsFolder();
@@ -364,7 +365,9 @@ namespace Synix_Control_Panel.SynixEngine
 			_openFolder.Enabled = target != null && !target.CanManageIds &&
 				(profile?.SupportLevel != ModSystemSupportLevel.DetectedOnly ||
 				Directory.Exists(GetSelectedTargetPath()));
-			_browseCatalog.Enabled = profile != null && IsSafeCatalogUri(profile.CatalogUrl, out _);
+			IReadOnlyList<CatalogChoice> catalogs = GetCatalogChoices(profile);
+			_browseCatalog.Enabled = catalogs.Count > 0;
+			_browseCatalog.Text = catalogs.Count > 1 ? "Browse Catalogs" : "Browse Catalog";
 			bool isRustFramework = profile?.Id.Equals("rust-umod", StringComparison.OrdinalIgnoreCase) == true;
 			_installFramework.Visible = isRustFramework;
 			_installFramework.Enabled = isRustFramework && stopped && !(_detection?.FrameworkDetected ?? false);
@@ -642,17 +645,69 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void BrowseCatalog()
 		{
-			if (_profileBox.SelectedItem is not ModSystemProfile profile ||
-				!IsSafeCatalogUri(profile.CatalogUrl, out Uri? uri))
+			if (_profileBox.SelectedItem is not ModSystemProfile profile)
 				return;
+			IReadOnlyList<CatalogChoice> catalogs = GetCatalogChoices(profile);
+			if (catalogs.Count == 0)
+				return;
+			if (catalogs.Count == 1)
+			{
+				OpenCatalog(catalogs[0].Uri);
+				return;
+			}
+
+			ContextMenuStrip menu = new()
+			{
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = Font,
+				ShowImageMargin = false
+			};
+			foreach (CatalogChoice catalog in catalogs)
+			{
+				ToolStripMenuItem item = new(catalog.Name)
+				{
+					ForeColor = SettingsPalette.PrimaryText,
+					BackColor = SettingsPalette.Card,
+					AutoSize = false,
+					Size = new Size(220, 34)
+				};
+				item.Click += (_, _) => OpenCatalog(catalog.Uri);
+				menu.Items.Add(item);
+			}
+			menu.Closed += (_, _) => menu.Dispose();
+			menu.Show(_browseCatalog, new Point(0, _browseCatalog.Height));
+		}
+
+		private void OpenCatalog(Uri uri)
+		{
 			try
 			{
-				Process.Start(new ProcessStartInfo(uri!.AbsoluteUri) { UseShellExecute = true });
+				Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
 			}
 			catch (Exception exception)
 			{
 				PlainEnglishErrorDialog.ShowError(this, "open the add-on catalog", exception.Message);
 			}
+		}
+
+		private static IReadOnlyList<CatalogChoice> GetCatalogChoices(ModSystemProfile? profile)
+		{
+			if (profile == null)
+				return [];
+			List<CatalogChoice> choices = [];
+			HashSet<string> urls = new(StringComparer.OrdinalIgnoreCase);
+			foreach (ModCatalogLink catalog in profile.Catalogs)
+			{
+				if (IsSafeCatalogUri(catalog.Url, out Uri? uri) && urls.Add(uri!.AbsoluteUri))
+					choices.Add(new CatalogChoice(catalog.Name.Trim(), uri));
+			}
+			if (IsSafeCatalogUri(profile.CatalogUrl, out Uri? legacyUri) &&
+				urls.Add(legacyUri!.AbsoluteUri))
+			{
+				choices.Add(new CatalogChoice("Add-on catalog", legacyUri));
+			}
+			return choices;
 		}
 
 		private void OpenAddOnsFolder()
@@ -722,6 +777,8 @@ namespace Synix_Control_Panel.SynixEngine
 			uri = candidate;
 			return true;
 		}
+
+		private sealed record CatalogChoice(string Name, Uri Uri);
 
 		private static ModernSettingsCard Card(int left, int top, int width, int height) => new()
 		{

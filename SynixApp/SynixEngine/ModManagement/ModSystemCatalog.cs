@@ -50,6 +50,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		public List<ModSystemProfile> Profiles { get; init; } = [];
 	}
 
+	internal sealed class ModCatalogLink
+	{
+		public string Name { get; init; } = string.Empty;
+		public string Url { get; init; } = string.Empty;
+	}
+
 	internal sealed class ModSystemProfile
 	{
 		public string Id { get; init; } = string.Empty;
@@ -60,6 +66,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		public string FrameworkName { get; init; } = string.Empty;
 		public List<string> FrameworkMarkers { get; init; } = [];
 		public string CatalogUrl { get; init; } = string.Empty;
+		public List<ModCatalogLink> Catalogs { get; init; } = [];
 		public bool RestartRequired { get; init; } = true;
 		public List<ModInstallTarget> Targets { get; init; } = [];
 
@@ -347,6 +354,22 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				{
 					throw new InvalidDataException($"{sourceName} contains an incomplete profile.");
 				}
+				if (!string.IsNullOrWhiteSpace(profile.CatalogUrl) &&
+					!IsSafeCatalogUrl(profile.CatalogUrl))
+				{
+					throw new InvalidDataException($"{sourceName} contains an unsafe catalog address.");
+				}
+				HashSet<string> catalogNames = new(StringComparer.OrdinalIgnoreCase);
+				HashSet<string> catalogUrls = new(StringComparer.OrdinalIgnoreCase);
+				foreach (ModCatalogLink catalog in profile.Catalogs)
+				{
+					if (string.IsNullOrWhiteSpace(catalog.Name) || catalog.Name.Length > 80 ||
+						catalog.Name.Any(char.IsControl) || !IsSafeCatalogUrl(catalog.Url) ||
+						!catalogNames.Add(catalog.Name.Trim()) || !catalogUrls.Add(catalog.Url))
+					{
+						throw new InvalidDataException($"{sourceName} contains an invalid or duplicate catalog choice.");
+					}
+				}
 
 				HashSet<string> targetIds = new(StringComparer.OrdinalIgnoreCase);
 				foreach (ModInstallTarget target in profile.Targets)
@@ -435,6 +458,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			return normalized.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
 				.All(part => part is not "." and not "..");
 		}
+
+		private static bool IsSafeCatalogUrl(string value) =>
+			Uri.TryCreate(value, UriKind.Absolute, out Uri? uri) &&
+			uri.Scheme == Uri.UriSchemeHttps &&
+			uri.IsDefaultPort &&
+			string.IsNullOrEmpty(uri.UserInfo);
 
 		private static bool IsSafeIniName(string value) =>
 			!string.IsNullOrWhiteSpace(value) &&
