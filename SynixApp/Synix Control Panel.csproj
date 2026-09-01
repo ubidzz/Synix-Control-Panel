@@ -21,11 +21,13 @@
 		<InformationalVersion>$(Version)</InformationalVersion>
 		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">Stable</SynixBuildChannel>
 		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == ''">Development</SynixBuildChannel>
+		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">win-x64</RuntimeIdentifier>
+		<SelfContained Condition="'$(SelfContained)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">true</SelfContained>
 		<DefineConstants Condition="'$(SynixBuildChannel)' == 'Stable'">$(DefineConstants);SYNIX_STABLE_RELEASE</DefineConstants>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
-		<PublishReadyToRun>true</PublishReadyToRun>
+		<PublishReadyToRun>false</PublishReadyToRun>
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 		<PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
@@ -140,6 +142,12 @@
 	  <Compile Update="UI\TroubleshooterDialog.Designer.cs">
 	    <DependentUpon>TroubleshooterDialog.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\ConnectionInformationDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\PlainEnglishErrorDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
 	  <Compile Update="UI\FirstRunGuideDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
@@ -205,17 +213,23 @@
 			<_SynixDotNetHost Condition="'$(_SynixDotNetHost)' == ''">$([System.IO.Path]::Combine('$(ProgramFiles)', 'dotnet', 'dotnet.exe'))</_SynixDotNetHost>
 		</PropertyGroup>
 		<Error Condition="'$(SynixBuildChannel)' != 'Stable'" Text="Synix Publish was not marked as a Stable release build." />
+		<Error Condition="'$(RuntimeIdentifier)' != 'win-x64'" Text="Synix release publishing must target win-x64. Select a Synix Folder publish profile and try again." />
+		<Error Condition="'$(SelfContained)' != 'true'" Text="Synix release publishing must be self-contained because SynixSetup.msi packages the single published EXE. The selected publish profile is incomplete." />
+		<Error Condition="'$(PublishSingleFile)' != 'true'" Text="Synix release publishing must create a single EXE because SynixSetup.msi packages only that file. The selected publish profile is incomplete." />
 		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
 		<Error Condition="!Exists('$(_SynixMsiProject)')" Text="The Synix MSI project was not found at $(_SynixMsiProject)." />
 		<Error Condition="!Exists('$(_SynixTestsProject)')" Text="The Synix automated test project was not found at $(_SynixTestsProject)." />
 		<Error Condition="!Exists('$(_SynixDotNetHost)')" Text="The 64-bit .NET host was not found at $(_SynixDotNetHost). Repair the Visual Studio .NET SDK before publishing." />
+		<Message Text="Starting the published EXE in hidden smoke-test mode..." Importance="high" />
+		<Exec Command="&quot;$(_SynixPublishedExe)&quot; --synix-publish-smoke-test" WorkingDirectory="$(_SynixPublishDirectory)" Timeout="30000" />
 		<Message Text="Running the complete Synix automated test suite before packaging..." Importance="high" />
 		<Exec Command="&quot;$(_SynixDotNetHost)&quot; test &quot;$(_SynixTestsProject)&quot; --configuration Release --logger &quot;console;verbosity=minimal&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
 		<PropertyGroup>
 			<_SynixAutomatedTestsUtc>$([System.DateTime]::UtcNow.ToString('O'))</_SynixAutomatedTestsUtc>
 		</PropertyGroup>
 		<Message Text="Building SynixSetup.msi with Version $(Version)..." Importance="high" />
-		<Exec Command="&quot;$(_SynixDotNetHost)&quot; build &quot;$(_SynixMsiProject)&quot; --configuration Release --nologo &quot;-p:Version=$(Version)&quot; &quot;-p:SynixPublishDir=$(_SynixPublishDirectory)&quot; &quot;-p:SynixProjectDir=$(MSBuildProjectDirectory)&quot; &quot;-p:SynixAssemblyName=$(AssemblyName)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+		<Delete Files="$(_SynixMsiBuildOutput)" Condition="Exists('$(_SynixMsiBuildOutput)')" />
+		<Exec Command="&quot;$(_SynixDotNetHost)&quot; build &quot;$(_SynixMsiProject)&quot; --configuration Release --no-incremental --nologo &quot;-p:Version=$(Version)&quot; &quot;-p:SynixPublishDir=$(_SynixPublishDirectory)&quot; &quot;-p:SynixProjectDir=$(MSBuildProjectDirectory)&quot; &quot;-p:SynixAssemblyName=$(AssemblyName)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
 		<Error Condition="!Exists('$(_SynixMsiBuildOutput)')" Text="WiX did not create $(_SynixMsiBuildOutput)." />
 		<Delete Files="$(_SynixMsiOutput)" Condition="Exists('$(_SynixMsiOutput)')" />
 		<Copy SourceFiles="$(_SynixMsiBuildOutput)" DestinationFiles="$(_SynixMsiOutput)" />

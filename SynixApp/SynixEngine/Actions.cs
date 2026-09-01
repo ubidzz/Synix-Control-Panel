@@ -933,10 +933,14 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			StartContext currentContext = status.Equals("MAINTENANCE", StringComparison.OrdinalIgnoreCase)
+				? StartContext.Scheduled
+				: status.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase)
+					? StartContext.CrashRecovery
+					: StartContext.Manual;
 			try
 			{
 				bool stopServer = false;
-				StartContext currentContext = StartContext.Manual;
 
 				if (!PassResourceGuard(out string guardMsg))
 				{
@@ -949,7 +953,27 @@ namespace Synix_Control_Panel.SynixEngine
 				if (!await EnsureSteamAuthenticationAfterImport(server, status))
 					return;
 
-				if (!ValidateIntegrityAndReport(server)) return;
+				bool showInteractiveErrors = string.IsNullOrWhiteSpace(status) ||
+					status.Equals("RESTART", StringComparison.OrdinalIgnoreCase);
+				if (!ValidateIntegrityAndReport(server, showInteractiveErrors)) return;
+				SafetyChecklistReport safetyReport = UserGuidance.BuildSafetyChecklist(server);
+				if (!safetyReport.CanContinue)
+				{
+					SafetyCheckItem blocked = safetyReport.Items.First(item =>
+						item.Level == SafetyCheckLevel.Blocked);
+					Log($"[SAFETY CHECK BLOCKED] {blocked.Name}: {blocked.Details}", Color.Red, true);
+					if (showInteractiveErrors)
+					{
+						PlainEnglishErrorDialog.ShowError(
+							MainGUI.Instance,
+							"start the server safely",
+							blocked.Details);
+					}
+					return;
+				}
+				Log(
+					$"[SAFETY CHECK] Automatic checklist passed at {safetyReport.CompletionPercentage}% readiness.",
+					Color.LimeGreen);
 				if (GameFix.NeedsManagedConfiguration(server))
 				{
 					ConfigurationApplyResult configurationResult =
@@ -1051,6 +1075,14 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception ex)
 			{
 				Log($"[🚨 CRITICAL ENGINE ERROR] Sequence failed for {server.ServerName}: {ex.Message}", Color.Red, true);
+				if (currentContext == StartContext.Manual && MainGUI.Instance != null)
+				{
+					MainGUI.Instance.BeginInvoke((Action)(() =>
+						PlainEnglishErrorDialog.ShowError(
+							MainGUI.Instance,
+							"complete the server action",
+							ex.ToString())));
+				}
 			}
 		}
 

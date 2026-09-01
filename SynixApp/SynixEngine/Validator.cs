@@ -207,7 +207,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return false;
 		}
 
-		public bool ValidateIntegrityAndReport(GameServer server)
+		public bool ValidateIntegrityAndReport(GameServer server, bool showDialog = true)
 		{
 			if (!CanServerStart(server, out string errorMessage))
 			{
@@ -216,7 +216,8 @@ namespace Synix_Control_Panel.SynixEngine
 					MainGUI.Instance.AppendLog($"[🚨 ERROR] {errorMessage}", Color.Red, true);
 				}));
 
-				MessageBox.Show(errorMessage, "Integrity Check Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				if (showDialog)
+					PlainEnglishErrorDialog.ShowError(MainGUI.Instance, "start the server", errorMessage);
 
 				server.Status = "Needs Repair";
 

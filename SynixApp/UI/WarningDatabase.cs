@@ -13,8 +13,10 @@
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixEngine;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Synix_Control_Panel.Database
 {
@@ -1015,9 +1017,16 @@ namespace Synix_Control_Panel.Database
 			headerGlyph.ForeColor = SettingsPalette.Warning;
 			_server = server;
 
-			string warningText = GetWarningText(server);
+			SafetyChecklistReport safetyReport = UserGuidance.BuildSafetyChecklist(server);
+			string warningText = BuildAssistantText(server, safetyReport);
 			txtWarningText.Text = warningText;
 			lblGameName.Text = server.Game;
+			lblWindowTitle.Text = "First-Start Assistant";
+			lblInstructionHeading.Text = "Automatic safety checklist and next steps";
+			lblActionHint.Text = safetyReport.CanContinue
+				? "Synix will keep checking the server automatically while it starts."
+				: "Fix the blocked checklist item before continuing.";
+			btnStart.Enabled = safetyReport.CanContinue;
 
 			GameInfo? game = GameDatabase.GetGame(server.Game);
 			if (game?.RequiredLaunchFiles.Length > 0)
@@ -1035,9 +1044,44 @@ namespace Synix_Control_Panel.Database
 			}
 			else
 			{
-				lblWarningTitle.Text = "First-launch preparation";
-				lblWarningSubtitle.Text = "Review these setup requirements before continuing.";
+				lblWarningTitle.Text = "Ready for the first start";
+				lblWarningSubtitle.Text = $"Setup is {safetyReport.CompletionPercentage}% complete. Review the automatic checks before continuing.";
+				btnStart.Text = "Install and Start";
 			}
+		}
+
+		internal static string BuildAssistantText(
+			GameServer server,
+			SafetyChecklistReport? report = null)
+		{
+			report ??= UserGuidance.BuildSafetyChecklist(server);
+			ConfigurationSupportPresentation support =
+				UserGuidance.GetConfigurationSupport(GameDatabase.GetGame(server.Game));
+			StringBuilder builder = new();
+			builder.AppendLine($"SETUP COMPLETION: {report.CompletionPercentage}%");
+			builder.AppendLine();
+			builder.AppendLine("AUTOMATIC SAFETY CHECKLIST");
+			foreach (SafetyCheckItem item in report.Items)
+			{
+				string status = item.Level switch
+				{
+					SafetyCheckLevel.Ready => "READY",
+					SafetyCheckLevel.Review => "REVIEW",
+					_ => "BLOCKED"
+				};
+				builder.AppendLine($"[{status}] {item.Name}: {item.Details}");
+			}
+			builder.AppendLine();
+			builder.AppendLine($"CONFIGURATION SUPPORT: {support.Status}");
+			builder.AppendLine(support.Summary);
+			builder.AppendLine();
+			builder.AppendLine("CONNECTION INFORMATION");
+			builder.AppendLine($"Game port: {server.Port}. {UserGuidance.GetPortSummary(server)}");
+			builder.AppendLine("After the server starts, use Server Options > Connection Information to copy the correct home-network or internet address.");
+			builder.AppendLine();
+			builder.AppendLine("GAME-SPECIFIC FIRST-START INFORMATION");
+			builder.AppendLine(GetWarningText(server));
+			return builder.ToString().Trim();
 		}
 
 		internal static string GetWarningText(GameServer server)
@@ -1086,11 +1130,7 @@ namespace Synix_Control_Panel.Database
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
-					$"Failed to open link: {exception.Message}",
-					"Link Error",
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
+				PlainEnglishErrorDialog.ShowError(this, "open the help link", exception.Message);
 			}
 		}
 
@@ -1104,7 +1144,7 @@ namespace Synix_Control_Panel.Database
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show($"Could not write eula.txt. Please check folder permissions:\n{ex.Message}", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					PlainEnglishErrorDialog.ShowError(this, "prepare the Minecraft agreement", ex.Message);
 					return;
 				}
 			}
@@ -1119,7 +1159,7 @@ namespace Synix_Control_Panel.Database
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Error: {ex.Message}");
+				PlainEnglishErrorDialog.ShowError(this, "save the first-start setup", ex.Message);
 			}
 		}
 

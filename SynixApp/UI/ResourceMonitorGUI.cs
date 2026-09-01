@@ -12,7 +12,9 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -44,15 +46,25 @@ namespace Synix_Control_Panel
 		private static Color TrackColor => SettingsPalette.Divider;
 
 		private readonly Dictionary<int, DataGridViewRow> _rowsByProcessId = new();
+		private readonly Dictionary<int, (double CpuMilliseconds, DateTime SampleTime)> _cpuSamples = new();
+		private readonly GameServer? _serverFilter;
 		private double _currentTotalCpuPercentage;
 		private double _currentTotalRamPercentage;
 		private bool _isRefreshing;
 
-		public ResourceMonitorGUI()
+		public ResourceMonitorGUI(GameServer? serverFilter = null)
 		{
+			_serverFilter = serverFilter;
 			InitializeComponent();
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 				ThemeManager.Apply(this);
+			if (_serverFilter != null)
+			{
+				Text = $"Live Process Details - {_serverFilter.ServerName}";
+				lblGridTitle.Text = $"Live Process Details  •  {_serverFilter.ServerName}";
+				lblGridSubtitle.Text = "Every launcher, console host, and game process Synix has verified inside this server group.";
+			}
+			lblActiveServersTitle.Text = "Active Processes";
 		}
 
 		protected override void OnShown(EventArgs eventArgs)
@@ -148,85 +160,87 @@ namespace Synix_Control_Panel
 
 			try
 			{
-				var serverSnapshot = MainGUI.serverList.ToList();
+				var serverSnapshot = (_serverFilter == null
+					? MainGUI.serverList
+					: MainGUI.serverList.Where(server => ReferenceEquals(server, _serverFilter)))
+					.ToList();
 				var totalUsage = ResourceMonitor.CalculateUsage(serverSnapshot);
 				HashSet<int> sampledProcessIds = new();
 
 				foreach (var server in serverSnapshot)
 				{
-					var process = server.RunningProcess;
-					if (process == null)
+					IReadOnlyList<ServerProcessIdentity> identities =
+						Servers.RefreshServerProcessRegistry(server);
+					foreach (ServerProcessIdentity identity in identities)
 					{
-						continue;
-					}
-
-					try
-					{
-						if (process.HasExited)
+						try
 						{
-							continue;
+							using Process process = Process.GetProcessById(identity.ProcessId);
+							if (process.HasExited)
+								continue;
+
+							process.Refresh();
+							double currentCpuMilliseconds = process.TotalProcessorTime.TotalMilliseconds;
+							DateTime currentTime = DateTime.Now;
+							double cpuPercentage = 0;
+
+							if (_cpuSamples.TryGetValue(identity.ProcessId, out var previous))
+							{
+								double elapsedMilliseconds =
+									(currentTime - previous.SampleTime).TotalMilliseconds;
+								if (elapsedMilliseconds > 0)
+								{
+									double usedCpuMilliseconds =
+										currentCpuMilliseconds - previous.CpuMilliseconds;
+									cpuPercentage = usedCpuMilliseconds /
+										(elapsedMilliseconds * Environment.ProcessorCount) * 100.0;
+								}
+							}
+							_cpuSamples[identity.ProcessId] = (currentCpuMilliseconds, currentTime);
+
+							cpuPercentage = Math.Clamp(cpuPercentage, 0, 100);
+							double ramGb = process.WorkingSet64 /
+								1024.0 / 1024.0 / 1024.0;
+							double totalSystemRamGb = GetTotalSystemRamGb();
+							double ramPercentage = Math.Clamp(
+								ramGb / totalSystemRamGb * 100.0,
+								0,
+								100);
+
+							int processId = process.Id;
+							string executableName = Path.GetFileName(identity.ExecutablePath);
+							if (string.IsNullOrWhiteSpace(executableName))
+								executableName = process.ProcessName + ".exe";
+							string processRole = server.PID == processId ? "Primary" : "Child / worker";
+							if (!sampledProcessIds.Add(processId))
+								continue;
+
+							if (!_rowsByProcessId.TryGetValue(processId, out DataGridViewRow? row))
+							{
+								int rowIndex = resourceGrid.Rows.Add();
+								row = resourceGrid.Rows[rowIndex];
+								row.Cells[colStatus.Index].Style.ForeColor = SuccessColor;
+								_rowsByProcessId.Add(processId, row);
+							}
+
+							row.SetValues(
+								"●  Running",
+								server.ServerName,
+								processId.ToString(),
+								$"{executableName}  •  {processRole}",
+								$"{cpuPercentage:N1}%",
+								$"{ramGb:N2} GB");
+							row.Cells[colExecutable.Index].ToolTipText =
+								string.IsNullOrWhiteSpace(identity.ExecutablePath)
+									? executableName
+									: identity.ExecutablePath;
+
+							row.Cells[colCpuUsage.Index].Tag = cpuPercentage;
+							row.Cells[colRamUsage.Index].Tag = ramPercentage;
 						}
-
-						process.Refresh();
-						double currentCpuMilliseconds = process.TotalProcessorTime.TotalMilliseconds;
-						DateTime currentTime = DateTime.Now;
-						double elapsedMilliseconds =
-							(currentTime - server.LastSampleTime).TotalMilliseconds;
-						double cpuPercentage = 0;
-
-						if (server.LastCpuMillis > 0 && elapsedMilliseconds > 0)
-						{
-							double usedCpuMilliseconds =
-								currentCpuMilliseconds - server.LastCpuMillis;
-							cpuPercentage = usedCpuMilliseconds /
-								(elapsedMilliseconds * Environment.ProcessorCount) * 100.0;
-						}
-
-						server.LastCpuMillis = currentCpuMilliseconds;
-						server.LastSampleTime = currentTime;
-
-						cpuPercentage = Math.Clamp(cpuPercentage, 0, 100);
-						double ramGb = process.WorkingSet64 /
-							1024.0 / 1024.0 / 1024.0;
-						double totalSystemRamGb = GetTotalSystemRamGb();
-						double ramPercentage = Math.Clamp(
-							ramGb / totalSystemRamGb * 100.0,
-							0,
-							100);
-
-						int processId = process.Id;
-						string executableName = process.ProcessName + ".exe";
-						if (!sampledProcessIds.Add(processId))
-						{
-							continue;
-						}
-
-						if (!_rowsByProcessId.TryGetValue(processId, out DataGridViewRow? row))
-						{
-							int rowIndex = resourceGrid.Rows.Add();
-							row = resourceGrid.Rows[rowIndex];
-							row.Cells[colStatus.Index].Style.ForeColor = SuccessColor;
-							_rowsByProcessId.Add(processId, row);
-						}
-
-						row.SetValues(
-							"●  Running",
-							server.ServerName,
-							processId.ToString(),
-							executableName,
-							$"{cpuPercentage:N1}%",
-							$"{ramGb:N2} GB");
-
-						row.Cells[colCpuUsage.Index].Tag = cpuPercentage;
-						row.Cells[colRamUsage.Index].Tag = ramPercentage;
-					}
-					catch (InvalidOperationException)
-					{
-
-					}
-					catch (Win32Exception)
-					{
-
+						catch (InvalidOperationException) { }
+						catch (Win32Exception) { }
+						catch (ArgumentException) { }
 					}
 				}
 
@@ -237,6 +251,7 @@ namespace Synix_Control_Panel
 					DataGridViewRow staleRow = _rowsByProcessId[staleProcessId];
 					resourceGrid.Rows.Remove(staleRow);
 					_rowsByProcessId.Remove(staleProcessId);
+					_cpuSamples.Remove(staleProcessId);
 				}
 
 				UpdateSummaryCards(totalUsage, sampledProcessIds.Count);
@@ -258,7 +273,7 @@ namespace Synix_Control_Panel
 
 		private void UpdateSummaryCards(
 			ResourceMonitor.ServerUsage totalUsage,
-			int runningServerCount)
+			int runningProcessCount)
 		{
 			_currentTotalCpuPercentage = Math.Clamp(
 				totalUsage.TotalCpuPercent,
@@ -277,20 +292,20 @@ namespace Synix_Control_Panel
 			lblTotalRamValue.Text = $"{totalRamGb:N2} GB";
 			lblTotalRamCaption.Text =
 				$"{_currentTotalRamPercentage:N1}% of {totalSystemRamGb:N1} GB system memory";
-			lblActiveServersValue.Text = runningServerCount.ToString();
-			lblActiveIndicator.ForeColor = runningServerCount > 0
+			lblActiveServersValue.Text = runningProcessCount.ToString();
+			lblActiveIndicator.ForeColor = runningProcessCount > 0
 				? SuccessColor
 				: SettingsPalette.DisabledText;
-			lblActiveServersCaption.Text = runningServerCount switch
+			lblActiveServersCaption.Text = runningProcessCount switch
 			{
 				0 => "No running server processes detected",
 				1 => "1 server process is currently online",
-				_ => $"{runningServerCount} server processes are currently online"
+				_ => $"{runningProcessCount} server processes are currently online"
 			};
 
-			lblServerCount.Text = runningServerCount == 1
-				? "1 running server"
-				: $"{runningServerCount} running servers";
+			lblServerCount.Text = runningProcessCount == 1
+				? "1 running process"
+				: $"{runningProcessCount} running processes";
 			lblLastUpdated.Text =
 				$"Updated {DateTime.Now:h:mm:ss tt}  •  Auto-refresh every 1 second";
 
@@ -447,6 +462,7 @@ namespace Synix_Control_Panel
 			tmrRefresh.Stop();
 			tmrRefresh.Tick -= tmrRefresh_Tick;
 			_rowsByProcessId.Clear();
+			_cpuSamples.Clear();
 			resourceGrid.Rows.Clear();
 		}
 

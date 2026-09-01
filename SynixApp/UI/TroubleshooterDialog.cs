@@ -23,6 +23,7 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private SynixHealthReport? _report;
 		private bool _running;
+		private bool _rowHeightRefreshPending;
 		private readonly GameServer? _readinessServer;
 		private bool IsReadinessMode => _readinessServer != null;
 
@@ -32,7 +33,31 @@ namespace Synix_Control_Panel.SynixEngine
 			GridStyler.DarkTheme(resultsGrid);
 			GridStyler.ApplyDashboardTheme(resultsGrid);
 			GridStyler.ApplyRoundedCorners(resultsGrid, 10);
+			ConfigureResultsGridRendering();
 			ThemeManager.Apply(this);
+		}
+
+		private void ConfigureResultsGridRendering()
+		{
+			resultsGrid.AutoSizeRowsMode =
+				DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
+			resultsGrid.RowTemplate.MinimumHeight = 36;
+			resultsGrid.DefaultCellStyle.Padding = new Padding(8, 4, 4, 4);
+			detailsColumn.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+			actionColumn.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+
+			typeof(DataGridView).InvokeMember(
+				"DoubleBuffered",
+				System.Reflection.BindingFlags.NonPublic |
+				System.Reflection.BindingFlags.Instance |
+				System.Reflection.BindingFlags.SetProperty,
+				null,
+				resultsGrid,
+				[true]);
+
+			resultsGrid.Scroll += ResultsGrid_Scroll;
+			resultsGrid.SizeChanged += ResultsGrid_SizeChanged;
+			resultsGrid.ColumnWidthChanged += ResultsGrid_ColumnWidthChanged;
 		}
 
 		internal TroubleshooterDialog(GameServer server) : this()
@@ -155,7 +180,49 @@ namespace Synix_Control_Panel.SynixEngine
 			finally
 			{
 				resultsGrid.ResumeLayout();
+				RefreshGridRowHeights();
 			}
+		}
+
+		private void ResultsGrid_Scroll(object? sender, ScrollEventArgs eventArgs)
+		{
+			resultsGrid.Invalidate(true);
+		}
+
+		private void ResultsGrid_SizeChanged(object? sender, EventArgs eventArgs) =>
+			QueueGridRowHeightRefresh();
+
+		private void ResultsGrid_ColumnWidthChanged(
+			object? sender,
+			DataGridViewColumnEventArgs eventArgs) =>
+			QueueGridRowHeightRefresh();
+
+		private void QueueGridRowHeightRefresh()
+		{
+			if (_rowHeightRefreshPending ||
+				!IsHandleCreated ||
+				IsDisposed ||
+				Disposing)
+			{
+				return;
+			}
+
+			_rowHeightRefreshPending = true;
+			BeginInvoke(() =>
+			{
+				_rowHeightRefreshPending = false;
+				RefreshGridRowHeights();
+			});
+		}
+
+		private void RefreshGridRowHeights()
+		{
+			if (resultsGrid.IsDisposed || resultsGrid.Rows.Count == 0)
+				return;
+
+			resultsGrid.AutoResizeRows(
+				DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders);
+			resultsGrid.Invalidate(true);
 		}
 
 		private static string GetReadinessResultText(SynixHealthLevel level) => level switch
@@ -247,12 +314,10 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				PlainEnglishErrorDialog.ShowError(
 					this,
-					exception.Message,
-					"Repair Could Not Finish",
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Warning);
+					"finish the selected repair",
+					exception.ToString());
 			}
 		}
 

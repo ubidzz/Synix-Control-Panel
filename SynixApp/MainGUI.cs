@@ -61,6 +61,7 @@ namespace Synix_Control_Panel
 			Instance = this;
 
 			FileHandler.LoadServers();
+			AddGuidanceMenuItems();
 
 			contextMenuStrip.Renderer = new Synix_Control_Panel.SynixApp.Design.SynixMenuRenderer();
 			contextMenuStrip.ShowImageMargin = false;
@@ -116,6 +117,35 @@ namespace Synix_Control_Panel
 			InitializeVersionCheckTimer();
 
 			cmbStatusFilter.SelectedItem = "All Statuses";
+		}
+
+		private void AddGuidanceMenuItems()
+		{
+			ToolStripMenuItem connectionInformation = new("Connection Information");
+			connectionInformation.Click += (_, _) =>
+			{
+				GameServer? server = GetSelectedServer();
+				if (server == null)
+					return;
+				using ConnectionInformationDialog dialog = new(server);
+				dialog.ShowDialog(this);
+			};
+
+			ToolStripMenuItem liveProcessDetails = new("Live Process Details");
+			liveProcessDetails.Click += (_, _) =>
+			{
+				GameServer? server = GetSelectedServer();
+				if (server == null)
+					return;
+				ResourceMonitorGUI monitor = new(server);
+				monitor.Show(this);
+			};
+
+			int insertAt = contextMenuStrip.Items.IndexOf(toolStripSeparator3);
+			if (insertAt < 0)
+				insertAt = contextMenuStrip.Items.Count;
+			contextMenuStrip.Items.Insert(insertAt++, liveProcessDetails);
+			contextMenuStrip.Items.Insert(insertAt, connectionInformation);
 		}
 
 		[DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
@@ -945,6 +975,7 @@ namespace Synix_Control_Panel
 			catch (Exception ex)
 			{
 				AppendLog($"[🚨 ERROR] Could not complete Public connectivity test: {ex.Message}", Color.Yellow);
+				PlainEnglishErrorDialog.ShowError(this, "test the internet connection", ex.Message);
 			}
 		}
 
@@ -982,6 +1013,7 @@ namespace Synix_Control_Panel
 			catch (Exception ex)
 			{
 				AppendLog($"[🚨 ERROR] Could not complete LAN connectivity test: {ex.Message}", Color.Yellow);
+				PlainEnglishErrorDialog.ShowError(this, "test the home-network connection", ex.Message);
 			}
 		}
 
@@ -1056,6 +1088,7 @@ namespace Synix_Control_Panel
 				catch (Exception ex)
 				{
 					AppendLog($"[🚨 RESTART ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
+					PlainEnglishErrorDialog.ShowError(this, "restart the server", ex.Message);
 				}
 			}
 		}

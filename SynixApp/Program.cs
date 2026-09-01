@@ -19,11 +19,21 @@ namespace Synix_Control_Panel.SynixApp
 	static class Program
 	{
 		private const string SingleInstanceMutexName = @"Local\SynixControlPanel.SingleInstance";
+		private const string PublishSmokeTestArgument = "--synix-publish-smoke-test";
 		private static Mutex? _singleInstanceMutex;
 
 		[STAThread]
 		static void Main(string[] args)
 		{
+			if (args.Any(argument => string.Equals(
+				argument,
+				PublishSmokeTestArgument,
+				StringComparison.OrdinalIgnoreCase)))
+			{
+				Environment.ExitCode = RunPublishSmokeTest();
+				return;
+			}
+
 			if (Core.TryRunUpdateHelper(args))
 				return;
 			Core.CleanupStaleOperations();
@@ -57,6 +67,31 @@ namespace Synix_Control_Panel.SynixApp
 			finally
 			{
 				ReleaseSingleInstanceMutex();
+			}
+		}
+
+		/// <summary>
+		/// Confirms that the published app host can load the managed Synix assembly,
+		/// Windows Forms, and user settings without displaying a window. The publish
+		/// target runs this before it creates the MSI and release receipt.
+		/// </summary>
+		private static int RunPublishSmokeTest()
+		{
+			try
+			{
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				_ = typeof(Program).Assembly.GetName().Version
+					?? throw new InvalidOperationException("The Synix assembly version could not be loaded.");
+				_ = Properties.Settings.Default.DarkMode;
+
+				using Control windowsFormsProbe = new();
+				windowsFormsProbe.CreateControl();
+				return 0;
+			}
+			catch
+			{
+				return 1;
 			}
 		}
 

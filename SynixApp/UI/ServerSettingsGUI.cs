@@ -44,6 +44,11 @@ namespace Synix_Control_Panel
 		private bool _passwordUnlockFailed;
 		private string _validationMessage =
 			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
+		private bool _advancedMode;
+		private ModernSettingsButton? _experienceModeButton;
+		private Label? _completionLabel;
+		private Panel? _completionTrack;
+		private Panel? _completionFill;
 
 		private const int WmNcLeftButtonDown = 0x00A1;
 		private const int HtCaption = 0x0002;
@@ -131,12 +136,104 @@ namespace Synix_Control_Panel
 			txtInstallPath.TabStop = false;
 			txtInstallPath.ShortcutsEnabled = false;
 			txtInstallPath.Cursor = Cursors.Default;
+			InitializeGuidanceControls();
 			ShowSettingsPage(
 				pnlPageGeneral,
 				btnNavGeneral,
 				"General",
 				"Choose the game and define the server identity.");
 			UpdateModernStatus();
+		}
+
+		private void InitializeGuidanceControls()
+		{
+			_advancedMode = Properties.Settings.Default.AdvancedServerSetupMode;
+			_experienceModeButton = new ModernSettingsButton
+			{
+				Name = "btnExperienceMode",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(628, 25),
+				Size = new Size(168, 34),
+				Font = new Font("Segoe UI", 8.5F, FontStyle.Bold)
+			};
+			_experienceModeButton.Click += (_, _) =>
+			{
+				_advancedMode = !_advancedMode;
+				Properties.Settings.Default.AdvancedServerSetupMode = _advancedMode;
+				try
+				{
+					Properties.Settings.Default.Save();
+				}
+				catch (Exception exception)
+				{
+					PlainEnglishErrorDialog.ShowError(
+						this,
+						"save the setup mode",
+						exception.Message);
+				}
+				ApplyExperienceMode();
+			};
+			pnlContent.Controls.Add(_experienceModeButton);
+			_experienceModeButton.BringToFront();
+
+			pnlSidebarStatus.Height = 176;
+			lblSidebarStatusDetail.Height = 32;
+			_completionLabel = new Label
+			{
+				Name = "lblSetupCompletion",
+				Text = "Setup completion: 0%",
+				Location = new Point(22, 123),
+				Size = new Size(166, 20),
+				Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+				ForeColor = SettingsPalette.SecondaryText
+			};
+			_completionTrack = new Panel
+			{
+				Name = "pnlSetupCompletionTrack",
+				Location = new Point(22, 151),
+				Size = new Size(166, 7),
+				BackColor = SettingsPalette.Divider
+			};
+			_completionFill = new Panel
+			{
+				Name = "pnlSetupCompletionFill",
+				Location = Point.Empty,
+				Size = new Size(0, 7),
+				BackColor = SettingsPalette.Accent
+			};
+			_completionTrack.Controls.Add(_completionFill);
+			pnlSidebarStatus.Controls.Add(_completionLabel);
+			pnlSidebarStatus.Controls.Add(_completionTrack);
+			ApplyExperienceMode();
+		}
+
+		private void ApplyExperienceMode()
+		{
+			if (_experienceModeButton == null)
+				return;
+
+			_experienceModeButton.Text = _advancedMode
+				? "Mode: Advanced"
+				: "Mode: Beginner";
+			_experienceModeButton.UseAccentStyle = !_advancedMode;
+			_experienceModeButton.AccessibleName = _advancedMode
+				? "Advanced server setup mode. Click to use Beginner mode."
+				: "Beginner server setup mode. Click to show advanced settings.";
+			cardRcon.Visible = _advancedMode;
+			cardLaunchArguments.Visible = _advancedMode;
+
+			if (pnlPageNetwork.Visible)
+			{
+				lblPageDescription.Text = _advancedMode
+					? "Assign service ports and secure remote administration."
+					: "Use the recommended game and query ports. Advanced mode adds RCON controls.";
+			}
+			if (pnlPageInstall.Visible)
+			{
+				lblPageDescription.Text = _advancedMode
+					? "Choose server storage and customize launch arguments."
+					: "Choose where the server will be installed. Synix supplies the recommended launch settings.";
+			}
 		}
 
 		private void ShowSettingsPage(
@@ -197,6 +294,35 @@ namespace Synix_Control_Panel
 			lblFooterStatus.ForeColor = ready
 				? SettingsPalette.Accent
 				: SettingsPalette.Warning;
+
+			bool hasGame = cmbGame.SelectedIndex > 0;
+			bool blockedByPort = validationMessage.Contains("[CONFLICT]", StringComparison.OrdinalIgnoreCase) &&
+				validationMessage.Contains("Port", StringComparison.OrdinalIgnoreCase);
+			bool requirementsMet = !validationMessage.Contains("[REQUIREMENT]", StringComparison.OrdinalIgnoreCase) &&
+				!validationMessage.Contains("[MINECRAFT]", StringComparison.OrdinalIgnoreCase) &&
+				!validationMessage.Contains("[VALIDATION ERROR]", StringComparison.OrdinalIgnoreCase);
+			int completion = UserGuidance.CalculateSetupCompletion(new SetupCompletionState(
+				!string.IsNullOrWhiteSpace(txtName.Text),
+				hasGame,
+				!string.IsNullOrWhiteSpace(txtInstallPath.Text),
+				hasGame && !blockedByPort,
+				hasGame && requirementsMet,
+				ready));
+			if (_completionLabel != null)
+			{
+				_completionLabel.Text = $"Setup completion: {completion}%";
+				_completionLabel.ForeColor = completion == 100
+					? SettingsPalette.Success
+					: SettingsPalette.SecondaryText;
+			}
+			if (_completionTrack != null && _completionFill != null)
+			{
+				_completionFill.Width = (int)Math.Round(
+					_completionTrack.ClientSize.Width * completion / 100d);
+				_completionFill.BackColor = completion == 100
+					? SettingsPalette.Success
+					: SettingsPalette.Accent;
+			}
 		}
 
 		private void btnNavGeneral_Click(object? sender, EventArgs eventArgs)
@@ -738,6 +864,12 @@ namespace Synix_Control_Panel
 					: "Disabled";
 
 			}
+			ConfigurationSupportPresentation support =
+				UserGuidance.GetConfigurationSupport(gameData);
+			lblTemplateBehavior.Text =
+				$"◇  CONFIGURATION SUPPORT: {support.Status}  •  Unsupported settings are disabled automatically.";
+			lblTemplateBehavior.ForeColor = support.Color;
+			ApplyExperienceMode();
 			SyncGatekeeper();
 		}
 
@@ -1232,7 +1364,10 @@ namespace Synix_Control_Panel
 
 				FileHandler.SaveServers(); this.DialogResult = DialogResult.OK; this.Close();
 			}
-			catch (Exception ex) { MessageBox.Show(ex.Message); }
+			catch (Exception ex)
+			{
+				PlainEnglishErrorDialog.ShowError(this, "save the server settings", ex.ToString());
+			}
 		}
 
 		private async void cmbGame_SelectedIndexChanged(object sender, EventArgs e)

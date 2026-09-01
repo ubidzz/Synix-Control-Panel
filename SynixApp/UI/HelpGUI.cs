@@ -115,19 +115,20 @@ namespace Synix_Control_Panel.SynixEngine
 					"The bottom status message in Server Setup names the exact missing field or port conflict. Save Server unlocks only after those requirements are resolved."),
 
 				["Server Setup Page Guide"] = new HelpItem("Start",
-					"USING THE FIVE SERVER SETUP PAGES:\n\n" +
+					"USING SERVER SETUP:\n\n" +
+					"Beginner Mode shows the settings most people need and keeps the recommended launch command. Advanced Mode adds RCON and raw launch arguments. Discord notifications remain available in either mode. Switching modes never deletes a saved value.\n\n" +
 					"• General: server identity, game template, version, map/profile choices, passwords, and Minecraft runtime choices when applicable.\n" +
 					"• World Generation: world name, seed, size, and other template-supported world options.\n" +
 					"• Network & RCON: game, query, app, and RCON ports. Synix checks active processes and saved servers for conflicts.\n" +
 					"• Automation: backup on start, update on start, restart scheduling, and Discord alerts.\n" +
 					"• Install & Launch: server folder, default-path selection, extra launch arguments, and final save.\n\n" +
 					"TEMPLATE-AWARE CONTROLS:\n" +
-					"Synix enables only the controls supported by the selected game. A disabled field is not an error and should not be forced into that game's launch command. The configuration status in the lower-left area and the detailed footer message update while you work."),
+					"Synix enables only the controls supported by the selected game. The Configuration Support banner explains whether support is Full, Guided, Launch-setting, or Basic. The lower-left completion bar and detailed footer update while you work. A disabled field is not an error and should not be forced into that game's launch command."),
 
 				["After Saving: Install, Start, and Verify"] = new HelpItem("Start",
 					"WHAT HAPPENS AFTER YOU CLICK SAVE SERVER:\n\n" +
 					"1. Synix stores the server definition and adds it to the Game Servers list.\n" +
-					"2. Select the server row and click Start. If files are missing, Synix runs the correct installer before launch.\n" +
+					"2. Select the server row and click Start. The First-Start Assistant shows an automatic safety checklist, configuration support status, connection guidance, and setup completion score. If files are missing, Synix runs the correct installer before launch.\n" +
 					"3. Watch Activity & Diagnostics. Download, validation, launch arguments, process binding, and probe results appear there.\n" +
 					"4. Wait for the status to change from Starting to Running. Some games create their configuration files only after the first complete boot.\n" +
 					"5. Stop the server cleanly before editing generated files. Use Configure or Server Options -> Open Config Editor when that template exposes a config file.\n" +
@@ -180,6 +181,8 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Create Batch File: exports the resolved launch command for supported templates.\n" +
 					"• Backup Server: creates a manual archive.\n" +
 					"• Restore Server Backup: appears when saved backups exist and lets you choose which archive to restore.\n" +
+					"• Live Process Details: shows every verified launcher, console host, child, and worker PID in this server group.\n" +
+					"• Connection Information: shows the correct same-network and internet addresses with copy buttons and the ports that may need forwarding.\n" +
 					"• Test LAN/WAN Connectivity: appears only for games with a reliable supported probe.\n" +
 					"• Delete Server: removes the Synix server entry and, after confirmation, can remove associated files/backups.\n\n" +
 					"Some actions are intentionally hidden or disabled for templates that use a different installer, generate settings only after first boot, or cannot be tested reliably."),
@@ -203,7 +206,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"RESOURCE TELEMETRY:\n\n" +
 					"The CPU Usage and RAM Usage cards at the top of the dashboard show total host usage. These numbers describe the computer, not only one game server.\n\n" +
 					"RESOURCE MONITOR:\n" +
-					"Open Resource Monitor to see each bound running server in a sortable list with Server Name, PID, executable, CPU usage, and RAM usage. Use Server Info when you need the detailed view for one server. Closing either monitor window does not stop a server."),
+					"Open Resource Monitor to see every verified process in each running server group with Server Name, PID, primary/child role, executable, CPU usage, and RAM usage. Server Options -> Live Process Details filters the same view to one selected server. Closing either monitor window does not stop a server."),
 
 				["Global Settings Menu & Privacy Mode"] = new HelpItem("Dash",
 					"SYNIX GLOBAL SETTINGS:\n\n" +

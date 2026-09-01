@@ -350,8 +350,8 @@ namespace Synix_Control_Panel.Help
 		{
 			_currentCpuPercentage = Math.Clamp(cpuPercentage, 0, 100);
 			lblCpuCardValue.Text = $"{_currentCpuPercentage:0.0}%";
-			lblCpuCaption.Text = _server.PID.HasValue && _server.PID.Value > 0
-				? $"Process {_server.PID.Value:N0}  •  500 ms refresh"
+			lblCpuCaption.Text = _serverProcess != null
+				? "Live CPU usage  •  Updates twice per second"
 				: "Waiting for a running server process";
 
 			double totalRam = MainGUI.Instance != null

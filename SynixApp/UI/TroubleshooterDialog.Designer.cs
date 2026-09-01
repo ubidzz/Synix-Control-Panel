@@ -85,7 +85,7 @@ namespace Synix_Control_Panel.SynixEngine
 			resultsGrid.AllowUserToAddRows = false;
 			resultsGrid.AllowUserToDeleteRows = false;
 			resultsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			resultsGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+			resultsGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
 			resultsGrid.BackgroundColor = Color.FromArgb(12, 21, 36);
 			resultsGrid.BorderStyle = BorderStyle.None;
 			resultsGrid.ColumnHeadersHeight = 40;
@@ -95,6 +95,7 @@ namespace Synix_Control_Panel.SynixEngine
 			resultsGrid.Name = "resultsGrid";
 			resultsGrid.ReadOnly = true;
 			resultsGrid.RowHeadersVisible = false;
+			resultsGrid.RowTemplate.MinimumHeight = 36;
 			resultsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 			resultsGrid.Size = new Size(1064, 516);
 			resultsGrid.TabIndex = 0;
