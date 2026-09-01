@@ -990,15 +990,17 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			StartContext currentContext = status.Equals("MAINTENANCE", StringComparison.OrdinalIgnoreCase)
+			bool isRestart = status.Equals("RESTART", StringComparison.OrdinalIgnoreCase);
+			bool isMaintenance = status.Equals("MAINTENANCE", StringComparison.OrdinalIgnoreCase);
+			bool isWatchdog = status.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase);
+			bool requiresVerifiedStop = RequiresVerifiedStopBeforeStartValidation(status);
+			StartContext currentContext = isMaintenance
 				? StartContext.Scheduled
-				: status.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase)
+				: isWatchdog
 					? StartContext.CrashRecovery
 					: StartContext.Manual;
 			try
 			{
-				bool stopServer = false;
-
 				if (!PassResourceGuard(out string guardMsg))
 				{
 					Log(guardMsg, System.Drawing.Color.Red, true);
@@ -1011,8 +1013,47 @@ namespace Synix_Control_Panel.SynixEngine
 				if (!await EnsureSteamAuthenticationAfterImport(server, status))
 					return false;
 
-				bool showInteractiveErrors = string.IsNullOrWhiteSpace(status) ||
-					status.Equals("RESTART", StringComparison.OrdinalIgnoreCase);
+				bool showInteractiveErrors = string.IsNullOrWhiteSpace(status) || isRestart;
+
+				if (isRestart)
+				{
+					Log($"[SYNIX] Starting restart sequence for {server.ServerName}...", Color.Cyan);
+				}
+				else if (isMaintenance)
+				{
+					Log($"[🛠 MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
+				}
+				else if (isWatchdog)
+				{
+					server.Status = StatusManager.GetStatus(ServerState.Crashed);
+					string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
+					Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
+
+					_ = SendDiscordNotification(
+						server,
+						DiscordNotificationEvent.ServerCrashed,
+						"CRASH DETECTED",
+						$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
+						Color.Red);
+
+					Core.Instance.UpdateGridStatus();
+				}
+
+				if (requiresVerifiedStop)
+				{
+					Log($"[SYNIX] Stopping the {server.ServerName} server and verifying its installed process is fully closed.", Color.Cyan, true);
+
+					bool stopped = await StopServerAndReport(server, isManual: isRestart);
+					if (!stopped)
+					{
+						Log(
+							$"[RESTART BLOCKED] {server.ServerName} was not fully shut down, so Synix will not launch a second copy.",
+							Color.Red,
+							true);
+						return false;
+					}
+				}
+
 				if (!ValidateIntegrityAndReport(server, showInteractiveErrors)) return false;
 				SafetyChecklistReport safetyReport = UserGuidance.BuildSafetyChecklist(server);
 				if (!safetyReport.CanContinue)
@@ -1076,50 +1117,6 @@ namespace Synix_Control_Panel.SynixEngine
 					return false;
 				}
 
-				if (status == "RESTART")
-				{
-					Log($"[SYNIX] Starting restart sequence for {server.ServerName}...", Color.Cyan);
-					stopServer = true;
-				}
-				else if (status == "MAINTENANCE")
-				{
-					Log($"[🛠 MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
-					stopServer = true;
-					currentContext = StartContext.Scheduled;
-				}
-				else if (status == "WATCHDOG")
-				{
-					server.Status = StatusManager.GetStatus(ServerState.Crashed);
-					string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
-					Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
-
-					_ = SendDiscordNotification(
-						server,
-						DiscordNotificationEvent.ServerCrashed,
-						"CRASH DETECTED",
-						$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
-						Color.Red);
-
-					stopServer = true;
-					currentContext = StartContext.CrashRecovery;
-					Core.Instance.UpdateGridStatus();
-				}
-
-				if (stopServer)
-				{
-					Log($"[SYNIX] Stopping the {server.ServerName} server and verifying its installed process is fully closed.", Color.Cyan, true);
-
-					bool stopped = await StopServerAndReport(server, isManual: status == "RESTART");
-					if (!stopped)
-					{
-						Log(
-							$"[RESTART BLOCKED] {server.ServerName} was not fully shut down, so Synix will not launch a second copy.",
-							Color.Red,
-							true);
-						return false;
-					}
-				}
-
 				if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 				{
 					Log($"[SYNIX] Starting the {server.ServerName} server.", Color.Cyan, true);
@@ -1134,7 +1131,6 @@ namespace Synix_Control_Panel.SynixEngine
 						Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
 					}
 				}
-				stopServer = false;
 				return server.Status == StatusManager.GetStatus(ServerState.Starting) ||
 					server.Status == StatusManager.GetStatus(ServerState.Running);
 			}
@@ -1152,6 +1148,11 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 		}
+
+		internal static bool RequiresVerifiedStopBeforeStartValidation(string? status) =>
+			status?.Equals("RESTART", StringComparison.OrdinalIgnoreCase) == true ||
+			status?.Equals("MAINTENANCE", StringComparison.OrdinalIgnoreCase) == true ||
+			status?.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase) == true;
 
 		public void RunUniversalHealthCheck()
 		{

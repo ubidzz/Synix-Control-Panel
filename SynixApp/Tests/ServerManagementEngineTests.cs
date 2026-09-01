@@ -23,6 +23,24 @@ namespace Synix_Control_Panel.Tests;
 
 public sealed class ServerManagementEngineTests
 {
+	[Theory]
+	[InlineData("RESTART")]
+	[InlineData("MAINTENANCE")]
+	[InlineData("WATCHDOG")]
+	[InlineData("maintenance")]
+	public void RestartWorkflowsRequireAStopBeforeFreshStartValidation(string status)
+	{
+		Assert.True(Core.RequiresVerifiedStopBeforeStartValidation(status));
+	}
+
+	[Theory]
+	[InlineData("")]
+	[InlineData("START")]
+	public void NormalStartsDoNotRunTheRestartStopPhase(string status)
+	{
+		Assert.False(Core.RequiresVerifiedStopBeforeStartValidation(status));
+	}
+
 	[Fact]
 	public async Task Stop_StillHandlesANormalSingleProcessServer()
 	{
