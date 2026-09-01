@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Design;
 
 #nullable enable
+#pragma warning disable CS8600
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -246,7 +247,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(cancelButton);
 			Controls.Add(startButton);
 			Font = new Font("Segoe UI", 10F);
-			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
 			MinimumSize = new Size(760, 580);
 			Name = "ReliabilityTestDialog";

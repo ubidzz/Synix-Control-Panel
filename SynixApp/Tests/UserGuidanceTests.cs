@@ -121,12 +121,23 @@ public sealed class UserGuidanceTests
 				using ConnectionInformationDialog connection = new(server);
 				using ResourceMonitorGUI processes = new(server);
 				using ServerSettingsGUI setup = new();
+				using WarningDatabase firstStart = new(new GameServer
+				{
+					Game = "Palworld",
+					ServerName = "Installed Server",
+					InstallPath = Path.GetTempPath(),
+					Port = 8211,
+					QueryPort = 8212
+				});
 				Control modeButton = setup.Controls.Find("btnExperienceMode", true).Single();
 				Control modeBadge = setup.Controls.Find("lblModeBadge", true).Single();
 				Control completion = setup.Controls.Find("lblSetupCompletion", true).Single();
 				Control statusDetail = setup.Controls.Find("lblSidebarStatusDetail", true).Single();
 				Assert.False(modeButton.Bounds.IntersectsWith(modeBadge.Bounds));
 				Assert.False(completion.Bounds.IntersectsWith(statusDetail.Bounds));
+				Assert.Equal(
+					"Start Server",
+					firstStart.Controls.Find("btnStart", true).Single().Text);
 			}
 			catch (Exception exception)
 			{

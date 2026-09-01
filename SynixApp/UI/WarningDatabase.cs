@@ -1046,7 +1046,7 @@ namespace Synix_Control_Panel.Database
 			{
 				lblWarningTitle.Text = "Ready for the first start";
 				lblWarningSubtitle.Text = $"Setup is {safetyReport.CompletionPercentage}% complete. Review the automatic checks before continuing.";
-				btnStart.Text = "Install and Start";
+				btnStart.Text = "Start Server";
 			}
 		}
 

@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Design;
 
 #nullable enable
+#pragma warning disable CS8600
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -195,7 +196,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(finishButton);
 			Font = new Font("Segoe UI", 10F);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
-			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "FirstRunGuideDialog";

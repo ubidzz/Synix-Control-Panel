@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Design;
 
 #nullable enable
+#pragma warning disable CS8600
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -1806,7 +1807,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(lblStatus);
 			Controls.Add(btnValidate);
 			Controls.Add(btnSave);
-			Icon = (Icon?)resources.GetObject("$this.Icon") ?? SystemIcons.Application;
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			MinimumSize = new Size(1040, 720);
 			Name = "GameDefinitionBuilder";
 			StartPosition = FormStartPosition.CenterParent;
