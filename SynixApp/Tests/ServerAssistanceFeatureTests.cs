@@ -4,7 +4,11 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.ServerHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using Xunit;
 
@@ -119,6 +123,51 @@ public sealed class ServerAssistanceFeatureTests
 	}
 
 	[Fact]
+	public async Task PlayerQueryAcceptsDirectPlayerResponseWithoutChallenge()
+	{
+		using UdpClient queryServer = new(
+			new IPEndPoint(IPAddress.Loopback, 0));
+		int queryPort = ((IPEndPoint)queryServer.Client.LocalEndPoint!).Port;
+		using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(5));
+
+		Task responder = Task.Run(async () =>
+		{
+			UdpReceiveResult request = await queryServer.ReceiveAsync(timeout.Token);
+			Assert.Equal(0x55, request.Buffer[4]);
+
+			using MemoryStream response = new();
+			using BinaryWriter writer = new(response, Encoding.UTF8, leaveOpen: true);
+			writer.Write(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x44, 0x01, 0x00 });
+			writer.Write(Encoding.UTF8.GetBytes("LiveNoobTV"));
+			writer.Write((byte)0);
+			writer.Write(0);
+			writer.Write(0F);
+			await queryServer.SendAsync(
+				response.ToArray(),
+				request.RemoteEndPoint,
+				timeout.Token);
+		}, timeout.Token);
+
+		GameServer server = new()
+		{
+			Game = "Soulmask",
+			ServerName = "Direct Response Test",
+			Port = 8777,
+			QueryPort = queryPort,
+			Status = Core.StatusManager.GetStatus(Core.ServerState.Running)
+		};
+
+		PlayerQueryResult result = await PlayerQueryService.QueryAsync(
+			server,
+			timeout.Token);
+		await responder;
+
+		Assert.True(result.IsSupported);
+		Assert.True(result.IsSuccessful);
+		Assert.Equal("LiveNoobTV", Assert.Single(result.Players).Name);
+	}
+
+	[Fact]
 	public void BackgroundServiceCommandQuotesThePublishedExecutablePath()
 	{
 		string command = BackgroundServiceManager.BuildLaunchCommand(
@@ -127,6 +176,76 @@ public sealed class ServerAssistanceFeatureTests
 		Assert.Equal(
 			"\"C:\\Program Files\\Synix\\Synix Control Panel.exe\" --synix-background-agent",
 			command);
+	}
+
+	[Fact]
+	public void ExplicitDashboardCloseDoesNotRestartBackgroundAgent()
+	{
+		Assert.False(BackgroundServiceManager.ShouldStartAgent(
+			startSuppressed: true,
+			enabled: true,
+			agentRunning: false));
+		Assert.True(BackgroundServiceManager.ShouldStartAgent(
+			startSuppressed: false,
+			enabled: true,
+			agentRunning: false));
+	}
+
+	[Fact]
+	public void ConfigEditorFindsEveryFileInAMultiFileGameDefinition()
+	{
+		GameServer server = new()
+		{
+			Game = "Subsistence",
+			ServerName = "Multi Config Test",
+			InstallPath = Path.Combine(
+				Path.GetTempPath(),
+				$"synix-multi-config-{Guid.NewGuid():N}")
+		};
+
+		IReadOnlyList<ConfigurationEditorFile> files =
+			Core.ResolveConfigurationEditorFiles(server);
+
+		Assert.Equal(2, files.Count);
+		Assert.Contains(files, file => file.Path.EndsWith(
+			@"UDKGame\Config\UDKDedServerSettings.ini",
+			StringComparison.OrdinalIgnoreCase));
+		Assert.Contains(files, file => file.Path.EndsWith(
+			@"UDKGame\Config\UDKEngine.ini",
+			StringComparison.OrdinalIgnoreCase));
+		Assert.All(files, file => Assert.Equal(ConfigFormat.StandardINI, file.Format));
+	}
+
+	[Fact]
+	public void ConfigEditorEmbedsItsFormResourceUnderTheFormTypeName()
+	{
+		Assert.Contains(
+			"Synix_Control_Panel.ServerHandler.ServerConfig.resources",
+			typeof(ServerConfig).Assembly.GetManifestResourceNames());
+	}
+
+	[Fact]
+	public void ConfigEditorRuntimeConstructorLoadsWithoutOpeningAWindow()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerConfig editor = new(
+					Path.Combine(Path.GetTempPath(), "synix-config-editor-test.ini"),
+					ConfigFormat.StandardINI);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+		Assert.Null(failure);
 	}
 
 	private static GameServer CreateScheduledServer() => new()

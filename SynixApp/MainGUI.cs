@@ -284,7 +284,10 @@ namespace Synix_Control_Panel
 				e.Cancel = true;
 				MessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, or restoring!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
 			}
+
+			BackgroundServiceManager.PrepareForDashboardExit();
 		}
 
 		private async Task LoadNetworkInfo()

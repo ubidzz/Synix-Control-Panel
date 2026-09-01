@@ -47,7 +47,8 @@ namespace Synix_Control_Panel.SynixEngine
 				new("INI / CFG / properties", ConfigFormat.StandardINI),
 				new("XML", ConfigFormat.XML),
 				new("JSON", ConfigFormat.JSON),
-				new("Space-separated values", ConfigFormat.Space)
+				new("Space-separated values", ConfigFormat.Space),
+				new("SCS SII", ConfigFormat.SII)
 			};
 			cmbLifecycleTracking.DataSource = new BuilderOption<GameLifecycleTrackingMode>[]
 			{

@@ -36,7 +36,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					string executablePath = GetExecutablePath();
 					key.SetValue(RunValueName, BuildLaunchCommand(executablePath), RegistryValueKind.String);
-					message = "Enabled. Synix will keep monitoring after the dashboard closes and will start automatically when you sign in.";
+					message = "Enabled for Windows sign-in. Closing Synix still exits every Synix process for the current session.";
 				}
 				else
 				{
@@ -106,9 +106,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 		internal static void StartIfEnabled()
 		{
-			if (_suppressStartForCurrentProcess ||
-				!Properties.Settings.Default.BackgroundServiceEnabled ||
-				IsAgentRunning())
+			if (!ShouldStartAgent(
+				_suppressStartForCurrentProcess,
+				Properties.Settings.Default.BackgroundServiceEnabled,
+				IsAgentRunning()))
 				return;
 
 			try
@@ -132,6 +133,22 @@ namespace Synix_Control_Panel.SynixEngine
 
 		internal static void SuppressStartForCurrentProcess() =>
 			_suppressStartForCurrentProcess = true;
+
+		/// <summary>
+		/// Makes an explicit dashboard close a full Synix exit. Game-server
+		/// processes are intentionally not touched.
+		/// </summary>
+		internal static void PrepareForDashboardExit()
+		{
+			SuppressStartForCurrentProcess();
+			RequestStop();
+		}
+
+		internal static bool ShouldStartAgent(
+			bool startSuppressed,
+			bool enabled,
+			bool agentRunning) =>
+			!startSuppressed && enabled && !agentRunning;
 
 		internal static int RunAgent()
 		{

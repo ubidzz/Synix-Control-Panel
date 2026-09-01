@@ -152,6 +152,9 @@ public sealed class GameConfigurationTests : IDisposable
 
 	[Theory]
 	[InlineData("Soulmask")]
+	[InlineData("Abiotic Factor")]
+	[InlineData("American Truck Simulator")]
+	[InlineData("Angels Fall First")]
 	[InlineData("Wreckfest")]
 	[InlineData("ASTRONEER")]
 	[InlineData("ASKA")]
@@ -428,6 +431,170 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void AmericanTruckSimulator_UpdatesSiiValuesWithoutChangingItsLayout()
+	{
+		AmericanTruckSimulatorConfiguration definition = new();
+		GameServer server = CreateServer("American Truck Simulator");
+		string path = definition.ResolveFullPath(server);
+		File.WriteAllText(
+			path,
+			"""
+			SiiNunit
+			{
+			server_config : _nameless.test {
+			 lobby_name: "Generated server"
+			 password: ""
+			 max_players: 8
+			 connection_dedicated_port: 27015
+			 query_dedicated_port: 27016
+			 server_logon_token: "preserved-token"
+			 traffic: true
+			}
+
+			}
+			""");
+		server.ServerName = "Synix Truck Server";
+		server.MaxPlayers = 12;
+		server.Port = 28015;
+		server.QueryPort = 28016;
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.True(result.Complete, result.Message);
+		Assert.Equal("Synix Truck Server", GetValue(path, definition.Format, "lobby_name"));
+		Assert.Equal("server-secret", GetValue(path, definition.Format, "password"));
+		Assert.Equal("12", GetValue(path, definition.Format, "max_players"));
+		Assert.Equal("28015", GetValue(path, definition.Format, "connection_dedicated_port"));
+		Assert.Equal("28016", GetValue(path, definition.Format, "query_dedicated_port"));
+		Assert.Contains("server_config : _nameless.test {", File.ReadAllText(path));
+		Assert.Contains("server_logon_token: \"preserved-token\"", File.ReadAllText(path));
+		Assert.True(File.Exists(path + ".synix.template"));
+	}
+
+	[Fact]
+	public void AngelsFallFirst_UpdatesOnlyVerifiedServerSettings()
+	{
+		AngelsFallFirstConfiguration definition = new();
+		GameServer server = CreateServer("Angels Fall First");
+		string path = definition.ResolveFullPath(server);
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+		File.WriteAllText(
+			path,
+			"""
+			[Engine.GameInfo]
+			MaxPlayers=64
+			[Engine.AccessControl]
+			AdminPassword=
+			[Engine.GameReplicationInfo]
+			ServerName=UDK Server
+			[UTGame.UTUIFrontEnd_LoginScreen]
+			bSavePassword=False
+			[AFFGame.AFFGameReplicationInfo]
+			ServerName=AFF Server
+			[AFFGame.AFFGameInfo_Incursion]
+			MaxPlayers=64
+			""");
+		server.ServerName = "AFF Synix Server";
+		server.MaxPlayers = 20;
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+		List<ConfigLine> values = ConfigHandler.LoadConfig(path, definition.Format);
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.True(result.Complete, result.Message);
+		Assert.Equal(2, values.Count(value =>
+			value.Key == "ServerName" && value.Value == "AFF Synix Server"));
+		Assert.Equal(2, values.Count(value =>
+			value.Key == "MaxPlayers" && value.Value == "20"));
+		Assert.Equal("admin-secret", Assert.Single(values,
+			value => value.Key == "AdminPassword").Value);
+		Assert.Equal("False", Assert.Single(values,
+			value => value.Key == "bSavePassword").Value);
+	}
+
+	[Theory]
+	[InlineData("Abiotic Factor", "AbioticFactor\\Saved\\Config\\WindowsServer\\GameUserSettings.ini", "[Server]\nGenerated=True\n")]
+	[InlineData("Soulmask", "WS\\Saved\\GameplaySettings\\GameXishu.json", "{\"generated\":true}")]
+	public void GeneratedConfigurationCaptures_ArePreservedInsteadOfReplaced(
+		string gameName,
+		string relativePath,
+		string generatedContent)
+	{
+		Assert.True(GameFix.TryGetConfiguration(
+			gameName,
+			out ConfigurationDefinition? definition));
+		Assert.NotNull(definition);
+		GameServer server = CreateServer(gameName);
+		string path = Path.Combine(server.InstallPath, relativePath);
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+		File.WriteAllText(path, generatedContent);
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.True(result.Complete, result.Message);
+		Assert.Equal(generatedContent, File.ReadAllText(path));
+		Assert.Equal(generatedContent, File.ReadAllText(path + ".synix.template"));
+	}
+
+	[Fact]
+	public void ActionSource_CapturedTemplateIncludesTheVerifiedGameRules()
+	{
+		Assert.True(GameFix.TryGetConfiguration(
+			"Action: Source",
+			out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		GameServer server = CreateServer("Action: Source");
+		server.ServerName = "Action Synix Server";
+		server.MaxPlayers = 18;
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+		string path = definition.ResolveFullPath(server);
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.True(result.Complete, result.Message);
+		Assert.True(File.ReadLines(path).Count() >= 40);
+		Assert.Equal("Action Synix Server", GetValue(path, definition.Format, "hostname"));
+		Assert.Equal("18", GetValue(path, definition.Format, "maxplayers"));
+		Assert.Contains("mp_allowpickup", File.ReadAllText(path));
+		Assert.Contains("mp_roundtimelimit", File.ReadAllText(path));
+	}
+
+	[Fact]
+	public void ConanExiles_CapturedTemplateIncludesTheGeneratedServerDefaults()
+	{
+		Assert.True(GameFix.TryGetConfiguration(
+			"Conan Exiles",
+			out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		GameServer server = CreateServer("Conan Exiles");
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+		string path = Path.Combine(
+			server.InstallPath,
+			@"ConanSandbox\Saved\Config\WindowsServer\ServerSettings.ini");
+		string enginePath = Path.Combine(
+			server.InstallPath,
+			@"ConanSandbox\Saved\Config\WindowsServer\Engine.ini");
+		string gamePath = Path.Combine(
+			server.InstallPath,
+			@"ConanSandbox\Saved\Config\WindowsServer\Game.ini");
+		string content = File.ReadAllText(path);
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.True(result.Complete, result.Message);
+		Assert.True(File.ReadLines(path).Count() >= 200);
+		Assert.True(File.ReadLines(enginePath).Count() >= 80);
+		Assert.Equal("server-secret", GetValue(path, definition.Format, "ServerPassword"));
+		Assert.Equal("admin-secret", GetValue(path, definition.Format, "AdminPassword"));
+		Assert.Equal("Test Server", GetValue(enginePath, definition.Format, "ServerName"));
+		Assert.Equal("10", GetValue(gamePath, definition.Format, "MaxPlayers"));
+		Assert.Contains("CraftFromStorageRadius=4000", content);
+		Assert.Contains("EnableLoginQueue=True", content);
+	}
+
+	[Fact]
 	public void SevenDaysToDie_RepairsLegacyWorldChoicesBeforeWritingTheConfiguration()
 	{
 		SevenDaysToDieConfiguration definition = new();
@@ -609,13 +776,19 @@ public sealed class GameConfigurationTests : IDisposable
 	{
 		SoulmaskConfiguration definition = new();
 		GameServer server = CreateServer("Soulmask");
+		string path = definition.ResolveFullPath(server);
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+		File.WriteAllText(path, "{\"generated\":true,\"difficulty\":2}");
 
 		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
 
 		Assert.True(result.Succeeded);
 		Assert.True(result.Complete);
 		Assert.False(result.Changed);
-		Assert.Empty(Directory.EnumerateFileSystemEntries(server.InstallPath));
+		Assert.Equal(
+			"{\"generated\":true,\"difficulty\":2}",
+			File.ReadAllText(path));
+		Assert.True(File.Exists(path + ".synix.template"));
 	}
 
 	[Fact]
@@ -1238,6 +1411,18 @@ public sealed class GameConfigurationTests : IDisposable
 		string gameName,
 		GameServer server)
 	{
+		if (gameName == "Soulmask")
+		{
+			string soulmaskDirectory = Path.Combine(
+				server.InstallPath,
+				@"WS\Saved\GameplaySettings");
+			Directory.CreateDirectory(soulmaskDirectory);
+			File.WriteAllText(
+				Path.Combine(soulmaskDirectory, "GameXishu.json"),
+				"{\"generated\":true,\"difficulty\":2}");
+			return;
+		}
+
 		if (gameName == "7 Days to Die")
 		{
 			File.WriteAllText(

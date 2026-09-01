@@ -58,19 +58,28 @@ namespace Synix_Control_Panel.SynixEngine
 				client.Connect(IPAddress.Loopback, port);
 
 				await client.SendAsync(PlayerChallengeRequest, timeout.Token);
-				UdpReceiveResult challengeResponse = await client.ReceiveAsync(timeout.Token);
-				if (!TryReadPayloadHeader(challengeResponse.Buffer, out byte responseType, out int payloadOffset) ||
-					responseType != 0x41 ||
-					challengeResponse.Buffer.Length < payloadOffset + 4)
+				UdpReceiveResult received = await client.ReceiveAsync(timeout.Token);
+				byte[] response = received.Buffer;
+				for (int challengeAttempt = 0; challengeAttempt < 2; challengeAttempt++)
 				{
-					return new(true, false, "The server did not return an A2S player challenge.", []);
+					if (!TryReadPayloadHeader(response, out byte responseType, out int payloadOffset))
+						return new(true, false, "The server returned an invalid A2S player response.", []);
+
+					// Some compatible servers accept the legacy -1 challenge and return
+					// A2S_PLAYER data immediately. Others require the challenge exchange.
+					if (responseType == 0x44)
+						break;
+
+					if (responseType != 0x41 || response.Length < payloadOffset + 4)
+						return new(true, false, "The server query works, but it did not provide a compatible player list.", []);
+
+					byte[] request = (byte[])PlayerChallengeRequest.Clone();
+					response.AsSpan(payloadOffset, 4).CopyTo(request.AsSpan(5, 4));
+					await client.SendAsync(request, timeout.Token);
+					response = (await client.ReceiveAsync(timeout.Token)).Buffer;
 				}
 
-				byte[] request = (byte[])PlayerChallengeRequest.Clone();
-				challengeResponse.Buffer.AsSpan(payloadOffset, 4).CopyTo(request.AsSpan(5, 4));
-				await client.SendAsync(request, timeout.Token);
-				UdpReceiveResult response = await client.ReceiveAsync(timeout.Token);
-				IReadOnlyList<GamePlayerInfo> players = ParsePlayerResponse(response.Buffer);
+				IReadOnlyList<GamePlayerInfo> players = ParsePlayerResponse(response);
 				return new(
 					true,
 					true,

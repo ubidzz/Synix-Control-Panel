@@ -377,7 +377,7 @@ public sealed class GameCompatibilityTests
 					.GetProperty("synixVersion")
 					.GetString());
 			Assert.Equal(
-				"1.0.22",
+				"1.0.24",
 				rust.GetProperty("configuration")
 					.GetProperty("synixVersion")
 					.GetString());

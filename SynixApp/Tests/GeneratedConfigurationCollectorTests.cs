@@ -172,6 +172,89 @@ public sealed class GeneratedConfigurationCollectorTests : IDisposable
 	}
 
 	[Fact]
+	public void CollectServer_CollectsAllConanGeneratedFilesWhenRequested()
+	{
+		string installPath = Path.Combine(_testRoot, "conan");
+		string configFolder = Path.Combine(
+			installPath,
+			"ConanSandbox",
+			"Saved",
+			"Config",
+			"WindowsServer");
+		Directory.CreateDirectory(configFolder);
+		File.WriteAllText(
+			Path.Combine(configFolder, "Engine.ini"),
+			"[OnlineSubsystemSteam]\r\nServerName=Test\r\n");
+		File.WriteAllText(
+			Path.Combine(configFolder, "Game.ini"),
+			"[/Script/Engine.GameSession]\r\nMaxPlayers=10\r\n");
+		File.WriteAllText(
+			Path.Combine(configFolder, "ServerSettings.ini"),
+			"[ServerSettings]\r\nAdminPassword=private-value\r\n");
+		File.WriteAllText(
+			Path.Combine(configFolder, "GameUserSettings.ini"),
+			"[ServerSettings]\r\nServerRegion=0\r\nbSavePassword=False\r\n");
+		string crashFolder = Path.Combine(
+			installPath,
+			"ConanSandbox",
+			"Saved",
+			"Config",
+			"CrashReportClient");
+		Directory.CreateDirectory(crashFolder);
+		File.WriteAllText(Path.Combine(crashFolder, "Crash.ini"), "[Crash]");
+
+		GameServer server = new()
+		{
+			Game = "Conan Exiles",
+			ServerName = "Conan Capture",
+			InstallPath = installPath
+		};
+		string destinationRoot = Path.Combine(_testRoot, "captures");
+
+		GeneratedConfigurationCaptureResult result =
+			GeneratedConfigurationCollector.CollectServer(
+				server,
+				destinationRoot,
+				includeAllGeneratedFiles: true);
+
+		Assert.Equal(4, result.CopiedFiles);
+		Assert.Empty(result.Errors);
+		Assert.True(File.Exists(Path.Combine(
+			destinationRoot,
+			"Conan Exiles",
+			"Engine.ini")));
+		Assert.True(File.Exists(Path.Combine(
+			destinationRoot,
+			"Conan Exiles",
+			"Game.ini")));
+		Assert.True(File.Exists(Path.Combine(
+			destinationRoot,
+			"Conan Exiles",
+			"ServerSettings.ini")));
+		Assert.True(File.Exists(Path.Combine(
+			destinationRoot,
+			"Conan Exiles",
+			"GameUserSettings.ini")));
+		Assert.Contains(
+			"bSavePassword=False",
+			File.ReadAllText(Path.Combine(
+				destinationRoot,
+				"Conan Exiles",
+				"GameUserSettings.ini")),
+			StringComparison.Ordinal);
+		Assert.False(File.Exists(Path.Combine(
+			destinationRoot,
+			"Conan Exiles",
+			"Crash.ini")));
+		string capturedSettings = File.ReadAllText(Path.Combine(
+			destinationRoot,
+			"Conan Exiles",
+			"ServerSettings.ini"));
+		Assert.Contains("{AdminPassword}", capturedSettings, StringComparison.Ordinal);
+		Assert.DoesNotContain("private-value", capturedSettings, StringComparison.Ordinal);
+	}
+
+	[Fact]
 	public void CollectServer_DoesNotRewriteAnUnchangedCapture()
 	{
 		string installPath = Path.Combine(_testRoot, "repeat");

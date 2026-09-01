@@ -58,7 +58,7 @@ namespace Synix_Control_Panel.SynixEngine
 				_backgroundServiceToggle.Checked = value;
 				SetBackgroundServiceStatus(
 					value
-						? "Enabled — monitoring continues after the dashboard closes."
+						? "Enabled for Windows sign-in — Close still exits Synix completely."
 						: "Disabled — scheduled work runs only while Synix is open.",
 					value);
 			}
@@ -107,7 +107,7 @@ namespace Synix_Control_Panel.SynixEngine
 			});
 			card.Controls.Add(new Label
 			{
-				Text = "Keeps crash recovery and smart maintenance active while the dashboard is closed. Runs only for this Windows user and requires no administrator password.",
+				Text = "Starts background monitoring when you sign in to Windows. Closing the Synix dashboard always exits Synix completely for the current session.",
 				ForeColor = SettingsPalette.SecondaryText,
 				Location = new Point(80, 48),
 				Size = new Size(610, 44)

@@ -24,7 +24,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		StandardINI = 0,
 		XML = 2,
 		JSON = 3,
-		Space = 4
+		Space = 4,
+		SII = 5
 	}
 
 	public enum ConfigValueType
@@ -459,6 +460,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ConfigFormat.JSON => "JSON",
 				ConfigFormat.XML => "XML",
 				ConfigFormat.Space => "SPACE",
+				ConfigFormat.SII => "SII",
 				_ => "INI"
 			};
 		}
@@ -1061,6 +1063,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ConfigFormat.JSON => new JsonConfigScanner(text).Parse(),
 				ConfigFormat.XML => ParseXmlDocument(text),
 				ConfigFormat.Space => ParseSpaceDocument(text),
+				ConfigFormat.SII => ParseSiiDocument(text),
 				_ => throw new NotSupportedException(
 					$"The configuration format '{format}' is not supported.")
 			};
@@ -1481,6 +1484,68 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				lineStart = lineEnd + 1;
 				if (text[lineEnd] == '\r' && lineStart < text.Length && text[lineStart] == '\n')
+				{
+					lineStart++;
+				}
+			}
+
+			return document;
+		}
+
+		private static ParsedDocument ParseSiiDocument(string text)
+		{
+			ParsedDocument document = new();
+			IdentityBuilder identities = new();
+			int lineStart = 0;
+
+			while (lineStart <= text.Length)
+			{
+				int lineEnd = FindLineEnd(text, lineStart);
+				int contentStart = lineStart;
+				int contentEnd = lineEnd;
+				TrimRange(text, ref contentStart, ref contentEnd);
+
+				if (contentStart < contentEnd &&
+					!IsCommentStart(text, contentStart, contentEnd) &&
+					text[contentStart] is not '{' and not '}')
+				{
+					int colonIndex = FindTopLevelCharacter(
+						text,
+						contentStart,
+						contentEnd,
+						':');
+					if (colonIndex > contentStart)
+					{
+						int keyStart = contentStart;
+						int keyEnd = colonIndex;
+						TrimRange(text, ref keyStart, ref keyEnd);
+						string key = text.Substring(keyStart, keyEnd - keyStart);
+						int valueStart = colonIndex + 1;
+						int valueEnd = FindIniValueEnd(text, valueStart, lineEnd);
+						TrimRange(text, ref valueStart, ref valueEnd);
+						if (valueStart < valueEnd)
+						{
+							AddIniValue(
+								text,
+								valueStart,
+								valueEnd,
+								key,
+								key,
+								string.Empty,
+								false,
+								document,
+								identities);
+						}
+					}
+				}
+
+				if (lineEnd >= text.Length)
+					break;
+
+				lineStart = lineEnd + 1;
+				if (text[lineEnd] == '\r' &&
+					lineStart < text.Length &&
+					text[lineStart] == '\n')
 				{
 					lineStart++;
 				}
@@ -2564,6 +2629,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				.Replace("-", string.Empty)
 				.Replace(".", string.Empty)
 				.ToLowerInvariant();
+			if (normalized == "bsavepassword")
+			{
+				return false;
+			}
 
 			return normalized.Contains("password") ||
 				normalized.Contains("passwd") ||

@@ -111,7 +111,7 @@ namespace Synix_Control_Panel.SynixEngine
 			card.Controls.Add(CreateGlyph("⇩"));
 			card.Controls.Add(CreateTitle("Collect Generated Game Configurations"));
 			card.Controls.Add(CreateDescription(
-				"After a server is stopped, copy game-created config files into one folder per game under Documents\\Synix Generated Configurations. Live files are unchanged and secret fields become template placeholders.",
+				"After a server is stopped, copy every known configuration plus additional INI, JSON, XML, CFG, CONF, and properties files found in game-created Saved\\Config folders. Live files are unchanged and secret fields become template placeholders.",
 				100));
 
 			_collectGeneratedConfigurationsToggle = new ModernSettingsToggle

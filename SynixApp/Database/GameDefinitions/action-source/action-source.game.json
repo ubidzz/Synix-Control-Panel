@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 3,
+  "definitionRevision": 4,
   "id": "action-source",
   "catalogOrder": 138,
   "game": "Action: Source",
@@ -37,15 +37,16 @@
   "eosDeploymentId": "",
   "configuration": {
     "schemaVersion": 1,
-    "revision": 1,
+    "revision": 2,
     "managedInputs": [
       "ServerName",
       "ServerPassword",
-      "Rcon"
+      "Rcon",
+      "MaxPlayers"
     ],
     "templates": [
       {
-        "revision": 1,
+        "revision": 2,
         "relativePath": "ahl2\\cfg\\server.cfg",
         "templateFile": "server.cfg"
       }

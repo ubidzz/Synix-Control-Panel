@@ -116,7 +116,13 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private async Task CollectGeneratedConfigurationAfterStop(GameServer server)
 		{
-			if (!GeneratedConfigurationCollector.AutomaticCollectionEnabled ||
+			if (!GeneratedConfigurationCollector.AutomaticCollectionEnabled)
+			{
+				return;
+			}
+
+			bool includeAllGeneratedFiles = !GameFix.ManagedConfigurationsEnabled;
+			if (!includeAllGeneratedFiles &&
 				GameFix.GetConfigFileCreationMode(server.Game) is
 					ConfigFileCreationMode.SynixTemplate or
 					ConfigFileCreationMode.LaunchArgumentsOnly)
@@ -127,7 +133,9 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				GeneratedConfigurationCaptureResult result = await Task.Run(() =>
-					GeneratedConfigurationCollector.CollectServer(server));
+					GeneratedConfigurationCollector.CollectServer(
+						server,
+						includeAllGeneratedFiles: includeAllGeneratedFiles));
 				if (result.CopiedFiles > 0)
 				{
 					Log(
@@ -152,75 +160,115 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server == null) return;
 
-			var blueprint = GameDatabase.GetGame(server.Game);
-
-			if (blueprint == null || string.IsNullOrEmpty(blueprint.RelativeConfigPath))
-			{
-				Log("This game does not have a config path defined.", Color.Red, true);
-				return;
-			}
-
 			if (string.IsNullOrWhiteSpace(server.InstallPath))
 			{
 				Log("Server installation path is not set.", Color.Red, true);
 				return;
 			}
 
-			string fullPath;
-			ConfigFormat format = blueprint.Format;
+			IReadOnlyList<ConfigurationEditorFile> configurationFiles;
+			try
+			{
+				configurationFiles = ResolveConfigurationEditorFiles(server);
+			}
+			catch (Exception exception)
+			{
+				Log($"Could not resolve the config file safely:\n{exception.Message}", Color.Red, true);
+				return;
+			}
+
+			if (configurationFiles.Count == 0)
+			{
+				Log("This game does not have a config path defined.", Color.Red, true);
+				return;
+			}
+
+			if (configurationFiles.Any(file => File.Exists(file.Path)) ||
+				GameFix.CanResetManagedConfiguration(server))
+			{
+				try
+				{
+					using ServerConfig editor = new(configurationFiles, server);
+					editor.ShowDialog(MainGUI.Instance);
+				}
+				catch (Exception exception)
+				{
+					Log(
+						$"[CONFIG EDITOR] Could not open the configuration editor: {exception.Message}",
+						Color.Red,
+						true);
+					PlainEnglishErrorDialog.ShowError(
+						MainGUI.Instance,
+						"open the configuration editor",
+						exception.ToString());
+				}
+			}
+			else
+			{
+				string locations = string.Join(
+					Environment.NewLine,
+					configurationFiles.Select(file => file.Path));
+				Log($"Could not find the game configuration file(s) at:\n{locations}", Color.Red, true);
+			}
+		}
+
+		internal static IReadOnlyList<ConfigurationEditorFile>
+			ResolveConfigurationEditorFiles(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (string.IsNullOrWhiteSpace(server.InstallPath))
+				return [];
+
+			Dictionary<string, ConfigurationEditorFile> files =
+				new(StringComparer.OrdinalIgnoreCase);
 			if (GameFix.TryGetConfiguration(
 				server.Game,
 				out ConfigurationDefinition? definition) &&
 				definition?.UsesConfigurationFile == true)
 			{
-				try
-				{
-					fullPath = definition.ResolveFullPath(server);
-					format = definition.Format;
-				}
-				catch (Exception exception)
-				{
-					Log($"Could not resolve the config file safely:\n{exception.Message}", Color.Red, true);
-					return;
-				}
-			}
-			else
-			{
-				string cleanIdentity = GetSafeName(server.ServerName);
-				string resolvedRelativePath = blueprint.RelativeConfigPath
-					.Replace("{Identity}", cleanIdentity)
-					.Replace("{ServerName}", cleanIdentity)
-					.Replace("{map}", server.WorldName ?? string.Empty)
-					.Replace("{port}", server.Port.ToString())
-					.Replace("{query}", server.QueryPort.ToString())
-					.Replace('/', Path.DirectorySeparatorChar)
-					.Replace('\\', Path.DirectorySeparatorChar);
-				string installRoot = Path.GetFullPath(server.InstallPath)
-					.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-				fullPath = Path.GetFullPath(Path.Combine(installRoot, resolvedRelativePath));
-				if (!fullPath.StartsWith(
-					installRoot + Path.DirectorySeparatorChar,
-					StringComparison.OrdinalIgnoreCase))
-				{
-					Log("The config path leaves the server installation folder.", Color.Red, true);
-					return;
-				}
+				foreach (string path in definition.ResolveConfigurationPaths(server))
+					files[path] = new ConfigurationEditorFile(path, definition.Format);
 			}
 
-			if (File.Exists(fullPath) || GameFix.CanResetManagedConfiguration(server))
+			GameInfo? blueprint = GameDatabase.GetGame(server.Game);
+			if (blueprint != null && !string.IsNullOrWhiteSpace(blueprint.RelativeConfigPath))
 			{
-				using (ServerConfig editor = new ServerConfig(
+				string fullPath = ResolveConfigurationEditorPath(
+					server,
+					blueprint.RelativeConfigPath);
+				files.TryAdd(
 					fullPath,
-					format,
-					server))
-				{
-					editor.ShowDialog();
-				}
+					new ConfigurationEditorFile(fullPath, blueprint.Format));
 			}
-			else
+
+			return files.Values.ToArray();
+		}
+
+		private static string ResolveConfigurationEditorPath(
+			GameServer server,
+			string relativePathTemplate)
+		{
+			string cleanIdentity = Instance.GetSafeName(server.ServerName);
+			string resolvedRelativePath = relativePathTemplate
+				.Replace("{Identity}", cleanIdentity, StringComparison.Ordinal)
+				.Replace("{ServerName}", cleanIdentity, StringComparison.Ordinal)
+				.Replace("{map}", server.WorldName ?? string.Empty, StringComparison.Ordinal)
+				.Replace("{port}", server.Port.ToString(), StringComparison.Ordinal)
+				.Replace("{query}", server.QueryPort.ToString(), StringComparison.Ordinal)
+				.Replace('/', Path.DirectorySeparatorChar)
+				.Replace('\\', Path.DirectorySeparatorChar);
+			string installRoot = Path.GetFullPath(server.InstallPath)
+				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			string fullPath = Path.GetFullPath(Path.Combine(installRoot, resolvedRelativePath));
+			if (!fullPath.StartsWith(
+				installRoot + Path.DirectorySeparatorChar,
+				StringComparison.OrdinalIgnoreCase))
 			{
-				Log($"Could not find the config file at:\n{fullPath}", Color.Red, true);
+				throw new InvalidDataException(
+					"The configuration path leaves the server installation folder.");
 			}
+
+			return fullPath;
 		}
 
 		public void OpenServerFolder(GameServer server)

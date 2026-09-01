@@ -14,13 +14,13 @@ using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
-	internal sealed class SoulmaskConfiguration : ConfigurationDefinition
+	internal sealed class AbioticFactorConfiguration : ConfigurationDefinition
 	{
-		public override string GameName => "Soulmask";
+		public override string GameName => "Abiotic Factor";
 		public override int SchemaVersion => 2;
 		public override bool PreservesInstalledTemplate => true;
 		public override string RelativePath =>
-			@"WS\Saved\GameplaySettings\GameXishu.json";
-		public override ConfigFormat Format => ConfigFormat.JSON;
+			@"AbioticFactor\Saved\Config\WindowsServer\GameUserSettings.ini";
+		public override ConfigFormat Format => ConfigFormat.StandardINI;
 	}
 }

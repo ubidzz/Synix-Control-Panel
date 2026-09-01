@@ -246,10 +246,11 @@ namespace Synix_Control_Panel.SynixEngine
 					"SAFE CONFIGURATION FILE EDITING:\n\n" +
 					"1. Stop the server so the game cannot overwrite the file while you edit it.\n" +
 					"2. Select the server and choose Server Options -> Open Config Editor.\n" +
-					"3. Structured View shows a clean setting name, detected type, and editable value. Hover the setting cell to see its complete nested path.\n" +
-					"4. Boolean values use a True/False dropdown. Text and number values remain normal editable cells.\n" +
-					"5. Use the search field and type filter to find a setting. Raw Preview helps you inspect the original file.\n" +
-					"6. Click Save Changes, then restart the server.\n\n" +
+					"3. If the game uses more than one configuration file, choose the file you want from the list in the title bar. Synix asks before leaving a file with unsaved changes.\n" +
+					"4. Structured View shows a clean setting name, detected type, and editable value. Hover the setting cell to see its complete nested path.\n" +
+					"5. Boolean values use a True/False dropdown. Text and number values remain normal editable cells.\n" +
+					"6. Use the search field and type filter to find a setting. Raw Preview helps you inspect the original file.\n" +
+					"7. Click Save Changes, then restart the server.\n\n" +
 					"FORMAT PROTECTION:\n" +
 					"Synix uses a lexical span patcher for supported INI, XML, JSON, and space-delimited configurations. It replaces only the value spans you changed, preserving the original comments, section headers, key order, line endings, whitespace, quotes, and surrounding structure. It does not rewrite the entire file with a generic serializer."),
 

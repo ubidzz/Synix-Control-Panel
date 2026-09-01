@@ -50,10 +50,14 @@ namespace Synix_Control_Panel.ServerHandler
 		private static Color SecretTypeColor => SettingsPalette.Warning;
 		private static Color NullTypeColor => SettingsPalette.MutedText;
 
-		private readonly string _path = string.Empty;
-		private readonly ConfigFormat _format = ConfigFormat.StandardINI;
+		private string _path = string.Empty;
+		private ConfigFormat _format = ConfigFormat.StandardINI;
 		private readonly GameServer? _server;
 		private readonly bool _isRuntimeInstance;
+		private readonly IReadOnlyList<ConfigurationEditorFile> _configurationFiles = [];
+		private ModernSettingsComboBox? _fileSelector;
+		private bool _fileSelectionIsUpdating;
+		private int _selectedFileIndex;
 		private List<ConfigLine> _fileData = new();
 		private bool _rowsAreLoading;
 		private bool _dataLoaded;
@@ -80,21 +84,44 @@ namespace Synix_Control_Panel.ServerHandler
 			string filePath,
 			ConfigFormat format,
 			GameServer? server)
+			: this([new ConfigurationEditorFile(filePath, format)], server)
+		{
+		}
+
+		internal ServerConfig(
+			IReadOnlyList<ConfigurationEditorFile> configurationFiles,
+			GameServer? server)
 		{
 			InitializeComponent();
 			ConfigureBooleanGridEditing();
-			ThemeManager.Apply(this);
 
-			if (string.IsNullOrWhiteSpace(filePath))
+			if (configurationFiles == null || configurationFiles.Count == 0)
 			{
-				throw new ArgumentException("A configuration file path is required.", nameof(filePath));
+				throw new ArgumentException(
+					"At least one configuration file path is required.",
+					nameof(configurationFiles));
 			}
 
-			_path = filePath;
-			_format = format;
+			_configurationFiles = configurationFiles
+				.Where(file => !string.IsNullOrWhiteSpace(file.Path))
+				.Select(file => file with { Path = Path.GetFullPath(file.Path) })
+				.GroupBy(file => file.Path, StringComparer.OrdinalIgnoreCase)
+				.Select(group => group.First())
+				.ToArray();
+			if (_configurationFiles.Count == 0)
+			{
+				throw new ArgumentException(
+					"At least one valid configuration file path is required.",
+					nameof(configurationFiles));
+			}
+
 			_server = server;
 			_isRuntimeInstance = true;
+			_selectedFileIndex = FindInitialFileIndex(_configurationFiles);
+			ApplySelectedFile();
+			ConfigureFileSelector();
 			ConfigureFilePresentation();
+			ThemeManager.Apply(this);
 		}
 
 		private void ConfigureBooleanGridEditing()
@@ -249,9 +276,17 @@ namespace Synix_Control_Panel.ServerHandler
 			Text = $"Config Editor - {fileName}";
 			lblFileName.Text = fileName;
 			lblFormatBadge.Text = formatName;
-			lblPageSubtitle.Text =
-				$"Edit {fileName} safely without changing its {formatName} structure.";
+			lblPageSubtitle.Text = _configurationFiles.Count > 1
+				? $"Editing {fileName} ({_selectedFileIndex + 1} of {_configurationFiles.Count} files). Choose another configuration file from the list above."
+				: $"Edit {fileName} safely without changing its {formatName} structure.";
 			lblFormatState.Text = $"{formatName} structure preserved";
+			if (_fileSelector != null &&
+				_fileSelector.SelectedIndex != _selectedFileIndex)
+			{
+				_fileSelectionIsUpdating = true;
+				_fileSelector.SelectedIndex = _selectedFileIndex;
+				_fileSelectionIsUpdating = false;
+			}
 			btnFixConfig.Visible = _server != null &&
 				GameFix.CanResetManagedConfiguration(_server);
 			btnRestoreBackup.Visible = _server != null;
@@ -259,6 +294,129 @@ namespace Synix_Control_Panel.ServerHandler
 			btnValidateConfig.Enabled = _server != null;
 			UpdateFixConfigAvailability();
 			UpdateRestoreBackupAvailability();
+		}
+
+		private void ConfigureFileSelector()
+		{
+			if (_configurationFiles.Count <= 1)
+				return;
+
+			lblFileName.Visible = false;
+			_fileSelector = new ModernSettingsComboBox
+			{
+				Location = new Point(184, 12),
+				Size = new Size(360, 34),
+				DropDownWidth = 620,
+				MaxDropDownItems = 10,
+				AccessibleName = "Configuration file",
+				AccessibleDescription = "Choose which game configuration file to edit."
+			};
+			foreach ((ConfigurationEditorFile file, int index) in
+				_configurationFiles.Select((file, index) => (file, index)))
+			{
+				_fileSelector.Items.Add(new ConfigurationFileChoice(
+					index,
+					GetConfigurationFileDisplayName(file.Path)));
+			}
+
+			_fileSelector.SelectedIndex = _selectedFileIndex;
+			_fileSelector.SelectedIndexChanged += FileSelectorSelectedIndexChanged;
+			titleBar.Controls.Add(_fileSelector);
+			_fileSelector.BringToFront();
+			lblFormatBadge.Location = new Point(554, 14);
+			lblFormatBadge.BringToFront();
+		}
+
+		private void FileSelectorSelectedIndexChanged(object? sender, EventArgs eventArgs)
+		{
+			if (_fileSelectionIsUpdating ||
+				_fileSelector?.SelectedItem is not ConfigurationFileChoice choice ||
+				choice.Index == _selectedFileIndex)
+			{
+				return;
+			}
+
+			SwitchConfigurationFile(choice.Index);
+		}
+
+		private void SwitchConfigurationFile(int newIndex)
+		{
+			if (newIndex < 0 || newIndex >= _configurationFiles.Count)
+				return;
+
+			dgvConfig.EndEdit();
+			if (HasUnsavedChanges())
+			{
+				DialogResult result = MessageBox.Show(
+					this,
+					$"Save your changes to {Path.GetFileName(_path)} before opening another configuration file?",
+					"Unsaved Configuration Changes",
+					MessageBoxButtons.YesNoCancel,
+					MessageBoxIcon.Warning,
+					MessageBoxDefaultButton.Button1);
+				if (result == DialogResult.Cancel ||
+					(result == DialogResult.Yes && !TrySaveCurrentConfiguration()))
+				{
+					RestoreFileSelectorSelection();
+					return;
+				}
+			}
+
+			_selectedFileIndex = newIndex;
+			ApplySelectedFile();
+			_fileData = [];
+			_dataLoaded = false;
+			ConfigureFilePresentation();
+			LoadConfiguration();
+		}
+
+		private void RestoreFileSelectorSelection()
+		{
+			if (_fileSelector == null)
+				return;
+
+			_fileSelectionIsUpdating = true;
+			_fileSelector.SelectedIndex = _selectedFileIndex;
+			_fileSelectionIsUpdating = false;
+		}
+
+		private void ApplySelectedFile()
+		{
+			ConfigurationEditorFile selected = _configurationFiles[_selectedFileIndex];
+			_path = selected.Path;
+			_format = selected.Format;
+		}
+
+		private string GetConfigurationFileDisplayName(string path)
+		{
+			if (_server == null || string.IsNullOrWhiteSpace(_server.InstallPath))
+				return Path.GetFileName(path);
+
+			try
+			{
+				string relativePath = Path.GetRelativePath(
+					Path.GetFullPath(_server.InstallPath),
+					path);
+				return relativePath.StartsWith("..", StringComparison.Ordinal)
+					? Path.GetFileName(path)
+					: relativePath;
+			}
+			catch
+			{
+				return Path.GetFileName(path);
+			}
+		}
+
+		private static int FindInitialFileIndex(
+			IReadOnlyList<ConfigurationEditorFile> configurationFiles)
+		{
+			for (int index = 0; index < configurationFiles.Count; index++)
+			{
+				if (File.Exists(configurationFiles[index].Path))
+					return index;
+			}
+
+			return 0;
 		}
 
 		private void LoadConfiguration()
@@ -628,6 +786,16 @@ namespace Synix_Control_Panel.ServerHandler
 
 		private void SaveConfiguration()
 		{
+			if (!TrySaveCurrentConfiguration())
+				return;
+
+			_allowClose = true;
+			DialogResult = DialogResult.OK;
+			Close();
+		}
+
+		private bool TrySaveCurrentConfiguration()
+		{
 			try
 			{
 				if (_server != null && HasUnsavedChanges())
@@ -635,17 +803,17 @@ namespace Synix_Control_Panel.ServerHandler
 						_server,
 						"Before saving changes from the configuration editor");
 				ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
-				_allowClose = true;
-				DialogResult = DialogResult.OK;
-				Close();
+				return true;
 			}
 			catch (Exception exception)
 			{
 				MessageBox.Show(
+					this,
 					$"The configuration was not saved. The original file is unchanged.\n\n{exception.Message}",
 					"Config Save Error",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
+				return false;
 			}
 		}
 
@@ -694,6 +862,8 @@ namespace Synix_Control_Panel.ServerHandler
 			btnReset.Enabled = false;
 			btnCancel.Enabled = false;
 			btnSave.Enabled = false;
+			if (_fileSelector != null)
+				_fileSelector.Enabled = false;
 
 			try
 			{
@@ -733,6 +903,8 @@ namespace Synix_Control_Panel.ServerHandler
 				_templateResetInProgress = false;
 				UseWaitCursor = false;
 				btnCancel.Enabled = true;
+				if (_fileSelector != null)
+					_fileSelector.Enabled = true;
 				UpdateFixConfigAvailability();
 				UpdateRestoreBackupAvailability();
 				if (File.Exists(_path) && _fileData.Count > 0)
@@ -881,6 +1053,11 @@ namespace Synix_Control_Panel.ServerHandler
 				ConfigValueType.Null => Color.FromArgb(40, 48, 61),
 				_ => Color.FromArgb(24, 48, 72)
 			};
+		}
+
+		private sealed record ConfigurationFileChoice(int Index, string DisplayName)
+		{
+			public override string ToString() => DisplayName;
 		}
 
 		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)
