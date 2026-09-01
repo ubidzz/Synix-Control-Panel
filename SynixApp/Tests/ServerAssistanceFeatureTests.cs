@@ -74,6 +74,38 @@ public sealed class ServerAssistanceFeatureTests
 	}
 
 	[Fact]
+	public void ExistingServerImportRejectsAQueryPortUsedByAStoppedServer()
+	{
+		GameInfo definition = GameDatabase.GetGameList()
+			.First(game => !string.IsNullOrWhiteSpace(game.ExeName));
+		string folder = CreateTemporaryServerFolder(definition);
+		GameServer existing = new()
+		{
+			ServerName = "Existing Stopped Server",
+			Port = 21000,
+			QueryPort = 21001,
+			Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped)
+		};
+		try
+		{
+			InvalidOperationException error = Assert.Throws<InvalidOperationException>(() =>
+				ExistingServerImport.Create(
+					folder,
+					definition,
+					"Imported Test",
+					22000,
+					21001,
+					[existing]));
+
+			Assert.Contains("unique query port", error.Message);
+		}
+		finally
+		{
+			Directory.Delete(folder, recursive: true);
+		}
+	}
+
+	[Fact]
 	public void SmartMaintenanceWaitsForPlayersThenRunsAtTheDeadline()
 	{
 		GameServer server = CreateScheduledServer();

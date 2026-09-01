@@ -381,16 +381,13 @@ namespace Synix_Control_Panel.SynixEngine
 					})
 					.ToList();
 				bool serverActive = Core.IsActivePortReservation(server);
-				bool anotherActive = configuredOwners.Any(Core.IsActivePortReservation);
 				if (configuredOwners.Count > 0)
 				{
 					items.Add(new SynixHealthItem(
-						serverActive || anotherActive
-							? SynixHealthLevel.Failed
-							: SynixHealthLevel.Warning,
+						SynixHealthLevel.Failed,
 						"Ports",
 						$"{server.ServerName}: {port}",
-						$"The {name} is also assigned to {string.Join(", ", configuredOwners.Select(owner => owner.ServerName))}. Stopped servers may share a saved port, but they cannot run together.",
+						$"The {name} is also assigned to {string.Join(", ", configuredOwners.Select(owner => owner.ServerName))}. Every saved server, including each cluster member, must use its own port.",
 						SynixHealthAction.None,
 						server));
 					continue;

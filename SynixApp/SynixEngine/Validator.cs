@@ -134,9 +134,25 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (checkAppPort) portChecks.Add((app, "App Port (Rust+)"));
 
+			var duplicateSelection = portChecks
+				.GroupBy(check => check.Value)
+				.FirstOrDefault(group => group.Count() > 1);
+			if (duplicateSelection != null)
+			{
+				string roles = string.Join(
+					" and ",
+					duplicateSelection.Select(check => check.Name));
+				MessageBox.Show(
+					$"Port Conflict: {roles} cannot both use port {duplicateSelection.Key}. Each server port must be unique.",
+					"Network Resource Conflict",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Stop);
+				return false;
+			}
+
 			foreach (var check in portChecks)
 			{
-				var owner = GetPortCollisionOwner(check.Value, excluding);
+				var owner = GetConfiguredPortCollisionOwner(check.Value, excluding);
 				if (owner != null)
 				{
 					MessageBox.Show($"Resource Collision: The {check.Name} ({check.Value}) is already allocated to instance: '{owner}'.",
@@ -298,6 +314,30 @@ namespace Synix_Control_Panel.SynixEngine
 			});
 
 			return owner?.ServerName;
+		}
+
+		public string? GetConfiguredPortCollisionOwner(
+			int port,
+			GameServer? excluding = null)
+		{
+			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
+			{
+				if (server == excluding)
+					return false;
+
+				return HasConfiguredPort(server, port);
+			});
+
+			return owner?.ServerName;
+		}
+
+		internal static bool HasConfiguredPort(GameServer server, int port)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			return server.Port == port ||
+				server.QueryPort == port ||
+				(server.EnableRcon && server.RconPort == port) ||
+				server.AppPort == port;
 		}
 
 		internal static bool IsActivePortReservation(GameServer server)

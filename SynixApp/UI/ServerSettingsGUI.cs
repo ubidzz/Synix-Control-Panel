@@ -647,21 +647,29 @@ namespace Synix_Control_Panel
 				bool checkQueryPort = numQueryPort.Enabled;
 				int aPort = (numAppPort != null && numAppPort.Enabled) ? (int)numAppPort.Value : 0;
 				int rPort = rconActive ? (int)numRconPort.Value : 0;
+				var selectedPorts = new List<(int Port, string Name)>();
+				if (checkGamePort) selectedPorts.Add((gPort, "Game Port"));
+				if (checkQueryPort) selectedPorts.Add((qPort, "Query Port"));
+				if (rPort > 0) selectedPorts.Add((rPort, "RCON Port"));
+				if (aPort > 0) selectedPorts.Add((aPort, "App Port"));
+				var duplicateSelection = selectedPorts
+					.GroupBy(port => port.Port)
+					.FirstOrDefault(group => group.Count() > 1);
 
 				string? gOwner = checkGamePort
-					? Core.Instance.GetPortCollisionOwner(gPort, _existingServer)
+					? Core.Instance.GetConfiguredPortCollisionOwner(gPort, _existingServer)
 					: null;
 				bool gOS = checkGamePort && Core.Instance.IsPortInUseLocally(gPort);
 
 				string? qOwner = (checkQueryPort && qPort > 0)
-					? Core.Instance.GetPortCollisionOwner(qPort, _existingServer)
+					? Core.Instance.GetConfiguredPortCollisionOwner(qPort, _existingServer)
 					: null;
 				bool qOS = checkQueryPort && qPort > 0 && Core.Instance.IsPortInUseLocally(qPort);
 
-				string? rOwner = (rPort > 0) ? Core.Instance.GetPortCollisionOwner(rPort, _existingServer) : null;
+				string? rOwner = (rPort > 0) ? Core.Instance.GetConfiguredPortCollisionOwner(rPort, _existingServer) : null;
 				bool rOS = (rPort > 0) && Core.Instance.IsPortInUseLocally(rPort);
 
-				string? aOwner = (aPort > 0) ? Core.Instance.GetPortCollisionOwner(aPort, _existingServer) : null;
+				string? aOwner = (aPort > 0) ? Core.Instance.GetConfiguredPortCollisionOwner(aPort, _existingServer) : null;
 				bool aOS = (aPort > 0) && Core.Instance.IsPortInUseLocally(aPort);
 
 				bool isNameTaken = MainGUI.serverList.Any(s =>
@@ -719,6 +727,15 @@ namespace Synix_Control_Panel
 				else if (isNameTaken)
 				{
 					_validationMessage = $"  ⚠️ [CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
+					btnSave.Enabled = false;
+				}
+				else if (duplicateSelection != null)
+				{
+					string roles = string.Join(
+						" and ",
+						duplicateSelection.Select(port => port.Name));
+					_validationMessage =
+						$"  ⚠️ [CONFLICT] {roles} cannot both use port {duplicateSelection.Key}.";
 					btnSave.Enabled = false;
 				}
 				else if (gOwner != null || gOS)
@@ -1189,6 +1206,12 @@ namespace Synix_Control_Panel
 				calculatedQueryPort,
 				(long)numQueryPort.Minimum,
 				(long)numQueryPort.Maximum);
+			if (!_isEditMode)
+			{
+				clampedQueryPort = ExistingServerImport.FindAvailablePort(
+					clampedQueryPort,
+					MainGUI.serverList.Concat([new GameServer { Port = gamePort }]));
+			}
 
 			try
 			{
@@ -1420,8 +1443,25 @@ namespace Synix_Control_Panel
 							numWorldSize.Minimum,
 							numWorldSize.Maximum);
 					}
-					numPort.Value = Math.Clamp(gameData.Port, numPort.Minimum, numPort.Maximum);
-					numQueryPort.Value = Math.Clamp(gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
+					int gamePort = Math.Clamp(
+						gameData.Port,
+						(int)numPort.Minimum,
+						(int)numPort.Maximum);
+					int queryPort = Math.Clamp(
+						gameData.QueryPort,
+						(int)numQueryPort.Minimum,
+						(int)numQueryPort.Maximum);
+					if (!_isEditMode)
+					{
+						gamePort = ExistingServerImport.FindAvailablePort(
+							gamePort,
+							MainGUI.serverList);
+						queryPort = ExistingServerImport.FindAvailablePort(
+							queryPort,
+							MainGUI.serverList.Concat([new GameServer { Port = gamePort }]));
+					}
+					numPort.Value = gamePort;
+					numQueryPort.Value = queryPort;
 					if (gameData.AppPort.HasValue)
 					{
 						numAppPort.Value = Math.Clamp(

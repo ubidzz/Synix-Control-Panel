@@ -108,7 +108,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"2. Click '+ Add Server' on the Server Dashboard.\n" +
 					"3. General: enter a unique Server Name, choose the Game Server template, and select a version when the template provides one.\n" +
 					"4. World Generation: choose the map, game mode, player limit, RAM, and other settings that are available for that game. Disabled controls are intentionally unsupported by the selected template.\n" +
-					"5. Network & RCON: review the service ports. Every server instance must use ports that do not conflict with another Synix server or running process.\n" +
+					"5. Network & RCON: review the service ports. Every server instance must use ports that do not conflict with another Synix server or running process. Cluster members need their own query ports.\n" +
 					"6. Automation: choose backup, update, restart schedule, and Discord notification options.\n" +
 					"7. Install & Launch: keep the default folder or choose a custom empty folder, review launch options, and click 'Save Server'.\n" +
 					"8. Select the new row on the dashboard and click 'Start'. The first installation can take several minutes; follow Activity & Diagnostics for progress.\n\n" +
@@ -119,7 +119,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"Beginner Mode shows the settings most people need and keeps the recommended launch command. Advanced Mode adds RCON and raw launch arguments. Discord notifications remain available in either mode. Switching modes never deletes a saved value.\n\n" +
 					"• General: server identity, game template, version, map/profile choices, passwords, and Minecraft runtime choices when applicable.\n" +
 					"• World Generation: world name, seed, size, and other template-supported world options.\n" +
-					"• Network & RCON: game, query, app, and RCON ports. Synix checks active processes and saved servers for conflicts.\n" +
+					"• Network & RCON: game, query, app, and RCON ports. Synix checks active processes and every saved server for conflicts, including stopped servers.\n" +
 					"• Automation: backup on start, update on start, restart scheduling, and Discord alerts.\n" +
 					"• Install & Launch: server folder, default-path selection, extra launch arguments, and final save.\n\n" +
 					"TEMPLATE-AWARE CONTROLS:\n" +

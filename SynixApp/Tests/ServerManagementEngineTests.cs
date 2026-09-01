@@ -601,6 +601,31 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Fact]
+	public void ConfiguredPortCollisionIncludesStoppedServers()
+	{
+		GameServer stopped = new()
+		{
+			Game = "7 Days to Die",
+			ServerName = "Stopped Port Owner",
+			Port = 26900,
+			QueryPort = 27015,
+			Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped)
+		};
+		MainGUI.serverList.Add(stopped);
+
+		try
+		{
+			Assert.Equal(
+				"Stopped Port Owner",
+				Core.Instance.GetConfiguredPortCollisionOwner(27015));
+		}
+		finally
+		{
+			MainGUI.serverList.Remove(stopped);
+		}
+	}
+
+	[Fact]
 	public void ApplyServerIcon_ReplacesTheCacheAndUpdatesMatchingServers()
 	{
 		string testRoot = Path.Combine(

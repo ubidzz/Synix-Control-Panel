@@ -123,6 +123,36 @@ public sealed class GamePrerequisiteCheckerTests
 		Assert.DoesNotContain(report.Items, item => item.Name == "Port 8777");
 	}
 
+	[Fact]
+	public void StartCheckBlocksASharedQueryPortOwnedByAnActiveServer()
+	{
+		GameInfo definition = new()
+		{
+			Game = "Shared Query Port Test",
+			RequiredArgs = "-Port={port} -QueryPort={query}"
+		};
+		GameServer server = new()
+		{
+			Game = definition.Game,
+			Port = 26900,
+			QueryPort = 27015
+		};
+
+		GamePrerequisiteReport report =
+			GamePrerequisiteChecker.CheckCurrentSystem(
+				definition,
+				server,
+				port => port == 27015 ? "Running Server" : null,
+				_ => false);
+
+		Assert.False(report.CanStart);
+		Assert.Contains(
+			report.Items,
+			item => item.Name == "Port 27015" &&
+				item.State == GamePrerequisiteState.Failed &&
+				item.Message.Contains("Running Server"));
+	}
+
 	private static GameInfo CreateDefinition() => new()
 	{
 		Game = "Prerequisite Test",

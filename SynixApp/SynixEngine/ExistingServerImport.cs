@@ -86,6 +86,20 @@ namespace Synix_Control_Panel.SynixEngine
 			ValidatePort(queryPort, "query");
 			if (gamePort == queryPort && gamePort > 0)
 				throw new InvalidOperationException("The game and query ports must be different.");
+			GameServer? gamePortOwner = registeredServers.FirstOrDefault(server =>
+				Core.HasConfiguredPort(server, gamePort));
+			if (gamePortOwner != null)
+			{
+				throw new InvalidOperationException(
+					$"The game port {gamePort} is already assigned to '{gamePortOwner.ServerName}'. Choose a unique port.");
+			}
+			GameServer? queryPortOwner = registeredServers.FirstOrDefault(server =>
+				Core.HasConfiguredPort(server, queryPort));
+			if (queryPortOwner != null)
+			{
+				throw new InvalidOperationException(
+					$"The query port {queryPort} is already assigned to '{queryPortOwner.ServerName}'. Every server needs a unique query port.");
+			}
 
 			return new GameServer
 			{
@@ -119,7 +133,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					server.Port,
 					server.QueryPort,
-					server.RconPort,
+					server.EnableRcon ? server.RconPort : 0,
 					server.AppPort ?? 0
 				})
 				.Where(port => port is >= 1 and <= 65535)
