@@ -63,10 +63,7 @@ namespace Synix_Control_Panel
 			FileHandler.LoadServers();
 			AddGuidanceMenuItems();
 
-			contextMenuStrip.Renderer = new Synix_Control_Panel.SynixApp.Design.SynixMenuRenderer();
-			contextMenuStrip.ShowImageMargin = false;
-			contextMenuStrip.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
-			ApplyMenuRoundingAndSpacing(contextMenuStrip);
+			SynixMenuStyler.Apply(contextMenuStrip);
 
 			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.DataSource = _visibleServers;
@@ -169,41 +166,6 @@ namespace Synix_Control_Panel
 			contextMenuStrip.Items.Insert(insertAt++, playerManagement);
 			contextMenuStrip.Items.Insert(insertAt++, liveProcessDetails);
 			contextMenuStrip.Items.Insert(insertAt, connectionInformation);
-		}
-
-		[DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-		internal static extern void DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int pvAttribute, uint cbAttribute);
-
-		private void ApplyMenuRoundingAndSpacing(ToolStripDropDown menu)
-		{
-			void ApplyDwm()
-			{
-				if (Environment.OSVersion.Version.Build >= 22000)
-				{
-					int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
-					int DWMWCP_ROUND = 2;
-					DwmSetWindowAttribute(menu.Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref DWMWCP_ROUND, sizeof(int));
-				}
-			}
-
-			if (menu.IsHandleCreated)
-			{
-				ApplyDwm();
-			}
-			else
-			{
-				menu.HandleCreated += (s, e) => ApplyDwm();
-			}
-
-			foreach (ToolStripItem item in menu.Items)
-			{
-				item.Padding = new Padding(0, 4, 0, 4);
-
-				if (item is ToolStripDropDownItem dropDownItem && dropDownItem.HasDropDownItems)
-				{
-					ApplyMenuRoundingAndSpacing(dropDownItem.DropDown);
-				}
-			}
 		}
 
 		private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)

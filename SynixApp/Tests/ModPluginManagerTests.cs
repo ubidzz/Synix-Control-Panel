@@ -16,6 +16,36 @@ namespace Synix_Control_Panel.Tests;
 public sealed class ModPluginManagerTests
 {
 	[Fact]
+	public void SharedMenuStylerAppliesTheSynixMenuDesign()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ContextMenuStrip menu = new();
+				ToolStripMenuItem item = new("Nexus Mods");
+				menu.Items.Add(item);
+
+				SynixMenuStyler.Apply(menu);
+
+				Assert.IsType<SynixMenuRenderer>(menu.Renderer);
+				Assert.False(menu.ShowImageMargin);
+				Assert.Equal(new Padding(0, 4, 0, 4), item.Padding);
+				Assert.Equal(11F, menu.Font.Size);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+		Assert.Null(failure);
+	}
+
+	[Fact]
 	public void SharedGridThemeDoesNotAddTheDashboardTooltip()
 	{
 		Exception? failure = null;

@@ -49,12 +49,6 @@ namespace Synix_Control_Panel.SynixEngine
 			BackColor = SettingsPalette.Window;
 			ForeColor = SettingsPalette.PrimaryText;
 			Font = new Font("Segoe UI", 9.5F);
-			_catalogMenu.BackColor = SettingsPalette.Card;
-			_catalogMenu.ForeColor = SettingsPalette.PrimaryText;
-			_catalogMenu.Font = Font;
-			_catalogMenu.Padding = new Padding(4);
-			_catalogMenu.ShowImageMargin = false;
-			_catalogMenu.Renderer = new SynixMenuRenderer();
 
 			Label pageHeading = Heading("Mod & Plugin Manager", 28, 20, 640, 42, 19F);
 			pageHeading.Name = "modPluginManagerHeading";
@@ -676,15 +670,12 @@ namespace Synix_Control_Panel.SynixEngine
 				ToolStripMenuItem item = new(catalog.Name)
 				{
 					ForeColor = SettingsPalette.PrimaryText,
-					BackColor = SettingsPalette.Card,
-					AutoSize = false,
-					Margin = new Padding(0, 2, 0, 2),
-					Padding = new Padding(8, 3, 8, 3),
-					Size = new Size(220, 38)
+					BackColor = SettingsPalette.Card
 				};
 				item.Click += (_, _) => OpenCatalog(catalog.Uri);
 				_catalogMenu.Items.Add(item);
 			}
+			SynixMenuStyler.Apply(_catalogMenu);
 			_catalogMenu.Show(_browseCatalog, new Point(0, _browseCatalog.Height + 4));
 		}
 
