@@ -31,6 +31,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private readonly ModernSettingsButton _installFramework;
 		private readonly ModernSettingsButton _browseCatalog;
 		private readonly ModernSettingsButton _openFolder;
+		private readonly ContextMenuStrip _catalogMenu = new();
 		private ModSystemDetection? _detection;
 		private IReadOnlyList<ModInventoryItem> _items = [];
 		private bool _updatingSelectors;
@@ -48,6 +49,12 @@ namespace Synix_Control_Panel.SynixEngine
 			BackColor = SettingsPalette.Window;
 			ForeColor = SettingsPalette.PrimaryText;
 			Font = new Font("Segoe UI", 9.5F);
+			_catalogMenu.BackColor = SettingsPalette.Card;
+			_catalogMenu.ForeColor = SettingsPalette.PrimaryText;
+			_catalogMenu.Font = Font;
+			_catalogMenu.Padding = new Padding(4);
+			_catalogMenu.ShowImageMargin = false;
+			_catalogMenu.Renderer = new SynixMenuRenderer();
 
 			Label pageHeading = Heading("Mod & Plugin Manager", 28, 20, 640, 42, 19F);
 			pageHeading.Name = "modPluginManagerHeading";
@@ -241,6 +248,13 @@ namespace Synix_Control_Panel.SynixEngine
 			base.OnShown(eventArgs);
 			_hasShown = true;
 			RefreshInventory();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			if (disposing)
+				_catalogMenu.Dispose();
 		}
 
 		private void ProfileChanged()
@@ -656,13 +670,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			ContextMenuStrip menu = new()
-			{
-				BackColor = SettingsPalette.Card,
-				ForeColor = SettingsPalette.PrimaryText,
-				Font = Font,
-				ShowImageMargin = false
-			};
+			_catalogMenu.Items.Clear();
 			foreach (CatalogChoice catalog in catalogs)
 			{
 				ToolStripMenuItem item = new(catalog.Name)
@@ -670,13 +678,14 @@ namespace Synix_Control_Panel.SynixEngine
 					ForeColor = SettingsPalette.PrimaryText,
 					BackColor = SettingsPalette.Card,
 					AutoSize = false,
-					Size = new Size(220, 34)
+					Margin = new Padding(0, 2, 0, 2),
+					Padding = new Padding(8, 3, 8, 3),
+					Size = new Size(220, 38)
 				};
 				item.Click += (_, _) => OpenCatalog(catalog.Uri);
-				menu.Items.Add(item);
+				_catalogMenu.Items.Add(item);
 			}
-			menu.Closed += (_, _) => menu.Dispose();
-			menu.Show(_browseCatalog, new Point(0, _browseCatalog.Height));
+			_catalogMenu.Show(_browseCatalog, new Point(0, _browseCatalog.Height + 4));
 		}
 
 		private void OpenCatalog(Uri uri)
