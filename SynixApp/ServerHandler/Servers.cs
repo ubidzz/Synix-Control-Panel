@@ -901,6 +901,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			TimeSpan quietPeriod,
 			TimeSpan pollInterval)
 		{
+			const int minimumConsecutiveEmptySamples = 3;
 			ArgumentNullException.ThrowIfNull(getLiveProcesses);
 			if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
 			if (quietPeriod < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(quietPeriod));
@@ -908,6 +909,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			DateTime deadline = DateTime.UtcNow.Add(timeout);
 			DateTime? quietSince = null;
+			int consecutiveEmptySamples = 0;
 
 			while (true)
 			{
@@ -917,6 +919,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (liveProcesses.Count > 0)
 				{
 					quietSince = null;
+					consecutiveEmptySamples = 0;
 					if (now >= deadline)
 					{
 						return liveProcesses;
@@ -925,7 +928,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				else
 				{
 					quietSince ??= now;
-					if (now - quietSince.Value >= quietPeriod)
+					consecutiveEmptySamples++;
+					if (consecutiveEmptySamples >= minimumConsecutiveEmptySamples &&
+						now - quietSince.Value >= quietPeriod)
 					{
 						return liveProcesses;
 					}
