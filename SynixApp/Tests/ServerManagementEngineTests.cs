@@ -15,6 +15,7 @@ using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using Synix_Control_Panel.Database;
+using System.Diagnostics;
 using System.Drawing;
 using Xunit;
 
@@ -22,6 +23,123 @@ namespace Synix_Control_Panel.Tests;
 
 public sealed class ServerManagementEngineTests
 {
+	[Fact]
+	public async Task Stop_StillHandlesANormalSingleProcessServer()
+	{
+		string testRoot = Path.Combine(
+			Path.GetTempPath(),
+			"SynixSingleProcessStopTests",
+			Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(testRoot);
+		string commandProcessor = Environment.GetEnvironmentVariable("ComSpec") ??
+			Path.Combine(Environment.SystemDirectory, "cmd.exe");
+		string executablePath = Path.Combine(testRoot, "WindroseServer.exe");
+		File.Copy(commandProcessor, executablePath);
+
+		Process? process = null;
+		try
+		{
+			process = StartLongRunningTestProcess(executablePath);
+			int processId = process.Id;
+			await Task.Delay(300);
+			GameServer server = new()
+			{
+				Game = "Windrose",
+				ServerName = "Single PID Test",
+				InstallPath = testRoot,
+				PID = processId,
+				RunningProcess = process,
+				Status = Core.StatusManager.GetStatus(Core.ServerState.Running)
+			};
+
+			IReadOnlyList<ServerProcessIdentity> registered =
+				Servers.RefreshServerProcessRegistry(server, forceDiscovery: true);
+			Assert.Single(registered);
+			Assert.Equal(processId, registered[0].ProcessId);
+
+			bool stopped = await Servers.Stop(server, (_, _) => { });
+
+			Assert.True(stopped);
+			Assert.False(IsTestProcessAlive(processId));
+			Assert.Null(server.PID);
+			Assert.Empty(server.ServerProcesses);
+		}
+		finally
+		{
+			KillTestProcess(process);
+			process?.Dispose();
+			if (Directory.Exists(testRoot))
+			{
+				Directory.Delete(testRoot, true);
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Stop_KillsEveryRegisteredExecutableForAMultiProcessServer()
+	{
+		string testRoot = Path.Combine(
+			Path.GetTempPath(),
+			"SynixMultiProcessStopTests",
+			Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(testRoot);
+		string commandProcessor = Environment.GetEnvironmentVariable("ComSpec") ??
+			Path.Combine(Environment.SystemDirectory, "cmd.exe");
+		string launcherPath = Path.Combine(testRoot, "PalServer.exe");
+		string workerDirectory = Path.Combine(testRoot, "Pal", "Binaries", "Win64");
+		Directory.CreateDirectory(workerDirectory);
+		string workerPath = Path.Combine(workerDirectory, "PalServer-Win64-Shipping-Cmd.exe");
+		File.Copy(commandProcessor, launcherPath);
+		File.Copy(commandProcessor, workerPath);
+
+		Process? launcher = null;
+		Process? worker = null;
+		try
+		{
+			launcher = StartLongRunningTestProcess(launcherPath);
+			worker = StartLongRunningTestProcess(workerPath);
+			int launcherPid = launcher.Id;
+			int workerPid = worker.Id;
+			await Task.Delay(300);
+
+			GameServer server = new()
+			{
+				Game = "Palworld",
+				ServerName = "Multi PID Test",
+				InstallPath = testRoot,
+				PID = launcherPid,
+				RunningProcess = launcher,
+				Status = Core.StatusManager.GetStatus(Core.ServerState.Running)
+			};
+
+			IReadOnlyList<ServerProcessIdentity> registered =
+				Servers.RefreshServerProcessRegistry(server, forceDiscovery: true);
+			Assert.Contains(registered, process => process.ProcessId == launcherPid);
+			Assert.Contains(registered, process => process.ProcessId == workerPid);
+			server.PID = null;
+			server.RunningProcess = null;
+
+			bool stopped = await Servers.Stop(server, (_, _) => { });
+
+			Assert.True(stopped);
+			Assert.False(IsTestProcessAlive(launcherPid));
+			Assert.False(IsTestProcessAlive(workerPid));
+			Assert.Null(server.PID);
+			Assert.Empty(server.ServerProcesses);
+		}
+		finally
+		{
+			KillTestProcess(launcher);
+			KillTestProcess(worker);
+			launcher?.Dispose();
+			worker?.Dispose();
+			if (Directory.Exists(testRoot))
+			{
+				Directory.Delete(testRoot, true);
+			}
+		}
+	}
+
 	[Fact]
 	public async Task ShutdownVerification_RequiresAContinuousQuietPeriod()
 	{
@@ -48,6 +166,47 @@ public sealed class ServerManagementEngineTests
 
 		Assert.Empty(survivors);
 		Assert.True(checks >= 6, "A temporary zero-process gap must not be treated as a completed shutdown.");
+	}
+
+	private static Process StartLongRunningTestProcess(string executablePath)
+	{
+		ProcessStartInfo startInfo = new()
+		{
+			FileName = executablePath,
+			Arguments = "/d /c ping 127.0.0.1 -n 30 > nul",
+			UseShellExecute = false,
+			CreateNoWindow = true
+		};
+		return Process.Start(startInfo) ??
+			throw new InvalidOperationException($"Could not start {executablePath}.");
+	}
+
+	private static void KillTestProcess(Process? process)
+	{
+		try
+		{
+			if (process != null && !process.HasExited)
+			{
+				process.Kill(entireProcessTree: true);
+				process.WaitForExit(5000);
+			}
+		}
+		catch
+		{
+		}
+	}
+
+	private static bool IsTestProcessAlive(int processId)
+	{
+		try
+		{
+			using Process process = Process.GetProcessById(processId);
+			return !process.HasExited;
+		}
+		catch
+		{
+			return false;
+		}
 	}
 
 	[Fact]

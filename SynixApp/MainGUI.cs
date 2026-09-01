@@ -485,6 +485,7 @@ namespace Synix_Control_Panel
 			GameServer? server = currentRow?.DataBoundItem as GameServer;
 			bool hasSelection = server != null && currentRow != null;
 
+			if (btnReadiness != null) btnReadiness.Enabled = hasSelection;
 			if (btnServerOptions != null) btnServerOptions.Enabled = hasSelection;
 			if (btnConfigure != null) btnConfigure.Enabled = hasSelection;
 			if (btnStart != null) btnStart.Enabled = hasSelection;
@@ -1025,6 +1026,16 @@ namespace Synix_Control_Panel
 			}
 
 			contextMenuStrip.Show(btnServerOptions, new System.Drawing.Point(0, 0), ToolStripDropDownDirection.AboveRight);
+		}
+
+		private void btnReadiness_Click(object sender, EventArgs e)
+		{
+			GameServer? selectedServer = GetSelectedServer();
+			if (selectedServer == null)
+				return;
+
+			using TroubleshooterDialog dialog = new(selectedServer);
+			dialog.ShowDialog(this);
 		}
 
 		private async void btnRestart_Click(object sender, EventArgs e)

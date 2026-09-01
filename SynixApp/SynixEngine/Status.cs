@@ -112,6 +112,7 @@ namespace Synix_Control_Panel.SynixEngine
 			server.RunningProcess?.Dispose();
 			server.RunningProcess = process;
 			server.PID = process.Id;
+			Servers.RefreshServerProcessRegistry(server, forceDiscovery: true);
 			server.Status = StatusManager.GetStatus(ServerState.Running);
 			try
 			{
@@ -160,6 +161,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
+			server.ServerProcesses = [];
+			server.LastProcessDiscoveryUtc = DateTime.MinValue;
 			server.RunningProcess?.Dispose();
 			server.RunningProcess = null;
 			UpdateGridStatus();

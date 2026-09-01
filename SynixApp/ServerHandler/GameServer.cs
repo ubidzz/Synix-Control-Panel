@@ -217,6 +217,13 @@ public sealed class DiscordWebhookRoute
 		DiscordNotificationEvent.All;
 }
 
+public sealed class ServerProcessIdentity
+{
+	public int ProcessId { get; set; }
+	public string ExecutablePath { get; set; } = string.Empty;
+	public DateTime? StartTimeUtc { get; set; }
+}
+
 public class GameServer
 {
 	public string Game { get; set; } = string.Empty;
@@ -252,9 +259,12 @@ public class GameServer
 	public string WorldName { get; set; } = "NewWorld";
 	public bool IsDefaultPath { get; set; } = true;
 	public int? PID { get; set; }
+	public List<ServerProcessIdentity> ServerProcesses { get; set; } = [];
 	public int? SteamPID { get; set; }
 	[JsonIgnore]
 	public Process? RunningProcess { get; set; }
+	[JsonIgnore]
+	public DateTime LastProcessDiscoveryUtc { get; set; } = DateTime.MinValue;
 	public string GameMode { get; set; } = "PVE";
 	public bool CrossplayEnabled { get; set; } = true;
 	[JsonIgnore]

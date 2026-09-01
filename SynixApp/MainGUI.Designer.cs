@@ -89,6 +89,7 @@ namespace Synix_Control_Panel
 			picSelectedServer = new PictureBox();
 			lblSelectedGame = new Label();
 			lblSelectedServerName = new Label();
+			btnReadiness = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnServerOptions = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnConfigure = new Synix_Control_Panel.SynixApp.Design.SynixButton();
 			btnStart = new Synix_Control_Panel.SynixApp.Design.SynixButton();
@@ -879,6 +880,7 @@ namespace Synix_Control_Panel
 			actionCard.Controls.Add(picSelectedServer);
 			actionCard.Controls.Add(lblSelectedGame);
 			actionCard.Controls.Add(lblSelectedServerName);
+			actionCard.Controls.Add(btnReadiness);
 			actionCard.Controls.Add(btnServerOptions);
 			actionCard.Controls.Add(btnConfigure);
 			actionCard.Controls.Add(btnStart);
@@ -925,6 +927,26 @@ namespace Synix_Control_Panel
 			lblSelectedServerName.Size = new Size(479, 18);
 			lblSelectedServerName.TabIndex = 2;
 			lblSelectedServerName.Text = "Choose a row to unlock server controls";
+			//
+			// btnReadiness
+			//
+			btnReadiness.BackColor = Color.FromArgb(17, 27, 45);
+			btnReadiness.BorderColor = Color.FromArgb(38, 155, 151);
+			btnReadiness.Cursor = Cursors.Hand;
+			btnReadiness.FillColor = Color.FromArgb(10, 48, 58);
+			btnReadiness.FillColorSecondary = Color.FromArgb(13, 67, 75);
+			btnReadiness.FlatStyle = FlatStyle.Flat;
+			btnReadiness.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+			btnReadiness.ForeColor = Color.FromArgb(42, 216, 204);
+			btnReadiness.Location = new Point(574, 21);
+			btnReadiness.Name = "btnReadiness";
+			btnReadiness.Size = new Size(114, 44);
+			btnReadiness.TabIndex = 3;
+			btnReadiness.TabStop = false;
+			btnReadiness.Text = "✓  Readiness";
+			btnReadiness.UseMnemonic = false;
+			btnReadiness.UseVisualStyleBackColor = false;
+			btnReadiness.Click += btnReadiness_Click;
 			// 
 			// btnServerOptions
 			// 
@@ -939,7 +961,7 @@ namespace Synix_Control_Panel
 			btnServerOptions.Location = new Point(698, 21);
 			btnServerOptions.Name = "btnServerOptions";
 			btnServerOptions.Size = new Size(154, 44);
-			btnServerOptions.TabIndex = 3;
+			btnServerOptions.TabIndex = 4;
 			btnServerOptions.TabStop = false;
 			btnServerOptions.Text = "Server Options  ▴";
 			btnServerOptions.UseMnemonic = false;
@@ -959,7 +981,7 @@ namespace Synix_Control_Panel
 			btnConfigure.Location = new Point(862, 21);
 			btnConfigure.Name = "btnConfigure";
 			btnConfigure.Size = new Size(124, 44);
-			btnConfigure.TabIndex = 4;
+			btnConfigure.TabIndex = 5;
 			btnConfigure.TabStop = false;
 			btnConfigure.Text = "Configure";
 			btnConfigure.UseMnemonic = false;
@@ -979,7 +1001,7 @@ namespace Synix_Control_Panel
 			btnStart.Location = new Point(1002, 21);
 			btnStart.Name = "btnStart";
 			btnStart.Size = new Size(116, 44);
-			btnStart.TabIndex = 5;
+			btnStart.TabIndex = 6;
 			btnStart.TabStop = false;
 			btnStart.Text = "▶  Start";
 			btnStart.UseMnemonic = false;
@@ -999,7 +1021,7 @@ namespace Synix_Control_Panel
 			btnRestart.Location = new Point(1128, 21);
 			btnRestart.Name = "btnRestart";
 			btnRestart.Size = new Size(116, 44);
-			btnRestart.TabIndex = 6;
+			btnRestart.TabIndex = 7;
 			btnRestart.TabStop = false;
 			btnRestart.Text = "↻  Restart";
 			btnRestart.UseMnemonic = false;
@@ -1019,7 +1041,7 @@ namespace Synix_Control_Panel
 			btnStop.Location = new Point(1254, 21);
 			btnStop.Name = "btnStop";
 			btnStop.Size = new Size(116, 44);
-			btnStop.TabIndex = 7;
+			btnStop.TabIndex = 8;
 			btnStop.TabStop = false;
 			btnStop.Text = "■  Stop";
 			btnStop.UseMnemonic = false;
@@ -1317,6 +1339,7 @@ namespace Synix_Control_Panel
 		private PictureBox picSelectedServer;
 		private Label lblSelectedGame;
 		private Label lblSelectedServerName;
+		private SynixApp.Design.SynixButton btnReadiness;
 		private SynixApp.Design.SynixButton btnServerOptions;
 		private SynixApp.Design.SynixButton btnConfigure;
 		private SynixApp.Design.SynixButton btnStart;

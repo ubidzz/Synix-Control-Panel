@@ -110,6 +110,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		private static extern bool CloseHandle(IntPtr handle);
 		#endregion
 		private static readonly SemaphoreSlim _consoleLock = new SemaphoreSlim(1, 1);
+		private static readonly object _serverProcessRegistryLock = new();
+		private static readonly TimeSpan _processDiscoveryInterval = TimeSpan.FromSeconds(5);
 
 		public static async Task Start(GameServer server, Action<string, Color> logCallback, StartContext context = StartContext.Manual)
 		{
@@ -377,6 +379,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
+					server.LastProcessDiscoveryUtc = DateTime.MinValue;
+					RefreshServerProcessRegistry(server, forceDiscovery: true);
+					_ = CaptureSpawnedServerProcesses(server, logCallback!);
 					if (hideWindow && !psi.UseShellExecute)
 					{
 						_ = HideServerWindowAfterLaunch(proc);
@@ -398,6 +403,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						{
 							if (IsStoppingStatus(server.Status))
 							{
+								return;
+							}
+
+							if (ReconcileActiveServerProcesses(server, forceDiscovery: true))
+							{
+								logCallback?.Invoke(
+									$"[PROCESS TRACKING] The launcher exited, but {server.ServerProcesses.Count} verified server process(es) remain active: {FormatProcessRegistry(server.ServerProcesses)}",
+									Color.Cyan);
+								FileHandler.SaveServers();
 								return;
 							}
 
@@ -465,6 +479,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				server.Status = StatusManager.GetStatus(ServerState.Stopping);
 				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+				TrackSavedServerProcesses(server, trackedProcesses);
 
 				targetPid = GetInitialTargetPid(server);
 				if (targetPid > 0)
@@ -473,6 +488,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 
 				TrackInstallDirectoryProcesses(server, trackedProcesses);
+				SynchronizeServerProcessRegistry(server, trackedProcesses);
 				List<int> liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
 
 				if (targetPid <= 0 || !liveProcesses.Contains(targetPid))
@@ -491,6 +507,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					FinalizeStoppedState(server);
 					return true;
 				}
+
+				logCallback?.Invoke(
+					$"[SHUTDOWN] Tracking {liveProcesses.Count} process(es) for {server.ServerName}: {FormatProcessRegistry(server.ServerProcesses)}",
+					Color.Aqua);
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
@@ -867,6 +887,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				() =>
 				{
 					RefreshTrackedProcesses(server, targetPid, trackedProcesses);
+					SynchronizeServerProcessRegistry(server, trackedProcesses);
 					return GetLiveTrackedProcesses(trackedProcesses);
 				},
 				timeout,
@@ -925,6 +946,244 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			TrackInstallDirectoryProcesses(server, trackedProcesses);
+		}
+
+		internal static IReadOnlyList<ServerProcessIdentity> RefreshServerProcessRegistry(
+			GameServer server,
+			bool forceDiscovery = false)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			Dictionary<int, DateTime?> trackedProcesses = [];
+			TrackSavedServerProcesses(server, trackedProcesses);
+
+			int targetPid = GetInitialTargetPid(server);
+			if (targetPid > 0)
+			{
+				TrackProcessTree(targetPid, trackedProcesses);
+			}
+
+			DateTime now = DateTime.UtcNow;
+			if (forceDiscovery ||
+				trackedProcesses.Count == 0 ||
+				now - server.LastProcessDiscoveryUtc >= _processDiscoveryInterval)
+			{
+				TrackInstallDirectoryProcesses(server, trackedProcesses);
+				server.LastProcessDiscoveryUtc = now;
+			}
+
+			SynchronizeServerProcessRegistry(server, trackedProcesses);
+			lock (_serverProcessRegistryLock)
+			{
+				return server.ServerProcesses.ToArray();
+			}
+		}
+
+		internal static bool ReconcileActiveServerProcesses(
+			GameServer server,
+			bool forceDiscovery = false)
+		{
+			IReadOnlyList<ServerProcessIdentity> processes =
+				RefreshServerProcessRegistry(server, forceDiscovery);
+			if (processes.Count == 0)
+			{
+				return false;
+			}
+
+			int primaryPid = SelectPrimaryProcess(
+				server,
+				processes.Select(process => process.ProcessId).ToArray(),
+				server.PID.GetValueOrDefault());
+			if (primaryPid <= 0)
+			{
+				return false;
+			}
+
+			try
+			{
+				bool alreadyBound = server.RunningProcess != null &&
+					!server.RunningProcess.HasExited &&
+					server.RunningProcess.Id == primaryPid;
+				if (!alreadyBound)
+				{
+					Process replacement = Process.GetProcessById(primaryPid);
+					server.RunningProcess?.Dispose();
+					server.RunningProcess = replacement;
+				}
+
+				server.PID = primaryPid;
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static async Task CaptureSpawnedServerProcesses(
+			GameServer server,
+			Action<string, Color> logCallback)
+		{
+			int previousCount = 0;
+			for (int attempt = 0; attempt < 10; attempt++)
+			{
+				await Task.Delay(1000).ConfigureAwait(false);
+				if (IsStoppingStatus(server.Status) ||
+					server.Status == StatusManager.GetStatus(ServerState.Stopped))
+				{
+					return;
+				}
+
+				IReadOnlyList<ServerProcessIdentity> processes =
+					RefreshServerProcessRegistry(server, forceDiscovery: true);
+				if (processes.Count > previousCount)
+				{
+					previousCount = processes.Count;
+					logCallback?.Invoke(
+						$"[PROCESS TRACKING] Registered {processes.Count} server process(es): {FormatProcessRegistry(processes)}",
+						Color.Cyan);
+				}
+			}
+
+			FileHandler.SaveServers();
+		}
+
+		private static void TrackSavedServerProcesses(
+			GameServer server,
+			Dictionary<int, DateTime?> trackedProcesses)
+		{
+			ServerProcessIdentity[] savedProcesses;
+			lock (_serverProcessRegistryLock)
+			{
+				savedProcesses = (server.ServerProcesses ?? []).ToArray();
+			}
+
+			foreach (ServerProcessIdentity identity in savedProcesses)
+			{
+				if (IsSavedServerProcessAlive(server, identity))
+				{
+					trackedProcesses[identity.ProcessId] = identity.StartTimeUtc;
+				}
+			}
+		}
+
+		private static bool IsSavedServerProcessAlive(
+			GameServer server,
+			ServerProcessIdentity identity)
+		{
+			if (identity.ProcessId <= 0 ||
+				identity.ProcessId == Environment.ProcessId ||
+				string.IsNullOrWhiteSpace(identity.ExecutablePath) ||
+				!IsPathInsideDirectory(identity.ExecutablePath, server.InstallPath))
+			{
+				return false;
+			}
+
+			try
+			{
+				using Process process = Process.GetProcessById(identity.ProcessId);
+				if (process.HasExited)
+				{
+					return false;
+				}
+
+				if (identity.StartTimeUtc.HasValue &&
+					process.StartTime.ToUniversalTime() != identity.StartTimeUtc.Value)
+				{
+					return false;
+				}
+
+				string? actualPath = TryGetProcessImagePath(process);
+				if (!string.IsNullOrWhiteSpace(actualPath))
+				{
+					return string.Equals(
+						Path.GetFullPath(actualPath),
+						Path.GetFullPath(identity.ExecutablePath),
+						StringComparison.OrdinalIgnoreCase);
+				}
+
+				return process.ProcessName.Equals(
+					Path.GetFileNameWithoutExtension(identity.ExecutablePath),
+					StringComparison.OrdinalIgnoreCase);
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static void SynchronizeServerProcessRegistry(
+			GameServer server,
+			Dictionary<int, DateTime?> trackedProcesses)
+		{
+			Dictionary<int, ServerProcessIdentity> existing;
+			lock (_serverProcessRegistryLock)
+			{
+				existing = (server.ServerProcesses ?? [])
+					.Where(process => process.ProcessId > 0)
+					.GroupBy(process => process.ProcessId)
+					.ToDictionary(group => group.Key, group => group.First());
+			}
+
+			List<ServerProcessIdentity> liveIdentities = [];
+			foreach (int processId in GetLiveTrackedProcesses(trackedProcesses))
+			{
+				try
+				{
+					using Process process = Process.GetProcessById(processId);
+					string? executablePath = TryGetProcessImagePath(process);
+					if (string.IsNullOrWhiteSpace(executablePath) &&
+						existing.TryGetValue(processId, out ServerProcessIdentity? savedIdentity))
+					{
+						executablePath = savedIdentity.ExecutablePath;
+					}
+
+					if (string.IsNullOrWhiteSpace(executablePath) ||
+						!IsPathInsideDirectory(executablePath, server.InstallPath))
+					{
+						continue;
+					}
+
+					DateTime? startTimeUtc = null;
+					try
+					{
+						startTimeUtc = process.StartTime.ToUniversalTime();
+					}
+					catch
+					{
+						if (existing.TryGetValue(processId, out ServerProcessIdentity? recoveredIdentity))
+						{
+							startTimeUtc = recoveredIdentity.StartTimeUtc;
+						}
+					}
+
+					liveIdentities.Add(new ServerProcessIdentity
+					{
+						ProcessId = processId,
+						ExecutablePath = Path.GetFullPath(executablePath),
+						StartTimeUtc = startTimeUtc
+					});
+				}
+				catch
+				{
+				}
+			}
+
+			lock (_serverProcessRegistryLock)
+			{
+				server.ServerProcesses = liveIdentities
+					.OrderBy(process => process.ProcessId)
+					.ToList();
+			}
+		}
+
+		private static string FormatProcessRegistry(
+			IEnumerable<ServerProcessIdentity> processes)
+		{
+			string result = string.Join(
+				", ",
+				processes.Select(process =>
+					$"{Path.GetFileName(process.ExecutablePath)} (PID {process.ProcessId})"));
+			return string.IsNullOrWhiteSpace(result) ? "none" : result;
 		}
 
 		private static void TrackProcessTree(int rootPid, Dictionary<int, DateTime?> trackedProcesses)
@@ -1305,6 +1564,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
+			lock (_serverProcessRegistryLock)
+			{
+				server.ServerProcesses = [];
+			}
+			server.LastProcessDiscoveryUtc = DateTime.MinValue;
 			server.HasAnnouncedOnline = false;
 			server.IsProbing = false;
 			server.LastProbeTime = null;

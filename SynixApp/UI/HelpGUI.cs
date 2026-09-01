@@ -184,6 +184,15 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Delete Server: removes the Synix server entry and, after confirmation, can remove associated files/backups.\n\n" +
 					"Some actions are intentionally hidden or disabled for templates that use a different installer, generate settings only after first boot, or cannot be tested reliably."),
 
+				["Server Readiness Center"] = new HelpItem("Dash",
+					"CHECK ONE SERVER BEFORE YOU START IT:\n\n" +
+					"1. Select a server on the dashboard and click Readiness in the bottom action bar.\n" +
+					"2. Synix checks the selected server's files, required runtimes, configuration, ports, Windows Firewall program rule, tracked processes, available disk space, and recent log.\n" +
+					"3. Ready means the check passed. Review means the server can usually continue, but the item deserves attention. Blocked means the listed problem should be fixed first.\n" +
+					"4. Select a Review or Blocked row. When Synix has a safe repair, the action button explains exactly what it will do. No repair runs just by opening the center.\n" +
+					"5. Click Check Again after making a change. Copy Report creates a plain-text summary you can keep or share for help.\n\n" +
+					"This view uses the same proven checks as the full Troubleshooter, but limits server-specific checks to the selected server and leaves the global Synix update check out. The full computer-wide Troubleshooter remains available in Settings -> Advanced."),
+
 				["Server Details & Double-Click Inspector"] = new HelpItem("Dash",
 					"INSPECTING A SERVER:\n\n" +
 					"Double-click a server row to open Server Info. This read-only view collects the selected server's identity, ports, credentials state, automation choices, paths, schedule, arguments, and current status in one window.\n\n" +

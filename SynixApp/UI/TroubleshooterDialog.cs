@@ -23,6 +23,8 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private SynixHealthReport? _report;
 		private bool _running;
+		private readonly GameServer? _readinessServer;
+		private bool IsReadinessMode => _readinessServer != null;
 
 		internal TroubleshooterDialog()
 		{
@@ -31,6 +33,19 @@ namespace Synix_Control_Panel.SynixEngine
 			GridStyler.ApplyDashboardTheme(resultsGrid);
 			GridStyler.ApplyRoundedCorners(resultsGrid, 10);
 			ThemeManager.Apply(this);
+		}
+
+		internal TroubleshooterDialog(GameServer server) : this()
+		{
+			_readinessServer = server ?? throw new ArgumentNullException(nameof(server));
+			Text = "Server Readiness Center";
+			titleLabel.Text = "Server Readiness Center";
+			subtitleLabel.Text =
+				$"Check whether {server.ServerName} ({server.Game}) is ready to install, start, stop, recover, and connect. Select any problem to see its safe action.";
+			resultColumn.HeaderText = "STATUS";
+			subjectColumn.HeaderText = "CHECK";
+			runButton.Text = "Check Again";
+			actionButton.Text = "Select an Action";
 		}
 
 		protected override async void OnShown(EventArgs eventArgs)
@@ -53,21 +68,28 @@ namespace Synix_Control_Panel.SynixEngine
 			copyButton.Enabled = false;
 			closeButton.Enabled = false;
 			statusLabel.ForeColor = SettingsPalette.SecondaryText;
-			statusLabel.Text = "Checking this PC and every installed server...";
+			statusLabel.Text = IsReadinessMode
+				? $"Checking {_readinessServer!.ServerName}..."
+				: "Checking this PC and every installed server...";
 			resultsGrid.Rows.Clear();
 
 			try
 			{
 				Progress<string> progress = new(message => statusLabel.Text = message);
-				GameServer[] servers = MainGUI.serverList.ToArray();
+				GameServer[] servers = IsReadinessMode
+					? [_readinessServer!]
+					: MainGUI.serverList.ToArray();
 				_report = await Task.Run(() => SynixTroubleshooter.RunAsync(
 					servers,
-					checkForUpdates: true,
-					progress));
+					checkForUpdates: !IsReadinessMode,
+					progress: progress,
+					includeUpdateStatus: !IsReadinessMode));
 				PopulateReport(_report);
-				statusLabel.Text = _report.FailedCount > 0
-					? $"ATTENTION NEEDED  •  {_report.FailedCount} failed  •  {_report.WarningCount} warnings  •  {_report.PassedCount} passed"
-					: $"HEALTHY  •  {_report.WarningCount} warnings  •  {_report.PassedCount} passed";
+				statusLabel.Text = IsReadinessMode
+					? GetReadinessSummary(_report)
+					: _report.FailedCount > 0
+						? $"ATTENTION NEEDED  •  {_report.FailedCount} failed  •  {_report.WarningCount} warnings  •  {_report.PassedCount} passed"
+						: $"HEALTHY  •  {_report.WarningCount} warnings  •  {_report.PassedCount} passed";
 				statusLabel.ForeColor = _report.FailedCount > 0
 					? SettingsPalette.Danger
 					: _report.WarningCount > 0
@@ -89,6 +111,19 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		private static string GetReadinessSummary(SynixHealthReport report)
+		{
+			int total = report.Items.Count;
+			int readyPercent = total == 0
+				? 0
+				: (int)Math.Round(report.PassedCount * 100d / total);
+			return report.FailedCount > 0
+				? $"NOT READY  •  {readyPercent}% passed  •  {report.FailedCount} blocked  •  {report.WarningCount} to review"
+				: report.WarningCount > 0
+					? $"READY WITH ITEMS TO REVIEW  •  {readyPercent}% passed  •  {report.WarningCount} to review"
+					: $"READY  •  {readyPercent}% passed  •  all {report.PassedCount} checks completed";
+		}
+
 		private void PopulateReport(SynixHealthReport report)
 		{
 			resultsGrid.SuspendLayout();
@@ -100,7 +135,7 @@ namespace Synix_Control_Panel.SynixEngine
 					.ThenBy(item => item.Subject, StringComparer.OrdinalIgnoreCase))
 				{
 					int index = resultsGrid.Rows.Add(
-						item.ResultText,
+						IsReadinessMode ? GetReadinessResultText(item.Level) : item.ResultText,
 						item.Area,
 						item.Subject,
 						item.Details,
@@ -123,6 +158,13 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		private static string GetReadinessResultText(SynixHealthLevel level) => level switch
+		{
+			SynixHealthLevel.Passed => "Ready",
+			SynixHealthLevel.Warning => "Review",
+			_ => "Blocked"
+		};
+
 		private static string GetActionText(SynixHealthAction action) => action switch
 		{
 			SynixHealthAction.RepairSteamCmd => "Repair SteamCMD",
@@ -144,7 +186,7 @@ namespace Synix_Control_Panel.SynixEngine
 			SynixHealthItem? item = GetSelectedItem();
 			actionButton.Enabled = !_running && item?.Action != SynixHealthAction.None;
 			actionButton.Text = item == null || item.Action == SynixHealthAction.None
-				? "Select a Repair"
+				? (IsReadinessMode ? "Select an Action" : "Select a Repair")
 				: GetActionText(item.Action);
 		}
 
@@ -246,8 +288,13 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			try
 			{
-				Clipboard.SetText(_report.ToPlainText());
-				statusLabel.Text = "Troubleshooter report copied to the clipboard.";
+				Clipboard.SetText(_report.ToPlainText(
+					IsReadinessMode
+						? "SYNIX SERVER READINESS REPORT"
+						: "SYNIX TROUBLESHOOTER REPORT"));
+				statusLabel.Text = IsReadinessMode
+					? "Server readiness report copied to the clipboard."
+					: "Troubleshooter report copied to the clipboard.";
 			}
 			catch
 			{

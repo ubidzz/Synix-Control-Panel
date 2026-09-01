@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Xunit;
 
 namespace Synix_Control_Panel.Tests;
@@ -26,6 +27,15 @@ public sealed class TroubleshooterAndRecoveryTests
 			try
 			{
 				using TroubleshooterDialog troubleshooter = new();
+				using TroubleshooterDialog readiness = new(new GameServer
+				{
+					Game = "Palworld",
+					ServerName = "Test Server"
+				});
+				Assert.Equal("Server Readiness Center", readiness.Text);
+				Assert.Equal(
+					"Server Readiness Center",
+					readiness.Controls.Find("titleLabel", true).Single().Text);
 				using FirstRunGuideDialog firstRun = new();
 				using ReliabilityTestDialog reliability = new();
 				using ServerBackupRestoreDialog restoreBackup = new();
@@ -134,6 +144,17 @@ public sealed class TroubleshooterAndRecoveryTests
 		Assert.Contains(report.Items, item => item.Area == "SteamCMD and runtimes");
 		Assert.Contains(report.Items, item => item.Area == "Available disk space");
 		Assert.Contains(report.Items, item => item.Area == "Synix update");
+	}
+
+	[Fact]
+	public async Task ServerReadinessChecks_DoNotAddTheGlobalUpdateResult()
+	{
+		SynixHealthReport report = await SynixTroubleshooter.RunAsync(
+			Array.Empty<GameServer>(),
+			checkForUpdates: false,
+			includeUpdateStatus: false);
+
+		Assert.DoesNotContain(report.Items, item => item.Area == "Synix update");
 	}
 
 	[Theory]

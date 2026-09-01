@@ -74,10 +74,10 @@ namespace Synix_Control_Panel.SynixEngine
 		internal int FailedCount => Items.Count(item => item.Level == SynixHealthLevel.Failed);
 		internal bool IsHealthy => FailedCount == 0;
 
-		internal string ToPlainText()
+		internal string ToPlainText(string title = "SYNIX TROUBLESHOOTER REPORT")
 		{
 			StringBuilder text = new();
-			text.AppendLine("SYNIX TROUBLESHOOTER REPORT");
+			text.AppendLine(title);
 			text.AppendLine();
 			text.AppendLine($"Completed: {CompletedAtUtc.ToLocalTime():g}");
 			text.AppendLine($"Synix: v{Core.GetCurrentVersion().ToString(3)} ({Core.DetectCurrentInstallation().DisplayName})");
@@ -106,7 +106,8 @@ namespace Synix_Control_Panel.SynixEngine
 			IReadOnlyList<GameServer> servers,
 			bool checkForUpdates,
 			IProgress<string>? progress = null,
-			CancellationToken cancellationToken = default)
+			CancellationToken cancellationToken = default,
+			bool includeUpdateStatus = true)
 		{
 			ArgumentNullException.ThrowIfNull(servers);
 			List<SynixHealthItem> items = [];
@@ -165,16 +166,16 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				RunServerCheck(items, "Ports", server, () => CheckPorts(server, game, servers, items));
 				RunServerCheck(items, "Windows Firewall", server, () => CheckFirewall(server, game, firewall, items));
-				RunServerCheck(items, "Crash recovery", server, () => CheckProcessRecovery(server, game, items));
+				RunServerCheck(items, "Process tracking", server, () => CheckProcessRecovery(server, items));
 				RunServerCheck(items, "Recent server logs", server, () => CheckLatestLog(server, items));
 			}
 
-			if (checkForUpdates)
+			if (includeUpdateStatus && checkForUpdates)
 			{
 				progress?.Report("Checking the installed Synix version...");
 				await CheckUpdateAsync(items, cancellationToken);
 			}
-			else
+			else if (includeUpdateStatus)
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Passed,
@@ -463,34 +464,44 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static void CheckProcessRecovery(
 			GameServer server,
-			GameInfo game,
 			ICollection<SynixHealthItem> items)
 		{
-			bool recorded = ProcessRecovery.IsRecordedProcessValid(server, game);
-			using Process? untracked = ProcessRecovery.FindInstalledServerProcess(
-				server,
-				game,
-				recorded ? server.PID : null);
-			if (untracked != null)
+			IReadOnlyList<ServerProcessIdentity> processes =
+				Servers.RefreshServerProcessRegistry(server, forceDiscovery: true);
+			bool statusClaimsActive =
+				server.Status == Core.StatusManager.GetStatus(Core.ServerState.Running) ||
+				server.Status == Core.StatusManager.GetStatus(Core.ServerState.Starting) ||
+				server.Status == Core.StatusManager.GetStatus(Core.ServerState.Stopping);
+			bool primaryTracked = server.PID.HasValue &&
+				processes.Any(process => process.ProcessId == server.PID.Value);
+
+			if (processes.Count > 0)
 			{
+				string processDetails = string.Join(
+					", ",
+					processes.Select(process =>
+						$"{Path.GetFileName(process.ExecutablePath)} (PID {process.ProcessId})"));
+				bool needsRecovery = !statusClaimsActive || !primaryTracked;
 				items.Add(new SynixHealthItem(
-					SynixHealthLevel.Warning,
-					"Crash recovery",
+					needsRecovery ? SynixHealthLevel.Warning : SynixHealthLevel.Passed,
+					"Process tracking",
 					server.ServerName,
-					$"The installed server executable is running as PID {untracked.Id}, but this Synix instance is not tracking it. Recover Processes can safely reconnect without restarting it.",
-					SynixHealthAction.RecoverProcesses,
+					needsRecovery
+						? $"Found {processes.Count} installed server process(es), but the saved server state needs to be reconnected: {processDetails}."
+						: $"Synix is tracking {processes.Count} verified server process(es): {processDetails}.",
+					needsRecovery ? SynixHealthAction.RecoverProcesses : SynixHealthAction.None,
 					server));
 				return;
 			}
 
 			items.Add(new SynixHealthItem(
-				SynixHealthLevel.Passed,
-				"Crash recovery",
+				statusClaimsActive ? SynixHealthLevel.Warning : SynixHealthLevel.Passed,
+				"Process tracking",
 				server.ServerName,
-				recorded
-					? $"The active server process is tracked as PID {server.PID}."
-					: "No untracked server process was found in the installed server folder.",
-				SynixHealthAction.None,
+				statusClaimsActive
+					? "The saved status says this server is active, but no verified executable is currently running. Recover Processes will reconcile its state."
+					: "No server executable is running, which is correct while this server is stopped.",
+				statusClaimsActive ? SynixHealthAction.RecoverProcesses : SynixHealthAction.None,
 				server));
 		}
 

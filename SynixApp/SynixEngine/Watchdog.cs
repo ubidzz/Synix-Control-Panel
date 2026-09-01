@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Diagnostics;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -28,19 +29,20 @@ namespace Synix_Control_Panel.SynixEngine
 			foreach (var server in MainGUI.serverList.ToList())
 			{
 				var dbEntry = GameDatabase.GetGame(server.Game);
-				string exePathFromDB = dbEntry?.ExeName ?? "";
 				bool usesExternalLifecycle = dbEntry?.LaunchBehavior.LifecycleTracking ==
 					GameLifecycleTrackingMode.ExternalDeployment;
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Starting))
 				{
-					if (!server.PID.HasValue && !usesExternalLifecycle)
+					if (!server.PID.HasValue &&
+						server.ServerProcesses.Count == 0 &&
+						!usesExternalLifecycle)
 					{
 						continue;
 					}
 
 					bool isAlive = usesExternalLifecycle ||
-								   (server.PID.HasValue && IsProcessAlive(server.PID.Value, exePathFromDB));
+						Servers.ReconcileActiveServerProcesses(server);
 
 					if (isAlive)
 					{
@@ -133,36 +135,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					if (!usesExternalLifecycle && server.PID.HasValue)
+					if (!usesExternalLifecycle)
 					{
-						if (!IsProcessAlive(server.PID.Value, exePathFromDB))
+						if (!Servers.ReconcileActiveServerProcesses(server))
 						{
 							_ = ExecuteStartSequence(server, "WATCHDOG");
 						}
 					}
 				}
-			}
-		}
-
-		private bool IsProcessAlive(int pid, string dbExePath)
-		{
-			try
-			{
-				using var p = Process.GetProcessById(pid);
-				if (p.HasExited) return false;
-
-				if (dbExePath.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) ||
-					dbExePath.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
-				{
-					return p.ProcessName.Equals("cmd", StringComparison.OrdinalIgnoreCase);
-				}
-
-				string expectedName = Path.GetFileNameWithoutExtension(dbExePath);
-				return p.ProcessName.Equals(expectedName, StringComparison.OrdinalIgnoreCase);
-			}
-			catch
-			{
-				return false;
 			}
 		}
 
