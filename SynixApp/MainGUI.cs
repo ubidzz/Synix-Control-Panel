@@ -122,7 +122,7 @@ namespace Synix_Control_Panel
 
 		private void AddGuidanceMenuItems()
 		{
-			ToolStripMenuItem modPluginManager = new("Mod & Plugin Manager");
+			ToolStripMenuItem modPluginManager = new("Mod && Plugin Manager");
 			modPluginManager.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
