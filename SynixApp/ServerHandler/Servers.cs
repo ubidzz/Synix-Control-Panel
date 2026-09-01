@@ -265,7 +265,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						return;
 					}
 
-					string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName);
+					string fullExePath = GameLaunchCommandBuilder.ResolveExecutablePath(server, dbEntry);
 					string binDir = Path.GetDirectoryName(fullExePath) ?? "";
 
 					if (!File.Exists(fullExePath))
@@ -283,7 +283,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 
 					isMinecraft = GameDatabase.IsMinecraft(server.Game);
-					if (isMinecraft)
+					if (MinecraftControlProfile.IsJava(server))
 					{
 						PrepareMinecraftLauncher(fullExePath, logCallback!);
 					}
@@ -336,6 +336,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						binDir,
 						dbEntry.LaunchBehavior.RunElevated,
 						hideWindow,
+						isMinecraft && hideWindow,
 						isMinecraft && hideWindow);
 
 					if (!psi.UseShellExecute)
@@ -350,9 +351,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				string safeLogArgs = "[arguments unavailable]";
 				if (selectedDefinition != null)
 				{
-					string fullExePath = Path.Combine(
-						server.InstallPath,
-						selectedDefinition.ExeName);
+					string fullExePath = GameLaunchCommandBuilder.ResolveExecutablePath(
+						server,
+						selectedDefinition);
 					string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
 						server,
 						selectedDefinition,
@@ -385,6 +386,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					if (isMinecraft && psi.RedirectStandardInput)
 					{
 						proc.StandardInput.AutoFlush = true;
+					}
+					if (isMinecraft && psi.RedirectStandardOutput)
+					{
+						MinecraftConsoleHub.Attach(server, proc);
 					}
 
 					server.RunningProcess = proc;
@@ -524,7 +529,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
-				bool isMinecraft = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+				bool isMinecraft = GameDatabase.IsMinecraft(server.Game);
 				bool signalSent = isMinecraft
 					? await TrySendMinecraftStopCommand(server, targetPid, logCallback!)
 					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
@@ -664,6 +669,30 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			int targetPid,
 			Action<string, Color> logCallback)
 		{
+			if (MinecraftControlProfile.IsJava(server))
+			{
+				MinecraftManagementResult<bool> management =
+					await MinecraftManagementClient.StopAsync(server);
+				if (management.Succeeded)
+				{
+					logCallback?.Invoke(
+						"[MINECRAFT] Requested a clean stop through Minecraft's local management service.",
+						Color.Aqua);
+					return true;
+				}
+
+				MinecraftRconResult rcon = await MinecraftRconClient.ExecuteCommandAsync(
+					server,
+					"stop");
+				if (rcon.Succeeded)
+				{
+					logCallback?.Invoke(
+						"[MINECRAFT] Sent the native 'stop' command through local Minecraft RCON.",
+						Color.Aqua);
+					return true;
+				}
+			}
+
 			if (TryWriteRedirectedInput(server, "stop"))
 			{
 				logCallback?.Invoke("[MINECRAFT] Sent the native 'stop' command through Synix's managed console pipe.", Color.Aqua);
@@ -905,6 +934,60 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				TimeSpan.FromMilliseconds(500));
 		}
 
+		internal static async Task<(bool Succeeded, string Message)> SendMinecraftCommandAsync(
+			GameServer server,
+			string command)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			string normalized = command?.Trim() ?? string.Empty;
+			if (!GameDatabase.IsMinecraft(server.Game))
+				return (false, "This console is available only for Minecraft servers.");
+			if (normalized.Length == 0)
+				return (false, "Enter a Minecraft server command.");
+			if (normalized.Length > 512 || normalized.IndexOfAny(['\r', '\n', '\0']) >= 0)
+				return (false, "The command is too long or contains an unsafe line break.");
+			if (normalized.Equals("stop", StringComparison.OrdinalIgnoreCase))
+			{
+				bool stopped = await Stop(
+					server,
+					(message, color) => Core.Instance.Log(message, color));
+				return stopped
+					? (true, "Minecraft saved and stopped through Synix's verified shutdown workflow.")
+					: (false, "Minecraft did not stop cleanly. Check Activity & Diagnostics for details.");
+			}
+
+			if (TryWriteRedirectedInput(server, normalized))
+			{
+				MinecraftConsoleHub.Publish(server, $"> {normalized}", false);
+				return (true, "Command sent through Synix's managed server console.");
+			}
+
+			if (MinecraftControlProfile.IsJava(server))
+			{
+				MinecraftRconResult rcon = await MinecraftRconClient.ExecuteCommandAsync(
+					server,
+					normalized);
+				if (rcon.Succeeded)
+				{
+					MinecraftConsoleHub.Publish(server, $"> {normalized}", false);
+					if (!string.IsNullOrWhiteSpace(rcon.Response))
+						MinecraftConsoleHub.Publish(server, rcon.Response, false);
+					return (true, "Command sent through local Minecraft RCON.");
+				}
+			}
+
+			int targetPid = GetInitialTargetPid(server);
+			if (targetPid > 0 && await TryWriteConsoleCommand(targetPid, normalized + "\r"))
+			{
+				MinecraftConsoleHub.Publish(server, $"> {normalized}", false);
+				return (true, "Command sent to the visible Minecraft console.");
+			}
+
+			return (
+				false,
+				"The Minecraft command channel is unavailable. Start this server from Synix with hidden server windows enabled, or enable local RCON for Java Edition.");
+		}
+
 		internal static async Task<List<int>> WaitForStableProcessExit(
 			Func<List<int>> getLiveProcesses,
 			TimeSpan timeout,
@@ -1130,6 +1213,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			GameServer server,
 			Dictionary<int, DateTime?> trackedProcesses)
 		{
+			HashSet<int> verifiedLaunchProcessTree = GetVerifiedLaunchProcessTreeIds(server);
 			Dictionary<int, ServerProcessIdentity> existing;
 			lock (_serverProcessRegistryLock)
 			{
@@ -1152,8 +1236,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						executablePath = savedIdentity.ExecutablePath;
 					}
 
+					bool isInstalledServerExecutable = !string.IsNullOrWhiteSpace(executablePath) &&
+						IsPathInsideDirectory(executablePath, server.InstallPath);
+					bool isVerifiedLaunchProcess = verifiedLaunchProcessTree.Contains(processId);
 					if (string.IsNullOrWhiteSpace(executablePath) ||
-						!IsPathInsideDirectory(executablePath, server.InstallPath))
+						(!isInstalledServerExecutable && !isVerifiedLaunchProcess))
 					{
 						continue;
 					}
@@ -1188,6 +1275,40 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				server.ServerProcesses = liveIdentities
 					.OrderBy(process => process.ProcessId)
 					.ToList();
+			}
+		}
+
+		private static HashSet<int> GetVerifiedLaunchProcessTreeIds(GameServer server)
+		{
+			try
+			{
+				GameInfo? game = GameDatabase.GetGame(server.Game);
+				if (game == null)
+				{
+					return [];
+				}
+
+				string launchPath = GameLaunchCommandBuilder.ResolveExecutablePath(server, game);
+				string extension = Path.GetExtension(launchPath);
+				if (!extension.Equals(".bat", StringComparison.OrdinalIgnoreCase) &&
+					!extension.Equals(".cmd", StringComparison.OrdinalIgnoreCase))
+				{
+					return [];
+				}
+
+				Process? launchProcess = server.RunningProcess;
+				if (launchProcess == null ||
+					launchProcess.HasExited ||
+					server.PID.GetValueOrDefault() != launchProcess.Id)
+				{
+					return [];
+				}
+
+				return GetProcessTreeIds(launchProcess.Id);
+			}
+			catch
+			{
+				return [];
 			}
 		}
 
@@ -1577,6 +1698,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		private static void FinalizeStoppedState(GameServer server)
 		{
+			MinecraftConsoleHub.NotifyStopped(server);
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;
 			lock (_serverProcessRegistryLock)

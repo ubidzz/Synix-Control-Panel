@@ -259,7 +259,8 @@ namespace Synix_Control_Panel.SynixEngine
 			string executable;
 			try
 			{
-				executable = Path.GetFullPath(Path.Combine(server.InstallPath, game.ExeName));
+				executable = Path.GetFullPath(
+					GameLaunchCommandBuilder.ResolveExecutablePath(server, game));
 			}
 			catch (Exception exception)
 			{
@@ -274,7 +275,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			List<string> missing = [];
 			if (!File.Exists(executable))
-				missing.Add(game.ExeName);
+				missing.Add(Path.GetFileName(executable));
 			foreach (string relativePath in game.RequiredLaunchFiles)
 			{
 				try
@@ -425,7 +426,8 @@ namespace Synix_Control_Panel.SynixEngine
 			string launchFile;
 			try
 			{
-				launchFile = Path.GetFullPath(Path.Combine(server.InstallPath, game.ExeName));
+				launchFile = Path.GetFullPath(
+					GameLaunchCommandBuilder.ResolveExecutablePath(server, game));
 			}
 			catch
 			{

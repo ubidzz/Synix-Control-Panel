@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 4,
   "id": "minecraft",
   "catalogOrder": 218,
   "game": "Minecraft",
   "aliases": [
-    "Minecraft Java"
+    "Minecraft Java",
+    "Minecraft Bedrock"
   ],
   "appId": "0",
   "requiresSteamLogin": false,

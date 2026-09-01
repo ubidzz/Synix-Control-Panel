@@ -34,7 +34,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			string fullPath = Path.Combine(server.InstallPath, dbEntry.ExeName);
+			string fullPath = GameLaunchCommandBuilder.ResolveExecutablePath(server, dbEntry);
 			if (!File.Exists(fullPath))
 			{
 				errorMessage = "The game files are missing! Please run 'Update' to fix the server.";
@@ -337,7 +337,9 @@ namespace Synix_Control_Panel.SynixEngine
 			return server.Port == port ||
 				server.QueryPort == port ||
 				(server.EnableRcon && server.RconPort == port) ||
-				server.AppPort == port;
+				server.AppPort == port ||
+				(MinecraftControlProfile.IsJava(server) &&
+					server.MinecraftManagementPort == port);
 		}
 
 		internal static bool IsActivePortReservation(GameServer server)

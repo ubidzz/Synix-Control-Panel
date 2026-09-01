@@ -186,6 +186,94 @@ public sealed class ServerManagementEngineTests
 		Assert.True(checks >= 6, "A temporary zero-process gap must not be treated as a completed shutdown.");
 	}
 
+	[Fact]
+	public async Task ProcessTracking_KeepsTheVerifiedMinecraftCommandLauncher()
+	{
+		string testRoot = Path.Combine(
+			Path.GetTempPath(),
+			"SynixMinecraftLauncherTests",
+			Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(testRoot);
+		string commandProcessor = Environment.GetEnvironmentVariable("ComSpec") ??
+			Path.Combine(Environment.SystemDirectory, "cmd.exe");
+
+		Process? launcher = null;
+		try
+		{
+			launcher = StartLongRunningTestProcess(commandProcessor);
+			int launcherPid = launcher.Id;
+			await Task.Delay(300);
+			GameServer server = new()
+			{
+				Game = "Minecraft",
+				ServerName = "Minecraft launcher tracking test",
+				InstallPath = testRoot,
+				PID = launcherPid,
+				RunningProcess = launcher,
+				Status = Core.StatusManager.GetStatus(Core.ServerState.Starting)
+			};
+
+			IReadOnlyList<ServerProcessIdentity> registered =
+				Servers.RefreshServerProcessRegistry(server, forceDiscovery: true);
+
+			Assert.Contains(registered, process => process.ProcessId == launcherPid);
+			Assert.True(Servers.ReconcileActiveServerProcesses(server));
+			Assert.Equal(launcherPid, server.PID);
+		}
+		finally
+		{
+			KillTestProcess(launcher);
+			launcher?.Dispose();
+			if (Directory.Exists(testRoot))
+			{
+				Directory.Delete(testRoot, true);
+			}
+		}
+	}
+
+	[Fact]
+	public async Task ProcessTracking_RejectsAnUnownedExternalCommandProcess()
+	{
+		string testRoot = Path.Combine(
+			Path.GetTempPath(),
+			"SynixUnownedLauncherTests",
+			Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(testRoot);
+		string commandProcessor = Environment.GetEnvironmentVariable("ComSpec") ??
+			Path.Combine(Environment.SystemDirectory, "cmd.exe");
+
+		Process? unrelatedProcess = null;
+		try
+		{
+			unrelatedProcess = StartLongRunningTestProcess(commandProcessor);
+			int unrelatedPid = unrelatedProcess.Id;
+			await Task.Delay(300);
+			GameServer server = new()
+			{
+				Game = "Minecraft",
+				ServerName = "Unowned process test",
+				InstallPath = testRoot,
+				PID = unrelatedPid,
+				Status = Core.StatusManager.GetStatus(Core.ServerState.Starting)
+			};
+
+			IReadOnlyList<ServerProcessIdentity> registered =
+				Servers.RefreshServerProcessRegistry(server, forceDiscovery: true);
+
+			Assert.Empty(registered);
+			Assert.False(Servers.ReconcileActiveServerProcesses(server));
+		}
+		finally
+		{
+			KillTestProcess(unrelatedProcess);
+			unrelatedProcess?.Dispose();
+			if (Directory.Exists(testRoot))
+			{
+				Directory.Delete(testRoot, true);
+			}
+		}
+	}
+
 	private static Process StartLongRunningTestProcess(string executablePath)
 	{
 		ProcessStartInfo startInfo = new()

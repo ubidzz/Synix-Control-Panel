@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -118,7 +119,9 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(server);
 
 			GameInfo? blueprint = GameDatabase.GetGame(server.Game);
-			string executableName = blueprint?.ExeName ?? string.Empty;
+			string executableName = blueprint == null
+				? string.Empty
+				: MinecraftControlProfile.ResolveExecutableName(server, blueprint);
 			if (string.IsNullOrWhiteSpace(server.InstallPath) ||
 				string.IsNullOrWhiteSpace(executableName))
 			{

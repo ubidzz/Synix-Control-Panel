@@ -54,6 +54,8 @@ namespace Synix_Control_Panel
 		private Label? _completionLabel;
 		private Panel? _completionTrack;
 		private Panel? _completionFill;
+		private Label? _minecraftEditionLabel;
+		private ModernSettingsComboBox? _minecraftEditionCombo;
 
 		private const int WmNcLeftButtonDown = 0x00A1;
 		private const int HtCaption = 0x0002;
@@ -142,12 +144,63 @@ namespace Synix_Control_Panel
 			txtInstallPath.ShortcutsEnabled = false;
 			txtInstallPath.Cursor = Cursors.Default;
 			InitializeGuidanceControls();
+			InitializeMinecraftEditionControls();
 			ShowSettingsPage(
 				pnlPageGeneral,
 				btnNavGeneral,
 				"General",
 				"Choose the game and define the server identity.");
 			UpdateModernStatus();
+		}
+
+		private void InitializeMinecraftEditionControls()
+		{
+			_minecraftEditionLabel = new Label
+			{
+				Name = "lblMinecraftEdition",
+				AutoSize = true,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+				Location = new Point(24, 52),
+				Text = "Edition"
+			};
+			_minecraftEditionCombo = new ModernSettingsComboBox
+			{
+				Name = "cmbMinecraftEdition",
+				BackColor = Color.FromArgb(12, 21, 36),
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 9.5F),
+				DrawMode = DrawMode.OwnerDrawFixed,
+				DropDownStyle = ComboBoxStyle.DropDownList,
+				FlatStyle = FlatStyle.Flat,
+				ItemHeight = 28,
+				Location = new Point(24, 72),
+				Size = new Size(260, 34)
+			};
+			_minecraftEditionCombo.Items.AddRange([
+				MinecraftControlProfile.JavaEdition,
+				MinecraftControlProfile.BedrockEdition
+			]);
+			_minecraftEditionCombo.SelectedItem = MinecraftControlProfile.JavaEdition;
+
+			foreach (Control control in new Control[]
+			{
+				lblMinecraftLoader,
+				cmbMinecraftLoader,
+				lblMinecraftLoaderVersion,
+				cmbMinecraftLoaderVersion,
+				lblMinecraftJava,
+				lblMinecraftJavaValue,
+				lblMinecraftRuntimeHelper
+			})
+			{
+				control.Top += 54;
+			}
+
+			cardMinecraftRuntime.Height += 54;
+			cardMinecraftRuntime.Controls.Add(_minecraftEditionLabel);
+			cardMinecraftRuntime.Controls.Add(_minecraftEditionCombo);
 		}
 
 		private void InitializeGuidanceControls()
@@ -465,6 +518,13 @@ namespace Synix_Control_Panel
 			int gameIndex = cmbGame.FindStringExact(_existingServer.Game);
 			if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
+			if (_minecraftEditionCombo != null && GameDatabase.IsMinecraft(_existingServer.Game))
+			{
+				SelectComboBoxValue(
+					_minecraftEditionCombo,
+					MinecraftControlProfile.NormalizeEdition(_existingServer.MinecraftEdition),
+					MinecraftControlProfile.JavaEdition);
+			}
 
 			if (Core.TryRevealServerSecrets(
 					_existingServer,
@@ -574,6 +634,7 @@ namespace Synix_Control_Panel
 					? GameDatabase.GetGame(selectedGame)
 					: null;
 				bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+				bool isMinecraftBedrock = isMinecraft && IsMinecraftBedrockSelected();
 				bool supportsServerFramework =
 					selectedDefinition?.SupportedServerFrameworks.Count > 0;
 				bool CanUnlock(Control c) => hasGame && c.Tag?.ToString() == "Required";
@@ -594,8 +655,11 @@ namespace Synix_Control_Panel
 				numWorldSize.Enabled = CanUnlock(numWorldSize);
 				cmbGameVersion.Enabled = CanUnlock(cmbGameVersion) && !_isLoadingMinecraftMetadata;
 				cmbMinecraftLoader.Enabled =
-					(isMinecraft || supportsServerFramework) && !_isLoadingMinecraftMetadata;
+					(isMinecraft || supportsServerFramework) &&
+					!isMinecraftBedrock &&
+					!_isLoadingMinecraftMetadata;
 				cmbMinecraftLoaderVersion.Enabled = isMinecraft &&
+					!isMinecraftBedrock &&
 					!_isLoadingMinecraftMetadata &&
 					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
 						.Equals(MinecraftMetadataService.VanillaLoader, StringComparison.OrdinalIgnoreCase);
@@ -694,12 +758,12 @@ namespace Synix_Control_Panel
 
 					btnSave.Enabled = false;
 				}
-				else if (isMinecraft && _isLoadingMinecraftMetadata)
+				else if (isMinecraft && !isMinecraftBedrock && _isLoadingMinecraftMetadata)
 				{
 					_validationMessage = "  ◌ [MINECRAFT] Loading compatible versions and Java requirements...";
 					btnSave.Enabled = false;
 				}
-				else if (isMinecraft && !string.IsNullOrWhiteSpace(_minecraftMetadataError))
+				else if (isMinecraft && !isMinecraftBedrock && !string.IsNullOrWhiteSpace(_minecraftMetadataError))
 				{
 					_validationMessage = $"  ⚠️ [MINECRAFT] {_minecraftMetadataError}";
 					btnSave.Enabled = false;
@@ -709,7 +773,7 @@ namespace Synix_Control_Panel
 					_validationMessage = "  🔒 [MINECRAFT] Select a Minecraft game version.";
 					btnSave.Enabled = false;
 				}
-				else if (isMinecraft &&
+				else if (isMinecraft && !isMinecraftBedrock &&
 					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
 						.Equals(MinecraftMetadataService.VanillaLoader, StringComparison.OrdinalIgnoreCase) &&
 					string.IsNullOrWhiteSpace(cmbMinecraftLoaderVersion.Text))
@@ -807,8 +871,20 @@ namespace Synix_Control_Panel
 			else
 			{
 				ConfigureRuntimeCard(gameData);
+				bool isMinecraft = GameDatabase.IsMinecraft(gameData.Game);
 				GameManagementCapability capabilities =
 					GameFix.GetManagementCapabilities(gameData);
+				if (isMinecraft && IsMinecraftBedrockSelected())
+				{
+					capabilities =
+						GameManagementCapability.WorldSeed |
+						GameManagementCapability.GameMode |
+						GameManagementCapability.MaxPlayers |
+						GameManagementCapability.QueryPort |
+						GameManagementCapability.WorldName |
+						GameManagementCapability.Port |
+						GameManagementCapability.GameVersion;
+				}
 				bool Supports(GameManagementCapability capability) =>
 					(capabilities & capability) != GameManagementCapability.None;
 
@@ -870,6 +946,9 @@ namespace Synix_Control_Panel
 					? "Required"
 					: "Disabled";
 				bool usesQueryPort = Supports(GameManagementCapability.QueryPort);
+				QueryPortLabel.Text = isMinecraft && IsMinecraftBedrockSelected()
+					? "IPv6 Port"
+					: "Query Port";
 				numQueryPort.Tag = usesQueryPort ? "Required" : "Disabled";
 				cmbWorldName.Tag = Supports(GameManagementCapability.WorldName)
 					? "Required"
@@ -984,7 +1063,7 @@ namespace Synix_Control_Panel
 			cmbGameVersion.SelectedIndexChanged += async (s, e) =>
 			{
 				trigger();
-				if (!_suppressMinecraftMetadataEvents && IsMinecraftSelected())
+				if (!isPrivacyLoading && !_suppressMinecraftMetadataEvents && IsMinecraftSelected())
 				{
 					await RefreshMinecraftRuntimeAsync(cmbMinecraftLoader.Text, "latest");
 				}
@@ -992,12 +1071,42 @@ namespace Synix_Control_Panel
 			cmbMinecraftLoader.SelectedIndexChanged += async (s, e) =>
 			{
 				trigger();
-				if (!_suppressMinecraftMetadataEvents && IsMinecraftSelected())
+				if (!isPrivacyLoading && !_suppressMinecraftMetadataEvents && IsMinecraftSelected())
 				{
 					await RefreshMinecraftRuntimeAsync(cmbMinecraftLoader.Text, "latest");
 				}
 			};
 			cmbMinecraftLoaderVersion.SelectedIndexChanged += (s, e) => trigger();
+			if (_minecraftEditionCombo != null)
+			{
+				_minecraftEditionCombo.SelectedIndexChanged += async (_, _) =>
+				{
+					trigger();
+					if (isPrivacyLoading || _suppressMinecraftMetadataEvents || !IsMinecraftSelected())
+						return;
+
+					GameInfo? minecraft = GameDatabase.GetGame("Minecraft");
+					if (minecraft == null)
+						return;
+
+					try
+					{
+						_suppressMinecraftMetadataEvents = true;
+						ApplyMinecraftEditionDefaults();
+						await PopulateVersionsAsync(minecraft, "latest");
+					}
+					finally
+					{
+						_suppressMinecraftMetadataEvents = false;
+					}
+					if (!IsMinecraftBedrockSelected())
+					{
+						await RefreshMinecraftRuntimeAsync(
+							MinecraftMetadataService.VanillaLoader,
+							"Official");
+					}
+				};
+			}
 			numRam.ValueChanged += (s, e) => trigger();
 		}
 
@@ -1023,17 +1132,35 @@ namespace Synix_Control_Panel
 			if (isMinecraft)
 			{
 				lblMinecraftRuntimeTitle.Text = "Minecraft Runtime";
-				lblMinecraftLoader.Text = "Loader";
-				lblMinecraftLoaderVersion.Visible = true;
-				cmbMinecraftLoaderVersion.Visible = true;
-				lblMinecraftJava.Visible = true;
-				lblMinecraftJavaValue.Visible = true;
+				bool bedrock = IsMinecraftBedrockSelected();
+				if (_minecraftEditionLabel != null) _minecraftEditionLabel.Visible = true;
+				if (_minecraftEditionCombo != null) _minecraftEditionCombo.Visible = true;
+				lblMinecraftLoader.Text = bedrock ? "Server Package" : "Loader";
+				lblMinecraftLoaderVersion.Visible = !bedrock;
+				cmbMinecraftLoaderVersion.Visible = !bedrock;
+				lblMinecraftJava.Visible = !bedrock;
+				lblMinecraftJavaValue.Visible = !bedrock;
 				cmbMinecraftLoader.Items.Clear();
-				cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge"]);
+				if (bedrock)
+				{
+					cmbMinecraftLoader.Items.Add("Official Bedrock");
+					cmbMinecraftLoader.SelectedIndex = 0;
+					cmbMinecraftLoader.Enabled = false;
+					lblMinecraftRuntimeHelper.Text =
+						"Synix installs Microsoft's official Bedrock Dedicated Server. Java and Java mod loaders do not apply.";
+				}
+				else
+				{
+					cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge"]);
+					if (MinecraftMetadataService.IsNeoForgeCompatibleVersion(cmbGameVersion.Text))
+						cmbMinecraftLoader.Items.Add(MinecraftMetadataService.NeoForgeLoader);
+				}
 			}
 			else if (supportsServerFramework && gameData != null)
 			{
 				lblMinecraftRuntimeTitle.Text = "Server Framework";
+				if (_minecraftEditionLabel != null) _minecraftEditionLabel.Visible = false;
+				if (_minecraftEditionCombo != null) _minecraftEditionCombo.Visible = false;
 				lblMinecraftLoader.Text = "Framework";
 				lblMinecraftLoaderVersion.Visible = false;
 				cmbMinecraftLoaderVersion.Visible = false;
@@ -1051,6 +1178,8 @@ namespace Synix_Control_Panel
 
 			if (!visible)
 			{
+				if (_minecraftEditionLabel != null) _minecraftEditionLabel.Visible = false;
+				if (_minecraftEditionCombo != null) _minecraftEditionCombo.Visible = false;
 				_minecraftMetadataRequestId++;
 				_suppressMinecraftMetadataEvents = false;
 				_isLoadingMinecraftMetadata = false;
@@ -1071,6 +1200,11 @@ namespace Synix_Control_Panel
 			try
 			{
 				await PopulateVersionsAsync(gameData, _existingServer.GameVersion ?? "latest");
+				if (IsMinecraftBedrockSelected())
+				{
+					ConfigureRuntimeCard(gameData);
+					return;
+				}
 				await RefreshMinecraftRuntimeAsync(
 					_existingServer.MinecraftLoader,
 					_existingServer.MinecraftLoaderVersion);
@@ -1086,19 +1220,21 @@ namespace Synix_Control_Panel
 			string? preferredLoader,
 			string? preferredLoaderVersion)
 		{
-			if (!IsMinecraftSelected() || IsDisposed)
+			if (!IsMinecraftSelected() || IsMinecraftBedrockSelected() || IsDisposed)
 				return;
 
 			int requestId = ++_minecraftMetadataRequestId;
 			_isLoadingMinecraftMetadata = true;
 			_minecraftMetadataError = string.Empty;
+			_suppressMinecraftMetadataEvents = true;
 			ConfigureRuntimeCard(GameDatabase.GetGame("Minecraft"));
 			SyncGatekeeper();
 
 			string loader = MinecraftMetadataService.NormalizeLoader(preferredLoader);
+			if (!cmbMinecraftLoader.Items.Contains(loader))
+				loader = MinecraftMetadataService.VanillaLoader;
 			try
 			{
-				_suppressMinecraftMetadataEvents = true;
 				SelectComboBoxValue(cmbMinecraftLoader, loader, MinecraftMetadataService.VanillaLoader);
 
 				cmbMinecraftLoaderVersion.Items.Clear();
@@ -1280,6 +1416,7 @@ namespace Synix_Control_Panel
 			}
 			string newPath = txtInstallPath.Text.Trim();
 			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
+			bool isMinecraftBedrock = isMinecraft && IsMinecraftBedrockSelected();
 			GameInfo? masterData = GameDatabase.GetGame(selectedGame);
 			bool supportsServerFramework = masterData?.SupportedServerFrameworks.Count > 0;
 			string steamAccountName = masterData?.RequiresSteamLogin == true
@@ -1316,17 +1453,25 @@ namespace Synix_Control_Panel
 				ExtraArgs = txtExtraArgs.Text,
 				IsDefaultPath = chkDefaultPath.Checked,
 				UpdateOnStart = chkUpdateOnStart.Checked,
-				EnableRcon = chkEnableRcon.Checked,
-				RconPassword = GetEnteredValue(txtRconPassword),
+				EnableRcon = !isMinecraftBedrock && chkEnableRcon.Checked,
+				RconPassword = isMinecraftBedrock ? string.Empty : GetEnteredValue(txtRconPassword),
 				InstallPath = newPath,
 				MaxRam = (int)numRam.Value,
 				GameVersion = cmbGameVersion.Text.Trim(),
-				MinecraftLoader = isMinecraft
+				MinecraftEdition = isMinecraft
+					? MinecraftControlProfile.NormalizeEdition(_minecraftEditionCombo?.Text)
+					: MinecraftControlProfile.JavaEdition,
+				MinecraftLoader = isMinecraft && !isMinecraftBedrock
 					? MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
 					: MinecraftMetadataService.VanillaLoader,
-				MinecraftLoaderVersion = isMinecraft
+				MinecraftLoaderVersion = isMinecraft && !isMinecraftBedrock
 					? cmbMinecraftLoaderVersion.Text.Trim()
 					: "Official",
+				EnableMinecraftManagementProtocol = isMinecraft && !isMinecraftBedrock &&
+					(_existingServer?.EnableMinecraftManagementProtocol ?? true),
+				MinecraftManagementPort = isMinecraft && !isMinecraftBedrock
+					? _existingServer?.MinecraftManagementPort ?? 0
+					: 0,
 				ServerFramework = supportsServerFramework
 					? cmbMinecraftLoader.Text.Trim()
 					: "Vanilla",
@@ -1337,7 +1482,9 @@ namespace Synix_Control_Panel
 						StringComparison.OrdinalIgnoreCase)
 						? _existingServer?.ServerFrameworkVersion ?? "Official"
 						: "Official",
-				RequiredJavaVersion = isMinecraft ? _resolvedMinecraftJavaVersion : 0,
+				RequiredJavaVersion = isMinecraft && !isMinecraftBedrock
+					? _resolvedMinecraftJavaVersion
+					: 0,
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = _selectedTime,
 				RestartDays = (bool[])_selectedDays.Clone(),
@@ -1362,6 +1509,9 @@ namespace Synix_Control_Panel
 				Status = _existingServer?.Status ?? StatusManager.GetStatus(ServerState.Stopped),
 				BackupOnStart = chkBackupOnStart.Checked
 			};
+
+			if (MinecraftControlProfile.IsJava(NewServer))
+				MinecraftControlProfile.EnsureDefaults(NewServer, MainGUI.serverList);
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{
@@ -1396,7 +1546,7 @@ namespace Synix_Control_Panel
 
 				if (masterData != null)
 				{
-					string fullExePath = System.IO.Path.Combine(NewServer.InstallPath, masterData.ExeName);
+					string fullExePath = GameLaunchCommandBuilder.ResolveExecutablePath(NewServer, masterData);
 					string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(NewServer.Game, fullExePath);
 
 					if (System.IO.File.Exists(iconPath))
@@ -1545,7 +1695,8 @@ namespace Synix_Control_Panel
 				cmbGameVersion.Items.Clear();
 				cmbGameVersion.Items.Add("latest");
 
-				if (gameData.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+				if (gameData.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase) &&
+					!IsMinecraftBedrockSelected())
 				{
 					try
 					{
@@ -1622,6 +1773,51 @@ namespace Synix_Control_Panel
 			_maintenanceMaximumDelayMinutes = scheduler.MaximumDelayMinutes;
 			_maintenanceBackupBeforeRestart = scheduler.BackupBeforeRestart;
 			_maintenanceUpdateBeforeRestart = scheduler.UpdateBeforeRestart;
+		}
+
+		private bool IsMinecraftBedrockSelected() =>
+			IsMinecraftSelected() &&
+			MinecraftControlProfile.NormalizeEdition(_minecraftEditionCombo?.Text) ==
+				MinecraftControlProfile.BedrockEdition;
+
+		private void ApplyMinecraftEditionDefaults()
+		{
+			bool bedrock = IsMinecraftBedrockSelected();
+			QueryPortLabel.Text = bedrock ? "IPv6 Port" : "Query Port";
+			if (!_isEditMode)
+			{
+				int preferredPort = bedrock
+					? MinecraftControlProfile.BedrockDefaultPort
+					: 25565;
+				int preferredSecondaryPort = bedrock
+					? MinecraftControlProfile.BedrockDefaultIpv6Port
+					: 25565;
+				int gamePort = ExistingServerImport.FindAvailablePort(
+					preferredPort,
+					MainGUI.serverList);
+				int secondaryPort = ExistingServerImport.FindAvailablePort(
+					preferredSecondaryPort,
+					MainGUI.serverList.Concat([new GameServer { Port = gamePort }]));
+				numPort.Value = Math.Clamp(gamePort, numPort.Minimum, numPort.Maximum);
+				numQueryPort.Value = Math.Clamp(
+					secondaryPort,
+					numQueryPort.Minimum,
+					numQueryPort.Maximum);
+			}
+
+			if (bedrock)
+			{
+				chkEnableRcon.Checked = false;
+				chkEnableRcon.Tag = "Disabled";
+				cmbCompetitive.Items.Clear();
+				cmbCompetitive.Items.AddRange(["Survival", "Creative", "Adventure"]);
+				cmbCompetitive.SelectedItem = "Survival";
+			}
+			else if (GameDatabase.GetGame("Minecraft") is GameInfo minecraft)
+			{
+				PopulateGameModes(minecraft, _existingServer?.GameMode ?? "PVE");
+			}
+			ToggleGameSpecificFields(GameDatabase.GetGame("Minecraft"));
 		}
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
 		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();

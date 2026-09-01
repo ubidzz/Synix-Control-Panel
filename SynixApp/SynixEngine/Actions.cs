@@ -318,7 +318,10 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					if (Properties.Settings.Default.enableRunAsAdmin)
 					{
-						string executableName = GameDatabase.GetGame(server.Game)?.ExeName ?? string.Empty;
+						GameInfo? definition = GameDatabase.GetGame(server.Game);
+						string executableName = definition == null
+							? string.Empty
+							: MinecraftControlProfile.ResolveExecutableName(server, definition);
 						string serverExePath = Path.Combine(server.InstallPath, executableName);
 
 						if (File.Exists(serverExePath))
@@ -1278,7 +1281,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				string safeArgs = EscapeWindowsBatchCommandLine(args);
 
-				string fullExePath = Path.Combine(server.InstallPath, dbEntry.ExeName ?? "");
+				string fullExePath = GameLaunchCommandBuilder.ResolveExecutablePath(server, dbEntry);
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
 				string safeIdentity = EscapeWindowsBatchCommandLine(cleanIdentity);

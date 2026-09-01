@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
@@ -42,7 +43,9 @@ namespace Synix_Control_Panel
 		private readonly SemaphoreSlim _versionCheckGate = new(1, 1);
 		private SynixUpdateCheckResult? _updateCheckResult;
 		private bool _updateShutdownRequested;
+		private ToolStripMenuItem? _modPluginManagerMenuItem;
 		private ToolStripMenuItem? _playerManagementMenuItem;
+		private ToolStripMenuItem? _minecraftConsoleMenuItem;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -120,8 +123,8 @@ namespace Synix_Control_Panel
 
 		private void AddGuidanceMenuItems()
 		{
-			ToolStripMenuItem modPluginManager = new("Mod && Plugin Manager");
-			modPluginManager.Click += (_, _) =>
+			_modPluginManagerMenuItem = new ToolStripMenuItem("Mod && Plugin Manager");
+			_modPluginManagerMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
 				if (server == null)
@@ -136,12 +139,21 @@ namespace Synix_Control_Panel
 				GameServer? server = GetSelectedServer();
 				if (server == null)
 					return;
-				if (!GameDatabase.SupportsPlayerManagement(
-					GameDatabase.GetGame(server.Game)))
+				if (!GameDatabase.SupportsPlayerManagement(server))
 				{
 					return;
 				}
 				using PlayerManagementCenter dialog = new(server);
+				dialog.ShowDialog(this);
+			};
+
+			_minecraftConsoleMenuItem = new ToolStripMenuItem("Minecraft Server Console");
+			_minecraftConsoleMenuItem.Click += (_, _) =>
+			{
+				GameServer? server = GetSelectedServer();
+				if (server == null || !GameDatabase.IsMinecraft(server.Game))
+					return;
+				using MinecraftConsoleDialog dialog = new(server);
 				dialog.ShowDialog(this);
 			};
 
@@ -168,8 +180,9 @@ namespace Synix_Control_Panel
 			int insertAt = contextMenuStrip.Items.IndexOf(toolStripSeparator3);
 			if (insertAt < 0)
 				insertAt = contextMenuStrip.Items.Count;
-			contextMenuStrip.Items.Insert(insertAt++, modPluginManager);
+			contextMenuStrip.Items.Insert(insertAt++, _modPluginManagerMenuItem);
 			contextMenuStrip.Items.Insert(insertAt++, _playerManagementMenuItem);
+			contextMenuStrip.Items.Insert(insertAt++, _minecraftConsoleMenuItem);
 			contextMenuStrip.Items.Insert(insertAt++, liveProcessDetails);
 			contextMenuStrip.Items.Insert(insertAt, connectionInformation);
 		}
@@ -525,7 +538,7 @@ namespace Synix_Control_Panel
 			}
 
 			picSelectedServer.Image = server.DisplayIcon;
-			lblSelectedGame.Text = server.Game;
+			lblSelectedGame.Text = server.DisplayGameName;
 			lblSelectedServerName.Text =
 				$"{server.ServerName}  •  {BusyStatusPresentation.GetDisplayStatus(server.Status)}";
 		}
@@ -1034,16 +1047,27 @@ namespace Synix_Control_Panel
 		{
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
-				bool isMinecraft = selectedServer.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase);
+				bool isMinecraft = GameDatabase.IsMinecraft(selectedServer.Game);
+				bool isMinecraftBedrock = MinecraftControlProfile.IsBedrock(selectedServer);
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
 				bool supportsConnectionTesting =
 					GameDatabase.SupportsManualConnectionTesting(selectedGameData);
 				bool supportsPlayerManagement =
-					GameDatabase.SupportsPlayerManagement(selectedGameData);
+					GameDatabase.SupportsPlayerManagement(selectedServer);
+				if (_modPluginManagerMenuItem != null)
+				{
+					_modPluginManagerMenuItem.Visible = !isMinecraftBedrock;
+					_modPluginManagerMenuItem.Enabled = !isMinecraftBedrock;
+				}
 				if (_playerManagementMenuItem != null)
 				{
 					_playerManagementMenuItem.Visible = supportsPlayerManagement;
 					_playerManagementMenuItem.Enabled = supportsPlayerManagement;
+				}
+				if (_minecraftConsoleMenuItem != null)
+				{
+					_minecraftConsoleMenuItem.Visible = isMinecraft;
+					_minecraftConsoleMenuItem.Enabled = isMinecraft;
 				}
 
 				updateServerToolStripMenuItem.Enabled = !isMinecraft;

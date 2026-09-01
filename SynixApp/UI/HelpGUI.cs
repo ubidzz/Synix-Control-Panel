@@ -466,30 +466,32 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Plugins: Synix never installs or manages plugins. Add your own files to oxide\\plugins.\n" +
 					"• Updates: Synix reapplies Oxide after Steam updates and validations. Switching back to Vanilla requires one Update or Validate to restore the official files."),
 
-				["Minecraft Vanilla, Fabric, and Forge"] = new HelpItem("Games",
+				["Minecraft Java, Bedrock, Fabric, Forge, and NeoForge"] = new HelpItem("Games",
 					"MINECRAFT SERVER AUTOMATION:\n\n" +
-					"Choose Minecraft in Server Setup, then select the Minecraft game version. The Minecraft Runtime card lets you choose Vanilla, Fabric, or Forge.\n\n" +
-					"• Version discovery: Synix reads Mojang's version manifest to populate supported Minecraft releases.\n" +
-					"• Loader discovery: Fabric or Forge loader versions are filtered for the selected Minecraft version.\n" +
+					"Choose Minecraft in Server Setup, then choose Java Edition or Bedrock Edition. The remaining fields change for that edition only; other game templates are unaffected.\n\n" +
+					"• Java version discovery: Synix reads Mojang's version manifest to populate supported releases.\n" +
+					"• Java loader discovery: Fabric, Forge, and NeoForge versions are filtered for the selected Minecraft version. NeoForge is offered for Minecraft 1.21 and newer.\n" +
 					"• Portable Java: Synix determines the Java major required by the selected game version and can download a private Eclipse Temurin runtime, avoiding changes to the computer's system Java.\n" +
 					"• Vanilla: downloads and launches the official server JAR.\n" +
 					"• Fabric: installs the selected Fabric loader and prepares the executable server launcher. Install Fabric API and gameplay mods yourself when the modpack requires them.\n" +
 					"• Forge: runs the Forge server installer and launches the generated modern or legacy Forge server structure.\n" +
+					"• NeoForge: reads NeoForge's official Maven catalog, runs its official server installer, and launches its generated Windows argument file.\n" +
+					"• Bedrock: reads Minecraft's current official Windows download, extracts the server safely, preserves existing worlds and configuration files during updates, and launches bedrock_server.exe without Java arguments.\n" +
 					"• EULA: you must accept Mojang's EULA before the server can complete startup.\n" +
 					"• Mods: Synix creates/uses the server structure, but users remain responsible for installing compatible mods and matching client-side requirements.\n\n" +
-					"Minecraft's service port is normally configured in `server.properties`, so template port controls may be locked instead of injected into launch arguments. For multiple Minecraft servers, give each installation a unique `server-port` in its own `server.properties` file."),
+					"Java normally uses port 25565. Bedrock normally uses UDP port 19132 plus the separate IPv6 port 19133. Every Minecraft server instance needs its own ports."),
 
 				["Minecraft Setup and First Launch"] = new HelpItem("Games",
 					"CREATE A MINECRAFT SERVER:\n\n" +
 					"1. Click Add Server and choose Minecraft.\n" +
-					"2. Select the Minecraft version, then choose Vanilla, Fabric, or Forge and a compatible loader version when required.\n" +
-					"3. Review the Portable Java version selected by Synix and choose RAM appropriate for the world and mod count.\n" +
-					"4. Save the server, select it on the dashboard, and click Start. Keep Synix open while Java, the server JAR, and loader files are downloaded/installed.\n" +
-					"5. Accept the Minecraft EULA when prompted.\n" +
-					"6. Wait until the console reports Done and Synix changes the server to Running.\n" +
-					"7. Stop the server with Synix before adding mods or changing `server.properties`.\n" +
-					"8. For Fabric, install Fabric API when required. For Forge/Fabric, use mods built for the exact Minecraft and loader versions you selected.\n\n" +
-					"To shut down safely, use Synix Stop. It sends Minecraft's native `stop` command, waits for world saves and the Java process to exit, and updates the status only after shutdown is verified."),
+					"2. Choose Java Edition or Bedrock Edition.\n" +
+					"3. For Java, select the game version and Vanilla, Fabric, Forge, or NeoForge. Review the portable Java version selected by Synix. For Bedrock, Synix selects the current official Windows package automatically.\n" +
+					"4. Choose RAM, world, player, and network settings, then save the server and click Start.\n" +
+					"5. Java requires acceptance of Mojang's EULA. Bedrock includes its own bundled agreements and configuration files.\n" +
+					"6. Open Server Options -> Minecraft Server Console to see the managed console and send a command even when native server windows are hidden.\n" +
+					"7. Stop the server with Synix before adding mods, packs, or changing `server.properties`.\n" +
+					"8. Match every Java mod to the exact Minecraft and loader versions selected. Bedrock behavior/resource packs use Bedrock's own world and pack structure.\n\n" +
+					"Synix keeps Minecraft control local by default. Java 1.21.9 and newer can use Minecraft's local management protocol; older Java servers can use local RCON when configured. Bedrock uses its managed console while Synix owns the running process. Synix Stop sends Minecraft's native `stop` command and waits for the server process to exit."),
 
 				["Official Support Links"] = new HelpItem("Support",
 					"COMMUNITY & SUPPORT RESOURCES:\n\n" +

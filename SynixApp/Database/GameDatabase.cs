@@ -125,5 +125,18 @@ namespace Synix_Control_Panel.SynixApp.Database
 				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
 		}
 
+		internal static bool SupportsPlayerManagement(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (IsMinecraft(server.Game))
+			{
+				return MinecraftControlProfile.IsJava(server) &&
+					(MinecraftControlProfile.ShouldEnableManagementProtocol(server) ||
+					 server.EnableRcon);
+			}
+
+			return SupportsPlayerManagement(GetGame(server.Game));
+		}
+
 	}
 }

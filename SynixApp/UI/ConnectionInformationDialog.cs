@@ -4,6 +4,7 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -18,6 +19,7 @@ namespace Synix_Control_Panel.SynixEngine
 		internal ConnectionInformationDialog(GameServer server)
 		{
 			_server = server ?? throw new ArgumentNullException(nameof(server));
+			bool isBedrock = MinecraftControlProfile.IsBedrock(_server);
 			Text = "Connection Information";
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
@@ -52,7 +54,9 @@ namespace Synix_Control_Panel.SynixEngine
 				out ModernSettingsButton lanCopy);
 			_publicValue = AddConnectionCard(
 				"Friends connecting over the internet",
-				"Your router and Windows Firewall must allow the game and query ports.",
+				isBedrock
+					? "Your router and Windows Firewall must allow Bedrock's UDP game port."
+					: "Your router and Windows Firewall must allow the game and query ports.",
 				226,
 				out ModernSettingsButton publicCopy);
 			lanCopy.Click += (_, _) => CopyAddress(_lanAddress);
@@ -60,8 +64,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 			Controls.Add(new Label
 			{
-				Text = UserGuidance.GetPortSummary(_server) +
-					" Some games appear in a server browser only when the query port is also forwarded.",
+				Text = isBedrock
+					? $"Bedrock game port: {_server.Port}/UDP. IPv6 port: {_server.QueryPort}/UDP. " +
+						"Each Bedrock server needs its own pair of ports."
+					: UserGuidance.GetPortSummary(_server) +
+						" Some games appear in a server browser only when the query port is also forwarded.",
 				Location = new Point(30, 356),
 				Size = new Size(700, 54),
 				ForeColor = SettingsPalette.SecondaryText

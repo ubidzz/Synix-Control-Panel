@@ -228,6 +228,10 @@ public class GameServer
 {
 	public string Game { get; set; } = string.Empty;
 	[JsonIgnore]
+	public string DisplayGameName => IsMinecraft(Game)
+		? $"Minecraft {MinecraftControlProfile.NormalizeEdition(MinecraftEdition)}"
+		: Game;
+	[JsonIgnore]
 	public System.Drawing.Image DisplayIcon { get; set; } = null!;
 	[JsonIgnore]
 	public bool HasAnnouncedOnline { get; set; }
@@ -309,8 +313,11 @@ public class GameServer
 	[JsonIgnore]
 	public bool IsProbing { get; set; } = false;
 	public string GameVersion { get; set; } = "Latest";
+	public string MinecraftEdition { get; set; } = "Java";
 	public string MinecraftLoader { get; set; } = "Vanilla";
 	public string MinecraftLoaderVersion { get; set; } = "Official";
+	public bool EnableMinecraftManagementProtocol { get; set; } = true;
+	public int MinecraftManagementPort { get; set; }
 	public string ServerFramework { get; set; } = "Vanilla";
 	public string ServerFrameworkVersion { get; set; } = "Official";
 	public int RequiredJavaVersion { get; set; } = 0;

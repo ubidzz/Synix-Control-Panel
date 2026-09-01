@@ -63,9 +63,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				ArgumentException.ThrowIfNullOrWhiteSpace(server.InstallPath);
 				installRoot = Path.GetFullPath(server.InstallPath);
-				executablePath = Path.GetFullPath(Path.Combine(
-					installRoot,
-					definition.ExeName));
+				executablePath = Path.GetFullPath(
+					GameLaunchCommandBuilder.ResolveExecutablePath(server, definition));
 				string relativeExecutable = Path.GetRelativePath(
 					installRoot,
 					executablePath);

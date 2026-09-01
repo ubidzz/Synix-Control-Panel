@@ -4,6 +4,8 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -14,6 +16,9 @@ namespace Synix_Control_Panel.SynixEngine
 		private readonly Label _summary;
 		private readonly Label _status;
 		private readonly ModernSettingsButton _refresh;
+		private readonly ModernSettingsButton _kick;
+		private readonly ModernSettingsButton _allowlist;
+		private readonly ModernSettingsButton _operator;
 
 		internal PlayerManagementCenter(GameServer server)
 		{
@@ -97,6 +102,17 @@ namespace Synix_Control_Panel.SynixEngine
 			};
 			Controls.Add(_status);
 
+			bool minecraftActions = GameDatabase.IsMinecraft(_server.Game) &&
+				MinecraftControlProfile.IsJava(_server);
+			_kick = CreatePlayerActionButton("Kick", 28, minecraftActions);
+			_allowlist = CreatePlayerActionButton("Add to Allowlist", 148, minecraftActions);
+			_operator = CreatePlayerActionButton("Make Operator", 308, minecraftActions);
+			_kick.Click += async (_, _) => await RunMinecraftPlayerCommandAsync("kick", "kick this player");
+			_allowlist.Click += async (_, _) => await RunMinecraftPlayerCommandAsync("whitelist add", "add this player to the allowlist");
+			_operator.Click += async (_, _) => await RunMinecraftPlayerCommandAsync("op", "make this player an operator");
+			Controls.AddRange([_kick, _allowlist, _operator]);
+			_grid.SelectionChanged += (_, _) => UpdateMinecraftActionState();
+
 			_refresh = new ModernSettingsButton
 			{
 				Text = "Refresh Players",
@@ -117,6 +133,7 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.AddRange([_refresh, close]);
 			CancelButton = close;
 			ThemeManager.Apply(this);
+			UpdateMinecraftActionState();
 		}
 
 		protected override async void OnShown(EventArgs eventArgs)
@@ -140,7 +157,9 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				_summary.Text = $"{_server.ServerName} • {_server.Game} • {result.Players.Count} named player(s)";
 				_status.Text = result.Message + (result.IsSupported
-					? " Player actions remain disabled unless a game provides a verified administration protocol."
+					? GameDatabase.IsMinecraft(_server.Game)
+						? " Select a player to use Minecraft's local administration commands."
+						: " Player actions remain disabled unless a game provides a verified administration protocol."
 					: string.Empty);
 				_status.ForeColor = result.IsSuccessful
 					? SettingsPalette.Success
@@ -149,7 +168,64 @@ namespace Synix_Control_Panel.SynixEngine
 			finally
 			{
 				_refresh.Enabled = true;
+				UpdateMinecraftActionState();
 			}
+		}
+
+		private ModernSettingsButton CreatePlayerActionButton(
+			string text,
+			int left,
+			bool visible)
+		{
+			return new ModernSettingsButton
+			{
+				Text = text,
+				Location = new Point(left, 532),
+				Size = new Size(text == "Kick" ? 108 : 148, 44),
+				Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
+				Visible = visible,
+				Enabled = false
+			};
+		}
+
+		private void UpdateMinecraftActionState()
+		{
+			bool enabled = _grid.SelectedRows.Count == 1 && _refresh.Enabled;
+			_kick.Enabled = _kick.Visible && enabled;
+			_allowlist.Enabled = _allowlist.Visible && enabled;
+			_operator.Enabled = _operator.Visible && enabled;
+		}
+
+		private async Task RunMinecraftPlayerCommandAsync(
+			string command,
+			string confirmationAction)
+		{
+			if (_grid.SelectedRows.Count != 1 ||
+				_grid.SelectedRows[0].Tag is not GamePlayerInfo player ||
+				!MinecraftRconClient.IsSafePlayerName(player.Name))
+			{
+				_status.Text = "Select a valid Minecraft player first.";
+				_status.ForeColor = SettingsPalette.Warning;
+				return;
+			}
+
+			if (MessageBox.Show(
+				this,
+				$"Do you want to {confirmationAction}: {player.Name}?",
+				"Confirm Minecraft Player Action",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Question) != DialogResult.Yes)
+			{
+				return;
+			}
+
+			(bool succeeded, string message) = await Servers.SendMinecraftCommandAsync(
+				_server,
+				$"{command} {player.Name}");
+			_status.Text = message;
+			_status.ForeColor = succeeded ? SettingsPalette.Success : SettingsPalette.Warning;
+			if (succeeded && command == "kick")
+				await RefreshPlayersAsync();
 		}
 
 		private static string FormatDuration(TimeSpan duration) =>

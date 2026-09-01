@@ -25,6 +25,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 	internal static class GameLaunchCommandBuilder
 	{
+		internal static string ResolveExecutablePath(GameServer server, GameInfo definition)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(definition);
+			return Path.Combine(
+				server.InstallPath,
+				MinecraftControlProfile.ResolveExecutableName(server, definition));
+		}
+
 		internal static string ResolveInvokedAppId(
 			GameServer server,
 			GameInfo definition,
@@ -166,11 +175,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return false;
 
 			bool isMinecraft = GameDatabase.IsMinecraft(server.Game);
+			bool isBedrock = MinecraftControlProfile.IsBedrock(server);
 			int ramToUse = isMinecraft ? server.MaxRam * 1024 : server.MaxRam;
 			string targetAppId = definition.AppID ?? string.Empty;
 			string cleanIdentity = Core.Instance.GetSafeName(server.ServerName ?? string.Empty);
 
-			arguments = PreparePublicIpArgument(
+			arguments = isBedrock
+				? string.Empty
+				: PreparePublicIpArgument(
 				definition.RequiredArgs ?? string.Empty,
 				publicIp)
 				.Replace("{app_port}", server.AppPort?.ToString() ?? "0")
@@ -191,9 +203,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				.Replace("{crossplay_public_ip}", ResolveCrossplayPublicIp(server.CrossplayEnabled, publicIp))
 				.Replace("{ram}", ramToUse.ToString());
 
-			if (isMinecraft &&
-				MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader)
-					.Equals(MinecraftMetadataService.ForgeLoader, StringComparison.OrdinalIgnoreCase))
+			string minecraftLoader = MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader);
+			if (MinecraftControlProfile.IsJava(server) &&
+				(minecraftLoader.Equals(MinecraftMetadataService.ForgeLoader, StringComparison.OrdinalIgnoreCase) ||
+				 minecraftLoader.Equals(MinecraftMetadataService.NeoForgeLoader, StringComparison.OrdinalIgnoreCase)))
 			{
 				arguments = $"-Xmx{ramToUse}M -Xms{ramToUse}M";
 			}
@@ -294,7 +307,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string workingDirectory,
 			bool runElevated,
 			bool createNoWindow,
-			bool redirectStandardInput)
+			bool redirectStandardInput,
+			bool redirectStandardOutput = false)
 		{
 			ArgumentException.ThrowIfNullOrWhiteSpace(executablePath);
 			ArgumentException.ThrowIfNullOrWhiteSpace(workingDirectory);
@@ -330,6 +344,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				? ProcessWindowStyle.Hidden
 				: ProcessWindowStyle.Normal;
 			startInfo.RedirectStandardInput = !runElevated && redirectStandardInput;
+			startInfo.RedirectStandardOutput = !runElevated && redirectStandardOutput;
+			startInfo.RedirectStandardError = !runElevated && redirectStandardOutput;
 			if (runElevated)
 				startInfo.Verb = "runas";
 

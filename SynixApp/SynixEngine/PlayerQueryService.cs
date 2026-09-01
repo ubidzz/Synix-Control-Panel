@@ -4,6 +4,7 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Buffers.Binary;
 using System.Net;
 using System.Net.Sockets;
@@ -35,6 +36,9 @@ namespace Synix_Control_Panel.SynixEngine
 			GameInfo? game = GameDatabase.GetGame(server.Game);
 			if (game == null)
 				return Unsupported("The game definition is unavailable.");
+
+			if (GameDatabase.IsMinecraft(server.Game))
+				return await QueryMinecraftAsync(server, cancellationToken);
 
 			ServerProbeProtocol protocol = GameDatabase.GetProbeProtocol(game);
 			if (protocol != ServerProbeProtocol.A2S)
@@ -100,6 +104,67 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return new(true, false, $"Player details could not be read: {exception.Message}", []);
 			}
+		}
+
+		private static async Task<PlayerQueryResult> QueryMinecraftAsync(
+			GameServer server,
+			CancellationToken cancellationToken)
+		{
+			if (MinecraftControlProfile.IsBedrock(server))
+			{
+				return Unsupported(
+					$"Minecraft Bedrock reports {server.CurrentPlayers} connected player(s), but its built-in status response does not publish player names.");
+			}
+
+			if (server.Status != Core.StatusManager.GetStatus(Core.ServerState.Running))
+				return new(true, false, "Start the server before refreshing player details.", []);
+
+			MinecraftManagementResult<IReadOnlyList<MinecraftManagedPlayer>> managed =
+				await MinecraftManagementClient.QueryPlayersAsync(server, cancellationToken);
+			if (managed.Succeeded && managed.Value != null)
+			{
+				IReadOnlyList<GamePlayerInfo> players = managed.Value
+					.Select(player => new GamePlayerInfo(player.Name, 0, TimeSpan.Zero))
+					.ToArray();
+				return new(
+					true,
+					true,
+					players.Count == 0
+						? "Minecraft's local management service reports no connected players."
+						: $"Loaded {players.Count} player(s) through Minecraft's local management service.",
+					players);
+			}
+
+			MinecraftRconResult rcon = await MinecraftRconClient.ExecuteCommandAsync(
+				server,
+				"list",
+				cancellationToken);
+			if (rcon.Succeeded)
+			{
+				IReadOnlyList<GamePlayerInfo> players = MinecraftRconClient
+					.ParsePlayerNames(rcon.Response)
+					.Select(name => new GamePlayerInfo(name, 0, TimeSpan.Zero))
+					.ToArray();
+				return new(
+					true,
+					true,
+					players.Count == 0
+						? "Minecraft RCON reports no connected players."
+						: $"Loaded {players.Count} player(s) through local Minecraft RCON.",
+					players);
+			}
+
+			string problem = string.Join(
+				" ",
+				new[] { managed.Problem, rcon.Problem }
+					.Where(value => !string.IsNullOrWhiteSpace(value)));
+			return new(
+				true,
+				false,
+				string.IsNullOrWhiteSpace(problem)
+					? "Minecraft player details are not available yet."
+					: problem,
+				[]);
 		}
 
 		internal static IReadOnlyList<GamePlayerInfo> ParsePlayerResponse(

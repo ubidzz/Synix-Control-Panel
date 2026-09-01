@@ -696,7 +696,7 @@ namespace Synix_Control_Panel
 			// 
 			// colGame
 			// 
-			colGame.DataPropertyName = "Game";
+			colGame.DataPropertyName = "DisplayGameName";
 			colGame.FillWeight = 18F;
 			colGame.HeaderText = "Game";
 			colGame.Name = "colGame";

@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Diagnostics;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -24,9 +25,10 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(game);
+			string executableName = MinecraftControlProfile.ResolveExecutableName(server, game);
 			if (string.IsNullOrWhiteSpace(server.InstallPath) ||
-				string.IsNullOrWhiteSpace(game.ExeName) ||
-				!game.ExeName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+				string.IsNullOrWhiteSpace(executableName) ||
+				!executableName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
 			{
 				return null;
 			}
@@ -36,14 +38,14 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				expectedPath = Path.GetFullPath(Path.Combine(
 					server.InstallPath,
-					game.ExeName));
+					executableName));
 			}
 			catch
 			{
 				return null;
 			}
 
-			string processName = Path.GetFileNameWithoutExtension(game.ExeName);
+			string processName = Path.GetFileNameWithoutExtension(executableName);
 			foreach (Process process in Process.GetProcessesByName(processName))
 			{
 				if (process.Id == Environment.ProcessId ||
@@ -87,10 +89,11 @@ namespace Synix_Control_Panel.SynixEngine
 				if (process.HasExited)
 					return false;
 
-				if (game.ExeName.EndsWith(".bat", StringComparison.OrdinalIgnoreCase))
+				string executableName = MinecraftControlProfile.ResolveExecutableName(server, game);
+				if (executableName.EndsWith(".bat", StringComparison.OrdinalIgnoreCase))
 					return process.ProcessName.Equals("cmd", StringComparison.OrdinalIgnoreCase);
 
-				string expectedPath = Path.GetFullPath(Path.Combine(server.InstallPath, game.ExeName));
+				string expectedPath = Path.GetFullPath(Path.Combine(server.InstallPath, executableName));
 				string actualPath = Path.GetFullPath(process.MainModule?.FileName ?? string.Empty);
 				return string.Equals(expectedPath, actualPath, StringComparison.OrdinalIgnoreCase);
 			}

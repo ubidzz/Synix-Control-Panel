@@ -401,7 +401,9 @@ namespace Synix_Control_Panel.SynixEngine
 				configuration.Status,
 				playerData,
 				crossplay ? "Available" : "Not listed",
-				game.ExeName,
+				GameDatabase.IsMinecraft(game.Game)
+					? "Start.bat / bedrock_server.exe"
+					: game.ExeName,
 				lastVerified);
 		}
 

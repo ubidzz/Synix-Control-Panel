@@ -4,13 +4,20 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	internal sealed record ExistingServerDetection(
 		GameInfo Game,
-		string ExecutablePath);
+		string ExecutablePath,
+		string MinecraftEdition = "Java")
+	{
+		internal string DisplayName => GameDatabase.IsMinecraft(Game.Game)
+			? $"Minecraft {MinecraftControlProfile.NormalizeEdition(MinecraftEdition)}"
+			: Game.Game;
+	}
 
 	internal static class ExistingServerImport
 	{
@@ -32,12 +39,26 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!Directory.Exists(normalizedFolder))
 				return [];
 
-			return GameDatabase.GetGameList()
+			List<ExistingServerDetection> detections = GameDatabase.GetGameList()
 				.Where(game => !string.IsNullOrWhiteSpace(game.ExeName))
 				.Select(game => new ExistingServerDetection(
 					game,
 					Path.GetFullPath(Path.Combine(normalizedFolder, game.ExeName))))
 				.Where(detection => File.Exists(detection.ExecutablePath))
+				.ToList();
+			GameInfo? minecraft = GameDatabase.GetGame("Minecraft");
+			string bedrockPath = Path.Combine(
+				normalizedFolder,
+				MinecraftControlProfile.BedrockExecutableName);
+			if (minecraft != null && File.Exists(bedrockPath))
+			{
+				detections.Add(new ExistingServerDetection(
+					minecraft,
+					Path.GetFullPath(bedrockPath),
+					MinecraftControlProfile.BedrockEdition));
+			}
+
+			return detections
 				.OrderBy(detection => detection.Game.CatalogOrder)
 				.ThenBy(detection => detection.Game.Game, StringComparer.OrdinalIgnoreCase)
 				.ToArray();
@@ -49,7 +70,8 @@ namespace Synix_Control_Panel.SynixEngine
 			string serverName,
 			int gamePort,
 			int queryPort,
-			IEnumerable<GameServer> existingServers)
+			IEnumerable<GameServer> existingServers,
+			string minecraftEdition = MinecraftControlProfile.JavaEdition)
 		{
 			ArgumentNullException.ThrowIfNull(game);
 			ArgumentNullException.ThrowIfNull(existingServers);
@@ -59,8 +81,14 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!Directory.Exists(normalizedFolder))
 				throw new DirectoryNotFoundException("Choose the folder that contains the existing server files.");
 
-			string executablePath = Path.GetFullPath(
-				Path.Combine(normalizedFolder, game.ExeName));
+			GameServer editionProbe = new()
+			{
+				Game = game.Game,
+				MinecraftEdition = minecraftEdition
+			};
+			string executablePath = Path.GetFullPath(Path.Combine(
+				normalizedFolder,
+				MinecraftControlProfile.ResolveExecutableName(editionProbe, game)));
 			if (!File.Exists(executablePath))
 			{
 				throw new FileNotFoundException(
@@ -104,6 +132,9 @@ namespace Synix_Control_Panel.SynixEngine
 			return new GameServer
 			{
 				Game = game.Game,
+				MinecraftEdition = GameDatabase.IsMinecraft(game.Game)
+					? MinecraftControlProfile.NormalizeEdition(minecraftEdition)
+					: MinecraftControlProfile.JavaEdition,
 				ServerName = requestedName,
 				InstallPath = normalizedFolder,
 				Port = gamePort,
@@ -134,7 +165,10 @@ namespace Synix_Control_Panel.SynixEngine
 					server.Port,
 					server.QueryPort,
 					server.EnableRcon ? server.RconPort : 0,
-					server.AppPort ?? 0
+					server.AppPort ?? 0,
+					MinecraftControlProfile.IsJava(server)
+						? server.MinecraftManagementPort
+						: 0
 				})
 				.Where(port => port is >= 1 and <= 65535)
 				.ToHashSet();

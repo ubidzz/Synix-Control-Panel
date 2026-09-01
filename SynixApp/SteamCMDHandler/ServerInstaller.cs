@@ -654,16 +654,36 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			string minecraftLoader = MinecraftMetadataService.VanillaLoader;
 			string minecraftLoaderVersion = "Official";
 			string forgeArtifactVersion = "";
+			string neoForgeArtifactVersion = "";
 			string expectedDownloadSha1 = "";
 			MinecraftMetadataService.MinecraftVersionMetadata? minecraftMetadata = null;
+			bool isBedrock = MinecraftControlProfile.IsBedrock(server);
 
 			if (blueprint.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
-				minecraftLoader = MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader);
-				logCallback?.Invoke($"Querying official metadata for Minecraft {minecraftLoader}...");
 				try
 				{
+					if (MinecraftControlProfile.IsBedrock(server))
+					{
+						logCallback?.Invoke("Querying the official Minecraft Bedrock server package...");
+						MinecraftMetadataService.BedrockServerMetadata bedrockMetadata =
+							await MinecraftMetadataService.GetBedrockServerMetadataAsync();
+						server.MinecraftEdition = MinecraftControlProfile.BedrockEdition;
+						server.GameVersion = bedrockMetadata.Version;
+						server.MinecraftLoader = MinecraftMetadataService.VanillaLoader;
+						server.MinecraftLoaderVersion = "Official";
+						server.RequiredJavaVersion = 0;
+						downloadUrl = bedrockMetadata.DownloadUri.AbsoluteUri;
+						fileName = $"bedrock-server-{bedrockMetadata.Version}.zip";
+						logCallback?.Invoke(
+							$"Resolved Minecraft Bedrock Dedicated Server {bedrockMetadata.Version}.");
+					}
+					else
+					{
+					minecraftLoader = MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader);
+					logCallback?.Invoke($"Querying official metadata for Minecraft Java {minecraftLoader}...");
 					minecraftMetadata = await MinecraftMetadataService.GetVersionMetadataAsync(server.GameVersion);
+					server.MinecraftEdition = MinecraftControlProfile.JavaEdition;
 					server.GameVersion = minecraftMetadata.Version;
 					requiredJava = minecraftMetadata.JavaMajorVersion;
 					server.RequiredJavaVersion = requiredJava;
@@ -702,6 +722,26 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 							logCallback?.Invoke("[WARNING] Forge checksum metadata was unavailable; HTTPS transport validation remains active.");
 						}
 					}
+					else if (minecraftLoader == MinecraftMetadataService.NeoForgeLoader)
+					{
+						Uri neoForgeInstallerUri = await MinecraftMetadataService.GetNeoForgeInstallerUriAsync(
+							server.GameVersion,
+							minecraftLoaderVersion);
+						downloadUrl = neoForgeInstallerUri.AbsoluteUri;
+						neoForgeArtifactVersion = Uri.UnescapeDataString(
+							neoForgeInstallerUri.Segments[^2].TrimEnd('/'));
+						fileName = "neoforge-installer.jar";
+						try
+						{
+							expectedDownloadSha1 = (await _httpClient.GetStringAsync(downloadUrl + ".sha1"))
+								.Trim()
+								.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries)[0];
+						}
+						catch
+						{
+							logCallback?.Invoke("[WARNING] NeoForge checksum metadata was unavailable; HTTPS transport validation remains active.");
+						}
+					}
 					else
 					{
 						downloadUrl = minecraftMetadata.ServerDownloadUrl;
@@ -710,7 +750,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					}
 
 					logCallback?.Invoke(
-						$"Resolved Minecraft {server.GameVersion}, {minecraftLoader} {minecraftLoaderVersion}, Java {requiredJava}.");
+						$"Resolved Minecraft Java {server.GameVersion}, {minecraftLoader} {minecraftLoaderVersion}, Java {requiredJava}.");
+
+					}
 				}
 				catch (Exception ex)
 				{
@@ -813,7 +855,10 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					logCallback?.Invoke($"[SYSTEM] Unzipping {fileName} into server directory... Please wait.");
 
-					System.IO.Compression.ZipFile.ExtractToDirectory(fullFilePath, server.InstallPath, overwriteFiles: true);
+					if (isBedrock)
+						ExtractBedrockArchive(fullFilePath, server.InstallPath);
+					else
+						System.IO.Compression.ZipFile.ExtractToDirectory(fullFilePath, server.InstallPath, overwriteFiles: true);
 
 					File.Delete(fullFilePath);
 					logCallback?.Invoke("[SYSTEM] Extraction complete. Temporary archive deleted.");
@@ -827,7 +872,16 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 			try
 			{
-				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+				if (isBedrock &&
+					!File.Exists(Path.Combine(
+						server.InstallPath,
+						MinecraftControlProfile.BedrockExecutableName)))
+				{
+					logCallback?.Invoke("[CRITICAL] The official Bedrock package did not contain bedrock_server.exe.");
+					return -1;
+				}
+
+				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase) && !isBedrock)
 				{
 					string runtimeFolder = Path.Combine(Core.RuntimesPath, $"Java{requiredJava}");
 
@@ -921,6 +975,25 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						if (forgeResult != 0)
 							return forgeResult;
 					}
+					else if (minecraftLoader == MinecraftMetadataService.NeoForgeLoader)
+					{
+						if (Core.GetSystemJavaVersion() < requiredJava &&
+							javaExecutable.Equals("java", StringComparison.OrdinalIgnoreCase))
+						{
+							logCallback?.Invoke(
+								$"[CRITICAL] NeoForge installation requires Java {requiredJava}. Portable Java installation was not completed.");
+							return -1;
+						}
+
+						int neoForgeResult = await InstallNeoForgeServerAsync(
+							server,
+							javaExecutable,
+							fullFilePath,
+							neoForgeArtifactVersion,
+							logCallback!);
+						if (neoForgeResult != 0)
+							return neoForgeResult;
+					}
 
 					if (minecraftLoader != MinecraftMetadataService.VanillaLoader)
 					{
@@ -931,9 +1004,14 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					logCallback?.Invoke($"[SYSTEM] Generating Minecraft {minecraftLoader} Start.bat bootstrapper...");
 					string batPath = Path.Combine(server.InstallPath, "Start.bat");
 
-					string launchCommand = minecraftLoader == MinecraftMetadataService.ForgeLoader
-						? BuildForgeLaunchCommand(server, javaExeCmd, forgeArtifactVersion)
-						: $"{javaExeCmd} %*";
+					string launchCommand = minecraftLoader switch
+					{
+						MinecraftMetadataService.ForgeLoader =>
+							BuildForgeLaunchCommand(server, javaExeCmd, forgeArtifactVersion),
+						MinecraftMetadataService.NeoForgeLoader =>
+							BuildNeoForgeLaunchCommand(server, javaExeCmd, neoForgeArtifactVersion),
+						_ => $"{javaExeCmd} %*"
+					};
 					File.WriteAllText(
 						batPath,
 						$"@echo off\r\n{launchCommand}\r\nexit /b %errorlevel%\r\n");
@@ -948,6 +1026,29 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 			Core.Instance.UpdateGridStatus();
 			return 0;
+		}
+
+		private static void ExtractBedrockArchive(string archivePath, string installPath)
+		{
+			Dictionary<string, byte[]> protectedFiles = new(StringComparer.OrdinalIgnoreCase);
+			foreach (string relativePath in new[]
+			{
+				"server.properties",
+				"allowlist.json",
+				"permissions.json"
+			})
+			{
+				string fullPath = Path.Combine(installPath, relativePath);
+				if (File.Exists(fullPath))
+					protectedFiles[relativePath] = File.ReadAllBytes(fullPath);
+			}
+
+			System.IO.Compression.ZipFile.ExtractToDirectory(
+				archivePath,
+				installPath,
+				overwriteFiles: true);
+			foreach ((string relativePath, byte[] content) in protectedFiles)
+				File.WriteAllBytes(Path.Combine(installPath, relativePath), content);
 		}
 
 		private static async Task<int> InstallForgeServerAsync(
@@ -1018,6 +1119,100 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				logCallback?.Invoke($"[CRITICAL] Forge installation failed: {ex.Message}");
 				return -1;
 			}
+		}
+
+		private static async Task<int> InstallNeoForgeServerAsync(
+			GameServer server,
+			string javaExecutable,
+			string installerPath,
+			string neoForgeArtifactVersion,
+			Action<string> logCallback)
+		{
+			if (!File.Exists(installerPath))
+			{
+				logCallback?.Invoke("[CRITICAL] The downloaded NeoForge installer is missing.");
+				return -1;
+			}
+
+			logCallback?.Invoke(
+				$"[NEOFORGE] Installing NeoForge {server.MinecraftLoaderVersion} for Minecraft {server.GameVersion}...");
+			ProcessStartInfo startInfo = new()
+			{
+				FileName = javaExecutable,
+				WorkingDirectory = server.InstallPath,
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true
+			};
+			startInfo.ArgumentList.Add("-jar");
+			startInfo.ArgumentList.Add(installerPath);
+			startInfo.ArgumentList.Add("--installServer");
+
+			try
+			{
+				using Process installer = new() { StartInfo = startInfo };
+				if (!installer.Start())
+					throw new InvalidOperationException("Windows could not start the NeoForge installer.");
+
+				Task<string> outputTask = installer.StandardOutput.ReadToEndAsync();
+				Task<string> errorTask = installer.StandardError.ReadToEndAsync();
+				using CancellationTokenSource timeout = new(TimeSpan.FromMinutes(10));
+				try
+				{
+					await installer.WaitForExitAsync(timeout.Token);
+				}
+				catch (OperationCanceledException)
+				{
+					try { installer.Kill(entireProcessTree: true); } catch { }
+					throw new TimeoutException("The NeoForge installer did not finish within 10 minutes.");
+				}
+
+				LogProcessOutput(await outputTask, "NEOFORGE", logCallback!);
+				LogProcessOutput(await errorTask, "NEOFORGE", logCallback!);
+				if (installer.ExitCode != 0)
+				{
+					logCallback?.Invoke($"[CRITICAL] NeoForge installer exited with code {installer.ExitCode}.");
+					return installer.ExitCode;
+				}
+
+				_ = BuildNeoForgeLaunchCommand(
+					server,
+					QuoteCommandArgument(javaExecutable),
+					neoForgeArtifactVersion);
+				try { File.Delete(installerPath); } catch { }
+				logCallback?.Invoke("[NEOFORGE] Server loader installed successfully.");
+				return 0;
+			}
+			catch (Exception ex)
+			{
+				logCallback?.Invoke($"[CRITICAL] NeoForge installation failed: {ex.Message}");
+				return -1;
+			}
+		}
+
+		private static string BuildNeoForgeLaunchCommand(
+			GameServer server,
+			string javaExeCmd,
+			string neoForgeArtifactVersion)
+		{
+			string argsPath = Path.Combine(
+				server.InstallPath,
+				"libraries",
+				"net",
+				"neoforged",
+				"neoforge",
+				neoForgeArtifactVersion,
+				"win_args.txt");
+			if (!File.Exists(argsPath))
+			{
+				throw new FileNotFoundException(
+					"NeoForge completed but its Windows launch argument file is missing.",
+					argsPath);
+			}
+
+			string relativeArgsPath = Path.GetRelativePath(server.InstallPath, argsPath);
+			return $"{javaExeCmd} %* @\"{relativeArgsPath}\" nogui";
 		}
 
 		private static string BuildForgeLaunchCommand(

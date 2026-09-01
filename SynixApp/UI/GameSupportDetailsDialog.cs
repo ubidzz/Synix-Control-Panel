@@ -94,11 +94,15 @@ namespace Synix_Control_Panel.SynixEngine
 				"Server program and connections",
 				new[]
 				{
-					("Server program", game.ExeName),
+					("Server program", GameDatabase.IsMinecraft(game.Game)
+						? "Java: Start.bat • Bedrock: bedrock_server.exe"
+						: game.ExeName),
 					("Steam App ID", string.IsNullOrWhiteSpace(game.AppID) ? "Not used" : game.AppID),
 					("Default ports", FormatPorts(game)),
 					("Player details", GetPlayerDetails(game)),
-					("Crossplay option", capabilities.HasFlag(GameManagementCapability.Crossplay) ? "Available in Synix" : "Not listed in this game definition"),
+					("Crossplay option", GameDatabase.IsMinecraft(game.Game)
+						? "Bedrock supports Bedrock clients across supported platforms"
+						: capabilities.HasFlag(GameManagementCapability.Crossplay) ? "Available in Synix" : "Not listed in this game definition"),
 					("Status check", FormatProbe(game))
 				});
 
@@ -109,7 +113,9 @@ namespace Synix_Control_Panel.SynixEngine
 					("Configuration file", FormatConfigurationFile(game)),
 					("Server window", game.LaunchBehavior.RequiresVisibleWindow ? "Visible while the server runs" : "Runs in the background when supported"),
 					("Process tracking", game.LaunchBehavior.LifecycleTracking == GameLifecycleTrackingMode.ExternalDeployment ? "External deployment" : "Synix-managed server process"),
-					("Required launch files", game.RequiredLaunchFiles.Length == 0 ? "None" : string.Join(", ", game.RequiredLaunchFiles.Select(Path.GetFileName)))
+					("Required launch files", GameDatabase.IsMinecraft(game.Game)
+						? "Edition-specific and verified after installation"
+						: game.RequiredLaunchFiles.Length == 0 ? "None" : string.Join(", ", game.RequiredLaunchFiles.Select(Path.GetFileName)))
 				},
 				"A support status describes Synix's current definition. It does not mean the game itself lacks features that are not listed here.");
 		}
@@ -176,6 +182,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static string FormatPorts(GameInfo game)
 		{
+			if (GameDatabase.IsMinecraft(game.Game))
+				return "Java 25565 • Bedrock UDP 19132 and IPv6 UDP 19133";
+
 			List<string> ports = [];
 			if (game.Port > 0)
 				ports.Add($"game {game.Port}");
@@ -190,11 +199,13 @@ namespace Synix_Control_Panel.SynixEngine
 			GameDatabase.GetProbeProtocol(game) == ServerProbeProtocol.A2S
 				? "Named players and player count"
 				: GameDatabase.IsMinecraft(game.Game)
-					? "Player count"
+					? "Player count; Java player names when local management or RCON is available"
 					: "Not available from the current status check";
 
 		private static string FormatProbe(GameInfo game) =>
-			GameDatabase.GetProbeProtocol(game) switch
+			GameDatabase.IsMinecraft(game.Game)
+				? "Java status protocol or Bedrock RakNet status"
+				: GameDatabase.GetProbeProtocol(game) switch
 			{
 				ServerProbeProtocol.A2S => "Steam server query",
 				ServerProbeProtocol.EpicOnlineServices => "Epic Online Services",

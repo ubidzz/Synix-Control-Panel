@@ -5,6 +5,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -120,7 +121,7 @@ namespace Synix_Control_Panel.SynixEngine
 			_detections = ExistingServerImport.Detect(_folderBox.Text);
 			_gameBox.Items.Clear();
 			foreach (ExistingServerDetection detection in _detections)
-				_gameBox.Items.Add(detection.Game.Game);
+				_gameBox.Items.Add(detection.DisplayName);
 
 			_gameBox.Enabled = _detections.Count > 0;
 			_importButton.Enabled = _detections.Count > 0;
@@ -135,7 +136,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			_gameBox.SelectedIndex = 0;
 			_detectionStatus.Text = _detections.Count == 1
-				? $"Found {_detections[0].Game.Game}."
+				? $"Found {_detections[0].DisplayName}."
 				: $"Found {_detections.Count} possible server programs. Select the correct game below.";
 			_detectionStatus.ForeColor = SettingsPalette.Success;
 		}
@@ -146,12 +147,18 @@ namespace Synix_Control_Panel.SynixEngine
 			if (detection == null)
 				return;
 
-			_nameBox.Text = MakeUniqueName(detection.Game.Game);
+			_nameBox.Text = MakeUniqueName(detection.DisplayName);
+			int defaultGamePort = detection.MinecraftEdition == MinecraftControlProfile.BedrockEdition
+				? MinecraftControlProfile.BedrockDefaultPort
+				: detection.Game.Port;
+			int defaultQueryPort = detection.MinecraftEdition == MinecraftControlProfile.BedrockEdition
+				? MinecraftControlProfile.BedrockDefaultIpv6Port
+				: detection.Game.QueryPort;
 			_gamePort.Value = ExistingServerImport.FindAvailablePort(
-				detection.Game.Port,
+				defaultGamePort,
 				MainGUI.serverList);
 			_queryPort.Value = ExistingServerImport.FindAvailablePort(
-				detection.Game.QueryPort,
+				defaultQueryPort,
 				MainGUI.serverList.Concat([new GameServer { Port = (int)_gamePort.Value }]));
 		}
 
@@ -170,7 +177,8 @@ namespace Synix_Control_Panel.SynixEngine
 					_nameBox.Text,
 					(int)_gamePort.Value,
 					(int)_queryPort.Value,
-					MainGUI.serverList);
+					MainGUI.serverList,
+					detection.MinecraftEdition);
 				MainGUI.serverList.Add(ImportedServer);
 				await Core.RefreshServerIconAsync(ImportedServer);
 				if (!Synix_Control_Panel.SynixApp.FileFolderHandler.FileHandler.SaveServers())

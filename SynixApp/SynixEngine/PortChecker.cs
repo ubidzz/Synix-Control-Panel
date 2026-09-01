@@ -11,6 +11,8 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.ServerHandler;
+using System.Buffers.Binary;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
@@ -381,6 +383,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private async Task<bool> UpdateMinecraftPlayerCount(GameServer server, string ip)
 		{
+			if (MinecraftControlProfile.IsBedrock(server))
+				return await UpdateMinecraftBedrockPlayerCount(server, ip);
+
 			try
 			{
 				using var tcpClient = new System.Net.Sockets.TcpClient();
@@ -445,6 +450,56 @@ namespace Synix_Control_Panel.SynixEngine
 			catch { }
 
 			return false;
+		}
+
+		private static async Task<bool> UpdateMinecraftBedrockPlayerCount(
+			GameServer server,
+			string ip)
+		{
+			ReadOnlySpan<byte> offlineMessageDataId =
+				[0x00, 0xFF, 0xFF, 0x00, 0xFE, 0xFE, 0xFE, 0xFE,
+				 0xFD, 0xFD, 0xFD, 0xFD, 0x12, 0x34, 0x56, 0x78];
+			byte[] request = new byte[33];
+			request[0] = 0x01;
+			BinaryPrimitives.WriteInt64BigEndian(request.AsSpan(1, 8), DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+			offlineMessageDataId.CopyTo(request.AsSpan(9, 16));
+			BinaryPrimitives.WriteInt64BigEndian(request.AsSpan(25, 8), Environment.TickCount64);
+
+			try
+			{
+				using UdpClient client = new(AddressFamily.InterNetwork);
+				client.Connect(ip, server.Port);
+				using CancellationTokenSource timeout = new(TimeSpan.FromMilliseconds(1500));
+				await client.SendAsync(request, timeout.Token);
+				byte[] response = (await client.ReceiveAsync(timeout.Token)).Buffer;
+				const int textLengthOffset = 33;
+				const int textOffset = 35;
+				if (response.Length < textOffset || response[0] != 0x1C)
+					return false;
+
+				int textLength = BinaryPrimitives.ReadUInt16BigEndian(
+					response.AsSpan(textLengthOffset, 2));
+				if (textLength <= 0 || response.Length < textOffset + textLength)
+					return false;
+
+				string[] fields = Encoding.UTF8
+					.GetString(response, textOffset, textLength)
+					.Split(';');
+				if (fields.Length < 6 ||
+					!int.TryParse(fields[4], out int online) ||
+					!int.TryParse(fields[5], out int maximum))
+				{
+					return false;
+				}
+
+				server.CurrentPlayers = online;
+				server.MaxPlayersFromQuery = maximum;
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 	}
 }

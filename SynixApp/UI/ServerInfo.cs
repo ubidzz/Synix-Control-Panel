@@ -13,7 +13,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.Help
@@ -177,7 +179,7 @@ namespace Synix_Control_Panel.Help
 			lblRconPortText.Text = _server.RconPort.ToString();
 			lblAppPortText.Text = _server.AppPort?.ToString() ?? "N/A";
 			lblServerNameText.Text = DisplayOrFallback(_server.ServerName);
-			lblGameServerText.Text = DisplayOrFallback(_server.Game);
+			lblGameServerText.Text = DisplayOrFallback(_server.DisplayGameName);
 			lblMapText.Text = DisplayOrFallback(_server.WorldName, "Not Required");
 			lblSeedText.Text = DisplayOrFallback(_server.WorldSeed, "Not Required");
 			lblCompetitiveText.Text = DisplayOrFallback(_server.GameMode, "Not Required");
@@ -191,8 +193,9 @@ namespace Synix_Control_Panel.Help
 				? DisplayOrFallback(passwords.AdminPassword, "Not Required")
 				: "Password unavailable";
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
-			lblGameVersion.Text = _server.Game == "Minecraft"
-				? DisplayOrFallback(_server.GameVersion, "Latest")
+			lblGameVersion.Text = GameDatabase.IsMinecraft(_server.Game)
+				? $"{MinecraftControlProfile.NormalizeEdition(_server.MinecraftEdition)} • " +
+					DisplayOrFallback(_server.GameVersion, "Latest")
 				: "N/A";
 
 			txtServerFolderValue.Text = DisplayOrFallback(_server.InstallPath);
