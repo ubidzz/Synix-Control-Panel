@@ -34,6 +34,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		string BackupFolder,
 		bool RestartRequired);
 
+	internal sealed record ModImportSecurityContext(bool IsCurrentProcessElevated)
+	{
+		internal static ModImportSecurityContext CaptureCurrent() =>
+			new(ModSecurityScanner.IsCurrentProcessElevated());
+	}
+
 	internal sealed class ModInstallationLedger
 	{
 		public int SchemaVersion { get; set; } = 1;
@@ -266,13 +272,15 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			ModInstallTarget target,
 			string packagePath,
 			string? expectedPackageSha256 = null,
-			string? securityReviewSummary = null)
+			string? securityReviewSummary = null,
+			ModImportSecurityContext? securityContext = null)
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(profile);
 			ArgumentNullException.ThrowIfNull(target);
 			EnsureStopped(server);
-			if (ModSecurityScanner.IsCurrentProcessElevated())
+			securityContext ??= ModImportSecurityContext.CaptureCurrent();
+			if (securityContext.IsCurrentProcessElevated)
 			{
 				throw new InvalidOperationException(
 					"Restart Synix normally instead of using Run as administrator before installing add-ons. This prevents mod code from inheriting administrator access.");

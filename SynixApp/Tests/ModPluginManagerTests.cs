@@ -275,10 +275,52 @@ public sealed class ModPluginManagerTests
 					profile,
 					target,
 					package,
-					new string('0', 64)));
+					new string('0', 64),
+					securityContext: new(false)));
 
 			Assert.Contains("changed after its security review", exception.Message, StringComparison.OrdinalIgnoreCase);
 			Assert.False(File.Exists(Path.Combine(root, "plugins", "Changed.cs")));
+		}
+		finally
+		{
+			ModPackageManager.DataRootOverride = previousDataRoot;
+			Directory.Delete(root, true);
+			Directory.Delete(dataRoot, true);
+			Directory.Delete(sourceRoot, true);
+		}
+	}
+
+	[Fact]
+	public void ImportRefusesAnElevatedSynixSecurityContext()
+	{
+		string root = CreateTestDirectory();
+		string dataRoot = CreateTestDirectory();
+		string sourceRoot = CreateTestDirectory();
+		string? previousDataRoot = ModPackageManager.DataRootOverride;
+		try
+		{
+			ModPackageManager.DataRootOverride = dataRoot;
+			string package = Path.Combine(sourceRoot, "Example.cs");
+			File.WriteAllText(package, "class Example {}");
+			GameServer server = new()
+			{
+				Game = "Test Game",
+				ServerName = "elevated-import-test",
+				InstallPath = root,
+				Status = "Stopped"
+			};
+			ModInstallTarget target = CreateFileTarget(".cs");
+
+			InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+				ModPackageManager.Import(
+					server,
+					CreateManagedProfile(target),
+					target,
+					package,
+					securityContext: new(true)));
+
+			Assert.Contains("Run as administrator", exception.Message, StringComparison.OrdinalIgnoreCase);
+			Assert.False(File.Exists(Path.Combine(root, "plugins", "Example.cs")));
 		}
 		finally
 		{
@@ -459,7 +501,12 @@ public sealed class ModPluginManagerTests
 				Targets = [target]
 			};
 
-			ModImportResult import = ModPackageManager.Import(server, profile, target, package);
+			ModImportResult import = ModPackageManager.Import(
+				server,
+				profile,
+				target,
+				package,
+				securityContext: new(false));
 			ModInventoryItem item = Assert.Single(ModPackageManager.Scan(server, profile));
 			Assert.Equal("new-version", File.ReadAllText(installedFile));
 			Assert.Equal("Healthy", item.Status);
@@ -521,7 +568,12 @@ public sealed class ModPluginManagerTests
 			};
 
 			Assert.Throws<InvalidDataException>(() =>
-				ModPackageManager.Import(server, profile, target, archivePath));
+				ModPackageManager.Import(
+					server,
+					profile,
+					target,
+					archivePath,
+					securityContext: new(false)));
 			Assert.False(File.Exists(Path.Combine(root, "outside.cs")));
 		}
 		finally
