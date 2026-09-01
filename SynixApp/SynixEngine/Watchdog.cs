@@ -91,19 +91,16 @@ namespace Synix_Control_Panel.SynixEngine
 
 										if (isResponding)
 										{
-											MainGUI.Instance?.Invoke((Action)(() =>
-											{
-												server.HasAnnouncedOnline = true;
-												_ = SendDiscordNotification(
-													server,
-													DiscordNotificationEvent.ServerOnline,
-													"SERVER ONLINE",
-													"Synix successfully verified server connectivity.",
-													Color.LimeGreen);
+											server.HasAnnouncedOnline = true;
+											_ = SendDiscordNotification(
+												server,
+												DiscordNotificationEvent.ServerOnline,
+												"SERVER ONLINE",
+												"Synix successfully verified server connectivity.",
+												Color.LimeGreen);
 
-												server.Status = StatusManager.GetStatus(ServerState.Running);
-												MainGUI.Instance.UpdateGrid();
-											}));
+											server.Status = StatusManager.GetStatus(ServerState.Running);
+											UpdateGridStatus();
 										}
 									}
 									catch (Exception ex)
@@ -123,10 +120,7 @@ namespace Synix_Control_Panel.SynixEngine
 						server.Status = StatusManager.GetStatus(ServerState.Stopped);
 						server.IsProbing = false;
 
-						MainGUI.Instance?.Invoke((Action)(() =>
-						{
-							MainGUI.Instance.UpdateGrid();
-						}));
+						UpdateGridStatus();
 
 						Log($"[Watchdog] {server.Game} process terminated during startup. Aborting sequence.");
 					}

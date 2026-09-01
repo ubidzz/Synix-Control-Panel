@@ -188,16 +188,24 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!Core.Instance.PassResourceGuard(out string guardMsg))
 				{
 					logCallback?.Invoke(guardMsg, Color.Orange);
-					MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
+						MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 
-				if (server.BackupOnStart && context != StartContext.CrashRecovery)
+				bool maintenanceBackup = context == StartContext.Scheduled &&
+					server.SmartMaintenanceEnabled &&
+					server.MaintenanceBackupBeforeRestart;
+				if ((server.BackupOnStart || maintenanceBackup) &&
+					context != StartContext.CrashRecovery)
 				{
 					await Task.Run(() => Core.Instance.ExecuteBackup(server, context));
 				}
 
-				if (server.UpdateOnStart)
+				bool maintenanceUpdate = context == StartContext.Scheduled &&
+					server.SmartMaintenanceEnabled &&
+					server.MaintenanceUpdateBeforeRestart;
+				if (server.UpdateOnStart || maintenanceUpdate)
 				{
 					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
 				}
@@ -269,7 +277,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							"SERVER FILE MISSING",
 							"The configured server launch file is missing. Run Update or Validate before starting.",
 							Color.Red);
-						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
+						server.Status = StatusManager.GetStatus(ServerState.Stopped);
+						Core.Instance.UpdateGridStatus();
 						return;
 					}
 
@@ -303,7 +312,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							"UNSAFE STARTUP BLOCKED",
 							argumentError,
 							Color.Red);
-						MainGUI.Instance?.Invoke((Action)(() => server.Status = StatusManager.GetStatus(ServerState.Stopped)));
+						server.Status = StatusManager.GetStatus(ServerState.Stopped);
+						Core.Instance.UpdateGridStatus();
 						return;
 					}
 

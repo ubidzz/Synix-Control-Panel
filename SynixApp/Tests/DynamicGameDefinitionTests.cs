@@ -120,6 +120,23 @@ public sealed class DynamicGameDefinitionTests
 	}
 
 	[Fact]
+	public void SevenDaysToDieUsesTheInstalledDedicatedServerLaunchContract()
+	{
+		GameInfo sevenDays = GameDatabase.GetGame("7 Days to Die")!;
+
+		Assert.Equal("7DaysToDieServer.exe", sevenDays.ExeName);
+		Assert.True(sevenDays.DefinitionRevision >= 2);
+		Assert.Contains("-configfile=\"serverconfig.xml\"", sevenDays.RequiredArgs);
+		Assert.Contains("-logfile \"output_log_dedi_synix.txt\"", sevenDays.RequiredArgs);
+		Assert.EndsWith("-dedicated", sevenDays.RequiredArgs);
+		Assert.DoesNotContain("-SteamAppId", sevenDays.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+		Assert.DoesNotContain("-GameWorld", sevenDays.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+		Assert.Equal(
+			["Navezgane", "Pregen06k01", "Pregen06k02", "Pregen08k01", "Pregen08k02", "RWG"],
+			sevenDays.Maps);
+	}
+
+	[Fact]
 	public void DuneSpecialBehaviorComesFromItsValidatedDefinition()
 	{
 		GameInfo dune = GameDatabase.GetGame("Dune: Awakening")!;

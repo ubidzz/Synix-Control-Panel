@@ -121,6 +121,16 @@ namespace Synix_Control_Panel
 
 		private void AddGuidanceMenuItems()
 		{
+			ToolStripMenuItem playerManagement = new("Player Management Center");
+			playerManagement.Click += (_, _) =>
+			{
+				GameServer? server = GetSelectedServer();
+				if (server == null)
+					return;
+				using PlayerManagementCenter dialog = new(server);
+				dialog.ShowDialog(this);
+			};
+
 			ToolStripMenuItem connectionInformation = new("Connection Information");
 			connectionInformation.Click += (_, _) =>
 			{
@@ -144,6 +154,7 @@ namespace Synix_Control_Panel
 			int insertAt = contextMenuStrip.Items.IndexOf(toolStripSeparator3);
 			if (insertAt < 0)
 				insertAt = contextMenuStrip.Items.Count;
+			contextMenuStrip.Items.Insert(insertAt++, playerManagement);
 			contextMenuStrip.Items.Insert(insertAt++, liveProcessDetails);
 			contextMenuStrip.Items.Insert(insertAt, connectionInformation);
 		}
@@ -702,8 +713,27 @@ namespace Synix_Control_Panel
 
 		private async void btnAddServer_Click(object sender, EventArgs e)
 		{
-			if (isInitializing) return;
-			await Core.Instance.AddServerAndReport();
+			if (isInitializing)
+				return;
+
+			using AddServerChoiceDialog choice = new();
+			if (choice.ShowDialog(this) != DialogResult.OK)
+				return;
+
+			switch (choice.SelectedChoice)
+			{
+				case AddServerChoice.CreateNew:
+					await Core.Instance.AddServerAndReport();
+					break;
+				case AddServerChoice.ImportExisting:
+					using (ExistingServerImportWizard import = new())
+						import.ShowDialog(this);
+					break;
+				case AddServerChoice.BrowseCatalog:
+					using (GameSupportCatalog catalog = new())
+						catalog.ShowDialog(this);
+					break;
+			}
 		}
 
 		private async void btnEdit_Click(object sender, EventArgs e)
@@ -1226,6 +1256,7 @@ namespace Synix_Control_Panel
 					MessageBoxIcon.Information);
 
 				await FileHandler.FlushLogsAsync();
+				BackgroundServiceManager.SuppressStartForCurrentProcess();
 				Core.LaunchPreparedUpdate(prepared);
 				_updateShutdownRequested = true;
 				isDownloadActive = false;

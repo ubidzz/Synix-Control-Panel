@@ -486,11 +486,12 @@ namespace Synix_Control_Panel.SynixEngine
 					catch (Exception exception)
 					{
 						Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
-						MessageBox.Show(
-							$"The Rust {ManifestMessage} completed, but Oxide could not be reapplied. Synix will block the modded server from starting until you retry with Update or Validate.\n\n{exception.Message}",
-							"Oxide Update Failed",
-							MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
+						if (!IsBackgroundServiceMode)
+							MessageBox.Show(
+								$"The Rust {ManifestMessage} completed, but Oxide could not be reapplied. Synix will block the modded server from starting until you retry with Update or Validate.\n\n{exception.Message}",
+								"Oxide Update Failed",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Error);
 						_ = SendDiscordNotification(
 							server,
 							failedEvent,
@@ -684,6 +685,14 @@ namespace Synix_Control_Panel.SynixEngine
 				 !string.IsNullOrWhiteSpace(server.SteamAccountName)))
 			{
 				return true;
+			}
+			if (IsBackgroundServiceMode)
+			{
+				Log(
+					$"[STEAM LOGIN] {server.ServerName} needs a Steam account name. Open Synix and start or update it manually once.",
+					Color.Orange,
+					true);
+				return false;
 			}
 
 			using SteamAccountLoginDialog loginDialog = new(
@@ -920,7 +929,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async Task ExecuteStartSequence(GameServer server, string status = "")
+		public async Task<bool> ExecuteStartSequence(GameServer server, string status = "")
 		{
 			ServerOperationKind operationKind = string.IsNullOrWhiteSpace(status)
 				? ServerOperationKind.Start
@@ -930,7 +939,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!operation.Acquired)
 			{
 				Log($"[START BLOCKED] {operation.FailureReason}", Color.Orange, true);
-				return;
+				return false;
 			}
 
 			StartContext currentContext = status.Equals("MAINTENANCE", StringComparison.OrdinalIgnoreCase)
@@ -945,17 +954,18 @@ namespace Synix_Control_Panel.SynixEngine
 				if (!PassResourceGuard(out string guardMsg))
 				{
 					Log(guardMsg, System.Drawing.Color.Red, true);
-					MessageBox.Show(guardMsg, "System Resource Exhaustion",
-						System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
-					return;
+					if (!IsBackgroundServiceMode)
+						MessageBox.Show(guardMsg, "System Resource Exhaustion",
+							System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+					return false;
 				}
 
 				if (!await EnsureSteamAuthenticationAfterImport(server, status))
-					return;
+					return false;
 
 				bool showInteractiveErrors = string.IsNullOrWhiteSpace(status) ||
 					status.Equals("RESTART", StringComparison.OrdinalIgnoreCase);
-				if (!ValidateIntegrityAndReport(server, showInteractiveErrors)) return;
+				if (!ValidateIntegrityAndReport(server, showInteractiveErrors)) return false;
 				SafetyChecklistReport safetyReport = UserGuidance.BuildSafetyChecklist(server);
 				if (!safetyReport.CanContinue)
 				{
@@ -969,7 +979,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"start the server safely",
 							blocked.Details);
 					}
-					return;
+					return false;
 				}
 				Log(
 					$"[SAFETY CHECK] Automatic checklist passed at {safetyReport.CompletionPercentage}% readiness.",
@@ -982,12 +992,13 @@ namespace Synix_Control_Panel.SynixEngine
 					if (!configurationResult.Succeeded)
 					{
 						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
-						MessageBox.Show(
-							configurationResult.Message,
-							"Configuration Could Not Be Applied",
-							MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
-						return;
+						if (showInteractiveErrors)
+							MessageBox.Show(
+								configurationResult.Message,
+								"Configuration Could Not Be Applied",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Error);
+						return false;
 					}
 
 					if (!configurationResult.Complete)
@@ -1002,14 +1013,19 @@ namespace Synix_Control_Panel.SynixEngine
 					FileHandler.SaveServers();
 				}
 				bool displayedFirstBootWarning = server.IsFirstBoot;
-				if (ShouldBlockForConfig(server)) return;
+				if (server.IsFirstBoot && !showInteractiveErrors)
+				{
+					Log($"[SETUP REQUIRED] {server.ServerName} must be started manually once to complete its first-start setup.", Color.Orange, true);
+					return false;
+				}
+				if (ShouldBlockForConfig(server)) return false;
 				if (!EnsureRequiredLaunchFilesAndReport(
 					server,
-					showDialog:
+					showDialog: showInteractiveErrors &&
 						!displayedFirstBootWarning &&
 						!status.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase)))
 				{
-					return;
+					return false;
 				}
 
 				if (status == "RESTART")
@@ -1052,16 +1068,16 @@ namespace Synix_Control_Panel.SynixEngine
 							$"[RESTART BLOCKED] {server.ServerName} was not fully shut down, so Synix will not launch a second copy.",
 							Color.Red,
 							true);
-						return;
+						return false;
 					}
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 				{
 					Log($"[SYNIX] Starting the {server.ServerName} server.", Color.Cyan, true);
-					if (!PassSpamLock(server, out string lockMsg, "Start")) { Log(lockMsg, System.Drawing.Color.Orange); return; }
+					if (!PassSpamLock(server, out string lockMsg, "Start")) { Log(lockMsg, System.Drawing.Color.Orange); return false; }
 
-					await Servers.Start(server, (msg, Color) => MainGUI.Instance?.Invoke((Action)(() => Log(msg, Color))), currentContext);
+					await Servers.Start(server, (message, color) => Log(message, color), currentContext);
 				}
 				else
 				{
@@ -1071,6 +1087,8 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 				}
 				stopServer = false;
+				return server.Status == StatusManager.GetStatus(ServerState.Starting) ||
+					server.Status == StatusManager.GetStatus(ServerState.Running);
 			}
 			catch (Exception ex)
 			{
@@ -1083,6 +1101,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"complete the server action",
 							ex.ToString())));
 				}
+				return false;
 			}
 		}
 

@@ -50,7 +50,20 @@ public sealed class GameLaunchCommandBuilderTests
 			Assert.False(
 				UnresolvedLaunchPlaceholder.IsMatch(arguments),
 				$"{definition.Game} left a launch placeholder unresolved: {arguments}");
-			Assert.EndsWith("-synixCompatibilityTest 1", arguments);
+			if (definition.RequiredArgs.TrimEnd().EndsWith(
+				"-dedicated",
+				StringComparison.OrdinalIgnoreCase))
+			{
+				Assert.Contains("-synixCompatibilityTest 1", arguments);
+				Assert.EndsWith("-dedicated", arguments);
+				Assert.True(
+					arguments.IndexOf("-synixCompatibilityTest 1", StringComparison.Ordinal) <
+					arguments.LastIndexOf("-dedicated", StringComparison.OrdinalIgnoreCase));
+			}
+			else
+			{
+				Assert.EndsWith("-synixCompatibilityTest 1", arguments);
+			}
 
 			string executablePath = Path.Combine(server.InstallPath, definition.ExeName);
 			string workingDirectory = Path.GetDirectoryName(executablePath)!;

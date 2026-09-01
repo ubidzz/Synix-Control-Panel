@@ -243,6 +243,15 @@ public class GameServer
 	public string RestartTime { get; set; } = "04:00";
 	public bool[] RestartDays { get; set; } = [true, true, true, true, true, true, true];
 	public string LastMaintenanceDate { get; set; } = string.Empty;
+	public bool SmartMaintenanceEnabled { get; set; } = true;
+	public bool MaintenanceWaitForPlayers { get; set; } = true;
+	public int MaintenanceMaximumDelayMinutes { get; set; } = 30;
+	public bool MaintenanceBackupBeforeRestart { get; set; } = true;
+	public bool MaintenanceUpdateBeforeRestart { get; set; } = false;
+	[JsonIgnore]
+	public DateTime? LastMaintenanceDeferralNoticeUtc { get; set; }
+	[JsonIgnore]
+	public DateTime? MaintenanceRetryAfterUtc { get; set; }
 	[JsonIgnore]
 	public int MaxPlayersFromQuery { get; set; }
 	[JsonIgnore]
@@ -279,6 +288,7 @@ public class GameServer
 	public string PlayerCount => $"{CurrentPlayers} / {MaxPlayers}";
 	public bool UpdateOnStart { get; set; } = false;
 	public bool BackupOnStart { get; set; } = false;
+	public bool PreserveImportedConfiguration { get; set; } = false;
 	public int ManagedConfigurationVersion { get; set; }
 	public bool IsDiscordAlertEnabled { get; set; } = false;
 	public string DiscordWebhook { get; set; } = string.Empty;

@@ -223,10 +223,29 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
-				arguments = $"{arguments} {server.ExtraArgs.Trim()}";
+				arguments = AppendExtraArguments(arguments, server.ExtraArgs);
 
 			arguments = arguments.Replace("  ", " ").Trim();
 			return true;
+		}
+
+		private static string AppendExtraArguments(
+			string baseArguments,
+			string extraArguments)
+		{
+			const string terminalDedicatedArgument = "-dedicated";
+			string normalizedBase = baseArguments.Trim();
+			string normalizedExtra = extraArguments.Trim();
+			if (normalizedBase.EndsWith(
+				terminalDedicatedArgument,
+				StringComparison.OrdinalIgnoreCase))
+			{
+				string prefix = normalizedBase[..^terminalDedicatedArgument.Length]
+					.TrimEnd();
+				return $"{prefix} {normalizedExtra} {terminalDedicatedArgument}";
+			}
+
+			return $"{normalizedBase} {normalizedExtra}";
 		}
 
 		private static string PreparePublicIpArgument(

@@ -324,6 +324,18 @@ namespace Synix_Control_Panel.SynixEngine
 			GameServer server,
 			ICollection<SynixHealthItem> items)
 		{
+			if (server.PreserveImportedConfiguration)
+			{
+				items.Add(new SynixHealthItem(
+					SynixHealthLevel.Passed,
+					"Configuration health",
+					server.ServerName,
+					"This imported server keeps its existing configuration. Synix will begin managing supported values only after you open Server Settings and save changes.",
+					SynixHealthAction.None,
+					server));
+				return;
+			}
+
 			ConfigurationValidationReport report =
 				await GameFix.ValidateManagedConfiguration(server);
 			SynixHealthLevel level = report.FailedCount > 0

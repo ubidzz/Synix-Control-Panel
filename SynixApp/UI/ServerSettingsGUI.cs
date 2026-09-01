@@ -33,6 +33,11 @@ namespace Synix_Control_Panel
 		private string _oldPath = string.Empty;
 		private bool[] _selectedDays = new bool[7] { false, false, false, false, false, false, false };
 		private string _selectedTime = "04:00";
+		private bool _smartMaintenanceEnabled = true;
+		private bool _maintenanceWaitForPlayers = true;
+		private int _maintenanceMaximumDelayMinutes = 30;
+		private bool _maintenanceBackupBeforeRestart = true;
+		private bool _maintenanceUpdateBeforeRestart;
 		private System.Windows.Forms.Timer? debounceTimer;
 		private bool _PrivacyMode = false;
 		private bool _isApplyingPortOffset = false;
@@ -505,7 +510,11 @@ namespace Synix_Control_Panel
 			chkDefaultPath.Checked = _existingServer.IsDefaultPath;
 			txtExtraArgs.Text = _existingServer.ExtraArgs ?? "";
 			txtWorldSeed.Text = _existingServer.WorldSeed ?? "12345";
-			numWorldSize.Value = Math.Clamp(_existingServer.WorldSize, numWorldSize.Minimum, numWorldSize.Maximum);
+			ConfigureWorldSizeInput(gameData);
+			int worldSizeToLoad = IsSevenDaysToDie(gameData)
+				? SevenDaysToDieConfiguration.NormalizeWorldSize(_existingServer.WorldSize)
+				: _existingServer.WorldSize;
+			numWorldSize.Value = Math.Clamp(worldSizeToLoad, numWorldSize.Minimum, numWorldSize.Maximum);
 
 			chkUpdateOnStart.Checked = _existingServer.UpdateOnStart;
 			chkEnableRcon.Checked = _existingServer.EnableRcon;
@@ -514,13 +523,21 @@ namespace Synix_Control_Panel
 			chkEnableSchedule.Checked = _existingServer.IsScheduledRestartEnabled;
 			if (_existingServer.RestartDays != null) _selectedDays = (bool[])_existingServer.RestartDays.Clone();
 			_selectedTime = _existingServer.RestartTime ?? "04:00";
+			_smartMaintenanceEnabled = _existingServer.SmartMaintenanceEnabled;
+			_maintenanceWaitForPlayers = _existingServer.MaintenanceWaitForPlayers;
+			_maintenanceMaximumDelayMinutes = _existingServer.MaintenanceMaximumDelayMinutes;
+			_maintenanceBackupBeforeRestart = _existingServer.MaintenanceBackupBeforeRestart;
+			_maintenanceUpdateBeforeRestart = _existingServer.MaintenanceUpdateBeforeRestart;
 			chkBackupOnStart.Checked = _existingServer.BackupOnStart;
 			cmbGameVersion.Text = _existingServer.GameVersion ?? "latest";
 			numRam.Value = Math.Clamp(_existingServer.MaxRam, numRam.Minimum, numRam.Maximum);
 
 			if (gameData != null)
 			{
-				PopulateMaps(gameData, _existingServer.WorldName ?? "");
+				string worldNameToLoad = IsSevenDaysToDie(gameData)
+					? SevenDaysToDieConfiguration.NormalizeWorldName(_existingServer.WorldName)
+					: _existingServer.WorldName ?? "";
+				PopulateMaps(gameData, worldNameToLoad);
 				PopulateGameModes(gameData, _existingServer.GameMode ?? "PVE");
 				ToggleGameSpecificFields(gameData);
 			}
@@ -1194,6 +1211,12 @@ namespace Synix_Control_Panel
 			int qPort = (int)numQueryPort.Value;
 			int rPort = (int)numRconPort.Value;
 			int wSize = (int)numWorldSize.Value;
+			string worldName = cmbWorldName.Text;
+			if (selectedGame.Equals("7 Days to Die", StringComparison.OrdinalIgnoreCase))
+			{
+				worldName = SevenDaysToDieConfiguration.NormalizeWorldName(worldName);
+				wSize = SevenDaysToDieConfiguration.NormalizeWorldSize(wSize);
+			}
 
 			int? aPort = numAppPort.Enabled ? (int)numAppPort.Value : (int?)null;
 			bool checkRconPort = chkEnableRcon.Enabled && chkEnableRcon.Checked;
@@ -1262,7 +1285,7 @@ namespace Synix_Control_Panel
 				Password = GetEnteredValue(txtPassword),
 				AdminPassword = GetEnteredValue(txtAdminPassword),
 				MaxPlayers = (int)numMaxPlayers.Value,
-				WorldName = cmbWorldName.Text,
+				WorldName = worldName,
 				GameMode = cmbCompetitive.Text,
 				CrossplayEnabled = chkCrossplay.Checked,
 				WorldSeed = GetEnteredValue(txtWorldSeed).Trim(),
@@ -1295,6 +1318,11 @@ namespace Synix_Control_Panel
 				IsScheduledRestartEnabled = chkEnableSchedule.Checked,
 				RestartTime = _selectedTime,
 				RestartDays = (bool[])_selectedDays.Clone(),
+				SmartMaintenanceEnabled = _smartMaintenanceEnabled,
+				MaintenanceWaitForPlayers = _maintenanceWaitForPlayers,
+				MaintenanceMaximumDelayMinutes = _maintenanceMaximumDelayMinutes,
+				MaintenanceBackupBeforeRestart = _maintenanceBackupBeforeRestart,
+				MaintenanceUpdateBeforeRestart = _maintenanceUpdateBeforeRestart,
 				IsDiscordAlertEnabled = discordSettings.MasterEnabled,
 				DiscordWebhook = discordSettings.MasterWebhook,
 				DiscordEvents = discordSettings.MasterEvents,
@@ -1381,6 +1409,17 @@ namespace Synix_Control_Panel
 				var gameData = GameDatabase.GetGame(selectedGame);
 				if (gameData != null)
 				{
+					ConfigureWorldSizeInput(gameData);
+					int initialWorldSize = IsSevenDaysToDie(gameData)
+						? SevenDaysToDieConfiguration.NormalizeWorldSize(gameData.WorldSize)
+						: gameData.WorldSize;
+					if (initialWorldSize > 0)
+					{
+						numWorldSize.Value = Math.Clamp(
+							initialWorldSize,
+							numWorldSize.Minimum,
+							numWorldSize.Maximum);
+					}
 					numPort.Value = Math.Clamp(gameData.Port, numPort.Minimum, numPort.Maximum);
 					numQueryPort.Value = Math.Clamp(gameData.QueryPort, numQueryPort.Minimum, numQueryPort.Maximum);
 					if (gameData.AppPort.HasValue)
@@ -1523,7 +1562,27 @@ namespace Synix_Control_Panel
 			using DefaultArgumentsDisplay display = new(gameData.RequiredArgs);
 			display.ShowDialog(this);
 		}
-		private void btnEditSchedule_Click(object sender, EventArgs e) { using var scheduler = new ScheduleSettingsGUI(_selectedDays, _selectedTime); if (scheduler.ShowDialog() == DialogResult.OK) { _selectedDays = scheduler.SelectedDays; _selectedTime = scheduler.SelectedTime; } }
+		private void btnEditSchedule_Click(object sender, EventArgs e)
+		{
+			using ScheduleSettingsGUI scheduler = new(
+				_selectedDays,
+				_selectedTime,
+				_smartMaintenanceEnabled,
+				_maintenanceWaitForPlayers,
+				_maintenanceMaximumDelayMinutes,
+				_maintenanceBackupBeforeRestart,
+				_maintenanceUpdateBeforeRestart);
+			if (scheduler.ShowDialog(this) != DialogResult.OK)
+				return;
+
+			_selectedDays = scheduler.SelectedDays;
+			_selectedTime = scheduler.SelectedTime;
+			_smartMaintenanceEnabled = scheduler.SmartMaintenanceEnabled;
+			_maintenanceWaitForPlayers = scheduler.WaitForPlayers;
+			_maintenanceMaximumDelayMinutes = scheduler.MaximumDelayMinutes;
+			_maintenanceBackupBeforeRestart = scheduler.BackupBeforeRestart;
+			_maintenanceUpdateBeforeRestart = scheduler.UpdateBeforeRestart;
+		}
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
 		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
 
@@ -1546,6 +1605,26 @@ namespace Synix_Control_Panel
 				cmbWorldName.SelectedItem = selectedMap;
 			else if (cmbWorldName.Items.Count > 0)
 				cmbWorldName.SelectedIndex = 0;
+		}
+
+		private static bool IsSevenDaysToDie(GameInfo? gameData) =>
+			gameData?.Game.Equals(
+				"7 Days to Die",
+				StringComparison.OrdinalIgnoreCase) == true;
+
+		private void ConfigureWorldSizeInput(GameInfo? gameData)
+		{
+			if (IsSevenDaysToDie(gameData))
+			{
+				numWorldSize.Maximum = 10240;
+				numWorldSize.Minimum = 6144;
+				numWorldSize.Increment = 2048;
+				return;
+			}
+
+			numWorldSize.Minimum = 50;
+			numWorldSize.Maximum = 5000;
+			numWorldSize.Increment = 1;
 		}
 
 		private void PopulateGameModes(GameInfo gameData, string selectedMode)

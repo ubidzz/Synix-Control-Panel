@@ -125,6 +125,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		internal static bool NeedsManagedConfigurationRepair(GameServer server)
 		{
+			if (server.PreserveImportedConfiguration)
+				return false;
+
 			if (GetConfigFileCreationMode(server.Game) is
 					ConfigFileCreationMode.Unknown or
 					ConfigFileCreationMode.LaunchArgumentsOnly ||
@@ -395,6 +398,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		internal static bool NeedsManagedConfiguration(GameServer server)
 		{
+			if (server.PreserveImportedConfiguration)
+			{
+				return false;
+			}
+
 			if (!ManagedConfigurationsEnabled)
 			{
 				return false;

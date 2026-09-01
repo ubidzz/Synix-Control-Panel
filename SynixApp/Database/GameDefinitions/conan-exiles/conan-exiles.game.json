@@ -7,7 +7,7 @@
   "aliases": [],
   "appId": "443030",
   "requiresSteamLogin": false,
-  "executable": "ConanSandbox\\Binaries\\Win64\\ConanSandboxServer.exe",
+  "executable": "ConanSandboxServer.exe",
   "downloadUrl": "",
   "arguments": "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -server -log -SteamAppId={steamAppID}",
   "rconSyntax": "",

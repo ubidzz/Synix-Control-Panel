@@ -420,11 +420,28 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.Equal("saved-password", GetValue(path, definition.Format, "ServerPassword"));
 		Assert.Equal("26942", GetValue(path, definition.Format, "ServerPort"));
 		Assert.Equal("14", GetValue(path, definition.Format, "ServerMaxPlayerCount"));
-		Assert.Equal("Pregen8k", GetValue(path, definition.Format, "GameWorld"));
+		Assert.Equal("Pregen08k01", GetValue(path, definition.Format, "GameWorld"));
 		Assert.Equal("saved-seed", GetValue(path, definition.Format, "WorldGenSeed"));
 		Assert.Equal("8192", GetValue(path, definition.Format, "WorldGenSize"));
 		Assert.Equal(definition.SchemaVersion, server.ManagedConfigurationVersion);
 		Assert.Null(await GameFix.ApplyFirstGeneratedConfiguration(server));
+	}
+
+	[Fact]
+	public void SevenDaysToDie_RepairsLegacyWorldChoicesBeforeWritingTheConfiguration()
+	{
+		SevenDaysToDieConfiguration definition = new();
+		GameServer server = CreateServer("7 Days to Die");
+		PrepareGeneratedConfiguration("7 Days to Die", server);
+		server.WorldName = "Pregen6k";
+		server.WorldSize = 4000;
+
+		ConfigurationApplyResult result = definition.Apply(CreateContext(server));
+		string path = definition.ResolveFullPath(server);
+
+		Assert.True(result.Succeeded);
+		Assert.Equal("Pregen06k01", GetValue(path, definition.Format, "GameWorld"));
+		Assert.Equal("6144", GetValue(path, definition.Format, "WorldGenSize"));
 	}
 
 	[Fact]

@@ -15,20 +15,22 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class SevenDaysToDieConfiguration : ConfigurationDefinition
 	{
+		private static readonly int[] SupportedWorldSizes = [6144, 8192, 10240];
+
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
 			new("ServerName", context => context.Server.ServerName),
 			new("ServerPassword", context => context.Passwords.ServerPassword),
 			new("ServerPort", context => context.Server.Port.ToString()),
 			new("ServerMaxPlayerCount", context => context.Server.MaxPlayers.ToString()),
-			new("GameWorld", context => context.Server.WorldName),
+			new("GameWorld", context => NormalizeWorldName(context.Server.WorldName)),
 			new("GameName", context => context.Identity),
 			new("WorldGenSeed", context => string.IsNullOrWhiteSpace(context.Server.WorldSeed) ? "12345" : context.Server.WorldSeed),
-			new("WorldGenSize", context => (context.Server.WorldSize > 0 ? context.Server.WorldSize : 6144).ToString())
+			new("WorldGenSize", context => NormalizeWorldSize(context.Server.WorldSize).ToString())
 		];
 
 		public override string GameName => "7 Days to Die";
-		public override int SchemaVersion => 3;
+		public override int SchemaVersion => 4;
 		public override bool SupportsFullReset => true;
 		public override bool PreservesInstalledTemplate => true;
 		public override ManagedConfigurationInput SupportedInputs =>
@@ -42,5 +44,21 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override string RelativePath => "serverconfig.xml";
 		public override ConfigFormat Format => ConfigFormat.XML;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
+
+		internal static string NormalizeWorldName(string? worldName)
+		{
+			string normalized = worldName?.Trim() ?? string.Empty;
+			return normalized.ToLowerInvariant() switch
+			{
+				"pregen6k" => "Pregen06k01",
+				"pregen8k" => "Pregen08k01",
+				"pregen10k" => "Navezgane",
+				"" => "Navezgane",
+				_ => normalized
+			};
+		}
+
+		internal static int NormalizeWorldSize(int worldSize) =>
+			SupportedWorldSizes.Contains(worldSize) ? worldSize : 6144;
 	}
 }

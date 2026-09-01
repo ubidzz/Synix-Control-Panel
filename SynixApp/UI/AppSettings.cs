@@ -173,6 +173,8 @@ namespace Synix_Control_Panel.SynixEngine
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
 				ElevatedSystemTasksChanged;
+			advancedSettingsPage.BackgroundServiceEnabledChanged +=
+				BackgroundServiceEnabledChanged;
 			advancedSettingsPage.TroubleshooterRequested +=
 				TroubleshooterRequested;
 			developmentSettingsPage.UsePremadeConfigurationsChanged +=
@@ -225,6 +227,8 @@ namespace Synix_Control_Panel.SynixEngine
 					Properties.Settings.Default.CheckDDoS;
 				advancedSettingsPage.ElevatedSystemTasks =
 					Properties.Settings.Default.enableRunAsAdmin;
+				advancedSettingsPage.BackgroundServiceEnabled =
+					Properties.Settings.Default.BackgroundServiceEnabled;
 				developmentSettingsPage.UsePremadeConfigurations =
 					!Properties.Settings.Default.DisablePremadeConfigurationsForDevelopment;
 				developmentSettingsPage.CollectGeneratedConfigurations =
@@ -488,6 +492,29 @@ namespace Synix_Control_Panel.SynixEngine
 			Properties.Settings.Default.enableRunAsAdmin =
 				advancedSettingsPage.ElevatedSystemTasks;
 			Properties.Settings.Default.Save();
+		}
+
+		private void BackgroundServiceEnabledChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings)
+				return;
+
+			bool enabled = advancedSettingsPage.BackgroundServiceEnabled;
+			if (!BackgroundServiceManager.SetEnabled(enabled, out string message))
+			{
+				_loadingSettings = true;
+				advancedSettingsPage.BackgroundServiceEnabled =
+					Properties.Settings.Default.BackgroundServiceEnabled;
+				_loadingSettings = false;
+				advancedSettingsPage.SetBackgroundServiceStatus(message, false);
+				return;
+			}
+
+			Properties.Settings.Default.BackgroundServiceEnabled = enabled;
+			Properties.Settings.Default.Save();
+			advancedSettingsPage.SetBackgroundServiceStatus(message, enabled);
 		}
 
 		private void btnDevelopment_Click(

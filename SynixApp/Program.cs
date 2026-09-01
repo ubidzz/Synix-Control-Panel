@@ -25,6 +25,12 @@ namespace Synix_Control_Panel.SynixApp
 		[STAThread]
 		static void Main(string[] args)
 		{
+			if (BackgroundServiceManager.IsAgentCommand(args))
+			{
+				Environment.ExitCode = BackgroundServiceManager.RunAgent();
+				return;
+			}
+
 			if (args.Any(argument => string.Equals(
 				argument,
 				PublishSmokeTestArgument,
@@ -62,11 +68,14 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
+				BackgroundServiceManager.WaitForStop(TimeSpan.FromSeconds(5));
+				BackgroundServiceManager.EnsureRegistrationMatchesSetting();
 				RunSynix(updateSuccessMarker, rolledBackVersion);
 			}
 			finally
 			{
 				ReleaseSingleInstanceMutex();
+				BackgroundServiceManager.StartIfEnabled();
 			}
 		}
 

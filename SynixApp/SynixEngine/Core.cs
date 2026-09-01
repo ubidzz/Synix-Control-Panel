@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using System.Collections.Concurrent;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -19,6 +20,7 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		private static Core? _instance;
 		public static Core Instance => _instance ??= new Core();
+		internal static bool IsBackgroundServiceMode { get; set; }
 
 		private static readonly HttpClient _discordClient = new()
 		{
@@ -51,7 +53,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void Log(string message, Color? color = null, bool bold = false)
 		{
-			MainGUI.Instance?.Invoke((Action)(() =>
+			if (MainGUI.Instance == null)
+			{
+				FileHandler.QueueLog(
+					"Synix_Background_Service",
+					$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}");
+				return;
+			}
+
+			MainGUI.Instance.Invoke((Action)(() =>
 			{
 				MainGUI.Instance.AppendLog(message, color ?? Color.White, bold);
 			}));
@@ -143,35 +153,58 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				DateTime now = DateTime.Now;
-				string currentTime = now.ToString("HH:mm");
 				string todayBookmark = now.ToString("yyyy-MM-dd");
-				int dayIndex = (int)now.DayOfWeek;
 
 				foreach (GameServer server in MainGUI.serverList.ToList())
 				{
-					bool[]? restartDays = server.RestartDays;
-					bool hasValidRestartDay =
-						restartDays != null &&
-						restartDays.Length > dayIndex &&
-						restartDays[dayIndex];
+					if (server.Status != StatusManager.GetStatus(ServerState.Running))
+						continue;
+					if (server.MaintenanceRetryAfterUtc > DateTime.UtcNow)
+						continue;
 
-					if (server.IsScheduledRestartEnabled &&
-						hasValidRestartDay &&
-						server.RestartTime == currentTime &&
-						server.LastMaintenanceDate != todayBookmark)
+					SmartMaintenancePlan plan = SmartMaintenancePlanner.Evaluate(server, now);
+					if (plan.Decision == SmartMaintenanceDecision.DeferForPlayers)
 					{
-						server.LastMaintenanceDate = todayBookmark;
+						bool shouldNotify = !server.LastMaintenanceDeferralNoticeUtc.HasValue ||
+							(DateTime.UtcNow - server.LastMaintenanceDeferralNoticeUtc.Value).TotalMinutes >= 5;
+						if (shouldNotify)
+						{
+							server.LastMaintenanceDeferralNoticeUtc = DateTime.UtcNow;
+							int remainingMinutes = Math.Max(
+								0,
+								server.MaintenanceMaximumDelayMinutes - (int)plan.Delay.TotalMinutes);
+							Log($"[SMART MAINTENANCE] {server.ServerName}: {plan.Reason} Up to {remainingMinutes} minute(s) remain.", Color.Cyan);
+						}
+						continue;
+					}
+
+					if (plan.Decision == SmartMaintenanceDecision.RunNow)
+					{
+						server.LastMaintenanceDeferralNoticeUtc = null;
 
 						_ = SendDiscordNotification(
 							server,
 							DiscordNotificationEvent.ServerRestarting,
 							"SCHEDULED RESTART",
-							"Weekly maintenance is starting now. The server will be back online shortly.",
+							server.CurrentPlayers > 0
+								? "The player-aware wait limit was reached. Maintenance is starting and the server will return shortly."
+								: "Smart maintenance is starting now. The server will be back online shortly.",
 							Color.Cyan);
 
-						Log($"[SYNIX] Scheduled weekly maintenance triggered for {server.ServerName}.");
+						Log($"[SYNIX] Smart maintenance triggered for {server.ServerName}. {plan.Reason}");
 
-						await ExecuteStartSequence(server, "MAINTENANCE");
+						bool completed = await ExecuteStartSequence(server, "MAINTENANCE");
+						if (completed)
+						{
+							server.LastMaintenanceDate = todayBookmark;
+							server.MaintenanceRetryAfterUtc = null;
+							FileHandler.SaveServers();
+						}
+						else if (server.SmartMaintenanceEnabled)
+						{
+							server.MaintenanceRetryAfterUtc = DateTime.UtcNow.AddMinutes(5);
+							Log($"[SMART MAINTENANCE] {server.ServerName} did not complete. Synix will safely retry in five minutes.", Color.Orange, true);
+						}
 					}
 				}
 			}
@@ -192,7 +225,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (globalCpu >= 85.0)
 			{
-				MessageBox.Show(
+				if (!IsBackgroundServiceMode)
+					MessageBox.Show(
 					$"[🛡️ RESOURCE GUARD] Global CPU Load is at {globalCpu:F1}%.\n\nStarting another server now would push the host into instability. Please wait for load to drop.",
 					"CPU Overload Protection",
 					MessageBoxButtons.OK,
@@ -213,7 +247,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (ramUsagePercent >= 85.0)
 			{
-				MessageBox.Show(
+				if (!IsBackgroundServiceMode)
+					MessageBox.Show(
 					$"[🛡️ RESOURCE GUARD] System RAM usage is at {ramUsagePercent:F1}% of the {usablePool:F1}GB usable pool.\n\nPlease stop a server before starting another.",
 					"System Resource Exhaustion",
 					MessageBoxButtons.OK,
