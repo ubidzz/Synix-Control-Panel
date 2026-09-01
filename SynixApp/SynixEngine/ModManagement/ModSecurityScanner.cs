@@ -191,6 +191,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				InspectZip(packagePath, target, findings);
 				return;
 			}
+			if (target.ArchiveOnly)
+				throw new InvalidDataException("This add-on area accepts complete ZIP packages only.");
 			if (!target.AllowedExtensions.Any(allowed =>
 				allowed.Equals(extension, StringComparison.OrdinalIgnoreCase)))
 			{
@@ -225,6 +227,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 
 			long totalBytes = 0;
 			int supportedFiles = 0;
+			bool requiredFileFound = string.IsNullOrWhiteSpace(target.RequiredArchiveFileName);
 			HashSet<string> destinations = new(StringComparer.OrdinalIgnoreCase);
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
@@ -242,12 +245,14 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					throw new InvalidDataException("The package contains duplicate destination paths.");
 
 				string extension = Path.GetExtension(entry.Name);
+				if (entry.Name.Equals(target.RequiredArchiveFileName, StringComparison.OrdinalIgnoreCase))
+					requiredFileFound = true;
 				if (DangerousArchiveExtensions.Contains(extension))
 				{
 					throw new InvalidDataException(
 						$"The package contains {entry.Name}, a program or script type that this add-on area must not install.");
 				}
-				if (!target.AllowedExtensions.Any(allowed =>
+				if (!target.PreserveArchiveContents && !target.AllowedExtensions.Any(allowed =>
 					allowed.Equals(extension, StringComparison.OrdinalIgnoreCase)))
 				{
 					continue;
@@ -267,6 +272,11 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 						leaveOpen: true);
 					InspectSourceText(reader.ReadToEnd(), findings);
 				}
+			}
+			if (!requiredFileFound)
+			{
+				throw new InvalidDataException(
+					$"The package does not contain the required {target.RequiredArchiveFileName} file.");
 			}
 			if (supportedFiles == 0)
 				throw new InvalidDataException("The package does not contain a supported add-on file.");

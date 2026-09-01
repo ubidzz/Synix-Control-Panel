@@ -57,6 +57,10 @@ A target contains:
 - `markerPaths`: relative paths that make this target active.
 - `frameworkNames`: server loader/framework names that make this target active.
 - `allowArchives`: permits safe ZIP extraction; other archive formats are not accepted.
+- `archiveOnly`: rejects loose files so a game that requires a complete mod folder cannot receive a partial installation.
+- `preserveArchiveContents`: copies every non-blocked file from a structurally valid ZIP instead of silently dropping game assets with uncommon extensions.
+- `requiredArchiveFileName`: file name that must occur in the ZIP, such as `ModInfo.xml` for 7 Days to Die.
+- `wrapRootArchiveFiles`: when the required marker is at the ZIP root, place the package contents in a safely named mod folder.
 - `scanDirectories`: also show first-level folders as provider-managed items.
 - `recursive`: scan supported files below subfolders.
 - `argumentName`: for `ArgumentIds`, the exact launch option such as `-mods`.

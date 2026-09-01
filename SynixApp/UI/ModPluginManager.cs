@@ -413,7 +413,9 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			string extensions = string.Join(';', target.AllowedExtensions.Select(extension => $"*{extension}"));
-			string filter = target.AllowArchives
+			string filter = target.ArchiveOnly
+				? "Complete add-on package (*.zip)|*.zip|All files (*.*)|*.*"
+				: target.AllowArchives
 				? $"Supported add-ons ({extensions};*.zip)|{extensions};*.zip|All files (*.*)|*.*"
 				: $"Supported add-ons ({extensions})|{extensions}|All files (*.*)|*.*";
 			using OpenFileDialog picker = new()

@@ -70,6 +70,37 @@
       ]
     },
     {
+      "id": "seven-days-to-die-mods",
+      "displayName": "7 Days to Die server mods",
+      "description": "Synix installs complete mod ZIP packages into the dedicated server's Mods folder. Mods with client assets may also need to be installed by every player.",
+      "supportLevel": "Managed",
+      "gameNames": [ "7 Days to Die" ],
+      "frameworkName": "Built-in mod loader",
+      "frameworkMarkers": [ "7DaysToDieServer.exe" ],
+      "catalogUrl": "https://community.thefunpimps.com/resources/categories/7-days-to-die-mods.1/",
+      "restartRequired": true,
+      "targets": [
+        {
+          "id": "mods",
+          "displayName": "Server Mods folder",
+          "kind": "Mod",
+          "mode": "FileImport",
+          "providerName": "7 Days to Die built-in loader",
+          "relativePath": "Mods",
+          "allowedExtensions": [ ".xml", ".dll", ".txt" ],
+          "markerPaths": [ "Mods" ],
+          "frameworkNames": [],
+          "allowArchives": true,
+          "archiveOnly": true,
+          "preserveArchiveContents": true,
+          "requiredArchiveFileName": "ModInfo.xml",
+          "wrapRootArchiveFiles": true,
+          "scanDirectories": true,
+          "recursive": true
+        }
+      ]
+    },
+    {
       "id": "ark-survival-evolved-workshop",
       "displayName": "Steam Workshop mods",
       "description": "Synix manages the ordered Steam Workshop IDs; ARK and Steam download and update the actual content.",

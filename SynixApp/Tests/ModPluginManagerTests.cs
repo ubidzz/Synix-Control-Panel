@@ -78,6 +78,8 @@ public sealed class ModPluginManagerTests
 				ModSystemCatalog.GetProfiles("ARK: Survival Ascended"));
 			ModSystemProfile evolved = Assert.Single(
 				ModSystemCatalog.GetProfiles("ARK: Survival Evolved"));
+			ModSystemProfile sevenDays = Assert.Single(
+				ModSystemCatalog.GetProfiles("7 Days to Die"));
 
 			Assert.Equal("Oxide/uMod", rust.DisplayName);
 			Assert.All(rust.Targets, target => Assert.True(target.CanImport));
@@ -91,10 +93,85 @@ public sealed class ModPluginManagerTests
 			Assert.Equal("Steam Workshop", workshopTarget.ProviderName);
 			Assert.Equal(2, workshopTarget.IdStores.Count);
 			Assert.Contains("-automanagedmods", workshopTarget.RequiredArguments);
+			ModInstallTarget sevenDaysTarget = Assert.Single(sevenDays.Targets);
+			Assert.Equal("Server Mods folder", sevenDaysTarget.DisplayName);
+			Assert.True(sevenDaysTarget.ArchiveOnly);
+			Assert.True(sevenDaysTarget.PreserveArchiveContents);
+			Assert.Equal("ModInfo.xml", sevenDaysTarget.RequiredArchiveFileName);
+			Assert.Contains("thefunpimps.com", sevenDays.CatalogUrl);
 		}
 		finally
 		{
 			ModSystemCatalog.ExternalProfileRootOverride = previousRoot;
+			Directory.Delete(profileRoot, true);
+		}
+	}
+
+	[Fact]
+	public void SevenDaysArchiveInstallsCompleteModFolderAndRejectsMissingManifest()
+	{
+		string root = CreateTestDirectory();
+		string dataRoot = CreateTestDirectory();
+		string sourceRoot = CreateTestDirectory();
+		string profileRoot = CreateTestDirectory();
+		string? previousDataRoot = ModPackageManager.DataRootOverride;
+		string? previousProfileRoot = ModSystemCatalog.ExternalProfileRootOverride;
+		try
+		{
+			ModPackageManager.DataRootOverride = dataRoot;
+			ModSystemCatalog.ExternalProfileRootOverride = profileRoot;
+			File.WriteAllText(Path.Combine(root, "7DaysToDieServer.exe"), "server");
+			GameServer server = new()
+			{
+				Game = "7 Days to Die",
+				ServerName = "seven-days-mod-test",
+				InstallPath = root,
+				Status = "Stopped"
+			};
+			ModSystemProfile profile = Assert.Single(ModSystemCatalog.GetProfiles(server.Game));
+			ModInstallTarget target = Assert.Single(profile.Targets);
+			Assert.True(ModSystemCatalog.Detect(server, profile)!.FrameworkDetected);
+
+			string package = Path.Combine(sourceRoot, "Example Mod.zip");
+			using (ZipArchive archive = ZipFile.Open(package, ZipArchiveMode.Create))
+			{
+				using (StreamWriter info = new(archive.CreateEntry("ModInfo.xml").Open()))
+					info.Write("<xml><Name value=\"Example\" /></xml>");
+				using (StreamWriter config = new(archive.CreateEntry("Config/blocks.xml").Open()))
+					config.Write("<configs />");
+				using (StreamWriter asset = new(archive.CreateEntry("Resources/example.bundledata").Open()))
+					asset.Write("game asset");
+			}
+
+			ModImportResult result = ModPackageManager.Import(
+				server,
+				profile,
+				target,
+				package,
+				securityContext: new(false));
+
+			Assert.True(File.Exists(Path.Combine(root, "Mods", "Example Mod", "ModInfo.xml")));
+			Assert.True(File.Exists(Path.Combine(root, "Mods", "Example Mod", "Config", "blocks.xml")));
+			Assert.True(File.Exists(Path.Combine(root, "Mods", "Example Mod", "Resources", "example.bundledata")));
+			Assert.Equal(3, result.InstalledFileCount);
+
+			string invalidPackage = Path.Combine(sourceRoot, "No Manifest.zip");
+			using (ZipArchive archive = ZipFile.Open(invalidPackage, ZipArchiveMode.Create))
+			{
+				using StreamWriter config = new(archive.CreateEntry("Config/blocks.xml").Open());
+				config.Write("<configs />");
+			}
+			InvalidDataException exception = Assert.Throws<InvalidDataException>(() =>
+				ModSecurityScanner.InspectPackageStructure(invalidPackage, target));
+			Assert.Contains("ModInfo.xml", exception.Message, StringComparison.OrdinalIgnoreCase);
+		}
+		finally
+		{
+			ModPackageManager.DataRootOverride = previousDataRoot;
+			ModSystemCatalog.ExternalProfileRootOverride = previousProfileRoot;
+			Directory.Delete(root, true);
+			Directory.Delete(dataRoot, true);
+			Directory.Delete(sourceRoot, true);
 			Directory.Delete(profileRoot, true);
 		}
 	}

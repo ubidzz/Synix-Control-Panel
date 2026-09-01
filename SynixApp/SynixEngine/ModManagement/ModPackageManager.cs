@@ -334,10 +334,16 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				{
 					if (!target.AllowArchives)
 						throw new InvalidDataException("This add-on system does not accept ZIP packages.");
-					sources.AddRange(ExtractPackage(packageSnapshot, extractionRoot, target));
+					sources.AddRange(ExtractPackage(
+						packageSnapshot,
+						extractionRoot,
+						target,
+						Path.GetFileNameWithoutExtension(packagePath)));
 				}
 				else
 				{
+					if (target.ArchiveOnly)
+						throw new InvalidDataException("This add-on area accepts complete ZIP packages only.");
 					if (!IsAllowedFile(packageSnapshot, target))
 						throw new InvalidDataException(BuildAllowedExtensionMessage(target));
 					if (package.Length > MaximumSingleFileBytes)
@@ -878,7 +884,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		private static IEnumerable<InstallSource> ExtractPackage(
 			string archivePath,
 			string extractionRoot,
-			ModInstallTarget target)
+			ModInstallTarget target,
+			string packageName)
 		{
 			Directory.CreateDirectory(extractionRoot);
 			string root = Path.GetFullPath(extractionRoot)
@@ -888,6 +895,11 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			using ZipArchive archive = ZipFile.OpenRead(archivePath);
 			if (archive.Entries.Count > MaximumArchiveEntries)
 				throw new InvalidDataException("The add-on package contains too many files.");
+			bool wrapRootFiles = target.WrapRootArchiveFiles && archive.Entries.Any(entry =>
+				!string.IsNullOrWhiteSpace(entry.Name) &&
+				entry.FullName.IndexOfAny(['/', '\\']) < 0 &&
+				entry.Name.Equals(target.RequiredArchiveFileName, StringComparison.OrdinalIgnoreCase));
+			string packageFolder = BuildSafePackageFolderName(packageName);
 			long extractedBytes = 0;
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
@@ -898,8 +910,10 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					throw new InvalidDataException("The add-on package exceeds the extraction safety limit.");
 
 				string relative = NormalizeRelativePath(entry.FullName);
+				if (wrapRootFiles)
+					relative = NormalizeRelativePath(Path.Combine(packageFolder, relative));
 				string destination = ResolveInsideRoot(root, relative);
-				if (!IsAllowedFile(destination, target))
+				if (!target.PreserveArchiveContents && !IsAllowedFile(destination, target))
 					continue;
 				Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
 				using Stream source = entry.Open();
@@ -908,6 +922,17 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				sources.Add(new InstallSource(destination, relative));
 			}
 			return sources;
+		}
+
+		private static string BuildSafePackageFolderName(string packageName)
+		{
+			string safe = string.Concat(packageName.Select(character =>
+				Path.GetInvalidFileNameChars().Contains(character) || character is '/' or '\\'
+					? '_'
+					: character)).Trim().TrimEnd('.', ' ');
+			if (safe.Length > 80)
+				safe = safe[..80];
+			return string.IsNullOrWhiteSpace(safe) ? "ImportedMod" : safe;
 		}
 
 		private static bool IsAllowedFile(string path, ModInstallTarget target)

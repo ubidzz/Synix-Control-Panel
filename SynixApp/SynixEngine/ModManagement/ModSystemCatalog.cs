@@ -80,6 +80,10 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		public List<string> MarkerPaths { get; init; } = [];
 		public List<string> FrameworkNames { get; init; } = [];
 		public bool AllowArchives { get; init; }
+		public bool ArchiveOnly { get; init; }
+		public bool PreserveArchiveContents { get; init; }
+		public string RequiredArchiveFileName { get; init; } = string.Empty;
+		public bool WrapRootArchiveFiles { get; init; }
 		public bool ScanDirectories { get; init; }
 		public bool Recursive { get; init; }
 		public string ArgumentName { get; init; } = string.Empty;
@@ -363,6 +367,21 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					{
 						throw new InvalidDataException($"{sourceName} attempts to allow a dangerous program or script type.");
 					}
+					if ((target.ArchiveOnly || target.PreserveArchiveContents ||
+						!string.IsNullOrWhiteSpace(target.RequiredArchiveFileName) ||
+						target.WrapRootArchiveFiles) && !target.AllowArchives)
+					{
+						throw new InvalidDataException($"{sourceName} contains archive rules on a target that does not accept archives.");
+					}
+					if (!string.IsNullOrWhiteSpace(target.RequiredArchiveFileName) &&
+						(target.RequiredArchiveFileName.Length > 128 ||
+						target.RequiredArchiveFileName != Path.GetFileName(target.RequiredArchiveFileName) ||
+						target.RequiredArchiveFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0))
+					{
+						throw new InvalidDataException($"{sourceName} contains an invalid required archive file name.");
+					}
+					if (target.WrapRootArchiveFiles && string.IsNullOrWhiteSpace(target.RequiredArchiveFileName))
+						throw new InvalidDataException($"{sourceName} cannot wrap root archive files without a required archive marker.");
 					if (target.Mode == ModTargetMode.ArgumentIds &&
 						(string.IsNullOrWhiteSpace(target.ArgumentName) ||
 							!target.ArgumentName.StartsWith('-') ||
