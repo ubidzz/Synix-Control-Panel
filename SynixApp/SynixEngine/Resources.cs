@@ -22,7 +22,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private void UpdateResourceStats()
 		{
 
-			var usage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
+			var usage = ResourceMonitor.GetTotalResources(ServerRegistry.Servers);
 
 			TotalCpuUsage = usage.TotalCpuPercent;
 			TotalRamUsageGb = usage.TotalRamMB / 1024.0;

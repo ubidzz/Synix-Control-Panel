@@ -1159,7 +1159,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void RunUniversalHealthCheck()
 		{
-			foreach (var server in MainGUI.serverList)
+			foreach (var server in ServerRegistry.Snapshot())
 			{
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{

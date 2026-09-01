@@ -38,6 +38,12 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": "",
+  "controlCapabilities": {
+    "lifecycle": "Standard",
+    "console": "None",
+    "configuration": "Generic",
+    "players": "QueryProtocol"
+  },
   "runtimeRequirements": {
     "minimumSystemMemoryGb": 0,
     "requiresAvx2": false,

@@ -96,6 +96,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string EosDeploymentId { get; init; } = string.Empty;
 		public GameRuntimeRequirements RuntimeRequirements { get; init; } = new();
 		public GameLaunchBehavior LaunchBehavior { get; init; } = new();
+		public GameControlCapabilities ControlCapabilities { get; init; } = new();
 		public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
 		public IReadOnlyList<string> LogPaths { get; init; } = [];
 		public IReadOnlyList<EmbeddedPostInstallAction> PostInstallActions { get; init; } = [];
@@ -257,6 +258,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				EosDeploymentId = manifest.EosDeploymentId,
 				RuntimeRequirements = manifest.RuntimeRequirements,
 				LaunchBehavior = manifest.LaunchBehavior,
+				ControlCapabilities = manifest.ControlCapabilities,
 				SupportedServerFrameworks = manifest.SupportedServerFrameworks
 					.Select(framework => framework.Trim())
 					.ToArray(),
@@ -375,6 +377,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				ValidateDefinitionValue(manifest.CrossplayDisabledValue, "crossplayDisabledValue", resourceName);
 			ValidateRuntimeRequirements(manifest.RuntimeRequirements, resourceName);
 			ValidateLaunchBehavior(manifest, resourceName);
+			ValidateControlCapabilities(manifest.ControlCapabilities, resourceName);
 			ValidateSupportedServerFrameworks(manifest, resourceName);
 			ValidateUniqueText(manifest.LogPaths, "logPaths", resourceName);
 			foreach (string path in manifest.LogPaths)
@@ -528,6 +531,34 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					throw new InvalidDataException(
 						$"{resourceName} may only enable Oxide for the trusted Rust definition.");
 				}
+			}
+		}
+
+		private static void ValidateControlCapabilities(
+			GameControlCapabilities? capabilities,
+			string resourceName)
+		{
+			if (capabilities == null)
+				throw new InvalidDataException($"{resourceName} contains null controlCapabilities.");
+
+			if (!Enum.IsDefined(capabilities.Lifecycle) ||
+				!Enum.IsDefined(capabilities.Console) ||
+				!Enum.IsDefined(capabilities.Configuration) ||
+				!Enum.IsDefined(capabilities.Players))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} contains an unsupported control capability.");
+			}
+
+			bool usesMinecraftController =
+				capabilities.Console == GameConsoleControllerKind.Minecraft ||
+				capabilities.Configuration == GameConfigurationControllerKind.Minecraft ||
+				capabilities.Players == GamePlayerControllerKind.Minecraft;
+			if (usesMinecraftController &&
+				capabilities.Lifecycle != GameLifecycleControllerKind.Minecraft)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} enables a Minecraft controller without the Minecraft lifecycle controller.");
 			}
 		}
 

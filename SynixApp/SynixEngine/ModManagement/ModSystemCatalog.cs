@@ -3,6 +3,7 @@
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Reflection;
 using System.Text.Json;
@@ -189,7 +190,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			if (profile == null || profile.Targets.Count == 0)
 				return null;
 
-			string framework = server.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase)
+			string framework = GameCapabilityResolver.UsesMinecraftLifecycle(server)
 				? server.MinecraftLoader
 				: server.ServerFramework;
 			ModInstallTarget[] activeTargets = profile.Targets

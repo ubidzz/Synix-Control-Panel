@@ -40,6 +40,12 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": "",
+  "controlCapabilities": {
+    "lifecycle": "Minecraft",
+    "console": "Minecraft",
+    "configuration": "Minecraft",
+    "players": "Minecraft"
+  },
   "logPaths": [
     "logs\\latest.log",
     "logs\\*.log.gz"

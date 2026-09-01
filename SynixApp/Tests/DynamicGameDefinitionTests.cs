@@ -120,6 +120,96 @@ public sealed class DynamicGameDefinitionTests
 	}
 
 	[Fact]
+	public void MinecraftControllersAreDeclaredByTheTrustedDefinition()
+	{
+		GameInfo minecraft = GameDatabase.GetGame("Minecraft Java")!;
+
+		Assert.Equal(
+			GameLifecycleControllerKind.Minecraft,
+			minecraft.ControlCapabilities.Lifecycle);
+		Assert.Equal(
+			GameConsoleControllerKind.Minecraft,
+			minecraft.ControlCapabilities.Console);
+		Assert.Equal(
+			GameConfigurationControllerKind.Minecraft,
+			minecraft.ControlCapabilities.Configuration);
+		Assert.Equal(
+			GamePlayerControllerKind.Minecraft,
+			minecraft.ControlCapabilities.Players);
+		Assert.True(GameDatabase.IsMinecraft(" minecraft bedrock "));
+	}
+
+	[Fact]
+	public void OrdinaryDefinitionsUseStandardControllersByDefault()
+	{
+		GameInfo rust = GameDatabase.GetGame("Rust")!;
+
+		Assert.Equal(
+			GameLifecycleControllerKind.Standard,
+			rust.ControlCapabilities.Lifecycle);
+		Assert.Equal(
+			GameConsoleControllerKind.None,
+			rust.ControlCapabilities.Console);
+		Assert.Equal(
+			GameConfigurationControllerKind.Generic,
+			rust.ControlCapabilities.Configuration);
+		Assert.Equal(
+			GamePlayerControllerKind.QueryProtocol,
+			rust.ControlCapabilities.Players);
+		Assert.False(GameDatabase.IsMinecraft("Rust"));
+	}
+
+	[Fact]
+	public void MinecraftControllerSelectionIsCapabilityDrivenInsteadOfNameDriven()
+	{
+		EmbeddedGamePackage package = TrustedGameDefinitionCatalog.ParsePackage(
+			"""
+			{
+			  "schemaVersion": 1,
+			  "id": "future-java-server",
+			  "game": "Future Java Server",
+			  "appId": "1",
+			  "executable": "server.bat",
+			  "port": 25565,
+			  "queryPort": 25566,
+			  "controlCapabilities": {
+			    "lifecycle": "Minecraft",
+			    "console": "Minecraft",
+			    "configuration": "Minecraft",
+			    "players": "Minecraft"
+			  }
+			}
+			""",
+			"future-java-server.game.json");
+
+		Assert.True(GameCapabilityResolver.UsesMinecraftLifecycle(package.Definition));
+	}
+
+	[Fact]
+	public void MinecraftSubControllersRequireMinecraftLifecycleController()
+	{
+		InvalidDataException exception = Assert.Throws<InvalidDataException>(() =>
+			TrustedGameDefinitionCatalog.ParsePackage(
+				"""
+				{
+				  "schemaVersion": 1,
+				  "id": "invalid-controller-test",
+				  "game": "Invalid Controller Test",
+				  "appId": "1",
+				  "executable": "server.exe",
+				  "port": 7777,
+				  "queryPort": 7778,
+				  "controlCapabilities": {
+				    "console": "Minecraft"
+				  }
+				}
+				""",
+				"invalid-controller-test.game.json"));
+
+		Assert.Contains("without the Minecraft lifecycle", exception.Message);
+	}
+
+	[Fact]
 	public void EosGamesDoNotAdvertiseUnsupportedPlayerMonitoring()
 	{
 		GameInfo game = GameDatabase.GetGame("ARK: Survival Ascended")!;

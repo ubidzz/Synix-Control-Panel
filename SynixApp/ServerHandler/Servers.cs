@@ -282,7 +282,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						return;
 					}
 
-					isMinecraft = GameDatabase.IsMinecraft(server.Game);
+					isMinecraft = GameCapabilityResolver.UsesMinecraftLifecycle(server);
 					if (MinecraftControlProfile.IsJava(server))
 					{
 						PrepareMinecraftLauncher(fullExePath, logCallback!);
@@ -529,7 +529,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
 
-				bool isMinecraft = GameDatabase.IsMinecraft(server.Game);
+				bool isMinecraft = GameCapabilityResolver.UsesMinecraftLifecycle(server);
 				bool signalSent = isMinecraft
 					? await TrySendMinecraftStopCommand(server, targetPid, logCallback!)
 					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
@@ -940,7 +940,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			string normalized = command?.Trim() ?? string.Empty;
-			if (!GameDatabase.IsMinecraft(server.Game))
+			if (!GameCapabilityResolver.UsesMinecraftConsole(server))
 				return (false, "This console is available only for Minecraft servers.");
 			if (normalized.Length == 0)
 				return (false, "Enter a Minecraft server command.");

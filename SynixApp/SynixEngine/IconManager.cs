@@ -170,7 +170,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string canonicalGameName = GameDatabase.GetCanonicalGameName(server.Game);
 			MainGUI.ServerIconsCache[canonicalGameName] = refreshedIcon;
 			server.DisplayIcon = refreshedIcon;
-			foreach (GameServer installedServer in MainGUI.serverList.Where(item =>
+			foreach (GameServer installedServer in ServerRegistry.Snapshot().Where(item =>
 				string.Equals(
 					GameDatabase.GetCanonicalGameName(item.Game),
 					canonicalGameName,

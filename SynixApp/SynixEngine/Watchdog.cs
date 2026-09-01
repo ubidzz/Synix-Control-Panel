@@ -26,7 +26,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private void PerformWatchdogCheck()
 		{
-			foreach (var server in MainGUI.serverList.ToList())
+			foreach (var server in ServerRegistry.Snapshot())
 			{
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				bool usesExternalLifecycle = dbEntry?.LaunchBehavior.LifecycleTracking ==

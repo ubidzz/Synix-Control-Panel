@@ -29,6 +29,121 @@ public sealed class SynixPasswordProtectionTests
 		"https://discord.com/api/webhooks/987654321/backup-webhook-token";
 
 	[Fact]
+	[Trait("Category", "Regression")]
+	public void LegacyServerDataRunsEveryMigrationInOrder()
+	{
+		string json =
+			"""
+			[
+			  {
+			    "Game": " Minecraft Java ",
+			    "QueryPort": 0,
+			    "GameMode": "PVP",
+			    "MinecraftEdition": "bedrock",
+			    "MinecraftLoader": "forge",
+			    "RestartDays": [true, false],
+			    "MaintenanceMaximumDelayMinutes": -10
+			  }
+			]
+			""";
+
+		List<GameServer> migrated = Core.DeserializeServersAndMigrate(
+			json,
+			out ServerDataMigrationSummary summary);
+
+		GameServer server = Assert.Single(migrated);
+		Assert.Equal(0, summary.SourceVersion);
+		Assert.Equal(ServerDataMigrator.CurrentVersion, summary.TargetVersion);
+		Assert.Equal(1, summary.MigratedServerCount);
+		Assert.Equal(ServerDataMigrator.CurrentVersion, server.DataSchemaVersion);
+		Assert.Equal("Minecraft", server.Game);
+		Assert.Equal(25565, server.QueryPort);
+		Assert.Equal("Survival", server.GameMode);
+		Assert.Equal("Bedrock", server.MinecraftEdition);
+		Assert.Equal("Forge", server.MinecraftLoader);
+		Assert.Equal(7, server.RestartDays.Length);
+		Assert.True(server.RestartDays[0]);
+		Assert.False(server.RestartDays[1]);
+		Assert.Equal(0, server.MaintenanceMaximumDelayMinutes);
+	}
+
+	[Fact]
+	public void CurrentServerDataMigrationIsIdempotent()
+	{
+		GameServer server = new()
+		{
+			DataSchemaVersion = ServerDataMigrator.CurrentVersion,
+			Game = "Rust",
+			QueryPort = 28015
+		};
+
+		Assert.False(ServerDataMigrator.Migrate(server));
+		Assert.Equal(ServerDataMigrator.CurrentVersion, server.DataSchemaVersion);
+		Assert.Equal(28015, server.QueryPort);
+	}
+
+	[Fact]
+	[Trait("Category", "Regression")]
+	public void LegacyMinecraftBedrockAliasPreservesItsEdition()
+	{
+		GameServer server = new()
+		{
+			Game = "Minecraft Bedrock",
+			MinecraftEdition = "Java"
+		};
+
+		Assert.True(ServerDataMigrator.Migrate(server));
+		Assert.Equal("Minecraft", server.Game);
+		Assert.Equal("Bedrock", server.MinecraftEdition);
+	}
+
+	[Fact]
+	public void FutureServerDataSchemaIsRejectedWithoutModification()
+	{
+		GameServer server = new()
+		{
+			DataSchemaVersion = ServerDataMigrator.CurrentVersion + 1,
+			Game = "Rust"
+		};
+
+		InvalidDataException exception = Assert.Throws<InvalidDataException>(() =>
+			ServerDataMigrator.Migrate(server));
+
+		Assert.Contains("newer Synix version", exception.Message);
+		Assert.Equal(ServerDataMigrator.CurrentVersion + 1, server.DataSchemaVersion);
+	}
+
+	[Fact]
+	[Trait("Category", "Regression")]
+	public void MigrationBackupPreservesTheOriginalFileOnlyOnce()
+	{
+		string root = Path.Combine(
+			Path.GetTempPath(),
+			$"SynixMigrationBackupTests-{Guid.NewGuid():N}");
+		Directory.CreateDirectory(root);
+		try
+		{
+			string sourcePath = Path.Combine(root, "servers.json");
+			File.WriteAllText(sourcePath, "original server data");
+
+			string backupPath = FileHandler.CreateServerDataMigrationBackup(
+				sourcePath,
+				ServerDataMigrator.CurrentVersion);
+			File.WriteAllText(sourcePath, "updated server data");
+			FileHandler.CreateServerDataMigrationBackup(
+				sourcePath,
+				ServerDataMigrator.CurrentVersion);
+
+			Assert.Equal("original server data", File.ReadAllText(backupPath));
+		}
+		finally
+		{
+			if (Directory.Exists(root))
+				Directory.Delete(root, true);
+		}
+	}
+
+	[Fact]
 	public void SetAndRevealPasswords_RoundTripsAllManagedValues()
 	{
 		GameServer server = new();

@@ -35,7 +35,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task RebindProcesses()
 		{
 			bool stateChanged = false;
-			foreach (var server in MainGUI.serverList)
+			foreach (var server in ServerRegistry.Snapshot())
 			{
 				GameInfo? gameData = GameDatabase.GetGame(server.Game);
 				Process? recoveredProcess = null;
@@ -250,7 +250,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string localIp = await Core.Instance.GetLocalIP();
 			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
 
-			if (GameDatabase.IsMinecraft(server.Game))
+			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
 			{
 				foreach (var ip in targets)
 				{

@@ -49,7 +49,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			try
 			{
 				string jsonString = Core
-					.SerializeServersForStorage(MainGUI.serverList);
+					.SerializeServersForStorage(ServerRegistry.Servers);
 				string savedPath = Path.Combine(Core.DataPath, FileName);
 
 				WriteTextAtomically(savedPath, jsonString);
@@ -78,27 +78,16 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					List<GameServer> loadedServers = Core
 						.DeserializeServersAndMigrate(
 							jsonString,
-							out int migratedPasswordServerCount);
+							out ServerDataMigrationSummary migrationSummary);
 
 					if (loadedServers != null)
 					{
-						bool migratedLegacyGameName = false;
-						MainGUI.serverList.Clear();
+						ServerRegistry.Servers.Clear();
 						foreach (var server in loadedServers)
 						{
-							string canonicalGameName = GameDatabase.GetCanonicalGameName(server.Game);
-							if (!server.Game.Equals(canonicalGameName, StringComparison.Ordinal))
-							{
-								server.Game = canonicalGameName;
-								migratedLegacyGameName = true;
-							}
-
 							var masterData = GameDatabase.GetGame(server.Game);
 							if (masterData != null)
 							{
-								if (server.QueryPort <= 0)
-									server.QueryPort = masterData.QueryPort;
-
 								string fullExePath = Path.Combine(server.InstallPath, masterData.ExeName);
 
 								string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(server.Game, fullExePath);
@@ -118,24 +107,27 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 									server.DisplayIcon = MainGUI.ServerIconsCache[server.Game];
 								}
 							}
-							MainGUI.serverList.Add(server);
+							ServerRegistry.Servers.Add(server);
 						}
 
-						if (migratedLegacyGameName || migratedPasswordServerCount > 0)
+						if (migrationSummary.Changed)
 						{
+							if (migrationSummary.MigratedServerCount > 0)
+								CreateServerDataMigrationBackup(fullPath, migrationSummary.TargetVersion);
+
 							if (SaveServers())
 							{
-								if (migratedLegacyGameName)
+								if (migrationSummary.MigratedServerCount > 0)
 								{
 									MainGUI.Instance?.AppendLog(
-										"[MIGRATION] Updated legacy 'Minecraft Java' server entries to 'Minecraft'.",
+										$"[MIGRATION] Upgraded {migrationSummary.MigratedServerCount} server record(s) to data schema {migrationSummary.TargetVersion}. The original file was backed up before saving.",
 										Color.DarkSeaGreen);
 								}
 
-								if (migratedPasswordServerCount > 0)
+								if (migrationSummary.MigratedPasswordServerCount > 0)
 								{
 									MainGUI.Instance?.AppendLog(
-										$"[MIGRATION] Protected saved passwords and Discord webhooks for {migratedPasswordServerCount} server(s) with Windows user encryption.",
+										$"[MIGRATION] Protected saved passwords and Discord webhooks for {migrationSummary.MigratedPasswordServerCount} server(s) with Windows user encryption.",
 										Color.DarkSeaGreen);
 								}
 							}
@@ -147,6 +139,17 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					MainGUI.Instance?.AppendLog($"[🚨 ERROR] Load failed: {ex.Message}");
 				}
 			}
+		}
+
+		internal static string CreateServerDataMigrationBackup(
+			string fullPath,
+			int targetVersion)
+		{
+			string backupPath = fullPath + $".before-data-v{targetVersion}.bak";
+			if (!File.Exists(backupPath))
+				File.Copy(fullPath, backupPath, overwrite: false);
+
+			return backupPath;
 		}
 
 		public static void WriteTextAtomically(string fullPath, string content)

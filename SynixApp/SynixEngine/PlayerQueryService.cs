@@ -37,13 +37,13 @@ namespace Synix_Control_Panel.SynixEngine
 			if (game == null)
 				return Unsupported("The game definition is unavailable.");
 
-			if (GameDatabase.IsMinecraft(server.Game))
+			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
 				return await QueryMinecraftAsync(server, cancellationToken);
 
 			ServerProbeProtocol protocol = GameDatabase.GetProbeProtocol(game);
 			if (protocol != ServerProbeProtocol.A2S)
 			{
-				string message = GameDatabase.IsMinecraft(server.Game)
+				string message = GameCapabilityResolver.UsesMinecraftPlayers(server)
 					? $"Minecraft reports {server.CurrentPlayers} connected player(s), but this server query does not publish player names."
 					: "This game's current query protocol does not provide a safe, universal player-name list.";
 				return Unsupported(message);

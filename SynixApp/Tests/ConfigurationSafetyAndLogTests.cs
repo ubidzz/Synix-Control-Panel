@@ -13,12 +13,55 @@
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
+using System.Text;
 using Xunit;
 
 namespace Synix_Control_Panel.Tests;
 
 public sealed class ConfigurationSafetyAndLogTests
 {
+	[Fact]
+	[Trait("Category", "Regression")]
+	public void ConfigurationTextSnapshotPreservesSupportedEncodingsAndByteOrderMarks()
+	{
+		(Encoding Encoding, bool IncludePreamble)[] cases =
+		[
+			(new UTF8Encoding(false, true), false),
+			(new UTF8Encoding(true, true), true),
+			(new UnicodeEncoding(false, true, true), true),
+			(new UnicodeEncoding(true, true, true), true),
+			(new UTF32Encoding(false, true, true), true),
+			(new UTF32Encoding(true, true, true), true),
+			(Encoding.Latin1, false)
+		];
+		string root = CreateTestDirectory();
+		try
+		{
+			for (int index = 0; index < cases.Length; index++)
+			{
+				(Encoding encoding, bool includePreamble) = cases[index];
+				string path = Path.Combine(root, $"encoding-{index}.cfg");
+				byte[] text = encoding.GetBytes("name=café\n");
+				byte[] preamble = includePreamble ? encoding.GetPreamble() : [];
+				File.WriteAllBytes(path, [.. preamble, .. text]);
+
+				ConfigurationTextSnapshot snapshot = ConfigurationTextSnapshot.Read(path);
+				byte[] encoded = snapshot.Encode("name=résumé\n");
+
+				Assert.Equal(encoding.CodePage, snapshot.TextEncoding.CodePage);
+				Assert.Equal(includePreamble, snapshot.HasByteOrderMark);
+				Assert.True(encoded.AsSpan().StartsWith(preamble));
+				Assert.Equal(
+					"name=résumé\n",
+					encoding.GetString(encoded, preamble.Length, encoded.Length - preamble.Length));
+			}
+		}
+		finally
+		{
+			Directory.Delete(root, true);
+		}
+	}
+
 	[Fact]
 	public void ManagedConfigurationBackup_RestoresPreviousFile()
 	{

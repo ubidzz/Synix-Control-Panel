@@ -24,6 +24,7 @@ namespace Synix_Control_Panel.Tests;
 public sealed class ServerManagementEngineTests
 {
 	[Theory]
+	[Trait("Category", "Regression")]
 	[InlineData("RESTART")]
 	[InlineData("MAINTENANCE")]
 	[InlineData("WATCHDOG")]
@@ -42,6 +43,7 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
 	public async Task Stop_StillHandlesANormalSingleProcessServer()
 	{
 		string testRoot = Path.Combine(
@@ -94,6 +96,7 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
 	public async Task Stop_KillsEveryRegisteredExecutableForAMultiProcessServer()
 	{
 		string testRoot = Path.Combine(
@@ -159,6 +162,7 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
 	public async Task ShutdownVerification_RequiresAContinuousQuietPeriod()
 	{
 		Queue<List<int>> processSnapshots = new(

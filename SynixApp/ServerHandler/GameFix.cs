@@ -390,7 +390,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			if (arguments.Contains("{ram}", StringComparison.OrdinalIgnoreCase))
 				capabilities |= GameManagementCapability.Ram;
-			if (GameDatabase.IsMinecraft(game.Game))
+			if (GameCapabilityResolver.UsesMinecraftConfiguration(game))
 				capabilities |= GameManagementCapability.GameVersion;
 
 			return capabilities;
@@ -636,7 +636,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			bool applied = false;
-			if (server.Game == "Minecraft")
+			if (GameCapabilityResolver.UsesMinecraftConfiguration(server))
 			{
 				ManualConfigWasCreated = true;
 				applied = true;

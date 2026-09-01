@@ -56,12 +56,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		}
 
 		internal static bool IsBedrock(GameServer server) =>
-			GameDatabase.IsMinecraft(server.Game) &&
+			GameCapabilityResolver.UsesMinecraftLifecycle(server) &&
 			(server.Game.Trim().Equals("Minecraft Bedrock", StringComparison.OrdinalIgnoreCase) ||
 			 NormalizeEdition(server.MinecraftEdition) == BedrockEdition);
 
 		internal static bool IsJava(GameServer server) =>
-			GameDatabase.IsMinecraft(server.Game) && !IsBedrock(server);
+			GameCapabilityResolver.UsesMinecraftLifecycle(server) && !IsBedrock(server);
 
 		internal static string ResolveExecutableName(GameServer server, GameInfo definition) =>
 			IsBedrock(server) ? BedrockExecutableName : definition.ExeName;

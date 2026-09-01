@@ -88,7 +88,7 @@ namespace Synix_Control_Panel.SynixEngine
 					CheckForDDoS();
 				}
 
-				foreach (GameServer server in MainGUI.serverList.ToList())
+				foreach (GameServer server in ServerRegistry.Snapshot())
 				{
 					if (server.Status == StatusManager.GetStatus(ServerState.Running))
 					{
@@ -155,7 +155,7 @@ namespace Synix_Control_Panel.SynixEngine
 				DateTime now = DateTime.Now;
 				string todayBookmark = now.ToString("yyyy-MM-dd");
 
-				foreach (GameServer server in MainGUI.serverList.ToList())
+				foreach (GameServer server in ServerRegistry.Snapshot())
 				{
 					if (server.Status != StatusManager.GetStatus(ServerState.Running))
 						continue;
@@ -240,7 +240,7 @@ namespace Synix_Control_Panel.SynixEngine
 			double usablePool = physicalRamGb - 5.0;
 			if (usablePool < 1) usablePool = physicalRamGb;
 
-			var usage = ResourceMonitor.GetTotalResources(MainGUI.serverList);
+			var usage = ResourceMonitor.GetTotalResources(ServerRegistry.Servers);
 			double usedGb = usage.TotalRamMB / 1024.0;
 
 			double ramUsagePercent = (usedGb / usablePool) * 100.0;

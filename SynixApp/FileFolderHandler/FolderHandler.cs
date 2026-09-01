@@ -57,9 +57,9 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 						}
 					}
 
-					if (MainGUI.serverList.Contains(server))
+					if (SynixEngine.ServerRegistry.Servers.Contains(server))
 					{
-						MainGUI.serverList.Remove(server);
+						SynixEngine.ServerRegistry.Servers.Remove(server);
 					}
 
 					FileHandler.SaveServers();

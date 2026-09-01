@@ -162,6 +162,7 @@ public sealed class MinecraftEditionTests : IDisposable
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
 	public void PlayerManagementStatusDoesNotCoverTheActionButtons()
 	{
 		Exception? failure = null;
@@ -227,6 +228,7 @@ public sealed class MinecraftEditionTests : IDisposable
 	}
 
 	[Theory]
+	[Trait("Category", "Regression")]
 	[InlineData("Survival", "Survival")]
 	[InlineData("survival", "Survival")]
 	[InlineData("Creative", "Creative")]

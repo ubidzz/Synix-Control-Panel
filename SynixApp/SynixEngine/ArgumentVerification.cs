@@ -198,7 +198,7 @@ namespace Synix_Control_Panel.SynixEngine
 					workingDirectory,
 					definition.LaunchBehavior.RunElevated,
 					createNoWindow: true,
-					redirectStandardInput: GameDatabase.IsMinecraft(server.Game));
+					redirectStandardInput: GameCapabilityResolver.UsesMinecraftConsole(server));
 				processSettingsBuilt = true;
 				processSettingsDetails = definition.LaunchBehavior.RunElevated
 					? "The command can be passed through the Windows elevation prompt."

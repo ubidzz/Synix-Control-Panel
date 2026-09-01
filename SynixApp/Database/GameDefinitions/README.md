@@ -19,6 +19,15 @@ Keep `gameModes` friendly for the user. For games that show PVP/PVE but require 
 
 Special hardware and launch behavior belongs in `runtimeRequirements` and `launchBehavior`, not in game-name checks. Definitions can require minimum system RAM, AVX2, hardware virtualization, Hyper-V, a supported Windows edition, .NET Framework 4.8/4.8.1, and allowlisted Microsoft Visual C++ x64 runtimes. They can also request an elevated launch, force a required server-manager window to remain visible, select external lifecycle tracking, disable generated launch-file export, and provide a ready message. These values are validated before the game enters the catalog. Synix checks declared prerequisites and occupied server ports before launch but does not silently install Windows components or runtimes.
 
+`controlCapabilities` selects the built-in controller family for lifecycle,
+console, configuration, and player operations. Ordinary games should keep the
+`Standard`, `None`, `Generic`, and `QueryProtocol` defaults. Minecraft declares
+its four Minecraft controllers in its definition. This keeps controller
+selection out of normal game-name switches while preserving a fixed, compiled,
+security-reviewed implementation. A definition cannot name a class, assembly,
+script, or arbitrary controller, and incompatible controller combinations are
+rejected during catalog validation.
+
 Complete templates may use either `SynixTemplate` or `GameGenerated`. `SynixTemplate` writes the complete file before first start. `GameGenerated` is for an official complete configuration captured after the server creates it; Synix then uses that built-in copy for managed values, validation, repair, and full reset. In both modes, placeholders automatically expose matching common fields in Server Settings without another game-name switch.
 
 Use `{HasPassword}` when a configuration has a separate password-enabled field. It expands to the definition's `booleanTrueValue` when `{Password}` is not empty and `booleanFalseValue` when it is empty.
@@ -58,6 +67,7 @@ The development validator checks every source definition for:
 - HTTPS-only download and icon addresses.
 - Allowlisted declarative post-install actions.
 - Declarative hardware and Windows runtime requirements, visible/elevated/external launch behavior, and supported server frameworks.
+- Valid built-in control capabilities and compatible controller combinations.
 
 The same validation is included in the Release Readiness Checker, so an invalid game definition blocks a release.
 

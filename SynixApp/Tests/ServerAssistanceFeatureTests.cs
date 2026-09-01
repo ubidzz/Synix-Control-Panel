@@ -74,6 +74,7 @@ public sealed class ServerAssistanceFeatureTests
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
 	public void ExistingServerImportRejectsAQueryPortUsedByAStoppedServer()
 	{
 		GameInfo definition = GameDatabase.GetGameList()
@@ -211,6 +212,7 @@ public sealed class ServerAssistanceFeatureTests
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
 	public void ExplicitDashboardCloseDoesNotRestartBackgroundAgent()
 	{
 		Assert.False(BackgroundServiceManager.ShouldStartAgent(

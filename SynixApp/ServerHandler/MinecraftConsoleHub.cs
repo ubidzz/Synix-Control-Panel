@@ -43,7 +43,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		internal static void NotifyStopped(GameServer server)
 		{
-			if (GameDatabase.IsMinecraft(server.Game))
+			if (GameCapabilityResolver.UsesMinecraftConsole(server))
 				Publish(server, "Minecraft's managed console process has stopped.", false);
 		}
 
@@ -57,7 +57,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		internal static void Publish(GameServer server, string text, bool isError)
 		{
-			if (!GameDatabase.IsMinecraft(server.Game) || string.IsNullOrWhiteSpace(text))
+			if (!GameCapabilityResolver.UsesMinecraftConsole(server) || string.IsNullOrWhiteSpace(text))
 				return;
 
 			MinecraftConsoleLine line = new(DateTime.Now, text, isError);

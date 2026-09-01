@@ -39,6 +39,42 @@ public enum GameLifecycleTrackingMode
 	ExternalDeployment
 }
 
+public enum GameLifecycleControllerKind
+{
+	Standard,
+	Minecraft
+}
+
+public enum GameConsoleControllerKind
+{
+	None,
+	Minecraft
+}
+
+public enum GameConfigurationControllerKind
+{
+	Generic,
+	Minecraft
+}
+
+public enum GamePlayerControllerKind
+{
+	QueryProtocol,
+	Minecraft
+}
+
+public sealed class GameControlCapabilities
+{
+	public GameLifecycleControllerKind Lifecycle { get; init; } =
+		GameLifecycleControllerKind.Standard;
+	public GameConsoleControllerKind Console { get; init; } =
+		GameConsoleControllerKind.None;
+	public GameConfigurationControllerKind Configuration { get; init; } =
+		GameConfigurationControllerKind.Generic;
+	public GamePlayerControllerKind Players { get; init; } =
+		GamePlayerControllerKind.QueryProtocol;
+}
+
 public enum GameCompatibilityStatus
 {
 	NeedsCommunityTesting,
@@ -166,6 +202,8 @@ public class GameDefinition
 	[JsonIgnore]
 	public GameLaunchBehavior LaunchBehavior { get; init; } = new();
 	[JsonIgnore]
+	public GameControlCapabilities ControlCapabilities { get; init; } = new();
+	[JsonIgnore]
 	public IReadOnlyList<string> SupportedServerFrameworks { get; init; } = [];
 	[JsonIgnore]
 	public IReadOnlyList<string> LogPaths { get; init; } = [];
@@ -226,6 +264,7 @@ public sealed class ServerProcessIdentity
 
 public class GameServer
 {
+	public int DataSchemaVersion { get; set; }
 	public string Game { get; set; } = string.Empty;
 	[JsonIgnore]
 	public string DisplayGameName => IsMinecraft(Game)

@@ -26,7 +26,7 @@ namespace Synix_Control_Panel
 {
 	public partial class MainGUI : Form
 	{
-		public static BindingList<GameServer> serverList = [];
+		public static BindingList<GameServer> serverList { get; } = ServerRegistry.Servers;
 		private readonly BindingList<GameServer> _visibleServers = [];
 		public bool isDownloadActive = false;
 		private static bool isInitializing = false;

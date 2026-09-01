@@ -174,7 +174,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!Core.TryValidateExtraArguments(server.ExtraArgs, out errorMessage))
 				return false;
 
-			bool isMinecraft = GameDatabase.IsMinecraft(server.Game);
+			bool isMinecraft = GameCapabilityResolver.UsesMinecraftLifecycle(server);
 			bool isBedrock = MinecraftControlProfile.IsBedrock(server);
 			int ramToUse = isMinecraft ? server.MaxRam * 1024 : server.MaxRam;
 			string targetAppId = definition.AppID ?? string.Empty;

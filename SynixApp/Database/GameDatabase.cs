@@ -31,8 +31,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 			CreateGameIndex();
 		private static readonly Dictionary<string, string> _canonicalNames =
 			CreateCanonicalNameIndex();
-		private const string CanonicalMinecraftName = "Minecraft";
-
 		public static string GetCanonicalGameName(string? gameName)
 		{
 			string normalizedName = gameName?.Trim() ?? string.Empty;
@@ -44,9 +42,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 
 		public static bool IsMinecraft(string? gameName)
 		{
-			return GetCanonicalGameName(gameName).Equals(
-				CanonicalMinecraftName,
-				StringComparison.OrdinalIgnoreCase);
+			return GameCapabilityResolver.UsesMinecraftLifecycle(GetGame(gameName ?? string.Empty));
 		}
 
 		public static GameInfo? GetGame(string gameName)
@@ -115,7 +111,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 			if (game == null)
 				return false;
 
-			return IsMinecraft(game.Game) ||
+			return game.ControlCapabilities.Players == GamePlayerControllerKind.Minecraft ||
 				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
 		}
 
@@ -128,7 +124,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 		internal static bool SupportsPlayerManagement(GameServer server)
 		{
 			ArgumentNullException.ThrowIfNull(server);
-			if (IsMinecraft(server.Game))
+			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
 			{
 				return MinecraftControlProfile.IsJava(server) &&
 					(MinecraftControlProfile.ShouldEnableManagementProtocol(server) ||

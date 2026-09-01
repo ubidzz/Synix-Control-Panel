@@ -359,7 +359,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 			List<GameServer> serverList = servers.ToList();
 			foreach (GameServer server in serverList)
+			{
+				ServerDataMigrator.Migrate(server);
 				MigrateLegacyServer(server);
+			}
 
 			return JsonSerializer.Serialize(
 				serverList,
@@ -370,15 +373,38 @@ namespace Synix_Control_Panel.SynixEngine
 			string json,
 			out int migratedServerCount)
 		{
+			List<GameServer> servers = DeserializeServersAndMigrate(
+				json,
+				out ServerDataMigrationSummary summary);
+			migratedServerCount = summary.MigratedPasswordServerCount;
+			return servers;
+		}
+
+		public static List<GameServer> DeserializeServersAndMigrate(
+			string json,
+			out ServerDataMigrationSummary summary)
+		{
 			List<GameServer> servers =
 				JsonSerializer.Deserialize<List<GameServer>>(json) ?? [];
 
-			migratedServerCount = 0;
+			int sourceVersion = servers.Count == 0
+				? ServerDataMigrator.CurrentVersion
+				: servers.Min(server => server.DataSchemaVersion);
+			int migratedServerCount = 0;
+			int migratedPasswordServerCount = 0;
 			foreach (GameServer server in servers)
 			{
-				if (MigrateLegacyServer(server))
+				if (ServerDataMigrator.Migrate(server))
 					migratedServerCount++;
+				if (MigrateLegacyServer(server))
+					migratedPasswordServerCount++;
 			}
+
+			summary = new ServerDataMigrationSummary(
+				sourceVersion,
+				ServerDataMigrator.CurrentVersion,
+				migratedServerCount,
+				migratedPasswordServerCount);
 
 			return servers;
 		}

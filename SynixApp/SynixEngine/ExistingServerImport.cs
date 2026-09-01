@@ -14,7 +14,7 @@ namespace Synix_Control_Panel.SynixEngine
 		string ExecutablePath,
 		string MinecraftEdition = "Java")
 	{
-		internal string DisplayName => GameDatabase.IsMinecraft(Game.Game)
+		internal string DisplayName => GameCapabilityResolver.UsesMinecraftLifecycle(Game)
 			? $"Minecraft {MinecraftControlProfile.NormalizeEdition(MinecraftEdition)}"
 			: Game.Game;
 	}
@@ -132,7 +132,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return new GameServer
 			{
 				Game = game.Game,
-				MinecraftEdition = GameDatabase.IsMinecraft(game.Game)
+				MinecraftEdition = GameCapabilityResolver.UsesMinecraftLifecycle(game)
 					? MinecraftControlProfile.NormalizeEdition(minecraftEdition)
 					: MinecraftControlProfile.JavaEdition,
 				ServerName = requestedName,

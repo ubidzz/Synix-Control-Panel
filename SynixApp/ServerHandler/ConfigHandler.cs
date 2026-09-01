@@ -109,146 +109,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 		}
 
-		private sealed class TextFileSnapshot
-		{
-			public string Text { get; private init; } = string.Empty;
-			public Encoding TextEncoding { get; private init; } =
-				new UTF8Encoding(false);
-			public bool HasByteOrderMark { get; private init; }
-
-			public static TextFileSnapshot Read(string path)
-			{
-				byte[] bytes;
-				using (FileStream stream = new(
-					path,
-					FileMode.Open,
-					FileAccess.Read,
-					FileShare.ReadWrite))
-				{
-					if (stream.Length > int.MaxValue)
-					{
-						throw new InvalidDataException(
-							"The configuration file is too large to edit safely.");
-					}
-
-					bytes = new byte[(int)stream.Length];
-					stream.ReadExactly(bytes);
-				}
-
-				Encoding encoding;
-				int preambleLength;
-				bool hasBom;
-
-				if (StartsWith(bytes, new byte[] { 0x00, 0x00, 0xFE, 0xFF }))
-				{
-					encoding = new UTF32Encoding(true, true, true);
-					preambleLength = 4;
-					hasBom = true;
-				}
-				else if (StartsWith(bytes, new byte[] { 0xFF, 0xFE, 0x00, 0x00 }))
-				{
-					encoding = new UTF32Encoding(false, true, true);
-					preambleLength = 4;
-					hasBom = true;
-				}
-				else if (StartsWith(bytes, new byte[] { 0xEF, 0xBB, 0xBF }))
-				{
-					encoding = new UTF8Encoding(true, true);
-					preambleLength = 3;
-					hasBom = true;
-				}
-				else if (StartsWith(bytes, new byte[] { 0xFE, 0xFF }))
-				{
-					encoding = new UnicodeEncoding(true, true, true);
-					preambleLength = 2;
-					hasBom = true;
-				}
-				else if (StartsWith(bytes, new byte[] { 0xFF, 0xFE }))
-				{
-					encoding = new UnicodeEncoding(false, true, true);
-					preambleLength = 2;
-					hasBom = true;
-				}
-				else
-				{
-					encoding = IsValidUtf8(bytes)
-						? new UTF8Encoding(false, true)
-						: CreateStrictLatin1Encoding();
-					preambleLength = 0;
-					hasBom = false;
-				}
-
-				return new TextFileSnapshot
-				{
-					Text = encoding.GetString(
-						bytes,
-						preambleLength,
-						bytes.Length - preambleLength),
-					TextEncoding = encoding,
-					HasByteOrderMark = hasBom
-				};
-			}
-
-			public byte[] Encode(string content)
-			{
-				byte[] contentBytes = TextEncoding.GetBytes(content);
-				if (!HasByteOrderMark)
-				{
-					return contentBytes;
-				}
-
-				byte[] preamble = TextEncoding.GetPreamble();
-				byte[] output = new byte[preamble.Length + contentBytes.Length];
-				Buffer.BlockCopy(preamble, 0, output, 0, preamble.Length);
-				Buffer.BlockCopy(
-					contentBytes,
-					0,
-					output,
-					preamble.Length,
-					contentBytes.Length);
-				return output;
-			}
-
-			private static bool StartsWith(byte[] source, byte[] prefix)
-			{
-				if (source.Length < prefix.Length)
-				{
-					return false;
-				}
-
-				for (int index = 0; index < prefix.Length; index++)
-				{
-					if (source[index] != prefix[index])
-					{
-						return false;
-					}
-				}
-
-				return true;
-			}
-
-			private static bool IsValidUtf8(byte[] bytes)
-			{
-				try
-				{
-					_ = new UTF8Encoding(false, true).GetString(bytes);
-					return true;
-				}
-				catch (DecoderFallbackException)
-				{
-					return false;
-				}
-			}
-
-			private static Encoding CreateStrictLatin1Encoding()
-			{
-				Encoding encoding = (Encoding)Encoding.Latin1.Clone();
-				encoding.EncoderFallback = EncoderFallback.ExceptionFallback;
-				encoding.DecoderFallback = DecoderFallback.ExceptionFallback;
-				return encoding;
-			}
-		}
-
 		private sealed class XmlElementFrame
 		{
 			public string NumericPath { get; init; } = string.Empty;
@@ -280,7 +140,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return new List<ConfigLine>();
 			}
 
-			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
+			ConfigurationTextSnapshot snapshot = ConfigurationTextSnapshot.Read(path);
 			return LoadConfigText(snapshot.Text, format);
 		}
 
@@ -313,7 +173,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return false;
 			}
 
-			string existingText = TextFileSnapshot.Read(path).Text;
+			string existingText = ConfigurationTextSnapshot.Read(path).Text;
 			Dictionary<string, int> existingStructure =
 				BuildStructureSignature(existingText, format);
 			Dictionary<string, int> requiredStructure =
@@ -343,7 +203,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					path);
 			}
 
-			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
+			ConfigurationTextSnapshot snapshot = ConfigurationTextSnapshot.Read(path);
 			return BuildUpdatedText(snapshot.Text, data, format);
 		}
 
@@ -359,14 +219,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					path);
 			}
 
-			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
+			ConfigurationTextSnapshot snapshot = ConfigurationTextSnapshot.Read(path);
 			string updatedText = BuildUpdatedText(snapshot.Text, data, format);
 			if (string.Equals(updatedText, snapshot.Text, StringComparison.Ordinal))
 			{
 				return;
 			}
 
-			WriteAtomically(path, snapshot.Encode(updatedText));
+			ConfigurationFileWriter.WriteAtomically(path, snapshot.Encode(updatedText));
 		}
 
 		internal static bool EnsureStandardIniTupleValues(
@@ -382,7 +242,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				throw new InvalidDataException("The INI tuple key is invalid.");
 			}
 
-			TextFileSnapshot snapshot = TextFileSnapshot.Read(path);
+			ConfigurationTextSnapshot snapshot = ConfigurationTextSnapshot.Read(path);
 			ParsedDocument document = ParseDocument(snapshot.Text, ConfigFormat.StandardINI);
 			List<KeyValuePair<string, string>> missing = requiredValues
 				.Where(required => !document.Values.Any(value =>
@@ -425,7 +285,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				",",
 				missing.Select(required => $"{required.Key}={required.Value}"));
 			string updated = snapshot.Text.Insert(closingIndex, insertion);
-			WriteAtomically(path, snapshot.Encode(updated));
+			ConfigurationFileWriter.WriteAtomically(path, snapshot.Encode(updated));
 			return true;
 		}
 
@@ -1004,55 +864,6 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			return value ? "true" : "false";
-		}
-
-		private static void WriteAtomically(string path, byte[] content)
-		{
-			string fullPath = Path.GetFullPath(path);
-			string directory = Path.GetDirectoryName(fullPath)
-				?? throw new InvalidOperationException("The config directory is unavailable.");
-			string temporaryPath = Path.Combine(
-				directory,
-				$".{Path.GetFileName(fullPath)}.{Guid.NewGuid():N}.synix.tmp");
-			string backupPath = fullPath + ".synix.bak";
-
-			try
-			{
-				File.WriteAllBytes(temporaryPath, content);
-				try
-				{
-					File.Replace(temporaryPath, fullPath, backupPath, true);
-				}
-				catch (PlatformNotSupportedException)
-				{
-					ReplaceWithFallback(temporaryPath, fullPath, backupPath);
-				}
-				catch (IOException)
-				{
-					ReplaceWithFallback(temporaryPath, fullPath, backupPath);
-				}
-			}
-			finally
-			{
-				if (File.Exists(temporaryPath))
-				{
-					File.Delete(temporaryPath);
-				}
-			}
-		}
-
-		private static void ReplaceWithFallback(
-			string temporaryPath,
-			string destinationPath,
-			string backupPath)
-		{
-			if (!File.Exists(temporaryPath))
-			{
-				return;
-			}
-
-			File.Copy(destinationPath, backupPath, true);
-			File.Move(temporaryPath, destinationPath, true);
 		}
 
 		private static ParsedDocument ParseDocument(string text, ConfigFormat format)

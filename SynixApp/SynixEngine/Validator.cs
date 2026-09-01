@@ -98,7 +98,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public bool ValidateNameAndReport(string name, string game, GameServer? excluding = null)
 		{
-			bool exists = MainGUI.serverList.Any(s =>
+			bool exists = ServerRegistry.Servers.Any(s =>
 				s.Game.Equals(game, StringComparison.OrdinalIgnoreCase) &&
 				s.ServerName.Equals(name, StringComparison.OrdinalIgnoreCase) &&
 				s != excluding);
@@ -300,7 +300,7 @@ namespace Synix_Control_Panel.SynixEngine
 			GameServer? excluding = null,
 			bool activeOnly = false)
 		{
-			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
+			GameServer? owner = ServerRegistry.Servers.FirstOrDefault(server =>
 			{
 				if (server == excluding)
 					return false;
@@ -320,7 +320,7 @@ namespace Synix_Control_Panel.SynixEngine
 			int port,
 			GameServer? excluding = null)
 		{
-			GameServer? owner = MainGUI.serverList.FirstOrDefault(server =>
+			GameServer? owner = ServerRegistry.Servers.FirstOrDefault(server =>
 			{
 				if (server == excluding)
 					return false;
