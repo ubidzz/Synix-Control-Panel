@@ -7,7 +7,7 @@
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Privilege](https://img.shields.io/badge/Admin-Not%20Required-blueviolet.svg?style=for-the-badge)
-[![Supported Profiles](https://img.shields.io/badge/Game%20Server%20Profiles-210%2B-00c8ff.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List)
+[![Supported Profiles](https://img.shields.io/badge/Game%20Server%20Profiles-228-00c8ff.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List)
 [![CodeQL](https://img.shields.io/badge/Security-CodeQL-2088FF?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/security/code-scanning)
 [![License](https://img.shields.io/badge/License-Personal%20Use-red.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md)
 [![Donate with PayPal](https://img.shields.io/badge/PayPal-Donate-0079C1?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8)
@@ -33,7 +33,7 @@ Running a dedicated server normally means finding the correct Steam App ID, inst
 | Without a Server Manager | With Synix |
 |---|---|
 | Install and configure SteamCMD manually | SteamCMD is checked and installed automatically |
-| Search for App IDs and startup arguments | Select from more than 210 built-in server profiles |
+| Search for App IDs and startup arguments | Select from 228 built-in server profiles |
 | Write and maintain batch files | Configure the server through normal forms and controls |
 | Watch Task Manager for crashes | Use built-in process and resource monitoring |
 | Remember updates, backups, and restarts | Enable automatic maintenance options per server |
@@ -47,6 +47,20 @@ Running a dedicated server normally means finding the correct Steam App ID, inst
 4. **Install and start.** Synix prepares the files, runs the required tools, launches the server, and begins monitoring it.
 
 Synix keeps the management experience local. The main Synix data folder is `C:\Synix`, while custom game-server locations can be placed on another SSD, NVMe drive, or storage folder.
+
+## 🌟 What Is New in v1.0.24
+
+v1.0.24 expands Synix from a server launcher into a more complete local server-management workspace:
+
+- **Server Readiness Center:** Checks required files, runtimes, configuration health, ports, Windows Firewall rules, disk space, process ownership, and recent logs.
+- **Import Existing Server:** Registers a supported existing installation without moving, reinstalling, or overwriting it.
+- **First-Start Assistant:** Explains the remaining setup, connection, configuration, backup, and recovery steps before the first launch.
+- **Plain-English errors:** Shows what happened, what the user can do next, and optional technical details.
+- **Reliable multi-process control:** Tracks launchers, consoles, child processes, replacement processes, and workers so stop and restart operations do not leave ghost processes or start duplicate servers.
+- **Smart Maintenance:** Can wait for players, back up the server, stop its verified process group, update it, and restart it on selected days and times.
+- **Game Support Catalog:** Search and filter all built-in profiles by name, compatibility, configuration, player details, crossplay, server program, and verification status.
+- **Minecraft Java and Bedrock control:** Adds edition-aware installation, configuration, process tracking, console commands, player management, loaders, and native game modes.
+- **Mod & Plugin Manager:** Discovers supported add-on folders, imports reviewed local packages, manages provider IDs, and records rollback information.
 
 ## 💾 Install Synix
 
@@ -96,9 +110,9 @@ Synix is intended to make common server-management jobs understandable without h
 - **Built-in help:** Learn about setup, ports, networking, backups, updates, watchdog behavior, and supported server options inside the application.
 - **No artificial instance limit:** Synix does not charge for or restrict the number of server entries you create.
 
-## 🎮 More Than 210 Server Profiles
+## 🎮 228 Built-In Server Profiles
 
-Synix includes **more than 210 built-in dedicated game-server profiles**, with additional profiles and corrections added over time.
+Synix includes **228 built-in dedicated game-server profiles**, with additional profiles and corrections added over time.
 
 Popular profiles include:
 
@@ -114,6 +128,32 @@ Popular profiles include:
 See the [complete supported game list](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List).
 
 > Dedicated servers change over time. A profile may need updated arguments after a game or server update. Synix records locally verified install, start, stop, and monitoring results to help identify what has been tested on your computer.
+
+## ⛏️ Minecraft Java and Bedrock
+
+Minecraft support is isolated from other game-server workflows and includes:
+
+- Separate Java and Bedrock setup, installation, importing, ports, icons, configuration, and connection guidance.
+- Automatic Java and loader selection for Vanilla, Fabric, Forge, and compatible NeoForge 1.21+ releases.
+- Installation of Microsoft's official Bedrock Dedicated Server package.
+- Managed `server.properties` and Bedrock configuration values for names, ports, maximum players, worlds, seeds, RCON, supported local-management settings, and native game modes.
+- Native **Survival**, **Creative**, and **Adventure** choices instead of generic PVE/PVP values.
+- A local Minecraft Server Console that works with Synix-managed hidden windows, supported localhost management, or optional RCON.
+- Prepared commands for announcements, player lists, moderation, operators, allowlists, world time, weather, saving, help, and clean shutdown.
+- Player-name management when the selected Java server exposes an authenticated local management or RCON channel.
+
+## 🧩 Mod & Plugin Manager
+
+Synix uses game and framework profiles instead of maintaining a database of every individual mod. Initial support includes Rust Oxide/uMod files, Minecraft mod and plugin folders, 7 Days to Die mod packages, ARK: Survival Evolved Steam Workshop IDs, and ARK: Survival Ascended provider mod IDs.
+
+- Discovers add-ons already installed in supported folders.
+- Imports supported local files and ZIP packages through guarded staging.
+- Opens supported external catalogs in the user's browser; Synix does not download catalog files or require catalog API credentials for those links.
+- Records SHA-256 values and rollback information for changes made by Synix.
+- Blocks unsafe archive paths, symbolic links, disguised libraries, prohibited executable or script types, oversized packages, duplicate destinations, and confirmed antivirus detections.
+- Treats an unavailable or inconclusive Microsoft Defender review as a warning instead of claiming that malware was found.
+
+> Mods and plugins execute with the game server's Windows permissions. A clean scan cannot prove that third-party code is trustworthy. Install add-ons only from sources you trust, and run Synix with standard Windows permissions.
 
 ## 🧠 Server Management and Automation
 
@@ -133,9 +173,10 @@ See the [complete supported game list](https://github.com/ubidzz/Synix-Control-P
 - Builds the required startup command from the selected profile and user settings.
 - Tracks the server from `Starting` to `Running` instead of assuming a launched process is ready.
 - Sends a normal close request first so supported servers have time to save.
-- Uses a staged process-tree fallback when a server cannot close normally.
+- Tracks the complete verified process group and uses a staged process-tree fallback when a server cannot close normally.
 - Prevents duplicate launches and common port conflicts.
 - Allows a startup attempt to be cancelled without creating a restart loop.
+- Keeps a private local command channel for supported Minecraft servers even when their command window is hidden.
 
 ### Monitoring and Recovery
 
@@ -145,6 +186,7 @@ See the [complete supported game list](https://github.com/ubidzz/Synix-Control-P
 - Uses A2S, TCP, UDP, HTTP, process, or socket checks where supported.
 - Supports Discord webhook notifications for server lifecycle and maintenance events.
 - Helps prevent new server launches when the host is already under heavy resource pressure.
+- Can use an optional background agent at Windows sign-in for scheduled monitoring without leaving a ghost Synix process after an explicit shutdown.
 
 ## 💾 Backups, Transfers, and Password Protection
 
@@ -157,7 +199,8 @@ See the [complete supported game list](https://github.com/ubidzz/Synix-Control-P
 - **Package verification:** Check a transfer package before importing it.
 - **Crash-safe importing:** Stage changes and automatically roll back incomplete imports when possible.
 - **Protected Synix passwords:** Passwords and Discord webhooks saved by Synix are protected for the current Windows user.
-- **Automatic migration:** Older plaintext Synix records are upgraded when loaded.
+- **Automatic migration:** Older plaintext Synix records and legacy server-data formats are upgraded when loaded.
+- **Migration backup:** Before a server-data schema upgrade is saved, Synix preserves the original file as `servers.json.before-data-v<version>.bak`.
 
 > Some game servers require passwords in their command line or configuration files. Synix protects its own saved values, but it cannot change how third-party game-server software stores or receives those values.
 
@@ -169,6 +212,8 @@ See the [complete supported game list](https://github.com/ubidzz/Synix-Control-P
 - Queries player counts and server information through A2S where supported.
 - Uses fallback checks for servers that do not provide a normal A2S response.
 - Manages `steam_appid.txt` for profiles that require a Steam API handshake.
+
+> Games that expose server discovery only through Epic Online Services may show **N/A** for player counts and hide unsupported Player Management or LAN/WAN connection-test actions. Synix does not ask normal users to provide EOS integration data that is not available through the normal server installation.
 
 ### Synix Network Guard
 
@@ -234,16 +279,18 @@ The Synix knowledge base is included directly in the application and covers:
 
 - **Application:** C# with .NET 10 and Windows Forms
 - **Architecture:** Shared, asynchronous server-management engine with a local desktop interface
+- **Game definitions:** Strict embedded JSON profiles with validated capabilities and no arbitrary script, plugin, assembly, or DLL loading
+- **Controller selection:** Manifest-driven built-in lifecycle, console, configuration, and player controllers
 - **Installer:** WiX-based per-user MSI
 - **Distribution:** GitHub Releases and WinGet
 - **Publishing:** Single-file ReadyToRun executable
-- **Data:** Local JSON persistence without a required SQL database
+- **Data:** Local versioned JSON persistence with sequential migrations and pre-migration backups; no SQL database required
 - **Password protection:** Windows user-bound encryption with portable encrypted transfer support
 - **Monitoring:** Windows process, CPU, memory, socket, and WMI integration
 - **Networking:** A2S and additional UDP, TCP, HTTP, and local process checks
 - **Quality checks:** Automated tests, CodeQL scanning, package hashes, and a release-readiness report
 
-Synix requires the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) when it is not already installed.
+Official Synix release packages are published as self-contained Windows applications. Developers building Synix from source need the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 
 ## 🖼️ Gallery
 
