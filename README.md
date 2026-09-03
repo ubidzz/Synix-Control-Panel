@@ -97,6 +97,8 @@ Download **`Synix.Control.Panel.exe`** from the [latest release](https://github.
 - The executable can be placed wherever you prefer.
 - Synix server data remains stored separately inside `C:\Synix`.
 
+> **.NET 10 is included with Synix.** Official Windows releases are self-contained and package the required .NET 10 runtime inside the published Synix executable, so users do not need to install .NET separately. `SynixSetup.msi` contains that same self-contained executable. Including the runtime is why the published application increased from roughly 40 MB to about 119 MB; the MSI download can remain smaller because the installed executable is compressed inside the installer.
+
 > **Upgrading from v1.0.20 or earlier:** Older installed releases used the Inno Setup `SynixSetup.exe` installer. Uninstall that installed version first, then install `SynixSetup.msi`. This does not remove the servers and settings stored inside `C:\Synix`.
 
 ## ✨ Designed for Normal Windows Users
@@ -283,14 +285,14 @@ The Synix knowledge base is included directly in the application and covers:
 - **Controller selection:** Manifest-driven built-in lifecycle, console, configuration, and player controllers
 - **Installer:** WiX-based per-user MSI
 - **Distribution:** GitHub Releases and WinGet
-- **Publishing:** Single-file ReadyToRun executable
+- **Publishing:** Self-contained .NET 10 Windows x64 single-file executable; the runtime is included with both the standalone application and `SynixSetup.msi`
 - **Data:** Local versioned JSON persistence with sequential migrations and pre-migration backups; no SQL database required
 - **Password protection:** Windows user-bound encryption with portable encrypted transfer support
 - **Monitoring:** Windows process, CPU, memory, socket, and WMI integration
 - **Networking:** A2S and additional UDP, TCP, HTTP, and local process checks
 - **Quality checks:** Automated tests, CodeQL scanning, package hashes, and a release-readiness report
 
-Official Synix release packages are published as self-contained Windows applications. Developers building Synix from source need the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+Official Synix release packages include the .NET 10 runtime and do not require users to install .NET separately. Developers building Synix from source still need the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 
 ## 🖼️ Gallery
 
