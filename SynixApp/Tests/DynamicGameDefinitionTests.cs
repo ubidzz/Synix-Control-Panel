@@ -154,7 +154,7 @@ public sealed class DynamicGameDefinitionTests
 		Assert.Equal("Eco User Token", eco.AuthenticationTokenLabel);
 		Assert.Equal("https://play.eco/account", eco.AuthenticationTokenHelpUrl);
 		Assert.Contains("{auth_token}", eco.RequiredArgs, StringComparison.Ordinal);
-		Assert.True(eco.DefinitionRevision >= 2);
+		Assert.True(eco.DefinitionRevision >= 3);
 	}
 
 	[Fact]

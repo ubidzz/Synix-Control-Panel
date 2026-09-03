@@ -252,6 +252,133 @@ public sealed class ServerAssistanceFeatureTests
 
 	[Fact]
 	[Trait("Category", "Regression")]
+	public void EcoConfigEditorCreatesVersionMatchedGameplayFilesFromInstalledTemplates()
+	{
+		string root = Path.Combine(
+			Path.GetTempPath(),
+			$"synix-eco-config-editor-{Guid.NewGuid():N}");
+		string configDirectory = Path.Combine(root, "Configs");
+		Directory.CreateDirectory(configDirectory);
+		try
+		{
+			string networkPath = Path.Combine(configDirectory, "Network.eco");
+			string existingNetwork = "{\"Name\":\"Existing Eco Server\"}";
+			File.WriteAllText(networkPath, existingNetwork);
+			File.WriteAllText(
+				Path.Combine(configDirectory, "Network.eco.template"),
+				"{\"Name\":\"Template Eco Server\"}");
+			string difficultyTemplate = "{\"CollaborationPreset\":\"LowCollaboration\"}";
+			File.WriteAllText(
+				Path.Combine(configDirectory, "Difficulty.eco.template"),
+				difficultyTemplate);
+			string usersTemplate = "{\"Admins\":[],\"Blacklist\":[]}";
+			File.WriteAllText(
+				Path.Combine(configDirectory, "Users.eco.template"),
+				usersTemplate);
+			File.WriteAllText(
+				Path.Combine(root, "server.properties"),
+				"motd=Not an Eco configuration");
+
+			GameServer server = new()
+			{
+				Game = "Eco",
+				ServerName = "Eco Multi Config",
+				InstallPath = root
+			};
+			Core.PrepareConfigurationEditorFiles(server);
+			IReadOnlyList<ConfigurationEditorFile> files =
+				Core.ResolveConfigurationEditorFiles(server);
+
+			Assert.Equal(3, files.Count);
+			Assert.Equal(networkPath, files[0].Path, ignoreCase: true);
+			Assert.All(files, file => Assert.Equal(ConfigFormat.JSON, file.Format));
+			Assert.Contains(files, file => file.Path.EndsWith(
+				@"Configs\Difficulty.eco",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.Contains(files, file => file.Path.EndsWith(
+				@"Configs\Users.eco",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.DoesNotContain(files, file => file.Path.EndsWith(
+				"server.properties",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.Equal(existingNetwork, File.ReadAllText(networkPath));
+			Assert.Equal(
+				difficultyTemplate,
+				File.ReadAllText(Path.Combine(configDirectory, "Difficulty.eco")));
+			Assert.Equal(
+				usersTemplate,
+				File.ReadAllText(Path.Combine(configDirectory, "Users.eco")));
+		}
+		finally
+		{
+			Directory.Delete(root, true);
+		}
+	}
+
+	[Fact]
+	[Trait("Category", "Regression")]
+	public void ConfigEditorAddsSupportedSiblingFilesFromADeclaredConfigDirectory()
+	{
+		string root = Path.Combine(
+			Path.GetTempPath(),
+			$"synix-sibling-config-editor-{Guid.NewGuid():N}");
+		string configDirectory = Path.Combine(
+			root,
+			@"ShooterGame\Saved\Config\WindowsServer");
+		Directory.CreateDirectory(configDirectory);
+		try
+		{
+			File.WriteAllText(
+				Path.Combine(configDirectory, "GameUserSettings.ini"),
+				"[ServerSettings]\nServerName=Configured");
+			File.WriteAllText(
+				Path.Combine(configDirectory, "Game.ini"),
+				"[/Script/ShooterGame.ShooterGameMode]\nXPMultiplier=2.0");
+			File.WriteAllText(
+				Path.Combine(configDirectory, "Engine.ini"),
+				"[URL]\nPort=7777");
+			File.WriteAllText(
+				Path.Combine(configDirectory, "Engine.ini.synix.bak"),
+				"backup");
+			File.WriteAllText(
+				Path.Combine(configDirectory, "Notes.md"),
+				"not a configuration file");
+
+			GameServer server = new()
+			{
+				Game = "ARK: Survival Ascended",
+				ServerName = "Sibling Config Test",
+				InstallPath = root
+			};
+			IReadOnlyList<ConfigurationEditorFile> files =
+				Core.ResolveConfigurationEditorFiles(server);
+
+			Assert.Equal(3, files.Count);
+			Assert.Contains(files, file => file.Path.EndsWith(
+				"GameUserSettings.ini",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.Contains(files, file => file.Path.EndsWith(
+				"Game.ini",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.Contains(files, file => file.Path.EndsWith(
+				"Engine.ini",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.DoesNotContain(files, file => file.Path.EndsWith(
+				".bak",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.DoesNotContain(files, file => file.Path.EndsWith(
+				"Notes.md",
+				StringComparison.OrdinalIgnoreCase));
+			Assert.All(files, file => Assert.Equal(ConfigFormat.StandardINI, file.Format));
+		}
+		finally
+		{
+			Directory.Delete(root, true);
+		}
+	}
+
+	[Fact]
+	[Trait("Category", "Regression")]
 	public void ConfigEditorAvailabilityHidesLaunchArgumentOnlyGames()
 	{
 		string root = Path.Combine(

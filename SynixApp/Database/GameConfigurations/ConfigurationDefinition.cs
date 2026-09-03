@@ -410,6 +410,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			return !UsesConfigurationFile || File.Exists(ResolveFullPath(server));
 		}
 
+		internal virtual void PrepareConfigurationFilesForEditing(GameServer server)
+		{
+		}
+
 		internal virtual IReadOnlyList<string> ResolveConfigurationPaths(
 			GameServer server)
 		{

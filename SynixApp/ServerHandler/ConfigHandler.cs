@@ -51,6 +51,23 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 	public static class ConfigHandler
 	{
+		internal static bool TryGetFormatFromPath(
+			string path,
+			out ConfigFormat format)
+		{
+			format = Path.GetExtension(path).ToLowerInvariant() switch
+			{
+				".json" or ".eco" => ConfigFormat.JSON,
+				".xml" => ConfigFormat.XML,
+				".sii" => ConfigFormat.SII,
+				".ini" or ".cfg" or ".conf" or ".properties" =>
+					ConfigFormat.StandardINI,
+				_ => (ConfigFormat)(-1)
+			};
+
+			return (int)format >= 0;
+		}
+
 		private enum ScalarStyle
 		{
 			Raw,

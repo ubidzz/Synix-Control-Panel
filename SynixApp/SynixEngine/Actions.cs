@@ -169,6 +169,7 @@ namespace Synix_Control_Panel.SynixEngine
 			IReadOnlyList<ConfigurationEditorFile> configurationFiles;
 			try
 			{
+				PrepareConfigurationEditorFiles(server);
 				configurationFiles = ResolveConfigurationEditorFiles(server);
 			}
 			catch (Exception exception)
@@ -212,6 +213,18 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		internal static void PrepareConfigurationEditorFiles(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (GameFix.TryGetConfiguration(
+				server.Game,
+				out ConfigurationDefinition? definition) &&
+				definition?.UsesConfigurationFile == true)
+			{
+				definition.PrepareConfigurationFilesForEditing(server);
+			}
+		}
+
 		internal static IReadOnlyList<ConfigurationEditorFile>
 			ResolveConfigurationEditorFiles(GameServer server)
 		{
@@ -241,7 +254,85 @@ namespace Synix_Control_Panel.SynixEngine
 					new ConfigurationEditorFile(fullPath, blueprint.Format));
 			}
 
+			AddSiblingConfigurationFiles(server, files);
+
 			return files.Values.ToArray();
+		}
+
+		private static void AddSiblingConfigurationFiles(
+			GameServer server,
+			Dictionary<string, ConfigurationEditorFile> files)
+		{
+			foreach (ConfigurationEditorFile declaredFile in files.Values.ToArray())
+			{
+				string? directory = Path.GetDirectoryName(declaredFile.Path);
+				if (string.IsNullOrWhiteSpace(directory) ||
+					!Directory.Exists(directory) ||
+					!IsDeclaredConfigurationDirectory(server, directory))
+				{
+					continue;
+				}
+
+				string declaredExtension = Path.GetExtension(declaredFile.Path);
+				foreach (string path in Directory
+					.EnumerateFiles(directory, "*", SearchOption.TopDirectoryOnly)
+					.OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+				{
+					string fileName = Path.GetFileName(path);
+					if (files.ContainsKey(path) || IsEditorFileExcluded(fileName))
+						continue;
+
+					ConfigFormat format;
+					if (Path.GetExtension(path).Equals(
+						declaredExtension,
+						StringComparison.OrdinalIgnoreCase))
+					{
+						format = declaredFile.Format;
+					}
+					else if (!ConfigHandler.TryGetFormatFromPath(path, out format))
+					{
+						continue;
+					}
+
+					files[path] = new ConfigurationEditorFile(path, format);
+				}
+			}
+		}
+
+		private static bool IsDeclaredConfigurationDirectory(
+			GameServer server,
+			string directory)
+		{
+			string installRoot = Path.GetFullPath(server.InstallPath)
+				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			string fullDirectory = Path.GetFullPath(directory)
+				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			if (fullDirectory.Equals(installRoot, StringComparison.OrdinalIgnoreCase))
+				return false;
+
+			string relativeDirectory = Path.GetRelativePath(installRoot, fullDirectory);
+			if (relativeDirectory.StartsWith("..", StringComparison.Ordinal) ||
+				Path.IsPathRooted(relativeDirectory))
+			{
+				return false;
+			}
+
+			return relativeDirectory.Split(
+				[Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+				StringSplitOptions.RemoveEmptyEntries)
+				.Any(part =>
+					part.Equals("cfg", StringComparison.OrdinalIgnoreCase) ||
+					part.Contains("config", StringComparison.OrdinalIgnoreCase) ||
+					part.Contains("setting", StringComparison.OrdinalIgnoreCase));
+		}
+
+		private static bool IsEditorFileExcluded(string fileName)
+		{
+			return fileName.StartsWith(".", StringComparison.Ordinal) ||
+				fileName.Contains(".synix.", StringComparison.OrdinalIgnoreCase) ||
+				fileName.EndsWith(".template", StringComparison.OrdinalIgnoreCase) ||
+				fileName.EndsWith(".bak", StringComparison.OrdinalIgnoreCase) ||
+				fileName.EndsWith(".backup", StringComparison.OrdinalIgnoreCase);
 		}
 
 		internal static bool CanOpenConfigurationEditor(GameServer server)

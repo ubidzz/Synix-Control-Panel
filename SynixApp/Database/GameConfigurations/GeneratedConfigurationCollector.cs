@@ -260,7 +260,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					SearchOption.AllDirectories))
 				{
 					if (IsExcludedGeneratedConfigurationPath(configRoot, path) ||
-						!TryGetDiscoveredFormat(path, out ConfigFormat format))
+						!ConfigHandler.TryGetFormatFromPath(path, out ConfigFormat format))
 					{
 						continue;
 					}
@@ -295,23 +295,6 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				part.Equals("Backup", StringComparison.OrdinalIgnoreCase) ||
 				part.Equals("Backups", StringComparison.OrdinalIgnoreCase) ||
 				part.Equals(".synix", StringComparison.OrdinalIgnoreCase));
-		}
-
-		private static bool TryGetDiscoveredFormat(
-			string path,
-			out ConfigFormat format)
-		{
-			format = Path.GetExtension(path).ToLowerInvariant() switch
-			{
-				".json" => ConfigFormat.JSON,
-				".xml" => ConfigFormat.XML,
-				".sii" => ConfigFormat.SII,
-				".ini" or ".cfg" or ".conf" or ".properties" =>
-					ConfigFormat.StandardINI,
-				_ => (ConfigFormat)(-1)
-			};
-
-			return (int)format >= 0;
 		}
 
 		private static string ResolveDatabasePath(
