@@ -170,6 +170,12 @@ public class GameDefinition
 	[JsonIgnore]
 	public bool RequiresAdminPassword { get; init; }
 	[JsonIgnore]
+	public bool RequiresAuthenticationToken { get; init; }
+	[JsonIgnore]
+	public string AuthenticationTokenLabel { get; init; } = "Authentication Token";
+	[JsonIgnore]
+	public string AuthenticationTokenHelpUrl { get; init; } = string.Empty;
+	[JsonIgnore]
 	public int MinimumServerPasswordLength { get; init; }
 	[JsonIgnore]
 	public bool ServerPasswordMustNotAppearInName { get; init; }
@@ -318,6 +324,7 @@ public class GameServer
 	public string ServerName { get; set; } = string.Empty;
 	public string Password { get; set; } = string.Empty;
 	public string AdminPassword { get; set; } = string.Empty;
+	public string AuthenticationToken { get; set; } = string.Empty;
 	public string Status { get; set; } = StatusManager.GetStatus(ServerState.Stopped);
 	public int MaxPlayers { get; set; } = 10;
 	public string WorldName { get; set; } = "NewWorld";

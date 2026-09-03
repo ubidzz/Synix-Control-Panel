@@ -67,6 +67,7 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerPassword = passwords.ServerPassword,
 					AdminPassword = passwords.AdminPassword,
 					RconPassword = passwords.RconPassword,
+					AuthenticationToken = passwords.AuthenticationToken,
 					DiscordWebhook = secrets.DiscordWebhook,
 					DiscordWebhookRoutes = Core
 						.RevealDiscordWebhookRoutes(server)
@@ -150,7 +151,8 @@ namespace Synix_Control_Panel.SynixEngine
 							new SynixServerPasswords(
 								entry.ServerPassword,
 								entry.AdminPassword,
-								entry.RconPassword),
+								entry.RconPassword,
+								entry.AuthenticationToken),
 							discordWebhook));
 					Core.SetDiscordWebhookRoutes(
 						server,
@@ -426,6 +428,7 @@ namespace Synix_Control_Panel.SynixEngine
 			public string ServerPassword { get; set; } = string.Empty;
 			public string AdminPassword { get; set; } = string.Empty;
 			public string RconPassword { get; set; } = string.Empty;
+			public string AuthenticationToken { get; set; } = string.Empty;
 
 			public string? DiscordWebhook { get; set; }
 			public List<DiscordWebhookRoute>? DiscordWebhookRoutes { get; set; }

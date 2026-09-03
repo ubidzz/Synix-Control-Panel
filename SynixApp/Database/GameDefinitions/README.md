@@ -21,6 +21,8 @@ Special hardware and launch behavior belongs in `runtimeRequirements` and `launc
 
 Use `minimumServerPasswordLength` and `serverPasswordMustNotAppearInName` for game-enforced password rules. Synix applies these rules while editing a server and again immediately before launch, so an older saved entry cannot start with settings the game will reject.
 
+Games that require a third-party online credential may set `requiresAuthenticationToken`, provide a user-facing `authenticationTokenLabel` and HTTPS `authenticationTokenHelpUrl`, and place `{auth_token}` in their launch arguments. Synix then shows the token field only for that game, protects the saved value with the current Windows user account, and redacts it from Synix previews and logs. A user-requested batch export intentionally contains the usable token and passwords in readable text so the batch file can launch without Synix; the export flow warns the user before writing it.
+
 `controlCapabilities` selects the built-in controller family for lifecycle,
 console, configuration, and player operations. Ordinary games should keep the
 `Standard`, `None`, `Generic`, and `QueryProtocol` defaults. Minecraft declares

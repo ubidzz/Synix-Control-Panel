@@ -105,7 +105,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			return new SynixServerPasswords(
 				string.IsNullOrEmpty(passwords.ServerPassword) ? string.Empty : "********",
 				string.IsNullOrEmpty(passwords.AdminPassword) ? string.Empty : "********",
-				string.IsNullOrEmpty(passwords.RconPassword) ? string.Empty : "********");
+				string.IsNullOrEmpty(passwords.RconPassword) ? string.Empty : "********",
+				string.IsNullOrEmpty(passwords.AuthenticationToken) ? string.Empty : "********");
 		}
 
 		internal static bool ShouldHideServerWindow(
@@ -195,6 +196,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				.Replace("{MaxPlayers}", server.MaxPlayers.ToString())
 				.Replace("{pass}", passwords.ServerPassword ?? string.Empty)
 				.Replace("{adminpass}", passwords.AdminPassword ?? string.Empty)
+				.Replace("{auth_token}", passwords.AuthenticationToken ?? string.Empty)
 				.Replace("{ServerName}", server.ServerName ?? string.Empty)
 				.Replace("{InstallPath}", server.InstallPath ?? string.Empty)
 				.Replace("{world_size}", server.WorldSize.ToString())

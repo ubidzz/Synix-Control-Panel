@@ -69,6 +69,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public int? AppPort { get; init; }
 		public int MaximumPlayers { get; init; } = GameDefinition.DefaultMaximumPlayers;
 		public bool RequiresAdminPassword { get; init; }
+		public bool RequiresAuthenticationToken { get; init; }
+		public string AuthenticationTokenLabel { get; init; } = "Authentication Token";
+		public string AuthenticationTokenHelpUrl { get; init; } = string.Empty;
 		public int MinimumServerPasswordLength { get; init; }
 		public bool ServerPasswordMustNotAppearInName { get; init; }
 		public int WorldSize { get; init; }
@@ -238,6 +241,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				AppPort = manifest.AppPort,
 				MaximumPlayers = manifest.MaximumPlayers,
 				RequiresAdminPassword = manifest.RequiresAdminPassword,
+				RequiresAuthenticationToken = manifest.RequiresAuthenticationToken,
+				AuthenticationTokenLabel = manifest.AuthenticationTokenLabel.Trim(),
+				AuthenticationTokenHelpUrl = manifest.AuthenticationTokenHelpUrl.Trim(),
 				MinimumServerPasswordLength = manifest.MinimumServerPasswordLength,
 				ServerPasswordMustNotAppearInName = manifest.ServerPasswordMustNotAppearInName,
 				WorldSize = manifest.WorldSize,
@@ -394,6 +400,29 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				throw new InvalidDataException(
 					$"{resourceName} requires an admin password but does not use the admin password placeholder.");
 			}
+			bool usesAuthenticationToken = manifest.Arguments.Contains(
+				"{auth_token}",
+				StringComparison.Ordinal);
+			if (manifest.RequiresAuthenticationToken && !usesAuthenticationToken)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} requires an authentication token but does not use the {{auth_token}} placeholder.");
+			}
+			if (!manifest.RequiresAuthenticationToken && usesAuthenticationToken)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} uses {{auth_token}} without declaring requiresAuthenticationToken.");
+			}
+			ValidateText(
+				manifest.AuthenticationTokenLabel,
+				"authenticationTokenLabel",
+				resourceName,
+				80,
+				required: manifest.RequiresAuthenticationToken);
+			ValidateHttpsUrl(
+				manifest.AuthenticationTokenHelpUrl,
+				"authenticationTokenHelpUrl",
+				resourceName);
 			ValidateHttpsUrl(manifest.DownloadUrl, "downloadUrl", resourceName);
 			ValidateHttpsUrl(manifest.IconUrl, "iconUrl", resourceName);
 			ValidateRelativePath(manifest.RelativeConfigPath, "relativeConfigPath", resourceName);

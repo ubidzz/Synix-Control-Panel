@@ -22,7 +22,7 @@ namespace Synix_Control_Panel.Tests;
 public sealed class GameLaunchCommandBuilderTests
 {
 	private static readonly Regex UnresolvedLaunchPlaceholder = new(
-		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|ServerName|InstallPath|world_size|Identity|crossplay|crossplay_public_ip|ram|rcon|mode|PublicIP)\\}",
+		"\\{(?:app_port|seed|map|steamAppID|appid|port|query|MaxPlayers|pass|adminpass|auth_token|ServerName|InstallPath|world_size|Identity|crossplay|crossplay_public_ip|ram|rcon|mode|PublicIP)\\}",
 		RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 	[Fact]
@@ -91,6 +91,38 @@ public sealed class GameLaunchCommandBuilderTests
 				Assert.Contains(arguments, startInfo.Arguments);
 			}
 		}
+	}
+
+	[Fact]
+	public void EcoLaunchUsesTheSavedTokenAndRedactsItFromPreviews()
+	{
+		GameInfo definition = GameDatabase.GetGame("Eco")!;
+		GameServer server = CreateServer(definition.Game);
+		const string authenticationToken = "eco-user-token_123.test";
+		SynixServerPasswords passwords = new(
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			authenticationToken);
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			passwords,
+			out string launchArguments,
+			out string launchError), launchError);
+		Assert.Contains($"-userToken=\"{authenticationToken}\"", launchArguments);
+
+		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
+			server,
+			definition,
+			definition.AppID,
+			GameLaunchCommandBuilder.CreateRedactedPasswords(passwords),
+			out string redactedArguments,
+			out string redactionError), redactionError);
+		Assert.DoesNotContain(authenticationToken, redactedArguments);
+		Assert.Contains("-userToken=\"********\"", redactedArguments);
 	}
 
 	[Fact]

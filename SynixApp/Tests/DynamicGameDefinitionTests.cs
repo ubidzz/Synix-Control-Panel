@@ -146,6 +146,18 @@ public sealed class DynamicGameDefinitionTests
 	}
 
 	[Fact]
+	public void EcoDefinitionRequiresOnlineAuthenticationToken()
+	{
+		GameInfo eco = GameDatabase.GetGame("Eco")!;
+
+		Assert.True(eco.RequiresAuthenticationToken);
+		Assert.Equal("Eco User Token", eco.AuthenticationTokenLabel);
+		Assert.Equal("https://play.eco/account", eco.AuthenticationTokenHelpUrl);
+		Assert.Contains("{auth_token}", eco.RequiredArgs, StringComparison.Ordinal);
+		Assert.True(eco.DefinitionRevision >= 2);
+	}
+
+	[Fact]
 	public void MinecraftControllersAreDeclaredByTheTrustedDefinition()
 	{
 		GameInfo minecraft = GameDatabase.GetGame("Minecraft Java")!;

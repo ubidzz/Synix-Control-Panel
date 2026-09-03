@@ -56,6 +56,10 @@ namespace Synix_Control_Panel
 		private Panel? _completionFill;
 		private Label? _minecraftEditionLabel;
 		private ModernSettingsComboBox? _minecraftEditionCombo;
+		private ModernSettingsCard? _authenticationTokenCard;
+		private Label? _authenticationTokenLabel;
+		private TextBox? _authenticationTokenTextBox;
+		private ModernSettingsButton? _authenticationTokenHelpButton;
 
 		private const int WmNcLeftButtonDown = 0x00A1;
 		private const int HtCaption = 0x0002;
@@ -145,6 +149,7 @@ namespace Synix_Control_Panel
 			txtInstallPath.Cursor = Cursors.Default;
 			InitializeGuidanceControls();
 			InitializeMinecraftEditionControls();
+			InitializeAuthenticationTokenControls();
 			ShowSettingsPage(
 				pnlPageGeneral,
 				btnNavGeneral,
@@ -201,6 +206,125 @@ namespace Synix_Control_Panel
 			cardMinecraftRuntime.Height += 54;
 			cardMinecraftRuntime.Controls.Add(_minecraftEditionLabel);
 			cardMinecraftRuntime.Controls.Add(_minecraftEditionCombo);
+		}
+
+		private void InitializeAuthenticationTokenControls()
+		{
+			_authenticationTokenCard = new ModernSettingsCard
+			{
+				Name = "cardAuthenticationToken",
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				FillColor = SettingsPalette.Card,
+				BorderColor = SettingsPalette.Border,
+				CornerRadius = 12,
+				Size = new Size(914, 154),
+				Visible = false
+			};
+			Label icon = new()
+			{
+				Name = "lblAuthenticationTokenIcon",
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.Accent,
+				Font = new Font("Segoe UI Symbol", 16F),
+				Location = new Point(20, 12),
+				Size = new Size(28, 30),
+				Text = "⌘",
+				TextAlign = ContentAlignment.MiddleCenter
+			};
+			Label title = new()
+			{
+				Name = "lblAuthenticationTokenTitle",
+				AutoSize = true,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+				Location = new Point(54, 17),
+				Text = "Online Service Authentication"
+			};
+			_authenticationTokenLabel = new Label
+			{
+				Name = "lblAuthenticationToken",
+				AutoSize = true,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+				Location = new Point(24, 50),
+				Text = "Authentication Token"
+			};
+			_authenticationTokenTextBox = new TextBox
+			{
+				Name = "txtAuthenticationToken",
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				AutoSize = false,
+				BackColor = SettingsPalette.Input,
+				BorderStyle = BorderStyle.FixedSingle,
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 10F),
+				Location = new Point(24, 70),
+				Size = new Size(706, 34),
+				UseSystemPasswordChar = _PrivacyMode
+			};
+			_authenticationTokenHelpButton = new ModernSettingsButton
+			{
+				Name = "btnAuthenticationTokenHelp",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(750, 66),
+				Size = new Size(140, 42),
+				Text = "Get Token",
+				UseAccentStyle = false
+			};
+			_authenticationTokenHelpButton.Click += (_, _) =>
+				OpenAuthenticationTokenHelpPage();
+			Label note = new()
+			{
+				Name = "lblAuthenticationTokenNote",
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.SecondaryText,
+				Font = new Font("Segoe UI", 8F),
+				Location = new Point(24, 116),
+				Size = new Size(866, 22),
+				Text = "Protected in Synix and hidden from its logs. Generated batch files include the usable token in readable text."
+			};
+
+			_authenticationTokenCard.Controls.Add(icon);
+			_authenticationTokenCard.Controls.Add(title);
+			_authenticationTokenCard.Controls.Add(_authenticationTokenLabel);
+			_authenticationTokenCard.Controls.Add(_authenticationTokenTextBox);
+			_authenticationTokenCard.Controls.Add(_authenticationTokenHelpButton);
+			_authenticationTokenCard.Controls.Add(note);
+			pnlPageGeneral.Controls.Add(_authenticationTokenCard);
+		}
+
+		private void OpenAuthenticationTokenHelpPage()
+		{
+			GameInfo? definition = GameDatabase.GetGame(cmbGame.Text);
+			if (definition == null ||
+				!Uri.TryCreate(
+					definition.AuthenticationTokenHelpUrl,
+					UriKind.Absolute,
+					out Uri? helpUri) ||
+				helpUri.Scheme != Uri.UriSchemeHttps)
+			{
+				return;
+			}
+
+			try
+			{
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(
+					helpUri.AbsoluteUri)
+				{
+					UseShellExecute = true
+				});
+			}
+			catch (Exception exception)
+			{
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					"open the authentication-token page",
+					exception.Message);
+			}
 		}
 
 		private void InitializeGuidanceControls()
@@ -485,6 +609,7 @@ namespace Synix_Control_Panel
 			txtPassword.Clear();
 			txtAdminPassword.Clear();
 			txtRconPassword.Clear();
+			_authenticationTokenTextBox?.Clear();
 			discordSettingsPage.ClearSecrets();
 			debounceTimer?.Stop();
 			debounceTimer?.Dispose();
@@ -498,6 +623,8 @@ namespace Synix_Control_Panel
 				txtPassword.UseSystemPasswordChar = true;
 				txtAdminPassword.UseSystemPasswordChar = true;
 				txtRconPassword.UseSystemPasswordChar = true;
+				if (_authenticationTokenTextBox != null)
+					_authenticationTokenTextBox.UseSystemPasswordChar = true;
 				discordSettingsPage.SetPrivacyMode(true);
 			}
 			else
@@ -505,6 +632,8 @@ namespace Synix_Control_Panel
 				txtPassword.UseSystemPasswordChar = false;
 				txtAdminPassword.UseSystemPasswordChar = false;
 				txtRconPassword.UseSystemPasswordChar = false;
+				if (_authenticationTokenTextBox != null)
+					_authenticationTokenTextBox.UseSystemPasswordChar = false;
 				discordSettingsPage.SetPrivacyMode(false);
 			}
 		}
@@ -537,6 +666,8 @@ namespace Synix_Control_Panel
 				txtPassword.Text = passwords.ServerPassword;
 				txtAdminPassword.Text = passwords.AdminPassword;
 				txtRconPassword.Text = passwords.RconPassword;
+				if (_authenticationTokenTextBox != null)
+					_authenticationTokenTextBox.Text = passwords.AuthenticationToken;
 				discordSettingsPage.LoadSettings(
 					_existingServer.IsDiscordAlertEnabled,
 					secrets.DiscordWebhook,
@@ -549,6 +680,7 @@ namespace Synix_Control_Panel
 				txtPassword.Clear();
 				txtAdminPassword.Clear();
 				txtRconPassword.Clear();
+				_authenticationTokenTextBox?.Clear();
 				discordSettingsPage.LoadSettings(
 					false,
 					string.Empty,
@@ -613,7 +745,7 @@ namespace Synix_Control_Panel
 				return;
 
 			MessageBox.Show(
-				"Synix could not unlock this server's saved passwords or Discord webhooks. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
+				"Synix could not unlock this server's saved passwords, authentication token, or Discord webhooks. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
 				"Re-enter Server Credentials",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Warning);
@@ -636,6 +768,13 @@ namespace Synix_Control_Panel
 				bool isRequiredAdminPasswordMissing =
 					selectedDefinition?.RequiresAdminPassword == true &&
 					string.IsNullOrWhiteSpace(GetEnteredValue(txtAdminPassword));
+				bool isRequiredAuthenticationTokenMissing =
+					selectedDefinition?.RequiresAuthenticationToken == true &&
+					string.IsNullOrWhiteSpace(GetAuthenticationTokenValue(selectedDefinition));
+				string requiredAuthenticationTokenLabel =
+					string.IsNullOrWhiteSpace(selectedDefinition?.AuthenticationTokenLabel)
+						? "Authentication Token"
+						: selectedDefinition!.AuthenticationTokenLabel;
 				string? serverInputError = null;
 				if (selectedDefinition != null &&
 					!GameServerInputValidator.TryValidate(
@@ -644,7 +783,8 @@ namespace Synix_Control_Panel
 						new SynixServerPasswords(
 							GetEnteredValue(txtPassword),
 							GetEnteredValue(txtAdminPassword),
-							GetEnteredValue(txtRconPassword)),
+							GetEnteredValue(txtRconPassword),
+							GetAuthenticationTokenValue(selectedDefinition)),
 						out string validationError))
 				{
 					serverInputError = validationError;
@@ -663,6 +803,11 @@ namespace Synix_Control_Panel
 
 				txtPassword.Enabled = CanUnlock(txtPassword);
 				txtAdminPassword.Enabled = CanUnlock(txtAdminPassword);
+				if (_authenticationTokenTextBox != null)
+				{
+					_authenticationTokenTextBox.Enabled =
+						selectedDefinition?.RequiresAuthenticationToken == true;
+				}
 				txtWorldSeed.Enabled = CanUnlock(txtWorldSeed);
 				cmbCompetitive.Enabled = CanUnlock(cmbCompetitive);
 				numMaxPlayers.Enabled = CanUnlock(numMaxPlayers);
@@ -792,6 +937,11 @@ namespace Synix_Control_Panel
 				else if (isRequiredAdminPasswordMissing)
 				{
 					_validationMessage = "  🔒 [REQUIRED] Enter an Admin Password to protect the server administrator role.";
+					btnSave.Enabled = false;
+				}
+				else if (isRequiredAuthenticationTokenMissing)
+				{
+					_validationMessage = $"  🔒 [REQUIRED] Enter the required {requiredAuthenticationTokenLabel} before this server can be saved.";
 					btnSave.Enabled = false;
 				}
 				else if (!string.IsNullOrWhiteSpace(serverInputError))
@@ -1113,6 +1263,14 @@ namespace Synix_Control_Panel
 			return textBox.Text;
 		}
 
+		private string GetAuthenticationTokenValue(GameInfo? definition)
+		{
+			return definition?.RequiresAuthenticationToken == true &&
+				_authenticationTokenTextBox != null
+					? GetEnteredValue(_authenticationTokenTextBox).Trim()
+					: string.Empty;
+		}
+
 		private void WireUpGatekeeperEvents()
 		{
 			if (debounceTimer == null) { debounceTimer = new System.Windows.Forms.Timer(); debounceTimer.Interval = 300; debounceTimer.Tick += (s, e) => { debounceTimer.Stop(); SyncGatekeeper(); }; }
@@ -1121,6 +1279,8 @@ namespace Synix_Control_Panel
 			txtPassword.TextChanged += (s, e) => trigger();
 			txtAdminPassword.TextChanged += (s, e) => trigger();
 			txtRconPassword.TextChanged += (s, e) => trigger();
+			if (_authenticationTokenTextBox != null)
+				_authenticationTokenTextBox.TextChanged += (_, _) => trigger();
 			cmbGame.SelectedIndexChanged += (s, e) => trigger();
 			numPort.TextChanged += GamePort_TextChanged;
 			numPort.ValueChanged += (s, e) => trigger();
@@ -1198,7 +1358,7 @@ namespace Synix_Control_Panel
 			cardCredentials.Location = visible
 				? new Point(0, cardMinecraftRuntime.Bottom + 16)
 				: new Point(0, 242);
-			cardCompatibility.Location = new Point(0, cardCredentials.Bottom + 16);
+			ConfigureAuthenticationTokenCard(gameData);
 
 			if (isMinecraft)
 			{
@@ -1257,6 +1417,35 @@ namespace Synix_Control_Panel
 				_minecraftMetadataError = string.Empty;
 				_resolvedMinecraftJavaVersion = 0;
 			}
+		}
+
+		private void ConfigureAuthenticationTokenCard(GameInfo? gameData)
+		{
+			bool visible = gameData?.RequiresAuthenticationToken == true;
+			if (_authenticationTokenCard == null)
+			{
+				cardCompatibility.Location = new Point(0, cardCredentials.Bottom + 16);
+				return;
+			}
+
+			_authenticationTokenCard.Location = new Point(0, cardCredentials.Bottom + 16);
+			_authenticationTokenCard.Visible = visible;
+			if (_authenticationTokenLabel != null)
+			{
+				_authenticationTokenLabel.Text = string.IsNullOrWhiteSpace(
+					gameData?.AuthenticationTokenLabel)
+						? "Authentication Token"
+						: gameData.AuthenticationTokenLabel;
+			}
+			if (_authenticationTokenHelpButton != null)
+			{
+				_authenticationTokenHelpButton.Visible =
+					!string.IsNullOrWhiteSpace(gameData?.AuthenticationTokenHelpUrl);
+			}
+
+			cardCompatibility.Location = visible
+				? new Point(0, _authenticationTokenCard.Bottom + 16)
+				: new Point(0, cardCredentials.Bottom + 16);
 		}
 
 		private async Task InitializeExistingMinecraftSelectionAsync()
@@ -1444,7 +1633,8 @@ namespace Synix_Control_Panel
 					new SynixServerPasswords(
 						GetEnteredValue(txtPassword),
 						GetEnteredValue(txtAdminPassword),
-						GetEnteredValue(txtRconPassword)),
+						GetEnteredValue(txtRconPassword),
+						GetAuthenticationTokenValue(masterData)),
 					out string serverInputError))
 			{
 				MessageBox.Show(
@@ -1453,7 +1643,15 @@ namespace Synix_Control_Panel
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				btnNavGeneral.PerformClick();
-				txtPassword.Focus();
+				if (masterData?.RequiresAuthenticationToken == true &&
+					string.IsNullOrWhiteSpace(GetAuthenticationTokenValue(masterData)))
+				{
+					_authenticationTokenTextBox?.Focus();
+				}
+				else
+				{
+					txtPassword.Focus();
+				}
 				return;
 			}
 
@@ -1535,6 +1733,7 @@ namespace Synix_Control_Panel
 				AppPort = aPort,
 				Password = GetEnteredValue(txtPassword),
 				AdminPassword = GetEnteredValue(txtAdminPassword),
+				AuthenticationToken = GetAuthenticationTokenValue(masterData),
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = worldName,
 				GameMode = isMinecraft
@@ -1621,7 +1820,8 @@ namespace Synix_Control_Panel
 						new SynixServerPasswords(
 							GetEnteredValue(txtPassword),
 							GetEnteredValue(txtAdminPassword),
-							GetEnteredValue(txtRconPassword)),
+							GetEnteredValue(txtRconPassword),
+							GetAuthenticationTokenValue(masterData)),
 						discordSettings.MasterWebhook));
 				Core.SetDiscordWebhookRoutes(NewServer, discordSettings.Routes);
 

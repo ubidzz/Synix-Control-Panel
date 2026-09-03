@@ -256,6 +256,71 @@ public sealed class UserGuidanceTests
 	}
 
 	[Fact]
+	public void EcoServerSettingsShowOnlyItsOnlineAuthenticationTokenCard()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerSettingsGUI setup = new(new GameServer
+				{
+					Game = "Eco",
+					ServerName = "Eco Test",
+					InstallPath = Path.GetTempPath(),
+					Port = 61466,
+					QueryPort = 61467
+				});
+				setup.Show();
+				Application.DoEvents();
+				Control tokenCard = setup.Controls.Find(
+					"cardAuthenticationToken",
+					true).Single();
+				TextBox token = Assert.IsType<TextBox>(setup.Controls.Find(
+					"txtAuthenticationToken",
+					true).Single());
+				Button getToken = Assert.IsAssignableFrom<Button>(setup.Controls.Find(
+					"btnAuthenticationTokenHelp",
+					true).Single());
+				Button save = Assert.IsAssignableFrom<Button>(setup.Controls.Find(
+					"btnSave",
+					true).Single());
+				Label footer = Assert.IsAssignableFrom<Label>(setup.Controls.Find(
+					"lblFooterStatus",
+					true).Single());
+
+				Assert.True(tokenCard.Visible);
+				Assert.True(token.Enabled);
+				Assert.True(getToken.Visible);
+				Assert.Equal(
+					"Eco User Token",
+					setup.Controls.Find("lblAuthenticationToken", true).Single().Text);
+				Assert.False(save.Enabled);
+				Assert.Contains("Eco User Token", footer.Text, StringComparison.Ordinal);
+
+				token.Text = "eco-user-token_123.test";
+				DateTime timeout = DateTime.UtcNow.AddSeconds(2);
+				while (!save.Enabled && DateTime.UtcNow < timeout)
+				{
+					Application.DoEvents();
+					Thread.Sleep(10);
+				}
+
+				Assert.True(save.Enabled, footer.Text);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+
+		Assert.Null(failure);
+	}
+
+	[Fact]
 	[Trait("Category", "Regression")]
 	public void EditingAValheimPasswordRefreshesTheSaveGate()
 	{

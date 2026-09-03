@@ -71,4 +71,57 @@ public sealed class GameServerInputValidatorTests
 		Assert.True(valid, error);
 		Assert.Empty(error);
 	}
+
+	[Fact]
+	public void EcoRequiresAUserTokenForOnlineAuthentication()
+	{
+		GameInfo definition = GameDatabase.GetGame("Eco")!;
+
+		bool valid = GameServerInputValidator.TryValidate(
+			definition,
+			"Eco Server",
+			new SynixServerPasswords(string.Empty, string.Empty, string.Empty),
+			out string error);
+
+		Assert.False(valid);
+		Assert.Contains("Eco User Token", error);
+	}
+
+	[Fact]
+	public void EcoAcceptsASafeUserToken()
+	{
+		GameInfo definition = GameDatabase.GetGame("Eco")!;
+
+		bool valid = GameServerInputValidator.TryValidate(
+			definition,
+			"Eco Server",
+			new SynixServerPasswords(
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				"eco-user-token_123.test"),
+			out string error);
+
+		Assert.True(valid, error);
+		Assert.Empty(error);
+	}
+
+	[Fact]
+	public void EcoRejectsTokensThatCouldAlterTheLaunchCommand()
+	{
+		GameInfo definition = GameDatabase.GetGame("Eco")!;
+
+		bool valid = GameServerInputValidator.TryValidate(
+			definition,
+			"Eco Server",
+			new SynixServerPasswords(
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				"token\" -offline"),
+			out string error);
+
+		Assert.False(valid);
+		Assert.Contains("cannot be passed safely", error);
+	}
 }

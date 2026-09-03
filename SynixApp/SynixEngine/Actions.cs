@@ -1247,7 +1247,7 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (SynixPasswordProtectionException)
 			{
 				Log(
-					"[🚨 ERROR] Synix could not unlock the saved passwords. Re-enter them in Server Settings before exporting a launch file.",
+					"[🚨 ERROR] Synix could not unlock the saved credentials. Re-enter them in Server Settings before exporting a launch file.",
 					Color.Red);
 				return false;
 			}
@@ -1260,6 +1260,24 @@ namespace Synix_Control_Panel.SynixEngine
 					"Export Disabled",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
+				return false;
+			}
+
+			if (!GameServerInputValidator.TryValidate(
+					dbEntry,
+					server.ServerName,
+					batchPasswords,
+					out string credentialError))
+			{
+				Log(
+					$"[🚨 ERROR] Launch file export blocked: {credentialError}",
+					Color.Red,
+					true);
+				MessageBox.Show(
+					$"{credentialError}\n\nOpen Server Settings, enter the required credential, and save before exporting the batch file.",
+					"Server Credentials Need Attention",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 				return false;
 			}
 

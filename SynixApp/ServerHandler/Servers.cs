@@ -177,7 +177,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				catch (SynixPasswordProtectionException)
 				{
 					logCallback?.Invoke(
-						"[🚨 ERROR] Synix could not unlock this server's passwords. Open Server Settings, re-enter them, and save before starting the server.",
+						"[🚨 ERROR] Synix could not unlock this server's credentials. Open Server Settings, re-enter them, and save before starting the server.",
 						Color.Red);
 					return;
 				}
@@ -187,7 +187,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					launchPasswords,
 					out string serverInputError))
 				{
-					string message = $"{serverInputError} Open Server Settings, correct the password, and save before starting.";
+					string message = $"{serverInputError} Open Server Settings, correct the credential, and save before starting.";
 					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
 					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
 					{

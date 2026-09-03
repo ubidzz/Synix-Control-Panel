@@ -35,6 +35,29 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return false;
 			}
 
+			string authenticationToken = passwords.AuthenticationToken ?? string.Empty;
+			string authenticationTokenLabel = string.IsNullOrWhiteSpace(
+				definition.AuthenticationTokenLabel)
+					? "authentication token"
+					: definition.AuthenticationTokenLabel;
+			if (definition.RequiresAuthenticationToken &&
+				string.IsNullOrWhiteSpace(authenticationToken))
+			{
+				error = $"{definition.Game} requires a valid {authenticationTokenLabel} for online server authentication.";
+				return false;
+			}
+
+			if (!string.IsNullOrEmpty(authenticationToken) &&
+				(authenticationToken.Length > 4096 ||
+				 authenticationToken.Any(character =>
+					char.IsControl(character) ||
+					char.IsWhiteSpace(character) ||
+					character is '"' or '\'' or '&' or '|' or '<' or '>' or '^' or '%' or '!')))
+			{
+				error = $"The {authenticationTokenLabel} contains characters that cannot be passed safely to the server.";
+				return false;
+			}
+
 			error = string.Empty;
 			return true;
 		}

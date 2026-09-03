@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "exportedBySynixVersion": "1.0.24",
-  "exportedAtUtc": "2026-09-03T10:01:50.7949938+00:00",
+  "exportedAtUtc": "2026-09-03T11:01:02.0616101+00:00",
   "games": [
     {
       "game": "7 Days to Die",
@@ -382,6 +382,33 @@
       "configuration": {
         "synixVersion": "1.0.24",
         "verifiedAtUtc": "2026-08-24T05:35:27.728397+00:00"
+      }
+    },
+    {
+      "game": "Eco",
+      "install": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T10:16:51.4751937+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T10:28:54.3195049+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T10:30:45.1633349+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T10:28:54.3096816+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T10:59:22.7867002+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T11:01:00.7394515+00:00"
       }
     },
     {

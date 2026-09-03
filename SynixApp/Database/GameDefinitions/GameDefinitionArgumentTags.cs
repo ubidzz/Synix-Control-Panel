@@ -31,6 +31,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			new("{MaxPlayers}", "Maximum players", "The maximum player count selected by the user."),
 			new("{pass}", "Server password", "The saved player/server password."),
 			new("{adminpass}", "Administrator password", "The saved administrator password."),
+			new("{auth_token}", "Online authentication token", "The protected third-party authentication token required by this server."),
 			new("{map}", "Map or world name", "The selected map, scenario, shard, or world name."),
 			new("{seed}", "World seed", "The selected world-generation seed."),
 			new("{world_size}", "World size", "The selected world size."),

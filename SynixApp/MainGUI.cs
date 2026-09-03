@@ -1389,6 +1389,16 @@ namespace Synix_Control_Panel
 				return;
 			}
 
+			DialogResult exportConfirmation = MessageBox.Show(
+				this,
+				"The generated batch file must contain any configured server passwords, administrator passwords, RCON passwords, and online authentication tokens in readable text. This is required so the batch file can start the server without Synix.\n\nAnyone who can read that file can use those credentials. Continue?",
+				"Export Batch File with Readable Credentials",
+				MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button2);
+			if (exportConfirmation != DialogResult.Yes)
+				return;
+
 			bool success = Core.Instance.ExportServerToBatch(selectedServer);
 
 			if (success)

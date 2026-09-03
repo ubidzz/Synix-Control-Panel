@@ -19,7 +19,8 @@ namespace Synix_Control_Panel.SynixEngine
 	public readonly record struct SynixServerPasswords(
    string ServerPassword,
    string AdminPassword,
-   string RconPassword);
+   string RconPassword,
+   string AuthenticationToken = "");
 
 	public readonly record struct SynixServerSecrets(
 		SynixServerPasswords Passwords,
@@ -35,9 +36,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 	public partial class Core
 	{
-		public const int CurrentStorageVersion = 3;
+		public const int CurrentStorageVersion = 4;
 		private const int DiscordWebhookStorageVersion = 2;
 		private const int DiscordRouteStorageVersion = 3;
+		private const int AuthenticationTokenStorageVersion = 4;
 		public const string ProtectedValuePrefix = "synix-dpapi-v1:";
 
 		private static readonly byte[] AdditionalEntropy =
@@ -145,7 +147,10 @@ namespace Synix_Control_Panel.SynixEngine
 			return new SynixServerPasswords(
 				Reveal(server.Password),
 				Reveal(server.AdminPassword),
-				Reveal(server.RconPassword));
+				Reveal(server.RconPassword),
+				server.PasswordStorageVersion < AuthenticationTokenStorageVersion
+					? server.AuthenticationToken ?? string.Empty
+					: Reveal(server.AuthenticationToken));
 		}
 
 		public static string RevealDiscordWebhook(GameServer server)
@@ -264,12 +269,15 @@ namespace Synix_Control_Panel.SynixEngine
 				plaintextSecrets.Passwords.AdminPassword);
 			string protectedRconPassword = Protect(
 				plaintextSecrets.Passwords.RconPassword);
+			string protectedAuthenticationToken = Protect(
+				plaintextSecrets.Passwords.AuthenticationToken);
 			string protectedDiscordWebhook = Protect(
 				plaintextSecrets.DiscordWebhook);
 
 			server.Password = protectedServerPassword;
 			server.AdminPassword = protectedAdminPassword;
 			server.RconPassword = protectedRconPassword;
+			server.AuthenticationToken = protectedAuthenticationToken;
 			server.DiscordWebhook = protectedDiscordWebhook;
 			server.PasswordStorageVersion = CurrentStorageVersion;
 		}
@@ -307,6 +315,7 @@ namespace Synix_Control_Panel.SynixEngine
 				NeedsProtection(server.Password) ||
 				NeedsProtection(server.AdminPassword) ||
 				NeedsProtection(server.RconPassword) ||
+				NeedsProtection(server.AuthenticationToken) ||
 				NeedsProtection(server.DiscordWebhook) ||
 				(server.DiscordWebhookRoutes ?? []).Any(route =>
 					NeedsProtection(route.WebhookUrl));
@@ -320,11 +329,15 @@ namespace Synix_Control_Panel.SynixEngine
 					? new SynixServerPasswords(
 						server.Password ?? string.Empty,
 						server.AdminPassword ?? string.Empty,
-						server.RconPassword ?? string.Empty)
+						server.RconPassword ?? string.Empty,
+						server.AuthenticationToken ?? string.Empty)
 					: new SynixServerPasswords(
 						Reveal(server.Password),
 						Reveal(server.AdminPassword),
-						Reveal(server.RconPassword));
+						Reveal(server.RconPassword),
+						previousStorageVersion < AuthenticationTokenStorageVersion
+							? server.AuthenticationToken ?? string.Empty
+							: Reveal(server.AuthenticationToken));
 			string plaintextWebhook = previousStorageVersion < DiscordWebhookStorageVersion
 				? server.DiscordWebhook ?? string.Empty
 				: Reveal(server.DiscordWebhook);

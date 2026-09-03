@@ -178,7 +178,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• Open Config Editor: opens the configured game file in Synix's format-aware editor.\n" +
 					"• Update Server: runs the supported game update workflow.\n" +
 					"• Validate Game Files: asks the supported installer to verify/repair game files.\n" +
-					"• Create Batch File: exports the resolved launch command for supported templates.\n" +
+					"• Create Batch File: exports the resolved launch command for supported templates. Configured passwords and online-service tokens are written as readable text so the file can start independently; keep it private.\n" +
 					"• Backup Server: creates a manual archive.\n" +
 					"• Restore Server Backup: appears when saved backups exist and lets you choose which archive to restore.\n" +
 					"• Mod & Plugin Manager: discovers installed add-ons and opens the safe workflow supported by that game's framework or provider.\n" +

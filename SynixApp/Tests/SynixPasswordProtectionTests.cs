@@ -23,6 +23,7 @@ public sealed class SynixPasswordProtectionTests
 	private const string ServerPassword = "server-secret-98!";
 	private const string AdminPassword = "admin-secret-42!";
 	private const string RconPassword = "rcon-secret-73!";
+	private const string AuthenticationToken = "eco-auth-token_25.test";
 	private const string DiscordWebhook =
 		"https://discord.com/api/webhooks/123456789/test-webhook-token";
 	private const string BackupWebhook =
@@ -184,7 +185,9 @@ public sealed class SynixPasswordProtectionTests
 		Assert.True(Core.IsProtected(server.Password));
 		Assert.True(Core.IsProtected(server.AdminPassword));
 		Assert.True(Core.IsProtected(server.RconPassword));
+		Assert.True(Core.IsProtected(server.AuthenticationToken));
 		Assert.DoesNotContain(ServerPassword, server.Password);
+		Assert.DoesNotContain(AuthenticationToken, server.AuthenticationToken);
 		Assert.Equal(
 			PlaintextPasswords(),
 			Core.RevealServerPasswords(server));
@@ -200,6 +203,7 @@ public sealed class SynixPasswordProtectionTests
 			Password = ServerPassword,
 			AdminPassword = AdminPassword,
 			RconPassword = RconPassword,
+			AuthenticationToken = AuthenticationToken,
 			DiscordWebhook = DiscordWebhook
 		};
 		string legacyJson = JsonSerializer.Serialize(new[] { legacyServer });
@@ -217,6 +221,7 @@ public sealed class SynixPasswordProtectionTests
 		Assert.True(Core.IsProtected(result.Password));
 		Assert.True(Core.IsProtected(result.AdminPassword));
 		Assert.True(Core.IsProtected(result.RconPassword));
+		Assert.True(Core.IsProtected(result.AuthenticationToken));
 		Assert.True(Core.IsProtected(result.DiscordWebhook));
 	}
 
@@ -230,6 +235,7 @@ public sealed class SynixPasswordProtectionTests
 			Password = ServerPassword,
 			AdminPassword = AdminPassword,
 			RconPassword = RconPassword,
+			AuthenticationToken = AuthenticationToken,
 			DiscordWebhook = DiscordWebhook
 		};
 
@@ -239,12 +245,13 @@ public sealed class SynixPasswordProtectionTests
 		Assert.DoesNotContain(ServerPassword, storageJson);
 		Assert.DoesNotContain(AdminPassword, storageJson);
 		Assert.DoesNotContain(RconPassword, storageJson);
+		Assert.DoesNotContain(AuthenticationToken, storageJson);
 		Assert.DoesNotContain(DiscordWebhook, storageJson);
 		Assert.DoesNotContain("test-webhook-token", storageJson);
 		Assert.Contains(
 			Core.ProtectedValuePrefix,
 			storageJson);
-		Assert.Contains("\"PasswordStorageVersion\": 3", storageJson);
+		Assert.Contains($"\"PasswordStorageVersion\": {Core.CurrentStorageVersion}", storageJson);
 	}
 
 	[Fact]
@@ -265,11 +272,16 @@ public sealed class SynixPasswordProtectionTests
 			versionOneServer);
 
 		Assert.True(migrated);
-		Assert.Equal(3, versionOneServer.PasswordStorageVersion);
+		Assert.Equal(Core.CurrentStorageVersion, versionOneServer.PasswordStorageVersion);
 		Assert.True(Core.IsProtected(
 			versionOneServer.DiscordWebhook));
 		Assert.Equal(
-			PlaintextSecrets(),
+			new SynixServerSecrets(
+				new SynixServerPasswords(
+					ServerPassword,
+					AdminPassword,
+					RconPassword),
+				DiscordWebhook),
 			Core.RevealServerSecrets(versionOneServer));
 	}
 
@@ -405,6 +417,7 @@ public sealed class SynixPasswordProtectionTests
 		Assert.DoesNotContain(ServerPassword, vaultAsText);
 		Assert.DoesNotContain(AdminPassword, vaultAsText);
 		Assert.DoesNotContain(RconPassword, vaultAsText);
+		Assert.DoesNotContain(AuthenticationToken, vaultAsText);
 		Assert.DoesNotContain(DiscordWebhook, vaultAsText);
 		Assert.DoesNotContain("test-webhook-token", vaultAsText);
 		Assert.DoesNotContain(BackupWebhook, vaultAsText);
@@ -508,7 +521,8 @@ public sealed class SynixPasswordProtectionTests
 		return new SynixServerPasswords(
 			ServerPassword,
 			AdminPassword,
-			RconPassword);
+			RconPassword,
+			AuthenticationToken);
 	}
 
 	private static SynixServerSecrets PlaintextSecrets()
