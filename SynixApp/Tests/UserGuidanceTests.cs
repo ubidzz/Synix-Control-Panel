@@ -273,6 +273,15 @@ public sealed class UserGuidanceTests
 				});
 				setup.Show();
 				Application.DoEvents();
+				Control securityPage = setup.Controls.Find(
+					"pnlPageSecurity",
+					true).Single();
+				ModernSettingsNavButton securityNavigation = Assert.IsType<ModernSettingsNavButton>(setup.Controls.Find(
+					"btnNavSecurity",
+					true).Single());
+				Control credentialsCard = setup.Controls.Find(
+					"cardCredentials",
+					true).Single();
 				Control tokenCard = setup.Controls.Find(
 					"cardAuthenticationToken",
 					true).Single();
@@ -289,6 +298,11 @@ public sealed class UserGuidanceTests
 					"lblFooterStatus",
 					true).Single());
 
+				Assert.Same(securityPage, credentialsCard.Parent);
+				Assert.Same(securityPage, tokenCard.Parent);
+				securityNavigation.PerformClick();
+				Application.DoEvents();
+				Assert.True(securityPage.Visible);
 				Assert.True(tokenCard.Visible);
 				Assert.True(token.Enabled);
 				Assert.True(getToken.Visible);
@@ -297,6 +311,7 @@ public sealed class UserGuidanceTests
 					setup.Controls.Find("lblAuthenticationToken", true).Single().Text);
 				Assert.False(save.Enabled);
 				Assert.Contains("Eco User Token", footer.Text, StringComparison.Ordinal);
+				Assert.True(securityNavigation.AttentionRequired);
 
 				token.Text = "eco-user-token_123.test";
 				DateTime timeout = DateTime.UtcNow.AddSeconds(2);
@@ -307,6 +322,112 @@ public sealed class UserGuidanceTests
 				}
 
 				Assert.True(save.Enabled, footer.Text);
+				Assert.False(securityNavigation.AttentionRequired);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void ServerSettingsNavigationHighlightsThePageThatNeedsAttention()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerSettingsGUI setup = new();
+				ModernSettingsNavButton general = Assert.IsType<ModernSettingsNavButton>(
+					setup.Controls.Find("btnNavGeneral", true).Single());
+				ModernSettingsNavButton security = Assert.IsType<ModernSettingsNavButton>(
+					setup.Controls.Find("btnNavSecurity", true).Single());
+				ModernSettingsNavButton network = Assert.IsType<ModernSettingsNavButton>(
+					setup.Controls.Find("btnNavNetwork", true).Single());
+				ModernSettingsNavButton install = Assert.IsType<ModernSettingsNavButton>(
+					setup.Controls.Find("btnNavInstall", true).Single());
+
+				Assert.True(general.AttentionRequired);
+				Assert.False(security.AttentionRequired);
+				Assert.False(network.AttentionRequired);
+				Assert.False(install.AttentionRequired);
+				Assert.Contains(
+					"require attention",
+					general.AccessibleDescription,
+					StringComparison.OrdinalIgnoreCase);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void ServerSettingsSecurityNavigationDoesNotOverlapStatusAtMinimumSize()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerSettingsGUI setup = new();
+				setup.Size = setup.MinimumSize;
+				setup.Show();
+				Application.DoEvents();
+
+				Control installNavigation = setup.Controls.Find(
+					"btnNavInstall",
+					true).Single();
+				Control sidebarStatus = setup.Controls.Find(
+					"pnlSidebarStatus",
+					true).Single();
+
+				Assert.True(
+					installNavigation.Bottom < sidebarStatus.Top,
+					$"Install navigation ends at {installNavigation.Bottom}, but status begins at {sidebarStatus.Top}.");
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void ServerSettingsTabsUseSeparateDesignerBackedPages()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerSettingsGUI setup = new();
+
+				Assert.IsType<ServerSettingsGeneralPage>(setup.Controls.Find("pnlPageGeneral", true).Single());
+				Assert.IsType<ServerSettingsSecurityPage>(setup.Controls.Find("pnlPageSecurity", true).Single());
+				Assert.IsType<ServerSettingsWorldPage>(setup.Controls.Find("pnlPageWorld", true).Single());
+				Assert.IsType<ServerSettingsNetworkPage>(setup.Controls.Find("pnlPageNetwork", true).Single());
+				Assert.IsType<ServerSettingsAutomationPage>(setup.Controls.Find("pnlPageAutomation", true).Single());
+				Assert.IsType<DiscordSettingsPage>(setup.Controls.Find("discordSettingsPage", true).Single());
+				Assert.IsType<ServerSettingsInstallPage>(setup.Controls.Find("pnlPageInstall", true).Single());
 			}
 			catch (Exception exception)
 			{

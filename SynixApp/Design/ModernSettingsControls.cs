@@ -1461,6 +1461,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 	{
 		private bool _selected;
 		private bool _hovered;
+		private bool _attentionRequired;
+		private float _attentionPulse;
 		private readonly Font _glyphFont =
 			new("Segoe UI Symbol", 14F, FontStyle.Regular);
 
@@ -1477,6 +1479,38 @@ namespace Synix_Control_Panel.SynixApp.Design
 			{
 				_selected = value;
 				Invalidate();
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool AttentionRequired
+		{
+			get => _attentionRequired;
+			set
+			{
+				if (_attentionRequired == value)
+					return;
+
+				_attentionRequired = value;
+				Invalidate();
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public float AttentionPulse
+		{
+			get => _attentionPulse;
+			set
+			{
+				float normalized = Math.Clamp(value, 0F, 1F);
+				if (Math.Abs(_attentionPulse - normalized) < 0.01F)
+					return;
+
+				_attentionPulse = normalized;
+				if (AttentionRequired)
+					Invalidate();
 			}
 		}
 
@@ -1548,9 +1582,15 @@ namespace Synix_Control_Panel.SynixApp.Design
 				eventArgs.Graphics.FillPath(accentBrush, accentPath);
 			}
 
-			Color textColor = Selected
+			Color normalTextColor = Selected
 				? SettingsPalette.Accent
 				: SettingsPalette.SecondaryText;
+			Color textColor = AttentionRequired
+				? BlendColor(
+					normalTextColor,
+					SettingsPalette.Warning,
+					0.35F + (AttentionPulse * 0.65F))
+				: normalTextColor;
 
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
@@ -1570,6 +1610,16 @@ namespace Synix_Control_Panel.SynixApp.Design
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);
+		}
+
+		private static Color BlendColor(Color from, Color to, float amount)
+		{
+			float normalized = Math.Clamp(amount, 0F, 1F);
+			return Color.FromArgb(
+				(int)Math.Round(from.A + ((to.A - from.A) * normalized)),
+				(int)Math.Round(from.R + ((to.R - from.R) * normalized)),
+				(int)Math.Round(from.G + ((to.G - from.G) * normalized)),
+				(int)Math.Round(from.B + ((to.B - from.B) * normalized)));
 		}
 	}
 

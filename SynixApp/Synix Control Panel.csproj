@@ -83,6 +83,45 @@
 	  <Compile Update="UI\GeneralSettingsPage.Designer.cs">
 	    <DependentUpon>GeneralSettingsPage.cs</DependentUpon>
 	  </Compile>
+	  <Compile Update="UI\ServerSettingsGeneralPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsGeneralPage.Designer.cs">
+	    <DependentUpon>ServerSettingsGeneralPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsSecurityPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsSecurityPage.Designer.cs">
+	    <DependentUpon>ServerSettingsSecurityPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsWorldPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsWorldPage.Designer.cs">
+	    <DependentUpon>ServerSettingsWorldPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsNetworkPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsNetworkPage.Designer.cs">
+	    <DependentUpon>ServerSettingsNetworkPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsAutomationPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsAutomationPage.Designer.cs">
+	    <DependentUpon>ServerSettingsAutomationPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsInstallPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsInstallPage.Designer.cs">
+	    <DependentUpon>ServerSettingsInstallPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSettingsGUI.PageControls.cs">
+	    <DependentUpon>ServerSettingsGUI.cs</DependentUpon>
+	  </Compile>
 	  <Compile Update="UI\BackupSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>

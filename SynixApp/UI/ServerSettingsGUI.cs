@@ -39,6 +39,8 @@ namespace Synix_Control_Panel
 		private bool _maintenanceBackupBeforeRestart = true;
 		private bool _maintenanceUpdateBeforeRestart;
 		private System.Windows.Forms.Timer? debounceTimer;
+		private System.Windows.Forms.Timer? _navigationAttentionTimer;
+		private float _navigationAttentionPhase;
 		private bool _PrivacyMode = false;
 		private bool _isApplyingPortOffset = false;
 		private bool _suppressMinecraftMetadataEvents = false;
@@ -86,6 +88,7 @@ namespace Synix_Control_Panel
 		public ServerSettingsGUI(GameServer? server = null)
 		{
 			InitializeComponent();
+			WirePageControlEvents();
 			isPrivacyLoading = true;
 			_existingServer = server;
 			_isEditMode = server != null;
@@ -148,6 +151,7 @@ namespace Synix_Control_Panel
 			txtInstallPath.ShortcutsEnabled = false;
 			txtInstallPath.Cursor = Cursors.Default;
 			InitializeGuidanceControls();
+			InitializeNavigationAttention();
 			InitializeMinecraftEditionControls();
 			InitializeAuthenticationTokenControls();
 			ShowSettingsPage(
@@ -158,143 +162,122 @@ namespace Synix_Control_Panel
 			UpdateModernStatus();
 		}
 
-		private void InitializeMinecraftEditionControls()
+		private void InitializeNavigationAttention()
 		{
-			_minecraftEditionLabel = new Label
+			components ??= new System.ComponentModel.Container();
+			_navigationAttentionTimer = new System.Windows.Forms.Timer(components)
 			{
-				Name = "lblMinecraftEdition",
-				AutoSize = true,
-				BackColor = SettingsPalette.Card,
-				ForeColor = SettingsPalette.PrimaryText,
-				Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-				Location = new Point(24, 52),
-				Text = "Edition"
+				Interval = 90
 			};
-			_minecraftEditionCombo = new ModernSettingsComboBox
+			_navigationAttentionTimer.Tick += (_, _) =>
 			{
-				Name = "cmbMinecraftEdition",
-				BackColor = Color.FromArgb(12, 21, 36),
-				ForeColor = SettingsPalette.PrimaryText,
-				Font = new Font("Segoe UI", 9.5F),
-				DrawMode = DrawMode.OwnerDrawFixed,
-				DropDownStyle = ComboBoxStyle.DropDownList,
-				FlatStyle = FlatStyle.Flat,
-				ItemHeight = 28,
-				Location = new Point(24, 72),
-				Size = new Size(260, 34)
-			};
-			_minecraftEditionCombo.Items.AddRange([
-				MinecraftControlProfile.JavaEdition,
-				MinecraftControlProfile.BedrockEdition
-			]);
-			_minecraftEditionCombo.SelectedItem = MinecraftControlProfile.JavaEdition;
+				_navigationAttentionPhase += 0.32F;
+				if (_navigationAttentionPhase >= MathF.Tau)
+					_navigationAttentionPhase -= MathF.Tau;
 
-			foreach (Control control in new Control[]
+				float pulse = 0.5F + (MathF.Sin(_navigationAttentionPhase) * 0.5F);
+				foreach (ModernSettingsNavButton button in GetNavigationButtons())
+				{
+					if (button.AttentionRequired)
+						button.AttentionPulse = pulse;
+				}
+			};
+		}
+
+		private ModernSettingsNavButton[] GetNavigationButtons() =>
+		[
+			btnNavGeneral,
+			btnNavSecurity,
+			btnNavWorld,
+			btnNavNetwork,
+			btnNavAutomation,
+			btnNavDiscord,
+			btnNavInstall
+		];
+
+		private void UpdateNavigationAttention(
+			bool general,
+			bool security,
+			bool world,
+			bool network,
+			bool automation,
+			bool discord,
+			bool install)
+		{
+			(ModernSettingsNavButton Button, bool Required)[] states =
+			[
+				(btnNavGeneral, general),
+				(btnNavSecurity, security),
+				(btnNavWorld, world),
+				(btnNavNetwork, network),
+				(btnNavAutomation, automation),
+				(btnNavDiscord, discord),
+				(btnNavInstall, install)
+			];
+
+			bool anyAttentionRequired = false;
+			foreach ((ModernSettingsNavButton button, bool required) in states)
 			{
-				lblMinecraftLoader,
-				cmbMinecraftLoader,
-				lblMinecraftLoaderVersion,
-				cmbMinecraftLoaderVersion,
-				lblMinecraftJava,
-				lblMinecraftJavaValue,
-				lblMinecraftRuntimeHelper
-			})
-			{
-				control.Top += 54;
+				button.AttentionRequired = required;
+				button.AccessibleDescription = required
+					? $"{button.Text} contains settings that require attention before saving."
+					: $"{button.Text} has no settings that require attention.";
+				anyAttentionRequired |= required;
 			}
 
-			cardMinecraftRuntime.Height += 54;
-			cardMinecraftRuntime.Controls.Add(_minecraftEditionLabel);
-			cardMinecraftRuntime.Controls.Add(_minecraftEditionCombo);
+			if (_navigationAttentionTimer == null)
+				return;
+
+			if (anyAttentionRequired)
+			{
+				if (!_navigationAttentionTimer.Enabled)
+					_navigationAttentionTimer.Start();
+				return;
+			}
+
+			_navigationAttentionTimer.Stop();
+			_navigationAttentionPhase = 0F;
+			foreach (ModernSettingsNavButton button in GetNavigationButtons())
+				button.AttentionPulse = 0F;
+		}
+
+		private void InitializeMinecraftEditionControls()
+		{
+			_minecraftEditionLabel = pnlPageGeneral.lblMinecraftEdition;
+			_minecraftEditionCombo = pnlPageGeneral.cmbMinecraftEdition;
+			if (_minecraftEditionCombo.Items.Count == 0)
+			{
+				_minecraftEditionCombo.Items.AddRange([
+					MinecraftControlProfile.JavaEdition,
+					MinecraftControlProfile.BedrockEdition
+				]);
+			}
+			_minecraftEditionCombo.SelectedItem = MinecraftControlProfile.JavaEdition;
 		}
 
 		private void InitializeAuthenticationTokenControls()
 		{
-			_authenticationTokenCard = new ModernSettingsCard
-			{
-				Name = "cardAuthenticationToken",
-				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-				BackColor = SettingsPalette.Card,
-				FillColor = SettingsPalette.Card,
-				BorderColor = SettingsPalette.Border,
-				CornerRadius = 12,
-				Size = new Size(914, 154),
-				Visible = false
-			};
-			Label icon = new()
-			{
-				Name = "lblAuthenticationTokenIcon",
-				BackColor = SettingsPalette.Card,
-				ForeColor = SettingsPalette.Accent,
-				Font = new Font("Segoe UI Symbol", 16F),
-				Location = new Point(20, 12),
-				Size = new Size(28, 30),
-				Text = "⌘",
-				TextAlign = ContentAlignment.MiddleCenter
-			};
-			Label title = new()
-			{
-				Name = "lblAuthenticationTokenTitle",
-				AutoSize = true,
-				BackColor = SettingsPalette.Card,
-				ForeColor = SettingsPalette.PrimaryText,
-				Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-				Location = new Point(54, 17),
-				Text = "Online Service Authentication"
-			};
-			_authenticationTokenLabel = new Label
-			{
-				Name = "lblAuthenticationToken",
-				AutoSize = true,
-				BackColor = SettingsPalette.Card,
-				ForeColor = SettingsPalette.PrimaryText,
-				Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-				Location = new Point(24, 50),
-				Text = "Authentication Token"
-			};
-			_authenticationTokenTextBox = new TextBox
-			{
-				Name = "txtAuthenticationToken",
-				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-				AutoSize = false,
-				BackColor = SettingsPalette.Input,
-				BorderStyle = BorderStyle.FixedSingle,
-				ForeColor = SettingsPalette.PrimaryText,
-				Font = new Font("Segoe UI", 10F),
-				Location = new Point(24, 70),
-				Size = new Size(706, 34),
-				UseSystemPasswordChar = _PrivacyMode
-			};
-			_authenticationTokenHelpButton = new ModernSettingsButton
-			{
-				Name = "btnAuthenticationTokenHelp",
-				Anchor = AnchorStyles.Top | AnchorStyles.Right,
-				Location = new Point(750, 66),
-				Size = new Size(140, 42),
-				Text = "Get Token",
-				UseAccentStyle = false
-			};
+			_authenticationTokenCard = pnlPageSecurity.cardAuthenticationToken;
+			_authenticationTokenLabel = pnlPageSecurity.lblAuthenticationToken;
+			_authenticationTokenTextBox = pnlPageSecurity.txtAuthenticationToken;
+			_authenticationTokenHelpButton = pnlPageSecurity.btnAuthenticationTokenHelp;
+			_authenticationTokenTextBox.UseSystemPasswordChar = _PrivacyMode;
 			_authenticationTokenHelpButton.Click += (_, _) =>
 				OpenAuthenticationTokenHelpPage();
-			Label note = new()
-			{
-				Name = "lblAuthenticationTokenNote",
-				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-				BackColor = SettingsPalette.Card,
-				ForeColor = SettingsPalette.SecondaryText,
-				Font = new Font("Segoe UI", 8F),
-				Location = new Point(24, 116),
-				Size = new Size(866, 22),
-				Text = "Protected in Synix and hidden from its logs. Generated batch files include the usable token in readable text."
-			};
+		}
 
-			_authenticationTokenCard.Controls.Add(icon);
-			_authenticationTokenCard.Controls.Add(title);
-			_authenticationTokenCard.Controls.Add(_authenticationTokenLabel);
-			_authenticationTokenCard.Controls.Add(_authenticationTokenTextBox);
-			_authenticationTokenCard.Controls.Add(_authenticationTokenHelpButton);
-			_authenticationTokenCard.Controls.Add(note);
-			pnlPageGeneral.Controls.Add(_authenticationTokenCard);
+		private void WirePageControlEvents()
+		{
+			txtName.TextChanged += txtName_TextChanged;
+			cmbGame.SelectedIndexChanged += cmbGame_SelectedIndexChanged;
+			txtWorldSeed.KeyPress += txtWorldSeed_KeyPress;
+			chkEnableRcon.CheckedChanged += chkEnableRcon_CheckedChanged;
+			chkEnableSchedule.CheckedChanged += chkEnableSchedule_CheckedChanged;
+			btnEditSchedule.Click += btnEditSchedule_Click;
+			chkDefaultPath.CheckedChanged += chkDefaultPath_CheckedChanged;
+			txtInstallPath.TextChanged += txtInstallPath_TextChanged;
+			btnBrowse.Click += btnBrowse_Click;
+			btnViewArgs.Click += btnViewArgs_Click;
 		}
 
 		private void OpenAuthenticationTokenHelpPage()
@@ -419,14 +402,15 @@ namespace Synix_Control_Panel
 		}
 
 		private void ShowSettingsPage(
-			Panel page,
+			Control page,
 			ModernSettingsNavButton navigationButton,
 			string title,
 			string description)
 		{
-			Panel[] pages =
+			Control[] pages =
 			{
 				pnlPageGeneral,
+				pnlPageSecurity,
 				pnlPageWorld,
 				pnlPageNetwork,
 				pnlPageAutomation,
@@ -436,6 +420,7 @@ namespace Synix_Control_Panel
 			ModernSettingsNavButton[] navigationButtons =
 			{
 				btnNavGeneral,
+				btnNavSecurity,
 				btnNavWorld,
 				btnNavNetwork,
 				btnNavAutomation,
@@ -443,7 +428,7 @@ namespace Synix_Control_Panel
 				btnNavInstall
 			};
 
-			foreach (Panel candidate in pages)
+			foreach (Control candidate in pages)
 			{
 				candidate.Visible = ReferenceEquals(candidate, page);
 			}
@@ -613,6 +598,8 @@ namespace Synix_Control_Panel
 			discordSettingsPage.ClearSecrets();
 			debounceTimer?.Stop();
 			debounceTimer?.Dispose();
+			_navigationAttentionTimer?.Stop();
+			_navigationAttentionTimer?.Dispose();
 			base.OnFormClosed(eventArgs);
 		}
 
@@ -901,6 +888,45 @@ namespace Synix_Control_Panel
 					s != _existingServer &&
 					s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) &&
 					s.ServerName.Equals(currentName, StringComparison.OrdinalIgnoreCase));
+				bool minecraftVersionNeedsAttention = isMinecraft &&
+					(string.IsNullOrWhiteSpace(cmbGameVersion.Text) ||
+					 (!isMinecraftBedrock && !string.IsNullOrWhiteSpace(_minecraftMetadataError)));
+				bool minecraftLoaderNeedsAttention = isMinecraft &&
+					!isMinecraftBedrock &&
+					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
+						.Equals(MinecraftMetadataService.VanillaLoader, StringComparison.OrdinalIgnoreCase) &&
+					string.IsNullOrWhiteSpace(cmbMinecraftLoaderVersion.Text);
+				bool portNeedsAttention = duplicateSelection != null ||
+					gOwner != null || gOS ||
+					qOwner != null || qOS ||
+					rOwner != null || rOS ||
+					aOwner != null || aOS;
+				bool scheduleNeedsAttention = isBaseReady &&
+					chkEnableSchedule.Checked &&
+					!_selectedDays.Any(selected => selected);
+				bool extraArgumentsValid = Core.TryValidateExtraArguments(
+					txtExtraArgs.Text,
+					out string extraArgumentsError);
+				string discordSettingsError = string.Empty;
+				bool discordSettingsValid = !isBaseReady ||
+					discordSettingsPage.TryGetSettings(out _, out discordSettingsError);
+
+				UpdateNavigationAttention(
+					general: !isBaseReady ||
+						minecraftVersionNeedsAttention ||
+						minecraftLoaderNeedsAttention ||
+						missingRequirement != null ||
+						isNameTaken,
+					security: isBaseReady &&
+						(isRequiredAdminPasswordMissing ||
+						 isRequiredAuthenticationTokenMissing ||
+						 !string.IsNullOrWhiteSpace(serverInputError)),
+					world: false,
+					network: isBaseReady && portNeedsAttention,
+					automation: scheduleNeedsAttention,
+					discord: isBaseReady && !discordSettingsValid,
+					install: isBaseReady &&
+						(string.IsNullOrWhiteSpace(txtInstallPath.Text) || !extraArgumentsValid));
 
 				if (!isBaseReady)
 				{
@@ -969,6 +995,11 @@ namespace Synix_Control_Panel
 					_validationMessage = $"  ⚠️ [CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
 					btnSave.Enabled = false;
 				}
+				else if (scheduleNeedsAttention)
+				{
+					_validationMessage = "  🔒 [REQUIRED] Select at least one day for the automatic restart schedule.";
+					btnSave.Enabled = false;
+				}
 				else if (duplicateSelection != null)
 				{
 					string roles = string.Join(
@@ -1003,6 +1034,16 @@ namespace Synix_Control_Panel
 					_validationMessage = "  🔒 [REQUIRED] Select an install folder or enable the default install path.";
 					btnSave.Enabled = false;
 				}
+				else if (!extraArgumentsValid)
+				{
+					_validationMessage = $"  ⚠️ [LAUNCH] {extraArgumentsError}";
+					btnSave.Enabled = false;
+				}
+				else if (!discordSettingsValid)
+				{
+					_validationMessage = $"  🔒 [DISCORD] {discordSettingsError}";
+					btnSave.Enabled = false;
+				}
 				else
 				{
 					if (!string.IsNullOrWhiteSpace(
@@ -1026,6 +1067,14 @@ namespace Synix_Control_Panel
 				System.Diagnostics.Debug.WriteLine($"[GATEKEEPER CRASH] {ex.Message}");
 				_validationMessage = $"  ⚠️ [VALIDATION ERROR] Validation could not complete: {ex.Message}";
 				btnSave.Enabled = false;
+				UpdateNavigationAttention(
+					general: true,
+					security: false,
+					world: false,
+					network: false,
+					automation: false,
+					discord: false,
+					install: false);
 				UpdateModernStatus();
 			}
 		}
@@ -1168,6 +1217,15 @@ namespace Synix_Control_Panel
 			SyncGatekeeper();
 		}
 
+		private void btnNavSecurity_Click(object? sender, EventArgs eventArgs)
+		{
+			ShowSettingsPage(
+				pnlPageSecurity,
+				btnNavSecurity,
+				"Security",
+				"Manage server passwords and online-service credentials.");
+		}
+
 		internal static string GetPortMappingSummary(GameInfo? gameData)
 		{
 			if (gameData == null)
@@ -1290,6 +1348,7 @@ namespace Synix_Control_Panel
 			chkEnableRcon.CheckedChanged += (s, e) => trigger();
 			chkCrossplay.CheckedChanged += (s, e) => trigger();
 			chkDefaultPath.CheckedChanged += (s, e) => trigger();
+			txtExtraArgs.TextChanged += (s, e) => trigger();
 			numWorldSize.ValueChanged += (s, e) => trigger();
 			cmbGameVersion.SelectedIndexChanged += async (s, e) =>
 			{
@@ -1355,7 +1414,7 @@ namespace Synix_Control_Panel
 			bool supportsServerFramework = gameData?.SupportedServerFrameworks.Count > 0;
 			bool visible = isMinecraft || supportsServerFramework;
 			cardMinecraftRuntime.Visible = visible;
-			cardCredentials.Location = visible
+			cardCompatibility.Location = visible
 				? new Point(0, cardMinecraftRuntime.Bottom + 16)
 				: new Point(0, 242);
 			ConfigureAuthenticationTokenCard(gameData);
@@ -1423,10 +1482,7 @@ namespace Synix_Control_Panel
 		{
 			bool visible = gameData?.RequiresAuthenticationToken == true;
 			if (_authenticationTokenCard == null)
-			{
-				cardCompatibility.Location = new Point(0, cardCredentials.Bottom + 16);
 				return;
-			}
 
 			_authenticationTokenCard.Location = new Point(0, cardCredentials.Bottom + 16);
 			_authenticationTokenCard.Visible = visible;
@@ -1442,10 +1498,6 @@ namespace Synix_Control_Panel
 				_authenticationTokenHelpButton.Visible =
 					!string.IsNullOrWhiteSpace(gameData?.AuthenticationTokenHelpUrl);
 			}
-
-			cardCompatibility.Location = visible
-				? new Point(0, _authenticationTokenCard.Bottom + 16)
-				: new Point(0, cardCredentials.Bottom + 16);
 		}
 
 		private async Task InitializeExistingMinecraftSelectionAsync()
@@ -1642,7 +1694,7 @@ namespace Synix_Control_Panel
 					"Server Settings Need Attention",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
-				btnNavGeneral.PerformClick();
+				btnNavSecurity.PerformClick();
 				if (masterData?.RequiresAuthenticationToken == true &&
 					string.IsNullOrWhiteSpace(GetAuthenticationTokenValue(masterData)))
 				{
@@ -1864,7 +1916,7 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private async void cmbGame_SelectedIndexChanged(object sender, EventArgs e)
+		private async void cmbGame_SelectedIndexChanged(object? sender, EventArgs e)
 		{
 			if (isPrivacyLoading) return;
 			if (cmbGame.SelectedIndex > 0)
@@ -2031,13 +2083,13 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void btnBrowse_Click(object sender, EventArgs e) { using var fbd = new FolderBrowserDialog(); if (fbd.ShowDialog() == DialogResult.OK) { txtInstallPath.Text = fbd.SelectedPath; SyncGatekeeper(); } }
-		private void chkDefaultPath_CheckedChanged(object sender, EventArgs e) => SyncGatekeeper();
-		private void txtInstallPath_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
-		private void chkEnableRcon_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableRcon.Checked; numRconPort.Enabled = txtRconPassword.Enabled = active; SyncGatekeeper(); }
-		private void chkEnableSchedule_CheckedChanged(object sender, EventArgs e) { if (isPrivacyLoading) return; if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked; SyncGatekeeper(); }
-		private void txtWorldSeed_KeyPress(object sender, KeyPressEventArgs e) { if (cmbGame.Text == "Rust" && !char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true; }
-		private void btnViewArgs_Click(object sender, EventArgs e)
+		private void btnBrowse_Click(object? sender, EventArgs e) { using var fbd = new FolderBrowserDialog(); if (fbd.ShowDialog() == DialogResult.OK) { txtInstallPath.Text = fbd.SelectedPath; SyncGatekeeper(); } }
+		private void chkDefaultPath_CheckedChanged(object? sender, EventArgs e) => SyncGatekeeper();
+		private void txtInstallPath_TextChanged(object? sender, EventArgs e) => SyncGatekeeper();
+		private void chkEnableRcon_CheckedChanged(object? sender, EventArgs e) { if (isPrivacyLoading) return; bool active = chkEnableRcon.Checked; numRconPort.Enabled = txtRconPassword.Enabled = active; SyncGatekeeper(); }
+		private void chkEnableSchedule_CheckedChanged(object? sender, EventArgs e) { if (isPrivacyLoading) return; if (btnEditSchedule != null) btnEditSchedule.Enabled = chkEnableSchedule.Checked; SyncGatekeeper(); }
+		private void txtWorldSeed_KeyPress(object? sender, KeyPressEventArgs e) { if (cmbGame.Text == "Rust" && !char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true; }
+		private void btnViewArgs_Click(object? sender, EventArgs e)
 		{
 			GameInfo? gameData = GameDatabase.GetGame(cmbGame.Text);
 			if (gameData == null)
@@ -2046,7 +2098,7 @@ namespace Synix_Control_Panel
 			using DefaultArgumentsDisplay display = new(gameData.RequiredArgs);
 			display.ShowDialog(this);
 		}
-		private void btnEditSchedule_Click(object sender, EventArgs e)
+		private void btnEditSchedule_Click(object? sender, EventArgs e)
 		{
 			using ScheduleSettingsGUI scheduler = new(
 				_selectedDays,
@@ -2066,6 +2118,7 @@ namespace Synix_Control_Panel
 			_maintenanceMaximumDelayMinutes = scheduler.MaximumDelayMinutes;
 			_maintenanceBackupBeforeRestart = scheduler.BackupBeforeRestart;
 			_maintenanceUpdateBeforeRestart = scheduler.UpdateBeforeRestart;
+			SyncGatekeeper();
 		}
 
 		private bool IsMinecraftBedrockSelected() =>
@@ -2108,7 +2161,7 @@ namespace Synix_Control_Panel
 			ToggleGameSpecificFields(GameDatabase.GetGame("Minecraft"));
 		}
 		private void btnCancel_Click(object sender, EventArgs e) { this.DialogResult = DialogResult.Cancel; this.Close(); }
-		private void txtName_TextChanged(object sender, EventArgs e) => SyncGatekeeper();
+		private void txtName_TextChanged(object? sender, EventArgs e) => SyncGatekeeper();
 
 		private void PopulateMaps(GameInfo gameData, string selectedMap)
 		{
