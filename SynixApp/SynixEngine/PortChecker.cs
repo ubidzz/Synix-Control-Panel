@@ -124,6 +124,17 @@ namespace Synix_Control_Panel.SynixEngine
 			GameInfo? gameData = GameDatabase.GetGame(server.Game);
 			ServerProbeProtocol probeProtocol = GameDatabase.GetProbeProtocol(gameData);
 			bool supportsA2S = probeProtocol == ServerProbeProtocol.A2S;
+			bool isLocalAddress = await IsLocalAddressAsync(ip);
+
+			if (isLocalAddress &&
+				!string.IsNullOrWhiteSpace(gameData?.LaunchBehavior.ReadyLogText) &&
+				GameLogDiscovery.ContainsCurrentStartupText(
+					server,
+					gameData.LaunchBehavior.ReadyLogText))
+			{
+				Log($"[PROBE SUCCESS] {server.Game} verified via -> declared game-log readiness signal");
+				return RecordSuccessfulProbe(server);
+			}
 
 			if (supportsA2S && await TestServerConnectivity(ip, server.QueryPort))
 			{
@@ -147,13 +158,15 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			}
 
-			if (await TestTcpConnectivity(ip, server.Port))
+			if (probeProtocol != ServerProbeProtocol.EpicOnlineServices &&
+				await TestTcpConnectivity(ip, server.Port))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.Port}");
 				return RecordSuccessfulProbe(server);
 			}
 
 			if (probeProtocol != ServerProbeProtocol.RestApi &&
+				probeProtocol != ServerProbeProtocol.EpicOnlineServices &&
 				await TestTcpConnectivity(ip, server.QueryPort))
 			{
 				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.QueryPort}");
@@ -168,7 +181,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (server.StartTime.HasValue &&
 				(DateTime.Now - server.StartTime.Value).TotalSeconds >= 120 &&
-				await IsLocalAddressAsync(ip))
+				isLocalAddress)
 			{
 				if (IsPortInUseLocally(server.Port))
 				{
@@ -179,6 +192,13 @@ namespace Synix_Control_Panel.SynixEngine
 				if (IsPortInUseLocally(server.QueryPort))
 				{
 					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Query Port {server.QueryPort} In Use)");
+					return RecordSuccessfulProbe(server);
+				}
+
+				if (probeProtocol == ServerProbeProtocol.EpicOnlineServices &&
+					Servers.ReconcileActiveServerProcesses(server))
+				{
+					Log($"[PROBE SUCCESS] {server.Game} verified via -> stable local EOS server process after 120 seconds");
 					return RecordSuccessfulProbe(server);
 				}
 			}

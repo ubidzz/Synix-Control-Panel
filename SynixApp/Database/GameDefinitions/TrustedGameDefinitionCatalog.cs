@@ -566,6 +566,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				resourceName,
 				512,
 				required: false);
+			ValidateText(
+				behavior.ReadyLogText,
+				"launchBehavior.readyLogText",
+				resourceName,
+				512,
+				required: false);
 			if (behavior.RunElevated &&
 				!manifest.Executable.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
 				!manifest.Executable.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) &&

@@ -394,6 +394,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				arguments.Contains("{crossplay}", StringComparison.Ordinal),
 				ManagedConfigurationInput.Crossplay,
 				GameManagementCapability.Crossplay);
+			Include(
+				false,
+				ManagedConfigurationInput.InviteCode,
+				GameManagementCapability.InviteCode);
 
 			if (arguments.Contains("{ram}", StringComparison.OrdinalIgnoreCase))
 				capabilities |= GameManagementCapability.Ram;
@@ -731,7 +735,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			foreach (EmbeddedGamePackage package in TrustedGameDefinitionCatalog.Packages)
 			{
-				if (package.Configuration == null)
+				if (package.Configuration == null ||
+					index.ContainsKey(package.Definition.Game))
 					continue;
 
 				AddConfiguration(

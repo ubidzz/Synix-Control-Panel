@@ -159,7 +159,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 						draft.LaunchBehavior.RequiresVisibleWindow,
 					["lifecycleTracking"] = draft.LaunchBehavior.LifecycleTracking.ToString(),
 					["allowLaunchFileExport"] = draft.LaunchBehavior.AllowLaunchFileExport,
-					["readyMessage"] = draft.LaunchBehavior.ReadyMessage.Trim()
+					["readyMessage"] = draft.LaunchBehavior.ReadyMessage.Trim(),
+					["readyLogText"] = draft.LaunchBehavior.ReadyLogText.Trim()
 				},
 				["supportedServerFrameworks"] =
 					CreateStringArray(draft.SupportedServerFrameworks),

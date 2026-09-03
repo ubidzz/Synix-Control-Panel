@@ -32,7 +32,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		Port = 1 << 9,
 		AppPort = 1 << 10,
 		ServerName = 1 << 11,
-		Crossplay = 1 << 12
+		Crossplay = 1 << 12,
+		InviteCode = 1 << 13
 	}
 
 	[Flags]
@@ -52,7 +53,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		AppPort = 1 << 10,
 		Ram = 1 << 11,
 		GameVersion = 1 << 12,
-		Crossplay = 1 << 13
+		Crossplay = 1 << 13,
+		InviteCode = 1 << 14
 	}
 
 	internal sealed class ConfigurationContext

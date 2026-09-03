@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "exportedBySynixVersion": "1.0.24",
-  "exportedAtUtc": "2026-09-03T11:01:02.0616101+00:00",
+  "exportedAtUtc": "2026-09-03T19:01:16.0668468+00:00",
   "games": [
     {
       "game": "7 Days to Die",
@@ -650,6 +650,33 @@
         "verifiedAtUtc": "2026-09-03T07:57:16.9033734+00:00"
       },
       "configuration": null
+    },
+    {
+      "game": "Windrose",
+      "install": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T17:56:29.925248+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T18:55:54.130232+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T18:08:47.9363835+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T18:55:54.0350815+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T19:01:10.983004+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T19:00:09.9573479+00:00"
+      }
     }
   ]
 }

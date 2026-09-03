@@ -64,7 +64,8 @@
     "requiresVisibleWindow": false,
     "lifecycleTracking": "Process",
     "allowLaunchFileExport": true,
-    "readyMessage": ""
+    "readyMessage": "",
+    "readyLogText": ""
   },
   "supportedServerFrameworks": [],
   "logPaths": [

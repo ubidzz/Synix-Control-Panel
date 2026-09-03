@@ -38,8 +38,15 @@ namespace Synix_Control_Panel
 			txtAuthenticationToken = new TextBox();
 			btnAuthenticationTokenHelp = new ModernSettingsButton();
 			lblAuthenticationTokenNote = new Label();
+			cardInviteCode = new ModernSettingsCard();
+			lblInviteCodeIcon = new Label();
+			lblInviteCodeTitle = new Label();
+			lblInviteCode = new Label();
+			txtInviteCode = new TextBox();
+			lblInviteCodeNote = new Label();
 			cardCredentials.SuspendLayout();
 			cardAuthenticationToken.SuspendLayout();
+			cardInviteCode.SuspendLayout();
 			SuspendLayout();
 			// cardCredentials
 			cardCredentials.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -221,6 +228,79 @@ namespace Synix_Control_Panel
 			lblAuthenticationTokenNote.TabIndex = 5;
 			lblAuthenticationTokenNote.Text = "Protected in Synix and hidden from its logs. Generated batch files include the usable token in readable text.";
 
+			// cardInviteCode
+			cardInviteCode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			cardInviteCode.BackColor = Color.FromArgb(17, 27, 45);
+			cardInviteCode.BorderColor = Color.FromArgb(38, 52, 77);
+			cardInviteCode.Controls.Add(lblInviteCodeIcon);
+			cardInviteCode.Controls.Add(lblInviteCodeTitle);
+			cardInviteCode.Controls.Add(lblInviteCode);
+			cardInviteCode.Controls.Add(txtInviteCode);
+			cardInviteCode.Controls.Add(lblInviteCodeNote);
+			cardInviteCode.CornerRadius = 12;
+			cardInviteCode.FillColor = Color.FromArgb(17, 27, 45);
+			cardInviteCode.Location = new Point(0, 340);
+			cardInviteCode.Name = "cardInviteCode";
+			cardInviteCode.Size = new Size(914, 154);
+			cardInviteCode.TabIndex = 2;
+
+			// lblInviteCodeIcon
+			lblInviteCodeIcon.BackColor = Color.FromArgb(17, 27, 45);
+			lblInviteCodeIcon.Font = new Font("Segoe UI Symbol", 16F);
+			lblInviteCodeIcon.ForeColor = Color.FromArgb(32, 214, 199);
+			lblInviteCodeIcon.Location = new Point(20, 12);
+			lblInviteCodeIcon.Name = "lblInviteCodeIcon";
+			lblInviteCodeIcon.Size = new Size(28, 30);
+			lblInviteCodeIcon.TabIndex = 0;
+			lblInviteCodeIcon.Text = "◇";
+			lblInviteCodeIcon.TextAlign = ContentAlignment.MiddleCenter;
+
+			// lblInviteCodeTitle
+			lblInviteCodeTitle.AutoSize = true;
+			lblInviteCodeTitle.BackColor = Color.FromArgb(17, 27, 45);
+			lblInviteCodeTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblInviteCodeTitle.ForeColor = Color.FromArgb(245, 247, 251);
+			lblInviteCodeTitle.Location = new Point(54, 17);
+			lblInviteCodeTitle.Name = "lblInviteCodeTitle";
+			lblInviteCodeTitle.Size = new Size(187, 21);
+			lblInviteCodeTitle.TabIndex = 1;
+			lblInviteCodeTitle.Text = "Windrose Invite Access";
+
+			// lblInviteCode
+			lblInviteCode.AutoSize = true;
+			lblInviteCode.BackColor = Color.FromArgb(17, 27, 45);
+			lblInviteCode.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblInviteCode.ForeColor = Color.FromArgb(245, 247, 251);
+			lblInviteCode.Location = new Point(24, 50);
+			lblInviteCode.Name = "lblInviteCode";
+			lblInviteCode.Size = new Size(68, 15);
+			lblInviteCode.TabIndex = 2;
+			lblInviteCode.Text = "Invite Code";
+
+			// txtInviteCode
+			txtInviteCode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			txtInviteCode.AutoSize = false;
+			txtInviteCode.BackColor = Color.FromArgb(12, 21, 36);
+			txtInviteCode.BorderStyle = BorderStyle.FixedSingle;
+			txtInviteCode.Font = new Font("Segoe UI", 10F);
+			txtInviteCode.ForeColor = Color.FromArgb(245, 247, 251);
+			txtInviteCode.Location = new Point(24, 70);
+			txtInviteCode.MaxLength = 64;
+			txtInviteCode.Name = "txtInviteCode";
+			txtInviteCode.Size = new Size(866, 34);
+			txtInviteCode.TabIndex = 3;
+
+			// lblInviteCodeNote
+			lblInviteCodeNote.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lblInviteCodeNote.BackColor = Color.FromArgb(17, 27, 45);
+			lblInviteCodeNote.Font = new Font("Segoe UI", 8F);
+			lblInviteCodeNote.ForeColor = Color.FromArgb(158, 172, 194);
+			lblInviteCodeNote.Location = new Point(24, 116);
+			lblInviteCodeNote.Name = "lblInviteCodeNote";
+			lblInviteCodeNote.Size = new Size(866, 22);
+			lblInviteCodeNote.TabIndex = 4;
+			lblInviteCodeNote.Text = "Privacy Mode masks this access credential. Enter a custom code, or leave it empty on first install to let Windrose generate one.";
+
 			// ServerSettingsSecurityPage
 			AutoScaleDimensions = new SizeF(96F, 96F);
 			AutoScaleMode = AutoScaleMode.Dpi;
@@ -228,12 +308,15 @@ namespace Synix_Control_Panel
 			BackColor = Color.FromArgb(8, 13, 24);
 			Controls.Add(cardCredentials);
 			Controls.Add(cardAuthenticationToken);
+			Controls.Add(cardInviteCode);
 			Name = "ServerSettingsSecurityPage";
 			Size = new Size(914, 496);
 			cardCredentials.ResumeLayout(false);
 			cardCredentials.PerformLayout();
 			cardAuthenticationToken.ResumeLayout(false);
 			cardAuthenticationToken.PerformLayout();
+			cardInviteCode.ResumeLayout(false);
+			cardInviteCode.PerformLayout();
 			ResumeLayout(false);
 		}
 
@@ -254,5 +337,11 @@ namespace Synix_Control_Panel
 		internal TextBox txtAuthenticationToken;
 		internal ModernSettingsButton btnAuthenticationTokenHelp;
 		internal Label lblAuthenticationTokenNote;
+		internal ModernSettingsCard cardInviteCode;
+		internal Label lblInviteCodeIcon;
+		internal Label lblInviteCodeTitle;
+		internal Label lblInviteCode;
+		internal TextBox txtInviteCode;
+		internal Label lblInviteCodeNote;
 	}
 }

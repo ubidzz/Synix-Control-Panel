@@ -277,6 +277,103 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void Windrose_UpdatesItsPersistentSettingsAndPreservesGeneratedIdentity()
+	{
+		WindroseConfiguration definition = new();
+		GameServer server = CreateServer("Windrose");
+		server.ServerName = "Windrose Friends";
+		server.InviteCode = "custom42";
+		server.MaxPlayers = 8;
+		PrepareGeneratedConfiguration(server.Game, server);
+
+		ConfigurationApplyResult protectedResult = definition.Apply(
+			new ConfigurationContext(
+				server,
+				new SynixServerPasswords("join-secret", string.Empty, string.Empty),
+				Core.Instance.GetSafeName(server.ServerName),
+				string.Empty,
+				string.Empty));
+		string path = definition.ResolveFullPath(server);
+
+		Assert.True(protectedResult.Succeeded, protectedResult.Message);
+		Assert.True(protectedResult.Complete, protectedResult.Message);
+		Assert.Equal(
+			"Windrose Friends",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.ServerName"));
+		Assert.Equal(
+			"custom42",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.InviteCode"));
+		Assert.Equal(
+			"join-secret",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.Password"));
+		Assert.Equal(
+			"True",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.IsPasswordProtected"));
+		Assert.Equal(
+			"generated-server-id",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.PersistentServerId"));
+		Assert.Equal(
+			"generated-world-id",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.WorldIslandId"));
+
+		ConfigurationApplyResult openResult = definition.Apply(
+			new ConfigurationContext(
+				server,
+				new SynixServerPasswords(string.Empty, string.Empty, string.Empty),
+				Core.Instance.GetSafeName(server.ServerName),
+				string.Empty,
+				string.Empty));
+
+		Assert.True(openResult.Succeeded, openResult.Message);
+		Assert.Equal(
+			"False",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.IsPasswordProtected"));
+	}
+
+	[Fact]
+	public void Windrose_FixConfigBootstrapsMissingPerServerTemplate()
+	{
+		WindroseConfiguration definition = new();
+		GameServer server = CreateServer("Windrose");
+		server.ServerName = "Recovered Windrose";
+		server.InviteCode = "fixed123";
+		server.MaxPlayers = 8;
+		server.Port = 7777;
+		PrepareGeneratedConfiguration(server.Game, server);
+		string path = definition.ResolveFullPath(server);
+		string templatePath = path + ".synix.template";
+
+		Assert.False(File.Exists(templatePath));
+
+		ConfigurationApplyResult reset = definition.ResetToTemplate(
+			new ConfigurationContext(
+				server,
+				new SynixServerPasswords("join-secret", string.Empty, string.Empty),
+				Core.Instance.GetSafeName(server.ServerName),
+				string.Empty,
+				string.Empty));
+
+		Assert.True(reset.Succeeded, reset.Message);
+		Assert.True(reset.Complete, reset.Message);
+		Assert.True(File.Exists(templatePath));
+		Assert.Equal(
+			"generated-server-id",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.PersistentServerId"));
+		Assert.Equal(
+			"generated-world-id",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.WorldIslandId"));
+		Assert.Equal(
+			"Recovered Windrose",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.ServerName"));
+		Assert.Equal(
+			"fixed123",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.InviteCode"));
+		Assert.Equal(
+			"True",
+			GetValue(path, ConfigFormat.JSON, "ServerDescription_Persistent.IsPasswordProtected"));
+	}
+
+	[Fact]
 	public void Enshrouded_CapturedTemplateCreatesCurrentDefaultsAndSafeRoles()
 	{
 		Assert.True(GameFix.TryGetConfiguration(
@@ -1770,15 +1867,25 @@ public sealed class GameConfigurationTests : IDisposable
 				Path.Combine(windroseDirectory, "ServerDescription.json"),
 				"""
 				{
-				  "Password": "",
-				  "ServerName": "Generated",
-				  "MaxPlayerCount": "16",
-				  "PersistentServerId": "generated-id",
-				  "InviteCode": "abcd1234",
-				  "UserSelectedRegion": "",
-				  "AutoRestart": true,
-				  "UseDirectConnection": false,
-				  "DirectConnectionServerPort": "7777"
+				  "Version": 1,
+				  "DeploymentId": "test-deployment",
+				  "ServerDescription_Persistent": {
+				    "PersistentServerId": "generated-server-id",
+				    "InviteCode": "abcd1234",
+				    "IsPasswordProtected": false,
+				    "Password": "",
+				    "ServerName": "Generated",
+				    "WorldIslandId": "generated-world-id",
+				    "MaxPlayerCount": 8,
+				    "UserSelectedRegion": "",
+				    "P2pProxyAddress": "127.0.0.1",
+				    "UseDirectConnection": false,
+				    "DirectConnectionServerAddress": "",
+				    "DirectConnectionServerPort": -1,
+				    "DirectConnectionProxyAddress": "0.0.0.0",
+				    "AutoLoadLatestBackupIfHasBroken": true,
+				    "CanLaunchMultipleServerInstances": false
+				  }
 				}
 				""");
 			return;

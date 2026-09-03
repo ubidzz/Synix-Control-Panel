@@ -262,6 +262,7 @@ namespace Synix_Control_Panel
 			_authenticationTokenTextBox = pnlPageSecurity.txtAuthenticationToken;
 			_authenticationTokenHelpButton = pnlPageSecurity.btnAuthenticationTokenHelp;
 			_authenticationTokenTextBox.UseSystemPasswordChar = _PrivacyMode;
+			txtInviteCode.UseSystemPasswordChar = _PrivacyMode;
 			_authenticationTokenHelpButton.Click += (_, _) =>
 				OpenAuthenticationTokenHelpPage();
 		}
@@ -593,6 +594,7 @@ namespace Synix_Control_Panel
 		{
 			txtPassword.Clear();
 			txtAdminPassword.Clear();
+			txtInviteCode.Clear();
 			txtRconPassword.Clear();
 			_authenticationTokenTextBox?.Clear();
 			discordSettingsPage.ClearSecrets();
@@ -610,6 +612,7 @@ namespace Synix_Control_Panel
 				txtPassword.UseSystemPasswordChar = true;
 				txtAdminPassword.UseSystemPasswordChar = true;
 				txtRconPassword.UseSystemPasswordChar = true;
+				txtInviteCode.UseSystemPasswordChar = true;
 				if (_authenticationTokenTextBox != null)
 					_authenticationTokenTextBox.UseSystemPasswordChar = true;
 				discordSettingsPage.SetPrivacyMode(true);
@@ -619,6 +622,7 @@ namespace Synix_Control_Panel
 				txtPassword.UseSystemPasswordChar = false;
 				txtAdminPassword.UseSystemPasswordChar = false;
 				txtRconPassword.UseSystemPasswordChar = false;
+				txtInviteCode.UseSystemPasswordChar = false;
 				if (_authenticationTokenTextBox != null)
 					_authenticationTokenTextBox.UseSystemPasswordChar = false;
 				discordSettingsPage.SetPrivacyMode(false);
@@ -634,6 +638,14 @@ namespace Synix_Control_Panel
 			int gameIndex = cmbGame.FindStringExact(_existingServer.Game);
 			if (gameIndex != -1) cmbGame.SelectedIndex = gameIndex;
 			GameInfo? gameData = GameDatabase.GetGame(_existingServer.Game);
+			string inviteCode = _existingServer.InviteCode ?? string.Empty;
+			if (string.IsNullOrWhiteSpace(inviteCode) &&
+				(GameFix.GetManagementCapabilities(gameData) &
+				 GameManagementCapability.InviteCode) != GameManagementCapability.None)
+			{
+				inviteCode = WindroseConfiguration.ReadInstalledInviteCode(_existingServer);
+			}
+			txtInviteCode.Text = inviteCode;
 			if (_minecraftEditionCombo != null && GameDatabase.IsMinecraft(_existingServer.Game))
 			{
 				SelectComboBoxValue(
@@ -758,6 +770,9 @@ namespace Synix_Control_Panel
 				bool isRequiredAuthenticationTokenMissing =
 					selectedDefinition?.RequiresAuthenticationToken == true &&
 					string.IsNullOrWhiteSpace(GetAuthenticationTokenValue(selectedDefinition));
+				bool supportsInviteCode =
+					(GameFix.GetManagementCapabilities(selectedDefinition) &
+					 GameManagementCapability.InviteCode) != GameManagementCapability.None;
 				string requiredAuthenticationTokenLabel =
 					string.IsNullOrWhiteSpace(selectedDefinition?.AuthenticationTokenLabel)
 						? "Authentication Token"
@@ -795,6 +810,7 @@ namespace Synix_Control_Panel
 					_authenticationTokenTextBox.Enabled =
 						selectedDefinition?.RequiresAuthenticationToken == true;
 				}
+				txtInviteCode.Enabled = supportsInviteCode;
 				txtWorldSeed.Enabled = CanUnlock(txtWorldSeed);
 				cmbCompetitive.Enabled = CanUnlock(cmbCompetitive);
 				numMaxPlayers.Enabled = CanUnlock(numMaxPlayers);
@@ -1329,6 +1345,14 @@ namespace Synix_Control_Panel
 					: string.Empty;
 		}
 
+		private string GetInviteCodeValue(GameInfo? definition)
+		{
+			return (GameFix.GetManagementCapabilities(definition) &
+				GameManagementCapability.InviteCode) != GameManagementCapability.None
+					? txtInviteCode.Text.Trim()
+					: string.Empty;
+		}
+
 		private void WireUpGatekeeperEvents()
 		{
 			if (debounceTimer == null) { debounceTimer = new System.Windows.Forms.Timer(); debounceTimer.Interval = 300; debounceTimer.Tick += (s, e) => { debounceTimer.Stop(); SyncGatekeeper(); }; }
@@ -1336,6 +1360,7 @@ namespace Synix_Control_Panel
 			txtName.TextChanged += (s, e) => trigger();
 			txtPassword.TextChanged += (s, e) => trigger();
 			txtAdminPassword.TextChanged += (s, e) => trigger();
+			txtInviteCode.TextChanged += (s, e) => trigger();
 			txtRconPassword.TextChanged += (s, e) => trigger();
 			if (_authenticationTokenTextBox != null)
 				_authenticationTokenTextBox.TextChanged += (_, _) => trigger();
@@ -1480,12 +1505,20 @@ namespace Synix_Control_Panel
 
 		private void ConfigureAuthenticationTokenCard(GameInfo? gameData)
 		{
-			bool visible = gameData?.RequiresAuthenticationToken == true;
+			bool tokenVisible = gameData?.RequiresAuthenticationToken == true;
+			bool inviteCodeVisible =
+				(GameFix.GetManagementCapabilities(gameData) &
+				 GameManagementCapability.InviteCode) != GameManagementCapability.None;
 			if (_authenticationTokenCard == null)
 				return;
 
-			_authenticationTokenCard.Location = new Point(0, cardCredentials.Bottom + 16);
-			_authenticationTokenCard.Visible = visible;
+			int nextTop = cardCredentials.Bottom + 16;
+			_authenticationTokenCard.Location = new Point(0, nextTop);
+			_authenticationTokenCard.Visible = tokenVisible;
+			if (tokenVisible)
+				nextTop = _authenticationTokenCard.Bottom + 16;
+			cardInviteCode.Location = new Point(0, nextTop);
+			cardInviteCode.Visible = inviteCodeVisible;
 			if (_authenticationTokenLabel != null)
 			{
 				_authenticationTokenLabel.Text = string.IsNullOrWhiteSpace(
@@ -1786,6 +1819,7 @@ namespace Synix_Control_Panel
 				Password = GetEnteredValue(txtPassword),
 				AdminPassword = GetEnteredValue(txtAdminPassword),
 				AuthenticationToken = GetAuthenticationTokenValue(masterData),
+				InviteCode = GetInviteCodeValue(masterData),
 				MaxPlayers = (int)numMaxPlayers.Value,
 				WorldName = worldName,
 				GameMode = isMinecraft

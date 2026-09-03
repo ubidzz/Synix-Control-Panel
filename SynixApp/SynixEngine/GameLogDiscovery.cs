@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -27,6 +28,7 @@ namespace Synix_Control_Panel.SynixEngine
 	internal static class GameLogDiscovery
 	{
 		private const int MaximumFilesExamined = 50_000;
+		private const int MaximumReadinessTailBytes = 512 * 1024;
 
 		internal static bool HasDeclaredLogs(string? game) =>
 			GameDatabase.GetGame(game ?? string.Empty)?.LogPaths.Count > 0;
@@ -83,6 +85,54 @@ namespace Synix_Control_Panel.SynixEngine
 				.Select(file => file.FullName)
 				.FirstOrDefault();
 			return new(latest, matches.Count, errors);
+		}
+
+		internal static bool ContainsCurrentStartupText(
+			GameServer server,
+			string expectedText)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (string.IsNullOrWhiteSpace(expectedText) || !server.StartTime.HasValue)
+				return false;
+
+			try
+			{
+				GameLogDiscoveryResult result = FindLatest(server);
+				if (!result.Found)
+					return false;
+
+				FileInfo log = new(result.LatestLogPath!);
+				DateTime startupUtc = server.StartTime.Value.ToUniversalTime();
+				if (!log.Exists || log.LastWriteTimeUtc < startupUtc.AddSeconds(-2))
+					return false;
+
+				using FileStream stream = new(
+					log.FullName,
+					FileMode.Open,
+					FileAccess.Read,
+					FileShare.ReadWrite | FileShare.Delete);
+				long tailStart = Math.Max(0, stream.Length - MaximumReadinessTailBytes);
+				stream.Seek(tailStart, SeekOrigin.Begin);
+				using StreamReader reader = new(
+					stream,
+					Encoding.UTF8,
+					detectEncodingFromByteOrderMarks: true,
+					bufferSize: 4096,
+					leaveOpen: false);
+				if (tailStart > 0)
+					_ = reader.ReadLine();
+
+				return reader.ReadToEnd().Contains(
+					expectedText,
+					StringComparison.OrdinalIgnoreCase);
+			}
+			catch (Exception exception) when (exception is IOException or
+				UnauthorizedAccessException or InvalidDataException or
+				ArgumentException or NotSupportedException or
+				System.Security.SecurityException)
+			{
+				return false;
+			}
 		}
 
 		private static string ExpandPattern(string pattern, GameServer server)

@@ -38,6 +38,8 @@ namespace Synix_Control_Panel
 		private ModernSettingsCard cardCredentials => pnlPageSecurity.cardCredentials;
 		private TextBox txtPassword => pnlPageSecurity.txtPassword;
 		private TextBox txtAdminPassword => pnlPageSecurity.txtAdminPassword;
+		private ModernSettingsCard cardInviteCode => pnlPageSecurity.cardInviteCode;
+		private TextBox txtInviteCode => pnlPageSecurity.txtInviteCode;
 
 		private TextBox txtWorldSeed => pnlPageWorld.txtWorldSeed;
 		private ModernSettingsNumericUpDown numWorldSize => pnlPageWorld.numWorldSize;

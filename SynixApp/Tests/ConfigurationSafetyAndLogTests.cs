@@ -155,6 +155,44 @@ public sealed class ConfigurationSafetyAndLogTests
 		}
 	}
 
+	[Fact]
+	[Trait("Category", "Regression")]
+	public void WindroseReadiness_RequiresTheCurrentStartupLogSignal()
+	{
+		string root = CreateTestDirectory();
+		try
+		{
+			GameServer server = new()
+			{
+				Game = "Windrose",
+				ServerName = "windrose-ready-test",
+				InstallPath = root,
+				StartTime = DateTime.Now
+			};
+			string logDirectory = Path.Combine(root, "R5", "Saved", "Logs");
+			Directory.CreateDirectory(logDirectory);
+			string logPath = Path.Combine(logDirectory, "R5.log");
+			File.WriteAllText(logPath, "Server registration finished successfully");
+			File.SetLastWriteTimeUtc(logPath, DateTime.UtcNow.AddMinutes(-5));
+
+			Assert.False(GameLogDiscovery.ContainsCurrentStartupText(
+				server,
+				"Server registration finished successfully"));
+
+			File.AppendAllText(
+				logPath,
+				Environment.NewLine + "Server registration finished successfully");
+
+			Assert.True(GameLogDiscovery.ContainsCurrentStartupText(
+				server,
+				"Server registration finished successfully"));
+		}
+		finally
+		{
+			Directory.Delete(root, true);
+		}
+	}
+
 	private static string CreateTestDirectory()
 	{
 		string directory = Path.Combine(

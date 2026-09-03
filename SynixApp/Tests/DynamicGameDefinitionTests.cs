@@ -136,6 +136,21 @@ public sealed class DynamicGameDefinitionTests
 	}
 
 	[Fact]
+	public void WindroseDefinitionUsesItsEightPlayerEosProfile()
+	{
+		GameInfo windrose = GameDatabase.GetGame("Windrose")!;
+
+		Assert.Equal(8, windrose.MaximumPlayers);
+		Assert.Equal(ServerProbeProtocol.EpicOnlineServices, windrose.ProbeProtocol);
+		Assert.False(windrose.SupportsManualConnectionTesting);
+		Assert.Contains(@"R5\Saved\Logs\*.log", windrose.LogPaths);
+		Assert.Equal(
+			"Server registration finished successfully",
+			windrose.LaunchBehavior.ReadyLogText);
+		Assert.True(windrose.DefinitionRevision >= 2);
+	}
+
+	[Fact]
 	public void ValheimDefinitionDeclaresItsRequiredPasswordRules()
 	{
 		GameInfo valheim = GameDatabase.GetGame("Valheim")!;
@@ -968,7 +983,8 @@ public sealed class DynamicGameDefinitionTests
 					RequiresVisibleWindow = true,
 					LifecycleTracking = GameLifecycleTrackingMode.ExternalDeployment,
 					AllowLaunchFileExport = false,
-					ReadyMessage = "The deployment passed its readiness checks."
+					ReadyMessage = "The deployment passed its readiness checks.",
+					ReadyLogText = "Deployment registration complete"
 				}
 			};
 
@@ -1012,9 +1028,13 @@ public sealed class DynamicGameDefinitionTests
 			Assert.Equal(
 				"The deployment passed its readiness checks.",
 				parsed.Definition.LaunchBehavior.ReadyMessage);
+			Assert.Equal(
+				"Deployment registration complete",
+				parsed.Definition.LaunchBehavior.ReadyLogText);
 			Assert.Single(parsed.PostInstallActions);
 			Assert.Contains("\"definitionRevision\": 2", result.Json);
 			Assert.Contains("\"requiresVisibleWindow\": true", result.Json);
+			Assert.Contains("\"readyLogText\": \"Deployment registration complete\"", result.Json);
 			Assert.Contains("\"minimumDotNetFramework\": \"NetFramework481\"", result.Json);
 			Assert.Contains("\"VisualCpp2015To2022X64\"", result.Json);
 			Assert.Contains("\"pvpValue\": \"PVP\"", result.Json);

@@ -117,6 +117,7 @@ public sealed class GameLaunchBehavior
 		GameLifecycleTrackingMode.Process;
 	public bool AllowLaunchFileExport { get; init; } = true;
 	public string ReadyMessage { get; init; } = string.Empty;
+	public string ReadyLogText { get; init; } = string.Empty;
 }
 
 public class GameDefinition
@@ -325,6 +326,7 @@ public class GameServer
 	public string Password { get; set; } = string.Empty;
 	public string AdminPassword { get; set; } = string.Empty;
 	public string AuthenticationToken { get; set; } = string.Empty;
+	public string InviteCode { get; set; } = string.Empty;
 	public string Status { get; set; } = StatusManager.GetStatus(ServerState.Stopped);
 	public int MaxPlayers { get; set; } = 10;
 	public string WorldName { get; set; } = "NewWorld";

@@ -191,6 +191,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			string existingText = ConfigurationTextSnapshot.Read(path).Text;
+			return HasRequiredStructureText(existingText, template, format);
+		}
+
+		internal static bool HasRequiredStructureText(
+			string existingText,
+			string template,
+			ConfigFormat format)
+		{
+			ArgumentNullException.ThrowIfNull(existingText);
+			ArgumentNullException.ThrowIfNull(template);
 			Dictionary<string, int> existingStructure =
 				BuildStructureSignature(existingText, format);
 			Dictionary<string, int> requiredStructure =

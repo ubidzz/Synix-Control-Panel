@@ -490,34 +490,6 @@ namespace Synix_Control_Panel
 			cmbMinecraftLoader.Size = new Size(260, 34);
 			cmbMinecraftLoader.TabIndex = 3;
 
-			// lblMinecraftEdition
-			lblMinecraftEdition.AutoSize = true;
-			lblMinecraftEdition.BackColor = Color.FromArgb(17, 27, 45);
-			lblMinecraftEdition.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-			lblMinecraftEdition.ForeColor = Color.FromArgb(245, 247, 251);
-			lblMinecraftEdition.Location = new Point(24, 52);
-			lblMinecraftEdition.Name = "lblMinecraftEdition";
-			lblMinecraftEdition.Size = new Size(43, 15);
-			lblMinecraftEdition.TabIndex = 2;
-			lblMinecraftEdition.Text = "Edition";
-
-			// cmbMinecraftEdition
-			cmbMinecraftEdition.BackColor = Color.FromArgb(12, 21, 36);
-			cmbMinecraftEdition.BorderColor = Color.FromArgb(38, 52, 77);
-			cmbMinecraftEdition.DrawMode = DrawMode.OwnerDrawFixed;
-			cmbMinecraftEdition.DropDownStyle = ComboBoxStyle.DropDownList;
-			cmbMinecraftEdition.FlatStyle = FlatStyle.Flat;
-			cmbMinecraftEdition.FocusBorderColor = Color.FromArgb(38, 52, 77);
-			cmbMinecraftEdition.Font = new Font("Segoe UI", 9.5F);
-			cmbMinecraftEdition.ForeColor = Color.FromArgb(245, 247, 251);
-			cmbMinecraftEdition.FormattingEnabled = true;
-			cmbMinecraftEdition.ItemHeight = 28;
-			cmbMinecraftEdition.Items.AddRange(new object[] { "Java", "Bedrock" });
-			cmbMinecraftEdition.Location = new Point(24, 72);
-			cmbMinecraftEdition.Name = "cmbMinecraftEdition";
-			cmbMinecraftEdition.Size = new Size(260, 34);
-			cmbMinecraftEdition.TabIndex = 3;
-
 			// lblMinecraftLoaderVersion
 			lblMinecraftLoaderVersion.AutoSize = true;
 			lblMinecraftLoaderVersion.BackColor = Color.FromArgb(17, 27, 45);

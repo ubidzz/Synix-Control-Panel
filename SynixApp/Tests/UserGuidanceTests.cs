@@ -7,6 +7,7 @@ using Synix_Control_Panel.Database;
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -256,6 +257,65 @@ public sealed class UserGuidanceTests
 	}
 
 	[Fact]
+	public void WindroseServerSettingsExposeInviteCodeAndCapPlayersAtEight()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerSettingsGUI setup = new(new GameServer
+				{
+					Game = "Windrose",
+					ServerName = "Windrose Test",
+					InstallPath = Path.GetTempPath(),
+					Port = 65401,
+					QueryPort = 65402,
+					MaxPlayers = 20,
+					InviteCode = "friends8"
+				});
+				setup.Show();
+				Application.DoEvents();
+				Assert.IsType<ModernSettingsNavButton>(setup.Controls.Find(
+					"btnNavSecurity",
+					true).Single()).PerformClick();
+				Application.DoEvents();
+
+				ModernSettingsNumericUpDown playerLimit =
+					Assert.IsType<ModernSettingsNumericUpDown>(setup.Controls.Find(
+						"numMaxPlayers",
+						true).Single());
+				Control inviteCard = setup.Controls.Find("cardInviteCode", true).Single();
+				Control tokenCard = setup.Controls.Find(
+					"cardAuthenticationToken",
+					true).Single();
+				TextBox inviteCode = Assert.IsType<TextBox>(setup.Controls.Find(
+					"txtInviteCode",
+					true).Single());
+
+				Assert.Equal(8, playerLimit.Maximum);
+				Assert.Equal(8, playerLimit.Value);
+				Assert.Equal(
+					"Max Players (maximum 8)",
+					setup.Controls.Find("MaxPlayerLabel", true).Single().Text);
+				Assert.True(inviteCard.Visible);
+				Assert.False(tokenCard.Visible);
+				Assert.True(inviteCode.Enabled);
+				Assert.Equal("friends8", inviteCode.Text);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+
+		Assert.Null(failure);
+	}
+
+	[Fact]
 	public void EcoServerSettingsShowOnlyItsOnlineAuthenticationTokenCard()
 	{
 		Exception? failure = null;
@@ -285,6 +345,9 @@ public sealed class UserGuidanceTests
 				Control tokenCard = setup.Controls.Find(
 					"cardAuthenticationToken",
 					true).Single();
+				Control inviteCard = setup.Controls.Find(
+					"cardInviteCode",
+					true).Single();
 				TextBox token = Assert.IsType<TextBox>(setup.Controls.Find(
 					"txtAuthenticationToken",
 					true).Single());
@@ -304,6 +367,7 @@ public sealed class UserGuidanceTests
 				Application.DoEvents();
 				Assert.True(securityPage.Visible);
 				Assert.True(tokenCard.Visible);
+				Assert.False(inviteCard.Visible);
 				Assert.True(token.Enabled);
 				Assert.True(getToken.Visible);
 				Assert.Equal(
@@ -420,6 +484,8 @@ public sealed class UserGuidanceTests
 			try
 			{
 				using ServerSettingsGUI setup = new();
+				ComboBox minecraftEdition = Assert.IsAssignableFrom<ComboBox>(
+					setup.Controls.Find("cmbMinecraftEdition", true).Single());
 
 				Assert.IsType<ServerSettingsGeneralPage>(setup.Controls.Find("pnlPageGeneral", true).Single());
 				Assert.IsType<ServerSettingsSecurityPage>(setup.Controls.Find("pnlPageSecurity", true).Single());
@@ -428,6 +494,9 @@ public sealed class UserGuidanceTests
 				Assert.IsType<ServerSettingsAutomationPage>(setup.Controls.Find("pnlPageAutomation", true).Single());
 				Assert.IsType<DiscordSettingsPage>(setup.Controls.Find("discordSettingsPage", true).Single());
 				Assert.IsType<ServerSettingsInstallPage>(setup.Controls.Find("pnlPageInstall", true).Single());
+				Assert.Equal(
+					[MinecraftControlProfile.JavaEdition, MinecraftControlProfile.BedrockEdition],
+					minecraftEdition.Items.Cast<string>());
 			}
 			catch (Exception exception)
 			{
