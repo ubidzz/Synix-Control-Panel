@@ -251,6 +251,38 @@ public sealed class ServerAssistanceFeatureTests
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
+	public void ConfigEditorAvailabilityHidesLaunchArgumentOnlyGames()
+	{
+		string root = Path.Combine(
+			Path.GetTempPath(),
+			$"synix-config-availability-{Guid.NewGuid():N}");
+		Directory.CreateDirectory(root);
+		try
+		{
+			GameServer valheim = new()
+			{
+				Game = "Valheim",
+				ServerName = "Valheim Test",
+				InstallPath = root
+			};
+			GameServer sevenDays = new()
+			{
+				Game = "7 Days to Die",
+				ServerName = "7D2D Test",
+				InstallPath = root
+			};
+
+			Assert.False(Core.CanOpenConfigurationEditor(valheim));
+			Assert.True(Core.CanOpenConfigurationEditor(sevenDays));
+		}
+		finally
+		{
+			Directory.Delete(root, true);
+		}
+	}
+
+	[Fact]
 	public void ConfigEditorEmbedsItsFormResourceUnderTheFormTypeName()
 	{
 		Assert.Contains(

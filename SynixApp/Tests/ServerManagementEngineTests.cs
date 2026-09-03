@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using Synix_Control_Panel.Database;
@@ -339,6 +340,7 @@ public sealed class ServerManagementEngineTests
 	[InlineData("Minecraft", "Minecraft")]
 	[InlineData("minecraft java", "Minecraft")]
 	[InlineData("  Minecraft Java  ", "Minecraft")]
+	[InlineData("Valheim (Crossplay)", "Valheim")]
 	[InlineData("  Palworld  ", "Palworld")]
 	[InlineData(null, "")]
 	public void GameNames_AreNormalizedForCurrentAndOlderSavedServers(
@@ -589,6 +591,24 @@ public sealed class ServerManagementEngineTests
 	}
 
 	[Theory]
+	[InlineData(Core.ServerState.Stopped, false)]
+	[InlineData(Core.ServerState.Starting, false)]
+	[InlineData(Core.ServerState.Stopping, false)]
+	[InlineData(Core.ServerState.Crashed, false)]
+	[InlineData(Core.ServerState.Running, true)]
+	public void LiveServerMenuActions_AppearOnlyWhileServerIsRunning(
+		Core.ServerState state,
+		bool expected)
+	{
+		GameServer server = new()
+		{
+			Status = Core.StatusManager.GetStatus(state)
+		};
+
+		Assert.Equal(expected, MainGUI.CanShowLiveServerActions(server));
+	}
+
+	[Theory]
 	[InlineData("")]
 	[InlineData("-log -port 7777 +maxplayers 20")]
 	[InlineData("/Config=server.json -Map=\"My Map\"")]
@@ -669,6 +689,7 @@ public sealed class ServerManagementEngineTests
 	[InlineData(Core.ServerState.Validating, "Validating")]
 	[InlineData(Core.ServerState.Export, "Exporting")]
 	[InlineData(Core.ServerState.Restoring, "Restoring")]
+	[InlineData(Core.ServerState.Deleting, "Deleting")]
 	public void ServerStates_UseTheExpectedUserFacingText(
 		Core.ServerState state,
 		string expectedText)
@@ -691,6 +712,7 @@ public sealed class ServerManagementEngineTests
 	[InlineData("Validating", "Validating")]
 	[InlineData("Exporting", "Exporting")]
 	[InlineData("Restoring /", "Restoring")]
+	[InlineData("Deleting", "Deleting")]
 	public void BusyStatusPresentation_RecognizesCurrentAndLegacyBusyText(
 		string status,
 		string expectedState)
@@ -708,6 +730,65 @@ public sealed class ServerManagementEngineTests
 	{
 		Assert.False(BusyStatusPresentation.TryGetBusyState(status, out _));
 		Assert.Equal(status, BusyStatusPresentation.GetDisplayStatus(status));
+	}
+
+	[Fact]
+	[Trait("Category", "Regression")]
+	public async Task ServerFolderDeletion_RemovesFilesThroughAsyncBoundary()
+	{
+		string testRoot = Path.Combine(
+			Path.GetTempPath(),
+			"SynixAsyncDeletionTests",
+			Guid.NewGuid().ToString("N"));
+		string nestedFolder = Path.Combine(testRoot, "world", "region");
+		Directory.CreateDirectory(nestedFolder);
+		File.WriteAllBytes(
+			Path.Combine(nestedFolder, "region-file.bin"),
+			new byte[128 * 1024]);
+		GameServer server = new()
+		{
+			Game = "Minecraft",
+			ServerName = "Async Delete Test",
+			InstallPath = testRoot,
+			Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped)
+		};
+
+		try
+		{
+			ServerFolderDeletionResult result =
+				await FolderHandler.ServerFolder.DeleteFilesAsync(server, deleteBackups: false);
+
+			Assert.True(result.InstallationDeleted);
+			Assert.Equal(testRoot, result.InstallationPath);
+			Assert.False(result.BackupsDeleted);
+			Assert.False(Directory.Exists(testRoot));
+		}
+		finally
+		{
+			if (Directory.Exists(testRoot))
+				Directory.Delete(testRoot, true);
+		}
+	}
+
+	[Theory]
+	[InlineData("Delete")]
+	[InlineData("Start")]
+	[InlineData("Update")]
+	[InlineData("Backup")]
+	[InlineData("Restore")]
+	[InlineData("Restart")]
+	[InlineData("Stop")]
+	public void DeletingState_BlocksOverlappingServerActions(string action)
+	{
+		GameServer server = new()
+		{
+			Game = "Minecraft",
+			ServerName = "Deleting Server",
+			Status = Core.StatusManager.GetStatus(Core.ServerState.Deleting)
+		};
+
+		Assert.False(Core.Instance.PassSpamLock(server, out string message, action));
+		Assert.Contains("currently Deleting", message, StringComparison.OrdinalIgnoreCase);
 	}
 
 	[Fact]

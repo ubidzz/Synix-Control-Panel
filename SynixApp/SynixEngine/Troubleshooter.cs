@@ -717,6 +717,7 @@ namespace Synix_Control_Panel.SynixEngine
 		bool InspectionSucceeded,
 		bool Enabled,
 		IReadOnlySet<string> AllowedExecutables,
+		IReadOnlySet<string> ProgramExecutables,
 		string? Problem);
 
 	internal static class WindowsFirewallInspector
@@ -782,7 +783,12 @@ namespace Synix_Control_Panel.SynixEngine
 		internal static FirewallSnapshot Capture()
 		{
 			if (!OperatingSystem.IsWindows())
-				return new(false, false, new HashSet<string>(), "Windows Firewall inspection is available only on Windows.");
+				return new(
+					false,
+					false,
+					new HashSet<string>(),
+					new HashSet<string>(),
+					"Windows Firewall inspection is available only on Windows.");
 
 			object? policy = null;
 			object? rules = null;
@@ -790,10 +796,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Type? policyType = Type.GetTypeFromProgID("HNetCfg.FwPolicy2");
 				if (policyType == null)
-					return new(false, false, new HashSet<string>(), "Windows Firewall services are unavailable.");
+					return new(false, false, new HashSet<string>(), new HashSet<string>(), "Windows Firewall services are unavailable.");
 				policy = Activator.CreateInstance(policyType);
 				if (policy == null)
-					return new(false, false, new HashSet<string>(), "Windows Firewall could not be opened.");
+					return new(false, false, new HashSet<string>(), new HashSet<string>(), "Windows Firewall could not be opened.");
 
 				dynamic firewallPolicy = policy;
 				int currentProfiles = Convert.ToInt32(firewallPolicy.CurrentProfileTypes);
@@ -809,21 +815,25 @@ namespace Synix_Control_Panel.SynixEngine
 
 				rules = firewallPolicy.Rules;
 				HashSet<string> allowed = new(StringComparer.OrdinalIgnoreCase);
+				HashSet<string> programExecutables = new(StringComparer.OrdinalIgnoreCase);
 				foreach (object ruleObject in (IEnumerable)rules)
 				{
 					dynamic rule = ruleObject;
 					try
 					{
+						string applicationName = Convert.ToString(rule.ApplicationName) ?? string.Empty;
+						if (!TryNormalizePath(applicationName, out string executablePath) ||
+							!executablePath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+						{
+							continue;
+						}
+
+						programExecutables.Add(executablePath);
 						bool ruleEnabled = Convert.ToBoolean(rule.Enabled);
 						int direction = Convert.ToInt32(rule.Direction);
 						int action = Convert.ToInt32(rule.Action);
-						string applicationName = Convert.ToString(rule.ApplicationName) ?? string.Empty;
-						if (ruleEnabled && direction == 1 && action == 1 &&
-							TryNormalizePath(applicationName, out string executablePath) &&
-							executablePath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-						{
+						if (ruleEnabled && direction == 1 && action == 1)
 							allowed.Add(executablePath);
-						}
 					}
 					catch
 					{
@@ -835,11 +845,16 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 				}
 
-				return new(true, enabled, allowed, null);
+				return new(true, enabled, allowed, programExecutables, null);
 			}
 			catch (Exception exception)
 			{
-				return new(false, false, new HashSet<string>(), exception.Message);
+				return new(
+					false,
+					false,
+					new HashSet<string>(),
+					new HashSet<string>(),
+					exception.Message);
 			}
 			finally
 			{

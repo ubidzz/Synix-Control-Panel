@@ -220,6 +220,183 @@ public sealed class TroubleshooterAndRecoveryTests
 	}
 
 	[Fact]
+	public void FirewallCleanup_FindsOnlyMissingDefaultServerFolders()
+	{
+		string gamesRoot = Path.Combine("C:\\Synix", "Games");
+		string deletedValheimExecutable = Path.Combine(
+			gamesRoot,
+			"Valheim",
+			"Deleted Server",
+			"valheim_server.exe");
+		string deletedPalworldChildExecutable = Path.Combine(
+			gamesRoot,
+			"Palworld",
+			"Gone Server",
+			"Pal",
+			"Binaries",
+			"Win64",
+			"PalServer-Win64-Test-Cmd.exe");
+		string registeredRustRoot = Path.Combine(
+			gamesRoot,
+			"Rust",
+			"Active Server");
+		string onDiskMinecraftRoot = Path.Combine(
+			gamesRoot,
+			"Minecraft",
+			"On Disk");
+		HashSet<string> existingDirectories = new(StringComparer.OrdinalIgnoreCase)
+		{
+			Path.Combine(gamesRoot, "Valheim"),
+			Path.Combine(gamesRoot, "Palworld"),
+			onDiskMinecraftRoot
+		};
+
+		IReadOnlyList<string> orphaned =
+			FirewallCleanupService.FindOrphanedDefaultServerExecutables(
+				[
+					deletedValheimExecutable,
+					deletedPalworldChildExecutable,
+					Path.Combine(registeredRustRoot, "RustDedicated.exe"),
+					Path.Combine(onDiskMinecraftRoot, "java.exe"),
+					Path.Combine("D:\\Servers", "Custom", "Server.exe"),
+					Path.Combine(gamesRoot, "Utility.exe")
+				],
+				gamesRoot,
+				[registeredRustRoot],
+				path => existingDirectories.Contains(path));
+
+		Assert.Equal(2, orphaned.Count);
+		Assert.Contains(deletedValheimExecutable, orphaned, StringComparer.OrdinalIgnoreCase);
+		Assert.Contains(deletedPalworldChildExecutable, orphaned, StringComparer.OrdinalIgnoreCase);
+		Assert.DoesNotContain(
+			Path.Combine(onDiskMinecraftRoot, "java.exe"),
+			orphaned,
+			StringComparer.OrdinalIgnoreCase);
+	}
+
+	[Fact]
+	public void FirewallCleanupCommand_RequiresTheExactDedicatedArgument()
+	{
+		Assert.True(FirewallCleanupService.IsCleanupCommand(
+			[FirewallCleanupService.CleanupArgument]));
+		Assert.False(FirewallCleanupService.IsCleanupCommand([]));
+		Assert.False(FirewallCleanupService.IsCleanupCommand(
+			[FirewallCleanupService.CleanupArgument, "extra"]));
+		Assert.False(FirewallCleanupService.IsCleanupCommand(["--other-command"]));
+	}
+
+	[Fact]
+	public void AdvancedSettings_FirewallCleanupIsIndependentAndUsesItsOwnCard()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using AdvancedSettingsPage page = new();
+				System.Windows.Forms.Control cleanupButton =
+					page.Controls.Find("btnFirewallCleanup", true).Single();
+				System.Windows.Forms.Control cleanupStatus =
+					page.Controls.Find("lblFirewallCleanupStatus", true).Single();
+				System.Windows.Forms.Control settingsCard =
+					page.Controls.Find("settingsCard", true).Single();
+
+				System.Windows.Forms.Control cleanupCard =
+					page.Controls.Find("firewallCleanupCard", true).Single();
+				System.Windows.Forms.Control cleanupDescription =
+					page.Controls.Find("lblFirewallCleanupDescription", true).Single();
+				System.Windows.Forms.Control backgroundServiceCard =
+					page.Controls.Find("backgroundServiceCard", true).Single();
+				System.Windows.Forms.Control troubleshooterCard =
+					page.Controls.Find("troubleshooterCard", true).Single();
+
+				Assert.True(cleanupButton.Enabled);
+				page.ElevatedSystemTasks = false;
+				Assert.True(cleanupButton.Enabled);
+				page.ElevatedSystemTasks = true;
+				Assert.True(cleanupButton.Enabled);
+				Assert.NotSame(settingsCard, cleanupCard);
+				Assert.Same(cleanupCard, cleanupButton.Parent);
+				Assert.Same(cleanupCard, cleanupStatus.Parent);
+				Assert.Contains("C:\\Synix\\Games", cleanupDescription.Text);
+				Assert.Contains("not scanned", cleanupDescription.Text);
+				Assert.True(cleanupButton.Bottom <= cleanupCard.ClientSize.Height);
+				Assert.True(cleanupStatus.Bottom <= cleanupCard.ClientSize.Height);
+				Assert.True(settingsCard.Bottom <= cleanupCard.Top);
+				Assert.True(cleanupCard.Bottom <= backgroundServiceCard.Top);
+				Assert.True(backgroundServiceCard.Bottom <= troubleshooterCard.Top);
+				Assert.True(troubleshooterCard.Bottom <= page.ClientSize.Height);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void FirewallCleanupConfirmation_UsesSynixChromeAndListsEveryRule()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				string firstPath = Path.Combine(
+					Core.GamesPath,
+					"Valheim",
+					"Old Server",
+					"valheim_server.exe");
+				string secondPath = Path.Combine(
+					Core.GamesPath,
+					"Palworld",
+					"Deleted Server",
+					"PalServer.exe");
+				using FirewallCleanupConfirmationDialog dialog = new(
+					[firstPath, secondPath]);
+				System.Windows.Forms.Control ruleList =
+					dialog.Controls.Find("firewallRuleList", true).Single();
+				System.Windows.Forms.Button removeButton =
+					Assert.IsAssignableFrom<System.Windows.Forms.Button>(
+						dialog.Controls.Find("confirmFirewallCleanupButton", true).Single());
+				System.Windows.Forms.Control safetyText =
+					dialog.Controls.Find("firewallCleanupSafetyText", true).Single();
+				System.Windows.Forms.Control reasonText =
+					dialog.Controls.Find("firewallInspectionReasonText", true).Single();
+				System.Windows.Forms.Control actionText =
+					dialog.Controls.Find("firewallCleanupActionText", true).Single();
+
+				Assert.Equal(
+					System.Windows.Forms.FormBorderStyle.None,
+					dialog.FormBorderStyle);
+				Assert.Single(dialog.Controls.Find("synixWindowHeader", true));
+				Assert.Contains("Valheim\\Old Server\\valheim_server.exe", ruleList.Text);
+				Assert.Contains("Palworld\\Deleted Server\\PalServer.exe", ruleList.Text);
+				Assert.Equal("Remove Rules", removeButton.Text);
+				Assert.Equal(
+					System.Windows.Forms.DialogResult.OK,
+					removeButton.DialogResult);
+				Assert.Contains("server folder is gone", reasonText.Text);
+				Assert.Contains("administrator permission", actionText.Text);
+				Assert.Contains("game files", safetyText.Text);
+				Assert.Contains("custom install folders", safetyText.Text);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+		Assert.Null(failure);
+	}
+
+	[Fact]
 	public void SessionMarker_DistinguishesCleanAndInterruptedRuns()
 	{
 		string folder = Path.Combine(Path.GetTempPath(), $"SynixSessionTest-{Guid.NewGuid():N}");

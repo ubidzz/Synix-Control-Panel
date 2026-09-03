@@ -67,6 +67,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public int Port { get; init; }
 		public int QueryPort { get; init; }
 		public int? AppPort { get; init; }
+		public int MaximumPlayers { get; init; } = GameDefinition.DefaultMaximumPlayers;
+		public bool RequiresAdminPassword { get; init; }
+		public int MinimumServerPasswordLength { get; init; }
+		public bool ServerPasswordMustNotAppearInName { get; init; }
 		public int WorldSize { get; init; }
 		public string WorldSeed { get; init; } = "12345";
 		public IReadOnlyList<string> Maps { get; init; } = [];
@@ -90,6 +94,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			"This game requires configuration before it can boot properly.";
 		public string IconUrl { get; init; } = string.Empty;
 		public bool IsQueryable { get; init; } = true;
+		public bool CrossplayDisablesPlayerTracking { get; init; }
 		public ServerProbeProtocol ProbeProtocol { get; init; } = ServerProbeProtocol.Auto;
 		public bool SupportsManualConnectionTesting { get; init; } = true;
 		public string ProbePath { get; init; } = string.Empty;
@@ -231,6 +236,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				Port = manifest.Port,
 				QueryPort = manifest.QueryPort,
 				AppPort = manifest.AppPort,
+				MaximumPlayers = manifest.MaximumPlayers,
+				RequiresAdminPassword = manifest.RequiresAdminPassword,
+				MinimumServerPasswordLength = manifest.MinimumServerPasswordLength,
+				ServerPasswordMustNotAppearInName = manifest.ServerPasswordMustNotAppearInName,
 				WorldSize = manifest.WorldSize,
 				WorldSeed = manifest.WorldSeed,
 				Maps = manifest.Maps.ToList(),
@@ -252,6 +261,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				WarningMessage = manifest.WarningMessage,
 				IconUrl = manifest.IconUrl,
 				IsQueryable = manifest.IsQueryable,
+				CrossplayDisablesPlayerTracking = manifest.CrossplayDisablesPlayerTracking,
 				ProbeProtocol = manifest.ProbeProtocol,
 				SupportsManualConnectionTesting = manifest.SupportsManualConnectionTesting,
 				ProbePath = manifest.ProbePath,
@@ -357,6 +367,33 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			ValidatePort(manifest.QueryPort, "queryPort", resourceName);
 			if (manifest.AppPort.HasValue)
 				ValidatePort(manifest.AppPort.Value, "appPort", resourceName);
+			if (manifest.MaximumPlayers is < 1 or > 100_000)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} has an invalid maximumPlayers value.");
+			}
+			if (manifest.MinimumServerPasswordLength is < 0 or > 1024)
+			{
+				throw new InvalidDataException(
+					$"{resourceName} has an invalid minimumServerPasswordLength value.");
+			}
+			if ((manifest.MinimumServerPasswordLength > 0 ||
+				 manifest.ServerPasswordMustNotAppearInName) &&
+				!manifest.Arguments.Contains("{pass}", StringComparison.Ordinal) &&
+				!(manifest.Configuration?.Templates.Any(template =>
+					template.Content.Contains("{Password}", StringComparison.Ordinal)) ?? false))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} defines server password rules but does not use the server password placeholder.");
+			}
+			if (manifest.RequiresAdminPassword &&
+				!manifest.Arguments.Contains("{adminpass}", StringComparison.Ordinal) &&
+				!(manifest.Configuration?.Templates.Any(template =>
+					template.Content.Contains("{AdminPassword}", StringComparison.Ordinal)) ?? false))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} requires an admin password but does not use the admin password placeholder.");
+			}
 			ValidateHttpsUrl(manifest.DownloadUrl, "downloadUrl", resourceName);
 			ValidateHttpsUrl(manifest.IconUrl, "iconUrl", resourceName);
 			ValidateRelativePath(manifest.RelativeConfigPath, "relativeConfigPath", resourceName);
@@ -375,6 +412,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			ValidateDefinitionValue(manifest.CrossplayEnabledValue, "crossplayEnabledValue", resourceName);
 			if (!string.IsNullOrEmpty(manifest.CrossplayDisabledValue))
 				ValidateDefinitionValue(manifest.CrossplayDisabledValue, "crossplayDisabledValue", resourceName);
+			if (manifest.CrossplayDisablesPlayerTracking &&
+				!manifest.Arguments.Contains("{crossplay}", StringComparison.Ordinal))
+			{
+				throw new InvalidDataException(
+					$"{resourceName} disables player tracking for Crossplay but its launch arguments do not contain {{crossplay}}.");
+			}
 			ValidateRuntimeRequirements(manifest.RuntimeRequirements, resourceName);
 			ValidateLaunchBehavior(manifest, resourceName);
 			ValidateControlCapabilities(manifest.ControlCapabilities, resourceName);

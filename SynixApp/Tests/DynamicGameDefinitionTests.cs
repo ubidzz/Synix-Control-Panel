@@ -32,11 +32,15 @@ public sealed class DynamicGameDefinitionTests
 		Assert.True(beamMp.IsEmbeddedDefinition);
 		Assert.Equal("3809400", starRupture.AppID);
 		Assert.Equal(ServerProbeProtocol.Tcp, beamMp.ProbeProtocol);
-		Assert.Equal(228, games.Count);
+		Assert.Equal(227, games.Count);
 		Assert.Equal(games.Count, TrustedGameDefinitionCatalog.Packages.Count);
 		Assert.All(games, game => Assert.True(game.IsEmbeddedDefinition));
+		Assert.All(games, game => Assert.True(game.CatalogOrder >= 0));
 		Assert.Equal(
-			Enumerable.Range(0, games.Count),
+			games.Count,
+			games.Select(game => game.CatalogOrder).Distinct().Count());
+		Assert.Equal(
+			games.Select(game => game.CatalogOrder).Order(),
 			games.Select(game => game.CatalogOrder));
 		Assert.Equal(
 			games.Count,
@@ -117,6 +121,28 @@ public sealed class DynamicGameDefinitionTests
 		Assert.DoesNotContain("-useperfthreads", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
 		Assert.DoesNotContain("-NoAsyncLoadingThread", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
 		Assert.DoesNotContain("-UseMultithreadForDS", palworld.RequiredArgs, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Fact]
+	public void EnshroudedDefinitionLimitsServersToSixteenPlayers()
+	{
+		GameInfo enshrouded = GameDatabase.GetGame("Enshrouded")!;
+		GameInfo rust = GameDatabase.GetGame("Rust")!;
+
+		Assert.Equal(16, enshrouded.MaximumPlayers);
+		Assert.True(enshrouded.RequiresAdminPassword);
+		Assert.True(enshrouded.DefinitionRevision >= 4);
+		Assert.Equal(GameDefinition.DefaultMaximumPlayers, rust.MaximumPlayers);
+	}
+
+	[Fact]
+	public void ValheimDefinitionDeclaresItsRequiredPasswordRules()
+	{
+		GameInfo valheim = GameDatabase.GetGame("Valheim")!;
+
+		Assert.Equal(5, valheim.MinimumServerPasswordLength);
+		Assert.True(valheim.ServerPasswordMustNotAppearInName);
+		Assert.True(valheim.DefinitionRevision >= 4);
 	}
 
 	[Fact]
@@ -241,6 +267,31 @@ public sealed class DynamicGameDefinitionTests
 		Assert.True(GameDatabase.SupportsPlayerCountMonitoring(game));
 		Assert.True(GameDatabase.SupportsPlayerManagement(game));
 		Assert.Equal("3 / 16", server.PlayerCount);
+	}
+
+	[Fact]
+	public void ValheimPlayerTrackingFollowsTheCrossplaySetting()
+	{
+		GameInfo game = GameDatabase.GetGame("Valheim")!;
+		Assert.Same(game, GameDatabase.GetGame("Valheim (Crossplay)"));
+		Assert.True(game.CrossplayDisablesPlayerTracking);
+
+		GameServer server = new()
+		{
+			Game = game.Game,
+			CurrentPlayers = 2,
+			MaxPlayers = 10,
+			CrossplayEnabled = true
+		};
+
+		Assert.False(GameDatabase.SupportsPlayerCountMonitoring(server));
+		Assert.False(GameDatabase.SupportsPlayerManagement(server));
+		Assert.Equal("N/A", server.PlayerCount);
+
+		server.CrossplayEnabled = false;
+		Assert.True(GameDatabase.SupportsPlayerCountMonitoring(server));
+		Assert.True(GameDatabase.SupportsPlayerManagement(server));
+		Assert.Equal("2 / 10", server.PlayerCount);
 	}
 
 	[Fact]
@@ -520,7 +571,7 @@ public sealed class DynamicGameDefinitionTests
 	[InlineData("Palworld")]
 	[InlineData("ARK: Survival Evolved")]
 	[InlineData("ARK: Survival Ascended")]
-	[InlineData("Valheim (Crossplay)")]
+	[InlineData("Valheim")]
 	[InlineData("Arma Reforger")]
 	public void DocumentedDedicatedServerCrossplayControlsAreExposed(string game)
 	{
@@ -776,7 +827,7 @@ public sealed class DynamicGameDefinitionTests
 			GameDefinitionValidator.ValidateSourceDirectory(projectDirectory!);
 
 		Assert.True(report.IsValid, report.ToPlainText());
-		Assert.Equal(228, report.DefinitionCount);
+		Assert.Equal(227, report.DefinitionCount);
 		Assert.True(report.TemplateCount >= 4);
 		Assert.Equal(63, report.PostInstallActionCount);
 		Assert.True(report.ManagedSettingBindingCount >= 8);

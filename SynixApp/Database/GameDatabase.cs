@@ -115,6 +115,21 @@ namespace Synix_Control_Panel.SynixApp.Database
 				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
 		}
 
+		public static bool IsPlayerTrackingDisabledByCrossplay(GameServer? server)
+		{
+			if (server == null || !server.CrossplayEnabled)
+				return false;
+
+			return GetGame(server.Game)?.CrossplayDisablesPlayerTracking == true;
+		}
+
+		public static bool SupportsPlayerCountMonitoring(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			return !IsPlayerTrackingDisabledByCrossplay(server) &&
+				SupportsPlayerCountMonitoring(GetGame(server.Game));
+		}
+
 		public static bool SupportsPlayerManagement(GameInfo? game)
 		{
 			return game != null &&
@@ -124,6 +139,9 @@ namespace Synix_Control_Panel.SynixApp.Database
 		internal static bool SupportsPlayerManagement(GameServer server)
 		{
 			ArgumentNullException.ThrowIfNull(server);
+			if (IsPlayerTrackingDisabledByCrossplay(server))
+				return false;
+
 			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
 			{
 				return MinecraftControlProfile.IsJava(server) &&

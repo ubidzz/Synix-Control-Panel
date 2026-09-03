@@ -173,6 +173,8 @@ namespace Synix_Control_Panel.SynixEngine
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
 				ElevatedSystemTasksChanged;
+			advancedSettingsPage.FirewallCleanupRequested +=
+				FirewallCleanupRequested;
 			advancedSettingsPage.BackgroundServiceEnabledChanged +=
 				BackgroundServiceEnabledChanged;
 			advancedSettingsPage.TroubleshooterRequested +=
@@ -492,6 +494,81 @@ namespace Synix_Control_Panel.SynixEngine
 			Properties.Settings.Default.enableRunAsAdmin =
 				advancedSettingsPage.ElevatedSystemTasks;
 			Properties.Settings.Default.Save();
+		}
+
+		private async void FirewallCleanupRequested(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			advancedSettingsPage.SetFirewallCleanupState(
+				"Checking Windows Firewall program paths...",
+				false,
+				inProgress: true);
+			FirewallOrphanScanResult scan = await Task.Run(() =>
+				FirewallCleanupService.ScanCurrentRules());
+			if (!scan.Succeeded)
+			{
+				advancedSettingsPage.SetFirewallCleanupState(scan.Message, false);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					"inspect Windows Firewall rules",
+					scan.Message);
+				return;
+			}
+
+			if (scan.ExecutablePaths.Count == 0)
+			{
+				advancedSettingsPage.SetFirewallCleanupState(scan.Message, true);
+				return;
+			}
+
+			using FirewallCleanupConfirmationDialog confirmation = new(
+				scan.ExecutablePaths);
+			if (confirmation.ShowDialog(this) != DialogResult.OK)
+			{
+				advancedSettingsPage.SetFirewallCleanupState(
+					"Cleanup canceled. No firewall rules were changed.",
+					false);
+				return;
+			}
+
+			advancedSettingsPage.SetFirewallCleanupState(
+				"Waiting for administrator permission...",
+				false,
+				inProgress: true);
+			ElevatedFirewallCleanupResult cleanup =
+				await FirewallCleanupService.RunElevatedCleanupAsync();
+			if (!cleanup.Succeeded)
+			{
+				advancedSettingsPage.SetFirewallCleanupState(
+					cleanup.Message,
+					false);
+				if (!cleanup.Canceled)
+				{
+					PlainEnglishErrorDialog.ShowError(
+						this,
+						"clean orphaned Windows Firewall rules",
+						cleanup.Message);
+				}
+				return;
+			}
+
+			FirewallOrphanScanResult verification = await Task.Run(() =>
+				FirewallCleanupService.ScanCurrentRules());
+			bool verified = verification.Succeeded &&
+				verification.ExecutablePaths.Count == 0;
+			string resultMessage = verified
+				? $"Removed and verified {scan.ExecutablePaths.Count} orphaned executable path(s)."
+				: cleanup.Message;
+			advancedSettingsPage.SetFirewallCleanupState(
+				resultMessage,
+				verified);
+			if (verified)
+			{
+				Core.Instance.Log(
+					$"[FIREWALL] Removed {scan.ExecutablePaths.Count} orphaned default-path server executable rule(s).",
+					Color.LimeGreen);
+			}
 		}
 
 		private void BackgroundServiceEnabledChanged(

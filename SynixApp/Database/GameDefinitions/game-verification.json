@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "exportedBySynixVersion": "1.0.24",
-  "exportedAtUtc": "2026-09-01T12:12:16.5951776+00:00",
+  "exportedAtUtc": "2026-09-03T10:01:50.7949938+00:00",
   "games": [
     {
       "game": "7 Days to Die",
@@ -21,7 +21,10 @@
         "synixVersion": "1.0.24",
         "verifiedAtUtc": "2026-09-01T09:18:52.673497+00:00"
       },
-      "arguments": null,
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T04:53:18.7932012+00:00"
+      },
       "configuration": {
         "synixVersion": "1.0.24",
         "verifiedAtUtc": "2026-09-01T10:30:59.8993251+00:00"
@@ -213,22 +216,25 @@
     {
       "game": "ARK: Survival Ascended",
       "install": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-22T18:03:12.8468737+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T04:58:57.656959+00:00"
       },
       "start": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-22T18:13:28.5205717+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:00:07.8778979+00:00"
       },
       "stop": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-22T18:24:25.0671577+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:27:03.8836929+00:00"
       },
       "monitoring": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-22T18:13:28.5139671+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:00:07.8704764+00:00"
       },
-      "arguments": null,
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:26:58.8476563+00:00"
+      },
       "configuration": {
         "synixVersion": "1.0.24",
         "verifiedAtUtc": "2026-08-22T18:24:25.1088941+00:00"
@@ -379,22 +385,103 @@
       }
     },
     {
-      "game": "Minecraft",
+      "game": "Enshrouded",
       "install": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-22T06:46:01.0244639+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:53:53.6044449+00:00"
       },
       "start": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-21T19:51:58.1495435+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:56:00.5206037+00:00"
       },
       "stop": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-21T20:14:55.6675767+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:56:20.1674989+00:00"
       },
       "monitoring": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-21T19:51:58.137553+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:56:00.4930491+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T05:58:09.7160172+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T06:51:46.7297896+00:00"
+      }
+    },
+    {
+      "game": "HumanitZ",
+      "install": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T08:49:11.1636134+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T08:52:35.7334643+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T08:53:06.2569076+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T08:52:35.724531+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T09:19:35.6161307+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T09:19:40.4663338+00:00"
+      }
+    },
+    {
+      "game": "Icarus",
+      "install": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T09:29:26.145974+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T09:44:24.1090154+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T09:44:58.1041117+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T09:44:24.0928267+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T09:58:51.3951651+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T10:01:49.3128695+00:00"
+      }
+    },
+    {
+      "game": "Minecraft",
+      "install": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-01T17:49:41.7284694+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-01T19:52:39.612734+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-01T18:45:24.635992+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-01T19:52:39.5648367+00:00"
       },
       "arguments": {
         "synixVersion": "1.0.21",
@@ -416,15 +503,21 @@
         "verifiedAtUtc": "2026-08-22T06:33:31.4796108+00:00"
       },
       "stop": {
-        "synixVersion": "1.0.21",
-        "verifiedAtUtc": "2026-08-22T07:14:06.1815394+00:00"
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-01T16:17:20.0689373+00:00"
       },
       "monitoring": {
         "synixVersion": "1.0.21",
         "verifiedAtUtc": "2026-08-22T06:33:31.4755674+00:00"
       },
-      "arguments": null,
-      "configuration": null
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-01T16:18:06.1692522+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-01T16:19:25.4930449+00:00"
+      }
     },
     {
       "game": "Rust",
@@ -501,6 +594,33 @@
       "arguments": {
         "synixVersion": "1.0.22",
         "verifiedAtUtc": "2026-08-24T18:22:34.8416718+00:00"
+      },
+      "configuration": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T06:45:11.9444807+00:00"
+      }
+    },
+    {
+      "game": "Valheim",
+      "install": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T07:21:03.4580323+00:00"
+      },
+      "start": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T07:27:05.4113458+00:00"
+      },
+      "stop": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T07:27:52.2582884+00:00"
+      },
+      "monitoring": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T07:27:05.401734+00:00"
+      },
+      "arguments": {
+        "synixVersion": "1.0.24",
+        "verifiedAtUtc": "2026-09-03T07:57:16.9033734+00:00"
       },
       "configuration": null
     }

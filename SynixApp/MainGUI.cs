@@ -46,6 +46,7 @@ namespace Synix_Control_Panel
 		private ToolStripMenuItem? _modPluginManagerMenuItem;
 		private ToolStripMenuItem? _playerManagementMenuItem;
 		private ToolStripMenuItem? _minecraftConsoleMenuItem;
+		private ToolStripMenuItem? _liveProcessDetailsMenuItem;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -137,7 +138,8 @@ namespace Synix_Control_Panel
 			_playerManagementMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
-				if (server == null)
+				if (server == null ||
+					!CanShowLiveServerActions(server))
 					return;
 				if (!GameDatabase.SupportsPlayerManagement(server))
 				{
@@ -167,11 +169,12 @@ namespace Synix_Control_Panel
 				dialog.ShowDialog(this);
 			};
 
-			ToolStripMenuItem liveProcessDetails = new("Live Process Details");
-			liveProcessDetails.Click += (_, _) =>
+			_liveProcessDetailsMenuItem = new ToolStripMenuItem("Live Process Details");
+			_liveProcessDetailsMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
-				if (server == null)
+				if (server == null ||
+					!CanShowLiveServerActions(server))
 					return;
 				ResourceMonitorGUI monitor = new(server);
 				monitor.Show(this);
@@ -183,8 +186,17 @@ namespace Synix_Control_Panel
 			contextMenuStrip.Items.Insert(insertAt++, _modPluginManagerMenuItem);
 			contextMenuStrip.Items.Insert(insertAt++, _playerManagementMenuItem);
 			contextMenuStrip.Items.Insert(insertAt++, _minecraftConsoleMenuItem);
-			contextMenuStrip.Items.Insert(insertAt++, liveProcessDetails);
+			contextMenuStrip.Items.Insert(insertAt++, _liveProcessDetailsMenuItem);
 			contextMenuStrip.Items.Insert(insertAt, connectionInformation);
+		}
+
+		internal static bool CanShowLiveServerActions(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			return string.Equals(
+				server.Status,
+				StatusManager.GetStatus(ServerState.Running),
+				StringComparison.OrdinalIgnoreCase);
 		}
 
 		private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -272,10 +284,14 @@ namespace Synix_Control_Panel
 			if (_updateShutdownRequested)
 				return;
 
-			if (isDownloadActive || Core.Instance.isDownloadActive)
+			bool deletionActive = serverList.Any(server =>
+				(server.Status ?? string.Empty).StartsWith(
+					StatusManager.GetStatus(ServerState.Deleting),
+					StringComparison.OrdinalIgnoreCase));
+			if (isDownloadActive || Core.Instance.isDownloadActive || deletionActive)
 			{
 				e.Cancel = true;
-				MessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, or restoring!",
+				MessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, restoring, or deleting!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
@@ -617,7 +633,8 @@ namespace Synix_Control_Panel
 					currentStatus.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Restoring", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
-					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase),
+					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith("Deleting", StringComparison.OrdinalIgnoreCase),
 				"Needs Attention" => currentStatus.Equals(
 					StatusManager.GetStatus(ServerState.Crashed),
 					StringComparison.OrdinalIgnoreCase),
@@ -775,7 +792,7 @@ namespace Synix_Control_Panel
 			await Core.Instance.UpdateServerAndReport(selectedServer, "VALIDATE");
 		}
 
-		private void btnDelete_Click(object sender, EventArgs e)
+		private async void btnDelete_Click(object sender, EventArgs e)
 		{
 			if (isInitializing) return;
 			GameServer? selectedServer = GetSelectedServer();
@@ -785,8 +802,8 @@ namespace Synix_Control_Panel
 				AppendLog(lockMsg, Color.Orange);
 				return;
 			}
-			Core.Instance.DeleteServerAndReport(selectedServer);
-			ApplyServerFilter();
+			if (await Core.Instance.DeleteServerAndReportAsync(selectedServer))
+				ApplyServerFilter();
 		}
 
 		private async void btnBackup_Click(object sender, EventArgs e)
@@ -856,7 +873,7 @@ namespace Synix_Control_Panel
 			}
 
 			IReadOnlyList<ServerBackupArchive> backups =
-				Core.Instance.GetServerBackups(selectedServer);
+				await Core.Instance.GetServerBackupsAsync(selectedServer);
 			if (backups.Count == 0)
 			{
 				AppendLog($"[♻ RESTORE] No backups were found for {selectedServer.ServerName}.", Color.Yellow);
@@ -960,11 +977,11 @@ namespace Synix_Control_Panel
 			Core.Instance.OpenServerFolder(selectedServer);
 		}
 
-		private void btnOpenBackup_Click(object sender, EventArgs e)
+		private async void btnOpenBackup_Click(object sender, EventArgs e)
 		{
 			GameServer? selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
-			Core.Instance.OpenBackFolder(selectedServer);
+			await Core.Instance.OpenBackFolderAsync(selectedServer);
 		}
 
 		private async void btnPublicConnection_Click(object sender, EventArgs e)
@@ -1043,7 +1060,7 @@ namespace Synix_Control_Panel
 			}
 		}
 
-		private void btnServerOptionsMenu_Click(object sender, EventArgs e)
+		private async void btnServerOptionsMenu_Click(object sender, EventArgs e)
 		{
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
@@ -1054,6 +1071,7 @@ namespace Synix_Control_Panel
 					GameDatabase.SupportsManualConnectionTesting(selectedGameData);
 				bool supportsPlayerManagement =
 					GameDatabase.SupportsPlayerManagement(selectedServer);
+				bool isRunning = CanShowLiveServerActions(selectedServer);
 				if (_modPluginManagerMenuItem != null)
 				{
 					_modPluginManagerMenuItem.Visible = !isMinecraftBedrock;
@@ -1061,8 +1079,14 @@ namespace Synix_Control_Panel
 				}
 				if (_playerManagementMenuItem != null)
 				{
-					_playerManagementMenuItem.Visible = supportsPlayerManagement;
-					_playerManagementMenuItem.Enabled = supportsPlayerManagement;
+					bool showPlayerManagement = isRunning && supportsPlayerManagement;
+					_playerManagementMenuItem.Visible = showPlayerManagement;
+					_playerManagementMenuItem.Enabled = showPlayerManagement;
+				}
+				if (_liveProcessDetailsMenuItem != null)
+				{
+					_liveProcessDetailsMenuItem.Visible = isRunning;
+					_liveProcessDetailsMenuItem.Enabled = isRunning;
 				}
 				if (_minecraftConsoleMenuItem != null)
 				{
@@ -1076,14 +1100,22 @@ namespace Synix_Control_Panel
 				fileValidationToolStripMenuItem.Visible = !isMinecraft;
 				btnExportBatch.Enabled = !isMinecraft;
 				btnExportBatch.Visible = !isMinecraft;
-				bool hasDeclaredLogs = GameLogDiscovery.HasDeclaredLogs(selectedServer.Game);
-				openLatestGameLogToolStripMenuItem.Visible = hasDeclaredLogs;
-				openLatestGameLogToolStripMenuItem.Enabled = hasDeclaredLogs;
-				bool hasBackups = Core.Instance.HasServerBackups(selectedServer);
+				bool canOpenConfigurationEditor =
+					Core.CanOpenConfigurationEditor(selectedServer);
+				openServerConfigFileToolStripMenuItem.Visible =
+					canOpenConfigurationEditor;
+				openServerConfigFileToolStripMenuItem.Enabled =
+					canOpenConfigurationEditor;
+				bool hasDetectedLogs = GameLogDiscovery.HasDetectedLogs(selectedServer);
+				openLatestGameLogToolStripMenuItem.Visible = hasDetectedLogs;
+				openLatestGameLogToolStripMenuItem.Enabled = hasDetectedLogs;
+				bool hasBackups = await Core.Instance.HasServerBackupsAsync(selectedServer);
+				if (!ReferenceEquals(selectedServer, GetSelectedServer()))
+					return;
 				restoreServerBackupToolStripMenuItem.Visible = hasBackups;
 				restoreServerBackupToolStripMenuItem.Enabled = hasBackups;
 
-				if (selectedServer.Status == "Running")
+				if (isRunning)
 				{
 					connectionTestToolStripMenuItem.Visible = supportsConnectionTesting;
 					connectionTestToolStripMenuItem.Enabled = supportsConnectionTesting;

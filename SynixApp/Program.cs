@@ -25,6 +25,13 @@ namespace Synix_Control_Panel.SynixApp
 		[STAThread]
 		static void Main(string[] args)
 		{
+			if (FirewallCleanupService.IsCleanupCommand(args))
+			{
+				Environment.ExitCode =
+					FirewallCleanupService.RunElevatedCleanupCommand();
+				return;
+			}
+
 			if (BackgroundServiceManager.IsAgentCommand(args))
 			{
 				Environment.ExitCode = BackgroundServiceManager.RunAgent();

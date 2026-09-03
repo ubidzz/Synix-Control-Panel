@@ -21,7 +21,8 @@ namespace Synix_Control_Panel.SynixEngine
 		Update,
 		Validate,
 		Backup,
-		Restore
+		Restore,
+		Delete
 	}
 
 	internal sealed class ServerOperationLease : IDisposable

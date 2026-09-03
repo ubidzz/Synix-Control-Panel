@@ -388,7 +388,9 @@ namespace Synix_Control_Panel.SynixEngine
 			ConfigurationSupportPresentation configuration = UserGuidance.GetConfigurationSupport(game);
 			GameManagementCapability capabilities = GameFix.GetManagementCapabilities(game);
 			bool crossplay = capabilities.HasFlag(GameManagementCapability.Crossplay);
-			string playerData = GameDatabase.GetProbeProtocol(game) == ServerProbeProtocol.A2S
+			string playerData = game.CrossplayDisablesPlayerTracking
+				? "Steam mode only"
+				: GameDatabase.GetProbeProtocol(game) == ServerProbeProtocol.A2S
 				? "Named players"
 				: GameDatabase.IsMinecraft(game.Game)
 					? "Player count"

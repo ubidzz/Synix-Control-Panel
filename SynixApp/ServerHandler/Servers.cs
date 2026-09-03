@@ -181,6 +181,24 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						Color.Red);
 					return;
 				}
+				if (!GameServerInputValidator.TryValidate(
+					selectedDefinition,
+					server.ServerName,
+					launchPasswords,
+					out string serverInputError))
+				{
+					string message = $"{serverInputError} Open Server Settings, correct the password, and save before starting.";
+					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
+					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
+					{
+						MessageBox.Show(
+							message,
+							"Server Settings Need Attention",
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Warning);
+					}
+					return;
+				}
 
 				bool isSystemSafe = await Task.Run(() => IsSystemSafeToStart());
 				if (!isSystemSafe) return;

@@ -31,6 +31,22 @@ namespace Synix_Control_Panel.SynixEngine
 		internal static bool HasDeclaredLogs(string? game) =>
 			GameDatabase.GetGame(game ?? string.Empty)?.LogPaths.Count > 0;
 
+		internal static bool HasDetectedLogs(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			try
+			{
+				return FindLatest(server).Found;
+			}
+			catch (Exception exception) when (exception is IOException or
+				UnauthorizedAccessException or InvalidDataException or
+				ArgumentException or NotSupportedException or
+				System.Security.SecurityException)
+			{
+				return false;
+			}
+		}
+
 		internal static GameLogDiscoveryResult FindLatest(GameServer server)
 		{
 			ArgumentNullException.ThrowIfNull(server);

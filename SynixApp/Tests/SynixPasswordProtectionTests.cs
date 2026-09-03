@@ -98,6 +98,32 @@ public sealed class SynixPasswordProtectionTests
 	}
 
 	[Fact]
+	[Trait("Category", "Regression")]
+	public void LegacyValheimDefinitionsMigrateIntoOneGameWithoutChangingBackend()
+	{
+		GameServer steamServer = new()
+		{
+			DataSchemaVersion = 3,
+			Game = "Valheim",
+			CrossplayEnabled = true
+		};
+		GameServer crossplayServer = new()
+		{
+			DataSchemaVersion = 3,
+			Game = "Valheim (Crossplay)",
+			CrossplayEnabled = true
+		};
+
+		Assert.True(ServerDataMigrator.Migrate(steamServer));
+		Assert.True(ServerDataMigrator.Migrate(crossplayServer));
+
+		Assert.Equal("Valheim", steamServer.Game);
+		Assert.False(steamServer.CrossplayEnabled);
+		Assert.Equal("Valheim", crossplayServer.Game);
+		Assert.True(crossplayServer.CrossplayEnabled);
+	}
+
+	[Fact]
 	public void FutureServerDataSchemaIsRejectedWithoutModification()
 	{
 		GameServer server = new()

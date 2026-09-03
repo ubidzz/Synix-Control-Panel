@@ -167,7 +167,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			if (server.StartTime.HasValue &&
-				(DateTime.Now - server.StartTime.Value).TotalSeconds >= 180 &&
+				(DateTime.Now - server.StartTime.Value).TotalSeconds >= 120 &&
 				await IsLocalAddressAsync(ip))
 			{
 				if (IsPortInUseLocally(server.Port))

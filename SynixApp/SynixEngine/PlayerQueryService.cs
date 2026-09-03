@@ -40,6 +40,13 @@ namespace Synix_Control_Panel.SynixEngine
 			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
 				return await QueryMinecraftAsync(server, cancellationToken);
 
+			if (!GameDatabase.SupportsPlayerManagement(server))
+			{
+				return Unsupported(GameDatabase.IsPlayerTrackingDisabledByCrossplay(server)
+					? "Player tracking is unavailable while Crossplay is enabled. Disable Crossplay to use Steam A2S player tracking."
+					: "This game's current query protocol does not provide a safe, universal player-name list.");
+			}
+
 			ServerProbeProtocol protocol = GameDatabase.GetProbeProtocol(game);
 			if (protocol != ServerProbeProtocol.A2S)
 			{

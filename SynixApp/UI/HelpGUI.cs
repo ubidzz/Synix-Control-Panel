@@ -227,7 +227,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"• General: choose whether native server console windows are shown and switch between Dark Mode and Light Mode. The theme is saved and reapplied across Synix windows.\n" +
 					"• Backups: enable a custom backup location and set the maximum archives retained per server from 1 to 100. Changing the location does not move or delete older archives.\n" +
 					"• Privacy & Security: Privacy Mode hides IP addresses, passwords, and other sensitive values while screen sharing. DDoS Attack Detection is marked experimental and should be treated as an alerting aid, not a replacement for router or hosting-provider protection.\n" +
-					"• Advanced: Elevated System Tasks requests administrator permission only for approved operations such as firewall cleanup or Network Guard actions. Normal server management remains a standard-user operation."),
+					"• Advanced: Elevated System Tasks controls automatic firewall cleanup when a server is deleted. The separate Clean Orphaned Rules action works whether that setting is on or off and requests administrator permission only when matching rules need removal. It compares executable paths under C:\\Synix\\Games\\[Game]\\[Server] with saved servers and the individual server folders still on disk; ports and custom installation folders are not scanned."),
 
 				["Dark Mode, Light Mode, and Console Windows"] = new HelpItem("Dash",
 					"DISPLAY AND CONSOLE SETTINGS:\n\n" +
@@ -387,7 +387,7 @@ namespace Synix_Control_Panel.SynixEngine
 					"USER-MODE SOVEREIGNTY (NO-ADMIN):\n\n" +
 					"Synix runs entirely in User-Mode without requesting Administrator (UAC) privileges by default. It will not edit your Windows registry or modify host system settings.\n\n" +
 					"SMART FIREWALL CLEANUP (OPTIONAL):\n" +
-					"If you enable Settings -> Advanced -> Elevated System Tasks, Synix may request Just-In-Time administrator permission only for an approved action such as removing orphaned Windows Firewall rules. If you decline the Windows UAC prompt, Synix skips the elevated task and continues normal user-mode operations.\n\n" +
+					"Elevated System Tasks controls automatic firewall cleanup during server deletion. Clean Orphaned Rules is a separate manual action that works whether that setting is on or off. It compares firewall executable paths under C:\\Synix\\Games\\[Game]\\[Server] with the saved server list and the individual server folders still on disk. The shared game folder may remain; a rule is eligible only when its specific server folder is gone. Port-only rules and custom installation folders are not scanned. If matching rules are found and you approve the cleanup, Synix requests Just-In-Time administrator permission. Declining UAC leaves the rules unchanged.\n\n" +
 					"FIREWALL REQUIREMENTS:\n" +
 					"Because Synix runs without Admin privileges by default, Windows Defender Firewall may prompt you the first time a game server binary executes. Always check 'Allow on Private and Public Networks' when prompted by Windows."),
 

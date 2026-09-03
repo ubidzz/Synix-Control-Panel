@@ -131,6 +131,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			return new GameServer
 			{
+				DataSchemaVersion = ServerDataMigrator.CurrentVersion,
 				Game = game.Game,
 				MinecraftEdition = GameCapabilityResolver.UsesMinecraftLifecycle(game)
 					? MinecraftControlProfile.NormalizeEdition(minecraftEdition)
@@ -145,6 +146,7 @@ namespace Synix_Control_Panel.SynixEngine
 				WorldName = game.Maps.FirstOrDefault() ?? "NewWorld",
 				GameMode = game.GameModes.FirstOrDefault() ?? "PVE",
 				MaxPlayers = 10,
+				CrossplayEnabled = false,
 				RconPort = FindAvailablePort(
 					Math.Clamp(queryPort + 1, 1, 65535),
 					registeredServers),

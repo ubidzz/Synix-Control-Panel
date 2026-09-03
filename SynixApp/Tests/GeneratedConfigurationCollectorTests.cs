@@ -127,7 +127,10 @@ public sealed class GeneratedConfigurationCollectorTests : IDisposable
 		string destinationRoot = Path.Combine(_testRoot, "captures");
 
 		GeneratedConfigurationCaptureResult result =
-			GeneratedConfigurationCollector.CollectServer(server, destinationRoot);
+			GeneratedConfigurationCollector.CollectServer(
+				server,
+				destinationRoot,
+				includeAllGeneratedFiles: true);
 
 		Assert.Equal(1, result.CopiedFiles);
 		Assert.Empty(result.Errors);

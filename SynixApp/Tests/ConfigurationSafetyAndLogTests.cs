@@ -127,6 +127,34 @@ public sealed class ConfigurationSafetyAndLogTests
 		}
 	}
 
+	[Fact]
+	[Trait("Category", "Regression")]
+	public void LogDetection_RequiresAnExistingDeclaredLogFile()
+	{
+		string root = CreateTestDirectory();
+		try
+		{
+			GameServer server = new()
+			{
+				Game = "Minecraft",
+				ServerName = "log-menu-test",
+				InstallPath = root
+			};
+
+			Assert.False(GameLogDiscovery.HasDetectedLogs(server));
+
+			string logDirectory = Path.Combine(root, "logs");
+			Directory.CreateDirectory(logDirectory);
+			File.WriteAllText(Path.Combine(logDirectory, "latest.log"), "ready");
+
+			Assert.True(GameLogDiscovery.HasDetectedLogs(server));
+		}
+		finally
+		{
+			Directory.Delete(root, true);
+		}
+	}
+
 	private static string CreateTestDirectory()
 	{
 		string directory = Path.Combine(

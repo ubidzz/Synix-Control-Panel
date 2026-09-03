@@ -172,24 +172,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					if (!names.Add(alias))
 						AddFailure(items, definition.Game, $"The alias '{alias}' is duplicated.");
 				}
-				if (!orders.Add(definition.CatalogOrder))
+				if (definition.CatalogOrder < 0)
+					AddFailure(items, definition.Game, "The catalog order cannot be negative.");
+				else if (!orders.Add(definition.CatalogOrder))
 					AddFailure(items, definition.Game, "The catalog order is duplicated.");
-			}
-
-			if (packages.Count > 0)
-			{
-				int[] expected = Enumerable.Range(0, packages.Count).ToArray();
-				int[] actual = packages
-					.Select(package => package.Definition.CatalogOrder)
-					.Order()
-					.ToArray();
-				if (!expected.SequenceEqual(actual))
-				{
-					AddFailure(
-						items,
-						"Catalog order",
-						"catalogOrder values must be unique and continuous from zero.");
-				}
 			}
 
 			int templateCount = packages.Sum(package =>

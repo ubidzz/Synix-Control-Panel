@@ -483,7 +483,9 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			btnFixConfig.Enabled = btnFixConfig.Visible &&
 				_server != null &&
-				GameFix.NeedsManagedConfigurationRepair(_server);
+				GameFix.CanManuallyResetManagedConfiguration(
+					_server,
+					IsServerBusy(_server));
 		}
 
 		private void UpdateRestoreBackupAvailability()
@@ -506,7 +508,10 @@ namespace Synix_Control_Panel.ServerHandler
 			btnRawPreview.Enabled = false;
 			btnSave.Enabled = false;
 			btnReset.Enabled = false;
-			btnFixConfig.Enabled = true;
+			btnFixConfig.Enabled = _server != null &&
+				GameFix.CanManuallyResetManagedConfiguration(
+					_server,
+					IsServerBusy(_server));
 			btnValidateConfig.Enabled = _server != null;
 			lblSettingCount.Text = "Config unavailable";
 			lblFormatState.Text = "Repair available";
@@ -840,11 +845,15 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 
 			bool fileExists = File.Exists(_path);
+			string developmentModeText = GameFix.ManagedConfigurationsEnabled
+				? string.Empty
+				: "\n\nDevelopment mode: automatic premade configuration writes are disabled, but this explicit repair is allowed.";
 			string backupText = fileExists
 				? "\n\nSynix will keep a .synix.bak copy of each configuration file it replaces."
 				: string.Empty;
 			DialogResult confirmation = MessageBox.Show(
 				"This will rebuild the game configuration from the Synix default template and apply the values saved in Server Settings.\n\nAny other custom configuration values will be removed." +
+				developmentModeText +
 				backupText +
 				"\n\nContinue?",
 				"Reset Config to Synix Defaults?",
@@ -1008,7 +1017,8 @@ namespace Synix_Control_Panel.ServerHandler
 				status == Core.StatusManager.GetStatus(Core.ServerState.Stopping) ||
 				status == Core.StatusManager.GetStatus(Core.ServerState.Installing) ||
 				status == Core.StatusManager.GetStatus(Core.ServerState.Updating) ||
-				status == Core.StatusManager.GetStatus(Core.ServerState.Validating);
+				status == Core.StatusManager.GetStatus(Core.ServerState.Validating) ||
+				status == Core.StatusManager.GetStatus(Core.ServerState.Deleting);
 		}
 
 		private void EnableGridDoubleBuffering()

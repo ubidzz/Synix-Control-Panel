@@ -12,9 +12,8 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using Synix_Control_Panel.SynixApp.Design;
-using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -46,8 +45,9 @@ namespace Synix_Control_Panel
 		private static Color TrackColor => SettingsPalette.Divider;
 
 		private readonly Dictionary<int, DataGridViewRow> _rowsByProcessId = new();
-		private readonly Dictionary<int, (double CpuMilliseconds, DateTime SampleTime)> _cpuSamples = new();
 		private readonly GameServer? _serverFilter;
+		private readonly CancellationTokenSource _refreshCancellation = new();
+		private readonly ResourceMonitorSnapshotSampler _snapshotSampler = new();
 		private double _currentTotalCpuPercentage;
 		private double _currentTotalRamPercentage;
 		private bool _isRefreshing;
@@ -77,7 +77,7 @@ namespace Synix_Control_Panel
 			doubleBufferedProperty?.SetValue(resourceGrid, true, null);
 
 			UpdateMetricBars();
-			tmrRefresh_Tick(this, EventArgs.Empty);
+			_ = RefreshAsync();
 			tmrRefresh.Start();
 		}
 
@@ -150,124 +150,113 @@ namespace Synix_Control_Panel
 
 		private void tmrRefresh_Tick(object? sender, EventArgs eventArgs)
 		{
+			_ = RefreshAsync();
+		}
+
+		private async Task RefreshAsync()
+		{
 			if (_isRefreshing || IsDisposed || Disposing)
 			{
 				return;
 			}
 
 			_isRefreshing = true;
-			resourceGrid.SuspendLayout();
-
 			try
 			{
-				var serverSnapshot = (_serverFilter == null
-					? MainGUI.serverList
-					: MainGUI.serverList.Where(server => ReferenceEquals(server, _serverFilter)))
-					.ToList();
-				var totalUsage = ResourceMonitor.CalculateUsage(serverSnapshot);
-				HashSet<int> sampledProcessIds = new();
+				List<GameServer> allServers = ServerRegistry.Snapshot();
+				List<GameServer> serverSnapshot = _serverFilter == null
+					? allServers
+					: allServers.Where(server => ReferenceEquals(server, _serverFilter)).ToList();
+				double totalSystemRamGb = GetTotalSystemRamGb();
+				CancellationToken cancellationToken = _refreshCancellation.Token;
+				ResourceUsageSnapshot snapshot = await _snapshotSampler.CaptureAsync(
+					serverSnapshot,
+					totalSystemRamGb,
+					cancellationToken);
 
-				foreach (var server in serverSnapshot)
+				if (cancellationToken.IsCancellationRequested || IsDisposed || Disposing)
+					return;
+
+				ApplyUsageSnapshot(snapshot);
+			}
+			catch (OperationCanceledException) when (_refreshCancellation.IsCancellationRequested)
+			{
+			}
+			catch (InvalidOperationException)
+			{
+				if (!IsDisposed && !Disposing)
 				{
-					IReadOnlyList<ServerProcessIdentity> identities =
-						Servers.RefreshServerProcessRegistry(server);
-					foreach (ServerProcessIdentity identity in identities)
+					lblLastUpdated.Text =
+						"Server list changed during sampling  •  Retrying automatically";
+				}
+			}
+			catch (Exception exception)
+			{
+				System.Diagnostics.Debug.WriteLine(
+					$"Resource Monitor sampling failed: {exception}");
+				if (!IsDisposed && !Disposing)
+				{
+					lblLastUpdated.Text =
+						"Resource sampling was delayed  •  Retrying automatically";
+				}
+			}
+			finally
+			{
+				_isRefreshing = false;
+			}
+		}
+
+		private void ApplyUsageSnapshot(ResourceUsageSnapshot snapshot)
+		{
+			resourceGrid.SuspendLayout();
+			try
+			{
+				HashSet<int> sampledProcessIds = snapshot.Processes
+					.Select(process => process.ProcessId)
+					.ToHashSet();
+				foreach (ResourceProcessUsage process in snapshot.Processes)
+				{
+					if (!_rowsByProcessId.TryGetValue(
+						process.ProcessId,
+						out DataGridViewRow? row))
 					{
-						try
-						{
-							using Process process = Process.GetProcessById(identity.ProcessId);
-							if (process.HasExited)
-								continue;
-
-							process.Refresh();
-							double currentCpuMilliseconds = process.TotalProcessorTime.TotalMilliseconds;
-							DateTime currentTime = DateTime.Now;
-							double cpuPercentage = 0;
-
-							if (_cpuSamples.TryGetValue(identity.ProcessId, out var previous))
-							{
-								double elapsedMilliseconds =
-									(currentTime - previous.SampleTime).TotalMilliseconds;
-								if (elapsedMilliseconds > 0)
-								{
-									double usedCpuMilliseconds =
-										currentCpuMilliseconds - previous.CpuMilliseconds;
-									cpuPercentage = usedCpuMilliseconds /
-										(elapsedMilliseconds * Environment.ProcessorCount) * 100.0;
-								}
-							}
-							_cpuSamples[identity.ProcessId] = (currentCpuMilliseconds, currentTime);
-
-							cpuPercentage = Math.Clamp(cpuPercentage, 0, 100);
-							double ramGb = process.WorkingSet64 /
-								1024.0 / 1024.0 / 1024.0;
-							double totalSystemRamGb = GetTotalSystemRamGb();
-							double ramPercentage = Math.Clamp(
-								ramGb / totalSystemRamGb * 100.0,
-								0,
-								100);
-
-							int processId = process.Id;
-							string executableName = Path.GetFileName(identity.ExecutablePath);
-							if (string.IsNullOrWhiteSpace(executableName))
-								executableName = process.ProcessName + ".exe";
-							string processRole = server.PID == processId ? "Primary" : "Child / worker";
-							if (!sampledProcessIds.Add(processId))
-								continue;
-
-							if (!_rowsByProcessId.TryGetValue(processId, out DataGridViewRow? row))
-							{
-								int rowIndex = resourceGrid.Rows.Add();
-								row = resourceGrid.Rows[rowIndex];
-								row.Cells[colStatus.Index].Style.ForeColor = SuccessColor;
-								_rowsByProcessId.Add(processId, row);
-							}
-
-							row.SetValues(
-								"●  Running",
-								server.ServerName,
-								processId.ToString(),
-								$"{executableName}  •  {processRole}",
-								$"{cpuPercentage:N1}%",
-								$"{ramGb:N2} GB");
-							row.Cells[colExecutable.Index].ToolTipText =
-								string.IsNullOrWhiteSpace(identity.ExecutablePath)
-									? executableName
-									: identity.ExecutablePath;
-
-							row.Cells[colCpuUsage.Index].Tag = cpuPercentage;
-							row.Cells[colRamUsage.Index].Tag = ramPercentage;
-						}
-						catch (InvalidOperationException) { }
-						catch (Win32Exception) { }
-						catch (ArgumentException) { }
+						int rowIndex = resourceGrid.Rows.Add();
+						row = resourceGrid.Rows[rowIndex];
+						row.Cells[colStatus.Index].Style.ForeColor = SuccessColor;
+						_rowsByProcessId.Add(process.ProcessId, row);
 					}
+
+					row.SetValues(
+						"●  Running",
+						process.ServerName,
+						process.ProcessId.ToString(),
+						$"{process.ExecutableName}  •  {process.ProcessRole}",
+						$"{process.CpuPercentage:N1}%",
+						$"{process.RamGb:N2} GB");
+					row.Cells[colExecutable.Index].ToolTipText =
+						string.IsNullOrWhiteSpace(process.ExecutablePath)
+							? process.ExecutableName
+							: process.ExecutablePath;
+					row.Cells[colCpuUsage.Index].Tag = process.CpuPercentage;
+					row.Cells[colRamUsage.Index].Tag = process.RamPercentage;
 				}
 
 				foreach (int staleProcessId in _rowsByProcessId.Keys
 					.Where(processId => !sampledProcessIds.Contains(processId))
 					.ToList())
 				{
-					DataGridViewRow staleRow = _rowsByProcessId[staleProcessId];
-					resourceGrid.Rows.Remove(staleRow);
+					resourceGrid.Rows.Remove(_rowsByProcessId[staleProcessId]);
 					_rowsByProcessId.Remove(staleProcessId);
-					_cpuSamples.Remove(staleProcessId);
 				}
 
-				UpdateSummaryCards(totalUsage, sampledProcessIds.Count);
+				UpdateSummaryCards(snapshot.TotalUsage, snapshot.Processes.Count);
 				resourceGrid.ClearSelection();
 				resourceGrid.CurrentCell = null;
 				resourceGrid.Invalidate();
 			}
-			catch (InvalidOperationException)
-			{
-				lblLastUpdated.Text =
-					"Server list changed during sampling  •  Retrying automatically";
-			}
 			finally
 			{
 				resourceGrid.ResumeLayout();
-				_isRefreshing = false;
 			}
 		}
 
@@ -461,8 +450,8 @@ namespace Synix_Control_Panel
 		{
 			tmrRefresh.Stop();
 			tmrRefresh.Tick -= tmrRefresh_Tick;
+			_refreshCancellation.Cancel();
 			_rowsByProcessId.Clear();
-			_cpuSamples.Clear();
 			resourceGrid.Rows.Clear();
 		}
 

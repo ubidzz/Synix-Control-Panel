@@ -111,11 +111,11 @@ namespace Synix_Control_Panel.SynixEngine
 				result.Succeeded ? "Backup Verified" : "Backup Verification Failed",
 				MessageBoxButtons.OK,
 				result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-			LoadBackups(Core.Instance.GetServerBackups(_server));
+			LoadBackups(await Core.Instance.GetServerBackupsAsync(_server));
 			SetManagementButtonsEnabled(true);
 		}
 
-		private void DeleteButton_Click(object? sender, EventArgs eventArgs)
+		private async void DeleteButton_Click(object? sender, EventArgs eventArgs)
 		{
 			UpdateSelection();
 			if (_server == null || SelectedBackup == null)
@@ -131,8 +131,9 @@ namespace Synix_Control_Panel.SynixEngine
 			if (confirmation != DialogResult.Yes)
 				return;
 
+			SetManagementButtonsEnabled(false);
 			ServerBackupManagementResult result =
-				Core.Instance.DeleteServerBackup(_server, SelectedBackup);
+				await Core.Instance.DeleteServerBackupAsync(_server, SelectedBackup);
 			if (!result.Succeeded)
 			{
 				MessageBox.Show(
@@ -142,7 +143,8 @@ namespace Synix_Control_Panel.SynixEngine
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
-			LoadBackups(Core.Instance.GetServerBackups(_server));
+			LoadBackups(await Core.Instance.GetServerBackupsAsync(_server));
+			SetManagementButtonsEnabled(true);
 		}
 
 		private void ConfirmSelection()

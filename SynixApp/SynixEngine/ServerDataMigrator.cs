@@ -20,7 +20,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 	public static class ServerDataMigrator
 	{
-		public const int CurrentVersion = 3;
+		public const int CurrentVersion = 4;
 
 		public static bool Migrate(GameServer server)
 		{
@@ -34,6 +34,10 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			bool changed = false;
+			bool wasLegacyValheimCrossplay = string.Equals(
+				server.Game?.Trim(),
+				"Valheim (Crossplay)",
+				StringComparison.OrdinalIgnoreCase);
 			while (server.DataSchemaVersion < CurrentVersion)
 			{
 				switch (server.DataSchemaVersion)
@@ -46,6 +50,9 @@ namespace Synix_Control_Panel.SynixEngine
 						break;
 					case 2:
 						MigrateToVersionThree(server);
+						break;
+					case 3:
+						MigrateToVersionFour(server, wasLegacyValheimCrossplay);
 						break;
 					default:
 						throw new InvalidDataException(
@@ -115,6 +122,28 @@ namespace Synix_Control_Panel.SynixEngine
 				0,
 				7 * 24 * 60);
 			server.DataSchemaVersion = 3;
+		}
+
+		private static void MigrateToVersionFour(
+			GameServer server,
+			bool wasLegacyValheimCrossplay)
+		{
+			if (wasLegacyValheimCrossplay)
+			{
+				server.Game = GameDatabase.GetCanonicalGameName("Valheim (Crossplay)");
+			}
+			else if (string.Equals(
+				GameDatabase.GetCanonicalGameName(server.Game),
+				"Valheim",
+				StringComparison.OrdinalIgnoreCase))
+			{
+				// The former standard Valheim definition never emitted -crossplay.
+				// Preserve that behavior when it adopts the unified definition.
+				server.Game = "Valheim";
+				server.CrossplayEnabled = false;
+			}
+
+			server.DataSchemaVersion = 4;
 		}
 	}
 }

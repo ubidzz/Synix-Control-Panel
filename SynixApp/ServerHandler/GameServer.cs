@@ -121,6 +121,8 @@ public sealed class GameLaunchBehavior
 
 public class GameDefinition
 {
+	public const int DefaultMaximumPlayers = 1000;
+
 	[JsonIgnore]
 	public string DefinitionId { get; init; } = string.Empty;
 	[JsonIgnore]
@@ -163,6 +165,14 @@ public class GameDefinition
 	public int Port { get; set; }
 	public int QueryPort { get; set; }
 	public int? AppPort { get; set; }
+	[JsonIgnore]
+	public int MaximumPlayers { get; init; } = DefaultMaximumPlayers;
+	[JsonIgnore]
+	public bool RequiresAdminPassword { get; init; }
+	[JsonIgnore]
+	public int MinimumServerPasswordLength { get; init; }
+	[JsonIgnore]
+	public bool ServerPasswordMustNotAppearInName { get; init; }
 
 	public List<string> GameModes { get; set; } = [];
 	[JsonIgnore]
@@ -181,6 +191,8 @@ public class GameDefinition
 	public string IconUrl { get; init; } = string.Empty;
 	[JsonIgnore]
 	public bool IsQueryable { get; init; } = true;
+	[JsonIgnore]
+	public bool CrossplayDisablesPlayerTracking { get; init; }
 	[JsonIgnore]
 	public ServerProbeProtocol ProbeProtocol { get; init; } = ServerProbeProtocol.Auto;
 	[JsonIgnore]
@@ -332,8 +344,7 @@ public class GameServer
 	{
 		get
 		{
-			GameInfo? game = GetGame(Game);
-			return SupportsPlayerCountMonitoring(game)
+			return SupportsPlayerCountMonitoring(this)
 				? $"{CurrentPlayers} / {MaxPlayers}"
 				: "N/A";
 		}

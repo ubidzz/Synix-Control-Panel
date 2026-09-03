@@ -152,7 +152,7 @@ public sealed class GameLaunchCommandBuilderTests
 	[Theory]
 	[InlineData("ARK: Survival Ascended", "-ServerPlatform=ALL", "-ServerPlatform=PC")]
 	[InlineData("ARK: Survival Evolved", "-crossplay", "")]
-	[InlineData("Valheim (Crossplay)", "-crossplay", "")]
+	[InlineData("Valheim", "-crossplay", "")]
 	public void CrossplayFlagIsIncludedOnlyWhenSelected(
 		string game,
 		string enabledValue,

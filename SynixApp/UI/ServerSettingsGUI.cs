@@ -633,6 +633,22 @@ namespace Synix_Control_Panel
 				GameInfo? selectedDefinition = hasGame
 					? GameDatabase.GetGame(selectedGame)
 					: null;
+				bool isRequiredAdminPasswordMissing =
+					selectedDefinition?.RequiresAdminPassword == true &&
+					string.IsNullOrWhiteSpace(GetEnteredValue(txtAdminPassword));
+				string? serverInputError = null;
+				if (selectedDefinition != null &&
+					!GameServerInputValidator.TryValidate(
+						selectedDefinition,
+						currentName,
+						new SynixServerPasswords(
+							GetEnteredValue(txtPassword),
+							GetEnteredValue(txtAdminPassword),
+							GetEnteredValue(txtRconPassword)),
+						out string validationError))
+				{
+					serverInputError = validationError;
+				}
 				bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 				bool isMinecraftBedrock = isMinecraft && IsMinecraftBedrockSelected();
 				bool supportsServerFramework =
@@ -773,6 +789,16 @@ namespace Synix_Control_Panel
 					_validationMessage = "  🔒 [MINECRAFT] Select a Minecraft game version.";
 					btnSave.Enabled = false;
 				}
+				else if (isRequiredAdminPasswordMissing)
+				{
+					_validationMessage = "  🔒 [REQUIRED] Enter an Admin Password to protect the server administrator role.";
+					btnSave.Enabled = false;
+				}
+				else if (!string.IsNullOrWhiteSpace(serverInputError))
+				{
+					_validationMessage = $"  🔒 [REQUIRED] {serverInputError}";
+					btnSave.Enabled = false;
+				}
 				else if (isMinecraft && !isMinecraftBedrock &&
 					!MinecraftMetadataService.NormalizeLoader(cmbMinecraftLoader.Text)
 						.Equals(MinecraftMetadataService.VanillaLoader, StringComparison.OrdinalIgnoreCase) &&
@@ -856,6 +882,7 @@ namespace Synix_Control_Panel
 
 		private void ToggleGameSpecificFields(GameInfo? gameData)
 		{
+			ConfigureMaximumPlayersInput(gameData);
 			var controls = new Control[] { txtPassword, txtAdminPassword, txtWorldSeed, cmbCompetitive, numAppPort, numMaxPlayers, numQueryPort, cmbWorldName, chkEnableRcon, chkCrossplay };
 			if (gameData == null)
 			{
@@ -945,10 +972,10 @@ namespace Synix_Control_Panel
 				numMaxPlayers.Tag = Supports(GameManagementCapability.MaxPlayers)
 					? "Required"
 					: "Disabled";
-				bool usesQueryPort = Supports(GameManagementCapability.QueryPort);
 				QueryPortLabel.Text = isMinecraft && IsMinecraftBedrockSelected()
 					? "IPv6 Port"
 					: "Query Port";
+				bool usesQueryPort = Supports(GameManagementCapability.QueryPort);
 				numQueryPort.Tag = usesQueryPort ? "Required" : "Disabled";
 				cmbWorldName.Tag = Supports(GameManagementCapability.WorldName)
 					? "Required"
@@ -979,11 +1006,52 @@ namespace Synix_Control_Panel
 			}
 			ConfigurationSupportPresentation support =
 				UserGuidance.GetConfigurationSupport(gameData);
+			string portMappingSummary = GetPortMappingSummary(gameData);
 			lblTemplateBehavior.Text =
-				$"◇  CONFIGURATION SUPPORT: {support.Status}  •  Unsupported settings are disabled automatically.";
-			lblTemplateBehavior.ForeColor = support.Color;
+				$"◇  CONFIGURATION SUPPORT: {support.Status}  •  {portMappingSummary}";
+			lblTemplateBehavior.ForeColor = portMappingSummary.StartsWith(
+				"Needs mapping:",
+				StringComparison.Ordinal)
+				? SettingsPalette.Warning
+				: support.Color;
 			ApplyExperienceMode();
 			SyncGatekeeper();
+		}
+
+		internal static string GetPortMappingSummary(GameInfo? gameData)
+		{
+			if (gameData == null)
+				return "Select a game to see its managed port mappings.";
+
+			GameManagementCapability capabilities =
+				GameFix.GetManagementCapabilities(gameData);
+			List<string> missing = [];
+			if ((capabilities & GameManagementCapability.Port) == 0)
+				missing.Add("Game Port");
+			if ((capabilities & GameManagementCapability.QueryPort) == 0)
+				missing.Add("Query Port");
+			if (gameData.AppPort.HasValue &&
+				(capabilities & GameManagementCapability.AppPort) == 0)
+			{
+				missing.Add("App Port");
+			}
+
+			return missing.Count == 0
+				? "All declared ports are mapped by arguments or configuration."
+				: $"Needs mapping: {string.Join(", ", missing)} (arguments or configuration template).";
+		}
+
+		private void ConfigureMaximumPlayersInput(GameInfo? gameData)
+		{
+			int maximum = gameData?.MaximumPlayers ?? GameDefinition.DefaultMaximumPlayers;
+			if (maximum > numMaxPlayers.Maximum)
+				numMaxPlayers.Maximum = maximum;
+			if (numMaxPlayers.Value > maximum)
+				numMaxPlayers.Value = maximum;
+			numMaxPlayers.Maximum = maximum;
+			MaxPlayerLabel.Text = maximum < GameDefinition.DefaultMaximumPlayers
+				? $"Max Players (maximum {maximum:0})"
+				: "Max Players";
 		}
 
 		private void SetupManagedPlaceholder(TextBox textBox, string placeholderText)
@@ -1050,6 +1118,9 @@ namespace Synix_Control_Panel
 			if (debounceTimer == null) { debounceTimer = new System.Windows.Forms.Timer(); debounceTimer.Interval = 300; debounceTimer.Tick += (s, e) => { debounceTimer.Stop(); SyncGatekeeper(); }; }
 			Action trigger = () => { debounceTimer.Stop(); debounceTimer.Start(); };
 			txtName.TextChanged += (s, e) => trigger();
+			txtPassword.TextChanged += (s, e) => trigger();
+			txtAdminPassword.TextChanged += (s, e) => trigger();
+			txtRconPassword.TextChanged += (s, e) => trigger();
 			cmbGame.SelectedIndexChanged += (s, e) => trigger();
 			numPort.TextChanged += GamePort_TextChanged;
 			numPort.ValueChanged += (s, e) => trigger();
@@ -1365,6 +1436,26 @@ namespace Synix_Control_Panel
 			string newName = txtName.Text.Trim();
 			string selectedGame = cmbGame.Text;
 			if (!Core.Instance.ValidateNameAndReport(newName, selectedGame, _existingServer)) return;
+			GameInfo? masterData = GameDatabase.GetGame(selectedGame);
+			if (masterData != null &&
+				!GameServerInputValidator.TryValidate(
+					masterData,
+					newName,
+					new SynixServerPasswords(
+						GetEnteredValue(txtPassword),
+						GetEnteredValue(txtAdminPassword),
+						GetEnteredValue(txtRconPassword)),
+					out string serverInputError))
+			{
+				MessageBox.Show(
+					serverInputError,
+					"Server Settings Need Attention",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				btnNavGeneral.PerformClick();
+				txtPassword.Focus();
+				return;
+			}
 
 			int gPort = (int)numPort.Value;
 			int qPort = (int)numQueryPort.Value;
@@ -1417,7 +1508,6 @@ namespace Synix_Control_Panel
 			string newPath = txtInstallPath.Text.Trim();
 			bool isMinecraft = selectedGame.Equals("Minecraft", StringComparison.OrdinalIgnoreCase);
 			bool isMinecraftBedrock = isMinecraft && IsMinecraftBedrockSelected();
-			GameInfo? masterData = GameDatabase.GetGame(selectedGame);
 			bool supportsServerFramework = masterData?.SupportedServerFrameworks.Count > 0;
 			string steamAccountName = masterData?.RequiresSteamLogin == true
 				? _existingServer?.SteamAccountName ?? string.Empty
@@ -1435,6 +1525,7 @@ namespace Synix_Control_Panel
 
 			NewServer = new GameServer
 			{
+				DataSchemaVersion = ServerDataMigrator.CurrentVersion,
 				Game = selectedGame,
 				SteamAccountName = steamAccountName,
 				ServerName = newName,

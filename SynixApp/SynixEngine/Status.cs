@@ -180,7 +180,8 @@ namespace Synix_Control_Panel.SynixEngine
 			BackingUp = 7,
 			Validating = 8,
 			Export = 9,
-			Restoring = 10
+			Restoring = 10,
+			Deleting = 11
 		}
 
 		public static class StatusManager
@@ -201,6 +202,7 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerState.Validating => "Validating",
 					ServerState.Export => "Exporting",
 					ServerState.Restoring => "Restoring",
+					ServerState.Deleting => "Deleting",
 					_ => "Unknown"
 				};
 			}
@@ -246,6 +248,12 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task UpdatePlayerCount(GameServer server)
 		{
 			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
+			if (!GameDatabase.SupportsPlayerCountMonitoring(server))
+			{
+				server.CurrentPlayers = 0;
+				server.MaxPlayersFromQuery = 0;
+				return;
+			}
 
 			string localIp = await Core.Instance.GetLocalIP();
 			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
@@ -257,13 +265,6 @@ namespace Synix_Control_Panel.SynixEngine
 					bool success = await UpdateMinecraftPlayerCount(server, ip);
 					if (success) return;
 				}
-				server.CurrentPlayers = 0;
-				return;
-			}
-
-			GameInfo? gameData = GameDatabase.GetGame(server.Game);
-			if (GameDatabase.GetProbeProtocol(gameData) != ServerProbeProtocol.A2S)
-			{
 				server.CurrentPlayers = 0;
 				return;
 			}

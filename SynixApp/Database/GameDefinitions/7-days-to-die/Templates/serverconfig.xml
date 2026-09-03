@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<ServerSettings>
+	<!-- GENERAL SERVER SETTINGS -->
+
+	<!-- Server representation -->
+	<property name="ServerName" value="{ServerName}"/>
+	<property name="ServerDescription" value="A 7 Days to Die server"/>
+	<property name="ServerWebsiteURL" value=""/>
+	<property name="ServerPassword" value="{Password}"/>
+	<property name="ServerLoginConfirmationText" value=""/>
+	<property name="Region" value="NorthAmericaEast"/>
+	<property name="Language" value="English"/>
+
+	<!-- Networking -->
+	<property name="ServerPort" value="{Port}"/>
+	<property name="ServerVisibility" value="2"/>
+	<property name="ServerDisabledNetworkProtocols" value="SteamNetworking"/>
+	<property name="ServerMaxWorldTransferSpeedKiBs" value="512"/>
+
+	<!-- Slots -->
+	<property name="ServerMaxPlayerCount" value="{MaxPlayers}"/>
+	<property name="ServerReservedSlots" value="0"/>
+	<property name="ServerReservedSlotsPermission" value="100"/>
+	<property name="ServerAdminSlots" value="0"/>
+	<property name="ServerAdminSlotsPermission" value="0"/>
+
+	<!-- Admin interfaces -->
+	<property name="WebDashboardEnabled" value="false"/>
+	<property name="WebDashboardPort" value="8080"/>
+	<property name="WebDashboardUrl" value=""/>
+	<property name="EnableMapRendering" value="false"/>
+
+	<property name="TelnetEnabled" value="true"/>
+	<property name="TelnetPort" value="8081"/>
+	<property name="TelnetPassword" value=""/>
+	<property name="TelnetFailedLoginLimit" value="10"/>
+	<property name="TelnetFailedLoginsBlocktime" value="10"/>
+
+	<property name="TerminalWindowEnabled" value="true"/>
+
+	<!-- Folder and file locations -->
+	<property name="AdminFileName" value="serveradmin.xml"/>
+	<!-- To override the save location, add UserDataFolder with an absolute path. -->
+
+	<!-- Other technical settings -->
+	<property name="ServerAllowCrossplay" value="false"/>
+	<property name="EACEnabled" value="true"/>
+	<property name="IgnoreEOSSanctions" value="false"/>
+	<property name="HideCommandExecutionLog" value="0"/>
+	<property name="MaxUncoveredMapChunksPerPlayer" value="131072"/>
+	<property name="PersistentPlayerProfiles" value="false"/>
+	<property name="MaxChunkAge" value="-1"/>
+	<property name="SaveDataLimit" value="-1"/>
+
+	<!-- GAMEPLAY -->
+
+	<!-- World -->
+	<property name="GameWorld" value="{WorldName}"/>
+	<property name="WorldGenSeed" value="{WorldSeed}"/>
+	<property name="WorldGenSize" value="{WorldSize}"/>
+	<property name="GameName" value="{Identity}"/>
+	<property name="GameMode" value="GameModeSurvival"/>
+
+	<!-- Difficulty -->
+	<property name="PlayerSafeZoneLevel" value="5"/>
+	<property name="PlayerSafeZoneHours" value="5"/>
+
+	<!-- Game Rules -->
+	<property name="BuildCreate" value="false"/>
+	<property name="BedrollDeadZoneSize" value="15"/>
+	<property name="BedrollExpiryTime" value="45"/>
+	<property name="AllowSpawnNearFriend" value="2"/>
+	<property name="CameraRestrictionMode" value="0"/>
+
+	<!-- Performance related -->
+	<property name="MaxSpawnedZombies" value="64"/>
+	<property name="MaxSpawnedAnimals" value="50"/>
+	<property name="ServerMaxAllowedViewDistance" value="12"/>
+	<property name="MaxQueuedMeshLayers" value="1000"/>
+
+	<!-- Multiplayer -->
+	<property name="PartySharedKillRange" value="100"/>
+	<property name="PlayerKillingMode" value="3"/>
+
+	<!-- Land claim options -->
+	<property name="LandClaimCount" value="5"/>
+	<property name="LandClaimSize" value="41"/>
+	<property name="LandClaimDeadZone" value="30"/>
+	<property name="LandClaimExpiryTime" value="7"/>
+	<property name="LandClaimDecayMode" value="0"/>
+	<property name="LandClaimOnlineDurabilityModifier" value="4"/>
+	<property name="LandClaimOfflineDurabilityModifier" value="4"/>
+	<property name="LandClaimOfflineDelay" value="0"/>
+
+	<property name="DynamicMeshEnabled" value="true"/>
+	<property name="DynamicMeshLandClaimOnly" value="true"/>
+	<property name="DynamicMeshLandClaimBuffer" value="3"/>
+	<property name="DynamicMeshMaxItemCache" value="3"/>
+
+	<property name="TwitchServerPermission" value="90"/>
+	<property name="TwitchBloodMoonAllowed" value="false"/>
+
+	<property name="SandboxCode" value="AAAJABJACJADJARFBNC"/>
+</ServerSettings>

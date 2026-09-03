@@ -27,7 +27,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			StatusManager.GetStatus(ServerState.BackingUp),
 			StatusManager.GetStatus(ServerState.Restoring),
 			StatusManager.GetStatus(ServerState.Validating),
-			StatusManager.GetStatus(ServerState.Export)
+			StatusManager.GetStatus(ServerState.Export),
+			StatusManager.GetStatus(ServerState.Deleting)
 		};
 
 		public const int FrameCount = DotCount;

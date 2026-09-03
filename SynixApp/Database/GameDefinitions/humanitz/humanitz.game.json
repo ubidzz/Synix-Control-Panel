@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "humanitz",
   "catalogOrder": 1,
   "game": "HumanitZ",
@@ -32,15 +32,33 @@
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
-  "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "needsConfigWarning": false,
+  "warningMessage": "Synix creates the complete server-generated GameServerSettings.ini layout and manages the server name, passwords, player limit, PVP or PVE mode, and RCON settings. Other HumanitZ gameplay values remain editable in the configuration editor.",
   "iconUrl": "",
   "isQueryable": true,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
-,
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 2,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "AdminPassword",
+      "GameMode",
+      "MaxPlayers",
+      "Rcon"
+    ],
+    "templates": [
+      {
+        "revision": 2,
+        "relativePath": "HumanitZServer\\GameServerSettings.ini",
+        "templateFile": "GameServerSettings.ini"
+      }
+    ]
+  },
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",

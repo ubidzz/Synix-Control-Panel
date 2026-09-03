@@ -94,6 +94,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				definition?.SupportsFullReset == true;
 		}
 
+		internal static bool CanManuallyResetManagedConfiguration(
+			GameServer server,
+			bool serverIsBusy)
+		{
+			return !serverIsBusy && CanResetManagedConfiguration(server);
+		}
+
 		internal static ConfigurationBackupSnapshot? BackupManagedConfiguration(
 			GameServer server,
 			string reason)
@@ -205,7 +212,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				items.Add(new ConfigurationValidationItem(
 					ConfigurationValidationState.Warning,
 					"Development setting",
-					"Premade game configurations are disabled for this development build. Validation remains read-only."));
+					"Automatic premade configuration creation and updates are disabled for this development build. Validation and the explicit Fix Config action remain available while the server is stopped."));
 			}
 
 			if (server.ManagedConfigurationVersion == definition.SchemaVersion)

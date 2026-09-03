@@ -156,16 +156,17 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
-				Directory.CreateDirectory(backupRoot);
-				CleanupIncompleteBackupFiles(backupRoot);
-
-				if (!Directory.Exists(sourceDir))
-					throw new DirectoryNotFoundException($"The server folder does not exist: {sourceDir}");
-				if (IsSameOrDescendantPath(zipPath, sourceDir))
-					throw new InvalidOperationException("The backup folder cannot be stored inside the server installation folder.");
-
+				int maximumBackups = Math.Max(1, Properties.Settings.Default.MaxBackups);
 				await Task.Run(() =>
 				{
+					Directory.CreateDirectory(backupRoot);
+					CleanupIncompleteBackupFiles(backupRoot);
+
+					if (!Directory.Exists(sourceDir))
+						throw new DirectoryNotFoundException($"The server folder does not exist: {sourceDir}");
+					if (IsSameOrDescendantPath(zipPath, sourceDir))
+						throw new InvalidOperationException("The backup folder cannot be stored inside the server installation folder.");
+
 					ZipFile.CreateFromDirectory(
 						sourceDirectoryName: sourceDir,
 						destinationArchiveFileName: temporaryZipPath,
@@ -183,20 +184,19 @@ namespace Synix_Control_Panel.SynixEngine
 					receiptPublished = true;
 					File.Move(temporaryZipPath, zipPath);
 					backupPublished = true;
-				});
 
-				List<FileInfo> files = new DirectoryInfo(backupRoot)
-					.GetFiles("*.zip")
-					.OrderByDescending(file => file.LastWriteTimeUtc)
-					.ToList();
-				int maximumBackups = Math.Max(1, Properties.Settings.Default.MaxBackups);
-				while (files.Count > maximumBackups)
-				{
-					FileInfo expiredBackup = files.Last();
-					expiredBackup.Delete();
-					TryDeleteBackupRestoreFile(GetBackupReceiptPath(expiredBackup.FullName));
-					files.RemoveAt(files.Count - 1);
-				}
+					List<FileInfo> files = new DirectoryInfo(backupRoot)
+						.GetFiles("*.zip")
+						.OrderByDescending(file => file.LastWriteTimeUtc)
+						.ToList();
+					while (files.Count > maximumBackups)
+					{
+						FileInfo expiredBackup = files.Last();
+						expiredBackup.Delete();
+						TryDeleteBackupRestoreFile(GetBackupReceiptPath(expiredBackup.FullName));
+						files.RemoveAt(files.Count - 1);
+					}
+				});
 
 				Log($"[💾 BACKUP] SHA-256 integrity receipt created for {Path.GetFileName(zipPath)}.", Color.LimeGreen);
 				Log($"[💾 BACKUP] Backup location: {zipPath}.", Color.LimeGreen);
@@ -380,8 +380,48 @@ namespace Synix_Control_Panel.SynixEngine
 				.ToArray();
 		}
 
-		internal bool HasServerBackups(GameServer server) =>
-			GetServerBackups(server).Count > 0;
+		internal Task<IReadOnlyList<ServerBackupArchive>> GetServerBackupsAsync(
+			GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			return Task.Run(() => GetServerBackups(server));
+		}
+
+		internal bool HasServerBackups(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			HashSet<string> folders = new(StringComparer.OrdinalIgnoreCase)
+			{
+				GetActiveServerBackupFolder(server),
+				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetSafeName(server.ServerName))
+			};
+
+			foreach (string folder in folders)
+			{
+				try
+				{
+					if (Directory.Exists(folder) &&
+						Directory.EnumerateFiles(folder, "*.zip", SearchOption.TopDirectoryOnly).Any())
+					{
+						return true;
+					}
+				}
+				catch (IOException)
+				{
+				}
+				catch (UnauthorizedAccessException)
+				{
+				}
+			}
+
+			return false;
+		}
+
+		internal Task<bool> HasServerBackupsAsync(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			return Task.Run(() => HasServerBackups(server));
+		}
 
 		internal async Task<ServerBackupManagementResult> VerifyServerBackupAsync(
 			GameServer server,
@@ -393,7 +433,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Backup);
 			if (!operation.Acquired)
 				return new ServerBackupManagementResult(false, operation.FailureReason);
-			if (!IsKnownServerBackup(server, backup.ArchivePath))
+			if (!await Task.Run(() => IsKnownServerBackup(server, backup.ArchivePath)))
 			{
 				return new ServerBackupManagementResult(
 					false,
@@ -468,6 +508,15 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
+		internal Task<ServerBackupManagementResult> DeleteServerBackupAsync(
+			GameServer server,
+			ServerBackupArchive backup)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			ArgumentNullException.ThrowIfNull(backup);
+			return Task.Run(() => DeleteServerBackup(server, backup));
+		}
+
 		internal async Task<ServerBackupRestoreResult> RestoreServerBackupAsync(
 			GameServer server,
 			ServerBackupArchive backup,
@@ -489,7 +538,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			string selectedPath = Path.GetFullPath(backup.ArchivePath);
-			if (!IsKnownServerBackup(server, selectedPath))
+			if (!await Task.Run(() => IsKnownServerBackup(server, selectedPath)))
 			{
 				return new ServerBackupRestoreResult(
 					false,

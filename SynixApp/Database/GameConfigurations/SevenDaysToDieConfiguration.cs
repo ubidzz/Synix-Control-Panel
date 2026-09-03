@@ -11,11 +11,16 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using System.Text;
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class SevenDaysToDieConfiguration : ConfigurationDefinition
 	{
+		private const string DefaultTemplateResourceName =
+			"Synix.GameDefinitions.SevenDaysToDie.serverconfig.xml";
 		private static readonly int[] SupportedWorldSizes = [6144, 8192, 10240];
+		private static readonly Lazy<string> DefaultTemplate =
+			new(LoadDefaultTemplate, LazyThreadSafetyMode.ExecutionAndPublication);
 
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
@@ -30,9 +35,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "7 Days to Die";
-		public override int SchemaVersion => 4;
+		public override int SchemaVersion => 5;
 		public override bool SupportsFullReset => true;
-		public override bool PreservesInstalledTemplate => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.ServerName |
 			ManagedConfigurationInput.ServerPassword |
@@ -44,6 +48,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override string RelativePath => "serverconfig.xml";
 		public override ConfigFormat Format => ConfigFormat.XML;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
+		public override string? CreateTemplate(ConfigurationContext context)
+		{
+			ArgumentNullException.ThrowIfNull(context);
+			return DefaultTemplate.Value;
+		}
 
 		internal static string NormalizeWorldName(string? worldName)
 		{
@@ -60,5 +69,22 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 		internal static int NormalizeWorldSize(int worldSize) =>
 			SupportedWorldSizes.Contains(worldSize) ? worldSize : 6144;
+
+		private static string LoadDefaultTemplate()
+		{
+			using Stream? stream = typeof(SevenDaysToDieConfiguration).Assembly
+				.GetManifestResourceStream(DefaultTemplateResourceName);
+			if (stream == null)
+			{
+				throw new InvalidDataException(
+					"The trusted 7 Days to Die serverconfig.xml template is missing.");
+			}
+
+			using StreamReader reader = new(
+				stream,
+				Encoding.UTF8,
+				detectEncodingFromByteOrderMarks: true);
+			return reader.ReadToEnd();
+		}
 	}
 }

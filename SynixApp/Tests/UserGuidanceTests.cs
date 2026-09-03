@@ -4,8 +4,11 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.Database;
+using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using Synix_Control_Panel.SynixEngine;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Xunit;
 
@@ -75,6 +78,38 @@ public sealed class UserGuidanceTests
 	}
 
 	[Fact]
+	public async Task ResourceMonitorSampling_DoesNotBlockTheCallingThread()
+	{
+		using ManualResetEventSlim discoveryGate = new(false);
+		ResourceMonitorSnapshotSampler sampler = new(_ =>
+		{
+			discoveryGate.Wait(TimeSpan.FromSeconds(5));
+			return [];
+		});
+		GameServer server = new() { ServerName = "Responsiveness Test" };
+		Task<ResourceUsageSnapshot>? samplingTask = null;
+
+		try
+		{
+			Stopwatch stopwatch = Stopwatch.StartNew();
+			samplingTask = sampler.CaptureAsync([server], 32, CancellationToken.None);
+			stopwatch.Stop();
+
+			Assert.False(samplingTask.IsCompleted);
+			Assert.True(
+				stopwatch.Elapsed < TimeSpan.FromSeconds(1),
+				$"Starting a resource sample blocked for {stopwatch.Elapsed.TotalMilliseconds:N0} ms.");
+		}
+		finally
+		{
+			discoveryGate.Set();
+		}
+
+		Assert.NotNull(samplingTask);
+		await samplingTask.WaitAsync(TimeSpan.FromSeconds(5));
+	}
+
+	[Fact]
 	public void FirstStartAssistant_IncludesChecklistAndConnectionHelp()
 	{
 		GameServer server = new()
@@ -100,6 +135,20 @@ public sealed class UserGuidanceTests
 		Assert.Equal(
 			"192.168.1.50:8777",
 			ConnectionInformationDialog.FormatAddress("192.168.1.50", 8777));
+	}
+
+	[Fact]
+	public void ServerSettingsExplainPortMappingsFromArgumentsOrConfigurations()
+	{
+		GameInfo enshrouded = GameDatabase.GetGame("Enshrouded")!;
+		GameInfo abioticFactor = GameDatabase.GetGame("Abiotic Factor")!;
+
+		string templateSummary = ServerSettingsGUI.GetPortMappingSummary(enshrouded);
+		Assert.Contains("Needs mapping: Game Port", templateSummary);
+		Assert.DoesNotContain("Query Port", templateSummary);
+		Assert.Equal(
+			"All declared ports are mapped by arguments or configuration.",
+			ServerSettingsGUI.GetPortMappingSummary(abioticFactor));
 	}
 
 	[Fact]
@@ -147,6 +196,110 @@ public sealed class UserGuidanceTests
 		thread.SetApartmentState(ApartmentState.STA);
 		thread.Start();
 		thread.Join();
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void EnshroudedServerSettingsCapThePlayerInputAtSixteen()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerSettingsGUI setup = new(new GameServer
+				{
+					Game = "Enshrouded",
+					ServerName = "Enshrouded Test",
+					InstallPath = Path.GetTempPath(),
+					Port = 15636,
+					QueryPort = 15637,
+					MaxPlayers = 64
+				});
+				ModernSettingsNumericUpDown playerLimit = Assert.IsType<ModernSettingsNumericUpDown>(
+					setup.Controls.Find("numMaxPlayers", true).Single());
+				ModernSettingsNumericUpDown gamePort = Assert.IsType<ModernSettingsNumericUpDown>(
+					setup.Controls.Find("numPort", true).Single());
+				ModernSettingsNumericUpDown queryPort = Assert.IsType<ModernSettingsNumericUpDown>(
+					setup.Controls.Find("numQueryPort", true).Single());
+				ModernSettingsNumericUpDown appPort = Assert.IsType<ModernSettingsNumericUpDown>(
+					setup.Controls.Find("numAppPort", true).Single());
+				TextBox adminPassword = Assert.IsType<TextBox>(
+					setup.Controls.Find("txtAdminPassword", true).Single());
+				Button saveButton = Assert.IsAssignableFrom<Button>(
+					setup.Controls.Find("btnSave", true).Single());
+
+				Assert.Equal(16, playerLimit.Maximum);
+				Assert.Equal(16, playerLimit.Value);
+				Assert.False(gamePort.Enabled);
+				Assert.True(queryPort.Enabled);
+				Assert.False(appPort.Enabled);
+				Assert.Contains(
+					"Needs mapping: Game Port",
+					setup.Controls.Find("lblTemplateBehavior", true).Single().Text);
+				Assert.True(adminPassword.Enabled);
+				Assert.False(saveButton.Enabled);
+				Assert.Equal(
+					"Max Players (maximum 16)",
+					setup.Controls.Find("MaxPlayerLabel", true).Single().Text);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	[Trait("Category", "Regression")]
+	public void EditingAValheimPasswordRefreshesTheSaveGate()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				using ServerSettingsGUI setup = new(new GameServer
+				{
+					Game = "Valheim",
+					ServerName = "454",
+					Password = "454",
+					InstallPath = Path.GetTempPath(),
+					Port = 61456,
+					QueryPort = 61457,
+					MaxPlayers = 10,
+					WorldName = "Dedicated"
+				});
+				TextBox password = Assert.IsType<TextBox>(
+					setup.Controls.Find("txtPassword", true).Single());
+				Button save = Assert.IsAssignableFrom<Button>(
+					setup.Controls.Find("btnSave", true).Single());
+
+				Assert.False(save.Enabled);
+				password.Text = "5555555";
+				DateTime timeout = DateTime.UtcNow.AddSeconds(2);
+				while (!save.Enabled && DateTime.UtcNow < timeout)
+				{
+					Application.DoEvents();
+					Thread.Sleep(10);
+				}
+
+				Assert.True(save.Enabled);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		Assert.True(thread.Join(TimeSpan.FromSeconds(10)));
+
 		Assert.Null(failure);
 	}
 }

@@ -50,6 +50,9 @@
 	  <EmbeddedResource Include="SynixEngine\version.txt" />
 	  <EmbeddedResource Include="Database\GameDefinitions\**\*.game.json" />
 	  <EmbeddedResource Include="Database\GameDefinitions\**\Templates\**\*" />
+	  <EmbeddedResource Update="Database\GameDefinitions\7-days-to-die\Templates\serverconfig.xml">
+	    <LogicalName>Synix.GameDefinitions.SevenDaysToDie.serverconfig.xml</LogicalName>
+	  </EmbeddedResource>
 	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
 	  <EmbeddedResource Include="Database\ModSystems\**\*.modsystem.json" />
 	</ItemGroup>
@@ -114,6 +117,9 @@
 	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
 	  </Compile>
 	  <Compile Update="UI\GameDefinitionBuilder.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\FirewallCleanupConfirmationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
 	  <Compile Update="UI\GameDefinitionBuilder.Designer.cs">

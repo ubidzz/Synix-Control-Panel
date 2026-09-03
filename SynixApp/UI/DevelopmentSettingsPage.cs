@@ -87,7 +87,7 @@ namespace Synix_Control_Panel.SynixEngine
 			card.Controls.Add(CreateGlyph("⚙"));
 			card.Controls.Add(CreateTitle("Use Premade Game Configurations"));
 			card.Controls.Add(CreateDescription(
-				"Turn this off to stop Synix from creating or updating premade game configuration files. Existing files are never deleted.",
+				"Turn this off to stop automatic creation and updates of premade game configuration files. Existing files are never deleted. Check Synix Values and the explicit Fix Config action remain available for stopped servers.",
 				76));
 
 			_usePremadeConfigurationsToggle = new ModernSettingsToggle

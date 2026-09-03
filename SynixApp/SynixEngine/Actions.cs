@@ -244,6 +244,23 @@ namespace Synix_Control_Panel.SynixEngine
 			return files.Values.ToArray();
 		}
 
+		internal static bool CanOpenConfigurationEditor(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			try
+			{
+				IReadOnlyList<ConfigurationEditorFile> files =
+					ResolveConfigurationEditorFiles(server);
+				return files.Count > 0 &&
+					(files.Any(file => File.Exists(file.Path)) ||
+					 GameFix.CanResetManagedConfiguration(server));
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		private static string ResolveConfigurationEditorPath(
 			GameServer server,
 			string relativePathTemplate)
@@ -283,13 +300,23 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public void DeleteServerAndReport(GameServer server)
+		public async Task<bool> DeleteServerAndReportAsync(GameServer server)
 		{
-			string status = server.Status ?? "";
-			if (status == StatusManager.GetStatus(ServerState.Installing) || status == StatusManager.GetStatus(ServerState.Updating) || (server.PID.HasValue && server.PID > 0))
+			using ServerOperationLease operation =
+				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Delete);
+			if (!operation.Acquired)
+			{
+				Log($"[DELETE BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				return false;
+			}
+
+			string status = server.Status ?? string.Empty;
+			if (status == StatusManager.GetStatus(ServerState.Installing) ||
+				status == StatusManager.GetStatus(ServerState.Updating) ||
+				(server.PID.HasValue && server.PID > 0))
 			{
 				Log("Cannot delete an active or installing server.", Color.Red, true);
-				return;
+				return false;
 			}
 
 			var page = new TaskDialogPage()
@@ -299,7 +326,6 @@ namespace Synix_Control_Panel.SynixEngine
 				Text = $"This will wipe the installation at:\n{server.InstallPath}",
 				Icon = TaskDialogIcon.Warning,
 				Buttons = { TaskDialogButton.Yes, TaskDialogButton.No },
-
 				Verification = new TaskDialogVerificationCheckBox()
 				{
 					Text = "Also delete all server backup archives"
@@ -309,46 +335,61 @@ namespace Synix_Control_Panel.SynixEngine
 			TaskDialogButton result = MainGUI.Instance == null
 				? TaskDialog.ShowDialog(page)
 				: TaskDialog.ShowDialog(MainGUI.Instance, page);
+			if (result != TaskDialogButton.Yes)
+				return false;
 
-			if (result == TaskDialogButton.Yes)
+			bool deleteBackups = page.Verification.Checked;
+			string previousStatus = status;
+			server.Status = StatusManager.GetStatus(ServerState.Deleting);
+			UpdateGridStatus();
+
+			try
 			{
-				bool deleteBackups = page.Verification.Checked;
-
-				try
+				if (Properties.Settings.Default.enableRunAsAdmin)
 				{
-					if (Properties.Settings.Default.enableRunAsAdmin)
-					{
-						GameInfo? definition = GameDatabase.GetGame(server.Game);
-						string executableName = definition == null
-							? string.Empty
-							: MinecraftControlProfile.ResolveExecutableName(server, definition);
-						string serverExePath = Path.Combine(server.InstallPath, executableName);
+					GameInfo? definition = GameDatabase.GetGame(server.Game);
+					string executableName = definition == null
+						? string.Empty
+						: MinecraftControlProfile.ResolveExecutableName(server, definition);
+					string serverExePath = Path.Combine(server.InstallPath, executableName);
 
-						if (File.Exists(serverExePath))
-						{
-							CleanFirewallRules(serverExePath);
-						}
-					}
-
-					FolderHandler.ServerFolder.Delete(server, deleteBackups, (msg, logColor) =>
-					{
-						Log(msg, logColor);
-					});
-
-					UpdateGridStatus();
+					if (File.Exists(serverExePath))
+						await CleanFirewallRulesAsync(serverExePath);
 				}
-				catch (Exception ex)
+
+				ServerFolderDeletionResult deletion =
+					await FolderHandler.ServerFolder.DeleteFilesAsync(server, deleteBackups);
+
+				if (deletion.InstallationDeleted)
 				{
-					Log($"Files were partially deleted, but an error occurred:\n{ex.Message}", Color.Red, true);
-					MessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					UpdateGridStatus();
+					Log(
+						$"[CLEANUP] Deleted server '{server.ServerName}' and all files at {deletion.InstallationPath}",
+						Color.Yellow);
 				}
+				if (deletion.BackupsDeleted)
+					Log($"[CLEANUP] Deleted server backups at {deletion.BackupPath}", Color.LimeGreen);
+
+				if (ServerRegistry.Servers.Contains(server))
+					ServerRegistry.Servers.Remove(server);
+
+				FileHandler.SaveServers();
+				UpdateGridStatus();
+				return true;
+			}
+			catch (Exception ex)
+			{
+				server.Status = previousStatus;
+				Log($"Files were partially deleted, but an error occurred:\n{ex.Message}", Color.Red, true);
+				MessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				UpdateGridStatus();
+				return false;
 			}
 		}
 
-		public void OpenBackFolder(GameServer selectedServer)
+		public async Task OpenBackFolderAsync(GameServer selectedServer)
 		{
-			IReadOnlyList<ServerBackupArchive> backups = GetServerBackups(selectedServer);
+			IReadOnlyList<ServerBackupArchive> backups =
+				await GetServerBackupsAsync(selectedServer);
 			string fullPath = backups.Count > 0
 				? Path.GetDirectoryName(backups[0].ArchivePath) ?? GetActiveServerBackupFolder(selectedServer)
 				: GetActiveServerBackupFolder(selectedServer);
@@ -1324,7 +1365,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public void CleanFirewallRules(string executablePath)
+		public async Task CleanFirewallRulesAsync(string executablePath)
 		{
 			try
 			{
@@ -1337,10 +1378,18 @@ namespace Synix_Control_Panel.SynixEngine
 					WindowStyle = ProcessWindowStyle.Hidden
 				};
 
-				Process? cleanup = Process.Start(psi);
-				cleanup?.WaitForExit();
+				using Process? cleanup = Process.Start(psi);
+				if (cleanup == null)
+				{
+					Log($"[FIREWALL] Windows could not start firewall cleanup for {executablePath}.", Color.Orange, true);
+					return;
+				}
 
-				Log($"[FIREWALL] Successfully removed rules for {executablePath}", Color.LimeGreen);
+				await cleanup.WaitForExitAsync();
+				if (cleanup.ExitCode == 0)
+					Log($"[FIREWALL] Successfully removed rules for {executablePath}", Color.LimeGreen);
+				else
+					Log($"[FIREWALL] Windows firewall cleanup exited with code {cleanup.ExitCode} for {executablePath}.", Color.Orange, true);
 			}
 			catch (System.ComponentModel.Win32Exception)
 			{

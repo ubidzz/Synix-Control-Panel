@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
+using Synix_Control_Panel.SynixApp.Database.GameDefinitions;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.Text.Json;
@@ -159,7 +160,6 @@ public sealed class GameConfigurationTests : IDisposable
 	[InlineData("ASTRONEER")]
 	[InlineData("ASKA")]
 	[InlineData("Assetto Corsa Competizione")]
-	[InlineData("7 Days to Die")]
 	[InlineData("Subsistence")]
 	[InlineData("Holdfast: Nations At War")]
 	[InlineData("Windrose")]
@@ -274,6 +274,86 @@ public sealed class GameConfigurationTests : IDisposable
 
 		Assert.True(updated.Succeeded, updated.Message);
 		Assert.True(updated.Complete, updated.Message);
+	}
+
+	[Fact]
+	public void Enshrouded_CapturedTemplateCreatesCurrentDefaultsAndSafeRoles()
+	{
+		Assert.True(GameFix.TryGetConfiguration(
+			"Enshrouded",
+			out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		GameServer server = CreateServer("Enshrouded");
+		server.ServerName = "Embervale Friends";
+		server.QueryPort = 15647;
+		server.MaxPlayers = 14;
+
+		ConfigurationContext context = CreateContext(server);
+		ConfigurationApplyResult result = definition.Apply(context);
+		string path = definition.ResolveFullPath(server);
+		using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
+		JsonElement root = document.RootElement;
+		JsonElement[] groups = root.GetProperty("userGroups").EnumerateArray().ToArray();
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.True(result.Complete, result.Message);
+		Assert.Equal("Embervale Friends", root.GetProperty("name").GetString());
+		Assert.Equal(15647, root.GetProperty("queryPort").GetInt32());
+		Assert.Equal(14, root.GetProperty("slotCount").GetInt32());
+		Assert.Equal("Default", root.GetProperty("gameSettingsPreset").GetString());
+		Assert.Equal(
+			"LoseSomeProgress",
+			root.GetProperty("gameSettings").GetProperty("tamingStartleRepercussion").GetString());
+		Assert.Equal(4, groups.Length);
+		Assert.Equal("Admin", groups[0].GetProperty("name").GetString());
+		Assert.Equal("admin-secret", groups[0].GetProperty("password").GetString());
+		Assert.True(groups[0].GetProperty("canKickBan").GetBoolean());
+		Assert.Equal("Friend", groups[1].GetProperty("name").GetString());
+		Assert.Equal("friend-admin-secret", groups[1].GetProperty("password").GetString());
+		Assert.Equal("guest-admin-secret", groups[2].GetProperty("password").GetString());
+		Assert.Equal("server-secret", groups[3].GetProperty("password").GetString());
+		Assert.True(root.TryGetProperty("bannedAccounts", out JsonElement bannedAccounts));
+		Assert.Empty(bannedAccounts.EnumerateArray());
+		Assert.False(root.TryGetProperty("bans", out _));
+		Assert.DoesNotContain(
+			definition.Validate(context),
+			item => item.State == ConfigurationValidationState.Failed);
+	}
+
+	[Fact]
+	public void Enshrouded_EmptyServerPasswordLeavesOnlyTheLeastPrivilegedRoleOpen()
+	{
+		Assert.True(GameFix.TryGetConfiguration(
+			"Enshrouded",
+			out ConfigurationDefinition? definition));
+		EmbeddedTemplateConfigurationDefinition template =
+			Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		GameServer server = CreateServer("Enshrouded");
+		ConfigurationContext context = new(
+			server,
+			new SynixServerPasswords(string.Empty, "admin-secret", "rcon-secret"),
+			Core.Instance.GetSafeName(server.ServerName),
+			"192.0.2.10",
+			"203.0.113.10");
+
+		ConfigurationApplyResult result = template.Apply(context);
+		using JsonDocument document = JsonDocument.Parse(
+			File.ReadAllText(template.ResolveFullPath(server)));
+		JsonElement[] groups = document.RootElement
+			.GetProperty("userGroups")
+			.EnumerateArray()
+			.ToArray();
+
+		Assert.True(result.Succeeded, result.Message);
+		Assert.All(groups.Take(3), group =>
+			Assert.False(string.IsNullOrWhiteSpace(
+				group.GetProperty("password").GetString())));
+		Assert.Equal(string.Empty, groups[3].GetProperty("password").GetString());
+		Assert.False(groups[3].GetProperty("canKickBan").GetBoolean());
+		Assert.False(groups[3].GetProperty("canAccessInventories").GetBoolean());
+		Assert.False(groups[3].GetProperty("canEditWorld").GetBoolean());
+		Assert.False(groups[3].GetProperty("canEditBase").GetBoolean());
+		Assert.False(groups[3].GetProperty("canExtendBase").GetBoolean());
 	}
 
 	[Theory]
@@ -395,7 +475,7 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
-	public async Task SevenDaysToDie_FirstGeneratedConfigurationReceivesSavedSynixSettings()
+	public async Task SevenDaysToDie_ManagedConfigurationReceivesSavedSynixSettings()
 	{
 		GameServer server = CreateServer("7 Days to Die");
 		server.ServerName = "Saved Seven Server";
@@ -407,18 +487,17 @@ public sealed class GameConfigurationTests : IDisposable
 		Core.SetServerPasswords(
 			server,
 			new SynixServerPasswords("saved-password", string.Empty, string.Empty));
-		PrepareGeneratedConfiguration("7 Days to Die", server);
 
-		ConfigurationApplyResult? result =
-			await GameFix.ApplyFirstGeneratedConfiguration(server);
+		ConfigurationApplyResult result =
+			await GameFix.ApplyManagedConfiguration(server);
 		SevenDaysToDieConfiguration definition = new();
 		string path = definition.ResolveFullPath(server);
 
-		Assert.NotNull(result);
-		ConfigurationApplyResult applied = result.Value;
-		Assert.True(applied.Succeeded);
-		Assert.True(applied.Complete);
-		Assert.True(applied.Changed);
+		Assert.True(result.Succeeded);
+		Assert.True(result.Complete);
+		Assert.True(result.Changed);
+		Assert.True(result.Created);
+		Assert.Equal(68, ConfigHandler.LoadConfig(path, definition.Format).Count);
 		Assert.Equal("Saved Seven Server", GetValue(path, definition.Format, "ServerName"));
 		Assert.Equal("saved-password", GetValue(path, definition.Format, "ServerPassword"));
 		Assert.Equal("26942", GetValue(path, definition.Format, "ServerPort"));
@@ -426,8 +505,24 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.Equal("Pregen08k01", GetValue(path, definition.Format, "GameWorld"));
 		Assert.Equal("saved-seed", GetValue(path, definition.Format, "WorldGenSeed"));
 		Assert.Equal("8192", GetValue(path, definition.Format, "WorldGenSize"));
+		Assert.Equal("True", GetValue(path, definition.Format, "EACEnabled"));
+		Assert.Equal("3", GetValue(path, definition.Format, "PlayerKillingMode"));
+		Assert.Equal(string.Empty, GetValue(path, definition.Format, "TelnetPassword"));
+		Assert.DoesNotContain("{Password}", File.ReadAllText(path), StringComparison.Ordinal);
 		Assert.Equal(definition.SchemaVersion, server.ManagedConfigurationVersion);
-		Assert.Null(await GameFix.ApplyFirstGeneratedConfiguration(server));
+
+		server.ServerName = "Edited Seven Server";
+		server.MaxPlayers = 10;
+		server.WorldSeed = "edited-seed";
+		ConfigurationApplyResult edited =
+			await GameFix.ApplyManagedConfiguration(server);
+
+		Assert.True(edited.Succeeded);
+		Assert.True(edited.Complete);
+		Assert.True(edited.Changed);
+		Assert.Equal("Edited Seven Server", GetValue(path, definition.Format, "ServerName"));
+		Assert.Equal("10", GetValue(path, definition.Format, "ServerMaxPlayerCount"));
+		Assert.Equal("edited-seed", GetValue(path, definition.Format, "WorldGenSeed"));
 	}
 
 	[Fact]
@@ -616,7 +711,6 @@ public sealed class GameConfigurationTests : IDisposable
 	{
 		SevenDaysToDieConfiguration definition = new();
 		GameServer server = CreateServer("7 Days to Die");
-		PrepareGeneratedConfiguration("7 Days to Die", server);
 		ConfigurationContext context = CreateContext(server);
 
 		ConfigurationApplyResult applied = definition.Apply(context);
@@ -747,9 +841,12 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
-	public void HumanitZ_MapsFriendlyModeAndRconToBooleanConfigurationValues()
+	public void HumanitZ_CapturedTemplateUsesOnlyDedicatedServerSettings()
 	{
-		HumanitZConfiguration definition = new();
+		Assert.True(GameFix.TryGetConfiguration(
+			"HumanitZ",
+			out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
 		GameServer server = CreateServer("HumanitZ");
 		server.GameMode = "PVE";
 		server.EnableRcon = false;
@@ -757,10 +854,25 @@ public sealed class GameConfigurationTests : IDisposable
 
 		ConfigurationApplyResult created = definition.Apply(CreateContext(server));
 		string path = definition.ResolveFullPath(server);
+		IReadOnlyList<string> configurationPaths =
+			definition.ResolveConfigurationPaths(server);
 
 		Assert.True(created.Succeeded, created.Message);
+		Assert.True(created.Complete, created.Message);
+		Assert.Single(configurationPaths);
+		Assert.Equal(path, configurationPaths[0]);
+		Assert.EndsWith(
+			Path.Combine("HumanitZServer", "GameServerSettings.ini"),
+			path,
+			StringComparison.OrdinalIgnoreCase);
+		Assert.False(File.Exists(Path.Combine(server.InstallPath, "Engine.ini")));
+		Assert.False(File.Exists(Path.Combine(server.InstallPath, "GameUserSettings.ini")));
+		Assert.False(File.Exists(Path.Combine(server.InstallPath, "Manifest.ini")));
 		Assert.Equal("false", GetValue(path, definition.Format, "PVP").ToLowerInvariant());
 		Assert.Equal("false", GetValue(path, definition.Format, "RCONEnabled").ToLowerInvariant());
+		Assert.Equal("39", GetValue(path, definition.Format, "Version"));
+		Assert.Equal("300", GetValue(path, definition.Format, "SaveIntervalSec"));
+		Assert.Equal("1", GetValue(path, definition.Format, "Weather_Blizzard"));
 
 		server.GameMode = "PVP";
 		server.EnableRcon = true;
@@ -769,6 +881,9 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.True(updated.Succeeded, updated.Message);
 		Assert.Equal("true", GetValue(path, definition.Format, "PVP").ToLowerInvariant());
 		Assert.Equal("true", GetValue(path, definition.Format, "RCONEnabled").ToLowerInvariant());
+		Assert.DoesNotContain(
+			definition.Validate(CreateContext(server)),
+			item => item.State == ConfigurationValidationState.Failed);
 	}
 
 	[Fact]
@@ -1040,6 +1155,67 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void Icarus_CapturedTemplateCreatesTheCompleteDedicatedServerSettings()
+	{
+		Assert.Equal(
+			ConfigFileCreationMode.SynixTemplate,
+			GameFix.GetConfigFileCreationMode("Icarus"));
+		Assert.True(GameFix.TryGetConfiguration(
+			"Icarus",
+			out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		Assert.True(definition.SupportsFullReset);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.ServerName);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.ServerPassword);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.AdminPassword);
+		AssertInput(definition.SupportedInputs, ManagedConfigurationInput.MaxPlayers);
+
+		GameServer server = CreateServer("Icarus");
+		server.ServerName = "Synix Icarus Server";
+		server.MaxPlayers = 12;
+		ConfigurationContext context = CreateContext(server);
+
+		ConfigurationApplyResult created = definition.Apply(context);
+		string path = definition.ResolveFullPath(server);
+
+		Assert.True(created.Succeeded, created.Message);
+		Assert.True(created.Complete, created.Message);
+		Assert.True(created.Created);
+		Assert.EndsWith(
+			Path.Combine(
+				"Icarus",
+				"Saved",
+				"Config",
+				"WindowsServer",
+				"ServerSettings.ini"),
+			path,
+			StringComparison.OrdinalIgnoreCase);
+		Assert.Equal(12, ConfigHandler.LoadConfig(path, definition.Format).Count);
+		Assert.Equal("Synix Icarus Server", GetValue(path, definition.Format, "SessionName"));
+		Assert.Equal("server-secret", GetValue(path, definition.Format, "JoinPassword"));
+		Assert.Equal("admin-secret", GetValue(path, definition.Format, "AdminPassword"));
+		Assert.Equal("12", GetValue(path, definition.Format, "MaxPlayers"));
+		Assert.Equal("300.000000", GetValue(path, definition.Format, "ShutdownIfNotJoinedFor"));
+		Assert.Equal("300.000000", GetValue(path, definition.Format, "ShutdownIfEmptyFor"));
+		Assert.Equal("True", GetValue(path, definition.Format, "AllowNonAdminsToLaunchProspects"));
+		Assert.Equal("False", GetValue(path, definition.Format, "AllowNonAdminsToDeleteProspects"));
+		Assert.Equal("True", GetValue(path, definition.Format, "ResumeProspect"));
+		Assert.False(definition.NeedsStructuralRepair(context));
+
+		SetValue(path, definition.Format, "ShutdownIfEmptyFor", "900.000000");
+		server.MaxPlayers = 16;
+		ConfigurationApplyResult updated = definition.Apply(context);
+
+		Assert.True(updated.Succeeded, updated.Message);
+		Assert.True(updated.Complete, updated.Message);
+		Assert.Equal("16", GetValue(path, definition.Format, "MaxPlayers"));
+		Assert.Equal("900.000000", GetValue(path, definition.Format, "ShutdownIfEmptyFor"));
+		Assert.DoesNotContain(
+			definition.Validate(context),
+			item => item.State == ConfigurationValidationState.Failed);
+	}
+
+	[Fact]
 	public void CraftopiaTemplate_CreatesTheCompleteConfigurationAndAppliesSavedValues()
 	{
 		Assert.Equal(
@@ -1104,6 +1280,22 @@ public sealed class GameConfigurationTests : IDisposable
 		Assert.False(GameFix.ShouldUseManagedConfigurations(false, true));
 		Assert.True(GameFix.ShouldUseManagedConfigurations(false, false));
 		Assert.True(GameFix.ShouldUseManagedConfigurations(true, true));
+	}
+
+	[Fact]
+	public void ManualConfigResetRemainsAvailableWhenAutomaticTemplatesAreDisabled()
+	{
+		GameServer server = CreateServer("HumanitZ");
+
+		Assert.False(GameFix.ShouldUseManagedConfigurations(
+			isOfficialRelease: false,
+			disabledForDevelopment: true));
+		Assert.True(GameFix.CanManuallyResetManagedConfiguration(
+			server,
+			serverIsBusy: false));
+		Assert.False(GameFix.CanManuallyResetManagedConfiguration(
+			server,
+			serverIsBusy: true));
 	}
 
 	[Fact]

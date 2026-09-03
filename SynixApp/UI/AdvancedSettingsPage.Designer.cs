@@ -140,7 +140,7 @@ namespace Synix_Control_Panel.SynixEngine
 			lblDescription.Name = "lblDescription";
 			lblDescription.Size = new Size(648, 59);
 			lblDescription.TabIndex = 1;
-			lblDescription.Text = "Request administrator permission only for approved actions such as firewall cleanup or Network Guard operations.";
+			lblDescription.Text = "When enabled, deleting a server requests administrator permission to remove its Windows Firewall rules. Turn this off to skip automatic cleanup during deletion.";
 			//
 			// chkElevatedTasks
 			//

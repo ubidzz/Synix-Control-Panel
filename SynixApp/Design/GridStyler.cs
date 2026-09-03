@@ -253,7 +253,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 				status.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Restoring", StringComparison.OrdinalIgnoreCase) ||
 				status.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
-				status.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase))
+				status.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase) ||
+				status.StartsWith("Deleting", StringComparison.OrdinalIgnoreCase))
 			{
 				return SettingsPalette.Warning;
 			}

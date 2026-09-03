@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 4,
   "id": "enshrouded",
   "catalogOrder": 9,
   "game": "Enshrouded",
@@ -14,6 +14,8 @@
   "port": 15636,
   "queryPort": 15637,
   "appPort": null,
+  "maximumPlayers": 16,
+  "requiresAdminPassword": true,
   "worldSize": 0,
   "worldSeed": "12345",
   "maps": [
@@ -27,12 +29,30 @@
   "requiredLaunchFiles": [],
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
-  "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "needsConfigWarning": false,
+  "warningMessage": "Synix creates the complete server-generated enshrouded_server.json layout and manages the server name, player and administrator passwords, query port, and player limit. Gameplay and role permissions remain editable in the configuration editor.",
   "iconUrl": "",
   "isQueryable": true,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 4,
+    "managedInputs": [
+      "ServerName",
+      "ServerPassword",
+      "AdminPassword",
+      "MaxPlayers",
+      "QueryPort"
+    ],
+    "templates": [
+      {
+        "revision": 4,
+        "relativePath": "enshrouded_server.json",
+        "templateFile": "enshrouded_server.json"
+      }
+    ]
+  }
 }

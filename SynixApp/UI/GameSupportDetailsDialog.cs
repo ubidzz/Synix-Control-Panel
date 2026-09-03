@@ -196,7 +196,9 @@ namespace Synix_Control_Panel.SynixEngine
 		}
 
 		private static string GetPlayerDetails(GameInfo game) =>
-			GameDatabase.GetProbeProtocol(game) == ServerProbeProtocol.A2S
+			game.CrossplayDisablesPlayerTracking
+				? "Named players and player count in Steam mode; unavailable in Crossplay mode"
+				: GameDatabase.GetProbeProtocol(game) == ServerProbeProtocol.A2S
 				? "Named players and player count"
 				: GameDatabase.IsMinecraft(game.Game)
 					? "Player count; Java player names when local management or RCON is available"
@@ -205,6 +207,8 @@ namespace Synix_Control_Panel.SynixEngine
 		private static string FormatProbe(GameInfo game) =>
 			GameDatabase.IsMinecraft(game.Game)
 				? "Java status protocol or Bedrock RakNet status"
+				: game.CrossplayDisablesPlayerTracking
+					? "Steam server query; Crossplay uses PlayFab"
 				: GameDatabase.GetProbeProtocol(game) switch
 			{
 				ServerProbeProtocol.A2S => "Steam server query",
