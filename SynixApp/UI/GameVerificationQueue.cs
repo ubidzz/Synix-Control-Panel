@@ -11,17 +11,18 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 using System.ComponentModel;
 
 namespace Synix_Control_Panel.SynixEngine
 {
 	internal sealed partial class GameVerificationQueue : Form
 	{
-		private const string NeedsWorkFilter = "Needs work";
-		private const string UnknownConfigurationFilter = "Unknown configuration";
-		private const string PartiallyVerifiedFilter = "Partially verified";
-		private const string FullyVerifiedFilter = "Fully verified";
-		private const string AllGamesFilter = "All games";
+		private const string NeedsWorkFilter = "needs-work";
+		private const string UnknownConfigurationFilter = "unknown-configuration";
+		private const string PartiallyVerifiedFilter = "partially-verified";
+		private const string FullyVerifiedFilter = "fully-verified";
+		private const string AllGamesFilter = "all-games";
 
 		private IReadOnlyList<GameVerificationQueueItem> _items = [];
 
@@ -32,21 +33,59 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 
 			ThemeManager.Apply(this);
+			PopulateLocalizedOptions();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) =>
+				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
+			_exportButton.Visible = !Core.IsOfficialRelease;
+			RefreshQueue();
+		}
+
+		private void InterfaceLanguageChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			PopulateLocalizedOptions();
+			RefreshQueue();
+		}
+
+		private void PopulateLocalizedOptions()
+		{
+			string selectedFilter =
+				(_filterCombo.SelectedItem as LocalizedOption)?.Value
+				?? NeedsWorkFilter;
+			GameVerificationKind selectedStep = SelectedStep;
+
+			_filterCombo.Items.Clear();
 			_filterCombo.Items.AddRange(
 			[
-				NeedsWorkFilter,
-				UnknownConfigurationFilter,
-				PartiallyVerifiedFilter,
-				FullyVerifiedFilter,
-				AllGamesFilter
+				new LocalizedOption(
+					NeedsWorkFilter,
+					"Option.VerificationFilter.NeedsWork"),
+				new LocalizedOption(
+					UnknownConfigurationFilter,
+					"Option.VerificationFilter.UnknownConfiguration"),
+				new LocalizedOption(
+					PartiallyVerifiedFilter,
+					"Option.VerificationFilter.PartiallyVerified"),
+				new LocalizedOption(
+					FullyVerifiedFilter,
+					"Option.VerificationFilter.FullyVerified"),
+				new LocalizedOption(
+					AllGamesFilter,
+					"Option.VerificationFilter.AllGames")
 			]);
-			_filterCombo.SelectedItem = NeedsWorkFilter;
+			_filterCombo.SelectedItem = _filterCombo.Items
+				.Cast<LocalizedOption>()
+				.First(option => option.Value == selectedFilter);
+
 			_stepCombo.DataSource = Enum.GetValues<GameVerificationKind>()
 				.Select(kind => new VerificationStepOption(kind))
 				.ToArray();
 			_stepCombo.DisplayMember = nameof(VerificationStepOption.DisplayName);
-			_exportButton.Visible = !Core.IsOfficialRelease;
-			RefreshQueue();
+			_stepCombo.SelectedItem = (_stepCombo.DataSource as
+				IEnumerable<VerificationStepOption>)?.FirstOrDefault(
+					option => option.Kind == selectedStep);
 		}
 
 		private GameVerificationQueueItem? SelectedItem =>
@@ -76,7 +115,9 @@ namespace Synix_Control_Panel.SynixEngine
 		private void ApplyFilter()
 		{
 			string search = _searchBox.Text.Trim();
-			string filter = _filterCombo.SelectedItem?.ToString() ?? NeedsWorkFilter;
+			string filter =
+				(_filterCombo.SelectedItem as LocalizedOption)?.Value
+				?? NeedsWorkFilter;
 			IEnumerable<GameVerificationQueueItem> visibleItems = _items.Where(item =>
 				search.Length == 0 ||
 				item.Game.Contains(search, StringComparison.OrdinalIgnoreCase));
@@ -196,7 +237,7 @@ namespace Synix_Control_Panel.SynixEngine
 				GameVerificationKind.Stop or
 				GameVerificationKind.Monitoring)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Install, Start, Stop, and Monitoring evidence is recorded automatically by the real Synix server workflow and cannot be marked manually.",
 					"Automatic Verification",
@@ -208,7 +249,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (SelectedStep == GameVerificationKind.Configuration &&
 				!item.HasKnownConfigurationBehavior)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Set the game's configuration behavior and add any required template information before marking its configuration as verified.",
 					"Configuration Definition Required",
@@ -220,7 +261,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (SelectedStep == GameVerificationKind.Configuration &&
 				!item.ConfigurationApplicable)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"This game is managed entirely through launch arguments, so a separate configuration-file test is not required.",
 					"Configuration Test Not Required",
@@ -245,7 +286,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (item == null)
 				return;
 
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
 				$"Remove the {FormatStepName(SelectedStep).ToLowerInvariant()} verification from {item.Game}?",
 				"Clear Verification Evidence",
@@ -294,7 +335,7 @@ namespace Synix_Control_Panel.SynixEngine
 				_statusLabel.Text =
 					$"Exported {result.EvidenceCount} verification checks for {result.GameCount} games into the project.";
 				_statusLabel.ForeColor = SettingsPalette.Success;
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					$"Saved project verification evidence to:\n\n{result.FilePath}\n\nRebuild Synix and run the built-in definition tests before releasing.",
 					"Verification Exported",
@@ -309,7 +350,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				_statusLabel.Text = exception.Message;
 				_statusLabel.ForeColor = SettingsPalette.Danger;
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
 					"Verification Export Failed",
@@ -400,12 +441,18 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			return kind switch
 			{
-				GameVerificationKind.Install => "Install",
-				GameVerificationKind.Start => "Start",
-				GameVerificationKind.Stop => "Stop",
-				GameVerificationKind.Monitoring => "Monitoring",
-				GameVerificationKind.Arguments => "Arguments",
-				GameVerificationKind.Configuration => "Configuration",
+				GameVerificationKind.Install =>
+					LocalizationManager.Get("VerificationStep.Install"),
+				GameVerificationKind.Start =>
+					LocalizationManager.Get("VerificationStep.Start"),
+				GameVerificationKind.Stop =>
+					LocalizationManager.Get("VerificationStep.Stop"),
+				GameVerificationKind.Monitoring =>
+					LocalizationManager.Get("VerificationStep.Monitoring"),
+				GameVerificationKind.Arguments =>
+					LocalizationManager.Get("VerificationStep.Arguments"),
+				GameVerificationKind.Configuration =>
+					LocalizationManager.Get("VerificationStep.Configuration"),
 				_ => kind.ToString()
 			};
 		}

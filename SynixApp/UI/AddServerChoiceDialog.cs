@@ -4,6 +4,7 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -21,7 +22,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		internal AddServerChoiceDialog()
 		{
-			Text = "Add a Server";
+			Text = LocalizationManager.Get("AddServer.Title");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -34,7 +35,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			Controls.Add(new Label
 			{
-				Text = "How would you like to add a server?",
+				Text = LocalizationManager.Get("AddServer.Heading"),
 				Font = new Font("Segoe UI", 19F, FontStyle.Bold),
 				Location = new Point(28, 24),
 				Size = new Size(660, 42),
@@ -42,31 +43,31 @@ namespace Synix_Control_Panel.SynixEngine
 			});
 			Controls.Add(new Label
 			{
-				Text = "Synix can install a new server or safely register files that are already on this PC.",
+				Text = LocalizationManager.Get("AddServer.Subtitle"),
 				Location = new Point(30, 70),
 				Size = new Size(650, 28),
 				ForeColor = SettingsPalette.SecondaryText
 			});
 
 			AddChoiceCard(
-				"Create and install a new server",
-				"Choose the game and settings, then let Synix download the server files.",
+				LocalizationManager.Get("AddServer.Create.Title"),
+				LocalizationManager.Get("AddServer.Create.Description"),
 				112,
-				"Create New",
+				LocalizationManager.Get("AddServer.Create.Button"),
 				AddServerChoice.CreateNew,
 				true);
 			AddChoiceCard(
-				"Import an existing server",
-				"Point Synix to an existing server folder. Your files are not moved or replaced.",
+				LocalizationManager.Get("AddServer.Import.Title"),
+				LocalizationManager.Get("AddServer.Import.Description"),
 				208,
-				"Import Existing",
+				LocalizationManager.Get("AddServer.Import.Button"),
 				AddServerChoice.ImportExisting,
 				false);
 			AddChoiceCard(
-				"Check game support first",
-				"Search the catalog to see executable, configuration, crossplay, and player-query support.",
+				LocalizationManager.Get("AddServer.Catalog.Title"),
+				LocalizationManager.Get("AddServer.Catalog.Description"),
 				304,
-				"View Catalog",
+				LocalizationManager.Get("AddServer.Catalog.Button"),
 				AddServerChoice.BrowseCatalog,
 				false);
 

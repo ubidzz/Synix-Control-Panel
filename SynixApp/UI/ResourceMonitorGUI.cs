@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Reflection;
@@ -57,14 +58,37 @@ namespace Synix_Control_Panel
 			_serverFilter = serverFilter;
 			InitializeComponent();
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+			{
 				ThemeManager.Apply(this);
+				LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+				Disposed += (_, _) =>
+					LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
+			}
+			ApplyLocalizedChrome();
+		}
+
+		private void InterfaceLanguageChanged(object? sender, EventArgs eventArgs)
+		{
+			ApplyLocalizedChrome();
+			resourceGrid.Invalidate();
+		}
+
+		private void ApplyLocalizedChrome()
+		{
 			if (_serverFilter != null)
 			{
-				Text = $"Live Process Details - {_serverFilter.ServerName}";
-				lblGridTitle.Text = $"Live Process Details  •  {_serverFilter.ServerName}";
-				lblGridSubtitle.Text = "Every launcher, console host, and game process Synix has verified inside this server group.";
+				Text = LocalizationManager.Get(
+					"ResourceMonitor.WindowTitleFiltered",
+					_serverFilter.ServerName);
+				lblGridTitle.Text = LocalizationManager.Get(
+					"ResourceMonitor.GridTitleFiltered",
+					_serverFilter.ServerName);
+				lblGridSubtitle.Text = LocalizationManager.Get(
+					"ResourceMonitor.FilteredSubtitle");
 			}
-			lblActiveServersTitle.Text = "Active Processes";
+
+			lblActiveServersTitle.Text = LocalizationManager.TranslateKnownText(
+				"Active Processes");
 		}
 
 		protected override void OnShown(EventArgs eventArgs)
@@ -227,12 +251,14 @@ namespace Synix_Control_Panel
 					}
 
 					row.SetValues(
-						"●  Running",
+						LocalizationManager.Get("ResourceMonitor.RowRunning"),
 						process.ServerName,
 						process.ProcessId.ToString(),
 						$"{process.ExecutableName}  •  {process.ProcessRole}",
 						$"{process.CpuPercentage:N1}%",
-						$"{process.RamGb:N2} GB");
+						LocalizationManager.Get(
+							"ResourceMonitor.RamValue",
+							process.RamGb));
 					row.Cells[colExecutable.Index].ToolTipText =
 						string.IsNullOrWhiteSpace(process.ExecutablePath)
 							? process.ExecutableName
@@ -277,26 +303,36 @@ namespace Synix_Control_Panel
 				100);
 
 			lblTotalCpuValue.Text = $"{_currentTotalCpuPercentage:N1}%";
-			lblTotalCpuCaption.Text = "Across all managed server processes";
-			lblTotalRamValue.Text = $"{totalRamGb:N2} GB";
-			lblTotalRamCaption.Text =
-				$"{_currentTotalRamPercentage:N1}% of {totalSystemRamGb:N1} GB system memory";
+			lblTotalCpuCaption.Text = LocalizationManager.Get(
+				"ResourceMonitor.CpuCaption");
+			lblTotalRamValue.Text = LocalizationManager.Get(
+				"ResourceMonitor.RamValue",
+				totalRamGb);
+			lblTotalRamCaption.Text = LocalizationManager.Get(
+				"ResourceMonitor.RamCaption",
+				_currentTotalRamPercentage,
+				totalSystemRamGb);
 			lblActiveServersValue.Text = runningProcessCount.ToString();
 			lblActiveIndicator.ForeColor = runningProcessCount > 0
 				? SuccessColor
 				: SettingsPalette.DisabledText;
 			lblActiveServersCaption.Text = runningProcessCount switch
 			{
-				0 => "No running server processes detected",
-				1 => "1 server process is currently online",
-				_ => $"{runningProcessCount} server processes are currently online"
+				0 => LocalizationManager.Get("ResourceMonitor.Active.None"),
+				1 => LocalizationManager.Get("ResourceMonitor.Active.One"),
+				_ => LocalizationManager.Get(
+					"ResourceMonitor.Active.Many",
+					runningProcessCount)
 			};
 
 			lblServerCount.Text = runningProcessCount == 1
-				? "1 running process"
-				: $"{runningProcessCount} running processes";
-			lblLastUpdated.Text =
-				$"Updated {DateTime.Now:h:mm:ss tt}  •  Auto-refresh every 1 second";
+				? LocalizationManager.Get("ResourceMonitor.ProcessCount.One")
+				: LocalizationManager.Get(
+					"ResourceMonitor.ProcessCount.Many",
+					runningProcessCount);
+			lblLastUpdated.Text = LocalizationManager.Get(
+				"ResourceMonitor.LastUpdated",
+				DateTime.Now);
 
 			pnlRamFill.BackColor = _currentTotalRamPercentage switch
 			{
@@ -417,7 +453,7 @@ namespace Synix_Control_Panel
 
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
-				"No running game servers detected",
+				LocalizationManager.Get("ResourceMonitor.Empty"),
 				resourceGrid.Font,
 				messageBounds,
 				SettingsPalette.MutedText,

@@ -481,7 +481,7 @@ namespace Synix_Control_Panel.Help
 					_server,
 					out IReadOnlyList<DiscordWebhookRoute> routes))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Synix could not unlock the saved Discord webhook information. Open Server Settings and save the webhooks again.",
 					"Discord Webhooks Unavailable",

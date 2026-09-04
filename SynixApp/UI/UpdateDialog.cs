@@ -85,7 +85,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"Windows could not open the GitHub release page.",
 					"Unable to Open GitHub",
 					MessageBoxButtons.OK,

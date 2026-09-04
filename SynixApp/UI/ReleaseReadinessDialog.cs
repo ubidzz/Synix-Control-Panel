@@ -93,7 +93,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (_projectDirectory is null)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Synix could not find the project folder. Run this checker from a Visual Studio Build or Rebuild of the Synix project.",
 					"Project Folder Not Found",
@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			if (string.IsNullOrWhiteSpace(_publishDirectory))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Choose the folder containing the published Synix files first.",
 					"Publish Folder Required",
@@ -174,7 +174,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Windows could not copy the release report.",
 					"Copy Failed",

@@ -52,7 +52,7 @@ namespace Synix_Control_Panel.SynixApp.UI
 			}
 			catch
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Windows could not copy the configuration report.",
 					"Copy Failed",

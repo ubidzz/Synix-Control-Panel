@@ -44,6 +44,7 @@ namespace Synix_Control_Panel.SynixEngine
 			txtWhatHappened = new TextBox();
 			lblExpected = new Label();
 			txtExpected = new TextBox();
+			lblEnglishReportWarning = new Label();
 			lblPrivacyNotice = new Label();
 			systemCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
 			lblSystemTitle = new Label();
@@ -92,6 +93,7 @@ namespace Synix_Control_Panel.SynixEngine
 			reportCard.Controls.Add(txtWhatHappened);
 			reportCard.Controls.Add(lblExpected);
 			reportCard.Controls.Add(txtExpected);
+			reportCard.Controls.Add(lblEnglishReportWarning);
 			reportCard.Controls.Add(lblPrivacyNotice);
 			reportCard.CornerRadius = 13;
 			reportCard.FillColor = Color.FromArgb(17, 27, 45);
@@ -220,6 +222,16 @@ namespace Synix_Control_Panel.SynixEngine
 		txtExpected.ScrollBars = ScrollBars.Vertical;
 		txtExpected.Size = new Size(744, 72);
 		txtExpected.TabIndex = 10;
+		lblEnglishReportWarning.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+		lblEnglishReportWarning.BackColor = Color.FromArgb(17, 27, 45);
+		lblEnglishReportWarning.Font = new Font("Segoe UI", 8.75F, FontStyle.Bold);
+		lblEnglishReportWarning.ForeColor = Color.FromArgb(45, 212, 191);
+		lblEnglishReportWarning.Location = new Point(22, 418);
+		lblEnglishReportWarning.Name = "lblEnglishReportWarning";
+		lblEnglishReportWarning.Size = new Size(744, 36);
+		lblEnglishReportWarning.TabIndex = 11;
+		lblEnglishReportWarning.Text = "Important: Write the summary and report details in English so the Synix support team can review them.";
+		lblEnglishReportWarning.Visible = false;
 		lblPrivacyNotice.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 		lblPrivacyNotice.BackColor = Color.FromArgb(17, 27, 45);
 		lblPrivacyNotice.Font = new Font("Segoe UI", 8.75F);
@@ -227,7 +239,7 @@ namespace Synix_Control_Panel.SynixEngine
 		lblPrivacyNotice.Location = new Point(22, 426);
 		lblPrivacyNotice.Name = "lblPrivacyNotice";
 		lblPrivacyNotice.Size = new Size(744, 38);
-		lblPrivacyNotice.TabIndex = 11;
+		lblPrivacyNotice.TabIndex = 12;
 		lblPrivacyNotice.Text = "Do not paste passwords, webhooks, IP addresses, private configuration, or full launch commands. Synix removes common secrets before sending.";
 		systemCard.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 		systemCard.BackColor = Color.FromArgb(17, 27, 45);
@@ -406,6 +418,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private TextBox txtWhatHappened = null!;
 		private Label lblExpected = null!;
 		private TextBox txtExpected = null!;
+		private Label lblEnglishReportWarning = null!;
 		private Label lblPrivacyNotice = null!;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard systemCard = null!;
 		private Label lblSystemTitle = null!;

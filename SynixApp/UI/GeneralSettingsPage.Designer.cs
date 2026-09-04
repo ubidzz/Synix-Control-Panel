@@ -55,6 +55,13 @@ namespace Synix_Control_Panel.SynixEngine
 			cmbSteamCmdDownloadMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
 			numSteamCmdDownloadLimit = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown();
 			lblSteamCmdDownloadUnit = new Label();
+			settingsCardLanguage = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			cardLayoutLanguage = new TableLayoutPanel();
+			settingGlyphLanguage = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			textLayoutLanguage = new TableLayoutPanel();
+			lblTitleLanguage = new Label();
+			lblDescriptionLanguage = new Label();
+			cmbLanguage = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
 			settingsCard.SuspendLayout();
 			cardLayout.SuspendLayout();
 			textLayout.SuspendLayout();
@@ -66,6 +73,9 @@ namespace Synix_Control_Panel.SynixEngine
 			textLayoutSteamDownloads.SuspendLayout();
 			downloadControlsLayout.SuspendLayout();
 			(numSteamCmdDownloadLimit).BeginInit();
+			settingsCardLanguage.SuspendLayout();
+			cardLayoutLanguage.SuspendLayout();
+			textLayoutLanguage.SuspendLayout();
 			SuspendLayout();
 			// 
 			// settingsCard
@@ -439,12 +449,126 @@ namespace Synix_Control_Panel.SynixEngine
 			lblSteamCmdDownloadUnit.TabIndex = 2;
 			lblSteamCmdDownloadUnit.Text = "Mbps";
 			lblSteamCmdDownloadUnit.TextAlign = ContentAlignment.MiddleLeft;
-			// 
+			//
+			// settingsCardLanguage
+			//
+			settingsCardLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			settingsCardLanguage.BackColor = Color.FromArgb(17, 27, 45);
+			settingsCardLanguage.BorderColor = Color.FromArgb(38, 52, 77);
+			settingsCardLanguage.Controls.Add(cardLayoutLanguage);
+			settingsCardLanguage.CornerRadius = 13;
+			settingsCardLanguage.FillColor = Color.FromArgb(17, 27, 45);
+			settingsCardLanguage.Location = new Point(0, 414);
+			settingsCardLanguage.Margin = new Padding(0);
+			settingsCardLanguage.Name = "settingsCardLanguage";
+			settingsCardLanguage.Size = new Size(818, 106);
+			settingsCardLanguage.TabIndex = 3;
+			//
+			// cardLayoutLanguage
+			//
+			cardLayoutLanguage.BackColor = Color.FromArgb(17, 27, 45);
+			cardLayoutLanguage.ColumnCount = 3;
+			cardLayoutLanguage.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));
+			cardLayoutLanguage.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			cardLayoutLanguage.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 220F));
+			cardLayoutLanguage.Controls.Add(settingGlyphLanguage, 0, 0);
+			cardLayoutLanguage.Controls.Add(textLayoutLanguage, 1, 0);
+			cardLayoutLanguage.Controls.Add(cmbLanguage, 2, 0);
+			cardLayoutLanguage.Dock = DockStyle.Fill;
+			cardLayoutLanguage.Location = new Point(0, 0);
+			cardLayoutLanguage.Margin = new Padding(0);
+			cardLayoutLanguage.Name = "cardLayoutLanguage";
+			cardLayoutLanguage.Padding = new Padding(22, 14, 20, 14);
+			cardLayoutLanguage.RowCount = 1;
+			cardLayoutLanguage.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			cardLayoutLanguage.Size = new Size(818, 106);
+			cardLayoutLanguage.TabIndex = 0;
+			//
+			// settingGlyphLanguage
+			//
+			settingGlyphLanguage.BackColor = Color.FromArgb(17, 27, 45);
+			settingGlyphLanguage.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+			settingGlyphLanguage.ForeColor = Color.FromArgb(32, 214, 199);
+			settingGlyphLanguage.Glyph = "A";
+			settingGlyphLanguage.Location = new Point(22, 18);
+			settingGlyphLanguage.Margin = new Padding(0, 4, 12, 0);
+			settingGlyphLanguage.Name = "settingGlyphLanguage";
+			settingGlyphLanguage.Size = new Size(42, 42);
+			settingGlyphLanguage.TabIndex = 0;
+			//
+			// textLayoutLanguage
+			//
+			textLayoutLanguage.BackColor = Color.FromArgb(17, 27, 45);
+			textLayoutLanguage.ColumnCount = 1;
+			textLayoutLanguage.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			textLayoutLanguage.Controls.Add(lblTitleLanguage, 0, 0);
+			textLayoutLanguage.Controls.Add(lblDescriptionLanguage, 0, 1);
+			textLayoutLanguage.Dock = DockStyle.Fill;
+			textLayoutLanguage.Location = new Point(80, 14);
+			textLayoutLanguage.Margin = new Padding(0);
+			textLayoutLanguage.Name = "textLayoutLanguage";
+			textLayoutLanguage.RowCount = 2;
+			textLayoutLanguage.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
+			textLayoutLanguage.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			textLayoutLanguage.Size = new Size(498, 78);
+			textLayoutLanguage.TabIndex = 1;
+			//
+			// lblTitleLanguage
+			//
+			lblTitleLanguage.AutoEllipsis = true;
+			lblTitleLanguage.BackColor = Color.FromArgb(17, 27, 45);
+			lblTitleLanguage.Dock = DockStyle.Fill;
+			lblTitleLanguage.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblTitleLanguage.ForeColor = Color.FromArgb(245, 247, 251);
+			lblTitleLanguage.Location = new Point(0, 0);
+			lblTitleLanguage.Margin = new Padding(0);
+			lblTitleLanguage.Name = "lblTitleLanguage";
+			lblTitleLanguage.Size = new Size(498, 31);
+			lblTitleLanguage.TabIndex = 0;
+			lblTitleLanguage.Text = "Language";
+			lblTitleLanguage.TextAlign = ContentAlignment.MiddleLeft;
+			//
+			// lblDescriptionLanguage
+			//
+			lblDescriptionLanguage.AutoEllipsis = true;
+			lblDescriptionLanguage.BackColor = Color.FromArgb(17, 27, 45);
+			lblDescriptionLanguage.Dock = DockStyle.Fill;
+			lblDescriptionLanguage.Font = new Font("Segoe UI", 9.5F);
+			lblDescriptionLanguage.ForeColor = Color.FromArgb(158, 172, 194);
+			lblDescriptionLanguage.Location = new Point(0, 31);
+			lblDescriptionLanguage.Margin = new Padding(0);
+			lblDescriptionLanguage.Name = "lblDescriptionLanguage";
+			lblDescriptionLanguage.Size = new Size(498, 47);
+			lblDescriptionLanguage.TabIndex = 1;
+			lblDescriptionLanguage.Text = "Choose the language used by Synix. Game settings and configuration values remain in English.";
+			//
+			// cmbLanguage
+			//
+			cmbLanguage.AccessibleName = "Interface language";
+			cmbLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			cmbLanguage.ArrowColor = Color.FromArgb(158, 172, 194);
+			cmbLanguage.BackColor = Color.FromArgb(12, 21, 36);
+			cmbLanguage.BorderColor = Color.FromArgb(38, 52, 77);
+			cmbLanguage.DrawMode = DrawMode.OwnerDrawFixed;
+			cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+			cmbLanguage.FlatStyle = FlatStyle.Flat;
+			cmbLanguage.FocusBorderColor = Color.FromArgb(32, 214, 199);
+			cmbLanguage.Font = new Font("Segoe UI", 10F);
+			cmbLanguage.ForeColor = Color.FromArgb(245, 247, 251);
+			cmbLanguage.ItemHeight = 28;
+			cmbLanguage.Location = new Point(588, 34);
+			cmbLanguage.Margin = new Padding(10, 20, 0, 0);
+			cmbLanguage.Name = "cmbLanguage";
+			cmbLanguage.SelectedItemBackColor = Color.FromArgb(24, 55, 73);
+			cmbLanguage.Size = new Size(190, 34);
+			cmbLanguage.TabIndex = 2;
+			//
 			// GeneralSettingsPage
-			// 
+			//
 			AutoScaleDimensions = new SizeF(96F, 96F);
 			AutoScaleMode = AutoScaleMode.Dpi;
 			BackColor = Color.FromArgb(8, 13, 24);
+			Controls.Add(settingsCardLanguage);
 			Controls.Add(settingsCardSteamDownloads);
 			Controls.Add(settingsCardDarkMode);
 			Controls.Add(settingsCard);
@@ -461,6 +585,9 @@ namespace Synix_Control_Panel.SynixEngine
 			textLayoutSteamDownloads.ResumeLayout(false);
 			downloadControlsLayout.ResumeLayout(false);
 			(numSteamCmdDownloadLimit).EndInit();
+			settingsCardLanguage.ResumeLayout(false);
+			cardLayoutLanguage.ResumeLayout(false);
+			textLayoutLanguage.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -490,5 +617,12 @@ namespace Synix_Control_Panel.SynixEngine
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbSteamCmdDownloadMode;
 		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown numSteamCmdDownloadLimit;
 		private Label lblSteamCmdDownloadUnit;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCardLanguage;
+		private TableLayoutPanel cardLayoutLanguage;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyphLanguage;
+		private TableLayoutPanel textLayoutLanguage;
+		private Label lblTitleLanguage;
+		private Label lblDescriptionLanguage;
+		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbLanguage;
 	}
 }

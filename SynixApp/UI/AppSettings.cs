@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.Localization;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -42,6 +43,10 @@ namespace Synix_Control_Panel.SynixEngine
 		private bool _configurationCollectionInProgress;
 		private string? _selectedImportPackage;
 		private bool _selectedImportPasswordProtected = true;
+		private string _currentPageHeadingKey =
+			"SettingsPage.General.Heading";
+		private string _currentPageSubtitleKey =
+			"SettingsPage.General.Subtitle";
 
 		public AppSettings()
 		{
@@ -50,8 +55,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowPage(
 				generalSettingsPage,
 				btnGeneral,
-				"General",
-				"Configure basic Synix behavior on this computer.");
+				"SettingsPage.General.Heading",
+				"SettingsPage.General.Subtitle");
 
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
 			{
@@ -59,8 +64,9 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			ThemeManager.Apply(this);
 
-			lblVersion.Text =
-				$"SYNIX CONTROL PANEL  •  v{Application.ProductVersion}";
+			lblVersion.Text = LocalizationManager.Get(
+				"Settings.VersionLabel",
+				Application.ProductVersion);
 
 			WireSettingsEvents();
 			LoadSavedSettings();
@@ -153,6 +159,8 @@ namespace Synix_Control_Panel.SynixEngine
 				SteamCmdDownloadModeChanged;
 			generalSettingsPage.SteamCmdDownloadLimitChanged +=
 				SteamCmdDownloadLimitChanged;
+			generalSettingsPage.UiLanguageChanged +=
+				UiLanguageChanged;
 			backupSettingsPage.CustomBackupChanged +=
 				CustomBackupChanged;
 			backupSettingsPage.BrowseRequested +=
@@ -211,6 +219,8 @@ namespace Synix_Control_Panel.SynixEngine
 					Properties.Settings.Default.SteamCmdDownloadLimitMbps;
 				generalSettingsPage.LimitSteamCmdDownloadSpeed =
 					Properties.Settings.Default.LimitSteamCmdDownloadSpeed;
+				generalSettingsPage.UiLanguageCode =
+					Properties.Settings.Default.UiLanguage;
 				backupSettingsPage.UseCustomBackupPath =
 					Properties.Settings.Default.UseCustomBackupPath;
 
@@ -245,8 +255,8 @@ namespace Synix_Control_Panel.SynixEngine
 		private void ShowPage(
 			Control page,
 			ModernSettingsNavButton selectedButton,
-			string heading,
-			string subtitle)
+			string headingKey,
+			string subtitleKey)
 		{
 			generalSettingsPage.Visible =
 				ReferenceEquals(page, generalSettingsPage);
@@ -270,9 +280,18 @@ namespace Synix_Control_Panel.SynixEngine
 			btnDevelopment.Selected =
 				ReferenceEquals(selectedButton, btnDevelopment);
 
-			lblPageHeading.Text = heading;
-			lblPageSubtitle.Text = subtitle;
+			_currentPageHeadingKey = headingKey;
+			_currentPageSubtitleKey = subtitleKey;
+			UpdateCurrentPageHeader();
 			page.BringToFront();
+		}
+
+		private void UpdateCurrentPageHeader()
+		{
+			lblPageHeading.Text =
+				LocalizationManager.Get(_currentPageHeadingKey);
+			lblPageSubtitle.Text =
+				LocalizationManager.Get(_currentPageSubtitleKey);
 		}
 
 		private void btnGeneral_Click(object? sender, EventArgs eventArgs)
@@ -280,8 +299,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowPage(
 				generalSettingsPage,
 				btnGeneral,
-				"General",
-				"Configure basic Synix behavior on this computer.");
+				"SettingsPage.General.Heading",
+				"SettingsPage.General.Subtitle");
 		}
 
 		private void btnBackups_Click(object? sender, EventArgs eventArgs)
@@ -289,8 +308,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowPage(
 				backupSettingsPage,
 				btnBackups,
-				"Backups",
-				"Manage server backups or move Synix to another computer.");
+				"SettingsPage.Backups.Heading",
+				"SettingsPage.Backups.Subtitle");
 		}
 
 		private void btnPrivacy_Click(object? sender, EventArgs eventArgs)
@@ -298,8 +317,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowPage(
 				privacySettingsPage,
 				btnPrivacy,
-				"Privacy & Security",
-				"Control how sensitive server information is displayed.");
+				"SettingsPage.Privacy.Heading",
+				"SettingsPage.Privacy.Subtitle");
 		}
 
 		private void btnAdvanced_Click(object? sender, EventArgs eventArgs)
@@ -307,8 +326,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowPage(
 				advancedSettingsPage,
 				btnAdvanced,
-				"Advanced",
-				"Configure elevated operations and advanced system behavior.");
+				"SettingsPage.Advanced.Heading",
+				"SettingsPage.Advanced.Subtitle");
 		}
 
 		private void btnReportProblem_Click(
@@ -318,8 +337,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowPage(
 				problemReportSettingsPage,
 				btnReportProblem,
-				"Report a Problem",
-				"Create a privacy-filtered compatibility report for Synix support.");
+				"SettingsPage.ReportProblem.Heading",
+				"SettingsPage.ReportProblem.Subtitle");
 		}
 
 		private void ReleaseReadinessRequested(
@@ -501,7 +520,7 @@ namespace Synix_Control_Panel.SynixEngine
 			EventArgs eventArgs)
 		{
 			advancedSettingsPage.SetFirewallCleanupState(
-				"Checking Windows Firewall program paths...",
+				LocalizationManager.Get("Advanced.Firewall.CheckingPaths"),
 				false,
 				inProgress: true);
 			FirewallOrphanScanResult scan = await Task.Run(() =>
@@ -527,13 +546,13 @@ namespace Synix_Control_Panel.SynixEngine
 			if (confirmation.ShowDialog(this) != DialogResult.OK)
 			{
 				advancedSettingsPage.SetFirewallCleanupState(
-					"Cleanup canceled. No firewall rules were changed.",
+					LocalizationManager.Get("Advanced.Firewall.Canceled"),
 					false);
 				return;
 			}
 
 			advancedSettingsPage.SetFirewallCleanupState(
-				"Waiting for administrator permission...",
+				LocalizationManager.Get("Advanced.Firewall.WaitingForAdmin"),
 				false,
 				inProgress: true);
 			ElevatedFirewallCleanupResult cleanup =
@@ -558,7 +577,9 @@ namespace Synix_Control_Panel.SynixEngine
 			bool verified = verification.Succeeded &&
 				verification.ExecutablePaths.Count == 0;
 			string resultMessage = verified
-				? $"Removed and verified {scan.ExecutablePaths.Count} orphaned executable path(s)."
+				? LocalizationManager.Get(
+					"Advanced.Firewall.RemovedVerified",
+					scan.ExecutablePaths.Count)
 				: cleanup.Message;
 			advancedSettingsPage.SetFirewallCleanupState(
 				resultMessage,
@@ -604,8 +625,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ShowPage(
 				developmentSettingsPage,
 				btnDevelopment,
-				"Development",
-				"Manage configuration capture and release testing tools.");
+				"SettingsPage.Development.Heading",
+				"SettingsPage.Development.Subtitle");
 		}
 
 		private void UsePremadeConfigurationsChanged(
@@ -694,7 +715,7 @@ namespace Synix_Control_Panel.SynixEngine
 					message.Append("Open the capture folder now?");
 				}
 
-				DialogResult response = MessageBox.Show(
+				DialogResult response = LocalizedMessageBox.Show(
 					this,
 					message.ToString(),
 					"Generated configuration collection",
@@ -713,7 +734,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
 					"Configuration collection failed",
@@ -810,6 +831,25 @@ namespace Synix_Control_Panel.SynixEngine
 			Properties.Settings.Default.Save();
 		}
 
+		private void UiLanguageChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			if (_loadingSettings)
+			{
+				return;
+			}
+
+			string languageCode = generalSettingsPage.UiLanguageCode;
+			Properties.Settings.Default.UiLanguage = languageCode;
+			Properties.Settings.Default.Save();
+			LocalizationManager.SetLanguage(languageCode);
+			UpdateCurrentPageHeader();
+			lblVersion.Text = LocalizationManager.Get(
+				"Settings.VersionLabel",
+				Application.ProductVersion);
+		}
+
 		private async void ExportSynixRequested(
 			object? sender,
 			EventArgs eventArgs)
@@ -833,7 +873,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!passwordProtected)
 			{
-				DialogResult unencryptedConfirmation = MessageBox.Show(
+				DialogResult unencryptedConfirmation = LocalizedMessageBox.Show(
 					this,
 					"A normal export is not encrypted. Anyone who gets the file can read " +
 					"settings, saved data, and any passwords written inside game configuration files.\n\n" +
@@ -879,7 +919,7 @@ namespace Synix_Control_Panel.SynixEngine
 			string estimateMessage = BuildExportEstimateMessage(estimate);
 			if (!estimate.HasEnoughSpace)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					estimateMessage,
 					"Not Enough Free Space",
@@ -888,7 +928,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			DialogResult continueExport = MessageBox.Show(
+			DialogResult continueExport = LocalizedMessageBox.Show(
 				this,
 				estimateMessage +
 					(passwordProtected
@@ -918,7 +958,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!FileHandler.SaveServers())
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Synix could not safely save the current server list. The export was not started.",
 					"Unable to Save Synix",
@@ -987,7 +1027,7 @@ namespace Synix_Control_Panel.SynixEngine
 				_selectedImportPasswordProtected = true;
 				backupSettingsPage.ShowImportSelectionPrompt();
 				backupSettingsPage.SetVerifyPackageReady(false);
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"The selected transfer package could not be found. Choose it again.",
 					"Transfer Package Not Found",
@@ -1000,7 +1040,7 @@ namespace Synix_Control_Panel.SynixEngine
 				Directory.EnumerateFileSystemEntries(Core.RootPath).Any();
 			if (existingFiles)
 			{
-				DialogResult confirmation = MessageBox.Show(
+				DialogResult confirmation = LocalizedMessageBox.Show(
 					this,
 					"Importing will replace files with the same names in C:\\Synix. " +
 					"Other files will be left in place.\n\n" +
@@ -1081,7 +1121,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (Core.Instance.isDownloadActive ||
 				(MainGUI.Instance?.isDownloadActive ?? false))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Wait for the current installation, update, backup, or transfer to finish before verifying a package.",
 					"Synix is busy",
@@ -1097,7 +1137,7 @@ namespace Synix_Control_Panel.SynixEngine
 				_selectedImportPasswordProtected = true;
 				backupSettingsPage.ShowImportSelectionPrompt();
 				backupSettingsPage.SetVerifyPackageReady(false);
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"The selected transfer package could not be found. Choose it again.",
 					"Transfer Package Not Found",
@@ -1174,7 +1214,7 @@ namespace Synix_Control_Panel.SynixEngine
 					_selectedImportPackage = null;
 					_selectedImportPasswordProtected = true;
 					backupSettingsPage.SetVerifyPackageReady(false);
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						this,
 						$"This import may need about " +
 						$"{FormatBytes(estimate.AdditionalSpaceRequiredBytes)} of working space " +
@@ -1188,7 +1228,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
 					"Package Estimate Failed",
@@ -1282,7 +1322,7 @@ namespace Synix_Control_Panel.SynixEngine
 				backupSettingsPage.ReportTransferProgress(new(
 					"Synix could not calculate the transfer size.",
 					0));
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
 					"Export Size Check Failed",
@@ -1406,7 +1446,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return true;
 			}
 
-			MessageBox.Show(
+			LocalizedMessageBox.Show(
 				this,
 				"Stop every game server and wait for installations, updates, validations, and backups to finish before transferring Synix.",
 				"Synix is busy",
@@ -1431,7 +1471,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				await Task.Run(async () => await operation(progress));
 
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					successMessage,
 					successTitle,
@@ -1444,7 +1484,7 @@ namespace Synix_Control_Panel.SynixEngine
 				backupSettingsPage.ReportTransferProgress(new(
 					"Transfer did not complete.",
 					0));
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
 					"Synix transfer failed",

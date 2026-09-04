@@ -113,10 +113,12 @@ namespace Synix_Control_Panel.SynixApp.Design
 				graphics.DrawArc(progressPen, ringBounds, -90F, Math.Max(2F, ratio * 360F));
 			}
 
-			string unit = _gaugeLabel.Contains("RAM", StringComparison.OrdinalIgnoreCase)
-				? "GB"
-				: "%";
-			string valueText = _value.ToString("0.0");
+			string unit = _gaugeLabel
+				.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+				.LastOrDefault() ?? string.Empty;
+			string valueText = _value.ToString(
+				"0.0",
+				System.Globalization.CultureInfo.CurrentUICulture);
 
 			Rectangle valueBounds = new(0, Height / 2 - 15, Width, 22);
 			Rectangle unitBounds = new(0, Height / 2 + 5, Width, 15);

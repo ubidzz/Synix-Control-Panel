@@ -16,6 +16,7 @@ using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
@@ -347,7 +348,9 @@ namespace Synix_Control_Panel
 			_completionLabel = new Label
 			{
 				Name = "lblSetupCompletion",
-				Text = "Setup completion: 0%",
+				Text = LocalizationManager.Get(
+					"ServerSetup.Completion",
+					0),
 				Location = new Point(22, 123),
 				Size = new Size(166, 20),
 				Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
@@ -451,13 +454,15 @@ namespace Synix_Control_Panel
 				? "Validation is waiting for the required server information."
 				: _validationMessage.Trim();
 
-			lblSidebarStatus.Text = ready ? "●  Ready to save" : "●  Action required";
+			lblSidebarStatus.Text = LocalizationManager.Get(ready
+				? "ServerSetup.Status.Ready"
+				: "ServerSetup.Status.ActionRequired");
 			lblSidebarStatus.ForeColor = ready
 				? SettingsPalette.Accent
 				: SettingsPalette.Warning;
-			lblSidebarStatusDetail.Text = ready
-				? "All required checks passed"
-				: "See the exact validation message below";
+			lblSidebarStatusDetail.Text = LocalizationManager.Get(ready
+				? "ServerSetup.Status.AllChecksPassed"
+				: "ServerSetup.Status.SeeValidationMessage");
 			lblFooterStatus.Text = validationMessage;
 			lblFooterStatus.ForeColor = ready
 				? SettingsPalette.Accent
@@ -478,7 +483,9 @@ namespace Synix_Control_Panel
 				ready));
 			if (_completionLabel != null)
 			{
-				_completionLabel.Text = $"Setup completion: {completion}%";
+				_completionLabel.Text = LocalizationManager.Get(
+					"ServerSetup.Completion",
+					completion);
 				_completionLabel.ForeColor = completion == 100
 					? SettingsPalette.Success
 					: SettingsPalette.SecondaryText;
@@ -743,7 +750,7 @@ namespace Synix_Control_Panel
 			if (!_passwordUnlockFailed)
 				return;
 
-			MessageBox.Show(
+			LocalizedMessageBox.Show(
 				"Synix could not unlock this server's saved passwords, authentication token, or Discord webhooks. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
 				"Re-enter Server Credentials",
 				MessageBoxButtons.OK,
@@ -1722,7 +1729,7 @@ namespace Synix_Control_Panel
 						GetAuthenticationTokenValue(masterData)),
 					out string serverInputError))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					serverInputError,
 					"Server Settings Need Attention",
 					MessageBoxButtons.OK,
@@ -1768,7 +1775,7 @@ namespace Synix_Control_Panel
 				txtExtraArgs.Text,
 				out string extraArgumentsError))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					extraArgumentsError,
 					"Extra Arguments Blocked",
 					MessageBoxButtons.OK,
@@ -1780,7 +1787,7 @@ namespace Synix_Control_Panel
 				out DiscordSettingsSnapshot discordSettings,
 				out string discordSettingsError))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					discordSettingsError,
 					"Discord Settings Need Attention",
 					MessageBoxButtons.OK,
@@ -1893,7 +1900,7 @@ namespace Synix_Control_Panel
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{
-				MessageBox.Show("Security Alert: One of your inputs contains illegal characters.",
+				LocalizedMessageBox.Show("Security Alert: One of your inputs contains illegal characters.",
 								"Input Blocked", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}

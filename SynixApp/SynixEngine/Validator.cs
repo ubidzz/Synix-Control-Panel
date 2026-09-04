@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
@@ -105,7 +105,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (exists)
 			{
-				MessageBox.Show($"You already have a {game} server named '{name}'.",
+				LocalizedMessageBox.Show($"You already have a {game} server named '{name}'.",
 								"Duplicate Name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return false;
 			}
@@ -142,7 +142,7 @@ namespace Synix_Control_Panel.SynixEngine
 				string roles = string.Join(
 					" and ",
 					duplicateSelection.Select(check => check.Name));
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					$"Port Conflict: {roles} cannot both use port {duplicateSelection.Key}. Each server port must be unique.",
 					"Network Resource Conflict",
 					MessageBoxButtons.OK,
@@ -155,14 +155,14 @@ namespace Synix_Control_Panel.SynixEngine
 				var owner = GetConfiguredPortCollisionOwner(check.Value, excluding);
 				if (owner != null)
 				{
-					MessageBox.Show($"Resource Collision: The {check.Name} ({check.Value}) is already allocated to instance: '{owner}'.",
+					LocalizedMessageBox.Show($"Resource Collision: The {check.Name} ({check.Value}) is already allocated to instance: '{owner}'.",
 									"Network Resource Conflict", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 					return false;
 				}
 
 				if (IsPortInUseLocally(check.Value))
 				{
-					MessageBox.Show($"Socket Conflict: The {check.Name} ({check.Value}) is currently occupied by another system process.",
+					LocalizedMessageBox.Show($"Socket Conflict: The {check.Name} ({check.Value}) is currently occupied by another system process.",
 									"System Resource Conflict", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 					return false;
 				}
@@ -170,7 +170,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (checkAppPort && gameName.Contains("Rust", StringComparison.OrdinalIgnoreCase) && app < 10000)
 			{
-				MessageBox.Show("Protocol Error: Rust+ (App Port) must be 10000 or higher.", "Logic Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show("Protocol Error: Rust+ (App Port) must be 10000 or higher.", "Logic Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return false;
 			}
 
@@ -183,7 +183,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (Directory.EnumerateFileSystemEntries(path).Any())
 				{
-					var result = MessageBox.Show("This folder isn't empty. Installing here might overwrite files. Continue?",
+					var result = LocalizedMessageBox.Show("This folder isn't empty. Installing here might overwrite files. Continue?",
 											   "Folder Not Empty", MessageBoxButtons.YesNo);
 					return result == DialogResult.Yes;
 				}

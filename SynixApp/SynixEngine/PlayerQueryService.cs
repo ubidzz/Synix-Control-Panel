@@ -4,6 +4,7 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Buffers.Binary;
 using System.Net;
@@ -35,7 +36,8 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(server);
 			GameInfo? game = GameDatabase.GetGame(server.Game);
 			if (game == null)
-				return Unsupported("The game definition is unavailable.");
+				return Unsupported(LocalizationManager.Get(
+					"PlayerQuery.GameDefinitionUnavailable"));
 
 			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
 				return await QueryMinecraftAsync(server, cancellationToken);
@@ -43,21 +45,24 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!GameDatabase.SupportsPlayerManagement(server))
 			{
 				return Unsupported(GameDatabase.IsPlayerTrackingDisabledByCrossplay(server)
-					? "Player tracking is unavailable while Crossplay is enabled. Disable Crossplay to use Steam A2S player tracking."
-					: "This game's current query protocol does not provide a safe, universal player-name list.");
+					? LocalizationManager.Get("PlayerQuery.CrossplayUnavailable")
+					: LocalizationManager.Get("PlayerQuery.ProtocolUnavailable"));
 			}
 
 			ServerProbeProtocol protocol = GameDatabase.GetProbeProtocol(game);
 			if (protocol != ServerProbeProtocol.A2S)
 			{
 				string message = GameCapabilityResolver.UsesMinecraftPlayers(server)
-					? $"Minecraft reports {server.CurrentPlayers} connected player(s), but this server query does not publish player names."
-					: "This game's current query protocol does not provide a safe, universal player-name list.";
+					? LocalizationManager.Get(
+						"PlayerQuery.MinecraftCountOnly",
+						server.CurrentPlayers)
+					: LocalizationManager.Get("PlayerQuery.ProtocolUnavailable");
 				return Unsupported(message);
 			}
 
 			if (server.Status != Core.StatusManager.GetStatus(Core.ServerState.Running))
-				return new(true, false, "Start the server before refreshing player details.", []);
+				return new(true, false, LocalizationManager.Get(
+					"PlayerQuery.StartServerFirst"), []);
 
 			int port = server.QueryPort > 0 ? server.QueryPort : server.Port;
 			try
@@ -74,7 +79,8 @@ namespace Synix_Control_Panel.SynixEngine
 				for (int challengeAttempt = 0; challengeAttempt < 2; challengeAttempt++)
 				{
 					if (!TryReadPayloadHeader(response, out byte responseType, out int payloadOffset))
-						return new(true, false, "The server returned an invalid A2S player response.", []);
+						return new(true, false, LocalizationManager.Get(
+							"PlayerQuery.InvalidA2sResponse"), []);
 
 					// Some compatible servers accept the legacy -1 challenge and return
 					// A2S_PLAYER data immediately. Others require the challenge exchange.
@@ -82,7 +88,8 @@ namespace Synix_Control_Panel.SynixEngine
 						break;
 
 					if (responseType != 0x41 || response.Length < payloadOffset + 4)
-						return new(true, false, "The server query works, but it did not provide a compatible player list.", []);
+						return new(true, false, LocalizationManager.Get(
+							"PlayerQuery.IncompatiblePlayerList"), []);
 
 					byte[] request = (byte[])PlayerChallengeRequest.Clone();
 					response.AsSpan(payloadOffset, 4).CopyTo(request.AsSpan(5, 4));
@@ -95,21 +102,29 @@ namespace Synix_Control_Panel.SynixEngine
 					true,
 					true,
 					players.Count == 0
-						? "The server responded and no named players are connected."
-						: $"Loaded {players.Count} connected player(s).",
+						? LocalizationManager.Get("PlayerQuery.NoNamedPlayers")
+						: LocalizationManager.Get(
+							"PlayerQuery.LoadedPlayers",
+							players.Count),
 					players);
 			}
 			catch (OperationCanceledException)
 			{
-				return new(true, false, $"The player query on UDP port {port} timed out.", []);
+				return new(true, false, LocalizationManager.Get(
+					"PlayerQuery.Timeout",
+					port), []);
 			}
 			catch (SocketException exception)
 			{
-				return new(true, false, $"The player query could not connect: {exception.Message}", []);
+				return new(true, false, LocalizationManager.Get(
+					"PlayerQuery.ConnectionFailed",
+					exception.Message), []);
 			}
 			catch (Exception exception)
 			{
-				return new(true, false, $"Player details could not be read: {exception.Message}", []);
+				return new(true, false, LocalizationManager.Get(
+					"PlayerQuery.ReadFailed",
+					exception.Message), []);
 			}
 		}
 
@@ -120,11 +135,14 @@ namespace Synix_Control_Panel.SynixEngine
 			if (MinecraftControlProfile.IsBedrock(server))
 			{
 				return Unsupported(
-					$"Minecraft Bedrock reports {server.CurrentPlayers} connected player(s), but its built-in status response does not publish player names.");
+					LocalizationManager.Get(
+						"PlayerQuery.BedrockCountOnly",
+						server.CurrentPlayers));
 			}
 
 			if (server.Status != Core.StatusManager.GetStatus(Core.ServerState.Running))
-				return new(true, false, "Start the server before refreshing player details.", []);
+				return new(true, false, LocalizationManager.Get(
+					"PlayerQuery.StartServerFirst"), []);
 
 			MinecraftManagementResult<IReadOnlyList<MinecraftManagedPlayer>> managed =
 				await MinecraftManagementClient.QueryPlayersAsync(server, cancellationToken);
@@ -137,8 +155,11 @@ namespace Synix_Control_Panel.SynixEngine
 					true,
 					true,
 					players.Count == 0
-						? "Minecraft's local management service reports no connected players."
-						: $"Loaded {players.Count} player(s) through Minecraft's local management service.",
+						? LocalizationManager.Get(
+							"PlayerQuery.MinecraftManagement.None")
+						: LocalizationManager.Get(
+							"PlayerQuery.MinecraftManagement.Loaded",
+							players.Count),
 					players);
 			}
 
@@ -156,8 +177,10 @@ namespace Synix_Control_Panel.SynixEngine
 					true,
 					true,
 					players.Count == 0
-						? "Minecraft RCON reports no connected players."
-						: $"Loaded {players.Count} player(s) through local Minecraft RCON.",
+						? LocalizationManager.Get("PlayerQuery.MinecraftRcon.None")
+						: LocalizationManager.Get(
+							"PlayerQuery.MinecraftRcon.Loaded",
+							players.Count),
 					players);
 			}
 
@@ -169,7 +192,7 @@ namespace Synix_Control_Panel.SynixEngine
 				true,
 				false,
 				string.IsNullOrWhiteSpace(problem)
-					? "Minecraft player details are not available yet."
+					? LocalizationManager.Get("PlayerQuery.MinecraftUnavailable")
 					: problem,
 				[]);
 		}
@@ -207,7 +230,9 @@ namespace Synix_Control_Panel.SynixEngine
 				offset += 4;
 				float seconds = BitConverter.Int32BitsToSingle(durationBits);
 				players.Add(new(
-					string.IsNullOrWhiteSpace(name) ? "Unnamed player" : name,
+					string.IsNullOrWhiteSpace(name)
+						? LocalizationManager.Get("PlayerQuery.UnnamedPlayer")
+						: name,
 					score,
 					TimeSpan.FromSeconds(Math.Max(0, seconds))));
 			}

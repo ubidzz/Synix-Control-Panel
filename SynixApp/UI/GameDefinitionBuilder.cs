@@ -208,7 +208,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (Core.IsOfficialRelease)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"The Game Definition Builder is available only in development builds.",
 					"Development Tool",
@@ -234,7 +234,7 @@ namespace Synix_Control_Panel.SynixEngine
 				lblStatus.ForeColor = SettingsPalette.Success;
 				lblStatus.Text = $"Saved: {result.DefinitionPath}";
 
-				DialogResult open = MessageBox.Show(
+				DialogResult open = LocalizedMessageBox.Show(
 					this,
 					"The validated definition and configuration templates were saved into the project. " +
 					"Rebuild Synix and run the automated tests before using it.\n\n" +
@@ -255,7 +255,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				lblStatus.ForeColor = SettingsPalette.Danger;
 				lblStatus.Text = exception.Message;
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
 					"Definition Could Not Be Saved",

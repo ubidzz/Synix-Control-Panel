@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
@@ -181,7 +181,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			System.Threading.Tasks.Task.Run(() =>
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"🚨 SYNIX NETWORK GUARD 🚨\n\n" +
 					"Critical bandwidth saturation detected on the network interface.\n\n" +
 					"System resources are redlining. Please check your firewall immediately.",

@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Drawing.Drawing2D;
+using Synix_Control_Panel.SynixApp.Localization;
 using static Synix_Control_Panel.SynixEngine.Core;
 
 namespace Synix_Control_Panel.SynixApp.Design
@@ -51,9 +52,31 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		public static string GetDisplayStatus(string? status)
 		{
-			return TryGetBusyState(status, out string busyState)
+			string displayStatus = TryGetBusyState(status, out string busyState)
 				? busyState
 				: status?.Trim() ?? string.Empty;
+			return GetLocalizedStatus(displayStatus);
+		}
+
+		private static string GetLocalizedStatus(string status)
+		{
+			return status switch
+			{
+				"Stopped" => LocalizationManager.Get("Status.Stopped"),
+				"Running" => LocalizationManager.Get("Status.Running"),
+				"Starting" => LocalizationManager.Get("Status.Starting"),
+				"Crashed" => LocalizationManager.Get("Status.Crashed"),
+				"Stopping" => LocalizationManager.Get("Status.Stopping"),
+				"Installing" => LocalizationManager.Get("Status.Installing"),
+				"Updating" => LocalizationManager.Get("Status.Updating"),
+				"Backing Up" => LocalizationManager.Get("Status.BackingUp"),
+				"Validating" => LocalizationManager.Get("Status.Validating"),
+				"Exporting" => LocalizationManager.Get("Status.Exporting"),
+				"Restoring" => LocalizationManager.Get("Status.Restoring"),
+				"Deleting" => LocalizationManager.Get("Status.Deleting"),
+				"Unknown" => LocalizationManager.Get("Status.Unknown"),
+				_ => status
+			};
 		}
 
 		public static void DrawIndicator(

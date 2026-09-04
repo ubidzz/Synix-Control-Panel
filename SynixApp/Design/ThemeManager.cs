@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Runtime.CompilerServices;
+using Synix_Control_Panel.SynixApp.Localization;
 
 namespace Synix_Control_Panel.SynixApp.Design
 {
@@ -187,6 +188,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 				root.ResumeLayout(false);
 				root.Invalidate(true);
 			}
+
+			LocalizationManager.Apply(root);
 		}
 
 		private static void ApplyControlTree(Control control)
@@ -216,6 +219,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			ApplyControlTree(eventArgs.Control);
 			WatchControlTree(eventArgs.Control);
+			LocalizationManager.Apply(eventArgs.Control);
 			GetRegistration(eventArgs.Control).AppliedVersion = _themeVersion;
 			eventArgs.Control.Invalidate(true);
 		}

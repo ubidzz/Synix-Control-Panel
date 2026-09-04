@@ -12,6 +12,7 @@
 // ============================================================================
 using System.ComponentModel;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -70,8 +71,8 @@ namespace Synix_Control_Panel.SynixEngine
 				_backgroundServiceToggle.Checked = value;
 				SetBackgroundServiceStatus(
 					value
-						? "Enabled for Windows sign-in — Close still exits Synix completely."
-						: "Disabled — scheduled work runs only while Synix is open.",
+						? LocalizationManager.Get("Advanced.Background.EnabledCurrent")
+						: LocalizationManager.Get("Advanced.Background.DisabledCurrent"),
 					value);
 			}
 		}
@@ -85,7 +86,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 		internal void SetBackgroundServiceStatus(string message, bool success)
 		{
-			_backgroundServiceStatus.Text = message;
+			_backgroundServiceStatus.Text =
+				LocalizationManager.TranslateKnownText(message);
 			_backgroundServiceStatus.ForeColor = success
 				? SettingsPalette.Success
 				: SettingsPalette.SecondaryText;
@@ -97,7 +99,8 @@ namespace Synix_Control_Panel.SynixEngine
 			bool inProgress = false)
 		{
 			_firewallCleanupInProgress = inProgress;
-			_firewallCleanupStatus.Text = message;
+			_firewallCleanupStatus.Text =
+				LocalizationManager.TranslateKnownText(message);
 			_firewallCleanupStatus.ForeColor = success
 				? SettingsPalette.Success
 				: inProgress
@@ -181,8 +184,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			_firewallCleanupButton.Enabled = !_firewallCleanupInProgress;
 			_firewallCleanupButton.Text = _firewallCleanupInProgress
-				? "Checking Firewall..."
-				: "Clean Orphaned Rules";
+				? LocalizationManager.Get("Advanced.Firewall.ButtonChecking")
+				: LocalizationManager.TranslateKnownText("Clean Orphaned Rules");
 		}
 
 		private void AddBackgroundServiceCard()

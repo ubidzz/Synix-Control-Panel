@@ -5,6 +5,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -45,7 +46,7 @@ namespace Synix_Control_Panel.SynixEngine
 			});
 			_summary = new Label
 			{
-				Text = $"{_server.ServerName} • {_server.Game} • {_server.PlayerCount}",
+				Text = BuildSummary(_server.CurrentPlayers),
 				Location = new Point(30, 66),
 				Size = new Size(820, 28),
 				ForeColor = SettingsPalette.SecondaryText,
@@ -106,12 +107,30 @@ namespace Synix_Control_Panel.SynixEngine
 
 			bool minecraftActions = GameDatabase.IsMinecraft(_server.Game) &&
 				MinecraftControlProfile.IsJava(_server);
-			_kick = CreatePlayerActionButton("Kick", 28, minecraftActions);
-			_allowlist = CreatePlayerActionButton("Add to Allowlist", 148, minecraftActions);
-			_operator = CreatePlayerActionButton("Make Operator", 308, minecraftActions);
-			_kick.Click += async (_, _) => await RunMinecraftPlayerCommandAsync("kick", "kick this player");
-			_allowlist.Click += async (_, _) => await RunMinecraftPlayerCommandAsync("whitelist add", "add this player to the allowlist");
-			_operator.Click += async (_, _) => await RunMinecraftPlayerCommandAsync("op", "make this player an operator");
+			_kick = CreatePlayerActionButton(
+				LocalizationManager.Get("PlayerCenter.Action.Kick"),
+				28,
+				minecraftActions,
+				108);
+			_allowlist = CreatePlayerActionButton(
+				LocalizationManager.Get("PlayerCenter.Action.Allowlist"),
+				148,
+				minecraftActions,
+				148);
+			_operator = CreatePlayerActionButton(
+				LocalizationManager.Get("PlayerCenter.Action.Operator"),
+				308,
+				minecraftActions,
+				148);
+			_kick.Click += async (_, _) => await RunMinecraftPlayerCommandAsync(
+				"kick",
+				"PlayerCenter.Confirm.Kick");
+			_allowlist.Click += async (_, _) => await RunMinecraftPlayerCommandAsync(
+				"whitelist add",
+				"PlayerCenter.Confirm.Allowlist");
+			_operator.Click += async (_, _) => await RunMinecraftPlayerCommandAsync(
+				"op",
+				"PlayerCenter.Confirm.Operator");
 			Controls.AddRange([_kick, _allowlist, _operator]);
 			_grid.SelectionChanged += (_, _) => UpdateMinecraftActionState();
 
@@ -149,7 +168,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private async Task RefreshPlayersAsync()
 		{
 			_refresh.Enabled = false;
-			_status.Text = "Loading player details…";
+			_status.Text = LocalizationManager.Get("PlayerCenter.Loading");
 			try
 			{
 				PlayerQueryResult result = await PlayerQueryService.QueryAsync(_server);
@@ -159,11 +178,13 @@ namespace Synix_Control_Panel.SynixEngine
 					int row = _grid.Rows.Add(player.Name, player.Score, FormatDuration(player.ConnectedFor));
 					_grid.Rows[row].Tag = player;
 				}
-				_summary.Text = $"{_server.ServerName} • {_server.Game} • {result.Players.Count} named player(s)";
+				_summary.Text = BuildSummary(result.Players.Count);
 				_status.Text = result.Message + (result.IsSupported
 					? GameDatabase.IsMinecraft(_server.Game)
-						? " Select a player to use Minecraft's local administration commands."
-						: " Player actions remain disabled unless a game provides a verified administration protocol."
+						? LocalizationManager.Get(
+							"PlayerCenter.Guidance.Minecraft")
+						: LocalizationManager.Get(
+							"PlayerCenter.Guidance.UnsupportedActions")
 					: string.Empty);
 				_status.ForeColor = result.IsSuccessful
 					? SettingsPalette.Success
@@ -179,7 +200,8 @@ namespace Synix_Control_Panel.SynixEngine
 		private ModernSettingsButton CreatePlayerActionButton(
 			string text,
 			int left,
-			bool visible)
+			bool visible,
+			int width)
 		{
 			return new ModernSettingsButton
 			{
@@ -187,7 +209,7 @@ namespace Synix_Control_Panel.SynixEngine
 					text.Where(char.IsAsciiLetterOrDigit).ToArray()),
 				Text = text,
 				Location = new Point(left, 560),
-				Size = new Size(text == "Kick" ? 108 : 148, 44),
+				Size = new Size(width, 44),
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
 				Visible = visible,
 				Enabled = false
@@ -204,21 +226,24 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private async Task RunMinecraftPlayerCommandAsync(
 			string command,
-			string confirmationAction)
+			string confirmationResourceKey)
 		{
 			if (_grid.SelectedRows.Count != 1 ||
 				_grid.SelectedRows[0].Tag is not GamePlayerInfo player ||
 				!MinecraftRconClient.IsSafePlayerName(player.Name))
 			{
-				_status.Text = "Select a valid Minecraft player first.";
+				_status.Text = LocalizationManager.Get(
+					"PlayerCenter.SelectValidPlayer");
 				_status.ForeColor = SettingsPalette.Warning;
 				return;
 			}
 
-			if (MessageBox.Show(
+			if (LocalizedMessageBox.Show(
 				this,
-				$"Do you want to {confirmationAction}: {player.Name}?",
-				"Confirm Minecraft Player Action",
+				LocalizationManager.Get(
+					confirmationResourceKey,
+					player.Name),
+				LocalizationManager.Get("PlayerCenter.Confirm.Title"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question) != DialogResult.Yes)
 			{
@@ -238,5 +263,14 @@ namespace Synix_Control_Panel.SynixEngine
 			duration.TotalHours >= 1
 				? $"{(int)duration.TotalHours}h {duration.Minutes:D2}m"
 				: $"{duration.Minutes}m {duration.Seconds:D2}s";
+
+		private string BuildSummary(int playerCount) =>
+			LocalizationManager.Get(
+				playerCount == 1
+					? "PlayerCenter.Summary.One"
+					: "PlayerCenter.Summary.Many",
+				_server.ServerName,
+				_server.Game,
+				playerCount);
 	}
 }

@@ -471,7 +471,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				server.Status = previousStatus;
 				Log($"Files were partially deleted, but an error occurred:\n{ex.Message}", Color.Red, true);
-				MessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				LocalizedMessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				UpdateGridStatus();
 				return false;
 			}
@@ -504,7 +504,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					MessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					LocalizedMessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
@@ -516,7 +516,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerUpdating = true;
 				if (!autoRestart)
 				{
-					var confirm = MessageBox.Show($"Are you sure you want to Update the {server.ServerName} server files?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+					var confirm = LocalizedMessageBox.Show($"Are you sure you want to Update the {server.ServerName} server files?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 					if (confirm != DialogResult.Yes) return;
 				}
 			}
@@ -524,17 +524,17 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					MessageBox.Show("You must stop the server before validating server files.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					LocalizedMessageBox.Show("You must stop the server before validating server files.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
 				{
-					MessageBox.Show("A download, update or validation is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					LocalizedMessageBox.Show("A download, update or validation is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
 
-				var confirm = MessageBox.Show($"Are you sure you want to Validate the {server.ServerName} server files?", "Confirm Validate", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				var confirm = LocalizedMessageBox.Show($"Are you sure you want to Validate the {server.ServerName} server files?", "Confirm Validate", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				if (confirm != DialogResult.Yes) return;
 			}
 			else
@@ -670,7 +670,7 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
 						if (!IsBackgroundServiceMode)
-							MessageBox.Show(
+							LocalizedMessageBox.Show(
 								$"The Rust {ManifestMessage} completed, but Oxide could not be reapplied. Synix will block the modded server from starting until you retry with Update or Validate.\n\n{exception.Message}",
 								"Oxide Update Failed",
 								MessageBoxButtons.OK,
@@ -802,7 +802,7 @@ namespace Synix_Control_Panel.SynixEngine
 							catch (Exception exception)
 							{
 								Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
-								MessageBox.Show(
+								LocalizedMessageBox.Show(
 									"The Rust server installed, but Oxide could not be installed. Synix will block the modded server from starting until you retry with Update or Validate.\n\n" + exception.Message,
 									"Oxide Installation Failed",
 									MessageBoxButtons.OK,
@@ -1017,7 +1017,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
-				MessageBox.Show("Please stop the server before editing its settings.",
+				LocalizedMessageBox.Show("Please stop the server before editing its settings.",
 								"Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
@@ -1026,7 +1026,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				string currentAction = (server.Status == StatusManager.GetStatus(ServerState.Updating)) ? StatusManager.GetStatus(ServerState.Updating) : StatusManager.GetStatus(ServerState.Installing);
 
-				MessageBox.Show($"Cannot edit '{server.ServerName}' while it is {currentAction}.\n\nPlease wait for the process to finish.",
+				LocalizedMessageBox.Show($"Cannot edit '{server.ServerName}' while it is {currentAction}.\n\nPlease wait for the process to finish.",
 								"System Busy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
@@ -1073,7 +1073,7 @@ namespace Synix_Control_Panel.SynixEngine
 							updatedServer.ServerFramework = OxideRuntimeManager.VanillaFrameworkName;
 							updatedServer.ServerFrameworkVersion = "Official";
 							Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
-							MessageBox.Show(
+							LocalizedMessageBox.Show(
 								"Oxide could not be installed. The server has been left set to Vanilla.\n\n" + exception.Message,
 								"Oxide Installation Failed",
 								MessageBoxButtons.OK,
@@ -1098,7 +1098,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"[OXIDE] Framework set to Vanilla. Start is blocked until Update or Validate restores the official Rust server files.",
 							Color.Orange,
 							true);
-						MessageBox.Show(
+						LocalizedMessageBox.Show(
 							"Rust is now set to Vanilla. Run Update or Validate before starting so Steam can restore the official server files.\n\nSynix will not delete your oxide folder or plugins.",
 							"Validation Required",
 							MessageBoxButtons.OK,
@@ -1140,7 +1140,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					Log(guardMsg, System.Drawing.Color.Red, true);
 					if (!IsBackgroundServiceMode)
-						MessageBox.Show(guardMsg, "System Resource Exhaustion",
+						LocalizedMessageBox.Show(guardMsg, "System Resource Exhaustion",
 							System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
 					return false;
 				}
@@ -1217,7 +1217,7 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
 						if (showInteractiveErrors)
-							MessageBox.Show(
+							LocalizedMessageBox.Show(
 								configurationResult.Message,
 								"Configuration Could Not Be Applied",
 								MessageBoxButtons.OK,
@@ -1346,7 +1346,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!dbEntry.LaunchBehavior.AllowLaunchFileExport)
 			{
 				Log($"[⚠️ NOTICE] {server.Game} does not allow generated launch files. Export aborted.", Color.Orange);
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					$"{server.Game} relies on its official launch or deployment file. A separate launch file cannot be safely generated for this game.",
 					"Export Disabled",
 					MessageBoxButtons.OK,
@@ -1364,7 +1364,7 @@ namespace Synix_Control_Panel.SynixEngine
 					$"[🚨 ERROR] Launch file export blocked: {credentialError}",
 					Color.Red,
 					true);
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					$"{credentialError}\n\nOpen Server Settings, enter the required credential, and save before exporting the batch file.",
 					"Server Credentials Need Attention",
 					MessageBoxButtons.OK,

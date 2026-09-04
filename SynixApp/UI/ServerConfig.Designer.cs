@@ -398,7 +398,6 @@ namespace Synix_Control_Panel.ServerHandler
 			cmbTypeFilter.ForeColor = Color.FromArgb(245, 247, 251);
 			cmbTypeFilter.FormattingEnabled = true;
 			cmbTypeFilter.ItemHeight = 28;
-			cmbTypeFilter.Items.AddRange(new object[] { "All types", "TEXT", "NUMBER", "BOOLEAN", "SECRET", "NULL" });
 			cmbTypeFilter.Location = new Point(526, 7);
 			cmbTypeFilter.Margin = new Padding(12, 7, 12, 13);
 			cmbTypeFilter.Name = "cmbTypeFilter";

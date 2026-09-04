@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 
@@ -37,10 +38,47 @@ namespace Synix_Control_Panel
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime || DesignMode)
 				return;
 
+			PopulateMasterPresetOptions();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) =>
+				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
 			ConfigureGrid();
 			LoadMasterEventOptions(DiscordNotificationEvent.All);
 			cmbMasterPreset.SelectedIndex = 0;
 			UpdateControlState();
+		}
+
+		private void InterfaceLanguageChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			PopulateMasterPresetOptions();
+		}
+
+		private void PopulateMasterPresetOptions()
+		{
+			int selectedIndex = Math.Max(0, cmbMasterPreset.SelectedIndex);
+			bool previousLoading = _loading;
+			_loading = true;
+			try
+			{
+				cmbMasterPreset.Items.Clear();
+				cmbMasterPreset.Items.AddRange(
+				[
+					LocalizationManager.Get("Option.Discord.AllEvents"),
+					LocalizationManager.Get("Option.Discord.ServerStatus"),
+					LocalizationManager.Get("Option.Discord.Maintenance"),
+					LocalizationManager.Get("Option.Discord.ProblemsOnly"),
+					LocalizationManager.Get("Option.Discord.Custom")
+				]);
+				cmbMasterPreset.SelectedIndex = Math.Min(
+					selectedIndex,
+					cmbMasterPreset.Items.Count - 1);
+			}
+			finally
+			{
+				_loading = previousLoading;
+			}
 		}
 
 		public void LoadSettings(
@@ -355,7 +393,7 @@ namespace Synix_Control_Panel
 			DiscordWebhookRoute? route = SelectedRoute;
 			if (route == null)
 				return;
-			if (MessageBox.Show(
+			if (LocalizedMessageBox.Show(
 				$"Remove the saved Discord destination '{route.Name}' from this server?\n\nThis does not delete the webhook from Discord.",
 				"Remove Discord Destination",
 				MessageBoxButtons.YesNo,

@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.SynixApp
@@ -50,6 +51,8 @@ namespace Synix_Control_Panel.SynixApp
 			if (Core.TryRunUpdateHelper(args))
 				return;
 			Core.CleanupStaleOperations();
+			LocalizationManager.Initialize(
+				Properties.Settings.Default.UiLanguage);
 
 			string? updateSuccessMarker = Core
 				.GetStartupSuccessMarker(args);
@@ -65,9 +68,9 @@ namespace Synix_Control_Panel.SynixApp
 			{
 				_singleInstanceMutex.Dispose();
 				_singleInstanceMutex = null;
-				MessageBox.Show(
-					"Synix is already running. Please use the existing Synix window.",
-					"Synix Already Running",
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get("Message.AlreadyRunning.Body"),
+					LocalizationManager.Get("Message.AlreadyRunning.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -123,7 +126,11 @@ namespace Synix_Control_Panel.SynixApp
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			ThemeManager.Initialize(Properties.Settings.Default.DarkMode);
-			Application.Idle += (_, _) => ThemeManager.ApplyToOpenForms();
+			Application.Idle += (_, _) =>
+			{
+				ThemeManager.ApplyToOpenForms();
+				LocalizationManager.ApplyToOpenForms();
+			};
 			try
 			{
 				bool importRolledBack = Core
@@ -133,7 +140,7 @@ namespace Synix_Control_Panel.SynixApp
 
 				if (importRolledBack)
 				{
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						"Synix detected an interrupted import and safely restored the previous files before starting.",
 						"Synix Import Recovered",
 						MessageBoxButtons.OK,
@@ -142,7 +149,7 @@ namespace Synix_Control_Panel.SynixApp
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"Synix found an interrupted import but could not safely restore the previous files. " +
 					"Synix will not start to avoid using incomplete data.\n\n" +
 					exception.Message,
@@ -157,7 +164,7 @@ namespace Synix_Control_Panel.SynixApp
 				int recoveredRestores = Core.RecoverInterruptedServerRestores();
 				if (recoveredRestores > 0)
 				{
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						$"Synix detected {recoveredRestores} interrupted server backup restore operation(s) and safely returned the affected server folders to their previous state.",
 						"Server Restore Recovered",
 						MessageBoxButtons.OK,
@@ -166,7 +173,7 @@ namespace Synix_Control_Panel.SynixApp
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"Synix found an interrupted server backup restore but could not safely recover its files. Synix will not start to avoid using incomplete server data.\n\n" +
 					exception.Message,
 					"Server Restore Recovery Failed",
@@ -194,7 +201,7 @@ namespace Synix_Control_Panel.SynixApp
 				}
 				if (!string.IsNullOrWhiteSpace(rolledBackVersion))
 				{
-					mainWindow.Shown += (_, _) => MessageBox.Show(
+					mainWindow.Shown += (_, _) => LocalizedMessageBox.Show(
 						mainWindow,
 						$"Synix {rolledBackVersion} could not start successfully, so Synix restored the previous program version. Your C:\\Synix server data was not changed.",
 						"Synix Update Rolled Back",
@@ -250,7 +257,7 @@ namespace Synix_Control_Panel.SynixApp
 				string logFilePath = Path.Combine(Core.LogsPath, $"Synix_fatal_crashes_{DateTime.Now:yyyy-MM-dd}.log");
 				FileHandler.WriteLogImmediate("Synix_fatal_crashes", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n");
 
-				MessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",
+				LocalizedMessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",
 							"Engine Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch

@@ -63,7 +63,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				void ShowSetupDialog()
 				{
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						MainGUI.Instance,
 						message,
 						"Additional Game Files Required",

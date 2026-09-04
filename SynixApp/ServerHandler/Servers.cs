@@ -159,7 +159,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						Color.Red);
 					if (context == StartContext.Manual)
 					{
-						MessageBox.Show(
+						LocalizedMessageBox.Show(
 							message,
 							"Server Requirements Not Met",
 							MessageBoxButtons.OK,
@@ -191,7 +191,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
 					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
 					{
-						MessageBox.Show(
+						LocalizedMessageBox.Show(
 							message,
 							"Server Settings Need Attention",
 							MessageBoxButtons.OK,
@@ -207,7 +207,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					logCallback?.Invoke(guardMsg, Color.Orange);
 					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
-						MessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						LocalizedMessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 

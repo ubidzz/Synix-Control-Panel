@@ -6,6 +6,7 @@
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine.ModManagement;
 using System.Diagnostics;
@@ -54,9 +55,11 @@ namespace Synix_Control_Panel.SynixEngine
 			pageHeading.Name = "modPluginManagerHeading";
 			Controls.Add(pageHeading);
 			Controls.Add(Body(
-				"Discover what is already installed, safely add local packages, and keep a rollback record without maintaining a list of every mod.",
+				LocalizationManager.Get("ModManager.Subtitle"),
 				30, 62, 890, 42));
-			Controls.Add(FieldLabel("SERVER", 30, 108, 110));
+			Controls.Add(FieldLabel(
+				LocalizationManager.Get("ModManager.Field.Server"),
+				30, 108, 110));
 			Controls.Add(new Label
 			{
 				Text = $"{_server.ServerName}  •  {_server.Game}",
@@ -66,25 +69,47 @@ namespace Synix_Control_Panel.SynixEngine
 				ForeColor = SettingsPalette.PrimaryText
 			});
 
-			Controls.Add(FieldLabel("ADD-ON SYSTEM", 404, 108, 160));
+			Controls.Add(FieldLabel(
+				LocalizationManager.Get("ModManager.Field.System"),
+				404, 108, 160));
 			_profileBox = new ModernSettingsComboBox
 			{
 				Location = new Point(404, 130),
 				Size = new Size(250, 36),
 				DisplayMember = nameof(ModSystemProfile.DisplayName),
+				FormattingEnabled = true,
 				Enabled = _profiles.Count > 1
+			};
+			_profileBox.Format += (_, eventArgs) =>
+			{
+				if (eventArgs.ListItem is ModSystemProfile profile)
+				{
+					eventArgs.Value = LocalizationManager.TranslateKnownText(
+						profile.DisplayName);
+				}
 			};
 			foreach (ModSystemProfile profile in _profiles)
 				_profileBox.Items.Add(profile);
 			_profileBox.SelectedIndexChanged += (_, _) => ProfileChanged();
 			Controls.Add(_profileBox);
 
-			Controls.Add(FieldLabel("INSTALL AREA", 668, 108, 150));
+			Controls.Add(FieldLabel(
+				LocalizationManager.Get("ModManager.Field.InstallArea"),
+				668, 108, 150));
 			_targetBox = new ModernSettingsComboBox
 			{
 				Location = new Point(668, 130),
 				Size = new Size(238, 36),
-				DisplayMember = nameof(ModInstallTarget.DisplayName)
+				DisplayMember = nameof(ModInstallTarget.DisplayName),
+				FormattingEnabled = true
+			};
+			_targetBox.Format += (_, eventArgs) =>
+			{
+				if (eventArgs.ListItem is ModInstallTarget target)
+				{
+					eventArgs.Value = LocalizationManager.TranslateKnownText(
+						target.DisplayName);
+				}
 			};
 			_targetBox.SelectedIndexChanged += (_, _) => UpdateButtonsAndSafety();
 			Controls.Add(_targetBox);
@@ -107,7 +132,9 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(_simpleView);
 
 			ModernSettingsCard supportCard = Card(28, 176, 1184, 78);
-			_supportTitle = Heading("Checking support…", 18, 12, 720, 26, 11F);
+			_supportTitle = Heading(
+				LocalizationManager.Get("ModManager.Support.Checking"),
+				18, 12, 720, 26, 11F);
 			_supportTitle.ForeColor = SettingsPalette.Accent;
 			_supportDetails = Body(string.Empty, 18, 40, 1128, 26);
 			supportCard.Controls.AddRange([_supportTitle, _supportDetails]);
@@ -120,7 +147,15 @@ namespace Synix_Control_Panel.SynixEngine
 				BackColor = SettingsPalette.Input,
 				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
 			};
-			string[] steps = ["1  Detect", "2  Stop server", "3  Back up files", "4  Install", "5  Verify", "6  Restart if needed"];
+			string[] steps =
+			[
+				LocalizationManager.Get("ModManager.Step.Detect"),
+				LocalizationManager.Get("ModManager.Step.Stop"),
+				LocalizationManager.Get("ModManager.Step.Backup"),
+				LocalizationManager.Get("ModManager.Step.Install"),
+				LocalizationManager.Get("ModManager.Step.Verify"),
+				LocalizationManager.Get("ModManager.Step.Restart")
+			];
 			for (int index = 0; index < steps.Length; index++)
 			{
 				workflow.Controls.Add(new Label
@@ -152,13 +187,13 @@ namespace Synix_Control_Panel.SynixEngine
 				AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None,
 				RowTemplate = { Height = 40 }
 			};
-			AddColumn("Name", "ADD-ON", 220);
-			AddColumn("Type", "TYPE", 80);
-			AddColumn("Version", "VERSION", 130);
-			AddColumn("Status", "STATUS", 170);
-			AddColumn("Security", "SECURITY", 190);
-			AddColumn("Source", "SOURCE", 130);
-			AddColumn("Location", "LOCATION", 300);
+			AddColumn("Name", LocalizationManager.Get("ModManager.Column.AddOn"), 220);
+			AddColumn("Type", LocalizationManager.Get("ModManager.Column.Type"), 80);
+			AddColumn("Version", LocalizationManager.Get("ModManager.Column.Version"), 130);
+			AddColumn("Status", LocalizationManager.Get("ModManager.Column.Status"), 170);
+			AddColumn("Security", LocalizationManager.Get("ModManager.Column.Security"), 190);
+			AddColumn("Source", LocalizationManager.Get("ModManager.Column.Source"), 130);
+			AddColumn("Location", LocalizationManager.Get("ModManager.Column.Location"), 300);
 			GridStyler.DarkTheme(_grid);
 			GridStyler.ApplyDashboardTheme(_grid);
 			_grid.SelectionChanged += (_, _) => SelectionChanged();
@@ -167,9 +202,11 @@ namespace Synix_Control_Panel.SynixEngine
 			ModernSettingsCard safetyCard = Card(890, 326, 322, 240);
 			safetyCard.Name = "automaticSafetyChecklistCard";
 			safetyCard.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-			safetyCard.Controls.Add(Heading("Automatic Safety Checklist", 18, 14, 282, 28, 11F));
+			safetyCard.Controls.Add(Heading(
+				LocalizationManager.Get("ModManager.Safety.Title"),
+				18, 14, 282, 28, 11F));
 			safetyCard.Controls.Add(Body(
-				"Synix checks these before it changes anything.",
+				LocalizationManager.Get("ModManager.Safety.Subtitle"),
 				18, 44, 282, 28));
 			_safetyItems = new Label[6];
 			for (int index = 0; index < _safetyItems.Length; index++)
@@ -190,7 +227,7 @@ namespace Synix_Control_Panel.SynixEngine
 			selectionCard.Name = "selectedAddOnDetailsCard";
 			selectionCard.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			_selectionDetails = Body(
-				"Select an add-on to see where it was found.",
+				LocalizationManager.Get("ModManager.Selection.Empty"),
 				18, 11, 282, 54);
 			_selectionDetails.Name = "selectedAddOnDetails";
 			_selectionDetails.UseMnemonic = false;
@@ -207,21 +244,35 @@ namespace Synix_Control_Panel.SynixEngine
 			};
 			Controls.Add(_inventorySummary);
 
-			_installFile = Button("Install From File", 28, 702, 156, accent: true);
+			_installFile = Button(
+				LocalizationManager.Get("ModManager.Button.InstallFile"),
+				28, 702, 156, accent: true);
 			_installFile.Click += InstallFile_Click;
-			_installFramework = Button("Install Framework", 194, 702, 164);
+			_installFramework = Button(
+				LocalizationManager.Get("ModManager.Button.InstallFramework"),
+				194, 702, 164);
 			_installFramework.Click += async (_, _) => await InstallFrameworkAsync();
-			_browseCatalog = Button("Browse Catalog", 368, 702, 150);
+			_browseCatalog = Button(
+				LocalizationManager.Get("ModManager.Button.BrowseCatalog"),
+				368, 702, 150);
 			_browseCatalog.Name = "browseAddOnCatalog";
 			_browseCatalog.Click += (_, _) => BrowseCatalog();
-			_openFolder = Button("Open Add-ons Folder", 528, 702, 172);
+			_openFolder = Button(
+				LocalizationManager.Get("ModManager.Button.OpenFolder"),
+				528, 702, 172);
 			_openFolder.Click += (_, _) => OpenAddOnsFolder();
-			ModernSettingsButton refresh = Button("Refresh", 710, 702, 112);
+			ModernSettingsButton refresh = Button(
+				LocalizationManager.Get("ModManager.Button.Refresh"),
+				710, 702, 112);
 			refresh.Click += (_, _) => RefreshInventory();
-			_remove = Button("Remove Selected", 878, 702, 150);
+			_remove = Button(
+				LocalizationManager.Get("ModManager.Button.Remove"),
+				878, 702, 150);
 			_remove.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			_remove.Click += RemoveSelected_Click;
-			ModernSettingsButton close = Button("Close", 1038, 702, 174);
+			ModernSettingsButton close = Button(
+				LocalizationManager.Get("ModManager.Button.Close"),
+				1038, 702, 174);
 			close.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			close.DialogResult = DialogResult.OK;
 			Controls.AddRange([
@@ -299,11 +350,11 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					int rowIndex = _grid.Rows.Add(
 						item.Name,
-						item.Type,
+						LocalizationManager.TranslateKnownText(item.Type),
 						item.Version,
-						item.Status,
-						item.SecurityStatus,
-						item.Source,
+						LocalizationManager.TranslateKnownText(item.Status),
+						LocalizationManager.TranslateKnownText(item.SecurityStatus),
+						LocalizationManager.TranslateKnownText(item.Source),
 						item.RelativePath);
 					_grid.Rows[rowIndex].Tag = item;
 					_grid.Rows[rowIndex].Cells[3].Style.ForeColor = item.Status switch
@@ -314,15 +365,21 @@ namespace Synix_Control_Panel.SynixEngine
 					};
 				}
 				_inventorySummary.Text = _items.Count == 0
-					? "No add-ons were found in the active profile folders."
-					: $"{_items.Count} add-on{(_items.Count == 1 ? string.Empty : "s")} found  •  {_items.Count(item => item.Status == "Healthy")} tracked by Synix";
+					? LocalizationManager.Get("ModManager.Inventory.Empty")
+					: LocalizationManager.Get(
+						_items.Count == 1
+							? "ModManager.Inventory.One"
+							: "ModManager.Inventory.Many",
+						_items.Count,
+						_items.Count(item => item.Status == "Healthy"));
 				UpdateSupportBanner();
 				SelectionChanged();
 				UpdateButtonsAndSafety();
 			}
 			catch (Exception exception)
 			{
-				_inventorySummary.Text = "Synix could not refresh the add-on folders.";
+				_inventorySummary.Text = LocalizationManager.Get(
+					"ModManager.Inventory.RefreshFailed");
 				_inventorySummary.ForeColor = SettingsPalette.Warning;
 				PlainEnglishErrorDialog.ShowError(this, "scan the server add-ons", exception.Message);
 			}
@@ -336,23 +393,43 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
-			_supportTitle.Text = _detection.SupportText;
+			_supportTitle.Text = GetSupportText(_detection);
 			_supportTitle.ForeColor = _detection.Profile.SupportLevel == ModSystemSupportLevel.DetectedOnly
 				? SettingsPalette.Warning
 				: _detection.FrameworkDetected ? SettingsPalette.Success : SettingsPalette.Warning;
 			string framework = string.IsNullOrWhiteSpace(_detection.Profile.FrameworkName)
-				? "The server loader and existing folders choose the install area automatically."
-				: $"Framework: {_detection.Profile.FrameworkName}.";
-			_supportDetails.Text = $"{_detection.Profile.Description}  {framework}";
+				? LocalizationManager.Get("ModManager.Framework.Automatic")
+				: LocalizationManager.Get(
+					"ModManager.Framework.Named",
+					LocalizationManager.TranslateKnownText(
+						_detection.Profile.FrameworkName));
+			_supportDetails.Text = $"{LocalizationManager.TranslateKnownText(_detection.Profile.Description)}  {framework}";
+		}
+
+		private static string GetSupportText(ModSystemDetection detection)
+		{
+			string key = detection.Profile.SupportLevel switch
+			{
+				_ when detection.RecommendedTarget.CanManageIds =>
+					"ModManager.Support.ProviderIds",
+				ModSystemSupportLevel.Managed when detection.FrameworkDetected =>
+					"ModManager.Support.FileImport",
+				ModSystemSupportLevel.Managed =>
+					"ModManager.Support.SetupNeeded",
+				_ => "ModManager.Support.DetectionOnly"
+			};
+			return LocalizationManager.Get(key);
 		}
 
 		private void ShowUnsupportedState()
 		{
-			_supportTitle.Text = "NO ADD-ON PROFILE YET";
+			_supportTitle.Text = LocalizationManager.Get(
+				"ModManager.Unsupported.Title");
 			_supportTitle.ForeColor = SettingsPalette.Warning;
 			_supportDetails.Text =
-				"Synix will not guess where this game stores mods. A small data profile can add support later without rewriting this window.";
-			_inventorySummary.Text = "No files were changed.";
+				LocalizationManager.Get("ModManager.Unsupported.Description");
+			_inventorySummary.Text = LocalizationManager.Get(
+				"ModManager.NoFilesChanged");
 			_grid.Rows.Clear();
 			UpdateButtonsAndSafety();
 		}
@@ -366,7 +443,9 @@ namespace Synix_Control_Panel.SynixEngine
 			bool canManage = profile != null && target != null && target.CanManage && standardUser &&
 				profile.SupportLevel == ModSystemSupportLevel.Managed &&
 				(_detection?.FrameworkDetected ?? false);
-			_installFile.Text = target?.CanManageIds == true ? "Manage Mod IDs" : "Install From File";
+			_installFile.Text = target?.CanManageIds == true
+				? LocalizationManager.Get("ModManager.Button.ManageIds")
+				: LocalizationManager.Get("ModManager.Button.InstallFile");
 			_installFile.Enabled = stopped && canManage;
 			_remove.Enabled = stopped && SelectedItem()?.CanRemove == true;
 			_openFolder.Visible = target?.CanManageIds != true;
@@ -375,26 +454,36 @@ namespace Synix_Control_Panel.SynixEngine
 				Directory.Exists(GetSelectedTargetPath()));
 			IReadOnlyList<CatalogChoice> catalogs = GetCatalogChoices(profile);
 			_browseCatalog.Enabled = catalogs.Count > 0;
-			_browseCatalog.Text = catalogs.Count > 1 ? "Browse Catalogs" : "Browse Catalog";
+			_browseCatalog.Text = catalogs.Count > 1
+				? LocalizationManager.Get("ModManager.Button.BrowseCatalogs")
+				: LocalizationManager.Get("ModManager.Button.BrowseCatalog");
 			bool isRustFramework = profile?.Id.Equals("rust-umod", StringComparison.OrdinalIgnoreCase) == true;
 			_installFramework.Visible = isRustFramework;
 			_installFramework.Enabled = isRustFramework && stopped && !(_detection?.FrameworkDetected ?? false);
 
 			if (_safetyItems.Length == 0)
 				return;
-			SetSafety(0, stopped, stopped ? "Server is stopped" : "Stop the server before changes");
+			SetSafety(0, stopped, LocalizationManager.Get(stopped
+				? "ModManager.Safety.ServerStopped"
+				: "ModManager.Safety.StopFirst"));
 			SetSafety(1, _detection?.FrameworkDetected == true,
-				_detection?.FrameworkDetected == true ? "Framework detected" : "Framework setup required");
+				LocalizationManager.Get(_detection?.FrameworkDetected == true
+					? "ModManager.Safety.FrameworkDetected"
+					: "ModManager.Safety.FrameworkRequired"));
 			SetSafety(2, Directory.Exists(_server.InstallPath),
-				Directory.Exists(_server.InstallPath) ? "Server folder available" : "Server folder missing");
+				LocalizationManager.Get(Directory.Exists(_server.InstallPath)
+					? "ModManager.Safety.FolderAvailable"
+					: "ModManager.Safety.FolderMissing"));
 			SetSafety(3, target?.CanManageIds != true, target?.CanManageIds == true
-				? "Provider download needs manual trust"
-				: "Security scan runs before install");
+				? LocalizationManager.Get("ModManager.Safety.ProviderTrust")
+				: LocalizationManager.Get("ModManager.Safety.SecurityScan"));
 			SetSafety(4, standardUser, standardUser
-				? "Standard Windows permissions"
-				: "Restart without administrator access");
+				? LocalizationManager.Get("ModManager.Safety.StandardPermissions")
+				: LocalizationManager.Get("ModManager.Safety.RestartWithoutAdmin"));
 			SetSafety(5, profile?.RestartRequired != true,
-				profile?.RestartRequired == true ? "Restart required after changes" : "Framework supports live reload");
+				profile?.RestartRequired == true
+					? LocalizationManager.Get("ModManager.Safety.RestartRequired")
+					: LocalizationManager.Get("ModManager.Safety.LiveReload"));
 		}
 
 		private void SetSafety(int index, bool passed, string text)
@@ -407,8 +496,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ModInventoryItem? item = SelectedItem();
 			_selectionDetails.Text = item == null
-				? "Select an add-on to see where it was found."
-				: $"{item.Name}{Environment.NewLine}{item.SecurityStatus}";
+				? LocalizationManager.Get("ModManager.Selection.Empty")
+				: $"{item.Name}{Environment.NewLine}{LocalizationManager.TranslateKnownText(item.SecurityStatus)}";
 			UpdateButtonsAndSafety();
 		}
 
@@ -451,7 +540,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					_inventorySummary.Text = "Security review blocked the package. No files were changed.";
 					_inventorySummary.ForeColor = SettingsPalette.Warning;
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						this,
 						review.BuildUserMessage(),
 						"Add-on security review blocked",
@@ -460,7 +549,7 @@ namespace Synix_Control_Panel.SynixEngine
 					return;
 				}
 
-				DialogResult confirmation = MessageBox.Show(
+				DialogResult confirmation = LocalizedMessageBox.Show(
 					this,
 					review.BuildUserMessage() +
 					$"\n\nInstall {Path.GetFileName(picker.FileName)} into {target.DisplayName}?",
@@ -486,7 +575,7 @@ namespace Synix_Control_Panel.SynixEngine
 					$"[ADD-ONS] Installed {result.DisplayName} ({result.InstalledFileCount} file(s)) for {_server.ServerName}.",
 					Color.LimeGreen);
 				RefreshInventory();
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					result.RestartRequired
 						? "The add-on was installed and verified. Start the server when you are ready."
@@ -513,7 +602,7 @@ namespace Synix_Control_Panel.SynixEngine
 			ModInventoryItem? item = SelectedItem();
 			if (item?.InstallationId == null || !item.CanRemove)
 				return;
-			if (MessageBox.Show(
+			if (LocalizedMessageBox.Show(
 				this,
 				$"Remove {item.Name}?\n\nSynix will restore the file that existed before this installation, when available.",
 				"Remove add-on",
@@ -565,7 +654,7 @@ namespace Synix_Control_Panel.SynixEngine
 				current);
 			if (dialog.ShowDialog(this) != DialogResult.OK)
 				return;
-			if (MessageBox.Show(
+			if (LocalizedMessageBox.Show(
 				this,
 				$"{target.ProviderName} will download and run the mods represented by these IDs. " +
 				"Synix cannot scan provider content before it is downloaded.\n\n" +
@@ -592,7 +681,7 @@ namespace Synix_Control_Panel.SynixEngine
 					$"[ADD-ONS] Saved {dialog.ModIds.Count} ordered {target.ProviderName} mod ID(s) for {_server.ServerName}.",
 					Color.LimeGreen);
 				RefreshInventory();
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"The ordered mod ID list is ready. The game will download or update provider-owned content when the server starts.",
 					"Mod IDs saved",
@@ -630,7 +719,7 @@ namespace Synix_Control_Panel.SynixEngine
 				_server.ServerFrameworkVersion = version;
 				FileHandler.SaveServers();
 				RefreshInventory();
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					$"Oxide/uMod {version} is ready. Synix did not install any plugins.",
 					"Framework installed",

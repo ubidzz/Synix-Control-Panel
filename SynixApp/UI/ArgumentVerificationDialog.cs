@@ -133,7 +133,7 @@ namespace Synix_Control_Panel.SynixEngine
 			ValidateSelectedServer();
 			if (_preview?.IsValid != true)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"The command must pass every validation check before Synix can start the argument test.",
 					"Argument Test Blocked",
@@ -148,7 +148,7 @@ namespace Synix_Control_Panel.SynixEngine
 				StringComparison.OrdinalIgnoreCase) ||
 				server.PID.HasValue)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Stop this server first. The test must observe a new launch created from the displayed arguments.",
 					"Server Already Active",

@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Synix_Control_Panel.SynixEngine.Core;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Localization;
 
 namespace Synix_Control_Panel
 {
@@ -47,6 +48,9 @@ namespace Synix_Control_Panel
 		private ToolStripMenuItem? _playerManagementMenuItem;
 		private ToolStripMenuItem? _minecraftConsoleMenuItem;
 		private ToolStripMenuItem? _liveProcessDetailsMenuItem;
+		private ToolStripMenuItem? _connectionInformationMenuItem;
+		private string? _localIpAddress;
+		private string? _publicIpAddress;
 		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -67,6 +71,10 @@ namespace Synix_Control_Panel
 
 			FileHandler.LoadServers();
 			AddGuidanceMenuItems();
+			PopulateStatusFilters();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) =>
+				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
 
 			SynixMenuStyler.Apply(contextMenuStrip);
 
@@ -119,12 +127,12 @@ namespace Synix_Control_Panel
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
 
-			cmbStatusFilter.SelectedItem = "All Statuses";
 		}
 
 		private void AddGuidanceMenuItems()
 		{
-			_modPluginManagerMenuItem = new ToolStripMenuItem("Mod && Plugin Manager");
+			_modPluginManagerMenuItem = new ToolStripMenuItem(
+				LocalizationManager.Get("Menu.ModPluginManager"));
 			_modPluginManagerMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
@@ -134,7 +142,8 @@ namespace Synix_Control_Panel
 				dialog.ShowDialog(this);
 			};
 
-			_playerManagementMenuItem = new ToolStripMenuItem("Player Management Center");
+			_playerManagementMenuItem = new ToolStripMenuItem(
+				LocalizationManager.Get("Menu.PlayerManagementCenter"));
 			_playerManagementMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
@@ -149,7 +158,8 @@ namespace Synix_Control_Panel
 				dialog.ShowDialog(this);
 			};
 
-			_minecraftConsoleMenuItem = new ToolStripMenuItem("Minecraft Server Console");
+			_minecraftConsoleMenuItem = new ToolStripMenuItem(
+				LocalizationManager.Get("Menu.MinecraftServerConsole"));
 			_minecraftConsoleMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
@@ -159,8 +169,9 @@ namespace Synix_Control_Panel
 				dialog.ShowDialog(this);
 			};
 
-			ToolStripMenuItem connectionInformation = new("Connection Information");
-			connectionInformation.Click += (_, _) =>
+			_connectionInformationMenuItem = new ToolStripMenuItem(
+				LocalizationManager.Get("Menu.ConnectionInformation"));
+			_connectionInformationMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
 				if (server == null)
@@ -169,7 +180,8 @@ namespace Synix_Control_Panel
 				dialog.ShowDialog(this);
 			};
 
-			_liveProcessDetailsMenuItem = new ToolStripMenuItem("Live Process Details");
+			_liveProcessDetailsMenuItem = new ToolStripMenuItem(
+				LocalizationManager.Get("Menu.LiveProcessDetails"));
 			_liveProcessDetailsMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
@@ -187,7 +199,59 @@ namespace Synix_Control_Panel
 			contextMenuStrip.Items.Insert(insertAt++, _playerManagementMenuItem);
 			contextMenuStrip.Items.Insert(insertAt++, _minecraftConsoleMenuItem);
 			contextMenuStrip.Items.Insert(insertAt++, _liveProcessDetailsMenuItem);
-			contextMenuStrip.Items.Insert(insertAt, connectionInformation);
+			contextMenuStrip.Items.Insert(insertAt, _connectionInformationMenuItem);
+		}
+
+		private void InterfaceLanguageChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			PopulateStatusFilters();
+			if (_modPluginManagerMenuItem != null)
+				_modPluginManagerMenuItem.Text =
+					LocalizationManager.Get("Menu.ModPluginManager");
+			if (_playerManagementMenuItem != null)
+				_playerManagementMenuItem.Text =
+					LocalizationManager.Get("Menu.PlayerManagementCenter");
+			if (_minecraftConsoleMenuItem != null)
+				_minecraftConsoleMenuItem.Text =
+					LocalizationManager.Get("Menu.MinecraftServerConsole");
+			if (_liveProcessDetailsMenuItem != null)
+				_liveProcessDetailsMenuItem.Text =
+					LocalizationManager.Get("Menu.LiveProcessDetails");
+			if (_connectionInformationMenuItem != null)
+				_connectionInformationMenuItem.Text =
+					LocalizationManager.Get("Menu.ConnectionInformation");
+			dataGridView1.Refresh();
+			UpdateDashboardSummary();
+			UpdateSelectedServerCard();
+			UpdateNetworkLabels();
+		}
+
+		private void PopulateStatusFilters()
+		{
+			string selectedValue =
+				(cmbStatusFilter.SelectedItem as LocalizedOption)?.Value
+				?? "all";
+			cmbStatusFilter.Items.Clear();
+			cmbStatusFilter.Items.AddRange(
+			[
+				new LocalizedOption("all", "Option.Status.All"),
+				new LocalizedOption("running", "Option.Status.Running"),
+				new LocalizedOption("stopped", "Option.Status.Stopped"),
+				new LocalizedOption("progress", "Option.Status.InProgress"),
+				new LocalizedOption("attention", "Option.Status.NeedsAttention")
+			]);
+
+			int selectedIndex = cmbStatusFilter.Items
+				.Cast<LocalizedOption>()
+				.Select((option, index) => (option, index))
+				.FirstOrDefault(item => string.Equals(
+					item.option.Value,
+					selectedValue,
+					StringComparison.Ordinal))
+				.index;
+			cmbStatusFilter.SelectedIndex = selectedIndex;
 		}
 
 		internal static bool CanShowLiveServerActions(GameServer server)
@@ -209,11 +273,19 @@ namespace Synix_Control_Panel
 			double cpu = Core.Instance.TotalCpuUsage;
 			double ram = Core.Instance.TotalRamUsageGb;
 
-			cpuGauge.UpdateGauge((float)cpu, "CPU %");
+			cpuGauge.UpdateGauge(
+				(float)cpu,
+				LocalizationManager.Get("Dashboard.CpuGaugeLabel"));
 			ramGauge.MaxValue = (float)systemTotalRamGb;
-			ramGauge.UpdateGauge((float)ram, "RAM GB");
-			lblCpuValue.Text = $"{cpu:0.0}%";
-			lblRamValue.Text = $"{ram:0.00} GB";
+			ramGauge.UpdateGauge(
+				(float)ram,
+				LocalizationManager.Get("Dashboard.RamGaugeLabel"));
+			lblCpuValue.Text = LocalizationManager.Get(
+				"Dashboard.CpuValue",
+				cpu);
+			lblRamValue.Text = LocalizationManager.Get(
+				"Dashboard.RamValue",
+				ram);
 			UpdateDashboardSummary();
 
 			chartTickCounter++;
@@ -291,7 +363,7 @@ namespace Synix_Control_Panel
 			if (isDownloadActive || Core.Instance.isDownloadActive || deletionActive)
 			{
 				e.Cancel = true;
-				MessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, restoring, or deleting!",
+				LocalizedMessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, restoring, or deleting!",
 								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
@@ -301,15 +373,42 @@ namespace Synix_Control_Panel
 
 		private async Task LoadNetworkInfo()
 		{
-			if (!isPrivacyLoading)
+			if (isPrivacyLoading)
 			{
-				string localIP = await Core.Instance.GetLocalIP();
-				lblLocalIP1.Text = $"LAN IP: {localIP}";
-
-				lblPublicIP.Text = "Public IP: Fetching...";
-				string publicIP = await Core.Instance.GetPublicIP();
-				lblPublicIP.Text = $"Public IP: {publicIP}";
+				UpdateNetworkLabels();
+				return;
 			}
+
+			_localIpAddress = null;
+			_publicIpAddress = null;
+			UpdateNetworkLabels();
+			_localIpAddress = await Core.Instance.GetLocalIP();
+			UpdateNetworkLabels();
+			_publicIpAddress = await Core.Instance.GetPublicIP();
+			UpdateNetworkLabels();
+		}
+
+		private void UpdateNetworkLabels()
+		{
+			if (isPrivacyLoading)
+			{
+				lblPublicIP.Text = LocalizationManager.Get(
+					"Dashboard.Network.PublicHidden");
+				lblLocalIP1.Text = LocalizationManager.Get(
+					"Dashboard.Network.LocalHidden");
+				return;
+			}
+
+			lblLocalIP1.Text = string.IsNullOrWhiteSpace(_localIpAddress)
+				? LocalizationManager.Get("Dashboard.Network.LocalFetching")
+				: LocalizationManager.Get(
+					"Dashboard.Network.LocalAddress",
+					_localIpAddress);
+			lblPublicIP.Text = string.IsNullOrWhiteSpace(_publicIpAddress)
+				? LocalizationManager.Get("Dashboard.Network.PublicFetching")
+				: LocalizationManager.Get(
+					"Dashboard.Network.PublicAddress",
+					_publicIpAddress);
 		}
 
 		private async void lblPublicIP_Click(object sender, EventArgs e)
@@ -503,14 +602,21 @@ namespace Synix_Control_Panel
 			lblRunningValue.Text = runningCount.ToString();
 			bool isFiltered = !string.IsNullOrWhiteSpace(txtServerSearch.Text) ||
 				!string.Equals(
-					cmbStatusFilter.SelectedItem?.ToString(),
-					"All Statuses",
-					StringComparison.OrdinalIgnoreCase);
+					(cmbStatusFilter.SelectedItem as LocalizedOption)?.Value,
+					"all",
+					StringComparison.Ordinal);
 			lblServersCount.Text = isFiltered
-				? $"{_visibleServers.Count} of {installedCount} servers"
+				? LocalizationManager.Get(
+					"Dashboard.ServerCount.Filtered",
+					_visibleServers.Count,
+					installedCount)
 				: installedCount == 1
-					? "1 server"
-					: $"{installedCount} servers";
+					? LocalizationManager.Get(
+						"Dashboard.ServerCount.One",
+						installedCount)
+					: LocalizationManager.Get(
+						"Dashboard.ServerCount.Many",
+						installedCount);
 		}
 
 		private void dataGridView1_SelectionChanged(object sender, EventArgs e)
@@ -571,7 +677,8 @@ namespace Synix_Control_Panel
 				return;
 
 			string searchText = txtServerSearch.Text.Trim();
-			string statusFilter = cmbStatusFilter?.SelectedItem?.ToString() ?? "All Statuses";
+			string statusFilter =
+				(cmbStatusFilter?.SelectedItem as LocalizedOption)?.Value ?? "all";
 			GameServer? selectedServer = dataGridView1.CurrentRow?.DataBoundItem as GameServer;
 			List<GameServer> matchingServers = serverList
 				.Where(server =>
@@ -619,13 +726,13 @@ namespace Synix_Control_Panel
 			string currentStatus = status ?? string.Empty;
 			return filter switch
 			{
-				"Running" => currentStatus.Equals(
+				"running" => currentStatus.Equals(
 					StatusManager.GetStatus(ServerState.Running),
 					StringComparison.OrdinalIgnoreCase),
-				"Stopped" => currentStatus.Equals(
+				"stopped" => currentStatus.Equals(
 					StatusManager.GetStatus(ServerState.Stopped),
 					StringComparison.OrdinalIgnoreCase),
-				"In Progress" =>
+				"progress" =>
 					currentStatus.StartsWith("Starting", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Stopping", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||
@@ -635,7 +742,7 @@ namespace Synix_Control_Panel
 					currentStatus.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Deleting", StringComparison.OrdinalIgnoreCase),
-				"Needs Attention" => currentStatus.Equals(
+				"attention" => currentStatus.Equals(
 					StatusManager.GetStatus(ServerState.Crashed),
 					StringComparison.OrdinalIgnoreCase),
 				_ => true
@@ -650,6 +757,11 @@ namespace Synix_Control_Panel
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			GridStyler.SetStatusColor(dataGridView1, e);
+			if (e.ColumnIndex == colStatus.Index && e.Value is string status)
+			{
+				e.Value = BusyStatusPresentation.GetDisplayStatus(status);
+				e.FormattingApplied = true;
+			}
 		}
 
 		private void dataGridView1_CellPainting(
@@ -689,7 +801,7 @@ namespace Synix_Control_Panel
 				eventArgs.CellBounds.Height);
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
-				busyState,
+				BusyStatusPresentation.GetDisplayStatus(busyState),
 				eventArgs.CellStyle?.Font ?? dataGridView1.Font,
 				textBounds,
 				SettingsPalette.Warning,
@@ -711,7 +823,7 @@ namespace Synix_Control_Panel
 			if (dataGridView1.CurrentRow == null)
 			{
 				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
-				MessageBox.Show("Please select a server in the list first.", "No Server Selected");
+				LocalizedMessageBox.Show("Please select a server in the list first.", "No Server Selected");
 				return null;
 			}
 
@@ -822,7 +934,7 @@ namespace Synix_Control_Panel
 				await Core.Instance.CreateServerBackupPreflightAsync(selectedServer);
 			if (!preflight.Succeeded)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					preflight.Message,
 					"Backup Check Failed",
@@ -832,7 +944,7 @@ namespace Synix_Control_Panel
 			}
 			if (!preflight.HasEnoughSpace)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					$"There is not enough space to safely create this backup.\n\n" +
 					$"Server data: {Core.FormatBytes(preflight.SourceBytes)}\n" +
@@ -845,7 +957,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
 				$"Create a backup of {selectedServer.ServerName}?\n\n" +
 				$"Files: {preflight.FileCount:N0}\n" +
@@ -885,7 +997,7 @@ namespace Synix_Control_Panel
 				return;
 
 			ServerBackupArchive selectedBackup = dialog.SelectedBackup;
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
 				$"Restore {selectedServer.ServerName} from this backup?\n\n" +
 				$"Created: {selectedBackup.CreatedLocal:f}\n" +
@@ -908,7 +1020,7 @@ namespace Synix_Control_Panel
 				selectedBackup,
 				progress);
 
-			MessageBox.Show(
+			LocalizedMessageBox.Show(
 				this,
 				result.Message,
 				result.Succeeded ? "Server Backup Restored" : "Server Restore Failed",
@@ -1260,7 +1372,7 @@ namespace Synix_Control_Panel
 				await VersionCheck();
 				if (_updateCheckResult?.Release is null)
 				{
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						this,
 						_updateCheckResult?.Problem ?? "Synix could not load the verified update details. Check your internet connection and try again.",
 						"Update Details Unavailable",
@@ -1294,7 +1406,7 @@ namespace Synix_Control_Panel
 					_updateCheckResult,
 					progress);
 
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					$"Synix {prepared.NewVersion.ToString(3)} was downloaded and verified.\n\nSynix will now close, apply the update, and open again. Everything inside C:\\Synix will remain unchanged.",
 					"Update Ready to Install",
@@ -1314,7 +1426,7 @@ namespace Synix_Control_Panel
 				lblUpdateStatus.Text = "Update did not start  •  Current Synix was not changed";
 				btnDownloadUpdate.Text = "Install Update";
 				btnDownloadUpdate.Enabled = true;
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
 					"Synix Update Did Not Start",
@@ -1341,7 +1453,7 @@ namespace Synix_Control_Panel
 				Core.Instance.isDownloadActive;
 			if (serverBusy || maintenanceBusy)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Stop every game server and wait for installations, updates, validations, backups, imports, and exports to finish before updating Synix.",
 					"Synix Is Busy",
@@ -1352,7 +1464,7 @@ namespace Synix_Control_Panel
 
 			if (!FileHandler.SaveServers())
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Synix could not safely save the current server list. The update was not started.",
 					"Unable to Save Synix",
@@ -1366,13 +1478,7 @@ namespace Synix_Control_Panel
 		public async Task UpdatePrivacyMode(bool isEnabled)
 		{
 			isPrivacyLoading = isEnabled;
-
-			if (isEnabled)
-			{
-				lblPublicIP.Text = "Public IP: [HIDDEN]";
-				lblLocalIP1.Text = "LAN IP: [HIDDEN]";
-			}
-
+			UpdateNetworkLabels();
 			await LoadNetworkInfo();
 		}
 
@@ -1389,7 +1495,7 @@ namespace Synix_Control_Panel
 				return;
 			}
 
-			DialogResult exportConfirmation = MessageBox.Show(
+			DialogResult exportConfirmation = LocalizedMessageBox.Show(
 				this,
 				"The generated batch file must contain any configured server passwords, administrator passwords, RCON passwords, and online authentication tokens in readable text. This is required so the batch file can start the server without Synix.\n\nAnyone who can read that file can use those credentials. Continue?",
 				"Export Batch File with Readable Credentials",
@@ -1403,7 +1509,7 @@ namespace Synix_Control_Panel
 
 			if (success)
 			{
-				MessageBox.Show($"Batch file generated successfully!\n\nSaved directly to:\n{selectedServer.InstallPath}",
+				LocalizedMessageBox.Show($"Batch file generated successfully!\n\nSaved directly to:\n{selectedServer.InstallPath}",
 								"Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
@@ -1440,7 +1546,7 @@ namespace Synix_Control_Panel
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Unable to open the link automatically.\n\nError: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show($"Unable to open the link automatically.\n\nError: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 

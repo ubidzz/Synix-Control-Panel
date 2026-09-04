@@ -96,7 +96,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Windows could not copy the validation report.",
 					"Copy Failed",

@@ -657,7 +657,6 @@ namespace Synix_Control_Panel
 			cmbStatusFilter.ForeColor = Color.FromArgb(245, 247, 251);
 			cmbStatusFilter.FormattingEnabled = true;
 			cmbStatusFilter.ItemHeight = 28;
-			cmbStatusFilter.Items.AddRange(new object[] { "All Statuses", "Running", "Stopped", "In Progress", "Needs Attention" });
 			cmbStatusFilter.Location = new Point(768, 61);
 			cmbStatusFilter.Name = "cmbStatusFilter";
 			cmbStatusFilter.SelectedItemBackColor = Color.FromArgb(24, 55, 73);

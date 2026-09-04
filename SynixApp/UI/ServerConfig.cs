@@ -15,6 +15,7 @@ using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.UI;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 using System.Reflection;
@@ -70,6 +71,7 @@ namespace Synix_Control_Panel.ServerHandler
 		public ServerConfig()
 		{
 			InitializeComponent();
+			InitializeLocalizedControls();
 			ConfigureBooleanGridEditing();
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 				ThemeManager.Apply(this);
@@ -93,6 +95,7 @@ namespace Synix_Control_Panel.ServerHandler
 			GameServer? server)
 		{
 			InitializeComponent();
+			InitializeLocalizedControls();
 			ConfigureBooleanGridEditing();
 
 			if (configurationFiles == null || configurationFiles.Count == 0)
@@ -122,6 +125,44 @@ namespace Synix_Control_Panel.ServerHandler
 			ConfigureFileSelector();
 			ConfigureFilePresentation();
 			ThemeManager.Apply(this);
+		}
+
+		private void InitializeLocalizedControls()
+		{
+			PopulateTypeFilterOptions();
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+			{
+				return;
+			}
+
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) =>
+				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
+		}
+
+		private void InterfaceLanguageChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			PopulateTypeFilterOptions();
+		}
+
+		private void PopulateTypeFilterOptions()
+		{
+			int selectedIndex = Math.Max(0, cmbTypeFilter.SelectedIndex);
+			cmbTypeFilter.Items.Clear();
+			cmbTypeFilter.Items.AddRange(
+			[
+				LocalizationManager.Get("Option.ConfigType.All"),
+				LocalizationManager.Get("Option.ConfigType.Text"),
+				LocalizationManager.Get("Option.ConfigType.Number"),
+				LocalizationManager.Get("Option.ConfigType.Boolean"),
+				LocalizationManager.Get("Option.ConfigType.Secret"),
+				LocalizationManager.Get("Option.ConfigType.Null")
+			]);
+			cmbTypeFilter.SelectedIndex = Math.Min(
+				selectedIndex,
+				cmbTypeFilter.Items.Count - 1);
 		}
 
 		private void ConfigureBooleanGridEditing()
@@ -248,7 +289,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 			if (_isRuntimeInstance && !_allowClose && HasUnsavedChanges())
 			{
-				DialogResult result = MessageBox.Show(
+				DialogResult result = LocalizedMessageBox.Show(
 					"You have unsaved configuration changes. Discard them and close?",
 					"Discard Changes?",
 					MessageBoxButtons.YesNo,
@@ -347,7 +388,7 @@ namespace Synix_Control_Panel.ServerHandler
 			dgvConfig.EndEdit();
 			if (HasUnsavedChanges())
 			{
-				DialogResult result = MessageBox.Show(
+				DialogResult result = LocalizedMessageBox.Show(
 					this,
 					$"Save your changes to {Path.GetFileName(_path)} before opening another configuration file?",
 					"Unsaved Configuration Changes",
@@ -434,7 +475,7 @@ namespace Synix_Control_Panel.ServerHandler
 						return;
 					}
 
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						$"The configuration file does not exist:\n\n{_path}",
 						"File Not Found",
 						MessageBoxButtons.OK,
@@ -464,7 +505,7 @@ namespace Synix_Control_Panel.ServerHandler
 					return;
 				}
 
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					$"Synix could not read this configuration file.\n\n{exception.Message}",
 					"Config Load Error",
 					MessageBoxButtons.OK,
@@ -620,7 +661,15 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 
 			string searchText = txtSearch.Text.Trim();
-			string selectedType = cmbTypeFilter.SelectedItem?.ToString() ?? "All types";
+			ConfigValueType? selectedType = cmbTypeFilter.SelectedIndex switch
+			{
+				1 => ConfigValueType.Text,
+				2 => ConfigValueType.Number,
+				3 => ConfigValueType.Boolean,
+				4 => ConfigValueType.Secret,
+				5 => ConfigValueType.Null,
+				_ => null
+			};
 			int visibleCount = 0;
 
 			dgvConfig.CurrentCell = null;
@@ -636,8 +685,7 @@ namespace Synix_Control_Panel.ServerHandler
 					line.Path.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
 					line.Section.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
 					GetRowValue(row).Contains(searchText, StringComparison.OrdinalIgnoreCase);
-				bool typeMatches = selectedType.Equals("All types", StringComparison.OrdinalIgnoreCase) ||
-					GetTypeDisplayName(line.Type).Equals(selectedType, StringComparison.OrdinalIgnoreCase);
+				bool typeMatches = selectedType == null || line.Type == selectedType;
 
 				row.Visible = searchMatches && typeMatches;
 				if (row.Visible)
@@ -781,7 +829,7 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					$"Synix could not build a safe preview.\n\n{exception.Message}",
 					"Preview Error",
 					MessageBoxButtons.OK,
@@ -812,7 +860,7 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					$"The configuration was not saved. The original file is unchanged.\n\n{exception.Message}",
 					"Config Save Error",
@@ -826,7 +874,7 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			if (_server == null || !CanFixConfiguration())
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"Synix does not have a complete reset template for this game.",
 					"Config Template Unavailable",
 					MessageBoxButtons.OK,
@@ -836,7 +884,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 			if (IsServerBusy(_server))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"Stop this server before resetting its configuration.",
 					"Server Must Be Stopped",
 					MessageBoxButtons.OK,
@@ -851,7 +899,7 @@ namespace Synix_Control_Panel.ServerHandler
 			string backupText = fileExists
 				? "\n\nSynix will keep a .synix.bak copy of each configuration file it replaces."
 				: string.Empty;
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				"This will rebuild the game configuration from the Synix default template and apply the values saved in Server Settings.\n\nAny other custom configuration values will be removed." +
 				developmentModeText +
 				backupText +
@@ -880,7 +928,7 @@ namespace Synix_Control_Panel.ServerHandler
 					await GameFix.ResetManagedConfiguration(_server);
 				if (!result.Succeeded || !result.Complete)
 				{
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 						result.Message,
 						"Config Reset Failed",
 						MessageBoxButtons.OK,
@@ -890,7 +938,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 				_ = FileHandler.SaveServers();
 				LoadConfiguration();
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					result.Message +
 					(fileExists
 						? "\n\nThe previous configuration was saved with a .synix.bak extension."
@@ -901,7 +949,7 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					$"Synix could not reset the configuration. The existing files were preserved when possible.\n\n{exception.Message}",
 					"Config Reset Failed",
 					MessageBoxButtons.OK,
@@ -931,7 +979,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 			if (HasUnsavedChanges())
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"Save or undo the changes in the editor before checking the values stored on disk.",
 					"Unsaved Changes",
@@ -951,7 +999,7 @@ namespace Synix_Control_Panel.ServerHandler
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					$"Synix could not finish the configuration check.\n\n{exception.Message}",
 					"Configuration Check Failed",
@@ -969,7 +1017,7 @@ namespace Synix_Control_Panel.ServerHandler
 		{
 			if (_server == null || IsServerBusy(_server))
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"Stop this server before restoring a configuration backup.",
 					"Server Must Be Stopped",
 					MessageBoxButtons.OK,
@@ -977,7 +1025,7 @@ namespace Synix_Control_Panel.ServerHandler
 				return;
 			}
 
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				"Restore the newest Synix configuration backup?\n\nSynix will first preserve the current files so this restore can also be undone.",
 				"Restore Previous Configuration?",
 				MessageBoxButtons.YesNo,
@@ -990,7 +1038,7 @@ namespace Synix_Control_Panel.ServerHandler
 				GameFix.RestorePreviousManagedConfiguration(_server);
 			if (!result.Succeeded)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					result.Message,
 					"Configuration Restore Failed",
 					MessageBoxButtons.OK,
@@ -1000,7 +1048,7 @@ namespace Synix_Control_Panel.ServerHandler
 
 			LoadConfiguration();
 			UpdateRestoreBackupAvailability();
-			MessageBox.Show(
+			LocalizedMessageBox.Show(
 				result.Message,
 				"Configuration Restored",
 				MessageBoxButtons.OK,

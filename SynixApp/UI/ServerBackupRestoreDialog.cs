@@ -105,7 +105,7 @@ namespace Synix_Control_Panel.SynixEngine
 			selectionLabel.Text = "Verifying archive paths and SHA-256 integrity...";
 			ServerBackupManagementResult result =
 				await Core.Instance.VerifyServerBackupAsync(_server, SelectedBackup);
-			MessageBox.Show(
+			LocalizedMessageBox.Show(
 				this,
 				result.Message,
 				result.Succeeded ? "Backup Verified" : "Backup Verification Failed",
@@ -121,7 +121,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (_server == null || SelectedBackup == null)
 				return;
 
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
 				$"Permanently delete this saved backup?\n\n{SelectedBackup.FileName}\n{SelectedBackup.CreatedLocal:f}\n\nThe running server files will not be changed.",
 				"Delete Server Backup",
@@ -136,7 +136,7 @@ namespace Synix_Control_Panel.SynixEngine
 				await Core.Instance.DeleteServerBackupAsync(_server, SelectedBackup);
 			if (!result.Succeeded)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					result.Message,
 					"Backup Could Not Be Deleted",
@@ -154,7 +154,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			if (SelectedBackup.Integrity == ServerBackupIntegrity.Invalid)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
 					"This backup has an invalid SHA-256 receipt and cannot be restored. Choose a different backup.",
 					"Backup Integrity Failed",

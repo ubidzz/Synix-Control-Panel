@@ -1,0 +1,4511 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Language.English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Language.French" xml:space="preserve">
+    <value>French</value>
+  </data>
+  <data name="Language.German" xml:space="preserve">
+    <value>German</value>
+  </data>
+  <data name="Language.Spanish" xml:space="preserve">
+    <value>Spanish</value>
+  </data>
+  <data name="Option.DownloadSpeed.Unlimited" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="Option.DownloadSpeed.Limited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="Message.AlreadyRunning.Body" xml:space="preserve">
+    <value>Synix is already running. Please use the existing Synix window.</value>
+  </data>
+  <data name="Message.AlreadyRunning.Title" xml:space="preserve">
+    <value>Synix Already Running</value>
+  </data>
+  <data name="Settings.VersionLabel" xml:space="preserve">
+    <value>SYNIX CONTROL PANEL  •  v{0}</value>
+  </data>
+  <data name="SettingsPage.General.Heading" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsPage.General.Subtitle" xml:space="preserve">
+    <value>Configure basic Synix behavior on this computer.</value>
+  </data>
+  <data name="SettingsPage.Backups.Heading" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="SettingsPage.Backups.Subtitle" xml:space="preserve">
+    <value>Manage server backups or move Synix to another computer.</value>
+  </data>
+  <data name="SettingsPage.Privacy.Heading" xml:space="preserve">
+    <value>Privacy &amp; Security</value>
+  </data>
+  <data name="SettingsPage.Privacy.Subtitle" xml:space="preserve">
+    <value>Control how sensitive server information is displayed.</value>
+  </data>
+  <data name="SettingsPage.Advanced.Heading" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="SettingsPage.Advanced.Subtitle" xml:space="preserve">
+    <value>Configure elevated operations and advanced system behavior.</value>
+  </data>
+  <data name="SettingsPage.ReportProblem.Heading" xml:space="preserve">
+    <value>Report a Problem</value>
+  </data>
+  <data name="SettingsPage.ReportProblem.Subtitle" xml:space="preserve">
+    <value>Create a privacy-filtered compatibility report for Synix support.</value>
+  </data>
+  <data name="SettingsPage.Development.Heading" xml:space="preserve">
+    <value>Development</value>
+  </data>
+  <data name="SettingsPage.Development.Subtitle" xml:space="preserve">
+    <value>Manage configuration capture and release testing tools.</value>
+  </data>
+  <data name="Menu.ModPluginManager" xml:space="preserve">
+    <value>Mod &amp;&amp; Plugin Manager</value>
+  </data>
+  <data name="Menu.PlayerManagementCenter" xml:space="preserve">
+    <value>Player Management Center</value>
+  </data>
+  <data name="Menu.MinecraftServerConsole" xml:space="preserve">
+    <value>Minecraft Server Console</value>
+  </data>
+  <data name="Menu.ConnectionInformation" xml:space="preserve">
+    <value>Connection Information</value>
+  </data>
+  <data name="Menu.LiveProcessDetails" xml:space="preserve">
+    <value>Live Process Details</value>
+  </data>
+  <data name="Option.Status.All" xml:space="preserve">
+    <value>All Statuses</value>
+  </data>
+  <data name="Option.Status.Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="Option.Status.Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Option.Status.InProgress" xml:space="preserve">
+    <value>In Progress</value>
+  </data>
+  <data name="Option.Status.NeedsAttention" xml:space="preserve">
+    <value>Needs Attention</value>
+  </data>
+  <data name="Option.Discord.AllEvents" xml:space="preserve">
+    <value>All events</value>
+  </data>
+  <data name="Option.Discord.ServerStatus" xml:space="preserve">
+    <value>Server status</value>
+  </data>
+  <data name="Option.Discord.Maintenance" xml:space="preserve">
+    <value>Maintenance</value>
+  </data>
+  <data name="Option.Discord.ProblemsOnly" xml:space="preserve">
+    <value>Problems only</value>
+  </data>
+  <data name="Option.Discord.Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Option.ConfigType.All" xml:space="preserve">
+    <value>All types</value>
+  </data>
+  <data name="Option.ConfigType.Text" xml:space="preserve">
+    <value>TEXT</value>
+  </data>
+  <data name="Option.ConfigType.Number" xml:space="preserve">
+    <value>NUMBER</value>
+  </data>
+  <data name="Option.ConfigType.Boolean" xml:space="preserve">
+    <value>BOOLEAN</value>
+  </data>
+  <data name="Option.ConfigType.Secret" xml:space="preserve">
+    <value>SECRET</value>
+  </data>
+  <data name="Option.ConfigType.Null" xml:space="preserve">
+    <value>NULL</value>
+  </data>
+  <data name="Option.VerificationFilter.NeedsWork" xml:space="preserve">
+    <value>Needs work</value>
+  </data>
+  <data name="Option.VerificationFilter.UnknownConfiguration" xml:space="preserve">
+    <value>Unknown configuration</value>
+  </data>
+  <data name="Option.VerificationFilter.PartiallyVerified" xml:space="preserve">
+    <value>Partially verified</value>
+  </data>
+  <data name="Option.VerificationFilter.FullyVerified" xml:space="preserve">
+    <value>Fully verified</value>
+  </data>
+  <data name="Option.VerificationFilter.AllGames" xml:space="preserve">
+    <value>All games</value>
+  </data>
+  <data name="VerificationStep.Install" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="VerificationStep.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="VerificationStep.Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="VerificationStep.Monitoring" xml:space="preserve">
+    <value>Monitoring</value>
+  </data>
+  <data name="VerificationStep.Arguments" xml:space="preserve">
+    <value>Arguments</value>
+  </data>
+  <data name="VerificationStep.Configuration" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="Status.Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Status.Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="Status.Starting" xml:space="preserve">
+    <value>Starting</value>
+  </data>
+  <data name="Status.Crashed" xml:space="preserve">
+    <value>Crashed</value>
+  </data>
+  <data name="Status.Stopping" xml:space="preserve">
+    <value>Stopping</value>
+  </data>
+  <data name="Status.Installing" xml:space="preserve">
+    <value>Installing</value>
+  </data>
+  <data name="Status.Updating" xml:space="preserve">
+    <value>Updating</value>
+  </data>
+  <data name="Status.BackingUp" xml:space="preserve">
+    <value>Backing Up</value>
+  </data>
+  <data name="Status.Validating" xml:space="preserve">
+    <value>Validating</value>
+  </data>
+  <data name="Status.Exporting" xml:space="preserve">
+    <value>Exporting</value>
+  </data>
+  <data name="Status.Restoring" xml:space="preserve">
+    <value>Restoring</value>
+  </data>
+  <data name="Status.Deleting" xml:space="preserve">
+    <value>Deleting</value>
+  </data>
+  <data name="Status.Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Dashboard.ServerCount.One" xml:space="preserve">
+    <value>{0} server</value>
+  </data>
+  <data name="Dashboard.ServerCount.Many" xml:space="preserve">
+    <value>{0} servers</value>
+  </data>
+  <data name="Dashboard.ServerCount.Filtered" xml:space="preserve">
+    <value>{0} of {1} servers</value>
+  </data>
+  <data name="Dashboard.Network.PublicFetching" xml:space="preserve">
+    <value>Public IP: Fetching...</value>
+  </data>
+  <data name="Dashboard.Network.LocalFetching" xml:space="preserve">
+    <value>LAN IP: Fetching...</value>
+  </data>
+  <data name="Dashboard.Network.PublicAddress" xml:space="preserve">
+    <value>Public IP: {0}</value>
+  </data>
+  <data name="Dashboard.Network.LocalAddress" xml:space="preserve">
+    <value>LAN IP: {0}</value>
+  </data>
+  <data name="Dashboard.Network.PublicHidden" xml:space="preserve">
+    <value>Public IP: [HIDDEN]</value>
+  </data>
+  <data name="Dashboard.Network.LocalHidden" xml:space="preserve">
+    <value>LAN IP: [HIDDEN]</value>
+  </data>
+  <data name="Dashboard.CpuGaugeLabel" xml:space="preserve">
+    <value>CPU %</value>
+  </data>
+  <data name="Dashboard.RamGaugeLabel" xml:space="preserve">
+    <value>RAM GB</value>
+  </data>
+  <data name="Dashboard.CpuValue" xml:space="preserve">
+    <value>{0:0.0}%</value>
+  </data>
+  <data name="Dashboard.RamValue" xml:space="preserve">
+    <value>{0:0.00} GB</value>
+  </data>
+  <data name="ServerSetup.Status.Ready" xml:space="preserve">
+    <value>●  Ready to save</value>
+  </data>
+  <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
+    <value>●  Action required</value>
+  </data>
+  <data name="ServerSetup.Status.AllChecksPassed" xml:space="preserve">
+    <value>All required checks passed</value>
+  </data>
+  <data name="ServerSetup.Status.SeeValidationMessage" xml:space="preserve">
+    <value>See the exact validation message below</value>
+  </data>
+  <data name="ServerSetup.Completion" xml:space="preserve">
+    <value>Setup completion: {0}%</value>
+  </data>
+  <data name="ProblemAction.ServerInstallation" xml:space="preserve">
+    <value>Server installation</value>
+  </data>
+  <data name="ProblemAction.UpdateValidation" xml:space="preserve">
+    <value>Server update or file validation</value>
+  </data>
+  <data name="ProblemAction.ServerStartup" xml:space="preserve">
+    <value>Server startup</value>
+  </data>
+  <data name="ProblemAction.ServerShutdown" xml:space="preserve">
+    <value>Server shutdown</value>
+  </data>
+  <data name="ProblemAction.RestartWatchdog" xml:space="preserve">
+    <value>Server restart or watchdog</value>
+  </data>
+  <data name="ProblemAction.IncorrectStatus" xml:space="preserve">
+    <value>Incorrect server status</value>
+  </data>
+  <data name="ProblemAction.ResourceMonitoring" xml:space="preserve">
+    <value>CPU, memory, or player monitoring</value>
+  </data>
+  <data name="ProblemAction.LocalNetwork" xml:space="preserve">
+    <value>Local network connection</value>
+  </data>
+  <data name="ProblemAction.PublicNetwork" xml:space="preserve">
+    <value>Internet or public connection</value>
+  </data>
+  <data name="ProblemAction.PortsFirewallRcon" xml:space="preserve">
+    <value>Ports, firewall, or RCON</value>
+  </data>
+  <data name="ProblemAction.ServerBackups" xml:space="preserve">
+    <value>Server backups</value>
+  </data>
+  <data name="ProblemAction.TransferExport" xml:space="preserve">
+    <value>Transfer export</value>
+  </data>
+  <data name="ProblemAction.TransferImport" xml:space="preserve">
+    <value>Transfer import</value>
+  </data>
+  <data name="ProblemAction.TransferVerification" xml:space="preserve">
+    <value>Transfer package verification</value>
+  </data>
+  <data name="ProblemAction.SettingsPasswords" xml:space="preserve">
+    <value>Server settings or passwords</value>
+  </data>
+  <data name="ProblemAction.DiscordAlerts" xml:space="preserve">
+    <value>Discord alerts</value>
+  </data>
+  <data name="ProblemAction.SynixUpdate" xml:space="preserve">
+    <value>Synix update</value>
+  </data>
+  <data name="ProblemAction.InstallationPackaging" xml:space="preserve">
+    <value>MSI, WinGet, or standalone installation</value>
+  </data>
+  <data name="ProblemAction.WindowDisplay" xml:space="preserve">
+    <value>Window or display problem</value>
+  </data>
+  <data name="ProblemAction.CrashFreeze" xml:space="preserve">
+    <value>Synix crash or freeze</value>
+  </data>
+  <data name="ProblemAction.TemplateLaunch" xml:space="preserve">
+    <value>Server template or launch behavior</value>
+  </data>
+  <data name="ProblemAction.Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Report.EnglishRequiredWarning" xml:space="preserve">
+    <value>Important: Write the summary and report details in English so the Synix support team can review them.</value>
+  </data>
+  <data name="Advanced.Firewall.ButtonChecking" xml:space="preserve">
+    <value>Checking Firewall...</value>
+  </data>
+  <data name="Advanced.Firewall.CheckingPaths" xml:space="preserve">
+    <value>Checking Windows Firewall program paths...</value>
+  </data>
+  <data name="Advanced.Firewall.Canceled" xml:space="preserve">
+    <value>Cleanup canceled. No firewall rules were changed.</value>
+  </data>
+  <data name="Advanced.Firewall.WaitingForAdmin" xml:space="preserve">
+    <value>Waiting for administrator permission...</value>
+  </data>
+  <data name="Advanced.Firewall.RemovedVerified" xml:space="preserve">
+    <value>Removed and verified {0} orphaned executable path(s).</value>
+  </data>
+  <data name="Advanced.Firewall.NoneFound" xml:space="preserve">
+    <value>No orphaned firewall rules were found in the default Synix Games folder.</value>
+  </data>
+  <data name="Advanced.Background.EnabledCurrent" xml:space="preserve">
+    <value>Enabled for Windows sign-in — Close still exits Synix completely.</value>
+  </data>
+  <data name="Advanced.Background.DisabledCurrent" xml:space="preserve">
+    <value>Disabled — scheduled work runs only while Synix is open.</value>
+  </data>
+  <data name="Advanced.Background.EnabledResult" xml:space="preserve">
+    <value>Enabled for Windows sign-in. Closing Synix still exits every Synix process for the current session.</value>
+  </data>
+  <data name="Advanced.Background.DisabledResult" xml:space="preserve">
+    <value>Disabled. Background monitoring will stop and will not start at sign-in.</value>
+  </data>
+  <data name="AddServer.Title" xml:space="preserve">
+    <value>Add a Server</value>
+  </data>
+  <data name="AddServer.Heading" xml:space="preserve">
+    <value>How would you like to add a server?</value>
+  </data>
+  <data name="AddServer.Subtitle" xml:space="preserve">
+    <value>Synix can install a new server or safely register files that are already on this PC.</value>
+  </data>
+  <data name="AddServer.Create.Title" xml:space="preserve">
+    <value>Create and install a new server</value>
+  </data>
+  <data name="AddServer.Create.Description" xml:space="preserve">
+    <value>Choose the game and settings, then let Synix download the server files.</value>
+  </data>
+  <data name="AddServer.Create.Button" xml:space="preserve">
+    <value>Create New</value>
+  </data>
+  <data name="AddServer.Import.Title" xml:space="preserve">
+    <value>Import an existing server</value>
+  </data>
+  <data name="AddServer.Import.Description" xml:space="preserve">
+    <value>Point Synix to an existing server folder. Your files are not moved or replaced.</value>
+  </data>
+  <data name="AddServer.Import.Button" xml:space="preserve">
+    <value>Import Existing</value>
+  </data>
+  <data name="AddServer.Catalog.Title" xml:space="preserve">
+    <value>Check game support first</value>
+  </data>
+  <data name="AddServer.Catalog.Description" xml:space="preserve">
+    <value>Search the catalog to see executable, configuration, crossplay, and player-query support.</value>
+  </data>
+  <data name="AddServer.Catalog.Button" xml:space="preserve">
+    <value>View Catalog</value>
+  </data>
+  <data name="Connection.Heading" xml:space="preserve">
+    <value>Connect to {0}</value>
+  </data>
+  <data name="Connection.Subtitle" xml:space="preserve">
+    <value>Use the address that matches where the player is connecting from.</value>
+  </data>
+  <data name="Connection.Local.Title" xml:space="preserve">
+    <value>Same computer or home network</value>
+  </data>
+  <data name="Connection.Local.Description" xml:space="preserve">
+    <value>Use this for players connected to the same router.</value>
+  </data>
+  <data name="Connection.Public.Title" xml:space="preserve">
+    <value>Friends connecting over the internet</value>
+  </data>
+  <data name="Connection.Public.Description" xml:space="preserve">
+    <value>Your router and Windows Firewall must allow the game and query ports.</value>
+  </data>
+  <data name="Connection.Public.BedrockDescription" xml:space="preserve">
+    <value>Your router and Windows Firewall must allow Bedrock's UDP game port.</value>
+  </data>
+  <data name="Connection.Ports.StandardSummary" xml:space="preserve">
+    <value>Configured ports: {0}. Some games appear in a server browser only when the query port is also forwarded.</value>
+  </data>
+  <data name="Connection.Ports.BedrockSummary" xml:space="preserve">
+    <value>Bedrock game port: {0}/UDP. IPv6 port: {1}/UDP. Each Bedrock server needs its own pair of ports.</value>
+  </data>
+  <data name="Connection.Port.Game" xml:space="preserve">
+    <value>game {0}</value>
+  </data>
+  <data name="Connection.Port.Query" xml:space="preserve">
+    <value>query {0}</value>
+  </data>
+  <data name="Connection.Port.Rcon" xml:space="preserve">
+    <value>RCON {0}</value>
+  </data>
+  <data name="Connection.Port.App" xml:space="preserve">
+    <value>app {0}</value>
+  </data>
+  <data name="Connection.Address.Hidden" xml:space="preserve">
+    <value>Hidden by Privacy Mode</value>
+  </data>
+  <data name="Connection.Address.PublicUnavailable" xml:space="preserve">
+    <value>Public address could not be loaded</value>
+  </data>
+  <data name="Connection.Address.Unavailable" xml:space="preserve">
+    <value>Address could not be loaded</value>
+  </data>
+  <data name="PlayerCenter.Summary.One" xml:space="preserve">
+    <value>{0} • {1} • 1 named player</value>
+  </data>
+  <data name="PlayerCenter.Summary.Many" xml:space="preserve">
+    <value>{0} • {1} • {2} named players</value>
+  </data>
+  <data name="PlayerCenter.Loading" xml:space="preserve">
+    <value>Loading player details…</value>
+  </data>
+  <data name="PlayerCenter.Guidance.Minecraft" xml:space="preserve">
+    <value> Select a player to use Minecraft's local administration commands.</value>
+  </data>
+  <data name="PlayerCenter.Guidance.UnsupportedActions" xml:space="preserve">
+    <value> Player actions remain disabled unless a game provides a verified administration protocol.</value>
+  </data>
+  <data name="PlayerCenter.Action.Kick" xml:space="preserve">
+    <value>Kick</value>
+  </data>
+  <data name="PlayerCenter.Action.Allowlist" xml:space="preserve">
+    <value>Add to Allowlist</value>
+  </data>
+  <data name="PlayerCenter.Action.Operator" xml:space="preserve">
+    <value>Make Operator</value>
+  </data>
+  <data name="PlayerCenter.SelectValidPlayer" xml:space="preserve">
+    <value>Select a valid Minecraft player first.</value>
+  </data>
+  <data name="PlayerCenter.Confirm.Title" xml:space="preserve">
+    <value>Confirm Minecraft Player Action</value>
+  </data>
+  <data name="PlayerCenter.Confirm.Kick" xml:space="preserve">
+    <value>Do you want to kick this player: {0}?</value>
+  </data>
+  <data name="PlayerCenter.Confirm.Allowlist" xml:space="preserve">
+    <value>Do you want to add this player to the allowlist: {0}?</value>
+  </data>
+  <data name="PlayerCenter.Confirm.Operator" xml:space="preserve">
+    <value>Do you want to make this player an operator: {0}?</value>
+  </data>
+  <data name="PlayerQuery.GameDefinitionUnavailable" xml:space="preserve">
+    <value>The game definition is unavailable.</value>
+  </data>
+  <data name="PlayerQuery.CrossplayUnavailable" xml:space="preserve">
+    <value>Player tracking is unavailable while Crossplay is enabled. Disable Crossplay to use Steam A2S player tracking.</value>
+  </data>
+  <data name="PlayerQuery.ProtocolUnavailable" xml:space="preserve">
+    <value>This game's current query protocol does not provide a safe, universal player-name list.</value>
+  </data>
+  <data name="PlayerQuery.MinecraftCountOnly" xml:space="preserve">
+    <value>Minecraft reports {0} connected player(s), but this server query does not publish player names.</value>
+  </data>
+  <data name="PlayerQuery.StartServerFirst" xml:space="preserve">
+    <value>Start the server before refreshing player details.</value>
+  </data>
+  <data name="PlayerQuery.InvalidA2sResponse" xml:space="preserve">
+    <value>The server returned an invalid A2S player response.</value>
+  </data>
+  <data name="PlayerQuery.IncompatiblePlayerList" xml:space="preserve">
+    <value>The server query works, but it did not provide a compatible player list.</value>
+  </data>
+  <data name="PlayerQuery.NoNamedPlayers" xml:space="preserve">
+    <value>The server responded and no named players are connected.</value>
+  </data>
+  <data name="PlayerQuery.LoadedPlayers" xml:space="preserve">
+    <value>Loaded {0} connected player(s).</value>
+  </data>
+  <data name="PlayerQuery.Timeout" xml:space="preserve">
+    <value>The player query on UDP port {0} timed out.</value>
+  </data>
+  <data name="PlayerQuery.ConnectionFailed" xml:space="preserve">
+    <value>The player query could not connect: {0}</value>
+  </data>
+  <data name="PlayerQuery.ReadFailed" xml:space="preserve">
+    <value>Player details could not be read: {0}</value>
+  </data>
+  <data name="PlayerQuery.BedrockCountOnly" xml:space="preserve">
+    <value>Minecraft Bedrock reports {0} connected player(s), but its built-in status response does not publish player names.</value>
+  </data>
+  <data name="PlayerQuery.MinecraftManagement.None" xml:space="preserve">
+    <value>Minecraft's local management service reports no connected players.</value>
+  </data>
+  <data name="PlayerQuery.MinecraftManagement.Loaded" xml:space="preserve">
+    <value>Loaded {0} player(s) through Minecraft's local management service.</value>
+  </data>
+  <data name="PlayerQuery.MinecraftRcon.None" xml:space="preserve">
+    <value>Minecraft RCON reports no connected players.</value>
+  </data>
+  <data name="PlayerQuery.MinecraftRcon.Loaded" xml:space="preserve">
+    <value>Loaded {0} player(s) through local Minecraft RCON.</value>
+  </data>
+  <data name="PlayerQuery.MinecraftUnavailable" xml:space="preserve">
+    <value>Minecraft player details are not available yet.</value>
+  </data>
+  <data name="PlayerQuery.UnnamedPlayer" xml:space="preserve">
+    <value>Unnamed player</value>
+  </data>
+  <data name="ModManager.Subtitle" xml:space="preserve">
+    <value>Discover what is already installed, safely add local packages, and keep a rollback record without maintaining a list of every mod.</value>
+  </data>
+  <data name="ModManager.Field.Server" xml:space="preserve">
+    <value>SERVER</value>
+  </data>
+  <data name="ModManager.Field.System" xml:space="preserve">
+    <value>ADD-ON SYSTEM</value>
+  </data>
+  <data name="ModManager.Field.InstallArea" xml:space="preserve">
+    <value>INSTALL AREA</value>
+  </data>
+  <data name="ModManager.Support.Checking" xml:space="preserve">
+    <value>Checking support…</value>
+  </data>
+  <data name="ModManager.Step.Detect" xml:space="preserve">
+    <value>1  Detect</value>
+  </data>
+  <data name="ModManager.Step.Stop" xml:space="preserve">
+    <value>2  Stop server</value>
+  </data>
+  <data name="ModManager.Step.Backup" xml:space="preserve">
+    <value>3  Back up files</value>
+  </data>
+  <data name="ModManager.Step.Install" xml:space="preserve">
+    <value>4  Install</value>
+  </data>
+  <data name="ModManager.Step.Verify" xml:space="preserve">
+    <value>5  Verify</value>
+  </data>
+  <data name="ModManager.Step.Restart" xml:space="preserve">
+    <value>6  Restart if needed</value>
+  </data>
+  <data name="ModManager.Column.AddOn" xml:space="preserve">
+    <value>ADD-ON</value>
+  </data>
+  <data name="ModManager.Column.Type" xml:space="preserve">
+    <value>TYPE</value>
+  </data>
+  <data name="ModManager.Column.Version" xml:space="preserve">
+    <value>VERSION</value>
+  </data>
+  <data name="ModManager.Column.Status" xml:space="preserve">
+    <value>STATUS</value>
+  </data>
+  <data name="ModManager.Column.Security" xml:space="preserve">
+    <value>SECURITY</value>
+  </data>
+  <data name="ModManager.Column.Source" xml:space="preserve">
+    <value>SOURCE</value>
+  </data>
+  <data name="ModManager.Column.Location" xml:space="preserve">
+    <value>LOCATION</value>
+  </data>
+  <data name="ModManager.Safety.Title" xml:space="preserve">
+    <value>Automatic Safety Checklist</value>
+  </data>
+  <data name="ModManager.Safety.Subtitle" xml:space="preserve">
+    <value>Synix checks these before it changes anything.</value>
+  </data>
+  <data name="ModManager.Selection.Empty" xml:space="preserve">
+    <value>Select an add-on to see where it was found.</value>
+  </data>
+  <data name="ModManager.Button.InstallFile" xml:space="preserve">
+    <value>Install From File</value>
+  </data>
+  <data name="ModManager.Button.InstallFramework" xml:space="preserve">
+    <value>Install Framework</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalog" xml:space="preserve">
+    <value>Browse Catalog</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalogs" xml:space="preserve">
+    <value>Browse Catalogs</value>
+  </data>
+  <data name="ModManager.Button.OpenFolder" xml:space="preserve">
+    <value>Open Add-ons Folder</value>
+  </data>
+  <data name="ModManager.Button.Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ModManager.Button.Remove" xml:space="preserve">
+    <value>Remove Selected</value>
+  </data>
+  <data name="ModManager.Button.Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ModManager.Button.ManageIds" xml:space="preserve">
+    <value>Manage Mod IDs</value>
+  </data>
+  <data name="ModManager.Inventory.Empty" xml:space="preserve">
+    <value>No add-ons were found in the active profile folders.</value>
+  </data>
+  <data name="ModManager.Inventory.One" xml:space="preserve">
+    <value>1 add-on found  •  {1} tracked by Synix</value>
+  </data>
+  <data name="ModManager.Inventory.Many" xml:space="preserve">
+    <value>{0} add-ons found  •  {1} tracked by Synix</value>
+  </data>
+  <data name="ModManager.Inventory.RefreshFailed" xml:space="preserve">
+    <value>Synix could not refresh the add-on folders.</value>
+  </data>
+  <data name="ModManager.Support.ProviderIds" xml:space="preserve">
+    <value>READY • Synix manages the provider's ordered mod ID list</value>
+  </data>
+  <data name="ModManager.Support.FileImport" xml:space="preserve">
+    <value>READY • Synix can safely import local add-on files</value>
+  </data>
+  <data name="ModManager.Support.SetupNeeded" xml:space="preserve">
+    <value>SETUP NEEDED • Select or install a compatible framework first</value>
+  </data>
+  <data name="ModManager.Support.DetectionOnly" xml:space="preserve">
+    <value>DETECTION ONLY • The game provider remains responsible for installation</value>
+  </data>
+  <data name="ModManager.Framework.Automatic" xml:space="preserve">
+    <value>The server loader and existing folders choose the install area automatically.</value>
+  </data>
+  <data name="ModManager.Framework.Named" xml:space="preserve">
+    <value>Framework: {0}.</value>
+  </data>
+  <data name="ModManager.Unsupported.Title" xml:space="preserve">
+    <value>NO ADD-ON PROFILE YET</value>
+  </data>
+  <data name="ModManager.Unsupported.Description" xml:space="preserve">
+    <value>Synix will not guess where this game stores mods. A small data profile can add support later without rewriting this window.</value>
+  </data>
+  <data name="ModManager.NoFilesChanged" xml:space="preserve">
+    <value>No files were changed.</value>
+  </data>
+  <data name="ModManager.Safety.ServerStopped" xml:space="preserve">
+    <value>Server is stopped</value>
+  </data>
+  <data name="ModManager.Safety.StopFirst" xml:space="preserve">
+    <value>Stop the server before changes</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkDetected" xml:space="preserve">
+    <value>Framework detected</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkRequired" xml:space="preserve">
+    <value>Framework setup required</value>
+  </data>
+  <data name="ModManager.Safety.FolderAvailable" xml:space="preserve">
+    <value>Server folder available</value>
+  </data>
+  <data name="ModManager.Safety.FolderMissing" xml:space="preserve">
+    <value>Server folder missing</value>
+  </data>
+  <data name="ModManager.Safety.ProviderTrust" xml:space="preserve">
+    <value>Provider download needs manual trust</value>
+  </data>
+  <data name="ModManager.Safety.SecurityScan" xml:space="preserve">
+    <value>Security scan runs before install</value>
+  </data>
+  <data name="ModManager.Safety.StandardPermissions" xml:space="preserve">
+    <value>Standard Windows permissions</value>
+  </data>
+  <data name="ModManager.Safety.RestartWithoutAdmin" xml:space="preserve">
+    <value>Restart without administrator access</value>
+  </data>
+  <data name="ModManager.Safety.RestartRequired" xml:space="preserve">
+    <value>Restart required after changes</value>
+  </data>
+  <data name="ModManager.Safety.LiveReload" xml:space="preserve">
+    <value>Framework supports live reload</value>
+  </data>
+  <data name="ModManager.Profile.Rust.Description" xml:space="preserve">
+    <value>Rust plugins loaded by the Oxide/uMod framework.</value>
+  </data>
+  <data name="ModManager.Profile.Rust.Target" xml:space="preserve">
+    <value>Oxide plugins</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.Name" xml:space="preserve">
+    <value>Minecraft add-ons</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.Description" xml:space="preserve">
+    <value>JAR plugins or mods selected from the server loader and folders already on disk.</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.ModsTarget" xml:space="preserve">
+    <value>Loader mods</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.PluginsTarget" xml:space="preserve">
+    <value>Server plugins</value>
+  </data>
+  <data name="ModManager.Profile.SevenDays.Name" xml:space="preserve">
+    <value>7 Days to Die server mods</value>
+  </data>
+  <data name="ModManager.Profile.SevenDays.Description" xml:space="preserve">
+    <value>Synix installs complete mod ZIP packages into the dedicated server's Mods folder. Mods with client assets may also need to be installed by every player.</value>
+  </data>
+  <data name="ModManager.Profile.SevenDays.Target" xml:space="preserve">
+    <value>Server Mods folder</value>
+  </data>
+  <data name="ModManager.Profile.ArkEvolved.Name" xml:space="preserve">
+    <value>Steam Workshop mods</value>
+  </data>
+  <data name="ModManager.Profile.ArkEvolved.Description" xml:space="preserve">
+    <value>Synix manages the ordered Steam Workshop IDs; ARK and Steam download and update the actual content.</value>
+  </data>
+  <data name="ModManager.Profile.ArkEvolved.Target" xml:space="preserve">
+    <value>Ordered Steam Workshop IDs</value>
+  </data>
+  <data name="ModManager.Profile.ArkAscended.Name" xml:space="preserve">
+    <value>CurseForge server mods</value>
+  </data>
+  <data name="ModManager.Profile.ArkAscended.Description" xml:space="preserve">
+    <value>Synix manages the ordered mod ID list; ARK downloads and updates the actual CurseForge content when the server starts.</value>
+  </data>
+  <data name="ModManager.Profile.ArkAscended.Target" xml:space="preserve">
+    <value>Ordered CurseForge mod IDs</value>
+  </data>
+  <data name="ModManager.Profile.Discovered.Name" xml:space="preserve">
+    <value>Discovered add-on folders</value>
+  </data>
+  <data name="ModManager.Profile.Discovered.Description" xml:space="preserve">
+    <value>Synix found common add-on folders and can inventory them safely. Installation stays disabled until a maintainer adds a verified data profile.</value>
+  </data>
+  <data name="ModManager.Known.Mod" xml:space="preserve">
+    <value>Mod</value>
+  </data>
+  <data name="ModManager.Known.Plugin" xml:space="preserve">
+    <value>Plugin</value>
+  </data>
+  <data name="ModManager.Known.ModId" xml:space="preserve">
+    <value>Mod ID</value>
+  </data>
+  <data name="ModManager.Known.ProviderManaged" xml:space="preserve">
+    <value>Provider managed</value>
+  </data>
+  <data name="ModManager.Known.ConfiguredNextStart" xml:space="preserve">
+    <value>Configured for next start</value>
+  </data>
+  <data name="ModManager.Known.ProviderNotScanned" xml:space="preserve">
+    <value>Provider download not pre-scanned</value>
+  </data>
+  <data name="ModManager.Known.GameProvider" xml:space="preserve">
+    <value>Game provider</value>
+  </data>
+  <data name="ModManager.Known.Detected" xml:space="preserve">
+    <value>Detected on disk</value>
+  </data>
+  <data name="ModManager.Known.Healthy" xml:space="preserve">
+    <value>Healthy</value>
+  </data>
+  <data name="ModManager.Known.Changed" xml:space="preserve">
+    <value>Changed outside Synix</value>
+  </data>
+  <data name="ModManager.Known.NotReviewed" xml:space="preserve">
+    <value>Not reviewed by Synix</value>
+  </data>
+  <data name="ModManager.Known.LegacyNotReviewed" xml:space="preserve">
+    <value>Legacy install • not reviewed</value>
+  </data>
+  <data name="ModManager.Known.StructuralOnly" xml:space="preserve">
+    <value>Structural checks only</value>
+  </data>
+  <data name="ModManager.Known.ReviewRecorded" xml:space="preserve">
+    <value>Pre-install review recorded</value>
+  </data>
+  <data name="ModManager.Known.External" xml:space="preserve">
+    <value>External</value>
+  </data>
+  <data name="ModManager.Known.ExternalProvider" xml:space="preserve">
+    <value>External provider</value>
+  </data>
+  <data name="ModManager.Known.SynixImport" xml:space="preserve">
+    <value>Synix import</value>
+  </data>
+  <data name="ModManager.Known.LocalPackage" xml:space="preserve">
+    <value>Local package</value>
+  </data>
+  <data name="ModManager.Known.BuiltInLoader" xml:space="preserve">
+    <value>Built-in mod loader</value>
+  </data>
+  <data name="ModManager.Known.ArkBuiltInInstaller" xml:space="preserve">
+    <value>ARK built-in mod installer</value>
+  </data>
+  <data name="ResourceMonitor.WindowTitleFiltered" xml:space="preserve">
+    <value>Live Process Details - {0}</value>
+  </data>
+  <data name="ResourceMonitor.GridTitleFiltered" xml:space="preserve">
+    <value>Live Process Details  •  {0}</value>
+  </data>
+  <data name="ResourceMonitor.FilteredSubtitle" xml:space="preserve">
+    <value>Every launcher, console host, and game process Synix has verified inside this server group.</value>
+  </data>
+  <data name="ResourceMonitor.RowRunning" xml:space="preserve">
+    <value>●  Running</value>
+  </data>
+  <data name="ResourceMonitor.CpuCaption" xml:space="preserve">
+    <value>Across all managed server processes</value>
+  </data>
+  <data name="ResourceMonitor.RamValue" xml:space="preserve">
+    <value>{0:N2} GB</value>
+  </data>
+  <data name="ResourceMonitor.RamCaption" xml:space="preserve">
+    <value>{0:N1}% of {1:N1} GB system memory</value>
+  </data>
+  <data name="ResourceMonitor.Active.None" xml:space="preserve">
+    <value>No running server processes detected</value>
+  </data>
+  <data name="ResourceMonitor.Active.One" xml:space="preserve">
+    <value>1 server process is currently online</value>
+  </data>
+  <data name="ResourceMonitor.Active.Many" xml:space="preserve">
+    <value>{0} server processes are currently online</value>
+  </data>
+  <data name="ResourceMonitor.ProcessCount.One" xml:space="preserve">
+    <value>1 running process</value>
+  </data>
+  <data name="ResourceMonitor.ProcessCount.Many" xml:space="preserve">
+    <value>{0} running processes</value>
+  </data>
+  <data name="ResourceMonitor.LastUpdated" xml:space="preserve">
+    <value>Updated {0:T}  •  Auto-refresh every 1 second</value>
+  </data>
+  <data name="ResourceMonitor.Empty" xml:space="preserve">
+    <value>No running game servers detected</value>
+  </data>
+  <data name="Text.BDA050585A00F0F6CB50" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="Text.E7AC0786668E0FF0F02B" xml:space="preserve">
+    <value>:</value>
+  </data>
+  <data name="Text.4B21C7403A59CBADBC0E" xml:space="preserve">
+    <value>.NET Framework requirement</value>
+  </data>
+  <data name="Text.ACE4C580886BB3063137" xml:space="preserve">
+    <value>↺</value>
+  </data>
+  <data name="Text.AD244EA43ED037EF1730" xml:space="preserve">
+    <value>↻</value>
+  </data>
+  <data name="Text.1B1A4A3B36DFC22C1EE4" xml:space="preserve">
+    <value>↻  Restart</value>
+  </data>
+  <data name="Text.BE66C4F105B89904ED79" xml:space="preserve">
+    <value>+  Add Server</value>
+  </data>
+  <data name="Text.8DB71ED28B0F2F143256" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="Text.503C7B3151D0479692A1" xml:space="preserve">
+    <value>&gt;_</value>
+  </data>
+  <data name="Text.C19732DF495EF97E72A3" xml:space="preserve">
+    <value>⌕</value>
+  </data>
+  <data name="Text.70B4B62A6095E612F4AD" xml:space="preserve">
+    <value>⌘</value>
+  </data>
+  <data name="Text.695155B305760B530D36" xml:space="preserve">
+    <value>■  Stop</value>
+  </data>
+  <data name="Text.C77C3829943ADF9C1E21" xml:space="preserve">
+    <value>▤</value>
+  </data>
+  <data name="Text.0DF1F6C5210F85368B8A" xml:space="preserve">
+    <value>▶  Start</value>
+  </data>
+  <data name="Text.6C84570F8BBCECB474D7" xml:space="preserve">
+    <value>◆</value>
+  </data>
+  <data name="Text.F88C1B7702D3AFFE04D4" xml:space="preserve">
+    <value>◇</value>
+  </data>
+  <data name="Text.ED08E4C207A6FC2493D7" xml:space="preserve">
+    <value>◇  Sensitive fields follow the Synix Privacy Mode setting.</value>
+  </data>
+  <data name="Text.4234688FB477D9CF1421" xml:space="preserve">
+    <value>◇  Template-aware controls: unavailable settings are disabled automatically for the selected game.</value>
+  </data>
+  <data name="Text.16370FF5BAC8B8D003C8" xml:space="preserve">
+    <value>◎</value>
+  </data>
+  <data name="Text.5F9E6A3696C4A7C2F25C" xml:space="preserve">
+    <value>●</value>
+  </data>
+  <data name="Text.A9710B6FD2B7AAA5135D" xml:space="preserve">
+    <value>●  Action required</value>
+  </data>
+  <data name="Text.06114F07909C7C52F41D" xml:space="preserve">
+    <value>●  Initializing SteamCMD...</value>
+  </data>
+  <data name="Text.F28331D3C1ADA044B1F9" xml:space="preserve">
+    <value>●  LIVE MONITORING</value>
+  </data>
+  <data name="Text.9C9046B6659057C8B0D0" xml:space="preserve">
+    <value>●  LIVE TELEMETRY</value>
+  </data>
+  <data name="Text.F5C77CBF1B197C912BCA" xml:space="preserve">
+    <value>●  SteamCMD needs attention</value>
+  </data>
+  <data name="Text.427A3D1D34F4C09963DA" xml:space="preserve">
+    <value>●  SteamCMD ready</value>
+  </data>
+  <data name="Text.F9F2B6CC304F2C8B6643" xml:space="preserve">
+    <value>◷</value>
+  </data>
+  <data name="Text.E5235A4A75E63AAA9740" xml:space="preserve">
+    <value>⚙</value>
+  </data>
+  <data name="Text.1B0142C80D27A3442046" xml:space="preserve">
+    <value>⚠ Changing this location does not delete backups from the previous folder.</value>
+  </data>
+  <data name="Text.1DABBA21CDAD44541F6B" xml:space="preserve">
+    <value>✓</value>
+  </data>
+  <data name="Text.32EFCD09F92A272905F1" xml:space="preserve">
+    <value>✓  Readiness</value>
+  </data>
+  <data name="Text.BE64F28A8D0A6257B2AF" xml:space="preserve">
+    <value>✕</value>
+  </data>
+  <data name="Text.E43308F9EB04022F2D19" xml:space="preserve">
+    <value>➜</value>
+  </data>
+  <data name="Text.60AE181A334566F4648C" xml:space="preserve">
+    <value>⬡</value>
+  </data>
+  <data name="Text.A9B62C4456D11AE0550C" xml:space="preserve">
+    <value>🔒 [REQUIRED] Enter a Server Name and select a Game Template.</value>
+  </data>
+  <data name="Text.5FECEB66FFC86F38D952" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Text.3CB4B01999543FE147B3" xml:space="preserve">
+    <value>0 running servers</value>
+  </data>
+  <data name="Text.5FC3FE0100834F4AF0C0" xml:space="preserve">
+    <value>0 servers</value>
+  </data>
+  <data name="Text.8066451A3B0D72DB913C" xml:space="preserve">
+    <value>0 settings</value>
+  </data>
+  <data name="Text.731FA3C961E0908B6EEC" xml:space="preserve">
+    <value>0 unsaved changes</value>
+  </data>
+  <data name="Text.13E2510BC57D3BD9E2A3" xml:space="preserve">
+    <value>0.0%</value>
+  </data>
+  <data name="Text.58ED4C80A138CBE07569" xml:space="preserve">
+    <value>0.0% of system memory</value>
+  </data>
+  <data name="Text.92C49213F152EFC7CE6E" xml:space="preserve">
+    <value>0.00 GB</value>
+  </data>
+  <data name="Text.1A759326BD5A56996BF1" xml:space="preserve">
+    <value>1   YOUR DATA STAYS SEPARATE
+Servers, settings, backups, runtimes, and SteamCMD are stored under C:\Synix so application updates do not replace them.</value>
+  </data>
+  <data name="Text.1F8DCA1F57379032F8AD" xml:space="preserve">
+    <value>1–100 per server</value>
+  </data>
+  <data name="Text.4A44DC15364204A80FE8" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="Text.5994471ABB01112AFCC1" xml:space="preserve">
+    <value>12345</value>
+  </data>
+  <data name="Text.CD33F03B524794FFF78C" xml:space="preserve">
+    <value>2   ADD A SERVER
+Choose a game, enter the friendly settings, and let Synix install it. Steam login is requested only when that game requires it.</value>
+  </data>
+  <data name="Text.C5156BE9BCD9DDFB3BA1" xml:space="preserve">
+    <value>27015</value>
+  </data>
+  <data name="Text.5D2FEE1F815D585D70A9" xml:space="preserve">
+    <value>27016</value>
+  </data>
+  <data name="Text.61A00FCEB996AF15FF21" xml:space="preserve">
+    <value>3   START, STOP, AND VERIFY
+Synix shows the exact launch arguments, verifies startup, uses safe stop behavior where supported, and keeps recent logs available.</value>
+  </data>
+  <data name="Text.CA9A7AA7C8AF17BABA8C" xml:space="preserve">
+    <value>4   NETWORK ACCESS
+Windows Firewall permission and router port forwarding are different. Synix checks local conflicts, but never changes your router.</value>
+  </data>
+  <data name="Text.C638A97009ED3C9CCB29" xml:space="preserve">
+    <value>5   RECOVERY AND BACKUPS
+Use Settings &gt; Advanced &gt; Troubleshooter for safe health checks and repairs. Use Backups before moving Synix or making large changes.</value>
+  </data>
+  <data name="Text.41C991EB6A66242C0454" xml:space="preserve">
+    <value>7777</value>
+  </data>
+  <data name="Text.7417BB0A663AE981F77C" xml:space="preserve">
+    <value>A server operation is currently in progress</value>
+  </data>
+  <data name="Text.2B2D3EED7C841FFB78AA" xml:space="preserve">
+    <value>Access controls, startup behavior, and integrations</value>
+  </data>
+  <data name="Text.B70806C6C2D93404F976" xml:space="preserve">
+    <value>Access Credentials</value>
+  </data>
+  <data name="Text.74ECEE4668229DC04361" xml:space="preserve">
+    <value>Account name, not your Steam display name</value>
+  </data>
+  <data name="Text.C6D30183C000D1797FAF" xml:space="preserve">
+    <value>Across all managed server processes</value>
+  </data>
+  <data name="Text.3223AB519F48D64BCAA0" xml:space="preserve">
+    <value>ACTIVE SERVERS</value>
+  </data>
+  <data name="Text.1FCD02D49EBBD52B384B" xml:space="preserve">
+    <value>Activity &amp; Diagnostics</value>
+  </data>
+  <data name="Text.1AEE199CD9A4FBDEF969" xml:space="preserve">
+    <value>Add Destination</value>
+  </data>
+  <data name="Text.C404A6A32FD8F56893D3" xml:space="preserve">
+    <value>Add every other complete template the game needs. Edit Installed location so each path is relative to the installed server folder.</value>
+  </data>
+  <data name="Text.01792A33C228A70EABC9" xml:space="preserve">
+    <value>Add files</value>
+  </data>
+  <data name="Text.7AF2440D6D8533178C93" xml:space="preserve">
+    <value>Added automatically</value>
+  </data>
+  <data name="Text.CAB93A0C978A9DE29613" xml:space="preserve">
+    <value>Additional configuration files</value>
+  </data>
+  <data name="Text.D4FF480F5F07EC7DFC68" xml:space="preserve">
+    <value>Additional files are required</value>
+  </data>
+  <data name="Text.2E28AAB93B90457D1678" xml:space="preserve">
+    <value>Admin Password</value>
+  </data>
+  <data name="Text.9F088DBEBD6C3C70A5DD" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="Text.3E1844F80A694282E164" xml:space="preserve">
+    <value>Advanced Discord Destinations</value>
+  </data>
+  <data name="Text.5684C243135644F8B70D" xml:space="preserve">
+    <value>Agreement required</value>
+  </data>
+  <data name="Text.1B1883FE46A693283181" xml:space="preserve">
+    <value>Allow launch-file export</value>
+  </data>
+  <data name="Text.012855FACF11B6858FD1" xml:space="preserve">
+    <value>App Port</value>
+  </data>
+  <data name="Text.1D62D75616FD38521A36" xml:space="preserve">
+    <value>AREA</value>
+  </data>
+  <data name="Text.20A878B1B65D4056AC2D" xml:space="preserve">
+    <value>Argument Test</value>
+  </data>
+  <data name="Text.35A34571868552B279A3" xml:space="preserve">
+    <value>ARGUMENTS</value>
+  </data>
+  <data name="Text.C856C7EB1CF5F53270C1" xml:space="preserve">
+    <value>Authentication Token</value>
+  </data>
+  <data name="Text.69230D9A2C6325D178BE" xml:space="preserve">
+    <value>Auto Restart</value>
+  </data>
+  <data name="Text.8F2ED817BE8BBE23D64C" xml:space="preserve">
+    <value>Automatic evidence comes from Synix actions; arguments require the real-server test.</value>
+  </data>
+  <data name="Text.BC489FF2DAD82D69C258" xml:space="preserve">
+    <value>Automatic safety checklist and next steps</value>
+  </data>
+  <data name="Text.A8BC53DE427A5E93DAED" xml:space="preserve">
+    <value>Automatically builds a safe game/server folder below the configured Games path.</value>
+  </data>
+  <data name="Text.FC52030FEF2C9AEC802D" xml:space="preserve">
+    <value>Automatically collect generated game configurations</value>
+  </data>
+  <data name="Text.D909750B1BBB71A39B63" xml:space="preserve">
+    <value>Automation</value>
+  </data>
+  <data name="Text.9D70644761665CEA1FDE" xml:space="preserve">
+    <value>BACKUP FILE</value>
+  </data>
+  <data name="Text.0F5BBD5CA04AD4F72861" xml:space="preserve">
+    <value>Backup on Start</value>
+  </data>
+  <data name="Text.9FF20EBBA7CCB0CA561D" xml:space="preserve">
+    <value>Backup Server</value>
+  </data>
+  <data name="Text.3334FEE2C77FEF827371" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="Text.A79A71B58AFE2BCD33ED" xml:space="preserve">
+    <value>Before you continue</value>
+  </data>
+  <data name="Text.1232008495CAD0B69745" xml:space="preserve">
+    <value>Blocks launch with clear Microsoft download guidance when the runtime is missing.</value>
+  </data>
+  <data name="Text.AAFE71EF1584DE2CA4E2" xml:space="preserve">
+    <value>Blocks setup with a clear message when the processor does not support AVX2.</value>
+  </data>
+  <data name="Text.3227AA9666253F7A7365" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="Text.28BBF5E4E8DC04D61EA5" xml:space="preserve">
+    <value>Browse Folder</value>
+  </data>
+  <data name="Text.3CEBC2F3146476331D53" xml:space="preserve">
+    <value>Builder guide and supported tags</value>
+  </data>
+  <data name="Text.09DC887D818AD07E931B" xml:space="preserve">
+    <value>C:\Synix\Games\Example Server</value>
+  </data>
+  <data name="Text.19766ED6CCB2F4A32778" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Text.2222C9E93C86C44F7B3E" xml:space="preserve">
+    <value>Cancel Check</value>
+  </data>
+  <data name="Text.ED928782624AFCE2078E" xml:space="preserve">
+    <value>Canceling the release check safely...</value>
+  </data>
+  <data name="Text.01CD8522DA9B22A77022" xml:space="preserve">
+    <value>Catalog order</value>
+  </data>
+  <data name="Text.2C12824B5F626268A103" xml:space="preserve">
+    <value>CHECK</value>
+  </data>
+  <data name="Text.32E60E730D2E6845D352" xml:space="preserve">
+    <value>Check Again</value>
+  </data>
+  <data name="Text.104CDE8B8DC20296DF9A" xml:space="preserve">
+    <value>Check for DDoS</value>
+  </data>
+  <data name="Text.975CB60570D8F3E9A641" xml:space="preserve">
+    <value>Check Release</value>
+  </data>
+  <data name="Text.5C75164CBDDF6C71885B" xml:space="preserve">
+    <value>Check release readiness</value>
+  </data>
+  <data name="Text.95E3AA6BFFB7545B20EF" xml:space="preserve">
+    <value>Check shared runtimes, server files, configurations, ports, Windows Firewall, disk space, interrupted processes, recent logs, and Synix update health from one place.</value>
+  </data>
+  <data name="Text.37923AD83E636BE4C27F" xml:space="preserve">
+    <value>Check SteamCMD for updates before launching the server.</value>
+  </data>
+  <data name="Text.6B1DD744008E1B4658A6" xml:space="preserve">
+    <value>Check SteamCMD, runtimes, server files, configs, ports, Windows Firewall, disk space, interrupted processes, recent logs, and update health.</value>
+  </data>
+  <data name="Text.E0A3BA64FA759DF9B7C8" xml:space="preserve">
+    <value>Check Synix Values</value>
+  </data>
+  <data name="Text.8BCAEE3C780FC5A57E1C" xml:space="preserve">
+    <value>Checking for updates...</value>
+  </data>
+  <data name="Text.D230F2F5F0AC7821A70C" xml:space="preserve">
+    <value>Checking release files...</value>
+  </data>
+  <data name="Text.1DF3BE2046D08A780F73" xml:space="preserve">
+    <value>Checks the actual publish output without rebuilding Synix, starting the release, or accessing C:\Synix.</value>
+  </data>
+  <data name="Text.52A32013E2D94B00DBF7" xml:space="preserve">
+    <value>Checks the installed Windows .NET Framework release before the server starts.</value>
+  </data>
+  <data name="Text.445F89C824FEC1E5E372" xml:space="preserve">
+    <value>Checks whether virtualization support is enabled and available to Windows.</value>
+  </data>
+  <data name="Text.B28F2358A90FE65BFCC8" xml:space="preserve">
+    <value>Choose a row to unlock server controls</value>
+  </data>
+  <data name="Text.58ECD5D931201294DE1E" xml:space="preserve">
+    <value>Choose a server type to show its local verification history.</value>
+  </data>
+  <data name="Text.6ABB0361F0B32BEF8441" xml:space="preserve">
+    <value>Choose Folder</value>
+  </data>
+  <data name="Text.C9F72F8A6A3B6CC20F72" xml:space="preserve">
+    <value>Choose only the built-in launch behavior verified for this dedicated server.</value>
+  </data>
+  <data name="Text.2D57929BE2D29C7BE3DC" xml:space="preserve">
+    <value>Choose Package</value>
+  </data>
+  <data name="Text.22FCE0291808752AD7BC" xml:space="preserve">
+    <value>Choose the backup that should replace the server's current files.</value>
+  </data>
+  <data name="Text.C3E5374703B9BCA89C7B" xml:space="preserve">
+    <value>Choose the game and define the server identity.</value>
+  </data>
+  <data name="Text.30F3BBCB43AC48EBFD1C" xml:space="preserve">
+    <value>Choose the language used by Synix. Game settings and configuration values remain in English.</value>
+  </data>
+  <data name="Text.54FE09AF7E87A247A21A" xml:space="preserve">
+    <value>Choose when Synix should perform the scheduled server restart.</value>
+  </data>
+  <data name="Text.4A7C3351A85F01259421" xml:space="preserve">
+    <value>Clean Orphaned Rules</value>
+  </data>
+  <data name="Text.7FF6D10F94CC3274F62A" xml:space="preserve">
+    <value>Clean orphaned Synix server firewall rules</value>
+  </data>
+  <data name="Text.9CC3A043B6A91D450BC3" xml:space="preserve">
+    <value>CLEAR</value>
+  </data>
+  <data name="Text.5776503C1A52F4FA028F" xml:space="preserve">
+    <value>Clear Filters</value>
+  </data>
+  <data name="Text.4E5F04F4586826E50CD7" xml:space="preserve">
+    <value>Clear Mark</value>
+  </data>
+  <data name="Text.7D9EB7ACB13E24625C40" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Text.FC61CB13704E7289E632" xml:space="preserve">
+    <value>Collect generated game configurations now</value>
+  </data>
+  <data name="Text.1BB88EF61843E3570111" xml:space="preserve">
+    <value>Collect Now</value>
+  </data>
+  <data name="Text.B09F5332EE858BE57F71" xml:space="preserve">
+    <value>Commands stay on this computer unless you intentionally configure Java RCON for remote access.</value>
+  </data>
+  <data name="Text.896F662B3A2818D05B77" xml:space="preserve">
+    <value>Compatibility Verification</value>
+  </data>
+  <data name="Text.82A8EB3A96D059596D55" xml:space="preserve">
+    <value>Complete the required file setup before the dedicated server can start.</value>
+  </data>
+  <data name="Text.17F05E768CFB4B761715" xml:space="preserve">
+    <value>Complete, working configuration template file</value>
+  </data>
+  <data name="Text.DFA45629AB8769153F0E" xml:space="preserve">
+    <value>Config Editor</value>
+  </data>
+  <data name="Text.5AF3D7C6153B4E57ECDF" xml:space="preserve">
+    <value>CONFIG SOURCE</value>
+  </data>
+  <data name="Text.ADD1C4B4E0694244F0AE" xml:space="preserve">
+    <value>Config unavailable</value>
+  </data>
+  <data name="Text.D5CDE76290BF3E730FE4" xml:space="preserve">
+    <value>CONFIGURATION</value>
+  </data>
+  <data name="Text.D8BF9A84111DD6962D14" xml:space="preserve">
+    <value>Configuration &amp; Security</value>
+  </data>
+  <data name="Text.5E5DD0B908E3A1075161" xml:space="preserve">
+    <value>Configuration Application Check</value>
+  </data>
+  <data name="Text.190621520ECD3E2F9460" xml:space="preserve">
+    <value>Configuration behavior</value>
+  </data>
+  <data name="Text.8097A44203F07EA4116C" xml:space="preserve">
+    <value>Configuration Editor</value>
+  </data>
+  <data name="Text.F1C216DDF2B88463BCA7" xml:space="preserve">
+    <value>Configuration file</value>
+  </data>
+  <data name="Text.1472FD9B53FABC65C401" xml:space="preserve">
+    <value>Configuration format</value>
+  </data>
+  <data name="Text.F0CDBB393CA93D39DF05" xml:space="preserve">
+    <value>Configuration path relative to the installed server folder</value>
+  </data>
+  <data name="Text.7ED4EB126CA3A3051286" xml:space="preserve">
+    <value>Configuration repair is available</value>
+  </data>
+  <data name="Text.773BE7BF4AC974A6FE2E" xml:space="preserve">
+    <value>Configuration report copied to the clipboard.</value>
+  </data>
+  <data name="Text.6198EFCA8E63CD466052" xml:space="preserve">
+    <value>CONFIGURATION STATUS</value>
+  </data>
+  <data name="Text.6DEFAFA2CAA653041739" xml:space="preserve">
+    <value>Configure</value>
+  </data>
+  <data name="Text.E894B3E84DA132D468BB" xml:space="preserve">
+    <value>Configure basic Synix behavior on this computer.</value>
+  </data>
+  <data name="Text.7176F50E66F1BD1104FC" xml:space="preserve">
+    <value>Configure Schedule</value>
+  </data>
+  <data name="Text.5AC265F396A2C58687AA" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Text.1315F512F1E9EDAD63BC" xml:space="preserve">
+    <value>Confirm removal of the listed firewall rules</value>
+  </data>
+  <data name="Text.4027E5B24418520F3EFE" xml:space="preserve">
+    <value>Connect GitHub</value>
+  </data>
+  <data name="Text.2D4C39C3520C4D081530" xml:space="preserve">
+    <value>Connect GitHub account</value>
+  </data>
+  <data name="Text.1F914C4386C0676EE418" xml:space="preserve">
+    <value>CONNECTED</value>
+  </data>
+  <data name="Text.CF9AC88C72460BC4871D" xml:space="preserve">
+    <value>Connection Information</value>
+  </data>
+  <data name="Text.C2BD3BDCD4926716C67B" xml:space="preserve">
+    <value>Continue only after you have reviewed the required setup steps.</value>
+  </data>
+  <data name="Text.B0E3D6C0E2C3C45CBD0F" xml:space="preserve">
+    <value>Copy Address</value>
+  </data>
+  <data name="Text.07754DEE7F94A6CA31B1" xml:space="preserve">
+    <value>Copy allowlisted Steam runtime files after install</value>
+  </data>
+  <data name="Text.DA14A0D982E06E70BB06" xml:space="preserve">
+    <value>Copy approved Steam runtime files after installation</value>
+  </data>
+  <data name="Text.C6BB8A5950C5AD175A37" xml:space="preserve">
+    <value>Copy Details</value>
+  </data>
+  <data name="Text.62372ADDC6612D415FFA" xml:space="preserve">
+    <value>Copy problem report</value>
+  </data>
+  <data name="Text.54B8E0C0C268C1549AF4" xml:space="preserve">
+    <value>Copy Report</value>
+  </data>
+  <data name="Text.A388F0CE16C067DFA8C5" xml:space="preserve">
+    <value>Covers the unified Microsoft runtime used by current 2015, 2017, 2019, and 2022 servers.</value>
+  </data>
+  <data name="Text.D7D31960DA6507518203" xml:space="preserve">
+    <value>CPU Usage</value>
+  </data>
+  <data name="Text.DE967EB5C05508CC7A7D" xml:space="preserve">
+    <value>CPU USAGE</value>
+  </data>
+  <data name="Text.2196E21E8E2F8ABE522B" xml:space="preserve">
+    <value>Create a protected server backup before each launch.</value>
+  </data>
+  <data name="Text.6360E272BBD6B64F99E0" xml:space="preserve">
+    <value>Create a transfer password</value>
+  </data>
+  <data name="Text.5D45286D0F2A822299E8" xml:space="preserve">
+    <value>Create a validated built-in game definition without plugins or scripts. Definitions are saved into the project and become available only after Synix is rebuilt.</value>
+  </data>
+  <data name="Text.E699C2B4C7E4FA83E8F1" xml:space="preserve">
+    <value>Create Batch File</value>
+  </data>
+  <data name="Text.6D6441A3204BECDDE1CB" xml:space="preserve">
+    <value>CREATED</value>
+  </data>
+  <data name="Text.444D9B21E5BAAF8243D5" xml:space="preserve">
+    <value>Crossplay</value>
+  </data>
+  <data name="Text.1B96BBB49F73081D9DD4" xml:space="preserve">
+    <value>Current state reported by the Synix engine</value>
+  </data>
+  <data name="Text.DA09D7E8BF4A3670094C" xml:space="preserve">
+    <value>Current version and installation type</value>
+  </data>
+  <data name="Text.2AC8E3E9A30E3E9FAAC6" xml:space="preserve">
+    <value>Custom backup location</value>
+  </data>
+  <data name="Text.3F39D5C348E5B79D06E8" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="Text.DF8C7C89B3E4CFB1FF6F" xml:space="preserve">
+    <value>Dark Mode</value>
+  </data>
+  <data name="Text.B509EAF7EB0805B82CA2" xml:space="preserve">
+    <value>Dark mode toggle</value>
+  </data>
+  <data name="Text.AD31F960FE65ED9192ED" xml:space="preserve">
+    <value>DDoS Attack Detection</value>
+  </data>
+  <data name="Text.A2D285B352873457207A" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="Text.6968CF40A73F3487A03E" xml:space="preserve">
+    <value>Default launch arguments</value>
+  </data>
+  <data name="Text.47DE4E70C6DC214B814C" xml:space="preserve">
+    <value>Default Launch Arguments</value>
+  </data>
+  <data name="Text.1F9D51EC4BA893F84146" xml:space="preserve">
+    <value>Default launch arguments (everything after the executable)</value>
+  </data>
+  <data name="Text.AB3F62688306482D75EC" xml:space="preserve">
+    <value>Default startup arguments</value>
+  </data>
+  <data name="Text.C7F120FC21CAE9933BF3" xml:space="preserve">
+    <value>Definition Builder</value>
+  </data>
+  <data name="Text.92FB0FBC6084EF453F25" xml:space="preserve">
+    <value>Definition ID</value>
+  </data>
+  <data name="Text.00904CDBFAE60F371356" xml:space="preserve">
+    <value>Definition revision</value>
+  </data>
+  <data name="Text.692AE6A41D7574B63232" xml:space="preserve">
+    <value>Definition test report copied to the clipboard.</value>
+  </data>
+  <data name="Text.030CFC390829811A85AF" xml:space="preserve">
+    <value>Delete Backup</value>
+  </data>
+  <data name="Text.056E6A5F6594451E2753" xml:space="preserve">
+    <value>Delete Server</value>
+  </data>
+  <data name="Text.8A36792207EBAFED1B5B" xml:space="preserve">
+    <value>Describe the problem</value>
+  </data>
+  <data name="Text.27A4BE0DE7696B0CACCF" xml:space="preserve">
+    <value>DESTINATION</value>
+  </data>
+  <data name="Text.50687C16EC33A3FCDB36" xml:space="preserve">
+    <value>Destination name</value>
+  </data>
+  <data name="Text.14FDC0F6C77F7978B7AD" xml:space="preserve">
+    <value>DETAILS</value>
+  </data>
+  <data name="Text.21B6A798321A49F75B9C" xml:space="preserve">
+    <value>Development</value>
+  </data>
+  <data name="Text.9F67BB0F58790841820E" xml:space="preserve">
+    <value>Disabled — scheduled work runs only while Synix is open.</value>
+  </data>
+  <data name="Text.6C47B175B49C03E40EB6" xml:space="preserve">
+    <value>Disconnect GitHub</value>
+  </data>
+  <data name="Text.F43D922729C65E06FA55" xml:space="preserve">
+    <value>Disconnect GitHub account</value>
+  </data>
+  <data name="Text.053BC65874AD6098E58C" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Text.6807623C5EB8D8D0EA66" xml:space="preserve">
+    <value>Discord Alerts</value>
+  </data>
+  <data name="Text.A8726569C87C6C5A3BFE" xml:space="preserve">
+    <value>Discord Destination</value>
+  </data>
+  <data name="Text.84A9F83EFC6F8A9F3401" xml:space="preserve">
+    <value>Discord opened. Select New Post in the bug-reporting forum and paste the copied report.</value>
+  </data>
+  <data name="Text.2C08652867AB096911A5" xml:space="preserve">
+    <value>Discord webhook URL</value>
+  </data>
+  <data name="Text.2841A3AA116B14C8DEF1" xml:space="preserve">
+    <value>Discord Webhooks</value>
+  </data>
+  <data name="Text.0BB9D8B879FB1885FD71" xml:space="preserve">
+    <value>Do not paste passwords, webhooks, IP addresses, private configuration, or full launch commands. Synix removes common secrets before sending.</value>
+  </data>
+  <data name="Text.E32BFB60FF5B5AA7759C" xml:space="preserve">
+    <value>Documents source folder for automatic imports (optional)</value>
+  </data>
+  <data name="Text.89BF7052C30A2A455D98" xml:space="preserve">
+    <value>Each rule points to an executable under C:\Synix\Games\[Game]\[Server], but that individual server folder is gone and no installed Synix server owns the path.</value>
+  </data>
+  <data name="Text.464C4FFD019E1E9691DC" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Text.46D0E2FA44635045064B" xml:space="preserve">
+    <value>Edit serverconfig.xml safely without changing its XML structure.</value>
+  </data>
+  <data name="Text.F37695A23C899C5215F8" xml:space="preserve">
+    <value>Edition</value>
+  </data>
+  <data name="Text.FC6B93CC9FEB25A19E4A" xml:space="preserve">
+    <value>Elevated system tasks</value>
+  </data>
+  <data name="Text.5F646AFBC7E02748C71A" xml:space="preserve">
+    <value>Elevated System Tasks</value>
+  </data>
+  <data name="Text.947BC568AF81FE33EC61" xml:space="preserve">
+    <value>Enable only when anonymous SteamCMD installation fails and a Steam account is required.</value>
+  </data>
+  <data name="Text.2F7C7C280CF67E40627A" xml:space="preserve">
+    <value>Enable only when the server cannot run correctly without Windows elevation.</value>
+  </data>
+  <data name="Text.F8DD21619DDB63E9BBFE" xml:space="preserve">
+    <value>Enable RCON</value>
+  </data>
+  <data name="Text.615A691F61191EE9C393" xml:space="preserve">
+    <value>Enable RCON only for game templates that support secure remote commands.</value>
+  </data>
+  <data name="Text.64D3499BE4B6DBDA7DC0" xml:space="preserve">
+    <value>Enable server query monitoring</value>
+  </data>
+  <data name="Text.59AD73A66B0E19C3759F" xml:space="preserve">
+    <value>Enable when the server has a verified query or network probe that Synix can monitor.</value>
+  </data>
+  <data name="Text.92C1CDFDF4CB9CF6FCCA" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Text.35632C4A3CA55AE70481" xml:space="preserve">
+    <value>Encrypted Export</value>
+  </data>
+  <data name="Text.B829E4DB7033188CBA7D" xml:space="preserve">
+    <value>Enter a valid Steam account name.</value>
+  </data>
+  <data name="Text.518F7A1D974E46AED149" xml:space="preserve">
+    <value>Enter IDs in the order they should load. Use commas, spaces, or one ID per line. Synix does not need a database of mod names.</value>
+  </data>
+  <data name="Text.E486E8326F69B31FB7D5" xml:space="preserve">
+    <value>Enter the game information, then validate before saving.</value>
+  </data>
+  <data name="Text.6746CFA6BDC11F969FE1" xml:space="preserve">
+    <value>EVENTS</value>
+  </data>
+  <data name="Text.976739468700078F590F" xml:space="preserve">
+    <value>Example Game</value>
+  </data>
+  <data name="Text.E83F8984B15353372DF8" xml:space="preserve">
+    <value>Example: Server closes a few seconds after Start</value>
+  </data>
+  <data name="Text.D75C341C66C26AED5A1D" xml:space="preserve">
+    <value>EXECUTABLE</value>
+  </data>
+  <data name="Text.2F376BD10744D7EAB43E" xml:space="preserve">
+    <value>Expected result</value>
+  </data>
+  <data name="Text.DA8D62A8D6AE22A3B0D5" xml:space="preserve">
+    <value>EXPERIMENTAL</value>
+  </data>
+  <data name="Text.3664895579F0A7E68C4A" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Text.0351317AE5A60B867426" xml:space="preserve">
+    <value>Export to Project</value>
+  </data>
+  <data name="Text.6F9406E668F812A49DBB" xml:space="preserve">
+    <value>External deployment is for launchers or virtual machines and disables query monitoring.</value>
+  </data>
+  <data name="Text.96599B7797D3C4D80ED1" xml:space="preserve">
+    <value>Extra Arguments</value>
+  </data>
+  <data name="Text.0078A1C33BF28B41D89B" xml:space="preserve">
+    <value>Finds rules whose executable was under C:\Synix\Games\[Game]\[Server], but that specific server is no longer saved and its server folder is gone. Ports and custom install folders are not scanned.</value>
+  </data>
+  <data name="Text.0CD9F7C4C6770B0CB39E" xml:space="preserve">
+    <value>Firewall Cleanup Review</value>
+  </data>
+  <data name="Text.07E7C9C515328484C872" xml:space="preserve">
+    <value>Firewall executable rules ready for removal</value>
+  </data>
+  <data name="Text.DB387CD78DCB5B6ED865" xml:space="preserve">
+    <value>First-launch preparation</value>
+  </data>
+  <data name="Text.A3EB320620E24F8D86E5" xml:space="preserve">
+    <value>First-Start Assistant</value>
+  </data>
+  <data name="Text.6D27A85CB8D78F9F3B3E" xml:space="preserve">
+    <value>First-start message shown to the user</value>
+  </data>
+  <data name="Text.4035C78A474280CE7F1E" xml:space="preserve">
+    <value>Fix Config</value>
+  </data>
+  <data name="Text.74CCD43303847F265530" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Text.0E078F2314E8311DAB20" xml:space="preserve">
+    <value>Folder Path</value>
+  </data>
+  <data name="Text.5F360A6A5C308A1A35AA" xml:space="preserve">
+    <value>FORMAT-AWARE EDITING</value>
+  </data>
+  <data name="Text.192EB4525AABD7E24BDD" xml:space="preserve">
+    <value>Framework</value>
+  </data>
+  <data name="Text.35120CEE0464BE5E274D" xml:space="preserve">
+    <value>Full Release Notes</value>
+  </data>
+  <data name="Text.5C412A262086B9701CDA" xml:space="preserve">
+    <value>Game</value>
+  </data>
+  <data name="Text.1FD5F5A768D30B9B6651" xml:space="preserve">
+    <value>GAME</value>
+  </data>
+  <data name="Text.8E458885B6464A37816B" xml:space="preserve">
+    <value>Game Definition Builder</value>
+  </data>
+  <data name="Text.63F3CED609376CC19222" xml:space="preserve">
+    <value>Game Definition Test Runner</value>
+  </data>
+  <data name="Text.77878EE62ED84A935F46" xml:space="preserve">
+    <value>Game icon HTTPS URL (optional)</value>
+  </data>
+  <data name="Text.1311D7944778FB4AD68C" xml:space="preserve">
+    <value>Game Mode</value>
+  </data>
+  <data name="Text.3BE6A898F14F4D050AF5" xml:space="preserve">
+    <value>Game modes (one exact value per line)</value>
+  </data>
+  <data name="Text.038C91613524C372388B" xml:space="preserve">
+    <value>Game name</value>
+  </data>
+  <data name="Text.2987FB567C05D4C78567" xml:space="preserve">
+    <value>Game port</value>
+  </data>
+  <data name="Text.3E8DBB6C3828E368EDBE" xml:space="preserve">
+    <value>Game Port</value>
+  </data>
+  <data name="Text.56215346C32A2444B7C7" xml:space="preserve">
+    <value>Game Server</value>
+  </data>
+  <data name="Text.F054BBC09408C30FDCF1" xml:space="preserve">
+    <value>Game Servers</value>
+  </data>
+  <data name="Text.B5847872D81BE16B1771" xml:space="preserve">
+    <value>Game Support Catalog</value>
+  </data>
+  <data name="Text.2D05F6D2868A95AD001F" xml:space="preserve">
+    <value>Game Verification Queue</value>
+  </data>
+  <data name="Text.8CACE39E73446B3AD675" xml:space="preserve">
+    <value>Game Version</value>
+  </data>
+  <data name="Text.EAD1F74310AB3C240377" xml:space="preserve">
+    <value>Gameplay Profile</value>
+  </data>
+  <data name="Text.C910D474DCD724BFF83D" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Text.9E8A7EC82FAED9A14FA0" xml:space="preserve">
+    <value>Get Token</value>
+  </data>
+  <data name="Text.4C11C80313DBD04B9AFD" xml:space="preserve">
+    <value>Getting Started with Synix</value>
+  </data>
+  <data name="Text.A7770C6DAAA4BDC22DB6" xml:space="preserve">
+    <value>GH</value>
+  </data>
+  <data name="Text.88ED3B522C4F0A8BD740" xml:space="preserve">
+    <value>GitHub is not connected. Copy and Discord options still work.</value>
+  </data>
+  <data name="Text.9942D957346A0E83C15C" xml:space="preserve">
+    <value>GitHub posts directly without opening a browser after the account is connected.</value>
+  </data>
+  <data name="Text.8DD65D0952ED144CCF6E" xml:space="preserve">
+    <value>Guide</value>
+  </data>
+  <data name="Text.B79CAC926E0B2E347E72" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Text.4E4DEFAC10984CADF571" xml:space="preserve">
+    <value>Hide IP addresses, passwords, and other sensitive information while screen sharing.</value>
+  </data>
+  <data name="Text.FAA9DECB5DCE3D4283A9" xml:space="preserve">
+    <value>HOUR</value>
+  </data>
+  <data name="Text.A8578B710044B649B2CD" xml:space="preserve">
+    <value>How the user obtains and places required game files</value>
+  </data>
+  <data name="Text.BD57CC4134F0EE29B309" xml:space="preserve">
+    <value>I Agree</value>
+  </data>
+  <data name="Text.4E469076738CB74F0877" xml:space="preserve">
+    <value>I confirmed the displayed server name, ports, player limit, and all other values used by this definition, including passwords, RCON, mode, and map/world where applicable.</value>
+  </data>
+  <data name="Text.F02B9628D5767DB6B7A2" xml:space="preserve">
+    <value>I Understand</value>
+  </data>
+  <data name="Text.13F02AECB00BE9833629" xml:space="preserve">
+    <value>Identity, world, player, and network information</value>
+  </data>
+  <data name="Text.5D385B4C5044DA97B77C" xml:space="preserve">
+    <value>IMPORT  No package selected
+Choose a package to calculate space and time.</value>
+  </data>
+  <data name="Text.25FBAC53BB846E706EFB" xml:space="preserve">
+    <value>Import Existing Server</value>
+  </data>
+  <data name="Text.617663EEC34944ABC976" xml:space="preserve">
+    <value>Import Synix</value>
+  </data>
+  <data name="Text.F0D55CE7EC557BCA05DD" xml:space="preserve">
+    <value>Important: Write the summary and report details in English so the Synix support team can review them.</value>
+  </data>
+  <data name="Text.E789B41753DEEEBD557E" xml:space="preserve">
+    <value>Individual events</value>
+  </data>
+  <data name="Text.11639557E899BAF5BC2A" xml:space="preserve">
+    <value>Insert a supported Synix argument tag</value>
+  </data>
+  <data name="Text.00B412E64B966EDA43AF" xml:space="preserve">
+    <value>Insert tag</value>
+  </data>
+  <data name="Text.B83B327F0B62E8168163" xml:space="preserve">
+    <value>INSTALL</value>
+  </data>
+  <data name="Text.D51A22847FE9E2546F54" xml:space="preserve">
+    <value>Install  — Not verified yet</value>
+  </data>
+  <data name="Text.74C8DFFDBC2FA5113AFF" xml:space="preserve">
+    <value>Install &amp; Launch</value>
+  </data>
+  <data name="Text.072D8E4338F73F8307C0" xml:space="preserve">
+    <value>Install Location</value>
+  </data>
+  <data name="Text.44D7882A1ADBECC9092C" xml:space="preserve">
+    <value>Install this game in Synix before testing its real launch arguments.</value>
+  </data>
+  <data name="Text.7E08C50FB774DD673401" xml:space="preserve">
+    <value>Install Update</value>
+  </data>
+  <data name="Text.70CAC3F03884A4946236" xml:space="preserve">
+    <value>Install, start, stop, and monitoring checks are recorded automatically. Argument verification uses a real installed server and a sanitized command test; configuration remains a manual file check.</value>
+  </data>
+  <data name="Text.90C149B626C5531C627C" xml:space="preserve">
+    <value>Installation canceled. No files were changed.</value>
+  </data>
+  <data name="Text.85C207B3B0E670D723EC" xml:space="preserve">
+    <value>Installed location</value>
+  </data>
+  <data name="Text.986665E0A02097AB3A6B" xml:space="preserve">
+    <value>Installed server to test</value>
+  </data>
+  <data name="Text.F73780A16B44791C9D49" xml:space="preserve">
+    <value>Installed Servers</value>
+  </data>
+  <data name="Text.B00EA51A815EE55F2F3E" xml:space="preserve">
+    <value>INTEGRITY</value>
+  </data>
+  <data name="Text.8027F432A7FB7C273A1A" xml:space="preserve">
+    <value>Interface language</value>
+  </data>
+  <data name="Text.A4DD72C4AC5BBC667FC3" xml:space="preserve">
+    <value>Invite Code</value>
+  </data>
+  <data name="Text.7038EF5AB5F991FBB7A7" xml:space="preserve">
+    <value>LAN IP: Fetching...</value>
+  </data>
+  <data name="Text.A4FE65264EF7DBB38D10" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Text.D015233993548E9D8DB5" xml:space="preserve">
+    <value>LAST TESTED</value>
+  </data>
+  <data name="Text.74E5C919B46AE61321E3" xml:space="preserve">
+    <value>LAST VERIFIED</value>
+  </data>
+  <data name="Text.5FED36DF5D87A8D21E74" xml:space="preserve">
+    <value>Last-tested Synix version: Not verified yet</value>
+  </data>
+  <data name="Text.73B6E48A1B552D112502" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data name="Text.CA0045022E70898A4312" xml:space="preserve">
+    <value>Launch Arguments</value>
+  </data>
+  <data name="Text.C30B958EFAB6DF2C8799" xml:space="preserve">
+    <value>Launch behavior</value>
+  </data>
+  <data name="Text.B540E2275FD81A204A01" xml:space="preserve">
+    <value>Launch file</value>
+  </data>
+  <data name="Text.440E4872137A7D7D68BE" xml:space="preserve">
+    <value>Launch preparation</value>
+  </data>
+  <data name="Text.A33AF08FF46D06B16BC4" xml:space="preserve">
+    <value>Launch Preparation</value>
+  </data>
+  <data name="Text.340ADCD38DA9710C18AF" xml:space="preserve">
+    <value>Launch with administrator permission</value>
+  </data>
+  <data name="Text.D3F2BA487FAA0A74E4A4" xml:space="preserve">
+    <value>Lets the user create a reviewed launch file. Disable for deployment commands that must stay inside Synix.</value>
+  </data>
+  <data name="Text.2FD27154D5938042C2FF" xml:space="preserve">
+    <value>Limit the number of backups retained per server.</value>
+  </data>
+  <data name="Text.E749931070B84A1593D2" xml:space="preserve">
+    <value>Live performance across every managed game server process.</value>
+  </data>
+  <data name="Text.908BFBA75F9F88B71363" xml:space="preserve">
+    <value>Live performance and configuration details</value>
+  </data>
+  <data name="Text.1891670EDE526C865B8E" xml:space="preserve">
+    <value>Loader</value>
+  </data>
+  <data name="Text.55519B4895A4D9906EDA" xml:space="preserve">
+    <value>Loader Version</value>
+  </data>
+  <data name="Text.9E611113ECA35A604A41" xml:space="preserve">
+    <value>Loading the built-in game verification queue...</value>
+  </data>
+  <data name="Text.47D2A515EF2F05B87D68" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Text.EC4ECC14F8B5A115C213" xml:space="preserve">
+    <value>LOCATION</value>
+  </data>
+  <data name="Text.070839931CDDA34F168B" xml:space="preserve">
+    <value>Logs\*.log
+Saved\Logs\**\*.log</value>
+  </data>
+  <data name="Text.522E549C1259D9FA47D1" xml:space="preserve">
+    <value>Long-Duration Reliability Test</value>
+  </data>
+  <data name="Text.E7FDDAD25C086FD12358" xml:space="preserve">
+    <value>Main World</value>
+  </data>
+  <data name="Text.356D7C14F9D27E3F02B3" xml:space="preserve">
+    <value>Maintenance schedule</value>
+  </data>
+  <data name="Text.6FBB40F135558D013066" xml:space="preserve">
+    <value>Maintenance Schedule</value>
+  </data>
+  <data name="Text.FED14E20C68A4626A601" xml:space="preserve">
+    <value>Manage Provider Mod IDs</value>
+  </data>
+  <data name="Text.BE176B0015C424B78E9F" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="Text.91433D51005E84C89DD7" xml:space="preserve">
+    <value>Map / World</value>
+  </data>
+  <data name="Text.F31BBCEE0082BEEE372A" xml:space="preserve">
+    <value>Map and mode choices come directly from the selected game template.</value>
+  </data>
+  <data name="Text.FDA8F741D724B426C343" xml:space="preserve">
+    <value>Maps or scenarios (one exact value per line)</value>
+  </data>
+  <data name="Text.F07368A0B39141B987BB" xml:space="preserve">
+    <value>Mark Verified</value>
+  </data>
+  <data name="Text.14DE81C3A20411BA2D54" xml:space="preserve">
+    <value>Master Discord Webhook</value>
+  </data>
+  <data name="Text.D6271860D5F643A7B632" xml:space="preserve">
+    <value>Max Players</value>
+  </data>
+  <data name="Text.22AAAEFD7330519932F8" xml:space="preserve">
+    <value>Max saved backups</value>
+  </data>
+  <data name="Text.ECF1D7C868EE46FC6DF0" xml:space="preserve">
+    <value>Mbps</value>
+  </data>
+  <data name="Text.A5C1D46A9B2A472DF537" xml:space="preserve">
+    <value>Message shown after special readiness checks pass (optional)</value>
+  </data>
+  <data name="Text.D1F06496D45A1E6282D5" xml:space="preserve">
+    <value>MESSAGES SENT</value>
+  </data>
+  <data name="Text.497A671BC79CEFD6446E" xml:space="preserve">
+    <value>Messages to send</value>
+  </data>
+  <data name="Text.A719A87866C159B12107" xml:space="preserve">
+    <value>Minecraft Runtime</value>
+  </data>
+  <data name="Text.060FE982CB1C65A900FA" xml:space="preserve">
+    <value>Minecraft Server Console</value>
+  </data>
+  <data name="Text.71F9139AF2A58247E590" xml:space="preserve">
+    <value>Minimum system RAM in GB (0 means no minimum)</value>
+  </data>
+  <data name="Text.1EB03F3919CF225C90CE" xml:space="preserve">
+    <value>MINUTE</value>
+  </data>
+  <data name="Text.90E63D85FA1AB2C8ED65" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="Text.CBBBBBAD108291DCD28A" xml:space="preserve">
+    <value>Mod &amp; Plugin Manager</value>
+  </data>
+  <data name="Text.90A94CC5F296BE2851BE" xml:space="preserve">
+    <value>MONITOR</value>
+  </data>
+  <data name="Text.0F38AC5E2C273A4B6642" xml:space="preserve">
+    <value>Monitor active server ports for incoming packet floods and notify on abnormal traffic bursts.</value>
+  </data>
+  <data name="Text.1C310A469AD1721A3E91" xml:space="preserve">
+    <value>Monitor and manage every game server from one workspace.</value>
+  </data>
+  <data name="Text.C0BAAAA9611D403EA0ED" xml:space="preserve">
+    <value>Monitoring  — Not verified yet</value>
+  </data>
+  <data name="Text.CC33EF16B6E13990D521" xml:space="preserve">
+    <value>My Dedicated Server</value>
+  </data>
+  <data name="Text.E2F79E5B60330BBA4C28" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="Text.A6D637EAA965641CEB00" xml:space="preserve">
+    <value>Name this destination, paste its Discord webhook, and choose exactly which Synix events it receives.</value>
+  </data>
+  <data name="Text.1744B96470B51BF30935" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="Text.A5FC08CED42C98919540" xml:space="preserve">
+    <value>Network &amp; RCON</value>
+  </data>
+  <data name="Text.B62B34022997D399172F" xml:space="preserve">
+    <value>NEW SERVER</value>
+  </data>
+  <data name="Text.79F554AF97ADC0A05FDE" xml:space="preserve">
+    <value>No Days Scheduled</value>
+  </data>
+  <data name="Text.6397F665181C6208628F" xml:space="preserve">
+    <value>No extra arguments</value>
+  </data>
+  <data name="Text.ECE11BCA5230C237A53C" xml:space="preserve">
+    <value>No publish folder was detected.</value>
+  </data>
+  <data name="Text.39AA18B083CD39C1A64C" xml:space="preserve">
+    <value>No reliability test has been run yet.</value>
+  </data>
+  <data name="Text.8351EECD2B11E94804F7" xml:space="preserve">
+    <value>No running server processes detected</value>
+  </data>
+  <data name="Text.8DDA097844BB6EDCFA10" xml:space="preserve">
+    <value>Not changed: game files, saved servers, port-only rules, custom install folders, and firewall rules outside C:\Synix\Games.</value>
+  </data>
+  <data name="Text.1B3F2F7A383F81F4A567" xml:space="preserve">
+    <value>Not Required</value>
+  </data>
+  <data name="Text.CA7981B46ECF2C1787B6" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Text.2BBA1B9B15644044B222" xml:space="preserve">
+    <value>Online Service Authentication</value>
+  </data>
+  <data name="Text.4DC50DE227F1D75CFF26" xml:space="preserve">
+    <value>Only a masked webhook identifier is shown. Open Server Settings to view or edit the saved destination.</value>
+  </data>
+  <data name="Text.A8796566765C1117B49C" xml:space="preserve">
+    <value>Only the value you change is replaced; comments, sections, nesting, quotes, spacing, and key order remain intact.</value>
+  </data>
+  <data name="Text.64159808F2A26715BA3E" xml:space="preserve">
+    <value>Open Backup Folder</value>
+  </data>
+  <data name="Text.A350826E531AABBD198C" xml:space="preserve">
+    <value>Open Config Editor</value>
+  </data>
+  <data name="Text.44760C7627E84170448C" xml:space="preserve">
+    <value>Open Discord</value>
+  </data>
+  <data name="Text.0D36C28AC26B4782FB6E" xml:space="preserve">
+    <value>Open Discord bug forum</value>
+  </data>
+  <data name="Text.0D2CDA15031BA9A8D8EE" xml:space="preserve">
+    <value>Open GitHub</value>
+  </data>
+  <data name="Text.C7ECF7D057EE7D3405E2" xml:space="preserve">
+    <value>Open Latest Game Log</value>
+  </data>
+  <data name="Text.DEF3278452C24C7A756A" xml:space="preserve">
+    <value>Open Server Folder</value>
+  </data>
+  <data name="Text.FAA71411B21242D2F5EA" xml:space="preserve">
+    <value>Open SteamCMD</value>
+  </data>
+  <data name="Text.6DA034A48B203D145071" xml:space="preserve">
+    <value>Open the game definition builder</value>
+  </data>
+  <data name="Text.E673C4B555E4960E2796" xml:space="preserve">
+    <value>Open the game verification queue</value>
+  </data>
+  <data name="Text.897C522834169BCBAA15" xml:space="preserve">
+    <value>Open the long-duration reliability test</value>
+  </data>
+  <data name="Text.8736DCB51A77046719F5" xml:space="preserve">
+    <value>Open the native console when a game server starts. Disable this to run servers silently in the background.</value>
+  </data>
+  <data name="Text.C8CF5C841F7BF2F1E0F3" xml:space="preserve">
+    <value>Open the Synix troubleshooter</value>
+  </data>
+  <data name="Text.59BE71333C960FD08E7E" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="Text.8E7F4674A03B5A87853B" xml:space="preserve">
+    <value>Optional flags only — for example: -log, -nosteamclient, or -forceupdate</value>
+  </data>
+  <data name="Text.656F6C1DD0569874658F" xml:space="preserve">
+    <value>Optional import files (relative paths, one per line)</value>
+  </data>
+  <data name="Text.CB904327966ABA4B8621" xml:space="preserve">
+    <value>Optional RCON syntax — launch arguments must contain {rcon}</value>
+  </data>
+  <data name="Text.962F85A27854336F3286" xml:space="preserve">
+    <value>ORIGINAL</value>
+  </data>
+  <data name="Text.BF239CF13522B7D2F15A" xml:space="preserve">
+    <value>Original formatting is protected</value>
+  </data>
+  <data name="Text.2E3FED7012F80848E367" xml:space="preserve">
+    <value>Orphaned Firewall Rule Cleanup</value>
+  </data>
+  <data name="Text.36B18A6020F2CE06DF28" xml:space="preserve">
+    <value>Overrides Synix's hide-console preference for servers managed through their own window.</value>
+  </data>
+  <data name="Text.5A0097CBC9C1DAE030DE" xml:space="preserve">
+    <value>Password (at least 8 characters)</value>
+  </data>
+  <data name="Text.E14232F65029A708148F" xml:space="preserve">
+    <value>Paths &amp; Launch Details</value>
+  </data>
+  <data name="Text.3F302A2A7158A024FB85" xml:space="preserve">
+    <value>PID</value>
+  </data>
+  <data name="Text.FD49E5BC2A30C83CDB47" xml:space="preserve">
+    <value>PLAYER</value>
+  </data>
+  <data name="Text.8405C55110FF1B17AA76" xml:space="preserve">
+    <value>Player Management Center</value>
+  </data>
+  <data name="Text.84E12AC655DD8D75DD44" xml:space="preserve">
+    <value>Players</value>
+  </data>
+  <data name="Text.72E9A59F5A1D6289DBAC" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Text.F2492B6E06AE47BEB928" xml:space="preserve">
+    <value>Port availability is checked automatically against running processes and other Synix servers.</value>
+  </data>
+  <data name="Text.88C573E39AAAD5793190" xml:space="preserve">
+    <value>Portable Java</value>
+  </data>
+  <data name="Text.324B134F57C70C729AE3" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Text.5AE2ADA526507712FA6E" xml:space="preserve">
+    <value>Privacy &amp; Security</value>
+  </data>
+  <data name="Text.22EAC55F97CD73017796" xml:space="preserve">
+    <value>Privacy mode</value>
+  </data>
+  <data name="Text.A3751075A47270B3938E" xml:space="preserve">
+    <value>Privacy Mode</value>
+  </data>
+  <data name="Text.F13396A9BD6FFF26191D" xml:space="preserve">
+    <value>Privacy Mode masks this access credential. Enter a custom code, or leave it empty on first install to let Windrose generate one.</value>
+  </data>
+  <data name="Text.6612929FD78E8C716C9E" xml:space="preserve">
+    <value>Problem summary</value>
+  </data>
+  <data name="Text.82F665628E2402225B0F" xml:space="preserve">
+    <value>Process identity and live resource usage for every active game server.</value>
+  </data>
+  <data name="Text.E0D0ADC74C8BE52AC274" xml:space="preserve">
+    <value>PROGRESS</value>
+  </data>
+  <data name="Text.E0870E4EBE08ADE8EE51" xml:space="preserve">
+    <value>Protect Synix Transfer</value>
+  </data>
+  <data name="Text.517D0391800FC8C55AD3" xml:space="preserve">
+    <value>Protected in Synix and hidden from its logs. Generated batch files include the usable token in readable text.</value>
+  </data>
+  <data name="Text.E53A38BB50FA0B338088" xml:space="preserve">
+    <value>Public IP: Fetching...</value>
+  </data>
+  <data name="Text.49CDA0DED2FDB6421A49" xml:space="preserve">
+    <value>Publish folder selected. Run the check when ready.</value>
+  </data>
+  <data name="Text.D986018F30352387AC70" xml:space="preserve">
+    <value>Published Synix folder</value>
+  </data>
+  <data name="Text.063BB757707AA9B94EA5" xml:space="preserve">
+    <value>PVE</value>
+  </data>
+  <data name="Text.B80A37564FBB3C075320" xml:space="preserve">
+    <value>Query</value>
+  </data>
+  <data name="Text.034F09D239FC7E391B3A" xml:space="preserve">
+    <value>Query port</value>
+  </data>
+  <data name="Text.516E776E998FF69A8D69" xml:space="preserve">
+    <value>Query Port</value>
+  </data>
+  <data name="Text.EC423125FB2CAF05C95B" xml:space="preserve">
+    <value>Quick Commands — choose one to prepare it, then review and send it</value>
+  </data>
+  <data name="Text.01539AB5D1C3CAF60B5F" xml:space="preserve">
+    <value>Quick event selection</value>
+  </data>
+  <data name="Text.FBA18C2CED380E08C996" xml:space="preserve">
+    <value>RAM Usage</value>
+  </data>
+  <data name="Text.771E2DB0F3BEF2D22BE9" xml:space="preserve">
+    <value>RAM USAGE</value>
+  </data>
+  <data name="Text.4C328BF4603F8E856CAD" xml:space="preserve">
+    <value>Raw Preview</value>
+  </data>
+  <data name="Text.31A60BEB2B996DC31CCC" xml:space="preserve">
+    <value>RCON</value>
+  </data>
+  <data name="Text.16C5D21817849765677F" xml:space="preserve">
+    <value>RCON Password</value>
+  </data>
+  <data name="Text.225EB9FD7C8D1624A15B" xml:space="preserve">
+    <value>RCON Port</value>
+  </data>
+  <data name="Text.15599B0016F3C3591CF5" xml:space="preserve">
+    <value>Read-only values can be selected and copied for diagnostics</value>
+  </data>
+  <data name="Text.69EDD9A74D913D8F77D6" xml:space="preserve">
+    <value>Read-only verification of template structure, revision, and values saved in Server Settings. Password values are never displayed.</value>
+  </data>
+  <data name="Text.D4BEB0C27C58D53CCFA7" xml:space="preserve">
+    <value>Reading and testing the project game-definition library...</value>
+  </data>
+  <data name="Text.54C8BBF4B91A6012A87B" xml:space="preserve">
+    <value>Ready — Windows requests administrator permission only if rules need removal.</value>
+  </data>
+  <data name="Text.EE6CA492F45CDE8E1B58" xml:space="preserve">
+    <value>Ready for the first start</value>
+  </data>
+  <data name="Text.2B2FF7B1710C1AE35612" xml:space="preserve">
+    <value>Ready to check the published files and the test receipt created during Publish.</value>
+  </data>
+  <data name="Text.60210D3A0210A72AC8E3" xml:space="preserve">
+    <value>Ready to check this computer.</value>
+  </data>
+  <data name="Text.B1A53241AEE398BDDBC1" xml:space="preserve">
+    <value>Ready to manage</value>
+  </data>
+  <data name="Text.FD866259C3EE73E57510" xml:space="preserve">
+    <value>Ready to test the built-in game-definition library.</value>
+  </data>
+  <data name="Text.C0BAAF3EA26A1A69CE63" xml:space="preserve">
+    <value>Ready. A 30-minute run with 30-second samples is recommended for a quick check.</value>
+  </data>
+  <data name="Text.16EDF686DF9F75A26826" xml:space="preserve">
+    <value>Record Verification</value>
+  </data>
+  <data name="Text.0E91610117029A62A478" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Text.BF53C2057CB18B677699" xml:space="preserve">
+    <value>Refresh Players</value>
+  </data>
+  <data name="Text.0C10BD130731730DDC5C" xml:space="preserve">
+    <value>Refresh to load player details directly from the local server.</value>
+  </data>
+  <data name="Text.E903F7224FB457AE0BFD" xml:space="preserve">
+    <value>Register Server</value>
+  </data>
+  <data name="Text.2C3115623E07C95FD45C" xml:space="preserve">
+    <value>Release check canceled.</value>
+  </data>
+  <data name="Text.F4ACA1BC97F35D76F433" xml:space="preserve">
+    <value>Release highlights</value>
+  </data>
+  <data name="Text.1DE733236BD0DED6BA11" xml:space="preserve">
+    <value>Release notes will appear here.</value>
+  </data>
+  <data name="Text.E8986299CC046EAA3D40" xml:space="preserve">
+    <value>Release Readiness Checker</value>
+  </data>
+  <data name="Text.696DA5B5195A0FB2544E" xml:space="preserve">
+    <value>Release report copied to the clipboard.</value>
+  </data>
+  <data name="Text.1C76BC80677D0B5E4DDA" xml:space="preserve">
+    <value>Reliability Test</value>
+  </data>
+  <data name="Text.4CB636A73FAD7D71BC94" xml:space="preserve">
+    <value>Reliability test cancelled. No server settings were changed.</value>
+  </data>
+  <data name="Text.B69EF66763BD411348C2" xml:space="preserve">
+    <value>Remind Me Later</value>
+  </data>
+  <data name="Text.BBC627D7B11E5339088A" xml:space="preserve">
+    <value>Remote Administration</value>
+  </data>
+  <data name="Text.C3812FC4ACB861D5182F" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Text.71F1CA24D00C97F88E3B" xml:space="preserve">
+    <value>Remove Rules</value>
+  </data>
+  <data name="Text.78D22B05B5081F527603" xml:space="preserve">
+    <value>Remove selected</value>
+  </data>
+  <data name="Text.1142B190BA89EF85AF20" xml:space="preserve">
+    <value>Repair available</value>
+  </data>
+  <data name="Text.777F9DDFDDB4FCF844BE" xml:space="preserve">
+    <value>Repairing SteamCMD...</value>
+  </data>
+  <data name="Text.FE3F7B0A38B0EEDF20EB" xml:space="preserve">
+    <value>Repeatedly samples Synix memory, handles, threads, and the read-only server health checks. It does not start, stop, install, update, or alter a server.</value>
+  </data>
+  <data name="Text.1D9D2EA26523EFAD4D0C" xml:space="preserve">
+    <value>Report a Problem</value>
+  </data>
+  <data name="Text.D320B9FEE80C1B53C8BD" xml:space="preserve">
+    <value>Require a visible server manager window</value>
+  </data>
+  <data name="Text.76E9456EF215ECDE0E0F" xml:space="preserve">
+    <value>Require an AVX2-capable processor</value>
+  </data>
+  <data name="Text.E6BFB35792E3ACBADCD7" xml:space="preserve">
+    <value>Require hardware virtualization</value>
+  </data>
+  <data name="Text.61DD18470607E3A0F102" xml:space="preserve">
+    <value>Require Microsoft Hyper-V</value>
+  </data>
+  <data name="Text.88E68081C6F4A7C6EEE2" xml:space="preserve">
+    <value>Require the server manager window to remain visible</value>
+  </data>
+  <data name="Text.EF20D5D938A93CEF88A3" xml:space="preserve">
+    <value>Require Visual C++ 2013 x64 runtime</value>
+  </data>
+  <data name="Text.A35B9EA54D03EE898DA0" xml:space="preserve">
+    <value>Require Visual C++ 2015-2022 x64 runtime</value>
+  </data>
+  <data name="Text.FFCA4DFEDF6D5ACCEDAA" xml:space="preserve">
+    <value>Require Windows Professional or higher</value>
+  </data>
+  <data name="Text.9E09BE4B90E9259491DD" xml:space="preserve">
+    <value>Required fields update automatically for the selected game.</value>
+  </data>
+  <data name="Text.AD654849FC9CF1C6D997" xml:space="preserve">
+    <value>Required files and Synix-created templates automatically enable a warning.</value>
+  </data>
+  <data name="Text.B0DAEADE1B96AB9F8EB5" xml:space="preserve">
+    <value>Required for features such as Hyper-V that are unavailable on Windows Home.</value>
+  </data>
+  <data name="Text.5BA4DAF696F2453133A8" xml:space="preserve">
+    <value>Required startup arguments are dynamically injected with your specific data before initialization. You may include any additional command-line flags not covered by the default string in the Extra Arguments section.</value>
+  </data>
+  <data name="Text.5DC5CE2CCFBCC1F3AE31" xml:space="preserve">
+    <value>Required user-supplied files (relative paths, one per line)</value>
+  </data>
+  <data name="Text.37B681C48EE6D830AF79" xml:space="preserve">
+    <value>Resolved automatically</value>
+  </data>
+  <data name="Text.0660108E0971E0A7C9A6" xml:space="preserve">
+    <value>Resolving...</value>
+  </data>
+  <data name="Text.D5982D352F46EF815D10" xml:space="preserve">
+    <value>Resource Monitor</value>
+  </data>
+  <data name="Text.04A28D914CBA2DD1AC88" xml:space="preserve">
+    <value>Resource sampling was delayed  •  Retrying automatically</value>
+  </data>
+  <data name="Text.E8A9279E12900267A1DF" xml:space="preserve">
+    <value>Restart days</value>
+  </data>
+  <data name="Text.A95511418E3B85D2CCA6" xml:space="preserve">
+    <value>Restart hour using a 24-hour clock</value>
+  </data>
+  <data name="Text.7A8126228870E99BDC43" xml:space="preserve">
+    <value>Restart minute</value>
+  </data>
+  <data name="Text.2D41AABA41C2EF3FED5C" xml:space="preserve">
+    <value>Restart selected days at a configured time while preserving the current scheduler data.</value>
+  </data>
+  <data name="Text.BBC2611830E1BE782900" xml:space="preserve">
+    <value>Restart time</value>
+  </data>
+  <data name="Text.3F593999A67CF40731E8" xml:space="preserve">
+    <value>Restore Backup</value>
+  </data>
+  <data name="Text.49C15D2B9D9702D4FF44" xml:space="preserve">
+    <value>Restore Server Backup</value>
+  </data>
+  <data name="Text.A67D2A6C9087C1BCB7E7" xml:space="preserve">
+    <value>RESULT</value>
+  </data>
+  <data name="Text.FE8445D560EC3691D1E1" xml:space="preserve">
+    <value>Review how Synix builds the command used to start this server.</value>
+  </data>
+  <data name="Text.2BD271478D5133521DF1" xml:space="preserve">
+    <value>Review orphaned firewall rules</value>
+  </data>
+  <data name="Text.E8C0C711D1FE88A47545" xml:space="preserve">
+    <value>Review the highlighted requirement</value>
+  </data>
+  <data name="Text.FC0C7D5D72BB74B7579E" xml:space="preserve">
+    <value>Review the license terms before allowing the first server launch.</value>
+  </data>
+  <data name="Text.A2CBC7E3EEB055BE8AFC" xml:space="preserve">
+    <value>Review these setup requirements before continuing.</value>
+  </data>
+  <data name="Text.EC2347A3BD2820AF49BE" xml:space="preserve">
+    <value>Run All Checks</value>
+  </data>
+  <data name="Text.6AB14A52545C53E3EA71" xml:space="preserve">
+    <value>Run Health Check</value>
+  </data>
+  <data name="Text.A4EEB7A5AB5896C51F91" xml:space="preserve">
+    <value>Run Release Check</value>
+  </data>
+  <data name="Text.8CBBAC76C84A2410D3BD" xml:space="preserve">
+    <value>Run Tests</value>
+  </data>
+  <data name="Text.E0CE633EA746EF5196B5" xml:space="preserve">
+    <value>Running Now</value>
+  </data>
+  <data name="Text.B38F7F9752C285B4B90B" xml:space="preserve">
+    <value>Running package structure, SHA-256, and antivirus checks…</value>
+  </data>
+  <data name="Text.4A3B87641F16E0F811C2" xml:space="preserve">
+    <value>Running Servers</value>
+  </data>
+  <data name="Text.E543E80B09CB9169F03C" xml:space="preserve">
+    <value>Runtime requirements</value>
+  </data>
+  <data name="Text.7D8E3B8B32D0C566BF14" xml:space="preserve">
+    <value>SAFE ACTION</value>
+  </data>
+  <data name="Text.35EB3848F9EBCA77854D" xml:space="preserve">
+    <value>Sample every</value>
+  </data>
+  <data name="Text.F8B175CAB826686FEA88" xml:space="preserve">
+    <value>Sanitized arguments (no secrets)</value>
+  </data>
+  <data name="Text.1509F561F2416598629B" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Text.35322B5BB5A218A15401" xml:space="preserve">
+    <value>Save Changes</value>
+  </data>
+  <data name="Text.B80C7163AA7089D922EC" xml:space="preserve">
+    <value>Save Destination</value>
+  </data>
+  <data name="Text.A9DE31384881AF4D5B60" xml:space="preserve">
+    <value>Save Ordered IDs</value>
+  </data>
+  <data name="Text.1FBB9499C89ED106DC66" xml:space="preserve">
+    <value>Save Server</value>
+  </data>
+  <data name="Text.EE056870168CF793A7A3" xml:space="preserve">
+    <value>Save to Project</value>
+  </data>
+  <data name="Text.0637B6730F1724433551" xml:space="preserve">
+    <value>Scheduled Restarts</value>
+  </data>
+  <data name="Text.A60FFBB10DC4CF25CA49" xml:space="preserve">
+    <value>SCORE</value>
+  </data>
+  <data name="Text.5D719633D44DEE05A861" xml:space="preserve">
+    <value>Search by game, executable, or support status…</value>
+  </data>
+  <data name="Text.2E7AAE6319922181CD1D" xml:space="preserve">
+    <value>Search game name...</value>
+  </data>
+  <data name="Text.01F1674FFF3FC5AD8DC9" xml:space="preserve">
+    <value>Search game or server name...</value>
+  </data>
+  <data name="Text.6CAABA13463DFF403A37" xml:space="preserve">
+    <value>Search settings, paths, or values...</value>
+  </data>
+  <data name="Text.59F006D63BD009B7F1F1" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="Text.8F6FB4EB7F42C0E245E2" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="Text.4CDDB86B34725DFF943D" xml:space="preserve">
+    <value>Security review blocked the package. No files were changed.</value>
+  </data>
+  <data name="Text.8C5A71A792CF70840F4B" xml:space="preserve">
+    <value>See exactly what Synix can install, configure, monitor, and query before creating a server.</value>
+  </data>
+  <data name="Text.339761CAC4ADD79725CB" xml:space="preserve">
+    <value>See which Discord destination receives each type of Synix notification for this server.</value>
+  </data>
+  <data name="Text.F00F8392B2C39AE7826E" xml:space="preserve">
+    <value>Select a backup to continue.</value>
+  </data>
+  <data name="Text.00EF301D2AB0505FDDA2" xml:space="preserve">
+    <value>Select a game server</value>
+  </data>
+  <data name="Text.FFF9C013BFE465B863CB" xml:space="preserve">
+    <value>Select a game to update its verification evidence.</value>
+  </data>
+  <data name="Text.F19AA7C4D8DA593D73AE" xml:space="preserve">
+    <value>Select a Repair</value>
+  </data>
+  <data name="Text.902EA0AF4FAA1C1AC056" xml:space="preserve">
+    <value>Select an Action</value>
+  </data>
+  <data name="Text.F576F35548B3364CBEDB" xml:space="preserve">
+    <value>Select an installed server and validate its command.</value>
+  </data>
+  <data name="Text.93CE53851DCBA5EAF20E" xml:space="preserve">
+    <value>Selected source file</value>
+  </data>
+  <data name="Text.93D8CAEF74F07185F0BF" xml:space="preserve">
+    <value>Send Command</value>
+  </data>
+  <data name="Text.DA03B7F52F79500329AF" xml:space="preserve">
+    <value>Send status, backups, maintenance, and problems to different Discord channels.</value>
+  </data>
+  <data name="Text.7B9A0CDE7FF0419B706F" xml:space="preserve">
+    <value>Send Test</value>
+  </data>
+  <data name="Text.FCF1E140E39DFF4DBC74" xml:space="preserve">
+    <value>Send your report</value>
+  </data>
+  <data name="Text.EB454593102B203B457D" xml:space="preserve">
+    <value>Sending a safe test message...</value>
+  </data>
+  <data name="Text.AEF7DE28D52977F1B5CD" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="Text.D8DDC4E4513A90E5F19B" xml:space="preserve">
+    <value>SERVER / ITEM</value>
+  </data>
+  <data name="Text.5435C9CD49190E73AAC1" xml:space="preserve">
+    <value>SERVER CONFIGURATION</value>
+  </data>
+  <data name="Text.7FD48896176AE13DC58A" xml:space="preserve">
+    <value>Server Dashboard</value>
+  </data>
+  <data name="Text.16A1DE974A53CBDEA4C1" xml:space="preserve">
+    <value>Server Details</value>
+  </data>
+  <data name="Text.B67782439FDBA86190F5" xml:space="preserve">
+    <value>Server executable (relative path)</value>
+  </data>
+  <data name="Text.3AB799989A14CE0B8AF0" xml:space="preserve">
+    <value>Server Folder</value>
+  </data>
+  <data name="Text.172BD52D1B25E1E2387D" xml:space="preserve">
+    <value>Server Framework</value>
+  </data>
+  <data name="Text.8B9115416CAB6B28ABC5" xml:space="preserve">
+    <value>Server Identity</value>
+  </data>
+  <data name="Text.912E0C12FD53AD9CABA5" xml:space="preserve">
+    <value>Server Info</value>
+  </data>
+  <data name="Text.6FB2EE8D927BED5B3EFB" xml:space="preserve">
+    <value>Server lifecycle tracking</value>
+  </data>
+  <data name="Text.EFFDBE01001E5581191A" xml:space="preserve">
+    <value>Server list changed during sampling  •  Retrying automatically</value>
+  </data>
+  <data name="Text.A50A426E7FA853DA7584" xml:space="preserve">
+    <value>Server log locations (one relative path or wildcard pattern per line)</value>
+  </data>
+  <data name="Text.BC4816425EBE8079C4F9" xml:space="preserve">
+    <value>Server Name</value>
+  </data>
+  <data name="Text.41CFA866FAA62B2104E6" xml:space="preserve">
+    <value>SERVER NAME</value>
+  </data>
+  <data name="Text.A0F68054D6613673BCF5" xml:space="preserve">
+    <value>Server Options  ▴</value>
+  </data>
+  <data name="Text.96F6C45E6C2129C0E77C" xml:space="preserve">
+    <value>Server Overview</value>
+  </data>
+  <data name="Text.10F86A32C69207531263" xml:space="preserve">
+    <value>Server Password</value>
+  </data>
+  <data name="Text.7B60A68A60DA2F0333AA" xml:space="preserve">
+    <value>Server RAM (GB)</value>
+  </data>
+  <data name="Text.8C33F13ABED20D6638CD" xml:space="preserve">
+    <value>Server Readiness Center</value>
+  </data>
+  <data name="Text.160A107437C6E0EBC01C" xml:space="preserve">
+    <value>Server Setup</value>
+  </data>
+  <data name="Text.DF87160BA314A6D2E7F5" xml:space="preserve">
+    <value>SERVER STATUS</value>
+  </data>
+  <data name="Text.FA8EB4AD4CE1F506D941" xml:space="preserve">
+    <value>Server type</value>
+  </data>
+  <data name="Text.BADB25941ACF62A2431E" xml:space="preserve">
+    <value>serverconfig.xml</value>
+  </data>
+  <data name="Text.796D04D8FFEF846F141D" xml:space="preserve">
+    <value>Servers online</value>
+  </data>
+  <data name="Text.F86BB6FC21DEB1E1F841" xml:space="preserve">
+    <value>Service Ports</value>
+  </data>
+  <data name="Text.4FE70949D3E77969ECE8" xml:space="preserve">
+    <value>SETTING</value>
+  </data>
+  <data name="Text.74A883A037BC227F9189" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Text.C57D4ECC83B7A2C7DFA4" xml:space="preserve">
+    <value>Short summary</value>
+  </data>
+  <data name="Text.52D1EA9EC1761138D30F" xml:space="preserve">
+    <value>Show a first-start setup warning</value>
+  </data>
+  <data name="Text.7E5C754C0A3B6670D020" xml:space="preserve">
+    <value>Show server console window</value>
+  </data>
+  <data name="Text.5856356326064A450522" xml:space="preserve">
+    <value>Show Server Console Window</value>
+  </data>
+  <data name="Text.9C3A965A650194E6FECC" xml:space="preserve">
+    <value>Show Technical Details</value>
+  </data>
+  <data name="Text.1A4BF21D8BE466FA4B66" xml:space="preserve">
+    <value>Showing 0 games</value>
+  </data>
+  <data name="Text.D72917FA7B697BD4F0E1" xml:space="preserve">
+    <value>Shown for transparency so you can verify the startup command has no hidden arguments.</value>
+  </data>
+  <data name="Text.92079831E5CC0BF95974" xml:space="preserve">
+    <value>Simple view</value>
+  </data>
+  <data name="Text.4512FE0408D72862AC67" xml:space="preserve">
+    <value>SIZE</value>
+  </data>
+  <data name="Text.39F17EC6EBCF3CEC37A0" xml:space="preserve">
+    <value>START</value>
+  </data>
+  <data name="Text.96A84F4FA3AB888D2363" xml:space="preserve">
+    <value>Start  — Not verified yet</value>
+  </data>
+  <data name="Text.F08A98135A8DF6ED38C7" xml:space="preserve">
+    <value>Start Server</value>
+  </data>
+  <data name="Text.28C45B32A2F9334AD511" xml:space="preserve">
+    <value>Start Test</value>
+  </data>
+  <data name="Text.5F194B4249C159AD665F" xml:space="preserve">
+    <value>Start Using Synix</value>
+  </data>
+  <data name="Text.20C57F23AC717E8E040D" xml:space="preserve">
+    <value>Starting the server through Synix. Waiting for its configured listener to respond...</value>
+  </data>
+  <data name="Text.091C22C7EE122D76DAE4" xml:space="preserve">
+    <value>Starts background monitoring when you sign in to Windows. Closing the Synix dashboard always exits Synix completely for the current session.</value>
+  </data>
+  <data name="Text.CB8E52F66C6AE36F58AE" xml:space="preserve">
+    <value>Startup argument template</value>
+  </data>
+  <data name="Text.835D3FF459F432C23A57" xml:space="preserve">
+    <value>Startup Tasks</value>
+  </data>
+  <data name="Text.920E413C7D411B61EF3E" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Text.8C2E4A035F5F3D218F87" xml:space="preserve">
+    <value>STATUS</value>
+  </data>
+  <data name="Text.74F96C8582DE2CB217C7" xml:space="preserve">
+    <value>Steam account login required</value>
+  </data>
+  <data name="Text.2ACE1D3304BA5649A5A1" xml:space="preserve">
+    <value>Steam account name</value>
+  </data>
+  <data name="Text.805C2CFA4215BDE01B9C" xml:space="preserve">
+    <value>Steam account required</value>
+  </data>
+  <data name="Text.6C56FA2DAEF6ACE9BAC4" xml:space="preserve">
+    <value>Steam Account Required</value>
+  </data>
+  <data name="Text.061DFDE9336C7B9E273C" xml:space="preserve">
+    <value>Steam AppID</value>
+  </data>
+  <data name="Text.106E51E2A0CD985A0FBC" xml:space="preserve">
+    <value>Steam runtime target directory (relative path)</value>
+  </data>
+  <data name="Text.0037D1151873C72377CB" xml:space="preserve">
+    <value>SteamCMD app configuration (normally blank)</value>
+  </data>
+  <data name="Text.1E704E3DA1455CD132D9" xml:space="preserve">
+    <value>SteamCMD Download Speed</value>
+  </data>
+  <data name="Text.AD5BE8100C99D831B948" xml:space="preserve">
+    <value>SteamCMD download speed in megabits per second</value>
+  </data>
+  <data name="Text.A0E49EF6BF0044178531" xml:space="preserve">
+    <value>SteamCMD download speed mode</value>
+  </data>
+  <data name="Text.04DEDF8AFEB8A4177A00" xml:space="preserve">
+    <value>STOP</value>
+  </data>
+  <data name="Text.E4BB34EB2488E93843E1" xml:space="preserve">
+    <value>Stop  — Not verified yet</value>
+  </data>
+  <data name="Text.CB7C1E8DC21E59830716" xml:space="preserve">
+    <value>Stop Server</value>
+  </data>
+  <data name="Text.1A4F630AC1B69FD00728" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Text.6DC2259A4335DB1F7C92" xml:space="preserve">
+    <value>Stopping the test server through Synix...</value>
+  </data>
+  <data name="Text.AFC6E98203B42710D6D2" xml:space="preserve">
+    <value>Store automated and manual server backup archives in a custom folder.</value>
+  </data>
+  <data name="Text.375D0C125CC8B4590775" xml:space="preserve">
+    <value>Structured View</value>
+  </data>
+  <data name="Text.C40FC918931D3BA589D1" xml:space="preserve">
+    <value>Submit problem report to GitHub</value>
+  </data>
+  <data name="Text.E447D358EDA1CE76C466" xml:space="preserve">
+    <value>Submit to GitHub</value>
+  </data>
+  <data name="Text.A03EE332F98F4733802C" xml:space="preserve">
+    <value>Switch the Synix dashboard between light and dark visual themes.</value>
+  </data>
+  <data name="Text.E7A2E5F1A55B98CBFB28" xml:space="preserve">
+    <value>Synix</value>
+  </data>
+  <data name="Text.B2060EFF487D034B8C89" xml:space="preserve">
+    <value>Synix Argument Test</value>
+  </data>
+  <data name="Text.62313792E6A228D65CE5" xml:space="preserve">
+    <value>Synix background service</value>
+  </data>
+  <data name="Text.E26C86E2069FAA56AA9A" xml:space="preserve">
+    <value>Synix Background Service</value>
+  </data>
+  <data name="Text.1263E823649071566AFC" xml:space="preserve">
+    <value>Synix builds the real command with this server's saved settings, hides every password, starts it normally, and waits for proof that the server accepted the launch.</value>
+  </data>
+  <data name="Text.2F4A3B0705E0D01E2F8F" xml:space="preserve">
+    <value>Synix Configuration Application Check</value>
+  </data>
+  <data name="Text.0245B987FC14009D721D" xml:space="preserve">
+    <value>Synix Control Panel</value>
+  </data>
+  <data name="Text.180299794A99A2CB63F1" xml:space="preserve">
+    <value>SYNIX CONTROL PANEL  •  version</value>
+  </data>
+  <data name="Text.D1904B9C7FAAF45FF3DD" xml:space="preserve">
+    <value>Synix could not verify this loader combination from the official metadata service.</value>
+  </data>
+  <data name="Text.030EBC77E93FA53151CE" xml:space="preserve">
+    <value>Synix does not open a public web-control port. Passwords stored by Synix are protected locally, and sensitive values are masked from its activity logs.</value>
+  </data>
+  <data name="Text.50DDB266BAA23B0FE224" xml:space="preserve">
+    <value>Synix Game Definition Builder</value>
+  </data>
+  <data name="Text.385E44CCA2BC7A3242CF" xml:space="preserve">
+    <value>Synix Game Definition Test Runner</value>
+  </data>
+  <data name="Text.43A57C9D7AFBA6F4D472" xml:space="preserve">
+    <value>Synix Game Verification Queue</value>
+  </data>
+  <data name="Text.52F141C563CA7003808C" xml:space="preserve">
+    <value>Synix installs Microsoft's official Bedrock Dedicated Server. Java and Java mod loaders do not apply.</value>
+  </data>
+  <data name="Text.5700D13EB472652C01DC" xml:space="preserve">
+    <value>Synix installs the official Oxide runtime only. Plugins remain user-managed in the server's oxide\plugins folder.</value>
+  </data>
+  <data name="Text.69B1390848A4F53A80A2" xml:space="preserve">
+    <value>Synix installs the selected server loader and matching portable Java. Add your own mods after installation.</value>
+  </data>
+  <data name="Text.93F24BC2C28FEF1DDC28" xml:space="preserve">
+    <value>Synix is designed to make personal game-server hosting understandable without hiding what it changes on your computer.</value>
+  </data>
+  <data name="Text.AB825BD7501C4E7CCD2A" xml:space="preserve">
+    <value>Synix logo</value>
+  </data>
+  <data name="Text.3D07CCD88E27236748F3" xml:space="preserve">
+    <value>Synix Release Readiness Checker</value>
+  </data>
+  <data name="Text.3DA22A4586E8B5324964" xml:space="preserve">
+    <value>Synix Reliability Test</value>
+  </data>
+  <data name="Text.7E485C2CF2CC85DC20B9" xml:space="preserve">
+    <value>Synix Settings</value>
+  </data>
+  <data name="Text.F70301C507AF16CA4237" xml:space="preserve">
+    <value>Synix Troubleshooter</value>
+  </data>
+  <data name="Text.8A5D418103F879095F96" xml:space="preserve">
+    <value>Synix Update</value>
+  </data>
+  <data name="Text.EDE7581CA906C86AD8C0" xml:space="preserve">
+    <value>Synix update is available</value>
+  </data>
+  <data name="Text.DB74849CCDF411527A63" xml:space="preserve">
+    <value>Synix verifies backups with integrity receipts, safely stages the selected archive, and automatically rolls back if restoration fails. The saved Synix server entry and its settings are not changed.</value>
+  </data>
+  <data name="Text.F283ABEE58C3C5919882" xml:space="preserve">
+    <value>Synix verifies each action automatically after it succeeds on this PC.</value>
+  </data>
+  <data name="Text.06EA49BA268B1386ABC4" xml:space="preserve">
+    <value>Synix version:</value>
+  </data>
+  <data name="Text.EED8C29183FC10F6FEC2" xml:space="preserve">
+    <value>System &amp; Server Troubleshooter</value>
+  </data>
+  <data name="Text.7083BACCFEE1C7E3CC47" xml:space="preserve">
+    <value>Tell us what you clicked, what Synix displayed, and how to make it happen again.</value>
+  </data>
+  <data name="Text.4C919AB44C497E4664E4" xml:space="preserve">
+    <value>Template revision</value>
+  </data>
+  <data name="Text.B976ECB48B1B2D4AC318" xml:space="preserve">
+    <value>Test built-in game definitions</value>
+  </data>
+  <data name="Text.3C838E93060745C33A0E" xml:space="preserve">
+    <value>Test duration</value>
+  </data>
+  <data name="Text.67907590F84228A78098" xml:space="preserve">
+    <value>Test LAN Connectivity</value>
+  </data>
+  <data name="Text.A6C3462A3E2E155F2613" xml:space="preserve">
+    <value>Test WAN Connectivity</value>
+  </data>
+  <data name="Text.D25BF1DE94C6CFCB40D4" xml:space="preserve">
+    <value>Testing every built-in definition and template safely...</value>
+  </data>
+  <data name="Text.91657E9737A951B3ADA2" xml:space="preserve">
+    <value>Tests every built-in game, managed setting binding, full configuration template, revision, path, log location, and allowlisted post-install action. Installed servers are never changed.</value>
+  </data>
+  <data name="Text.897AEC201F7172829EF3" xml:space="preserve">
+    <value>The add-on was not installed.</value>
+  </data>
+  <data name="Text.9364F108EA4C3D297620" xml:space="preserve">
+    <value>The configuration report will appear here.</value>
+  </data>
+  <data name="Text.D1227935539D1BA6B9E6" xml:space="preserve">
+    <value>The game server process is not running</value>
+  </data>
+  <data name="Text.8421EE422CBE769494A6" xml:space="preserve">
+    <value>The game server process is online</value>
+  </data>
+  <data name="Text.D613F5D4C11D7D3ACD78" xml:space="preserve">
+    <value>The game-definition tests could not finish.</value>
+  </data>
+  <data name="Text.849FF4D03C300A88F143" xml:space="preserve">
+    <value>The local connection was removed. Revoke Synix on the GitHub page that opened.</value>
+  </data>
+  <data name="Text.F694AAA8DA2C0516E83B" xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data name="Text.199AA28C30C28597C6E2" xml:space="preserve">
+    <value>The privacy-filtered report was copied and is ready to paste into the Discord bug forum.</value>
+  </data>
+  <data name="Text.CFA163A0DFA468756CF4" xml:space="preserve">
+    <value>The readiness report will appear here.</value>
+  </data>
+  <data name="Text.3CDC839AB03D7080ED58" xml:space="preserve">
+    <value>The release check could not finish.</value>
+  </data>
+  <data name="Text.0117F5327FA39CD0DABB" xml:space="preserve">
+    <value>The release check was canceled. No release files were changed.</value>
+  </data>
+  <data name="Text.AB89F96B667CE80E48CB" xml:space="preserve">
+    <value>The reliability report will appear after the requested run finishes.</value>
+  </data>
+  <data name="Text.D9718558CFBB91F44CFF" xml:space="preserve">
+    <value>The schedule is saved with this server's settings.</value>
+  </data>
+  <data name="Text.44D8326D9590F71F8B1B" xml:space="preserve">
+    <value>The selected server requires a Steam account for installation. Enter the account name that SteamCMD should use.</value>
+  </data>
+  <data name="Text.D305131EE6798E1D30FA" xml:space="preserve">
+    <value>The server must remain stopped during restoration</value>
+  </data>
+  <data name="Text.BCB4E85BFE366942E9D4" xml:space="preserve">
+    <value>The server stopped before startup could be verified. Review its recent logs and definition.</value>
+  </data>
+  <data name="Text.946FF9E0EB0FA926E2AF" xml:space="preserve">
+    <value>The test server is stopped. The completed argument evidence is preserved.</value>
+  </data>
+  <data name="Text.475F12DE42F62AE8996C" xml:space="preserve">
+    <value>The validation report will appear here.</value>
+  </data>
+  <data name="Text.7B3AC1F3AD7BA73ED0CC" xml:space="preserve">
+    <value>These values are enabled only when the selected server template supports them.</value>
+  </data>
+  <data name="Text.7CB94F75343DF207439A" xml:space="preserve">
+    <value>This informational view shows the default arguments Synix uses when building the start command.</value>
+  </data>
+  <data name="Text.B6C4C1953C0B95ECE881" xml:space="preserve">
+    <value>TOTAL CPU</value>
+  </data>
+  <data name="Text.09EA012D10A0D0AF4057" xml:space="preserve">
+    <value>TOTAL RAM</value>
+  </data>
+  <data name="Text.DDE6FA1EFA42980A5A3D" xml:space="preserve">
+    <value>Total system load</value>
+  </data>
+  <data name="Text.2A8FBB837295BABAD526" xml:space="preserve">
+    <value>Total system RAM in use</value>
+  </data>
+  <data name="Text.6440A1A6AB337CD371BA" xml:space="preserve">
+    <value>Turn on every day when the scheduled restart should run.</value>
+  </data>
+  <data name="Text.A90BAB6FF81B3D09ACCD" xml:space="preserve">
+    <value>TYPE</value>
+  </data>
+  <data name="Text.CA184496974204A0BD3F" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
+  <data name="Text.AAD454AE502B9251A7DB" xml:space="preserve">
+    <value>Undo Edits</value>
+  </data>
+  <data name="Text.09872897779CD02DAC70" xml:space="preserve">
+    <value>Update did not start  •  Current Synix was not changed</value>
+  </data>
+  <data name="Text.4B9B06633B41446C342E" xml:space="preserve">
+    <value>Update on Start</value>
+  </data>
+  <data name="Text.348C3C8FD21539135DB5" xml:space="preserve">
+    <value>Update safety information appears here.</value>
+  </data>
+  <data name="Text.D56284509EEB667D3032" xml:space="preserve">
+    <value>Update Server</value>
+  </data>
+  <data name="Text.D63AB4711473B0398FEB" xml:space="preserve">
+    <value>Uptime</value>
+  </data>
+  <data name="Text.9B15CE9E25E944D6F42D" xml:space="preserve">
+    <value>Use at least 8 characters.</value>
+  </data>
+  <data name="Text.A8142050CBD33EE95F3F" xml:space="preserve">
+    <value>Use full speed or limit game-server installs, updates, repairs, and validations.</value>
+  </data>
+  <data name="Text.60ADFA0715E4E83522DF" xml:space="preserve">
+    <value>Use one webhook for this server and choose the messages it should receive.</value>
+  </data>
+  <data name="Text.4910EE68C0A14BD4AF19" xml:space="preserve">
+    <value>Use only when testing proves the server needs the approved Steam DLL files. The target must stay inside the server folder.</value>
+  </data>
+  <data name="Text.1433E221238B95E942F7" xml:space="preserve">
+    <value>Use only when the server is deployed through Hyper-V or Windows containers.</value>
+  </data>
+  <data name="Text.86286BA8D6C58145405E" xml:space="preserve">
+    <value>Use premade game configurations</value>
+  </data>
+  <data name="Text.7E8C4DD0D3627B5A23DA" xml:space="preserve">
+    <value>Use Synix default folder</value>
+  </data>
+  <data name="Text.F2029FAFB53EFFEE6890" xml:space="preserve">
+    <value>Uses the computer's local time and a 24-hour clock.</value>
+  </data>
+  <data name="Text.DD560617527C225ABE17" xml:space="preserve">
+    <value>Validate &amp; Preview</value>
+  </data>
+  <data name="Text.932B6CA1C188CE565F52" xml:space="preserve">
+    <value>Validate Command</value>
+  </data>
+  <data name="Text.730771C7CEF0FB9F5591" xml:space="preserve">
+    <value>Validate Game Files</value>
+  </data>
+  <data name="Text.F08E959E621C8112615C" xml:space="preserve">
+    <value>Validated definition preview</value>
+  </data>
+  <data name="Text.8EC121C93E4A0DE65F26" xml:space="preserve">
+    <value>VALUE</value>
+  </data>
+  <data name="Text.229193F097F563A43177" xml:space="preserve">
+    <value>Verification queue refreshed from the saved Synix evidence.</value>
+  </data>
+  <data name="Text.B08D124792DCE6815189" xml:space="preserve">
+    <value>Verification step</value>
+  </data>
+  <data name="Text.A7678DBAFBD9E2842236" xml:space="preserve">
+    <value>Verified hardware and Windows requirements checked before Synix installs or launches the server.</value>
+  </data>
+  <data name="Text.4B8F3F5DCE29F4501415" xml:space="preserve">
+    <value>Verified update package details</value>
+  </data>
+  <data name="Text.61600AA7118C043C99D7" xml:space="preserve">
+    <value>Verify Backup</value>
+  </data>
+  <data name="Text.16FB4FBCA9A11AC839AE" xml:space="preserve">
+    <value>Verifying archive paths and SHA-256 integrity...</value>
+  </data>
+  <data name="Text.E3D178B901F8C19B399B" xml:space="preserve">
+    <value>View Default Arguments</value>
+  </data>
+  <data name="Text.90789C12D0731B4405F2" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="Text.1541A2463CE596ED2718" xml:space="preserve">
+    <value>View Discord Webhooks</value>
+  </data>
+  <data name="Text.46EE37AE5CD1AE985F98" xml:space="preserve">
+    <value>Waiting for a configuration report.</value>
+  </data>
+  <data name="Text.95B4A7B23387C67FD233" xml:space="preserve">
+    <value>Waiting for a running server process</value>
+  </data>
+  <data name="Text.29CAE0D1FFE7D67CA266" xml:space="preserve">
+    <value>Waiting for first sample  •  Auto-refresh every 1 second</value>
+  </data>
+  <data name="Text.47E276FC6AA8982F2525" xml:space="preserve">
+    <value>WEBHOOK</value>
+  </data>
+  <data name="Text.C6FA3ED8B75178BC0DB2" xml:space="preserve">
+    <value>Webhook secrets stay protected</value>
+  </data>
+  <data name="Text.EFA8EF66DE8A78C422CB" xml:space="preserve">
+    <value>Welcome to Synix</value>
+  </data>
+  <data name="Text.483BD49023AE2BFB08DA" xml:space="preserve">
+    <value>What happened</value>
+  </data>
+  <data name="Text.C4DC542B511FD74F4016" xml:space="preserve">
+    <value>What happened?</value>
+  </data>
+  <data name="Text.FF395F5EEE87F691A065" xml:space="preserve">
+    <value>WHAT HAPPENS AFTER YOU CONTINUE</value>
+  </data>
+  <data name="Text.7F4A2A64A3B6B93FCDCE" xml:space="preserve">
+    <value>What should have happened?</value>
+  </data>
+  <data name="Text.9B1DF515009197F7B731" xml:space="preserve">
+    <value>What Synix currently knows how to install, configure, start, monitor, and query for this game.</value>
+  </data>
+  <data name="Text.DDE7244B8E964BD733E4" xml:space="preserve">
+    <value>What Synix was doing when the problem happened</value>
+  </data>
+  <data name="Text.F48D9672621A29033BFE" xml:space="preserve">
+    <value>What were you doing?</value>
+  </data>
+  <data name="Text.C29162E9E78CEEA6A66B" xml:space="preserve">
+    <value>When enabled, deleting a server requests administrator permission to remove its Windows Firewall rules. Turn this off to skip automatic cleanup during deletion.</value>
+  </data>
+  <data name="Text.84915063F51DB634577C" xml:space="preserve">
+    <value>WHY SYNIX FLAGGED THESE RULES</value>
+  </data>
+  <data name="Text.534837B3B824387D9DA0" xml:space="preserve">
+    <value>Window title</value>
+  </data>
+  <data name="Text.9D352A1132C068237394" xml:space="preserve">
+    <value>Windows requests administrator permission. Synix then removes only firewall rules matching the exact executable paths above and scans again to verify the cleanup.</value>
+  </data>
+  <data name="Text.84447CC03EF09445AAA2" xml:space="preserve">
+    <value>Windows version:</value>
+  </data>
+  <data name="Text.89A12481F8B497A1F048" xml:space="preserve">
+    <value>Windrose Invite Access</value>
+  </data>
+  <data name="Text.1CB68A1BAF6E0FA7AE13" xml:space="preserve">
+    <value>World Generation</value>
+  </data>
+  <data name="Text.33DED6ECB268AFB09FD2" xml:space="preserve">
+    <value>World Seed</value>
+  </data>
+  <data name="Text.59E97D4C50CDAA280770" xml:space="preserve">
+    <value>World Size</value>
+  </data>
+  <data name="Text.40658E9AF8FD92229AE1" xml:space="preserve">
+    <value>XML</value>
+  </data>
+  <data name="Text.14F1D8A6E3F92BDA1B12" xml:space="preserve">
+    <value>XML structure preserved</value>
+  </data>
+  <data name="Text.C473C014C6CA52721FE2" xml:space="preserve">
+    <value>You will need this password when moving Synix to the new PC. It cannot be recovered.</value>
+  </data>
+  <data name="DynamicText.41F9619205659A9701F9" xml:space="preserve">
+    <value>  — Not verified yet</value>
+  </data>
+  <data name="DynamicText.2ECD4E03F90BD36A3ACB" xml:space="preserve">
+    <value>  •  Live performance and configuration details</value>
+  </data>
+  <data name="DynamicText.49F13708648834FD3B0F" xml:space="preserve">
+    <value>  ✓ Verified</value>
+  </data>
+  <data name="DynamicText.9FCE49D988FA222456E5" xml:space="preserve">
+    <value> • Encrypted</value>
+  </data>
+  <data name="DynamicText.CE681F47869F6705B99E" xml:space="preserve">
+    <value> • Legacy</value>
+  </data>
+  <data name="DynamicText.A4F47BA7EB271CEA2A55" xml:space="preserve">
+    <value> • Low-disk</value>
+  </data>
+  <data name="DynamicText.BA391AF6213679C8CE8E" xml:space="preserve">
+    <value> • Minecraft </value>
+  </data>
+  <data name="DynamicText.C0DC4B8E2D0B8558D8E2" xml:space="preserve">
+    <value> • This step is recorded by the real server workflow.</value>
+  </data>
+  <data name="DynamicText.B1114987F118BC0D2ED9" xml:space="preserve">
+    <value> • Unencrypted</value>
+  </data>
+  <data name="DynamicText.87BC0728AF0251FD98E5" xml:space="preserve">
+    <value> advanced destinations</value>
+  </data>
+  <data name="DynamicText.7C3DF177A1A23ED13B68" xml:space="preserve">
+    <value> available  •  Running </value>
+  </data>
+  <data name="DynamicText.08B41002B78DE9155861" xml:space="preserve">
+    <value> checks passed</value>
+  </data>
+  <data name="DynamicText.A2A4C2FFCA986FFFCB9F" xml:space="preserve">
+    <value> complete  •  </value>
+  </data>
+  <data name="DynamicText.EC3F7553C2D74CA1F0E8" xml:space="preserve">
+    <value> compressed  •  </value>
+  </data>
+  <data name="DynamicText.D447B35FC51885E62CFB" xml:space="preserve">
+    <value> Configuration Check</value>
+  </data>
+  <data name="DynamicText.593CDAC08ED98F1CB9E5" xml:space="preserve">
+    <value> configured webhook destinations</value>
+  </data>
+  <data name="DynamicText.F36B8F89A6A8DD2ACEF1" xml:space="preserve">
+    <value> Confirm the visible in-game values before recording the verification.</value>
+  </data>
+  <data name="DynamicText.58575D78A8A9DA329A1C" xml:space="preserve">
+    <value> detected  •  Details unavailable</value>
+  </data>
+  <data name="DynamicText.C10CD10BB60D2DC1612C" xml:space="preserve">
+    <value> elapsed)...</value>
+  </data>
+  <data name="DynamicText.1F8567519612B6928E40" xml:space="preserve">
+    <value> failed  •  </value>
+  </data>
+  <data name="DynamicText.00029CBA0C5C049B0F4F" xml:space="preserve">
+    <value> files
+</value>
+  </data>
+  <data name="DynamicText.2C2E7BBF694EDF0CC0AD" xml:space="preserve">
+    <value> files). Choose another configuration file from the list above.</value>
+  </data>
+  <data name="DynamicText.167CC6220952ABB33D24" xml:space="preserve">
+    <value> game(s)</value>
+  </data>
+  <data name="DynamicText.6CA80BE8B1CF314FBADE" xml:space="preserve">
+    <value> games  •  </value>
+  </data>
+  <data name="DynamicText.4F45BA6348ABD5F373DE" xml:space="preserve">
+    <value> games  •  Double-click a row for details</value>
+  </data>
+  <data name="DynamicText.8E6C1D055A48696D36E9" xml:space="preserve">
+    <value> games into the project.</value>
+  </data>
+  <data name="DynamicText.4083F01D964313316728" xml:space="preserve">
+    <value> GB</value>
+  </data>
+  <data name="DynamicText.572C528F62FC025BD3BE" xml:space="preserve">
+    <value> GB system memory</value>
+  </data>
+  <data name="DynamicText.F4DFA6FAADCEF28F233E" xml:space="preserve">
+    <value> is available</value>
+  </data>
+  <data name="DynamicText.8EB05FDEBDF27CB25A4B" xml:space="preserve">
+    <value> item(s) need attention</value>
+  </data>
+  <data name="DynamicText.3E26810B512F5FF14375" xml:space="preserve">
+    <value> mod IDs</value>
+  </data>
+  <data name="DynamicText.A8889BCEC5FA90F35EFB" xml:space="preserve">
+    <value> need configuration research</value>
+  </data>
+  <data name="DynamicText.4BA9160301A8FCFD29C6" xml:space="preserve">
+    <value> need work  •  </value>
+  </data>
+  <data name="DynamicText.A4282E4B2298B90B56F7" xml:space="preserve">
+    <value> of </value>
+  </data>
+  <data name="DynamicText.910624AB2632D235658E" xml:space="preserve">
+    <value> passed</value>
+  </data>
+  <data name="DynamicText.E796579E160E7CF88222" xml:space="preserve">
+    <value> possible server programs. Select the correct game below.</value>
+  </data>
+  <data name="DynamicText.21EE2B4F49445E5DBD93" xml:space="preserve">
+    <value> problem(s) must be corrected</value>
+  </data>
+  <data name="DynamicText.46BE4373C2852F3D74FD" xml:space="preserve">
+    <value> quick command</value>
+  </data>
+  <data name="DynamicText.256770E049127313B448" xml:space="preserve">
+    <value> Release Notes</value>
+  </data>
+  <data name="DynamicText.3792CB53AB19A06DC732" xml:space="preserve">
+    <value> requires a Steam account for installation. Enter the account name that SteamCMD should use.</value>
+  </data>
+  <data name="DynamicText.1B77DF1D73EA160924FA" xml:space="preserve">
+    <value> safe action(s)</value>
+  </data>
+  <data name="DynamicText.F89DAB7624159F2C02E1" xml:space="preserve">
+    <value> safely without changing its </value>
+  </data>
+  <data name="DynamicText.2234527FDECB32EB09F3" xml:space="preserve">
+    <value> saved backups below. Newest backups are shown first.</value>
+  </data>
+  <data name="DynamicText.7B2E1A8A3342B6AC38B2" xml:space="preserve">
+    <value> seconds remaining)...</value>
+  </data>
+  <data name="DynamicText.7A139C8D1C747374C3D5" xml:space="preserve">
+    <value> server loader. Add your own mods after installation.</value>
+  </data>
+  <data name="DynamicText.3C507AAF5D59D89B0353" xml:space="preserve">
+    <value> setting bindings  •  </value>
+  </data>
+  <data name="DynamicText.8AB5FCAA02B080A097CB" xml:space="preserve">
+    <value> settings</value>
+  </data>
+  <data name="DynamicText.EA3D2DC72DD4E827B039" xml:space="preserve">
+    <value> structure preserved</value>
+  </data>
+  <data name="DynamicText.CF65B40956AD413DD017" xml:space="preserve">
+    <value> structure.</value>
+  </data>
+  <data name="DynamicText.4B16B1CCA24EB59CFD7A" xml:space="preserve">
+    <value> Support Details</value>
+  </data>
+  <data name="DynamicText.B623872A53510585C8EA" xml:space="preserve">
+    <value> template(s) • </value>
+  </data>
+  <data name="DynamicText.F9EDC24A445828096426" xml:space="preserve">
+    <value> templates  •  </value>
+  </data>
+  <data name="DynamicText.6DED442919DF2707B4D3" xml:space="preserve">
+    <value> tests</value>
+  </data>
+  <data name="DynamicText.168E1FE1316B44FB61A0" xml:space="preserve">
+    <value> unique numeric mod ID(s) • order is preserved</value>
+  </data>
+  <data name="DynamicText.E70B3EEA5EEFE6953748" xml:space="preserve">
+    <value> unsaved changes</value>
+  </data>
+  <data name="DynamicText.1BFD4FB05E0081875605" xml:space="preserve">
+    <value> uses Java </value>
+  </data>
+  <data name="DynamicText.9BBFCF0B576C037A7883" xml:space="preserve">
+    <value> uses the official Mojang server and Java </value>
+  </data>
+  <data name="DynamicText.6413A450730B77B35597" xml:space="preserve">
+    <value> verification checks for </value>
+  </data>
+  <data name="DynamicText.4188D7E57BAA3739DB85" xml:space="preserve">
+    <value> verification cleared.</value>
+  </data>
+  <data name="DynamicText.EA0E691CC7A0B657F4C5" xml:space="preserve">
+    <value> verified for Synix v</value>
+  </data>
+  <data name="DynamicText.D2BDEE6E45E70CF7E1D1" xml:space="preserve">
+    <value> warning(s)</value>
+  </data>
+  <data name="DynamicText.CB25EBAE69469AA12ACB" xml:space="preserve">
+    <value> warnings  •  </value>
+  </data>
+  <data name="DynamicText.E5BA27171DB191757274" xml:space="preserve">
+    <value> was imported to this PC. Confirm the Steam account name so SteamCMD can restore access before the first start.</value>
+  </data>
+  <data name="DynamicText.373318B8C602CE9A87E7" xml:space="preserve">
+    <value> working space • </value>
+  </data>
+  <data name="DynamicText.61F22AE6DB02265AEEB3" xml:space="preserve">
+    <value>: argument verification recorded from the real-server test.</value>
+  </data>
+  <data name="DynamicText.2CC062D71DA0D1727CCB" xml:space="preserve">
+    <value>: that step is already verified for this Synix version or a newer version.</value>
+  </data>
+  <data name="DynamicText.40B538AA2E630581BEDD" xml:space="preserve">
+    <value>. Add mods after installation.</value>
+  </data>
+  <data name="DynamicText.A783537855BD692EFEA5" xml:space="preserve">
+    <value>. No browser was opened.</value>
+  </data>
+  <data name="DynamicText.9EF95204F1BF47BAF4C6" xml:space="preserve">
+    <value>. Reports can be posted directly.</value>
+  </data>
+  <data name="DynamicText.F7A728E252D10CA3096D" xml:space="preserve">
+    <value>) is ready to install, start, stop, recover, and connect. Select any problem to see its safe action.</value>
+  </data>
+  <data name="DynamicText.476D609923BE99183213" xml:space="preserve">
+    <value>% complete. Review the automatic checks before continuing.</value>
+  </data>
+  <data name="DynamicText.E06DFA6ACFCD8648DB09" xml:space="preserve">
+    <value>% of </value>
+  </data>
+  <data name="DynamicText.65836FB8A6EF94ED3781" xml:space="preserve">
+    <value>◇  CONFIGURATION SUPPORT: </value>
+  </data>
+  <data name="DynamicText.B2FBABF6D620A4B554DD" xml:space="preserve">
+    <value>✓  Latest version  •  v</value>
+  </data>
+  <data name="DynamicText.A09EB6DC42481F3A6222" xml:space="preserve">
+    <value>1 advanced destination</value>
+  </data>
+  <data name="DynamicText.36134FEFDC7A2322ADAF" xml:space="preserve">
+    <value>1 configured webhook destination</value>
+  </data>
+  <data name="DynamicText.841A820BC0CD109C0B37" xml:space="preserve">
+    <value>1 unsaved change</value>
+  </data>
+  <data name="DynamicText.22FA36407341CF93E902" xml:space="preserve">
+    <value>Active Processes</value>
+  </data>
+  <data name="DynamicText.2125312BC1C1A4926AD0" xml:space="preserve">
+    <value>Also delete all server backup archives</value>
+  </data>
+  <data name="DynamicText.4DB57837E5E3B248C29D" xml:space="preserve">
+    <value>Argument Test • </value>
+  </data>
+  <data name="DynamicText.C79B56CFB8142A3D3C2E" xml:space="preserve">
+    <value>Argument verification recorded for Synix v</value>
+  </data>
+  <data name="DynamicText.636A7FABCFC61CEBD6F2" xml:space="preserve">
+    <value>Assign service ports and secure remote administration.</value>
+  </data>
+  <data name="DynamicText.685804741D15CBE4BF9A" xml:space="preserve">
+    <value>ATTENTION NEEDED  •  </value>
+  </data>
+  <data name="DynamicText.6A4BFFD65469D67E8BD1" xml:space="preserve">
+    <value>Backups for </value>
+  </data>
+  <data name="DynamicText.76B551440BDFE99DF4E7" xml:space="preserve">
+    <value>Check whether </value>
+  </data>
+  <data name="DynamicText.CD126377CEC9A35E68E2" xml:space="preserve">
+    <value>Checking </value>
+  </data>
+  <data name="DynamicText.973CB1044C2D435579D5" xml:space="preserve">
+    <value>Checking this PC and every installed server...</value>
+  </data>
+  <data name="DynamicText.B74B06EC6EEB1F159449" xml:space="preserve">
+    <value>Choose an encrypted or normal file containing everything in C:\Synix, or restore it on a new computer.
+</value>
+  </data>
+  <data name="DynamicText.CB565F94960FAEEC9A40" xml:space="preserve">
+    <value>Choose an existing server folder to continue.</value>
+  </data>
+  <data name="DynamicText.AB80BEDBA7075DEA64E2" xml:space="preserve">
+    <value>Choose Another</value>
+  </data>
+  <data name="DynamicText.793006985DD52D518C6D" xml:space="preserve">
+    <value>Choose server storage and customize launch arguments.</value>
+  </data>
+  <data name="DynamicText.A621C06C3B84375BB5BD" xml:space="preserve">
+    <value>Choose where the server will be installed. Synix supplies the recommended launch settings.</value>
+  </data>
+  <data name="DynamicText.36A6C5ECE85999A4BE81" xml:space="preserve">
+    <value>Command validation failed. Correct the failed checks before starting the test.</value>
+  </data>
+  <data name="DynamicText.99916B9A2D79AE0044D5" xml:space="preserve">
+    <value>Command validation passed. Start the test to prove that the real server accepts it.</value>
+  </data>
+  <data name="DynamicText.C5566A2C83DE75C0179D" xml:space="preserve">
+    <value>Complete notes for Synix </value>
+  </data>
+  <data name="DynamicText.467DF3BC2FDE6E2A1F69" xml:space="preserve">
+    <value>Config Editor - </value>
+  </data>
+  <data name="DynamicText.60E61D0680BBD2B80C32" xml:space="preserve">
+    <value>Connected to GitHub as </value>
+  </data>
+  <data name="DynamicText.126209416AEF4E53CE1F" xml:space="preserve">
+    <value>CURRENT  •  </value>
+  </data>
+  <data name="DynamicText.D4861223A6E12FB3D4D1" xml:space="preserve">
+    <value>Discord Webhooks • </value>
+  </data>
+  <data name="DynamicText.88FE0EB41EC7BC4C1699" xml:space="preserve">
+    <value>Downloading verified update... </value>
+  </data>
+  <data name="DynamicText.4A683D9AC9F3EB4B325E" xml:space="preserve">
+    <value>Edit </value>
+  </data>
+  <data name="DynamicText.07974A58F2F45DF701AB" xml:space="preserve">
+    <value>Edit Server</value>
+  </data>
+  <data name="DynamicText.4343EB764C3E6E4400F1" xml:space="preserve">
+    <value>EDIT SERVER</value>
+  </data>
+  <data name="DynamicText.EE278C8C67EC922F5202" xml:space="preserve">
+    <value>Editing </value>
+  </data>
+  <data name="DynamicText.326266F599826B026939" xml:space="preserve">
+    <value>Encrypted: ≤</value>
+  </data>
+  <data name="DynamicText.7DB071F7CAF8B4F9F356" xml:space="preserve">
+    <value>Enter the transfer password</value>
+  </data>
+  <data name="DynamicText.56B2AD5C5F9981E80A74" xml:space="preserve">
+    <value>EXECUTABLE RULES READY FOR REMOVAL  •  </value>
+  </data>
+  <data name="DynamicText.DD2CE43D50ECE1645EB2" xml:space="preserve">
+    <value>EXPORT  </value>
+  </data>
+  <data name="DynamicText.CBBA62AF17CFB9FA453B" xml:space="preserve">
+    <value>EXPORT  Calculating Synix data...</value>
+  </data>
+  <data name="DynamicText.BFF68669A81473927734" xml:space="preserve">
+    <value>Exported </value>
+  </data>
+  <data name="DynamicText.F1929C63C944CFD10ED5" xml:space="preserve">
+    <value>FAILED  •  </value>
+  </data>
+  <data name="DynamicText.7ECD8218EFACE24753CD" xml:space="preserve">
+    <value>Fix the blocked checklist item before continuing.</value>
+  </data>
+  <data name="DynamicText.CC69F7E674DBE601901B" xml:space="preserve">
+    <value>Found </value>
+  </data>
+  <data name="DynamicText.784D4FC2B729CCA04F8C" xml:space="preserve">
+    <value>GitHub connected successfully as </value>
+  </data>
+  <data name="DynamicText.7F1E323B6272C6209A59" xml:space="preserve">
+    <value>Healthy</value>
+  </data>
+  <data name="DynamicText.09C4A925225089569D58" xml:space="preserve">
+    <value>HEALTHY  •  </value>
+  </data>
+  <data name="DynamicText.9380C57621B46B84DD91" xml:space="preserve">
+    <value>Hide Technical Details</value>
+  </data>
+  <data name="DynamicText.2CFF9BAABF56CA002610" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="DynamicText.6C2125698392AD259AA9" xml:space="preserve">
+    <value>IMPORT  </value>
+  </data>
+  <data name="DynamicText.1140E90DB5EAF6F57905" xml:space="preserve">
+    <value>Install Unavailable</value>
+  </data>
+  <data name="DynamicText.8214BA754E823839D94C" xml:space="preserve">
+    <value>IPv6 Port</value>
+  </data>
+  <data name="DynamicText.2E03C5949800C9051B96" xml:space="preserve">
+    <value>Java </value>
+  </data>
+  <data name="DynamicText.A118AA0BA303A3D11333" xml:space="preserve">
+    <value>Last-tested Synix version: v</value>
+  </data>
+  <data name="DynamicText.48E90B62E47904DCCF35" xml:space="preserve">
+    <value>Live CPU usage  •  Updates twice per second</value>
+  </data>
+  <data name="DynamicText.D1F3B7C8D7B5CE7FABA2" xml:space="preserve">
+    <value>Manage </value>
+  </data>
+  <data name="DynamicText.AEAADD7A8007834A6BF2" xml:space="preserve">
+    <value>Manage or restore one of the </value>
+  </data>
+  <data name="DynamicText.6216460DC46050B514AA" xml:space="preserve">
+    <value>Mark Configuration</value>
+  </data>
+  <data name="DynamicText.8AB1A07A7E0B77D97E23" xml:space="preserve">
+    <value>Max Players (maximum </value>
+  </data>
+  <data name="DynamicText.DD8E913716E705BEEFB3" xml:space="preserve">
+    <value>Minecraft </value>
+  </data>
+  <data name="DynamicText.5F83363AA32B68BAD3E3" xml:space="preserve">
+    <value>Mode: Advanced</value>
+  </data>
+  <data name="DynamicText.950660AA706852FE74D6" xml:space="preserve">
+    <value>Mode: Beginner</value>
+  </data>
+  <data name="DynamicText.1DC83F605EDF0AE29B9E" xml:space="preserve">
+    <value>Monitoring</value>
+  </data>
+  <data name="DynamicText.78A8F90383342A65EBBA" xml:space="preserve">
+    <value>Move Synix to another PC</value>
+  </data>
+  <data name="DynamicText.B33FD36A68F065CBBB4C" xml:space="preserve">
+    <value>No saved backups remain for this server.</value>
+  </data>
+  <data name="DynamicText.019DEC65766E8437A2BC" xml:space="preserve">
+    <value>No saved verification was found for that step.</value>
+  </data>
+  <data name="DynamicText.4477A4C46D66B4C3CDD3" xml:space="preserve">
+    <value>No supported server executable was found in this folder. Try the folder used as the server install path.</value>
+  </data>
+  <data name="DynamicText.975D0C0D2656474C5CD5" xml:space="preserve">
+    <value>Normal Export</value>
+  </data>
+  <data name="DynamicText.497D99E50C4128A2BDAB" xml:space="preserve">
+    <value>Normal: ≤</value>
+  </data>
+  <data name="DynamicText.B9B4426B45381F43586C" xml:space="preserve">
+    <value>NOT READY  •  </value>
+  </data>
+  <data name="DynamicText.DC12BEC5D71F167B495F" xml:space="preserve">
+    <value>Not specified</value>
+  </data>
+  <data name="DynamicText.130011756125313C72F2" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="DynamicText.D38FB1CB428F289769EF" xml:space="preserve">
+    <value>Open Synix Transfer</value>
+  </data>
+  <data name="DynamicText.8339FF392F9F8BC319F7" xml:space="preserve">
+    <value>PASSED  •  </value>
+  </data>
+  <data name="DynamicText.B8BF6DBF0C07A7337532" xml:space="preserve">
+    <value>Password unavailable</value>
+  </data>
+  <data name="DynamicText.38EC0A98A8088C79769F" xml:space="preserve">
+    <value>READY TO RELEASE  •  </value>
+  </data>
+  <data name="DynamicText.5C49F319B870768820E5" xml:space="preserve">
+    <value>Recorded Automatically</value>
+  </data>
+  <data name="DynamicText.FEB1FFB864616C071102" xml:space="preserve">
+    <value>Reliability test failed: </value>
+  </data>
+  <data name="DynamicText.01A577B00705C33CE85F" xml:space="preserve">
+    <value>Report submitted successfully as GitHub issue #</value>
+  </data>
+  <data name="DynamicText.887AA0B2527278446D37" xml:space="preserve">
+    <value>Restore Steam authorization</value>
+  </data>
+  <data name="DynamicText.4A36589E436B9D805559" xml:space="preserve">
+    <value>Restore Steam Authorization</value>
+  </data>
+  <data name="DynamicText.87DE7163FF43F16DD0DC" xml:space="preserve">
+    <value>Running </value>
+  </data>
+  <data name="DynamicText.4D9F3906B5B271EF9DE9" xml:space="preserve">
+    <value>Saved: </value>
+  </data>
+  <data name="DynamicText.BEEA8B6B4E3FC3DA7763" xml:space="preserve">
+    <value>Select a game...</value>
+  </data>
+  <data name="DynamicText.1F153FD1824C1367E373" xml:space="preserve">
+    <value>Selected: </value>
+  </data>
+  <data name="DynamicText.F7F803AB3DE2C59F5B4D" xml:space="preserve">
+    <value>Sending a test to </value>
+  </data>
+  <data name="DynamicText.423401648A096552A248" xml:space="preserve">
+    <value>Server Package</value>
+  </data>
+  <data name="DynamicText.8B700BE01A653A54E743" xml:space="preserve">
+    <value>Server process started. Waiting for its configured listener (</value>
+  </data>
+  <data name="DynamicText.DBF742AF53EBF85C9E90" xml:space="preserve">
+    <value>Server readiness report copied to the clipboard.</value>
+  </data>
+  <data name="DynamicText.47147541FE6F1B92B3BE" xml:space="preserve">
+    <value>Setup is </value>
+  </data>
+  <data name="DynamicText.D6C0325C60EB7DB19FBF" xml:space="preserve">
+    <value>SHA-256 verified download  •  </value>
+  </data>
+  <data name="DynamicText.7282E1FBB2C6D34C8149" xml:space="preserve">
+    <value>Showing </value>
+  </data>
+  <data name="DynamicText.C1710D59A83DE3DB42F8" xml:space="preserve">
+    <value>Stop servers before transferring.</value>
+  </data>
+  <data name="DynamicText.70F07633B7828935455F" xml:space="preserve">
+    <value>Synix </value>
+  </data>
+  <data name="DynamicText.EEBE25AAE08F9ED6AC38" xml:space="preserve">
+    <value>Synix installs the compatible </value>
+  </data>
+  <data name="DynamicText.2963E82CDEB74AF4972B" xml:space="preserve">
+    <value>Synix installs the official server and matching portable Java.</value>
+  </data>
+  <data name="DynamicText.08C5C7B84B1CB9DC7F73" xml:space="preserve">
+    <value>Synix version: </value>
+  </data>
+  <data name="DynamicText.1EF6387A9E820CAE40CD" xml:space="preserve">
+    <value>Synix will keep checking the server automatically while it starts.</value>
+  </data>
+  <data name="DynamicText.4135714A2CE40AC94577" xml:space="preserve">
+    <value>Synix writes this complete template before the first start and manages its supported values.</value>
+  </data>
+  <data name="DynamicText.5C906B4070E09E4F5EE9" xml:space="preserve">
+    <value>Test Arguments</value>
+  </data>
+  <data name="DynamicText.7DA57FD83E46D2A235A5" xml:space="preserve">
+    <value>The game creates the file first. Add the complete captured file so Synix can apply saved values and safely repair it after the first run.</value>
+  </data>
+  <data name="DynamicText.46A58E5D0D9BDB34C783" xml:space="preserve">
+    <value>The health check could not finish: </value>
+  </data>
+  <data name="DynamicText.E41073C5B47F6C6BB4ED" xml:space="preserve">
+    <value>The matching download is not ready for automatic installation.</value>
+  </data>
+  <data name="DynamicText.21E5A037A461B8D029D9" xml:space="preserve">
+    <value>The process is active. Waiting for the 30-second startup check (</value>
+  </data>
+  <data name="DynamicText.D4038A4218D6441AC827" xml:space="preserve">
+    <value>The startup probe could not complete: </value>
+  </data>
+  <data name="DynamicText.B83EC0A78559E32C96D2" xml:space="preserve">
+    <value>This game already has argument evidence from this Synix version or a newer version.</value>
+  </data>
+  <data name="DynamicText.2B2D90F9562301F0CDFF" xml:space="preserve">
+    <value>This process can take some time depending on how much data needs to be packaged.</value>
+  </data>
+  <data name="DynamicText.DEEE4044C49F8F673EE8" xml:space="preserve">
+    <value>This will wipe the installation at:
+</value>
+  </data>
+  <data name="DynamicText.98343573B4075CAC328B" xml:space="preserve">
+    <value>Troubleshooter report copied to the clipboard.</value>
+  </data>
+  <data name="DynamicText.D83FAEA8A64567361A7C" xml:space="preserve">
+    <value>Update </value>
+  </data>
+  <data name="DynamicText.AF343DB014F025B1BDDA" xml:space="preserve">
+    <value>Update Details</value>
+  </data>
+  <data name="DynamicText.957B6227F5D5D371C582" xml:space="preserve">
+    <value>Use the password that was created when this Synix package was exported.</value>
+  </data>
+  <data name="DynamicText.521C1B97737D7230C110" xml:space="preserve">
+    <value>Use the recommended game and query ports. Advanced mode adds RCON controls.</value>
+  </data>
+  <data name="DynamicText.D4C8665A67DE98221812" xml:space="preserve">
+    <value>Valid definition • revision </value>
+  </data>
+  <data name="DynamicText.F96281A2FB88C022D64B" xml:space="preserve">
+    <value>Verification Queue</value>
+  </data>
+  <data name="DynamicText.A728732ECF56432BF453" xml:space="preserve">
+    <value>Verify Package</value>
+  </data>
+  <data name="DynamicText.5BC8BBFF8EDCD0E27144" xml:space="preserve">
+    <value>Version check unavailable  •  v</value>
+  </data>
+  <data name="DynamicText.6D2A0FB0BA7193CDCA30" xml:space="preserve">
+    <value>Waiting for GitHub approval. The code expires at </value>
+  </data>
+  <data name="DynamicText.E14FD3BA58A9853DD8E1" xml:space="preserve">
+    <value>Windows version: </value>
+  </data>
+  <data name="MessageText.B2F06E7B3A4E957880A3" xml:space="preserve">
+    <value>
+
+Continue?</value>
+  </data>
+  <data name="MessageText.44318E7F273C4C1CC8A3" xml:space="preserve">
+    <value>
+
+Do you want to continue and create a transfer password?</value>
+  </data>
+  <data name="MessageText.FEEC1973C8CB7222A750" xml:space="preserve">
+    <value>
+
+Do you want to continue with the normal unencrypted export?</value>
+  </data>
+  <data name="MessageText.8AAE6B59FCC491DD1C08" xml:space="preserve">
+    <value>
+
+Install </value>
+  </data>
+  <data name="MessageText.68872965F53794420A20" xml:space="preserve">
+    <value>
+
+Open Server Settings, enter the required credential, and save before exporting the batch file.</value>
+  </data>
+  <data name="MessageText.5F6AAC329F1072908B3A" xml:space="preserve">
+    <value>
+
+Rebuild Synix and run the built-in definition tests before releasing.</value>
+  </data>
+  <data name="MessageText.59F0A8696AC3ACB6194A" xml:space="preserve">
+    <value>
+
+Review the description fields first and make sure they do not contain private information.</value>
+  </data>
+  <data name="MessageText.EA0103765079D5A9470B" xml:space="preserve">
+    <value>
+
+The code was copied to the clipboard. Select OK to open GitHub, paste the code, and approve Synix.</value>
+  </data>
+  <data name="MessageText.ECD30B96D30BE40030DF" xml:space="preserve">
+    <value>
+
+The previous configuration was saved with a .synix.bak extension.</value>
+  </data>
+  <data name="MessageText.3820E0D9FB046DF90699" xml:space="preserve">
+    <value>
+
+The running server files will not be changed.</value>
+  </data>
+  <data name="MessageText.85E282AECA05B2D5B228" xml:space="preserve">
+    <value> before opening another configuration file?</value>
+  </data>
+  <data name="MessageText.16E13657AB2656B61033" xml:space="preserve">
+    <value> cannot both use port </value>
+  </data>
+  <data name="MessageText.D823A26D6569D92F1604" xml:space="preserve">
+    <value> completed, but Oxide could not be reapplied. Synix will block the modded server from starting until you retry with Update or Validate.
+
+</value>
+  </data>
+  <data name="MessageText.2866CCEBE3AA5A19E700" xml:space="preserve">
+    <value> could not start successfully, so Synix restored the previous program version. Your C:\Synix server data was not changed.</value>
+  </data>
+  <data name="MessageText.D9941FFB44D576E11473" xml:space="preserve">
+    <value> for details.</value>
+  </data>
+  <data name="MessageText.0ECD600E66813739E580" xml:space="preserve">
+    <value> from this backup?
+
+</value>
+  </data>
+  <data name="MessageText.771E41674D5F807F5920" xml:space="preserve">
+    <value> interrupted server backup restore operation(s) and safely returned the affected server folders to their previous state.</value>
+  </data>
+  <data name="MessageText.3A68C5D43F6A077DBE61" xml:space="preserve">
+    <value> into </value>
+  </data>
+  <data name="MessageText.5A534ECADB662859FF9A" xml:space="preserve">
+    <value> is available.
+
+</value>
+  </data>
+  <data name="MessageText.808F082537BF075A6BD1" xml:space="preserve">
+    <value> is ready. Synix did not install any plugins.</value>
+  </data>
+  <data name="MessageText.747D45DF4BB323CF5FE4" xml:space="preserve">
+    <value> of working space </value>
+  </data>
+  <data name="MessageText.E637D01AC2228578A52E" xml:space="preserve">
+    <value> relies on its official launch or deployment file. A separate launch file cannot be safely generated for this game.</value>
+  </data>
+  <data name="MessageText.0CF53D72A5907790053E" xml:space="preserve">
+    <value> runtime specifically for this server?
+
+(This is completely safe and will not change your computer's global Java settings).</value>
+  </data>
+  <data name="MessageText.7933FD1E01DE044003D4" xml:space="preserve">
+    <value> server files?</value>
+  </data>
+  <data name="MessageText.F76C470CDFB128772C04" xml:space="preserve">
+    <value> server named '</value>
+  </data>
+  <data name="MessageText.D4BE5EE23FABF7300788" xml:space="preserve">
+    <value> verification from </value>
+  </data>
+  <data name="MessageText.2A916B0C3047BE1A772E" xml:space="preserve">
+    <value> was downloaded and verified.
+
+Synix will now close, apply the update, and open again. Everything inside C:\Synix will remain unchanged.</value>
+  </data>
+  <data name="MessageText.550B491328F0BC534EC8" xml:space="preserve">
+    <value> will download and run the mods represented by these IDs. </value>
+  </data>
+  <data name="MessageText.07170DCD1A2D5CE0D5E3" xml:space="preserve">
+    <value>, but only </value>
+  </data>
+  <data name="MessageText.251E852A5F8FB27652F7" xml:space="preserve">
+    <value>, but your system has </value>
+  </data>
+  <data name="MessageText.B685DB1E5380E971646A" xml:space="preserve">
+    <value>?
+
+Synix will restore the file that existed before this installation, when available.</value>
+  </data>
+  <data name="MessageText.94C7EDF72757F90404AE" xml:space="preserve">
+    <value>.
+
+Please wait for the process to finish.</value>
+  </data>
+  <data name="MessageText.F998C26227C791B08F3F" xml:space="preserve">
+    <value>.
+
+Would you like Synix to automatically download a portable Java </value>
+  </data>
+  <data name="MessageText.70C68D7DC8CD8C8E714B" xml:space="preserve">
+    <value>. Each server port must be unique.</value>
+  </data>
+  <data name="MessageText.6B8E45736E172C2B4E28" xml:space="preserve">
+    <value>' from this server?
+
+This does not delete the webhook from Discord.</value>
+  </data>
+  <data name="MessageText.36984E8AB7FB99A050AD" xml:space="preserve">
+    <value>' while it is </value>
+  </data>
+  <data name="MessageText.C862740102ACA321571B" xml:space="preserve">
+    <value>) is already allocated to instance: '</value>
+  </data>
+  <data name="MessageText.00F8A4382F92C5238DEC" xml:space="preserve">
+    <value>) is currently occupied by another system process.</value>
+  </data>
+  <data name="MessageText.9FC433A6AD279541DFAE" xml:space="preserve">
+    <value>[🛡️ RESOURCE GUARD] Global CPU Load is at </value>
+  </data>
+  <data name="MessageText.6D699B69303324A6360B" xml:space="preserve">
+    <value>[🛡️ RESOURCE GUARD] System RAM usage is at </value>
+  </data>
+  <data name="MessageText.EB4DD7AAED50293D26AC" xml:space="preserve">
+    <value>% of the </value>
+  </data>
+  <data name="MessageText.B18993FEC41257BDED36" xml:space="preserve">
+    <value>%.
+
+Starting another server now would push the host into instability. Please wait for load to drop.</value>
+  </data>
+  <data name="MessageText.7BCC566BB73F14B5F5EC" xml:space="preserve">
+    <value>🚨 SYNIX NETWORK GUARD 🚨
+
+</value>
+  </data>
+  <data name="MessageText.7E0290C3557A7F9E0F5F" xml:space="preserve">
+    <value>A download, update or validation is already in progress.</value>
+  </data>
+  <data name="MessageText.8C7D933E149177870C0C" xml:space="preserve">
+    <value>A normal export is not encrypted. Anyone who gets the file can read </value>
+  </data>
+  <data name="MessageText.601D435F77F129E56270" xml:space="preserve">
+    <value>Add-on security review</value>
+  </data>
+  <data name="MessageText.A2AB176254809E1818BD" xml:space="preserve">
+    <value>Add-on security review blocked</value>
+  </data>
+  <data name="MessageText.4407B4C6A0DF591322E3" xml:space="preserve">
+    <value>Additional Game Files Required</value>
+  </data>
+  <data name="MessageText.D20BD1679795C8D719A6" xml:space="preserve">
+    <value>Are you sure you want to Update the </value>
+  </data>
+  <data name="MessageText.D60818E44357EF37D61F" xml:space="preserve">
+    <value>Are you sure you want to Validate the </value>
+  </data>
+  <data name="MessageText.40693567D074F64B26C5" xml:space="preserve">
+    <value>Argument Test Blocked</value>
+  </data>
+  <data name="MessageText.CFACB27EC40395E98A71" xml:space="preserve">
+    <value>Automatic Verification</value>
+  </data>
+  <data name="MessageText.ADA1B3D50D00914EE9E6" xml:space="preserve">
+    <value>Backup Check Failed</value>
+  </data>
+  <data name="MessageText.9848B5FC9954185EE516" xml:space="preserve">
+    <value>Backup Could Not Be Deleted</value>
+  </data>
+  <data name="MessageText.E38A2D5FA560F98052DC" xml:space="preserve">
+    <value>Backup folder: </value>
+  </data>
+  <data name="MessageText.5222069B5E5C4C68451B" xml:space="preserve">
+    <value>Backup Integrity Failed</value>
+  </data>
+  <data name="MessageText.6ABC8E0D8209E250F6DE" xml:space="preserve">
+    <value>Backup Verification Failed</value>
+  </data>
+  <data name="MessageText.17A4B79ED999C004885D" xml:space="preserve">
+    <value>Backup Verified</value>
+  </data>
+  <data name="MessageText.23CBCB62E27C0309918E" xml:space="preserve">
+    <value>Batch file generated successfully!
+
+Saved directly to:
+</value>
+  </data>
+  <data name="MessageText.248D89E27FEDE5EBBB31" xml:space="preserve">
+    <value>Cannot close Synix while a server is installing, updating, backing up, restoring, or deleting!</value>
+  </data>
+  <data name="MessageText.D68F8DECC4920C1DB499" xml:space="preserve">
+    <value>Cannot edit '</value>
+  </data>
+  <data name="MessageText.2022398CDE720D78BF2A" xml:space="preserve">
+    <value>Choose the folder containing the published Synix files first.</value>
+  </data>
+  <data name="MessageText.EEBC6BCDF6B34F44F7A3" xml:space="preserve">
+    <value>Clear Verification Evidence</value>
+  </data>
+  <data name="MessageText.E7516E586A2D8DACDF5E" xml:space="preserve">
+    <value>Config Load Error</value>
+  </data>
+  <data name="MessageText.4C6913DA26CA421FD296" xml:space="preserve">
+    <value>Config Reset Complete</value>
+  </data>
+  <data name="MessageText.071AC0FA89C3FD9DD0F3" xml:space="preserve">
+    <value>Config Reset Failed</value>
+  </data>
+  <data name="MessageText.9169BD1E6835B2752A61" xml:space="preserve">
+    <value>Config Save Error</value>
+  </data>
+  <data name="MessageText.08E9E5F519C0E3E112DC" xml:space="preserve">
+    <value>Config Template Unavailable</value>
+  </data>
+  <data name="MessageText.68F42FF97AF1C59CF5EA" xml:space="preserve">
+    <value>Configuration Check Failed</value>
+  </data>
+  <data name="MessageText.A728E0F49A6144AF2123" xml:space="preserve">
+    <value>Configuration collection failed</value>
+  </data>
+  <data name="MessageText.BEC7FB4A2E994E86D846" xml:space="preserve">
+    <value>Configuration Could Not Be Applied</value>
+  </data>
+  <data name="MessageText.A2605A701380C408F3A9" xml:space="preserve">
+    <value>Configuration Definition Required</value>
+  </data>
+  <data name="MessageText.AEBC3D7D14735D41DB99" xml:space="preserve">
+    <value>Configuration Rebuilt</value>
+  </data>
+  <data name="MessageText.8C800FC47C25572C6AD2" xml:space="preserve">
+    <value>Configuration Restore Failed</value>
+  </data>
+  <data name="MessageText.5B867C348CF06A5F841C" xml:space="preserve">
+    <value>Configuration Restored</value>
+  </data>
+  <data name="MessageText.EB44D36BC8B5BCCD5CFA" xml:space="preserve">
+    <value>Configuration Test Not Required</value>
+  </data>
+  <data name="MessageText.464192041ACD5C461D76" xml:space="preserve">
+    <value>Confirm Server Backup</value>
+  </data>
+  <data name="MessageText.C6F572AC4FC25E13AFAC" xml:space="preserve">
+    <value>Confirm Server Restore</value>
+  </data>
+  <data name="MessageText.6777CB3700E1CB28BA45" xml:space="preserve">
+    <value>Confirm Update</value>
+  </data>
+  <data name="MessageText.256D7130B2F22503E8E1" xml:space="preserve">
+    <value>Confirm Validate</value>
+  </data>
+  <data name="MessageText.C09ACD8E3F4CBB979723" xml:space="preserve">
+    <value>Continue only if every ID came from a source you trust.</value>
+  </data>
+  <data name="MessageText.2C58B2D4975AADC6042D" xml:space="preserve">
+    <value>Copy Failed</value>
+  </data>
+  <data name="MessageText.A97238C59D3D8F1C8C01" xml:space="preserve">
+    <value>CPU Overload Protection</value>
+  </data>
+  <data name="MessageText.648703ABEB36C19B9FAC" xml:space="preserve">
+    <value>Create a backup of </value>
+  </data>
+  <data name="MessageText.FB4DFB6571C5135965E7" xml:space="preserve">
+    <value>Created: </value>
+  </data>
+  <data name="MessageText.639B4003003474BB0E82" xml:space="preserve">
+    <value>Critical bandwidth saturation detected on the network interface.
+
+</value>
+  </data>
+  <data name="MessageText.B97D1F258E17E5840885" xml:space="preserve">
+    <value>Definition Could Not Be Saved</value>
+  </data>
+  <data name="MessageText.88498CCE0307979DF647" xml:space="preserve">
+    <value>Delete Server Backup</value>
+  </data>
+  <data name="MessageText.3DFF1583132439A391AF" xml:space="preserve">
+    <value>Deletion Error</value>
+  </data>
+  <data name="MessageText.B21513D99A8B9F37D043" xml:space="preserve">
+    <value>Development Tool</value>
+  </data>
+  <data name="MessageText.CD26D6F5A2FFE405025E" xml:space="preserve">
+    <value>Discard Changes?</value>
+  </data>
+  <data name="MessageText.53B01E5FCFDE56675C9A" xml:space="preserve">
+    <value>Disconnect GitHub from Synix?
+
+Synix will delete the encrypted connection saved on this computer, then open GitHub so you can revoke the authorization from your account.</value>
+  </data>
+  <data name="MessageText.E6E4FEF591A50B57191C" xml:space="preserve">
+    <value>Discord Settings Need Attention</value>
+  </data>
+  <data name="MessageText.48D138C102B85678A03A" xml:space="preserve">
+    <value>Discord Webhooks Unavailable</value>
+  </data>
+  <data name="MessageText.0F51A780746E45FC6C0F" xml:space="preserve">
+    <value>Do you want to continue?</value>
+  </data>
+  <data name="MessageText.1D8A8E332F05698AE41A" xml:space="preserve">
+    <value>Do you want to create an unencrypted export?</value>
+  </data>
+  <data name="MessageText.08F5F62D5DF858C318E0" xml:space="preserve">
+    <value>Duplicate Name</value>
+  </data>
+  <data name="MessageText.B184EB2E8295900AF177" xml:space="preserve">
+    <value>Engine Failure</value>
+  </data>
+  <data name="MessageText.FBCAED3A43A89EEDF08A" xml:space="preserve">
+    <value>Export Batch File with Readable Credentials</value>
+  </data>
+  <data name="MessageText.4E1BB930DEF7915B9BE3" xml:space="preserve">
+    <value>Export Complete</value>
+  </data>
+  <data name="MessageText.C67DF039B0A88D904F8A" xml:space="preserve">
+    <value>Export Disabled</value>
+  </data>
+  <data name="MessageText.B829E695ACFBE22F29A4" xml:space="preserve">
+    <value>Export Size Check Failed</value>
+  </data>
+  <data name="MessageText.FD77EDCDA01793141139" xml:space="preserve">
+    <value>Extra Arguments Blocked</value>
+  </data>
+  <data name="MessageText.BF599881101CA656921C" xml:space="preserve">
+    <value>File Not Found</value>
+  </data>
+  <data name="MessageText.35A13F8518DB386ACF10" xml:space="preserve">
+    <value>File: </value>
+  </data>
+  <data name="MessageText.26F17AF9132F99F7B11C" xml:space="preserve">
+    <value>Files were partially deleted, but an error occurred:
+</value>
+  </data>
+  <data name="MessageText.8DE47F3E1DD4143AE614" xml:space="preserve">
+    <value>Files: </value>
+  </data>
+  <data name="MessageText.E66DFFEC800B8E0880C2" xml:space="preserve">
+    <value>Fix Server Configuration</value>
+  </data>
+  <data name="MessageText.C726A205BF5687DDEE59" xml:space="preserve">
+    <value>Folder Not Empty</value>
+  </data>
+  <data name="MessageText.0E2A59C8DC9861D1E462" xml:space="preserve">
+    <value>Framework installed</value>
+  </data>
+  <data name="MessageText.81B5A4525968B091562A" xml:space="preserve">
+    <value>Free on backup drive: </value>
+  </data>
+  <data name="MessageText.42FC716A4CA72C44C656" xml:space="preserve">
+    <value>Free up space before starting the import.</value>
+  </data>
+  <data name="MessageText.8A04520CAFD5494EA500" xml:space="preserve">
+    <value>Game Definition Saved</value>
+  </data>
+  <data name="MessageText.87921535DD9A89A111C2" xml:space="preserve">
+    <value>GB usable pool.
+
+Please stop a server before starting another.</value>
+  </data>
+  <data name="MessageText.6CF185055ECAD68E95B1" xml:space="preserve">
+    <value>Generated configuration collection</value>
+  </data>
+  <data name="MessageText.6835A8FB46D66B1E8FB3" xml:space="preserve">
+    <value>GitHub sign-in code:
+
+</value>
+  </data>
+  <data name="MessageText.AA813C217642E96BB674" xml:space="preserve">
+    <value>If Synix does not reopen, run your existing Synix program or download the latest release from GitHub. Your C:\Synix server data was not changed.</value>
+  </data>
+  <data name="MessageText.A7C1D64E9ACF44DF56DE" xml:space="preserve">
+    <value>Import Synix Transfer</value>
+  </data>
+  <data name="MessageText.3AE977634FE14DFF12A0" xml:space="preserve">
+    <value>Importing will replace files with the same names in C:\Synix. </value>
+  </data>
+  <data name="MessageText.825DF968960C76EF5F71" xml:space="preserve">
+    <value>Input Blocked</value>
+  </data>
+  <data name="MessageText.FD1FB8A609DE5750E995" xml:space="preserve">
+    <value>Install, Start, Stop, and Monitoring evidence is recorded automatically by the real Synix server workflow and cannot be marked manually.</value>
+  </data>
+  <data name="MessageText.2CEE7AAFEDF4FEA66592" xml:space="preserve">
+    <value>Installation complete</value>
+  </data>
+  <data name="MessageText.0E60DF883393C8FFBC95" xml:space="preserve">
+    <value>Java Version Mismatch</value>
+  </data>
+  <data name="MessageText.30CEEBDAB7CFD49B284D" xml:space="preserve">
+    <value>Large servers can take some time to package. The final compressed backup will usually be smaller than the maximum shown.</value>
+  </data>
+  <data name="MessageText.FD8A8A047163DEE6DEDD" xml:space="preserve">
+    <value>Link Error</value>
+  </data>
+  <data name="MessageText.3BB3AB528F4AAAA1B706" xml:space="preserve">
+    <value>Logic Error</value>
+  </data>
+  <data name="MessageText.C60492AEDCE59342DD4F" xml:space="preserve">
+    <value>Maximum space needed: </value>
+  </data>
+  <data name="MessageText.69CA929D937D47644BA3" xml:space="preserve">
+    <value>Mod IDs saved</value>
+  </data>
+  <data name="MessageText.2EEBA8FBD0CFC361873B" xml:space="preserve">
+    <value>Network Resource Conflict</value>
+  </data>
+  <data name="MessageText.C2B79A94A0143B014649" xml:space="preserve">
+    <value>No Server Selected</value>
+  </data>
+  <data name="MessageText.51513CCC80231973A886" xml:space="preserve">
+    <value>Normal Export Is Not Private</value>
+  </data>
+  <data name="MessageText.F727378408783816583A" xml:space="preserve">
+    <value>Not Enough Backup Space</value>
+  </data>
+  <data name="MessageText.C88B1ACC218450147D75" xml:space="preserve">
+    <value>Not Enough Free Space</value>
+  </data>
+  <data name="MessageText.0816446DCC92413E456B" xml:space="preserve">
+    <value>on </value>
+  </data>
+  <data name="MessageText.D2D13D1289F04B27E55E" xml:space="preserve">
+    <value>Open the definition folder now?</value>
+  </data>
+  <data name="MessageText.416964F527A4267E7811" xml:space="preserve">
+    <value>Operation in Progress</value>
+  </data>
+  <data name="MessageText.C622B98E215C962319A8" xml:space="preserve">
+    <value>Other files will be left in place.
+
+</value>
+  </data>
+  <data name="MessageText.B5759DD5A929BC83BF21" xml:space="preserve">
+    <value>Oxide could not be installed. The server has been left set to Vanilla.
+
+</value>
+  </data>
+  <data name="MessageText.F6357B8B687408CB14BD" xml:space="preserve">
+    <value>Oxide Installation Failed</value>
+  </data>
+  <data name="MessageText.7A08C9A23E19304AEE20" xml:space="preserve">
+    <value>Oxide Update Failed</value>
+  </data>
+  <data name="MessageText.BAFC4ABD944D91913324" xml:space="preserve">
+    <value>Oxide/uMod </value>
+  </data>
+  <data name="MessageText.174DAFB8780B79335D17" xml:space="preserve">
+    <value>Package Estimate Failed</value>
+  </data>
+  <data name="MessageText.19D449052666D3536BD9" xml:space="preserve">
+    <value>Permanently delete this saved backup?
+
+</value>
+  </data>
+  <data name="MessageText.7FF51079982199131314" xml:space="preserve">
+    <value>Please select a server in the list first.</value>
+  </data>
+  <data name="MessageText.9B6050841590FD1BB10A" xml:space="preserve">
+    <value>Please stop the server before editing its settings.</value>
+  </data>
+  <data name="MessageText.8F6E69E397120D85805D" xml:space="preserve">
+    <value>Port Conflict: </value>
+  </data>
+  <data name="MessageText.E139B2992A88F9B2FBFB" xml:space="preserve">
+    <value>Possible Network Flood Detected</value>
+  </data>
+  <data name="MessageText.B3084806B31E356F5612" xml:space="preserve">
+    <value>Preview Error</value>
+  </data>
+  <data name="MessageText.56FF45D5FB6A4400524B" xml:space="preserve">
+    <value>Project Folder Not Found</value>
+  </data>
+  <data name="MessageText.263A4EA84B60E34548E3" xml:space="preserve">
+    <value>Protocol Error: Rust+ (App Port) must be 10000 or higher.</value>
+  </data>
+  <data name="MessageText.468EADDB3CA79D6CD85C" xml:space="preserve">
+    <value>Provider mod security warning</value>
+  </data>
+  <data name="MessageText.1F510840383E97897648" xml:space="preserve">
+    <value>Publish Folder Required</value>
+  </data>
+  <data name="MessageText.F0B165A5FCE7FA5AA8E7" xml:space="preserve">
+    <value>Re-enter Server Credentials</value>
+  </data>
+  <data name="MessageText.91FB292DAF78A0A596B7" xml:space="preserve">
+    <value>Rebuild Synix and run the automated tests before using it.
+
+</value>
+  </data>
+  <data name="MessageText.5948954E3B49BE94F964" xml:space="preserve">
+    <value>Remove </value>
+  </data>
+  <data name="MessageText.1836C66D2E22132440F9" xml:space="preserve">
+    <value>Remove add-on</value>
+  </data>
+  <data name="MessageText.87ABFFD4DED3AC3FC6CA" xml:space="preserve">
+    <value>Remove Discord Destination</value>
+  </data>
+  <data name="MessageText.041B94AC75979B188A3A" xml:space="preserve">
+    <value>Remove the </value>
+  </data>
+  <data name="MessageText.08124DC2F265489C2FC1" xml:space="preserve">
+    <value>Remove the saved Discord destination '</value>
+  </data>
+  <data name="MessageText.813762AC49C63A97BA7C" xml:space="preserve">
+    <value>Report Submitted</value>
+  </data>
+  <data name="MessageText.8A7D73F831BD8606CF92" xml:space="preserve">
+    <value>Reset Config to Synix Defaults?</value>
+  </data>
+  <data name="MessageText.7BA411FC138076039A96" xml:space="preserve">
+    <value>Resource Collision: The </value>
+  </data>
+  <data name="MessageText.5128BFA26323DFC32A9B" xml:space="preserve">
+    <value>Restore </value>
+  </data>
+  <data name="MessageText.9A66A7E6057B206C0F72" xml:space="preserve">
+    <value>Restore Previous Configuration?</value>
+  </data>
+  <data name="MessageText.D955BE724373ACFC3AD2" xml:space="preserve">
+    <value>Restore the newest Synix configuration backup?
+
+Synix will first preserve the current files so this restore can also be undone.</value>
+  </data>
+  <data name="MessageText.5D588DF651FF90C72490" xml:space="preserve">
+    <value>Rust is now set to Vanilla. Run Update or Validate before starting so Steam can restore the official server files.
+
+Synix will not delete your oxide folder or plugins.</value>
+  </data>
+  <data name="MessageText.A36A8AE6C94D6549F743" xml:space="preserve">
+    <value>Save or undo the changes in the editor before checking the values stored on disk.</value>
+  </data>
+  <data name="MessageText.03EA7D567C54290CC734" xml:space="preserve">
+    <value>Save your changes to </value>
+  </data>
+  <data name="MessageText.CC71ED71BEA0A5374986" xml:space="preserve">
+    <value>Saved project verification evidence to:
+
+</value>
+  </data>
+  <data name="MessageText.3AA26503CC8EA0B171F1" xml:space="preserve">
+    <value>Security Alert: One of your inputs contains illegal characters.</value>
+  </data>
+  <data name="MessageText.A9A99B446A25CB5B9D0D" xml:space="preserve">
+    <value>Server Active</value>
+  </data>
+  <data name="MessageText.AB679B16586E59139E46" xml:space="preserve">
+    <value>Server Already Active</value>
+  </data>
+  <data name="MessageText.F54AB1029C023880D42B" xml:space="preserve">
+    <value>Server Backup Restored</value>
+  </data>
+  <data name="MessageText.53A69D577D447510BDF3" xml:space="preserve">
+    <value>Server Credentials Need Attention</value>
+  </data>
+  <data name="MessageText.D2289CFD0A91EB006CDB" xml:space="preserve">
+    <value>Server data: </value>
+  </data>
+  <data name="MessageText.88F9321A50E97A2552C0" xml:space="preserve">
+    <value>Server Must Be Stopped</value>
+  </data>
+  <data name="MessageText.D54A40616D4F5EA41F72" xml:space="preserve">
+    <value>Server Requirements Not Met</value>
+  </data>
+  <data name="MessageText.65D2086D829692154664" xml:space="preserve">
+    <value>Server Restore Failed</value>
+  </data>
+  <data name="MessageText.29C4DCBECE4B727C4FC7" xml:space="preserve">
+    <value>Server Restore Recovered</value>
+  </data>
+  <data name="MessageText.F1BDA58EC346DD4A3517" xml:space="preserve">
+    <value>Server Restore Recovery Failed</value>
+  </data>
+  <data name="MessageText.726B95C83B7011B7B778" xml:space="preserve">
+    <value>Server Settings Need Attention</value>
+  </data>
+  <data name="MessageText.9E4EAF41685A751D0C5D" xml:space="preserve">
+    <value>Set the game's configuration behavior and add any required template information before marking its configuration as verified.</value>
+  </data>
+  <data name="MessageText.BAAC4E75933FF0A53DF0" xml:space="preserve">
+    <value>settings, saved data, and any passwords written inside game configuration files.
+
+</value>
+  </data>
+  <data name="MessageText.27412668C92FDF96DFC1" xml:space="preserve">
+    <value>Socket Conflict: The </value>
+  </data>
+  <data name="MessageText.39604342A705F1F9CD41" xml:space="preserve">
+    <value>Stop every game server and wait for installations, updates, validations, and backups to finish before transferring Synix.</value>
+  </data>
+  <data name="MessageText.4F40B60D50A8EAE10F50" xml:space="preserve">
+    <value>Stop every game server and wait for installations, updates, validations, backups, imports, and exports to finish before updating Synix.</value>
+  </data>
+  <data name="MessageText.37D35536B29E5D04935F" xml:space="preserve">
+    <value>Stop this server before resetting its configuration.</value>
+  </data>
+  <data name="MessageText.96B14861829C994EDBFF" xml:space="preserve">
+    <value>Stop this server before restoring a configuration backup.</value>
+  </data>
+  <data name="MessageText.713E1363B1176FB2ABCE" xml:space="preserve">
+    <value>Stop this server first. The test must observe a new launch created from the displayed arguments.</value>
+  </data>
+  <data name="MessageText.3608D4A724B6D3D6CC3C" xml:space="preserve">
+    <value>Submit Problem Report</value>
+  </data>
+  <data name="MessageText.46718064A7E451D480B7" xml:space="preserve">
+    <value>Submit this public GitHub issue?
+
+</value>
+  </data>
+  <data name="MessageText.CF46A3CD150D5DC654A9" xml:space="preserve">
+    <value>Synix cannot scan provider content before it is downloaded.
+
+</value>
+  </data>
+  <data name="MessageText.C212E9F16F2E20F010C2" xml:space="preserve">
+    <value>Synix could not build a safe preview.
+
+</value>
+  </data>
+  <data name="MessageText.6B5EDE5E1A10BF24CA11" xml:space="preserve">
+    <value>Synix could not find the project folder. Run this checker from a Visual Studio Build or Rebuild of the Synix project.</value>
+  </data>
+  <data name="MessageText.95953D4C870DA3A99428" xml:space="preserve">
+    <value>Synix could not finish the automatic update. Synix attempted to restore the previous program when possible.
+
+</value>
+  </data>
+  <data name="MessageText.1AEE44867A923B83ACFD" xml:space="preserve">
+    <value>Synix could not finish the configuration check.
+
+</value>
+  </data>
+  <data name="MessageText.B636576B831816AEDD53" xml:space="preserve">
+    <value>Synix could not load the verified update details. Check your internet connection and try again.</value>
+  </data>
+  <data name="MessageText.BE4C2B2035310BB5C2B0" xml:space="preserve">
+    <value>Synix could not read this configuration file.
+
+</value>
+  </data>
+  <data name="MessageText.A9CB674BA5370D048A34" xml:space="preserve">
+    <value>Synix could not reset the configuration. The existing files were preserved when possible.
+
+</value>
+  </data>
+  <data name="MessageText.657673AC18698061BB2E" xml:space="preserve">
+    <value>Synix could not safely save the current server list. The export was not started.</value>
+  </data>
+  <data name="MessageText.99747F392DEC17447B2C" xml:space="preserve">
+    <value>Synix could not safely save the current server list. The update was not started.</value>
+  </data>
+  <data name="MessageText.4AE453C9E5CBA09BFB92" xml:space="preserve">
+    <value>Synix could not unlock the saved Discord webhook information. Open Server Settings and save the webhooks again.</value>
+  </data>
+  <data name="MessageText.F1BDC745E75B8DDCCD0A" xml:space="preserve">
+    <value>Synix could not unlock this server's saved passwords, authentication token, or Discord webhooks. They may have come from another Windows user or computer.
+
+Enter the credentials again and press Save Changes to protect them for this Windows user.</value>
+  </data>
+  <data name="MessageText.1534B2D8CF0711D160D8" xml:space="preserve">
+    <value>Synix detected </value>
+  </data>
+  <data name="MessageText.77CA926F13AA4934EB38" xml:space="preserve">
+    <value>Synix detected an interrupted import and safely restored the previous files before starting.</value>
+  </data>
+  <data name="MessageText.1D7E8CD37BFCD097E6DA" xml:space="preserve">
+    <value>Synix does not have a complete reset template for this game.</value>
+  </data>
+  <data name="MessageText.90F77A017BBE9B4EAFDF" xml:space="preserve">
+    <value>Synix encountered a critical error and needs to close. Please check </value>
+  </data>
+  <data name="MessageText.C552770DF85E04D199C7" xml:space="preserve">
+    <value>Synix Export Size Estimate</value>
+  </data>
+  <data name="MessageText.C3BDB546D4250A84613E" xml:space="preserve">
+    <value>Synix found an interrupted import but could not safely restore the previous files. </value>
+  </data>
+  <data name="MessageText.C6FAB903EFB120374D1A" xml:space="preserve">
+    <value>Synix found an interrupted server backup restore but could not safely recover its files. Synix will not start to avoid using incomplete server data.
+
+</value>
+  </data>
+  <data name="MessageText.334089AFAFCB9816855E" xml:space="preserve">
+    <value>Synix Import Recovered</value>
+  </data>
+  <data name="MessageText.90ED38FBE8B2A704E6E9" xml:space="preserve">
+    <value>Synix Import Recovery Failed</value>
+  </data>
+  <data name="MessageText.2026E17B2FBBD14CA098" xml:space="preserve">
+    <value>Synix is busy</value>
+  </data>
+  <data name="MessageText.71228FB6E1838242AABC" xml:space="preserve">
+    <value>Synix Is Busy</value>
+  </data>
+  <data name="MessageText.6274B8242FDE54CD9F58" xml:space="preserve">
+    <value>Synix transfer failed</value>
+  </data>
+  <data name="MessageText.7FA4E7793085EED47264" xml:space="preserve">
+    <value>Synix Update Did Not Complete</value>
+  </data>
+  <data name="MessageText.CBA91BC857FCE7FB1699" xml:space="preserve">
+    <value>Synix Update Did Not Start</value>
+  </data>
+  <data name="MessageText.A6B5FF35CCA9E5FEA406" xml:space="preserve">
+    <value>Synix Update Rolled Back</value>
+  </data>
+  <data name="MessageText.22B01559466E6A052021" xml:space="preserve">
+    <value>Synix will not start to avoid using incomplete data.
+
+</value>
+  </data>
+  <data name="MessageText.AA9402AAA45447FCB9A8" xml:space="preserve">
+    <value>Synix will rebuild the complete configuration from its trusted template, reapply the saved server values, and preserve a backup. Continue?</value>
+  </data>
+  <data name="MessageText.DE1AF9A23161B913B688" xml:space="preserve">
+    <value>Synix-managed passwords and Discord webhooks remain protected for this Windows </value>
+  </data>
+  <data name="MessageText.34557F437E44241ECE25" xml:space="preserve">
+    <value>System Busy</value>
+  </data>
+  <data name="MessageText.5731D3A46405AF847615" xml:space="preserve">
+    <value>System Resource Conflict</value>
+  </data>
+  <data name="MessageText.7116FDBDB62E9D56DC20" xml:space="preserve">
+    <value>System Resource Exhaustion</value>
+  </data>
+  <data name="MessageText.F9E1595FF7C4DB1D430A" xml:space="preserve">
+    <value>System resources are redlining. Please check your firewall immediately.</value>
+  </data>
+  <data name="MessageText.3679B9A889A4F6F470DA" xml:space="preserve">
+    <value>The add-on was installed and verified. Start the server when you are ready.</value>
+  </data>
+  <data name="MessageText.F23CB309225C503B6D8A" xml:space="preserve">
+    <value>The add-on was installed and verified. This framework can usually reload it without a full restart.</value>
+  </data>
+  <data name="MessageText.21619FB57FA1E3D42E43" xml:space="preserve">
+    <value>The command must pass every validation check before Synix can start the argument test.</value>
+  </data>
+  <data name="MessageText.A19837AA86ACFBABA21C" xml:space="preserve">
+    <value>The configuration file does not exist:
+
+</value>
+  </data>
+  <data name="MessageText.6CE3F5095A059C356950" xml:space="preserve">
+    <value>The configuration was not saved. The original file is unchanged.
+
+</value>
+  </data>
+  <data name="MessageText.63AAE1772D0963E8D8C6" xml:space="preserve">
+    <value>The current server files will be replaced. Synix will stage the backup first and automatically return the current files if restoration fails. The saved Synix server entry and settings will not be changed.</value>
+  </data>
+  <data name="MessageText.EA2CD9B6AE3E2608F49E" xml:space="preserve">
+    <value>The Game Definition Builder is available only in development builds.</value>
+  </data>
+  <data name="MessageText.6D2AA0B6E336330DD96A" xml:space="preserve">
+    <value>The generated batch file must contain any configured server passwords, administrator passwords, RCON passwords, and online authentication tokens in readable text. This is required so the batch file can start the server without Synix.
+
+Anyone who can read that file can use those credentials. Continue?</value>
+  </data>
+  <data name="MessageText.2A2FCD5BFFF42E6401AE" xml:space="preserve">
+    <value>The ordered mod ID list is ready. The game will download or update provider-owned content when the server starts.</value>
+  </data>
+  <data name="MessageText.1CB5FBEFC150D2C77EEE" xml:space="preserve">
+    <value>The package will still be checked for accidental damage when imported.
+
+</value>
+  </data>
+  <data name="MessageText.E75B2FD41F8780419B9B" xml:space="preserve">
+    <value>The report was submitted successfully as GitHub issue #</value>
+  </data>
+  <data name="MessageText.FC58250B5F2A8DEC7DB4" xml:space="preserve">
+    <value>The Rust </value>
+  </data>
+  <data name="MessageText.373CEB926DBF1BC13BCE" xml:space="preserve">
+    <value>The Rust server installed, but Oxide could not be installed. Synix will block the modded server from starting until you retry with Update or Validate.
+
+</value>
+  </data>
+  <data name="MessageText.A570646762EA80624E34" xml:space="preserve">
+    <value>The selected transfer package could not be found. Choose it again.</value>
+  </data>
+  <data name="MessageText.79646E53B994F608A148" xml:space="preserve">
+    <value>The validated definition and configuration templates were saved into the project. </value>
+  </data>
+  <data name="MessageText.53E9C662FB5DFC742D1E" xml:space="preserve">
+    <value>There is not enough space to safely create this backup.
+
+</value>
+  </data>
+  <data name="MessageText.313E93838C2B67200EAB" xml:space="preserve">
+    <value>This backup has an invalid SHA-256 receipt and cannot be restored. Choose a different backup.</value>
+  </data>
+  <data name="MessageText.379C1CF1A5975C5E0C37" xml:space="preserve">
+    <value>This folder isn't empty. Installing here might overwrite files. Continue?</value>
+  </data>
+  <data name="MessageText.F94014E8EAE83ED1AC43" xml:space="preserve">
+    <value>This game is managed entirely through launch arguments, so a separate configuration-file test is not required.</value>
+  </data>
+  <data name="MessageText.176F8090FC114CC8B9EA" xml:space="preserve">
+    <value>This import may need about </value>
+  </data>
+  <data name="MessageText.7207C417D17A90F2BE69" xml:space="preserve">
+    <value>This server requires Java </value>
+  </data>
+  <data name="MessageText.AC3B07BB575D129E2A12" xml:space="preserve">
+    <value>This will rebuild the game configuration from the Synix default template and apply the values saved in Server Settings.
+
+Any other custom configuration values will be removed.</value>
+  </data>
+  <data name="MessageText.F3A342B1FDFDC5B75041" xml:space="preserve">
+    <value>to be re-entered.
+
+</value>
+  </data>
+  <data name="MessageText.2E667C0BCB471DE327C9" xml:space="preserve">
+    <value>Transfer Package Not Found</value>
+  </data>
+  <data name="MessageText.06E993CB721FF8A65898" xml:space="preserve">
+    <value>Unable to Open GitHub</value>
+  </data>
+  <data name="MessageText.9F6FCB4796F0EDB908E3" xml:space="preserve">
+    <value>Unable to open the link automatically.
+
+Error: </value>
+  </data>
+  <data name="MessageText.D32C6F24B9B502297553" xml:space="preserve">
+    <value>Unable to Save Synix</value>
+  </data>
+  <data name="MessageText.F507179BD454425EEE38" xml:space="preserve">
+    <value>Unsaved Changes</value>
+  </data>
+  <data name="MessageText.47D6D9A26235C64A173D" xml:space="preserve">
+    <value>Unsaved Configuration Changes</value>
+  </data>
+  <data name="MessageText.0A497001C8409ABD3B28" xml:space="preserve">
+    <value>Update Details Unavailable</value>
+  </data>
+  <data name="MessageText.64D4D1195007C9357392" xml:space="preserve">
+    <value>Update Ready to Install</value>
+  </data>
+  <data name="MessageText.0CEC9ACC619C38E0E017" xml:space="preserve">
+    <value>user. If this export is imported on another PC, those credentials may need </value>
+  </data>
+  <data name="MessageText.87A19B7F2D612D398A74" xml:space="preserve">
+    <value>Validation Required</value>
+  </data>
+  <data name="MessageText.B32413A80382548BEC79" xml:space="preserve">
+    <value>Verification Export Failed</value>
+  </data>
+  <data name="MessageText.928E0E14F24067F7A176" xml:space="preserve">
+    <value>Verification Exported</value>
+  </data>
+  <data name="MessageText.BA03F2AB291E808BE95A" xml:space="preserve">
+    <value>Wait for the current installation, update, backup, or transfer to finish before verifying a package.</value>
+  </data>
+  <data name="MessageText.C02FB698977B0364EC82" xml:space="preserve">
+    <value>Windows could not copy the configuration report.</value>
+  </data>
+  <data name="MessageText.C4163B7C6E2B1B662C17" xml:space="preserve">
+    <value>Windows could not copy the release report.</value>
+  </data>
+  <data name="MessageText.42714FAA1D98E9331F6D" xml:space="preserve">
+    <value>Windows could not copy the report.</value>
+  </data>
+  <data name="MessageText.E30D1FF9B8D6F1EEE71C" xml:space="preserve">
+    <value>Windows could not copy the validation report.</value>
+  </data>
+  <data name="MessageText.D08D6AB01BF21D6FCB08" xml:space="preserve">
+    <value>Windows could not open the GitHub release page.</value>
+  </data>
+  <data name="MessageText.BD8BCFC959732EEF1834" xml:space="preserve">
+    <value>You already have a </value>
+  </data>
+  <data name="MessageText.663E3E2D227DB51428B7" xml:space="preserve">
+    <value>You have unsaved configuration changes. Discard them and close?</value>
+  </data>
+  <data name="MessageText.3B1950A30C957AAF88A2" xml:space="preserve">
+    <value>You must stop the server before updating it.</value>
+  </data>
+  <data name="MessageText.19580FB3CF2A0F82762D" xml:space="preserve">
+    <value>You must stop the server before validating server files.</value>
+  </data>
+</root>

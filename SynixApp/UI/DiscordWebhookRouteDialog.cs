@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixEngine;
 using System.ComponentModel;
 
@@ -31,8 +32,45 @@ namespace Synix_Control_Panel
 				return;
 
 			ThemeManager.Apply(this);
+			PopulatePresetOptions();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) =>
+				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
 			LoadEventOptions(DiscordNotificationEvent.All);
 			cmbPreset.SelectedIndex = 0;
+		}
+
+		private void InterfaceLanguageChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			PopulatePresetOptions();
+		}
+
+		private void PopulatePresetOptions()
+		{
+			int selectedIndex = Math.Max(0, cmbPreset.SelectedIndex);
+			bool previousLoading = _loading;
+			_loading = true;
+			try
+			{
+				cmbPreset.Items.Clear();
+				cmbPreset.Items.AddRange(
+				[
+					LocalizationManager.Get("Option.Discord.AllEvents"),
+					LocalizationManager.Get("Option.Discord.ServerStatus"),
+					LocalizationManager.Get("Option.Discord.Maintenance"),
+					LocalizationManager.Get("Option.Discord.ProblemsOnly"),
+					LocalizationManager.Get("Option.Discord.Custom")
+				]);
+				cmbPreset.SelectedIndex = Math.Min(
+					selectedIndex,
+					cmbPreset.Items.Count - 1);
+			}
+			finally
+			{
+				_loading = previousLoading;
+			}
 		}
 
 		public DiscordWebhookRouteDialog(

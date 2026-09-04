@@ -226,7 +226,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (globalCpu >= 85.0)
 			{
 				if (!IsBackgroundServiceMode)
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 					$"[🛡️ RESOURCE GUARD] Global CPU Load is at {globalCpu:F1}%.\n\nStarting another server now would push the host into instability. Please wait for load to drop.",
 					"CPU Overload Protection",
 					MessageBoxButtons.OK,
@@ -248,7 +248,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (ramUsagePercent >= 85.0)
 			{
 				if (!IsBackgroundServiceMode)
-					MessageBox.Show(
+					LocalizedMessageBox.Show(
 					$"[🛡️ RESOURCE GUARD] System RAM usage is at {ramUsagePercent:F1}% of the {usablePool:F1}GB usable pool.\n\nPlease stop a server before starting another.",
 					"System Resource Exhaustion",
 					MessageBoxButtons.OK,

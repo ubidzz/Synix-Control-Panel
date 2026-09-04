@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
@@ -907,7 +907,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 							MainGUI.Instance?.Invoke((Action)(() =>
 							{
-								result = System.Windows.Forms.MessageBox.Show(
+								result = LocalizedMessageBox.Show(
 									MainGUI.Instance,
 									$"This server requires Java {requiredJava}, but your system has {javaStatus}.\n\nWould you like Synix to automatically download a portable Java {requiredJava} runtime specifically for this server?\n\n(This is completely safe and will not change your computer's global Java settings).",
 									"Java Version Mismatch",

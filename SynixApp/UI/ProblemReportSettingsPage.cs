@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Http;
@@ -21,6 +22,32 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public partial class ProblemReportSettingsPage : UserControl
 	{
+		private static readonly string[] ProblemActionResourceKeys =
+		[
+			"ProblemAction.ServerInstallation",
+			"ProblemAction.UpdateValidation",
+			"ProblemAction.ServerStartup",
+			"ProblemAction.ServerShutdown",
+			"ProblemAction.RestartWatchdog",
+			"ProblemAction.IncorrectStatus",
+			"ProblemAction.ResourceMonitoring",
+			"ProblemAction.LocalNetwork",
+			"ProblemAction.PublicNetwork",
+			"ProblemAction.PortsFirewallRcon",
+			"ProblemAction.ServerBackups",
+			"ProblemAction.TransferExport",
+			"ProblemAction.TransferImport",
+			"ProblemAction.TransferVerification",
+			"ProblemAction.SettingsPasswords",
+			"ProblemAction.DiscordAlerts",
+			"ProblemAction.SynixUpdate",
+			"ProblemAction.InstallationPackaging",
+			"ProblemAction.WindowDisplay",
+			"ProblemAction.CrashFreeze",
+			"ProblemAction.TemplateLaunch",
+			"ProblemAction.Other"
+		];
+
 		private readonly CancellationTokenSource _lifetimeCancellation = new();
 		private bool _operationInProgress;
 
@@ -31,10 +58,65 @@ namespace Synix_Control_Panel.SynixEngine
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
 				return;
 
-			cmbFailedAction.Items.AddRange(Core.ProblemReportActions.ToArray());
+			PopulateProblemActionOptions();
+			UpdateEnglishReportWarning();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) =>
+				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
 			RefreshServerTypes();
 			RefreshAutomaticInformation();
 			RefreshGitHubConnectionDisplay();
+		}
+
+		private void InterfaceLanguageChanged(
+			object? sender,
+			EventArgs eventArgs)
+		{
+			PopulateProblemActionOptions();
+			UpdateEnglishReportWarning();
+			RefreshAutomaticInformation();
+			RefreshGitHubConnectionDisplay();
+		}
+
+		private void UpdateEnglishReportWarning()
+		{
+			bool showWarning = !string.Equals(
+				LocalizationManager.CurrentLanguageCode,
+				LocalizationManager.DefaultLanguageCode,
+				StringComparison.OrdinalIgnoreCase);
+			lblEnglishReportWarning.Text = LocalizationManager.Get(
+				"Report.EnglishRequiredWarning");
+			lblEnglishReportWarning.Visible = showWarning;
+			lblPrivacyNotice.Top = showWarning ? 458 : 426;
+			reportCard.Height = showWarning ? 518 : 482;
+			systemCard.Top = reportCard.Bottom + 16;
+			sendCard.Top = systemCard.Bottom + 16;
+			pageScroll.PerformLayout();
+		}
+
+		private void PopulateProblemActionOptions()
+		{
+			string? selectedValue =
+				(cmbFailedAction.SelectedItem as LocalizedOption)?.Value;
+			cmbFailedAction.Items.Clear();
+
+			for (int index = 0; index < Core.ProblemReportActions.Count; index++)
+			{
+				string resourceKey = index < ProblemActionResourceKeys.Length
+					? ProblemActionResourceKeys[index]
+					: throw new InvalidOperationException(
+						"A problem-report action is missing its language resource key.");
+				cmbFailedAction.Items.Add(new LocalizedOption(
+					Core.ProblemReportActions[index],
+					resourceKey));
+			}
+
+			if (!string.IsNullOrWhiteSpace(selectedValue))
+			{
+				cmbFailedAction.SelectedItem = cmbFailedAction.Items
+					.Cast<LocalizedOption>()
+					.FirstOrDefault(option => option.Value == selectedValue);
+			}
 		}
 
 		protected override void OnVisibleChanged(EventArgs eventArgs)
@@ -142,7 +224,7 @@ namespace Synix_Control_Panel.SynixEngine
 				GitHubDeviceAuthorization authorization =
 					await Core.BeginGitHubConnectionAsync(_lifetimeCancellation.Token);
 				TryCopyText(authorization.UserCode);
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					FindForm(),
 					$"GitHub sign-in code:\n\n{authorization.UserCode}\n\nThe code was copied to the clipboard. Select OK to open GitHub, paste the code, and approve Synix.",
 					"Connect GitHub",
@@ -187,7 +269,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (_operationInProgress)
 				return;
 
-			DialogResult result = MessageBox.Show(
+			DialogResult result = LocalizedMessageBox.Show(
 				FindForm(),
 				"Disconnect GitHub from Synix?\n\nSynix will delete the encrypted connection saved on this computer, then open GitHub so you can revoke the authorization from your account.",
 				"Disconnect GitHub",
@@ -223,7 +305,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (report == null)
 				return;
 
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				FindForm(),
 				$"Submit this public GitHub issue?\n\n{report.Title}\n\nReview the description fields first and make sure they do not contain private information.",
 				"Submit Problem Report",
@@ -242,7 +324,7 @@ namespace Synix_Control_Panel.SynixEngine
 				lblReportStatus.Text =
 					$"Report submitted successfully as GitHub issue #{issue.Number}. No browser was opened.";
 				lblReportStatus.ForeColor = SettingsPalette.Success;
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					FindForm(),
 					$"The report was submitted successfully as GitHub issue #{issue.Number}.",
 					"Report Submitted",
@@ -318,7 +400,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return Core.PrepareProblemReport(new ProblemReportDraft(
 					cmbServerType.SelectedItem as string ?? string.Empty,
-					cmbFailedAction.SelectedItem as string ?? string.Empty,
+					(cmbFailedAction.SelectedItem as LocalizedOption)?.Value
+						?? string.Empty,
 					txtSummary.Text,
 					txtWhatHappened.Text,
 					txtExpected.Text));
@@ -348,7 +431,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			lblReportStatus.Text = message;
 			lblReportStatus.ForeColor = SettingsPalette.Danger;
-			MessageBox.Show(
+			LocalizedMessageBox.Show(
 				FindForm(),
 				message,
 				title,

@@ -174,7 +174,6 @@ namespace Synix_Control_Panel
 			// cmbMasterPreset
 			//
 			cmbMasterPreset.DropDownStyle = ComboBoxStyle.DropDownList;
-			cmbMasterPreset.Items.AddRange(new object[] { "All events", "Server status", "Maintenance", "Problems only", "Custom" });
 			cmbMasterPreset.Location = new Point(24, 166);
 			cmbMasterPreset.Name = "cmbMasterPreset";
 			cmbMasterPreset.Size = new Size(250, 30);

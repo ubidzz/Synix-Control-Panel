@@ -196,7 +196,7 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception exception)
 			{
 				TryWriteHelperFailure(args[1], exception);
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					"Synix could not finish the automatic update. Synix attempted to restore the previous program when possible.\n\n" +
 					"If Synix does not reopen, run your existing Synix program or download the latest release from GitHub. Your C:\\Synix server data was not changed.",
 					"Synix Update Did Not Complete",

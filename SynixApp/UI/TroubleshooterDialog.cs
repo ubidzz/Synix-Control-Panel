@@ -331,7 +331,7 @@ namespace Synix_Control_Panel.SynixEngine
 				throw new InvalidOperationException("Stop the server before rebuilding its configuration.");
 			}
 
-			DialogResult confirmation = MessageBox.Show(
+			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
 				"Synix will rebuild the complete configuration from its trusted template, reapply the saved server values, and preserve a backup. Continue?",
 				"Fix Server Configuration",
@@ -344,7 +344,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!result.Succeeded)
 				throw new InvalidOperationException(result.Message);
 			FileHandler.SaveServers();
-			MessageBox.Show(this, result.Message, "Configuration Rebuilt", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			LocalizedMessageBox.Show(this, result.Message, "Configuration Rebuilt", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private void CopyButton_Click(object? sender, EventArgs eventArgs)
@@ -363,7 +363,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch
 			{
-				MessageBox.Show(this, "Windows could not copy the report.", "Copy Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(this, "Windows could not copy the report.", "Copy Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 	}

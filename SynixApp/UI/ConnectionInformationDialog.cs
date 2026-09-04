@@ -4,6 +4,7 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine
@@ -33,7 +34,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			Controls.Add(new Label
 			{
-				Text = $"Connect to {_server.ServerName}",
+				Text = LocalizationManager.Get(
+					"Connection.Heading",
+					_server.ServerName),
 				Font = new Font("Segoe UI", 18F, FontStyle.Bold),
 				Location = new Point(28, 22),
 				Size = new Size(704, 40),
@@ -41,22 +44,24 @@ namespace Synix_Control_Panel.SynixEngine
 			});
 			Controls.Add(new Label
 			{
-				Text = "Use the address that matches where the player is connecting from.",
+				Text = LocalizationManager.Get("Connection.Subtitle"),
 				Location = new Point(30, 66),
 				Size = new Size(700, 28),
 				ForeColor = SettingsPalette.SecondaryText
 			});
 
 			_lanValue = AddConnectionCard(
-				"Same computer or home network",
-				"Use this for players connected to the same router.",
+				LocalizationManager.Get("Connection.Local.Title"),
+				LocalizationManager.Get("Connection.Local.Description"),
 				108,
 				out ModernSettingsButton lanCopy);
 			_publicValue = AddConnectionCard(
-				"Friends connecting over the internet",
+				LocalizationManager.Get("Connection.Public.Title"),
 				isBedrock
-					? "Your router and Windows Firewall must allow Bedrock's UDP game port."
-					: "Your router and Windows Firewall must allow the game and query ports.",
+					? LocalizationManager.Get(
+						"Connection.Public.BedrockDescription")
+					: LocalizationManager.Get(
+						"Connection.Public.Description"),
 				226,
 				out ModernSettingsButton publicCopy);
 			lanCopy.Click += (_, _) => CopyAddress(_lanAddress);
@@ -65,10 +70,11 @@ namespace Synix_Control_Panel.SynixEngine
 			Controls.Add(new Label
 			{
 				Text = isBedrock
-					? $"Bedrock game port: {_server.Port}/UDP. IPv6 port: {_server.QueryPort}/UDP. " +
-						"Each Bedrock server needs its own pair of ports."
-					: UserGuidance.GetPortSummary(_server) +
-						" Some games appear in a server browser only when the query port is also forwarded.",
+					? LocalizationManager.Get(
+						"Connection.Ports.BedrockSummary",
+						_server.Port,
+						_server.QueryPort)
+					: BuildStandardPortSummary(),
 				Location = new Point(30, 356),
 				Size = new Size(700, 54),
 				ForeColor = SettingsPalette.SecondaryText
@@ -100,23 +106,58 @@ namespace Synix_Control_Panel.SynixEngine
 				_publicAddress = string.IsNullOrWhiteSpace(publicIp)
 					? string.Empty
 					: FormatAddress(publicIp.Trim(), _server.Port);
-				_lanValue.Text = privacyMode ? "Hidden by Privacy Mode" : _lanAddress;
+				_lanValue.Text = privacyMode
+					? LocalizationManager.Get("Connection.Address.Hidden")
+					: _lanAddress;
 				_publicValue.Text = privacyMode
-					? "Hidden by Privacy Mode"
+					? LocalizationManager.Get("Connection.Address.Hidden")
 					: string.IsNullOrWhiteSpace(_publicAddress)
-						? "Public address could not be loaded"
+						? LocalizationManager.Get(
+							"Connection.Address.PublicUnavailable")
 						: _publicAddress;
 			}
 			catch (Exception exception)
 			{
-				_lanValue.Text = "Address could not be loaded";
-				_publicValue.Text = "Address could not be loaded";
+				_lanValue.Text = LocalizationManager.Get(
+					"Connection.Address.Unavailable");
+				_publicValue.Text = LocalizationManager.Get(
+					"Connection.Address.Unavailable");
 				_ = exception;
 			}
 		}
 
 		internal static string FormatAddress(string address, int port) =>
 			$"{address}:{port}";
+
+		private string BuildStandardPortSummary()
+		{
+			List<string> ports =
+			[
+				LocalizationManager.Get("Connection.Port.Game", _server.Port)
+			];
+			if (_server.QueryPort > 0 && _server.QueryPort != _server.Port)
+			{
+				ports.Add(LocalizationManager.Get(
+					"Connection.Port.Query",
+					_server.QueryPort));
+			}
+			if (_server.EnableRcon && _server.RconPort > 0)
+			{
+				ports.Add(LocalizationManager.Get(
+					"Connection.Port.Rcon",
+					_server.RconPort));
+			}
+			if (_server.AppPort is > 0)
+			{
+				ports.Add(LocalizationManager.Get(
+					"Connection.Port.App",
+					_server.AppPort.Value));
+			}
+
+			return LocalizationManager.Get(
+				"Connection.Ports.StandardSummary",
+				string.Join(", ", ports));
+		}
 
 		private Label AddConnectionCard(
 			string title,
