@@ -35,8 +35,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			accountNameTextBox = new TextBox();
 			privacyMessageLabel = new Label();
 			validationLabel = new Label();
-			cancelButton = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
-			continueButton = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			cancelButton = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
+			continueButton = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
 			SuspendLayout();
 			// 
 			// titleLabel
@@ -166,7 +166,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		private TextBox accountNameTextBox;
 		private Label privacyMessageLabel;
 		private Label validationLabel;
-		private SynixApp.Design.ModernSettingsButton cancelButton;
-		private SynixApp.Design.ModernSettingsButton continueButton;
+		private SynixApp.Design.Controls.ModernSettingsButton cancelButton;
+		private SynixApp.Design.Controls.ModernSettingsButton continueButton;
 	}
 }

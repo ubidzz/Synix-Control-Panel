@@ -31,18 +31,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		private void InitializeComponent()
 		{
-			settingsCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			settingsCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			cardLayout = new TableLayoutPanel();
-			settingGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			settingGlyph = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			textLayout = new TableLayoutPanel();
 			lblTitle = new Label();
 			lblDescription = new Label();
-			chkElevatedTasks = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
-			troubleshooterCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
-			troubleshooterGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			chkElevatedTasks = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle();
+			troubleshooterCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
+			troubleshooterGlyph = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			lblTroubleshooterTitle = new Label();
 			lblTroubleshooterDescription = new Label();
-			btnTroubleshooter = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			btnTroubleshooter = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
 			settingsCard.SuspendLayout();
 			cardLayout.SuspendLayout();
 			textLayout.SuspendLayout();
@@ -230,17 +230,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		#endregion
 
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCard;
 		private TableLayoutPanel cardLayout;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyph;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph settingGlyph;
 		private TableLayoutPanel textLayout;
 		private Label lblTitle;
 		private Label lblDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkElevatedTasks;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard troubleshooterCard;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph troubleshooterGlyph;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle chkElevatedTasks;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard troubleshooterCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph troubleshooterGlyph;
 		private Label lblTroubleshooterTitle;
 		private Label lblTroubleshooterDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnTroubleshooter;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnTroubleshooter;
 	}
 }

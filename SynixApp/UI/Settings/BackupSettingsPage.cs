@@ -16,13 +16,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 {
 	public partial class BackupSettingsPage : UserControl
 	{
-		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
+		private readonly Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton
 			_exportSynixButton;
-		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
+		private readonly Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton
 			_normalExportButton;
-		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
+		private readonly Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton
 			_importSynixButton;
-		private readonly Synix_Control_Panel.SynixApp.Design.ModernSettingsButton
+		private readonly Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton
 			_verifyPackageButton;
 		private readonly Label _transferStatusLabel;
 		private readonly Label _transferEtaLabel;
@@ -305,17 +305,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		}
 
 		private (
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton ExportButton,
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton NormalExportButton,
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton ImportButton,
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton VerifyButton,
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton ExportButton,
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton NormalExportButton,
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton ImportButton,
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton VerifyButton,
 			Label StatusLabel,
 			Label EtaLabel,
 			ProgressBar ProgressBar,
 			Label ExportEstimateLabel,
 			Label ImportEstimateLabel) CreateTransferCard()
 		{
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsCard card = new()
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard card = new()
 			{
 				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
 				BackColor = Color.FromArgb(17, 27, 45),
@@ -366,26 +366,26 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Text = "IMPORT  No package selected\nChoose a package to calculate space and time."
 			};
 
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton exportButton = new()
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton exportButton = new()
 			{
 				Location = new Point(22, 136),
 				Size = new Size(128, 36),
 				Text = "Encrypted Export",
 				UseAccentStyle = true
 			};
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton normalExportButton = new()
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton normalExportButton = new()
 			{
 				Location = new Point(158, 136),
 				Size = new Size(128, 36),
 				Text = "Normal Export"
 			};
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton importButton = new()
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton importButton = new()
 			{
 				Location = new Point(294, 136),
 				Size = new Size(128, 36),
 				Text = "Choose Package"
 			};
-			Synix_Control_Panel.SynixApp.Design.ModernSettingsButton verifyButton = new()
+			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton verifyButton = new()
 			{
 				Enabled = false,
 				Location = new Point(430, 136),

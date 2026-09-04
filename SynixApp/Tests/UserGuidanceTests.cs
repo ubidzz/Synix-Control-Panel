@@ -4,7 +4,7 @@
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
-using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Design.Controls;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;

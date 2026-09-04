@@ -45,7 +45,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblSidebarEyebrow = new Label();
 			lblSidebarTitle = new Label();
 			lblSidebarDescription = new Label();
-			searchCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			searchCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			lblSearchIcon = new Label();
 			txtSearch = new TextBox();
 			btnClearSearch = new Button();
@@ -59,7 +59,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblContentEyebrow = new Label();
 			lblContentHeading = new Label();
 			lblContentDescription = new Label();
-			articleCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			articleCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			articleLayout = new TableLayoutPanel();
 			articleHeader = new Panel();
 			lblTopicCategory = new Label();
@@ -68,7 +68,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			articleDivider = new Label();
 			articleBody = new Panel();
 			lblAnswer = new RichTextBox();
-			qrCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			qrCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			lblQrHeading = new Label();
 			pbQRCode = new PictureBox();
 			lblQrCaption = new Label();
@@ -750,7 +750,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		private Label lblSidebarEyebrow;
 		private Label lblSidebarTitle;
 		private Label lblSidebarDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard searchCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard searchCard;
 		private Label lblSearchIcon;
 		private TextBox txtSearch;
 		private Button btnClearSearch;
@@ -764,7 +764,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		private Label lblContentEyebrow;
 		private Label lblContentHeading;
 		private Label lblContentDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard articleCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard articleCard;
 		private TableLayoutPanel articleLayout;
 		private Panel articleHeader;
 		private Label lblTopicCategory;
@@ -773,7 +773,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		private Label articleDivider;
 		private Panel articleBody;
 		private RichTextBox lblAnswer;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard qrCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard qrCard;
 		private Label lblQrHeading;
 		private PictureBox pbQRCode;
 		private Label lblQrCaption;

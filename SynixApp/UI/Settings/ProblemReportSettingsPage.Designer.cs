@@ -32,12 +32,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		private void InitializeComponent()
 		{
 			pageScroll = new Panel();
-			reportCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			reportCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			lblReportTitle = new Label();
 			lblServerType = new Label();
-			cmbServerType = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
+			cmbServerType = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox();
 			lblFailedAction = new Label();
-			cmbFailedAction = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
+			cmbFailedAction = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox();
 			lblSummary = new Label();
 			txtSummary = new TextBox();
 			lblWhatHappened = new Label();
@@ -46,20 +46,20 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			txtExpected = new TextBox();
 			lblEnglishReportWarning = new Label();
 			lblPrivacyNotice = new Label();
-			systemCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			systemCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			lblSystemTitle = new Label();
 			lblSynixVersion = new Label();
 			lblWindowsVersion = new Label();
 			lblVerification = new Label();
-			sendCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			sendCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			lblSendTitle = new Label();
 			lblConnectionStatus = new Label();
 			actionFlow = new FlowLayoutPanel();
-			btnConnectGitHub = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
-			btnDisconnectGitHub = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
-			btnSubmitGitHub = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
-			btnCopyReport = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
-			btnOpenDiscord = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			btnConnectGitHub = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
+			btnDisconnectGitHub = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
+			btnSubmitGitHub = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
+			btnCopyReport = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
+			btnOpenDiscord = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
 			lblReportStatus = new Label();
 			pageScroll.SuspendLayout();
 			reportCard.SuspendLayout();
@@ -406,12 +406,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		}
 
 		private Panel pageScroll = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard reportCard = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard reportCard = null!;
 		private Label lblReportTitle = null!;
 		private Label lblServerType = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbServerType = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox cmbServerType = null!;
 		private Label lblFailedAction = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbFailedAction = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox cmbFailedAction = null!;
 		private Label lblSummary = null!;
 		private TextBox txtSummary = null!;
 		private Label lblWhatHappened = null!;
@@ -420,20 +420,20 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		private TextBox txtExpected = null!;
 		private Label lblEnglishReportWarning = null!;
 		private Label lblPrivacyNotice = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard systemCard = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard systemCard = null!;
 		private Label lblSystemTitle = null!;
 		private Label lblSynixVersion = null!;
 		private Label lblWindowsVersion = null!;
 		private Label lblVerification = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard sendCard = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard sendCard = null!;
 		private Label lblSendTitle = null!;
 		private Label lblConnectionStatus = null!;
 		private FlowLayoutPanel actionFlow = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnConnectGitHub = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnDisconnectGitHub = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnSubmitGitHub = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnCopyReport = null!;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnOpenDiscord = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnConnectGitHub = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnDisconnectGitHub = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnSubmitGitHub = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnCopyReport = null!;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnOpenDiscord = null!;
 		private Label lblReportStatus = null!;
 	}
 }

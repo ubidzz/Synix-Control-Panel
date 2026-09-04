@@ -37,16 +37,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			titleBottomBorder = new Label();
 			bodyLayout = new TableLayoutPanel();
 			headerPanel = new Panel();
-			headerGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			headerGlyph = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			lblHeading = new Label();
 			lblSubtitle = new Label();
-			argumentsCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			argumentsCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			lblArgumentsTitle = new Label();
 			lblArgumentsHelp = new Label();
 			txtArgs = new TextBox();
 			actionPanel = new Panel();
 			lblTransparencyNote = new Label();
-			btnClose = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			btnClose = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
 			shellLayout.SuspendLayout();
 			titleBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)picLogo).BeginInit();
@@ -278,15 +278,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		private Label titleBottomBorder;
 		private TableLayoutPanel bodyLayout;
 		private Panel headerPanel;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph headerGlyph;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph headerGlyph;
 		private Label lblHeading;
 		private Label lblSubtitle;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard argumentsCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard argumentsCard;
 		private Label lblArgumentsTitle;
 		private Label lblArgumentsHelp;
 		private TextBox txtArgs;
 		private Panel actionPanel;
 		private Label lblTransparencyNote;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnClose;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnClose;
 	}
 }

@@ -37,17 +37,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			titleBottomBorder = new Label();
 			bodyLayout = new TableLayoutPanel();
 			headerPanel = new Panel();
-			headerGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			headerGlyph = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			lblWarningTitle = new Label();
 			lblWarningSubtitle = new Label();
 			lblGameName = new Label();
-			warningCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			warningCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			lblInstructionHeading = new Label();
 			txtWarningText = new RichTextBox();
 			actionPanel = new Panel();
 			lblActionHint = new Label();
-			btnNo = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
-			btnStart = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			btnNo = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
+			btnStart = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
 			shellLayout.SuspendLayout();
 			titleBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)picLogo).BeginInit();
@@ -297,16 +297,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		private Label titleBottomBorder;
 		private TableLayoutPanel bodyLayout;
 		private Panel headerPanel;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph headerGlyph;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph headerGlyph;
 		private Label lblWarningTitle;
 		private Label lblWarningSubtitle;
 		private Label lblGameName;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard warningCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard warningCard;
 		private Label lblInstructionHeading;
 		private RichTextBox txtWarningText;
 		private Panel actionPanel;
 		private Label lblActionHint;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnNo;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnStart;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnNo;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnStart;
 	}
 }

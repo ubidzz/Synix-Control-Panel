@@ -31,24 +31,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		private void InitializeComponent()
 		{
-			settingsCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			settingsCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			rootLayout = new TableLayoutPanel();
 			headerPanel = new Panel();
-			headerGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			headerGlyph = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			lblHeader = new Label();
 			lblCustomTitle = new Label();
-			chkCustomBackup = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
+			chkCustomBackup = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle();
 			lblCustomDescription = new Label();
-			backupPathHost = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			backupPathHost = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			txtBackupPath = new TextBox();
-			btnBrowseBackup = new Synix_Control_Panel.SynixApp.Design.ModernSettingsButton();
+			btnBrowseBackup = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton();
 			lblWarning = new Label();
 			separator = new Label();
 			retentionLayout = new TableLayoutPanel();
 			retentionTextLayout = new TableLayoutPanel();
 			lblMaxBackupsTitle = new Label();
 			lblMaxBackupsDescription = new Label();
-			numMaxBackups = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown();
+			numMaxBackups = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsNumericUpDown();
 			lblRange = new Label();
 			settingsCard.SuspendLayout();
 			rootLayout.SuspendLayout();
@@ -377,24 +377,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		#endregion
 
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCard;
 		private TableLayoutPanel rootLayout;
 		private Panel headerPanel;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph headerGlyph;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph headerGlyph;
 		private Label lblHeader;
 		private Label lblCustomTitle;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkCustomBackup;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle chkCustomBackup;
 		private Label lblCustomDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard backupPathHost;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard backupPathHost;
 		private TextBox txtBackupPath;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsButton btnBrowseBackup;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton btnBrowseBackup;
 		private Label lblWarning;
 		private Label separator;
 		private TableLayoutPanel retentionLayout;
 		private TableLayoutPanel retentionTextLayout;
 		private Label lblMaxBackupsTitle;
 		private Label lblMaxBackupsDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown numMaxBackups;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsNumericUpDown numMaxBackups;
 		private Label lblRange;
 	}
 }

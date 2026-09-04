@@ -31,37 +31,37 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		private void InitializeComponent()
 		{
-			settingsCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			settingsCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			cardLayout = new TableLayoutPanel();
-			settingGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			settingGlyph = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			textLayout = new TableLayoutPanel();
 			lblTitle = new Label();
 			lblDescription = new Label();
-			chkShowServerWindow = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
-			settingsCardDarkMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			chkShowServerWindow = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle();
+			settingsCardDarkMode = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			cardLayoutDarkMode = new TableLayoutPanel();
-			settingGlyphDarkMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			settingGlyphDarkMode = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			textLayoutDarkMode = new TableLayoutPanel();
 			lblTitleDarkMode = new Label();
 			lblDescriptionDarkMode = new Label();
-			chkDarkMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
-			settingsCardSteamDownloads = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			chkDarkMode = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle();
+			settingsCardSteamDownloads = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			cardLayoutSteamDownloads = new TableLayoutPanel();
-			settingGlyphSteamDownloads = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			settingGlyphSteamDownloads = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			textLayoutSteamDownloads = new TableLayoutPanel();
 			lblTitleSteamDownloads = new Label();
 			lblDescriptionSteamDownloads = new Label();
 			downloadControlsLayout = new TableLayoutPanel();
-			cmbSteamCmdDownloadMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
-			numSteamCmdDownloadLimit = new Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown();
+			cmbSteamCmdDownloadMode = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox();
+			numSteamCmdDownloadLimit = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsNumericUpDown();
 			lblSteamCmdDownloadUnit = new Label();
-			settingsCardLanguage = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			settingsCardLanguage = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			cardLayoutLanguage = new TableLayoutPanel();
-			settingGlyphLanguage = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			settingGlyphLanguage = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			textLayoutLanguage = new TableLayoutPanel();
 			lblTitleLanguage = new Label();
 			lblDescriptionLanguage = new Label();
-			cmbLanguage = new Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox();
+			cmbLanguage = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox();
 			settingsCard.SuspendLayout();
 			cardLayout.SuspendLayout();
 			textLayout.SuspendLayout();
@@ -593,36 +593,36 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		#endregion
 
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCard;
 		private TableLayoutPanel cardLayout;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyph;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph settingGlyph;
 		private TableLayoutPanel textLayout;
 		private Label lblTitle;
 		private Label lblDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkShowServerWindow;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCardDarkMode;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle chkShowServerWindow;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCardDarkMode;
 		private TableLayoutPanel cardLayoutDarkMode;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyphDarkMode;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph settingGlyphDarkMode;
 		private TableLayoutPanel textLayoutDarkMode;
 		private Label lblTitleDarkMode;
 		private Label lblDescriptionDarkMode;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkDarkMode;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCardSteamDownloads;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle chkDarkMode;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCardSteamDownloads;
 		private TableLayoutPanel cardLayoutSteamDownloads;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyphSteamDownloads;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph settingGlyphSteamDownloads;
 		private TableLayoutPanel textLayoutSteamDownloads;
 		private Label lblTitleSteamDownloads;
 		private Label lblDescriptionSteamDownloads;
 		private TableLayoutPanel downloadControlsLayout;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbSteamCmdDownloadMode;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsNumericUpDown numSteamCmdDownloadLimit;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox cmbSteamCmdDownloadMode;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsNumericUpDown numSteamCmdDownloadLimit;
 		private Label lblSteamCmdDownloadUnit;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCardLanguage;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCardLanguage;
 		private TableLayoutPanel cardLayoutLanguage;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyphLanguage;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph settingGlyphLanguage;
 		private TableLayoutPanel textLayoutLanguage;
 		private Label lblTitleLanguage;
 		private Label lblDescriptionLanguage;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsComboBox cmbLanguage;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsComboBox cmbLanguage;
 	}
 }

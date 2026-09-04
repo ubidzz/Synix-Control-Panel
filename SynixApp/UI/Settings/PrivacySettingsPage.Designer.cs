@@ -31,21 +31,21 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		private void InitializeComponent()
 		{
-			settingsCard = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			settingsCard = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			cardLayout = new TableLayoutPanel();
-			settingGlyph = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			settingGlyph = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			textLayout = new TableLayoutPanel();
 			lblTitle = new Label();
 			lblDescription = new Label();
-			chkPrivacyMode = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
-			settingsCardDDoS = new Synix_Control_Panel.SynixApp.Design.ModernSettingsCard();
+			chkPrivacyMode = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle();
+			settingsCardDDoS = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard();
 			cardLayoutDDoS = new TableLayoutPanel();
-			settingGlyphDDoS = new Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph();
+			settingGlyphDDoS = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph();
 			textLayoutDDoS = new TableLayoutPanel();
 			lblTitleDDoS = new Label();
 			lblDescriptionDDoS = new Label();
 			lblExperimentalBadge = new Label();
-			chkCheckForDDoS = new Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle();
+			chkCheckForDDoS = new Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle();
 			settingsCard.SuspendLayout();
 			cardLayout.SuspendLayout();
 			textLayout.SuspendLayout();
@@ -304,20 +304,20 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		#endregion
 
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCard;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCard;
 		private TableLayoutPanel cardLayout;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyph;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph settingGlyph;
 		private TableLayoutPanel textLayout;
 		private Label lblTitle;
 		private Label lblDescription;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkPrivacyMode;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsCard settingsCardDDoS;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle chkPrivacyMode;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsCard settingsCardDDoS;
 		private TableLayoutPanel cardLayoutDDoS;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsGlyph settingGlyphDDoS;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsGlyph settingGlyphDDoS;
 		private TableLayoutPanel textLayoutDDoS;
 		private Label lblTitleDDoS;
 		private Label lblDescriptionDDoS;
 		private Label lblExperimentalBadge;
-		private Synix_Control_Panel.SynixApp.Design.ModernSettingsToggle chkCheckForDDoS;
+		private Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsToggle chkCheckForDDoS;
 	}
 }
