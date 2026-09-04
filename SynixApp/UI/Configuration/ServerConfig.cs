@@ -217,9 +217,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 					ref preference,
 					sizeof(int));
 			}
-			catch
+			catch (Exception suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 

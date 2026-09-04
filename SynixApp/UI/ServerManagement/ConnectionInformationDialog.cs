@@ -212,7 +212,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			if (string.IsNullOrWhiteSpace(address))
 				return;
 			try { Clipboard.SetText(address); }
-			catch { }
+			catch (Exception suppressedException)
+			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+			}
 		}
 	}
 }

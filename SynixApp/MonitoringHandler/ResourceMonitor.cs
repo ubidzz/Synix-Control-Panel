@@ -96,9 +96,9 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 								lastCpuTime[proc.Id] = currentCpuTime;
 								lastCheckTime[proc.Id] = currentTime;
 							}
-							catch
+							catch (Exception suppressedException)
 							{
-
+								Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 							}
 						}
 						catch

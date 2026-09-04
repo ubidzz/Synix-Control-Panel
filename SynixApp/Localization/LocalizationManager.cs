@@ -574,8 +574,9 @@ internal static class LocalizationManager
 						requestedCulture.TwoLetterISOLanguageName,
 						StringComparison.OrdinalIgnoreCase));
 			}
-			catch (CultureNotFoundException)
+			catch (CultureNotFoundException suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 
@@ -614,8 +615,9 @@ internal static class LocalizationManager
 				}
 			}
 		}
-		catch (IOException)
+		catch (IOException suppressedException)
 		{
+			Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 		}
 
 		try
@@ -631,12 +633,14 @@ internal static class LocalizationManager
 					Path.GetFileName(directory));
 			}
 		}
-		catch (IOException)
+		catch (IOException suppressedException)
 		{
+			Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 		}
-		catch (UnauthorizedAccessException)
-		{
-		}
+catch (UnauthorizedAccessException suppressedException)
+{
+	Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+}
 
 		return languages
 			.OrderBy(language => language.Code == DefaultLanguageCode ? 0 : 1)

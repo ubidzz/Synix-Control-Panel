@@ -71,7 +71,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			copyButton.Click += (_, _) =>
 			{
 				try { Clipboard.SetText(_error.TechnicalDetails); }
-				catch { }
+				catch (Exception suppressedException)
+				{
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+				}
 			};
 
 			ModernSettingsButton closeButton = new()

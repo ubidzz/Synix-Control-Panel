@@ -313,12 +313,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					if (Directory.Exists(root))
 						Directory.Delete(root, true);
 				}
-				catch (IOException)
+				catch (IOException suppressedException)
 				{
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
-				catch (UnauthorizedAccessException)
-				{
-				}
+catch (UnauthorizedAccessException suppressedException)
+{
+	Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+}
 			}
 		}
 

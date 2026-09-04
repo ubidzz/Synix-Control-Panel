@@ -187,8 +187,9 @@ namespace Synix_Control_Panel.SynixApp
 			{
 				SynixSessionRecovery.BeginSession();
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 
 			try
@@ -227,9 +228,9 @@ namespace Synix_Control_Panel.SynixApp
 			{
 				_singleInstanceMutex?.ReleaseMutex();
 			}
-			catch (ApplicationException)
+			catch (ApplicationException suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 			finally
 			{
@@ -261,9 +262,9 @@ namespace Synix_Control_Panel.SynixApp
 				LocalizedMessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",
 							"Engine Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 	}

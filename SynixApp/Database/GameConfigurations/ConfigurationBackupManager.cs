@@ -197,8 +197,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						else if (!existed && File.Exists(target))
 							File.Delete(target);
 					}
-					catch
+					catch (Exception suppressedException)
 					{
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
 				return new(false, 0, $"The backup could not be restored. Existing files were rolled back when possible. {exception.Message}");

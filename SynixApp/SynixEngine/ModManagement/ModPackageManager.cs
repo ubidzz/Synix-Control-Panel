@@ -982,8 +982,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					}
 				}
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 			return "Not reported";
 		}
@@ -1042,8 +1043,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				processIsRunning = Servers.ReconcileActiveServerProcesses(server, forceDiscovery: true);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 			if (processIsRunning || server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
@@ -1063,8 +1065,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					else
 						TryDeleteFile(file.DestinationPath);
 				}
-				catch
+				catch (Exception suppressedException)
 				{
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
 			}
 		}
@@ -1079,8 +1082,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					File.Delete(path);
 				}
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 
@@ -1091,8 +1095,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				if (Directory.Exists(path))
 					Directory.Delete(path, true);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 

@@ -623,8 +623,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 							File.Delete(targetPath);
 						}
 					}
-					catch
+					catch (Exception suppressedException)
 					{
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
 
@@ -647,8 +648,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 							File.Delete(rollbackPath);
 						}
 					}
-					catch
+					catch (Exception suppressedException)
 					{
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
 			}

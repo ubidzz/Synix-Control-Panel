@@ -195,9 +195,9 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					if (File.Exists(temporaryPath))
 						File.Delete(temporaryPath);
 				}
-				catch
+				catch (Exception suppressedException)
 				{
-
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
 			}
 		}
@@ -258,9 +258,9 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			{
 				await _logWorkerTask.ConfigureAwait(false);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 
@@ -339,15 +339,15 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					{
 						oldLogFile.Delete();
 					}
-					catch
+					catch (Exception suppressedException)
 					{
-
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
 			}
-			catch
+			catch (Exception suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 

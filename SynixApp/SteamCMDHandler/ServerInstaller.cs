@@ -90,9 +90,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					{
 						logCallback?.Invoke(line);
 					}
-					catch
+					catch (Exception suppressedException)
 					{
-
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
 			});
@@ -234,9 +234,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					heartbeatTask.GetAwaiter().GetResult();
 				}
-				catch (OperationCanceledException)
+				catch (OperationCanceledException suppressedException)
 				{
-
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
 				catch (Exception ex)
 				{
@@ -253,9 +253,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					dashboardWriter.GetAwaiter().GetResult();
 				}
-				catch
+				catch (Exception suppressedException)
 				{
-
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
 
 				SetMainWindowTitle("Synix Control Panel");
@@ -1056,7 +1056,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 				catch (OperationCanceledException)
 				{
-					try { installer.Kill(entireProcessTree: true); } catch { }
+					try { installer.Kill(entireProcessTree: true); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
 					throw new TimeoutException("The Forge installer did not finish within 10 minutes.");
 				}
 
@@ -1072,7 +1072,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 
 				_ = BuildForgeLaunchCommand(server, QuoteCommandArgument(javaExecutable), forgeArtifactVersion);
-				try { File.Delete(installerPath); } catch { }
+				try { File.Delete(installerPath); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
 				logCallback?.Invoke("[FORGE] Server loader installed successfully.");
 				return 0;
 			}
@@ -1126,7 +1126,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 				catch (OperationCanceledException)
 				{
-					try { installer.Kill(entireProcessTree: true); } catch { }
+					try { installer.Kill(entireProcessTree: true); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
 					throw new TimeoutException("The NeoForge installer did not finish within 10 minutes.");
 				}
 
@@ -1142,7 +1142,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					server,
 					QuoteCommandArgument(javaExecutable),
 					neoForgeArtifactVersion);
-				try { File.Delete(installerPath); } catch { }
+				try { File.Delete(installerPath); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
 				logCallback?.Invoke("[NEOFORGE] Server loader installed successfully.");
 				return 0;
 			}

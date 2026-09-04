@@ -484,8 +484,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					}
 				}
 			}
-			catch (UnauthorizedAccessException)
+			catch (UnauthorizedAccessException suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 
 			string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
@@ -500,8 +501,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				if (!process.HasExited)
 					process.Kill(entireProcessTree: true);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 

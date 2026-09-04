@@ -112,9 +112,18 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 						totalUsage.TotalCpuPercent += cpuPercentage;
 						totalUsage.TotalRamMB += ramGb * 1024.0;
 					}
-					catch (InvalidOperationException) { }
-					catch (Win32Exception) { }
-					catch (ArgumentException) { }
+					catch (InvalidOperationException suppressedException)
+					{
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+					}
+catch (Win32Exception suppressedException)
+{
+	Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+}
+catch (ArgumentException suppressedException)
+{
+	Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+}
 				}
 			}
 

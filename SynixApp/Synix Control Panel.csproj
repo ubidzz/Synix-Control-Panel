@@ -125,9 +125,6 @@
 	  <Compile Update="UI\ServerSetup\ServerSettingsInstallPage.Designer.cs">
 	    <DependentUpon>ServerSettingsInstallPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSetup\ServerSettingsGUI.PageControls.cs">
-	    <DependentUpon>ServerSettingsGUI.cs</DependentUpon>
-	  </Compile>
 	  <Compile Update="UI\Settings\BackupSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
