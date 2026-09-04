@@ -571,7 +571,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					picker.FileName,
 					review.PackageSha256,
 					review.AntivirusStatus);
-				MainGUI.Instance?.AppendLog(
+				ApplicationLogService.Write(
 					$"[ADD-ONS] Installed {result.DisplayName} ({result.InstalledFileCount} file(s)) for {_server.ServerName}.",
 					Color.LimeGreen);
 				RefreshInventory();
@@ -626,7 +626,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 						change.Rollback();
 						throw new IOException("Synix could not save the updated provider mod ID list.");
 					}
-					MainGUI.Instance?.AppendLog(
+					ApplicationLogService.Write(
 						$"[ADD-ONS] Removed provider mod ID {item.Name} from {_server.ServerName}.",
 						Color.LimeGreen);
 					RefreshInventory();
@@ -634,7 +634,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				}
 
 				string removed = ModPackageManager.Remove(_server, item.InstallationId);
-				MainGUI.Instance?.AppendLog(
+				ApplicationLogService.Write(
 					$"[ADD-ONS] Removed {removed} from {_server.ServerName} using its Synix rollback record.",
 					Color.LimeGreen);
 				RefreshInventory();
@@ -677,7 +677,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					throw new IOException("Synix could not save the provider mod ID list.");
 				}
 				saved = true;
-				MainGUI.Instance?.AppendLog(
+				ApplicationLogService.Write(
 					$"[ADD-ONS] Saved {dialog.ModIds.Count} ordered {target.ProviderName} mod ID(s) for {_server.ServerName}.",
 					Color.LimeGreen);
 				RefreshInventory();
@@ -715,7 +715,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				string version = await OxideRuntimeManager.InstallOrUpdateAsync(
 					_server,
 					definition,
-					(message, color) => MainGUI.Instance?.AppendLog(message, color));
+					(message, color) => ApplicationLogService.Write(message, color));
 				_server.ServerFrameworkVersion = version;
 				FileHandler.SaveServers();
 				RefreshInventory();

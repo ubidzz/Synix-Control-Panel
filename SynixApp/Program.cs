@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Localization;
+using Synix_Control_Panel.SynixApp.UI.Dashboard;
 using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.SynixApp

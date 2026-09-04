@@ -23,6 +23,48 @@ namespace Synix_Control_Panel.Tests;
 
 public sealed class ServerManagementEngineTests
 {
+	[Fact]
+	public void CoreLoggingPublishesWithoutADashboardReference()
+	{
+		ApplicationLogEventArgs? received = null;
+		EventHandler<ApplicationLogEventArgs> handler = (_, eventArgs) =>
+			received = eventArgs;
+		ApplicationUiService.LogRequested += handler;
+
+		try
+		{
+			Core.Instance.Log("Neutral application log", Color.Cyan, true);
+
+			Assert.NotNull(received);
+			Assert.Equal("Neutral application log", received.Message);
+			Assert.Equal(Color.Cyan, received.Color);
+			Assert.True(received.Bold);
+		}
+		finally
+		{
+			ApplicationUiService.LogRequested -= handler;
+		}
+	}
+
+	[Fact]
+	public void GridRefreshPublishesWithoutADashboardReference()
+	{
+		int refreshCount = 0;
+		EventHandler handler = (_, _) => refreshCount++;
+		ApplicationUiService.GridRefreshRequested += handler;
+
+		try
+		{
+			Core.Instance.UpdateGridStatus();
+
+			Assert.Equal(1, refreshCount);
+		}
+		finally
+		{
+			ApplicationUiService.GridRefreshRequested -= handler;
+		}
+	}
+
 	[Theory]
 	[Trait("Category", "Regression")]
 	[InlineData("RESTART")]
@@ -801,7 +843,7 @@ public sealed class ServerManagementEngineTests
 			QueryPort = 27015,
 			Status = Core.StatusManager.GetStatus(Core.ServerState.Stopped)
 		};
-		MainGUI.serverList.Add(stopped);
+		ServerRegistry.Servers.Add(stopped);
 
 		try
 		{
@@ -811,7 +853,7 @@ public sealed class ServerManagementEngineTests
 		}
 		finally
 		{
-			MainGUI.serverList.Remove(stopped);
+			ServerRegistry.Servers.Remove(stopped);
 		}
 	}
 
@@ -841,8 +883,8 @@ public sealed class ServerManagementEngineTests
 			Game = "Icon Test Game",
 			ServerName = "Second"
 		};
-		MainGUI.serverList.Add(first);
-		MainGUI.serverList.Add(second);
+		ServerRegistry.Servers.Add(first);
+		ServerRegistry.Servers.Add(second);
 
 		try
 		{
@@ -851,13 +893,13 @@ public sealed class ServerManagementEngineTests
 			Assert.Same(first.DisplayIcon, second.DisplayIcon);
 			Assert.Same(
 				first.DisplayIcon,
-				MainGUI.ServerIconsCache["Icon Test Game"]);
+				ServerIconCache.Icons["Icon Test Game"]);
 		}
 		finally
 		{
-			MainGUI.serverList.Remove(first);
-			MainGUI.serverList.Remove(second);
-			if (MainGUI.ServerIconsCache.Remove(
+			ServerRegistry.Servers.Remove(first);
+			ServerRegistry.Servers.Remove(second);
+			if (ServerIconCache.Icons.Remove(
 				"Icon Test Game",
 				out Image? refreshedIcon))
 			{

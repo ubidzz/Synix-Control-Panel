@@ -196,26 +196,17 @@ namespace Synix_Control_Panel.SynixEngine
 			if (server.IsFirstBoot)
 			{
 				DialogResult result = DialogResult.Cancel;
-
-				MainGUI? mainWindow = MainGUI.Instance;
-				if (mainWindow != null && mainWindow.InvokeRequired)
-				{
-					mainWindow.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
-					mainWindow.Invoke((Action)(() =>
-					{
-						using (var warningForm = new WarningDatabase(server))
-						{
-							result = warningForm.ShowDialog(mainWindow);
-						}
-					}));
-				}
-				else
+				ApplicationLogService.Write(
+					$"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...",
+					Color.Yellow);
+				ApplicationUiService.Invoke(() =>
 				{
 					using (var warningForm = new WarningDatabase(server))
 					{
-						result = warningForm.ShowDialog(MainGUI.Instance);
+						result = warningForm.ShowDialog(
+							ApplicationUiService.DialogOwner);
 					}
-				}
+				});
 
 				return result != DialogResult.OK;
 			}
@@ -227,13 +218,19 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!CanServerStart(server, out string errorMessage))
 			{
-				MainGUI.Instance?.Invoke((Action)(() =>
-				{
-					MainGUI.Instance.AppendLog($"[🚨 ERROR] {errorMessage}", Color.Red, true);
-				}));
+				ApplicationLogService.Write(
+					$"[🚨 ERROR] {errorMessage}",
+					Color.Red,
+					true);
 
 				if (showDialog)
-					PlainEnglishErrorDialog.ShowError(MainGUI.Instance, "start the server", errorMessage);
+				{
+					ApplicationUiService.Invoke(() =>
+						PlainEnglishErrorDialog.ShowError(
+							ApplicationUiService.DialogOwner,
+							"start the server",
+							errorMessage));
+				}
 
 				server.Status = "Needs Repair";
 

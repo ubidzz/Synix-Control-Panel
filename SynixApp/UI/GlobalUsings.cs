@@ -2,7 +2,6 @@
 // moving presentation types back into engine or data namespaces.
 global using Synix_Control_Panel.SynixEngine;
 global using Synix_Control_Panel.SynixApp.UI.Configuration;
-global using Synix_Control_Panel.SynixApp.UI.Dashboard;
 global using Synix_Control_Panel.SynixApp.UI.Diagnostics;
 global using Synix_Control_Panel.SynixApp.UI.Discord;
 global using Synix_Control_Panel.SynixApp.UI.GameDefinitions;

@@ -50,7 +50,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 		private void LoadInstalledServers()
 		{
-			InstalledServerOption[] servers = MainGUI.serverList
+			InstalledServerOption[] servers = ServerRegistry.Servers
 				.Where(server => string.Equals(
 					GameDatabase.GetCanonicalGameName(server.Game),
 					_game,

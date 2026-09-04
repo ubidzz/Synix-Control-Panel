@@ -168,7 +168,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 					TriggerGlobalDDoSAlert();
 
-					MainGUI.Instance?.AppendLog($"[🚨 SECURITY] NETWORK FLOOD: {currentBps / 1024 / 1024} MB/s | System CPU: {cpuUsage:0}%", Color.Maroon);
+					ApplicationLogService.Write($"[🚨 SECURITY] NETWORK FLOOD: {currentBps / 1024 / 1024} MB/s | System CPU: {cpuUsage:0}%", Color.Maroon);
 				}
 			}
 			else

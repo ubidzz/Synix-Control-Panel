@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 				Progress<string> progress = new(message => statusLabel.Text = message);
 				GameServer[] servers = IsReadinessMode
 					? [_readinessServer!]
-					: MainGUI.serverList.ToArray();
+					: ServerRegistry.Servers.ToArray();
 				_report = await Task.Run(() => SynixTroubleshooter.RunAsync(
 					servers,
 					checkForUpdates: !IsReadinessMode,

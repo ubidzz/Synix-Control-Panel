@@ -172,7 +172,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				server.IsProbing = false;
 				server.LastProbeTime = null;
 				server.Status = StatusManager.GetStatus(ServerState.Starting);
-				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+				Core.Instance.UpdateGridStatus();
 
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";

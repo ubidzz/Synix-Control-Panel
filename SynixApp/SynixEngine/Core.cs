@@ -53,18 +53,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public void Log(string message, Color? color = null, bool bold = false)
 		{
-			if (MainGUI.Instance == null)
-			{
-				FileHandler.QueueLog(
-					"Synix_Background_Service",
-					$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}");
-				return;
-			}
-
-			MainGUI.Instance.Invoke((Action)(() =>
-			{
-				MainGUI.Instance.AppendLog(message, color ?? Color.White, bold);
-			}));
+			ApplicationLogService.Write(message, color, bold);
 		}
 
 		public Task SendDiscordAlert(GameServer server, string title, string message, Color color) =>

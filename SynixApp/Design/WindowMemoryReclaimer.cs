@@ -27,7 +27,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 		public static void Track(Form form)
 		{
-			if (form is MainGUI || form.IsDisposed)
+			if (ApplicationUiService.IsMainWindow(form) || form.IsDisposed)
 				return;
 
 			Registrations.GetValue(form, RegisterWindow);
@@ -52,20 +52,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (Interlocked.Exchange(ref _cleanupScheduled, 1) != 0)
 				return;
 
-			MainGUI? mainWindow = MainGUI.Instance;
-			if (mainWindow != null &&
-				!mainWindow.IsDisposed &&
-				mainWindow.IsHandleCreated)
-			{
-				try
-				{
-					mainWindow.BeginInvoke((MethodInvoker)ReleaseClosedWindowMemory);
-					return;
-				}
-				catch (InvalidOperationException)
-				{
-				}
-			}
+			if (ApplicationUiService.TryPost(ReleaseClosedWindowMemory))
+				return;
 
 			ThreadPool.QueueUserWorkItem(_ => ReleaseClosedWindowMemory());
 		}

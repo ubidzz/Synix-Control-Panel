@@ -156,10 +156,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 				: detection.Game.QueryPort;
 			_gamePort.Value = ExistingServerImport.FindAvailablePort(
 				defaultGamePort,
-				MainGUI.serverList);
+				ServerRegistry.Servers);
 			_queryPort.Value = ExistingServerImport.FindAvailablePort(
 				defaultQueryPort,
-				MainGUI.serverList.Concat([new GameServer { Port = (int)_gamePort.Value }]));
+				ServerRegistry.Servers.Concat([new GameServer { Port = (int)_gamePort.Value }]));
 		}
 
 		private async void Import_Click(object? sender, EventArgs eventArgs)
@@ -177,15 +177,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 					_nameBox.Text,
 					(int)_gamePort.Value,
 					(int)_queryPort.Value,
-					MainGUI.serverList,
+					ServerRegistry.Servers,
 					detection.MinecraftEdition);
-				MainGUI.serverList.Add(ImportedServer);
+				ServerRegistry.Servers.Add(ImportedServer);
 				await Core.RefreshServerIconAsync(ImportedServer);
 				if (!Synix_Control_Panel.SynixApp.FileFolderHandler.FileHandler.SaveServers())
 					throw new IOException("Synix could not save the imported server.");
 
 				await Core.Instance.RebindProcesses();
-				MainGUI.Instance?.AppendLog(
+				ApplicationLogService.Write(
 					$"[IMPORT] Registered {ImportedServer.ServerName} without changing its existing files. Review Server Settings before its first Synix-managed start.",
 					SettingsPalette.Success,
 					true);
@@ -195,7 +195,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			catch (Exception exception)
 			{
 				if (ImportedServer != null)
-					MainGUI.serverList.Remove(ImportedServer);
+					ServerRegistry.Servers.Remove(ImportedServer);
 				ImportedServer = null;
 				PlainEnglishErrorDialog.ShowError(this, "import the existing server", exception.Message);
 				_importButton.Enabled = true;
@@ -211,7 +211,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 		{
 			string baseName = $"Imported {game}";
 			string candidate = baseName;
-			for (int suffix = 2; MainGUI.serverList.Any(server => server.ServerName.Equals(
+			for (int suffix = 2; ServerRegistry.Servers.Any(server => server.ServerName.Equals(
 				candidate,
 				StringComparison.OrdinalIgnoreCase)); suffix++)
 			{

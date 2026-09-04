@@ -61,24 +61,13 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (showDialog)
 			{
-				void ShowSetupDialog()
-				{
+				ApplicationUiService.Invoke(() =>
 					LocalizedMessageBox.Show(
-						MainGUI.Instance,
+						ApplicationUiService.DialogOwner,
 						message,
 						"Additional Game Files Required",
 						MessageBoxButtons.OK,
-						MessageBoxIcon.Information);
-				}
-
-				if (MainGUI.Instance?.InvokeRequired == true)
-				{
-					MainGUI.Instance.Invoke(ShowSetupDialog);
-				}
-				else
-				{
-					ShowSetupDialog();
-				}
+						MessageBoxIcon.Information));
 			}
 
 			return false;

@@ -361,8 +361,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				? "Live CPU usage  •  Updates twice per second"
 				: "Waiting for a running server process";
 
-			double totalRam = MainGUI.Instance != null
-				? MainGUI.Instance.systemTotalRamGb
+			double totalRam = Core.TotalRamGb > 0
+				? Core.TotalRamGb
 				: 32.0;
 			if (totalRam <= 0)
 			{

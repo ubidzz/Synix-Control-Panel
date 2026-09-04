@@ -136,17 +136,8 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 
-			MainGUI? mainWindow = MainGUI.Instance;
-			if (mainWindow != null &&
-				!mainWindow.IsDisposed &&
-				mainWindow.IsHandleCreated &&
-				mainWindow.InvokeRequired)
-			{
-				return (bool)mainWindow.Invoke(
-					new Func<bool>(() => ApplyServerIcon(server, iconPath)));
-			}
-
-			return ApplyServerIcon(server, iconPath);
+			return ApplicationUiService.Invoke(
+				() => ApplyServerIcon(server, iconPath));
 		}
 
 		internal static bool ApplyServerIcon(GameServer server, string iconPath)
@@ -168,7 +159,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			string canonicalGameName = GameDatabase.GetCanonicalGameName(server.Game);
-			MainGUI.ServerIconsCache[canonicalGameName] = refreshedIcon;
+			ServerIconCache.Icons[canonicalGameName] = refreshedIcon;
 			server.DisplayIcon = refreshedIcon;
 			foreach (GameServer installedServer in ServerRegistry.Snapshot().Where(item =>
 				string.Equals(

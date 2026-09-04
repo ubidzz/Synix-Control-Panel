@@ -189,7 +189,7 @@ namespace Synix_Control_Panel.SynixEngine
 				try
 				{
 					using ServerConfig editor = new(configurationFiles, server);
-					editor.ShowDialog(MainGUI.Instance);
+					editor.ShowDialog(ApplicationUiService.DialogOwner);
 				}
 				catch (Exception exception)
 				{
@@ -198,7 +198,7 @@ namespace Synix_Control_Panel.SynixEngine
 						Color.Red,
 						true);
 					PlainEnglishErrorDialog.ShowError(
-						MainGUI.Instance,
+						ApplicationUiService.DialogOwner,
 						"open the configuration editor",
 						exception.ToString());
 				}
@@ -422,9 +422,10 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 			};
 
-			TaskDialogButton result = MainGUI.Instance == null
+			IWin32Window? dialogOwner = ApplicationUiService.DialogOwner;
+			TaskDialogButton result = dialogOwner == null
 				? TaskDialog.ShowDialog(page)
-				: TaskDialog.ShowDialog(MainGUI.Instance, page);
+				: TaskDialog.ShowDialog(dialogOwner, page);
 			if (result != TaskDialogButton.Yes)
 				return false;
 
@@ -621,7 +622,7 @@ namespace Synix_Control_Panel.SynixEngine
 				int exitCode = await Task.Run(() =>
 				{
 					return ServerInstaller.Install(server, gameData,
-						msg => { MainGUI.Instance?.BeginInvoke((Action)(() => Log(msg))); },
+						msg => Log(msg),
 						pid =>
 						{
 							server.SteamPID = pid;
@@ -881,7 +882,7 @@ namespace Synix_Control_Panel.SynixEngine
 				blueprint.Game,
 				server.SteamAccountName,
 				restoringImportedServer);
-			if (loginDialog.ShowDialog(MainGUI.Instance) != DialogResult.OK)
+			if (loginDialog.ShowDialog(ApplicationUiService.DialogOwner) != DialogResult.OK)
 			{
 				Log(
 					restoringImportedServer
@@ -955,8 +956,7 @@ namespace Synix_Control_Panel.SynixEngine
 					ServerInstaller.AuthenticateSteamAccount(
 						server,
 						blueprint,
-						message => MainGUI.Instance?.BeginInvoke(
-							(Action)(() => Log(message))),
+						message => Log(message),
 						pid =>
 						{
 							server.SteamPID = pid;
@@ -1198,7 +1198,7 @@ namespace Synix_Control_Panel.SynixEngine
 					if (showInteractiveErrors)
 					{
 						PlainEnglishErrorDialog.ShowError(
-							MainGUI.Instance,
+							ApplicationUiService.DialogOwner,
 							"start the server safely",
 							blocked.Details);
 					}
@@ -1271,13 +1271,13 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception ex)
 			{
 				Log($"[🚨 CRITICAL ENGINE ERROR] Sequence failed for {server.ServerName}: {ex.Message}", Color.Red, true);
-				if (currentContext == StartContext.Manual && MainGUI.Instance != null)
+				if (currentContext == StartContext.Manual && ApplicationUiService.IsAvailable)
 				{
-					MainGUI.Instance.BeginInvoke((Action)(() =>
+					ApplicationUiService.TryPost(() =>
 						PlainEnglishErrorDialog.ShowError(
-							MainGUI.Instance,
+							ApplicationUiService.DialogOwner,
 							"complete the server action",
-							ex.ToString())));
+							ex.ToString()));
 				}
 				return false;
 			}

@@ -157,27 +157,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 			void SetMainWindowTitle(string title)
 			{
-				MainGUI? mainWindow = MainGUI.Instance;
-
-				if (mainWindow == null ||
-					mainWindow.IsDisposed ||
-					!mainWindow.IsHandleCreated)
-				{
-					return;
-				}
-
-				try
-				{
-					mainWindow.BeginInvoke(new Action(() =>
-					{
-						if (!mainWindow.IsDisposed)
-							mainWindow.Text = title;
-					}));
-				}
-				catch (InvalidOperationException)
-				{
-
-				}
+				ApplicationUiService.SetMainWindowTitle(title);
 			}
 
 			CancellationTokenSource heartbeatCts =
@@ -622,26 +602,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 		private static void SetMainWindowTitle(string title)
 		{
-			MainGUI? mainWindow = MainGUI.Instance;
-
-			if (mainWindow == null ||
-				mainWindow.IsDisposed ||
-				!mainWindow.IsHandleCreated)
-			{
-				return;
-			}
-
-			try
-			{
-				mainWindow.BeginInvoke(new Action(() =>
-				{
-					if (!mainWindow.IsDisposed)
-						mainWindow.Text = title;
-				}));
-			}
-			catch (InvalidOperationException)
-			{
-			}
+			ApplicationUiService.SetMainWindowTitle(title);
 		}
 
 		private static async Task<int> InstallDirectDownloadAsync(GameServer server, GameInfo blueprint, Action<string> logCallback)
@@ -905,15 +866,16 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 							System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.No;
 
-							MainGUI.Instance?.Invoke((Action)(() =>
+							if (ApplicationUiService.IsAvailable)
 							{
-								result = LocalizedMessageBox.Show(
-									MainGUI.Instance,
-									$"This server requires Java {requiredJava}, but your system has {javaStatus}.\n\nWould you like Synix to automatically download a portable Java {requiredJava} runtime specifically for this server?\n\n(This is completely safe and will not change your computer's global Java settings).",
-									"Java Version Mismatch",
-									System.Windows.Forms.MessageBoxButtons.YesNo,
-									System.Windows.Forms.MessageBoxIcon.Question);
-							}));
+								result = ApplicationUiService.Invoke(() =>
+									LocalizedMessageBox.Show(
+										ApplicationUiService.DialogOwner,
+										$"This server requires Java {requiredJava}, but your system has {javaStatus}.\n\nWould you like Synix to automatically download a portable Java {requiredJava} runtime specifically for this server?\n\n(This is completely safe and will not change your computer's global Java settings).",
+										"Java Version Mismatch",
+										System.Windows.Forms.MessageBoxButtons.YesNo,
+										System.Windows.Forms.MessageBoxIcon.Question));
+							}
 
 							if (result == System.Windows.Forms.DialogResult.Yes)
 							{

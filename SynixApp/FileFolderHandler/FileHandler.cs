@@ -54,14 +54,14 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 				WriteTextAtomically(savedPath, jsonString);
 
-				MainGUI.Instance?.AppendLog(
+				ApplicationLogService.Write(
 					$"[📜 INFO] JSON saved successfully to {savedPath}.",
 					Color.DarkSeaGreen);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				MainGUI.Instance?.AppendLog("[🚨 ERROR] Save Error: " + ex.Message);
+				ApplicationLogService.Write("[🚨 ERROR] Save Error: " + ex.Message);
 				return false;
 			}
 		}
@@ -94,17 +94,17 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 								if (File.Exists(iconPath))
 								{
-									if (!MainGUI.ServerIconsCache.ContainsKey(server.Game))
+									if (!ServerIconCache.Icons.ContainsKey(server.Game))
 									{
 										using (var ms = new MemoryStream(File.ReadAllBytes(iconPath)))
 										{
 											using (var tempImage = System.Drawing.Image.FromStream(ms))
 											{
-												MainGUI.ServerIconsCache[server.Game] = new Bitmap(tempImage);
+												ServerIconCache.Icons[server.Game] = new Bitmap(tempImage);
 											}
 										}
 									}
-									server.DisplayIcon = MainGUI.ServerIconsCache[server.Game];
+									server.DisplayIcon = ServerIconCache.Icons[server.Game];
 								}
 							}
 							ServerRegistry.Servers.Add(server);
@@ -119,14 +119,14 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 							{
 								if (migrationSummary.MigratedServerCount > 0)
 								{
-									MainGUI.Instance?.AppendLog(
+									ApplicationLogService.Write(
 										$"[MIGRATION] Upgraded {migrationSummary.MigratedServerCount} server record(s) to data schema {migrationSummary.TargetVersion}. The original file was backed up before saving.",
 										Color.DarkSeaGreen);
 								}
 
 								if (migrationSummary.MigratedPasswordServerCount > 0)
 								{
-									MainGUI.Instance?.AppendLog(
+									ApplicationLogService.Write(
 										$"[MIGRATION] Protected saved passwords and Discord webhooks for {migrationSummary.MigratedPasswordServerCount} server(s) with Windows user encryption.",
 										Color.DarkSeaGreen);
 								}
@@ -136,7 +136,7 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				}
 				catch (Exception ex)
 				{
-					MainGUI.Instance?.AppendLog($"[🚨 ERROR] Load failed: {ex.Message}");
+					ApplicationLogService.Write($"[🚨 ERROR] Load failed: {ex.Message}");
 				}
 			}
 		}

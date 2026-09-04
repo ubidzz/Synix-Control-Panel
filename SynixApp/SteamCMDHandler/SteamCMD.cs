@@ -26,8 +26,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			try
 			{
 				logCallback?.Invoke($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange);
-				if (MainGUI.Instance != null)
-					MainGUI.Instance.isDownloadActive = true;
+				Core.Instance.isDownloadActive = true;
 				logCallback?.Invoke("[SYNIX] Checking SteamCMD dependencies...", Color.Cyan);
 
 				if (!Directory.Exists(Core.SteamCmdPath))
@@ -91,7 +90,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 			finally
 			{
-				if (MainGUI.Instance != null) MainGUI.Instance.isDownloadActive = false;
+				Core.Instance.isDownloadActive = false;
 				logCallback?.Invoke($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange);
 			}
 		}

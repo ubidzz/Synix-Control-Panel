@@ -346,7 +346,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 
 		private static double GetTotalSystemRamGb()
 		{
-			double totalRamGb = MainGUI.Instance?.systemTotalRamGb ?? 32.0;
+			double totalRamGb = Core.TotalRamGb > 0 ? Core.TotalRamGb : 32.0;
 			return totalRamGb > 0 ? totalRamGb : 32.0;
 		}
 

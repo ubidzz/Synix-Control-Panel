@@ -280,7 +280,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				}
 				catch (Exception exception)
 				{
-					MainGUI.Instance?.AppendLog(
+					ApplicationLogService.Write(
 						$"[ADD-ON PROFILE] Ignored {Path.GetFileName(file)}: {exception.Message}",
 						Color.Orange);
 				}

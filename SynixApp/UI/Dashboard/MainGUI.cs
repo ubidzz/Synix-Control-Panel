@@ -27,12 +27,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 {
 	public partial class MainGUI : Form
 	{
-		public static BindingList<GameServer> serverList { get; } = ServerRegistry.Servers;
+		private static BindingList<GameServer> serverList { get; } = ServerRegistry.Servers;
 		private readonly BindingList<GameServer> _visibleServers = [];
-		public bool isDownloadActive = false;
 		private static bool isInitializing = false;
-		public static MainGUI? Instance { get; private set; }
-		public double systemTotalRamGb = 128;
 		private int chartTickCounter = 0;
 		private const int maxGraphPoints = 60;
 		private static Font boldFont = new Font("Segoe UI", 9, FontStyle.Bold);
@@ -51,7 +48,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 		private ToolStripMenuItem? _connectionInformationMenuItem;
 		private string? _localIpAddress;
 		private string? _publicIpAddress;
-		public static Dictionary<string, Image> ServerIconsCache = new Dictionary<string, Image>();
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
 
@@ -65,16 +61,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			InitializeComponent();
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
 				return;
+			ApplicationUiService.LogRequested += ApplicationLogRequested;
+			ApplicationUiService.GridRefreshRequested += ApplicationGridRefreshRequested;
+			ApplicationUiService.RegisterMainWindow(this, UpdatePrivacyMode);
+			Disposed += MainGUI_Disposed;
 			ThemeManager.Apply(this);
-
-			Instance = this;
 
 			FileHandler.LoadServers();
 			AddGuidanceMenuItems();
 			PopulateStatusFilters();
 			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
-			Disposed += (_, _) =>
-				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
 
 			SynixMenuStyler.Apply(contextMenuStrip);
 
@@ -127,6 +123,26 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			_ = VersionCheck();
 			InitializeVersionCheckTimer();
 
+		}
+
+		private void MainGUI_Disposed(object? sender, EventArgs eventArgs)
+		{
+			LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
+			ApplicationUiService.LogRequested -= ApplicationLogRequested;
+			ApplicationUiService.GridRefreshRequested -= ApplicationGridRefreshRequested;
+			ApplicationUiService.UnregisterMainWindow(this);
+		}
+
+		private void ApplicationLogRequested(
+			object? sender,
+			ApplicationLogEventArgs eventArgs)
+		{
+			AppendLog(eventArgs.Message, eventArgs.Color, eventArgs.Bold);
+		}
+
+		private void ApplicationGridRefreshRequested(object? sender, EventArgs eventArgs)
+		{
+			UpdateGrid();
 		}
 
 		private void AddGuidanceMenuItems()
@@ -276,7 +292,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			cpuGauge.UpdateGauge(
 				(float)cpu,
 				LocalizationManager.Get("Dashboard.CpuGaugeLabel"));
-			ramGauge.MaxValue = (float)systemTotalRamGb;
+			ramGauge.MaxValue = (float)GetUsableSystemRamGb();
 			ramGauge.UpdateGauge(
 				(float)ram,
 				LocalizationManager.Get("Dashboard.RamGaugeLabel"));
@@ -289,6 +305,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			UpdateDashboardSummary();
 
 			chartTickCounter++;
+		}
+
+		private static double GetUsableSystemRamGb()
+		{
+			return Core.TotalRamGb > 0 ? Core.TotalRamGb : 128.0;
 		}
 
 		[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -360,7 +381,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				(server.Status ?? string.Empty).StartsWith(
 					StatusManager.GetStatus(ServerState.Deleting),
 					StringComparison.OrdinalIgnoreCase));
-			if (isDownloadActive || Core.Instance.isDownloadActive || deletionActive)
+			if (Core.Instance.isDownloadActive || deletionActive)
 			{
 				e.Cancel = true;
 				LocalizedMessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, restoring, or deleting!",
@@ -532,8 +553,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			{
 				double physicalRam = await Task.Run(ResourceMonitor.GetTotalSystemRamGB);
 				double reserved = Math.Max(physicalRam * 0.10, 5.0);
-				systemTotalRamGb = Math.Max(1.0, physicalRam - reserved);
-				ramGauge.MaxValue = (float)systemTotalRamGb;
+				Core.TotalRamGb = Math.Max(1.0, physicalRam - reserved);
+				ramGauge.MaxValue = (float)GetUsableSystemRamGb();
 			}
 			catch (Exception ex)
 			{
@@ -1389,7 +1410,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			if (!CanInstallSynixUpdate())
 				return;
 
-			isDownloadActive = true;
 			Core.Instance.isDownloadActive = true;
 			versionTimer?.Stop();
 			btnDownloadUpdate.Enabled = false;
@@ -1417,7 +1437,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				BackgroundServiceManager.SuppressStartForCurrentProcess();
 				Core.LaunchPreparedUpdate(prepared);
 				_updateShutdownRequested = true;
-				isDownloadActive = false;
 				Core.Instance.isDownloadActive = false;
 				Application.Exit();
 			}
@@ -1437,7 +1456,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			{
 				if (!_updateShutdownRequested)
 				{
-					isDownloadActive = false;
 					Core.Instance.isDownloadActive = false;
 					versionTimer?.Start();
 				}
@@ -1449,8 +1467,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			bool serverBusy = serverList.Any(server =>
 				server.Status != Core.StatusManager.GetStatus(
 					Core.ServerState.Stopped));
-			bool maintenanceBusy = isDownloadActive ||
-				Core.Instance.isDownloadActive;
+			bool maintenanceBusy = Core.Instance.isDownloadActive;
 			if (serverBusy || maintenanceBusy)
 			{
 				LocalizedMessageBox.Show(

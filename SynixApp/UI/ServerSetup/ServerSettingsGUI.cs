@@ -905,7 +905,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				string? aOwner = (aPort > 0) ? Core.Instance.GetConfiguredPortCollisionOwner(aPort, _existingServer) : null;
 				bool aOS = (aPort > 0) && Core.Instance.IsPortInUseLocally(aPort);
 
-				bool isNameTaken = MainGUI.serverList.Any(s =>
+				bool isNameTaken = ServerRegistry.Servers.Any(s =>
 					s != _existingServer &&
 					s.Game.Equals(selectedGame, StringComparison.OrdinalIgnoreCase) &&
 					s.ServerName.Equals(currentName, StringComparison.OrdinalIgnoreCase));
@@ -1696,7 +1696,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			{
 				clampedQueryPort = ExistingServerImport.FindAvailablePort(
 					clampedQueryPort,
-					MainGUI.serverList.Concat([new GameServer { Port = gamePort }]));
+					ServerRegistry.Servers.Concat([new GameServer { Port = gamePort }]));
 			}
 
 			try
@@ -1894,7 +1894,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			};
 
 			if (MinecraftControlProfile.IsJava(NewServer))
-				MinecraftControlProfile.EnsureDefaults(NewServer, MainGUI.serverList);
+				MinecraftControlProfile.EnsureDefaults(NewServer, ServerRegistry.Servers);
 
 			if (!IsGameServerConfigSafe(NewServer))
 			{
@@ -1918,15 +1918,15 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 				if (_isEditMode && _existingServer != null)
 				{
-					var existing = MainGUI.serverList.FirstOrDefault(s => s.ServerName == _existingServer.ServerName);
+					var existing = ServerRegistry.Servers.FirstOrDefault(s => s.ServerName == _existingServer.ServerName);
 					if (existing != null)
 					{
 						NewServer.IsFirstBoot = false;
-						int index = MainGUI.serverList.IndexOf(existing);
-						MainGUI.serverList[index] = NewServer;
+						int index = ServerRegistry.Servers.IndexOf(existing);
+						ServerRegistry.Servers[index] = NewServer;
 					}
 				}
-				else MainGUI.serverList.Add(NewServer);
+				else ServerRegistry.Servers.Add(NewServer);
 
 				if (masterData != null)
 				{
@@ -1935,12 +1935,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 					if (System.IO.File.Exists(iconPath))
 					{
-						if (!MainGUI.ServerIconsCache.TryGetValue(NewServer.Game, out Image? cachedIcon))
+						if (!ServerIconCache.Icons.TryGetValue(NewServer.Game, out Image? cachedIcon))
 						{
 							using MemoryStream stream = new(File.ReadAllBytes(iconPath));
 							using Image sourceImage = Image.FromStream(stream);
 							cachedIcon = new Bitmap(sourceImage);
-							MainGUI.ServerIconsCache[NewServer.Game] = cachedIcon;
+							ServerIconCache.Icons[NewServer.Game] = cachedIcon;
 						}
 
 						NewServer.DisplayIcon = cachedIcon;
@@ -1989,10 +1989,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					{
 						gamePort = ExistingServerImport.FindAvailablePort(
 							gamePort,
-							MainGUI.serverList);
+							ServerRegistry.Servers);
 						queryPort = ExistingServerImport.FindAvailablePort(
 							queryPort,
-							MainGUI.serverList.Concat([new GameServer { Port = gamePort }]));
+							ServerRegistry.Servers.Concat([new GameServer { Port = gamePort }]));
 					}
 					numPort.Value = gamePort;
 					numQueryPort.Value = queryPort;
@@ -2179,10 +2179,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					: 25565;
 				int gamePort = ExistingServerImport.FindAvailablePort(
 					preferredPort,
-					MainGUI.serverList);
+					ServerRegistry.Servers);
 				int secondaryPort = ExistingServerImport.FindAvailablePort(
 					preferredSecondaryPort,
-					MainGUI.serverList.Concat([new GameServer { Port = gamePort }]));
+					ServerRegistry.Servers.Concat([new GameServer { Port = gamePort }]));
 				numPort.Value = Math.Clamp(gamePort, numPort.Minimum, numPort.Maximum);
 				numQueryPort.Value = Math.Clamp(
 					secondaryPort,

@@ -494,11 +494,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				privacySettingsPage.PrivacyMode;
 			Properties.Settings.Default.Save();
 
-			if (MainGUI.Instance != null)
-			{
-				await MainGUI.Instance.UpdatePrivacyMode(
-					privacySettingsPage.PrivacyMode);
-			}
+			await ApplicationUiService.UpdatePrivacyModeAsync(
+				privacySettingsPage.PrivacyMode);
 		}
 
 		private void ElevatedSystemTasksChanged(
@@ -670,7 +667,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			UseWaitCursor = true;
 			try
 			{
-				GameServer[] servers = MainGUI.serverList.ToArray();
+				GameServer[] servers = ServerRegistry.Servers.ToArray();
 				GeneratedConfigurationCaptureResult result = await Task.Run(() =>
 					GeneratedConfigurationCollector.Collect(servers));
 				StringBuilder message = new();
@@ -978,7 +975,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 							Core.PrepareEncryptedExport(
 								Core.RootPath,
 								transferPassword,
-								MainGUI.serverList);
+								ServerRegistry.Servers);
 
 							await Core.ExportAsync(
 								Core.RootPath,
@@ -1098,9 +1095,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			if (imported)
 			{
 				FileHandler.LoadServers();
-				Core.MarkImportedSteamAuthenticationRequired(MainGUI.serverList);
+				Core.MarkImportedSteamAuthenticationRequired(ServerRegistry.Servers);
 				FileHandler.SaveServers();
-				MainGUI.Instance?.UpdateGrid();
+				ApplicationUiService.RequestGridRefresh();
 				_selectedImportPackage = null;
 				_selectedImportPasswordProtected = true;
 				backupSettingsPage.ShowImportSelectionPrompt();
@@ -1118,8 +1115,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				return;
 			}
 
-			if (Core.Instance.isDownloadActive ||
-				(MainGUI.Instance?.isDownloadActive ?? false))
+			if (Core.Instance.isDownloadActive)
 			{
 				LocalizedMessageBox.Show(
 					this,
@@ -1435,11 +1431,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		private bool CanTransferSynix()
 		{
-			bool serverBusy = MainGUI.serverList.Any(server =>
+			bool serverBusy = ServerRegistry.Servers.Any(server =>
 				server.Status != Core.StatusManager.GetStatus(
 					Core.ServerState.Stopped));
-			bool maintenanceBusy = Core.Instance.isDownloadActive ||
-				(MainGUI.Instance?.isDownloadActive ?? false);
+			bool maintenanceBusy = Core.Instance.isDownloadActive;
 
 			if (!serverBusy && !maintenanceBusy)
 			{

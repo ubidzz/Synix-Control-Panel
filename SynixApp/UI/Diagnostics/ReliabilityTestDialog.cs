@@ -38,7 +38,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			{
 				Progress<string> progress = new(message => statusLabel.Text = message);
 				ReliabilityTestReport report = await Task.Run(() => ReliabilityTestRunner.RunAsync(
-					MainGUI.serverList.ToArray(),
+					ServerRegistry.Servers.ToArray(),
 					TimeSpan.FromMinutes(durationInput.Value),
 					TimeSpan.FromSeconds(intervalInput.Value),
 					progress,

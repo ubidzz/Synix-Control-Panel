@@ -23,13 +23,7 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		public void UpdateGridStatus()
 		{
-			if (MainGUI.Instance != null && !MainGUI.Instance.IsDisposed && MainGUI.Instance.IsHandleCreated)
-			{
-				MainGUI.Instance.BeginInvoke((MethodInvoker)delegate
-				{
-					MainGUI.Instance.UpdateGrid();
-				});
-			}
+			ApplicationUiService.RequestGridRefresh();
 		}
 
 		public async Task RebindProcesses()

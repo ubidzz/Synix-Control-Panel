@@ -30,7 +30,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			try
 			{
 				server.Status = StatusManager.GetStatus(ServerState.Stopping);
-				MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+				Core.Instance.UpdateGridStatus();
 				TrackSavedServerProcesses(server, trackedProcesses);
 
 				targetPid = GetInitialTargetPid(server);
@@ -300,7 +300,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			server.PID = survivingPid;
 			server.Status = StatusManager.GetStatus(ServerState.Running);
-			MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+			Core.Instance.UpdateGridStatus();
 		}
 
 		private static void FinalizeStoppedState(GameServer server)
@@ -318,7 +318,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			server.LastProbeTime = null;
 			server.RunningProcess?.Dispose();
 			server.RunningProcess = null;
-			MainGUI.Instance?.Invoke((Action)(() => MainGUI.Instance.UpdateGrid()));
+			Core.Instance.UpdateGridStatus();
 		}
 	}
 }
