@@ -549,7 +549,7 @@ public sealed class DynamicGameDefinitionTests
 			Game = game.Game,
 			ServerName = "Test"
 		};
-		string warning = Synix_Control_Panel.Database.WarningDatabase.GetWarningText(server);
+		string warning = WarningDatabase.GetWarningText(server);
 
 		Assert.Equal("2145", game.AppID);
 		Assert.Equal("srcds.exe", game.ExeName);

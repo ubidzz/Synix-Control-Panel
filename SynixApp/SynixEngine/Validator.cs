@@ -203,7 +203,7 @@ namespace Synix_Control_Panel.SynixEngine
 					mainWindow.AppendLog($"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...", Color.Yellow);
 					mainWindow.Invoke((Action)(() =>
 					{
-						using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
+						using (var warningForm = new WarningDatabase(server))
 						{
 							result = warningForm.ShowDialog(mainWindow);
 						}
@@ -211,7 +211,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				else
 				{
-					using (var warningForm = new Synix_Control_Panel.Database.WarningDatabase(server))
+					using (var warningForm = new WarningDatabase(server))
 					{
 						result = warningForm.ShowDialog(MainGUI.Instance);
 					}

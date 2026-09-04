@@ -77,142 +77,148 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="UI\GeneralSettingsPage.cs">
+	  <Compile Update="UI\Dashboard\MainGUI.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\Dashboard\MainGUI.Designer.cs">
+	    <DependentUpon>MainGUI.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\Settings\GeneralSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\GeneralSettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\GeneralSettingsPage.Designer.cs">
 	    <DependentUpon>GeneralSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsGeneralPage.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsGeneralPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsGeneralPage.Designer.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsGeneralPage.Designer.cs">
 	    <DependentUpon>ServerSettingsGeneralPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsSecurityPage.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsSecurityPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsSecurityPage.Designer.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsSecurityPage.Designer.cs">
 	    <DependentUpon>ServerSettingsSecurityPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsWorldPage.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsWorldPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsWorldPage.Designer.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsWorldPage.Designer.cs">
 	    <DependentUpon>ServerSettingsWorldPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsNetworkPage.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsNetworkPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsNetworkPage.Designer.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsNetworkPage.Designer.cs">
 	    <DependentUpon>ServerSettingsNetworkPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsAutomationPage.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsAutomationPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsAutomationPage.Designer.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsAutomationPage.Designer.cs">
 	    <DependentUpon>ServerSettingsAutomationPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsInstallPage.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsInstallPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsInstallPage.Designer.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsInstallPage.Designer.cs">
 	    <DependentUpon>ServerSettingsInstallPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerSettingsGUI.PageControls.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsGUI.PageControls.cs">
 	    <DependentUpon>ServerSettingsGUI.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\BackupSettingsPage.cs">
+	  <Compile Update="UI\Settings\BackupSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\BackupSettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\BackupSettingsPage.Designer.cs">
 	    <DependentUpon>BackupSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\PrivacySettingsPage.cs">
+	  <Compile Update="UI\Settings\PrivacySettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\PrivacySettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\PrivacySettingsPage.Designer.cs">
 	    <DependentUpon>PrivacySettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\AdvancedSettingsPage.cs">
+	  <Compile Update="UI\Settings\AdvancedSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\AdvancedSettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\AdvancedSettingsPage.Designer.cs">
 	    <DependentUpon>AdvancedSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\DevelopmentSettingsPage.cs">
+	  <Compile Update="UI\Settings\DevelopmentSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ProblemReportSettingsPage.cs">
+	  <Compile Update="UI\Settings\ProblemReportSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ProblemReportSettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\ProblemReportSettingsPage.Designer.cs">
 	    <DependentUpon>ProblemReportSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\SteamAccountLoginDialog.cs">
+	  <Compile Update="UI\ServerSetup\SteamAccountLoginDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\SteamAccountLoginDialog.Designer.cs">
+	  <Compile Update="UI\ServerSetup\SteamAccountLoginDialog.Designer.cs">
 	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionBuilder.cs">
+	  <Compile Update="UI\GameDefinitions\GameDefinitionBuilder.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\FirewallCleanupConfirmationDialog.cs">
+	  <Compile Update="UI\Diagnostics\FirewallCleanupConfirmationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionBuilder.Designer.cs">
+	  <Compile Update="UI\GameDefinitions\GameDefinitionBuilder.Designer.cs">
 	    <DependentUpon>GameDefinitionBuilder.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionValidationDialog.cs">
+	  <Compile Update="UI\GameDefinitions\GameDefinitionValidationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionValidationDialog.Designer.cs">
+	  <Compile Update="UI\GameDefinitions\GameDefinitionValidationDialog.Designer.cs">
 	    <DependentUpon>GameDefinitionValidationDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\GameVerificationQueue.cs">
+	  <Compile Update="UI\GameDefinitions\GameVerificationQueue.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\GameVerificationQueue.Designer.cs">
+	  <Compile Update="UI\GameDefinitions\GameVerificationQueue.Designer.cs">
 	    <DependentUpon>GameVerificationQueue.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ArgumentVerificationDialog.cs">
+	  <Compile Update="UI\GameDefinitions\ArgumentVerificationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\ArgumentVerificationDialog.Designer.cs">
+	  <Compile Update="UI\GameDefinitions\ArgumentVerificationDialog.Designer.cs">
 	    <DependentUpon>ArgumentVerificationDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\TroubleshooterDialog.cs">
+	  <Compile Update="UI\Diagnostics\TroubleshooterDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\TroubleshooterDialog.Designer.cs">
+	  <Compile Update="UI\Diagnostics\TroubleshooterDialog.Designer.cs">
 	    <DependentUpon>TroubleshooterDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ConnectionInformationDialog.cs">
+	  <Compile Update="UI\ServerManagement\ConnectionInformationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\ModPluginManager.cs">
+	  <Compile Update="UI\ServerManagement\ModPluginManager.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\PlainEnglishErrorDialog.cs">
+	  <Compile Update="UI\Diagnostics\PlainEnglishErrorDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\FirstRunGuideDialog.cs">
+	  <Compile Update="UI\Onboarding\FirstRunGuideDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\FirstRunGuideDialog.Designer.cs">
+	  <Compile Update="UI\Onboarding\FirstRunGuideDialog.Designer.cs">
 	    <DependentUpon>FirstRunGuideDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ReliabilityTestDialog.cs">
+	  <Compile Update="UI\Diagnostics\ReliabilityTestDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\ReliabilityTestDialog.Designer.cs">
+	  <Compile Update="UI\Diagnostics\ReliabilityTestDialog.Designer.cs">
 	    <DependentUpon>ReliabilityTestDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerBackupRestoreDialog.cs">
+	  <Compile Update="UI\ServerManagement\ServerBackupRestoreDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerBackupRestoreDialog.Designer.cs">
+	  <Compile Update="UI\ServerManagement\ServerBackupRestoreDialog.Designer.cs">
 	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
 	  </Compile>
 	</ItemGroup>
@@ -222,11 +228,15 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="UI\SteamAccountLoginDialog.resx">
+	  <EmbeddedResource Update="UI\Dashboard\MainGUI.resx">
+	    <DependentUpon>MainGUI.cs</DependentUpon>
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="UI\ServerSetup\SteamAccountLoginDialog.resx">
 	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="UI\ServerBackupRestoreDialog.resx">
+	  <EmbeddedResource Update="UI\ServerManagement\ServerBackupRestoreDialog.resx">
 	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>

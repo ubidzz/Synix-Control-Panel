@@ -1,0 +1,304 @@
+// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
+using System.ComponentModel;
+using Synix_Control_Panel.SynixApp.Design;
+
+namespace Synix_Control_Panel.SynixApp.UI.Settings
+{
+	public sealed class DevelopmentSettingsPage : UserControl
+	{
+		private ModernSettingsToggle? _usePremadeConfigurationsToggle;
+		private ModernSettingsToggle? _collectGeneratedConfigurationsToggle;
+
+		public DevelopmentSettingsPage()
+		{
+			BackColor = SettingsPalette.Window;
+			Size = new Size(818, 520);
+			AutoScroll = true;
+			AutoScrollMinSize = new Size(0, 936);
+			AddPremadeConfigurationsCard();
+			AddGeneratedConfigurationsCard();
+			AddReleaseReadinessCard();
+			AddGameDefinitionsCard();
+			AddReliabilityTestCard();
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool UsePremadeConfigurations
+		{
+			get => _usePremadeConfigurationsToggle?.Checked ?? true;
+			set
+			{
+				if (_usePremadeConfigurationsToggle != null)
+					_usePremadeConfigurationsToggle.Checked = value;
+			}
+		}
+
+		[Browsable(false)]
+		public event EventHandler? UsePremadeConfigurationsChanged;
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool CollectGeneratedConfigurations
+		{
+			get => _collectGeneratedConfigurationsToggle?.Checked ?? false;
+			set
+			{
+				if (_collectGeneratedConfigurationsToggle != null)
+					_collectGeneratedConfigurationsToggle.Checked = value;
+			}
+		}
+
+		[Browsable(false)]
+		public event EventHandler? CollectGeneratedConfigurationsChanged;
+
+		[Browsable(false)]
+		public event EventHandler? CollectGeneratedConfigurationsRequested;
+
+		[Browsable(false)]
+		public event EventHandler? ReleaseReadinessRequested;
+
+		[Browsable(false)]
+		public event EventHandler? GameDefinitionValidationRequested;
+
+		[Browsable(false)]
+		public event EventHandler? GameDefinitionBuilderRequested;
+
+		[Browsable(false)]
+		public event EventHandler? GameVerificationQueueRequested;
+
+		[Browsable(false)]
+		public event EventHandler? ReliabilityTestRequested;
+
+		private void AddPremadeConfigurationsCard()
+		{
+			ModernSettingsCard card = CreateCard(0, 156);
+			card.Controls.Add(CreateGlyph("⚙"));
+			card.Controls.Add(CreateTitle("Use Premade Game Configurations"));
+			card.Controls.Add(CreateDescription(
+				"Turn this off to stop automatic creation and updates of premade game configuration files. Existing files are never deleted. Check Synix Values and the explicit Fix Config action remain available for stopped servers.",
+				76));
+
+			_usePremadeConfigurationsToggle = new ModernSettingsToggle
+			{
+				AccessibleName = "Use premade game configurations",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				Checked = true,
+				Location = new Point(card.Width - 79, 28),
+				Size = new Size(54, 30)
+			};
+			_usePremadeConfigurationsToggle.CheckedChanged += (_, eventArgs) =>
+				UsePremadeConfigurationsChanged?.Invoke(this, eventArgs);
+			card.Controls.Add(_usePremadeConfigurationsToggle);
+			Controls.Add(card);
+		}
+
+		private void AddGeneratedConfigurationsCard()
+		{
+			ModernSettingsCard card = CreateCard(176, 176);
+			card.Controls.Add(CreateGlyph("⇩"));
+			card.Controls.Add(CreateTitle("Collect Generated Game Configurations"));
+			card.Controls.Add(CreateDescription(
+				"After a server is stopped, copy every known configuration plus additional INI, JSON, XML, CFG, CONF, and properties files found in game-created Saved\\Config folders. Live files are unchanged and secret fields become template placeholders.",
+				100));
+
+			_collectGeneratedConfigurationsToggle = new ModernSettingsToggle
+			{
+				AccessibleName = "Automatically collect generated game configurations",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				Location = new Point(card.Width - 79, 28),
+				Size = new Size(54, 30)
+			};
+			_collectGeneratedConfigurationsToggle.CheckedChanged += (_, eventArgs) =>
+				CollectGeneratedConfigurationsChanged?.Invoke(this, eventArgs);
+
+			ModernSettingsButton collectButton = new()
+			{
+				AccessibleName = "Collect generated game configurations now",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 185, 102),
+				Size = new Size(160, 42),
+				Text = "Collect Now",
+				UseAccentStyle = true
+			};
+			collectButton.Click += (_, eventArgs) =>
+				CollectGeneratedConfigurationsRequested?.Invoke(this, eventArgs);
+
+			card.Controls.Add(_collectGeneratedConfigurationsToggle);
+			card.Controls.Add(collectButton);
+			Controls.Add(card);
+		}
+
+		private void AddReleaseReadinessCard()
+		{
+			ModernSettingsCard card = CreateCard(372, 156);
+			card.Controls.Add(CreateGlyph("✓"));
+			card.Controls.Add(CreateTitle("Release Readiness Checker"));
+			card.Controls.Add(CreateDescription(
+				"Check matching versions, Stable publish files, MSI upgrade safety, SHA-256 hashes, and the complete automated test suite.",
+				76));
+
+			ModernSettingsButton checkButton = new()
+			{
+				AccessibleName = "Check release readiness",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 185, 54),
+				Size = new Size(160, 42),
+				Text = "Check Release",
+				UseAccentStyle = true
+			};
+			checkButton.Click += (_, eventArgs) =>
+				ReleaseReadinessRequested?.Invoke(this, eventArgs);
+
+			card.Controls.Add(checkButton);
+			Controls.Add(card);
+		}
+
+		private void AddGameDefinitionsCard()
+		{
+			ModernSettingsCard card = CreateCard(548, 196);
+			card.Controls.Add(CreateGlyph("◇"));
+			card.Controls.Add(CreateTitle("Built-in Game Definition Tests"));
+			card.Controls.Add(CreateDescription(
+				"Test every built-in definition, then use the Verification Queue to prove real launch arguments against an installed server and export approved evidence into the project. Definition tests use isolated temporary files and never change installed servers.",
+				72));
+
+			ModernSettingsButton validateButton = new()
+			{
+				AccessibleName = "Test built-in game definitions",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 505, 136),
+				Size = new Size(150, 42),
+				Text = "Run Tests"
+			};
+			validateButton.Click += (_, eventArgs) =>
+				GameDefinitionValidationRequested?.Invoke(this, eventArgs);
+
+			ModernSettingsButton queueButton = new()
+			{
+				AccessibleName = "Open the game verification queue",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 345, 136),
+				Size = new Size(150, 42),
+				Text = "Verification Queue"
+			};
+			queueButton.Click += (_, eventArgs) =>
+				GameVerificationQueueRequested?.Invoke(this, eventArgs);
+
+			ModernSettingsButton builderButton = new()
+			{
+				AccessibleName = "Open the game definition builder",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 185, 136),
+				Size = new Size(160, 42),
+				Text = "Definition Builder",
+				UseAccentStyle = true
+			};
+			builderButton.Click += (_, eventArgs) =>
+				GameDefinitionBuilderRequested?.Invoke(this, eventArgs);
+
+			card.Controls.Add(validateButton);
+			card.Controls.Add(queueButton);
+			card.Controls.Add(builderButton);
+			Controls.Add(card);
+		}
+
+		private void AddReliabilityTestCard()
+		{
+			ModernSettingsCard card = CreateCard(764, 156);
+			card.Controls.Add(CreateGlyph("⌁"));
+			card.Controls.Add(CreateTitle("Long-Duration Reliability Test"));
+			card.Controls.Add(CreateDescription(
+				"Sample Synix memory, handles, threads, and read-only health checks over time. This development tool never starts, stops, installs, or changes a server.",
+				76));
+
+			ModernSettingsButton runButton = new()
+			{
+				AccessibleName = "Open the long-duration reliability test",
+				Anchor = AnchorStyles.Top | AnchorStyles.Right,
+				Location = new Point(card.Width - 185, 54),
+				Size = new Size(160, 42),
+				Text = "Reliability Test",
+				UseAccentStyle = true
+			};
+			runButton.Click += (_, eventArgs) => ReliabilityTestRequested?.Invoke(this, eventArgs);
+			card.Controls.Add(runButton);
+			Controls.Add(card);
+		}
+
+		private ModernSettingsCard CreateCard(int y, int height)
+		{
+			return new ModernSettingsCard
+			{
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				BorderColor = SettingsPalette.Border,
+				FillColor = SettingsPalette.Card,
+				CornerRadius = 13,
+				Location = new Point(0, y),
+				Size = new Size(GetCardWidth(), height)
+			};
+		}
+
+		private static ModernSettingsGlyph CreateGlyph(string glyph)
+		{
+			return new ModernSettingsGlyph
+			{
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.Accent,
+				Font = new Font("Segoe UI Symbol", 15F),
+				Glyph = glyph,
+				Location = new Point(22, 24),
+				Size = new Size(42, 42)
+			};
+		}
+
+		private static Label CreateTitle(string text)
+		{
+			return new Label
+			{
+				AutoEllipsis = true,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+				Location = new Point(80, 22),
+				Size = new Size(570, 31),
+				Text = text
+			};
+		}
+
+		private static Label CreateDescription(string text, int height)
+		{
+			return new Label
+			{
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				BackColor = SettingsPalette.Card,
+				ForeColor = SettingsPalette.SecondaryText,
+				Font = new Font("Segoe UI", 9.5F),
+				Location = new Point(80, 55),
+				Size = new Size(520, height),
+				Text = text
+			};
+		}
+
+		private int GetCardWidth()
+		{
+			return Math.Max(
+				640,
+				ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 2);
+		}
+	}
+}

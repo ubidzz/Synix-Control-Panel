@@ -3,7 +3,6 @@
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
 // ============================================================================
-using Synix_Control_Panel.Database;
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;

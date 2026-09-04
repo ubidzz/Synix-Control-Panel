@@ -15,7 +15,6 @@ using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
-using Synix_Control_Panel.Database;
 using System.Diagnostics;
 using System.Drawing;
 using Xunit;

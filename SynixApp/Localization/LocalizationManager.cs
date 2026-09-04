@@ -190,7 +190,7 @@ internal static class LocalizationManager
 	{
 		// The Help Center intentionally remains English so support instructions,
 		// screenshots, and terminology match the English support workflow.
-		if (root is global::Synix_Control_Panel.SynixEngine.HelpGUI)
+		if (root is global::Synix_Control_Panel.SynixApp.UI.Help.HelpGUI)
 		{
 			return;
 		}
