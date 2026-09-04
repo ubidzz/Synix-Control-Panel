@@ -75,8 +75,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				ConfigureManagedTextBox(
 					txtWorldSeed,
 					seedSupported,
-					gameData == null ? "Select a game..." : "Not Required");
-				numWorldSize.Tag = sizeSupported ? "Required" : "Disabled";
+					LocalizationManager.Get(gameData == null
+						? "ServerSetup.Placeholder.SelectGame"
+						: "ServerSetup.Placeholder.NotRequired"));
+				numWorldSize.Tag = sizeSupported;
 			}
 			finally
 			{
@@ -102,10 +104,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		public void ApplyAvailability(bool hasGame)
 		{
-			txtWorldSeed.Enabled = hasGame &&
-				txtWorldSeed.Tag?.ToString() == "Required";
-			numWorldSize.Enabled = hasGame &&
-				numWorldSize.Tag?.ToString() == "Required";
+			txtWorldSeed.Enabled = hasGame && IsRequired(txtWorldSeed);
+			numWorldSize.Enabled = hasGame && numWorldSize.Tag is true;
 		}
 
 		public static bool IsSevenDaysToDie(GameInfo? gameData) =>
@@ -146,11 +146,14 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		private static string ReadManagedValue(TextBox textBox)
 		{
-			return textBox.ForeColor == Color.Gray ||
-				textBox.Text is "Select a game..." or "Not Required"
+			return textBox.Tag is ManagedTextBoxState { Required: false } state &&
+				(textBox.ForeColor == Color.Gray || textBox.Text == state.Placeholder)
 					? string.Empty
 					: textBox.Text;
 		}
+
+		private static bool IsRequired(TextBox textBox) =>
+			textBox.Tag is ManagedTextBoxState { Required: true };
 
 		private static void ConfigureManagedTextBox(
 			TextBox textBox,
@@ -159,11 +162,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		{
 			textBox.GotFocus -= ManagedTextBoxGotFocus;
 			textBox.LostFocus -= ManagedTextBoxLostFocus;
-			textBox.Tag = required ? "Required" : placeholder;
+			textBox.Tag = new ManagedTextBoxState(required, placeholder);
 			if (required)
 			{
-				if (textBox.ForeColor == Color.Gray ||
-					textBox.Text is "Select a game..." or "Not Required")
+				if (textBox.ForeColor == Color.Gray)
 				{
 					textBox.Text = string.Empty;
 				}
@@ -180,7 +182,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		private static void ManagedTextBoxGotFocus(object? sender, EventArgs eventArgs)
 		{
 			if (sender is TextBox textBox &&
-				textBox.Text == textBox.Tag?.ToString())
+				textBox.Tag is ManagedTextBoxState state &&
+				textBox.Text == state.Placeholder)
 			{
 				textBox.Text = string.Empty;
 				textBox.ForeColor = SettingsPalette.PrimaryText;
@@ -192,8 +195,14 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			if (sender is TextBox textBox && string.IsNullOrWhiteSpace(textBox.Text))
 			{
 				textBox.ForeColor = Color.Gray;
-				textBox.Text = textBox.Tag?.ToString() ?? string.Empty;
+				textBox.Text = textBox.Tag is ManagedTextBoxState state
+					? state.Placeholder
+					: string.Empty;
 			}
 		}
+
+		private sealed record ManagedTextBoxState(
+			bool Required,
+			string Placeholder);
 	}
 }

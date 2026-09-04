@@ -26,6 +26,9 @@ internal static class LocalizationManager
 		"Synix_Control_Panel.Localization.Strings",
 		typeof(LocalizationManager).Assembly);
 
+	private static readonly IReadOnlyList<SupportedLanguage> Languages =
+		DiscoverSupportedLanguages();
+
 	private static readonly IReadOnlyDictionary<string, string>
 		StaticTextKeys = BuildStaticTextKeyMap();
 
@@ -41,6 +44,9 @@ internal static class LocalizationManager
 	private static readonly ConditionalWeakTable<Control, AccessibleTextTarget>
 		AccessibleTextTargets = new();
 
+	private static readonly ConditionalWeakTable<Control, AccessibleDescriptionTarget>
+		AccessibleDescriptionTargets = new();
+
 	private static readonly ConditionalWeakTable<TextBox, PlaceholderTextTarget>
 		PlaceholderTextTargets = new();
 
@@ -55,9 +61,6 @@ internal static class LocalizationManager
 
 	private static readonly ConditionalWeakTable<Control, RuntimeTextBinding>
 		RuntimeTextBindings = new();
-
-	private static readonly IReadOnlyList<SupportedLanguage> Languages =
-		DiscoverSupportedLanguages();
 
 	private static CultureInfo _currentUICulture =
 		CultureInfo.GetCultureInfo(DefaultLanguageCode);
@@ -116,6 +119,92 @@ internal static class LocalizationManager
 			_currentUICulture,
 			Get(resourceKey),
 			arguments);
+	}
+
+	/// <summary>
+	/// Returns the invariant English resource text for technical logs and other
+	/// support data that must not change with the selected interface language.
+	/// </summary>
+	public static string GetEnglish(string resourceKey, params object?[] arguments)
+	{
+		string value = ResourceManager.GetString(
+			resourceKey,
+			CultureInfo.InvariantCulture) ?? $"[{resourceKey}]";
+		return arguments.Length == 0
+			? value
+			: string.Format(
+				CultureInfo.GetCultureInfo(DefaultLanguageCode),
+				value,
+				arguments);
+	}
+
+	/// <summary>
+	/// Binds a control directly to a named resource. Unlike assigning the result
+	/// of <see cref="Get(string)"/> once, a bound value follows later language
+	/// changes without keeping the English source text in window code.
+	/// </summary>
+	public static void BindText(
+		Control control,
+		string resourceKey,
+		params object?[] arguments)
+	{
+		ArgumentNullException.ThrowIfNull(control);
+		TrackTextChanges(control);
+		RuntimeTextBindings.Remove(control);
+		BindTextValue(
+			control,
+			resourceKey,
+			arguments,
+			value => control.Text = value);
+	}
+
+	public static void BindAccessibleName(
+		Control control,
+		string resourceKey,
+		params object?[] arguments)
+	{
+		ArgumentNullException.ThrowIfNull(control);
+		AccessibleTextTarget target = AccessibleTextTargets.GetValue(
+			control,
+			static value => new AccessibleTextTarget(value));
+		BindTextValue(
+			target,
+			resourceKey,
+			arguments,
+			value => control.AccessibleName = value);
+	}
+
+	public static void BindAccessibleDescription(
+		Control control,
+		string resourceKey,
+		params object?[] arguments)
+	{
+		ArgumentNullException.ThrowIfNull(control);
+		AccessibleDescriptionTarget target =
+			AccessibleDescriptionTargets.GetValue(
+				control,
+				static value => new AccessibleDescriptionTarget(value));
+		BindTextValue(
+			target,
+			resourceKey,
+			arguments,
+			value => control.AccessibleDescription = value);
+	}
+
+	public static void BindPlaceholderText(
+		TextBox textBox,
+		string resourceKey,
+		params object?[] arguments)
+	{
+		ArgumentNullException.ThrowIfNull(textBox);
+		PlaceholderTextTarget target = PlaceholderTextTargets.GetValue(
+			textBox,
+			static value => new PlaceholderTextTarget(value));
+		BindTextValue(
+			target,
+			resourceKey,
+			arguments,
+			value => textBox.PlaceholderText = value);
 	}
 
 	/// <summary>
@@ -216,6 +305,16 @@ internal static class LocalizationManager
 					static value => new AccessibleTextTarget(value)),
 				() => control.AccessibleName ?? string.Empty,
 				value => control.AccessibleName = value);
+		}
+
+		if (!string.IsNullOrWhiteSpace(control.AccessibleDescription))
+		{
+			ApplyBoundText(
+				AccessibleDescriptionTargets.GetValue(
+					control,
+					static value => new AccessibleDescriptionTarget(value)),
+				() => control.AccessibleDescription ?? string.Empty,
+				value => control.AccessibleDescription = value);
 		}
 
 		if (control is TextBox textBox &&
@@ -440,11 +539,29 @@ internal static class LocalizationManager
 			TextBindings.Add(target, binding);
 		}
 
-		string translated = Get(binding.ResourceKey);
+		string translated = binding.Arguments.Length == 0
+			? Get(binding.ResourceKey)
+			: Get(binding.ResourceKey, binding.Arguments);
 		if (!string.Equals(readText(), translated, StringComparison.Ordinal))
 		{
 			WriteLocalizedText(writeText, translated);
 		}
+	}
+
+	private static void BindTextValue(
+		object target,
+		string resourceKey,
+		object?[] arguments,
+		Action<string> writeText)
+	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(resourceKey);
+		TextBindings.Remove(target);
+		TextBinding binding = new(resourceKey, arguments);
+		TextBindings.Add(target, binding);
+		string translated = binding.Arguments.Length == 0
+			? Get(binding.ResourceKey)
+			: Get(binding.ResourceKey, binding.Arguments);
+		WriteLocalizedText(writeText, translated);
 	}
 
 	private static void WriteLocalizedText(
@@ -466,28 +583,34 @@ internal static class LocalizationManager
 	{
 		Dictionary<string, string> keys =
 			new(StringComparer.Ordinal);
+		IEnumerable<CultureInfo> cultures =
+			new[] { CultureInfo.InvariantCulture }
+				.Concat(Languages.Select(language =>
+					CultureInfo.GetCultureInfo(language.Code)));
 
-		ResourceSet? resourceSet = ResourceManager.GetResourceSet(
-			CultureInfo.InvariantCulture,
-			createIfNotExists: true,
-			tryParents: true);
-
-		if (resourceSet is null)
+		foreach (CultureInfo culture in cultures)
 		{
-			return keys;
-		}
-
-		foreach (DictionaryEntry entry in resourceSet)
-		{
-			if (entry.Key is not string key ||
-				entry.Value is not string value ||
-				(!key.StartsWith("Text.", StringComparison.Ordinal) &&
-					value.Contains('{')))
+			ResourceSet? resourceSet = ResourceManager.GetResourceSet(
+				culture,
+				createIfNotExists: true,
+				tryParents: true);
+			if (resourceSet is null)
 			{
 				continue;
 			}
 
-			keys.TryAdd(value, key);
+			foreach (DictionaryEntry entry in resourceSet)
+			{
+				if (entry.Key is not string key ||
+					entry.Value is not string value ||
+					(!key.StartsWith("Text.", StringComparison.Ordinal) &&
+						value.Contains('{')))
+				{
+					continue;
+				}
+
+				keys.TryAdd(value, key);
+			}
 		}
 
 		return keys;
@@ -637,10 +760,10 @@ internal static class LocalizationManager
 		{
 			Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 		}
-catch (UnauthorizedAccessException suppressedException)
-{
-	Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
-}
+		catch (UnauthorizedAccessException suppressedException)
+		{
+			Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+		}
 
 		return languages
 			.OrderBy(language => language.Code == DefaultLanguageCode ? 0 : 1)
@@ -705,12 +828,16 @@ catch (UnauthorizedAccessException suppressedException)
 
 	private sealed class TextBinding
 	{
-		public TextBinding(string resourceKey)
+		public TextBinding(
+			string resourceKey,
+			IEnumerable<object?>? arguments = null)
 		{
 			ResourceKey = resourceKey;
+			Arguments = arguments?.ToArray() ?? [];
 		}
 
 		public string ResourceKey { get; }
+		public object?[] Arguments { get; }
 	}
 
 	private sealed class AppliedLanguageVersion
@@ -747,6 +874,16 @@ catch (UnauthorizedAccessException suppressedException)
 	private sealed class AccessibleTextTarget
 	{
 		public AccessibleTextTarget(Control control)
+		{
+			Control = control;
+		}
+
+		public Control Control { get; }
+	}
+
+	private sealed class AccessibleDescriptionTarget
+	{
+		public AccessibleDescriptionTarget(Control control)
 		{
 			Control = control;
 		}

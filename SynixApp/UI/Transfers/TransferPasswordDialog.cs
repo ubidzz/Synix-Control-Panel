@@ -25,15 +25,19 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 
 		public TransferPasswordDialog(bool confirmPassword) : this()
 		{
-			Text = confirmPassword
-				? "Protect Synix Transfer"
-				: "Open Synix Transfer";
-			titleLabel.Text = confirmPassword
-					? "Create a transfer password"
-					: "Enter the transfer password";
-			descriptionLabel.Text = confirmPassword
-					? "You will need this password when moving Synix to the new PC. It cannot be recovered."
-					: "Use the password that was created when this Synix package was exported.";
+			Text = LocalizationManager.Get(confirmPassword
+				? "TransferPassword.Protect.WindowTitle"
+				: "TransferPassword.Open.WindowTitle");
+			LocalizationManager.BindText(
+				titleLabel,
+				confirmPassword
+					? "TransferPassword.Protect.Title"
+					: "TransferPassword.Open.Title");
+			LocalizationManager.BindText(
+				descriptionLabel,
+				confirmPassword
+					? "TransferPassword.Protect.Description"
+					: "TransferPassword.Open.Description");
 
 			int buttonTop;
 			if (confirmPassword)
@@ -50,7 +54,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			validationLabel.Location = new Point(24, buttonTop - 25);
 			cancelButton.Location = new Point(232, buttonTop);
 			continueButton.Location = new Point(328, buttonTop);
-			continueButton.Text = confirmPassword ? "Export" : "Import";
+			LocalizationManager.BindText(
+				continueButton,
+				confirmPassword
+					? "TransferPassword.Button.Export"
+					: "TransferPassword.Button.Import");
 			continueButton.Click += (_, _) => ValidateAndClose(confirmPassword);
 			ClientSize = new Size(440, confirmPassword ? 282 : 222);
 			ThemeManager.Apply(this);
@@ -60,7 +68,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 		{
 			if (passwordTextBox.Text.Length < 8)
 			{
-				validationLabel.Text = "Use at least 8 characters.";
+				LocalizationManager.BindText(
+					validationLabel,
+					"Text.9B15CE9E25E944D6F42D");
 				passwordTextBox.Focus();
 				return;
 			}
@@ -68,7 +78,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			if (confirmPassword &&
 				confirmTextBox.Text != passwordTextBox.Text)
 			{
-				validationLabel.Text = "The passwords do not match.";
+				LocalizationManager.BindText(
+					validationLabel,
+					"Text.F694AAA8DA2C0516E83B");
 				confirmTextBox.Focus();
 				return;
 			}

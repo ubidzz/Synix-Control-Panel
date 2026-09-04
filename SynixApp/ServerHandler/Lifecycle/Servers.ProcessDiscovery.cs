@@ -105,8 +105,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				string? imagePath = TryGetProcessImagePath(process);
 				return imagePath != null && IsPathInsideDirectory(imagePath, server.InstallPath);
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -222,8 +223,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				return process.MainModule?.FileName;
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return null;
 			}
 		}
@@ -242,8 +244,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				string normalizedFile = Path.GetFullPath(filePath);
 				return normalizedFile.StartsWith(normalizedDirectory, StringComparison.OrdinalIgnoreCase);
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -307,16 +310,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					{
 						return process.StartTime.ToUniversalTime() == expectedStartTime.Value;
 					}
-					catch
+					catch (Exception exception)
 					{
+						ApplicationLogService.WriteSuppressedException(exception);
 						return false;
 					}
 				}
 
 				return true;
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}

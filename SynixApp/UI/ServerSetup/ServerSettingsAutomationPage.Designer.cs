@@ -68,7 +68,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblStartupIcon.Name = "lblStartupIcon";
 			lblStartupIcon.Size = new Size(28, 30);
 			lblStartupIcon.TabIndex = 0;
-			lblStartupIcon.Text = "⚙";
+			lblStartupIcon.Text = LocalizationManager.Get("Text.E5235A4A75E63AAA9740");
 			lblStartupIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblStartupTitle
@@ -80,7 +80,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblStartupTitle.Name = "lblStartupTitle";
 			lblStartupTitle.Size = new Size(114, 21);
 			lblStartupTitle.TabIndex = 1;
-			lblStartupTitle.Text = "Startup Tasks";
+			lblStartupTitle.Text = LocalizationManager.Get("Text.835D3FF459F432C23A57");
 
 			// lblUpdateTitle
 			lblUpdateTitle.BackColor = Color.FromArgb(17, 27, 45);
@@ -90,7 +90,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblUpdateTitle.Name = "lblUpdateTitle";
 			lblUpdateTitle.Size = new Size(180, 20);
 			lblUpdateTitle.TabIndex = 2;
-			lblUpdateTitle.Text = "Update on Start";
+			lblUpdateTitle.Text = LocalizationManager.Get("ServerSetup.Automation.UpdateOnStart.AccessibleName");
 
 			// lblUpdateDescription
 			lblUpdateDescription.BackColor = Color.FromArgb(17, 27, 45);
@@ -100,7 +100,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblUpdateDescription.Name = "lblUpdateDescription";
 			lblUpdateDescription.Size = new Size(340, 34);
 			lblUpdateDescription.TabIndex = 3;
-			lblUpdateDescription.Text = "Check SteamCMD for updates before launching the server.";
+			lblUpdateDescription.Text = LocalizationManager.Get("Text.37923AD83E636BE4C27F");
 
 			// chkUpdateOnStart
 			chkUpdateOnStart.BackColor = Color.FromArgb(17, 27, 45);
@@ -117,7 +117,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblBackupTitle.Name = "lblBackupTitle";
 			lblBackupTitle.Size = new Size(180, 20);
 			lblBackupTitle.TabIndex = 5;
-			lblBackupTitle.Text = "Backup on Start";
+			lblBackupTitle.Text = LocalizationManager.Get("ServerSetup.Automation.BackupOnStart.AccessibleName");
 
 			// lblBackupDescription
 			lblBackupDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -128,7 +128,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblBackupDescription.Name = "lblBackupDescription";
 			lblBackupDescription.Size = new Size(340, 34);
 			lblBackupDescription.TabIndex = 6;
-			lblBackupDescription.Text = "Create a protected server backup before each launch.";
+			lblBackupDescription.Text = LocalizationManager.Get("Text.2196E21E8E2F8ABE522B");
 
 			// chkBackupOnStart
 			chkBackupOnStart.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -162,7 +162,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblScheduleIcon.Name = "lblScheduleIcon";
 			lblScheduleIcon.Size = new Size(28, 30);
 			lblScheduleIcon.TabIndex = 0;
-			lblScheduleIcon.Text = "◷";
+			lblScheduleIcon.Text = LocalizationManager.Get("Text.F9F2B6CC304F2C8B6643");
 			lblScheduleIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblScheduleTitle
@@ -174,7 +174,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblScheduleTitle.Name = "lblScheduleTitle";
 			lblScheduleTitle.Size = new Size(151, 21);
 			lblScheduleTitle.TabIndex = 1;
-			lblScheduleTitle.Text = "Scheduled Restarts";
+			lblScheduleTitle.Text = LocalizationManager.Get("Text.0637B6730F1724433551");
 
 			// lblScheduleDescription
 			lblScheduleDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -185,7 +185,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblScheduleDescription.Name = "lblScheduleDescription";
 			lblScheduleDescription.Size = new Size(560, 38);
 			lblScheduleDescription.TabIndex = 2;
-			lblScheduleDescription.Text = "Restart selected days at a configured time while preserving the current scheduler data.";
+			lblScheduleDescription.Text = LocalizationManager.Get("Text.2D41AABA41C2EF3FED5C");
 
 			// chkEnableSchedule
 			chkEnableSchedule.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -203,7 +203,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnEditSchedule.Name = "btnEditSchedule";
 			btnEditSchedule.Size = new Size(155, 42);
 			btnEditSchedule.TabIndex = 4;
-			btnEditSchedule.Text = "Configure Schedule";
+			btnEditSchedule.Text = LocalizationManager.Get("Text.7176F50E66F1BD1104FC");
 
 			// ServerSettingsAutomationPage
 			AutoScaleDimensions = new SizeF(96F, 96F);

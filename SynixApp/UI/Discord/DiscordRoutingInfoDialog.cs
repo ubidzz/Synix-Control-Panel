@@ -41,7 +41,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(routes);
 
-			lblHeading.Text = $"Discord Webhooks • {server.ServerName}";
+			LocalizationManager.BindText(
+				lblHeading,
+				"Discord.Routing.Heading",
+				server.ServerName);
 			LoadRoutes(server, masterWebhook, routes);
 		}
 
@@ -73,8 +76,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			if (!string.IsNullOrWhiteSpace(masterWebhook))
 			{
 				AddRoute(
-					server.IsDiscordAlertEnabled ? "Enabled" : "Paused",
-					"Master webhook",
+					LocalizationManager.Get(
+						server.IsDiscordAlertEnabled
+							? "Text.92C1CDFDF4CB9CF6FCCA"
+							: "Discord.Status.Paused"),
+					LocalizationManager.Get("Discord.MasterWebhook"),
 					BuildEventList(server.DiscordEvents),
 					MaskWebhook(masterWebhook),
 					server.IsDiscordAlertEnabled
@@ -85,18 +91,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			foreach (DiscordWebhookRoute route in routes)
 			{
 				AddRoute(
-					route.Enabled ? "Enabled" : "Paused",
+					LocalizationManager.Get(
+						route.Enabled
+							? "Text.92C1CDFDF4CB9CF6FCCA"
+							: "Discord.Status.Paused"),
 					string.IsNullOrWhiteSpace(route.Name)
-						? "Discord destination"
+						? LocalizationManager.Get("Text.A8726569C87C6C5A3BFE")
 						: route.Name,
 					BuildEventList(route.Events),
 					MaskWebhook(route.WebhookUrl),
 					route.Enabled ? SettingsPalette.Success : SettingsPalette.MutedText);
 			}
 
-			lblCount.Text = gridRoutes.Rows.Count == 1
-				? "1 configured webhook destination"
-				: $"{gridRoutes.Rows.Count} configured webhook destinations";
+			LocalizationManager.BindText(
+				lblCount,
+				gridRoutes.Rows.Count == 1
+					? "DynamicText.36134FEFDC7A2322ADAF"
+					: "Discord.Routing.Count.Many",
+				gridRoutes.Rows.Count);
 			gridRoutes.ClearSelection();
 		}
 
@@ -120,24 +132,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 		{
 			string[] selected = Core.GetDiscordNotificationOptions()
 				.Where(option => (events & option.Event) != 0)
-				.Select(option => option.Name)
+				.Select(option => LocalizationManager.TranslateKnownText(option.Name))
 				.ToArray();
 			return selected.Length == 0
-				? "No messages selected"
+				? LocalizationManager.Get("Discord.NoMessagesSelected")
 				: string.Join(" • ", selected);
 		}
 
 		private static string MaskWebhook(string? webhook)
 		{
 			if (!Core.TryValidateDiscordWebhookUrl(webhook, out Uri? uri, out _))
-				return "Webhook unavailable";
+				return LocalizationManager.Get("Discord.WebhookUnavailable");
 
 			string[] segments = uri!.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 			string identifier = segments.Length >= 3 ? segments[2] : string.Empty;
 			string visible = identifier.Length <= 6 ? identifier : identifier[^6..];
 			return string.IsNullOrWhiteSpace(visible)
-				? "Discord webhook"
-				: $"Discord webhook ••••{visible}";
+				? LocalizationManager.Get("Discord.Webhook")
+				: LocalizationManager.Get("Discord.WebhookMasked", visible);
 		}
 
 		protected override bool ProcessCmdKey(ref Message message, Keys keyData)

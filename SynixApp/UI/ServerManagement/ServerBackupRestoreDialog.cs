@@ -36,27 +36,38 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			ArgumentNullException.ThrowIfNull(backups);
 
 			_server = server;
-			titleLabel.Text = $"Backups for {server.ServerName}";
+			LocalizationManager.BindText(
+				titleLabel,
+				"ServerBackup.Title",
+				server.ServerName);
 			LoadBackups(backups);
 		}
 
 		private void LoadBackups(IReadOnlyList<ServerBackupArchive> backups)
 		{
 			backupGrid.Rows.Clear();
-			subtitleLabel.Text = backups.Count == 0
-				? "No saved backups remain for this server."
-				: $"Manage or restore one of the {backups.Count} saved backups below. Newest backups are shown first.";
+			LocalizationManager.BindText(
+				subtitleLabel,
+				backups.Count == 0
+					? "DynamicText.B33FD36A68F065CBBB4C"
+					: "ServerBackup.Subtitle.Many",
+				backups.Count);
 			foreach (ServerBackupArchive backup in backups)
 			{
 				int rowIndex = backupGrid.Rows.Add(
-					backup.CreatedLocal.ToString("MMM d, yyyy  h:mm:ss tt"),
+					backup.CreatedLocal.ToString(
+						"G",
+						System.Globalization.CultureInfo.CurrentUICulture),
 					backup.FileName,
 					FormatBytes(backup.CompressedBytes),
 					backup.UncompressedBytes > 0
 						? FormatBytes(backup.UncompressedBytes)
-						: "Unknown",
-					backup.IntegrityText,
-					backup.LastVerifiedLocal?.ToString("MMM d, yyyy  h:mm tt") ?? "Never",
+						: LocalizationManager.Get("Status.Unknown"),
+					LocalizationManager.TranslateKnownText(backup.IntegrityText),
+					backup.LastVerifiedLocal?.ToString(
+						"g",
+						System.Globalization.CultureInfo.CurrentUICulture) ??
+					LocalizationManager.Get("GameDefinitions.Queue.Never"),
 					Path.GetDirectoryName(backup.ArchivePath) ?? string.Empty);
 				DataGridViewRow row = backupGrid.Rows[rowIndex];
 				row.Tag = backup;
@@ -102,13 +113,18 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			SetManagementButtonsEnabled(false);
 			selectionLabel.ForeColor = SettingsPalette.SecondaryText;
-			selectionLabel.Text = "Verifying archive paths and SHA-256 integrity...";
+			LocalizationManager.BindText(
+				selectionLabel,
+				"Text.16FB4FBCA9A11AC839AE");
 			ServerBackupManagementResult result =
 				await Core.Instance.VerifyServerBackupAsync(_server, SelectedBackup);
 			LocalizedMessageBox.Show(
 				this,
-				result.Message,
-				result.Succeeded ? "Backup Verified" : "Backup Verification Failed",
+				LocalizationManager.TranslateRuntimeText(result.Message),
+				LocalizationManager.Get(
+					result.Succeeded
+						? "MessageText.17A4B79ED999C004885D"
+						: "MessageText.6ABC8E0D8209E250F6DE"),
 				MessageBoxButtons.OK,
 				result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
 			LoadBackups(await Core.Instance.GetServerBackupsAsync(_server));
@@ -123,8 +139,13 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
-				$"Permanently delete this saved backup?\n\n{SelectedBackup.FileName}\n{SelectedBackup.CreatedLocal:f}\n\nThe running server files will not be changed.",
-				"Delete Server Backup",
+				LocalizationManager.Get(
+					"ServerBackup.Delete.Confirm",
+					SelectedBackup.FileName,
+					SelectedBackup.CreatedLocal.ToString(
+						"f",
+						System.Globalization.CultureInfo.CurrentUICulture)),
+				LocalizationManager.Get("MessageText.88498CCE0307979DF647"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning,
 				MessageBoxDefaultButton.Button2);
@@ -138,8 +159,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			{
 				LocalizedMessageBox.Show(
 					this,
-					result.Message,
-					"Backup Could Not Be Deleted",
+					LocalizationManager.TranslateRuntimeText(result.Message),
+					LocalizationManager.Get("MessageText.9848B5FC9954185EE516"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -156,8 +177,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"This backup has an invalid SHA-256 receipt and cannot be restored. Choose a different backup.",
-					"Backup Integrity Failed",
+					LocalizationManager.Get("MessageText.313E93838C2B67200EAB"),
+					LocalizationManager.Get("MessageText.5222069B5E5C4C68451B"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -177,10 +198,20 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			verifyButton.Enabled = SelectedBackup != null &&
 				SelectedBackup.Integrity != ServerBackupIntegrity.Invalid;
 			deleteButton.Enabled = SelectedBackup != null;
-			selectionLabel.Text = SelectedBackup == null
-				? "Select a backup to continue."
-				: $"Selected: {SelectedBackup.CreatedLocal:f}  •  " +
-					$"{FormatBytes(SelectedBackup.CompressedBytes)} compressed  •  {SelectedBackup.IntegrityText}";
+			LocalizationManager.BindText(
+				selectionLabel,
+				SelectedBackup == null
+					? "Text.F00F8392B2C39AE7826E"
+					: "ServerBackup.Selection",
+				SelectedBackup?.CreatedLocal.ToString(
+					"f",
+					System.Globalization.CultureInfo.CurrentUICulture) ?? string.Empty,
+				SelectedBackup == null
+					? string.Empty
+					: FormatBytes(SelectedBackup.CompressedBytes),
+				SelectedBackup == null
+					? string.Empty
+					: LocalizationManager.TranslateKnownText(SelectedBackup.IntegrityText));
 			selectionLabel.ForeColor = SelectedBackup?.Integrity switch
 			{
 				ServerBackupIntegrity.Recorded => SettingsPalette.Success,

@@ -100,7 +100,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			if (configurationFiles == null || configurationFiles.Count == 0)
 			{
 				throw new ArgumentException(
-					"At least one configuration file path is required.",
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.PathRequired"),
 					nameof(configurationFiles));
 			}
 
@@ -113,7 +114,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			if (_configurationFiles.Count == 0)
 			{
 				throw new ArgumentException(
-					"At least one valid configuration file path is required.",
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.ValidPathRequired"),
 					nameof(configurationFiles));
 			}
 
@@ -289,8 +291,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			if (_isRuntimeInstance && !_allowClose && HasUnsavedChanges())
 			{
 				DialogResult result = LocalizedMessageBox.Show(
-					"You have unsaved configuration changes. Discard them and close?",
-					"Discard Changes?",
+					LocalizationManager.Get("MessageText.663E3E2D227DB51428B7"),
+					LocalizationManager.Get("MessageText.CD26D6F5A2FFE405025E"),
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Warning,
 					MessageBoxDefaultButton.Button2);
@@ -313,13 +315,22 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			string fileName = Path.GetFileName(_path);
 			string formatName = ConfigHandler.GetFormatDisplayName(_format);
 
-			Text = $"Config Editor - {fileName}";
+			Text = LocalizationManager.Get("Configuration.Editor.Title", fileName);
 			lblFileName.Text = fileName;
 			lblFormatBadge.Text = formatName;
-			lblPageSubtitle.Text = _configurationFiles.Count > 1
-				? $"Editing {fileName} ({_selectedFileIndex + 1} of {_configurationFiles.Count} files). Choose another configuration file from the list above."
-				: $"Edit {fileName} safely without changing its {formatName} structure.";
-			lblFormatState.Text = $"{formatName} structure preserved";
+			LocalizationManager.BindText(
+				lblPageSubtitle,
+				_configurationFiles.Count > 1
+					? "Configuration.Editor.Subtitle.Multiple"
+					: "Configuration.Editor.Subtitle.Single",
+				fileName,
+				_selectedFileIndex + 1,
+				_configurationFiles.Count,
+				formatName);
+			LocalizationManager.BindText(
+				lblFormatState,
+				"Configuration.Editor.StructurePreserved",
+				formatName);
 			if (_fileSelector != null &&
 				_fileSelector.SelectedIndex != _selectedFileIndex)
 			{
@@ -348,8 +359,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				Size = new Size(360, 34),
 				DropDownWidth = 620,
 				MaxDropDownItems = 10,
-				AccessibleName = "Configuration file",
-				AccessibleDescription = "Choose which game configuration file to edit."
+				AccessibleName = LocalizationManager.Get("Text.F1C216DDF2B88463BCA7"),
+				AccessibleDescription = LocalizationManager.Get("Configuration.Editor.FileSelector.Description")
 			};
 			foreach ((ConfigurationEditorFile file, int index) in
 				_configurationFiles.Select((file, index) => (file, index)))
@@ -389,8 +400,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			{
 				DialogResult result = LocalizedMessageBox.Show(
 					this,
-					$"Save your changes to {Path.GetFileName(_path)} before opening another configuration file?",
-					"Unsaved Configuration Changes",
+					LocalizationManager.Get(
+						"Configuration.Editor.SwitchFilePrompt",
+						Path.GetFileName(_path)),
+					LocalizationManager.Get("MessageText.47D6D9A26235C64A173D"),
 					MessageBoxButtons.YesNoCancel,
 					MessageBoxIcon.Warning,
 					MessageBoxDefaultButton.Button1);
@@ -441,8 +454,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 					? Path.GetFileName(path)
 					: relativePath;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return Path.GetFileName(path);
 			}
 		}
@@ -470,13 +484,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 					if (CanFixConfiguration())
 					{
 						ShowConfigurationRepairState(
-							"The configuration file is missing. Use Fix Config to rebuild it from the Synix template.");
+							LocalizationManager.Get("Configuration.Editor.Repair.Missing"));
 						return;
 					}
 
 					LocalizedMessageBox.Show(
-						$"The configuration file does not exist:\n\n{_path}",
-						"File Not Found",
+						LocalizationManager.Get("Configuration.Editor.FileNotFound", _path),
+						LocalizationManager.Get("MessageText.BF599881101CA656921C"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					_allowClose = true;
@@ -488,9 +502,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				dgvConfig.Enabled = true;
 				btnStructured.Enabled = true;
 				btnRawPreview.Enabled = true;
-				lblPreservationTitle.Text = "Original formatting is protected";
-				lblPreservationText.Text =
-					"Only the value you change is replaced; comments, sections, nesting, quotes, spacing, and key order remain intact.";
+				LocalizationManager.BindText(
+					lblPreservationTitle,
+					"Text.BF239CF13522B7D2F15A");
+				LocalizationManager.BindText(
+					lblPreservationText,
+					"Text.A8796566765C1117B49C");
 				PopulateGrid();
 				ShowStructuredView();
 				UpdateFixConfigAvailability();
@@ -500,13 +517,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				if (CanFixConfiguration())
 				{
 					ShowConfigurationRepairState(
-						$"Synix could not read this configuration. Use Fix Config to rebuild it. {exception.Message}");
+						LocalizationManager.Get(
+							"Configuration.Editor.Repair.ReadFailed",
+							exception.Message));
 					return;
 				}
 
 				LocalizedMessageBox.Show(
-					$"Synix could not read this configuration file.\n\n{exception.Message}",
-					"Config Load Error",
+					LocalizationManager.Get(
+						"Configuration.Editor.LoadFailed",
+						exception.Message),
+					LocalizationManager.Get("MessageText.E7516E586A2D8DACDF5E"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				_allowClose = true;
@@ -553,9 +574,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 					_server,
 					IsServerBusy(_server));
 			btnValidateConfig.Enabled = _server != null;
-			lblSettingCount.Text = "Config unavailable";
-			lblFormatState.Text = "Repair available";
-			lblPreservationTitle.Text = "Configuration repair is available";
+			LocalizationManager.BindText(lblSettingCount, "Text.ADD1C4B4E0694244F0AE");
+			LocalizationManager.BindText(lblFormatState, "Text.1142B190BA89EF85AF20");
+			LocalizationManager.BindText(lblPreservationTitle, "Text.7ED4EB126CA3A3051286");
 			lblPreservationText.Text = message;
 		}
 
@@ -644,11 +665,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 		{
 			return type switch
 			{
-				ConfigValueType.Boolean => "BOOLEAN",
-				ConfigValueType.Number => "NUMBER",
-				ConfigValueType.Secret => "SECRET",
-				ConfigValueType.Null => "NULL",
-				_ => "TEXT"
+				ConfigValueType.Boolean => LocalizationManager.Get("Option.ConfigType.Boolean"),
+				ConfigValueType.Number => LocalizationManager.Get("Option.ConfigType.Number"),
+				ConfigValueType.Secret => LocalizationManager.Get("Option.ConfigType.Secret"),
+				ConfigValueType.Null => LocalizationManager.Get("Option.ConfigType.Null"),
+				_ => LocalizationManager.Get("Option.ConfigType.Text")
 			};
 		}
 
@@ -693,7 +714,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				}
 			}
 
-			lblSettingCount.Text = $"{visibleCount} of {_fileData.Count} settings";
+			LocalizationManager.BindText(
+				lblSettingCount,
+				"Configuration.Editor.SettingCount",
+				visibleCount,
+				_fileData.Count);
 		}
 
 		private List<ConfigLine> CollectUpdatedData()
@@ -766,9 +791,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			int changedCount = dgvConfig.Rows
 				.Cast<DataGridViewRow>()
 				.Count(RowHasChanged);
-			lblModifiedCount.Text = changedCount == 1
-				? "1 unsaved change"
-				: $"{changedCount} unsaved changes";
+			LocalizationManager.BindText(
+				lblModifiedCount,
+				changedCount == 1
+					? "DynamicText.841A820BC0CD109C0B37"
+					: "Configuration.Editor.UnsavedChanges.Many",
+				changedCount);
 			lblModifiedCount.ForeColor = changedCount > 0
 				? SettingsPalette.Warning
 				: SettingsPalette.MutedText;
@@ -829,8 +857,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			catch (Exception exception)
 			{
 				LocalizedMessageBox.Show(
-					$"Synix could not build a safe preview.\n\n{exception.Message}",
-					"Preview Error",
+					LocalizationManager.Get("Configuration.Editor.PreviewFailed", exception.Message),
+					LocalizationManager.Get("MessageText.B3084806B31E356F5612"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -853,7 +881,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				if (_server != null && HasUnsavedChanges())
 					_ = GameFix.BackupManagedConfiguration(
 						_server,
-						"Before saving changes from the configuration editor");
+						LocalizationManager.Get(
+							"Configuration.Editor.BackupReason"));
 				ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
 				return true;
 			}
@@ -861,8 +890,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			{
 				LocalizedMessageBox.Show(
 					this,
-					$"The configuration was not saved. The original file is unchanged.\n\n{exception.Message}",
-					"Config Save Error",
+					LocalizationManager.Get("Configuration.Editor.SaveFailed", exception.Message),
+					LocalizationManager.Get("MessageText.9169BD1E6835B2752A61"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return false;
@@ -874,8 +903,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			if (_server == null || !CanFixConfiguration())
 			{
 				LocalizedMessageBox.Show(
-					"Synix does not have a complete reset template for this game.",
-					"Config Template Unavailable",
+					LocalizationManager.Get("MessageText.1D7E8CD37BFCD097E6DA"),
+					LocalizationManager.Get("MessageText.08E9E5F519C0E3E112DC"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -884,8 +913,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			if (IsServerBusy(_server))
 			{
 				LocalizedMessageBox.Show(
-					"Stop this server before resetting its configuration.",
-					"Server Must Be Stopped",
+					LocalizationManager.Get("MessageText.37D35536B29E5D04935F"),
+					LocalizationManager.Get("MessageText.88F9321A50E97A2552C0"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
@@ -894,16 +923,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			bool fileExists = File.Exists(_path);
 			string developmentModeText = GameFix.ManagedConfigurationsEnabled
 				? string.Empty
-				: "\n\nDevelopment mode: automatic premade configuration writes are disabled, but this explicit repair is allowed.";
+				: LocalizationManager.Get("Configuration.Editor.Reset.DevelopmentMode");
 			string backupText = fileExists
-				? "\n\nSynix will keep a .synix.bak copy of each configuration file it replaces."
+				? LocalizationManager.Get("Configuration.Editor.Reset.BackupNotice")
 				: string.Empty;
 			DialogResult confirmation = LocalizedMessageBox.Show(
-				"This will rebuild the game configuration from the Synix default template and apply the values saved in Server Settings.\n\nAny other custom configuration values will be removed." +
+				LocalizationManager.Get("MessageText.AC3B07BB575D129E2A12") +
 				developmentModeText +
 				backupText +
-				"\n\nContinue?",
-				"Reset Config to Synix Defaults?",
+				LocalizationManager.Get("MessageText.B2F06E7B3A4E957880A3"),
+				LocalizationManager.Get("MessageText.8A7D73F831BD8606CF92"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning,
 				MessageBoxDefaultButton.Button2);
@@ -928,8 +957,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				if (!result.Succeeded || !result.Complete)
 				{
 					LocalizedMessageBox.Show(
-						result.Message,
-						"Config Reset Failed",
+						LocalizationManager.TranslateRuntimeText(result.Message),
+						LocalizationManager.Get("MessageText.071AC0FA89C3FD9DD0F3"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
@@ -938,19 +967,19 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				_ = FileHandler.SaveServers();
 				LoadConfiguration();
 				LocalizedMessageBox.Show(
-					result.Message +
+					LocalizationManager.TranslateRuntimeText(result.Message) +
 					(fileExists
-						? "\n\nThe previous configuration was saved with a .synix.bak extension."
+						? LocalizationManager.Get("MessageText.ECD30B96D30BE40030DF")
 						: string.Empty),
-					"Config Reset Complete",
+					LocalizationManager.Get("MessageText.4C6913DA26CA421FD296"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
 			catch (Exception exception)
 			{
 				LocalizedMessageBox.Show(
-					$"Synix could not reset the configuration. The existing files were preserved when possible.\n\n{exception.Message}",
-					"Config Reset Failed",
+					LocalizationManager.Get("Configuration.Editor.ResetFailed", exception.Message),
+					LocalizationManager.Get("MessageText.071AC0FA89C3FD9DD0F3"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -980,8 +1009,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Save or undo the changes in the editor before checking the values stored on disk.",
-					"Unsaved Changes",
+					LocalizationManager.Get("MessageText.A36A8AE6C94D6549F743"),
+					LocalizationManager.Get("MessageText.F507179BD454425EEE38"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -1000,8 +1029,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			{
 				LocalizedMessageBox.Show(
 					this,
-					$"Synix could not finish the configuration check.\n\n{exception.Message}",
-					"Configuration Check Failed",
+					LocalizationManager.Get("Configuration.Editor.ValidationFailed", exception.Message),
+					LocalizationManager.Get("MessageText.68F42FF97AF1C59CF5EA"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -1017,16 +1046,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			if (_server == null || IsServerBusy(_server))
 			{
 				LocalizedMessageBox.Show(
-					"Stop this server before restoring a configuration backup.",
-					"Server Must Be Stopped",
+					LocalizationManager.Get("MessageText.96B14861829C994EDBFF"),
+					LocalizationManager.Get("MessageText.88F9321A50E97A2552C0"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
 			}
 
 			DialogResult confirmation = LocalizedMessageBox.Show(
-				"Restore the newest Synix configuration backup?\n\nSynix will first preserve the current files so this restore can also be undone.",
-				"Restore Previous Configuration?",
+				LocalizationManager.Get("MessageText.D955BE724373ACFC3AD2"),
+				LocalizationManager.Get("MessageText.9A66A7E6057B206C0F72"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning,
 				MessageBoxDefaultButton.Button2);
@@ -1038,8 +1067,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			if (!result.Succeeded)
 			{
 				LocalizedMessageBox.Show(
-					result.Message,
-					"Configuration Restore Failed",
+					LocalizationManager.TranslateRuntimeText(result.Message),
+					LocalizationManager.Get("MessageText.8C800FC47C25572C6AD2"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -1048,8 +1077,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			LoadConfiguration();
 			UpdateRestoreBackupAvailability();
 			LocalizedMessageBox.Show(
-				result.Message,
-				"Configuration Restored",
+				LocalizationManager.TranslateRuntimeText(result.Message),
+				LocalizationManager.Get("MessageText.5B867C348CF06A5F841C"),
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Information);
 		}

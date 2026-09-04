@@ -12,9 +12,14 @@ All interface-language files are kept in this folder.
   and rebuilds `Strings.fr.resx`.
 - `GenerateGermanResources.ps1` and `GenerateSpanishResources.ps1` keep the
   German and Spanish translations organized in the same folder.
+- `SemanticResources.<culture>.ps1` keeps the named text used by dynamic
+  windows, dialogs, validation summaries, and accessibility labels in one
+  reviewable file per language.
 - `OperationalTranslations.<culture>.ps1` contains changing status text and
   dialog wording that is assembled around server names, ports, paths, counts,
   and other values that must remain unchanged.
+- `OperationalTranslations.en.ps1` pins the matching English source fragments
+  so resource regeneration cannot drop translations used by runtime reports.
 
 Additional compiled `Strings.<culture>.resx` catalogs are discovered at
 build time and appear in the language selector automatically, including in
@@ -26,11 +31,11 @@ Run the English generator first, followed by each language generator, after
 adding or changing visible text. Localization tests fail when a named runtime
 resource or visible interface string is missing from any supported language.
 English, French, German, and Spanish cover the shared operational interface,
-including specialist, developer, warning, and server-management windows.
-The Help Center and technical log/report contents intentionally remain in
-English. Rare diagnostic details safely fall back to English when a dedicated
-translation is not yet present.
+including specialist, developer, warning, server-management, activity, and
+validation text. The Help Center and technical text-log/support-report contents
+intentionally remain in English.
 
-Only interface text is translated. Game identifiers, map and mode values,
-configuration keys, launch arguments, ports, tokens, file names, and protocol
-names remain unchanged so a language change cannot alter a server.
+Only Synix interface text is translated. Game identifiers, map and mode values,
+console commands, configuration keys and values, launch arguments, ports,
+tokens, file names, protocol identifiers, and output-matching markers remain
+unchanged so a language change cannot alter how a game server operates.

@@ -85,14 +85,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		{
 			ModernSettingsCard card = CreateCard(0, 156);
 			card.Controls.Add(CreateGlyph("⚙"));
-			card.Controls.Add(CreateTitle("Use Premade Game Configurations"));
+			card.Controls.Add(CreateTitle(
+				LocalizationManager.Get("Text.86286BA8D6C58145405E")));
 			card.Controls.Add(CreateDescription(
-				"Turn this off to stop automatic creation and updates of premade game configuration files. Existing files are never deleted. Check Synix Values and the explicit Fix Config action remain available for stopped servers.",
+				LocalizationManager.Get("Settings.Development.Premade.Description"),
 				76));
 
 			_usePremadeConfigurationsToggle = new ModernSettingsToggle
 			{
-				AccessibleName = "Use premade game configurations",
+				AccessibleName = LocalizationManager.Get("Text.86286BA8D6C58145405E"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				BackColor = SettingsPalette.Card,
 				Checked = true,
@@ -109,14 +110,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		{
 			ModernSettingsCard card = CreateCard(176, 176);
 			card.Controls.Add(CreateGlyph("⇩"));
-			card.Controls.Add(CreateTitle("Collect Generated Game Configurations"));
+			card.Controls.Add(CreateTitle(
+				LocalizationManager.Get("Settings.Development.Collect.Title")));
 			card.Controls.Add(CreateDescription(
-				"After a server is stopped, copy every known configuration plus additional INI, JSON, XML, CFG, CONF, and properties files found in game-created Saved\\Config folders. Live files are unchanged and secret fields become template placeholders.",
+				LocalizationManager.Get("Settings.Development.Collect.Description"),
 				100));
 
 			_collectGeneratedConfigurationsToggle = new ModernSettingsToggle
 			{
-				AccessibleName = "Automatically collect generated game configurations",
+				AccessibleName = LocalizationManager.Get("Text.FC52030FEF2C9AEC802D"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				BackColor = SettingsPalette.Card,
 				Location = new Point(card.Width - 79, 28),
@@ -127,11 +129,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 			ModernSettingsButton collectButton = new()
 			{
-				AccessibleName = "Collect generated game configurations now",
+				AccessibleName = LocalizationManager.Get("Text.FC61CB13704E7289E632"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				Location = new Point(card.Width - 185, 102),
 				Size = new Size(160, 42),
-				Text = "Collect Now",
+				Text = LocalizationManager.Get("Text.1BB88EF61843E3570111"),
 				UseAccentStyle = true
 			};
 			collectButton.Click += (_, eventArgs) =>
@@ -146,18 +148,19 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		{
 			ModernSettingsCard card = CreateCard(372, 156);
 			card.Controls.Add(CreateGlyph("✓"));
-			card.Controls.Add(CreateTitle("Release Readiness Checker"));
+			card.Controls.Add(CreateTitle(
+				LocalizationManager.Get("Text.E8986299CC046EAA3D40")));
 			card.Controls.Add(CreateDescription(
-				"Check matching versions, Stable publish files, MSI upgrade safety, SHA-256 hashes, and the complete automated test suite.",
+				LocalizationManager.Get("Settings.Development.Release.Description"),
 				76));
 
 			ModernSettingsButton checkButton = new()
 			{
-				AccessibleName = "Check release readiness",
+				AccessibleName = LocalizationManager.Get("Text.5C75164CBDDF6C71885B"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				Location = new Point(card.Width - 185, 54),
 				Size = new Size(160, 42),
-				Text = "Check Release",
+				Text = LocalizationManager.Get("Text.975CB60570D8F3E9A641"),
 				UseAccentStyle = true
 			};
 			checkButton.Click += (_, eventArgs) =>
@@ -171,40 +174,41 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		{
 			ModernSettingsCard card = CreateCard(548, 196);
 			card.Controls.Add(CreateGlyph("◇"));
-			card.Controls.Add(CreateTitle("Built-in Game Definition Tests"));
+			card.Controls.Add(CreateTitle(
+				LocalizationManager.Get("Settings.Development.Definitions.Title")));
 			card.Controls.Add(CreateDescription(
-				"Test every built-in definition, then use the Verification Queue to prove real launch arguments against an installed server and export approved evidence into the project. Definition tests use isolated temporary files and never change installed servers.",
+				LocalizationManager.Get("Settings.Development.Definitions.Description"),
 				72));
 
 			ModernSettingsButton validateButton = new()
 			{
-				AccessibleName = "Test built-in game definitions",
+				AccessibleName = LocalizationManager.Get("Text.B976ECB48B1B2D4AC318"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				Location = new Point(card.Width - 505, 136),
 				Size = new Size(150, 42),
-				Text = "Run Tests"
+				Text = LocalizationManager.Get("Text.8CBBAC76C84A2410D3BD")
 			};
 			validateButton.Click += (_, eventArgs) =>
 				GameDefinitionValidationRequested?.Invoke(this, eventArgs);
 
 			ModernSettingsButton queueButton = new()
 			{
-				AccessibleName = "Open the game verification queue",
+				AccessibleName = LocalizationManager.Get("Text.E673C4B555E4960E2796"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				Location = new Point(card.Width - 345, 136),
 				Size = new Size(150, 42),
-				Text = "Verification Queue"
+				Text = LocalizationManager.Get("DynamicText.F96281A2FB88C022D64B")
 			};
 			queueButton.Click += (_, eventArgs) =>
 				GameVerificationQueueRequested?.Invoke(this, eventArgs);
 
 			ModernSettingsButton builderButton = new()
 			{
-				AccessibleName = "Open the game definition builder",
+				AccessibleName = LocalizationManager.Get("Text.6DA034A48B203D145071"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				Location = new Point(card.Width - 185, 136),
 				Size = new Size(160, 42),
-				Text = "Definition Builder",
+				Text = LocalizationManager.Get("Text.C7F120FC21CAE9933BF3"),
 				UseAccentStyle = true
 			};
 			builderButton.Click += (_, eventArgs) =>
@@ -220,18 +224,19 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		{
 			ModernSettingsCard card = CreateCard(764, 156);
 			card.Controls.Add(CreateGlyph("⌁"));
-			card.Controls.Add(CreateTitle("Long-Duration Reliability Test"));
+			card.Controls.Add(CreateTitle(
+				LocalizationManager.Get("Text.522E549C1259D9FA47D1")));
 			card.Controls.Add(CreateDescription(
-				"Sample Synix memory, handles, threads, and read-only health checks over time. This development tool never starts, stops, installs, or changes a server.",
+				LocalizationManager.Get("Settings.Development.Reliability.Description"),
 				76));
 
 			ModernSettingsButton runButton = new()
 			{
-				AccessibleName = "Open the long-duration reliability test",
+				AccessibleName = LocalizationManager.Get("Text.897C522834169BCBAA15"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
 				Location = new Point(card.Width - 185, 54),
 				Size = new Size(160, 42),
-				Text = "Reliability Test",
+				Text = LocalizationManager.Get("Text.1C76BC80677D0B5E4DDA"),
 				UseAccentStyle = true
 			};
 			runButton.Click += (_, eventArgs) => ReliabilityTestRequested?.Invoke(this, eventArgs);

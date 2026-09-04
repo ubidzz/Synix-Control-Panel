@@ -60,7 +60,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(810, 38);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Long-Duration Reliability Test";
+			titleLabel.Text = LocalizationManager.Get("Text.522E549C1259D9FA47D1");
 			// 
 			// subtitleLabel
 			// 
@@ -70,7 +70,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(810, 44);
 			subtitleLabel.TabIndex = 1;
-			subtitleLabel.Text = "Repeatedly samples Synix memory, handles, threads, and the read-only server health checks. It does not start, stop, install, update, or alter a server.";
+			subtitleLabel.Text = LocalizationManager.Get("Text.FE3F7B0A38B0EEDF20EB");
 			// 
 			// durationLabel
 			// 
@@ -79,7 +79,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			durationLabel.Name = "durationLabel";
 			durationLabel.Size = new Size(130, 26);
 			durationLabel.TabIndex = 2;
-			durationLabel.Text = "Test duration";
+			durationLabel.Text = LocalizationManager.Get("Text.3C838E93060745C33A0E");
 			// 
 			// durationInput
 			// 
@@ -101,7 +101,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			minutesLabel.Name = "minutesLabel";
 			minutesLabel.Size = new Size(72, 26);
 			minutesLabel.TabIndex = 4;
-			minutesLabel.Text = "minutes";
+			minutesLabel.Text = LocalizationManager.Get("Schedule.Smart.Minutes");
 			// 
 			// intervalLabel
 			// 
@@ -110,7 +110,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			intervalLabel.Name = "intervalLabel";
 			intervalLabel.Size = new Size(125, 26);
 			intervalLabel.TabIndex = 5;
-			intervalLabel.Text = "Sample every";
+			intervalLabel.Text = LocalizationManager.Get("Text.35EB3848F9EBCA77854D");
 			// 
 			// intervalInput
 			// 
@@ -133,7 +133,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			secondsLabel.Name = "secondsLabel";
 			secondsLabel.Size = new Size(72, 26);
 			secondsLabel.TabIndex = 7;
-			secondsLabel.Text = "seconds";
+			secondsLabel.Text = LocalizationManager.Get("Text.59F006D63BD009B7F1F1");
 			// 
 			// statusLabel
 			// 
@@ -144,7 +144,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			statusLabel.Name = "statusLabel";
 			statusLabel.Size = new Size(810, 28);
 			statusLabel.TabIndex = 8;
-			statusLabel.Text = "Ready. A 30-minute run with 30-second samples is recommended for a quick check.";
+			statusLabel.Text = LocalizationManager.Get("Text.C0BAAF3EA26A1A69CE63");
 			// 
 			// reportBox
 			// 
@@ -159,7 +159,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			reportBox.ScrollBars = RichTextBoxScrollBars.ForcedBoth;
 			reportBox.Size = new Size(810, 360);
 			reportBox.TabIndex = 9;
-			reportBox.Text = "No reliability test has been run yet.";
+			reportBox.Text = LocalizationManager.Get("Text.39AA18B083CD39C1A64C");
 			reportBox.WordWrap = false;
 			// 
 			// closeButton
@@ -174,7 +174,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			closeButton.Name = "closeButton";
 			closeButton.Size = new Size(105, 42);
 			closeButton.TabIndex = 10;
-			closeButton.Text = "Close";
+			closeButton.Text = LocalizationManager.Get("ModManager.Button.Close");
 			closeButton.UseVisualStyleBackColor = false;
 			// 
 			// copyButton
@@ -189,7 +189,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			copyButton.Name = "copyButton";
 			copyButton.Size = new Size(125, 42);
 			copyButton.TabIndex = 11;
-			copyButton.Text = "Copy Report";
+			copyButton.Text = LocalizationManager.Get("Text.54B8E0C0C268C1549AF4");
 			copyButton.UseVisualStyleBackColor = false;
 			copyButton.Click += CopyButton_Click;
 			// 
@@ -205,7 +205,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(115, 42);
 			cancelButton.TabIndex = 12;
-			cancelButton.Text = "Cancel";
+			cancelButton.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			cancelButton.UseVisualStyleBackColor = false;
 			cancelButton.Click += CancelButton_Click;
 			// 
@@ -220,7 +220,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			startButton.Name = "startButton";
 			startButton.Size = new Size(134, 42);
 			startButton.TabIndex = 13;
-			startButton.Text = "Start Test";
+			startButton.Text = LocalizationManager.Get("Text.28C45B32A2F9334AD511");
 			startButton.UseAccentStyle = true;
 			startButton.UseVisualStyleBackColor = false;
 			startButton.Click += StartButton_Click;
@@ -253,7 +253,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			Name = "ReliabilityTestDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Reliability Test";
+			Text = LocalizationManager.Get("Text.3DA22A4586E8B5324964");
 			(durationInput).EndInit();
 			(intervalInput).EndInit();
 			ResumeLayout(false);

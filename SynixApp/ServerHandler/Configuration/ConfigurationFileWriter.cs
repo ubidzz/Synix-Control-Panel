@@ -11,7 +11,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			string fullPath = Path.GetFullPath(path);
 			string directory = Path.GetDirectoryName(fullPath)
-				?? throw new InvalidOperationException("The config directory is unavailable.");
+				?? throw new InvalidOperationException(LocalizationManager.Get(
+					"Configuration.Editor.Error.DirectoryUnavailable"));
 			string temporaryPath = Path.Combine(
 				directory,
 				$".{Path.GetFileName(fullPath)}.{Guid.NewGuid():N}.synix.tmp");

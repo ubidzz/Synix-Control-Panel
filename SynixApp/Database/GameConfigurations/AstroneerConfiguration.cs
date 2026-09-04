@@ -39,7 +39,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (!ConfigurationFileExists(context.Server))
 			{
 				return ConfigurationApplyResult.Failure(
-					"ASTRONEER must be started once so it can generate its complete configuration files.");
+					LocalizationManager.Get(
+						"Configuration.Apply.StartOnceToGenerate",
+						GameName));
 			}
 
 			return base.Apply(context);

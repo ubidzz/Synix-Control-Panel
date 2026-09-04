@@ -60,7 +60,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblWorldIcon.Name = "lblWorldIcon";
 			lblWorldIcon.Size = new Size(28, 30);
 			lblWorldIcon.TabIndex = 0;
-			lblWorldIcon.Text = "◎";
+			lblWorldIcon.Text = LocalizationManager.Get("Text.16370FF5BAC8B8D003C8");
 			lblWorldIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblWorldTitle
@@ -72,7 +72,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblWorldTitle.Name = "lblWorldTitle";
 			lblWorldTitle.Size = new Size(145, 21);
 			lblWorldTitle.TabIndex = 1;
-			lblWorldTitle.Text = "World Generation";
+			lblWorldTitle.Text = LocalizationManager.Get("ServerSetup.Page.World.Title");
 
 			// lblWorldDescription
 			lblWorldDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -83,7 +83,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblWorldDescription.Name = "lblWorldDescription";
 			lblWorldDescription.Size = new Size(866, 22);
 			lblWorldDescription.TabIndex = 2;
-			lblWorldDescription.Text = "These values are enabled only when the selected server template supports them.";
+			lblWorldDescription.Text = LocalizationManager.Get("Text.7B3AC1F3AD7BA73ED0CC");
 
 			// lblWorldSeed
 			lblWorldSeed.AutoSize = true;
@@ -94,7 +94,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblWorldSeed.Name = "lblWorldSeed";
 			lblWorldSeed.Size = new Size(68, 15);
 			lblWorldSeed.TabIndex = 3;
-			lblWorldSeed.Text = "World Seed";
+			lblWorldSeed.Text = LocalizationManager.Get("Text.33DED6ECB268AFB09FD2");
 
 			// txtWorldSeed
 			txtWorldSeed.AutoSize = false;
@@ -116,7 +116,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblWorldSize.Name = "lblWorldSize";
 			lblWorldSize.Size = new Size(65, 15);
 			lblWorldSize.TabIndex = 5;
-			lblWorldSize.Text = "World Size";
+			lblWorldSize.Text = LocalizationManager.Get("Text.59E97D4C50CDAA280770");
 
 			// numWorldSize
 			numWorldSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;

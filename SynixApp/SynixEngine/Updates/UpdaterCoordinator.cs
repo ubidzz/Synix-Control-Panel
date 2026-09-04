@@ -73,7 +73,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(check);
 			if (!check.CanInstall || check.Release is null || check.Asset is null)
-				throw new InvalidOperationException("This Synix update is not ready to install.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updater.Error.NotReady"));
 
 			string updaterRoot = GetUpdaterRoot();
 			Directory.CreateDirectory(updaterRoot);
@@ -163,7 +164,8 @@ namespace Synix_Control_Panel.SynixEngine
 			startInfo.ArgumentList.Add(preparedUpdate.RequestPath);
 
 			Process helper = Process.Start(startInfo) ??
-				throw new InvalidOperationException("Synix could not start the update helper.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updater.Error.HelperStart"));
 			using (helper)
 			{
 				DateTime deadline = DateTime.UtcNow.AddSeconds(10);
@@ -178,7 +180,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			throw new InvalidOperationException(
-				"The Synix update helper could not prepare the update safely.");
+				LocalizationManager.Get("Updater.Error.HelperPrepare"));
 		}
 
 		public static bool TryRunUpdateHelper(string[] args)
@@ -197,9 +199,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				TryWriteHelperFailure(args[1], exception);
 				LocalizedMessageBox.Show(
-					"Synix could not finish the automatic update. Synix attempted to restore the previous program when possible.\n\n" +
-					"If Synix does not reopen, run your existing Synix program or download the latest release from GitHub. Your C:\\Synix server data was not changed.",
-					"Synix Update Did Not Complete",
+					LocalizationManager.Get(
+						"Updater.AutomaticUpdateFailed.Body"),
+					LocalizationManager.Get(
+						"Updater.AutomaticUpdateFailed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -281,13 +284,14 @@ namespace Synix_Control_Panel.SynixEngine
 				!FilesMatch(helperExecutable, parentExecutable))
 			{
 				throw new InvalidDataException(
-					"The update request does not match the running Synix process.");
+					LocalizationManager.Get("Updater.Error.ProcessMismatch"));
 			}
 			request.DestinationPath = Path.GetFullPath(parentExecutable);
 
 			File.WriteAllText(request.ReadyMarkerPath, "ready");
 			if (!parent.WaitForExit(TimeSpan.FromSeconds(ParentExitTimeoutSeconds)))
-				throw new TimeoutException("Synix did not close in time for the update.");
+				throw new TimeoutException(LocalizationManager.Get(
+					"Updater.Error.CloseTimeout"));
 
 			VerifyPayload(request.PayloadPath, request.ExpectedSha256);
 			string backupPath = Path.Combine(
@@ -304,7 +308,8 @@ namespace Synix_Control_Panel.SynixEngine
 					_ => ApplyMsiUpdate(request)
 				};
 				if (!applied)
-					throw new InvalidOperationException("The update installer did not complete successfully.");
+					throw new InvalidOperationException(LocalizationManager.Get(
+						"Updater.Error.InstallerIncomplete"));
 
 				Process updatedProcess = StartSynix(
 					request.DestinationPath,
@@ -336,7 +341,7 @@ namespace Synix_Control_Panel.SynixEngine
 				catch (Exception rollbackException)
 				{
 					throw new AggregateException(
-						"The Synix update failed and the previous program could not be restored automatically.",
+						LocalizationManager.Get("Updater.Error.RollbackFailed"),
 						updateException,
 						rollbackException);
 				}
@@ -349,18 +354,22 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!IsPathInsideUpdaterRoot(fullRequestPath) ||
 				!File.Exists(fullRequestPath))
 			{
-				throw new InvalidDataException("The update request path is not trusted.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updater.Error.RequestPathUntrusted"));
 			}
 
 			FileInfo requestFile = new(fullRequestPath);
 			if (requestFile.Length <= 0 || requestFile.Length > 64 * 1024)
-				throw new InvalidDataException("The update request has an unsafe size.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updater.Error.RequestSizeUnsafe"));
 
 			SynixUpdateRequest request = JsonSerializer.Deserialize<SynixUpdateRequest>(
 				File.ReadAllText(fullRequestPath)) ??
-				throw new InvalidDataException("The update request is incomplete.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updater.Error.RequestIncomplete"));
 			string operationDirectory = Path.GetDirectoryName(fullRequestPath) ??
-				throw new InvalidDataException("The update request folder is missing.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updater.Error.RequestFolderMissing"));
 			request.OperationDirectory = operationDirectory;
 			request.PayloadPath = Path.Combine(
 				operationDirectory,
@@ -383,7 +392,8 @@ namespace Synix_Control_Panel.SynixEngine
 				!IsSafeVersionText(request.PreviousVersion) ||
 				!IsSafeVersionText(request.NewVersion))
 			{
-				throw new InvalidDataException("The update request failed validation.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updater.Error.RequestValidation"));
 			}
 
 			return request;
@@ -398,7 +408,8 @@ namespace Synix_Control_Panel.SynixEngine
 		private static bool ApplyStandaloneUpdate(SynixUpdateRequest request)
 		{
 			string directory = Path.GetDirectoryName(request.DestinationPath) ??
-				throw new InvalidOperationException("The standalone Synix folder is missing.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updater.Error.StandaloneFolderMissing"));
 			string stagedPath = Path.Combine(
 				directory,
 				$".{Path.GetFileName(request.DestinationPath)}.{Guid.NewGuid():N}.update");
@@ -421,7 +432,8 @@ namespace Synix_Control_Panel.SynixEngine
 				Environment.SystemDirectory,
 				"msiexec.exe");
 			if (!File.Exists(msiexecPath))
-				throw new FileNotFoundException("Windows Installer could not be found.", msiexecPath);
+				throw new FileNotFoundException(LocalizationManager.Get(
+					"Updater.Error.WindowsInstallerMissing"), msiexecPath);
 
 			ProcessStartInfo startInfo = new(msiexecPath)
 			{
@@ -439,7 +451,8 @@ namespace Synix_Control_Panel.SynixEngine
 					: "SYNIXINSTALLSOURCE=Setup");
 
 			using Process installer = Process.Start(startInfo) ??
-				throw new InvalidOperationException("Synix could not start its MSI update.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updater.Error.MsiStart"));
 			if (!installer.WaitForExit(TimeSpan.FromMinutes(InstallerTimeoutMinutes)))
 			{
 				StopTimedOutProcess(installer);
@@ -534,7 +547,8 @@ namespace Synix_Control_Panel.SynixEngine
 			startInfo.ArgumentList.Add(argumentName);
 			startInfo.ArgumentList.Add(argumentValue);
 			return Process.Start(startInfo) ??
-				throw new InvalidOperationException("Synix could not restart after updating.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updater.Error.Restart"));
 		}
 
 		private static bool WaitForUpdatedStartup(
@@ -563,7 +577,8 @@ namespace Synix_Control_Panel.SynixEngine
 			string destinationPath)
 		{
 			string directory = Path.GetDirectoryName(destinationPath) ??
-				throw new InvalidOperationException("The Synix program folder is missing.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updater.Error.ProgramFolderMissing"));
 			string restoreStage = Path.Combine(
 				directory,
 				$".{Path.GetFileName(destinationPath)}.{Guid.NewGuid():N}.rollback");
@@ -656,7 +671,8 @@ namespace Synix_Control_Panel.SynixEngine
 			CryptographicOperations.ZeroMemory(actual);
 			CryptographicOperations.ZeroMemory(expected);
 			if (!matches)
-				throw new InvalidDataException("The downloaded update no longer matches GitHub's SHA-256 digest.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updater.Error.DigestMismatch"));
 		}
 
 		private static bool FilesMatch(string leftPath, string rightPath)
@@ -684,7 +700,8 @@ namespace Synix_Control_Panel.SynixEngine
 		private static void EnsureFolderCanBeUpdated(string directory, long assetSize)
 		{
 			if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
-				throw new DirectoryNotFoundException("The standalone Synix folder could not be found.");
+				throw new DirectoryNotFoundException(LocalizationManager.Get(
+					"Updater.Error.StandaloneFolderNotFound"));
 
 			EnsureFreeSpace(directory, checked(assetSize * 2 + 8L * 1024 * 1024));
 			string probePath = Path.Combine(
@@ -704,7 +721,7 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (UnauthorizedAccessException exception)
 			{
 				throw new InvalidOperationException(
-					"Windows will not allow Synix to update this standalone folder. Move Synix to a folder you can write to, then try again.",
+					LocalizationManager.Get("Updater.Error.FolderNotWritable"),
 					exception);
 			}
 			finally
@@ -716,12 +733,17 @@ namespace Synix_Control_Panel.SynixEngine
 		private static void EnsureFreeSpace(string path, long requiredBytes)
 		{
 			string root = Path.GetPathRoot(Path.GetFullPath(path)) ??
-				throw new InvalidOperationException("Synix could not identify the update drive.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updater.Error.DriveUnknown"));
 			DriveInfo drive = new(root);
 			if (drive.AvailableFreeSpace < requiredBytes)
 			{
 				throw new IOException(
-					$"The update needs about {FormatUpdateBytes(requiredBytes)} free on {drive.Name}, but only {FormatUpdateBytes(drive.AvailableFreeSpace)} is available.");
+					LocalizationManager.Get(
+						"Updater.Error.FreeSpace",
+						FormatUpdateBytes(requiredBytes),
+						drive.Name,
+						FormatUpdateBytes(drive.AvailableFreeSpace)));
 			}
 		}
 
@@ -877,7 +899,7 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(check);
 			return Task.FromException<SynixPreparedUpdate>(
 				new InvalidOperationException(
-					"Automatic updater operations are available only in an official Stable Synix release."));
+					LocalizationManager.Get("Updater.Error.StableOnly")));
 		}
 
 		public static void LaunchPreparedUpdate(
@@ -885,7 +907,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(preparedUpdate);
 			throw new InvalidOperationException(
-				"Automatic updater operations are disabled in development builds.");
+				LocalizationManager.Get("Updater.Error.DevelopmentDisabled"));
 		}
 
 		public static bool TryRunUpdateHelper(string[] args)

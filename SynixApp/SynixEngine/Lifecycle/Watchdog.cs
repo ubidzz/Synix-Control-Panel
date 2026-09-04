@@ -51,7 +51,7 @@ namespace Synix_Control_Panel.SynixEngine
 						{
 
 							server.IsProbing = false;
-							Log($"[PROBE] Reset a stale startup probe for {server.ServerName}.", Color.OrangeRed);
+							LogLocalized("Watchdog.Activity.ProbeReset", Color.OrangeRed, false, server.ServerName);
 						}
 
 						if (!server.HasAnnouncedOnline && !server.IsProbing)
@@ -63,7 +63,7 @@ namespace Synix_Control_Panel.SynixEngine
 								server.IsProbing = true;
 								if (isFirstProbe)
 								{
-									Log($"[PROBE] Startup verification active for {server.ServerName}; waiting for its network listener...", Color.Cyan);
+									LogLocalized("Watchdog.Activity.ProbeWaiting", Color.Cyan, false, server.ServerName);
 								}
 
 								_ = Task.Run(async () =>
@@ -95,8 +95,8 @@ namespace Synix_Control_Panel.SynixEngine
 											_ = SendDiscordNotification(
 												server,
 												DiscordNotificationEvent.ServerOnline,
-												"SERVER ONLINE",
-												"Synix successfully verified server connectivity.",
+												LocalizationManager.Get("Watchdog.Notification.Online.Title"),
+												LocalizationManager.Get("Watchdog.Notification.Online.Body"),
 												Color.LimeGreen);
 
 											server.Status = StatusManager.GetStatus(ServerState.Running);
@@ -105,7 +105,7 @@ namespace Synix_Control_Panel.SynixEngine
 									}
 									catch (Exception ex)
 									{
-										Log($"[Watchdog Error] {server.Game}: {ex.Message}");
+										LogLocalized("Watchdog.Activity.Error", arguments: [server.Game, ex.Message]);
 									}
 									finally
 									{
@@ -122,7 +122,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 						UpdateGridStatus();
 
-						Log($"[Watchdog] {server.Game} process terminated during startup. Aborting sequence.");
+						LogLocalized("Watchdog.Activity.StartupTerminated", arguments: [server.Game]);
 					}
 					continue;
 				}
@@ -168,7 +168,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 					TriggerGlobalDDoSAlert();
 
-					ApplicationLogService.Write($"[🚨 SECURITY] NETWORK FLOOD: {currentBps / 1024 / 1024} MB/s | System CPU: {cpuUsage:0}%", Color.Maroon);
+					ApplicationLogService.WriteLocalized(
+						"Watchdog.Activity.NetworkFlood",
+						Color.Maroon,
+						false,
+						currentBps / 1024 / 1024,
+						cpuUsage);
 				}
 			}
 			else
@@ -182,10 +187,10 @@ namespace Synix_Control_Panel.SynixEngine
 			System.Threading.Tasks.Task.Run(() =>
 			{
 				LocalizedMessageBox.Show(
-					"🚨 SYNIX NETWORK GUARD 🚨\n\n" +
-					"Critical bandwidth saturation detected on the network interface.\n\n" +
-					"System resources are redlining. Please check your firewall immediately.",
-					"Possible Network Flood Detected",
+					LocalizationManager.Get(
+						"NetworkGuard.Flood.Body"),
+					LocalizationManager.Get(
+						"NetworkGuard.Flood.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Stop,
 					MessageBoxDefaultButton.Button1,
@@ -217,7 +222,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 				return _cpuCounter.NextValue();
 			}
-			catch { return 0f; }
+			catch (Exception exception)
+			{
+				ApplicationLogService.WriteSuppressedException(exception);
+				return 0f;
+			}
 		}
 
 		private long GetBytesPerSecond()
@@ -250,8 +259,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 				return bytesPerSecond;
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return 0;
 			}
 		}

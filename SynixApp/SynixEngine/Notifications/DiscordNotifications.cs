@@ -18,8 +18,12 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public sealed record DiscordNotificationOption(
 		DiscordNotificationEvent Event,
-		string Name,
-		string Group);
+		string NameResourceKey,
+		string GroupResourceKey)
+	{
+		public string Name => LocalizationManager.Get(NameResourceKey);
+		public string Group => LocalizationManager.Get(GroupResourceKey);
+	}
 	public sealed record DiscordWebhookTestResult(bool Succeeded, string Message);
 
 	public partial class Core
@@ -63,31 +67,31 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static readonly DiscordNotificationOption[] DiscordOptions =
 		[
-			new(DiscordNotificationEvent.ServerStarting, "Server starting", "Server status"),
-			new(DiscordNotificationEvent.ServerOnline, "Server online", "Server status"),
-			new(DiscordNotificationEvent.ServerStopping, "Server stopping", "Server status"),
-			new(DiscordNotificationEvent.ServerStopped, "Server stopped", "Server status"),
-			new(DiscordNotificationEvent.ServerRestarting, "Server restarting", "Server status"),
-			new(DiscordNotificationEvent.ServerCrashed, "Crash detected", "Server status"),
-			new(DiscordNotificationEvent.InstallStarted, "Install started", "Installation and maintenance"),
-			new(DiscordNotificationEvent.InstallCompleted, "Install completed", "Installation and maintenance"),
-			new(DiscordNotificationEvent.InstallFailed, "Install failed", "Installation and maintenance"),
-			new(DiscordNotificationEvent.UpdateStarted, "Update started", "Installation and maintenance"),
-			new(DiscordNotificationEvent.UpdateCompleted, "Update completed", "Installation and maintenance"),
-			new(DiscordNotificationEvent.UpdateFailed, "Update failed", "Installation and maintenance"),
-			new(DiscordNotificationEvent.VerificationStarted, "File verification started", "Installation and maintenance"),
-			new(DiscordNotificationEvent.VerificationCompleted, "File verification completed", "Installation and maintenance"),
-			new(DiscordNotificationEvent.VerificationFailed, "File verification failed", "Installation and maintenance"),
-			new(DiscordNotificationEvent.BackupStarted, "Backup started", "Backups and restoration"),
-			new(DiscordNotificationEvent.BackupCompleted, "Backup completed", "Backups and restoration"),
-			new(DiscordNotificationEvent.BackupFailed, "Backup failed", "Backups and restoration"),
-			new(DiscordNotificationEvent.RestoreStarted, "Restore started", "Backups and restoration"),
-			new(DiscordNotificationEvent.RestoreCompleted, "Restore completed", "Backups and restoration"),
-			new(DiscordNotificationEvent.RestoreFailed, "Restore failed", "Backups and restoration"),
-			new(DiscordNotificationEvent.ResourceWarning, "CPU or RAM warning", "Health and security"),
-			new(DiscordNotificationEvent.MonitoringWarning, "Monitoring or connectivity warning", "Health and security"),
-			new(DiscordNotificationEvent.ConfigurationWarning, "Configuration warning", "Health and security"),
-			new(DiscordNotificationEvent.SecurityWarning, "Security action blocked", "Health and security")
+			new(DiscordNotificationEvent.ServerStarting, "Discord.Event.ServerStarting", "Discord.Group.ServerStatus"),
+			new(DiscordNotificationEvent.ServerOnline, "Discord.Event.ServerOnline", "Discord.Group.ServerStatus"),
+			new(DiscordNotificationEvent.ServerStopping, "Discord.Event.ServerStopping", "Discord.Group.ServerStatus"),
+			new(DiscordNotificationEvent.ServerStopped, "Discord.Event.ServerStopped", "Discord.Group.ServerStatus"),
+			new(DiscordNotificationEvent.ServerRestarting, "Discord.Event.ServerRestarting", "Discord.Group.ServerStatus"),
+			new(DiscordNotificationEvent.ServerCrashed, "Discord.Event.ServerCrashed", "Discord.Group.ServerStatus"),
+			new(DiscordNotificationEvent.InstallStarted, "Discord.Event.InstallStarted", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.InstallCompleted, "Discord.Event.InstallCompleted", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.InstallFailed, "Discord.Event.InstallFailed", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.UpdateStarted, "Discord.Event.UpdateStarted", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.UpdateCompleted, "Discord.Event.UpdateCompleted", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.UpdateFailed, "Discord.Event.UpdateFailed", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.VerificationStarted, "Discord.Event.VerificationStarted", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.VerificationCompleted, "Discord.Event.VerificationCompleted", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.VerificationFailed, "Discord.Event.VerificationFailed", "Discord.Group.Maintenance"),
+			new(DiscordNotificationEvent.BackupStarted, "Discord.Event.BackupStarted", "Discord.Group.Backups"),
+			new(DiscordNotificationEvent.BackupCompleted, "Discord.Event.BackupCompleted", "Discord.Group.Backups"),
+			new(DiscordNotificationEvent.BackupFailed, "Discord.Event.BackupFailed", "Discord.Group.Backups"),
+			new(DiscordNotificationEvent.RestoreStarted, "Discord.Event.RestoreStarted", "Discord.Group.Backups"),
+			new(DiscordNotificationEvent.RestoreCompleted, "Discord.Event.RestoreCompleted", "Discord.Group.Backups"),
+			new(DiscordNotificationEvent.RestoreFailed, "Discord.Event.RestoreFailed", "Discord.Group.Backups"),
+			new(DiscordNotificationEvent.ResourceWarning, "Discord.Event.ResourceWarning", "Discord.Group.Health"),
+			new(DiscordNotificationEvent.MonitoringWarning, "Discord.Event.MonitoringWarning", "Discord.Group.Health"),
+			new(DiscordNotificationEvent.ConfigurationWarning, "Discord.Event.ConfigurationWarning", "Discord.Group.Health"),
+			new(DiscordNotificationEvent.SecurityWarning, "Discord.Event.SecurityWarning", "Discord.Group.Health")
 		];
 
 		private readonly SemaphoreSlim _discordDeliveryLock = new(1, 1);
@@ -104,7 +108,7 @@ namespace Synix_Control_Panel.SynixEngine
 			error = string.Empty;
 			if (string.IsNullOrWhiteSpace(value))
 			{
-				error = "Enter a Discord webhook URL.";
+				error = LocalizationManager.Get("Discord.Validation.UrlRequired");
 				return false;
 			}
 
@@ -114,7 +118,7 @@ namespace Synix_Control_Panel.SynixEngine
 				!string.IsNullOrEmpty(candidate.UserInfo) ||
 				!string.IsNullOrEmpty(candidate.Fragment))
 			{
-				error = "Use an HTTPS webhook URL created by discord.com.";
+				error = LocalizationManager.Get("Discord.Validation.HttpsRequired");
 				return false;
 			}
 
@@ -126,7 +130,7 @@ namespace Synix_Control_Panel.SynixEngine
 				!long.TryParse(segments[2], out _) ||
 				string.IsNullOrWhiteSpace(segments[3]))
 			{
-				error = "The Discord webhook URL is incomplete or has an unsupported format.";
+				error = LocalizationManager.Get("Discord.Validation.UrlFormat");
 				return false;
 			}
 
@@ -156,9 +160,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (SynixPasswordProtectionException)
 			{
-				Log(
-					"[👾 DISCORD ERROR] Synix could not unlock one or more saved Discord webhooks. Re-enter them in Server Settings.",
-					Color.Red);
+				LogLocalized("Discord.Activity.WebhookUnlockFailed", Color.Red);
 				return;
 			}
 
@@ -166,7 +168,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (!TryValidateDiscordWebhookUrl(webhookUrl, out Uri? webhookUri, out string error))
 				{
-					Log($"[👾 DISCORD ERROR] {destinationName}: {error}", Color.Red);
+					LogLocalized("Discord.Activity.DestinationError", Color.Red, false, destinationName, error);
 					continue;
 				}
 
@@ -191,22 +193,24 @@ namespace Synix_Control_Panel.SynixEngine
 
 			GameServer testServer = new()
 			{
-				ServerName = string.IsNullOrWhiteSpace(serverName) ? "Test Server" : serverName.Trim()
+				ServerName = string.IsNullOrWhiteSpace(serverName)
+					? LocalizationManager.Get("Discord.Test.DefaultServerName")
+					: serverName.Trim()
 			};
 			string deliveryError = string.Empty;
 			bool succeeded = await SendDiscordPayloadAsync(
 				webhookUri!,
 				testServer,
 				DiscordNotificationEvent.ServerOnline,
-				"TEST CONNECTION",
-				$"Synix successfully reached {destinationName}.",
+				LocalizationManager.Get("Discord.Test.Title"),
+				LocalizationManager.Get("Discord.Test.Body", destinationName),
 				Color.LimeGreen,
 				destinationName,
 				logFailure: false,
 				errorSink: value => deliveryError = value);
 			return new DiscordWebhookTestResult(
 				succeeded,
-				succeeded ? "Discord received the test message." : deliveryError);
+				succeeded ? LocalizationManager.Get("Discord.Test.Succeeded") : deliveryError);
 		}
 
 		private static List<(string Name, string Url)> GetDiscordDestinations(
@@ -221,7 +225,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				string masterUrl = RevealDiscordWebhook(server);
 				if (!string.IsNullOrWhiteSpace(masterUrl) && uniqueUrls.Add(masterUrl))
-					destinations.Add(("Master webhook", masterUrl));
+					destinations.Add((LocalizationManager.Get("Discord.Destination.Master"), masterUrl));
 			}
 
 			foreach (DiscordWebhookRoute route in RevealDiscordWebhookRoutes(server))
@@ -235,7 +239,9 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				destinations.Add((
-					string.IsNullOrWhiteSpace(route.Name) ? "Discord channel" : route.Name,
+					string.IsNullOrWhiteSpace(route.Name)
+						? LocalizationManager.Get("Discord.Destination.Channel")
+						: route.Name,
 					route.WebhookUrl));
 			}
 
@@ -268,12 +274,12 @@ namespace Synix_Control_Panel.SynixEngine
 						{
 							new
 							{
-								name = "Synix event",
+								name = LocalizationManager.Get("Discord.Payload.EventField"),
 								value = GetDiscordEventName(notificationEvent),
 								inline = true
 							}
 						},
-						footer = new { text = "Synix Engine • Secure Server Automation" },
+						footer = new { text = LocalizationManager.Get("Discord.Payload.Footer") },
 						timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
 					}
 				}
@@ -297,19 +303,26 @@ namespace Synix_Control_Panel.SynixEngine
 						continue;
 					}
 
-					string failure = $"{destinationName} returned {(int)response.StatusCode} {response.ReasonPhrase}.";
+					string failure = LocalizationManager.Get(
+						"Discord.Error.HttpResponse",
+						destinationName,
+						(int)response.StatusCode,
+						response.ReasonPhrase ?? string.Empty);
 					errorSink?.Invoke(failure);
 					if (logFailure)
-						Log($"[👾 DISCORD] {failure}", Color.Red);
+						LogLocalized("Discord.Activity.Error", Color.Red, false, failure);
 					return false;
 				}
 			}
 			catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException)
 			{
-				string failure = $"Discord delivery to {destinationName} failed ({exception.GetType().Name}).";
+				string failure = LocalizationManager.Get(
+					"Discord.Error.DeliveryFailed",
+					destinationName,
+					exception.GetType().Name);
 				errorSink?.Invoke(failure);
 				if (logFailure)
-					Log($"[👾 DISCORD ERROR] {failure}", Color.Red);
+					LogLocalized("Discord.Activity.Error", Color.Red, false, failure);
 				return false;
 			}
 			finally
@@ -327,23 +340,27 @@ namespace Synix_Control_Panel.SynixEngine
 		public static string SummarizeDiscordEvents(DiscordNotificationEvent events)
 		{
 			if (events == DiscordNotificationEvent.None)
-				return "No events";
+				return LocalizationManager.Get("Discord.Summary.None");
 			if ((events & DiscordNotificationEvent.All) == DiscordNotificationEvent.All)
-				return "All events";
+				return LocalizationManager.Get("Discord.Summary.All");
 			if ((events & DiscordProblemEvents) == events)
-				return "Problems only";
+				return LocalizationManager.Get("Discord.Summary.ProblemsOnly");
 			if ((events & DiscordStatusEvents) == events)
-				return "Server status";
+				return LocalizationManager.Get("Discord.Summary.ServerStatus");
 			if ((events & DiscordMaintenanceEvents) == events)
-				return "Maintenance";
+				return LocalizationManager.Get("Discord.Summary.Maintenance");
 
 			int selected = DiscordOptions.Count(option => (events & option.Event) != 0);
-			return $"{selected} selected event{(selected == 1 ? string.Empty : "s")}";
+			return LocalizationManager.Get(
+				selected == 1 ? "Discord.Summary.SelectedOne" : "Discord.Summary.SelectedMany",
+				selected);
 		}
 
 		private static string LimitDiscordText(string? value, int maximumLength)
 		{
-			string text = string.IsNullOrWhiteSpace(value) ? "Synix server" : value.Trim();
+			string text = string.IsNullOrWhiteSpace(value)
+				? LocalizationManager.Get("Discord.Payload.DefaultServerName")
+				: value.Trim();
 			return text.Length <= maximumLength
 				? text
 				: text[..maximumLength];

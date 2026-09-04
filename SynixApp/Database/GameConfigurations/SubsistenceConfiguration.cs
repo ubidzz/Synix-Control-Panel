@@ -88,7 +88,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				if (!File.Exists(snapshotPath))
 				{
 					return ConfigurationApplyResult.Failure(
-						"Subsistence must generate its complete configuration files before Synix can reset them.");
+						LocalizationManager.Get(
+							"Configuration.Apply.GenerateBeforeReset",
+							GameName));
 				}
 
 				snapshots.Add(new ResetTemplate(
@@ -126,12 +128,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					applied.Complete,
 					true,
 					reset.Created,
-					$"The complete Subsistence configuration files were restored, but the saved Synix settings could not all be reapplied. {applied.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.RestoredReapplyFailed",
+						GameName,
+						applied.Message));
 			}
 
 			return reset with
 			{
-				Message = $"{reset.Message} Reapplied the saved Synix server settings."
+				Message = LocalizationManager.Get(
+					"Configuration.Apply.Reapplied",
+					reset.Message)
 			};
 		}
 	}

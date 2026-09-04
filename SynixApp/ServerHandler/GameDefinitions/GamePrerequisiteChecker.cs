@@ -103,12 +103,22 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					AddResult(
 						items,
 						installedMemory >= requirements.MinimumSystemMemoryGb,
-						"System memory",
-						$"{definition.Game} requires at least {requirements.MinimumSystemMemoryGb} GB of system RAM. Detected: {installedMemory:0.0} GB.");
+						LocalizationManager.Get(
+							"Prerequisite.SystemMemory.Name"),
+						LocalizationManager.Get(
+							"Prerequisite.SystemMemory.Required",
+							definition.Game,
+							requirements.MinimumSystemMemoryGb,
+							installedMemory));
 				}
 				else
 				{
-					AddUnknown(items, "System memory", "Synix could not read the installed system memory.");
+					AddUnknown(
+						items,
+						LocalizationManager.Get(
+							"Prerequisite.SystemMemory.Name"),
+						LocalizationManager.Get(
+							"Prerequisite.SystemMemory.Unknown"));
 				}
 			}
 
@@ -117,28 +127,39 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				AddResult(
 					items,
 					snapshot.Avx2Supported,
-					"AVX2 processor support",
-					$"{definition.Game} requires a processor with AVX2 support.");
+					LocalizationManager.Get("Prerequisite.Avx2.Name"),
+					LocalizationManager.Get(
+						"Prerequisite.Avx2.Required",
+						definition.Game));
 			}
 
 			EvaluateBooleanRequirement(
 				items,
 				requirements.RequiresHardwareVirtualization,
 				snapshot.HardwareVirtualizationEnabled,
-				"Hardware virtualization",
-				$"{definition.Game} requires {snapshot.VirtualizationTechnology} to be enabled in the computer firmware.");
+				LocalizationManager.Get(
+					"Prerequisite.Virtualization.Name"),
+				LocalizationManager.Get(
+					"Prerequisite.Virtualization.Required",
+					definition.Game,
+					snapshot.VirtualizationTechnology));
 			EvaluateBooleanRequirement(
 				items,
 				requirements.RequiresHyperV,
 				snapshot.HypervisorPresent,
-				"Microsoft Hyper-V",
-				$"{definition.Game} requires Hyper-V to be enabled in Windows Features.");
+				LocalizationManager.Get("Prerequisite.HyperV.Name"),
+				LocalizationManager.Get(
+					"Prerequisite.HyperV.Required",
+					definition.Game));
 			EvaluateBooleanRequirement(
 				items,
 				requirements.RequiresWindowsProfessionalOrHigher,
 				snapshot.WindowsProfessionalOrHigher,
-				"Windows edition",
-				$"{definition.Game} requires Windows Professional, Enterprise, or a higher supported edition.");
+				LocalizationManager.Get(
+					"Prerequisite.WindowsEdition.Name"),
+				LocalizationManager.Get(
+					"Prerequisite.WindowsEdition.Required",
+					definition.Game));
 
 			if (requirements.MinimumDotNetFramework != DotNetFrameworkRequirement.None)
 			{
@@ -152,11 +173,19 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						items,
 						installedRelease >= requiredRelease,
 						label,
-						$"{definition.Game} requires {label} or newer.");
+						LocalizationManager.Get(
+							"Prerequisite.DotNet.Required",
+							definition.Game,
+							label));
 				}
 				else
 				{
-					AddUnknown(items, label, $"Synix could not verify whether {label} is installed.");
+					AddUnknown(
+						items,
+						label,
+						LocalizationManager.Get(
+							"Prerequisite.Runtime.Unknown",
+							label));
 				}
 			}
 
@@ -166,7 +195,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				string label = GetVisualCppLabel(runtime);
 				if (!snapshot.VisualCppRegistryReadable)
 				{
-					AddUnknown(items, label, $"Synix could not verify whether {label} is installed.");
+					AddUnknown(
+						items,
+						label,
+						LocalizationManager.Get(
+							"Prerequisite.Runtime.Unknown",
+							label));
 					continue;
 				}
 
@@ -174,7 +208,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					items,
 					snapshot.InstalledVisualCppRedistributables.Contains(runtime),
 					label,
-					$"{definition.Game} requires the Microsoft {label} runtime.");
+					LocalizationManager.Get(
+						"Prerequisite.VisualCpp.Required",
+						definition.Game,
+						label));
 			}
 
 			return new GamePrerequisiteReport(items);
@@ -185,16 +222,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			DotNetFrameworkRequirement.NetFramework48 => ".NET Framework 4.8",
 			DotNetFrameworkRequirement.NetFramework481 => ".NET Framework 4.8.1",
-			_ => "No .NET Framework requirement"
+			_ => LocalizationManager.Get("Prerequisite.DotNet.None")
 		};
 
 		internal static string GetVisualCppLabel(
 			VisualCppRedistributableRequirement requirement) => requirement switch
 		{
 			VisualCppRedistributableRequirement.VisualCpp2013X64 =>
-				"Visual C++ 2013 Redistributable (x64)",
+				LocalizationManager.Get("Prerequisite.VisualCpp.2013X64"),
 			VisualCppRedistributableRequirement.VisualCpp2015To2022X64 =>
-				"Visual C++ 2015–2022 Redistributable (x64)",
+				LocalizationManager.Get("Prerequisite.VisualCpp.2015To2022X64"),
 			_ => requirement.ToString()
 		};
 
@@ -218,8 +255,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					items.Add(new GamePrerequisiteItem(
 						GamePrerequisiteState.Failed,
-						$"Port {port}",
-						$"The {name} {port} is assigned to the Synix server '{owner}'."));
+						LocalizationManager.Get(
+							"Prerequisite.Port.Name",
+							port),
+						LocalizationManager.Get(
+							"Prerequisite.Port.Assigned",
+							name,
+							port,
+							owner)));
 					continue;
 				}
 
@@ -227,8 +270,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					items.Add(new GamePrerequisiteItem(
 						GamePrerequisiteState.Failed,
-						$"Port {port}",
-						$"The {name} {port} is currently being used by another program."));
+						LocalizationManager.Get(
+							"Prerequisite.Port.Name",
+							port),
+						LocalizationManager.Get(
+							"Prerequisite.Port.InUse",
+							name,
+							port)));
 				}
 			}
 			return items;
@@ -324,7 +372,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						? "Intel VT-x"
 						: manufacturer.Contains("AMD", StringComparison.OrdinalIgnoreCase)
 							? "AMD-V (SVM)"
-							: "hardware virtualization";
+							: LocalizationManager.Get("Prerequisite.Virtualization.Generic");
 					bool? enabled = processor["VirtualizationFirmwareEnabled"] == null
 						? null
 						: Convert.ToBoolean(processor["VirtualizationFirmwareEnabled"]);
@@ -335,7 +383,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
-			return (null, "hardware virtualization");
+			return (
+				null,
+				LocalizationManager.Get("Prerequisite.Virtualization.Generic"));
 		}
 
 		private static int? ReadDotNetFrameworkRelease()
@@ -351,8 +401,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					? Convert.ToInt32(value)
 					: 0;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(
+					suppressedException,
+					"ReadDotNetFrameworkRelease");
 				return null;
 			}
 		}
@@ -416,7 +469,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (available.HasValue)
 				AddResult(items, available.Value, name, failureMessage);
 			else
-				AddUnknown(items, name, $"Synix could not verify {name} on this computer.");
+				AddUnknown(
+					items,
+					name,
+					LocalizationManager.Get(
+						"Prerequisite.Requirement.Unknown",
+						name));
 		}
 
 		private static void AddResult(
@@ -426,7 +484,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string failureMessage) => items.Add(new GamePrerequisiteItem(
 			passed ? GamePrerequisiteState.Passed : GamePrerequisiteState.Failed,
 			name,
-			passed ? $"{name} is available." : failureMessage));
+			passed
+				? LocalizationManager.Get(
+					"Prerequisite.Requirement.Available",
+					name)
+				: failureMessage));
 
 		private static void AddUnknown(
 			ICollection<GamePrerequisiteItem> items,

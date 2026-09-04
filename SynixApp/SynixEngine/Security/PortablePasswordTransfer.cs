@@ -46,7 +46,8 @@ namespace Synix_Control_Panel.SynixEngine
 			if (string.IsNullOrEmpty(transferPassword))
 			{
 				throw new ArgumentException(
-					"A transfer password is required for portable saved credentials.",
+					LocalizationManager.Get(
+						"Security.Transfer.Error.PasswordRequired"),
 					nameof(transferPassword));
 			}
 
@@ -115,7 +116,8 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!File.Exists(serversPath))
 			{
 				throw new SynixPasswordProtectionException(
-					"The transfer contains saved credentials but no server list to restore them into.");
+					LocalizationManager.Get(
+						"Security.Transfer.Error.ServerListMissing"));
 			}
 
 			byte[] encryptedVault = File.ReadAllBytes(vaultPath);
@@ -125,13 +127,15 @@ namespace Synix_Control_Panel.SynixEngine
 				PortablePasswordBundle bundle =
 					JsonSerializer.Deserialize<PortablePasswordBundle>(plaintext) ??
 					throw new SynixPasswordProtectionException(
-						"The portable saved-credential list is incomplete.");
+						LocalizationManager.Get(
+							"Security.Transfer.Error.ListIncomplete"));
 
 				if (bundle.Version is < 1 or > PortablePasswordFormatVersion ||
 					bundle.Servers is null)
 				{
 					throw new SynixPasswordProtectionException(
-						"This saved-credential transfer version is not supported.");
+						LocalizationManager.Get(
+							"Security.Transfer.Error.VersionUnsupported"));
 				}
 
 				List<GameServer> importedServers =
@@ -173,7 +177,8 @@ namespace Synix_Control_Panel.SynixEngine
 				exception is JsonException or IOException or InvalidOperationException)
 			{
 				throw new SynixPasswordProtectionException(
-					"Synix could not restore the portable saved credentials.",
+					LocalizationManager.Get(
+						"Security.Transfer.Error.RestoreFailed"),
 					exception);
 			}
 			finally
@@ -208,7 +213,9 @@ namespace Synix_Control_Panel.SynixEngine
 			if (matches.Count != 1)
 			{
 				throw new SynixPasswordProtectionException(
-					$"The saved credentials for '{entry.ServerName}' could not be matched safely to one imported server.");
+					LocalizationManager.Get(
+						"Security.Transfer.Error.ServerMatch",
+						entry.ServerName));
 			}
 
 			return matches[0];
@@ -237,7 +244,8 @@ namespace Synix_Control_Panel.SynixEngine
 			if (plaintext.Length > MaximumPayloadBytes)
 			{
 				throw new SynixPasswordProtectionException(
-					"The saved-credential list is unexpectedly large.");
+					LocalizationManager.Get(
+						"Security.Transfer.Error.ListTooLarge"));
 			}
 
 			byte[] salt = RandomNumberGenerator.GetBytes(PortablePasswordSaltSize);
@@ -324,7 +332,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				CryptographicOperations.ZeroMemory(plaintext);
 				throw new SynixPasswordProtectionException(
-					"The portable saved credentials could not be unlocked with this transfer password.",
+					LocalizationManager.Get(
+						"Security.Transfer.Error.UnlockFailed"),
 					exception);
 			}
 			finally
@@ -365,7 +374,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private static SynixPasswordProtectionException InvalidVault()
 		{
 			return new SynixPasswordProtectionException(
-				"The portable saved-credential data is damaged or incomplete.");
+				LocalizationManager.Get("Security.Transfer.Error.Damaged"));
 		}
 
 		private static void WriteBytesAtomically(
@@ -374,7 +383,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			string? directory = Path.GetDirectoryName(fullPath);
 			if (string.IsNullOrWhiteSpace(directory))
-				throw new InvalidOperationException("The password vault folder is missing.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Security.Transfer.Error.VaultFolderMissing"));
 
 			Directory.CreateDirectory(directory);
 			string temporaryPath = Path.Combine(

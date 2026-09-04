@@ -40,7 +40,8 @@ namespace Synix_Control_Panel.SynixEngine
 				return new FirewallOrphanScanResult(
 					false,
 					[],
-					snapshot.Problem ?? "Windows Firewall rules could not be inspected.");
+					snapshot.Problem ?? LocalizationManager.Get(
+						"FirewallCleanup.Scan.InspectionFailed"));
 			}
 
 			IEnumerable<GameServer> servers = registeredServers ??
@@ -56,8 +57,10 @@ namespace Synix_Control_Panel.SynixEngine
 				true,
 				orphaned,
 				orphaned.Count == 0
-					? "No orphaned firewall rules were found in the default Synix Games folder."
-					: $"Found firewall rules for {orphaned.Count} deleted server executable path(s).");
+					? LocalizationManager.Get("FirewallCleanup.Scan.NoneFound")
+					: LocalizationManager.Get(
+						"FirewallCleanup.Scan.Found",
+						orphaned.Count));
 		}
 
 		internal static IReadOnlyList<string>
@@ -129,7 +132,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return new ElevatedFirewallCleanupResult(
 					false,
 					false,
-					"Firewall cleanup is available only on Windows.");
+					LocalizationManager.Get("FirewallCleanup.WindowsOnly"));
 			}
 
 			try
@@ -147,7 +150,7 @@ namespace Synix_Control_Panel.SynixEngine
 					return new ElevatedFirewallCleanupResult(
 						false,
 						false,
-						"Windows could not start the approved firewall cleanup task.");
+						LocalizationManager.Get("FirewallCleanup.StartFailed"));
 				}
 
 				await process.WaitForExitAsync();
@@ -155,25 +158,27 @@ namespace Synix_Control_Panel.SynixEngine
 					? new ElevatedFirewallCleanupResult(
 						true,
 						false,
-						"Synix removed and verified the orphaned firewall rules.")
+						LocalizationManager.Get("FirewallCleanup.Completed"))
 					: new ElevatedFirewallCleanupResult(
 						false,
 						false,
-						"The elevated firewall cleanup did not complete. No rules outside the default Synix Games folder were targeted.");
+						LocalizationManager.Get("FirewallCleanup.Incomplete"));
 			}
 			catch (Win32Exception exception) when (exception.NativeErrorCode == 1223)
 			{
 				return new ElevatedFirewallCleanupResult(
 					false,
 					true,
-					"Administrator permission was canceled. No firewall rules were changed.");
+					LocalizationManager.Get("FirewallCleanup.Canceled"));
 			}
 			catch (Exception exception)
 			{
 				return new ElevatedFirewallCleanupResult(
 					false,
 					false,
-					$"Firewall cleanup could not start: {exception.Message}");
+					LocalizationManager.Get(
+						"FirewallCleanup.Error",
+						exception.Message));
 			}
 		}
 
@@ -217,8 +222,11 @@ namespace Synix_Control_Panel.SynixEngine
 				servers = Core.DeserializeServersAndMigrate(json, out int _);
 				return true;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(
+					suppressedException,
+					"LoadSavedServersForFirewallCleanup");
 				return false;
 			}
 		}
@@ -295,8 +303,11 @@ namespace Synix_Control_Panel.SynixEngine
 						Environment.ExpandEnvironmentVariables(path.Trim().Trim('"'))));
 				return true;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(
+					suppressedException,
+					"NormalizeFirewallCleanupPath");
 				return false;
 			}
 		}

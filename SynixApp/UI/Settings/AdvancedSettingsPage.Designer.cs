@@ -125,7 +125,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(648, 31);
 			lblTitle.TabIndex = 0;
-			lblTitle.Text = "Elevated System Tasks";
+			lblTitle.Text = LocalizationManager.Get("Text.5F646AFBC7E02748C71A");
 			lblTitle.TextAlign = ContentAlignment.MiddleLeft;
 			//
 			// lblDescription
@@ -140,11 +140,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblDescription.Name = "lblDescription";
 			lblDescription.Size = new Size(648, 59);
 			lblDescription.TabIndex = 1;
-			lblDescription.Text = "When enabled, deleting a server requests administrator permission to remove its Windows Firewall rules. Turn this off to skip automatic cleanup during deletion.";
+			lblDescription.Text = LocalizationManager.Get("Text.C29162E9E78CEEA6A66B");
 			//
 			// chkElevatedTasks
 			//
-			chkElevatedTasks.AccessibleName = "Elevated system tasks";
+			chkElevatedTasks.AccessibleName = LocalizationManager.Get("Text.5F646AFBC7E02748C71A");
 			chkElevatedTasks.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			chkElevatedTasks.BackColor = Color.FromArgb(17, 27, 45);
 			chkElevatedTasks.Cursor = Cursors.Hand;
@@ -190,7 +190,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTroubleshooterTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblTroubleshooterTitle.Location = new Point(80, 22);
 			lblTroubleshooterTitle.Size = new Size(520, 31);
-			lblTroubleshooterTitle.Text = "System & Server Troubleshooter";
+			lblTroubleshooterTitle.Text = LocalizationManager.Get("Text.EED8C29183FC10F6FEC2");
 			//
 			// lblTroubleshooterDescription
 			//
@@ -200,16 +200,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTroubleshooterDescription.ForeColor = Color.FromArgb(158, 172, 194);
 			lblTroubleshooterDescription.Location = new Point(80, 54);
 			lblTroubleshooterDescription.Size = new Size(520, 72);
-			lblTroubleshooterDescription.Text = "Check SteamCMD, runtimes, server files, configs, ports, Windows Firewall, disk space, interrupted processes, recent logs, and update health.";
+			lblTroubleshooterDescription.Text = LocalizationManager.Get("Text.6B1DD744008E1B4658A6");
 			//
 			// btnTroubleshooter
 			//
-			btnTroubleshooter.AccessibleName = "Open the Synix troubleshooter";
+			btnTroubleshooter.AccessibleName = LocalizationManager.Get("Text.C8CF5C841F7BF2F1E0F3");
 			btnTroubleshooter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnTroubleshooter.Location = new Point(628, 52);
 			btnTroubleshooter.Name = "btnTroubleshooter";
 			btnTroubleshooter.Size = new Size(165, 42);
-			btnTroubleshooter.Text = "Run Health Check";
+			btnTroubleshooter.Text = LocalizationManager.Get("Text.6AB14A52545C53E3EA71");
 			btnTroubleshooter.UseAccentStyle = true;
 			//
 			// AdvancedSettingsPage

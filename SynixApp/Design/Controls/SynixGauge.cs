@@ -20,7 +20,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 	{
 		private float _value;
 		private float _maxValue = 100F;
-		private string _gaugeLabel = "CPU %";
+		private string _gaugeLabel =
+			LocalizationManager.Get("Dashboard.CpuGaugeLabel");
 
 		[Category("Synix Design")]
 		[Description("Current value of the gauge.")]

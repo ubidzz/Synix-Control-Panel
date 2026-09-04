@@ -19,7 +19,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 {
 	public partial class DiscordWebhookRouteDialog : Form
 	{
-		private readonly string _serverName = "Test Server";
+		private readonly string _serverName =
+			LocalizationManager.Get("Discord.TestServer");
 		private readonly string _routeId = Guid.NewGuid().ToString("N");
 		private bool _loading;
 
@@ -79,7 +80,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			string serverName) : this()
 		{
 			_serverName = string.IsNullOrWhiteSpace(serverName)
-				? "Test Server"
+				? LocalizationManager.Get("Discord.TestServer")
 				: serverName.Trim();
 			_routeId = string.IsNullOrWhiteSpace(route?.Id)
 				? Guid.NewGuid().ToString("N")
@@ -138,7 +139,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 		private void UpdateSelectionStatus()
 		{
 			DiscordNotificationEvent events = GetSelectedEvents();
-			lblSelection.Text = Core.SummarizeDiscordEvents(events);
+			lblSelection.Text = LocalizationManager.TranslateRuntimeText(
+				Core.SummarizeDiscordEvents(events));
 			lblSelection.ForeColor = events == DiscordNotificationEvent.None
 				? SettingsPalette.Warning
 				: SettingsPalette.Accent;
@@ -147,13 +149,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 		private async void btnTest_Click(object? sender, EventArgs eventArgs)
 		{
 			btnTest.Enabled = false;
-			lblStatus.Text = "Sending a safe test message...";
+			LocalizationManager.BindText(
+				lblStatus,
+				"Text.EB454593102B203B457D");
 			lblStatus.ForeColor = SettingsPalette.SecondaryText;
 			DiscordWebhookTestResult result = await Core.Instance.SendDiscordTestAsync(
 				txtWebhook.Text.Trim(),
 				_serverName,
-				string.IsNullOrWhiteSpace(txtName.Text) ? "Discord channel" : txtName.Text.Trim());
-			lblStatus.Text = result.Message;
+				string.IsNullOrWhiteSpace(txtName.Text)
+					? LocalizationManager.Get("Discord.Channel")
+					: txtName.Text.Trim());
+			lblStatus.Text = LocalizationManager.TranslateRuntimeText(result.Message);
 			lblStatus.ForeColor = result.Succeeded
 				? SettingsPalette.Success
 				: SettingsPalette.Danger;
@@ -167,17 +173,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			DiscordNotificationEvent events = GetSelectedEvents();
 			if (string.IsNullOrWhiteSpace(name))
 			{
-				ShowValidation("Give this Discord destination a name, such as Backups or Server Status.");
+				ShowValidation(LocalizationManager.Get("Discord.Validation.NameRequired"));
 				return;
 			}
 			if (!Core.TryValidateDiscordWebhookUrl(webhook, out Uri? normalized, out string error))
 			{
-				ShowValidation(error);
+				ShowValidation(LocalizationManager.TranslateRuntimeText(error));
 				return;
 			}
 			if (events == DiscordNotificationEvent.None)
 			{
-				ShowValidation("Select at least one event for this Discord destination.");
+				ShowValidation(LocalizationManager.Get("Discord.Validation.EventRequired"));
 				return;
 			}
 
@@ -202,7 +208,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 		private sealed class EventItem(DiscordNotificationOption option)
 		{
 			public DiscordNotificationOption Option { get; } = option;
-			public override string ToString() => $"{Option.Group}  •  {Option.Name}";
+			public override string ToString() => LocalizationManager.Get(
+				"Discord.EventOption",
+				LocalizationManager.TranslateKnownText(Option.Group),
+				LocalizationManager.TranslateKnownText(Option.Name));
 		}
 	}
 }

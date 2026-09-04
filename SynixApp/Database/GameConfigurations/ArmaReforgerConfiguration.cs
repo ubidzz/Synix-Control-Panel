@@ -72,7 +72,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					items.Add(new ConfigurationValidationItem(
 						ConfigurationValidationState.Failed,
 						"rcon",
-						"The root of server.json is not a JSON object."));
+						LocalizationManager.Get(
+							"Configuration.Check.Rcon.InvalidJsonRoot")));
 					return items;
 				}
 
@@ -95,15 +96,19 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						: ConfigurationValidationState.Failed,
 					"rcon",
 					matchesSavedValue
-						? "The RCON section matches the values saved in Synix."
-						: "The RCON section does not match the enabled state, port, or password saved in Synix."));
+						? LocalizationManager.Get(
+							"Configuration.Check.Rcon.Matches")
+						: LocalizationManager.Get(
+							"Configuration.Check.Rcon.Differs")));
 			}
 			catch (Exception exception)
 			{
 				items.Add(new ConfigurationValidationItem(
 					ConfigurationValidationState.Failed,
 					"rcon",
-					$"Synix could not inspect the RCON section: {exception.Message}"));
+					LocalizationManager.Get(
+						"Configuration.Check.Rcon.InspectFailed",
+						exception.Message)));
 			}
 
 			return items;
@@ -193,13 +198,18 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					true,
 					result.Created,
 					result.Complete
-						? $"Updated and verified the {GameName} configuration."
+						? LocalizationManager.Get(
+							"Configuration.Apply.Updated",
+							GameName)
 						: result.Message);
 			}
 			catch (Exception exception)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The {GameName} RCON configuration could not be applied: {exception.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.RconFailed",
+						GameName,
+						exception.Message));
 			}
 		}
 
@@ -228,7 +238,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			JsonNode? parsed = JsonNode.Parse(File.ReadAllText(path));
 			if (parsed is not JsonObject root)
 			{
-				throw new InvalidDataException("The root of server.json must be a JSON object.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Configuration.Error.JsonRootObject",
+					"server.json"));
 			}
 
 			bool changed;
@@ -261,7 +273,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			string? directory = Path.GetDirectoryName(path);
 			if (string.IsNullOrWhiteSpace(directory))
 			{
-				throw new InvalidOperationException("The configuration directory is unavailable.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Configuration.Error.DirectoryUnavailable"));
 			}
 
 			string temporaryPath = Path.Combine(
@@ -272,7 +285,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				string json = root.ToJsonString(TemplateJsonOptions);
 				File.WriteAllText(temporaryPath, json, new UTF8Encoding(false, true));
 				_ = JsonNode.Parse(File.ReadAllText(temporaryPath)) ??
-					throw new InvalidDataException("The generated JSON could not be verified.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Configuration.Error.GeneratedJsonInvalid"));
 				File.Move(temporaryPath, path, true);
 			}
 			finally
@@ -297,7 +311,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (password.Any(char.IsWhiteSpace))
 			{
 				throw new InvalidDataException(
-					"Arma Reforger admin passwords cannot contain spaces.");
+					LocalizationManager.Get(
+						"Configuration.Error.ArmaAdminPasswordSpaces"));
 			}
 
 			return password;
@@ -309,13 +324,15 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (password.Length < 3)
 			{
 				throw new InvalidDataException(
-					"Arma Reforger RCON passwords must contain at least three characters.");
+					LocalizationManager.Get(
+						"Configuration.Error.ArmaRconPasswordLength"));
 			}
 
 			if (password.Any(char.IsWhiteSpace))
 			{
 				throw new InvalidDataException(
-					"Arma Reforger RCON passwords cannot contain spaces.");
+					LocalizationManager.Get(
+						"Configuration.Error.ArmaRconPasswordSpaces"));
 			}
 
 			return password;

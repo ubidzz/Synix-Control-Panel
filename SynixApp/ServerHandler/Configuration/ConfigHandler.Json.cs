@@ -47,7 +47,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (_index != _text.Length)
 				{
 					throw new InvalidDataException(
-						$"Unexpected JSON content at character {_index}.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.JsonUnexpectedContent",
+							_index));
 				}
 
 				return _document;
@@ -58,7 +60,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				SkipTrivia();
 				if (_index >= _text.Length)
 				{
-					throw new InvalidDataException("The JSON value ended unexpectedly.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Configuration.Editor.Error.JsonUnexpectedEnd"));
 				}
 
 				char character = _text[_index];
@@ -80,7 +83,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 
 				throw new InvalidDataException(
-					$"Unsupported JSON value at character {_index}.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.JsonUnsupportedValue",
+						_index));
 			}
 
 			private void ParseObject(string pointer, string displayPath)
@@ -191,7 +196,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!IsValidNumber(token, true))
 				{
 					throw new InvalidDataException(
-						$"Invalid JSON number at character {start}.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.JsonInvalidNumber",
+							start));
 				}
 
 				AddValue(
@@ -217,7 +224,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					!_text.AsSpan(_index, literal.Length).SequenceEqual(literal.AsSpan()))
 				{
 					throw new InvalidDataException(
-						$"Invalid JSON literal at character {_index}.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.JsonInvalidLiteral",
+							_index));
 				}
 
 				_index += literal.Length;
@@ -280,7 +289,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (_index >= _text.Length || _text[_index] != '"')
 				{
 					throw new InvalidDataException(
-						$"Expected a JSON string at character {_index}.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.JsonStringExpected",
+							_index));
 				}
 
 				int start = _index++;
@@ -308,7 +319,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 
 				throw new InvalidDataException(
-					$"Unterminated JSON string at character {start}.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.JsonStringUnterminated",
+						start));
 			}
 
 			private void SkipTrivia()
@@ -342,7 +355,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						int commentEnd = _text.IndexOf("*/", _index + 2, StringComparison.Ordinal);
 						if (commentEnd < 0)
 						{
-							throw new InvalidDataException("An unterminated JSON comment was found.");
+							throw new InvalidDataException(LocalizationManager.Get(
+								"Configuration.Editor.Error.JsonCommentUnterminated"));
 						}
 						_index = commentEnd + 2;
 						continue;
@@ -367,7 +381,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!TryConsume(character))
 				{
 					throw new InvalidDataException(
-						$"Expected '{character}' at JSON character {_index}.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.JsonCharacterExpected",
+							character,
+							_index));
 				}
 			}
 

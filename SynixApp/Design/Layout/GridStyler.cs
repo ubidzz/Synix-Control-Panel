@@ -269,7 +269,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			grid.Cursor = Cursors.Hand;
 			grid.Rows[eventArgs.RowIndex].Cells[eventArgs.ColumnIndex].ToolTipText =
-				"Double-click to view server details";
+				LocalizationManager.Get("Dashboard.Grid.DetailsTooltip");
 		}
 
 		private static void ServerGrid_CellMouseLeave(object? sender, DataGridViewCellEventArgs eventArgs)

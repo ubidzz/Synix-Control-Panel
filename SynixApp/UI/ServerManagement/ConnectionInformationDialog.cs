@@ -21,7 +21,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		{
 			_server = server ?? throw new ArgumentNullException(nameof(server));
 			bool isBedrock = MinecraftControlProfile.IsBedrock(_server);
-			Text = "Connection Information";
+			Text = LocalizationManager.Get("Menu.ConnectionInformation");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -82,7 +82,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			ModernSettingsButton close = new()
 			{
-				Text = "Close",
+				Text = LocalizationManager.Get("ModManager.Button.Close"),
 				Location = new Point(574, 446),
 				Size = new Size(158, 44),
 				DialogResult = DialogResult.OK,
@@ -182,7 +182,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			});
 			Label value = new()
 			{
-				Text = "Loading...",
+				Text = LocalizationManager.Get("Text.47D2A515EF2F05B87D68"),
 				Font = new Font("Consolas", 11F, FontStyle.Bold),
 				Location = new Point(20, 43),
 				Size = new Size(450, 25),
@@ -198,7 +198,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			});
 			copyButton = new ModernSettingsButton
 			{
-				Text = "Copy Address",
+				Text = LocalizationManager.Get("Text.B0E3D6C0E2C3C45CBD0F"),
 				Location = new Point(548, 31),
 				Size = new Size(134, 42)
 			};

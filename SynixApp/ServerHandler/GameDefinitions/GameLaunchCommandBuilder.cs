@@ -318,7 +318,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!TryGetLauncherKind(executablePath, out GameLauncherKind launcherKind))
 			{
 				throw new NotSupportedException(
-					$"The launch file type '{Path.GetExtension(executablePath)}' is not supported.");
+					LocalizationManager.Get(
+						"LaunchCommand.Error.UnsupportedFileType",
+						Path.GetExtension(executablePath)));
 			}
 
 			ProcessStartInfo startInfo;
@@ -361,7 +363,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			ArgumentException.ThrowIfNullOrWhiteSpace(scriptPath);
 			if (scriptPath.IndexOfAny(['\0', '\r', '\n', '"']) >= 0)
 				throw new ArgumentException(
-					"The command script path contains unsupported characters.",
+					LocalizationManager.Get(
+						"LaunchCommand.Error.UnsafeScriptPath"),
 					nameof(scriptPath));
 
 			string command = $"\"{scriptPath}\"";

@@ -77,7 +77,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (stream == null)
 			{
 				throw new InvalidDataException(
-					"The trusted 7 Days to Die serverconfig.xml template is missing.");
+					LocalizationManager.Get(
+						"Configuration.Error.TrustedTemplateMissing",
+						"7 Days to Die",
+						"serverconfig.xml"));
 			}
 
 			using StreamReader reader = new(

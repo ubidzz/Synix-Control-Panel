@@ -37,29 +37,49 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			ApplyTemplateGridTheme();
 			cmbConfigMode.DataSource = new BuilderOption<ConfigFileCreationMode>[]
 			{
-				new("Not verified yet", ConfigFileCreationMode.Unknown),
-				new("Game creates it after first start", ConfigFileCreationMode.GameGenerated),
-				new("Synix creates it from a template", ConfigFileCreationMode.SynixTemplate),
-				new("Launch arguments only", ConfigFileCreationMode.LaunchArgumentsOnly)
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.ConfigMode.Unknown"),
+					ConfigFileCreationMode.Unknown),
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.ConfigMode.GameGenerated"),
+					ConfigFileCreationMode.GameGenerated),
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.ConfigMode.Template"),
+					ConfigFileCreationMode.SynixTemplate),
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.ConfigMode.ArgumentsOnly"),
+					ConfigFileCreationMode.LaunchArgumentsOnly)
 			};
 			cmbFormat.DataSource = new BuilderOption<ConfigFormat>[]
 			{
 				new("INI / CFG / properties", ConfigFormat.StandardINI),
 				new("XML", ConfigFormat.XML),
 				new("JSON", ConfigFormat.JSON),
-				new("Space-separated values", ConfigFormat.Space),
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.Format.SpaceSeparated"),
+					ConfigFormat.Space),
 				new("SCS SII", ConfigFormat.SII)
 			};
 			cmbLifecycleTracking.DataSource = new BuilderOption<GameLifecycleTrackingMode>[]
 			{
-				new("Track the launched server process", GameLifecycleTrackingMode.Process),
-				new("External deployment controls the server", GameLifecycleTrackingMode.ExternalDeployment)
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.Lifecycle.Process"),
+					GameLifecycleTrackingMode.Process),
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.Lifecycle.External"),
+					GameLifecycleTrackingMode.ExternalDeployment)
 			};
 			cmbDotNetFramework.DataSource = new BuilderOption<DotNetFrameworkRequirement>[]
 			{
-				new("No verified .NET Framework requirement", DotNetFrameworkRequirement.None),
-				new(".NET Framework 4.8 or newer", DotNetFrameworkRequirement.NetFramework48),
-				new(".NET Framework 4.8.1 or newer", DotNetFrameworkRequirement.NetFramework481)
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.DotNet.None"),
+					DotNetFrameworkRequirement.None),
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.DotNet.Framework48"),
+					DotNetFrameworkRequirement.NetFramework48),
+				new(LocalizationManager.Get(
+					"GameDefinitions.Builder.DotNet.Framework481"),
+					DotNetFrameworkRequirement.NetFramework481)
 			};
 			cmbArgumentTag.DataSource = GameDefinitionArgumentTags.LaunchArguments
 				.Select(tag => new BuilderOption<GameDefinitionArgumentTag>(
@@ -99,8 +119,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			using OpenFileDialog dialog = new()
 			{
-				Title = "Select a complete game configuration template",
-				Filter = "Configuration files|*.ini;*.cfg;*.json;*.xml;*.txt;*.properties|All files|*.*",
+				Title = LocalizationManager.Get(
+					"GameDefinitions.Builder.TemplatePicker.Title"),
+				Filter = LocalizationManager.Get(
+					"GameDefinitions.Builder.TemplatePicker.Filter"),
 				CheckFileExists = true
 			};
 			if (dialog.ShowDialog(this) == DialogResult.OK)
@@ -113,8 +135,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			using OpenFileDialog dialog = new()
 			{
-				Title = "Add complete game configuration templates",
-				Filter = "Configuration files|*.ini;*.cfg;*.json;*.xml;*.txt;*.properties;*.lua;*.yaml;*.yml|All files|*.*",
+				Title = LocalizationManager.Get(
+					"GameDefinitions.Builder.AddTemplatesPicker.Title"),
+				Filter = LocalizationManager.Get(
+					"GameDefinitions.Builder.AddTemplatesPicker.Filter"),
 				CheckFileExists = true,
 				Multiselect = true
 			};
@@ -191,16 +215,19 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 					GameDefinitionAuthoring.ValidateDraft(draft);
 				rtbPreview.Text = GameDefinitionAuthoring.CreateDefinitionJson(draft);
 				lblStatus.ForeColor = SettingsPalette.Success;
-				lblStatus.Text =
-					$"Valid definition • revision {package.Definition.DefinitionRevision} • " +
-					$"{package.Configuration?.Templates.Count ?? 0} template(s) • " +
-					$"{package.PostInstallActions.Count} safe action(s)";
+				LocalizationManager.BindText(
+					lblStatus,
+					"GameDefinitions.Builder.ValidSummary",
+					package.Definition.DefinitionRevision,
+					package.Configuration?.Templates.Count ?? 0,
+					package.PostInstallActions.Count);
 				ShowPreview();
 			}
 			catch (Exception exception)
 			{
 				lblStatus.ForeColor = SettingsPalette.Danger;
-				lblStatus.Text = exception.Message;
+				lblStatus.Text = LocalizationManager.TranslateRuntimeText(
+					exception.Message);
 			}
 		}
 
@@ -210,8 +237,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"The Game Definition Builder is available only in development builds.",
-					"Development Tool",
+					LocalizationManager.Get("MessageText.EA2CD9B6AE3E2608F49E"),
+					LocalizationManager.Get("MessageText.B21513D99A8B9F37D043"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -224,7 +251,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 					Core.FindProjectDirectory(Environment.CurrentDirectory);
 				if (projectDirectory == null)
 					throw new DirectoryNotFoundException(
-						"Synix Control Panel.csproj could not be found from this development build.");
+						LocalizationManager.Get(
+							"GameDefinitions.Builder.ProjectNotFound"));
 
 				GameDefinitionSaveResult result =
 					GameDefinitionAuthoring.SaveDraft(
@@ -232,14 +260,15 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 						projectDirectory);
 				rtbPreview.Text = result.Json;
 				lblStatus.ForeColor = SettingsPalette.Success;
-				lblStatus.Text = $"Saved: {result.DefinitionPath}";
+				LocalizationManager.BindText(
+					lblStatus,
+					"GameDefinitions.Builder.SavedPath",
+					result.DefinitionPath);
 
 				DialogResult open = LocalizedMessageBox.Show(
 					this,
-					"The validated definition and configuration templates were saved into the project. " +
-					"Rebuild Synix and run the automated tests before using it.\n\n" +
-					"Open the definition folder now?",
-					"Game Definition Saved",
+					LocalizationManager.Get("GameDefinitions.Builder.Saved.Body"),
+					LocalizationManager.Get("MessageText.8A04520CAFD5494EA500"),
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Information);
 				if (open == DialogResult.Yes)
@@ -254,11 +283,12 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			catch (Exception exception)
 			{
 				lblStatus.ForeColor = SettingsPalette.Danger;
-				lblStatus.Text = exception.Message;
+				lblStatus.Text = LocalizationManager.TranslateRuntimeText(
+					exception.Message);
 				LocalizedMessageBox.Show(
 					this,
-					exception.Message,
-					"Definition Could Not Be Saved",
+					LocalizationManager.TranslateRuntimeText(exception.Message),
+					LocalizationManager.Get("MessageText.B97D1F258E17E5840885"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -345,13 +375,17 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblConfigModeHelp.Text = mode switch
 			{
 				ConfigFileCreationMode.SynixTemplate =>
-					"Synix writes this complete template before the first start and manages its supported values.",
+					LocalizationManager.Get(
+						"GameDefinitions.Builder.ConfigModeHelp.Template"),
 				ConfigFileCreationMode.GameGenerated =>
-					"The game creates the file first. Add the complete captured file so Synix can apply saved values and safely repair it after the first run.",
+					LocalizationManager.Get(
+						"GameDefinitions.Builder.ConfigModeHelp.GameGenerated"),
 				ConfigFileCreationMode.LaunchArgumentsOnly =>
-					"The required user settings are passed through launch arguments; no managed configuration is needed.",
+					LocalizationManager.Get(
+						"GameDefinitions.Builder.ConfigModeHelp.ArgumentsOnly"),
 				_ =>
-					"Use this only while the game's configuration behavior is still being researched."
+					LocalizationManager.Get(
+						"GameDefinitions.Builder.ConfigModeHelp.Unknown")
 			};
 		}
 
@@ -429,7 +463,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			rtbGuide.Visible = true;
 			rtbPreview.Visible = false;
-			lblRightPane.Text = "Builder guide and supported tags";
+			LocalizationManager.BindText(
+				lblRightPane,
+				"Text.3CEBC2F3146476331D53");
 			btnShowGuide.UseAccentStyle = true;
 			btnShowPreview.UseAccentStyle = false;
 			btnShowGuide.Invalidate();
@@ -440,7 +476,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			rtbGuide.Visible = false;
 			rtbPreview.Visible = true;
-			lblRightPane.Text = "Validated definition preview";
+			LocalizationManager.BindText(
+				lblRightPane,
+				"Text.F08E959E621C8112615C");
 			btnShowGuide.UseAccentStyle = false;
 			btnShowPreview.UseAccentStyle = true;
 			btnShowGuide.Invalidate();
@@ -468,79 +506,26 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 		private static string BuildGuideText()
 		{
-			StringBuilder guide = new();
-			guide.AppendLine("QUICK START");
-			guide.AppendLine("1. Enter the exact game name and numeric Steam server AppID.");
-			guide.AppendLine("2. Enter the server executable path relative to the installed server folder.");
-			guide.AppendLine("3. Enter only the command text that comes after the executable. Use the supported tags below where Synix must insert a user's setting.");
-			guide.AppendLine("4. Choose how the game gets its configuration file. A managed mode requires a complete, working configuration file—not a partial example.");
-			guide.AppendLine("5. Select Validate & Preview. Fix every reported problem before saving.");
-			guide.AppendLine("6. Save, rebuild Synix, run the automated tests, then test install/start/stop/monitoring for the game.");
-			guide.AppendLine();
-			guide.AppendLine("REQUIRED FIELDS");
-			guide.AppendLine("• Game name: the name users see in Synix.");
-			guide.AppendLine("• Definition ID: unique lowercase ID; Synix creates it from the game name for you.");
-			guide.AppendLine("• Steam AppID: dedicated-server AppID, not always the client game AppID.");
-			guide.AppendLine("• SteamCMD app configuration: normally blank. Shared GoldSrc AppID 90 games use the verified form '90 mod folder', such as '90 mod cstrike'. Synix accepts only this safe form.");
-			guide.AppendLine("• Executable: for example Binaries\\Win64\\Server.exe. Do not include the install folder.");
-			guide.AppendLine("• Ports: verified default game and query ports.");
-			guide.AppendLine("• Maps and game modes: enter one exact game value per line. These populate the choices shown while creating or editing a server.");
-			guide.AppendLine();
-			guide.AppendLine("LAUNCH ARGUMENTS");
-			guide.AppendLine("Do not enter the executable itself. Keep the game's fixed flags as normal text and insert tags only for values controlled by Synix.");
-			guide.AppendLine("Example: -port {port} -queryport {query} -name \"{ServerName}\" -maxplayers {MaxPlayers}");
-			guide.AppendLine();
-			guide.AppendLine("SUPPORTED ARGUMENT TAGS");
-			foreach (GameDefinitionArgumentTag tag in GameDefinitionArgumentTags.LaunchArguments)
-				guide.AppendLine($"{tag.Token}  {tag.Description}");
-			guide.AppendLine();
-			guide.AppendLine("RCON RECIPE");
-			guide.AppendLine("Put {rcon} in the launch arguments where the optional RCON command belongs. In RCON syntax, use:");
-			foreach (GameDefinitionArgumentTag tag in GameDefinitionArgumentTags.RconSyntax)
-				guide.AppendLine($"{tag.Token}  {tag.Description}");
-			guide.AppendLine("Example RCON syntax: +rcon.port {rcon_port} +rcon.password \"{rcon_pass}\"");
-			guide.AppendLine();
-			guide.AppendLine("CONFIGURATION BEHAVIOR");
-			guide.AppendLine("• Not verified yet: Synix does not manage a config file.");
-			guide.AppendLine("• Game creates it after first start: use a complete captured config as the editing and repair template.");
-			guide.AppendLine("• Synix creates it from a template: Synix places the complete config before first start.");
-			guide.AppendLine("• Launch arguments only: the game does not require a managed config for these settings.");
-			guide.AppendLine();
-			guide.AppendLine("CONFIGURATION TEMPLATE TAGS");
-			guide.AppendLine("{ServerName}, {Password}, {HasPassword}, {AdminPassword}, {MaxPlayers}, {Port}, {QueryPort}, {RCONPort}, {RCONPassword}, {EnableRcon}, {Identity}, {WorldName}, {WorldSeed}, {WorldSize}, {AppPort}, {LocalIP}, {PublicIP}, {IsPvp}, {IsPve}, {GameMode}");
-			guide.AppendLine("{HasPassword} writes the definition's true value when a server password exists and its false value when the password is empty.");
-			guide.AppendLine("Use Add configuration files when a server needs more than one file. Select each complete source file, then edit its Installed location in the table so the path is relative to the server folder. Synix validates, embeds, writes, repairs, and upgrades every listed file together.");
-			guide.AppendLine();
-			guide.AppendLine("REQUIRED USER-SUPPLIED FILES");
-			guide.AppendLine("Enter one safe path per line, relative to the installed server folder. Required files block startup until present; optional files are imported when found but never block startup.");
-			guide.AppendLine("When required files come from the normal game, explain every user step in Setup instructions. Synix never downloads, bypasses ownership, or redistributes licensed player files.");
-			guide.AppendLine("External data folder is the folder name Synix may look for under the user's Documents folders. Leave it empty when the user must copy the files manually.");
-			guide.AppendLine();
-			guide.AppendLine("FIRST-START WARNING AND ICON");
-			guide.AppendLine("Enable the warning when users must complete setup before the first launch. Write the exact steps and identify anything the user must obtain from their own game installation.");
-			guide.AppendLine("Icon URL is optional and must use HTTPS. Synix falls back to the installed server executable icon when it is blank.");
-			guide.AppendLine();
-			guide.AppendLine("REVISIONS AND SAFETY");
-			guide.AppendLine("Start new definitions and templates at revision 1. Increase definition revision whenever the game definition changes. Increase template revision only when the managed config layout changes. Synix refuses an overwrite without a higher revision and preserves upgrade backups.");
-			guide.AppendLine();
-			guide.AppendLine("POST-INSTALL OPTION");
-			guide.AppendLine("Enable Steam runtime copying only when the server has been verified to require it. The target must be a relative folder inside that server installation. Synix copies only its three allowlisted Steam runtime DLLs.");
-			guide.AppendLine();
-			guide.AppendLine("RUNTIME REQUIREMENTS");
-			guide.AppendLine("Set minimum system RAM to 0 when the game has no verified minimum. Hardware and Windows-runtime checks explain missing requirements before setup and block an unsafe launch; they do not change Windows settings.");
-			guide.AppendLine("Select a .NET Framework or Visual C++ runtime only when the game's official requirements identify it. Synix checks the Windows registry but never installs or downloads prerequisites silently.");
-			guide.AppendLine("Hyper-V requires Windows Professional or higher, so selecting Hyper-V also selects that Windows requirement.");
-			guide.AppendLine();
-			guide.AppendLine("LAUNCH BEHAVIOR");
-			guide.AppendLine("Use normal process tracking for standard dedicated servers. External deployment is only for a launcher, virtual machine, or other deployment that owns the server lifecycle; it automatically disables query monitoring.");
-			guide.AppendLine("Enable Required visible manager for games whose official server manager must stay open. This overrides the user's global hide-console preference only for that definition.");
-			guide.AppendLine("Elevated launch is supported only for .exe, .bat, and .cmd launch files. Enable launch-file export only when the user can safely create and run a reviewed launch file outside Synix.");
-			guide.AppendLine("The ready message is shown after the game's special readiness checks succeed. These fields select built-in, allowlisted Synix behavior and cannot run arbitrary scripts or plugins.");
-			guide.AppendLine();
-			guide.AppendLine("LOG DISCOVERY");
-			guide.AppendLine("Enter safe paths relative to the installed server folder. Use * for one path segment or file name and ** for nested folders. Supported placeholders are {Identity}, {ServerName}, {WorldName}, {Port}, and {QueryPort}.");
-			guide.AppendLine("Examples: logs\\latest.log, Saved\\Logs\\*.log, profiles\\{Identity}\\logs\\**\\*.log. Synix searches these paths only when the user asks to open the newest game log.");
-			return guide.ToString();
+			string launchTags = string.Join(
+				Environment.NewLine,
+				GameDefinitionArgumentTags.LaunchArguments.Select(tag =>
+					$"{tag.Token}  " +
+					LocalizationManager.TranslateRuntimeText(tag.Description)));
+			string rconTags = string.Join(
+				Environment.NewLine,
+				GameDefinitionArgumentTags.RconSyntax.Select(tag =>
+					$"{tag.Token}  " +
+					LocalizationManager.TranslateRuntimeText(tag.Description)));
+
+			return LocalizationManager.Get("GameDefinitions.Builder.Guide")
+				.Replace(
+					"[LAUNCH_ARGUMENT_TAGS]",
+					launchTags,
+					StringComparison.Ordinal)
+				.Replace(
+					"[RCON_ARGUMENT_TAGS]",
+					rconTags,
+					StringComparison.Ordinal);
 		}
 
 		private static string CreateId(string name)

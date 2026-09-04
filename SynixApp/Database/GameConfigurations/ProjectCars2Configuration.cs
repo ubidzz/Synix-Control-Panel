@@ -41,7 +41,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				return [new ConfigurationValidationItem(
 					ConfigurationValidationState.Failed,
 					RelativePath,
-					"The managed configuration file is missing.")];
+					LocalizationManager.Get(
+						"Configuration.Check.ManagedFile.Missing"))];
 			}
 
 			try
@@ -52,10 +53,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					structureMatches
 						? ConfigurationValidationState.Passed
 						: ConfigurationValidationState.Failed,
-					"Template structure",
+					LocalizationManager.Get(
+						"Configuration.Check.TemplateStructure"),
 					structureMatches
-						? "The required template structure is present."
-						: "One or more required template tags are missing or invalid."));
+						? LocalizationManager.Get(
+							"Configuration.Check.TemplateStructure.Present")
+						: LocalizationManager.Get(
+							"Configuration.Check.TemplateStructure.Invalid")));
 				string text = File.ReadAllText(path);
 				items.Add(ValidateValue(text, "name", Quote(context.Server.ServerName)));
 				items.Add(ValidateValue(text, "password", Quote(context.Passwords.ServerPassword)));
@@ -68,8 +72,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			{
 				return [new ConfigurationValidationItem(
 					ConfigurationValidationState.Failed,
-					"Configuration read",
-					$"Synix could not safely inspect this configuration: {exception.Message}")];
+					LocalizationManager.Get(
+						"Configuration.Check.ConfigurationRead"),
+					LocalizationManager.Get(
+						"Configuration.Check.ConfigurationRead.Failed",
+						exception.Message))];
 			}
 		}
 
@@ -95,7 +102,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					if (template == null)
 					{
 						return ConfigurationApplyResult.Failure(
-							"The complete Project CARS 2 sample configuration is missing from the server installation.");
+							LocalizationManager.Get(
+								"Configuration.Apply.InstalledSampleMissing",
+								GameName));
 					}
 
 					WriteNewFile(path, template);
@@ -122,7 +131,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						false,
 						changed,
 						created,
-						$"The complete file was preserved, but these settings were not found: {string.Join(", ", missing)}.");
+						LocalizationManager.Get(
+							"Configuration.Apply.ManagedSettingsMissing",
+							string.Join(", ", missing)));
 				}
 
 				return new ConfigurationApplyResult(
@@ -131,15 +142,24 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					created || changed,
 					created,
 					created
-						? "Created the complete Project CARS 2 configuration from its installed sample."
+						? LocalizationManager.Get(
+							"Configuration.Apply.CreatedFromInstalledSample",
+							GameName)
 						: changed
-							? "Updated the managed Project CARS 2 settings."
-							: "The Project CARS 2 configuration is already current.");
+							? LocalizationManager.Get(
+								"Configuration.Apply.ManagedSettingsUpdated",
+								GameName)
+							: LocalizationManager.Get(
+								"Configuration.Apply.Current",
+								GameName));
 			}
 			catch (Exception exception)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The Project CARS 2 configuration could not be applied: {exception.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.Failed",
+						GameName,
+						exception.Message));
 			}
 		}
 
@@ -204,8 +224,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					ConfigurationValidationState.Failed,
 					key,
 					matches.Count == 0
-						? "The managed configuration tag is missing."
-						: "The managed tag appears more than once, so Synix cannot safely identify one value.");
+						? LocalizationManager.Get(
+							"Configuration.Check.ManagedTag.Missing")
+						: LocalizationManager.Get(
+							"Configuration.Check.ManagedTag.Duplicate"));
 			}
 
 			bool matchesSavedValue = string.Equals(
@@ -218,8 +240,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					: ConfigurationValidationState.Failed,
 				key,
 				matchesSavedValue
-					? "The file value matches the value saved in Synix."
-					: "The file value does not match the value saved in Synix.");
+					? LocalizationManager.Get(
+						"Configuration.Check.Value.Matches")
+					: LocalizationManager.Get(
+						"Configuration.Check.Value.Differs"));
 		}
 
 		private static Dictionary<string, int> GetPropertyCounts(string text)

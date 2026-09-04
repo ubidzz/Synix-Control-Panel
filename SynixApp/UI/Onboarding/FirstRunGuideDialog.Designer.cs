@@ -53,7 +53,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(760, 44);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Welcome to Synix";
+			titleLabel.Text = LocalizationManager.Get("Text.EFA8EF66DE8A78C422CB");
 			// 
 			// subtitleLabel
 			// 
@@ -63,7 +63,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(756, 44);
 			subtitleLabel.TabIndex = 1;
-			subtitleLabel.Text = "Synix is designed to make personal game-server hosting understandable without hiding what it changes on your computer.";
+			subtitleLabel.Text = LocalizationManager.Get("Text.93F24BC2C28FEF1DDC28");
 			// 
 			// guidePanel
 			// 
@@ -89,7 +89,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			stepOne.Name = "stepOne";
 			stepOne.Size = new Size(716, 58);
 			stepOne.TabIndex = 0;
-			stepOne.Text = "1   YOUR DATA STAYS SEPARATE\r\nServers, settings, backups, runtimes, and SteamCMD are stored under C:\\Synix so application updates do not replace them.";
+			stepOne.Text = LocalizationManager.Get("Text.1A759326BD5A56996BF1");
 			// 
 			// stepTwo
 			// 
@@ -101,7 +101,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			stepTwo.Name = "stepTwo";
 			stepTwo.Size = new Size(716, 64);
 			stepTwo.TabIndex = 1;
-			stepTwo.Text = "2   ADD A SERVER\r\nChoose a game, enter the friendly settings, and let Synix install it. Steam login is requested only when that game requires it.";
+			stepTwo.Text = LocalizationManager.Get("Text.CD33F03B524794FFF78C");
 			// 
 			// stepThree
 			// 
@@ -113,7 +113,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			stepThree.Name = "stepThree";
 			stepThree.Size = new Size(716, 60);
 			stepThree.TabIndex = 2;
-			stepThree.Text = "3   START, STOP, AND VERIFY\r\nSynix shows the exact launch arguments, verifies startup, uses safe stop behavior where supported, and keeps recent logs available.";
+			stepThree.Text = LocalizationManager.Get("Text.61A00FCEB996AF15FF21");
 			// 
 			// stepFour
 			// 
@@ -125,7 +125,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			stepFour.Name = "stepFour";
 			stepFour.Size = new Size(716, 60);
 			stepFour.TabIndex = 3;
-			stepFour.Text = "4   NETWORK ACCESS\r\nWindows Firewall permission and router port forwarding are different. Synix checks local conflicts, but never changes your router.";
+			stepFour.Text = LocalizationManager.Get("Text.CA9A7AA7C8AF17BABA8C");
 			// 
 			// stepFive
 			// 
@@ -137,7 +137,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			stepFive.Name = "stepFive";
 			stepFive.Size = new Size(716, 60);
 			stepFive.TabIndex = 4;
-			stepFive.Text = "5   RECOVERY AND BACKUPS\r\nUse Settings > Advanced > Troubleshooter for safe health checks and repairs. Use Backups before moving Synix or making large changes.";
+			stepFive.Text = LocalizationManager.Get("Text.C638A97009ED3C9CCB29");
 			// 
 			// privacyLabel
 			// 
@@ -148,7 +148,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			privacyLabel.Name = "privacyLabel";
 			privacyLabel.Size = new Size(756, 42);
 			privacyLabel.TabIndex = 2;
-			privacyLabel.Text = "Synix does not open a public web-control port. Passwords stored by Synix are protected locally, and sensitive values are masked from its activity logs.";
+			privacyLabel.Text = LocalizationManager.Get("Text.030EBC77E93FA53151CE");
 			// 
 			// troubleshooterButton
 			// 
@@ -161,7 +161,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			troubleshooterButton.Name = "troubleshooterButton";
 			troubleshooterButton.Size = new Size(176, 44);
 			troubleshooterButton.TabIndex = 3;
-			troubleshooterButton.Text = "Run Health Check";
+			troubleshooterButton.Text = LocalizationManager.Get("Text.6AB14A52545C53E3EA71");
 			troubleshooterButton.UseVisualStyleBackColor = false;
 			troubleshooterButton.Click += TroubleshooterButton_Click;
 			// 
@@ -177,7 +177,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			finishButton.Name = "finishButton";
 			finishButton.Size = new Size(170, 44);
 			finishButton.TabIndex = 4;
-			finishButton.Text = "Start Using Synix";
+			finishButton.Text = LocalizationManager.Get("Text.5F194B4249C159AD665F");
 			finishButton.UseAccentStyle = true;
 			finishButton.UseVisualStyleBackColor = false;
 			// 
@@ -202,7 +202,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			Name = "FirstRunGuideDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Getting Started with Synix";
+			Text = LocalizationManager.Get("Text.4C11C80313DBD04B9AFD");
 			guidePanel.ResumeLayout(false);
 			ResumeLayout(false);
 		}

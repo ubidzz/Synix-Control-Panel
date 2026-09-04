@@ -108,7 +108,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblMasterTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblMasterTitle.Location = new Point(24, 20);
 			lblMasterTitle.Name = "lblMasterTitle";
-			lblMasterTitle.Text = "Master Discord Webhook";
+			lblMasterTitle.Text = LocalizationManager.Get("Text.14DE81C3A20411BA2D54");
 			//
 			// lblMasterDescription
 			//
@@ -116,7 +116,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblMasterDescription.Location = new Point(24, 49);
 			lblMasterDescription.Name = "lblMasterDescription";
 			lblMasterDescription.Size = new Size(470, 38);
-			lblMasterDescription.Text = "Use one webhook for this server and choose the messages it should receive.";
+			lblMasterDescription.Text = LocalizationManager.Get("Text.60ADFA0715E4E83522DF");
 			//
 			// lblMasterEnabled
 			//
@@ -125,7 +125,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblMasterEnabled.Location = new Point(734, 18);
 			lblMasterEnabled.Name = "lblMasterEnabled";
 			lblMasterEnabled.Size = new Size(72, 30);
-			lblMasterEnabled.Text = "Enabled";
+			lblMasterEnabled.Text = LocalizationManager.Get("Text.92C1CDFDF4CB9CF6FCCA");
 			lblMasterEnabled.TextAlign = ContentAlignment.MiddleRight;
 			//
 			// chkMasterEnabled
@@ -142,7 +142,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblMasterWebhook.ForeColor = Color.FromArgb(158, 172, 194);
 			lblMasterWebhook.Location = new Point(24, 86);
 			lblMasterWebhook.Name = "lblMasterWebhook";
-			lblMasterWebhook.Text = "Discord webhook URL";
+			lblMasterWebhook.Text = LocalizationManager.Get("Text.2C08652867AB096911A5");
 			//
 			// txtMasterWebhook
 			//
@@ -160,7 +160,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			btnTestMaster.Location = new Point(344, 209);
 			btnTestMaster.Name = "btnTestMaster";
 			btnTestMaster.Size = new Size(150, 42);
-			btnTestMaster.Text = "Send Test";
+			btnTestMaster.Text = LocalizationManager.Get("Text.7B9A0CDE7FF0419B706F");
 			btnTestMaster.Click += btnTestMaster_Click;
 			//
 			// lblMasterPreset
@@ -169,7 +169,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblMasterPreset.ForeColor = Color.FromArgb(158, 172, 194);
 			lblMasterPreset.Location = new Point(24, 145);
 			lblMasterPreset.Name = "lblMasterPreset";
-			lblMasterPreset.Text = "Messages to send";
+			lblMasterPreset.Text = LocalizationManager.Get("Text.497A671BC79CEFD6446E");
 			//
 			// cmbMasterPreset
 			//
@@ -185,7 +185,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblMasterEvents.ForeColor = Color.FromArgb(158, 172, 194);
 			lblMasterEvents.Location = new Point(520, 44);
 			lblMasterEvents.Name = "lblMasterEvents";
-			lblMasterEvents.Text = "Individual events";
+			lblMasterEvents.Text = LocalizationManager.Get("Text.E789B41753DEEEBD557E");
 			//
 			// lstMasterEvents
 			//
@@ -233,7 +233,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblAdvancedTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblAdvancedTitle.Location = new Point(24, 18);
 			lblAdvancedTitle.Name = "lblAdvancedTitle";
-			lblAdvancedTitle.Text = "Advanced Discord Destinations";
+			lblAdvancedTitle.Text = LocalizationManager.Get("Text.3E1844F80A694282E164");
 			//
 			// lblAdvancedDescription
 			//
@@ -241,7 +241,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblAdvancedDescription.Location = new Point(24, 47);
 			lblAdvancedDescription.Name = "lblAdvancedDescription";
 			lblAdvancedDescription.Size = new Size(620, 35);
-			lblAdvancedDescription.Text = "Send status, backups, maintenance, and problems to different Discord channels.";
+			lblAdvancedDescription.Text = LocalizationManager.Get("Text.DA03B7F52F79500329AF");
 			//
 			// lblRouteCount
 			//
@@ -276,23 +276,23 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			btnAdd.Location = new Point(24, 254);
 			btnAdd.Name = "btnAdd";
 			btnAdd.Size = new Size(130, 42);
-			btnAdd.Text = "Add Destination";
+			btnAdd.Text = LocalizationManager.Get("Text.1AEE199CD9A4FBDEF969");
 			btnAdd.UseAccentStyle = true;
 			btnAdd.Click += btnAdd_Click;
 			btnEdit.Location = new Point(164, 254);
 			btnEdit.Name = "btnEdit";
 			btnEdit.Size = new Size(100, 42);
-			btnEdit.Text = "Edit";
+			btnEdit.Text = LocalizationManager.Get("Text.464C4FFD019E1E9691DC");
 			btnEdit.Click += btnEdit_Click;
 			btnRemove.Location = new Point(274, 254);
 			btnRemove.Name = "btnRemove";
 			btnRemove.Size = new Size(100, 42);
-			btnRemove.Text = "Remove";
+			btnRemove.Text = LocalizationManager.Get("Text.C3812FC4ACB861D5182F");
 			btnRemove.Click += btnRemove_Click;
 			btnTestRoute.Location = new Point(384, 254);
 			btnTestRoute.Name = "btnTestRoute";
 			btnTestRoute.Size = new Size(120, 42);
-			btnTestRoute.Text = "Send Test";
+			btnTestRoute.Text = LocalizationManager.Get("Text.7B9A0CDE7FF0419B706F");
 			btnTestRoute.Click += btnTestRoute_Click;
 			//
 			// lblStatus

@@ -92,7 +92,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (management.Succeeded)
 				{
 					logCallback?.Invoke(
-						"[MINECRAFT] Requested a clean stop through Minecraft's local management service.",
+						LocalizationManager.Get("Minecraft.Activity.StopThroughManagement"),
 						Color.Aqua);
 					return true;
 				}
@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (rcon.Succeeded)
 				{
 					logCallback?.Invoke(
-						"[MINECRAFT] Sent the native 'stop' command through local Minecraft RCON.",
+						LocalizationManager.Get("Minecraft.Activity.StopThroughRcon"),
 						Color.Aqua);
 					return true;
 				}
@@ -111,18 +111,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			if (TryWriteRedirectedInput(server, "stop"))
 			{
-				logCallback?.Invoke("[MINECRAFT] Sent the native 'stop' command through Synix's managed console pipe.", Color.Aqua);
+				logCallback?.Invoke(LocalizationManager.Get("Minecraft.Activity.StopThroughPipe"), Color.Aqua);
 				return true;
 			}
 
 			if (targetPid > 0 && await TryWriteConsoleCommand(targetPid, "stop\r"))
 			{
-				logCallback?.Invoke("[MINECRAFT] Sent the native 'stop' command to the visible server console.", Color.Aqua);
+				logCallback?.Invoke(LocalizationManager.Get("Minecraft.Activity.StopThroughConsole"), Color.Aqua);
 				return true;
 			}
 
 			logCallback?.Invoke(
-				"[⚠️ MINECRAFT] The original console input channel is unavailable. Synix will use the verified process-tree fallback.",
+				LocalizationManager.Get("Minecraft.Activity.ConsoleFallback"),
 				Color.OrangeRed);
 			return false;
 		}
@@ -141,20 +141,24 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				process.StandardInput.Flush();
 				return true;
 			}
-			catch (ObjectDisposedException)
+			catch (ObjectDisposedException ex)
 			{
+				ApplicationLogService.WriteSuppressedException(ex);
 				return false;
 			}
-			catch (InvalidOperationException)
+			catch (InvalidOperationException ex)
 			{
+				ApplicationLogService.WriteSuppressedException(ex);
 				return false;
 			}
-			catch (IOException)
+			catch (IOException ex)
 			{
+				ApplicationLogService.WriteSuppressedException(ex);
 				return false;
 			}
-			catch
+			catch (Exception ex)
 			{
+				ApplicationLogService.WriteSuppressedException(ex);
 				return false;
 			}
 		}
@@ -183,9 +187,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					WriteConsoleInput(inputHandle, inputRecords, (uint)inputRecords.Length, out uint written) &&
 					written == (uint)inputRecords.Length;
 			}
-			catch
+			catch (Exception ex)
 			{
-
+				ApplicationLogService.WriteSuppressedException(ex);
 				return false;
 			}
 			finally
@@ -277,25 +281,25 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			ArgumentNullException.ThrowIfNull(server);
 			string normalized = command?.Trim() ?? string.Empty;
 			if (!GameCapabilityResolver.UsesMinecraftConsole(server))
-				return (false, "This console is available only for Minecraft servers.");
+				return (false, LocalizationManager.Get("Minecraft.Command.ConsoleOnly"));
 			if (normalized.Length == 0)
-				return (false, "Enter a Minecraft server command.");
+				return (false, LocalizationManager.Get("Minecraft.Command.Required"));
 			if (normalized.Length > 512 || normalized.IndexOfAny(['\r', '\n', '\0']) >= 0)
-				return (false, "The command is too long or contains an unsafe line break.");
+				return (false, LocalizationManager.Get("Minecraft.Command.Unsafe"));
 			if (normalized.Equals("stop", StringComparison.OrdinalIgnoreCase))
 			{
 				bool stopped = await Stop(
 					server,
 					(message, color) => Core.Instance.Log(message, color));
 				return stopped
-					? (true, "Minecraft saved and stopped through Synix's verified shutdown workflow.")
-					: (false, "Minecraft did not stop cleanly. Check Activity & Diagnostics for details.");
+					? (true, LocalizationManager.Get("Minecraft.Command.StopSucceeded"))
+					: (false, LocalizationManager.Get("Minecraft.Command.StopFailed"));
 			}
 
 			if (TryWriteRedirectedInput(server, normalized))
 			{
 				MinecraftConsoleHub.Publish(server, $"> {normalized}", false);
-				return (true, "Command sent through Synix's managed server console.");
+				return (true, LocalizationManager.Get("Minecraft.Command.SentThroughPipe"));
 			}
 
 			if (MinecraftControlProfile.IsJava(server))
@@ -308,7 +312,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					MinecraftConsoleHub.Publish(server, $"> {normalized}", false);
 					if (!string.IsNullOrWhiteSpace(rcon.Response))
 						MinecraftConsoleHub.Publish(server, rcon.Response, false);
-					return (true, "Command sent through local Minecraft RCON.");
+					return (true, LocalizationManager.Get("Minecraft.Command.SentThroughRcon"));
 				}
 			}
 
@@ -316,12 +320,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (targetPid > 0 && await TryWriteConsoleCommand(targetPid, normalized + "\r"))
 			{
 				MinecraftConsoleHub.Publish(server, $"> {normalized}", false);
-				return (true, "Command sent to the visible Minecraft console.");
+				return (true, LocalizationManager.Get("Minecraft.Command.SentThroughConsole"));
 			}
 
 			return (
 				false,
-				"The Minecraft command channel is unavailable. Start this server from Synix with hidden server windows enabled, or enable local RCON for Java Edition.");
+				LocalizationManager.Get("Minecraft.Command.ChannelUnavailable"));
 		}
 	}
 }

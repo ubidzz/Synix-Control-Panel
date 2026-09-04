@@ -51,9 +51,12 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		internal string ResultText => Level switch
 		{
-			SynixHealthLevel.Passed => "Passed",
-			SynixHealthLevel.Warning => "Warning",
-			_ => "Failed"
+			SynixHealthLevel.Passed => LocalizationManager.Get(
+				"Diagnostics.Health.Result.Passed"),
+			SynixHealthLevel.Warning => LocalizationManager.Get(
+				"Diagnostics.Health.Result.Warning"),
+			_ => LocalizationManager.Get(
+				"Diagnostics.Health.Result.Failed")
 		};
 	}
 
@@ -74,18 +77,32 @@ namespace Synix_Control_Panel.SynixEngine
 		internal int FailedCount => Items.Count(item => item.Level == SynixHealthLevel.Failed);
 		internal bool IsHealthy => FailedCount == 0;
 
-		internal string ToPlainText(string title = "SYNIX TROUBLESHOOTER REPORT")
+		internal string ToPlainText(string? title = null)
 		{
 			StringBuilder text = new();
-			text.AppendLine(title);
+			text.AppendLine(title ?? LocalizationManager.Get(
+				"Diagnostics.Health.Report.Title"));
 			text.AppendLine();
-			text.AppendLine($"Completed: {CompletedAtUtc.ToLocalTime():g}");
-			text.AppendLine($"Synix: v{Core.GetCurrentVersion().ToString(3)} ({Core.DetectCurrentInstallation().DisplayName})");
-			text.AppendLine($"Passed: {PassedCount}  Warnings: {WarningCount}  Failed: {FailedCount}");
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Health.Report.Completed",
+				CompletedAtUtc.ToLocalTime()));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Health.Report.Version",
+				Core.GetCurrentVersion().ToString(3),
+				Core.DetectCurrentInstallation().DisplayName));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Health.Report.Counts",
+				PassedCount,
+				WarningCount,
+				FailedCount));
 			text.AppendLine();
 			foreach (SynixHealthItem item in Items)
 			{
-				text.AppendLine($"[{item.ResultText.ToUpperInvariant()}] {item.Area} — {item.Subject}");
+				text.AppendLine(LocalizationManager.Get(
+					"Diagnostics.Health.Report.Item",
+					item.ResultText.ToUpperInvariant(),
+					item.Area,
+					item.Subject));
 				text.AppendLine(item.Details);
 			}
 
@@ -111,7 +128,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(servers);
 			List<SynixHealthItem> items = [];
-			progress?.Report("Checking SteamCMD and shared runtimes...");
+			progress?.Report(LocalizationManager.Get(
+				"Diagnostics.Health.Progress.SharedRuntimes"));
 			CheckSteamCmd(items);
 			CheckJavaRuntimes(servers, items);
 			CheckDiskSpace(servers, items);
@@ -121,18 +139,24 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Warning,
-					"Windows Firewall",
-					"Firewall inspection",
-					firewall.Problem ?? "Windows Firewall rules could not be inspected.",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Firewall"),
+					LocalizationManager.Get(
+						"Diagnostics.Health.Subject.FirewallInspection"),
+					firewall.Problem ?? LocalizationManager.Get(
+						"Diagnostics.Health.Firewall.InspectionFailed"),
 					SynixHealthAction.OpenFirewallSettings));
 			}
 			else if (!firewall.Enabled)
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Warning,
-					"Windows Firewall",
-					"Firewall protection",
-					"Windows Firewall is disabled for every active network profile. Synix did not change it.",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Firewall"),
+					LocalizationManager.Get(
+						"Diagnostics.Health.Subject.FirewallProtection"),
+					LocalizationManager.Get(
+						"Diagnostics.Health.Firewall.Disabled"),
 					SynixHealthAction.OpenFirewallSettings));
 			}
 
@@ -140,48 +164,92 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 				GameServer server = servers[index];
-				progress?.Report($"Checking {server.ServerName} ({index + 1} of {servers.Count})...");
+				progress?.Report(LocalizationManager.Get(
+					"Diagnostics.Health.Progress.Server",
+					server.ServerName,
+					index + 1,
+					servers.Count));
 				GameInfo? game = GameDatabase.GetGame(server.Game);
 				if (game == null)
 				{
 					items.Add(new SynixHealthItem(
 						SynixHealthLevel.Failed,
-						"Server files",
+						LocalizationManager.Get(
+							"Diagnostics.Health.Area.ServerFiles"),
 						server.ServerName,
-						$"The saved game '{server.Game}' no longer exists in the built-in definition library.",
+						LocalizationManager.Get(
+							"Diagnostics.Health.DefinitionMissing",
+							server.Game),
 						SynixHealthAction.OpenServerFolder,
 						server));
 					continue;
 				}
 
-				RunServerCheck(items, "Server files", server, () => CheckServerFiles(server, game, items));
-				RunServerCheck(items, "SteamCMD and runtimes", server, () => CheckRuntimeRequirements(server, game, items));
+				RunServerCheck(
+					items,
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.ServerFiles"),
+					server,
+					() => CheckServerFiles(server, game, items));
+				RunServerCheck(
+					items,
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Runtimes"),
+					server,
+					() => CheckRuntimeRequirements(server, game, items));
 				try
 				{
 					await CheckConfigurationAsync(server, items);
 				}
 				catch (Exception exception)
 				{
-					AddCheckFailure(items, "Configuration health", server, exception);
+					AddCheckFailure(
+						items,
+						LocalizationManager.Get(
+							"Diagnostics.Health.Area.Configuration"),
+						server,
+						exception);
 				}
-				RunServerCheck(items, "Ports", server, () => CheckPorts(server, game, servers, items));
-				RunServerCheck(items, "Windows Firewall", server, () => CheckFirewall(server, game, firewall, items));
-				RunServerCheck(items, "Process tracking", server, () => CheckProcessRecovery(server, items));
-				RunServerCheck(items, "Recent server logs", server, () => CheckLatestLog(server, items));
+				RunServerCheck(
+					items,
+					LocalizationManager.Get("Diagnostics.Health.Area.Ports"),
+					server,
+					() => CheckPorts(server, game, servers, items));
+				RunServerCheck(
+					items,
+					LocalizationManager.Get("Diagnostics.Health.Area.Firewall"),
+					server,
+					() => CheckFirewall(server, game, firewall, items));
+				RunServerCheck(
+					items,
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.ProcessTracking"),
+					server,
+					() => CheckProcessRecovery(server, items));
+				RunServerCheck(
+					items,
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.RecentLogs"),
+					server,
+					() => CheckLatestLog(server, items));
 			}
 
 			if (includeUpdateStatus && checkForUpdates)
 			{
-				progress?.Report("Checking the installed Synix version...");
+				progress?.Report(LocalizationManager.Get(
+					"Diagnostics.Health.Progress.Update"));
 				await CheckUpdateAsync(items, cancellationToken);
 			}
 			else if (includeUpdateStatus)
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Passed,
-					"Synix update",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Update"),
 					$"v{Core.GetCurrentVersion().ToString(3)}",
-					$"Installed as {Core.DetectCurrentInstallation().DisplayName}. The online update check was skipped."));
+					LocalizationManager.Get(
+						"Diagnostics.Health.Update.Skipped",
+						Core.DetectCurrentInstallation().DisplayName)));
 			}
 
 			return new SynixHealthReport(DateTimeOffset.UtcNow, items);
@@ -195,11 +263,15 @@ namespace Synix_Control_Panel.SynixEngine
 				executableExists && initialized
 					? SynixHealthLevel.Passed
 					: SynixHealthLevel.Failed,
-				"SteamCMD and runtimes",
+				LocalizationManager.Get(
+					"Diagnostics.Health.Area.Runtimes"),
 				"SteamCMD",
 				executableExists && initialized
-					? $"SteamCMD is initialized at {Core.SteamCmdPath}."
-					: "SteamCMD is missing or has not completed its first-run initialization.",
+					? LocalizationManager.Get(
+						"Diagnostics.Health.SteamCmd.Initialized",
+						Core.SteamCmdPath)
+					: LocalizationManager.Get(
+						"Diagnostics.Health.SteamCmd.Missing"),
 				executableExists && initialized
 					? SynixHealthAction.None
 					: SynixHealthAction.RepairSteamCmd));
@@ -229,11 +301,18 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				items.Add(new SynixHealthItem(
 					available ? SynixHealthLevel.Passed : SynixHealthLevel.Failed,
-					"SteamCMD and runtimes",
-					$"Java {version}",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Runtimes"),
+					LocalizationManager.Get(
+						"Diagnostics.Health.Java.Subject",
+						version),
 					available
-						? $"The managed Java {version} runtime is available."
-						: $"A saved Minecraft server requires Java {version}, but its managed runtime is missing. Update that server to restore it.",
+						? LocalizationManager.Get(
+							"Diagnostics.Health.Java.Available",
+							version)
+						: LocalizationManager.Get(
+							"Diagnostics.Health.Java.Missing",
+							version),
 					available ? SynixHealthAction.None : SynixHealthAction.ValidateServerFiles,
 					affectedServer));
 			}
@@ -249,9 +328,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Failed,
-					"Server files",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.ServerFiles"),
 					server.ServerName,
-					"The installed server folder is missing.",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Files.FolderMissing"),
 					SynixHealthAction.ValidateServerFiles,
 					server));
 				return;
@@ -267,9 +348,12 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Failed,
-					"Server files",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.ServerFiles"),
 					server.ServerName,
-					$"The saved executable path is invalid: {exception.Message}",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Files.PathInvalid",
+						exception.Message),
 					SynixHealthAction.OpenServerFolder,
 					server));
 				return;
@@ -292,11 +376,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 			items.Add(new SynixHealthItem(
 				missing.Count == 0 ? SynixHealthLevel.Passed : SynixHealthLevel.Failed,
-				"Server files",
+				LocalizationManager.Get(
+					"Diagnostics.Health.Area.ServerFiles"),
 				server.ServerName,
 				missing.Count == 0
-					? "The server executable and every declared required launch file are present. Use Validate Server Files for a complete Steam byte check."
-					: "Missing required files: " + string.Join(", ", missing),
+					? LocalizationManager.Get(
+						"Diagnostics.Health.Files.Complete")
+					: LocalizationManager.Get(
+						"Diagnostics.Health.Files.Missing",
+						string.Join(", ", missing)),
 				SynixHealthAction.ValidateServerFiles,
 				server));
 		}
@@ -314,7 +402,8 @@ namespace Synix_Control_Panel.SynixEngine
 					result.State == GamePrerequisiteState.Failed
 						? SynixHealthLevel.Failed
 						: SynixHealthLevel.Warning,
-					"SteamCMD and runtimes",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Runtimes"),
 					$"{server.ServerName}: {result.Name}",
 					result.Message,
 					SynixHealthAction.None,
@@ -330,9 +419,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Passed,
-					"Configuration health",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Configuration"),
 					server.ServerName,
-					"This imported server keeps its existing configuration. Synix will begin managing supported values only after you open Server Settings and save changes.",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Configuration.Imported"),
 					SynixHealthAction.None,
 					server));
 				return;
@@ -346,7 +437,8 @@ namespace Synix_Control_Panel.SynixEngine
 					? SynixHealthLevel.Warning
 					: SynixHealthLevel.Passed;
 			string details = level == SynixHealthLevel.Passed
-				? "The managed configuration is complete and uses the current template revision."
+				? LocalizationManager.Get(
+					"Diagnostics.Health.Configuration.Complete")
 				: string.Join(
 					" ",
 					report.Items
@@ -355,7 +447,8 @@ namespace Synix_Control_Panel.SynixEngine
 						.Select(item => item.Message));
 			items.Add(new SynixHealthItem(
 				level,
-				"Configuration health",
+				LocalizationManager.Get(
+					"Diagnostics.Health.Area.Configuration"),
 				server.ServerName,
 				details,
 				report.FixConfigAvailable && level != SynixHealthLevel.Passed
@@ -387,9 +480,14 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					items.Add(new SynixHealthItem(
 						SynixHealthLevel.Failed,
-						"Ports",
+						LocalizationManager.Get(
+							"Diagnostics.Health.Area.Ports"),
 						$"{server.ServerName}: {port}",
-						$"The {name} is also assigned to {string.Join(", ", configuredOwners.Select(owner => owner.ServerName))}. Every saved server, including each cluster member, must use its own port.",
+						LocalizationManager.Get(
+							"Diagnostics.Health.Ports.Duplicate",
+							name,
+							string.Join(", ", configuredOwners.Select(
+								owner => owner.ServerName))),
 						SynixHealthAction.None,
 						server));
 					continue;
@@ -400,13 +498,20 @@ namespace Synix_Control_Panel.SynixEngine
 					occupied && !serverActive
 						? SynixHealthLevel.Failed
 						: SynixHealthLevel.Passed,
-					"Ports",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Ports"),
 					$"{server.ServerName}: {port}",
 					occupied
 						? serverActive
-							? $"The {name} is bound while this server is active."
-							: $"The {name} is occupied by another program while this server is stopped."
-						: $"The {name} is currently available.",
+							? LocalizationManager.Get(
+								"Diagnostics.Health.Ports.Active",
+								name)
+							: LocalizationManager.Get(
+								"Diagnostics.Health.Ports.Occupied",
+								name)
+						: LocalizationManager.Get(
+							"Diagnostics.Health.Ports.Available",
+							name),
 					SynixHealthAction.None,
 					server));
 			}
@@ -448,11 +553,16 @@ namespace Synix_Control_Panel.SynixEngine
 				: GetInstalledRelativePath(server.InstallPath, allowedExecutable);
 			items.Add(new SynixHealthItem(
 				allowed ? SynixHealthLevel.Passed : SynixHealthLevel.Warning,
-				"Windows Firewall",
+				LocalizationManager.Get(
+					"Diagnostics.Health.Area.Firewall"),
 				server.ServerName,
 				allowed
-					? $"An enabled inbound program rule targets the installed server executable '{matchedFile}'."
-					: $"No enabled inbound program rule points to an executable inside this server's install folder. The configured launch file is '{checkedFile}'. This check does not use ports; Windows may prompt when the server starts, and router port forwarding is separate.",
+					? LocalizationManager.Get(
+						"Diagnostics.Health.Firewall.Allowed",
+						matchedFile)
+					: LocalizationManager.Get(
+						"Diagnostics.Health.Firewall.RuleMissing",
+						checkedFile),
 				allowed ? SynixHealthAction.None : SynixHealthAction.OpenFirewallSettings,
 				server));
 		}
@@ -496,11 +606,18 @@ namespace Synix_Control_Panel.SynixEngine
 				bool needsRecovery = !statusClaimsActive || !primaryTracked;
 				items.Add(new SynixHealthItem(
 					needsRecovery ? SynixHealthLevel.Warning : SynixHealthLevel.Passed,
-					"Process tracking",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.ProcessTracking"),
 					server.ServerName,
 					needsRecovery
-						? $"Found {processes.Count} installed server process(es), but the saved server state needs to be reconnected: {processDetails}."
-						: $"Synix is tracking {processes.Count} verified server process(es): {processDetails}.",
+						? LocalizationManager.Get(
+							"Diagnostics.Health.Process.RecoveryNeeded",
+							processes.Count,
+							processDetails)
+						: LocalizationManager.Get(
+							"Diagnostics.Health.Process.Tracking",
+							processes.Count,
+							processDetails),
 					needsRecovery ? SynixHealthAction.RecoverProcesses : SynixHealthAction.None,
 					server));
 				return;
@@ -508,11 +625,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 			items.Add(new SynixHealthItem(
 				statusClaimsActive ? SynixHealthLevel.Warning : SynixHealthLevel.Passed,
-				"Process tracking",
+				LocalizationManager.Get(
+					"Diagnostics.Health.Area.ProcessTracking"),
 				server.ServerName,
 				statusClaimsActive
-					? "The saved status says this server is active, but no verified executable is currently running. Recover Processes will reconcile its state."
-					: "No server executable is running, which is correct while this server is stopped.",
+					? LocalizationManager.Get(
+						"Diagnostics.Health.Process.StatusMismatch")
+					: LocalizationManager.Get(
+						"Diagnostics.Health.Process.None"),
 				statusClaimsActive ? SynixHealthAction.RecoverProcesses : SynixHealthAction.None,
 				server));
 		}
@@ -528,11 +648,14 @@ namespace Synix_Control_Panel.SynixEngine
 					GameLogDiscovery.HasDeclaredLogs(server.Game)
 						? SynixHealthLevel.Warning
 						: SynixHealthLevel.Passed,
-					"Recent server logs",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.RecentLogs"),
 					server.ServerName,
 					GameLogDiscovery.HasDeclaredLogs(server.Game)
-						? "No file was found at the declared game-log locations yet."
-						: "This game does not have a verified log location in its built-in definition yet.",
+						? LocalizationManager.Get(
+							"Diagnostics.Health.Logs.NotFound")
+						: LocalizationManager.Get(
+							"Diagnostics.Health.Logs.NotDeclared"),
 					SynixHealthAction.None,
 					server));
 				return;
@@ -542,10 +665,13 @@ namespace Synix_Control_Panel.SynixEngine
 			string? likelyProblem = FindLikelyLogProblem(tail);
 			items.Add(new SynixHealthItem(
 				likelyProblem == null ? SynixHealthLevel.Passed : SynixHealthLevel.Warning,
-				"Recent server logs",
+				LocalizationManager.Get(
+					"Diagnostics.Health.Area.RecentLogs"),
 				server.ServerName,
 				likelyProblem == null
-					? $"No common startup failure was found in {Path.GetFileName(result.LatestLogPath)}."
+					? LocalizationManager.Get(
+						"Diagnostics.Health.Logs.Healthy",
+						Path.GetFileName(result.LatestLogPath))
 					: likelyProblem,
 				SynixHealthAction.OpenLatestLog,
 				server));
@@ -561,7 +687,9 @@ namespace Synix_Control_Panel.SynixEngine
 			string line = Regex.Replace(match.Value.Trim(), @"\s+", " ");
 			if (line.Length > 360)
 				line = line[..360] + "…";
-			return "The newest log contains a likely startup problem: " + line;
+			return LocalizationManager.Get(
+				"Diagnostics.Health.Logs.Problem",
+				line);
 		}
 
 		private static string ReadLogTail(string path)
@@ -618,17 +746,23 @@ namespace Synix_Control_Panel.SynixEngine
 							: SynixHealthLevel.Passed;
 					items.Add(new SynixHealthItem(
 						level,
-						"Available disk space",
+						LocalizationManager.Get(
+							"Diagnostics.Health.Area.DiskSpace"),
 						root,
-						$"{FormatBytes(free)} is available. Large installs, updates, validation, and backups may require additional temporary space."));
+						LocalizationManager.Get(
+							"Diagnostics.Health.Disk.Available",
+							FormatBytes(free))));
 				}
 				catch (Exception exception)
 				{
 					items.Add(new SynixHealthItem(
 						SynixHealthLevel.Warning,
-						"Available disk space",
+						LocalizationManager.Get(
+							"Diagnostics.Health.Area.DiskSpace"),
 						root,
-						$"Synix could not inspect this drive: {exception.Message}"));
+						LocalizationManager.Get(
+							"Diagnostics.Health.Disk.Failed",
+							exception.Message)));
 				}
 			}
 		}
@@ -647,13 +781,18 @@ namespace Synix_Control_Panel.SynixEngine
 					result.UpdateAvailable
 						? SynixHealthLevel.Warning
 						: SynixHealthLevel.Passed,
-					"Synix update",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Update"),
 					$"v{current.ToString(3)} — {result.Installation.DisplayName}",
 					result.UpdateAvailable
 						? result.ReleaseReady
-							? $"Synix {result.AdvertisedVersion!.ToString(3)} is available and its release assets are ready."
-							: result.Problem ?? "A newer version is being prepared."
-						: "This installation matches or exceeds the advertised Synix version.",
+							? LocalizationManager.Get(
+								"Diagnostics.Health.Update.Available",
+								result.AdvertisedVersion!.ToString(3))
+							: result.Problem ?? LocalizationManager.Get(
+								"Diagnostics.Health.Update.Preparing")
+						: LocalizationManager.Get(
+							"Diagnostics.Health.Update.Current"),
 					result.UpdateAvailable
 						? SynixHealthAction.OpenUpdate
 						: SynixHealthAction.None));
@@ -663,9 +802,12 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				items.Add(new SynixHealthItem(
 					SynixHealthLevel.Warning,
-					"Synix update",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Area.Update"),
 					$"v{Core.GetCurrentVersion().ToString(3)}",
-					$"The online update check was unavailable: {exception.Message}",
+					LocalizationManager.Get(
+						"Diagnostics.Health.Update.Failed",
+						exception.Message),
 					SynixHealthAction.OpenUpdate));
 			}
 		}
@@ -709,7 +851,9 @@ namespace Synix_Control_Panel.SynixEngine
 				SynixHealthLevel.Warning,
 				area,
 				server.ServerName,
-				$"This check could not finish: {exception.Message}",
+				LocalizationManager.Get(
+					"Diagnostics.Health.Check.Failed",
+					exception.Message),
 				SynixHealthAction.None,
 				server));
 		}
@@ -790,7 +934,8 @@ namespace Synix_Control_Panel.SynixEngine
 					false,
 					new HashSet<string>(),
 					new HashSet<string>(),
-					"Windows Firewall inspection is available only on Windows.");
+					LocalizationManager.Get(
+						"Diagnostics.Health.Firewall.WindowsOnly"));
 
 			object? policy = null;
 			object? rules = null;
@@ -798,10 +943,22 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				Type? policyType = Type.GetTypeFromProgID("HNetCfg.FwPolicy2");
 				if (policyType == null)
-					return new(false, false, new HashSet<string>(), new HashSet<string>(), "Windows Firewall services are unavailable.");
+					return new(
+						false,
+						false,
+						new HashSet<string>(),
+						new HashSet<string>(),
+						LocalizationManager.Get(
+							"Diagnostics.Health.Firewall.Unavailable"));
 				policy = Activator.CreateInstance(policyType);
 				if (policy == null)
-					return new(false, false, new HashSet<string>(), new HashSet<string>(), "Windows Firewall could not be opened.");
+					return new(
+						false,
+						false,
+						new HashSet<string>(),
+						new HashSet<string>(),
+						LocalizationManager.Get(
+							"Diagnostics.Health.Firewall.OpenFailed"));
 
 				dynamic firewallPolicy = policy;
 				int currentProfiles = Convert.ToInt32(firewallPolicy.CurrentProfileTypes);

@@ -158,7 +158,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(147, 21);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Resource Monitor";
+			lblWindowTitle.Text = LocalizationManager.Get("Text.D5982D352F46EF815D10");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			//
 			// btnMinimize
@@ -177,7 +177,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			btnMinimize.Size = new Size(48, 55);
 			btnMinimize.TabIndex = 2;
 			btnMinimize.TabStop = false;
-			btnMinimize.Text = "—";
+			btnMinimize.Text = LocalizationManager.Get("Text.BDA050585A00F0F6CB50");
 			btnMinimize.UseVisualStyleBackColor = false;
 			btnMinimize.Click += btnMinimize_Click;
 			//
@@ -197,7 +197,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			btnClose.Size = new Size(48, 55);
 			btnClose.TabIndex = 3;
 			btnClose.TabStop = false;
-			btnClose.Text = "×";
+			btnClose.Text = LocalizationManager.Get("Text.8DB71ED28B0F2F143256");
 			btnClose.UseVisualStyleBackColor = false;
 			btnClose.Click += btnClose_Click;
 			//
@@ -267,7 +267,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblPageHeading.Name = "lblPageHeading";
 			lblPageHeading.Size = new Size(277, 41);
 			lblPageHeading.TabIndex = 0;
-			lblPageHeading.Text = "Resource Monitor";
+			lblPageHeading.Text = LocalizationManager.Get("Text.D5982D352F46EF815D10");
 			//
 			// lblPageSubtitle
 			//
@@ -279,7 +279,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblPageSubtitle.Name = "lblPageSubtitle";
 			lblPageSubtitle.Size = new Size(389, 19);
 			lblPageSubtitle.TabIndex = 1;
-			lblPageSubtitle.Text = "Live performance across every managed game server process.";
+			lblPageSubtitle.Text = LocalizationManager.Get("Text.E749931070B84A1593D2");
 			//
 			// lblLiveIndicator
 			//
@@ -291,7 +291,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblLiveIndicator.Name = "lblLiveIndicator";
 			lblLiveIndicator.Size = new Size(164, 30);
 			lblLiveIndicator.TabIndex = 2;
-			lblLiveIndicator.Text = "●  LIVE MONITORING";
+			lblLiveIndicator.Text = LocalizationManager.Get("Text.F28331D3C1ADA044B1F9");
 			lblLiveIndicator.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// metricsLayout
@@ -352,7 +352,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblTotalCpuTitle.Name = "lblTotalCpuTitle";
 			lblTotalCpuTitle.Size = new Size(72, 17);
 			lblTotalCpuTitle.TabIndex = 1;
-			lblTotalCpuTitle.Text = "TOTAL CPU";
+			lblTotalCpuTitle.Text = LocalizationManager.Get("Text.B6C4C1953C0B95ECE881");
 			//
 			// lblTotalCpuValue
 			//
@@ -364,7 +364,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblTotalCpuValue.Name = "lblTotalCpuValue";
 			lblTotalCpuValue.Size = new Size(84, 41);
 			lblTotalCpuValue.TabIndex = 2;
-			lblTotalCpuValue.Text = "0.0%";
+			lblTotalCpuValue.Text = LocalizationManager.Get("Text.13E2510BC57D3BD9E2A3");
 			//
 			// lblTotalCpuCaption
 			//
@@ -376,7 +376,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblTotalCpuCaption.Name = "lblTotalCpuCaption";
 			lblTotalCpuCaption.Size = new Size(320, 18);
 			lblTotalCpuCaption.TabIndex = 3;
-			lblTotalCpuCaption.Text = "Across all managed server processes";
+			lblTotalCpuCaption.Text = LocalizationManager.Get("ResourceMonitor.CpuCaption");
 			//
 			// pnlCpuTrack
 			//
@@ -437,7 +437,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblTotalRamTitle.Name = "lblTotalRamTitle";
 			lblTotalRamTitle.Size = new Size(75, 17);
 			lblTotalRamTitle.TabIndex = 1;
-			lblTotalRamTitle.Text = "TOTAL RAM";
+			lblTotalRamTitle.Text = LocalizationManager.Get("Text.09EA012D10A0D0AF4057");
 			//
 			// lblTotalRamValue
 			//
@@ -449,7 +449,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblTotalRamValue.Name = "lblTotalRamValue";
 			lblTotalRamValue.Size = new Size(120, 41);
 			lblTotalRamValue.TabIndex = 2;
-			lblTotalRamValue.Text = "0.00 GB";
+			lblTotalRamValue.Text = LocalizationManager.Get("Text.92C49213F152EFC7CE6E");
 			//
 			// lblTotalRamCaption
 			//
@@ -461,7 +461,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblTotalRamCaption.Name = "lblTotalRamCaption";
 			lblTotalRamCaption.Size = new Size(318, 18);
 			lblTotalRamCaption.TabIndex = 3;
-			lblTotalRamCaption.Text = "0.0% of system memory";
+			lblTotalRamCaption.Text = LocalizationManager.Get("Text.58ED4C80A138CBE07569");
 			//
 			// pnlRamTrack
 			//
@@ -522,7 +522,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblActiveServersTitle.Name = "lblActiveServersTitle";
 			lblActiveServersTitle.Size = new Size(108, 17);
 			lblActiveServersTitle.TabIndex = 1;
-			lblActiveServersTitle.Text = "ACTIVE SERVERS";
+			lblActiveServersTitle.Text = LocalizationManager.Get("Text.3223AB519F48D64BCAA0");
 			//
 			// lblActiveServersValue
 			//
@@ -534,7 +534,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblActiveServersValue.Name = "lblActiveServersValue";
 			lblActiveServersValue.Size = new Size(36, 41);
 			lblActiveServersValue.TabIndex = 2;
-			lblActiveServersValue.Text = "0";
+			lblActiveServersValue.Text = LocalizationManager.Get("Text.5FECEB66FFC86F38D952");
 			//
 			// lblActiveServersCaption
 			//
@@ -546,7 +546,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblActiveServersCaption.Name = "lblActiveServersCaption";
 			lblActiveServersCaption.Size = new Size(320, 38);
 			lblActiveServersCaption.TabIndex = 3;
-			lblActiveServersCaption.Text = "No running server processes detected";
+			lblActiveServersCaption.Text = LocalizationManager.Get("ResourceMonitor.Active.None");
 			//
 			// lblActiveIndicator
 			//
@@ -558,7 +558,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblActiveIndicator.Name = "lblActiveIndicator";
 			lblActiveIndicator.Size = new Size(26, 26);
 			lblActiveIndicator.TabIndex = 4;
-			lblActiveIndicator.Text = "●";
+			lblActiveIndicator.Text = LocalizationManager.Get("Text.5F9E6A3696C4A7C2F25C");
 			lblActiveIndicator.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// pnlGridCard
@@ -590,7 +590,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblGridTitle.Name = "lblGridTitle";
 			lblGridTitle.Size = new Size(172, 28);
 			lblGridTitle.TabIndex = 0;
-			lblGridTitle.Text = "Running Servers";
+			lblGridTitle.Text = LocalizationManager.Get("Text.4A3B87641F16E0F811C2");
 			//
 			// lblGridSubtitle
 			//
@@ -602,7 +602,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblGridSubtitle.Name = "lblGridSubtitle";
 			lblGridSubtitle.Size = new Size(383, 15);
 			lblGridSubtitle.TabIndex = 1;
-			lblGridSubtitle.Text = "Process identity and live resource usage for every active game server.";
+			lblGridSubtitle.Text = LocalizationManager.Get("Text.82F665628E2402225B0F");
 			//
 			// resourceGrid
 			//
@@ -654,7 +654,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			//
 			dataGridViewCellStyle3.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
 			colStatus.DefaultCellStyle = dataGridViewCellStyle3;
-			colStatus.HeaderText = "STATUS";
+			colStatus.HeaderText = LocalizationManager.Get("ModManager.Column.Status");
 			colStatus.MinimumWidth = 105;
 			colStatus.Name = "colStatus";
 			colStatus.ReadOnly = true;
@@ -667,7 +667,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			dataGridViewCellStyle4.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
 			colServerName.DefaultCellStyle = dataGridViewCellStyle4;
 			colServerName.FillWeight = 28F;
-			colServerName.HeaderText = "SERVER NAME";
+			colServerName.HeaderText = LocalizationManager.Get("Text.41CFA866FAA62B2104E6");
 			colServerName.MinimumWidth = 150;
 			colServerName.Name = "colServerName";
 			colServerName.ReadOnly = true;
@@ -677,7 +677,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
 			dataGridViewCellStyle5.ForeColor = Color.FromArgb(158, 172, 194);
 			colPid.DefaultCellStyle = dataGridViewCellStyle5;
-			colPid.HeaderText = "PID";
+			colPid.HeaderText = LocalizationManager.Get("Text.3F302A2A7158A024FB85");
 			colPid.MinimumWidth = 75;
 			colPid.Name = "colPid";
 			colPid.ReadOnly = true;
@@ -688,14 +688,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			//
 			colExecutable.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			colExecutable.FillWeight = 40F;
-			colExecutable.HeaderText = "EXECUTABLE";
+			colExecutable.HeaderText = LocalizationManager.Get("Text.D75C341C66C26AED5A1D");
 			colExecutable.MinimumWidth = 210;
 			colExecutable.Name = "colExecutable";
 			colExecutable.ReadOnly = true;
 			//
 			// colCpuUsage
 			//
-			colCpuUsage.HeaderText = "CPU USAGE";
+			colCpuUsage.HeaderText = LocalizationManager.Get("Text.D7D31960DA6507518203");
 			colCpuUsage.MinimumWidth = 145;
 			colCpuUsage.Name = "colCpuUsage";
 			colCpuUsage.ReadOnly = true;
@@ -704,7 +704,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			//
 			// colRamUsage
 			//
-			colRamUsage.HeaderText = "RAM USAGE";
+			colRamUsage.HeaderText = LocalizationManager.Get("Text.771E2DB0F3BEF2D22BE9");
 			colRamUsage.MinimumWidth = 155;
 			colRamUsage.Name = "colRamUsage";
 			colRamUsage.ReadOnly = true;
@@ -731,7 +731,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblServerCount.Name = "lblServerCount";
 			lblServerCount.Size = new Size(108, 15);
 			lblServerCount.TabIndex = 4;
-			lblServerCount.Text = "0 running servers";
+			lblServerCount.Text = LocalizationManager.Get("Text.3CB4B01999543FE147B3");
 			//
 			// lblLastUpdated
 			//
@@ -743,7 +743,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			lblLastUpdated.Name = "lblLastUpdated";
 			lblLastUpdated.Size = new Size(324, 21);
 			lblLastUpdated.TabIndex = 5;
-			lblLastUpdated.Text = "Waiting for first sample  •  Auto-refresh every 1 second";
+			lblLastUpdated.Text = LocalizationManager.Get("Text.29CAE0D1FFE7D67CA266");
 			lblLastUpdated.TextAlign = ContentAlignment.MiddleRight;
 			//
 			// tmrRefresh
@@ -768,7 +768,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			Name = "ResourceMonitorGUI";
 			Padding = new Padding(1);
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Resource Monitor";
+			Text = LocalizationManager.Get("Text.D5982D352F46EF815D10");
 			FormClosed += ResourceMonitorGUI_FormClosed;
 			shellLayout.ResumeLayout(false);
 			titleBar.ResumeLayout(false);

@@ -149,7 +149,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			if (string.IsNullOrWhiteSpace(path))
 			{
-				throw new ArgumentException("A configuration path is required.", nameof(path));
+				throw new ArgumentException(LocalizationManager.Get(
+					"Configuration.Editor.Error.SinglePathRequired"), nameof(path));
 			}
 
 			if (!File.Exists(path))
@@ -189,7 +190,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!File.Exists(path))
 			{
 				throw new FileNotFoundException(
-					"The configuration file could not be found.",
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.FileNotFound"),
 					path);
 			}
 
@@ -205,7 +207,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!File.Exists(path))
 			{
 				throw new FileNotFoundException(
-					"The configuration file could not be found.",
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.FileNotFound"),
 					path);
 			}
 
@@ -243,7 +246,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ConfigFormat.Space => ParseSpaceDocument(text),
 				ConfigFormat.SII => ParseSiiDocument(text),
 				_ => throw new NotSupportedException(
-					$"The configuration format '{format}' is not supported.")
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.FormatUnsupported",
+						format))
 			};
 		}
 

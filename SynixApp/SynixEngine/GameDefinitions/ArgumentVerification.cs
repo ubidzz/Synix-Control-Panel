@@ -46,16 +46,22 @@ namespace Synix_Control_Panel.SynixEngine
 			if (definition == null)
 			{
 				checks.Add(new GameArgumentVerificationCheck(
-					"Built-in definition",
+					LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Definition.Name"),
 					false,
-					$"No built-in definition was found for {server.Game}."));
+					LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Definition.Missing",
+						server.Game)));
 				return EmptyArgumentPreview(server, checks);
 			}
 
 			checks.Add(new GameArgumentVerificationCheck(
-				"Built-in definition",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.Definition.Name"),
 				true,
-				$"Loaded revision {definition.DefinitionRevision}."));
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.Definition.Loaded",
+					definition.DefinitionRevision)));
 
 			string installRoot;
 			string executablePath;
@@ -74,11 +80,14 @@ namespace Synix_Control_Panel.SynixEngine
 						".." + Path.DirectorySeparatorChar,
 						StringComparison.Ordinal);
 				checks.Add(new GameArgumentVerificationCheck(
-					"Launch path containment",
+					LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.PathContainment.Name"),
 					staysInsideInstall,
 					staysInsideInstall
-						? "The launch file remains inside the selected server folder."
-						: "The definition launch path escapes the selected server folder."));
+						? LocalizationManager.Get(
+							"GameDefinitions.ArgumentCheck.PathContainment.Safe")
+						: LocalizationManager.Get(
+							"GameDefinitions.ArgumentCheck.PathContainment.Escapes")));
 				if (!staysInsideInstall)
 					return EmptyArgumentPreview(server, checks);
 			}
@@ -87,7 +96,8 @@ namespace Synix_Control_Panel.SynixEngine
 				PathTooLongException)
 			{
 				checks.Add(new GameArgumentVerificationCheck(
-					"Launch path",
+					LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.LaunchPath.Name"),
 					false,
 					exception.Message));
 				return EmptyArgumentPreview(server, checks);
@@ -95,30 +105,39 @@ namespace Synix_Control_Panel.SynixEngine
 
 			bool launchFileExists = File.Exists(executablePath);
 			checks.Add(new GameArgumentVerificationCheck(
-				"Installed launch file",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.InstalledFile.Name"),
 				launchFileExists,
 				launchFileExists
 					? executablePath
-					: $"The launch file is missing: {executablePath}"));
+					: LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.InstalledFile.Missing",
+						executablePath)));
 
 			bool supportedLauncher = GameLaunchCommandBuilder.TryGetLauncherKind(
 				executablePath,
 				out _);
 			checks.Add(new GameArgumentVerificationCheck(
-				"Supported launcher",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.Launcher.Name"),
 				supportedLauncher,
 				supportedLauncher
-					? "Synix can start this executable or command script safely."
-					: $"The launch file type {Path.GetExtension(executablePath)} is not supported."));
+					? LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Launcher.Supported")
+					: LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Launcher.Unsupported",
+						Path.GetExtension(executablePath))));
 
 			bool extraArgumentsSafe = TryValidateExtraArguments(
 				server.ExtraArgs,
 				out string extraArgumentsError);
 			checks.Add(new GameArgumentVerificationCheck(
-				"Extra argument safety",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.ExtraArguments.Name"),
 				extraArgumentsSafe,
 				extraArgumentsSafe
-					? "No Windows command-injection operators were found."
+					? LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.ExtraArguments.Safe")
 					: extraArgumentsError));
 
 			if (!TryRevealServerPasswords(
@@ -126,9 +145,11 @@ namespace Synix_Control_Panel.SynixEngine
 				out SynixServerPasswords passwords))
 			{
 				checks.Add(new GameArgumentVerificationCheck(
-					"Protected passwords",
+					LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Passwords.Name"),
 					false,
-					"Synix could not unlock this server's saved passwords."));
+					LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Passwords.UnlockFailed")));
 				return CreateArgumentPreview(
 					server,
 					executablePath,
@@ -138,9 +159,11 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			checks.Add(new GameArgumentVerificationCheck(
-				"Protected passwords",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.Passwords.Name"),
 				true,
-				"Saved passwords were unlocked only in memory and will remain hidden in this preview."));
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.Passwords.Hidden")));
 
 			string invokedAppId = GameLaunchCommandBuilder.ResolveInvokedAppId(
 				server,
@@ -154,10 +177,12 @@ namespace Synix_Control_Panel.SynixEngine
 				out string arguments,
 				out string argumentError);
 			checks.Add(new GameArgumentVerificationCheck(
-				"Complete launch arguments",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.CompleteArguments.Name"),
 				argumentsBuilt,
 				argumentsBuilt
-					? "The installed server values were inserted into the definition."
+					? LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.CompleteArguments.Inserted")
 					: argumentError));
 
 			string sanitizedArguments = string.Empty;
@@ -179,13 +204,18 @@ namespace Synix_Control_Panel.SynixEngine
 				.Where(token => arguments.Contains(token, StringComparison.Ordinal))
 				.ToArray();
 			checks.Add(new GameArgumentVerificationCheck(
-				"Resolved Synix tags",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.Tags.Name"),
 				argumentsBuilt && unresolvedTokens.Length == 0,
 				!argumentsBuilt
-					? "The command must build before its tags can be checked."
+					? LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Tags.BuildFirst")
 					: unresolvedTokens.Length == 0
-						? "Every supported Synix argument tag was replaced."
-						: $"Unresolved tags: {string.Join(", ", unresolvedTokens)}"));
+						? LocalizationManager.Get(
+							"GameDefinitions.ArgumentCheck.Tags.Resolved")
+						: LocalizationManager.Get(
+							"GameDefinitions.ArgumentCheck.Tags.Unresolved",
+							string.Join(", ", unresolvedTokens))));
 
 			bool processSettingsBuilt = false;
 			string processSettingsDetails;
@@ -201,8 +231,10 @@ namespace Synix_Control_Panel.SynixEngine
 					redirectStandardInput: GameCapabilityResolver.UsesMinecraftConsole(server));
 				processSettingsBuilt = true;
 				processSettingsDetails = definition.LaunchBehavior.RunElevated
-					? "The command can be passed through the Windows elevation prompt."
-					: "The command can be passed directly to the server process.";
+					? LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Process.Elevated")
+					: LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Process.Direct");
 			}
 			catch (Exception exception) when (exception is ArgumentException or
 				NotSupportedException or
@@ -211,7 +243,8 @@ namespace Synix_Control_Panel.SynixEngine
 				processSettingsDetails = exception.Message;
 			}
 			checks.Add(new GameArgumentVerificationCheck(
-				"Process launch construction",
+				LocalizationManager.Get(
+					"GameDefinitions.ArgumentCheck.Process.Name"),
 				processSettingsBuilt,
 				processSettingsDetails));
 

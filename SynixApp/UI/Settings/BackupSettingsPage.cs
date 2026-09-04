@@ -198,13 +198,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 						double remainingSeconds =
 						(progress.TotalBytes - progress.BytesProcessed) /
 						bytesPerSecond;
-						etaText =
-							$"ETA: About {FormatDuration(remainingSeconds)} remaining";
+						etaText = LocalizationManager.Get(
+							"Settings.Backup.Transfer.Eta",
+							FormatDuration(remainingSeconds));
 					}
 				}
 			}
 
-			_transferStatusLabel.Text = progress.Message;
+			_transferStatusLabel.Text =
+				LocalizationManager.TranslateRuntimeText(progress.Message);
 			_transferEtaLabel.Text = etaText;
 			_transferEtaLabel.Visible =
 				_transferProgressBar.Visible && etaText.Length > 0;
@@ -218,10 +220,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			string encryptedTime,
 			string normalTime)
 		{
-			_exportEstimateLabel.Text =
-				$"EXPORT  {FormatBytes(sourceBytes)} • {fileCount:N0} files\n" +
-				$"Encrypted: ≤{FormatBytes(estimatedPackageBytes)} • {encryptedTime}\n" +
-				$"Normal: ≤{FormatBytes(estimatedPackageBytes)} • {normalTime}";
+			LocalizationManager.BindText(
+				_exportEstimateLabel,
+				"Settings.Backup.Transfer.ExportEstimate",
+				FormatBytes(sourceBytes),
+				fileCount,
+				FormatBytes(estimatedPackageBytes),
+				encryptedTime,
+				normalTime);
 		}
 
 		public void ShowImportEstimate(
@@ -232,26 +238,43 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			bool lowDiskFormat,
 			bool passwordProtected)
 		{
-			_importEstimateLabel.Text =
-				$"IMPORT  {packageName}\n" +
-				$"{FormatBytes(dataBytes)} • +{FormatBytes(additionalSpaceBytes)} working space • {estimatedTime}" +
-				(passwordProtected ? " • Encrypted" : " • Unencrypted") +
-				(lowDiskFormat ? " • Low-disk" : " • Legacy");
-			_importSynixButton.Text = "Import Synix";
+			LocalizationManager.BindText(
+				_importEstimateLabel,
+				"Settings.Backup.Transfer.ImportEstimate",
+				packageName,
+				FormatBytes(dataBytes),
+				FormatBytes(additionalSpaceBytes),
+				estimatedTime,
+				LocalizationManager.Get(
+					passwordProtected
+						? "Settings.Backup.Transfer.Encrypted"
+						: "Settings.Backup.Transfer.Unencrypted"),
+				LocalizationManager.Get(
+					lowDiskFormat
+						? "Settings.Backup.Transfer.LowDisk"
+						: "Settings.Backup.Transfer.Legacy"));
+			LocalizationManager.BindText(
+				_importSynixButton,
+				"Text.617663EEC34944ABC976");
 		}
 
 		public void ShowImportSelectionPrompt()
 		{
-			_importEstimateLabel.Text =
-				"IMPORT  No package selected\nChoose a package to calculate space and time.";
-			_importSynixButton.Text = "Choose Package";
+			LocalizationManager.BindText(
+				_importEstimateLabel,
+				"Text.5D385B4C5044DA97B77C");
+			LocalizationManager.BindText(
+				_importSynixButton,
+				"Text.2D57929BE2D29C7BE3DC");
 		}
 
 		public void SetImportReady(bool ready)
 		{
-			_importSynixButton.Text = ready
-				? "Import Synix"
-				: "Choose Another";
+			LocalizationManager.BindText(
+				_importSynixButton,
+				ready
+					? "Text.617663EEC34944ABC976"
+					: "DynamicText.AB80BEDBA7075DEA64E2");
 		}
 
 		private static string FormatBytes(long bytes)
@@ -273,15 +296,22 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, seconds));
 			if (duration.TotalHours >= 1)
 			{
-				return $"{(int)duration.TotalHours} hr {duration.Minutes} min";
+				return LocalizationManager.Get(
+					"Settings.Backup.Duration.Hours",
+					(int)duration.TotalHours,
+					duration.Minutes);
 			}
 
 			if (duration.TotalMinutes >= 1)
 			{
-				return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalMinutes))} min";
+				return LocalizationManager.Get(
+					"Settings.Backup.Duration.Minutes",
+					Math.Max(1, (int)Math.Ceiling(duration.TotalMinutes)));
 			}
 
-			return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds))} sec";
+			return LocalizationManager.Get(
+				"Settings.Backup.Duration.Seconds",
+				Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds)));
 		}
 
 		private void chkCustomBackup_CheckedChanged(
@@ -334,7 +364,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Size = new Size(520, 30),
 				Font = new Font("Segoe UI", 12F, FontStyle.Bold),
 				ForeColor = Color.FromArgb(245, 247, 251),
-				Text = "Move Synix to another PC"
+				Text = LocalizationManager.Get("DynamicText.78A8F90383342A65EBBA")
 			};
 			Label description = new()
 			{
@@ -343,8 +373,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Size = new Size(774, 34),
 				Font = new Font("Segoe UI", 9.5F),
 				ForeColor = Color.FromArgb(158, 172, 194),
-				Text = "Choose an encrypted or normal file containing everything in C:\\Synix, or restore it on a new computer.\n" +
-					"This process can take some time depending on how much data needs to be packaged."
+				Text = LocalizationManager.Get("Settings.Backup.Transfer.Description")
 			};
 
 			Label exportEstimateLabel = new()
@@ -354,7 +383,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Size = new Size(374, 51),
 				Font = new Font("Segoe UI", 8.2F),
 				ForeColor = Color.FromArgb(125, 230, 221),
-				Text = "EXPORT  Calculating Synix data..."
+				Text = LocalizationManager.Get("DynamicText.CBBA62AF17CFB9FA453B")
 			};
 			Label importEstimateLabel = new()
 			{
@@ -363,34 +392,34 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Size = new Size(386, 51),
 				Font = new Font("Segoe UI", 8.5F),
 				ForeColor = Color.FromArgb(158, 172, 194),
-				Text = "IMPORT  No package selected\nChoose a package to calculate space and time."
+				Text = LocalizationManager.Get("Text.5D385B4C5044DA97B77C")
 			};
 
 			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton exportButton = new()
 			{
 				Location = new Point(22, 136),
 				Size = new Size(128, 36),
-				Text = "Encrypted Export",
+				Text = LocalizationManager.Get("Text.35632C4A3CA55AE70481"),
 				UseAccentStyle = true
 			};
 			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton normalExportButton = new()
 			{
 				Location = new Point(158, 136),
 				Size = new Size(128, 36),
-				Text = "Normal Export"
+				Text = LocalizationManager.Get("DynamicText.975D0C0D2656474C5CD5")
 			};
 			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton importButton = new()
 			{
 				Location = new Point(294, 136),
 				Size = new Size(128, 36),
-				Text = "Choose Package"
+				Text = LocalizationManager.Get("Text.2D57929BE2D29C7BE3DC")
 			};
 			Synix_Control_Panel.SynixApp.Design.Controls.ModernSettingsButton verifyButton = new()
 			{
 				Enabled = false,
 				Location = new Point(430, 136),
 				Size = new Size(128, 36),
-				Text = "Verify Package"
+				Text = LocalizationManager.Get("DynamicText.A728732ECF56432BF453")
 			};
 			Label statusLabel = new()
 			{
@@ -399,7 +428,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Size = new Size(226, 19),
 				Font = new Font("Segoe UI", 9F),
 				ForeColor = Color.FromArgb(158, 172, 194),
-				Text = "Stop servers before transferring."
+				Text = LocalizationManager.Get("DynamicText.C1710D59A83DE3DB42F8")
 			};
 			Label etaLabel = new()
 			{

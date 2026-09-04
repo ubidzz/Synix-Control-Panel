@@ -30,14 +30,16 @@ namespace Synix_Control_Panel.SynixEngine
 			var dbEntry = GameDatabase.GetGame(server.Game);
 			if (dbEntry == null)
 			{
-				errorMessage = "Game not found in database.";
+				errorMessage = LocalizationManager.Get(
+					"Validator.GameDefinitionMissing");
 				return false;
 			}
 
 			string fullPath = GameLaunchCommandBuilder.ResolveExecutablePath(server, dbEntry);
 			if (!File.Exists(fullPath))
 			{
-				errorMessage = "The game files are missing! Please run 'Update' to fix the server.";
+				errorMessage = LocalizationManager.Get(
+					"Validator.GameFilesMissing");
 				return false;
 			}
 
@@ -46,9 +48,10 @@ namespace Synix_Control_Panel.SynixEngine
 				if (!IsPortInUseLocally(port))
 					continue;
 
-				errorMessage =
-					$"The {name} ({port}) is already being used by another program. " +
-					"Close the other program or edit this server and choose a free port.";
+				errorMessage = LocalizationManager.Get(
+					"Validator.PortInUse",
+					name,
+					port);
 				return false;
 			}
 
@@ -77,20 +80,20 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			if (Supports(GameManagementCapability.Port))
-				Add(server.Port, "game port");
+				Add(server.Port, LocalizationManager.Get("PortRole.Game"));
 
 			if (Supports(GameManagementCapability.QueryPort))
-				Add(server.QueryPort, "query port");
+				Add(server.QueryPort, LocalizationManager.Get("PortRole.Query"));
 
 			if (server.EnableRcon && Supports(GameManagementCapability.Rcon))
 			{
-				Add(server.RconPort, "RCON port");
+				Add(server.RconPort, LocalizationManager.Get("PortRole.Rcon"));
 			}
 
 			if (Supports(GameManagementCapability.AppPort) &&
 				server.AppPort.HasValue)
 			{
-				Add(server.AppPort.Value, "app port");
+				Add(server.AppPort.Value, LocalizationManager.Get("PortRole.App"));
 			}
 
 			return ports;
@@ -105,8 +108,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (exists)
 			{
-				LocalizedMessageBox.Show($"You already have a {game} server named '{name}'.",
-								"Duplicate Name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"Validator.DuplicateName.Body",
+						game,
+						name),
+					LocalizationManager.Get("Validator.DuplicateName.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 				return false;
 			}
 			return true;
@@ -126,13 +135,17 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			var portChecks = new List<(int Value, string Name)>();
 
-			if (checkGamePort) portChecks.Add((game, "Game Port"));
+			if (checkGamePort)
+				portChecks.Add((game, LocalizationManager.Get("PortRole.Game.Title")));
 
-			if (checkQueryPort) portChecks.Add((query, "Query Port"));
+			if (checkQueryPort)
+				portChecks.Add((query, LocalizationManager.Get("PortRole.Query.Title")));
 
-			if (checkRcon) portChecks.Add((rcon, "RCON Port"));
+			if (checkRcon)
+				portChecks.Add((rcon, LocalizationManager.Get("PortRole.Rcon.Title")));
 
-			if (checkAppPort) portChecks.Add((app, "App Port (Rust+)"));
+			if (checkAppPort)
+				portChecks.Add((app, LocalizationManager.Get("PortRole.RustPlus.Title")));
 
 			var duplicateSelection = portChecks
 				.GroupBy(check => check.Value)
@@ -140,11 +153,17 @@ namespace Synix_Control_Panel.SynixEngine
 			if (duplicateSelection != null)
 			{
 				string roles = string.Join(
-					" and ",
-					duplicateSelection.Select(check => check.Name));
+					LocalizationManager.Get(
+						"Validator.PortConflict.RolesSeparator"),
+					duplicateSelection.Select(check =>
+						LocalizationManager.TranslateRuntimeText(check.Name)));
 				LocalizedMessageBox.Show(
-					$"Port Conflict: {roles} cannot both use port {duplicateSelection.Key}. Each server port must be unique.",
-					"Network Resource Conflict",
+					LocalizationManager.Get(
+						"Validator.PortConflict.Duplicate.Body",
+						roles,
+						duplicateSelection.Key),
+					LocalizationManager.Get(
+						"Validator.NetworkConflict.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Stop);
 				return false;
@@ -155,22 +174,41 @@ namespace Synix_Control_Panel.SynixEngine
 				var owner = GetConfiguredPortCollisionOwner(check.Value, excluding);
 				if (owner != null)
 				{
-					LocalizedMessageBox.Show($"Resource Collision: The {check.Name} ({check.Value}) is already allocated to instance: '{owner}'.",
-									"Network Resource Conflict", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+					LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"Validator.PortConflict.Configured.Body",
+							LocalizationManager.TranslateRuntimeText(check.Name),
+							check.Value,
+							owner),
+						LocalizationManager.Get(
+							"Validator.NetworkConflict.Title"),
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Stop);
 					return false;
 				}
 
 				if (IsPortInUseLocally(check.Value))
 				{
-					LocalizedMessageBox.Show($"Socket Conflict: The {check.Name} ({check.Value}) is currently occupied by another system process.",
-									"System Resource Conflict", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+					LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"Validator.PortConflict.Socket.Body",
+							LocalizationManager.TranslateRuntimeText(check.Name),
+							check.Value),
+						LocalizationManager.Get(
+							"Validator.SystemConflict.Title"),
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Stop);
 					return false;
 				}
 			}
 
 			if (checkAppPort && gameName.Contains("Rust", StringComparison.OrdinalIgnoreCase) && app < 10000)
 			{
-				LocalizedMessageBox.Show("Protocol Error: Rust+ (App Port) must be 10000 or higher.", "Logic Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get("Validator.RustAppPort.Body"),
+					LocalizationManager.Get("Validator.LogicError.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 				return false;
 			}
 
@@ -183,8 +221,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (Directory.EnumerateFileSystemEntries(path).Any())
 				{
-					var result = LocalizedMessageBox.Show("This folder isn't empty. Installing here might overwrite files. Continue?",
-											   "Folder Not Empty", MessageBoxButtons.YesNo);
+					var result = LocalizedMessageBox.Show(
+						LocalizationManager.Get("Validator.FolderNotEmpty.Body"),
+						LocalizationManager.Get("Validator.FolderNotEmpty.Title"),
+						MessageBoxButtons.YesNo);
 					return result == DialogResult.Yes;
 				}
 			}
@@ -196,9 +236,10 @@ namespace Synix_Control_Panel.SynixEngine
 			if (server.IsFirstBoot)
 			{
 				DialogResult result = DialogResult.Cancel;
-				ApplicationLogService.Write(
-					$"[🛠️ CONFIG] Opening mandatory configuration warning for {server.ServerName}...",
-					Color.Yellow);
+				ApplicationLogService.WriteLocalized(
+					"Validator.Activity.OpeningConfigurationWarning",
+					Color.Yellow,
+					arguments: [server.ServerName]);
 				ApplicationUiService.Invoke(() =>
 				{
 					using (var warningForm = new WarningDatabase(server))
@@ -218,17 +259,19 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!CanServerStart(server, out string errorMessage))
 			{
-				ApplicationLogService.Write(
-					$"[🚨 ERROR] {errorMessage}",
+				ApplicationLogService.WriteLocalized(
+					"Validator.Activity.Error",
 					Color.Red,
-					true);
+					true,
+					errorMessage);
 
 				if (showDialog)
 				{
 					ApplicationUiService.Invoke(() =>
 						PlainEnglishErrorDialog.ShowError(
 							ApplicationUiService.DialogOwner,
-							"start the server",
+							LocalizationManager.Get(
+								"Validator.ErrorAction.StartServer"),
 							errorMessage));
 				}
 
@@ -286,7 +329,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (isLocked)
 			{
-				lockMessage = $"[🔒 LOCKED] Cannot {serverTrigger.ToLower()}. {server.ServerName} is currently {status}.";
+				lockMessage = LocalizationManager.Get(
+					"Validator.OperationLocked",
+					LocalizationManager.Get($"ServerOperation.Name.{serverTrigger}"),
+					server.ServerName,
+					status);
 				return false;
 			}
 
@@ -361,7 +408,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (TotalCpuUsage >= 80.0)
 			{
-				message = $"[RESOURCE GUARD] CPU load is critical ({TotalCpuUsage:F1}%). Launch aborted.";
+				message = LocalizationManager.Get(
+					"Validator.ResourceGuard.Cpu",
+					TotalCpuUsage);
 				return false;
 			}
 
@@ -369,7 +418,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (currentRamPercent >= 85.0)
 			{
-				message = $"[RESOURCE GUARD] System RAM usage is at {currentRamPercent:F1}% of the usable pool.";
+				message = LocalizationManager.Get(
+					"Validator.ResourceGuard.Ram",
+					currentRamPercent);
 				return false;
 			}
 
@@ -395,25 +446,30 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (arguments.Length > MaximumExtraArgumentsLength)
 			{
-				errorMessage = $"Extra Arguments cannot exceed {MaximumExtraArgumentsLength:N0} characters.";
+				errorMessage = LocalizationManager.Get(
+					"Validation.ExtraArguments.TooLong",
+					MaximumExtraArgumentsLength);
 				return false;
 			}
 
 			if (arguments.IndexOfAny(['\0', '\r', '\n']) >= 0)
 			{
-				errorMessage = "Extra Arguments cannot contain line breaks or null characters.";
+				errorMessage = LocalizationManager.Get(
+					"Validation.ExtraArguments.LineBreaks");
 				return false;
 			}
 
 			if (ContainsBatchVariableExpansion(arguments, '%'))
 			{
-				errorMessage = "Extra Arguments cannot contain Windows batch variable expansion such as %VARIABLE%.";
+				errorMessage = LocalizationManager.Get(
+					"Validation.ExtraArguments.PercentExpansion");
 				return false;
 			}
 
 			if (ContainsBatchVariableExpansion(arguments, '!'))
 			{
-				errorMessage = "Extra Arguments cannot contain delayed Windows batch variable expansion such as !VARIABLE!.";
+				errorMessage = LocalizationManager.Get(
+					"Validation.ExtraArguments.DelayedExpansion");
 				return false;
 			}
 
@@ -423,8 +479,8 @@ namespace Synix_Control_Panel.SynixEngine
 				char character = arguments[index];
 				if (!insideQuotes && character == '^')
 				{
-					errorMessage =
-						"Extra Arguments contain the Windows batch escape operator '^' outside quotes.";
+					errorMessage = LocalizationManager.Get(
+						"Validation.ExtraArguments.EscapeOperator");
 					return false;
 				}
 
@@ -441,15 +497,17 @@ namespace Synix_Control_Panel.SynixEngine
 						character is '&' or '|'
 							? new string(character, 2)
 							: character.ToString();
-					errorMessage =
-						$"Extra Arguments contain the Windows command operator '{commandOperator}' outside quotes.";
+					errorMessage = LocalizationManager.Get(
+						"Validation.ExtraArguments.CommandOperator",
+						commandOperator);
 					return false;
 				}
 			}
 
 			if (insideQuotes)
 			{
-				errorMessage = "Extra Arguments contain an unclosed double quote.";
+				errorMessage = LocalizationManager.Get(
+					"Validation.ExtraArguments.UnclosedQuote");
 				return false;
 			}
 
@@ -461,7 +519,7 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(commandLine);
 			if (commandLine.IndexOfAny(['\0', '\r', '\n']) >= 0)
 				throw new ArgumentException(
-					"Windows batch command lines cannot contain line breaks or null characters.",
+					LocalizationManager.Get("Validation.BatchCommand.LineBreaks"),
 					nameof(commandLine));
 
 			StringBuilder escaped = new(commandLine.Length + 16);
@@ -559,7 +617,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (!isSafe)
 					{
-						Core.Instance.Log($"[🚨 SECURITY] Illegal characters found in property: {prop.Name}");
+						Core.Instance.LogLocalized(
+							"Validator.Activity.UnsafeProperty",
+							arguments: [prop.Name]);
 						return false;
 					}
 				}
@@ -581,7 +641,8 @@ namespace Synix_Control_Panel.SynixEngine
 				};
 
 				using Process proc = Process.Start(psi) ??
-					throw new InvalidOperationException("Java did not start.");
+					throw new InvalidOperationException(
+						LocalizationManager.Get("Validator.Java.StartFailed"));
 				string output = proc.StandardError.ReadToEnd();
 				proc.WaitForExit();
 

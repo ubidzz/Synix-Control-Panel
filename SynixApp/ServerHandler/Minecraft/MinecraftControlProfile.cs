@@ -157,7 +157,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			problem = string.Empty;
 			if (!ShouldEnableManagementProtocol(server))
 			{
-				problem = "This Minecraft version does not have its management protocol enabled.";
+				problem = LocalizationManager.Get("Minecraft.Management.ProtocolDisabled");
 				return false;
 			}
 
@@ -165,7 +165,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				GetPropertiesPath(server),
 				out Dictionary<string, string>? properties))
 			{
-				problem = "Minecraft server.properties is not available yet.";
+				problem = LocalizationManager.Get("Minecraft.Management.PropertiesUnavailable");
 				return false;
 			}
 
@@ -182,13 +182,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			if (!enabled || port is < 1 or > 65535 || !IsValidManagementSecret(secret))
 			{
-				problem = "Minecraft's local management endpoint is incomplete or disabled.";
+				problem = LocalizationManager.Get("Minecraft.Management.EndpointUnavailable");
 				return false;
 			}
 
 			if (!IsLoopbackHost(host))
 			{
-				problem = "Synix will use the Minecraft management protocol only when it is restricted to this computer.";
+				problem = LocalizationManager.Get("Minecraft.Management.LoopbackRequired");
 				return false;
 			}
 
@@ -259,8 +259,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				return true;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				properties.Clear();
 				return false;
 			}

@@ -15,10 +15,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			ArgumentNullException.ThrowIfNull(executablePaths);
 			if (executablePaths.Count == 0)
 				throw new ArgumentException(
-					"At least one firewall executable path is required.",
+					LocalizationManager.Get(
+						"Diagnostics.FirewallCleanup.Error.PathRequired"),
 					nameof(executablePaths));
 
-			Text = "Firewall Cleanup Review";
+			Text = LocalizationManager.Get("Text.0CD9F7C4C6770B0CB39E");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -39,7 +40,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			Controls.Add(new Label
 			{
 				Name = "firewallCleanupHeading",
-				Text = "Review orphaned firewall rules",
+				Text = LocalizationManager.Get("Text.2BD271478D5133521DF1"),
 				Font = new Font("Segoe UI", 18F, FontStyle.Bold),
 				ForeColor = SettingsPalette.PrimaryText,
 				Location = new Point(86, 20),
@@ -65,7 +66,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			};
 			reasonCard.Controls.Add(new Label
 			{
-				Text = "WHY SYNIX FLAGGED THESE RULES",
+				Text = LocalizationManager.Get("Text.84915063F51DB634577C"),
 				Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
 				ForeColor = SettingsPalette.Accent,
 				Location = new Point(18, 12),
@@ -74,7 +75,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			reasonCard.Controls.Add(new Label
 			{
 				Name = "firewallInspectionReasonText",
-				Text = "Each rule points to an executable under C:\\Synix\\Games\\[Game]\\[Server], but that individual server folder is gone and no installed Synix server owns the path.",
+				Text = LocalizationManager.Get("Text.89BF7052C30A2A455D98"),
 				ForeColor = SettingsPalette.PrimaryText,
 				Location = new Point(18, 38),
 				Size = new Size(688, 38)
@@ -92,7 +93,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			};
 			pathsCard.Controls.Add(new Label
 			{
-				Text = $"EXECUTABLE RULES READY FOR REMOVAL  •  {executablePaths.Count}",
+				Text = LocalizationManager.Get(
+					"Diagnostics.FirewallCleanup.RuleCount",
+					executablePaths.Count),
 				Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
 				ForeColor = SettingsPalette.Warning,
 				Location = new Point(20, 16),
@@ -101,7 +104,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			pathsCard.Controls.Add(new TextBox
 			{
 				Name = "firewallRuleList",
-				AccessibleName = "Firewall executable rules ready for removal",
+				AccessibleName = LocalizationManager.Get("Text.07E7C9C515328484C872"),
 				Text = BuildPathList(executablePaths),
 				Multiline = true,
 				ReadOnly = true,
@@ -127,7 +130,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			};
 			safetyCard.Controls.Add(new Label
 			{
-				Text = "WHAT HAPPENS AFTER YOU CONTINUE",
+				Text = LocalizationManager.Get("Text.FF395F5EEE87F691A065"),
 				Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
 				ForeColor = SettingsPalette.Warning,
 				Location = new Point(18, 10),
@@ -136,7 +139,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			safetyCard.Controls.Add(new Label
 			{
 				Name = "firewallCleanupActionText",
-				Text = "Windows requests administrator permission. Synix then removes only firewall rules matching the exact executable paths above and scans again to verify the cleanup.",
+				Text = LocalizationManager.Get("Text.9D352A1132C068237394"),
 				ForeColor = SettingsPalette.PrimaryText,
 				Location = new Point(18, 34),
 				Size = new Size(688, 34)
@@ -144,7 +147,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			safetyCard.Controls.Add(new Label
 			{
 				Name = "firewallCleanupSafetyText",
-				Text = "Not changed: game files, saved servers, port-only rules, custom install folders, and firewall rules outside C:\\Synix\\Games.",
+				Text = LocalizationManager.Get("Text.8DDA097844BB6EDCFA10"),
 				ForeColor = SettingsPalette.SecondaryText,
 				Location = new Point(18, 73),
 				Size = new Size(688, 26)
@@ -154,7 +157,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			ModernSettingsButton cancelButton = new()
 			{
 				Name = "cancelFirewallCleanupButton",
-				Text = "Cancel",
+				Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778"),
 				Location = new Point(418, 608),
 				Size = new Size(158, 42),
 				DialogResult = DialogResult.Cancel
@@ -162,8 +165,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			ModernSettingsButton removeButton = new()
 			{
 				Name = "confirmFirewallCleanupButton",
-				Text = "Remove Rules",
-				AccessibleName = "Confirm removal of the listed firewall rules",
+				Text = LocalizationManager.Get("Text.71F1CA24D00C97F88E3B"),
+				AccessibleName = LocalizationManager.Get("Text.1315F512F1E9EDAD63BC"),
 				Location = new Point(594, 608),
 				Size = new Size(158, 42),
 				DialogResult = DialogResult.OK,
@@ -177,7 +180,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 		}
 
 		private static string BuildSummary(int count) =>
-			$"Synix found {count} firewall {(count == 1 ? "rule" : "rules")} that reference deleted servers under C:\\Synix\\Games. Nothing changes until you approve removal.";
+			LocalizationManager.Get(
+				count == 1
+					? "Diagnostics.FirewallCleanup.Summary.One"
+					: "Diagnostics.FirewallCleanup.Summary.Many",
+				count);
 
 		private static string BuildPathList(
 			IEnumerable<string> executablePaths) =>

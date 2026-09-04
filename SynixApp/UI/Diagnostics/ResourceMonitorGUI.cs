@@ -87,8 +87,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 					"ResourceMonitor.FilteredSubtitle");
 			}
 
-			lblActiveServersTitle.Text = LocalizationManager.TranslateKnownText(
-				"Active Processes");
+			LocalizationManager.BindText(
+				lblActiveServersTitle,
+				"ResourceMonitor.ActiveProcesses.Title");
 		}
 
 		protected override void OnShown(EventArgs eventArgs)
@@ -203,15 +204,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 
 				ApplyUsageSnapshot(snapshot);
 			}
-			catch (OperationCanceledException) when (_refreshCancellation.IsCancellationRequested)
+			catch (OperationCanceledException exception) when (
+				_refreshCancellation.IsCancellationRequested)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 			}
 			catch (InvalidOperationException)
 			{
 				if (!IsDisposed && !Disposing)
 				{
-					lblLastUpdated.Text =
-						"Server list changed during sampling  •  Retrying automatically";
+					LocalizationManager.BindText(
+						lblLastUpdated,
+						"ResourceMonitor.Retry.ServerListChanged");
 				}
 			}
 			catch (Exception exception)
@@ -220,8 +224,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 					$"Resource Monitor sampling failed: {exception}");
 				if (!IsDisposed && !Disposing)
 				{
-					lblLastUpdated.Text =
-						"Resource sampling was delayed  •  Retrying automatically";
+					LocalizationManager.BindText(
+						lblLastUpdated,
+						"ResourceMonitor.Retry.Delayed");
 				}
 			}
 			finally

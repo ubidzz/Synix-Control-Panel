@@ -105,7 +105,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				string resourceKey = index < ProblemActionResourceKeys.Length
 					? ProblemActionResourceKeys[index]
 					: throw new InvalidOperationException(
-						"A problem-report action is missing its language resource key.");
+						LocalizationManager.Get(
+							"Report.Error.ActionResourceMissing"));
 				cmbFailedAction.Items.Add(new LocalizedOption(
 					Core.ProblemReportActions[index],
 					resourceKey));
@@ -159,10 +160,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 		private void RefreshAutomaticInformation()
 		{
-			lblSynixVersion.Text =
-				$"Synix version: {Core.GetProblemReportSynixVersion()}";
-			lblWindowsVersion.Text =
-				$"Windows version: {Core.GetProblemReportWindowsVersion()}";
+			LocalizationManager.BindText(
+				lblSynixVersion,
+				"Report.Automatic.SynixVersion",
+				Core.GetProblemReportSynixVersion());
+			LocalizationManager.BindText(
+				lblWindowsVersion,
+				"Report.Automatic.WindowsVersion",
+				Core.GetProblemReportWindowsVersion());
 			RefreshVerificationDisplay();
 		}
 
@@ -171,8 +176,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			string serverType = cmbServerType.SelectedItem as string ?? string.Empty;
 			if (serverType.Length == 0)
 			{
-				lblVerification.Text =
-					"Choose a server type to show its local verification history.";
+				LocalizationManager.BindText(
+					lblVerification,
+					"Text.58ECD5D931201294DE1E");
 				return;
 			}
 
@@ -180,10 +186,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Core.GetGameCompatibility(serverType);
 			lblVerification.Text = string.Join(
 				Environment.NewLine,
-				FormatVerification("Install", verification.Install),
-				FormatVerification("Start", verification.Start),
-				FormatVerification("Stop", verification.Stop),
-				FormatVerification("Monitoring", verification.Monitoring));
+				FormatVerification(
+					LocalizationManager.Get("VerificationStep.Install"),
+					verification.Install),
+				FormatVerification(
+					LocalizationManager.Get("VerificationStep.Start"),
+					verification.Start),
+				FormatVerification(
+					LocalizationManager.Get("VerificationStep.Stop"),
+					verification.Stop),
+				FormatVerification(
+					LocalizationManager.Get("VerificationStep.Monitoring"),
+					verification.Monitoring));
 		}
 
 		private void RefreshGitHubConnectionDisplay()
@@ -193,8 +207,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			{
 				connection = Core.GetGitHubConnectionInfo();
 			}
-			catch (ProblemReportException)
+			catch (ProblemReportException suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				connection = null;
 				Core.DisconnectGitHub();
 			}
@@ -203,9 +218,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnConnectGitHub.Visible = !connected;
 			btnDisconnectGitHub.Visible = connected;
 			btnSubmitGitHub.Enabled = connected && !_operationInProgress;
-			lblConnectionStatus.Text = connected
-				? $"Connected to GitHub as {connection!.UserName}. Reports can be posted directly."
-				: "GitHub is not connected. Copy and Discord options still work.";
+			LocalizationManager.BindText(
+				lblConnectionStatus,
+				connected
+					? "Report.GitHub.Connected"
+					: "Text.88ED3B522C4F0A8BD740",
+				connection?.UserName ?? string.Empty);
 			lblConnectionStatus.ForeColor = connected
 				? SettingsPalette.Success
 				: SettingsPalette.SecondaryText;
@@ -218,7 +236,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			if (_operationInProgress)
 				return;
 
-			SetOperationState(true, "Requesting a secure sign-in code from GitHub...");
+			SetOperationState(
+				true,
+				LocalizationManager.Get("Report.GitHub.RequestingCode"));
 			try
 			{
 				GitHubDeviceAuthorization authorization =
@@ -226,34 +246,43 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				TryCopyText(authorization.UserCode);
 				LocalizedMessageBox.Show(
 					FindForm(),
-					$"GitHub sign-in code:\n\n{authorization.UserCode}\n\nThe code was copied to the clipboard. Select OK to open GitHub, paste the code, and approve Synix.",
-					"Connect GitHub",
+					LocalizationManager.Get(
+						"Report.GitHub.DeviceCode.Body",
+						authorization.UserCode),
+					LocalizationManager.Get("Text.4027E5B24418520F3EFE"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				OpenAllowedUrl(authorization.VerificationUri.AbsoluteUri);
-				lblReportStatus.Text =
-					$"Waiting for GitHub approval. The code expires at {authorization.ExpiresAtUtc.ToLocalTime():h:mm tt}.";
+				LocalizationManager.BindText(
+					lblReportStatus,
+					"Report.GitHub.Waiting",
+					authorization.ExpiresAtUtc.ToLocalTime().ToString(
+						"t",
+						System.Globalization.CultureInfo.CurrentUICulture));
 
 				GitHubConnectionInfo connection =
 					await Core.CompleteGitHubConnectionAsync(
 						authorization,
 						_lifetimeCancellation.Token);
-				lblReportStatus.Text =
-					$"GitHub connected successfully as {connection.UserName}.";
+				LocalizationManager.BindText(
+					lblReportStatus,
+					"Report.GitHub.ConnectedSuccess",
+					connection.UserName);
 				lblReportStatus.ForeColor = SettingsPalette.Success;
 			}
-			catch (OperationCanceledException) when (_lifetimeCancellation.IsCancellationRequested)
+			catch (OperationCanceledException suppressedException) when (_lifetimeCancellation.IsCancellationRequested)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 			catch (Exception exception) when (exception is ProblemReportException or
 				HttpRequestException or
 				TaskCanceledException)
 			{
 				ShowOperationError(
-					"GitHub Connection",
+					LocalizationManager.Get("Report.GitHub.ConnectionTitle"),
 					exception is TaskCanceledException
-						? "GitHub did not respond in time. Check the internet connection and try again."
-						: exception.Message);
+						? LocalizationManager.Get("Report.GitHub.Timeout")
+						: LocalizationManager.TranslateRuntimeText(exception.Message));
 			}
 			finally
 			{
@@ -271,8 +300,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 			DialogResult result = LocalizedMessageBox.Show(
 				FindForm(),
-				"Disconnect GitHub from Synix?\n\nSynix will delete the encrypted connection saved on this computer, then open GitHub so you can revoke the authorization from your account.",
-				"Disconnect GitHub",
+				LocalizationManager.Get("MessageText.53B01E5FCFDE56675C9A"),
+				LocalizationManager.Get("Text.6C47B175B49C03E40EB6"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question,
 				MessageBoxDefaultButton.Button2);
@@ -282,14 +311,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			if (!Core.DisconnectGitHub())
 			{
 				ShowOperationError(
-					"Disconnect GitHub",
-					"Windows could not remove the saved GitHub connection. Close other Synix windows and try again.");
+					LocalizationManager.Get("Text.6C47B175B49C03E40EB6"),
+					LocalizationManager.Get("Report.GitHub.DisconnectFailed"));
 				return;
 			}
 
 			RefreshGitHubConnectionDisplay();
-			lblReportStatus.Text =
-				"The local connection was removed. Revoke Synix on the GitHub page that opened.";
+			LocalizationManager.BindText(
+				lblReportStatus,
+				"Text.849FF4D03C300A88F143");
 			lblReportStatus.ForeColor = SettingsPalette.Success;
 			OpenAllowedUrl(Core.GitHubAuthorizationSettingsUrl);
 		}
@@ -307,42 +337,47 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 			DialogResult confirmation = LocalizedMessageBox.Show(
 				FindForm(),
-				$"Submit this public GitHub issue?\n\n{report.Title}\n\nReview the description fields first and make sure they do not contain private information.",
-				"Submit Problem Report",
+				LocalizationManager.Get("Report.Submit.Confirm", report.Title),
+				LocalizationManager.Get("MessageText.3608D4A724B6D3D6CC3C"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question,
 				MessageBoxDefaultButton.Button2);
 			if (confirmation != DialogResult.Yes)
 				return;
 
-			SetOperationState(true, "Submitting the report directly to GitHub...");
+			SetOperationState(
+				true,
+				LocalizationManager.Get("Report.Submit.Progress"));
 			try
 			{
 				GitHubIssueResult issue = await Core.SubmitProblemReportToGitHubAsync(
 					report,
 					_lifetimeCancellation.Token);
-				lblReportStatus.Text =
-					$"Report submitted successfully as GitHub issue #{issue.Number}. No browser was opened.";
+				LocalizationManager.BindText(
+					lblReportStatus,
+					"Report.Submit.SuccessStatus",
+					issue.Number);
 				lblReportStatus.ForeColor = SettingsPalette.Success;
 				LocalizedMessageBox.Show(
 					FindForm(),
-					$"The report was submitted successfully as GitHub issue #{issue.Number}.",
-					"Report Submitted",
+					LocalizationManager.Get("Report.Submit.SuccessBody", issue.Number),
+					LocalizationManager.Get("MessageText.813762AC49C63A97BA7C"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
-			catch (OperationCanceledException) when (_lifetimeCancellation.IsCancellationRequested)
+			catch (OperationCanceledException suppressedException) when (_lifetimeCancellation.IsCancellationRequested)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 			catch (Exception exception) when (exception is ProblemReportException or
 				HttpRequestException or
 				TaskCanceledException)
 			{
 				ShowOperationError(
-					"Submit Problem Report",
+					LocalizationManager.Get("MessageText.3608D4A724B6D3D6CC3C"),
 					exception is TaskCanceledException
-						? "GitHub did not respond in time. Check the internet connection and try again."
-						: exception.Message);
+						? LocalizationManager.Get("Report.GitHub.Timeout")
+						: LocalizationManager.TranslateRuntimeText(exception.Message));
 			}
 			finally
 			{
@@ -367,13 +402,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			if (!TryCopyText(clipboardReport))
 			{
 				ShowOperationError(
-					"Copy Problem Report",
-					"Windows could not access the clipboard. Try again after closing another clipboard program.");
+					LocalizationManager.Get("Text.62372ADDC6612D415FFA"),
+					LocalizationManager.Get("Report.Copy.Failed"));
 				return;
 			}
 
-			lblReportStatus.Text =
-				"The privacy-filtered report was copied and is ready to paste into the Discord bug forum.";
+			LocalizationManager.BindText(
+				lblReportStatus,
+				"Text.199AA28C30C28597C6E2");
 			lblReportStatus.ForeColor = SettingsPalette.Success;
 		}
 
@@ -382,8 +418,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			EventArgs eventArgs)
 		{
 			OpenAllowedUrl(Core.DiscordBugForumUrl);
-			lblReportStatus.Text =
-				"Discord opened. Select New Post in the bug-reporting forum and paste the copied report.";
+			LocalizationManager.BindText(
+				lblReportStatus,
+				"Text.84A9F83EFC6F8A9F3401");
 			lblReportStatus.ForeColor = SettingsPalette.SecondaryText;
 		}
 
@@ -408,7 +445,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			}
 			catch (ProblemReportException exception)
 			{
-				ShowOperationError("Problem Report", exception.Message);
+				ShowOperationError(
+					LocalizationManager.Get("Report.Problem.Title"),
+					LocalizationManager.TranslateRuntimeText(exception.Message));
 				return null;
 			}
 		}
@@ -444,8 +483,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			GameVerificationEvidence? evidence)
 		{
 			return evidence == null
-				? $"{name} verified: Not yet"
-				: $"{name} verified: Synix v{evidence.SynixVersion} on {evidence.VerifiedAtUtc.ToLocalTime():d}";
+				? LocalizationManager.Get("Report.Verification.NotYet", name)
+				: LocalizationManager.Get(
+					"Report.Verification.Recorded",
+					name,
+					evidence.SynixVersion,
+					evidence.VerifiedAtUtc.ToLocalTime().ToString(
+						"d",
+						System.Globalization.CultureInfo.CurrentUICulture));
 		}
 
 		private static bool TryCopyText(string text)
@@ -455,8 +500,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Clipboard.SetText(text);
 				return true;
 			}
-			catch (ExternalException)
+			catch (ExternalException suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return false;
 			}
 		}
@@ -470,7 +516,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					!(uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) ||
 					  uri.Host.Equals("discord.gg", StringComparison.OrdinalIgnoreCase)))
 				{
-					throw new ProblemReportException("Synix rejected an unexpected web address.");
+					throw new ProblemReportException(LocalizationManager.Get(
+						"Report.UnexpectedWebAddress"));
 				}
 
 				Process.Start(new ProcessStartInfo(uri.AbsoluteUri)
@@ -483,8 +530,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				ProblemReportException)
 			{
 				ShowOperationError(
-					"Open Web Page",
-					$"Windows could not open the page. {exception.Message}");
+					LocalizationManager.Get("Report.OpenPage.Title"),
+					LocalizationManager.Get(
+						"Report.OpenPage.Failed",
+						exception.Message));
 			}
 		}
 	}

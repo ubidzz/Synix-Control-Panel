@@ -28,10 +28,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			: this()
 		{
 			ArgumentNullException.ThrowIfNull(report);
-			_titleLabel.Text = $"{report.GameName} Configuration Check";
-			_summaryLabel.Text = report.IsCurrent
-				? $"CURRENT  •  {report.PassedCount} checks passed"
-				: $"ATTENTION NEEDED  •  {report.FailedCount} failed  •  {report.WarningCount} warning(s)";
+			LocalizationManager.BindText(
+				_titleLabel,
+				"Configuration.Validation.Title",
+				report.GameName);
+			LocalizationManager.BindText(
+				_summaryLabel,
+				report.IsCurrent
+					? "Configuration.Validation.Current"
+					: "Configuration.Validation.Attention",
+				report.PassedCount,
+				report.FailedCount,
+				report.WarningCount);
 			_summaryLabel.ForeColor = report.IsCurrent
 				? SettingsPalette.Success
 				: report.FailedCount > 0
@@ -47,15 +55,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			try
 			{
 				Clipboard.SetText(_reportBox.Text);
-				_summaryLabel.Text = "Configuration report copied to the clipboard.";
+				LocalizationManager.BindText(
+					_summaryLabel,
+					"Text.773BE7BF4AC974A6FE2E");
 				_summaryLabel.ForeColor = SettingsPalette.Success;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				LocalizedMessageBox.Show(
 					this,
-					"Windows could not copy the configuration report.",
-					"Copy Failed",
+					LocalizationManager.Get("MessageText.C02FB698977B0364EC82"),
+					LocalizationManager.Get("MessageText.2C58B2D4975AADC6042D"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 			}

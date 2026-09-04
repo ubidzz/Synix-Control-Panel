@@ -102,7 +102,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblIdentityIcon.Name = "lblIdentityIcon";
 			lblIdentityIcon.Size = new Size(28, 30);
 			lblIdentityIcon.TabIndex = 0;
-			lblIdentityIcon.Text = "▤";
+			lblIdentityIcon.Text = LocalizationManager.Get("Text.C77C3829943ADF9C1E21");
 			lblIdentityIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblIdentityTitle
@@ -114,7 +114,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblIdentityTitle.Name = "lblIdentityTitle";
 			lblIdentityTitle.Size = new Size(127, 21);
 			lblIdentityTitle.TabIndex = 1;
-			lblIdentityTitle.Text = "Server Identity";
+			lblIdentityTitle.Text = LocalizationManager.Get("Guidance.Safety.ServerIdentity.Name");
 
 			// ServerNameLabel
 			ServerNameLabel.AutoSize = true;
@@ -125,7 +125,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ServerNameLabel.Name = "ServerNameLabel";
 			ServerNameLabel.Size = new Size(80, 15);
 			ServerNameLabel.TabIndex = 2;
-			ServerNameLabel.Text = "Server Name";
+			ServerNameLabel.Text = LocalizationManager.Get("Text.41CFA866FAA62B2104E6");
 
 			// txtName
 			txtName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -148,7 +148,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			GameServerLabel.Name = "GameServerLabel";
 			GameServerLabel.Size = new Size(76, 15);
 			GameServerLabel.TabIndex = 4;
-			GameServerLabel.Text = "Game Server";
+			GameServerLabel.Text = LocalizationManager.Get("Text.56215346C32A2444B7C7");
 
 			// cmbGame
 			cmbGame.BackColor = Color.FromArgb(12, 21, 36);
@@ -175,7 +175,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblGameVersion.Name = "lblGameVersion";
 			lblGameVersion.Size = new Size(84, 15);
 			lblGameVersion.TabIndex = 6;
-			lblGameVersion.Text = "Game Version";
+			lblGameVersion.Text = LocalizationManager.Get("Text.8CACE39E73446B3AD675");
 
 			// cmbGameVersion
 			cmbGameVersion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -204,7 +204,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblIdentityHelper.Name = "lblIdentityHelper";
 			lblIdentityHelper.Size = new Size(390, 22);
 			lblIdentityHelper.TabIndex = 8;
-			lblIdentityHelper.Text = "Required fields update automatically for the selected game.";
+			lblIdentityHelper.Text = LocalizationManager.Get("Text.9E09BE4B90E9259491DD");
 
 			// cardGameplay
 			cardGameplay.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -238,7 +238,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblGameplayIcon.Name = "lblGameplayIcon";
 			lblGameplayIcon.Size = new Size(28, 30);
 			lblGameplayIcon.TabIndex = 0;
-			lblGameplayIcon.Text = "◎";
+			lblGameplayIcon.Text = LocalizationManager.Get("Text.16370FF5BAC8B8D003C8");
 			lblGameplayIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblGameplayTitle
@@ -250,7 +250,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblGameplayTitle.Name = "lblGameplayTitle";
 			lblGameplayTitle.Size = new Size(144, 21);
 			lblGameplayTitle.TabIndex = 1;
-			lblGameplayTitle.Text = "Gameplay Profile";
+			lblGameplayTitle.Text = LocalizationManager.Get("Text.EAD1F74310AB3C240377");
 
 			// lblCrossplay
 			lblCrossplay.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -262,7 +262,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCrossplay.Name = "lblCrossplay";
 			lblCrossplay.Size = new Size(59, 15);
 			lblCrossplay.TabIndex = 2;
-			lblCrossplay.Text = "Crossplay";
+			lblCrossplay.Text = LocalizationManager.Get("Text.444D9B21E5BAAF8243D5");
 			lblCrossplay.Visible = false;
 
 			// chkCrossplay
@@ -284,7 +284,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			MapLabel.Name = "MapLabel";
 			MapLabel.Size = new Size(31, 15);
 			MapLabel.TabIndex = 2;
-			MapLabel.Text = "Map";
+			MapLabel.Text = LocalizationManager.Get("Text.BE176B0015C424B78E9F");
 
 			// cmbWorldName
 			cmbWorldName.BackColor = Color.FromArgb(12, 21, 36);
@@ -311,7 +311,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCompetitive.Name = "lblCompetitive";
 			lblCompetitive.Size = new Size(72, 15);
 			lblCompetitive.TabIndex = 4;
-			lblCompetitive.Text = "Game Mode";
+			lblCompetitive.Text = LocalizationManager.Get("Text.1311D7944778FB4AD68C");
 
 			// cmbCompetitive
 			cmbCompetitive.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -339,7 +339,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			MaxPlayerLabel.Name = "MaxPlayerLabel";
 			MaxPlayerLabel.Size = new Size(72, 15);
 			MaxPlayerLabel.TabIndex = 6;
-			MaxPlayerLabel.Text = "Max Players";
+			MaxPlayerLabel.Text = LocalizationManager.Get("ServerSetup.MaxPlayers.Label");
 
 			// numMaxPlayers
 			numMaxPlayers.BackColor = Color.FromArgb(12, 21, 36);
@@ -362,7 +362,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			label1.Name = "label1";
 			label1.Size = new Size(98, 15);
 			label1.TabIndex = 8;
-			label1.Text = "Server RAM (GB)";
+			label1.Text = LocalizationManager.Get("Text.7B60A68A60DA2F0333AA");
 
 			// numRam
 			numRam.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -387,7 +387,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblGameplayHelper.Name = "lblGameplayHelper";
 			lblGameplayHelper.Size = new Size(412, 22);
 			lblGameplayHelper.TabIndex = 10;
-			lblGameplayHelper.Text = "Map and mode choices come directly from the selected game template.";
+			lblGameplayHelper.Text = LocalizationManager.Get("Text.F31BBCEE0082BEEE372A");
 
 			// cardMinecraftRuntime
 			cardMinecraftRuntime.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -420,7 +420,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftRuntimeIcon.Name = "lblMinecraftRuntimeIcon";
 			lblMinecraftRuntimeIcon.Size = new Size(28, 30);
 			lblMinecraftRuntimeIcon.TabIndex = 0;
-			lblMinecraftRuntimeIcon.Text = "⬡";
+			lblMinecraftRuntimeIcon.Text = LocalizationManager.Get("Text.60AE181A334566F4648C");
 			lblMinecraftRuntimeIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblMinecraftRuntimeTitle
@@ -432,7 +432,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftRuntimeTitle.Name = "lblMinecraftRuntimeTitle";
 			lblMinecraftRuntimeTitle.Size = new Size(145, 21);
 			lblMinecraftRuntimeTitle.TabIndex = 1;
-			lblMinecraftRuntimeTitle.Text = "Minecraft Runtime";
+			lblMinecraftRuntimeTitle.Text = LocalizationManager.Get("ServerSetup.Runtime.Minecraft.Title");
 
 			// lblMinecraftEdition
 			lblMinecraftEdition.AutoSize = true;
@@ -443,7 +443,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftEdition.Name = "lblMinecraftEdition";
 			lblMinecraftEdition.Size = new Size(43, 15);
 			lblMinecraftEdition.TabIndex = 2;
-			lblMinecraftEdition.Text = "Edition";
+			lblMinecraftEdition.Text = LocalizationManager.Get("Text.F37695A23C899C5215F8");
 
 			// cmbMinecraftEdition
 			cmbMinecraftEdition.BackColor = Color.FromArgb(12, 21, 36);
@@ -471,7 +471,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftLoader.Name = "lblMinecraftLoader";
 			lblMinecraftLoader.Size = new Size(43, 15);
 			lblMinecraftLoader.TabIndex = 2;
-			lblMinecraftLoader.Text = "Loader";
+			lblMinecraftLoader.Text = LocalizationManager.Get("ServerSetup.Runtime.Loader");
 
 			// cmbMinecraftLoader
 			cmbMinecraftLoader.BackColor = Color.FromArgb(12, 21, 36);
@@ -499,7 +499,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftLoaderVersion.Name = "lblMinecraftLoaderVersion";
 			lblMinecraftLoaderVersion.Size = new Size(88, 15);
 			lblMinecraftLoaderVersion.TabIndex = 4;
-			lblMinecraftLoaderVersion.Text = "Loader Version";
+			lblMinecraftLoaderVersion.Text = LocalizationManager.Get("Text.55519B4895A4D9906EDA");
 
 			// cmbMinecraftLoaderVersion
 			cmbMinecraftLoaderVersion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -528,7 +528,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftJava.Name = "lblMinecraftJava";
 			lblMinecraftJava.Size = new Size(82, 15);
 			lblMinecraftJava.TabIndex = 6;
-			lblMinecraftJava.Text = "Portable Java";
+			lblMinecraftJava.Text = LocalizationManager.Get("Text.88C573E39AAAD5793190");
 
 			// lblMinecraftJavaValue
 			lblMinecraftJavaValue.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -541,7 +541,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftJavaValue.Padding = new Padding(10, 0, 10, 0);
 			lblMinecraftJavaValue.Size = new Size(204, 34);
 			lblMinecraftJavaValue.TabIndex = 7;
-			lblMinecraftJavaValue.Text = "Resolved automatically";
+			lblMinecraftJavaValue.Text = LocalizationManager.Get("Text.37B681C48EE6D830AF79");
 			lblMinecraftJavaValue.TextAlign = ContentAlignment.MiddleLeft;
 
 			// lblMinecraftRuntimeHelper
@@ -554,7 +554,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMinecraftRuntimeHelper.Name = "lblMinecraftRuntimeHelper";
 			lblMinecraftRuntimeHelper.Size = new Size(866, 18);
 			lblMinecraftRuntimeHelper.TabIndex = 8;
-			lblMinecraftRuntimeHelper.Text = "Synix installs the selected server loader and matching portable Java. Add your own mods after installation.";
+			lblMinecraftRuntimeHelper.Text = LocalizationManager.Get("Text.69B1390848A4F53A80A2");
 
 			// cardCompatibility
 			cardCompatibility.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -583,7 +583,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCompatibilityIcon.Name = "lblCompatibilityIcon";
 			lblCompatibilityIcon.Size = new Size(28, 30);
 			lblCompatibilityIcon.TabIndex = 0;
-			lblCompatibilityIcon.Text = "✓";
+			lblCompatibilityIcon.Text = LocalizationManager.Get("Text.1DABBA21CDAD44541F6B");
 			lblCompatibilityIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblCompatibilityTitle
@@ -595,7 +595,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCompatibilityTitle.Name = "lblCompatibilityTitle";
 			lblCompatibilityTitle.Size = new Size(211, 21);
 			lblCompatibilityTitle.TabIndex = 1;
-			lblCompatibilityTitle.Text = "Compatibility Verification";
+			lblCompatibilityTitle.Text = LocalizationManager.Get("Text.896F662B3A2818D05B77");
 
 			// lblCompatibilityHelper
 			lblCompatibilityHelper.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -606,7 +606,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCompatibilityHelper.Name = "lblCompatibilityHelper";
 			lblCompatibilityHelper.Size = new Size(610, 20);
 			lblCompatibilityHelper.TabIndex = 2;
-			lblCompatibilityHelper.Text = "Synix verifies each action automatically after it succeeds on this PC.";
+			lblCompatibilityHelper.Text = LocalizationManager.Get("Text.F283ABEE58C3C5919882");
 			lblCompatibilityHelper.TextAlign = ContentAlignment.MiddleRight;
 
 			// lblInstallVerification
@@ -619,7 +619,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblInstallVerification.Padding = new Padding(10, 0, 10, 0);
 			lblInstallVerification.Size = new Size(200, 30);
 			lblInstallVerification.TabIndex = 3;
-			lblInstallVerification.Text = "Install  — Not verified yet";
+			lblInstallVerification.Text = LocalizationManager.Get("Text.D51A22847FE9E2546F54");
 			lblInstallVerification.TextAlign = ContentAlignment.MiddleLeft;
 
 			// lblStartVerification
@@ -632,7 +632,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblStartVerification.Padding = new Padding(10, 0, 10, 0);
 			lblStartVerification.Size = new Size(200, 30);
 			lblStartVerification.TabIndex = 4;
-			lblStartVerification.Text = "Start  — Not verified yet";
+			lblStartVerification.Text = LocalizationManager.Get("Text.96A84F4FA3AB888D2363");
 			lblStartVerification.TextAlign = ContentAlignment.MiddleLeft;
 
 			// lblStopVerification
@@ -645,7 +645,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblStopVerification.Padding = new Padding(10, 0, 10, 0);
 			lblStopVerification.Size = new Size(200, 30);
 			lblStopVerification.TabIndex = 5;
-			lblStopVerification.Text = "Stop  — Not verified yet";
+			lblStopVerification.Text = LocalizationManager.Get("Text.E4BB34EB2488E93843E1");
 			lblStopVerification.TextAlign = ContentAlignment.MiddleLeft;
 
 			// lblMonitoringVerification
@@ -659,7 +659,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblMonitoringVerification.Padding = new Padding(10, 0, 10, 0);
 			lblMonitoringVerification.Size = new Size(224, 30);
 			lblMonitoringVerification.TabIndex = 6;
-			lblMonitoringVerification.Text = "Monitoring  — Not verified yet";
+			lblMonitoringVerification.Text = LocalizationManager.Get("Text.C0BAAAA9611D403EA0ED");
 			lblMonitoringVerification.TextAlign = ContentAlignment.MiddleLeft;
 
 			// lblLastTestedVersion
@@ -671,7 +671,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblLastTestedVersion.Name = "lblLastTestedVersion";
 			lblLastTestedVersion.Size = new Size(866, 28);
 			lblLastTestedVersion.TabIndex = 7;
-			lblLastTestedVersion.Text = "Last-tested Synix version: Not verified yet";
+			lblLastTestedVersion.Text = LocalizationManager.Get("ServerSetup.Verification.LastTested.Unverified");
 			lblLastTestedVersion.TextAlign = ContentAlignment.MiddleLeft;
 
 			// ServerSettingsGeneralPage

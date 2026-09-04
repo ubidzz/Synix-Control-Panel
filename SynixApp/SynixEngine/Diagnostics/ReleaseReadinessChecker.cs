@@ -54,34 +54,63 @@ namespace Synix_Control_Panel.SynixEngine
 		public string ToPlainText()
 		{
 			StringBuilder report = new();
-			report.AppendLine("SYNIX RELEASE READINESS REPORT");
+			report.AppendLine(LocalizationManager.Get("Release.Report.Title"));
 			report.AppendLine(new string('=', 36));
-			report.AppendLine($"Result: {(IsReady ? "READY TO RELEASE" : "NOT READY")}");
-			report.AppendLine($"Version: {(Version is null ? "Unknown" : Version.ToString(3))}");
-			report.AppendLine($"Passed: {PassedCount}  Warnings: {WarningCount}  Failed: {FailedCount}");
-			report.AppendLine($"Project: {ProjectDirectory}");
-			report.AppendLine($"Publish folder: {PublishDirectory}");
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.Result",
+				LocalizationManager.Get(IsReady
+					? "Release.Report.Result.Ready"
+					: "Release.Report.Result.NotReady")));
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.Version",
+				Version is null
+					? LocalizationManager.Get("Report.Unknown")
+					: Version.ToString(3)));
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.Counts",
+				PassedCount,
+				WarningCount,
+				FailedCount));
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.Project",
+				ProjectDirectory));
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.PublishFolder",
+				PublishDirectory));
 			report.AppendLine();
 
 			foreach (SynixReleaseCheckItem item in Items)
 			{
-				string marker = item.Level switch
+				string markerKey = item.Level switch
 				{
-					SynixReleaseCheckLevel.Passed => "PASS",
-					SynixReleaseCheckLevel.Warning => "WARN",
-					_ => "FAIL"
+					SynixReleaseCheckLevel.Passed => "Report.Marker.Pass",
+					SynixReleaseCheckLevel.Warning => "Report.Marker.Warning",
+					_ => "Report.Marker.Fail"
 				};
-				report.AppendLine($"[{marker}] {item.Name}");
-				report.AppendLine($"       {item.Details}");
+				report.AppendLine(LocalizationManager.Get(
+					"Release.Report.Item",
+					LocalizationManager.Get(markerKey),
+					LocalizationManager.TranslateKnownText(item.Name)));
+				report.AppendLine(LocalizationManager.Get(
+					"Release.Report.ItemDetails",
+					LocalizationManager.TranslateRuntimeText(item.Details)));
 			}
 
 			report.AppendLine();
-			report.AppendLine("GITHUB RELEASE ASSETS");
-			report.AppendLine($"Synix.Control.Panel.exe  SHA-256: {StandaloneSha256 ?? "Unavailable"}");
-			report.AppendLine($"SynixSetup.msi           SHA-256: {MsiSha256 ?? "Unavailable"}");
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.Assets"));
+			string unavailable = LocalizationManager.Get("Report.Unavailable");
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.StandaloneHash",
+				StandaloneSha256 ?? unavailable));
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.MsiHash",
+				MsiSha256 ?? unavailable));
 			report.AppendLine();
-			report.AppendLine("Upload the published 'Synix Control Panel.exe' as 'Synix.Control.Panel.exe'.");
-			report.AppendLine("Upload the published 'SynixSetup.msi' as 'SynixSetup.msi'.");
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.UploadStandalone"));
+			report.AppendLine(LocalizationManager.Get(
+				"Release.Report.UploadMsi"));
 			return report.ToString().TrimEnd();
 		}
 	}
@@ -115,21 +144,33 @@ namespace Synix_Control_Panel.SynixEngine
 			string? standaloneHash = null;
 			string? msiHash = null;
 
-			progress?.Report("Checking project versions...");
+			progress?.Report(LocalizationManager.Get(
+				"Release.Progress.ProjectVersions"));
 			string projectFile = Path.Combine(
 				fullProjectDirectory,
 				"Synix Control Panel.csproj");
 			if (!File.Exists(projectFile))
 			{
-				AddFailure(items, "Project file", "Synix Control Panel.csproj was not found.");
+				AddFailure(
+					items,
+					LocalizationManager.Get("Release.Check.ProjectFile"),
+					LocalizationManager.Get("Release.Check.ProjectFileMissing"));
 			}
 			else
 			{
 				projectVersion = ReadProjectVersion(projectFile);
 				if (projectVersion is null)
-					AddFailure(items, "Project version", "The project Version value is missing or invalid.");
+					AddFailure(
+						items,
+						LocalizationManager.Get("Release.Check.ProjectVersion"),
+						LocalizationManager.Get("Release.Check.ProjectVersionInvalid"));
 				else
-					AddPassed(items, "Project version", $"The project is set to v{projectVersion.ToString(3)}.");
+					AddPassed(
+						items,
+						LocalizationManager.Get("Release.Check.ProjectVersion"),
+						LocalizationManager.Get(
+							"Release.Check.ProjectVersionValue",
+							projectVersion.ToString(3)));
 			}
 
 			string versionFile = Path.Combine(
@@ -138,7 +179,10 @@ namespace Synix_Control_Panel.SynixEngine
 				"version.txt");
 			if (!File.Exists(versionFile))
 			{
-				AddFailure(items, "Version file", "SynixEngine\\version.txt was not found.");
+				AddFailure(
+					items,
+					LocalizationManager.Get("Release.Check.VersionFile"),
+					LocalizationManager.Get("Release.Check.VersionFileMissing"));
 			}
 			else
 			{
@@ -148,37 +192,55 @@ namespace Synix_Control_Panel.SynixEngine
 						File.ReadAllText(versionFile),
 						out versionFileVersion))
 					{
-						AddFailure(items, "Version file", "version.txt does not contain a valid version.");
+						AddFailure(
+							items,
+							LocalizationManager.Get("Release.Check.VersionFile"),
+							LocalizationManager.Get("Release.Check.VersionFileInvalid"));
 					}
 					else if (projectVersion is null || versionFileVersion != projectVersion)
 					{
 						AddFailure(
 							items,
-							"Version agreement",
-							$"The project is v{FormatReleaseVersion(projectVersion)}, but version.txt is v{FormatReleaseVersion(versionFileVersion)}.");
+							LocalizationManager.Get("Release.Check.VersionAgreement"),
+							LocalizationManager.Get(
+								"Release.Check.VersionMismatch",
+								FormatReleaseVersion(projectVersion),
+								FormatReleaseVersion(versionFileVersion)));
 					}
 					else
 					{
-						AddPassed(items, "Version agreement", "The project and version.txt match.");
+						AddPassed(
+							items,
+							LocalizationManager.Get("Release.Check.VersionAgreement"),
+							LocalizationManager.Get("Release.Check.VersionMatch"));
 					}
 				}
 				catch (Exception exception)
 				{
 					AddFailure(
 						items,
-						"Version file",
-						$"version.txt could not be read: {exception.Message}");
+						LocalizationManager.Get("Release.Check.VersionFile"),
+						LocalizationManager.Get(
+							"Release.Check.VersionFileReadFailed",
+							exception.Message));
 				}
 			}
 
-			progress?.Report("Checking published programs...");
+			progress?.Report(LocalizationManager.Get(
+				"Release.Progress.PublishedPrograms"));
 			if (!Directory.Exists(fullPublishDirectory))
 			{
-				AddFailure(items, "Publish folder", "The selected publish folder does not exist.");
+				AddFailure(
+					items,
+					LocalizationManager.Get("Release.Check.PublishFolder"),
+					LocalizationManager.Get("Release.Check.PublishFolderMissing"));
 			}
 			else
 			{
-				AddPassed(items, "Publish folder", "The publish folder is available.");
+				AddPassed(
+					items,
+					LocalizationManager.Get("Release.Check.PublishFolder"),
+					LocalizationManager.Get("Release.Check.PublishFolderAvailable"));
 			}
 
 			string standalonePath = Path.Combine(
@@ -190,7 +252,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			standaloneHash = await CheckArtifactAsync(
 				items,
-				"Published standalone program",
+				LocalizationManager.Get("Release.Check.StandaloneProgram"),
 				standalonePath,
 				projectVersion,
 				progress,
@@ -203,7 +265,8 @@ namespace Synix_Control_Panel.SynixEngine
 				cancellationToken);
 
 			string manifestPath = FindReleaseManifestPath(fullPublishDirectory);
-			progress?.Report("Checking Stable-build manifest...");
+			progress?.Report(LocalizationManager.Get(
+				"Release.Progress.Manifest"));
 			CheckManifest(
 				items,
 				manifestPath,
@@ -211,19 +274,23 @@ namespace Synix_Control_Panel.SynixEngine
 				standaloneHash,
 				msiHash);
 
-			progress?.Report("Checking MSI package settings...");
+			progress?.Report(LocalizationManager.Get(
+				"Release.Progress.MsiSettings"));
 			CheckMsiProject(
 				items,
 				fullProjectDirectory);
 
-			progress?.Report("Checking the Publish test receipt...");
+			progress?.Report(LocalizationManager.Get(
+				"Release.Progress.TestReceipt"));
 			CheckAutomatedTestReceipt(
 				items,
 				manifestPath);
-			progress?.Report("Checking the security regression receipt...");
+			progress?.Report(LocalizationManager.Get(
+				"Release.Progress.SecurityReceipt"));
 			CheckSecurityRegressionReceipt(items, manifestPath);
 
-			progress?.Report("Validating the built-in game definition library...");
+			progress?.Report(LocalizationManager.Get(
+				"Release.Progress.GameDefinitions"));
 			GameDefinitionValidationReport definitionReport =
 				GameDefinitionValidator.ValidateSourceDirectory(
 					fullProjectDirectory);
@@ -238,23 +305,28 @@ namespace Synix_Control_Panel.SynixEngine
 						.Select(item => $"{item.Definition}: {item.Details}"));
 				AddFailure(
 					items,
-					"Game definition library",
-					$"{definitionReport.FailedCount} definition problem(s) must be fixed. {problems}");
+					LocalizationManager.Get("Release.Check.GameDefinitions"),
+					LocalizationManager.Get(
+						"Release.Check.GameDefinitionsFailed",
+						definitionReport.FailedCount,
+						problems));
 			}
 			else
 			{
 				AddPassed(
 					items,
-					"Game definition library",
-					$"Validated {definitionReport.DefinitionCount} definitions, " +
-					$"{definitionReport.TemplateCount} complete template(s), and " +
-					$"{definitionReport.PostInstallActionCount} safe post-install action(s).");
+					LocalizationManager.Get("Release.Check.GameDefinitions"),
+					LocalizationManager.Get(
+						"Release.Check.GameDefinitionsPassed",
+						definitionReport.DefinitionCount,
+						definitionReport.TemplateCount,
+						definitionReport.PostInstallActionCount));
 			}
 
 			items.Add(new SynixReleaseCheckItem(
 				SynixReleaseCheckLevel.Passed,
-				"GitHub asset names",
-				"Upload the standalone program as Synix.Control.Panel.exe and the installer as SynixSetup.msi."));
+				LocalizationManager.Get("Release.Check.GitHubAssetNames"),
+				LocalizationManager.Get("Release.Check.GitHubAssetNames.Valid")));
 
 			return new SynixReleaseReadinessReport(
 				projectVersion,
@@ -450,7 +522,9 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (!File.Exists(path))
 			{
-				AddFailure(items, checkName, $"Missing file: {path}");
+				AddFailure(items, checkName, LocalizationManager.Get(
+					"Release.Check.MissingFile",
+					path));
 				return null;
 			}
 
@@ -459,7 +533,9 @@ namespace Synix_Control_Panel.SynixEngine
 				FileInfo file = new(path);
 				if (file.Length < MinimumExecutableSize)
 				{
-					AddFailure(items, checkName, $"The file is unexpectedly small ({FormatReleaseBytes(file.Length)}).");
+					AddFailure(items, checkName, LocalizationManager.Get(
+						"Release.Check.FileTooSmall",
+						FormatReleaseBytes(file.Length)));
 					return null;
 				}
 
@@ -473,17 +549,25 @@ namespace Synix_Control_Panel.SynixEngine
 					AddFailure(
 						items,
 						checkName,
-						$"Expected v{FormatReleaseVersion(expectedVersion)}, but the file reports v{FormatReleaseVersion(artifactVersion)}.");
+						LocalizationManager.Get(
+							"Release.Check.FileVersionMismatch",
+							FormatReleaseVersion(expectedVersion),
+							FormatReleaseVersion(artifactVersion)));
 				}
 				else
 				{
 					AddPassed(
 						items,
 						checkName,
-						$"v{artifactVersion!.ToString(3)} is present ({FormatReleaseBytes(file.Length)}).");
+						LocalizationManager.Get(
+							"Release.Check.FilePresent",
+							artifactVersion!.ToString(3),
+							FormatReleaseBytes(file.Length)));
 				}
 
-				progress?.Report($"Calculating SHA-256 for {Path.GetFileName(path)}...");
+				progress?.Report(LocalizationManager.Get(
+					"Release.Progress.CalculatingHash",
+					Path.GetFileName(path)));
 				await using FileStream stream = new(
 					path,
 					FileMode.Open,
@@ -505,7 +589,9 @@ namespace Synix_Control_Panel.SynixEngine
 				AddFailure(
 					items,
 					checkName,
-					$"The file could not be inspected: {exception.Message}");
+					LocalizationManager.Get(
+						"Release.Check.FileInspectFailed",
+						exception.Message));
 				return null;
 			}
 		}
@@ -517,10 +603,13 @@ namespace Synix_Control_Panel.SynixEngine
 			IProgress<string>? progress,
 			CancellationToken cancellationToken)
 		{
-			const string checkName = "Windows Installer (MSI)";
+			string checkName = LocalizationManager.Get(
+				"Release.Check.WindowsInstaller");
 			if (!File.Exists(path))
 			{
-				AddFailure(items, checkName, $"Missing file: {path}");
+				AddFailure(items, checkName, LocalizationManager.Get(
+					"Release.Check.MissingFile",
+					path));
 				return null;
 			}
 
@@ -529,7 +618,9 @@ namespace Synix_Control_Panel.SynixEngine
 				FileInfo file = new(path);
 				if (file.Length < MinimumExecutableSize)
 				{
-					AddFailure(items, checkName, $"The file is unexpectedly small ({FormatReleaseBytes(file.Length)}).");
+					AddFailure(items, checkName, LocalizationManager.Get(
+						"Release.Check.FileTooSmall",
+						FormatReleaseBytes(file.Length)));
 					return null;
 				}
 
@@ -557,20 +648,29 @@ namespace Synix_Control_Panel.SynixEngine
 
 				List<string> problems = [];
 				if (!versionValid || expectedVersion is null || msiVersion != expectedVersion)
-					problems.Add($"expected v{FormatReleaseVersion(expectedVersion)}, but the MSI reports v{FormatReleaseVersion(msiVersion)}");
+					problems.Add(LocalizationManager.Get(
+						"Release.Check.MsiVersionMismatch",
+						FormatReleaseVersion(expectedVersion),
+						FormatReleaseVersion(msiVersion)));
 				if (!nameValid)
-					problems.Add("the product name is incorrect");
+					problems.Add(LocalizationManager.Get(
+						"Release.Check.MsiProductNameIncorrect"));
 				if (!publisherValid)
-					problems.Add("the publisher is incorrect");
+					problems.Add(LocalizationManager.Get(
+						"Release.Check.MsiPublisherIncorrect"));
 				if (!upgradeCodeValid)
-					problems.Add("the upgrade code is incorrect");
+					problems.Add(LocalizationManager.Get(
+						"Release.Check.MsiUpgradeCodeIncorrect"));
 
 				if (problems.Count == 0)
 				{
 					AddPassed(
 						items,
 						checkName,
-						$"v{msiVersion!.ToString(3)} is present ({FormatReleaseBytes(file.Length)}) with the correct upgrade identity.");
+						LocalizationManager.Get(
+							"Release.Check.MsiPresent",
+							msiVersion!.ToString(3),
+							FormatReleaseBytes(file.Length)));
 				}
 				else
 				{
@@ -580,7 +680,9 @@ namespace Synix_Control_Panel.SynixEngine
 						string.Join("; ", problems) + ".");
 				}
 
-				progress?.Report($"Calculating SHA-256 for {Path.GetFileName(path)}...");
+				progress?.Report(LocalizationManager.Get(
+					"Release.Progress.CalculatingHash",
+					Path.GetFileName(path)));
 				await using FileStream stream = new(
 					path,
 					FileMode.Open,
@@ -602,7 +704,9 @@ namespace Synix_Control_Panel.SynixEngine
 				AddFailure(
 					items,
 					checkName,
-					$"The MSI could not be inspected: {exception.Message}");
+					LocalizationManager.Get(
+						"Release.Check.MsiInspectFailed",
+						exception.Message));
 				return null;
 			}
 		}
@@ -614,7 +718,9 @@ namespace Synix_Control_Panel.SynixEngine
 			const uint noMoreItems = 259;
 			uint status = MsiOpenDatabase(path, IntPtr.Zero, out IntPtr database);
 			if (status != success)
-				throw new InvalidDataException($"Windows Installer could not open the MSI (error {status}).");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Release.Error.MsiOpen",
+					status));
 
 			IntPtr view = IntPtr.Zero;
 			try
@@ -624,10 +730,14 @@ namespace Synix_Control_Panel.SynixEngine
 					"SELECT `Property`, `Value` FROM `Property`",
 					out view);
 				if (status != success)
-					throw new InvalidDataException($"The MSI Property table could not be opened (error {status}).");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Release.Error.MsiPropertyOpen",
+						status));
 				status = MsiViewExecute(view, IntPtr.Zero);
 				if (status != success)
-					throw new InvalidDataException($"The MSI Property table could not be read (error {status}).");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Release.Error.MsiPropertyRead",
+						status));
 
 				Dictionary<string, string> properties = new(
 					StringComparer.OrdinalIgnoreCase);
@@ -637,7 +747,9 @@ namespace Synix_Control_Panel.SynixEngine
 					if (status == noMoreItems)
 						break;
 					if (status != success)
-						throw new InvalidDataException($"The MSI Property table is incomplete (error {status}).");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"Release.Error.MsiPropertyIncomplete",
+							status));
 
 					try
 					{
@@ -672,7 +784,9 @@ namespace Synix_Control_Panel.SynixEngine
 				null,
 				ref characterCount);
 			if (status is not (success or moreData))
-				throw new InvalidDataException($"An MSI value could not be read (error {status}).");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Release.Error.MsiValueRead",
+					status));
 
 			StringBuilder value = new(checked((int)characterCount + 1));
 			uint capacity = (uint)value.Capacity;
@@ -682,7 +796,9 @@ namespace Synix_Control_Panel.SynixEngine
 				value,
 				ref capacity);
 			if (status != success)
-				throw new InvalidDataException($"An MSI value could not be read (error {status}).");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Release.Error.MsiValueRead",
+					status));
 			return value.ToString();
 		}
 
@@ -697,8 +813,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				AddFailure(
 					items,
-					"Stable-build manifest",
-					"The publish manifest is missing. Publish Synix again before releasing.");
+					LocalizationManager.Get("Release.Check.Manifest"),
+					LocalizationManager.Get("Release.Check.ManifestMissing"));
 				return;
 			}
 
@@ -711,55 +827,64 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				AddFailure(
 					items,
-					"Stable-build manifest",
-					$"The manifest could not be read: {exception.Message}");
+					LocalizationManager.Get("Release.Check.Manifest"),
+					LocalizationManager.Get(
+						"Release.Check.ManifestReadFailed",
+						exception.Message));
 				return;
 			}
 			List<string> problems = [];
 			if (!manifest.TryGetValue("FormatVersion", out string? format) || format != "3")
-				problems.Add("unsupported manifest format");
+				problems.Add(LocalizationManager.Get(
+					"Release.Check.ManifestFormatUnsupported"));
 			if (!manifest.TryGetValue("Channel", out string? channel) ||
 				!Core.IsOfficialChannel(channel))
 			{
-				problems.Add("the published EXE is not marked Stable");
+				problems.Add(LocalizationManager.Get(
+					"Release.Check.ManifestNotStable"));
 			}
 			if (!manifest.TryGetValue("Version", out string? versionText) ||
 				!Core.TryParseVersionText(versionText, out Version? manifestVersion) ||
 				expectedVersion is null || manifestVersion != expectedVersion)
 			{
-				problems.Add("manifest version does not match the project");
+				problems.Add(LocalizationManager.Get(
+					"Release.Check.ManifestVersionMismatch"));
 			}
 			if (!ManifestValueMatches(
 				manifest,
 				"StandaloneFile",
 				PublishedExecutableName))
 			{
-				problems.Add("standalone filename is incorrect");
+				problems.Add(LocalizationManager.Get(
+					"Release.Check.StandaloneNameIncorrect"));
 			}
 			if (!ManifestValueMatches(
 				manifest,
 				"MsiFile",
 				MsiFileName))
 			{
-				problems.Add("MSI filename is incorrect");
+				problems.Add(LocalizationManager.Get(
+					"Release.Check.MsiNameIncorrect"));
 			}
 			if (!HashMatches(manifest, "StandaloneSha256", standaloneHash))
-				problems.Add("standalone SHA-256 does not match the published file");
+				problems.Add(LocalizationManager.Get(
+					"Release.Check.StandaloneHashMismatch"));
 			if (!HashMatches(manifest, "MsiSha256", msiHash))
-				problems.Add("MSI SHA-256 does not match the installer");
+				problems.Add(LocalizationManager.Get(
+					"Release.Check.MsiHashMismatch"));
 
 			if (problems.Count == 0)
 			{
 				AddPassed(
 					items,
-					"Stable-build manifest",
-					"The published files match the Stable manifest and both SHA-256 values.");
+					LocalizationManager.Get("Release.Check.Manifest"),
+					LocalizationManager.Get("Release.Check.ManifestValid"));
 			}
 			else
 			{
 				AddFailure(
 					items,
-					"Stable-build manifest",
+					LocalizationManager.Get("Release.Check.Manifest"),
 					string.Join("; ", problems) + ".");
 			}
 		}
@@ -778,8 +903,12 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				AddFailure(
 					items,
-					"MSI package settings",
-					$"Missing MSI project file: {(!File.Exists(msiProjectPath) ? msiProjectPath : msiSourcePath)}");
+					LocalizationManager.Get("Release.Check.MsiSettings"),
+					LocalizationManager.Get(
+						"Release.Check.MsiProjectFileMissing",
+						!File.Exists(msiProjectPath)
+							? msiProjectPath
+							: msiSourcePath));
 				return;
 			}
 
@@ -794,48 +923,54 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				AddFailure(
 					items,
-					"MSI package settings",
-					$"The MSI project could not be read: {exception.Message}");
+					LocalizationManager.Get("Release.Check.MsiSettings"),
+					LocalizationManager.Get(
+						"Release.Check.MsiProjectReadFailed",
+						exception.Message));
 				return;
 			}
 
 			string combined = msiProject + Environment.NewLine + msiSource;
-			(string Text, string Description)[] requirements =
+			(string Text, string DescriptionKey)[] requirements =
 			[
-				(ExpectedUpgradeCode, "fixed MSI upgrade code"),
-				("<Version>$(Version)</Version>", "shared project version"),
-				("SynixVersion=$(Version)", "MSI version forwarding"),
-				("Version=\"$(var.SynixVersion)\"", "MSI package version"),
-				("Scope=\"perUser\"", "non-administrator per-user installation"),
-				("<MajorUpgrade", "automatic MSI upgrades"),
-				("AllowSameVersionUpgrades=\"yes\"", "safe same-version test upgrades"),
-				("<OutputName>SynixSetup</OutputName>", "expected MSI filename"),
-				("<InstallerPlatform>x64</InstallerPlatform>", "64-bit installer platform"),
-				(@"Software\ubidzz\Synix Control Panel", "stable install registration"),
-				("SynixInstallSource", "Setup and WinGet source registration")
+				(ExpectedUpgradeCode, "Release.Requirement.FixedUpgradeCode"),
+				("<Version>$(Version)</Version>", "Release.Requirement.SharedVersion"),
+				("SynixVersion=$(Version)", "Release.Requirement.VersionForwarding"),
+				("Version=\"$(var.SynixVersion)\"", "Release.Requirement.PackageVersion"),
+				("Scope=\"perUser\"", "Release.Requirement.PerUser"),
+				("<MajorUpgrade", "Release.Requirement.AutomaticUpgrades"),
+				("AllowSameVersionUpgrades=\"yes\"", "Release.Requirement.SafeSameVersion"),
+				("<OutputName>SynixSetup</OutputName>", "Release.Requirement.MsiFilename"),
+				("<InstallerPlatform>x64</InstallerPlatform>", "Release.Requirement.X64"),
+				(@"Software\ubidzz\Synix Control Panel", "Release.Requirement.StableRegistration"),
+				("SynixInstallSource", "Release.Requirement.SourceRegistration")
 			];
 			List<string> missing = requirements
 				.Where(requirement => !combined.Contains(
 					requirement.Text,
 					StringComparison.OrdinalIgnoreCase))
-				.Select(requirement => requirement.Description)
+				.Select(requirement => LocalizationManager.Get(
+					requirement.DescriptionKey))
 				.ToList();
 			if (combined.Contains(@"C:\Users\", StringComparison.OrdinalIgnoreCase))
-				missing.Add("portable paths without a personal user folder");
+				missing.Add(LocalizationManager.Get(
+					"Release.Requirement.PortablePaths"));
 
 			if (missing.Count == 0)
 			{
 				AddPassed(
 					items,
-					"MSI package settings",
-					"Version forwarding, upgrade identity, per-user installation, filename, architecture, and portable paths are correct.");
+					LocalizationManager.Get("Release.Check.MsiSettings"),
+					LocalizationManager.Get("Release.Check.MsiSettingsValid"));
 			}
 			else
 			{
 				AddFailure(
 					items,
-					"MSI package settings",
-					"Missing or incorrect: " + string.Join(", ", missing) + ".");
+					LocalizationManager.Get("Release.Check.MsiSettings"),
+					LocalizationManager.Get(
+						"Release.Check.MissingOrIncorrect",
+						string.Join(", ", missing)));
 			}
 		}
 
@@ -847,8 +982,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				AddFailure(
 					items,
-					"Automated tests",
-					"The Publish test receipt is missing. Publish Synix again before releasing.");
+					LocalizationManager.Get("Release.Check.AutomatedTests"),
+					LocalizationManager.Get("Release.Check.TestReceiptMissing"));
 				return;
 			}
 
@@ -860,23 +995,27 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					AddPassed(
 						items,
-						"Automated tests",
-						$"The complete suite passed during Visual Studio Publish at {completedUtc.ToLocalTime():g}.");
+						LocalizationManager.Get("Release.Check.AutomatedTests"),
+						LocalizationManager.Get(
+							"Release.Check.TestsPassed",
+							completedUtc.ToLocalTime()));
 				}
 				else
 				{
 					AddFailure(
 						items,
-						"Automated tests",
-						"The manifest does not contain a valid passing test receipt. Publish Synix again.");
+						LocalizationManager.Get("Release.Check.AutomatedTests"),
+						LocalizationManager.Get("Release.Check.TestReceiptInvalid"));
 				}
 			}
 			catch (Exception exception)
 			{
 				AddFailure(
 					items,
-					"Automated tests",
-					$"The Publish test receipt could not be read: {exception.Message}");
+					LocalizationManager.Get("Release.Check.AutomatedTests"),
+					LocalizationManager.Get(
+						"Release.Check.TestReceiptReadFailed",
+						exception.Message));
 			}
 		}
 
@@ -888,8 +1027,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				AddFailure(
 					items,
-					"Security regression suite",
-					"The Publish security receipt is missing. Publish Synix again before releasing.");
+					LocalizationManager.Get("Release.Check.SecuritySuite"),
+					LocalizationManager.Get("Release.Check.SecurityReceiptMissing"));
 				return;
 			}
 
@@ -900,20 +1039,27 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					AddPassed(
 						items,
-						"Security regression suite",
-						$"Security-sensitive argument, path, archive, password, definition, and update tests passed during Publish at {completedUtc.ToLocalTime():g}.");
+						LocalizationManager.Get("Release.Check.SecuritySuite"),
+						LocalizationManager.Get(
+							"Release.Check.SecurityTestsPassed",
+							completedUtc.ToLocalTime()));
 				}
 				else
 				{
 					AddFailure(
 						items,
-						"Security regression suite",
-						"The manifest does not contain a valid passing security receipt. Publish Synix again.");
+						LocalizationManager.Get("Release.Check.SecuritySuite"),
+						LocalizationManager.Get("Release.Check.SecurityReceiptInvalid"));
 				}
 			}
 			catch (Exception exception)
 			{
-				AddFailure(items, "Security regression suite", $"The security receipt could not be read: {exception.Message}");
+				AddFailure(
+					items,
+					LocalizationManager.Get("Release.Check.SecuritySuite"),
+					LocalizationManager.Get(
+						"Release.Check.SecurityReceiptReadFailed",
+						exception.Message));
 			}
 		}
 
@@ -944,7 +1090,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static string FormatReleaseVersion(Version? version)
 		{
-			return version?.ToString(3) ?? "Unknown";
+			return version?.ToString(3) ?? LocalizationManager.Get("Report.Unknown");
 		}
 
 		private static string FormatReleaseBytes(long bytes)

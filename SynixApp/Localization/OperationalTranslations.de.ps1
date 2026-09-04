@@ -345,4 +345,15 @@
     'MessageText.663E3E2D227DB51428B7' = 'Sie haben nicht gespeicherte Konfigurationsänderungen. Verwerfen und schließen?'
     'MessageText.3B1950A30C957AAF88A2' = 'Sie müssen den Server vor dem Aktualisieren stoppen.'
     'MessageText.19580FB3CF2A0F82762D' = 'Sie müssen den Server stoppen, bevor Sie die Serverdateien validieren.'
+    'MessageText.1D7E8CD37BFCD097E6DA' = "Synix besitzt keine vollständige Rücksetzvorlage für dieses Spiel."
+    'MessageText.2A2FCD5BFFF42E6401AE' = "Die sortierte Mod-ID-Liste ist bereit. Das Spiel lädt beim Serverstart Inhalte des Anbieters herunter oder aktualisiert sie."
+    'MessageText.3679B9A889A4F6F470DA' = "Das Add-on wurde installiert und geprüft. Starten Sie den Server, wenn Sie bereit sind."
+    'MessageText.4AE453C9E5CBA09BFB92' = "Synix konnte die gespeicherten Discord-Webhook-Daten nicht entsperren. Öffnen Sie die Servereinstellungen und speichern Sie die Webhooks erneut."
+    'MessageText.53B01E5FCFDE56675C9A' = "GitHub von Synix trennen?`n`nSynix löscht die auf diesem Computer gespeicherte verschlüsselte Verbindung und öffnet anschließend GitHub, damit Sie die Autorisierung in Ihrem Konto widerrufen können."
+    'MessageText.6B5EDE5E1A10BF24CA11' = "Synix konnte den Projektordner nicht finden. Führen Sie diese Prüfung aus einem Build oder Rebuild des Synix-Projekts in Visual Studio aus."
+    'MessageText.9E4EAF41685A751D0C5D' = "Legen Sie das Konfigurationsverhalten des Spiels fest und fügen Sie alle erforderlichen Vorlageninformationen hinzu, bevor die Konfiguration als geprüft markiert wird."
+    'MessageText.D955BE724373ACFC3AD2' = "Neueste Synix-Konfigurationssicherung wiederherstellen?`n`nSynix bewahrt zuerst die aktuellen Dateien auf, damit auch diese Wiederherstellung rückgängig gemacht werden kann."
+    'MessageText.ECD30B96D30BE40030DF' = "`n`nDie vorherige Konfiguration wurde mit der Erweiterung .synix.bak gespeichert."
+    'MessageText.F23CB309225C503B6D8A' = "Das Add-on wurde installiert und geprüft. Dieses Framework kann es gewöhnlich ohne vollständigen Neustart neu laden."
+    'MessageText.FD1FB8A609DE5750E995' = "Nachweise für Installation, Start, Stopp und Überwachung werden automatisch durch den echten Synix-Serverablauf erfasst und können nicht manuell markiert werden."
 }

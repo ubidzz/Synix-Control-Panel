@@ -31,24 +31,29 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				using RegistryKey key = Registry.CurrentUser.CreateSubKey(RunKeyPath, writable: true)
-					?? throw new InvalidOperationException("The Windows startup settings could not be opened.");
+					?? throw new InvalidOperationException(LocalizationManager.Get(
+						"BackgroundService.Error.StartupSettings"));
 				if (enabled)
 				{
 					string executablePath = GetExecutablePath();
 					key.SetValue(RunValueName, BuildLaunchCommand(executablePath), RegistryValueKind.String);
-					message = "Enabled for Windows sign-in. Closing Synix still exits every Synix process for the current session.";
+					message = LocalizationManager.Get(
+						"Advanced.Background.EnabledResult");
 				}
 				else
 				{
 					key.DeleteValue(RunValueName, throwOnMissingValue: false);
 					RequestStop();
-					message = "Disabled. Background monitoring will stop and will not start at sign-in.";
+					message = LocalizationManager.Get(
+						"Advanced.Background.DisabledResult");
 				}
 				return true;
 			}
 			catch (Exception exception)
 			{
-				message = $"Windows could not update the background service setting: {exception.Message}";
+				message = LocalizationManager.Get(
+					"BackgroundService.Error.UpdateSetting",
+					exception.Message);
 				return false;
 			}
 		}
@@ -95,12 +100,14 @@ namespace Synix_Control_Panel.SynixEngine
 						return true;
 					}
 				}
-				catch (WaitHandleCannotBeOpenedException)
+				catch (WaitHandleCannotBeOpenedException suppressedException)
 				{
+					ApplicationLogService.WriteSuppressedException(suppressedException);
 					return true;
 				}
-				catch
+				catch (Exception suppressedException)
 				{
+					ApplicationLogService.WriteSuppressedException(suppressedException);
 					return false;
 				}
 			}
@@ -206,18 +213,21 @@ namespace Synix_Control_Panel.SynixEngine
 				using Mutex mutex = Mutex.OpenExisting(AgentMutexName);
 				return true;
 			}
-			catch (WaitHandleCannotBeOpenedException)
+			catch (WaitHandleCannotBeOpenedException suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return false;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return false;
 			}
 		}
 
 		private static string GetExecutablePath() =>
 			Environment.ProcessPath ??
-			throw new InvalidOperationException("The Synix program path could not be determined.");
+			throw new InvalidOperationException(LocalizationManager.Get(
+				"BackgroundService.Error.ProgramPath"));
 	}
 }

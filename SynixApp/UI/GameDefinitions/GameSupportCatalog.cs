@@ -30,7 +30,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 		internal GameSupportCatalog()
 		{
-			Text = "Game Support Catalog";
+			Text = LocalizationManager.Get("Text.B5847872D81BE16B1771");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimumSize = new Size(980, 600);
@@ -42,7 +42,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 			Controls.Add(new Label
 			{
-				Text = "Game Support Catalog",
+				Text = LocalizationManager.Get("Text.B5847872D81BE16B1771"),
 				Font = new Font("Segoe UI", 19F, FontStyle.Bold),
 				Location = new Point(28, 22),
 				Size = new Size(620, 42),
@@ -50,7 +50,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			});
 			Controls.Add(new Label
 			{
-				Text = "See exactly what Synix can install, configure, monitor, and query before creating a server.",
+				Text = LocalizationManager.Get("Text.8C5A71A792CF70840F4B"),
 				Location = new Point(30, 66),
 				Size = new Size(840, 28),
 				ForeColor = SettingsPalette.SecondaryText
@@ -63,7 +63,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				ForeColor = SettingsPalette.PrimaryText,
 				BorderStyle = BorderStyle.FixedSingle,
 				Font = new Font("Segoe UI", 10F),
-				PlaceholderText = "Search by game, executable, or support status…",
+				PlaceholderText = LocalizationManager.Get("Text.5D719633D44DEE05A861"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Left
 			};
 			Controls.Add(_search);
@@ -78,7 +78,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_clearFilters = new ModernSettingsButton
 			{
 				Name = "clearCatalogFilters",
-				Text = "Clear Filters",
+				Text = LocalizationManager.Get("Text.5776503C1A52F4FA028F"),
 				Location = new Point(1002, 104),
 				Size = new Size(150, 40),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right
@@ -148,13 +148,13 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None,
 				RowTemplate = { Height = 42 }
 			};
-			AddColumn("Game", "GAME", 250, true);
-			AddColumn("Compatibility", "COMPATIBILITY", 190);
-			AddColumn("Configuration", "CONFIGURATION", 210);
-			AddColumn("PlayerData", "PLAYER DETAILS", 155);
-			AddColumn("Crossplay", "CROSSPLAY", 110);
-			AddColumn("Executable", "SERVER PROGRAM", 240);
-			AddColumn("LastVerified", "LAST VERIFIED", 130);
+			AddColumn("Game", LocalizationManager.Get("Text.1FD5F5A768D30B9B6651"), 250, true);
+			AddColumn("Compatibility", LocalizationManager.Get("Catalog.Column.Compatibility"), 190);
+			AddColumn("Configuration", LocalizationManager.Get("Text.D5CDE76290BF3E730FE4"), 210);
+			AddColumn("PlayerData", LocalizationManager.Get("Catalog.Column.PlayerDetails"), 155);
+			AddColumn("Crossplay", LocalizationManager.Get("Text.444D9B21E5BAAF8243D5"), 110);
+			AddColumn("Executable", LocalizationManager.Get("Catalog.Column.ServerProgram"), 240);
+			AddColumn("LastVerified", LocalizationManager.Get("Text.74E5C919B46AE61321E3"), 130);
 			GridStyler.DarkTheme(_grid);
 			GridStyler.ApplyDashboardTheme(_grid);
 			_grid.AllowUserToResizeColumns = true;
@@ -166,7 +166,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 			_viewDetails = new ModernSettingsButton
 			{
-				Text = "View Details",
+				Text = LocalizationManager.Get("Text.90789C12D0731B4405F2"),
 				Location = new Point(836, 656),
 				Size = new Size(156, 44),
 				UseAccentStyle = true,
@@ -177,7 +177,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 			ModernSettingsButton close = new()
 			{
-				Text = "Close",
+				Text = LocalizationManager.Get("ModManager.Button.Close"),
 				Location = new Point(1002, 656),
 				Size = new Size(150, 44),
 				DialogResult = DialogResult.OK,
@@ -211,48 +211,59 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			List<CatalogFilterChoice> nameChoices =
 			[
-				new("Name: All", null)
+				new(LocalizationManager.Get("Catalog.Filter.NameAll"), null)
 			];
 			nameChoices.AddRange(Enumerable.Range('A', 26).Select(character =>
-				new CatalogFilterChoice($"Name starts: {(char)character}", ((char)character).ToString())));
-			nameChoices.Add(new("Name starts: 0–9", GameSupportCatalogFilterEngine.Numbers));
-			nameChoices.Add(new("Name starts: Other", GameSupportCatalogFilterEngine.Other));
+				new CatalogFilterChoice(
+					LocalizationManager.Get("Catalog.Filter.NameStarts", (char)character),
+					((char)character).ToString())));
+			nameChoices.Add(new(
+				LocalizationManager.Get("Catalog.Filter.NameNumbers"),
+				GameSupportCatalogFilterEngine.Numbers));
+			nameChoices.Add(new(
+				LocalizationManager.Get("Catalog.Filter.NameOther"),
+				GameSupportCatalogFilterEngine.Other));
 			SetChoices(_nameFilter, nameChoices);
 			SetChoices(_sortFilter,
 			[
-				new("Sort: A–Z", "ascending"),
-				new("Sort: Z–A", "descending")
+				new(LocalizationManager.Get("Catalog.Filter.SortAscending"), "ascending"),
+				new(LocalizationManager.Get("Catalog.Filter.SortDescending"), "descending")
 			]);
 			SetChoices(
 				_compatibilityFilter,
-				CreateValueChoices("Compatibility", _allRows.Select(row => row.Compatibility)));
+				CreateValueChoices(LocalizationManager.Get("Catalog.Filter.Compatibility"), _allRows.Select(row => row.Compatibility)));
 			SetChoices(
 				_configurationFilter,
-				CreateValueChoices("Configuration", _allRows.Select(row => row.Configuration)));
+				CreateValueChoices(LocalizationManager.Get("Text.D5CDE76290BF3E730FE4"), _allRows.Select(row => row.Configuration)));
 			SetChoices(
 				_playerFilter,
-				CreateValueChoices("Player details", _allRows.Select(row => row.PlayerData)));
+				CreateValueChoices(LocalizationManager.Get("Catalog.Column.PlayerDetails"), _allRows.Select(row => row.PlayerData)));
 			SetChoices(
 				_crossplayFilter,
-				CreateValueChoices("Crossplay", _allRows.Select(row => row.Crossplay)));
+				CreateValueChoices(LocalizationManager.Get("Text.444D9B21E5BAAF8243D5"), _allRows.Select(row => row.Crossplay)));
 			SetChoices(
 				_programFilter,
-				CreateValueChoices("Server program", _allRows.Select(row => row.Executable)));
+				CreateValueChoices(LocalizationManager.Get("Catalog.Column.ServerProgram"), _allRows.Select(row => row.Executable)));
 			SetChoices(
 				_verificationFilter,
-				CreateValueChoices("Last verified", _allRows.Select(row => row.LastVerified)));
+				CreateValueChoices(LocalizationManager.Get("Text.74E5C919B46AE61321E3"), _allRows.Select(row => row.LastVerified)));
 		}
 
 		private static IReadOnlyList<CatalogFilterChoice> CreateValueChoices(
 			string heading,
 			IEnumerable<string> values)
 		{
-			List<CatalogFilterChoice> choices = [new($"{heading}: All", null)];
+			List<CatalogFilterChoice> choices =
+			[
+				new(LocalizationManager.Get("Catalog.Filter.All", heading), null)
+			];
 			choices.AddRange(values
 				.Where(value => !string.IsNullOrWhiteSpace(value))
 				.Distinct(StringComparer.OrdinalIgnoreCase)
 				.OrderBy(value => value, StringComparer.CurrentCultureIgnoreCase)
-				.Select(value => new CatalogFilterChoice($"{heading}: {value}", value)));
+				.Select(value => new CatalogFilterChoice(
+					LocalizationManager.Get("Catalog.Filter.Value", heading, value),
+					value)));
 			return choices;
 		}
 
@@ -303,7 +314,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				_allRows,
 				filter);
 			_grid.DataSource = visible;
-			_count.Text = $"{visible.Length} of {_allRows.Count} games  •  Double-click a row for details";
+			LocalizationManager.BindText(
+				_count,
+				"Catalog.Count",
+				visible.Length,
+				_allRows.Count);
 			_clearFilters.Enabled = filter.HasActiveFilters;
 			UpdateDetailsButton();
 		}
@@ -349,8 +364,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			DataGridViewCell cell = _grid.Rows[eventArgs.RowIndex].Cells[eventArgs.ColumnIndex];
 			string value = Convert.ToString(cell.FormattedValue)?.Trim() ?? string.Empty;
 			cell.ToolTipText = string.IsNullOrWhiteSpace(value)
-				? "Double-click to view game support details."
-				: $"{value}{Environment.NewLine}{Environment.NewLine}Double-click to view game support details.";
+				? LocalizationManager.Get("Catalog.Tooltip.OpenDetails")
+				: LocalizationManager.Get("Catalog.Tooltip.Value", value);
 		}
 
 		private void GridKeyDown(object? sender, KeyEventArgs eventArgs)
@@ -389,20 +404,22 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			GameManagementCapability capabilities = GameFix.GetManagementCapabilities(game);
 			bool crossplay = capabilities.HasFlag(GameManagementCapability.Crossplay);
 			string playerData = game.CrossplayDisablesPlayerTracking
-				? "Steam mode only"
+				? LocalizationManager.Get("Catalog.PlayerData.SteamOnly")
 				: GameDatabase.GetProbeProtocol(game) == ServerProbeProtocol.A2S
-				? "Named players"
+				? LocalizationManager.Get("Catalog.PlayerData.Named")
 				: GameDatabase.IsMinecraft(game.Game)
-					? "Player count"
-					: "Not available";
+					? LocalizationManager.Get("Catalog.PlayerData.Count")
+					: LocalizationManager.Get("Catalog.NotAvailable");
 			string lastVerified = compatibility.Verification.LastTested?.VerifiedAtUtc
-				.ToLocalTime().ToString("yyyy-MM-dd") ?? "Not verified";
+				.ToLocalTime().ToString("d", System.Globalization.CultureInfo.CurrentUICulture) ??
+				LocalizationManager.Get("Catalog.NotVerified");
 			return new(
 				game.Game,
-				compatibility.DisplayName,
-				configuration.Status,
+				LocalizationManager.TranslateKnownText(compatibility.DisplayName),
+				LocalizationManager.TranslateKnownText(configuration.Status),
 				playerData,
-				crossplay ? "Available" : "Not listed",
+				LocalizationManager.Get(
+					crossplay ? "Catalog.Available" : "Catalog.NotListed"),
 				GameDatabase.IsMinecraft(game.Game)
 					? "Start.bat / bedrock_server.exe"
 					: game.ExeName,

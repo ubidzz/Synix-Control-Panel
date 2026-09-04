@@ -85,7 +85,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				cmbMinecraftEdition.SelectedItem = MinecraftControlProfile.JavaEdition;
 
 				cmbGame.Items.Clear();
-				cmbGame.Items.Add("-- Pick a Game --");
+				cmbGame.Items.Add(LocalizationManager.Get(
+					"ServerSetup.GamePicker.Placeholder"));
 				foreach (GameInfo game in GameDatabase.GetGameList().OrderBy(game => game.Game))
 					cmbGame.Items.Add(game.Game);
 			}
@@ -155,6 +156,20 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			}
 		}
 
+		public void RefreshLocalizedPresentation()
+		{
+			if (cmbGame.Items.Count > 0)
+			{
+				bool noGameSelected = cmbGame.SelectedIndex == 0;
+				cmbGame.Items[0] = LocalizationManager.Get(
+					"ServerSetup.GamePicker.Placeholder");
+				if (noGameSelected)
+					cmbGame.SelectedIndex = 0;
+			}
+			RefreshCompatibilityVerification(
+				HasSelectedGame ? SelectedGame : null);
+		}
+
 		public void ConfigureForGame(GameInfo? gameData)
 		{
 			ConfigureMaximumPlayersInput(gameData);
@@ -175,41 +190,26 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 			bool Supports(GameManagementCapability capability) =>
 				(capabilities & capability) != 0;
-			cmbCompetitive.Tag = Supports(GameManagementCapability.GameMode)
-				? "Required"
-				: "Disabled";
-			numMaxPlayers.Tag = Supports(GameManagementCapability.MaxPlayers)
-				? "Required"
-				: "Disabled";
-			cmbWorldName.Tag = Supports(GameManagementCapability.WorldName)
-				? "Required"
-				: "Disabled";
-			cmbGameVersion.Tag = Supports(GameManagementCapability.GameVersion)
-				? "Required"
-				: "Disabled";
-			numRam.Tag = Supports(GameManagementCapability.Ram)
-				? "Required"
-				: "Disabled";
+			cmbCompetitive.Tag = Supports(GameManagementCapability.GameMode);
+			numMaxPlayers.Tag = Supports(GameManagementCapability.MaxPlayers);
+			cmbWorldName.Tag = Supports(GameManagementCapability.WorldName);
+			cmbGameVersion.Tag = Supports(GameManagementCapability.GameVersion);
+			numRam.Tag = Supports(GameManagementCapability.Ram);
 			bool supportsCrossplay = Supports(GameManagementCapability.Crossplay);
-			chkCrossplay.Tag = supportsCrossplay ? "Required" : "Disabled";
+			chkCrossplay.Tag = supportsCrossplay;
 			lblCrossplay.Visible = supportsCrossplay;
 			chkCrossplay.Visible = supportsCrossplay;
 		}
 
 		public void ApplyAvailability(bool hasGame)
 		{
-			cmbCompetitive.Enabled = hasGame &&
-				cmbCompetitive.Tag?.ToString() == "Required";
-			numMaxPlayers.Enabled = hasGame &&
-				numMaxPlayers.Tag?.ToString() == "Required";
-			cmbWorldName.Enabled = hasGame &&
-				cmbWorldName.Tag?.ToString() == "Required";
-			cmbGameVersion.Enabled = hasGame &&
-				cmbGameVersion.Tag?.ToString() == "Required" &&
+			cmbCompetitive.Enabled = hasGame && cmbCompetitive.Tag is true;
+			numMaxPlayers.Enabled = hasGame && numMaxPlayers.Tag is true;
+			cmbWorldName.Enabled = hasGame && cmbWorldName.Tag is true;
+			cmbGameVersion.Enabled = hasGame && cmbGameVersion.Tag is true &&
 				!_isLoading;
-			numRam.Enabled = hasGame && numRam.Tag?.ToString() == "Required";
-			chkCrossplay.Enabled = hasGame &&
-				chkCrossplay.Tag?.ToString() == "Required";
+			numRam.Enabled = hasGame && numRam.Tag is true;
+			chkCrossplay.Enabled = hasGame && chkCrossplay.Tag is true;
 			bool supportsFramework = GameDatabase.GetGame(SelectedGame)?
 				.SupportedServerFrameworks.Count > 0;
 			cmbMinecraftLoader.Enabled =
@@ -278,20 +278,37 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public void RefreshCompatibilityVerification(string? game)
 		{
 			GameCompatibilityVerification verification = Core.GetGameCompatibility(game);
-			UpdateCompatibilityLabel(lblInstallVerification, "Install", verification.Install);
-			UpdateCompatibilityLabel(lblStartVerification, "Start", verification.Start);
-			UpdateCompatibilityLabel(lblStopVerification, "Stop", verification.Stop);
-			UpdateCompatibilityLabel(lblMonitoringVerification, "Monitoring", verification.Monitoring);
+			UpdateCompatibilityLabel(
+				lblInstallVerification,
+				"VerificationStep.Install",
+				verification.Install);
+			UpdateCompatibilityLabel(
+				lblStartVerification,
+				"VerificationStep.Start",
+				verification.Start);
+			UpdateCompatibilityLabel(
+				lblStopVerification,
+				"VerificationStep.Stop",
+				verification.Stop);
+			UpdateCompatibilityLabel(
+				lblMonitoringVerification,
+				"VerificationStep.Monitoring",
+				verification.Monitoring);
 			GameVerificationEvidence? lastTested = verification.LastTested;
 			if (lastTested == null)
 			{
-				lblLastTestedVersion.Text = "Last-tested Synix version: Not verified yet";
+				LocalizationManager.BindText(
+					lblLastTestedVersion,
+					"ServerSetup.Verification.LastTested.Unverified");
 				lblLastTestedVersion.ForeColor = Color.FromArgb(158, 172, 194);
 				return;
 			}
 
-			lblLastTestedVersion.Text =
-				$"Last-tested Synix version: v{lastTested.SynixVersion}  •  {lastTested.VerifiedAtUtc.ToLocalTime():MMM d, yyyy}";
+			LocalizationManager.BindText(
+				lblLastTestedVersion,
+				"ServerSetup.Verification.LastTested.Verified",
+				lastTested.SynixVersion,
+				lastTested.VerifiedAtUtc.ToLocalTime());
 			lblLastTestedVersion.ForeColor = Color.FromArgb(32, 214, 199);
 		}
 
@@ -317,7 +334,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			}
 			catch (Exception exception)
 			{
-				_minecraftMetadataError = $"Metadata could not be loaded: {exception.Message}";
+				_minecraftMetadataError = LocalizationManager.Get(
+					"ServerSetup.Minecraft.MetadataLoadFailed",
+					exception.Message);
 				SettingsChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
@@ -343,8 +362,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					}
 					catch (Exception exception)
 					{
-						_minecraftMetadataError =
-							$"Mojang versions could not be loaded: {exception.Message}";
+						_minecraftMetadataError = LocalizationManager.Get(
+							"ServerSetup.Minecraft.MojangVersionsLoadFailed",
+							exception.Message);
 					}
 				}
 
@@ -394,13 +414,19 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					loader,
 					MinecraftMetadataService.VanillaLoader);
 				cmbMinecraftLoaderVersion.Items.Clear();
-				cmbMinecraftLoaderVersion.Items.Add("Loading compatible builds...");
+				cmbMinecraftLoaderVersion.Items.Add(LocalizationManager.Get(
+					"ServerSetup.Minecraft.LoadingBuilds"));
 				cmbMinecraftLoaderVersion.SelectedIndex = 0;
 				cmbMinecraftLoaderVersion.Enabled = false;
-				lblMinecraftJavaValue.Text = "Resolving...";
-				lblMinecraftRuntimeHelper.Text = loader == MinecraftMetadataService.VanillaLoader
-					? "Synix installs the official server and matching portable Java."
-					: $"Synix installs the compatible {loader} server loader. Add your own mods after installation.";
+				LocalizationManager.BindText(
+					lblMinecraftJavaValue,
+					"ServerSetup.Minecraft.Resolving");
+				LocalizationManager.BindText(
+					lblMinecraftRuntimeHelper,
+					loader == MinecraftMetadataService.VanillaLoader
+						? "ServerSetup.Minecraft.Helper.Vanilla"
+						: "ServerSetup.Minecraft.Helper.Loader",
+					loader);
 
 				Task<MinecraftMetadataService.MinecraftVersionMetadata> metadataTask =
 					MinecraftMetadataService.GetVersionMetadataAsync(cmbGameVersion.Text);
@@ -414,8 +440,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				IReadOnlyList<string> compatibleBuilds = await loaderTask;
 				if (compatibleBuilds.Count == 0)
 				{
-					throw new InvalidOperationException(
-						$"No compatible {loader} server build exists for Minecraft {metadata.Version}.");
+					throw new InvalidOperationException(LocalizationManager.Get(
+						"ServerSetup.Minecraft.NoCompatibleBuild",
+						loader,
+						metadata.Version));
 				}
 				cmbMinecraftLoaderVersion.Items.Clear();
 				foreach (string build in compatibleBuilds)
@@ -433,22 +461,35 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					cmbMinecraftLoaderVersion.SelectedItem = requestedBuild;
 				}
 				_resolvedJavaVersion = metadata.JavaMajorVersion;
-				lblMinecraftJavaValue.Text = $"Java {metadata.JavaMajorVersion}";
-				lblMinecraftRuntimeHelper.Text = loader == MinecraftMetadataService.VanillaLoader
-					? $"Minecraft {metadata.Version} uses the official Mojang server and Java {metadata.JavaMajorVersion}."
-					: $"Minecraft {metadata.Version} + {loader} {cmbMinecraftLoaderVersion.Text} uses Java {metadata.JavaMajorVersion}. Add mods after installation.";
+				LocalizationManager.BindText(
+					lblMinecraftJavaValue,
+					"ServerSetup.Minecraft.JavaVersion",
+					metadata.JavaMajorVersion);
+				LocalizationManager.BindText(
+					lblMinecraftRuntimeHelper,
+					loader == MinecraftMetadataService.VanillaLoader
+						? "ServerSetup.Minecraft.Helper.ResolvedVanilla"
+						: "ServerSetup.Minecraft.Helper.ResolvedLoader",
+					metadata.Version,
+					loader,
+					cmbMinecraftLoaderVersion.Text,
+					metadata.JavaMajorVersion);
 			}
 			catch (Exception exception)
 			{
 				if (requestId != _minecraftRequestId || IsDisposed)
 					return;
 				_resolvedJavaVersion = 0;
-				_minecraftMetadataError =
-					$"{exception.Message} Re-select the version or loader to retry.";
+				_minecraftMetadataError = LocalizationManager.Get(
+					"ServerSetup.Minecraft.RetryDetail",
+					exception.Message);
 				cmbMinecraftLoaderVersion.Items.Clear();
-				lblMinecraftJavaValue.Text = "Unavailable";
-				lblMinecraftRuntimeHelper.Text =
-					"Synix could not verify this loader combination from the official metadata service.";
+				LocalizationManager.BindText(
+					lblMinecraftJavaValue,
+					"ServerSetup.Minecraft.Unavailable");
+				LocalizationManager.BindText(
+					lblMinecraftRuntimeHelper,
+					"ServerSetup.Minecraft.Helper.Unverified");
 			}
 			finally
 			{
@@ -490,11 +531,17 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 			if (isMinecraft)
 			{
-				lblMinecraftRuntimeTitle.Text = "Minecraft Runtime";
+				LocalizationManager.BindText(
+					lblMinecraftRuntimeTitle,
+					"ServerSetup.Runtime.Minecraft.Title");
 				bool bedrock = IsMinecraftBedrockSelected;
 				lblMinecraftEdition.Visible = true;
 				cmbMinecraftEdition.Visible = true;
-				lblMinecraftLoader.Text = bedrock ? "Server Package" : "Loader";
+				LocalizationManager.BindText(
+					lblMinecraftLoader,
+					bedrock
+						? "ServerSetup.Runtime.ServerPackage"
+						: "ServerSetup.Runtime.Loader");
 				lblMinecraftLoaderVersion.Visible = !bedrock;
 				cmbMinecraftLoaderVersion.Visible = !bedrock;
 				lblMinecraftJava.Visible = !bedrock;
@@ -502,11 +549,13 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				cmbMinecraftLoader.Items.Clear();
 				if (bedrock)
 				{
-					cmbMinecraftLoader.Items.Add("Official Bedrock");
+					cmbMinecraftLoader.Items.Add(LocalizationManager.Get(
+						"ServerSetup.Runtime.OfficialBedrock"));
 					cmbMinecraftLoader.SelectedIndex = 0;
 					cmbMinecraftLoader.Enabled = false;
-					lblMinecraftRuntimeHelper.Text =
-						"Synix installs Microsoft's official Bedrock Dedicated Server. Java and Java mod loaders do not apply.";
+					LocalizationManager.BindText(
+						lblMinecraftRuntimeHelper,
+						"ServerSetup.Minecraft.Helper.Bedrock");
 				}
 				else
 				{
@@ -517,10 +566,14 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			}
 			else if (supportsFramework && gameData != null)
 			{
-				lblMinecraftRuntimeTitle.Text = "Server Framework";
+				LocalizationManager.BindText(
+					lblMinecraftRuntimeTitle,
+					"ServerSetup.Runtime.Framework.Title");
 				lblMinecraftEdition.Visible = false;
 				cmbMinecraftEdition.Visible = false;
-				lblMinecraftLoader.Text = "Framework";
+				LocalizationManager.BindText(
+					lblMinecraftLoader,
+					"ServerSetup.Runtime.Framework");
 				lblMinecraftLoaderVersion.Visible = false;
 				cmbMinecraftLoaderVersion.Visible = false;
 				lblMinecraftJava.Visible = false;
@@ -533,8 +586,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					cmbMinecraftLoader,
 					_existingServer?.ServerFramework ?? "Vanilla",
 					"Vanilla");
-				lblMinecraftRuntimeHelper.Text =
-					"Synix installs the official Oxide runtime only. Plugins remain user-managed in the server's oxide\\plugins folder.";
+				LocalizationManager.BindText(
+					lblMinecraftRuntimeHelper,
+					"ServerSetup.Runtime.Framework.Helper");
 			}
 
 			if (!visible)
@@ -557,20 +611,26 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			if (numMaxPlayers.Value > maximum)
 				numMaxPlayers.Value = maximum;
 			numMaxPlayers.Maximum = maximum;
-			MaxPlayerLabel.Text = maximum < GameDefinition.DefaultMaximumPlayers
-				? $"Max Players (maximum {maximum:0})"
-				: "Max Players";
+			LocalizationManager.BindText(
+				MaxPlayerLabel,
+				maximum < GameDefinition.DefaultMaximumPlayers
+					? "ServerSetup.MaxPlayers.Limited"
+					: "ServerSetup.MaxPlayers.Label",
+				maximum);
 		}
 
 		private static void UpdateCompatibilityLabel(
 			Label label,
-			string action,
+			string actionResourceKey,
 			GameVerificationEvidence? evidence)
 		{
 			bool verified = evidence != null;
-			label.Text = verified
-				? $"{action}  ✓ Verified"
-				: $"{action}  — Not verified yet";
+			LocalizationManager.BindText(
+				label,
+				verified
+					? "ServerSetup.Verification.Verified"
+					: "ServerSetup.Verification.Unverified",
+				LocalizationManager.Get(actionResourceKey));
 			label.ForeColor = verified
 				? Color.FromArgb(32, 214, 199)
 				: Color.FromArgb(158, 172, 194);

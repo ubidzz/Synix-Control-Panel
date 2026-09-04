@@ -164,7 +164,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnHelp.Size = new Size(36, 36);
 			btnHelp.TabIndex = 7;
 			btnHelp.TabStop = false;
-			btnHelp.Text = "Help";
+			btnHelp.Text = LocalizationManager.Get("Text.B79CAC926E0B2E347E72");
 			btnHelp.UseVisualStyleBackColor = false;
 			btnHelp.Click += btnHelp_Click;
 			// 
@@ -190,7 +190,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblAppName.Name = "lblAppName";
 			lblAppName.Size = new Size(160, 21);
 			lblAppName.TabIndex = 1;
-			lblAppName.Text = "Synix Control Panel";
+			lblAppName.Text = LocalizationManager.Get("Text.0245B987FC14009D721D");
 			lblAppName.MouseDown += Form_Drag_MouseDown;
 			// 
 			// btnSettings
@@ -209,7 +209,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnSettings.Size = new Size(36, 36);
 			btnSettings.TabIndex = 2;
 			btnSettings.TabStop = false;
-			btnSettings.Text = "⚙";
+			btnSettings.Text = LocalizationManager.Get("Text.E5235A4A75E63AAA9740");
 			toolTip1.SetToolTip(btnSettings, "Synix Settings");
 			btnSettings.UseVisualStyleBackColor = false;
 			btnSettings.Click += btnSettings_Click;
@@ -230,7 +230,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnGithub.Size = new Size(36, 36);
 			btnGithub.TabIndex = 3;
 			btnGithub.TabStop = false;
-			btnGithub.Text = "GH";
+			btnGithub.Text = LocalizationManager.Get("Text.A7770C6DAAA4BDC22DB6");
 			toolTip1.SetToolTip(btnGithub, "Open Synix on GitHub");
 			btnGithub.UseVisualStyleBackColor = false;
 			btnGithub.Click += btnGithub_Click;
@@ -251,7 +251,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnDiscord.Size = new Size(36, 36);
 			btnDiscord.TabIndex = 4;
 			btnDiscord.TabStop = false;
-			btnDiscord.Text = "D";
+			btnDiscord.Text = LocalizationManager.Get("Text.3F39D5C348E5B79D06E8");
 			toolTip1.SetToolTip(btnDiscord, "Open the Synix Discord");
 			btnDiscord.UseVisualStyleBackColor = false;
 			btnDiscord.Click += btnDiscord_Click;
@@ -272,7 +272,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnMinimize.Size = new Size(36, 36);
 			btnMinimize.TabIndex = 5;
 			btnMinimize.TabStop = false;
-			btnMinimize.Text = "—";
+			btnMinimize.Text = LocalizationManager.Get("Text.BDA050585A00F0F6CB50");
 			btnMinimize.UseVisualStyleBackColor = false;
 			btnMinimize.Click += btnMinimize_Click;
 			// 
@@ -292,7 +292,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnClose.Size = new Size(36, 36);
 			btnClose.TabIndex = 6;
 			btnClose.TabStop = false;
-			btnClose.Text = "✕";
+			btnClose.Text = LocalizationManager.Get("Text.BE64F28A8D0A6257B2AF");
 			btnClose.UseVisualStyleBackColor = false;
 			btnClose.Click += btnClose_Click;
 			// 
@@ -306,7 +306,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblDashboardTitle.Name = "lblDashboardTitle";
 			lblDashboardTitle.Size = new Size(269, 41);
 			lblDashboardTitle.TabIndex = 1;
-			lblDashboardTitle.Text = "Server Dashboard";
+			lblDashboardTitle.Text = LocalizationManager.Get("Text.7FD48896176AE13DC58A");
 			// 
 			// lblDashboardSubtitle
 			// 
@@ -318,7 +318,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblDashboardSubtitle.Name = "lblDashboardSubtitle";
 			lblDashboardSubtitle.Size = new Size(386, 19);
 			lblDashboardSubtitle.TabIndex = 2;
-			lblDashboardSubtitle.Text = "Monitor and manage every game server from one workspace.";
+			lblDashboardSubtitle.Text = LocalizationManager.Get("Text.1C310A469AD1721A3E91");
 			// 
 			// installedCard
 			// 
@@ -344,7 +344,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblInstalledCaption.Name = "lblInstalledCaption";
 			lblInstalledCaption.Size = new Size(120, 19);
 			lblInstalledCaption.TabIndex = 0;
-			lblInstalledCaption.Text = "Installed Servers";
+			lblInstalledCaption.Text = LocalizationManager.Get("Text.F73780A16B44791C9D49");
 			// 
 			// lblInstalledValue
 			// 
@@ -356,7 +356,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblInstalledValue.Name = "lblInstalledValue";
 			lblInstalledValue.Size = new Size(40, 46);
 			lblInstalledValue.TabIndex = 1;
-			lblInstalledValue.Text = "0";
+			lblInstalledValue.Text = LocalizationManager.Get("Text.5FECEB66FFC86F38D952");
 			// 
 			// lblInstalledHint
 			// 
@@ -368,7 +368,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblInstalledHint.Name = "lblInstalledHint";
 			lblInstalledHint.Size = new Size(99, 15);
 			lblInstalledHint.TabIndex = 2;
-			lblInstalledHint.Text = "Ready to manage";
+			lblInstalledHint.Text = LocalizationManager.Get("Text.B1A53241AEE398BDDBC1");
 			// 
 			// runningCard
 			// 
@@ -394,7 +394,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblRunningCaption.Name = "lblRunningCaption";
 			lblRunningCaption.Size = new Size(98, 19);
 			lblRunningCaption.TabIndex = 0;
-			lblRunningCaption.Text = "Running Now";
+			lblRunningCaption.Text = LocalizationManager.Get("Text.E0CE633EA746EF5196B5");
 			// 
 			// lblRunningValue
 			// 
@@ -406,7 +406,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblRunningValue.Name = "lblRunningValue";
 			lblRunningValue.Size = new Size(40, 46);
 			lblRunningValue.TabIndex = 1;
-			lblRunningValue.Text = "0";
+			lblRunningValue.Text = LocalizationManager.Get("Text.5FECEB66FFC86F38D952");
 			// 
 			// lblRunningHint
 			// 
@@ -418,7 +418,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblRunningHint.Name = "lblRunningHint";
 			lblRunningHint.Size = new Size(80, 15);
 			lblRunningHint.TabIndex = 2;
-			lblRunningHint.Text = "Servers online";
+			lblRunningHint.Text = LocalizationManager.Get("Text.796D04D8FFEF846F141D");
 			// 
 			// cpuCard
 			// 
@@ -445,7 +445,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblCpuCaption.Name = "lblCpuCaption";
 			lblCpuCaption.Size = new Size(82, 19);
 			lblCpuCaption.TabIndex = 0;
-			lblCpuCaption.Text = "CPU Usage";
+			lblCpuCaption.Text = LocalizationManager.Get("Text.D7D31960DA6507518203");
 			// 
 			// lblCpuValue
 			// 
@@ -457,7 +457,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblCpuValue.Name = "lblCpuValue";
 			lblCpuValue.Size = new Size(66, 31);
 			lblCpuValue.TabIndex = 1;
-			lblCpuValue.Text = "0.0%";
+			lblCpuValue.Text = LocalizationManager.Get("Text.13E2510BC57D3BD9E2A3");
 			// 
 			// lblCpuHint
 			// 
@@ -469,7 +469,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblCpuHint.Name = "lblCpuHint";
 			lblCpuHint.Size = new Size(99, 15);
 			lblCpuHint.TabIndex = 2;
-			lblCpuHint.Text = "Total system load";
+			lblCpuHint.Text = LocalizationManager.Get("Text.DDE6FA1EFA42980A5A3D");
 			// 
 			// cpuGauge
 			// 
@@ -509,7 +509,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblRamCaption.Name = "lblRamCaption";
 			lblRamCaption.Size = new Size(86, 19);
 			lblRamCaption.TabIndex = 0;
-			lblRamCaption.Text = "RAM Usage";
+			lblRamCaption.Text = LocalizationManager.Get("Text.771E2DB0F3BEF2D22BE9");
 			// 
 			// lblRamValue
 			// 
@@ -521,7 +521,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblRamValue.Name = "lblRamValue";
 			lblRamValue.Size = new Size(96, 31);
 			lblRamValue.TabIndex = 1;
-			lblRamValue.Text = "0.00 GB";
+			lblRamValue.Text = LocalizationManager.Get("Text.92C49213F152EFC7CE6E");
 			// 
 			// lblRamHint
 			// 
@@ -533,7 +533,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblRamHint.Name = "lblRamHint";
 			lblRamHint.Size = new Size(136, 15);
 			lblRamHint.TabIndex = 2;
-			lblRamHint.Text = "Total system RAM in use";
+			lblRamHint.Text = LocalizationManager.Get("Text.2A8FBB837295BABAD526");
 			// 
 			// ramGauge
 			// 
@@ -575,7 +575,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblServersTitle.Name = "lblServersTitle";
 			lblServersTitle.Size = new Size(134, 25);
 			lblServersTitle.TabIndex = 0;
-			lblServersTitle.Text = "Game Servers";
+			lblServersTitle.Text = LocalizationManager.Get("Text.F054BBC09408C30FDCF1");
 			// 
 			// lblServersCount
 			// 
@@ -587,7 +587,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblServersCount.Name = "lblServersCount";
 			lblServersCount.Size = new Size(52, 15);
 			lblServersCount.TabIndex = 1;
-			lblServersCount.Text = "0 servers";
+			lblServersCount.Text = LocalizationManager.Get("Text.5FC3FE0100834F4AF0C0");
 			// 
 			// btnAddServer
 			// 
@@ -604,7 +604,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnAddServer.Size = new Size(132, 38);
 			btnAddServer.TabIndex = 2;
 			btnAddServer.TabStop = false;
-			btnAddServer.Text = "+  Add Server";
+			btnAddServer.Text = LocalizationManager.Get("Text.BE66C4F105B89904ED79");
 			btnAddServer.UseMnemonic = false;
 			btnAddServer.UseVisualStyleBackColor = false;
 			btnAddServer.Click += btnAddServer_Click;
@@ -628,7 +628,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblSearchIcon.Name = "lblSearchIcon";
 			lblSearchIcon.Size = new Size(30, 34);
 			lblSearchIcon.TabIndex = 0;
-			lblSearchIcon.Text = "⌕";
+			lblSearchIcon.Text = LocalizationManager.Get("Text.C19732DF495EF97E72A3");
 			lblSearchIcon.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// txtServerSearch
@@ -639,7 +639,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			txtServerSearch.ForeColor = Color.FromArgb(245, 247, 251);
 			txtServerSearch.Location = new Point(44, 11);
 			txtServerSearch.Name = "txtServerSearch";
-			txtServerSearch.PlaceholderText = "Search game or server name...";
+			txtServerSearch.PlaceholderText = LocalizationManager.Get("Text.01F1674FFF3FC5AD8DC9");
 			txtServerSearch.Size = new Size(675, 18);
 			txtServerSearch.TabIndex = 1;
 			txtServerSearch.TextChanged += ServerFilterChanged;
@@ -697,7 +697,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			colGame.DataPropertyName = "DisplayGameName";
 			colGame.FillWeight = 18F;
-			colGame.HeaderText = "Game";
+			colGame.HeaderText = LocalizationManager.Get("Text.1FD5F5A768D30B9B6651");
 			colGame.Name = "colGame";
 			colGame.ReadOnly = true;
 			colGame.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -706,7 +706,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			colName.DataPropertyName = "ServerName";
 			colName.FillWeight = 24F;
-			colName.HeaderText = "Server Name";
+			colName.HeaderText = LocalizationManager.Get("Text.41CFA866FAA62B2104E6");
 			colName.Name = "colName";
 			colName.ReadOnly = true;
 			colName.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -715,7 +715,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			colPort.DataPropertyName = "Port";
 			colPort.FillWeight = 10F;
-			colPort.HeaderText = "Port";
+			colPort.HeaderText = LocalizationManager.Get("Text.72E9A59F5A1D6289DBAC");
 			colPort.Name = "colPort";
 			colPort.ReadOnly = true;
 			colPort.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -724,7 +724,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			colQueryPort.DataPropertyName = "QueryPort";
 			colQueryPort.FillWeight = 10F;
-			colQueryPort.HeaderText = "Query";
+			colQueryPort.HeaderText = LocalizationManager.Get("Text.B80A37564FBB3C075320");
 			colQueryPort.Name = "colQueryPort";
 			colQueryPort.ReadOnly = true;
 			colQueryPort.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -733,7 +733,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			colPlayerCount.DataPropertyName = "PlayerCount";
 			colPlayerCount.FillWeight = 10F;
-			colPlayerCount.HeaderText = "Players";
+			colPlayerCount.HeaderText = LocalizationManager.Get("Text.84E12AC655DD8D75DD44");
 			colPlayerCount.Name = "colPlayerCount";
 			colPlayerCount.ReadOnly = true;
 			colPlayerCount.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -742,7 +742,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			colUptime.DataPropertyName = "Uptime";
 			colUptime.FillWeight = 13F;
-			colUptime.HeaderText = "Uptime";
+			colUptime.HeaderText = LocalizationManager.Get("Text.D63AB4711473B0398FEB");
 			colUptime.Name = "colUptime";
 			colUptime.ReadOnly = true;
 			colUptime.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -751,7 +751,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			colStatus.DataPropertyName = "Status";
 			colStatus.FillWeight = 15F;
-			colStatus.HeaderText = "Status";
+			colStatus.HeaderText = LocalizationManager.Get("ModManager.Column.Status");
 			colStatus.Name = "colStatus";
 			colStatus.ReadOnly = true;
 			colStatus.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -780,7 +780,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblActivityTitle.Name = "lblActivityTitle";
 			lblActivityTitle.Size = new Size(180, 21);
 			lblActivityTitle.TabIndex = 0;
-			lblActivityTitle.Text = "Activity & Diagnostics";
+			lblActivityTitle.Text = LocalizationManager.Get("Text.1FCD02D49EBBD52B384B");
 			lblActivityTitle.UseMnemonic = false;
 			// 
 			// btnClearLog
@@ -797,7 +797,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnClearLog.Name = "btnClearLog";
 			btnClearLog.Size = new Size(62, 34);
 			btnClearLog.TabIndex = 1;
-			btnClearLog.Text = "CLEAR";
+			btnClearLog.Text = LocalizationManager.Get("Text.9CC3A043B6A91D450BC3");
 			btnClearLog.UseVisualStyleBackColor = false;
 			btnClearLog.Click += btnClearLog_Click;
 			// 
@@ -838,7 +838,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblNetworkTitle.Name = "lblNetworkTitle";
 			lblNetworkTitle.Size = new Size(76, 21);
 			lblNetworkTitle.TabIndex = 0;
-			lblNetworkTitle.Text = "Network";
+			lblNetworkTitle.Text = LocalizationManager.Get("Text.1744B96470B51BF30935");
 			// 
 			// lblPublicIP
 			// 
@@ -852,7 +852,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblPublicIP.Padding = new Padding(12, 0, 0, 0);
 			lblPublicIP.Size = new Size(362, 34);
 			lblPublicIP.TabIndex = 1;
-			lblPublicIP.Text = "Public IP: Fetching...";
+			lblPublicIP.Text = LocalizationManager.Get("Dashboard.Network.PublicFetching");
 			lblPublicIP.TextAlign = ContentAlignment.MiddleLeft;
 			lblPublicIP.Click += lblPublicIP_Click;
 			// 
@@ -868,7 +868,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblLocalIP1.Padding = new Padding(12, 0, 0, 0);
 			lblLocalIP1.Size = new Size(362, 34);
 			lblLocalIP1.TabIndex = 2;
-			lblLocalIP1.Text = "LAN IP: Fetching...";
+			lblLocalIP1.Text = LocalizationManager.Get("Dashboard.Network.LocalFetching");
 			lblLocalIP1.TextAlign = ContentAlignment.MiddleLeft;
 			lblLocalIP1.Click += lblLocalIP_Click;
 			// 
@@ -913,7 +913,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblSelectedGame.Name = "lblSelectedGame";
 			lblSelectedGame.Size = new Size(480, 22);
 			lblSelectedGame.TabIndex = 1;
-			lblSelectedGame.Text = "Select a game server";
+			lblSelectedGame.Text = LocalizationManager.Get("Text.00EF301D2AB0505FDDA2");
 			// 
 			// lblSelectedServerName
 			// 
@@ -925,7 +925,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblSelectedServerName.Name = "lblSelectedServerName";
 			lblSelectedServerName.Size = new Size(479, 18);
 			lblSelectedServerName.TabIndex = 2;
-			lblSelectedServerName.Text = "Choose a row to unlock server controls";
+			lblSelectedServerName.Text = LocalizationManager.Get("Text.B28F2358A90FE65BFCC8");
 			//
 			// btnReadiness
 			//
@@ -942,7 +942,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnReadiness.Size = new Size(114, 44);
 			btnReadiness.TabIndex = 3;
 			btnReadiness.TabStop = false;
-			btnReadiness.Text = "✓  Readiness";
+			btnReadiness.Text = LocalizationManager.Get("Text.32EFCD09F92A272905F1");
 			btnReadiness.UseMnemonic = false;
 			btnReadiness.UseVisualStyleBackColor = false;
 			btnReadiness.Click += btnReadiness_Click;
@@ -962,7 +962,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnServerOptions.Size = new Size(154, 44);
 			btnServerOptions.TabIndex = 4;
 			btnServerOptions.TabStop = false;
-			btnServerOptions.Text = "Server Options  ▴";
+			btnServerOptions.Text = LocalizationManager.Get("Text.A0F68054D6613673BCF5");
 			btnServerOptions.UseMnemonic = false;
 			btnServerOptions.UseVisualStyleBackColor = false;
 			btnServerOptions.Click += btnServerOptionsMenu_Click;
@@ -982,7 +982,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnConfigure.Size = new Size(124, 44);
 			btnConfigure.TabIndex = 5;
 			btnConfigure.TabStop = false;
-			btnConfigure.Text = "Configure";
+			btnConfigure.Text = LocalizationManager.Get("Text.6DEFAFA2CAA653041739");
 			btnConfigure.UseMnemonic = false;
 			btnConfigure.UseVisualStyleBackColor = false;
 			btnConfigure.Click += btnEdit_Click;
@@ -1002,7 +1002,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnStart.Size = new Size(116, 44);
 			btnStart.TabIndex = 6;
 			btnStart.TabStop = false;
-			btnStart.Text = "▶  Start";
+			btnStart.Text = LocalizationManager.Get("Text.0DF1F6C5210F85368B8A");
 			btnStart.UseMnemonic = false;
 			btnStart.UseVisualStyleBackColor = false;
 			btnStart.Click += btnStart_Click;
@@ -1022,7 +1022,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnRestart.Size = new Size(116, 44);
 			btnRestart.TabIndex = 7;
 			btnRestart.TabStop = false;
-			btnRestart.Text = "↻  Restart";
+			btnRestart.Text = LocalizationManager.Get("Text.1B1A4A3B36DFC22C1EE4");
 			btnRestart.UseMnemonic = false;
 			btnRestart.UseVisualStyleBackColor = false;
 			btnRestart.Click += btnRestart_Click;
@@ -1042,7 +1042,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnStop.Size = new Size(116, 44);
 			btnStop.TabIndex = 8;
 			btnStop.TabStop = false;
-			btnStop.Text = "■  Stop";
+			btnStop.Text = LocalizationManager.Get("Text.695155B305760B530D36");
 			btnStop.UseMnemonic = false;
 			btnStop.UseVisualStyleBackColor = false;
 			btnStop.Click += btnStop_Click;
@@ -1070,7 +1070,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblSteamStatus.Name = "lblSteamStatus";
 			lblSteamStatus.Size = new Size(117, 15);
 			lblSteamStatus.TabIndex = 0;
-			lblSteamStatus.Text = "●  SteamCMD ready";
+			lblSteamStatus.Text = LocalizationManager.Get("Text.427A3D1D34F4C09963DA");
 			// 
 			// lblUpdateStatus
 			// 
@@ -1083,7 +1083,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			lblUpdateStatus.Name = "lblUpdateStatus";
 			lblUpdateStatus.Size = new Size(450, 22);
 			lblUpdateStatus.TabIndex = 1;
-			lblUpdateStatus.Text = "Checking for updates...";
+			lblUpdateStatus.Text = LocalizationManager.Get("Text.8BCAEE3C780FC5A57E1C");
 			lblUpdateStatus.TextAlign = ContentAlignment.MiddleRight;
 			// 
 			// btnDownloadUpdate
@@ -1103,7 +1103,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnDownloadUpdate.Size = new Size(168, 26);
 			btnDownloadUpdate.TabIndex = 2;
 			btnDownloadUpdate.TabStop = false;
-			btnDownloadUpdate.Text = "Install Update";
+			btnDownloadUpdate.Text = LocalizationManager.Get("Updates.Button.Install");
 			btnDownloadUpdate.UseMnemonic = false;
 			btnDownloadUpdate.UseVisualStyleBackColor = false;
 			btnDownloadUpdate.Visible = false;
@@ -1119,7 +1119,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			deleteServerToolStripMenuItem.Name = "deleteServerToolStripMenuItem";
 			deleteServerToolStripMenuItem.Size = new Size(196, 22);
-			deleteServerToolStripMenuItem.Text = "Delete Server";
+			deleteServerToolStripMenuItem.Text = LocalizationManager.Get("Text.056E6A5F6594451E2753");
 			deleteServerToolStripMenuItem.Click += btnDelete_Click;
 			// 
 			// toolStripSeparator4
@@ -1131,28 +1131,28 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			openServerFolderToolStripMenuItem.Name = "openServerFolderToolStripMenuItem";
 			openServerFolderToolStripMenuItem.Size = new Size(196, 22);
-			openServerFolderToolStripMenuItem.Text = "Open Server Folder";
+			openServerFolderToolStripMenuItem.Text = LocalizationManager.Get("Text.DEF3278452C24C7A756A");
 			openServerFolderToolStripMenuItem.Click += btnOpenFolder_Click;
 			// 
 			// backupToolStripMenuItem
 			// 
 			backupToolStripMenuItem.Name = "backupToolStripMenuItem";
 			backupToolStripMenuItem.Size = new Size(196, 22);
-			backupToolStripMenuItem.Text = "Open Backup Folder";
+			backupToolStripMenuItem.Text = LocalizationManager.Get("Text.64159808F2A26715BA3E");
 			backupToolStripMenuItem.Click += btnOpenBackup_Click;
 			// 
 			// openServerConfigFileToolStripMenuItem
 			// 
 			openServerConfigFileToolStripMenuItem.Name = "openServerConfigFileToolStripMenuItem";
 			openServerConfigFileToolStripMenuItem.Size = new Size(196, 22);
-			openServerConfigFileToolStripMenuItem.Text = "Open Config Editor";
+			openServerConfigFileToolStripMenuItem.Text = LocalizationManager.Get("Text.A350826E531AABBD198C");
 			openServerConfigFileToolStripMenuItem.Click += btnOpenConfig_Click;
 			//
 			// openLatestGameLogToolStripMenuItem
 			//
 			openLatestGameLogToolStripMenuItem.Name = "openLatestGameLogToolStripMenuItem";
 			openLatestGameLogToolStripMenuItem.Size = new Size(196, 22);
-			openLatestGameLogToolStripMenuItem.Text = "Open Latest Game Log";
+			openLatestGameLogToolStripMenuItem.Text = LocalizationManager.Get("Text.C7ECF7D057EE7D3405E2");
 			openLatestGameLogToolStripMenuItem.Click += btnOpenLatestGameLog_Click;
 			// 
 			// toolStripSeparator5
@@ -1164,32 +1164,32 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			updateServerToolStripMenuItem.Name = "updateServerToolStripMenuItem";
 			updateServerToolStripMenuItem.Size = new Size(196, 22);
-			updateServerToolStripMenuItem.Text = "Update Server";
+			updateServerToolStripMenuItem.Text = LocalizationManager.Get("Text.D56284509EEB667D3032");
 			updateServerToolStripMenuItem.Click += btnUpdate_Click;
 			// 
 			// fileValidationToolStripMenuItem
 			// 
 			fileValidationToolStripMenuItem.Name = "fileValidationToolStripMenuItem";
 			fileValidationToolStripMenuItem.Size = new Size(196, 22);
-			fileValidationToolStripMenuItem.Text = "Validate Game Files";
+			fileValidationToolStripMenuItem.Text = LocalizationManager.Get("Text.730771C7CEF0FB9F5591");
 			fileValidationToolStripMenuItem.Click += btnFileValidation_Click;
 			// 
 			// btnExportBatch
 			// 
 			btnExportBatch.Name = "btnExportBatch";
 			btnExportBatch.Size = new Size(196, 22);
-			btnExportBatch.Text = "Create Batch File";
+			btnExportBatch.Text = LocalizationManager.Get("Text.E699C2B4C7E4FA83E8F1");
 			btnExportBatch.Click += btnExportBatch_Click;
 			// 
 			// backupServerToolStripMenuItem
 			// 
 			backupServerToolStripMenuItem.Name = "backupServerToolStripMenuItem";
 			backupServerToolStripMenuItem.Size = new Size(196, 22);
-			backupServerToolStripMenuItem.Text = "Backup Server";
+			backupServerToolStripMenuItem.Text = LocalizationManager.Get("Text.9FF20EBBA7CCB0CA561D");
 			backupServerToolStripMenuItem.Click += btnBackup_Click;
 			restoreServerBackupToolStripMenuItem.Name = "restoreServerBackupToolStripMenuItem";
 			restoreServerBackupToolStripMenuItem.Size = new Size(196, 22);
-			restoreServerBackupToolStripMenuItem.Text = "Restore Server Backup";
+			restoreServerBackupToolStripMenuItem.Text = LocalizationManager.Get("Text.49C15D2B9D9702D4FF44");
 			restoreServerBackupToolStripMenuItem.Visible = false;
 			restoreServerBackupToolStripMenuItem.Click += btnRestoreServerBackup_Click;
 			// 
@@ -1202,14 +1202,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			// 
 			connectionTestToolStripMenuItem.Name = "connectionTestToolStripMenuItem";
 			connectionTestToolStripMenuItem.Size = new Size(196, 22);
-			connectionTestToolStripMenuItem.Text = "Test WAN Connectivity";
+			connectionTestToolStripMenuItem.Text = LocalizationManager.Get("Text.A6C3462A3E2E155F2613");
 			connectionTestToolStripMenuItem.Click += btnPublicConnection_Click;
 			// 
 			// connectionLocalTestToolStripMenuItem
 			// 
 			connectionLocalTestToolStripMenuItem.Name = "connectionLocalTestToolStripMenuItem";
 			connectionLocalTestToolStripMenuItem.Size = new Size(196, 22);
-			connectionLocalTestToolStripMenuItem.Text = "Test LAN Connectivity";
+			connectionLocalTestToolStripMenuItem.Text = LocalizationManager.Get("Text.67907590F84228A78098");
 			connectionLocalTestToolStripMenuItem.Click += btnLocalConnection_Click;
 			// 
 			// openServerConfig
@@ -1247,7 +1247,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			MaximizeBox = false;
 			Name = "MainGUI";
 			StartPosition = FormStartPosition.CenterScreen;
-			Text = "Synix Control Panel";
+			Text = LocalizationManager.Get("Text.0245B987FC14009D721D");
 			FormClosing += MainForm_FormClosing;
 			Shown += MainGUI_Shown;
 			MouseDown += Form_Drag_MouseDown;

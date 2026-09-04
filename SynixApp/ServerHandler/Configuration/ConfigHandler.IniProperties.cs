@@ -28,11 +28,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			IReadOnlyDictionary<string, string> requiredValues)
 		{
 			if (!File.Exists(path))
-				throw new FileNotFoundException("The configuration file could not be found.", path);
+				throw new FileNotFoundException(LocalizationManager.Get(
+					"Configuration.Editor.Error.FileNotFound"), path);
 			if (string.IsNullOrWhiteSpace(tupleKey) ||
 				tupleKey.IndexOfAny(['=', '(', ')', '\r', '\n']) >= 0)
 			{
-				throw new InvalidDataException("The INI tuple key is invalid.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Configuration.Editor.Error.IniTupleKey"));
 			}
 
 			ConfigurationTextSnapshot snapshot = ConfigurationTextSnapshot.Read(path);
@@ -50,7 +52,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					key.IndexOfAny(['=', ',', '(', ')', '\r', '\n']) >= 0 ||
 					!IsSafeIniTupleValue(value))
 				{
-					throw new InvalidDataException("A requested INI tuple value is invalid.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Configuration.Editor.Error.IniTupleValue"));
 				}
 			}
 
@@ -60,7 +63,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				snapshot.Text.IndexOf(marker, markerIndex + marker.Length, StringComparison.Ordinal) >= 0)
 			{
 				throw new InvalidDataException(
-					$"The configuration must contain exactly one {tupleKey} tuple.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.IniTupleCount",
+						tupleKey));
 			}
 
 			int lineEnd = snapshot.Text.IndexOfAny(['\r', '\n'], markerIndex);
@@ -71,7 +76,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				lineEnd - 1,
 				lineEnd - markerIndex);
 			if (closingIndex < markerIndex + marker.Length)
-				throw new InvalidDataException($"The {tupleKey} tuple is incomplete.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Configuration.Editor.Error.IniTupleIncomplete",
+					tupleKey));
 
 			string separator = closingIndex > markerIndex + marker.Length ? "," : string.Empty;
 			string insertion = separator + string.Join(

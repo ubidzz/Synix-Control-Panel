@@ -52,7 +52,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (IsOfficialRelease)
 			{
 				throw new InvalidOperationException(
-					"Verification evidence can be exported only from a development build.");
+					LocalizationManager.Get("VerificationExport.DevelopmentOnly"));
 			}
 
 			return ExportGameVerificationToProject(
@@ -75,7 +75,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!File.Exists(projectFile))
 			{
 				throw new DirectoryNotFoundException(
-					"The selected folder does not contain Synix Control Panel.csproj.");
+					LocalizationManager.Get("VerificationExport.ProjectFileMissing"));
 			}
 
 			string definitionsDirectory = Path.GetFullPath(Path.Combine(
@@ -85,7 +85,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!Directory.Exists(definitionsDirectory))
 			{
 				throw new DirectoryNotFoundException(
-					"The project game-definition folder could not be found.");
+					LocalizationManager.Get("VerificationExport.DefinitionFolderMissing"));
 			}
 
 			string destination = Path.GetFullPath(Path.Combine(
@@ -96,7 +96,7 @@ namespace Synix_Control_Panel.SynixEngine
 				StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidOperationException(
-					"The verification export path escaped the project game-definition folder.");
+					LocalizationManager.Get("VerificationExport.PathOutsideProject"));
 			}
 
 			GameCompatibilityVerification[] records =
@@ -153,19 +153,22 @@ namespace Synix_Control_Panel.SynixEngine
 
 				using Stream stream = assembly.GetManifestResourceStream(resourceName) ??
 					throw new InvalidDataException(
-						"The embedded game-verification resource could not be opened.");
+						LocalizationManager.Get("VerificationExport.ResourceOpenFailed"));
 				if (stream.Length > 1024 * 1024)
-					throw new InvalidDataException("The game-verification resource is too large.");
+					throw new InvalidDataException(
+						LocalizationManager.Get("VerificationExport.ResourceTooLarge"));
 				using StreamReader reader = new(stream);
 				GameVerificationProjectDocument document =
 					JsonSerializer.Deserialize<GameVerificationProjectDocument>(
 						reader.ReadToEnd(),
 						_projectVerificationJsonOptions) ??
 					throw new InvalidDataException(
-						"The embedded game-verification resource is empty.");
+						LocalizationManager.Get("VerificationExport.ResourceEmpty"));
 				if (document.SchemaVersion != 1)
 					throw new InvalidDataException(
-						$"Unsupported game-verification schema {document.SchemaVersion}.");
+						LocalizationManager.Get(
+							"VerificationExport.SchemaUnsupported",
+							document.SchemaVersion));
 
 				Dictionary<string, GameCompatibilityVerification> records =
 					new(StringComparer.OrdinalIgnoreCase);
@@ -176,7 +179,9 @@ namespace Synix_Control_Panel.SynixEngine
 						continue;
 					if (!records.TryAdd(canonicalGame, record))
 						throw new InvalidDataException(
-							$"Duplicate project verification record for {canonicalGame}.");
+							LocalizationManager.Get(
+								"VerificationExport.DuplicateRecord",
+								canonicalGame));
 					record.Game = canonicalGame;
 				}
 				return records;

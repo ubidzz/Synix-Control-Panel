@@ -21,7 +21,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public ServerSettingsNetworkPage()
 		{
 			InitializeComponent();
-			chkEnableRcon.Tag = "RCON";
+			LocalizationManager.BindAccessibleName(
+				chkEnableRcon,
+				"ServerSetup.Network.RconToggle.AccessibleName");
 			numPort.TextChanged += GamePortTextChanged;
 			numPort.ValueChanged += SettingsControlChanged;
 			numQueryPort.ValueChanged += SettingsControlChanged;
@@ -109,32 +111,25 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 			bool Supports(GameManagementCapability capability) =>
 				(capabilities & capability) != 0;
-			numPort.Tag = Supports(GameManagementCapability.Port)
-				? "Required"
-				: "Disabled";
-			numQueryPort.Tag = Supports(GameManagementCapability.QueryPort)
-				? "Required"
-				: "Disabled";
-			numAppPort.Tag = Supports(GameManagementCapability.AppPort)
-				? "Required"
-				: "Disabled";
-			chkEnableRcon.Tag = Supports(GameManagementCapability.Rcon)
-				? "Required"
-				: "Disabled";
-			QueryPortLabel.Text = isMinecraftBedrock ? "IPv6 Port" : "Query Port";
+			numPort.Tag = Supports(GameManagementCapability.Port);
+			numQueryPort.Tag = Supports(GameManagementCapability.QueryPort);
+			numAppPort.Tag = Supports(GameManagementCapability.AppPort);
+			chkEnableRcon.Tag = Supports(GameManagementCapability.Rcon);
+			LocalizationManager.BindText(
+				QueryPortLabel,
+				isMinecraftBedrock
+					? "ServerSetup.Port.Ipv6"
+					: "ServerSetup.Port.Query");
 			if (isMinecraftBedrock)
 				chkEnableRcon.Checked = false;
 		}
 
 		public void ApplyAvailability(bool hasGame)
 		{
-			numPort.Enabled = hasGame && numPort.Tag?.ToString() == "Required";
-			numQueryPort.Enabled = hasGame &&
-				numQueryPort.Tag?.ToString() == "Required";
-			numAppPort.Enabled = hasGame &&
-				numAppPort.Tag?.ToString() == "Required";
-			chkEnableRcon.Enabled = hasGame &&
-				chkEnableRcon.Tag?.ToString() == "Required";
+			numPort.Enabled = hasGame && numPort.Tag is true;
+			numQueryPort.Enabled = hasGame && numQueryPort.Tag is true;
+			numAppPort.Enabled = hasGame && numAppPort.Tag is true;
+			chkEnableRcon.Enabled = hasGame && chkEnableRcon.Tag is true;
 			bool rconActive = chkEnableRcon.Enabled && chkEnableRcon.Checked;
 			numRconPort.Enabled = rconActive;
 			txtRconPassword.Enabled = rconActive;
@@ -183,7 +178,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		public void ApplyMinecraftEditionDefaults(bool bedrock)
 		{
-			QueryPortLabel.Text = bedrock ? "IPv6 Port" : "Query Port";
+			LocalizationManager.BindText(
+				QueryPortLabel,
+				bedrock
+					? "ServerSetup.Port.Ipv6"
+					: "ServerSetup.Port.Query");
 			if (_editMode)
 				return;
 
@@ -217,21 +216,33 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public PortValidationResult ValidatePorts(GameServer? existingServer)
 		{
 			List<(int Port, string Name)> selectedPorts = [];
-			if (GamePortEnabled) selectedPorts.Add((GamePort, "Game Port"));
-			if (QueryPortEnabled) selectedPorts.Add((QueryPort, "Query Port"));
-			if (RconEnabled) selectedPorts.Add((RconPort, "RCON Port"));
+			if (GamePortEnabled)
+				selectedPorts.Add((GamePort,
+					LocalizationManager.Get("ServerSetup.Port.Game")));
+			if (QueryPortEnabled)
+				selectedPorts.Add((QueryPort,
+					LocalizationManager.Get("ServerSetup.Port.Query")));
+			if (RconEnabled)
+				selectedPorts.Add((RconPort,
+					LocalizationManager.Get("ServerSetup.Port.Rcon")));
 			if (AppPortEnabled && AppPort.HasValue)
-				selectedPorts.Add((AppPort.Value, "App Port"));
+				selectedPorts.Add((AppPort.Value,
+					LocalizationManager.Get("ServerSetup.Port.App")));
 
 			IGrouping<int, (int Port, string Name)>? duplicate = selectedPorts
 				.GroupBy(port => port.Port)
 				.FirstOrDefault(group => group.Count() > 1);
 			if (duplicate != null)
 			{
-				string roles = string.Join(" and ", duplicate.Select(port => port.Name));
+				string roles = string.Join(
+					LocalizationManager.Get("ServerSetup.List.AndSeparator"),
+					duplicate.Select(port => port.Name));
 				return new PortValidationResult(
 					true,
-					$"  ⚠️ [CONFLICT] {roles} cannot both use port {duplicate.Key}.");
+					LocalizationManager.Get(
+						"ServerSetup.Validation.DuplicatePort",
+						roles,
+						duplicate.Key));
 			}
 
 			foreach ((int port, string name) in selectedPorts)
@@ -245,7 +256,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 				return new PortValidationResult(
 					true,
-					$"  ⚠️ [CONFLICT] {name} {port} is blocked by: {owner ?? "System Process"}");
+					LocalizationManager.Get(
+						"ServerSetup.Validation.PortBlocked",
+						name,
+						port,
+						owner ?? LocalizationManager.Get(
+							"ServerSetup.Port.SystemProcess")));
 			}
 
 			return new PortValidationResult(false, string.Empty);

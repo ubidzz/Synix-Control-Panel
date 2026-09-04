@@ -23,9 +23,15 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public ServerSettingsAutomationPage()
 		{
 			InitializeComponent();
-			chkEnableSchedule.Tag = "Activate Scheduler";
-			chkUpdateOnStart.Tag = "Update on Start";
-			chkBackupOnStart.Tag = "Backup on Start";
+			LocalizationManager.BindAccessibleName(
+				chkEnableSchedule,
+				"ServerSetup.Automation.EnableSchedule.AccessibleName");
+			LocalizationManager.BindAccessibleName(
+				chkUpdateOnStart,
+				"ServerSetup.Automation.UpdateOnStart.AccessibleName");
+			LocalizationManager.BindAccessibleName(
+				chkBackupOnStart,
+				"ServerSetup.Automation.BackupOnStart.AccessibleName");
 			chkUpdateOnStart.CheckedChanged += SettingsControlChanged;
 			chkBackupOnStart.CheckedChanged += SettingsControlChanged;
 			chkEnableSchedule.CheckedChanged += ScheduleEnabledChanged;

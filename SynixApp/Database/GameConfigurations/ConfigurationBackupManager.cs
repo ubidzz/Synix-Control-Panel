@@ -131,11 +131,15 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				out SnapshotManifest? manifest) ||
 				snapshotDirectory == null || manifest == null)
 			{
-				return new(false, 0, "No previous managed-configuration backup is available.");
+				return new(false, 0, LocalizationManager.Get(
+					"Configuration.Backup.NoneAvailable"));
 			}
 
 			string installRoot = GetInstallRoot(server);
-			_ = CreateSnapshot(server, definition, "Before restoring a previous configuration");
+			_ = CreateSnapshot(
+				server,
+				definition,
+				LocalizationManager.Get("Configuration.Backup.BeforeRestore"));
 			List<(string Target, string Staged, string? Rollback, bool Existed)> files = [];
 			List<(string Target, string? Rollback, bool Existed)> replaced = [];
 
@@ -152,8 +156,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 							entry.Sha256,
 							StringComparison.OrdinalIgnoreCase))
 					{
-						throw new InvalidDataException(
-							$"Backup verification failed for {entry.RelativePath}.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"Configuration.Backup.VerificationFailed",
+							entry.RelativePath));
 					}
 
 					string target = ResolveInside(installRoot, entry.RelativePath);
@@ -184,7 +189,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				return new(
 					true,
 					files.Count,
-					$"Restored {files.Count} configuration file(s) from the {manifest.CreatedAtUtc.LocalDateTime:g} backup.");
+					LocalizationManager.Get(
+						"Configuration.Backup.Restored",
+						files.Count,
+						manifest.CreatedAtUtc.LocalDateTime));
 			}
 			catch (Exception exception)
 			{
@@ -202,7 +210,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
-				return new(false, 0, $"The backup could not be restored. Existing files were rolled back when possible. {exception.Message}");
+				return new(false, 0, LocalizationManager.Get(
+					"Configuration.Backup.RestoreFailed",
+					exception.Message));
 			}
 			finally
 			{
@@ -234,8 +244,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			{
 				backupRoot = GetBackupRoot(GetInstallRoot(server));
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				return false;
 			}
 			if (!Directory.Exists(backupRoot))
@@ -248,8 +259,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					.Select(path => GetSafeRelativePath(GetInstallRoot(server), path).Replace('\\', '/'))
 					.ToHashSet(StringComparer.OrdinalIgnoreCase);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				return false;
 			}
 
@@ -273,6 +285,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				}
 				catch (Exception exception) when (exception is IOException or JsonException or UnauthorizedAccessException)
 				{
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(exception);
 				}
 			}
 			return false;
@@ -281,7 +294,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		private static string GetInstallRoot(GameServer server)
 		{
 			if (string.IsNullOrWhiteSpace(server.InstallPath))
-				throw new InvalidOperationException("The server installation path is missing.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Configuration.Error.InstallPathMissing"));
 			return Path.GetFullPath(server.InstallPath)
 				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 		}
@@ -295,7 +309,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (!fullPath.StartsWith(
 				root + Path.DirectorySeparatorChar,
 				StringComparison.OrdinalIgnoreCase))
-				throw new InvalidDataException("A managed configuration path leaves the server installation folder.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Configuration.Error.ManagedPathOutsideServer"));
 			return Path.GetRelativePath(root, fullPath);
 		}
 
@@ -309,7 +324,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (!path.StartsWith(
 				fullRoot + Path.DirectorySeparatorChar,
 				StringComparison.OrdinalIgnoreCase))
-				throw new InvalidDataException("A backup entry attempted to leave its allowed folder.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Configuration.Error.BackupPathOutsideFolder"));
 			return path;
 		}
 
@@ -339,6 +355,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			}
 			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(exception);
 			}
 		}
 
@@ -351,6 +368,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			}
 			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(exception);
 			}
 		}
 	}

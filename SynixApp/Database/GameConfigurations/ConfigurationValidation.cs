@@ -58,35 +58,56 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public string ToPlainText()
 		{
 			StringBuilder report = new();
-			report.AppendLine("SYNIX CONFIGURATION APPLICATION REPORT");
+			report.AppendLine(LocalizationManager.Get(
+				"Configuration.Report.Title"));
 			report.AppendLine();
-			report.AppendLine($"Game: {GameName}");
-			report.AppendLine($"Result: {(IsCurrent ? "CURRENT" : "ATTENTION NEEDED")}");
-			report.AppendLine(
-				$"Passed: {PassedCount}  Warnings: {WarningCount}  Failed: {FailedCount}");
-			report.AppendLine(
-				$"Template revision: saved {SavedRevision}, current {CurrentRevision}");
-			report.AppendLine(
-				$"Fix Config: {(FixConfigAvailable ? "Available while the server is stopped" : "Not available for this game")}");
+			report.AppendLine(LocalizationManager.Get(
+				"Configuration.Report.Game",
+				GameName));
+			report.AppendLine(LocalizationManager.Get(
+				"Configuration.Report.Result",
+				LocalizationManager.Get(IsCurrent
+					? "Configuration.Report.Result.Current"
+					: "Configuration.Report.Result.Attention")));
+			report.AppendLine(LocalizationManager.Get(
+				"Configuration.Report.Counts",
+				PassedCount,
+				WarningCount,
+				FailedCount));
+			report.AppendLine(LocalizationManager.Get(
+				"Configuration.Report.TemplateRevision",
+				SavedRevision,
+				CurrentRevision));
+			report.AppendLine(LocalizationManager.Get(
+				"Configuration.Report.FixConfig",
+				LocalizationManager.Get(FixConfigAvailable
+					? "Configuration.Report.FixConfig.Available"
+					: "Configuration.Report.FixConfig.Unavailable")));
 			report.AppendLine();
 
 			foreach (ConfigurationValidationItem item in Items)
 			{
-				string state = item.State switch
+				string state = LocalizationManager.Get(item.State switch
 				{
-					ConfigurationValidationState.Passed => "PASS",
-					ConfigurationValidationState.Warning => "WARNING",
-					_ => "FAIL"
-				};
-				report.AppendLine($"[{state}] {item.Setting}");
-				report.AppendLine(item.Message);
+					ConfigurationValidationState.Passed =>
+						"Configuration.Report.State.Pass",
+					ConfigurationValidationState.Warning =>
+						"Configuration.Report.State.Warning",
+					_ => "Configuration.Report.State.Fail"
+				});
+				report.AppendLine(LocalizationManager.Get(
+					"Configuration.Report.Item",
+					state,
+					LocalizationManager.TranslateKnownText(item.Setting)));
+				report.AppendLine(LocalizationManager.TranslateRuntimeText(
+					item.Message));
 			}
 
 			if (FixConfigAvailable)
 			{
 				report.AppendLine();
-				report.AppendLine(
-					"Fix Config rebuilds the complete file from the trusted Synix template, reapplies the saved server values, and preserves a backup. Other custom values can be removed by a full reset.");
+				report.AppendLine(LocalizationManager.Get(
+					"Configuration.Report.FixConfig.Footer"));
 			}
 
 			return report.ToString().TrimEnd();

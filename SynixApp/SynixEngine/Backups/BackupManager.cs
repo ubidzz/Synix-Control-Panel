@@ -39,9 +39,11 @@ namespace Synix_Control_Panel.SynixEngine
 		public DateTime? LastVerifiedLocal => LastVerifiedUtc?.ToLocalTime();
 		public string IntegrityText => Integrity switch
 		{
-			ServerBackupIntegrity.Recorded => "SHA-256 receipt",
-			ServerBackupIntegrity.Legacy => "Legacy backup",
-			_ => "Invalid receipt"
+			ServerBackupIntegrity.Recorded => LocalizationManager.Get(
+				"Backup.Integrity.Receipt"),
+			ServerBackupIntegrity.Legacy => LocalizationManager.Get(
+				"Backup.Integrity.Legacy"),
+			_ => LocalizationManager.Get("Backup.Integrity.Invalid")
 		};
 	}
 
@@ -88,18 +90,18 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Backup);
 			if (!operation.Acquired)
 			{
-				Log($"[BACKUP BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				LogLocalized("Backup.Activity.Blocked", Color.Orange, true, operation.FailureReason);
 				return;
 			}
 
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
-				Log($"[🚨 ERROR] {server.ServerName} must be Stopped to perform a backup.", Color.Orange);
+				LogLocalized("Backup.Activity.StopRequired", Color.Orange, false, server.ServerName);
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.BackupFailed,
-					"BACKUP BLOCKED",
-					"The server must be stopped before a backup can begin.",
+					LocalizationManager.Get("Backup.Notification.Blocked.Title"),
+					LocalizationManager.Get("Backup.Notification.Blocked.Body"),
 					Color.Orange);
 				return;
 			}
@@ -107,38 +109,46 @@ namespace Synix_Control_Panel.SynixEngine
 			ServerBackupPreflight preflight = await CreateServerBackupPreflightAsync(server);
 			if (!preflight.Succeeded)
 			{
-				Log($"[🚨 BACKUP ERROR] {preflight.Message}", Color.Red, true);
+				LogLocalized("Backup.Activity.Error", Color.Red, true, preflight.Message);
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.BackupFailed,
-					"BACKUP FAILED",
+					LocalizationManager.Get("Backup.Notification.Failed.Title"),
 					preflight.Message,
 					Color.Red);
 				return;
 			}
 			if (!preflight.HasEnoughSpace)
 			{
-				Log(
-					$"[🚨 BACKUP ERROR] The backup drive needs up to {FormatBytes(preflight.RequiredBytes)} free, but only {FormatBytes(preflight.AvailableBytes)} is available.",
+				LogLocalized(
+					"Backup.Activity.SpaceInsufficient",
 					Color.Red,
-					true);
+					true,
+					FormatBytes(preflight.RequiredBytes),
+					FormatBytes(preflight.AvailableBytes));
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.BackupFailed,
-					"BACKUP FAILED",
-					$"Not enough free space. Up to {FormatBytes(preflight.RequiredBytes)} is needed, but {FormatBytes(preflight.AvailableBytes)} is available.",
+					LocalizationManager.Get("Backup.Notification.Failed.Title"),
+					LocalizationManager.Get(
+						"Backup.Notification.SpaceInsufficient.Body",
+						FormatBytes(preflight.RequiredBytes),
+						FormatBytes(preflight.AvailableBytes)),
 					Color.Red);
 				return;
 			}
 
-			Log("[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+			LogLocalized("SteamCmd.Activity.CloseDisabled", Color.Orange, true);
 			isDownloadActive = true;
-			Log($"[💾 BACKUP] Starting backup compression for {server.ServerName}...", Color.Cyan);
+			LogLocalized("Backup.Activity.Starting", Color.Cyan, false, server.ServerName);
 			_ = SendDiscordNotification(
 				server,
 				DiscordNotificationEvent.BackupStarted,
-				"BACKUP STARTED",
-				$"Synix is backing up {FormatBytes(preflight.SourceBytes)} across {preflight.FileCount:N0} files.",
+				LocalizationManager.Get("Backup.Notification.Started.Title"),
+				LocalizationManager.Get(
+					"Backup.Notification.Started.Body",
+					FormatBytes(preflight.SourceBytes),
+					preflight.FileCount),
 				Color.Cyan);
 
 			server.Status = StatusManager.GetStatus(ServerState.BackingUp);
@@ -163,9 +173,12 @@ namespace Synix_Control_Panel.SynixEngine
 					CleanupIncompleteBackupFiles(backupRoot);
 
 					if (!Directory.Exists(sourceDir))
-						throw new DirectoryNotFoundException($"The server folder does not exist: {sourceDir}");
+						throw new DirectoryNotFoundException(LocalizationManager.Get(
+							"Backup.Error.ServerFolderMissing",
+							sourceDir));
 					if (IsSameOrDescendantPath(zipPath, sourceDir))
-						throw new InvalidOperationException("The backup folder cannot be stored inside the server installation folder.");
+						throw new InvalidOperationException(LocalizationManager.Get(
+							"Backup.Error.FolderInsideServer"));
 
 					ZipFile.CreateFromDirectory(
 						sourceDirectoryName: sourceDir,
@@ -198,14 +211,14 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 				});
 
-				Log($"[💾 BACKUP] SHA-256 integrity receipt created for {Path.GetFileName(zipPath)}.", Color.LimeGreen);
-				Log($"[💾 BACKUP] Backup location: {zipPath}.", Color.LimeGreen);
-				Log($"[💾 BACKUP] Finished backing up {server.ServerName}.", Color.LimeGreen);
+				LogLocalized("Backup.Activity.ReceiptCreated", Color.LimeGreen, false, Path.GetFileName(zipPath));
+				LogLocalized("Backup.Activity.Location", Color.LimeGreen, false, zipPath);
+				LogLocalized("Backup.Activity.Finished", Color.LimeGreen, false, server.ServerName);
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.BackupCompleted,
-					"BACKUP COMPLETED",
-					$"Created {Path.GetFileName(zipPath)} with a SHA-256 integrity receipt.",
+					LocalizationManager.Get("Backup.Notification.Completed.Title"),
+					LocalizationManager.Get("Backup.Notification.Completed.Body", Path.GetFileName(zipPath)),
 					Color.LimeGreen);
 			}
 			catch (Exception exception)
@@ -216,11 +229,11 @@ namespace Synix_Control_Panel.SynixEngine
 					TryDeleteBackupRestoreFile(zipPath);
 				if (receiptPublished)
 					TryDeleteBackupRestoreFile(receiptPath);
-				Log($"[🚨 BACKUP ERROR] {exception.Message}", Color.Red, true);
+				LogLocalized("Backup.Activity.Error", Color.Red, true, exception.Message);
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.BackupFailed,
-					"BACKUP FAILED",
+					LocalizationManager.Get("Backup.Notification.Failed.Title"),
 					exception.Message,
 					Color.Red);
 			}
@@ -228,7 +241,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				server.Status = StatusManager.GetStatus(ServerState.Stopped);
 				isDownloadActive = false;
-				Log("[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				LogLocalized("SteamCmd.Activity.CloseEnabled", Color.Orange, true);
 				UpdateGridStatus();
 			}
 		}
@@ -252,7 +265,9 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					return new ServerBackupPreflight(
 						false,
-						$"The server folder does not exist: {sourcePath}",
+						LocalizationManager.Get(
+							"Backup.Error.ServerFolderMissing",
+							sourcePath),
 						backupFolder,
 						0,
 						0,
@@ -263,7 +278,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					return new ServerBackupPreflight(
 						false,
-						"The backup folder cannot be stored inside the server installation folder.",
+						LocalizationManager.Get("Backup.Error.FolderInsideServer"),
 						backupFolder,
 						0,
 						0,
@@ -286,7 +301,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					return new ServerBackupPreflight(
 						false,
-						"The server folder contains no files to back up.",
+						LocalizationManager.Get("Backup.Error.NoFiles"),
 						backupFolder,
 						0,
 						0,
@@ -315,7 +330,9 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return new ServerBackupPreflight(
 					false,
-					$"Synix could not measure the server backup: {exception.Message}",
+					LocalizationManager.Get(
+						"Backup.Error.MeasureFailed",
+						exception.Message),
 					string.Empty,
 					0,
 					0,
@@ -441,13 +458,13 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return new ServerBackupManagementResult(
 					false,
-					"The selected backup is missing or is not stored in this server's backup folder.");
+					LocalizationManager.Get("Backup.Error.UnknownBackup"));
 			}
 			if (backup.Integrity == ServerBackupIntegrity.Invalid)
 			{
 				return new ServerBackupManagementResult(
 					false,
-					"The selected backup has an invalid integrity receipt. Synix will not replace that receipt or trust the archive.");
+					LocalizationManager.Get("Backup.Error.InvalidReceiptUntrusted"));
 			}
 
 			try
@@ -472,7 +489,7 @@ namespace Synix_Control_Panel.SynixEngine
 				});
 				return new ServerBackupManagementResult(
 					true,
-					"The backup archive, safe paths, and SHA-256 integrity check passed.");
+					LocalizationManager.Get("Backup.Verification.Passed"));
 			}
 			catch (Exception exception)
 			{
@@ -494,21 +511,25 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return new ServerBackupManagementResult(
 					false,
-					"The selected backup is missing or is not stored in this server's backup folder.");
+					LocalizationManager.Get("Backup.Error.UnknownBackup"));
 			}
 
 			try
 			{
 				File.Delete(backup.ArchivePath);
 				TryDeleteBackupRestoreFile(GetBackupReceiptPath(backup.ArchivePath));
-				return new ServerBackupManagementResult(true, "The selected backup was deleted.");
+				return new ServerBackupManagementResult(
+					true,
+					LocalizationManager.Get("Backup.Delete.Succeeded"));
 			}
 			catch (Exception exception) when (exception is IOException or
 				UnauthorizedAccessException)
 			{
 				return new ServerBackupManagementResult(
 					false,
-					$"Synix could not delete the selected backup: {exception.Message}");
+					LocalizationManager.Get(
+						"Backup.Delete.Failed",
+						exception.Message));
 			}
 		}
 
@@ -538,7 +559,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return new ServerBackupRestoreResult(
 					false,
-					"Stop the server before restoring a backup.");
+					LocalizationManager.Get("Backup.Restore.StopServer"));
 			}
 
 			string selectedPath = Path.GetFullPath(backup.ArchivePath);
@@ -546,50 +567,50 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				return new ServerBackupRestoreResult(
 					false,
-					"The selected backup is missing or is not stored in this server's backup folder.");
+					LocalizationManager.Get("Backup.Error.UnknownBackup"));
 			}
 
 			isDownloadActive = true;
 			server.Status = StatusManager.GetStatus(ServerState.Restoring);
 			UpdateGridStatus();
-			Log("[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
-			Log($"[♻ RESTORE] Preparing {backup.FileName} for {server.ServerName}...", Color.Cyan, true);
+			LogLocalized("SteamCmd.Activity.CloseDisabled", Color.Orange, true);
+			LogLocalized("Backup.Restore.Activity.Preparing", Color.Cyan, true, backup.FileName, server.ServerName);
 			_ = SendDiscordNotification(
 				server,
 				DiscordNotificationEvent.RestoreStarted,
-				"RESTORE STARTED",
-				$"Synix is restoring {backup.FileName}.",
+				LocalizationManager.Get("Backup.Restore.Notification.Started.Title"),
+				LocalizationManager.Get("Backup.Restore.Notification.Started.Body", backup.FileName),
 				Color.Cyan);
 
 			try
 			{
 				ServerBackupRestoreResult result = await Task.Run(() =>
 					RestoreServerBackup(server, backup, progress));
-				Log(
-					result.Succeeded
-						? $"[♻ RESTORE] {server.ServerName} was restored from {backup.FileName}."
-						: $"[🚨 RESTORE ERROR] {result.Message}",
-					result.Succeeded ? Color.LimeGreen : Color.Red,
-					true);
+				if (result.Succeeded)
+					LogLocalized("Backup.Restore.Activity.Succeeded", Color.LimeGreen, true, server.ServerName, backup.FileName);
+				else
+					LogLocalized("Backup.Restore.Activity.Failed", Color.Red, true, result.Message);
 				_ = SendDiscordNotification(
 					server,
 					result.Succeeded
 						? DiscordNotificationEvent.RestoreCompleted
 						: DiscordNotificationEvent.RestoreFailed,
-					result.Succeeded ? "RESTORE COMPLETED" : "RESTORE FAILED",
+					LocalizationManager.Get(result.Succeeded
+						? "Backup.Restore.Notification.Completed.Title"
+						: "Backup.Restore.Notification.Failed.Title"),
 					result.Succeeded
-						? $"Restored {backup.FileName} successfully."
+						? LocalizationManager.Get("Backup.Restore.Notification.Completed.Body", backup.FileName)
 						: result.Message,
 					result.Succeeded ? Color.LimeGreen : Color.Red);
 				return result;
 			}
 			catch (Exception exception)
 			{
-				Log($"[🚨 RESTORE ERROR] {exception.Message}", Color.Red, true);
+				LogLocalized("Backup.Restore.Activity.Failed", Color.Red, true, exception.Message);
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.RestoreFailed,
-					"RESTORE FAILED",
+					LocalizationManager.Get("Backup.Restore.Notification.Failed.Title"),
 					exception.Message,
 					Color.Red);
 				return new ServerBackupRestoreResult(false, exception.Message);
@@ -598,7 +619,7 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				server.Status = StatusManager.GetStatus(ServerState.Stopped);
 				isDownloadActive = false;
-				Log("[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				LogLocalized("SteamCmd.Activity.CloseEnabled", Color.Orange, true);
 				UpdateGridStatus();
 			}
 		}
@@ -616,7 +637,8 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				RestoreJournal journal = JsonSerializer.Deserialize<RestoreJournal>(
 					File.ReadAllText(journalPath)) ??
-					throw new InvalidDataException("A server restore recovery record is empty.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.RecoveryRecordEmpty"));
 
 				ValidateRestoreJournal(journal);
 				bool restoreWasActivated = string.Equals(
@@ -638,7 +660,8 @@ namespace Synix_Control_Panel.SynixEngine
 				else if (!Directory.Exists(journal.InstallPath) &&
 					!string.Equals(journal.Phase, "Prepared", StringComparison.Ordinal))
 				{
-					throw new IOException("An interrupted server restore is missing both its active and rollback folders.");
+					throw new IOException(LocalizationManager.Get(
+						"Backup.Error.RecoveryFoldersMissing"));
 				}
 
 				if (Directory.Exists(journal.OperationRoot))
@@ -656,8 +679,9 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			string installPath = ValidateInstallPath(server.InstallPath);
 			if (IsSameOrDescendantPath(backup.ArchivePath, installPath))
-				throw new InvalidOperationException("A backup stored inside the server folder cannot be restored safely. Move the backup folder outside the server installation first.");
-			progress?.Report("Verifying the selected backup...");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Backup.Error.ArchiveInsideServer"));
+			progress?.Report(LocalizationManager.Get("Backup.Progress.Verifying"));
 			VerifyBackupIntegrity(backup.ArchivePath);
 			string parentPath = Path.GetDirectoryName(installPath)!;
 			Directory.CreateDirectory(parentPath);
@@ -676,7 +700,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				Directory.CreateDirectory(extractionRoot);
-				progress?.Report("Checking the selected backup...");
+				progress?.Report(LocalizationManager.Get("Backup.Progress.Checking"));
 				restoredBytes = ExtractBackupSafely(
 					backup.ArchivePath,
 					extractionRoot,
@@ -703,7 +727,7 @@ namespace Synix_Control_Panel.SynixEngine
 			bool originalMoved = false;
 			try
 			{
-				progress?.Report("Preserving the current server files...");
+				progress?.Report(LocalizationManager.Get("Backup.Progress.Preserving"));
 				if (Directory.Exists(installPath))
 				{
 					Directory.Move(installPath, rollbackPath);
@@ -712,7 +736,7 @@ namespace Synix_Control_Panel.SynixEngine
 					WriteRestoreJournal(journalPath, journal);
 				}
 
-				progress?.Report("Activating the selected backup...");
+				progress?.Report(LocalizationManager.Get("Backup.Progress.Activating"));
 				journal.Phase = "Activating";
 				WriteRestoreJournal(journalPath, journal);
 				Directory.Move(preparedRoot, installPath);
@@ -755,12 +779,12 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				throw new AggregateException(
-					"The restore failed and Synix could not automatically return the previous server folder. Restart Synix so recovery can try again.",
+					LocalizationManager.Get("Backup.Error.AutomaticRollbackFailed"),
 					activationException,
 					rollbackException);
 			}
 
-			progress?.Report("Cleaning up the previous server files...");
+			progress?.Report(LocalizationManager.Get("Backup.Progress.Cleaning"));
 			bool cleanupComplete = true;
 			try
 			{
@@ -775,12 +799,12 @@ namespace Synix_Control_Panel.SynixEngine
 				cleanupComplete = false;
 			}
 
-			progress?.Report("Restore complete.");
+			progress?.Report(LocalizationManager.Get("Backup.Progress.Complete"));
 			return new ServerBackupRestoreResult(
 				true,
-				cleanupComplete
-					? "The selected backup was restored successfully."
-					: "The backup was restored, but temporary cleanup will finish the next time Synix starts.",
+				LocalizationManager.Get(cleanupComplete
+					? "Backup.Restore.Succeeded"
+					: "Backup.Restore.CleanupPending"),
 				restoredBytes);
 		}
 
@@ -792,13 +816,15 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			using ZipArchive archive = ZipFile.OpenRead(archivePath);
 			if (archive.Entries.Count == 0)
-				throw new InvalidDataException("The selected backup is empty.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Backup.Error.Empty"));
 
 			long totalBytes = 0;
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
 				if (IsSymbolicLink(entry))
-					throw new InvalidDataException("The backup contains an unsupported symbolic link.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.SymbolicLink"));
 				totalBytes = checked(totalBytes + entry.Length);
 			}
 
@@ -813,13 +839,16 @@ namespace Synix_Control_Panel.SynixEngine
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
 				if (Path.IsPathRooted(entry.FullName))
-					throw new InvalidDataException("The backup contains an unsafe absolute path.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.AbsolutePath"));
 				if (entry.FullName.Split('/', '\\').Any(segment => segment.Contains(':')))
-					throw new InvalidDataException("The backup contains an unsupported alternate file stream path.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.AlternateStream"));
 
 				string destinationPath = Path.GetFullPath(Path.Combine(extractionRoot, entry.FullName));
 				if (!destinationPath.StartsWith(safeRoot, StringComparison.OrdinalIgnoreCase))
-					throw new InvalidDataException("The backup contains an unsafe path.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.UnsafePath"));
 
 				if (string.IsNullOrEmpty(entry.Name))
 				{
@@ -840,11 +869,15 @@ namespace Synix_Control_Panel.SynixEngine
 				File.SetLastWriteTime(destinationPath, entry.LastWriteTime.LocalDateTime);
 				copiedBytes = checked(copiedBytes + entry.Length);
 				copiedFiles++;
-				progress?.Report($"Unpacking backup file {copiedFiles} of {Math.Max(1, totalFiles)}...");
+				progress?.Report(LocalizationManager.Get(
+					"Backup.Progress.Unpacking",
+					copiedFiles,
+					Math.Max(1, totalFiles)));
 			}
 
 			if (copiedFiles == 0)
-				throw new InvalidDataException("The selected backup contains no server files.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Backup.Error.NoServerFiles"));
 			return copiedBytes;
 		}
 
@@ -915,7 +948,7 @@ namespace Synix_Control_Panel.SynixEngine
 				out BackupReceipt? receipt) || receipt == null)
 			{
 				throw new InvalidDataException(
-					"The selected backup has an invalid SHA-256 integrity receipt.");
+					LocalizationManager.Get("Backup.Error.InvalidHashReceipt"));
 			}
 
 			string actualHash = ComputeFileSha256(archivePath);
@@ -941,7 +974,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!CryptographicOperations.FixedTimeEquals(expectedBytes, actualBytes))
 			{
 				throw new InvalidDataException(
-					"The selected backup failed its SHA-256 integrity check. The archive may be damaged or may have changed after Synix created it.");
+					LocalizationManager.Get("Backup.Error.HashMismatch"));
 			}
 		}
 
@@ -1080,7 +1113,7 @@ namespace Synix_Control_Panel.SynixEngine
 				out BackupReceipt? receipt) || receipt == null)
 			{
 				throw new InvalidDataException(
-					"The selected backup has an invalid SHA-256 integrity receipt.");
+					LocalizationManager.Get("Backup.Error.InvalidHashReceipt"));
 			}
 			return receipt;
 		}
@@ -1105,7 +1138,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			using ZipArchive archive = ZipFile.OpenRead(archivePath);
 			if (archive.Entries.Count == 0)
-				throw new InvalidDataException("The selected backup is empty.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Backup.Error.Empty"));
 
 			string validationRoot = Path.Combine(
 				Path.GetTempPath(),
@@ -1119,13 +1153,16 @@ namespace Synix_Control_Panel.SynixEngine
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
 				if (IsSymbolicLink(entry) || Path.IsPathRooted(entry.FullName))
-					throw new InvalidDataException("The backup contains an unsafe path or symbolic link.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.UnsafePathOrLink"));
 				if (entry.FullName.Split('/', '\\').Any(segment => segment.Contains(':')))
-					throw new InvalidDataException("The backup contains an unsupported alternate file stream path.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.AlternateStream"));
 
 				string destinationPath = Path.GetFullPath(Path.Combine(validationRoot, entry.FullName));
 				if (!destinationPath.StartsWith(safeRoot, StringComparison.OrdinalIgnoreCase))
-					throw new InvalidDataException("The backup contains an unsafe path.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Backup.Error.UnsafePath"));
 				totalBytes = checked(totalBytes + entry.Length);
 				if (!string.IsNullOrEmpty(entry.Name))
 				{
@@ -1136,7 +1173,8 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			if (fileCount == 0)
-				throw new InvalidDataException("The selected backup contains no server files.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Backup.Error.NoServerFiles"));
 			return totalBytes;
 		}
 
@@ -1161,21 +1199,26 @@ namespace Synix_Control_Panel.SynixEngine
 		private static void EnsureRestoreDiskSpace(string installPath, long requiredBytes)
 		{
 			string root = Path.GetPathRoot(installPath) ??
-				throw new InvalidOperationException("Synix could not determine the server drive.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Backup.Error.ServerDriveUnknown"));
 			DriveInfo drive = new(root);
 			long safetyMargin = 64L * 1024 * 1024;
 			long requiredWithMargin = checked(requiredBytes + safetyMargin);
 			if (drive.AvailableFreeSpace < requiredWithMargin)
 			{
 				throw new IOException(
-					$"The server drive needs at least {FormatBytes(requiredWithMargin)} free to stage this restore, but only {FormatBytes(drive.AvailableFreeSpace)} is available.");
+					LocalizationManager.Get(
+						"Backup.Error.RestoreSpace",
+						FormatBytes(requiredWithMargin),
+						FormatBytes(drive.AvailableFreeSpace)));
 			}
 		}
 
 		private static string ValidateInstallPath(string path)
 		{
 			if (string.IsNullOrWhiteSpace(path))
-				throw new InvalidOperationException("The server installation path is empty.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Backup.Error.InstallPathEmpty"));
 
 			string fullPath = Path.GetFullPath(path)
 				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -1183,7 +1226,8 @@ namespace Synix_Control_Panel.SynixEngine
 			if (string.IsNullOrWhiteSpace(parent) ||
 				string.Equals(fullPath, Path.GetPathRoot(fullPath), StringComparison.OrdinalIgnoreCase))
 			{
-				throw new InvalidOperationException("Synix refused to restore into a drive root.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Backup.Error.DriveRoot"));
 			}
 			return fullPath;
 		}
@@ -1220,7 +1264,14 @@ namespace Synix_Control_Panel.SynixEngine
 
 		internal static string FormatBytes(long bytes)
 		{
-			string[] units = ["B", "KB", "MB", "GB", "TB"];
+			string[] units =
+			[
+				LocalizationManager.Get("Size.Unit.Bytes"),
+				LocalizationManager.Get("Size.Unit.Kilobytes"),
+				LocalizationManager.Get("Size.Unit.Megabytes"),
+				LocalizationManager.Get("Size.Unit.Gigabytes"),
+				LocalizationManager.Get("Size.Unit.Terabytes")
+			];
 			double value = Math.Max(0, bytes);
 			int unit = 0;
 			while (value >= 1024 && unit < units.Length - 1)
@@ -1257,7 +1308,8 @@ namespace Synix_Control_Panel.SynixEngine
 					Path.GetFileName(installPath) + RestoreRollbackMarker,
 					StringComparison.OrdinalIgnoreCase))
 			{
-				throw new InvalidDataException("A server restore recovery record contains unsafe paths.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Backup.Error.RecoveryUnsafePaths"));
 			}
 		}
 

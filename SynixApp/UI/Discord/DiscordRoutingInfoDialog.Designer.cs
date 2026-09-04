@@ -101,7 +101,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblWindowTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblWindowTitle.Location = new Point(58, 17);
 			lblWindowTitle.Name = "lblWindowTitle";
-			lblWindowTitle.Text = "Discord Webhooks";
+			lblWindowTitle.Text = LocalizationManager.Get("Text.2841A3AA116B14C8DEF1");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			//
 			// btnTitleClose
@@ -113,7 +113,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			btnTitleClose.Name = "btnTitleClose";
 			btnTitleClose.Size = new Size(50, 55);
 			btnTitleClose.TabIndex = 1;
-			btnTitleClose.Text = "✕";
+			btnTitleClose.Text = LocalizationManager.Get("Text.BE64F28A8D0A6257B2AF");
 			btnTitleClose.Click += btnClose_Click;
 			//
 			// titleBottomBorder
@@ -132,7 +132,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblHeading.Location = new Point(28, 78);
 			lblHeading.Name = "lblHeading";
 			lblHeading.Size = new Size(884, 42);
-			lblHeading.Text = "Discord Webhooks";
+			lblHeading.Text = LocalizationManager.Get("Text.2841A3AA116B14C8DEF1");
 			//
 			// lblDescription
 			//
@@ -141,7 +141,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblDescription.Location = new Point(31, 120);
 			lblDescription.Name = "lblDescription";
 			lblDescription.Size = new Size(881, 38);
-			lblDescription.Text = "See which Discord destination receives each type of Synix notification for this server.";
+			lblDescription.Text = LocalizationManager.Get("Text.339761CAC4ADD79725CB");
 			//
 			// informationCard
 			//
@@ -164,7 +164,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblInformationIcon.Location = new Point(16, 14);
 			lblInformationIcon.Name = "lblInformationIcon";
 			lblInformationIcon.Size = new Size(48, 48);
-			lblInformationIcon.Text = "◆";
+			lblInformationIcon.Text = LocalizationManager.Get("Text.6C84570F8BBCECB474D7");
 			lblInformationIcon.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// lblInformationTitle
@@ -174,7 +174,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblInformationTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblInformationTitle.Location = new Point(80, 14);
 			lblInformationTitle.Name = "lblInformationTitle";
-			lblInformationTitle.Text = "Webhook secrets stay protected";
+			lblInformationTitle.Text = LocalizationManager.Get("Text.C6FA3ED8B75178BC0DB2");
 			//
 			// lblInformationText
 			//
@@ -183,7 +183,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblInformationText.Location = new Point(80, 36);
 			lblInformationText.Name = "lblInformationText";
 			lblInformationText.Size = new Size(782, 30);
-			lblInformationText.Text = "Only a masked webhook identifier is shown. Open Server Settings to view or edit the saved destination.";
+			lblInformationText.Text = LocalizationManager.Get("Text.4DC50DE227F1D75CFF26");
 			//
 			// gridRoutes
 			//
@@ -206,14 +206,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			//
 			// statusColumn
 			//
-			statusColumn.HeaderText = "STATUS";
+			statusColumn.HeaderText = LocalizationManager.Get("ModManager.Column.Status");
 			statusColumn.Name = "statusColumn";
 			statusColumn.ReadOnly = true;
 			statusColumn.Width = 90;
 			//
 			// destinationColumn
 			//
-			destinationColumn.HeaderText = "DESTINATION";
+			destinationColumn.HeaderText = LocalizationManager.Get("Text.27A4BE0DE7696B0CACCF");
 			destinationColumn.Name = "destinationColumn";
 			destinationColumn.ReadOnly = true;
 			destinationColumn.Width = 190;
@@ -221,13 +221,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			// eventsColumn
 			//
 			eventsColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-			eventsColumn.HeaderText = "MESSAGES SENT";
+			eventsColumn.HeaderText = LocalizationManager.Get("Text.D1F06496D45A1E6282D5");
 			eventsColumn.Name = "eventsColumn";
 			eventsColumn.ReadOnly = true;
 			//
 			// webhookColumn
 			//
-			webhookColumn.HeaderText = "WEBHOOK";
+			webhookColumn.HeaderText = LocalizationManager.Get("Text.47E276FC6AA8982F2525");
 			webhookColumn.Name = "webhookColumn";
 			webhookColumn.ReadOnly = true;
 			webhookColumn.Width = 190;
@@ -248,7 +248,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			btnClose.Name = "btnClose";
 			btnClose.Size = new Size(130, 42);
 			btnClose.TabIndex = 2;
-			btnClose.Text = "Close";
+			btnClose.Text = LocalizationManager.Get("ModManager.Button.Close");
 			btnClose.Click += btnClose_Click;
 			//
 			// DiscordRoutingInfoDialog
@@ -272,7 +272,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			Name = "DiscordRoutingInfoDialog";
 			Padding = new Padding(1);
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Discord Webhooks";
+			Text = LocalizationManager.Get("Text.2841A3AA116B14C8DEF1");
 			titleBar.ResumeLayout(false);
 			titleBar.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)picLogo).EndInit();

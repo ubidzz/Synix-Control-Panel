@@ -126,7 +126,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					out BedrockServerMetadata fallbackMetadata))
 			{
 				throw new InvalidOperationException(
-					"The official Minecraft page did not publish a Windows Bedrock server package. Try again later.");
+					LocalizationManager.Get("Minecraft.Metadata.BedrockPackageMissing"));
 			}
 
 			return fallbackMetadata;
@@ -231,7 +231,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return catalog.LatestRelease;
 
 			if (!catalog.MetadataUrls.ContainsKey(version))
-				throw new InvalidOperationException($"Minecraft version '{version}' was not found in Mojang's manifest.");
+				throw new InvalidOperationException(LocalizationManager.Get("Minecraft.Metadata.VersionNotFound", version));
 
 			return version;
 		}
@@ -248,7 +248,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!catalog.MetadataUrls.TryGetValue(version, out string? metadataUrl) ||
 				string.IsNullOrWhiteSpace(metadataUrl))
 			{
-				throw new InvalidOperationException($"Mojang metadata is missing for Minecraft {version}.");
+				throw new InvalidOperationException(LocalizationManager.Get("Minecraft.Metadata.VersionMetadataMissing", version));
 			}
 
 			string versionJson = await HttpClient.GetStringAsync(metadataUrl, cancellationToken)
@@ -259,7 +259,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!root.TryGetProperty("downloads", out JsonElement downloads) ||
 				!downloads.TryGetProperty("server", out JsonElement serverDownload))
 			{
-				throw new InvalidOperationException($"Minecraft {version} does not publish a dedicated server download.");
+				throw new InvalidOperationException(LocalizationManager.Get("Minecraft.Metadata.ServerDownloadMissing", version));
 			}
 
 			string downloadUrl = serverDownload.GetProperty("url").GetString() ?? "";
@@ -272,7 +272,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			int javaMajor = ResolveJavaMajor(root, version);
 
 			if (string.IsNullOrWhiteSpace(downloadUrl))
-				throw new InvalidOperationException($"Minecraft {version} has an empty server download URL.");
+				throw new InvalidOperationException(LocalizationManager.Get("Minecraft.Metadata.ServerUrlMissing", version));
 
 			return new MinecraftVersionMetadata(version, downloadUrl, sha1, size, javaMajor);
 		}
@@ -346,7 +346,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (installerVersion.Length == 0 && installers.Length > 0)
 				installerVersion = installers[0].GetProperty("version").GetString() ?? "";
 			if (installerVersion.Length == 0)
-				throw new InvalidOperationException("Fabric did not publish a usable server installer version.");
+				throw new InvalidOperationException(LocalizationManager.Get("Minecraft.Metadata.FabricInstallerMissing"));
 
 			return new Uri(
 				$"{FabricMetaBaseUrl}/loader/{Uri.EscapeDataString(gameVersion)}/" +
@@ -371,7 +371,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				build.Equals(forgeVersion, StringComparison.OrdinalIgnoreCase));
 			if (artifactVersion == null)
 				throw new InvalidOperationException(
-					$"Forge {forgeVersion} metadata disappeared for Minecraft {gameVersion}.");
+					LocalizationManager.Get("Minecraft.Metadata.ForgeMetadataMissing", forgeVersion, gameVersion));
 
 			string escapedArtifactVersion = Uri.EscapeDataString(artifactVersion);
 
@@ -627,7 +627,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string loaderName)
 		{
 			if (compatibleBuilds.Count == 0)
-				throw new InvalidOperationException($"No compatible {loaderName} server build was found.");
+				throw new InvalidOperationException(LocalizationManager.Get("Minecraft.Metadata.CompatibleBuildMissing", loaderName));
 
 			string selected = selectedVersion?.Trim() ?? "";
 			if (selected.Length == 0 || selected.Equals("latest", StringComparison.OrdinalIgnoreCase))
@@ -637,7 +637,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				build => build.Equals(selected, StringComparison.OrdinalIgnoreCase));
 			if (exact == null)
 				throw new InvalidOperationException(
-					$"{loaderName} {selected} is not compatible with the selected Minecraft version.");
+					LocalizationManager.Get("Minecraft.Metadata.BuildIncompatible", loaderName, selected));
 
 			return exact;
 		}

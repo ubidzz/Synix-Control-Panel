@@ -106,10 +106,13 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			int fullyVerified = _items.Count(item => item.IsFullyVerified);
 			int unknownConfiguration = _items.Count(item =>
 				!item.HasKnownConfigurationBehavior);
-			_summaryLabel.Text =
-				$"{_items.Count} games  •  {fullyVerified} complete  •  " +
-				$"{_items.Count - fullyVerified} need work  •  " +
-				$"{unknownConfiguration} need configuration research";
+			LocalizationManager.BindText(
+				_summaryLabel,
+				"GameDefinitions.Queue.Summary",
+				_items.Count,
+				fullyVerified,
+				_items.Count - fullyVerified,
+				unknownConfiguration);
 		}
 
 		private void ApplyFilter()
@@ -151,7 +154,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				_grid.Rows[rowIndex].Tag = item;
 			}
 
-			_visibleLabel.Text = $"Showing {_grid.Rows.Count} game(s)";
+			LocalizationManager.BindText(
+				_visibleLabel,
+				"GameDefinitions.Queue.Showing",
+				_grid.Rows.Count);
 			if (_grid.Rows.Count > 0)
 			{
 				_grid.Rows[0].Selected = true;
@@ -196,20 +202,25 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_markButton.Enabled = hasSelection && configurationAllowed && manualActionAvailable;
 			_clearButton.Enabled = hasSelection &&
 				GetEvidence(item?.Verification, SelectedStep) != null;
-			_markButton.Text = SelectedStep switch
-			{
-				GameVerificationKind.Arguments => "Test Arguments",
-				GameVerificationKind.Configuration => "Mark Configuration",
-				_ => "Recorded Automatically"
-			};
-			_selectedLabel.Text = item == null
-				? "Select a game to update its verification evidence."
-				: SelectedStep is GameVerificationKind.Install or
-					GameVerificationKind.Start or
-					GameVerificationKind.Stop or
-					GameVerificationKind.Monitoring
-					? $"Selected: {item.Game} • This step is recorded by the real server workflow."
-					: $"Selected: {item.Game}";
+			LocalizationManager.BindText(
+				_markButton,
+				SelectedStep switch
+				{
+					GameVerificationKind.Arguments => "DynamicText.5C906B4070E09E4F5EE9",
+					GameVerificationKind.Configuration => "DynamicText.6216460DC46050B514AA",
+					_ => "DynamicText.5C49F319B870768820E5"
+				});
+			LocalizationManager.BindText(
+				_selectedLabel,
+				item == null
+					? "Text.FFF9C013BFE465B863CB"
+					: SelectedStep is GameVerificationKind.Install or
+						GameVerificationKind.Start or
+						GameVerificationKind.Stop or
+						GameVerificationKind.Monitoring
+						? "GameDefinitions.Queue.SelectedAutomatic"
+						: "GameDefinitions.Queue.Selected",
+				item?.Game ?? string.Empty);
 		}
 
 		private void MarkButton_Click(object? sender, EventArgs eventArgs)
@@ -224,8 +235,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				dialog.ShowDialog(this);
 				if (dialog.VerificationRecorded)
 				{
-					_statusLabel.Text =
-						$"{item.Game}: argument verification recorded from the real-server test.";
+					LocalizationManager.BindText(
+						_statusLabel,
+						"GameDefinitions.Queue.ArgumentRecorded",
+						item.Game);
 					_statusLabel.ForeColor = SettingsPalette.Success;
 				}
 				RefreshQueueAndRestoreSelection(item.Game);
@@ -239,8 +252,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Install, Start, Stop, and Monitoring evidence is recorded automatically by the real Synix server workflow and cannot be marked manually.",
-					"Automatic Verification",
+					LocalizationManager.Get("MessageText.FD1FB8A609DE5750E995"),
+					LocalizationManager.Get("MessageText.CFACB27EC40395E98A71"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -251,8 +264,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Set the game's configuration behavior and add any required template information before marking its configuration as verified.",
-					"Configuration Definition Required",
+					LocalizationManager.Get("MessageText.9E4EAF41685A751D0C5D"),
+					LocalizationManager.Get("MessageText.A2605A701380C408F3A9"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -263,17 +276,22 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"This game is managed entirely through launch arguments, so a separate configuration-file test is not required.",
-					"Configuration Test Not Required",
+					LocalizationManager.Get("MessageText.F94014E8EAE83ED1AC43"),
+					LocalizationManager.Get("MessageText.EB44D36BC8B5BCCD5CFA"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
 			}
 
 			bool recorded = Core.RecordGameVerification(item.Game, SelectedStep);
-			_statusLabel.Text = recorded
-				? $"{item.Game}: {FormatStepName(SelectedStep)} verified for Synix v{Core.GetCurrentVersion().ToString(3)}."
-				: $"{item.Game}: that step is already verified for this Synix version or a newer version.";
+			LocalizationManager.BindText(
+				_statusLabel,
+				recorded
+					? "GameDefinitions.Queue.StepRecorded"
+					: "GameDefinitions.Queue.StepAlreadyRecorded",
+				item.Game,
+				FormatStepName(SelectedStep),
+				Core.GetCurrentVersion().ToString(3));
 			_statusLabel.ForeColor = recorded
 				? SettingsPalette.Success
 				: SettingsPalette.SecondaryText;
@@ -288,8 +306,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
-				$"Remove the {FormatStepName(SelectedStep).ToLowerInvariant()} verification from {item.Game}?",
-				"Clear Verification Evidence",
+				LocalizationManager.Get(
+					"GameDefinitions.Queue.ClearConfirm",
+					FormatStepName(SelectedStep),
+					item.Game),
+				LocalizationManager.Get("MessageText.EEBC6BCDF6B34F44F7A3"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning,
 				MessageBoxDefaultButton.Button2);
@@ -297,9 +318,13 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				return;
 
 			bool cleared = Core.ClearGameVerification(item.Game, SelectedStep);
-			_statusLabel.Text = cleared
-				? $"{item.Game}: {FormatStepName(SelectedStep)} verification cleared."
-				: "No saved verification was found for that step.";
+			LocalizationManager.BindText(
+				_statusLabel,
+				cleared
+					? "GameDefinitions.Queue.StepCleared"
+					: "DynamicText.019DEC65766E8437A2BC",
+				item.Game,
+				FormatStepName(SelectedStep));
 			_statusLabel.ForeColor = cleared
 				? SettingsPalette.Warning
 				: SettingsPalette.SecondaryText;
@@ -310,7 +335,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			string? selectedGame = SelectedItem?.Game;
 			RefreshQueueAndRestoreSelection(selectedGame);
-			_statusLabel.Text = "Verification queue refreshed from the saved Synix evidence.";
+			LocalizationManager.BindText(
+				_statusLabel,
+				"Text.229193F097F563A43177");
 			_statusLabel.ForeColor = SettingsPalette.SecondaryText;
 		}
 
@@ -327,18 +354,24 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				if (projectDirectory == null)
 				{
 					throw new DirectoryNotFoundException(
-						"Synix Control Panel.csproj could not be found from this development build.");
+						LocalizationManager.Get(
+							"GameDefinitions.Builder.ProjectNotFound"));
 				}
 
 				GameVerificationProjectExportResult result =
 					Core.ExportGameVerificationToProject(projectDirectory);
-				_statusLabel.Text =
-					$"Exported {result.EvidenceCount} verification checks for {result.GameCount} games into the project.";
+				LocalizationManager.BindText(
+					_statusLabel,
+					"GameDefinitions.Queue.Exported",
+					result.EvidenceCount,
+					result.GameCount);
 				_statusLabel.ForeColor = SettingsPalette.Success;
 				LocalizedMessageBox.Show(
 					this,
-					$"Saved project verification evidence to:\n\n{result.FilePath}\n\nRebuild Synix and run the built-in definition tests before releasing.",
-					"Verification Exported",
+					LocalizationManager.Get(
+						"GameDefinitions.Queue.ExportBody",
+						result.FilePath),
+					LocalizationManager.Get("MessageText.928E0E14F24067F7A176"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
@@ -348,12 +381,13 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				InvalidOperationException or
 				NotSupportedException)
 			{
-				_statusLabel.Text = exception.Message;
+				_statusLabel.Text = LocalizationManager.TranslateRuntimeText(
+					exception.Message);
 				_statusLabel.ForeColor = SettingsPalette.Danger;
 				LocalizedMessageBox.Show(
 					this,
-					exception.Message,
-					"Verification Export Failed",
+					LocalizationManager.TranslateRuntimeText(exception.Message),
+					LocalizationManager.Get("MessageText.B32413A80382548BEC79"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -390,9 +424,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			if (style == null)
 				return;
 
-			if (value == "Verified" || value == "Not required")
+			if (value == LocalizationManager.Get("GameDefinitions.Queue.Evidence.Verified") ||
+				value == LocalizationManager.Get("Text.1B3F2F7A383F81F4A567"))
 				style.ForeColor = SettingsPalette.Success;
-			else if (value is "Needs test" or "Definition needed")
+			else if (value == LocalizationManager.Get("GameDefinitions.Queue.Evidence.NeedsTest") ||
+				value == LocalizationManager.Get("GameDefinitions.Queue.Evidence.DefinitionNeeded"))
 				style.ForeColor = SettingsPalette.Warning;
 			else if (eventArgs.ColumnIndex == _progressColumn.Index)
 			{
@@ -406,16 +442,19 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 		private static string FormatEvidence(GameVerificationEvidence? evidence)
 		{
-			return evidence == null ? "Needs test" : "Verified";
+			return LocalizationManager.Get(
+				evidence == null
+					? "GameDefinitions.Queue.Evidence.NeedsTest"
+					: "GameDefinitions.Queue.Evidence.Verified");
 		}
 
 		private static string FormatConfigurationEvidence(
 			GameVerificationQueueItem item)
 		{
 			if (!item.ConfigurationApplicable)
-				return "Not required";
+				return LocalizationManager.Get("Text.1B3F2F7A383F81F4A567");
 			if (!item.HasKnownConfigurationBehavior)
-				return "Definition needed";
+				return LocalizationManager.Get("GameDefinitions.Queue.Evidence.DefinitionNeeded");
 			return FormatEvidence(item.Verification.Configuration);
 		}
 
@@ -423,18 +462,23 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			return mode switch
 			{
-				ConfigFileCreationMode.GameGenerated => "Game generated",
-				ConfigFileCreationMode.SynixTemplate => "Synix template",
-				ConfigFileCreationMode.LaunchArgumentsOnly => "Arguments only",
-				_ => "Unknown"
+				ConfigFileCreationMode.GameGenerated => LocalizationManager.Get("GameDefinitions.Queue.Mode.GameGenerated"),
+				ConfigFileCreationMode.SynixTemplate => LocalizationManager.Get("GameDefinitions.Queue.Mode.SynixTemplate"),
+				ConfigFileCreationMode.LaunchArgumentsOnly => LocalizationManager.Get("GameDefinitions.Queue.Mode.ArgumentsOnly"),
+				_ => LocalizationManager.Get("Status.Unknown")
 			};
 		}
 
 		private static string FormatLastTested(GameVerificationEvidence? evidence)
 		{
 			return evidence == null
-				? "Never"
-				: $"v{evidence.SynixVersion}  •  {evidence.VerifiedAtUtc.ToLocalTime():g}";
+				? LocalizationManager.Get("GameDefinitions.Queue.Never")
+				: LocalizationManager.Get(
+					"GameDefinitions.Queue.LastTested",
+					evidence.SynixVersion,
+					evidence.VerifiedAtUtc.ToLocalTime().ToString(
+						"g",
+						System.Globalization.CultureInfo.CurrentUICulture));
 		}
 
 		private static string FormatStepName(GameVerificationKind kind)

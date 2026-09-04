@@ -212,7 +212,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			PictureBox logo = new()
 			{
 				Name = "synixWindowLogo",
-				AccessibleName = "Synix logo",
+				AccessibleName = LocalizationManager.Get(
+					"WindowHeader.Logo.AccessibleName"),
 				BackColor = Color.Transparent,
 				Image = global::Synix_Control_Panel.Properties.Resources.synix_logo,
 				Location = new Point(17, 10),
@@ -225,7 +226,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			titleLabel = new Label
 			{
 				Name = "synixWindowTitle",
-				AccessibleName = "Window title",
+				AccessibleName = LocalizationManager.Get(
+					"WindowHeader.Title.AccessibleName"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
 				AutoEllipsis = true,
 				BackColor = Color.Transparent,
@@ -245,7 +247,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Button closeButton = CreateWindowButton(
 					"synixWindowCloseButton",
 					"✕",
-					"Close",
+					LocalizationManager.Get(
+						"WindowHeader.Close.AccessibleName"),
 					buttonX,
 					isCloseButton: true);
 				closeButton.Click += (_, _) => form.Close();
@@ -258,7 +261,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Button maximizeButton = CreateWindowButton(
 					"synixWindowMaximizeButton",
 					"□",
-					"Maximize or restore",
+					LocalizationManager.Get(
+						"WindowHeader.MaximizeRestore.AccessibleName"),
 					buttonX,
 					isCloseButton: false);
 				maximizeButton.Click += (_, _) => ToggleMaximize(form);
@@ -271,7 +275,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Button minimizeButton = CreateWindowButton(
 					"synixWindowMinimizeButton",
 					"—",
-					"Minimize",
+					LocalizationManager.Get(
+						"WindowHeader.Minimize.AccessibleName"),
 					buttonX,
 					isCloseButton: false);
 				minimizeButton.Click += (_, _) =>

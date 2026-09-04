@@ -130,7 +130,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(648, 31);
 			lblTitle.TabIndex = 0;
-			lblTitle.Text = "Privacy Mode";
+			lblTitle.Text = LocalizationManager.Get("Text.22EAC55F97CD73017796");
 			lblTitle.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblDescription
@@ -145,11 +145,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblDescription.Name = "lblDescription";
 			lblDescription.Size = new Size(648, 49);
 			lblDescription.TabIndex = 1;
-			lblDescription.Text = "Hide IP addresses, passwords, and other sensitive information while screen sharing.";
+			lblDescription.Text = LocalizationManager.Get("Text.4E4DEFAC10984CADF571");
 			// 
 			// chkPrivacyMode
 			// 
-			chkPrivacyMode.AccessibleName = "Privacy mode";
+			chkPrivacyMode.AccessibleName = LocalizationManager.Get("Text.22EAC55F97CD73017796");
 			chkPrivacyMode.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			chkPrivacyMode.BackColor = Color.FromArgb(17, 27, 45);
 			chkPrivacyMode.Cursor = Cursors.Hand;
@@ -237,7 +237,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTitleDDoS.Name = "lblTitleDDoS";
 			lblTitleDDoS.Size = new Size(185, 21);
 			lblTitleDDoS.TabIndex = 0;
-			lblTitleDDoS.Text = "DDoS Attack Detection";
+			lblTitleDDoS.Text = LocalizationManager.Get("Text.AD31F960FE65ED9192ED");
 			lblTitleDDoS.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblExperimentalBadge
@@ -252,7 +252,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblExperimentalBadge.Padding = new Padding(6, 2, 6, 2);
 			lblExperimentalBadge.Size = new Size(95, 17);
 			lblExperimentalBadge.TabIndex = 2;
-			lblExperimentalBadge.Text = "EXPERIMENTAL";
+			lblExperimentalBadge.Text = LocalizationManager.Get("Text.DA8D62A8D6AE22A3B0D5");
 			lblExperimentalBadge.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// lblDescriptionDDoS
@@ -268,11 +268,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblDescriptionDDoS.Name = "lblDescriptionDDoS";
 			lblDescriptionDDoS.Size = new Size(648, 49);
 			lblDescriptionDDoS.TabIndex = 1;
-			lblDescriptionDDoS.Text = "Monitor active server ports for incoming packet floods and notify on abnormal traffic bursts.";
+			lblDescriptionDDoS.Text = LocalizationManager.Get("Text.0F38AC5E2C273A4B6642");
 			// 
 			// chkCheckForDDoS
 			// 
-			chkCheckForDDoS.AccessibleName = "Check for DDoS";
+			chkCheckForDDoS.AccessibleName = LocalizationManager.Get("Text.104CDE8B8DC20296DF9A");
 			chkCheckForDDoS.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			chkCheckForDDoS.BackColor = Color.FromArgb(17, 27, 45);
 			chkCheckForDDoS.Cursor = Cursors.Hand;

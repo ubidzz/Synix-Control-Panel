@@ -57,7 +57,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(1064, 38);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Synix Troubleshooter";
+			titleLabel.Text = LocalizationManager.Get("Text.F70301C507AF16CA4237");
 			// 
 			// subtitleLabel
 			// 
@@ -68,7 +68,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(1064, 42);
 			subtitleLabel.TabIndex = 1;
-			subtitleLabel.Text = "Check shared runtimes, server files, configurations, ports, Windows Firewall, disk space, interrupted processes, recent logs, and Synix update health from one place.";
+			subtitleLabel.Text = LocalizationManager.Get("Text.95E3AA6BFFB7545B20EF");
 			// 
 			// statusLabel
 			// 
@@ -79,7 +79,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			statusLabel.Name = "statusLabel";
 			statusLabel.Size = new Size(1064, 28);
 			statusLabel.TabIndex = 2;
-			statusLabel.Text = "Ready to check this computer.";
+			statusLabel.Text = LocalizationManager.Get("Text.60210D3A0210A72AC8E3");
 			// 
 			// resultsGrid
 			// 
@@ -104,7 +104,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			// 
 			// resultColumn
 			// 
-			resultColumn.HeaderText = "RESULT";
+			resultColumn.HeaderText = LocalizationManager.Get("Text.A67D2A6C9087C1BCB7E7");
 			resultColumn.MinimumWidth = 90;
 			resultColumn.Name = "resultColumn";
 			resultColumn.ReadOnly = true;
@@ -112,7 +112,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			// 
 			// areaColumn
 			// 
-			areaColumn.HeaderText = "AREA";
+			areaColumn.HeaderText = LocalizationManager.Get("Text.1D62D75616FD38521A36");
 			areaColumn.MinimumWidth = 150;
 			areaColumn.Name = "areaColumn";
 			areaColumn.ReadOnly = true;
@@ -120,7 +120,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			// 
 			// subjectColumn
 			// 
-			subjectColumn.HeaderText = "SERVER / ITEM";
+			subjectColumn.HeaderText = LocalizationManager.Get("Text.D8DDC4E4513A90E5F19B");
 			subjectColumn.MinimumWidth = 170;
 			subjectColumn.Name = "subjectColumn";
 			subjectColumn.ReadOnly = true;
@@ -131,14 +131,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			detailsColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
 			detailsColumn.DefaultCellStyle = dataGridViewCellStyle1;
-			detailsColumn.HeaderText = "DETAILS";
+			detailsColumn.HeaderText = LocalizationManager.Get("Text.14FDC0F6C77F7978B7AD");
 			detailsColumn.MinimumWidth = 260;
 			detailsColumn.Name = "detailsColumn";
 			detailsColumn.ReadOnly = true;
 			// 
 			// actionColumn
 			// 
-			actionColumn.HeaderText = "SAFE ACTION";
+			actionColumn.HeaderText = LocalizationManager.Get("Text.7D8E3B8B32D0C566BF14");
 			actionColumn.MinimumWidth = 150;
 			actionColumn.Name = "actionColumn";
 			actionColumn.ReadOnly = true;
@@ -156,7 +156,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			closeButton.Name = "closeButton";
 			closeButton.Size = new Size(110, 42);
 			closeButton.TabIndex = 3;
-			closeButton.Text = "Close";
+			closeButton.Text = LocalizationManager.Get("ModManager.Button.Close");
 			closeButton.UseVisualStyleBackColor = false;
 			// 
 			// copyButton
@@ -171,7 +171,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			copyButton.Name = "copyButton";
 			copyButton.Size = new Size(138, 42);
 			copyButton.TabIndex = 4;
-			copyButton.Text = "Copy Report";
+			copyButton.Text = LocalizationManager.Get("Text.54B8E0C0C268C1549AF4");
 			copyButton.UseVisualStyleBackColor = false;
 			copyButton.Click += CopyButton_Click;
 			// 
@@ -187,7 +187,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			actionButton.Name = "actionButton";
 			actionButton.Size = new Size(154, 42);
 			actionButton.TabIndex = 5;
-			actionButton.Text = "Select a Repair";
+			actionButton.Text = LocalizationManager.Get("Text.F19AA7C4D8DA593D73AE");
 			actionButton.UseVisualStyleBackColor = false;
 			actionButton.Click += ActionButton_Click;
 			// 
@@ -202,7 +202,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			runButton.Name = "runButton";
 			runButton.Size = new Size(152, 42);
 			runButton.TabIndex = 6;
-			runButton.Text = "Run All Checks";
+			runButton.Text = LocalizationManager.Get("Text.EC2347A3BD2820AF49BE");
 			runButton.UseAccentStyle = true;
 			runButton.UseVisualStyleBackColor = false;
 			runButton.Click += RunButton_Click;
@@ -229,7 +229,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			Name = "TroubleshooterDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Troubleshooter";
+			Text = LocalizationManager.Get("Text.F70301C507AF16CA4237");
 			((System.ComponentModel.ISupportInitialize)resultsGrid).EndInit();
 			ResumeLayout(false);
 		}

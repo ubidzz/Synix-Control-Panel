@@ -166,14 +166,20 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerOperationKind.Update or
 				ServerOperationKind.Validate)
 			{
-				return $"SteamCMD is already performing {GetDisplayName(active.Kind)} for {active.ServerName}. Wait for it to finish before starting another SteamCMD job.";
+				return LocalizationManager.Get(
+					"ServerOperation.Busy.SteamCmd",
+					GetDisplayName(active.Kind),
+					active.ServerName);
 			}
 
-			return $"{requestedServer.ServerName} is already performing {GetDisplayName(active.Kind)}. Wait for that operation to finish.";
+			return LocalizationManager.Get(
+				"ServerOperation.Busy.Server",
+				requestedServer.ServerName,
+				GetDisplayName(active.Kind));
 		}
 
 		private static string GetDisplayName(ServerOperationKind kind) =>
-			kind.ToString().ToLowerInvariant();
+			LocalizationManager.Get($"ServerOperation.Name.{kind}");
 
 		private sealed record ActiveOperation(
 			Guid OwnerId,

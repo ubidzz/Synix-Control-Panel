@@ -42,7 +42,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		{
 			_server = server ?? throw new ArgumentNullException(nameof(server));
 			_profiles = ModSystemCatalog.GetProfiles(server);
-			Text = "Mod & Plugin Manager";
+			Text = LocalizationManager.Get("Menu.ModPluginManager");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimumSize = new Size(1240, 760);
@@ -51,7 +51,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			ForeColor = SettingsPalette.PrimaryText;
 			Font = new Font("Segoe UI", 9.5F);
 
-			Label pageHeading = Heading("Mod & Plugin Manager", 28, 20, 640, 42, 19F);
+			Label pageHeading = Heading(
+				LocalizationManager.Get("Menu.ModPluginManager"),
+				28, 20, 640, 42, 19F);
 			pageHeading.Name = "modPluginManagerHeading";
 			Controls.Add(pageHeading);
 			Controls.Add(Body(
@@ -62,7 +64,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				30, 108, 110));
 			Controls.Add(new Label
 			{
-				Text = $"{_server.ServerName}  •  {_server.Game}",
+				Text = LocalizationManager.Get(
+					"ModManager.ServerSummary",
+					_server.ServerName,
+					_server.Game),
 				Location = new Point(30, 130),
 				Size = new Size(360, 30),
 				Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold),
@@ -116,7 +121,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			Controls.Add(new Label
 			{
-				Text = "Simple view",
+				Text = LocalizationManager.Get("Text.92079831E5CC0BF95974"),
 				Location = new Point(1022, 114),
 				Size = new Size(104, 24),
 				ForeColor = SettingsPalette.SecondaryText,
@@ -381,7 +386,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				_inventorySummary.Text = LocalizationManager.Get(
 					"ModManager.Inventory.RefreshFailed");
 				_inventorySummary.ForeColor = SettingsPalette.Warning;
-				PlainEnglishErrorDialog.ShowError(this, "scan the server add-ons", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("ModManager.ErrorAction.Scan"),
+					exception.Message);
 			}
 		}
 
@@ -403,7 +411,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					"ModManager.Framework.Named",
 					LocalizationManager.TranslateKnownText(
 						_detection.Profile.FrameworkName));
-			_supportDetails.Text = $"{LocalizationManager.TranslateKnownText(_detection.Profile.Description)}  {framework}";
+			_supportDetails.Text = LocalizationManager.Get(
+				"ModManager.SupportDetails",
+				LocalizationManager.TranslateKnownText(_detection.Profile.Description),
+				framework);
 		}
 
 		private static string GetSupportText(ModSystemDetection detection)
@@ -514,13 +525,15 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			string extensions = string.Join(';', target.AllowedExtensions.Select(extension => $"*{extension}"));
 			string filter = target.ArchiveOnly
-				? "Complete add-on package (*.zip)|*.zip|All files (*.*)|*.*"
+				? LocalizationManager.Get("ModManager.FileFilter.ArchiveOnly")
 				: target.AllowArchives
-				? $"Supported add-ons ({extensions};*.zip)|{extensions};*.zip|All files (*.*)|*.*"
-				: $"Supported add-ons ({extensions})|{extensions}|All files (*.*)|*.*";
+				? LocalizationManager.Get("ModManager.FileFilter.WithArchives", extensions)
+				: LocalizationManager.Get("ModManager.FileFilter.Files", extensions);
 			using OpenFileDialog picker = new()
 			{
-				Title = $"Choose a file for {target.DisplayName}",
+				Title = LocalizationManager.Get(
+					"ModManager.FilePicker.Title",
+					LocalizationManager.TranslateKnownText(target.DisplayName)),
 				Filter = filter,
 				CheckFileExists = true,
 				Multiselect = false
@@ -532,18 +545,22 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			{
 				UseWaitCursor = true;
 				_installFile.Enabled = false;
-				_inventorySummary.Text = "Running package structure, SHA-256, and antivirus checks…";
+				LocalizationManager.BindText(
+					_inventorySummary,
+					"Text.B38F7F9752C285B4B90B");
 				ModSecurityReview review = await ModSecurityScanner.ReviewPackageAsync(
 					picker.FileName,
 					target);
 				if (review.Outcome == ModSecurityOutcome.Blocked)
 				{
-					_inventorySummary.Text = "Security review blocked the package. No files were changed.";
+					LocalizationManager.BindText(
+						_inventorySummary,
+						"Text.4CDDB86B34725DFF943D");
 					_inventorySummary.ForeColor = SettingsPalette.Warning;
 					LocalizedMessageBox.Show(
 						this,
-						review.BuildUserMessage(),
-						"Add-on security review blocked",
+						LocalizationManager.TranslateRuntimeText(review.BuildUserMessage()),
+						LocalizationManager.Get("MessageText.A2AB176254809E1818BD"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return;
@@ -551,16 +568,21 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 				DialogResult confirmation = LocalizedMessageBox.Show(
 					this,
-					review.BuildUserMessage() +
-					$"\n\nInstall {Path.GetFileName(picker.FileName)} into {target.DisplayName}?",
-					"Add-on security review",
+					LocalizationManager.Get(
+						"ModManager.SecurityReview.Confirm",
+						LocalizationManager.TranslateRuntimeText(review.BuildUserMessage()),
+						Path.GetFileName(picker.FileName),
+						LocalizationManager.TranslateKnownText(target.DisplayName)),
+					LocalizationManager.Get("MessageText.601D435F77F129E56270"),
 					MessageBoxButtons.OKCancel,
 					review.Outcome == ModSecurityOutcome.Passed
 						? MessageBoxIcon.Information
 						: MessageBoxIcon.Warning);
 				if (confirmation != DialogResult.OK)
 				{
-					_inventorySummary.Text = "Installation canceled. No files were changed.";
+					LocalizationManager.BindText(
+						_inventorySummary,
+						"Text.90C149B626C5531C627C");
 					return;
 				}
 
@@ -571,24 +593,36 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					picker.FileName,
 					review.PackageSha256,
 					review.AntivirusStatus);
-				ApplicationLogService.Write(
-					$"[ADD-ONS] Installed {result.DisplayName} ({result.InstalledFileCount} file(s)) for {_server.ServerName}.",
-					Color.LimeGreen);
+				ApplicationLogService.WriteLocalized(
+					"ModManager.Activity.Installed",
+					Color.LimeGreen,
+					arguments:
+					[
+						result.DisplayName,
+						result.InstalledFileCount,
+						_server.ServerName
+					]);
 				RefreshInventory();
 				LocalizedMessageBox.Show(
 					this,
-					result.RestartRequired
-						? "The add-on was installed and verified. Start the server when you are ready."
-						: "The add-on was installed and verified. This framework can usually reload it without a full restart.",
-					"Installation complete",
+					LocalizationManager.Get(
+						result.RestartRequired
+							? "MessageText.3679B9A889A4F6F470DA"
+							: "MessageText.F23CB309225C503B6D8A"),
+					LocalizationManager.Get("MessageText.2CEE7AAFEDF4FEA66592"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
 			catch (Exception exception)
 			{
-				_inventorySummary.Text = "The add-on was not installed.";
+				LocalizationManager.BindText(
+					_inventorySummary,
+					"Text.897AEC201F7172829EF3");
 				_inventorySummary.ForeColor = SettingsPalette.Warning;
-				PlainEnglishErrorDialog.ShowError(this, "install the selected add-on", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("ModManager.ErrorAction.Install"),
+					exception.Message);
 			}
 			finally
 			{
@@ -604,8 +638,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				return;
 			if (LocalizedMessageBox.Show(
 				this,
-				$"Remove {item.Name}?\n\nSynix will restore the file that existed before this installation, when available.",
-				"Remove add-on",
+				LocalizationManager.Get("ModManager.Remove.Confirm", item.Name),
+				LocalizationManager.Get("MessageText.1836C66D2E22132440F9"),
 				MessageBoxButtons.OKCancel,
 				MessageBoxIcon.Warning) != DialogResult.OK)
 			{
@@ -624,24 +658,30 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					if (!FileHandler.SaveServers())
 					{
 						change.Rollback();
-						throw new IOException("Synix could not save the updated provider mod ID list.");
+						throw new IOException(LocalizationManager.Get(
+							"ModManager.Provider.SaveUpdatedFailed"));
 					}
-					ApplicationLogService.Write(
-						$"[ADD-ONS] Removed provider mod ID {item.Name} from {_server.ServerName}.",
-						Color.LimeGreen);
+					ApplicationLogService.WriteLocalized(
+						"ModManager.Activity.ProviderIdRemoved",
+						Color.LimeGreen,
+						arguments: [item.Name, _server.ServerName]);
 					RefreshInventory();
 					return;
 				}
 
 				string removed = ModPackageManager.Remove(_server, item.InstallationId);
-				ApplicationLogService.Write(
-					$"[ADD-ONS] Removed {removed} from {_server.ServerName} using its Synix rollback record.",
-					Color.LimeGreen);
+				ApplicationLogService.WriteLocalized(
+					"ModManager.Activity.Removed",
+					Color.LimeGreen,
+					arguments: [removed, _server.ServerName]);
 				RefreshInventory();
 			}
 			catch (Exception exception)
 			{
-				PlainEnglishErrorDialog.ShowError(this, "remove the selected add-on", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("ModManager.ErrorAction.Remove"),
+					exception.Message);
 			}
 		}
 
@@ -649,17 +689,19 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		{
 			IReadOnlyList<string> current = ModPackageManager.GetProviderIds(_server, target);
 			using ProviderModIdEditor dialog = new(
-				string.IsNullOrWhiteSpace(target.ProviderName) ? "game provider" : target.ProviderName,
+				string.IsNullOrWhiteSpace(target.ProviderName)
+					? LocalizationManager.Get("ModManager.Known.GameProvider")
+					: target.ProviderName,
 				target.MaximumIds,
 				current);
 			if (dialog.ShowDialog(this) != DialogResult.OK)
 				return;
 			if (LocalizedMessageBox.Show(
 				this,
-				$"{target.ProviderName} will download and run the mods represented by these IDs. " +
-				"Synix cannot scan provider content before it is downloaded.\n\n" +
-				"Continue only if every ID came from a source you trust.",
-				"Provider mod security warning",
+				LocalizationManager.Get(
+					"ModManager.Provider.Warning",
+					target.ProviderName),
+				LocalizationManager.Get("MessageText.468EADDB3CA79D6CD85C"),
 				MessageBoxButtons.OKCancel,
 				MessageBoxIcon.Warning) != DialogResult.OK)
 			{
@@ -674,17 +716,24 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				if (!FileHandler.SaveServers())
 				{
 					change.Rollback();
-					throw new IOException("Synix could not save the provider mod ID list.");
+					throw new IOException(LocalizationManager.Get(
+						"ModManager.Provider.SaveFailed"));
 				}
 				saved = true;
-				ApplicationLogService.Write(
-					$"[ADD-ONS] Saved {dialog.ModIds.Count} ordered {target.ProviderName} mod ID(s) for {_server.ServerName}.",
-					Color.LimeGreen);
+				ApplicationLogService.WriteLocalized(
+					"ModManager.Activity.ProviderIdsSaved",
+					Color.LimeGreen,
+					arguments:
+					[
+						dialog.ModIds.Count,
+						target.ProviderName,
+						_server.ServerName
+					]);
 				RefreshInventory();
 				LocalizedMessageBox.Show(
 					this,
-					"The ordered mod ID list is ready. The game will download or update provider-owned content when the server starts.",
-					"Mod IDs saved",
+					LocalizationManager.Get("MessageText.2A2FCD5BFFF42E6401AE"),
+					LocalizationManager.Get("MessageText.69CA929D937D47644BA3"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
@@ -692,7 +741,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			{
 				if (!saved)
 					change?.Rollback();
-				PlainEnglishErrorDialog.ShowError(this, "save the provider mod ID list", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("ModManager.ErrorAction.SaveIds"),
+					exception.Message);
 			}
 		}
 
@@ -721,8 +773,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				RefreshInventory();
 				LocalizedMessageBox.Show(
 					this,
-					$"Oxide/uMod {version} is ready. Synix did not install any plugins.",
-					"Framework installed",
+					LocalizationManager.Get("ModManager.Framework.Installed", version),
+					LocalizationManager.Get("MessageText.0E2A59C8DC9861D1E462"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
@@ -731,7 +783,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				_server.ServerFramework = previousFramework;
 				_server.ServerFrameworkVersion = previousVersion;
 				FileHandler.SaveServers();
-				PlainEnglishErrorDialog.ShowError(this, "install the Rust plugin framework", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("ModManager.ErrorAction.InstallFramework"),
+					exception.Message);
 			}
 			finally
 			{
@@ -776,7 +831,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			catch (Exception exception)
 			{
-				PlainEnglishErrorDialog.ShowError(this, "open the add-on catalog", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("ModManager.ErrorAction.OpenCatalog"),
+					exception.Message);
 			}
 		}
 
@@ -794,7 +852,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			if (IsSafeCatalogUri(profile.CatalogUrl, out Uri? legacyUri) &&
 				urls.Add(legacyUri!.AbsoluteUri))
 			{
-				choices.Add(new CatalogChoice("Add-on catalog", legacyUri));
+				choices.Add(new CatalogChoice(
+					LocalizationManager.Get("ModManager.Catalog.Default"),
+					legacyUri));
 			}
 			return choices;
 		}
@@ -815,7 +875,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			catch (Exception exception)
 			{
-				PlainEnglishErrorDialog.ShowError(this, "open the add-on folder", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("ModManager.ErrorAction.OpenFolder"),
+					exception.Message);
 			}
 		}
 
@@ -941,7 +1004,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			IReadOnlyList<string> currentIds)
 		{
 			_maximumIds = maximumIds;
-			Text = "Manage Provider Mod IDs";
+			Text = LocalizationManager.Get("Text.FED14E20C68A4626A601");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -954,7 +1017,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			Controls.Add(new Label
 			{
-				Text = $"Manage {providerName} mod IDs",
+				Text = LocalizationManager.Get(
+					"ModManager.Provider.Title",
+					providerName),
 				Location = new Point(28, 22),
 				Size = new Size(594, 42),
 				Font = new Font("Segoe UI", 18F, FontStyle.Bold),
@@ -962,7 +1027,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			});
 			Controls.Add(new Label
 			{
-				Text = "Enter IDs in the order they should load. Use commas, spaces, or one ID per line. Synix does not need a database of mod names.",
+				Text = LocalizationManager.Get("Text.518F7A1D974E46AED149"),
 				Location = new Point(30, 68),
 				Size = new Size(580, 48),
 				ForeColor = SettingsPalette.SecondaryText
@@ -992,14 +1057,14 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			ModernSettingsButton cancel = new()
 			{
-				Text = "Cancel",
+				Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778"),
 				Location = new Point(328, 370),
 				Size = new Size(138, 42),
 				DialogResult = DialogResult.Cancel
 			};
 			ModernSettingsButton save = new()
 			{
-				Text = "Save Ordered IDs",
+				Text = LocalizationManager.Get("Text.A9DE31384881AF4D5B60"),
 				Location = new Point(478, 370),
 				Size = new Size(144, 42),
 				UseAccentStyle = true
@@ -1016,13 +1081,17 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			try
 			{
 				ModIds = ModPackageManager.NormalizeProviderIds(_ids.Text, _maximumIds);
-				_status.Text = $"{ModIds.Count} unique numeric mod ID(s) • order is preserved";
+				LocalizationManager.BindText(
+					_status,
+					"ModManager.Provider.ValidCount",
+					ModIds.Count);
 				_status.ForeColor = SettingsPalette.Success;
 			}
 			catch (Exception exception)
 			{
 				ModIds = [];
-				_status.Text = exception.Message;
+				_status.Text = LocalizationManager.TranslateRuntimeText(
+					exception.Message);
 				_status.ForeColor = SettingsPalette.Warning;
 			}
 		}
@@ -1037,7 +1106,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			catch (Exception exception)
 			{
-				_status.Text = exception.Message;
+				_status.Text = LocalizationManager.TranslateRuntimeText(
+					exception.Message);
 				_status.ForeColor = SettingsPalette.Warning;
 			}
 		}

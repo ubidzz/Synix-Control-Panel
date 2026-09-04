@@ -30,15 +30,22 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			bool restoringImportedServer = false)
 			: this()
 		{
-			Text = restoringImportedServer
-				? "Restore Steam Authorization"
-				: "Steam Account Required";
-			titleLabel.Text = restoringImportedServer
-				? "Restore Steam authorization"
-				: "Steam account required";
-			descriptionLabel.Text = restoringImportedServer
-				? $"{gameName} was imported to this PC. Confirm the Steam account name so SteamCMD can restore access before the first start."
-				: $"{gameName} requires a Steam account for installation. Enter the account name that SteamCMD should use.";
+			LocalizationManager.BindText(
+				this,
+				restoringImportedServer
+					? "ServerSetup.SteamAccount.Restore.WindowTitle"
+					: "ServerSetup.SteamAccount.Required.WindowTitle");
+			LocalizationManager.BindText(
+				titleLabel,
+				restoringImportedServer
+					? "ServerSetup.SteamAccount.Restore.Title"
+					: "ServerSetup.SteamAccount.Required.Title");
+			LocalizationManager.BindText(
+				descriptionLabel,
+				restoringImportedServer
+					? "ServerSetup.SteamAccount.Restore.Description"
+					: "ServerSetup.SteamAccount.Required.Description",
+				gameName);
 			accountNameTextBox.Text = existingAccountName?.Trim() ?? string.Empty;
 
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
@@ -64,7 +71,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 			if (!valid)
 			{
-				validationLabel.Text = "Enter a valid Steam account name.";
+				LocalizationManager.BindText(
+					validationLabel,
+					"ServerSetup.SteamAccount.Validation.InvalidName");
 				accountNameTextBox.Focus();
 				return;
 			}

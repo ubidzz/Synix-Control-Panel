@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblBrand.Name = "lblBrand";
 			lblBrand.Size = new Size(46, 21);
 			lblBrand.TabIndex = 0;
-			lblBrand.Text = "Synix";
+			lblBrand.Text = LocalizationManager.Get("Text.E7A2E5F1A55B98CBFB28");
 			lblBrand.MouseDown += TitleBar_MouseDown;
 
 			// lblWindowTitle
@@ -115,7 +115,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(97, 20);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Server Setup";
+			lblWindowTitle.Text = LocalizationManager.Get("ServerSetup.Window.Title");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 
 			// btnTitleMinimize
@@ -132,7 +132,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnTitleMinimize.Name = "btnTitleMinimize";
 			btnTitleMinimize.Size = new Size(48, 55);
 			btnTitleMinimize.TabIndex = 3;
-			btnTitleMinimize.Text = "—";
+			btnTitleMinimize.Text = LocalizationManager.Get("Text.BDA050585A00F0F6CB50");
 			btnTitleMinimize.UseVisualStyleBackColor = false;
 			btnTitleMinimize.Click += btnTitleMinimize_Click;
 
@@ -150,7 +150,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnTitleClose.Name = "btnTitleClose";
 			btnTitleClose.Size = new Size(48, 55);
 			btnTitleClose.TabIndex = 4;
-			btnTitleClose.Text = "×";
+			btnTitleClose.Text = LocalizationManager.Get("Text.8DB71ED28B0F2F143256");
 			btnTitleClose.UseVisualStyleBackColor = false;
 			btnTitleClose.Click += btnTitleClose_Click;
 
@@ -175,7 +175,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblFooterStatus.Name = "lblFooterStatus";
 			lblFooterStatus.Size = new Size(790, 48);
 			lblFooterStatus.TabIndex = 0;
-			lblFooterStatus.Text = "🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
+			lblFooterStatus.Text = LocalizationManager.Get("Text.A9B62C4456D11AE0550C");
 			lblFooterStatus.TextAlign = ContentAlignment.MiddleLeft;
 			lblFooterStatus.UseMnemonic = false;
 
@@ -193,7 +193,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnCancel.Padding = new Padding(14, 0, 14, 0);
 			btnCancel.Size = new Size(140, 44);
 			btnCancel.TabIndex = 1;
-			btnCancel.Text = "Cancel";
+			btnCancel.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			btnCancel.UseAccentStyle = false;
 			btnCancel.UseVisualStyleBackColor = false;
 			btnCancel.Click += btnCancel_Click;
@@ -212,7 +212,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnSave.Padding = new Padding(16, 0, 16, 0);
 			btnSave.Size = new Size(160, 44);
 			btnSave.TabIndex = 2;
-			btnSave.Text = "Save Server";
+			btnSave.Text = LocalizationManager.Get("ServerSetup.Button.SaveServer");
 			btnSave.UseAccentStyle = true;
 			btnSave.UseVisualStyleBackColor = false;
 			btnSave.Click += btnSave_Click;
@@ -252,7 +252,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblSidebarSection.Name = "lblSidebarSection";
 			lblSidebarSection.Size = new Size(176, 22);
 			lblSidebarSection.TabIndex = 0;
-			lblSidebarSection.Text = "SERVER CONFIGURATION";
+			lblSidebarSection.Text = LocalizationManager.Get("Text.5435C9CD49190E73AAC1");
 
 			// btnNavGeneral
 			btnNavGeneral.BackColor = Color.FromArgb(10, 18, 32);
@@ -264,7 +264,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnNavGeneral.Selected = true;
 			btnNavGeneral.Size = new Size(186, 46);
 			btnNavGeneral.TabIndex = 1;
-			btnNavGeneral.Text = "General";
+			btnNavGeneral.Text = LocalizationManager.Get("SettingsPage.General.Heading");
 			btnNavGeneral.Click += btnNavGeneral_Click;
 
 			// btnNavSecurity
@@ -276,7 +276,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnNavSecurity.Name = "btnNavSecurity";
 			btnNavSecurity.Size = new Size(186, 46);
 			btnNavSecurity.TabIndex = 2;
-			btnNavSecurity.Text = "Security";
+			btnNavSecurity.Text = LocalizationManager.Get("ModManager.Column.Security");
 			btnNavSecurity.Click += btnNavSecurity_Click;
 
 			// btnNavWorld
@@ -288,7 +288,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnNavWorld.Name = "btnNavWorld";
 			btnNavWorld.Size = new Size(186, 46);
 			btnNavWorld.TabIndex = 3;
-			btnNavWorld.Text = "World Generation";
+			btnNavWorld.Text = LocalizationManager.Get("ServerSetup.Page.World.Title");
 			btnNavWorld.Click += btnNavWorld_Click;
 
 			// btnNavNetwork
@@ -300,7 +300,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnNavNetwork.Name = "btnNavNetwork";
 			btnNavNetwork.Size = new Size(186, 46);
 			btnNavNetwork.TabIndex = 4;
-			btnNavNetwork.Text = "Network & RCON";
+			btnNavNetwork.Text = LocalizationManager.Get("ServerSetup.Page.Network.Title");
 			btnNavNetwork.Click += btnNavNetwork_Click;
 
 			// btnNavAutomation
@@ -312,7 +312,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnNavAutomation.Name = "btnNavAutomation";
 			btnNavAutomation.Size = new Size(186, 46);
 			btnNavAutomation.TabIndex = 5;
-			btnNavAutomation.Text = "Automation";
+			btnNavAutomation.Text = LocalizationManager.Get("ServerSetup.Page.Automation.Title");
 			btnNavAutomation.Click += btnNavAutomation_Click;
 
 			// btnNavDiscord
@@ -324,7 +324,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnNavDiscord.Name = "btnNavDiscord";
 			btnNavDiscord.Size = new Size(186, 46);
 			btnNavDiscord.TabIndex = 6;
-			btnNavDiscord.Text = "Discord";
+			btnNavDiscord.Text = LocalizationManager.Get("Text.053BC65874AD6098E58C");
 			btnNavDiscord.Click += btnNavDiscord_Click;
 
 			// btnNavInstall
@@ -336,7 +336,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnNavInstall.Name = "btnNavInstall";
 			btnNavInstall.Size = new Size(186, 46);
 			btnNavInstall.TabIndex = 7;
-			btnNavInstall.Text = "Install & Launch";
+			btnNavInstall.Text = LocalizationManager.Get("ServerSetup.Page.Install.Title");
 			btnNavInstall.Click += btnNavInstall_Click;
 
 			// pnlSidebarStatus
@@ -367,7 +367,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblSidebarStatusHeading.Name = "lblSidebarStatusHeading";
 			lblSidebarStatusHeading.Size = new Size(176, 20);
 			lblSidebarStatusHeading.TabIndex = 1;
-			lblSidebarStatusHeading.Text = "CONFIGURATION STATUS";
+			lblSidebarStatusHeading.Text = LocalizationManager.Get("Text.6198EFCA8E63CD466052");
 
 			// lblSidebarStatus
 			lblSidebarStatus.BackColor = Color.FromArgb(10, 18, 32);
@@ -377,7 +377,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblSidebarStatus.Name = "lblSidebarStatus";
 			lblSidebarStatus.Size = new Size(176, 24);
 			lblSidebarStatus.TabIndex = 2;
-			lblSidebarStatus.Text = "●  Action required";
+			lblSidebarStatus.Text = LocalizationManager.Get("ServerSetup.Status.ActionRequired");
 
 			// lblSidebarStatusDetail
 			lblSidebarStatusDetail.BackColor = Color.FromArgb(10, 18, 32);
@@ -387,7 +387,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblSidebarStatusDetail.Name = "lblSidebarStatusDetail";
 			lblSidebarStatusDetail.Size = new Size(176, 42);
 			lblSidebarStatusDetail.TabIndex = 3;
-			lblSidebarStatusDetail.Text = "Review the highlighted requirement";
+			lblSidebarStatusDetail.Text = LocalizationManager.Get("Text.E8C0C711D1FE88A47545");
 
 			// pnlContent
 			pnlContent.BackColor = Color.FromArgb(8, 13, 24);
@@ -411,7 +411,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblPageTitle.Name = "lblPageTitle";
 			lblPageTitle.Size = new Size(126, 41);
 			lblPageTitle.TabIndex = 0;
-			lblPageTitle.Text = "General";
+			lblPageTitle.Text = LocalizationManager.Get("SettingsPage.General.Heading");
 			lblPageTitle.UseMnemonic = false;
 
 			// lblPageDescription
@@ -424,7 +424,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblPageDescription.Name = "lblPageDescription";
 			lblPageDescription.Size = new Size(710, 22);
 			lblPageDescription.TabIndex = 1;
-			lblPageDescription.Text = "Choose the game and define the server identity.";
+			lblPageDescription.Text = LocalizationManager.Get("ServerSetup.Page.General.Description");
 
 			// lblModeBadge
 			lblModeBadge.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -435,7 +435,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblModeBadge.Name = "lblModeBadge";
 			lblModeBadge.Size = new Size(132, 34);
 			lblModeBadge.TabIndex = 2;
-			lblModeBadge.Text = "NEW SERVER";
+			lblModeBadge.Text = LocalizationManager.Get("ServerSetup.ModeBadge.New");
 			lblModeBadge.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblTemplateBehavior
@@ -448,7 +448,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblTemplateBehavior.Padding = new Padding(14, 0, 14, 0);
 			lblTemplateBehavior.Size = new Size(914, 34);
 			lblTemplateBehavior.TabIndex = 3;
-			lblTemplateBehavior.Text = "◇  Template-aware controls: unavailable settings are disabled automatically for the selected game.";
+			lblTemplateBehavior.Text = LocalizationManager.Get("Text.4234688FB477D9CF1421");
 			lblTemplateBehavior.TextAlign = ContentAlignment.MiddleLeft;
 			lblTemplateBehavior.UseMnemonic = false;
 
@@ -547,7 +547,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			MinimumSize = new Size(1100, 720);
 			Name = "ServerSettingsGUI";
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Server Setup";
+			Text = LocalizationManager.Get("ServerSetup.Window.Title");
 			pnlPageDiscord.ResumeLayout(false);
 			pnlPageHost.ResumeLayout(false);
 			pnlContent.ResumeLayout(false);

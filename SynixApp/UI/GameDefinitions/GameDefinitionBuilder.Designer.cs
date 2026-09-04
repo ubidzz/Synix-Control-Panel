@@ -178,7 +178,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(326, 37);
 			lblTitle.TabIndex = 0;
-			lblTitle.Text = "Game Definition Builder";
+			lblTitle.Text = LocalizationManager.Get("Text.8E458885B6464A37816B");
 			// 
 			// lblDescription
 			// 
@@ -189,7 +189,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblDescription.Name = "lblDescription";
 			lblDescription.Size = new Size(1110, 42);
 			lblDescription.TabIndex = 1;
-			lblDescription.Text = "Create a validated built-in game definition without plugins or scripts. Definitions are saved into the project and become available only after Synix is rebuilt.";
+			lblDescription.Text = LocalizationManager.Get("Text.5D45286D0F2A822299E8");
 			// 
 			// pnlInputs
 			// 
@@ -326,7 +326,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblGame.Name = "lblGame";
 			lblGame.Size = new Size(74, 15);
 			lblGame.TabIndex = 0;
-			lblGame.Text = "Game name";
+			lblGame.Text = LocalizationManager.Get("Text.038C91613524C372388B");
 			// 
 			// txtGame
 			// 
@@ -349,7 +349,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblId.Name = "lblId";
 			lblId.Size = new Size(79, 15);
 			lblId.TabIndex = 2;
-			lblId.Text = "Definition ID";
+			lblId.Text = LocalizationManager.Get("Text.92FB0FBC6084EF453F25");
 			// 
 			// txtId
 			// 
@@ -371,7 +371,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblAppId.Name = "lblAppId";
 			lblAppId.Size = new Size(81, 15);
 			lblAppId.TabIndex = 4;
-			lblAppId.Text = "Steam AppID";
+			lblAppId.Text = LocalizationManager.Get("Text.061DFDE9336C7B9E273C");
 			// 
 			// txtAppId
 			// 
@@ -393,7 +393,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblExecutable.Name = "lblExecutable";
 			lblExecutable.Size = new Size(192, 15);
 			lblExecutable.TabIndex = 6;
-			lblExecutable.Text = "Server executable (relative path)";
+			lblExecutable.Text = LocalizationManager.Get("Text.B67782439FDBA86190F5");
 			// 
 			// txtExecutable
 			// 
@@ -415,7 +415,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblArguments.Name = "lblArguments";
 			lblArguments.Size = new Size(341, 15);
 			lblArguments.TabIndex = 8;
-			lblArguments.Text = "Default launch arguments (everything after the executable)";
+			lblArguments.Text = LocalizationManager.Get("Text.1F9D51EC4BA893F84146");
 			// 
 			// txtArguments
 			// 
@@ -437,7 +437,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblArgumentTag.Name = "lblArgumentTag";
 			lblArgumentTag.Size = new Size(221, 15);
 			lblArgumentTag.TabIndex = 10;
-			lblArgumentTag.Text = "Insert a supported Synix argument tag";
+			lblArgumentTag.Text = LocalizationManager.Get("Text.11639557E899BAF5BC2A");
 			// 
 			// cmbArgumentTag
 			// 
@@ -467,7 +467,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnInsertArgumentTag.Name = "btnInsertArgumentTag";
 			btnInsertArgumentTag.Size = new Size(114, 42);
 			btnInsertArgumentTag.TabIndex = 12;
-			btnInsertArgumentTag.Text = "Insert tag";
+			btnInsertArgumentTag.Text = LocalizationManager.Get("Text.00B412E64B966EDA43AF");
 			btnInsertArgumentTag.UseVisualStyleBackColor = false;
 			btnInsertArgumentTag.Click += btnInsertArgumentTag_Click;
 			// 
@@ -480,7 +480,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRconSyntax.Name = "lblRconSyntax";
 			lblRconSyntax.Size = new Size(357, 15);
 			lblRconSyntax.TabIndex = 13;
-			lblRconSyntax.Text = "Optional RCON syntax — launch arguments must contain {rcon}";
+			lblRconSyntax.Text = LocalizationManager.Get("Text.CB904327966ABA4B8621");
 			// 
 			// txtRconSyntax
 			// 
@@ -502,7 +502,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblCatalogOrder.Name = "lblCatalogOrder";
 			lblCatalogOrder.Size = new Size(82, 15);
 			lblCatalogOrder.TabIndex = 15;
-			lblCatalogOrder.Text = "Catalog order";
+			lblCatalogOrder.Text = LocalizationManager.Get("Text.01CD8522DA9B22A77022");
 			// 
 			// numCatalogOrder
 			// 
@@ -525,7 +525,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblDefinitionRevision.Name = "lblDefinitionRevision";
 			lblDefinitionRevision.Size = new Size(110, 15);
 			lblDefinitionRevision.TabIndex = 17;
-			lblDefinitionRevision.Text = "Definition revision";
+			lblDefinitionRevision.Text = LocalizationManager.Get("Text.00904CDBFAE60F371356");
 			// 
 			// numDefinitionRevision
 			// 
@@ -548,7 +548,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblPort.Name = "lblPort";
 			lblPort.Size = new Size(67, 15);
 			lblPort.TabIndex = 19;
-			lblPort.Text = "Game port";
+			lblPort.Text = LocalizationManager.Get("PortRole.Game");
 			// 
 			// numPort
 			// 
@@ -572,7 +572,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblQueryPort.Name = "lblQueryPort";
 			lblQueryPort.Size = new Size(68, 15);
 			lblQueryPort.TabIndex = 21;
-			lblQueryPort.Text = "Query port";
+			lblQueryPort.Text = LocalizationManager.Get("PortRole.Query");
 			// 
 			// numQueryPort
 			// 
@@ -596,7 +596,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblConfigMode.Name = "lblConfigMode";
 			lblConfigMode.Size = new Size(135, 15);
 			lblConfigMode.TabIndex = 23;
-			lblConfigMode.Text = "Configuration behavior";
+			lblConfigMode.Text = LocalizationManager.Get("Configuration.Check.Behavior");
 			// 
 			// cmbConfigMode
 			// 
@@ -626,7 +626,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblFormat.Name = "lblFormat";
 			lblFormat.Size = new Size(125, 15);
 			lblFormat.TabIndex = 25;
-			lblFormat.Text = "Configuration format";
+			lblFormat.Text = LocalizationManager.Get("Text.1472FD9B53FABC65C401");
 			// 
 			// cmbFormat
 			// 
@@ -664,7 +664,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblConfigPath.Name = "lblConfigPath";
 			lblConfigPath.Size = new Size(319, 15);
 			lblConfigPath.TabIndex = 28;
-			lblConfigPath.Text = "Configuration path relative to the installed server folder";
+			lblConfigPath.Text = LocalizationManager.Get("Text.F0CDBB393CA93D39DF05");
 			// 
 			// txtConfigPath
 			// 
@@ -686,7 +686,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblTemplate.Name = "lblTemplate";
 			lblTemplate.Size = new Size(266, 15);
 			lblTemplate.TabIndex = 30;
-			lblTemplate.Text = "Complete, working configuration template file";
+			lblTemplate.Text = LocalizationManager.Get("Text.17F05E768CFB4B761715");
 			// 
 			// txtTemplate
 			// 
@@ -721,7 +721,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblConfigRevision.Name = "lblConfigRevision";
 			lblConfigRevision.Size = new Size(106, 15);
 			lblConfigRevision.TabIndex = 33;
-			lblConfigRevision.Text = "Template revision";
+			lblConfigRevision.Text = LocalizationManager.Get("Configuration.Check.TemplateRevision");
 			// 
 			// numConfigRevision
 			// 
@@ -744,7 +744,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblSteamTarget.Name = "lblSteamTarget";
 			lblSteamTarget.Size = new Size(265, 15);
 			lblSteamTarget.TabIndex = 35;
-			lblSteamTarget.Text = "Steam runtime target directory (relative path)";
+			lblSteamTarget.Text = LocalizationManager.Get("Text.106E51E2A0CD985A0FBC");
 			// 
 			// txtSteamRuntimeTarget
 			// 
@@ -759,7 +759,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			// 
 			// chkSteamLogin
 			// 
-			chkSteamLogin.AccessibleName = "Steam account login required";
+			chkSteamLogin.AccessibleName = LocalizationManager.Get("Text.74F96C8582DE2CB217C7");
 			chkSteamLogin.AccessibleRole = AccessibleRole.CheckButton;
 			chkSteamLogin.BackColor = Color.FromArgb(17, 27, 45);
 			chkSteamLogin.Location = new Point(474, 1164);
@@ -777,7 +777,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblSteamLoginOption.Name = "lblSteamLoginOption";
 			lblSteamLoginOption.Size = new Size(171, 15);
 			lblSteamLoginOption.TabIndex = 38;
-			lblSteamLoginOption.Text = "Steam account login required";
+			lblSteamLoginOption.Text = LocalizationManager.Get("Text.74F96C8582DE2CB217C7");
 			// 
 			// lblSteamLoginHelp
 			// 
@@ -787,11 +787,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblSteamLoginHelp.Name = "lblSteamLoginHelp";
 			lblSteamLoginHelp.Size = new Size(438, 34);
 			lblSteamLoginHelp.TabIndex = 39;
-			lblSteamLoginHelp.Text = "Enable only when anonymous SteamCMD installation fails and a Steam account is required.";
+			lblSteamLoginHelp.Text = LocalizationManager.Get("Text.947BC568AF81FE33EC61");
 			// 
 			// chkQueryable
 			// 
-			chkQueryable.AccessibleName = "Enable server query monitoring";
+			chkQueryable.AccessibleName = LocalizationManager.Get("Text.64D3499BE4B6DBDA7DC0");
 			chkQueryable.AccessibleRole = AccessibleRole.CheckButton;
 			chkQueryable.BackColor = Color.FromArgb(17, 27, 45);
 			chkQueryable.Checked = true;
@@ -811,7 +811,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblQueryableOption.Name = "lblQueryableOption";
 			lblQueryableOption.Size = new Size(182, 15);
 			lblQueryableOption.TabIndex = 41;
-			lblQueryableOption.Text = "Enable server query monitoring";
+			lblQueryableOption.Text = LocalizationManager.Get("Text.64D3499BE4B6DBDA7DC0");
 			// 
 			// lblQueryableHelp
 			// 
@@ -821,11 +821,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblQueryableHelp.Name = "lblQueryableHelp";
 			lblQueryableHelp.Size = new Size(438, 34);
 			lblQueryableHelp.TabIndex = 42;
-			lblQueryableHelp.Text = "Enable when the server has a verified query or network probe that Synix can monitor.";
+			lblQueryableHelp.Text = LocalizationManager.Get("Text.59AD73A66B0E19C3759F");
 			// 
 			// chkSteamRuntime
 			// 
-			chkSteamRuntime.AccessibleName = "Copy allowlisted Steam runtime files after install";
+			chkSteamRuntime.AccessibleName = LocalizationManager.Get("Text.07754DEE7F94A6CA31B1");
 			chkSteamRuntime.AccessibleRole = AccessibleRole.CheckButton;
 			chkSteamRuntime.BackColor = Color.FromArgb(17, 27, 45);
 			chkSteamRuntime.Location = new Point(474, 1300);
@@ -844,7 +844,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblSteamRuntimeOption.Name = "lblSteamRuntimeOption";
 			lblSteamRuntimeOption.Size = new Size(297, 15);
 			lblSteamRuntimeOption.TabIndex = 44;
-			lblSteamRuntimeOption.Text = "Copy approved Steam runtime files after installation";
+			lblSteamRuntimeOption.Text = LocalizationManager.Get("Text.DA14A0D982E06E70BB06");
 			// 
 			// lblSteamRuntimeHelp
 			// 
@@ -854,7 +854,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblSteamRuntimeHelp.Name = "lblSteamRuntimeHelp";
 			lblSteamRuntimeHelp.Size = new Size(438, 48);
 			lblSteamRuntimeHelp.TabIndex = 45;
-			lblSteamRuntimeHelp.Text = "Use only when testing proves the server needs the approved Steam DLL files. The target must stay inside the server folder.";
+			lblSteamRuntimeHelp.Text = LocalizationManager.Get("Text.4910EE68C0A14BD4AF19");
 			// 
 			// lblMaps
 			// 
@@ -865,7 +865,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblMaps.Name = "lblMaps";
 			lblMaps.Size = new Size(249, 15);
 			lblMaps.TabIndex = 46;
-			lblMaps.Text = "Maps or scenarios (one exact value per line)";
+			lblMaps.Text = LocalizationManager.Get("Text.FDA8F741D724B426C343");
 			// 
 			// txtMaps
 			// 
@@ -891,7 +891,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblGameModes.Name = "lblGameModes";
 			lblGameModes.Size = new Size(224, 15);
 			lblGameModes.TabIndex = 48;
-			lblGameModes.Text = "Game modes (one exact value per line)";
+			lblGameModes.Text = LocalizationManager.Get("Text.3BE6A898F14F4D050AF5");
 			// 
 			// txtGameModes
 			// 
@@ -917,7 +917,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiredLaunchFiles.Name = "lblRequiredLaunchFiles";
 			lblRequiredLaunchFiles.Size = new Size(320, 15);
 			lblRequiredLaunchFiles.TabIndex = 50;
-			lblRequiredLaunchFiles.Text = "Required user-supplied files (relative paths, one per line)";
+			lblRequiredLaunchFiles.Text = LocalizationManager.Get("Text.5DC5CE2CCFBCC1F3AE31");
 			// 
 			// txtRequiredLaunchFiles
 			// 
@@ -943,7 +943,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblOptionalLaunchFiles.Name = "lblOptionalLaunchFiles";
 			lblOptionalLaunchFiles.Size = new Size(280, 15);
 			lblOptionalLaunchFiles.TabIndex = 52;
-			lblOptionalLaunchFiles.Text = "Optional import files (relative paths, one per line)";
+			lblOptionalLaunchFiles.Text = LocalizationManager.Get("Text.656F6C1DD0569874658F");
 			// 
 			// txtOptionalLaunchFiles
 			// 
@@ -969,7 +969,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblExternalDataFolder.Name = "lblExternalDataFolder";
 			lblExternalDataFolder.Size = new Size(329, 15);
 			lblExternalDataFolder.TabIndex = 54;
-			lblExternalDataFolder.Text = "Documents source folder for automatic imports (optional)";
+			lblExternalDataFolder.Text = LocalizationManager.Get("Text.E32BFB60FF5B5AA7759C");
 			// 
 			// txtExternalDataFolder
 			// 
@@ -991,7 +991,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblSetupInstructions.Name = "lblSetupInstructions";
 			lblSetupInstructions.Size = new Size(296, 15);
 			lblSetupInstructions.TabIndex = 56;
-			lblSetupInstructions.Text = "How the user obtains and places required game files";
+			lblSetupInstructions.Text = LocalizationManager.Get("Text.A8578B710044B649B2CD");
 			// 
 			// txtSetupInstructions
 			// 
@@ -1016,7 +1016,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblIconUrl.Name = "lblIconUrl";
 			lblIconUrl.Size = new Size(188, 15);
 			lblIconUrl.TabIndex = 58;
-			lblIconUrl.Text = "Game icon HTTPS URL (optional)";
+			lblIconUrl.Text = LocalizationManager.Get("Text.77878EE62ED84A935F46");
 			// 
 			// txtIconUrl
 			// 
@@ -1031,7 +1031,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			// 
 			// chkFirstStartWarning
 			// 
-			chkFirstStartWarning.AccessibleName = "Show a first-start setup warning";
+			chkFirstStartWarning.AccessibleName = LocalizationManager.Get("Text.52D1EA9EC1761138D30F");
 			chkFirstStartWarning.AccessibleRole = AccessibleRole.CheckButton;
 			chkFirstStartWarning.BackColor = Color.FromArgb(17, 27, 45);
 			chkFirstStartWarning.Location = new Point(474, 2188);
@@ -1049,7 +1049,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblFirstStartWarningOption.Name = "lblFirstStartWarningOption";
 			lblFirstStartWarningOption.Size = new Size(185, 15);
 			lblFirstStartWarningOption.TabIndex = 61;
-			lblFirstStartWarningOption.Text = "Show a first-start setup warning";
+			lblFirstStartWarningOption.Text = LocalizationManager.Get("Text.52D1EA9EC1761138D30F");
 			// 
 			// lblFirstStartWarningHelp
 			// 
@@ -1059,7 +1059,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblFirstStartWarningHelp.Name = "lblFirstStartWarningHelp";
 			lblFirstStartWarningHelp.Size = new Size(438, 34);
 			lblFirstStartWarningHelp.TabIndex = 62;
-			lblFirstStartWarningHelp.Text = "Required files and Synix-created templates automatically enable a warning.";
+			lblFirstStartWarningHelp.Text = LocalizationManager.Get("Text.AD654849FC9CF1C6D997");
 			// 
 			// lblWarningMessage
 			// 
@@ -1070,7 +1070,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblWarningMessage.Name = "lblWarningMessage";
 			lblWarningMessage.Size = new Size(215, 15);
 			lblWarningMessage.TabIndex = 63;
-			lblWarningMessage.Text = "First-start message shown to the user";
+			lblWarningMessage.Text = LocalizationManager.Get("Text.6D27A85CB8D78F9F3B3E");
 			// 
 			// txtWarningMessage
 			// 
@@ -1095,7 +1095,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblAdditionalTemplates.Name = "lblAdditionalTemplates";
 			lblAdditionalTemplates.Size = new Size(167, 15);
 			lblAdditionalTemplates.TabIndex = 65;
-			lblAdditionalTemplates.Text = "Additional configuration files";
+			lblAdditionalTemplates.Text = LocalizationManager.Get("Text.CAB93A0C978A9DE29613");
 			// 
 			// lblAdditionalTemplatesHelp
 			// 
@@ -1105,7 +1105,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblAdditionalTemplatesHelp.Name = "lblAdditionalTemplatesHelp";
 			lblAdditionalTemplatesHelp.Size = new Size(516, 42);
 			lblAdditionalTemplatesHelp.TabIndex = 66;
-			lblAdditionalTemplatesHelp.Text = "Add every other complete template the game needs. Edit Installed location so each path is relative to the installed server folder.";
+			lblAdditionalTemplatesHelp.Text = LocalizationManager.Get("Text.C404A6A32FD8F56893D3");
 			// 
 			// dgvAdditionalTemplates
 			// 
@@ -1129,14 +1129,14 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			// 
 			colTemplateDestination.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			colTemplateDestination.FillWeight = 44F;
-			colTemplateDestination.HeaderText = "Installed location";
+			colTemplateDestination.HeaderText = LocalizationManager.Get("Text.85C207B3B0E670D723EC");
 			colTemplateDestination.Name = "colTemplateDestination";
 			// 
 			// colTemplateSource
 			// 
 			colTemplateSource.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			colTemplateSource.FillWeight = 56F;
-			colTemplateSource.HeaderText = "Selected source file";
+			colTemplateSource.HeaderText = LocalizationManager.Get("Text.93CE53851DCBA5EAF20E");
 			colTemplateSource.Name = "colTemplateSource";
 			colTemplateSource.ReadOnly = true;
 			// 
@@ -1150,7 +1150,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnAddTemplates.Name = "btnAddTemplates";
 			btnAddTemplates.Size = new Size(138, 42);
 			btnAddTemplates.TabIndex = 68;
-			btnAddTemplates.Text = "Add files";
+			btnAddTemplates.Text = LocalizationManager.Get("Text.01792A33C228A70EABC9");
 			btnAddTemplates.UseVisualStyleBackColor = false;
 			btnAddTemplates.Click += btnAddTemplates_Click;
 			// 
@@ -1164,7 +1164,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnRemoveTemplate.Name = "btnRemoveTemplate";
 			btnRemoveTemplate.Size = new Size(138, 42);
 			btnRemoveTemplate.TabIndex = 69;
-			btnRemoveTemplate.Text = "Remove selected";
+			btnRemoveTemplate.Text = LocalizationManager.Get("ModManager.Button.Remove");
 			btnRemoveTemplate.UseVisualStyleBackColor = false;
 			btnRemoveTemplate.Click += btnRemoveTemplate_Click;
 			// 
@@ -1177,7 +1177,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblSteamAppConfig.Name = "lblSteamAppConfig";
 			lblSteamAppConfig.Size = new Size(263, 15);
 			lblSteamAppConfig.TabIndex = 70;
-			lblSteamAppConfig.Text = "SteamCMD app configuration (normally blank)";
+			lblSteamAppConfig.Text = LocalizationManager.Get("Text.0037D1151873C72377CB");
 			// 
 			// txtSteamAppConfig
 			// 
@@ -1199,7 +1199,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRuntimeSection.Name = "lblRuntimeSection";
 			lblRuntimeSection.Size = new Size(167, 20);
 			lblRuntimeSection.TabIndex = 72;
-			lblRuntimeSection.Text = "Runtime requirements";
+			lblRuntimeSection.Text = LocalizationManager.Get("Text.E543E80B09CB9169F03C");
 			// 
 			// lblRuntimeSectionHelp
 			// 
@@ -1209,7 +1209,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRuntimeSectionHelp.Name = "lblRuntimeSectionHelp";
 			lblRuntimeSectionHelp.Size = new Size(516, 42);
 			lblRuntimeSectionHelp.TabIndex = 73;
-			lblRuntimeSectionHelp.Text = "Verified hardware and Windows requirements checked before Synix installs or launches the server.";
+			lblRuntimeSectionHelp.Text = LocalizationManager.Get("Text.A7678DBAFBD9E2842236");
 			// 
 			// lblMinimumRam
 			// 
@@ -1220,7 +1220,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblMinimumRam.Name = "lblMinimumRam";
 			lblMinimumRam.Size = new Size(295, 15);
 			lblMinimumRam.TabIndex = 74;
-			lblMinimumRam.Text = "Minimum system RAM in GB (0 means no minimum)";
+			lblMinimumRam.Text = LocalizationManager.Get("Text.71F9139AF2A58247E590");
 			// 
 			// numMinimumRam
 			// 
@@ -1243,7 +1243,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblDotNetFramework.Name = "lblDotNetFramework";
 			lblDotNetFramework.Size = new Size(173, 15);
 			lblDotNetFramework.TabIndex = 76;
-			lblDotNetFramework.Text = ".NET Framework requirement";
+			lblDotNetFramework.Text = LocalizationManager.Get("Text.4B21C7403A59CBADBC0E");
 			// 
 			// cmbDotNetFramework
 			// 
@@ -1271,11 +1271,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblDotNetFrameworkHelp.Name = "lblDotNetFrameworkHelp";
 			lblDotNetFrameworkHelp.Size = new Size(516, 34);
 			lblDotNetFrameworkHelp.TabIndex = 78;
-			lblDotNetFrameworkHelp.Text = "Checks the installed Windows .NET Framework release before the server starts.";
+			lblDotNetFrameworkHelp.Text = LocalizationManager.Get("Text.52A32013E2D94B00DBF7");
 			// 
 			// chkRequiresVisualCpp2013
 			// 
-			chkRequiresVisualCpp2013.AccessibleName = "Require Visual C++ 2013 x64 runtime";
+			chkRequiresVisualCpp2013.AccessibleName = LocalizationManager.Get("Text.EF20D5D938A93CEF88A3");
 			chkRequiresVisualCpp2013.AccessibleRole = AccessibleRole.CheckButton;
 			chkRequiresVisualCpp2013.BackColor = Color.FromArgb(17, 27, 45);
 			chkRequiresVisualCpp2013.Location = new Point(474, 3102);
@@ -1293,7 +1293,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVisualCpp2013Option.Name = "lblRequiresVisualCpp2013Option";
 			lblRequiresVisualCpp2013Option.Size = new Size(215, 15);
 			lblRequiresVisualCpp2013Option.TabIndex = 80;
-			lblRequiresVisualCpp2013Option.Text = "Require Visual C++ 2013 x64 runtime";
+			lblRequiresVisualCpp2013Option.Text = LocalizationManager.Get("Text.EF20D5D938A93CEF88A3");
 			// 
 			// lblRequiresVisualCpp2013Help
 			// 
@@ -1303,11 +1303,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVisualCpp2013Help.Name = "lblRequiresVisualCpp2013Help";
 			lblRequiresVisualCpp2013Help.Size = new Size(438, 34);
 			lblRequiresVisualCpp2013Help.TabIndex = 81;
-			lblRequiresVisualCpp2013Help.Text = "Blocks launch with clear Microsoft download guidance when the runtime is missing.";
+			lblRequiresVisualCpp2013Help.Text = LocalizationManager.Get("Text.1232008495CAD0B69745");
 			// 
 			// chkRequiresVisualCpp2015To2022
 			// 
-			chkRequiresVisualCpp2015To2022.AccessibleName = "Require Visual C++ 2015-2022 x64 runtime";
+			chkRequiresVisualCpp2015To2022.AccessibleName = LocalizationManager.Get("Text.A35B9EA54D03EE898DA0");
 			chkRequiresVisualCpp2015To2022.AccessibleRole = AccessibleRole.CheckButton;
 			chkRequiresVisualCpp2015To2022.BackColor = Color.FromArgb(17, 27, 45);
 			chkRequiresVisualCpp2015To2022.Location = new Point(474, 3174);
@@ -1325,7 +1325,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVisualCpp2015To2022Option.Name = "lblRequiresVisualCpp2015To2022Option";
 			lblRequiresVisualCpp2015To2022Option.Size = new Size(248, 15);
 			lblRequiresVisualCpp2015To2022Option.TabIndex = 83;
-			lblRequiresVisualCpp2015To2022Option.Text = "Require Visual C++ 2015-2022 x64 runtime";
+			lblRequiresVisualCpp2015To2022Option.Text = LocalizationManager.Get("Text.A35B9EA54D03EE898DA0");
 			// 
 			// lblRequiresVisualCpp2015To2022Help
 			// 
@@ -1335,11 +1335,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVisualCpp2015To2022Help.Name = "lblRequiresVisualCpp2015To2022Help";
 			lblRequiresVisualCpp2015To2022Help.Size = new Size(438, 34);
 			lblRequiresVisualCpp2015To2022Help.TabIndex = 84;
-			lblRequiresVisualCpp2015To2022Help.Text = "Covers the unified Microsoft runtime used by current 2015, 2017, 2019, and 2022 servers.";
+			lblRequiresVisualCpp2015To2022Help.Text = LocalizationManager.Get("Text.A388F0CE16C067DFA8C5");
 			// 
 			// chkRequiresAvx2
 			// 
-			chkRequiresAvx2.AccessibleName = "Require an AVX2-capable processor";
+			chkRequiresAvx2.AccessibleName = LocalizationManager.Get("Text.76E9456EF215ECDE0E0F");
 			chkRequiresAvx2.AccessibleRole = AccessibleRole.CheckButton;
 			chkRequiresAvx2.BackColor = Color.FromArgb(17, 27, 45);
 			chkRequiresAvx2.Location = new Point(474, 3234);
@@ -1357,7 +1357,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresAvx2Option.Name = "lblRequiresAvx2Option";
 			lblRequiresAvx2Option.Size = new Size(204, 15);
 			lblRequiresAvx2Option.TabIndex = 86;
-			lblRequiresAvx2Option.Text = "Require an AVX2-capable processor";
+			lblRequiresAvx2Option.Text = LocalizationManager.Get("Text.76E9456EF215ECDE0E0F");
 			// 
 			// lblRequiresAvx2Help
 			// 
@@ -1367,11 +1367,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresAvx2Help.Name = "lblRequiresAvx2Help";
 			lblRequiresAvx2Help.Size = new Size(438, 34);
 			lblRequiresAvx2Help.TabIndex = 87;
-			lblRequiresAvx2Help.Text = "Blocks setup with a clear message when the processor does not support AVX2.";
+			lblRequiresAvx2Help.Text = LocalizationManager.Get("Text.AAFE71EF1584DE2CA4E2");
 			// 
 			// chkRequiresVirtualization
 			// 
-			chkRequiresVirtualization.AccessibleName = "Require hardware virtualization";
+			chkRequiresVirtualization.AccessibleName = LocalizationManager.Get("Text.E6BFB35792E3ACBADCD7");
 			chkRequiresVirtualization.AccessibleRole = AccessibleRole.CheckButton;
 			chkRequiresVirtualization.BackColor = Color.FromArgb(17, 27, 45);
 			chkRequiresVirtualization.Location = new Point(474, 3306);
@@ -1389,7 +1389,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVirtualizationOption.Name = "lblRequiresVirtualizationOption";
 			lblRequiresVirtualizationOption.Size = new Size(183, 15);
 			lblRequiresVirtualizationOption.TabIndex = 89;
-			lblRequiresVirtualizationOption.Text = "Require hardware virtualization";
+			lblRequiresVirtualizationOption.Text = LocalizationManager.Get("Text.E6BFB35792E3ACBADCD7");
 			// 
 			// lblRequiresVirtualizationHelp
 			// 
@@ -1399,11 +1399,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVirtualizationHelp.Name = "lblRequiresVirtualizationHelp";
 			lblRequiresVirtualizationHelp.Size = new Size(438, 34);
 			lblRequiresVirtualizationHelp.TabIndex = 90;
-			lblRequiresVirtualizationHelp.Text = "Checks whether virtualization support is enabled and available to Windows.";
+			lblRequiresVirtualizationHelp.Text = LocalizationManager.Get("Text.445F89C824FEC1E5E372");
 			// 
 			// chkRequiresHyperV
 			// 
-			chkRequiresHyperV.AccessibleName = "Require Microsoft Hyper-V";
+			chkRequiresHyperV.AccessibleName = LocalizationManager.Get("Text.61DD18470607E3A0F102");
 			chkRequiresHyperV.AccessibleRole = AccessibleRole.CheckButton;
 			chkRequiresHyperV.BackColor = Color.FromArgb(17, 27, 45);
 			chkRequiresHyperV.Location = new Point(474, 3378);
@@ -1422,7 +1422,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresHyperVOption.Name = "lblRequiresHyperVOption";
 			lblRequiresHyperVOption.Size = new Size(157, 15);
 			lblRequiresHyperVOption.TabIndex = 92;
-			lblRequiresHyperVOption.Text = "Require Microsoft Hyper-V";
+			lblRequiresHyperVOption.Text = LocalizationManager.Get("Text.61DD18470607E3A0F102");
 			// 
 			// lblRequiresHyperVHelp
 			// 
@@ -1432,11 +1432,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresHyperVHelp.Name = "lblRequiresHyperVHelp";
 			lblRequiresHyperVHelp.Size = new Size(438, 34);
 			lblRequiresHyperVHelp.TabIndex = 93;
-			lblRequiresHyperVHelp.Text = "Use only when the server is deployed through Hyper-V or Windows containers.";
+			lblRequiresHyperVHelp.Text = LocalizationManager.Get("Text.1433E221238B95E942F7");
 			// 
 			// chkRequiresWindowsPro
 			// 
-			chkRequiresWindowsPro.AccessibleName = "Require Windows Professional or higher";
+			chkRequiresWindowsPro.AccessibleName = LocalizationManager.Get("Text.FFCA4DFEDF6D5ACCEDAA");
 			chkRequiresWindowsPro.AccessibleRole = AccessibleRole.CheckButton;
 			chkRequiresWindowsPro.BackColor = Color.FromArgb(17, 27, 45);
 			chkRequiresWindowsPro.Location = new Point(474, 3450);
@@ -1454,7 +1454,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresWindowsProOption.Name = "lblRequiresWindowsProOption";
 			lblRequiresWindowsProOption.Size = new Size(229, 15);
 			lblRequiresWindowsProOption.TabIndex = 95;
-			lblRequiresWindowsProOption.Text = "Require Windows Professional or higher";
+			lblRequiresWindowsProOption.Text = LocalizationManager.Get("Text.FFCA4DFEDF6D5ACCEDAA");
 			// 
 			// lblRequiresWindowsProHelp
 			// 
@@ -1464,7 +1464,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresWindowsProHelp.Name = "lblRequiresWindowsProHelp";
 			lblRequiresWindowsProHelp.Size = new Size(438, 34);
 			lblRequiresWindowsProHelp.TabIndex = 96;
-			lblRequiresWindowsProHelp.Text = "Required for features such as Hyper-V that are unavailable on Windows Home.";
+			lblRequiresWindowsProHelp.Text = LocalizationManager.Get("Text.B0DAEADE1B96AB9F8EB5");
 			// 
 			// lblLaunchSection
 			// 
@@ -1475,7 +1475,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblLaunchSection.Name = "lblLaunchSection";
 			lblLaunchSection.Size = new Size(124, 20);
 			lblLaunchSection.TabIndex = 97;
-			lblLaunchSection.Text = "Launch behavior";
+			lblLaunchSection.Text = LocalizationManager.Get("Text.C30B958EFAB6DF2C8799");
 			// 
 			// lblLaunchSectionHelp
 			// 
@@ -1485,11 +1485,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblLaunchSectionHelp.Name = "lblLaunchSectionHelp";
 			lblLaunchSectionHelp.Size = new Size(516, 42);
 			lblLaunchSectionHelp.TabIndex = 98;
-			lblLaunchSectionHelp.Text = "Choose only the built-in launch behavior verified for this dedicated server.";
+			lblLaunchSectionHelp.Text = LocalizationManager.Get("Text.C9F72F8A6A3B6CC20F72");
 			// 
 			// chkRunElevated
 			// 
-			chkRunElevated.AccessibleName = "Launch with administrator permission";
+			chkRunElevated.AccessibleName = LocalizationManager.Get("Text.340ADCD38DA9710C18AF");
 			chkRunElevated.AccessibleRole = AccessibleRole.CheckButton;
 			chkRunElevated.BackColor = Color.FromArgb(17, 27, 45);
 			chkRunElevated.Location = new Point(474, 3614);
@@ -1507,7 +1507,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRunElevatedOption.Name = "lblRunElevatedOption";
 			lblRunElevatedOption.Size = new Size(215, 15);
 			lblRunElevatedOption.TabIndex = 100;
-			lblRunElevatedOption.Text = "Launch with administrator permission";
+			lblRunElevatedOption.Text = LocalizationManager.Get("Text.340ADCD38DA9710C18AF");
 			// 
 			// lblRunElevatedHelp
 			// 
@@ -1517,11 +1517,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRunElevatedHelp.Name = "lblRunElevatedHelp";
 			lblRunElevatedHelp.Size = new Size(438, 34);
 			lblRunElevatedHelp.TabIndex = 101;
-			lblRunElevatedHelp.Text = "Enable only when the server cannot run correctly without Windows elevation.";
+			lblRunElevatedHelp.Text = LocalizationManager.Get("Text.2F7C7C280CF67E40627A");
 			// 
 			// chkRequiresVisibleWindow
 			// 
-			chkRequiresVisibleWindow.AccessibleName = "Require the server manager window to remain visible";
+			chkRequiresVisibleWindow.AccessibleName = LocalizationManager.Get("Text.88E68081C6F4A7C6EEE2");
 			chkRequiresVisibleWindow.AccessibleRole = AccessibleRole.CheckButton;
 			chkRequiresVisibleWindow.BackColor = Color.FromArgb(17, 27, 45);
 			chkRequiresVisibleWindow.Location = new Point(474, 3686);
@@ -1539,7 +1539,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVisibleWindowOption.Name = "lblRequiresVisibleWindowOption";
 			lblRequiresVisibleWindowOption.Size = new Size(236, 15);
 			lblRequiresVisibleWindowOption.TabIndex = 103;
-			lblRequiresVisibleWindowOption.Text = "Require a visible server manager window";
+			lblRequiresVisibleWindowOption.Text = LocalizationManager.Get("Text.D320B9FEE80C1B53C8BD");
 			// 
 			// lblRequiresVisibleWindowHelp
 			// 
@@ -1549,7 +1549,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRequiresVisibleWindowHelp.Name = "lblRequiresVisibleWindowHelp";
 			lblRequiresVisibleWindowHelp.Size = new Size(438, 34);
 			lblRequiresVisibleWindowHelp.TabIndex = 104;
-			lblRequiresVisibleWindowHelp.Text = "Overrides Synix's hide-console preference for servers managed through their own window.";
+			lblRequiresVisibleWindowHelp.Text = LocalizationManager.Get("Text.36B18A6020F2CE06DF28");
 			// 
 			// lblLifecycleTracking
 			// 
@@ -1560,7 +1560,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblLifecycleTracking.Name = "lblLifecycleTracking";
 			lblLifecycleTracking.Size = new Size(143, 15);
 			lblLifecycleTracking.TabIndex = 105;
-			lblLifecycleTracking.Text = "Server lifecycle tracking";
+			lblLifecycleTracking.Text = LocalizationManager.Get("Text.6FB2EE8D927BED5B3EFB");
 			// 
 			// cmbLifecycleTracking
 			// 
@@ -1589,11 +1589,11 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblLifecycleTrackingHelp.Name = "lblLifecycleTrackingHelp";
 			lblLifecycleTrackingHelp.Size = new Size(516, 34);
 			lblLifecycleTrackingHelp.TabIndex = 107;
-			lblLifecycleTrackingHelp.Text = "External deployment is for launchers or virtual machines and disables query monitoring.";
+			lblLifecycleTrackingHelp.Text = LocalizationManager.Get("Text.6F9406E668F812A49DBB");
 			// 
 			// chkAllowLaunchExport
 			// 
-			chkAllowLaunchExport.AccessibleName = "Allow launch-file export";
+			chkAllowLaunchExport.AccessibleName = LocalizationManager.Get("Text.1B1883FE46A693283181");
 			chkAllowLaunchExport.AccessibleRole = AccessibleRole.CheckButton;
 			chkAllowLaunchExport.BackColor = Color.FromArgb(17, 27, 45);
 			chkAllowLaunchExport.Checked = true;
@@ -1613,7 +1613,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblAllowLaunchExportOption.Name = "lblAllowLaunchExportOption";
 			lblAllowLaunchExportOption.Size = new Size(141, 15);
 			lblAllowLaunchExportOption.TabIndex = 109;
-			lblAllowLaunchExportOption.Text = "Allow launch-file export";
+			lblAllowLaunchExportOption.Text = LocalizationManager.Get("Text.1B1883FE46A693283181");
 			// 
 			// lblAllowLaunchExportHelp
 			// 
@@ -1623,7 +1623,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblAllowLaunchExportHelp.Name = "lblAllowLaunchExportHelp";
 			lblAllowLaunchExportHelp.Size = new Size(438, 48);
 			lblAllowLaunchExportHelp.TabIndex = 110;
-			lblAllowLaunchExportHelp.Text = "Lets the user create a reviewed launch file. Disable for deployment commands that must stay inside Synix.";
+			lblAllowLaunchExportHelp.Text = LocalizationManager.Get("Text.D3F2BA487FAA0A74E4A4");
 			// 
 			// lblReadyMessage
 			// 
@@ -1634,7 +1634,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblReadyMessage.Name = "lblReadyMessage";
 			lblReadyMessage.Size = new Size(343, 15);
 			lblReadyMessage.TabIndex = 111;
-			lblReadyMessage.Text = "Message shown after special readiness checks pass (optional)";
+			lblReadyMessage.Text = LocalizationManager.Get("Text.A5C1D46A9B2A472DF537");
 			// 
 			// txtReadyMessage
 			// 
@@ -1659,7 +1659,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblLogPaths.Name = "lblLogPaths";
 			lblLogPaths.Size = new Size(378, 15);
 			lblLogPaths.TabIndex = 113;
-			lblLogPaths.Text = "Server log locations (one relative path or wildcard pattern per line)";
+			lblLogPaths.Text = LocalizationManager.Get("Text.A50A426E7FA853DA7584");
 			// 
 			// txtLogPaths
 			// 
@@ -1671,7 +1671,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			txtLogPaths.Location = new Point(12, 4108);
 			txtLogPaths.Multiline = true;
 			txtLogPaths.Name = "txtLogPaths";
-			txtLogPaths.PlaceholderText = "Logs\\*.log\r\nSaved\\Logs\\**\\*.log";
+			txtLogPaths.PlaceholderText = LocalizationManager.Get("Text.070839931CDDA34F168B");
 			txtLogPaths.ScrollBars = ScrollBars.Vertical;
 			txtLogPaths.Size = new Size(516, 76);
 			txtLogPaths.TabIndex = 114;
@@ -1685,7 +1685,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblRightPane.Name = "lblRightPane";
 			lblRightPane.Size = new Size(242, 20);
 			lblRightPane.TabIndex = 3;
-			lblRightPane.Text = "Builder guide and supported tags";
+			lblRightPane.Text = LocalizationManager.Get("Text.3CEBC2F3146476331D53");
 			// 
 			// btnShowGuide
 			// 
@@ -1698,7 +1698,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnShowGuide.Name = "btnShowGuide";
 			btnShowGuide.Size = new Size(102, 34);
 			btnShowGuide.TabIndex = 4;
-			btnShowGuide.Text = "Guide";
+			btnShowGuide.Text = LocalizationManager.Get("Text.8DD65D0952ED144CCF6E");
 			btnShowGuide.UseAccentStyle = true;
 			btnShowGuide.UseVisualStyleBackColor = false;
 			btnShowGuide.Click += btnShowGuide_Click;
@@ -1714,7 +1714,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnShowPreview.Name = "btnShowPreview";
 			btnShowPreview.Size = new Size(104, 34);
 			btnShowPreview.TabIndex = 5;
-			btnShowPreview.Text = "Preview";
+			btnShowPreview.Text = LocalizationManager.Get("Text.324B134F57C70C729AE3");
 			btnShowPreview.UseVisualStyleBackColor = false;
 			btnShowPreview.Click += btnShowPreview_Click;
 			// 
@@ -1757,7 +1757,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			lblStatus.Name = "lblStatus";
 			lblStatus.Size = new Size(540, 46);
 			lblStatus.TabIndex = 8;
-			lblStatus.Text = "Enter the game information, then validate before saving.";
+			lblStatus.Text = LocalizationManager.Get("Text.E486E8326F69B31FB7D5");
 			// 
 			// btnValidate
 			// 
@@ -1770,7 +1770,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnValidate.Name = "btnValidate";
 			btnValidate.Size = new Size(164, 44);
 			btnValidate.TabIndex = 9;
-			btnValidate.Text = "Validate & Preview";
+			btnValidate.Text = LocalizationManager.Get("Text.DD560617527C225ABE17");
 			btnValidate.UseVisualStyleBackColor = false;
 			btnValidate.Click += btnValidate_Click;
 			// 
@@ -1785,7 +1785,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnSave.Name = "btnSave";
 			btnSave.Size = new Size(172, 44);
 			btnSave.TabIndex = 10;
-			btnSave.Text = "Save to Project";
+			btnSave.Text = LocalizationManager.Get("Text.EE056870168CF793A7A3");
 			btnSave.UseAccentStyle = true;
 			btnSave.UseVisualStyleBackColor = false;
 			btnSave.Click += btnSave_Click;
@@ -1811,7 +1811,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			MinimumSize = new Size(1040, 720);
 			Name = "GameDefinitionBuilder";
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Game Definition Builder";
+			Text = LocalizationManager.Get("Text.50DDB266BAA23B0FE224");
 			pnlInputs.ResumeLayout(false);
 			pnlInputs.PerformLayout();
 			(numCatalogOrder).EndInit();

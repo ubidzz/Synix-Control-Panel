@@ -52,7 +52,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(668, 34);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Synix update is available";
+			titleLabel.Text = LocalizationManager.Get("Text.EDE7581CA906C86AD8C0");
 			// 
 			// subtitleLabel
 			// 
@@ -61,7 +61,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(668, 25);
 			subtitleLabel.TabIndex = 1;
-			subtitleLabel.Text = "Current version and installation type";
+			subtitleLabel.Text = LocalizationManager.Get("Text.DA09D7E8BF4A3670094C");
 			// 
 			// summaryCard
 			// 
@@ -85,7 +85,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			highlightsTitleLabel.Name = "highlightsTitleLabel";
 			highlightsTitleLabel.Size = new Size(632, 26);
 			highlightsTitleLabel.TabIndex = 0;
-			highlightsTitleLabel.Text = "Release highlights";
+			highlightsTitleLabel.Text = LocalizationManager.Get("Text.F4ACA1BC97F35D76F433");
 			// 
 			// highlightsTextBox
 			// 
@@ -99,7 +99,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			highlightsTextBox.ScrollBars = RichTextBoxScrollBars.Vertical;
 			highlightsTextBox.Size = new Size(632, 160);
 			highlightsTextBox.TabIndex = 1;
-			highlightsTextBox.Text = "Release notes will appear here.";
+			highlightsTextBox.Text = LocalizationManager.Get("Text.1DE733236BD0DED6BA11");
 			// 
 			// verificationLabel
 			// 
@@ -109,7 +109,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			verificationLabel.Name = "verificationLabel";
 			verificationLabel.Size = new Size(632, 25);
 			verificationLabel.TabIndex = 2;
-			verificationLabel.Text = "Verified update package details";
+			verificationLabel.Text = LocalizationManager.Get("Text.4B8F3F5DCE29F4501415");
 			// 
 			// safetyMessageLabel
 			// 
@@ -118,7 +118,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			safetyMessageLabel.Name = "safetyMessageLabel";
 			safetyMessageLabel.Size = new Size(668, 52);
 			safetyMessageLabel.TabIndex = 3;
-			safetyMessageLabel.Text = "Update safety information appears here.";
+			safetyMessageLabel.Text = LocalizationManager.Get("Text.348C3C8FD21539135DB5");
 			// 
 			// laterButton
 			// 
@@ -131,7 +131,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			laterButton.Name = "laterButton";
 			laterButton.Size = new Size(90, 40);
 			laterButton.TabIndex = 4;
-			laterButton.Text = "Later";
+			laterButton.Text = LocalizationManager.Get("Text.73B6E48A1B552D112502");
 			laterButton.UseVisualStyleBackColor = false;
 			// 
 			// githubButton
@@ -144,7 +144,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			githubButton.Name = "githubButton";
 			githubButton.Size = new Size(116, 40);
 			githubButton.TabIndex = 5;
-			githubButton.Text = "Open GitHub";
+			githubButton.Text = LocalizationManager.Get("Text.0D2CDA15031BA9A8D8EE");
 			githubButton.UseVisualStyleBackColor = false;
 			// 
 			// fullNotesButton
@@ -157,7 +157,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			fullNotesButton.Name = "fullNotesButton";
 			fullNotesButton.Size = new Size(160, 40);
 			fullNotesButton.TabIndex = 6;
-			fullNotesButton.Text = "Full Release Notes";
+			fullNotesButton.Text = LocalizationManager.Get("Text.35120CEE0464BE5E274D");
 			fullNotesButton.UseVisualStyleBackColor = false;
 			// 
 			// installButton
@@ -170,7 +170,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			installButton.Name = "installButton";
 			installButton.Size = new Size(164, 40);
 			installButton.TabIndex = 7;
-			installButton.Text = "Install Update";
+			installButton.Text = LocalizationManager.Get("Updates.Button.Install");
 			installButton.UseAccentStyle = true;
 			installButton.UseVisualStyleBackColor = false;
 			// 
@@ -200,7 +200,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			Name = "SynixUpdateDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Update";
+			Text = LocalizationManager.Get("ProblemAction.SynixUpdate");
 			summaryCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}

@@ -74,7 +74,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCredentialsIcon.Name = "lblCredentialsIcon";
 			lblCredentialsIcon.Size = new Size(28, 30);
 			lblCredentialsIcon.TabIndex = 0;
-			lblCredentialsIcon.Text = "◇";
+			lblCredentialsIcon.Text = LocalizationManager.Get("Text.F88C1B7702D3AFFE04D4");
 			lblCredentialsIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblCredentialsTitle
@@ -86,7 +86,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCredentialsTitle.Name = "lblCredentialsTitle";
 			lblCredentialsTitle.Size = new Size(153, 21);
 			lblCredentialsTitle.TabIndex = 1;
-			lblCredentialsTitle.Text = "Access Credentials";
+			lblCredentialsTitle.Text = LocalizationManager.Get("Text.B70806C6C2D93404F976");
 
 			// lblPassword
 			lblPassword.AutoSize = true;
@@ -97,7 +97,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblPassword.Name = "lblPassword";
 			lblPassword.Size = new Size(100, 15);
 			lblPassword.TabIndex = 2;
-			lblPassword.Text = "Server Password";
+			lblPassword.Text = LocalizationManager.Get("Text.10F86A32C69207531263");
 
 			// txtPassword
 			txtPassword.AutoSize = false;
@@ -119,7 +119,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblAdminPassword.Name = "lblAdminPassword";
 			lblAdminPassword.Size = new Size(102, 15);
 			lblAdminPassword.TabIndex = 4;
-			lblAdminPassword.Text = "Admin Password";
+			lblAdminPassword.Text = LocalizationManager.Get("Text.2E28AAB93B90457D1678");
 
 			// txtAdminPassword
 			txtAdminPassword.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -142,7 +142,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCredentialsNote.Name = "lblCredentialsNote";
 			lblCredentialsNote.Size = new Size(866, 22);
 			lblCredentialsNote.TabIndex = 6;
-			lblCredentialsNote.Text = "◇  Sensitive fields follow the Synix Privacy Mode setting.";
+			lblCredentialsNote.Text = LocalizationManager.Get("Text.ED08E4C207A6FC2493D7");
 
 
 			// cardAuthenticationToken
@@ -170,7 +170,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblAuthenticationTokenIcon.Name = "lblAuthenticationTokenIcon";
 			lblAuthenticationTokenIcon.Size = new Size(28, 30);
 			lblAuthenticationTokenIcon.TabIndex = 0;
-			lblAuthenticationTokenIcon.Text = "⌘";
+			lblAuthenticationTokenIcon.Text = LocalizationManager.Get("Text.70B4B62A6095E612F4AD");
 			lblAuthenticationTokenIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblAuthenticationTokenTitle
@@ -182,7 +182,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblAuthenticationTokenTitle.Name = "lblAuthenticationTokenTitle";
 			lblAuthenticationTokenTitle.Size = new Size(244, 21);
 			lblAuthenticationTokenTitle.TabIndex = 1;
-			lblAuthenticationTokenTitle.Text = "Online Service Authentication";
+			lblAuthenticationTokenTitle.Text = LocalizationManager.Get("Text.2BBA1B9B15644044B222");
 
 			// lblAuthenticationToken
 			lblAuthenticationToken.AutoSize = true;
@@ -193,7 +193,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblAuthenticationToken.Name = "lblAuthenticationToken";
 			lblAuthenticationToken.Size = new Size(129, 15);
 			lblAuthenticationToken.TabIndex = 2;
-			lblAuthenticationToken.Text = "Authentication Token";
+			lblAuthenticationToken.Text = LocalizationManager.Get("ServerSetup.Security.AuthenticationToken");
 
 			// txtAuthenticationToken
 			txtAuthenticationToken.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -215,7 +215,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnAuthenticationTokenHelp.Name = "btnAuthenticationTokenHelp";
 			btnAuthenticationTokenHelp.Size = new Size(140, 42);
 			btnAuthenticationTokenHelp.TabIndex = 4;
-			btnAuthenticationTokenHelp.Text = "Get Token";
+			btnAuthenticationTokenHelp.Text = LocalizationManager.Get("Text.9E8A7EC82FAED9A14FA0");
 
 			// lblAuthenticationTokenNote
 			lblAuthenticationTokenNote.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -226,7 +226,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblAuthenticationTokenNote.Name = "lblAuthenticationTokenNote";
 			lblAuthenticationTokenNote.Size = new Size(866, 22);
 			lblAuthenticationTokenNote.TabIndex = 5;
-			lblAuthenticationTokenNote.Text = "Protected in Synix and hidden from its logs. Generated batch files include the usable token in readable text.";
+			lblAuthenticationTokenNote.Text = LocalizationManager.Get("Text.517D0391800FC8C55AD3");
 
 			// cardInviteCode
 			cardInviteCode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -252,7 +252,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblInviteCodeIcon.Name = "lblInviteCodeIcon";
 			lblInviteCodeIcon.Size = new Size(28, 30);
 			lblInviteCodeIcon.TabIndex = 0;
-			lblInviteCodeIcon.Text = "◇";
+			lblInviteCodeIcon.Text = LocalizationManager.Get("Text.F88C1B7702D3AFFE04D4");
 			lblInviteCodeIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblInviteCodeTitle
@@ -264,7 +264,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblInviteCodeTitle.Name = "lblInviteCodeTitle";
 			lblInviteCodeTitle.Size = new Size(187, 21);
 			lblInviteCodeTitle.TabIndex = 1;
-			lblInviteCodeTitle.Text = "Windrose Invite Access";
+			lblInviteCodeTitle.Text = LocalizationManager.Get("Text.89A12481F8B497A1F048");
 
 			// lblInviteCode
 			lblInviteCode.AutoSize = true;
@@ -275,7 +275,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblInviteCode.Name = "lblInviteCode";
 			lblInviteCode.Size = new Size(68, 15);
 			lblInviteCode.TabIndex = 2;
-			lblInviteCode.Text = "Invite Code";
+			lblInviteCode.Text = LocalizationManager.Get("Text.A4DD72C4AC5BBC667FC3");
 
 			// txtInviteCode
 			txtInviteCode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -299,7 +299,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblInviteCodeNote.Name = "lblInviteCodeNote";
 			lblInviteCodeNote.Size = new Size(866, 22);
 			lblInviteCodeNote.TabIndex = 4;
-			lblInviteCodeNote.Text = "Privacy Mode masks this access credential. Enter a custom code, or leave it empty on first install to let Windrose generate one.";
+			lblInviteCodeNote.Text = LocalizationManager.Get("Text.F13396A9BD6FFF26191D");
 
 			// ServerSettingsSecurityPage
 			AutoScaleDimensions = new SizeF(96F, 96F);

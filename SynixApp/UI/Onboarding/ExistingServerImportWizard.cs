@@ -24,7 +24,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 
 		internal ExistingServerImportWizard()
 		{
-			Text = "Import Existing Server";
+			Text = LocalizationManager.Get("Text.25FBAC53BB846E706EFB");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -35,32 +35,44 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			ForeColor = SettingsPalette.PrimaryText;
 			Font = new Font("Segoe UI", 9.5F);
 
-			Controls.Add(Heading("Import an existing game server", 28, 24, 744, 42, 19F));
+			Controls.Add(Heading(
+				LocalizationManager.Get("Onboarding.Import.Heading"),
+				28, 24, 744, 42, 19F));
 			Controls.Add(Body(
-				"Choose the server's main folder. Synix will identify the game from its exact executable path. It will not move, delete, reinstall, or overwrite your existing configuration.",
+				LocalizationManager.Get("Onboarding.Import.Subtitle"),
 				30, 68, 730, 50));
 
 			ModernSettingsCard folderCard = Card(28, 126, 744, 132);
-			folderCard.Controls.Add(Heading("1. Choose the existing server folder", 18, 14, 540, 26, 11F));
+			folderCard.Controls.Add(Heading(
+				LocalizationManager.Get("Onboarding.Import.StepFolder"),
+				18, 14, 540, 26, 11F));
 			_folderBox = Input(18, 52, 566, 38);
 			_folderBox.TextChanged += (_, _) => DetectGames();
 			folderCard.Controls.Add(_folderBox);
 			ModernSettingsButton browse = new()
 			{
-				Text = "Browse",
+				Text = LocalizationManager.Get("Text.3227AA9666253F7A7365"),
 				Location = new Point(596, 50),
 				Size = new Size(128, 42)
 			};
 			browse.Click += Browse_Click;
 			folderCard.Controls.Add(browse);
-			_detectionStatus = Body("No folder selected yet.", 18, 98, 706, 24);
+			_detectionStatus = Body(
+				LocalizationManager.Get("Onboarding.Import.NoFolderSelected"),
+				18, 98, 706, 24);
 			folderCard.Controls.Add(_detectionStatus);
 			Controls.Add(folderCard);
 
 			ModernSettingsCard detailsCard = Card(28, 274, 744, 226);
-			detailsCard.Controls.Add(Heading("2. Confirm the server details", 18, 14, 680, 26, 11F));
-			detailsCard.Controls.Add(FieldLabel("Detected game", 18, 52, 330));
-			detailsCard.Controls.Add(FieldLabel("Server name in Synix", 382, 52, 330));
+			detailsCard.Controls.Add(Heading(
+				LocalizationManager.Get("Onboarding.Import.StepDetails"),
+				18, 14, 680, 26, 11F));
+			detailsCard.Controls.Add(FieldLabel(
+				LocalizationManager.Get("Onboarding.Import.DetectedGame"),
+				18, 52, 330));
+			detailsCard.Controls.Add(FieldLabel(
+				LocalizationManager.Get("Onboarding.Import.ServerName"),
+				382, 52, 330));
 			_gameBox = new ModernSettingsComboBox
 			{
 				Location = new Point(18, 78),
@@ -72,27 +84,31 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			_nameBox = Input(382, 78, 342, 40);
 			detailsCard.Controls.Add(_nameBox);
 
-			detailsCard.Controls.Add(FieldLabel("Game port", 18, 136, 160));
-			detailsCard.Controls.Add(FieldLabel("Query port", 200, 136, 160));
+			detailsCard.Controls.Add(FieldLabel(
+				LocalizationManager.Get("Text.3E8DBB6C3828E368EDBE"),
+				18, 136, 160));
+			detailsCard.Controls.Add(FieldLabel(
+				LocalizationManager.Get("Text.516E776E998FF69A8D69"),
+				200, 136, 160));
 			_gamePort = PortInput(18, 162);
 			_queryPort = PortInput(200, 162);
 			detailsCard.Controls.Add(_gamePort);
 			detailsCard.Controls.Add(_queryPort);
 			detailsCard.Controls.Add(Body(
-				"Use the ports already configured for this server. You can change the rest of the settings after import.",
+				LocalizationManager.Get("Onboarding.Import.PortsHelp"),
 				382, 144, 342, 60));
 			Controls.Add(detailsCard);
 
 			ModernSettingsButton cancel = new()
 			{
-				Text = "Cancel",
+				Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778"),
 				Location = new Point(464, 522),
 				Size = new Size(142, 44),
 				DialogResult = DialogResult.Cancel
 			};
 			_importButton = new ModernSettingsButton
 			{
-				Text = "Register Server",
+				Text = LocalizationManager.Get("Text.E903F7224FB457AE0BFD"),
 				Location = new Point(618, 522),
 				Size = new Size(154, 44),
 				UseAccentStyle = true,
@@ -108,7 +124,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 		{
 			using FolderBrowserDialog browser = new()
 			{
-				Description = "Choose the folder containing the installed game server",
+				Description = LocalizationManager.Get("Onboarding.Import.FolderPicker"),
 				UseDescriptionForTitle = true,
 				ShowNewFolderButton = false
 			};
@@ -127,17 +143,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 			_importButton.Enabled = _detections.Count > 0;
 			if (_detections.Count == 0)
 			{
-				_detectionStatus.Text = Directory.Exists(_folderBox.Text.Trim())
-					? "No supported server executable was found in this folder. Try the folder used as the server install path."
-					: "Choose an existing server folder to continue.";
+				LocalizationManager.BindText(
+					_detectionStatus,
+					Directory.Exists(_folderBox.Text.Trim())
+						? "DynamicText.4477A4C46D66B4C3CDD3"
+						: "DynamicText.CB565F94960FAEEC9A40");
 				_detectionStatus.ForeColor = SettingsPalette.Warning;
 				return;
 			}
 
 			_gameBox.SelectedIndex = 0;
-			_detectionStatus.Text = _detections.Count == 1
-				? $"Found {_detections[0].DisplayName}."
-				: $"Found {_detections.Count} possible server programs. Select the correct game below.";
+			LocalizationManager.BindText(
+				_detectionStatus,
+				_detections.Count == 1
+					? "Onboarding.Import.FoundOne"
+					: "Onboarding.Import.FoundMany",
+				_detections.Count == 1
+					? _detections[0].DisplayName
+					: _detections.Count);
 			_detectionStatus.ForeColor = SettingsPalette.Success;
 		}
 
@@ -182,13 +205,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 				ServerRegistry.Servers.Add(ImportedServer);
 				await Core.RefreshServerIconAsync(ImportedServer);
 				if (!Synix_Control_Panel.SynixApp.FileFolderHandler.FileHandler.SaveServers())
-					throw new IOException("Synix could not save the imported server.");
+					throw new IOException(LocalizationManager.Get(
+						"Onboarding.Import.SaveFailed"));
 
 				await Core.Instance.RebindProcesses();
-				ApplicationLogService.Write(
-					$"[IMPORT] Registered {ImportedServer.ServerName} without changing its existing files. Review Server Settings before its first Synix-managed start.",
+				ApplicationLogService.WriteLocalized(
+					"Onboarding.Import.Activity.Registered",
 					SettingsPalette.Success,
-					true);
+					true,
+					ImportedServer.ServerName);
 				DialogResult = DialogResult.OK;
 				Close();
 			}
@@ -197,7 +222,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 				if (ImportedServer != null)
 					ServerRegistry.Servers.Remove(ImportedServer);
 				ImportedServer = null;
-				PlainEnglishErrorDialog.ShowError(this, "import the existing server", exception.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("Onboarding.Import.ErrorAction"),
+					exception.Message);
 				_importButton.Enabled = true;
 			}
 		}
@@ -209,7 +237,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Onboarding
 
 		private static string MakeUniqueName(string game)
 		{
-			string baseName = $"Imported {game}";
+			string baseName = LocalizationManager.Get(
+				"Onboarding.Import.DefaultServerName",
+				game);
 			string candidate = baseName;
 			for (int suffix = 2; ServerRegistry.Servers.Any(server => server.ServerName.Equals(
 				candidate,

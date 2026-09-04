@@ -48,7 +48,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				if (!File.Exists(sourcePath))
 				{
 					return ConfigurationApplyResult.Failure(
-						"Wreckfest has not generated its initial configuration yet.");
+						LocalizationManager.Get(
+							"Configuration.Apply.InitialNotGenerated",
+							GameName));
 				}
 
 				return ReplaceWithTemplates(
@@ -61,7 +63,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			catch (Exception exception)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The Wreckfest configuration could not be reset: {exception.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.ResetGameFailed",
+						GameName,
+						exception.Message));
 			}
 		}
 
@@ -77,7 +82,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						true,
 						false,
 						false,
-						"The Wreckfest configuration is already present.");
+						LocalizationManager.Get(
+							"Configuration.Apply.AlreadyPresent",
+							GameName));
 				}
 
 				string sourcePath = ResolveFullPath(
@@ -90,7 +97,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						false,
 						false,
 						false,
-						"Wreckfest has not generated its initial configuration yet.");
+						LocalizationManager.Get(
+							"Configuration.Apply.InitialNotGenerated",
+							GameName));
 				}
 
 				File.Copy(sourcePath, targetPath, false);
@@ -99,12 +108,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					true,
 					true,
 					true,
-					"Created the Wreckfest server configuration.");
+					LocalizationManager.Get(
+						"Configuration.Apply.ServerConfigurationCreated",
+						GameName));
 			}
 			catch (Exception ex)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The Wreckfest configuration could not be created: {ex.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.CreateFailed",
+						GameName,
+						ex.Message));
 			}
 		}
 	}

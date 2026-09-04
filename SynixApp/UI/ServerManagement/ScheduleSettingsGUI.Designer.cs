@@ -70,7 +70,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			headerGlyph.Name = "headerGlyph";
 			headerGlyph.Size = new Size(52, 52);
 			headerGlyph.TabIndex = 0;
-			headerGlyph.Text = "↻";
+			headerGlyph.Text = LocalizationManager.Get("Text.AD244EA43ED037EF1730");
 			// 
 			// lblHeading
 			// 
@@ -80,7 +80,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblHeading.Name = "lblHeading";
 			lblHeading.Size = new Size(570, 39);
 			lblHeading.TabIndex = 1;
-			lblHeading.Text = "Maintenance schedule";
+			lblHeading.Text = LocalizationManager.Get("Text.356D7C14F9D27E3F02B3");
 			// 
 			// lblSubtitle
 			// 
@@ -89,7 +89,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblSubtitle.Name = "lblSubtitle";
 			lblSubtitle.Size = new Size(568, 28);
 			lblSubtitle.TabIndex = 2;
-			lblSubtitle.Text = "Choose when Synix should perform the scheduled server restart.";
+			lblSubtitle.Text = LocalizationManager.Get("Text.54FE09AF7E87A247A21A");
 			// 
 			// timeCard
 			// 
@@ -117,7 +117,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblTimeTitle.Name = "lblTimeTitle";
 			lblTimeTitle.Size = new Size(360, 26);
 			lblTimeTitle.TabIndex = 0;
-			lblTimeTitle.Text = "Restart time";
+			lblTimeTitle.Text = LocalizationManager.Get("Text.BBC2611830E1BE782900");
 			// 
 			// lblTimeHelp
 			// 
@@ -126,7 +126,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblTimeHelp.Name = "lblTimeHelp";
 			lblTimeHelp.Size = new Size(394, 38);
 			lblTimeHelp.TabIndex = 1;
-			lblTimeHelp.Text = "Uses the computer's local time and a 24-hour clock.";
+			lblTimeHelp.Text = LocalizationManager.Get("Text.F2029FAFB53EFFEE6890");
 			// 
 			// lblHour
 			// 
@@ -136,7 +136,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblHour.Name = "lblHour";
 			lblHour.Size = new Size(100, 22);
 			lblHour.TabIndex = 2;
-			lblHour.Text = "HOUR";
+			lblHour.Text = LocalizationManager.Get("Text.FAA9DECB5DCE3D4283A9");
 			lblHour.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// lblMinute
@@ -147,7 +147,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblMinute.Name = "lblMinute";
 			lblMinute.Size = new Size(84, 22);
 			lblMinute.TabIndex = 3;
-			lblMinute.Text = "MINUTE";
+			lblMinute.Text = LocalizationManager.Get("Text.1EB03F3919CF225C90CE");
 			lblMinute.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// lblTimeSeparator
@@ -158,12 +158,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblTimeSeparator.Name = "lblTimeSeparator";
 			lblTimeSeparator.Size = new Size(22, 32);
 			lblTimeSeparator.TabIndex = 4;
-			lblTimeSeparator.Text = ":";
+			lblTimeSeparator.Text = LocalizationManager.Get("Text.E7AC0786668E0FF0F02B");
 			lblTimeSeparator.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// numRestartHour
 			// 
-			numRestartHour.AccessibleName = "Restart hour using a 24-hour clock";
+			numRestartHour.AccessibleName = LocalizationManager.Get("Text.A95511418E3B85D2CCA6");
 			numRestartHour.AccessibleRole = AccessibleRole.SpinButton;
 			numRestartHour.BackColor = Color.FromArgb(12, 21, 36);
 			numRestartHour.Font = new Font("Segoe UI", 11F);
@@ -178,7 +178,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			// 
 			// numRestartMinute
 			// 
-			numRestartMinute.AccessibleName = "Restart minute";
+			numRestartMinute.AccessibleName = LocalizationManager.Get("Text.7A8126228870E99BDC43");
 			numRestartMinute.AccessibleRole = AccessibleRole.SpinButton;
 			numRestartMinute.BackColor = Color.FromArgb(12, 21, 36);
 			numRestartMinute.Font = new Font("Segoe UI", 11F);
@@ -219,7 +219,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblDaysTitle.Name = "lblDaysTitle";
 			lblDaysTitle.Size = new Size(612, 26);
 			lblDaysTitle.TabIndex = 0;
-			lblDaysTitle.Text = "Restart days";
+			lblDaysTitle.Text = LocalizationManager.Get("Text.E8A9279E12900267A1DF");
 			// 
 			// lblDaysHelp
 			// 
@@ -228,7 +228,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblDaysHelp.Name = "lblDaysHelp";
 			lblDaysHelp.Size = new Size(612, 24);
 			lblDaysHelp.TabIndex = 1;
-			lblDaysHelp.Text = "Turn on every day when the scheduled restart should run.";
+			lblDaysHelp.Text = LocalizationManager.Get("Text.6440A1A6AB337CD371BA");
 			// 
 			// chkSun
 			// 
@@ -307,7 +307,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			lblScheduleHint.Name = "lblScheduleHint";
 			lblScheduleHint.Size = new Size(390, 40);
 			lblScheduleHint.TabIndex = 5;
-			lblScheduleHint.Text = "The schedule is saved with this server's settings.";
+			lblScheduleHint.Text = LocalizationManager.Get("Text.D9718558CFBB91F44CFF");
 			// 
 			// btnCancel
 			// 
@@ -320,7 +320,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			btnCancel.Name = "btnCancel";
 			btnCancel.Size = new Size(102, 42);
 			btnCancel.TabIndex = 6;
-			btnCancel.Text = "Cancel";
+			btnCancel.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			btnCancel.UseVisualStyleBackColor = false;
 			btnCancel.Click += btnCancel_Click;
 			// 
@@ -334,7 +334,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			btnSaveSchedule.Name = "btnSaveSchedule";
 			btnSaveSchedule.Size = new Size(102, 42);
 			btnSaveSchedule.TabIndex = 7;
-			btnSaveSchedule.Text = "Save";
+			btnSaveSchedule.Text = LocalizationManager.Get("Text.1509F561F2416598629B");
 			btnSaveSchedule.UseAccentStyle = true;
 			btnSaveSchedule.UseVisualStyleBackColor = false;
 			btnSaveSchedule.Click += btnSaveSchedule_Click;
@@ -363,7 +363,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			Name = "ScheduleSettingsGUI";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Maintenance Schedule";
+			Text = LocalizationManager.Get("Text.356D7C14F9D27E3F02B3");
 			timeCard.ResumeLayout(false);
 			(numRestartHour).EndInit();
 			(numRestartMinute).EndInit();

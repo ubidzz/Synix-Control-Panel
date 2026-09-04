@@ -204,7 +204,8 @@ namespace Synix_Control_Panel.SynixEngine
 				responseType != 0x44 ||
 				offset >= response.Length)
 			{
-				throw new InvalidDataException("The server returned an invalid A2S player response.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"PlayerQuery.InvalidA2sResponse"));
 			}
 
 			int count = response[offset++];
@@ -212,17 +213,20 @@ namespace Synix_Control_Panel.SynixEngine
 			for (int index = 0; index < count; index++)
 			{
 				if (offset >= response.Length)
-					throw new InvalidDataException("The player response ended unexpectedly.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"PlayerQuery.ResponseUnexpectedEnd"));
 
 				offset++; // Player index supplied by the server.
 				int nameEnd = response[offset..].IndexOf((byte)0);
 				if (nameEnd < 0)
-					throw new InvalidDataException("A player name was not terminated correctly.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"PlayerQuery.NameNotTerminated"));
 
 				string name = Encoding.UTF8.GetString(response.Slice(offset, nameEnd));
 				offset += nameEnd + 1;
 				if (response.Length < offset + 8)
-					throw new InvalidDataException("A player record was incomplete.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"PlayerQuery.RecordIncomplete"));
 
 				int score = BinaryPrimitives.ReadInt32LittleEndian(response.Slice(offset, 4));
 				offset += 4;

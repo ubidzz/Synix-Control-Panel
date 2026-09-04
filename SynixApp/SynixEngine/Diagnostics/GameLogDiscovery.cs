@@ -45,6 +45,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ArgumentException or NotSupportedException or
 				System.Security.SecurityException)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -54,10 +55,12 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(server);
 			GameInfo? game = GameDatabase.GetGame(server.Game);
 			if (game == null || game.LogPaths.Count == 0)
-				return new(null, 0, ["This game definition does not declare any log locations yet."]);
+				return new(null, 0, [LocalizationManager.Get(
+					"GameLogs.Error.NoDeclaredLocations")]);
 			if (string.IsNullOrWhiteSpace(server.InstallPath) ||
 				!Directory.Exists(server.InstallPath))
-				return new(null, 0, ["The installed server folder could not be found."]);
+				return new(null, 0, [LocalizationManager.Get(
+					"GameLogs.Error.ServerFolderMissing")]);
 
 			string root = Path.GetFullPath(server.InstallPath)
 				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -131,6 +134,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ArgumentException or NotSupportedException or
 				System.Security.SecurityException)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -157,7 +161,8 @@ namespace Synix_Control_Panel.SynixEngine
 				relativePattern.Contains(':') ||
 				relativePattern.Split('/', StringSplitOptions.RemoveEmptyEntries)
 					.Any(segment => segment is "." or ".."))
-				throw new InvalidDataException("The log pattern is unsafe.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameLogs.Error.PatternUnsafe"));
 
 			int wildcardIndex = relativePattern.IndexOfAny(['*', '?']);
 			if (wildcardIndex < 0)
@@ -186,7 +191,8 @@ namespace Synix_Control_Panel.SynixEngine
 				SearchOption.AllDirectories))
 			{
 				if (++examined > MaximumFilesExamined)
-					throw new InvalidDataException("The log search exceeded the safe file limit.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameLogs.Error.SearchLimit"));
 				string relative = Path.GetRelativePath(root, file).Replace('\\', '/');
 				if (matcher.IsMatch(relative))
 					matches.Add(file);
@@ -214,7 +220,8 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!path.StartsWith(
 				root + Path.DirectorySeparatorChar,
 				StringComparison.OrdinalIgnoreCase))
-				throw new InvalidDataException("The log path leaves the installed server folder.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameLogs.Error.PathOutsideServer"));
 			return path;
 		}
 	}
@@ -229,7 +236,12 @@ namespace Synix_Control_Panel.SynixEngine
 				string details = result.Errors.Count > 0
 					? " " + string.Join(" ", result.Errors.Take(2))
 					: string.Empty;
-				Log($"[LOGS] No declared game log was found for {server.ServerName}.{details}", Color.Orange, true);
+				ApplicationLogService.WriteLocalized(
+					"GameLogs.Activity.NotFound",
+					Color.Orange,
+					true,
+					server.ServerName,
+					details);
 				return;
 			}
 
@@ -240,12 +252,22 @@ namespace Synix_Control_Panel.SynixEngine
 					FileName = result.LatestLogPath!,
 					UseShellExecute = true
 				});
-				Log($"[LOGS] Opened the newest declared game log for {server.ServerName}: {result.LatestLogPath}", Color.Cyan);
+				ApplicationLogService.WriteLocalized(
+					"GameLogs.Activity.Opened",
+					Color.Cyan,
+					false,
+					server.ServerName,
+					result.LatestLogPath);
 			}
 			catch (Exception exception) when (exception is InvalidOperationException or
 				System.ComponentModel.Win32Exception)
 			{
-				Log($"[LOGS] Windows could not open the newest log for {server.ServerName}: {exception.Message}", Color.OrangeRed, true);
+				ApplicationLogService.WriteLocalized(
+					"GameLogs.Activity.OpenFailed",
+					Color.OrangeRed,
+					true,
+					server.ServerName,
+					exception.Message);
 			}
 		}
 	}

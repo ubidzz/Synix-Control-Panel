@@ -114,7 +114,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception ex)
 			{
-				Log($"[🛰️ NETWORK ERROR] Probe failed for {ip}:{port} - {ex.Message}", Color.Red);
+				LogLocalized("Probe.Activity.NetworkError", Color.Red, false, ip, port, ex.Message);
 				return false;
 			}
 		}
@@ -132,13 +132,13 @@ namespace Synix_Control_Panel.SynixEngine
 					server,
 					gameData.LaunchBehavior.ReadyLogText))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> declared game-log readiness signal");
+				LogLocalized("Probe.Activity.LogReadiness", arguments: [server.Game]);
 				return RecordSuccessfulProbe(server);
 			}
 
 			if (supportsA2S && await TestServerConnectivity(ip, server.QueryPort))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> A2S (Steam UDP) on Port {server.QueryPort}");
+				LogLocalized("Probe.Activity.A2S", arguments: [server.Game, server.QueryPort]);
 				return RecordSuccessfulProbe(server);
 			}
 
@@ -161,7 +161,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (probeProtocol != ServerProbeProtocol.EpicOnlineServices &&
 				await TestTcpConnectivity(ip, server.Port))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.Port}");
+				LogLocalized("Probe.Activity.Tcp", arguments: [server.Game, server.Port]);
 				return RecordSuccessfulProbe(server);
 			}
 
@@ -169,13 +169,13 @@ namespace Synix_Control_Panel.SynixEngine
 				probeProtocol != ServerProbeProtocol.EpicOnlineServices &&
 				await TestTcpConnectivity(ip, server.QueryPort))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> TCP Handshake on Port {server.QueryPort}");
+				LogLocalized("Probe.Activity.Tcp", arguments: [server.Game, server.QueryPort]);
 				return RecordSuccessfulProbe(server);
 			}
 
 			if (supportsA2S && await TestServerConnectivity(ip, server.Port))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> UDP Check on Port {server.Port}");
+				LogLocalized("Probe.Activity.Udp", arguments: [server.Game, server.Port]);
 				return RecordSuccessfulProbe(server);
 			}
 
@@ -185,20 +185,20 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (IsPortInUseLocally(server.Port))
 				{
-					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Game Port {server.Port} In Use)");
+					LogLocalized("Probe.Activity.GamePortBinding", arguments: [server.Game, server.Port]);
 					return RecordSuccessfulProbe(server);
 				}
 
 				if (IsPortInUseLocally(server.QueryPort))
 				{
-					Log($"[PROBE SUCCESS] {server.Game} verified via -> OS Binding (Query Port {server.QueryPort} In Use)");
+					LogLocalized("Probe.Activity.QueryPortBinding", arguments: [server.Game, server.QueryPort]);
 					return RecordSuccessfulProbe(server);
 				}
 
 				if (probeProtocol == ServerProbeProtocol.EpicOnlineServices &&
 					Servers.ReconcileActiveServerProcesses(server))
 				{
-					Log($"[PROBE SUCCESS] {server.Game} verified via -> stable local EOS server process after 120 seconds");
+					LogLocalized("Probe.Activity.EosProcess", arguments: [server.Game]);
 					return RecordSuccessfulProbe(server);
 				}
 			}
@@ -240,7 +240,7 @@ namespace Synix_Control_Panel.SynixEngine
 					HttpCompletionOption.ResponseHeadersRead,
 					timeout.Token);
 
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> HTTP REST endpoint on Port {server.QueryPort} ({(int)response.StatusCode})");
+				LogLocalized("Probe.Activity.RestEndpoint", arguments: [server.Game, server.QueryPort, (int)response.StatusCode]);
 				return true;
 			}
 			catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or UriFormatException)
@@ -250,7 +250,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (await TestTcpConnectivity(ip, server.QueryPort, timeoutMs))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> REST TCP listener on Port {server.QueryPort}");
+				LogLocalized("Probe.Activity.RestTcp", arguments: [server.Game, server.QueryPort]);
 				return true;
 			}
 
@@ -324,7 +324,7 @@ namespace Synix_Control_Panel.SynixEngine
 							(!string.IsNullOrWhiteSpace(server.ServerName) &&
 							 jsonResponse.Contains(server.ServerName, StringComparison.OrdinalIgnoreCase)))
 						{
-							Log($"[PROBE SUCCESS] {server.Game} verified via -> Epic Online Services session listing");
+							LogLocalized("Probe.Activity.EosSession", arguments: [server.Game]);
 							return true;
 						}
 					}
@@ -338,7 +338,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (await IsLocalAddressAsync(ip) &&
 				(IsPortInUseLocally(server.Port) || IsPortInUseLocally(server.QueryPort)))
 			{
-				Log($"[PROBE SUCCESS] {server.Game} verified via -> local EOS server socket binding");
+				LogLocalized("Probe.Activity.EosSocket", arguments: [server.Game]);
 				return true;
 			}
 
@@ -371,8 +371,9 @@ namespace Synix_Control_Panel.SynixEngine
 				IPAddress[] localAddresses = await Dns.GetHostAddressesAsync(Dns.GetHostName());
 				return targetAddresses.Any(target => localAddresses.Contains(target));
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -395,8 +396,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 				return false;
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -519,8 +521,9 @@ namespace Synix_Control_Panel.SynixEngine
 				server.MaxPlayersFromQuery = maximum;
 				return true;
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}

@@ -41,7 +41,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				return new TrustedPostInstallExecutionResult(
 					false,
 					false,
-					["The server installation folder is unavailable."]);
+					[LocalizationManager.Get("PostInstall.InstallFolderUnavailable")]);
 			}
 
 			if (!TrustedGameDefinitionCatalog.TryGetPackage(
@@ -78,12 +78,16 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 								changed = true;
 							}
 							messages.Add(
-								$"Verified directory: {GetDisplayPath(server.InstallPath, targetDirectory)}");
+								LocalizationManager.Get(
+									"PostInstall.DirectoryVerified",
+									GetDisplayPath(server.InstallPath, targetDirectory)));
 							break;
 
 						default:
 							throw new InvalidDataException(
-								$"Unsupported post-install action: {action.Type}.");
+								LocalizationManager.Get(
+									"PostInstall.ActionUnsupported",
+									action.Type));
 					}
 				}
 
@@ -109,13 +113,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				string targetPath = Path.Combine(targetDirectory, fileName);
 				if (!File.Exists(sourcePath))
 				{
-					messages.Add($"Steam runtime source was not present: {fileName}");
+					messages.Add(LocalizationManager.Get(
+						"PostInstall.SteamRuntime.SourceMissing",
+						fileName));
 					continue;
 				}
 
 				if (File.Exists(targetPath))
 				{
-					messages.Add($"Steam runtime already present: {fileName}");
+					messages.Add(LocalizationManager.Get(
+						"PostInstall.SteamRuntime.AlreadyPresent",
+						fileName));
 					continue;
 				}
 
@@ -125,11 +133,15 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					fileName,
 					false))
 				{
-					throw new IOException($"Synix could not copy the trusted Steam runtime file {fileName}.");
+					throw new IOException(LocalizationManager.Get(
+						"PostInstall.SteamRuntime.CopyFailed",
+						fileName));
 				}
 
 				changed = true;
-				messages.Add($"Copied trusted Steam runtime: {fileName}");
+				messages.Add(LocalizationManager.Get(
+					"PostInstall.SteamRuntime.Copied",
+					fileName));
 			}
 
 			return changed;
@@ -152,7 +164,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					"A post-install target attempted to leave the server installation folder.");
+					LocalizationManager.Get("PostInstall.TargetOutsideInstall"));
 			}
 
 			RejectReparsePointTargets(root, resolved);
@@ -177,7 +189,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				if ((File.GetAttributes(current) & FileAttributes.ReparsePoint) != 0)
 				{
 					throw new InvalidDataException(
-						"A post-install target contains a linked directory and was blocked.");
+						LocalizationManager.Get("PostInstall.LinkedDirectoryBlocked"));
 				}
 			}
 		}
@@ -185,7 +197,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		private static string GetDisplayPath(string installPath, string targetPath)
 		{
 			string relative = Path.GetRelativePath(installPath, targetPath);
-			return relative == "." ? "server root" : relative;
+			return relative == "."
+				? LocalizationManager.Get("PostInstall.ServerRoot")
+				: relative;
 		}
 	}
 }

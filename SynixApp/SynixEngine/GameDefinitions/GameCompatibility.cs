@@ -231,14 +231,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public static string GetCompatibilityStatusDisplayName(
 			GameCompatibilityStatus status)
 		{
-			return status switch
-			{
-				GameCompatibilityStatus.FullyVerified => "Fully verified",
-				GameCompatibilityStatus.PartiallyVerified => "Partially verified",
-				GameCompatibilityStatus.InstallationVerifiedOnly => "Install verified",
-				GameCompatibilityStatus.NeedsConfigurationTemplate => "Needs configuration template",
-				_ => "Needs community testing"
-			};
+			return LocalizationManager.Get($"GameCompatibility.Status.{status}");
 		}
 
 		public static bool RecordGameVerification(

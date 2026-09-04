@@ -48,25 +48,55 @@ namespace Synix_Control_Panel.SynixEngine
 		internal string ToPlainText()
 		{
 			StringBuilder text = new();
-			text.AppendLine("SYNIX RELIABILITY TEST REPORT");
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.Title"));
 			text.AppendLine();
-			text.AppendLine($"Started: {StartedAtUtc.ToLocalTime():g}");
-			text.AppendLine($"Completed: {CompletedAtUtc.ToLocalTime():g}");
-			text.AppendLine($"Duration: {CompletedAtUtc - StartedAtUtc:g}");
-			text.AppendLine($"Samples: {Samples.Count}");
-			text.AppendLine($"Peak private memory: {FormatBytes(PeakPrivateMemory)}");
-			text.AppendLine($"Private memory growth: {FormatSignedBytes(PrivateMemoryGrowth)}");
-			text.AppendLine($"Handle growth: {HandleGrowth:+#;-#;0}");
-			text.AppendLine($"Thread growth: {ThreadGrowth:+#;-#;0}");
-			text.AppendLine($"Highest health failures: {(Samples.Count == 0 ? 0 : Samples.Max(sample => sample.HealthFailures))}");
-			text.AppendLine($"Highest health warnings: {(Samples.Count == 0 ? 0 : Samples.Max(sample => sample.HealthWarnings))}");
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.Started",
+				StartedAtUtc.ToLocalTime()));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.Completed",
+				CompletedAtUtc.ToLocalTime()));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.Duration",
+				CompletedAtUtc - StartedAtUtc));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.Samples",
+				Samples.Count));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.PeakMemory",
+				FormatBytes(PeakPrivateMemory)));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.MemoryGrowth",
+				FormatSignedBytes(PrivateMemoryGrowth)));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.HandleGrowth",
+				HandleGrowth));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.ThreadGrowth",
+				ThreadGrowth));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.HighestFailures",
+				Samples.Count == 0
+					? 0
+					: Samples.Max(sample => sample.HealthFailures)));
+			text.AppendLine(LocalizationManager.Get(
+				"Diagnostics.Reliability.Report.HighestWarnings",
+				Samples.Count == 0
+					? 0
+					: Samples.Max(sample => sample.HealthWarnings)));
 			text.AppendLine();
 			foreach (ReliabilitySample sample in Samples)
 			{
-				text.AppendLine(
-					$"{sample.CapturedAtUtc.ToLocalTime():T}  Private {FormatBytes(sample.PrivateMemoryBytes),10}  " +
-					$"Working set {FormatBytes(sample.WorkingSetBytes),10}  Handles {sample.HandleCount,5}  " +
-					$"Threads {sample.ThreadCount,4}  Fail {sample.HealthFailures,3}  Warn {sample.HealthWarnings,3}");
+				text.AppendLine(LocalizationManager.Get(
+					"Diagnostics.Reliability.Report.Sample",
+					sample.CapturedAtUtc.ToLocalTime(),
+					FormatBytes(sample.PrivateMemoryBytes),
+					FormatBytes(sample.WorkingSetBytes),
+					sample.HandleCount,
+					sample.ThreadCount,
+					sample.HealthFailures,
+					sample.HealthWarnings));
 			}
 			return text.ToString().TrimEnd();
 		}
@@ -110,7 +140,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 				cycle++;
-				progress?.Report($"Sample {cycle}: checking health and memory...  {elapsed.Elapsed:mm\\:ss} elapsed");
+				progress?.Report(LocalizationManager.Get(
+					"Diagnostics.Reliability.Progress.Sample",
+					cycle,
+					elapsed.Elapsed));
 				SynixHealthReport health = await SynixTroubleshooter.RunAsync(
 					servers,
 					checkForUpdates: false,

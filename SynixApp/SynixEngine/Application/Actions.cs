@@ -28,7 +28,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Stop);
 			if (!operation.Acquired)
 			{
-				Log($"[STOP BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				LogLocalized("ServerActions.Activity.StopBlocked", Color.Orange, true, operation.FailureReason);
 				return false;
 			}
 
@@ -37,10 +37,12 @@ namespace Synix_Control_Panel.SynixEngine
 			_ = SendDiscordNotification(
 				server,
 				DiscordNotificationEvent.ServerStopping,
-				isManual ? "SERVER STOPPING" : "AUTOMATIC STOP",
+				LocalizationManager.Get(isManual
+					? "ServerActions.Notification.Stop.ManualTitle"
+					: "ServerActions.Notification.Stop.AutomaticTitle"),
 				isManual
-					? "A shutdown command was issued from Synix."
-					: "Synix is stopping the server as part of an automatic operation.",
+					? LocalizationManager.Get("ServerActions.Notification.Stop.ManualBody")
+					: LocalizationManager.Get("ServerActions.Notification.Stop.AutomaticBody"),
 				Color.Orange);
 
 			bool stopped = await Servers.Stop(server, (msg, logColor) =>
@@ -50,7 +52,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!stopped)
 			{
-				Log($"[🚨 STOP FAILED] {server.ServerName} is still running. Synix kept its live PID and status.", Color.Red, true);
+				LogLocalized("ServerActions.Activity.StopFailed", Color.Red, true, server.ServerName);
 			}
 			else
 			{
@@ -60,8 +62,8 @@ namespace Synix_Control_Panel.SynixEngine
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.ServerStopped,
-					"SERVER STOPPED",
-					$"{server.ServerName} is fully stopped.",
+					LocalizationManager.Get("ServerActions.Notification.Stopped.Title"),
+					LocalizationManager.Get("ServerActions.Notification.Stopped.Body", server.ServerName),
 					Color.LimeGreen);
 			}
 
@@ -82,11 +84,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!result.Succeeded)
 			{
-				Log($"[CONFIG ERROR] {result.Message}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.ConfigError", Color.Red, true, result.Message);
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.ConfigurationWarning,
-					"CONFIGURATION ERROR",
+					LocalizationManager.Get("ServerActions.Notification.ConfigurationError.Title"),
 					result.Message,
 					Color.Red);
 				return;
@@ -94,11 +96,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!result.Complete)
 			{
-				Log($"[CONFIG WARNING] {result.Message}", Color.Orange, true);
+				LogLocalized("ServerActions.Activity.ConfigWarning", Color.Orange, true, result.Message);
 				_ = SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.ConfigurationWarning,
-					"CONFIGURATION WARNING",
+					LocalizationManager.Get("ServerActions.Notification.ConfigurationWarning.Title"),
 					result.Message,
 					Color.Orange);
 				return;
@@ -106,10 +108,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (result.Changed)
 			{
-				Log(
-					$"[CONFIG] Applied the saved Synix settings to the newly generated {server.Game} configuration.",
+				LogLocalized(
+					"ServerActions.Activity.GeneratedConfigApplied",
 					Color.LimeGreen,
-					true);
+					true,
+					server.Game);
 			}
 		}
 
@@ -137,21 +140,28 @@ namespace Synix_Control_Panel.SynixEngine
 						includeAllGeneratedFiles: includeAllGeneratedFiles));
 				if (result.CopiedFiles > 0)
 				{
-					Log(
-						$"[CONFIG CAPTURE] Copied {result.CopiedFiles} generated configuration file(s) for {server.ServerName} to {result.DestinationRoot}.",
-						Color.Cyan);
+					LogLocalized(
+						"ServerActions.Activity.ConfigCaptureCopied",
+						Color.Cyan,
+						false,
+						result.CopiedFiles,
+						server.ServerName,
+						result.DestinationRoot);
 				}
 
 				foreach (string error in result.Errors.Take(3))
 				{
-					Log($"[CONFIG CAPTURE] {error}", Color.OrangeRed);
+					LogLocalized("ServerActions.Activity.ConfigCaptureWarning", Color.OrangeRed, false, error);
 				}
 			}
 			catch (Exception exception)
 			{
-				Log(
-					$"[CONFIG CAPTURE] Could not collect the generated configuration for {server.ServerName}: {exception.Message}",
-					Color.OrangeRed);
+				LogLocalized(
+					"ServerActions.Activity.ConfigCaptureFailed",
+					Color.OrangeRed,
+					false,
+					server.ServerName,
+					exception.Message);
 			}
 		}
 
@@ -161,7 +171,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (string.IsNullOrWhiteSpace(server.InstallPath))
 			{
-				Log("Server installation path is not set.", Color.Red, true);
+				LogLocalized("ServerActions.Activity.InstallPathMissing", Color.Red, true);
 				return;
 			}
 
@@ -173,13 +183,13 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception exception)
 			{
-				Log($"Could not resolve the config file safely:\n{exception.Message}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.ConfigPathUnsafe", Color.Red, true, exception.Message);
 				return;
 			}
 
 			if (configurationFiles.Count == 0)
 			{
-				Log("This game does not have a config path defined.", Color.Red, true);
+				LogLocalized("ServerActions.Activity.ConfigPathUndefined", Color.Red, true);
 				return;
 			}
 
@@ -193,13 +203,15 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				catch (Exception exception)
 				{
-					Log(
-						$"[CONFIG EDITOR] Could not open the configuration editor: {exception.Message}",
+					LogLocalized(
+						"ServerActions.Activity.ConfigEditorFailed",
 						Color.Red,
-						true);
+						true,
+						exception.Message);
 					PlainEnglishErrorDialog.ShowError(
 						ApplicationUiService.DialogOwner,
-						"open the configuration editor",
+						LocalizationManager.Get(
+							"ServerActions.ErrorAction.OpenConfigEditor"),
 						exception.ToString());
 				}
 			}
@@ -208,7 +220,7 @@ namespace Synix_Control_Panel.SynixEngine
 				string locations = string.Join(
 					Environment.NewLine,
 					configurationFiles.Select(file => file.Path));
-				Log($"Could not find the game configuration file(s) at:\n{locations}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.ConfigFilesMissing", Color.Red, true, locations);
 			}
 		}
 
@@ -345,8 +357,9 @@ namespace Synix_Control_Panel.SynixEngine
 					(files.Any(file => File.Exists(file.Path)) ||
 					 GameFix.CanResetManagedConfiguration(server));
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -372,7 +385,7 @@ namespace Synix_Control_Panel.SynixEngine
 				StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					"The configuration path leaves the server installation folder.");
+					LocalizationManager.Get("ServerActions.Error.ConfigPathOutsideInstall"));
 			}
 
 			return fullPath;
@@ -386,7 +399,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			else
 			{
-				Log($"[🚨 ERROR] Folder does not exist: {server.InstallPath}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.FolderMissing", Color.Red, true, server.InstallPath);
 			}
 		}
 
@@ -396,7 +409,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Delete);
 			if (!operation.Acquired)
 			{
-				Log($"[DELETE BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				LogLocalized("ServerActions.Activity.DeleteBlocked", Color.Orange, true, operation.FailureReason);
 				return false;
 			}
 
@@ -405,20 +418,26 @@ namespace Synix_Control_Panel.SynixEngine
 				status == StatusManager.GetStatus(ServerState.Updating) ||
 				(server.PID.HasValue && server.PID > 0))
 			{
-				Log("Cannot delete an active or installing server.", Color.Red, true);
+				LogLocalized("ServerActions.Activity.DeleteActiveBlocked", Color.Red, true);
 				return false;
 			}
 
 			var page = new TaskDialogPage()
 			{
-				Caption = "Confirm Total Deletion",
-				Heading = $"Are you sure you want to PERMANENTLY delete '{server.ServerName}'?",
-				Text = $"This will wipe the installation at:\n{server.InstallPath}",
+				Caption = LocalizationManager.Get(
+					"ServerActions.Delete.ConfirmTitle"),
+				Heading = LocalizationManager.Get(
+					"ServerActions.Delete.ConfirmHeading",
+					server.ServerName),
+				Text = LocalizationManager.Get(
+					"ServerActions.Delete.ConfirmBody",
+					server.InstallPath),
 				Icon = TaskDialogIcon.Warning,
 				Buttons = { TaskDialogButton.Yes, TaskDialogButton.No },
 				Verification = new TaskDialogVerificationCheckBox()
 				{
-					Text = "Also delete all server backup archives"
+					Text = LocalizationManager.Get(
+						"ServerActions.Delete.IncludeBackups")
 				}
 			};
 
@@ -453,12 +472,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (deletion.InstallationDeleted)
 				{
-					Log(
-						$"[CLEANUP] Deleted server '{server.ServerName}' and all files at {deletion.InstallationPath}",
-						Color.Yellow);
+					LogLocalized(
+						"ServerActions.Activity.ServerDeleted",
+						Color.Yellow,
+						false,
+						server.ServerName,
+						deletion.InstallationPath);
 				}
 				if (deletion.BackupsDeleted)
-					Log($"[CLEANUP] Deleted server backups at {deletion.BackupPath}", Color.LimeGreen);
+					LogLocalized("ServerActions.Activity.BackupsDeleted", Color.LimeGreen, false, deletion.BackupPath);
 
 				if (ServerRegistry.Servers.Contains(server))
 					ServerRegistry.Servers.Remove(server);
@@ -470,8 +492,15 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (Exception ex)
 			{
 				server.Status = previousStatus;
-				Log($"Files were partially deleted, but an error occurred:\n{ex.Message}", Color.Red, true);
-				LocalizedMessageBox.Show($"Files were partially deleted, but an error occurred:\n{ex.Message}", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				LogLocalized("ServerActions.Activity.DeleteFailed", Color.Red, true, ex.Message);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"ServerActions.Delete.Error.Body",
+						LocalizationManager.TranslateRuntimeText(ex.Message)),
+					LocalizationManager.Get(
+						"ServerActions.Delete.Error.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 				UpdateGridStatus();
 				return false;
 			}
@@ -488,11 +517,11 @@ namespace Synix_Control_Panel.SynixEngine
 			if (Directory.Exists(fullPath))
 			{
 				Process.Start("explorer.exe", fullPath);
-				Log($"[✔ SYNIX] Opening vault: {selectedServer.ServerName}", Color.Cyan);
+				LogLocalized("ServerActions.Activity.VaultOpening", Color.Cyan, false, selectedServer.ServerName);
 			}
 			else
 			{
-				Log($"[🚨 SYNIX] There are no created backups at: {fullPath}", Color.Yellow, true);
+				LogLocalized("ServerActions.Activity.NoBackups", Color.Yellow, true, fullPath);
 			}
 		}
 
@@ -504,19 +533,32 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					LocalizedMessageBox.Show("You must stop the server before updating it.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"ServerActions.Update.StopFirst"),
+						LocalizationManager.Get(
+							"ServerActions.ServerActive.Title"),
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
 					return;
 				}
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
 				{
-					Log("A Downloading or Updating is already in progress.", Color.Orange);
+					LogLocalized("ServerActions.Activity.DownloadBusy", Color.Orange);
 					return;
 				}
 
 				ServerUpdating = true;
 				if (!autoRestart)
 				{
-					var confirm = LocalizedMessageBox.Show($"Are you sure you want to Update the {server.ServerName} server files?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+					var confirm = LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"ServerActions.Update.Confirm",
+							server.ServerName),
+						LocalizationManager.Get(
+							"ServerActions.Update.ConfirmTitle"),
+						MessageBoxButtons.YesNo,
+						MessageBoxIcon.Question);
 					if (confirm != DialogResult.Yes) return;
 				}
 			}
@@ -524,17 +566,36 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
-					LocalizedMessageBox.Show("You must stop the server before validating server files.", "Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"ServerActions.Validate.StopFirst"),
+						LocalizationManager.Get(
+							"ServerActions.ServerActive.Title"),
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
 					return;
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
 				{
-					LocalizedMessageBox.Show("A download, update or validation is already in progress.", "System Busy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"ServerActions.ValidationBusy.Body"),
+						LocalizationManager.Get(
+							"ServerActions.SystemBusy.Title"),
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Information);
 					return;
 				}
 
-				var confirm = LocalizedMessageBox.Show($"Are you sure you want to Validate the {server.ServerName} server files?", "Confirm Validate", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				var confirm = LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"ServerActions.Validate.Confirm",
+						server.ServerName),
+					LocalizationManager.Get(
+						"ServerActions.Validate.ConfirmTitle"),
+					MessageBoxButtons.YesNo,
+					MessageBoxIcon.Question);
 				if (confirm != DialogResult.Yes) return;
 			}
 			else
@@ -544,7 +605,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 			{
-				Log($"Could not find the database blueprint or AppID for {server.Game}.", Color.Red, true);
+				LogLocalized("ServerActions.Activity.GameDefinitionMissing", Color.Red, true, server.Game);
 				return;
 			}
 
@@ -558,7 +619,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerOperationCoordinator.TryBegin(server, operationKind);
 			if (!operation.Acquired)
 			{
-				Log($"[STEAMCMD BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				LogLocalized("ServerActions.Activity.SteamCmdBlocked", Color.Orange, true, operation.FailureReason);
 				return;
 			}
 			DiscordNotificationEvent startedEvent = ServerUpdating
@@ -570,37 +631,39 @@ namespace Synix_Control_Panel.SynixEngine
 			DiscordNotificationEvent failedEvent = ServerUpdating
 				? DiscordNotificationEvent.UpdateFailed
 				: DiscordNotificationEvent.VerificationFailed;
-			string operationName = ServerUpdating ? "UPDATE" : "FILE VERIFICATION";
+			string operationName = LocalizationManager.Get(ServerUpdating
+				? "ServerActions.Operation.Update"
+				: "ServerActions.Operation.FileVerification");
 
 			try
 			{
-				Log($"[🔒 WARNING] Synix close window button is disabled!", Color.Orange, true);
+				LogLocalized("SteamCmd.Activity.CloseDisabled", Color.Orange, true);
 				isDownloadActive = true;
 				string ManifestMessage = "";
 
 				if (ServerUpdating)
 				{
-					Log($"UPDATE STARTED: {server.Game} ---", Color.White, true);
+					LogLocalized("ServerActions.Activity.UpdateStarted", Color.White, true, server.Game);
 					server.Status = StatusManager.GetStatus(ServerState.Updating);
-					Log($"[📜 INFO] Fetching update manifest from Steam... Please wait.", Color.DeepSkyBlue, true);
-					Log($"[⏳ NOTE] SteamCMD is working silently in the background. Progress text will stream shortly!", Color.Gray);
-					ManifestMessage = "update";
+					LogLocalized("ServerActions.Activity.FetchingManifest", Color.DeepSkyBlue, true);
+					LogLocalized("ServerActions.Activity.UpdateWorking", Color.Gray);
+					ManifestMessage = LocalizationManager.Get("ServerActions.Operation.UpdateLower");
 				}
 				else
 				{
-					Log($"VALIDATION STARTED: {server.Game}", Color.White, true);
+					LogLocalized("ServerActions.Activity.ValidationStarted", Color.White, true, server.Game);
 					server.Status = StatusManager.GetStatus(ServerState.Validating);
-					Log($"[📜 INFO] Analyzing local files... Please wait.", Color.DeepSkyBlue, true);
-					Log($"[⏳ NOTE] SteamCMD is validating bytes silently. Progress text will stream shortly!", Color.Gray);
-					ManifestMessage = "validation";
+					LogLocalized("ServerActions.Activity.AnalyzingFiles", Color.DeepSkyBlue, true);
+					LogLocalized("ServerActions.Activity.ValidationWorking", Color.Gray);
+					ManifestMessage = LocalizationManager.Get("ServerActions.Operation.ValidationLower");
 				}
 
 				Core.Instance.UpdateGridStatus();
 				_ = SendDiscordNotification(
 					server,
 					startedEvent,
-					$"{operationName} STARTED",
-					$"SteamCMD is processing {server.ServerName}.",
+					LocalizationManager.Get("ServerActions.Notification.OperationStarted.Title", operationName),
+					LocalizationManager.Get("ServerActions.Notification.OperationStarted.Body", server.ServerName),
 					Color.Cyan);
 
 				string steamAppsPath = Path.Combine(server.InstallPath, "steamapps");
@@ -611,11 +674,11 @@ namespace Synix_Control_Panel.SynixEngine
 					try
 					{
 						File.Delete(manifestPath);
-						Log($"[🛠️ SYSTEM] Cleared old Steam manifest to force a clean {ManifestMessage}.", Color.SeaGreen);
+						LogLocalized("ServerActions.Activity.ManifestCleared", Color.SeaGreen, false, ManifestMessage);
 					}
 					catch (Exception ex)
 					{
-						Log($"[⚠ WARNING] Could not clear manifest. The {ManifestMessage} might fail. Error: {ex.Message}", Color.Red, true);
+						LogLocalized("ServerActions.Activity.ManifestClearFailed", Color.Red, true, ManifestMessage, ex.Message);
 					}
 				}
 
@@ -633,29 +696,26 @@ namespace Synix_Control_Panel.SynixEngine
 				if (exitCode != 0)
 				{
 					string errorDetail = ServerInstaller.GetSteamError(exitCode);
-					Log($"[SYNIX] Failed!\n\nReason: {errorDetail}", Color.Red, true);
-					Log($"[🚨 CRITICAL ERROR] Failed with code {exitCode}.", Color.Red, true);
+					LogLocalized("ServerActions.Activity.SteamFailed", Color.Red, true, errorDetail);
+					LogLocalized("ServerActions.Activity.ExitCodeFailed", Color.Red, true, exitCode);
 					_ = SendDiscordNotification(
 						server,
 						failedEvent,
-						$"{operationName} FAILED",
+						LocalizationManager.Get("ServerActions.Notification.OperationFailed.Title", operationName),
 						errorDetail,
 						Color.Red);
 					isDownloadActive = false;
-					Log($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+					LogLocalized("SteamCmd.Activity.CloseEnabled", Color.Orange, true);
 					return;
 				}
 
 				bool fixApplied = await GameFix.PostInstall(server);
 				if (fixApplied)
-					Log($"[✔️ SUCCESS] Re-applied required files to the {server.Game} server.", Color.Green);
+					LogLocalized("ServerActions.Activity.RequiredFilesReapplied", Color.Green, false, server.Game);
 				if (OxideRuntimeManager.RequiresVanillaRestore(server, gameData))
 				{
 					server.ServerFrameworkVersion = "Official";
-					Log(
-						"[OXIDE] Steam restored the official Rust server files. The server is now set to Vanilla; user plugin files were left untouched.",
-						Color.LimeGreen,
-						true);
+					LogLocalized("ServerActions.Activity.OxideOfficialRestored", Color.LimeGreen, true);
 				}
 				if (OxideRuntimeManager.IsEnabled(server, gameData))
 				{
@@ -668,18 +728,24 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 					catch (Exception exception)
 					{
-						Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+						LogLocalized("ServerActions.Activity.OxideError", Color.Red, true, exception.Message);
 						if (!IsBackgroundServiceMode)
 							LocalizedMessageBox.Show(
-								$"The Rust {ManifestMessage} completed, but Oxide could not be reapplied. Synix will block the modded server from starting until you retry with Update or Validate.\n\n{exception.Message}",
-								"Oxide Update Failed",
+								LocalizationManager.Get(
+									"ServerActions.Oxide.ReapplyFailed.Body",
+									LocalizationManager.TranslateRuntimeText(
+										ManifestMessage),
+									LocalizationManager.TranslateRuntimeText(
+										exception.Message)),
+								LocalizationManager.Get(
+									"ServerActions.Oxide.UpdateFailed.Title"),
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Error);
 						_ = SendDiscordNotification(
 							server,
 							failedEvent,
-							$"{operationName} FAILED",
-							$"SteamCMD completed, but Oxide could not be reapplied: {exception.Message}",
+							LocalizationManager.Get("ServerActions.Notification.OperationFailed.Title", operationName),
+							LocalizationManager.Get("ServerActions.Notification.OxideReapplyFailed.Body", exception.Message),
 							Color.Red);
 						return;
 					}
@@ -687,27 +753,27 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (ServerUpdating)
 				{
-					Log($"[SYNIX] UPDATE FINISHED: {server.Game}", Color.Green, true);
+					LogLocalized("ServerActions.Activity.UpdateFinished", Color.Green, true, server.Game);
 				}
 				else
 				{
-					Log($"[SYNIX] Validating FINISHED: {server.Game}", Color.Green, true);
+					LogLocalized("ServerActions.Activity.ValidationFinished", Color.Green, true, server.Game);
 				}
 				_ = SendDiscordNotification(
 					server,
 					completedEvent,
-					$"{operationName} COMPLETED",
-					$"{server.ServerName} completed successfully.",
+					LocalizationManager.Get("ServerActions.Notification.OperationCompleted.Title", operationName),
+					LocalizationManager.Get("ServerActions.Notification.OperationCompleted.Body", server.ServerName),
 					Color.LimeGreen);
 				ManifestMessage = "";
 			}
 			catch (Exception exception)
 			{
-				Log($"[🚨 {operationName} ERROR] {exception.Message}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.OperationError", Color.Red, true, operationName, exception.Message);
 				_ = SendDiscordNotification(
 					server,
 					failedEvent,
-					$"{operationName} FAILED",
+					LocalizationManager.Get("ServerActions.Notification.OperationFailed.Title", operationName),
 					exception.Message,
 					Color.Red);
 			}
@@ -718,7 +784,7 @@ namespace Synix_Control_Panel.SynixEngine
 				isDownloadActive = false;
 				FileHandler.SaveServers();
 				Core.Instance.UpdateGridStatus();
-				Log("[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+				LogLocalized("SteamCmd.Activity.CloseEnabled", Color.Orange, true);
 			}
 		}
 
@@ -734,7 +800,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 					{
-						Log("Could not find the AppID for this game. Installation aborted.", Color.Red, true);
+						LogLocalized("ServerActions.Activity.InstallAppIdMissing", Color.Red, true);
 						return;
 					}
 
@@ -744,23 +810,23 @@ namespace Synix_Control_Panel.SynixEngine
 							ServerOperationKind.Install);
 					if (!operation.Acquired)
 					{
-						Log($"[INSTALL BLOCKED] {operation.FailureReason}", Color.Orange, true);
+						LogLocalized("ServerActions.Activity.InstallBlocked", Color.Orange, true, operation.FailureReason);
 						return;
 					}
 
 					try
 					{
 						isDownloadActive = true;
-						Log($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange, true);
+						LogLocalized("SteamCmd.Activity.CloseDisabled", Color.Orange, true);
 
-						Log($"[SYNIX] AUTO-INSTALL STARTED: {newServer.Game}", Color.LightCyan, true);
+						LogLocalized("ServerActions.Activity.InstallStarted", Color.LightCyan, true, newServer.Game);
 						newServer.Status = StatusManager.GetStatus(ServerState.Installing);
 						Core.Instance.UpdateGridStatus();
 						_ = SendDiscordNotification(
 							newServer,
 							DiscordNotificationEvent.InstallStarted,
-							"INSTALL STARTED",
-							$"SteamCMD is installing {newServer.Game}.",
+							LocalizationManager.Get("ServerActions.Notification.InstallStarted.Title"),
+							LocalizationManager.Get("ServerActions.Notification.InstallStarted.Body", newServer.Game),
 							Color.Cyan);
 
 						int exitCode = await Task.Run(() =>
@@ -777,19 +843,20 @@ namespace Synix_Control_Panel.SynixEngine
 						if (exitCode != 0)
 						{
 							string errorMsg = ServerInstaller.GetSteamError(exitCode);
-							Log($"Installation Failed!\n\nReason: {errorMsg}", Color.Red, true);
+							LogLocalized("ServerActions.Activity.InstallFailed", Color.Red, true, errorMsg);
 							newServer.Status = "Failed";
 							_ = SendDiscordNotification(
 								newServer,
 								DiscordNotificationEvent.InstallFailed,
-								"INSTALL FAILED",
+								LocalizationManager.Get("ServerActions.Notification.InstallFailed.Title"),
 								errorMsg,
 								Color.Red);
 							return;
 						}
 
 						bool fixApplied = await GameFix.PostInstall(newServer);
-						if (fixApplied) Log($"[✔️ SUCCESS] Re-applied missing files to the {newServer.Game} server.", Color.Green);
+						if (fixApplied)
+							LogLocalized("ServerActions.Activity.MissingFilesReapplied", Color.Green, false, newServer.Game);
 						if (OxideRuntimeManager.IsEnabled(newServer, gameData))
 						{
 							try
@@ -801,17 +868,21 @@ namespace Synix_Control_Panel.SynixEngine
 							}
 							catch (Exception exception)
 							{
-								Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+								LogLocalized("ServerActions.Activity.OxideError", Color.Red, true, exception.Message);
 								LocalizedMessageBox.Show(
-									"The Rust server installed, but Oxide could not be installed. Synix will block the modded server from starting until you retry with Update or Validate.\n\n" + exception.Message,
-									"Oxide Installation Failed",
+									LocalizationManager.Get(
+										"ServerActions.Oxide.InstallFailed.Body",
+										LocalizationManager.TranslateRuntimeText(
+											exception.Message)),
+									LocalizationManager.Get(
+										"ServerActions.Oxide.InstallFailed.Title"),
 									MessageBoxButtons.OK,
 									MessageBoxIcon.Error);
 								_ = SendDiscordNotification(
 									newServer,
 									DiscordNotificationEvent.InstallFailed,
-									"INSTALL FAILED",
-									$"The server files installed, but Oxide could not be installed: {exception.Message}",
+									LocalizationManager.Get("ServerActions.Notification.InstallFailed.Title"),
+									LocalizationManager.Get("ServerActions.Notification.OxideInstallFailed.Body", exception.Message),
 									Color.Red);
 								return;
 							}
@@ -823,24 +894,24 @@ namespace Synix_Control_Panel.SynixEngine
 						if (await RefreshServerIconAsync(newServer))
 						{
 							Core.Instance.UpdateGridStatus();
-							Log($"[ICON] Updated the dashboard icon for {newServer.Game}.", Color.Cyan);
+							LogLocalized("ServerActions.Activity.IconUpdated", Color.Cyan, false, newServer.Game);
 						}
-						Log($"AUTO-INSTALL FINISHED: {newServer.Game}", Color.Green, true);
+						LogLocalized("ServerActions.Activity.InstallFinished", Color.Green, true, newServer.Game);
 						_ = SendDiscordNotification(
 							newServer,
 							DiscordNotificationEvent.InstallCompleted,
-							"INSTALL COMPLETED",
-							$"{newServer.Game} is installed and ready for its first start.",
+							LocalizationManager.Get("ServerActions.Notification.InstallCompleted.Title"),
+							LocalizationManager.Get("ServerActions.Notification.InstallCompleted.Body", newServer.Game),
 							Color.LimeGreen);
 						RecordGameVerification(newServer.Game, GameVerificationKind.Install);
 					}
 					catch (Exception ex)
 					{
-						Log($"An unexpected error occurred during installation: {ex.Message}", Color.Red, true);
+						LogLocalized("ServerActions.Activity.InstallUnexpectedError", Color.Red, true, ex.Message);
 						_ = SendDiscordNotification(
 							newServer,
 							DiscordNotificationEvent.InstallFailed,
-							"INSTALL FAILED",
+							LocalizationManager.Get("ServerActions.Notification.InstallFailed.Title"),
 							ex.Message,
 							Color.Red);
 					}
@@ -851,7 +922,7 @@ namespace Synix_Control_Panel.SynixEngine
 						isDownloadActive = false;
 						FileHandler.SaveServers();
 						Core.Instance.UpdateGridStatus();
-						Log($"[⚠ WARNING] Synix close window button is now Enabled!", Color.Orange, true);
+						LogLocalized("SteamCmd.Activity.CloseEnabled", Color.Orange, true);
 					}
 				}
 			}
@@ -871,10 +942,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			if (IsBackgroundServiceMode)
 			{
-				Log(
-					$"[STEAM LOGIN] {server.ServerName} needs a Steam account name. Open Synix and start or update it manually once.",
-					Color.Orange,
-					true);
+				LogLocalized("ServerActions.Activity.SteamAccountNeeded", Color.Orange, true, server.ServerName);
 				return false;
 			}
 
@@ -884,10 +952,10 @@ namespace Synix_Control_Panel.SynixEngine
 				restoringImportedServer);
 			if (loginDialog.ShowDialog(ApplicationUiService.DialogOwner) != DialogResult.OK)
 			{
-				Log(
+				LogLocalized(
 					restoringImportedServer
-						? "Steam authorization was cancelled. The server was not started."
-						: "Steam account login was cancelled. No files were changed.",
+						? "ServerActions.Activity.SteamAuthorizationCancelled"
+						: "ServerActions.Activity.SteamLoginCancelled",
 					Color.Orange,
 					true);
 				return false;
@@ -915,10 +983,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (status is "WATCHDOG" or "MAINTENANCE")
 			{
-				Log(
-					$"[STEAM LOGIN] {server.ServerName} was imported and needs Steam authorization on this PC. Start it manually once to complete the login.",
-					Color.Orange,
-					true);
+				LogLocalized("ServerActions.Activity.ImportSteamAuthorizationNeeded", Color.Orange, true, server.ServerName);
 				return false;
 			}
 
@@ -936,10 +1001,7 @@ namespace Synix_Control_Panel.SynixEngine
 				await SteamCMD.EnsureSteamCMD((message, color) => Log(message, color));
 				if (!File.Exists(Core.SteamCmdExe))
 				{
-					Log(
-						"SteamCMD could not be prepared, so Steam authorization could not start.",
-						Color.Red,
-						true);
+					LogLocalized("ServerActions.Activity.SteamCmdPreparationFailed", Color.Red, true);
 					return false;
 				}
 			}
@@ -947,10 +1009,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				isDownloadActive = true;
-				Log(
-					"[LOCKED] Synix cannot close while Steam authorization is running.",
-					Color.Orange,
-					true);
+				LogLocalized("ServerActions.Activity.SteamAuthorizationLocked", Color.Orange, true);
 
 				int exitCode = await Task.Run(() =>
 					ServerInstaller.AuthenticateSteamAccount(
@@ -965,19 +1024,17 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (exitCode != 0)
 				{
-					Log(
-						$"Steam authorization was not completed. {ServerInstaller.GetSteamError(exitCode)} The server was not started.",
+					LogLocalized(
+						"ServerActions.Activity.SteamAuthorizationFailed",
 						Color.Red,
-						true);
+						true,
+						ServerInstaller.GetSteamError(exitCode));
 					return false;
 				}
 
 				server.SteamAuthenticationRequired = false;
 				FileHandler.SaveServers();
-				Log(
-					$"[STEAM LOGIN] {server.ServerName} is authorized on this PC.",
-					Color.Green,
-					true);
+				LogLocalized("ServerActions.Activity.SteamAuthorizationSucceeded", Color.Green, true, server.ServerName);
 				return true;
 			}
 			finally
@@ -986,10 +1043,7 @@ namespace Synix_Control_Panel.SynixEngine
 				isDownloadActive = false;
 				FileHandler.SaveServers();
 				Core.Instance.UpdateGridStatus();
-				Log(
-					"[UNLOCKED] Synix can close again.",
-					Color.Orange,
-					true);
+				LogLocalized("ServerActions.Activity.SteamAuthorizationUnlocked", Color.Orange, true);
 			}
 		}
 
@@ -1016,8 +1070,13 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
-				LocalizedMessageBox.Show("Please stop the server before editing its settings.",
-								"Server Active", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"ServerActions.Edit.StopFirst"),
+					LocalizationManager.Get(
+						"ServerActions.ServerActive.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 				return;
 			}
 
@@ -1025,8 +1084,15 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				string currentAction = (server.Status == StatusManager.GetStatus(ServerState.Updating)) ? StatusManager.GetStatus(ServerState.Updating) : StatusManager.GetStatus(ServerState.Installing);
 
-				LocalizedMessageBox.Show($"Cannot edit '{server.ServerName}' while it is {currentAction}.\n\nPlease wait for the process to finish.",
-								"System Busy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"ServerActions.Edit.Busy.Body",
+						server.ServerName,
+						LocalizationManager.TranslateRuntimeText(currentAction)),
+					LocalizationManager.Get(
+						"ServerActions.SystemBusy.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 				return;
 			}
 
@@ -1041,15 +1107,15 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (!configurationResult.Succeeded)
 					{
-						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
+						LogLocalized("ServerActions.Activity.ConfigError", Color.Red, true, configurationResult.Message);
 					}
 					else if (!configurationResult.Complete)
 					{
-						Log($"[CONFIG WARNING] {configurationResult.Message}", Color.Orange, true);
+						LogLocalized("ServerActions.Activity.ConfigWarning", Color.Orange, true, configurationResult.Message);
 					}
 					else if (configurationResult.Changed)
 					{
-						Log($"[CONFIG] {configurationResult.Message}", Color.Green);
+						LogLocalized("ServerActions.Activity.ConfigChanged", Color.Green, false, configurationResult.Message);
 					}
 
 					GameInfo? definition = GameDatabase.GetGame(updatedServer.Game);
@@ -1071,10 +1137,14 @@ namespace Synix_Control_Panel.SynixEngine
 						{
 							updatedServer.ServerFramework = OxideRuntimeManager.VanillaFrameworkName;
 							updatedServer.ServerFrameworkVersion = "Official";
-							Log($"[OXIDE ERROR] {exception.Message}", Color.Red, true);
+							LogLocalized("ServerActions.Activity.OxideError", Color.Red, true, exception.Message);
 							LocalizedMessageBox.Show(
-								"Oxide could not be installed. The server has been left set to Vanilla.\n\n" + exception.Message,
-								"Oxide Installation Failed",
+								LocalizationManager.Get(
+									"ServerActions.Oxide.VanillaFallback.Body",
+									LocalizationManager.TranslateRuntimeText(
+										exception.Message)),
+								LocalizationManager.Get(
+									"ServerActions.Oxide.InstallFailed.Title"),
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Error);
 						}
@@ -1093,19 +1163,18 @@ namespace Synix_Control_Panel.SynixEngine
 					{
 						updatedServer.ServerFrameworkVersion =
 							OxideRuntimeManager.VanillaRestoreRequiredVersion;
-						Log(
-							"[OXIDE] Framework set to Vanilla. Start is blocked until Update or Validate restores the official Rust server files.",
-							Color.Orange,
-							true);
+						LogLocalized("ServerActions.Activity.OxideRestoreRequired", Color.Orange, true);
 						LocalizedMessageBox.Show(
-							"Rust is now set to Vanilla. Run Update or Validate before starting so Steam can restore the official server files.\n\nSynix will not delete your oxide folder or plugins.",
-							"Validation Required",
+							LocalizationManager.Get(
+								"ServerActions.Oxide.RestoreOfficial.Body"),
+							LocalizationManager.Get(
+								"ServerActions.Oxide.RestoreOfficial.Title"),
 							MessageBoxButtons.OK,
 							MessageBoxIcon.Information);
 					}
 
 					FileHandler.SaveServers();
-					Log($"[✔️ SUCCESS] {updatedServer.ServerName} settings updated and saved.", Color.Green);
+					LogLocalized("ServerActions.Activity.SettingsSaved", Color.Green, false, updatedServer.ServerName);
 					Core.Instance.UpdateGridStatus();
 				}
 			}
@@ -1120,7 +1189,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ServerOperationCoordinator.TryBegin(server, operationKind);
 			if (!operation.Acquired)
 			{
-				Log($"[START BLOCKED] {operation.FailureReason}", Color.Orange, true);
+				LogLocalized("ServerActions.Activity.StartBlocked", Color.Orange, true, operation.FailureReason);
 				return false;
 			}
 
@@ -1139,8 +1208,12 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					Log(guardMsg, System.Drawing.Color.Red, true);
 					if (!IsBackgroundServiceMode)
-						LocalizedMessageBox.Show(guardMsg, "System Resource Exhaustion",
-							System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+						LocalizedMessageBox.Show(
+							LocalizationManager.TranslateRuntimeText(guardMsg),
+							LocalizationManager.Get(
+								"ResourceGuard.Exhaustion.Title"),
+							System.Windows.Forms.MessageBoxButtons.OK,
+							System.Windows.Forms.MessageBoxIcon.Warning);
 					return false;
 				}
 
@@ -1151,23 +1224,26 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (isRestart)
 				{
-					Log($"[SYNIX] Starting restart sequence for {server.ServerName}...", Color.Cyan);
+					LogLocalized("ServerActions.Activity.RestartSequence", Color.Cyan, false, server.ServerName);
 				}
 				else if (isMaintenance)
 				{
-					Log($"[🛠 MAINTENANCE] Scheduled restart sequence for {server.ServerName}.", Color.Cyan, true);
+					LogLocalized("ServerActions.Activity.MaintenanceRestart", Color.Cyan, true, server.ServerName);
 				}
 				else if (isWatchdog)
 				{
 					server.Status = StatusManager.GetStatus(ServerState.Crashed);
-					string reason = !server.RunningProcess?.Responding ?? false ? "FREEZE" : "CRASH/CLOSE";
-					Log($"[🛡️ WATCHDOG] {reason} detected on {server.ServerName}. Initializing recovery...", Color.Orange);
+					string reason = LocalizationManager.Get(
+						!server.RunningProcess?.Responding ?? false
+							? "ServerActions.Watchdog.Freeze"
+							: "ServerActions.Watchdog.CrashOrClose");
+					LogLocalized("ServerActions.Activity.WatchdogRecovery", Color.Orange, false, reason, server.ServerName);
 
 					_ = SendDiscordNotification(
 						server,
 						DiscordNotificationEvent.ServerCrashed,
-						"CRASH DETECTED",
-						$"{server.ServerName} has terminated. Synix is attempting an automatic restart.",
+						LocalizationManager.Get("ServerActions.Notification.CrashDetected.Title"),
+						LocalizationManager.Get("ServerActions.Notification.CrashDetected.Body", server.ServerName),
 						Color.Red);
 
 					Core.Instance.UpdateGridStatus();
@@ -1175,15 +1251,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (requiresVerifiedStop)
 				{
-					Log($"[SYNIX] Stopping the {server.ServerName} server and verifying its installed process is fully closed.", Color.Cyan, true);
+					LogLocalized("ServerActions.Activity.VerifyingStop", Color.Cyan, true, server.ServerName);
 
 					bool stopped = await StopServerAndReport(server, isManual: isRestart);
 					if (!stopped)
 					{
-						Log(
-							$"[RESTART BLOCKED] {server.ServerName} was not fully shut down, so Synix will not launch a second copy.",
-							Color.Red,
-							true);
+						LogLocalized("ServerActions.Activity.RestartBlocked", Color.Red, true, server.ServerName);
 						return false;
 					}
 				}
@@ -1194,19 +1267,22 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					SafetyCheckItem blocked = safetyReport.Items.First(item =>
 						item.Level == SafetyCheckLevel.Blocked);
-					Log($"[SAFETY CHECK BLOCKED] {blocked.Name}: {blocked.Details}", Color.Red, true);
+					LogLocalized("ServerActions.Activity.SafetyBlocked", Color.Red, true, blocked.Name, blocked.Details);
 					if (showInteractiveErrors)
 					{
 						PlainEnglishErrorDialog.ShowError(
 							ApplicationUiService.DialogOwner,
-							"start the server safely",
+							LocalizationManager.Get(
+								"ServerActions.ErrorAction.StartSafely"),
 							blocked.Details);
 					}
 					return false;
 				}
-				Log(
-					$"[SAFETY CHECK] Automatic checklist passed at {safetyReport.CompletionPercentage}% readiness.",
-					Color.LimeGreen);
+				LogLocalized(
+					"ServerActions.Activity.SafetyPassed",
+					Color.LimeGreen,
+					false,
+					safetyReport.CompletionPercentage);
 				if (GameFix.NeedsManagedConfiguration(server))
 				{
 					ConfigurationApplyResult configurationResult =
@@ -1214,11 +1290,13 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (!configurationResult.Succeeded)
 					{
-						Log($"[CONFIG ERROR] {configurationResult.Message}", Color.Red, true);
+						LogLocalized("ServerActions.Activity.ConfigError", Color.Red, true, configurationResult.Message);
 						if (showInteractiveErrors)
 							LocalizedMessageBox.Show(
-								configurationResult.Message,
-								"Configuration Could Not Be Applied",
+								LocalizationManager.TranslateRuntimeText(
+									configurationResult.Message),
+								LocalizationManager.Get(
+									"ServerActions.ConfigurationApplyFailed.Title"),
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Error);
 						return false;
@@ -1226,11 +1304,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (!configurationResult.Complete)
 					{
-						Log($"[CONFIG WARNING] {configurationResult.Message}", Color.Orange, true);
+						LogLocalized("ServerActions.Activity.ConfigWarning", Color.Orange, true, configurationResult.Message);
 					}
 					else if (configurationResult.Changed)
 					{
-						Log($"[CONFIG] {configurationResult.Message}", Color.Green);
+						LogLocalized("ServerActions.Activity.ConfigChanged", Color.Green, false, configurationResult.Message);
 					}
 
 					FileHandler.SaveServers();
@@ -1238,7 +1316,7 @@ namespace Synix_Control_Panel.SynixEngine
 				bool displayedFirstBootWarning = server.IsFirstBoot;
 				if (server.IsFirstBoot && !showInteractiveErrors)
 				{
-					Log($"[SETUP REQUIRED] {server.ServerName} must be started manually once to complete its first-start setup.", Color.Orange, true);
+					LogLocalized("ServerActions.Activity.FirstStartRequired", Color.Orange, true, server.ServerName);
 					return false;
 				}
 				if (ShouldBlockForConfig(server)) return false;
@@ -1253,7 +1331,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Stopped))
 				{
-					Log($"[SYNIX] Starting the {server.ServerName} server.", Color.Cyan, true);
+					LogLocalized("ServerActions.Activity.Starting", Color.Cyan, true, server.ServerName);
 					if (!PassSpamLock(server, out string lockMsg, "Start")) { Log(lockMsg, System.Drawing.Color.Orange); return false; }
 
 					await Servers.Start(server, (message, color) => Log(message, color), currentContext);
@@ -1262,7 +1340,7 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					if (server.Status != StatusManager.GetStatus(ServerState.Starting))
 					{
-						Log($"[🚨 CRITICAL] Restart failed: {server.ServerName} is still stuck!", Color.Red);
+						LogLocalized("ServerActions.Activity.RestartFailed", Color.Red, false, server.ServerName);
 					}
 				}
 				return server.Status == StatusManager.GetStatus(ServerState.Starting) ||
@@ -1270,13 +1348,14 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception ex)
 			{
-				Log($"[🚨 CRITICAL ENGINE ERROR] Sequence failed for {server.ServerName}: {ex.Message}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.SequenceFailed", Color.Red, true, server.ServerName, ex.Message);
 				if (currentContext == StartContext.Manual && ApplicationUiService.IsAvailable)
 				{
 					ApplicationUiService.TryPost(() =>
 						PlainEnglishErrorDialog.ShowError(
 							ApplicationUiService.DialogOwner,
-							"complete the server action",
+							LocalizationManager.Get(
+								"ServerActions.ErrorAction.CompleteAction"),
 							ex.ToString()));
 				}
 				return false;
@@ -1320,14 +1399,14 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			if (server == null || string.IsNullOrWhiteSpace(server.InstallPath))
 			{
-				Log("[🚨 ERROR] Cannot export: Invalid server or missing install path.", Color.Red);
+				LogLocalized("ServerActions.Activity.ExportInvalidServer", Color.Red);
 				return false;
 			}
 
 			var dbEntry = GameDatabase.GetGame(server.Game);
 			if (dbEntry == null)
 			{
-				Log($"[🚨 ERROR] Game database entry for '{server.Game}' not found.", Color.Red);
+				LogLocalized("ServerActions.Activity.ExportDefinitionMissing", Color.Red, false, server.Game);
 				return false;
 			}
 
@@ -1339,18 +1418,19 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (SynixPasswordProtectionException)
 			{
-				Log(
-					"[🚨 ERROR] Synix could not unlock the saved credentials. Re-enter them in Server Settings before exporting a launch file.",
-					Color.Red);
+				LogLocalized("ServerActions.Activity.ExportCredentialsLocked", Color.Red);
 				return false;
 			}
 
 			if (!dbEntry.LaunchBehavior.AllowLaunchFileExport)
 			{
-				Log($"[⚠️ NOTICE] {server.Game} does not allow generated launch files. Export aborted.", Color.Orange);
+				LogLocalized("ServerActions.Activity.ExportDisabled", Color.Orange, false, server.Game);
 				LocalizedMessageBox.Show(
-					$"{server.Game} relies on its official launch or deployment file. A separate launch file cannot be safely generated for this game.",
-					"Export Disabled",
+					LocalizationManager.Get(
+						"ServerActions.Export.Disabled.Body",
+						server.Game),
+					LocalizationManager.Get(
+						"ServerActions.Export.Disabled.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return false;
@@ -1362,13 +1442,14 @@ namespace Synix_Control_Panel.SynixEngine
 					batchPasswords,
 					out string credentialError))
 			{
-				Log(
-					$"[🚨 ERROR] Launch file export blocked: {credentialError}",
-					Color.Red,
-					true);
+				LogLocalized("ServerActions.Activity.ExportCredentialBlocked", Color.Red, true, credentialError);
 				LocalizedMessageBox.Show(
-					$"{credentialError}\n\nOpen Server Settings, enter the required credential, and save before exporting the batch file.",
-					"Server Credentials Need Attention",
+					LocalizationManager.Get(
+						"ServerActions.Export.CredentialAttention.Body",
+						LocalizationManager.TranslateRuntimeText(
+							credentialError)),
+					LocalizationManager.Get(
+						"ServerActions.Export.CredentialAttention.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return false;
@@ -1392,8 +1473,9 @@ namespace Synix_Control_Panel.SynixEngine
 
 					appidPath = scanner.FirstOrDefault() ?? "";
 				}
-				catch
+				catch (Exception exception)
 				{
+					ApplicationLogService.WriteSuppressedException(exception);
 					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
 				}
 
@@ -1427,10 +1509,7 @@ namespace Synix_Control_Panel.SynixEngine
 					out string args,
 					out string argumentError))
 				{
-					Log(
-						$"[🚨 SECURITY] Launch file export blocked: {argumentError}",
-						Color.Red,
-						true);
+					LogLocalized("ServerActions.Activity.ExportArgumentBlocked", Color.Red, true, argumentError);
 					return false;
 				}
 
@@ -1469,12 +1548,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				File.WriteAllText(fullOutputPath, batchContent.ToString());
 
-				Log($"[✔️ SUCCESS] Exported launch script to: {fullOutputPath}", Color.SpringGreen);
+				LogLocalized("ServerActions.Activity.ExportSucceeded", Color.SpringGreen, false, fullOutputPath);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Log($"[🚨 ERROR] Failed to generate batch file payload: {ex.Message}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.ExportFailed", Color.Red, true, ex.Message);
 				return false;
 			}
 		}
@@ -1495,23 +1574,23 @@ namespace Synix_Control_Panel.SynixEngine
 				using Process? cleanup = Process.Start(psi);
 				if (cleanup == null)
 				{
-					Log($"[FIREWALL] Windows could not start firewall cleanup for {executablePath}.", Color.Orange, true);
+					LogLocalized("ServerActions.Activity.FirewallStartFailed", Color.Orange, true, executablePath);
 					return;
 				}
 
 				await cleanup.WaitForExitAsync();
 				if (cleanup.ExitCode == 0)
-					Log($"[FIREWALL] Successfully removed rules for {executablePath}", Color.LimeGreen);
+					LogLocalized("ServerActions.Activity.FirewallRemoved", Color.LimeGreen, false, executablePath);
 				else
-					Log($"[FIREWALL] Windows firewall cleanup exited with code {cleanup.ExitCode} for {executablePath}.", Color.Orange, true);
+					LogLocalized("ServerActions.Activity.FirewallExitCode", Color.Orange, true, cleanup.ExitCode, executablePath);
 			}
 			catch (System.ComponentModel.Win32Exception)
 			{
-				Log("[FIREWALL] User denied Admin rights. Rule was not deleted.", Color.Orange, true);
+				LogLocalized("ServerActions.Activity.FirewallAdminDenied", Color.Orange, true);
 			}
 			catch (Exception ex)
 			{
-				Log($"[FIREWALL ERROR] {ex.Message}", Color.Red, true);
+				LogLocalized("ServerActions.Activity.FirewallError", Color.Red, true, ex.Message);
 			}
 		}
 	}

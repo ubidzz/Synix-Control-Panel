@@ -56,6 +56,19 @@ namespace Synix_Control_Panel.SynixEngine
 			ApplicationLogService.Write(message, color, bold);
 		}
 
+		public void LogLocalized(
+			string resourceKey,
+			Color? color = null,
+			bool bold = false,
+			params object?[] arguments)
+		{
+			ApplicationLogService.WriteLocalized(
+				resourceKey,
+				color,
+				bold,
+				arguments);
+		}
+
 		public Task SendDiscordAlert(GameServer server, string title, string message, Color color) =>
 			SendDiscordNotification(
 				server,
@@ -114,8 +127,8 @@ namespace Synix_Control_Panel.SynixEngine
 								_ = SendDiscordNotification(
 									server,
 									DiscordNotificationEvent.ResourceWarning,
-									"RESOURCE WARNING",
-									$"High RAM usage detected: {server.RamUsage:F1}%. Performance may be impacted.",
+									LocalizationManager.Get("Core.Notification.ResourceWarning.Title"),
+									LocalizationManager.Get("Core.Notification.ResourceWarning.Body", server.RamUsage),
 									Color.Gold);
 							}
 						}
@@ -162,7 +175,13 @@ namespace Synix_Control_Panel.SynixEngine
 							int remainingMinutes = Math.Max(
 								0,
 								server.MaintenanceMaximumDelayMinutes - (int)plan.Delay.TotalMinutes);
-							Log($"[SMART MAINTENANCE] {server.ServerName}: {plan.Reason} Up to {remainingMinutes} minute(s) remain.", Color.Cyan);
+							LogLocalized(
+								"Core.Activity.MaintenanceDeferred",
+								Color.Cyan,
+								false,
+								server.ServerName,
+								plan.Reason,
+								remainingMinutes);
 						}
 						continue;
 					}
@@ -174,13 +193,13 @@ namespace Synix_Control_Panel.SynixEngine
 						_ = SendDiscordNotification(
 							server,
 							DiscordNotificationEvent.ServerRestarting,
-							"SCHEDULED RESTART",
+							LocalizationManager.Get("Core.Notification.ScheduledRestart.Title"),
 							server.CurrentPlayers > 0
-								? "The player-aware wait limit was reached. Maintenance is starting and the server will return shortly."
-								: "Smart maintenance is starting now. The server will be back online shortly.",
+								? LocalizationManager.Get("Core.Notification.ScheduledRestart.PlayerWaitBody")
+								: LocalizationManager.Get("Core.Notification.ScheduledRestart.Body"),
 							Color.Cyan);
 
-						Log($"[SYNIX] Smart maintenance triggered for {server.ServerName}. {plan.Reason}");
+						LogLocalized("Core.Activity.MaintenanceTriggered", arguments: [server.ServerName, plan.Reason]);
 
 						bool completed = await ExecuteStartSequence(server, "MAINTENANCE");
 						if (completed)
@@ -192,7 +211,7 @@ namespace Synix_Control_Panel.SynixEngine
 						else if (server.SmartMaintenanceEnabled)
 						{
 							server.MaintenanceRetryAfterUtc = DateTime.UtcNow.AddMinutes(5);
-							Log($"[SMART MAINTENANCE] {server.ServerName} did not complete. Synix will safely retry in five minutes.", Color.Orange, true);
+							LogLocalized("Core.Activity.MaintenanceRetry", Color.Orange, true, server.ServerName);
 						}
 					}
 				}
@@ -216,8 +235,11 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (!IsBackgroundServiceMode)
 					LocalizedMessageBox.Show(
-					$"[🛡️ RESOURCE GUARD] Global CPU Load is at {globalCpu:F1}%.\n\nStarting another server now would push the host into instability. Please wait for load to drop.",
-					"CPU Overload Protection",
+					LocalizationManager.Get(
+						"ResourceGuard.Cpu.Body",
+						globalCpu),
+					LocalizationManager.Get(
+						"ResourceGuard.Cpu.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 
@@ -238,8 +260,12 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				if (!IsBackgroundServiceMode)
 					LocalizedMessageBox.Show(
-					$"[🛡️ RESOURCE GUARD] System RAM usage is at {ramUsagePercent:F1}% of the {usablePool:F1}GB usable pool.\n\nPlease stop a server before starting another.",
-					"System Resource Exhaustion",
+					LocalizationManager.Get(
+						"ResourceGuard.Memory.Body",
+						ramUsagePercent,
+						usablePool),
+					LocalizationManager.Get(
+						"ResourceGuard.Exhaustion.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 

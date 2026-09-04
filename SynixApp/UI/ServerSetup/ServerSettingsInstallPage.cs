@@ -18,7 +18,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public ServerSettingsInstallPage()
 		{
 			InitializeComponent();
-			chkDefaultPath.Tag = "Default Folder";
+			LocalizationManager.BindAccessibleName(
+				chkDefaultPath,
+				"ServerSetup.Install.DefaultFolder.AccessibleName");
 			chkDefaultPath.CheckedChanged += SettingsControlChanged;
 			txtInstallPath.TextChanged += SettingsControlChanged;
 			txtExtraArgs.TextChanged += SettingsControlChanged;

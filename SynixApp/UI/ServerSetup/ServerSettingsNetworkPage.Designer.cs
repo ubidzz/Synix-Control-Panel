@@ -78,7 +78,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblPortsIcon.Name = "lblPortsIcon";
 			lblPortsIcon.Size = new Size(28, 30);
 			lblPortsIcon.TabIndex = 0;
-			lblPortsIcon.Text = "⌘";
+			lblPortsIcon.Text = LocalizationManager.Get("Text.70B4B62A6095E612F4AD");
 			lblPortsIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblPortsTitle
@@ -90,7 +90,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblPortsTitle.Name = "lblPortsTitle";
 			lblPortsTitle.Size = new Size(117, 21);
 			lblPortsTitle.TabIndex = 1;
-			lblPortsTitle.Text = "Service Ports";
+			lblPortsTitle.Text = LocalizationManager.Get("Text.F86BB6FC21DEB1E1F841");
 
 			// lblPortsDescription
 			lblPortsDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -101,7 +101,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblPortsDescription.Name = "lblPortsDescription";
 			lblPortsDescription.Size = new Size(866, 24);
 			lblPortsDescription.TabIndex = 2;
-			lblPortsDescription.Text = "Port availability is checked automatically against running processes and other Synix servers.";
+			lblPortsDescription.Text = LocalizationManager.Get("Text.F2492B6E06AE47BEB928");
 
 			// PortLabel
 			PortLabel.AutoSize = true;
@@ -112,7 +112,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			PortLabel.Name = "PortLabel";
 			PortLabel.Size = new Size(66, 15);
 			PortLabel.TabIndex = 3;
-			PortLabel.Text = "Game Port";
+			PortLabel.Text = LocalizationManager.Get("PortRole.Game");
 
 			// numPort
 			numPort.BackColor = Color.FromArgb(12, 21, 36);
@@ -135,7 +135,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			QueryPortLabel.Name = "QueryPortLabel";
 			QueryPortLabel.Size = new Size(66, 15);
 			QueryPortLabel.TabIndex = 5;
-			QueryPortLabel.Text = "Query Port";
+			QueryPortLabel.Text = LocalizationManager.Get("PortRole.Query");
 
 			// numQueryPort
 			numQueryPort.BackColor = Color.FromArgb(12, 21, 36);
@@ -158,7 +158,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblAppPort.Name = "lblAppPort";
 			lblAppPort.Size = new Size(54, 15);
 			lblAppPort.TabIndex = 7;
-			lblAppPort.Text = "App Port";
+			lblAppPort.Text = LocalizationManager.Get("PortRole.App");
 
 			// numAppPort
 			numAppPort.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -201,7 +201,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblRconIcon.Name = "lblRconIcon";
 			lblRconIcon.Size = new Size(28, 30);
 			lblRconIcon.TabIndex = 0;
-			lblRconIcon.Text = "◇";
+			lblRconIcon.Text = LocalizationManager.Get("Text.F88C1B7702D3AFFE04D4");
 			lblRconIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblRconTitle
@@ -213,7 +213,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblRconTitle.Name = "lblRconTitle";
 			lblRconTitle.Size = new Size(185, 21);
 			lblRconTitle.TabIndex = 1;
-			lblRconTitle.Text = "Remote Administration";
+			lblRconTitle.Text = LocalizationManager.Get("Text.BBC627D7B11E5339088A");
 
 			// lblRconDescription
 			lblRconDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -224,7 +224,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblRconDescription.Name = "lblRconDescription";
 			lblRconDescription.Size = new Size(700, 24);
 			lblRconDescription.TabIndex = 2;
-			lblRconDescription.Text = "Enable RCON only for game templates that support secure remote commands.";
+			lblRconDescription.Text = LocalizationManager.Get("Text.615A691F61191EE9C393");
 
 			// lblRconToggleTitle
 			lblRconToggleTitle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -235,7 +235,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblRconToggleTitle.Name = "lblRconToggleTitle";
 			lblRconToggleTitle.Size = new Size(92, 22);
 			lblRconToggleTitle.TabIndex = 3;
-			lblRconToggleTitle.Text = "Enable RCON";
+			lblRconToggleTitle.Text = LocalizationManager.Get("ServerSetup.Network.RconToggle.AccessibleName");
 
 			// chkEnableRcon
 			chkEnableRcon.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -254,7 +254,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblRCONport.Name = "lblRCONport";
 			lblRCONport.Size = new Size(68, 15);
 			lblRCONport.TabIndex = 5;
-			lblRCONport.Text = "RCON Port";
+			lblRCONport.Text = LocalizationManager.Get("PortRole.Rcon");
 
 			// numRconPort
 			numRconPort.BackColor = Color.FromArgb(12, 21, 36);
@@ -277,7 +277,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblRCONpassword.Name = "lblRCONpassword";
 			lblRCONpassword.Size = new Size(98, 15);
 			lblRCONpassword.TabIndex = 7;
-			lblRCONpassword.Text = "RCON Password";
+			lblRCONpassword.Text = LocalizationManager.Get("Text.16C5D21817849765677F");
 
 			// txtRconPassword
 			txtRconPassword.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;

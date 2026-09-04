@@ -81,7 +81,7 @@ namespace Synix_Control_Panel.SynixEngine
 				exception is CryptographicException or PlatformNotSupportedException)
 			{
 				throw new SynixPasswordProtectionException(
-					"Windows could not protect the saved server credentials for this user.",
+					LocalizationManager.Get("PasswordProtection.ProtectFailed"),
 					exception);
 			}
 			finally
@@ -107,7 +107,7 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (FormatException exception)
 			{
 				throw new SynixPasswordProtectionException(
-					"The saved credential data is damaged or incomplete.",
+					LocalizationManager.Get("PasswordProtection.DataDamaged"),
 					exception);
 			}
 
@@ -131,7 +131,8 @@ namespace Synix_Control_Panel.SynixEngine
 				exception is CryptographicException or PlatformNotSupportedException)
 			{
 				throw new SynixPasswordProtectionException(
-					"These saved credentials belong to another Windows user or computer, or the credential data is damaged.",
+					LocalizationManager.Get(
+						"PasswordProtection.WrongUserOrDamaged"),
 					exception);
 			}
 			finally

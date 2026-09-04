@@ -72,28 +72,38 @@ namespace Synix_Control_Panel.SynixEngine
 			if (game == null)
 			{
 				return new(
-					"Select a game",
-					"Choose a game to see exactly what Synix can configure.",
+					LocalizationManager.Get(
+						"Guidance.Configuration.SelectGame.Status"),
+					LocalizationManager.Get(
+						"Guidance.Configuration.SelectGame.Summary"),
 					SettingsPalette.MutedText);
 			}
 
 			return game.ConfigFileCreation switch
 			{
 				ConfigFileCreationMode.SynixTemplate => new(
-					"Full configuration support",
-					"Synix creates the configuration, applies the settings you choose, and protects existing files with backups.",
+					LocalizationManager.Get(
+						"Guidance.Configuration.Full.Status"),
+					LocalizationManager.Get(
+						"Guidance.Configuration.Full.Summary"),
 					SettingsPalette.Success),
 				ConfigFileCreationMode.GameGenerated => new(
-					"Guided configuration support",
-					"The game creates its configuration on first start; Synix can manage it after that file exists.",
+					LocalizationManager.Get(
+						"Guidance.Configuration.Guided.Status"),
+					LocalizationManager.Get(
+						"Guidance.Configuration.Guided.Summary"),
 					SettingsPalette.Accent),
 				ConfigFileCreationMode.LaunchArgumentsOnly => new(
-					"Launch-setting support",
-					"This game is configured through its launch command, so no separate managed configuration file is required.",
+					LocalizationManager.Get(
+						"Guidance.Configuration.Launch.Status"),
+					LocalizationManager.Get(
+						"Guidance.Configuration.Launch.Summary"),
 					SettingsPalette.Accent),
 				_ => new(
-					"Basic installation support",
-					"Synix can install and run this server, but its game configuration is not fully managed yet.",
+					LocalizationManager.Get(
+						"Guidance.Configuration.Basic.Status"),
+					LocalizationManager.Get(
+						"Guidance.Configuration.Basic.Summary"),
 					SettingsPalette.Warning)
 			};
 		}
@@ -117,40 +127,95 @@ namespace Synix_Control_Panel.SynixEngine
 			List<SafetyCheckItem> items = [];
 			GameInfo? game = GameDatabase.GetGame(server.Game);
 
+			string serverIdentity = LocalizationManager.Get(
+				"Guidance.Safety.ServerIdentity.Name");
 			items.Add(string.IsNullOrWhiteSpace(server.ServerName)
-				? new(SafetyCheckLevel.Blocked, "Server identity", "Enter a server name before starting.")
-				: new(SafetyCheckLevel.Ready, "Server identity", $"{server.ServerName} is saved as a {server.Game} server."));
+				? new(
+					SafetyCheckLevel.Blocked,
+					serverIdentity,
+					LocalizationManager.Get(
+						"Guidance.Safety.ServerIdentity.Missing"))
+				: new(
+					SafetyCheckLevel.Ready,
+					serverIdentity,
+					LocalizationManager.Get(
+						"Guidance.Safety.ServerIdentity.Saved",
+						server.ServerName,
+						server.Game)));
 
+			string gameDefinition = LocalizationManager.Get(
+				"Guidance.Safety.GameDefinition.Name");
 			items.Add(game == null
-				? new(SafetyCheckLevel.Blocked, "Game definition", "The selected game definition could not be found.")
-				: new(SafetyCheckLevel.Ready, "Game definition", $"The {game.Game} launch definition is loaded."));
+				? new(
+					SafetyCheckLevel.Blocked,
+					gameDefinition,
+					LocalizationManager.Get(
+						"Guidance.Safety.GameDefinition.Missing"))
+				: new(
+					SafetyCheckLevel.Ready,
+					gameDefinition,
+					LocalizationManager.Get(
+						"Guidance.Safety.GameDefinition.Loaded",
+						game.Game)));
 
+			string installationFolder = LocalizationManager.Get(
+				"Guidance.Safety.InstallFolder.Name");
 			items.Add(string.IsNullOrWhiteSpace(server.InstallPath)
-				? new(SafetyCheckLevel.Blocked, "Installation folder", "Choose an installation folder.")
+				? new(
+					SafetyCheckLevel.Blocked,
+					installationFolder,
+					LocalizationManager.Get(
+						"Guidance.Safety.InstallFolder.Missing"))
 				: Directory.Exists(server.InstallPath)
-					? new(SafetyCheckLevel.Ready, "Installation folder", "The selected server folder is available.")
-					: new(SafetyCheckLevel.Review, "Installation folder", "Synix will create this folder and install the server files on first start."));
+					? new(
+						SafetyCheckLevel.Ready,
+						installationFolder,
+						LocalizationManager.Get(
+							"Guidance.Safety.InstallFolder.Available"))
+					: new(
+						SafetyCheckLevel.Review,
+						installationFolder,
+						LocalizationManager.Get(
+							"Guidance.Safety.InstallFolder.WillCreate")));
 
 			bool portsValid = server.Port is >= 1 and <= 65535 &&
 				(server.QueryPort == 0 || server.QueryPort is >= 1 and <= 65535) &&
 				(!server.EnableRcon || server.RconPort is >= 1 and <= 65535);
+			string networkPorts = LocalizationManager.Get(
+				"Guidance.Safety.NetworkPorts.Name");
 			items.Add(portsValid
-				? new(SafetyCheckLevel.Ready, "Network ports", GetPortSummary(server))
-				: new(SafetyCheckLevel.Blocked, "Network ports", "One or more required ports are outside the valid 1–65535 range."));
+				? new(SafetyCheckLevel.Ready, networkPorts, GetPortSummary(server))
+				: new(
+					SafetyCheckLevel.Blocked,
+					networkPorts,
+					LocalizationManager.Get(
+						"Guidance.Safety.NetworkPorts.Invalid")));
 
 			ConfigurationSupportPresentation support = GetConfigurationSupport(game);
+			string configurationSupport = LocalizationManager.Get(
+				"Guidance.Safety.ConfigurationSupport.Name");
 			items.Add(game?.ConfigFileCreation == ConfigFileCreationMode.Unknown
-				? new(SafetyCheckLevel.Review, "Configuration support", support.Summary)
-				: new(SafetyCheckLevel.Ready, "Configuration support", support.Summary));
+				? new(SafetyCheckLevel.Review, configurationSupport, support.Summary)
+				: new(SafetyCheckLevel.Ready, configurationSupport, support.Summary));
 
 			if (game != null)
 			{
 				GamePrerequisiteItem? failure = GamePrerequisiteChecker
 					.CheckCurrentSystem(game)
 					.FirstFailure;
+				string computerRequirements = LocalizationManager.Get(
+					"Guidance.Safety.ComputerRequirements.Name");
 				items.Add(failure == null
-					? new(SafetyCheckLevel.Ready, "Computer requirements", "This PC meets the known requirements for this game server.")
-					: new(SafetyCheckLevel.Blocked, "Computer requirements", failure.Message));
+					? new(
+						SafetyCheckLevel.Ready,
+						computerRequirements,
+						LocalizationManager.Get(
+							"Guidance.Safety.ComputerRequirements.Met"))
+					: new(
+						SafetyCheckLevel.Blocked,
+						computerRequirements,
+						LocalizationManager.TranslateRuntimeText(
+							failure.Message)));
 			}
 
 			return new SafetyChecklistReport(items);
@@ -158,14 +223,27 @@ namespace Synix_Control_Panel.SynixEngine
 
 		internal static string GetPortSummary(GameServer server)
 		{
-			List<string> ports = [$"game {server.Port}"];
+			List<string> ports =
+			[
+				LocalizationManager.Get(
+					"Guidance.Port.Game",
+					server.Port)
+			];
 			if (server.QueryPort > 0 && server.QueryPort != server.Port)
-				ports.Add($"query {server.QueryPort}");
+				ports.Add(LocalizationManager.Get(
+					"Guidance.Port.Query",
+					server.QueryPort));
 			if (server.EnableRcon && server.RconPort > 0)
-				ports.Add($"RCON {server.RconPort}");
+				ports.Add(LocalizationManager.Get(
+					"Guidance.Port.Rcon",
+					server.RconPort));
 			if (server.AppPort is > 0)
-				ports.Add($"app {server.AppPort.Value}");
-			return "Configured ports: " + string.Join(", ", ports) + ".";
+				ports.Add(LocalizationManager.Get(
+					"Guidance.Port.App",
+					server.AppPort.Value));
+			return LocalizationManager.Get(
+				"Guidance.Port.Summary",
+				string.Join(", ", ports));
 		}
 
 		internal static PlainEnglishError TranslateError(
@@ -173,16 +251,19 @@ namespace Synix_Control_Panel.SynixEngine
 			string? technicalDetails)
 		{
 			string details = string.IsNullOrWhiteSpace(technicalDetails)
-				? "No additional technical details were provided."
+				? LocalizationManager.Get(
+					"Guidance.Error.NoTechnicalDetails")
 				: technicalDetails.Trim();
 			string searchable = details.ToLowerInvariant();
 
 			if (searchable.Contains("game not found") || searchable.Contains("game definition"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"The saved game definition is no longer available.",
-					"Edit this server and select a supported game. If the game was added by a custom definition, restore or re-import that definition first.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.GameDefinition.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.GameDefinition.NextStep"),
 					details);
 			}
 
@@ -191,9 +272,11 @@ namespace Synix_Control_Panel.SynixEngine
 				searchable.Contains("antivirus:"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"The selected add-on did not pass Synix's security review.",
-					"Do not bypass a confirmed threat. If the scan was only unavailable or inconclusive, review the warning and install only when you trust the exact source and SHA-256 shown.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.Security.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.Security.NextStep"),
 					details);
 			}
 
@@ -201,71 +284,90 @@ namespace Synix_Control_Panel.SynixEngine
 				(searchable.Contains("use") || searchable.Contains("occup") || searchable.Contains("bind")))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"A network port needed by this server is already being used.",
-					"Open Live Process Details and stop any older copy of this server, or edit the server and choose a free port. Then try again.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.Port.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.Port.NextStep"),
 					details);
 			}
 
 			if (searchable.Contains("not found") || searchable.Contains("missing") || searchable.Contains("could not find"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"A required server file could not be found.",
-					"Use Server Options > Validate Game Files. If this is a new server, run Update Server to finish the installation.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.File.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.File.NextStep"),
 					details);
 			}
 
 			if (searchable.Contains("access") || searchable.Contains("permission") || searchable.Contains("unauthorized"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"Windows would not allow Synix to read or change a required file.",
-					"Close any program using the server folder, confirm your Windows account can write to it, and try again.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.Permission.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.Permission.NextStep"),
 					details);
 			}
 
 			if (searchable.Contains("configuration") || searchable.Contains("config file"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"The server configuration is incomplete or could not be updated safely.",
-					"Open the Server Readiness Center and use Fix Config when it is offered. Synix creates a backup before rebuilding a managed configuration.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.Configuration.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.Configuration.NextStep"),
 					details);
 			}
 
 			if (searchable.Contains(" requires ") || searchable.Contains("requirement"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"This computer does not meet a known requirement for the selected game server.",
-					"Read the requirement shown in the technical details, install or enable the missing Windows component, and run the Readiness Center again.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.Requirement.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.Requirement.NextStep"),
 					details);
 			}
 
 			if (searchable.Contains("network") || searchable.Contains("http") || searchable.Contains("github") || searchable.Contains("timed out"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"Synix could not reach the required online service.",
-					"Check the internet connection and Windows Firewall, wait a moment, and try again.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.Network.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.Network.NextStep"),
 					details);
 			}
 
 			if (searchable.Contains("process") || searchable.Contains("shutdown") || searchable.Contains("still running"))
 			{
 				return new(
-					$"Synix could not {operation}",
-					"One or more parts of the game server are still running.",
-					"Open Live Process Details, wait for every process in this server group to close, and then try again. The Readiness Center can recover stale process tracking.",
+					ErrorHeading(operation),
+					LocalizationManager.Get(
+						"Guidance.Error.Process.Explanation"),
+					LocalizationManager.Get(
+						"Guidance.Error.Process.NextStep"),
 					details);
 			}
 
 			return new(
-				$"Synix could not {operation}",
-				"The requested action did not finish.",
-				"Open the Server Readiness Center for guided checks. You can copy the technical details below if you need to report the problem.",
+				ErrorHeading(operation),
+				LocalizationManager.Get(
+					"Guidance.Error.Generic.Explanation"),
+				LocalizationManager.Get(
+					"Guidance.Error.Generic.NextStep"),
 				details);
 		}
+
+		private static string ErrorHeading(string operation) =>
+			LocalizationManager.Get("Guidance.Error.Heading", operation);
 	}
 }

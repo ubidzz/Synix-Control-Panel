@@ -14,14 +14,21 @@ namespace Synix_Control_Panel.SynixEngine
 {
 	public sealed class ApplicationLogEventArgs : EventArgs
 	{
-		public ApplicationLogEventArgs(string message, Color color, bool bold)
+		public ApplicationLogEventArgs(
+			string technicalMessage,
+			string? localizedMessage,
+			Color color,
+			bool bold)
 		{
-			Message = message;
+			TechnicalMessage = technicalMessage;
+			LocalizedMessage = localizedMessage;
 			Color = color;
 			Bold = bold;
 		}
 
-		public string Message { get; }
+		public string TechnicalMessage { get; }
+		public string? LocalizedMessage { get; }
+		public string Message => TechnicalMessage;
 		public Color Color { get; }
 		public bool Bold { get; }
 	}
@@ -79,11 +86,24 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public static bool PublishLog(string message, Color color, bool bold = false)
 		{
+			return PublishLog(message, null, color, bold);
+		}
+
+		public static bool PublishLog(
+			string technicalMessage,
+			string? localizedMessage,
+			Color color,
+			bool bold = false)
+		{
 			EventHandler<ApplicationLogEventArgs>? handlers = LogRequested;
 			if (handlers == null)
 				return false;
 
-			ApplicationLogEventArgs eventArgs = new(message, color, bold);
+			ApplicationLogEventArgs eventArgs = new(
+				technicalMessage,
+				localizedMessage,
+				color,
+				bold);
 			bool delivered = false;
 			foreach (Delegate callback in handlers.GetInvocationList())
 			{

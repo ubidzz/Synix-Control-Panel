@@ -49,7 +49,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(852, 36);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Game Definition Test Runner";
+			titleLabel.Text = LocalizationManager.Get("Text.63F3CED609376CC19222");
 			// 
 			// subtitleLabel
 			// 
@@ -60,7 +60,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(852, 46);
 			subtitleLabel.TabIndex = 1;
-			subtitleLabel.Text = "Tests every built-in game, managed setting binding, full configuration template, revision, path, log location, and allowlisted post-install action. Installed servers are never changed.";
+			subtitleLabel.Text = LocalizationManager.Get("Text.91657E9737A951B3ADA2");
 			// 
 			// _statusLabel
 			// 
@@ -71,7 +71,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_statusLabel.Name = "_statusLabel";
 			_statusLabel.Size = new Size(852, 30);
 			_statusLabel.TabIndex = 2;
-			_statusLabel.Text = "Ready to test the built-in game-definition library.";
+			_statusLabel.Text = LocalizationManager.Get("Text.FD866259C3EE73E57510");
 			// 
 			// _reportBox
 			// 
@@ -87,7 +87,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_reportBox.ScrollBars = RichTextBoxScrollBars.ForcedBoth;
 			_reportBox.Size = new Size(852, 480);
 			_reportBox.TabIndex = 3;
-			_reportBox.Text = "The validation report will appear here.";
+			_reportBox.Text = LocalizationManager.Get("Text.475F12DE42F62AE8996C");
 			_reportBox.WordWrap = false;
 			// 
 			// _closeButton
@@ -102,7 +102,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_closeButton.Name = "_closeButton";
 			_closeButton.Size = new Size(110, 42);
 			_closeButton.TabIndex = 4;
-			_closeButton.Text = "Close";
+			_closeButton.Text = LocalizationManager.Get("ModManager.Button.Close");
 			_closeButton.UseVisualStyleBackColor = false;
 			// 
 			// _copyButton
@@ -117,7 +117,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_copyButton.Name = "_copyButton";
 			_copyButton.Size = new Size(142, 42);
 			_copyButton.TabIndex = 5;
-			_copyButton.Text = "Copy Report";
+			_copyButton.Text = LocalizationManager.Get("Text.54B8E0C0C268C1549AF4");
 			_copyButton.UseVisualStyleBackColor = false;
 			_copyButton.Click += CopyButton_Click;
 			// 
@@ -132,7 +132,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_runButton.Name = "_runButton";
 			_runButton.Size = new Size(162, 42);
 			_runButton.TabIndex = 6;
-			_runButton.Text = "Run Tests";
+			_runButton.Text = LocalizationManager.Get("Text.8CBBAC76C84A2410D3BD");
 			_runButton.UseAccentStyle = true;
 			_runButton.UseVisualStyleBackColor = false;
 			_runButton.Click += RunButton_Click;
@@ -158,7 +158,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			Name = "GameDefinitionValidationDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Game Definition Test Runner";
+			Text = LocalizationManager.Get("Text.385E44CCA2BC7A3242CF");
 			ResumeLayout(false);
 		}
 

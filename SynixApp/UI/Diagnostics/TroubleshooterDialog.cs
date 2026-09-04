@@ -63,14 +63,19 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 		internal TroubleshooterDialog(GameServer server) : this()
 		{
 			_readinessServer = server ?? throw new ArgumentNullException(nameof(server));
-			Text = "Server Readiness Center";
-			titleLabel.Text = "Server Readiness Center";
-			subtitleLabel.Text =
-				$"Check whether {server.ServerName} ({server.Game}) is ready to install, start, stop, recover, and connect. Select any problem to see its safe action.";
-			resultColumn.HeaderText = "STATUS";
-			subjectColumn.HeaderText = "CHECK";
-			runButton.Text = "Check Again";
-			actionButton.Text = "Select an Action";
+			Text = LocalizationManager.Get("Text.8C33F13ABED20D6638CD");
+			LocalizationManager.BindText(
+				titleLabel,
+				"Text.8C33F13ABED20D6638CD");
+			LocalizationManager.BindText(
+				subtitleLabel,
+				"Diagnostics.Readiness.Subtitle",
+				server.ServerName,
+				server.Game);
+			resultColumn.HeaderText = LocalizationManager.Get("ModManager.Column.Status");
+			subjectColumn.HeaderText = LocalizationManager.Get("Text.2C12824B5F626268A103");
+			LocalizationManager.BindText(runButton, "Text.32E60E730D2E6845D352");
+			LocalizationManager.BindText(actionButton, "Text.902EA0AF4FAA1C1AC056");
 		}
 
 		protected override async void OnShown(EventArgs eventArgs)
@@ -93,14 +98,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			copyButton.Enabled = false;
 			closeButton.Enabled = false;
 			statusLabel.ForeColor = SettingsPalette.SecondaryText;
-			statusLabel.Text = IsReadinessMode
-				? $"Checking {_readinessServer!.ServerName}..."
-				: "Checking this PC and every installed server...";
+			LocalizationManager.BindText(
+				statusLabel,
+				IsReadinessMode
+					? "Diagnostics.Readiness.CheckingServer"
+					: "DynamicText.973CB1044C2D435579D5",
+				_readinessServer?.ServerName ?? string.Empty);
 			resultsGrid.Rows.Clear();
 
 			try
 			{
-				Progress<string> progress = new(message => statusLabel.Text = message);
+				Progress<string> progress = new(message =>
+					statusLabel.Text = LocalizationManager.TranslateRuntimeText(message));
 				GameServer[] servers = IsReadinessMode
 					? [_readinessServer!]
 					: ServerRegistry.Servers.ToArray();
@@ -112,9 +121,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 				PopulateReport(_report);
 				statusLabel.Text = IsReadinessMode
 					? GetReadinessSummary(_report)
-					: _report.FailedCount > 0
-						? $"ATTENTION NEEDED  •  {_report.FailedCount} failed  •  {_report.WarningCount} warnings  •  {_report.PassedCount} passed"
-						: $"HEALTHY  •  {_report.WarningCount} warnings  •  {_report.PassedCount} passed";
+					: LocalizationManager.Get(
+						_report.FailedCount > 0
+							? "Diagnostics.Health.Summary.Attention"
+							: "Diagnostics.Health.Summary.Healthy",
+						_report.FailedCount,
+						_report.WarningCount,
+						_report.PassedCount);
 				statusLabel.ForeColor = _report.FailedCount > 0
 					? SettingsPalette.Danger
 					: _report.WarningCount > 0
@@ -124,7 +137,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			}
 			catch (Exception exception)
 			{
-				statusLabel.Text = "The health check could not finish: " + exception.Message;
+				statusLabel.Text =
+					LocalizationManager.Get("DynamicText.46A58E5D0D9BDB34C783") +
+					exception.Message;
 				statusLabel.ForeColor = SettingsPalette.Danger;
 			}
 			finally
@@ -142,11 +157,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			int readyPercent = total == 0
 				? 0
 				: (int)Math.Round(report.PassedCount * 100d / total);
-			return report.FailedCount > 0
-				? $"NOT READY  •  {readyPercent}% passed  •  {report.FailedCount} blocked  •  {report.WarningCount} to review"
-				: report.WarningCount > 0
-					? $"READY WITH ITEMS TO REVIEW  •  {readyPercent}% passed  •  {report.WarningCount} to review"
-					: $"READY  •  {readyPercent}% passed  •  all {report.PassedCount} checks completed";
+			return LocalizationManager.Get(
+				report.FailedCount > 0
+					? "Diagnostics.Readiness.Summary.NotReady"
+					: report.WarningCount > 0
+						? "Diagnostics.Readiness.Summary.Review"
+						: "Diagnostics.Readiness.Summary.Ready",
+				readyPercent,
+				report.FailedCount,
+				report.WarningCount,
+				report.PassedCount);
 		}
 
 		private void PopulateReport(SynixHealthReport report)
@@ -160,10 +180,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 					.ThenBy(item => item.Subject, StringComparer.OrdinalIgnoreCase))
 				{
 					int index = resultsGrid.Rows.Add(
-						IsReadinessMode ? GetReadinessResultText(item.Level) : item.ResultText,
-						item.Area,
-						item.Subject,
-						item.Details,
+						IsReadinessMode
+							? GetReadinessResultText(item.Level)
+							: LocalizationManager.TranslateRuntimeText(item.ResultText),
+						LocalizationManager.TranslateRuntimeText(item.Area),
+						LocalizationManager.TranslateRuntimeText(item.Subject),
+						LocalizationManager.TranslateRuntimeText(item.Details),
 						GetActionText(item.Action));
 					DataGridViewRow row = resultsGrid.Rows[index];
 					row.Tag = item;
@@ -225,25 +247,21 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			resultsGrid.Invalidate(true);
 		}
 
-		private static string GetReadinessResultText(SynixHealthLevel level) => level switch
+		private static string GetReadinessResultText(SynixHealthLevel level) =>
+			LocalizationManager.Get(level switch
 		{
-			SynixHealthLevel.Passed => "Ready",
-			SynixHealthLevel.Warning => "Review",
-			_ => "Blocked"
-		};
+			SynixHealthLevel.Passed => "Diagnostics.Readiness.Result.Ready",
+			SynixHealthLevel.Warning => "Diagnostics.Readiness.Result.Review",
+			_ => "Diagnostics.Readiness.Result.Blocked"
+		});
 
-		private static string GetActionText(SynixHealthAction action) => action switch
+		private static string GetActionText(SynixHealthAction action)
 		{
-			SynixHealthAction.RepairSteamCmd => "Repair SteamCMD",
-			SynixHealthAction.ValidateServerFiles => "Validate Files",
-			SynixHealthAction.FixConfiguration => "Fix Config",
-			SynixHealthAction.OpenServerFolder => "Open Folder",
-			SynixHealthAction.OpenFirewallSettings => "Firewall Settings",
-			SynixHealthAction.RecoverProcesses => "Recover Processes",
-			SynixHealthAction.OpenLatestLog => "Open Log",
-			SynixHealthAction.OpenUpdate => "Open Updates",
-			_ => string.Empty
-		};
+			string key = GetActionResourceKey(action);
+			return string.IsNullOrEmpty(key)
+				? string.Empty
+				: LocalizationManager.Get(key);
+		}
 
 		private void ResultsGrid_SelectionChanged(object? sender, EventArgs eventArgs) =>
 			UpdateActionButton();
@@ -252,10 +270,27 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 		{
 			SynixHealthItem? item = GetSelectedItem();
 			actionButton.Enabled = !_running && item?.Action != SynixHealthAction.None;
-			actionButton.Text = item == null || item.Action == SynixHealthAction.None
-				? (IsReadinessMode ? "Select an Action" : "Select a Repair")
-				: GetActionText(item.Action);
+			LocalizationManager.BindText(
+				actionButton,
+				item == null || item.Action == SynixHealthAction.None
+					? IsReadinessMode
+						? "Text.902EA0AF4FAA1C1AC056"
+						: "Text.F19AA7C4D8DA593D73AE"
+					: GetActionResourceKey(item.Action));
 		}
+
+		private static string GetActionResourceKey(SynixHealthAction action) => action switch
+		{
+			SynixHealthAction.RepairSteamCmd => "Diagnostics.Action.RepairSteamCmd",
+			SynixHealthAction.ValidateServerFiles => "Diagnostics.Action.ValidateFiles",
+			SynixHealthAction.FixConfiguration => "Text.4035C78A474280CE7F1E",
+			SynixHealthAction.OpenServerFolder => "Diagnostics.Action.OpenFolder",
+			SynixHealthAction.OpenFirewallSettings => "Diagnostics.Action.FirewallSettings",
+			SynixHealthAction.RecoverProcesses => "Diagnostics.Action.RecoverProcesses",
+			SynixHealthAction.OpenLatestLog => "Diagnostics.Action.OpenLog",
+			SynixHealthAction.OpenUpdate => "Diagnostics.Action.OpenUpdates",
+			_ => string.Empty
+		};
 
 		private SynixHealthItem? GetSelectedItem() =>
 			resultsGrid.SelectedRows.Count > 0
@@ -273,7 +308,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 				switch (item.Action)
 				{
 					case SynixHealthAction.RepairSteamCmd:
-						statusLabel.Text = "Repairing SteamCMD...";
+						LocalizationManager.BindText(
+							statusLabel,
+							"Text.777F9DDFDDB4FCF844BE");
 						await Task.Run(() => SteamCMD.EnsureSteamCMD((message, color) =>
 						{
 							if (IsHandleCreated)
@@ -316,7 +353,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			{
 				PlainEnglishErrorDialog.ShowError(
 					this,
-					"finish the selected repair",
+					LocalizationManager.Get("Diagnostics.ErrorAction.FinishRepair"),
 					exception.ToString());
 			}
 		}
@@ -328,13 +365,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 				Core.StatusManager.GetStatus(Core.ServerState.Stopped),
 				StringComparison.OrdinalIgnoreCase))
 			{
-				throw new InvalidOperationException("Stop the server before rebuilding its configuration.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Diagnostics.Configuration.StopBeforeRebuild"));
 			}
 
 			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
-				"Synix will rebuild the complete configuration from its trusted template, reapply the saved server values, and preserve a backup. Continue?",
-				"Fix Server Configuration",
+				LocalizationManager.Get("MessageText.AA9402AAA45447FCB9A8"),
+				LocalizationManager.Get("MessageText.E66DFFEC800B8E0880C2"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning);
 			if (confirmation != DialogResult.Yes)
@@ -344,7 +382,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			if (!result.Succeeded)
 				throw new InvalidOperationException(result.Message);
 			FileHandler.SaveServers();
-			LocalizedMessageBox.Show(this, result.Message, "Configuration Rebuilt", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			LocalizedMessageBox.Show(
+				this,
+				LocalizationManager.TranslateRuntimeText(result.Message),
+				LocalizationManager.Get("MessageText.AEBC3D7D14735D41DB99"),
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Information);
 		}
 
 		private void CopyButton_Click(object? sender, EventArgs eventArgs)
@@ -355,15 +398,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			{
 				Clipboard.SetText(_report.ToPlainText(
 					IsReadinessMode
-						? "SYNIX SERVER READINESS REPORT"
-						: "SYNIX TROUBLESHOOTER REPORT"));
-				statusLabel.Text = IsReadinessMode
-					? "Server readiness report copied to the clipboard."
-					: "Troubleshooter report copied to the clipboard.";
+						? LocalizationManager.Get(
+							"Diagnostics.Health.Report.ReadinessTitle")
+						: LocalizationManager.Get(
+							"Diagnostics.Health.Report.Title")));
+				LocalizationManager.BindText(
+					statusLabel,
+					IsReadinessMode
+						? "DynamicText.DBF742AF53EBF85C9E90"
+						: "DynamicText.98343573B4075CAC328B");
 			}
 			catch
 			{
-				LocalizedMessageBox.Show(this, "Windows could not copy the report.", "Copy Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(
+					this,
+					LocalizationManager.Get("MessageText.42714FAA1D98E9331F6D"),
+					LocalizationManager.Get("MessageText.2C58B2D4975AADC6042D"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 			}
 		}
 	}

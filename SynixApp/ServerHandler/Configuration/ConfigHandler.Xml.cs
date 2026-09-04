@@ -51,7 +51,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					int commentEnd = text.IndexOf("-->", tagStart + 4, StringComparison.Ordinal);
 					if (commentEnd < 0)
 					{
-						throw new InvalidDataException("An unterminated XML comment was found.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"Configuration.Editor.Error.XmlCommentUnterminated"));
 					}
 					if (frames.Count > 0)
 					{
@@ -67,7 +68,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					int cdataEnd = text.IndexOf("]]>", cdataStart, StringComparison.Ordinal);
 					if (cdataEnd < 0)
 					{
-						throw new InvalidDataException("An unterminated XML CDATA section was found.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"Configuration.Editor.Error.XmlCDataUnterminated"));
 					}
 
 					if (frames.Count > 0)
@@ -98,7 +100,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					int processingEnd = text.IndexOf("?>", tagStart + 2, StringComparison.Ordinal);
 					if (processingEnd < 0)
 					{
-						throw new InvalidDataException("An unterminated XML declaration was found.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"Configuration.Editor.Error.XmlDeclarationUnterminated"));
 					}
 					if (frames.Count > 0)
 					{
@@ -341,7 +344,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (index >= tagEnd)
 				{
 					throw new InvalidDataException(
-						$"The XML attribute '{name}' is missing its closing quote.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.XmlAttributeQuote",
+							name));
 				}
 
 				string rawValue = text.Substring(valueStart, index - valueStart);
@@ -383,7 +388,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 			}
 
-			throw new InvalidDataException("An XML tag is missing its closing '>'.");
+			throw new InvalidDataException(LocalizationManager.Get(
+				"Configuration.Editor.Error.XmlTagClose"));
 		}
 
 		private static int FindXmlDeclarationEnd(string text, int start)
@@ -420,7 +426,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 			}
 
-			throw new InvalidDataException("An XML declaration is missing its closing '>'.");
+			throw new InvalidDataException(LocalizationManager.Get(
+				"Configuration.Editor.Error.XmlDeclarationClose"));
 		}
 
 		private static bool IsSelfClosingXmlTag(string text, int tagStart, int tagEnd)

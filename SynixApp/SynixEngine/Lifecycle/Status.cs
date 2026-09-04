@@ -61,7 +61,12 @@ namespace Synix_Control_Panel.SynixEngine
 					string interruptedStatus = server.Status;
 					CleanupStoppedState(server);
 					stateChanged = true;
-					Log($"[🔧 RECOVERY] Cleared an interrupted {interruptedStatus} state for {server.ServerName}.", Color.Orange, true);
+					LogLocalized(
+						"Status.Activity.InterruptedCleared",
+						Color.Orange,
+						true,
+						LocalizationManager.TranslateRuntimeText(interruptedStatus),
+						server.ServerName);
 				}
 
 				if (IsSteamOperationStatus(server.Status))
@@ -82,7 +87,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 					if (isSteamCmdActive)
 					{
-						Log($"[🔗 REBIND] Found {server.Game} SteamCMD operation still active (PID: {server.SteamPID})", Color.BlueViolet, true);
+						LogLocalized("Status.Activity.SteamCmdRebound", Color.BlueViolet, true, server.Game, server.SteamPID);
 					}
 					else
 					{
@@ -94,7 +99,7 @@ namespace Synix_Control_Panel.SynixEngine
 						{
 							await GameFix.PostInstall(server);
 							await RefreshServerIconAsync(server);
-							Log($"[🔧 RECOVERY] {server.Game} finished while Synix was closed. Applied its safe post-install actions.", Color.Green, true);
+							LogLocalized("Status.Activity.PostInstallRecovered", Color.Green, true, server.Game);
 						}
 						stateChanged = true;
 					}
@@ -131,17 +136,19 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				catch (Exception exception)
 				{
-					Log($"[🚨 CRASH HANDLER ERROR] {exception.Message}", Color.Red);
+					LogLocalized("Status.Activity.CrashHandlerError", Color.Red, false, exception.Message);
 					CleanupStoppedState(server);
 				}
 			};
 			process.EnableRaisingEvents = true;
-			Log(
+			LogLocalized(
 				discoveredByPath
-					? $"[🔗 CRASH RECOVERY] Reconnected {server.ServerName} by its exact installed executable path (PID: {process.Id})."
-					: $"[🔗 REBIND] Reconnected {server.ServerName} (PID: {process.Id}).",
+					? "Status.Activity.ReconnectedByPath"
+					: "Status.Activity.Reconnected",
 				Color.BlueViolet,
-				true);
+				true,
+				server.ServerName,
+				process.Id);
 		}
 
 		private static bool IsSteamOperationStatus(string? status) =>

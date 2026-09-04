@@ -102,7 +102,8 @@ namespace Synix_Control_Panel.SynixApp
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 				_ = typeof(Program).Assembly.GetName().Version
-					?? throw new InvalidOperationException("The Synix assembly version could not be loaded.");
+					?? throw new InvalidOperationException(
+						LocalizationManager.Get("Application.Error.VersionUnavailable"));
 				_ = Properties.Settings.Default.DarkMode;
 
 				using Control windowsFormsProbe = new();
@@ -142,8 +143,10 @@ namespace Synix_Control_Panel.SynixApp
 				if (importRolledBack)
 				{
 					LocalizedMessageBox.Show(
-						"Synix detected an interrupted import and safely restored the previous files before starting.",
-						"Synix Import Recovered",
+						LocalizationManager.Get(
+							"Startup.ImportRecovery.Succeeded.Body"),
+						LocalizationManager.Get(
+							"Startup.ImportRecovery.Succeeded.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Information);
 				}
@@ -151,10 +154,12 @@ namespace Synix_Control_Panel.SynixApp
 			catch (Exception exception)
 			{
 				LocalizedMessageBox.Show(
-					"Synix found an interrupted import but could not safely restore the previous files. " +
-					"Synix will not start to avoid using incomplete data.\n\n" +
-					exception.Message,
-					"Synix Import Recovery Failed",
+					LocalizationManager.Get(
+						"Startup.ImportRecovery.Failed.Body",
+						LocalizationManager.TranslateRuntimeText(
+							exception.Message)),
+					LocalizationManager.Get(
+						"Startup.ImportRecovery.Failed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -166,8 +171,11 @@ namespace Synix_Control_Panel.SynixApp
 				if (recoveredRestores > 0)
 				{
 					LocalizedMessageBox.Show(
-						$"Synix detected {recoveredRestores} interrupted server backup restore operation(s) and safely returned the affected server folders to their previous state.",
-						"Server Restore Recovered",
+						LocalizationManager.Get(
+							"Startup.ServerRestoreRecovery.Succeeded.Body",
+							recoveredRestores),
+						LocalizationManager.Get(
+							"Startup.ServerRestoreRecovery.Succeeded.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Information);
 				}
@@ -175,9 +183,12 @@ namespace Synix_Control_Panel.SynixApp
 			catch (Exception exception)
 			{
 				LocalizedMessageBox.Show(
-					"Synix found an interrupted server backup restore but could not safely recover its files. Synix will not start to avoid using incomplete server data.\n\n" +
-					exception.Message,
-					"Server Restore Recovery Failed",
+					LocalizationManager.Get(
+						"Startup.ServerRestoreRecovery.Failed.Body",
+						LocalizationManager.TranslateRuntimeText(
+							exception.Message)),
+					LocalizationManager.Get(
+						"Startup.ServerRestoreRecovery.Failed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -205,8 +216,11 @@ namespace Synix_Control_Panel.SynixApp
 				{
 					mainWindow.Shown += (_, _) => LocalizedMessageBox.Show(
 						mainWindow,
-						$"Synix {rolledBackVersion} could not start successfully, so Synix restored the previous program version. Your C:\\Synix server data was not changed.",
-						"Synix Update Rolled Back",
+						LocalizationManager.Get(
+							"Startup.UpdateRollback.Body",
+							rolledBackVersion),
+						LocalizationManager.Get(
+							"Startup.UpdateRollback.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
 				}
@@ -259,8 +273,13 @@ namespace Synix_Control_Panel.SynixApp
 				string logFilePath = Path.Combine(Core.LogsPath, $"Synix_fatal_crashes_{DateTime.Now:yyyy-MM-dd}.log");
 				FileHandler.WriteLogImmediate("Synix_fatal_crashes", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n");
 
-				LocalizedMessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",
-							"Engine Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"Startup.FatalError.Body",
+						logFilePath),
+					LocalizationManager.Get("Startup.FatalError.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 			}
 			catch (Exception suppressedException)
 			{

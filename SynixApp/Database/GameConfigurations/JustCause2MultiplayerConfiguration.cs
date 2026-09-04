@@ -39,7 +39,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				return [new ConfigurationValidationItem(
 					ConfigurationValidationState.Failed,
 					RelativePath,
-					"The managed configuration file is missing.")];
+					LocalizationManager.Get(
+						"Configuration.Check.ManagedFile.Missing"))];
 			}
 
 			try
@@ -50,10 +51,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					structureMatches
 						? ConfigurationValidationState.Passed
 						: ConfigurationValidationState.Failed,
-					"Template structure",
+					LocalizationManager.Get(
+						"Configuration.Check.TemplateStructure"),
 					structureMatches
-						? "The required template structure is present."
-						: "One or more required template tags are missing or invalid."));
+						? LocalizationManager.Get(
+							"Configuration.Check.TemplateStructure.Present")
+						: LocalizationManager.Get(
+							"Configuration.Check.TemplateStructure.Invalid")));
 				string text = File.ReadAllText(path);
 				items.Add(ValidateValue(text, "MaxPlayers", context.Server.MaxPlayers.ToString()));
 				items.Add(ValidateValue(text, "BindPort", context.Server.Port.ToString()));
@@ -65,8 +69,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			{
 				return [new ConfigurationValidationItem(
 					ConfigurationValidationState.Failed,
-					"Configuration read",
-					$"Synix could not safely inspect this configuration: {exception.Message}")];
+					LocalizationManager.Get(
+						"Configuration.Check.ConfigurationRead"),
+					LocalizationManager.Get(
+						"Configuration.Check.ConfigurationRead.Failed",
+						exception.Message))];
 			}
 		}
 
@@ -90,7 +97,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					if (template == null)
 					{
 						return ConfigurationApplyResult.Failure(
-							"The complete Just Cause 2 default_config.lua is missing from the server installation.");
+							LocalizationManager.Get(
+								"Configuration.Apply.InstalledDefaultMissing",
+								"Just Cause 2",
+								"default_config.lua"));
 					}
 
 					WriteNewFile(path, template);
@@ -116,7 +126,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						false,
 						changed,
 						created,
-						$"The complete file was preserved, but these settings were not found: {string.Join(", ", missing)}.");
+						LocalizationManager.Get(
+							"Configuration.Apply.ManagedSettingsMissing",
+							string.Join(", ", missing)));
 				}
 
 				return new ConfigurationApplyResult(
@@ -125,15 +137,24 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					created || changed,
 					created,
 					created
-						? "Created the complete Just Cause 2 configuration from its installed default file."
+						? LocalizationManager.Get(
+							"Configuration.Apply.CreatedFromInstalledDefault",
+							"Just Cause 2")
 						: changed
-							? "Updated the managed Just Cause 2 settings."
-							: "The Just Cause 2 configuration is already current.");
+							? LocalizationManager.Get(
+								"Configuration.Apply.ManagedSettingsUpdated",
+								"Just Cause 2")
+							: LocalizationManager.Get(
+								"Configuration.Apply.Current",
+								"Just Cause 2"));
 			}
 			catch (Exception exception)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The Just Cause 2 configuration could not be applied: {exception.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.Failed",
+						"Just Cause 2",
+						exception.Message));
 			}
 		}
 
@@ -198,8 +219,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					ConfigurationValidationState.Failed,
 					key,
 					matches.Count == 0
-						? "The managed configuration tag is missing."
-						: "The managed tag appears more than once, so Synix cannot safely identify one value.");
+						? LocalizationManager.Get(
+							"Configuration.Check.ManagedTag.Missing")
+						: LocalizationManager.Get(
+							"Configuration.Check.ManagedTag.Duplicate"));
 			}
 
 			bool matchesSavedValue = string.Equals(
@@ -212,8 +235,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					: ConfigurationValidationState.Failed,
 				key,
 				matchesSavedValue
-					? "The file value matches the value saved in Synix."
-					: "The file value does not match the value saved in Synix.");
+					? LocalizationManager.Get(
+						"Configuration.Check.Value.Matches")
+					: LocalizationManager.Get(
+						"Configuration.Check.Value.Differs"));
 		}
 
 		private static Dictionary<string, int> GetPropertyCounts(string text)

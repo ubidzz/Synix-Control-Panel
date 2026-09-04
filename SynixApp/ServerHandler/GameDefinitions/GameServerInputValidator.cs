@@ -20,8 +20,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string password = passwords.ServerPassword ?? string.Empty;
 			if (password.Length < definition.MinimumServerPasswordLength)
 			{
-				error = $"{definition.Game} requires a server password with at least " +
-					$"{definition.MinimumServerPasswordLength} characters.";
+				error = LocalizationManager.Get(
+					"GameInput.Password.MinimumLength",
+					definition.Game,
+					definition.MinimumServerPasswordLength);
 				return false;
 			}
 
@@ -31,19 +33,24 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					password,
 					StringComparison.OrdinalIgnoreCase))
 			{
-				error = $"{definition.Game} does not allow the server password to appear in the server name.";
+				error = LocalizationManager.Get(
+					"GameInput.Password.NotInServerName",
+					definition.Game);
 				return false;
 			}
 
 			string authenticationToken = passwords.AuthenticationToken ?? string.Empty;
 			string authenticationTokenLabel = string.IsNullOrWhiteSpace(
 				definition.AuthenticationTokenLabel)
-					? "authentication token"
+					? LocalizationManager.Get("GameInput.AuthenticationToken")
 					: definition.AuthenticationTokenLabel;
 			if (definition.RequiresAuthenticationToken &&
 				string.IsNullOrWhiteSpace(authenticationToken))
 			{
-				error = $"{definition.Game} requires a valid {authenticationTokenLabel} for online server authentication.";
+				error = LocalizationManager.Get(
+					"GameInput.AuthenticationToken.Required",
+					definition.Game,
+					authenticationTokenLabel);
 				return false;
 			}
 
@@ -54,7 +61,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					char.IsWhiteSpace(character) ||
 					character is '"' or '\'' or '&' or '|' or '<' or '>' or '^' or '%' or '!')))
 			{
-				error = $"The {authenticationTokenLabel} contains characters that cannot be passed safely to the server.";
+				error = LocalizationManager.Get(
+					"GameInput.AuthenticationToken.Unsafe",
+					authenticationTokenLabel);
 				return false;
 			}
 

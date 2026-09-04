@@ -24,7 +24,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		internal PlayerManagementCenter(GameServer server)
 		{
 			_server = server ?? throw new ArgumentNullException(nameof(server));
-			Text = "Player Management Center";
+			Text = LocalizationManager.Get("Menu.PlayerManagementCenter");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -37,7 +37,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			Controls.Add(new Label
 			{
-				Text = "Player Management Center",
+				Text = LocalizationManager.Get("Menu.PlayerManagementCenter"),
 				Font = new Font("Segoe UI", 19F, FontStyle.Bold),
 				Location = new Point(28, 22),
 				Size = new Size(620, 42),
@@ -72,7 +72,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_grid.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "PlayerName",
-				HeaderText = "PLAYER",
+				HeaderText = LocalizationManager.Get("Text.FD49E5BC2A30C83CDB47"),
 				DataPropertyName = nameof(GamePlayerInfo.Name),
 				AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
 				FillWeight = 60
@@ -80,14 +80,14 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_grid.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "Score",
-				HeaderText = "SCORE",
+				HeaderText = LocalizationManager.Get("Text.A60FFBB10DC4CF25CA49"),
 				DataPropertyName = nameof(GamePlayerInfo.Score),
 				Width = 150
 			});
 			_grid.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "Connected",
-				HeaderText = "CONNECTED",
+				HeaderText = LocalizationManager.Get("Text.1F914C4386C0676EE418"),
 				Width = 190
 			});
 			GridStyler.DarkTheme(_grid);
@@ -97,7 +97,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_status = new Label
 			{
 				Name = "playerManagementStatus",
-				Text = "Refresh to load player details directly from the local server.",
+				Text = LocalizationManager.Get("Text.0C10BD130731730DDC5C"),
 				Location = new Point(28, 496),
 				Size = new Size(844, 48),
 				ForeColor = SettingsPalette.SecondaryText,
@@ -137,7 +137,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_refresh = new ModernSettingsButton
 			{
 				Name = "playerManagementRefresh",
-				Text = "Refresh Players",
+				Text = LocalizationManager.Get("Text.BF53C2057CB18B677699"),
 				Location = new Point(566, 560),
 				Size = new Size(148, 44),
 				UseAccentStyle = true,
@@ -147,7 +147,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			ModernSettingsButton close = new()
 			{
 				Name = "playerManagementClose",
-				Text = "Close",
+				Text = LocalizationManager.Get("ModManager.Button.Close"),
 				Location = new Point(726, 560),
 				Size = new Size(146, 44),
 				DialogResult = DialogResult.OK,
@@ -179,7 +179,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					_grid.Rows[row].Tag = player;
 				}
 				_summary.Text = BuildSummary(result.Players.Count);
-				_status.Text = result.Message + (result.IsSupported
+				_status.Text = LocalizationManager.TranslateRuntimeText(
+					result.Message) + (result.IsSupported
 					? GameDatabase.IsMinecraft(_server.Game)
 						? LocalizationManager.Get(
 							"PlayerCenter.Guidance.Minecraft")
@@ -260,9 +261,16 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		}
 
 		private static string FormatDuration(TimeSpan duration) =>
-			duration.TotalHours >= 1
-				? $"{(int)duration.TotalHours}h {duration.Minutes:D2}m"
-				: $"{duration.Minutes}m {duration.Seconds:D2}s";
+			LocalizationManager.Get(
+				duration.TotalHours >= 1
+					? "PlayerCenter.Duration.Hours"
+					: "PlayerCenter.Duration.Minutes",
+				duration.TotalHours >= 1
+					? (int)duration.TotalHours
+					: duration.Minutes,
+				duration.TotalHours >= 1
+					? duration.Minutes
+					: duration.Seconds);
 
 		private string BuildSummary(int playerCount) =>
 			LocalizationManager.Get(

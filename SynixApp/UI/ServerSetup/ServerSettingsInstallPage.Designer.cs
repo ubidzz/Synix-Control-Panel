@@ -70,7 +70,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblInstallIcon.Name = "lblInstallIcon";
 			lblInstallIcon.Size = new Size(28, 30);
 			lblInstallIcon.TabIndex = 0;
-			lblInstallIcon.Text = "➜";
+			lblInstallIcon.Text = LocalizationManager.Get("Text.E43308F9EB04022F2D19");
 			lblInstallIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblInstallTitle
@@ -82,7 +82,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblInstallTitle.Name = "lblInstallTitle";
 			lblInstallTitle.Size = new Size(127, 21);
 			lblInstallTitle.TabIndex = 1;
-			lblInstallTitle.Text = "Install Location";
+			lblInstallTitle.Text = LocalizationManager.Get("Text.072D8E4338F73F8307C0");
 
 			// lblDefaultPathTitle
 			lblDefaultPathTitle.BackColor = Color.FromArgb(17, 27, 45);
@@ -92,7 +92,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblDefaultPathTitle.Name = "lblDefaultPathTitle";
 			lblDefaultPathTitle.Size = new Size(190, 20);
 			lblDefaultPathTitle.TabIndex = 2;
-			lblDefaultPathTitle.Text = "Use Synix default folder";
+			lblDefaultPathTitle.Text = LocalizationManager.Get("Text.7E8C4DD0D3627B5A23DA");
 
 			// lblDefaultPathDescription
 			lblDefaultPathDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblDefaultPathDescription.Name = "lblDefaultPathDescription";
 			lblDefaultPathDescription.Size = new Size(570, 22);
 			lblDefaultPathDescription.TabIndex = 3;
-			lblDefaultPathDescription.Text = "Automatically builds a safe game/server folder below the configured Games path.";
+			lblDefaultPathDescription.Text = LocalizationManager.Get("Text.A8BC53DE427A5E93DAED");
 
 			// chkDefaultPath
 			chkDefaultPath.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -122,7 +122,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			FolderPathLabel.Name = "FolderPathLabel";
 			FolderPathLabel.Size = new Size(76, 15);
 			FolderPathLabel.TabIndex = 5;
-			FolderPathLabel.Text = "Folder Path";
+			FolderPathLabel.Text = LocalizationManager.Get("Text.0E078F2314E8311DAB20");
 
 			// txtInstallPath
 			txtInstallPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -148,7 +148,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(155, 42);
 			btnBrowse.TabIndex = 7;
-			btnBrowse.Text = "Browse Folder";
+			btnBrowse.Text = LocalizationManager.Get("Text.28BBF5E4E8DC04D61EA5");
 
 			// cardLaunchArguments
 			cardLaunchArguments.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -176,7 +176,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblLaunchIcon.Name = "lblLaunchIcon";
 			lblLaunchIcon.Size = new Size(28, 30);
 			lblLaunchIcon.TabIndex = 0;
-			lblLaunchIcon.Text = ">_";
+			lblLaunchIcon.Text = LocalizationManager.Get("Text.503C7B3151D0479692A1");
 			lblLaunchIcon.TextAlign = ContentAlignment.MiddleCenter;
 
 			// lblLaunchTitle
@@ -188,7 +188,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblLaunchTitle.Name = "lblLaunchTitle";
 			lblLaunchTitle.Size = new Size(136, 21);
 			lblLaunchTitle.TabIndex = 1;
-			lblLaunchTitle.Text = "Launch Arguments";
+			lblLaunchTitle.Text = LocalizationManager.Get("Configuration.Check.LaunchArguments");
 
 			// lblaruments
 			lblaruments.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -199,7 +199,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblaruments.Name = "lblaruments";
 			lblaruments.Size = new Size(665, 55);
 			lblaruments.TabIndex = 2;
-			lblaruments.Text = "Required startup arguments are dynamically injected with your specific data before initialization. You may include any additional command-line flags not covered by the default string in the Extra Arguments section.";
+			lblaruments.Text = LocalizationManager.Get("Text.5BA4DAF696F2453133A8");
 
 			// btnViewArgs
 			btnViewArgs.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -209,7 +209,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnViewArgs.Name = "btnViewArgs";
 			btnViewArgs.Size = new Size(180, 42);
 			btnViewArgs.TabIndex = 3;
-			btnViewArgs.Text = "View Default Arguments";
+			btnViewArgs.Text = LocalizationManager.Get("Text.E3D178B901F8C19B399B");
 
 			// TextLabel3
 			TextLabel3.AutoSize = true;
@@ -220,7 +220,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			TextLabel3.Name = "TextLabel3";
 			TextLabel3.Size = new Size(99, 15);
 			TextLabel3.TabIndex = 4;
-			TextLabel3.Text = "Extra Arguments";
+			TextLabel3.Text = LocalizationManager.Get("Text.96599B7797D3C4D80ED1");
 
 			// TextLabel7
 			TextLabel7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -231,7 +231,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			TextLabel7.Name = "TextLabel7";
 			TextLabel7.Size = new Size(750, 20);
 			TextLabel7.TabIndex = 5;
-			TextLabel7.Text = "Optional flags only — for example: -log, -nosteamclient, or -forceupdate";
+			TextLabel7.Text = LocalizationManager.Get("Text.8E7F4674A03B5A87853B");
 
 			// txtExtraArgs
 			txtExtraArgs.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;

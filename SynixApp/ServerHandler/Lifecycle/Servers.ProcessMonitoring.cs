@@ -109,8 +109,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				server.PID = primaryPid;
 				return true;
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -135,7 +136,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					previousCount = processes.Count;
 					logCallback?.Invoke(
-						$"[PROCESS TRACKING] Registered {processes.Count} server process(es): {FormatProcessRegistry(processes)}",
+						LocalizationManager.Get(
+							"ServerProcess.Activity.Registered",
+							processes.Count,
+							FormatProcessRegistry(processes)),
 						Color.Cyan);
 				}
 			}
@@ -201,8 +205,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					Path.GetFileNameWithoutExtension(identity.ExecutablePath),
 					StringComparison.OrdinalIgnoreCase);
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -248,8 +253,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					{
 						startTimeUtc = process.StartTime.ToUniversalTime();
 					}
-					catch
+					catch (Exception exception)
 					{
+						ApplicationLogService.WriteSuppressedException(exception);
 						if (existing.TryGetValue(processId, out ServerProcessIdentity? recoveredIdentity))
 						{
 							startTimeUtc = recoveredIdentity.StartTimeUtc;
@@ -305,8 +311,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				return GetProcessTreeIds(launchProcess.Id);
 			}
-			catch
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return [];
 			}
 		}
@@ -318,7 +325,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				", ",
 				processes.Select(process =>
 					$"{Path.GetFileName(process.ExecutablePath)} (PID {process.ProcessId})"));
-			return string.IsNullOrWhiteSpace(result) ? "none" : result;
+			return string.IsNullOrWhiteSpace(result)
+				? LocalizationManager.Get("ServerProcess.None")
+				: result;
 		}
 	}
 }

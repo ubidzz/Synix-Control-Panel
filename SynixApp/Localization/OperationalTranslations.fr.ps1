@@ -345,4 +345,15 @@
     'MessageText.663E3E2D227DB51428B7' = 'Vous avez des modifications de configuration non enregistrées. Les ignorer et fermer ?'
     'MessageText.3B1950A30C957AAF88A2' = 'Vous devez arrêter le serveur avant de le mettre à jour.'
     'MessageText.19580FB3CF2A0F82762D' = 'Vous devez arrêter le serveur avant de valider ses fichiers.'
+    'MessageText.1D7E8CD37BFCD097E6DA' = "Synix ne possède pas de modèle de réinitialisation complet pour ce jeu."
+    'MessageText.2A2FCD5BFFF42E6401AE' = "La liste ordonnée des ID de mods est prête. Le jeu téléchargera ou mettra à jour le contenu du fournisseur au démarrage du serveur."
+    'MessageText.3679B9A889A4F6F470DA' = "Le module complémentaire a été installé et vérifié. Démarrez le serveur lorsque vous êtes prêt."
+    'MessageText.4AE453C9E5CBA09BFB92' = "Synix n’a pas pu déverrouiller les informations enregistrées du webhook Discord. Ouvrez les paramètres du serveur et enregistrez à nouveau les webhooks."
+    'MessageText.53B01E5FCFDE56675C9A' = "Déconnecter GitHub de Synix ?`n`nSynix supprimera la connexion chiffrée enregistrée sur cet ordinateur, puis ouvrira GitHub pour vous permettre de révoquer l’autorisation de votre compte."
+    'MessageText.6B5EDE5E1A10BF24CA11' = "Synix n’a pas trouvé le dossier du projet. Exécutez ce contrôle depuis une génération ou une régénération du projet Synix dans Visual Studio."
+    'MessageText.9E4EAF41685A751D0C5D' = "Définissez le comportement de configuration du jeu et ajoutez les informations de modèle requises avant de marquer sa configuration comme vérifiée."
+    'MessageText.D955BE724373ACFC3AD2' = "Restaurer la sauvegarde de configuration Synix la plus récente ?`n`nSynix conservera d’abord les fichiers actuels afin que cette restauration puisse également être annulée."
+    'MessageText.ECD30B96D30BE40030DF' = "`n`nLa configuration précédente a été enregistrée avec l’extension .synix.bak."
+    'MessageText.F23CB309225C503B6D8A' = "Le module complémentaire a été installé et vérifié. Cette infrastructure peut généralement le recharger sans redémarrage complet."
+    'MessageText.FD1FB8A609DE5750E995' = "Les preuves d’installation, de démarrage, d’arrêt et de surveillance sont enregistrées automatiquement par le véritable flux de serveur Synix et ne peuvent pas être marquées manuellement."
 }

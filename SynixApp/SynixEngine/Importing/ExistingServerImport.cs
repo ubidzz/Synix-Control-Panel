@@ -79,7 +79,8 @@ namespace Synix_Control_Panel.SynixEngine
 			string normalizedFolder = Path.GetFullPath(
 				folder?.Trim() ?? throw new ArgumentNullException(nameof(folder)));
 			if (!Directory.Exists(normalizedFolder))
-				throw new DirectoryNotFoundException("Choose the folder that contains the existing server files.");
+				throw new DirectoryNotFoundException(LocalizationManager.Get(
+					"Onboarding.Import.Error.FolderMissing"));
 
 			GameServer editionProbe = new()
 			{
@@ -92,41 +93,60 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!File.Exists(executablePath))
 			{
 				throw new FileNotFoundException(
-					$"Synix could not find the expected {game.Game} server program.",
+					LocalizationManager.Get(
+						"Onboarding.Import.Error.ProgramMissing",
+						game.Game),
 					executablePath);
 			}
 
 			GameServer[] registeredServers = existingServers.ToArray();
 			if (registeredServers.Any(server => PathsEqual(server.InstallPath, normalizedFolder)))
-				throw new InvalidOperationException("This server folder is already registered in Synix.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Onboarding.Import.Error.FolderRegistered"));
 
 			string requestedName = string.IsNullOrWhiteSpace(serverName)
-				? $"Imported {game.Game}"
+				? LocalizationManager.Get(
+					"Onboarding.Import.DefaultServerName",
+					game.Game)
 				: serverName.Trim();
 			if (registeredServers.Any(server => server.ServerName.Equals(
 				requestedName,
 				StringComparison.OrdinalIgnoreCase)))
 			{
-				throw new InvalidOperationException("A server with this name is already registered in Synix.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Onboarding.Import.Error.NameRegistered"));
 			}
 
-			ValidatePort(gamePort, "game");
-			ValidatePort(queryPort, "query");
+			ValidatePort(
+				gamePort,
+				"gamePort",
+				LocalizationManager.Get("ServerSetup.Port.Game"));
+			ValidatePort(
+				queryPort,
+				"queryPort",
+				LocalizationManager.Get("ServerSetup.Port.Query"));
 			if (gamePort == queryPort && gamePort > 0)
-				throw new InvalidOperationException("The game and query ports must be different.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Onboarding.Import.Error.PortsDifferent"));
 			GameServer? gamePortOwner = registeredServers.FirstOrDefault(server =>
 				Core.HasConfiguredPort(server, gamePort));
 			if (gamePortOwner != null)
 			{
 				throw new InvalidOperationException(
-					$"The game port {gamePort} is already assigned to '{gamePortOwner.ServerName}'. Choose a unique port.");
+					LocalizationManager.Get(
+						"Onboarding.Import.Error.GamePortUsed",
+						gamePort,
+						gamePortOwner.ServerName));
 			}
 			GameServer? queryPortOwner = registeredServers.FirstOrDefault(server =>
 				Core.HasConfiguredPort(server, queryPort));
 			if (queryPortOwner != null)
 			{
 				throw new InvalidOperationException(
-					$"The query port {queryPort} is already assigned to '{queryPortOwner.ServerName}'. Every server needs a unique query port.");
+					LocalizationManager.Get(
+						"Onboarding.Import.Error.QueryPortUsed",
+						queryPort,
+						queryPortOwner.ServerName));
 			}
 
 			return new GameServer
@@ -188,7 +208,8 @@ namespace Synix_Control_Panel.SynixEngine
 					return port;
 			}
 
-			throw new InvalidOperationException("No unused network port is available.");
+			throw new InvalidOperationException(LocalizationManager.Get(
+				"Onboarding.Import.Error.NoPortAvailable"));
 		}
 
 		private static bool PathsEqual(string? first, string second)
@@ -210,10 +231,17 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		private static void ValidatePort(int port, string label)
+		private static void ValidatePort(
+			int port,
+			string parameterName,
+			string displayName)
 		{
 			if (port is < 1 or > 65535)
-				throw new ArgumentOutOfRangeException(label, $"The {label} port must be between 1 and 65535.");
+				throw new ArgumentOutOfRangeException(
+					parameterName,
+					LocalizationManager.Get(
+						"Onboarding.Import.Error.PortRange",
+						displayName));
 		}
 	}
 }

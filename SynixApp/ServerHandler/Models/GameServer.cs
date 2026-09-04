@@ -132,7 +132,8 @@ public class GameDefinition
 	[JsonIgnore]
 	public bool NeedsConfigWarning { get; internal set; }
 	[JsonIgnore]
-	public string WarningMessage { get; set; } = "This game requires configuration before it can boot properly.";
+	public string WarningMessage { get; set; } = LocalizationManager.GetEnglish(
+		"GameDefinition.Default.ConfigurationWarning");
 	public ConfigFormat Format { get; set; }
 	[JsonIgnore]
 	public ConfigFileCreationMode ConfigFileCreation { get; init; } =
@@ -173,7 +174,8 @@ public class GameDefinition
 	[JsonIgnore]
 	public bool RequiresAuthenticationToken { get; init; }
 	[JsonIgnore]
-	public string AuthenticationTokenLabel { get; init; } = "Authentication Token";
+	public string AuthenticationTokenLabel { get; init; } =
+		LocalizationManager.GetEnglish("GameInput.AuthenticationToken.Label");
 	[JsonIgnore]
 	public string AuthenticationTokenHelpUrl { get; init; } = string.Empty;
 	[JsonIgnore]
@@ -267,7 +269,8 @@ public enum DiscordNotificationEvent : long
 public sealed class DiscordWebhookRoute
 {
 	public string Id { get; set; } = Guid.NewGuid().ToString("N");
-	public string Name { get; set; } = "Discord Channel";
+	public string Name { get; set; } =
+		LocalizationManager.Get("Discord.Destination.DefaultName");
 	public bool Enabled { get; set; } = true;
 	public string WebhookUrl { get; set; } = string.Empty;
 	public DiscordNotificationEvent Events { get; set; } =
@@ -393,7 +396,11 @@ public class GameServer
 			TimeSpan duration = DateTime.Now - StartTime.Value;
 
 			if (duration.TotalDays >= 1)
-				return $"{(int)duration.TotalDays}d {duration.Hours:D2}h {duration.Minutes:D2}m";
+				return LocalizationManager.Get(
+					"Dashboard.Uptime.Days",
+					(int)duration.TotalDays,
+					duration.Hours,
+					duration.Minutes);
 
 			return $"{duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}";
 		}

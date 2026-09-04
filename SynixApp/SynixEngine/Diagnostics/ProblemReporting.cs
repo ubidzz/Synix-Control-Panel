@@ -163,13 +163,17 @@ namespace Synix_Control_Panel.SynixEngine
 			string expectedResult = SanitizeProblemReportText(draft.ExpectedResult);
 
 			if (string.IsNullOrWhiteSpace(serverType))
-				throw new ProblemReportException("Choose the server type affected by the problem.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.Error.ServerTypeRequired"));
 			if (!ProblemReportActions.Contains(failedAction, StringComparer.Ordinal))
-				throw new ProblemReportException("Choose what Synix was doing when the problem happened.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.Error.ActionRequired"));
 			if (string.IsNullOrWhiteSpace(summary))
-				throw new ProblemReportException("Enter a short summary of the problem.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.Error.SummaryRequired"));
 			if (string.IsNullOrWhiteSpace(whatHappened))
-				throw new ProblemReportException("Describe what happened so the problem can be investigated.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.Error.DescriptionRequired"));
 
 			GameCompatibilityVerification verification = GetGameCompatibility(serverType);
 			string synixVersion = GetCurrentVersion().ToString(3);
@@ -296,7 +300,8 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(authorization);
 			if (string.IsNullOrWhiteSpace(authorization.DeviceCode))
-				throw new ProblemReportException("The GitHub connection request is incomplete. Start again.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.GitHub.Error.RequestIncomplete"));
 
 			int interval = Math.Clamp(authorization.PollIntervalSeconds, 5, 60);
 			while (DateTimeOffset.UtcNow < authorization.ExpiresAtUtc)
@@ -334,21 +339,28 @@ namespace Synix_Control_Panel.SynixEngine
 						interval = Math.Min(interval + 5, 60);
 						continue;
 					case "access_denied":
-						throw new ProblemReportException("The GitHub connection was cancelled.");
+						throw new ProblemReportException(LocalizationManager.Get(
+							"ProblemReport.GitHub.Error.Cancelled"));
 					case "expired_token":
 					case "token_expired":
-						throw new ProblemReportException("The GitHub sign-in code expired. Select Connect GitHub and try again.");
+						throw new ProblemReportException(LocalizationManager.Get(
+							"ProblemReport.GitHub.Error.CodeExpired"));
 					case "device_flow_disabled":
-						throw new ProblemReportException("GitHub Device Flow is not enabled for the Synix GitHub App.");
+						throw new ProblemReportException(LocalizationManager.Get(
+							"ProblemReport.GitHub.Error.DeviceFlowDisabled"));
 					default:
 						throw new ProblemReportException(
 							string.IsNullOrWhiteSpace(token.ErrorDescription)
-								? "GitHub could not complete the connection."
-								: token.ErrorDescription);
+								? LocalizationManager.Get(
+									"ProblemReport.GitHub.Error.ConnectionFailed")
+								: LocalizationManager.Get(
+									"ProblemReport.GitHub.Error.ConnectionDetail",
+									token.ErrorDescription));
 				}
 			}
 
-			throw new ProblemReportException("The GitHub sign-in code expired. Select Connect GitHub and try again.");
+			throw new ProblemReportException(LocalizationManager.Get(
+				"ProblemReport.GitHub.Error.CodeExpired"));
 		}
 
 		public static async Task<GitHubIssueResult> SubmitProblemReportToGitHubAsync(
@@ -360,14 +372,16 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				GitHubConnectionState state = LoadGitHubConnection(GitHubConnectionPath) ??
-					throw new ProblemReportException("Connect a GitHub account before submitting the report.");
+					throw new ProblemReportException(LocalizationManager.Get(
+						"ProblemReport.GitHub.Error.ConnectFirst"));
 				state = await RefreshGitHubConnectionIfNeededAsync(
 					state,
 					cancellationToken).ConfigureAwait(false);
 
 				string accessToken = RevealProtectedConnectionValue(
 					state.ProtectedAccessToken,
-					"GitHub access token");
+					LocalizationManager.Get(
+						"ProblemReport.GitHub.Value.AccessToken"));
 				try
 				{
 					using HttpRequestMessage request = CreateGitHubRequest(
@@ -400,13 +414,15 @@ namespace Synix_Control_Panel.SynixEngine
 					if (response.StatusCode == HttpStatusCode.Unauthorized)
 					{
 						DisconnectGitHub();
-						throw new ProblemReportException("GitHub disconnected this authorization. Connect the account again.");
+						throw new ProblemReportException(LocalizationManager.Get(
+							"ProblemReport.GitHub.Error.AuthorizationDisconnected"));
 					}
 
 					if (response.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.NotFound)
 					{
 						throw new ProblemReportException(
-							"GitHub cannot access the Synix issue tracker. Make sure the Synix GitHub App is public, installed on the Synix-Control-Panel repository, and has Issues set to Read and write.");
+							LocalizationManager.Get(
+								"ProblemReport.GitHub.Error.IssueTrackerAccess"));
 					}
 
 					throw CreateGitHubException(response.StatusCode, payload.Message);
@@ -432,6 +448,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return false;
 			}
 		}
@@ -446,7 +463,8 @@ namespace Synix_Control_Panel.SynixEngine
 				 !IsProtected(state.ProtectedRefreshToken)) ||
 				!IsProtected(state.ProtectedUserName))
 			{
-				throw new ProblemReportException("GitHub connection data must be protected before it is saved.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.GitHub.Error.ProtectionRequired"));
 			}
 
 			FileHandler.WriteTextAtomically(
@@ -488,6 +506,7 @@ namespace Synix_Control_Panel.SynixEngine
 				JsonException or
 				SynixPasswordProtectionException)
 			{
+				ApplicationLogService.WriteSuppressedException(exception);
 				return null;
 			}
 		}
@@ -507,12 +526,14 @@ namespace Synix_Control_Panel.SynixEngine
 				 state.RefreshTokenExpiresAtUtc.Value <= DateTimeOffset.UtcNow.AddMinutes(2)))
 			{
 				DisconnectGitHub();
-				throw new ProblemReportException("The GitHub connection expired. Connect the account again.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.GitHub.Error.ConnectionExpired"));
 			}
 
 			string refreshToken = RevealProtectedConnectionValue(
 				state.ProtectedRefreshToken,
-				"GitHub refresh token");
+				LocalizationManager.Get(
+					"ProblemReport.GitHub.Value.RefreshToken"));
 			try
 			{
 				GitHubTokenResponse response = await RequestGitHubTokenAsync(
@@ -526,7 +547,8 @@ namespace Synix_Control_Panel.SynixEngine
 				if (string.IsNullOrWhiteSpace(response.AccessToken))
 				{
 					DisconnectGitHub();
-					throw new ProblemReportException("The GitHub connection expired. Connect the account again.");
+					throw new ProblemReportException(LocalizationManager.Get(
+						"ProblemReport.GitHub.Error.ConnectionExpired"));
 				}
 
 				GitHubConnectionState refreshed = CreateConnectionState(
@@ -648,8 +670,12 @@ namespace Synix_Control_Panel.SynixEngine
 			string safeMessage = SanitizeProblemReportText(message);
 			return new ProblemReportException(
 				string.IsNullOrWhiteSpace(safeMessage)
-					? $"GitHub could not complete the request ({(int)statusCode})."
-					: $"GitHub could not complete the request: {safeMessage}");
+					? LocalizationManager.Get(
+						"ProblemReport.GitHub.Error.RequestFailedCode",
+						(int)statusCode)
+					: LocalizationManager.Get(
+						"ProblemReport.GitHub.Error.RequestFailedDetail",
+						safeMessage));
 		}
 
 		private static bool TryValidateGitHubDeviceUri(
@@ -727,7 +753,9 @@ namespace Synix_Control_Panel.SynixEngine
 			string valueName)
 		{
 			if (!IsProtected(protectedValue))
-				throw new ProblemReportException($"The saved {valueName} is not protected and was rejected.");
+				throw new ProblemReportException(LocalizationManager.Get(
+					"ProblemReport.GitHub.Error.SavedValueUnprotected",
+					valueName));
 			try
 			{
 				return Reveal(protectedValue);
@@ -735,7 +763,9 @@ namespace Synix_Control_Panel.SynixEngine
 			catch (SynixPasswordProtectionException exception)
 			{
 				throw new ProblemReportException(
-					$"Windows could not unlock the saved {valueName}. Connect GitHub again.",
+					LocalizationManager.Get(
+						"ProblemReport.GitHub.Error.UnlockSavedValue",
+						valueName),
 					exception);
 			}
 		}
@@ -756,7 +786,8 @@ namespace Synix_Control_Panel.SynixEngine
 			[JsonIgnore]
 			public string UserName => RevealProtectedConnectionValue(
 				ProtectedUserName,
-				"GitHub account name");
+				LocalizationManager.Get(
+					"ProblemReport.GitHub.Value.AccountName"));
 		}
 
 		private sealed class GitHubConnectionStorage

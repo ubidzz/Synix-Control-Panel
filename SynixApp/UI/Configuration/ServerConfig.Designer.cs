@@ -154,7 +154,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(111, 21);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Config Editor";
+			lblWindowTitle.Text = LocalizationManager.Get("Text.DFA45629AB8769153F0E");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			//
 			// lblFileName
@@ -168,7 +168,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblFileName.Padding = new Padding(10, 5, 10, 5);
 			lblFileName.Size = new Size(235, 30);
 			lblFileName.TabIndex = 2;
-			lblFileName.Text = "serverconfig.xml";
+			lblFileName.Text = LocalizationManager.Get("Text.BADB25941ACF62A2431E");
 			lblFileName.TextAlign = ContentAlignment.MiddleCenter;
 			lblFileName.MouseDown += TitleBar_MouseDown;
 			//
@@ -181,7 +181,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblFormatBadge.Name = "lblFormatBadge";
 			lblFormatBadge.Size = new Size(58, 30);
 			lblFormatBadge.TabIndex = 3;
-			lblFormatBadge.Text = "XML";
+			lblFormatBadge.Text = LocalizationManager.Get("Text.40658E9AF8FD92229AE1");
 			lblFormatBadge.TextAlign = ContentAlignment.MiddleCenter;
 			lblFormatBadge.MouseDown += TitleBar_MouseDown;
 			//
@@ -201,7 +201,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnMinimize.Size = new Size(48, 55);
 			btnMinimize.TabIndex = 4;
 			btnMinimize.TabStop = false;
-			btnMinimize.Text = "—";
+			btnMinimize.Text = LocalizationManager.Get("Text.BDA050585A00F0F6CB50");
 			btnMinimize.UseVisualStyleBackColor = false;
 			btnMinimize.Click += btnMinimize_Click;
 			//
@@ -221,7 +221,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnClose.Size = new Size(48, 55);
 			btnClose.TabIndex = 5;
 			btnClose.TabStop = false;
-			btnClose.Text = "×";
+			btnClose.Text = LocalizationManager.Get("Text.8DB71ED28B0F2F143256");
 			btnClose.UseVisualStyleBackColor = false;
 			btnClose.Click += btnClose_Click;
 			//
@@ -293,7 +293,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblPageTitle.Name = "lblPageTitle";
 			lblPageTitle.Size = new Size(310, 41);
 			lblPageTitle.TabIndex = 0;
-			lblPageTitle.Text = "Configuration Editor";
+			lblPageTitle.Text = LocalizationManager.Get("Text.8097A44203F07EA4116C");
 			//
 			// lblPageSubtitle
 			//
@@ -305,7 +305,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblPageSubtitle.Name = "lblPageSubtitle";
 			lblPageSubtitle.Size = new Size(888, 23);
 			lblPageSubtitle.TabIndex = 1;
-			lblPageSubtitle.Text = "Edit serverconfig.xml safely without changing its XML structure.";
+			lblPageSubtitle.Text = LocalizationManager.Get("Text.46D0E2FA44635045064B");
 			//
 			// lblSafeBadge
 			//
@@ -317,7 +317,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblSafeBadge.Name = "lblSafeBadge";
 			lblSafeBadge.Size = new Size(163, 30);
 			lblSafeBadge.TabIndex = 2;
-			lblSafeBadge.Text = "FORMAT-AWARE EDITING";
+			lblSafeBadge.Text = LocalizationManager.Get("Text.5F360A6A5C308A1A35AA");
 			lblSafeBadge.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// toolbarLayout
@@ -367,7 +367,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblSearchGlyph.Name = "lblSearchGlyph";
 			lblSearchGlyph.Size = new Size(28, 29);
 			lblSearchGlyph.TabIndex = 0;
-			lblSearchGlyph.Text = "⌕";
+			lblSearchGlyph.Text = LocalizationManager.Get("Text.C19732DF495EF97E72A3");
 			lblSearchGlyph.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// txtSearch
@@ -379,7 +379,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			txtSearch.ForeColor = Color.FromArgb(245, 247, 251);
 			txtSearch.Location = new Point(44, 13);
 			txtSearch.Name = "txtSearch";
-			txtSearch.PlaceholderText = "Search settings, paths, or values...";
+			txtSearch.PlaceholderText = LocalizationManager.Get("Text.6CAABA13463DFF403A37");
 			txtSearch.Size = new Size(440, 19);
 			txtSearch.TabIndex = 1;
 			txtSearch.TextChanged += txtSearch_TextChanged;
@@ -420,7 +420,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnValidateConfig.Name = "btnValidateConfig";
 			btnValidateConfig.Size = new Size(158, 46);
 			btnValidateConfig.TabIndex = 2;
-			btnValidateConfig.Text = "Check Synix Values";
+			btnValidateConfig.Text = LocalizationManager.Get("Text.E0A3BA64FA759DF9B7C8");
 			btnValidateConfig.UseVisualStyleBackColor = false;
 			btnValidateConfig.Click += btnValidateConfig_Click;
 			//
@@ -438,7 +438,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnStructured.Name = "btnStructured";
 			btnStructured.Size = new Size(126, 46);
 			btnStructured.TabIndex = 3;
-			btnStructured.Text = "Structured View";
+			btnStructured.Text = LocalizationManager.Get("Text.375D0C125CC8B4590775");
 			btnStructured.UseVisualStyleBackColor = false;
 			btnStructured.Click += btnStructured_Click;
 			//
@@ -456,7 +456,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnRawPreview.Name = "btnRawPreview";
 			btnRawPreview.Size = new Size(138, 46);
 			btnRawPreview.TabIndex = 4;
-			btnRawPreview.Text = "Raw Preview";
+			btnRawPreview.Text = LocalizationManager.Get("Text.4C328BF4603F8E856CAD");
 			btnRawPreview.UseVisualStyleBackColor = false;
 			btnRawPreview.Click += btnRawPreview_Click;
 			//
@@ -485,7 +485,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblShieldGlyph.Name = "lblShieldGlyph";
 			lblShieldGlyph.Size = new Size(42, 38);
 			lblShieldGlyph.TabIndex = 0;
-			lblShieldGlyph.Text = "◇";
+			lblShieldGlyph.Text = LocalizationManager.Get("Text.F88C1B7702D3AFFE04D4");
 			lblShieldGlyph.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// lblPreservationTitle
@@ -498,7 +498,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblPreservationTitle.Name = "lblPreservationTitle";
 			lblPreservationTitle.Size = new Size(223, 19);
 			lblPreservationTitle.TabIndex = 1;
-			lblPreservationTitle.Text = "Original formatting is protected";
+			lblPreservationTitle.Text = LocalizationManager.Get("Text.BF239CF13522B7D2F15A");
 			//
 			// lblPreservationText
 			//
@@ -511,7 +511,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblPreservationText.Name = "lblPreservationText";
 			lblPreservationText.Size = new Size(1054, 19);
 			lblPreservationText.TabIndex = 2;
-			lblPreservationText.Text = "Only the value you change is replaced; comments, sections, nesting, quotes, spacing, and key order remain intact.";
+			lblPreservationText.Text = LocalizationManager.Get("Text.A8796566765C1117B49C");
 			//
 			// pnlGridCard
 			//
@@ -589,7 +589,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			dataGridViewCellStyle3.ForeColor = Color.FromArgb(245, 247, 251);
 			colSetting.DefaultCellStyle = dataGridViewCellStyle3;
 			colSetting.FillWeight = 44F;
-			colSetting.HeaderText = "SETTING";
+			colSetting.HeaderText = LocalizationManager.Get("Text.4FE70949D3E77969ECE8");
 			colSetting.MinimumWidth = 280;
 			colSetting.Name = "colSetting";
 			colSetting.ReadOnly = true;
@@ -601,7 +601,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
 			dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
 			colType.DefaultCellStyle = dataGridViewCellStyle4;
-			colType.HeaderText = "TYPE";
+			colType.HeaderText = LocalizationManager.Get("ModManager.Column.Type");
 			colType.MinimumWidth = 120;
 			colType.Name = "colType";
 			colType.ReadOnly = true;
@@ -616,7 +616,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			dataGridViewCellStyle5.SelectionForeColor = Color.FromArgb(245, 247, 251);
 			colValue.DefaultCellStyle = dataGridViewCellStyle5;
 			colValue.FillWeight = 56F;
-			colValue.HeaderText = "VALUE";
+			colValue.HeaderText = LocalizationManager.Get("Text.8EC121C93E4A0DE65F26");
 			colValue.MinimumWidth = 300;
 			colValue.Name = "colValue";
 			colValue.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -677,7 +677,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblSettingCount.Name = "lblSettingCount";
 			lblSettingCount.Size = new Size(68, 17);
 			lblSettingCount.TabIndex = 1;
-			lblSettingCount.Text = "0 settings";
+			lblSettingCount.Text = LocalizationManager.Get("Text.8066451A3B0D72DB913C");
 			//
 			// lblModifiedCount
 			//
@@ -688,7 +688,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblModifiedCount.Name = "lblModifiedCount";
 			lblModifiedCount.Size = new Size(107, 15);
 			lblModifiedCount.TabIndex = 2;
-			lblModifiedCount.Text = "0 unsaved changes";
+			lblModifiedCount.Text = LocalizationManager.Get("Text.731FA3C961E0908B6EEC");
 			//
 			// lblStatusGlyph
 			//
@@ -699,7 +699,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblStatusGlyph.Name = "lblStatusGlyph";
 			lblStatusGlyph.Size = new Size(22, 22);
 			lblStatusGlyph.TabIndex = 3;
-			lblStatusGlyph.Text = "✓";
+			lblStatusGlyph.Text = LocalizationManager.Get("Text.1DABBA21CDAD44541F6B");
 			lblStatusGlyph.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// lblFormatState
@@ -711,7 +711,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			lblFormatState.Name = "lblFormatState";
 			lblFormatState.Size = new Size(135, 15);
 			lblFormatState.TabIndex = 4;
-			lblFormatState.Text = "XML structure preserved";
+			lblFormatState.Text = LocalizationManager.Get("Text.14F1D8A6E3F92BDA1B12");
 			//
 			// btnFixConfig
 			//
@@ -727,7 +727,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnFixConfig.Name = "btnFixConfig";
 			btnFixConfig.Size = new Size(140, 44);
 			btnFixConfig.TabIndex = 5;
-			btnFixConfig.Text = "Fix Config";
+			btnFixConfig.Text = LocalizationManager.Get("Configuration.Check.FixConfig");
 			btnFixConfig.UseVisualStyleBackColor = false;
 			btnFixConfig.Click += btnFixConfig_Click;
 			btnRestoreBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -742,7 +742,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnRestoreBackup.Name = "btnRestoreBackup";
 			btnRestoreBackup.Size = new Size(140, 44);
 			btnRestoreBackup.TabIndex = 4;
-			btnRestoreBackup.Text = "Restore Backup";
+			btnRestoreBackup.Text = LocalizationManager.Get("Text.3F593999A67CF40731E8");
 			btnRestoreBackup.UseVisualStyleBackColor = false;
 			btnRestoreBackup.Click += btnRestoreBackup_Click;
 			//
@@ -760,7 +760,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnReset.Name = "btnReset";
 			btnReset.Size = new Size(110, 44);
 			btnReset.TabIndex = 6;
-			btnReset.Text = "Undo Edits";
+			btnReset.Text = LocalizationManager.Get("Text.AAD454AE502B9251A7DB");
 			btnReset.UseVisualStyleBackColor = false;
 			btnReset.Click += btnReset_Click;
 			//
@@ -777,7 +777,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnCancel.Name = "btnCancel";
 			btnCancel.Size = new Size(110, 44);
 			btnCancel.TabIndex = 7;
-			btnCancel.Text = "Cancel";
+			btnCancel.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			btnCancel.UseVisualStyleBackColor = false;
 			btnCancel.Click += btnCancel_Click;
 			//
@@ -795,7 +795,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			btnSave.Name = "btnSave";
 			btnSave.Size = new Size(140, 44);
 			btnSave.TabIndex = 8;
-			btnSave.Text = "Save Changes";
+			btnSave.Text = LocalizationManager.Get("ServerSetup.Button.SaveChanges");
 			btnSave.UseVisualStyleBackColor = false;
 			btnSave.Click += btnSave_Click;
 			//
@@ -819,7 +819,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			Padding = new Padding(1);
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Config Editor";
+			Text = LocalizationManager.Get("Text.DFA45629AB8769153F0E");
 			shellLayout.ResumeLayout(false);
 			titleBar.ResumeLayout(false);
 			titleBar.PerformLayout();

@@ -458,8 +458,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		{
 			using FolderBrowserDialog dialog = new()
 			{
-				Description =
-					"Select a custom folder or drive for Synix server backups.",
+				Description = LocalizationManager.Get(
+					"Settings.Backup.FolderPicker"),
 				UseDescriptionForTitle = true
 			};
 
@@ -524,17 +524,22 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				FirewallCleanupService.ScanCurrentRules());
 			if (!scan.Succeeded)
 			{
-				advancedSettingsPage.SetFirewallCleanupState(scan.Message, false);
+				advancedSettingsPage.SetFirewallCleanupState(
+					LocalizationManager.TranslateRuntimeText(scan.Message),
+					false);
 				PlainEnglishErrorDialog.ShowError(
 					this,
-					"inspect Windows Firewall rules",
+					LocalizationManager.Get(
+						"Settings.Advanced.ErrorAction.InspectFirewall"),
 					scan.Message);
 				return;
 			}
 
 			if (scan.ExecutablePaths.Count == 0)
 			{
-				advancedSettingsPage.SetFirewallCleanupState(scan.Message, true);
+				advancedSettingsPage.SetFirewallCleanupState(
+					LocalizationManager.TranslateRuntimeText(scan.Message),
+					true);
 				return;
 			}
 
@@ -563,7 +568,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				{
 					PlainEnglishErrorDialog.ShowError(
 						this,
-						"clean orphaned Windows Firewall rules",
+						LocalizationManager.Get(
+							"Settings.Advanced.ErrorAction.CleanFirewall"),
 						cleanup.Message);
 				}
 				return;
@@ -583,9 +589,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				verified);
 			if (verified)
 			{
-				Core.Instance.Log(
-					$"[FIREWALL] Removed {scan.ExecutablePaths.Count} orphaned default-path server executable rule(s).",
-					Color.LimeGreen);
+				ApplicationLogService.WriteLocalized(
+					"Settings.Firewall.Activity.Removed",
+					Color.LimeGreen,
+					arguments: scan.ExecutablePaths.Count);
 			}
 		}
 
@@ -674,24 +681,29 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				if (result.FoundFiles)
 				{
 					message.AppendLine(
-						$"Copied {result.CopiedFiles} configuration file(s). " +
-						$"{result.UnchangedFiles} file(s) were already current.");
+						LocalizationManager.Get(
+							"Settings.Development.Collect.Summary",
+							result.CopiedFiles,
+							result.UnchangedFiles));
 					message.AppendLine();
 					message.AppendLine(result.DestinationRoot);
 					message.AppendLine();
 					message.AppendLine(
-						"Synix replaced recognized secret fields with template placeholders. Review every captured file before adding it to source control because a game may use an unusual credential name.");
+						LocalizationManager.Get(
+							"Settings.Development.Collect.Secrets"));
 				}
 				else
 				{
 					message.AppendLine(
-						"No existing game-generated configuration files were found. Start and stop an installed server once, then try again.");
+						LocalizationManager.Get(
+							"Settings.Development.Collect.None"));
 				}
 
 				if (result.Errors.Count > 0)
 				{
 					message.AppendLine();
-					message.AppendLine("Files that could not be collected:");
+					message.AppendLine(LocalizationManager.Get(
+						"Settings.Development.Collect.FailuresHeader"));
 					foreach (string error in result.Errors.Take(5))
 					{
 						message.AppendLine($"• {error}");
@@ -699,7 +711,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					if (result.Errors.Count > 5)
 					{
 						message.AppendLine(
-							$"• {result.Errors.Count - 5} additional file(s)");
+							LocalizationManager.Get(
+								"Settings.Development.Collect.AdditionalFiles",
+								result.Errors.Count - 5));
 					}
 				}
 
@@ -709,13 +723,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				if (result.FoundFiles)
 				{
 					message.AppendLine();
-					message.Append("Open the capture folder now?");
+					message.Append(LocalizationManager.Get(
+						"Settings.Development.Collect.OpenFolder"));
 				}
 
 				DialogResult response = LocalizedMessageBox.Show(
 					this,
 					message.ToString(),
-					"Generated configuration collection",
+					LocalizationManager.Get(
+						"Settings.Development.Collect.Title"),
 					buttons,
 					result.Errors.Count == 0
 						? MessageBoxIcon.Information
@@ -733,8 +749,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			{
 				LocalizedMessageBox.Show(
 					this,
-					exception.Message,
-					"Configuration collection failed",
+					LocalizationManager.TranslateRuntimeText(exception.Message),
+					LocalizationManager.Get(
+						"Settings.Development.Collect.FailedTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -872,14 +889,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			{
 				DialogResult unencryptedConfirmation = LocalizedMessageBox.Show(
 					this,
-					"A normal export is not encrypted. Anyone who gets the file can read " +
-					"settings, saved data, and any passwords written inside game configuration files.\n\n" +
-					"Synix-managed passwords and Discord webhooks remain protected for this Windows " +
-					"user. If this export is imported on another PC, those credentials may need " +
-					"to be re-entered.\n\n" +
-					"The package will still be checked for accidental damage when imported.\n\n" +
-					"Do you want to create an unencrypted export?",
-					"Normal Export Is Not Private",
+					LocalizationManager.Get(
+						"Settings.Transfer.NormalWarning"),
+					LocalizationManager.Get(
+						"Settings.Transfer.NormalWarningTitle"),
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Warning,
 					MessageBoxDefaultButton.Button2);
@@ -891,8 +904,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 			using SaveFileDialog fileDialog = new()
 			{
-				Title = "Save Synix transfer package",
-				Filter = "Synix transfer package (*.synixbackup)|*.synixbackup",
+				Title = LocalizationManager.Get(
+					"Settings.Transfer.SavePicker.Title"),
+				Filter = LocalizationManager.Get(
+					"Settings.Transfer.FileFilter"),
 				DefaultExt = "synixbackup",
 				AddExtension = true,
 				FileName = passwordProtected
@@ -919,7 +934,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				LocalizedMessageBox.Show(
 					this,
 					estimateMessage,
-					"Not Enough Free Space",
+					LocalizationManager.Get(
+						"Settings.Transfer.NotEnoughSpaceTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
@@ -929,9 +945,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				this,
 				estimateMessage +
 					(passwordProtected
-						? "\n\nDo you want to continue and create a transfer password?"
-						: "\n\nDo you want to continue with the normal unencrypted export?"),
-				"Synix Export Size Estimate",
+						? "\n\n" + LocalizationManager.Get(
+							"Settings.Transfer.ContinueEncrypted")
+						: "\n\n" + LocalizationManager.Get(
+							"Settings.Transfer.ContinueNormal")),
+				LocalizationManager.Get(
+					"Settings.Transfer.EstimateTitle"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Information,
 				MessageBoxDefaultButton.Button1);
@@ -957,8 +976,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Synix could not safely save the current server list. The export was not started.",
-					"Unable to Save Synix",
+					LocalizationManager.Get(
+						"Settings.Transfer.SaveFailed"),
+					LocalizationManager.Get(
+						"Settings.Transfer.SaveFailedTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -996,10 +1017,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 						Core.DeleteVault(Core.RootPath);
 					}
 				},
-				"Export complete",
+				LocalizationManager.Get(
+					"Settings.Transfer.ExportCompleteTitle"),
 				passwordProtected
-					? $"Synix was safely exported to:\n\n{fileDialog.FileName}\n\nSaved Synix passwords and Discord webhooks can be restored on the new PC with this transfer password. Keep it with the file; it cannot be recovered."
-					: $"Synix was exported to:\n\n{fileDialog.FileName}\n\nThis file is not encrypted, so keep it somewhere private. Synix-managed passwords and Discord webhooks may need to be re-entered on another PC.");
+					? LocalizationManager.Get(
+						"Settings.Transfer.ExportCompleteEncrypted",
+						fileDialog.FileName)
+					: LocalizationManager.Get(
+						"Settings.Transfer.ExportCompleteNormal",
+						fileDialog.FileName));
 		}
 
 		private async void ImportSynixRequested(
@@ -1026,8 +1052,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				backupSettingsPage.SetVerifyPackageReady(false);
 				LocalizedMessageBox.Show(
 					this,
-					"The selected transfer package could not be found. Choose it again.",
-					"Transfer Package Not Found",
+					LocalizationManager.Get(
+						"Settings.Transfer.PackageNotFound"),
+					LocalizationManager.Get(
+						"Settings.Transfer.PackageNotFoundTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
@@ -1039,10 +1067,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			{
 				DialogResult confirmation = LocalizedMessageBox.Show(
 					this,
-					"Importing will replace files with the same names in C:\\Synix. " +
-					"Other files will be left in place.\n\n" +
-					"Do you want to continue?",
-					"Import Synix Transfer",
+					LocalizationManager.Get(
+						"Settings.Transfer.ImportConfirm"),
+					LocalizationManager.Get(
+						"Settings.Transfer.ImportConfirmTitle"),
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Warning,
 					MessageBoxDefaultButton.Button2);
@@ -1087,10 +1115,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 						Core.DeleteVault(Core.RootPath);
 					}
 				},
-				"Import complete",
+				LocalizationManager.Get(
+					"Settings.Transfer.ImportCompleteTitle"),
 				_selectedImportPasswordProtected
-					? "Your Synix files, saved passwords, and Discord webhooks were restored for this Windows user. Servers that require a Steam account will ask for authorization the first time you start them on this PC."
-					: "Your Synix files were restored. Passwords and Discord webhooks protected on another PC may need to be re-entered. Servers that require a Steam account will ask for authorization the first time you start them on this PC.");
+					? LocalizationManager.Get(
+						"Settings.Transfer.ImportCompleteEncrypted")
+					: LocalizationManager.Get(
+						"Settings.Transfer.ImportCompleteNormal"));
 
 			if (imported)
 			{
@@ -1119,8 +1150,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Wait for the current installation, update, backup, or transfer to finish before verifying a package.",
-					"Synix is busy",
+					LocalizationManager.Get(
+						"Settings.Transfer.BusyVerify"),
+					LocalizationManager.Get(
+						"Settings.Transfer.BusyTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -1135,8 +1168,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				backupSettingsPage.SetVerifyPackageReady(false);
 				LocalizedMessageBox.Show(
 					this,
-					"The selected transfer package could not be found. Choose it again.",
-					"Transfer Package Not Found",
+					LocalizationManager.Get(
+						"Settings.Transfer.PackageNotFound"),
+					LocalizationManager.Get(
+						"Settings.Transfer.PackageNotFoundTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
@@ -1160,18 +1195,21 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					packageFile,
 					transferPassword,
 					progress),
-				"Package verified",
-				$"Synix read and checked the entire package:\n\n" +
-				$"{Path.GetFileName(packageFile)}\n\n" +
-				"No damage was found, and no files were imported.");
+				LocalizationManager.Get(
+					"Settings.Transfer.VerifyCompleteTitle"),
+				LocalizationManager.Get(
+					"Settings.Transfer.VerifyCompleteBody",
+					Path.GetFileName(packageFile)));
 		}
 
 		private async Task SelectImportPackageAsync()
 		{
 			using OpenFileDialog fileDialog = new()
 			{
-				Title = "Choose a Synix transfer package",
-				Filter = "Synix transfer package (*.synixbackup)|*.synixbackup",
+				Title = LocalizationManager.Get(
+					"Settings.Transfer.OpenPicker.Title"),
+				Filter = LocalizationManager.Get(
+					"Settings.Transfer.FileFilter"),
 				CheckFileExists = true,
 				Multiselect = false
 			};
@@ -1212,12 +1250,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					backupSettingsPage.SetVerifyPackageReady(false);
 					LocalizedMessageBox.Show(
 						this,
-						$"This import may need about " +
-						$"{FormatBytes(estimate.AdditionalSpaceRequiredBytes)} of working space " +
-						$"on {estimate.DestinationVolume}, but only " +
-						$"{FormatBytes(estimate.AvailableBytes)} is available.\n\n" +
-						"Free up space before starting the import.",
-						"Not Enough Free Space",
+						LocalizationManager.Get(
+							"Settings.Transfer.ImportNoSpace",
+							FormatBytes(estimate.AdditionalSpaceRequiredBytes),
+							estimate.DestinationVolume,
+							FormatBytes(estimate.AvailableBytes)),
+						LocalizationManager.Get(
+							"Settings.Transfer.NotEnoughSpaceTitle"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
 				}
@@ -1226,8 +1265,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			{
 				LocalizedMessageBox.Show(
 					this,
-					exception.Message,
-					"Package Estimate Failed",
+					LocalizationManager.TranslateRuntimeText(exception.Message),
+					LocalizationManager.Get(
+						"Settings.Transfer.EstimateFailedTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -1272,8 +1312,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 						0,
 						0,
 						0,
-						$"Estimate unavailable: {exception.Message}",
-						"Estimate unavailable");
+						LocalizationManager.Get(
+							"Settings.Transfer.EstimateUnavailable",
+							LocalizationManager.TranslateRuntimeText(
+								exception.Message)),
+						LocalizationManager.Get(
+							"Settings.Transfer.EstimateUnavailableShort"));
 				}
 			}
 		}
@@ -1285,7 +1329,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			Core.Instance.isDownloadActive = true;
 			backupSettingsPage.SetTransferBusy(true);
 			backupSettingsPage.ReportTransferProgress(new(
-				"Calculating transfer size and checking free space...",
+				LocalizationManager.Get(
+					"Settings.Transfer.Calculating"),
 				0));
 
 			try
@@ -1309,19 +1354,23 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 						isImport: false,
 						passwordProtected: false));
 				backupSettingsPage.ReportTransferProgress(new(
-					$"Estimated package: up to {FormatBytes(estimate.EstimatedPackageBytes)}.",
+					LocalizationManager.Get(
+						"Settings.Transfer.EstimatedPackageStatus",
+						FormatBytes(estimate.EstimatedPackageBytes)),
 					0));
 				return estimate;
 			}
 			catch (Exception exception)
 			{
 				backupSettingsPage.ReportTransferProgress(new(
-					"Synix could not calculate the transfer size.",
+					LocalizationManager.Get(
+						"Settings.Transfer.SizeCalculationFailed"),
 					0));
 				LocalizedMessageBox.Show(
 					this,
-					exception.Message,
-					"Export Size Check Failed",
+					LocalizationManager.TranslateRuntimeText(exception.Message),
+					LocalizationManager.Get(
+						"Settings.Transfer.ExportSizeCheckFailedTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return null;
@@ -1339,34 +1388,41 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		{
 			StringBuilder message = new();
 			message.AppendLine(
-				$"Synix found {FormatBytes(estimate.SourceBytes)} in " +
-				$"{estimate.FileCount:N0} files.");
+				LocalizationManager.Get(
+					"Settings.Transfer.EstimateSummary",
+					FormatBytes(estimate.SourceBytes),
+					estimate.FileCount));
 			message.AppendLine();
 			message.AppendLine(
-				$"Estimated transfer package: up to " +
-				$"{FormatBytes(estimate.EstimatedPackageBytes)}");
+				LocalizationManager.Get(
+					"Settings.Transfer.EstimatePackage",
+					FormatBytes(estimate.EstimatedPackageBytes)));
 			message.AppendLine();
-			message.AppendLine("Free-space check:");
+			message.AppendLine(LocalizationManager.Get(
+				"Settings.Transfer.FreeSpaceHeader"));
 			foreach (SynixExportStorageRequirement requirement in
 				estimate.StorageRequirements)
 			{
 				message.AppendLine(
-					$"• {requirement.VolumeRoot} ({requirement.Purpose}): " +
-					$"about {FormatBytes(requirement.RequiredBytes)} needed, " +
-					$"{FormatBytes(requirement.AvailableBytes)} available");
+					LocalizationManager.Get(
+						"Settings.Transfer.FreeSpaceLine",
+						requirement.VolumeRoot,
+						LocalizationManager.TranslateRuntimeText(
+							requirement.Purpose),
+						FormatBytes(requirement.RequiredBytes),
+						FormatBytes(requirement.AvailableBytes)));
 			}
 
 			message.AppendLine();
 			if (estimate.HasEnoughSpace)
 			{
-				message.Append(
-					"The final package may be smaller after compression.");
+				message.Append(LocalizationManager.Get(
+					"Settings.Transfer.EnoughSpace"));
 			}
 			else
 			{
-				message.Append(
-					"There is not enough free space. Free up space or choose " +
-					"another save location, then try again.");
+				message.Append(LocalizationManager.Get(
+					"Settings.Transfer.InsufficientSpace"));
 			}
 
 			return message.ToString();
@@ -1409,8 +1465,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				workBytes / assumedBytesPerSecond + fileOverheadSeconds);
 			double minimumSeconds = Math.Max(5, centerSeconds * 0.65);
 			double maximumSeconds = Math.Max(15, centerSeconds * 1.75);
-			return $"about {FormatEstimatedDuration(minimumSeconds)}–" +
-				$"{FormatEstimatedDuration(maximumSeconds)}";
+			return LocalizationManager.Get(
+				"Settings.Transfer.ApproximateRange",
+				FormatEstimatedDuration(minimumSeconds),
+				FormatEstimatedDuration(maximumSeconds));
 		}
 
 		private static string FormatEstimatedDuration(double seconds)
@@ -1418,15 +1476,22 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, seconds));
 			if (duration.TotalHours >= 1)
 			{
-				return $"{(int)duration.TotalHours}h {duration.Minutes}m";
+				return LocalizationManager.Get(
+					"Settings.Transfer.DurationHoursMinutes",
+					(int)duration.TotalHours,
+					duration.Minutes);
 			}
 
 			if (duration.TotalMinutes >= 1)
 			{
-				return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalMinutes))}m";
+				return LocalizationManager.Get(
+					"Settings.Transfer.DurationMinutes",
+					Math.Max(1, (int)Math.Ceiling(duration.TotalMinutes)));
 			}
 
-			return $"{Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds))}s";
+			return LocalizationManager.Get(
+				"Settings.Transfer.DurationSeconds",
+				Math.Max(1, (int)Math.Ceiling(duration.TotalSeconds)));
 		}
 
 		private bool CanTransferSynix()
@@ -1443,8 +1508,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 			LocalizedMessageBox.Show(
 				this,
-				"Stop every game server and wait for installations, updates, validations, and backups to finish before transferring Synix.",
-				"Synix is busy",
+				LocalizationManager.Get(
+					"Settings.Transfer.Busy"),
+				LocalizationManager.Get(
+					"Settings.Transfer.BusyTitle"),
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Information);
 			return false;
@@ -1477,12 +1544,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			catch (Exception exception)
 			{
 				backupSettingsPage.ReportTransferProgress(new(
-					"Transfer did not complete.",
+					LocalizationManager.Get(
+						"Settings.Transfer.FailedStatus"),
 					0));
 				LocalizedMessageBox.Show(
 					this,
-					exception.Message,
-					"Synix transfer failed",
+					LocalizationManager.TranslateRuntimeText(exception.Message),
+					LocalizationManager.Get(
+						"Settings.Transfer.FailedTitle"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return false;

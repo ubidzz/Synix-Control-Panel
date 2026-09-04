@@ -99,7 +99,11 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					}
 					catch (Exception ex)
 					{
-						throw new Exception("Folder move failed: " + ex.Message);
+						throw new IOException(
+							LocalizationManager.Get(
+								"FileSystem.Error.FolderMoveFailed",
+								ex.Message),
+							ex);
 					}
 				}
 				return false;

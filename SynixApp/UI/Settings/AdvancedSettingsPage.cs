@@ -137,7 +137,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			card.Controls.Add(new Label
 			{
 				Name = "lblFirewallCleanupTitle",
-				Text = "Orphaned Firewall Rule Cleanup",
+				Text = LocalizationManager.Get("Text.2E3FED7012F80848E367"),
 				Font = new Font("Segoe UI", 12F, FontStyle.Bold),
 				ForeColor = SettingsPalette.PrimaryText,
 				Location = new Point(80, 16),
@@ -147,7 +147,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			card.Controls.Add(new Label
 			{
 				Name = "lblFirewallCleanupDescription",
-				Text = "Finds rules whose executable was under C:\\Synix\\Games\\[Game]\\[Server], but that specific server is no longer saved and its server folder is gone. Ports and custom install folders are not scanned.",
+				Text = LocalizationManager.Get("Text.0078A1C33BF28B41D89B"),
 				ForeColor = SettingsPalette.SecondaryText,
 				Location = new Point(80, 44),
 				Size = new Size(520, 50),
@@ -156,8 +156,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			_firewallCleanupButton = new ModernSettingsButton
 			{
 				Name = "btnFirewallCleanup",
-				Text = "Clean Orphaned Rules",
-				AccessibleName = "Clean orphaned Synix server firewall rules",
+				Text = LocalizationManager.Get("Text.4A7C3351A85F01259421"),
+				AccessibleName = LocalizationManager.Get("Text.7FF6D10F94CC3274F62A"),
 				Location = new Point(613, 42),
 				Size = new Size(180, 42),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right,
@@ -166,7 +166,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			_firewallCleanupStatus = new Label
 			{
 				Name = "lblFirewallCleanupStatus",
-				Text = "Ready — Windows requests administrator permission only if rules need removal.",
+				Text = LocalizationManager.Get("Text.54C8BBF4B91A6012A87B"),
 				ForeColor = SettingsPalette.SecondaryText,
 				Location = new Point(80, 96),
 				Size = new Size(520, 22),
@@ -183,9 +183,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		private void UpdateFirewallCleanupAvailability()
 		{
 			_firewallCleanupButton.Enabled = !_firewallCleanupInProgress;
-			_firewallCleanupButton.Text = _firewallCleanupInProgress
-				? LocalizationManager.Get("Advanced.Firewall.ButtonChecking")
-				: LocalizationManager.TranslateKnownText("Clean Orphaned Rules");
+			LocalizationManager.BindText(
+				_firewallCleanupButton,
+				_firewallCleanupInProgress
+					? "Advanced.Firewall.ButtonChecking"
+					: "Text.4A7C3351A85F01259421");
 		}
 
 		private void AddBackgroundServiceCard()
@@ -208,7 +210,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			});
 			card.Controls.Add(new Label
 			{
-				Text = "Synix Background Service",
+				Text = LocalizationManager.Get("Text.E26C86E2069FAA56AA9A"),
 				Font = new Font("Segoe UI", 12F, FontStyle.Bold),
 				ForeColor = SettingsPalette.PrimaryText,
 				Location = new Point(80, 14),
@@ -216,14 +218,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			});
 			card.Controls.Add(new Label
 			{
-				Text = "Starts background monitoring when you sign in to Windows. Closing the Synix dashboard always exits Synix completely for the current session.",
+				Text = LocalizationManager.Get("Text.091C22C7EE122D76DAE4"),
 				ForeColor = SettingsPalette.SecondaryText,
 				Location = new Point(80, 42),
 				Size = new Size(610, 36)
 			});
 			_backgroundServiceStatus = new Label
 			{
-				Text = "Disabled — scheduled work runs only while Synix is open.",
+				Text = LocalizationManager.Get("Text.9F67BB0F58790841820E"),
 				ForeColor = SettingsPalette.SecondaryText,
 				Location = new Point(80, 82),
 				Size = new Size(610, 22),
@@ -233,7 +235,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			_backgroundServiceToggle = new ModernSettingsToggle
 			{
 				Location = new Point(739, 26),
-				AccessibleName = "Synix background service",
+				AccessibleName = LocalizationManager.Get("Text.E26C86E2069FAA56AA9A"),
 				Anchor = AnchorStyles.Top | AnchorStyles.Right
 			};
 			card.Controls.Add(_backgroundServiceToggle);

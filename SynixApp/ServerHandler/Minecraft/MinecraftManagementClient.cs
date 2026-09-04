@@ -43,7 +43,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 
 				if (players.ValueKind != JsonValueKind.Array)
-					return new(false, null, "Minecraft returned an unexpected player-list format.");
+					return new(false, null, LocalizationManager.Get("Minecraft.Management.PlayerListFormat"));
 
 				List<MinecraftManagedPlayer> result = [];
 				foreach (JsonElement player in players.EnumerateArray())
@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			catch (Exception exception) when (
 				exception is InvalidOperationException or JsonException)
 			{
-				return new(false, null, $"Minecraft player data could not be read: {exception.Message}");
+				return new(false, null, LocalizationManager.Get("Minecraft.Management.PlayerDataInvalid", exception.Message));
 			}
 		}
 
@@ -147,27 +147,32 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					if (root.TryGetProperty("error", out JsonElement error))
 					{
 						string message = error.TryGetProperty("message", out JsonElement messageElement)
-							? messageElement.GetString() ?? "Minecraft rejected the request."
-							: "Minecraft rejected the management request.";
-						return new(false, default, message);
+							? messageElement.GetString() ?? string.Empty
+							: string.Empty;
+						return new(
+							false,
+							default,
+							message.Length > 0
+								? LocalizationManager.Get("Minecraft.Management.RequestRejectedDetail", message)
+								: LocalizationManager.Get("Minecraft.Management.RequestRejected"));
 					}
 
 					if (!root.TryGetProperty("result", out JsonElement result))
-						return new(false, default, "Minecraft did not return a management result.");
+						return new(false, default, LocalizationManager.Get("Minecraft.Management.ResultMissing"));
 
 					return new(true, result.Clone(), string.Empty);
 				}
 
-				return new(false, default, "Minecraft closed the management connection.");
+				return new(false, default, LocalizationManager.Get("Minecraft.Management.ConnectionClosed"));
 			}
 			catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
 			{
-				return new(false, default, "Minecraft's local management connection timed out.");
+				return new(false, default, LocalizationManager.Get("Minecraft.Management.Timeout"));
 			}
 			catch (Exception exception) when (
 				exception is WebSocketException or IOException or JsonException or UriFormatException)
 			{
-				return new(false, default, $"Minecraft's local management connection is unavailable: {exception.Message}");
+				return new(false, default, LocalizationManager.Get("Minecraft.Management.ConnectionUnavailable", exception.Message));
 			}
 		}
 
@@ -183,13 +188,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					buffer,
 					cancellationToken);
 				if (received.MessageType == WebSocketMessageType.Close)
-					throw new IOException("Minecraft closed the management connection.");
+					throw new IOException(LocalizationManager.Get("Minecraft.Management.ConnectionClosed"));
 				if (received.MessageType != WebSocketMessageType.Text)
 					continue;
 
 				content.Write(buffer, 0, received.Count);
 				if (content.Length > MaximumResponseBytes)
-					throw new InvalidDataException("The Minecraft management response was too large.");
+					throw new InvalidDataException(LocalizationManager.Get("Minecraft.Management.ResponseTooLarge"));
 				if (received.EndOfMessage)
 					return content.ToArray();
 			}

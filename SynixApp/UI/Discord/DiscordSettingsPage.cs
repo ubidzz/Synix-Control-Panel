@@ -28,7 +28,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 		private readonly List<DiscordWebhookRoute> _routes = [];
 		private bool _loading;
 		private bool _privacyMode;
-		private string _serverName = "Test Server";
+		private string _serverName =
+			LocalizationManager.Get("Discord.TestServer");
 
 		public event EventHandler? SettingsChanged;
 
@@ -101,7 +102,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 		public void SetServerName(string? serverName)
 		{
 			_serverName = string.IsNullOrWhiteSpace(serverName)
-				? "Test Server"
+				? LocalizationManager.Get("Discord.TestServer")
 				: serverName.Trim();
 		}
 
@@ -136,12 +137,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			{
 				if (!Core.TryValidateDiscordWebhookUrl(masterWebhook, out Uri? normalized, out error))
 				{
+					error = LocalizationManager.TranslateRuntimeText(error);
 					settings = EmptySnapshot();
 					return false;
 				}
 				if (masterEvents == DiscordNotificationEvent.None)
 				{
-					error = "Select at least one event for the master Discord webhook.";
+					error = LocalizationManager.Get(
+						"Discord.Validation.MasterEventRequired");
 					settings = EmptySnapshot();
 					return false;
 				}
@@ -152,13 +155,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			{
 				if (!Core.TryValidateDiscordWebhookUrl(route.WebhookUrl, out _, out string routeError))
 				{
-					error = $"{route.Name}: {routeError}";
+					error = LocalizationManager.Get(
+						"Discord.Validation.RouteError",
+						route.Name,
+						LocalizationManager.TranslateRuntimeText(routeError));
 					settings = EmptySnapshot();
 					return false;
 				}
 				if (route.Events == DiscordNotificationEvent.None)
 				{
-					error = $"{route.Name} must have at least one selected event.";
+					error = LocalizationManager.Get(
+					"Discord.Validation.RouteEventRequired",
+					route.Name);
 					settings = EmptySnapshot();
 					return false;
 				}
@@ -182,25 +190,25 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			gridRoutes.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "EnabledColumn",
-				HeaderText = "STATUS",
+				HeaderText = LocalizationManager.Get("ModManager.Column.Status"),
 				Width = 95
 			});
 			gridRoutes.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "NameColumn",
-				HeaderText = "DESTINATION",
+				HeaderText = LocalizationManager.Get("Text.27A4BE0DE7696B0CACCF"),
 				Width = 220
 			});
 			gridRoutes.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "EventsColumn",
-				HeaderText = "EVENTS",
+				HeaderText = LocalizationManager.Get("Text.6746CFA6BDC11F969FE1"),
 				AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 			});
 			gridRoutes.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "WebhookColumn",
-				HeaderText = "WEBHOOK",
+				HeaderText = LocalizationManager.Get("Text.47E276FC6AA8982F2525"),
 				Width = 175
 			});
 
@@ -248,9 +256,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			foreach (DiscordWebhookRoute route in _routes)
 			{
 				int index = gridRoutes.Rows.Add(
-					route.Enabled ? "Enabled" : "Paused",
+					LocalizationManager.Get(
+						route.Enabled
+							? "Text.92C1CDFDF4CB9CF6FCCA"
+							: "Discord.Status.Paused"),
 					route.Name,
-					Core.SummarizeDiscordEvents(route.Events),
+					LocalizationManager.TranslateRuntimeText(
+						Core.SummarizeDiscordEvents(route.Events)),
 					"••••••••••••");
 				DataGridViewRow row = gridRoutes.Rows[index];
 				row.Tag = route;
@@ -284,9 +296,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			btnEdit.Enabled = hasSelection;
 			btnRemove.Enabled = hasSelection;
 			btnTestRoute.Enabled = hasSelection;
-			lblRouteCount.Text = _routes.Count == 1
-				? "1 advanced destination"
-				: $"{_routes.Count} advanced destinations";
+			LocalizationManager.BindText(
+				lblRouteCount,
+				_routes.Count == 1
+					? "DynamicText.A09EB6DC42481F3A6222"
+					: "Discord.DestinationCount.Many",
+				_routes.Count);
 		}
 
 		private void gridRoutes_SelectionChanged(object? sender, EventArgs eventArgs)
@@ -352,14 +367,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 
 		private void UpdateMasterSummary()
 		{
-			lblMasterSummary.Text = Core.SummarizeDiscordEvents(GetMasterEvents());
+			lblMasterSummary.Text = LocalizationManager.TranslateRuntimeText(
+				Core.SummarizeDiscordEvents(GetMasterEvents()));
 		}
 
 		private async void btnTestMaster_Click(object? sender, EventArgs eventArgs)
 		{
 			await TestWebhookAsync(
 				txtMasterWebhook.Text.Trim(),
-				"Master webhook",
+				LocalizationManager.Get("Discord.MasterWebhook"),
 				btnTestMaster);
 		}
 
@@ -394,8 +410,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			if (route == null)
 				return;
 			if (LocalizedMessageBox.Show(
-				$"Remove the saved Discord destination '{route.Name}' from this server?\n\nThis does not delete the webhook from Discord.",
-				"Remove Discord Destination",
+				LocalizationManager.Get("Discord.RemoveDestination.Body", route.Name),
+				LocalizationManager.Get("MessageText.87ABFFD4DED3AC3FC6CA"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question) != DialogResult.Yes)
 			{
@@ -420,13 +436,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			Control button)
 		{
 			button.Enabled = false;
-			lblStatus.Text = $"Sending a test to {name}...";
+			LocalizationManager.BindText(
+				lblStatus,
+				"Discord.Test.SendingTo",
+				name);
 			lblStatus.ForeColor = SettingsPalette.SecondaryText;
 			DiscordWebhookTestResult result = await Core.Instance.SendDiscordTestAsync(
 				webhook,
 				_serverName,
 				name);
-			lblStatus.Text = result.Message;
+			lblStatus.Text = LocalizationManager.TranslateRuntimeText(result.Message);
 			lblStatus.ForeColor = result.Succeeded
 				? SettingsPalette.Success
 				: SettingsPalette.Danger;
@@ -447,15 +466,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 		{
 			string[] selected = Core.GetDiscordNotificationOptions()
 				.Where(option => (events & option.Event) != 0)
-				.Select(option => option.Name)
+				.Select(option => LocalizationManager.TranslateKnownText(option.Name))
 				.ToArray();
-			return selected.Length == 0 ? "No messages selected" : string.Join(", ", selected);
+			return selected.Length == 0
+				? LocalizationManager.Get("Discord.NoMessagesSelected")
+				: string.Join(", ", selected);
 		}
 
 		private static string MaskDiscordWebhook(string? webhook)
 		{
 			if (!Core.TryValidateDiscordWebhookUrl(webhook, out Uri? uri, out _))
-				return "Webhook unavailable";
+				return LocalizationManager.Get("Discord.WebhookUnavailable");
 
 			string[] segments = uri!.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 			string identifier = segments.Length >= 3 ? segments[2] : string.Empty;
@@ -463,14 +484,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 				? identifier
 				: identifier[^6..];
 			return string.IsNullOrWhiteSpace(visible)
-				? "Discord webhook"
-				: $"Discord webhook ••••{visible}";
+				? LocalizationManager.Get("Discord.Webhook")
+				: LocalizationManager.Get(
+					"Discord.WebhookMasked",
+					visible);
 		}
 
 		private sealed class EventItem(DiscordNotificationOption option)
 		{
 			public DiscordNotificationOption Option { get; } = option;
-			public override string ToString() => Option.Name;
+			public override string ToString() =>
+				LocalizationManager.TranslateKnownText(Option.Name);
 		}
 	}
 }

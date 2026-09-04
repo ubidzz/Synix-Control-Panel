@@ -153,7 +153,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						Path.IsPathRooted(relativePath))
 					{
 						throw new InvalidDataException(
-							"The generated configuration is outside the server installation folder.");
+							LocalizationManager.Get(
+								"GeneratedConfig.Error.OutsideInstall"));
 					}
 
 					string destinationFileName = GetFlatDestinationFileName(
@@ -169,7 +170,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					if (string.IsNullOrWhiteSpace(destinationDirectory))
 					{
 						throw new InvalidOperationException(
-							"The capture destination is unavailable.");
+							LocalizationManager.Get(
+								"GeneratedConfig.Error.DestinationUnavailable"));
 					}
 
 					Directory.CreateDirectory(destinationDirectory);
@@ -318,7 +320,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					"The configuration path leaves the server installation folder.");
+					LocalizationManager.Get(
+						"GeneratedConfig.Error.PathOutsideInstall"));
 			}
 
 			return fullPath;
@@ -331,7 +334,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (LooksBinary(sourcePath))
 			{
 				throw new InvalidDataException(
-					"Binary configuration files are not copied as text templates.");
+					LocalizationManager.Get("GeneratedConfig.Error.BinaryFile"));
 			}
 
 			List<ConfigLine> values = ConfigHandler.LoadConfig(sourcePath, format);
@@ -437,7 +440,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					"The capture path leaves the selected destination folder.");
+					LocalizationManager.Get(
+						"GeneratedConfig.Error.PathOutsideDestination"));
 			}
 		}
 
@@ -445,7 +449,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		{
 			string directory = Path.GetDirectoryName(path)
 				?? throw new InvalidOperationException(
-					"The capture destination is unavailable.");
+					LocalizationManager.Get(
+						"GeneratedConfig.Error.DestinationUnavailable"));
 			string temporaryPath = Path.Combine(
 				directory,
 				$".{Path.GetFileName(path)}.{Guid.NewGuid():N}.synix.tmp");

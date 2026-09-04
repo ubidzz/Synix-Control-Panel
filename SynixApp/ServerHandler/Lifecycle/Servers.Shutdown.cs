@@ -55,16 +55,20 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				if (liveProcesses.Count == 0)
 				{
-					logCallback?.Invoke($"[SHUTDOWN] No live process remains for {server.ServerName}. State reconciled.", Color.Lime);
+					logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.NoProcess", server.ServerName), Color.Lime);
 					FinalizeStoppedState(server);
 					return true;
 				}
 
 				logCallback?.Invoke(
-					$"[SHUTDOWN] Tracking {liveProcesses.Count} process(es) for {server.ServerName}: {FormatProcessRegistry(server.ServerProcesses)}",
+					LocalizationManager.Get(
+						"ServerStop.Activity.Tracking",
+						liveProcesses.Count,
+						server.ServerName,
+						FormatProcessRegistry(server.ServerProcesses)),
 					Color.Aqua);
 
-				logCallback?.Invoke($"[SHUTDOWN] Sending save signal to {server.ServerName}...", Color.Aqua);
+				logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.SaveSignal", server.ServerName), Color.Aqua);
 
 				bool isMinecraft = GameCapabilityResolver.UsesMinecraftLifecycle(server);
 				bool signalSent = isMinecraft
@@ -86,13 +90,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				if (liveProcesses.Count == 0)
 				{
-					logCallback?.Invoke($"[SYNIX] {server.ServerName} saved and closed cleanly.", Color.Lime);
+					logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.CleanStop", server.ServerName), Color.Lime);
 					FinalizeStoppedState(server);
 					return true;
 				}
 
 				logCallback?.Invoke(
-					$"[🛡️ WATCHDOG] {server.ServerName} did not close cleanly. Forcing {liveProcesses.Count} process(es) to stop...",
+					LocalizationManager.Get("ServerStop.Activity.Forcing", server.ServerName, liveProcesses.Count),
 					Color.Violet);
 
 				await ForceTerminateProcesses(liveProcesses, targetPid, trackedProcesses, logCallback!);
@@ -102,18 +106,21 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					RestoreLiveServerState(server, liveProcesses, targetPid);
 					logCallback?.Invoke(
-						$"[🚨 STOP FAILED] {server.ServerName} still has a live process (PID: {string.Join(", ", liveProcesses)}). Status was not changed to Stopped.",
+						LocalizationManager.Get(
+							"ServerStop.Activity.LiveProcessRemains",
+							server.ServerName,
+							string.Join(", ", liveProcesses)),
 						Color.Red);
 					return false;
 				}
 
 				FinalizeStoppedState(server);
-				logCallback?.Invoke($"[🛡️ WATCHDOG] {server.ServerName} was force-closed and verified stopped.", Color.Violet);
+				logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.ForcedAndVerified", server.ServerName), Color.Violet);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[🚨 ERROR] Failed to stop {server.ServerName}: {ex.Message}", Color.Red);
+				logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.Failed", server.ServerName, ex.Message), Color.Red);
 
 				RefreshTrackedProcesses(server, targetPid, trackedProcesses);
 				List<int> liveProcesses = GetLiveTrackedProcesses(trackedProcesses);
@@ -215,7 +222,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				}
 				catch (Exception ex)
 				{
-					logCallback?.Invoke($"[⚠️ STOP] Direct process-tree kill failed for PID {processId}: {ex.Message}", Color.OrangeRed);
+					logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.DirectKillFailed", processId, ex.Message), Color.OrangeRed);
 				}
 			}
 
@@ -242,13 +249,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						await killProcess.WaitForExitAsync();
 						if (killProcess.ExitCode != 0 && IsTrackedProcessAlive(processId, trackedProcesses))
 						{
-							logCallback?.Invoke($"[⚠️ STOP] taskkill returned exit code {killProcess.ExitCode} for PID {processId}.", Color.OrangeRed);
+							logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.TaskkillExitCode", killProcess.ExitCode, processId), Color.OrangeRed);
 						}
 					}
 				}
 				catch (Exception ex)
 				{
-					logCallback?.Invoke($"[⚠️ STOP] taskkill failed for PID {processId}: {ex.Message}", Color.OrangeRed);
+					logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.TaskkillFailed", processId, ex.Message), Color.OrangeRed);
 				}
 			}
 		}

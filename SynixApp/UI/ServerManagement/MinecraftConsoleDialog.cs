@@ -20,7 +20,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		internal MinecraftConsoleDialog(GameServer server)
 		{
 			_server = server ?? throw new ArgumentNullException(nameof(server));
-			Text = "Minecraft Server Console";
+			Text = LocalizationManager.Get("Menu.MinecraftServerConsole");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimumSize = new Size(780, 540);
@@ -31,7 +31,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			Controls.Add(new Label
 			{
-				Text = "Minecraft Server Console",
+				Text = LocalizationManager.Get("Menu.MinecraftServerConsole"),
 				Font = new Font("Segoe UI", 19F, FontStyle.Bold),
 				Location = new Point(28, 22),
 				Size = new Size(620, 42),
@@ -40,7 +40,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			});
 			Controls.Add(new Label
 			{
-				Text = $"{_server.ServerName} • Minecraft {MinecraftControlProfile.NormalizeEdition(_server.MinecraftEdition)}",
+				Text = LocalizationManager.Get(
+					"MinecraftConsole.ServerSummary",
+					_server.ServerName,
+					MinecraftControlProfile.NormalizeEdition(_server.MinecraftEdition)),
 				Location = new Point(30, 66),
 				Size = new Size(900, 26),
 				ForeColor = SettingsPalette.SecondaryText,
@@ -64,7 +67,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			Controls.Add(new Label
 			{
-				Text = "Quick Commands — choose one to prepare it, then review and send it",
+				Text = LocalizationManager.Get("Text.EC423125FB2CAF05C95B"),
 				Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold),
 				Location = new Point(28, 458),
 				Size = new Size(924, 24),
@@ -100,7 +103,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				BackColor = SettingsPalette.Input,
 				ForeColor = SettingsPalette.PrimaryText,
 				BorderStyle = BorderStyle.FixedSingle,
-				PlaceholderText = "Enter a server command, for example: say Server maintenance in 5 minutes"
+				PlaceholderText = LocalizationManager.Get(
+					"MinecraftConsole.CommandPlaceholder",
+					"say Server maintenance in 5 minutes")
 			};
 			_command.KeyDown += async (_, eventArgs) =>
 			{
@@ -113,7 +118,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_send = new ModernSettingsButton
 			{
 				Name = "minecraftSendCommand",
-				Text = "Send Command",
+				Text = LocalizationManager.Get("Text.93D8CAEF74F07185F0BF"),
 				Location = new Point(774, 584),
 				Size = new Size(178, 44),
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
@@ -124,7 +129,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			_status = new Label
 			{
-				Text = "Commands stay on this computer unless you intentionally configure Java RCON for remote access.",
+				Text = LocalizationManager.Get("Text.B09F5332EE858BE57F71"),
 				Location = new Point(28, 638),
 				Size = new Size(924, 24),
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
@@ -160,31 +165,61 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			bool isJava = MinecraftControlProfile.IsJava(server);
 			List<MinecraftQuickCommand> commands =
 			[
-				new("Announce", "say ", "Type the announcement after 'say', then send it."),
-				new("List Players", "list", "Shows the players currently connected to the server."),
-				new("Kick Player", "kick ", "Type the player's name after 'kick', then send it."),
-				new("Make Operator", "op ", "Type the player's name after 'op', then send it."),
-				new("Remove Operator", "deop ", "Type the player's name after 'deop', then send it."),
+				new(
+					LocalizationManager.Get("MinecraftConsole.Quick.Announce.Label"),
+					"say ",
+					LocalizationManager.Get("MinecraftConsole.Quick.Announce.Help")),
+				new(
+					LocalizationManager.Get("MinecraftConsole.Quick.List.Label"),
+					"list",
+					LocalizationManager.Get("MinecraftConsole.Quick.List.Help")),
+				new(
+					LocalizationManager.Get("MinecraftConsole.Quick.Kick.Label"),
+					"kick ",
+					LocalizationManager.Get("MinecraftConsole.Quick.Kick.Help")),
+				new(
+					LocalizationManager.Get("PlayerCenter.Action.Operator"),
+					"op ",
+					LocalizationManager.Get("MinecraftConsole.Quick.Operator.Help")),
+				new(
+					LocalizationManager.Get("MinecraftConsole.Quick.Deop.Label"),
+					"deop ",
+					LocalizationManager.Get("MinecraftConsole.Quick.Deop.Help")),
 				isJava
-					? new("View Whitelist", "whitelist list", "Shows every player on the Java Edition whitelist.")
-					: new("View Allowlist", "allowlist list", "Shows every player on the Bedrock Edition allowlist."),
-				new("Set Day", "time set day", "Changes the current world time to daytime."),
-				new("Clear Weather", "weather clear", "Clears rain and thunderstorms in the current world."),
-				new("Command Help", "help", "Shows the commands supported by this Minecraft server.")
+					? new(
+						LocalizationManager.Get("MinecraftConsole.Quick.Whitelist.Label"),
+						"whitelist list",
+						LocalizationManager.Get("MinecraftConsole.Quick.Whitelist.Help"))
+					: new(
+						LocalizationManager.Get("MinecraftConsole.Quick.Allowlist.Label"),
+						"allowlist list",
+						LocalizationManager.Get("MinecraftConsole.Quick.Allowlist.Help")),
+				new(
+					LocalizationManager.Get("MinecraftConsole.Quick.Day.Label"),
+					"time set day",
+					LocalizationManager.Get("MinecraftConsole.Quick.Day.Help")),
+				new(
+					LocalizationManager.Get("MinecraftConsole.Quick.Weather.Label"),
+					"weather clear",
+					LocalizationManager.Get("MinecraftConsole.Quick.Weather.Help")),
+				new(
+					LocalizationManager.Get("MinecraftConsole.Quick.Help.Label"),
+					"help",
+					LocalizationManager.Get("MinecraftConsole.Quick.Help.Help"))
 			];
 
 			if (isJava)
 			{
 				commands.Add(new(
-					"Save World",
+					LocalizationManager.Get("MinecraftConsole.Quick.Save.Label"),
 					"save-all",
-					"Requests an immediate Java Edition world save."));
+					LocalizationManager.Get("MinecraftConsole.Quick.Save.Help")));
 			}
 
 			commands.Add(new(
-				"Stop Server",
+				LocalizationManager.Get("Text.CB7C1E8DC21E59830716"),
 				"stop",
-				"CAUTION: Sending this command saves and shuts down the Minecraft server.",
+				LocalizationManager.Get("MinecraftConsole.Quick.Stop.Help"),
 				true));
 			return commands;
 		}
@@ -204,7 +239,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				ForeColor = quickCommand.IsDangerous
 					? SettingsPalette.Danger
 					: SettingsPalette.PrimaryText,
-				AccessibleName = quickCommand.Label + " quick command",
+				AccessibleName = LocalizationManager.Get(
+					"MinecraftConsole.Quick.AccessibleName",
+					quickCommand.Label),
 				AccessibleDescription = quickCommand.Guidance
 			};
 			button.Click += (_, _) => PrepareQuickCommand(quickCommand);

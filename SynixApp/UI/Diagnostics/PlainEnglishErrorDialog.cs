@@ -35,9 +35,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 				Location = new Point(28, 24),
 				Size = new Size(630, 42)
 			};
-			Label explanationHeading = CreateHeading("What happened", 82);
+			Label explanationHeading = CreateHeading(
+				LocalizationManager.Get("Text.483BD49023AE2BFB08DA"),
+				82);
 			Label explanation = CreateBody(_error.Explanation, 108, 50);
-			Label nextHeading = CreateHeading("What to do next", 170);
+			Label nextHeading = CreateHeading(
+				LocalizationManager.Get("Diagnostics.Error.WhatToDoNext"),
+				170);
 			Label next = CreateBody(_error.NextStep, 196, 66);
 
 			_technicalBox = new TextBox
@@ -56,7 +60,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 
 			_detailsButton = new ModernSettingsButton
 			{
-				Text = "Show Technical Details",
+				Text = LocalizationManager.Get("Text.9C3A965A650194E6FECC"),
 				Location = new Point(28, 300),
 				Size = new Size(190, 42)
 			};
@@ -64,7 +68,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 
 			ModernSettingsButton copyButton = new()
 			{
-				Text = "Copy Details",
+				Text = LocalizationManager.Get("Text.C6BB8A5950C5AD175A37"),
 				Location = new Point(376, 300),
 				Size = new Size(130, 42)
 			};
@@ -79,7 +83,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 
 			ModernSettingsButton closeButton = new()
 			{
-				Text = "Close",
+				Text = LocalizationManager.Get("ModManager.Button.Close"),
 				Location = new Point(518, 300),
 				Size = new Size(142, 42),
 				DialogResult = DialogResult.OK,
@@ -133,7 +137,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 		{
 			bool show = !_technicalBox.Visible;
 			_technicalBox.Visible = show;
-			_detailsButton.Text = show ? "Hide Technical Details" : "Show Technical Details";
+			LocalizationManager.BindText(
+				_detailsButton,
+				show
+					? "DynamicText.9380C57621B46B84DD91"
+					: "Text.9C3A965A650194E6FECC");
 			_detailsButton.Location = new Point(28, show ? 348 : 300);
 			foreach (Control control in Controls.OfType<Button>().Where(control => !ReferenceEquals(control, _detailsButton)))
 				control.Top = show ? 348 : 300;

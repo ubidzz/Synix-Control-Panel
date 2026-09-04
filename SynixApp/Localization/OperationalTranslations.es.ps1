@@ -345,4 +345,15 @@
     'MessageText.663E3E2D227DB51428B7' = 'Tienes cambios de configuración sin guardar. ¿Descartarlos y cerrar?'
     'MessageText.3B1950A30C957AAF88A2' = 'Debes detener el servidor antes de actualizarlo.'
     'MessageText.19580FB3CF2A0F82762D' = 'Debes detener el servidor antes de validar sus archivos.'
+    'MessageText.1D7E8CD37BFCD097E6DA' = "Synix no tiene una plantilla completa de restablecimiento para este juego."
+    'MessageText.2A2FCD5BFFF42E6401AE' = "La lista ordenada de ID de mods está lista. El juego descargará o actualizará el contenido del proveedor al iniciar el servidor."
+    'MessageText.3679B9A889A4F6F470DA' = "El complemento se instaló y verificó. Inicie el servidor cuando esté listo."
+    'MessageText.4AE453C9E5CBA09BFB92' = "Synix no pudo desbloquear la información guardada del webhook de Discord. Abra la configuración del servidor y vuelva a guardar los webhooks."
+    'MessageText.53B01E5FCFDE56675C9A' = "¿Desconectar GitHub de Synix?`n`nSynix eliminará la conexión cifrada guardada en este equipo y abrirá GitHub para que pueda revocar la autorización de su cuenta."
+    'MessageText.6B5EDE5E1A10BF24CA11' = "Synix no pudo encontrar la carpeta del proyecto. Ejecute esta comprobación desde una compilación o recompilación del proyecto Synix en Visual Studio."
+    'MessageText.9E4EAF41685A751D0C5D' = "Defina el comportamiento de configuración del juego y añada los datos de plantilla necesarios antes de marcar la configuración como verificada."
+    'MessageText.D955BE724373ACFC3AD2' = "¿Restaurar la copia de configuración de Synix más reciente?`n`nSynix conservará primero los archivos actuales para que también se pueda deshacer esta restauración."
+    'MessageText.ECD30B96D30BE40030DF' = "`n`nLa configuración anterior se guardó con la extensión .synix.bak."
+    'MessageText.F23CB309225C503B6D8A' = "El complemento se instaló y verificó. Este entorno normalmente puede recargarlo sin un reinicio completo."
+    'MessageText.FD1FB8A609DE5750E995' = "Las pruebas de instalación, inicio, detención y supervisión se registran automáticamente mediante el flujo real del servidor Synix y no se pueden marcar manualmente."
 }

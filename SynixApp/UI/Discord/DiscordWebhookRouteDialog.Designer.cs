@@ -69,7 +69,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblTitle.ForeColor = Color.FromArgb(245, 247, 251);
 			lblTitle.Location = new Point(28, 22);
 			lblTitle.Name = "lblTitle";
-			lblTitle.Text = "Discord Destination";
+			lblTitle.Text = LocalizationManager.Get("Text.A8726569C87C6C5A3BFE");
 			//
 			// lblDescription
 			//
@@ -77,7 +77,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblDescription.Location = new Point(31, 64);
 			lblDescription.Name = "lblDescription";
 			lblDescription.Size = new Size(716, 40);
-			lblDescription.Text = "Name this destination, paste its Discord webhook, and choose exactly which Synix events it receives.";
+			lblDescription.Text = LocalizationManager.Get("Text.A6D637EAA965641CEB00");
 			//
 			// lblName
 			//
@@ -85,7 +85,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblName.ForeColor = Color.FromArgb(158, 172, 194);
 			lblName.Location = new Point(31, 116);
 			lblName.Name = "lblName";
-			lblName.Text = "Destination name";
+			lblName.Text = LocalizationManager.Get("Text.50687C16EC33A3FCDB36");
 			//
 			// txtName
 			//
@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblEnabled.Location = new Point(565, 140);
 			lblEnabled.Name = "lblEnabled";
 			lblEnabled.Size = new Size(110, 30);
-			lblEnabled.Text = "Enabled";
+			lblEnabled.Text = LocalizationManager.Get("Text.92C1CDFDF4CB9CF6FCCA");
 			lblEnabled.TextAlign = ContentAlignment.MiddleLeft;
 			//
 			// chkEnabled
@@ -119,7 +119,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblWebhook.ForeColor = Color.FromArgb(158, 172, 194);
 			lblWebhook.Location = new Point(31, 184);
 			lblWebhook.Name = "lblWebhook";
-			lblWebhook.Text = "Discord webhook URL";
+			lblWebhook.Text = LocalizationManager.Get("Text.2C08652867AB096911A5");
 			//
 			// txtWebhook
 			//
@@ -137,7 +137,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			lblPreset.ForeColor = Color.FromArgb(158, 172, 194);
 			lblPreset.Location = new Point(31, 254);
 			lblPreset.Name = "lblPreset";
-			lblPreset.Text = "Quick event selection";
+			lblPreset.Text = LocalizationManager.Get("Text.01539AB5D1C3CAF60B5F");
 			//
 			// cmbPreset
 			//
@@ -181,7 +181,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			btnTest.Location = new Point(31, 596);
 			btnTest.Name = "btnTest";
 			btnTest.Size = new Size(150, 42);
-			btnTest.Text = "Send Test";
+			btnTest.Text = LocalizationManager.Get("Text.7B9A0CDE7FF0419B706F");
 			btnTest.Click += btnTest_Click;
 			//
 			// btnCancel
@@ -190,14 +190,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			btnCancel.Location = new Point(465, 596);
 			btnCancel.Name = "btnCancel";
 			btnCancel.Size = new Size(125, 42);
-			btnCancel.Text = "Cancel";
+			btnCancel.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			//
 			// btnSave
 			//
 			btnSave.Location = new Point(604, 596);
 			btnSave.Name = "btnSave";
 			btnSave.Size = new Size(131, 42);
-			btnSave.Text = "Save Destination";
+			btnSave.Text = LocalizationManager.Get("Text.B80C7163AA7089D922EC");
 			btnSave.UseAccentStyle = true;
 			btnSave.Click += btnSave_Click;
 			//
@@ -232,7 +232,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			Name = "DiscordWebhookRouteDialog";
 			ShowIcon = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Discord Destination";
+			Text = LocalizationManager.Get("Text.A8726569C87C6C5A3BFE");
 			ResumeLayout(false);
 			PerformLayout();
 		}

@@ -7,6 +7,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Resources;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
@@ -551,7 +552,7 @@ public sealed class LocalizationTests
 	}
 
 	[Fact]
-	public void EveryDynamicInterfaceFragment_HasATranslationInEachSupportedLanguage()
+	public void EveryRuntimeInterfaceFragment_HasATranslationInEachSupportedLanguage()
 	{
 		ResourceManager manager = new(
 			"Synix_Control_Panel.Localization.Strings",
@@ -560,10 +561,12 @@ public sealed class LocalizationTests
 			CultureInfo.InvariantCulture,
 			createIfNotExists: true,
 			tryParents: false));
-		string[] dynamicKeys = english
+		string[] runtimeKeys = english
 			.Cast<DictionaryEntry>()
 			.Select(entry => Assert.IsType<string>(entry.Key))
-			.Where(key => key.StartsWith("DynamicText.", StringComparison.Ordinal))
+			.Where(key =>
+				key.StartsWith("DynamicText.", StringComparison.Ordinal) ||
+				key.StartsWith("MessageText.", StringComparison.Ordinal))
 			.ToArray();
 
 		foreach (string languageCode in new[] { "fr", "de", "es" })
@@ -577,13 +580,13 @@ public sealed class LocalizationTests
 				.Cast<DictionaryEntry>()
 				.Select(entry => Assert.IsType<string>(entry.Key))
 				.ToHashSet(StringComparer.Ordinal);
-			string[] missing = dynamicKeys
+			string[] missing = runtimeKeys
 				.Where(key => !translatedKeys.Contains(key))
 				.ToArray();
 
 			Assert.True(
 				missing.Length == 0,
-				$"{languageCode} dynamic interface resources are missing: " +
+				$"{languageCode} runtime interface resources are missing: " +
 				string.Join(", ", missing));
 		}
 	}
@@ -718,5 +721,181 @@ public sealed class LocalizationTests
 		thread.Start();
 		thread.Join();
 		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void NamedBindings_UpdateEveryInterfaceTextTargetWithoutChangingCommandData()
+	{
+		Exception? failure = null;
+		Thread thread = new(() =>
+		{
+			try
+			{
+				const string commandExample =
+					"say Server maintenance in 5 minutes";
+				using Form root = new();
+				using Label label = new();
+				using Button button = new();
+				using TextBox input = new();
+				root.Controls.AddRange([label, button, input]);
+
+				LocalizationManager.Initialize("fr-FR");
+				LocalizationManager.BindText(label, "Catalog.Available");
+				LocalizationManager.BindAccessibleName(
+					button,
+					"MinecraftConsole.Quick.AccessibleName",
+					commandExample);
+				LocalizationManager.BindAccessibleDescription(
+					button,
+					"GameDefinitions.ArgumentCheck.Launcher.Supported");
+				LocalizationManager.BindPlaceholderText(
+					input,
+					"MinecraftConsole.CommandPlaceholder",
+					commandExample);
+
+				Assert.Equal(LocalizationManager.Get("Catalog.Available"), label.Text);
+				Assert.Contains(commandExample, button.AccessibleName);
+				Assert.Contains(commandExample, input.PlaceholderText);
+
+				LocalizationManager.SetLanguage("de-DE");
+				LocalizationManager.Apply(root);
+
+				Assert.Equal(LocalizationManager.Get("Catalog.Available"), label.Text);
+				Assert.Equal(
+					LocalizationManager.Get(
+						"GameDefinitions.ArgumentCheck.Launcher.Supported"),
+					button.AccessibleDescription);
+				Assert.Equal(
+					LocalizationManager.Get(
+						"MinecraftConsole.Quick.AccessibleName",
+						commandExample),
+					button.AccessibleName);
+				Assert.Equal(
+					LocalizationManager.Get(
+						"MinecraftConsole.CommandPlaceholder",
+						commandExample),
+					input.PlaceholderText);
+			}
+			catch (Exception exception)
+			{
+				failure = exception;
+			}
+			finally
+			{
+				LocalizationManager.Initialize(
+					LocalizationManager.DefaultLanguageCode);
+			}
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+		Assert.Null(failure);
+	}
+
+	[Fact]
+	public void EveryTranslatedResource_PreservesItsFormatPlaceholders()
+	{
+		ResourceManager manager = new(
+			"Synix_Control_Panel.Localization.Strings",
+			typeof(LocalizationManager).Assembly);
+		ResourceSet english = Assert.IsAssignableFrom<ResourceSet>(
+			manager.GetResourceSet(
+				CultureInfo.InvariantCulture,
+				createIfNotExists: true,
+				tryParents: false));
+		Dictionary<string, string> englishValues = english
+			.Cast<DictionaryEntry>()
+			.ToDictionary(
+				entry => Assert.IsType<string>(entry.Key),
+				entry => Assert.IsType<string>(entry.Value),
+				StringComparer.Ordinal);
+		Regex placeholder = new(@"\{\d+(?:,[^}:]+)?(?::[^}]+)?\}");
+
+		foreach (string languageCode in new[] { "fr", "de", "es" })
+		{
+			ResourceSet translated = Assert.IsAssignableFrom<ResourceSet>(
+				manager.GetResourceSet(
+					CultureInfo.GetCultureInfo(languageCode),
+					createIfNotExists: true,
+					tryParents: false));
+			foreach (DictionaryEntry entry in translated)
+			{
+				string key = Assert.IsType<string>(entry.Key);
+				if (!englishValues.TryGetValue(key, out string? englishText))
+					continue;
+
+				string translatedText = Assert.IsType<string>(entry.Value);
+				string[] expected = placeholder.Matches(englishText)
+					.Select(match => match.Value)
+					.OrderBy(value => value, StringComparer.Ordinal)
+					.ToArray();
+				string[] actual = placeholder.Matches(translatedText)
+					.Select(match => match.Value)
+					.OrderBy(value => value, StringComparer.Ordinal)
+					.ToArray();
+
+				Assert.True(
+					expected.SequenceEqual(actual, StringComparer.Ordinal),
+					$"{languageCode} changed placeholders for {key}: " +
+					$"expected [{string.Join(", ", expected)}], " +
+					$"found [{string.Join(", ", actual)}]");
+			}
+		}
+	}
+
+	[Fact]
+	public void InterfaceSource_DoesNotAssignVisibleEnglishLiteralsDirectly()
+	{
+		string projectDirectory = Assert.IsType<string>(
+			Core.FindProjectDirectory(AppContext.BaseDirectory));
+		Regex directVisibleText = new(
+			"(?<!\\$)\\b(?:Text|HeaderText|PlaceholderText|AccessibleName|" +
+			"AccessibleDescription|Title|Caption|Heading|Description|Filter)" +
+			"\\s*=\\s*\"(?=[^\"\\r\\n]*[A-Za-z])[^\"\\r\\n]*\"");
+		Regex directDialogText = new(
+			"(?:MessageBox|LocalizedMessageBox)\\.Show\\s*\\(\\s*" +
+			"\"[^\"\\r\\n]*[A-Za-z]|" +
+			"PlainEnglishErrorDialog\\.ShowError\\s*\\([^,]+,\\s*" +
+			"\"[^\"\\r\\n]*[A-Za-z]",
+			RegexOptions.Singleline);
+		Regex directExceptionText = new(
+			"throw\\s+new\\s+[A-Za-z0-9_.<>]+\\s*\\(\\s*" +
+			"\"[^\"\\r\\n]*[A-Za-z][^\"\\r\\n]*\"");
+		Regex directResultText = new(
+			"return\\s+new\\s*\\([^;\\r\\n]*,\\s*" +
+			"\"[^\"\\r\\n]*[A-Za-z][^\"\\r\\n]*\"");
+		List<string> violations = [];
+
+		foreach (string path in Directory.EnumerateFiles(
+			projectDirectory,
+			"*.cs",
+			SearchOption.AllDirectories))
+		{
+			string relativePath = Path.GetRelativePath(projectDirectory, path);
+			if (relativePath.StartsWith("Tests" + Path.DirectorySeparatorChar) ||
+				relativePath.StartsWith("obj" + Path.DirectorySeparatorChar) ||
+				relativePath.Contains(
+					Path.DirectorySeparatorChar + "Help" +
+					Path.DirectorySeparatorChar,
+					StringComparison.OrdinalIgnoreCase))
+			{
+				continue;
+			}
+
+			string source = File.ReadAllText(path);
+			foreach (Match match in directVisibleText.Matches(source)
+				.Concat(directDialogText.Matches(source))
+				.Concat(directExceptionText.Matches(source))
+				.Concat(directResultText.Matches(source)))
+			{
+				int line = source.AsSpan(0, match.Index).Count('\n') + 1;
+				violations.Add($"{relativePath}:{line}: {match.Value}");
+			}
+		}
+
+		Assert.True(
+			violations.Count == 0,
+			"Visible text must use LocalizationManager resource bindings. " +
+			string.Join(Environment.NewLine, violations));
 	}
 }

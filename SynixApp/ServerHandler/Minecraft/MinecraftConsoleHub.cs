@@ -38,13 +38,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			};
 			process.BeginOutputReadLine();
 			process.BeginErrorReadLine();
-			Publish(server, "Synix connected to Minecraft's managed hidden console.", false);
+			Publish(server, LocalizationManager.Get("Minecraft.Console.Connected"), false);
 		}
 
 		internal static void NotifyStopped(GameServer server)
 		{
 			if (GameCapabilityResolver.UsesMinecraftConsole(server))
-				Publish(server, "Minecraft's managed console process has stopped.", false);
+				Publish(server, LocalizationManager.Get("Minecraft.Console.Stopped"), false);
 		}
 
 		internal static IReadOnlyList<MinecraftConsoleLine> GetSnapshot(GameServer server)
@@ -107,8 +107,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							line.Contains("FATAL", StringComparison.OrdinalIgnoreCase)))
 					.ToArray();
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				return [];
 			}
 		}

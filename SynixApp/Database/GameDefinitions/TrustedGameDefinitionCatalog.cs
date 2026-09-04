@@ -70,7 +70,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public int MaximumPlayers { get; init; } = GameDefinition.DefaultMaximumPlayers;
 		public bool RequiresAdminPassword { get; init; }
 		public bool RequiresAuthenticationToken { get; init; }
-		public string AuthenticationTokenLabel { get; init; } = "Authentication Token";
+		public string AuthenticationTokenLabel { get; init; } =
+			LocalizationManager.GetEnglish("GameInput.AuthenticationToken.Label");
 		public string AuthenticationTokenHelpUrl { get; init; } = string.Empty;
 		public int MinimumServerPasswordLength { get; init; }
 		public bool ServerPasswordMustNotAppearInName { get; init; }
@@ -94,7 +95,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string LaunchFileSetupInstructions { get; init; } = string.Empty;
 		public bool NeedsConfigWarning { get; init; }
 		public string WarningMessage { get; init; } =
-			"This game requires configuration before it can boot properly.";
+			LocalizationManager.GetEnglish(
+				"GameDefinition.Default.ConfigurationWarning");
 		public string IconUrl { get; init; } = string.Empty;
 		public bool IsQueryable { get; init; } = true;
 		public bool CrossplayDisablesPlayerTracking { get; init; }
@@ -195,9 +197,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			Func<string, string, string?>? templateLoader = null)
 		{
 			if (string.IsNullOrWhiteSpace(json))
-				throw new InvalidDataException($"{resourceName} is empty.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.ResourceEmpty",
+					resourceName));
 			if (json.Length > MaximumDefinitionBytes)
-				throw new InvalidDataException($"{resourceName} is too large.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.ResourceTooLarge",
+					resourceName));
 
 			EmbeddedGameDefinition manifest;
 			try
@@ -205,12 +211,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				manifest = JsonSerializer.Deserialize<EmbeddedGameDefinition>(
 					json,
 					SerializerOptions) ?? throw new InvalidDataException(
-						$"{resourceName} did not contain a game definition.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.DefinitionMissing",
+							resourceName));
 			}
 			catch (JsonException exception)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} is not a valid Synix game definition: {exception.Message}",
+					LocalizationManager.Get(
+						"GameDefinition.Error.InvalidDefinition",
+						resourceName,
+						exception.Message),
 					exception);
 			}
 
@@ -299,9 +310,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				.OrderBy(name => name, StringComparer.Ordinal))
 			{
 				using Stream stream = assembly.GetManifestResourceStream(resourceName) ??
-					throw new InvalidDataException($"The embedded resource {resourceName} could not be opened.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.ResourceOpenFailed",
+						resourceName));
 				if (stream.Length > MaximumDefinitionBytes)
-					throw new InvalidDataException($"{resourceName} is too large.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.ResourceTooLarge",
+						resourceName));
 				using StreamReader reader = new(stream);
 				packages.Add(ParsePackage(
 					reader.ReadToEnd(),
@@ -317,7 +332,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			foreach (EmbeddedGamePackage package in packages)
 			{
 				if (!names.Add(package.Definition.Game))
-					throw new InvalidDataException($"Duplicate embedded game definition: {package.Definition.Game}.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.DuplicateEmbedded",
+						package.Definition.Game));
 			}
 
 			return packages
@@ -331,21 +348,34 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			string resourceName)
 		{
 			if (manifest.SchemaVersion != 1)
-				throw new InvalidDataException($"{resourceName} uses unsupported schema version {manifest.SchemaVersion}.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.SchemaUnsupported",
+					resourceName,
+					manifest.SchemaVersion));
 			if (manifest.DefinitionRevision < 1)
-				throw new InvalidDataException($"{resourceName} has an invalid definitionRevision.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidField",
+					resourceName,
+					"definitionRevision"));
 			ValidateText(manifest.Id, "id", resourceName, 80, required: true);
 			if (manifest.CatalogOrder < 0)
-				throw new InvalidDataException($"{resourceName} has an invalid catalogOrder.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidField",
+					resourceName,
+					"catalogOrder"));
 			if (!manifest.Id.All(character =>
 				char.IsAsciiLetterOrDigit(character) || character == '-'))
 			{
-				throw new InvalidDataException($"{resourceName} has an invalid game definition id.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidDefinitionId",
+					resourceName));
 			}
 			ValidateText(manifest.Game, "game", resourceName, 120, required: true);
 			ValidateText(manifest.AppId, "appId", resourceName, 32, required: true);
 			if (!manifest.AppId.All(char.IsDigit))
-				throw new InvalidDataException($"{resourceName} has a non-numeric Steam AppID.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.NonNumericAppId",
+					resourceName));
 			ValidateSteamAppConfig(manifest.SteamAppConfig, manifest.AppId, resourceName);
 			ValidateRelativePath(manifest.Executable, "executable", resourceName, required: true);
 			ValidateSingleLine(manifest.Arguments, "arguments", resourceName, 16_384);
@@ -362,12 +392,16 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			if (!string.IsNullOrWhiteSpace(manifest.RconSyntax) && !usesRconTag)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} defines rconSyntax but its launch arguments do not contain {{rcon}}.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.RconSyntaxUnused",
+						resourceName));
 			}
 			if (usesRconTag && string.IsNullOrWhiteSpace(manifest.RconSyntax))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains {{rcon}} but does not define rconSyntax.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.RconSyntaxMissing",
+						resourceName));
 			}
 			ValidatePort(manifest.Port, "port", resourceName);
 			ValidatePort(manifest.QueryPort, "queryPort", resourceName);
@@ -376,12 +410,18 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			if (manifest.MaximumPlayers is < 1 or > 100_000)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} has an invalid maximumPlayers value.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.InvalidFieldValue",
+						resourceName,
+						"maximumPlayers"));
 			}
 			if (manifest.MinimumServerPasswordLength is < 0 or > 1024)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} has an invalid minimumServerPasswordLength value.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.InvalidFieldValue",
+						resourceName,
+						"minimumServerPasswordLength"));
 			}
 			if ((manifest.MinimumServerPasswordLength > 0 ||
 				 manifest.ServerPasswordMustNotAppearInName) &&
@@ -390,7 +430,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					template.Content.Contains("{Password}", StringComparison.Ordinal)) ?? false))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} defines server password rules but does not use the server password placeholder.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.PasswordPlaceholderMissing",
+						resourceName));
 			}
 			if (manifest.RequiresAdminPassword &&
 				!manifest.Arguments.Contains("{adminpass}", StringComparison.Ordinal) &&
@@ -398,7 +440,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					template.Content.Contains("{AdminPassword}", StringComparison.Ordinal)) ?? false))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} requires an admin password but does not use the admin password placeholder.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.AdminPasswordPlaceholderMissing",
+						resourceName));
 			}
 			bool usesAuthenticationToken = manifest.Arguments.Contains(
 				"{auth_token}",
@@ -406,12 +450,16 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			if (manifest.RequiresAuthenticationToken && !usesAuthenticationToken)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} requires an authentication token but does not use the {{auth_token}} placeholder.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.AuthenticationTokenPlaceholderMissing",
+						resourceName));
 			}
 			if (!manifest.RequiresAuthenticationToken && usesAuthenticationToken)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} uses {{auth_token}} without declaring requiresAuthenticationToken.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.AuthenticationTokenNotDeclared",
+						resourceName));
 			}
 			ValidateText(
 				manifest.AuthenticationTokenLabel,
@@ -445,7 +493,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				!manifest.Arguments.Contains("{crossplay}", StringComparison.Ordinal))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} disables player tracking for Crossplay but its launch arguments do not contain {{crossplay}}.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.CrossplayPlaceholderMissing",
+						resourceName));
 			}
 			ValidateRuntimeRequirements(manifest.RuntimeRequirements, resourceName);
 			ValidateLaunchBehavior(manifest, resourceName);
@@ -455,9 +505,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			foreach (string path in manifest.LogPaths)
 				ValidateRelativePattern(path, "logPaths", resourceName);
 			if (manifest.PostInstallActions == null)
-				throw new InvalidDataException($"{resourceName} contains a null postInstallActions collection.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.NullCollection",
+					resourceName,
+					"postInstallActions"));
 			if (manifest.PostInstallActions.Count > 16)
-				throw new InvalidDataException($"{resourceName} contains too many post-install actions.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.TooManyPostInstallActions",
+					resourceName));
 			HashSet<string> postInstallActions = new(StringComparer.OrdinalIgnoreCase);
 			foreach (EmbeddedPostInstallAction action in manifest.PostInstallActions)
 			{
@@ -465,7 +520,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					not TrustedPostInstallActionType.EnsureDirectory)
 				{
 					throw new InvalidDataException(
-						$"{resourceName} contains an unsupported post-install action type.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.UnsupportedPostInstallAction",
+							resourceName));
 				}
 				ValidateRelativePath(
 					action.TargetDirectory,
@@ -474,7 +531,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					required: action.Type == TrustedPostInstallActionType.EnsureDirectory);
 				string identity = $"{action.Type}\u001f{action.TargetDirectory}";
 				if (!postInstallActions.Add(identity))
-					throw new InvalidDataException($"{resourceName} contains a duplicate post-install action.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.DuplicatePostInstallAction",
+						resourceName));
 			}
 
 			if (manifest.Configuration != null)
@@ -484,12 +543,18 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 						 ConfigFileCreationMode.GameGenerated))
 				{
 					throw new InvalidDataException(
-						$"{resourceName} has templates but is not marked SynixTemplate or GameGenerated.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.InvalidTemplateMode",
+							resourceName));
 				}
 				if (manifest.Configuration.SchemaVersion < 1)
-					throw new InvalidDataException($"{resourceName} has an invalid configuration schema version.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.InvalidConfigurationSchema",
+						resourceName));
 				if (manifest.Configuration.Revision < 1)
-					throw new InvalidDataException($"{resourceName} has an invalid configuration revision.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.InvalidConfigurationRevision",
+						resourceName));
 				ValidateManagedInputs(manifest.Configuration, resourceName);
 				HashSet<string> templatePaths = new(StringComparer.OrdinalIgnoreCase);
 				foreach (EmbeddedConfigurationTemplate template in manifest.Configuration.Templates)
@@ -498,19 +563,28 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 						template.Revision > manifest.Configuration.Revision)
 					{
 						throw new InvalidDataException(
-							$"{resourceName} contains an invalid template revision.");
+							LocalizationManager.Get(
+								"GameDefinition.Error.InvalidTemplateRevision",
+								resourceName));
 					}
 					ValidateRelativePath(template.RelativePath, "configuration.templates.relativePath", resourceName, required: true);
 					ValidateRelativePath(template.TemplateFile, "configuration.templates.templateFile", resourceName);
 					if (!templatePaths.Add(template.RelativePath))
-						throw new InvalidDataException($"{resourceName} contains duplicate configuration template paths.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"GameDefinition.Error.DuplicateTemplatePaths",
+							resourceName));
 					if (string.IsNullOrWhiteSpace(template.Content) || template.Content.Length > MaximumTemplateCharacters)
-						throw new InvalidDataException($"{resourceName} contains an empty or oversized configuration template.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"GameDefinition.Error.InvalidTemplateContent",
+							resourceName));
 					foreach (Match match in PlaceholderPattern.Matches(template.Content))
 					{
 						string placeholder = match.Groups[1].Value;
 						if (!SupportedPlaceholders.Contains(placeholder))
-							throw new InvalidDataException($"{resourceName} uses unsupported placeholder {{{placeholder}}}.");
+							throw new InvalidDataException(LocalizationManager.Get(
+								"GameDefinition.Error.UnsupportedPlaceholder",
+								resourceName,
+								placeholder));
 					}
 				}
 			}
@@ -521,15 +595,27 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			string resourceName)
 		{
 			if (requirements == null)
-				throw new InvalidDataException($"{resourceName} contains null runtimeRequirements.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.NullField",
+					resourceName,
+					"runtimeRequirements"));
 			if (requirements.MinimumSystemMemoryGb is < 0 or > 1024)
-				throw new InvalidDataException($"{resourceName} has an invalid minimumSystemMemoryGb.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidField",
+					resourceName,
+					"minimumSystemMemoryGb"));
 			if (!Enum.IsDefined(requirements.MinimumDotNetFramework))
-				throw new InvalidDataException($"{resourceName} has an invalid minimumDotNetFramework.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidField",
+					resourceName,
+					"minimumDotNetFramework"));
 			if (requirements.VisualCppRedistributables == null)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains null runtimeRequirements.visualCppRedistributables.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.NullField",
+						resourceName,
+						"runtimeRequirements.visualCppRedistributables"));
 			}
 			if (requirements.VisualCppRedistributables.Any(requirement =>
 				!Enum.IsDefined(requirement)) ||
@@ -537,13 +623,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				requirements.VisualCppRedistributables.Distinct().Count())
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains an invalid or duplicate Visual C++ runtime requirement.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.InvalidVisualCppRequirement",
+						resourceName));
 			}
 			if (requirements.RequiresHyperV &&
 				!requirements.RequiresWindowsProfessionalOrHigher)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} requires Hyper-V but does not require a Windows edition that supports Hyper-V.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.HyperVWindowsRequirement",
+						resourceName));
 			}
 		}
 
@@ -552,13 +642,18 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			string resourceName)
 		{
 			GameLaunchBehavior behavior = manifest.LaunchBehavior ??
-				throw new InvalidDataException($"{resourceName} contains null launchBehavior.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.NullField",
+					resourceName,
+					"launchBehavior"));
 			if (!GameLaunchCommandBuilder.TryGetLauncherKind(
 				manifest.Executable,
 				out _))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} uses an unsupported launch file type. Use an .exe, .bat, or .cmd file.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.UnsupportedLaunchFile",
+						resourceName));
 			}
 			ValidateText(
 				behavior.ReadyMessage,
@@ -578,13 +673,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				!manifest.Executable.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} requests an elevated launch for an unsupported executable type.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.UnsupportedElevatedLaunch",
+						resourceName));
 			}
 			if (behavior.LifecycleTracking == GameLifecycleTrackingMode.ExternalDeployment &&
 				manifest.IsQueryable)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} cannot use external lifecycle tracking while isQueryable is true.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.ExternalLifecycleQueryable",
+						resourceName));
 			}
 		}
 
@@ -601,13 +700,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				if (!framework.Equals("Oxide", StringComparison.OrdinalIgnoreCase))
 				{
 					throw new InvalidDataException(
-						$"{resourceName} contains an unsupported server framework.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.UnsupportedFramework",
+							resourceName));
 				}
 				if (!manifest.Id.Equals("rust", StringComparison.OrdinalIgnoreCase) ||
 					manifest.AppId != "258550")
 				{
 					throw new InvalidDataException(
-						$"{resourceName} may only enable Oxide for the trusted Rust definition.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.OxideOnlyForRust",
+							resourceName));
 				}
 			}
 		}
@@ -617,7 +720,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			string resourceName)
 		{
 			if (capabilities == null)
-				throw new InvalidDataException($"{resourceName} contains null controlCapabilities.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.NullField",
+					resourceName,
+					"controlCapabilities"));
 
 			if (!Enum.IsDefined(capabilities.Lifecycle) ||
 				!Enum.IsDefined(capabilities.Console) ||
@@ -625,7 +731,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				!Enum.IsDefined(capabilities.Players))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains an unsupported control capability.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.UnsupportedControlCapability",
+						resourceName));
 			}
 
 			bool usesMinecraftController =
@@ -636,7 +744,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				capabilities.Lifecycle != GameLifecycleControllerKind.Minecraft)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} enables a Minecraft controller without the Minecraft lifecycle controller.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.MinecraftLifecycleRequired",
+						resourceName));
 			}
 		}
 
@@ -645,7 +755,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			string resourceName)
 		{
 			if (configuration.ManagedInputs == null)
-				throw new InvalidDataException($"{resourceName} contains a null configuration.managedInputs collection.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.NullCollection",
+					resourceName,
+					"configuration.managedInputs"));
 
 			ManagedConfigurationInput declared = ManagedConfigurationInput.None;
 			foreach (ManagedConfigurationInput input in configuration.ManagedInputs)
@@ -655,7 +768,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					(declared & input) != ManagedConfigurationInput.None)
 				{
 					throw new InvalidDataException(
-						$"{resourceName} contains an invalid or duplicate configuration managed input.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.InvalidManagedInput",
+							resourceName));
 				}
 				declared |= input;
 			}
@@ -668,8 +783,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			if (declared != discovered)
 			{
 				throw new InvalidDataException(
-					$"{resourceName} configuration.managedInputs does not match the placeholders used by its templates. " +
-					$"Declared: {declared}. Template fields: {discovered}.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.ManagedInputsMismatch",
+						resourceName,
+						declared,
+						discovered));
 			}
 		}
 
@@ -729,7 +847,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				if (hasFile == hasContent)
 				{
 					throw new InvalidDataException(
-						$"{resourceName} must give each configuration template either templateFile or content, but not both.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.TemplateSourceAmbiguous",
+							resourceName));
 				}
 
 				if (!hasFile)
@@ -746,7 +866,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				if (content == null)
 				{
 					throw new InvalidDataException(
-						$"{resourceName} references missing embedded template {template.TemplateFile}.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.EmbeddedTemplateMissing",
+							resourceName,
+							template.TemplateFile));
 				}
 
 				template.Content = content;
@@ -785,11 +908,15 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			foreach (GameInfo definition in definitions)
 			{
 				if (!names.Add(definition.Game))
-					throw new InvalidDataException($"Duplicate game definition: {definition.Game}.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.DuplicateDefinition",
+						definition.Game));
 				foreach (string alias in definition.Aliases)
 				{
 					if (!names.Add(alias))
-						throw new InvalidDataException($"Duplicate game name or alias: {alias}.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"GameDefinition.Error.DuplicateName",
+							alias));
 				}
 			}
 		}
@@ -800,14 +927,20 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			string resourceName)
 		{
 			if (values == null)
-				throw new InvalidDataException($"{resourceName} contains a null {field} collection.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.NullCollection",
+					resourceName,
+					field));
 
 			HashSet<string> unique = new(StringComparer.OrdinalIgnoreCase);
 			foreach (string value in values)
 			{
 				ValidateText(value, field, resourceName, 512, required: true);
 				if (!unique.Add(value.Trim()))
-					throw new InvalidDataException($"{resourceName} contains a duplicate {field} value.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.DuplicateFieldValue",
+						resourceName,
+						field));
 			}
 		}
 
@@ -820,14 +953,20 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			if (string.IsNullOrWhiteSpace(path))
 			{
 				if (required)
-					throw new InvalidDataException($"{resourceName} requires {field}.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"GameDefinition.Error.RequiredField",
+						resourceName,
+						field));
 				return;
 			}
 			if (!string.Equals(path, path.Trim(), StringComparison.Ordinal) ||
 				path.Any(char.IsControl))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains an invalid {field} path.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.InvalidPath",
+						resourceName,
+						field));
 			}
 
 			if (path.Length > 512 ||
@@ -837,7 +976,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				path.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries)
 					.Any(segment => segment is "." or ".."))
 			{
-				throw new InvalidDataException($"{resourceName} contains an unsafe {field} path.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.UnsafePath",
+					resourceName,
+					field));
 			}
 		}
 
@@ -856,7 +998,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				path.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries)
 					.Any(segment => segment is "." or ".."))
 			{
-				throw new InvalidDataException($"{resourceName} contains an unsafe {field} pattern.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.UnsafePattern",
+					resourceName,
+					field));
 			}
 
 			foreach (Match match in PlaceholderPattern.Matches(path))
@@ -866,7 +1011,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					not "WorldName" and not "Port" and not "QueryPort")
 				{
 					throw new InvalidDataException(
-						$"{resourceName} uses unsupported log-path placeholder {{{placeholder}}}.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.UnsupportedLogPlaceholder",
+							resourceName,
+							placeholder));
 				}
 			}
 		}
@@ -883,14 +1031,20 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				string.IsNullOrWhiteSpace(uri.Host) ||
 				!string.IsNullOrEmpty(uri.UserInfo))
 			{
-				throw new InvalidDataException($"{resourceName} contains an unsafe {field} URL.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.UnsafeUrl",
+					resourceName,
+					field));
 			}
 		}
 
 		private static void ValidatePort(int port, string field, string resourceName)
 		{
 			if (port is < 1 or > 65535)
-				throw new InvalidDataException($"{resourceName} has an invalid {field}.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidField",
+					resourceName,
+					field));
 		}
 
 		private static void ValidateSteamAppConfig(
@@ -908,7 +1062,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				!value.StartsWith(appId + " mod ", StringComparison.Ordinal))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains an unsafe steamAppConfig. Use only '<AppID> mod <folder>'.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.UnsafeSteamAppConfig",
+						resourceName));
 			}
 		}
 
@@ -919,7 +1075,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			int maximumLength)
 		{
 			if (value.Length > maximumLength || value.IndexOfAny(['\r', '\n', '\0']) >= 0)
-				throw new InvalidDataException($"{resourceName} contains an invalid {field} value.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidFieldValue",
+					resourceName,
+					field));
 		}
 
 		private static void ValidateDefinitionValue(
@@ -935,7 +1094,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					character is '"' or '\'' or '{' or '}' or '&' or '|' or ';'))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains an unsafe {field} value.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.UnsafeFieldValue",
+						resourceName,
+						field));
 			}
 		}
 
@@ -947,7 +1109,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			bool required)
 		{
 			if (required && string.IsNullOrWhiteSpace(value))
-				throw new InvalidDataException($"{resourceName} requires {field}.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.RequiredField",
+					resourceName,
+					field));
 			ValidateSingleLine(value, field, resourceName, maximumLength);
 		}
 

@@ -72,7 +72,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_titleLabel.Name = "_titleLabel";
 			_titleLabel.Size = new Size(1172, 40);
 			_titleLabel.TabIndex = 0;
-			_titleLabel.Text = "Game Verification Queue";
+			_titleLabel.Text = LocalizationManager.Get("Text.2D05F6D2868A95AD001F");
 			// 
 			// _subtitleLabel
 			// 
@@ -82,7 +82,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_subtitleLabel.Name = "_subtitleLabel";
 			_subtitleLabel.Size = new Size(1170, 44);
 			_subtitleLabel.TabIndex = 1;
-			_subtitleLabel.Text = "Install, start, stop, and monitoring checks are recorded automatically. Argument verification uses a real installed server and a sanitized command test; configuration remains a manual file check.";
+			_subtitleLabel.Text = LocalizationManager.Get("Text.70CAC3F03884A4946236");
 			// 
 			// _summaryLabel
 			// 
@@ -93,7 +93,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_summaryLabel.Name = "_summaryLabel";
 			_summaryLabel.Size = new Size(1170, 28);
 			_summaryLabel.TabIndex = 2;
-			_summaryLabel.Text = "Loading the built-in game verification queue...";
+			_summaryLabel.Text = LocalizationManager.Get("Text.9E611113ECA35A604A41");
 			// 
 			// _searchBox
 			// 
@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_searchBox.ForeColor = Color.FromArgb(245, 247, 251);
 			_searchBox.Location = new Point(26, 144);
 			_searchBox.Name = "_searchBox";
-			_searchBox.PlaceholderText = "Search game name...";
+			_searchBox.PlaceholderText = LocalizationManager.Get("Text.2E7AAE6319922181CD1D");
 			_searchBox.Size = new Size(360, 25);
 			_searchBox.TabIndex = 3;
 			_searchBox.TextChanged += SearchBox_TextChanged;
@@ -135,7 +135,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_visibleLabel.Name = "_visibleLabel";
 			_visibleLabel.Size = new Size(252, 25);
 			_visibleLabel.TabIndex = 5;
-			_visibleLabel.Text = "Showing 0 games";
+			_visibleLabel.Text = LocalizationManager.Get("Text.1A4BF21D8BE466FA4B66");
 			_visibleLabel.TextAlign = ContentAlignment.MiddleRight;
 			// 
 			// _grid
@@ -187,7 +187,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			// _gameColumn
 			// 
 			_gameColumn.Frozen = true;
-			_gameColumn.HeaderText = "GAME";
+			_gameColumn.HeaderText = LocalizationManager.Get("Text.1FD5F5A768D30B9B6651");
 			_gameColumn.MinimumWidth = 190;
 			_gameColumn.Name = "_gameColumn";
 			_gameColumn.ReadOnly = true;
@@ -195,56 +195,56 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			// 
 			// _progressColumn
 			// 
-			_progressColumn.HeaderText = "PROGRESS";
+			_progressColumn.HeaderText = LocalizationManager.Get("Text.E0D0ADC74C8BE52AC274");
 			_progressColumn.Name = "_progressColumn";
 			_progressColumn.ReadOnly = true;
 			_progressColumn.Width = 82;
 			// 
 			// _configModeColumn
 			// 
-			_configModeColumn.HeaderText = "CONFIG SOURCE";
+			_configModeColumn.HeaderText = LocalizationManager.Get("Text.5AF3D7C6153B4E57ECDF");
 			_configModeColumn.Name = "_configModeColumn";
 			_configModeColumn.ReadOnly = true;
 			_configModeColumn.Width = 130;
 			// 
 			// _installColumn
 			// 
-			_installColumn.HeaderText = "INSTALL";
+			_installColumn.HeaderText = LocalizationManager.Get("VerificationStep.Install");
 			_installColumn.Name = "_installColumn";
 			_installColumn.ReadOnly = true;
 			_installColumn.Width = 88;
 			// 
 			// _startColumn
 			// 
-			_startColumn.HeaderText = "START";
+			_startColumn.HeaderText = LocalizationManager.Get("VerificationStep.Start");
 			_startColumn.Name = "_startColumn";
 			_startColumn.ReadOnly = true;
 			_startColumn.Width = 88;
 			// 
 			// _stopColumn
 			// 
-			_stopColumn.HeaderText = "STOP";
+			_stopColumn.HeaderText = LocalizationManager.Get("VerificationStep.Stop");
 			_stopColumn.Name = "_stopColumn";
 			_stopColumn.ReadOnly = true;
 			_stopColumn.Width = 88;
 			// 
 			// _monitoringColumn
 			// 
-			_monitoringColumn.HeaderText = "MONITOR";
+			_monitoringColumn.HeaderText = LocalizationManager.Get("Text.90A94CC5F296BE2851BE");
 			_monitoringColumn.Name = "_monitoringColumn";
 			_monitoringColumn.ReadOnly = true;
 			_monitoringColumn.Width = 92;
 			// 
 			// _argumentsColumn
 			// 
-			_argumentsColumn.HeaderText = "ARGUMENTS";
+			_argumentsColumn.HeaderText = LocalizationManager.Get("VerificationStep.Arguments");
 			_argumentsColumn.Name = "_argumentsColumn";
 			_argumentsColumn.ReadOnly = true;
 			_argumentsColumn.Width = 96;
 			// 
 			// _configurationColumn
 			// 
-			_configurationColumn.HeaderText = "CONFIGURATION";
+			_configurationColumn.HeaderText = LocalizationManager.Get("VerificationStep.Configuration");
 			_configurationColumn.Name = "_configurationColumn";
 			_configurationColumn.ReadOnly = true;
 			_configurationColumn.Width = 122;
@@ -252,7 +252,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			// _lastTestedColumn
 			// 
 			_lastTestedColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-			_lastTestedColumn.HeaderText = "LAST TESTED";
+			_lastTestedColumn.HeaderText = LocalizationManager.Get("Text.D015233993548E9D8DB5");
 			_lastTestedColumn.MinimumWidth = 165;
 			_lastTestedColumn.Name = "_lastTestedColumn";
 			_lastTestedColumn.ReadOnly = true;
@@ -266,7 +266,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_selectedLabel.Name = "_selectedLabel";
 			_selectedLabel.Size = new Size(590, 25);
 			_selectedLabel.TabIndex = 7;
-			_selectedLabel.Text = "Select a game to update its verification evidence.";
+			_selectedLabel.Text = LocalizationManager.Get("Text.FFF9C013BFE465B863CB");
 			// 
 			// _stepLabel
 			// 
@@ -276,7 +276,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_stepLabel.Name = "_stepLabel";
 			_stepLabel.Size = new Size(112, 42);
 			_stepLabel.TabIndex = 8;
-			_stepLabel.Text = "Verification step";
+			_stepLabel.Text = LocalizationManager.Get("Text.B08D124792DCE6815189");
 			_stepLabel.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// _stepCombo
@@ -310,7 +310,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_markButton.Name = "_markButton";
 			_markButton.Size = new Size(146, 42);
 			_markButton.TabIndex = 10;
-			_markButton.Text = "Mark Verified";
+			_markButton.Text = LocalizationManager.Get("Text.F07368A0B39141B987BB");
 			_markButton.UseAccentStyle = true;
 			_markButton.UseVisualStyleBackColor = false;
 			_markButton.Click += MarkButton_Click;
@@ -326,7 +326,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_clearButton.Name = "_clearButton";
 			_clearButton.Size = new Size(130, 42);
 			_clearButton.TabIndex = 11;
-			_clearButton.Text = "Clear Mark";
+			_clearButton.Text = LocalizationManager.Get("Text.4E5F04F4586826E50CD7");
 			_clearButton.UseVisualStyleBackColor = false;
 			_clearButton.Click += ClearButton_Click;
 			// 
@@ -341,7 +341,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_exportButton.Name = "_exportButton";
 			_exportButton.Size = new Size(168, 42);
 			_exportButton.TabIndex = 12;
-			_exportButton.Text = "Export to Project";
+			_exportButton.Text = LocalizationManager.Get("Text.0351317AE5A60B867426");
 			_exportButton.UseVisualStyleBackColor = false;
 			_exportButton.Click += ExportButton_Click;
 			// 
@@ -356,7 +356,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_refreshButton.Name = "_refreshButton";
 			_refreshButton.Size = new Size(126, 42);
 			_refreshButton.TabIndex = 13;
-			_refreshButton.Text = "Refresh";
+			_refreshButton.Text = LocalizationManager.Get("ModManager.Button.Refresh");
 			_refreshButton.UseVisualStyleBackColor = false;
 			_refreshButton.Click += RefreshButton_Click;
 			// 
@@ -372,7 +372,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_closeButton.Name = "_closeButton";
 			_closeButton.Size = new Size(134, 42);
 			_closeButton.TabIndex = 14;
-			_closeButton.Text = "Close";
+			_closeButton.Text = LocalizationManager.Get("ModManager.Button.Close");
 			_closeButton.UseVisualStyleBackColor = false;
 			// 
 			// _statusLabel
@@ -383,7 +383,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_statusLabel.Name = "_statusLabel";
 			_statusLabel.Size = new Size(1170, 26);
 			_statusLabel.TabIndex = 15;
-			_statusLabel.Text = "Automatic evidence comes from Synix actions; arguments require the real-server test.";
+			_statusLabel.Text = LocalizationManager.Get("Text.8F2ED817BE8BBE23D64C");
 			// 
 			// GameVerificationQueue
 			// 
@@ -415,7 +415,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			Name = "GameVerificationQueue";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Game Verification Queue";
+			Text = LocalizationManager.Get("Text.43A57C9D7AFBA6F4D472");
 			((System.ComponentModel.ISupportInitialize)_grid).EndInit();
 			ResumeLayout(false);
 			PerformLayout();

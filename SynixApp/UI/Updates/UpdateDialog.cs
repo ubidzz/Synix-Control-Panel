@@ -27,18 +27,30 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			ArgumentNullException.ThrowIfNull(check);
 			SynixReleaseInfo release = check.Release ??
 				throw new ArgumentException(
-					"Release details are required for the update window.",
+					LocalizationManager.Get(
+						"Updates.Error.ReleaseDetailsRequired"),
 					nameof(check));
 
-			titleLabel.Text = $"Synix {release.VersionText} is available";
-			subtitleLabel.Text = $"Running {check.CurrentVersion.ToString(3)}  •  {check.Installation.DisplayName}";
+			LocalizationManager.BindText(
+				titleLabel,
+				"Updates.Available.Title",
+				release.VersionText);
+			LocalizationManager.BindText(
+				subtitleLabel,
+				"Updates.Available.Subtitle",
+				check.CurrentVersion.ToString(3),
+				check.Installation.DisplayName);
 			highlightsTextBox.Text = Core.BuildHighlights(release.Notes);
 			verificationLabel.ForeColor = check.Asset is null
 				? SettingsPalette.Warning
 				: SettingsPalette.Success;
-			verificationLabel.Text = check.Asset is null
-				? "The matching download is not ready for automatic installation."
-				: $"SHA-256 verified download  •  {FormatBytes(check.Asset.Size)}  •  {check.Asset.Name}";
+			LocalizationManager.BindText(
+				verificationLabel,
+				check.Asset is null
+					? "Updates.Download.Unavailable"
+					: "Updates.Download.Verified",
+				check.Asset is null ? string.Empty : FormatBytes(check.Asset.Size),
+				check.Asset?.Name ?? string.Empty);
 			safetyMessageLabel.ForeColor = check.CanInstall
 				? SettingsPalette.SecondaryText
 				: SettingsPalette.Warning;
@@ -49,7 +61,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 				using SynixReleaseNotesDialog notesDialog = new(release);
 				notesDialog.ShowDialog(this);
 			};
-			installButton.Text = check.CanInstall ? "Install Update" : "Install Unavailable";
+			LocalizationManager.BindText(
+				installButton,
+				check.CanInstall
+					? "Updates.Button.Install"
+					: "Updates.Button.Unavailable");
 			installButton.Enabled = check.CanInstall;
 			installButton.Click += (_, _) =>
 			{
@@ -64,14 +80,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 		{
 			if (check.Installation.Kind == SynixInstallationKind.Development)
 			{
-				return "Automatic installation is disabled for this Visual Studio build. " +
-					"Published Setup and Standalone releases enable it automatically.";
+				return LocalizationManager.Get(
+					"Updates.Safety.DevelopmentBuild");
 			}
 
 			if (!string.IsNullOrWhiteSpace(check.Problem))
-				return check.Problem;
+				return LocalizationManager.TranslateRuntimeText(check.Problem);
 
-			return "All game servers must be stopped before installing. Synix will update only its program files; everything inside C:\\Synix remains unchanged.";
+			return LocalizationManager.Get("Updates.Safety.StopServers");
 		}
 
 		private static void OpenUrl(Uri uri)
@@ -86,8 +102,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 			catch
 			{
 				LocalizedMessageBox.Show(
-					"Windows could not open the GitHub release page.",
-					"Unable to Open GitHub",
+					LocalizationManager.Get("Updates.GitHub.OpenFailed.Body"),
+					LocalizationManager.Get("Updates.GitHub.OpenFailed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 			}
@@ -106,7 +122,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 	{
 		public SynixReleaseNotesDialog(SynixReleaseInfo release)
 		{
-			Text = $"Synix {release.VersionText} Release Notes";
+			LocalizationManager.BindText(
+				this,
+				"Updates.ReleaseNotes.WindowTitle",
+				release.VersionText);
 			StartPosition = FormStartPosition.CenterParent;
 			FormBorderStyle = FormBorderStyle.Sizable;
 			MinimizeBox = false;
@@ -123,8 +142,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Updates
 				Padding = new Padding(22, 18, 22, 8),
 				Font = new Font("Segoe UI", 15F, FontStyle.Bold),
 				ForeColor = SettingsPalette.PrimaryText,
-				Text = $"Complete notes for Synix {release.VersionText}"
+				Text = LocalizationManager.Get(
+					"Updates.ReleaseNotes.Title",
+					release.VersionText)
 			};
+			LocalizationManager.BindText(
+				title,
+				"Updates.ReleaseNotes.Title",
+				release.VersionText);
 			RichTextBox notes = new()
 			{
 				Dock = DockStyle.Fill,

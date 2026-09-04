@@ -31,7 +31,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				: Core.FindPublishDirectory(
 					_projectDirectory);
 
-			_publishPathLabel.Text = _publishDirectory ?? "No publish folder was detected.";
+			_publishPathLabel.Text = _publishDirectory ??
+				LocalizationManager.Get("Text.ECE11BCA5230C237A53C");
 			ThemeManager.Apply(this);
 		}
 
@@ -51,7 +52,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				_checkCancellation?.Cancel();
 				eventArgs.Cancel = true;
-				_statusLabel.Text = "Canceling the release check safely...";
+				LocalizationManager.BindText(
+					_statusLabel,
+					"Text.ED928782624AFCE2078E");
 			}
 
 			base.OnFormClosing(eventArgs);
@@ -61,7 +64,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		{
 			using FolderBrowserDialog browser = new()
 			{
-				Description = "Select the folder containing the published Synix Control Panel.exe.",
+				Description = LocalizationManager.Get("ReleaseReadiness.FolderPicker"),
 				UseDescriptionForTitle = true,
 				ShowNewFolderButton = false,
 				SelectedPath = Directory.Exists(_publishDirectory)
@@ -73,7 +76,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 			_publishDirectory = browser.SelectedPath;
 			_publishPathLabel.Text = _publishDirectory;
-			_statusLabel.Text = "Publish folder selected. Run the check when ready.";
+			LocalizationManager.BindText(
+				_statusLabel,
+				"Text.49CDA0DED2FDB6421A49");
 			_copyButton.Enabled = false;
 		}
 
@@ -82,7 +87,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			if (_checkInProgress)
 			{
 				_checkCancellation?.Cancel();
-				_statusLabel.Text = "Canceling the release check safely...";
+				LocalizationManager.BindText(
+					_statusLabel,
+					"Text.ED928782624AFCE2078E");
 				return;
 			}
 
@@ -95,8 +102,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Synix could not find the project folder. Run this checker from a Visual Studio Build or Rebuild of the Synix project.",
-					"Project Folder Not Found",
+					LocalizationManager.Get("MessageText.6B5EDE5E1A10BF24CA11"),
+					LocalizationManager.Get("MessageText.56FF45D5FB6A4400524B"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
@@ -105,8 +112,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Choose the folder containing the published Synix files first.",
-					"Publish Folder Required",
+					LocalizationManager.Get("MessageText.2022398CDE720D78BF2A"),
+					LocalizationManager.Get("MessageText.1F510840383E97897648"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -114,17 +121,17 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 			_checkInProgress = true;
 			_checkCancellation = new CancellationTokenSource();
-			_runButton.Text = "Cancel Check";
+			LocalizationManager.BindText(_runButton, "Text.2222C9E93C86C44F7B3E");
 			_browseButton.Enabled = false;
 			_copyButton.Enabled = false;
 			_closeButton.Enabled = false;
-			_reportBox.Text = "Checking release files...";
+			LocalizationManager.BindText(_reportBox, "Text.D230F2F5F0AC7821A70C");
 			_statusLabel.ForeColor = SettingsPalette.SecondaryText;
 
 			try
 			{
 				Progress<string> progress = new(message =>
-					_statusLabel.Text = message);
+					_statusLabel.Text = LocalizationManager.TranslateRuntimeText(message));
 				SynixReleaseReadinessReport report = await Core.CheckReleaseReadinessAsync(
 					_projectDirectory,
 					_publishDirectory,
@@ -135,23 +142,27 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				_reportBox.SelectionStart = 0;
 				_reportBox.ScrollToCaret();
 				_copyButton.Enabled = true;
-				_statusLabel.Text = report.IsReady
-					? $"READY TO RELEASE  •  {report.PassedCount} checks passed"
-					: $"NOT READY  •  {report.FailedCount} item(s) need attention";
+				LocalizationManager.BindText(
+					_statusLabel,
+					report.IsReady
+						? "ReleaseReadiness.Summary.Ready"
+						: "ReleaseReadiness.Summary.NotReady",
+					report.IsReady ? report.PassedCount : report.FailedCount);
 				_statusLabel.ForeColor = report.IsReady
 					? SettingsPalette.Success
 					: SettingsPalette.Warning;
 			}
 			catch (OperationCanceledException)
 			{
-				_reportBox.Text = "The release check was canceled. No release files were changed.";
-				_statusLabel.Text = "Release check canceled.";
+				LocalizationManager.BindText(_reportBox, "Text.0117F5327FA39CD0DABB");
+				LocalizationManager.BindText(_statusLabel, "Text.2C3115623E07C95FD45C");
 				_statusLabel.ForeColor = SettingsPalette.Warning;
 			}
 			catch (Exception exception)
 			{
-				_reportBox.Text = exception.Message;
-				_statusLabel.Text = "The release check could not finish.";
+				_reportBox.Text = LocalizationManager.TranslateRuntimeText(
+					exception.Message);
+				LocalizationManager.BindText(_statusLabel, "Text.3CDC839AB03D7080ED58");
 				_statusLabel.ForeColor = SettingsPalette.Warning;
 			}
 			finally
@@ -159,7 +170,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				_checkCancellation?.Dispose();
 				_checkCancellation = null;
 				_checkInProgress = false;
-				_runButton.Text = "Run Release Check";
+				LocalizationManager.BindText(_runButton, "Text.A4EEB7A5AB5896C51F91");
 				_browseButton.Enabled = true;
 				_closeButton.Enabled = true;
 			}
@@ -170,14 +181,15 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			try
 			{
 				Clipboard.SetText(_reportBox.Text);
-				_statusLabel.Text = "Release report copied to the clipboard.";
+				LocalizationManager.BindText(_statusLabel, "Text.696DA5B5195A0FB2544E");
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				LocalizedMessageBox.Show(
 					this,
-					"Windows could not copy the release report.",
-					"Copy Failed",
+					LocalizationManager.Get("MessageText.C4163B7C6E2B1B662C17"),
+					LocalizationManager.Get("MessageText.2C58B2D4975AADC6042D"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 			}

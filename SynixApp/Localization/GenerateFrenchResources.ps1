@@ -87,6 +87,87 @@ $semanticTranslations = [ordered]@{
     'ServerSetup.Status.AllChecksPassed' = "Toutes les vérifications requises ont réussi"
     'ServerSetup.Status.SeeValidationMessage' = "Consultez le message de validation ci-dessous"
     'ServerSetup.Completion' = "Configuration : {0} %"
+    'ServerSetup.Window.EditTitle' = "Modifier le serveur"
+    'ServerSetup.ModeBadge.Edit' = "MODIFIER LE SERVEUR"
+    'ServerSetup.Page.Security.Description' = "Gérez les mots de passe du serveur et les identifiants des services en ligne."
+    'ServerSetup.Page.World.Description' = "Configurez la graine, la taille et les options du monde propres au jeu."
+    'ServerSetup.Page.Network.Description' = "Attribuez les ports de service et sécurisez l’administration à distance."
+    'ServerSetup.Page.Network.BeginnerDescription' = "Utilisez les ports de jeu et de requête recommandés. Le mode avancé ajoute les commandes RCON."
+    'ServerSetup.Page.Automation.Description' = "Contrôlez les tâches de démarrage, les redémarrages planifiés, les sauvegardes et les alertes."
+    'ServerSetup.Page.Discord.Title' = "Notifications Discord"
+    'ServerSetup.Page.Discord.Description' = "Utilisez un webhook principal ou acheminez les événements Synix vers plusieurs salons Discord."
+    'ServerSetup.Page.Install.Description' = "Choisissez l’emplacement du serveur et personnalisez les arguments de lancement."
+    'ServerSetup.Page.Install.BeginnerDescription' = "Choisissez où installer le serveur. Synix fournit les paramètres de lancement recommandés."
+    'ServerSetup.Mode.Advanced' = "Mode : Avancé"
+    'ServerSetup.Mode.Beginner' = "Mode : Débutant"
+    'ServerSetup.Mode.Advanced.AccessibleName' = "Mode de configuration avancé. Cliquez pour utiliser le mode débutant."
+    'ServerSetup.Mode.Beginner.AccessibleName' = "Mode de configuration débutant. Cliquez pour afficher les paramètres avancés."
+    'ServerSetup.Navigation.AttentionRequired' = "{0} contient des paramètres à corriger avant l’enregistrement."
+    'ServerSetup.Navigation.NoAttentionRequired' = "{0} ne contient aucun paramètre nécessitant votre attention."
+    'ServerSetup.Validation.Waiting' = "La validation attend les informations requises du serveur."
+    'ServerSetup.Validation.ServerNameAndGameRequired' = "  🔒 [REQUIS] Saisissez un nom de serveur et sélectionnez un modèle de jeu."
+    'ServerSetup.Validation.ServerNameRequired' = "  🔒 [REQUIS] Saisissez un nom avant d’enregistrer ce serveur."
+    'ServerSetup.Validation.GameRequired' = "  🔒 [REQUIS] Sélectionnez un modèle de jeu avant d’enregistrer ce serveur."
+    'ServerSetup.Validation.MinecraftLoading' = "  ◌ [MINECRAFT] Chargement des versions compatibles et des prérequis Java…"
+    'ServerSetup.Validation.MinecraftDetail' = "  ⚠️ [MINECRAFT] {0}"
+    'ServerSetup.Validation.MinecraftVersionRequired' = "  🔒 [MINECRAFT] Sélectionnez une version du jeu Minecraft."
+    'ServerSetup.Validation.AdminPasswordRequired' = "  🔒 [REQUIS] Saisissez un mot de passe administrateur pour protéger le rôle d’administration du serveur."
+    'ServerSetup.Validation.AuthenticationTokenRequired' = "  🔒 [REQUIS] Saisissez le champ obligatoire {0} avant d’enregistrer ce serveur."
+    'ServerSetup.Validation.RequiredDetail' = "  🔒 [REQUIS] {0}"
+    'ServerSetup.Validation.MinecraftLoaderRequired' = "  🔒 [MINECRAFT] Aucune version compatible du chargeur n’est sélectionnée."
+    'ServerSetup.Validation.RequirementDetail' = "  ⚠️ [PRÉREQUIS] {0}"
+    'ServerSetup.Validation.NameConflict' = "  ⚠️ [CONFLIT] Le nom « {0} » est déjà utilisé pour {1}."
+    'ServerSetup.Validation.ScheduleDayRequired' = "  🔒 [REQUIS] Sélectionnez au moins un jour pour le redémarrage automatique."
+    'ServerSetup.Validation.InstallFolderRequired' = "  🔒 [REQUIS] Sélectionnez un dossier d’installation ou activez le chemin par défaut."
+    'ServerSetup.Validation.LaunchDetail' = "  ⚠️ [LANCEMENT] {0}"
+    'ServerSetup.Validation.DiscordDetail' = "  🔒 [DISCORD] {0}"
+    'ServerSetup.Validation.ReadyNote' = "  ✔ [PRÊT] REMARQUE : {0}"
+    'ServerSetup.Validation.Updating' = "  ✔ [PRÊT] Mise à jour : {0}"
+    'ServerSetup.Validation.Ready' = "  ✔ [PRÊT] La configuration est valide et sûre."
+    'ServerSetup.Validation.Error' = "  ⚠️ [ERREUR DE VALIDATION] La validation n’a pas pu aboutir : {0}"
+    'ServerSetup.Validation.DuplicatePort' = "  ⚠️ [CONFLIT] {0} ne peuvent pas utiliser le même port {1}."
+    'ServerSetup.Validation.PortBlocked' = "  ⚠️ [CONFLIT] {0} {1} est bloqué par : {2}"
+    'ServerSetup.ConfigurationSupport' = "◇  PRISE EN CHARGE DE LA CONFIGURATION : {0}  •  {1}"
+    'ServerSetup.PortMapping.SelectGame' = "Sélectionnez un jeu pour afficher ses ports gérés."
+    'ServerSetup.PortMapping.AllMapped' = "Tous les ports déclarés sont définis par les arguments ou la configuration."
+    'ServerSetup.PortMapping.NeedsMapping' = "Mappage requis : {0} (arguments ou modèle de configuration)."
+    'ServerSetup.Port.Ipv6' = "Port IPv6"
+    'ServerSetup.Port.SystemProcess' = "Processus système"
+    'ServerSetup.List.AndSeparator' = " et "
+    'ServerSetup.Credentials.UnlockFailed.Title' = "Saisir à nouveau les identifiants du serveur"
+    'ServerSetup.Credentials.UnlockFailed.Body' = "Synix n’a pas pu déverrouiller les mots de passe, le jeton d’authentification ou les webhooks Discord enregistrés pour ce serveur. Ils peuvent provenir d’un autre utilisateur Windows ou d’un autre ordinateur.`n`nSaisissez à nouveau les identifiants, puis cliquez sur Enregistrer les modifications pour les protéger pour cet utilisateur Windows."
+    'ServerSetup.Dialog.SettingsAttention.Title' = "Paramètres du serveur à vérifier"
+    'ServerSetup.Dialog.ExtraArgumentsBlocked.Title' = "Arguments supplémentaires bloqués"
+    'ServerSetup.Dialog.DiscordAttention.Title' = "Paramètres Discord à vérifier"
+    'ServerSetup.Dialog.IllegalInput.Title' = "Saisie bloquée"
+    'ServerSetup.Dialog.IllegalInput.Body' = "Alerte de sécurité : une de vos saisies contient des caractères interdits."
+    'ServerSetup.ErrorAction.SaveMode' = "enregistrer le mode de configuration"
+    'ServerSetup.ErrorAction.SaveSettings' = "enregistrer les paramètres du serveur"
+    'ServerSetup.ErrorAction.OpenTokenPage' = "ouvrir la page du jeton d’authentification"
+    'ServerSetup.GamePicker.Placeholder' = "-- Choisir un jeu --"
+    'ServerSetup.Placeholder.SelectGame' = "Sélectionnez un jeu…"
+    'ServerSetup.Automation.EnableSchedule.AccessibleName' = "Activer le planificateur"
+    'ServerSetup.Install.DefaultFolder.AccessibleName' = "Dossier par défaut"
+    'ServerSetup.Verification.LastTested.Verified' = "Dernière version Synix testée : v{0}  •  {1:d}"
+    'ServerSetup.Verification.Verified' = "{0}  ✓ Vérifié"
+    'ServerSetup.Verification.Unverified' = "{0}  — Pas encore vérifié"
+    'ServerSetup.Minecraft.MetadataLoadFailed' = "Impossible de charger les métadonnées : {0}"
+    'ServerSetup.Minecraft.MojangVersionsLoadFailed' = "Impossible de charger les versions Mojang : {0}"
+    'ServerSetup.Minecraft.LoadingBuilds' = "Chargement des versions compatibles…"
+    'ServerSetup.Minecraft.JavaVersion' = "Java {0}"
+    'ServerSetup.Minecraft.Helper.Vanilla' = "Synix installe le serveur officiel et la version portable de Java correspondante."
+    'ServerSetup.Minecraft.Helper.Loader' = "Synix installe le chargeur de serveur {0} compatible. Ajoutez vos propres mods après l’installation."
+    'ServerSetup.Minecraft.NoCompatibleBuild' = "Aucune version de serveur {0} compatible n’existe pour Minecraft {1}."
+    'ServerSetup.Minecraft.Helper.ResolvedVanilla' = "Minecraft {0} utilise le serveur Mojang officiel et Java {3}."
+    'ServerSetup.Minecraft.Helper.ResolvedLoader' = "Minecraft {0} + {1} {2} utilise Java {3}. Ajoutez les mods après l’installation."
+    'ServerSetup.Minecraft.RetryDetail' = "{0} Sélectionnez à nouveau la version ou le chargeur pour réessayer."
+    'ServerSetup.Runtime.ServerPackage' = "Paquet du serveur"
+    'ServerSetup.Runtime.OfficialBedrock' = "Bedrock officiel"
+    'ServerSetup.MaxPlayers.Limited' = "Joueurs max. (maximum {0:0})"
+    'ServerSetup.SteamAccount.Restore.WindowTitle' = "Restaurer l’autorisation Steam"
+    'ServerSetup.SteamAccount.Restore.Title' = "Restaurer l’autorisation Steam"
+    'ServerSetup.SteamAccount.Restore.Description' = "{0} a été importé sur cet ordinateur. Confirmez le nom du compte Steam afin que SteamCMD puisse restaurer l’accès avant le premier démarrage."
+    'ServerSetup.SteamAccount.Required.Description' = "{0} nécessite un compte Steam pour l’installation. Saisissez le nom du compte que SteamCMD doit utiliser."
     'ProblemAction.ServerInstallation' = "Installation du serveur"
     'ProblemAction.UpdateValidation' = "Mise à jour ou validation des fichiers du serveur"
     'ProblemAction.ServerStartup' = "Démarrage du serveur"
@@ -286,6 +367,15 @@ $semanticTranslations = [ordered]@{
     'ResourceMonitor.ProcessCount.Many' = "{0} processus en cours"
     'ResourceMonitor.LastUpdated' = "Mis à jour à {0:T}  •  Actualisation automatique chaque seconde"
     'ResourceMonitor.Empty' = "Aucun serveur de jeu en cours détecté"
+}
+
+$additionalSemanticTranslations = & (Join-Path $PSScriptRoot 'SemanticResources.fr.ps1')
+foreach ($entry in $additionalSemanticTranslations.GetEnumerator()) {
+    if ($semanticTranslations.Contains($entry.Key)) {
+        throw "Duplicate French semantic resource key: $($entry.Key)"
+    }
+
+    $semanticTranslations[$entry.Key] = [string]$entry.Value
 }
 
 $pairs = @(
@@ -1015,14 +1105,14 @@ try {
         $key = [string]$entry.Key
         $english = [string]$entry.Value
         $french = $null
-        if ($operationalTranslations.Contains($key)) {
+		if ($semanticTranslations.Contains($key)) {
+			continue
+		}
+		elseif ($operationalTranslations.Contains($key)) {
             $writer.AddResource($key, [string]$operationalTranslations[$key])
             $translatedStaticCount++
         }
-        elseif (($key.StartsWith('Text.', [System.StringComparison]::Ordinal) -or
-            $key.StartsWith('DynamicText.', [System.StringComparison]::Ordinal) -or
-            $key.StartsWith('MessageText.', [System.StringComparison]::Ordinal)) -and
-            $translations.TryGetValue($english, [ref]$french)) {
+		elseif ($translations.TryGetValue($english, [ref]$french)) {
             $writer.AddResource($key, $french)
             $translatedStaticCount++
         }

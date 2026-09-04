@@ -97,14 +97,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (resourceName == null)
 			{
 				throw new InvalidDataException(
-					"The verified Minecraft Java configuration template is missing.");
+				LocalizationManager.Get("Minecraft.Configuration.TemplateMissing"));
 			}
 
 			using Stream? stream = assembly.GetManifestResourceStream(resourceName);
 			if (stream == null)
 			{
 				throw new InvalidDataException(
-					"The verified Minecraft Java configuration template could not be opened.");
+				LocalizationManager.Get("Minecraft.Configuration.TemplateOpenFailed"));
 			}
 
 			using StreamReader reader = new(stream);

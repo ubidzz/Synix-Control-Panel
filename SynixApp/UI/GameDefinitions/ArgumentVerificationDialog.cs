@@ -37,7 +37,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		public ArgumentVerificationDialog(string game) : this()
 		{
 			_game = GameDatabase.GetCanonicalGameName(game);
-			_titleLabel.Text = $"Argument Test • {_game}";
+			LocalizationManager.BindText(
+				_titleLabel,
+				"GameDefinitions.ArgumentTest.Title",
+				_game);
 			LoadInstalledServers();
 		}
 
@@ -63,8 +66,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_instanceCombo.DisplayMember = nameof(InstalledServerOption.DisplayName);
 			if (servers.Length == 0)
 			{
-				_statusLabel.Text =
-					"Install this game in Synix before testing its real launch arguments.";
+				LocalizationManager.BindText(
+					_statusLabel,
+					"Text.44D7882A1ADBECC9092C");
 				_statusLabel.ForeColor = SettingsPalette.Warning;
 				UpdateButtons();
 				return;
@@ -109,15 +113,20 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			foreach (GameArgumentVerificationCheck check in _preview.Checks)
 			{
 				int rowIndex = _checksGrid.Rows.Add(
-					check.Name,
-					check.Passed ? "PASS" : "FAIL",
-					check.Details);
+					LocalizationManager.TranslateRuntimeText(check.Name),
+					LocalizationManager.Get(
+						check.Passed
+							? "GameDefinitions.Result.Pass"
+							: "GameDefinitions.Result.Fail"),
+					LocalizationManager.TranslateRuntimeText(check.Details));
 				_checksGrid.Rows[rowIndex].Tag = check;
 			}
 
-			_statusLabel.Text = _preview.IsValid
-				? "Command validation passed. Start the test to prove that the real server accepts it."
-				: "Command validation failed. Correct the failed checks before starting the test.";
+			LocalizationManager.BindText(
+				_statusLabel,
+				_preview.IsValid
+					? "DynamicText.99916B9A2D79AE0044D5"
+					: "DynamicText.36A6C5ECE85999A4BE81");
 			_statusLabel.ForeColor = _preview.IsValid
 				? SettingsPalette.Success
 				: SettingsPalette.Danger;
@@ -135,8 +144,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"The command must pass every validation check before Synix can start the argument test.",
-					"Argument Test Blocked",
+					LocalizationManager.Get("MessageText.21619FB57FA1E3D42E43"),
+					LocalizationManager.Get("MessageText.40693567D074F64B26C5"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
@@ -150,8 +159,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Stop this server first. The test must observe a new launch created from the displayed arguments.",
-					"Server Already Active",
+					LocalizationManager.Get("MessageText.713E1363B1176FB2ABCE"),
+					LocalizationManager.Get("MessageText.AB679B16586E59139E46"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -162,8 +171,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_launchVerified = false;
 			_confirmationCheck.Checked = false;
 			SetConfirmationAvailable(false);
-			_statusLabel.Text =
-				"Starting the server through Synix. Waiting for its configured listener to respond...";
+			LocalizationManager.BindText(
+				_statusLabel,
+				"Text.20C57F23AC717E8E040D");
 			_statusLabel.ForeColor = SettingsPalette.Accent;
 			UpdateButtons();
 			await Core.Instance.ExecuteStartSequence(server);
@@ -178,10 +188,14 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				return;
 
 			_stopButton.Enabled = false;
-			_statusLabel.Text = "Stopping the test server through Synix...";
+			LocalizationManager.BindText(
+				_statusLabel,
+				"Text.6DC2259A4335DB1F7C92");
 			_statusLabel.ForeColor = SettingsPalette.Accent;
 			await Core.Instance.StopServerAndReport(server);
-			_statusLabel.Text = "The test server is stopped. The completed argument evidence is preserved.";
+			LocalizationManager.BindText(
+				_statusLabel,
+				"Text.946FF9E0EB0FA926E2AF");
 			_statusLabel.ForeColor = SettingsPalette.SecondaryText;
 			UpdateButtons();
 		}
@@ -207,8 +221,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				!server.PID.HasValue)
 			{
 				_probeTimer.Stop();
-				_statusLabel.Text =
-					"The server stopped before startup could be verified. Review its recent logs and definition.";
+				LocalizationManager.BindText(
+					_statusLabel,
+					"Text.BCB4E85BFE366942E9D4");
 				_statusLabel.ForeColor = SettingsPalette.Danger;
 				_testLaunchRequested = false;
 				UpdateButtons();
@@ -228,12 +243,14 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				if (processSurvived && elapsed >= TimeSpan.FromSeconds(30))
 				{
 					CompleteLaunchEvidence(
-						"The server remained active for 30 seconds. This definition does not support a safe automatic network probe.");
+						"GameDefinitions.ArgumentTest.ProcessSurvived");
 				}
 				else
 				{
-					_statusLabel.Text =
-						$"The process is active. Waiting for the 30-second startup check ({Math.Max(0, 30 - (int)elapsed.TotalSeconds)} seconds remaining)...";
+					LocalizationManager.BindText(
+						_statusLabel,
+						"GameDefinitions.ArgumentTest.WaitingProcess",
+						Math.Max(0, 30 - (int)elapsed.TotalSeconds));
 					_statusLabel.ForeColor = SettingsPalette.Accent;
 				}
 				UpdateButtons();
@@ -260,18 +277,23 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				if (responding)
 				{
 					CompleteLaunchEvidence(
-						"The real server accepted the command and responded through its configured network listener.");
+						"GameDefinitions.ArgumentTest.ListenerResponded");
 				}
 				else
 				{
-					_statusLabel.Text =
-						$"Server process started. Waiting for its configured listener ({elapsed:mm\\:ss} elapsed)...";
+					LocalizationManager.BindText(
+						_statusLabel,
+						"GameDefinitions.ArgumentTest.WaitingListener",
+						elapsed.ToString("mm\\:ss"));
 					_statusLabel.ForeColor = SettingsPalette.Accent;
 				}
 			}
 			catch (Exception exception)
 			{
-				_statusLabel.Text = $"The startup probe could not complete: {exception.Message}";
+				LocalizationManager.BindText(
+					_statusLabel,
+					"GameDefinitions.ArgumentTest.ProbeFailed",
+					exception.Message);
 				_statusLabel.ForeColor = SettingsPalette.Warning;
 			}
 			finally
@@ -281,13 +303,14 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			}
 		}
 
-		private void CompleteLaunchEvidence(string details)
+		private void CompleteLaunchEvidence(string detailsResourceKey)
 		{
 			_launchVerified = true;
 			_probeTimer.Stop();
 			SetConfirmationAvailable(true);
-			_statusLabel.Text = details +
-				" Confirm the visible in-game values before recording the verification.";
+			_statusLabel.Text =
+				LocalizationManager.Get(detailsResourceKey) +
+				LocalizationManager.Get("DynamicText.F36B8F89A6A8DD2ACEF1");
 			_statusLabel.ForeColor = SettingsPalette.Success;
 		}
 
@@ -313,9 +336,12 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			GameCompatibilityVerification verification =
 				Core.GetGameCompatibility(server.Game);
 			VerificationRecorded = verification.Arguments != null;
-			_statusLabel.Text = recorded
-				? $"Argument verification recorded for Synix v{Core.GetCurrentVersion().ToString(3)}."
-				: "This game already has argument evidence from this Synix version or a newer version.";
+			LocalizationManager.BindText(
+				_statusLabel,
+				recorded
+					? "GameDefinitions.ArgumentTest.Recorded"
+					: "DynamicText.B83EC0A78559E32C96D2",
+				Core.GetCurrentVersion().ToString(3));
 			_statusLabel.ForeColor = VerificationRecorded
 				? SettingsPalette.Success
 				: SettingsPalette.Warning;

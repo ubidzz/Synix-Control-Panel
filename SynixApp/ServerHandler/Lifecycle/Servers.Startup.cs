@@ -30,13 +30,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (selectedDefinition == null)
 				{
 					logCallback?.Invoke(
-						$"[START ERROR] The built-in definition for '{server.Game}' could not be loaded.",
+						LocalizationManager.Get("ServerStart.Activity.DefinitionMissing", server.Game),
 						Color.Red);
 					_ = Core.Instance.SendDiscordNotification(
 						server,
 						DiscordNotificationEvent.ConfigurationWarning,
-						"START CONFIGURATION ERROR",
-						$"The built-in definition for {server.Game} could not be loaded.",
+						LocalizationManager.Get("ServerStart.Notification.ConfigurationError.Title"),
+						LocalizationManager.Get("ServerStart.Notification.DefinitionMissing.Body", server.Game),
 						Color.Red);
 					return;
 				}
@@ -53,23 +53,24 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				foreach (GamePrerequisiteItem warning in prerequisites.Items.Where(item =>
 					item.State == GamePrerequisiteState.Warning))
 				{
-					logCallback?.Invoke($"[REQUIREMENT WARNING] {warning.Message}", Color.Orange);
+					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.RequirementWarning", warning.Message), Color.Orange);
 				}
 				if (!prerequisites.CanStart)
 				{
 					string message = prerequisites.ToDisplayText();
-					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
+					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.Blocked", message), Color.Red);
 					_ = Core.Instance.SendDiscordNotification(
 						server,
 						DiscordNotificationEvent.MonitoringWarning,
-						"START BLOCKED",
+						LocalizationManager.Get("ServerStart.Notification.Blocked.Title"),
 						message,
 						Color.Red);
 					if (context == StartContext.Manual)
 					{
 						LocalizedMessageBox.Show(
-							message,
-							"Server Requirements Not Met",
+							LocalizationManager.TranslateRuntimeText(message),
+							LocalizationManager.Get(
+								"ServerStart.RequirementsNotMet.Title"),
 							MessageBoxButtons.OK,
 							MessageBoxIcon.Warning);
 					}
@@ -85,7 +86,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				catch (SynixPasswordProtectionException)
 				{
 					logCallback?.Invoke(
-						"[🚨 ERROR] Synix could not unlock this server's credentials. Open Server Settings, re-enter them, and save before starting the server.",
+						LocalizationManager.Get("ServerStart.Activity.CredentialsLocked"),
 						Color.Red);
 					return;
 				}
@@ -95,13 +96,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					launchPasswords,
 					out string serverInputError))
 				{
-					string message = $"{serverInputError} Open Server Settings, correct the credential, and save before starting.";
-					logCallback?.Invoke($"[START BLOCKED] {message}", Color.Red);
+					string message = LocalizationManager.Get(
+						"ServerStart.CredentialAttention.Body",
+						LocalizationManager.TranslateRuntimeText(serverInputError));
+					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.Blocked", message), Color.Red);
 					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
 					{
 						LocalizedMessageBox.Show(
 							message,
-							"Server Settings Need Attention",
+							LocalizationManager.Get(
+								"ServerStart.SettingsAttention.Title"),
 							MessageBoxButtons.OK,
 							MessageBoxIcon.Warning);
 					}
@@ -115,7 +119,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					logCallback?.Invoke(guardMsg, Color.Orange);
 					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
-						LocalizedMessageBox.Show(guardMsg, "System Resource Exhaustion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						LocalizedMessageBox.Show(
+							LocalizationManager.TranslateRuntimeText(guardMsg),
+							LocalizationManager.Get(
+								"ResourceGuard.Exhaustion.Title"),
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Warning);
 					return;
 				}
 
@@ -142,14 +151,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						StringComparison.OrdinalIgnoreCase))
 				{
 					logCallback?.Invoke(
-						"[OXIDE ERROR] Start blocked because Oxide was not installed successfully. Run Update or Validate to retry.",
+						LocalizationManager.Get("ServerStart.Activity.OxideInstallFailed"),
 						Color.Red);
 					return;
 				}
 				if (OxideRuntimeManager.RequiresVanillaRestore(server, selectedDefinition))
 				{
 					logCallback?.Invoke(
-						"[OXIDE] Start blocked because Rust was changed to Vanilla. Run Update or Validate to restore the official files first.",
+						LocalizationManager.Get("ServerStart.Activity.OxideRestoreRequired"),
 						Color.Orange);
 					return;
 				}
@@ -163,7 +172,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					if (string.IsNullOrWhiteSpace(launchPublicIp))
 					{
 						logCallback?.Invoke(
-							"[PUBLIC LISTING] Synix could not detect the current public address. The server will use its own automatic address detection.",
+							LocalizationManager.Get("ServerStart.Activity.PublicAddressUnavailable"),
 							Color.Orange);
 					}
 				}
@@ -187,7 +196,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					var dbEntry = GameDatabase.GetGame(server.Game);
 					if (dbEntry == null)
 					{
-						logCallback?.Invoke("[🚨 ERROR] Game template not found.", Color.Red);
+						logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.TemplateMissing"), Color.Red);
 						return;
 					}
 
@@ -196,12 +205,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					if (!File.Exists(fullExePath))
 					{
-						logCallback?.Invoke($"[🚨 ERROR] Executable missing: {fullExePath}", Color.Red);
+						logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.ExecutableMissing", fullExePath), Color.Red);
 						_ = Core.Instance.SendDiscordNotification(
 							server,
 							DiscordNotificationEvent.ConfigurationWarning,
-							"SERVER FILE MISSING",
-							"The configured server launch file is missing. Run Update or Validate before starting.",
+							LocalizationManager.Get("ServerStart.Notification.FileMissing.Title"),
+							LocalizationManager.Get("ServerStart.Notification.FileMissing.Body"),
 							Color.Red);
 						server.Status = StatusManager.GetStatus(ServerState.Stopped);
 						Core.Instance.UpdateGridStatus();
@@ -230,12 +239,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						out string argumentError))
 					{
 						logCallback?.Invoke(
-							$"[🚨 SECURITY] {argumentError} Startup was blocked.",
+							LocalizationManager.Get("ServerStart.Activity.SecurityBlocked", argumentError),
 							Color.Red);
 						_ = Core.Instance.SendDiscordNotification(
 							server,
 							DiscordNotificationEvent.SecurityWarning,
-							"UNSAFE STARTUP BLOCKED",
+							LocalizationManager.Get("ServerStart.Notification.Unsafe.Title"),
 							argumentError,
 							Color.Red);
 						server.Status = StatusManager.GetStatus(ServerState.Stopped);
@@ -252,7 +261,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							cleanIdentity);
 						Directory.CreateDirectory(profilePath);
 						logCallback?.Invoke(
-							$"[ARMA REFORGER] Profile and crash logs: {profilePath}",
+							LocalizationManager.Get("ServerStart.Activity.ArmaProfile", profilePath),
 							Color.Cyan);
 					}
 
@@ -274,7 +283,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 				if (psi == null) return;
 
-				string safeLogArgs = "[arguments unavailable]";
+				string safeLogArgs = LocalizationManager.Get("ServerStart.Arguments.Unavailable");
 				if (selectedDefinition != null)
 				{
 					string fullExePath = GameLaunchCommandBuilder.ResolveExecutablePath(
@@ -293,18 +302,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						out safeLogArgs,
 						out _))
 					{
-						safeLogArgs = "[arguments passed securely; preview unavailable]";
+						safeLogArgs = LocalizationManager.Get("ServerStart.Arguments.SecurePreviewUnavailable");
 					}
 					else if (!string.IsNullOrWhiteSpace(launchPublicIp))
 					{
 						safeLogArgs = safeLogArgs.Replace(
 							launchPublicIp,
-							"[PUBLIC IP]",
+							LocalizationManager.Get("ServerStart.Arguments.PublicIpRedacted"),
 							StringComparison.Ordinal);
 					}
 				}
 
-				logCallback?.Invoke($"[ARGUMENT] {safeLogArgs}", Color.Cyan);
+				logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.Arguments", safeLogArgs), Color.Cyan);
 
 				Process? proc = Process.Start(psi);
 				if (proc != null)
@@ -333,8 +342,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					_ = Core.Instance.SendDiscordNotification(
 						server,
 						DiscordNotificationEvent.ServerStarting,
-						"SERVER STARTING",
-						$"{server.ServerName} process has been initiated.",
+						LocalizationManager.Get("ServerStart.Notification.Starting.Title"),
+						LocalizationManager.Get("ServerStart.Notification.Starting.Body", server.ServerName),
 						Color.Cyan);
 
 					proc.EnableRaisingEvents = true;
@@ -350,7 +359,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							if (ReconcileActiveServerProcesses(server, forceDiscovery: true))
 							{
 								logCallback?.Invoke(
-									$"[PROCESS TRACKING] The launcher exited, but {server.ServerProcesses.Count} verified server process(es) remain active: {FormatProcessRegistry(server.ServerProcesses)}",
+									LocalizationManager.Get(
+										"ServerStart.Activity.LauncherExitedProcessesRemain",
+										server.ServerProcesses.Count,
+										FormatProcessRegistry(server.ServerProcesses)),
 									Color.Cyan);
 								FileHandler.SaveServers();
 								return;
@@ -369,7 +381,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						}
 						catch (Exception ex)
 						{
-							logCallback?.Invoke($"[🚨 CRASH HANDLER ERROR] {ex.Message}", Color.Red);
+							logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.CrashHandlerError", ex.Message), Color.Red);
 							FinalizeStoppedState(server);
 						}
 					};
@@ -378,11 +390,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[🚨 CRITICAL ERROR] {ex.Message}", Color.Red);
+			logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.CriticalError", ex.Message), Color.Red);
 				_ = Core.Instance.SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.MonitoringWarning,
-					"START FAILED",
+					LocalizationManager.Get("ServerStart.Notification.Failed.Title"),
 					ex.Message,
 					Color.Red);
 			}
@@ -400,13 +412,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!string.Equals(original, updated, StringComparison.Ordinal))
 				{
 					File.WriteAllText(launcherPath, updated);
-					logCallback?.Invoke("[MINECRAFT] Updated the legacy launcher so clean console shutdown commands are accepted.", Color.Cyan);
+					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.MinecraftLauncherUpdated"), Color.Cyan);
 				}
 			}
 			catch (Exception ex)
 			{
 
-				logCallback?.Invoke($"[⚠️ MINECRAFT] Could not update Start.bat for graceful shutdown: {ex.Message}", Color.OrangeRed);
+				logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.MinecraftLauncherUpdateFailed", ex.Message), Color.OrangeRed);
 			}
 		}
 
@@ -434,8 +446,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							return;
 						}
 					}
-					catch
+					catch (Exception exception)
 					{
+						ApplicationLogService.WriteSuppressedException(exception);
 						return;
 					}
 

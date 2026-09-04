@@ -53,7 +53,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(852, 34);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Release Readiness Checker";
+			titleLabel.Text = LocalizationManager.Get("Text.E8986299CC046EAA3D40");
 			// 
 			// subtitleLabel
 			// 
@@ -63,7 +63,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(852, 24);
 			subtitleLabel.TabIndex = 1;
-			subtitleLabel.Text = "Checks the actual publish output without rebuilding Synix, starting the release, or accessing C:\\Synix.";
+			subtitleLabel.Text = LocalizationManager.Get("Text.1DF3BE2046D08A780F73");
 			// 
 			// folderCard
 			// 
@@ -88,7 +88,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			folderTitleLabel.Name = "folderTitleLabel";
 			folderTitleLabel.Size = new Size(620, 25);
 			folderTitleLabel.TabIndex = 0;
-			folderTitleLabel.Text = "Published Synix folder";
+			folderTitleLabel.Text = LocalizationManager.Get("Text.D986018F30352387AC70");
 			// 
 			// _publishPathLabel
 			// 
@@ -99,7 +99,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_publishPathLabel.Name = "_publishPathLabel";
 			_publishPathLabel.Size = new Size(635, 28);
 			_publishPathLabel.TabIndex = 1;
-			_publishPathLabel.Text = "No publish folder was detected.";
+			_publishPathLabel.Text = LocalizationManager.Get("Text.ECE11BCA5230C237A53C");
 			// 
 			// _browseButton
 			// 
@@ -112,7 +112,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_browseButton.Name = "_browseButton";
 			_browseButton.Size = new Size(142, 42);
 			_browseButton.TabIndex = 2;
-			_browseButton.Text = "Choose Folder";
+			_browseButton.Text = LocalizationManager.Get("Text.6ABB0361F0B32BEF8441");
 			_browseButton.UseVisualStyleBackColor = false;
 			_browseButton.Click += BrowseButton_Click;
 			// 
@@ -124,7 +124,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_statusLabel.Name = "_statusLabel";
 			_statusLabel.Size = new Size(852, 28);
 			_statusLabel.TabIndex = 3;
-			_statusLabel.Text = "Ready to check the published files and the test receipt created during Publish.";
+			_statusLabel.Text = LocalizationManager.Get("Text.2B2FF7B1710C1AE35612");
 			// 
 			// _reportBox
 			// 
@@ -140,7 +140,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_reportBox.ScrollBars = RichTextBoxScrollBars.ForcedBoth;
 			_reportBox.Size = new Size(852, 392);
 			_reportBox.TabIndex = 4;
-			_reportBox.Text = "The readiness report will appear here.";
+			_reportBox.Text = LocalizationManager.Get("Text.CFA163A0DFA468756CF4");
 			_reportBox.WordWrap = false;
 			// 
 			// _closeButton
@@ -155,7 +155,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_closeButton.Name = "_closeButton";
 			_closeButton.Size = new Size(110, 42);
 			_closeButton.TabIndex = 5;
-			_closeButton.Text = "Close";
+			_closeButton.Text = LocalizationManager.Get("ModManager.Button.Close");
 			_closeButton.UseVisualStyleBackColor = false;
 			// 
 			// _copyButton
@@ -170,7 +170,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_copyButton.Name = "_copyButton";
 			_copyButton.Size = new Size(152, 42);
 			_copyButton.TabIndex = 6;
-			_copyButton.Text = "Copy Report";
+			_copyButton.Text = LocalizationManager.Get("Text.54B8E0C0C268C1549AF4");
 			_copyButton.UseVisualStyleBackColor = false;
 			_copyButton.Click += CopyButton_Click;
 			// 
@@ -185,7 +185,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_runButton.Name = "_runButton";
 			_runButton.Size = new Size(186, 42);
 			_runButton.TabIndex = 7;
-			_runButton.Text = "Run Release Check";
+			_runButton.Text = LocalizationManager.Get("Text.A4EEB7A5AB5896C51F91");
 			_runButton.UseAccentStyle = true;
 			_runButton.UseVisualStyleBackColor = false;
 			_runButton.Click += RunButton_Click;
@@ -212,7 +212,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			Name = "SynixReleaseReadinessDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Release Readiness Checker";
+			Text = LocalizationManager.Get("Text.3D07CCD88E27236748F3");
 			folderCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}

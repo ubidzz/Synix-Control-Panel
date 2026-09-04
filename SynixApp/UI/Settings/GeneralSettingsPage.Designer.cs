@@ -153,7 +153,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(648, 31);
 			lblTitle.TabIndex = 0;
-			lblTitle.Text = "Show Server Console Window";
+			lblTitle.Text = LocalizationManager.Get("Text.5856356326064A450522");
 			lblTitle.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblDescription
@@ -168,11 +168,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblDescription.Name = "lblDescription";
 			lblDescription.Size = new Size(648, 55);
 			lblDescription.TabIndex = 1;
-			lblDescription.Text = "Open the native console when a game server starts. Disable this to run servers silently in the background.";
+			lblDescription.Text = LocalizationManager.Get("Text.8736DCB51A77046719F5");
 			// 
 			// chkShowServerWindow
 			// 
-			chkShowServerWindow.AccessibleName = "Show server console window";
+			chkShowServerWindow.AccessibleName = LocalizationManager.Get("Text.5856356326064A450522");
 			chkShowServerWindow.AccessibleRole = AccessibleRole.CheckButton;
 			chkShowServerWindow.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			chkShowServerWindow.BackColor = Color.FromArgb(17, 27, 45);
@@ -259,7 +259,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTitleDarkMode.Name = "lblTitleDarkMode";
 			lblTitleDarkMode.Size = new Size(648, 31);
 			lblTitleDarkMode.TabIndex = 0;
-			lblTitleDarkMode.Text = "Dark Mode";
+			lblTitleDarkMode.Text = LocalizationManager.Get("Text.DF8C7C89B3E4CFB1FF6F");
 			lblTitleDarkMode.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblDescriptionDarkMode
@@ -274,11 +274,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblDescriptionDarkMode.Name = "lblDescriptionDarkMode";
 			lblDescriptionDarkMode.Size = new Size(648, 49);
 			lblDescriptionDarkMode.TabIndex = 1;
-			lblDescriptionDarkMode.Text = "Switch the Synix dashboard between light and dark visual themes.";
+			lblDescriptionDarkMode.Text = LocalizationManager.Get("Text.A03EE332F98F4733802C");
 			// 
 			// chkDarkMode
 			// 
-			chkDarkMode.AccessibleName = "Dark mode toggle";
+			chkDarkMode.AccessibleName = LocalizationManager.Get("Text.B509EAF7EB0805B82CA2");
 			chkDarkMode.AccessibleRole = AccessibleRole.CheckButton;
 			chkDarkMode.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			chkDarkMode.BackColor = Color.FromArgb(17, 27, 45);
@@ -365,7 +365,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTitleSteamDownloads.Name = "lblTitleSteamDownloads";
 			lblTitleSteamDownloads.Size = new Size(414, 31);
 			lblTitleSteamDownloads.TabIndex = 0;
-			lblTitleSteamDownloads.Text = "SteamCMD Download Speed";
+			lblTitleSteamDownloads.Text = LocalizationManager.Get("Text.1E704E3DA1455CD132D9");
 			lblTitleSteamDownloads.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblDescriptionSteamDownloads
@@ -380,7 +380,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblDescriptionSteamDownloads.Name = "lblDescriptionSteamDownloads";
 			lblDescriptionSteamDownloads.Size = new Size(414, 61);
 			lblDescriptionSteamDownloads.TabIndex = 1;
-			lblDescriptionSteamDownloads.Text = "Use full speed or limit game-server installs, updates, repairs, and validations.";
+			lblDescriptionSteamDownloads.Text = LocalizationManager.Get("Text.A8142050CBD33EE95F3F");
 			// 
 			// downloadControlsLayout
 			// 
@@ -402,7 +402,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			// 
 			// cmbSteamCmdDownloadMode
 			// 
-			cmbSteamCmdDownloadMode.AccessibleName = "SteamCMD download speed mode";
+			cmbSteamCmdDownloadMode.AccessibleName = LocalizationManager.Get("Text.A0E49EF6BF0044178531");
 			cmbSteamCmdDownloadMode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			cmbSteamCmdDownloadMode.ArrowColor = Color.FromArgb(158, 172, 194);
 			cmbSteamCmdDownloadMode.BackColor = Color.FromArgb(12, 21, 36);
@@ -423,7 +423,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			// 
 			// numSteamCmdDownloadLimit
 			// 
-			numSteamCmdDownloadLimit.AccessibleName = "SteamCMD download speed in megabits per second";
+			numSteamCmdDownloadLimit.AccessibleName = LocalizationManager.Get("Text.AD5BE8100C99D831B948");
 			numSteamCmdDownloadLimit.AccessibleRole = AccessibleRole.SpinButton;
 			numSteamCmdDownloadLimit.BackColor = Color.FromArgb(12, 21, 36);
 			numSteamCmdDownloadLimit.Font = new Font("Segoe UI", 10.5F);
@@ -447,7 +447,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblSteamCmdDownloadUnit.Name = "lblSteamCmdDownloadUnit";
 			lblSteamCmdDownloadUnit.Size = new Size(72, 92);
 			lblSteamCmdDownloadUnit.TabIndex = 2;
-			lblSteamCmdDownloadUnit.Text = "Mbps";
+			lblSteamCmdDownloadUnit.Text = LocalizationManager.Get("Text.ECF1D7C868EE46FC6DF0");
 			lblSteamCmdDownloadUnit.TextAlign = ContentAlignment.MiddleLeft;
 			//
 			// settingsCardLanguage
@@ -525,7 +525,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblTitleLanguage.Name = "lblTitleLanguage";
 			lblTitleLanguage.Size = new Size(498, 31);
 			lblTitleLanguage.TabIndex = 0;
-			lblTitleLanguage.Text = "Language";
+			lblTitleLanguage.Text = LocalizationManager.Get("Text.A4FE65264EF7DBB38D10");
 			lblTitleLanguage.TextAlign = ContentAlignment.MiddleLeft;
 			//
 			// lblDescriptionLanguage
@@ -540,11 +540,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblDescriptionLanguage.Name = "lblDescriptionLanguage";
 			lblDescriptionLanguage.Size = new Size(498, 47);
 			lblDescriptionLanguage.TabIndex = 1;
-			lblDescriptionLanguage.Text = "Choose the language used by Synix. Game settings and configuration values remain in English.";
+			lblDescriptionLanguage.Text = LocalizationManager.Get("Text.30F3BBCB43AC48EBFD1C");
 			//
 			// cmbLanguage
 			//
-			cmbLanguage.AccessibleName = "Interface language";
+			cmbLanguage.AccessibleName = LocalizationManager.Get("Text.8027F432A7FB7C273A1A");
 			cmbLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			cmbLanguage.ArrowColor = Color.FromArgb(158, 172, 194);
 			cmbLanguage.BackColor = Color.FromArgb(12, 21, 36);

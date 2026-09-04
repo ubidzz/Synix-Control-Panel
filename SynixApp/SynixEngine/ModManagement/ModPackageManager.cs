@@ -168,12 +168,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 							: $"{Path.GetFileName(target.IdStores[0].RelativePath)} • {id}";
 						results.Add(new ModInventoryItem(
 							id,
-							"Mod ID",
-							"Provider managed",
-							"Configured for next start",
-							"Provider download not pre-scanned",
+							LocalizationManager.Get("ModManager.Known.ModId"),
+							LocalizationManager.Get("ModManager.Known.ProviderManaged"),
+							LocalizationManager.Get("ModManager.Known.ConfiguredNextStart"),
+							LocalizationManager.Get("ModManager.Known.ProviderNotScanned"),
 							string.IsNullOrWhiteSpace(target.ProviderName)
-								? "Game provider"
+								? LocalizationManager.Get("ModManager.Known.GameProvider")
 								: target.ProviderName,
 							location,
 							string.Empty,
@@ -209,24 +209,28 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					targetNames.Add(name);
 					results.Add(new ModInventoryItem(
 						name,
-						target.Kind.ToString(),
+						LocalizationManager.Get($"ModManager.Known.{target.Kind}"),
 						ReadVersion(file),
+								reference == null
+									? LocalizationManager.Get("ModManager.Known.Detected")
+									: LocalizationManager.Get(healthy
+										? "ModManager.Known.Healthy"
+										: "ModManager.Known.Changed"),
+								reference == null
+									? LocalizationManager.Get("ModManager.Known.NotReviewed")
+									: reference.Installation.SecurityReviewedAtUtc == null ||
+										string.IsNullOrWhiteSpace(reference.Installation.SecurityReview)
+										? LocalizationManager.Get("ModManager.Known.LegacyNotReviewed")
+										: reference.Installation.SecurityReview.Equals(
+											"Structural checks completed",
+											StringComparison.Ordinal)
+											? LocalizationManager.Get("ModManager.Known.StructuralOnly")
+											: LocalizationManager.Get("ModManager.Known.ReviewRecorded"),
 							reference == null
-								? "Detected on disk"
-								: healthy ? "Healthy" : "Changed outside Synix",
-							reference == null
-								? "Not reviewed by Synix"
-								: reference.Installation.SecurityReviewedAtUtc == null ||
-									string.IsNullOrWhiteSpace(reference.Installation.SecurityReview)
-									? "Legacy install • not reviewed"
-									: reference.Installation.SecurityReview.Equals(
-										"Structural checks completed",
-										StringComparison.Ordinal)
-										? "Structural checks only"
-										: "Pre-install review recorded",
-							reference == null
-							? string.IsNullOrWhiteSpace(target.ProviderName) ? "External" : target.ProviderName
-							: "Synix import",
+							? string.IsNullOrWhiteSpace(target.ProviderName)
+								? LocalizationManager.Get("ModManager.Known.External")
+								: target.ProviderName
+							: LocalizationManager.Get("ModManager.Known.SynixImport"),
 						relativePath,
 						file,
 						reference?.Installation.Id,
@@ -249,12 +253,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 						continue;
 					results.Add(new ModInventoryItem(
 						Path.GetFileName(directory),
-						target.Kind.ToString(),
-						"Provider managed",
-						"Detected on disk",
-						"Not reviewed by Synix",
+						LocalizationManager.Get($"ModManager.Known.{target.Kind}"),
+						LocalizationManager.Get("ModManager.Known.ProviderManaged"),
+						LocalizationManager.Get("ModManager.Known.Detected"),
+						LocalizationManager.Get("ModManager.Known.NotReviewed"),
 						string.IsNullOrWhiteSpace(target.ProviderName)
-							? "External provider"
+							? LocalizationManager.Get("ModManager.Known.ExternalProvider")
 							: target.ProviderName,
 						relativePath,
 						directory,
@@ -283,17 +287,20 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			if (securityContext.IsCurrentProcessElevated)
 			{
 				throw new InvalidOperationException(
-					"Restart Synix normally instead of using Run as administrator before installing add-ons. This prevents mod code from inheriting administrator access.");
+					LocalizationManager.Get("ModManager.Error.ElevatedProcess"));
 			}
 			if (profile.SupportLevel != ModSystemSupportLevel.Managed || !target.CanImport)
 				throw new InvalidOperationException(
-					"Synix can inspect this add-on system, but its provider must install the files.");
+					LocalizationManager.Get("ModManager.Error.ProviderInstallRequired"));
 			if (!File.Exists(packagePath))
-				throw new FileNotFoundException("The selected add-on package no longer exists.", packagePath);
+				throw new FileNotFoundException(
+					LocalizationManager.Get("ModManager.Error.PackageMissing"),
+					packagePath);
 
 			FileInfo package = new(packagePath);
 			if (package.Length is <= 0 or > MaximumArchiveBytes)
-				throw new InvalidDataException("The selected add-on package has an invalid size.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModManager.Error.PackageSize"));
 
 			string targetRoot = ModSystemCatalog.ResolveInsideInstallPath(
 				server.InstallPath,
@@ -318,7 +325,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 						!packageSha256.Equals(expectedPackageSha256, StringComparison.OrdinalIgnoreCase)))
 				{
 					throw new InvalidDataException(
-						"The package changed after its security review. Synix stopped before installing anything.");
+						LocalizationManager.Get("ModManager.Error.ChangedAfterReview"));
 				}
 				IReadOnlyList<ModSecurityFinding> structuralFindings =
 					ModSecurityScanner.InspectPackageStructure(packageSnapshot, target);
@@ -333,7 +340,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				if (packageExtension.Equals(".zip", StringComparison.OrdinalIgnoreCase))
 				{
 					if (!target.AllowArchives)
-						throw new InvalidDataException("This add-on system does not accept ZIP packages.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"ModManager.Error.ZipNotAccepted"));
 					sources.AddRange(ExtractPackage(
 						packageSnapshot,
 						extractionRoot,
@@ -343,16 +351,19 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				else
 				{
 					if (target.ArchiveOnly)
-						throw new InvalidDataException("This add-on area accepts complete ZIP packages only.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"ModManager.Error.ZipOnly"));
 					if (!IsAllowedFile(packageSnapshot, target))
 						throw new InvalidDataException(BuildAllowedExtensionMessage(target));
 					if (package.Length > MaximumSingleFileBytes)
-						throw new InvalidDataException("The selected add-on file exceeds the safety limit.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"ModManager.Error.FileTooLarge"));
 					sources.Add(new InstallSource(packageSnapshot, Path.GetFileName(packagePath)));
 				}
 
 				if (sources.Count == 0)
-					throw new InvalidDataException("The package did not contain a supported add-on file.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModManager.Error.NoSupportedFile"));
 
 				Directory.CreateDirectory(targetRoot);
 				List<AppliedFile> applied = [];
@@ -448,7 +459,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			ModInstallationLedger ledger = LoadLedger(server);
 			ModInstallationRecord record = ledger.Installations.FirstOrDefault(candidate =>
 				candidate.Id.Equals(installationId, StringComparison.OrdinalIgnoreCase)) ??
-				throw new InvalidOperationException("Synix no longer has an installation record for this add-on.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"ModManager.Error.RecordMissing"));
 
 			foreach (ModInstalledFile file in record.Files)
 			{
@@ -457,7 +469,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					!ComputeSha256(installedPath).Equals(file.Sha256, StringComparison.OrdinalIgnoreCase))
 				{
 					throw new InvalidOperationException(
-						$"{Path.GetFileName(installedPath)} changed after Synix installed it. Synix left it in place so your changes are not lost.");
+						LocalizationManager.Get(
+							"ModManager.Error.InstalledFileChanged",
+							Path.GetFileName(installedPath)));
 				}
 			}
 
@@ -557,7 +571,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			ArgumentNullException.ThrowIfNull(target);
 			EnsureStopped(server);
 			if (!target.CanManageIds)
-				throw new InvalidOperationException("This add-on target does not use provider IDs.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"ModManager.Error.ProviderIdsUnsupported"));
 
 			string[] normalized = NormalizeProviderIds(ids, target.MaximumIds).ToArray();
 			List<ProviderConfigurationSnapshot> snapshots = [];
@@ -628,7 +643,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		{
 			ArgumentNullException.ThrowIfNull(target);
 			if (target.Mode != ModTargetMode.ArgumentIds)
-				throw new InvalidOperationException("This add-on target does not use provider IDs.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"ModManager.Error.ProviderIdsUnsupported"));
 			string[] normalized = NormalizeProviderIds(ids, target.MaximumIds).ToArray();
 			string existing = extraArguments?.Trim() ?? string.Empty;
 			Match existingMatch = CreateArgumentIdRegex(target).Match(existing);
@@ -666,12 +682,16 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				string id = candidate.Trim();
 				if (id.Length is < 1 or > 20 || !id.All(char.IsAsciiDigit))
-					throw new InvalidDataException($"'{candidate}' is not a valid numeric provider mod ID.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModManager.Error.ProviderIdInvalid",
+						candidate));
 				if (!seen.Add(id))
 					continue;
 				normalized.Add(id);
 				if (normalized.Count > limit)
-					throw new InvalidDataException($"This profile allows up to {limit} mod IDs.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModManager.Error.ProviderIdLimit",
+						limit));
 			}
 			return normalized;
 		}
@@ -849,15 +869,17 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				ModInstallationLedger ledger = JsonSerializer.Deserialize<ModInstallationLedger>(
 					File.ReadAllText(path),
-					LedgerJsonOptions) ?? throw new InvalidDataException("The add-on history is empty.");
+					LedgerJsonOptions) ?? throw new InvalidDataException(
+						LocalizationManager.Get("ModManager.Error.HistoryEmpty"));
 				if (ledger.SchemaVersion != CurrentLedgerSchemaVersion)
-					throw new InvalidDataException("The add-on history uses an unsupported format.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModManager.Error.HistoryFormat"));
 				return ledger;
 			}
 			catch (JsonException exception)
 			{
 				throw new InvalidDataException(
-					"Synix could not read this server's add-on history. No files were changed.",
+					LocalizationManager.Get("ModManager.Error.HistoryReadFailed"),
 					exception);
 			}
 		}
@@ -894,7 +916,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			List<InstallSource> sources = [];
 			using ZipArchive archive = ZipFile.OpenRead(archivePath);
 			if (archive.Entries.Count > MaximumArchiveEntries)
-				throw new InvalidDataException("The add-on package contains too many files.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModManager.Error.TooManyFiles"));
 			bool wrapRootFiles = target.WrapRootArchiveFiles && archive.Entries.Any(entry =>
 				!string.IsNullOrWhiteSpace(entry.Name) &&
 				entry.FullName.IndexOfAny(['/', '\\']) < 0 &&
@@ -907,7 +930,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					continue;
 				extractedBytes = checked(extractedBytes + entry.Length);
 				if (entry.Length > MaximumSingleFileBytes || extractedBytes > MaximumArchiveBytes)
-					throw new InvalidDataException("The add-on package exceeds the extraction safety limit.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModManager.Error.ExtractionLimit"));
 
 				string relative = NormalizeRelativePath(entry.FullName);
 				if (wrapRootFiles)
@@ -945,7 +969,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		private static string BuildAllowedExtensionMessage(ModInstallTarget target)
 		{
 			string extensions = string.Join(", ", target.AllowedExtensions);
-			return $"This add-on area accepts these file types: {extensions}.";
+			return LocalizationManager.Get(
+				"ModManager.Error.AllowedTypes",
+				extensions);
 		}
 
 		private static string ReadVersion(string path)
@@ -986,7 +1012,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
-			return "Not reported";
+			return LocalizationManager.Get("ModManager.Known.NotReported");
 		}
 
 		private static string ComputeSha256(string path)
@@ -1022,13 +1048,15 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		private static string ResolveInsideRoot(string rootPath, string relativePath)
 		{
 			if (!ModSystemCatalog.IsSafeRelativePath(relativePath))
-				throw new InvalidDataException("The add-on package contains an unsafe path.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModManager.Error.UnsafePath"));
 			string root = Path.GetFullPath(rootPath)
 				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) +
 				Path.DirectorySeparatorChar;
 			string destination = Path.GetFullPath(Path.Combine(root, relativePath));
 			if (!destination.StartsWith(root, StringComparison.OrdinalIgnoreCase))
-				throw new InvalidDataException("The add-on package contains an unsafe path.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModManager.Error.UnsafePath"));
 			return destination;
 		}
 
@@ -1050,7 +1078,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			if (processIsRunning || server.Status != StatusManager.GetStatus(ServerState.Stopped))
 			{
 				throw new InvalidOperationException(
-					"Stop the server before installing or removing add-ons. This protects files that the game may still be using.");
+					LocalizationManager.Get("ModManager.Error.StopServer"));
 			}
 		}
 

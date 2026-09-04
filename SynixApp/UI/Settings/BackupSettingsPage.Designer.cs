@@ -138,7 +138,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblHeader.Name = "lblHeader";
 			lblHeader.Size = new Size(83, 25);
 			lblHeader.TabIndex = 1;
-			lblHeader.Text = "Backups";
+			lblHeader.Text = LocalizationManager.Get("SettingsPage.Backups.Heading");
 			// 
 			// lblCustomTitle
 			// 
@@ -152,12 +152,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblCustomTitle.Name = "lblCustomTitle";
 			lblCustomTitle.Size = new Size(666, 30);
 			lblCustomTitle.TabIndex = 1;
-			lblCustomTitle.Text = "Custom backup location";
+			lblCustomTitle.Text = LocalizationManager.Get("Text.2AC8E3E9A30E3E9FAAC6");
 			lblCustomTitle.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// chkCustomBackup
 			// 
-			chkCustomBackup.AccessibleName = "Custom backup location";
+			chkCustomBackup.AccessibleName = LocalizationManager.Get("Text.2AC8E3E9A30E3E9FAAC6");
 			chkCustomBackup.AccessibleRole = AccessibleRole.CheckButton;
 			chkCustomBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			chkCustomBackup.BackColor = Color.FromArgb(17, 27, 45);
@@ -183,7 +183,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblCustomDescription.Name = "lblCustomDescription";
 			lblCustomDescription.Size = new Size(774, 36);
 			lblCustomDescription.TabIndex = 3;
-			lblCustomDescription.Text = "Store automated and manual server backup archives in a custom folder.";
+			lblCustomDescription.Text = LocalizationManager.Get("Text.AFC6E98203B42710D6D2");
 			lblCustomDescription.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// backupPathHost
@@ -230,7 +230,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnBrowseBackup.Name = "btnBrowseBackup";
 			btnBrowseBackup.Size = new Size(108, 44);
 			btnBrowseBackup.TabIndex = 5;
-			btnBrowseBackup.Text = "Browse";
+			btnBrowseBackup.Text = LocalizationManager.Get("Text.3227AA9666253F7A7365");
 			btnBrowseBackup.UseVisualStyleBackColor = false;
 			// 
 			// lblWarning
@@ -246,7 +246,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblWarning.Name = "lblWarning";
 			lblWarning.Size = new Size(774, 43);
 			lblWarning.TabIndex = 6;
-			lblWarning.Text = "⚠ Changing this location does not delete backups from the previous folder.";
+			lblWarning.Text = LocalizationManager.Get("Text.1B0142C80D27A3442046");
 			lblWarning.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// separator
@@ -309,7 +309,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblMaxBackupsTitle.Name = "lblMaxBackupsTitle";
 			lblMaxBackupsTitle.Size = new Size(532, 29);
 			lblMaxBackupsTitle.TabIndex = 0;
-			lblMaxBackupsTitle.Text = "Max saved backups";
+			lblMaxBackupsTitle.Text = LocalizationManager.Get("Text.22AAAEFD7330519932F8");
 			lblMaxBackupsTitle.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblMaxBackupsDescription
@@ -324,7 +324,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblMaxBackupsDescription.Name = "lblMaxBackupsDescription";
 			lblMaxBackupsDescription.Size = new Size(532, 45);
 			lblMaxBackupsDescription.TabIndex = 1;
-			lblMaxBackupsDescription.Text = "Limit the number of backups retained per server.";
+			lblMaxBackupsDescription.Text = LocalizationManager.Get("Text.2FD27154D5938042C2FF");
 			lblMaxBackupsDescription.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// numMaxBackups
@@ -352,7 +352,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblRange.Name = "lblRange";
 			lblRange.Size = new Size(126, 74);
 			lblRange.TabIndex = 2;
-			lblRange.Text = "1–100 per server";
+			lblRange.Text = LocalizationManager.Get("Text.1F8DCA1F57379032F8AD");
 			lblRange.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// BackupSettingsPage

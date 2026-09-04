@@ -35,7 +35,10 @@ namespace Synix_Control_Panel.SynixEngine
 
 			foreach (string copiedFile in result.CopiedFiles)
 			{
-				Log($"[SETUP] Imported {copiedFile} for {server.ServerName}.", Color.Cyan);
+				LogLocalized(
+					"RequiredFiles.Activity.Imported",
+					Color.Cyan,
+					arguments: [copiedFile, server.ServerName]);
 			}
 
 			if (result.MissingFiles.Count == 0)
@@ -48,13 +51,19 @@ namespace Synix_Control_Panel.SynixEngine
 				Environment.NewLine,
 				result.MissingFiles.Select(relativeFile =>
 					$"• {Path.GetFullPath(Path.Combine(server.InstallPath, relativeFile))}"));
-			string message =
-				$"{server.Game} needs these files before its dedicated server can start:\n\n" +
-				$"{missingFiles}\n\n" +
-				game.LaunchFileSetupInstructions + "\n\n" +
-				$"Required destinations:\n{destinations}";
+			string message = LocalizationManager.Get(
+				"RequiredFiles.Message",
+				server.Game,
+				missingFiles,
+				LocalizationManager.TranslateRuntimeText(game.LaunchFileSetupInstructions),
+				destinations);
 
-			Log($"[SETUP REQUIRED] Missing {missingFiles}. {game.LaunchFileSetupInstructions}", Color.Orange, true);
+			LogLocalized(
+				"RequiredFiles.Activity.Missing",
+				Color.Orange,
+				true,
+				missingFiles,
+				LocalizationManager.TranslateRuntimeText(game.LaunchFileSetupInstructions));
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			FileHandler.SaveServers();
 			UpdateGridStatus();
@@ -64,8 +73,9 @@ namespace Synix_Control_Panel.SynixEngine
 				ApplicationUiService.Invoke(() =>
 					LocalizedMessageBox.Show(
 						ApplicationUiService.DialogOwner,
-						message,
-						"Additional Game Files Required",
+						LocalizationManager.TranslateRuntimeText(message),
+						LocalizationManager.Get(
+							"RequiredFiles.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Information));
 			}

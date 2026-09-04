@@ -128,7 +128,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(70, 21);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Settings";
+			lblWindowTitle.Text = LocalizationManager.Get("Text.74A883A037BC227F9189");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			//
 			// btnMinimize
@@ -147,7 +147,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnMinimize.Size = new Size(48, 55);
 			btnMinimize.TabIndex = 2;
 			btnMinimize.TabStop = false;
-			btnMinimize.Text = "—";
+			btnMinimize.Text = LocalizationManager.Get("Text.BDA050585A00F0F6CB50");
 			btnMinimize.UseVisualStyleBackColor = false;
 			btnMinimize.Click += btnMinimize_Click;
 			//
@@ -167,7 +167,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnClose.Size = new Size(48, 55);
 			btnClose.TabIndex = 3;
 			btnClose.TabStop = false;
-			btnClose.Text = "×";
+			btnClose.Text = LocalizationManager.Get("Text.8DB71ED28B0F2F143256");
 			btnClose.UseVisualStyleBackColor = false;
 			btnClose.Click += btnClose_Click;
 			//
@@ -245,7 +245,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnGeneral.Selected = true;
 			btnGeneral.Size = new Size(185, 54);
 			btnGeneral.TabIndex = 0;
-			btnGeneral.Text = "General";
+			btnGeneral.Text = LocalizationManager.Get("SettingsPage.General.Heading");
 			btnGeneral.TextAlign = ContentAlignment.MiddleLeft;
 			btnGeneral.UseVisualStyleBackColor = false;
 			btnGeneral.Click += btnGeneral_Click;
@@ -265,7 +265,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnBackups.Selected = false;
 			btnBackups.Size = new Size(185, 54);
 			btnBackups.TabIndex = 1;
-			btnBackups.Text = "Backups";
+			btnBackups.Text = LocalizationManager.Get("SettingsPage.Backups.Heading");
 			btnBackups.TextAlign = ContentAlignment.MiddleLeft;
 			btnBackups.UseVisualStyleBackColor = false;
 			btnBackups.Click += btnBackups_Click;
@@ -285,7 +285,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnPrivacy.Selected = false;
 			btnPrivacy.Size = new Size(185, 54);
 			btnPrivacy.TabIndex = 2;
-			btnPrivacy.Text = "Privacy & Security";
+			btnPrivacy.Text = LocalizationManager.Get("SettingsPage.Privacy.Heading");
 			btnPrivacy.TextAlign = ContentAlignment.MiddleLeft;
 			btnPrivacy.UseVisualStyleBackColor = false;
 			btnPrivacy.Click += btnPrivacy_Click;
@@ -305,7 +305,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnReportProblem.Selected = false;
 			btnReportProblem.Size = new Size(185, 54);
 			btnReportProblem.TabIndex = 3;
-			btnReportProblem.Text = "Report a Problem";
+			btnReportProblem.Text = LocalizationManager.Get("SettingsPage.ReportProblem.Heading");
 			btnReportProblem.TextAlign = ContentAlignment.MiddleLeft;
 			btnReportProblem.UseVisualStyleBackColor = false;
 			btnReportProblem.Click += btnReportProblem_Click;
@@ -325,7 +325,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnAdvanced.Selected = false;
 			btnAdvanced.Size = new Size(185, 54);
 			btnAdvanced.TabIndex = 4;
-			btnAdvanced.Text = "Advanced";
+			btnAdvanced.Text = LocalizationManager.Get("SettingsPage.Advanced.Heading");
 			btnAdvanced.TextAlign = ContentAlignment.MiddleLeft;
 			btnAdvanced.UseVisualStyleBackColor = false;
 			btnAdvanced.Click += btnAdvanced_Click;
@@ -345,7 +345,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			btnDevelopment.Selected = false;
 			btnDevelopment.Size = new Size(185, 54);
 			btnDevelopment.TabIndex = 5;
-			btnDevelopment.Text = "Development";
+			btnDevelopment.Text = LocalizationManager.Get("SettingsPage.Development.Heading");
 			btnDevelopment.TextAlign = ContentAlignment.MiddleLeft;
 			btnDevelopment.UseVisualStyleBackColor = false;
 			btnDevelopment.Visible = false;
@@ -361,7 +361,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblVersion.Name = "lblVersion";
 			lblVersion.Size = new Size(180, 48);
 			lblVersion.TabIndex = 1;
-			lblVersion.Text = "SYNIX CONTROL PANEL  •  version";
+			lblVersion.Text = LocalizationManager.Get("Text.180299794A99A2CB63F1");
 			lblVersion.TextAlign = ContentAlignment.MiddleLeft;
 			//
 			// sidebarRightBorder
@@ -414,7 +414,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblPageHeading.Name = "lblPageHeading";
 			lblPageHeading.Size = new Size(134, 42);
 			lblPageHeading.TabIndex = 0;
-			lblPageHeading.Text = "General";
+			lblPageHeading.Text = LocalizationManager.Get("SettingsPage.General.Heading");
 			//
 			// lblPageSubtitle
 			//
@@ -426,7 +426,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			lblPageSubtitle.Name = "lblPageSubtitle";
 			lblPageSubtitle.Size = new Size(343, 19);
 			lblPageSubtitle.TabIndex = 1;
-			lblPageSubtitle.Text = "Configure basic Synix behavior on this computer.";
+			lblPageSubtitle.Text = LocalizationManager.Get("SettingsPage.General.Subtitle");
 			//
 			// pageHost
 			//
@@ -529,7 +529,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			Padding = new Padding(1);
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Settings";
+			Text = LocalizationManager.Get("Text.7E485C2CF2CC85DC20B9");
 			shellLayout.ResumeLayout(false);
 			titleBar.ResumeLayout(false);
 			titleBar.PerformLayout();

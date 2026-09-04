@@ -54,14 +54,17 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 				WriteTextAtomically(savedPath, jsonString);
 
-				ApplicationLogService.Write(
-					$"[📜 INFO] JSON saved successfully to {savedPath}.",
-					Color.DarkSeaGreen);
+				ApplicationLogService.WriteLocalized(
+					"FileHandler.Activity.Saved",
+					Color.DarkSeaGreen,
+					arguments: [savedPath]);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				ApplicationLogService.Write("[🚨 ERROR] Save Error: " + ex.Message);
+				ApplicationLogService.WriteLocalized(
+					"FileHandler.Activity.SaveError",
+					arguments: [ex.Message]);
 				return false;
 			}
 		}
@@ -119,16 +122,25 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 							{
 								if (migrationSummary.MigratedServerCount > 0)
 								{
-									ApplicationLogService.Write(
-										$"[MIGRATION] Upgraded {migrationSummary.MigratedServerCount} server record(s) to data schema {migrationSummary.TargetVersion}. The original file was backed up before saving.",
-										Color.DarkSeaGreen);
+									ApplicationLogService.WriteLocalized(
+										"FileHandler.Activity.MigrationUpgraded",
+										Color.DarkSeaGreen,
+										arguments:
+										[
+											migrationSummary.MigratedServerCount,
+											migrationSummary.TargetVersion
+										]);
 								}
 
 								if (migrationSummary.MigratedPasswordServerCount > 0)
 								{
-									ApplicationLogService.Write(
-										$"[MIGRATION] Protected saved passwords and Discord webhooks for {migrationSummary.MigratedPasswordServerCount} server(s) with Windows user encryption.",
-										Color.DarkSeaGreen);
+									ApplicationLogService.WriteLocalized(
+										"FileHandler.Activity.MigrationProtected",
+										Color.DarkSeaGreen,
+										arguments:
+										[
+											migrationSummary.MigratedPasswordServerCount
+										]);
 								}
 							}
 						}
@@ -136,7 +148,9 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				}
 				catch (Exception ex)
 				{
-					ApplicationLogService.Write($"[🚨 ERROR] Load failed: {ex.Message}");
+					ApplicationLogService.WriteLocalized(
+						"FileHandler.Activity.LoadError",
+						arguments: [ex.Message]);
 				}
 			}
 		}
@@ -156,7 +170,8 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 		{
 			string? directory = Path.GetDirectoryName(fullPath);
 			if (string.IsNullOrWhiteSpace(directory))
-				throw new ArgumentException("A destination folder is required.", nameof(fullPath));
+				throw new ArgumentException(LocalizationManager.Get(
+					"FileSystem.Error.DestinationFolderRequired"), nameof(fullPath));
 
 			Directory.CreateDirectory(directory);
 			string temporaryPath = Path.Combine(

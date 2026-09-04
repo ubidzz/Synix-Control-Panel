@@ -78,7 +78,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!magic.SequenceEqual(Magic))
 			{
 				throw new InvalidDataException(
-					"This is not a Synix transfer package.");
+					LocalizationManager.Get("Transfer.Error.NotPackage"));
 			}
 
 			return reader.ReadInt32();
@@ -92,7 +92,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!File.Exists(packagePath))
 			{
 				throw new FileNotFoundException(
-					"The selected Synix transfer package was not found.",
+					LocalizationManager.Get("Transfer.Error.PackageNotFound"),
 					packagePath);
 			}
 
@@ -127,7 +127,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (version != FormatVersion)
 			{
 				throw new InvalidDataException(
-					"This Synix transfer package version is not supported.");
+					LocalizationManager.Get("Transfer.Error.VersionUnsupported"));
 			}
 
 			long legacyRequired = AddWithLimit(
@@ -165,19 +165,21 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!Directory.Exists(sourceRoot))
 			{
 				throw new DirectoryNotFoundException(
-					$"The Synix data folder was not found: {sourceDirectory}");
+					LocalizationManager.Get(
+						"Transfer.Error.DataFolderNotFound",
+						sourceDirectory));
 			}
 
 			if (IsInsideDirectory(destinationPath, sourceRoot))
 			{
 				throw new InvalidOperationException(
-					"Save the transfer package outside the C:\\Synix folder.");
+					LocalizationManager.Get("Transfer.Error.SaveOutsideDataFolder"));
 			}
 
 			string destinationDirectory =
 				Path.GetDirectoryName(destinationPath) ??
 				throw new InvalidOperationException(
-					"The selected destination is not valid.");
+					LocalizationManager.Get("Transfer.Error.DestinationInvalid"));
 			Directory.CreateDirectory(destinationDirectory);
 
 			SynixExportEstimate estimate = EstimateExport(
@@ -284,8 +286,12 @@ namespace Synix_Control_Panel.SynixEngine
 							completedBytes * 99 / Math.Max(1, totalBytes));
 						progress?.Report(new(
 							protection == SynixTransferProtection.PasswordProtected
-								? $"Packing and encrypting {relativePath}..."
-								: $"Packing {relativePath}...",
+								? LocalizationManager.Get(
+									"Transfer.Progress.PackingEncrypted",
+									relativePath)
+								: LocalizationManager.Get(
+									"Transfer.Progress.Packing",
+									relativePath),
 							percent,
 							completedBytes,
 							totalBytes));
@@ -305,7 +311,7 @@ namespace Synix_Control_Panel.SynixEngine
 				output.Close();
 				File.Move(temporaryEncrypted, destinationPath, true);
 				progress?.Report(new(
-					"Synix transfer package is ready.",
+					LocalizationManager.Get("Transfer.Progress.PackageReady"),
 					100,
 					totalBytes,
 					totalBytes));
@@ -336,9 +342,11 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!estimate.HasEnoughSpace)
 			{
 				throw new IOException(
-					$"There is not enough free space on {estimate.DestinationVolume}. " +
-					$"Synix needs about {FormatTransferBytes(estimate.AdditionalSpaceRequiredBytes)}, " +
-					$"but only {FormatTransferBytes(estimate.AvailableBytes)} is available.");
+					LocalizationManager.Get(
+						"Transfer.Error.ImportFreeSpace",
+						estimate.DestinationVolume,
+						FormatTransferBytes(estimate.AdditionalSpaceRequiredBytes),
+						FormatTransferBytes(estimate.AvailableBytes)));
 			}
 
 			byte[] key = header.Protection ==
@@ -350,7 +358,8 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				progress?.Report(new(
-					"Verifying the transfer package without unpacking it...",
+					LocalizationManager.Get(
+						"Transfer.Progress.VerifyWithoutUnpacking"),
 					0,
 					0,
 					MultiplyWithLimit(header.TotalBytes, 2)));
@@ -375,7 +384,7 @@ namespace Synix_Control_Panel.SynixEngine
 					progress,
 					cancellationToken).ConfigureAwait(false);
 				progress?.Report(new(
-					"Synix files were restored.",
+					LocalizationManager.Get("Transfer.Progress.FilesRestored"),
 					100,
 					MultiplyWithLimit(header.TotalBytes, 2),
 					MultiplyWithLimit(header.TotalBytes, 2)));
@@ -384,8 +393,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				throw new InvalidDataException(
 					header.Protection == SynixTransferProtection.PasswordProtected
-						? "The transfer password is incorrect, or the package is damaged."
-						: "The unencrypted transfer package is damaged.",
+						? LocalizationManager.Get(
+							"Transfer.Error.PasswordOrDamaged")
+						: LocalizationManager.Get(
+							"Transfer.Error.UnencryptedDamaged"),
 					exception);
 			}
 			finally
@@ -416,7 +427,8 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				progress?.Report(new(
-					"Verifying the transfer package without importing it...",
+					LocalizationManager.Get(
+						"Transfer.Progress.VerifyWithoutImporting"),
 					0,
 					0,
 					header.TotalBytes));
@@ -431,7 +443,8 @@ namespace Synix_Control_Panel.SynixEngine
 					progress,
 					cancellationToken).ConfigureAwait(false);
 				progress?.Report(new(
-					"The transfer package passed verification.",
+					LocalizationManager.Get(
+						"Transfer.Progress.VerificationPassed"),
 					100,
 					header.TotalBytes,
 					header.TotalBytes));
@@ -440,8 +453,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				throw new InvalidDataException(
 					header.Protection == SynixTransferProtection.PasswordProtected
-						? "The transfer password is incorrect, or the package is damaged."
-						: "The unencrypted transfer package is damaged.",
+						? LocalizationManager.Get(
+							"Transfer.Error.PasswordOrDamaged")
+						: LocalizationManager.Get(
+							"Transfer.Error.UnencryptedDamaged"),
 					exception);
 			}
 			finally
@@ -477,7 +492,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!headerBytes.SequenceEqual(expectedHeader.AuthenticatedBytes))
 			{
 				throw new InvalidDataException(
-					"The Synix transfer package header changed while it was being read.");
+					LocalizationManager.Get("Transfer.Error.HeaderChanged"));
 			}
 
 			using AesGcm? aes = expectedHeader.Protection ==
@@ -513,7 +528,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (!uniquePaths.Add(entry.RelativePath))
 				{
 					throw new InvalidDataException(
-						"The transfer package contains duplicate files.");
+						LocalizationManager.Get("Transfer.Error.DuplicateFiles"));
 				}
 
 				if (expectedEntries is not null &&
@@ -521,7 +536,8 @@ namespace Synix_Control_Panel.SynixEngine
 					 entry != expectedEntries[entryIndex]))
 				{
 					throw new InvalidDataException(
-						"The transfer package changed after verification.");
+						LocalizationManager.Get(
+							"Transfer.Error.ChangedAfterVerification"));
 				}
 
 				entries.Add(entry);
@@ -562,7 +578,8 @@ namespace Synix_Control_Panel.SynixEngine
 							fileCompleted + plain.Length > entry.Length)
 						{
 							throw new InvalidDataException(
-								"The transfer package contains an invalid file length.");
+								LocalizationManager.Get(
+									"Transfer.Error.InvalidFileLength"));
 						}
 
 						if (destination is not null)
@@ -593,8 +610,12 @@ namespace Synix_Control_Panel.SynixEngine
 									Math.Max(1, expectedHeader.TotalBytes));
 						progress?.Report(new(
 							writing
-								? $"Restoring {entry.RelativePath}..."
-								: $"Verifying {entry.RelativePath}...",
+								? LocalizationManager.Get(
+									"Transfer.Progress.Restoring",
+									entry.RelativePath)
+								: LocalizationManager.Get(
+									"Transfer.Progress.Verifying",
+									entry.RelativePath),
 							percent,
 							overallCompleted,
 							expectedWork));
@@ -631,7 +652,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (completedBytes != expectedHeader.TotalBytes)
 			{
 				throw new InvalidDataException(
-					"The transfer package data size does not match its header.");
+					LocalizationManager.Get("Transfer.Error.DataSizeMismatch"));
 			}
 
 			await ReadAndValidateStreamingEndMarkerAsync(
@@ -643,7 +664,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (input.Position != input.Length)
 			{
 				throw new InvalidDataException(
-					"The transfer package contains unexpected trailing data.");
+					LocalizationManager.Get("Transfer.Error.TrailingData"));
 			}
 
 			return entries;
@@ -765,8 +786,8 @@ namespace Synix_Control_Panel.SynixEngine
 				catch (Exception rollbackException)
 				{
 					throw new AggregateException(
-						"The import failed and Synix could not finish the immediate rollback. " +
-						"Synix will retry recovery the next time it starts.",
+						LocalizationManager.Get(
+							"Transfer.Error.RollbackPendingStreaming"),
 						importException,
 						rollbackException);
 				}
@@ -794,8 +815,9 @@ namespace Synix_Control_Panel.SynixEngine
 					destinationPath,
 					IntPtr.Zero);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return false;
 			}
 		}
@@ -808,8 +830,9 @@ namespace Synix_Control_Panel.SynixEngine
 					"NTFS",
 					StringComparison.OrdinalIgnoreCase);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return false;
 			}
 		}
@@ -844,7 +867,7 @@ namespace Synix_Control_Panel.SynixEngine
 				LegacyStreamingFormatVersion => LegacyStreamingHeaderSize,
 				StreamingFormatVersion => StreamingHeaderSize,
 				_ => throw new InvalidDataException(
-					"This Synix transfer package version is not supported.")
+					LocalizationManager.Get("Transfer.Error.VersionUnsupported"))
 			};
 			using FileStream input = new(
 				packagePath,
@@ -862,7 +885,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (read == 0)
 				{
 					throw new InvalidDataException(
-						"The Synix transfer package is incomplete.");
+						LocalizationManager.Get("Transfer.Error.Incomplete"));
 				}
 
 				totalRead += read;
@@ -876,7 +899,7 @@ namespace Synix_Control_Panel.SynixEngine
 				reader.ReadInt32() != ChunkSize)
 			{
 				throw new InvalidDataException(
-					"This Synix transfer package version is not supported.");
+					LocalizationManager.Get("Transfer.Error.VersionUnsupported"));
 			}
 
 			byte[] salt = reader.ReadBytes(SaltSize);
@@ -895,7 +918,7 @@ namespace Synix_Control_Panel.SynixEngine
 				memory.Position != memory.Length)
 			{
 				throw new InvalidDataException(
-					"The Synix transfer package header is invalid.");
+					LocalizationManager.Get("Transfer.Error.HeaderInvalid"));
 			}
 
 			return new(
@@ -916,7 +939,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (pathBytes.Length == 0 || pathBytes.Length > MaximumStreamingPathBytes)
 			{
 				throw new InvalidDataException(
-					"A Synix file path is too long for the transfer package.");
+					LocalizationManager.Get("Transfer.Error.PathTooLong"));
 			}
 
 			using MemoryStream memory = new();
@@ -938,21 +961,21 @@ namespace Synix_Control_Panel.SynixEngine
 				.SequenceEqual(StreamingPayloadMagic))
 			{
 				throw new InvalidDataException(
-					"The transfer package contains invalid file metadata.");
+					LocalizationManager.Get("Transfer.Error.InvalidMetadata"));
 			}
 
 			int pathLength = reader.ReadInt32();
 			if (pathLength <= 0 || pathLength > MaximumStreamingPathBytes)
 			{
 				throw new InvalidDataException(
-					"The transfer package contains an invalid file path.");
+					LocalizationManager.Get("Transfer.Error.InvalidPath"));
 			}
 
 			byte[] pathBytes = reader.ReadBytes(pathLength);
 			if (pathBytes.Length != pathLength)
 			{
 				throw new InvalidDataException(
-					"The transfer package contains incomplete file metadata.");
+					LocalizationManager.Get("Transfer.Error.IncompleteMetadata"));
 			}
 
 			string relativePath = new UTF8Encoding(false, true)
@@ -963,7 +986,7 @@ namespace Synix_Control_Panel.SynixEngine
 				ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks)
 			{
 				throw new InvalidDataException(
-					"The transfer package contains invalid file metadata.");
+					LocalizationManager.Get("Transfer.Error.InvalidMetadata"));
 			}
 
 			return new(
@@ -1013,7 +1036,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (length <= 0 || length > MaximumStreamingPathBytes + 64)
 			{
 				throw new InvalidDataException(
-					"The transfer package contains invalid file metadata.");
+					LocalizationManager.Get("Transfer.Error.InvalidMetadata"));
 			}
 
 			byte[] nonce = new byte[NonceSize];
@@ -1106,7 +1129,7 @@ namespace Synix_Control_Panel.SynixEngine
 				(compression == CompressionNone && storedLength != plainLength))
 			{
 				throw new InvalidDataException(
-					"The transfer package contains an invalid data block.");
+					LocalizationManager.Get("Transfer.Error.InvalidDataBlock"));
 			}
 
 			byte[] nonce = new byte[NonceSize];
@@ -1171,7 +1194,8 @@ namespace Synix_Control_Panel.SynixEngine
 				if (read == 0)
 				{
 					throw new InvalidDataException(
-						"The transfer package contains incomplete compressed data.");
+						LocalizationManager.Get(
+							"Transfer.Error.IncompleteCompressedData"));
 				}
 
 				totalRead += read;
@@ -1180,7 +1204,8 @@ namespace Synix_Control_Panel.SynixEngine
 			if (decompressor.ReadByte() != -1)
 			{
 				throw new InvalidDataException(
-					"The transfer package contains too much compressed data.");
+					LocalizationManager.Get(
+						"Transfer.Error.TooMuchCompressedData"));
 			}
 
 			return plain;
@@ -1260,7 +1285,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (marker != StreamingEndMarker)
 			{
 				throw new InvalidDataException(
-					"The transfer package is incomplete.");
+					LocalizationManager.Get("Transfer.Error.Incomplete"));
 			}
 
 			byte[] nonce = new byte[NonceSize];
@@ -1292,7 +1317,8 @@ namespace Synix_Control_Panel.SynixEngine
 				if (aes is null)
 				{
 					throw new InvalidOperationException(
-						"Encryption was not initialized.");
+						LocalizationManager.Get(
+							"Transfer.Error.EncryptionNotInitialized"));
 				}
 
 				tag = new byte[TagSize];
@@ -1323,7 +1349,8 @@ namespace Synix_Control_Panel.SynixEngine
 				if (aes is null)
 				{
 					throw new InvalidOperationException(
-						"Encryption was not initialized.");
+						LocalizationManager.Get(
+							"Transfer.Error.EncryptionNotInitialized"));
 				}
 
 				aes.Decrypt(
@@ -1345,7 +1372,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!valid)
 			{
 				throw new CryptographicException(
-					"The unencrypted transfer package is damaged.");
+					LocalizationManager.Get("Transfer.Error.UnencryptedDamaged"));
 			}
 
 			protectedData.CopyTo(plain);

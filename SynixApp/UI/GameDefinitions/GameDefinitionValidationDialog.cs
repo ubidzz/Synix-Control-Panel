@@ -46,8 +46,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			_copyButton.Enabled = false;
 			_closeButton.Enabled = false;
 			_statusLabel.ForeColor = SettingsPalette.SecondaryText;
-			_statusLabel.Text = "Testing every built-in definition and template safely...";
-			_reportBox.Text = "Reading and testing the project game-definition library...";
+			LocalizationManager.BindText(_statusLabel, "Text.D25BF1DE94C6CFCB40D4");
+			LocalizationManager.BindText(_reportBox, "Text.D4BEB0C27C58D53CCFA7");
 
 			try
 			{
@@ -62,12 +62,16 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				_reportBox.Text = report.ToPlainText();
 				_reportBox.SelectionStart = 0;
 				_reportBox.ScrollToCaret();
-				_statusLabel.Text = report.IsValid
-					? $"PASSED  •  {report.DefinitionCount} games  •  " +
-						$"{report.TemplateCount} templates  •  " +
-						$"{report.ManagedSettingBindingCount} setting bindings  •  " +
-						$"{report.DefinitionTestCount} tests"
-					: $"FAILED  •  {report.FailedCount} problem(s) must be corrected";
+				LocalizationManager.BindText(
+					_statusLabel,
+					report.IsValid
+						? "GameDefinitions.Validation.Summary.Passed"
+						: "GameDefinitions.Validation.Summary.Failed",
+					report.DefinitionCount,
+					report.TemplateCount,
+					report.ManagedSettingBindingCount,
+					report.DefinitionTestCount,
+					report.FailedCount);
 				_statusLabel.ForeColor = report.IsValid
 					? SettingsPalette.Success
 					: SettingsPalette.Danger;
@@ -75,9 +79,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			}
 			catch (Exception exception)
 			{
-				_reportBox.Text = exception.Message;
+				_reportBox.Text = LocalizationManager.TranslateRuntimeText(
+					exception.Message);
 				_statusLabel.ForeColor = SettingsPalette.Danger;
-				_statusLabel.Text = "The game-definition tests could not finish.";
+				LocalizationManager.BindText(_statusLabel, "Text.D613F5D4C11D7D3ACD78");
 			}
 			finally
 			{
@@ -92,14 +97,15 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			try
 			{
 				Clipboard.SetText(_reportBox.Text);
-				_statusLabel.Text = "Definition test report copied to the clipboard.";
+				LocalizationManager.BindText(_statusLabel, "Text.692AE6A41D7574B63232");
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				LocalizedMessageBox.Show(
 					this,
-					"Windows could not copy the validation report.",
-					"Copy Failed",
+					LocalizationManager.Get("MessageText.E30D1FF9B8D6F1EEE71C"),
+					LocalizationManager.Get("MessageText.2C58B2D4975AADC6042D"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 			}

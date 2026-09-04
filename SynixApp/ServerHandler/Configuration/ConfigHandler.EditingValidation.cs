@@ -67,8 +67,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					 !string.Equals(sourceValue.Path, updatedValue.Path, StringComparison.Ordinal)))
 				{
 					throw new InvalidDataException(
-						$"The location of '{updatedValue.Key}' changed after the editor opened. " +
-						"Reload the configuration before saving.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.LocationChanged",
+							updatedValue.Key));
 				}
 
 				unmatchedChangedIds.Remove(sourceValue.Id);
@@ -81,8 +82,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					!ValuesAreEquivalent(sourceValue, updatedValue.OriginalValue))
 				{
 					throw new InvalidDataException(
-						$"'{sourceValue.Key}' changed on disk after the editor opened. " +
-						"Reload the file before saving so the newer value is not overwritten.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.DiskValueChanged",
+							sourceValue.Key));
 				}
 
 				string replacementValue = FormatReplacement(
@@ -104,8 +106,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (unmatchedChangedIds.Count > 0)
 			{
 				throw new InvalidDataException(
-					"One or more edited settings no longer exist in the file. " +
-					"Reload the configuration before saving.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.SettingsMissing"));
 			}
 
 			string updatedText = ApplyLexicalSpanReplacements(
@@ -196,7 +198,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					replacement.Start + replacement.Length > originalText.Length)
 				{
 					throw new InvalidDataException(
-						"A configuration value could not be mapped back to the source file.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.SourceMapping"));
 				}
 
 				if (replacement.ExpectedOriginalToken.Length != replacement.Length ||
@@ -204,14 +207,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.SequenceEqual(replacement.ExpectedOriginalToken.AsSpan()))
 				{
 					throw new InvalidDataException(
-						"A configuration value no longer matches its exact source span. " +
-						"Nothing was saved; reload the file before trying again.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.SourceSpanChanged"));
 				}
 
 				if (replacement.Start + replacement.Length > previousStart)
 				{
 					throw new InvalidDataException(
-						"Overlapping configuration values were detected. Nothing was saved.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.OverlappingValues"));
 				}
 
 				builder.Remove(replacement.Start, replacement.Length);
@@ -232,7 +236,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!string.Equals(originalText, updatedText, StringComparison.Ordinal))
 				{
 					throw new InvalidDataException(
-						"The configuration changed even though no value replacement was requested.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.UnrequestedChange"));
 				}
 				return;
 			}
@@ -252,8 +257,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.SequenceEqual(updatedText.AsSpan(updatedCursor, unchangedLength)))
 				{
 					throw new InvalidDataException(
-						"Text outside an edited value span would be modified. " +
-						"The save was cancelled.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.OutsideSpanChange"));
 				}
 
 				originalCursor = replacement.Start;
@@ -263,8 +268,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						.SequenceEqual(replacement.Value.AsSpan()))
 				{
 					throw new InvalidDataException(
-						"A replacement value was not written to its exact lexical span. " +
-						"The save was cancelled.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.ReplacementSpan"));
 				}
 
 				originalCursor += replacement.Length;
@@ -278,8 +283,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					.SequenceEqual(updatedText.AsSpan(updatedCursor, trailingLength)))
 			{
 				throw new InvalidDataException(
-					"Trailing text outside the edited value spans would be modified. " +
-					"The save was cancelled.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.TrailingTextChange"));
 			}
 		}
 
@@ -303,8 +308,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					StringComparer.Ordinal))
 			{
 				throw new InvalidDataException(
-					"The replacement would change the configuration's setting structure. " +
-					"The save was cancelled.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.StructureChange"));
 			}
 
 			Dictionary<string, ParsedValue> reparsedValues = reparsedDocument.Values
@@ -318,8 +323,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					ParsedValue? source = originalDocument.Values.FirstOrDefault(
 						value => value.Id == changedId);
 					throw new InvalidDataException(
-						$"The new value for '{source?.Key ?? "a setting"}' would change " +
-						"the file structure. The save was cancelled.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.ValueStructureChange",
+							source?.Key ?? LocalizationManager.Get(
+								"Configuration.Editor.GenericSetting")));
 				}
 			}
 		}
@@ -334,14 +341,17 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				source.OriginalToken.Contains('\n'))
 			{
 				throw new InvalidDataException(
-					$"'{source.Key}' contains source line breaks and cannot be edited " +
-					"without changing the file's original layout.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.SourceLineBreaks",
+						source.Key));
 			}
 
 			if (value.Contains('\r') || value.Contains('\n'))
 			{
 				throw new InvalidDataException(
-					$"'{source.Key}' cannot contain a line break.");
+					LocalizationManager.Get(
+						"Configuration.Editor.Error.LineBreak",
+						source.Key));
 			}
 
 			if (source.Type == ConfigValueType.Boolean)
@@ -349,7 +359,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!TryParseBoolean(value, out bool booleanValue))
 				{
 					throw new InvalidDataException(
-						$"'{source.Key}' must be True or False.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.Boolean",
+							source.Key));
 				}
 
 				value = source.Style == ScalarStyle.JsonBoolean
@@ -361,7 +373,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!IsValidNumber(value, source.Style == ScalarStyle.JsonNumber))
 				{
 					throw new InvalidDataException(
-						$"'{source.Key}' requires a valid numeric value.");
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.Number",
+							source.Key));
 				}
 				value = value.Trim();
 			}
@@ -380,7 +394,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ScalarStyle.XmlText => EscapeXml(value),
 				ScalarStyle.XmlCData => value.Contains("]]>", StringComparison.Ordinal)
 					? throw new InvalidDataException(
-						$"'{source.Key}' cannot contain the XML CDATA terminator ']]>'.")
+						LocalizationManager.Get(
+							"Configuration.Editor.Error.CDataTerminator",
+							source.Key))
 					: value,
 				_ => FormatRawValue(source, value, format)
 			};
@@ -476,7 +492,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 								!char.IsLowSurrogate(value[index + 1]))
 							{
 								throw new InvalidDataException(
-									"A JSON value contains an invalid Unicode surrogate.");
+									LocalizationManager.Get(
+										"Configuration.Editor.Error.JsonUnicodeSurrogate"));
 							}
 
 							builder.Append(character);
@@ -485,7 +502,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						else if (char.IsLowSurrogate(character))
 						{
 							throw new InvalidDataException(
-								"A JSON value contains an invalid Unicode surrogate.");
+								LocalizationManager.Get(
+									"Configuration.Editor.Error.JsonUnicodeSurrogate"));
 						}
 						else
 						{

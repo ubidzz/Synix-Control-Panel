@@ -47,7 +47,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			_titleLabel.Name = "_titleLabel";
 			_titleLabel.Size = new Size(852, 36);
 			_titleLabel.TabIndex = 0;
-			_titleLabel.Text = "Configuration Application Check";
+			_titleLabel.Text = LocalizationManager.Get("Text.5E5DD0B908E3A1075161");
 			// 
 			// _subtitleLabel
 			// 
@@ -57,7 +57,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			_subtitleLabel.Name = "_subtitleLabel";
 			_subtitleLabel.Size = new Size(852, 42);
 			_subtitleLabel.TabIndex = 1;
-			_subtitleLabel.Text = "Read-only verification of template structure, revision, and values saved in Server Settings. Password values are never displayed.";
+			_subtitleLabel.Text = LocalizationManager.Get("Text.69EDD9A74D913D8F77D6");
 			// 
 			// _summaryLabel
 			// 
@@ -68,7 +68,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			_summaryLabel.Name = "_summaryLabel";
 			_summaryLabel.Size = new Size(852, 28);
 			_summaryLabel.TabIndex = 2;
-			_summaryLabel.Text = "Waiting for a configuration report.";
+			_summaryLabel.Text = LocalizationManager.Get("Text.46EE37AE5CD1AE985F98");
 			// 
 			// _reportBox
 			// 
@@ -84,7 +84,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			_reportBox.ScrollBars = RichTextBoxScrollBars.ForcedBoth;
 			_reportBox.Size = new Size(852, 476);
 			_reportBox.TabIndex = 3;
-			_reportBox.Text = "The configuration report will appear here.";
+			_reportBox.Text = LocalizationManager.Get("Text.9364F108EA4C3D297620");
 			_reportBox.WordWrap = false;
 			// 
 			// _closeButton
@@ -99,7 +99,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			_closeButton.Name = "_closeButton";
 			_closeButton.Size = new Size(120, 42);
 			_closeButton.TabIndex = 4;
-			_closeButton.Text = "Close";
+			_closeButton.Text = LocalizationManager.Get("ModManager.Button.Close");
 			_closeButton.UseVisualStyleBackColor = false;
 			// 
 			// _copyButton
@@ -113,7 +113,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			_copyButton.Name = "_copyButton";
 			_copyButton.Size = new Size(170, 42);
 			_copyButton.TabIndex = 5;
-			_copyButton.Text = "Copy Report";
+			_copyButton.Text = LocalizationManager.Get("Text.54B8E0C0C268C1549AF4");
 			_copyButton.UseAccentStyle = true;
 			_copyButton.UseVisualStyleBackColor = false;
 			_copyButton.Click += CopyButton_Click;
@@ -138,7 +138,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			Name = "ConfigurationValidationDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Configuration Application Check";
+			Text = LocalizationManager.Get("Text.2F4A3B0705E0D01E2F8F");
 			ResumeLayout(false);
 		}
 

@@ -47,25 +47,48 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string ToPlainText()
 		{
 			StringBuilder text = new();
-			text.AppendLine("SYNIX GAME DEFINITION TEST REPORT");
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.Title"));
 			text.AppendLine(new string('=', 34));
-			text.AppendLine($"Result: {(IsValid ? "VALID" : "FAILED")}");
-			text.AppendLine($"Definitions: {DefinitionCount}");
-			text.AppendLine($"Templates: {TemplateCount}");
-			text.AppendLine($"Managed setting bindings: {ManagedSettingBindingCount}");
-			text.AppendLine($"Safe post-install actions: {PostInstallActionCount}");
-			text.AppendLine($"Definition tests completed: {DefinitionTestCount}");
-			text.AppendLine($"Warnings: {WarningCount}  Failed: {FailedCount}");
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.Result",
+				LocalizationManager.Get(IsValid
+					? "GameDefinitions.Report.Result.Valid"
+					: "GameDefinitions.Report.Result.Failed")));
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.Definitions",
+				DefinitionCount));
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.Templates",
+				TemplateCount));
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.ManagedBindings",
+				ManagedSettingBindingCount));
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.SafeActions",
+				PostInstallActionCount));
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.TestsCompleted",
+				DefinitionTestCount));
+			text.AppendLine(LocalizationManager.Get(
+				"GameDefinitions.Report.Counts",
+				WarningCount,
+				FailedCount));
 			foreach (GameDefinitionValidationItem item in Items)
 			{
-				string marker = item.Level switch
+				string markerKey = item.Level switch
 				{
-					GameDefinitionValidationLevel.Passed => "PASS",
-					GameDefinitionValidationLevel.Warning => "WARN",
-					_ => "FAIL"
+					GameDefinitionValidationLevel.Passed => "Report.Marker.Pass",
+					GameDefinitionValidationLevel.Warning => "Report.Marker.Warning",
+					_ => "Report.Marker.Fail"
 				};
-				text.AppendLine($"[{marker}] {item.Definition}");
-				text.AppendLine($"       {item.Details}");
+				text.AppendLine(LocalizationManager.Get(
+					"GameDefinitions.Report.Item",
+					LocalizationManager.Get(markerKey),
+					LocalizationManager.TranslateKnownText(item.Definition)));
+				text.AppendLine(LocalizationManager.Get(
+					"GameDefinitions.Report.ItemDetails",
+					LocalizationManager.TranslateRuntimeText(item.Details)));
 			}
 			return text.ToString().TrimEnd();
 		}
@@ -91,8 +114,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					0,
 					[new GameDefinitionValidationItem(
 						GameDefinitionValidationLevel.Failed,
-						"Embedded game library",
-						exception.Message)]);
+						LocalizationManager.Get(
+							"GameDefinitions.Check.EmbeddedLibrary"),
+						LocalizationManager.TranslateRuntimeText(
+							exception.Message))]);
 			}
 		}
 
@@ -113,8 +138,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					0,
 					[new GameDefinitionValidationItem(
 						GameDefinitionValidationLevel.Failed,
-						"Game definition library",
-						"Database\\GameDefinitions was not found.")]);
+						LocalizationManager.Get(
+							"GameDefinitions.Check.Library"),
+						LocalizationManager.Get(
+							"GameDefinitions.Check.LibraryFolderMissing"))]);
 			}
 
 			List<EmbeddedGamePackage> packages = [];
@@ -146,7 +173,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					items.Add(new GameDefinitionValidationItem(
 						GameDefinitionValidationLevel.Failed,
 						displayName,
-						exception.Message));
+						LocalizationManager.TranslateRuntimeText(
+							exception.Message)));
 				}
 			}
 
@@ -164,18 +192,24 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			{
 				GameInfo definition = package.Definition;
 				if (!ids.Add(definition.DefinitionId))
-					AddFailure(items, definition.Game, "The definition ID is duplicated.");
+					AddFailure(items, definition.Game, LocalizationManager.Get(
+						"GameDefinitions.Check.DuplicateDefinitionId"));
 				if (!names.Add(definition.Game))
-					AddFailure(items, definition.Game, "The game name is duplicated.");
+					AddFailure(items, definition.Game, LocalizationManager.Get(
+						"GameDefinitions.Check.DuplicateGameName"));
 				foreach (string alias in definition.Aliases)
 				{
 					if (!names.Add(alias))
-						AddFailure(items, definition.Game, $"The alias '{alias}' is duplicated.");
+						AddFailure(items, definition.Game, LocalizationManager.Get(
+							"GameDefinitions.Check.DuplicateAlias",
+							alias));
 				}
 				if (definition.CatalogOrder < 0)
-					AddFailure(items, definition.Game, "The catalog order cannot be negative.");
+					AddFailure(items, definition.Game, LocalizationManager.Get(
+						"GameDefinitions.Check.NegativeCatalogOrder"));
 				else if (!orders.Add(definition.CatalogOrder))
-					AddFailure(items, definition.Game, "The catalog order is duplicated.");
+					AddFailure(items, definition.Game, LocalizationManager.Get(
+						"GameDefinitions.Check.DuplicateCatalogOrder"));
 			}
 
 			int templateCount = packages.Sum(package =>
@@ -188,12 +222,21 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 			{
 				items.Add(new GameDefinitionValidationItem(
 					GameDefinitionValidationLevel.Passed,
-					"Game definition library",
-					$"Validated {packages.Count} definitions, {templateCount} complete template(s), {managedBindingCount} managed setting binding(s), and {actionCount} allowlisted post-install action(s)."));
+					LocalizationManager.Get(
+						"GameDefinitions.Check.Library"),
+					LocalizationManager.Get(
+						"GameDefinitions.Check.LibraryValidated",
+						packages.Count,
+						templateCount,
+						managedBindingCount,
+						actionCount)));
 				items.Add(new GameDefinitionValidationItem(
 					GameDefinitionValidationLevel.Passed,
-					"Definition test runner",
-					$"Completed {definitionTestCount} isolated definition and configuration test(s) without changing installed servers."));
+					LocalizationManager.Get(
+						"GameDefinitions.Check.TestRunner"),
+					LocalizationManager.Get(
+						"GameDefinitions.Check.TestsCompleted",
+						definitionTestCount)));
 			}
 
 			return new GameDefinitionValidationReport(
@@ -244,7 +287,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				{
 					Game = package.Definition.Game,
 					InstallPath = root,
-					ServerName = "Synix Definition Test",
+					ServerName = LocalizationManager.GetEnglish(
+						"GameDefinition.Validation.TestServerName"),
 					WorldName = "SynixWorld",
 					WorldSeed = "12345",
 					GameMode = "PVE",
@@ -278,7 +322,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					AddFailure(
 						items,
 						package.Definition.Game,
-						"The isolated template test did not create every declared configuration file.");
+						LocalizationManager.Get(
+							"GameDefinitions.Check.TemplateFilesMissing"));
 					return;
 				}
 
@@ -294,7 +339,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 						AddFailure(
 							items,
 							package.Definition.Game,
-							"The isolated template test found an unresolved managed placeholder.");
+							LocalizationManager.Get(
+								"GameDefinitions.Check.UnresolvedPlaceholder"));
 						return;
 					}
 				}
@@ -304,7 +350,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				AddFailure(
 					items,
 					package.Definition.Game,
-					$"The isolated definition test failed: {exception.Message}");
+					LocalizationManager.Get(
+						"GameDefinitions.Check.IsolatedTestFailed",
+						exception.Message));
 			}
 			finally
 			{
@@ -342,21 +390,29 @@ catch (UnauthorizedAccessException suppressedException)
 			using JsonDocument document = JsonDocument.Parse(json);
 			JsonElement root = document.RootElement;
 			if (!root.TryGetProperty("definitionRevision", out _))
-				throw new InvalidDataException($"{displayName} is missing definitionRevision.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinitions.Check.MissingDefinitionRevision",
+					displayName));
 
 			if (!root.TryGetProperty("configuration", out JsonElement configuration) ||
 				configuration.ValueKind == JsonValueKind.Null)
 				return;
 			if (configuration.ValueKind != JsonValueKind.Object)
-				throw new InvalidDataException($"{displayName} has an invalid configuration object.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinitions.Check.InvalidConfigurationObject",
+					displayName));
 			if (!configuration.TryGetProperty("revision", out _))
-				throw new InvalidDataException($"{displayName} is missing configuration.revision.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinitions.Check.MissingConfigurationRevision",
+					displayName));
 			if (configuration.TryGetProperty("templates", out JsonElement templates))
 			{
 				foreach (JsonElement template in templates.EnumerateArray())
 				{
 					if (!template.TryGetProperty("revision", out _))
-						throw new InvalidDataException($"{displayName} contains a template without a revision.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"GameDefinitions.Check.TemplateRevisionMissing",
+							displayName));
 				}
 			}
 		}
@@ -376,8 +432,8 @@ catch (UnauthorizedAccessException suppressedException)
 					package.Definition.DefinitionId,
 					StringComparison.OrdinalIgnoreCase))
 			{
-				throw new InvalidDataException(
-					"The folder and definition filename must match the definition ID.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinitions.Check.LayoutMismatch"));
 			}
 		}
 

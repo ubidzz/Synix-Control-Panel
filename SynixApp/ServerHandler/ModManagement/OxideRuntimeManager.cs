@@ -72,10 +72,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!IsEnabled(server, definition))
 				return server.ServerFrameworkVersion ?? "Official";
 			if (!Directory.Exists(server.InstallPath))
-				throw new DirectoryNotFoundException("The Rust server folder does not exist.");
+				throw new DirectoryNotFoundException(LocalizationManager.Get("Oxide.Error.ServerFolderMissing"));
 
 			server.ServerFrameworkVersion = FailedVersion;
-			log?.Invoke("[OXIDE] Checking the official Oxide.Rust release...", Color.Cyan);
+			log?.Invoke(LocalizationManager.Get("Oxide.Activity.CheckingRelease"), Color.Cyan);
 			OxideRelease release = await GetLatestReleaseAsync(cancellationToken);
 			string tempRoot = Path.Combine(
 				Path.GetTempPath(),
@@ -99,17 +99,17 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					Convert.FromHexString(release.Sha256)))
 				{
 					throw new InvalidDataException(
-						"The Oxide download did not match the SHA-256 digest published by GitHub.");
+						LocalizationManager.Get("Oxide.Error.DigestMismatch"));
 				}
 
 				ExtractArchiveSafely(archivePath, stagingPath);
 				if (!Directory.Exists(Path.Combine(stagingPath, "RustDedicated_Data")))
-					throw new InvalidDataException("The official Oxide archive has an unexpected layout.");
+					throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.ArchiveLayout"));
 
 				ApplyOverlayWithRollback(stagingPath, server.InstallPath, rollbackPath);
 				server.ServerFrameworkVersion = release.Version;
 				log?.Invoke(
-					$"[OXIDE] Official Oxide.Rust {release.Version} installed. Synix did not add any plugins.",
+					LocalizationManager.Get("Oxide.Activity.Installed", release.Version),
 					Color.LimeGreen);
 				return release.Version;
 			}
@@ -153,7 +153,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				versionParts.Any(part =>
 					part.Length == 0 || part.Any(character => !char.IsAsciiDigit(character))))
 			{
-				throw new InvalidDataException("GitHub returned an invalid Oxide release version.");
+				throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.ReleaseVersionInvalid"));
 			}
 
 			foreach (JsonElement asset in root.GetProperty("assets").EnumerateArray())
@@ -170,26 +170,26 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				string sha256 = NormalizeSha256Digest(digest);
 				string url = asset.GetProperty("browser_download_url").GetString() ?? string.Empty;
 				if (!TryValidateDownloadUri(url, version, out Uri? downloadUri))
-					throw new InvalidDataException("GitHub returned an unsafe Oxide asset URL.");
+					throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.AssetUrlUnsafe"));
 				long size = asset.GetProperty("size").GetInt64();
 				if (size is <= 0 or > MaximumDownloadBytes)
-					throw new InvalidDataException("The Oxide asset size is invalid.");
+					throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.AssetSizeInvalid"));
 
 				return new OxideRelease(version, downloadUri!, sha256);
 			}
 
 			throw new InvalidDataException(
-				$"The official release did not contain {WindowsAssetName}.");
+				LocalizationManager.Get("Oxide.Error.AssetMissing", WindowsAssetName));
 		}
 
 		internal static string NormalizeSha256Digest(string digest)
 		{
 			const string prefix = "sha256:";
 			if (!digest.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-				throw new InvalidDataException("The Oxide release is missing its SHA-256 digest.");
+				throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.DigestMissing"));
 			string value = digest[prefix.Length..];
 			if (value.Length != 64 || value.Any(character => !Uri.IsHexDigit(character)))
-				throw new InvalidDataException("The Oxide release has an invalid SHA-256 digest.");
+				throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.DigestInvalid"));
 			return value.ToUpperInvariant();
 		}
 
@@ -230,7 +230,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			response.EnsureSuccessStatusCode();
 			long? contentLength = response.Content.Headers.ContentLength;
 			if (contentLength is <= 0 or > MaximumDownloadBytes)
-				throw new InvalidDataException("The Oxide download size is invalid.");
+				throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.DownloadSizeInvalid"));
 
 			await using Stream source = await response.Content.ReadAsStreamAsync(cancellationToken);
 			await using FileStream destination = new(
@@ -249,7 +249,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					break;
 				total += read;
 				if (total > MaximumDownloadBytes)
-					throw new InvalidDataException("The Oxide download exceeded its size limit.");
+					throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.DownloadTooLarge"));
 				await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
 			}
 		}
@@ -276,19 +276,19 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
 			using ZipArchive archive = ZipFile.OpenRead(archivePath);
 			if (archive.Entries.Count > MaximumArchiveEntries)
-				throw new InvalidDataException("The Oxide archive contains too many entries.");
+				throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.TooManyEntries"));
 			long extractedBytes = 0;
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
 				extractedBytes = checked(extractedBytes + entry.Length);
 				if (extractedBytes > MaximumExtractedBytes)
-					throw new InvalidDataException("The Oxide archive exceeds the extraction size limit.");
+					throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.ExtractionTooLarge"));
 				string normalized = entry.FullName.Replace('/', Path.DirectorySeparatorChar);
 				if (string.IsNullOrWhiteSpace(normalized))
 					continue;
 				string destination = Path.GetFullPath(Path.Combine(root, normalized));
 				if (!destination.StartsWith(root, StringComparison.OrdinalIgnoreCase))
-					throw new InvalidDataException("The Oxide archive contains an unsafe path.");
+					throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.ArchivePathUnsafe"));
 				if (normalized.EndsWith(Path.DirectorySeparatorChar))
 				{
 					Directory.CreateDirectory(destination);
@@ -323,7 +323,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					string relative = Path.GetRelativePath(source, sourceFile);
 					string destinationFile = Path.GetFullPath(Path.Combine(destination, relative));
 					if (!destinationFile.StartsWith(destination, StringComparison.OrdinalIgnoreCase))
-						throw new InvalidDataException("The Oxide overlay contains an unsafe path.");
+						throw new InvalidDataException(LocalizationManager.Get("Oxide.Error.OverlayPathUnsafe"));
 
 					Directory.CreateDirectory(Path.GetDirectoryName(destinationFile)!);
 					if (File.Exists(destinationFile))

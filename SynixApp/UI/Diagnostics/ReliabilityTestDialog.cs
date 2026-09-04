@@ -33,10 +33,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			cancelButton.Enabled = true;
 			closeButton.Enabled = false;
 			copyButton.Enabled = false;
-			reportBox.Text = "The reliability report will appear after the requested run finishes.";
+			LocalizationManager.BindText(
+				reportBox,
+				"Text.AB89F96B667CE80E48CB");
 			try
 			{
-				Progress<string> progress = new(message => statusLabel.Text = message);
+				Progress<string> progress = new(message =>
+					statusLabel.Text = LocalizationManager.TranslateRuntimeText(message));
 				ReliabilityTestReport report = await Task.Run(() => ReliabilityTestRunner.RunAsync(
 					ServerRegistry.Servers.ToArray(),
 					TimeSpan.FromMinutes(durationInput.Value),
@@ -44,18 +47,26 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 					progress,
 					_cancellation.Token));
 				reportBox.Text = report.ToPlainText();
-				statusLabel.Text = $"Completed {report.Samples.Count} reliability samples. Private-memory change: {report.PrivateMemoryGrowth / 1024d / 1024d:+0.0;-0.0;0.0} MB.";
+				LocalizationManager.BindText(
+					statusLabel,
+					"Diagnostics.Reliability.Completed",
+					report.Samples.Count,
+					report.PrivateMemoryGrowth / 1024d / 1024d);
 				statusLabel.ForeColor = SettingsPalette.Success;
 				copyButton.Enabled = true;
 			}
 			catch (OperationCanceledException)
 			{
-				statusLabel.Text = "Reliability test cancelled. No server settings were changed.";
+				LocalizationManager.BindText(
+					statusLabel,
+					"Text.4CB636A73FAD7D71BC94");
 				statusLabel.ForeColor = SettingsPalette.Warning;
 			}
 			catch (Exception exception)
 			{
-				statusLabel.Text = "Reliability test failed: " + exception.Message;
+				statusLabel.Text =
+					LocalizationManager.Get("DynamicText.FEB1FFB864616C071102") +
+					exception.Message;
 				statusLabel.ForeColor = SettingsPalette.Danger;
 			}
 			finally

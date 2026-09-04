@@ -46,7 +46,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					items.Add(new ConfigurationValidationItem(
 						ConfigurationValidationState.Failed,
 						template.RelativePath,
-						"The required configuration file is missing."));
+						LocalizationManager.Get(
+							"Configuration.Check.RequiredFile.Missing")));
 					continue;
 				}
 
@@ -61,10 +62,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						structureMatches
 							? ConfigurationValidationState.Passed
 							: ConfigurationValidationState.Failed,
-						$"{template.RelativePath} structure",
+						LocalizationManager.Get(
+							"Configuration.Check.FileStructure",
+							template.RelativePath),
 						structureMatches
-							? "The required template structure is present."
-							: "One or more required template tags are missing or invalid."));
+							? LocalizationManager.Get(
+								"Configuration.Check.TemplateStructure.Present")
+							: LocalizationManager.Get(
+								"Configuration.Check.TemplateStructure.Invalid")));
 
 					List<ConfigLine> desiredValues =
 						ConfigHandler.LoadConfigText(expandedTemplate, Format);
@@ -98,7 +103,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 							items.Add(new ConfigurationValidationItem(
 								ConfigurationValidationState.Failed,
 								displayName,
-								"The managed configuration tag is missing or has the wrong data type."));
+								LocalizationManager.Get(
+									"Configuration.Check.ManagedTag.MissingOrType")));
 							continue;
 						}
 
@@ -107,7 +113,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 							items.Add(new ConfigurationValidationItem(
 								ConfigurationValidationState.Failed,
 								displayName,
-								"The managed tag appears more than once, so Synix cannot safely identify one value."));
+								LocalizationManager.Get(
+									"Configuration.Check.ManagedTag.Duplicate")));
 							continue;
 						}
 
@@ -118,16 +125,21 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 								: ConfigurationValidationState.Failed,
 							displayName,
 							valueMatches
-								? "The file value matches the value saved in Synix."
-								: "The file value does not match the value saved in Synix."));
+								? LocalizationManager.Get(
+									"Configuration.Check.Value.Matches")
+								: LocalizationManager.Get(
+									"Configuration.Check.Value.Differs")));
 					}
 
 					if (managedValues.Count == 0)
 					{
 						items.Add(new ConfigurationValidationItem(
 							ConfigurationValidationState.Passed,
-							$"{template.RelativePath} managed values",
-							"This template does not replace values from Server Settings."));
+							LocalizationManager.Get(
+								"Configuration.Check.FileManagedValues",
+								template.RelativePath),
+							LocalizationManager.Get(
+								"Configuration.Check.ManagedValues.NotReplaced")));
 					}
 				}
 				catch (Exception exception)
@@ -135,7 +147,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					items.Add(new ConfigurationValidationItem(
 						ConfigurationValidationState.Failed,
 						template.RelativePath,
-						$"Synix could not safely inspect this file: {exception.Message}"));
+						LocalizationManager.Get(
+							"Configuration.Check.FileInspect.Failed",
+							exception.Message)));
 				}
 			}
 
@@ -183,7 +197,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				}
 
 				string backupMessage = upgradeBackups.Count > 0
-					? $" Preserved {upgradeBackups.Count} pre-upgrade configuration backup(s)."
+					? LocalizationManager.Get(
+						"Configuration.Apply.UpgradeBackupsPreserved",
+						upgradeBackups.Count)
 					: string.Empty;
 				if (missing.Count > 0)
 				{
@@ -192,7 +208,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						false,
 						changed,
 						created,
-						$"The existing files were preserved, but these managed settings were not found: {string.Join(", ", missing)}." +
+						LocalizationManager.Get(
+							"Configuration.Apply.ManagedSettingsMissing.Multiple",
+							string.Join(", ", missing)) +
 						backupMessage);
 				}
 
@@ -202,16 +220,25 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					changed,
 					created,
 					(created
-						? $"Created the required {GameName} configuration files."
+						? LocalizationManager.Get(
+							"Configuration.Apply.RequiredFilesCreated",
+							GameName)
 						: changed
-							? $"Updated the managed {GameName} configuration settings."
-							: $"The {GameName} configuration files are already current.") +
+							? LocalizationManager.Get(
+								"Configuration.Apply.ManagedSettingsUpdated",
+								GameName)
+							: LocalizationManager.Get(
+								"Configuration.Apply.FilesCurrent",
+								GameName)) +
 					backupMessage);
 			}
 			catch (Exception ex)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The {GameName} configuration could not be created: {ex.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.CreateFailed",
+						GameName,
+						ex.Message));
 			}
 		}
 

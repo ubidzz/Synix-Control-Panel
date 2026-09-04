@@ -28,6 +28,36 @@ namespace Synix_Control_Panel.SynixEngine
 		}
 
 		/// <summary>
+		/// Publishes translated activity text while retaining invariant English in
+		/// the technical log used for troubleshooting and support.
+		/// </summary>
+		public static void WriteLocalized(
+			string resourceKey,
+			Color? color = null,
+			bool bold = false,
+			params object?[] arguments)
+		{
+			string technicalMessage = LocalizationManager.GetEnglish(
+				resourceKey,
+				arguments);
+			string localizedMessage = LocalizationManager.Get(
+				resourceKey,
+				arguments);
+			if (ApplicationUiService.PublishLog(
+				technicalMessage,
+				localizedMessage,
+				color ?? Color.White,
+				bold))
+			{
+				return;
+			}
+
+			FileHandler.QueueLog(
+				"Synix_Background_Service",
+				$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {technicalMessage}");
+		}
+
+		/// <summary>
 		/// Records an intentionally suppressed exception in the text log without
 		/// publishing it to Activity &amp; Diagnostics on the dashboard.
 		/// </summary>

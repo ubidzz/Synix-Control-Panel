@@ -25,7 +25,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (stream.Length > int.MaxValue)
 				{
 					throw new InvalidDataException(
-						"The configuration file is too large to edit safely.");
+						LocalizationManager.Get(
+							"Configuration.Editor.FileTooLarge"));
 				}
 
 				bytes = new byte[(int)stream.Length];

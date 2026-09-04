@@ -47,7 +47,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(392, 30);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Create a transfer password";
+			titleLabel.Text = LocalizationManager.Get("TransferPassword.Protect.Title");
 			// 
 			// descriptionLabel
 			// 
@@ -56,7 +56,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			descriptionLabel.Name = "descriptionLabel";
 			descriptionLabel.Size = new Size(392, 42);
 			descriptionLabel.TabIndex = 1;
-			descriptionLabel.Text = "You will need this password when moving Synix to the new PC. It cannot be recovered.";
+			descriptionLabel.Text = LocalizationManager.Get("TransferPassword.Protect.Description");
 			// 
 			// passwordTextBox
 			// 
@@ -65,7 +65,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			passwordTextBox.ForeColor = Color.FromArgb(245, 247, 251);
 			passwordTextBox.Location = new Point(24, 102);
 			passwordTextBox.Name = "passwordTextBox";
-			passwordTextBox.PlaceholderText = "Password (at least 8 characters)";
+			passwordTextBox.PlaceholderText = LocalizationManager.Get("Text.5A0097CBC9C1DAE030DE");
 			passwordTextBox.Size = new Size(392, 25);
 			passwordTextBox.TabIndex = 2;
 			passwordTextBox.UseSystemPasswordChar = true;
@@ -77,7 +77,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			confirmTextBox.ForeColor = Color.FromArgb(245, 247, 251);
 			confirmTextBox.Location = new Point(24, 158);
 			confirmTextBox.Name = "confirmTextBox";
-			confirmTextBox.PlaceholderText = "Confirm password";
+			confirmTextBox.PlaceholderText = LocalizationManager.Get("Text.5AC265F396A2C58687AA");
 			confirmTextBox.Size = new Size(392, 25);
 			confirmTextBox.TabIndex = 3;
 			confirmTextBox.UseSystemPasswordChar = true;
@@ -101,7 +101,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(88, 40);
 			cancelButton.TabIndex = 5;
-			cancelButton.Text = "Cancel";
+			cancelButton.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			cancelButton.UseVisualStyleBackColor = false;
 			// 
 			// continueButton
@@ -114,7 +114,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			continueButton.Name = "continueButton";
 			continueButton.Size = new Size(88, 40);
 			continueButton.TabIndex = 6;
-			continueButton.Text = "Export";
+			continueButton.Text = LocalizationManager.Get("TransferPassword.Button.Export");
 			continueButton.UseAccentStyle = true;
 			continueButton.UseVisualStyleBackColor = false;
 			// 
@@ -141,7 +141,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Transfers
 			Name = "TransferPasswordDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Protect Synix Transfer";
+			Text = LocalizationManager.Get("TransferPassword.Protect.WindowTitle");
 			ResumeLayout(false);
 			PerformLayout();
 		}

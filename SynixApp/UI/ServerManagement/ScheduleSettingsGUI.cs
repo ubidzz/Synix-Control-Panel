@@ -117,21 +117,33 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				FillColor = SettingsPalette.Card,
 				BorderColor = SettingsPalette.Divider
 			};
-			smartCard.Controls.Add(CreateLabel("Smart maintenance", 20, 14, 300, 26, true));
-			smartCard.Controls.Add(CreateLabel(
-				"Wait for players when possible, then safely stop every server process before maintenance.",
+			smartCard.Controls.Add(CreateLocalizedLabel(
+				"Schedule.Smart.Title",
+				20, 14, 300, 26, true));
+			smartCard.Controls.Add(CreateLocalizedLabel(
+				"Schedule.Smart.Description",
 				20, 42, 500, 40));
-			_smartToggle = CreateToggle(574, 18, "Enable smart maintenance");
+			_smartToggle = CreateToggle(
+				574,
+				18,
+				"Schedule.Smart.Toggle.AccessibleName");
 			_smartToggle.Checked = true;
 			_smartToggle.CheckedChanged += (_, _) => UpdateSmartControlState();
 			smartCard.Controls.Add(_smartToggle);
 
-			smartCard.Controls.Add(CreateLabel("Wait for players", 20, 92, 150, 28, true));
-			_waitToggle = CreateToggle(164, 90, "Wait for connected players");
+			smartCard.Controls.Add(CreateLocalizedLabel(
+				"Schedule.Smart.WaitForPlayers",
+				20, 92, 150, 28, true));
+			_waitToggle = CreateToggle(
+				164,
+				90,
+				"Schedule.Smart.WaitToggle.AccessibleName");
 			_waitToggle.Checked = true;
 			_waitToggle.CheckedChanged += (_, _) => UpdateSmartControlState();
 			smartCard.Controls.Add(_waitToggle);
-			smartCard.Controls.Add(CreateLabel("Maximum delay", 242, 92, 140, 28, true));
+			smartCard.Controls.Add(CreateLocalizedLabel(
+				"Schedule.Smart.MaximumDelay",
+				242, 92, 140, 28, true));
 			_delayMinutes = new NumericUpDown
 			{
 				Location = new Point(374, 90),
@@ -144,14 +156,26 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				BorderStyle = BorderStyle.FixedSingle
 			};
 			smartCard.Controls.Add(_delayMinutes);
-			smartCard.Controls.Add(CreateLabel("minutes", 456, 94, 64, 24));
+			smartCard.Controls.Add(CreateLocalizedLabel(
+				"Schedule.Smart.Minutes",
+				456, 94, 64, 24));
 
-			smartCard.Controls.Add(CreateLabel("Backup", 20, 134, 70, 26, true));
-			_backupToggle = CreateToggle(90, 130, "Back up before restart");
+			smartCard.Controls.Add(CreateLocalizedLabel(
+				"Schedule.Smart.Backup",
+				20, 134, 70, 26, true));
+			_backupToggle = CreateToggle(
+				90,
+				130,
+				"Schedule.Smart.BackupToggle.AccessibleName");
 			_backupToggle.Checked = true;
 			smartCard.Controls.Add(_backupToggle);
-			smartCard.Controls.Add(CreateLabel("Update", 242, 134, 70, 26, true));
-			_updateToggle = CreateToggle(310, 130, "Update before restart");
+			smartCard.Controls.Add(CreateLocalizedLabel(
+				"Schedule.Smart.Update",
+				242, 134, 70, 26, true));
+			_updateToggle = CreateToggle(
+				310,
+				130,
+				"Schedule.Smart.UpdateToggle.AccessibleName");
 			smartCard.Controls.Add(_updateToggle);
 			Controls.Add(smartCard);
 
@@ -169,11 +193,37 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_updateToggle.Enabled = enabled;
 		}
 
-		private static ModernSettingsToggle CreateToggle(int left, int top, string accessibleName) => new()
+		private static ModernSettingsToggle CreateToggle(
+			int left,
+			int top,
+			string accessibleNameKey)
 		{
-			Location = new Point(left, top),
-			AccessibleName = accessibleName
-		};
+			ModernSettingsToggle toggle = new()
+			{
+				Location = new Point(left, top)
+			};
+			LocalizationManager.BindAccessibleName(toggle, accessibleNameKey);
+			return toggle;
+		}
+
+		private static Label CreateLocalizedLabel(
+			string resourceKey,
+			int left,
+			int top,
+			int width,
+			int height,
+			bool bold = false)
+		{
+			Label label = CreateLabel(
+				LocalizationManager.Get(resourceKey),
+				left,
+				top,
+				width,
+				height,
+				bold);
+			LocalizationManager.BindText(label, resourceKey);
+			return label;
+		}
 
 		private static Label CreateLabel(
 			string text,

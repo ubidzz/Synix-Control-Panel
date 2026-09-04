@@ -127,7 +127,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				: new ConfigurationRestoreResult(
 					false,
 					0,
-					"This game does not have a managed configuration definition.");
+					LocalizationManager.Get(
+						"Configuration.Restore.ManagedDefinitionMissing"));
 		}
 
 		internal static bool NeedsManagedConfigurationRepair(GameServer server)
@@ -172,8 +173,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				items.Add(new ConfigurationValidationItem(
 					ConfigurationValidationState.Warning,
-					"Configuration behavior",
-					"This game's configuration-file behavior has not been verified."));
+					LocalizationManager.Get("Configuration.Check.Behavior"),
+					LocalizationManager.Get(
+						"Configuration.Check.Behavior.NotVerified")));
 				return new ConfigurationValidationReport(
 					server.Game,
 					server.ManagedConfigurationVersion,
@@ -194,11 +196,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				items.Add(new ConfigurationValidationItem(
 					state,
 					creationMode == ConfigFileCreationMode.LaunchArgumentsOnly
-						? "Launch arguments"
-						: "Managed definition",
+						? LocalizationManager.Get(
+							"Configuration.Check.LaunchArguments")
+						: LocalizationManager.Get(
+							"Configuration.Check.ManagedDefinition"),
 					creationMode == ConfigFileCreationMode.LaunchArgumentsOnly
-						? "This game applies its supported values through launch arguments instead of a configuration file."
-						: "Synix does not have a managed configuration definition for this game."));
+						? LocalizationManager.Get(
+							"Configuration.Check.ValuesThroughArguments")
+						: LocalizationManager.Get(
+							"Configuration.Check.ManagedDefinition.Missing")));
 				return new ConfigurationValidationReport(
 					server.Game,
 					server.ManagedConfigurationVersion,
@@ -211,30 +217,40 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				items.Add(new ConfigurationValidationItem(
 					ConfigurationValidationState.Warning,
-					"Development setting",
-					"Automatic premade configuration creation and updates are disabled for this development build. Validation and the explicit Fix Config action remain available while the server is stopped."));
+					LocalizationManager.Get(
+						"Configuration.Check.DevelopmentSetting"),
+					LocalizationManager.Get(
+						"Configuration.Check.DevelopmentSetting.Disabled")));
 			}
 
 			if (server.ManagedConfigurationVersion == definition.SchemaVersion)
 			{
 				items.Add(new ConfigurationValidationItem(
 					ConfigurationValidationState.Passed,
-					"Template revision",
-					$"The server is recorded with the current template revision {definition.SchemaVersion}."));
+					LocalizationManager.Get("Configuration.Check.TemplateRevision"),
+					LocalizationManager.Get(
+						"Configuration.Check.TemplateRevision.Current",
+						definition.SchemaVersion)));
 			}
 			else if (server.ManagedConfigurationVersion < definition.SchemaVersion)
 			{
 				items.Add(new ConfigurationValidationItem(
 					ConfigurationValidationState.Warning,
-					"Template revision",
-					$"The server is recorded with revision {server.ManagedConfigurationVersion}, but Synix now uses revision {definition.SchemaVersion}. Save Server Settings to apply the newer managed values."));
+					LocalizationManager.Get("Configuration.Check.TemplateRevision"),
+					LocalizationManager.Get(
+						"Configuration.Check.TemplateRevision.Outdated",
+						server.ManagedConfigurationVersion,
+						definition.SchemaVersion)));
 			}
 			else
 			{
 				items.Add(new ConfigurationValidationItem(
 					ConfigurationValidationState.Warning,
-					"Template revision",
-					$"The server was last managed by revision {server.ManagedConfigurationVersion}, which is newer than this Synix definition revision {definition.SchemaVersion}."));
+					LocalizationManager.Get("Configuration.Check.TemplateRevision"),
+					LocalizationManager.Get(
+						"Configuration.Check.TemplateRevision.Newer",
+						server.ManagedConfigurationVersion,
+						definition.SchemaVersion)));
 			}
 
 			string localIp = string.Empty;
@@ -250,8 +266,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					items.Add(new ConfigurationValidationItem(
 						ConfigurationValidationState.Failed,
-						"Network values",
-						$"Synix could not obtain the network addresses required to validate this template: {exception.Message}"));
+						LocalizationManager.Get(
+							"Configuration.Check.NetworkValues"),
+						LocalizationManager.Get(
+							"Configuration.Check.NetworkValues.Failed",
+							exception.Message)));
 					return new ConfigurationValidationReport(
 						server.Game,
 						server.ManagedConfigurationVersion,
@@ -272,8 +291,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					items.Add(new ConfigurationValidationItem(
 						ConfigurationValidationState.Failed,
-						"Protected passwords",
-						"Synix could not unlock the saved passwords. Re-enter them in Server Settings before validating the configuration."));
+						LocalizationManager.Get(
+							"Configuration.Check.ProtectedPasswords"),
+						LocalizationManager.Get(
+							"Configuration.Check.ProtectedPasswords.UnlockFailed")));
 					return new ConfigurationValidationReport(
 						server.Game,
 						server.ManagedConfigurationVersion,
@@ -292,10 +313,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			items.AddRange(definition.Validate(context));
 			items.Add(new ConfigurationValidationItem(
 				ConfigurationValidationState.Passed,
-				"Fix Config",
+				LocalizationManager.Get("Configuration.Check.FixConfig"),
 				definition.SupportsFullReset
-					? "A complete trusted template is available. Fix Config creates a backup before replacing the file and reapplying the saved Synix values."
-					: "Validation is available, but Synix will not offer a full rebuild because this game does not have a complete trusted reset template."));
+					? LocalizationManager.Get(
+						"Configuration.Check.FixConfig.Available")
+					: LocalizationManager.Get(
+						"Configuration.Check.FixConfig.Unavailable")));
 
 			return new ConfigurationValidationReport(
 				server.Game,
@@ -473,7 +496,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					true,
 					false,
 					false,
-					"Premade game configurations are disabled for this development build.");
+					LocalizationManager.Get(
+						"Configuration.Apply.PremadeDisabled"));
 			}
 
 			ConfigFileCreationMode creationMode =
@@ -485,7 +509,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					true,
 					false,
 					false,
-					"This game's configuration-file behavior has not been verified.");
+					LocalizationManager.Get(
+						"Configuration.Check.Behavior.NotVerified"));
 			}
 
 			if (creationMode == ConfigFileCreationMode.LaunchArgumentsOnly)
@@ -501,7 +526,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					true,
 					false,
 					false,
-					"This game does not have a managed configuration definition.");
+					LocalizationManager.Get(
+						"Configuration.Apply.ManagedDefinitionMissing"));
 			}
 
 			string localIp = string.Empty;
@@ -535,7 +561,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				catch (SynixPasswordProtectionException)
 				{
 					return ConfigurationApplyResult.Failure(
-						"Synix could not unlock the saved passwords. Re-enter them in Server Settings before applying the game configuration.");
+						LocalizationManager.Get(
+							"Configuration.Apply.PasswordUnlockFailed"));
 				}
 			}
 
@@ -549,7 +576,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ConfigurationBackupManager.CreateSnapshot(
 					server,
 					definition,
-					"Before applying saved Synix server settings");
+					LocalizationManager.Get(
+						"Configuration.Backup.BeforeApply"));
 			ConfigurationApplyResult result = definition.Apply(context);
 			if (!result.Changed)
 				ConfigurationBackupManager.Discard(snapshot);
@@ -584,7 +612,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				!definition.SupportsFullReset)
 			{
 				return ConfigurationApplyResult.Failure(
-					"Synix does not have a complete reset template for this game.");
+					LocalizationManager.Get(
+						"Configuration.Apply.ResetTemplateMissing.Generic"));
 			}
 
 			string localIp = string.Empty;
@@ -599,7 +628,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				catch (Exception exception)
 				{
 					return ConfigurationApplyResult.Failure(
-						$"Synix could not obtain the network addresses required by this template. {exception.Message}");
+						LocalizationManager.Get(
+							"Configuration.Apply.NetworkFailed",
+							exception.Message));
 				}
 			}
 
@@ -613,7 +644,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				catch (SynixPasswordProtectionException)
 				{
 					return ConfigurationApplyResult.Failure(
-						"Synix could not unlock the saved passwords. Re-enter them in Server Settings before resetting the game configuration.");
+						LocalizationManager.Get(
+							"Configuration.Apply.ResetPasswordUnlockFailed"));
 				}
 			}
 
@@ -627,7 +659,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ConfigurationBackupManager.CreateSnapshot(
 					server,
 					definition,
-					"Before resetting from the Synix template");
+					LocalizationManager.Get(
+						"Configuration.Backup.BeforeReset"));
 			ConfigurationApplyResult result = definition.ResetToTemplate(context);
 			if (!result.Changed)
 				ConfigurationBackupManager.Discard(snapshot);
@@ -665,12 +698,15 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							? Color.Orange
 							: Color.LightGreen
 						: Color.Red;
-					Core.Instance.Log($"[POST-INSTALL] {message}", color);
+					Core.Instance.LogLocalized(
+						"Configuration.PostInstall.Activity",
+						color,
+						arguments: [LocalizationManager.TranslateRuntimeText(message)]);
 				}
 				if (!postInstall.Succeeded)
 				{
-					Core.Instance.Log(
-						"[POST-INSTALL ERROR] The trusted post-install recipe did not complete.",
+					Core.Instance.LogLocalized(
+						"Configuration.PostInstall.Error",
 						Color.Red);
 				}
 				applied |= postInstall.Changed;
@@ -695,7 +731,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						ConfigurationApplyResult result = await ApplyManagedConfiguration(server);
 						if (!result.Succeeded)
 						{
-							Core.Instance.Log($"[CONFIG ERROR] {result.Message}", Color.Red);
+							Core.Instance.LogLocalized(
+								"Configuration.Activity.Error",
+								Color.Red,
+								arguments: [result.Message]);
 						}
 						else
 						{
@@ -711,14 +750,20 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 							if (!result.Complete)
 							{
-								Core.Instance.Log($"[CONFIG WARNING] {result.Message}", Color.Orange);
+								Core.Instance.LogLocalized(
+									"Configuration.Activity.Warning",
+									Color.Orange,
+									arguments: [result.Message]);
 							}
 						}
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
+				ApplicationLogService.WriteSuppressedException(
+					exception,
+					"ApplyManagedConfigurationPostInstall");
 				return false;
 			}
 
@@ -775,12 +820,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			ConfigurationDefinition definition)
 		{
 			if (!index.TryAdd(definition.GameName, definition))
-				throw new InvalidDataException($"Duplicate configuration definition: {definition.GameName}.");
+				throw new InvalidDataException(
+					LocalizationManager.Get(
+						"Configuration.Definition.Duplicate",
+						definition.GameName));
 
 			foreach (string alias in definition.Aliases)
 			{
 				if (!index.TryAdd(alias, definition))
-					throw new InvalidDataException($"Duplicate configuration name or alias: {alias}.");
+					throw new InvalidDataException(
+						LocalizationManager.Get(
+							"Configuration.Definition.DuplicateAlias",
+							alias));
 			}
 		}
 

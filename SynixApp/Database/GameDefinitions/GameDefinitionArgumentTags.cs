@@ -23,37 +23,43 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 	{
 		internal static IReadOnlyList<GameDefinitionArgumentTag> LaunchArguments { get; } =
 		[
-			new("{ServerName}", "Server name", "The server name entered by the user."),
-			new("{Identity}", "Safe server identity", "A folder-safe version of the server name."),
-			new("{port}", "Game port", "The main game connection port."),
-			new("{query}", "Query port", "The Steam or server-browser query port."),
-			new("{app_port}", "Additional app port", "The optional extra application port."),
-			new("{MaxPlayers}", "Maximum players", "The maximum player count selected by the user."),
-			new("{pass}", "Server password", "The saved player/server password."),
-			new("{adminpass}", "Administrator password", "The saved administrator password."),
-			new("{auth_token}", "Online authentication token", "The protected third-party authentication token required by this server."),
-			new("{map}", "Map or world name", "The selected map, scenario, shard, or world name."),
-			new("{seed}", "World seed", "The selected world-generation seed."),
-			new("{world_size}", "World size", "The selected world size."),
-			new("{mode}", "Game mode", "The selected game mode or PVE/PVP value."),
-			new("{crossplay}", "Crossplay", "The game-specific enabled value, flag, or no argument when Crossplay is disabled."),
-			new("{crossplay_public_ip}", "Crossplay public IPv4 argument", "The ARK: Survival Evolved Epic public-IP argument when Crossplay is enabled and the address is available."),
-			new("{ram}", "Memory limit", "The configured memory value in megabytes."),
-			new("{rcon}", "Optional RCON arguments", "The RCON recipe below, or nothing when RCON is disabled."),
-			new("{steamAppID}", "Installed Steam AppID", "The AppID Synix determined for the installed server."),
-			new("{appid}", "Definition Steam AppID", "The Steam AppID stored in this game definition."),
-			new("{PublicIP}", "Current public IPv4 address", "The current public IPv4 address, or no argument when it cannot be determined."),
-			new("{InstallPath}", "Server install folder", "The complete server installation folder.")
+			Create("{ServerName}", "ServerName"),
+			Create("{Identity}", "Identity"),
+			Create("{port}", "Port"),
+			Create("{query}", "QueryPort"),
+			Create("{app_port}", "AppPort"),
+			Create("{MaxPlayers}", "MaxPlayers"),
+			Create("{pass}", "Password"),
+			Create("{adminpass}", "AdminPassword"),
+			Create("{auth_token}", "AuthenticationToken"),
+			Create("{map}", "Map"),
+			Create("{seed}", "Seed"),
+			Create("{world_size}", "WorldSize"),
+			Create("{mode}", "Mode"),
+			Create("{crossplay}", "Crossplay"),
+			Create("{crossplay_public_ip}", "CrossplayPublicIp"),
+			Create("{ram}", "Ram"),
+			Create("{rcon}", "RconArguments"),
+			Create("{steamAppID}", "InstalledSteamAppId"),
+			Create("{appid}", "DefinitionSteamAppId"),
+			Create("{PublicIP}", "PublicIp"),
+			Create("{InstallPath}", "InstallPath")
 		];
 
 		internal static IReadOnlyList<GameDefinitionArgumentTag> RconSyntax { get; } =
 		[
-			new("{rcon_port}", "RCON port", "The RCON port selected by the user."),
-			new("{rcon_pass}", "RCON password", "The saved RCON password."),
-			new("{rcon_enabled}", "RCON enabled value", "The exact enabled value required by this game, such as true, True, or 1."),
-			new("{adminpass}", "Administrator password", "The saved administrator password, used by games that share it with RCON."),
-			new("{steamAppID}", "Installed Steam AppID", "The AppID Synix determined for the installed server.")
+			Create("{rcon_port}", "RconPort"),
+			Create("{rcon_pass}", "RconPassword"),
+			Create("{rcon_enabled}", "RconEnabled"),
+			Create("{adminpass}", "SharedAdminPassword"),
+			Create("{steamAppID}", "InstalledSteamAppId")
 		];
+
+		private static GameDefinitionArgumentTag Create(string token, string resourceSuffix) =>
+			new(
+				token,
+				LocalizationManager.Get($"GameDefinition.Tag.{resourceSuffix}.Name"),
+				LocalizationManager.Get($"GameDefinition.Tag.{resourceSuffix}.Description"));
 
 		private static readonly HashSet<string> LaunchTokens =
 			LaunchArguments.Select(tag => tag.Token).ToHashSet(StringComparer.Ordinal);
@@ -85,14 +91,21 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				if (!supportedTokens.Contains(token))
 				{
 					throw new InvalidDataException(
-						$"{resourceName} contains unsupported or incorrectly capitalized {field} tag {token}.");
+						LocalizationManager.Get(
+							"GameDefinition.Error.UnsupportedTag",
+							resourceName,
+							field,
+							token));
 				}
 				return string.Empty;
 			});
 			if (remaining.Contains('{') || remaining.Contains('}'))
 			{
 				throw new InvalidDataException(
-					$"{resourceName} contains an incomplete {field} tag.");
+					LocalizationManager.Get(
+						"GameDefinition.Error.IncompleteTag",
+						resourceName,
+						field));
 			}
 		}
 

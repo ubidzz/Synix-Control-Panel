@@ -94,7 +94,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		{
 			return Path.GetDirectoryName(ResolveFullPath(server))
 				?? throw new InvalidOperationException(
-					"The Eco configuration directory is unavailable.");
+					LocalizationManager.Get(
+						"Eco.Configuration.DirectoryUnavailable"));
 		}
 	}
 }

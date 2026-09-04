@@ -30,7 +30,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			if (!server.EnableRcon || server.RconPort is < 1 or > 65535)
-				return new(false, string.Empty, "Minecraft RCON is disabled for this server.");
+				return new(false, string.Empty, LocalizationManager.Get("Minecraft.Rcon.Disabled"));
 
 			string password;
 			try
@@ -43,7 +43,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			if (string.IsNullOrWhiteSpace(password))
-				return new(false, string.Empty, "Minecraft RCON needs a password in Server Settings.");
+				return new(false, string.Empty, LocalizationManager.Get("Minecraft.Rcon.PasswordRequired"));
 
 			using CancellationTokenSource timeout =
 				CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -67,7 +67,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					authenticationId,
 					timeout.Token);
 				if (authentication.RequestId == -1)
-					return new(false, string.Empty, "Minecraft rejected the saved RCON password.");
+					return new(false, string.Empty, LocalizationManager.Get("Minecraft.Rcon.PasswordRejected"));
 
 				const int commandId = 73_102;
 				await WritePacketAsync(
@@ -81,7 +81,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					RconPacket response = await ReadPacketAsync(stream, timeout.Token);
 					if (response.RequestId != commandId)
-						return new(false, string.Empty, "Minecraft returned an unrelated RCON response.");
+						return new(false, string.Empty, LocalizationManager.Get("Minecraft.Rcon.UnrelatedResponse"));
 
 					return new(true, response.Body, string.Empty);
 				}
@@ -93,16 +93,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
 			{
-				return new(false, string.Empty, $"Minecraft RCON on TCP port {server.RconPort} timed out.");
+				return new(false, string.Empty, LocalizationManager.Get("Minecraft.Rcon.Timeout", server.RconPort));
 			}
 			catch (SocketException exception)
 			{
-				return new(false, string.Empty, $"Minecraft RCON could not connect: {exception.Message}");
+				return new(false, string.Empty, LocalizationManager.Get("Minecraft.Rcon.ConnectionFailed", exception.Message));
 			}
 			catch (Exception exception) when (
 				exception is IOException or InvalidDataException)
 			{
-				return new(false, string.Empty, $"Minecraft RCON returned an invalid response: {exception.Message}");
+				return new(false, string.Empty, LocalizationManager.Get("Minecraft.Rcon.InvalidResponse", exception.Message));
 			}
 		}
 
@@ -154,7 +154,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					return packet;
 			}
 
-			throw new InvalidDataException("The RCON authentication response was not received.");
+			throw new InvalidDataException(LocalizationManager.Get("Minecraft.Rcon.AuthenticationMissing"));
 		}
 
 		private static async Task WritePacketAsync(
@@ -177,12 +177,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			await stream.ReadExactlyAsync(lengthBytes, cancellationToken);
 			int length = BinaryPrimitives.ReadInt32LittleEndian(lengthBytes);
 			if (length is < 10 or > MaximumPacketLength)
-				throw new InvalidDataException($"The RCON packet length {length} is invalid.");
+				throw new InvalidDataException(LocalizationManager.Get("Minecraft.Rcon.InvalidPacketLength", length));
 
 			byte[] payload = new byte[length];
 			await stream.ReadExactlyAsync(payload, cancellationToken);
 			if (payload[^1] != 0 || payload[^2] != 0)
-				throw new InvalidDataException("The RCON packet terminator is missing.");
+				throw new InvalidDataException(LocalizationManager.Get("Minecraft.Rcon.PacketTerminatorMissing"));
 
 			int requestId = BinaryPrimitives.ReadInt32LittleEndian(payload.AsSpan(0, 4));
 			int packetType = BinaryPrimitives.ReadInt32LittleEndian(payload.AsSpan(4, 4));

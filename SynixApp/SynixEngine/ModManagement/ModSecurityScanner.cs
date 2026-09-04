@@ -38,25 +38,30 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 	{
 		internal string BuildUserMessage()
 		{
-			string heading = Outcome switch
+			string heading = LocalizationManager.Get(Outcome switch
 			{
-				ModSecurityOutcome.Blocked => "Synix blocked this package.",
-				ModSecurityOutcome.ReviewRequired => "Review this package before installing it.",
-				_ => "The automatic checks completed."
-			};
+				ModSecurityOutcome.Blocked => "ModSecurity.Heading.Blocked",
+				ModSecurityOutcome.ReviewRequired =>
+					"ModSecurity.Heading.ReviewRequired",
+				_ => "ModSecurity.Heading.Completed"
+			});
 			StringBuilder message = new();
 			message.AppendLine(heading);
 			message.AppendLine();
-			message.AppendLine($"Antivirus: {AntivirusStatus}");
-			message.AppendLine($"SHA-256: {PackageSha256}");
+			message.AppendLine(LocalizationManager.Get(
+				"ModSecurity.Antivirus",
+				AntivirusStatus));
+			message.AppendLine(LocalizationManager.Get(
+				"ModSecurity.Sha256",
+				PackageSha256));
 			foreach (ModSecurityFinding finding in Findings.Take(8))
 				message.AppendLine($"• {finding.Message}");
 			if (Findings.Count > 8)
-				message.AppendLine($"• {Findings.Count - 8} more finding(s) were omitted from this summary.");
+				message.AppendLine(LocalizationManager.Get(
+					"ModSecurity.MoreFindings",
+					Findings.Count - 8));
 			message.AppendLine();
-			message.Append(
-				"Mods and plugins run as code with the game server's Windows permissions. " +
-				"A clean scan cannot prove that code is trustworthy. Continue only when you trust its source.");
+			message.Append(LocalizationManager.Get("ModSecurity.SafetyNotice"));
 			return message.ToString();
 		}
 	}
@@ -82,20 +87,20 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			StringComparer.OrdinalIgnoreCase);
 		private static readonly (string Token, string Description)[] RiskySourceCapabilities =
 		[
-			("System.Diagnostics.Process", "can start other programs"),
-			("Process.Start", "can start other programs"),
-			("cmd.exe", "references Windows Command Prompt"),
-			("powershell", "references PowerShell"),
-			("DllImport", "can call native Windows functions"),
-			("NativeLibrary", "can load native libraries"),
-			("Microsoft.Win32.Registry", "can access the Windows Registry"),
-			("RegistryKey", "can access the Windows Registry"),
-			("File.Delete", "can delete files"),
-			("Directory.Delete", "can delete folders"),
-			("HttpClient", "can communicate over the internet"),
-			("WebClient", "can communicate over the internet"),
-			("System.Net.Sockets", "can open network connections"),
-			("Assembly.Load", "can load additional code at runtime")
+			("System.Diagnostics.Process", "ModSecurity.Capability.StartPrograms"),
+			("Process.Start", "ModSecurity.Capability.StartPrograms"),
+			("cmd.exe", "ModSecurity.Capability.CommandPrompt"),
+			("powershell", "ModSecurity.Capability.PowerShell"),
+			("DllImport", "ModSecurity.Capability.NativeFunctions"),
+			("NativeLibrary", "ModSecurity.Capability.NativeLibraries"),
+			("Microsoft.Win32.Registry", "ModSecurity.Capability.Registry"),
+			("RegistryKey", "ModSecurity.Capability.Registry"),
+			("File.Delete", "ModSecurity.Capability.DeleteFiles"),
+			("Directory.Delete", "ModSecurity.Capability.DeleteFolders"),
+			("HttpClient", "ModSecurity.Capability.Internet"),
+			("WebClient", "ModSecurity.Capability.Internet"),
+			("System.Net.Sockets", "ModSecurity.Capability.Network"),
+			("Assembly.Load", "ModSecurity.Capability.LoadCode")
 		];
 
 		internal static bool IsCurrentProcessElevated()
@@ -122,7 +127,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			try
 			{
 				if (!File.Exists(packagePath))
-					throw new FileNotFoundException("The selected package no longer exists.");
+					throw new FileNotFoundException(LocalizationManager.Get(
+						"ModSecurity.Error.PackageMissing"));
 				hash = await ComputeSha256Async(packagePath, cancellationToken);
 				InspectPackageStructure(packagePath, target, findings);
 			}
@@ -135,8 +141,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					exception.Message));
 				return new ModSecurityReview(
 					ModSecurityOutcome.Blocked,
-					"Unavailable",
-					"Not run because the package failed structural checks",
+					LocalizationManager.Get("ModSecurity.Status.Unavailable"),
+					LocalizationManager.Get(
+						"ModSecurity.Antivirus.NotRun"),
 					findings);
 			}
 
@@ -147,13 +154,15 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				findings.Add(new ModSecurityFinding(
 					ModSecurityFindingSeverity.Blocked,
-					"Microsoft Defender reported a threat in this package."));
+					LocalizationManager.Get(
+						"ModSecurity.Finding.DefenderThreat")));
 			}
 			else if (!antivirus.Completed)
 			{
 				findings.Add(new ModSecurityFinding(
 					ModSecurityFindingSeverity.Warning,
-					"Microsoft Defender could not verify this package on this computer."));
+					LocalizationManager.Get(
+						"ModSecurity.Finding.DefenderUnavailable")));
 			}
 
 			ModSecurityOutcome outcome = findings.Any(finding =>
@@ -181,25 +190,30 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		{
 			FileInfo package = new(packagePath);
 			if (package.Length is <= 0 or > MaximumArchiveBytes)
-				throw new InvalidDataException("The package has an invalid or unsafe size.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.UnsafeSize"));
 
 			string extension = Path.GetExtension(packagePath);
 			if (extension.Equals(".zip", StringComparison.OrdinalIgnoreCase))
 			{
 				if (!target.AllowArchives)
-					throw new InvalidDataException("This add-on area does not accept ZIP packages.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModSecurity.Error.ZipNotAccepted"));
 				InspectZip(packagePath, target, findings);
 				return;
 			}
 			if (target.ArchiveOnly)
-				throw new InvalidDataException("This add-on area accepts complete ZIP packages only.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.ZipOnly"));
 			if (!target.AllowedExtensions.Any(allowed =>
 				allowed.Equals(extension, StringComparison.OrdinalIgnoreCase)))
 			{
-				throw new InvalidDataException("The package file type is not allowed for this add-on area.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.FileTypeNotAllowed"));
 			}
 			if (package.Length > MaximumSingleFileBytes)
-				throw new InvalidDataException("The add-on file exceeds Synix's per-file safety limit.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.FileTooLarge"));
 
 			ValidateFileSignature(packagePath, extension);
 			AddCodeCapabilityNotice(extension, findings);
@@ -211,7 +225,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				{
 					findings.Add(new ModSecurityFinding(
 						ModSecurityFindingSeverity.Warning,
-						"The source plugin is too large for Synix's readable capability review."));
+						LocalizationManager.Get(
+							"ModSecurity.Finding.SourceTooLarge")));
 				}
 			}
 		}
@@ -223,7 +238,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		{
 			using ZipArchive archive = ZipFile.OpenRead(packagePath);
 			if (archive.Entries.Count > MaximumArchiveEntries)
-				throw new InvalidDataException("The package contains too many files.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.TooManyFiles"));
 
 			long totalBytes = 0;
 			int supportedFiles = 0;
@@ -235,14 +251,17 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					continue;
 				totalBytes = checked(totalBytes + entry.Length);
 				if (entry.Length > MaximumSingleFileBytes || totalBytes > MaximumArchiveBytes)
-					throw new InvalidDataException("The package expands beyond Synix's safety limit.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModSecurity.Error.ExpandedTooLarge"));
 				if (IsSymbolicLink(entry))
-					throw new InvalidDataException("The package contains a symbolic link, which Synix does not install.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModSecurity.Error.SymbolicLink"));
 
 				string relative = entry.FullName.Replace('/', Path.DirectorySeparatorChar);
 				ValidateArchivePath(relative);
 				if (!destinations.Add(relative))
-					throw new InvalidDataException("The package contains duplicate destination paths.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModSecurity.Error.DuplicatePaths"));
 
 				string extension = Path.GetExtension(entry.Name);
 				if (entry.Name.Equals(target.RequiredArchiveFileName, StringComparison.OrdinalIgnoreCase))
@@ -250,7 +269,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				if (DangerousArchiveExtensions.Contains(extension))
 				{
 					throw new InvalidDataException(
-						$"The package contains {entry.Name}, a program or script type that this add-on area must not install.");
+						LocalizationManager.Get(
+							"ModSecurity.Error.DangerousFile",
+							entry.Name));
 				}
 				if (!target.PreserveArchiveContents && !target.AllowedExtensions.Any(allowed =>
 					allowed.Equals(extension, StringComparison.OrdinalIgnoreCase)))
@@ -276,16 +297,20 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			if (!requiredFileFound)
 			{
 				throw new InvalidDataException(
-					$"The package does not contain the required {target.RequiredArchiveFileName} file.");
+					LocalizationManager.Get(
+						"ModSecurity.Error.RequiredFileMissing",
+						target.RequiredArchiveFileName));
 			}
 			if (supportedFiles == 0)
-				throw new InvalidDataException("The package does not contain a supported add-on file.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.NoSupportedFile"));
 		}
 
 		private static void ValidateArchivePath(string relativePath)
 		{
 			if (!ModSystemCatalog.IsSafeRelativePath(relativePath) || relativePath.Contains(':'))
-				throw new InvalidDataException("The package contains a path outside its add-on folder.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.PathEscapesFolder"));
 			foreach (string part in relativePath.Split(
 				[Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
 				StringSplitOptions.RemoveEmptyEntries))
@@ -295,7 +320,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					part.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
 					ReservedWindowsNames.Contains(fileName))
 				{
-					throw new InvalidDataException("The package contains a Windows-reserved or invalid file name.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModSecurity.Error.InvalidWindowsName"));
 				}
 			}
 		}
@@ -312,7 +338,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				Span<byte> signature = stackalloc byte[2];
 				if (stream.Read(signature) != signature.Length || signature[0] != (byte)'M' || signature[1] != (byte)'Z')
-					throw new InvalidDataException($"{name} is not a valid Windows library file.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModSecurity.Error.InvalidWindowsLibrary",
+						name));
 			}
 			else if (extension.Equals(".jar", StringComparison.OrdinalIgnoreCase))
 			{
@@ -320,7 +348,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				if (stream.Read(signature) != signature.Length ||
 					signature[0] != (byte)'P' || signature[1] != (byte)'K')
 				{
-					throw new InvalidDataException($"{name} is not a valid Java archive.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"ModSecurity.Error.InvalidJavaArchive",
+						name));
 				}
 			}
 		}
@@ -329,9 +359,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			string extension,
 			List<ModSecurityFinding> findings)
 		{
-			if (findings.Any(finding => finding.Message.StartsWith(
-				"This package contains executable add-on code",
-				StringComparison.Ordinal)))
+			if (findings.Any(finding =>
+				finding.Message == LocalizationManager.Get(
+					"ModSecurity.Finding.ExecutableCode")))
 			{
 				return;
 			}
@@ -341,7 +371,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				findings.Add(new ModSecurityFinding(
 					ModSecurityFindingSeverity.Information,
-					"This package contains executable add-on code and will inherit the game server's Windows permissions."));
+					LocalizationManager.Get(
+						"ModSecurity.Finding.ExecutableCode")));
 			}
 		}
 
@@ -350,9 +381,11 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			List<ModSecurityFinding> findings)
 		{
 			if (source.IndexOf('\0') >= 0)
-				throw new InvalidDataException("A source plugin contains binary data disguised as text.");
-			foreach ((string token, string description) in RiskySourceCapabilities)
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ModSecurity.Error.BinarySource"));
+			foreach ((string token, string descriptionKey) in RiskySourceCapabilities)
 			{
+				string description = LocalizationManager.Get(descriptionKey);
 				if (!source.Contains(token, StringComparison.OrdinalIgnoreCase) ||
 					findings.Any(finding => finding.Message.Contains(description, StringComparison.OrdinalIgnoreCase)))
 				{
@@ -360,7 +393,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				}
 				findings.Add(new ModSecurityFinding(
 					ModSecurityFindingSeverity.Warning,
-					$"Source-code capability detected: {description}. This is a warning, not proof of malware."));
+					LocalizationManager.Get(
+						"ModSecurity.Finding.Capability",
+						description)));
 			}
 		}
 
@@ -388,7 +423,11 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		{
 			string? executable = FindMicrosoftDefenderCli();
 			if (executable == null)
-				return new DefenderScanResult(false, false, "Microsoft Defender scanner is unavailable");
+				return new DefenderScanResult(
+					false,
+					false,
+					LocalizationManager.Get(
+						"ModSecurity.Defender.ScannerUnavailable"));
 
 			using Process process = new()
 			{
@@ -410,7 +449,11 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			try
 			{
 				if (!process.Start())
-					return new DefenderScanResult(false, false, "Microsoft Defender did not start");
+					return new DefenderScanResult(
+						false,
+						false,
+						LocalizationManager.Get(
+							"ModSecurity.Defender.StartFailed"));
 				Task<string> standardOutput = process.StandardOutput.ReadToEndAsync(cancellationToken);
 				Task<string> standardError = process.StandardError.ReadToEndAsync(cancellationToken);
 				using CancellationTokenSource timeout = CancellationTokenSource.CreateLinkedTokenSource(
@@ -424,31 +467,47 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					return new DefenderScanResult(
 						true,
 						true,
-						"Microsoft Defender reported a threat");
+						LocalizationManager.Get(
+							"ModSecurity.Defender.Threat"));
 				}
 				return process.ExitCode switch
 				{
-					0 => new DefenderScanResult(true, false, "Microsoft Defender found no threat"),
+					0 => new DefenderScanResult(
+						true,
+						false,
+						LocalizationManager.Get(
+							"ModSecurity.Defender.Clean")),
 					2 => new DefenderScanResult(
 						false,
 						false,
-						"Microsoft Defender scan was inconclusive (exit code 2)"),
+						LocalizationManager.Get(
+							"ModSecurity.Defender.Inconclusive")),
 					_ => new DefenderScanResult(
 						false,
 						false,
-						$"Microsoft Defender could not complete the scan (exit code {process.ExitCode})")
+						LocalizationManager.Get(
+							"ModSecurity.Defender.ScanFailed",
+							process.ExitCode))
 				};
 			}
 			catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
 			{
 				TryTerminate(process);
-				return new DefenderScanResult(false, false, "Microsoft Defender scan timed out");
+				return new DefenderScanResult(
+					false,
+					false,
+					LocalizationManager.Get(
+						"ModSecurity.Defender.TimedOut"));
 			}
 			catch (Exception exception) when (exception is InvalidOperationException or
 				System.ComponentModel.Win32Exception or IOException or UnauthorizedAccessException)
 			{
 				TryTerminate(process);
-				return new DefenderScanResult(false, false, "Microsoft Defender could not run without additional Windows permission");
+				return new DefenderScanResult(
+					false,
+					false,
+					LocalizationManager.Get(
+						"ModSecurity.Defender.PermissionRequired"));
 			}
 		}
 

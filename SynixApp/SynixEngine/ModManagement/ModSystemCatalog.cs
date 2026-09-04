@@ -119,12 +119,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		internal string SupportText => Profile.SupportLevel switch
 		{
 			_ when RecommendedTarget.CanManageIds =>
-				"READY • Synix manages the provider's ordered mod ID list",
+				LocalizationManager.Get("ModCatalog.Support.ProviderIds"),
 			ModSystemSupportLevel.Managed when FrameworkDetected =>
-				"READY • Synix can safely import local add-on files",
+				LocalizationManager.Get("ModCatalog.Support.FileImport"),
 			ModSystemSupportLevel.Managed =>
-				"SETUP NEEDED • Select or install a compatible framework first",
-			_ => "DETECTION ONLY • The game provider remains responsible for installation"
+				LocalizationManager.Get("ModCatalog.Support.FrameworkRequired"),
+			_ => LocalizationManager.Get("ModCatalog.Support.DetectionOnly")
 		};
 	}
 
@@ -215,20 +215,20 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		internal static ModSystemCatalogDocument Parse(string json, string sourceName)
 		{
 			if (string.IsNullOrWhiteSpace(json))
-				throw new InvalidDataException($"{sourceName} is empty.");
+				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.Empty", sourceName));
 			if (json.Length > MaximumCatalogBytes)
-				throw new InvalidDataException($"{sourceName} is too large.");
+				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.TooLarge", sourceName));
 
 			ModSystemCatalogDocument document;
 			try
 			{
 				document = JsonSerializer.Deserialize<ModSystemCatalogDocument>(json, JsonOptions) ??
-					throw new InvalidDataException($"{sourceName} did not contain a mod-system catalog.");
+					throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.MissingCatalog", sourceName));
 			}
 			catch (JsonException exception)
 			{
 				throw new InvalidDataException(
-					$"{sourceName} is not a valid Synix mod-system catalog: {exception.Message}",
+					LocalizationManager.Get("ModCatalog.Error.InvalidCatalog", sourceName, exception.Message),
 					exception);
 			}
 
@@ -245,9 +245,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				.OrderBy(name => name, StringComparer.Ordinal))
 			{
 				using Stream stream = assembly.GetManifestResourceStream(resourceName) ??
-					throw new InvalidDataException($"The embedded resource {resourceName} could not be opened.");
+					throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.ResourceOpen", resourceName));
 				if (stream.Length > MaximumCatalogBytes)
-					throw new InvalidDataException($"{resourceName} is too large.");
+					throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.TooLarge", resourceName));
 				using StreamReader reader = new(stream);
 				profiles.AddRange(Parse(reader.ReadToEnd(), resourceName).Profiles);
 			}
@@ -256,7 +256,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			foreach (ModSystemProfile profile in profiles)
 			{
 				if (!ids.Add(profile.Id))
-					throw new InvalidDataException($"Duplicate mod-system profile id: {profile.Id}.");
+					throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.DuplicateProfile", profile.Id));
 			}
 			return profiles;
 		}
@@ -280,9 +280,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				}
 				catch (Exception exception)
 				{
-					ApplicationLogService.Write(
-						$"[ADD-ON PROFILE] Ignored {Path.GetFileName(file)}: {exception.Message}",
-						Color.Orange);
+					ApplicationLogService.WriteLocalized(
+						"ModCatalog.Activity.ProfileIgnored",
+						Color.Orange,
+						false,
+						Path.GetFileName(file),
+						exception.Message);
 				}
 			}
 			return profiles.Values.ToArray();
@@ -314,7 +317,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					DisplayName = relativePath.Replace('/', Path.DirectorySeparatorChar),
 					Kind = pluginFolder ? ModContentKind.Plugin : ModContentKind.Mod,
 					Mode = ModTargetMode.DetectionOnly,
-					ProviderName = "Found on disk",
+					ProviderName = LocalizationManager.Get(
+						"ModManager.DetectedProfile.Provider"),
 					RelativePath = relativePath,
 					AllowedExtensions = extensions,
 					MarkerPaths = [relativePath],
@@ -329,12 +333,14 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			return new ModSystemProfile
 			{
 				Id = "dynamic-folder-discovery",
-				DisplayName = "Discovered add-on folders",
-				Description =
-					"Synix found common add-on folders and can inventory them safely. Installation stays disabled until a maintainer adds a verified data profile.",
+				DisplayName = LocalizationManager.Get(
+					"ModManager.DetectedProfile.DisplayName"),
+				Description = LocalizationManager.Get(
+					"ModManager.DetectedProfile.Description"),
 				SupportLevel = ModSystemSupportLevel.DetectedOnly,
 				GameNames = [server.Game],
-				FrameworkName = "Auto-detected folders",
+				FrameworkName = LocalizationManager.Get(
+					"ModManager.DetectedProfile.Framework"),
 				Targets = targets
 			};
 		}
@@ -342,9 +348,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		private static void Validate(ModSystemCatalogDocument document, string sourceName)
 		{
 			if (document.SchemaVersion != CurrentSchemaVersion)
-				throw new InvalidDataException($"{sourceName} uses an unsupported schema version.");
+				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.SchemaVersion", sourceName));
 			if (document.Profiles.Count == 0)
-				throw new InvalidDataException($"{sourceName} does not contain any profiles.");
+				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.NoProfiles", sourceName));
 
 			foreach (ModSystemProfile profile in document.Profiles)
 			{
@@ -353,12 +359,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					profile.GameNames.Count == 0 ||
 					profile.Targets.Count == 0)
 				{
-					throw new InvalidDataException($"{sourceName} contains an incomplete profile.");
+					throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.IncompleteProfile", sourceName));
 				}
 				if (!string.IsNullOrWhiteSpace(profile.CatalogUrl) &&
 					!IsSafeCatalogUrl(profile.CatalogUrl))
 				{
-					throw new InvalidDataException($"{sourceName} contains an unsafe catalog address.");
+					throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.UnsafeAddress", sourceName));
 				}
 				HashSet<string> catalogNames = new(StringComparer.OrdinalIgnoreCase);
 				HashSet<string> catalogUrls = new(StringComparer.OrdinalIgnoreCase);
@@ -368,7 +374,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 						catalog.Name.Any(char.IsControl) || !IsSafeCatalogUrl(catalog.Url) ||
 						!catalogNames.Add(catalog.Name.Trim()) || !catalogUrls.Add(catalog.Url))
 					{
-						throw new InvalidDataException($"{sourceName} contains an invalid or duplicate catalog choice.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidCatalogChoice", sourceName));
 					}
 				}
 
@@ -382,49 +388,49 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 								!IsSafeRelativePath(target.RelativePath))) ||
 						!targetIds.Add(target.Id))
 					{
-						throw new InvalidDataException($"{sourceName} contains an invalid installation target.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidTarget", sourceName));
 					}
 					if (target.Mode == ModTargetMode.FileImport && target.AllowedExtensions.Count == 0)
-						throw new InvalidDataException($"{sourceName} contains a file-import target with no allowed file types.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.NoFileTypes", sourceName));
 					if (target.Mode == ModTargetMode.FileImport && target.AllowedExtensions.Any(extension =>
 						ForbiddenImportExtensions.Contains(extension)))
 					{
-						throw new InvalidDataException($"{sourceName} attempts to allow a dangerous program or script type.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.DangerousType", sourceName));
 					}
 					if ((target.ArchiveOnly || target.PreserveArchiveContents ||
 						!string.IsNullOrWhiteSpace(target.RequiredArchiveFileName) ||
 						target.WrapRootArchiveFiles) && !target.AllowArchives)
 					{
-						throw new InvalidDataException($"{sourceName} contains archive rules on a target that does not accept archives.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.ArchiveRules", sourceName));
 					}
 					if (!string.IsNullOrWhiteSpace(target.RequiredArchiveFileName) &&
 						(target.RequiredArchiveFileName.Length > 128 ||
 						target.RequiredArchiveFileName != Path.GetFileName(target.RequiredArchiveFileName) ||
 						target.RequiredArchiveFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0))
 					{
-						throw new InvalidDataException($"{sourceName} contains an invalid required archive file name.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidArchiveName", sourceName));
 					}
 					if (target.WrapRootArchiveFiles && string.IsNullOrWhiteSpace(target.RequiredArchiveFileName))
-						throw new InvalidDataException($"{sourceName} cannot wrap root archive files without a required archive marker.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.ArchiveMarkerRequired", sourceName));
 					if (target.Mode == ModTargetMode.ArgumentIds &&
 						(string.IsNullOrWhiteSpace(target.ArgumentName) ||
 							!target.ArgumentName.StartsWith('-') ||
 							target.ArgumentName.Any(character =>
 								!char.IsAsciiLetterOrDigit(character) && character != '-')))
 					{
-						throw new InvalidDataException($"{sourceName} contains an invalid provider ID argument.");
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidProviderArgument", sourceName));
 					}
 					if (target.Mode == ModTargetMode.ConfigurationIds)
 					{
 						if (target.IdStores.Count == 0)
-							throw new InvalidDataException($"{sourceName} contains a provider ID target with no configuration stores.");
+							throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.NoConfigStores", sourceName));
 						foreach (ModIdStore store in target.IdStores)
 						{
 							if (!IsSafeRelativePath(store.RelativePath) ||
 								!IsSafeIniName(store.Section) ||
 								!IsSafeIniName(store.Key))
 							{
-								throw new InvalidDataException($"{sourceName} contains an invalid provider ID configuration store.");
+								throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidConfigStore", sourceName));
 							}
 						}
 					}
@@ -435,7 +441,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 							requiredArgument.Any(character =>
 								!char.IsAsciiLetterOrDigit(character) && character != '-'))
 						{
-							throw new InvalidDataException($"{sourceName} contains an invalid required launch argument.");
+							throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidLaunchArgument", sourceName));
 						}
 					}
 					foreach (string extension in target.AllowedExtensions)
@@ -444,7 +450,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 							!extension.StartsWith('.') ||
 							extension.Any(character => !char.IsAsciiLetterOrDigit(character) && character != '.'))
 						{
-							throw new InvalidDataException($"{sourceName} contains an invalid file extension.");
+							throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidExtension", sourceName));
 						}
 					}
 				}
@@ -495,15 +501,15 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		internal static string ResolveInsideInstallPath(string installPath, string relativePath)
 		{
 			if (string.IsNullOrWhiteSpace(installPath))
-				throw new InvalidOperationException("The server does not have an installation folder.");
+				throw new InvalidOperationException(LocalizationManager.Get("ModCatalog.Error.InstallFolderMissing"));
 			if (!IsSafeRelativePath(relativePath))
-				throw new InvalidDataException("The mod-system profile contains an unsafe folder path.");
+				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.UnsafeFolder"));
 			string root = Path.GetFullPath(installPath)
 				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) +
 				Path.DirectorySeparatorChar;
 			string resolved = Path.GetFullPath(Path.Combine(root, relativePath));
 			if (!resolved.StartsWith(root, StringComparison.OrdinalIgnoreCase))
-				throw new InvalidDataException("The add-on folder is outside the server installation.");
+				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.FolderOutsideInstall"));
 			return resolved;
 		}
 	}

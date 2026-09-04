@@ -26,18 +26,18 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(server);
 			DateTime fallback = now.Date;
 			if (!server.IsScheduledRestartEnabled)
-				return NotDue(fallback, "Scheduled maintenance is disabled.");
+				return NotDue(fallback, "Maintenance.Reason.Disabled");
 
 			int dayIndex = (int)now.DayOfWeek;
 			if (server.RestartDays == null ||
 				server.RestartDays.Length <= dayIndex ||
 				!server.RestartDays[dayIndex])
 			{
-				return NotDue(fallback, "Today is not a selected maintenance day.");
+				return NotDue(fallback, "Maintenance.Reason.DayNotSelected");
 			}
 
 			if (server.LastMaintenanceDate == now.ToString("yyyy-MM-dd"))
-				return NotDue(fallback, "Today's maintenance is already complete.");
+				return NotDue(fallback, "Maintenance.Reason.AlreadyComplete");
 
 			if (!TimeSpan.TryParseExact(
 				server.RestartTime,
@@ -45,16 +45,16 @@ namespace Synix_Control_Panel.SynixEngine
 				System.Globalization.CultureInfo.InvariantCulture,
 				out TimeSpan scheduledTime))
 			{
-				return NotDue(fallback, "The maintenance time is invalid.");
+				return NotDue(fallback, "Maintenance.Reason.InvalidTime");
 			}
 
 			DateTime scheduledFor = now.Date.Add(scheduledTime);
 			if (now < scheduledFor)
-				return NotDue(scheduledFor, "The scheduled time has not arrived.");
+				return NotDue(scheduledFor, "Maintenance.Reason.NotDue");
 
 			TimeSpan delay = now - scheduledFor;
 			if (!server.SmartMaintenanceEnabled && delay >= TimeSpan.FromMinutes(1))
-				return NotDue(scheduledFor, "The standard maintenance minute has passed.");
+				return NotDue(scheduledFor, "Maintenance.Reason.MinutePassed");
 
 			int maximumDelay = Math.Clamp(server.MaintenanceMaximumDelayMinutes, 0, 720);
 			if (server.SmartMaintenanceEnabled &&
@@ -66,7 +66,7 @@ namespace Synix_Control_Panel.SynixEngine
 					SmartMaintenanceDecision.DeferForPlayers,
 					scheduledFor,
 					delay,
-					$"Waiting for {server.CurrentPlayers} connected player(s) to leave.");
+					LocalizationManager.Get("Maintenance.Reason.WaitingForPlayers", server.CurrentPlayers));
 			}
 
 			return new(
@@ -74,11 +74,15 @@ namespace Synix_Control_Panel.SynixEngine
 				scheduledFor,
 				delay,
 				server.CurrentPlayers > 0 && maximumDelay > 0
-					? "The maximum player-aware delay has been reached."
-					: "The server is ready for scheduled maintenance.");
+					? LocalizationManager.Get("Maintenance.Reason.MaximumDelayReached")
+					: LocalizationManager.Get("Maintenance.Reason.Ready"));
 		}
 
-		private static SmartMaintenancePlan NotDue(DateTime scheduledFor, string reason) =>
-			new(SmartMaintenanceDecision.NotDue, scheduledFor, TimeSpan.Zero, reason);
+		private static SmartMaintenancePlan NotDue(DateTime scheduledFor, string resourceKey) =>
+			new(
+				SmartMaintenanceDecision.NotDue,
+				scheduledFor,
+				TimeSpan.Zero,
+				LocalizationManager.Get(resourceKey));
 	}
 }

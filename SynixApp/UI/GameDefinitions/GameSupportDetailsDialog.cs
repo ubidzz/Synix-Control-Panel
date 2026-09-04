@@ -17,7 +17,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		internal GameSupportDetailsDialog(GameInfo game)
 		{
 			ArgumentNullException.ThrowIfNull(game);
-			Text = $"{game.Game} Support Details";
+			Text = LocalizationManager.Get("Catalog.Details.Title", game.Game);
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -39,7 +39,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			});
 			Controls.Add(new Label
 			{
-				Text = "What Synix currently knows how to install, configure, start, monitor, and query for this game.",
+				Text = LocalizationManager.Get("Text.9B1DF515009197F7B731"),
 				Location = new Point(30, 66),
 				Size = new Size(780, 28),
 				ForeColor = SettingsPalette.SecondaryText
@@ -58,7 +58,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 
 			ModernSettingsButton close = new()
 			{
-				Text = "Close",
+				Text = LocalizationManager.Get("ModManager.Button.Close"),
 				Location = new Point(654, 634),
 				Size = new Size(158, 44),
 				DialogResult = DialogResult.OK,
@@ -77,47 +77,66 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			ConfigurationSupportPresentation configuration = UserGuidance.GetConfigurationSupport(game);
 			GameManagementCapability capabilities = GameFix.GetManagementCapabilities(game);
 			string lastVerified = compatibility.Verification.LastTested is GameVerificationEvidence evidence
-				? $"{evidence.VerifiedAtUtc.ToLocalTime():MMMM d, yyyy} with Synix {evidence.SynixVersion}"
-				: "Not verified by a Synix user yet";
+				? LocalizationManager.Get(
+					"Catalog.Details.LastVerifiedValue",
+					evidence.VerifiedAtUtc.ToLocalTime().ToString(
+						"D",
+						System.Globalization.CultureInfo.CurrentUICulture),
+					evidence.SynixVersion)
+				: LocalizationManager.Get("Catalog.Details.NotVerified");
 
 			AddSection(
-				"Current Synix support",
+				LocalizationManager.Get("Catalog.Details.Section.Support"),
 				new[]
 				{
-					("Compatibility", compatibility.DisplayName),
-					("Last verified", lastVerified),
-					("Configuration", configuration.Status)
+					(LocalizationManager.Get("Catalog.Filter.Compatibility"), LocalizationManager.TranslateKnownText(compatibility.DisplayName)),
+					(LocalizationManager.Get("Text.74E5C919B46AE61321E3"), lastVerified),
+					(LocalizationManager.Get("Text.D5CDE76290BF3E730FE4"), LocalizationManager.TranslateKnownText(configuration.Status))
 				},
-				configuration.Summary);
+				LocalizationManager.TranslateRuntimeText(configuration.Summary));
 
 			AddSection(
-				"Server program and connections",
+				LocalizationManager.Get("Catalog.Details.Section.Program"),
 				new[]
 				{
-					("Server program", GameDatabase.IsMinecraft(game.Game)
-						? "Java: Start.bat • Bedrock: bedrock_server.exe"
+					(LocalizationManager.Get("Catalog.Column.ServerProgram"), GameDatabase.IsMinecraft(game.Game)
+						? LocalizationManager.Get(
+							"Catalog.Details.MinecraftPrograms",
+							"Start.bat",
+							"bedrock_server.exe")
 						: game.ExeName),
-					("Steam App ID", string.IsNullOrWhiteSpace(game.AppID) ? "Not used" : game.AppID),
-					("Default ports", FormatPorts(game)),
-					("Player details", GetPlayerDetails(game)),
-					("Crossplay option", GameDatabase.IsMinecraft(game.Game)
-						? "Bedrock supports Bedrock clients across supported platforms"
-						: capabilities.HasFlag(GameManagementCapability.Crossplay) ? "Available in Synix" : "Not listed in this game definition"),
-					("Status check", FormatProbe(game))
+					(LocalizationManager.Get("Catalog.Details.SteamAppId"), string.IsNullOrWhiteSpace(game.AppID) ? LocalizationManager.Get("Catalog.Details.NotUsed") : game.AppID),
+					(LocalizationManager.Get("Catalog.Details.DefaultPorts"), FormatPorts(game)),
+					(LocalizationManager.Get("Catalog.Column.PlayerDetails"), GetPlayerDetails(game)),
+					(LocalizationManager.Get("Catalog.Details.CrossplayOption"), GameDatabase.IsMinecraft(game.Game)
+						? LocalizationManager.Get("Catalog.Details.Crossplay.Bedrock")
+						: LocalizationManager.Get(
+							capabilities.HasFlag(GameManagementCapability.Crossplay)
+								? "Catalog.Details.Crossplay.Available"
+								: "Catalog.Details.Crossplay.NotListed")),
+					(LocalizationManager.Get("Catalog.Details.StatusCheck"), FormatProbe(game))
 				});
 
 			AddSection(
-				"Configuration and startup",
+				LocalizationManager.Get("Catalog.Details.Section.Configuration"),
 				new[]
 				{
-					("Configuration file", FormatConfigurationFile(game)),
-					("Server window", game.LaunchBehavior.RequiresVisibleWindow ? "Visible while the server runs" : "Runs in the background when supported"),
-					("Process tracking", game.LaunchBehavior.LifecycleTracking == GameLifecycleTrackingMode.ExternalDeployment ? "External deployment" : "Synix-managed server process"),
-					("Required launch files", GameDatabase.IsMinecraft(game.Game)
-						? "Edition-specific and verified after installation"
-						: game.RequiredLaunchFiles.Length == 0 ? "None" : string.Join(", ", game.RequiredLaunchFiles.Select(Path.GetFileName)))
+					(LocalizationManager.Get("Text.F1C216DDF2B88463BCA7"), FormatConfigurationFile(game)),
+					(LocalizationManager.Get("Catalog.Details.ServerWindow"), LocalizationManager.Get(
+						game.LaunchBehavior.RequiresVisibleWindow
+							? "Catalog.Details.Window.Visible"
+							: "Catalog.Details.Window.Background")),
+					(LocalizationManager.Get("Catalog.Details.ProcessTracking"), LocalizationManager.Get(
+						game.LaunchBehavior.LifecycleTracking == GameLifecycleTrackingMode.ExternalDeployment
+							? "Catalog.Details.Process.External"
+							: "Catalog.Details.Process.Managed")),
+					(LocalizationManager.Get("Catalog.Details.RequiredLaunchFiles"), GameDatabase.IsMinecraft(game.Game)
+						? LocalizationManager.Get("Catalog.Details.LaunchFiles.Minecraft")
+						: game.RequiredLaunchFiles.Length == 0
+							? LocalizationManager.Get("Catalog.Details.None")
+							: string.Join(", ", game.RequiredLaunchFiles.Select(Path.GetFileName)))
 				},
-				"A support status describes Synix's current definition. It does not mean the game itself lacks features that are not listed here.");
+				LocalizationManager.Get("Catalog.Details.SupportNote"));
 		}
 
 		private void AddSection(
@@ -157,7 +176,9 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				});
 				card.Controls.Add(new Label
 				{
-					Text = string.IsNullOrWhiteSpace(value) ? "Not specified" : value,
+					Text = string.IsNullOrWhiteSpace(value)
+						? LocalizationManager.Get("DynamicText.DC12BEC5D71F167B495F")
+						: value,
 					Location = new Point(218, rowTop),
 					Size = new Size(516, 25),
 					ForeColor = SettingsPalette.PrimaryText,
@@ -183,39 +204,41 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		private static string FormatPorts(GameInfo game)
 		{
 			if (GameDatabase.IsMinecraft(game.Game))
-				return "Java 25565 • Bedrock UDP 19132 and IPv6 UDP 19133";
+				return LocalizationManager.Get("Catalog.Details.Ports.Minecraft");
 
 			List<string> ports = [];
 			if (game.Port > 0)
-				ports.Add($"game {game.Port}");
+				ports.Add(LocalizationManager.Get("Connection.Port.Game", game.Port));
 			if (game.QueryPort > 0)
-				ports.Add($"query {game.QueryPort}");
+				ports.Add(LocalizationManager.Get("Connection.Port.Query", game.QueryPort));
 			if (game.AppPort > 0)
-				ports.Add($"app {game.AppPort}");
-			return ports.Count == 0 ? "Assigned during setup" : string.Join(", ", ports);
+				ports.Add(LocalizationManager.Get("Connection.Port.App", game.AppPort));
+			return ports.Count == 0
+				? LocalizationManager.Get("Catalog.Details.Ports.AssignedDuringSetup")
+				: string.Join(", ", ports);
 		}
 
 		private static string GetPlayerDetails(GameInfo game) =>
 			game.CrossplayDisablesPlayerTracking
-				? "Named players and player count in Steam mode; unavailable in Crossplay mode"
+				? LocalizationManager.Get("Catalog.Details.PlayerData.SteamCrossplay")
 				: GameDatabase.GetProbeProtocol(game) == ServerProbeProtocol.A2S
-				? "Named players and player count"
+				? LocalizationManager.Get("Catalog.Details.PlayerData.NamedCount")
 				: GameDatabase.IsMinecraft(game.Game)
-					? "Player count; Java player names when local management or RCON is available"
-					: "Not available from the current status check";
+					? LocalizationManager.Get("Catalog.Details.PlayerData.Minecraft")
+					: LocalizationManager.Get("Catalog.Details.PlayerData.Unavailable");
 
 		private static string FormatProbe(GameInfo game) =>
 			GameDatabase.IsMinecraft(game.Game)
-				? "Java status protocol or Bedrock RakNet status"
+				? LocalizationManager.Get("Catalog.Details.Probe.Minecraft")
 				: game.CrossplayDisablesPlayerTracking
-					? "Steam server query; Crossplay uses PlayFab"
+					? LocalizationManager.Get("Catalog.Details.Probe.Crossplay")
 				: GameDatabase.GetProbeProtocol(game) switch
 			{
-				ServerProbeProtocol.A2S => "Steam server query",
-				ServerProbeProtocol.EpicOnlineServices => "Epic Online Services",
-				ServerProbeProtocol.RestApi => "Game web API",
-				ServerProbeProtocol.Tcp => "Network port check",
-				_ => "Automatic"
+				ServerProbeProtocol.A2S => LocalizationManager.Get("Catalog.Details.Probe.Steam"),
+				ServerProbeProtocol.EpicOnlineServices => LocalizationManager.Get("Catalog.Details.Probe.Eos"),
+				ServerProbeProtocol.RestApi => LocalizationManager.Get("Catalog.Details.Probe.WebApi"),
+				ServerProbeProtocol.Tcp => LocalizationManager.Get("Catalog.Details.Probe.Port"),
+				_ => LocalizationManager.Get("Catalog.Details.Probe.Automatic")
 			};
 
 		private static string FormatConfigurationFile(GameInfo game)
@@ -224,10 +247,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				return game.RelativeConfigPath;
 			return game.ConfigFileCreation switch
 			{
-				ConfigFileCreationMode.LaunchArgumentsOnly => "Uses launch settings",
-				ConfigFileCreationMode.GameGenerated => "Created by the game on first start",
-				ConfigFileCreationMode.SynixTemplate => "Created and managed by Synix",
-				_ => "Not defined yet"
+				ConfigFileCreationMode.LaunchArgumentsOnly => LocalizationManager.Get("Catalog.Details.Config.LaunchArguments"),
+				ConfigFileCreationMode.GameGenerated => LocalizationManager.Get("Catalog.Details.Config.GameGenerated"),
+				ConfigFileCreationMode.SynixTemplate => LocalizationManager.Get("Catalog.Details.Config.SynixTemplate"),
+				_ => LocalizationManager.Get("Catalog.Details.Config.Undefined")
 			};
 		}
 	}

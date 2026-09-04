@@ -26,11 +26,13 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			if (server.DataSchemaVersion < 0)
-				throw new InvalidDataException("The server data schema version is invalid.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ServerData.Error.SchemaInvalid"));
 			if (server.DataSchemaVersion > CurrentVersion)
 			{
-				throw new InvalidDataException(
-					$"This server data requires a newer Synix version (schema {server.DataSchemaVersion}).");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"ServerData.Error.NewerVersionRequired",
+					server.DataSchemaVersion));
 			}
 
 			bool changed = false;
@@ -55,8 +57,9 @@ namespace Synix_Control_Panel.SynixEngine
 						MigrateToVersionFour(server, wasLegacyValheimCrossplay);
 						break;
 					default:
-						throw new InvalidDataException(
-							$"No migration is available for server data schema {server.DataSchemaVersion}.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"ServerData.Error.MigrationUnavailable",
+							server.DataSchemaVersion));
 				}
 
 				changed = true;

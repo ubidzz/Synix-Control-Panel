@@ -47,7 +47,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(468, 34);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Steam account required";
+			titleLabel.Text = LocalizationManager.Get("ServerSetup.SteamAccount.Required.Title");
 			// 
 			// descriptionLabel
 			// 
@@ -56,7 +56,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			descriptionLabel.Name = "descriptionLabel";
 			descriptionLabel.Size = new Size(468, 60);
 			descriptionLabel.TabIndex = 1;
-			descriptionLabel.Text = "The selected server requires a Steam account for installation. Enter the account name that SteamCMD should use.";
+			descriptionLabel.Text = LocalizationManager.Get("Text.44D8326D9590F71F8B1B");
 			// 
 			// accountNameLabel
 			// 
@@ -66,7 +66,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			accountNameLabel.Name = "accountNameLabel";
 			accountNameLabel.Size = new Size(468, 24);
 			accountNameLabel.TabIndex = 2;
-			accountNameLabel.Text = "Steam account name";
+			accountNameLabel.Text = LocalizationManager.Get("Text.2ACE1D3304BA5649A5A1");
 			// 
 			// accountNameTextBox
 			// 
@@ -75,7 +75,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			accountNameTextBox.ForeColor = Color.FromArgb(245, 247, 251);
 			accountNameTextBox.Location = new Point(26, 162);
 			accountNameTextBox.Name = "accountNameTextBox";
-			accountNameTextBox.PlaceholderText = "Account name, not your Steam display name";
+			accountNameTextBox.PlaceholderText = LocalizationManager.Get("Text.74ECEE4668229DC04361");
 			accountNameTextBox.Size = new Size(468, 25);
 			accountNameTextBox.TabIndex = 3;
 			// 
@@ -109,7 +109,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(120, 40);
 			cancelButton.TabIndex = 6;
-			cancelButton.Text = "Cancel";
+			cancelButton.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			cancelButton.UseVisualStyleBackColor = false;
 			// 
 			// continueButton
@@ -124,7 +124,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			continueButton.Name = "continueButton";
 			continueButton.Size = new Size(120, 40);
 			continueButton.TabIndex = 7;
-			continueButton.Text = "Open SteamCMD";
+			continueButton.Text = LocalizationManager.Get("Text.FAA71411B21242D2F5EA");
 			continueButton.UseAccentStyle = true;
 			continueButton.UseVisualStyleBackColor = false;
 			continueButton.Click += ContinueButton_Click;
@@ -153,7 +153,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			Name = "SteamAccountLoginDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Steam Account Required";
+			Text = LocalizationManager.Get("ServerSetup.SteamAccount.Required.Title");
 			ResumeLayout(false);
 			PerformLayout();
 		}

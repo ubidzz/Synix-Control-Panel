@@ -34,8 +34,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		private float _navigationAttentionPhase;
 		private bool _PrivacyMode = false;
 		private bool _passwordUnlockFailed;
-		private string _validationMessage =
-			"  🔒 [REQUIRED] Enter a Server Name and select a Game Template.";
+		private string _validationMessage = string.Empty;
+		private bool _blockedByPort;
+		private bool _requirementsBlocked;
 		private bool _advancedMode;
 		private ModernSettingsButton? _experienceModeButton;
 		private Label? _completionLabel;
@@ -72,6 +73,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			_isEditMode = server != null;
 			_PrivacyMode = Properties.Settings.Default.PrivacyMode;
 			ConfigureModernShell();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) =>
+				LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
 
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
 				DesignMode ||
@@ -110,17 +114,41 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		private void ConfigureModernShell()
 		{
-			lblModeBadge.Text = _isEditMode ? "EDIT SERVER" : "NEW SERVER";
-			btnSave.Text = _isEditMode ? "Save Changes" : "Save Server";
-			Text = _isEditMode ? "Edit Server" : "Server Setup";
+			LocalizationManager.BindText(
+				lblModeBadge,
+				_isEditMode
+					? "ServerSetup.ModeBadge.Edit"
+					: "ServerSetup.ModeBadge.New");
+			LocalizationManager.BindText(
+				btnSave,
+				_isEditMode
+					? "ServerSetup.Button.SaveChanges"
+					: "ServerSetup.Button.SaveServer");
+			LocalizationManager.BindText(
+				this,
+				_isEditMode
+					? "ServerSetup.Window.EditTitle"
+					: "ServerSetup.Window.Title");
 			InitializeGuidanceControls();
 			InitializeNavigationAttention();
 			ShowSettingsPage(
 				pnlPageGeneral,
 				btnNavGeneral,
-				"General",
-				"Choose the game and define the server identity.");
+				"ServerSetup.Page.General.Title",
+				"ServerSetup.Page.General.Description");
 			UpdateModernStatus();
+		}
+
+		private void InterfaceLanguageChanged(object? sender, EventArgs eventArgs)
+		{
+			if (IsDisposed || Disposing)
+				return;
+
+			pnlPageGeneral.RefreshLocalizedPresentation();
+			ToggleGameSpecificFields(
+				pnlPageGeneral.HasSelectedGame
+					? GameDatabase.GetGame(pnlPageGeneral.SelectedGame)
+					: null);
 		}
 
 		private void InitializeNavigationAttention()
@@ -180,9 +208,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			foreach ((ModernSettingsNavButton button, bool required) in states)
 			{
 				button.AttentionRequired = required;
-				button.AccessibleDescription = required
-					? $"{button.Text} contains settings that require attention before saving."
-					: $"{button.Text} has no settings that require attention.";
+				LocalizationManager.BindAccessibleDescription(
+					button,
+					required
+						? "ServerSetup.Navigation.AttentionRequired"
+						: "ServerSetup.Navigation.NoAttentionRequired",
+					button.Text);
 				anyAttentionRequired |= required;
 			}
 
@@ -263,7 +294,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				{
 					PlainEnglishErrorDialog.ShowError(
 						this,
-						"save the setup mode",
+						LocalizationManager.Get(
+							"ServerSetup.ErrorAction.SaveMode"),
 						exception.Message);
 				}
 				ApplyExperienceMode();
@@ -309,27 +341,35 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			if (_experienceModeButton == null)
 				return;
 
-			_experienceModeButton.Text = _advancedMode
-				? "Mode: Advanced"
-				: "Mode: Beginner";
+			LocalizationManager.BindText(
+				_experienceModeButton,
+				_advancedMode
+					? "ServerSetup.Mode.Advanced"
+					: "ServerSetup.Mode.Beginner");
 			_experienceModeButton.UseAccentStyle = !_advancedMode;
-			_experienceModeButton.AccessibleName = _advancedMode
-				? "Advanced server setup mode. Click to use Beginner mode."
-				: "Beginner server setup mode. Click to show advanced settings.";
+			LocalizationManager.BindAccessibleName(
+				_experienceModeButton,
+				_advancedMode
+					? "ServerSetup.Mode.Advanced.AccessibleName"
+					: "ServerSetup.Mode.Beginner.AccessibleName");
 			pnlPageNetwork.SetAdvancedMode(_advancedMode);
 			pnlPageInstall.SetAdvancedMode(_advancedMode);
 
 			if (pnlPageNetwork.Visible)
 			{
-				lblPageDescription.Text = _advancedMode
-					? "Assign service ports and secure remote administration."
-					: "Use the recommended game and query ports. Advanced mode adds RCON controls.";
+				LocalizationManager.BindText(
+					lblPageDescription,
+					_advancedMode
+						? "ServerSetup.Page.Network.Description"
+						: "ServerSetup.Page.Network.BeginnerDescription");
 			}
 			if (pnlPageInstall.Visible)
 			{
-				lblPageDescription.Text = _advancedMode
-					? "Choose server storage and customize launch arguments."
-					: "Choose where the server will be installed. Synix supplies the recommended launch settings.";
+				LocalizationManager.BindText(
+					lblPageDescription,
+					_advancedMode
+						? "ServerSetup.Page.Install.Description"
+						: "ServerSetup.Page.Install.BeginnerDescription");
 			}
 		}
 
@@ -370,8 +410,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				candidate.Selected = ReferenceEquals(candidate, navigationButton);
 			}
 
-			lblPageTitle.Text = title;
-			lblPageDescription.Text = description;
+			LocalizationManager.BindText(lblPageTitle, title);
+			LocalizationManager.BindText(lblPageDescription, description);
 			page.BringToFront();
 		}
 
@@ -379,7 +419,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		{
 			bool ready = btnSave.Enabled;
 			string validationMessage = string.IsNullOrWhiteSpace(_validationMessage)
-				? "Validation is waiting for the required server information."
+				? LocalizationManager.Get("ServerSetup.Validation.Waiting")
 				: _validationMessage.Trim();
 
 			lblSidebarStatus.Text = LocalizationManager.Get(ready
@@ -397,11 +437,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				: SettingsPalette.Warning;
 
 			bool hasGame = pnlPageGeneral.HasSelectedGame;
-			bool blockedByPort = validationMessage.Contains("[CONFLICT]", StringComparison.OrdinalIgnoreCase) &&
-				validationMessage.Contains("Port", StringComparison.OrdinalIgnoreCase);
-			bool requirementsMet = !validationMessage.Contains("[REQUIREMENT]", StringComparison.OrdinalIgnoreCase) &&
-				!validationMessage.Contains("[MINECRAFT]", StringComparison.OrdinalIgnoreCase) &&
-				!validationMessage.Contains("[VALIDATION ERROR]", StringComparison.OrdinalIgnoreCase);
+			bool blockedByPort = _blockedByPort;
+			bool requirementsMet = !_requirementsBlocked;
 			int completion = UserGuidance.CalculateSetupCompletion(new SetupCompletionState(
 				!string.IsNullOrWhiteSpace(pnlPageGeneral.ServerName),
 				hasGame,
@@ -433,8 +470,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ShowSettingsPage(
 				pnlPageGeneral,
 				btnNavGeneral,
-				"General",
-				"Choose the game and define the server identity.");
+				"ServerSetup.Page.General.Title",
+				"ServerSetup.Page.General.Description");
 		}
 
 		private void btnNavWorld_Click(object? sender, EventArgs eventArgs)
@@ -442,8 +479,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ShowSettingsPage(
 				pnlPageWorld,
 				btnNavWorld,
-				"World Generation",
-				"Configure world seed, size, and game-specific world options.");
+				"ServerSetup.Page.World.Title",
+				"ServerSetup.Page.World.Description");
 		}
 
 		private void btnNavNetwork_Click(object? sender, EventArgs eventArgs)
@@ -451,8 +488,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ShowSettingsPage(
 				pnlPageNetwork,
 				btnNavNetwork,
-				"Network & RCON",
-				"Assign service ports and secure remote administration.");
+				"ServerSetup.Page.Network.Title",
+				"ServerSetup.Page.Network.Description");
 		}
 
 		private void btnNavAutomation_Click(object? sender, EventArgs eventArgs)
@@ -460,8 +497,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ShowSettingsPage(
 				pnlPageAutomation,
 				btnNavAutomation,
-				"Automation",
-				"Control startup tasks, scheduled restarts, backups, and alerts.");
+				"ServerSetup.Page.Automation.Title",
+				"ServerSetup.Page.Automation.Description");
 		}
 
 		private void btnNavInstall_Click(object? sender, EventArgs eventArgs)
@@ -469,8 +506,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ShowSettingsPage(
 				pnlPageInstall,
 				btnNavInstall,
-				"Install & Launch",
-				"Choose server storage and customize launch arguments.");
+				"ServerSetup.Page.Install.Title",
+				"ServerSetup.Page.Install.Description");
 		}
 
 		private void TitleBar_MouseDown(object? sender, MouseEventArgs eventArgs)
@@ -602,8 +639,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				return;
 
 			LocalizedMessageBox.Show(
-				"Synix could not unlock this server's saved passwords, authentication token, or Discord webhooks. They may have come from another Windows user or computer.\n\nEnter the credentials again and press Save Changes to protect them for this Windows user.",
-				"Re-enter Server Credentials",
+				LocalizationManager.Get(
+					"ServerSetup.Credentials.UnlockFailed.Body"),
+				LocalizationManager.Get(
+					"ServerSetup.Credentials.UnlockFailed.Title"),
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Warning);
 		}
@@ -678,6 +717,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					discordSettingsPage.TryGetSettings(
 						out _,
 						out discordSettingsError);
+				_blockedByPort = isBaseReady && portValidation.HasConflict;
+				_requirementsBlocked =
+					minecraftVersionNeedsAttention ||
+					minecraftLoaderNeedsAttention ||
+					missingRequirement != null;
 
 				UpdateNavigationAttention(
 					general: !isBaseReady ||
@@ -699,75 +743,84 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 				if (!isBaseReady)
 				{
-					_validationMessage = !hasName && !hasGame
-						? "  🔒 [REQUIRED] Enter a Server Name and select a Game Template."
-						: !hasName
-							? "  🔒 [REQUIRED] Enter a Server Name before this server can be saved."
-							: "  🔒 [REQUIRED] Select a Game Template before this server can be saved.";
+					_validationMessage = LocalizationManager.Get(
+						!hasName && !hasGame
+							? "ServerSetup.Validation.ServerNameAndGameRequired"
+							: !hasName
+								? "ServerSetup.Validation.ServerNameRequired"
+								: "ServerSetup.Validation.GameRequired");
 					btnSave.Enabled = false;
 				}
 				else if (isMinecraft &&
 					!isMinecraftBedrock &&
 					pnlPageGeneral.IsLoadingMinecraftMetadata)
 				{
-					_validationMessage =
-						"  ◌ [MINECRAFT] Loading compatible versions and Java requirements...";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.MinecraftLoading");
 					btnSave.Enabled = false;
 				}
 				else if (isMinecraft &&
 					!isMinecraftBedrock &&
 					!string.IsNullOrWhiteSpace(pnlPageGeneral.MinecraftMetadataError))
 				{
-					_validationMessage =
-						$"  ⚠️ [MINECRAFT] {pnlPageGeneral.MinecraftMetadataError}";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.MinecraftDetail",
+						pnlPageGeneral.MinecraftMetadataError);
 					btnSave.Enabled = false;
 				}
 				else if (isMinecraft &&
 					string.IsNullOrWhiteSpace(pnlPageGeneral.GameVersion))
 				{
-					_validationMessage =
-						"  🔒 [MINECRAFT] Select a Minecraft game version.";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.MinecraftVersionRequired");
 					btnSave.Enabled = false;
 				}
 				else if (pnlPageSecurity.RequiredAdminPasswordMissing)
 				{
-					_validationMessage =
-						"  🔒 [REQUIRED] Enter an Admin Password to protect the server administrator role.";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.AdminPasswordRequired");
 					btnSave.Enabled = false;
 				}
 				else if (pnlPageSecurity.RequiredAuthenticationTokenMissing)
 				{
-					_validationMessage =
-						$"  🔒 [REQUIRED] Enter the required {pnlPageSecurity.AuthenticationTokenLabel} before this server can be saved.";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.AuthenticationTokenRequired",
+						pnlPageSecurity.AuthenticationTokenLabel);
 					btnSave.Enabled = false;
 				}
 				else if (!string.IsNullOrWhiteSpace(serverInputError))
 				{
-					_validationMessage = $"  🔒 [REQUIRED] {serverInputError}";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.RequiredDetail",
+						LocalizationManager.TranslateRuntimeText(serverInputError));
 					btnSave.Enabled = false;
 				}
 				else if (minecraftLoaderNeedsAttention)
 				{
-					_validationMessage =
-						"  🔒 [MINECRAFT] No compatible loader build is selected.";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.MinecraftLoaderRequired");
 					btnSave.Enabled = false;
 				}
 				else if (missingRequirement != null)
 				{
-					_validationMessage =
-						$"  ⚠️ [REQUIREMENT] {missingRequirement.Message}";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.RequirementDetail",
+						LocalizationManager.TranslateRuntimeText(
+							missingRequirement.Message));
 					btnSave.Enabled = false;
 				}
 				else if (isNameTaken)
 				{
-					_validationMessage =
-						$"  ⚠️ [CONFLICT] Name '{currentName}' is already used for {selectedGame}.";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.NameConflict",
+						currentName,
+						selectedGame);
 					btnSave.Enabled = false;
 				}
 				else if (scheduleNeedsAttention)
 				{
-					_validationMessage =
-						"  🔒 [REQUIRED] Select at least one day for the automatic restart schedule.";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.ScheduleDayRequired");
 					btnSave.Enabled = false;
 				}
 				else if (portValidation.HasConflict)
@@ -777,28 +830,38 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				}
 				else if (string.IsNullOrWhiteSpace(pnlPageInstall.InstallPath))
 				{
-					_validationMessage =
-						"  🔒 [REQUIRED] Select an install folder or enable the default install path.";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.InstallFolderRequired");
 					btnSave.Enabled = false;
 				}
 				else if (!extraArgumentsValid)
 				{
-					_validationMessage = $"  ⚠️ [LAUNCH] {extraArgumentsError}";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.LaunchDetail",
+						LocalizationManager.TranslateRuntimeText(extraArgumentsError));
 					btnSave.Enabled = false;
 				}
 				else if (!discordSettingsValid)
 				{
-					_validationMessage = $"  🔒 [DISCORD] {discordSettingsError}";
+					_validationMessage = LocalizationManager.Get(
+						"ServerSetup.Validation.DiscordDetail",
+						LocalizationManager.TranslateRuntimeText(discordSettingsError));
 					btnSave.Enabled = false;
 				}
 				else
 				{
 					_validationMessage = !string.IsNullOrWhiteSpace(
 						selectedDefinition?.LaunchBehavior.ReadyMessage)
-						? $"  ✔ [READY] NOTE: {selectedDefinition.LaunchBehavior.ReadyMessage}"
+						? LocalizationManager.Get(
+							"ServerSetup.Validation.ReadyNote",
+							LocalizationManager.TranslateRuntimeText(
+								selectedDefinition.LaunchBehavior.ReadyMessage))
 						: _isEditMode
-							? $"  ✔ [READY] Updating: {currentName}"
-							: "  ✔ [READY] Configuration is valid and safe.";
+							? LocalizationManager.Get(
+								"ServerSetup.Validation.Updating",
+								currentName)
+							: LocalizationManager.Get(
+								"ServerSetup.Validation.Ready");
 					btnSave.Enabled = true;
 				}
 
@@ -808,8 +871,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			{
 				System.Diagnostics.Debug.WriteLine(
 					$"[GATEKEEPER CRASH] {exception.Message}");
-				_validationMessage =
-					$"  ⚠️ [VALIDATION ERROR] Validation could not complete: {exception.Message}";
+				_validationMessage = LocalizationManager.Get(
+					"ServerSetup.Validation.Error",
+					exception.Message);
+				_blockedByPort = false;
+				_requirementsBlocked = true;
 				btnSave.Enabled = false;
 				UpdateNavigationAttention(
 					general: true,
@@ -838,11 +904,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ConfigurationSupportPresentation support =
 				UserGuidance.GetConfigurationSupport(gameData);
 			string portMappingSummary = GetPortMappingSummary(gameData);
-			lblTemplateBehavior.Text =
-				$"◇  CONFIGURATION SUPPORT: {support.Status}  •  {portMappingSummary}";
-			lblTemplateBehavior.ForeColor = portMappingSummary.StartsWith(
-				"Needs mapping:",
-				StringComparison.Ordinal)
+			LocalizationManager.BindText(
+				lblTemplateBehavior,
+				"ServerSetup.ConfigurationSupport",
+				LocalizationManager.TranslateRuntimeText(support.Status),
+				portMappingSummary);
+			lblTemplateBehavior.ForeColor = HasMissingPortMappings(gameData)
 					? SettingsPalette.Warning
 					: support.Color;
 			ApplyExperienceMode();
@@ -854,31 +921,47 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ShowSettingsPage(
 				pnlPageSecurity,
 				btnNavSecurity,
-				"Security",
-				"Manage server passwords and online-service credentials.");
+				"ServerSetup.Page.Security.Title",
+				"ServerSetup.Page.Security.Description");
 		}
 
 		internal static string GetPortMappingSummary(GameInfo? gameData)
 		{
 			if (gameData == null)
-				return "Select a game to see its managed port mappings.";
+				return LocalizationManager.Get(
+					"ServerSetup.PortMapping.SelectGame");
 
 			GameManagementCapability capabilities =
 				GameFix.GetManagementCapabilities(gameData);
 			List<string> missing = [];
 			if ((capabilities & GameManagementCapability.Port) == 0)
-				missing.Add("Game Port");
+				missing.Add(LocalizationManager.Get("ServerSetup.Port.Game"));
 			if ((capabilities & GameManagementCapability.QueryPort) == 0)
-				missing.Add("Query Port");
+				missing.Add(LocalizationManager.Get("ServerSetup.Port.Query"));
 			if (gameData.AppPort.HasValue &&
 				(capabilities & GameManagementCapability.AppPort) == 0)
 			{
-				missing.Add("App Port");
+				missing.Add(LocalizationManager.Get("ServerSetup.Port.App"));
 			}
 
 			return missing.Count == 0
-				? "All declared ports are mapped by arguments or configuration."
-				: $"Needs mapping: {string.Join(", ", missing)} (arguments or configuration template).";
+				? LocalizationManager.Get("ServerSetup.PortMapping.AllMapped")
+				: LocalizationManager.Get(
+					"ServerSetup.PortMapping.NeedsMapping",
+					string.Join(", ", missing));
+		}
+
+		private static bool HasMissingPortMappings(GameInfo? gameData)
+		{
+			if (gameData == null)
+				return false;
+
+			GameManagementCapability capabilities =
+				GameFix.GetManagementCapabilities(gameData);
+			return (capabilities & GameManagementCapability.Port) == 0 ||
+				(capabilities & GameManagementCapability.QueryPort) == 0 ||
+				(gameData.AppPort.HasValue &&
+				 (capabilities & GameManagementCapability.AppPort) == 0);
 		}
 
 		private void btnNavDiscord_Click(object? sender, EventArgs eventArgs)
@@ -886,8 +969,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			ShowSettingsPage(
 				pnlPageDiscord,
 				btnNavDiscord,
-				"Discord Notifications",
-				"Use one master webhook or route different Synix events to multiple Discord channels.");
+				"ServerSetup.Page.Discord.Title",
+				"ServerSetup.Page.Discord.Description");
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
@@ -910,7 +993,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			{
 				LocalizedMessageBox.Show(
 					serverInputError,
-					"Server Settings Need Attention",
+					LocalizationManager.Get(
+						"ServerSetup.Dialog.SettingsAttention.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				btnNavSecurity.PerformClick();
@@ -941,7 +1025,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			{
 				LocalizedMessageBox.Show(
 					extraArgumentsError,
-					"Extra Arguments Blocked",
+					LocalizationManager.Get(
+						"ServerSetup.Dialog.ExtraArgumentsBlocked.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				pnlPageInstall.FocusExtraArguments();
@@ -953,7 +1038,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			{
 				LocalizedMessageBox.Show(
 					discordSettingsError,
-					"Discord Settings Need Attention",
+					LocalizationManager.Get(
+						"ServerSetup.Dialog.DiscordAttention.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				btnNavDiscord.PerformClick();
@@ -1085,8 +1171,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			if (!IsGameServerConfigSafe(NewServer))
 			{
 				LocalizedMessageBox.Show(
-					"Security Alert: One of your inputs contains illegal characters.",
-					"Input Blocked",
+					LocalizationManager.Get(
+						"ServerSetup.Dialog.IllegalInput.Body"),
+					LocalizationManager.Get(
+						"ServerSetup.Dialog.IllegalInput.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -1152,9 +1240,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			}
 			catch (Exception exception)
 			{
-				PlainEnglishErrorDialog.ShowError(
-					this,
-					"save the server settings",
+					PlainEnglishErrorDialog.ShowError(
+						this,
+						LocalizationManager.Get(
+							"ServerSetup.ErrorAction.SaveSettings"),
 					exception.ToString());
 			}
 		}

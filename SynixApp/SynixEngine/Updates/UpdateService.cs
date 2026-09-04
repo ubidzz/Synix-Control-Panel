@@ -39,10 +39,13 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public string DisplayName => Kind switch
 		{
-			SynixInstallationKind.Standalone => "Standalone edition",
-			SynixInstallationKind.Setup => "Setup edition",
-			SynixInstallationKind.WinGet => "WinGet edition",
-			_ => "Development build"
+			SynixInstallationKind.Standalone => LocalizationManager.Get(
+				"Updates.Installation.Standalone"),
+			SynixInstallationKind.Setup => LocalizationManager.Get(
+				"Updates.Installation.Setup"),
+			SynixInstallationKind.WinGet => LocalizationManager.Get(
+				"Updates.Installation.WinGet"),
+			_ => LocalizationManager.Get("Updates.Installation.Development")
 		};
 	}
 
@@ -165,7 +168,9 @@ namespace Synix_Control_Panel.SynixEngine
 					: null;
 
 				string? problem = advertisedVersion > currentVersion && asset is null
-					? $"The verified {GetExpectedAssetName(installation.Kind)} download is not attached to this release yet."
+					? LocalizationManager.Get(
+						"Updates.Problem.AssetMissing",
+						GetExpectedAssetName(installation.Kind))
 					: null;
 
 				return new SynixUpdateCheckResult(
@@ -191,7 +196,8 @@ namespace Synix_Control_Panel.SynixEngine
 					null,
 					null,
 					advertisedVersion > currentVersion
-						? "The update was detected, but its verified release details could not be loaded. Try again in a moment."
+						? LocalizationManager.Get(
+							"Updates.Problem.DetailsUnavailable")
 						: null);
 			}
 		}
@@ -200,7 +206,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			string executablePath = Environment.ProcessPath ??
 				throw new InvalidOperationException(
-					"Synix could not determine its executable path.");
+					LocalizationManager.Get("Updates.Error.ExecutablePathUnknown"));
 
 			if (!Core.IsOfficialRelease)
 			{
@@ -351,12 +357,14 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(asset);
 			ValidateDownloadUri(asset.DownloadUri);
 			if (asset.Size <= 0 || asset.Size > MaximumAssetBytes)
-				throw new InvalidDataException("The update download has an unsafe size.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.UnsafeDownloadSize"));
 
 			string fullDestinationPath = Path.GetFullPath(destinationPath);
 			string? directory = Path.GetDirectoryName(fullDestinationPath);
 			if (string.IsNullOrWhiteSpace(directory))
-				throw new InvalidOperationException("The update download folder is missing.");
+				throw new InvalidOperationException(LocalizationManager.Get(
+					"Updates.Error.DownloadFolderMissing"));
 			Directory.CreateDirectory(directory);
 
 			using HttpResponseMessage response = await HttpClient.GetAsync(
@@ -367,7 +375,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 			long responseLength = response.Content.Headers.ContentLength ?? asset.Size;
 			if (responseLength <= 0 || responseLength > MaximumAssetBytes)
-				throw new InvalidDataException("The update server returned an unsafe download size.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.ServerDownloadSize"));
 
 			await using Stream input = await response.Content.ReadAsStreamAsync(
 				cancellationToken);
@@ -389,7 +398,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 					received += read;
 					if (received > MaximumAssetBytes || received > asset.Size)
-						throw new InvalidDataException("The update download exceeded its expected size.");
+						throw new InvalidDataException(LocalizationManager.Get(
+							"Updates.Error.DownloadExceededSize"));
 
 					await output.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
 					progress?.Report(new SynixUpdateDownloadProgress(
@@ -401,7 +411,8 @@ namespace Synix_Control_Panel.SynixEngine
 				output.Flush(flushToDisk: true);
 			}
 			if (received != asset.Size)
-				throw new InvalidDataException("The update download is incomplete.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.DownloadIncomplete"));
 
 			await VerifyDownloadedAssetAsync(
 				fullDestinationPath,
@@ -428,7 +439,7 @@ namespace Synix_Control_Panel.SynixEngine
 				root.GetProperty("prerelease").GetBoolean())
 			{
 				throw new InvalidDataException(
-					"GitHub returned a draft or prerelease instead of a stable release.");
+					LocalizationManager.Get("Updates.Error.ReleaseNotStable"));
 			}
 
 			string tagName = root.GetProperty("tag_name").GetString() ?? string.Empty;
@@ -436,14 +447,16 @@ namespace Synix_Control_Panel.SynixEngine
 				? nameElement.GetString() ?? string.Empty
 				: string.Empty;
 			if (!TryResolveReleaseVersion(tagName, releaseName, out Version? version))
-				throw new InvalidDataException("The GitHub release has an invalid version.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.ReleaseVersionInvalid"));
 
 			string htmlUrl = root.GetProperty("html_url").GetString() ?? string.Empty;
 			if (!Uri.TryCreate(htmlUrl, UriKind.Absolute, out Uri? releaseUri) ||
 				releaseUri.Scheme != Uri.UriSchemeHttps ||
 				!string.Equals(releaseUri.Host, "github.com", StringComparison.OrdinalIgnoreCase))
 			{
-				throw new InvalidDataException("The GitHub release link is invalid.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.ReleaseLinkInvalid"));
 			}
 
 			List<SynixReleaseAsset> assets = [];
@@ -506,7 +519,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public static string BuildHighlights(string? markdown, int maximumItems = 6)
 		{
 			if (string.IsNullOrWhiteSpace(markdown))
-				return "Open the full release notes on GitHub to see what changed.";
+				return LocalizationManager.Get("Updates.ReleaseNotes.OpenGitHub");
 
 			List<string> highlights = markdown
 				.Replace("\r\n", "\n", StringComparison.Ordinal)
@@ -538,7 +551,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public static string FormatReleaseNotes(string? markdown)
 		{
 			if (string.IsNullOrWhiteSpace(markdown))
-				return "No release notes were provided.";
+				return LocalizationManager.Get("Updates.ReleaseNotes.Empty");
 
 			IEnumerable<string> lines = markdown
 				.Replace("\r\n", "\n", StringComparison.Ordinal)
@@ -572,7 +585,8 @@ namespace Synix_Control_Panel.SynixEngine
 				128,
 				cancellationToken);
 			if (!TryParseVersionText(rawVersion, out Version? version))
-				throw new InvalidDataException("GitHub returned an invalid Synix version.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.SynixVersionInvalid"));
 			return version!;
 		}
 
@@ -588,7 +602,8 @@ namespace Synix_Control_Panel.SynixEngine
 			response.EnsureSuccessStatusCode();
 
 			if (response.Content.Headers.ContentLength > maximumBytes)
-				throw new InvalidDataException("The update metadata is unexpectedly large.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.MetadataTooLarge"));
 
 			await using Stream stream = await response.Content.ReadAsStreamAsync(
 				cancellationToken);
@@ -600,7 +615,8 @@ namespace Synix_Control_Panel.SynixEngine
 				if (read == 0)
 					break;
 				if (buffer.Length + read > maximumBytes)
-					throw new InvalidDataException("The update metadata is unexpectedly large.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Updates.Error.MetadataTooLarge"));
 				buffer.Write(chunk, 0, read);
 			}
 
@@ -631,7 +647,8 @@ namespace Synix_Control_Panel.SynixEngine
 			CryptographicOperations.ZeroMemory(expectedHash);
 
 			if (!matches)
-				throw new InvalidDataException("The update failed its SHA-256 safety check.");
+				throw new InvalidDataException(LocalizationManager.Get(
+					"Updates.Error.HashMismatch"));
 
 			stream.Position = 0;
 			ValidateDownloadedAssetHeader(stream, assetName);
@@ -647,7 +664,8 @@ namespace Synix_Control_Panel.SynixEngine
 			if (string.Equals(extension, ".exe", StringComparison.OrdinalIgnoreCase))
 			{
 				if (bytesRead < 2 || header[0] != (byte)'M' || header[1] != (byte)'Z')
-					throw new InvalidDataException("The downloaded standalone update is not a valid Windows executable.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Updates.Error.StandaloneInvalid"));
 				return;
 			}
 
@@ -655,11 +673,13 @@ namespace Synix_Control_Panel.SynixEngine
 			if (string.Equals(extension, ".msi", StringComparison.OrdinalIgnoreCase))
 			{
 				if (bytesRead < msiHeader.Length || !header.SequenceEqual(msiHeader))
-					throw new InvalidDataException("The downloaded Setup update is not a valid Windows Installer package.");
+					throw new InvalidDataException(LocalizationManager.Get(
+						"Updates.Error.SetupInvalid"));
 				return;
 			}
 
-			throw new InvalidDataException("The update uses an unsupported file type.");
+			throw new InvalidDataException(LocalizationManager.Get(
+				"Updates.Error.FileTypeUnsupported"));
 		}
 
 		internal static bool TryResolveReleaseVersion(
@@ -763,7 +783,7 @@ namespace Synix_Control_Panel.SynixEngine
 				!string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					"The update download does not point to the official GitHub release host.");
+					LocalizationManager.Get("Updates.Error.UntrustedHost"));
 			}
 		}
 

@@ -137,7 +137,21 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			object? sender,
 			ApplicationLogEventArgs eventArgs)
 		{
-			AppendLog(eventArgs.Message, eventArgs.Color, eventArgs.Bold);
+			if (eventArgs.LocalizedMessage == null)
+			{
+				AppendLog(
+					eventArgs.TechnicalMessage,
+					eventArgs.Color,
+					eventArgs.Bold);
+			}
+			else
+			{
+				AppendLogCore(
+					eventArgs.TechnicalMessage,
+					eventArgs.LocalizedMessage,
+					eventArgs.Color,
+					eventArgs.Bold);
+			}
 		}
 
 		private void ApplicationGridRefreshRequested(object? sender, EventArgs eventArgs)
@@ -367,7 +381,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 		{
 			if (isPrivacyLoading)
 			{
-				AppendLog("[🛡️ BLOCK] Streamer mode is active", Color.Red);
+				AppendLocalizedLog("Dashboard.Activity.StreamerMode", Color.Red);
 				return;
 			}
 		}
@@ -384,8 +398,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			if (Core.Instance.isDownloadActive || deletionActive)
 			{
 				e.Cancel = true;
-				LocalizedMessageBox.Show("Cannot close Synix while a server is installing, updating, backing up, restoring, or deleting!",
-								"Operation in Progress", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get("Dashboard.CloseBlocked.Body"),
+					LocalizationManager.Get("Dashboard.CloseBlocked.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 				return;
 			}
 
@@ -438,11 +455,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			Clipboard.SetText(publicIP);
 			if (!isPrivacyLoading)
 			{
-				AppendLog($"[🚨 SYNIX] Public IP {publicIP} was copied to clipboard.", Color.Cyan);
+				AppendLocalizedLog(
+					"Dashboard.Activity.PublicIpCopied",
+					Color.Cyan,
+					arguments: publicIP);
 			}
 			else
 			{
-				AppendLog($"[🚨 SYNIX] Public IP [HIDDEN] was copied to clipboard.", Color.Cyan);
+				AppendLocalizedLog(
+					"Dashboard.Activity.PublicIpCopiedHidden",
+					Color.Cyan);
 			}
 		}
 
@@ -452,19 +474,50 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			Clipboard.SetText(localIP);
 			if (!isPrivacyLoading)
 			{
-				AppendLog($"[🚨 SYNIX] Local IP {localIP} was copied to clipboard.", Color.Cyan);
+				AppendLocalizedLog(
+					"Dashboard.Activity.LocalIpCopied",
+					Color.Cyan,
+					arguments: localIP);
 			}
 			else
 			{
-				AppendLog($"[🚨 SYNIX] Local IP [HIDDEN] was copied to clipboard.", Color.Cyan);
+				AppendLocalizedLog(
+					"Dashboard.Activity.LocalIpCopiedHidden",
+					Color.Cyan);
 			}
 		}
 
 		public void AppendLog(string message, Color? textColor = null, bool isBold = false)
 		{
+			AppendLogCore(
+				message,
+				LocalizationManager.TranslateRuntimeText(message),
+				textColor,
+				isBold);
+		}
+
+		private void AppendLocalizedLog(
+			string resourceKey,
+			Color? textColor = null,
+			bool isBold = false,
+			params object?[] arguments)
+		{
+			AppendLogCore(
+				LocalizationManager.GetEnglish(resourceKey, arguments),
+				LocalizationManager.Get(resourceKey, arguments),
+				textColor,
+				isBold);
+		}
+
+		private void AppendLogCore(
+			string technicalMessage,
+			string displayedMessage,
+			Color? textColor,
+			bool isBold)
+		{
 			FileHandler.QueueLog(
 				"Synix_Log",
-				$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}");
+				$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {technicalMessage}");
 
 			if (!IsHandleCreated || IsDisposed)
 				return;
@@ -472,20 +525,25 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			if (rtbLog.InvokeRequired)
 			{
 				rtbLog.BeginInvoke(
-					new Action(() => AppendLogToUi(message, textColor, isBold)));
+					new Action(() => AppendLogToUi(
+						displayedMessage,
+						textColor,
+						isBold)));
 				return;
 			}
 
-			AppendLogToUi(message, textColor, isBold);
+			AppendLogToUi(displayedMessage, textColor, isBold);
 		}
 
-		private void AppendLogToUi(string message, Color? textColor, bool isBold)
+		private void AppendLogToUi(
+			string displayedMessage,
+			Color? textColor,
+			bool isBold)
 		{
 			if (rtbLog.IsDisposed)
 				return;
 
 			string timeStamp = $"[{DateTime.Now:HH:mm:ss}] ";
-
 			rtbLog.SelectionStart = rtbLog.TextLength;
 			rtbLog.SelectionLength = 0;
 			rtbLog.SelectionColor = ResolveLogColor(textColor);
@@ -500,7 +558,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			}
 
 			rtbLog.SelectionFont = isBold ? boldFont : regularFont;
-			rtbLog.AppendText(timeStamp + message + Environment.NewLine);
+			rtbLog.AppendText(
+				timeStamp + displayedMessage + Environment.NewLine);
 			rtbLog.SelectionStart = rtbLog.Text.Length;
 			rtbLog.ScrollToCaret();
 		}
@@ -537,7 +596,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 		{
 			if (SynixSessionRecovery.PreviousSessionWasInterrupted)
 			{
-				AppendLog("[🔧 CRASH RECOVERY] Synix detected an interrupted previous session and is reconnecting any server processes that are still running.", Color.Orange, true);
+				AppendLocalizedLog(
+					"Dashboard.Activity.CrashRecovery",
+					Color.Orange,
+					true);
 			}
 			try
 			{
@@ -546,7 +608,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[🚨 REBIND ERROR] {ex.Message}", Color.Red, true);
+				AppendLocalizedLog(
+					"Dashboard.Activity.RebindError",
+					Color.Red,
+					true,
+					ex.Message);
 			}
 
 			try
@@ -558,7 +624,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[⚠️ RESOURCE ERROR] {ex.Message}", Color.Orange);
+				AppendLocalizedLog(
+					"Dashboard.Activity.ResourceError",
+					Color.Orange,
+					arguments: ex.Message);
 			}
 
 			UpdateDashboardSummary();
@@ -567,17 +636,27 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 			try
 			{
-				lblSteamStatus.Text = "●  Initializing SteamCMD...";
+				LocalizationManager.BindText(
+					lblSteamStatus,
+					"Text.06114F07909C7C52F41D");
 				lblSteamStatus.ForeColor = SettingsPalette.Warning;
 				await Task.Run(() => SteamCMD.EnsureSteamCMD((msg, color) => AppendLog(msg, color)));
-				lblSteamStatus.Text = "●  SteamCMD ready";
+				LocalizationManager.BindText(
+					lblSteamStatus,
+					"Text.427A3D1D34F4C09963DA");
 				lblSteamStatus.ForeColor = SettingsPalette.Accent;
 			}
 			catch (Exception ex)
 			{
-				lblSteamStatus.Text = "●  SteamCMD needs attention";
+				LocalizationManager.BindText(
+					lblSteamStatus,
+					"Text.F5C77CBF1B197C912BCA");
 				lblSteamStatus.ForeColor = SettingsPalette.Danger;
-				AppendLog($"[🚨 STEAMCMD ERROR] {ex.Message}", Color.Red, true);
+				AppendLocalizedLog(
+					"Dashboard.Activity.SteamCmdError",
+					Color.Red,
+					true,
+					ex.Message);
 			}
 
 			if (SynixSessionRecovery.ShouldShowFirstRunGuide())
@@ -591,7 +670,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 					}
 					catch (Exception exception)
 					{
-						AppendLog($"[⚠️ FIRST RUN] The completion marker could not be saved: {exception.Message}", Color.Orange);
+						AppendLocalizedLog(
+							"Dashboard.Activity.FirstRunMarkerFailed",
+							Color.Orange,
+							arguments: exception.Message);
 					}
 				}
 			}
@@ -675,15 +757,22 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			if (!hasSelection || server == null)
 			{
 				picSelectedServer.Image = null;
-				lblSelectedGame.Text = "Select a game server";
-				lblSelectedServerName.Text = "Choose a row to unlock server controls";
+				LocalizationManager.BindText(
+					lblSelectedGame,
+					"Text.00EF301D2AB0505FDDA2");
+				LocalizationManager.BindText(
+					lblSelectedServerName,
+					"Text.B28F2358A90FE65BFCC8");
 				return;
 			}
 
 			picSelectedServer.Image = server.DisplayIcon;
 			lblSelectedGame.Text = server.DisplayGameName;
-			lblSelectedServerName.Text =
-				$"{server.ServerName}  •  {BusyStatusPresentation.GetDisplayStatus(server.Status)}";
+			LocalizationManager.BindText(
+				lblSelectedServerName,
+				"Dashboard.SelectedServer.Summary",
+				server.ServerName,
+				BusyStatusPresentation.GetDisplayStatus(server.Status));
 		}
 
 		private void ServerFilterChanged(object sender, EventArgs e)
@@ -758,7 +847,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 					currentStatus.StartsWith("Stopping", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Installing", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Updating", StringComparison.OrdinalIgnoreCase) ||
-					currentStatus.StartsWith("Backing Up", StringComparison.OrdinalIgnoreCase) ||
+					currentStatus.StartsWith(
+						StatusManager.GetStatus(ServerState.BackingUp),
+						StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Restoring", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Validating", StringComparison.OrdinalIgnoreCase) ||
 					currentStatus.StartsWith("Exporting", StringComparison.OrdinalIgnoreCase) ||
@@ -843,14 +934,20 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 		{
 			if (dataGridView1.CurrentRow == null)
 			{
-				AppendLog("[🚨 ERROR] No row is currently selected!", Color.Red);
-				LocalizedMessageBox.Show("Please select a server in the list first.", "No Server Selected");
+				AppendLocalizedLog(
+					"Dashboard.Activity.NoRowSelected",
+					Color.Red);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get("Dashboard.NoServerSelected.Body"),
+					LocalizationManager.Get("Dashboard.NoServerSelected.Title"));
 				return null;
 			}
 
 			if (dataGridView1.CurrentRow.DataBoundItem is not GameServer selectedServer)
 			{
-				AppendLog("[🚨 ERROR] Invalid GameServer object!", Color.Red);
+				AppendLocalizedLog(
+					"Dashboard.Activity.InvalidServerObject",
+					Color.Red);
 				return null;
 			}
 
@@ -958,7 +1055,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				LocalizedMessageBox.Show(
 					this,
 					preflight.Message,
-					"Backup Check Failed",
+					LocalizationManager.Get(
+						"Dashboard.Backup.CheckFailed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -967,12 +1065,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			{
 				LocalizedMessageBox.Show(
 					this,
-					$"There is not enough space to safely create this backup.\n\n" +
-					$"Server data: {Core.FormatBytes(preflight.SourceBytes)}\n" +
-					$"Maximum space needed: {Core.FormatBytes(preflight.RequiredBytes)}\n" +
-					$"Free on backup drive: {Core.FormatBytes(preflight.AvailableBytes)}\n\n" +
-					$"Backup folder: {preflight.BackupFolder}",
-					"Not Enough Backup Space",
+					LocalizationManager.Get(
+						"Dashboard.Backup.NotEnoughSpace.Body",
+						Core.FormatBytes(preflight.SourceBytes),
+						Core.FormatBytes(preflight.RequiredBytes),
+						Core.FormatBytes(preflight.AvailableBytes),
+						preflight.BackupFolder),
+					LocalizationManager.Get(
+						"Dashboard.Backup.NotEnoughSpace.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;
@@ -980,13 +1080,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
-				$"Create a backup of {selectedServer.ServerName}?\n\n" +
-				$"Files: {preflight.FileCount:N0}\n" +
-				$"Server data: {Core.FormatBytes(preflight.SourceBytes)}\n" +
-				$"Maximum space needed: {Core.FormatBytes(preflight.RequiredBytes)}\n" +
-				$"Free on backup drive: {Core.FormatBytes(preflight.AvailableBytes)}\n\n" +
-				"Large servers can take some time to package. The final compressed backup will usually be smaller than the maximum shown.",
-				"Confirm Server Backup",
+				LocalizationManager.Get(
+					"Dashboard.Backup.Confirm.Body",
+					selectedServer.ServerName,
+					preflight.FileCount,
+					Core.FormatBytes(preflight.SourceBytes),
+					Core.FormatBytes(preflight.RequiredBytes),
+					Core.FormatBytes(preflight.AvailableBytes)),
+				LocalizationManager.Get("Dashboard.Backup.Confirm.Title"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Information,
 				MessageBoxDefaultButton.Button2);
@@ -1009,7 +1110,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				await Core.Instance.GetServerBackupsAsync(selectedServer);
 			if (backups.Count == 0)
 			{
-				AppendLog($"[♻ RESTORE] No backups were found for {selectedServer.ServerName}.", Color.Yellow);
+				AppendLocalizedLog(
+					"Dashboard.Activity.NoBackups",
+					Color.Yellow,
+					arguments: selectedServer.ServerName);
 				return;
 			}
 
@@ -1020,11 +1124,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			ServerBackupArchive selectedBackup = dialog.SelectedBackup;
 			DialogResult confirmation = LocalizedMessageBox.Show(
 				this,
-				$"Restore {selectedServer.ServerName} from this backup?\n\n" +
-				$"Created: {selectedBackup.CreatedLocal:f}\n" +
-				$"File: {selectedBackup.FileName}\n\n" +
-				"The current server files will be replaced. Synix will stage the backup first and automatically return the current files if restoration fails. The saved Synix server entry and settings will not be changed.",
-				"Confirm Server Restore",
+				LocalizationManager.Get(
+					"Dashboard.Restore.Confirm.Body",
+					selectedServer.ServerName,
+					selectedBackup.CreatedLocal,
+					selectedBackup.FileName),
+				LocalizationManager.Get("Dashboard.Restore.Confirm.Title"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning,
 				MessageBoxDefaultButton.Button2);
@@ -1033,8 +1138,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 			Progress<string> progress = new(message =>
 			{
-				if (!message.StartsWith("Unpacking backup file", StringComparison.OrdinalIgnoreCase))
-					AppendLog($"[♻ RESTORE] {message}", Color.Cyan);
+				if (!message.StartsWith(
+					LocalizationManager.Get("Backup.Progress.UnpackingPrefix"),
+					StringComparison.OrdinalIgnoreCase))
+					AppendLog(
+						LocalizationManager.Get(
+							"Dashboard.Restore.Activity",
+							message),
+						Color.Cyan);
 			});
 			ServerBackupRestoreResult result = await Core.Instance.RestoreServerBackupAsync(
 				selectedServer,
@@ -1044,7 +1155,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			LocalizedMessageBox.Show(
 				this,
 				result.Message,
-				result.Succeeded ? "Server Backup Restored" : "Server Restore Failed",
+				LocalizationManager.Get(result.Succeeded
+					? "Dashboard.Restore.Succeeded.Title"
+					: "Dashboard.Restore.Failed.Title"),
 				MessageBoxButtons.OK,
 				result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
 		}
@@ -1084,7 +1197,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				catch (Exception ex)
 				{
 
-					AppendLog($"[🚨 STOP ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
+					AppendLocalizedLog(
+						"Dashboard.Activity.StopError",
+						Color.Red,
+						arguments:
+						[
+							selectedServer.ServerName,
+							ex.Message
+						]);
 				}
 			}
 		}
@@ -1126,11 +1246,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
 			if (!GameDatabase.SupportsManualConnectionTesting(gameData))
 			{
-				AppendLog($"[🛡️ NETWORK] Manual WAN connection testing is not supported for {selectedServer.Game}.", Color.Yellow);
+				AppendLocalizedLog(
+					"Dashboard.Activity.WanUnsupported",
+					Color.Yellow,
+					arguments: selectedServer.Game);
 				return;
 			}
 
-			AppendLog($"[📡 NETWORK] Running comprehensive WAN connectivity tests for {selectedServer.ServerName}...", Color.White);
+			AppendLocalizedLog(
+				"Dashboard.Activity.WanTesting",
+				Color.White,
+				arguments: selectedServer.ServerName);
 
 			try
 			{
@@ -1141,17 +1267,39 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 				if (isReachable)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable at {ipText} using its configured probe protocol.", Color.Green);
+					AppendLocalizedLog(
+						"Dashboard.Activity.WanReachable",
+						Color.Green,
+						arguments:
+						[
+							selectedServer.ServerName,
+							ipText
+						]);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] The configured connection probe failed for {selectedServer.ServerName} at {ipText} (Game Port {selectedServer.Port}, Query/Probe Port {selectedServer.QueryPort}). Check the server, router, firewall, and protocol-specific settings.", Color.Red);
+					AppendLocalizedLog(
+						"Dashboard.Activity.WanProbeFailed",
+						Color.Red,
+						arguments:
+						[
+							selectedServer.ServerName,
+							ipText,
+							selectedServer.Port,
+							selectedServer.QueryPort
+						]);
 				}
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[🚨 ERROR] Could not complete Public connectivity test: {ex.Message}", Color.Yellow);
-				PlainEnglishErrorDialog.ShowError(this, "test the internet connection", ex.Message);
+				AppendLocalizedLog(
+					"Dashboard.Activity.WanTestFailed",
+					Color.Yellow,
+					arguments: ex.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("Dashboard.ErrorAction.TestInternet"),
+					ex.Message);
 			}
 		}
 
@@ -1164,11 +1312,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
 			if (!GameDatabase.SupportsManualConnectionTesting(gameData))
 			{
-				AppendLog($"[🛡️ NETWORK] Manual LAN connection testing is not supported for {selectedServer.Game}.", Color.Yellow);
+				AppendLocalizedLog(
+					"Dashboard.Activity.LanUnsupported",
+					Color.Yellow,
+					arguments: selectedServer.Game);
 				return;
 			}
 
-			AppendLog($"[📡 NETWORK] Running comprehensive LAN connectivity tests for {selectedServer.ServerName}...", Color.White);
+			AppendLocalizedLog(
+				"Dashboard.Activity.LanTesting",
+				Color.White,
+				arguments: selectedServer.ServerName);
 
 			try
 			{
@@ -1179,17 +1333,39 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 				if (isReachable)
 				{
-					AppendLog($"[🌐 ONLINE] {selectedServer.ServerName} is reachable locally at {ipText} using its configured probe protocol.", Color.Green);
+					AppendLocalizedLog(
+						"Dashboard.Activity.LanReachable",
+						Color.Green,
+						arguments:
+						[
+							selectedServer.ServerName,
+							ipText
+						]);
 				}
 				else
 				{
-					AppendLog($"[🛡️ BLOCK] The configured local probe failed for {selectedServer.ServerName} at {ipText} (Game Port {selectedServer.Port}, Query/Probe Port {selectedServer.QueryPort}). Ensure the server and its query service are running.", Color.Red);
+					AppendLocalizedLog(
+						"Dashboard.Activity.LanProbeFailed",
+						Color.Red,
+						arguments:
+						[
+							selectedServer.ServerName,
+							ipText,
+							selectedServer.Port,
+							selectedServer.QueryPort
+						]);
 				}
 			}
 			catch (Exception ex)
 			{
-				AppendLog($"[🚨 ERROR] Could not complete LAN connectivity test: {ex.Message}", Color.Yellow);
-				PlainEnglishErrorDialog.ShowError(this, "test the home-network connection", ex.Message);
+				AppendLocalizedLog(
+					"Dashboard.Activity.LanTestFailed",
+					Color.Yellow,
+					arguments: ex.Message);
+				PlainEnglishErrorDialog.ShowError(
+					this,
+					LocalizationManager.Get("Dashboard.ErrorAction.TestHomeNetwork"),
+					ex.Message);
 			}
 		}
 
@@ -1296,8 +1472,18 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				}
 				catch (Exception ex)
 				{
-					AppendLog($"[🚨 RESTART ERROR] {selectedServer.ServerName}: {ex.Message}", Color.Red);
-					PlainEnglishErrorDialog.ShowError(this, "restart the server", ex.Message);
+					AppendLocalizedLog(
+						"Dashboard.Activity.RestartError",
+						Color.Red,
+						arguments:
+						[
+							selectedServer.ServerName,
+							ex.Message
+						]);
+					PlainEnglishErrorDialog.ShowError(
+						this,
+						LocalizationManager.Get("Dashboard.ErrorAction.RestartServer"),
+						ex.Message);
 				}
 			}
 		}
@@ -1341,7 +1527,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 			btnDownloadUpdate.Visible = false;
 			btnDownloadUpdate.Enabled = false;
-			lblUpdateStatus.Text = "Checking for updates...";
+			LocalizationManager.BindText(
+				lblUpdateStatus,
+				"Text.8BCAEE3C780FC5A57E1C");
 			lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
 			lblUpdateStatus.BackColor = SettingsPalette.TitleBar;
 
@@ -1354,31 +1542,46 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 				if (_updateCheckResult.UpdateAvailable)
 				{
-					string latestVersion = _updateCheckResult.AdvertisedVersion?.ToString(3) ?? "new";
-					lblUpdateStatus.Text = _updateCheckResult.Release is not null
-						? $"Update {latestVersion} available  •  Running {currentVersion.ToString(3)}"
-						: $"Update {latestVersion} detected  •  Details unavailable";
+					string latestVersion =
+						_updateCheckResult.AdvertisedVersion?.ToString(3) ??
+						LocalizationManager.Get("Updates.Version.New");
+					LocalizationManager.BindText(
+						lblUpdateStatus,
+						_updateCheckResult.Release is not null
+							? "Dashboard.Update.Available"
+							: "Dashboard.Update.DetailsUnavailable",
+						latestVersion,
+						currentVersion.ToString(3));
 					lblUpdateStatus.ForeColor = SettingsPalette.Warning;
-					btnDownloadUpdate.Text = _updateCheckResult.CanInstall
-						? "Install Update"
-						: "Update Details";
+					LocalizationManager.BindText(
+						btnDownloadUpdate,
+						_updateCheckResult.CanInstall
+							? "Text.7E08C50FB774DD673401"
+							: "Dashboard.Update.Button.Details");
 					btnDownloadUpdate.Visible = true;
 					btnDownloadUpdate.Enabled = true;
 				}
 				else
 				{
-					lblUpdateStatus.Text = $"✓  Latest version  •  v{currentVersion.ToString(3)}";
+					LocalizationManager.BindText(
+						lblUpdateStatus,
+						"Dashboard.Update.Latest",
+						currentVersion.ToString(3));
 					lblUpdateStatus.ForeColor = SettingsPalette.Accent;
 				}
 			}
 			catch (Exception exception)
 			{
 				_updateCheckResult = null;
-				lblUpdateStatus.Text = $"Version check unavailable  •  v{currentVersion.ToString(3)}";
+				LocalizationManager.BindText(
+					lblUpdateStatus,
+					"Dashboard.Update.CheckUnavailable",
+					currentVersion.ToString(3));
 				lblUpdateStatus.ForeColor = SettingsPalette.MutedText;
-				AppendLog(
-					$"[⚠️ UPDATE] Version check unavailable: {exception.Message}",
-					Color.Orange);
+				AppendLocalizedLog(
+					"Dashboard.Activity.UpdateCheckFailed",
+					Color.Orange,
+					arguments: exception.Message);
 			}
 			finally
 			{
@@ -1395,8 +1598,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				{
 					LocalizedMessageBox.Show(
 						this,
-						_updateCheckResult?.Problem ?? "Synix could not load the verified update details. Check your internet connection and try again.",
-						"Update Details Unavailable",
+						_updateCheckResult?.Problem ??
+						LocalizationManager.Get("Dashboard.Update.LoadDetailsFailed"),
+						LocalizationManager.Get("Dashboard.Update.DetailsUnavailable.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
 					return;
@@ -1417,8 +1621,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			{
 				Progress<SynixUpdateDownloadProgress> progress = new(download =>
 				{
-					lblUpdateStatus.Text =
-						$"Downloading verified update... {download.Percent}%";
+					LocalizationManager.BindText(
+						lblUpdateStatus,
+						"Dashboard.Update.Downloading",
+						download.Percent);
 					btnDownloadUpdate.Text = $"{download.Percent}%";
 				});
 
@@ -1428,8 +1634,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 				LocalizedMessageBox.Show(
 					this,
-					$"Synix {prepared.NewVersion.ToString(3)} was downloaded and verified.\n\nSynix will now close, apply the update, and open again. Everything inside C:\\Synix will remain unchanged.",
-					"Update Ready to Install",
+					LocalizationManager.Get(
+						"Dashboard.Update.Ready.Body",
+						prepared.NewVersion.ToString(3)),
+					LocalizationManager.Get("Dashboard.Update.Ready.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 
@@ -1442,13 +1650,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			}
 			catch (Exception exception)
 			{
-				lblUpdateStatus.Text = "Update did not start  •  Current Synix was not changed";
-				btnDownloadUpdate.Text = "Install Update";
+				LocalizationManager.BindText(
+					lblUpdateStatus,
+					"Text.09872897779CD02DAC70");
+				LocalizationManager.BindText(
+					btnDownloadUpdate,
+					"Text.7E08C50FB774DD673401");
 				btnDownloadUpdate.Enabled = true;
 				LocalizedMessageBox.Show(
 					this,
 					exception.Message,
-					"Synix Update Did Not Start",
+					LocalizationManager.Get("Dashboard.Update.Failed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}
@@ -1472,8 +1684,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Stop every game server and wait for installations, updates, validations, backups, imports, and exports to finish before updating Synix.",
-					"Synix Is Busy",
+					LocalizationManager.Get("Dashboard.Update.Busy.Body"),
+					LocalizationManager.Get("Dashboard.Update.Busy.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return false;
@@ -1483,8 +1695,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Synix could not safely save the current server list. The update was not started.",
-					"Unable to Save Synix",
+					LocalizationManager.Get("Dashboard.Update.SaveFailed.Body"),
+					LocalizationManager.Get("Dashboard.Update.SaveFailed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return false;
@@ -1514,8 +1726,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 			DialogResult exportConfirmation = LocalizedMessageBox.Show(
 				this,
-				"The generated batch file must contain any configured server passwords, administrator passwords, RCON passwords, and online authentication tokens in readable text. This is required so the batch file can start the server without Synix.\n\nAnyone who can read that file can use those credentials. Continue?",
-				"Export Batch File with Readable Credentials",
+				LocalizationManager.Get("Dashboard.Export.CredentialsWarning.Body"),
+				LocalizationManager.Get("Dashboard.Export.CredentialsWarning.Title"),
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Warning,
 				MessageBoxDefaultButton.Button2);
@@ -1526,8 +1738,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 			if (success)
 			{
-				LocalizedMessageBox.Show($"Batch file generated successfully!\n\nSaved directly to:\n{selectedServer.InstallPath}",
-								"Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"Dashboard.Export.Complete.Body",
+						selectedServer.InstallPath),
+					LocalizationManager.Get("Dashboard.Export.Complete.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
 			}
 		}
 
@@ -1563,7 +1780,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			}
 			catch (Exception ex)
 			{
-				LocalizedMessageBox.Show($"Unable to open the link automatically.\n\nError: {ex.Message}", "Link Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get("Dashboard.Link.OpenFailed.Body", ex.Message),
+					LocalizationManager.Get("Dashboard.Link.OpenFailed.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
 			}
 		}
 

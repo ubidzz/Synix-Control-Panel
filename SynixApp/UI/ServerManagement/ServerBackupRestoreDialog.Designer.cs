@@ -63,7 +63,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			titleLabel.Name = "titleLabel";
 			titleLabel.Size = new Size(1104, 38);
 			titleLabel.TabIndex = 0;
-			titleLabel.Text = "Restore Server Backup";
+			titleLabel.Text = LocalizationManager.Get("Text.49C15D2B9D9702D4FF44");
 			// 
 			// subtitleLabel
 			// 
@@ -74,7 +74,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			subtitleLabel.Name = "subtitleLabel";
 			subtitleLabel.Size = new Size(1104, 40);
 			subtitleLabel.TabIndex = 1;
-			subtitleLabel.Text = "Choose the backup that should replace the server's current files.";
+			subtitleLabel.Text = LocalizationManager.Get("Text.22FCE0291808752AD7BC");
 			// 
 			// warningCard
 			// 
@@ -100,7 +100,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			warningIcon.Name = "warningIcon";
 			warningIcon.Size = new Size(52, 52);
 			warningIcon.TabIndex = 0;
-			warningIcon.Text = "↺";
+			warningIcon.Text = LocalizationManager.Get("Text.ACE4C580886BB3063137");
 			warningIcon.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// warningTitle
@@ -112,7 +112,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			warningTitle.Name = "warningTitle";
 			warningTitle.Size = new Size(990, 25);
 			warningTitle.TabIndex = 1;
-			warningTitle.Text = "The server must remain stopped during restoration";
+			warningTitle.Text = LocalizationManager.Get("Text.D305131EE6798E1D30FA");
 			// 
 			// warningText
 			// 
@@ -123,7 +123,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			warningText.Name = "warningText";
 			warningText.Size = new Size(990, 46);
 			warningText.TabIndex = 2;
-			warningText.Text = "Synix verifies backups with integrity receipts, safely stages the selected archive, and automatically rolls back if restoration fails. The saved Synix server entry and its settings are not changed.";
+			warningText.Text = LocalizationManager.Get("Text.DB74849CCDF411527A63");
 			// 
 			// backupGrid
 			// 
@@ -147,7 +147,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			// 
 			// createdColumn
 			// 
-			createdColumn.HeaderText = "CREATED";
+			createdColumn.HeaderText = LocalizationManager.Get("Text.6D6441A3204BECDDE1CB");
 			createdColumn.MinimumWidth = 190;
 			createdColumn.Name = "createdColumn";
 			createdColumn.ReadOnly = true;
@@ -155,7 +155,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			// 
 			// fileColumn
 			// 
-			fileColumn.HeaderText = "BACKUP FILE";
+			fileColumn.HeaderText = LocalizationManager.Get("Text.9D70644761665CEA1FDE");
 			fileColumn.MinimumWidth = 210;
 			fileColumn.Name = "fileColumn";
 			fileColumn.ReadOnly = true;
@@ -163,7 +163,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			// 
 			// sizeColumn
 			// 
-			sizeColumn.HeaderText = "SIZE";
+			sizeColumn.HeaderText = LocalizationManager.Get("Text.4512FE0408D72862AC67");
 			sizeColumn.MinimumWidth = 90;
 			sizeColumn.Name = "sizeColumn";
 			sizeColumn.ReadOnly = true;
@@ -171,7 +171,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			//
 			// uncompressedColumn
 			//
-			uncompressedColumn.HeaderText = "ORIGINAL";
+			uncompressedColumn.HeaderText = LocalizationManager.Get("Text.962F85A27854336F3286");
 			uncompressedColumn.MinimumWidth = 100;
 			uncompressedColumn.Name = "uncompressedColumn";
 			uncompressedColumn.ReadOnly = true;
@@ -179,7 +179,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			//
 			// integrityColumn
 			//
-			integrityColumn.HeaderText = "INTEGRITY";
+			integrityColumn.HeaderText = LocalizationManager.Get("Text.B00EA51A815EE55F2F3E");
 			integrityColumn.MinimumWidth = 130;
 			integrityColumn.Name = "integrityColumn";
 			integrityColumn.ReadOnly = true;
@@ -187,7 +187,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			//
 			// verifiedColumn
 			//
-			verifiedColumn.HeaderText = "LAST VERIFIED";
+			verifiedColumn.HeaderText = LocalizationManager.Get("Text.74E5C919B46AE61321E3");
 			verifiedColumn.MinimumWidth = 180;
 			verifiedColumn.Name = "verifiedColumn";
 			verifiedColumn.ReadOnly = true;
@@ -196,7 +196,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			// locationColumn
 			// 
 			locationColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-			locationColumn.HeaderText = "LOCATION";
+			locationColumn.HeaderText = LocalizationManager.Get("ModManager.Column.Location");
 			locationColumn.MinimumWidth = 220;
 			locationColumn.Name = "locationColumn";
 			locationColumn.ReadOnly = true;
@@ -210,7 +210,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			selectionLabel.Name = "selectionLabel";
 			selectionLabel.Size = new Size(1104, 28);
 			selectionLabel.TabIndex = 3;
-			selectionLabel.Text = "Select a backup to continue.";
+			selectionLabel.Text = LocalizationManager.Get("Text.F00F8392B2C39AE7826E");
 			//
 			// deleteButton
 			//
@@ -224,7 +224,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			deleteButton.Name = "deleteButton";
 			deleteButton.Size = new Size(128, 42);
 			deleteButton.TabIndex = 4;
-			deleteButton.Text = "Delete Backup";
+			deleteButton.Text = LocalizationManager.Get("Text.030CFC390829811A85AF");
 			deleteButton.UseVisualStyleBackColor = false;
 			deleteButton.Click += DeleteButton_Click;
 			//
@@ -240,7 +240,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			verifyButton.Name = "verifyButton";
 			verifyButton.Size = new Size(136, 42);
 			verifyButton.TabIndex = 5;
-			verifyButton.Text = "Verify Backup";
+			verifyButton.Text = LocalizationManager.Get("Text.61600AA7118C043C99D7");
 			verifyButton.UseVisualStyleBackColor = false;
 			verifyButton.Click += VerifyButton_Click;
 			// 
@@ -256,7 +256,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			cancelButton.Name = "cancelButton";
 			cancelButton.Size = new Size(120, 42);
 			cancelButton.TabIndex = 6;
-			cancelButton.Text = "Cancel";
+			cancelButton.Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778");
 			cancelButton.UseVisualStyleBackColor = false;
 			// 
 			// restoreButton
@@ -271,7 +271,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			restoreButton.Name = "restoreButton";
 			restoreButton.Size = new Size(128, 42);
 			restoreButton.TabIndex = 7;
-			restoreButton.Text = "Restore Backup";
+			restoreButton.Text = LocalizationManager.Get("Text.3F593999A67CF40731E8");
 			restoreButton.UseAccentStyle = true;
 			restoreButton.UseVisualStyleBackColor = false;
 			restoreButton.Click += RestoreButton_Click;
@@ -300,7 +300,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			Name = "ServerBackupRestoreDialog";
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Restore Server Backup";
+			Text = LocalizationManager.Get("Text.49C15D2B9D9702D4FF44");
 			warningCard.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)backupGrid).EndInit();
 			ResumeLayout(false);
