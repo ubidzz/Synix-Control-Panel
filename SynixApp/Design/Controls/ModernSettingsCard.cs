@@ -30,6 +30,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			{
 				_cornerRadius = Math.Max(0, value);
 				UpdateRoundedRegion();
+				PerformLayout();
 				Invalidate();
 			}
 		}
@@ -41,6 +42,26 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 		[Category("Synix Appearance")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Color BorderColor { get; set; } = SettingsPalette.Border;
+
+		public override Rectangle DisplayRectangle
+		{
+			get
+			{
+				Rectangle bounds = base.DisplayRectangle;
+				double radius = Math.Min(CornerRadius,
+					Math.Max(0, Math.Min(ClientSize.Width - 1, ClientSize.Height - 1) / 2D));
+				// Docked, opaque layouts must stay inside the curve as well as the
+				// straight border. Otherwise child windows paint over the smoothed edge.
+				int inset = radius > 0 ? (int)Math.Ceiling(radius * (1D - Math.Sqrt(0.5D))) + 2 : 1;
+				int left = Math.Max(0, inset - Padding.Left);
+				int top = Math.Max(0, inset - Padding.Top);
+				int right = Math.Max(0, inset - Padding.Right);
+				int bottom = Math.Max(0, inset - Padding.Bottom);
+				return new Rectangle(bounds.X + left, bounds.Y + top,
+					Math.Max(0, bounds.Width - left - right),
+					Math.Max(0, bounds.Height - top - bottom));
+			}
+		}
 
 		public ModernSettingsCard()
 		{
@@ -59,6 +80,14 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 		{
 			base.OnResize(eventArgs);
 			UpdateRoundedRegion();
+		}
+
+		protected override void OnHandleCreated(EventArgs eventArgs)
+		{
+			base.OnHandleCreated(eventArgs);
+			// Designer layouts can resume without a layout pass, retaining edge-to-edge
+			// child bounds until the card is resized. Apply the content inset on first use.
+			PerformLayout();
 		}
 
 		protected override void OnPaintBackground(PaintEventArgs eventArgs)

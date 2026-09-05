@@ -10,6 +10,8 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Windows.Forms;
 using Synix_Control_Panel.SynixApp.Design.Controls;
+using Synix_Control_Panel.SynixApp.UI.Help;
+using Synix_Control_Panel.SynixApp.UI.Settings;
 using Xunit;
 
 namespace Synix_Control_Panel.Tests;
@@ -87,6 +89,7 @@ public sealed class ModernSettingsCardRenderingTests
 				Assert.NotNull(card.Region);
 				Assert.True(card.Region.IsVisible(card.Width / 2, card.Height / 2));
 				using Bitmap rendered = RenderCard(card, parent.BackColor);
+				AssertOutlineVisible(card, rendered);
 				Assert.Equal(Color.Red.ToArgb(), rendered.GetPixel(card.Width / 2, card.Height / 2).ToArgb());
 				if (radius > 0)
 				{
@@ -95,6 +98,109 @@ public sealed class ModernSettingsCardRenderingTests
 				}
 			}
 		});
+	}
+
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void NestedOpaqueLayouts_DoNotPaintOverCardOutline(bool lightTheme)
+	{
+		RunOnStaThread(() =>
+		{
+			using Panel parent = new()
+			{
+				BackColor = lightTheme ? Color.White : Color.Black,
+				Size = new Size(818, 122)
+			};
+			using ModernSettingsCard card = new()
+			{
+				Size = parent.Size,
+				CornerRadius = 13,
+				FillColor = lightTheme ? Color.Gainsboro : Color.FromArgb(17, 27, 45),
+				BorderColor = lightTheme ? Color.DimGray : Color.FromArgb(38, 52, 77)
+			};
+			using TableLayoutPanel layout = new() { Dock = DockStyle.Fill, BackColor = card.FillColor };
+			using Panel nested = new() { Dock = DockStyle.Fill, BackColor = card.FillColor, Margin = Padding.Empty };
+			parent.Controls.Add(card);
+			card.Controls.Add(layout);
+			layout.Controls.Add(nested);
+			using Bitmap rendered = RenderCard(card, parent.BackColor);
+			AssertOutlineVisible(card, rendered);
+			Assert.Equal(card.DisplayRectangle, layout.Bounds);
+		});
+	}
+
+	[Fact]
+	public void ContentInset_RespectsExistingPadding()
+	{
+		RunOnStaThread(() =>
+		{
+			using ModernSettingsCard card = new()
+			{
+				Size = new Size(334, 112),
+				Padding = new Padding(22, 18, 20, 18)
+			};
+			using Panel child = new() { Dock = DockStyle.Fill };
+			card.Controls.Add(child);
+			Assert.Equal(new Rectangle(22, 18, 292, 76), child.Bounds);
+		});
+	}
+
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void SettingsAndHelpCards_KeepTheirVisibleBorders(bool helpWindow)
+	{
+		RunOnStaThread(() =>
+		{
+			using Control page = helpWindow ? new HelpGUI() : new GeneralSettingsPage();
+			if (helpWindow)
+			{
+				TreeView navigation = Assert.IsType<TreeView>(Assert.Single(page.Controls.Find("treeNavigation", true)));
+				_ = navigation.Handle;
+				navigation.SelectedNode = navigation.Nodes[0].Nodes[0];
+				Assert.Equal((string)navigation.SelectedNode.Tag!,
+					Assert.Single(page.Controls.Find("lblTopicTitle", true)).Text);
+			}
+			string[] names = helpWindow
+				? ["articleCard"]
+				: ["settingsCard", "settingsCardDarkMode", "settingsCardSteamDownloads", "settingsCardLanguage"];
+			foreach (string name in names)
+			{
+				ModernSettingsCard card = Assert.IsType<ModernSettingsCard>(Assert.Single(page.Controls.Find(name, true)));
+				// Host the real content without showing a window. A hidden Form otherwise
+				// prevents DrawToBitmap from creating and painting its child layouts.
+				using Panel viewport = new() { Size = card.Size, BackColor = card.Parent!.BackColor };
+				viewport.Controls.Add(card);
+				Assert.True(card.Controls[0].Visible);
+				using Bitmap rendered = RenderCard(card, viewport.BackColor);
+				AssertOutlineVisible(card, rendered);
+			}
+		});
+	}
+
+	private static void AssertOutlineVisible(ModernSettingsCard card, Bitmap rendered)
+	{
+		using Bitmap expected = RenderWithoutWindowRegion(card);
+		int width = card.Width;
+		int height = card.Height;
+		Assert.Equal(card.BorderColor.ToArgb(), rendered.GetPixel(width / 2, 0).ToArgb());
+		Assert.Equal(card.BorderColor.ToArgb(), rendered.GetPixel(width / 2, height - 1).ToArgb());
+		Assert.Equal(card.BorderColor.ToArgb(), rendered.GetPixel(0, height / 2).ToArgb());
+		Assert.Equal(card.BorderColor.ToArgb(), rendered.GetPixel(width - 1, height / 2).ToArgb());
+		int cornerSize = Math.Min(card.CornerRadius + 2, Math.Min(width, height) / 2);
+		for (int y = 0; y < cornerSize; y++)
+			for (int x = 0; x < cornerSize; x++)
+				foreach (Point corner in new[]
+				{
+					new Point(x, y), new Point(width - 1 - x, y),
+					new Point(x, height - 1 - y), new Point(width - 1 - x, height - 1 - y)
+				})
+				{
+					int edgeColor = expected.GetPixel(corner.X, corner.Y).ToArgb();
+					if (edgeColor != card.FillColor.ToArgb())
+						Assert.Equal(edgeColor, rendered.GetPixel(corner.X, corner.Y).ToArgb());
+				}
 	}
 
 	private static Bitmap RenderCard(ModernSettingsCard card, Color parentColor)
