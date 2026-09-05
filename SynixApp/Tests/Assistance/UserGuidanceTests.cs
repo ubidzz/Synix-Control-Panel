@@ -236,9 +236,7 @@ public sealed class UserGuidanceTests
 				Assert.False(gamePort.Enabled);
 				Assert.True(queryPort.Enabled);
 				Assert.False(appPort.Enabled);
-				Assert.Contains(
-					"Needs mapping: Game Port",
-					setup.Controls.Find("lblTemplateBehavior", true).Single().Text);
+				Assert.Empty(setup.Controls.Find("lblTemplateBehavior", true));
 				Assert.True(adminPassword.Enabled);
 				Assert.False(saveButton.Enabled);
 				Assert.Equal(

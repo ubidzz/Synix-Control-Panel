@@ -937,17 +937,6 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				isMinecraftBedrock,
 				_isEditMode);
 
-			ConfigurationSupportPresentation support =
-				UserGuidance.GetConfigurationSupport(gameData);
-			string portMappingSummary = GetPortMappingSummary(gameData);
-			LocalizationManager.BindText(
-				lblTemplateBehavior,
-				"ServerSetup.ConfigurationSupport",
-				LocalizationManager.TranslateRuntimeText(support.Status),
-				portMappingSummary);
-			lblTemplateBehavior.ForeColor = HasMissingPortMappings(gameData)
-					? SettingsPalette.Warning
-					: support.Color;
 			ApplyExperienceMode();
 			SyncGatekeeper();
 		}

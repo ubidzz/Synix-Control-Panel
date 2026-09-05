@@ -40,22 +40,24 @@ public sealed class ServerSetupProgressTests
 		});
 	}
 
-	[Fact]
-	public void ProgressFitsAtMinimumSizeWithoutCoveringPagesOrSidebar()
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void ProgressFitsWithoutTheOldBannerGapOrCoveringPagesOrSidebar(bool minimumSize)
 	{
 		RunOnSta(() =>
 		{
 			using ServerSettingsGUI setup = new();
-			setup.Size = setup.MinimumSize;
+			if (minimumSize) setup.Size = setup.MinimumSize;
 			ShowOffscreen(setup);
 			Control strip = Find<ServerSetupProgressStrip>(setup, "setupProgress");
 			Control description = Find<Label>(setup, "lblPageDescription");
-			Control support = Find<Label>(setup, "lblTemplateBehavior");
 			Control pages = Find<Panel>(setup, "pnlPageHost");
 			Assert.True(description.Bottom <= strip.Top);
-			Assert.True(strip.Bottom < support.Top);
-			Assert.True(support.Bottom < pages.Top);
+			Assert.Empty(setup.Controls.Find("lblTemplateBehavior", true));
+			Assert.InRange(pages.Top - strip.Bottom, 1, (int)Math.Ceiling(20 * setup.DeviceDpi / 96d));
 			Assert.True(pages.Height >= 300);
+			Assert.True(pages.Bottom <= pages.Parent!.ClientSize.Height);
 			Assert.True(strip.Right <= strip.Parent!.ClientSize.Width);
 			Assert.Empty(setup.Controls.Find("lblSetupCompletion", true));
 			Assert.True(Find<ModernSettingsNavButton>(setup, "btnNavInstall").Bottom < Find<Panel>(setup, "pnlSidebarStatus").Top);
