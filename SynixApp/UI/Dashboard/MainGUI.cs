@@ -44,6 +44,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 		private ToolStripMenuItem? _modPluginManagerMenuItem;
 		private ToolStripMenuItem? _playerManagementMenuItem;
 		private ToolStripMenuItem? _minecraftConsoleMenuItem;
+		private ToolStripMenuItem? _satisfactoryControlMenuItem;
 		private ToolStripMenuItem? _liveProcessDetailsMenuItem;
 		private ToolStripMenuItem? _connectionInformationMenuItem;
 		private string? _localIpAddress;
@@ -161,6 +162,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 		private void AddGuidanceMenuItems()
 		{
+			_satisfactoryControlMenuItem = new ToolStripMenuItem(LocalizationManager.Get("Satisfactory.Title"));
+			_satisfactoryControlMenuItem.Click += (_, _) =>
+			{
+				GameServer? server = GetSelectedServer();
+				if (server == null || !GameDatabase.IsSatisfactory(server.Game)) return;
+				using SatisfactoryControlDialog dialog = new(server);
+				dialog.ShowDialog(this);
+			};
+			contextMenuStrip.Items.Add(_satisfactoryControlMenuItem);
 			_modPluginManagerMenuItem = new ToolStripMenuItem(
 				LocalizationManager.Get("Menu.ModPluginManager"));
 			_modPluginManagerMenuItem.Click += (_, _) =>
@@ -237,6 +247,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			EventArgs eventArgs)
 		{
 			PopulateStatusFilters();
+			if (_satisfactoryControlMenuItem != null)
+				_satisfactoryControlMenuItem.Text = LocalizationManager.Get("Satisfactory.Title");
 			if (_modPluginManagerMenuItem != null)
 				_modPluginManagerMenuItem.Text =
 					LocalizationManager.Get("Menu.ModPluginManager");
@@ -1374,6 +1386,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
 				bool isMinecraft = GameDatabase.IsMinecraft(selectedServer.Game);
+				if (_satisfactoryControlMenuItem != null)
+					_satisfactoryControlMenuItem.Visible = GameDatabase.IsSatisfactory(selectedServer.Game);
 				bool isMinecraftBedrock = MinecraftControlProfile.IsBedrock(selectedServer);
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
 				bool supportsConnectionTesting =

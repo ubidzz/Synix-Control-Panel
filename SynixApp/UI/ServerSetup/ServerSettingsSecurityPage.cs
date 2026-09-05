@@ -30,7 +30,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public string ServerPassword => ReadManagedValue(txtPassword);
 		public string AdminPassword => ReadManagedValue(txtAdminPassword);
 		public string AuthenticationToken =>
-			_gameData?.RequiresAuthenticationToken == true
+			_gameData?.RequiresAuthenticationToken == true || GameDatabase.IsSatisfactory(_gameData?.Game)
 				? ReadManagedValue(txtAuthenticationToken).Trim()
 				: string.Empty;
 		public string InviteCode => SupportsInviteCode
@@ -56,7 +56,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		{
 			txtPassword.UseSystemPasswordChar = enabled;
 			txtAdminPassword.UseSystemPasswordChar = enabled;
-			txtAuthenticationToken.UseSystemPasswordChar = enabled;
+			txtAuthenticationToken.UseSystemPasswordChar = enabled || GameDatabase.IsSatisfactory(_gameData?.Game);
 			txtInviteCode.UseSystemPasswordChar = enabled;
 		}
 
@@ -124,7 +124,15 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 						? "ServerSetup.Placeholder.SelectGame"
 						: "ServerSetup.Placeholder.NotRequired"));
 
-				bool tokenVisible = gameData?.RequiresAuthenticationToken == true;
+				bool satisfactory = GameDatabase.IsSatisfactory(gameData?.Game);
+				bool tokenVisible = gameData?.RequiresAuthenticationToken == true || satisfactory;
+				cardAuthenticationToken.Height = satisfactory ? 210 : 154;
+				lblAuthenticationTokenNote.Height = satisfactory ? 78 : 22;
+				lblAuthenticationTokenTitle.Text = LocalizationManager.Get(satisfactory ? "Satisfactory.OptionalConnection" : "Text.2BBA1B9B15644044B222");
+				lblAuthenticationTokenNote.Text = LocalizationManager.Get(satisfactory ? "Satisfactory.SecurityHelp" : "Text.517D0391800FC8C55AD3");
+				txtAuthenticationToken.UseSystemPasswordChar = satisfactory || Properties.Settings.Default.PrivacyMode;
+				if (satisfactory) txtAuthenticationToken.PlaceholderText = LocalizationManager.Get("Satisfactory.AddAfterInstall");
+				else txtAuthenticationToken.PlaceholderText = string.Empty;
 				int nextTop = cardCredentials.Bottom + 16;
 				cardAuthenticationToken.Location = new Point(0, nextTop);
 				cardAuthenticationToken.Visible = tokenVisible;
@@ -134,7 +142,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				cardInviteCode.Visible = SupportsInviteCode;
 				lblAuthenticationToken.Text = AuthenticationTokenLabel;
 				btnAuthenticationTokenHelp.Visible =
-					!string.IsNullOrWhiteSpace(gameData?.AuthenticationTokenHelpUrl);
+					!satisfactory && !string.IsNullOrWhiteSpace(gameData?.AuthenticationTokenHelpUrl);
 			}
 			finally
 			{

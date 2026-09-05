@@ -24,6 +24,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		private static readonly object _serverProcessRegistryLock = new();
 		private static readonly TimeSpan _processDiscoveryInterval = TimeSpan.FromSeconds(5);
 
+		internal static ServerProcessIdentity[] GetServerProcessSnapshot(GameServer server)
+		{
+			lock (_serverProcessRegistryLock)
+			{
+				return (server.ServerProcesses ?? []).Select(identity => new ServerProcessIdentity
+				{
+					ProcessId = identity.ProcessId, ExecutablePath = identity.ExecutablePath,
+					StartTimeUtc = identity.StartTimeUtc
+				}).ToArray();
+			}
+		}
+
 		private static bool IsStoppingStatus(string? status)
 		{
 			return status?.StartsWith(

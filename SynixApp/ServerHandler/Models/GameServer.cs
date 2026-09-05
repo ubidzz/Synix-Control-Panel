@@ -329,6 +329,15 @@ public class GameServer
 	public string Password { get; set; } = string.Empty;
 	public string AdminPassword { get; set; } = string.Empty;
 	public string AuthenticationToken { get; set; } = string.Empty;
+	public string SatisfactoryCertificateFingerprint { get; set; } = string.Empty;
+	[JsonIgnore]
+	public DateTime? SatisfactoryLastAttemptUtc { get; set; }
+	[JsonIgnore]
+	public DateTime? SatisfactoryLastSuccessUtc { get; set; }
+	[JsonIgnore]
+	public string SatisfactoryApiErrorKey { get; set; } = string.Empty;
+	[JsonIgnore]
+	internal Synix_Control_Panel.SynixApp.ServerHandler.Satisfactory.SatisfactoryServerState? SatisfactoryState { get; set; }
 	public string InviteCode { get; set; } = string.Empty;
 	public string Status { get; set; } = StatusManager.GetStatus(ServerState.Stopped);
 	public int MaxPlayers { get; set; } = 10;
@@ -356,6 +365,10 @@ public class GameServer
 	{
 		get
 		{
+			if (IsSatisfactory(Game))
+				return Synix_Control_Panel.SynixApp.ServerHandler.Satisfactory.SatisfactoryIntegration.HasFreshPlayerCount(this)
+					? $"{CurrentPlayers} / {MaxPlayersFromQuery}"
+					: "N/A";
 			return SupportsPlayerCountMonitoring(this)
 				? $"{CurrentPlayers} / {MaxPlayers}"
 				: "N/A";

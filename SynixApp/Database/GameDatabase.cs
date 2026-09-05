@@ -106,12 +106,16 @@ namespace Synix_Control_Panel.SynixApp.Database
 				ServerProbeProtocol.Tcp;
 		}
 
+		public static bool IsSatisfactory(string? gameName) =>
+			GetGame(gameName ?? string.Empty)?.DefinitionId == "satisfactory";
+
 		public static bool SupportsPlayerCountMonitoring(GameInfo? game)
 		{
 			if (game == null)
 				return false;
 
-			return game.ControlCapabilities.Players == GamePlayerControllerKind.Minecraft ||
+			return game.DefinitionId == "satisfactory" ||
+				game.ControlCapabilities.Players == GamePlayerControllerKind.Minecraft ||
 				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
 		}
 

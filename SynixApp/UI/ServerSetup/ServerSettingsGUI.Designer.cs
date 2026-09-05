@@ -62,6 +62,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblPageDescription = new Label();
 			lblModeBadge = new Label();
 			lblTemplateBehavior = new Label();
+			setupProgress = new ServerSetupProgressStrip();
 			pnlPageHost = new Panel();
 			pnlPageGeneral = new ServerSettingsGeneralPage();
 			pnlPageSecurity = new ServerSettingsSecurityPage();
@@ -71,6 +72,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			pnlPageDiscord = new Panel();
 			discordSettingsPage = new DiscordSettingsPage();
 			pnlPageInstall = new ServerSettingsInstallPage();
+			pnlPageReview = new ServerSettingsReviewPage();
 			pnlTitleBar.SuspendLayout();
 			pnlFooter.SuspendLayout();
 			pnlBody.SuspendLayout();
@@ -395,6 +397,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			pnlContent.Controls.Add(lblPageDescription);
 			pnlContent.Controls.Add(lblModeBadge);
 			pnlContent.Controls.Add(lblTemplateBehavior);
+			pnlContent.Controls.Add(setupProgress);
 			pnlContent.Controls.Add(pnlPageHost);
 			pnlContent.Dock = DockStyle.Fill;
 			pnlContent.Location = new Point(210, 0);
@@ -443,11 +446,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblTemplateBehavior.BackColor = Color.FromArgb(11, 35, 47);
 			lblTemplateBehavior.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 			lblTemplateBehavior.ForeColor = Color.FromArgb(32, 214, 199);
-			lblTemplateBehavior.Location = new Point(28, 88);
+			lblTemplateBehavior.Location = new Point(28, 196);
 			lblTemplateBehavior.Name = "lblTemplateBehavior";
 			lblTemplateBehavior.Padding = new Padding(14, 0, 14, 0);
 			lblTemplateBehavior.Size = new Size(914, 34);
-			lblTemplateBehavior.TabIndex = 3;
+			lblTemplateBehavior.TabIndex = 4;
 			lblTemplateBehavior.Text = LocalizationManager.Get("Text.4234688FB477D9CF1421");
 			lblTemplateBehavior.TextAlign = ContentAlignment.MiddleLeft;
 			lblTemplateBehavior.UseMnemonic = false;
@@ -462,9 +465,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			pnlPageHost.Controls.Add(pnlPageAutomation);
 			pnlPageHost.Controls.Add(pnlPageDiscord);
 			pnlPageHost.Controls.Add(pnlPageInstall);
-			pnlPageHost.Location = new Point(28, 136);
+			pnlPageHost.Controls.Add(pnlPageReview);
+			pnlPageHost.Location = new Point(28, 244);
 			pnlPageHost.Name = "pnlPageHost";
-			pnlPageHost.Size = new Size(914, 496);
+			pnlPageHost.Size = new Size(914, 388);
 			pnlPageHost.TabIndex = 5;
 
 			// pnlPageGeneral
@@ -527,6 +531,18 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			pnlPageInstall.Name = "pnlPageInstall";
 			pnlPageInstall.Size = new Size(914, 496);
 			pnlPageInstall.TabIndex = 6;
+			// pnlPageReview
+			pnlPageReview.Dock = DockStyle.Fill;
+			pnlPageReview.Name = "pnlPageReview";
+			pnlPageReview.Size = new Size(914, 388);
+			pnlPageReview.TabIndex = 7;
+			pnlPageReview.Visible = false;
+			// setupProgress
+			setupProgress.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			setupProgress.Location = new Point(28, 88);
+			setupProgress.Name = "setupProgress";
+			setupProgress.Size = new Size(914, 92);
+			setupProgress.TabIndex = 3;
 			// ServerSettingsGUI
 			AcceptButton = btnSave;
 			AutoScaleDimensions = new SizeF(96F, 96F);
@@ -593,6 +609,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		private Label lblModeBadge;
 		private Label lblTemplateBehavior;
 		private Panel pnlPageHost;
+		private ServerSetupProgressStrip setupProgress;
+		private ServerSettingsReviewPage pnlPageReview;
 		private ServerSettingsGeneralPage pnlPageGeneral;
 		private ServerSettingsSecurityPage pnlPageSecurity;
 		private ServerSettingsWorldPage pnlPageWorld;

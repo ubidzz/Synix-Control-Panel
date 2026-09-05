@@ -71,10 +71,11 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				logCallback?.Invoke(LocalizationManager.Get("ServerStop.Activity.SaveSignal", server.ServerName), Color.Aqua);
 
 				bool isMinecraft = GameCapabilityResolver.UsesMinecraftLifecycle(server);
-				bool signalSent = isMinecraft
+				bool apiStop = await Satisfactory.SatisfactoryIntegration.TryShutdownAsync(server);
+				bool signalSent = apiStop || (isMinecraft
 					? await TrySendMinecraftStopCommand(server, targetPid, logCallback!)
-					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server);
-				TimeSpan gracefulTimeout = isMinecraft
+					: targetPid > 0 && await TrySendConsoleShutdownSignal(targetPid, server));
+				TimeSpan gracefulTimeout = isMinecraft || apiStop
 					? TimeSpan.FromSeconds(60)
 					: TimeSpan.FromSeconds(25);
 

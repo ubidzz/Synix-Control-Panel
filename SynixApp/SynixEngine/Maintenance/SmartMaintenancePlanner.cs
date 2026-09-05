@@ -57,16 +57,19 @@ namespace Synix_Control_Panel.SynixEngine
 				return NotDue(scheduledFor, "Maintenance.Reason.MinutePassed");
 
 			int maximumDelay = Math.Clamp(server.MaintenanceMaximumDelayMinutes, 0, 720);
+			bool playerCountUnknown = SynixApp.ServerHandler.Satisfactory.SatisfactoryIntegration.IsConnected(server) &&
+				!SynixApp.ServerHandler.Satisfactory.SatisfactoryIntegration.HasFreshPlayerCount(server);
 			if (server.SmartMaintenanceEnabled &&
 				server.MaintenanceWaitForPlayers &&
-				server.CurrentPlayers > 0 &&
+				(server.CurrentPlayers > 0 || playerCountUnknown) &&
 				delay < TimeSpan.FromMinutes(maximumDelay))
 			{
 				return new(
 					SmartMaintenanceDecision.DeferForPlayers,
 					scheduledFor,
 					delay,
-					LocalizationManager.Get("Maintenance.Reason.WaitingForPlayers", server.CurrentPlayers));
+					playerCountUnknown ? LocalizationManager.Get("Satisfactory.UnknownPlayers") :
+						LocalizationManager.Get("Maintenance.Reason.WaitingForPlayers", server.CurrentPlayers));
 			}
 
 			return new(

@@ -1152,6 +1152,353 @@ Saisissez à nouveau les identifiants, puis cliquez sur Enregistrer les modifica
   <data name="ResourceMonitor.Empty" xml:space="preserve">
     <value>Aucun serveur de jeu en cours détecté</value>
   </data>
+  <data name="Satisfactory.ConnectHeading" xml:space="preserve">
+    <value>Connecter ce serveur</value>
+  </data>
+  <data name="Satisfactory.ConnectAutomatically" xml:space="preserve">
+    <value>Connecter automatiquement</value>
+  </data>
+  <data name="Satisfactory.ConnectingAutomatically" xml:space="preserve">
+    <value>Connexion : envoi de la commande, récupération du jeton et vérification…</value>
+  </data>
+  <data name="Satisfactory.Error.ConsoleInputBusy" xml:space="preserve">
+    <value>Une commande inachevée se trouve dans la console. Effacez-la avant la connexion ; Synix ne la remplacera pas.</value>
+  </data>
+  <data name="Satisfactory.Error.ConsoleFilters" xml:space="preserve">
+    <value>Retirez les filtres du journal de cette console pour que Synix puisse lire le nouveau jeton.</value>
+  </data>
+  <data name="Satisfactory.Error.LocalIdentity" xml:space="preserve">
+    <value>Le port de l’API locale n’appartient pas au serveur sélectionné. Vérifiez son port de jeu ; aucun jeton envoyé à cette API.</value>
+  </data>
+  <data name="Satisfactory.Title" xml:space="preserve">
+    <value>Centre de contrôle Satisfactory</value>
+  </data>
+  <data name="Satisfactory.Setup" xml:space="preserve">
+    <value>Connecter l’API</value>
+  </data>
+  <data name="Satisfactory.Overview" xml:space="preserve">
+    <value>Vue d’ensemble</value>
+  </data>
+  <data name="Satisfactory.Options" xml:space="preserve">
+    <value>Paramètres du serveur</value>
+  </data>
+  <data name="Satisfactory.Saves" xml:space="preserve">
+    <value>Sauvegardes</value>
+  </data>
+  <data name="Satisfactory.Console" xml:space="preserve">
+    <value>Console avancée</value>
+  </data>
+  <data name="Satisfactory.Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Satisfactory.NotConnected" xml:space="preserve">
+    <value>Connexion facultative : suivez Connecter l’API après l’installation et le démarrage. Les commandes normales fonctionnent sans jeton.</value>
+  </data>
+  <data name="Satisfactory.StartFirst" xml:space="preserve">
+    <value>Démarrez le serveur installé avec Synix, puis revendiquez-le dans le gestionnaire de serveurs du jeu. Revenez ici pour connecter l’API.</value>
+  </data>
+  <data name="Satisfactory.ConnectedHint" xml:space="preserve">
+    <value>API liée à {0}. Actualisez pour obtenir les informations actuelles.</value>
+  </data>
+  <data name="Satisfactory.SetupSteps" xml:space="preserve">
+    <value>Terminez la configuration initiale dans le gestionnaire de Satisfactory et laissez le serveur démarré avec -NewConsole.
+
+Cliquez ci-dessous. Synix envoie la commande, récupère le nouveau jeton, le vérifie et l’enregistre de façon sécurisée. Aucun copier-coller.</value>
+  </data>
+  <data name="Satisfactory.Error.AmbiguousToken" xml:space="preserve">
+    <value>La console a renvoyé différents jetons. Aucune connexion enregistrée.</value>
+  </data>
+  <data name="Satisfactory.Error.ConsoleUnavailable" xml:space="preserve">
+    <value>Synix ne peut pas accéder à la console Unreal du serveur. Démarrez-le avec -NewConsole et utilisez les mêmes autorisations Windows pour Synix et le serveur.</value>
+  </data>
+  <data name="Satisfactory.Error.ConsoleTokenMissing" xml:space="preserve">
+    <value>La commande a été envoyée, mais Synix n’a pas pu lire un nouveau jeton complet dans la sortie de ce serveur. Vérifiez que le serveur répond et peut écrire dans son journal. Toute connexion enregistrée est conservée ; la commande n’a pas été répétée.</value>
+  </data>
+  <data name="Satisfactory.Error.ConsoleBusy" xml:space="preserve">
+    <value>La console ne répond pas ou une connexion est en cours. Patientez puis réessayez. La commande n’est jamais répétée automatiquement.</value>
+  </data>
+  <data name="Satisfactory.Disconnect" xml:space="preserve">
+    <value>Retirer le jeton</value>
+  </data>
+  <data name="Satisfactory.TokenSafety" xml:space="preserve">
+    <value>Cette connexion donne à Synix un accès administrateur. Le jeton est chiffré pour votre compte Windows, sans être ajouté aux configurations ni aux arguments. Satisfactory l’affiche dans sa console et son journal : gardez-les privés. Retirer la connexion ne révoque pas le jeton.</value>
+  </data>
+  <data name="Satisfactory.OptionalConnection" xml:space="preserve">
+    <value>API Satisfactory (facultative)</value>
+  </data>
+  <data name="Satisfactory.SecurityHelp" xml:space="preserve">
+    <value>Après la configuration dans Satisfactory, démarrez le serveur avec -NewConsole. Dans Synix : Options du serveur → Centre de contrôle Satisfactory → Connecter l’API → Connecter automatiquement. Cette connexion facultative ne bloque pas les commandes normales.</value>
+  </data>
+  <data name="Satisfactory.AddAfterInstall" xml:space="preserve">
+    <value>Ajouter via le centre de contrôle après l’installation</value>
+  </data>
+  <data name="Satisfactory.Refresh" xml:space="preserve">
+    <value>Actualiser</value>
+  </data>
+  <data name="Satisfactory.Start" xml:space="preserve">
+    <value>Démarrer le serveur</value>
+  </data>
+  <data name="Satisfactory.Restart" xml:space="preserve">
+    <value>Redémarrer le serveur</value>
+  </data>
+  <data name="Satisfactory.Stop" xml:space="preserve">
+    <value>Arrêter le serveur</value>
+  </data>
+  <data name="Satisfactory.Field" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="Satisfactory.Value" xml:space="preserve">
+    <value>Valeur</value>
+  </data>
+  <data name="Satisfactory.Setting" xml:space="preserve">
+    <value>Clé du paramètre</value>
+  </data>
+  <data name="Satisfactory.Pending" xml:space="preserve">
+    <value>Valeur en attente</value>
+  </data>
+  <data name="Satisfactory.Session" xml:space="preserve">
+    <value>Session</value>
+  </data>
+  <data name="Satisfactory.SaveName" xml:space="preserve">
+    <value>Nom de sauvegarde</value>
+  </data>
+  <data name="Satisfactory.Date" xml:space="preserve">
+    <value>Enregistrée le</value>
+  </data>
+  <data name="Satisfactory.Players" xml:space="preserve">
+    <value>Joueurs connectés</value>
+  </data>
+  <data name="Satisfactory.State" xml:space="preserve">
+    <value>État de la session</value>
+  </data>
+  <data name="Satisfactory.WaitingSession" xml:space="preserve">
+    <value>En attente d’une session (serveur démarré)</value>
+  </data>
+  <data name="Satisfactory.Paused" xml:space="preserve">
+    <value>En pause</value>
+  </data>
+  <data name="Satisfactory.Playing" xml:space="preserve">
+    <value>En jeu</value>
+  </data>
+  <data name="Satisfactory.TickRate" xml:space="preserve">
+    <value>Ticks moyens / seconde</value>
+  </data>
+  <data name="Satisfactory.Duration" xml:space="preserve">
+    <value>Durée de jeu de la session</value>
+  </data>
+  <data name="Satisfactory.TechTier" xml:space="preserve">
+    <value>Palier technologique</value>
+  </data>
+  <data name="Satisfactory.Updated" xml:space="preserve">
+    <value>Actualisé à {0}. Le tableau de bord actualise les joueurs automatiquement ; cette vue s’actualise sur demande.</value>
+  </data>
+  <data name="Satisfactory.Working" xml:space="preserve">
+    <value>Connexion au serveur local…</value>
+  </data>
+  <data name="Satisfactory.Done" xml:space="preserve">
+    <value>Demande terminée.</value>
+  </data>
+  <data name="Satisfactory.Connected" xml:space="preserve">
+    <value>Jeton vérifié et enregistré de façon sécurisée. Le suivi des joueurs est connecté.</value>
+  </data>
+  <data name="Satisfactory.DisconnectConfirm" xml:space="preserve">
+    <value>Retirer le jeton et le certificat enregistrés dans Synix ? Le serveur continuera de fonctionner. L’accès des autres applications n’est pas révoqué.</value>
+  </data>
+  <data name="Satisfactory.StartConfirm" xml:space="preserve">
+    <value>Démarrer ce serveur avec Synix ? S’il n’est pas installé, le processus normal d’installation sera lancé.</value>
+  </data>
+  <data name="Satisfactory.StopConfirm" xml:space="preserve">
+    <value>Arrêter ce serveur avec Synix ? Les joueurs seront déconnectés. Synix indiquera un arrêt volontaire pour éviter un redémarrage automatique.</value>
+  </data>
+  <data name="Satisfactory.RestartConfirm" xml:space="preserve">
+    <value>Redémarrer ce serveur avec Synix ? Les joueurs connectés seront déconnectés.</value>
+  </data>
+  <data name="Satisfactory.LifecycleFailed" xml:space="preserve">
+    <value>Synix n’a pas terminé cette action. Consultez Activité et diagnostics.</value>
+  </data>
+  <data name="Satisfactory.OptionsHelp" xml:space="preserve">
+    <value>Actualisez pour lire les paramètres pris en charge. Modifiez les valeurs et appliquez vos changements. Les clés et valeurs restent en anglais. Les valeurs en attente peuvent nécessiter un redémarrage via Synix.</value>
+  </data>
+  <data name="Satisfactory.ApplyOptions" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="Satisfactory.ApplyConfirm" xml:space="preserve">
+    <value>Appliquer {0} paramètres modifiés ? Certains nécessitent un redémarrage. Synix ne redémarrera pas automatiquement.</value>
+  </data>
+  <data name="Satisfactory.DiscardOptions" xml:space="preserve">
+    <value>Ignorer les modifications non enregistrées et actualiser depuis le serveur ?</value>
+  </data>
+  <data name="Satisfactory.OptionsApplied" xml:space="preserve">
+    <value>Modifications envoyées. Actualisez les valeurs en attente ; redémarrez via Synix si nécessaire.</value>
+  </data>
+  <data name="Satisfactory.SavesHelp" xml:space="preserve">
+    <value>Actualisez les sauvegardes. Avant un chargement, la session active est sauvegardée. Les fichiers envoyés ne sont pas chargés automatiquement. Les noms restent inchangés.</value>
+  </data>
+  <data name="Satisfactory.SaveNameHint" xml:space="preserve">
+    <value>Nom facultatif ; laissez vide pour une sauvegarde Synix datée</value>
+  </data>
+  <data name="Satisfactory.SaveNow" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="Satisfactory.LoadSave" xml:space="preserve">
+    <value>Charger la sélection</value>
+  </data>
+  <data name="Satisfactory.Upload" xml:space="preserve">
+    <value>Envoyer une sauvegarde</value>
+  </data>
+  <data name="Satisfactory.Download" xml:space="preserve">
+    <value>Télécharger la sélection</value>
+  </data>
+  <data name="Satisfactory.SaveConfirm" xml:space="preserve">
+    <value>Sauvegarder la session sous {0} ? Une sauvegarde du même nom peut être écrasée.</value>
+  </data>
+  <data name="Satisfactory.LoadConfirm" xml:space="preserve">
+    <value>Sauvegarder la progression actuelle, puis charger {0} ? Les joueurs peuvent être déconnectés.</value>
+  </data>
+  <data name="Satisfactory.UploadConfirm" xml:space="preserve">
+    <value>Envoyer {0} au serveur ? Une sauvegarde du même nom peut être remplacée. La session active ne changera pas.</value>
+  </data>
+  <data name="Satisfactory.Loading" xml:space="preserve">
+    <value>Chargement demandé. L’API peut être temporairement indisponible. Actualisez dans un instant.</value>
+  </data>
+  <data name="Satisfactory.SaveFilter" xml:space="preserve">
+    <value>Sauvegardes Satisfactory (*.sav)|*.sav</value>
+  </data>
+  <data name="Satisfactory.ConsoleHelp" xml:space="preserve">
+    <value>Avancé : saisissez une commande serveur en anglais. Les commandes d’arrêt passent par Synix. Les commandes de jeton/mot de passe et scripts sont bloquées. La sortie reste ici, hors tableau de bord et journaux.</value>
+  </data>
+  <data name="Satisfactory.SendCommand" xml:space="preserve">
+    <value>Envoyer la commande</value>
+  </data>
+  <data name="Satisfactory.CommandConfirm" xml:space="preserve">
+    <value>Exécuter cette commande serveur ? Les commandes avancées peuvent modifier le jeu ou perturber les joueurs.</value>
+  </data>
+  <data name="Satisfactory.Error.Certificate" xml:space="preserve">
+    <value>Aucun certificat approuvé. Utilisez Connecter l’API → Connecter automatiquement.</value>
+  </data>
+  <data name="Satisfactory.Error.Port" xml:space="preserve">
+    <value>Le port de jeu configuré est invalide.</value>
+  </data>
+  <data name="Satisfactory.Error.Token" xml:space="preserve">
+    <value>La console n’a pas renvoyé de jeton complet. Aucune connexion enregistrée.</value>
+  </data>
+  <data name="Satisfactory.Error.Unavailable" xml:space="preserve">
+    <value>L’API locale est indisponible ou ne répond pas. Vérifiez que le serveur est démarré et a fini de charger. Les commandes normales restent disponibles.</value>
+  </data>
+  <data name="Satisfactory.Error.Connection" xml:space="preserve">
+    <value>Connexion sécurisée impossible. Vérifiez que le serveur a fini de charger, puis utilisez Connecter automatiquement.</value>
+  </data>
+  <data name="Satisfactory.Error.Authentication" xml:space="preserve">
+    <value>Le serveur a refusé le jeton. Vérifiez que sa configuration initiale est terminée, puis utilisez Connecter automatiquement.</value>
+  </data>
+  <data name="Satisfactory.Error.Request" xml:space="preserve">
+    <value>Le serveur a refusé la demande. Vérifiez la sauvegarde, les valeurs et l’état du serveur. Aucun nouvel essai automatique.</value>
+  </data>
+  <data name="Satisfactory.Error.Response" xml:space="preserve">
+    <value>Le serveur a renvoyé une réponse inattendue. Aucun nombre de joueurs valide.</value>
+  </data>
+  <data name="Satisfactory.Error.SaveSize" xml:space="preserve">
+    <value>Le transfert dépasse la limite de sécurité de 512 Mo.</value>
+  </data>
+  <data name="Satisfactory.Error.ProtectedToken" xml:space="preserve">
+    <value>Windows n’a pas pu déchiffrer le jeton. Utilisez Connecter automatiquement pour ce compte Windows.</value>
+  </data>
+  <data name="Satisfactory.Error.SaveConnection" xml:space="preserve">
+    <value>La connexion n’a pas pu être enregistrée. La précédente a été conservée.</value>
+  </data>
+  <data name="Satisfactory.Error.SelectSave" xml:space="preserve">
+    <value>Sélectionnez d’abord une sauvegarde.</value>
+  </data>
+  <data name="Satisfactory.Error.Command" xml:space="preserve">
+    <value>Saisissez une seule commande. Scripts, commandes de jeton/mot de passe et accès non sécurisé sont interdits ici. Utilisez les boutons de démarrage/arrêt/redémarrage.</value>
+  </data>
+  <data name="Satisfactory.UnknownPlayers" xml:space="preserve">
+    <value>En attente du rétablissement du suivi des joueurs avant la maintenance.</value>
+  </data>
+  <data name="ServerOperation.Name.Configure" xml:space="preserve">
+    <value>configuration du serveur</value>
+  </data>
+  <data name="ServerSetup.Progress.Details" xml:space="preserve">
+    <value>Détails du serveur</value>
+  </data>
+  <data name="ServerSetup.Progress.Required" xml:space="preserve">
+    <value>Paramètres requis</value>
+  </data>
+  <data name="ServerSetup.Progress.Review" xml:space="preserve">
+    <value>Récapitulatif</value>
+  </data>
+  <data name="ServerSetup.Progress.Save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="ServerSetup.Progress.Details.Hint" xml:space="preserve">
+    <value>Ouvrez Général pour choisir le jeu et nommer votre serveur.</value>
+  </data>
+  <data name="ServerSetup.Progress.Required.Hint" xml:space="preserve">
+    <value>Ouvrez la première page nécessitant votre attention. Les paramètres facultatifs peuvent conserver leurs valeurs par défaut.</value>
+  </data>
+  <data name="ServerSetup.Progress.Review.Hint" xml:space="preserve">
+    <value>Consultez vos choix sans les enregistrer. Vous pouvez encore modifier chaque onglet.</value>
+  </data>
+  <data name="ServerSetup.Progress.Save.Hint" xml:space="preserve">
+    <value>Consultez vos choix et sélectionnez le bouton Enregistrer. Cette étape n’enregistre rien automatiquement.</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Waiting" xml:space="preserve">
+    <value>EN ATTENTE</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Attention" xml:space="preserve">
+    <value>ACTION REQUISE</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Complete" xml:space="preserve">
+    <value>TERMINÉ</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
+    <value>SUIVANT</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
+    <value>PRÊT</value>
+  </data>
+  <data name="ServerSetup.Progress.Step" xml:space="preserve">
+    <value>Étape {0} : {1}. {2}</value>
+  </data>
+  <data name="ServerSetup.Review.Title" xml:space="preserve">
+    <value>Récapitulatif</value>
+  </data>
+  <data name="ServerSetup.Review.Description" xml:space="preserve">
+    <value>Vérifiez vos choix. Vous pouvez encore modifier chaque onglet avant d’enregistrer.</value>
+  </data>
+  <data name="ServerSetup.Review.Notice" xml:space="preserve">
+    <value>Les mots de passe, jetons, codes d’invitation, webhooks et arguments de lancement sont masqués ici. L’enregistrement ne vérifie ni le démarrage ni l’accès Internet ; utilisez le tableau de bord pour installer ou démarrer.</value>
+  </data>
+  <data name="ServerSetup.Review.Setting" xml:space="preserve">
+    <value>PARAMÈTRE</value>
+  </data>
+  <data name="ServerSetup.Review.Value" xml:space="preserve">
+    <value>VOTRE CHOIX</value>
+  </data>
+  <data name="ServerSetup.Review.ServerName" xml:space="preserve">
+    <value>Nom du serveur</value>
+  </data>
+  <data name="ServerSetup.Review.Game" xml:space="preserve">
+    <value>Jeu</value>
+  </data>
+  <data name="ServerSetup.Review.Version" xml:space="preserve">
+    <value>Version du jeu</value>
+  </data>
+  <data name="ServerSetup.Review.Edition" xml:space="preserve">
+    <value>Édition</value>
+  </data>
+  <data name="ServerSetup.Review.Ram" xml:space="preserve">
+    <value>RAM du serveur (Go)</value>
+  </data>
+  <data name="ServerSetup.Review.World" xml:space="preserve">
+    <value>Carte / monde</value>
+  </data>
+  <data name="ServerSetup.Review.GameMode" xml:space="preserve">
+    <value>Mode de jeu</value>
+  </data>
+  <data name="ServerSetup.Review.InstallFolder" xml:space="preserve">
+    <value>Dossier d’installation</value>
+  </data>
   <data name="Catalog.Available" xml:space="preserve">
     <value>Disponible</value>
   </data>

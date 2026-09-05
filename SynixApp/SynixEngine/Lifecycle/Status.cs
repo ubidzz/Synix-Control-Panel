@@ -256,6 +256,11 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task UpdatePlayerCount(GameServer server)
 		{
 			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
+			if (GameDatabase.IsSatisfactory(server.Game))
+			{
+				await SynixApp.ServerHandler.Satisfactory.SatisfactoryIntegration.PollAsync(server);
+				return;
+			}
 			if (!GameDatabase.SupportsPlayerCountMonitoring(server))
 			{
 				server.CurrentPlayers = 0;

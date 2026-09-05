@@ -226,6 +226,7 @@ namespace Synix_Control_Panel.SynixEngine
 				return string.Empty;
 
 			string sanitized = value.Replace("\0", string.Empty, StringComparison.Ordinal);
+			sanitized = SynixApp.ServerHandler.Satisfactory.SatisfactoryTokenParser.Redact(sanitized);
 			sanitized = DiscordWebhookPattern.Replace(sanitized, "[Discord webhook removed]");
 			sanitized = WindowsUserPathPattern.Replace(sanitized, @"C:\Users\[user]");
 			sanitized = Ipv4Pattern.Replace(sanitized, "[IP address removed]");

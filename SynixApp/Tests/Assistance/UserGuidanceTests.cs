@@ -180,10 +180,12 @@ public sealed class UserGuidanceTests
 				});
 				Control modeButton = setup.Controls.Find("btnExperienceMode", true).Single();
 				Control modeBadge = setup.Controls.Find("lblModeBadge", true).Single();
-				Control completion = setup.Controls.Find("lblSetupCompletion", true).Single();
-				Control statusDetail = setup.Controls.Find("lblSidebarStatusDetail", true).Single();
+				Control progress = setup.Controls.Find("setupProgress", true).Single();
+				Control pageDescription = setup.Controls.Find("lblPageDescription", true).Single();
+				Control pageHost = setup.Controls.Find("pnlPageHost", true).Single();
 				Assert.False(modeButton.Bounds.IntersectsWith(modeBadge.Bounds));
-				Assert.False(completion.Bounds.IntersectsWith(statusDetail.Bounds));
+				Assert.False(progress.Bounds.IntersectsWith(pageDescription.Bounds));
+				Assert.False(progress.Bounds.IntersectsWith(pageHost.Bounds));
 				Assert.Equal(
 					"Start Server",
 					firstStart.Controls.Find("btnStart", true).Single().Text);

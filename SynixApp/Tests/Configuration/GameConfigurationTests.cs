@@ -1313,6 +1313,102 @@ public sealed class GameConfigurationTests : IDisposable
 	}
 
 	[Fact]
+	public void Satisfactory_CapturedTemplatesCreateAllThreeEditableConfigurationFiles()
+	{
+		Assert.True(GameFix.TryGetConfiguration("Satisfactory", out ConfigurationDefinition? definition));
+		Assert.IsType<EmbeddedTemplateConfigurationDefinition>(definition);
+		Assert.Equal(2, definition.SchemaVersion);
+		Assert.True(definition.SupportsFullReset);
+		Assert.Equal(ManagedConfigurationInput.MaxPlayers, definition.SupportedInputs);
+		GameServer server = CreateServer("Satisfactory");
+		server.MaxPlayers = 12;
+		ConfigurationContext context = CreateContext(server);
+		ConfigurationApplyResult created = definition.Apply(context);
+
+		Assert.True(created.Succeeded, created.Message);
+		Assert.True(created.Complete, created.Message);
+		Assert.True(created.Created);
+		string folder = Path.Combine(server.InstallPath, @"FactoryGame\Saved\Config\WindowsServer");
+		string[] expectedPaths = [Path.Combine(folder, "Game.ini"), Path.Combine(folder, "Engine.ini"), Path.Combine(folder, "GameUserSettings.ini")];
+		Assert.Equal(expectedPaths, definition.ResolveConfigurationPaths(server));
+		Assert.All(expectedPaths, path => Assert.True(File.Exists(path)));
+		Assert.False(File.Exists(Path.Combine(folder, "Manifest.ini")));
+		Assert.Equal("12", GetValue(expectedPaths[0], definition.Format, "MaxPlayers"));
+		Assert.Equal("en-US", GetValue(expectedPaths[1], definition.Format, "Culture"));
+		Assert.Equal("130000", GetValue(expectedPaths[1], definition.Format, "ConfiguredLanSpeed"));
+		Assert.Equal("False", GetValue(expectedPaths[1], definition.Format, "bAgreeToCrashUpload"));
+		Assert.Equal("True", GetValue(expectedPaths[2], definition.Format, "mbCrossPlayEnabled"));
+		Assert.Equal("0", GetValue(expectedPaths[2], definition.Format, "CurrentFGGameUserSettingsVersion"));
+		Assert.Equal("3", GetValue(expectedPaths[2], definition.Format, "sg.LandscapeQuality"));
+		foreach (var template in TrustedGameDefinitionCatalog.Packages.Single(package => package.Definition.Game == "Satisfactory").Configuration!.Templates.Skip(1))
+		{
+			string installed = File.ReadAllText(Path.Combine(folder, template.TemplateFile));
+			Assert.Equal(template.Content.Replace("\r\n", "\n").TrimEnd(), installed.Replace("\r\n", "\n").TrimEnd());
+		}
+		Assert.True(ConfigHandler.LoadConfig(expectedPaths[1], definition.Format).Count(line => line.Key == "Paths") > 70);
+		Assert.False(definition.NeedsStructuralRepair(context));
+		Assert.DoesNotContain(definition.Validate(context), item => item.State == ConfigurationValidationState.Failed);
+	}
+
+	[Fact]
+	public void Satisfactory_ManagedUpdatesPreserveUserSettingsAndRepeatedEnginePaths()
+	{
+		Assert.True(GameFix.TryGetConfiguration("Satisfactory", out ConfigurationDefinition? definition));
+		Assert.NotNull(definition);
+		GameServer server = CreateServer("Satisfactory");
+		ConfigurationContext context = CreateContext(server);
+		Assert.True(definition.Apply(context).Complete);
+		string folder = Path.GetDirectoryName(definition.ResolveFullPath(server))!;
+		string engine = Path.Combine(folder, "Engine.ini");
+		string userSettings = Path.Combine(folder, "GameUserSettings.ini");
+		string[] enginePaths = File.ReadAllLines(engine).Where(line => line.StartsWith("Paths=", StringComparison.Ordinal)).ToArray();
+		SetValue(engine, definition.Format, "ConfiguredLanSpeed", "150000");
+		SetValue(userSettings, definition.Format, "FrameRateLimit", "30.000000");
+		File.AppendAllText(userSettings, "\n[Custom.Settings]\nKeepMyValue=42\n");
+		string customizedEngine = File.ReadAllText(engine);
+		string customizedUserSettings = File.ReadAllText(userSettings);
+		server.ManagedConfigurationVersion = 1;
+		server.MaxPlayers = 16;
+
+		ConfigurationApplyResult updated = definition.Apply(context);
+		Assert.True(updated.Succeeded, updated.Message);
+		Assert.True(updated.Complete, updated.Message);
+		Assert.Equal("16", GetValue(definition.ResolveFullPath(server), definition.Format, "MaxPlayers"));
+		Assert.Equal(customizedEngine, File.ReadAllText(engine));
+		Assert.Equal(customizedUserSettings, File.ReadAllText(userSettings));
+		Assert.Equal(customizedEngine, File.ReadAllText(engine + ".synix.before-template-v2.bak"));
+		Assert.Equal(customizedUserSettings, File.ReadAllText(userSettings + ".synix.before-template-v2.bak"));
+		Assert.Equal(enginePaths, File.ReadAllLines(engine).Where(line => line.StartsWith("Paths=", StringComparison.Ordinal)));
+		Assert.DoesNotContain(definition.Validate(context), item => item.State == ConfigurationValidationState.Failed);
+	}
+
+	[Fact]
+	public void Satisfactory_FixConfigRestoresCapturedFilesAndSavedPlayerLimit()
+	{
+		Assert.True(GameFix.TryGetConfiguration("Satisfactory", out ConfigurationDefinition? definition));
+		Assert.NotNull(definition);
+		GameServer server = CreateServer("Satisfactory");
+		ConfigurationContext context = CreateContext(server);
+		Assert.True(definition.Apply(context).Complete);
+		string folder = Path.GetDirectoryName(definition.ResolveFullPath(server))!;
+		string engine = Path.Combine(folder, "Engine.ini");
+		string userSettings = Path.Combine(folder, "GameUserSettings.ini");
+		File.WriteAllText(engine, "[Broken]\nValue=1\n");
+		File.Delete(userSettings);
+		Assert.True(definition.NeedsStructuralRepair(context));
+		server.MaxPlayers = 8;
+
+		ConfigurationApplyResult reset = definition.ResetToTemplate(context);
+		Assert.True(reset.Succeeded, reset.Message);
+		Assert.True(reset.Complete, reset.Message);
+		Assert.Equal("8", GetValue(definition.ResolveFullPath(server), definition.Format, "MaxPlayers"));
+		Assert.Contains("Paths=%GAMEDIR%Content", File.ReadAllText(engine));
+		Assert.Equal("0.000000", GetValue(userSettings, definition.Format, "FrameRateLimit"));
+		Assert.False(definition.NeedsStructuralRepair(context));
+		Assert.DoesNotContain(definition.Validate(context), item => item.State == ConfigurationValidationState.Failed);
+	}
+
+	[Fact]
 	public void CraftopiaTemplate_CreatesTheCompleteConfigurationAndAppliesSavedValues()
 	{
 		Assert.Equal(

@@ -35,13 +35,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		private bool _PrivacyMode = false;
 		private bool _passwordUnlockFailed;
 		private string _validationMessage = string.Empty;
-		private bool _blockedByPort;
-		private bool _requirementsBlocked;
+		private bool _serverDetailsReady;
+		private bool _setupReviewed;
+		private bool _showingReview;
 		private bool _advancedMode;
 		private ModernSettingsButton? _experienceModeButton;
-		private Label? _completionLabel;
-		private Panel? _completionTrack;
-		private Panel? _completionFill;
 
 		private const int WmNcLeftButtonDown = 0x00A1;
 		private const int HtCaption = 0x0002;
@@ -130,6 +128,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					? "ServerSetup.Window.EditTitle"
 					: "ServerSetup.Window.Title");
 			InitializeGuidanceControls();
+			setupProgress.StepSelected += (_, step) => NavigateSetupStep(step);
 			InitializeNavigationAttention();
 			ShowSettingsPage(
 				pnlPageGeneral,
@@ -170,6 +169,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					if (button.AttentionRequired)
 						button.AttentionPulse = pulse;
 				}
+				setupProgress.UpdateAttentionPulse(pulse);
 			};
 		}
 
@@ -235,7 +235,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		private void WirePageControlEvents()
 		{
-			debounceTimer = new System.Windows.Forms.Timer()
+			debounceTimer = new System.Windows.Forms.Timer(components)
 			{
 				Interval = 300
 			};
@@ -260,8 +260,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		{
 			if (isPrivacyLoading || debounceTimer == null)
 				return;
+			_setupReviewed = false;
 			debounceTimer.Stop();
 			debounceTimer.Start();
+			UpdateSetupProgress();
 		}
 
 		private void MinecraftEditionChanged(object? sender, EventArgs eventArgs)
@@ -303,36 +305,6 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			pnlContent.Controls.Add(_experienceModeButton);
 			_experienceModeButton.BringToFront();
 
-			pnlSidebarStatus.Height = 176;
-			lblSidebarStatusDetail.Height = 32;
-			_completionLabel = new Label
-			{
-				Name = "lblSetupCompletion",
-				Text = LocalizationManager.Get(
-					"ServerSetup.Completion",
-					0),
-				Location = new Point(22, 123),
-				Size = new Size(166, 20),
-				Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
-				ForeColor = SettingsPalette.SecondaryText
-			};
-			_completionTrack = new Panel
-			{
-				Name = "pnlSetupCompletionTrack",
-				Location = new Point(22, 151),
-				Size = new Size(166, 7),
-				BackColor = SettingsPalette.Divider
-			};
-			_completionFill = new Panel
-			{
-				Name = "pnlSetupCompletionFill",
-				Location = Point.Empty,
-				Size = new Size(0, 7),
-				BackColor = SettingsPalette.Accent
-			};
-			_completionTrack.Controls.Add(_completionFill);
-			pnlSidebarStatus.Controls.Add(_completionLabel);
-			pnlSidebarStatus.Controls.Add(_completionTrack);
 			ApplyExperienceMode();
 		}
 
@@ -375,7 +347,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		private void ShowSettingsPage(
 			Control page,
-			ModernSettingsNavButton navigationButton,
+			ModernSettingsNavButton? navigationButton,
 			string title,
 			string description)
 		{
@@ -387,7 +359,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				pnlPageNetwork,
 				pnlPageAutomation,
 				pnlPageDiscord,
-				pnlPageInstall
+				pnlPageInstall,
+				pnlPageReview
 			};
 			ModernSettingsNavButton[] navigationButtons =
 			{
@@ -412,7 +385,98 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 			LocalizationManager.BindText(lblPageTitle, title);
 			LocalizationManager.BindText(lblPageDescription, description);
+			_showingReview = ReferenceEquals(page, pnlPageReview);
 			page.BringToFront();
+		}
+
+		private void UpdateSetupProgress()
+		{
+			setupProgress.UpdateState(
+				_serverDetailsReady,
+				btnSave.Enabled && debounceTimer?.Enabled != true,
+				_setupReviewed,
+				_isEditMode);
+		}
+
+		private void NavigateSetupStep(int step)
+		{
+			// Recheck pending edits before navigating; the strip shares the Save gate.
+			debounceTimer?.Stop();
+			SyncGatekeeper();
+			if (step == 0)
+			{
+				btnNavGeneral.PerformClick();
+				pnlPageGeneral.SelectNextControl(null, true, true, true, false);
+			}
+			else if (!btnSave.Enabled)
+			{
+				FocusRequiredSettings();
+			}
+			else
+			{
+				RefreshSetupReview();
+				ShowSettingsPage(pnlPageReview, null,
+					"ServerSetup.Review.Title", "ServerSetup.Review.Description");
+				_setupReviewed = true;
+				UpdateSetupProgress();
+				if (step == 3)
+					btnSave.Select();
+			}
+		}
+
+		private void FocusRequiredSettings()
+		{
+			ModernSettingsNavButton target = GetNavigationButtons()
+				.FirstOrDefault(button => button.AttentionRequired) ?? btnNavGeneral;
+			target.PerformClick();
+			if (ReferenceEquals(target, btnNavSecurity))
+				pnlPageSecurity.FocusFirstRequiredInput();
+			else
+				target.Select();
+		}
+
+		private void RefreshSetupReview()
+		{
+			GameInfo? definition = GameDatabase.GetGame(pnlPageGeneral.SelectedGame);
+			GameManagementCapability capabilities = GameFix.GetManagementCapabilities(definition);
+			List<(string ResourceKey, string Value)> summary =
+			[
+				("ServerSetup.Review.ServerName", pnlPageGeneral.ServerName),
+				("ServerSetup.Review.Game", pnlPageGeneral.SelectedGame)
+			];
+			void Add(string key, string value)
+			{
+				if (!string.IsNullOrWhiteSpace(value))
+					summary.Add((key, value));
+			}
+			Add("ServerSetup.Review.Version", pnlPageGeneral.GameVersion);
+			if (pnlPageGeneral.IsMinecraftSelected)
+			{
+				Add("ServerSetup.Review.Edition", pnlPageGeneral.MinecraftEdition);
+				if (!pnlPageGeneral.IsMinecraftBedrockSelected)
+					Add("ServerSetup.Runtime.Loader", $"{pnlPageGeneral.MinecraftLoader} {pnlPageGeneral.MinecraftLoaderVersion}".Trim());
+			}
+			else if (definition?.SupportedServerFrameworks.Count > 0)
+				Add("ServerSetup.Runtime.Loader", pnlPageGeneral.SelectedRuntime);
+			if (capabilities.HasFlag(GameManagementCapability.MaxPlayers))
+				Add("ServerSetup.MaxPlayers.Label", pnlPageGeneral.MaximumPlayers.ToString());
+			if (capabilities.HasFlag(GameManagementCapability.Ram))
+				Add("ServerSetup.Review.Ram", pnlPageGeneral.MaximumRam.ToString());
+			if (capabilities.HasFlag(GameManagementCapability.WorldName))
+				Add("ServerSetup.Review.World", pnlPageGeneral.WorldName);
+			if (capabilities.HasFlag(GameManagementCapability.GameMode))
+				Add("ServerSetup.Review.GameMode", pnlPageGeneral.GameMode);
+			if (pnlPageNetwork.GamePortEnabled)
+				Add("ServerSetup.Port.Game", pnlPageNetwork.GamePort.ToString());
+			if (pnlPageNetwork.QueryPortEnabled)
+				Add(pnlPageGeneral.IsMinecraftBedrockSelected ? "ServerSetup.Port.Ipv6" : "ServerSetup.Port.Query", pnlPageNetwork.QueryPort.ToString());
+			if (pnlPageNetwork.RconEnabled)
+				Add("ServerSetup.Port.Rcon", pnlPageNetwork.RconPort.ToString());
+			if (pnlPageNetwork.AppPortEnabled)
+				Add("ServerSetup.Port.App", pnlPageNetwork.AppPort?.ToString() ?? string.Empty);
+			Add("ServerSetup.Review.InstallFolder", pnlPageInstall.InstallPath);
+			// Deliberately exclude credentials, invite codes, webhooks and launch arguments.
+			pnlPageReview.SetSummary(summary);
 		}
 
 		private void UpdateModernStatus()
@@ -436,33 +500,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				? SettingsPalette.Accent
 				: SettingsPalette.Warning;
 
-			bool hasGame = pnlPageGeneral.HasSelectedGame;
-			bool blockedByPort = _blockedByPort;
-			bool requirementsMet = !_requirementsBlocked;
-			int completion = UserGuidance.CalculateSetupCompletion(new SetupCompletionState(
-				!string.IsNullOrWhiteSpace(pnlPageGeneral.ServerName),
-				hasGame,
-				!string.IsNullOrWhiteSpace(pnlPageInstall.InstallPath),
-				hasGame && !blockedByPort,
-				hasGame && requirementsMet,
-				ready));
-			if (_completionLabel != null)
-			{
-				_completionLabel.Text = LocalizationManager.Get(
-					"ServerSetup.Completion",
-					completion);
-				_completionLabel.ForeColor = completion == 100
-					? SettingsPalette.Success
-					: SettingsPalette.SecondaryText;
-			}
-			if (_completionTrack != null && _completionFill != null)
-			{
-				_completionFill.Width = (int)Math.Round(
-					_completionTrack.ClientSize.Width * completion / 100d);
-				_completionFill.BackColor = completion == 100
-					? SettingsPalette.Success
-					: SettingsPalette.Accent;
-			}
+			UpdateSetupProgress();
+			if (_showingReview)
+				RefreshSetupReview();
 		}
 
 		private void btnNavGeneral_Click(object? sender, EventArgs eventArgs)
@@ -717,14 +757,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					discordSettingsPage.TryGetSettings(
 						out _,
 						out discordSettingsError);
-				_blockedByPort = isBaseReady && portValidation.HasConflict;
-				_requirementsBlocked =
-					minecraftVersionNeedsAttention ||
-					minecraftLoaderNeedsAttention ||
-					missingRequirement != null;
+				_serverDetailsReady = isBaseReady && !isNameTaken;
 
 				UpdateNavigationAttention(
 					general: !isBaseReady ||
+						(isMinecraft && !isMinecraftBedrock && pnlPageGeneral.IsLoadingMinecraftMetadata) ||
 						minecraftVersionNeedsAttention ||
 						minecraftLoaderNeedsAttention ||
 						missingRequirement != null ||
@@ -874,8 +911,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				_validationMessage = LocalizationManager.Get(
 					"ServerSetup.Validation.Error",
 					exception.Message);
-				_blockedByPort = false;
-				_requirementsBlocked = true;
+				_serverDetailsReady = false;
 				btnSave.Enabled = false;
 				UpdateNavigationAttention(
 					general: true,
@@ -975,6 +1011,15 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
+			// Enter/click can arrive before the edit debounce finishes.
+			debounceTimer?.Stop();
+			SyncGatekeeper();
+			if (!btnSave.Enabled)
+			{
+				FocusRequiredSettings();
+				return;
+			}
+
 			string newName = pnlPageGeneral.ServerName;
 			string selectedGame = pnlPageGeneral.SelectedGame;
 			if (!Core.Instance.ValidateNameAndReport(
@@ -1083,6 +1128,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				Password = pnlPageSecurity.ServerPassword,
 				AdminPassword = pnlPageSecurity.AdminPassword,
 				AuthenticationToken = pnlPageSecurity.AuthenticationToken,
+				SatisfactoryCertificateFingerprint = GameDatabase.IsSatisfactory(selectedGame)
+					? _existingServer?.SatisfactoryCertificateFingerprint ?? string.Empty : string.Empty,
 				InviteCode = pnlPageSecurity.InviteCode,
 				MaxPlayers = pnlPageGeneral.MaximumPlayers,
 				WorldName = worldName,
@@ -1254,6 +1301,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		{
 			if (isPrivacyLoading)
 				return;
+			_setupReviewed = false;
 
 			if (pnlPageGeneral.HasSelectedGame)
 			{
