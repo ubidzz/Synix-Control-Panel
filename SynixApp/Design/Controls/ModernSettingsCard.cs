@@ -63,15 +63,34 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 
 		protected override void OnPaintBackground(PaintEventArgs eventArgs)
 		{
-			base.OnPaintBackground(eventArgs);
+			// Blend the rounded edge into the surface behind the card, not its own fill.
+			eventArgs.Graphics.Clear(Parent?.BackColor ?? BackColor);
+			if (Parent is Control parent)
+			{
+				GraphicsState state = eventArgs.Graphics.Save();
+				try
+				{
+					eventArgs.Graphics.TranslateTransform(-Left, -Top);
+					Rectangle clip = eventArgs.ClipRectangle;
+					clip.Offset(Left, Top);
+					using PaintEventArgs parentArgs = new(eventArgs.Graphics, clip);
+					InvokePaintBackground(parent, parentArgs);
+				}
+				finally
+				{
+					eventArgs.Graphics.Restore(state);
+				}
+			}
+			else
+			{
+				base.OnPaintBackground(eventArgs);
+			}
 
 			if (ClientSize.Width <= 1 || ClientSize.Height <= 1)
 				return;
 
 			eventArgs.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			using GraphicsPath path = RoundedGeometry.Create(
-				new Rectangle(0, 0, Width - 1, Height - 1),
-				CornerRadius);
+			using GraphicsPath path = CreateCardPath();
 			using SolidBrush brush = new(FillColor);
 			eventArgs.Graphics.FillPath(brush, path);
 		}
@@ -84,24 +103,31 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				return;
 
 			eventArgs.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			using GraphicsPath path = RoundedGeometry.Create(
-				new Rectangle(0, 0, Width - 1, Height - 1),
-				CornerRadius);
+			using GraphicsPath path = CreateCardPath();
 			using Pen borderPen = new(BorderColor, 1F);
 			eventArgs.Graphics.DrawPath(borderPen, path);
 		}
+
+		private GraphicsPath CreateCardPath() => RoundedGeometry.Create(
+			new Rectangle(0, 0, ClientSize.Width - 1, ClientSize.Height - 1),
+			CornerRadius);
 
 		private void UpdateRoundedRegion()
 		{
 			if (Width <= 1 || Height <= 1)
 				return;
 
-			using GraphicsPath path = RoundedGeometry.Create(
-				new Rectangle(0, 0, Width, Height),
-				CornerRadius);
+			using GraphicsPath path = CreateCardPath();
+			Region roundedRegion = new(path);
+			// A hard window region must include the centered border and its antialias
+			// fringe. Derive it from the same path so no corner loses edge pixels.
+			using Pen edgeAllowance = new(Color.Black, 3F);
+			path.Widen(edgeAllowance);
+			roundedRegion.Union(path);
+			roundedRegion.Intersect(ClientRectangle);
 
 			Region? oldRegion = Region;
-			Region = new Region(path);
+			Region = roundedRegion;
 			oldRegion?.Dispose();
 		}
 	}
