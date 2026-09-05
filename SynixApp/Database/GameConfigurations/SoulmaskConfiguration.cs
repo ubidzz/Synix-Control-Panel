@@ -10,11 +10,17 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using Synix_Control_Panel.SynixApp.ServerHandler;
+
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
 	internal sealed class SoulmaskConfiguration : ConfigurationDefinition
 	{
 		public override string GameName => "Soulmask";
-		public override bool UsesConfigurationFile => false;
+		public override int SchemaVersion => 2;
+		public override bool PreservesInstalledTemplate => true;
+		public override string RelativePath =>
+			@"WS\Saved\GameplaySettings\GameXishu.json";
+		public override ConfigFormat Format => ConfigFormat.JSON;
 	}
 }

@@ -49,19 +49,22 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			try
 			{
 				string jsonString = Core
-					.SerializeServersForStorage(MainGUI.serverList);
+					.SerializeServersForStorage(ServerRegistry.Servers);
 				string savedPath = Path.Combine(Core.DataPath, FileName);
 
 				WriteTextAtomically(savedPath, jsonString);
 
-				MainGUI.Instance?.AppendLog(
-					$"[📜 INFO] JSON saved successfully to {savedPath}.",
-					Color.DarkSeaGreen);
+				ApplicationLogService.WriteLocalized(
+					"FileHandler.Activity.Saved",
+					Color.DarkSeaGreen,
+					arguments: [savedPath]);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				MainGUI.Instance?.AppendLog("[🚨 ERROR] Save Error: " + ex.Message);
+				ApplicationLogService.WriteLocalized(
+					"FileHandler.Activity.SaveError",
+					arguments: [ex.Message]);
 				return false;
 			}
 		}
@@ -78,65 +81,66 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					List<GameServer> loadedServers = Core
 						.DeserializeServersAndMigrate(
 							jsonString,
-							out int migratedPasswordServerCount);
+							out ServerDataMigrationSummary migrationSummary);
 
 					if (loadedServers != null)
 					{
-						bool migratedLegacyGameName = false;
-						MainGUI.serverList.Clear();
+						ServerRegistry.Servers.Clear();
 						foreach (var server in loadedServers)
 						{
-							string canonicalGameName = GameDatabase.GetCanonicalGameName(server.Game);
-							if (!server.Game.Equals(canonicalGameName, StringComparison.Ordinal))
-							{
-								server.Game = canonicalGameName;
-								migratedLegacyGameName = true;
-							}
-
 							var masterData = GameDatabase.GetGame(server.Game);
 							if (masterData != null)
 							{
-								if (server.QueryPort <= 0)
-									server.QueryPort = masterData.QueryPort;
-
 								string fullExePath = Path.Combine(server.InstallPath, masterData.ExeName);
 
 								string iconPath = Synix_Control_Panel.SynixEngine.Core.GetLocalServerIcon(server.Game, fullExePath);
 
 								if (File.Exists(iconPath))
 								{
-									if (!MainGUI.ServerIconsCache.ContainsKey(server.Game))
+									if (!ServerIconCache.Icons.ContainsKey(server.Game))
 									{
 										using (var ms = new MemoryStream(File.ReadAllBytes(iconPath)))
 										{
 											using (var tempImage = System.Drawing.Image.FromStream(ms))
 											{
-												MainGUI.ServerIconsCache[server.Game] = new Bitmap(tempImage);
+												ServerIconCache.Icons[server.Game] = new Bitmap(tempImage);
 											}
 										}
 									}
-									server.DisplayIcon = MainGUI.ServerIconsCache[server.Game];
+									server.DisplayIcon = ServerIconCache.Icons[server.Game];
 								}
 							}
-							MainGUI.serverList.Add(server);
+							ServerRegistry.Servers.Add(server);
 						}
 
-						if (migratedLegacyGameName || migratedPasswordServerCount > 0)
+						if (migrationSummary.Changed)
 						{
+							if (migrationSummary.MigratedServerCount > 0)
+								CreateServerDataMigrationBackup(fullPath, migrationSummary.TargetVersion);
+
 							if (SaveServers())
 							{
-								if (migratedLegacyGameName)
+								if (migrationSummary.MigratedServerCount > 0)
 								{
-									MainGUI.Instance?.AppendLog(
-										"[MIGRATION] Updated legacy 'Minecraft Java' server entries to 'Minecraft'.",
-										Color.DarkSeaGreen);
+									ApplicationLogService.WriteLocalized(
+										"FileHandler.Activity.MigrationUpgraded",
+										Color.DarkSeaGreen,
+										arguments:
+										[
+											migrationSummary.MigratedServerCount,
+											migrationSummary.TargetVersion
+										]);
 								}
 
-								if (migratedPasswordServerCount > 0)
+								if (migrationSummary.MigratedPasswordServerCount > 0)
 								{
-									MainGUI.Instance?.AppendLog(
-										$"[MIGRATION] Protected saved passwords and Discord webhooks for {migratedPasswordServerCount} server(s) with Windows user encryption.",
-										Color.DarkSeaGreen);
+									ApplicationLogService.WriteLocalized(
+										"FileHandler.Activity.MigrationProtected",
+										Color.DarkSeaGreen,
+										arguments:
+										[
+											migrationSummary.MigratedPasswordServerCount
+										]);
 								}
 							}
 						}
@@ -144,16 +148,30 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 				}
 				catch (Exception ex)
 				{
-					MainGUI.Instance?.AppendLog($"[🚨 ERROR] Load failed: {ex.Message}");
+					ApplicationLogService.WriteLocalized(
+						"FileHandler.Activity.LoadError",
+						arguments: [ex.Message]);
 				}
 			}
+		}
+
+		internal static string CreateServerDataMigrationBackup(
+			string fullPath,
+			int targetVersion)
+		{
+			string backupPath = fullPath + $".before-data-v{targetVersion}.bak";
+			if (!File.Exists(backupPath))
+				File.Copy(fullPath, backupPath, overwrite: false);
+
+			return backupPath;
 		}
 
 		public static void WriteTextAtomically(string fullPath, string content)
 		{
 			string? directory = Path.GetDirectoryName(fullPath);
 			if (string.IsNullOrWhiteSpace(directory))
-				throw new ArgumentException("A destination folder is required.", nameof(fullPath));
+				throw new ArgumentException(LocalizationManager.Get(
+					"FileSystem.Error.DestinationFolderRequired"), nameof(fullPath));
 
 			Directory.CreateDirectory(directory);
 			string temporaryPath = Path.Combine(
@@ -192,9 +210,9 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					if (File.Exists(temporaryPath))
 						File.Delete(temporaryPath);
 				}
-				catch
+				catch (Exception suppressedException)
 				{
-
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
 			}
 		}
@@ -255,9 +273,9 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 			{
 				await _logWorkerTask.ConfigureAwait(false);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 
@@ -336,15 +354,15 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					{
 						oldLogFile.Delete();
 					}
-					catch
+					catch (Exception suppressedException)
 					{
-
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
 			}
-			catch
+			catch (Exception suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 

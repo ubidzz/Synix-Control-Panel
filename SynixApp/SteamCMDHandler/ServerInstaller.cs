@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
@@ -42,15 +42,16 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 			catch (InvalidOperationException ex)
 			{
-				logCallback?.Invoke($"[CRITICAL] {ex.Message}");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.CriticalDetail", ex.Message));
 				return 97;
 			}
 
 			if (downloadThrottleKbps.HasValue)
 			{
 				logCallback?.Invoke(
-					$"[STEAMCMD] Download speed limited to " +
-					$"{downloadThrottleKbps.Value / 1000} Mbps for this operation.");
+					LocalizationManager.Get(
+						"Installer.Activity.DownloadLimited",
+						downloadThrottleKbps.Value / 1000));
 			}
 
 			if (blueprint.RequiresSteamLogin)
@@ -90,9 +91,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					{
 						logCallback?.Invoke(line);
 					}
-					catch
+					catch (Exception suppressedException)
 					{
-
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
 			});
@@ -157,27 +158,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 			void SetMainWindowTitle(string title)
 			{
-				MainGUI? mainWindow = MainGUI.Instance;
-
-				if (mainWindow == null ||
-					mainWindow.IsDisposed ||
-					!mainWindow.IsHandleCreated)
-				{
-					return;
-				}
-
-				try
-				{
-					mainWindow.BeginInvoke(new Action(() =>
-					{
-						if (!mainWindow.IsDisposed)
-							mainWindow.Text = title;
-					}));
-				}
-				catch (InvalidOperationException)
-				{
-
-				}
+				ApplicationUiService.SetMainWindowTitle(title);
 			}
 
 			CancellationTokenSource heartbeatCts =
@@ -207,9 +188,10 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 							TimeSpan elapsed = installTimer.Elapsed;
 
 							SetMainWindowTitle(
-								"Synix Control Panel - Working... " +
-								$"[{elapsed.Minutes:D2}m " +
-								$"{elapsed.Seconds:D2}s]");
+								LocalizationManager.Get(
+									"Installer.Window.Working",
+									elapsed.Minutes,
+									elapsed.Seconds));
 						}
 					}
 					catch (OperationCanceledException)
@@ -241,7 +223,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			catch (Exception ex)
 			{
 				logQueue.Writer.TryWrite(
-					$"[CRITICAL] Launcher Error: {ex.Message}");
+					LocalizationManager.Get("Installer.Activity.LauncherError", ex.Message));
 
 				resultCode = -1;
 			}
@@ -254,14 +236,14 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					heartbeatTask.GetAwaiter().GetResult();
 				}
-				catch (OperationCanceledException)
+				catch (OperationCanceledException suppressedException)
 				{
-
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
 				catch (Exception ex)
 				{
 					logQueue.Writer.TryWrite(
-						$"[WARNING] Heartbeat cleanup failed: {ex.Message}");
+						LocalizationManager.Get("Installer.Activity.HeartbeatError", ex.Message));
 				}
 
 				installTimer.Stop();
@@ -273,12 +255,12 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					dashboardWriter.GetAwaiter().GetResult();
 				}
-				catch
+				catch (Exception suppressedException)
 				{
-
+					Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 				}
 
-				SetMainWindowTitle("Synix Control Panel");
+				SetMainWindowTitle(LocalizationManager.Get("App.Title"));
 				Core.Instance.UpdateGridStatus();
 			}
 
@@ -307,7 +289,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				string.IsNullOrWhiteSpace(server.SteamAccountName))
 			{
 				throw new InvalidOperationException(
-					$"{blueprint.Game} requires a Steam account name before installation.");
+					LocalizationManager.Get("Installer.Error.SteamAccountRequiredForInstall", blueprint.Game));
 			}
 
 			bool authenticated = blueprint.RequiresSteamLogin;
@@ -375,13 +357,13 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			if (!blueprint.RequiresSteamLogin)
 			{
 				throw new InvalidOperationException(
-					$"{blueprint.Game} does not require Steam account authorization.");
+					LocalizationManager.Get("Installer.Error.AuthorizationNotRequired", blueprint.Game));
 			}
 
 			if (string.IsNullOrWhiteSpace(server.SteamAccountName))
 			{
 				throw new InvalidOperationException(
-					$"{blueprint.Game} requires a Steam account name before authorization.");
+					LocalizationManager.Get("Installer.Error.SteamAccountRequiredForAuthorization", blueprint.Game));
 			}
 
 			ProcessStartInfo startInfo = new()
@@ -415,7 +397,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 			catch (InvalidOperationException ex)
 			{
-				logCallback?.Invoke($"[CRITICAL] {ex.Message}");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.CriticalDetail", ex.Message));
 				return 97;
 			}
 
@@ -434,11 +416,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			try
 			{
 				logCallback?.Invoke(
-					$"[STEAM LOGIN] Checking Steam authorization for {blueprint.Game}.");
+					LocalizationManager.Get("Installer.Activity.CheckingAuthorization", blueprint.Game));
 				logCallback?.Invoke(
-					"If SteamCMD requests authorization, enter your password there and " +
-					"approve the login in the Steam Mobile app. Synix does not receive " +
-					"or save your password or Steam Guard code.");
+					LocalizationManager.Get("Installer.Activity.AuthorizationInstructions"));
 
 				process.Start();
 				onPidStarted?.Invoke(process.Id);
@@ -447,8 +427,10 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					TimeSpan elapsed = authenticationTimer.Elapsed;
 					SetMainWindowTitle(
-						"Synix Control Panel - Steam authorization... " +
-						$"[{elapsed.Minutes:D2}m {elapsed.Seconds:D2}s]");
+						LocalizationManager.Get(
+							"Installer.Window.Authorization",
+							elapsed.Minutes,
+							elapsed.Seconds));
 				}
 
 				string newConsoleLog = ReadFileSince(
@@ -458,24 +440,24 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				if (ContainsSteamFailure(newConsoleLog) || process.ExitCode != 0)
 				{
 					logCallback?.Invoke(
-						"[CRITICAL] Steam authorization was cancelled, rejected, or did not finish.");
+						LocalizationManager.Get("Installer.Activity.AuthorizationFailed"));
 					return 96;
 				}
 
 				logCallback?.Invoke(
-					$"[STEAM LOGIN] Steam authorization for {blueprint.Game} is ready on this PC.");
+					LocalizationManager.Get("Installer.Activity.AuthorizationReady", blueprint.Game));
 				return 0;
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke(
-					$"[CRITICAL] Steam authorization error: {ex.Message}");
+					LocalizationManager.Get("Installer.Activity.AuthorizationError", ex.Message));
 				return 96;
 			}
 			finally
 			{
 				authenticationTimer.Stop();
-				SetMainWindowTitle("Synix Control Panel");
+				SetMainWindowTitle(LocalizationManager.Get("App.Title"));
 				Core.Instance.UpdateGridStatus();
 			}
 		}
@@ -502,11 +484,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			try
 			{
 				logCallback?.Invoke(
-					$"[STEAM LOGIN] Opening SteamCMD for {blueprint.Game}.");
+					LocalizationManager.Get("Installer.Activity.OpeningSteamCmd", blueprint.Game));
 				logCallback?.Invoke(
-					"Enter your Steam password directly in the SteamCMD window. " +
-					"Approve the login in the Steam Mobile app, or enter the " +
-					"Steam Guard code from the app or your Steam email if requested.");
+					LocalizationManager.Get("Installer.Activity.LoginInstructions"));
 
 				process.Start();
 				onPidStarted?.Invoke(process.Id);
@@ -515,8 +495,10 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				{
 					TimeSpan elapsed = installTimer.Elapsed;
 					SetMainWindowTitle(
-						"Synix Control Panel - Steam login/install... " +
-						$"[{elapsed.Minutes:D2}m {elapsed.Seconds:D2}s]");
+						LocalizationManager.Get(
+							"Installer.Window.LoginInstall",
+							elapsed.Minutes,
+							elapsed.Seconds));
 				}
 
 				string newConsoleLog = ReadFileSince(
@@ -530,14 +512,14 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						StringComparison.OrdinalIgnoreCase))
 				{
 					logCallback?.Invoke(
-						$"[STEAM LOGIN] {blueprint.Game} was downloaded successfully.");
+						LocalizationManager.Get("Installer.Activity.AuthenticatedDownloadComplete", blueprint.Game));
 					return 0;
 				}
 
 				if (ContainsSteamFailure(newConsoleLog))
 				{
 					logCallback?.Invoke(
-						"[CRITICAL] SteamCMD reported that the authenticated installation failed.");
+						LocalizationManager.Get("Installer.Activity.AuthenticatedInstallFailed"));
 					return 98;
 				}
 
@@ -550,25 +532,24 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				if (File.Exists(installedExecutable))
 				{
 					logCallback?.Invoke(
-						"[WARNING] SteamCMD closed without a completion message, " +
-						"but the server executable is present.");
+						LocalizationManager.Get("Installer.Activity.ExecutablePresentWithoutCompletion"));
 					return 0;
 				}
 
 				logCallback?.Invoke(
-					"[CRITICAL] SteamCMD closed before Synix could verify the installation.");
+					LocalizationManager.Get("Installer.Activity.InstallationUnverified"));
 				return 98;
 			}
 			catch (Exception ex)
 			{
 				logCallback?.Invoke(
-					$"[CRITICAL] Steam login installer error: {ex.Message}");
+					LocalizationManager.Get("Installer.Activity.LoginInstallerError", ex.Message));
 				return -1;
 			}
 			finally
 			{
 				installTimer.Stop();
-				SetMainWindowTitle("Synix Control Panel");
+				SetMainWindowTitle(LocalizationManager.Get("App.Title"));
 				Core.Instance.UpdateGridStatus();
 			}
 		}
@@ -581,8 +562,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					? new FileInfo(filePath).Length
 					: 0;
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return 0;
 			}
 		}
@@ -603,8 +585,9 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				using StreamReader reader = new(stream, Encoding.UTF8, true);
 				return reader.ReadToEnd();
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				ApplicationLogService.WriteSuppressedException(suppressedException);
 				return string.Empty;
 			}
 		}
@@ -622,26 +605,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 		private static void SetMainWindowTitle(string title)
 		{
-			MainGUI? mainWindow = MainGUI.Instance;
-
-			if (mainWindow == null ||
-				mainWindow.IsDisposed ||
-				!mainWindow.IsHandleCreated)
-			{
-				return;
-			}
-
-			try
-			{
-				mainWindow.BeginInvoke(new Action(() =>
-				{
-					if (!mainWindow.IsDisposed)
-						mainWindow.Text = title;
-				}));
-			}
-			catch (InvalidOperationException)
-			{
-			}
+			ApplicationUiService.SetMainWindowTitle(title);
 		}
 
 		private static async Task<int> InstallDirectDownloadAsync(GameServer server, GameInfo blueprint, Action<string> logCallback)
@@ -654,16 +618,36 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			string minecraftLoader = MinecraftMetadataService.VanillaLoader;
 			string minecraftLoaderVersion = "Official";
 			string forgeArtifactVersion = "";
+			string neoForgeArtifactVersion = "";
 			string expectedDownloadSha1 = "";
 			MinecraftMetadataService.MinecraftVersionMetadata? minecraftMetadata = null;
+			bool isBedrock = MinecraftControlProfile.IsBedrock(server);
 
 			if (blueprint.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
-				minecraftLoader = MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader);
-				logCallback?.Invoke($"Querying official metadata for Minecraft {minecraftLoader}...");
 				try
 				{
+					if (MinecraftControlProfile.IsBedrock(server))
+					{
+						logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.QueryingBedrock"));
+						MinecraftMetadataService.BedrockServerMetadata bedrockMetadata =
+							await MinecraftMetadataService.GetBedrockServerMetadataAsync();
+						server.MinecraftEdition = MinecraftControlProfile.BedrockEdition;
+						server.GameVersion = bedrockMetadata.Version;
+						server.MinecraftLoader = MinecraftMetadataService.VanillaLoader;
+						server.MinecraftLoaderVersion = "Official";
+						server.RequiredJavaVersion = 0;
+						downloadUrl = bedrockMetadata.DownloadUri.AbsoluteUri;
+						fileName = $"bedrock-server-{bedrockMetadata.Version}.zip";
+						logCallback?.Invoke(
+							LocalizationManager.Get("Installer.Activity.ResolvedBedrock", bedrockMetadata.Version));
+					}
+					else
+					{
+						minecraftLoader = MinecraftMetadataService.NormalizeLoader(server.MinecraftLoader);
+						logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.QueryingMinecraftJava", minecraftLoader));
 					minecraftMetadata = await MinecraftMetadataService.GetVersionMetadataAsync(server.GameVersion);
+					server.MinecraftEdition = MinecraftControlProfile.JavaEdition;
 					server.GameVersion = minecraftMetadata.Version;
 					requiredJava = minecraftMetadata.JavaMajorVersion;
 					server.RequiredJavaVersion = requiredJava;
@@ -697,9 +681,31 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 								.Trim()
 								.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries)[0];
 						}
-						catch
+						catch (Exception suppressedException)
 						{
-							logCallback?.Invoke("[WARNING] Forge checksum metadata was unavailable; HTTPS transport validation remains active.");
+							ApplicationLogService.WriteSuppressedException(suppressedException);
+							logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ForgeChecksumUnavailable"));
+						}
+					}
+					else if (minecraftLoader == MinecraftMetadataService.NeoForgeLoader)
+					{
+						Uri neoForgeInstallerUri = await MinecraftMetadataService.GetNeoForgeInstallerUriAsync(
+							server.GameVersion,
+							minecraftLoaderVersion);
+						downloadUrl = neoForgeInstallerUri.AbsoluteUri;
+						neoForgeArtifactVersion = Uri.UnescapeDataString(
+							neoForgeInstallerUri.Segments[^2].TrimEnd('/'));
+						fileName = "neoforge-installer.jar";
+						try
+						{
+							expectedDownloadSha1 = (await _httpClient.GetStringAsync(downloadUrl + ".sha1"))
+								.Trim()
+								.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries)[0];
+						}
+						catch (Exception suppressedException)
+						{
+							ApplicationLogService.WriteSuppressedException(suppressedException);
+							logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.NeoForgeChecksumUnavailable"));
 						}
 					}
 					else
@@ -710,11 +716,18 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					}
 
 					logCallback?.Invoke(
-						$"Resolved Minecraft {server.GameVersion}, {minecraftLoader} {minecraftLoaderVersion}, Java {requiredJava}.");
+						LocalizationManager.Get(
+							"Installer.Activity.ResolvedMinecraftJava",
+							server.GameVersion,
+							minecraftLoader,
+							minecraftLoaderVersion,
+							requiredJava));
+
+					}
 				}
 				catch (Exception ex)
 				{
-					logCallback?.Invoke($"[CRITICAL] Failed to resolve official Minecraft metadata: {ex.Message}");
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.MetadataResolutionFailed", ex.Message));
 					return -1;
 				}
 			}
@@ -731,7 +744,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 			else
 			{
-				logCallback?.Invoke($"[ERROR] Non-Steam game '{blueprint.Game}' is missing a DownloadUrl.");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.DownloadUrlMissing", blueprint.Game));
 				return 1;
 			}
 
@@ -742,7 +755,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					Directory.CreateDirectory(server.InstallPath);
 
 				fullFilePath = Path.Combine(server.InstallPath, fileName);
-				logCallback?.Invoke($"Starting download: {fileName}...");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.DownloadStarting", fileName));
 
 				using (HttpRequestMessage request = new(HttpMethod.Get, downloadUrl))
 				{
@@ -774,7 +787,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 							int percent = (int)((double)totalRead / totalBytes.Value * 100);
 							if (percent > lastReportedPercent)
 							{
-								logCallback?.Invoke($"Downloading {fileName}... {percent}%");
+								logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.Downloading", fileName, percent));
 								lastReportedPercent = percent;
 							}
 						}
@@ -787,7 +800,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					new FileInfo(fullFilePath).Length != minecraftMetadata.ServerSize)
 				{
 					File.Delete(fullFilePath);
-					logCallback?.Invoke("[CRITICAL] Minecraft server download size did not match Mojang metadata.");
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.MinecraftSizeMismatch"));
 					return -1;
 				}
 
@@ -795,15 +808,15 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					!VerifyFileSha1(fullFilePath, expectedDownloadSha1))
 				{
 					File.Delete(fullFilePath);
-					logCallback?.Invoke("[CRITICAL] Download checksum validation failed. The file was deleted.");
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ChecksumFailed"));
 					return -1;
 				}
 
-				logCallback?.Invoke($"Download complete! Saved to {fullFilePath}");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.DownloadComplete", fullFilePath));
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[CRITICAL] Download Error: {ex.Message}");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.DownloadError", ex.Message));
 				return -1;
 			}
 
@@ -811,23 +824,35 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			{
 				if (fileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
 				{
-					logCallback?.Invoke($"[SYSTEM] Unzipping {fileName} into server directory... Please wait.");
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.Extracting", fileName));
 
-					System.IO.Compression.ZipFile.ExtractToDirectory(fullFilePath, server.InstallPath, overwriteFiles: true);
+					if (isBedrock)
+						ExtractBedrockArchive(fullFilePath, server.InstallPath);
+					else
+						System.IO.Compression.ZipFile.ExtractToDirectory(fullFilePath, server.InstallPath, overwriteFiles: true);
 
 					File.Delete(fullFilePath);
-					logCallback?.Invoke("[SYSTEM] Extraction complete. Temporary archive deleted.");
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ExtractionComplete"));
 				}
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[CRITICAL] Failed to extract archive: {ex.Message}");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ExtractionFailed", ex.Message));
 				return -1;
 			}
 
 			try
 			{
-				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
+				if (isBedrock &&
+					!File.Exists(Path.Combine(
+						server.InstallPath,
+						MinecraftControlProfile.BedrockExecutableName)))
+				{
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.BedrockExecutableMissing"));
+					return -1;
+				}
+
+				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase) && !isBedrock)
 				{
 					string runtimeFolder = Path.Combine(Core.RuntimesPath, $"Java{requiredJava}");
 
@@ -839,7 +864,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					{
 						javaExecutable = existingExecutables[0];
 						javaExeCmd = QuoteCommandArgument(javaExecutable);
-						logCallback?.Invoke($"[SYSTEM] Using previously cached Portable Java {requiredJava}.");
+						logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.UsingCachedJava", requiredJava));
 					}
 					else
 					{
@@ -847,23 +872,30 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 						if (systemJava < requiredJava)
 						{
-							string javaStatus = systemJava == 0 ? "no Java installed" : $"Java {systemJava}";
+							string javaStatus = systemJava == 0
+								? LocalizationManager.Get("Installer.JavaStatus.None")
+								: LocalizationManager.Get("Installer.JavaStatus.Version", systemJava);
 
 							System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.No;
 
-							MainGUI.Instance?.Invoke((Action)(() =>
+							if (ApplicationUiService.IsAvailable)
 							{
-								result = System.Windows.Forms.MessageBox.Show(
-									MainGUI.Instance,
-									$"This server requires Java {requiredJava}, but your system has {javaStatus}.\n\nWould you like Synix to automatically download a portable Java {requiredJava} runtime specifically for this server?\n\n(This is completely safe and will not change your computer's global Java settings).",
-									"Java Version Mismatch",
-									System.Windows.Forms.MessageBoxButtons.YesNo,
-									System.Windows.Forms.MessageBoxIcon.Question);
-							}));
+								result = ApplicationUiService.Invoke(() =>
+									LocalizedMessageBox.Show(
+										ApplicationUiService.DialogOwner,
+										LocalizationManager.Get(
+											"Installer.JavaMismatch.Body",
+											requiredJava,
+											javaStatus),
+										LocalizationManager.Get(
+											"Installer.JavaMismatch.Title"),
+										System.Windows.Forms.MessageBoxButtons.YesNo,
+										System.Windows.Forms.MessageBoxIcon.Question));
+							}
 
 							if (result == System.Windows.Forms.DialogResult.Yes)
 							{
-								logCallback?.Invoke($"[SYSTEM] Downloading Portable Java {requiredJava} (Eclipse Temurin JRE)...");
+								logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.DownloadingJava", requiredJava));
 
 								string jreUrl = $"https://api.adoptium.net/v3/binary/latest/{requiredJava}/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk";
 								string zipPath = Path.Combine(Core.RuntimesPath, $"java{requiredJava}_temp.zip");
@@ -883,7 +915,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 									}
 								}
 
-								logCallback?.Invoke("[SYSTEM] Extracting Portable Java environment...");
+								logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ExtractingJava"));
 								System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, runtimeFolder, overwriteFiles: true);
 								File.Delete(zipPath);
 
@@ -892,12 +924,12 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 								{
 									javaExecutable = newlyExtracted[0];
 									javaExeCmd = QuoteCommandArgument(javaExecutable);
-									logCallback?.Invoke("[SYSTEM] Portable Java installed successfully!");
+									logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.JavaInstalled"));
 								}
 							}
 							else
 							{
-								logCallback?.Invoke("[WARNING] Java download skipped by user. The server will likely crash on startup.");
+								logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.JavaSkipped"));
 							}
 						}
 					}
@@ -908,7 +940,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 							javaExecutable.Equals("java", StringComparison.OrdinalIgnoreCase))
 						{
 							logCallback?.Invoke(
-								$"[CRITICAL] Forge installation requires Java {requiredJava}. Portable Java installation was not completed.");
+								LocalizationManager.Get("Installer.Activity.ForgeJavaRequired", requiredJava));
 							return -1;
 						}
 
@@ -921,19 +953,43 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						if (forgeResult != 0)
 							return forgeResult;
 					}
+					else if (minecraftLoader == MinecraftMetadataService.NeoForgeLoader)
+					{
+						if (Core.GetSystemJavaVersion() < requiredJava &&
+							javaExecutable.Equals("java", StringComparison.OrdinalIgnoreCase))
+						{
+							logCallback?.Invoke(
+								LocalizationManager.Get("Installer.Activity.NeoForgeJavaRequired", requiredJava));
+							return -1;
+						}
+
+						int neoForgeResult = await InstallNeoForgeServerAsync(
+							server,
+							javaExecutable,
+							fullFilePath,
+							neoForgeArtifactVersion,
+							logCallback!);
+						if (neoForgeResult != 0)
+							return neoForgeResult;
+					}
 
 					if (minecraftLoader != MinecraftMetadataService.VanillaLoader)
 					{
 						Directory.CreateDirectory(Path.Combine(server.InstallPath, "mods"));
-						logCallback?.Invoke("[MINECRAFT] Mods folder is ready. Synix leaves mod selection and installation to the user.");
+						logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ModsFolderReady"));
 					}
 
-					logCallback?.Invoke($"[SYSTEM] Generating Minecraft {minecraftLoader} Start.bat bootstrapper...");
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.GeneratingLauncher", minecraftLoader));
 					string batPath = Path.Combine(server.InstallPath, "Start.bat");
 
-					string launchCommand = minecraftLoader == MinecraftMetadataService.ForgeLoader
-						? BuildForgeLaunchCommand(server, javaExeCmd, forgeArtifactVersion)
-						: $"{javaExeCmd} %*";
+					string launchCommand = minecraftLoader switch
+					{
+						MinecraftMetadataService.ForgeLoader =>
+							BuildForgeLaunchCommand(server, javaExeCmd, forgeArtifactVersion),
+						MinecraftMetadataService.NeoForgeLoader =>
+							BuildNeoForgeLaunchCommand(server, javaExeCmd, neoForgeArtifactVersion),
+						_ => $"{javaExeCmd} %*"
+					};
 					File.WriteAllText(
 						batPath,
 						$"@echo off\r\n{launchCommand}\r\nexit /b %errorlevel%\r\n");
@@ -941,13 +997,36 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[WARNING] Failed to generate post-install files: {ex.Message}");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.PostInstallFailed", ex.Message));
 				if (blueprint.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 					return -1;
 			}
 
 			Core.Instance.UpdateGridStatus();
 			return 0;
+		}
+
+		private static void ExtractBedrockArchive(string archivePath, string installPath)
+		{
+			Dictionary<string, byte[]> protectedFiles = new(StringComparer.OrdinalIgnoreCase);
+			foreach (string relativePath in new[]
+			{
+				"server.properties",
+				"allowlist.json",
+				"permissions.json"
+			})
+			{
+				string fullPath = Path.Combine(installPath, relativePath);
+				if (File.Exists(fullPath))
+					protectedFiles[relativePath] = File.ReadAllBytes(fullPath);
+			}
+
+			System.IO.Compression.ZipFile.ExtractToDirectory(
+				archivePath,
+				installPath,
+				overwriteFiles: true);
+			foreach ((string relativePath, byte[] content) in protectedFiles)
+				File.WriteAllBytes(Path.Combine(installPath, relativePath), content);
 		}
 
 		private static async Task<int> InstallForgeServerAsync(
@@ -959,12 +1038,12 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 		{
 			if (!File.Exists(installerPath))
 			{
-				logCallback?.Invoke("[CRITICAL] The downloaded Forge installer is missing.");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ForgeInstallerMissing"));
 				return -1;
 			}
 
 			logCallback?.Invoke(
-				$"[FORGE] Installing Forge {server.MinecraftLoaderVersion} for Minecraft {server.GameVersion}...");
+				LocalizationManager.Get("Installer.Activity.InstallingForge", server.MinecraftLoaderVersion, server.GameVersion));
 			ProcessStartInfo startInfo = new()
 			{
 				FileName = javaExecutable,
@@ -982,7 +1061,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			{
 				using Process installer = new() { StartInfo = startInfo };
 				if (!installer.Start())
-					throw new InvalidOperationException("Windows could not start the Forge installer.");
+					throw new InvalidOperationException(LocalizationManager.Get("Installer.Error.ForgeStart"));
 
 				Task<string> outputTask = installer.StandardOutput.ReadToEndAsync();
 				Task<string> errorTask = installer.StandardError.ReadToEndAsync();
@@ -993,8 +1072,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				}
 				catch (OperationCanceledException)
 				{
-					try { installer.Kill(entireProcessTree: true); } catch { }
-					throw new TimeoutException("The Forge installer did not finish within 10 minutes.");
+					try { installer.Kill(entireProcessTree: true); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
+					throw new TimeoutException(LocalizationManager.Get("Installer.Error.ForgeTimeout"));
 				}
 
 				string output = await outputTask;
@@ -1004,20 +1083,114 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 
 				if (installer.ExitCode != 0)
 				{
-					logCallback?.Invoke($"[CRITICAL] Forge installer exited with code {installer.ExitCode}.");
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ForgeExitCode", installer.ExitCode));
 					return installer.ExitCode;
 				}
 
 				_ = BuildForgeLaunchCommand(server, QuoteCommandArgument(javaExecutable), forgeArtifactVersion);
-				try { File.Delete(installerPath); } catch { }
-				logCallback?.Invoke("[FORGE] Server loader installed successfully.");
+				try { File.Delete(installerPath); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ForgeInstalled"));
 				return 0;
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[CRITICAL] Forge installation failed: {ex.Message}");
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ForgeFailed", ex.Message));
 				return -1;
 			}
+		}
+
+		private static async Task<int> InstallNeoForgeServerAsync(
+			GameServer server,
+			string javaExecutable,
+			string installerPath,
+			string neoForgeArtifactVersion,
+			Action<string> logCallback)
+		{
+			if (!File.Exists(installerPath))
+			{
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.NeoForgeInstallerMissing"));
+				return -1;
+			}
+
+			logCallback?.Invoke(
+				LocalizationManager.Get("Installer.Activity.InstallingNeoForge", server.MinecraftLoaderVersion, server.GameVersion));
+			ProcessStartInfo startInfo = new()
+			{
+				FileName = javaExecutable,
+				WorkingDirectory = server.InstallPath,
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true
+			};
+			startInfo.ArgumentList.Add("-jar");
+			startInfo.ArgumentList.Add(installerPath);
+			startInfo.ArgumentList.Add("--installServer");
+
+			try
+			{
+				using Process installer = new() { StartInfo = startInfo };
+				if (!installer.Start())
+					throw new InvalidOperationException(LocalizationManager.Get("Installer.Error.NeoForgeStart"));
+
+				Task<string> outputTask = installer.StandardOutput.ReadToEndAsync();
+				Task<string> errorTask = installer.StandardError.ReadToEndAsync();
+				using CancellationTokenSource timeout = new(TimeSpan.FromMinutes(10));
+				try
+				{
+					await installer.WaitForExitAsync(timeout.Token);
+				}
+				catch (OperationCanceledException)
+				{
+					try { installer.Kill(entireProcessTree: true); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
+					throw new TimeoutException(LocalizationManager.Get("Installer.Error.NeoForgeTimeout"));
+				}
+
+				LogProcessOutput(await outputTask, "NEOFORGE", logCallback!);
+				LogProcessOutput(await errorTask, "NEOFORGE", logCallback!);
+				if (installer.ExitCode != 0)
+				{
+					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.NeoForgeExitCode", installer.ExitCode));
+					return installer.ExitCode;
+				}
+
+				_ = BuildNeoForgeLaunchCommand(
+					server,
+					QuoteCommandArgument(javaExecutable),
+					neoForgeArtifactVersion);
+				try { File.Delete(installerPath); } catch (Exception suppressedException) { Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException); }
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.NeoForgeInstalled"));
+				return 0;
+			}
+			catch (Exception ex)
+			{
+				logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.NeoForgeFailed", ex.Message));
+				return -1;
+			}
+		}
+
+		private static string BuildNeoForgeLaunchCommand(
+			GameServer server,
+			string javaExeCmd,
+			string neoForgeArtifactVersion)
+		{
+			string argsPath = Path.Combine(
+				server.InstallPath,
+				"libraries",
+				"net",
+				"neoforged",
+				"neoforge",
+				neoForgeArtifactVersion,
+				"win_args.txt");
+			if (!File.Exists(argsPath))
+			{
+				throw new FileNotFoundException(
+					LocalizationManager.Get("Installer.Error.NeoForgeArgumentsMissing"),
+					argsPath);
+			}
+
+			string relativeArgsPath = Path.GetRelativePath(server.InstallPath, argsPath);
+			return $"{javaExeCmd} %* @\"{relativeArgsPath}\" nogui";
 		}
 
 		private static string BuildForgeLaunchCommand(
@@ -1052,7 +1225,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				return $"{javaExeCmd} %* -jar {QuoteCommandArgument(Path.GetFileName(legacyJar))} nogui";
 
 			throw new InvalidOperationException(
-				"Forge completed but no Windows argument file or legacy Forge server jar was created.");
+				LocalizationManager.Get("Installer.Error.ForgeLauncherMissing"));
 		}
 
 		private static void LogProcessOutput(
@@ -1137,15 +1310,15 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 		{
 			return code switch
 			{
-				0 => "Success",
-				96 => "Steam account authorization was cancelled, rejected, or could not be completed.",
-				97 => "A Steam account name is required for this game.",
-				98 => "Steam login was cancelled, rejected, or the authenticated installation could not be verified.",
-				99 => "Steam Error: AppID not found, no subscription, or SteamCMD reported a failure.",
-				5 => "Invalid Arguments",
-				7 => "Disk Space Full",
-				8 => "Network Connection Lost",
-				_ => $"SteamCMD Failure (Code: {code})"
+				0 => LocalizationManager.Get("Installer.SteamError.Success"),
+				96 => LocalizationManager.Get("Installer.SteamError.AuthorizationFailed"),
+				97 => LocalizationManager.Get("Installer.SteamError.AccountRequired"),
+				98 => LocalizationManager.Get("Installer.SteamError.LoginFailed"),
+				99 => LocalizationManager.Get("Installer.SteamError.AppFailure"),
+				5 => LocalizationManager.Get("Installer.SteamError.InvalidArguments"),
+				7 => LocalizationManager.Get("Installer.SteamError.DiskFull"),
+				8 => LocalizationManager.Get("Installer.SteamError.NetworkLost"),
+				_ => LocalizationManager.Get("Installer.SteamError.Code", code)
 			};
 		}
 	}

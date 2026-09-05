@@ -177,5 +177,41 @@ namespace Synix_Control_Panel.Properties {
                 this["SteamCmdDownloadLimitMbps"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AdvancedServerSetupMode {
+            get {
+                return ((bool)(this["AdvancedServerSetupMode"]));
+            }
+            set {
+                this["AdvancedServerSetupMode"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BackgroundServiceEnabled {
+            get {
+                return ((bool)(this["BackgroundServiceEnabled"]));
+            }
+            set {
+                this["BackgroundServiceEnabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
+        public string UiLanguage {
+            get {
+                return ((string)(this["UiLanguage"]));
+            }
+            set {
+                this["UiLanguage"] = value;
+            }
+        }
     }
 }

@@ -6,7 +6,7 @@ Each supported game has its own folder and `.game.json` definition. Synix embeds
 
 1. Open **Settings > Development > Built-in Game Definitions** in a development build.
 2. Use **Definition Builder** or copy `GameDefinition.template.json` as a starting layout.
-3. Give the definition a unique lowercase `id`, continuous `catalogOrder`, and `definitionRevision`.
+3. Give the definition a unique lowercase `id`, unique nonnegative `catalogOrder`, and `definitionRevision`. Existing order values remain stable when definitions are removed.
 4. Add the executable, Steam AppID, launch arguments, ports, maps, modes, probing behavior, and configuration information.
 5. If Synix creates the configuration or manages a complete game-generated configuration after first start, add every complete game-provided template under the game's `Templates` folder and give each template its exact installed-server location.
 6. Run **Validate Library**, build Synix, and run the automated tests.
@@ -18,6 +18,19 @@ Most Steam applications leave **SteamCMD app configuration** blank. Shared GoldS
 Keep `gameModes` friendly for the user. For games that show PVP/PVE but require another launch or configuration value, set `pvpValue` and `pveValue` to the exact values the server accepts, such as `False`/`True` or `0`/`1`. Set `booleanTrueValue` and `booleanFalseValue` to the exact boolean representation used by the game's configuration and RCON settings. Synix validates these as single safe values before they can reach a server process or configuration file.
 
 Special hardware and launch behavior belongs in `runtimeRequirements` and `launchBehavior`, not in game-name checks. Definitions can require minimum system RAM, AVX2, hardware virtualization, Hyper-V, a supported Windows edition, .NET Framework 4.8/4.8.1, and allowlisted Microsoft Visual C++ x64 runtimes. They can also request an elevated launch, force a required server-manager window to remain visible, select external lifecycle tracking, disable generated launch-file export, and provide a ready message. These values are validated before the game enters the catalog. Synix checks declared prerequisites and occupied server ports before launch but does not silently install Windows components or runtimes.
+
+Use `minimumServerPasswordLength` and `serverPasswordMustNotAppearInName` for game-enforced password rules. Synix applies these rules while editing a server and again immediately before launch, so an older saved entry cannot start with settings the game will reject.
+
+Games that require a third-party online credential may set `requiresAuthenticationToken`, provide a user-facing `authenticationTokenLabel` and HTTPS `authenticationTokenHelpUrl`, and place `{auth_token}` in their launch arguments. Synix then shows the token field only for that game, protects the saved value with the current Windows user account, and redacts it from Synix previews and logs. A user-requested batch export intentionally contains the usable token and passwords in readable text so the batch file can launch without Synix; the export flow warns the user before writing it.
+
+`controlCapabilities` selects the built-in controller family for lifecycle,
+console, configuration, and player operations. Ordinary games should keep the
+`Standard`, `None`, `Generic`, and `QueryProtocol` defaults. Minecraft declares
+its four Minecraft controllers in its definition. This keeps controller
+selection out of normal game-name switches while preserving a fixed, compiled,
+security-reviewed implementation. A definition cannot name a class, assembly,
+script, or arbitrary controller, and incompatible controller combinations are
+rejected during catalog validation.
 
 Complete templates may use either `SynixTemplate` or `GameGenerated`. `SynixTemplate` writes the complete file before first start. `GameGenerated` is for an official complete configuration captured after the server creates it; Synix then uses that built-in copy for managed values, validation, repair, and full reset. In both modes, placeholders automatically expose matching common fields in Server Settings without another game-name switch.
 
@@ -36,6 +49,7 @@ The builder is a development tool. It writes validated source files into this pr
 - Before applying a newer template revision to an existing server, Synix creates a one-time `.synix.before-template-v<revision>.bak` copy.
 - Synix updates only settings represented by its placeholders. Unrecognized game settings and user customizations remain in the live file.
 - Missing required tags are reported for repair instead of silently replacing the user's configuration.
+- Set `crossplayDisablesPlayerTracking` when enabling Crossplay switches the game away from its query protocol. Synix then disables player counts and player management only while that server's Crossplay switch is on.
 
 ## Safe post-install actions
 
@@ -52,12 +66,13 @@ The development validator checks every source definition for:
 
 - Strict JSON fields and supported schema versions.
 - Explicit definition and template revisions.
-- Unique IDs, game names, aliases, and continuous catalog order.
+- Unique IDs, game names, aliases, and nonnegative catalog order values.
 - Safe relative executable, configuration, template, and post-install paths.
 - Existing complete template files and supported placeholders.
 - HTTPS-only download and icon addresses.
 - Allowlisted declarative post-install actions.
 - Declarative hardware and Windows runtime requirements, visible/elevated/external launch behavior, and supported server frameworks.
+- Valid built-in control capabilities and compatible controller combinations.
 
 The same validation is included in the Release Readiness Checker, so an invalid game definition blocks a release.
 

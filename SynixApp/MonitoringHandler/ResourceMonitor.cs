@@ -34,8 +34,13 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 			ServerUsage total = new ServerUsage();
 			int processorCount = Environment.ProcessorCount;
 
-			List<int> activePids = new List<int>();
-			foreach (var s in serverList) { if (s.PID.HasValue) activePids.Add(s.PID.Value); }
+			List<GameServer> servers = serverList.ToList();
+			Dictionary<GameServer, int[]> processIdsByServer = servers.ToDictionary(
+				server => server,
+				server => GetProcessIds(server).ToArray());
+			HashSet<int> activePids = processIdsByServer.Values
+				.SelectMany(processIds => processIds)
+				.ToHashSet();
 
 			List<int> deadPids = new List<int>();
 			foreach (var pid in lastCpuTime.Keys) { if (!activePids.Contains(pid)) deadPids.Add(pid); }
@@ -45,31 +50,31 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 				lastCheckTime.Remove(pid);
 			}
 
-			foreach (var server in serverList)
+			HashSet<int> sampledPids = [];
+			foreach (var server in servers)
 			{
 				string currentStatus = server.Status ?? "";
 				bool isRunning = string.Equals(currentStatus, StatusManager.GetStatus(ServerState.Running), StringComparison.OrdinalIgnoreCase);
 				bool isStarting = string.Equals(currentStatus, StatusManager.GetStatus(ServerState.Starting), StringComparison.OrdinalIgnoreCase);
 
-				if (server.PID.HasValue && (isRunning || isStarting))
+				if ((isRunning || isStarting) &&
+					processIdsByServer.TryGetValue(server, out int[]? serverProcessIds) &&
+					serverProcessIds.Length > 0)
 				{
-					try
+					double serverTotalMb = 0;
+					foreach (int processId in serverProcessIds)
 					{
-						using (Process proc = Process.GetProcessById(server.PID.Value))
+						if (!sampledPids.Add(processId))
+							continue;
+						try
 						{
+							using Process proc = Process.GetProcessById(processId);
 							if (proc.HasExited)
-							{
-								server.RamUsage = 0;
 								continue;
-							}
 
 							double serverMB = proc.WorkingSet64 / 1024.0 / 1024.0;
+							serverTotalMb += serverMB;
 							total.TotalRamMB += serverMB;
-
-							if (Core.TotalRamGb > 0)
-							{
-								server.RamUsage = (serverMB / 1024.0 / Core.TotalRamGb) * 100.0;
-							}
 
 							try
 							{
@@ -91,16 +96,19 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 								lastCpuTime[proc.Id] = currentCpuTime;
 								lastCheckTime[proc.Id] = currentTime;
 							}
-							catch
+							catch (Exception suppressedException)
 							{
-
+								Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 							}
 						}
+						catch
+						{
+							// A process may close between registry refresh and sampling.
+						}
 					}
-					catch
-					{
-						server.RamUsage = 0;
-					}
+					server.RamUsage = Core.TotalRamGb > 0
+						? (serverTotalMb / 1024.0 / Core.TotalRamGb) * 100.0
+						: 0;
 				}
 				else
 				{
@@ -108,6 +116,18 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 				}
 			}
 			return total;
+		}
+
+		internal static IReadOnlyList<int> GetProcessIds(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			HashSet<int> processIds = (server.ServerProcesses ?? [])
+				.Select(process => process.ProcessId)
+				.Where(processId => processId > 0)
+				.ToHashSet();
+			if (server.PID is > 0)
+				processIds.Add(server.PID.Value);
+			return processIds.ToArray();
 		}
 
 		public static double GetTotalSystemRamGB()

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 3,
   "id": "windrose",
   "catalogOrder": 187,
   "game": "Windrose",
@@ -14,6 +14,7 @@
   "port": 7777,
   "queryPort": 27015,
   "appPort": null,
+  "maximumPlayers": 8,
   "worldSize": 0,
   "worldSeed": "12345",
   "maps": [],
@@ -29,11 +30,28 @@
   "warningMessage": "This game requires configuration before it can boot properly.",
   "iconUrl": "",
   "isQueryable": false,
-  "probeProtocol": "Auto",
-  "supportsManualConnectionTesting": true,
+  "probeProtocol": "EpicOnlineServices",
+  "supportsManualConnectionTesting": false,
   "probePath": "",
-  "eosDeploymentId": ""
-,
+  "eosDeploymentId": "",
+  "configuration": {
+    "schemaVersion": 1,
+    "revision": 3,
+    "managedInputs": [],
+    "templates": [
+      {
+        "revision": 3,
+        "relativePath": "R5\\ServerDescription.json",
+        "templateFile": "ServerDescription.json"
+      }
+    ]
+  },
+  "launchBehavior": {
+    "readyLogText": "Server registration finished successfully"
+  },
+  "logPaths": [
+    "R5\\Saved\\Logs\\*.log"
+  ],
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",

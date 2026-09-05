@@ -12,6 +12,12 @@
 // ============================================================================
 namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 {
+	public sealed record ServerFolderDeletionResult(
+		string InstallationPath,
+		bool InstallationDeleted,
+		string? BackupPath,
+		bool BackupsDeleted);
+
 	public static class FolderHandler
 	{
 		public static void Create(string path)
@@ -24,50 +30,53 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 
 		public static class ServerFolder
 		{
-			public static void Delete(GameServer server, bool deleteBackups, Action<string, Color> logCallback)
+			public static Task<ServerFolderDeletionResult> DeleteFilesAsync(
+				GameServer server,
+				bool deleteBackups)
 			{
-				try
+				ArgumentNullException.ThrowIfNull(server);
+				return Task.Run(() => DeleteFiles(server, deleteBackups));
+			}
+
+			internal static ServerFolderDeletionResult DeleteFiles(
+				GameServer server,
+				bool deleteBackups)
+			{
+				bool installationDeleted = false;
+				if (Directory.Exists(server.InstallPath))
 				{
-					if (Directory.Exists(server.InstallPath))
-					{
-						Directory.Delete(server.InstallPath, true);
-						logCallback?.Invoke($"[CLEANUP] Deleted server '{server.ServerName}' and all files at {server.InstallPath}", Color.Yellow);
-					}
-
-					if (deleteBackups)
-					{
-
-						string cleanGame = SynixEngine.Core.Instance.GetSafeName(server.Game);
-						string cleanServer = SynixEngine.Core.Instance.GetSafeName(server.ServerName);
-						string baseBackupFolder = SynixEngine.Core.DefaultBackupPath;
-
-						if (Properties.Settings.Default.UseCustomBackupPath &&
-							!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&
-							Directory.Exists(Properties.Settings.Default.CustomBackupPath))
-						{
-							baseBackupFolder = Properties.Settings.Default.CustomBackupPath;
-						}
-
-						string backupRoot = Path.Combine(baseBackupFolder, cleanGame, cleanServer);
-
-						if (Directory.Exists(backupRoot))
-						{
-							Directory.Delete(backupRoot, true);
-							logCallback?.Invoke($"[CLEANUP] Deleted server backups at {backupRoot}", Color.LimeGreen);
-						}
-					}
-
-					if (MainGUI.serverList.Contains(server))
-					{
-						MainGUI.serverList.Remove(server);
-					}
-
-					FileHandler.SaveServers();
+					Directory.Delete(server.InstallPath, true);
+					installationDeleted = true;
 				}
-				catch (Exception ex)
+
+				string? backupRoot = null;
+				bool backupsDeleted = false;
+				if (deleteBackups)
 				{
-					throw new Exception(ex.Message);
+					string cleanGame = SynixEngine.Core.Instance.GetSafeName(server.Game);
+					string cleanServer = SynixEngine.Core.Instance.GetSafeName(server.ServerName);
+					string baseBackupFolder = SynixEngine.Core.DefaultBackupPath;
+
+					if (Properties.Settings.Default.UseCustomBackupPath &&
+						!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&
+						Directory.Exists(Properties.Settings.Default.CustomBackupPath))
+					{
+						baseBackupFolder = Properties.Settings.Default.CustomBackupPath;
+					}
+
+					backupRoot = Path.Combine(baseBackupFolder, cleanGame, cleanServer);
+					if (Directory.Exists(backupRoot))
+					{
+						Directory.Delete(backupRoot, true);
+						backupsDeleted = true;
+					}
 				}
+
+				return new ServerFolderDeletionResult(
+					server.InstallPath,
+					installationDeleted,
+					backupRoot,
+					backupsDeleted);
 			}
 
 			public static bool Rename(GameServer oldServer, GameServer newServer)
@@ -90,7 +99,11 @@ namespace Synix_Control_Panel.SynixApp.FileFolderHandler
 					}
 					catch (Exception ex)
 					{
-						throw new Exception("Folder move failed: " + ex.Message);
+						throw new IOException(
+							LocalizationManager.Get(
+								"FileSystem.Error.FolderMoveFailed",
+								ex.Message),
+							ex);
 					}
 				}
 				return false;

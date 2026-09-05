@@ -1,2 +1,8 @@
 # Development-only game-definition builder backups
 Database/GameDefinitions/**/*.bak
+
+# These are source-code feature folders, not generated backup output.
+!/SynixEngine/Backups/
+!/SynixEngine/Backups/*.cs
+!/Tests/Backups/
+!/Tests/Backups/*.cs

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "satisfactory",
   "catalogOrder": 35,
   "game": "Satisfactory",
@@ -9,7 +9,7 @@
   "requiresSteamLogin": false,
   "executable": "FactoryServer.exe",
   "downloadUrl": "",
-  "arguments": "-log -unattended -multihome=0.0.0.0 -Port={port} -SteamAppId={steamAppID}",
+  "arguments": "-log -unattended -multihome=0.0.0.0 -Port={port} -NewConsole -SteamAppId={steamAppID}",
   "rconSyntax": "",
   "port": 7777,
   "queryPort": 15777,
@@ -34,8 +34,7 @@
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
-  "eosDeploymentId": ""
-,
+  "eosDeploymentId": "",
   "postInstallActions": [
     {
       "type": "CopySteamRuntimeFiles",
@@ -44,7 +43,7 @@
   ],
   "configuration": {
     "schemaVersion": 1,
-    "revision": 1,
+    "revision": 2,
     "managedInputs": [
       "MaxPlayers"
     ],
@@ -53,6 +52,16 @@
         "revision": 1,
         "relativePath": "FactoryGame\\Saved\\Config\\WindowsServer\\Game.ini",
         "templateFile": "Game.ini"
+      },
+      {
+        "revision": 2,
+        "relativePath": "FactoryGame\\Saved\\Config\\WindowsServer\\Engine.ini",
+        "templateFile": "Engine.ini"
+      },
+      {
+        "revision": 2,
+        "relativePath": "FactoryGame\\Saved\\Config\\WindowsServer\\GameUserSettings.ini",
+        "templateFile": "GameUserSettings.ini"
       }
     ]
   }

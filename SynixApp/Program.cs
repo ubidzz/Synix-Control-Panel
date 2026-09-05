@@ -12,6 +12,8 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Localization;
+using Synix_Control_Panel.SynixApp.UI.Dashboard;
 using Synix_Control_Panel.SynixEngine;
 
 namespace Synix_Control_Panel.SynixApp
@@ -19,14 +21,39 @@ namespace Synix_Control_Panel.SynixApp
 	static class Program
 	{
 		private const string SingleInstanceMutexName = @"Local\SynixControlPanel.SingleInstance";
+		private const string PublishSmokeTestArgument = "--synix-publish-smoke-test";
 		private static Mutex? _singleInstanceMutex;
 
 		[STAThread]
 		static void Main(string[] args)
 		{
+			if (FirewallCleanupService.IsCleanupCommand(args))
+			{
+				Environment.ExitCode =
+					FirewallCleanupService.RunElevatedCleanupCommand();
+				return;
+			}
+
+			if (BackgroundServiceManager.IsAgentCommand(args))
+			{
+				Environment.ExitCode = BackgroundServiceManager.RunAgent();
+				return;
+			}
+
+			if (args.Any(argument => string.Equals(
+				argument,
+				PublishSmokeTestArgument,
+				StringComparison.OrdinalIgnoreCase)))
+			{
+				Environment.ExitCode = RunPublishSmokeTest();
+				return;
+			}
+
 			if (Core.TryRunUpdateHelper(args))
 				return;
 			Core.CleanupStaleOperations();
+			LocalizationManager.Initialize(
+				Properties.Settings.Default.UiLanguage);
 
 			string? updateSuccessMarker = Core
 				.GetStartupSuccessMarker(args);
@@ -42,9 +69,9 @@ namespace Synix_Control_Panel.SynixApp
 			{
 				_singleInstanceMutex.Dispose();
 				_singleInstanceMutex = null;
-				MessageBox.Show(
-					"Synix is already running. Please use the existing Synix window.",
-					"Synix Already Running",
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get("Message.AlreadyRunning.Body"),
+					LocalizationManager.Get("Message.AlreadyRunning.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 				return;
@@ -52,11 +79,40 @@ namespace Synix_Control_Panel.SynixApp
 
 			try
 			{
+				BackgroundServiceManager.WaitForStop(TimeSpan.FromSeconds(5));
+				BackgroundServiceManager.EnsureRegistrationMatchesSetting();
 				RunSynix(updateSuccessMarker, rolledBackVersion);
 			}
 			finally
 			{
 				ReleaseSingleInstanceMutex();
+				BackgroundServiceManager.StartIfEnabled();
+			}
+		}
+
+		/// <summary>
+		/// Confirms that the published app host can load the managed Synix assembly,
+		/// Windows Forms, and user settings without displaying a window. The publish
+		/// target runs this before it creates the MSI and release receipt.
+		/// </summary>
+		private static int RunPublishSmokeTest()
+		{
+			try
+			{
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				_ = typeof(Program).Assembly.GetName().Version
+					?? throw new InvalidOperationException(
+						LocalizationManager.Get("Application.Error.VersionUnavailable"));
+				_ = Properties.Settings.Default.DarkMode;
+
+				using Control windowsFormsProbe = new();
+				windowsFormsProbe.CreateControl();
+				return 0;
+			}
+			catch
+			{
+				return 1;
 			}
 		}
 
@@ -72,7 +128,11 @@ namespace Synix_Control_Panel.SynixApp
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			ThemeManager.Initialize(Properties.Settings.Default.DarkMode);
-			Application.Idle += (_, _) => ThemeManager.ApplyToOpenForms();
+			Application.Idle += (_, _) =>
+			{
+				ThemeManager.ApplyToOpenForms();
+				LocalizationManager.ApplyToOpenForms();
+			};
 			try
 			{
 				bool importRolledBack = Core
@@ -82,20 +142,24 @@ namespace Synix_Control_Panel.SynixApp
 
 				if (importRolledBack)
 				{
-					MessageBox.Show(
-						"Synix detected an interrupted import and safely restored the previous files before starting.",
-						"Synix Import Recovered",
+					LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"Startup.ImportRecovery.Succeeded.Body"),
+						LocalizationManager.Get(
+							"Startup.ImportRecovery.Succeeded.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Information);
 				}
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
-					"Synix found an interrupted import but could not safely restore the previous files. " +
-					"Synix will not start to avoid using incomplete data.\n\n" +
-					exception.Message,
-					"Synix Import Recovery Failed",
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"Startup.ImportRecovery.Failed.Body",
+						LocalizationManager.TranslateRuntimeText(
+							exception.Message)),
+					LocalizationManager.Get(
+						"Startup.ImportRecovery.Failed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -106,19 +170,25 @@ namespace Synix_Control_Panel.SynixApp
 				int recoveredRestores = Core.RecoverInterruptedServerRestores();
 				if (recoveredRestores > 0)
 				{
-					MessageBox.Show(
-						$"Synix detected {recoveredRestores} interrupted server backup restore operation(s) and safely returned the affected server folders to their previous state.",
-						"Server Restore Recovered",
+					LocalizedMessageBox.Show(
+						LocalizationManager.Get(
+							"Startup.ServerRestoreRecovery.Succeeded.Body",
+							recoveredRestores),
+						LocalizationManager.Get(
+							"Startup.ServerRestoreRecovery.Succeeded.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Information);
 				}
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(
-					"Synix found an interrupted server backup restore but could not safely recover its files. Synix will not start to avoid using incomplete server data.\n\n" +
-					exception.Message,
-					"Server Restore Recovery Failed",
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"Startup.ServerRestoreRecovery.Failed.Body",
+						LocalizationManager.TranslateRuntimeText(
+							exception.Message)),
+					LocalizationManager.Get(
+						"Startup.ServerRestoreRecovery.Failed.Title"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				return;
@@ -128,8 +198,9 @@ namespace Synix_Control_Panel.SynixApp
 			{
 				SynixSessionRecovery.BeginSession();
 			}
-			catch
+			catch (Exception suppressedException)
 			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 
 			try
@@ -143,10 +214,13 @@ namespace Synix_Control_Panel.SynixApp
 				}
 				if (!string.IsNullOrWhiteSpace(rolledBackVersion))
 				{
-					mainWindow.Shown += (_, _) => MessageBox.Show(
+					mainWindow.Shown += (_, _) => LocalizedMessageBox.Show(
 						mainWindow,
-						$"Synix {rolledBackVersion} could not start successfully, so Synix restored the previous program version. Your C:\\Synix server data was not changed.",
-						"Synix Update Rolled Back",
+						LocalizationManager.Get(
+							"Startup.UpdateRollback.Body",
+							rolledBackVersion),
+						LocalizationManager.Get(
+							"Startup.UpdateRollback.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
 				}
@@ -168,9 +242,9 @@ namespace Synix_Control_Panel.SynixApp
 			{
 				_singleInstanceMutex?.ReleaseMutex();
 			}
-			catch (ApplicationException)
+			catch (ApplicationException suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 			finally
 			{
@@ -199,12 +273,17 @@ namespace Synix_Control_Panel.SynixApp
 				string logFilePath = Path.Combine(Core.LogsPath, $"Synix_fatal_crashes_{DateTime.Now:yyyy-MM-dd}.log");
 				FileHandler.WriteLogImmediate("Synix_fatal_crashes", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [FATAL CRASH]\r\n{ex.Message}\r\n{ex.StackTrace}\r\n----------------------------------------\r\n");
 
-				MessageBox.Show($"Synix encountered a critical error and needs to close. Please check {logFilePath} for details.",
-							"Engine Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				LocalizedMessageBox.Show(
+					LocalizationManager.Get(
+						"Startup.FatalError.Body",
+						logFilePath),
+					LocalizationManager.Get("Startup.FatalError.Title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
 			}
-			catch
+			catch (Exception suppressedException)
 			{
-
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 			}
 		}
 	}

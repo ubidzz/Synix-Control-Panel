@@ -31,8 +31,6 @@ namespace Synix_Control_Panel.SynixApp.Database
 			CreateGameIndex();
 		private static readonly Dictionary<string, string> _canonicalNames =
 			CreateCanonicalNameIndex();
-		private const string CanonicalMinecraftName = "Minecraft";
-
 		public static string GetCanonicalGameName(string? gameName)
 		{
 			string normalizedName = gameName?.Trim() ?? string.Empty;
@@ -44,9 +42,7 @@ namespace Synix_Control_Panel.SynixApp.Database
 
 		public static bool IsMinecraft(string? gameName)
 		{
-			return GetCanonicalGameName(gameName).Equals(
-				CanonicalMinecraftName,
-				StringComparison.OrdinalIgnoreCase);
+			return GameCapabilityResolver.UsesMinecraftLifecycle(GetGame(gameName ?? string.Empty));
 		}
 
 		public static GameInfo? GetGame(string gameName)
@@ -108,6 +104,56 @@ namespace Synix_Control_Panel.SynixApp.Database
 				ServerProbeProtocol.A2S or
 				ServerProbeProtocol.RestApi or
 				ServerProbeProtocol.Tcp;
+		}
+
+		public static bool IsSatisfactory(string? gameName) =>
+			GetGame(gameName ?? string.Empty)?.DefinitionId == "satisfactory";
+
+		public static bool SupportsPlayerCountMonitoring(GameInfo? game)
+		{
+			if (game == null)
+				return false;
+
+			return game.DefinitionId == "satisfactory" ||
+				game.ControlCapabilities.Players == GamePlayerControllerKind.Minecraft ||
+				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
+		}
+
+		public static bool IsPlayerTrackingDisabledByCrossplay(GameServer? server)
+		{
+			if (server == null || !server.CrossplayEnabled)
+				return false;
+
+			return GetGame(server.Game)?.CrossplayDisablesPlayerTracking == true;
+		}
+
+		public static bool SupportsPlayerCountMonitoring(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			return !IsPlayerTrackingDisabledByCrossplay(server) &&
+				SupportsPlayerCountMonitoring(GetGame(server.Game));
+		}
+
+		public static bool SupportsPlayerManagement(GameInfo? game)
+		{
+			return game != null &&
+				GetProbeProtocol(game) == ServerProbeProtocol.A2S;
+		}
+
+		internal static bool SupportsPlayerManagement(GameServer server)
+		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (IsPlayerTrackingDisabledByCrossplay(server))
+				return false;
+
+			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
+			{
+				return MinecraftControlProfile.IsJava(server) &&
+					(MinecraftControlProfile.ShouldEnableManagementProtocol(server) ||
+					 server.EnableRcon);
+			}
+
+			return SupportsPlayerManagement(GetGame(server.Game));
 		}
 
 	}

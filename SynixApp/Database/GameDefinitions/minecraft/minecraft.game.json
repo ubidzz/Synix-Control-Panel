@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 5,
   "id": "minecraft",
   "catalogOrder": 218,
   "game": "Minecraft",
   "aliases": [
-    "Minecraft Java"
+    "Minecraft Java",
+    "Minecraft Bedrock"
   ],
   "appId": "0",
   "requiresSteamLogin": false,
@@ -19,7 +20,11 @@
   "worldSize": 0,
   "worldSeed": "12345",
   "maps": [],
-  "gameModes": [],
+  "gameModes": [
+    "Survival",
+    "Creative",
+    "Adventure"
+  ],
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "server.properties",
   "format": "StandardINI",
@@ -35,6 +40,12 @@
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": "",
+  "controlCapabilities": {
+    "lifecycle": "Minecraft",
+    "console": "Minecraft",
+    "configuration": "Minecraft",
+    "players": "Minecraft"
+  },
   "logPaths": [
     "logs\\latest.log",
     "logs\\*.log.gz"

@@ -102,7 +102,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			catch (Exception exception)
 			{
 				return ConfigurationApplyResult.Failure(
-					$"The Palworld managed settings could not be upgraded safely: {exception.Message}");
+					LocalizationManager.Get(
+						"Configuration.Apply.ManagedUpgradeFailed",
+						GameName,
+						exception.Message));
 			}
 			finally
 			{

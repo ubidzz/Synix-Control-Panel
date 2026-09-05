@@ -15,6 +15,11 @@
   "port": 7777,
   "queryPort": 27015,
   "appPort": null,
+  "requiresAuthenticationToken": false,
+  "authenticationTokenLabel": "Authentication Token",
+  "authenticationTokenHelpUrl": "",
+  "minimumServerPasswordLength": 0,
+  "serverPasswordMustNotAppearInName": false,
   "worldSize": 0,
   "worldSeed": "12345",
   "maps": [],
@@ -34,10 +39,17 @@
   "warningMessage": "Review the server configuration before the first start.",
   "iconUrl": "",
   "isQueryable": true,
+  "crossplayDisablesPlayerTracking": false,
   "probeProtocol": "Auto",
   "supportsManualConnectionTesting": true,
   "probePath": "",
   "eosDeploymentId": "",
+  "controlCapabilities": {
+    "lifecycle": "Standard",
+    "console": "None",
+    "configuration": "Generic",
+    "players": "QueryProtocol"
+  },
   "runtimeRequirements": {
     "minimumSystemMemoryGb": 0,
     "requiresAvx2": false,
@@ -52,7 +64,8 @@
     "requiresVisibleWindow": false,
     "lifecycleTracking": "Process",
     "allowLaunchFileExport": true,
-    "readyMessage": ""
+    "readyMessage": "",
+    "readyLogText": ""
   },
   "supportedServerFrameworks": [],
   "logPaths": [

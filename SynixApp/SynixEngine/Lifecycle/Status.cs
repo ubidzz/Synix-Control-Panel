@@ -1,0 +1,353 @@
+﻿// ============================================================================
+// PROJECT: Synix Game Server Control Panel
+// AUTHOR: Jason Turner (ubidzz)
+// COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
+// ============================================================================
+using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixApp.ServerHandler;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+
+namespace Synix_Control_Panel.SynixEngine
+{
+	public partial class Core
+	{
+		public void UpdateGridStatus()
+		{
+			ApplicationUiService.RequestGridRefresh();
+		}
+
+		public async Task RebindProcesses()
+		{
+			bool stateChanged = false;
+			foreach (var server in ServerRegistry.Snapshot())
+			{
+				GameInfo? gameData = GameDatabase.GetGame(server.Game);
+				Process? recoveredProcess = null;
+				bool discoveredByPath = false;
+				if (gameData != null && ProcessRecovery.IsRecordedProcessValid(server, gameData))
+				{
+					try
+					{
+						recoveredProcess = Process.GetProcessById(server.PID!.Value);
+					}
+					catch (Exception suppressedException)
+					{
+						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+					}
+				}
+				else if (gameData != null)
+				{
+					recoveredProcess = ProcessRecovery.FindInstalledServerProcess(server, gameData);
+					discoveredByPath = recoveredProcess != null;
+				}
+
+				if (recoveredProcess != null)
+				{
+					BindRecoveredProcess(server, recoveredProcess, discoveredByPath);
+					stateChanged = true;
+				}
+				else if (server.PID.HasValue || IsInterruptedRuntimeStatus(server.Status))
+				{
+					string interruptedStatus = server.Status;
+					CleanupStoppedState(server);
+					stateChanged = true;
+					LogLocalized(
+						"Status.Activity.InterruptedCleared",
+						Color.Orange,
+						true,
+						LocalizationManager.TranslateRuntimeText(interruptedStatus),
+						server.ServerName);
+				}
+
+				if (IsSteamOperationStatus(server.Status))
+				{
+					bool isSteamCmdActive = false;
+					if (server.SteamPID.HasValue)
+					{
+						try
+						{
+							using var installer = Process.GetProcessById(server.SteamPID.Value);
+							isSteamCmdActive = !installer.HasExited && installer.ProcessName.Contains("steamcmd", StringComparison.OrdinalIgnoreCase);
+						}
+						catch (Exception suppressedException)
+						{
+							Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+						}
+					}
+
+					if (isSteamCmdActive)
+					{
+						LogLocalized("Status.Activity.SteamCmdRebound", Color.BlueViolet, true, server.Game, server.SteamPID);
+					}
+					else
+					{
+						bool postInstallNeeded = server.Status == StatusManager.GetStatus(ServerState.Installing) ||
+							server.Status == StatusManager.GetStatus(ServerState.Updating);
+						server.Status = StatusManager.GetStatus(ServerState.Stopped);
+						server.SteamPID = null;
+						if (postInstallNeeded)
+						{
+							await GameFix.PostInstall(server);
+							await RefreshServerIconAsync(server);
+							LogLocalized("Status.Activity.PostInstallRecovered", Color.Green, true, server.Game);
+						}
+						stateChanged = true;
+					}
+				}
+			}
+			if (stateChanged)
+				FileHandler.SaveServers();
+			UpdateGridStatus();
+		}
+
+		private void BindRecoveredProcess(GameServer server, Process process, bool discoveredByPath)
+		{
+			server.RunningProcess?.Dispose();
+			server.RunningProcess = process;
+			server.PID = process.Id;
+			Servers.RefreshServerProcessRegistry(server, forceDiscovery: true);
+			server.Status = StatusManager.GetStatus(ServerState.Running);
+			try
+			{
+				server.StartTime ??= process.StartTime;
+			}
+			catch (Exception suppressedException)
+			{
+				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
+			}
+			process.Exited += async (_, _) =>
+			{
+				try
+				{
+					if (server.Status == StatusManager.GetStatus(ServerState.Running))
+						await ExecuteStartSequence(server, "WATCHDOG");
+					else if (!server.Status.StartsWith(StatusManager.GetStatus(ServerState.Stopping), StringComparison.OrdinalIgnoreCase))
+						CleanupStoppedState(server);
+				}
+				catch (Exception exception)
+				{
+					LogLocalized("Status.Activity.CrashHandlerError", Color.Red, false, exception.Message);
+					CleanupStoppedState(server);
+				}
+			};
+			process.EnableRaisingEvents = true;
+			LogLocalized(
+				discoveredByPath
+					? "Status.Activity.ReconnectedByPath"
+					: "Status.Activity.Reconnected",
+				Color.BlueViolet,
+				true,
+				server.ServerName,
+				process.Id);
+		}
+
+		private static bool IsSteamOperationStatus(string? status) =>
+			status == StatusManager.GetStatus(ServerState.Installing) ||
+			status == StatusManager.GetStatus(ServerState.Updating) ||
+			status == StatusManager.GetStatus(ServerState.Validating);
+
+		private static bool IsInterruptedRuntimeStatus(string? status) =>
+			status == StatusManager.GetStatus(ServerState.Running) ||
+			status == StatusManager.GetStatus(ServerState.Starting) ||
+			status == StatusManager.GetStatus(ServerState.Stopping) ||
+			status == StatusManager.GetStatus(ServerState.Crashed) ||
+			status == StatusManager.GetStatus(ServerState.BackingUp) ||
+			status == StatusManager.GetStatus(ServerState.Restoring) ||
+			status == StatusManager.GetStatus(ServerState.Export);
+
+		private void CleanupStoppedState(GameServer server)
+		{
+			server.Status = StatusManager.GetStatus(ServerState.Stopped);
+			server.PID = null;
+			server.ServerProcesses = [];
+			server.LastProcessDiscoveryUtc = DateTime.MinValue;
+			server.RunningProcess?.Dispose();
+			server.RunningProcess = null;
+			UpdateGridStatus();
+		}
+
+		public enum ServerState
+		{
+			Stopped = 0,
+			Running = 1,
+			Starting = 2,
+			Crashed = 3,
+			Stopping = 4,
+			Installing = 5,
+			Updating = 6,
+			BackingUp = 7,
+			Validating = 8,
+			Export = 9,
+			Restoring = 10,
+			Deleting = 11
+		}
+
+		public static class StatusManager
+		{
+
+			public static string GetStatus(ServerState state)
+			{
+				return state switch
+				{
+					ServerState.Stopped => "Stopped",
+					ServerState.Running => "Running",
+					ServerState.Starting => "Starting",
+					ServerState.Crashed => "Crashed",
+					ServerState.Stopping => "Stopping",
+					ServerState.Installing => "Installing",
+					ServerState.Updating => "Updating",
+					ServerState.BackingUp => "Backing Up",
+					ServerState.Validating => "Validating",
+					ServerState.Export => "Exporting",
+					ServerState.Restoring => "Restoring",
+					ServerState.Deleting => "Deleting",
+					_ => "Unknown"
+				};
+			}
+
+			public static string GetStatus(int code) => GetStatus((ServerState)code);
+		}
+
+		private static string? _cachedLocalIp = null;
+		public async Task<string> GetLocalIP()
+		{
+			if (_cachedLocalIp != null) return _cachedLocalIp;
+			try
+			{
+
+				using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+				{
+					socket.Connect("8.8.8.8", 65530);
+					IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
+					_cachedLocalIp = endPoint?.Address.ToString() ?? "127.0.0.1";
+					return _cachedLocalIp;
+				}
+			}
+			catch
+			{
+				return "127.0.0.1";
+			}
+		}
+
+		private static readonly HttpClient _sharedNetworkClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+
+		public async Task<string> GetPublicIP()
+		{
+			try
+			{
+				return await _sharedNetworkClient.GetStringAsync("https://api.ipify.org");
+			}
+			catch
+			{
+				return string.Empty;
+			}
+		}
+
+		public async Task UpdatePlayerCount(GameServer server)
+		{
+			if (server.Status != StatusManager.GetStatus(ServerState.Running)) return;
+			if (GameDatabase.IsSatisfactory(server.Game))
+			{
+				await SynixApp.ServerHandler.Satisfactory.SatisfactoryIntegration.PollAsync(server);
+				return;
+			}
+			if (!GameDatabase.SupportsPlayerCountMonitoring(server))
+			{
+				server.CurrentPlayers = 0;
+				server.MaxPlayersFromQuery = 0;
+				return;
+			}
+
+			string localIp = await Core.Instance.GetLocalIP();
+			var targets = new List<string> { "127.0.0.1", localIp }.Where(x => !string.IsNullOrEmpty(x)).Distinct();
+
+			if (GameCapabilityResolver.UsesMinecraftPlayers(server))
+			{
+				foreach (var ip in targets)
+				{
+					bool success = await UpdateMinecraftPlayerCount(server, ip);
+					if (success) return;
+				}
+				server.CurrentPlayers = 0;
+				return;
+			}
+
+			using var udpClient = new System.Net.Sockets.UdpClient();
+			try
+			{
+
+				if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+				{
+					const int SIO_UDP_CONNRESET = -1744830452;
+					udpClient.Client.IOControl(SIO_UDP_CONNRESET, new byte[] { 0 }, null);
+				}
+
+				foreach (var ip in targets)
+				{
+					try
+					{
+						System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(System.Net.IPAddress.Parse(ip), server.QueryPort);
+
+						await udpClient.SendAsync(_a2sInfoRequest, _a2sInfoRequest.Length, remoteEP);
+
+						UdpReceiveResult result;
+						using (var receiveTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500)))
+						{
+							result = await udpClient.ReceiveAsync(receiveTimeout.Token);
+						}
+
+						byte[] data = result.Buffer;
+
+						if (data.Length >= 9 && data[4] == 0x41)
+						{
+							byte[] challengeRequest = new byte[_a2sInfoRequest.Length + 4];
+							Array.Copy(_a2sInfoRequest, 0, challengeRequest, 0, _a2sInfoRequest.Length);
+							Array.Copy(data, 5, challengeRequest, _a2sInfoRequest.Length, 4);
+
+							await udpClient.SendAsync(challengeRequest, challengeRequest.Length, remoteEP);
+
+							using (var challengeTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(1500)))
+							{
+								result = await udpClient.ReceiveAsync(challengeTimeout.Token);
+							}
+
+							data = result.Buffer;
+						}
+
+						if (data.Length > 5 && data[4] == 0x49)
+						{
+							int pointer = 6;
+
+							for (int i = 0; i < 4; i++)
+							{
+								while (pointer < data.Length && data[pointer] != 0x00) pointer++;
+								pointer++;
+							}
+
+							pointer += 2;
+
+							if (pointer + 1 < data.Length)
+							{
+								server.CurrentPlayers = data[pointer];
+								server.MaxPlayersFromQuery = data[pointer + 1];
+								return;
+							}
+						}
+					}
+					catch { continue; }
+				}
+			}
+			catch { server.CurrentPlayers = 0; }
+		}
+	}
+}

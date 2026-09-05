@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 3,
+  "definitionRevision": 4,
   "id": "conan-exiles",
   "catalogOrder": 30,
   "game": "Conan Exiles",
   "aliases": [],
   "appId": "443030",
   "requiresSteamLogin": false,
-  "executable": "ConanSandbox\\Binaries\\Win64\\ConanSandboxServer.exe",
+  "executable": "ConanSandboxServer.exe",
   "downloadUrl": "",
   "arguments": "{map}?Listen?MaxPlayers={MaxPlayers}?ServerName=\"{ServerName}\"?ServerPassword=\"{pass}\"?Port={port}?QueryPort={query} -server -log -SteamAppId={steamAppID}",
   "rconSyntax": "",
@@ -43,7 +43,7 @@
   ],
   "configuration": {
     "schemaVersion": 1,
-    "revision": 1,
+    "revision": 2,
     "managedInputs": [
       "ServerName",
       "ServerPassword",
@@ -53,17 +53,17 @@
     ],
     "templates": [
       {
-        "revision": 1,
+        "revision": 2,
         "relativePath": "ConanSandbox\\Saved\\Config\\WindowsServer\\Engine.ini",
         "templateFile": "Engine.ini"
       },
       {
-        "revision": 1,
+        "revision": 2,
         "relativePath": "ConanSandbox\\Saved\\Config\\WindowsServer\\Game.ini",
         "templateFile": "Game.ini"
       },
       {
-        "revision": 1,
+        "revision": 2,
         "relativePath": "ConanSandbox\\Saved\\Config\\WindowsServer\\ServerSettings.ini",
         "templateFile": "ServerSettings.ini"
       }

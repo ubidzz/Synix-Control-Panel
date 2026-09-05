@@ -15,17 +15,19 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.23</Version>
+		<Version>1.0.24</Version>
 		<AssemblyVersion>$(Version).0</AssemblyVersion>
 		<FileVersion>$(Version).0</FileVersion>
 		<InformationalVersion>$(Version)</InformationalVersion>
 		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">Stable</SynixBuildChannel>
 		<SynixBuildChannel Condition="'$(SynixBuildChannel)' == ''">Development</SynixBuildChannel>
+		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">win-x64</RuntimeIdentifier>
+		<SelfContained Condition="'$(SelfContained)' == '' and ('$(_IsPublishing)' == 'true' or '$(PublishProfile)' != '' or '$(WebPublishProfileFile)' != '')">true</SelfContained>
 		<DefineConstants Condition="'$(SynixBuildChannel)' == 'Stable'">$(DefineConstants);SYNIX_STABLE_RELEASE</DefineConstants>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<PublishSingleFile>true</PublishSingleFile>
-		<PublishReadyToRun>true</PublishReadyToRun>
+		<PublishReadyToRun>false</PublishReadyToRun>
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 		<PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
@@ -48,7 +50,11 @@
 	  <EmbeddedResource Include="SynixEngine\version.txt" />
 	  <EmbeddedResource Include="Database\GameDefinitions\**\*.game.json" />
 	  <EmbeddedResource Include="Database\GameDefinitions\**\Templates\**\*" />
+	  <EmbeddedResource Update="Database\GameDefinitions\7-days-to-die\Templates\serverconfig.xml">
+	    <LogicalName>Synix.GameDefinitions.SevenDaysToDie.serverconfig.xml</LogicalName>
+	  </EmbeddedResource>
 	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
+	  <EmbeddedResource Include="Database\ModSystems\**\*.modsystem.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -71,91 +77,157 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="UI\GeneralSettingsPage.cs">
+	  <Compile Update="UI\Dashboard\MainGUI.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerManagement\SatisfactoryControlDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerManagement\SatisfactoryControlDialog.Designer.cs">
+	    <DependentUpon>SatisfactoryControlDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\Dashboard\MainGUI.Designer.cs">
+	    <DependentUpon>MainGUI.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\Settings\GeneralSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\GeneralSettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\GeneralSettingsPage.Designer.cs">
 	    <DependentUpon>GeneralSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\BackupSettingsPage.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsGeneralPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\BackupSettingsPage.Designer.cs">
+	  <Compile Update="UI\ServerSetup\ServerSettingsReviewPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsReviewPage.Designer.cs">
+	    <DependentUpon>ServerSettingsReviewPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsGeneralPage.Designer.cs">
+	    <DependentUpon>ServerSettingsGeneralPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsSecurityPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsSecurityPage.Designer.cs">
+	    <DependentUpon>ServerSettingsSecurityPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsWorldPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsWorldPage.Designer.cs">
+	    <DependentUpon>ServerSettingsWorldPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsNetworkPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsNetworkPage.Designer.cs">
+	    <DependentUpon>ServerSettingsNetworkPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsAutomationPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsAutomationPage.Designer.cs">
+	    <DependentUpon>ServerSettingsAutomationPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsInstallPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\ServerSetup\ServerSettingsInstallPage.Designer.cs">
+	    <DependentUpon>ServerSettingsInstallPage.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\Settings\BackupSettingsPage.cs">
+	    <SubType>UserControl</SubType>
+	  </Compile>
+	  <Compile Update="UI\Settings\BackupSettingsPage.Designer.cs">
 	    <DependentUpon>BackupSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\PrivacySettingsPage.cs">
+	  <Compile Update="UI\Settings\PrivacySettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\PrivacySettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\PrivacySettingsPage.Designer.cs">
 	    <DependentUpon>PrivacySettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\AdvancedSettingsPage.cs">
+	  <Compile Update="UI\Settings\AdvancedSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\AdvancedSettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\AdvancedSettingsPage.Designer.cs">
 	    <DependentUpon>AdvancedSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\DevelopmentSettingsPage.cs">
+	  <Compile Update="UI\Settings\DevelopmentSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ProblemReportSettingsPage.cs">
+	  <Compile Update="UI\Settings\ProblemReportSettingsPage.cs">
 	    <SubType>UserControl</SubType>
 	  </Compile>
-	  <Compile Update="UI\ProblemReportSettingsPage.Designer.cs">
+	  <Compile Update="UI\Settings\ProblemReportSettingsPage.Designer.cs">
 	    <DependentUpon>ProblemReportSettingsPage.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\SteamAccountLoginDialog.cs">
+	  <Compile Update="UI\ServerSetup\SteamAccountLoginDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\SteamAccountLoginDialog.Designer.cs">
+	  <Compile Update="UI\ServerSetup\SteamAccountLoginDialog.Designer.cs">
 	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionBuilder.cs">
+	  <Compile Update="UI\GameDefinitions\GameDefinitionBuilder.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionBuilder.Designer.cs">
+	  <Compile Update="UI\Diagnostics\FirewallCleanupConfirmationDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\GameDefinitions\GameDefinitionBuilder.Designer.cs">
 	    <DependentUpon>GameDefinitionBuilder.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionValidationDialog.cs">
+	  <Compile Update="UI\GameDefinitions\GameDefinitionValidationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\GameDefinitionValidationDialog.Designer.cs">
+	  <Compile Update="UI\GameDefinitions\GameDefinitionValidationDialog.Designer.cs">
 	    <DependentUpon>GameDefinitionValidationDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\GameVerificationQueue.cs">
+	  <Compile Update="UI\GameDefinitions\GameVerificationQueue.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\GameVerificationQueue.Designer.cs">
+	  <Compile Update="UI\GameDefinitions\GameVerificationQueue.Designer.cs">
 	    <DependentUpon>GameVerificationQueue.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ArgumentVerificationDialog.cs">
+	  <Compile Update="UI\GameDefinitions\ArgumentVerificationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\ArgumentVerificationDialog.Designer.cs">
+	  <Compile Update="UI\GameDefinitions\ArgumentVerificationDialog.Designer.cs">
 	    <DependentUpon>ArgumentVerificationDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\TroubleshooterDialog.cs">
+	  <Compile Update="UI\Diagnostics\TroubleshooterDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\TroubleshooterDialog.Designer.cs">
+	  <Compile Update="UI\Diagnostics\TroubleshooterDialog.Designer.cs">
 	    <DependentUpon>TroubleshooterDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\FirstRunGuideDialog.cs">
+	  <Compile Update="UI\ServerManagement\ConnectionInformationDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\FirstRunGuideDialog.Designer.cs">
+	  <Compile Update="UI\ServerManagement\ModPluginManager.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\Diagnostics\PlainEnglishErrorDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\Onboarding\FirstRunGuideDialog.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="UI\Onboarding\FirstRunGuideDialog.Designer.cs">
 	    <DependentUpon>FirstRunGuideDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ReliabilityTestDialog.cs">
+	  <Compile Update="UI\Diagnostics\ReliabilityTestDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\ReliabilityTestDialog.Designer.cs">
+	  <Compile Update="UI\Diagnostics\ReliabilityTestDialog.Designer.cs">
 	    <DependentUpon>ReliabilityTestDialog.cs</DependentUpon>
 	  </Compile>
-	  <Compile Update="UI\ServerBackupRestoreDialog.cs">
+	  <Compile Update="UI\ServerManagement\ServerBackupRestoreDialog.cs">
 	    <SubType>Form</SubType>
 	  </Compile>
-	  <Compile Update="UI\ServerBackupRestoreDialog.Designer.cs">
+	  <Compile Update="UI\ServerManagement\ServerBackupRestoreDialog.Designer.cs">
 	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
 	  </Compile>
 	</ItemGroup>
@@ -165,15 +237,36 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="UI\SteamAccountLoginDialog.resx">
+	  <EmbeddedResource Update="UI\Dashboard\MainGUI.resx">
+	    <DependentUpon>MainGUI.cs</DependentUpon>
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="UI\ServerSetup\SteamAccountLoginDialog.resx">
 	    <DependentUpon>SteamAccountLoginDialog.cs</DependentUpon>
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="UI\ServerBackupRestoreDialog.resx">
+	  <EmbeddedResource Update="UI\ServerManagement\ServerBackupRestoreDialog.resx">
 	    <DependentUpon>ServerBackupRestoreDialog.cs</DependentUpon>
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
+	  <EmbeddedResource Include="$(IntermediateOutputPath)synix-supported-languages.txt">
+	    <LogicalName>Synix_Control_Panel.Localization.SupportedLanguages.txt</LogicalName>
+	  </EmbeddedResource>
 	</ItemGroup>
+
+	<Target Name="GenerateSynixSupportedLanguageManifest" BeforeTargets="PrepareResourceNames">
+		<PropertyGroup>
+			<_SynixSupportedLanguageManifest>$(IntermediateOutputPath)synix-supported-languages.txt</_SynixSupportedLanguageManifest>
+		</PropertyGroup>
+		<ItemGroup>
+			<_SynixLocalizedCatalog Include="$(MSBuildProjectDirectory)\Localization\Strings.*.resx" />
+		</ItemGroup>
+		<WriteLinesToFile
+			File="$(_SynixSupportedLanguageManifest)"
+			Lines="en-US;@(_SynixLocalizedCatalog->'%(Filename)')"
+			Overwrite="true"
+			Encoding="UTF-8" />
+	</Target>
 
 	<ItemGroup>
 		<None Update="Images\SyniX logo with glowing accents.png">
@@ -205,17 +298,23 @@
 			<_SynixDotNetHost Condition="'$(_SynixDotNetHost)' == ''">$([System.IO.Path]::Combine('$(ProgramFiles)', 'dotnet', 'dotnet.exe'))</_SynixDotNetHost>
 		</PropertyGroup>
 		<Error Condition="'$(SynixBuildChannel)' != 'Stable'" Text="Synix Publish was not marked as a Stable release build." />
+		<Error Condition="'$(RuntimeIdentifier)' != 'win-x64'" Text="Synix release publishing must target win-x64. Select a Synix Folder publish profile and try again." />
+		<Error Condition="'$(SelfContained)' != 'true'" Text="Synix release publishing must be self-contained because SynixSetup.msi packages the single published EXE. The selected publish profile is incomplete." />
+		<Error Condition="'$(PublishSingleFile)' != 'true'" Text="Synix release publishing must create a single EXE because SynixSetup.msi packages only that file. The selected publish profile is incomplete." />
 		<Error Condition="!Exists('$(_SynixPublishedExe)')" Text="The published Synix executable was not found at $(_SynixPublishedExe)." />
 		<Error Condition="!Exists('$(_SynixMsiProject)')" Text="The Synix MSI project was not found at $(_SynixMsiProject)." />
 		<Error Condition="!Exists('$(_SynixTestsProject)')" Text="The Synix automated test project was not found at $(_SynixTestsProject)." />
 		<Error Condition="!Exists('$(_SynixDotNetHost)')" Text="The 64-bit .NET host was not found at $(_SynixDotNetHost). Repair the Visual Studio .NET SDK before publishing." />
+		<Message Text="Starting the published EXE in hidden smoke-test mode..." Importance="high" />
+		<Exec Command="&quot;$(_SynixPublishedExe)&quot; --synix-publish-smoke-test" WorkingDirectory="$(_SynixPublishDirectory)" Timeout="30000" />
 		<Message Text="Running the complete Synix automated test suite before packaging..." Importance="high" />
 		<Exec Command="&quot;$(_SynixDotNetHost)&quot; test &quot;$(_SynixTestsProject)&quot; --configuration Release --logger &quot;console;verbosity=minimal&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
 		<PropertyGroup>
 			<_SynixAutomatedTestsUtc>$([System.DateTime]::UtcNow.ToString('O'))</_SynixAutomatedTestsUtc>
 		</PropertyGroup>
 		<Message Text="Building SynixSetup.msi with Version $(Version)..." Importance="high" />
-		<Exec Command="&quot;$(_SynixDotNetHost)&quot; build &quot;$(_SynixMsiProject)&quot; --configuration Release --nologo &quot;-p:Version=$(Version)&quot; &quot;-p:SynixPublishDir=$(_SynixPublishDirectory)&quot; &quot;-p:SynixProjectDir=$(MSBuildProjectDirectory)&quot; &quot;-p:SynixAssemblyName=$(AssemblyName)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+		<Delete Files="$(_SynixMsiBuildOutput)" Condition="Exists('$(_SynixMsiBuildOutput)')" />
+		<Exec Command="&quot;$(_SynixDotNetHost)&quot; build &quot;$(_SynixMsiProject)&quot; --configuration Release --no-incremental --nologo &quot;-p:Version=$(Version)&quot; &quot;-p:SynixPublishDir=$(_SynixPublishDirectory)&quot; &quot;-p:SynixProjectDir=$(MSBuildProjectDirectory)&quot; &quot;-p:SynixAssemblyName=$(AssemblyName)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
 		<Error Condition="!Exists('$(_SynixMsiBuildOutput)')" Text="WiX did not create $(_SynixMsiBuildOutput)." />
 		<Delete Files="$(_SynixMsiOutput)" Condition="Exists('$(_SynixMsiOutput)')" />
 		<Copy SourceFiles="$(_SynixMsiBuildOutput)" DestinationFiles="$(_SynixMsiOutput)" />

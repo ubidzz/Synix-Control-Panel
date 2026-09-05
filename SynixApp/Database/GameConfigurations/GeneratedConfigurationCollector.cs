@@ -69,7 +69,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			{
 				GeneratedConfigurationCaptureResult result = CollectServer(
 					server,
-					captureRoot);
+					captureRoot,
+					includeAllGeneratedFiles: true);
 				copiedFiles += result.CopiedFiles;
 				unchangedFiles += result.UnchangedFiles;
 				missingFiles += result.MissingFiles;
@@ -86,7 +87,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 		internal static GeneratedConfigurationCaptureResult CollectServer(
 			GameServer server,
-			string? destinationRoot = null)
+			string? destinationRoot = null,
+			bool includeAllGeneratedFiles = false)
 		{
 			ArgumentNullException.ThrowIfNull(server);
 
@@ -96,8 +98,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					: destinationRoot);
 			ConfigFileCreationMode creationMode =
 				GameFix.GetConfigFileCreationMode(server.Game);
-			if (creationMode is ConfigFileCreationMode.SynixTemplate or
-				ConfigFileCreationMode.LaunchArgumentsOnly ||
+			if ((!includeAllGeneratedFiles &&
+				creationMode is ConfigFileCreationMode.SynixTemplate or
+					ConfigFileCreationMode.LaunchArgumentsOnly) ||
 				string.IsNullOrWhiteSpace(server.InstallPath) ||
 				!Directory.Exists(server.InstallPath))
 			{
@@ -113,7 +116,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			IReadOnlyList<(string Path, ConfigFormat Format)> candidates;
 			try
 			{
-				candidates = GetCandidateFiles(server);
+				candidates = GetCandidateFiles(
+					server,
+					includeAllGeneratedFiles);
 			}
 			catch (Exception exception)
 			{
@@ -148,7 +153,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 						Path.IsPathRooted(relativePath))
 					{
 						throw new InvalidDataException(
-							"The generated configuration is outside the server installation folder.");
+							LocalizationManager.Get(
+								"GeneratedConfig.Error.OutsideInstall"));
 					}
 
 					string destinationFileName = GetFlatDestinationFileName(
@@ -164,7 +170,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					if (string.IsNullOrWhiteSpace(destinationDirectory))
 					{
 						throw new InvalidOperationException(
-							"The capture destination is unavailable.");
+							LocalizationManager.Get(
+								"GeneratedConfig.Error.DestinationUnavailable"));
 					}
 
 					Directory.CreateDirectory(destinationDirectory);
@@ -197,7 +204,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		}
 
 		private static IReadOnlyList<(string Path, ConfigFormat Format)> GetCandidateFiles(
-			GameServer server)
+			GameServer server,
+			bool discoverAdditionalGeneratedFiles)
 		{
 			Dictionary<string, ConfigFormat> files =
 				new(StringComparer.OrdinalIgnoreCase);
@@ -219,9 +227,76 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				files[ResolveDatabasePath(server, game.RelativeConfigPath)] = game.Format;
 			}
 
+			if (discoverAdditionalGeneratedFiles)
+			{
+				foreach ((string path, ConfigFormat format) in
+					DiscoverGeneratedConfigurationFiles(server.InstallPath))
+				{
+					files.TryAdd(path, format);
+				}
+			}
+
 			return files
 				.Select(file => (file.Key, file.Value))
 				.ToArray();
+		}
+
+		private static IEnumerable<(string Path, ConfigFormat Format)>
+			DiscoverGeneratedConfigurationFiles(string installPath)
+		{
+			string installRoot = Path.GetFullPath(installPath);
+			List<string> savedConfigRoots = [];
+			AddSavedConfigRoot(installRoot, savedConfigRoots);
+
+			foreach (string topLevelDirectory in Directory.EnumerateDirectories(installRoot))
+			{
+				AddSavedConfigRoot(topLevelDirectory, savedConfigRoots);
+			}
+
+			foreach (string configRoot in savedConfigRoots.Distinct(
+				StringComparer.OrdinalIgnoreCase))
+			{
+				foreach (string path in Directory.EnumerateFiles(
+					configRoot,
+					"*",
+					SearchOption.AllDirectories))
+				{
+					if (IsExcludedGeneratedConfigurationPath(configRoot, path) ||
+						!ConfigHandler.TryGetFormatFromPath(path, out ConfigFormat format))
+					{
+						continue;
+					}
+
+					yield return (path, format);
+				}
+			}
+		}
+
+		private static void AddSavedConfigRoot(
+			string parentPath,
+			ICollection<string> roots)
+		{
+			string candidate = Path.Combine(parentPath, "Saved", "Config");
+			if (Directory.Exists(candidate))
+			{
+				roots.Add(candidate);
+			}
+		}
+
+		private static bool IsExcludedGeneratedConfigurationPath(
+			string configRoot,
+			string path)
+		{
+			string relativePath = Path.GetRelativePath(configRoot, path);
+			string[] parts = relativePath.Split(
+				[Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+				StringSplitOptions.RemoveEmptyEntries);
+			return parts.Any(part => part.Equals("CrashReportClient", StringComparison.OrdinalIgnoreCase) ||
+				part.Equals("Crashes", StringComparison.OrdinalIgnoreCase) ||
+				part.Equals("Logs", StringComparison.OrdinalIgnoreCase) ||
+				part.Equals("Backup", StringComparison.OrdinalIgnoreCase) ||
+				part.Equals("Backups", StringComparison.OrdinalIgnoreCase) ||
+				part.Equals(".synix", StringComparison.OrdinalIgnoreCase));
 		}
 
 		private static string ResolveDatabasePath(
@@ -245,7 +320,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					"The configuration path leaves the server installation folder.");
+					LocalizationManager.Get(
+						"GeneratedConfig.Error.PathOutsideInstall"));
 			}
 
 			return fullPath;
@@ -258,7 +334,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			if (LooksBinary(sourcePath))
 			{
 				throw new InvalidDataException(
-					"Binary configuration files are not copied as text templates.");
+					LocalizationManager.Get("GeneratedConfig.Error.BinaryFile"));
 			}
 
 			List<ConfigLine> values = ConfigHandler.LoadConfig(sourcePath, format);
@@ -364,7 +440,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 				StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(
-					"The capture path leaves the selected destination folder.");
+					LocalizationManager.Get(
+						"GeneratedConfig.Error.PathOutsideDestination"));
 			}
 		}
 
@@ -372,7 +449,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		{
 			string directory = Path.GetDirectoryName(path)
 				?? throw new InvalidOperationException(
-					"The capture destination is unavailable.");
+					LocalizationManager.Get(
+						"GeneratedConfig.Error.DestinationUnavailable"));
 			string temporaryPath = Path.Combine(
 				directory,
 				$".{Path.GetFileName(path)}.{Guid.NewGuid():N}.synix.tmp");

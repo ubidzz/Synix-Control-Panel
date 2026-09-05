@@ -25,27 +25,26 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 		{
 			try
 			{
-				logCallback?.Invoke($"[⚠ WARNING] Synix close window button is now Disabled!", Color.Orange);
-				if (MainGUI.Instance != null)
-					MainGUI.Instance.isDownloadActive = true;
-				logCallback?.Invoke("[SYNIX] Checking SteamCMD dependencies...", Color.Cyan);
+				logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.CloseDisabled"), Color.Orange);
+				Core.Instance.isDownloadActive = true;
+				logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.Checking"), Color.Cyan);
 
 				if (!Directory.Exists(Core.SteamCmdPath))
 				{
-					logCallback?.Invoke("[SYNIX] Creating SteamCMD directory...", Color.Yellow);
+					logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.CreatingFolder"), Color.Yellow);
 					FolderHandler.Create(Core.SteamCmdPath);
 				}
 
 				if (!File.Exists(Core.SteamCmdExe))
 				{
-					logCallback?.Invoke("[SYNIX] Downloading SteamCMD...", Color.Cyan);
+					logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.Downloading"), Color.Cyan);
 					using (var client = new HttpClient())
 					{
 						var response = await client.GetByteArrayAsync("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip");
 						await File.WriteAllBytesAsync(ZipPath, response);
 					}
 
-					logCallback?.Invoke("[SYNIX] Unzipping SteamCMD...", Color.Cyan);
+					logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.Extracting"), Color.Cyan);
 					ZipFile.ExtractToDirectory(ZipPath, Core.SteamCmdPath, true);
 
 					if (File.Exists(ZipPath)) File.Delete(ZipPath);
@@ -54,7 +53,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 				string publicFolder = Path.Combine(Core.SteamCmdPath, "public");
 				if (!Directory.Exists(publicFolder))
 				{
-					logCallback?.Invoke("[SYNIX] Starting first-run updates (this may take a few minutes)...", Color.Yellow);
+					logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.FirstRun"), Color.Yellow);
 
 					string packageFolder = Path.Combine(Core.SteamCmdPath, "package");
 					if (Directory.Exists(packageFolder)) Directory.Delete(packageFolder, true);
@@ -77,22 +76,22 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						proc.BeginOutputReadLine();
 						await proc.WaitForExitAsync();
 					}
-					logCallback?.Invoke("[SYNIX] SteamCMD is ready for action.", Color.Lime);
+					logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.Ready"), Color.Lime);
 				}
 				else
 				{
-					logCallback?.Invoke("[SYNIX] SteamCMD already initialized.", Color.Cyan);
+					logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.AlreadyReady"), Color.Cyan);
 				}
-				logCallback?.Invoke("[SYNIX] Initialization complete.", Color.LimeGreen);
+				logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.Complete"), Color.LimeGreen);
 			}
 			catch (Exception ex)
 			{
-				logCallback?.Invoke($"[🚨 CRITICAL ERROR] SteamCMD Setup Failed: {ex.Message}", Color.Red);
+				logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.SetupFailed", ex.Message), Color.Red);
 			}
 			finally
 			{
-				if (MainGUI.Instance != null) MainGUI.Instance.isDownloadActive = false;
-				logCallback?.Invoke($"[🔓 WARNING] Synix close window button is now Enabled!", Color.Orange);
+				Core.Instance.isDownloadActive = false;
+				logCallback?.Invoke(LocalizationManager.Get("SteamCmd.Activity.CloseEnabled"), Color.Orange);
 			}
 		}
 	}

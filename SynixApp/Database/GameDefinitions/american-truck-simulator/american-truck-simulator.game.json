@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 1,
+  "definitionRevision": 2,
   "id": "american-truck-simulator",
   "catalogOrder": 57,
   "game": "American Truck Simulator",
@@ -20,7 +20,7 @@
   "gameModes": [],
   "configFileCreation": "GameGenerated",
   "relativeConfigPath": "server_config.sii",
-  "format": "StandardINI",
+  "format": "SII",
   "externalDataFolderName": "American Truck Simulator",
   "requiredLaunchFiles": [
     "server_packages.sii",
@@ -31,7 +31,7 @@
   ],
   "launchFileSetupInstructions": "Open Documents\\American Truck Simulator\\config.cfg and set uset g_console \"1\". Launch the normal American Truck Simulator game, load your profile and map, press ~ to open the console, and run export_server_packages. Close the game, then click Start in Synix again. Synix will import the generated files automatically.",
   "needsConfigWarning": true,
-  "warningMessage": "This game requires configuration before it can boot properly.",
+  "warningMessage": "American Truck Simulator must export server_packages.sii and server_packages.dat from the game first. Synix then preserves the generated SII files and can safely update the lobby name, password, player limit, and dedicated ports.",
   "iconUrl": "",
   "isQueryable": true,
   "probeProtocol": "Auto",

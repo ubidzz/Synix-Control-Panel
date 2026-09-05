@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "icarus",
   "catalogOrder": 21,
   "game": "Icarus",
@@ -31,7 +31,7 @@
   "optionalLaunchFiles": [],
   "launchFileSetupInstructions": "",
   "needsConfigWarning": true,
-  "warningMessage": "Icarus starts in its dedicated-server lobby. Join the server and load, resume, or create a prospect. Synix stores ServerSettings.ini inside this server folder and applies the server password, administrator password, and player limit.",
+  "warningMessage": "Synix creates the complete server-generated ServerSettings.ini layout and manages the session name, join password, administrator password, and player limit. Icarus starts in its dedicated-server lobby; join the server to load, resume, or create a prospect.",
   "iconUrl": "",
   "isQueryable": true,
   "probeProtocol": "Auto",
