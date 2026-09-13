@@ -165,14 +165,18 @@ public sealed class ServerSetupProgressTests
 		});
 	}
 
-	private static ServerSettingsGUI CreateEcoSetup() => new(new GameServer
+	private static ServerSettingsGUI CreateEcoSetup()
 	{
-		Game = "Eco",
-		ServerName = "Eco Setup Progress Test",
-		InstallPath = Path.GetTempPath(),
-		Port = 61466,
-		QueryPort = 61467
-	});
+		(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
+		return new ServerSettingsGUI(new GameServer
+		{
+			Game = "Eco",
+			ServerName = "Eco Setup Progress Test",
+			InstallPath = Path.GetTempPath(),
+			Port = gamePort,
+			QueryPort = queryPort
+		});
+	}
 
 	[Theory]
 	[InlineData(false, "Eco", "txtAuthenticationToken", "eco-user-token_123.test")]
@@ -184,10 +188,11 @@ public sealed class ServerSetupProgressTests
 	{
 		RunOnSta(() =>
 		{
+			(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
 			using ServerSettingsGUI setup = new(editMode ? new GameServer
 			{
 				Game = game, ServerName = "Review transition test", WorldSeed = "invalid",
-				InstallPath = Path.GetTempPath(), Port = 61466, QueryPort = 61467
+				InstallPath = Path.GetTempPath(), Port = gamePort, QueryPort = queryPort
 			} : null);
 			ShowOffscreen(setup);
 			if (!editMode)
@@ -195,8 +200,8 @@ public sealed class ServerSetupProgressTests
 				ComboBox games = Find<ComboBox>(setup, "cmbGame");
 				games.SelectedIndex = games.FindStringExact(game);
 				Find<TextBox>(setup, "txtName").Text = "Review transition test";
-				Find<ModernSettingsNumericUpDown>(setup, "numPort").Value = 61466;
-				Find<ModernSettingsNumericUpDown>(setup, "numQueryPort").Value = 61467;
+				Find<ModernSettingsNumericUpDown>(setup, "numPort").Value = gamePort;
+				Find<ModernSettingsNumericUpDown>(setup, "numQueryPort").Value = queryPort;
 				Find<ModernSettingsToggle>(setup, "chkDefaultPath").Checked = true;
 				if (lastInput == "txtWorldSeed")
 					Find<TextBox>(setup, lastInput).Text = "invalid";
@@ -240,14 +245,16 @@ public sealed class ServerSetupProgressTests
 	{
 		RunOnSta(() =>
 		{
+			(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
 			using ServerSettingsGUI setup = new(new GameServer
 			{
 				Game = "Empyrion - Galactic Survival", ServerName = "Saved server review test",
-				WorldSeed = "1011345", InstallPath = Path.GetTempPath(), Port = 61468, QueryPort = 61469
+				WorldSeed = "1011345", InstallPath = Path.GetTempPath(), Port = gamePort, QueryPort = queryPort
 			});
 			ShowOffscreen(setup);
 			Assert.False(Find<Button>(setup, "btnSave").Enabled);
 			Assert.False(Step(setup, 4).Enabled);
+			Assert.True(Step(setup, 3).Enabled, Find<Label>(setup, "lblFooterStatus").Text);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Next, Step(setup, 3).State);
 			Step(setup, 4).PerformClick();
 			Assert.False(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);

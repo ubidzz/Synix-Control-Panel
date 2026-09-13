@@ -12,6 +12,8 @@
 // ============================================================================
 using System.Drawing;
 using System.Globalization;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Windows.Forms;
@@ -137,8 +139,50 @@ public sealed class WorldSeedSetupTests
 			page.btnGenerateSeed.PerformClick();
 			AssertValidGeneratedSeed(page.WorldSeed);
 			Invoke(setup, "NavigateSetupStep", 1);
-			Assert.True(Find<Button>(setup, "btnSave").Enabled);
+			Assert.True(Find<Button>(setup, "btnSave").Enabled, Find<Label>(setup, "lblFooterStatus").Text);
+			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
 			Assert.Equal(seed, saved.WorldSeed);
+			Assert.Null(setup.NewServer);
+		});
+	}
+
+	[Theory]
+	[InlineData(ProtocolType.Tcp)]
+	[InlineData(ProtocolType.Udp)]
+	public void RepairingTheSeedDoesNotBypassAnOccupiedGamePort(ProtocolType protocol)
+	{
+		RunOnSta(() =>
+		{
+			(int occupiedPort, _) = ServerSetupTestPorts.FindAvailablePair();
+			using Socket listener = new(AddressFamily.InterNetwork,
+				protocol == ProtocolType.Tcp ? SocketType.Stream : SocketType.Dgram, protocol);
+			listener.Bind(new IPEndPoint(IPAddress.Loopback, occupiedPort));
+			if (protocol == ProtocolType.Tcp)
+				listener.Listen(1);
+
+			GameServer saved = ExistingEmpyrion(string.Empty);
+			// The normal fixture skips occupied ports, including this test listener.
+			Assert.NotEqual(occupiedPort, saved.Port);
+			Assert.NotEqual(occupiedPort, saved.QueryPort);
+			saved.Port = occupiedPort;
+			using ServerSettingsGUI setup = new(saved);
+			ShowOffscreen(setup);
+			Invoke(setup, "NavigateSetupStep", 1);
+			ServerSettingsWorldPage world = Find<ServerSettingsWorldPage>(setup, "pnlPageWorld");
+			Assert.True(world.Visible);
+			world.btnGenerateSeed.PerformClick();
+			AssertValidGeneratedSeed(world.WorldSeed);
+			Invoke(setup, "NavigateSetupStep", 1);
+			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			Assert.True(Find<ModernSettingsNavButton>(setup, "btnNavNetwork").AttentionRequired);
+			Assert.True(Find<ServerSettingsNetworkPage>(setup, "pnlPageNetwork").Visible);
+			Assert.Contains(occupiedPort.ToString(CultureInfo.InvariantCulture), Find<Label>(setup, "lblFooterStatus").Text);
+
+			listener.Dispose();
+			Invoke(setup, "NavigateSetupStep", 1);
+			Assert.True(Find<Button>(setup, "btnSave").Enabled, Find<Label>(setup, "lblFooterStatus").Text);
+			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
+			Assert.Empty(saved.WorldSeed);
 			Assert.Null(setup.NewServer);
 		});
 	}
@@ -180,12 +224,16 @@ public sealed class WorldSeedSetupTests
 		});
 	}
 
-	private static GameServer ExistingEmpyrion(string seed) => new()
+	private static GameServer ExistingEmpyrion(string seed)
 	{
-		Game = "Empyrion - Galactic Survival", ServerName = "Empyrion seed validation test",
-		WorldSeed = seed, WorldName = "Default Multiplayer", Port = 61468, QueryPort = 61469,
-		InstallPath = Path.Combine(Path.GetTempPath(), "SynixSeedUiTests", Guid.NewGuid().ToString("N"))
-	};
+		(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
+		return new GameServer
+		{
+			Game = "Empyrion - Galactic Survival", ServerName = "Empyrion seed validation test",
+			WorldSeed = seed, WorldName = "Default Multiplayer", Port = gamePort, QueryPort = queryPort,
+			InstallPath = Path.Combine(Path.GetTempPath(), "SynixSeedUiTests", Guid.NewGuid().ToString("N"))
+		};
+	}
 	private static void AssertValidGeneratedSeed(string value)
 	{
 		Assert.True(int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int seed));

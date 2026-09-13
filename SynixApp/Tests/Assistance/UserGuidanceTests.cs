@@ -329,13 +329,14 @@ public sealed class UserGuidanceTests
 		{
 			try
 			{
+				(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
 				using ServerSettingsGUI setup = new(new GameServer
 				{
 					Game = "Eco",
 					ServerName = "Eco Test",
 					InstallPath = Path.GetTempPath(),
-					Port = 61466,
-					QueryPort = 61467
+					Port = gamePort,
+					QueryPort = queryPort
 				});
 				setup.Show();
 				Application.DoEvents();
@@ -525,14 +526,15 @@ public sealed class UserGuidanceTests
 		{
 			try
 			{
+				(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
 				using ServerSettingsGUI setup = new(new GameServer
 				{
 					Game = "Valheim",
 					ServerName = "454",
 					Password = "454",
 					InstallPath = Path.GetTempPath(),
-					Port = 61456,
-					QueryPort = 61457,
+					Port = gamePort,
+					QueryPort = queryPort,
 					MaxPlayers = 10,
 					WorldName = "Dedicated"
 				});
