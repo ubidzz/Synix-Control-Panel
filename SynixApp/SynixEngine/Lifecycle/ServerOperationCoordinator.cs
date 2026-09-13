@@ -23,7 +23,8 @@ namespace Synix_Control_Panel.SynixEngine
 		Backup,
 		Restore,
 		Delete,
-		Configure
+		Configure,
+		AddOns
 	}
 
 	internal sealed class ServerOperationLease : IDisposable
@@ -149,7 +150,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private static string GetServerResource(GameServer server)
 		{
 			string identity = !string.IsNullOrWhiteSpace(server.InstallPath)
-				? Path.GetFullPath(server.InstallPath)
+				? Path.GetFullPath(server.InstallPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
 				: $"{server.Game}|{server.ServerName}";
 			return "server:" + identity;
 		}

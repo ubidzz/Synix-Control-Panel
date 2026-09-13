@@ -298,6 +298,15 @@
   <data name="ServerSetup.Status.Ready" xml:space="preserve">
     <value>●  Prêt à enregistrer</value>
   </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Vérifier les choix</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Vérification des modifications…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Les paramètres requis sont valides. Ouvrez l’étape 3 pour vérifier vos choix avant d’enregistrer.</value>
+  </data>
   <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
     <value>●  Action requise</value>
   </data>
@@ -1453,6 +1462,9 @@ Cliquez ci-dessous. Synix envoie la commande, récupère le nouveau jeton, le v�
   </data>
   <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
     <value>SUIVANT</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>VÉRIFICATION</value>
   </data>
   <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
     <value>PRÊT</value>
@@ -10609,7 +10621,7 @@ Toutes les autres valeurs de configuration personnalisées seront supprimées.</
     <value>Un ancien fichier du module nécessaire à la restauration est manquant. Aucun fichier n’a été modifié. Restaurez le fichier de récupération manquant ou utilisez une sauvegarde vérifiée du serveur avant de supprimer ce module.</value>
   </data>
   <data name="ModManager.Error.RecoveryRetained" xml:space="preserve">
-    <value>L’importation du module a échoué et certaines modifications n’ont pas pu être annulées. Les fichiers de récupération ont été conservés dans {0}. Gardez le serveur arrêté et restaurez ces fichiers ou une sauvegarde vérifiée avant de le démarrer.</value>
+    <value>L’opération sur le module a échoué et certaines modifications n’ont pas pu être annulées. Les fichiers de récupération ont été conservés dans {0}. Gardez le serveur arrêté et restaurez ces fichiers ou une sauvegarde vérifiée avant de le démarrer.</value>
   </data>
   <data name="LaunchCommand.Error.UnsafeBatchValue" xml:space="preserve">
     <value>Le champ de lancement {0} ne peut pas être transmis en toute sécurité à ce lanceur batch Windows. Les guillemets doubles intégrés, sauts de ligne et expressions de variables ne sont pas pris en charge ici. La valeur n’a pas été modifiée.</value>
@@ -10773,4 +10785,16 @@ Toutes les autres valeurs de configuration personnalisées seront supprimées.</
   <data name="EmpyrionMods.Import.ExistingScenario" xml:space="preserve">
     <value>Ce dossier de scénario existe déjà. Les fichiers correspondants seront remplacés, ce qui peut affecter les mondes utilisant ce scénario. Conservez une sauvegarde complète du serveur et utilisez un autre nom de dossier pour un autre scénario. Les fichiers des mondes sauvegardés ne seront pas modifiés.</value>
   </data>
+  <data name="ServerOperation.Name.AddOns" xml:space="preserve"><value>gestion des extensions</value></data>
+  <data name="ModManager.Error.NewerInstallation" xml:space="preserve"><value>Une importation plus récente utilise des fichiers de ce paquet. Annulez d’abord l’importation la plus récente.</value></data>
+  <data name="ModManager.Error.PreviousFileChanged" xml:space="preserve"><value>Un fichier original sauvegardé a changé. L’annulation a été arrêtée avant toute modification des fichiers du serveur. Si nécessaire, restaurez une sauvegarde complète et fiable du serveur.</value></data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve"><value>Rechercher des extensions dans cette zone d’installation…</value></data>
+  <data name="ModManager.Inventory.Scanning" xml:space="preserve"><value>Recherche des extensions et vérification des fichiers suivis…</value></data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve"><value>{0} extensions sur {1} correspondent à votre recherche</value></data>
+  <data name="ModManager.Progress.Installing" xml:space="preserve"><value>Installation du paquet vérifié et enregistrement des copies de récupération…</value></data>
+  <data name="ModManager.Progress.Removing" xml:space="preserve"><value>Vérification du paquet complet et restauration des fichiers précédents…</value></data>
+  <data name="ModManager.Progress.Framework" xml:space="preserve"><value>Installation du framework du serveur. Veuillez garder cette fenêtre ouverte…</value></data>
+  <data name="ModManager.Framework.SaveFailed" xml:space="preserve"><value>Les fichiers du framework ont été installés, mais Synix n’a pas pu enregistrer les paramètres du serveur. Vérifiez les autorisations du dossier et enregistrez à nouveau la configuration avant de le démarrer. Les fichiers installés n’ont pas été annulés.</value></data>
+  <data name="ModManager.Progress.Failed" xml:space="preserve"><value>L’opération n’a pas pu se terminer. Consultez l’erreur, puis actualisez la liste avant de réessayer.</value></data>
+  <data name="ModManager.Field.Search" xml:space="preserve"><value>Rechercher</value></data>
 </root>

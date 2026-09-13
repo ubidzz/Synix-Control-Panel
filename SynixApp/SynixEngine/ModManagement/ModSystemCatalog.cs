@@ -219,7 +219,10 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			ModInstallTarget[] activeTargets = profile.Targets
 				.Where(target => IsTargetActive(server.InstallPath, framework, target))
 				.ToArray();
-			ModInstallTarget recommended = activeTargets.FirstOrDefault(target => target.CanManage) ??
+			// The configured loader is a stronger signal than folders left by an older loader.
+			ModInstallTarget recommended = activeTargets.FirstOrDefault(target => target.CanManage &&
+				target.FrameworkNames.Any(name => name.Equals(framework, StringComparison.OrdinalIgnoreCase))) ??
+				activeTargets.FirstOrDefault(target => target.CanManage) ??
 				profile.Targets.FirstOrDefault(target => target.CanManage) ??
 				profile.Targets[0];
 			bool frameworkDetected = profile.SupportLevel == ModSystemSupportLevel.DetectedOnly ||

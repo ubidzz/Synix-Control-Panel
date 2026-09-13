@@ -286,8 +286,7 @@ public sealed class EmpyrionModTests : IDisposable
 				Assert.NotEqual("ExistingWorld", selection.SaveName);
 				CapturePreviewIfRequested(selection, "scenario-selection.png");
 				using ModPluginManager manager = new(_server);
-				typeof(ModPluginManager).GetMethod("RefreshInventory", System.Reflection.BindingFlags.Instance |
-					System.Reflection.BindingFlags.NonPublic)!.Invoke(manager, null);
+				WorkflowUiTest.Pump((Task)WorkflowUiTest.Invoke(manager, "RefreshInventory", false)!);
 				Control summary = Assert.Single(manager.Controls.Find("modInventorySummary", true));
 				Assert.Equal(LocalizationManager.Get("ModManager.Inventory.One", 1, 1), summary.Text);
 				CapturePreviewIfRequested(manager, "shared-manager.png");
@@ -313,7 +312,7 @@ public sealed class EmpyrionModTests : IDisposable
 			form.Location = new Point(-20000, -20000);
 			form.ShowInTaskbar = false;
 			form.Show();
-			Application.DoEvents();
+			WorkflowUiTest.WaitUntil(() => !form.UseWaitCursor);
 			form.Update();
 		}
 		using Bitmap image = new(control.Width, control.Height);

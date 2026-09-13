@@ -14,6 +14,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Synix_Control_Panel.SynixEngine.ModManagement;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -629,18 +630,25 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!Directory.Exists(RestoreJournalFolder))
 				return 0;
 
-			int recovered = 0;
+			// Validate the complete recovery queue before changing any server folders.
+			List<(string Path, RestoreJournal Journal)> pending = [];
 			foreach (string journalPath in Directory.EnumerateFiles(
 				RestoreJournalFolder,
 				"*.json",
 				SearchOption.TopDirectoryOnly))
 			{
+				ModPathSafety.EnsureNoLinks(journalPath);
 				RestoreJournal journal = JsonSerializer.Deserialize<RestoreJournal>(
 					File.ReadAllText(journalPath)) ??
 					throw new InvalidDataException(LocalizationManager.Get(
 						"Backup.Error.RecoveryRecordEmpty"));
 
-				ValidateRestoreJournal(journal);
+				ValidateRestoreJournal(journal, journalPath);
+				pending.Add((journalPath, journal));
+			}
+			int recovered = 0;
+			foreach ((string journalPath, RestoreJournal journal) in pending)
+			{
 				bool restoreWasActivated = string.Equals(
 					journal.Phase,
 					"Restored",
@@ -652,9 +660,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				else if (Directory.Exists(journal.RollbackPath))
 				{
-					if (Directory.Exists(journal.InstallPath))
-						Directory.Delete(journal.InstallPath, true);
-					Directory.Move(journal.RollbackPath, journal.InstallPath);
+					RestorePreservedInstallation(journal);
 					recovered++;
 				}
 				else if (!Directory.Exists(journal.InstallPath) &&
@@ -670,6 +676,33 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			return recovered;
+		}
+
+		private static void RestorePreservedInstallation(RestoreJournal journal)
+		{
+			// Keep the interrupted installation until the original folder is back in place.
+			// Deleting it first would lose both the active folder and useful recovery evidence
+			// if Windows subsequently refused to move the preserved original.
+			ModPathSafety.EnsureTreeHasNoLinks(journal.RollbackPath);
+			ModPathSafety.EnsureTreeHasNoLinks(journal.InstallPath);
+			ModPathSafety.EnsureTreeHasNoLinks(journal.OperationRoot);
+			string displaced = ModPathSafety.Resolve(journal.OperationRoot, "interrupted-" + Guid.NewGuid().ToString("N"));
+			bool displacedCurrent = Directory.Exists(journal.InstallPath);
+			if (displacedCurrent)
+			{
+				Directory.CreateDirectory(journal.OperationRoot);
+				Directory.Move(journal.InstallPath, displaced);
+			}
+			try { Directory.Move(journal.RollbackPath, journal.InstallPath); }
+			catch (Exception exception)
+			{
+				if (displacedCurrent && !Directory.Exists(journal.InstallPath))
+				{
+					try { Directory.Move(displaced, journal.InstallPath); }
+					catch (Exception recoveryError) { throw new AggregateException(exception, recoveryError); }
+				}
+				throw;
+			}
 		}
 
 		private ServerBackupRestoreResult RestoreServerBackup(
@@ -725,6 +758,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			bool originalMoved = false;
+			bool replacementActivated = false;
 			try
 			{
 				progress?.Report(LocalizationManager.Get("Backup.Progress.Preserving"));
@@ -740,6 +774,7 @@ namespace Synix_Control_Panel.SynixEngine
 				journal.Phase = "Activating";
 				WriteRestoreJournal(journalPath, journal);
 				Directory.Move(preparedRoot, installPath);
+				replacementActivated = true;
 				journal.Phase = "Restored";
 				WriteRestoreJournal(journalPath, journal);
 			}
@@ -750,16 +785,14 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					try
 					{
-						if (Directory.Exists(installPath))
-							Directory.Delete(installPath, true);
-						Directory.Move(rollbackPath, installPath);
+						RestorePreservedInstallation(journal);
 					}
 					catch (Exception exception)
 					{
 						rollbackException = exception;
 					}
 				}
-				else if (!originalMoved && Directory.Exists(installPath))
+				else if (replacementActivated && !originalMoved && Directory.Exists(installPath))
 				{
 					try
 					{
@@ -1294,8 +1327,15 @@ namespace Synix_Control_Panel.SynixEngine
 			File.Move(temporaryPath, journalPath, true);
 		}
 
-		private static void ValidateRestoreJournal(RestoreJournal journal)
+		private static void ValidateRestoreJournal(RestoreJournal journal, string journalPath)
 		{
+			string operationId = Path.GetFileNameWithoutExtension(journalPath);
+			if (!Guid.TryParseExact(operationId, "N", out _) ||
+				journal.Phase is not ("Prepared" or "OriginalPreserved" or "Activating" or "Restored") ||
+				!Path.IsPathFullyQualified(journal.InstallPath) ||
+				!Path.IsPathFullyQualified(journal.OperationRoot) ||
+				!Path.IsPathFullyQualified(journal.RollbackPath))
+				throw new InvalidDataException(LocalizationManager.Get("Backup.Error.RecoveryUnsafePaths"));
 			string installPath = ValidateInstallPath(journal.InstallPath);
 			string parentPath = Path.GetDirectoryName(installPath)!;
 			string operationRoot = Path.GetFullPath(journal.OperationRoot);
@@ -1303,14 +1343,19 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!string.Equals(Path.GetDirectoryName(operationRoot), parentPath, StringComparison.OrdinalIgnoreCase) ||
 				!Path.GetFileName(operationRoot).StartsWith(RestoreOperationPrefix, StringComparison.OrdinalIgnoreCase) ||
+				!Path.GetFileName(operationRoot).EndsWith("-" + operationId, StringComparison.OrdinalIgnoreCase) ||
 				!string.Equals(Path.GetDirectoryName(rollbackPath), parentPath, StringComparison.OrdinalIgnoreCase) ||
-				!Path.GetFileName(rollbackPath).StartsWith(
-					Path.GetFileName(installPath) + RestoreRollbackMarker,
-					StringComparison.OrdinalIgnoreCase))
+				!Path.GetFileName(rollbackPath).Equals(Path.GetFileName(installPath) + RestoreRollbackMarker + operationId,
+					StringComparison.OrdinalIgnoreCase) ||
+				operationRoot.Equals(installPath, StringComparison.OrdinalIgnoreCase) ||
+				operationRoot.Equals(rollbackPath, StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(LocalizationManager.Get(
 					"Backup.Error.RecoveryUnsafePaths"));
 			}
+			ModPathSafety.EnsureTreeHasNoLinks(installPath);
+			ModPathSafety.EnsureTreeHasNoLinks(operationRoot);
+			ModPathSafety.EnsureTreeHasNoLinks(rollbackPath);
 		}
 
 		private static void TryDeleteBackupRestoreDirectory(string path)

@@ -31,6 +31,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		private readonly Label _supportTitle;
 		private readonly Label _supportDetails;
 		private readonly DataGridView _grid;
+		private readonly TextBox _search;
 		private readonly Label _inventorySummary;
 		private readonly Label _selectionDetails;
 		private readonly Label[] _safetyItems;
@@ -39,12 +40,16 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		private readonly ModernSettingsButton _installFramework;
 		private readonly ModernSettingsButton _browseCatalog;
 		private readonly ModernSettingsButton _openFolder;
+		private readonly ModernSettingsButton _refresh;
+		private readonly ModernSettingsButton _close;
 		private readonly ContextMenuStrip _catalogMenu = new();
 		private ModSystemDetection? _detection;
 		private IReadOnlyList<ModInventoryItem> _items = [];
 		private bool _updatingSelectors;
 		private bool _hasShown;
 		private bool _busy;
+		private bool _renderingInventory;
+		private bool _scanFailed;
 
 		internal ModPluginManager(GameServer server)
 		{
@@ -88,6 +93,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				404, 108, 160));
 			_profileBox = new ModernSettingsComboBox
 			{
+				Name = "modSystemSelector",
 				Location = new Point(404, 130),
 				Size = new Size(250, 36),
 				DisplayMember = nameof(ModSystemProfile.DisplayName),
@@ -112,6 +118,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				668, 108, 150));
 			_targetBox = new ModernSettingsComboBox
 			{
+				Name = "modInstallAreaSelector",
 				Location = new Point(668, 130),
 				Size = new Size(238, 36),
 				DisplayMember = nameof(ModInstallTarget.DisplayName),
@@ -125,7 +132,10 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 						target.DisplayName);
 				}
 			};
-			_targetBox.SelectedIndexChanged += (_, _) => UpdateButtonsAndSafety();
+			_targetBox.SelectedIndexChanged += (_, _) =>
+			{
+				if (!_updatingSelectors) RenderInventory();
+			};
 			Controls.Add(_targetBox);
 
 			Controls.Add(new Label
@@ -183,11 +193,31 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			Controls.Add(workflow);
 
+			ModernSettingsCard searchCard = Card(28, 326, 844, 36);
+			searchCard.FillColor = SettingsPalette.Input;
+			searchCard.Controls.Add(Body(LocalizationManager.Get("ModManager.Field.Search"), 14, 9, 88, 22));
+			_search = new TextBox
+			{
+				Name = "addOnSearchBox",
+				Location = new Point(110, 8),
+				Size = new Size(718, 24),
+				Font = new Font("Segoe UI", 10F),
+				BackColor = SettingsPalette.Input,
+				ForeColor = SettingsPalette.PrimaryText,
+				BorderStyle = BorderStyle.None,
+				PlaceholderText = LocalizationManager.Get("ModManager.Inventory.Search"),
+				AccessibleName = LocalizationManager.Get("ModManager.Inventory.Search"),
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+			};
+			_search.TextChanged += (_, _) => RenderInventory();
+			searchCard.Controls.Add(_search);
+			Controls.Add(searchCard);
+
 			_grid = new DataGridView
 			{
 				Name = "addOnInventoryGrid",
-				Location = new Point(28, 326),
-				Size = new Size(844, 326),
+				Location = new Point(28, 370),
+				Size = new Size(844, 282),
 				Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
 				ReadOnly = true,
 				AllowUserToAddRows = false,
@@ -263,6 +293,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				LocalizationManager.Get("ModManager.Button.InstallFile"),
 				28, 702, 156, accent: true);
 			_installFile.Click += InstallFile_Click;
+			_installFile.Name = "importAddOnPackage";
 			_installFramework = Button(
 				LocalizationManager.Get("ModManager.Button.InstallFramework"),
 				194, 702, 164);
@@ -270,7 +301,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_installFramework.Click += async (_, _) =>
 			{
 				if (_targetBox.SelectedItem is ModInstallTarget selected && EmpyrionAddOns.IsScenario(selected))
-					ChooseEmpyrionScenario();
+					await ChooseEmpyrionScenarioAsync();
 				else
 					await InstallFrameworkAsync();
 			};
@@ -283,24 +314,28 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				LocalizationManager.Get("ModManager.Button.OpenFolder"),
 				528, 702, 172);
 			_openFolder.Click += (_, _) => OpenAddOnsFolder();
-			ModernSettingsButton refresh = Button(
+			_openFolder.Name = "openAddOnFolder";
+			_refresh = Button(
 				LocalizationManager.Get("ModManager.Button.Refresh"),
 				710, 702, 112);
-			refresh.Click += (_, _) => RefreshInventory();
+			_refresh.Click += async (_, _) => await RefreshInventory();
+			_refresh.Name = "refreshAddOnInventory";
 			_remove = Button(
 				LocalizationManager.Get("ModManager.Button.Remove"),
 				878, 702, 150);
 			_remove.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			_remove.Click += RemoveSelected_Click;
-			ModernSettingsButton close = Button(
+			_remove.Name = "removeAddOnPackage";
+			_close = Button(
 				LocalizationManager.Get("ModManager.Button.Close"),
 				1038, 702, 174);
-			close.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			close.DialogResult = DialogResult.OK;
+			_close.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			_close.DialogResult = DialogResult.OK;
+			_close.Name = "closeAddOnManager";
 			Controls.AddRange([
 				_installFile, _installFramework, _browseCatalog, _openFolder,
-				refresh, _remove, close]);
-			CancelButton = close;
+				_refresh, _remove, _close]);
+			CancelButton = _close;
 
 			if (_profiles.Count > 0)
 				_profileBox.SelectedIndex = 0;
@@ -310,11 +345,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			ThemeManager.Apply(this);
 		}
 
-		protected override void OnShown(EventArgs eventArgs)
+		protected override async void OnShown(EventArgs eventArgs)
 		{
 			base.OnShown(eventArgs);
 			_hasShown = true;
-			RefreshInventory();
+			await RefreshInventory();
 		}
 
 		protected override void OnFormClosing(FormClosingEventArgs eventArgs)
@@ -330,91 +365,139 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				_catalogMenu.Dispose();
 		}
 
-		private void ProfileChanged()
+		private async void ProfileChanged()
 		{
 			if (_updatingSelectors || _profileBox.SelectedItem is not ModSystemProfile profile)
 				return;
-			_detection = ModSystemCatalog.Detect(_server, profile);
-			_updatingSelectors = true;
 			try
 			{
-				_targetBox.Items.Clear();
-				foreach (ModInstallTarget target in profile.Targets)
-					_targetBox.Items.Add(target);
-				int recommended = Math.Max(0, profile.Targets.FindIndex(target =>
-					target.Id.Equals(_detection?.RecommendedTarget.Id, StringComparison.OrdinalIgnoreCase)));
-				if (_targetBox.Items.Count > 0)
-					_targetBox.SelectedIndex = recommended;
+				_detection = ModSystemCatalog.Detect(_server, profile);
+				_updatingSelectors = true;
+				try
+				{
+					_targetBox.Items.Clear();
+					foreach (ModInstallTarget target in profile.Targets)
+						_targetBox.Items.Add(target);
+					int recommended = Math.Max(0, profile.Targets.FindIndex(target =>
+						target.Id.Equals(_detection?.RecommendedTarget.Id, StringComparison.OrdinalIgnoreCase)));
+					if (_targetBox.Items.Count > 0)
+						_targetBox.SelectedIndex = recommended;
+				}
+				finally
+				{
+					_updatingSelectors = false;
+				}
+				if (_hasShown)
+				{
+					await RefreshInventory();
+				}
+				else
+				{
+					UpdateSupportBanner();
+					UpdateButtonsAndSafety();
+				}
 			}
-			finally
+			catch (Exception exception)
 			{
-				_updatingSelectors = false;
-			}
-			if (_hasShown)
-			{
-				RefreshInventory();
-			}
-			else
-			{
+				_detection = null;
+				InvalidateInventory();
 				UpdateSupportBanner();
-				UpdateButtonsAndSafety();
+				PlainEnglishErrorDialog.ShowError(this, LocalizationManager.Get("ModManager.ErrorAction.Scan"), exception.Message);
 			}
 		}
 
-		private void RefreshInventory()
+		private async Task RefreshInventory(bool duringOperation = false)
 		{
-			if (_busy) return;
+			if (_busy && !duringOperation) return;
 			if (_profileBox.SelectedItem is not ModSystemProfile profile)
 			{
 				ShowUnsupportedState();
 				return;
 			}
-
 			try
 			{
-				_detection = ModSystemCatalog.Detect(_server, profile);
-				_items = ModPackageManager.Scan(_server, profile);
-				_grid.Rows.Clear();
-				foreach (ModInventoryItem item in _items)
-				{
-					int rowIndex = _grid.Rows.Add(
-						item.Name,
-						LocalizationManager.TranslateKnownText(item.Type),
-						item.Version,
-						LocalizationManager.TranslateKnownText(item.Status),
-						LocalizationManager.TranslateKnownText(item.SecurityStatus),
-						LocalizationManager.TranslateKnownText(item.Source),
-						item.RelativePath);
-					_grid.Rows[rowIndex].Tag = item;
-					_grid.Rows[rowIndex].Cells[3].Style.ForeColor = item.Status switch
-					{
-						"Healthy" => SettingsPalette.Success,
-						"Changed outside Synix" => SettingsPalette.Warning,
-						_ => SettingsPalette.SecondaryText
-					};
-				}
-				_inventorySummary.Text = _items.Count == 0
-					? LocalizationManager.Get("ModManager.Inventory.Empty")
-					: LocalizationManager.Get(
-						_items.Count == 1
-							? "ModManager.Inventory.One"
-							: "ModManager.Inventory.Many",
-						_items.Count,
-						_items.Count(item => item.InstallationId != null));
+				SetBusy(true, "ModManager.Inventory.Scanning");
+				using ServerOperationLease operation = ModPackageManager.BeginOperation(_server);
+				var result = await Task.Run(() => (Detection: ModSystemCatalog.Detect(_server, profile),
+					Items: ModPackageManager.Scan(_server, profile)));
+				_detection = result.Detection;
+				_items = result.Items;
+				_scanFailed = false;
+				RenderInventory();
 				UpdateSupportBanner();
-				SelectionChanged();
-				UpdateButtonsAndSafety();
 			}
 			catch (Exception exception)
 			{
-				_inventorySummary.Text = LocalizationManager.Get(
-					"ModManager.Inventory.RefreshFailed");
+				_scanFailed = true;
+				_items = [];
+				RenderInventory();
+				_inventorySummary.Text = LocalizationManager.Get("ModManager.Inventory.RefreshFailed");
 				_inventorySummary.ForeColor = SettingsPalette.Warning;
-				PlainEnglishErrorDialog.ShowError(
-					this,
-					LocalizationManager.Get("ModManager.ErrorAction.Scan"),
-					exception.Message);
+				PlainEnglishErrorDialog.ShowError(this,
+					LocalizationManager.Get("ModManager.ErrorAction.Scan"), exception.Message);
 			}
+			finally
+			{
+				if (!duringOperation) SetBusy(false);
+			}
+		}
+
+		private void SetBusy(bool busy, string? progressKey = null)
+		{
+			_busy = busy;
+			UseWaitCursor = busy;
+			if (progressKey != null)
+			{
+				_inventorySummary.Text = LocalizationManager.Get(progressKey);
+				_inventorySummary.ForeColor = SettingsPalette.SecondaryText;
+			}
+			UpdateButtonsAndSafety();
+		}
+
+		private void RenderInventory()
+		{
+			if (_updatingSelectors || _renderingInventory) return;
+			ModInventoryItem? selected = SelectedItem();
+			string? targetId = (_targetBox.SelectedItem as ModInstallTarget)?.Id;
+			string search = _search.Text.Trim();
+			ModInventoryItem[] visible = _items.Where(item =>
+				item.TargetId.Equals(targetId, StringComparison.OrdinalIgnoreCase) &&
+				(search.Length == 0 || new[] { item.Name, item.Type, item.Source, item.RelativePath }
+					.Any(value => value.Contains(search, StringComparison.CurrentCultureIgnoreCase)))).ToArray();
+			_renderingInventory = true;
+			try
+			{
+				_grid.Rows.Clear();
+				DataGridViewRow? retained = null;
+				foreach (ModInventoryItem item in visible)
+				{
+					int index = _grid.Rows.Add(item.Name, item.Type, item.Version, item.Status,
+						item.SecurityStatus, item.Source, item.RelativePath);
+					DataGridViewRow row = _grid.Rows[index];
+					row.Tag = item;
+					Color color = item.Status == LocalizationManager.Get("ModManager.Known.Healthy") ? SettingsPalette.Success :
+						item.Status == LocalizationManager.Get("ModManager.Known.Changed") ? SettingsPalette.Warning : SettingsPalette.SecondaryText;
+					row.Cells[3].Style.ForeColor = row.Cells[3].Style.SelectionForeColor = color;
+					if (selected?.TargetId == item.TargetId && selected.RelativePath == item.RelativePath)
+						retained = row;
+				}
+				_grid.ClearSelection();
+				if (_grid.Rows.Count > 0)
+				{
+					retained ??= _grid.Rows[0];
+					_grid.CurrentCell = retained.Cells[0];
+					retained.Selected = true;
+				}
+			}
+			finally { _renderingInventory = false; }
+			_inventorySummary.ForeColor = SettingsPalette.SecondaryText;
+			_inventorySummary.Text = search.Length > 0
+				? LocalizationManager.Get("ModManager.Inventory.Filtered", visible.Length,
+					_items.Count(item => item.TargetId.Equals(targetId, StringComparison.OrdinalIgnoreCase)))
+				: visible.Length == 0 ? LocalizationManager.Get("ModManager.Inventory.Empty")
+				: LocalizationManager.Get(visible.Length == 1 ? "ModManager.Inventory.One" : "ModManager.Inventory.Many",
+					visible.Length, visible.Count(item => item.InstallationId != null));
+			SelectionChanged();
 		}
 
 		private void UpdateSupportBanner()
@@ -486,18 +569,19 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				? LocalizationManager.Get("ModManager.Button.ManageIds")
 				: LocalizationManager.Get(target?.AllowFolderImport == true
 					? "EmpyrionMods.Button.Import" : "ModManager.Button.InstallFile");
-			_installFile.Enabled = !_busy && stopped && canManage;
+			_installFile.Enabled = !_busy && !_scanFailed && stopped && canManage;
 			_remove.Enabled = !_busy && stopped && standardUser && SelectedItem()?.CanRemove == true;
-			_remove.Text = LocalizationManager.Get(target?.PackageLayout is ModPackageLayout.EmpyrionMod or ModPackageLayout.EmpyrionScenario
+			_remove.Text = LocalizationManager.Get(target?.CanImport == true
 				? "EmpyrionMods.Button.RollBack" : "ModManager.Button.Remove");
 			_profileBox.Enabled = !_busy && _profiles.Count > 1;
 			_targetBox.Enabled = !_busy && _targetBox.Items.Count > 1;
+			_search.Enabled = _grid.Enabled = _refresh.Enabled = _close.Enabled = !_busy;
 			_openFolder.Visible = target?.CanManageIds != true;
-			_openFolder.Enabled = target != null && !target.CanManageIds &&
+			_openFolder.Enabled = !_busy && !_scanFailed && target != null && !target.CanManageIds &&
 				(profile?.SupportLevel != ModSystemSupportLevel.DetectedOnly ||
 				Directory.Exists(GetSelectedTargetPath()));
 			IReadOnlyList<CatalogChoice> catalogs = GetCatalogChoices(profile);
-			_browseCatalog.Enabled = catalogs.Count > 0;
+			_browseCatalog.Enabled = !_busy && catalogs.Count > 0;
 			_browseCatalog.Text = catalogs.Count > 1
 				? LocalizationManager.Get("ModManager.Button.BrowseCatalogs")
 				: LocalizationManager.Get("ModManager.Button.BrowseCatalog");
@@ -505,7 +589,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			bool isScenario = target != null && EmpyrionAddOns.IsScenario(target);
 			_installFramework.Visible = isRustFramework || isScenario;
 			_installFramework.Text = LocalizationManager.Get(isScenario ? "EmpyrionMods.Button.ChooseScenario" : "ModManager.Button.InstallFramework");
-			_installFramework.Enabled = !_busy && stopped && standardUser &&
+			_installFramework.Enabled = !_busy && !_scanFailed && stopped && standardUser &&
 				(isScenario ? canManage : isRustFramework && !(_detection?.FrameworkDetected ?? false));
 
 			if (_safetyItems.Length == 0)
@@ -527,8 +611,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			SetSafety(4, standardUser, standardUser
 				? LocalizationManager.Get("ModManager.Safety.StandardPermissions")
 				: LocalizationManager.Get("ModManager.Safety.RestartWithoutAdmin"));
-			SetSafety(5, profile?.RestartRequired != true,
-				profile?.RestartRequired == true
+			SetSafety(5, profile?.RestartRequired == false,
+				profile?.RestartRequired != false
 					? LocalizationManager.Get("ModManager.Safety.RestartRequired")
 					: LocalizationManager.Get("ModManager.Safety.LiveReload"));
 		}
@@ -541,6 +625,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private void SelectionChanged()
 		{
+			if (_renderingInventory) return;
 			ModInventoryItem? item = SelectedItem();
 			_selectionDetails.Text = item == null
 				? LocalizationManager.Get("ModManager.Selection.Empty")
@@ -550,12 +635,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private async void InstallFile_Click(object? sender, EventArgs eventArgs)
 		{
-			if (_profileBox.SelectedItem is not ModSystemProfile profile ||
+			if (_busy || _profileBox.SelectedItem is not ModSystemProfile profile ||
 				_targetBox.SelectedItem is not ModInstallTarget target)
 				return;
 			if (target.CanManageIds)
 			{
-				ManageProviderIds(target);
+				await ManageProviderIdsAsync(target);
 				return;
 			}
 			string packagePath;
@@ -592,15 +677,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 
 			PreparedModPackage? prepared = null;
+			string sourceName = Path.GetFileName(packagePath.TrimEnd(Path.DirectorySeparatorChar));
 			try
 			{
-				_busy = true;
-				UpdateButtonsAndSafety();
-				UseWaitCursor = true;
-				_installFile.Enabled = false;
-				LocalizationManager.BindText(
-					_inventorySummary,
-					"Text.B38F7F9752C285B4B90B");
+				SetBusy(true, "Text.B38F7F9752C285B4B90B");
+				using ServerOperationLease operation = ModPackageManager.BeginOperation(_server);
+				ModPackageManager.EnsureStopped(_server);
 				if (folderImport)
 				{
 					prepared = await Task.Run(() => PreparedModPackage.FromFolder(packagePath, target));
@@ -611,9 +693,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					target);
 				if (review.Outcome == ModSecurityOutcome.Blocked)
 				{
-					LocalizationManager.BindText(
-						_inventorySummary,
-						"Text.4CDDB86B34725DFF943D");
+					_inventorySummary.Text = LocalizationManager.Get("Text.4CDDB86B34725DFF943D");
 					_inventorySummary.ForeColor = SettingsPalette.Warning;
 					LocalizedMessageBox.Show(
 						this,
@@ -634,23 +714,22 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					LocalizationManager.Get(
 						"ModManager.SecurityReview.Confirm",
 						reviewMessage,
-						Path.GetFileName(packagePath),
+						sourceName,
 						LocalizationManager.TranslateKnownText(target.DisplayName) +
 							(scenarioFolder == null ? "" : " / " + scenarioFolder)),
 					LocalizationManager.Get("MessageText.601D435F77F129E56270"),
 					MessageBoxButtons.OKCancel,
 					!replacingScenario && review.Outcome == ModSecurityOutcome.Passed
 						? MessageBoxIcon.Information
-						: MessageBoxIcon.Warning);
+						: MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 				if (confirmation != DialogResult.OK)
 				{
-					LocalizationManager.BindText(
-						_inventorySummary,
-						"Text.90C149B626C5531C627C");
+					_inventorySummary.Text = LocalizationManager.Get("Text.90C149B626C5531C627C");
 					return;
 				}
 
 				ModImportSecurityContext securityContext = ModImportSecurityContext.CaptureCurrent();
+				_inventorySummary.Text = LocalizationManager.Get("ModManager.Progress.Installing");
 				ModImportResult result = await Task.Run(() => ModPackageManager.Import(
 					_server,
 					profile,
@@ -667,8 +746,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 						result.InstalledFileCount,
 						_server.ServerName
 					]);
-				_busy = false;
-				RefreshInventory();
+				await RefreshInventory(duringOperation: true);
 				LocalizedMessageBox.Show(
 					this,
 					LocalizationManager.Get(
@@ -681,10 +759,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			catch (Exception exception)
 			{
-				LocalizationManager.BindText(
-					_inventorySummary,
-					"Text.897AEC201F7172829EF3");
-				_inventorySummary.ForeColor = SettingsPalette.Warning;
+				InvalidateInventory();
 				PlainEnglishErrorDialog.ShowError(
 					this,
 					LocalizationManager.Get("ModManager.ErrorAction.Install"),
@@ -694,14 +769,13 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			{
 				try { prepared?.Dispose(); }
 				catch (Exception exception) { ApplicationLogService.WriteSuppressedException(exception); }
-				_busy = false;
-				UseWaitCursor = false;
-				UpdateButtonsAndSafety();
+				SetBusy(false);
 			}
 		}
 
-		private void ChooseEmpyrionScenario()
+		private async Task ChooseEmpyrionScenarioAsync()
 		{
+			if (_busy) return;
 			try
 			{
 				using EmpyrionScenarioPicker picker = new(_server);
@@ -710,107 +784,105 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					LocalizationManager.Get("EmpyrionMods.Selection.Confirm", picker.Scenario, picker.SaveName),
 					LocalizationManager.Get("EmpyrionMods.Button.ChooseScenario"), MessageBoxButtons.OKCancel,
 					MessageBoxIcon.Warning) != DialogResult.OK) return;
+				SetBusy(true);
 				EmpyrionAddOns.SelectScenario(_server, picker.Scenario, picker.SaveName,
 					() => FileHandler.SaveServers(), picker.OriginalSelection);
-				RefreshInventory();
+				await RefreshInventory(duringOperation: true);
 				LocalizedMessageBox.Show(this, LocalizationManager.Get("EmpyrionMods.Selection.Saved"),
 					LocalizationManager.Get("EmpyrionMods.Button.ChooseScenario"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			catch (Exception exception)
 			{
+				InvalidateInventory();
 				PlainEnglishErrorDialog.ShowError(this, LocalizationManager.Get("EmpyrionMods.Button.ChooseScenario"), exception.Message);
 			}
+			finally { SetBusy(false); }
 		}
 
-		private void RemoveSelected_Click(object? sender, EventArgs eventArgs)
+		private async void RemoveSelected_Click(object? sender, EventArgs eventArgs)
 		{
 			ModInventoryItem? item = SelectedItem();
-			if (item?.InstallationId == null || !item.CanRemove)
+			if (_busy || item?.InstallationId == null || !item.CanRemove)
 				return;
+			ModInstallTarget? target = (_profileBox.SelectedItem as ModSystemProfile)?.Targets
+				.FirstOrDefault(candidate => candidate.Id.Equals(item.TargetId, StringComparison.OrdinalIgnoreCase));
+			if (target == null) return;
 			if (LocalizedMessageBox.Show(
 				this,
-				LocalizationManager.Get(EmpyrionAddOns.IsEmpyrion(_server) ? "EmpyrionMods.Remove.Confirm" : "ModManager.Remove.Confirm", item.Name),
+				LocalizationManager.Get(target.CanImport ? "EmpyrionMods.Remove.Confirm" : "ModManager.Remove.Confirm", item.Name),
 				LocalizationManager.Get("MessageText.1836C66D2E22132440F9"),
 				MessageBoxButtons.OKCancel,
-				MessageBoxIcon.Warning) != DialogResult.OK)
+				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.OK)
 			{
 				return;
 			}
 
 			try
 			{
-				if (_targetBox.SelectedItem is ModInstallTarget target && target.CanManageIds)
+				SetBusy(true, "ModManager.Progress.Removing");
+				using ServerOperationLease operation = ModPackageManager.BeginOperation(_server);
+				if (target.CanManageIds)
 				{
 					IReadOnlyList<string> current = ModPackageManager.GetProviderIds(_server, target);
-					ProviderIdConfigurationChange change = ModPackageManager.ConfigureProviderIds(
+					ModPackageManager.SaveProviderIds(
 						_server,
 						target,
-						current.Where(id => !id.Equals(item.Name, StringComparison.Ordinal)));
-					if (!FileHandler.SaveServers())
-					{
-						change.Rollback();
-						throw new IOException(LocalizationManager.Get(
-							"ModManager.Provider.SaveUpdatedFailed"));
-					}
+						current.Where(id => !id.Equals(item.Name, StringComparison.Ordinal)), () => FileHandler.SaveServers());
 					ApplicationLogService.WriteLocalized(
 						"ModManager.Activity.ProviderIdRemoved",
 						Color.LimeGreen,
 						arguments: [item.Name, _server.ServerName]);
-					RefreshInventory();
+					await RefreshInventory(duringOperation: true);
 					return;
 				}
 
-				string removed = ModPackageManager.Remove(_server, item.InstallationId);
+				string removed = await Task.Run(() => ModPackageManager.Remove(_server, item.InstallationId));
 				ApplicationLogService.WriteLocalized(
 					"ModManager.Activity.Removed",
 					Color.LimeGreen,
 					arguments: [removed, _server.ServerName]);
-				RefreshInventory();
+				await RefreshInventory(duringOperation: true);
 			}
 			catch (Exception exception)
 			{
+				InvalidateInventory();
 				PlainEnglishErrorDialog.ShowError(
 					this,
 					LocalizationManager.Get("ModManager.ErrorAction.Remove"),
 					exception.Message);
 			}
+			finally { SetBusy(false); }
 		}
 
-		private void ManageProviderIds(ModInstallTarget target)
+		private async Task ManageProviderIdsAsync(ModInstallTarget target)
 		{
-			IReadOnlyList<string> current = ModPackageManager.GetProviderIds(_server, target);
-			using ProviderModIdEditor dialog = new(
-				string.IsNullOrWhiteSpace(target.ProviderName)
-					? LocalizationManager.Get("ModManager.Known.GameProvider")
-					: target.ProviderName,
-				target.MaximumIds,
-				current);
-			if (dialog.ShowDialog(this) != DialogResult.OK)
-				return;
-			if (LocalizedMessageBox.Show(
-				this,
-				LocalizationManager.Get(
-					"ModManager.Provider.Warning",
-					target.ProviderName),
-				LocalizationManager.Get("MessageText.468EADDB3CA79D6CD85C"),
-				MessageBoxButtons.OKCancel,
-				MessageBoxIcon.Warning) != DialogResult.OK)
-			{
-				return;
-			}
-
-			ProviderIdConfigurationChange? change = null;
-			bool saved = false;
+			if (_busy) return;
 			try
 			{
-				change = ModPackageManager.ConfigureProviderIds(_server, target, dialog.ModIds);
-				if (!FileHandler.SaveServers())
+				SetBusy(true);
+				using ServerOperationLease operation = ModPackageManager.BeginOperation(_server);
+				IReadOnlyList<string> current = ModPackageManager.GetProviderIds(_server, target);
+				using ProviderModIdEditor dialog = new(
+					string.IsNullOrWhiteSpace(target.ProviderName)
+						? LocalizationManager.Get("ModManager.Known.GameProvider")
+						: target.ProviderName,
+					target.MaximumIds,
+					current);
+				if (dialog.ShowDialog(this) != DialogResult.OK)
+					return;
+				if (LocalizedMessageBox.Show(
+					this,
+					LocalizationManager.Get(
+						"ModManager.Provider.Warning",
+						target.ProviderName),
+					LocalizationManager.Get("MessageText.468EADDB3CA79D6CD85C"),
+					MessageBoxButtons.OKCancel,
+					MessageBoxIcon.Warning) != DialogResult.OK)
 				{
-					change.Rollback();
-					throw new IOException(LocalizationManager.Get(
-						"ModManager.Provider.SaveFailed"));
+					return;
 				}
-				saved = true;
+
+				ModPackageManager.SaveProviderIds(_server, target, dialog.ModIds, () => FileHandler.SaveServers());
 				ApplicationLogService.WriteLocalized(
 					"ModManager.Activity.ProviderIdsSaved",
 					Color.LimeGreen,
@@ -820,7 +892,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 						target.ProviderName,
 						_server.ServerName
 					]);
-				RefreshInventory();
+				await RefreshInventory(duringOperation: true);
 				LocalizedMessageBox.Show(
 					this,
 					LocalizationManager.Get("MessageText.2A2FCD5BFFF42E6401AE"),
@@ -830,17 +902,18 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			catch (Exception exception)
 			{
-				if (!saved)
-					change?.Rollback();
+				InvalidateInventory();
 				PlainEnglishErrorDialog.ShowError(
 					this,
 					LocalizationManager.Get("ModManager.ErrorAction.SaveIds"),
 					exception.Message);
 			}
+			finally { SetBusy(false); }
 		}
 
 		private async Task InstallFrameworkAsync()
 		{
+			if (_busy) return;
 			ModSystemProfile? profile = _profileBox.SelectedItem as ModSystemProfile;
 			if (profile?.Id.Equals("rust-umod", StringComparison.OrdinalIgnoreCase) != true)
 				return;
@@ -850,18 +923,22 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			string previousFramework = _server.ServerFramework;
 			string previousVersion = _server.ServerFrameworkVersion;
+			bool frameworkApplied = false;
 			try
 			{
-				_installFramework.Enabled = false;
-				UseWaitCursor = true;
+				SetBusy(true, "ModManager.Progress.Framework");
+				using ServerOperationLease operation = ModPackageManager.BeginOperation(_server);
+				ModPackageManager.EnsureStopped(_server);
 				_server.ServerFramework = OxideRuntimeManager.FrameworkName;
-				string version = await OxideRuntimeManager.InstallOrUpdateAsync(
+				string version = await Task.Run(() => OxideRuntimeManager.InstallOrUpdateAsync(
 					_server,
 					definition,
-					(message, color) => ApplicationLogService.Write(message, color));
+					(message, color) => ApplicationLogService.Write(message, color)));
 				_server.ServerFrameworkVersion = version;
-				FileHandler.SaveServers();
-				RefreshInventory();
+				frameworkApplied = true;
+				if (!FileHandler.SaveServers())
+					throw new IOException(LocalizationManager.Get("ModManager.Framework.SaveFailed"));
+				await RefreshInventory(duringOperation: true);
 				LocalizedMessageBox.Show(
 					this,
 					LocalizationManager.Get("ModManager.Framework.Installed", version),
@@ -871,9 +948,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			catch (Exception exception)
 			{
-				_server.ServerFramework = previousFramework;
-				_server.ServerFrameworkVersion = previousVersion;
-				FileHandler.SaveServers();
+				if (!frameworkApplied)
+				{
+					_server.ServerFramework = previousFramework;
+					_server.ServerFrameworkVersion = previousVersion;
+				}
+				InvalidateInventory();
 				PlainEnglishErrorDialog.ShowError(
 					this,
 					LocalizationManager.Get("ModManager.ErrorAction.InstallFramework"),
@@ -881,9 +961,17 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			finally
 			{
-				UseWaitCursor = false;
-				UpdateButtonsAndSafety();
+				SetBusy(false);
 			}
+		}
+
+		private void InvalidateInventory()
+		{
+			_scanFailed = true;
+			_items = [];
+			RenderInventory();
+			_inventorySummary.Text = LocalizationManager.Get("ModManager.Progress.Failed");
+			_inventorySummary.ForeColor = SettingsPalette.Warning;
 		}
 
 		private void BrowseCatalog()

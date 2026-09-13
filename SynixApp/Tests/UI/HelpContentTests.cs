@@ -104,7 +104,10 @@ public sealed class HelpContentTests
 		Dictionary<string, HelpItem> articles = HelpGUI.CreateHelpArticles();
 		string guide = articles["Server Setup Pages"].Answer;
 		Assert.Contains("Server details → Required settings → Review → Save server", guide);
-		Assert.Contains("Review is optional", guide);
+		Assert.Contains("Synix opens step 3", guide);
+		Assert.Contains("Changing a setting locks Save again", guide);
+		Assert.Contains("opening Review never saves automatically", guide);
+		Assert.DoesNotContain("Review is optional", guide);
 		Assert.Contains("not download or installation progress", guide);
 		Assert.Contains("Switching modes does not erase saved values", guide);
 		Assert.Contains("does not mean the game has finished installing", articles["First-Time Setup Guide"].Answer);

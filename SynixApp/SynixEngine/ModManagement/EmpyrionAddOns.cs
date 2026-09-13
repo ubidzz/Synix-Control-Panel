@@ -112,6 +112,7 @@ internal static class EmpyrionAddOns
 		Func<bool> persistServer, EmpyrionScenarioState? expected = null)
 	{
 		if (!IsEmpyrion(server)) throw Error("Profile");
+		using ServerOperationLease operation = ModPackageManager.BeginOperation(server);
 		ModPackageManager.EnsureStopped(server);
 		ValidateFolderName(scenario, scenario: true);
 		ValidateFolderName(saveName);

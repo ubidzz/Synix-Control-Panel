@@ -542,6 +542,10 @@ public sealed class UserGuidanceTests
 					setup.Controls.Find("btnSave", true).Single());
 
 				Assert.False(save.Enabled);
+				setup.StartPosition = FormStartPosition.Manual;
+				setup.Location = new System.Drawing.Point(-32000, -32000);
+				setup.ShowInTaskbar = false;
+				setup.Show();
 				password.Text = "5555555";
 				DateTime timeout = DateTime.UtcNow.AddSeconds(2);
 				while (!save.Enabled && DateTime.UtcNow < timeout)
@@ -551,6 +555,7 @@ public sealed class UserGuidanceTests
 				}
 
 				Assert.True(save.Enabled);
+				Assert.True(setup.Controls.Find("pnlPageReview", true).Single().Visible);
 			}
 			catch (Exception exception)
 			{

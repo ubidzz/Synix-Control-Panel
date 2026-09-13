@@ -472,7 +472,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					THE FOUR CHECKPOINTS
 					Server details → Required settings → Review → Save server
 
-					These track configuration readiness, not download or installation progress. Review is optional; required valid settings determine whether saving is available. Read the exact footer message when something needs attention.
+					These track configuration readiness, not download or installation progress. Once the required settings pass validation, Synix opens step 3 so you can review your choices, then unlocks Save Server. Changing a setting locks Save again until the updated choices are shown in Review. You must choose Save yourself; opening Review never saves automatically. Read the exact footer message when something needs attention.
 
 					When editing a server, stop it first if the change affects files or options read at launch. Save Changes updates its profile; it does not promise that a running game has applied those values. Restart through Synix when the game requires it.
 					"""),
@@ -1033,9 +1033,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					4. Choose Install From File or Import Package for a supported file, ZIP, or complete mod folder. The available choices depend on the game's add-on system.
 					5. Review the destination, scan result, warnings, and confirmation.
 					6. Let staging, backup, and installation finish.
-					7. Refresh the list, restart if required, and check the game log and a client connection.
+					7. Synix refreshes the list when installation finishes. Restart if required, then check the game log and a client connection.
 
-					Simplified view hides some technical detail without bypassing the checks.
+					The list shows the selected install area. Use Search to find an add-on by name, type, source, or path. Refresh scans again and keeps the selected item when it is still present. Simplified view hides some technical detail without bypassing the checks.
+
+					Keep the window open while a scan or change is in progress. Synix disables conflicting actions until it finishes. If an action fails, read its error and refresh the list before trying again.
 
 					WORKFLOW TYPES
 					Supported workflows include Minecraft JAR packages, Rust Oxide/uMod plugins, local 7 Days to Die packages, Empyrion scenarios and server mods, ARK: Survival Evolved Workshop IDs, and ARK: Survival Ascended provider IDs. Some systems are detection-only or require their framework first.
@@ -1050,9 +1052,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					CATALOGS, REMOVAL, AND RECOVERY
 					Browse Catalog opens the provider website. It does not automatically resolve dependencies or install a complete modpack.
 
-					Stop before Remove Selected and review its target and rollback information. Synix records changes it performs, not every manual edit. Keep independent backups: removing a mod can make a world unloadable or remove mod-owned content.
+					Stop the server before Roll Back Import. This reverses the entire selected import, which may contain several add-ons. It restores saved originals and removes files introduced by that import. Roll back newer imports first when they share files; Synix refuses to overwrite files changed outside its recorded import or use saved originals that fail their recorded integrity check. Older import records may not include hashes for saved originals.
 
-					An empty table means no supported add-ons were found in the active locations. Check the profile, folder, and framework before assuming all files on disk were searched.
+					For a provider-managed ID, Remove Selected removes that ID from Synix's supported configuration; it is not a local package rollback. Synix records changes it performs, not every manual edit. Keep independent full-server backups: removing a mod can make a world unloadable or remove mod-owned content.
+
+					An empty table means no supported add-ons match the selected install area and search. Clear Search and check the profile, folder, and framework before assuming all files on disk were searched.
 					"""),
 
 				["Empyrion: Scenarios and Server Mods"] = CreateArticle(

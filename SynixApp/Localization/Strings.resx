@@ -298,6 +298,15 @@
   <data name="ServerSetup.Status.Ready" xml:space="preserve">
     <value>●  Ready to save</value>
   </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Review settings</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Checking your changes…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Required settings are valid. Open step 3 to review your choices before saving.</value>
+  </data>
   <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
     <value>●  Action required</value>
   </data>
@@ -1555,6 +1564,9 @@ Click below. Synix sends the command, reads the new token, verifies it, and save
   </data>
   <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
     <value>NEXT</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>REVIEWING</value>
   </data>
   <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
     <value>READY</value>
@@ -10764,7 +10776,7 @@ Any other custom configuration values will be removed.</value>
     <value>A previous add-on file needed for restoration is missing. No files were changed. Restore the missing recovery file or use a verified server backup before removing this add-on.</value>
   </data>
   <data name="ModManager.Error.RecoveryRetained" xml:space="preserve">
-    <value>The add-on import failed and some changes could not be rolled back. Recovery files were kept at {0}. Keep the server stopped and restore those files or a verified server backup before starting it.</value>
+    <value>The add-on operation failed and some changes could not be rolled back. Recovery files were kept at {0}. Keep the server stopped and restore those files or a verified server backup before starting it.</value>
   </data>
   <data name="LaunchCommand.Error.UnsafeBatchValue" xml:space="preserve">
     <value>The launch field {0} cannot be passed safely through this Windows batch launcher. Embedded double quotes, line breaks, or variable expressions are not supported here. The value was not changed.</value>
@@ -10928,4 +10940,16 @@ Any other custom configuration values will be removed.</value>
   <data name="EmpyrionMods.Import.ExistingScenario" xml:space="preserve">
     <value>This scenario folder already exists. Matching files will be replaced, which can affect worlds using this scenario. Keep a full server backup and use a different folder name for a different scenario. Saved-world files themselves will not be changed.</value>
   </data>
+  <data name="ServerOperation.Name.AddOns" xml:space="preserve"><value>add-on management</value></data>
+  <data name="ModManager.Error.NewerInstallation" xml:space="preserve"><value>A newer import now owns files in this package. Roll back the newer import first.</value></data>
+  <data name="ModManager.Error.PreviousFileChanged" xml:space="preserve"><value>A saved original file has changed. Rollback was stopped before changing server files. Restore a trusted full-server backup if necessary.</value></data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve"><value>Search add-ons in this install area…</value></data>
+  <data name="ModManager.Inventory.Scanning" xml:space="preserve"><value>Scanning add-ons and checking tracked files…</value></data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve"><value>{0} of {1} add-ons match your search</value></data>
+  <data name="ModManager.Progress.Installing" xml:space="preserve"><value>Installing the reviewed package and saving rollback copies…</value></data>
+  <data name="ModManager.Progress.Removing" xml:space="preserve"><value>Checking the complete package and restoring previous files…</value></data>
+  <data name="ModManager.Progress.Framework" xml:space="preserve"><value>Installing the server framework. Please keep this window open…</value></data>
+  <data name="ModManager.Framework.SaveFailed" xml:space="preserve"><value>The framework files were installed, but Synix could not save the server settings. Check folder permissions and save the server configuration again before starting it. The installed files were not undone.</value></data>
+  <data name="ModManager.Progress.Failed" xml:space="preserve"><value>The operation could not finish. Review the error, then refresh before trying again.</value></data>
+  <data name="ModManager.Field.Search" xml:space="preserve"><value>Search</value></data>
 </root>

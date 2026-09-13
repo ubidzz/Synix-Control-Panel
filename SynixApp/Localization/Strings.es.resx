@@ -298,6 +298,15 @@
   <data name="ServerSetup.Status.Ready" xml:space="preserve">
     <value>●  Listo para guardar</value>
   </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Revisar opciones</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Comprobando los cambios…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Los ajustes obligatorios son válidos. Abra el paso 3 para revisar sus opciones antes de guardar.</value>
+  </data>
   <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
     <value>●  Acción requerida</value>
   </data>
@@ -1453,6 +1462,9 @@ Pulsa abajo. Synix envía el comando, lee el nuevo token, lo verifica y lo guard
   </data>
   <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
     <value>SIGUIENTE</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>REVISANDO</value>
   </data>
   <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
     <value>LISTO</value>
@@ -10726,7 +10738,7 @@ Se eliminarán los demás valores de configuración personalizados.</value>
     <value>Falta un archivo anterior del complemento necesario para restaurarlo. No se ha cambiado ningún archivo. Restaura el archivo de recuperación que falta o utiliza una copia de seguridad verificada del servidor antes de eliminar este complemento.</value>
   </data>
   <data name="ModManager.Error.RecoveryRetained" xml:space="preserve">
-    <value>La importación del complemento ha fallado y no se han podido revertir algunos cambios. Los archivos de recuperación se han conservado en {0}. Mantén el servidor detenido y restaura esos archivos o una copia de seguridad verificada antes de iniciarlo.</value>
+    <value>La operación del complemento ha fallado y no se han podido revertir algunos cambios. Los archivos de recuperación se han conservado en {0}. Mantén el servidor detenido y restaura esos archivos o una copia de seguridad verificada antes de iniciarlo.</value>
   </data>
   <data name="LaunchCommand.Error.UnsafeBatchValue" xml:space="preserve">
     <value>El campo de inicio {0} no puede pasarse de forma segura a este iniciador por lotes de Windows. Aquí no se admiten comillas dobles internas, saltos de línea ni expresiones de variables. El valor no se ha cambiado.</value>
@@ -10890,4 +10902,16 @@ Se eliminarán los demás valores de configuración personalizados.</value>
   <data name="EmpyrionMods.Import.ExistingScenario" xml:space="preserve">
     <value>Esta carpeta de escenario ya existe. Los archivos coincidentes se reemplazarán, lo que puede afectar a mundos que usen este escenario. Conserve una copia completa del servidor y use otro nombre de carpeta para un escenario diferente. Los archivos de mundos guardados no se modificarán.</value>
   </data>
+  <data name="ServerOperation.Name.AddOns" xml:space="preserve"><value>gestión de complementos</value></data>
+  <data name="ModManager.Error.NewerInstallation" xml:space="preserve"><value>Una importación más reciente utiliza archivos de este paquete. Revierta primero la importación más reciente.</value></data>
+  <data name="ModManager.Error.PreviousFileChanged" xml:space="preserve"><value>Un archivo original guardado ha cambiado. La reversión se detuvo antes de cambiar archivos del servidor. Si es necesario, restaure una copia de seguridad completa y fiable del servidor.</value></data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve"><value>Buscar complementos en esta área de instalación…</value></data>
+  <data name="ModManager.Inventory.Scanning" xml:space="preserve"><value>Buscando complementos y comprobando archivos registrados…</value></data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve"><value>{0} de {1} complementos coinciden con la búsqueda</value></data>
+  <data name="ModManager.Progress.Installing" xml:space="preserve"><value>Instalando el paquete revisado y guardando copias de recuperación…</value></data>
+  <data name="ModManager.Progress.Removing" xml:space="preserve"><value>Comprobando el paquete completo y restaurando archivos anteriores…</value></data>
+  <data name="ModManager.Progress.Framework" xml:space="preserve"><value>Instalando el framework del servidor. Mantenga abierta esta ventana…</value></data>
+  <data name="ModManager.Framework.SaveFailed" xml:space="preserve"><value>Los archivos del framework se instalaron, pero Synix no pudo guardar los ajustes del servidor. Compruebe los permisos de la carpeta y vuelva a guardar la configuración antes de iniciarlo. Los archivos instalados no se revirtieron.</value></data>
+  <data name="ModManager.Progress.Failed" xml:space="preserve"><value>La operación no pudo finalizar. Revise el error y actualice la lista antes de volver a intentarlo.</value></data>
+  <data name="ModManager.Field.Search" xml:space="preserve"><value>Buscar</value></data>
 </root>

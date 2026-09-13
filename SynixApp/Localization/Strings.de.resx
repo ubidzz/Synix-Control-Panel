@@ -298,6 +298,15 @@
   <data name="ServerSetup.Status.Ready" xml:space="preserve">
     <value>●  Speicherbereit</value>
   </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Auswahl prüfen</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Änderungen werden geprüft…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Die erforderlichen Einstellungen sind gültig. Öffnen Sie Schritt 3, um Ihre Auswahl vor dem Speichern zu prüfen.</value>
+  </data>
   <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
     <value>●  Aktion erforderlich</value>
   </data>
@@ -1453,6 +1462,9 @@ Klicken Sie unten. Synix sendet den Befehl, liest das neue Token, prüft es und 
   </data>
   <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
     <value>WEITER</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>IN PRÜFUNG</value>
   </data>
   <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
     <value>BEREIT</value>
@@ -10726,7 +10738,7 @@ Alle anderen benutzerdefinierten Konfigurationswerte werden entfernt.</value>
     <value>Eine zur Wiederherstellung benötigte frühere Add-on-Datei fehlt. Es wurden keine Dateien geändert. Stelle die fehlende Wiederherstellungsdatei wieder her oder verwende eine geprüfte Serversicherung, bevor du dieses Add-on entfernst.</value>
   </data>
   <data name="ModManager.Error.RecoveryRetained" xml:space="preserve">
-    <value>Der Add-on-Import ist fehlgeschlagen und einige Änderungen konnten nicht rückgängig gemacht werden. Wiederherstellungsdateien wurden unter {0} aufbewahrt. Lass den Server gestoppt und stelle diese Dateien oder eine geprüfte Serversicherung wieder her, bevor du ihn startest.</value>
+    <value>Der Add-on-Vorgang ist fehlgeschlagen und einige Änderungen konnten nicht rückgängig gemacht werden. Wiederherstellungsdateien wurden unter {0} aufbewahrt. Lass den Server gestoppt und stelle diese Dateien oder eine geprüfte Serversicherung wieder her, bevor du ihn startest.</value>
   </data>
   <data name="LaunchCommand.Error.UnsafeBatchValue" xml:space="preserve">
     <value>Das Startfeld {0} kann diesem Windows-Batch-Starter nicht sicher übergeben werden. Eingebettete doppelte Anführungszeichen, Zeilenumbrüche oder Variablenausdrücke werden hier nicht unterstützt. Der Wert wurde nicht geändert.</value>
@@ -10890,4 +10902,16 @@ Alle anderen benutzerdefinierten Konfigurationswerte werden entfernt.</value>
   <data name="EmpyrionMods.Import.ExistingScenario" xml:space="preserve">
     <value>Dieser Szenarioordner existiert bereits. Gleichnamige Dateien werden ersetzt; dies kann Welten mit diesem Szenario beeinflussen. Erstellen Sie eine vollständige Serversicherung und verwenden Sie für ein anderes Szenario einen anderen Ordnernamen. Die gespeicherten Weltdateien selbst werden nicht geändert.</value>
   </data>
+  <data name="ServerOperation.Name.AddOns" xml:space="preserve"><value>Add-on-Verwaltung</value></data>
+  <data name="ModManager.Error.NewerInstallation" xml:space="preserve"><value>Ein neuerer Import verwendet Dateien dieses Pakets. Machen Sie zuerst den neueren Import rückgängig.</value></data>
+  <data name="ModManager.Error.PreviousFileChanged" xml:space="preserve"><value>Eine gesicherte Originaldatei wurde geändert. Der Vorgang wurde vor Änderungen an Serverdateien gestoppt. Stellen Sie bei Bedarf eine vertrauenswürdige vollständige Serversicherung wieder her.</value></data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve"><value>Add-ons in diesem Installationsbereich suchen…</value></data>
+  <data name="ModManager.Inventory.Scanning" xml:space="preserve"><value>Add-ons werden gesucht und erfasste Dateien geprüft…</value></data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve"><value>{0} von {1} Add-ons entsprechen Ihrer Suche</value></data>
+  <data name="ModManager.Progress.Installing" xml:space="preserve"><value>Das geprüfte Paket wird installiert und Wiederherstellungskopien werden gespeichert…</value></data>
+  <data name="ModManager.Progress.Removing" xml:space="preserve"><value>Das gesamte Paket wird geprüft und vorherige Dateien werden wiederhergestellt…</value></data>
+  <data name="ModManager.Progress.Framework" xml:space="preserve"><value>Das Server-Framework wird installiert. Bitte lassen Sie dieses Fenster geöffnet…</value></data>
+  <data name="ModManager.Framework.SaveFailed" xml:space="preserve"><value>Die Framework-Dateien wurden installiert, aber Synix konnte die Servereinstellungen nicht speichern. Prüfen Sie die Ordnerberechtigungen und speichern Sie die Serverkonfiguration vor dem Start erneut. Die installierten Dateien wurden nicht zurückgesetzt.</value></data>
+  <data name="ModManager.Progress.Failed" xml:space="preserve"><value>Der Vorgang konnte nicht abgeschlossen werden. Prüfen Sie den Fehler und aktualisieren Sie die Liste vor einem erneuten Versuch.</value></data>
+  <data name="ModManager.Field.Search" xml:space="preserve"><value>Suche</value></data>
 </root>

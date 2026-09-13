@@ -36,6 +36,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		private bool _passwordUnlockFailed;
 		private string _validationMessage = string.Empty;
 		private bool _serverDetailsReady;
+		private bool _requirementsReady;
 		private bool _setupReviewed;
 		private bool _showingReview;
 		private bool _advancedMode;
@@ -242,7 +243,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			debounceTimer.Tick += (_, _) =>
 			{
 				debounceTimer.Stop();
+				if (!_isEditMode)
+					pnlPageWorld.EnsureRandomSeedForNewServer();
 				SyncGatekeeper();
+				if (!_setupReviewed)
+					ShowSetupReview();
 			};
 
 			pnlPageGeneral.SettingsChanged += PageSettingsChanged;
@@ -261,9 +266,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			if (isPrivacyLoading || debounceTimer == null)
 				return;
 			_setupReviewed = false;
+			_requirementsReady = false;
+			btnSave.Enabled = false;
 			debounceTimer.Stop();
 			debounceTimer.Start();
-			UpdateSetupProgress();
+			_validationMessage = LocalizationManager.Get("ServerSetup.Validation.Checking");
+			UpdateModernStatus();
 		}
 
 		private void MinecraftEditionChanged(object? sender, EventArgs eventArgs)
@@ -387,22 +395,26 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			LocalizationManager.BindText(lblPageDescription, description);
 			_showingReview = ReferenceEquals(page, pnlPageReview);
 			page.BringToFront();
+			UpdateSetupProgress();
 		}
 
 		private void UpdateSetupProgress()
 		{
 			setupProgress.UpdateState(
 				_serverDetailsReady,
-				btnSave.Enabled && debounceTimer?.Enabled != true,
+				_requirementsReady && debounceTimer?.Enabled != true,
 				_setupReviewed,
-				_isEditMode);
+				_isEditMode,
+				_showingReview);
 		}
 
 		private void NavigateSetupStep(int step)
 		{
+			if (step is < 0 or > 3)
+				return;
 			if (!_isEditMode)
 				pnlPageWorld.EnsureRandomSeedForNewServer();
-			// Recheck pending edits before navigating; the strip shares the Save gate.
+			// Recheck pending edits without treating valid settings as already reviewed.
 			debounceTimer?.Stop();
 			SyncGatekeeper();
 			if (step == 0)
@@ -410,20 +422,31 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				btnNavGeneral.PerformClick();
 				pnlPageGeneral.SelectNextControl(null, true, true, true, false);
 			}
-			else if (!btnSave.Enabled)
+			else if (!_requirementsReady)
 			{
 				FocusRequiredSettings();
 			}
 			else
 			{
-				RefreshSetupReview();
-				ShowSettingsPage(pnlPageReview, null,
-					"ServerSetup.Review.Title", "ServerSetup.Review.Description");
-				_setupReviewed = true;
-				UpdateSetupProgress();
-				if (step == 3)
+				ShowSetupReview();
+				if (step == 3 && btnSave.Enabled)
 					btnSave.Select();
 			}
+		}
+
+		private void ShowSetupReview()
+		{
+			// Never mark an unseen or still-changing summary as reviewed.
+			if (!_requirementsReady || debounceTimer?.Enabled == true || !Visible || Disposing)
+				return;
+
+			RefreshSetupReview();
+			ShowSettingsPage(pnlPageReview, null,
+				"ServerSetup.Review.Title", "ServerSetup.Review.Description");
+			pnlPageReview.SelectNextControl(null, true, true, true, false);
+			_setupReviewed = true;
+			btnSave.Enabled = true;
+			UpdateModernStatus();
 		}
 
 		private void FocusRequiredSettings()
@@ -486,17 +509,20 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		private void UpdateModernStatus()
 		{
 			bool ready = btnSave.Enabled;
-			string validationMessage = string.IsNullOrWhiteSpace(_validationMessage)
-				? LocalizationManager.Get("ServerSetup.Validation.Waiting")
-				: _validationMessage.Trim();
+			bool needsReview = _requirementsReady && !_setupReviewed && debounceTimer?.Enabled != true;
+			string validationMessage = needsReview
+				? LocalizationManager.Get("ServerSetup.Validation.ReviewRequired")
+				: string.IsNullOrWhiteSpace(_validationMessage)
+					? LocalizationManager.Get("ServerSetup.Validation.Waiting")
+					: _validationMessage.Trim();
 
 			lblSidebarStatus.Text = LocalizationManager.Get(ready
 				? "ServerSetup.Status.Ready"
-				: "ServerSetup.Status.ActionRequired");
+				: needsReview ? "ServerSetup.Status.ReviewRequired" : "ServerSetup.Status.ActionRequired");
 			lblSidebarStatus.ForeColor = ready
 				? SettingsPalette.Accent
 				: SettingsPalette.Warning;
-			lblSidebarStatusDetail.Text = LocalizationManager.Get(ready
+			lblSidebarStatusDetail.Text = LocalizationManager.Get(ready || needsReview
 				? "ServerSetup.Status.AllChecksPassed"
 				: "ServerSetup.Status.SeeValidationMessage");
 			lblFooterStatus.Text = validationMessage;
@@ -791,7 +817,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 							: !hasName
 								? "ServerSetup.Validation.ServerNameRequired"
 								: "ServerSetup.Validation.GameRequired");
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (isMinecraft &&
 					!isMinecraftBedrock &&
@@ -799,7 +825,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.MinecraftLoading");
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (isMinecraft &&
 					!isMinecraftBedrock &&
@@ -808,46 +834,46 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.MinecraftDetail",
 						pnlPageGeneral.MinecraftMetadataError);
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (isMinecraft &&
 					string.IsNullOrWhiteSpace(pnlPageGeneral.GameVersion))
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.MinecraftVersionRequired");
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (pnlPageSecurity.RequiredAdminPasswordMissing)
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.AdminPasswordRequired");
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (pnlPageSecurity.RequiredAuthenticationTokenMissing)
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.AuthenticationTokenRequired",
 						pnlPageSecurity.AuthenticationTokenLabel);
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (!string.IsNullOrWhiteSpace(serverInputError))
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.RequiredDetail",
 						LocalizationManager.TranslateRuntimeText(serverInputError));
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (!worldSettingsValid)
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.RequiredDetail", worldSettingsError);
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (minecraftLoaderNeedsAttention)
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.MinecraftLoaderRequired");
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (missingRequirement != null)
 				{
@@ -855,7 +881,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 						"ServerSetup.Validation.RequirementDetail",
 						LocalizationManager.TranslateRuntimeText(
 							missingRequirement.Message));
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (isNameTaken)
 				{
@@ -863,38 +889,38 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 						"ServerSetup.Validation.NameConflict",
 						currentName,
 						selectedGame);
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (scheduleNeedsAttention)
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.ScheduleDayRequired");
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (portValidation.HasConflict)
 				{
 					_validationMessage = portValidation.ErrorMessage;
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (string.IsNullOrWhiteSpace(pnlPageInstall.InstallPath))
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.InstallFolderRequired");
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (!extraArgumentsValid)
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.LaunchDetail",
 						LocalizationManager.TranslateRuntimeText(extraArgumentsError));
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else if (!discordSettingsValid)
 				{
 					_validationMessage = LocalizationManager.Get(
 						"ServerSetup.Validation.DiscordDetail",
 						LocalizationManager.TranslateRuntimeText(discordSettingsError));
-					btnSave.Enabled = false;
+					_requirementsReady = false;
 				}
 				else
 				{
@@ -910,9 +936,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 								currentName)
 							: LocalizationManager.Get(
 								"ServerSetup.Validation.Ready");
-					btnSave.Enabled = true;
+					_requirementsReady = true;
 				}
 
+				if (!_requirementsReady)
+					_setupReviewed = false;
+				btnSave.Enabled = _requirementsReady && _setupReviewed && debounceTimer?.Enabled != true;
 				UpdateModernStatus();
 			}
 			catch (Exception exception)
@@ -923,6 +952,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					"ServerSetup.Validation.Error",
 					exception.Message);
 				_serverDetailsReady = false;
+				_requirementsReady = false;
+				_setupReviewed = false;
 				btnSave.Enabled = false;
 				UpdateNavigationAttention(
 					general: true,
@@ -1016,11 +1047,19 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			// Enter/click can arrive before the edit debounce finishes.
 			debounceTimer?.Stop();
 			SyncGatekeeper();
-			if (!btnSave.Enabled)
+			if (!_requirementsReady)
 			{
 				FocusRequiredSettings();
 				return;
 			}
+			if (!_setupReviewed)
+			{
+				// A queued click or Enter must show the review, never save in the same action.
+				ShowSetupReview();
+				return;
+			}
+			if (!btnSave.Enabled)
+				return;
 
 			string newName = pnlPageGeneral.ServerName;
 			string selectedGame = pnlPageGeneral.SelectedGame;
@@ -1304,6 +1343,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			if (isPrivacyLoading)
 				return;
 			_setupReviewed = false;
+			_requirementsReady = false;
+			btnSave.Enabled = false;
 
 			if (pnlPageGeneral.HasSelectedGame)
 			{
