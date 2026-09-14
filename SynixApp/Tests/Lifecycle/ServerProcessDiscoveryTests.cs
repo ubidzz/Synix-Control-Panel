@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.SynixEngine.ModManagement;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
@@ -56,12 +57,88 @@ public sealed class ServerProcessDiscoveryTests
 		}
 		finally
 		{
-			if (!unrelated.HasExited)
+			try
 			{
-				unrelated.Kill(entireProcessTree: true);
-				await unrelated.WaitForExitAsync();
+				if (!unrelated.HasExited)
+					unrelated.Kill(entireProcessTree: true);
+				await unrelated.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(10));
 			}
-			Directory.Delete(fixture, recursive: true);
+			finally
+			{
+				// Release our process handle before trying to remove its copied executable.
+				unrelated.Dispose();
+			}
+			await DeleteFixtureAsync(fixture);
+		}
+	}
+
+	[Fact]
+	public async Task FixtureCleanup_RetriesUntilATemporaryFileLockIsReleased()
+	{
+		string fixture = Path.Combine(Path.GetTempPath(), "SynixStalePidTests", Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(fixture);
+		try
+		{
+			using FileStream locked = new(Path.Combine(fixture, "locked.exe"), FileMode.CreateNew,
+				FileAccess.ReadWrite, FileShare.Read);
+			Task cleanup = DeleteFixtureAsync(fixture);
+			Assert.False(cleanup.IsCompleted, "Cleanup must wait for the lock rather than fail or ignore the file.");
+			locked.Dispose();
+			await cleanup;
+			Assert.False(Directory.Exists(fixture));
+		}
+		finally { await DeleteFixtureAsync(fixture); }
+	}
+
+	[Fact]
+	public async Task FixtureCleanup_ReportsALockThatOutlastsTheRetryWindow()
+	{
+		string fixture = Path.Combine(Path.GetTempPath(), "SynixStalePidTests", Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(fixture);
+		try
+		{
+			using FileStream locked = new(Path.Combine(fixture, "locked.exe"), FileMode.CreateNew,
+				FileAccess.ReadWrite, FileShare.Read);
+			Exception? failure = await Record.ExceptionAsync(() => DeleteFixtureAsync(fixture, TimeSpan.FromMilliseconds(150)));
+			Assert.True(failure is IOException or UnauthorizedAccessException,
+				"A persistent lock must fail cleanup, not turn a failed deletion into a passing test.");
+			Assert.True(Directory.Exists(fixture));
+		}
+		finally { await DeleteFixtureAsync(fixture); }
+	}
+
+	[Fact]
+	public async Task FixtureCleanup_RejectsPathsOutsideAnIndividualFixture()
+	{
+		string fixtureRoot = Path.Combine(Path.GetTempPath(), "SynixStalePidTests");
+		foreach (string path in new[] { Path.GetTempPath(), fixtureRoot, Path.Combine(fixtureRoot, "not-a-fixture") })
+			await Assert.ThrowsAsync<InvalidOperationException>(() => DeleteFixtureAsync(path));
+	}
+
+	private static async Task DeleteFixtureAsync(string fixture, TimeSpan? retryWindow = null)
+	{
+		string fullPath = Path.GetFullPath(fixture);
+		string fixtureRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "SynixStalePidTests"));
+		if (!string.Equals(Path.GetDirectoryName(fullPath), fixtureRoot, StringComparison.OrdinalIgnoreCase) ||
+			!Guid.TryParseExact(Path.GetFileName(fullPath), "N", out _))
+			throw new InvalidOperationException("Cleanup is restricted to an individual stale-PID test fixture.");
+
+		Stopwatch elapsed = Stopwatch.StartNew();
+		TimeSpan limit = retryWindow ?? TimeSpan.FromSeconds(10);
+		while (Directory.Exists(fullPath))
+		{
+			ModPathSafety.EnsureTreeHasNoLinks(fullPath);
+			try
+			{
+				Directory.Delete(fullPath, recursive: true);
+				return;
+			}
+			catch (Exception exception) when ((exception is IOException or UnauthorizedAccessException) && elapsed.Elapsed < limit)
+			{
+				// Windows can briefly retain an executable/file lock after the process exits.
+				// Retry only this disposable fixture; persistent failures still fail the test.
+				await Task.Delay(100);
+			}
 		}
 	}
 
