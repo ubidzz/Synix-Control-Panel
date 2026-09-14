@@ -23,14 +23,24 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		private readonly Label _status;
 		private readonly ModernSettingsButton _send;
 		private readonly ToolTip _quickCommandTips = new();
+		private readonly System.Collections.Concurrent.ConcurrentQueue<MinecraftConsoleLine> _pendingLines = new();
+		private readonly System.Windows.Forms.Timer _lineTimer = new() { Interval = 150 };
 
-		internal MinecraftConsoleDialog(GameServer server)
+		private bool _sending;
+
+		internal MinecraftConsoleDialog(GameServer server, bool embedded = false)
 		{
+			_lineTimer.Tick += (_, _) =>
+			{
+				for (int i = 0; i < 50 && _pendingLines.TryDequeue(out MinecraftConsoleLine? line); i++) AppendLine(line);
+			};
+			Shown += (_, _) => _lineTimer.Start();
+			Disposed += (_, _) => { _lineTimer.Dispose(); _pendingLines.Clear(); };
 			_server = server ?? throw new ArgumentNullException(nameof(server));
 			Text = LocalizationManager.Get("Menu.MinecraftServerConsole");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
-			MinimumSize = new Size(780, 540);
+			MinimumSize = embedded ? Size.Empty : new Size(780, 540);
 			ClientSize = new Size(980, 680);
 			BackColor = SettingsPalette.Window;
 			ForeColor = SettingsPalette.PrimaryText;
@@ -59,16 +69,19 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			_output = new RichTextBox
 			{
+				Name = "minecraftConsoleOutput",
 				Location = new Point(28, 106),
 				Size = new Size(924, 338),
 				Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-				BackColor = Color.FromArgb(6, 12, 22),
+				BackColor = SettingsPalette.Input,
 				ForeColor = SettingsPalette.PrimaryText,
 				BorderStyle = BorderStyle.FixedSingle,
 				ReadOnly = true,
+				Multiline = true,
 				DetectUrls = false,
 				Font = new Font("Cascadia Mono", 9F),
-				WordWrap = false
+				WordWrap = true,
+				ScrollBars = RichTextBoxScrollBars.Vertical
 			};
 			Controls.Add(_output);
 
@@ -145,7 +158,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			Controls.Add(_status);
 
 			MinecraftConsoleHub.LineReceived += HandleLineReceived;
-			ThemeManager.Apply(this);
+			if (!embedded) ThemeManager.Apply(this);
 		}
 
 		protected override void OnShown(EventArgs eventArgs)
@@ -270,6 +283,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private async Task SendCommandAsync()
 		{
+			if (_sending || IsDisposed) return;
+			_sending = true;
 			string command = _command.Text;
 			_send.Enabled = false;
 			try
@@ -277,15 +292,20 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				(bool succeeded, string message) = await Servers.SendMinecraftCommandAsync(
 					_server,
 					command);
+				if (IsDisposed) return;
 				_status.Text = message;
 				_status.ForeColor = succeeded ? SettingsPalette.Success : SettingsPalette.Warning;
-				if (succeeded)
+				if (succeeded && _command.Text == command)
 					_command.Clear();
+			}
+			catch (Exception exception)
+			{
+				if (!IsDisposed) _status.Text = Core.SanitizeProblemReportText(exception.Message);
 			}
 			finally
 			{
-				_send.Enabled = true;
-				_command.Focus();
+				_sending = false;
+				if (!IsDisposed) { _send.Enabled = true; _command.Focus(); }
 			}
 		}
 
@@ -293,19 +313,24 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		{
 			if (!MinecraftConsoleHub.IsSameServer(_server, server) || IsDisposed)
 				return;
-			if (InvokeRequired)
-			{
-				BeginInvoke(new Action(() => AppendLine(line)));
-				return;
-			}
-			AppendLine(line);
+			_pendingLines.Enqueue(line);
+			while (_pendingLines.Count > 2000) _pendingLines.TryDequeue(out _);
 		}
 
 		private void AppendLine(MinecraftConsoleLine line)
 		{
+			if (_output.TextLength > 200000)
+			{
+				_output.Select(0, _output.TextLength - 100000);
+				_output.SelectedText = string.Empty;
+			}
 			_output.SelectionStart = _output.TextLength;
 			_output.SelectionColor = line.IsError ? SettingsPalette.Danger : SettingsPalette.PrimaryText;
-			_output.AppendText($"[{line.Timestamp:HH:mm:ss}] {line.Text}{Environment.NewLine}");
+			// Saved Windows logs can retain a trailing CR, while live output may contain
+			// multiline errors. Preserve internal breaks and append one record terminator.
+			string text = SecretRedactor.Redact(line.Text).ReplaceLineEndings(Environment.NewLine).TrimEnd('\r', '\n');
+			if (text.Length > 8192) text = text[..8192] + "…";
+			_output.AppendText($"[{line.Timestamp:HH:mm:ss}] {text}{Environment.NewLine}");
 			_output.SelectionStart = _output.TextLength;
 			_output.ScrollToCaret();
 		}

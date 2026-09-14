@@ -257,7 +257,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			{
 				selectedMode = MinecraftControlProfile.NormalizeGameMode(selectedMode);
 				foreach (string mode in MinecraftControlProfile.GameModes)
-					cmbCompetitive.Items.Add(mode);
+					if (!IsMinecraftBedrockSelected || mode != "Spectator") cmbCompetitive.Items.Add(mode);
+				if (IsMinecraftBedrockSelected && selectedMode == "Spectator") selectedMode = MinecraftControlProfile.SurvivalGameMode;
 			}
 			else if (gameData.GameModes != null)
 			{
@@ -566,7 +567,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				}
 				else
 				{
-					cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge"]);
+					cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge", MinecraftPluginRuntime.Paper, MinecraftPluginRuntime.Purpur]);
 					if (MinecraftMetadataService.IsNeoForgeCompatibleVersion(cmbGameVersion.Text))
 						cmbMinecraftLoader.Items.Add(MinecraftMetadataService.NeoForgeLoader);
 				}

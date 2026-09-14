@@ -105,7 +105,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!File.Exists(path))
 					return [];
 
-				return File.ReadLines(path)
+				SynixEngine.ModManagement.ModPathSafety.EnsureNoLinks(path);
+				using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+				stream.Seek(Math.Max(0, stream.Length - 512 * 1024), SeekOrigin.Begin);
+				using StreamReader reader = new(stream);
+				if (stream.Position > 0) reader.ReadLine();
+				return reader.ReadToEnd().Split('\n')
 					.TakeLast(500)
 					.Select(line => new MinecraftConsoleLine(
 						File.GetLastWriteTime(path),

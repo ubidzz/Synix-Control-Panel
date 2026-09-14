@@ -10914,4 +10914,456 @@ Alle anderen benutzerdefinierten Konfigurationswerte werden entfernt.</value>
   <data name="ModManager.Framework.SaveFailed" xml:space="preserve"><value>Die Framework-Dateien wurden installiert, aber Synix konnte die Servereinstellungen nicht speichern. Prüfen Sie die Ordnerberechtigungen und speichern Sie die Serverkonfiguration vor dem Start erneut. Die installierten Dateien wurden nicht zurückgesetzt.</value></data>
   <data name="ModManager.Progress.Failed" xml:space="preserve"><value>Der Vorgang konnte nicht abgeschlossen werden. Prüfen Sie den Fehler und aktualisieren Sie die Liste vor einem erneuten Versuch.</value></data>
   <data name="ModManager.Field.Search" xml:space="preserve"><value>Suche</value></data>
+  <data name="MinecraftWorkspace.Title" xml:space="preserve">
+    <value>Minecraft-Kontrollzentrum</value>
+  </data>
+  <data name="MinecraftWorkspace.Overview" xml:space="preserve">
+    <value>Übersicht</value>
+  </data>
+  <data name="MinecraftWorkspace.Console" xml:space="preserve">
+    <value>Konsole</value>
+  </data>
+  <data name="MinecraftWorkspace.Players" xml:space="preserve">
+    <value>Spieler</value>
+  </data>
+  <data name="MinecraftWorkspace.Settings" xml:space="preserve">
+    <value>Einstellungen &amp; Dateien</value>
+  </data>
+  <data name="MinecraftWorkspace.Worlds" xml:space="preserve">
+    <value>Welten</value>
+  </data>
+  <data name="MinecraftWorkspace.Mods" xml:space="preserve">
+    <value>Mods &amp; Plugins</value>
+  </data>
+  <data name="MinecraftWorkspace.Backups" xml:space="preserve">
+    <value>Sicherungen</value>
+  </data>
+  <data name="MinecraftWorkspace.Recovery" xml:space="preserve">
+    <value>Änderungen wiederherstellen</value>
+  </data>
+  <data name="MinecraftWorkspace.Diagnostics" xml:space="preserve">
+    <value>Diagnose</value>
+  </data>
+  <data name="MinecraftWorkspace.Schedules" xml:space="preserve">
+    <value>Zeitpläne</value>
+  </data>
+  <data name="MinecraftWorkspace.Start" xml:space="preserve">
+    <value>Starten</value>
+  </data>
+  <data name="MinecraftWorkspace.Stop" xml:space="preserve">
+    <value>Stoppen</value>
+  </data>
+  <data name="MinecraftWorkspace.Restart" xml:space="preserve">
+    <value>Neustarten</value>
+  </data>
+  <data name="MinecraftWorkspace.Setup" xml:space="preserve">
+    <value>Servereinrichtung</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyRuntime" xml:space="preserve">
+    <value>Server-Software anwenden</value>
+  </data>
+  <data name="MinecraftWorkspace.Readiness" xml:space="preserve">
+    <value>Bereitschaft prüfen</value>
+  </data>
+  <data name="MinecraftWorkspace.Connection" xml:space="preserve">
+    <value>Verbindungsdaten</value>
+  </data>
+  <data name="MinecraftWorkspace.Refresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="MinecraftWorkspace.Ready" xml:space="preserve">
+    <value>Bereit. Kein Server wird automatisch gestartet.</value>
+  </data>
+  <data name="MinecraftWorkspace.Working" xml:space="preserve">
+    <value>Wird bearbeitet…</value>
+  </data>
+  <data name="MinecraftWorkspace.Wait" xml:space="preserve">
+    <value>Warten Sie, bis der aktuelle Vorgang abgeschlossen ist.</value>
+  </data>
+  <data name="MinecraftWorkspace.Cancelled" xml:space="preserve">
+    <value>Abgebrochen. Installierte Dateien wurden nicht geändert.</value>
+  </data>
+  <data name="MinecraftWorkspace.CancelOperation" xml:space="preserve">
+    <value>Import abbrechen</value>
+  </data>
+  <data name="MinecraftWorkspace.Save" xml:space="preserve">
+    <value>Änderungen speichern</value>
+  </data>
+  <data name="MinecraftWorkspace.Discard" xml:space="preserve">
+    <value>Diese ungespeicherten Änderungen verwerfen?</value>
+  </data>
+  <data name="MinecraftWorkspace.File" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="MinecraftWorkspace.Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="MinecraftWorkspace.EditFile" xml:space="preserve">
+    <value>Datei bearbeiten</value>
+  </data>
+  <data name="MinecraftWorkspace.StructuredEditor" xml:space="preserve">
+    <value>Strukturierter Editor</value>
+  </data>
+  <data name="MinecraftWorkspace.Player" xml:space="preserve">
+    <value>Spielername</value>
+  </data>
+  <data name="MinecraftWorkspace.Source" xml:space="preserve">
+    <value>Quelle</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyPlayer" xml:space="preserve">
+    <value>Spieleraktion ausführen</value>
+  </data>
+  <data name="MinecraftWorkspace.World" xml:space="preserve">
+    <value>Welt</value>
+  </data>
+  <data name="MinecraftWorkspace.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="MinecraftWorkspace.Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="MinecraftWorkspace.Available" xml:space="preserve">
+    <value>Verfügbar</value>
+  </data>
+  <data name="MinecraftWorkspace.NewWorldName" xml:space="preserve">
+    <value>Neuer Weltordnername</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportWorld" xml:space="preserve">
+    <value>Welt-ZIP importieren</value>
+  </data>
+  <data name="MinecraftWorkspace.ActivateWorld" xml:space="preserve">
+    <value>Gewählte Welt verwenden</value>
+  </data>
+  <data name="MinecraftWorkspace.AddOnId" xml:space="preserve">
+    <value>Erweiterungs-ID</value>
+  </data>
+  <data name="MinecraftWorkspace.Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="MinecraftWorkspace.Loader" xml:space="preserve">
+    <value>Loader</value>
+  </data>
+  <data name="MinecraftWorkspace.ManageAddOns" xml:space="preserve">
+    <value>Einzelne Erweiterungen</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportPack" xml:space="preserve">
+    <value>Paket importieren / aktualisieren</value>
+  </data>
+  <data name="MinecraftWorkspace.Checks" xml:space="preserve">
+    <value>Kompatibilität prüfen</value>
+  </data>
+  <data name="MinecraftWorkspace.Created" xml:space="preserve">
+    <value>Erstellt</value>
+  </data>
+  <data name="MinecraftWorkspace.Size" xml:space="preserve">
+    <value>Größe</value>
+  </data>
+  <data name="MinecraftWorkspace.Files" xml:space="preserve">
+    <value>Dateien</value>
+  </data>
+  <data name="MinecraftWorkspace.Change" xml:space="preserve">
+    <value>Änderung</value>
+  </data>
+  <data name="MinecraftWorkspace.CreateBackup" xml:space="preserve">
+    <value>Vollsicherung erstellen</value>
+  </data>
+  <data name="MinecraftWorkspace.RestoreBackup" xml:space="preserve">
+    <value>Sicherung wiederherstellen</value>
+  </data>
+  <data name="MinecraftWorkspace.VerifyBackup" xml:space="preserve">
+    <value>Sicherung prüfen</value>
+  </data>
+  <data name="MinecraftWorkspace.EditSchedule" xml:space="preserve">
+    <value>Zeitplan bearbeiten</value>
+  </data>
+  <data name="MinecraftWorkspace.Enabled" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="MinecraftWorkspace.Disabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoChange" xml:space="preserve">
+    <value>Änderung rückgängig machen</value>
+  </data>
+  <data name="MinecraftWorkspace.Area" xml:space="preserve">
+    <value>Bereich</value>
+  </data>
+  <data name="MinecraftWorkspace.Detail" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="MinecraftWorkspace.Performance" xml:space="preserve">
+    <value>Prozessressourcen</value>
+  </data>
+  <data name="MinecraftWorkspace.Online" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="MinecraftWorkspace.Logs" xml:space="preserve">
+    <value>Aktuelle Protokolle</value>
+  </data>
+  <data name="MinecraftWorkspace.Apply" xml:space="preserve">
+    <value>Änderungen anwenden</value>
+  </data>
+  <data name="MinecraftWorkspace.Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="MinecraftWorkspace.Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="MinecraftWorkspace.Add" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="MinecraftWorkspace.Replace" xml:space="preserve">
+    <value>Ersetzen</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Prepared" xml:space="preserve">
+    <value>Wiederherstellung nötig</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Applied" xml:space="preserve">
+    <value>Angewendet</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Undone" xml:space="preserve">
+    <value>Rückgängig gemacht</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Kick" xml:space="preserve">
+    <value>Kicken</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Allow" xml:space="preserve">
+    <value>Whitelist: hinzufügen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Disallow" xml:space="preserve">
+    <value>Whitelist: entfernen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Operator" xml:space="preserve">
+    <value>Operator erteilen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Deop" xml:space="preserve">
+    <value>Operator entfernen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Ban" xml:space="preserve">
+    <value>Bannen (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Pardon" xml:space="preserve">
+    <value>Entbannen (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.OverviewHelp" xml:space="preserve">
+    <value>Verwalte diesen Minecraft-Server hier. Stoppe ihn vor Änderungen an Dateien, Welten, Paketen oder Laufzeit. Start, Stopp und Neustart verwenden die normalen Synix-Sicherheitsprüfungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.OverviewValues" xml:space="preserve">
+    <value>Software: {0} • Build: {1}
+Java: {2} • RAM-Limit: {3} GB
+Spieler: {4} • Spielport: {5} • Abfrage-/IPv6-Port: {6}
+Welt: {7}
+Angezeigter Name / MOTD: {8}</value>
+  </data>
+  <data name="MinecraftWorkspace.ScheduleHelp" xml:space="preserve">
+    <value>Plane Neustarts und Wartung, bei Bedarf mit Warten auf Spieler und vollständiger Sicherung. Zeiten gelten lokal auf diesem PC. Synix muss für die Zeitplanung laufen.</value>
+  </data>
+  <data name="MinecraftWorkspace.ScheduleValues" xml:space="preserve">
+    <value>Geplanter Neustart: {0}
+Ortszeit: {1}
+Tage: {2}
+Auf Spieler warten: {3}
+Vor Wartung sichern: {4}
+Vor Wartung aktualisieren: {5}</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayersHelp" xml:space="preserve">
+    <value>Aktualisiere die Online-Namen und gespeicherten Zugriffslisten. Wähle oder tippe einen Namen und prüfe die Aktion. Befehle benötigen einen laufenden Server und eine funktionierende Konsolenverbindung. Java-Sperrbefehle gelten nicht für Bedrock.</value>
+  </data>
+  <data name="MinecraftWorkspace.SettingsHelp" xml:space="preserve">
+    <value>Bearbeite server.properties und Mod-/Plugin-Konfigurationen. Von Synix verwendete Werte werden beim Speichern von server.properties übernommen. MOTD und lokaler Eintragsname sind getrennt. Aktualisieren liest externe Änderungen bei gestopptem Server ein.</value>
+  </data>
+  <data name="MinecraftWorkspace.EditorHelp" xml:space="preserve">
+    <value>Speichern legt Wiederherstellungskopien an. Ports, Welt, Seed, Spielmodus, Spielerlimit und unterstützte Steuerungseinstellungen aktualisieren auch Synix. JSON, XML und YAML werden vor dem Speichern geprüft. Andere Formate erfordern Sorgfalt. Zugangsdaten privat halten.</value>
+  </data>
+  <data name="MinecraftWorkspace.WorldsHelp" xml:space="preserve">
+    <value>Importiere eine Java- oder Bedrock-Welt als ZIP in einen NEUEN Ordner und wähle sie aus. Vorhandene Welten werden nicht ersetzt, Editionen nicht konvertiert. Ein Wechsel prüft weder Spiel-/Mod-Kompatibilität noch führt er ein Upgrade oder Downgrade durch. Zuerst sichern.</value>
+  </data>
+  <data name="MinecraftWorkspace.ModsHelp" xml:space="preserve">
+    <value>Prüfe JAR-Metadaten und Abhängigkeiten, verwalte einzelne Add-ons oder importiere ein Serverpaket. Verwende dessen genaue Spiel- und Loader-Version. Kompatibilitätsprüfungen sind Hinweise, kein Beweis für sicheren Code oder funktionierende Mods.</value>
+  </data>
+  <data name="MinecraftWorkspace.BackupsHelp" xml:space="preserve">
+    <value>Vollsicherungen enthalten Serverordner, Welten, Add-ons und Konfiguration. Server zuerst stoppen. Prüfe vor dem Wiederherstellen die Integrität. Die Wiederherstellung ersetzt Serverdateien; Prüfsummen erkennen keine bereits in der Sicherung enthaltenen Probleme.</value>
+  </data>
+  <data name="MinecraftWorkspace.RecoveryHelp" xml:space="preserve">
+    <value>Änderungen behalten vorherige Dateien und Prüfsummen. Wähle eine angewendete oder unterbrochene Änderung. Mache neuere überlappende Änderungen zuerst rückgängig. Externe Bearbeitungen und die aktive importierte Welt sind geschützt. Für Welt-/Laufzeit-Upgrades eine Vollsicherung behalten.</value>
+  </data>
+  <data name="MinecraftWorkspace.DiagnosticsHelp" xml:space="preserve">
+    <value>Suche Hinweise im aktuellen Serverprotokoll und letzten Absturzbericht. Funde sind keine bestätigten Ursachen. CPU/RAM sind keine Minecraft-TPS/MSPT-Werte; nutze bei Tick-Problemen einen passenden serverinternen Profiler.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmStop" xml:space="preserve">
+    <value>Diesen Server jetzt über Synix stoppen?</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmRestart" xml:space="preserve">
+    <value>Diesen Server jetzt über Synix neu starten?</value>
+  </data>
+  <data name="MinecraftWorkspace.RuntimeNotice" xml:space="preserve">
+    <value>Die gewählte Spielversion, den Loader und Build aus offiziellen Quellen installieren? Dabei kann Java heruntergeladen und der offizielle Forge-/NeoForge-Installer ausgeführt werden. Dateien werden zuerst vorbereitet; ersetzte Originale bleiben zur Wiederherstellung erhalten. Welten und Add-ons bleiben bestehen. Vor Versionswechseln vollständig sichern. Kein Spielserver wird gestartet.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmPlayer" xml:space="preserve">
+    <value>Den gewählten Spielerbefehl senden? Operatorrechte gewähren umfassende Kontrolle über den Spielserver.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmWorld" xml:space="preserve">
+    <value>Die gewählte Welt beim nächsten Start verwenden? Die aktuelle bleibt gespeichert. Wähle nur eine Welt, die zu Edition, Version und Mods dieses Servers passt.</value>
+  </data>
+  <data name="MinecraftWorkspace.PackNotice" xml:space="preserve">
+    <value>Dieses vertrauenswürdige Serverpaket importieren? Modrinth-Pakete können Dateien von zugelassenen HTTPS-Quellen laden. Mods und Spielskripte führen Code im Spielserver aus. Layout-, Hash-, Kompatibilitäts- und Virenprüfungen garantieren keine Sicherheit. Prüfe alle Änderungen vor dem Anwenden.</value>
+  </data>
+  <data name="MinecraftWorkspace.CompatibilityNotice" xml:space="preserve">
+    <value>Metadaten werden ohne Laden des Mod-Codes gelesen. Komplexe Versionsbereiche, bedingte Abhängigkeiten und ältere/eingebettete Metadaten müssen manuell geprüft werden. Weder Kompatibilität noch Schadsoftwarefreiheit sind garantiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Skipped" xml:space="preserve">
+    <value>Nicht importiert: {0}</value>
+  </data>
+  <data name="MinecraftWorkspace.BackupSpace" xml:space="preserve">
+    <value>Prüfe Sicherungsort und freien Speicherplatz.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmBackup" xml:space="preserve">
+    <value>Eine vollständige Sicherung dieses gestoppten Servers erstellen?</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmRestore" xml:space="preserve">
+    <value>Die gewählte Vollsicherung wiederherstellen? Vorhandene Serverdateien werden ersetzt. Prüfe das Archiv und sichere weiterhin benötigte aktuelle Dateien zuerst.</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoNotice" xml:space="preserve">
+    <value>Vorherige Dateien wiederherstellen. Neue Dateien werden nur entfernt, wenn sie unverändert sind. Bearbeitete Dateien blockieren die Wiederherstellung. Weltkonvertierungen nach einem Versionswechsel erfordern eine vollständige Sicherung.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoLogFindings" xml:space="preserve">
+    <value>Kein bekanntes Muster in den verfügbaren aktuellen Protokollen gefunden. Dies ist keine vollständige Zustandsprüfung. Nutze die Bereitschaftsprüfung und suche den ersten Fehler zum Problemzeitpunkt.</value>
+  </data>
+  <data name="MinecraftWorkspace.PreviewSummary" xml:space="preserve">
+    <value>Vor dem Anwenden prüfen: {0} neu • {1} ersetzt • {2} entfernt. Vorherige Dateien bleiben zur Wiederherstellung erhalten. Kein Server wird gestartet.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Runtime" xml:space="preserve">
+    <value>Der stabile Server-Build oder seine Download-Metadaten sind nicht verfügbar. Aktualisiere die Versions-/Build-Auswahl.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Size" xml:space="preserve">
+    <value>Datei-, Metadaten- oder Gesamtgrößenlimits werden überschritten.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Recovery" xml:space="preserve">
+    <value>Wiederherstellungsdaten fehlen oder sind widersprüchlich. Behalte den Wiederherstellungsordner und nutze eine geprüfte Vollsicherung.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PendingRecovery" xml:space="preserve">
+    <value>Ein vorheriger Vorgang muss wiederhergestellt werden. Öffne die Wiederherstellung und löse ihn vor dem Start oder weiteren Änderungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Changed" xml:space="preserve">
+    <value>Eine Datei wurde seit der Prüfung oder diesem Vorgang geändert. Aktualisiere und prüfe erneut. Fremde Änderungen werden nicht überschrieben.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Layout" xml:space="preserve">
+    <value>Paketstruktur oder Pfad sind unsicher, mehrdeutig oder nicht unterstützt. Wähle ein unterstütztes Serverpaket oder Weltarchiv.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.ActiveWorld" xml:space="preserve">
+    <value>Diese importierte Welt ist aktiv. Wechsle vor dem Rückgängigmachen zu einer anderen Welt.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldExists" xml:space="preserve">
+    <value>Dieser Weltordner existiert bereits. Wähle einen neuen Namen. Der Import überschreibt keine vorhandenen Welten.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldLayout" xml:space="preserve">
+    <value>Wähle ein Archiv mit genau einer Welt samt level.dat. Für vollständige Server oder mehrere Welten nutze Sicherung/Wiederherstellung.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldEdition" xml:space="preserve">
+    <value>Die Welt passt nicht zur Serveredition oder erwartete Regions-/Datenbankdateien fehlen. Java- und Bedrock-Welten werden nicht konvertiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldName" xml:space="preserve">
+    <value>Verwende einen sicheren Weltordnernamen ohne Pfade oder reservierte Windows-Namen. Für Importe sind Buchstaben, Zahlen, Leerzeichen, Bindestriche und Unterstriche erlaubt.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.JavaOnly" xml:space="preserve">
+    <value>Dieser Ablauf ist für Java-Mods/-Plugins. Nutze den unterstützten Bedrock-Add-on-Ablauf. Java-JARs laufen nicht auf Bedrock.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PackEmpty" xml:space="preserve">
+    <value>Keine unterstützten Serverinhalte gefunden. Launcher, Clientdateien, Laufzeiten, Welten und Servereinstellungen im Stammordner werden hier nicht importiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.LoaderMismatch" xml:space="preserve">
+    <value>Der Inhalt passt nicht zur gewählten Serversoftware. Mods benötigen den passenden Loader, Bukkit-/Paper-Plugins eine Plugin-Laufzeit.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.CurseForgeManifest" xml:space="preserve">
+    <value>Dies ist ein CurseForge-Clientmanifest, kein vollständiges Serverpaket. Lade das Server-ZIP des Autors mit den tatsächlichen Mods und Konfigurationen herunter. Fehlende Dateien werden nicht still übersprungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PackVersion" xml:space="preserve">
+    <value>Minecraft-Version und Loader/Build des Pakets müssen übereinstimmen. Wähle und installiere zuerst genau diese Laufzeit. Nicht unterstützte Loader werden nicht ersetzt.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.DownloadSource" xml:space="preserve">
+    <value>Download oder Weiterleitung ist keine zugelassene öffentliche HTTPS-Quelle. Nutze stattdessen ein unterstütztes lokales Server-ZIP des Autors.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.DownloadHash" xml:space="preserve">
+    <value>Eine Datei stimmt nicht mit ihrer angegebenen Größe oder SHA-512-Prüfsumme überein. Nichts wurde installiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Properties" xml:space="preserve">
+    <value>Ein von Synix verwendeter Minecraft-Wert ist ungültig oder widersprüchlich. Prüfe Ports, Spielerlimit, Spielmodus und Steuerungseinstellungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.SaveEntry" xml:space="preserve">
+    <value>Synix konnte den geänderten Eintrag nicht speichern. Der Vorgang wurde nicht akzeptiert; nötige Wiederherstellungsdateien bleiben erhalten.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.ManagementLocal" xml:space="preserve">
+    <value>Die Minecraft-Verwaltungsverbindung von Synix muss auf localhost bleiben. Diesen Steuerungszugang nicht im Internet veröffentlichen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PortConflict" xml:space="preserve">
+    <value>Ein konfigurierter Port gehört zu einem anderen Synix-Server. Wähle vor dem Speichern einen anderen Port.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Player" xml:space="preserve">
+    <value>Wähle eine unterstützte Aktion und einen gültigen Spielernamen. Java-Sperrbefehle gelten nicht für Bedrock.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.StartFailed" xml:space="preserve">
+    <value>Der Server wurde nicht gestartet. Prüfe Bereitschaft und Dashboard-Protokoll vor einem erneuten Versuch.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.MetadataUnknown" xml:space="preserve">
+    <value>Metadaten konnten nicht vollständig gelesen werden. Prüfe die Datei und die Kompatibilitätsangaben des Autors.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.Duplicate" xml:space="preserve">
+    <value>Mehrere Haupt-JARs verwenden diese ID. Prüfe und entferne die doppelte Version.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.ClientOnly" xml:space="preserve">
+    <value>Dieses JAR ist laut Metadaten nur für Clients. Nicht auf einem dedizierten Server installieren.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.WrongLoader" xml:space="preserve">
+    <value>Die JAR-Metadaten passen nicht zum ausgewählten Loader bzw. zur Serversoftware.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyMissing" xml:space="preserve">
+    <value>Benötigte Abhängigkeit fehlt in den gelesenen Metadaten: {0}. Prüfe eingebettete oder bedingte Abhängigkeiten vor einer Installation.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyVersion" xml:space="preserve">
+    <value>Abhängigkeit {0} benötigt {1}; gelesen wurde {2}.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyReview" xml:space="preserve">
+    <value>Abhängigkeit {0} manuell prüfen: benötigt {1}, gelesen {2}. Dieser Versionsbereich wird nicht vollständig verstanden.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Java" xml:space="preserve">
+    <value>Das Protokoll deutet auf eine falsche Java-/Klassenversion hin. Nutze die vom Server und Mod-Loader benötigte Java-Version.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Memory" xml:space="preserve">
+    <value>Java konnte möglicherweise nicht genug Speicher reservieren. Prüfe freien RAM, Serverlimit und andere laufende Server.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Dependency" xml:space="preserve">
+    <value>Das Protokoll nennt Abhängigkeiten. Prüfe den ersten Loader-Fehler sowie Mod, Abhängigkeit, Spielversion und Loader-Build.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Port" xml:space="preserve">
+    <value>Ein Port ist offenbar belegt. Prüfe andere Prozesse und die Serverports; öffne keine unbeteiligten Firewall-Ports.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Eula" xml:space="preserve">
+    <value>Minecraft verlangt die EULA-Zustimmung. Lies sie und bestätige sie im normalen Erststart-Ablauf, falls du einverstanden bist.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Tick" xml:space="preserve">
+    <value>Langsame Ticks oder Watchdog-Zeitüberschreitung erkannt. Prüfe CPU, Weltgenerierung, Entitäten und Mods. Mehr RAM allein hilft nicht immer.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Mixin" xml:space="preserve">
+    <value>Ein Mixin-Fehler deutet oft auf unpassende Mod-/Loader-Versionen hin. Prüfe die erste Ursache im Absturzbericht und die Paketanforderungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.World" xml:space="preserve">
+    <value>Das Protokoll meldet Lesefehler in Weltdaten. Stoppe den Server und sichere aktuelle Dateien, bevor du eine geprüfte kompatible Sicherung versuchst.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.RuntimeRecovery" xml:space="preserve"><value>Für diese ältere Installation ist kein Laufzeitprofil gespeichert. Verwende eine vollständige Serversicherung zur Wiederherstellung.</value></data>
+  <data name="MinecraftWorkspace.Error.RuntimeMismatch" xml:space="preserve"><value>Die installierte Laufzeit stimmt nicht mit der Auswahl überein. Öffne die Minecraft-Verwaltung und wähle „Laufzeit anwenden“.</value></data>
+  <data name="MinecraftWorkspace.IncludeOptional" xml:space="preserve"><value>Optionale Server-Mods einbeziehen</value></data>
+  <data name="MinecraftWorkspace.WorldFilter" xml:space="preserve"><value>Welt-ZIP (*.zip)|*.zip</value></data>
+  <data name="MinecraftWorkspace.PackFilter" xml:space="preserve"><value>Minecraft-Serverpaket (*.zip;*.mrpack)|*.zip;*.mrpack</value></data>
+  <data name="MinecraftWorkspace.Error.InvalidValue" xml:space="preserve"><value>Der Wert für {0} ist ungültig. Korrigiere diese Einstellung vor dem Speichern.</value></data>
+  <data name="MinecraftWorkspace.Empty" xml:space="preserve"><value>Keine Einträge vorhanden. Aktualisiere nach dem Hinzufügen von Inhalten oder Änderungen an der Einrichtung.</value></data>
+  <data name="MinecraftWorkspace.State.Superseded" xml:space="preserve"><value>Durch Vollsicherung ersetzt</value></data>
+  <data name="MinecraftWorkspace.CompatibilitySummary" xml:space="preserve">
+    <value>{0} Erweiterungen erkannt • {1} Hinweise zu prüfen. Diese Prüfung ändert keine Dateien.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoCompatibilityAddOns" xml:space="preserve">
+    <value>Im aktiven Mod- oder Plugin-Ordner dieser Serverkonfiguration wurden keine Erweiterungen gefunden.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoCompatibilityFindings" xml:space="preserve">
+    <value>Die verfügbaren Metadatenprüfungen haben keine Probleme gefunden. Dies garantiert nicht, dass alle Mods oder Plugins zusammen funktionieren.</value>
+  </data>
 </root>

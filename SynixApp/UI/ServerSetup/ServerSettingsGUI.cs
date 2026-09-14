@@ -111,6 +111,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			}
 		}
 
+		internal void OpenAutomationPage() => btnNavAutomation_Click(this, EventArgs.Empty);
+
 		private void ConfigureModernShell()
 		{
 			LocalizationManager.BindText(
@@ -1220,6 +1222,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				RequiredJavaVersion = isMinecraft && !isMinecraftBedrock
 					? pnlPageGeneral.ResolvedMinecraftJavaVersion
 					: 0,
+				MinecraftAdvertisedName = _existingServer?.MinecraftAdvertisedName,
+				MinecraftQueryEnabled = _existingServer?.MinecraftQueryEnabled ?? true,
+				MinecraftManagementTlsEnabled = _existingServer?.MinecraftManagementTlsEnabled ?? false,
 				IsScheduledRestartEnabled =
 					pnlPageAutomation.ScheduleEnabled,
 				RestartTime = pnlPageAutomation.SelectedTime,

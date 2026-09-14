@@ -393,6 +393,9 @@ public class GameServer
 	public string MinecraftEdition { get; set; } = "Java";
 	public string MinecraftLoader { get; set; } = "Vanilla";
 	public string MinecraftLoaderVersion { get; set; } = "Official";
+	public string? MinecraftAdvertisedName { get; set; }
+	public bool MinecraftQueryEnabled { get; set; } = true;
+	public bool MinecraftManagementTlsEnabled { get; set; }
 	public bool EnableMinecraftManagementProtocol { get; set; } = true;
 	public int MinecraftManagementPort { get; set; }
 	public string ServerFramework { get; set; } = "Vanilla";

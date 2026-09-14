@@ -195,7 +195,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				if (server == null ||
 					!CanShowLiveServerActions(server))
 					return;
-				if (!GameDatabase.SupportsPlayerManagement(server))
+				if (GameDatabase.IsMinecraft(server.Game) || !GameDatabase.SupportsPlayerManagement(server))
 				{
 					return;
 				}
@@ -204,13 +204,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			};
 
 			_minecraftConsoleMenuItem = new ToolStripMenuItem(
-				LocalizationManager.Get("Menu.MinecraftServerConsole"));
+				LocalizationManager.Get("MinecraftWorkspace.Title"));
 			_minecraftConsoleMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
 				if (server == null || !GameDatabase.IsMinecraft(server.Game))
 					return;
-				using MinecraftConsoleDialog dialog = new(server);
+				using MinecraftControlCenter dialog = new(server);
 				dialog.ShowDialog(this);
 			};
 
@@ -262,7 +262,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 					LocalizationManager.Get("Menu.PlayerManagementCenter");
 			if (_minecraftConsoleMenuItem != null)
 				_minecraftConsoleMenuItem.Text =
-					LocalizationManager.Get("Menu.MinecraftServerConsole");
+					LocalizationManager.Get("MinecraftWorkspace.Title");
 			if (_liveProcessDetailsMenuItem != null)
 				_liveProcessDetailsMenuItem.Text =
 					LocalizationManager.Get("Menu.LiveProcessDetails");
@@ -1170,6 +1170,19 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				selectedServer,
 				selectedBackup,
 				progress);
+			if (result.Succeeded && GameCapabilityResolver.UsesMinecraftLifecycle(selectedServer))
+			{
+				try
+				{
+					Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.SynchronizeRestored(selectedServer, FileHandler.SaveServers, fullRestore: true);
+				}
+				catch (Exception exception)
+				{
+					LocalizedMessageBox.Show(this, Core.SanitizeProblemReportText(exception.Message),
+						LocalizationManager.Get("MinecraftWorkspace.Title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+			}
 
 			LocalizedMessageBox.Show(
 				this,
@@ -1395,10 +1408,20 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			item.Enabled = supported;
 		}
 
+		internal static void UpdatePlayerManagementMenuItem(ToolStripMenuItem item, GameServer? server)
+		{
+			bool show = server != null && !GameDatabase.IsMinecraft(server.Game) &&
+				GameDatabase.SupportsPlayerManagement(server) && CanShowLiveServerActions(server);
+			item.Visible = show;
+			item.Enabled = show;
+		}
+
 		private async void btnServerOptionsMenu_Click(object sender, EventArgs e)
 		{
 			if (_modPluginManagerMenuItem != null)
 				UpdateModPluginManagerMenuItem(_modPluginManagerMenuItem, GetSelectedServer());
+			if (_playerManagementMenuItem != null)
+				UpdatePlayerManagementMenuItem(_playerManagementMenuItem, GetSelectedServer());
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
 				bool isMinecraft = GameDatabase.IsMinecraft(selectedServer.Game);
@@ -1407,15 +1430,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
 				bool supportsConnectionTesting =
 					GameDatabase.SupportsManualConnectionTesting(selectedGameData);
-				bool supportsPlayerManagement =
-					GameDatabase.SupportsPlayerManagement(selectedServer);
 				bool isRunning = CanShowLiveServerActions(selectedServer);
-				if (_playerManagementMenuItem != null)
-				{
-					bool showPlayerManagement = isRunning && supportsPlayerManagement;
-					_playerManagementMenuItem.Visible = showPlayerManagement;
-					_playerManagementMenuItem.Enabled = showPlayerManagement;
-				}
 				if (_liveProcessDetailsMenuItem != null)
 				{
 					_liveProcessDetailsMenuItem.Visible = isRunning;

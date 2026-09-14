@@ -425,6 +425,14 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			return Convert.ToHexString(hash);
 		}
 
+		internal static async Task<string> ReviewMinecraftContentAsync(string stagingFolder, CancellationToken cancellationToken)
+		{
+			ModPathSafety.EnsureTreeHasNoLinks(stagingFolder);
+			DefenderScanResult result = await ScanWithMicrosoftDefenderAsync(stagingFolder, cancellationToken);
+			if (result.Blocked) throw new InvalidDataException(LocalizationManager.Get("ModSecurity.Finding.DefenderThreat"));
+			return LocalizationManager.Get("ModSecurity.Antivirus", result.Status);
+		}
+
 		private static async Task<DefenderScanResult> ScanWithMicrosoftDefenderAsync(
 			string packagePath,
 			CancellationToken cancellationToken)

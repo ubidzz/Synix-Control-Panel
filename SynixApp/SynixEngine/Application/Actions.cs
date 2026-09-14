@@ -17,6 +17,7 @@ using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using System.Diagnostics;
 using System.Text;
+using Synix_Control_Panel.SynixEngine.Minecraft;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -1070,7 +1071,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return authenticationCount;
 		}
 
-		public async Task EditServerAndReport(GameServer server)
+		public async Task EditServerAndReport(GameServer server, bool openAutomation = false)
 		{
 			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
@@ -1100,9 +1101,29 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			if (GameCapabilityResolver.UsesMinecraftLifecycle(server))
+			{
+				try
+				{
+					MinecraftConfigurationSync.Synchronize(server, FileHandler.SaveServers);
+					// Record the known current profile before the user selects a different runtime.
+					if (Directory.Exists(server.InstallPath) && MinecraftRuntimeUpdater.ReadInstalled(server) == null &&
+						(File.Exists(Path.Combine(server.InstallPath, "server.jar")) ||
+						 File.Exists(Path.Combine(server.InstallPath, "Start.bat")) ||
+						 File.Exists(Path.Combine(server.InstallPath, "bedrock_server.exe"))))
+						MinecraftRuntimeUpdater.WriteInstalled(server);
+				}
+				catch (Exception exception)
+				{
+					LocalizedMessageBox.Show(SecretRedactor.Redact(exception.Message),
+						LocalizationManager.Get("MinecraftWorkspace.Title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+			}
 			string previousFramework = server.ServerFramework ?? "Vanilla";
 			using (var editForm = new ServerSettingsGUI(server))
 			{
+				if (openAutomation) editForm.Shown += (_, _) => editForm.OpenAutomationPage();
 				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
 				{
 					GameServer updatedServer = editForm.NewServer;
@@ -1265,6 +1286,11 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 				}
 
+				if (GameCapabilityResolver.UsesMinecraftLifecycle(server))
+				{
+					MinecraftContentTransactions.EnsureReadyToStart(server);
+					MinecraftConfigurationSync.Synchronize(server, FileHandler.SaveServers);
+				}
 				if (!ValidateIntegrityAndReport(server, showInteractiveErrors)) return false;
 				SafetyChecklistReport safetyReport = UserGuidance.BuildSafetyChecklist(server);
 				if (!safetyReport.CanContinue)

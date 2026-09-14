@@ -977,7 +977,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					7. Back up the working world before adding mods.
 
 					JAVA AND BEDROCK
-					Java choices include Vanilla, Fabric, Forge, and supported NeoForge combinations. Use the choices actually offered; do not invent a version string to bypass compatibility checks. Synix prepares the supported Java runtime/loader combination.
+					Java choices include Vanilla, Fabric, Forge, NeoForge, Paper, and Purpur where builds are available. Use the version and build selectors; Paper and Purpur use plugins, while Fabric, Forge, and NeoForge use their matching mods. Synix downloads the selected runtime from its official provider.
 
 					Bedrock uses the official Bedrock Dedicated Server package and does not use Java.
 
@@ -987,7 +987,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					Fabric, Forge, NeoForge, and plugin-server packages are not interchangeable. Creating a mods or plugins folder does not install the required loader or server framework. Browse Catalog is not automatic modpack or dependency installation.
 
 					CONFIGURATION
-					Configure manages supported server.properties and edition-specific settings. Native modes include Survival, Creative, and Adventure; technical values and commands keep the form Minecraft expects.
+					Configure manages server.properties and edition-specific settings. Java also offers Spectator mode. Technical values and commands keep the form Minecraft expects.
+
+					From Server Options, open Minecraft Control Center. Its Settings page lists the server's editable configuration files. Edit File provides text editing; Structured Editor provides the existing format-aware editor. Both save changes while the server is stopped. Known server.properties values such as ports, player limit, world, seed, mode, and command-channel settings also update Synix's saved entry. The advertised name/MOTD is separate from the local entry name. Unknown mod settings stay in their own files.
+
+					Synix re-reads these settings before editing the entry or starting it, and when Refresh is used while stopped. If an external edit is invalid or conflicts with another entry, correct the named problem instead of repeatedly starting the server. An editor refuses to overwrite a file changed since it was opened; reopen it to load the new contents.
+
+					CHANGING THE SERVER RUNTIME
+					Keep a full server backup before changing versions or loaders. Choose the new runtime in Setup, save the reviewed entry, then select Apply Runtime in Minecraft Control Center. Synix prepares the official runtime separately, preserves server.properties and world folders, and records the replaced runtime files. It does not automatically start the server. Start is blocked while a recorded runtime and the selected profile disagree.
+
+					A file rollback does not undo world changes made after the server starts. Never assume a world opened with newer Minecraft or different mods can safely be loaded by an older runtime; recover the matching full backup instead.
 
 					Stop before changing files that require a restart. Do not replace an existing world with a fresh template as a repair shortcut.
 
@@ -998,7 +1007,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				["Minecraft Console and Player Tools"] = CreateArticle(
 					"Games",
 					"""
-					Select the Minecraft server and open its console or player tools from Server Options.
+					Select the Minecraft server, then open Server Options → Minecraft Control Center. The Console and Players pages keep command and player tools together. Other pages provide settings, worlds, add-ons, full-server backups, restart scheduling, recovery, and diagnostics.
 
 					COMMAND CHANNELS
 					Supported configurations can use a Synix-managed console, a supported localhost management channel, or optional RCON. The available channel depends on the edition and server configuration.
@@ -1019,6 +1028,39 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					Use the dashboard Stop or Restart action for lifecycle changes so the watchdog knows the shutdown is intentional.
 
 					Keep optional RCON or administration endpoints local unless you have a secured remote-management arrangement. Public gameplay does not require exposing those credentials or endpoints.
+					"""),
+
+				["Minecraft Modpacks, Worlds, and Recovery"] = CreateArticle(
+					"Games",
+					"""
+					INSTALL OR UPDATE A SERVER MODPACK
+					1. Make a full-server backup and stop the server. Use Synix with normal Windows permissions.
+					2. Set and apply the pack's exact Minecraft version, loader, and loader build first.
+					3. In Minecraft Control Center → Mods & Plugins, choose Import Server Pack. Select a Modrinth .mrpack or a complete server ZIP containing actual mods/plugins and configuration files.
+					4. Optional server mods are skipped unless Include optional server mods is selected. Client-only Modrinth entries and client overrides are not imported.
+					5. Review the scan result, metadata checks, skipped content, and every file to be added, replaced, or removed. Confirm only if the source and changes are appropriate.
+					6. Start manually after installation, read the console, and test a matching client connection.
+
+					The importer does not run pack-supplied launch scripts, replace worlds, or overwrite root server.properties. Download the author's full server pack if a CurseForge client export contains only a download manifest. Private downloads, unsupported hosts, or unsupported loaders need the author's supported server files; Synix does not bypass provider restrictions.
+
+					Modrinth downloads are hash-checked. Supported JAR metadata is inspected for loader, client-only content, duplicate IDs, and declared dependencies without running the JAR. Unknown metadata and complex version ranges require review. A clean scan or a lack of identified conflicts does not guarantee a mod is safe or compatible. Missing dependencies are not silently downloaded.
+
+					Reimporting the same named pack can remove its previously managed JARs that are no longer present, but only when those files still match their recorded hashes. Unmanaged JARs and world files are not removed. Configuration files supplied by the new pack can replace older ones; the preview shows them before you confirm. Keep the same server-ZIP filename when updating that pack so it is recognized as the same pack.
+
+					WORLD MANAGEMENT
+					Use Worlds to list recognized worlds. Import World ZIP copies one matching-edition world into a new named folder; it does not overwrite an existing world or convert between Java and Bedrock. Select an installed world and Activate World to change level-name and Synix's world setting together. The next start loads the selected world. Changing the seed affects generation of a new world, not existing terrain.
+
+					RECOVERY
+					Recovery lists file changes made by this workspace. Undo restores the recorded previous files or removes files introduced by that change. Switch away from an imported world before undoing its import. If files were edited afterward, Synix refuses to overwrite them; preserve the edits and use a suitable full backup if necessary.
+
+					A pending recovery blocks Start until recovery finishes and the saved entry agrees with the restored files. Older installations without a recorded runtime profile require a full backup for runtime recovery. Backups remain complete server-folder backups, independent of individual change records.
+
+					After a successful full-backup restore, old workspace change records are marked as replaced by that backup. They remain visible for reference but cannot be undone against the restored files. Importing or editing content after the restore creates new recovery records.
+
+					DIAGNOSTICS AND SCHEDULES
+					Diagnostics reads recent log and crash-report tails for common Java, memory, dependency, port, world, and tick-time problems. No detected pattern is not proof the server is healthy. Performance opens the resource monitor; CPU and RAM measurements are not a substitute for game tick profiling.
+
+					Schedules opens Synix's existing restart and maintenance settings. Choose the desired days, time, player-wait behavior, backup, and update options, then review and save. The workspace does not create a second scheduler or change your schedule automatically.
 					"""),
 
 				["Mod and Plugin Manager"] = CreateArticle(

@@ -52,6 +52,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 		private static Color NullTypeColor => SettingsPalette.MutedText;
 
 		private string _path = string.Empty;
+		private string? _loadedFileHash;
+		internal Func<bool> PersistServerChanges = FileHandler.SaveServers;
 		private ConfigFormat _format = ConfigFormat.StandardINI;
 		private readonly GameServer? _server;
 		private readonly bool _isRuntimeInstance;
@@ -496,6 +498,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 					return;
 				}
 
+				_loadedFileHash = Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.HashFile(_path);
 				_fileData = ConfigHandler.LoadConfig(_path, _format);
 				dgvConfig.Enabled = true;
 				btnStructured.Enabled = true;
@@ -876,12 +879,21 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 		{
 			try
 			{
+				if (_loadedFileHash != Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.HashFile(_path))
+					throw Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.Error("Changed");
 				if (_server != null && HasUnsavedChanges())
 					_ = GameFix.BackupManagedConfiguration(
 						_server,
 						LocalizationManager.Get(
 							"Configuration.Editor.BackupReason"));
-				ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
+				if (_server != null && Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.IsProperties(_server, _path))
+				{
+					string preview = ConfigHandler.CreatePreview(_path, CollectUpdatedData(), _format);
+					Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.Save(_server, _path, preview,
+						_loadedFileHash, PersistServerChanges);
+				}
+				else ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
+				_loadedFileHash = Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.HashFile(_path);
 				return true;
 			}
 			catch (Exception exception)
@@ -1081,6 +1093,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				return;
 			}
 
+			try
+			{
+				Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.Synchronize(_server, FileHandler.SaveServers);
+			}
+			catch (Exception exception)
+			{
+				LocalizedMessageBox.Show(this, Core.SanitizeProblemReportText(exception.Message), Text,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 			LoadConfiguration();
 			UpdateRestoreBackupAvailability();
 			LocalizedMessageBox.Show(

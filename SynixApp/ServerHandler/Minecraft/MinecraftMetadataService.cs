@@ -160,6 +160,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		internal static string NormalizeLoader(string? loader)
 		{
+			if (string.Equals(loader, MinecraftPluginRuntime.Paper, StringComparison.OrdinalIgnoreCase))
+				return MinecraftPluginRuntime.Paper;
+			if (string.Equals(loader, MinecraftPluginRuntime.Purpur, StringComparison.OrdinalIgnoreCase))
+				return MinecraftPluginRuntime.Purpur;
 			if (string.Equals(loader, FabricLoader, StringComparison.OrdinalIgnoreCase))
 				return FabricLoader;
 			if (string.Equals(loader, ForgeLoader, StringComparison.OrdinalIgnoreCase))
@@ -291,6 +295,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			return normalizedLoader switch
 			{
+				MinecraftPluginRuntime.Paper or MinecraftPluginRuntime.Purpur =>
+					await MinecraftPluginRuntime.GetBuildsAsync(normalizedLoader, gameVersion, cancellationToken).ConfigureAwait(false),
 				FabricLoader => await GetFabricLoaderVersionsAsync(gameVersion, cancellationToken)
 					.ConfigureAwait(false),
 				ForgeLoader => await GetForgeLoaderVersionsAsync(gameVersion, cancellationToken)

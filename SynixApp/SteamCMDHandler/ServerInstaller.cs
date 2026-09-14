@@ -620,6 +620,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			string forgeArtifactVersion = "";
 			string neoForgeArtifactVersion = "";
 			string expectedDownloadSha1 = "";
+			MinecraftRuntimeArtifact? pluginArtifact = null;
 			MinecraftMetadataService.MinecraftVersionMetadata? minecraftMetadata = null;
 			bool isBedrock = MinecraftControlProfile.IsBedrock(server);
 
@@ -659,7 +660,13 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 						server.MinecraftLoaderVersion);
 					server.MinecraftLoaderVersion = minecraftLoaderVersion;
 
-					if (minecraftLoader == MinecraftMetadataService.FabricLoader)
+					if (MinecraftPluginRuntime.IsPluginRuntime(minecraftLoader))
+					{
+						pluginArtifact = await MinecraftPluginRuntime.GetArtifactAsync(minecraftLoader, server.GameVersion, minecraftLoaderVersion);
+						downloadUrl = pluginArtifact.Url.AbsoluteUri;
+						fileName = "server.jar";
+					}
+					else if (minecraftLoader == MinecraftMetadataService.FabricLoader)
 					{
 						downloadUrl = (await MinecraftMetadataService.GetFabricServerJarUriAsync(
 							server.GameVersion,
@@ -802,6 +809,17 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					File.Delete(fullFilePath);
 					logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.MinecraftSizeMismatch"));
 					return -1;
+				}
+
+				if (pluginArtifact != null)
+				{
+					using FileStream artifactStream = File.OpenRead(fullFilePath);
+					using IncrementalHash hasher = IncrementalHash.CreateHash(pluginArtifact.Algorithm);
+					byte[] hashBuffer = new byte[81920];
+					int hashRead;
+					while ((hashRead = artifactStream.Read(hashBuffer)) > 0) hasher.AppendData(hashBuffer, 0, hashRead);
+					if (!Convert.ToHexString(hasher.GetHashAndReset()).Equals(pluginArtifact.Hash, StringComparison.OrdinalIgnoreCase))
+						throw new InvalidDataException(LocalizationManager.Get("Installer.Activity.ChecksumFailed"));
 				}
 
 				if (!string.IsNullOrWhiteSpace(expectedDownloadSha1) &&
@@ -973,7 +991,11 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 							return neoForgeResult;
 					}
 
-					if (minecraftLoader != MinecraftMetadataService.VanillaLoader)
+					if (MinecraftPluginRuntime.IsPluginRuntime(minecraftLoader))
+					{
+						Directory.CreateDirectory(Path.Combine(server.InstallPath, "plugins"));
+					}
+					else if (minecraftLoader != MinecraftMetadataService.VanillaLoader)
 					{
 						Directory.CreateDirectory(Path.Combine(server.InstallPath, "mods"));
 						logCallback?.Invoke(LocalizationManager.Get("Installer.Activity.ModsFolderReady"));
@@ -1002,6 +1024,8 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 					return -1;
 			}
 
+			if (blueprint.Game.Equals("Minecraft", StringComparison.OrdinalIgnoreCase))
+				Synix_Control_Panel.SynixEngine.Minecraft.MinecraftRuntimeUpdater.WriteInstalled(server);
 			Core.Instance.UpdateGridStatus();
 			return 0;
 		}
