@@ -18,10 +18,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("serverName", context => context.Server.ServerName),
-			new("password", context => context.Passwords.ServerPassword),
-			new("adminPassword", context => context.Passwords.AdminPassword),
-			new("maxCarSlots", context => context.Server.MaxPlayers.ToString())
+			new("serverName", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("password", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("adminPassword", context => context.Passwords.AdminPassword, serverField: ConfigurationServerField.AdminPassword),
+			new("maxCarSlots", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers)
 		];
 
 		public override string GameName => "Assetto Corsa Competizione";

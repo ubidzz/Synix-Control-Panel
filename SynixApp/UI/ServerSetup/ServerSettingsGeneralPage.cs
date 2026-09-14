@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
@@ -250,7 +257,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			{
 				selectedMode = MinecraftControlProfile.NormalizeGameMode(selectedMode);
 				foreach (string mode in MinecraftControlProfile.GameModes)
-					cmbCompetitive.Items.Add(mode);
+					if (!IsMinecraftBedrockSelected || mode != "Spectator") cmbCompetitive.Items.Add(mode);
+				if (IsMinecraftBedrockSelected && selectedMode == "Spectator") selectedMode = MinecraftControlProfile.SurvivalGameMode;
 			}
 			else if (gameData.GameModes != null)
 			{
@@ -559,7 +567,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				}
 				else
 				{
-					cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge"]);
+					cmbMinecraftLoader.Items.AddRange(["Vanilla", "Fabric", "Forge", MinecraftPluginRuntime.Paper, MinecraftPluginRuntime.Purpur]);
 					if (MinecraftMetadataService.IsNeoForgeCompatibleVersion(cmbGameVersion.Text))
 						cmbMinecraftLoader.Items.Add(MinecraftMetadataService.NeoForgeLoader);
 				}

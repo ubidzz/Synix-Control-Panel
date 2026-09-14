@@ -18,9 +18,9 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("ServerName", context => context.Server.ServerName),
-			new("ServerPassword", context => context.Passwords.ServerPassword),
-			new("MaxPlayers", context => context.Server.MaxPlayers.ToString())
+			new("ServerName", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("ServerPassword", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("MaxPlayers", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers)
 		];
 
 		public override string GameName => "Ground Branch";

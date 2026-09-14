@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using System.Collections.Concurrent;
@@ -98,7 +105,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!File.Exists(path))
 					return [];
 
-				return File.ReadLines(path)
+				SynixEngine.ModManagement.ModPathSafety.EnsureNoLinks(path);
+				using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+				stream.Seek(Math.Max(0, stream.Length - 512 * 1024), SeekOrigin.Begin);
+				using StreamReader reader = new(stream);
+				if (stream.Position > 0) reader.ReadLine();
+				return reader.ReadToEnd().Split('\n')
 					.TakeLast(500)
 					.Select(line => new MinecraftConsoleLine(
 						File.GetLastWriteTime(path),

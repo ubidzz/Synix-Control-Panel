@@ -303,7 +303,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			GameServer server,
 			string relativePathTemplate)
 		{
-			string identity = Core.Instance.GetSafeName(server.ServerName);
+			string identity = Core.GetServerIdentity(server);
 			string relativePath = relativePathTemplate
 				.Replace("{Identity}", identity, StringComparison.Ordinal)
 				.Replace("{ServerName}", identity, StringComparison.Ordinal)

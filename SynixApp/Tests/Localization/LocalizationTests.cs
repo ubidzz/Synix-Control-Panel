@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 
 using System.Collections;
@@ -397,7 +404,7 @@ public sealed class LocalizationTests
 				Assert.Contains("SERVEUR", modText);
 				Assert.Contains("SYSTÈME DE MODULES", modText);
 				Assert.Contains("Liste de contrôle de sécurité automatique", modText);
-				Assert.Contains("Installer un fichier", modText);
+				Assert.Contains("Importer ZIP / dossier", modText);
 				ComboBox[] selectors = GetControls<ComboBox>(mods).ToArray();
 				Assert.Equal(2, selectors.Length);
 				Assert.Equal("Modules Minecraft", selectors[0].GetItemText(

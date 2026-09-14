@@ -14,6 +14,9 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixApp.FileFolderHandler;
+using Synix_Control_Panel.SynixEngine.ModManagement;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -83,18 +86,19 @@ namespace Synix_Control_Panel.SynixEngine
 					"Synix",
 					"RestoreOperations");
 
-		public async Task ExecuteBackup(GameServer server, StartContext context)
+		public async Task<bool> ExecuteBackup(GameServer server, StartContext context)
 		{
-			if (context == StartContext.CrashRecovery) return;
+			ArgumentNullException.ThrowIfNull(server);
+			if (context == StartContext.CrashRecovery) return false;
 			using ServerOperationLease operation =
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Backup);
 			if (!operation.Acquired)
 			{
 				LogLocalized("Backup.Activity.Blocked", Color.Orange, true, operation.FailureReason);
-				return;
+				return false;
 			}
 
-			if (server.Status != StatusManager.GetStatus(ServerState.Stopped))
+			if (server.Status != StatusManager.GetStatus(ServerState.Stopped) || server.PID.HasValue)
 			{
 				LogLocalized("Backup.Activity.StopRequired", Color.Orange, false, server.ServerName);
 				_ = SendDiscordNotification(
@@ -103,7 +107,7 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("Backup.Notification.Blocked.Title"),
 					LocalizationManager.Get("Backup.Notification.Blocked.Body"),
 					Color.Orange);
-				return;
+				return false;
 			}
 
 			ServerBackupPreflight preflight = await CreateServerBackupPreflightAsync(server);
@@ -116,7 +120,7 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("Backup.Notification.Failed.Title"),
 					preflight.Message,
 					Color.Red);
-				return;
+				return false;
 			}
 			if (!preflight.HasEnoughSpace)
 			{
@@ -135,7 +139,7 @@ namespace Synix_Control_Panel.SynixEngine
 						FormatBytes(preflight.RequiredBytes),
 						FormatBytes(preflight.AvailableBytes)),
 					Color.Red);
-				return;
+				return false;
 			}
 
 			LogLocalized("SteamCmd.Activity.CloseDisabled", Color.Orange, true);
@@ -198,16 +202,26 @@ namespace Synix_Control_Panel.SynixEngine
 					File.Move(temporaryZipPath, zipPath);
 					backupPublished = true;
 
-					List<FileInfo> files = new DirectoryInfo(backupRoot)
+					// Retention is housekeeping after publication. Never delete the completed
+					// backup because an older archive is locked or cannot be removed.
+					FileInfo[] expiredBackups = new DirectoryInfo(backupRoot)
 						.GetFiles("*.zip")
+						.Where(file => !file.FullName.Equals(zipPath, StringComparison.OrdinalIgnoreCase))
 						.OrderByDescending(file => file.LastWriteTimeUtc)
-						.ToList();
-					while (files.Count > maximumBackups)
+						.Skip(maximumBackups - 1)
+						.ToArray();
+					foreach (FileInfo expiredBackup in expiredBackups)
 					{
-						FileInfo expiredBackup = files.Last();
-						expiredBackup.Delete();
-						TryDeleteBackupRestoreFile(GetBackupReceiptPath(expiredBackup.FullName));
-						files.RemoveAt(files.Count - 1);
+						try
+						{
+							expiredBackup.Delete();
+							TryDeleteBackupRestoreFile(GetBackupReceiptPath(expiredBackup.FullName));
+						}
+						catch (Exception exception)
+						{
+							LogLocalized("Backup.Retention.Warning", Color.Orange, true,
+								expiredBackup.Name, exception.Message);
+						}
 					}
 				});
 
@@ -220,15 +234,19 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("Backup.Notification.Completed.Title"),
 					LocalizationManager.Get("Backup.Notification.Completed.Body", Path.GetFileName(zipPath)),
 					Color.LimeGreen);
+				return true;
 			}
 			catch (Exception exception)
 			{
 				TryDeleteBackupRestoreFile(temporaryZipPath);
 				TryDeleteBackupRestoreFile(temporaryReceiptPath);
-				if (backupPublished)
-					TryDeleteBackupRestoreFile(zipPath);
-				if (receiptPublished)
+				if (receiptPublished && !backupPublished)
 					TryDeleteBackupRestoreFile(receiptPath);
+				if (backupPublished)
+				{
+					LogLocalized("Backup.Retention.Warning", Color.Orange, true, Path.GetFileName(zipPath), exception.Message);
+					return true;
+				}
 				LogLocalized("Backup.Activity.Error", Color.Red, true, exception.Message);
 				_ = SendDiscordNotification(
 					server,
@@ -236,6 +254,7 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("Backup.Notification.Failed.Title"),
 					exception.Message,
 					Color.Red);
+				return false;
 			}
 			finally
 			{
@@ -261,6 +280,10 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				sourcePath = Path.GetFullPath(server.InstallPath);
 				backupFolder = Path.GetFullPath(GetActiveServerBackupFolder(server));
+				if (Properties.Settings.Default.UseCustomBackupPath &&
+					(string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) ||
+					!Directory.Exists(Properties.Settings.Default.CustomBackupPath)))
+					throw new DirectoryNotFoundException(LocalizationManager.Get("Backup.Error.CustomFolderUnavailable"));
 				if (!Directory.Exists(sourcePath))
 				{
 					return new ServerBackupPreflight(
@@ -344,7 +367,7 @@ namespace Synix_Control_Panel.SynixEngine
 		internal string GetActiveServerBackupFolder(GameServer server)
 		{
 			string cleanGame = GetSafeName(server.Game);
-			string cleanServer = GetSafeName(server.ServerName);
+			string cleanServer = GetServerIdentity(server);
 			return Path.Combine(GetActiveBackupBaseFolder(), cleanGame, cleanServer);
 		}
 
@@ -355,7 +378,7 @@ namespace Synix_Control_Panel.SynixEngine
 			HashSet<string> folders = new(StringComparer.OrdinalIgnoreCase)
 			{
 				GetActiveServerBackupFolder(server),
-				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetSafeName(server.ServerName))
+				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetServerIdentity(server))
 			};
 
 			List<ServerBackupArchive> backups = [];
@@ -412,7 +435,7 @@ namespace Synix_Control_Panel.SynixEngine
 			HashSet<string> folders = new(StringComparer.OrdinalIgnoreCase)
 			{
 				GetActiveServerBackupFolder(server),
-				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetSafeName(server.ServerName))
+				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetServerIdentity(server))
 			};
 
 			foreach (string folder in folders)
@@ -545,7 +568,8 @@ namespace Synix_Control_Panel.SynixEngine
 		internal async Task<ServerBackupRestoreResult> RestoreServerBackupAsync(
 			GameServer server,
 			ServerBackupArchive backup,
-			IProgress<string>? progress = null)
+			IProgress<string>? progress = null,
+			Func<bool>? persist = null)
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(backup);
@@ -560,6 +584,12 @@ namespace Synix_Control_Panel.SynixEngine
 				return new ServerBackupRestoreResult(
 					false,
 					LocalizationManager.Get("Backup.Restore.StopServer"));
+			}
+			persist ??= FileHandler.SaveServers;
+			try { SynchronizePendingServerRestores(server, persist); }
+			catch (Exception exception)
+			{
+				return new(false, LocalizationManager.Get("Backup.Restore.PreviousPending", SanitizeProblemReportText(exception.Message)));
 			}
 
 			string selectedPath = Path.GetFullPath(backup.ArchivePath);
@@ -586,6 +616,24 @@ namespace Synix_Control_Panel.SynixEngine
 			{
 				ServerBackupRestoreResult result = await Task.Run(() =>
 					RestoreServerBackup(server, backup, progress));
+				if (result.Succeeded)
+				{
+					// The restore lease still excludes independent operations while profile
+					// settings are refreshed. Retain the journal and original folder on failure.
+					server.Status = StatusManager.GetStatus(ServerState.Stopped);
+					try
+					{
+						progress?.Report(LocalizationManager.Get("Backup.Progress.Synchronizing"));
+						bool cleaned = SynchronizePendingServerRestores(server, persist);
+						result = result with { Message = LocalizationManager.Get(cleaned ? "Backup.Restore.Succeeded" : "Backup.Restore.CleanupPending") };
+						progress?.Report(LocalizationManager.Get("Backup.Progress.Complete"));
+					}
+					catch (Exception exception)
+					{
+						result = result with { Succeeded = false,
+							Message = LocalizationManager.Get("Backup.Restore.SettingsPending", SanitizeProblemReportText(exception.Message)) };
+					}
+				}
 				if (result.Succeeded)
 					LogLocalized("Backup.Restore.Activity.Succeeded", Color.LimeGreen, true, server.ServerName, backup.FileName);
 				else
@@ -624,38 +672,96 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		internal static int RecoverInterruptedServerRestores()
+		private static List<(string Path, RestoreJournal Journal)> ReadRestoreJournals()
 		{
 			if (!Directory.Exists(RestoreJournalFolder))
-				return 0;
+				return [];
 
-			int recovered = 0;
+			// Validate the complete recovery queue before changing any server folders.
+			List<(string Path, RestoreJournal Journal)> pending = [];
 			foreach (string journalPath in Directory.EnumerateFiles(
 				RestoreJournalFolder,
 				"*.json",
 				SearchOption.TopDirectoryOnly))
 			{
+				ModPathSafety.EnsureNoLinks(journalPath);
+				if (new FileInfo(journalPath).Length > 64 * 1024)
+					throw new InvalidDataException(LocalizationManager.Get("Backup.Error.RecoveryRecordEmpty"));
 				RestoreJournal journal = JsonSerializer.Deserialize<RestoreJournal>(
 					File.ReadAllText(journalPath)) ??
 					throw new InvalidDataException(LocalizationManager.Get(
 						"Backup.Error.RecoveryRecordEmpty"));
 
-				ValidateRestoreJournal(journal);
+				ValidateRestoreJournal(journal, journalPath);
+				pending.Add((journalPath, journal));
+			}
+			return pending;
+		}
+
+		internal static bool SynchronizePendingServerRestores(GameServer server, Func<bool> persist)
+		{
+			List<(string Path, RestoreJournal Journal)> journals = ReadRestoreJournals();
+			if (journals.Count == 0 || string.IsNullOrWhiteSpace(server.InstallPath)) return true;
+			string installPath = Path.GetFullPath(server.InstallPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			var pending = journals.Where(item => item.Journal.InstallPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+				.Equals(installPath, StringComparison.OrdinalIgnoreCase)).ToArray();
+			if (pending.Length == 0) return true;
+			using ServerOperationLease operation = ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Configure);
+			if (!operation.Acquired) throw new InvalidOperationException(operation.FailureReason);
+			ModPackageManager.EnsureStopped(server);
+			if (!Directory.Exists(installPath))
+				throw new IOException(LocalizationManager.Get("Backup.Error.RecoveryFoldersMissing"));
+			bool cleaned = true;
+			foreach ((string journalPath, RestoreJournal journal) in pending)
+			{
+				if (journal.Phase != "Restored")
+					throw new InvalidDataException(LocalizationManager.Get("Backup.Error.RestartForRecovery"));
+				if (journal.NeedsSettingsSync)
+				{
+					ServerConfigurationSync.SynchronizeRestored(server, persist);
+					journal.NeedsSettingsSync = false;
+					WriteRestoreJournal(journalPath, journal);
+				}
+				try
+				{
+					if (Directory.Exists(journal.RollbackPath)) Directory.Delete(journal.RollbackPath, true);
+					if (Directory.Exists(journal.OperationRoot)) Directory.Delete(journal.OperationRoot, true);
+					File.Delete(journalPath);
+				}
+				catch (IOException) { cleaned = false; }
+				catch (UnauthorizedAccessException) { cleaned = false; }
+			}
+			return cleaned;
+		}
+
+		internal static int RecoverInterruptedServerRestores()
+		{
+			List<(string Path, RestoreJournal Journal)> pending = ReadRestoreJournals();
+			int recovered = 0;
+			foreach ((string journalPath, RestoreJournal journal) in pending)
+			{
 				bool restoreWasActivated = string.Equals(
 					journal.Phase,
 					"Restored",
 					StringComparison.Ordinal);
 				if (restoreWasActivated && Directory.Exists(journal.InstallPath))
 				{
+					// Profile data loads later during application startup. The next restore
+					// completion/start attempt must synchronize it before discarding recovery.
+					if (journal.NeedsSettingsSync) continue;
 					if (Directory.Exists(journal.RollbackPath))
 						Directory.Delete(journal.RollbackPath, true);
 				}
 				else if (Directory.Exists(journal.RollbackPath))
 				{
-					if (Directory.Exists(journal.InstallPath))
-						Directory.Delete(journal.InstallPath, true);
-					Directory.Move(journal.RollbackPath, journal.InstallPath);
+					RestorePreservedInstallation(journal);
 					recovered++;
+					if (restoreWasActivated && journal.NeedsSettingsSync)
+					{
+						// A prior settings save may already have succeeded before the crash.
+						// Re-read the recovered original before clearing this completion record.
+						continue;
+					}
 				}
 				else if (!Directory.Exists(journal.InstallPath) &&
 					!string.Equals(journal.Phase, "Prepared", StringComparison.Ordinal))
@@ -670,6 +776,33 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			return recovered;
+		}
+
+		private static void RestorePreservedInstallation(RestoreJournal journal)
+		{
+			// Keep the interrupted installation until the original folder is back in place.
+			// Deleting it first would lose both the active folder and useful recovery evidence
+			// if Windows subsequently refused to move the preserved original.
+			ModPathSafety.EnsureTreeHasNoLinks(journal.RollbackPath);
+			ModPathSafety.EnsureTreeHasNoLinks(journal.InstallPath);
+			ModPathSafety.EnsureTreeHasNoLinks(journal.OperationRoot);
+			string displaced = ModPathSafety.Resolve(journal.OperationRoot, "interrupted-" + Guid.NewGuid().ToString("N"));
+			bool displacedCurrent = Directory.Exists(journal.InstallPath);
+			if (displacedCurrent)
+			{
+				Directory.CreateDirectory(journal.OperationRoot);
+				Directory.Move(journal.InstallPath, displaced);
+			}
+			try { Directory.Move(journal.RollbackPath, journal.InstallPath); }
+			catch (Exception exception)
+			{
+				if (displacedCurrent && !Directory.Exists(journal.InstallPath))
+				{
+					try { Directory.Move(displaced, journal.InstallPath); }
+					catch (Exception recoveryError) { throw new AggregateException(exception, recoveryError); }
+				}
+				throw;
+			}
 		}
 
 		private ServerBackupRestoreResult RestoreServerBackup(
@@ -713,6 +846,7 @@ namespace Synix_Control_Panel.SynixEngine
 					InstallPath = installPath,
 					OperationRoot = operationRoot,
 					RollbackPath = rollbackPath,
+					NeedsSettingsSync = true,
 					Phase = "Prepared"
 				};
 				WriteRestoreJournal(journalPath, journal);
@@ -725,6 +859,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 
 			bool originalMoved = false;
+			bool replacementActivated = false;
 			try
 			{
 				progress?.Report(LocalizationManager.Get("Backup.Progress.Preserving"));
@@ -740,6 +875,7 @@ namespace Synix_Control_Panel.SynixEngine
 				journal.Phase = "Activating";
 				WriteRestoreJournal(journalPath, journal);
 				Directory.Move(preparedRoot, installPath);
+				replacementActivated = true;
 				journal.Phase = "Restored";
 				WriteRestoreJournal(journalPath, journal);
 			}
@@ -750,16 +886,14 @@ namespace Synix_Control_Panel.SynixEngine
 				{
 					try
 					{
-						if (Directory.Exists(installPath))
-							Directory.Delete(installPath, true);
-						Directory.Move(rollbackPath, installPath);
+						RestorePreservedInstallation(journal);
 					}
 					catch (Exception exception)
 					{
 						rollbackException = exception;
 					}
 				}
-				else if (!originalMoved && Directory.Exists(installPath))
+				else if (replacementActivated && !originalMoved && Directory.Exists(installPath))
 				{
 					try
 					{
@@ -784,27 +918,11 @@ namespace Synix_Control_Panel.SynixEngine
 					rollbackException);
 			}
 
-			progress?.Report(LocalizationManager.Get("Backup.Progress.Cleaning"));
-			bool cleanupComplete = true;
-			try
-			{
-				if (Directory.Exists(rollbackPath))
-					Directory.Delete(rollbackPath, true);
-				if (Directory.Exists(operationRoot))
-					Directory.Delete(operationRoot, true);
-				File.Delete(journalPath);
-			}
-			catch
-			{
-				cleanupComplete = false;
-			}
-
-			progress?.Report(LocalizationManager.Get("Backup.Progress.Complete"));
+			// Profile synchronization and cleanup are performed by the shared caller
+			// under the same restore lease, not separately by each UI window.
 			return new ServerBackupRestoreResult(
 				true,
-				LocalizationManager.Get(cleanupComplete
-					? "Backup.Restore.Succeeded"
-					: "Backup.Restore.CleanupPending"),
+				LocalizationManager.Get("Backup.Restore.Succeeded"),
 				restoredBytes);
 		}
 
@@ -1247,8 +1365,7 @@ namespace Synix_Control_Panel.SynixEngine
 		private string GetActiveBackupBaseFolder()
 		{
 			if (Properties.Settings.Default.UseCustomBackupPath &&
-				!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath) &&
-				Directory.Exists(Properties.Settings.Default.CustomBackupPath))
+				!string.IsNullOrWhiteSpace(Properties.Settings.Default.CustomBackupPath))
 			{
 				return Path.GetFullPath(Properties.Settings.Default.CustomBackupPath);
 			}
@@ -1294,8 +1411,15 @@ namespace Synix_Control_Panel.SynixEngine
 			File.Move(temporaryPath, journalPath, true);
 		}
 
-		private static void ValidateRestoreJournal(RestoreJournal journal)
+		private static void ValidateRestoreJournal(RestoreJournal journal, string journalPath)
 		{
+			string operationId = Path.GetFileNameWithoutExtension(journalPath);
+			if (!Guid.TryParseExact(operationId, "N", out _) ||
+				journal.Phase is not ("Prepared" or "OriginalPreserved" or "Activating" or "Restored") ||
+				!Path.IsPathFullyQualified(journal.InstallPath) ||
+				!Path.IsPathFullyQualified(journal.OperationRoot) ||
+				!Path.IsPathFullyQualified(journal.RollbackPath))
+				throw new InvalidDataException(LocalizationManager.Get("Backup.Error.RecoveryUnsafePaths"));
 			string installPath = ValidateInstallPath(journal.InstallPath);
 			string parentPath = Path.GetDirectoryName(installPath)!;
 			string operationRoot = Path.GetFullPath(journal.OperationRoot);
@@ -1303,14 +1427,19 @@ namespace Synix_Control_Panel.SynixEngine
 
 			if (!string.Equals(Path.GetDirectoryName(operationRoot), parentPath, StringComparison.OrdinalIgnoreCase) ||
 				!Path.GetFileName(operationRoot).StartsWith(RestoreOperationPrefix, StringComparison.OrdinalIgnoreCase) ||
+				!Path.GetFileName(operationRoot).EndsWith("-" + operationId, StringComparison.OrdinalIgnoreCase) ||
 				!string.Equals(Path.GetDirectoryName(rollbackPath), parentPath, StringComparison.OrdinalIgnoreCase) ||
-				!Path.GetFileName(rollbackPath).StartsWith(
-					Path.GetFileName(installPath) + RestoreRollbackMarker,
-					StringComparison.OrdinalIgnoreCase))
+				!Path.GetFileName(rollbackPath).Equals(Path.GetFileName(installPath) + RestoreRollbackMarker + operationId,
+					StringComparison.OrdinalIgnoreCase) ||
+				operationRoot.Equals(installPath, StringComparison.OrdinalIgnoreCase) ||
+				operationRoot.Equals(rollbackPath, StringComparison.OrdinalIgnoreCase))
 			{
 				throw new InvalidDataException(LocalizationManager.Get(
 					"Backup.Error.RecoveryUnsafePaths"));
 			}
+			ModPathSafety.EnsureTreeHasNoLinks(installPath);
+			ModPathSafety.EnsureTreeHasNoLinks(operationRoot);
+			ModPathSafety.EnsureTreeHasNoLinks(rollbackPath);
 		}
 
 		private static void TryDeleteBackupRestoreDirectory(string path)
@@ -1358,6 +1487,7 @@ namespace Synix_Control_Panel.SynixEngine
 			public string OperationRoot { get; set; } = string.Empty;
 			public string RollbackPath { get; set; } = string.Empty;
 			public string Phase { get; set; } = string.Empty;
+			public bool NeedsSettingsSync { get; set; }
 		}
 
 		private sealed record BackupReceipt(

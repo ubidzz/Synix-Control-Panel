@@ -17,6 +17,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 	internal sealed partial class ServerBackupRestoreDialog : Form
 	{
 		private GameServer? _server;
+		private bool _busy;
 		internal ServerBackupArchive? SelectedBackup { get; private set; }
 
 		internal ServerBackupRestoreDialog()
@@ -45,6 +46,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private void LoadBackups(IReadOnlyList<ServerBackupArchive> backups)
 		{
+			string? selectedPath = SelectedBackup?.ArchivePath;
 			backupGrid.Rows.Clear();
 			LocalizationManager.BindText(
 				subtitleLabel,
@@ -83,8 +85,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			if (backupGrid.Rows.Count > 0)
 			{
-				backupGrid.Rows[0].Selected = true;
-				backupGrid.CurrentCell = backupGrid.Rows[0].Cells[0];
+				DataGridViewRow selectedRow = backupGrid.Rows.Cast<DataGridViewRow>().FirstOrDefault(row =>
+					(row.Tag as ServerBackupArchive)?.ArchivePath.Equals(selectedPath, StringComparison.OrdinalIgnoreCase) == true)
+					?? backupGrid.Rows[0];
+				backupGrid.ClearSelection();
+				backupGrid.CurrentCell = selectedRow.Cells[0];
+				selectedRow.Selected = true;
 			}
 			UpdateSelection();
 		}
@@ -107,32 +113,42 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private async void VerifyButton_Click(object? sender, EventArgs eventArgs)
 		{
+			if (_busy) return;
 			UpdateSelection();
 			if (_server == null || SelectedBackup == null)
 				return;
-
-			SetManagementButtonsEnabled(false);
-			selectionLabel.ForeColor = SettingsPalette.SecondaryText;
-			LocalizationManager.BindText(
-				selectionLabel,
-				"Text.16FB4FBCA9A11AC839AE");
-			ServerBackupManagementResult result =
-				await Core.Instance.VerifyServerBackupAsync(_server, SelectedBackup);
-			LocalizedMessageBox.Show(
-				this,
-				LocalizationManager.TranslateRuntimeText(result.Message),
-				LocalizationManager.Get(
-					result.Succeeded
-						? "MessageText.17A4B79ED999C004885D"
-						: "MessageText.6ABC8E0D8209E250F6DE"),
-				MessageBoxButtons.OK,
-				result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-			LoadBackups(await Core.Instance.GetServerBackupsAsync(_server));
-			SetManagementButtonsEnabled(true);
+			ServerBackupArchive backup = SelectedBackup;
+			try
+			{
+				await RunManagementActionAsync(async () =>
+				{
+					selectionLabel.ForeColor = SettingsPalette.SecondaryText;
+					LocalizationManager.BindText(
+						selectionLabel,
+						"Text.16FB4FBCA9A11AC839AE");
+					ServerBackupManagementResult result =
+						await Core.Instance.VerifyServerBackupAsync(_server, backup);
+					LocalizedMessageBox.Show(
+						this,
+						LocalizationManager.TranslateRuntimeText(result.Message),
+						LocalizationManager.Get(
+							result.Succeeded
+								? "MessageText.17A4B79ED999C004885D"
+								: "MessageText.6ABC8E0D8209E250F6DE"),
+						MessageBoxButtons.OK,
+						result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+					LoadBackups(await Core.Instance.GetServerBackupsAsync(_server));
+				});
+			}
+			catch (Exception exception)
+			{
+				PlainEnglishErrorDialog.ShowError(this, LocalizationManager.Get("MessageText.6ABC8E0D8209E250F6DE"), exception.Message);
+			}
 		}
 
 		private async void DeleteButton_Click(object? sender, EventArgs eventArgs)
 		{
+			if (_busy) return;
 			UpdateSelection();
 			if (_server == null || SelectedBackup == null)
 				return;
@@ -152,24 +168,48 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			if (confirmation != DialogResult.Yes)
 				return;
 
-			SetManagementButtonsEnabled(false);
-			ServerBackupManagementResult result =
-				await Core.Instance.DeleteServerBackupAsync(_server, SelectedBackup);
-			if (!result.Succeeded)
+			ServerBackupArchive backup = SelectedBackup;
+			try
 			{
-				LocalizedMessageBox.Show(
-					this,
-					LocalizationManager.TranslateRuntimeText(result.Message),
-					LocalizationManager.Get("MessageText.9848B5FC9954185EE516"),
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
+				await RunManagementActionAsync(async () =>
+				{
+					ServerBackupManagementResult result =
+						await Core.Instance.DeleteServerBackupAsync(_server, backup);
+					if (!result.Succeeded)
+					{
+						LocalizedMessageBox.Show(
+							this,
+							LocalizationManager.TranslateRuntimeText(result.Message),
+							LocalizationManager.Get("MessageText.9848B5FC9954185EE516"),
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+					}
+					LoadBackups(await Core.Instance.GetServerBackupsAsync(_server));
+				});
 			}
-			LoadBackups(await Core.Instance.GetServerBackupsAsync(_server));
-			SetManagementButtonsEnabled(true);
+			catch (Exception exception)
+			{
+				PlainEnglishErrorDialog.ShowError(this, LocalizationManager.Get("MessageText.9848B5FC9954185EE516"), exception.Message);
+			}
+		}
+
+		internal async Task RunManagementActionAsync(Func<Task> action)
+		{
+			if (_busy) return;
+			SetManagementButtonsEnabled(false);
+			try { await action(); }
+			finally { SetManagementButtonsEnabled(true); }
+		}
+
+		protected override void OnFormClosing(FormClosingEventArgs eventArgs)
+		{
+			if (_busy) eventArgs.Cancel = true;
+			base.OnFormClosing(eventArgs);
 		}
 
 		private void ConfirmSelection()
 		{
+			if (_busy) return;
 			UpdateSelection();
 			if (SelectedBackup == null)
 				return;
@@ -193,11 +233,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			SelectedBackup = backupGrid.SelectedRows.Count > 0
 				? backupGrid.SelectedRows[0].Tag as ServerBackupArchive
 				: null;
-			restoreButton.Enabled = SelectedBackup != null &&
+			restoreButton.Enabled = !_busy && SelectedBackup != null &&
 				SelectedBackup.Integrity != ServerBackupIntegrity.Invalid;
-			verifyButton.Enabled = SelectedBackup != null &&
+			verifyButton.Enabled = !_busy && SelectedBackup != null &&
 				SelectedBackup.Integrity != ServerBackupIntegrity.Invalid;
-			deleteButton.Enabled = SelectedBackup != null;
+			deleteButton.Enabled = !_busy && SelectedBackup != null;
+			if (_busy) return;
 			LocalizationManager.BindText(
 				selectionLabel,
 				SelectedBackup == null
@@ -223,6 +264,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private void SetManagementButtonsEnabled(bool enabled)
 		{
+			_busy = !enabled;
+			UseWaitCursor = !enabled;
 			backupGrid.Enabled = enabled;
 			cancelButton.Enabled = enabled;
 			if (enabled)

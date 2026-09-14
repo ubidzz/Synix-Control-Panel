@@ -141,7 +141,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		private static string ExpandPattern(string pattern, GameServer server)
 		{
-			string identity = Core.Instance.GetSafeName(server.ServerName);
+			string identity = Core.GetServerIdentity(server);
 			string worldName = Core.Instance.GetSafeName(server.WorldName ?? string.Empty);
 			return pattern
 				.Replace("{Identity}", identity, StringComparison.Ordinal)

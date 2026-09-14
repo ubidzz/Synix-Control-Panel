@@ -24,14 +24,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("ServerName", context => context.Server.ServerName),
-			new("ServerPassword", context => context.Passwords.ServerPassword),
-			new("ServerPort", context => context.Server.Port.ToString()),
-			new("ServerMaxPlayerCount", context => context.Server.MaxPlayers.ToString()),
-			new("GameWorld", context => NormalizeWorldName(context.Server.WorldName)),
+			new("ServerName", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("ServerPassword", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("ServerPort", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("ServerMaxPlayerCount", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers),
+			new("GameWorld", context => NormalizeWorldName(context.Server.WorldName), serverField: ConfigurationServerField.WorldName),
 			new("GameName", context => context.Identity),
-			new("WorldGenSeed", context => string.IsNullOrWhiteSpace(context.Server.WorldSeed) ? "12345" : context.Server.WorldSeed),
-			new("WorldGenSize", context => NormalizeWorldSize(context.Server.WorldSize).ToString())
+			new("WorldGenSeed", context => string.IsNullOrWhiteSpace(context.Server.WorldSeed) ? "12345" : context.Server.WorldSeed, serverField: ConfigurationServerField.WorldSeed),
+			new("WorldGenSize", context => NormalizeWorldSize(context.Server.WorldSize).ToString(), serverField: ConfigurationServerField.WorldSize)
 		];
 
 		public override string GameName => "7 Days to Die";

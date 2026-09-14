@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.ServerHandler;
@@ -20,7 +27,16 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 	internal enum ModContentKind
 	{
 		Plugin,
-		Mod
+		Mod,
+		Scenario
+	}
+
+	internal enum ModPackageLayout
+	{
+		Default,
+		FolderTree,
+		EmpyrionMod,
+		EmpyrionScenario
 	}
 
 	internal enum ModTargetMode
@@ -72,6 +88,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		public List<ModInstallTarget> Targets { get; init; } = [];
 
 		[JsonIgnore]
+		public bool UserConfigured { get; init; }
+
+		[JsonIgnore]
 		public bool CanManage => SupportLevel == ModSystemSupportLevel.Managed &&
 			Targets.Any(target => target.CanManage);
 	}
@@ -82,12 +101,14 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		public string DisplayName { get; init; } = string.Empty;
 		public ModContentKind Kind { get; init; }
 		public ModTargetMode Mode { get; init; }
+		public ModPackageLayout PackageLayout { get; init; }
 		public string ProviderName { get; init; } = string.Empty;
 		public string RelativePath { get; init; } = string.Empty;
 		public List<string> AllowedExtensions { get; init; } = [];
 		public List<string> MarkerPaths { get; init; } = [];
 		public List<string> FrameworkNames { get; init; } = [];
 		public bool AllowArchives { get; init; }
+		public bool AllowFolderImport { get; init; }
 		public bool ArchiveOnly { get; init; }
 		public bool PreserveArchiveContents { get; init; }
 		public string RequiredArchiveFileName { get; init; } = string.Empty;
@@ -169,16 +190,44 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 
 		internal static IReadOnlyList<ModSystemProfile> GetProfiles(string gameName) =>
 			Profiles.Where(profile => profile.GameNames.Any(name =>
-				name.Equals(gameName, StringComparison.OrdinalIgnoreCase))).ToArray();
+				GameDatabase.GetCanonicalGameName(name).Equals(GameDatabase.GetCanonicalGameName(gameName),
+					StringComparison.OrdinalIgnoreCase))).ToArray();
+
+		internal static bool MatchesGame(ModSystemProfile profile, string gameName) =>
+			profile.GameNames.Any(name => GameDatabase.GetCanonicalGameName(name).Equals(
+				GameDatabase.GetCanonicalGameName(gameName), StringComparison.OrdinalIgnoreCase));
+
+		internal static bool CanManageAddOns(GameServer? server) =>
+			server != null &&
+			// Folder discovery and catalog links alone are not mod-management support.
+			// Keep supported games available even before their loader is installed.
+			GetProfiles(server).Any(profile => profile.CanManage);
+
+		// Opening the manager also lets an unlisted game configure an import location.
+		// This is deliberately separate from claiming verified mod/loader support.
+		internal static bool CanOpenManager(GameServer? server) =>
+			server != null && !string.IsNullOrWhiteSpace(server.Game);
 
 		internal static IReadOnlyList<ModSystemProfile> GetProfiles(GameServer server)
 		{
 			ArgumentNullException.ThrowIfNull(server);
-			IReadOnlyList<ModSystemProfile> exact = GetProfiles(server.Game);
-			if (exact.Count > 0)
-				return exact;
-			ModSystemProfile? discovered = BuildFolderDiscoveryProfile(server);
-			return discovered == null ? [] : [discovered];
+			List<ModSystemProfile> profiles = MinecraftControlProfile.IsBedrock(server) ? [] : GetProfiles(server.Game).ToList();
+			ModSystemProfile? configured = null;
+			try { configured = UniversalModImports.Load(server); }
+			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidDataException)
+			{
+				// A damaged optional local profile must not prevent opening the manager
+				// or using the game's built-in profiles. Saving still requires a valid file.
+				ApplicationLogService.WriteLocalized("ModCatalog.Activity.ProfileIgnored", Color.Orange, false,
+					"import-locations.modsystem.json", exception.Message);
+			}
+			if (configured != null) profiles.Add(configured);
+			if (profiles.Count == 0)
+			{
+				ModSystemProfile? discovered = BuildFolderDiscoveryProfile(server);
+				if (discovered != null) profiles.Add(discovered);
+			}
+			return profiles;
 		}
 
 		internal static ModSystemDetection? Detect(
@@ -196,10 +245,13 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			ModInstallTarget[] activeTargets = profile.Targets
 				.Where(target => IsTargetActive(server.InstallPath, framework, target))
 				.ToArray();
-			ModInstallTarget recommended = activeTargets.FirstOrDefault(target => target.CanManage) ??
+			// The configured loader is a stronger signal than folders left by an older loader.
+			ModInstallTarget recommended = activeTargets.FirstOrDefault(target => target.CanManage &&
+				target.FrameworkNames.Any(name => name.Equals(framework, StringComparison.OrdinalIgnoreCase))) ??
+				activeTargets.FirstOrDefault(target => target.CanManage) ??
 				profile.Targets.FirstOrDefault(target => target.CanManage) ??
 				profile.Targets[0];
-			bool frameworkDetected = profile.SupportLevel == ModSystemSupportLevel.DetectedOnly ||
+			bool frameworkDetected = profile.UserConfigured || profile.SupportLevel == ModSystemSupportLevel.DetectedOnly ||
 				recommended.CanManageIds ||
 				FrameworkMatches(profile, framework) ||
 				profile.FrameworkMarkers.Any(marker => PathExists(server.InstallPath, marker)) ||
@@ -381,6 +433,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				HashSet<string> targetIds = new(StringComparer.OrdinalIgnoreCase);
 				foreach (ModInstallTarget target in profile.Targets)
 				{
+					if (!ModPackageHandlers.For(target).AcceptsProfile(profile, target))
+						throw new InvalidDataException(LocalizationManager.Get("EmpyrionMods.Error.Profile"));
 					if (string.IsNullOrWhiteSpace(target.Id) ||
 						string.IsNullOrWhiteSpace(target.DisplayName) ||
 						(!target.CanManageIds &&
@@ -393,16 +447,20 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					if (target.Mode == ModTargetMode.FileImport && target.AllowedExtensions.Count == 0)
 						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.NoFileTypes", sourceName));
 					if (target.Mode == ModTargetMode.FileImport && target.AllowedExtensions.Any(extension =>
-						ForbiddenImportExtensions.Contains(extension)))
+						ForbiddenImportExtensions.Contains(extension) &&
+						!(target.PackageLayout == ModPackageLayout.FolderTree && extension.Equals(".js", StringComparison.OrdinalIgnoreCase))))
 					{
 						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.DangerousType", sourceName));
 					}
-					if ((target.ArchiveOnly || target.PreserveArchiveContents ||
+					if ((target.ArchiveOnly || target.AllowFolderImport || target.PreserveArchiveContents ||
 						!string.IsNullOrWhiteSpace(target.RequiredArchiveFileName) ||
 						target.WrapRootArchiveFiles) && !target.AllowArchives)
 					{
 						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.ArchiveRules", sourceName));
 					}
+					if (target.AllowFolderImport && (!target.CanImport || (target.PackageLayout != ModPackageLayout.FolderTree &&
+						(!target.ArchiveOnly || (target.PackageLayout == ModPackageLayout.Default && string.IsNullOrWhiteSpace(target.RequiredArchiveFileName))))))
+						throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.ArchiveMarkerRequired", sourceName));
 					if (!string.IsNullOrWhiteSpace(target.RequiredArchiveFileName) &&
 						(target.RequiredArchiveFileName.Length > 128 ||
 						target.RequiredArchiveFileName != Path.GetFileName(target.RequiredArchiveFileName) ||
@@ -459,11 +517,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 
 		internal static bool IsSafeRelativePath(string value)
 		{
-			if (string.IsNullOrWhiteSpace(value) || Path.IsPathRooted(value))
-				return false;
-			string normalized = value.Replace('/', Path.DirectorySeparatorChar);
-			return normalized.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
-				.All(part => part is not "." and not "..");
+			return ModPathSafety.IsSafeRelativePath(value);
 		}
 
 		private static bool IsSafeCatalogUrl(string value) =>
@@ -504,13 +558,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				throw new InvalidOperationException(LocalizationManager.Get("ModCatalog.Error.InstallFolderMissing"));
 			if (!IsSafeRelativePath(relativePath))
 				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.UnsafeFolder"));
-			string root = Path.GetFullPath(installPath)
-				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) +
-				Path.DirectorySeparatorChar;
-			string resolved = Path.GetFullPath(Path.Combine(root, relativePath));
-			if (!resolved.StartsWith(root, StringComparison.OrdinalIgnoreCase))
-				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.FolderOutsideInstall"));
-			return resolved;
+			return ModPathSafety.Resolve(installPath, relativePath);
 		}
 	}
 }

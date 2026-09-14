@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Drawing;
 using System.Reflection;
@@ -20,8 +27,8 @@ public sealed class ServerSetupProgressTests
 	[Theory]
 	[InlineData(false, false, false, "Attention,Waiting,Waiting,Waiting")]
 	[InlineData(true, false, false, "Complete,Attention,Waiting,Waiting")]
-	[InlineData(true, true, false, "Complete,Complete,Next,Ready")]
-	[InlineData(true, true, true, "Complete,Complete,Complete,Next")]
+	[InlineData(true, true, false, "Complete,Complete,Next,Waiting")]
+	[InlineData(true, true, true, "Complete,Complete,Complete,Ready")]
 	[InlineData(true, false, true, "Complete,Attention,Waiting,Waiting")]
 	[InlineData(false, true, true, "Attention,Waiting,Waiting,Waiting")]
 	public void CheckpointsFollowValidationNotVisitedTabs(bool details, bool ready, bool reviewed, string expected)
@@ -36,7 +43,7 @@ public sealed class ServerSetupProgressTests
 			Assert.True(buttons[0].Enabled);
 			Assert.Equal(details, buttons[1].Enabled);
 			Assert.Equal(details && ready, buttons[2].Enabled);
-			Assert.Equal(details && ready, buttons[3].Enabled);
+			Assert.Equal(details && ready && reviewed, buttons[3].Enabled);
 		});
 	}
 
@@ -81,7 +88,7 @@ public sealed class ServerSetupProgressTests
 			Navigate(setup, 2);
 			Assert.True(Find<Button>(setup, "btnSave").Enabled);
 			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
-			Assert.Equal(ServerSetupProgressStrip.StepState.Complete, Step(setup, 3).State);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Current, Step(setup, 3).State);
 			DataGridView grid = Find<DataGridView>(setup, "gridSummary");
 			Assert.True(grid.ReadOnly);
 			string[] values = grid.Rows.Cast<DataGridViewRow>().SelectMany(row => row.Cells.Cast<DataGridViewCell>())
@@ -96,6 +103,8 @@ public sealed class ServerSetupProgressTests
 			Assert.Equal(DialogResult.None, setup.DialogResult);
 
 			Find<TextBox>(setup, "txtAuthenticationToken").Text = string.Empty;
+			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			Assert.False(Step(setup, 4).Enabled);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Waiting, Step(setup, 3).State);
 			// A click/Enter before the debounce completes must still respect the gate.
 			typeof(ServerSettingsGUI).GetMethod("btnSave_Click", BindingFlags.Instance | BindingFlags.NonPublic)!
@@ -117,21 +126,26 @@ public sealed class ServerSetupProgressTests
 			Find<TextBox>(setup, "txtAuthenticationToken").Text = "eco-user-token_123.test";
 			Navigate(setup, 2);
 			Find<TextBox>(setup, "txtName").Text = "Updated server name";
+			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			Assert.False(Step(setup, 4).Enabled);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Waiting, Step(setup, 3).State);
 			Navigate(setup, 0);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Next, Step(setup, 3).State);
-			Assert.True(Find<Button>(setup, "btnSave").Enabled); // Review remains optional.
+			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Validation.ReviewRequired"),
+				Find<Label>(setup, "lblFooterStatus").Text);
 			Navigate(setup, 2);
+			Assert.True(Find<Button>(setup, "btnSave").Enabled);
 			Assert.Contains(Find<DataGridView>(setup, "gridSummary").Rows.Cast<DataGridViewRow>(),
 				row => Equals(row.Cells[1].Value, "Updated server name"));
 		});
 	}
 
 	[Theory]
-	[InlineData("fr-FR", "Récapitulatif", "TERMINÉ")]
-	[InlineData("de-DE", "Überprüfen", "ABGESCHLOSSEN")]
-	[InlineData("es-ES", "Revisar", "COMPLETO")]
-	public void OpenSetupUpdatesItsGuideAndReviewLanguageWithoutTranslatingValues(string language, string title, string complete)
+	[InlineData("fr-FR", "Récapitulatif", "VÉRIFICATION")]
+	[InlineData("de-DE", "Überprüfen", "IN PRÜFUNG")]
+	[InlineData("es-ES", "Revisar", "REVISANDO")]
+	public void OpenSetupUpdatesItsGuideAndReviewLanguageWithoutTranslatingValues(string language, string title, string current)
 	{
 		RunOnSta(() =>
 		{
@@ -143,7 +157,7 @@ public sealed class ServerSetupProgressTests
 			LocalizationManager.SetLanguage(language);
 			LocalizationManager.Apply(setup);
 			Assert.Equal(title, Step(setup, 3).Text);
-			Assert.Equal(complete, Step(setup, 3).StatusText);
+			Assert.Equal(current, Step(setup, 3).StatusText);
 			DataGridView grid = Find<DataGridView>(setup, "gridSummary");
 			Assert.Equal(LocalizationManager.Get("ServerSetup.Review.ServerName"), grid.Rows[0].Cells[0].Value);
 			Assert.Equal("Save", grid.Rows[0].Cells[1].Value);
@@ -151,14 +165,163 @@ public sealed class ServerSetupProgressTests
 		});
 	}
 
-	private static ServerSettingsGUI CreateEcoSetup() => new(new GameServer
+	private static ServerSettingsGUI CreateEcoSetup()
 	{
-		Game = "Eco",
-		ServerName = "Eco Setup Progress Test",
-		InstallPath = Path.GetTempPath(),
-		Port = 61466,
-		QueryPort = 61467
-	});
+		(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
+		return new ServerSettingsGUI(new GameServer
+		{
+			Game = "Eco",
+			ServerName = "Eco Setup Progress Test",
+			InstallPath = Path.GetTempPath(),
+			Port = gamePort,
+			QueryPort = queryPort
+		});
+	}
+
+	[Theory]
+	[InlineData(false, "Eco", "txtAuthenticationToken", "eco-user-token_123.test")]
+	[InlineData(true, "Eco", "txtAuthenticationToken", "eco-user-token_123.test")]
+	[InlineData(false, "Empyrion - Galactic Survival", "txtWorldSeed", "1011345")]
+	[InlineData(true, "Empyrion - Galactic Survival", "txtWorldSeed", "1011345")]
+	public void LastRequiredSettingAutomaticallyOpensReviewBeforeUnlockingSave(
+		bool editMode, string game, string lastInput, string validValue)
+	{
+		RunOnSta(() =>
+		{
+			(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
+			using ServerSettingsGUI setup = new(editMode ? new GameServer
+			{
+				Game = game, ServerName = "Review transition test", WorldSeed = "invalid",
+				InstallPath = Path.GetTempPath(), Port = gamePort, QueryPort = queryPort
+			} : null);
+			ShowOffscreen(setup);
+			if (!editMode)
+			{
+				ComboBox games = Find<ComboBox>(setup, "cmbGame");
+				games.SelectedIndex = games.FindStringExact(game);
+				Find<TextBox>(setup, "txtName").Text = "Review transition test";
+				Find<ModernSettingsNumericUpDown>(setup, "numPort").Value = gamePort;
+				Find<ModernSettingsNumericUpDown>(setup, "numQueryPort").Value = queryPort;
+				Find<ModernSettingsToggle>(setup, "chkDefaultPath").Checked = true;
+				if (lastInput == "txtWorldSeed")
+					Find<TextBox>(setup, lastInput).Text = "invalid";
+			}
+
+			Navigate(setup, 1);
+			Button save = Find<Button>(setup, "btnSave");
+			ServerSettingsReviewPage review = Find<ServerSettingsReviewPage>(setup, "pnlPageReview");
+			Assert.False(save.Enabled);
+			Assert.False(review.Visible);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Attention, Step(setup, 2).State);
+			bool enabledOnlyAfterShowingSummary = false;
+			save.EnabledChanged += (_, _) =>
+			{
+				if (save.Enabled)
+					enabledOnlyAfterShowingSummary = review.Visible &&
+						Equals(Find<DataGridView>(setup, "gridSummary").Rows[0].Cells[1].Value, "Review transition test");
+			};
+
+			Find<TextBox>(setup, lastInput).Text = validValue;
+			Assert.False(save.Enabled);
+			Assert.False(Step(setup, 4).Enabled);
+			var validationTimer = (System.Windows.Forms.Timer)typeof(ServerSettingsGUI)
+				.GetField("debounceTimer", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(setup)!;
+			WorkflowUiTest.WaitUntil(() => !validationTimer.Enabled);
+			Assert.True(save.Enabled, Find<Label>(setup, "lblFooterStatus").Text);
+			Assert.True(enabledOnlyAfterShowingSummary);
+			Assert.True(review.Visible);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Complete, Step(setup, 2).State);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Current, Step(setup, 3).State);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Ready, Step(setup, 4).State);
+			Assert.False(save.Focused);
+			Assert.True(Find<DataGridView>(setup, "gridSummary").ContainsFocus);
+			Assert.Null(setup.NewServer);
+			Assert.Equal(DialogResult.None, setup.DialogResult);
+		});
+	}
+
+	[Fact]
+	public void ValidExistingSettingsStillRequireReviewAndCannotSkipToSave()
+	{
+		RunOnSta(() =>
+		{
+			(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
+			using ServerSettingsGUI setup = new(new GameServer
+			{
+				Game = "Empyrion - Galactic Survival", ServerName = "Saved server review test",
+				WorldSeed = "1011345", InstallPath = Path.GetTempPath(), Port = gamePort, QueryPort = queryPort
+			});
+			ShowOffscreen(setup);
+			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			Assert.False(Step(setup, 4).Enabled);
+			Assert.True(Step(setup, 3).Enabled, Find<Label>(setup, "lblFooterStatus").Text);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Next, Step(setup, 3).State);
+			Step(setup, 4).PerformClick();
+			Assert.False(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
+			Assert.Null(setup.NewServer);
+
+			Step(setup, 3).PerformClick();
+			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
+			Assert.True(Find<Button>(setup, "btnSave").Enabled);
+			Assert.True(Step(setup, 4).Enabled);
+			Navigate(setup, 0);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Complete, Step(setup, 3).State);
+			Assert.True(Find<Button>(setup, "btnSave").Enabled);
+		});
+	}
+
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void QueuedSaveDuringAValidEditShowsReviewWithoutSaving(bool previouslyReviewed)
+	{
+		RunOnSta(() =>
+		{
+			using ServerSettingsGUI setup = CreateEcoSetup();
+			ShowOffscreen(setup);
+			Find<TextBox>(setup, "txtAuthenticationToken").Text = "eco-user-token_123.test";
+			if (previouslyReviewed)
+			{
+				Navigate(setup, 2);
+				Find<Button>(setup, "btnNavGeneral").PerformClick();
+			}
+			Find<TextBox>(setup, "txtName").Text = "Fresh review required";
+			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			typeof(ServerSettingsGUI).GetMethod("btnSave_Click", BindingFlags.Instance | BindingFlags.NonPublic)!
+				.Invoke(setup, [Find<Button>(setup, "btnSave"), EventArgs.Empty]);
+			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
+			Assert.Contains(Find<DataGridView>(setup, "gridSummary").Rows.Cast<DataGridViewRow>(),
+				row => Equals(row.Cells[1].Value, "Fresh review required"));
+			Assert.True(Find<Button>(setup, "btnSave").Enabled);
+			Assert.Null(setup.NewServer);
+			Assert.Equal(DialogResult.None, setup.DialogResult);
+		});
+	}
+
+	[Fact]
+	public void InvalidChangesStayOnTheirSettingsPageUntilCorrected()
+	{
+		RunOnSta(() =>
+		{
+			using ServerSettingsGUI setup = CreateEcoSetup();
+			ShowOffscreen(setup);
+			TextBox token = Find<TextBox>(setup, "txtAuthenticationToken");
+			token.Text = "eco-user-token_123.test";
+			Navigate(setup, 2);
+			Find<Button>(setup, "btnNavSecurity").PerformClick();
+			token.Text = string.Empty;
+			Button save = Find<Button>(setup, "btnSave");
+			Assert.False(save.Enabled);
+			WorkflowUiTest.WaitUntil(() => Step(setup, 2).State == ServerSetupProgressStrip.StepState.Attention);
+			Assert.True(Find<ServerSettingsSecurityPage>(setup, "pnlPageSecurity").Visible);
+			Assert.False(save.Enabled);
+			Assert.False(Step(setup, 4).Enabled);
+			token.Text = "replacement-token";
+			WorkflowUiTest.WaitUntil(() => save.Enabled);
+			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
+			Assert.Null(setup.NewServer);
+		});
+	}
 
 	[Theory]
 	[InlineData("en-US", true, false)]

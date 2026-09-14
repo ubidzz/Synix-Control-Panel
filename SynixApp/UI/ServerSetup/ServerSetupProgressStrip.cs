@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.ComponentModel;
 using System.Drawing.Drawing2D;
@@ -12,7 +19,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup;
 /// <summary>Setup checkpoints only; installation progress belongs to the dashboard.</summary>
 public sealed class ServerSetupProgressStrip : UserControl
 {
-	internal enum StepState { Waiting, Attention, Complete, Next, Ready }
+	internal enum StepState { Waiting, Attention, Complete, Next, Ready, Current }
 	private readonly StepButton[] _steps;
 	public event EventHandler<int>? StepSelected;
 
@@ -51,23 +58,29 @@ public sealed class ServerSetupProgressStrip : UserControl
 		UpdateState(false, false, false);
 	}
 
-	internal void UpdateState(bool detailsReady, bool requirementsReady, bool reviewed, bool editMode = false)
+	internal void UpdateState(bool detailsReady, bool requirementsReady, bool reviewed, bool editMode = false, bool showingReview = false)
 	{
-		// Review is optional, so this strip must never add another Save gate.
+		// Valid settings unlock Review; displaying the current review unlocks Save.
 		requirementsReady &= detailsReady;
 		reviewed &= requirementsReady;
 		StepState[] states =
 		[
 			detailsReady ? StepState.Complete : StepState.Attention,
 			!detailsReady ? StepState.Waiting : requirementsReady ? StepState.Complete : StepState.Attention,
-			!requirementsReady ? StepState.Waiting : reviewed ? StepState.Complete : StepState.Next,
-			!requirementsReady ? StepState.Waiting : reviewed ? StepState.Next : StepState.Ready
+			!requirementsReady ? StepState.Waiting : showingReview ? StepState.Current : reviewed ? StepState.Complete : StepState.Next,
+			reviewed ? StepState.Ready : StepState.Waiting
 		];
 		string[] titles = ["Details", "Required", "Review", "Save"];
 		for (int index = 0; index < _steps.Length; index++)
 		{
 			StepButton button = _steps[index];
-			button.Enabled = index == 0 || (index == 1 ? detailsReady : requirementsReady);
+			button.Enabled = index switch
+			{
+				0 => true,
+				1 => detailsReady,
+				2 => requirementsReady,
+				_ => reviewed
+			};
 			button.State = states[index];
 			LocalizationManager.BindText(button, index == 3 && editMode
 				? "ServerSetup.Button.SaveChanges" : $"ServerSetup.Progress.{titles[index]}");
@@ -121,7 +134,7 @@ public sealed class ServerSetupProgressStrip : UserControl
 			{
 				StepState.Complete => SettingsPalette.Success,
 				StepState.Attention => Blend(SettingsPalette.SecondaryText, SettingsPalette.Warning, 0.4F + Pulse * 0.6F),
-				StepState.Next or StepState.Ready => SettingsPalette.Accent,
+				StepState.Next or StepState.Ready or StepState.Current => SettingsPalette.Accent,
 				_ => SettingsPalette.MutedText
 			};
 			int radius = Px(13);

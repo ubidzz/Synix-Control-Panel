@@ -298,6 +298,15 @@
   <data name="ServerSetup.Status.Ready" xml:space="preserve">
     <value>●  Speicherbereit</value>
   </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Auswahl prüfen</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Änderungen werden geprüft…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Die erforderlichen Einstellungen sind gültig. Öffnen Sie Schritt 3, um Ihre Auswahl vor dem Speichern zu prüfen.</value>
+  </data>
   <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
     <value>●  Aktion erforderlich</value>
   </data>
@@ -1453,6 +1462,9 @@ Klicken Sie unten. Synix sendet den Befehl, liest das neue Token, prüft es und 
   </data>
   <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
     <value>WEITER</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>IN PRÜFUNG</value>
   </data>
   <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
     <value>BEREIT</value>
@@ -3151,6 +3163,12 @@ Erstellen Sie Synix danach neu, führen Sie die Tests aus und prüfen Sie Instal
   <data name="Configuration.Report.State.Warning" xml:space="preserve">
     <value>WARNUNG</value>
   </data>
+  <data name="Configuration.Report.State.Information" xml:space="preserve">
+    <value>HINWEIS</value>
+  </data>
+  <data name="Diagnostics.Health.Summary.Review" xml:space="preserve">
+    <value>ZU PRÜFEN  •  {0} Warnungen  •  {1} bestanden</value>
+  </data>
   <data name="Configuration.Report.State.Fail" xml:space="preserve">
     <value>FEHLER</value>
   </data>
@@ -3568,7 +3586,7 @@ Jetzt den Definitionsordner öffnen?</value>
     <value>Gespeichert: {0}</value>
   </data>
   <data name="GameDefinitions.Builder.TemplatePicker.Filter" xml:space="preserve">
-    <value>Konfigurationsdateien|*.ini;*.cfg;*.json;*.xml;*.txt;*.properties|Alle Dateien|*.*</value>
+    <value>Konfigurationsdateien|*.ini;*.cfg;*.json;*.xml;*.txt;*.properties;*.yaml;*.yml|Alle Dateien|*.*</value>
   </data>
   <data name="GameDefinitions.Builder.TemplatePicker.Title" xml:space="preserve">
     <value>Wählen Sie eine vollständige Spielkonfigurationsvorlage aus</value>
@@ -4152,8 +4170,12 @@ Bitte stoppen Sie einen Server, bevor Sie einen anderen starten.</value>
     <value>Die Konfiguration konnte nicht angewendet werden</value>
   </data>
   <data name="ServerActions.Delete.ConfirmBody" xml:space="preserve">
-    <value>Dadurch wird die Installation gelöscht unter:
-{0}</value>
+    <value>Dadurch wird die Installation an folgendem Ort endgültig gelöscht:
+{0}
+
+Der von Synix gespeicherte Add-on-Importverlauf und die Wiederherstellungskopien dieses Servers werden ebenfalls gelöscht.
+
+Vollständige Serversicherungsarchive bleiben erhalten, sofern Sie die folgende Option nicht auswählen.</value>
   </data>
   <data name="ServerActions.Delete.ConfirmHeading" xml:space="preserve">
     <value>Sind Sie sicher, dass Sie „{0}“ DAUERHAFT löschen möchten?</value>
@@ -6048,6 +6070,15 @@ Geben Sie Speicherplatz frei oder wählen Sie einen anderen Speicherort und vers
   <data name="FileSystem.Error.FolderMoveFailed" xml:space="preserve">
     <value>Der Ordner konnte nicht verschoben werden: {0}</value>
   </data>
+  <data name="FileSystem.Error.UnsafeDeletionPath" xml:space="preserve">
+    <value>Synix hat das Löschen von „{0}“ verweigert, da dieser Ordner nicht sicher als Server- oder Sicherungsordner gelöscht werden kann. Laufwerkswurzeln, Windows- und Anwendungsordner, Stammordner für Benutzerdaten und gemeinsam genutzte Synix-Ordner sind geschützt.</value>
+  </data>
+  <data name="FileSystem.Error.LinkedDeletionPath" xml:space="preserve">
+    <value>Synix hat das Löschen von „{0}“ verweigert, da der Ordner oder einer seiner übergeordneten Ordner eine Verknüpfung ist. Verknüpfte Ordner können nicht automatisch gelöscht werden.</value>
+  </data>
+  <data name="FileSystem.Error.DeletionPathUnavailable" xml:space="preserve">
+    <value>Synix konnte den zu löschenden Ordner „{0}“ nicht sicher überprüfen.</value>
+  </data>
   <data name="Configuration.Activity.Error" xml:space="preserve">
     <value>[KONFIGURATIONSFEHLER] {0}</value>
   </data>
@@ -7254,6 +7285,9 @@ Erforderliche Ziele:
   </data>
   <data name="ServerActions.Activity.BackupsDeleted" xml:space="preserve">
     <value>[LÖSCHEN] Serversicherungen aus {0} entfernt.</value>
+  </data>
+  <data name="ServerActions.Activity.AddOnDataDeleted" xml:space="preserve">
+    <value>[LÖSCHEN] Add-on-Verlauf und Wiederherstellungskopien dieses Servers aus {0} entfernt.</value>
   </data>
   <data name="ServerActions.Activity.ConfigCaptureCopied" xml:space="preserve">
     <value>[KONFIGURATIONSERFASSUNG] {0} Datei(en) für {1} nach {2} kopiert.</value>
@@ -10697,4 +10731,820 @@ Alle anderen benutzerdefinierten Konfigurationswerte werden entfernt.</value>
   <data name="MessageText.19580FB3CF2A0F82762D" xml:space="preserve">
     <value>Sie müssen den Server stoppen, bevor Sie die Serverdateien validieren.</value>
   </data>
+  <data name="ModManager.Error.LinkedPath" xml:space="preserve">
+    <value>Dieser Add-on-Vorgang verwendet eine verknüpfte Datei oder einen verknüpften Ordner. Wähle einen normalen Ordner; Synix folgt dieser Verknüpfung nicht.</value>
+  </data>
+  <data name="ModManager.Error.PreviousFileMissing" xml:space="preserve">
+    <value>Eine zur Wiederherstellung benötigte frühere Add-on-Datei fehlt. Es wurden keine Dateien geändert. Stelle die fehlende Wiederherstellungsdatei wieder her oder verwende eine geprüfte Serversicherung, bevor du dieses Add-on entfernst.</value>
+  </data>
+  <data name="ModManager.Error.RecoveryRetained" xml:space="preserve">
+    <value>Der Add-on-Vorgang ist fehlgeschlagen und einige Änderungen konnten nicht rückgängig gemacht werden. Wiederherstellungsdateien wurden unter {0} aufbewahrt. Lass den Server gestoppt und stelle diese Dateien oder eine geprüfte Serversicherung wieder her, bevor du ihn startest.</value>
+  </data>
+  <data name="LaunchCommand.Error.UnsafeBatchValue" xml:space="preserve">
+    <value>Das Startfeld {0} kann diesem Windows-Batch-Starter nicht sicher übergeben werden. Eingebettete doppelte Anführungszeichen, Zeilenumbrüche oder Variablenausdrücke werden hier nicht unterstützt. Der Wert wurde nicht geändert.</value>
+  </data>
+  <data name="LaunchCommand.Error.UnsafeBatchArguments" xml:space="preserve">
+    <value>Der vollständige Batch-Befehl enthält unsichere Befehlssyntax oder Variablenersetzung. Prüfe die Startwerte und zusätzlichen Argumente; es wurde nichts gestartet.</value>
+  </data>
+  <data name="ServerStart.Arguments.CustomHidden" xml:space="preserve">
+    <value>[Benutzerdefinierte Argumente vorhanden; Inhalt im Protokoll ausgeblendet]</value>
+  </data>
+  <data name="Configuration.Editor.Error.YamlUnsupported" xml:space="preserve">
+    <value>YAML-Zeile {0} ist ungültig oder verwendet eine Funktion, die dieser Editor nicht sicher ändern kann. Unterstützt: ein Dokument mit eingerückten Zuordnungen/Listen und einzeiligen Werten. Inline-Sammlungen, mehrzeilige Werte, Tags, Anker und Aliase werden nicht unterstützt. Nichts wurde gespeichert.</value>
+  </data>
+  <data name="GameInput.WorldSeed.RequiredNumber" xml:space="preserve">
+    <value>Für {0} ist ein Welt-Seed als ganze Zahl von {1} bis {2} erforderlich. Korrigieren Sie ihn unter Servereinrichtung &gt; Weltgenerierung.</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Required" xml:space="preserve">
+    <value>Welt-Seed (erforderlich)</value>
+  </data>
+  <data name="ServerSetup.World.Seed.RangeHint" xml:space="preserve">
+    <value>Ganze Zahl von {0} bis {1}. Behalten Sie bei einer bestehenden Welt den ursprünglichen Seed.</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Generate" xml:space="preserve">
+    <value>Seed erzeugen</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Hint" xml:space="preserve">
+    <value>Erzeugen Sie einen Seed für eine neue Welt oder geben Sie einen eigenen ein. Behalten Sie bei bestehenden Welten den ursprünglichen Seed.</value>
+  </data>
+  <data name="ModManager.Known.Scenario" xml:space="preserve">
+    <value>Szenario</value>
+  </data>
+  <data name="EmpyrionMods.Error.Profile" xml:space="preserve">
+    <value>Diese Paketstruktur wird nur für die dokumentierten Content-Ordner von Empyrion unterstützt.</value>
+  </data>
+  <data name="EmpyrionMods.Error.FolderName" xml:space="preserve">
+    <value>Verwenden Sie einen Ordnernamen mit 1–80 Zeichen, ohne Schrägstriche, reservierte Windows-Namen oder Leerzeichen am Anfang oder Ende. Ein Szenarioname darf nicht nur aus einer Workshop-Nummer bestehen.</value>
+  </data>
+  <data name="EmpyrionMods.Error.Layout" xml:space="preserve">
+    <value>Wählen Sie ein vollständig heruntergeladenes Szenario oder ein vollständiges kompiliertes Server-Mod-Paket, nicht die Spielinstallation, eine Workshop-Sammlung, einen Bauplan oder ein Quellcode-Archiv.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ScenarioLayout" xml:space="preserve">
+    <value>Ein Szenario muss gameoptions.yaml und seine Content-, Playfields-, Sectors- oder Prefabs-Dateien gemeinsam enthalten: im ZIP-Hauptverzeichnis oder in einem einzelnen Szenarioordner.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ScenarioCode" xml:space="preserve">
+    <value>Dieses Szenariopaket enthält DLL-, C#- oder JAR-Code. Importieren Sie Servercode separat über Empyrion-Server-Mods, nachdem Sie die Anleitung des Autors gelesen haben.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ModLayout" xml:space="preserve">
+    <value>Wählen Sie ein vollständiges kompiliertes Mod-Paket: DLLs und Zusatzdateien müssen im Paket-Hauptverzeichnis oder in einzelnen Mod-Ordnern liegen. Zusätzliche umschließende Ordner und vollständige Serverarchive werden nicht akzeptiert.</value>
+  </data>
+  <data name="EmpyrionMods.Error.MissingScenario" xml:space="preserve">
+    <value>Dieses Szenario ist nicht installiert. Importieren Sie zuerst das vollständige Szenario und wählen Sie es dann aus der Liste.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ConfigurationChanged" xml:space="preserve">
+    <value>Die Szenario- oder Spielstandeinstellungen wurden geändert, während dieses Fenster geöffnet war. Schließen Sie es und wählen Sie das Szenario erneut.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ExistingSave" xml:space="preserve">
+    <value>Dieser Spielstand existiert bereits. Ein anderes Szenario benötigt einen neuen, unbenutzten Spielstandnamen. Synix hat die vorhandene Welt weder ersetzt noch gelöscht.</value>
+  </data>
+  <data name="EmpyrionMods.Error.Configuration" xml:space="preserve">
+    <value>dedicated.yaml fehlt, ist zu groß oder enthält nicht genau eine Einstellung GameConfig.CustomScenario und GameConfig.GameName. Konfigurieren Sie zuerst den Server.</value>
+  </data>
+  <data name="EmpyrionMods.Error.SaveFailed" xml:space="preserve">
+    <value>Synix konnte den Servereintrag nicht speichern. Die vorherige Szenariokonfiguration wurde wiederhergestellt; die Sicherung bleibt erhalten.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ProtectedScenario" xml:space="preserve">
+    <value>Synix entfernt das ausgewählte Szenario oder Szenariodateien nicht, solange gespeicherte Welten existieren. Diese Welten können weiterhin von den Dateien abhängen. Es wurden keine Szenariodateien entfernt.</value>
+  </data>
+  <data name="EmpyrionMods.Status.Protected" xml:space="preserve">
+    <value>Für gespeicherte Welten geschützt</value>
+  </data>
+  <data name="EmpyrionMods.Status.Installed" xml:space="preserve">
+    <value>Installiert (nicht erneut geprüft)</value>
+  </data>
+  <data name="EmpyrionMods.Button.Import" xml:space="preserve">
+    <value>Paket importieren</value>
+  </data>
+  <data name="EmpyrionMods.Button.ChooseScenario" xml:space="preserve">
+    <value>Szenario wählen</value>
+  </data>
+  <data name="EmpyrionMods.ImportedScenario" xml:space="preserve">
+    <value>Die Szenariodateien wurden importiert. Die aktuelle Welt und Szenarioauswahl wurden nicht geändert. Wählen Sie über Szenario wählen das Szenario und einen Spielstandnamen. Behalten Sie bei Updates denselben Szenarioordnernamen.</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ScenarioTitle" xml:space="preserve">
+    <value>Empyrion-Szenario importieren</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ModTitle" xml:space="preserve">
+    <value>Empyrion-Server-Mods importieren</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ScenarioHelp" xml:space="preserve">
+    <value>Abonnieren Sie das Szenario in Steam und warten Sie auf den Download. Wählen Sie dann seinen Ordner unter steamapps\workshop\content\383120 oder eine vollständige Szenario-ZIP. Diese lokale Serverkopie wird von Steam nicht automatisch aktualisiert.</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ModHelp" xml:space="preserve">
+    <value>Wählen Sie eine vollständige ZIP oder einen Ordner mit kompilierten Server-Mods eines vertrauenswürdigen Autors. DLLs, _Info.yaml (falls vorhanden), Abhängigkeiten und Ressourcen gehören zusammen. Synix lädt keine Abhängigkeiten herunter und führt Mod-Code nicht selbst aus.</value>
+  </data>
+  <data name="EmpyrionMods.Picker.FolderName" xml:space="preserve">
+    <value>Szenarioordner auf dem Server (diesen Namen für Updates beibehalten)</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Zip" xml:space="preserve">
+    <value>ZIP wählen</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Folder" xml:space="preserve">
+    <value>Ordner wählen</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Review" xml:space="preserve">
+    <value>Paket prüfen</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Confirm" xml:space="preserve">
+    <value>Szenario: {0}&#10;Spielstandname: {1}&#10;&#10;Synix sichert dedicated.yaml, ändert nur die Szenario-/Spielstandauswahl und speichert den zugehörigen Servereintrag. Vorhandene Weltordner werden nicht geändert. Diese Einstellungen beim nächsten Start verwenden?</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Saved" xml:space="preserve">
+    <value>Die Szenario- und Spielstandauswahl wurde gespeichert. Starten Sie den Server, wenn Sie bereit sind, prüfen Sie das Spielprotokoll und verbinden Sie einen Client. Vorhandene Weltordner wurden beibehalten.</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Help" xml:space="preserve">
+    <value>Aktuelles Szenario: {0}&#10;Aktueller Spielstand: {1}&#10;Wählen Sie unten installierte Inhalte. Der Dateiimport allein aktiviert kein Szenario.</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Scenario" xml:space="preserve">
+    <value>Installiertes Szenario</value>
+  </data>
+  <data name="EmpyrionMods.Selection.SaveName" xml:space="preserve">
+    <value>Spielstandname (GameConfig.GameName — nicht der Anzeigename des Servers)</value>
+  </data>
+  <data name="EmpyrionMods.Selection.NewSaveNotice" xml:space="preserve">
+    <value>Ein anderes Szenario benötigt einen neuen Spielstand. Synix schlägt einen neuen Namen vor und löscht oder überschreibt keine vorhandene Welt.</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Use" xml:space="preserve">
+    <value>Szenario verwenden</value>
+  </data>
+  <data name="EmpyrionMods.Support.Scenarios" xml:space="preserve">
+    <value>Importieren Sie einen heruntergeladenen Ordner oder eine ZIP. Danach Szenario wählen; vorhandene Spielstände bleiben geschützt.</value>
+  </data>
+  <data name="EmpyrionMods.Support.Mods" xml:space="preserve">
+    <value>Importieren Sie vollständige kompilierte Mod-Ordner oder ZIPs. Prüfen Sie die Abhängigkeiten des Autors; der Code läuft in Empyrion.</value>
+  </data>
+  <data name="EmpyrionMods.Button.RollBack" xml:space="preserve">
+    <value>Import rückgängig</value>
+  </data>
+  <data name="EmpyrionMods.Remove.Confirm" xml:space="preserve">
+    <value>Den Import mit {0} rückgängig machen? Alle Dateien desselben Pakets werden entfernt oder auf ihre vorherigen Kopien zurückgesetzt, auch andere Mods im Paket. Außerhalb von Synix geänderte Dateien blockieren dies. Erstellen Sie vorher eine vollständige Serversicherung.</value>
+  </data>
+  <data name="ModPackages.Error.FolderUnsupported" xml:space="preserve">
+    <value>Dieses Add-on-System unterstützt keinen Ordnerimport. Wählen Sie eine unterstützte Paketdatei.</value>
+  </data>
+  <data name="ModPackages.Error.Layout" xml:space="preserve">
+    <value>Wählen Sie einen vollständigen Mod- oder Szenarioordner mit den erforderlichen Dateien, nicht die Spielinstallation oder eine Sammlung unabhängiger Downloads.</value>
+  </data>
+  <data name="ModPackages.Error.Size" xml:space="preserve">
+    <value>Das Paket überschreitet die Importgrenzen dieses Add-on-Systems oder wurde während des Kopierens verändert. Es wurde nichts installiert.</value>
+  </data>
+  <data name="ModPackages.Picker.Title" xml:space="preserve">
+    <value>Mod-Paket importieren</value>
+  </data>
+  <data name="ModPackages.Picker.Help" xml:space="preserve">
+    <value>Wählen Sie eine vollständige Mod-ZIP oder einen Ordner für das gewählte Spiel und Framework. Erforderliches Manifest, Abhängigkeiten und Ressourcen müssen zusammenbleiben. Prüfen Sie Ziel und Scanergebnis vor der Installation.</value>
+  </data>
+  <data name="ModPackages.Picker.Destination" xml:space="preserve">
+    <value>Installationsordner auf dem Server</value>
+  </data>
+  <data name="ModPackages.Picker.SelectFolder" xml:space="preserve">
+    <value>Wählen Sie den vollständigen Mod- oder Szenarioordner, nicht die Spielinstallation</value>
+  </data>
+  <data name="EmpyrionMods.Import.ExistingScenario" xml:space="preserve">
+    <value>Dieser Szenarioordner existiert bereits. Gleichnamige Dateien werden ersetzt; dies kann Welten mit diesem Szenario beeinflussen. Erstellen Sie eine vollständige Serversicherung und verwenden Sie für ein anderes Szenario einen anderen Ordnernamen. Die gespeicherten Weltdateien selbst werden nicht geändert.</value>
+  </data>
+  <data name="ServerOperation.Name.AddOns" xml:space="preserve"><value>Add-on-Verwaltung</value></data>
+  <data name="ModManager.Error.NewerInstallation" xml:space="preserve"><value>Ein neuerer Import verwendet Dateien dieses Pakets. Machen Sie zuerst den neueren Import rückgängig.</value></data>
+  <data name="ModManager.Error.PreviousFileChanged" xml:space="preserve"><value>Eine gesicherte Originaldatei wurde geändert. Der Vorgang wurde vor Änderungen an Serverdateien gestoppt. Stellen Sie bei Bedarf eine vertrauenswürdige vollständige Serversicherung wieder her.</value></data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve"><value>Add-ons in diesem Installationsbereich suchen…</value></data>
+  <data name="ModManager.Inventory.Scanning" xml:space="preserve"><value>Add-ons werden gesucht und erfasste Dateien geprüft…</value></data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve"><value>{0} von {1} Add-ons entsprechen Ihrer Suche</value></data>
+  <data name="ModManager.Progress.Installing" xml:space="preserve"><value>Das geprüfte Paket wird installiert und Wiederherstellungskopien werden gespeichert…</value></data>
+  <data name="ModManager.Progress.Removing" xml:space="preserve"><value>Das gesamte Paket wird geprüft und vorherige Dateien werden wiederhergestellt…</value></data>
+  <data name="ModManager.Progress.Framework" xml:space="preserve"><value>Das Server-Framework wird installiert. Bitte lassen Sie dieses Fenster geöffnet…</value></data>
+  <data name="ModManager.Framework.SaveFailed" xml:space="preserve"><value>Die Framework-Dateien wurden installiert, aber Synix konnte die Servereinstellungen nicht speichern. Prüfen Sie die Ordnerberechtigungen und speichern Sie die Serverkonfiguration vor dem Start erneut. Die installierten Dateien wurden nicht zurückgesetzt.</value></data>
+  <data name="ModManager.Progress.Failed" xml:space="preserve"><value>Der Vorgang konnte nicht abgeschlossen werden. Prüfen Sie den Fehler und aktualisieren Sie die Liste vor einem erneuten Versuch.</value></data>
+  <data name="ModManager.Field.Search" xml:space="preserve"><value>Suche</value></data>
+  <data name="MinecraftWorkspace.Title" xml:space="preserve">
+    <value>Minecraft-Kontrollzentrum</value>
+  </data>
+  <data name="MinecraftWorkspace.Overview" xml:space="preserve">
+    <value>Übersicht</value>
+  </data>
+  <data name="MinecraftWorkspace.Console" xml:space="preserve">
+    <value>Konsole</value>
+  </data>
+  <data name="MinecraftWorkspace.Players" xml:space="preserve">
+    <value>Spieler</value>
+  </data>
+  <data name="MinecraftWorkspace.Settings" xml:space="preserve">
+    <value>Einstellungen &amp; Dateien</value>
+  </data>
+  <data name="MinecraftWorkspace.Worlds" xml:space="preserve">
+    <value>Welten</value>
+  </data>
+  <data name="MinecraftWorkspace.Mods" xml:space="preserve">
+    <value>Mods &amp; Plugins</value>
+  </data>
+  <data name="MinecraftWorkspace.Backups" xml:space="preserve">
+    <value>Sicherungen</value>
+  </data>
+  <data name="MinecraftWorkspace.Recovery" xml:space="preserve">
+    <value>Änderungen wiederherstellen</value>
+  </data>
+  <data name="MinecraftWorkspace.Diagnostics" xml:space="preserve">
+    <value>Diagnose</value>
+  </data>
+  <data name="MinecraftWorkspace.Schedules" xml:space="preserve">
+    <value>Zeitpläne</value>
+  </data>
+  <data name="MinecraftWorkspace.Start" xml:space="preserve">
+    <value>Starten</value>
+  </data>
+  <data name="MinecraftWorkspace.Stop" xml:space="preserve">
+    <value>Stoppen</value>
+  </data>
+  <data name="MinecraftWorkspace.Restart" xml:space="preserve">
+    <value>Neustarten</value>
+  </data>
+  <data name="MinecraftWorkspace.Setup" xml:space="preserve">
+    <value>Servereinrichtung</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyRuntime" xml:space="preserve">
+    <value>Server-Software anwenden</value>
+  </data>
+  <data name="MinecraftWorkspace.Readiness" xml:space="preserve">
+    <value>Bereitschaft prüfen</value>
+  </data>
+  <data name="MinecraftWorkspace.Connection" xml:space="preserve">
+    <value>Verbindungsdaten</value>
+  </data>
+  <data name="MinecraftWorkspace.Refresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="MinecraftWorkspace.Ready" xml:space="preserve">
+    <value>Bereit. Kein Server wird automatisch gestartet.</value>
+  </data>
+  <data name="MinecraftWorkspace.Working" xml:space="preserve">
+    <value>Wird bearbeitet…</value>
+  </data>
+  <data name="MinecraftWorkspace.Wait" xml:space="preserve">
+    <value>Warten Sie, bis der aktuelle Vorgang abgeschlossen ist.</value>
+  </data>
+  <data name="MinecraftWorkspace.Cancelled" xml:space="preserve">
+    <value>Abgebrochen. Installierte Dateien wurden nicht geändert.</value>
+  </data>
+  <data name="MinecraftWorkspace.CancelOperation" xml:space="preserve">
+    <value>Import abbrechen</value>
+  </data>
+  <data name="MinecraftWorkspace.Save" xml:space="preserve">
+    <value>Änderungen speichern</value>
+  </data>
+  <data name="MinecraftWorkspace.Discard" xml:space="preserve">
+    <value>Diese ungespeicherten Änderungen verwerfen?</value>
+  </data>
+  <data name="MinecraftWorkspace.File" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="MinecraftWorkspace.Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="MinecraftWorkspace.EditFile" xml:space="preserve">
+    <value>Datei bearbeiten</value>
+  </data>
+  <data name="MinecraftWorkspace.StructuredEditor" xml:space="preserve">
+    <value>Strukturierter Editor</value>
+  </data>
+  <data name="MinecraftWorkspace.Player" xml:space="preserve">
+    <value>Spielername</value>
+  </data>
+  <data name="MinecraftWorkspace.Source" xml:space="preserve">
+    <value>Quelle</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyPlayer" xml:space="preserve">
+    <value>Spieleraktion ausführen</value>
+  </data>
+  <data name="MinecraftWorkspace.World" xml:space="preserve">
+    <value>Welt</value>
+  </data>
+  <data name="MinecraftWorkspace.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="MinecraftWorkspace.Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="MinecraftWorkspace.Available" xml:space="preserve">
+    <value>Verfügbar</value>
+  </data>
+  <data name="MinecraftWorkspace.NewWorldName" xml:space="preserve">
+    <value>Neuer Weltordnername</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportWorld" xml:space="preserve">
+    <value>Welt-ZIP importieren</value>
+  </data>
+  <data name="MinecraftWorkspace.ActivateWorld" xml:space="preserve">
+    <value>Gewählte Welt verwenden</value>
+  </data>
+  <data name="MinecraftWorkspace.AddOnId" xml:space="preserve">
+    <value>Erweiterungs-ID</value>
+  </data>
+  <data name="MinecraftWorkspace.Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="MinecraftWorkspace.Loader" xml:space="preserve">
+    <value>Loader</value>
+  </data>
+  <data name="MinecraftWorkspace.ManageAddOns" xml:space="preserve">
+    <value>Einzelne Erweiterungen</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportPack" xml:space="preserve">
+    <value>Paket importieren / aktualisieren</value>
+  </data>
+  <data name="MinecraftWorkspace.Checks" xml:space="preserve">
+    <value>Kompatibilität prüfen</value>
+  </data>
+  <data name="MinecraftWorkspace.Created" xml:space="preserve">
+    <value>Erstellt</value>
+  </data>
+  <data name="MinecraftWorkspace.Size" xml:space="preserve">
+    <value>Größe</value>
+  </data>
+  <data name="MinecraftWorkspace.Files" xml:space="preserve">
+    <value>Dateien</value>
+  </data>
+  <data name="MinecraftWorkspace.Change" xml:space="preserve">
+    <value>Änderung</value>
+  </data>
+  <data name="MinecraftWorkspace.CreateBackup" xml:space="preserve">
+    <value>Vollsicherung erstellen</value>
+  </data>
+  <data name="MinecraftWorkspace.RestoreBackup" xml:space="preserve">
+    <value>Sicherung wiederherstellen</value>
+  </data>
+  <data name="MinecraftWorkspace.VerifyBackup" xml:space="preserve">
+    <value>Sicherung prüfen</value>
+  </data>
+  <data name="MinecraftWorkspace.EditSchedule" xml:space="preserve">
+    <value>Zeitplan bearbeiten</value>
+  </data>
+  <data name="MinecraftWorkspace.Enabled" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="MinecraftWorkspace.Disabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoChange" xml:space="preserve">
+    <value>Änderung rückgängig machen</value>
+  </data>
+  <data name="MinecraftWorkspace.Area" xml:space="preserve">
+    <value>Bereich</value>
+  </data>
+  <data name="MinecraftWorkspace.Detail" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="MinecraftWorkspace.Performance" xml:space="preserve">
+    <value>Prozessressourcen</value>
+  </data>
+  <data name="MinecraftWorkspace.Online" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="MinecraftWorkspace.Logs" xml:space="preserve">
+    <value>Aktuelle Protokolle</value>
+  </data>
+  <data name="MinecraftWorkspace.Apply" xml:space="preserve">
+    <value>Änderungen anwenden</value>
+  </data>
+  <data name="MinecraftWorkspace.Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="MinecraftWorkspace.Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="MinecraftWorkspace.Add" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="MinecraftWorkspace.Replace" xml:space="preserve">
+    <value>Ersetzen</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Prepared" xml:space="preserve">
+    <value>Wiederherstellung nötig</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Applied" xml:space="preserve">
+    <value>Angewendet</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Undone" xml:space="preserve">
+    <value>Rückgängig gemacht</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Kick" xml:space="preserve">
+    <value>Kicken</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Allow" xml:space="preserve">
+    <value>Whitelist: hinzufügen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Disallow" xml:space="preserve">
+    <value>Whitelist: entfernen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Operator" xml:space="preserve">
+    <value>Operator erteilen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Deop" xml:space="preserve">
+    <value>Operator entfernen</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Ban" xml:space="preserve">
+    <value>Bannen (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Pardon" xml:space="preserve">
+    <value>Entbannen (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.OverviewHelp" xml:space="preserve">
+    <value>Verwalte diesen Minecraft-Server hier. Stoppe ihn vor Änderungen an Dateien, Welten, Paketen oder Laufzeit. Start, Stopp und Neustart verwenden die normalen Synix-Sicherheitsprüfungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.OverviewValues" xml:space="preserve">
+    <value>Software: {0} • Build: {1}
+Java: {2} • RAM-Limit: {3} GB
+Spieler: {4} • Spielport: {5} • Abfrage-/IPv6-Port: {6}
+Welt: {7}
+Angezeigter Name / MOTD: {8}</value>
+  </data>
+  <data name="MinecraftWorkspace.ScheduleHelp" xml:space="preserve">
+    <value>Plane Neustarts und Wartung, bei Bedarf mit Warten auf Spieler und vollständiger Sicherung. Zeiten gelten lokal auf diesem PC. Synix muss für die Zeitplanung laufen.</value>
+  </data>
+  <data name="MinecraftWorkspace.ScheduleValues" xml:space="preserve">
+    <value>Geplanter Neustart: {0}
+Ortszeit: {1}
+Tage: {2}
+Auf Spieler warten: {3}
+Vor Wartung sichern: {4}
+Vor Wartung aktualisieren: {5}</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayersHelp" xml:space="preserve">
+    <value>Aktualisiere die Online-Namen und gespeicherten Zugriffslisten. Wähle oder tippe einen Namen und prüfe die Aktion. Befehle benötigen einen laufenden Server und eine funktionierende Konsolenverbindung. Java-Sperrbefehle gelten nicht für Bedrock.</value>
+  </data>
+  <data name="MinecraftWorkspace.SettingsHelp" xml:space="preserve">
+    <value>Bearbeite server.properties und Mod-/Plugin-Konfigurationen. Von Synix verwendete Werte werden beim Speichern von server.properties übernommen. MOTD und lokaler Eintragsname sind getrennt. Aktualisieren liest externe Änderungen bei gestopptem Server ein.</value>
+  </data>
+  <data name="MinecraftWorkspace.EditorHelp" xml:space="preserve">
+    <value>Speichern legt Wiederherstellungskopien an. Ports, Welt, Seed, Spielmodus, Spielerlimit und unterstützte Steuerungseinstellungen aktualisieren auch Synix. JSON, XML und YAML werden vor dem Speichern geprüft. Andere Formate erfordern Sorgfalt. Zugangsdaten privat halten.</value>
+  </data>
+  <data name="MinecraftWorkspace.WorldsHelp" xml:space="preserve">
+    <value>Importiere eine Java- oder Bedrock-Welt als ZIP in einen NEUEN Ordner und wähle sie aus. Vorhandene Welten werden nicht ersetzt, Editionen nicht konvertiert. Ein Wechsel prüft weder Spiel-/Mod-Kompatibilität noch führt er ein Upgrade oder Downgrade durch. Zuerst sichern.</value>
+  </data>
+  <data name="MinecraftWorkspace.ModsHelp" xml:space="preserve">
+    <value>Prüfe JAR-Metadaten und Abhängigkeiten, verwalte einzelne Add-ons oder importiere ein Serverpaket. Verwende dessen genaue Spiel- und Loader-Version. Kompatibilitätsprüfungen sind Hinweise, kein Beweis für sicheren Code oder funktionierende Mods.</value>
+  </data>
+  <data name="MinecraftWorkspace.BackupsHelp" xml:space="preserve">
+    <value>Vollsicherungen enthalten Serverordner, Welten, Add-ons und Konfiguration. Server zuerst stoppen. Prüfe vor dem Wiederherstellen die Integrität. Die Wiederherstellung ersetzt Serverdateien; Prüfsummen erkennen keine bereits in der Sicherung enthaltenen Probleme.</value>
+  </data>
+  <data name="MinecraftWorkspace.RecoveryHelp" xml:space="preserve">
+    <value>Änderungen behalten vorherige Dateien und Prüfsummen. Wähle eine angewendete oder unterbrochene Änderung. Mache neuere überlappende Änderungen zuerst rückgängig. Externe Bearbeitungen und die aktive importierte Welt sind geschützt. Für Welt-/Laufzeit-Upgrades eine Vollsicherung behalten.</value>
+  </data>
+  <data name="MinecraftWorkspace.DiagnosticsHelp" xml:space="preserve">
+    <value>Suche Hinweise im aktuellen Serverprotokoll und letzten Absturzbericht. Funde sind keine bestätigten Ursachen. CPU/RAM sind keine Minecraft-TPS/MSPT-Werte; nutze bei Tick-Problemen einen passenden serverinternen Profiler.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmStop" xml:space="preserve">
+    <value>Diesen Server jetzt über Synix stoppen?</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmRestart" xml:space="preserve">
+    <value>Diesen Server jetzt über Synix neu starten?</value>
+  </data>
+  <data name="MinecraftWorkspace.RuntimeNotice" xml:space="preserve">
+    <value>Die gewählte Spielversion, den Loader und Build aus offiziellen Quellen installieren? Dabei kann Java heruntergeladen und der offizielle Forge-/NeoForge-Installer ausgeführt werden. Dateien werden zuerst vorbereitet; ersetzte Originale bleiben zur Wiederherstellung erhalten. Welten und Add-ons bleiben bestehen. Vor Versionswechseln vollständig sichern. Kein Spielserver wird gestartet.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmPlayer" xml:space="preserve">
+    <value>Den gewählten Spielerbefehl senden? Operatorrechte gewähren umfassende Kontrolle über den Spielserver.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmWorld" xml:space="preserve">
+    <value>Die gewählte Welt beim nächsten Start verwenden? Die aktuelle bleibt gespeichert. Wähle nur eine Welt, die zu Edition, Version und Mods dieses Servers passt.</value>
+  </data>
+  <data name="MinecraftWorkspace.PackNotice" xml:space="preserve">
+    <value>Dieses vertrauenswürdige Serverpaket importieren? Modrinth-Pakete können Dateien von zugelassenen HTTPS-Quellen laden. Mods und Spielskripte führen Code im Spielserver aus. Layout-, Hash-, Kompatibilitäts- und Virenprüfungen garantieren keine Sicherheit. Prüfe alle Änderungen vor dem Anwenden.</value>
+  </data>
+  <data name="MinecraftWorkspace.CompatibilityNotice" xml:space="preserve">
+    <value>Metadaten werden ohne Laden des Mod-Codes gelesen. Komplexe Versionsbereiche, bedingte Abhängigkeiten und ältere/eingebettete Metadaten müssen manuell geprüft werden. Weder Kompatibilität noch Schadsoftwarefreiheit sind garantiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Skipped" xml:space="preserve">
+    <value>Nicht importiert: {0}</value>
+  </data>
+  <data name="MinecraftWorkspace.BackupSpace" xml:space="preserve">
+    <value>Prüfe Sicherungsort und freien Speicherplatz.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmBackup" xml:space="preserve">
+    <value>Eine vollständige Sicherung dieses gestoppten Servers erstellen?</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmRestore" xml:space="preserve">
+    <value>Die gewählte Vollsicherung wiederherstellen? Vorhandene Serverdateien werden ersetzt. Prüfe das Archiv und sichere weiterhin benötigte aktuelle Dateien zuerst.</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoNotice" xml:space="preserve">
+    <value>Vorherige Dateien wiederherstellen. Neue Dateien werden nur entfernt, wenn sie unverändert sind. Bearbeitete Dateien blockieren die Wiederherstellung. Weltkonvertierungen nach einem Versionswechsel erfordern eine vollständige Sicherung.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoLogFindings" xml:space="preserve">
+    <value>Kein bekanntes Muster in den verfügbaren aktuellen Protokollen gefunden. Dies ist keine vollständige Zustandsprüfung. Nutze die Bereitschaftsprüfung und suche den ersten Fehler zum Problemzeitpunkt.</value>
+  </data>
+  <data name="MinecraftWorkspace.PreviewSummary" xml:space="preserve">
+    <value>Vor dem Anwenden prüfen: {0} neu • {1} ersetzt • {2} entfernt. Vorherige Dateien bleiben zur Wiederherstellung erhalten. Kein Server wird gestartet.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Runtime" xml:space="preserve">
+    <value>Der stabile Server-Build oder seine Download-Metadaten sind nicht verfügbar. Aktualisiere die Versions-/Build-Auswahl.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Size" xml:space="preserve">
+    <value>Datei-, Metadaten- oder Gesamtgrößenlimits werden überschritten.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Recovery" xml:space="preserve">
+    <value>Wiederherstellungsdaten fehlen oder sind widersprüchlich. Behalte den Wiederherstellungsordner und nutze eine geprüfte Vollsicherung.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PendingRecovery" xml:space="preserve">
+    <value>Ein vorheriger Vorgang muss wiederhergestellt werden. Öffne die Wiederherstellung und löse ihn vor dem Start oder weiteren Änderungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Changed" xml:space="preserve">
+    <value>Eine Datei wurde seit der Prüfung oder diesem Vorgang geändert. Aktualisiere und prüfe erneut. Fremde Änderungen werden nicht überschrieben.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Layout" xml:space="preserve">
+    <value>Paketstruktur oder Pfad sind unsicher, mehrdeutig oder nicht unterstützt. Wähle ein unterstütztes Serverpaket oder Weltarchiv.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.ActiveWorld" xml:space="preserve">
+    <value>Diese importierte Welt ist aktiv. Wechsle vor dem Rückgängigmachen zu einer anderen Welt.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldExists" xml:space="preserve">
+    <value>Dieser Weltordner existiert bereits. Wähle einen neuen Namen. Der Import überschreibt keine vorhandenen Welten.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldLayout" xml:space="preserve">
+    <value>Wähle ein Archiv mit genau einer Welt samt level.dat. Für vollständige Server oder mehrere Welten nutze Sicherung/Wiederherstellung.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldEdition" xml:space="preserve">
+    <value>Die Welt passt nicht zur Serveredition oder erwartete Regions-/Datenbankdateien fehlen. Java- und Bedrock-Welten werden nicht konvertiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldName" xml:space="preserve">
+    <value>Verwende einen sicheren Weltordnernamen ohne Pfade oder reservierte Windows-Namen. Für Importe sind Buchstaben, Zahlen, Leerzeichen, Bindestriche und Unterstriche erlaubt.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.JavaOnly" xml:space="preserve">
+    <value>Dieser Ablauf ist für Java-Mods/-Plugins. Nutze den unterstützten Bedrock-Add-on-Ablauf. Java-JARs laufen nicht auf Bedrock.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PackEmpty" xml:space="preserve">
+    <value>Keine unterstützten Serverinhalte gefunden. Launcher, Clientdateien, Laufzeiten, Welten und Servereinstellungen im Stammordner werden hier nicht importiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.LoaderMismatch" xml:space="preserve">
+    <value>Der Inhalt passt nicht zur gewählten Serversoftware. Mods benötigen den passenden Loader, Bukkit-/Paper-Plugins eine Plugin-Laufzeit.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.CurseForgeManifest" xml:space="preserve">
+    <value>Dies ist ein CurseForge-Clientmanifest, kein vollständiges Serverpaket. Lade das Server-ZIP des Autors mit den tatsächlichen Mods und Konfigurationen herunter. Fehlende Dateien werden nicht still übersprungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PackVersion" xml:space="preserve">
+    <value>Minecraft-Version und Loader/Build des Pakets müssen übereinstimmen. Wähle und installiere zuerst genau diese Laufzeit. Nicht unterstützte Loader werden nicht ersetzt.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.DownloadSource" xml:space="preserve">
+    <value>Download oder Weiterleitung ist keine zugelassene öffentliche HTTPS-Quelle. Nutze stattdessen ein unterstütztes lokales Server-ZIP des Autors.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.DownloadHash" xml:space="preserve">
+    <value>Eine Datei stimmt nicht mit ihrer angegebenen Größe oder SHA-512-Prüfsumme überein. Nichts wurde installiert.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Properties" xml:space="preserve">
+    <value>Ein von Synix verwendeter Minecraft-Wert ist ungültig oder widersprüchlich. Prüfe Ports, Spielerlimit, Spielmodus und Steuerungseinstellungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.SaveEntry" xml:space="preserve">
+    <value>Synix konnte den geänderten Eintrag nicht speichern. Der Vorgang wurde nicht akzeptiert; nötige Wiederherstellungsdateien bleiben erhalten.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.ManagementLocal" xml:space="preserve">
+    <value>Die Minecraft-Verwaltungsverbindung von Synix muss auf localhost bleiben. Diesen Steuerungszugang nicht im Internet veröffentlichen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PortConflict" xml:space="preserve">
+    <value>Ein konfigurierter Port gehört zu einem anderen Synix-Server. Wähle vor dem Speichern einen anderen Port.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Player" xml:space="preserve">
+    <value>Wähle eine unterstützte Aktion und einen gültigen Spielernamen. Java-Sperrbefehle gelten nicht für Bedrock.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.StartFailed" xml:space="preserve">
+    <value>Der Server wurde nicht gestartet. Prüfe Bereitschaft und Dashboard-Protokoll vor einem erneuten Versuch.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.MetadataUnknown" xml:space="preserve">
+    <value>Metadaten konnten nicht vollständig gelesen werden. Prüfe die Datei und die Kompatibilitätsangaben des Autors.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.Duplicate" xml:space="preserve">
+    <value>Mehrere Haupt-JARs verwenden diese ID. Prüfe und entferne die doppelte Version.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.ClientOnly" xml:space="preserve">
+    <value>Dieses JAR ist laut Metadaten nur für Clients. Nicht auf einem dedizierten Server installieren.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.WrongLoader" xml:space="preserve">
+    <value>Die JAR-Metadaten passen nicht zum ausgewählten Loader bzw. zur Serversoftware.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyMissing" xml:space="preserve">
+    <value>Benötigte Abhängigkeit fehlt in den gelesenen Metadaten: {0}. Prüfe eingebettete oder bedingte Abhängigkeiten vor einer Installation.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyVersion" xml:space="preserve">
+    <value>Abhängigkeit {0} benötigt {1}; gelesen wurde {2}.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyReview" xml:space="preserve">
+    <value>Abhängigkeit {0} manuell prüfen: benötigt {1}, gelesen {2}. Dieser Versionsbereich wird nicht vollständig verstanden.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Java" xml:space="preserve">
+    <value>Das Protokoll deutet auf eine falsche Java-/Klassenversion hin. Nutze die vom Server und Mod-Loader benötigte Java-Version.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Memory" xml:space="preserve">
+    <value>Java konnte möglicherweise nicht genug Speicher reservieren. Prüfe freien RAM, Serverlimit und andere laufende Server.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Dependency" xml:space="preserve">
+    <value>Das Protokoll nennt Abhängigkeiten. Prüfe den ersten Loader-Fehler sowie Mod, Abhängigkeit, Spielversion und Loader-Build.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Port" xml:space="preserve">
+    <value>Ein Port ist offenbar belegt. Prüfe andere Prozesse und die Serverports; öffne keine unbeteiligten Firewall-Ports.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Eula" xml:space="preserve">
+    <value>Minecraft verlangt die EULA-Zustimmung. Lies sie und bestätige sie im normalen Erststart-Ablauf, falls du einverstanden bist.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Tick" xml:space="preserve">
+    <value>Langsame Ticks oder Watchdog-Zeitüberschreitung erkannt. Prüfe CPU, Weltgenerierung, Entitäten und Mods. Mehr RAM allein hilft nicht immer.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Mixin" xml:space="preserve">
+    <value>Ein Mixin-Fehler deutet oft auf unpassende Mod-/Loader-Versionen hin. Prüfe die erste Ursache im Absturzbericht und die Paketanforderungen.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.World" xml:space="preserve">
+    <value>Das Protokoll meldet Lesefehler in Weltdaten. Stoppe den Server und sichere aktuelle Dateien, bevor du eine geprüfte kompatible Sicherung versuchst.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.RuntimeRecovery" xml:space="preserve"><value>Für diese ältere Installation ist kein Laufzeitprofil gespeichert. Verwende eine vollständige Serversicherung zur Wiederherstellung.</value></data>
+  <data name="MinecraftWorkspace.Error.RuntimeMismatch" xml:space="preserve"><value>Die installierte Laufzeit stimmt nicht mit der Auswahl überein. Öffne die Minecraft-Verwaltung und wähle „Laufzeit anwenden“.</value></data>
+  <data name="MinecraftWorkspace.IncludeOptional" xml:space="preserve"><value>Optionale Server-Mods einbeziehen</value></data>
+  <data name="MinecraftWorkspace.WorldFilter" xml:space="preserve"><value>Welt-ZIP (*.zip)|*.zip</value></data>
+  <data name="MinecraftWorkspace.PackFilter" xml:space="preserve"><value>Minecraft-Serverpaket (*.zip;*.mrpack)|*.zip;*.mrpack</value></data>
+  <data name="MinecraftWorkspace.Error.InvalidValue" xml:space="preserve"><value>Der Wert für {0} ist ungültig. Korrigiere diese Einstellung vor dem Speichern.</value></data>
+  <data name="MinecraftWorkspace.Empty" xml:space="preserve"><value>Keine Einträge vorhanden. Aktualisiere nach dem Hinzufügen von Inhalten oder Änderungen an der Einrichtung.</value></data>
+  <data name="MinecraftWorkspace.State.Superseded" xml:space="preserve"><value>Durch Vollsicherung ersetzt</value></data>
+  <data name="MinecraftWorkspace.CompatibilitySummary" xml:space="preserve">
+    <value>{0} Erweiterungen erkannt • {1} Hinweise zu prüfen. Diese Prüfung ändert keine Dateien.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoCompatibilityAddOns" xml:space="preserve">
+    <value>Im aktiven Mod- oder Plugin-Ordner dieser Serverkonfiguration wurden keine Erweiterungen gefunden.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoCompatibilityFindings" xml:space="preserve">
+    <value>Die verfügbaren Metadatenprüfungen haben keine Probleme gefunden. Dies garantiert nicht, dass alle Mods oder Plugins zusammen funktionieren.</value>
+  </data>
+  <data name="AsaPackages.Button.Read" xml:space="preserve"><value>Mod-Paket lesen</value></data>
+  <data name="AsaPackages.Title" xml:space="preserve"><value>ASA-Mod-Paket lesen</value></data>
+  <data name="AsaPackages.Help" xml:space="preserve"><value>Wählen Sie eine ASA-Windows-Server-ZIP oder einen entpackten Ordner. Synix findet Mod-Beschreibungen auch in Unterordnern und Mod-Sammlungen und bereitet die CurseForge-IDs zur Prüfung vor. Die ZIP-Dateien werden nicht kopiert oder installiert. Beim Serverstart lädt und registriert ASA die aktuelle Serverversion des Anbieters, nicht unbedingt die Version aus der ZIP.</value></data>
+  <data name="AsaPackages.Source" xml:space="preserve"><value>Quelle des Mod-Pakets</value></data>
+  <data name="AsaPackages.Id" xml:space="preserve"><value>Mod-ID</value></data>
+  <data name="AsaPackages.Descriptor" xml:space="preserve"><value>Speicherort der Beschreibung</value></data>
+  <data name="AsaPackages.Choose" xml:space="preserve"><value>Wählen Sie eine ZIP oder einen Ordner zur Prüfung. Servereinstellungen und Dateien bleiben unverändert, bis Sie die ID-Liste separat prüfen und speichern.</value></data>
+  <data name="AsaPackages.Trust" xml:space="preserve"><value>Paket-Metadaten sind nicht vertrauenswürdig. Die Erkennung ist keine Schadsoftware- oder Kompatibilitätsprüfung und kein Nachweis der Urheberschaft.</value></data>
+  <data name="AsaPackages.Review" xml:space="preserve"><value>Mod-IDs prüfen</value></data>
+  <data name="AsaPackages.Reading" xml:space="preserve"><value>Paket-Metadaten werden gelesen. Mod-Code wird nicht ausgeführt.</value></data>
+  <data name="AsaPackages.Found" xml:space="preserve"><value>{0} Mods erkannt; {1} neue IDs werden hinzugefügt. Die bisherige Reihenfolge bleibt erhalten. Prüfen Sie vor dem Speichern die vollständige Liste.</value></data>
+  <data name="AsaPackages.Timeout" xml:space="preserve"><value>Die Prüfung wurde abgebrochen oder dauerte zu lange. Wählen Sie einen kleineren Paketordner.</value></data>
+  <data name="AsaPackages.Error.Source" xml:space="preserve"><value>Wählen Sie eine ARK-Server-Mod-ZIP oder einen entpackten Ordner. Andere Archivformate werden nicht unterstützt.</value></data>
+  <data name="AsaPackages.Error.Limit" xml:space="preserve"><value>Das Paket überschreitet die Grenzen des Lesers. Wählen Sie einen kleineren Ordner oder eine ZIP mit höchstens 100 Mod-Beschreibungen.</value></data>
+  <data name="AsaPackages.Error.Layout" xml:space="preserve"><value>Das Paket enthält unsichere Pfade, Verknüpfungen, doppelte Pfade, Dateikonflikte oder zu viele Ordnerebenen. Nichts wurde geändert.</value></data>
+  <data name="AsaPackages.Error.Descriptor" xml:space="preserve"><value>Keine .uplugin-Mod-Beschreibung gefunden. Wählen Sie die Mod-ZIP oder ihren entpackten Ordner. Entpacken Sie verschachtelte Archive zuerst.</value></data>
+  <data name="AsaPackages.Error.Metadata" xml:space="preserve"><value>Eine Mod-Beschreibung ist kein gültiges, eindeutiges JSON. Nichts wurde geändert.</value></data>
+  <data name="AsaPackages.Error.Game" xml:space="preserve"><value>Eine Beschreibung verweist nicht auf ein CurseForge-Projekt für ARK: Survival Ascended. Synix errät weder das Spiel noch die Mod-ID.</value></data>
+  <data name="AsaPackages.Error.Id" xml:space="preserve"><value>Eine Beschreibung enthält keine einzelne gültige CurseForge-Projekt-ID (cf_ugcID). Verwenden Sie Mod-IDs verwalten mit der ID von der CurseForge-Seite des Autors.</value></data>
+  <data name="AsaPackages.Error.ServerBuild" xml:space="preserve"><value>Ein Mod hat kein erkanntes WindowsServer-Paket oder eine passende .ucas/.utoc-Datei fehlt. Wählen Sie die Windows-Server-Version, nicht die Client-Version.</value></data>
+  <data name="AsaPackages.Error.DuplicateMod" xml:space="preserve"><value>Das Paket enthält mehrere Beschreibungen mit derselben Mod-ID. Wählen Sie eine Version pro Mod und prüfen Sie erneut.</value></data>
+  <data name="AsePackages.Title" xml:space="preserve"><value>ASE-Mod-Paket lesen</value></data>
+  <data name="AsePackages.Help" xml:space="preserve"><value>Wählen Sie eine ARK: Survival Evolved-Mod-ZIP oder einen Ordner mit .mod-Beschreibung und passendem aufbereitetem Mod-Ordner. Synix liest die Workshop-ID aus der Beschreibung, nicht aus dem ZIP-Namen. Dateien werden nicht kopiert oder installiert: Nach der Prüfung aktualisiert Synix ActiveMods und ModIDS für ARKs automatischen Download. Karten und Total Conversions benötigen eventuell weitere Einstellungen. ASA-CurseForge-Pakete sind nicht kompatibel.</value></data>
+  <data name="AsePackages.Error.Layout" xml:space="preserve"><value>Kein erkanntes vollständiges ASE-Mod-Paket. Benötigt werden eine .mod-Beschreibung und der passende Mod-Ordner mit mod.info und aufbereiteten Spieldaten. Die enthaltene ID muss zum numerischen Dateinamen passen. Rohe Workshop-.z-Downloads ohne vorbereitete .mod-Datei werden nicht erkannt; verwenden Sie Mod-IDs verwalten.</value></data>
+  <data name="ArkPackages.Error.WrongEdition" xml:space="preserve"><value>Das Paket enthält eine Beschreibung für die andere ARK-Ausgabe. ASE-Steam-Workshop-Mods und ASA-CurseForge-Mods sind nicht austauschbar. Wählen Sie ein Paket für den ausgewählten Server.</value></data>
+  <data name="UniversalMods.Locations.Title" xml:space="preserve"><value>Importordner</value></data>
+  <data name="UniversalMods.Locations.Profile" xml:space="preserve"><value>Eigene Importordner</value></data>
+  <data name="UniversalMods.Locations.Help" xml:space="preserve"><value>Wählen Sie den Mod-/Plugin-Ordner und die Hauptdateitypen gemäß der Anleitung des Spiels oder Loaders. Dies gilt nur für diesen Server. Vorhandene Einträge können aktualisiert werden; Mod-Dateien werden hier nicht verändert.</value></data>
+  <data name="UniversalMods.Locations.New" xml:space="preserve"><value>Neuen Ordner hinzufügen</value></data>
+  <data name="UniversalMods.Locations.Name" xml:space="preserve"><value>Name des Importordners</value></data>
+  <data name="UniversalMods.Locations.Path" xml:space="preserve"><value>Ordner innerhalb des Servers (z. B. BepInEx/plugins)</value></data>
+  <data name="UniversalMods.Locations.Extensions" xml:space="preserve"><value>Hauptdateitypen (z. B. .dll, .jar, .lua, .pak)</value></data>
+  <data name="UniversalMods.Locations.Browse" xml:space="preserve"><value>Server-Unterordner wählen</value></data>
+  <data name="UniversalMods.Locations.Warning" xml:space="preserve"><value>Der Dateiimport installiert keinen Loader und registriert keine Anbieter-Mods. Beachten Sie die Installationsanleitung des Spiels.</value></data>
+  <data name="UniversalMods.Locations.Save" xml:space="preserve"><value>Ordner speichern</value></data>
+  <data name="UniversalMods.Locations.Ready" xml:space="preserve"><value>Eigener Dateiimport — Kompatibilität prüfen</value></data>
+  <data name="UniversalMods.Locations.NotConfigured" xml:space="preserve"><value>Keine Importordner eingerichtet</value></data>
+  <data name="UniversalMods.Locations.Start" xml:space="preserve"><value>Legen Sie unter Importordner den Mod-/Plugin-Ordner fest. Ein Dateiimport garantiert nicht, dass das Spiel diese Dateien laden kann.</value></data>
+  <data name="UniversalMods.Locations.Selected" xml:space="preserve"><value>Vom Benutzer gewählter Importordner</value></data>
+  <data name="UniversalMods.Import.Title" xml:space="preserve"><value>Paketimport prüfen</value></data>
+  <data name="UniversalMods.Import.Help" xml:space="preserve"><value>Wählen Sie den Paketordner, dessen Inhalt in den Server-Importordner gehört. Unterordner bleiben erhalten. Wählen Sie einen tieferen Ordner, um Download-Hüllen wegzulassen. Nur aufgeführte Dateien werden importiert; ersetzte Dateien werden gesichert. Inkompatible Mods werden nicht konvertiert.</value></data>
+  <data name="UniversalMods.Import.ChooseFile" xml:space="preserve"><value>Datei / ZIP wählen</value></data>
+  <data name="UniversalMods.Import.Continue" xml:space="preserve"><value>Weiter zur Sicherheitsprüfung</value></data>
+  <data name="UniversalMods.Import.Source" xml:space="preserve"><value>Paketdatei</value></data>
+  <data name="UniversalMods.Import.Destination" xml:space="preserve"><value>Ziel auf dem Server</value></data>
+  <data name="UniversalMods.Import.Change" xml:space="preserve"><value>Aktion</value></data>
+  <data name="UniversalMods.Import.WholePackage" xml:space="preserve"><value>Gesamtes Paket — Ordnerstruktur erhalten</value></data>
+  <data name="UniversalMods.Import.New" xml:space="preserve"><value>Neue Datei</value></data>
+  <data name="UniversalMods.Import.Replace" xml:space="preserve"><value>Ersetzen (mit Sicherung)</value></data>
+  <data name="UniversalMods.Import.Reading" xml:space="preserve"><value>Paket wird gelesen und Zielvorschau erstellt…</value></data>
+  <data name="UniversalMods.Import.Summary" xml:space="preserve"><value>{0} Dateien ausgewählt; {1} vorhandene Dateien werden vor dem Ersetzen gesichert. Installation erst nach der nächsten Bestätigung.</value></data>
+  <data name="UniversalMods.Error.InvalidLocations" xml:space="preserve"><value>Die gespeicherten Importordner sind ungültig oder gehören zu einem anderen Spiel. Keine Dateien geändert.</value></data>
+  <data name="UniversalMods.Error.InstallFolder" xml:space="preserve"><value>Installieren Sie den Server, bevor Sie Importordner einrichten.</value></data>
+  <data name="UniversalMods.Error.LocationLimit" xml:space="preserve"><value>Ein Server kann bis zu 32 eigene Importordner haben.</value></data>
+  <data name="UniversalMods.Error.LocationName" xml:space="preserve"><value>Geben Sie einen Namen mit 1–80 Zeichen ein und wählen Sie Mod oder Plugin.</value></data>
+  <data name="UniversalMods.Error.Extensions" xml:space="preserve"><value>Geben Sie 1–32 Dateiendungen mit Punkt ein, z. B. .dll oder .pak. Installer und Befehlsskripte sind nicht zulässig.</value></data>
+  <data name="UniversalMods.Error.Collision" xml:space="preserve"><value>Das Paket enthält einen Datei-/Ordnerkonflikt. Wählen Sie ein eindeutiges, vollständiges Paket.</value></data>
+  <data name="UniversalMods.Error.NoFiles" xml:space="preserve"><value>Der gewählte Paketordner enthält keinen der Hauptdateitypen dieses Importordners. Wählen Sie einen anderen Ordner oder prüfen Sie die Dateitypen.</value></data>
+  <data name="UniversalMods.Error.PackageRoot" xml:space="preserve"><value>Wählen Sie einen gültigen Ordner innerhalb des Pakets. Externe Pfade sind unzulässig.</value></data>
+  <data name="UniversalMods.Import.Done" xml:space="preserve"><value>Dateien importiert; ersetzte Dateien wurden gesichert. Prüfen Sie vor dem Start den benötigten Loader und die Aktivierung. Kein Server wurde gestartet.</value></data>
+  <data name="UniversalMods.Import.Rollback" xml:space="preserve"><value>Den gesamten Paketimport „{0}“ ({1} Dateien) zurücksetzen? Frühere Dateien werden wiederhergestellt und neu hinzugefügte entfernt. Dies betrifft das ganze Paket, nicht nur die ausgewählte Datei.</value></data>
+  <data name="UniversalMods.Wizard.Title" xml:space="preserve"><value>Mods und Plugins importieren</value></data>
+  <data name="UniversalMods.Wizard.Button" xml:space="preserve"><value>ZIP / Ordner importieren</value></data>
+  <data name="UniversalMods.Wizard.Advanced" xml:space="preserve"><value>Erweitert: Importordner</value></data>
+  <data name="UniversalMods.Wizard.Help" xml:space="preserve"><value>Wähle eine ZIP-Datei, Mod-Datei oder einen entpackten Ordner. Synix liest das Paket für {0} und zeigt vor jeder Änderung, wie es hinzugefügt wird.</value></data>
+  <data name="UniversalMods.Wizard.File" xml:space="preserve"><value>ZIP oder Mod-Datei wählen</value></data>
+  <data name="UniversalMods.Wizard.Folder" xml:space="preserve"><value>Entpackten Ordner wählen</value></data>
+  <data name="UniversalMods.Wizard.Filter" xml:space="preserve"><value>ZIP-Pakete (*.zip)|*.zip|Mod- oder Plugin-Dateien (*.*)|*.*</value></data>
+  <data name="UniversalMods.Wizard.Empty" xml:space="preserve"><value>Wähle zuerst die heruntergeladene ZIP-Datei oder den Ordner. Importordner müssen nicht vorher eingerichtet werden.</value></data>
+  <data name="UniversalMods.Wizard.Continue" xml:space="preserve"><value>Prüfen und importieren</value></data>
+  <data name="UniversalMods.Wizard.Destination" xml:space="preserve"><value>Zielordner wählen</value></data>
+  <data name="UniversalMods.Wizard.DestinationHelp" xml:space="preserve"><value>Wähle den Mod-Ordner innerhalb dieses Servers laut Installationsanleitung des Spiels.</value></data>
+  <data name="UniversalMods.Wizard.Reading" xml:space="preserve"><value>Paket und Ordnerstruktur werden gelesen… Keine Serverdateien werden geändert.</value></data>
+  <data name="UniversalMods.Wizard.Unknown" xml:space="preserve"><value>{0} Dateien gelesen. Für dieses Spiel wurde kein Ziel erkannt. Wähle den Mod-Ordner des Servers; Dateitypen werden automatisch ausgefüllt. Den Ordner nicht raten.</value></data>
+  <data name="UniversalMods.Wizard.Ambiguous" xml:space="preserve"><value>{0} Dateien gelesen. Mehrere Ziele sind möglich. Wähle oben das passende Mod- oder Plugin-System für die Vorschau.</value></data>
+  <data name="UniversalMods.Wizard.Undecided" xml:space="preserve"><value>Ziel auswählen</value></data>
+  <data name="UniversalMods.Wizard.Cancelled" xml:space="preserve"><value>Lesen abgebrochen. Nichts wurde importiert.</value></data>
+  <data name="UniversalMods.Wizard.ProviderAction" xml:space="preserve"><value>Download beim Serverstart</value></data>
+  <data name="UniversalMods.Wizard.ProviderDetails" xml:space="preserve"><value>{0}
+Mod-ID: {1}
+ARK lädt diesen Mod beim Serverstart von {2}. Synix kopiert oder registriert die heruntergeladenen Paketdateien nicht.</value></data>
+  <data name="UniversalMods.Wizard.ProviderWarning" xml:space="preserve"><value>{0}-Mod-IDs erkannt. Prüfe als Nächstes die geordnete ID-Liste. ARK lädt die Mods beim nächsten Start; dies ist kein Datei-Upload. Kein automatischer Serverstart.</value></data>
+  <data name="UniversalMods.Wizard.LoaderMissing" xml:space="preserve"><value>Dieses Paket benötigt einen passenden Server-Loader. Richte ihn in den Servereinstellungen ein und öffne den Import erneut. Keine Dateien wurden geändert.</value></data>
+  <data name="UniversalMods.Wizard.Summary" xml:space="preserve"><value>{0} Dateien werden importiert; {1} vorhandene Dateien werden vor dem Ersetzen gesichert. Prüfe die Ziele in der Liste. Kein automatischer Serverstart.</value></data>
+  <data name="UniversalMods.Wizard.ManualWarning" xml:space="preserve"><value>Dateien werden nach {0} kopiert. Prüfe Vorschau und Spielanleitung: Die Ordnerwahl installiert keinen Loader und aktiviert keine Anbieter-Mods. Das Ziel wird erst nach Bestätigung gespeichert.</value></data>
+  <data name="UniversalMods.Wizard.Root" xml:space="preserve"><value>Dateien verwenden aus: {0}</value></data>
+  <data name="UniversalMods.Wizard.Whole" xml:space="preserve"><value>Gesamtes Paket</value></data>
+  <data name="ModSupport.Title" xml:space="preserve">
+    <value>Mod-Support &amp; Einrichtung</value>
+  </data>
+  <data name="ModSupport.Column" xml:space="preserve">
+    <value>Mods / Plugins</value>
+  </data>
+  <data name="ModSupport.Documented" xml:space="preserve">
+    <value>Server-Methoden dokumentiert</value>
+  </data>
+  <data name="ModSupport.NeedsVerification" xml:space="preserve">
+    <value>Prüfung erforderlich</value>
+  </data>
+  <data name="ModSupport.ImportRules" xml:space="preserve">
+    <value>Synix hat Importregeln für dieses Spiel. Das Paket muss trotzdem zum installierten Loader, zur Serverversion und zu den Abhängigkeiten passen.</value>
+  </data>
+  <data name="ModSupport.ManualSetup" xml:space="preserve">
+    <value>Für dieses Spiel gibt es noch keine automatische Installationsregel. Lesen Sie zuerst die Hinweise; Dateien müssen eventuell auch in einer Konfiguration oder beim Anbieter aktiviert werden.</value>
+  </data>
+  <data name="ModSupport.EvidenceNote" xml:space="preserve">
+    <value>Dokumentierter Support ist kein Kompatibilitätstest auf einem laufenden Server. Server-Mods, Client-Mods und Loader-Installationen sind verschieden. Diese Anleitung lädt, installiert und startet nichts.</value>
+  </data>
+  <data name="ModSupport.Methods" xml:space="preserve">
+    <value>Dokumentierte Methoden</value>
+  </data>
+  <data name="ModSupport.UnverifiedNote" xml:space="preserve">
+    <value>Eine zuverlässige serverspezifische Installationsmethode wurde noch nicht bestätigt. Das bedeutet nicht, dass das Spiel keine Mods unterstützt. Wählen Sie ein ZIP oder einen Ordner und prüfen Sie Ziel und Aktivierung anhand der Serveranleitung des Autors.</value>
+  </data>
+  <data name="ModSupport.Reviewed" xml:space="preserve">
+    <value>Dokumentation geprüft: {0}</value>
+  </data>
+  <data name="ModSupport.Sources" xml:space="preserve">
+    <value>Installationsquellen (Link zum Lesen öffnen)</value>
+  </data>
+  <data name="ModSupport.GuidedImport" xml:space="preserve">
+    <value>Server-Mod-Methoden sind dokumentiert. Lesen Sie Mod-Support &amp; Einrichtung zur Aktivierung und prüfen Sie Ihr Paket mit ZIP / Ordner importieren.</value>
+  </data>
+  <data name="ModSupport.UnverifiedImport" xml:space="preserve">
+    <value>Wählen Sie ZIP / Ordner importieren. Der Server-Support muss geprüft werden; Mod-Support &amp; Einrichtung erklärt die Grenzen.</value>
+  </data>
+  <data name="ModSupport.InvalidCatalog" xml:space="preserve">
+    <value>Der Katalog zur Mod-Unterstützung konnte nicht gelesen werden. Prüfen Sie, ob Ihre Synix-Installation vollständig ist.</value>
+  </data>
+  <data name="Configuration.Sync.Changed" xml:space="preserve">
+    <value>Diese Konfiguration wurde seit dem Öffnen geändert. Öffnen Sie sie vor dem Speichern erneut.</value>
+  </data>
+  <data name="Configuration.Sync.SaveEntry" xml:space="preserve">
+    <value>Der Synix-Servereintrag konnte nicht gespeichert werden. Die Konfiguration und Servereinstellungen wurden wiederhergestellt.</value>
+  </data>
+  <data name="Configuration.Sync.Ambiguous" xml:space="preserve">
+    <value>Die gemeinsame Einstellung „{0}“ enthält doppelte oder widersprüchliche Werte. Beheben Sie dies vor dem Speichern.</value>
+  </data>
+  <data name="Configuration.Sync.InvalidValue" xml:space="preserve">
+    <value>Die gemeinsame Einstellung „{0}“ hat einen für Synix ungültigen Wert. Korrigieren Sie ihn vor dem Speichern.</value>
+  </data>
+  <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
+    <value>Das Speichern ist fehlgeschlagen und die ursprüngliche Konfiguration konnte nicht automatisch wiederhergestellt werden. Prüfen Sie vor dem Serverstart die Konfiguration und ihre Sicherung: {0}</value>
+  </data>
+  <data name="ModInstallGuide.Compatibility" xml:space="preserve"><value>Kompatibilität</value></data>
+  <data name="ModInstallGuide.Destination" xml:space="preserve"><value>Installationsziel</value></data>
+  <data name="ModInstallGuide.Activation" xml:space="preserve"><value>So wird es aktiviert</value></data>
+  <data name="ModInstallGuide.Recovery" xml:space="preserve"><value>So machen Sie es rückgängig</value></data>
+  <data name="ModInstallGuide.Unknown" xml:space="preserve"><value>Nicht erfasst</value></data>
+  <data name="ModInstallGuide.Context" xml:space="preserve"><value>{0} • Spielversion: {1} • Loader/System: {2}</value></data>
+  <data name="ModInstallGuide.PendingCompatibility" xml:space="preserve"><value>Wählen Sie ein Paket und ein passendes Ziel, um die möglichen Prüfungen zu sehen.</value></data>
+  <data name="ModInstallGuide.PendingDestination" xml:space="preserve"><value>Kein Ziel ausgewählt. Keine Serverdateien oder Einstellungen wurden geändert.</value></data>
+  <data name="ModInstallGuide.PendingActivation" xml:space="preserve"><value>Ein Import startet den Server nie automatisch. Die Aktivierung hängt vom Spiel und Mod-System ab.</value></data>
+  <data name="ModInstallGuide.PendingRecovery" xml:space="preserve"><value>Sichern Sie Server und Welt vor der Nutzung neuer Mods. Der gewählte Importweg erklärt die Wiederherstellung.</value></data>
+  <data name="ModInstallGuide.LayoutRecognized" xml:space="preserve"><value>Paketstruktur/Loader-Zuordnung erkannt. Spielversionen, Abhängigkeiten und Client-Anforderungen sind hier nicht vollständig geprüft; beachten Sie die Vorgaben des Autors.</value></data>
+  <data name="ModInstallGuide.ManualCompatibility" xml:space="preserve"><value>Manuelles Ziel — Kompatibilität ungeprüft. Eine passende Dateiendung beweist nicht, dass die Mod mit diesem Spiel oder Loader funktioniert.</value></data>
+  <data name="ModInstallGuide.LoaderMissing" xml:space="preserve"><value>Import gesperrt: Ein passender Loader fehlt oder das Paket passt nicht zum gewählten Loader. Prüfen Sie Servereinstellungen und Mod-Unterstützung &amp; Einrichtung.</value></data>
+  <data name="ModInstallGuide.ProviderCompatibility" xml:space="preserve"><value>Nur Anbieter-IDs. Mod-Versionen, Abhängigkeiten und Plattformkompatibilität werden nicht geprüft. Bestätigen Sie die Serverunterstützung beim Anbieter.</value></data>
+  <data name="ModInstallGuide.ProviderDestination" xml:space="preserve"><value>Synix speichert die geordnete {0}-ID-Liste, nicht die Mod-Dateien der ZIP. Spiel/Anbieter bestimmen den Downloadort.</value></data>
+  <data name="ModInstallGuide.LaunchArgument" xml:space="preserve"><value>Server-Startoption: {0}=&lt;geordnete IDs&gt;</value></data>
+  <data name="ModInstallGuide.RequiredArguments" xml:space="preserve"><value>Erforderliche Startparameter: {0}</value></data>
+  <data name="ModInstallGuide.FileChanges" xml:space="preserve"><value>{0} Dateien geplant; {1} vorhandene Dateien werden vor dem Ersetzen gesichert.</value></data>
+  <data name="ModInstallGuide.FilePreview" xml:space="preserve"><value>Wählen Sie links eine Datei für den vollständigen Zielpfad. Kopiert wird erst nach Bestätigung der nächsten Prüfung.</value></data>
+  <data name="ModInstallGuide.ProviderActivation" xml:space="preserve"><value>Speichern Sie die geordneten IDs, starten Sie den Server selbst und prüfen Sie das Download-/Startprotokoll. Eine gewählte ZIP legt die heruntergeladene Version nicht fest.</value></data>
+  <data name="ModInstallGuide.ManualActivation" xml:space="preserve"><value>Dateikopien installieren keinen Loader und registrieren/aktivieren keine Mod. Folgen Sie der Mod-Einrichtung und den Serveranweisungen des Autors; starten Sie dann selbst und prüfen Sie das Protokoll.</value></data>
+  <data name="ModInstallGuide.ScenarioActivation" xml:space="preserve"><value>Der Import wechselt nicht die aktive Welt. Wählen Sie vor dem Start über Szenario auswählen das Szenario und den Spielstand. Vorhandene Spielstände werden nicht automatisch konvertiert.</value></data>
+  <data name="ModInstallGuide.FileActivation" xml:space="preserve"><value>Der gewählte Loader liest die importierten Dateien beim Serverstart. Erfüllen Sie zuerst zusätzliche Einrichtungs- und Client-Anforderungen des Autors und prüfen Sie das Startprotokoll. Synix startet den Server nicht.</value></data>
+  <data name="ModInstallGuide.FileRecovery" xml:space="preserve"><value>Stoppen Sie den Server, wählen Sie einen importierten Eintrag und nutzen Sie Import rückgängig machen. Ersetzte Dateien werden wiederhergestellt, neue Importdateien entfernt; spätere Änderungen können dies blockieren. Weltänderungen bleiben bestehen. Erstellen Sie vor dem Start eine vollständige Sicherung.</value></data>
+  <data name="ModInstallGuide.ProviderRecovery" xml:space="preserve"><value>Stoppen Sie den Server und entfernen Sie neue IDs oder stellen Sie die alte Reihenfolge wieder her. Anbieterdateien werden nicht gelöscht, alte Mod-Versionen/Weltdaten nicht wiederhergestellt. Bewahren Sie vor dem Start die alte ID-Liste und eine vollständige Sicherung auf.</value></data>
+  <data name="ModInstallGuide.ScenarioRecovery" xml:space="preserve"><value>Ein aktives Szenario oder vorhandene Spielstände können das Entfernen verhindern.</value></data>
+  <data name="Backup.Retention.Warning" xml:space="preserve"><value>Die neue Sicherung wurde gespeichert, aber die Bereinigung benötigt Aufmerksamkeit für {0}: {1}</value></data>
+  <data name="Backup.Creation.Failed" xml:space="preserve"><value>Die Sicherung wurde nicht abgeschlossen. Prüfen Sie vor dem Fortfahren den Grund unter Aktivität und Diagnose.</value></data>
+  <data name="ServerStart.Maintenance.BackupFailed" xml:space="preserve"><value>Start abgebrochen: Die angeforderte Sicherung wurde nicht abgeschlossen. Es wurde weder aktualisiert noch der Server gestartet. Prüfen Sie den Sicherungsfehler und versuchen Sie es erneut.</value></data>
+  <data name="ServerStart.Maintenance.UpdateFailed" xml:space="preserve"><value>Start abgebrochen: Die angeforderte Aktualisierung wurde nicht abgeschlossen. Der Server bleibt gestoppt. Prüfen Sie den Fehler vor einem erneuten Versuch.</value></data>
+  <data name="ServerActions.Operation.RequiresStopped" xml:space="preserve"><value>Stoppen Sie den Server und warten Sie, bis seine Prozesse beendet sind, bevor Sie seine Dateien aktualisieren oder prüfen.</value></data>
+  <data name="Backup.Error.CustomFolderUnavailable" xml:space="preserve"><value>Der ausgewählte Sicherungsordner ist nicht verfügbar. Verbinden Sie ihn erneut oder wählen Sie einen anderen Ordner. Synix verwendet nicht stillschweigend einen anderen Speicherort.</value></data>
+  <data name="Configuration.Sync.TooLarge" xml:space="preserve"><value>Eine wiederhergestellte Konfiguration ist zu groß für eine sichere Synchronisierung. Prüfen Sie die Datei vor dem Serverstart.</value></data>
+  <data name="Backup.Progress.Synchronizing" xml:space="preserve"><value>Synix-Einstellungen werden aus der wiederhergestellten Konfiguration aktualisiert...</value></data>
+  <data name="Backup.Restore.SettingsPending" xml:space="preserve"><value>Die Sicherungsdateien wurden wiederhergestellt, aber Synix konnte die Servereinstellungen nicht vollständig aktualisieren. Wiederherstellungsdateien wurden behalten. Beheben Sie das Problem und versuchen Sie Start erneut; der Start bleibt bis zur erfolgreichen Synchronisierung gesperrt. Details: {0}</value></data>
+  <data name="Backup.Error.RestartForRecovery" xml:space="preserve"><value>Eine frühere Wiederherstellung wurde unterbrochen. Starten Sie Synix neu, um sie abzuschließen, bevor Sie diesen Server starten oder wiederherstellen.</value></data>
+  <data name="Backup.Restore.PreviousPending" xml:space="preserve"><value>Eine frühere Wiederherstellung erfordert noch Ihre Aufmerksamkeit. Diese Wiederherstellung wurde nicht gestartet. Details: {0}</value></data>
 </root>

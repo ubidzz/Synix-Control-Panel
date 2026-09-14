@@ -18,11 +18,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("display name", context => context.Server.ServerName),
-			new("server name", context => context.Server.ServerName),
-			new("password", context => context.Passwords.ServerPassword),
-			new("steam game port", context => context.Server.Port.ToString()),
-			new("steam query port", context => context.Server.QueryPort.ToString())
+			new("display name", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("server name", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("password", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("steam game port", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("steam query port", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort)
 		];
 
 		public override string GameName => "ASKA";

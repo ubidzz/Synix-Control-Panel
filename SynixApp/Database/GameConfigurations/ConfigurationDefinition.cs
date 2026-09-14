@@ -85,16 +85,19 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public ConfigurationBinding(
 			string key,
 			Func<ConfigurationContext, string> value,
-			string? path = null)
+			string? path = null,
+			ConfigurationServerField serverField = ConfigurationServerField.None)
 		{
 			Key = key;
 			Value = value;
 			Path = path;
+			ServerField = serverField;
 		}
 
 		public string Key { get; }
 		public string? Path { get; }
 		public Func<ConfigurationContext, string> Value { get; }
+		public ConfigurationServerField ServerField { get; }
 	}
 
 	internal readonly record struct ConfigurationApplyResult(
@@ -136,6 +139,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public virtual string RelativePath => string.Empty;
 		public virtual ConfigFormat Format => ConfigFormat.StandardINI;
 		public virtual IReadOnlyList<ConfigurationBinding> Bindings => [];
+
+		internal virtual IReadOnlyList<ConfigurationServerBinding> GetServerBindings(GameServer server, string path)
+		{
+			if (!UsesConfigurationFile || string.IsNullOrWhiteSpace(RelativePath) ||
+				!Path.GetFullPath(path).Equals(ResolveFullPath(server), StringComparison.OrdinalIgnoreCase))
+				return [];
+			return Bindings.Where(binding => binding.ServerField != ConfigurationServerField.None)
+				.Select(binding => new ConfigurationServerBinding(binding.Key, binding.ServerField, binding.Path)).ToArray();
+		}
+
+		internal virtual List<ConfigLine> ReadServerValues(string text) => ConfigHandler.LoadConfigText(text, Format);
 
 		public virtual string? CreateTemplate(ConfigurationContext context)
 		{
@@ -480,7 +494,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 					"Configuration.Error.InstallPathMissing"));
 			}
 
-			string identity = Core.Instance.GetSafeName(server.ServerName);
+			string identity = Core.GetServerIdentity(server);
 			string relativePath = relativePathTemplate
 				.Replace("{Identity}", identity, StringComparison.Ordinal)
 				.Replace("{ServerName}", identity, StringComparison.Ordinal)

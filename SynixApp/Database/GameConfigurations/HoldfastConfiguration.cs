@@ -18,12 +18,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("server_name", context => context.Server.ServerName),
-			new("server_password", context => context.Passwords.ServerPassword),
-			new("server_admin_password", context => context.Passwords.AdminPassword),
-			new("server_port", context => context.Server.Port.ToString()),
-			new("steam_query_port", context => context.Server.QueryPort.ToString()),
-			new("maximum_players", context => context.Server.MaxPlayers.ToString())
+			new("server_name", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("server_password", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("server_admin_password", context => context.Passwords.AdminPassword, serverField: ConfigurationServerField.AdminPassword),
+			new("server_port", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("steam_query_port", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort),
+			new("maximum_players", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers)
 		];
 
 		public override string GameName => "Holdfast: Nations At War";
