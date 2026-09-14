@@ -24,8 +24,13 @@ internal static class WorkflowUiTest
 		Exception? failure = null;
 		Thread thread = new(() =>
 		{
+			// DoEvents restores the previous context. Keep a UI context installed for
+			// the whole fixture so awaited work never resumes on a pool thread.
+			using WindowsFormsSynchronizationContext context = new();
+			SynchronizationContext.SetSynchronizationContext(context);
 			try { action(); }
 			catch (Exception exception) { failure = exception; }
+			finally { SynchronizationContext.SetSynchronizationContext(null); }
 		}) { IsBackground = true };
 		thread.SetApartmentState(ApartmentState.STA);
 		thread.Start();
@@ -53,4 +58,3 @@ internal static class WorkflowUiTest
 		Assert.True(completed(), "The asynchronous UI action did not finish.");
 	}
 }
-

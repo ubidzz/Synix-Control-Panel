@@ -33,7 +33,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 		string FullPath,
 		string? InstallationId,
 		bool CanRemove,
-		string TargetId = "");
+		string TargetId = "",
+		string ImportedPackageName = "",
+		int ImportedFileCount = 0);
 
 	internal sealed record ModImportResult(
 		string InstallationId,
@@ -233,7 +235,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 					trackedFiles.TryGetValue(relativePath, out ModInstallationReference? reference);
 					bool healthy = reference != null &&
 						hash.Equals(reference.File.Sha256, StringComparison.OrdinalIgnoreCase);
-					string name = Path.GetFileNameWithoutExtension(file);
+					string name = target.PackageLayout == ModPackageLayout.FolderTree
+						? Path.GetRelativePath(targetRoot, file) : Path.GetFileNameWithoutExtension(file);
 					targetNames.Add(name);
 					results.Add(new ModInventoryItem(
 						name,
@@ -262,7 +265,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 						relativePath,
 						file,
 						reference?.Installation.Id,
-						healthy && OwnsAllFiles(reference!.Installation, trackedFiles), target.Id));
+						healthy && OwnsAllFiles(reference!.Installation, trackedFiles), target.Id,
+						reference?.Installation.DisplayName ?? string.Empty, reference?.Installation.Files.Count ?? 0));
 				}
 
 				if (!target.ScanDirectories)
@@ -345,8 +349,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			ArgumentNullException.ThrowIfNull(target);
 			using ServerOperationLease operation = BeginOperation(server);
 			EnsureStopped(server);
-			if (target.PackageLayout != ModPackageLayout.Default && !EmpyrionAddOns.IsEmpyrion(server))
-				throw EmpyrionAddOns.Error("Profile");
+			if (!ModPackageHandlers.For(target).AcceptsProfile(profile, target) ||
+				!ModSystemCatalog.MatchesGame(profile, server.Game))
+				throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidTarget", target.DisplayName));
 			securityContext ??= ModImportSecurityContext.CaptureCurrent();
 			if (securityContext.IsCurrentProcessElevated)
 			{
@@ -1089,16 +1094,10 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			List<InstallSource> sources = [];
 			using ZipArchive archive = ZipFile.OpenRead(archivePath);
 			ModPackageLimits limits = ModPackageLimits.For(target);
-			IReadOnlyDictionary<string, string>? mappedPaths = ModPackageHandlers.For(target)
-				.MapArchive(archive, target, packageName, installationFolderName);
+			IReadOnlyDictionary<string, string> mappedPaths = ModPackageHandlers.Map(archive, target, packageName, installationFolderName);
 			if (archive.Entries.Count > limits.Entries)
 				throw new InvalidDataException(LocalizationManager.Get(
 					"ModManager.Error.TooManyFiles"));
-			bool wrapRootFiles = target.WrapRootArchiveFiles && archive.Entries.Any(entry =>
-				!string.IsNullOrWhiteSpace(entry.Name) &&
-				entry.FullName.IndexOfAny(['/', '\\']) < 0 &&
-				entry.Name.Equals(target.RequiredArchiveFileName, StringComparison.OrdinalIgnoreCase));
-			string packageFolder = BuildSafePackageFolderName(packageName);
 			long extractedBytes = 0;
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
@@ -1111,10 +1110,10 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 
 				if (!ModPathSafety.IsSafeRelativePath(entry.FullName))
 					throw new InvalidDataException(LocalizationManager.Get("ModManager.Error.UnsafePath"));
-				string relative = NormalizeRelativePath(mappedPaths == null ? entry.FullName :
-					mappedPaths[entry.FullName.Replace('\\', '/')]);
-				if (wrapRootFiles)
-					relative = NormalizeRelativePath(Path.Combine(packageFolder, relative));
+				string mapped = entry.FullName;
+				if (!mappedPaths.TryGetValue(entry.FullName.Replace('\\', '/'), out mapped!))
+					continue;
+				string relative = NormalizeRelativePath(mapped);
 				string destination = ResolveInsideRoot(root, relative);
 				if (!target.PreserveArchiveContents && !IsAllowedFile(destination, target))
 					continue;
@@ -1127,7 +1126,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			return sources;
 		}
 
-		private static string BuildSafePackageFolderName(string packageName)
+		internal static string BuildSafePackageFolderName(string packageName)
 		{
 			string safe = string.Concat(packageName.Select(character =>
 				Path.GetInvalidFileNameChars().Contains(character) || character is '/' or '\\'

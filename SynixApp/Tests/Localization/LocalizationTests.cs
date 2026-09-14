@@ -404,7 +404,7 @@ public sealed class LocalizationTests
 				Assert.Contains("SERVEUR", modText);
 				Assert.Contains("SYSTÈME DE MODULES", modText);
 				Assert.Contains("Liste de contrôle de sécurité automatique", modText);
-				Assert.Contains("Installer un fichier", modText);
+				Assert.Contains("Importer ZIP / dossier", modText);
 				ComboBox[] selectors = GetControls<ComboBox>(mods).ToArray();
 				Assert.Equal(2, selectors.Length);
 				Assert.Equal("Modules Minecraft", selectors[0].GetItemText(

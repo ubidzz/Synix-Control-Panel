@@ -181,7 +181,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			_modPluginManagerMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
-				if (server == null || !ModSystemCatalog.CanManageAddOns(server))
+				if (server == null || !ModSystemCatalog.CanOpenManager(server))
 					return;
 				using ModPluginManager dialog = new(server);
 				dialog.ShowDialog(this);
@@ -1403,7 +1403,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 
 		internal static void UpdateModPluginManagerMenuItem(ToolStripMenuItem item, GameServer? server)
 		{
-			bool supported = ModSystemCatalog.CanManageAddOns(server);
+			bool supported = ModSystemCatalog.CanOpenManager(server);
 			item.Visible = supported;
 			item.Enabled = supported;
 		}

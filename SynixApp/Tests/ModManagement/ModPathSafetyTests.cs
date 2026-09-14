@@ -198,7 +198,8 @@ public sealed class ModPathSafetyTests
 		}
 
 		internal ModImportResult Import(string? packagePath = null) => ModPackageManager.Import(Server,
-			new ModSystemProfile { Id = "fixture", DisplayName = "Fixture", SupportLevel = ModSystemSupportLevel.Managed, Targets = [_target] },
+			new ModSystemProfile { Id = "fixture", DisplayName = "Fixture", SupportLevel = ModSystemSupportLevel.Managed,
+				GameNames = [Server.Game], Targets = [_target] },
 			_target, packagePath ?? PathInRoot("input/Welcome.cs"), securityContext: new(false));
 
 		internal string PathInRoot(string relative)

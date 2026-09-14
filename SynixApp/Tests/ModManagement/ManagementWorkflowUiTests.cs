@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Design.Controls;
 using Synix_Control_Panel.SynixEngine;
 using Synix_Control_Panel.SynixEngine.ModManagement;
 using System.Drawing;
@@ -76,6 +77,37 @@ public sealed class ManagementWorkflowUiTests : IDisposable
 		_server.MinecraftLoader = loader;
 		Assert.Equal(area, ModSystemCatalog.Detect(_server)!.RecommendedTarget.RelativePath);
 	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void ModSupportButtonStaysAtRightMarginWithoutOverlappingAdvancedOptions(bool simple) => WorkflowUiTest.Run(() =>
+	{
+		using ModPluginManager manager = new(_server);
+		manager.StartPosition = FormStartPosition.Manual;
+		manager.Location = new Point(-20000, -20000);
+		manager.Show();
+		WorkflowUiTest.WaitUntil(() => !manager.UseWaitCursor);
+		Control guide = Assert.Single(manager.Controls.Find("gameModSupportGuide", true));
+		Control advanced = Assert.Single(manager.Controls.Find("configureModImportLocations", true));
+		Control close = Assert.Single(manager.Controls.Find("closeAddOnManager", true));
+		ModernSettingsToggle toggle = Assert.IsType<ModernSettingsToggle>(manager.Controls.Find("modSimpleViewToggle", true).Single());
+		toggle.Checked = simple;
+		foreach (int width in new[] { 1240, 1500, 1240 })
+		{
+			manager.ClientSize = new Size(width, manager.ClientSize.Height);
+			manager.PerformLayout();
+			Assert.Equal(28, manager.ClientSize.Width - guide.Right);
+			Assert.Equal(close.Right, guide.Right);
+			Assert.Equal(!simple, advanced.Visible);
+			if (!simple)
+			{
+				Assert.Equal(guide.Top, advanced.Top);
+				Assert.Equal(12, guide.Left - advanced.Right);
+			}
+		}
+		CapturePreview(manager, "mod-manager-header-" + (simple ? "simple" : "advanced") + ".png");
+	});
 
 	[Fact]
 	public void ModBusyStateBlocksClosingAndActionsThenRestoresThem() => WorkflowUiTest.Run(() =>

@@ -70,17 +70,19 @@ internal sealed class ModPackagePicker : ModPackageDialog
 	private readonly TextBox _source;
 	private readonly TextBox _folder;
 	private readonly Label _status;
+	private readonly ModInstallTarget _target;
 	internal string SourcePath => _source.Text;
 	internal bool IsFolder { get; private set; }
 	internal string? ScenarioFolder => _scenario ? _folder.Text : null;
 
 	internal ModPackagePicker(ModInstallTarget target) : base(ModPackageHandlers.For(target).PickerTitleKey)
 	{
+		_target = target;
 		bool scenario = EmpyrionAddOns.IsScenario(target);
 		_scenario = scenario;
 		AddText(LocalizationManager.Get(ModPackageHandlers.For(target).PickerHelpKey), 74, 88);
 		_source = AddInput(168, "modPackageSource", readOnly: true);
-		AddButton("EmpyrionMods.Picker.Zip", 28, 209, ChooseZip);
+		AddButton(target.PackageLayout == ModPackageLayout.FolderTree ? "UniversalMods.Import.ChooseFile" : "EmpyrionMods.Picker.Zip", 28, 209, ChooseZip);
 		AddButton("EmpyrionMods.Picker.Folder", 230, 209, ChooseFolder);
 		AddText(LocalizationManager.Get(scenario ? "EmpyrionMods.Picker.FolderName" : "ModPackages.Picker.Destination"), 266, 28);
 		_folder = AddInput(296, "modPackageFolderName", readOnly: !scenario);
@@ -94,7 +96,10 @@ internal sealed class ModPackagePicker : ModPackageDialog
 
 	private void ChooseZip()
 	{
-		using OpenFileDialog picker = new() { Filter = LocalizationManager.Get("ModManager.FileFilter.ArchiveOnly"), CheckFileExists = true };
+		string filter = _target.PackageLayout == ModPackageLayout.FolderTree
+			? LocalizationManager.Get("ModManager.FileFilter.WithArchives", string.Join(';', _target.AllowedExtensions.Select(extension => "*" + extension)))
+			: LocalizationManager.Get("ModManager.FileFilter.ArchiveOnly");
+		using OpenFileDialog picker = new() { Filter = filter, CheckFileExists = true };
 		if (picker.ShowDialog(this) == DialogResult.OK) SetSource(picker.FileName, false);
 	}
 

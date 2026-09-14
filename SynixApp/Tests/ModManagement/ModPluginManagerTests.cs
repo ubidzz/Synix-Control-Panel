@@ -24,7 +24,7 @@ namespace Synix_Control_Panel.Tests;
 public sealed class ModPluginManagerTests
 {
 	[Fact]
-	public void ServerOptionsOnlyShowTheModManagerForSupportedGamesAcrossTheEntireCatalog()
+	public void ServerOptionsAllowImportSetupWithoutClaimingEveryGameHasABuiltInModProfile()
 	{
 		string profileRoot = CreateTestDirectory();
 		string? previousRoot = ModSystemCatalog.ExternalProfileRootOverride;
@@ -53,8 +53,8 @@ public sealed class ModPluginManagerTests
 								$"Unexpected mod support for {game.Game} ({status}).");
 							MainGUI.UpdateModPluginManagerMenuItem(item, server);
 							// Available records visibility even while the parent menu is closed.
-							Assert.Equal(expected, item.Available);
-							Assert.Equal(expected, item.Enabled);
+							Assert.True(item.Available);
+							Assert.True(item.Enabled);
 						}
 					}
 
@@ -69,7 +69,7 @@ public sealed class ModPluginManagerTests
 					})
 					{
 						MainGUI.UpdateModPluginManagerMenuItem(item, server);
-						bool expected = server?.Game is "Rust" || server?.MinecraftLoader is "Forge";
+						bool expected = server != null;
 						Assert.Equal(expected, item.Available);
 						Assert.Equal(expected, item.Enabled);
 					}
@@ -857,8 +857,10 @@ public sealed class ModPluginManagerTests
 		}
 	}
 
-	[Fact]
-	public void ManagerWindowConstructsForAProviderIdProfile()
+	[Theory]
+	[InlineData("ARK: Survival Ascended")]
+	[InlineData("ARK: Survival Evolved")]
+	public void ManagerWindowConstructsForAProviderIdProfile(string game)
 	{
 		string root = CreateTestDirectory();
 		string profileRoot = CreateTestDirectory();
@@ -873,7 +875,7 @@ public sealed class ModPluginManagerTests
 				{
 					using ModPluginManager manager = new(new GameServer
 					{
-						Game = "ARK: Survival Ascended",
+						Game = game,
 						ServerName = "asa-test",
 						InstallPath = root,
 						Status = "Stopped"
@@ -898,6 +900,11 @@ public sealed class ModPluginManagerTests
 					Assert.False(heading.UseMnemonic);
 					Assert.DoesNotContain("&&", heading.Text);
 					Assert.Equal(heading.Text, manager.Text);
+					Control readPackage = manager.Controls.Find("manageProviderModIds", true).Single();
+					Control manageIds = manager.Controls.Find("importAddOnPackage", true).Single();
+					Assert.Equal(manageIds.Enabled, readPackage.Enabled);
+					Assert.False(readPackage.Bounds.IntersectsWith(manageIds.Bounds));
+					Assert.False(readPackage.Bounds.IntersectsWith(manager.Controls.Find("browseAddOnCatalog", true).Single().Bounds));
 				}
 				catch (Exception exception)
 				{

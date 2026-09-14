@@ -31,13 +31,14 @@ internal static class ModPackageFiles
 		return ModPathSafety.IsSafeRelativePath(cleaned) ? cleaned : "Package-" + cleaned;
 	}
 
-	internal static void CopyExactBounded(Stream input, Stream output, long expectedBytes)
+	internal static void CopyExactBounded(Stream input, Stream output, long expectedBytes, CancellationToken cancellationToken = default)
 	{
 		byte[] buffer = new byte[81920];
 		long written = 0;
 		int count;
 		while ((count = input.Read(buffer, 0, buffer.Length)) != 0)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			written = checked(written + count);
 			if (written > expectedBytes) throw Error("Size");
 			output.Write(buffer, 0, count);
@@ -55,17 +56,17 @@ internal sealed class PreparedModPackage : IDisposable
 	internal string Path { get; }
 	private PreparedModPackage(string root, string path) { _root = root; Path = path; }
 
-	internal static PreparedModPackage FromFolder(string source, ModInstallTarget target)
+	internal static PreparedModPackage FromFolder(string source, ModInstallTarget target, CancellationToken cancellationToken = default)
 	{
 		if (!target.AllowFolderImport) throw ModPackageFiles.Error("FolderUnsupported");
 		ModPathSafety.EnsureNoLinks(source);
 		if (!Directory.Exists(source)) throw ModPackageFiles.Error("Layout");
 		IModPackageHandler handler = ModPackageHandlers.For(target);
 		string marker = handler.FolderMarker(target);
-		if (string.IsNullOrWhiteSpace(marker)) throw ModPackageFiles.Error("Layout");
-		if (!Directory.EnumerateFiles(source, marker).Any() &&
+		if (target.PackageLayout != ModPackageLayout.FolderTree && (string.IsNullOrWhiteSpace(marker) ||
+			(!Directory.EnumerateFiles(source, marker).Any() &&
 			(!handler.AllowsWrappedSourceFolder || !Directory.EnumerateDirectories(source)
-				.Any(path => (File.GetAttributes(path) & FileAttributes.ReparsePoint) == 0 && Directory.EnumerateFiles(path, marker).Any())))
+				.Any(path => (File.GetAttributes(path) & FileAttributes.ReparsePoint) == 0 && Directory.EnumerateFiles(path, marker).Any())))))
 			throw ModPackageFiles.Error("Layout");
 		string root = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "SynixAddOn-" + Guid.NewGuid().ToString("N"));
 		ModPathSafety.EnsureNoLinks(root);
@@ -85,16 +86,17 @@ internal sealed class PreparedModPackage : IDisposable
 				{
 					foreach (string entry in Directory.EnumerateFileSystemEntries(directory))
 					{
+						cancellationToken.ThrowIfCancellationRequested();
 						if (++count > limits.Entries) throw ModPackageFiles.Error("Size");
 						ModPathSafety.EnsureNoLinks(entry);
 						string relative = System.IO.Path.GetRelativePath(source, entry).Replace('\\', '/');
-						if (!ModPathSafety.IsSafeRelativePath(relative)) throw ModPackageFiles.Error("Layout");
+						if (!ModPathSafety.IsSafeRelativePath(relative) || relative.Split('/').Length > 32) throw ModPackageFiles.Error("Layout");
 						if (Directory.Exists(entry)) { pending.Push(entry); continue; }
 						using FileStream input = new(entry, FileMode.Open, FileAccess.Read, FileShare.Read);
 						if (input.Length > limits.FileBytes || (bytes = checked(bytes + input.Length)) > limits.TotalBytes)
 							throw ModPackageFiles.Error("Size");
 						using Stream output = zip.CreateEntry(relative, CompressionLevel.Fastest).Open();
-						ModPackageFiles.CopyExactBounded(input, output, input.Length);
+						ModPackageFiles.CopyExactBounded(input, output, input.Length, cancellationToken);
 					}
 				}
 			}

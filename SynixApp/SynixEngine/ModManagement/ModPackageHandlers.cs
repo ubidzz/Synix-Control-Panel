@@ -31,16 +31,33 @@ internal interface IModPackageHandler
 
 internal static class ModPackageHandlers
 {
+	// Preview and installation use the same destination mapping.
+	internal static IReadOnlyDictionary<string, string> Map(ZipArchive archive, ModInstallTarget target,
+		string packageName, string? selection = null, CancellationToken cancellationToken = default)
+	{
+		IReadOnlyDictionary<string, string>? specialized = For(target).MapArchive(archive, target, packageName, selection);
+		if (specialized != null) return specialized;
+		IReadOnlyDictionary<string, string> paths = UniversalModPackage.Map(archive, target, selection ?? "", cancellationToken);
+		bool wrap = target.WrapRootArchiveFiles && paths.Values.Any(path =>
+			path.Equals(target.RequiredArchiveFileName, StringComparison.OrdinalIgnoreCase));
+		string folder = ModPackageManager.BuildSafePackageFolderName(packageName);
+		return paths.Where(pair => target.PreserveArchiveContents ||
+			target.AllowedExtensions.Contains(Path.GetExtension(pair.Value), StringComparer.OrdinalIgnoreCase))
+			.ToDictionary(pair => pair.Key, pair => wrap ? folder + "/" + pair.Value : pair.Value, StringComparer.OrdinalIgnoreCase);
+	}
+
 	private static readonly IModPackageHandler Default = new StandardPackageHandler();
+	private static readonly IModPackageHandler FolderTree = new FolderTreePackageHandler();
 	private static readonly IModPackageHandler EmpyrionMods = new EmpyrionPackageHandler(scenario: false);
 	private static readonly IModPackageHandler EmpyrionScenarios = new EmpyrionPackageHandler(scenario: true);
 	// History must remain readable even if a profile is later renamed or removed.
-	internal static int MaximumHistoryEntries => Math.Max(Default.Limits.Entries,
+	internal static int MaximumHistoryEntries => Math.Max(FolderTree.Limits.Entries,
 		Math.Max(EmpyrionMods.Limits.Entries, EmpyrionScenarios.Limits.Entries));
 
 	internal static IModPackageHandler For(ModInstallTarget target) => target.PackageLayout switch
 	{
 		ModPackageLayout.Default => Default,
+		ModPackageLayout.FolderTree => FolderTree,
 		ModPackageLayout.EmpyrionMod => EmpyrionMods,
 		ModPackageLayout.EmpyrionScenario => EmpyrionScenarios,
 		_ => throw new InvalidDataException(LocalizationManager.Get("ModCatalog.Error.InvalidTarget", target.Id))
@@ -57,6 +74,23 @@ internal static class ModPackageHandlers
 		public bool AllowsWrappedSourceFolder => true;
 		public bool IsInstalledFolder(string folder) => Directory.Exists(folder);
 		public IReadOnlyDictionary<string, string>? MapArchive(ZipArchive zip, ModInstallTarget target, string packageName, string? destinationName) => null;
+	}
+
+	private sealed class FolderTreePackageHandler : IModPackageHandler
+	{
+		public ModPackageLimits Limits => new(65536, 4L * 1024 * 1024 * 1024, 16L * 1024 * 1024 * 1024);
+		public bool GroupInventoryByFolder => false;
+		public string PickerTitleKey => "UniversalMods.Import.Title";
+		public string PickerHelpKey => "UniversalMods.Import.Help";
+		public bool AcceptsProfile(ModSystemProfile profile, ModInstallTarget target) =>
+			target.Mode == ModTargetMode.FileImport && target.AllowArchives && target.AllowFolderImport &&
+			target.PreserveArchiveContents && !target.WrapRootArchiveFiles && !target.ArchiveOnly &&
+			string.IsNullOrEmpty(target.RequiredArchiveFileName);
+		public string FolderMarker(ModInstallTarget target) => string.Empty;
+		public bool AllowsWrappedSourceFolder => true;
+		public bool IsInstalledFolder(string folder) => Directory.Exists(folder);
+		public IReadOnlyDictionary<string, string>? MapArchive(ZipArchive zip, ModInstallTarget target, string packageName, string? destinationName) =>
+			UniversalModPackage.Map(zip, target, destinationName ?? string.Empty);
 	}
 
 	private sealed class EmpyrionPackageHandler(bool scenario) : IModPackageHandler

@@ -11366,4 +11366,133 @@ Vor Wartung aktualisieren: {5}</value>
   <data name="MinecraftWorkspace.NoCompatibilityFindings" xml:space="preserve">
     <value>Die verfügbaren Metadatenprüfungen haben keine Probleme gefunden. Dies garantiert nicht, dass alle Mods oder Plugins zusammen funktionieren.</value>
   </data>
+  <data name="AsaPackages.Button.Read" xml:space="preserve"><value>Mod-Paket lesen</value></data>
+  <data name="AsaPackages.Title" xml:space="preserve"><value>ASA-Mod-Paket lesen</value></data>
+  <data name="AsaPackages.Help" xml:space="preserve"><value>Wählen Sie eine ASA-Windows-Server-ZIP oder einen entpackten Ordner. Synix findet Mod-Beschreibungen auch in Unterordnern und Mod-Sammlungen und bereitet die CurseForge-IDs zur Prüfung vor. Die ZIP-Dateien werden nicht kopiert oder installiert. Beim Serverstart lädt und registriert ASA die aktuelle Serverversion des Anbieters, nicht unbedingt die Version aus der ZIP.</value></data>
+  <data name="AsaPackages.Source" xml:space="preserve"><value>Quelle des Mod-Pakets</value></data>
+  <data name="AsaPackages.Id" xml:space="preserve"><value>Mod-ID</value></data>
+  <data name="AsaPackages.Descriptor" xml:space="preserve"><value>Speicherort der Beschreibung</value></data>
+  <data name="AsaPackages.Choose" xml:space="preserve"><value>Wählen Sie eine ZIP oder einen Ordner zur Prüfung. Servereinstellungen und Dateien bleiben unverändert, bis Sie die ID-Liste separat prüfen und speichern.</value></data>
+  <data name="AsaPackages.Trust" xml:space="preserve"><value>Paket-Metadaten sind nicht vertrauenswürdig. Die Erkennung ist keine Schadsoftware- oder Kompatibilitätsprüfung und kein Nachweis der Urheberschaft.</value></data>
+  <data name="AsaPackages.Review" xml:space="preserve"><value>Mod-IDs prüfen</value></data>
+  <data name="AsaPackages.Reading" xml:space="preserve"><value>Paket-Metadaten werden gelesen. Mod-Code wird nicht ausgeführt.</value></data>
+  <data name="AsaPackages.Found" xml:space="preserve"><value>{0} Mods erkannt; {1} neue IDs werden hinzugefügt. Die bisherige Reihenfolge bleibt erhalten. Prüfen Sie vor dem Speichern die vollständige Liste.</value></data>
+  <data name="AsaPackages.Timeout" xml:space="preserve"><value>Die Prüfung wurde abgebrochen oder dauerte zu lange. Wählen Sie einen kleineren Paketordner.</value></data>
+  <data name="AsaPackages.Error.Source" xml:space="preserve"><value>Wählen Sie eine ARK-Server-Mod-ZIP oder einen entpackten Ordner. Andere Archivformate werden nicht unterstützt.</value></data>
+  <data name="AsaPackages.Error.Limit" xml:space="preserve"><value>Das Paket überschreitet die Grenzen des Lesers. Wählen Sie einen kleineren Ordner oder eine ZIP mit höchstens 100 Mod-Beschreibungen.</value></data>
+  <data name="AsaPackages.Error.Layout" xml:space="preserve"><value>Das Paket enthält unsichere Pfade, Verknüpfungen, doppelte Pfade, Dateikonflikte oder zu viele Ordnerebenen. Nichts wurde geändert.</value></data>
+  <data name="AsaPackages.Error.Descriptor" xml:space="preserve"><value>Keine .uplugin-Mod-Beschreibung gefunden. Wählen Sie die Mod-ZIP oder ihren entpackten Ordner. Entpacken Sie verschachtelte Archive zuerst.</value></data>
+  <data name="AsaPackages.Error.Metadata" xml:space="preserve"><value>Eine Mod-Beschreibung ist kein gültiges, eindeutiges JSON. Nichts wurde geändert.</value></data>
+  <data name="AsaPackages.Error.Game" xml:space="preserve"><value>Eine Beschreibung verweist nicht auf ein CurseForge-Projekt für ARK: Survival Ascended. Synix errät weder das Spiel noch die Mod-ID.</value></data>
+  <data name="AsaPackages.Error.Id" xml:space="preserve"><value>Eine Beschreibung enthält keine einzelne gültige CurseForge-Projekt-ID (cf_ugcID). Verwenden Sie Mod-IDs verwalten mit der ID von der CurseForge-Seite des Autors.</value></data>
+  <data name="AsaPackages.Error.ServerBuild" xml:space="preserve"><value>Ein Mod hat kein erkanntes WindowsServer-Paket oder eine passende .ucas/.utoc-Datei fehlt. Wählen Sie die Windows-Server-Version, nicht die Client-Version.</value></data>
+  <data name="AsaPackages.Error.DuplicateMod" xml:space="preserve"><value>Das Paket enthält mehrere Beschreibungen mit derselben Mod-ID. Wählen Sie eine Version pro Mod und prüfen Sie erneut.</value></data>
+  <data name="AsePackages.Title" xml:space="preserve"><value>ASE-Mod-Paket lesen</value></data>
+  <data name="AsePackages.Help" xml:space="preserve"><value>Wählen Sie eine ARK: Survival Evolved-Mod-ZIP oder einen Ordner mit .mod-Beschreibung und passendem aufbereitetem Mod-Ordner. Synix liest die Workshop-ID aus der Beschreibung, nicht aus dem ZIP-Namen. Dateien werden nicht kopiert oder installiert: Nach der Prüfung aktualisiert Synix ActiveMods und ModIDS für ARKs automatischen Download. Karten und Total Conversions benötigen eventuell weitere Einstellungen. ASA-CurseForge-Pakete sind nicht kompatibel.</value></data>
+  <data name="AsePackages.Error.Layout" xml:space="preserve"><value>Kein erkanntes vollständiges ASE-Mod-Paket. Benötigt werden eine .mod-Beschreibung und der passende Mod-Ordner mit mod.info und aufbereiteten Spieldaten. Die enthaltene ID muss zum numerischen Dateinamen passen. Rohe Workshop-.z-Downloads ohne vorbereitete .mod-Datei werden nicht erkannt; verwenden Sie Mod-IDs verwalten.</value></data>
+  <data name="ArkPackages.Error.WrongEdition" xml:space="preserve"><value>Das Paket enthält eine Beschreibung für die andere ARK-Ausgabe. ASE-Steam-Workshop-Mods und ASA-CurseForge-Mods sind nicht austauschbar. Wählen Sie ein Paket für den ausgewählten Server.</value></data>
+  <data name="UniversalMods.Locations.Title" xml:space="preserve"><value>Importordner</value></data>
+  <data name="UniversalMods.Locations.Profile" xml:space="preserve"><value>Eigene Importordner</value></data>
+  <data name="UniversalMods.Locations.Help" xml:space="preserve"><value>Wählen Sie den Mod-/Plugin-Ordner und die Hauptdateitypen gemäß der Anleitung des Spiels oder Loaders. Dies gilt nur für diesen Server. Vorhandene Einträge können aktualisiert werden; Mod-Dateien werden hier nicht verändert.</value></data>
+  <data name="UniversalMods.Locations.New" xml:space="preserve"><value>Neuen Ordner hinzufügen</value></data>
+  <data name="UniversalMods.Locations.Name" xml:space="preserve"><value>Name des Importordners</value></data>
+  <data name="UniversalMods.Locations.Path" xml:space="preserve"><value>Ordner innerhalb des Servers (z. B. BepInEx/plugins)</value></data>
+  <data name="UniversalMods.Locations.Extensions" xml:space="preserve"><value>Hauptdateitypen (z. B. .dll, .jar, .lua, .pak)</value></data>
+  <data name="UniversalMods.Locations.Browse" xml:space="preserve"><value>Server-Unterordner wählen</value></data>
+  <data name="UniversalMods.Locations.Warning" xml:space="preserve"><value>Der Dateiimport installiert keinen Loader und registriert keine Anbieter-Mods. Beachten Sie die Installationsanleitung des Spiels.</value></data>
+  <data name="UniversalMods.Locations.Save" xml:space="preserve"><value>Ordner speichern</value></data>
+  <data name="UniversalMods.Locations.Ready" xml:space="preserve"><value>Eigener Dateiimport — Kompatibilität prüfen</value></data>
+  <data name="UniversalMods.Locations.NotConfigured" xml:space="preserve"><value>Keine Importordner eingerichtet</value></data>
+  <data name="UniversalMods.Locations.Start" xml:space="preserve"><value>Legen Sie unter Importordner den Mod-/Plugin-Ordner fest. Ein Dateiimport garantiert nicht, dass das Spiel diese Dateien laden kann.</value></data>
+  <data name="UniversalMods.Locations.Selected" xml:space="preserve"><value>Vom Benutzer gewählter Importordner</value></data>
+  <data name="UniversalMods.Import.Title" xml:space="preserve"><value>Paketimport prüfen</value></data>
+  <data name="UniversalMods.Import.Help" xml:space="preserve"><value>Wählen Sie den Paketordner, dessen Inhalt in den Server-Importordner gehört. Unterordner bleiben erhalten. Wählen Sie einen tieferen Ordner, um Download-Hüllen wegzulassen. Nur aufgeführte Dateien werden importiert; ersetzte Dateien werden gesichert. Inkompatible Mods werden nicht konvertiert.</value></data>
+  <data name="UniversalMods.Import.ChooseFile" xml:space="preserve"><value>Datei / ZIP wählen</value></data>
+  <data name="UniversalMods.Import.Continue" xml:space="preserve"><value>Weiter zur Sicherheitsprüfung</value></data>
+  <data name="UniversalMods.Import.Source" xml:space="preserve"><value>Paketdatei</value></data>
+  <data name="UniversalMods.Import.Destination" xml:space="preserve"><value>Ziel auf dem Server</value></data>
+  <data name="UniversalMods.Import.Change" xml:space="preserve"><value>Aktion</value></data>
+  <data name="UniversalMods.Import.WholePackage" xml:space="preserve"><value>Gesamtes Paket — Ordnerstruktur erhalten</value></data>
+  <data name="UniversalMods.Import.New" xml:space="preserve"><value>Neue Datei</value></data>
+  <data name="UniversalMods.Import.Replace" xml:space="preserve"><value>Ersetzen (mit Sicherung)</value></data>
+  <data name="UniversalMods.Import.Reading" xml:space="preserve"><value>Paket wird gelesen und Zielvorschau erstellt…</value></data>
+  <data name="UniversalMods.Import.Summary" xml:space="preserve"><value>{0} Dateien ausgewählt; {1} vorhandene Dateien werden vor dem Ersetzen gesichert. Installation erst nach der nächsten Bestätigung.</value></data>
+  <data name="UniversalMods.Error.InvalidLocations" xml:space="preserve"><value>Die gespeicherten Importordner sind ungültig oder gehören zu einem anderen Spiel. Keine Dateien geändert.</value></data>
+  <data name="UniversalMods.Error.InstallFolder" xml:space="preserve"><value>Installieren Sie den Server, bevor Sie Importordner einrichten.</value></data>
+  <data name="UniversalMods.Error.LocationLimit" xml:space="preserve"><value>Ein Server kann bis zu 32 eigene Importordner haben.</value></data>
+  <data name="UniversalMods.Error.LocationName" xml:space="preserve"><value>Geben Sie einen Namen mit 1–80 Zeichen ein und wählen Sie Mod oder Plugin.</value></data>
+  <data name="UniversalMods.Error.Extensions" xml:space="preserve"><value>Geben Sie 1–32 Dateiendungen mit Punkt ein, z. B. .dll oder .pak. Installer und Befehlsskripte sind nicht zulässig.</value></data>
+  <data name="UniversalMods.Error.Collision" xml:space="preserve"><value>Das Paket enthält einen Datei-/Ordnerkonflikt. Wählen Sie ein eindeutiges, vollständiges Paket.</value></data>
+  <data name="UniversalMods.Error.NoFiles" xml:space="preserve"><value>Der gewählte Paketordner enthält keinen der Hauptdateitypen dieses Importordners. Wählen Sie einen anderen Ordner oder prüfen Sie die Dateitypen.</value></data>
+  <data name="UniversalMods.Error.PackageRoot" xml:space="preserve"><value>Wählen Sie einen gültigen Ordner innerhalb des Pakets. Externe Pfade sind unzulässig.</value></data>
+  <data name="UniversalMods.Import.Done" xml:space="preserve"><value>Dateien importiert; ersetzte Dateien wurden gesichert. Prüfen Sie vor dem Start den benötigten Loader und die Aktivierung. Kein Server wurde gestartet.</value></data>
+  <data name="UniversalMods.Import.Rollback" xml:space="preserve"><value>Den gesamten Paketimport „{0}“ ({1} Dateien) zurücksetzen? Frühere Dateien werden wiederhergestellt und neu hinzugefügte entfernt. Dies betrifft das ganze Paket, nicht nur die ausgewählte Datei.</value></data>
+  <data name="UniversalMods.Wizard.Title" xml:space="preserve"><value>Mods und Plugins importieren</value></data>
+  <data name="UniversalMods.Wizard.Button" xml:space="preserve"><value>ZIP / Ordner importieren</value></data>
+  <data name="UniversalMods.Wizard.Advanced" xml:space="preserve"><value>Erweitert: Importordner</value></data>
+  <data name="UniversalMods.Wizard.Help" xml:space="preserve"><value>Wähle eine ZIP-Datei, Mod-Datei oder einen entpackten Ordner. Synix liest das Paket für {0} und zeigt vor jeder Änderung, wie es hinzugefügt wird.</value></data>
+  <data name="UniversalMods.Wizard.File" xml:space="preserve"><value>ZIP oder Mod-Datei wählen</value></data>
+  <data name="UniversalMods.Wizard.Folder" xml:space="preserve"><value>Entpackten Ordner wählen</value></data>
+  <data name="UniversalMods.Wizard.Filter" xml:space="preserve"><value>ZIP-Pakete (*.zip)|*.zip|Mod- oder Plugin-Dateien (*.*)|*.*</value></data>
+  <data name="UniversalMods.Wizard.Empty" xml:space="preserve"><value>Wähle zuerst die heruntergeladene ZIP-Datei oder den Ordner. Importordner müssen nicht vorher eingerichtet werden.</value></data>
+  <data name="UniversalMods.Wizard.Continue" xml:space="preserve"><value>Prüfen und importieren</value></data>
+  <data name="UniversalMods.Wizard.Destination" xml:space="preserve"><value>Zielordner wählen</value></data>
+  <data name="UniversalMods.Wizard.DestinationHelp" xml:space="preserve"><value>Wähle den Mod-Ordner innerhalb dieses Servers laut Installationsanleitung des Spiels.</value></data>
+  <data name="UniversalMods.Wizard.Reading" xml:space="preserve"><value>Paket und Ordnerstruktur werden gelesen… Keine Serverdateien werden geändert.</value></data>
+  <data name="UniversalMods.Wizard.Unknown" xml:space="preserve"><value>{0} Dateien gelesen. Für dieses Spiel wurde kein Ziel erkannt. Wähle den Mod-Ordner des Servers; Dateitypen werden automatisch ausgefüllt. Den Ordner nicht raten.</value></data>
+  <data name="UniversalMods.Wizard.Ambiguous" xml:space="preserve"><value>{0} Dateien gelesen. Mehrere Ziele sind möglich. Wähle oben das passende Mod- oder Plugin-System für die Vorschau.</value></data>
+  <data name="UniversalMods.Wizard.Undecided" xml:space="preserve"><value>Ziel auswählen</value></data>
+  <data name="UniversalMods.Wizard.Cancelled" xml:space="preserve"><value>Lesen abgebrochen. Nichts wurde importiert.</value></data>
+  <data name="UniversalMods.Wizard.ProviderAction" xml:space="preserve"><value>Download beim Serverstart</value></data>
+  <data name="UniversalMods.Wizard.ProviderDetails" xml:space="preserve"><value>{0}
+Mod-ID: {1}
+ARK lädt diesen Mod beim Serverstart von {2}. Synix kopiert oder registriert die heruntergeladenen Paketdateien nicht.</value></data>
+  <data name="UniversalMods.Wizard.ProviderWarning" xml:space="preserve"><value>{0}-Mod-IDs erkannt. Prüfe als Nächstes die geordnete ID-Liste. ARK lädt die Mods beim nächsten Start; dies ist kein Datei-Upload. Kein automatischer Serverstart.</value></data>
+  <data name="UniversalMods.Wizard.LoaderMissing" xml:space="preserve"><value>Dieses Paket benötigt einen passenden Server-Loader. Richte ihn in den Servereinstellungen ein und öffne den Import erneut. Keine Dateien wurden geändert.</value></data>
+  <data name="UniversalMods.Wizard.Summary" xml:space="preserve"><value>{0} Dateien werden importiert; {1} vorhandene Dateien werden vor dem Ersetzen gesichert. Prüfe die Ziele in der Liste. Kein automatischer Serverstart.</value></data>
+  <data name="UniversalMods.Wizard.ManualWarning" xml:space="preserve"><value>Dateien werden nach {0} kopiert. Prüfe Vorschau und Spielanleitung: Die Ordnerwahl installiert keinen Loader und aktiviert keine Anbieter-Mods. Das Ziel wird erst nach Bestätigung gespeichert.</value></data>
+  <data name="UniversalMods.Wizard.Root" xml:space="preserve"><value>Dateien verwenden aus: {0}</value></data>
+  <data name="UniversalMods.Wizard.Whole" xml:space="preserve"><value>Gesamtes Paket</value></data>
+  <data name="ModSupport.Title" xml:space="preserve">
+    <value>Mod-Support &amp; Einrichtung</value>
+  </data>
+  <data name="ModSupport.Column" xml:space="preserve">
+    <value>Mods / Plugins</value>
+  </data>
+  <data name="ModSupport.Documented" xml:space="preserve">
+    <value>Server-Methoden dokumentiert</value>
+  </data>
+  <data name="ModSupport.NeedsVerification" xml:space="preserve">
+    <value>Prüfung erforderlich</value>
+  </data>
+  <data name="ModSupport.ImportRules" xml:space="preserve">
+    <value>Synix hat Importregeln für dieses Spiel. Das Paket muss trotzdem zum installierten Loader, zur Serverversion und zu den Abhängigkeiten passen.</value>
+  </data>
+  <data name="ModSupport.ManualSetup" xml:space="preserve">
+    <value>Für dieses Spiel gibt es noch keine automatische Installationsregel. Lesen Sie zuerst die Hinweise; Dateien müssen eventuell auch in einer Konfiguration oder beim Anbieter aktiviert werden.</value>
+  </data>
+  <data name="ModSupport.EvidenceNote" xml:space="preserve">
+    <value>Dokumentierter Support ist kein Kompatibilitätstest auf einem laufenden Server. Server-Mods, Client-Mods und Loader-Installationen sind verschieden. Diese Anleitung lädt, installiert und startet nichts.</value>
+  </data>
+  <data name="ModSupport.Methods" xml:space="preserve">
+    <value>Dokumentierte Methoden</value>
+  </data>
+  <data name="ModSupport.UnverifiedNote" xml:space="preserve">
+    <value>Eine zuverlässige serverspezifische Installationsmethode wurde noch nicht bestätigt. Das bedeutet nicht, dass das Spiel keine Mods unterstützt. Wählen Sie ein ZIP oder einen Ordner und prüfen Sie Ziel und Aktivierung anhand der Serveranleitung des Autors.</value>
+  </data>
+  <data name="ModSupport.Reviewed" xml:space="preserve">
+    <value>Dokumentation geprüft: {0}</value>
+  </data>
+  <data name="ModSupport.Sources" xml:space="preserve">
+    <value>Installationsquellen (Link zum Lesen öffnen)</value>
+  </data>
+  <data name="ModSupport.GuidedImport" xml:space="preserve">
+    <value>Server-Mod-Methoden sind dokumentiert. Lesen Sie Mod-Support &amp; Einrichtung zur Aktivierung und prüfen Sie Ihr Paket mit ZIP / Ordner importieren.</value>
+  </data>
+  <data name="ModSupport.UnverifiedImport" xml:space="preserve">
+    <value>Wählen Sie ZIP / Ordner importieren. Der Server-Support muss geprüft werden; Mod-Support &amp; Einrichtung erklärt die Grenzen.</value>
+  </data>
+  <data name="ModSupport.InvalidCatalog" xml:space="preserve">
+    <value>Der Katalog zur Mod-Unterstützung konnte nicht gelesen werden. Prüfen Sie, ob Ihre Synix-Installation vollständig ist.</value>
+  </data>
 </root>

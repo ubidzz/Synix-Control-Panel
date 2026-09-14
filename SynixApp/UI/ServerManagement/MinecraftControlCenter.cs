@@ -42,7 +42,9 @@ internal sealed class MinecraftControlCenter : Form
 	private GameServer? _consoleServer;
 	private Label _schedule = null!;
 	private bool _busy;
+	private bool _disposing;
 	private CancellationTokenSource? _cancellation;
+	private bool Unavailable => _disposing || Disposing || IsDisposed;
 	private GameServer Server => ServerRegistry.Servers.FirstOrDefault(server =>
 		server.InstallPath.Equals(_initialServer.InstallPath, StringComparison.OrdinalIgnoreCase)) ?? _initialServer;
 	internal static string TextFor(string key, params object[] args) => LocalizationManager.Get("MinecraftWorkspace." + key, args);
@@ -229,6 +231,7 @@ internal sealed class MinecraftControlCenter : Form
 	protected override async void OnShown(EventArgs e)
 	{
 		base.OnShown(e);
+		if (Unavailable) return;
 		UpdateNavigation();
 		_timer.Start();
 		await RunAsync(RefreshPageAsync);
@@ -236,13 +239,22 @@ internal sealed class MinecraftControlCenter : Form
 
 	private void UpdateNavigation()
 	{
+		if (Unavailable) return;
 		foreach (ModernSettingsButton item in _navigation.Controls.OfType<ModernSettingsButton>())
 			item.UseAccentStyle = ReferenceEquals(item.Tag, _tabs.SelectedTab);
 	}
 
 	protected override void Dispose(bool disposing)
 	{
-		if (disposing) { _timer.Dispose(); _cancellation?.Dispose(); _console?.Dispose(); _tips.Dispose(); }
+		if (disposing && !_disposing)
+		{
+			// Child disposal can raise selection events before Form.IsDisposed is set.
+			// An in-flight action owns its token source until its continuation finishes.
+			_disposing = true;
+			_timer.Dispose();
+			_console?.Dispose();
+			_tips.Dispose();
+		}
 		base.Dispose(disposing);
 	}
 
@@ -342,30 +354,42 @@ internal sealed class MinecraftControlCenter : Form
 
 	private async Task RunAsync(Func<Task> action, bool cancellable = false)
 	{
-		if (_busy || IsDisposed) return;
+		if (_busy || Unavailable) return;
 		_busy = true;
-		_cancellation = new CancellationTokenSource();
+		using CancellationTokenSource cancellation = new();
+		_cancellation = cancellation;
 		_cancel.Visible = cancellable;
 		_status.Text = TextFor("Working");
 		UseWaitCursor = true;
 		UpdateActionAvailability();
-		try { await action(); if (!IsDisposed) { UpdateSummary(); _status.Text = TextFor("Ready"); } }
-		catch (OperationCanceledException) { if (!IsDisposed) _status.Text = TextFor("Cancelled"); }
+		try { await action(); if (!Unavailable) { UpdateSummary(); _status.Text = TextFor("Ready"); } }
+		catch (OperationCanceledException) { if (!Unavailable) _status.Text = TextFor("Cancelled"); }
 		catch (Exception exception)
 		{
-			if (!IsDisposed) { _status.Text = Core.SanitizeProblemReportText(exception.Message);
+			if (!Unavailable) { _status.Text = Core.SanitizeProblemReportText(exception.Message);
 				LocalizedMessageBox.Show(this, _status.Text, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning); }
 		}
-		finally { _busy = false; _cancel.Visible = false; UseWaitCursor = false; _cancellation.Dispose(); _cancellation = null; UpdateActionAvailability(); }
+		finally
+		{
+			_busy = false;
+			_cancellation = null;
+			if (!Unavailable)
+			{
+				_cancel.Visible = false;
+				UseWaitCursor = false;
+				UpdateActionAvailability();
+			}
+		}
 	}
 
 	private bool Confirm(string key) => LocalizedMessageBox.Show(this, TextFor(key), Text,
 		MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
 
-	private IProgress<string> Progress() => new Progress<string>(message => { if (!IsDisposed) _status.Text = SecretRedactor.Redact(message); });
+	private IProgress<string> Progress() => new Progress<string>(message => { if (!Unavailable) _status.Text = SecretRedactor.Redact(message); });
 
 	private void UpdateSummary()
 	{
+		if (Unavailable) return;
 		GameServer server = Server;
 		_summary.Text = server.ServerName + "  •  Minecraft " + server.MinecraftEdition + "  •  " + server.GameVersion +
 			"  •  " + LocalizationManager.TranslateRuntimeText(server.Status) + Environment.NewLine +
@@ -379,6 +403,7 @@ internal sealed class MinecraftControlCenter : Form
 
 	private void UpdateActionAvailability()
 	{
+		if (Unavailable) return;
 		bool stopped = Server.Status == StatusManager.GetStatus(ServerState.Stopped);
 		bool crashed = Server.Status == StatusManager.GetStatus(ServerState.Crashed);
 		bool running = Server.Status == StatusManager.GetStatus(ServerState.Running);
@@ -404,6 +429,7 @@ internal sealed class MinecraftControlCenter : Form
 
 	private async Task RefreshPageAsync()
 	{
+		if (Unavailable) return;
 		UpdateSummary();
 		string page = _tabs.SelectedTab?.Name ?? "Overview";
 		GameServer server = Server;
@@ -431,6 +457,7 @@ internal sealed class MinecraftControlCenter : Form
 				if (server.Status == StatusManager.GetStatus(ServerState.Running))
 				{
 					PlayerQueryResult players = await PlayerQueryService.QueryAsync(server);
+					if (Unavailable) return;
 					foreach (GamePlayerInfo player in players.Players) AddRow(page, player.Name, player.Name, TextFor("Online"));
 				}
 				foreach (string list in MinecraftControlProfile.IsBedrock(server) ? new[] { "allowlist.json", "permissions.json" } :
@@ -440,6 +467,7 @@ internal sealed class MinecraftControlCenter : Form
 					if (!File.Exists(path)) continue;
 					if (new FileInfo(path).Length > 4 * 1024 * 1024) throw MinecraftContentTransactions.Error("Size");
 					using System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(await File.ReadAllTextAsync(path));
+					if (Unavailable) return;
 					foreach (System.Text.Json.JsonElement player in document.RootElement.EnumerateArray().Take(10000))
 						if (player.TryGetProperty("name", out var name)) AddRow(page, name.GetString(), name.GetString(), list);
 				}
@@ -476,6 +504,7 @@ internal sealed class MinecraftControlCenter : Form
 			case "Diagnostics":
 				_grids[page].Rows.Clear();
 				string log = await Task.Run(() => ReadRecentLogs(server));
+				if (Unavailable) return;
 				foreach (MinecraftFinding finding in MinecraftLogDiagnostics.Analyze(log))
 					AddRow(page, finding, finding.Area, finding.Detail);
 				if (_grids[page].Rows.Count == 0) AddRow(page, null, TextFor("Logs"), TextFor("NoLogFindings"));
@@ -485,6 +514,7 @@ internal sealed class MinecraftControlCenter : Form
 
 	private void AddRow(string grid, object? tag, params object?[] values)
 	{
+		if (Unavailable) return;
 		int row = _grids[grid].Rows.Add(values.Select(value => value ?? string.Empty).ToArray());
 		_grids[grid].Rows[row].Tag = tag;
 	}

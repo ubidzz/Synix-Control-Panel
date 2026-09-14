@@ -184,6 +184,29 @@ public sealed class MinecraftWorkspaceUiTests : IDisposable
 	});
 
 	[Theory]
+	[InlineData("success")]
+	[InlineData("cancelled")]
+	[InlineData("failure")]
+	public void PendingWorkspaceActionCanFinishAfterDisposal(string outcome) => WorkflowUiTest.Run(() =>
+	{
+		using MinecraftControlCenter form = new(_server);
+		TaskCompletionSource pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		Task run = (Task)WorkflowUiTest.Invoke(form, "RunAsync", (Func<Task>)(() => pending.Task), true)!;
+		Assert.False(run.IsCompleted);
+		form.Dispose();
+		Assert.True(form.IsDisposed);
+		if (outcome == "failure") pending.SetException(new IOException("Fixture refresh failed."));
+		else if (outcome == "cancelled") pending.SetCanceled();
+		else pending.SetResult();
+		WorkflowUiTest.Pump(run);
+		Assert.False(form.IsHandleCreated);
+		bool startedAfterDisposal = false;
+		WorkflowUiTest.Pump((Task)WorkflowUiTest.Invoke(form, "RunAsync", (Func<Task>)(() =>
+			{ startedAfterDisposal = true; return Task.CompletedTask; }), false)!);
+		Assert.False(startedAfterDisposal);
+	});
+
+	[Theory]
 	[InlineData(false)]
 	[InlineData(true)]
 	public void PreviewRequiresExplicitCompatibleChanges(bool compatible) => WorkflowUiTest.Run(() =>

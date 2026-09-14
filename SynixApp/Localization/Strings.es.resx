@@ -11366,4 +11366,133 @@ Actualizar antes del mantenimiento: {5}</value>
   <data name="MinecraftWorkspace.NoCompatibilityFindings" xml:space="preserve">
     <value>Las comprobaciones de metadatos disponibles no encontraron problemas. Esto no garantiza que todos los mods o plugins funcionen juntos.</value>
   </data>
+  <data name="AsaPackages.Button.Read" xml:space="preserve"><value>Leer paquete de mod</value></data>
+  <data name="AsaPackages.Title" xml:space="preserve"><value>Leer paquete de mod ASA</value></data>
+  <data name="AsaPackages.Help" xml:space="preserve"><value>Elija un ZIP de mod ASA para servidor Windows o una carpeta extraída. Synix busca descriptores en paquetes planos, subcarpetas o conjuntos de mods y prepara sus ID de CurseForge para revisarlos. Los archivos del ZIP no se copian ni se instalan. Al iniciar el servidor, ASA descarga y registra la versión actual del proveedor; no fija la versión del ZIP.</value></data>
+  <data name="AsaPackages.Source" xml:space="preserve"><value>Origen del paquete de mod</value></data>
+  <data name="AsaPackages.Id" xml:space="preserve"><value>ID del mod</value></data>
+  <data name="AsaPackages.Descriptor" xml:space="preserve"><value>Ubicación del descriptor</value></data>
+  <data name="AsaPackages.Choose" xml:space="preserve"><value>Elija un ZIP o una carpeta para examinar. No se cambiarán ajustes ni archivos del servidor hasta que revise y guarde la lista de ID por separado.</value></data>
+  <data name="AsaPackages.Trust" xml:space="preserve"><value>Los metadatos del paquete no son de confianza. La detección no analiza malware, comprueba compatibilidad ni demuestra la identidad del autor.</value></data>
+  <data name="AsaPackages.Review" xml:space="preserve"><value>Revisar ID de mods</value></data>
+  <data name="AsaPackages.Reading" xml:space="preserve"><value>Leyendo metadatos. No se ejecuta código de mods.</value></data>
+  <data name="AsaPackages.Found" xml:space="preserve"><value>{0} mods identificados; {1} ID nuevos para añadir. Se conserva el orden existente. Revise la lista completa antes de guardar.</value></data>
+  <data name="AsaPackages.Timeout" xml:space="preserve"><value>La inspección se canceló o tardó demasiado. Elija una carpeta de paquete más pequeña.</value></data>
+  <data name="AsaPackages.Error.Source" xml:space="preserve"><value>Elija un ZIP de mod de servidor ARK o una carpeta extraída. Este lector no admite otros formatos de archivo comprimido.</value></data>
+  <data name="AsaPackages.Error.Limit" xml:space="preserve"><value>El paquete supera los límites del lector. Elija una carpeta o ZIP más pequeño con un máximo de 100 descriptores de mods.</value></data>
+  <data name="AsaPackages.Error.Layout" xml:space="preserve"><value>El paquete contiene rutas inseguras, enlaces, rutas duplicadas, conflictos de archivos o demasiadas subcarpetas. No se cambió nada.</value></data>
+  <data name="AsaPackages.Error.Descriptor" xml:space="preserve"><value>No se encontró ningún descriptor .uplugin. Elija el ZIP del mod o su carpeta extraída; primero extraiga los archivos comprimidos anidados.</value></data>
+  <data name="AsaPackages.Error.Metadata" xml:space="preserve"><value>Un descriptor de mod no es JSON válido e inequívoco. No se cambió nada.</value></data>
+  <data name="AsaPackages.Error.Game" xml:space="preserve"><value>Un descriptor no identifica un proyecto de CurseForge para ARK: Survival Ascended. Synix no adivinará el juego ni el ID.</value></data>
+  <data name="AsaPackages.Error.Id" xml:space="preserve"><value>Un descriptor no tiene un único ID de proyecto de CurseForge válido (cf_ugcID). Use Gestionar ID de mods con el ID de la página de CurseForge del autor.</value></data>
+  <data name="AsaPackages.Error.ServerBuild" xml:space="preserve"><value>Un mod no tiene un paquete WindowsServer reconocido o falta su archivo .ucas/.utoc correspondiente. Elija la descarga para servidor Windows, no la versión cliente.</value></data>
+  <data name="AsaPackages.Error.DuplicateMod" xml:space="preserve"><value>El paquete contiene más de un descriptor para el mismo ID de mod. Elija una versión de cada mod y vuelva a examinarlo.</value></data>
+  <data name="AsePackages.Title" xml:space="preserve"><value>Leer paquete de mod ASE</value></data>
+  <data name="AsePackages.Help" xml:space="preserve"><value>Elija un ZIP o carpeta de mod de ARK: Survival Evolved con un descriptor .mod y su carpeta de contenido compilado. Synix lee el ID de Workshop del descriptor, no del nombre del ZIP. No se copian ni instalan archivos: tras la revisión, Synix actualiza ActiveMods y ModIDS para la descarga automática de ARK. Los mapas y las conversiones totales pueden necesitar otros ajustes. Los paquetes ASA de CurseForge no son compatibles.</value></data>
+  <data name="AsePackages.Error.Layout" xml:space="preserve"><value>No es una exportación ASE completa reconocida. Incluya el descriptor .mod y su carpeta con mod.info y recursos compilados. El ID interno debe coincidir con el nombre numérico del descriptor. Las descargas Workshop .z sin un archivo .mod preparado no son compatibles; use Gestionar ID de mods.</value></data>
+  <data name="ArkPackages.Error.WrongEdition" xml:space="preserve"><value>El paquete contiene un descriptor de la otra edición de ARK. Los mods Steam Workshop de ASE y CurseForge de ASA no son intercambiables. Elija un paquete para el servidor seleccionado.</value></data>
+  <data name="UniversalMods.Locations.Title" xml:space="preserve"><value>Ubicaciones de importación</value></data>
+  <data name="UniversalMods.Locations.Profile" xml:space="preserve"><value>Ubicaciones personalizadas</value></data>
+  <data name="UniversalMods.Locations.Help" xml:space="preserve"><value>Indique la carpeta y los tipos de archivo principales según las instrucciones del juego o cargador. Solo se aplica a este servidor. Seleccione una ubicación existente para actualizarla; aquí no se cambian archivos de mods.</value></data>
+  <data name="UniversalMods.Locations.New" xml:space="preserve"><value>Añadir ubicación</value></data>
+  <data name="UniversalMods.Locations.Name" xml:space="preserve"><value>Nombre de ubicación</value></data>
+  <data name="UniversalMods.Locations.Path" xml:space="preserve"><value>Carpeta dentro del servidor (ejemplo: BepInEx/plugins)</value></data>
+  <data name="UniversalMods.Locations.Extensions" xml:space="preserve"><value>Tipos de archivo principales (ejemplo: .dll, .jar, .lua, .pak)</value></data>
+  <data name="UniversalMods.Locations.Browse" xml:space="preserve"><value>Elegir subcarpeta</value></data>
+  <data name="UniversalMods.Locations.Warning" xml:space="preserve"><value>La importación no instala cargadores ni registra mods gestionados por proveedores. Consulte las instrucciones del juego.</value></data>
+  <data name="UniversalMods.Locations.Save" xml:space="preserve"><value>Guardar ubicación</value></data>
+  <data name="UniversalMods.Locations.Ready" xml:space="preserve"><value>Importación personalizada — revise la compatibilidad</value></data>
+  <data name="UniversalMods.Locations.NotConfigured" xml:space="preserve"><value>No hay ubicaciones configuradas</value></data>
+  <data name="UniversalMods.Locations.Start" xml:space="preserve"><value>Use Ubicaciones de importación para definir la carpeta de mods o plugins. Importar archivos no garantiza que el juego pueda cargarlos.</value></data>
+  <data name="UniversalMods.Locations.Selected" xml:space="preserve"><value>Ubicación elegida por el usuario</value></data>
+  <data name="UniversalMods.Import.Title" xml:space="preserve"><value>Revisar importación</value></data>
+  <data name="UniversalMods.Import.Help" xml:space="preserve"><value>Elija la carpeta del paquete cuyo contenido pertenece a la ubicación del servidor. Se conservan las subcarpetas. Puede omitir carpetas envolventes eligiendo una más profunda. Solo se importan los archivos listados; se guardan copias de los reemplazados. No se convierten mods incompatibles.</value></data>
+  <data name="UniversalMods.Import.ChooseFile" xml:space="preserve"><value>Elegir archivo / ZIP</value></data>
+  <data name="UniversalMods.Import.Continue" xml:space="preserve"><value>Continuar a seguridad</value></data>
+  <data name="UniversalMods.Import.Source" xml:space="preserve"><value>Archivo del paquete</value></data>
+  <data name="UniversalMods.Import.Destination" xml:space="preserve"><value>Destino en servidor</value></data>
+  <data name="UniversalMods.Import.Change" xml:space="preserve"><value>Acción</value></data>
+  <data name="UniversalMods.Import.WholePackage" xml:space="preserve"><value>Paquete completo — conservar carpetas</value></data>
+  <data name="UniversalMods.Import.New" xml:space="preserve"><value>Archivo nuevo</value></data>
+  <data name="UniversalMods.Import.Replace" xml:space="preserve"><value>Reemplazar (con copia)</value></data>
+  <data name="UniversalMods.Import.Reading" xml:space="preserve"><value>Leyendo paquete y preparando destinos…</value></data>
+  <data name="UniversalMods.Import.Summary" xml:space="preserve"><value>{0} archivos seleccionados; {1} archivos existentes se copiarán antes de reemplazarlos. No se instala nada hasta la siguiente confirmación.</value></data>
+  <data name="UniversalMods.Error.InvalidLocations" xml:space="preserve"><value>Las ubicaciones guardadas no son válidas o pertenecen a otro juego. No se cambió ningún archivo.</value></data>
+  <data name="UniversalMods.Error.InstallFolder" xml:space="preserve"><value>Instale el servidor antes de configurar ubicaciones.</value></data>
+  <data name="UniversalMods.Error.LocationLimit" xml:space="preserve"><value>Un servidor admite hasta 32 ubicaciones personalizadas.</value></data>
+  <data name="UniversalMods.Error.LocationName" xml:space="preserve"><value>Indique un nombre de 1 a 80 caracteres y elija Mod o Plugin.</value></data>
+  <data name="UniversalMods.Error.Extensions" xml:space="preserve"><value>Indique de 1 a 32 extensiones con punto, como .dll o .pak. No se aceptan instaladores ni scripts de comandos.</value></data>
+  <data name="UniversalMods.Error.Collision" xml:space="preserve"><value>El paquete tiene un conflicto de archivos o carpetas. Elija un paquete completo y sin conflictos.</value></data>
+  <data name="UniversalMods.Error.NoFiles" xml:space="preserve"><value>La carpeta elegida no contiene tipos de archivo principales aceptados. Elija otra carpeta o revise los tipos de la ubicación.</value></data>
+  <data name="UniversalMods.Error.PackageRoot" xml:space="preserve"><value>Elija una carpeta válida dentro del paquete. No se aceptan rutas externas.</value></data>
+  <data name="UniversalMods.Import.Done" xml:space="preserve"><value>Archivos importados; se guardaron copias de los reemplazados. Revise el cargador y la activación del juego antes de iniciar. No se inició ningún servidor.</value></data>
+  <data name="UniversalMods.Import.Rollback" xml:space="preserve"><value>¿Revertir todo el paquete importado '{0}' ({1} archivos)? Se restauran los archivos anteriores y se eliminan los añadidos. Afecta al paquete completo, no solo al archivo seleccionado.</value></data>
+  <data name="UniversalMods.Wizard.Title" xml:space="preserve"><value>Importar mods y plugins</value></data>
+  <data name="UniversalMods.Wizard.Button" xml:space="preserve"><value>Importar ZIP / carpeta</value></data>
+  <data name="UniversalMods.Wizard.Advanced" xml:space="preserve"><value>Avanzado: carpetas de importación</value></data>
+  <data name="UniversalMods.Wizard.Help" xml:space="preserve"><value>Elige un ZIP, un archivo de mod o una carpeta extraída. Synix lee el paquete para {0} y muestra cómo se añadirá antes de cambiar nada.</value></data>
+  <data name="UniversalMods.Wizard.File" xml:space="preserve"><value>Elegir ZIP o archivo de mod</value></data>
+  <data name="UniversalMods.Wizard.Folder" xml:space="preserve"><value>Elegir carpeta extraída</value></data>
+  <data name="UniversalMods.Wizard.Filter" xml:space="preserve"><value>Paquetes ZIP (*.zip)|*.zip|Archivos de mod o plugin (*.*)|*.*</value></data>
+  <data name="UniversalMods.Wizard.Empty" xml:space="preserve"><value>Primero elige el ZIP o la carpeta descargada. No necesitas configurar ubicaciones de importación antes.</value></data>
+  <data name="UniversalMods.Wizard.Continue" xml:space="preserve"><value>Revisar e importar</value></data>
+  <data name="UniversalMods.Wizard.Destination" xml:space="preserve"><value>Elegir carpeta de destino</value></data>
+  <data name="UniversalMods.Wizard.DestinationHelp" xml:space="preserve"><value>Elige la carpeta de mods dentro de este servidor según las instrucciones del juego.</value></data>
+  <data name="UniversalMods.Wizard.Reading" xml:space="preserve"><value>Leyendo el paquete y su estructura… No se modifican archivos del servidor.</value></data>
+  <data name="UniversalMods.Wizard.Unknown" xml:space="preserve"><value>Se leyeron {0} archivos. No se identificó un destino para este juego. Elige su carpeta de mods; los tipos se rellenan automáticamente. No adivines la carpeta.</value></data>
+  <data name="UniversalMods.Wizard.Ambiguous" xml:space="preserve"><value>Se leyeron {0} archivos. Hay varios destinos posibles. Elige arriba el sistema de mods o plugins correcto para ver la vista previa.</value></data>
+  <data name="UniversalMods.Wizard.Undecided" xml:space="preserve"><value>Elegir destino</value></data>
+  <data name="UniversalMods.Wizard.Cancelled" xml:space="preserve"><value>Lectura cancelada. No se importó nada.</value></data>
+  <data name="UniversalMods.Wizard.ProviderAction" xml:space="preserve"><value>Descarga al iniciar servidor</value></data>
+  <data name="UniversalMods.Wizard.ProviderDetails" xml:space="preserve"><value>{0}
+ID del mod: {1}
+ARK descargará este mod de {2} al iniciar el servidor. Synix no copia ni registra los archivos del paquete descargado.</value></data>
+  <data name="UniversalMods.Wizard.ProviderWarning" xml:space="preserve"><value>IDs de mods de {0} detectados. Revisa su orden a continuación. ARK descargará los mods al próximo inicio; no es una carga local de archivos. Sin inicio automático.</value></data>
+  <data name="UniversalMods.Wizard.LoaderMissing" xml:space="preserve"><value>Este paquete necesita un cargador de servidor compatible. Configúralo en los ajustes del servidor y vuelve a abrir Importar. No se cambiaron archivos.</value></data>
+  <data name="UniversalMods.Wizard.Summary" xml:space="preserve"><value>Se importarán {0} archivos; se respaldarán {1} archivos antes de reemplazarlos. Revisa los destinos. Sin inicio automático.</value></data>
+  <data name="UniversalMods.Wizard.ManualWarning" xml:space="preserve"><value>Los archivos se copiarán en {0}. Revisa la vista previa y las instrucciones: elegir carpeta no instala un cargador ni activa mods de proveedores. El destino se recuerda solo tras confirmar.</value></data>
+  <data name="UniversalMods.Wizard.Root" xml:space="preserve"><value>Usar archivos de: {0}</value></data>
+  <data name="UniversalMods.Wizard.Whole" xml:space="preserve"><value>Paquete completo</value></data>
+  <data name="ModSupport.Title" xml:space="preserve">
+    <value>Soporte y configuración de mods</value>
+  </data>
+  <data name="ModSupport.Column" xml:space="preserve">
+    <value>Mods / plugins</value>
+  </data>
+  <data name="ModSupport.Documented" xml:space="preserve">
+    <value>Métodos de servidor documentados</value>
+  </data>
+  <data name="ModSupport.NeedsVerification" xml:space="preserve">
+    <value>Requiere verificación</value>
+  </data>
+  <data name="ModSupport.ImportRules" xml:space="preserve">
+    <value>Synix tiene reglas de importación para este juego. El paquete debe coincidir con el cargador instalado, la versión del servidor y las dependencias.</value>
+  </data>
+  <data name="ModSupport.ManualSetup" xml:space="preserve">
+    <value>Este juego aún no tiene una regla de instalación automática. Lea el método antes de elegir el destino; quizá deba activar los archivos en una configuración o proveedor.</value>
+  </data>
+  <data name="ModSupport.EvidenceNote" xml:space="preserve">
+    <value>El soporte documentado no es una prueba de compatibilidad en un servidor en ejecución. Los mods de servidor, de cliente y los instaladores de cargadores son distintos. Esta guía no descarga, instala ni inicia nada.</value>
+  </data>
+  <data name="ModSupport.Methods" xml:space="preserve">
+    <value>Métodos documentados</value>
+  </data>
+  <data name="ModSupport.UnverifiedNote" xml:space="preserve">
+    <value>Aún no se ha confirmado un método de instalación específico para servidores. Esto no significa que el juego no admita mods. Elija un ZIP o una carpeta y confirme el destino y la activación con las instrucciones del autor.</value>
+  </data>
+  <data name="ModSupport.Reviewed" xml:space="preserve">
+    <value>Documentación revisada: {0}</value>
+  </data>
+  <data name="ModSupport.Sources" xml:space="preserve">
+    <value>Referencias de instalación (abra un enlace para leer)</value>
+  </data>
+  <data name="ModSupport.GuidedImport" xml:space="preserve">
+    <value>Hay métodos de mods de servidor documentados. Consulte Soporte y configuración de mods para activarlos y luego importe un ZIP o carpeta para revisar el paquete.</value>
+  </data>
+  <data name="ModSupport.UnverifiedImport" xml:space="preserve">
+    <value>Elija Importar ZIP / carpeta para revisar un paquete. El soporte requiere verificación; la guía explica las limitaciones.</value>
+  </data>
+  <data name="ModSupport.InvalidCatalog" xml:space="preserve">
+    <value>No se pudo leer el catálogo de compatibilidad con mods. Comprueba que la instalación de Synix esté completa.</value>
+  </data>
 </root>

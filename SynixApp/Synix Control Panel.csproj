@@ -55,6 +55,7 @@
 	  </EmbeddedResource>
 	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
 	  <EmbeddedResource Include="Database\ModSystems\**\*.modsystem.json" />
+	  <EmbeddedResource Include="Database\ModSystems\**\*.modsupport.json" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -24,7 +24,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 	internal sealed class ModPluginManager : Form
 	{
 		private readonly GameServer _server;
-		private readonly IReadOnlyList<ModSystemProfile> _profiles;
+		private IReadOnlyList<ModSystemProfile> _profiles;
 		private readonly ModernSettingsComboBox _profileBox;
 		private readonly ModernSettingsComboBox _targetBox;
 		private readonly ModernSettingsToggle _simpleView;
@@ -36,6 +36,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		private readonly Label _selectionDetails;
 		private readonly Label[] _safetyItems;
 		private readonly ModernSettingsButton _installFile;
+		private readonly ModernSettingsButton _readArkPackage;
+		private readonly ModernSettingsButton _importLocations;
 		private readonly ModernSettingsButton _remove;
 		private readonly ModernSettingsButton _installFramework;
 		private readonly ModernSettingsButton _browseCatalog;
@@ -70,6 +72,16 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				28, 20, 640, 42, 19F);
 			pageHeading.Name = "modPluginManagerHeading";
 			Controls.Add(pageHeading);
+			_importLocations = Button(LocalizationManager.Get("UniversalMods.Wizard.Advanced"), 710, 20, 242);
+			_importLocations.Name = "configureModImportLocations";
+			_importLocations.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			_importLocations.Click += (_, _) => ConfigureImportLocations();
+			Controls.Add(_importLocations);
+			ModernSettingsButton supportGuide = Button(LocalizationManager.Get("ModSupport.Title"), 964, 20, 248);
+			supportGuide.Name = "gameModSupportGuide";
+			supportGuide.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			supportGuide.Click += (_, _) => { using GameModSupportDialog guide = new(_server.Game); guide.ShowDialog(this); };
+			Controls.Add(supportGuide);
 			Controls.Add(Body(
 				LocalizationManager.Get("ModManager.Subtitle"),
 				30, 62, 890, 42));
@@ -148,6 +160,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			});
 			_simpleView = new ModernSettingsToggle
 			{
+				Name = "modSimpleViewToggle",
 				Location = new Point(1134, 108),
 				Checked = true,
 				Anchor = AnchorStyles.Top | AnchorStyles.Right
@@ -291,12 +304,19 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 			_installFile = Button(
 				LocalizationManager.Get("ModManager.Button.InstallFile"),
-				28, 702, 156, accent: true);
+				28, 702, 182, accent: true);
 			_installFile.Click += InstallFile_Click;
 			_installFile.Name = "importAddOnPackage";
+			_readArkPackage = Button(LocalizationManager.Get("ModManager.Button.ManageIds"), 220, 702, 142);
+			_readArkPackage.Name = "manageProviderModIds";
+			_readArkPackage.Click += async (_, _) =>
+			{
+				if (_targetBox.SelectedItem is ModInstallTarget target && target.CanManageIds)
+					await ManageProviderIdsAsync(target);
+			};
 			_installFramework = Button(
 				LocalizationManager.Get("ModManager.Button.InstallFramework"),
-				194, 702, 164);
+				220, 702, 142);
 			_installFramework.Name = "addOnSetupAction";
 			_installFramework.Click += async (_, _) =>
 			{
@@ -333,7 +353,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			_close.DialogResult = DialogResult.OK;
 			_close.Name = "closeAddOnManager";
 			Controls.AddRange([
-				_installFile, _installFramework, _browseCatalog, _openFolder,
+				_installFile, _readArkPackage, _installFramework, _browseCatalog, _openFolder,
 				_refresh, _remove, _close]);
 			CancelButton = _close;
 
@@ -522,6 +542,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				"ModManager.SupportDetails",
 				LocalizationManager.TranslateKnownText(_detection.Profile.Description),
 				framework);
+			if (_detection.Profile.UserConfigured)
+			{
+				_supportTitle.Text = LocalizationManager.Get("UniversalMods.Locations.Ready");
+				_supportTitle.ForeColor = SettingsPalette.Warning;
+				_supportDetails.Text = LocalizationManager.Get("UniversalMods.Locations.Warning");
+			}
 			if (_detection.Profile.Targets.FirstOrDefault()?.PackageLayout is ModPackageLayout.EmpyrionScenario)
 				_supportDetails.Text = LocalizationManager.Get("EmpyrionMods.Support.Scenarios");
 			else if (_detection.Profile.Targets.FirstOrDefault()?.PackageLayout is ModPackageLayout.EmpyrionMod)
@@ -545,11 +571,11 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private void ShowUnsupportedState()
 		{
-			_supportTitle.Text = LocalizationManager.Get(
-				"ModManager.Unsupported.Title");
+			_supportTitle.Text = GameModSupportCatalog.StatusText(_server.Game);
 			_supportTitle.ForeColor = SettingsPalette.Warning;
-			_supportDetails.Text =
-				LocalizationManager.Get("ModManager.Unsupported.Description");
+			_supportDetails.Text = LocalizationManager.Get(
+				GameModSupportCatalog.ForGame(_server.Game)?.Status == GameModEvidence.Documented
+					? "ModSupport.GuidedImport" : "ModSupport.UnverifiedImport");
 			_inventorySummary.Text = LocalizationManager.Get(
 				"ModManager.NoFilesChanged");
 			_grid.Rows.Clear();
@@ -562,14 +588,16 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			ModInstallTarget? target = _targetBox.SelectedItem as ModInstallTarget;
 			bool stopped = _server.Status == StatusManager.GetStatus(ServerState.Stopped);
 			bool standardUser = !ModSecurityScanner.IsCurrentProcessElevated();
+			_importLocations.Enabled = !_busy && stopped && Directory.Exists(_server.InstallPath);
+			_importLocations.Visible = !_simpleView.Checked;
 			bool canManage = profile != null && target != null && target.CanManage && standardUser &&
 				profile.SupportLevel == ModSystemSupportLevel.Managed &&
 				(_detection?.FrameworkDetected ?? false);
-			_installFile.Text = target?.CanManageIds == true
-				? LocalizationManager.Get("ModManager.Button.ManageIds")
-				: LocalizationManager.Get(target?.AllowFolderImport == true
-					? "EmpyrionMods.Button.Import" : "ModManager.Button.InstallFile");
-			_installFile.Enabled = !_busy && !_scanFailed && stopped && canManage;
+			_installFile.Text = LocalizationManager.Get("UniversalMods.Wizard.Button");
+			_installFile.Enabled = !_busy && stopped && standardUser && Directory.Exists(_server.InstallPath);
+			bool canReadArk = target?.CanManageIds == true;
+			_readArkPackage.Visible = canReadArk;
+			_readArkPackage.Enabled = canReadArk && _installFile.Enabled;
 			_remove.Enabled = !_busy && stopped && standardUser && SelectedItem()?.CanRemove == true;
 			_remove.Text = LocalizationManager.Get(target?.CanImport == true
 				? "EmpyrionMods.Button.RollBack" : "ModManager.Button.Remove");
@@ -598,7 +626,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				? "ModManager.Safety.ServerStopped"
 				: "ModManager.Safety.StopFirst"));
 			SetSafety(1, _detection?.FrameworkDetected == true,
-				LocalizationManager.Get(_detection?.FrameworkDetected == true
+				LocalizationManager.Get(profile?.UserConfigured == true ? "UniversalMods.Locations.Selected" : _detection?.FrameworkDetected == true
 					? "ModManager.Safety.FrameworkDetected"
 					: "ModManager.Safety.FrameworkRequired"));
 			SetSafety(2, Directory.Exists(_server.InstallPath),
@@ -635,62 +663,30 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private async void InstallFile_Click(object? sender, EventArgs eventArgs)
 		{
-			if (_busy || _profileBox.SelectedItem is not ModSystemProfile profile ||
-				_targetBox.SelectedItem is not ModInstallTarget target)
-				return;
-			if (target.CanManageIds)
-			{
-				await ManageProviderIdsAsync(target);
-				return;
-			}
-			string packagePath;
-			bool folderImport = false;
-			string? scenarioFolder = null;
-			if (target.AllowFolderImport)
-			{
-				using ModPackagePicker packagePicker = new(target);
-				if (packagePicker.ShowDialog(this) != DialogResult.OK) return;
-				packagePath = packagePicker.SourcePath;
-				folderImport = packagePicker.IsFolder;
-				scenarioFolder = packagePicker.ScenarioFolder;
-			}
-			else
-			{
-				string extensions = string.Join(';', target.AllowedExtensions.Select(extension => $"*{extension}"));
-				string filter = target.ArchiveOnly
-					? LocalizationManager.Get("ModManager.FileFilter.ArchiveOnly")
-					: target.AllowArchives
-					? LocalizationManager.Get("ModManager.FileFilter.WithArchives", extensions)
-					: LocalizationManager.Get("ModManager.FileFilter.Files", extensions);
-				using OpenFileDialog picker = new()
-				{
-					Title = LocalizationManager.Get(
-						"ModManager.FilePicker.Title",
-						LocalizationManager.TranslateKnownText(target.DisplayName)),
-					Filter = filter,
-					CheckFileExists = true,
-					Multiselect = false
-				};
-				if (picker.ShowDialog(this) != DialogResult.OK)
-					return;
-				packagePath = picker.FileName;
-			}
-
-			PreparedModPackage? prepared = null;
-			string sourceName = Path.GetFileName(packagePath.TrimEnd(Path.DirectorySeparatorChar));
+			if (_busy) return;
+			using ModImportWizard wizard = new(_server);
 			try
 			{
+				if (wizard.ShowDialog(this) != DialogResult.OK || wizard.Selection is not ModImportChoice selected) return;
+				ModSystemProfile profile = selected.Profile;
+				ModInstallTarget target = selected.Target;
+				string packagePath = wizard.PackagePath;
+				string sourceName = Path.GetFileName(packagePath);
+				string? scenarioFolder = selected.Selection.Length == 0 ? null : selected.Selection;
+				string reviewedHash = wizard.PackageSha256;
+				if (target.CanManageIds)
+				{
+					await ManageProviderIdsAsync(target, package: wizard);
+					return;
+				}
 				SetBusy(true, "Text.B38F7F9752C285B4B90B");
 				using ServerOperationLease operation = ModPackageManager.BeginOperation(_server);
 				ModPackageManager.EnsureStopped(_server);
-				if (folderImport)
-				{
-					prepared = await Task.Run(() => PreparedModPackage.FromFolder(packagePath, target));
-					packagePath = prepared.Path;
-				}
 				ModSecurityReview review = await ModSecurityScanner.ReviewPackageAsync(
 					packagePath,
 					target);
+				if (reviewedHash != null && !reviewedHash.Equals(review.PackageSha256, StringComparison.OrdinalIgnoreCase))
+					throw new InvalidDataException(LocalizationManager.Get("ModManager.Error.ChangedAfterReview"));
 				if (review.Outcome == ModSecurityOutcome.Blocked)
 				{
 					_inventorySummary.Text = LocalizationManager.Get("Text.4CDDB86B34725DFF943D");
@@ -704,7 +700,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					return;
 				}
 
-				bool replacingScenario = scenarioFolder != null && Directory.Exists(ModPathSafety.Resolve(
+				bool replacingScenario = EmpyrionAddOns.IsScenario(target) && scenarioFolder != null && Directory.Exists(ModPathSafety.Resolve(
 					_server.InstallPath, target.RelativePath + "/" + scenarioFolder));
 				string reviewMessage = LocalizationManager.TranslateRuntimeText(review.BuildUserMessage());
 				if (replacingScenario)
@@ -716,7 +712,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 						reviewMessage,
 						sourceName,
 						LocalizationManager.TranslateKnownText(target.DisplayName) +
-							(scenarioFolder == null ? "" : " / " + scenarioFolder)),
+							(EmpyrionAddOns.IsScenario(target) && scenarioFolder != null ? " / " + scenarioFolder : "")),
 					LocalizationManager.Get("MessageText.601D435F77F129E56270"),
 					MessageBoxButtons.OKCancel,
 					!replacingScenario && review.Outcome == ModSecurityOutcome.Passed
@@ -729,6 +725,13 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				}
 
 				ModImportSecurityContext securityContext = ModImportSecurityContext.CaptureCurrent();
+				if (selected.RememberLocation)
+				{
+					profile = UniversalModImports.SaveLocation(_server, target.DisplayName, target.RelativePath,
+						string.Join(',', target.AllowedExtensions), target.Kind);
+					target = profile.Targets.Single(candidate => candidate.Id == target.Id);
+				}
+				SelectImportedTarget(profile.Id, target.Id);
 				_inventorySummary.Text = LocalizationManager.Get("ModManager.Progress.Installing");
 				ModImportResult result = await Task.Run(() => ModPackageManager.Import(
 					_server,
@@ -750,6 +753,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				LocalizedMessageBox.Show(
 					this,
 					LocalizationManager.Get(
+						target.PackageLayout == ModPackageLayout.FolderTree ? "UniversalMods.Import.Done" :
 						EmpyrionAddOns.IsScenario(target) ? "EmpyrionMods.ImportedScenario" : result.RestartRequired
 							? "MessageText.3679B9A889A4F6F470DA"
 							: "MessageText.F23CB309225C503B6D8A"),
@@ -767,10 +771,56 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			}
 			finally
 			{
-				try { prepared?.Dispose(); }
-				catch (Exception exception) { ApplicationLogService.WriteSuppressedException(exception); }
 				SetBusy(false);
 			}
+		}
+
+		private void SelectImportedTarget(string profileId, string targetId)
+		{
+			_profiles = ModSystemCatalog.GetProfiles(_server);
+			_updatingSelectors = true;
+			try
+			{
+				_profileBox.Items.Clear();
+				foreach (ModSystemProfile profile in _profiles) _profileBox.Items.Add(profile);
+				_profileBox.SelectedItem = _profiles.FirstOrDefault(profile => profile.Id == profileId);
+				_targetBox.Items.Clear();
+				if (_profileBox.SelectedItem is ModSystemProfile selected)
+				{
+					foreach (ModInstallTarget target in selected.Targets) _targetBox.Items.Add(target);
+					_targetBox.SelectedItem = selected.Targets.FirstOrDefault(target => target.Id == targetId);
+					_detection = ModSystemCatalog.Detect(_server, selected);
+				}
+			}
+			finally { _updatingSelectors = false; }
+		}
+
+		private void ConfigureImportLocations()
+		{
+			if (_busy) return;
+			try
+			{
+				using ModImportLocationDialog dialog = new(_server);
+				if (dialog.ShowDialog(this) != DialogResult.OK || dialog.ImportLocation is not ModInstallTarget target) return;
+				SetBusy(true);
+				ModSystemProfile saved = UniversalModImports.SaveLocation(_server, target.DisplayName, target.RelativePath,
+					string.Join(',', target.AllowedExtensions), target.Kind);
+				_profiles = ModSystemCatalog.GetProfiles(_server);
+				_updatingSelectors = true;
+				try
+				{
+					_profileBox.Items.Clear();
+					foreach (ModSystemProfile profile in _profiles) _profileBox.Items.Add(profile);
+					_profileBox.SelectedIndex = _profiles.ToList().FindIndex(profile => profile.Id == saved.Id);
+				}
+				finally { _updatingSelectors = false; }
+			}
+			catch (Exception exception)
+			{
+				PlainEnglishErrorDialog.ShowError(this, LocalizationManager.Get("UniversalMods.Locations.Title"), exception.Message);
+			}
+			finally { SetBusy(false); }
+			ProfileChanged();
 		}
 
 		private async Task ChooseEmpyrionScenarioAsync()
@@ -809,7 +859,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			if (target == null) return;
 			if (LocalizedMessageBox.Show(
 				this,
-				LocalizationManager.Get(target.CanImport ? "EmpyrionMods.Remove.Confirm" : "ModManager.Remove.Confirm", item.Name),
+				target.PackageLayout == ModPackageLayout.FolderTree
+					? LocalizationManager.Get("UniversalMods.Import.Rollback", item.ImportedPackageName, item.ImportedFileCount)
+					: LocalizationManager.Get(target.CanImport ? "EmpyrionMods.Remove.Confirm" : "ModManager.Remove.Confirm", item.Name),
 				LocalizationManager.Get("MessageText.1836C66D2E22132440F9"),
 				MessageBoxButtons.OKCancel,
 				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.OK)
@@ -854,7 +906,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 			finally { SetBusy(false); }
 		}
 
-		private async Task ManageProviderIdsAsync(ModInstallTarget target)
+		private async Task ManageProviderIdsAsync(ModInstallTarget target, ModImportWizard? package = null)
 		{
 			if (_busy) return;
 			try
@@ -862,6 +914,15 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				SetBusy(true);
 				using ServerOperationLease operation = ModPackageManager.BeginOperation(_server);
 				IReadOnlyList<string> current = ModPackageManager.GetProviderIds(_server, target);
+				if (package != null)
+				{
+					if (!ArkModPackageReader.Supports(_server.Game, target)) return;
+					ModPackageManager.EnsureStopped(_server);
+					ModPackagePreview check = await Task.Run(() => UniversalModPackage.Preview(_server, ModImportDiscovery.SnapshotTarget, package.PackagePath));
+					if (check.PackageSha256 != package.PackageSha256) throw new InvalidDataException(LocalizationManager.Get("ModManager.Error.ChangedAfterReview"));
+					current = ModPackageManager.NormalizeProviderIds(string.Join(',', current.Concat(package.ProviderMods.Select(mod => mod.ModId))), target.MaximumIds);
+					if (package.Selection != null) SelectImportedTarget(package.Selection.Profile.Id, target.Id);
+				}
 				using ProviderModIdEditor dialog = new(
 					string.IsNullOrWhiteSpace(target.ProviderName)
 						? LocalizationManager.Get("ModManager.Known.GameProvider")
@@ -1073,6 +1134,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 
 		private void ApplySimpleView()
 		{
+			_importLocations.Visible = !_simpleView.Checked;
 			if (_grid.Columns.Count < 7)
 				return;
 			_grid.Columns[5].Visible = !_simpleView.Checked;

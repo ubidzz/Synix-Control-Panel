@@ -14,6 +14,7 @@ using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixApp.UI.ServerManagement;
 
 namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 {
@@ -73,6 +74,14 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Right
 			};
 			Controls.Add(close);
+			ModernSettingsButton mods = new()
+			{
+				Name = "gameModSupportGuide", Text = LocalizationManager.Get("ModSupport.Title"),
+				Location = new Point(28, 634), Size = new Size(270, 44),
+				Anchor = AnchorStyles.Bottom | AnchorStyles.Left
+			};
+			mods.Click += (_, _) => { using GameModSupportDialog dialog = new(game.Game); dialog.ShowDialog(this); };
+			Controls.Add(mods);
 			AcceptButton = close;
 			CancelButton = close;
 			ThemeManager.Apply(this);

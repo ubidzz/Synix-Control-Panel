@@ -273,7 +273,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				string extension = Path.GetExtension(entry.Name);
 				if (entry.Name.Equals(target.RequiredArchiveFileName, StringComparison.OrdinalIgnoreCase))
 					requiredFileFound = true;
-				if (DangerousArchiveExtensions.Contains(extension))
+				if (DangerousArchiveExtensions.Contains(extension) &&
+					!(target.PackageLayout == ModPackageLayout.FolderTree && extension.Equals(".js", StringComparison.OrdinalIgnoreCase) &&
+					 target.AllowedExtensions.Contains(".js", StringComparer.OrdinalIgnoreCase)))
 				{
 					throw new InvalidDataException(
 						LocalizationManager.Get(
@@ -373,7 +375,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				return;
 			}
-			if (extension.Equals(".cs", StringComparison.OrdinalIgnoreCase) ||
+			if (extension.Equals(".lua", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".js", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".py", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".so", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".asi", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".cs", StringComparison.OrdinalIgnoreCase) ||
 				extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) ||
 				extension.Equals(".jar", StringComparison.OrdinalIgnoreCase))
 			{
