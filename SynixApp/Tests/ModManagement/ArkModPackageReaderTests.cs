@@ -215,8 +215,14 @@ public sealed class ArkModPackageReaderTests : IDisposable
 	[InlineData("es-ES", true)]
 	[InlineData("en-US", true, ArkModPackageReader.Evolved)]
 	[InlineData("de-DE", false, ArkModPackageReader.Evolved)]
+	[InlineData("en-US", true, ArkModPackageReader.Ascended, 718)]
+	[InlineData("fr-FR", false, ArkModPackageReader.Ascended, 718)]
+	[InlineData("de-DE", true, ArkModPackageReader.Ascended, 718)]
+	[InlineData("es-ES", true, ArkModPackageReader.Ascended, 718)]
+	[InlineData("en-US", true, ArkModPackageReader.Evolved, 718)]
+	[InlineData("de-DE", false, ArkModPackageReader.Evolved, 718)]
 	public void PackagePreviewUsesTheSynixThemeAndKeepsDetailsVisibleAtMinimumSize(string language, bool dark,
-		string game = ArkModPackageReader.Ascended) => WorkflowUiTest.Run(() =>
+		string game = ArkModPackageReader.Ascended, int constrainedHeight = 0) => WorkflowUiTest.Run(() =>
 	{
 		string previousLanguage = LocalizationManager.CurrentLanguageCode;
 		bool previousTheme = ThemeManager.IsDarkMode;
@@ -230,6 +236,10 @@ public sealed class ArkModPackageReaderTests : IDisposable
 			dialog.Show();
 			WorkflowUiTest.Pump(dialog.ReadSourceAsync(game == ArkModPackageReader.Evolved
 				? Zip(EvolvedPackage("Download/ModBundle/")) : Zip(Package("Download/ModBundle/SomeMod/"))));
+			// Reproduce the smaller client area seen on the headless Windows runner
+			// without depending on, or changing, the developer's screen resolution.
+			if (constrainedHeight > 0)
+				dialog.MinimumSize = new Size(dialog.MinimumSize.Width, constrainedHeight);
 			dialog.Size = dialog.MinimumSize;
 			Application.DoEvents();
 			dialog.Update();
@@ -240,7 +250,7 @@ public sealed class ArkModPackageReaderTests : IDisposable
 			Assert.True(details.GetLineFromCharIndex(details.TextLength - 1) >= 2);
 			Assert.True(details.GetPositionFromCharIndex(details.TextLength - 1).Y + details.Font.Height <= details.ClientSize.Height,
 				"The selected mod's full example path must be visible without scrolling at minimum size.");
-			foreach (string name in new[] { "arkPackageHelp", "arkPackageStatus" })
+			foreach (string name in new[] { "arkPackageHelp", "arkPackageStatus", "arkPackageTrust" })
 			{
 				Label label = Assert.IsType<Label>(dialog.Controls.Find(name, true).Single());
 				Size measured = TextRenderer.MeasureText(label.Text, label.Font, new Size(label.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
@@ -256,7 +266,7 @@ public sealed class ArkModPackageReaderTests : IDisposable
 				Directory.CreateDirectory(previews);
 				using Bitmap bitmap = new(dialog.Width, dialog.Height);
 				dialog.DrawToBitmap(bitmap, new Rectangle(Point.Empty, dialog.Size));
-				bitmap.Save(Path.Combine(previews, "ark-package-" + (game == ArkModPackageReader.Evolved ? "ase-" : "asa-") + language + ".png"), ImageFormat.Png);
+				bitmap.Save(Path.Combine(previews, "ark-package-" + (game == ArkModPackageReader.Evolved ? "ase-" : "asa-") + language + "-" + constrainedHeight + ".png"), ImageFormat.Png);
 			}
 			dialog.Close();
 		}

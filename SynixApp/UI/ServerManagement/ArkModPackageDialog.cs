@@ -46,12 +46,19 @@ internal sealed class ArkModPackageDialog : Form
 		Font = new Font("Segoe UI", 10F);
 		TableLayoutPanel layout = new() { Dock = DockStyle.Fill, Padding = new Padding(24), ColumnCount = 1, RowCount = 9 };
 		layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-		foreach (float height in new[] { 48F, 110F, 42F, 52F }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
+		layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
+		// Size wrapped guidance to its text so short Windows work areas do not
+		// lose the preview grid to fixed-height, mostly empty description rows.
+		layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+		foreach (float height in new[] { 42F, 52F }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
 		layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-		foreach (float height in new[] { 126F, 68F, 40F, 48F }) layout.RowStyles.Add(new RowStyle(SizeType.Absolute, height));
+		layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 126));
+		layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+		layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+		layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
 		Controls.Add(layout);
 		layout.Controls.Add(new Label { Text = Text, Dock = DockStyle.Fill, Font = new Font(Font.FontFamily, 18F, FontStyle.Bold), UseMnemonic = false }, 0, 0);
-		layout.Controls.Add(new Label { Text = LocalizationManager.Get(evolved ? "AsePackages.Help" : "AsaPackages.Help"), Dock = DockStyle.Fill,
+		layout.Controls.Add(new Label { Text = LocalizationManager.Get(evolved ? "AsePackages.Help" : "AsaPackages.Help"), Dock = DockStyle.Fill, AutoSize = true,
 			Name = "arkPackageHelp", ForeColor = SettingsPalette.SecondaryText, UseMnemonic = false }, 0, 1);
 		ModernSettingsCard sourceCard = new() { Dock = DockStyle.Fill, Padding = new Padding(10), FillColor = SettingsPalette.Input };
 		_source = new TextBox { Name = "arkPackageSource", ReadOnly = true, Dock = DockStyle.Fill, BorderStyle = BorderStyle.None,
@@ -86,10 +93,10 @@ internal sealed class ArkModPackageDialog : Form
 		detailCard.Controls.Add(_details);
 		layout.Controls.Add(detailCard, 0, 5);
 		_grid.CurrentCellChanged += (_, _) => UpdateDetails();
-		_status = new Label { Name = "arkPackageStatus", Dock = DockStyle.Fill, UseMnemonic = false,
+		_status = new Label { Name = "arkPackageStatus", Dock = DockStyle.Fill, AutoSize = true, UseMnemonic = false,
 			Text = LocalizationManager.Get("AsaPackages.Choose"), ForeColor = SettingsPalette.SecondaryText };
 		layout.Controls.Add(_status, 0, 6);
-		layout.Controls.Add(new Label { Text = LocalizationManager.Get("AsaPackages.Trust"), Dock = DockStyle.Fill,
+		layout.Controls.Add(new Label { Name = "arkPackageTrust", Text = LocalizationManager.Get("AsaPackages.Trust"), Dock = DockStyle.Fill, AutoSize = true,
 			ForeColor = SettingsPalette.Warning, UseMnemonic = false }, 0, 7);
 		FlowLayoutPanel actions = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, WrapContents = false };
 		_review = Button("AsaPackages.Review", "arkPackageReview");
