@@ -68,6 +68,23 @@ public sealed class InterruptedServerRestoreTests : IDisposable
 	}
 
 	[Fact]
+	public void MissingActivatedFolderCannotDiscardItsPreservedOriginalDuringSettingsSync()
+	{
+		WriteFolder(Rollback, "original");
+		WriteFolder(Operation, "staging");
+		WriteJournal("Restored", needsSettingsSync: true);
+		GameServer server = new() { Game = "Fixture", ServerName = "server", InstallPath = Install, Status = "Stopped" };
+		Assert.Throws<IOException>(() => Core.SynchronizePendingServerRestores(server, () => true));
+		Assert.True(File.Exists(Journal));
+		Assert.Equal("original", File.ReadAllText(Path.Combine(Rollback, "world.dat")));
+		Assert.Equal(1, Core.RecoverInterruptedServerRestores());
+		Assert.Equal("original", File.ReadAllText(Path.Combine(Install, "world.dat")));
+		Assert.True(File.Exists(Journal));
+		Assert.True(Core.SynchronizePendingServerRestores(server, () => true));
+		Assert.False(File.Exists(Journal));
+	}
+
+	[Fact]
 	public void PreparedRestoreWithNoOriginalOnlyCleansItsOwnStaging()
 	{
 		WriteFolder(Operation, "staging");
@@ -155,10 +172,11 @@ public sealed class InterruptedServerRestoreTests : IDisposable
 		Assert.Equal("original settings", File.ReadAllText(Path.Combine(Install, "settings.ini")));
 	}
 
-	private void WriteJournal(string phase, string? rollback = null) =>
+	private void WriteJournal(string phase, string? rollback = null, bool needsSettingsSync = false) =>
 		File.WriteAllText(Journal, JsonSerializer.Serialize(new
 		{
-			InstallPath = Install, OperationRoot = Operation, RollbackPath = rollback ?? Rollback, Phase = phase
+			InstallPath = Install, OperationRoot = Operation, RollbackPath = rollback ?? Rollback, Phase = phase,
+			NeedsSettingsSync = needsSettingsSync
 		}));
 
 	private static void WriteFolder(string path, string content)

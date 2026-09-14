@@ -26,6 +26,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			ArgumentNullException.ThrowIfNull(logCallback);
 			try
 			{
+				Core.SynchronizePendingServerRestores(server, FileHandler.SaveServers);
 				GameInfo? selectedDefinition = GameDatabase.GetGame(server.Game);
 				if (selectedDefinition == null)
 				{
@@ -128,22 +129,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					return;
 				}
 
-				bool maintenanceBackup = context == StartContext.Scheduled &&
-					server.SmartMaintenanceEnabled &&
-					server.MaintenanceBackupBeforeRestart;
-				if ((server.BackupOnStart || maintenanceBackup) &&
-					context != StartContext.CrashRecovery)
-				{
-					await Task.Run(() => Core.Instance.ExecuteBackup(server, context));
-				}
-
-				bool maintenanceUpdate = context == StartContext.Scheduled &&
-					server.SmartMaintenanceEnabled &&
-					server.MaintenanceUpdateBeforeRestart;
-				if (server.UpdateOnStart || maintenanceUpdate)
-				{
-					await Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true));
-				}
+				if (!await RunStartupMaintenanceAsync(server, context,
+					() => Task.Run(() => Core.Instance.ExecuteBackup(server, context)),
+					() => Task.Run(() => Core.Instance.UpdateServerAndReport(server, "UPDATE", true)),
+					logCallback!)) return;
 				if (OxideRuntimeManager.IsEnabled(server, selectedDefinition) &&
 					string.Equals(
 						server.ServerFrameworkVersion,
@@ -398,6 +387,26 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					ex.Message,
 					Color.Red);
 			}
+		}
+
+		internal static async Task<bool> RunStartupMaintenanceAsync(GameServer server, StartContext context,
+			Func<Task<bool>> backup, Func<Task<bool>> update, Action<string, Color> log)
+		{
+			bool scheduled = context == StartContext.Scheduled && server.SmartMaintenanceEnabled;
+			bool needsBackup = context != StartContext.CrashRecovery &&
+				(server.BackupOnStart || scheduled && server.MaintenanceBackupBeforeRestart);
+			bool needsUpdate = server.UpdateOnStart || scheduled && server.MaintenanceUpdateBeforeRestart;
+			if (needsBackup && !await backup())
+			{
+				log(LocalizationManager.Get("ServerStart.Maintenance.BackupFailed"), Color.Red);
+				return false;
+			}
+			if (needsUpdate && !await update())
+			{
+				log(LocalizationManager.Get("ServerStart.Maintenance.UpdateFailed"), Color.Red);
+				return false;
+			}
+			return true;
 		}
 
 		private static void PrepareMinecraftLauncher(string launcherPath, Action<string, Color> logCallback)

@@ -96,10 +96,65 @@ internal static class ServerConfigurationSync
 	}
 
 	private static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes));
+
+	internal static void SynchronizeRestored(GameServer server, Func<bool> persist)
+	{
+		using ServerOperationLease operation = ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Configure);
+		if (!operation.Acquired) throw new InvalidOperationException(operation.FailureReason);
+		ModPackageManager.EnsureStopped(server);
+		if (MinecraftControlProfile.IsJava(server) || MinecraftControlProfile.IsBedrock(server))
+		{
+			MinecraftConfigurationSync.SynchronizeRestored(server, persist, fullRestore: true);
+			return;
+		}
+		if (!GameFix.TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) || definition == null) return;
+		Dictionary<ConfigurationServerField, Change> planned = [];
+		// Resolve all paths before changing names, ports or other path-dependent values.
+		// Read every mapped file first, so a bad later file cannot leave a partial update.
+		foreach (string file in definition.ResolveConfigurationPaths(server).Distinct(StringComparer.OrdinalIgnoreCase))
+		{
+			string path = ModPathSafety.Resolve(server.InstallPath, Path.GetRelativePath(server.InstallPath, file));
+			if (!File.Exists(path) || definition.GetServerBindings(server, path).Count == 0) continue;
+			if (new FileInfo(path).Length > 4 * 1024 * 1024) throw Error("TooLarge");
+			foreach (Change change in ReadChanges(server, path, ConfigurationTextSnapshot.Read(path).Text, includeUnchanged: true))
+			{
+				if (planned.TryGetValue(change.Field, out Change? previous) && !Equivalent(previous, change))
+					throw Error("Ambiguous", change.Field.ToString());
+				planned[change.Field] = change;
+			}
+		}
+		Change[] changes = planned.Values.Where(change => !Equals(change.Before, change.After)).ToArray();
+		if (changes.Length == 0) return;
+		SecretState secretsBefore = SecretState.Capture(server);
+		int previousReportedMaximum = server.MaxPlayersFromQuery;
+		try
+		{
+			Core.MigrateLegacyServer(server);
+			foreach (Change change in changes) Set(server, change.Field, change.After);
+			if (changes.Any(change => change.Field == ConfigurationServerField.MaxPlayers)) server.MaxPlayersFromQuery = 0;
+			if (!persist()) throw Error("SaveEntry");
+		}
+		catch
+		{
+			foreach (Change change in changes) Set(server, change.Field, change.Before);
+			server.MaxPlayersFromQuery = previousReportedMaximum;
+			secretsBefore.Restore(server);
+			throw;
+		}
+		Core.Instance.UpdateGridStatus();
+	}
+
+	private static bool Equivalent(Change first, Change second)
+	{
+		if (Equals(first.After, second.After)) return true;
+		return first.Field is ConfigurationServerField.Password or ConfigurationServerField.AdminPassword or ConfigurationServerField.RconPassword &&
+			Core.Reveal((string?)first.After ?? "") == Core.Reveal((string?)second.After ?? "");
+	}
+
 	private static InvalidDataException Error(string name, string? key = null) =>
 		new(LocalizationManager.Get("Configuration.Sync." + name, key ?? string.Empty));
 
-	private static IReadOnlyList<Change> ReadChanges(GameServer server, string path, string text)
+	private static IReadOnlyList<Change> ReadChanges(GameServer server, string path, string text, bool includeUnchanged = false)
 	{
 		if (!GameFix.TryGetConfiguration(server.Game, out ConfigurationDefinition? definition) || definition == null)
 			return [];
@@ -137,12 +192,12 @@ internal static class ServerConfigurationSync
 				ConfigurationServerField.RconPassword)
 			{
 				string previousPassword = server.PasswordStorageVersion == 0 ? (string?)before ?? string.Empty : Core.Reveal((string?)before ?? string.Empty);
-				if (previousPassword == (string?)value) continue;
-				after = Core.Protect((string?)value ?? string.Empty);
+				if (previousPassword == (string?)value) after = before;
+				else after = Core.Protect((string?)value ?? string.Empty);
 			}
-			if (!Equals(before, after)) changes.Add(new(field, before, after));
+			if (includeUnchanged || !Equals(before, after)) changes.Add(new(field, before, after));
 		}
-		if (changes.Any(change => change.Field == ConfigurationServerField.ServerName) && string.IsNullOrEmpty(server.ConfigurationIdentity))
+		if (changes.Any(change => change.Field == ConfigurationServerField.ServerName && !Equals(change.Before, change.After)) && string.IsNullOrEmpty(server.ConfigurationIdentity))
 			changes.Add(new(ConfigurationServerField.ConfigurationIdentity, server.ConfigurationIdentity, Core.GetServerIdentity(server)));
 		return changes;
 	}

@@ -66,6 +66,38 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	[Theory]
 	[InlineData("ARK: Survival Ascended")]
 	[InlineData("ARK: Survival Evolved")]
+	public void RestoredConfigurationRefreshesSharedValuesWithoutRewritingTheConfig(string game)
+	{
+		_server.Game = game;
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, ArkConfig, Encoding.Unicode);
+		byte[] original = File.ReadAllBytes(path);
+		int saves = 0;
+		ServerConfigurationSync.SynchronizeRestored(_server, () => { saves++; return true; });
+		Assert.Equal(32, _server.MaxPlayers);
+		Assert.Equal("Updated server", _server.ServerName);
+		Assert.Equal("fixture-admin", Core.Reveal(_server.AdminPassword));
+		Assert.True(Core.IsProtected(_server.AdminPassword));
+		Assert.Equal(original, File.ReadAllBytes(path));
+		Assert.False(File.Exists(path + ".synix.bak"));
+		ServerConfigurationSync.SynchronizeRestored(_server, () => { saves++; return true; });
+		Assert.Equal(1, saves);
+	}
+
+	[Fact]
+	public void FailedRestoredSettingsPersistenceLeavesTheProfileAndConfigUnchanged()
+	{
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, ArkConfig);
+		string before = Core.SerializeServersForStorage([_server]);
+		Assert.Throws<InvalidDataException>(() => ServerConfigurationSync.SynchronizeRestored(_server, () => false));
+		Assert.Equal(before, Core.SerializeServersForStorage([_server]));
+		Assert.Equal(ArkConfig, File.ReadAllText(path));
+	}
+
+	[Theory]
+	[InlineData("ARK: Survival Ascended")]
+	[InlineData("ARK: Survival Evolved")]
 	public void ArkSaveUpdatesSharedFieldsAndEncryptedStorageWithoutTouchingOtherServers(string game)
 	{
 		_server.Game = game;
@@ -335,6 +367,7 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		}
 		ConfigurationApplyResult result = definition.Apply(context);
 		Assert.True(result.Succeeded, result.Message);
+		ServerConfigurationSync.SynchronizeRestored(_server, () => true);
 		foreach (string path in definition.ResolveConfigurationPaths(_server))
 		{
 			Assert.True(File.Exists(path), path);

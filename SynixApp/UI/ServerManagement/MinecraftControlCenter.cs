@@ -598,7 +598,8 @@ internal sealed class MinecraftControlCenter : Form
 		ModPackageManager.EnsureStopped(Server);
 		ServerBackupPreflight preflight = await Core.Instance.CreateServerBackupPreflightAsync(Server);
 		if (!preflight.Succeeded || !preflight.HasEnoughSpace) throw new IOException(preflight.Message + Environment.NewLine + TextFor("BackupSpace"));
-		if (Confirm("ConfirmBackup")) await Core.Instance.ExecuteBackup(Server, StartContext.Manual);
+		if (Confirm("ConfirmBackup") && !await Core.Instance.ExecuteBackup(Server, StartContext.Manual))
+			throw new IOException(LocalizationManager.Get("Backup.Creation.Failed"));
 		await RefreshPageAsync();
 	}
 
@@ -609,10 +610,6 @@ internal sealed class MinecraftControlCenter : Form
 		using ServerBackupRestoreDialog dialog = new(server, await Core.Instance.GetServerBackupsAsync(server));
 		if (dialog.ShowDialog(this) != DialogResult.OK || dialog.SelectedBackup == null || !Confirm("ConfirmRestore")) return;
 		ServerBackupRestoreResult result = await Core.Instance.RestoreServerBackupAsync(server, dialog.SelectedBackup, Progress());
-		if (result.Succeeded)
-		{
-			MinecraftConfigurationSync.SynchronizeRestored(server, FileHandler.SaveServers, fullRestore: true);
-		}
 		LocalizedMessageBox.Show(this, result.Message, Text, MessageBoxButtons.OK, result.Succeeded ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
 		await RefreshPageAsync();
 	}

@@ -11574,4 +11574,15 @@ ARK will download this mod from {2} when you start the server. Synix does not co
   <data name="ModInstallGuide.FileRecovery" xml:space="preserve"><value>Stop the server, select an imported item and use Roll Back Import. This restores replaced files and removes new files from that import; later edits can block rollback. It does not restore world changes. Make a full backup before starting.</value></data>
   <data name="ModInstallGuide.ProviderRecovery" xml:space="preserve"><value>Stop the server and edit the ID list to remove additions or restore its previous order. This does not delete provider files or restore older mod versions/world data. Keep the old ID list and a full server backup before starting.</value></data>
   <data name="ModInstallGuide.ScenarioRecovery" xml:space="preserve"><value>An active scenario or existing saves may prevent removal.</value></data>
+  <data name="Backup.Retention.Warning" xml:space="preserve"><value>The new backup is saved, but backup cleanup needs attention for {0}: {1}</value></data>
+  <data name="Backup.Creation.Failed" xml:space="preserve"><value>The backup did not complete. Check Activity &amp; Diagnostics for the reason before continuing.</value></data>
+  <data name="ServerStart.Maintenance.BackupFailed" xml:space="preserve"><value>Startup cancelled: the requested backup did not complete. No update or server launch was performed. Check the backup error and try again.</value></data>
+  <data name="ServerStart.Maintenance.UpdateFailed" xml:space="preserve"><value>Startup cancelled: the requested update did not complete. The server remains stopped. Review the update error before trying again.</value></data>
+  <data name="ServerActions.Operation.RequiresStopped" xml:space="preserve"><value>Stop the server and confirm its processes have exited before updating or validating its files.</value></data>
+  <data name="Backup.Error.CustomFolderUnavailable" xml:space="preserve"><value>The selected custom backup folder is unavailable. Reconnect it or choose another backup folder. Synix will not silently use a different location.</value></data>
+  <data name="Configuration.Sync.TooLarge" xml:space="preserve"><value>A restored configuration is too large to synchronize safely. Review the file before starting the server.</value></data>
+  <data name="Backup.Progress.Synchronizing" xml:space="preserve"><value>Updating Synix settings from the restored configuration...</value></data>
+  <data name="Backup.Restore.SettingsPending" xml:space="preserve"><value>The backup files are restored, but Synix could not finish updating its server settings. Recovery files have been kept. Correct the problem and retry Start; startup remains blocked until synchronization succeeds. Details: {0}</value></data>
+  <data name="Backup.Error.RestartForRecovery" xml:space="preserve"><value>A previous restore was interrupted. Restart Synix to recover it before starting or restoring this server.</value></data>
+  <data name="Backup.Restore.PreviousPending" xml:space="preserve"><value>A previous restore still needs attention. This restore has not started. Details: {0}</value></data>
 </root>

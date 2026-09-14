@@ -1111,7 +1111,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				MessageBoxIcon.Information,
 				MessageBoxDefaultButton.Button2);
 			if (confirmation == DialogResult.Yes)
-				await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
+			{
+				if (!await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual))
+					LocalizedMessageBox.Show(this, LocalizationManager.Get("Backup.Creation.Failed"),
+						LocalizationManager.Get("Backup.Notification.Failed.Title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 		}
 
 		private async void btnRestoreServerBackup_Click(object sender, EventArgs e)
@@ -1170,20 +1174,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				selectedServer,
 				selectedBackup,
 				progress);
-			if (result.Succeeded && GameCapabilityResolver.UsesMinecraftLifecycle(selectedServer))
-			{
-				try
-				{
-					Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.SynchronizeRestored(selectedServer, FileHandler.SaveServers, fullRestore: true);
-				}
-				catch (Exception exception)
-				{
-					LocalizedMessageBox.Show(this, Core.SanitizeProblemReportText(exception.Message),
-						LocalizationManager.Get("MinecraftWorkspace.Title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return;
-				}
-			}
-
 			LocalizedMessageBox.Show(
 				this,
 				result.Message,

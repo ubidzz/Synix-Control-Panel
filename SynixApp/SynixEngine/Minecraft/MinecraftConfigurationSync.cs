@@ -219,17 +219,17 @@ internal static class MinecraftConfigurationSync
 		foreach (GameServer other in ServerRegistry.Servers.Where(other => !ReferenceEquals(other, server) &&
 			!other.InstallPath.Equals(server.InstallPath, StringComparison.OrdinalIgnoreCase)))
 			if (ports.Any(port => Core.HasConfiguredPort(other, port))) throw MinecraftContentTransactions.Error("PortConflict");
-		return result;
+		return result with { ReportedPlayers = result.Players != old.Players ? 0 : old.ReportedPlayers };
 	}
 
 	private sealed record State(int Port, int Query, int Players, string World, string Seed, string Mode,
 		string? Advertised, bool QueryEnabled, bool Rcon, int RconPort, string RconPassword,
-		bool Management, int ManagementPort, bool ManagementTls)
+		bool Management, int ManagementPort, bool ManagementTls, int ReportedPlayers)
 	{
 		internal static State Capture(GameServer server) => new(server.Port, server.QueryPort, server.MaxPlayers,
 			server.WorldName, server.WorldSeed, server.GameMode, server.MinecraftAdvertisedName, server.MinecraftQueryEnabled,
 			server.EnableRcon, server.RconPort, server.RconPassword, server.EnableMinecraftManagementProtocol,
-			server.MinecraftManagementPort, server.MinecraftManagementTlsEnabled);
+			server.MinecraftManagementPort, server.MinecraftManagementTlsEnabled, server.MaxPlayersFromQuery);
 		internal void Apply(GameServer server)
 		{
 			server.Port = Port; server.QueryPort = Query; server.MaxPlayers = Players; server.WorldName = World;
@@ -237,6 +237,7 @@ internal static class MinecraftConfigurationSync
 			server.MinecraftQueryEnabled = QueryEnabled; server.EnableRcon = Rcon; server.RconPort = RconPort;
 			server.RconPassword = RconPassword; server.EnableMinecraftManagementProtocol = Management;
 			server.MinecraftManagementPort = ManagementPort; server.MinecraftManagementTlsEnabled = ManagementTls;
+			server.MaxPlayersFromQuery = ReportedPlayers;
 		}
 	}
 }

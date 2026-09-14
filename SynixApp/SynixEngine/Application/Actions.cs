@@ -530,8 +530,14 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async Task UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false)
+		public async Task<bool> UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false)
 		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (server.Status != StatusManager.GetStatus(ServerState.Stopped) || server.PID.HasValue)
+			{
+				LogLocalized("ServerActions.Operation.RequiresStopped", Color.Orange, true);
+				return false;
+			}
 			bool ServerUpdating = false;
 
 			if (serverProcess == "UPDATE")
@@ -545,12 +551,12 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.ServerActive.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
-					return;
+					return false;
 				}
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
 				{
 					LogLocalized("ServerActions.Activity.DownloadBusy", Color.Orange);
-					return;
+					return false;
 				}
 
 				ServerUpdating = true;
@@ -564,7 +570,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.Update.ConfirmTitle"),
 						MessageBoxButtons.YesNo,
 						MessageBoxIcon.Question);
-					if (confirm != DialogResult.Yes) return;
+					if (confirm != DialogResult.Yes) return false;
 				}
 			}
 			else if (serverProcess == "VALIDATE")
@@ -578,7 +584,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.ServerActive.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
-					return;
+					return false;
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
@@ -590,7 +596,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.SystemBusy.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Information);
-					return;
+					return false;
 				}
 
 				var confirm = LocalizedMessageBox.Show(
@@ -601,21 +607,21 @@ namespace Synix_Control_Panel.SynixEngine
 						"ServerActions.Validate.ConfirmTitle"),
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Question);
-				if (confirm != DialogResult.Yes) return;
+				if (confirm != DialogResult.Yes) return false;
 			}
 			else
-			{ return; }
+			{ return false; }
 
 			var gameData = GameDatabase.GetGame(server.Game);
 
 			if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 			{
 				LogLocalized("ServerActions.Activity.GameDefinitionMissing", Color.Red, true, server.Game);
-				return;
+				return false;
 			}
 
 			if (!EnsureSteamAccountName(server, gameData))
-				return;
+				return false;
 
 			ServerOperationKind operationKind = ServerUpdating
 				? ServerOperationKind.Update
@@ -625,7 +631,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!operation.Acquired)
 			{
 				LogLocalized("ServerActions.Activity.SteamCmdBlocked", Color.Orange, true, operation.FailureReason);
-				return;
+				return false;
 			}
 			DiscordNotificationEvent startedEvent = ServerUpdating
 				? DiscordNotificationEvent.UpdateStarted
@@ -711,7 +717,7 @@ namespace Synix_Control_Panel.SynixEngine
 						Color.Red);
 					isDownloadActive = false;
 					LogLocalized("SteamCmd.Activity.CloseEnabled", Color.Orange, true);
-					return;
+					return false;
 				}
 
 				bool fixApplied = await GameFix.PostInstall(server);
@@ -752,7 +758,7 @@ namespace Synix_Control_Panel.SynixEngine
 							LocalizationManager.Get("ServerActions.Notification.OperationFailed.Title", operationName),
 							LocalizationManager.Get("ServerActions.Notification.OxideReapplyFailed.Body", exception.Message),
 							Color.Red);
-						return;
+						return false;
 					}
 				}
 
@@ -771,6 +777,7 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("ServerActions.Notification.OperationCompleted.Body", server.ServerName),
 					Color.LimeGreen);
 				ManifestMessage = "";
+				return true;
 			}
 			catch (Exception exception)
 			{
@@ -781,6 +788,7 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("ServerActions.Notification.OperationFailed.Title", operationName),
 					exception.Message,
 					Color.Red);
+				return false;
 			}
 			finally
 			{
@@ -1229,6 +1237,7 @@ namespace Synix_Control_Panel.SynixEngine
 					: StartContext.Manual;
 			try
 			{
+				SynchronizePendingServerRestores(server, FileHandler.SaveServers);
 				if (!PassResourceGuard(out string guardMsg))
 				{
 					Log(guardMsg, System.Drawing.Color.Red, true);
