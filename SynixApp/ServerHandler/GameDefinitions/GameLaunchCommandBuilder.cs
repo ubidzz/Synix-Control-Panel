@@ -188,7 +188,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			bool isBedrock = MinecraftControlProfile.IsBedrock(server);
 			int ramToUse = isMinecraft ? server.MaxRam * 1024 : server.MaxRam;
 			string targetAppId = definition.AppID ?? string.Empty;
-			string cleanIdentity = Core.Instance.GetSafeName(server.ServerName ?? string.Empty);
+			string cleanIdentity = Core.GetServerIdentity(server);
 
 			bool commandScript = TryGetLauncherKind(ResolveExecutablePath(server, definition), out GameLauncherKind kind) &&
 				kind == GameLauncherKind.WindowsCommandScript;

@@ -1164,6 +1164,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				Game = selectedGame,
 				SteamAccountName = steamAccountName,
 				ServerName = newName,
+				ConfigurationIdentity = _existingServer?.ConfigurationIdentity ?? string.Empty,
 				Port = gamePort,
 				QueryPort = queryPort,
 				RconPort = rconPort,

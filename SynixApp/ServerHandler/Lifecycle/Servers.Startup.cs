@@ -228,7 +228,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						dbEntry,
 						fullExePath);
 
-					string cleanIdentity = Core.Instance.GetSafeName(server.ServerName);
+					string cleanIdentity = Core.GetServerIdentity(server);
 					if (!GameLaunchCommandBuilder.TryBuildArguments(
 						server,
 						dbEntry,

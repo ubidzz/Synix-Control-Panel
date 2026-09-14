@@ -11533,4 +11533,19 @@ ARK will download this mod from {2} when you start the server. Synix does not co
   <data name="ModSupport.InvalidCatalog" xml:space="preserve">
     <value>The game mod-support catalog could not be read. Check that your Synix installation is complete.</value>
   </data>
+  <data name="Configuration.Sync.Changed" xml:space="preserve">
+    <value>This configuration changed since it was opened. Reopen it before saving.</value>
+  </data>
+  <data name="Configuration.Sync.SaveEntry" xml:space="preserve">
+    <value>The Synix server entry could not be saved. The configuration and server settings have been restored.</value>
+  </data>
+  <data name="Configuration.Sync.Ambiguous" xml:space="preserve">
+    <value>The shared setting '{0}' has duplicate or conflicting values. Resolve these before saving so Synix can update the correct server value.</value>
+  </data>
+  <data name="Configuration.Sync.InvalidValue" xml:space="preserve">
+    <value>The shared setting '{0}' has an invalid value for Synix. Correct it before saving.</value>
+  </data>
+  <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
+    <value>Saving failed and the original configuration could not be restored automatically. Do not start the server until you review the configuration and its backup: {0}</value>
+  </data>
 </root>

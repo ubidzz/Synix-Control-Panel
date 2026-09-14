@@ -345,7 +345,7 @@ namespace Synix_Control_Panel.SynixEngine
 		internal string GetActiveServerBackupFolder(GameServer server)
 		{
 			string cleanGame = GetSafeName(server.Game);
-			string cleanServer = GetSafeName(server.ServerName);
+			string cleanServer = GetServerIdentity(server);
 			return Path.Combine(GetActiveBackupBaseFolder(), cleanGame, cleanServer);
 		}
 
@@ -356,7 +356,7 @@ namespace Synix_Control_Panel.SynixEngine
 			HashSet<string> folders = new(StringComparer.OrdinalIgnoreCase)
 			{
 				GetActiveServerBackupFolder(server),
-				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetSafeName(server.ServerName))
+				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetServerIdentity(server))
 			};
 
 			List<ServerBackupArchive> backups = [];
@@ -413,7 +413,7 @@ namespace Synix_Control_Panel.SynixEngine
 			HashSet<string> folders = new(StringComparer.OrdinalIgnoreCase)
 			{
 				GetActiveServerBackupFolder(server),
-				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetSafeName(server.ServerName))
+				Path.Combine(DefaultBackupPath, GetSafeName(server.Game), GetServerIdentity(server))
 			};
 
 			foreach (string folder in folders)

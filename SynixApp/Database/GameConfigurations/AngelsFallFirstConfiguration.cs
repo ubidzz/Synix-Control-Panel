@@ -19,15 +19,15 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
 			new("AdminPassword", context => context.Passwords.AdminPassword,
-				"[Engine.AccessControl] / AdminPassword"),
+				"[Engine.AccessControl] / AdminPassword", serverField: ConfigurationServerField.AdminPassword),
 			new("MaxPlayers", context => context.Server.MaxPlayers.ToString(),
-				"[Engine.GameInfo] / MaxPlayers"),
+				"[Engine.GameInfo] / MaxPlayers", serverField: ConfigurationServerField.MaxPlayers),
 			new("MaxPlayers", context => context.Server.MaxPlayers.ToString(),
-				"[AFFGame.AFFGameInfo_Incursion] / MaxPlayers"),
+				"[AFFGame.AFFGameInfo_Incursion] / MaxPlayers", serverField: ConfigurationServerField.MaxPlayers),
 			new("ServerName", context => context.Server.ServerName,
-				"[Engine.GameReplicationInfo] / ServerName"),
+				"[Engine.GameReplicationInfo] / ServerName", serverField: ConfigurationServerField.ServerName),
 			new("ServerName", context => context.Server.ServerName,
-				"[AFFGame.AFFGameReplicationInfo] / ServerName")
+				"[AFFGame.AFFGameReplicationInfo] / ServerName", serverField: ConfigurationServerField.ServerName)
 		];
 
 		public override string GameName => "Angels Fall First";

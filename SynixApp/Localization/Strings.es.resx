@@ -11495,4 +11495,19 @@ ARK descargará este mod de {2} al iniciar el servidor. Synix no copia ni regist
   <data name="ModSupport.InvalidCatalog" xml:space="preserve">
     <value>No se pudo leer el catálogo de compatibilidad con mods. Comprueba que la instalación de Synix esté completa.</value>
   </data>
+  <data name="Configuration.Sync.Changed" xml:space="preserve">
+    <value>Esta configuración cambió desde que se abrió. Vuelva a abrirla antes de guardar.</value>
+  </data>
+  <data name="Configuration.Sync.SaveEntry" xml:space="preserve">
+    <value>No se pudo guardar el registro del servidor en Synix. Se restauraron la configuración y los ajustes del servidor.</value>
+  </data>
+  <data name="Configuration.Sync.Ambiguous" xml:space="preserve">
+    <value>El ajuste compartido «{0}» tiene valores duplicados o contradictorios. Corríjalos antes de guardar.</value>
+  </data>
+  <data name="Configuration.Sync.InvalidValue" xml:space="preserve">
+    <value>El ajuste compartido «{0}» tiene un valor no válido para Synix. Corríjalo antes de guardar.</value>
+  </data>
+  <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
+    <value>El guardado falló y no se pudo restaurar automáticamente la configuración original. Antes de iniciar el servidor, revise la configuración y su copia de seguridad: {0}</value>
+  </data>
 </root>

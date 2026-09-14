@@ -11378,4 +11378,19 @@ ARK téléchargera ce mod depuis {2} au démarrage du serveur. Synix ne copie ni
   <data name="ModSupport.InvalidCatalog" xml:space="preserve">
     <value>Le catalogue de prise en charge des mods n’a pas pu être lu. Vérifiez que votre installation de Synix est complète.</value>
   </data>
+  <data name="Configuration.Sync.Changed" xml:space="preserve">
+    <value>Cette configuration a changé depuis son ouverture. Rouvrez-la avant d’enregistrer.</value>
+  </data>
+  <data name="Configuration.Sync.SaveEntry" xml:space="preserve">
+    <value>Impossible d’enregistrer le serveur dans Synix. La configuration et les paramètres du serveur ont été restaurés.</value>
+  </data>
+  <data name="Configuration.Sync.Ambiguous" xml:space="preserve">
+    <value>Le paramètre partagé « {0} » contient des valeurs en double ou contradictoires. Corrigez-les avant d’enregistrer.</value>
+  </data>
+  <data name="Configuration.Sync.InvalidValue" xml:space="preserve">
+    <value>La valeur du paramètre partagé « {0} » n’est pas valide pour Synix. Corrigez-la avant d’enregistrer.</value>
+  </data>
+  <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
+    <value>L’enregistrement a échoué et la configuration d’origine n’a pas pu être restaurée automatiquement. Avant de démarrer le serveur, vérifiez la configuration et sa sauvegarde : {0}</value>
+  </data>
 </root>

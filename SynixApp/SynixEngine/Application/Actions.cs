@@ -369,7 +369,7 @@ namespace Synix_Control_Panel.SynixEngine
 			GameServer server,
 			string relativePathTemplate)
 		{
-			string cleanIdentity = Instance.GetSafeName(server.ServerName);
+			string cleanIdentity = Core.GetServerIdentity(server);
 			string resolvedRelativePath = relativePathTemplate
 				.Replace("{Identity}", cleanIdentity, StringComparison.Ordinal)
 				.Replace("{ServerName}", cleanIdentity, StringComparison.Ordinal)

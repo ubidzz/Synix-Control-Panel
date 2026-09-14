@@ -886,10 +886,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 						_server,
 						LocalizationManager.Get(
 							"Configuration.Editor.BackupReason"));
-				if (_server != null && Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.IsProperties(_server, _path))
+				if (_server != null)
 				{
 					string preview = ConfigHandler.CreatePreview(_path, CollectUpdatedData(), _format);
-					Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.Save(_server, _path, preview,
+					ServerConfigurationSync.Save(_server, _path, preview, _format,
 						_loadedFileHash, PersistServerChanges);
 				}
 				else ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);

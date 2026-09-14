@@ -11495,4 +11495,19 @@ ARK lädt diesen Mod beim Serverstart von {2}. Synix kopiert oder registriert di
   <data name="ModSupport.InvalidCatalog" xml:space="preserve">
     <value>Der Katalog zur Mod-Unterstützung konnte nicht gelesen werden. Prüfen Sie, ob Ihre Synix-Installation vollständig ist.</value>
   </data>
+  <data name="Configuration.Sync.Changed" xml:space="preserve">
+    <value>Diese Konfiguration wurde seit dem Öffnen geändert. Öffnen Sie sie vor dem Speichern erneut.</value>
+  </data>
+  <data name="Configuration.Sync.SaveEntry" xml:space="preserve">
+    <value>Der Synix-Servereintrag konnte nicht gespeichert werden. Die Konfiguration und Servereinstellungen wurden wiederhergestellt.</value>
+  </data>
+  <data name="Configuration.Sync.Ambiguous" xml:space="preserve">
+    <value>Die gemeinsame Einstellung „{0}“ enthält doppelte oder widersprüchliche Werte. Beheben Sie dies vor dem Speichern.</value>
+  </data>
+  <data name="Configuration.Sync.InvalidValue" xml:space="preserve">
+    <value>Die gemeinsame Einstellung „{0}“ hat einen für Synix ungültigen Wert. Korrigieren Sie ihn vor dem Speichern.</value>
+  </data>
+  <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
+    <value>Das Speichern ist fehlgeschlagen und die ursprüngliche Konfiguration konnte nicht automatisch wiederhergestellt werden. Prüfen Sie vor dem Serverstart die Konfiguration und ihre Sicherung: {0}</value>
+  </data>
 </root>

@@ -36,6 +36,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override ManagedConfigurationInput SupportedInputs =>
 			GetSupportedInputs();
 
+		internal override IReadOnlyList<ConfigurationServerBinding> GetServerBindings(GameServer server, string path)
+		{
+			foreach (ConfigurationTemplate template in Templates)
+				if (Path.GetFullPath(path).Equals(ResolveFullPath(server, template.RelativePath), StringComparison.OrdinalIgnoreCase))
+					return ConfigurationServerBinding.FromTemplate(template.Content, Format);
+			return [];
+		}
+
 		public override IReadOnlyList<ConfigurationValidationItem> Validate(
 			ConfigurationContext context)
 		{

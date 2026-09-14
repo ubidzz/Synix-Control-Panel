@@ -328,6 +328,8 @@ public class GameServer
 	public bool SteamAuthenticationRequired { get; set; }
 	public string InstallPath { get; set; } = string.Empty;
 	public string ServerName { get; set; } = string.Empty;
+	// Keep name-based game save/config identities stable when the advertised name is edited.
+	public string ConfigurationIdentity { get; set; } = string.Empty;
 	public string Password { get; set; } = string.Empty;
 	public string AdminPassword { get; set; } = string.Empty;
 	public string AuthenticationToken { get; set; } = string.Empty;
