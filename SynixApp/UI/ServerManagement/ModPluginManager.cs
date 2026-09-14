@@ -756,7 +756,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 						target.PackageLayout == ModPackageLayout.FolderTree ? "UniversalMods.Import.Done" :
 						EmpyrionAddOns.IsScenario(target) ? "EmpyrionMods.ImportedScenario" : result.RestartRequired
 							? "MessageText.3679B9A889A4F6F470DA"
-							: "MessageText.F23CB309225C503B6D8A"),
+							: "MessageText.F23CB309225C503B6D8A") + Environment.NewLine + Environment.NewLine +
+						ModInstallGuidance.Create(_server, selected).NextSteps(),
 					LocalizationManager.Get("MessageText.2CEE7AAFEDF4FEA66592"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
@@ -923,12 +924,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 					current = ModPackageManager.NormalizeProviderIds(string.Join(',', current.Concat(package.ProviderMods.Select(mod => mod.ModId))), target.MaximumIds);
 					if (package.Selection != null) SelectImportedTarget(package.Selection.Profile.Id, target.Id);
 				}
+				ModSystemProfile profile = (_profileBox.SelectedItem as ModSystemProfile) ??
+					throw new InvalidOperationException(LocalizationManager.Get("ModManager.Error.RecordMissing"));
+				ModInstallGuidance guidance = ModInstallGuidance.Create(_server, new(profile, target, "", true));
 				using ProviderModIdEditor dialog = new(
-					string.IsNullOrWhiteSpace(target.ProviderName)
-						? LocalizationManager.Get("ModManager.Known.GameProvider")
-						: target.ProviderName,
-					target.MaximumIds,
-					current);
+					string.IsNullOrWhiteSpace(target.ProviderName) ? LocalizationManager.Get("ModManager.Known.GameProvider") : target.ProviderName,
+					target.MaximumIds, current, guidance);
 				if (dialog.ShowDialog(this) != DialogResult.OK)
 					return;
 				if (LocalizedMessageBox.Show(
@@ -956,7 +957,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				await RefreshInventory(duringOperation: true);
 				LocalizedMessageBox.Show(
 					this,
-					LocalizationManager.Get("MessageText.2A2FCD5BFFF42E6401AE"),
+					LocalizationManager.Get("MessageText.2A2FCD5BFFF42E6401AE") + Environment.NewLine + Environment.NewLine + guidance.NextSteps(),
 					LocalizationManager.Get("MessageText.69CA929D937D47644BA3"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
@@ -1242,41 +1243,51 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		internal ProviderModIdEditor(
 			string providerName,
 			int maximumIds,
-			IReadOnlyList<string> currentIds)
+			IReadOnlyList<string> currentIds,
+			ModInstallGuidance guidance)
 		{
 			_maximumIds = maximumIds;
 			Text = LocalizationManager.Get("Text.FED14E20C68A4626A601");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
-			MaximizeBox = false;
-			FormBorderStyle = FormBorderStyle.FixedDialog;
-			ClientSize = new Size(650, 430);
+			ClientSize = new Size(1060, 740);
+			MinimumSize = new Size(960, 700);
 			BackColor = SettingsPalette.Window;
 			ForeColor = SettingsPalette.PrimaryText;
 			Font = new Font("Segoe UI", 9.5F);
+			TableLayoutPanel layout = UniversalModDialogStyle.Layout(this, [48, 58, -1, 48, 48]);
+			layout.ColumnCount = 2;
+			layout.ColumnStyles.Clear();
+			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
 
-			Controls.Add(new Label
+			Label title = new()
 			{
 				Text = LocalizationManager.Get(
 					"ModManager.Provider.Title",
 					providerName),
-				Location = new Point(28, 22),
-				Size = new Size(594, 42),
+				Dock = DockStyle.Fill,
+				UseMnemonic = false,
 				Font = new Font("Segoe UI", 18F, FontStyle.Bold),
 				ForeColor = SettingsPalette.PrimaryText
-			});
-			Controls.Add(new Label
+			};
+			layout.Controls.Add(title, 0, 0);
+			layout.SetColumnSpan(title, 2);
+			Label help = new()
 			{
 				Text = LocalizationManager.Get("Text.518F7A1D974E46AED149"),
-				Location = new Point(30, 68),
-				Size = new Size(580, 48),
+				Dock = DockStyle.Fill,
+				UseMnemonic = false,
 				ForeColor = SettingsPalette.SecondaryText
-			});
+			};
+			layout.Controls.Add(help, 0, 1);
+			layout.SetColumnSpan(help, 2);
 			_ids = new TextBox
 			{
-				Location = new Point(28, 128),
-				Size = new Size(594, 184),
+				Name = "providerModIds",
+				AccessibleName = title.Text,
+				Dock = DockStyle.Fill,
 				Multiline = true,
 				ScrollBars = ScrollBars.Vertical,
 				AcceptsReturn = true,
@@ -1287,31 +1298,42 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				Font = new Font("Cascadia Mono", 10F)
 			};
 			_ids.TextChanged += (_, _) => ValidateIds();
-			Controls.Add(_ids);
+			layout.Controls.Add(_ids, 0, 2);
+			ModInstallGuidancePanel review = new() { Margin = new Padding(12, 3, 3, 3) };
+			review.ShowGuidance(guidance);
+			layout.Controls.Add(review, 1, 2);
+			layout.SetRowSpan(review, 2);
 			_status = new Label
 			{
-				Location = new Point(30, 322),
-				Size = new Size(400, 48),
+				Dock = DockStyle.Fill,
 				ForeColor = SettingsPalette.SecondaryText
 			};
-			Controls.Add(_status);
+			layout.Controls.Add(_status, 0, 3);
 
 			ModernSettingsButton cancel = new()
 			{
+				Name = "cancelProviderModIds",
 				Text = LocalizationManager.Get("Text.19766ED6CCB2F4A32778"),
-				Location = new Point(328, 370),
-				Size = new Size(138, 42),
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				MinimumSize = new Size(180, 42),
+				Padding = new Padding(12, 0, 12, 0),
 				DialogResult = DialogResult.Cancel
 			};
 			ModernSettingsButton save = new()
 			{
+				Name = "saveProviderModIds",
 				Text = LocalizationManager.Get("Text.A9DE31384881AF4D5B60"),
-				Location = new Point(478, 370),
-				Size = new Size(144, 42),
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				MinimumSize = new Size(240, 42),
+				Padding = new Padding(12, 0, 12, 0),
 				UseAccentStyle = true
 			};
 			save.Click += (_, _) => Save();
-			Controls.AddRange([cancel, save]);
+			FlowLayoutPanel actions = UniversalModDialogStyle.Actions(layout, 4);
+			layout.SetColumnSpan(actions, 2);
+			actions.Controls.AddRange([save, cancel]);
 			CancelButton = cancel;
 			ValidateIds();
 			ThemeManager.Apply(this);

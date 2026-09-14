@@ -11510,4 +11510,30 @@ ARK descargará este mod de {2} al iniciar el servidor. Synix no copia ni regist
   <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
     <value>El guardado falló y no se pudo restaurar automáticamente la configuración original. Antes de iniciar el servidor, revise la configuración y su copia de seguridad: {0}</value>
   </data>
+  <data name="ModInstallGuide.Compatibility" xml:space="preserve"><value>Compatibilidad</value></data>
+  <data name="ModInstallGuide.Destination" xml:space="preserve"><value>Dónde se añadirá</value></data>
+  <data name="ModInstallGuide.Activation" xml:space="preserve"><value>Cómo activarlo</value></data>
+  <data name="ModInstallGuide.Recovery" xml:space="preserve"><value>Cómo deshacerlo</value></data>
+  <data name="ModInstallGuide.Unknown" xml:space="preserve"><value>No registrado</value></data>
+  <data name="ModInstallGuide.Context" xml:space="preserve"><value>{0} • Versión del juego: {1} • Cargador/sistema: {2}</value></data>
+  <data name="ModInstallGuide.PendingCompatibility" xml:space="preserve"><value>Elige un paquete y un destino adecuado para ver qué puede comprobar Synix.</value></data>
+  <data name="ModInstallGuide.PendingDestination" xml:space="preserve"><value>No hay ningún destino seleccionado. No se han cambiado archivos ni ajustes del servidor.</value></data>
+  <data name="ModInstallGuide.PendingActivation" xml:space="preserve"><value>La importación nunca inicia el servidor automáticamente. La activación depende del juego y del sistema de mods.</value></data>
+  <data name="ModInstallGuide.PendingRecovery" xml:space="preserve"><value>Haz una copia del servidor y del mundo antes de usar mods nuevos. La ruta elegida explicará qué se puede deshacer.</value></data>
+  <data name="ModInstallGuide.LayoutRecognized" xml:space="preserve"><value>Estructura y ruta del cargador reconocidas. Aquí no se verifican por completo las versiones, dependencias ni requisitos del cliente; consulta los requisitos del autor.</value></data>
+  <data name="ModInstallGuide.ManualCompatibility" xml:space="preserve"><value>Destino manual: compatibilidad no verificada. Una extensión coincidente no demuestra que el mod funcione con este juego o cargador.</value></data>
+  <data name="ModInstallGuide.LoaderMissing" xml:space="preserve"><value>Importación bloqueada: falta un cargador adecuado o el paquete no coincide con el seleccionado. Revisa los ajustes del servidor y la ayuda de configuración de mods.</value></data>
+  <data name="ModInstallGuide.ProviderCompatibility" xml:space="preserve"><value>Solo identificadores del proveedor. No se comprueban versiones, dependencias ni compatibilidad de plataforma. Confirma que cada elemento admite este servidor.</value></data>
+  <data name="ModInstallGuide.ProviderDestination" xml:space="preserve"><value>Synix guarda la lista ordenada de identificadores de {0}, no los archivos del ZIP. El juego/proveedor determina la ubicación de descarga.</value></data>
+  <data name="ModInstallGuide.LaunchArgument" xml:space="preserve"><value>Opción de inicio del servidor: {0}=&lt;identificadores ordenados&gt;</value></data>
+  <data name="ModInstallGuide.RequiredArguments" xml:space="preserve"><value>Parámetros de inicio necesarios: {0}</value></data>
+  <data name="ModInstallGuide.FileChanges" xml:space="preserve"><value>{0} archivos en el plan; se guardará una copia de {1} archivos existentes antes de reemplazarlos.</value></data>
+  <data name="ModInstallGuide.FilePreview" xml:space="preserve"><value>Selecciona un archivo a la izquierda para ver su destino completo. No se copia nada hasta confirmar la siguiente revisión.</value></data>
+  <data name="ModInstallGuide.ProviderActivation" xml:space="preserve"><value>Guarda los identificadores ordenados, inicia el servidor y revisa su registro de descarga/inicio. El ZIP elegido no fija la versión que descargará el juego/proveedor.</value></data>
+  <data name="ModInstallGuide.ManualActivation" xml:space="preserve"><value>Copiar archivos no instala un cargador ni registra/activa un mod. Sigue la ayuda de configuración y las instrucciones del autor; después inicia el servidor y revisa el registro.</value></data>
+  <data name="ModInstallGuide.ScenarioActivation" xml:space="preserve"><value>La importación no cambia el mundo activo. Usa Elegir escenario para seleccionar el escenario y su partida antes de iniciar. Las partidas existentes no se convierten automáticamente.</value></data>
+  <data name="ModInstallGuide.FileActivation" xml:space="preserve"><value>El cargador/sistema lee los archivos importados al iniciar el servidor. Completa primero la configuración adicional y los requisitos del cliente indicados por el autor; luego revisa el registro. Synix no inicia el servidor.</value></data>
+  <data name="ModInstallGuide.FileRecovery" xml:space="preserve"><value>Detén el servidor, selecciona un elemento importado y usa Revertir importación. Se restauran los archivos reemplazados y se eliminan los nuevos de esa importación; cambios posteriores pueden bloquearlo. No restaura cambios del mundo. Haz una copia completa antes de iniciar.</value></data>
+  <data name="ModInstallGuide.ProviderRecovery" xml:space="preserve"><value>Detén el servidor y edita la lista para quitar identificadores añadidos o restaurar el orden anterior. Esto no elimina archivos del proveedor ni restaura versiones anteriores o el mundo. Conserva la lista anterior y una copia completa antes de iniciar.</value></data>
+  <data name="ModInstallGuide.ScenarioRecovery" xml:space="preserve"><value>Un escenario activo o partidas existentes pueden impedir la eliminación.</value></data>
 </root>

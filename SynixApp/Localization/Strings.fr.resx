@@ -11393,4 +11393,30 @@ ARK téléchargera ce mod depuis {2} au démarrage du serveur. Synix ne copie ni
   <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
     <value>L’enregistrement a échoué et la configuration d’origine n’a pas pu être restaurée automatiquement. Avant de démarrer le serveur, vérifiez la configuration et sa sauvegarde : {0}</value>
   </data>
+  <data name="ModInstallGuide.Compatibility" xml:space="preserve"><value>Compatibilité</value></data>
+  <data name="ModInstallGuide.Destination" xml:space="preserve"><value>Destination de l’installation</value></data>
+  <data name="ModInstallGuide.Activation" xml:space="preserve"><value>Comment l’activer</value></data>
+  <data name="ModInstallGuide.Recovery" xml:space="preserve"><value>Comment annuler</value></data>
+  <data name="ModInstallGuide.Unknown" xml:space="preserve"><value>Non renseigné</value></data>
+  <data name="ModInstallGuide.Context" xml:space="preserve"><value>{0} • Version du jeu : {1} • Chargeur/système : {2}</value></data>
+  <data name="ModInstallGuide.PendingCompatibility" xml:space="preserve"><value>Choisissez un paquet et une destination adaptée pour voir ce que Synix peut vérifier.</value></data>
+  <data name="ModInstallGuide.PendingDestination" xml:space="preserve"><value>Aucune destination sélectionnée. Aucun fichier ni paramètre du serveur n’a été modifié.</value></data>
+  <data name="ModInstallGuide.PendingActivation" xml:space="preserve"><value>L’importation ne démarre jamais le serveur automatiquement. L’activation dépend du jeu et du système de mods.</value></data>
+  <data name="ModInstallGuide.PendingRecovery" xml:space="preserve"><value>Sauvegardez le serveur et le monde avant d’utiliser de nouveaux mods. La méthode choisie indiquera ce qui peut être annulé.</value></data>
+  <data name="ModInstallGuide.LayoutRecognized" xml:space="preserve"><value>Structure et destination du chargeur reconnues. Les versions du jeu, dépendances et exigences client ne sont pas entièrement vérifiées ici ; consultez les exigences de l’auteur.</value></data>
+  <data name="ModInstallGuide.ManualCompatibility" xml:space="preserve"><value>Destination manuelle — compatibilité non vérifiée. Une extension de fichier adaptée ne prouve pas que ce mod fonctionne avec ce jeu ou ce chargeur.</value></data>
+  <data name="ModInstallGuide.LoaderMissing" xml:space="preserve"><value>Importation bloquée : chargeur adapté absent ou paquet incompatible avec le chargeur sélectionné. Vérifiez les paramètres du serveur et l’aide à la configuration des mods.</value></data>
+  <data name="ModInstallGuide.ProviderCompatibility" xml:space="preserve"><value>Identifiants du fournisseur uniquement. Versions, dépendances et compatibilité de plateforme non vérifiées. Vérifiez que chaque élément prend en charge ce serveur.</value></data>
+  <data name="ModInstallGuide.ProviderDestination" xml:space="preserve"><value>Synix enregistre la liste ordonnée d’identifiants {0}, pas les fichiers du ZIP. Le jeu/fournisseur détermine le dossier de téléchargement.</value></data>
+  <data name="ModInstallGuide.LaunchArgument" xml:space="preserve"><value>Option de lancement du serveur : {0}=&lt;identifiants ordonnés&gt;</value></data>
+  <data name="ModInstallGuide.RequiredArguments" xml:space="preserve"><value>Options de lancement requises : {0}</value></data>
+  <data name="ModInstallGuide.FileChanges" xml:space="preserve"><value>{0} fichiers prévus ; {1} fichiers existants seront sauvegardés avant remplacement.</value></data>
+  <data name="ModInstallGuide.FilePreview" xml:space="preserve"><value>Sélectionnez un fichier à gauche pour sa destination complète. Aucune copie avant confirmation de l’étape suivante.</value></data>
+  <data name="ModInstallGuide.ProviderActivation" xml:space="preserve"><value>Enregistrez les identifiants ordonnés, démarrez vous-même le serveur et vérifiez son journal de téléchargement/démarrage. Le ZIP choisi ne fixe pas la version téléchargée.</value></data>
+  <data name="ModInstallGuide.ManualActivation" xml:space="preserve"><value>Copier les fichiers n’installe pas de chargeur et n’enregistre/n’active pas le mod. Suivez l’aide à la configuration et les instructions serveur de l’auteur, puis démarrez le serveur et vérifiez son journal.</value></data>
+  <data name="ModInstallGuide.ScenarioActivation" xml:space="preserve"><value>L’importation ne change pas le monde actif. Utilisez Choisir un scénario pour sélectionner le scénario et sa sauvegarde avant de démarrer. Les sauvegardes existantes ne sont pas converties automatiquement.</value></data>
+  <data name="ModInstallGuide.FileActivation" xml:space="preserve"><value>Le chargeur/système lit les fichiers importés au démarrage du serveur. Effectuez d’abord la configuration supplémentaire et les étapes client requises par l’auteur, puis vérifiez le journal. Synix ne démarre pas le serveur.</value></data>
+  <data name="ModInstallGuide.FileRecovery" xml:space="preserve"><value>Arrêtez le serveur, sélectionnez un élément importé et annulez l’importation. Les fichiers remplacés sont restaurés et les nouveaux retirés ; des modifications ultérieures peuvent bloquer l’opération. Les changements du monde ne sont pas annulés. Faites une sauvegarde complète avant de démarrer.</value></data>
+  <data name="ModInstallGuide.ProviderRecovery" xml:space="preserve"><value>Arrêtez le serveur puis retirez les identifiants ajoutés ou rétablissez leur ordre précédent. Cela ne supprime pas les fichiers du fournisseur et ne restaure ni anciennes versions ni monde. Conservez l’ancienne liste et une sauvegarde complète avant de démarrer.</value></data>
+  <data name="ModInstallGuide.ScenarioRecovery" xml:space="preserve"><value>Un scénario actif ou des sauvegardes existantes peuvent empêcher la suppression.</value></data>
 </root>

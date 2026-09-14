@@ -11548,4 +11548,30 @@ ARK will download this mod from {2} when you start the server. Synix does not co
   <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
     <value>Saving failed and the original configuration could not be restored automatically. Do not start the server until you review the configuration and its backup: {0}</value>
   </data>
+  <data name="ModInstallGuide.Compatibility" xml:space="preserve"><value>Compatibility</value></data>
+  <data name="ModInstallGuide.Destination" xml:space="preserve"><value>Where it will be added</value></data>
+  <data name="ModInstallGuide.Activation" xml:space="preserve"><value>How to activate it</value></data>
+  <data name="ModInstallGuide.Recovery" xml:space="preserve"><value>How to undo it</value></data>
+  <data name="ModInstallGuide.Unknown" xml:space="preserve"><value>Not recorded</value></data>
+  <data name="ModInstallGuide.Context" xml:space="preserve"><value>{0} • Game version: {1} • Loader/system: {2}</value></data>
+  <data name="ModInstallGuide.PendingCompatibility" xml:space="preserve"><value>Choose a package and a matching destination to see what Synix can check.</value></data>
+  <data name="ModInstallGuide.PendingDestination" xml:space="preserve"><value>No destination is selected. No server files or settings have been changed.</value></data>
+  <data name="ModInstallGuide.PendingActivation" xml:space="preserve"><value>Importing never starts the server automatically. Activation depends on the selected game and mod system.</value></data>
+  <data name="ModInstallGuide.PendingRecovery" xml:space="preserve"><value>Back up the server and world before using new mods. The selected route will explain what can be undone.</value></data>
+  <data name="ModInstallGuide.LayoutRecognized" xml:space="preserve"><value>Layout/loader route recognized. Game versions, dependencies and client requirements are not fully verified here; check the author's requirements.</value></data>
+  <data name="ModInstallGuide.ManualCompatibility" xml:space="preserve"><value>Manual destination — compatibility is unverified. A matching file extension does not prove this mod works with this game or loader.</value></data>
+  <data name="ModInstallGuide.LoaderMissing" xml:space="preserve"><value>Import blocked: a matching loader is missing or the package does not match the selected loader. Check server settings and Mod support &amp; setup.</value></data>
+  <data name="ModInstallGuide.ProviderCompatibility" xml:space="preserve"><value>Provider IDs only. Mod versions, dependencies and platform compatibility are not checked. Confirm that each provider item supports this server.</value></data>
+  <data name="ModInstallGuide.ProviderDestination" xml:space="preserve"><value>Synix saves the ordered {0} ID list, not the ZIP's mod files. The game/provider controls the download location.</value></data>
+  <data name="ModInstallGuide.LaunchArgument" xml:space="preserve"><value>Server launch option: {0}=&lt;ordered IDs&gt;</value></data>
+  <data name="ModInstallGuide.RequiredArguments" xml:space="preserve"><value>Required launch flags: {0}</value></data>
+  <data name="ModInstallGuide.FileChanges" xml:space="preserve"><value>{0} files in the plan; {1} existing files will be backed up before replacement.</value></data>
+  <data name="ModInstallGuide.FilePreview" xml:space="preserve"><value>Select a file on the left for its full destination. Nothing is copied until the next review is confirmed.</value></data>
+  <data name="ModInstallGuide.ProviderActivation" xml:space="preserve"><value>Save the ordered IDs, then start the server yourself and check its download/startup log. A selected ZIP does not pin the version downloaded by the game/provider.</value></data>
+  <data name="ModInstallGuide.ManualActivation" xml:space="preserve"><value>Copying files does not install a loader or register/enable a mod. Follow Mod support &amp; setup and the author's server instructions, then start the server yourself and check its log.</value></data>
+  <data name="ModInstallGuide.ScenarioActivation" xml:space="preserve"><value>Import does not switch the active world. Use Choose Scenario to select this scenario and its save before starting. Existing saves are not converted automatically.</value></data>
+  <data name="ModInstallGuide.FileActivation" xml:space="preserve"><value>The selected loader/system reads the imported files when you start the server. Complete the author's extra setup and client requirements first, then check the startup log. Synix does not start the server.</value></data>
+  <data name="ModInstallGuide.FileRecovery" xml:space="preserve"><value>Stop the server, select an imported item and use Roll Back Import. This restores replaced files and removes new files from that import; later edits can block rollback. It does not restore world changes. Make a full backup before starting.</value></data>
+  <data name="ModInstallGuide.ProviderRecovery" xml:space="preserve"><value>Stop the server and edit the ID list to remove additions or restore its previous order. This does not delete provider files or restore older mod versions/world data. Keep the old ID list and a full server backup before starting.</value></data>
+  <data name="ModInstallGuide.ScenarioRecovery" xml:space="preserve"><value>An active scenario or existing saves may prevent removal.</value></data>
 </root>

@@ -22,6 +22,7 @@ internal sealed class ModImportWizard : Form
 	private readonly ModernSettingsComboBox _choices, _roots;
 	private readonly RichTextBox _source, _details;
 	private readonly DataGridView _grid;
+	private readonly ModInstallGuidancePanel _guidance;
 	private readonly Label _status;
 	private ModImportAnalysis? _analysis;
 	private PreparedModPackage? _prepared;
@@ -37,15 +38,21 @@ internal sealed class ModImportWizard : Form
 		_server = server;
 		Name = "modImportWizard";
 		Text = T("Title");
-		ClientSize = new Size(1060, 790);
+		ClientSize = new Size(1120, 830);
 		MinimumSize = new Size(1000, 760);
 		StartPosition = FormStartPosition.CenterParent;
 		ShowInTaskbar = false;
 		Font = new Font("Segoe UI", 10F);
 		BackColor = SettingsPalette.Window;
 		TableLayoutPanel layout = UniversalModDialogStyle.Layout(this, [44, 56, 48, 54, 44, 44, -1, 108, 66, 48]);
+		layout.ColumnCount = 2;
+		layout.ColumnStyles.Clear();
+		layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60));
+		layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40));
 		layout.Controls.Add(UniversalModDialogStyle.Label(Text, heading: true), 0, 0);
 		layout.Controls.Add(UniversalModDialogStyle.Label(T("Help", server.Game)), 0, 1);
+		layout.SetColumnSpan(layout.GetControlFromPosition(0, 0)!, 2);
+		layout.SetColumnSpan(layout.GetControlFromPosition(0, 1)!, 2);
 		FlowLayoutPanel pickers = new() { Dock = DockStyle.Fill, WrapContents = false };
 		_file = Button("File", "chooseModPackageFile", 250);
 		_folder = Button("Folder", "chooseModPackageFolder", 230);
@@ -66,6 +73,10 @@ internal sealed class ModImportWizard : Form
 		guide.Click += (_, _) => { using GameModSupportDialog dialog = new(server.Game); dialog.ShowDialog(this); };
 		pickers.Controls.Add(guide);
 		layout.Controls.Add(pickers, 0, 2);
+		layout.SetColumnSpan(pickers, 2);
+		_guidance = new() { Margin = new Padding(12, 3, 3, 3) };
+		layout.Controls.Add(_guidance, 1, 3);
+		layout.SetRowSpan(_guidance, 5);
 		_source = Details("modImportSource");
 		_source.Text = T("Empty");
 		layout.Controls.Add(_source, 0, 3);
@@ -100,7 +111,9 @@ internal sealed class ModImportWizard : Form
 		_status = UniversalModDialogStyle.Label(T("Empty"));
 		_status.Name = "modImportWizardStatus";
 		layout.Controls.Add(_status, 0, 8);
+		layout.SetColumnSpan(_status, 2);
 		FlowLayoutPanel actions = UniversalModDialogStyle.Actions(layout, 9);
+		layout.SetColumnSpan(actions, 2);
 		_continue = Button("Continue", "confirmModImportPlan", 240);
 		_continue.UseAccentStyle = true;
 		_continue.Click += (_, _) => { if (!_reading && Selection != null && PackageSha256.Length > 0) { DialogResult = DialogResult.OK; Close(); } };
@@ -192,6 +205,7 @@ internal sealed class ModImportWizard : Form
 			}
 			_status.Text = T("ProviderWarning", choice.Target.ProviderName);
 			PackageSha256 = _analysis.PackageSha256;
+			_guidance.ShowGuidance(ModInstallGuidance.Create(_server, choice));
 		}
 		else
 		{
@@ -210,6 +224,7 @@ internal sealed class ModImportWizard : Form
 			_status.Text = !choice.Ready ? T("LoaderMissing") : choice.Profile.UserConfigured ? T("ManualWarning", choice.Target.RelativePath) :
 				T("Summary", preview.Files.Count, preview.Files.Count(file => file.ReplacesFile));
 			PackageSha256 = preview.PackageSha256;
+			_guidance.ShowGuidance(ModInstallGuidance.Create(_server, choice, preview));
 		}
 		if (_grid.Rows.Count > 0) { _grid.CurrentCell = _grid.Rows[0].Cells[0]; _details.Text = _grid.Rows[0].Tag as string ?? ""; }
 		if (choice.Ready) Selection = choice with { Selection = root };
@@ -229,6 +244,7 @@ internal sealed class ModImportWizard : Form
 	{
 		Selection = null; PackageSha256 = "";
 		_grid.Rows.Clear(); _details.Clear(); _continue.Enabled = false;
+		_guidance.ShowGuidance(ModInstallGuidance.Pending);
 	}
 	private void SetReading(bool reading)
 	{

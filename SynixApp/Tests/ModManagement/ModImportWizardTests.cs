@@ -15,6 +15,7 @@ using System.Drawing.Imaging;
 using System.IO.Compression;
 using System.Text;
 using System.Windows.Forms;
+using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Design.Controls;
 using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixEngine.ModManagement;
@@ -158,6 +159,9 @@ public sealed class ModImportWizardTests : IDisposable
 		Assert.True(wizard.Selection.Target.CanManageIds);
 		Assert.Equal("123456", Assert.Single(wizard.ProviderMods).ModId);
 		Assert.Contains("not a local file upload", Find(wizard, "modImportWizardStatus").Text);
+		Assert.Contains("-mods=<ordered IDs>", Find(wizard, "modGuideDestination").Text);
+		Assert.Contains("does not pin the version", Find(wizard, "modGuideActivation").Text);
+		Assert.Contains("does not delete provider files", Find(wizard, "modGuideRecovery").Text);
 		Assert.False(Find(wizard, "chooseModDestination").Visible);
 		Assert.Empty(_server.ExtraArgs);
 		Assert.Empty(Directory.GetFileSystemEntries(_server.InstallPath));
@@ -196,6 +200,23 @@ public sealed class ModImportWizardTests : IDisposable
 			Assert.True(details.ReadOnly && details.Multiline && details.WordWrap);
 			Assert.Equal(SettingsPalette.Input, details.BackColor);
 			Assert.Contains(Path.Combine(_server.InstallPath, "Extensions", "Mods", "B", "main.lua"), details.Text);
+			string guidanceBeforeSelection = Find(wizard, "modGuideDestination").Text;
+			grid.CurrentCell = grid.Rows[0].Cells[0];
+			Assert.Equal(guidanceBeforeSelection, Find(wizard, "modGuideDestination").Text);
+			foreach (string section in new[] { "Compatibility", "Destination", "Activation", "Recovery" })
+			{
+				RichTextBox guide = Assert.IsAssignableFrom<RichTextBox>(Find(wizard, "modGuide" + section));
+				Assert.True(guide.ReadOnly && guide.Multiline && guide.WordWrap);
+				Assert.Equal(RichTextBoxScrollBars.Vertical, guide.ScrollBars);
+				Assert.Equal(SettingsPalette.Input, guide.BackColor);
+				Assert.False(string.IsNullOrWhiteSpace(guide.Text));
+				Assert.DoesNotContain("ModInstallGuide.", guide.Text);
+				Assert.True(guide.Height >= 32);
+				Rectangle bounds = wizard.RectangleToClient(guide.RectangleToScreen(guide.ClientRectangle));
+				Assert.True(wizard.ClientRectangle.Contains(bounds));
+			}
+			ThemeManager.Apply(Find(wizard, "modInstallGuidance"));
+			Assert.Equal(SettingsPalette.Input, Find(wizard, "modGuideCompatibility").BackColor);
 			Control confirm = Find(wizard, "confirmModImportPlan"), destination = Find(wizard, "chooseModDestination");
 			Assert.False(confirm.Bounds.IntersectsWith(destination.Bounds));
 			foreach (Control button in new[] { confirm, destination, Find(wizard, "chooseModPackageFolder") })
@@ -209,7 +230,66 @@ public sealed class ModImportWizardTests : IDisposable
 			Assert.Empty(wizard.PackageSha256);
 			Assert.Empty(grid.Rows.Cast<DataGridViewRow>());
 			Assert.False(Find(wizard, "confirmModImportPlan").Enabled);
+			Assert.Equal(ModInstallGuidance.Pending.Destination, Find(wizard, "modGuideDestination").Text);
+			Assert.DoesNotContain(_server.InstallPath, Find(wizard, "modGuideDestination").Text);
 			Assert.Empty(Directory.GetFileSystemEntries(_server.InstallPath));
+		}
+		finally { LocalizationManager.Initialize(previous); }
+	});
+
+	[Fact]
+	public void MissingLoaderReviewStaysBlockedAndExplainsWhy() => WorkflowUiTest.Run(() =>
+	{
+		_server.Game = "Minecraft"; _server.MinecraftLoader = "Forge";
+		using ModImportWizard wizard = new(_server);
+		Show(wizard); Read(wizard, JarZip("Example.jar", "fabric.mod.json"));
+		Assert.Null(wizard.Selection);
+		Assert.False(Find(wizard, "confirmModImportPlan").Enabled);
+		Assert.Contains("Import blocked", Find(wizard, "modGuideCompatibility").Text);
+		Assert.Contains("Forge", Find(wizard, "modGuideCompatibility").Text);
+		Assert.Empty(Directory.GetFileSystemEntries(_server.InstallPath));
+	});
+
+	[Theory]
+	[InlineData("en-US")]
+	[InlineData("de-DE")]
+	[InlineData("fr-FR")]
+	[InlineData("es-ES")]
+	public void ProviderIdEditorShowsRecoveryAndExactConfigDestinationsWithoutSaving(string language) => WorkflowUiTest.Run(() =>
+	{
+		string previous = LocalizationManager.CurrentLanguageCode;
+		try
+		{
+			LocalizationManager.Initialize(language);
+			_server.Game = ArkModPackageReader.Evolved;
+			ModSystemProfile profile = ModSystemCatalog.GetProfiles(_server).Single(item => item.Id == "ark-survival-evolved-workshop");
+			ModInstallTarget target = profile.Targets.Single();
+			using ProviderModIdEditor editor = new(target.ProviderName, target.MaximumIds, ["123", "456"],
+				ModInstallGuidance.Create(_server, new(profile, target, "", true)));
+			Show(editor); editor.Size = editor.MinimumSize;
+			Assert.Equal(new[] { "123", "456" }, editor.ModIds);
+			Assert.Contains("GameUserSettings.ini", Find(editor, "modGuideDestination").Text);
+			Assert.Contains("[ModInstaller] ModIDS", Find(editor, "modGuideDestination").Text);
+			Assert.Contains("-automanagedmods", Find(editor, "modGuideDestination").Text);
+			foreach (string section in new[] { "Compatibility", "Destination", "Activation", "Recovery" })
+			{
+				Control guide = Find(editor, "modGuide" + section);
+				Assert.DoesNotContain("ModInstallGuide.", guide.Text);
+				Rectangle bounds = editor.RectangleToClient(guide.RectangleToScreen(guide.ClientRectangle));
+				Assert.True(editor.ClientRectangle.Contains(bounds));
+				Assert.True(guide.Height >= 32);
+			}
+			foreach (string name in new[] { "cancelProviderModIds", "saveProviderModIds" })
+			{
+				Control button = Find(editor, name);
+				Assert.True(TextRenderer.MeasureText(button.Text, button.Font).Width + 24 <= button.Width);
+				Assert.True(editor.ClientRectangle.Contains(editor.RectangleToClient(button.RectangleToScreen(button.ClientRectangle))));
+			}
+			Find(editor, "providerModIds").Text = "456\r\n789";
+			Assert.Equal(new[] { "456", "789" }, editor.ModIds);
+			Assert.Empty(Directory.GetFileSystemEntries(_server.InstallPath));
+			Assert.Empty(_server.ExtraArgs);
+			Capture(editor, "provider-editor-" + language);
 		}
 		finally { LocalizationManager.Initialize(previous); }
 	});
