@@ -32,12 +32,14 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		ServerRegistry.Servers.Add(_server);
 	}
 
-	private string FileAt(string relative, string text, Encoding? encoding = null)
+	// Keep fixture paths independent of their contents: a password-bearing test value
+	// must not make a path-returning helper look like a credential lookup to CodeQL.
+	private string FixturePath(string relative) => ModPathSafety.Resolve(_server.InstallPath, relative);
+
+	private static void WriteFixture(string path, string text, Encoding? encoding = null)
 	{
-		string path = ModPathSafety.Resolve(_server.InstallPath, relative);
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		File.WriteAllText(path, text, encoding ?? new UTF8Encoding(false));
-		return path;
 	}
 
 	private void Save(string path, string text, Func<bool>? persist = null, ConfigFormat format = ConfigFormat.StandardINI) =>
@@ -69,7 +71,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		_server.Game = game;
 		GameServer other = new() { ServerName = "Other", Game = game, InstallPath = Path.Combine(_root, "other"), MaxPlayers = 9 };
 		ServerRegistry.Servers.Add(other);
-		string path = FileAt(ArkPath, "[ServerSettings]\r\nServerAdminPassword=old\r\n", Encoding.Unicode);
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, "[ServerSettings]\r\nServerAdminPassword=old\r\n", Encoding.Unicode);
 		string storage = Path.Combine(_root, "servers.json");
 		string backupFolder = Core.Instance.GetActiveServerBackupFolder(_server);
 		int saves = 0;
@@ -102,7 +105,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	public void ActualEditorSaveThenReopenedServerSetupDisplaysNewPasswords(string game) => WorkflowUiTest.Run(() =>
 	{
 		_server.Game = game;
-		string path = FileAt(ArkPath, "[ServerSettings]\nServerPassword=old\nServerAdminPassword=old-admin\n");
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, "[ServerSettings]\nServerPassword=old\nServerAdminPassword=old-admin\n");
 		using (ServerConfig editor = new(path, ConfigFormat.StandardINI, _server))
 		{
 			string storage = Path.Combine(_root, "servers.json");
@@ -125,7 +129,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	[Fact]
 	public void SavingUneditedConfigRepairsDriftAndRepeatedSaveDoesNotReencryptOrPersist()
 	{
-		string path = FileAt(ArkPath, ArkConfig);
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, ArkConfig);
 		int saves = 0;
 		Save(path, ArkConfig, () => { saves++; return true; });
 		string ciphertext = _server.AdminPassword;
@@ -141,7 +146,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		_server.Password = Core.Protect("old-password");
 		_server.AdminPassword = Core.Protect("old-admin");
 		string text = "[ServerSettings]\nServerPassword=\n[Plugin]\nServerAdminPassword=unrelated\n";
-		string path = FileAt(ArkPath, text);
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, text);
 		Save(path, text);
 		Assert.Empty(_server.Password);
 		Assert.Equal("old-admin", Core.Reveal(_server.AdminPassword));
@@ -153,7 +159,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	[InlineData("ShooterGame/Saved/Config/WindowsServer/Other.ini")]
 	public void UnmappedFilesDoNotUpdateTheServerEvenWhenKeysLookSimilar(string relative)
 	{
-		string path = FileAt(relative, "ServerAdminPassword=old");
+		string path = FixturePath(relative);
+		WriteFixture(path, "ServerAdminPassword=old");
 		Save(path, "ServerAdminPassword=new", () => throw new InvalidOperationException("Must not persist"));
 		Assert.Empty(_server.AdminPassword);
 		Assert.Equal("ServerAdminPassword=new", File.ReadAllText(path));
@@ -166,7 +173,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	[InlineData("[ServerSettings]\nServerAdminPassword=one\nServerAdminPassword=two")]
 	public void InvalidOrAmbiguousValuesRejectBothWrites(string text)
 	{
-		string path = FileAt(ArkPath, "[ServerSettings]\nServerAdminPassword=old");
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, "[ServerSettings]\nServerAdminPassword=old");
 		Assert.Throws<InvalidDataException>(() => Save(path, text));
 		Assert.Equal("[ServerSettings]\nServerAdminPassword=old", File.ReadAllText(path));
 		Assert.Empty(_server.AdminPassword);
@@ -180,7 +188,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	{
 		_server.AdminPassword = Core.Protect("before");
 		string encrypted = _server.AdminPassword;
-		string path = FileAt(ArkPath, "[ServerSettings]\nServerAdminPassword=before");
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, "[ServerSettings]\nServerAdminPassword=before");
 		File.WriteAllText(path + ".synix.bak", "older backup");
 		Assert.ThrowsAny<Exception>(() => Save(path, ArkConfig, () => throws ? throw new IOException("fixture failure") : false));
 		Assert.Equal("[ServerSettings]\nServerAdminPassword=before", File.ReadAllText(path));
@@ -193,7 +202,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	[Fact]
 	public void ExternalEditAfterOpenIsNotOverwritten()
 	{
-		string path = FileAt(ArkPath, ArkConfig);
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, ArkConfig);
 		string? hash = MinecraftContentTransactions.HashFile(path);
 		File.WriteAllText(path, "external edit");
 		Assert.Throws<InvalidDataException>(() => ServerConfigurationSync.Save(_server, path, ArkConfig, ConfigFormat.StandardINI, hash, () => true));
@@ -211,7 +221,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	public void DifferentGameHandlersAndFormatsUpdateTheSameServerRecord(string game, string relative, ConfigFormat format, string text)
 	{
 		_server.Game = game;
-		string path = FileAt(relative, text);
+		string path = FixturePath(relative);
+		WriteFixture(path, text);
 		int saves = 0;
 		Save(path, text, () => { saves++; return true; }, format);
 		Assert.Equal("Updated server", _server.ServerName);
@@ -239,7 +250,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		_server.Password = "legacy-password";
 		_server.AdminPassword = "legacy-admin";
 		_server.AuthenticationToken = "legacy-token";
-		string path = FileAt(ArkPath, "[ServerSettings]\nServerAdminPassword=updated-admin");
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, "[ServerSettings]\nServerAdminPassword=updated-admin");
 		bool Persist() { _ = Core.SerializeServersForStorage([_server]); return !fail; }
 		if (fail)
 		{
@@ -262,7 +274,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	[Fact]
 	public void IniCasingStillMatchesTheSharedSetting()
 	{
-		string path = FileAt(ArkPath, "[serversettings]\nserveradminpassword=updated-admin");
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, "[serversettings]\nserveradminpassword=updated-admin");
 		Save(path, File.ReadAllText(path));
 		Assert.Equal("updated-admin", Core.Reveal(_server.AdminPassword));
 	}
@@ -270,7 +283,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	[Fact]
 	public void RollbackDoesNotOverwriteAnExternalEditMadeDuringFailedPersistence()
 	{
-		string path = FileAt(ArkPath, "[ServerSettings]\nServerAdminPassword=before");
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, "[ServerSettings]\nServerAdminPassword=before");
 		Assert.Throws<IOException>(() => Save(path, ArkConfig, () => { File.WriteAllText(path, "external edit"); return false; }));
 		Assert.Equal("external edit", File.ReadAllText(path));
 		Assert.Equal("[ServerSettings]\nServerAdminPassword=before", File.ReadAllText(path + ".synix.bak"));
@@ -282,7 +296,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 	{
 		_server.Game = "Empyrion - Galactic Survival";
 		const string text = "ServerConfig:\n  Srv_Port: 44200\n  Srv_Name: 'YAML server'\n  Srv_Password: 'yaml-password'\n  Srv_MaxPlayers: 12\nGameConfig:\n  Seed: 4567\n  CustomScenario: 'Custom world'\n";
-		string path = FileAt("dedicated.yaml", text);
+		string path = FixturePath("dedicated.yaml");
+		WriteFixture(path, text);
 		Save(path, text, format: ConfigFormat.YAML);
 		Assert.Equal("YAML server", _server.ServerName);
 		Assert.Equal(44200, _server.Port);
@@ -315,8 +330,8 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		ConfigurationContext context = new(_server, new("fixture-password", "fixture-admin", "fixture-rcon"), "Original", "127.0.0.1", "127.0.0.1");
 		if (game == "ASTRONEER")
 		{
-			FileAt("Astro/Saved/Config/WindowsServer/AstroServerSettings.ini", "PublicIP=127.0.0.1\nOwnerName=\nOwnerGuid=0");
-			FileAt("Astro/Saved/Config/WindowsServer/Engine.ini", "[URL]\nPort=44001");
+			WriteFixture(FixturePath("Astro/Saved/Config/WindowsServer/AstroServerSettings.ini"), "PublicIP=127.0.0.1\nOwnerName=\nOwnerGuid=0");
+			WriteFixture(FixturePath("Astro/Saved/Config/WindowsServer/Engine.ini"), "[URL]\nPort=44001");
 		}
 		ConfigurationApplyResult result = definition.Apply(context);
 		Assert.True(result.Succeeded, result.Message);
