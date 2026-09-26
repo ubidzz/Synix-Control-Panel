@@ -18,11 +18,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("lobby_name", context => context.Server.ServerName),
-			new("password", context => context.Passwords.ServerPassword),
-			new("max_players", context => context.Server.MaxPlayers.ToString()),
-			new("connection_dedicated_port", context => context.Server.Port.ToString()),
-			new("query_dedicated_port", context => context.Server.QueryPort.ToString())
+			new("lobby_name", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("password", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("max_players", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers),
+			new("connection_dedicated_port", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("query_dedicated_port", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort)
 		];
 
 		public override string GameName => "American Truck Simulator";

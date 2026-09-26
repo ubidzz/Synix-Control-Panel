@@ -16,6 +16,7 @@ using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.SynixEngine.ModManagement;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -172,11 +173,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			};
 			contextMenuStrip.Items.Add(_satisfactoryControlMenuItem);
 			_modPluginManagerMenuItem = new ToolStripMenuItem(
-				LocalizationManager.Get("Menu.ModPluginManager"));
+				LocalizationManager.Get("Menu.ModPluginManager"))
+			{
+				Visible = false,
+				Enabled = false
+			};
 			_modPluginManagerMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
-				if (server == null)
+				if (server == null || !ModSystemCatalog.CanOpenManager(server))
 					return;
 				using ModPluginManager dialog = new(server);
 				dialog.ShowDialog(this);
@@ -190,7 +195,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				if (server == null ||
 					!CanShowLiveServerActions(server))
 					return;
-				if (!GameDatabase.SupportsPlayerManagement(server))
+				if (GameDatabase.IsMinecraft(server.Game) || !GameDatabase.SupportsPlayerManagement(server))
 				{
 					return;
 				}
@@ -199,13 +204,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			};
 
 			_minecraftConsoleMenuItem = new ToolStripMenuItem(
-				LocalizationManager.Get("Menu.MinecraftServerConsole"));
+				LocalizationManager.Get("MinecraftWorkspace.Title"));
 			_minecraftConsoleMenuItem.Click += (_, _) =>
 			{
 				GameServer? server = GetSelectedServer();
 				if (server == null || !GameDatabase.IsMinecraft(server.Game))
 					return;
-				using MinecraftConsoleDialog dialog = new(server);
+				using MinecraftControlCenter dialog = new(server);
 				dialog.ShowDialog(this);
 			};
 
@@ -257,7 +262,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 					LocalizationManager.Get("Menu.PlayerManagementCenter");
 			if (_minecraftConsoleMenuItem != null)
 				_minecraftConsoleMenuItem.Text =
-					LocalizationManager.Get("Menu.MinecraftServerConsole");
+					LocalizationManager.Get("MinecraftWorkspace.Title");
 			if (_liveProcessDetailsMenuItem != null)
 				_liveProcessDetailsMenuItem.Text =
 					LocalizationManager.Get("Menu.LiveProcessDetails");
@@ -527,6 +532,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			Color? textColor,
 			bool isBold)
 		{
+			technicalMessage = SecretRedactor.Redact(technicalMessage);
+			displayedMessage = SecretRedactor.Redact(displayedMessage);
 			FileHandler.QueueLog(
 				"Synix_Log",
 				$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {technicalMessage}");
@@ -1104,7 +1111,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				MessageBoxIcon.Information,
 				MessageBoxDefaultButton.Button2);
 			if (confirmation == DialogResult.Yes)
-				await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual);
+			{
+				if (!await Core.Instance.ExecuteBackup(selectedServer, StartContext.Manual))
+					LocalizedMessageBox.Show(this, LocalizationManager.Get("Backup.Creation.Failed"),
+						LocalizationManager.Get("Backup.Notification.Failed.Title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 		}
 
 		private async void btnRestoreServerBackup_Click(object sender, EventArgs e)
@@ -1163,7 +1174,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				selectedServer,
 				selectedBackup,
 				progress);
-
 			LocalizedMessageBox.Show(
 				this,
 				result.Message,
@@ -1381,31 +1391,36 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			}
 		}
 
+		internal static void UpdateModPluginManagerMenuItem(ToolStripMenuItem item, GameServer? server)
+		{
+			bool supported = ModSystemCatalog.CanOpenManager(server);
+			item.Visible = supported;
+			item.Enabled = supported;
+		}
+
+		internal static void UpdatePlayerManagementMenuItem(ToolStripMenuItem item, GameServer? server)
+		{
+			bool show = server != null && !GameDatabase.IsMinecraft(server.Game) &&
+				GameDatabase.SupportsPlayerManagement(server) && CanShowLiveServerActions(server);
+			item.Visible = show;
+			item.Enabled = show;
+		}
+
 		private async void btnServerOptionsMenu_Click(object sender, EventArgs e)
 		{
+			if (_modPluginManagerMenuItem != null)
+				UpdateModPluginManagerMenuItem(_modPluginManagerMenuItem, GetSelectedServer());
+			if (_playerManagementMenuItem != null)
+				UpdatePlayerManagementMenuItem(_playerManagementMenuItem, GetSelectedServer());
 			if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem is GameServer selectedServer)
 			{
 				bool isMinecraft = GameDatabase.IsMinecraft(selectedServer.Game);
 				if (_satisfactoryControlMenuItem != null)
 					_satisfactoryControlMenuItem.Visible = GameDatabase.IsSatisfactory(selectedServer.Game);
-				bool isMinecraftBedrock = MinecraftControlProfile.IsBedrock(selectedServer);
 				GameInfo? selectedGameData = GameDatabase.GetGame(selectedServer.Game);
 				bool supportsConnectionTesting =
 					GameDatabase.SupportsManualConnectionTesting(selectedGameData);
-				bool supportsPlayerManagement =
-					GameDatabase.SupportsPlayerManagement(selectedServer);
 				bool isRunning = CanShowLiveServerActions(selectedServer);
-				if (_modPluginManagerMenuItem != null)
-				{
-					_modPluginManagerMenuItem.Visible = !isMinecraftBedrock;
-					_modPluginManagerMenuItem.Enabled = !isMinecraftBedrock;
-				}
-				if (_playerManagementMenuItem != null)
-				{
-					bool showPlayerManagement = isRunning && supportsPlayerManagement;
-					_playerManagementMenuItem.Visible = showPlayerManagement;
-					_playerManagementMenuItem.Enabled = showPlayerManagement;
-				}
 				if (_liveProcessDetailsMenuItem != null)
 				{
 					_liveProcessDetailsMenuItem.Visible = isRunning;

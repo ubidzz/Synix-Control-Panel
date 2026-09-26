@@ -1,0 +1,2303 @@
+{
+  "schemaVersion": 1,
+  "scope": "Server-side mod/plugin methods. Documentation review is not live-server certification or automatic-import support. NeedsVerification means inconclusive evidence, not unsupported.",
+  "entries": [
+    {
+      "gameId": "7-days-to-die",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Native mod folders",
+        "Community server plugins"
+      ],
+      "notes": "Native mod folders require ModInfo.xml. Locate the active user-data Mods folder for this server version; do not confuse client-only mods or a loader download with a ready server mod.",
+      "sources": [
+        "https://community.thefunpimps.com/threads/what-is-the-new-layout-for-modinfo-xml-v2.32514/",
+        "https://umod.org/documentation/games"
+      ]
+    },
+    {
+      "gameId": "abiotic-factor",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "action-source",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "age-of-chivalry",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in ageofchivalry/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "airmen",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "alien-swarm-reactive-drop",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in reactivedrop/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "america-s-army-proving-grounds",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "american-truck-simulator",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Modded session support"
+      ],
+      "notes": "Export server packages from a client with the desired content. SCS says the dedicated server does not need extra DLC/mod data; do not upload a normal client mod ZIP as a server plugin.",
+      "sources": [
+        "https://modding.scssoft.com/wiki/Documentation/Tools/Dedicated_Server"
+      ]
+    },
+    {
+      "gameId": "angels-fall-first",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "archean",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Steam Workshop mods",
+        "Local mods"
+      ],
+      "notes": "Download Workshop content, configure external_mods_dir and enable each repository mod name in the world's mods.txt. Folder names are not the activation names.",
+      "sources": [
+        "https://wiki.archean.space/en/multiplayer/settingup.html"
+      ]
+    },
+    {
+      "gameId": "ark-survival-ascended",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "CurseForge provider mods"
+      ],
+      "notes": "Use ordered CurseForge project IDs with the game's -mods argument. Cooked WindowsServer packages and provider identity must match; copying a .uplugin folder alone does not register a provider-managed mod.",
+      "sources": [
+        "https://arksa.curseforge.com/",
+        "https://docs.curseforge.com/docs/capabilities/mod-installation-methods/using-different-methods/"
+      ]
+    },
+    {
+      "gameId": "ark-survival-evolved",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Steam Workshop mods"
+      ],
+      "notes": "Use ASE Workshop IDs with the server's active mod list and download mechanism. ASE .mod packages are not ASA CurseForge .uplugin packages.",
+      "sources": [
+        "https://steamcommunity.com/app/346110/workshop/"
+      ]
+    },
+    {
+      "gameId": "arma-3",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Workshop/local mods",
+        "Server-only mods"
+      ],
+      "notes": "Keep each mod's Addons/signature files together. Configure -mod or -serverMod and required keys for this game; copying a folder does not enable it.",
+      "sources": [
+        "https://community.bistudio.com/wiki/Arma_3:_Server_Config_File"
+      ]
+    },
+    {
+      "gameId": "arma-reforger",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Bohemia Workshop mods",
+        "Local testing add-ons"
+      ],
+      "notes": "Use game.mods GUID entries in the server JSON. Local -addons/-addonsDir testing is a separate hosting mode, not Steam Workshop ID installation.",
+      "sources": [
+        "https://community.bistudio.com/wiki/Arma_Reforger:Server_Config",
+        "https://community.bistudio.com/wiki/Arma_Reforger:Server_Hosting"
+      ]
+    },
+    {
+      "gameId": "aska",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "assetto-corsa",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Custom cars/tracks",
+        "AssettoServer extensions"
+      ],
+      "notes": "Content and configuration/checksums must match the chosen car and track. AssettoServer is a separate compatible server implementation, not a generic file-copy plugin loader.",
+      "sources": [
+        "https://github.com/compujuckel/AssettoServer",
+        "https://github.com/compujuckel/assettoserver-docs/blob/master/docs/thebeginnersguide.md"
+      ]
+    },
+    {
+      "gameId": "assetto-corsa-competizione",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "astroneer",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "atlas",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "automobilista-2",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "avorion",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "barotrauma",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Content packages"
+      ],
+      "notes": "Keep each content package and filelist.xml together and enable packages in the server's configuration. The published guide flags version-dependent details; verify current paths.",
+      "sources": [
+        "https://barotraumagame.com/wiki/Enabling_Mods_on_a_Dedicated_Server"
+      ]
+    },
+    {
+      "gameId": "battle-splash-2-0",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "battlebit-remastered",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Community API modules"
+      ],
+      "notes": "BattleBitAPIRunner loads C# modules for a separate API endpoint connected to the community server. It is not the game executable or a mod folder inside it; configure the runner and module dependencies separately.",
+      "sources": [
+        "https://github.com/BattleBit-Community-Servers/BattleBitAPIRunner"
+      ]
+    },
+    {
+      "gameId": "beammp",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Server Lua plugins",
+        "Client mod ZIPs"
+      ],
+      "notes": "Use the configured ResourceFolder. Server/<PluginName> needs a top-level .lua script; Client keeps each mod .zip intact. Custom maps also require the Map setting.",
+      "sources": [
+        "https://docs.beammp.com/server/manual/"
+      ]
+    },
+    {
+      "gameId": "beasts-of-bermuda",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "beyond-the-wire",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "black-mesa",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in bms/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "blackwake",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "blade-symphony",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod maintains game or engine support. Use the correct game/version-specific loader build; verify its game folder before importing plugins.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "brainbread-2",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "chivalry-deadliest-warrior",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "chivalry-medieval-warfare",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "citadel-forged-with-fire",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "codename-cure",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "colony-survival",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Server mods"
+      ],
+      "notes": "Server-side code mods exist, including the developer's shared-stockpile mod. Package layout, dependencies and world activation depend on the game/mod version; no generic DLL destination is assumed.",
+      "sources": [
+        "https://github.com/pipliz/Pandaros.SharedStockpile"
+      ]
+    },
+    {
+      "gameId": "conan-exiles",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "PAK mods",
+        "Steam Workshop mods"
+      ],
+      "notes": "Local .pak files need an ordered ConanSandbox/Mods/modlist.txt. Clients must use compatible mod versions and order. Importing files and activating them are distinct steps.",
+      "sources": [
+        "https://forums.funcom.com/t/conan-exiles-dedicated-server-launcher-official-version-1-9-1-beta/21699/26",
+        "https://forums.funcom.com/t/mods-on-microsoft-store-pc-and-how-to-install-them/168411"
+      ]
+    },
+    {
+      "gameId": "contagion",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod includes support for this game/engine. Use a compatible Metamod:Source and SourceMod build and verify the game folder; dependencies and extension binaries must match the server platform.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "core-keeper",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SDK mods"
+      ],
+      "notes": "Extract each server-compatible mod into its own CoreKeeperServer_Data/StreamingAssets/Mods subfolder. Dedicated servers require manual mod file management.",
+      "sources": [
+        "https://github.com/CoreKeeperMods/Core-Keeper-Docs/blob/main/playing-with-mods/installing-mods/on-dedicated-servers.md"
+      ]
+    },
+    {
+      "gameId": "counter-strike-1-6",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "counter-strike-condition-zero",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "counter-strike-source",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in cstrike/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "craftopia",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "creativerse",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "cryofall",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "cubic-odyssey",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "d-a-t-a",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "d-i-p-r-i-p",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod maintains game or engine support. Use the correct game/version-specific loader build; verify its game folder before importing plugins.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "dark-and-light",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "dark-messiah-of-might-magic-dedicated-server",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod maintains game or engine support. Use the correct game/version-specific loader build; verify its game folder before importing plugins.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "darkest-hour-europe-44-45",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "day-of-defeat",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "day-of-defeat-source",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in dod/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "day-of-dragons",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "day-of-infamy",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in doi/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "days-of-war",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "dayz",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Workshop/local mods",
+        "Server-only mods"
+      ],
+      "notes": "Keep each mod's Addons/signature files together. Configure -mod or -serverMod and required keys for this game; copying a folder does not enable it.",
+      "sources": [
+        "https://community.bistudio.com/wiki/DayZ:Modding_Structure"
+      ]
+    },
+    {
+      "gameId": "deadlived",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "deadpoly",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "deadside",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "deathmatch-classic",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "desynced",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "dino-d-day",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in dinodday/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "don-t-starve-together",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Server Lua mods (Steam Workshop)"
+      ],
+      "notes": "ServerModSetup entries in dedicated_server_mods_setup.lua download Workshop mods; modoverrides.lua enables them and their options for the world/shard. Use the active server installation and cluster paths. Client-only mods are separate; preserve cluster backups before changing server mods.",
+      "sources": [
+        "https://support.klei.com/hc/en-us/articles/4407489414548-Getting-a-Dedicated-Server-Failed-To-Start-Error-Message",
+        "https://github.com/mathielo/dst-dedicated-server/tree/main/DSTClusterConfig/mods"
+      ]
+    },
+    {
+      "gameId": "duckside",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "dune-awakening",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "dysterra",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "dystopia",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in dystopia/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "e-y-e-divine-cybermancy",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in eye/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "eco",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Server code mods",
+        "Plugins"
+      ],
+      "notes": "Compatible compiled mods go in Mods/UserCode. Match Eco's API version and preserve required accompanying assets.",
+      "sources": [
+        "https://wiki.play.eco/en/Getting_Started_with_Eco_Modding_in_Visual_Studio"
+      ]
+    },
+    {
+      "gameId": "eden-star",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "empires-mod",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in empires/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "empyrion-galactic-survival",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Scenarios",
+        "API mods"
+      ],
+      "notes": "Scenarios and API mods are separate systems. Scenarios require their complete folder and save selection; Workshop blueprints are not dedicated-server API mods.",
+      "sources": [
+        "https://empyriononline.com/forums/empyrion-api.39/",
+        "https://steamcommunity.com/app/383120/workshop/"
+      ]
+    },
+    {
+      "gameId": "enshrouded",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "eternal-silence",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in esmod/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "euro-truck-simulator-2",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Modded session support"
+      ],
+      "notes": "Export server packages from a client with the desired content. SCS says the dedicated server does not need extra DLC/mod data; do not upload a normal client mod ZIP as a server plugin.",
+      "sources": [
+        "https://modding.scssoft.com/wiki/Documentation/Tools/Dedicated_Server"
+      ]
+    },
+    {
+      "gameId": "evolution-survival",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "fistful-of-frags",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in fof/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "fortress-forever",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in fortressforever/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "foundry",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "frozen-flame",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "garry-s-mod",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Lua addons",
+        "GMA addons",
+        "Workshop collections"
+      ],
+      "notes": "Unpacked addons retain their own garrysmod/addons folder. GMA and Workshop-collection installation are distinct; client-only assets do not imply server Lua support.",
+      "sources": [
+        "https://wiki.facepunch.com/gmod/Lua_Folder_Structure",
+        "https://wiki.facepunch.com/gmod/Workshop_for_Dedicated_Servers"
+      ]
+    },
+    {
+      "gameId": "ground-branch",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Steam Workshop mods"
+      ],
+      "notes": "Recent builds use Workshop IDs in mods.txt. Verify the CTE/release version and server/client mod compatibility before applying changes.",
+      "sources": [
+        "https://www.groundbranch.com/2026/01/build-update-061-patch-v1035-2/"
+      ]
+    },
+    {
+      "gameId": "ground-branch-cte",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Steam Workshop mods"
+      ],
+      "notes": "Recent builds use Workshop IDs in mods.txt. Verify the CTE/release version and server/client mod compatibility before applying changes.",
+      "sources": [
+        "https://www.groundbranch.com/2026/01/build-update-061-patch-v1035-2/"
+      ]
+    },
+    {
+      "gameId": "half-life-2-deathmatch",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in hl2mp/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "half-life-deathmatch-source",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "half-life-dedicated-server",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "half-life-opposing-force",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "hanako-honor-blade",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "heat",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "hell-s-new-world",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "hellion",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "holdfast-nations-at-war",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Workshop maps",
+        "Script mods"
+      ],
+      "notes": "Configure mods_installed plus the appropriate load_mod/load_mod_server_only commands and map rotation. Script/map mods affect console cross-play.",
+      "sources": [
+        "https://wiki.holdfastgame.com/Server_Configuration",
+        "https://wiki.holdfastgame.com/Mods_and_Consoles"
+      ]
+    },
+    {
+      "gameId": "humanitz",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "hurtworld",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Oxide/uMod plugins"
+      ],
+      "notes": "Requires the matching game-specific loader and version. .cs plugins are source code compiled by the loader, not by Synix. Verify current loader availability for legacy games.",
+      "sources": [
+        "https://umod.org/documentation/games",
+        "https://umod.org/documentation/plugins/installation"
+      ]
+    },
+    {
+      "gameId": "hypercharge-unboxed",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "icarus",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "PAK mods"
+      ],
+      "notes": "Use compatible server .pak files in Icarus/Content/Paks/mods. Some mod authors require matching client files. Source/EXMODZ packages need their mod tool rather than blind extraction.",
+      "sources": [
+        "https://github.com/laanp/Icarus_Mods_Separated"
+      ]
+    },
+    {
+      "gameId": "insurgency-2014",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in insurgency/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "insurgency-mod",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod includes support for this game/engine. Use a compatible Metamod:Source and SourceMod build and verify the game folder; dependencies and extension binaries must match the server platform.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "insurgency-sandstorm",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "mod.io server mods"
+      ],
+      "notes": "Server mods include maps and admin extensions. Follow the server-mod guide for provider downloads and game/mutator configuration. Steam Workshop and mod.io identifiers are not interchangeable.",
+      "sources": [
+        "https://mod.io/g/insurgencysandstorm/r/how-to-set-up-a-steam-dedicated-server-with-mods"
+      ]
+    },
+    {
+      "gameId": "iosoccer",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in iosoccer/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "isles-of-yore",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "jabroni-brawl-episode-3",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "jbmod",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "just-cause-2-multiplayer",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "just-cause-3-multiplayer",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "killing-floor",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "killing-floor-2",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "last-oasis",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "left-4-dead-1",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in left4dead/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "left-4-dead-2",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in left4dead2/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "life-is-feudal-your-own",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "logic-world",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Server C# mods"
+      ],
+      "notes": "The game/server compiles mod source. Its mod API is incomplete and version-sensitive; keep complete mod structures and verify the current server-side API before import.",
+      "sources": [
+        "https://wiki.logic.world/wiki/Mods%3AIntroduction"
+      ]
+    },
+    {
+      "gameId": "longvinter",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "mainland",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "medieval-engineers",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Workshop world mods"
+      ],
+      "notes": "The official dedicated-server configuration accepts mod IDs, one per line. Select the correct world and server-instance data path; copying workshop files alone does not configure the world's mod list.",
+      "sources": [
+        "https://www.medievalengineers.com/dedicated-servers/"
+      ]
+    },
+    {
+      "gameId": "memories-of-mars",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "military-conflict-vietnam",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in vietnam/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "minecraft",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Java loader mods",
+        "Java server plugins",
+        "Bedrock add-on packs"
+      ],
+      "notes": "Match the edition, Minecraft version and loader. Java mod/plugin JARs are not Bedrock behavior/resource packs. Vanilla Java does not load Forge/Fabric mods or Bukkit plugins.",
+      "sources": [
+        "https://docs.papermc.io/paper/adding-plugins",
+        "https://docs.fabricmc.net/players/installing-mods",
+        "https://learn.microsoft.com/en-us/minecraft/creator/documents/bedrockserver/serverproperties"
+      ]
+    },
+    {
+      "gameId": "miscreated",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "modular-combat",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "monday-night-combat",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "mordhau",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "mod.io server mods"
+      ],
+      "notes": "Server-side admin and gameplay mods are published on the game's mod.io service. Use the mod author's server activation and dependency instructions; client-only mods use different handling.",
+      "sources": [
+        "https://mod.io/g/mordhau/m?_limit=20&_sort=-ratings_weighted_aggregate&revenue_type=3"
+      ]
+    },
+    {
+      "gameId": "mount-blade-ii-bannerlord",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Multiplayer modules"
+      ],
+      "notes": "Use dedicated-server-compatible modules with their dependencies and the corresponding module launch selection. Client/single-player modules are not automatically usable on a dedicated server.",
+      "sources": [
+        "https://moddocs.bannerlord.com/multiplayer/hosting_server/"
+      ]
+    },
+    {
+      "gameId": "myth-of-empires",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Steam Workshop mods"
+      ],
+      "notes": "The official private-server tool installs Workshop IDs and separately enables them in SteamModList. Downloaded files alone are not an activation list.",
+      "sources": [
+        "https://www.mythofempires.com/newsall/2024/0220/556.html"
+      ]
+    },
+    {
+      "gameId": "nanos-world",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Lua packages",
+        "Asset packs"
+      ],
+      "notes": "Packages go in the server's Packages directory with per-package Server, Client and Shared files. Index.lua and package configuration determine loading; select enabled packages in the server configuration.",
+      "sources": [
+        "https://docs.nanos-world.com/docs/core-concepts/packages/packages-guide"
+      ]
+    },
+    {
+      "gameId": "natural-selection-2",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "necesse",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Java mod packages"
+      ],
+      "notes": "Use compatible mod JARs. The default mod directory is in user data; a custom server-local directory requires the -mod launch option. Resolve that path before import rather than assuming the installation's mods folder is active.",
+      "sources": [
+        "https://www.necessewiki.com/Modding"
+      ]
+    },
+    {
+      "gameId": "neotokyo",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod maintains game or engine support. Use the correct game/version-specific loader build; verify its game folder before importing plugins.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "night-of-the-dead",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "nightingale",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "no-more-room-in-hell",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in nmrih/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "no-one-survived",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "ns2-combat",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "nuclear-dawn",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod includes support for this game/engine. Use a compatible Metamod:Source and SourceMod build and verify the game folder; dependencies and extension binaries must match the server platform.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "nuclear-option",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Nuclei server plugins"
+      ],
+      "notes": "The community Nuclei dedicated-server setup uses a game-specific mod loader. Verify the loader, plugin version and server launch instructions; generic client mods are not sufficient evidence.",
+      "sources": [
+        "https://github.com/MaxWasUnavailable/Nuclei"
+      ]
+    },
+    {
+      "gameId": "onset",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Lua server packages",
+        "Asset packages"
+      ],
+      "notes": "Preserve index.lua, package.json and package assets. The server uses packages and autostart directories differently; choosing automatic startup is a separate decision.",
+      "sources": [
+        "https://dev.playonset.com/wiki/packages"
+      ]
+    },
+    {
+      "gameId": "operation-harsh-doorstop",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "out-of-reach",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "outlaws-of-the-old-west",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "painkiller-hell-damnation",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "palworld",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Workshop server mods",
+        "Native server mod deployment"
+      ],
+      "notes": "Windows dedicated-server mods need a server-compatible Info.json, files in the selected Workshop directory, and PackageName entries plus bGlobalEnableMod in Mods/PalModSettings.ini. -workshopdir overrides the path and -NoMods disables mods. The game applies install rules; Synix does not execute package instructions.",
+      "sources": [
+        "https://docs.palworldgame.com/settings-and-operation/mod/"
+      ]
+    },
+    {
+      "gameId": "pavlov-vr",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "pirates-vikings-and-knights-ii",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in pvkii/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "pixark",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "plains-of-pain",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "playervs",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "primal-carnage-extinction",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "project-cars",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "project-cars-2",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "project-zomboid",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Multiplayer mods"
+      ],
+      "notes": "The developer documents multiplayer mod support and a mod manager. Build 41 and Build 42 mods are not interchangeable; mod identifiers, dependencies, load order and the dedicated-server setup must match the installed build. Review unstable-build warnings and back up the world before changes.",
+      "sources": [
+        "https://projectzomboid.com/blog/features-overview-build-42-20/",
+        "https://projectzomboid.com/blog/news/2024/12/build-42-unstable/"
+      ]
+    },
+    {
+      "gameId": "puck",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "qanga",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "quake-live",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "minqlx server plugins"
+      ],
+      "notes": "minqlx extends the dedicated server with Python plugins. It targets the Linux server and needs its own loader/configuration; this is not automatic support for Synix's Windows executable.",
+      "sources": [
+        "https://github.com/MinoMino/minqlx"
+      ]
+    },
+    {
+      "gameId": "raceroom",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "re-poly",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "red-orchestra-2-heroes-of-stalingrad",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "reflex-arena",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "reign-of-kings",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Oxide/uMod plugins"
+      ],
+      "notes": "Requires the matching game-specific loader and version. .cs plugins are source code compiled by the loader, not by Synix. Verify current loader availability for legacy games.",
+      "sources": [
+        "https://umod.org/documentation/games",
+        "https://umod.org/documentation/plugins/installation"
+      ]
+    },
+    {
+      "gameId": "return-to-moria",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "rfactor-2",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Car and track component packages",
+        "Race-event packages"
+      ],
+      "notes": "Dedicated hosting uses installed car/track components and a matching race-event/series package. Put .rfcmp/.rfmod packages in Packages, then install them with the game's ModMgr; copying files alone is not installation. The event must reference installed content, and paid content has separate hosting requirements.",
+      "sources": [
+        "https://docs.studio-397.com/pages/viewpage.action?navigatingVersions=true&pageId=48726029",
+        "https://docs.studio-397.com/pages/viewpage.action?pageId=20808370"
+      ]
+    },
+    {
+      "gameId": "ricochet",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "right-to-rule",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "rising-storm-2-vietnam",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "rising-world",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Server plugins"
+      ],
+      "notes": "The developer documents per-plugin subfolders for Java-edition server plugins. The current and legacy editions use different APIs; verify the installed edition and plugin format before using a destination.",
+      "sources": [
+        "https://forum.rising-world.net/thread/5363-how-to-install-run-a-plugin-java-version/"
+      ]
+    },
+    {
+      "gameId": "risk-of-rain-2",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Dedicated-server BepInEx plugins"
+      ],
+      "notes": "Dedicated-server plugins such as R2DSEssentials require the matching BepInEx dependency chain. Match server and client mod requirements; not every client Thunderstore mod works on the dedicated server.",
+      "sources": [
+        "https://thunderstore.io/c/riskofrain2/p/IHarbHD/DebugToolkit/v/3.8.2/"
+      ]
+    },
+    {
+      "gameId": "runescape-dragonwilds",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "rust",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Oxide/uMod plugins"
+      ],
+      "notes": "Requires the matching game-specific loader and version. .cs plugins are source code compiled by the loader, not by Synix. Verify current loader availability for legacy games.",
+      "sources": [
+        "https://umod.org/documentation/games",
+        "https://umod.org/documentation/plugins/installation"
+      ]
+    },
+    {
+      "gameId": "s-box",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "saleblazers",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "sapiens",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "satisfactory",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Satisfactory Mod Loader server mods"
+      ],
+      "notes": "Requires a compatible SML and dedicated-server builds of the mods and dependencies. Complete packages use FactoryGame/Mods. Client-only packages will not work; the mod's server-platform support must be checked.",
+      "sources": [
+        "https://docs.ficsit.app/satisfactory-modding/v3.8.0/ForUsers/DedicatedServerSetup.html",
+        "https://docs.ficsit.app/satisfactory-modding/v3.7.0/ManualInstallDirections.html"
+      ]
+    },
+    {
+      "gameId": "scp-5k",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "scp-secret-laboratory",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "LabAPI plugins"
+      ],
+      "notes": "Current dedicated servers bundle LabAPI. Use plugins built for the matching API and the server instance's configured plugin directory. Older EXILED or other framework plugins are not automatically interchangeable.",
+      "sources": [
+        "https://github.com/northwood-studios/LabAPI"
+      ]
+    },
+    {
+      "gameId": "scum",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "serious-sam-2017",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "serious-sam-3-bfe",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "serious-sam-classics-revolution",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "serious-sam-hd-the-first-encounter",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "serious-sam-hd-the-second-encounter",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "ships-at-sea",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "silica",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "MelonLoader server plugins"
+      ],
+      "notes": "Community server plugins require the Silica-compatible MelonLoader setup. Match the dedicated-server build and retain dependency files; do not install a loader by treating it as a plugin ZIP.",
+      "sources": [
+        "https://github.com/data-bomb/Silica/blob/main/README.md"
+      ]
+    },
+    {
+      "gameId": "smalland-survive-the-wilds",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "sniper-elite-4",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "soldat",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Server scripts",
+        "Custom maps"
+      ],
+      "notes": "Dedicated servers support scripting and maps. Use the matching server's script system and permissions; client graphical mods are separate from server scripts.",
+      "sources": [
+        "https://opensoldat.github.io/manual/manual.html"
+      ]
+    },
+    {
+      "gameId": "sons-of-the-forest",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "soulmask",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "space-engineers",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Steam Workshop mods",
+        "mod.io mods",
+        "Server plugins"
+      ],
+      "notes": "Select mods for the world/server configuration rather than copying a generic ZIP. Steam and crossplay/mod.io availability differ. Server plugins need the correct server implementation and plugin build.",
+      "sources": [
+        "https://www.spaceengineersgame.com/dedicated-servers/",
+        "https://www.spaceengineersgame.com/space-engineers-community-crossplay/"
+      ]
+    },
+    {
+      "gameId": "squad",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Workshop mod folders"
+      ],
+      "notes": "Complete published mod folders go under SquadGame/Plugins/Mods. Map/layer rotation must also select content provided by the installed mod; keep its folder structure and server/client version matched.",
+      "sources": [
+        "https://squad.fandom.com/wiki/Uploading_a_mod_to_a_dedicated_server"
+      ]
+    },
+    {
+      "gameId": "squad-44-post-scriptum",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "star-rupture",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Community ModLoader server plugins"
+      ],
+      "notes": "Use the dedicated-server edition of AlienX's loader. Plugins go in its ModLoader/Plugins directory beside the server binary and require compatible interface versions and Enabled settings. The client edition is different.",
+      "sources": [
+        "https://github.com/AlienXAXS/StarRupture-ModLoader"
+      ]
+    },
+    {
+      "gameId": "starground",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "stationeers",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "LaunchPad/BepInEx server mods"
+      ],
+      "notes": "Use the dedicated-server LaunchPad package and compatible BepInEx. Export the enabled mod package from LaunchPad so mods and modconfig.xml stay together; do not copy the client loader into a server.",
+      "sources": [
+        "https://github.com/StationeersLaunchPad/StationeersLaunchPad"
+      ]
+    },
+    {
+      "gameId": "stormworks-build-and-rescue",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "subsistence",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "sunkenland",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "survive-the-nights",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "sven-co-op",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AngelScript server plugins",
+        "Custom maps"
+      ],
+      "notes": "The configured plugin_list_file (default default_plugins.txt) selects AngelScript plugins. Copying a script does not add it to that list; preserve map/script support files and match the server version.",
+      "sources": [
+        "https://wiki.svencoop.com/Running_a_server/Configuration"
+      ]
+    },
+    {
+      "gameId": "synergy",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in synergy/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "takedown-red-sabre",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "team-fortress-2",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in tf/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "team-fortress-2-classified",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "SourceMod maintains game or engine support. Use the correct game/version-specific loader build; verify its game folder before importing plugins.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt"
+      ]
+    },
+    {
+      "gameId": "team-fortress-2-gold-rush",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "team-fortress-2008",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "team-fortress-classic",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "AMX Mod X plugins"
+      ],
+      "notes": "Requires a compatible Metamod and AMX Mod X installation. Compiled .amxx files go under the game's addons/amxmodx/plugins and must be enabled in configs/plugins.ini. Module/support files have separate destinations.",
+      "sources": [
+        "https://wiki.alliedmods.net/AMX_Mod_X_1.9_Release_Notes",
+        "https://wiki.alliedmods.net/Installing_AMX_Mod_X_Manually"
+      ]
+    },
+    {
+      "gameId": "terraria",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "tModLoader mods",
+        "TShock plugins"
+      ],
+      "notes": "These require different server implementations. tModLoader uses mod packages and an enabled list; TShock loads API-compatible DLLs from ServerPlugins. Vanilla Terraria does not load either. Resolve the active mod/save path before importing.",
+      "sources": [
+        "https://github.com/tModLoader/tModLoader/wiki/Starting-a-modded-server",
+        "https://github.com/Pryaxis/TShock/blob/general-devel/docs/command-line-parameters.md"
+      ]
+    },
+    {
+      "gameId": "the-forest",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Oxide/uMod plugins"
+      ],
+      "notes": "Requires the matching game-specific loader and version. .cs plugins are source code compiled by the loader, not by Synix. Verify current loader availability for legacy games.",
+      "sources": [
+        "https://umod.org/documentation/games",
+        "https://umod.org/documentation/plugins/installation"
+      ]
+    },
+    {
+      "gameId": "the-front",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "the-haunted-hell-s-reach",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "the-isle",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "the-isle-evrima",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "the-riftbreaker",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "tower-unite",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "treason",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in treason/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    },
+    {
+      "gameId": "undoing",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "unturned",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "Steam Workshop mods",
+        "Rocket/LDM plugins",
+        "OpenMod plugins"
+      ],
+      "notes": "Workshop IDs go in the instance's WorkshopDownloadConfig.json. Rocket/LDM and OpenMod are separate plugin frameworks under Modules; plugin paths are per server instance. A plugin DLL is not a Workshop item.",
+      "sources": [
+        "https://docs.smartlydressedgames.com/en/latest/servers/server-hosting.html",
+        "https://docs.smartlydressedgames.com/en/stable/servers/rocket.html",
+        "https://docs.smartlydressedgames.com/en/stable/servers/openmod.html"
+      ]
+    },
+    {
+      "gameId": "v-rising",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "BepInEx server plugins"
+      ],
+      "notes": "Requires the V Rising-compatible IL2CPP BepInEx pack, not an arbitrary BepInEx build. Match the mod's server/client designation, game version and dependencies. Server plugins are normally placed in BepInEx/plugins.",
+      "sources": [
+        "https://wiki.vrisingmods.com/user/Mod_Install.html"
+      ]
+    },
+    {
+      "gameId": "valheim",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "BepInEx server plugins"
+      ],
+      "notes": "Install the Valheim-compatible BepInEx loader first. Server-compatible plugins go in BepInEx/plugins; dependencies and configuration must match. Some mods also require client installation; a Thunderstore manifest alone does not prove server compatibility.",
+      "sources": [
+        "https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/"
+      ]
+    },
+    {
+      "gameId": "vein",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "warfork",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "wickland",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "windrose",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "wreckfest",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "wreckfest-2",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "wurm-unlimited",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "WurmServerModLauncher mods"
+      ],
+      "notes": "Install the matching community server mod launcher and launch the patched server. Mod folders, properties files and dependencies must retain the launcher's layout. Importing a JAR alone does not install the launcher.",
+      "sources": [
+        "https://github.com/ago1024/WurmServerModLauncher"
+      ]
+    },
+    {
+      "gameId": "zero-world",
+      "status": "NeedsVerification",
+      "reviewedOn": "2026-09-14",
+      "methods": [],
+      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
+      "sources": []
+    },
+    {
+      "gameId": "zombie-panic-source",
+      "status": "Documented",
+      "reviewedOn": "2026-09-14",
+      "methods": [
+        "SourceMod plugins"
+      ],
+      "notes": "Requires a compatible Metamod:Source and SourceMod build for this server version. Compiled .smx plugins go in zps/addons/sourcemod/plugins; accompanying translations, gamedata and extensions retain their documented folders.",
+      "sources": [
+        "https://github.com/alliedmodders/sourcemod/blob/master/gamedata/core.games/common.games.txt",
+        "https://wiki.alliedmods.net/Managing_your_Sourcemod_installation"
+      ]
+    }
+  ]
+}

@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using System.Diagnostics;
 using System.IO.Compression;
@@ -68,9 +75,6 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 
 	internal static class ModSecurityScanner
 	{
-		private const int MaximumArchiveEntries = 2048;
-		private const long MaximumSingleFileBytes = 256L * 1024 * 1024;
-		private const long MaximumArchiveBytes = 512L * 1024 * 1024;
 		private const int MaximumSourceInspectionBytes = 2 * 1024 * 1024;
 		private static readonly HashSet<string> DangerousArchiveExtensions = new(
 			[
@@ -189,7 +193,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			List<ModSecurityFinding> findings)
 		{
 			FileInfo package = new(packagePath);
-			if (package.Length is <= 0 or > MaximumArchiveBytes)
+			ModPackageLimits limits = ModPackageLimits.For(target);
+			if (package.Length <= 0 || package.Length > limits.TotalBytes)
 				throw new InvalidDataException(LocalizationManager.Get(
 					"ModSecurity.Error.UnsafeSize"));
 
@@ -211,7 +216,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				throw new InvalidDataException(LocalizationManager.Get(
 					"ModSecurity.Error.FileTypeNotAllowed"));
 			}
-			if (package.Length > MaximumSingleFileBytes)
+			if (package.Length > limits.FileBytes)
 				throw new InvalidDataException(LocalizationManager.Get(
 					"ModSecurity.Error.FileTooLarge"));
 
@@ -237,7 +242,8 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			List<ModSecurityFinding> findings)
 		{
 			using ZipArchive archive = ZipFile.OpenRead(packagePath);
-			if (archive.Entries.Count > MaximumArchiveEntries)
+			ModPackageLimits limits = ModPackageLimits.For(target);
+			if (archive.Entries.Count > limits.Entries)
 				throw new InvalidDataException(LocalizationManager.Get(
 					"ModSecurity.Error.TooManyFiles"));
 
@@ -247,16 +253,17 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			HashSet<string> destinations = new(StringComparer.OrdinalIgnoreCase);
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
+				if (IsSymbolicLink(entry))
+					throw new InvalidDataException(LocalizationManager.Get("ModSecurity.Error.SymbolicLink"));
 				if (string.IsNullOrWhiteSpace(entry.Name))
+				{
+					ValidateArchivePath(entry.FullName.TrimEnd('/', '\\'));
 					continue;
+				}
 				totalBytes = checked(totalBytes + entry.Length);
-				if (entry.Length > MaximumSingleFileBytes || totalBytes > MaximumArchiveBytes)
+				if (entry.Length > limits.FileBytes || totalBytes > limits.TotalBytes)
 					throw new InvalidDataException(LocalizationManager.Get(
 						"ModSecurity.Error.ExpandedTooLarge"));
-				if (IsSymbolicLink(entry))
-					throw new InvalidDataException(LocalizationManager.Get(
-						"ModSecurity.Error.SymbolicLink"));
-
 				string relative = entry.FullName.Replace('/', Path.DirectorySeparatorChar);
 				ValidateArchivePath(relative);
 				if (!destinations.Add(relative))
@@ -266,7 +273,9 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				string extension = Path.GetExtension(entry.Name);
 				if (entry.Name.Equals(target.RequiredArchiveFileName, StringComparison.OrdinalIgnoreCase))
 					requiredFileFound = true;
-				if (DangerousArchiveExtensions.Contains(extension))
+				if (DangerousArchiveExtensions.Contains(extension) &&
+					!(target.PackageLayout == ModPackageLayout.FolderTree && extension.Equals(".js", StringComparison.OrdinalIgnoreCase) &&
+					 target.AllowedExtensions.Contains(".js", StringComparer.OrdinalIgnoreCase)))
 				{
 					throw new InvalidDataException(
 						LocalizationManager.Get(
@@ -304,6 +313,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			if (supportedFiles == 0)
 				throw new InvalidDataException(LocalizationManager.Get(
 					"ModSecurity.Error.NoSupportedFile"));
+			_ = ModPackageHandlers.For(target).MapArchive(archive, target, "Package", null);
 		}
 
 		private static void ValidateArchivePath(string relativePath)
@@ -365,7 +375,12 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 			{
 				return;
 			}
-			if (extension.Equals(".cs", StringComparison.OrdinalIgnoreCase) ||
+			if (extension.Equals(".lua", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".js", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".py", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".so", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".asi", StringComparison.OrdinalIgnoreCase) ||
+				extension.Equals(".cs", StringComparison.OrdinalIgnoreCase) ||
 				extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) ||
 				extension.Equals(".jar", StringComparison.OrdinalIgnoreCase))
 			{
@@ -415,6 +430,14 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement
 				FileOptions.Asynchronous | FileOptions.SequentialScan);
 			byte[] hash = await SHA256.HashDataAsync(stream, cancellationToken);
 			return Convert.ToHexString(hash);
+		}
+
+		internal static async Task<string> ReviewMinecraftContentAsync(string stagingFolder, CancellationToken cancellationToken)
+		{
+			ModPathSafety.EnsureTreeHasNoLinks(stagingFolder);
+			DefenderScanResult result = await ScanWithMicrosoftDefenderAsync(stagingFolder, cancellationToken);
+			if (result.Blocked) throw new InvalidDataException(LocalizationManager.Get("ModSecurity.Finding.DefenderThreat"));
+			return LocalizationManager.Get("ModSecurity.Antivirus", result.Status);
 		}
 
 		private static async Task<DefenderScanResult> ScanWithMicrosoftDefenderAsync(

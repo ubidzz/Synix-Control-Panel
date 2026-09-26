@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixEngine;
@@ -28,7 +35,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		internal const int BedrockDefaultPort = 19132;
 		internal const int BedrockDefaultIpv6Port = 19133;
 		internal static readonly IReadOnlyList<string> GameModes =
-			[SurvivalGameMode, CreativeGameMode, AdventureGameMode];
+			[SurvivalGameMode, CreativeGameMode, AdventureGameMode, "Spectator"];
 		private const int FirstManagementProtocolMajor = 1;
 		private const int FirstManagementProtocolMinor = 21;
 		private const int FirstManagementProtocolPatch = 9;
@@ -50,6 +57,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return CreativeGameMode;
 			if (value.Equals(AdventureGameMode, StringComparison.OrdinalIgnoreCase))
 				return AdventureGameMode;
+			if (value.Equals("Spectator", StringComparison.OrdinalIgnoreCase))
+				return "Spectator";
 
 			// PVE and PVP are legacy Synix values, not Minecraft game modes.
 			return SurvivalGameMode;

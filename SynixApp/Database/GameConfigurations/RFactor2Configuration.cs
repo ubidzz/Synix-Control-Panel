@@ -18,8 +18,8 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("Simulation Port", context => context.Server.Port.ToString()),
-			new("HTTP Server Port", context => context.Server.QueryPort.ToString())
+			new("Simulation Port", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("HTTP Server Port", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort)
 		];
 
 		public override string GameName => "rFactor 2";

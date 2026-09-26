@@ -19,14 +19,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		private const string TemplateSuffix = ".template";
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("Name", context => context.Server.ServerName),
-			new("Password", context => context.Passwords.ServerPassword),
-			new("GameServerPort", context => context.Server.Port.ToString()),
-			new("WebServerPort", context => context.Server.QueryPort.ToString()),
-			new("RconServerPort", context => context.Server.RconPort.ToString()),
+			new("Name", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("Password", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("GameServerPort", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("WebServerPort", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort),
+			new("RconServerPort", context => context.Server.RconPort.ToString(), serverField: ConfigurationServerField.RconPort),
 			new("RconPassword", context =>
-				context.Server.EnableRcon ? context.Passwords.RconPassword : string.Empty),
-			new("DefaultSlots", context => context.Server.MaxPlayers.ToString())
+				context.Server.EnableRcon ? context.Passwords.RconPassword : string.Empty, serverField: ConfigurationServerField.RconPassword),
+			new("DefaultSlots", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers)
 		];
 
 		public override string GameName => "Eco";

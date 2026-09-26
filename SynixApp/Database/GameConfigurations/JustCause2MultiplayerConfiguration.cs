@@ -30,6 +30,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			ManagedConfigurationInput.ServerName;
 		public override string RelativePath => "config.lua";
 
+		internal override IReadOnlyList<ConfigurationServerBinding> GetServerBindings(GameServer server, string path) =>
+			Path.GetFullPath(path).Equals(ResolveFullPath(server), StringComparison.OrdinalIgnoreCase)
+				? [new("Name", ConfigurationServerField.ServerName), new("Password", ConfigurationServerField.Password),
+					new("MaxPlayers", ConfigurationServerField.MaxPlayers), new("BindPort", ConfigurationServerField.Port)] : [];
+
+		internal override List<Synix_Control_Panel.SynixApp.ServerHandler.ConfigLine> ReadServerValues(string text) =>
+			ConfigurationServerBinding.ReadFlatAssignments(text, "=", "--", allowComma: true);
+
 		public override IReadOnlyList<ConfigurationValidationItem> Validate(
 			ConfigurationContext context)
 		{

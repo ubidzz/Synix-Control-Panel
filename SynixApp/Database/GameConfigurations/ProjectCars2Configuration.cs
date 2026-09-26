@@ -32,6 +32,15 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			ManagedConfigurationInput.ServerName;
 		public override string RelativePath => "server.cfg";
 
+		internal override IReadOnlyList<ConfigurationServerBinding> GetServerBindings(GameServer server, string path) =>
+			Path.GetFullPath(path).Equals(ResolveFullPath(server), StringComparison.OrdinalIgnoreCase)
+				? [new("name", ConfigurationServerField.ServerName), new("password", ConfigurationServerField.Password),
+					new("maxPlayerCount", ConfigurationServerField.MaxPlayers), new("hostPort", ConfigurationServerField.Port),
+					new("queryPort", ConfigurationServerField.QueryPort)] : [];
+
+		internal override List<ConfigLine> ReadServerValues(string text) =>
+			ConfigurationServerBinding.ReadFlatAssignments(text, ":", "//");
+
 		public override IReadOnlyList<ConfigurationValidationItem> Validate(
 			ConfigurationContext context)
 		{

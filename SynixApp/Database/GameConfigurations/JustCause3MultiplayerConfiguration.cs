@@ -18,11 +18,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("name", context => context.Server.ServerName),
-			new("password", context => context.Passwords.ServerPassword),
-			new("maxPlayers", context => context.Server.MaxPlayers.ToString()),
-			new("port", context => context.Server.Port.ToString()),
-			new("queryPort", context => context.Server.QueryPort.ToString())
+			new("name", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("password", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("maxPlayers", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers),
+			new("port", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("queryPort", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort)
 		];
 
 		public override string GameName => "Just Cause 3 Multiplayer";

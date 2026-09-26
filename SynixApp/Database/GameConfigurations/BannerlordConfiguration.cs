@@ -18,10 +18,10 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("ServerName", context => context.Server.ServerName),
-			new("GamePassword", context => context.Passwords.ServerPassword),
-			new("AdminPassword", context => context.Passwords.AdminPassword),
-			new("MaxNumberOfPlayers", context => context.Server.MaxPlayers.ToString())
+			new("ServerName", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("GamePassword", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("AdminPassword", context => context.Passwords.AdminPassword, serverField: ConfigurationServerField.AdminPassword),
+			new("MaxNumberOfPlayers", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers)
 		];
 
 		public override string GameName => "Mount & Blade II: Bannerlord";

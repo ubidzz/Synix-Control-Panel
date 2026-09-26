@@ -18,14 +18,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("server.hostname", context => context.Server.ServerName),
-			new("server.maxplayers", context => context.Server.MaxPlayers.ToString()),
-			new("server.seed", context => string.IsNullOrWhiteSpace(context.Server.WorldSeed) ? "12345" : context.Server.WorldSeed),
-			new("server.worldsize", context => (context.Server.WorldSize > 0 ? context.Server.WorldSize : 4000).ToString()),
-			new("server.level", context => string.IsNullOrWhiteSpace(context.Server.WorldName) ? "Procedural Map" : context.Server.WorldName),
-			new("server.pve", context => string.Equals(context.Server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase).ToString().ToLowerInvariant()),
-			new("rcon.port", context => context.Server.RconPort.ToString()),
-			new("rcon.password", context => context.Server.EnableRcon ? context.Passwords.RconPassword : string.Empty),
+			new("server.hostname", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("server.maxplayers", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers),
+			new("server.seed", context => string.IsNullOrWhiteSpace(context.Server.WorldSeed) ? "12345" : context.Server.WorldSeed, serverField: ConfigurationServerField.WorldSeed),
+			new("server.worldsize", context => (context.Server.WorldSize > 0 ? context.Server.WorldSize : 4000).ToString(), serverField: ConfigurationServerField.WorldSize),
+			new("server.level", context => string.IsNullOrWhiteSpace(context.Server.WorldName) ? "Procedural Map" : context.Server.WorldName, serverField: ConfigurationServerField.WorldName),
+			new("server.pve", context => string.Equals(context.Server.GameMode, "PVE", StringComparison.OrdinalIgnoreCase).ToString().ToLowerInvariant(), serverField: ConfigurationServerField.IsPve),
+			new("rcon.port", context => context.Server.RconPort.ToString(), serverField: ConfigurationServerField.RconPort),
+			new("rcon.password", context => context.Server.EnableRcon ? context.Passwords.RconPassword : string.Empty, serverField: ConfigurationServerField.RconPassword),
 			new("rcon.web", context => bool.TrueString.ToLowerInvariant())
 		];
 

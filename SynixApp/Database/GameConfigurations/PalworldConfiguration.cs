@@ -26,17 +26,17 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("ServerName", context => context.Server.ServerName),
-			new("AdminPassword", context => context.Passwords.AdminPassword),
-			new("ServerPassword", context => context.Passwords.ServerPassword),
-			new("ServerPlayerMaxNum", context => context.Server.MaxPlayers.ToString()),
-			new("PublicPort", context => context.Server.Port.ToString()),
+			new("ServerName", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("AdminPassword", context => context.Passwords.AdminPassword, serverField: ConfigurationServerField.AdminPassword),
+			new("ServerPassword", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
+			new("ServerPlayerMaxNum", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers),
+			new("PublicPort", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
 			new("PublicIP", _ => string.Empty),
-			new("RCONEnabled", context => context.Server.EnableRcon.ToString()),
-			new("RCONPort", context => context.Server.RconPort.ToString()),
-			new("RESTAPIPort", context => context.Server.QueryPort.ToString()),
-			new("CrossplayPlatforms", CrossplayPlatforms),
-			new("bIsPvP", PvpEnabled),
+			new("RCONEnabled", context => context.Server.EnableRcon.ToString(), serverField: ConfigurationServerField.EnableRcon),
+			new("RCONPort", context => context.Server.RconPort.ToString(), serverField: ConfigurationServerField.RconPort),
+			new("RESTAPIPort", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort),
+			new("CrossplayPlatforms", CrossplayPlatforms, serverField: ConfigurationServerField.CrossplayPlatforms),
+			new("bIsPvP", PvpEnabled, serverField: ConfigurationServerField.IsPvp),
 			new("bEnablePlayerToPlayerDamage", PvpEnabled),
 			new("bEnableDefenseOtherGuildPlayer", PvpEnabled)
 		];

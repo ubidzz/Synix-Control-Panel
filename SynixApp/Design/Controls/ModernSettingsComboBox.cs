@@ -23,6 +23,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 		private const int WmPaint = 0x000F;
 		private const int WmNcPaint = 0x0085;
 		private const int WmEraseBackground = 0x0014;
+		private const int WmPrint = 0x0317;
+		private const int WmPrintClient = 0x0318;
 		private const int WsBorder = 0x00800000;
 		private const int WsExClientEdge = 0x00000200;
 		private bool _mouseInside;
@@ -180,6 +182,14 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 
 		protected override void WndProc(ref Message message)
 		{
+			if (message.Msg is WmPrint or WmPrintClient && message.WParam != IntPtr.Zero)
+			{
+				base.WndProc(ref message);
+				// Printing/capturing the control must use the same chrome as screen painting.
+				using Graphics graphics = Graphics.FromHdc(message.WParam);
+				DrawModernChrome(graphics);
+				return;
+			}
 			if (message.Msg == WmNcPaint)
 			{
 

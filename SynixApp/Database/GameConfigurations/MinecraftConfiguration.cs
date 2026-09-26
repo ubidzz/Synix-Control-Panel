@@ -23,12 +23,12 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		private static readonly Lazy<string> JavaTemplate = new(LoadJavaTemplate);
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("motd", context => EscapeProperty(context.Server.ServerName)),
+			new("motd", context => EscapeMotd(context.Server.MinecraftAdvertisedName ?? context.Server.ServerName)),
 			new("gamemode", context => MinecraftControlProfile
 				.NormalizeGameMode(context.Server.GameMode)
 				.ToLowerInvariant()),
 			new("server-port", context => context.Server.Port.ToString()),
-			new("enable-query", _ => bool.TrueString),
+			new("enable-query", context => context.Server.MinecraftQueryEnabled.ToString().ToLowerInvariant()),
 			new("query.port", context => context.Server.QueryPort.ToString()),
 			new("max-players", context => context.Server.MaxPlayers.ToString()),
 			new("level-name", context => EscapeProperty(string.IsNullOrWhiteSpace(context.Server.WorldName) ? "world" : context.Server.WorldName)),
@@ -44,11 +44,13 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("management-server-secret", context => ManagementEnabled(context)
 				? MinecraftControlProfile.GetOrCreateManagementSecret(context.Server)
 				: string.Empty),
-			new("management-server-tls-enabled", _ => bool.FalseString.ToLowerInvariant()),
+			new("management-server-tls-enabled", context => context.Server.MinecraftManagementTlsEnabled.ToString().ToLowerInvariant()),
 			new("status-heartbeat-interval", context => ManagementEnabled(context) ? "5" : "0")
 		];
 
 		public override string GameName => "Minecraft";
+		private static string EscapeMotd(string value) => value.Replace("\\", "\\\\", StringComparison.Ordinal)
+			.Replace("\r", "\\r", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal).Replace("\t", "\\t", StringComparison.Ordinal);
 		public override int SchemaVersion => 6;
 		public override bool SupportsFullReset => true;
 		public override ManagedConfigurationInput SupportedInputs =>
@@ -125,7 +127,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 	{
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("server-name", context => EscapeProperty(context.Server.ServerName)),
+			new("server-name", context => EscapeProperty(context.Server.MinecraftAdvertisedName ?? context.Server.ServerName)),
 			new("server-port", context => context.Server.Port.ToString()),
 			new("server-portv6", context => context.Server.QueryPort.ToString()),
 			new("max-players", context => context.Server.MaxPlayers.ToString()),
@@ -155,7 +157,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override string CreateTemplate(ConfigurationContext context)
 		{
 			return string.Join("\n",
-				$"server-name={EscapeProperty(context.Server.ServerName)}",
+				$"server-name={EscapeProperty(context.Server.MinecraftAdvertisedName ?? context.Server.ServerName)}",
 				$"gamemode={MinecraftControlProfile.NormalizeGameMode(context.Server.GameMode).ToLowerInvariant()}",
 				"force-gamemode=false",
 				"difficulty=easy",

@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.FileFolderHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
@@ -51,6 +52,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 		private static Color NullTypeColor => SettingsPalette.MutedText;
 
 		private string _path = string.Empty;
+		private string? _loadedFileHash;
+		internal Func<bool> PersistServerChanges = FileHandler.SaveServers;
 		private ConfigFormat _format = ConfigFormat.StandardINI;
 		private readonly GameServer? _server;
 		private readonly bool _isRuntimeInstance;
@@ -318,15 +321,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			Text = LocalizationManager.Get("Configuration.Editor.Title", fileName);
 			lblFileName.Text = fileName;
 			lblFormatBadge.Text = formatName;
-			LocalizationManager.BindText(
-				lblPageSubtitle,
-				_configurationFiles.Count > 1
-					? "Configuration.Editor.Subtitle.Multiple"
-					: "Configuration.Editor.Subtitle.Single",
-				fileName,
-				_selectedFileIndex + 1,
-				_configurationFiles.Count,
-				formatName);
+			if (_configurationFiles.Count > 1)
+				LocalizationManager.BindText(lblPageSubtitle, "Configuration.Editor.Subtitle.Multiple",
+					fileName, _selectedFileIndex + 1, _configurationFiles.Count, formatName);
+			else
+				LocalizationManager.BindText(lblPageSubtitle, "Configuration.Editor.Subtitle.Single",
+					fileName, formatName);
 			LocalizationManager.BindText(
 				lblFormatState,
 				"Configuration.Editor.StructurePreserved",
@@ -498,6 +498,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 					return;
 				}
 
+				_loadedFileHash = Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.HashFile(_path);
 				_fileData = ConfigHandler.LoadConfig(_path, _format);
 				dgvConfig.Enabled = true;
 				btnStructured.Enabled = true;
@@ -878,12 +879,21 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 		{
 			try
 			{
+				if (_loadedFileHash != Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.HashFile(_path))
+					throw Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.Error("Changed");
 				if (_server != null && HasUnsavedChanges())
 					_ = GameFix.BackupManagedConfiguration(
 						_server,
 						LocalizationManager.Get(
 							"Configuration.Editor.BackupReason"));
-				ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
+				if (_server != null)
+				{
+					string preview = ConfigHandler.CreatePreview(_path, CollectUpdatedData(), _format);
+					ServerConfigurationSync.Save(_server, _path, preview, _format,
+						_loadedFileHash, PersistServerChanges);
+				}
+				else ConfigHandler.SaveConfig(_path, CollectUpdatedData(), _format);
+				_loadedFileHash = Synix_Control_Panel.SynixEngine.Minecraft.MinecraftContentTransactions.HashFile(_path);
 				return true;
 			}
 			catch (Exception exception)
@@ -921,6 +931,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 			}
 
 			bool fileExists = File.Exists(_path);
+			if (!GameServerInputValidator.TryValidateWorldSeed(
+				GameDatabase.GetGame(_server.Game), _server.WorldSeed, out string worldSeedError))
+			{
+				LocalizedMessageBox.Show(this, worldSeedError,
+					LocalizationManager.Get("ServerSetup.Dialog.SettingsAttention.Title"),
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
 			string developmentModeText = GameFix.ManagedConfigurationsEnabled
 				? string.Empty
 				: LocalizationManager.Get("Configuration.Editor.Reset.DevelopmentMode");
@@ -1074,6 +1093,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				return;
 			}
 
+			try
+			{
+				Synix_Control_Panel.SynixEngine.Minecraft.MinecraftConfigurationSync.Synchronize(_server, FileHandler.SaveServers);
+			}
+			catch (Exception exception)
+			{
+				LocalizedMessageBox.Show(this, Core.SanitizeProblemReportText(exception.Message), Text,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 			LoadConfiguration();
 			UpdateRestoreBackupAvailability();
 			LocalizedMessageBox.Show(

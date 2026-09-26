@@ -71,6 +71,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		{
 			if (!IsEnabled(server, definition))
 				return server.ServerFrameworkVersion ?? "Official";
+			using ServerOperationLease operation = Synix_Control_Panel.SynixEngine.ModManagement.ModPackageManager.BeginOperation(server);
 			if (!Directory.Exists(server.InstallPath))
 				throw new DirectoryNotFoundException(LocalizationManager.Get("Oxide.Error.ServerFolderMissing"));
 
@@ -85,6 +86,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			string archivePath = Path.Combine(tempRoot, WindowsAssetName);
 			string stagingPath = Path.Combine(tempRoot, "staging");
 			string rollbackPath = Path.Combine(tempRoot, "rollback");
+			bool retainRecoveryFiles = false;
 
 			try
 			{
@@ -113,9 +115,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					Color.LimeGreen);
 				return release.Version;
 			}
+			catch (OverlayRecoveryException)
+			{
+				retainRecoveryFiles = true;
+				throw;
+			}
 			finally
 			{
-				TryDeleteDirectory(tempRoot);
+				if (!retainRecoveryFiles) TryDeleteDirectory(tempRoot);
 			}
 		}
 
@@ -359,8 +366,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 				}
 			}
-			catch
+			catch (Exception exception)
 			{
+				List<Exception> recoveryErrors = [];
 				foreach (string createdFile in createdFiles.AsEnumerable().Reverse())
 				{
 					try
@@ -370,6 +378,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 					catch (Exception suppressedException)
 					{
+						recoveryErrors.Add(suppressedException);
 						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
@@ -381,12 +390,19 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 					catch (Exception suppressedException)
 					{
+						recoveryErrors.Add(suppressedException);
 						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 					}
 				}
+				if (recoveryErrors.Count > 0)
+					throw new OverlayRecoveryException(rollbackRoot,
+						new AggregateException(new[] { exception }.Concat(recoveryErrors)));
 				throw;
 			}
 		}
+
+		private sealed class OverlayRecoveryException(string recoveryPath, Exception innerException)
+			: IOException(LocalizationManager.Get("ModManager.Error.RecoveryRetained", recoveryPath), innerException);
 
 		private static void TryDeleteDirectory(string path)
 		{

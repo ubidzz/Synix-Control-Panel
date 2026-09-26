@@ -2,6 +2,13 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design.Controls;
@@ -322,13 +329,14 @@ public sealed class UserGuidanceTests
 		{
 			try
 			{
+				(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
 				using ServerSettingsGUI setup = new(new GameServer
 				{
 					Game = "Eco",
 					ServerName = "Eco Test",
 					InstallPath = Path.GetTempPath(),
-					Port = 61466,
-					QueryPort = 61467
+					Port = gamePort,
+					QueryPort = queryPort
 				});
 				setup.Show();
 				Application.DoEvents();
@@ -518,14 +526,15 @@ public sealed class UserGuidanceTests
 		{
 			try
 			{
+				(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
 				using ServerSettingsGUI setup = new(new GameServer
 				{
 					Game = "Valheim",
 					ServerName = "454",
 					Password = "454",
 					InstallPath = Path.GetTempPath(),
-					Port = 61456,
-					QueryPort = 61457,
+					Port = gamePort,
+					QueryPort = queryPort,
 					MaxPlayers = 10,
 					WorldName = "Dedicated"
 				});
@@ -535,6 +544,10 @@ public sealed class UserGuidanceTests
 					setup.Controls.Find("btnSave", true).Single());
 
 				Assert.False(save.Enabled);
+				setup.StartPosition = FormStartPosition.Manual;
+				setup.Location = new System.Drawing.Point(-32000, -32000);
+				setup.ShowInTaskbar = false;
+				setup.Show();
 				password.Text = "5555555";
 				DateTime timeout = DateTime.UtcNow.AddSeconds(2);
 				while (!save.Enabled && DateTime.UtcNow < timeout)
@@ -544,6 +557,7 @@ public sealed class UserGuidanceTests
 				}
 
 				Assert.True(save.Enabled);
+				Assert.True(setup.Controls.Find("pnlPageReview", true).Single().Visible);
 			}
 			catch (Exception exception)
 			{

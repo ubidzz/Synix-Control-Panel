@@ -25,6 +25,17 @@ Profiles compiled with Synix live in this folder and end with `.modsystem.json`.
 
 External profiles are validated with the same strict rules as built-in profiles. An external profile with the same `id` replaces the built-in profile the next time the manager opens, so support rules can be updated independently of the main UI code.
 
+## Import review and next steps
+
+The source-first import wizard and provider-ID editor show the same four-part review:
+
+- **Compatibility:** distinguishes a recognized layout/loader route, a missing or mismatched loader, a user-selected destination, and provider IDs. A recognized route is not certification of game versions, dependencies, client requirements, or safe mod code.
+- **Destination:** shows the full local install folder and planned replacement count, or the exact launch option/configuration files and keys used for provider IDs. Selecting a file shows its complete destination separately without replacing the overall review.
+- **Activation:** explains manual server start, loader/author setup, and separate scenario selection where applicable. Selecting an ARK ZIP extracts IDs; it does not upload its content or pin the provider's downloaded version.
+- **Recovery:** explains whole-import rollback, protection against later file edits, and the difference between file rollback and restoring a world. Provider ID edits do not delete downloaded content or restore previous mod versions; users should retain their old ID list and a full server backup.
+
+Activation and recovery instructions are repeated after a successful import or ID save. Reading or cancelling a review does not save settings or change server files. These explanations do not replace the security review, stopped-server checks, package-hash checks, or the game's installation instructions.
+
 ## Schema version 1
 
 The root object contains:

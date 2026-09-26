@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 5,
+  "definitionRevision": 6,
   "id": "minecraft",
   "catalogOrder": 218,
   "game": "Minecraft",
@@ -23,7 +23,8 @@
   "gameModes": [
     "Survival",
     "Creative",
-    "Adventure"
+    "Adventure",
+    "Spectator"
   ],
   "configFileCreation": "SynixTemplate",
   "relativeConfigPath": "server.properties",

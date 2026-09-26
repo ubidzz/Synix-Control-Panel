@@ -2,11 +2,19 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixApp.UI.ServerManagement;
 
 namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 {
@@ -66,6 +74,14 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				Anchor = AnchorStyles.Bottom | AnchorStyles.Right
 			};
 			Controls.Add(close);
+			ModernSettingsButton mods = new()
+			{
+				Name = "gameModSupportGuide", Text = LocalizationManager.Get("ModSupport.Title"),
+				Location = new Point(28, 634), Size = new Size(270, 44),
+				Anchor = AnchorStyles.Bottom | AnchorStyles.Left
+			};
+			mods.Click += (_, _) => { using GameModSupportDialog dialog = new(game.Game); dialog.ShowDialog(this); };
+			Controls.Add(mods);
 			AcceptButton = close;
 			CancelButton = close;
 			ThemeManager.Apply(this);

@@ -79,6 +79,20 @@ public sealed class ServerOperationCoordinatorTests
 		Assert.Contains("SteamCMD", validate.FailureReason, StringComparison.OrdinalIgnoreCase);
 	}
 
+	[Fact]
+	public async Task SameFolderWithTrailingSeparatorCannotBypassTheOperationLock()
+	{
+		GameServer first = CreateServer("normalized");
+		GameServer alias = new() { Game = first.Game, ServerName = first.ServerName,
+			InstallPath = first.InstallPath + Path.DirectorySeparatorChar };
+		using ServerOperationLease operation = ServerOperationCoordinator.TryBegin(first, ServerOperationKind.AddOns);
+		Task<ServerOperationLease> independent;
+		using (ExecutionContext.SuppressFlow())
+			independent = Task.Run(() => ServerOperationCoordinator.TryBegin(alias, ServerOperationKind.Start));
+		using ServerOperationLease blocked = await independent;
+		Assert.False(blocked.Acquired);
+	}
+
 	private static GameServer CreateServer(string name) => new()
 	{
 		Game = "Coordinator Test",

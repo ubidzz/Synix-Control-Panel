@@ -106,6 +106,31 @@ public sealed class OxideRuntimeManagerTests
 		}
 	}
 
+	[Fact]
+	public void IncompleteOverlayRollbackKeepsTheOriginalRecoveryCopy()
+	{
+		string root = CreateTestRoot();
+		string source = Path.Combine(root, "source");
+		string server = Path.Combine(root, "server");
+		string rollback = Path.Combine(root, "rollback");
+		try
+		{
+			Directory.CreateDirectory(source);
+			Directory.CreateDirectory(server);
+			File.WriteAllText(Path.Combine(source, "fixture.dll"), "replacement fixture");
+			File.WriteAllText(Path.Combine(server, "fixture.dll"), "original fixture");
+			using (FileStream locked = new(Path.Combine(server, "fixture.dll"), FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				IOException failure = Assert.ThrowsAny<IOException>(() =>
+					OxideRuntimeManager.ApplyOverlayWithRollback(source, server, rollback));
+				Assert.Contains(rollback, failure.Message);
+				Assert.Equal("original fixture", File.ReadAllText(Path.Combine(rollback, "fixture.dll")));
+				Assert.Equal("original fixture", File.ReadAllText(Path.Combine(server, "fixture.dll")));
+			}
+		}
+		finally { Directory.Delete(root, true); }
+	}
+
 	private static string CreateTestRoot()
 	{
 		string path = Path.Combine(

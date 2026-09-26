@@ -298,6 +298,15 @@
   <data name="ServerSetup.Status.Ready" xml:space="preserve">
     <value>●  Ready to save</value>
   </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Review settings</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Checking your changes…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Required settings are valid. Open step 3 to review your choices before saving.</value>
+  </data>
   <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
     <value>●  Action required</value>
   </data>
@@ -1556,6 +1565,9 @@ Click below. Synix sends the command, reads the new token, verifies it, and save
   <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
     <value>NEXT</value>
   </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>REVIEWING</value>
+  </data>
   <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
     <value>READY</value>
   </data>
@@ -2668,6 +2680,12 @@ This does not delete the webhook from Discord.</value>
   <data name="Configuration.Report.State.Warning" xml:space="preserve">
     <value>WARNING</value>
   </data>
+  <data name="Configuration.Report.State.Information" xml:space="preserve">
+    <value>NOTE</value>
+  </data>
+  <data name="Diagnostics.Health.Summary.Review" xml:space="preserve">
+    <value>ITEMS TO REVIEW  •  {0} warnings  •  {1} passed</value>
+  </data>
   <data name="Configuration.Report.State.Fail" xml:space="preserve">
     <value>FAIL</value>
   </data>
@@ -3080,7 +3098,7 @@ This does not delete the webhook from Discord.</value>
     <value>Saved: {0}</value>
   </data>
   <data name="GameDefinitions.Builder.TemplatePicker.Filter" xml:space="preserve">
-    <value>Configuration files|*.ini;*.cfg;*.json;*.xml;*.txt;*.properties|All files|*.*</value>
+    <value>Configuration files|*.ini;*.cfg;*.json;*.xml;*.txt;*.properties;*.yaml;*.yml|All files|*.*</value>
   </data>
   <data name="GameDefinitions.Builder.TemplatePicker.Title" xml:space="preserve">
     <value>Select a complete game configuration template</value>
@@ -3529,8 +3547,12 @@ Please stop a server before starting another.</value>
     <value>Configuration Could Not Be Applied</value>
   </data>
   <data name="ServerActions.Delete.ConfirmBody" xml:space="preserve">
-    <value>This will wipe the installation at:
-{0}</value>
+    <value>This will permanently delete the installation at:
+{0}
+
+This server's add-on import history and recovery copies stored by Synix will also be deleted.
+
+Full server backup archives are kept unless you select the option below.</value>
   </data>
   <data name="ServerActions.Delete.ConfirmHeading" xml:space="preserve">
     <value>Are you sure you want to PERMANENTLY delete '{0}'?</value>
@@ -6188,6 +6210,15 @@ Examples: logs\latest.log, Saved\Logs\*.log, profiles\{Identity}\logs\**\*.log. 
   <data name="FileSystem.Error.FolderMoveFailed" xml:space="preserve">
     <value>The folder could not be moved: {0}</value>
   </data>
+  <data name="FileSystem.Error.UnsafeDeletionPath" xml:space="preserve">
+    <value>Synix refused to delete '{0}' because it is not a safe server or backup folder. Drive roots, Windows and application folders, user-data roots, and shared Synix folders are protected.</value>
+  </data>
+  <data name="FileSystem.Error.LinkedDeletionPath" xml:space="preserve">
+    <value>Synix refused to delete '{0}' because the folder or one of its parent folders is a link. Linked folders cannot be deleted automatically.</value>
+  </data>
+  <data name="FileSystem.Error.DeletionPathUnavailable" xml:space="preserve">
+    <value>Synix could not safely verify the deletion folder '{0}'.</value>
+  </data>
   <data name="Configuration.Activity.Error" xml:space="preserve">
     <value>[CONFIG ERROR] {0}</value>
   </data>
@@ -7394,6 +7425,9 @@ Required destinations:
   </data>
   <data name="ServerActions.Activity.BackupsDeleted" xml:space="preserve">
     <value>[DELETE] Removed server backups from {0}.</value>
+  </data>
+  <data name="ServerActions.Activity.AddOnDataDeleted" xml:space="preserve">
+    <value>[DELETE] Removed this server's add-on history and recovery copies from {0}.</value>
   </data>
   <data name="ServerActions.Activity.ConfigCaptureCopied" xml:space="preserve">
     <value>[CONFIG CAPTURE] Copied {0} file(s) for {1} to {2}.</value>
@@ -10735,4 +10769,820 @@ Any other custom configuration values will be removed.</value>
   <data name="MessageText.19580FB3CF2A0F82762D" xml:space="preserve">
     <value>You must stop the server before validating server files.</value>
   </data>
+  <data name="ModManager.Error.LinkedPath" xml:space="preserve">
+    <value>This add-on operation uses a linked file or folder. Choose a normal folder; Synix will not follow that link.</value>
+  </data>
+  <data name="ModManager.Error.PreviousFileMissing" xml:space="preserve">
+    <value>A previous add-on file needed for restoration is missing. No files were changed. Restore the missing recovery file or use a verified server backup before removing this add-on.</value>
+  </data>
+  <data name="ModManager.Error.RecoveryRetained" xml:space="preserve">
+    <value>The add-on operation failed and some changes could not be rolled back. Recovery files were kept at {0}. Keep the server stopped and restore those files or a verified server backup before starting it.</value>
+  </data>
+  <data name="LaunchCommand.Error.UnsafeBatchValue" xml:space="preserve">
+    <value>The launch field {0} cannot be passed safely through this Windows batch launcher. Embedded double quotes, line breaks, or variable expressions are not supported here. The value was not changed.</value>
+  </data>
+  <data name="LaunchCommand.Error.UnsafeBatchArguments" xml:space="preserve">
+    <value>The completed batch command contains unsafe command syntax or variable expansion. Review the launch values and extra arguments; nothing was started.</value>
+  </data>
+  <data name="ServerStart.Arguments.CustomHidden" xml:space="preserve">
+    <value>[Custom arguments supplied; contents omitted from log]</value>
+  </data>
+  <data name="Configuration.Editor.Error.YamlUnsupported" xml:space="preserve">
+    <value>YAML line {0} is invalid or uses a feature this editor cannot safely change. Supported: one document with indented mappings/lists and single-line values. Flow collections, multiline values, tags, anchors, and aliases are not supported. Nothing was saved.</value>
+  </data>
+  <data name="GameInput.WorldSeed.RequiredNumber" xml:space="preserve">
+    <value>World Seed is required for {0}: use a whole number from {1} to {2}. Correct it in Server Setup &gt; World Generation.</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Required" xml:space="preserve">
+    <value>World Seed (required)</value>
+  </data>
+  <data name="ServerSetup.World.Seed.RangeHint" xml:space="preserve">
+    <value>Whole number from {0} to {1}. For an existing world, keep its original seed.</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Generate" xml:space="preserve">
+    <value>Generate seed</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Hint" xml:space="preserve">
+    <value>Generate a seed for a new world, or enter your own. For an existing world, keep its original seed.</value>
+  </data>
+  <data name="ModManager.Known.Scenario" xml:space="preserve">
+    <value>Scenario</value>
+  </data>
+  <data name="EmpyrionMods.Error.Profile" xml:space="preserve">
+    <value>This package layout is only supported for Empyrion's documented Content folders.</value>
+  </data>
+  <data name="EmpyrionMods.Error.FolderName" xml:space="preserve">
+    <value>Use a folder name of 1–80 characters, without slashes, reserved Windows names, or leading/trailing spaces. A scenario name cannot be only a Workshop number.</value>
+  </data>
+  <data name="EmpyrionMods.Error.Layout" xml:space="preserve">
+    <value>Select a complete downloaded scenario or compiled server mod package, not the game installation, a Workshop collection, a blueprint, or a source-code archive.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ScenarioLayout" xml:space="preserve">
+    <value>A scenario must have gameoptions.yaml and its Content, Playfields, Sectors, or Prefabs assets together, either at the ZIP root or inside one scenario folder.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ScenarioCode" xml:space="preserve">
+    <value>This scenario package contains DLL, C#, or JAR code. Import server code separately through Empyrion server mods after reviewing the author's instructions.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ModLayout" xml:space="preserve">
+    <value>Select a complete compiled mod package: DLL files and their support files must be at the package root or inside individual mod folders. Extra wrapper folders and full server archives are not accepted.</value>
+  </data>
+  <data name="EmpyrionMods.Error.MissingScenario" xml:space="preserve">
+    <value>That scenario is not installed. Import the complete scenario first, then choose it from the installed list.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ConfigurationChanged" xml:space="preserve">
+    <value>The scenario or save settings changed while this window was open. Close it and choose the scenario again.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ExistingSave" xml:space="preserve">
+    <value>That save already exists. A different scenario needs a new, unused save name. Synix has not replaced or deleted the existing world.</value>
+  </data>
+  <data name="EmpyrionMods.Error.Configuration" xml:space="preserve">
+    <value>dedicated.yaml is missing, too large, or does not contain one GameConfig.CustomScenario and GameConfig.GameName setting. Configure the server first.</value>
+  </data>
+  <data name="EmpyrionMods.Error.SaveFailed" xml:space="preserve">
+    <value>Synix could not save the server entry. The previous scenario configuration has been restored; the backup is retained.</value>
+  </data>
+  <data name="EmpyrionMods.Error.ProtectedScenario" xml:space="preserve">
+    <value>Synix will not remove the selected scenario or scenario assets while saved worlds exist. Those worlds may still depend on the files. No scenario files were removed.</value>
+  </data>
+  <data name="EmpyrionMods.Status.Protected" xml:space="preserve">
+    <value>Protected for saved worlds</value>
+  </data>
+  <data name="EmpyrionMods.Status.Installed" xml:space="preserve">
+    <value>Installed (not re-verified)</value>
+  </data>
+  <data name="EmpyrionMods.Button.Import" xml:space="preserve">
+    <value>Import Package</value>
+  </data>
+  <data name="EmpyrionMods.Button.ChooseScenario" xml:space="preserve">
+    <value>Choose Scenario</value>
+  </data>
+  <data name="EmpyrionMods.ImportedScenario" xml:space="preserve">
+    <value>Scenario files were imported. The current world and scenario selection were not changed. Use Choose Scenario to select the scenario and a save name. Keep the same scenario folder name when importing an update.</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ScenarioTitle" xml:space="preserve">
+    <value>Import an Empyrion scenario</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ModTitle" xml:space="preserve">
+    <value>Import Empyrion server mods</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ScenarioHelp" xml:space="preserve">
+    <value>Subscribe in Steam and let the download finish, then select the scenario folder under steamapps\workshop\content\383120, or choose a complete scenario ZIP. This imports a local copy; Steam will not update that server copy automatically.</value>
+  </data>
+  <data name="EmpyrionMods.Picker.ModHelp" xml:space="preserve">
+    <value>Choose a complete compiled server mod ZIP or folder from an author you trust. Keep DLLs, _Info.yaml (when supplied), dependencies and assets together. Synix does not download dependencies or run mod code itself.</value>
+  </data>
+  <data name="EmpyrionMods.Picker.FolderName" xml:space="preserve">
+    <value>Scenario folder name on the server (reuse this name for updates)</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Zip" xml:space="preserve">
+    <value>Choose ZIP</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Folder" xml:space="preserve">
+    <value>Choose Folder</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Review" xml:space="preserve">
+    <value>Review Package</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Confirm" xml:space="preserve">
+    <value>Scenario: {0}&#10;Save name: {1}&#10;&#10;Synix will back up dedicated.yaml, update only the scenario/save selection, and save the matching server entry. Existing world folders are not changed. Apply these settings for the next start?</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Saved" xml:space="preserve">
+    <value>The scenario and save selection were saved. Start the server when ready, then check its game log and connect with a client. Existing world folders were preserved.</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Help" xml:space="preserve">
+    <value>Current scenario: {0}&#10;Current save: {1}&#10;Choose installed content below. Importing files alone does not activate a scenario.</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Scenario" xml:space="preserve">
+    <value>Installed scenario</value>
+  </data>
+  <data name="EmpyrionMods.Selection.SaveName" xml:space="preserve">
+    <value>Save name (GameConfig.GameName — not the server's display name)</value>
+  </data>
+  <data name="EmpyrionMods.Selection.NewSaveNotice" xml:space="preserve">
+    <value>A different scenario needs a new save. Synix suggests a new name and never deletes or overwrites an existing world.</value>
+  </data>
+  <data name="EmpyrionMods.Selection.Use" xml:space="preserve">
+    <value>Use Scenario</value>
+  </data>
+  <data name="EmpyrionMods.Support.Scenarios" xml:space="preserve">
+    <value>Import a downloaded folder or ZIP. Use Choose Scenario afterwards; existing saves are protected.</value>
+  </data>
+  <data name="EmpyrionMods.Support.Mods" xml:space="preserve">
+    <value>Import complete compiled mod folders or ZIPs. Check the author's dependencies; code runs in Empyrion.</value>
+  </data>
+  <data name="EmpyrionMods.Button.RollBack" xml:space="preserve">
+    <value>Roll Back Import</value>
+  </data>
+  <data name="EmpyrionMods.Remove.Confirm" xml:space="preserve">
+    <value>Roll back the import containing {0}? All files installed by that same package will be removed or restored to their previous copies, including other mods in the package. Files changed outside Synix will block rollback. Keep a full server backup before continuing.</value>
+  </data>
+  <data name="ModPackages.Error.FolderUnsupported" xml:space="preserve">
+    <value>This add-on system does not support folder imports. Choose one of its supported package files.</value>
+  </data>
+  <data name="ModPackages.Error.Layout" xml:space="preserve">
+    <value>Select a complete mod or scenario folder containing the required package files, not the game installation or a collection of unrelated downloads.</value>
+  </data>
+  <data name="ModPackages.Error.Size" xml:space="preserve">
+    <value>The package exceeds this add-on system's import limits, or its contents changed while being copied. Nothing was installed.</value>
+  </data>
+  <data name="ModPackages.Picker.Title" xml:space="preserve">
+    <value>Import a mod package</value>
+  </data>
+  <data name="ModPackages.Picker.Help" xml:space="preserve">
+    <value>Choose a complete mod ZIP or folder for the selected game and framework. Keep its required manifest, dependencies and assets together. Review the destination and scan results before installing.</value>
+  </data>
+  <data name="ModPackages.Picker.Destination" xml:space="preserve">
+    <value>Installation folder on the server</value>
+  </data>
+  <data name="ModPackages.Picker.SelectFolder" xml:space="preserve">
+    <value>Select the complete mod or scenario folder, not the game installation</value>
+  </data>
+  <data name="EmpyrionMods.Import.ExistingScenario" xml:space="preserve">
+    <value>This scenario folder already exists. Matching files will be replaced, which can affect worlds using this scenario. Keep a full server backup and use a different folder name for a different scenario. Saved-world files themselves will not be changed.</value>
+  </data>
+  <data name="ServerOperation.Name.AddOns" xml:space="preserve"><value>add-on management</value></data>
+  <data name="ModManager.Error.NewerInstallation" xml:space="preserve"><value>A newer import now owns files in this package. Roll back the newer import first.</value></data>
+  <data name="ModManager.Error.PreviousFileChanged" xml:space="preserve"><value>A saved original file has changed. Rollback was stopped before changing server files. Restore a trusted full-server backup if necessary.</value></data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve"><value>Search add-ons in this install area…</value></data>
+  <data name="ModManager.Inventory.Scanning" xml:space="preserve"><value>Scanning add-ons and checking tracked files…</value></data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve"><value>{0} of {1} add-ons match your search</value></data>
+  <data name="ModManager.Progress.Installing" xml:space="preserve"><value>Installing the reviewed package and saving rollback copies…</value></data>
+  <data name="ModManager.Progress.Removing" xml:space="preserve"><value>Checking the complete package and restoring previous files…</value></data>
+  <data name="ModManager.Progress.Framework" xml:space="preserve"><value>Installing the server framework. Please keep this window open…</value></data>
+  <data name="ModManager.Framework.SaveFailed" xml:space="preserve"><value>The framework files were installed, but Synix could not save the server settings. Check folder permissions and save the server configuration again before starting it. The installed files were not undone.</value></data>
+  <data name="ModManager.Progress.Failed" xml:space="preserve"><value>The operation could not finish. Review the error, then refresh before trying again.</value></data>
+  <data name="ModManager.Field.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="MinecraftWorkspace.Title" xml:space="preserve">
+    <value>Minecraft Control Center</value>
+  </data>
+  <data name="MinecraftWorkspace.Overview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="MinecraftWorkspace.Console" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="MinecraftWorkspace.Players" xml:space="preserve">
+    <value>Players</value>
+  </data>
+  <data name="MinecraftWorkspace.Settings" xml:space="preserve">
+    <value>Settings &amp; files</value>
+  </data>
+  <data name="MinecraftWorkspace.Worlds" xml:space="preserve">
+    <value>Worlds</value>
+  </data>
+  <data name="MinecraftWorkspace.Mods" xml:space="preserve">
+    <value>Mods &amp; plugins</value>
+  </data>
+  <data name="MinecraftWorkspace.Backups" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="MinecraftWorkspace.Recovery" xml:space="preserve">
+    <value>Change recovery</value>
+  </data>
+  <data name="MinecraftWorkspace.Diagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="MinecraftWorkspace.Schedules" xml:space="preserve">
+    <value>Schedules</value>
+  </data>
+  <data name="MinecraftWorkspace.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="MinecraftWorkspace.Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="MinecraftWorkspace.Restart" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data name="MinecraftWorkspace.Setup" xml:space="preserve">
+    <value>Server setup</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyRuntime" xml:space="preserve">
+    <value>Apply selected runtime</value>
+  </data>
+  <data name="MinecraftWorkspace.Readiness" xml:space="preserve">
+    <value>Readiness checks</value>
+  </data>
+  <data name="MinecraftWorkspace.Connection" xml:space="preserve">
+    <value>Connection details</value>
+  </data>
+  <data name="MinecraftWorkspace.Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="MinecraftWorkspace.Ready" xml:space="preserve">
+    <value>Ready. No server is started automatically.</value>
+  </data>
+  <data name="MinecraftWorkspace.Working" xml:space="preserve">
+    <value>Working…</value>
+  </data>
+  <data name="MinecraftWorkspace.Wait" xml:space="preserve">
+    <value>Wait for the current operation to finish.</value>
+  </data>
+  <data name="MinecraftWorkspace.Cancelled" xml:space="preserve">
+    <value>Cancelled. Installed files were not changed.</value>
+  </data>
+  <data name="MinecraftWorkspace.CancelOperation" xml:space="preserve">
+    <value>Cancel import</value>
+  </data>
+  <data name="MinecraftWorkspace.Save" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="MinecraftWorkspace.Discard" xml:space="preserve">
+    <value>Discard these unsaved edits?</value>
+  </data>
+  <data name="MinecraftWorkspace.File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="MinecraftWorkspace.Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="MinecraftWorkspace.EditFile" xml:space="preserve">
+    <value>Edit selected file</value>
+  </data>
+  <data name="MinecraftWorkspace.StructuredEditor" xml:space="preserve">
+    <value>Structured editor</value>
+  </data>
+  <data name="MinecraftWorkspace.Player" xml:space="preserve">
+    <value>Player name</value>
+  </data>
+  <data name="MinecraftWorkspace.Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyPlayer" xml:space="preserve">
+    <value>Apply player action</value>
+  </data>
+  <data name="MinecraftWorkspace.World" xml:space="preserve">
+    <value>World</value>
+  </data>
+  <data name="MinecraftWorkspace.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="MinecraftWorkspace.Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="MinecraftWorkspace.Available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="MinecraftWorkspace.NewWorldName" xml:space="preserve">
+    <value>New world folder name</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportWorld" xml:space="preserve">
+    <value>Import world ZIP</value>
+  </data>
+  <data name="MinecraftWorkspace.ActivateWorld" xml:space="preserve">
+    <value>Use selected world</value>
+  </data>
+  <data name="MinecraftWorkspace.AddOnId" xml:space="preserve">
+    <value>Add-on ID</value>
+  </data>
+  <data name="MinecraftWorkspace.Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="MinecraftWorkspace.Loader" xml:space="preserve">
+    <value>Loader</value>
+  </data>
+  <data name="MinecraftWorkspace.ManageAddOns" xml:space="preserve">
+    <value>Individual add-ons</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportPack" xml:space="preserve">
+    <value>Import / update pack</value>
+  </data>
+  <data name="MinecraftWorkspace.Checks" xml:space="preserve">
+    <value>Compatibility checks</value>
+  </data>
+  <data name="MinecraftWorkspace.Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="MinecraftWorkspace.Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="MinecraftWorkspace.Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="MinecraftWorkspace.Change" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="MinecraftWorkspace.CreateBackup" xml:space="preserve">
+    <value>Create full backup</value>
+  </data>
+  <data name="MinecraftWorkspace.RestoreBackup" xml:space="preserve">
+    <value>Restore backup</value>
+  </data>
+  <data name="MinecraftWorkspace.VerifyBackup" xml:space="preserve">
+    <value>Verify backup</value>
+  </data>
+  <data name="MinecraftWorkspace.EditSchedule" xml:space="preserve">
+    <value>Edit schedule</value>
+  </data>
+  <data name="MinecraftWorkspace.Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="MinecraftWorkspace.Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoChange" xml:space="preserve">
+    <value>Undo / recover change</value>
+  </data>
+  <data name="MinecraftWorkspace.Area" xml:space="preserve">
+    <value>Area</value>
+  </data>
+  <data name="MinecraftWorkspace.Detail" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="MinecraftWorkspace.Performance" xml:space="preserve">
+    <value>Process resources</value>
+  </data>
+  <data name="MinecraftWorkspace.Online" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="MinecraftWorkspace.Logs" xml:space="preserve">
+    <value>Recent logs</value>
+  </data>
+  <data name="MinecraftWorkspace.Apply" xml:space="preserve">
+    <value>Apply changes</value>
+  </data>
+  <data name="MinecraftWorkspace.Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="MinecraftWorkspace.Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="MinecraftWorkspace.Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="MinecraftWorkspace.Replace" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Prepared" xml:space="preserve">
+    <value>Recovery needed</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Applied" xml:space="preserve">
+    <value>Applied</value>
+  </data>
+  <data name="MinecraftWorkspace.State.Undone" xml:space="preserve">
+    <value>Undone</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Kick" xml:space="preserve">
+    <value>Kick</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Allow" xml:space="preserve">
+    <value>Allowlist: add</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Disallow" xml:space="preserve">
+    <value>Allowlist: remove</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Operator" xml:space="preserve">
+    <value>Grant operator</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Deop" xml:space="preserve">
+    <value>Remove operator</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Ban" xml:space="preserve">
+    <value>Ban (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Pardon" xml:space="preserve">
+    <value>Unban (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.OverviewHelp" xml:space="preserve">
+    <value>Manage the selected Minecraft server here. Stop it before changing files, worlds, packs, or runtime. Start, stop, and restart use Synix's normal lifecycle safeguards.</value>
+  </data>
+  <data name="MinecraftWorkspace.OverviewValues" xml:space="preserve">
+    <value>Software: {0} • Build: {1}
+Java: {2} • RAM limit: {3} GB
+Players: {4} • Game port: {5} • Query / IPv6 port: {6}
+World: {7}
+Advertised name / MOTD: {8}</value>
+  </data>
+  <data name="MinecraftWorkspace.ScheduleHelp" xml:space="preserve">
+    <value>Use schedules for restarts and maintenance, including waiting for players and making a full backup first. Times use this PC's local time. Synix must be running for its scheduler to run.</value>
+  </data>
+  <data name="MinecraftWorkspace.ScheduleValues" xml:space="preserve">
+    <value>Scheduled restart: {0}
+Local time: {1}
+Days: {2}
+Wait for players: {3}
+Back up before maintenance: {4}
+Update before maintenance: {5}</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayersHelp" xml:space="preserve">
+    <value>Refresh to view online names and saved access lists. Choose or type a player name, then review the action. Commands require a running server and a working console connection. Bedrock does not support Java ban commands.</value>
+  </data>
+  <data name="MinecraftWorkspace.SettingsHelp" xml:space="preserve">
+    <value>Edit server.properties and mod/plugin configuration files. Values used by Synix are synchronized when server.properties is saved. Advertised name / MOTD is separate from this entry's local name. Refresh reloads external config edits while stopped.</value>
+  </data>
+  <data name="MinecraftWorkspace.EditorHelp" xml:space="preserve">
+    <value>Save creates recovery copies. Changes to ports, world, seed, game mode, player limit, and supported Minecraft control settings also update Synix. JSON, XML, and YAML are parsed before saving; other formats require careful editing. Keep credentials private.</value>
+  </data>
+  <data name="MinecraftWorkspace.WorldsHelp" xml:space="preserve">
+    <value>Import a Java or Bedrock world ZIP into a NEW folder, then select it to use it. Existing worlds are not replaced. Editions are not converted. Switching does not upgrade, downgrade, or verify a world's game/mod compatibility; back up first.</value>
+  </data>
+  <data name="MinecraftWorkspace.ModsHelp" xml:space="preserve">
+    <value>Inspect JAR metadata and dependencies, manage individual add-ons, or review a complete server pack. Use the pack's exact game version and loader build. Compatibility checks are advisory and do not prove that code is safe or that every mod will work.</value>
+  </data>
+  <data name="MinecraftWorkspace.BackupsHelp" xml:space="preserve">
+    <value>Full backups include the server folder, worlds, add-ons, and configuration. Stop the server first. Verify integrity before restoring. Restoring replaces server files; receipts verify archive integrity, not whether the backup contains a pre-existing problem.</value>
+  </data>
+  <data name="MinecraftWorkspace.RecoveryHelp" xml:space="preserve">
+    <value>Every content change keeps previous files and hashes. Select an applied or interrupted change to recover it. Undo newer overlapping changes first. Externally modified files and the active imported world are protected. Keep a full backup for runtime/world upgrades.</value>
+  </data>
+  <data name="MinecraftWorkspace.DiagnosticsHelp" xml:space="preserve">
+    <value>Look for common problems in the recent server log and latest crash report. Findings are clues, not confirmed causes. Process CPU/RAM is not Minecraft TPS/MSPT; use a compatible in-server profiler when diagnosing tick performance.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmStop" xml:space="preserve">
+    <value>Stop this server through Synix now?</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmRestart" xml:space="preserve">
+    <value>Restart this server through Synix now?</value>
+  </data>
+  <data name="MinecraftWorkspace.RuntimeNotice" xml:space="preserve">
+    <value>Install the selected game version, loader, and build from their official sources? This may download Java and run the official Forge/NeoForge installer. Server files are staged first; previous replaced files are kept for recovery. Worlds and add-ons are preserved. Make a full backup before changing game versions. No game server is started.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmPlayer" xml:space="preserve">
+    <value>Send the selected player command? Operator access grants broad control over the game server.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmWorld" xml:space="preserve">
+    <value>Use the selected world on the next start? The current world stays on disk. Only choose a world compatible with this server's edition, version, and mods.</value>
+  </data>
+  <data name="MinecraftWorkspace.PackNotice" xml:space="preserve">
+    <value>Import this trusted server pack? A Modrinth pack can download referenced files from approved HTTPS sources. Mods and game scripts run code inside the game server. Layout, hash, compatibility, and available antivirus checks are not a safety guarantee. Review all changes before applying them.</value>
+  </data>
+  <data name="MinecraftWorkspace.CompatibilityNotice" xml:space="preserve">
+    <value>Checks read metadata without loading mod code. Complex version ranges, conditional dependencies, and some bundled/legacy metadata require manual review. These checks do not guarantee compatibility or absence of malware.</value>
+  </data>
+  <data name="MinecraftWorkspace.Skipped" xml:space="preserve">
+    <value>Not imported: {0}</value>
+  </data>
+  <data name="MinecraftWorkspace.BackupSpace" xml:space="preserve">
+    <value>Check the backup location and available free space.</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmBackup" xml:space="preserve">
+    <value>Create a full backup of this stopped server?</value>
+  </data>
+  <data name="MinecraftWorkspace.ConfirmRestore" xml:space="preserve">
+    <value>Restore the selected full backup? Existing server files will be replaced. Verify the archive and keep any current files you still need before proceeding.</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoNotice" xml:space="preserve">
+    <value>Recover this change's previous files. Files added by this change are removed only if unchanged. Modified files block recovery. A full backup is required to reverse any world conversion performed after starting a different game version.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoLogFindings" xml:space="preserve">
+    <value>No recognized pattern found in the available recent logs. This is not a complete health check. Use Readiness and check the first error near the failure time.</value>
+  </data>
+  <data name="MinecraftWorkspace.PreviewSummary" xml:space="preserve">
+    <value>Review before applying: {0} new • {1} replaced • {2} removed. Previous files are retained for recovery. No server is started.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Runtime" xml:space="preserve">
+    <value>The requested stable server build or its download metadata is unavailable. Refresh the version/build selection and try again.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Size" xml:space="preserve">
+    <value>This content exceeds the supported file, metadata, or total-size limits.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Recovery" xml:space="preserve">
+    <value>Recovery data is missing or inconsistent. Keep the recovery folder and use a verified full backup.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PendingRecovery" xml:space="preserve">
+    <value>A previous content operation needs recovery. Open Change recovery and resolve it before making another change.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Changed" xml:space="preserve">
+    <value>A file changed since review or since this operation. Refresh and review again. No unrelated edits will be overwritten.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Layout" xml:space="preserve">
+    <value>The package layout or path is unsafe, ambiguous, or unsupported. Select a supported server pack or world archive.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.ActiveWorld" xml:space="preserve">
+    <value>This is the active imported world. Switch to another world before undoing its import.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldExists" xml:space="preserve">
+    <value>That world folder already exists. Choose a new folder name; existing worlds are never overwritten by import.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldLayout" xml:space="preserve">
+    <value>Select an archive containing one world with level.dat. Full-server and multi-world archives use the backup/restore workflow instead.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldEdition" xml:space="preserve">
+    <value>This world does not match the server edition or is missing its expected region/database files. Java and Bedrock worlds are not converted.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.WorldName" xml:space="preserve">
+    <value>Use a safe world folder name, without paths or reserved Windows names. For imported worlds, use letters, numbers, spaces, hyphens, or underscores.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.JavaOnly" xml:space="preserve">
+    <value>This workflow is for Java server mods/plugins. Use Bedrock's own supported add-on workflow; Java JARs cannot run on Bedrock.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PackEmpty" xml:space="preserve">
+    <value>No supported server content was found. Launcher scripts, client files, runtimes, worlds, and root server settings are not imported by the modpack workflow.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.LoaderMismatch" xml:space="preserve">
+    <value>The content type does not match the selected server software. Mods need the matching mod loader; Bukkit/Paper plugins need a plugin runtime.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.CurseForgeManifest" xml:space="preserve">
+    <value>This is a CurseForge client manifest, not a complete server pack. Download the author's server ZIP containing the actual mods and configs; unavailable files are not silently skipped.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PackVersion" xml:space="preserve">
+    <value>The pack's Minecraft version and loader/build must match this server. Select and apply that exact runtime first. Unsupported loaders are not substituted.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.DownloadSource" xml:space="preserve">
+    <value>The download or redirect is not an approved public HTTPS source. Use an author's supported local server ZIP instead.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.DownloadHash" xml:space="preserve">
+    <value>A downloaded file did not match its declared size or SHA-512 hash. Nothing was installed.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Properties" xml:space="preserve">
+    <value>A Minecraft value used by Synix is invalid or conflicting. Check ports, player limit, game mode, and control settings before saving.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.SaveEntry" xml:space="preserve">
+    <value>Synix could not save the updated server entry. The operation was not accepted; recovery files were retained where needed.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.ManagementLocal" xml:space="preserve">
+    <value>Synix's Minecraft management connection must remain on localhost. Do not expose this control endpoint to the Internet.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.PortConflict" xml:space="preserve">
+    <value>A configured port belongs to another Synix server. Choose a different port before saving.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.Player" xml:space="preserve">
+    <value>Choose a supported action and a valid player name. Java bans are not Bedrock commands.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.StartFailed" xml:space="preserve">
+    <value>The server did not start. Check Readiness and the dashboard activity log before retrying.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.MetadataUnknown" xml:space="preserve">
+    <value>Metadata could not be fully read. Check the file and its author's compatibility requirements.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.Duplicate" xml:space="preserve">
+    <value>More than one top-level JAR declares this ID. Review and remove the duplicate version.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.ClientOnly" xml:space="preserve">
+    <value>This JAR declares itself client-only. Do not install it on a dedicated server.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.WrongLoader" xml:space="preserve">
+    <value>This JAR's metadata does not match the selected loader/software.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyMissing" xml:space="preserve">
+    <value>Required dependency not found in the scanned metadata: {0}. Check bundled or conditional dependencies before installing anything.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyVersion" xml:space="preserve">
+    <value>Dependency {0} requires {1}; the scanned version is {2}.</value>
+  </data>
+  <data name="MinecraftWorkspace.Check.DependencyReview" xml:space="preserve">
+    <value>Manually check dependency {0}: required {1}, scanned {2}. This range/version is not fully understood.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Java" xml:space="preserve">
+    <value>The log suggests a Java/class-version mismatch. Use the Java version required by the selected server and mod loader.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Memory" xml:space="preserve">
+    <value>The log suggests Java could not allocate enough memory. Check available RAM, the server limit, and whether other servers are consuming it.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Dependency" xml:space="preserve">
+    <value>The log mentions dependency requirements. Inspect the first loader error, then check the exact mod, dependency, game version, and loader build.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Port" xml:space="preserve">
+    <value>The log suggests a port is already in use. Check other processes and this server's configured ports; do not open unrelated firewall ports.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Eula" xml:space="preserve">
+    <value>The log requests Minecraft EULA acceptance. Read and accept it through the normal first-start workflow if you agree.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Tick" xml:space="preserve">
+    <value>The log reports slow ticks or a watchdog timeout. Check CPU load, world generation, entities, and mods. More RAM alone may not solve this.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.Mixin" xml:space="preserve">
+    <value>A mixin error often involves an incompatible mod/loader combination. Check the first cause in the crash report and the pack's required versions.</value>
+  </data>
+  <data name="MinecraftWorkspace.Log.World" xml:space="preserve">
+    <value>The log reports world-data read errors. Stop the server and preserve current files before trying a verified compatible backup.</value>
+  </data>
+  <data name="MinecraftWorkspace.Error.RuntimeRecovery" xml:space="preserve"><value>This older installation has no recorded runtime profile. Use a full server backup to recover it; Synix will not guess its previous loader and version.</value></data>
+  <data name="MinecraftWorkspace.Error.RuntimeMismatch" xml:space="preserve"><value>The installed runtime does not match the selected edition, version, loader, or Java requirement. Open the Minecraft Control Center and use Apply Runtime before starting.</value></data>
+  <data name="MinecraftWorkspace.IncludeOptional" xml:space="preserve"><value>Include optional server mods</value></data>
+  <data name="MinecraftWorkspace.WorldFilter" xml:space="preserve"><value>World ZIP (*.zip)|*.zip</value></data>
+  <data name="MinecraftWorkspace.PackFilter" xml:space="preserve"><value>Minecraft server pack (*.zip;*.mrpack)|*.zip;*.mrpack</value></data>
+  <data name="MinecraftWorkspace.Error.InvalidValue" xml:space="preserve"><value>The value for {0} is invalid. Correct this setting before saving.</value></data>
+  <data name="MinecraftWorkspace.Empty" xml:space="preserve"><value>No items to show. Refresh after adding content or changing this server's setup.</value></data>
+  <data name="MinecraftWorkspace.State.Superseded" xml:space="preserve"><value>Replaced by full backup restore</value></data>
+  <data name="MinecraftWorkspace.CompatibilitySummary" xml:space="preserve">
+    <value>{0} add-ons identified • {1} findings to review. This check does not change files.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoCompatibilityAddOns" xml:space="preserve">
+    <value>No add-ons were found in the active mods or plugins folder for this server setup.</value>
+  </data>
+  <data name="MinecraftWorkspace.NoCompatibilityFindings" xml:space="preserve">
+    <value>No issues were found by the available metadata checks. This does not guarantee that every mod or plugin will work together.</value>
+  </data>
+  <data name="AsaPackages.Button.Read" xml:space="preserve"><value>Read Mod Package</value></data>
+  <data name="AsaPackages.Title" xml:space="preserve"><value>Read ASA mod package</value></data>
+  <data name="AsaPackages.Help" xml:space="preserve"><value>Choose a downloaded ASA Windows-server ZIP or an extracted folder. Synix finds mod descriptors inside flat, wrapped, or multi-mod packages and prepares their CurseForge IDs for review. The ZIP's files are not copied or installed. ASA downloads and registers the provider's current server build when you start the server; this does not pin the ZIP's version.</value></data>
+  <data name="AsaPackages.Source" xml:space="preserve"><value>Mod package source</value></data>
+  <data name="AsaPackages.Id" xml:space="preserve"><value>Mod ID</value></data>
+  <data name="AsaPackages.Descriptor" xml:space="preserve"><value>Descriptor location</value></data>
+  <data name="AsaPackages.Choose" xml:space="preserve"><value>Choose a ZIP or folder to inspect. No server settings or files will change until you separately review and save the mod ID list.</value></data>
+  <data name="AsaPackages.Trust" xml:space="preserve"><value>Package metadata is untrusted. Recognition is not a malware scan, compatibility check, or proof of publisher identity.</value></data>
+  <data name="AsaPackages.Review" xml:space="preserve"><value>Review Mod IDs</value></data>
+  <data name="AsaPackages.Reading" xml:space="preserve"><value>Reading package metadata. No mod code is executed.</value></data>
+  <data name="AsaPackages.Found" xml:space="preserve"><value>{0} mods identified; {1} new IDs to add. Existing IDs keep their order. Review the complete list before saving.</value></data>
+  <data name="AsaPackages.Timeout" xml:space="preserve"><value>Package inspection was cancelled or took too long. Choose a smaller package folder and try again.</value></data>
+  <data name="AsaPackages.Error.Source" xml:space="preserve"><value>Choose an ARK server mod ZIP or an extracted mod folder. Other archive formats are not supported by this reader.</value></data>
+  <data name="AsaPackages.Error.Limit" xml:space="preserve"><value>The package exceeds the metadata reader's limits. Choose a smaller folder or ZIP with no more than 100 mod descriptors.</value></data>
+  <data name="AsaPackages.Error.Layout" xml:space="preserve"><value>The package contains unsafe paths, links, duplicate paths, conflicting files, or too many nested folders. Nothing was changed.</value></data>
+  <data name="AsaPackages.Error.Descriptor" xml:space="preserve"><value>No .uplugin mod descriptor was found. Choose the mod ZIP or its extracted folder; nested archives must be extracted first.</value></data>
+  <data name="AsaPackages.Error.Metadata" xml:space="preserve"><value>A mod descriptor is not valid, unambiguous JSON. Nothing was changed.</value></data>
+  <data name="AsaPackages.Error.Game" xml:space="preserve"><value>A descriptor does not identify an ARK: Survival Ascended CurseForge project. Synix will not guess the game or mod ID.</value></data>
+  <data name="AsaPackages.Error.Id" xml:space="preserve"><value>A descriptor has no single valid CurseForge project ID (cf_ugcID). Use Manage Mod IDs with the ID from the author's CurseForge page.</value></data>
+  <data name="AsaPackages.Error.ServerBuild" xml:space="preserve"><value>A mod has no recognized WindowsServer package or is missing a matching .ucas/.utoc file. Choose the Windows-server download, not a client build.</value></data>
+  <data name="AsaPackages.Error.DuplicateMod" xml:space="preserve"><value>The package contains more than one descriptor for the same mod ID. Choose one version of each mod and inspect again.</value></data>
+  <data name="AsePackages.Title" xml:space="preserve"><value>Read ASE mod package</value></data>
+  <data name="AsePackages.Help" xml:space="preserve"><value>Choose an ARK: Survival Evolved mod ZIP or folder containing a .mod descriptor and its matching cooked mod folder. Synix reads the Workshop ID from the descriptor, not the ZIP name. Files are not copied or installed: after review, Synix updates ActiveMods and ModIDS for ARK's automatic download route. Maps and total conversions may need separate server setup. ASA CurseForge packages are not compatible.</value></data>
+  <data name="AsePackages.Error.Layout" xml:space="preserve"><value>This is not a recognized complete ASE mod export. Include the .mod descriptor and matching mod folder with mod.info and cooked assets. The embedded ID must match any numeric descriptor filename. Raw Workshop .z downloads without a prepared .mod file are not supported by this reader; use Manage Mod IDs instead.</value></data>
+  <data name="ArkPackages.Error.WrongEdition" xml:space="preserve"><value>This package contains a descriptor for the other ARK edition. ASE Steam Workshop mods and ASA CurseForge mods are not interchangeable. Choose a package for the selected server.</value></data>
+  <data name="UniversalMods.Locations.Title" xml:space="preserve"><value>Import locations</value></data>
+  <data name="UniversalMods.Locations.Profile" xml:space="preserve"><value>Custom import locations</value></data>
+  <data name="UniversalMods.Locations.Help" xml:space="preserve"><value>Set the mod or plugin folder and accepted main file types using this game's or loader's instructions. This applies only to this server. Select an existing location to update it; no mod files are changed here.</value></data>
+  <data name="UniversalMods.Locations.New" xml:space="preserve"><value>Add a new location</value></data>
+  <data name="UniversalMods.Locations.Name" xml:space="preserve"><value>Location name</value></data>
+  <data name="UniversalMods.Locations.Path" xml:space="preserve"><value>Folder inside the server (for example: BepInEx/plugins)</value></data>
+  <data name="UniversalMods.Locations.Extensions" xml:space="preserve"><value>Main file types (for example: .dll, .jar, .lua, .pak)</value></data>
+  <data name="UniversalMods.Locations.Browse" xml:space="preserve"><value>Choose server subfolder</value></data>
+  <data name="UniversalMods.Locations.Warning" xml:space="preserve"><value>File import does not install a loader or register provider-managed mods. Check the game's installation instructions.</value></data>
+  <data name="UniversalMods.Locations.Save" xml:space="preserve"><value>Save location</value></data>
+  <data name="UniversalMods.Locations.Ready" xml:space="preserve"><value>Custom file import — compatibility needs review</value></data>
+  <data name="UniversalMods.Locations.NotConfigured" xml:space="preserve"><value>No import locations configured</value></data>
+  <data name="UniversalMods.Locations.Start" xml:space="preserve"><value>Use Import locations to set this server's mod or plugin folder. Importing files does not prove the game can load them.</value></data>
+  <data name="UniversalMods.Locations.Selected" xml:space="preserve"><value>User-selected import location</value></data>
+  <data name="UniversalMods.Import.Title" xml:space="preserve"><value>Review package import</value></data>
+  <data name="UniversalMods.Import.Help" xml:space="preserve"><value>Choose the folder inside the package whose contents belong in the selected server location. Subfolders are preserved. You can remove download wrappers by selecting a deeper folder. Only the listed files will be imported; existing files receive recovery copies. This does not convert incompatible mods.</value></data>
+  <data name="UniversalMods.Import.ChooseFile" xml:space="preserve"><value>Choose file / ZIP</value></data>
+  <data name="UniversalMods.Import.Continue" xml:space="preserve"><value>Continue to security review</value></data>
+  <data name="UniversalMods.Import.Source" xml:space="preserve"><value>Package file</value></data>
+  <data name="UniversalMods.Import.Destination" xml:space="preserve"><value>Server destination</value></data>
+  <data name="UniversalMods.Import.Change" xml:space="preserve"><value>Action</value></data>
+  <data name="UniversalMods.Import.WholePackage" xml:space="preserve"><value>Whole package — keep its folder structure</value></data>
+  <data name="UniversalMods.Import.New" xml:space="preserve"><value>New file</value></data>
+  <data name="UniversalMods.Import.Replace" xml:space="preserve"><value>Replace (backup kept)</value></data>
+  <data name="UniversalMods.Import.Reading" xml:space="preserve"><value>Reading package and preparing the destination preview…</value></data>
+  <data name="UniversalMods.Import.Summary" xml:space="preserve"><value>{0} files selected; {1} existing files will be backed up before replacement. Nothing is installed until the next confirmation.</value></data>
+  <data name="UniversalMods.Error.InvalidLocations" xml:space="preserve"><value>The saved import locations are invalid or belong to a different server game. No files were changed.</value></data>
+  <data name="UniversalMods.Error.InstallFolder" xml:space="preserve"><value>Install this server before configuring local import locations.</value></data>
+  <data name="UniversalMods.Error.LocationLimit" xml:space="preserve"><value>A server can have up to 32 custom import locations.</value></data>
+  <data name="UniversalMods.Error.LocationName" xml:space="preserve"><value>Enter a location name of 1–80 characters and choose Mod or Plugin.</value></data>
+  <data name="UniversalMods.Error.Extensions" xml:space="preserve"><value>Enter 1–32 main file extensions, including their dots, such as .dll or .pak. Installer programs and command scripts are not accepted.</value></data>
+  <data name="UniversalMods.Error.Collision" xml:space="preserve"><value>The package has a file/folder conflict. Choose a complete, unambiguous package.</value></data>
+  <data name="UniversalMods.Error.NoFiles" xml:space="preserve"><value>The selected package folder contains none of this location's main file types. Select another content folder or review the location's accepted types.</value></data>
+  <data name="UniversalMods.Error.PackageRoot" xml:space="preserve"><value>Choose a valid folder inside the package. Paths outside the package are not accepted.</value></data>
+  <data name="UniversalMods.Import.Done" xml:space="preserve"><value>Files imported. Recovery copies were kept for replaced files. Check this game's loader and activation requirements before starting. No server was started.</value></data>
+  <data name="UniversalMods.Import.Rollback" xml:space="preserve"><value>Roll back the entire imported package '{0}' ({1} files)? This restores its previous files and removes files that the package added. It affects the whole package, not only the selected file.</value></data>
+  <data name="UniversalMods.Wizard.Title" xml:space="preserve"><value>Import mods and plugins</value></data>
+  <data name="UniversalMods.Wizard.Button" xml:space="preserve"><value>Import ZIP / folder</value></data>
+  <data name="UniversalMods.Wizard.Advanced" xml:space="preserve"><value>Advanced: import locations</value></data>
+  <data name="UniversalMods.Wizard.Help" xml:space="preserve"><value>Choose a ZIP, a downloaded mod file, or an extracted folder. Synix reads the package for {0} and shows how it will be added before changing anything.</value></data>
+  <data name="UniversalMods.Wizard.File" xml:space="preserve"><value>Choose ZIP or mod file</value></data>
+  <data name="UniversalMods.Wizard.Folder" xml:space="preserve"><value>Choose extracted folder</value></data>
+  <data name="UniversalMods.Wizard.Filter" xml:space="preserve"><value>ZIP packages (*.zip)|*.zip|Mod or plugin files (*.*)|*.*</value></data>
+  <data name="UniversalMods.Wizard.Empty" xml:space="preserve"><value>Start by choosing your downloaded ZIP or folder. You do not need to configure import locations first.</value></data>
+  <data name="UniversalMods.Wizard.Continue" xml:space="preserve"><value>Review and import</value></data>
+  <data name="UniversalMods.Wizard.Destination" xml:space="preserve"><value>Choose destination folder</value></data>
+  <data name="UniversalMods.Wizard.DestinationHelp" xml:space="preserve"><value>Choose the mod folder inside this server, following the game's installation instructions.</value></data>
+  <data name="UniversalMods.Wizard.Reading" xml:space="preserve"><value>Reading the package and checking its layout… No server files are being changed.</value></data>
+  <data name="UniversalMods.Wizard.Unknown" xml:space="preserve"><value>Read {0} files. Synix could not identify a destination for this game. Choose the server's mod folder; file types are filled in automatically. Do not guess the folder.</value></data>
+  <data name="UniversalMods.Wizard.Ambiguous" xml:space="preserve"><value>Read {0} files. More than one destination may fit. Choose the matching mod or plugin system above to preview it.</value></data>
+  <data name="UniversalMods.Wizard.Undecided" xml:space="preserve"><value>Choose a destination</value></data>
+  <data name="UniversalMods.Wizard.Cancelled" xml:space="preserve"><value>Package reading cancelled. Nothing was imported.</value></data>
+  <data name="UniversalMods.Wizard.ProviderAction" xml:space="preserve"><value>Download on server start</value></data>
+  <data name="UniversalMods.Wizard.ProviderDetails" xml:space="preserve"><value>{0}
+Mod ID: {1}
+ARK will download this mod from {2} when you start the server. Synix does not copy or register the downloaded package files.</value></data>
+  <data name="UniversalMods.Wizard.ProviderWarning" xml:space="preserve"><value>Detected {0} mod IDs. Next, review the ordered ID list. ARK downloads the mods on its next start; this is not a local file upload. No server is started automatically.</value></data>
+  <data name="UniversalMods.Wizard.LoaderMissing" xml:space="preserve"><value>This package needs a matching server loader. Set up the loader in server settings, then reopen Import. Files have not been changed.</value></data>
+  <data name="UniversalMods.Wizard.Summary" xml:space="preserve"><value>{0} files will be imported; {1} existing files will be backed up before replacement. Review the destinations below. No server starts automatically.</value></data>
+  <data name="UniversalMods.Wizard.ManualWarning" xml:space="preserve"><value>Files will be copied into {0}. Check the preview and the game's instructions: choosing a folder does not install a loader or activate provider-managed mods. This location is remembered only after confirmation.</value></data>
+  <data name="UniversalMods.Wizard.Root" xml:space="preserve"><value>Use files from: {0}</value></data>
+  <data name="UniversalMods.Wizard.Whole" xml:space="preserve"><value>Whole package</value></data>
+  <data name="ModSupport.Title" xml:space="preserve">
+    <value>Mod support &amp; setup</value>
+  </data>
+  <data name="ModSupport.Column" xml:space="preserve">
+    <value>Mods / plugins</value>
+  </data>
+  <data name="ModSupport.Documented" xml:space="preserve">
+    <value>Server methods documented</value>
+  </data>
+  <data name="ModSupport.NeedsVerification" xml:space="preserve">
+    <value>Needs verification</value>
+  </data>
+  <data name="ModSupport.ImportRules" xml:space="preserve">
+    <value>Synix has import rules for this game. The package must still match the installed loader, server version and dependencies.</value>
+  </data>
+  <data name="ModSupport.ManualSetup" xml:space="preserve">
+    <value>No automatic installation rule is available for this game yet. Read the method below before choosing a destination; files may also need activation in a configuration or provider.</value>
+  </data>
+  <data name="ModSupport.EvidenceNote" xml:space="preserve">
+    <value>Documented support is not a live-server compatibility test. Server mods, client mods and loader installers are different. Nothing is downloaded, installed or started by this guide.</value>
+  </data>
+  <data name="ModSupport.Methods" xml:space="preserve">
+    <value>Documented methods</value>
+  </data>
+  <data name="ModSupport.UnverifiedNote" xml:space="preserve">
+    <value>No reliable server-specific installation method has been confirmed yet. This does not mean the game cannot be modded. Choose a ZIP or folder to inspect it, then use the author's server instructions to confirm the destination and activation.</value>
+  </data>
+  <data name="ModSupport.Reviewed" xml:space="preserve">
+    <value>Documentation reviewed: {0}</value>
+  </data>
+  <data name="ModSupport.Sources" xml:space="preserve">
+    <value>Installation references (open a link to read)</value>
+  </data>
+  <data name="ModSupport.GuidedImport" xml:space="preserve">
+    <value>Server mod methods are documented. Use Mod support &amp; setup for activation instructions, then Import ZIP / folder to inspect your package.</value>
+  </data>
+  <data name="ModSupport.UnverifiedImport" xml:space="preserve">
+    <value>Choose Import ZIP / folder to inspect a package. Server support needs verification; Mod support &amp; setup explains the limits.</value>
+  </data>
+  <data name="ModSupport.InvalidCatalog" xml:space="preserve">
+    <value>The game mod-support catalog could not be read. Check that your Synix installation is complete.</value>
+  </data>
+  <data name="Configuration.Sync.Changed" xml:space="preserve">
+    <value>This configuration changed since it was opened. Reopen it before saving.</value>
+  </data>
+  <data name="Configuration.Sync.SaveEntry" xml:space="preserve">
+    <value>The Synix server entry could not be saved. The configuration and server settings have been restored.</value>
+  </data>
+  <data name="Configuration.Sync.Ambiguous" xml:space="preserve">
+    <value>The shared setting '{0}' has duplicate or conflicting values. Resolve these before saving so Synix can update the correct server value.</value>
+  </data>
+  <data name="Configuration.Sync.InvalidValue" xml:space="preserve">
+    <value>The shared setting '{0}' has an invalid value for Synix. Correct it before saving.</value>
+  </data>
+  <data name="Configuration.Sync.RollbackFailed" xml:space="preserve">
+    <value>Saving failed and the original configuration could not be restored automatically. Do not start the server until you review the configuration and its backup: {0}</value>
+  </data>
+  <data name="ModInstallGuide.Compatibility" xml:space="preserve"><value>Compatibility</value></data>
+  <data name="ModInstallGuide.Destination" xml:space="preserve"><value>Where it will be added</value></data>
+  <data name="ModInstallGuide.Activation" xml:space="preserve"><value>How to activate it</value></data>
+  <data name="ModInstallGuide.Recovery" xml:space="preserve"><value>How to undo it</value></data>
+  <data name="ModInstallGuide.Unknown" xml:space="preserve"><value>Not recorded</value></data>
+  <data name="ModInstallGuide.Context" xml:space="preserve"><value>{0} • Game version: {1} • Loader/system: {2}</value></data>
+  <data name="ModInstallGuide.PendingCompatibility" xml:space="preserve"><value>Choose a package and a matching destination to see what Synix can check.</value></data>
+  <data name="ModInstallGuide.PendingDestination" xml:space="preserve"><value>No destination is selected. No server files or settings have been changed.</value></data>
+  <data name="ModInstallGuide.PendingActivation" xml:space="preserve"><value>Importing never starts the server automatically. Activation depends on the selected game and mod system.</value></data>
+  <data name="ModInstallGuide.PendingRecovery" xml:space="preserve"><value>Back up the server and world before using new mods. The selected route will explain what can be undone.</value></data>
+  <data name="ModInstallGuide.LayoutRecognized" xml:space="preserve"><value>Layout/loader route recognized. Game versions, dependencies and client requirements are not fully verified here; check the author's requirements.</value></data>
+  <data name="ModInstallGuide.ManualCompatibility" xml:space="preserve"><value>Manual destination — compatibility is unverified. A matching file extension does not prove this mod works with this game or loader.</value></data>
+  <data name="ModInstallGuide.LoaderMissing" xml:space="preserve"><value>Import blocked: a matching loader is missing or the package does not match the selected loader. Check server settings and Mod support &amp; setup.</value></data>
+  <data name="ModInstallGuide.ProviderCompatibility" xml:space="preserve"><value>Provider IDs only. Mod versions, dependencies and platform compatibility are not checked. Confirm that each provider item supports this server.</value></data>
+  <data name="ModInstallGuide.ProviderDestination" xml:space="preserve"><value>Synix saves the ordered {0} ID list, not the ZIP's mod files. The game/provider controls the download location.</value></data>
+  <data name="ModInstallGuide.LaunchArgument" xml:space="preserve"><value>Server launch option: {0}=&lt;ordered IDs&gt;</value></data>
+  <data name="ModInstallGuide.RequiredArguments" xml:space="preserve"><value>Required launch flags: {0}</value></data>
+  <data name="ModInstallGuide.FileChanges" xml:space="preserve"><value>{0} files in the plan; {1} existing files will be backed up before replacement.</value></data>
+  <data name="ModInstallGuide.FilePreview" xml:space="preserve"><value>Select a file on the left for its full destination. Nothing is copied until the next review is confirmed.</value></data>
+  <data name="ModInstallGuide.ProviderActivation" xml:space="preserve"><value>Save the ordered IDs, then start the server yourself and check its download/startup log. A selected ZIP does not pin the version downloaded by the game/provider.</value></data>
+  <data name="ModInstallGuide.ManualActivation" xml:space="preserve"><value>Copying files does not install a loader or register/enable a mod. Follow Mod support &amp; setup and the author's server instructions, then start the server yourself and check its log.</value></data>
+  <data name="ModInstallGuide.ScenarioActivation" xml:space="preserve"><value>Import does not switch the active world. Use Choose Scenario to select this scenario and its save before starting. Existing saves are not converted automatically.</value></data>
+  <data name="ModInstallGuide.FileActivation" xml:space="preserve"><value>The selected loader/system reads the imported files when you start the server. Complete the author's extra setup and client requirements first, then check the startup log. Synix does not start the server.</value></data>
+  <data name="ModInstallGuide.FileRecovery" xml:space="preserve"><value>Stop the server, select an imported item and use Roll Back Import. This restores replaced files and removes new files from that import; later edits can block rollback. It does not restore world changes. Make a full backup before starting.</value></data>
+  <data name="ModInstallGuide.ProviderRecovery" xml:space="preserve"><value>Stop the server and edit the ID list to remove additions or restore its previous order. This does not delete provider files or restore older mod versions/world data. Keep the old ID list and a full server backup before starting.</value></data>
+  <data name="ModInstallGuide.ScenarioRecovery" xml:space="preserve"><value>An active scenario or existing saves may prevent removal.</value></data>
+  <data name="Backup.Retention.Warning" xml:space="preserve"><value>The new backup is saved, but backup cleanup needs attention for {0}: {1}</value></data>
+  <data name="Backup.Creation.Failed" xml:space="preserve"><value>The backup did not complete. Check Activity &amp; Diagnostics for the reason before continuing.</value></data>
+  <data name="ServerStart.Maintenance.BackupFailed" xml:space="preserve"><value>Startup cancelled: the requested backup did not complete. No update or server launch was performed. Check the backup error and try again.</value></data>
+  <data name="ServerStart.Maintenance.UpdateFailed" xml:space="preserve"><value>Startup cancelled: the requested update did not complete. The server remains stopped. Review the update error before trying again.</value></data>
+  <data name="ServerActions.Operation.RequiresStopped" xml:space="preserve"><value>Stop the server and confirm its processes have exited before updating or validating its files.</value></data>
+  <data name="Backup.Error.CustomFolderUnavailable" xml:space="preserve"><value>The selected custom backup folder is unavailable. Reconnect it or choose another backup folder. Synix will not silently use a different location.</value></data>
+  <data name="Configuration.Sync.TooLarge" xml:space="preserve"><value>A restored configuration is too large to synchronize safely. Review the file before starting the server.</value></data>
+  <data name="Backup.Progress.Synchronizing" xml:space="preserve"><value>Updating Synix settings from the restored configuration...</value></data>
+  <data name="Backup.Restore.SettingsPending" xml:space="preserve"><value>The backup files are restored, but Synix could not finish updating its server settings. Recovery files have been kept. Correct the problem and retry Start; startup remains blocked until synchronization succeeds. Details: {0}</value></data>
+  <data name="Backup.Error.RestartForRecovery" xml:space="preserve"><value>A previous restore was interrupted. Restart Synix to recover it before starting or restoring this server.</value></data>
+  <data name="Backup.Restore.PreviousPending" xml:space="preserve"><value>A previous restore still needs attention. This restore has not started. Details: {0}</value></data>
 </root>

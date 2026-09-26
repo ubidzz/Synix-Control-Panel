@@ -17,6 +17,7 @@ using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.SteamCMDHandler;
 using System.Diagnostics;
 using System.Text;
+using Synix_Control_Panel.SynixEngine.Minecraft;
 
 namespace Synix_Control_Panel.SynixEngine
 {
@@ -368,7 +369,7 @@ namespace Synix_Control_Panel.SynixEngine
 			GameServer server,
 			string relativePathTemplate)
 		{
-			string cleanIdentity = Instance.GetSafeName(server.ServerName);
+			string cleanIdentity = Core.GetServerIdentity(server);
 			string resolvedRelativePath = relativePathTemplate
 				.Replace("{Identity}", cleanIdentity, StringComparison.Ordinal)
 				.Replace("{ServerName}", cleanIdentity, StringComparison.Ordinal)
@@ -455,6 +456,8 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
+				// Validate before any firewall cleanup or other deletion side effects.
+				FolderHandler.ServerFolder.ValidateDeletionTargets(server, deleteBackups);
 				if (Properties.Settings.Default.enableRunAsAdmin)
 				{
 					GameInfo? definition = GameDatabase.GetGame(server.Game);
@@ -481,6 +484,8 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 				if (deletion.BackupsDeleted)
 					LogLocalized("ServerActions.Activity.BackupsDeleted", Color.LimeGreen, false, deletion.BackupPath);
+				if (deletion.AddOnDataDeleted)
+					LogLocalized("ServerActions.Activity.AddOnDataDeleted", Color.LimeGreen, false, deletion.AddOnDataPath);
 
 				if (ServerRegistry.Servers.Contains(server))
 					ServerRegistry.Servers.Remove(server);
@@ -525,8 +530,14 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async Task UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false)
+		public async Task<bool> UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false)
 		{
+			ArgumentNullException.ThrowIfNull(server);
+			if (server.Status != StatusManager.GetStatus(ServerState.Stopped) || server.PID.HasValue)
+			{
+				LogLocalized("ServerActions.Operation.RequiresStopped", Color.Orange, true);
+				return false;
+			}
 			bool ServerUpdating = false;
 
 			if (serverProcess == "UPDATE")
@@ -540,12 +551,12 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.ServerActive.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
-					return;
+					return false;
 				}
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
 				{
 					LogLocalized("ServerActions.Activity.DownloadBusy", Color.Orange);
-					return;
+					return false;
 				}
 
 				ServerUpdating = true;
@@ -559,7 +570,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.Update.ConfirmTitle"),
 						MessageBoxButtons.YesNo,
 						MessageBoxIcon.Question);
-					if (confirm != DialogResult.Yes) return;
+					if (confirm != DialogResult.Yes) return false;
 				}
 			}
 			else if (serverProcess == "VALIDATE")
@@ -573,7 +584,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.ServerActive.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
-					return;
+					return false;
 				}
 
 				if (server.Status == StatusManager.GetStatus(ServerState.Updating) || server.Status == StatusManager.GetStatus(ServerState.Installing) || server.Status == StatusManager.GetStatus(ServerState.Validating) || isDownloadActive)
@@ -585,7 +596,7 @@ namespace Synix_Control_Panel.SynixEngine
 							"ServerActions.SystemBusy.Title"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Information);
-					return;
+					return false;
 				}
 
 				var confirm = LocalizedMessageBox.Show(
@@ -596,21 +607,21 @@ namespace Synix_Control_Panel.SynixEngine
 						"ServerActions.Validate.ConfirmTitle"),
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Question);
-				if (confirm != DialogResult.Yes) return;
+				if (confirm != DialogResult.Yes) return false;
 			}
 			else
-			{ return; }
+			{ return false; }
 
 			var gameData = GameDatabase.GetGame(server.Game);
 
 			if (gameData == null || string.IsNullOrEmpty(gameData.AppID))
 			{
 				LogLocalized("ServerActions.Activity.GameDefinitionMissing", Color.Red, true, server.Game);
-				return;
+				return false;
 			}
 
 			if (!EnsureSteamAccountName(server, gameData))
-				return;
+				return false;
 
 			ServerOperationKind operationKind = ServerUpdating
 				? ServerOperationKind.Update
@@ -620,7 +631,7 @@ namespace Synix_Control_Panel.SynixEngine
 			if (!operation.Acquired)
 			{
 				LogLocalized("ServerActions.Activity.SteamCmdBlocked", Color.Orange, true, operation.FailureReason);
-				return;
+				return false;
 			}
 			DiscordNotificationEvent startedEvent = ServerUpdating
 				? DiscordNotificationEvent.UpdateStarted
@@ -706,7 +717,7 @@ namespace Synix_Control_Panel.SynixEngine
 						Color.Red);
 					isDownloadActive = false;
 					LogLocalized("SteamCmd.Activity.CloseEnabled", Color.Orange, true);
-					return;
+					return false;
 				}
 
 				bool fixApplied = await GameFix.PostInstall(server);
@@ -747,7 +758,7 @@ namespace Synix_Control_Panel.SynixEngine
 							LocalizationManager.Get("ServerActions.Notification.OperationFailed.Title", operationName),
 							LocalizationManager.Get("ServerActions.Notification.OxideReapplyFailed.Body", exception.Message),
 							Color.Red);
-						return;
+						return false;
 					}
 				}
 
@@ -766,6 +777,7 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("ServerActions.Notification.OperationCompleted.Body", server.ServerName),
 					Color.LimeGreen);
 				ManifestMessage = "";
+				return true;
 			}
 			catch (Exception exception)
 			{
@@ -776,6 +788,7 @@ namespace Synix_Control_Panel.SynixEngine
 					LocalizationManager.Get("ServerActions.Notification.OperationFailed.Title", operationName),
 					exception.Message,
 					Color.Red);
+				return false;
 			}
 			finally
 			{
@@ -1066,7 +1079,7 @@ namespace Synix_Control_Panel.SynixEngine
 			return authenticationCount;
 		}
 
-		public async Task EditServerAndReport(GameServer server)
+		public async Task EditServerAndReport(GameServer server, bool openAutomation = false)
 		{
 			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
@@ -1096,9 +1109,29 @@ namespace Synix_Control_Panel.SynixEngine
 				return;
 			}
 
+			if (GameCapabilityResolver.UsesMinecraftLifecycle(server))
+			{
+				try
+				{
+					MinecraftConfigurationSync.Synchronize(server, FileHandler.SaveServers);
+					// Record the known current profile before the user selects a different runtime.
+					if (Directory.Exists(server.InstallPath) && MinecraftRuntimeUpdater.ReadInstalled(server) == null &&
+						(File.Exists(Path.Combine(server.InstallPath, "server.jar")) ||
+						 File.Exists(Path.Combine(server.InstallPath, "Start.bat")) ||
+						 File.Exists(Path.Combine(server.InstallPath, "bedrock_server.exe"))))
+						MinecraftRuntimeUpdater.WriteInstalled(server);
+				}
+				catch (Exception exception)
+				{
+					LocalizedMessageBox.Show(SecretRedactor.Redact(exception.Message),
+						LocalizationManager.Get("MinecraftWorkspace.Title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+			}
 			string previousFramework = server.ServerFramework ?? "Vanilla";
 			using (var editForm = new ServerSettingsGUI(server))
 			{
+				if (openAutomation) editForm.Shown += (_, _) => editForm.OpenAutomationPage();
 				if (editForm.ShowDialog() == DialogResult.OK && editForm.NewServer != null)
 				{
 					GameServer updatedServer = editForm.NewServer;
@@ -1204,6 +1237,7 @@ namespace Synix_Control_Panel.SynixEngine
 					: StartContext.Manual;
 			try
 			{
+				SynchronizePendingServerRestores(server, FileHandler.SaveServers);
 				if (!PassResourceGuard(out string guardMsg))
 				{
 					Log(guardMsg, System.Drawing.Color.Red, true);
@@ -1261,6 +1295,11 @@ namespace Synix_Control_Panel.SynixEngine
 					}
 				}
 
+				if (GameCapabilityResolver.UsesMinecraftLifecycle(server))
+				{
+					MinecraftContentTransactions.EnsureReadyToStart(server);
+					MinecraftConfigurationSync.Synchronize(server, FileHandler.SaveServers);
+				}
 				if (!ValidateIntegrityAndReport(server, showInteractiveErrors)) return false;
 				SafetyChecklistReport safetyReport = UserGuidance.BuildSafetyChecklist(server);
 				if (!safetyReport.CanContinue)
@@ -1457,48 +1496,11 @@ namespace Synix_Control_Panel.SynixEngine
 
 			try
 			{
-				string targetId = dbEntry.AppID ?? "";
-				string invokedId = targetId;
-				string appidPath = "";
-
-				try
-				{
-					var scanner = Directory.EnumerateFiles(server.InstallPath, "steam_appid.txt", new EnumerationOptions
-					{
-						RecurseSubdirectories = true,
-						IgnoreInaccessible = true,
-						MaxRecursionDepth = int.MaxValue,
-						AttributesToSkip = FileAttributes.ReparsePoint
-					});
-
-					appidPath = scanner.FirstOrDefault() ?? "";
-				}
-				catch (Exception exception)
-				{
-					ApplicationLogService.WriteSuppressedException(exception);
-					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
-				}
-
-				if (string.IsNullOrEmpty(appidPath))
-				{
-					appidPath = Path.Combine(server.InstallPath, "steam_appid.txt");
-				}
-
-				if (File.Exists(appidPath))
-				{
-					try
-					{
-						string fileContent = File.ReadAllText(appidPath).Trim();
-						if (!string.IsNullOrWhiteSpace(fileContent))
-						{
-							invokedId = fileContent;
-						}
-					}
-					catch (Exception suppressedException)
-					{
-						Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
-					}
-				}
+				string fullExePath = GameLaunchCommandBuilder.ResolveExecutablePath(server, dbEntry);
+				string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
+					server,
+					dbEntry,
+					fullExePath);
 
 				string cleanIdentity = GetSafeName(server.ServerName ?? "Server");
 				if (!GameLaunchCommandBuilder.TryBuildArguments(
@@ -1507,7 +1509,8 @@ namespace Synix_Control_Panel.SynixEngine
 					invokedId,
 					batchPasswords,
 					out string args,
-					out string argumentError))
+					out string argumentError,
+					forBatchFile: true))
 				{
 					LogLocalized("ServerActions.Activity.ExportArgumentBlocked", Color.Red, true, argumentError);
 					return false;
@@ -1515,13 +1518,12 @@ namespace Synix_Control_Panel.SynixEngine
 
 				string safeArgs = EscapeWindowsBatchCommandLine(args);
 
-				string fullExePath = GameLaunchCommandBuilder.ResolveExecutablePath(server, dbEntry);
 				string binDir = Path.GetDirectoryName(fullExePath) ?? server.InstallPath;
 				string exeNameOnly = Path.GetFileName(fullExePath);
 				string safeIdentity = EscapeWindowsBatchCommandLine(cleanIdentity);
-				string safeBinDir = EscapeWindowsBatchCommandLine(binDir);
-				string safeExeName = EscapeWindowsBatchCommandLine(exeNameOnly);
-				string safeInvokedId = EscapeWindowsBatchCommandLine(invokedId);
+				string safeBinDir = EscapeWindowsBatchQuotedValue(binDir);
+				string safeExeName = EscapeWindowsBatchQuotedValue(exeNameOnly);
+				string safeInvokedId = EscapeWindowsBatchQuotedValue(invokedId);
 
 				StringBuilder batchContent = new StringBuilder();
 				batchContent.AppendLine("@echo off");

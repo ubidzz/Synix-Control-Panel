@@ -23,20 +23,20 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new(PersistentPath + "Password", context => context.Passwords.ServerPassword),
+			new(PersistentPath + "Password", context => context.Passwords.ServerPassword, serverField: ConfigurationServerField.Password),
 			new(
 				PersistentPath + "IsPasswordProtected",
 				context => (!string.IsNullOrEmpty(context.Passwords.ServerPassword)).ToString()),
-			new(PersistentPath + "ServerName", context => context.Server.ServerName),
+			new(PersistentPath + "ServerName", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
 			new(
 				PersistentPath + "MaxPlayerCount",
-				context => Math.Clamp(context.Server.MaxPlayers, 1, MaximumPlayers).ToString()),
+				context => Math.Clamp(context.Server.MaxPlayers, 1, MaximumPlayers).ToString(), serverField: ConfigurationServerField.MaxPlayers),
 			new(
 				PersistentPath + "InviteCode",
-				context => ResolveInviteCode(context.Server)),
+				context => ResolveInviteCode(context.Server), serverField: ConfigurationServerField.InviteCode),
 			new(
 				PersistentPath + "DirectConnectionServerPort",
-				context => context.Server.Port.ToString())
+				context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port)
 		];
 
 		public override string GameName => "Windrose";

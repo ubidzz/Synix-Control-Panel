@@ -2,11 +2,19 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Database.GameConfigurations;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.ServerHandler;
+using Synix_Control_Panel.SynixEngine.ModManagement;
 
 namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 {
@@ -151,6 +159,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			AddColumn("Game", LocalizationManager.Get("Text.1FD5F5A768D30B9B6651"), 250, true);
 			AddColumn("Compatibility", LocalizationManager.Get("Catalog.Column.Compatibility"), 190);
 			AddColumn("Configuration", LocalizationManager.Get("Text.D5CDE76290BF3E730FE4"), 210);
+			AddColumn("Mods", LocalizationManager.Get("ModSupport.Column"), 260);
 			AddColumn("PlayerData", LocalizationManager.Get("Catalog.Column.PlayerDetails"), 155);
 			AddColumn("Crossplay", LocalizationManager.Get("Text.444D9B21E5BAAF8243D5"), 110);
 			AddColumn("Executable", LocalizationManager.Get("Catalog.Column.ServerProgram"), 240);
@@ -423,7 +432,10 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				GameDatabase.IsMinecraft(game.Game)
 					? "Start.bat / bedrock_server.exe"
 					: game.ExeName,
-				lastVerified);
+				lastVerified,
+				GameModSupportCatalog.StatusText(game.Game) +
+					(GameModSupportCatalog.ForGame(game.Game)?.Methods.Count > 0
+						? " — " + string.Join(", ", GameModSupportCatalog.ForGame(game.Game)!.Methods) : ""));
 		}
 
 	}
@@ -520,7 +532,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		string PlayerData,
 		string Crossplay,
 		string Executable,
-		string LastVerified)
+		string LastVerified,
+		string Mods = "")
 	{
 		internal string SearchText => string.Join(
 			' ',
@@ -530,6 +543,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			PlayerData,
 			Crossplay,
 			Executable,
-			LastVerified);
+			LastVerified,
+			Mods);
 	}
 }

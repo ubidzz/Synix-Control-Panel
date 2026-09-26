@@ -306,7 +306,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			if (control is TextBoxBase textBox)
 			{
-				textBox.BackColor = textBox is RichTextBox
+				textBox.BackColor = textBox is RichTextBox and not ModernSettingsDetailsBox
 					? SettingsPalette.Console
 					: SettingsPalette.Input;
 				textBox.ForeColor = SettingsPalette.PrimaryText;

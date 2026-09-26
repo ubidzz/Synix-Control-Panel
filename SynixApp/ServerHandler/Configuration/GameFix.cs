@@ -150,7 +150,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ConfigurationContext context = new(
 					server,
 					new SynixServerPasswords("template", "template", "template"),
-					Core.Instance.GetSafeName(server.ServerName),
+					Core.GetServerIdentity(server),
 					"0.0.0.0",
 					"0.0.0.0");
 				return definition.NeedsStructuralRepair(context);
@@ -215,8 +215,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			if (!ManagedConfigurationsEnabled)
 			{
+				// This preference controls automatic writes, not the health of the
+				// files. An explicit repair cannot (and must not) change it.
 				items.Add(new ConfigurationValidationItem(
-					ConfigurationValidationState.Warning,
+					ConfigurationValidationState.Information,
 					LocalizationManager.Get(
 						"Configuration.Check.DevelopmentSetting"),
 					LocalizationManager.Get(
@@ -307,7 +309,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			ConfigurationContext context = new(
 				server,
 				passwords,
-				Core.Instance.GetSafeName(server.ServerName),
+				Core.GetServerIdentity(server),
 				localIp,
 				publicIp);
 			items.AddRange(definition.Validate(context));
@@ -569,7 +571,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			ConfigurationContext context = new(
 				server,
 				passwords,
-				Core.Instance.GetSafeName(server.ServerName),
+				Core.GetServerIdentity(server),
 				localIp,
 				publicIp);
 			ConfigurationBackupSnapshot? snapshot =
@@ -652,7 +654,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			ConfigurationContext context = new(
 				server,
 				passwords,
-				Core.Instance.GetSafeName(server.ServerName),
+				Core.GetServerIdentity(server),
 				localIp,
 				publicIp);
 			ConfigurationBackupSnapshot? snapshot =

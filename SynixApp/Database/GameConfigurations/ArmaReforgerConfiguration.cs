@@ -31,14 +31,14 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 
 		private static readonly ConfigurationBinding[] ManagedBindings =
 		[
-			new("bindPort", context => context.Server.Port.ToString()),
-			new("publicPort", context => context.Server.Port.ToString()),
-			new("a2s.port", context => context.Server.QueryPort.ToString()),
-			new("game.name", context => context.Server.ServerName),
-			new("game.password", context => NormalizeOptionalValue(context.Passwords.ServerPassword)),
-			new("game.passwordAdmin", context => NormalizeAdminPassword(context.Passwords.AdminPassword)),
-			new("game.maxPlayers", context => context.Server.MaxPlayers.ToString()),
-			new("game.crossPlatform", context => context.Server.CrossplayEnabled.ToString().ToLowerInvariant())
+			new("bindPort", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("publicPort", context => context.Server.Port.ToString(), serverField: ConfigurationServerField.Port),
+			new("a2s.port", context => context.Server.QueryPort.ToString(), serverField: ConfigurationServerField.QueryPort),
+			new("game.name", context => context.Server.ServerName, serverField: ConfigurationServerField.ServerName),
+			new("game.password", context => NormalizeOptionalValue(context.Passwords.ServerPassword), serverField: ConfigurationServerField.Password),
+			new("game.passwordAdmin", context => NormalizeAdminPassword(context.Passwords.AdminPassword), serverField: ConfigurationServerField.AdminPassword),
+			new("game.maxPlayers", context => context.Server.MaxPlayers.ToString(), serverField: ConfigurationServerField.MaxPlayers),
+			new("game.crossPlatform", context => context.Server.CrossplayEnabled.ToString().ToLowerInvariant(), serverField: ConfigurationServerField.CrossplayEnabled)
 		];
 
 		public override string GameName => "Arma Reforger";
@@ -55,6 +55,24 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		public override string RelativePath => @"configs\server.json";
 		public override ConfigFormat Format => ConfigFormat.JSON;
 		public override IReadOnlyList<ConfigurationBinding> Bindings => ManagedBindings;
+
+		internal override IReadOnlyList<ConfigurationServerBinding> GetServerBindings(GameServer server, string path)
+		{
+			IReadOnlyList<ConfigurationServerBinding> bindings = base.GetServerBindings(server, path);
+			return bindings.Count == 0 ? [] : [.. bindings,
+				new("rcon.port", ConfigurationServerField.RconPort),
+				new("rcon.password", ConfigurationServerField.RconPassword),
+				new("$rconEnabled", ConfigurationServerField.EnableRcon)];
+		}
+
+		internal override List<ConfigLine> ReadServerValues(string text)
+		{
+			List<ConfigLine> values = base.ReadServerValues(text);
+			using JsonDocument document = JsonDocument.Parse(text);
+			values.Add(new ConfigLine { Key = "$rconEnabled", Value =
+				(document.RootElement.TryGetProperty("rcon", out JsonElement rcon) && rcon.ValueKind == JsonValueKind.Object).ToString() });
+			return values;
+		}
 
 		public override IReadOnlyList<ConfigurationValidationItem> Validate(
 			ConfigurationContext context)

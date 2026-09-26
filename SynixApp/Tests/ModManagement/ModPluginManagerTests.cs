@@ -2,9 +2,17 @@
 // PROJECT: Synix Game Server Control Panel
 // AUTHOR: Jason Turner (ubidzz)
 // COPYRIGHT: © 2026 All Rights Reserved.
+//
+// LEGAL NOTICE:
+// This source code is proprietary and confidential.
+// 1. Permission is granted for PERSONAL, NON-COMMERCIAL use only.
+// 2. You may modify this code for your own use, but you may NOT redistribute,
+//    rebrand, or sell this code or derivative works without written consent.
+// 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.Design;
+using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixEngine;
 using Synix_Control_Panel.SynixEngine.ModManagement;
 using System.IO.Compression;
@@ -15,6 +23,109 @@ namespace Synix_Control_Panel.Tests;
 
 public sealed class ModPluginManagerTests
 {
+	[Fact]
+	public void ServerOptionsAllowImportSetupWithoutClaimingEveryGameHasABuiltInModProfile()
+	{
+		string profileRoot = CreateTestDirectory();
+		string? previousRoot = ModSystemCatalog.ExternalProfileRootOverride;
+		try
+		{
+			ModSystemCatalog.ExternalProfileRootOverride = profileRoot;
+			HashSet<string> supportedGames = new(StringComparer.OrdinalIgnoreCase)
+			{
+				"Minecraft", "Rust", "7 Days to Die",
+				"ARK: Survival Evolved", "ARK: Survival Ascended", "Empyrion - Galactic Survival"
+			};
+			Assert.True(GameDatabase.GetGames.Count > supportedGames.Count);
+			Exception? failure = null;
+			Thread thread = new(() =>
+			{
+				try
+				{
+					using ToolStripMenuItem item = new();
+					foreach (GameInfo game in GameDatabase.GetGames)
+					{
+						foreach (string status in new[] { "Stopped", "Running" })
+						{
+							GameServer server = new() { Game = game.Game, Status = status };
+							bool expected = supportedGames.Contains(game.Game);
+							Assert.True(ModSystemCatalog.CanManageAddOns(server) == expected,
+								$"Unexpected mod support for {game.Game} ({status}).");
+							MainGUI.UpdateModPluginManagerMenuItem(item, server);
+							// Available records visibility even while the parent menu is closed.
+							Assert.True(item.Available);
+							Assert.True(item.Enabled);
+						}
+					}
+
+					// Reuse the same item as selection changes, including no selection.
+					foreach (GameServer? server in new GameServer?[]
+					{
+						new() { Game = "Rust" }, new() { Game = "Satisfactory" },
+						new() { Game = "Minecraft", MinecraftEdition = "Bedrock" },
+						new() { Game = "Minecraft Bedrock" },
+						new() { Game = "Minecraft", MinecraftLoader = "Forge" },
+						new() { Game = "Unknown game" }, null
+					})
+					{
+						MainGUI.UpdateModPluginManagerMenuItem(item, server);
+						bool expected = server != null;
+						Assert.Equal(expected, item.Available);
+						Assert.Equal(expected, item.Enabled);
+					}
+				}
+				catch (Exception exception)
+				{
+					failure = exception;
+				}
+			}) { IsBackground = true };
+			thread.SetApartmentState(ApartmentState.STA);
+			thread.Start();
+			Assert.True(thread.Join(TimeSpan.FromSeconds(30)), "The menu checks did not finish.");
+			Assert.Null(failure);
+		}
+		finally
+		{
+			ModSystemCatalog.ExternalProfileRootOverride = previousRoot;
+			Directory.Delete(profileRoot, true);
+		}
+	}
+
+	[Theory]
+	[InlineData("DetectedOnly", "FileImport", false)]
+	[InlineData("Managed", "DetectionOnly", false)]
+	[InlineData("Managed", "FileImport", true)]
+	public void MenuSupportRequiresBothAManagedProfileAndAnActionableTarget(
+		string supportLevel, string mode, bool expected)
+	{
+		string profileRoot = CreateTestDirectory();
+		string? previousRoot = ModSystemCatalog.ExternalProfileRootOverride;
+		try
+		{
+			ModSystemCatalog.ExternalProfileRootOverride = profileRoot;
+			File.WriteAllText(Path.Combine(profileRoot, "test.modsystem.json"), $$"""
+				{
+				  "schemaVersion": 1,
+				  "profiles": [{
+				    "id": "test-game", "displayName": "Test profile",
+				    "gameNames": ["Test Game"], "supportLevel": "{{supportLevel}}",
+				    "catalogUrl": "https://example.com/mods",
+				    "targets": [{
+				      "id": "mods", "displayName": "Mods", "kind": "Mod",
+				      "mode": "{{mode}}", "relativePath": "mods", "allowedExtensions": [".jar"]
+				    }]
+				  }]
+				}
+				""");
+			Assert.Equal(expected, ModSystemCatalog.CanManageAddOns(new() { Game = "Test Game" }));
+		}
+		finally
+		{
+			ModSystemCatalog.ExternalProfileRootOverride = previousRoot;
+			Directory.Delete(profileRoot, true);
+		}
+	}
+
 	[Fact]
 	public void SharedMenuStylerAppliesTheSynixMenuDesign()
 	{
@@ -575,6 +686,7 @@ public sealed class ModPluginManagerTests
 
 			Assert.Equal("Updated community profile", profile.DisplayName);
 			Assert.False(profile.Targets[0].CanImport);
+			Assert.False(ModSystemCatalog.CanManageAddOns(new() { Game = "Rust" }));
 		}
 		finally
 		{
@@ -608,6 +720,7 @@ public sealed class ModPluginManagerTests
 			Assert.False(profile.Targets[0].CanImport);
 			Assert.Equal("Example", item.Name);
 			Assert.Equal("Detected on disk", item.Status);
+			Assert.False(ModSystemCatalog.CanManageAddOns(server));
 		}
 		finally
 		{
@@ -744,8 +857,10 @@ public sealed class ModPluginManagerTests
 		}
 	}
 
-	[Fact]
-	public void ManagerWindowConstructsForAProviderIdProfile()
+	[Theory]
+	[InlineData("ARK: Survival Ascended")]
+	[InlineData("ARK: Survival Evolved")]
+	public void ManagerWindowConstructsForAProviderIdProfile(string game)
 	{
 		string root = CreateTestDirectory();
 		string profileRoot = CreateTestDirectory();
@@ -760,7 +875,7 @@ public sealed class ModPluginManagerTests
 				{
 					using ModPluginManager manager = new(new GameServer
 					{
-						Game = "ARK: Survival Ascended",
+						Game = game,
 						ServerName = "asa-test",
 						InstallPath = root,
 						Status = "Stopped"
@@ -783,6 +898,13 @@ public sealed class ModPluginManagerTests
 					Assert.False(checklist.Bounds.IntersectsWith(selection.Bounds));
 					Assert.True(details.Height >= 50);
 					Assert.False(heading.UseMnemonic);
+					Assert.DoesNotContain("&&", heading.Text);
+					Assert.Equal(heading.Text, manager.Text);
+					Control readPackage = manager.Controls.Find("manageProviderModIds", true).Single();
+					Control manageIds = manager.Controls.Find("importAddOnPackage", true).Single();
+					Assert.Equal(manageIds.Enabled, readPackage.Enabled);
+					Assert.False(readPackage.Bounds.IntersectsWith(manageIds.Bounds));
+					Assert.False(readPackage.Bounds.IntersectsWith(manager.Controls.Find("browseAddOnCatalog", true).Single().Bounds));
 				}
 				catch (Exception exception)
 				{
