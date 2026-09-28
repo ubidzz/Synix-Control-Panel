@@ -174,7 +174,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblFooterStatus.ForeColor = Color.FromArgb(158, 172, 194);
 			lblFooterStatus.Location = new Point(24, 12);
 			lblFooterStatus.Name = "lblFooterStatus";
-			lblFooterStatus.Size = new Size(790, 48);
+			lblFooterStatus.Size = new Size(680, 48);
 			lblFooterStatus.TabIndex = 0;
 			lblFooterStatus.Text = LocalizationManager.Get("Text.A9B62C4456D11AE0550C");
 			lblFooterStatus.TextAlign = ContentAlignment.MiddleLeft;
@@ -189,7 +189,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnCancel.FlatStyle = FlatStyle.Flat;
 			btnCancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnCancel.ForeColor = Color.FromArgb(245, 247, 251);
-			btnCancel.Location = new Point(844, 14);
+			btnCancel.Location = new Point(724, 14);
 			btnCancel.Name = "btnCancel";
 			btnCancel.Padding = new Padding(14, 0, 14, 0);
 			btnCancel.Size = new Size(140, 44);
@@ -208,12 +208,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			btnSave.FlatStyle = FlatStyle.Flat;
 			btnSave.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnSave.ForeColor = Color.FromArgb(8, 13, 24);
-			btnSave.Location = new Point(996, 14);
+			btnSave.Location = new Point(876, 14);
 			btnSave.Name = "btnSave";
 			btnSave.Padding = new Padding(16, 0, 16, 0);
-			btnSave.Size = new Size(160, 44);
+			btnSave.Size = new Size(280, 44);
 			btnSave.TabIndex = 2;
-			btnSave.Text = LocalizationManager.Get("ServerSetup.Button.SaveServer");
+			btnSave.Text = LocalizationManager.Get("ServerSetup.Button.NextReview");
 			btnSave.UseAccentStyle = true;
 			btnSave.UseVisualStyleBackColor = false;
 			btnSave.Click += btnSave_Click;

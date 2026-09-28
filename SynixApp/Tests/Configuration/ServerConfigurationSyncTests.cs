@@ -158,6 +158,29 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		Assert.Equal("new-fixture-password", security.txtPassword.Text);
 	});
 
+	[Theory]
+	[InlineData("ARK: Survival Ascended", false)]
+	[InlineData("ARK: Survival Evolved", true)]
+	public void InternationalConfigTextAndPasswordsRoundTripWithoutNormalization(string game, bool utf16)
+	{
+		_server.Game = game;
+		string path = FixturePath(ArkPath);
+		WriteFixture(path, ArkConfig, utf16 ? Encoding.Unicode : new UTF8Encoding(false));
+		const string title = "朋友伺服器 サーバー Café Привет";
+		const string join = "密碼e\u0301🔐123";
+		const string admin = "管理員한국어123";
+		string edited = ArkConfig.Replace("Updated server", title).Replace("fixture-password", join).Replace("fixture-admin", admin);
+		string stored = "";
+		Save(path, edited, () => { stored = Core.SerializeServersForStorage(ServerRegistry.Servers); return true; });
+		GameServer reloaded = Assert.Single(Core.DeserializeServersAndMigrate(stored, out int _));
+		Assert.Equal(title, reloaded.ServerName);
+		Assert.Equal(join, Core.Reveal(reloaded.Password));
+		Assert.Equal(admin, Core.Reveal(reloaded.AdminPassword));
+		Assert.Equal(edited, File.ReadAllText(path));
+		Assert.DoesNotContain(join, stored);
+		Assert.DoesNotContain(admin, stored);
+	}
+
 	[Fact]
 	public void SavingUneditedConfigRepairsDriftAndRepeatedSaveDoesNotReencryptOrPersist()
 	{

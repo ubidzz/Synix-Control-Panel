@@ -15,6 +15,12 @@ The Definition Builder accepts one or many configuration files. Use **Add files*
 
 Most Steam applications leave **SteamCMD app configuration** blank. Shared GoldSrc AppID 90 packages use the exact allowlisted form `90 mod folder`, such as `90 mod cstrike`. Synix places this selection before `app_update` and rejects commands that do not match the safe format.
 
+**Steam branch** (`steamBranch`) is optional. The Isle uses `public` for Legacy and `evrima` for Evrima with the same dedicated-server AppID 412680. Synix passes the selected branch to `app_update -beta` during both installation and updates. A branch is a single, case-sensitive name, not a command: only letters, digits, underscores, dots and hyphens are accepted (maximum 64 characters; no leading dot or hyphen). Password-protected branches are not supported by this field.
+
+The download AppID is not necessarily the store game's ID, and it is not a unique game key. Keep shared IDs when Steam distributes several games through one dedicated-server package, and supply the required selector or branch. Terraria and Stormworks bundle their current dedicated-server executables with the owned game download; those entries deliberately use the game package and require Steam login. Do not substitute a player-client ID unless the package actually contains the required dedicated server.
+
+See [Steam download audit](Steam-Download-Audit.md) and `steam-download-audit.json` for the 2026-09-29 catalog review, removed installer entries, evidence links and limitations. Review SteamDB depots as well as the application title: a server-named Tool can contain only a placeholder or Linux files. Metadata review is not a successful live installation test.
+
 Keep `gameModes` friendly for the user. For games that show PVP/PVE but require another launch or configuration value, set `pvpValue` and `pveValue` to the exact values the server accepts, such as `False`/`True` or `0`/`1`. Set `booleanTrueValue` and `booleanFalseValue` to the exact boolean representation used by the game's configuration and RCON settings. Synix validates these as single safe values before they can reach a server process or configuration file.
 
 Special hardware and launch behavior belongs in `runtimeRequirements` and `launchBehavior`, not in game-name checks. Definitions can require minimum system RAM, AVX2, hardware virtualization, Hyper-V, a supported Windows edition, .NET Framework 4.8/4.8.1, and allowlisted Microsoft Visual C++ x64 runtimes. They can also request an elevated launch, force a required server-manager window to remain visible, select external lifecycle tracking, disable generated launch-file export, and provide a ready message. These values are validated before the game enters the catalog. Synix checks declared prerequisites and occupied server ports before launch but does not silently install Windows components or runtimes.
@@ -75,6 +81,18 @@ The development validator checks every source definition for:
 - Valid built-in control capabilities and compatible controller combinations.
 
 The same validation is included in the Release Readiness Checker, so an invalid game definition blocks a release.
+
+## International server titles and passwords
+
+`game-text-support.json` records a separate online search for every current built-in game. It is embedded into the app and available from **General → Title characters** and **Security → Name & password character support**. The details window also lets users select any other game in the catalog.
+
+- Title, join-password, administrator-password and RCON-password evidence is independent. Translated game menus, a UTF-8 configuration file or a shared engine are not sufficient evidence for all four fields.
+- `Documented` is backed by a developer source; `Conditional` explains version, encoding or client limitations; `Restricted` describes a known constraint; `NotApplicable` is scoped to the built-in feature, not plugins. Every non-unverified record requires a source and an explanatory note.
+- `Unverified` means the individual online search did not establish support. It does **not** impose an ASCII-only input filter or claim that the game cannot use international text. Missing/new game records also remain unverified.
+- `searchedOn` and `searchQuery` record research coverage, not live-server testing. Detailed evidence notes are maintained in English; user-facing labels are localized. Recheck sources when game versions change.
+- Synix preserves complete Unicode input without normalizing passwords. Malformed surrogate characters are rejected with a field-only error. Existing native-format, token and game-specific validation remains in effect.
+- Exported Windows launch files use UTF-8 and select that code page before any names, paths or passwords are read. Managed Java Minecraft properties use Unicode escapes compatible with both legacy Latin-1 and modern UTF-8 readers; Bedrock keeps its native text format.
+- Tests cover catalog coverage/evidence validation, international inputs, protected-password storage, ARK configuration synchronization, Java/Bedrock properties, UTF-8 RCON packet lengths, launch arguments, batch export and the localized guidance layout. These are Synix tests, not certification that every game/client accepts every script or emoji.
 
 ## Security boundaries
 

@@ -131,7 +131,8 @@ public sealed class ServerSetupProgressTests
 			Assert.Equal(ServerSetupProgressStrip.StepState.Waiting, Step(setup, 3).State);
 			Navigate(setup, 0);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Next, Step(setup, 3).State);
-			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			Assert.True(Find<Button>(setup, "btnSave").Enabled);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), Find<Button>(setup, "btnSave").Text);
 			Assert.Equal(LocalizationManager.Get("ServerSetup.Validation.ReviewRequired"),
 				Find<Label>(setup, "lblFooterStatus").Text);
 			Navigate(setup, 2);
@@ -145,6 +146,15 @@ public sealed class ServerSetupProgressTests
 	[InlineData("fr-FR", "Récapitulatif", "VÉRIFICATION")]
 	[InlineData("de-DE", "Überprüfen", "IN PRÜFUNG")]
 	[InlineData("es-ES", "Revisar", "REVISANDO")]
+	[InlineData("zh-Hans", "检查", "检查中")]
+	[InlineData("zh-Hant", "檢查", "檢查中")]
+	[InlineData("ja-JP", "確認", "確認中")]
+	[InlineData("ko-KR", "검토", "검토 중")]
+	[InlineData("it-IT", "Verifica", "Verifica in corso")]
+	[InlineData("pt-BR", "Revisar", "Revisando")]
+	[InlineData("pl-PL", "Przegląd", "Przeglądanie")]
+	[InlineData("ru-RU", "Проверка", "Проверка")]
+	[InlineData("tr-TR", "Gözden geçir", "Gözden geçiriliyor")]
 	public void OpenSetupUpdatesItsGuideAndReviewLanguageWithoutTranslatingValues(string language, string title, string current)
 	{
 		RunOnSta(() =>
@@ -162,6 +172,9 @@ public sealed class ServerSetupProgressTests
 			Assert.Equal(LocalizationManager.Get("ServerSetup.Review.ServerName"), grid.Rows[0].Cells[0].Value);
 			Assert.Equal("Save", grid.Rows[0].Cells[1].Value);
 			Assert.Equal("Eco", grid.Rows[1].Cells[1].Value);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.SaveSettings"), Find<Button>(setup, "btnSave").Text);
+			Find<Button>(setup, "btnNavGeneral").PerformClick();
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), Find<Button>(setup, "btnSave").Text);
 		});
 	}
 
@@ -179,11 +192,82 @@ public sealed class ServerSetupProgressTests
 	}
 
 	[Theory]
+	[InlineData(false, "txtPassword")]
+	[InlineData(true, "txtPassword")]
+	[InlineData(false, "txtAdminPassword")]
+	[InlineData(true, "txtAdminPassword")]
+	public void PasswordTypingWithPausesKeepsFocusUntilNextIsClicked(bool editMode, string inputName)
+	{
+		RunOnSta(() =>
+		{
+			(int gamePort, int queryPort) = ServerSetupTestPorts.FindAvailablePair();
+			using ServerSettingsGUI setup = new(editMode ? new GameServer
+			{
+				Game = "Enshrouded", ServerName = "Password review test",
+				InstallPath = Path.GetTempPath(), Port = gamePort, QueryPort = queryPort
+			} : null);
+			ShowOffscreen(setup);
+			if (!editMode)
+			{
+				ComboBox games = Find<ComboBox>(setup, "cmbGame");
+				games.SelectedIndex = games.FindStringExact("Enshrouded");
+				Find<TextBox>(setup, "txtName").Text = "Password review test";
+				Find<ModernSettingsNumericUpDown>(setup, "numPort").Value = gamePort;
+				Find<ModernSettingsNumericUpDown>(setup, "numQueryPort").Value = queryPort;
+				Find<ModernSettingsToggle>(setup, "chkDefaultPath").Checked = true;
+			}
+			if (inputName == "txtPassword")
+				Find<TextBox>(setup, "txtAdminPassword").Text = "existing-admin-password";
+			Navigate(setup, 0);
+			Find<Button>(setup, "btnNavSecurity").PerformClick();
+			TextBox input = Find<TextBox>(setup, inputName);
+			input.Focus();
+			Button action = Find<Button>(setup, "btnSave");
+			ServerSettingsReviewPage review = Find<ServerSettingsReviewPage>(setup, "pnlPageReview");
+			string expected = string.Empty;
+			foreach (string part in new[] { "a", "1", "-a-longer-password-" + new string('x', 64) })
+			{
+				input.SelectedText = part;
+				expected += part;
+				WaitForValidation(setup);
+				Assert.False(review.Visible);
+				Assert.True(input.Focused);
+				Assert.Equal(expected, input.Text);
+				Assert.True(action.Enabled, Find<Label>(setup, "lblFooterStatus").Text);
+				Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), action.Text);
+				Assert.False(Step(setup, 4).Enabled);
+				Assert.Null(setup.NewServer);
+			}
+
+			action.PerformClick();
+			Assert.True(review.Visible);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.SaveSettings"), action.Text);
+			Assert.True(action.Enabled);
+			Assert.True(Step(setup, 4).Enabled);
+			Assert.Null(setup.NewServer);
+			Assert.Equal(DialogResult.None, setup.DialogResult);
+
+			Find<Button>(setup, "btnNavSecurity").PerformClick();
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), action.Text);
+			input.Focus();
+			input.AppendText("-edited-after-review");
+			WaitForValidation(setup);
+			Assert.False(review.Visible);
+			Assert.True(input.Focused);
+			Assert.False(Step(setup, 4).Enabled);
+			Assert.Equal(expected + "-edited-after-review", input.Text);
+			action.PerformClick();
+			Assert.True(review.Visible);
+			Assert.Null(setup.NewServer);
+		});
+	}
+
+	[Theory]
 	[InlineData(false, "Eco", "txtAuthenticationToken", "eco-user-token_123.test")]
 	[InlineData(true, "Eco", "txtAuthenticationToken", "eco-user-token_123.test")]
 	[InlineData(false, "Empyrion - Galactic Survival", "txtWorldSeed", "1011345")]
 	[InlineData(true, "Empyrion - Galactic Survival", "txtWorldSeed", "1011345")]
-	public void LastRequiredSettingAutomaticallyOpensReviewBeforeUnlockingSave(
+	public void LastRequiredSettingEnablesNextWithoutOpeningReviewOrSaving(
 		bool editMode, string game, string lastInput, string validValue)
 	{
 		RunOnSta(() =>
@@ -213,24 +297,27 @@ public sealed class ServerSetupProgressTests
 			Assert.False(save.Enabled);
 			Assert.False(review.Visible);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Attention, Step(setup, 2).State);
-			bool enabledOnlyAfterShowingSummary = false;
-			save.EnabledChanged += (_, _) =>
-			{
-				if (save.Enabled)
-					enabledOnlyAfterShowingSummary = review.Visible &&
-						Equals(Find<DataGridView>(setup, "gridSummary").Rows[0].Cells[1].Value, "Review transition test");
-			};
-
-			Find<TextBox>(setup, lastInput).Text = validValue;
+			TextBox input = Find<TextBox>(setup, lastInput);
+			input.Focus();
+			input.Text = validValue;
 			Assert.False(save.Enabled);
 			Assert.False(Step(setup, 4).Enabled);
-			var validationTimer = (System.Windows.Forms.Timer)typeof(ServerSettingsGUI)
-				.GetField("debounceTimer", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(setup)!;
-			WorkflowUiTest.WaitUntil(() => !validationTimer.Enabled);
+			WaitForValidation(setup);
 			Assert.True(save.Enabled, Find<Label>(setup, "lblFooterStatus").Text);
-			Assert.True(enabledOnlyAfterShowingSummary);
-			Assert.True(review.Visible);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), save.Text);
+			Assert.False(review.Visible);
+			Assert.True(input.Focused);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Complete, Step(setup, 2).State);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Next, Step(setup, 3).State);
+			Assert.Equal(ServerSetupProgressStrip.StepState.Waiting, Step(setup, 4).State);
+			Assert.Null(setup.NewServer);
+			Assert.Equal(DialogResult.None, setup.DialogResult);
+
+			save.PerformClick();
+			Assert.True(review.Visible);
+			Assert.True(save.Enabled);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.SaveSettings"), save.Text);
+			Assert.Equal("Review transition test", Find<DataGridView>(setup, "gridSummary").Rows[0].Cells[1].Value);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Current, Step(setup, 3).State);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Ready, Step(setup, 4).State);
 			Assert.False(save.Focused);
@@ -252,7 +339,8 @@ public sealed class ServerSetupProgressTests
 				WorldSeed = "1011345", InstallPath = Path.GetTempPath(), Port = gamePort, QueryPort = queryPort
 			});
 			ShowOffscreen(setup);
-			Assert.False(Find<Button>(setup, "btnSave").Enabled);
+			Assert.True(Find<Button>(setup, "btnSave").Enabled);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), Find<Button>(setup, "btnSave").Text);
 			Assert.False(Step(setup, 4).Enabled);
 			Assert.True(Step(setup, 3).Enabled, Find<Label>(setup, "lblFooterStatus").Text);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Next, Step(setup, 3).State);
@@ -267,6 +355,12 @@ public sealed class ServerSetupProgressTests
 			Navigate(setup, 0);
 			Assert.Equal(ServerSetupProgressStrip.StepState.Complete, Step(setup, 3).State);
 			Assert.True(Find<Button>(setup, "btnSave").Enabled);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), Find<Button>(setup, "btnSave").Text);
+			Find<Button>(setup, "btnSave").PerformClick();
+			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.SaveSettings"), Find<Button>(setup, "btnSave").Text);
+			Assert.Null(setup.NewServer);
+			Assert.Equal(DialogResult.None, setup.DialogResult);
 		});
 	}
 
@@ -299,7 +393,7 @@ public sealed class ServerSetupProgressTests
 	}
 
 	[Fact]
-	public void InvalidChangesStayOnTheirSettingsPageUntilCorrected()
+	public void CorrectedSettingsStayOnTheirPageUntilNextIsClicked()
 	{
 		RunOnSta(() =>
 		{
@@ -318,6 +412,11 @@ public sealed class ServerSetupProgressTests
 			Assert.False(Step(setup, 4).Enabled);
 			token.Text = "replacement-token";
 			WorkflowUiTest.WaitUntil(() => save.Enabled);
+			Assert.True(Find<ServerSettingsSecurityPage>(setup, "pnlPageSecurity").Visible);
+			Assert.False(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
+			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), save.Text);
+			Assert.False(Step(setup, 4).Enabled);
+			save.PerformClick();
 			Assert.True(Find<ServerSettingsReviewPage>(setup, "pnlPageReview").Visible);
 			Assert.Null(setup.NewServer);
 		});
@@ -329,6 +428,15 @@ public sealed class ServerSetupProgressTests
 	[InlineData("de-DE", true, true)]
 	[InlineData("es-ES", true, true)]
 	[InlineData("en-US", false, true)]
+	[InlineData("zh-Hans", true, true)]
+	[InlineData("zh-Hant", false, true)]
+	[InlineData("ja-JP", true, true)]
+	[InlineData("ko-KR", true, true)]
+	[InlineData("it-IT", true, true)]
+	[InlineData("pt-BR", true, true)]
+	[InlineData("pl-PL", true, true)]
+	[InlineData("ru-RU", true, true)]
+	[InlineData("tr-TR", true, true)]
 	public void ReviewAndCheckpointTextFitInBothThemesAndAllLanguages(string language, bool darkMode, bool minimumSize)
 	{
 		RunOnSta(() =>
@@ -360,11 +468,30 @@ public sealed class ServerSetupProgressTests
 				Size measured = TextRenderer.MeasureText(notice.Text, notice.Font,
 					new Size(notice.Width - notice.Padding.Horizontal, int.MaxValue), TextFormatFlags.WordBreak);
 				Assert.True(measured.Height <= notice.Height - notice.Padding.Vertical);
+				Button action = Find<Button>(setup, "btnSave");
+				Button cancel = Find<Button>(setup, "btnCancel");
+				Label footer = Find<Label>(setup, "lblFooterStatus");
+				Assert.Equal(LocalizationManager.Get("ServerSetup.Button.SaveSettings"), action.Text);
+				Assert.True(TextRenderer.MeasureText(action.Text, action.Font).Width <= action.Width - action.Padding.Horizontal);
+				Assert.True(footer.Right < cancel.Left);
+				Assert.True(cancel.Right < action.Left);
+				Assert.True(action.Right <= action.Parent!.ClientSize.Width);
 				using Bitmap rendered = new(setup.Width, setup.Height);
 				setup.DrawToBitmap(rendered, setup.ClientRectangle);
 				// Optional artifacts stay in the test output folder, never in a live server.
 				if (Environment.GetEnvironmentVariable("SYNIX_RENDER_SETUP_PROGRESS") == "1")
 					rendered.Save(Path.Combine(AppContext.BaseDirectory, $"setup-review-{language}-{darkMode}.png"));
+				Find<Button>(setup, "btnNavGeneral").PerformClick();
+				Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), action.Text);
+				Assert.True(TextRenderer.MeasureText(action.Text, action.Font).Width <= action.Width - action.Padding.Horizontal);
+				Size footerText = TextRenderer.MeasureText(footer.Text, footer.Font,
+					new Size(footer.Width, int.MaxValue), TextFormatFlags.WordBreak);
+				Assert.True(footerText.Height <= footer.Height);
+				if (Environment.GetEnvironmentVariable("SYNIX_RENDER_SETUP_PROGRESS") == "1")
+				{
+					setup.DrawToBitmap(rendered, setup.ClientRectangle);
+					rendered.Save(Path.Combine(AppContext.BaseDirectory, $"setup-next-{language}-{darkMode}.png"));
+				}
 			}
 			finally { ThemeManager.Initialize(previousTheme); }
 		});
@@ -376,6 +503,12 @@ public sealed class ServerSetupProgressTests
 		Find<ServerSetupProgressStrip.StepButton>(setup, $"btnSetupStep{index}");
 	private static void Navigate(ServerSettingsGUI setup, int step) =>
 		typeof(ServerSettingsGUI).GetMethod("NavigateSetupStep", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(setup, [step]);
+	private static void WaitForValidation(ServerSettingsGUI setup)
+	{
+		var timer = (System.Windows.Forms.Timer)typeof(ServerSettingsGUI)
+			.GetField("debounceTimer", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(setup)!;
+		WorkflowUiTest.WaitUntil(() => !timer.Enabled);
+	}
 
 	private static void ShowOffscreen(Form form)
 	{

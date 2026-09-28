@@ -157,6 +157,8 @@ public class GameDefinition
 	[JsonIgnore]
 	public string SteamAppConfig { get; init; } = string.Empty;
 	[JsonIgnore]
+	public string SteamBranch { get; init; } = string.Empty;
+	[JsonIgnore]
 	public string ExeName { get; set; } = string.Empty;
 	[JsonIgnore]
 	public string DownloadUrl { get; init; } = string.Empty;

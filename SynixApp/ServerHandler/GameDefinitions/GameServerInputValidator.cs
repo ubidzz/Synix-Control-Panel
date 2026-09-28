@@ -71,6 +71,19 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			out string error)
 		{
 			ArgumentNullException.ThrowIfNull(definition);
+			// Validate code points without normalizing, transliterating or rejecting non-Latin text.
+			foreach ((string field, string? value) in new[]
+			{
+				("ServerTitle", serverName), ("JoinPassword", passwords.ServerPassword),
+				("AdminPassword", passwords.AdminPassword), ("RconPassword", passwords.RconPassword)
+			})
+			{
+				if (!HasCompleteUnicodeCharacters(value))
+				{
+					error = LocalizationManager.Get("GameText.InvalidUnicode", LocalizationManager.Get("GameText.Field." + field));
+					return false;
+				}
+			}
 
 			string password = passwords.ServerPassword ?? string.Empty;
 			if (password.Length < definition.MinimumServerPasswordLength)
@@ -123,6 +136,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			error = string.Empty;
+			return true;
+		}
+
+		private static bool HasCompleteUnicodeCharacters(string? value)
+		{
+			if (value == null) return true;
+			for (int i = 0; i < value.Length; i++)
+			{
+				if (!char.IsSurrogate(value[i])) continue;
+				if (!char.IsHighSurrogate(value[i]) || i + 1 >= value.Length || !char.IsLowSurrogate(value[i + 1])) return false;
+				i++;
+			}
 			return true;
 		}
 	}

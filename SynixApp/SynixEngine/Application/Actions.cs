@@ -1528,6 +1528,8 @@ namespace Synix_Control_Panel.SynixEngine
 				StringBuilder batchContent = new StringBuilder();
 				batchContent.AppendLine("@echo off");
 				batchContent.AppendLine("setlocal DisableDelayedExpansion");
+				// The file is UTF-8. Switch before cmd reads any localized names, paths or passwords.
+				batchContent.AppendLine("chcp 65001 >nul || exit /b 1");
 				batchContent.AppendLine($"echo :: ===========================================================================");
 				batchContent.AppendLine($"echo :: SYNIX AUTOMATICALLY GENERATED LAUNCH SCRIPT");
 				batchContent.AppendLine($"echo :: Server: {safeIdentity}");
@@ -1548,7 +1550,7 @@ namespace Synix_Control_Panel.SynixEngine
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
 				string fullOutputPath = Path.Combine(server.InstallPath, safeFileName);
 
-				File.WriteAllText(fullOutputPath, batchContent.ToString());
+				File.WriteAllText(fullOutputPath, batchContent.ToString(), new UTF8Encoding(false, true));
 
 				LogLocalized("ServerActions.Activity.ExportSucceeded", Color.SpringGreen, false, fullOutputPath);
 				return true;

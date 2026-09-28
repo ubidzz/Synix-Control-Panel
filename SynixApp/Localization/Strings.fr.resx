@@ -305,7 +305,13 @@
     <value>Vérification des modifications…</value>
   </data>
   <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
-    <value>Les paramètres requis sont valides. Ouvrez l’étape 3 pour vérifier vos choix avant d’enregistrer.</value>
+    <value>Les paramètres sont valides. Cliquez sur Suivant : vérifier quand vous êtes prêt.</value>
+  </data>
+  <data name="ServerSetup.Button.NextReview" xml:space="preserve">
+    <value>Suivant : vérifier</value>
+  </data>
+  <data name="ServerSetup.Button.SaveSettings" xml:space="preserve">
+    <value>Enregistrer les paramètres</value>
   </data>
   <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
     <value>●  Action requise</value>
@@ -11430,4 +11436,29 @@ ARK téléchargera ce mod depuis {2} au démarrage du serveur. Synix ne copie ni
   <data name="Backup.Restore.SettingsPending" xml:space="preserve"><value>Les fichiers ont été restaurés, mais Synix n’a pas pu terminer la mise à jour des paramètres du serveur. Les fichiers de récupération sont conservés. Corrigez le problème puis réessayez Démarrer ; le démarrage reste bloqué jusqu’à la réussite de la synchronisation. Détails : {0}</value></data>
   <data name="Backup.Error.RestartForRecovery" xml:space="preserve"><value>Une restauration précédente a été interrompue. Redémarrez Synix pour la récupérer avant de démarrer ou restaurer ce serveur.</value></data>
   <data name="Backup.Restore.PreviousPending" xml:space="preserve"><value>Une restauration précédente nécessite encore votre attention. Cette restauration n’a pas démarré. Détails : {0}</value></data>
+  <data name="GameDefinition.SteamBranch.Label" xml:space="preserve"><value>Branche Steam</value></data>
+  <data name="Language.PreviewNotice" xml:space="preserve">
+    <value>Aperçu : commandes principales traduites. Certains textes restent en anglais.</value>
+  </data>
+  <data name="GameText.Title" xml:space="preserve"><value>Caractères des noms et mots de passe</value></data>
+  <data name="GameText.SelectGame" xml:space="preserve"><value>Choisir un jeu</value></data>
+  <data name="GameText.Status.Unverified" xml:space="preserve"><value>Non vérifié</value></data>
+  <data name="GameText.Status.Documented" xml:space="preserve"><value>Prise en charge documentée</value></data>
+  <data name="GameText.Status.Conditional" xml:space="preserve"><value>Voir les conditions</value></data>
+  <data name="GameText.Status.Restricted" xml:space="preserve"><value>Restreint</value></data>
+  <data name="GameText.Status.NotApplicable" xml:space="preserve"><value>Sans objet (fonction native)</value></data>
+  <data name="GameText.TitleSummary" xml:space="preserve"><value>Caractères du titre : {0} · Détails</value></data>
+  <data name="GameText.PasswordSummary" xml:space="preserve"><value>Caractères internationaux : {0}</value></data>
+  <data name="GameText.Introduction" xml:space="preserve"><value>Synix accepte les caractères internationaux. Chaque champ a son propre état de vérification ; la prise en charge des titres ne prouve pas celle des mots de passe. Non vérifié ne signifie pas non pris en charge et n'impose pas l'anglais. La documentation ne remplace pas un test de chaque version, police ou méthode de saisie.</value></data>
+  <data name="GameText.SafetyNote" xml:space="preserve"><value>Les mots de passe doivent correspondre exactement : des caractères identiques à l'écran peuvent avoir des encodages différents. Les limites du jeu et séparateurs interdits restent applicables. Jetons, identifiants, dossiers et noms de joueurs ont leurs propres règles. Les notes détaillées peuvent être en anglais.</value></data>
+  <data name="GameText.SearchedOn" xml:space="preserve"><value>Recherche en ligne effectuée : {0}</value></data>
+  <data name="GameText.SearchQuery" xml:space="preserve"><value>Recherche propre à ce jeu</value></data>
+  <data name="GameText.Field.ServerTitle" xml:space="preserve"><value>Titre public du serveur</value></data>
+  <data name="GameText.Field.JoinPassword" xml:space="preserve"><value>Mot de passe de connexion</value></data>
+  <data name="GameText.Field.AdminPassword" xml:space="preserve"><value>Mot de passe administrateur</value></data>
+  <data name="GameText.Field.RconPassword" xml:space="preserve"><value>Mot de passe RCON</value></data>
+  <data name="GameText.UnverifiedNote" xml:space="preserve"><value>La recherche en ligne n'a pas établi la prise en charge des caractères internationaux pour ce champ. Consultez la documentation actuelle et testez les caractères exacts. Un champ désactivé dans Synix n'est pas forcément absent du jeu.</value></data>
+  <data name="GameText.Sources" xml:space="preserve"><value>Sources</value></data>
+  <data name="GameText.InvalidCatalog" xml:space="preserve"><value>Le catalogue de prise en charge des caractères est invalide.</value></data>
+  <data name="GameText.InvalidUnicode" xml:space="preserve"><value>{0} contient un caractère Unicode incomplet. Saisissez-le à nouveau ; Synix ne remplace pas les caractères silencieusement.</value></data>
 </root>

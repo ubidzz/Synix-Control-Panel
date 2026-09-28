@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Reflection;
+using System.Text;
 
 namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 {
@@ -31,11 +32,11 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 			new("enable-query", context => context.Server.MinecraftQueryEnabled.ToString().ToLowerInvariant()),
 			new("query.port", context => context.Server.QueryPort.ToString()),
 			new("max-players", context => context.Server.MaxPlayers.ToString()),
-			new("level-name", context => EscapeProperty(string.IsNullOrWhiteSpace(context.Server.WorldName) ? "world" : context.Server.WorldName)),
-			new("level-seed", context => EscapeProperty(context.Server.WorldSeed)),
+			new("level-name", context => EncodeJavaProperty(EscapeProperty(string.IsNullOrWhiteSpace(context.Server.WorldName) ? "world" : context.Server.WorldName))),
+			new("level-seed", context => EncodeJavaProperty(EscapeProperty(context.Server.WorldSeed))),
 			new("enable-rcon", context => context.Server.EnableRcon.ToString().ToLowerInvariant()),
 			new("rcon.port", context => context.Server.RconPort.ToString()),
-			new("rcon.password", context => EscapeProperty(context.Passwords.RconPassword)),
+			new("rcon.password", context => EncodeJavaProperty(EscapeProperty(context.Passwords.RconPassword))),
 			new("management-server-enabled", context => ManagementEnabled(context).ToString().ToLowerInvariant()),
 			new("management-server-host", _ => "localhost"),
 			new("management-server-port", context => ManagementEnabled(context)
@@ -49,9 +50,23 @@ namespace Synix_Control_Panel.SynixApp.Database.GameConfigurations
 		];
 
 		public override string GameName => "Minecraft";
-		private static string EscapeMotd(string value) => value.Replace("\\", "\\\\", StringComparison.Ordinal)
-			.Replace("\r", "\\r", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal).Replace("\t", "\\t", StringComparison.Ordinal);
-		public override int SchemaVersion => 6;
+		private static string EscapeMotd(string value) => EncodeJavaProperty(value.Replace("\\", "\\\\", StringComparison.Ordinal)
+			.Replace("\r", "\\r", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal).Replace("\t", "\\t", StringComparison.Ordinal));
+		// Java properties escapes work in both pre-1.20 Latin-1 and modern UTF-8 readers.
+		// Keep this Java-only: Bedrock's native server-name must remain UTF-8 text.
+		private static string EncodeJavaProperty(string escapedValue)
+		{
+			StringBuilder result = new();
+			for (int i = 0; i < escapedValue.Length; i++)
+			{
+				char character = escapedValue[i];
+				if (character > 127 || char.IsControl(character) || character == ' ' && (i == 0 || i == escapedValue.Length - 1))
+					result.Append("\\u").Append(((int)character).ToString("X4", System.Globalization.CultureInfo.InvariantCulture));
+				else result.Append(character);
+			}
+			return result.ToString();
+		}
+		public override int SchemaVersion => 7;
 		public override bool SupportsFullReset => true;
 		public override ManagedConfigurationInput SupportedInputs =>
 			ManagedConfigurationInput.WorldSeed |

@@ -11,6 +11,7 @@
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
 using Synix_Control_Panel.SynixEngine;
+using Synix_Control_Panel.SynixApp.Database.GameDefinitions;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -284,6 +285,7 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(blueprint);
+			TrustedGameDefinitionCatalog.ValidateSteamBranch(blueprint.SteamBranch, blueprint.Game);
 
 			if (blueprint.RequiresSteamLogin &&
 				string.IsNullOrWhiteSpace(server.SteamAccountName))
@@ -325,6 +327,11 @@ namespace Synix_Control_Panel.SynixApp.SteamCMDHandler
 			}
 			startInfo.ArgumentList.Add("+app_update");
 			startInfo.ArgumentList.Add(blueprint.AppID);
+			if (!string.IsNullOrEmpty(blueprint.SteamBranch))
+			{
+				startInfo.ArgumentList.Add("-beta");
+				startInfo.ArgumentList.Add(blueprint.SteamBranch);
+			}
 			startInfo.ArgumentList.Add("validate");
 			startInfo.ArgumentList.Add("+quit");
 

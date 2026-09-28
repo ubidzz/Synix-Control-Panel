@@ -1,0 +1,1397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Preview: core interface translation. Missing entries intentionally fall back to English.
+       Game commands, configuration values, paths and user data are not translated. -->
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="_Language.IsPreview" xml:space="preserve"><value>true</value></data>
+  <data name="Language.English" xml:space="preserve">
+    <value>英語</value>
+  </data>
+  <data name="Language.French" xml:space="preserve">
+    <value>フランス語</value>
+  </data>
+  <data name="Language.German" xml:space="preserve">
+    <value>ドイツ語</value>
+  </data>
+  <data name="Language.Spanish" xml:space="preserve">
+    <value>スペイン語</value>
+  </data>
+  <data name="Option.DownloadSpeed.Unlimited" xml:space="preserve">
+    <value>無制限</value>
+  </data>
+  <data name="Option.DownloadSpeed.Limited" xml:space="preserve">
+    <value>制限あり</value>
+  </data>
+  <data name="SettingsPage.General.Heading" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="SettingsPage.Backups.Heading" xml:space="preserve">
+    <value>バックアップ</value>
+  </data>
+  <data name="SettingsPage.Privacy.Heading" xml:space="preserve">
+    <value>プライバシーとセキュリティ</value>
+  </data>
+  <data name="SettingsPage.Advanced.Heading" xml:space="preserve">
+    <value>詳細設定</value>
+  </data>
+  <data name="SettingsPage.ReportProblem.Heading" xml:space="preserve">
+    <value>問題を報告</value>
+  </data>
+  <data name="SettingsPage.Development.Heading" xml:space="preserve">
+    <value>開発</value>
+  </data>
+  <data name="Menu.ModPluginManager" xml:space="preserve">
+    <value>Mod・プラグイン管理</value>
+  </data>
+  <data name="Menu.PlayerManagementCenter" xml:space="preserve">
+    <value>プレイヤー管理センター</value>
+  </data>
+  <data name="Menu.MinecraftServerConsole" xml:space="preserve">
+    <value>Minecraft サーバーコンソール</value>
+  </data>
+  <data name="Menu.ConnectionInformation" xml:space="preserve">
+    <value>接続情報</value>
+  </data>
+  <data name="Menu.LiveProcessDetails" xml:space="preserve">
+    <value>プロセスの詳細</value>
+  </data>
+  <data name="Option.Status.All" xml:space="preserve">
+    <value>すべての状態</value>
+  </data>
+  <data name="Option.Status.Running" xml:space="preserve">
+    <value>稼働中</value>
+  </data>
+  <data name="Option.Status.Stopped" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Option.Status.InProgress" xml:space="preserve">
+    <value>処理中</value>
+  </data>
+  <data name="Option.Status.NeedsAttention" xml:space="preserve">
+    <value>確認が必要</value>
+  </data>
+  <data name="VerificationStep.Start" xml:space="preserve">
+    <value>起動</value>
+  </data>
+  <data name="VerificationStep.Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Status.Stopped" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Status.Running" xml:space="preserve">
+    <value>稼働中</value>
+  </data>
+  <data name="Status.Starting" xml:space="preserve">
+    <value>起動中</value>
+  </data>
+  <data name="Status.Crashed" xml:space="preserve">
+    <value>異常終了</value>
+  </data>
+  <data name="Status.Stopping" xml:space="preserve">
+    <value>停止処理中</value>
+  </data>
+  <data name="Status.Installing" xml:space="preserve">
+    <value>インストール中</value>
+  </data>
+  <data name="Status.Updating" xml:space="preserve">
+    <value>更新中</value>
+  </data>
+  <data name="Status.BackingUp" xml:space="preserve">
+    <value>バックアップ中</value>
+  </data>
+  <data name="Status.Validating" xml:space="preserve">
+    <value>検証中</value>
+  </data>
+  <data name="Status.Exporting" xml:space="preserve">
+    <value>エクスポート中</value>
+  </data>
+  <data name="Status.Restoring" xml:space="preserve">
+    <value>復元中</value>
+  </data>
+  <data name="Status.Deleting" xml:space="preserve">
+    <value>削除中</value>
+  </data>
+  <data name="Status.Unknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Dashboard.ServerCount.One" xml:space="preserve">
+    <value>{0} サーバー</value>
+  </data>
+  <data name="Dashboard.ServerCount.Many" xml:space="preserve">
+    <value>{0} サーバー</value>
+  </data>
+  <data name="Dashboard.ServerCount.Filtered" xml:space="preserve">
+    <value>{1} サーバー中 {0}</value>
+  </data>
+  <data name="Dashboard.Network.PublicAddress" xml:space="preserve">
+    <value>パブリック IP：{0}</value>
+  </data>
+  <data name="Dashboard.Network.LocalAddress" xml:space="preserve">
+    <value>LAN IP：{0}</value>
+  </data>
+  <data name="ServerSetup.Status.Ready" xml:space="preserve">
+    <value>●  保存できます</value>
+  </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  設定を確認</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>変更を確認中…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>設定は有効です。準備ができたら「次へ：確認」で内容を確認して保存してください。</value>
+  </data>
+  <data name="ServerSetup.Button.NextReview" xml:space="preserve">
+    <value>次へ：確認</value>
+  </data>
+  <data name="ServerSetup.Button.SaveSettings" xml:space="preserve">
+    <value>サーバー設定を保存</value>
+  </data>
+  <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
+    <value>●  操作が必要</value>
+  </data>
+  <data name="ServerSetup.Status.AllChecksPassed" xml:space="preserve">
+    <value>必須チェックにすべて合格</value>
+  </data>
+  <data name="ServerSetup.Completion" xml:space="preserve">
+    <value>設定の完了率：{0}%</value>
+  </data>
+  <data name="ServerSetup.Window.Title" xml:space="preserve">
+    <value>サーバー設定</value>
+  </data>
+  <data name="ServerSetup.Window.EditTitle" xml:space="preserve">
+    <value>サーバーを編集</value>
+  </data>
+  <data name="ServerSetup.ModeBadge.New" xml:space="preserve">
+    <value>新しいサーバー</value>
+  </data>
+  <data name="ServerSetup.ModeBadge.Edit" xml:space="preserve">
+    <value>サーバーを編集</value>
+  </data>
+  <data name="ServerSetup.Button.SaveServer" xml:space="preserve">
+    <value>サーバーを保存</value>
+  </data>
+  <data name="ServerSetup.Button.SaveChanges" xml:space="preserve">
+    <value>変更を保存</value>
+  </data>
+  <data name="ServerSetup.Page.General.Title" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="ServerSetup.Page.Security.Title" xml:space="preserve">
+    <value>セキュリティ</value>
+  </data>
+  <data name="ServerSetup.Page.World.Title" xml:space="preserve">
+    <value>ワールド生成</value>
+  </data>
+  <data name="ServerSetup.Page.Network.Title" xml:space="preserve">
+    <value>ネットワークと RCON</value>
+  </data>
+  <data name="ServerSetup.Page.Automation.Title" xml:space="preserve">
+    <value>自動化</value>
+  </data>
+  <data name="ServerSetup.Page.Discord.Title" xml:space="preserve">
+    <value>Discord 通知</value>
+  </data>
+  <data name="ServerSetup.Page.Install.Title" xml:space="preserve">
+    <value>インストールと起動</value>
+  </data>
+  <data name="ServerSetup.Mode.Advanced" xml:space="preserve">
+    <value>モード：詳細</value>
+  </data>
+  <data name="ServerSetup.Mode.Beginner" xml:space="preserve">
+    <value>モード：基本</value>
+  </data>
+  <data name="ServerSetup.Port.Game" xml:space="preserve">
+    <value>ゲームポート</value>
+  </data>
+  <data name="ServerSetup.Port.Query" xml:space="preserve">
+    <value>クエリポート</value>
+  </data>
+  <data name="ServerSetup.Port.Ipv6" xml:space="preserve">
+    <value>IPv6 ポート</value>
+  </data>
+  <data name="ServerSetup.Port.Rcon" xml:space="preserve">
+    <value>RCON ポート</value>
+  </data>
+  <data name="ServerSetup.Port.App" xml:space="preserve">
+    <value>アプリポート</value>
+  </data>
+  <data name="ServerSetup.Dialog.SettingsAttention.Title" xml:space="preserve">
+    <value>サーバー設定の確認が必要</value>
+  </data>
+  <data name="ServerSetup.GamePicker.Placeholder" xml:space="preserve">
+    <value>-- ゲームを選択 --</value>
+  </data>
+  <data name="ServerSetup.Placeholder.SelectGame" xml:space="preserve">
+    <value>ゲームを選択…</value>
+  </data>
+  <data name="ServerSetup.Placeholder.NotRequired" xml:space="preserve">
+    <value>不要</value>
+  </data>
+  <data name="ServerSetup.Security.AuthenticationToken" xml:space="preserve">
+    <value>認証トークン</value>
+  </data>
+  <data name="ServerSetup.Network.RconToggle.AccessibleName" xml:space="preserve">
+    <value>RCON を有効化</value>
+  </data>
+  <data name="ServerSetup.Automation.EnableSchedule.AccessibleName" xml:space="preserve">
+    <value>スケジュールを有効化</value>
+  </data>
+  <data name="ServerSetup.Automation.UpdateOnStart.AccessibleName" xml:space="preserve">
+    <value>起動時に更新</value>
+  </data>
+  <data name="ServerSetup.Automation.BackupOnStart.AccessibleName" xml:space="preserve">
+    <value>起動時にバックアップ</value>
+  </data>
+  <data name="ServerSetup.Install.DefaultFolder.AccessibleName" xml:space="preserve">
+    <value>既定のフォルダー</value>
+  </data>
+  <data name="ServerSetup.Minecraft.Unavailable" xml:space="preserve">
+    <value>利用不可</value>
+  </data>
+  <data name="ServerSetup.Runtime.ServerPackage" xml:space="preserve">
+    <value>サーバーパッケージ</value>
+  </data>
+  <data name="ServerSetup.Runtime.Loader" xml:space="preserve">
+    <value>ローダー</value>
+  </data>
+  <data name="ServerSetup.Runtime.Framework.Title" xml:space="preserve">
+    <value>サーバーフレームワーク</value>
+  </data>
+  <data name="ServerSetup.Runtime.Framework" xml:space="preserve">
+    <value>フレームワーク</value>
+  </data>
+  <data name="ServerSetup.MaxPlayers.Label" xml:space="preserve">
+    <value>最大プレイヤー数</value>
+  </data>
+  <data name="ServerSetup.MaxPlayers.Limited" xml:space="preserve">
+    <value>最大プレイヤー数（上限 {0:0}）</value>
+  </data>
+  <data name="ServerSetup.SteamAccount.Required.WindowTitle" xml:space="preserve">
+    <value>Steam アカウントが必要</value>
+  </data>
+  <data name="ServerSetup.SteamAccount.Required.Title" xml:space="preserve">
+    <value>Steam アカウントが必要</value>
+  </data>
+  <data name="AddServer.Title" xml:space="preserve">
+    <value>サーバーを追加</value>
+  </data>
+  <data name="AddServer.Heading" xml:space="preserve">
+    <value>どの方法でサーバーを追加しますか？</value>
+  </data>
+  <data name="AddServer.Create.Title" xml:space="preserve">
+    <value>新しいサーバーを作成・インストール</value>
+  </data>
+  <data name="AddServer.Create.Description" xml:space="preserve">
+    <value>ゲームと設定を選ぶと、Synix がサーバーファイルをダウンロードします。</value>
+  </data>
+  <data name="AddServer.Create.Button" xml:space="preserve">
+    <value>新規作成</value>
+  </data>
+  <data name="AddServer.Import.Title" xml:space="preserve">
+    <value>既存のサーバーをインポート</value>
+  </data>
+  <data name="AddServer.Import.Description" xml:space="preserve">
+    <value>既存のサーバーフォルダーを指定してください。ファイルは移動・置換されません。</value>
+  </data>
+  <data name="AddServer.Import.Button" xml:space="preserve">
+    <value>既存サーバーをインポート</value>
+  </data>
+  <data name="AddServer.Catalog.Title" xml:space="preserve">
+    <value>ゲームの対応状況を確認</value>
+  </data>
+  <data name="AddServer.Catalog.Button" xml:space="preserve">
+    <value>カタログを表示</value>
+  </data>
+  <data name="PlayerCenter.Action.Kick" xml:space="preserve">
+    <value>キック</value>
+  </data>
+  <data name="ModManager.Field.Server" xml:space="preserve">
+    <value>サーバー</value>
+  </data>
+  <data name="ModManager.Field.System" xml:space="preserve">
+    <value>アドオンシステム</value>
+  </data>
+  <data name="ModManager.Field.InstallArea" xml:space="preserve">
+    <value>インストール先</value>
+  </data>
+  <data name="ModManager.Step.Detect" xml:space="preserve">
+    <value>1  検出</value>
+  </data>
+  <data name="ModManager.Step.Stop" xml:space="preserve">
+    <value>2  サーバーを停止</value>
+  </data>
+  <data name="ModManager.Step.Backup" xml:space="preserve">
+    <value>3  ファイルをバックアップ</value>
+  </data>
+  <data name="ModManager.Step.Install" xml:space="preserve">
+    <value>4  インストール</value>
+  </data>
+  <data name="ModManager.Step.Verify" xml:space="preserve">
+    <value>5  検証</value>
+  </data>
+  <data name="ModManager.Step.Restart" xml:space="preserve">
+    <value>6  必要なら再起動</value>
+  </data>
+  <data name="ModManager.Column.AddOn" xml:space="preserve">
+    <value>アドオン</value>
+  </data>
+  <data name="ModManager.Column.Type" xml:space="preserve">
+    <value>種類</value>
+  </data>
+  <data name="ModManager.Column.Version" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="ModManager.Column.Status" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="ModManager.Column.Security" xml:space="preserve">
+    <value>セキュリティ</value>
+  </data>
+  <data name="ModManager.Column.Source" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="ModManager.Column.Location" xml:space="preserve">
+    <value>場所</value>
+  </data>
+  <data name="ModManager.Safety.Title" xml:space="preserve">
+    <value>自動安全チェック</value>
+  </data>
+  <data name="ModManager.Button.InstallFile" xml:space="preserve">
+    <value>ファイルからインストール</value>
+  </data>
+  <data name="ModManager.Button.InstallFramework" xml:space="preserve">
+    <value>フレームワークをインストール</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalog" xml:space="preserve">
+    <value>カタログを参照</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalogs" xml:space="preserve">
+    <value>カタログを参照</value>
+  </data>
+  <data name="ModManager.Button.OpenFolder" xml:space="preserve">
+    <value>アドオンフォルダーを開く</value>
+  </data>
+  <data name="ModManager.Button.Refresh" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="ModManager.Button.Remove" xml:space="preserve">
+    <value>選択項目を削除</value>
+  </data>
+  <data name="ModManager.Button.Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="ModManager.Button.ManageIds" xml:space="preserve">
+    <value>Mod ID を管理</value>
+  </data>
+  <data name="ModManager.NoFilesChanged" xml:space="preserve">
+    <value>ファイルは変更されていません。</value>
+  </data>
+  <data name="ModManager.Safety.ServerStopped" xml:space="preserve">
+    <value>サーバーは停止中</value>
+  </data>
+  <data name="ModManager.Safety.StopFirst" xml:space="preserve">
+    <value>変更前にサーバーを停止</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkDetected" xml:space="preserve">
+    <value>フレームワーク検出済み</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkRequired" xml:space="preserve">
+    <value>フレームワークの設定が必要</value>
+  </data>
+  <data name="ModManager.Safety.FolderAvailable" xml:space="preserve">
+    <value>サーバーフォルダーあり</value>
+  </data>
+  <data name="ModManager.Safety.FolderMissing" xml:space="preserve">
+    <value>サーバーフォルダーなし</value>
+  </data>
+  <data name="ModManager.Safety.SecurityScan" xml:space="preserve">
+    <value>インストール前に安全性をスキャン</value>
+  </data>
+  <data name="ModManager.Safety.StandardPermissions" xml:space="preserve">
+    <value>標準の Windows 権限</value>
+  </data>
+  <data name="ModManager.Safety.RestartRequired" xml:space="preserve">
+    <value>変更後は再起動が必要</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.Name" xml:space="preserve">
+    <value>Minecraft アドオン</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.ModsTarget" xml:space="preserve">
+    <value>ローダー用 Mod</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.PluginsTarget" xml:space="preserve">
+    <value>サーバープラグイン</value>
+  </data>
+  <data name="ModManager.Known.Mod" xml:space="preserve">
+    <value>Mod</value>
+  </data>
+  <data name="ModManager.Known.Plugin" xml:space="preserve">
+    <value>プラグイン</value>
+  </data>
+  <data name="ResourceMonitor.RowRunning" xml:space="preserve">
+    <value>●  稼働中</value>
+  </data>
+  <data name="Satisfactory.Overview" xml:space="preserve">
+    <value>概要</value>
+  </data>
+  <data name="Satisfactory.Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Satisfactory.Refresh" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="Satisfactory.Start" xml:space="preserve">
+    <value>サーバーを起動</value>
+  </data>
+  <data name="Satisfactory.Stop" xml:space="preserve">
+    <value>サーバーを停止</value>
+  </data>
+  <data name="Satisfactory.Value" xml:space="preserve">
+    <value>値</value>
+  </data>
+  <data name="Satisfactory.ApplyOptions" xml:space="preserve">
+    <value>変更を適用</value>
+  </data>
+  <data name="Satisfactory.SendCommand" xml:space="preserve">
+    <value>コマンドを送信</value>
+  </data>
+  <data name="ServerOperation.Name.Configure" xml:space="preserve">
+    <value>サーバー構成</value>
+  </data>
+  <data name="ServerSetup.Progress.Details" xml:space="preserve">
+    <value>サーバー情報</value>
+  </data>
+  <data name="ServerSetup.Progress.Required" xml:space="preserve">
+    <value>必須設定</value>
+  </data>
+  <data name="ServerSetup.Progress.Review" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="ServerSetup.Progress.Save" xml:space="preserve">
+    <value>サーバーを保存</value>
+  </data>
+  <data name="ServerSetup.Progress.Details.Hint" xml:space="preserve">
+    <value>「一般」でゲームを選び、サーバー名を設定してください。</value>
+  </data>
+  <data name="ServerSetup.Progress.Review.Hint" xml:space="preserve">
+    <value>保存せずに選択内容を確認します。どのタブでも引き続き編集できます。</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Waiting" xml:space="preserve">
+    <value>待機中</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Attention" xml:space="preserve">
+    <value>確認が必要</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Complete" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>確認中</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="ServerSetup.Progress.Step" xml:space="preserve">
+    <value>手順 {0}：{1}。{2}</value>
+  </data>
+  <data name="ServerSetup.Review.Title" xml:space="preserve">
+    <value>設定を確認</value>
+  </data>
+  <data name="ServerSetup.Review.Description" xml:space="preserve">
+    <value>選択内容を確認してください。保存前はどのタブでも編集できます。</value>
+  </data>
+  <data name="ServerSetup.Review.Notice" xml:space="preserve">
+    <value>パスワード、トークン、招待コード、Webhook、起動引数は非表示です。保存しても起動やインターネット接続は検証されません。ダッシュボードからインストールまたは起動してください。</value>
+  </data>
+  <data name="ServerSetup.Review.Setting" xml:space="preserve">
+    <value>設定項目</value>
+  </data>
+  <data name="ServerSetup.Review.Value" xml:space="preserve">
+    <value>選択内容</value>
+  </data>
+  <data name="ServerSetup.Review.ServerName" xml:space="preserve">
+    <value>サーバー名</value>
+  </data>
+  <data name="ServerSetup.Review.Game" xml:space="preserve">
+    <value>ゲーム</value>
+  </data>
+  <data name="ServerSetup.Review.Version" xml:space="preserve">
+    <value>ゲームバージョン</value>
+  </data>
+  <data name="ServerSetup.Review.Edition" xml:space="preserve">
+    <value>エディション</value>
+  </data>
+  <data name="ServerSetup.Review.Ram" xml:space="preserve">
+    <value>サーバーメモリ (GB)</value>
+  </data>
+  <data name="ServerSetup.Review.World" xml:space="preserve">
+    <value>マップ / ワールド</value>
+  </data>
+  <data name="ServerSetup.Review.GameMode" xml:space="preserve">
+    <value>ゲームモード</value>
+  </data>
+  <data name="ServerSetup.Review.InstallFolder" xml:space="preserve">
+    <value>インストールフォルダー</value>
+  </data>
+  <data name="Catalog.Available" xml:space="preserve">
+    <value>利用可能</value>
+  </data>
+  <data name="Configuration.Editor.SettingCount" xml:space="preserve">
+    <value>{1} 設定中 {0}</value>
+  </data>
+  <data name="Configuration.Editor.UnsavedChanges.Many" xml:space="preserve">
+    <value>未保存の変更：{0} 件</value>
+  </data>
+  <data name="Dashboard.NoServerSelected.Body" xml:space="preserve">
+    <value>まず一覧でサーバーを選択してください。</value>
+  </data>
+  <data name="Dashboard.NoServerSelected.Title" xml:space="preserve">
+    <value>サーバーが未選択</value>
+  </data>
+  <data name="Diagnostics.Readiness.Result.Ready" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="Diagnostics.Readiness.Result.Review" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="PortRole.Game" xml:space="preserve">
+    <value>ゲームポート</value>
+  </data>
+  <data name="PortRole.Query" xml:space="preserve">
+    <value>クエリポート</value>
+  </data>
+  <data name="PortRole.Rcon" xml:space="preserve">
+    <value>RCON ポート</value>
+  </data>
+  <data name="PortRole.App" xml:space="preserve">
+    <value>アプリポート</value>
+  </data>
+  <data name="PortRole.Game.Title" xml:space="preserve">
+    <value>ゲームポート</value>
+  </data>
+  <data name="PortRole.Query.Title" xml:space="preserve">
+    <value>クエリポート</value>
+  </data>
+  <data name="PortRole.Rcon.Title" xml:space="preserve">
+    <value>RCON ポート</value>
+  </data>
+  <data name="Configuration.Check.FixConfig" xml:space="preserve">
+    <value>設定を修復</value>
+  </data>
+  <data name="ModSecurity.Status.Unavailable" xml:space="preserve">
+    <value>利用不可</value>
+  </data>
+  <data name="MinecraftConsole.Quick.Deop.Label" xml:space="preserve">
+    <value>管理者権限を削除</value>
+  </data>
+  <data name="ServerStart.SettingsAttention.Title" xml:space="preserve">
+    <value>サーバー設定の確認が必要</value>
+  </data>
+  <data name="WindowHeader.Close.AccessibleName" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Dashboard.Backup.Confirm.Title" xml:space="preserve">
+    <value>サーバーバックアップの確認</value>
+  </data>
+  <data name="Dashboard.Restore.Confirm.Title" xml:space="preserve">
+    <value>サーバー復元の確認</value>
+  </data>
+  <data name="Report.Unknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Report.Unavailable" xml:space="preserve">
+    <value>利用不可</value>
+  </data>
+  <data name="GameInput.AuthenticationToken" xml:space="preserve">
+    <value>認証トークン</value>
+  </data>
+  <data name="GameInput.AuthenticationToken.Label" xml:space="preserve">
+    <value>認証トークン</value>
+  </data>
+  <data name="ServerOperation.Name.Start" xml:space="preserve">
+    <value>起動</value>
+  </data>
+  <data name="ServerOperation.Name.Restart" xml:space="preserve">
+    <value>再起動</value>
+  </data>
+  <data name="ServerOperation.Name.Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="ServerOperation.Name.Config" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="GameDefinition.Tag.ServerName.Name" xml:space="preserve">
+    <value>サーバー名</value>
+  </data>
+  <data name="GameDefinition.Tag.Port.Name" xml:space="preserve">
+    <value>ゲームポート</value>
+  </data>
+  <data name="GameDefinition.Tag.QueryPort.Name" xml:space="preserve">
+    <value>クエリポート</value>
+  </data>
+  <data name="GameDefinition.Tag.Password.Name" xml:space="preserve">
+    <value>サーバーパスワード</value>
+  </data>
+  <data name="GameDefinition.Tag.Seed.Name" xml:space="preserve">
+    <value>ワールドシード</value>
+  </data>
+  <data name="GameDefinition.Tag.WorldSize.Name" xml:space="preserve">
+    <value>ワールドサイズ</value>
+  </data>
+  <data name="GameDefinition.Tag.Mode.Name" xml:space="preserve">
+    <value>ゲームモード</value>
+  </data>
+  <data name="GameDefinition.Tag.RconPort.Name" xml:space="preserve">
+    <value>RCON ポート</value>
+  </data>
+  <data name="GameDefinition.Tag.RconPassword.Name" xml:space="preserve">
+    <value>RCON パスワード</value>
+  </data>
+  <data name="Text.1B1A4A3B36DFC22C1EE4" xml:space="preserve">
+    <value>↻  再起動</value>
+  </data>
+  <data name="Text.BE66C4F105B89904ED79" xml:space="preserve">
+    <value>+  サーバーを追加</value>
+  </data>
+  <data name="Text.695155B305760B530D36" xml:space="preserve">
+    <value>■  停止</value>
+  </data>
+  <data name="Text.0DF1F6C5210F85368B8A" xml:space="preserve">
+    <value>▶  起動</value>
+  </data>
+  <data name="Text.32EFCD09F92A272905F1" xml:space="preserve">
+    <value>✓  準備チェック</value>
+  </data>
+  <data name="Text.B70806C6C2D93404F976" xml:space="preserve">
+    <value>アクセス認証情報</value>
+  </data>
+  <data name="Text.74ECEE4668229DC04361" xml:space="preserve">
+    <value>Steam の表示名ではなくアカウント名</value>
+  </data>
+  <data name="Text.1FCD02D49EBBD52B384B" xml:space="preserve">
+    <value>アクティビティと診断</value>
+  </data>
+  <data name="Text.2E28AAB93B90457D1678" xml:space="preserve">
+    <value>管理者パスワード</value>
+  </data>
+  <data name="Text.012855FACF11B6858FD1" xml:space="preserve">
+    <value>アプリポート</value>
+  </data>
+  <data name="Text.1D62D75616FD38521A36" xml:space="preserve">
+    <value>項目</value>
+  </data>
+  <data name="Text.9D70644761665CEA1FDE" xml:space="preserve">
+    <value>バックアップファイル</value>
+  </data>
+  <data name="Text.0F5BBD5CA04AD4F72861" xml:space="preserve">
+    <value>起動時にバックアップ</value>
+  </data>
+  <data name="Text.9FF20EBBA7CCB0CA561D" xml:space="preserve">
+    <value>サーバーをバックアップ</value>
+  </data>
+  <data name="Text.3227AA9666253F7A7365" xml:space="preserve">
+    <value>参照</value>
+  </data>
+  <data name="Text.28BBF5E4E8DC04D61EA5" xml:space="preserve">
+    <value>フォルダーを参照</value>
+  </data>
+  <data name="Text.19766ED6CCB2F4A32778" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Text.E0A3BA64FA759DF9B7C8" xml:space="preserve">
+    <value>Synix の設定値を確認</value>
+  </data>
+  <data name="Text.6ABB0361F0B32BEF8441" xml:space="preserve">
+    <value>フォルダーを選択</value>
+  </data>
+  <data name="Text.2D57929BE2D29C7BE3DC" xml:space="preserve">
+    <value>パッケージを選択</value>
+  </data>
+  <data name="Text.30F3BBCB43AC48EBFD1C" xml:space="preserve">
+    <value>Synix の表示言語を選択します。ゲーム設定と設定値は英語のままです。</value>
+  </data>
+  <data name="Text.9CC3A043B6A91D450BC3" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="Text.7D9EB7ACB13E24625C40" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Text.DFA45629AB8769153F0E" xml:space="preserve">
+    <value>設定エディター</value>
+  </data>
+  <data name="Text.8097A44203F07EA4116C" xml:space="preserve">
+    <value>設定エディター</value>
+  </data>
+  <data name="Text.6198EFCA8E63CD466052" xml:space="preserve">
+    <value>設定状況</value>
+  </data>
+  <data name="Text.6DEFAFA2CAA653041739" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Text.7176F50E66F1BD1104FC" xml:space="preserve">
+    <value>スケジュールを設定</value>
+  </data>
+  <data name="Text.D7D31960DA6507518203" xml:space="preserve">
+    <value>CPU 使用率</value>
+  </data>
+  <data name="Text.DE967EB5C05508CC7A7D" xml:space="preserve">
+    <value>CPU 使用率</value>
+  </data>
+  <data name="Text.E699C2B4C7E4FA83E8F1" xml:space="preserve">
+    <value>バッチファイルを作成</value>
+  </data>
+  <data name="Text.6D6441A3204BECDDE1CB" xml:space="preserve">
+    <value>作成日時</value>
+  </data>
+  <data name="Text.DF8C7C89B3E4CFB1FF6F" xml:space="preserve">
+    <value>ダークモード</value>
+  </data>
+  <data name="Text.B509EAF7EB0805B82CA2" xml:space="preserve">
+    <value>ダークモード切替</value>
+  </data>
+  <data name="Text.6968CF40A73F3487A03E" xml:space="preserve">
+    <value>既定の起動引数</value>
+  </data>
+  <data name="Text.47DE4E70C6DC214B814C" xml:space="preserve">
+    <value>既定の起動引数</value>
+  </data>
+  <data name="Text.030CFC390829811A85AF" xml:space="preserve">
+    <value>バックアップを削除</value>
+  </data>
+  <data name="Text.056E6A5F6594451E2753" xml:space="preserve">
+    <value>サーバーを削除</value>
+  </data>
+  <data name="Text.14FDC0F6C77F7978B7AD" xml:space="preserve">
+    <value>詳細</value>
+  </data>
+  <data name="Text.2841A3AA116B14C8DEF1" xml:space="preserve">
+    <value>Discord Webhook</value>
+  </data>
+  <data name="Text.464C4FFD019E1E9691DC" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="Text.F37695A23C899C5215F8" xml:space="preserve">
+    <value>エディション</value>
+  </data>
+  <data name="Text.92C1CDFDF4CB9CF6FCCA" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="Text.96599B7797D3C4D80ED1" xml:space="preserve">
+    <value>追加引数</value>
+  </data>
+  <data name="Text.4035C78A474280CE7F1E" xml:space="preserve">
+    <value>設定を修復</value>
+  </data>
+  <data name="Text.74CCD43303847F265530" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="Text.0E078F2314E8311DAB20" xml:space="preserve">
+    <value>フォルダーパス</value>
+  </data>
+  <data name="Text.1FD5F5A768D30B9B6651" xml:space="preserve">
+    <value>ゲーム</value>
+  </data>
+  <data name="Text.1311D7944778FB4AD68C" xml:space="preserve">
+    <value>ゲームモード</value>
+  </data>
+  <data name="Text.3E8DBB6C3828E368EDBE" xml:space="preserve">
+    <value>ゲームポート</value>
+  </data>
+  <data name="Text.56215346C32A2444B7C7" xml:space="preserve">
+    <value>ゲームサーバー</value>
+  </data>
+  <data name="Text.F054BBC09408C30FDCF1" xml:space="preserve">
+    <value>ゲームサーバー</value>
+  </data>
+  <data name="Text.B5847872D81BE16B1771" xml:space="preserve">
+    <value>対応ゲームカタログ</value>
+  </data>
+  <data name="Text.8CACE39E73446B3AD675" xml:space="preserve">
+    <value>ゲームバージョン</value>
+  </data>
+  <data name="Text.9E8A7EC82FAED9A14FA0" xml:space="preserve">
+    <value>トークンを取得</value>
+  </data>
+  <data name="Text.8DD65D0952ED144CCF6E" xml:space="preserve">
+    <value>ガイド</value>
+  </data>
+  <data name="Text.B79CAC926E0B2E347E72" xml:space="preserve">
+    <value>ヘルプ</value>
+  </data>
+  <data name="Text.25FBAC53BB846E706EFB" xml:space="preserve">
+    <value>既存のサーバーをインポート</value>
+  </data>
+  <data name="Text.072D8E4338F73F8307C0" xml:space="preserve">
+    <value>インストール先</value>
+  </data>
+  <data name="Text.F73780A16B44791C9D49" xml:space="preserve">
+    <value>インストール済みサーバー</value>
+  </data>
+  <data name="Text.8027F432A7FB7C273A1A" xml:space="preserve">
+    <value>表示言語</value>
+  </data>
+  <data name="Text.A4DD72C4AC5BBC667FC3" xml:space="preserve">
+    <value>招待コード</value>
+  </data>
+  <data name="Text.A4FE65264EF7DBB38D10" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="Text.55519B4895A4D9906EDA" xml:space="preserve">
+    <value>ローダーのバージョン</value>
+  </data>
+  <data name="Text.47D2A515EF2F05B87D68" xml:space="preserve">
+    <value>読み込み中…</value>
+  </data>
+  <data name="Text.E7FDDAD25C086FD12358" xml:space="preserve">
+    <value>メインワールド</value>
+  </data>
+  <data name="Text.BE176B0015C424B78E9F" xml:space="preserve">
+    <value>マップ</value>
+  </data>
+  <data name="Text.91433D51005E84C89DD7" xml:space="preserve">
+    <value>マップ / ワールド</value>
+  </data>
+  <data name="Text.D6271860D5F643A7B632" xml:space="preserve">
+    <value>最大プレイヤー数</value>
+  </data>
+  <data name="Text.1744B96470B51BF30935" xml:space="preserve">
+    <value>ネットワーク</value>
+  </data>
+  <data name="Text.79F554AF97ADC0A05FDE" xml:space="preserve">
+    <value>曜日が未設定</value>
+  </data>
+  <data name="Text.1B3F2F7A383F81F4A567" xml:space="preserve">
+    <value>不要</value>
+  </data>
+  <data name="Text.2BBA1B9B15644044B222" xml:space="preserve">
+    <value>オンラインサービス認証</value>
+  </data>
+  <data name="Text.64159808F2A26715BA3E" xml:space="preserve">
+    <value>バックアップフォルダーを開く</value>
+  </data>
+  <data name="Text.A350826E531AABBD198C" xml:space="preserve">
+    <value>設定エディターを開く</value>
+  </data>
+  <data name="Text.C7ECF7D057EE7D3405E2" xml:space="preserve">
+    <value>最新のゲームログを開く</value>
+  </data>
+  <data name="Text.DEF3278452C24C7A756A" xml:space="preserve">
+    <value>サーバーフォルダーを開く</value>
+  </data>
+  <data name="Text.59BE71333C960FD08E7E" xml:space="preserve">
+    <value>任意</value>
+  </data>
+  <data name="Text.84E12AC655DD8D75DD44" xml:space="preserve">
+    <value>プレイヤー</value>
+  </data>
+  <data name="Text.72E9A59F5A1D6289DBAC" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="Text.22EAC55F97CD73017796" xml:space="preserve">
+    <value>プライバシーモード</value>
+  </data>
+  <data name="Text.B80A37564FBB3C075320" xml:space="preserve">
+    <value>クエリ</value>
+  </data>
+  <data name="Text.516E776E998FF69A8D69" xml:space="preserve">
+    <value>クエリポート</value>
+  </data>
+  <data name="Text.771E2DB0F3BEF2D22BE9" xml:space="preserve">
+    <value>メモリ使用量</value>
+  </data>
+  <data name="Text.4C328BF4603F8E856CAD" xml:space="preserve">
+    <value>生データ表示</value>
+  </data>
+  <data name="Text.16C5D21817849765677F" xml:space="preserve">
+    <value>RCON パスワード</value>
+  </data>
+  <data name="Text.225EB9FD7C8D1624A15B" xml:space="preserve">
+    <value>RCON ポート</value>
+  </data>
+  <data name="Text.B1A53241AEE398BDDBC1" xml:space="preserve">
+    <value>管理できます</value>
+  </data>
+  <data name="Text.BF53C2057CB18B677699" xml:space="preserve">
+    <value>プレイヤーを更新</value>
+  </data>
+  <data name="Text.BBC627D7B11E5339088A" xml:space="preserve">
+    <value>リモート管理</value>
+  </data>
+  <data name="Text.C3812FC4ACB861D5182F" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Text.E8A9279E12900267A1DF" xml:space="preserve">
+    <value>再起動する曜日</value>
+  </data>
+  <data name="Text.BBC2611830E1BE782900" xml:space="preserve">
+    <value>再起動時刻</value>
+  </data>
+  <data name="Text.3F593999A67CF40731E8" xml:space="preserve">
+    <value>バックアップを復元</value>
+  </data>
+  <data name="Text.49C15D2B9D9702D4FF44" xml:space="preserve">
+    <value>サーバーバックアップを復元</value>
+  </data>
+  <data name="Text.E0CE633EA746EF5196B5" xml:space="preserve">
+    <value>稼働中</value>
+  </data>
+  <data name="Text.4A3B87641F16E0F811C2" xml:space="preserve">
+    <value>稼働中のサーバー</value>
+  </data>
+  <data name="Text.1509F561F2416598629B" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Text.0637B6730F1724433551" xml:space="preserve">
+    <value>再起動スケジュール</value>
+  </data>
+  <data name="Text.2E7AAE6319922181CD1D" xml:space="preserve">
+    <value>ゲーム名を検索…</value>
+  </data>
+  <data name="Text.01F1674FFF3FC5AD8DC9" xml:space="preserve">
+    <value>ゲーム名またはサーバー名で検索…</value>
+  </data>
+  <data name="Text.6CAABA13463DFF403A37" xml:space="preserve">
+    <value>設定・パス・値を検索…</value>
+  </data>
+  <data name="Text.F00F8392B2C39AE7826E" xml:space="preserve">
+    <value>続行するにはバックアップを選択してください。</value>
+  </data>
+  <data name="Text.93D8CAEF74F07185F0BF" xml:space="preserve">
+    <value>コマンドを送信</value>
+  </data>
+  <data name="Text.AEF7DE28D52977F1B5CD" xml:space="preserve">
+    <value>サーバー</value>
+  </data>
+  <data name="Text.5435C9CD49190E73AAC1" xml:space="preserve">
+    <value>サーバー構成</value>
+  </data>
+  <data name="Text.7FD48896176AE13DC58A" xml:space="preserve">
+    <value>サーバーダッシュボード</value>
+  </data>
+  <data name="Text.16A1DE974A53CBDEA4C1" xml:space="preserve">
+    <value>サーバー情報</value>
+  </data>
+  <data name="Text.BC4816425EBE8079C4F9" xml:space="preserve">
+    <value>サーバー名</value>
+  </data>
+  <data name="Text.41CFA866FAA62B2104E6" xml:space="preserve">
+    <value>サーバー名</value>
+  </data>
+  <data name="Text.A0F68054D6613673BCF5" xml:space="preserve">
+    <value>サーバー操作  ▴</value>
+  </data>
+  <data name="Text.10F86A32C69207531263" xml:space="preserve">
+    <value>サーバーパスワード</value>
+  </data>
+  <data name="Text.7B60A68A60DA2F0333AA" xml:space="preserve">
+    <value>サーバーメモリ (GB)</value>
+  </data>
+  <data name="Text.8C33F13ABED20D6638CD" xml:space="preserve">
+    <value>サーバー準備チェック</value>
+  </data>
+  <data name="Text.796D04D8FFEF846F141D" xml:space="preserve">
+    <value>オンラインのサーバー</value>
+  </data>
+  <data name="Text.F86BB6FC21DEB1E1F841" xml:space="preserve">
+    <value>サービスポート</value>
+  </data>
+  <data name="Text.4FE70949D3E77969ECE8" xml:space="preserve">
+    <value>設定項目</value>
+  </data>
+  <data name="Text.74A883A037BC227F9189" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Text.5856356326064A450522" xml:space="preserve">
+    <value>サーバーコンソールを表示</value>
+  </data>
+  <data name="Text.92079831E5CC0BF95974" xml:space="preserve">
+    <value>シンプル表示</value>
+  </data>
+  <data name="Text.4512FE0408D72862AC67" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="Text.F08A98135A8DF6ED38C7" xml:space="preserve">
+    <value>サーバーを起動</value>
+  </data>
+  <data name="Text.835D3FF459F432C23A57" xml:space="preserve">
+    <value>起動時のタスク</value>
+  </data>
+  <data name="Text.2ACE1D3304BA5649A5A1" xml:space="preserve">
+    <value>Steam アカウント名</value>
+  </data>
+  <data name="Text.1E704E3DA1455CD132D9" xml:space="preserve">
+    <value>SteamCMD ダウンロード速度</value>
+  </data>
+  <data name="Text.CB7C1E8DC21E59830716" xml:space="preserve">
+    <value>サーバーを停止</value>
+  </data>
+  <data name="Text.1A4F630AC1B69FD00728" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Text.375D0C125CC8B4590775" xml:space="preserve">
+    <value>構造化表示</value>
+  </data>
+  <data name="Text.7E485C2CF2CC85DC20B9" xml:space="preserve">
+    <value>Synix 設定</value>
+  </data>
+  <data name="Text.67907590F84228A78098" xml:space="preserve">
+    <value>LAN 接続をテスト</value>
+  </data>
+  <data name="Text.A6C3462A3E2E155F2613" xml:space="preserve">
+    <value>WAN 接続をテスト</value>
+  </data>
+  <data name="Text.DDE6FA1EFA42980A5A3D" xml:space="preserve">
+    <value>システム全体の負荷</value>
+  </data>
+  <data name="Text.2A8FBB837295BABAD526" xml:space="preserve">
+    <value>システムのメモリ使用量</value>
+  </data>
+  <data name="Text.AAD454AE502B9251A7DB" xml:space="preserve">
+    <value>編集を取り消す</value>
+  </data>
+  <data name="Text.4B9B06633B41446C342E" xml:space="preserve">
+    <value>起動時に更新</value>
+  </data>
+  <data name="Text.D56284509EEB667D3032" xml:space="preserve">
+    <value>サーバーを更新</value>
+  </data>
+  <data name="Text.D63AB4711473B0398FEB" xml:space="preserve">
+    <value>稼働時間</value>
+  </data>
+  <data name="Text.7E8C4DD0D3627B5A23DA" xml:space="preserve">
+    <value>Synix の既定フォルダーを使用</value>
+  </data>
+  <data name="Text.730771C7CEF0FB9F5591" xml:space="preserve">
+    <value>ゲームファイルを検証</value>
+  </data>
+  <data name="Text.8EC121C93E4A0DE65F26" xml:space="preserve">
+    <value>値</value>
+  </data>
+  <data name="Text.61600AA7118C043C99D7" xml:space="preserve">
+    <value>バックアップを検証</value>
+  </data>
+  <data name="Text.E3D178B901F8C19B399B" xml:space="preserve">
+    <value>既定の引数を表示</value>
+  </data>
+  <data name="Text.90789C12D0731B4405F2" xml:space="preserve">
+    <value>詳細を表示</value>
+  </data>
+  <data name="Text.33DED6ECB268AFB09FD2" xml:space="preserve">
+    <value>ワールドシード</value>
+  </data>
+  <data name="Text.59E97D4C50CDAA280770" xml:space="preserve">
+    <value>ワールドサイズ</value>
+  </data>
+  <data name="DynamicText.00029CBA0C5C049B0F4F" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="DynamicText.8AB5FCAA02B080A097CB" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="DynamicText.4A683D9AC9F3EB4B325E" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="DynamicText.07974A58F2F45DF701AB" xml:space="preserve">
+    <value>サーバーを編集</value>
+  </data>
+  <data name="DynamicText.4343EB764C3E6E4400F1" xml:space="preserve">
+    <value>サーバーを編集</value>
+  </data>
+  <data name="DynamicText.8214BA754E823839D94C" xml:space="preserve">
+    <value>IPv6 ポート</value>
+  </data>
+  <data name="DynamicText.5F83363AA32B68BAD3E3" xml:space="preserve">
+    <value>モード：詳細</value>
+  </data>
+  <data name="DynamicText.950660AA706852FE74D6" xml:space="preserve">
+    <value>モード：基本</value>
+  </data>
+  <data name="DynamicText.87DE7163FF43F16DD0DC" xml:space="preserve">
+    <value>稼働中</value>
+  </data>
+  <data name="DynamicText.BEEA8B6B4E3FC3DA7763" xml:space="preserve">
+    <value>ゲームを選択…</value>
+  </data>
+  <data name="DynamicText.423401648A096552A248" xml:space="preserve">
+    <value>サーバーパッケージ</value>
+  </data>
+  <data name="MessageText.464192041ACD5C461D76" xml:space="preserve">
+    <value>サーバーバックアップの確認</value>
+  </data>
+  <data name="MessageText.C6F572AC4FC25E13AFAC" xml:space="preserve">
+    <value>サーバー復元の確認</value>
+  </data>
+  <data name="MessageText.C2B79A94A0143B014649" xml:space="preserve">
+    <value>サーバーが未選択</value>
+  </data>
+  <data name="MessageText.7FF51079982199131314" xml:space="preserve">
+    <value>まず一覧でサーバーを選択してください。</value>
+  </data>
+  <data name="MessageText.726B95C83B7011B7B778" xml:space="preserve">
+    <value>サーバー設定の確認が必要</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Required" xml:space="preserve">
+    <value>ワールドシード（必須）</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Generate" xml:space="preserve">
+    <value>シードを生成</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Folder" xml:space="preserve">
+    <value>フォルダーを選択</value>
+  </data>
+  <data name="EmpyrionMods.Button.RollBack" xml:space="preserve">
+    <value>インポートを元に戻す</value>
+  </data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve">
+    <value>このインストール先のアドオンを検索…</value>
+  </data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve">
+    <value>{1} アドオン中 {0} 件が一致</value>
+  </data>
+  <data name="ModManager.Field.Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="MinecraftWorkspace.Title" xml:space="preserve">
+    <value>Minecraft コントロールセンター</value>
+  </data>
+  <data name="MinecraftWorkspace.Overview" xml:space="preserve">
+    <value>概要</value>
+  </data>
+  <data name="MinecraftWorkspace.Console" xml:space="preserve">
+    <value>コンソール</value>
+  </data>
+  <data name="MinecraftWorkspace.Players" xml:space="preserve">
+    <value>プレイヤー</value>
+  </data>
+  <data name="MinecraftWorkspace.Settings" xml:space="preserve">
+    <value>設定とファイル</value>
+  </data>
+  <data name="MinecraftWorkspace.Worlds" xml:space="preserve">
+    <value>ワールド</value>
+  </data>
+  <data name="MinecraftWorkspace.Mods" xml:space="preserve">
+    <value>Mod とプラグイン</value>
+  </data>
+  <data name="MinecraftWorkspace.Backups" xml:space="preserve">
+    <value>バックアップ</value>
+  </data>
+  <data name="MinecraftWorkspace.Recovery" xml:space="preserve">
+    <value>変更の復元</value>
+  </data>
+  <data name="MinecraftWorkspace.Diagnostics" xml:space="preserve">
+    <value>診断</value>
+  </data>
+  <data name="MinecraftWorkspace.Schedules" xml:space="preserve">
+    <value>スケジュール</value>
+  </data>
+  <data name="MinecraftWorkspace.Start" xml:space="preserve">
+    <value>起動</value>
+  </data>
+  <data name="MinecraftWorkspace.Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="MinecraftWorkspace.Restart" xml:space="preserve">
+    <value>再起動</value>
+  </data>
+  <data name="MinecraftWorkspace.Setup" xml:space="preserve">
+    <value>サーバー設定</value>
+  </data>
+  <data name="MinecraftWorkspace.Readiness" xml:space="preserve">
+    <value>準備状況の確認</value>
+  </data>
+  <data name="MinecraftWorkspace.Connection" xml:space="preserve">
+    <value>接続の詳細</value>
+  </data>
+  <data name="MinecraftWorkspace.Refresh" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="MinecraftWorkspace.Working" xml:space="preserve">
+    <value>処理中…</value>
+  </data>
+  <data name="MinecraftWorkspace.Save" xml:space="preserve">
+    <value>変更を保存</value>
+  </data>
+  <data name="MinecraftWorkspace.File" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="MinecraftWorkspace.Format" xml:space="preserve">
+    <value>形式</value>
+  </data>
+  <data name="MinecraftWorkspace.EditFile" xml:space="preserve">
+    <value>選択ファイルを編集</value>
+  </data>
+  <data name="MinecraftWorkspace.StructuredEditor" xml:space="preserve">
+    <value>構造化エディター</value>
+  </data>
+  <data name="MinecraftWorkspace.Player" xml:space="preserve">
+    <value>プレイヤー名</value>
+  </data>
+  <data name="MinecraftWorkspace.Source" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyPlayer" xml:space="preserve">
+    <value>プレイヤー操作を実行</value>
+  </data>
+  <data name="MinecraftWorkspace.World" xml:space="preserve">
+    <value>ワールド</value>
+  </data>
+  <data name="MinecraftWorkspace.Status" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="MinecraftWorkspace.Active" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="MinecraftWorkspace.Available" xml:space="preserve">
+    <value>利用可能</value>
+  </data>
+  <data name="MinecraftWorkspace.NewWorldName" xml:space="preserve">
+    <value>新しいワールドのフォルダー名</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportWorld" xml:space="preserve">
+    <value>ワールド ZIP をインポート</value>
+  </data>
+  <data name="MinecraftWorkspace.ActivateWorld" xml:space="preserve">
+    <value>選択したワールドを使用</value>
+  </data>
+  <data name="MinecraftWorkspace.AddOnId" xml:space="preserve">
+    <value>アドオン ID</value>
+  </data>
+  <data name="MinecraftWorkspace.Version" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="MinecraftWorkspace.Loader" xml:space="preserve">
+    <value>ローダー</value>
+  </data>
+  <data name="MinecraftWorkspace.ManageAddOns" xml:space="preserve">
+    <value>個別のアドオン</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportPack" xml:space="preserve">
+    <value>パックをインポート・更新</value>
+  </data>
+  <data name="MinecraftWorkspace.Checks" xml:space="preserve">
+    <value>互換性チェック</value>
+  </data>
+  <data name="MinecraftWorkspace.Created" xml:space="preserve">
+    <value>作成日時</value>
+  </data>
+  <data name="MinecraftWorkspace.Size" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="MinecraftWorkspace.Files" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="MinecraftWorkspace.Change" xml:space="preserve">
+    <value>変更</value>
+  </data>
+  <data name="MinecraftWorkspace.CreateBackup" xml:space="preserve">
+    <value>完全バックアップを作成</value>
+  </data>
+  <data name="MinecraftWorkspace.RestoreBackup" xml:space="preserve">
+    <value>バックアップを復元</value>
+  </data>
+  <data name="MinecraftWorkspace.VerifyBackup" xml:space="preserve">
+    <value>バックアップを検証</value>
+  </data>
+  <data name="MinecraftWorkspace.EditSchedule" xml:space="preserve">
+    <value>スケジュールを編集</value>
+  </data>
+  <data name="MinecraftWorkspace.Enabled" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="MinecraftWorkspace.Disabled" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoChange" xml:space="preserve">
+    <value>変更を取り消す・復元</value>
+  </data>
+  <data name="MinecraftWorkspace.Area" xml:space="preserve">
+    <value>項目</value>
+  </data>
+  <data name="MinecraftWorkspace.Detail" xml:space="preserve">
+    <value>詳細</value>
+  </data>
+  <data name="MinecraftWorkspace.Performance" xml:space="preserve">
+    <value>プロセスのリソース</value>
+  </data>
+  <data name="MinecraftWorkspace.Online" xml:space="preserve">
+    <value>オンライン</value>
+  </data>
+  <data name="MinecraftWorkspace.Logs" xml:space="preserve">
+    <value>最近のログ</value>
+  </data>
+  <data name="MinecraftWorkspace.Apply" xml:space="preserve">
+    <value>変更を適用</value>
+  </data>
+  <data name="MinecraftWorkspace.Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="MinecraftWorkspace.Remove" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="MinecraftWorkspace.Add" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="MinecraftWorkspace.Replace" xml:space="preserve">
+    <value>置換</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Kick" xml:space="preserve">
+    <value>キック</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Allow" xml:space="preserve">
+    <value>許可リストに追加</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Disallow" xml:space="preserve">
+    <value>許可リストから削除</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Operator" xml:space="preserve">
+    <value>管理者権限を付与</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Deop" xml:space="preserve">
+    <value>管理者権限を削除</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Ban" xml:space="preserve">
+    <value>BAN（Java）</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Pardon" xml:space="preserve">
+    <value>BAN 解除（Java）</value>
+  </data>
+  <data name="UniversalMods.Wizard.Button" xml:space="preserve">
+    <value>ZIP / フォルダーをインポート</value>
+  </data>
+  <data name="ModSupport.Title" xml:space="preserve">
+    <value>Mod の対応と設定</value>
+  </data>
+  <data name="Language.PreviewNotice" xml:space="preserve">
+    <value>プレビュー：主な操作項目を翻訳済み。一部のヘルプや診断は英語です。</value>
+  </data>
+  <data name="Text.8736DCB51A77046719F5" xml:space="preserve">
+    <value>ゲームサーバーの起動時にコンソールを開きます。無効にするとバックグラウンドで実行します。</value>
+  </data>
+  <data name="Text.A03EE332F98F4733802C" xml:space="preserve">
+    <value>Synix ダッシュボードのライト・ダークテーマを切り替えます。</value>
+  </data>
+  <data name="Text.A8142050CBD33EE95F3F" xml:space="preserve">
+    <value>サーバーのインストール・更新・修復・検証時のダウンロード速度を設定します。</value>
+  </data>
+  <data name="Text.1C310A469AD1721A3E91" xml:space="preserve">
+    <value>すべてのゲームサーバーを一か所で監視・管理します。</value>
+  </data>
+  <data name="SettingsPage.General.Subtitle" xml:space="preserve">
+    <value>このコンピューターでの Synix の基本動作を設定します。</value>
+  </data>
+  <data name="ServerSetup.Page.General.Description" xml:space="preserve">
+    <value>ゲームを選択し、サーバーの基本情報を設定します。</value>
+  </data>
+  <data name="ServerSetup.Page.Security.Description" xml:space="preserve">
+    <value>サーバーパスワードとオンラインサービスの認証情報を管理します。</value>
+  </data>
+</root>
+

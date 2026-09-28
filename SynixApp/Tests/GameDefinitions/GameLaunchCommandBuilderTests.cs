@@ -541,6 +541,44 @@ public sealed class GameLaunchCommandBuilderTests
 		}
 	}
 
+	[Fact]
+	public void InternationalTextSurvivesNativeArgumentsAndUtf8BatchExport()
+	{
+		string directory = Path.Combine(Path.GetTempPath(), "Synix.Tests", Guid.NewGuid().ToString("N"), "中文 サーバー");
+		Directory.CreateDirectory(directory);
+		EventHandler<ApplicationLogEventArgs> captureLog = (_, _) => { };
+		ApplicationUiService.LogRequested += captureLog;
+		try
+		{
+			GameInfo definition = GameDatabase.GetGame("ARK: Survival Ascended")!;
+			GameServer server = CreateServer(definition.Game);
+			server.InstallPath = directory;
+			server.ServerName = "朋友のサーバー Привет";
+			server.WorldName = "TheIsland_WP";
+			SynixServerPasswords passwords = new("測試密碼123", "管理者密碼123", "遠端管理123");
+			Core.SetServerPasswords(server, passwords);
+			Assert.True(GameLaunchCommandBuilder.TryBuildArguments(server, definition, definition.AppID, passwords,
+				out string arguments, out string error), error);
+			Assert.Contains(server.ServerName, arguments);
+			Assert.Contains(passwords.ServerPassword, arguments);
+			Assert.Contains(passwords.AdminPassword, arguments);
+			Assert.True(Core.Instance.ExportServerToBatch(server));
+			byte[] bytes = File.ReadAllBytes(Assert.Single(Directory.GetFiles(directory, "Run_*_Server.bat")));
+			Assert.False(bytes.Take(3).SequenceEqual(new byte[] { 0xef, 0xbb, 0xbf }));
+			string batch = new System.Text.UTF8Encoding(false, true).GetString(bytes);
+			Assert.StartsWith("@echo off\r\nsetlocal DisableDelayedExpansion\r\nchcp 65001 >nul || exit /b 1\r\n", batch);
+			Assert.Contains(server.ServerName, batch);
+			Assert.Contains(passwords.ServerPassword, batch);
+			Assert.Contains(passwords.AdminPassword, batch);
+			Assert.Contains(directory, batch);
+		}
+		finally
+		{
+			ApplicationUiService.LogRequested -= captureLog;
+			Directory.Delete(Path.GetDirectoryName(directory)!, recursive: true);
+		}
+	}
+
 	[Theory]
 	[InlineData(null)]
 	[InlineData("not-an-app-id")]

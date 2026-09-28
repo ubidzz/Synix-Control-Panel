@@ -108,6 +108,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			btnRemoveTemplate = new ModernSettingsButton();
 			lblSteamAppConfig = new Label();
 			txtSteamAppConfig = new TextBox();
+			lblSteamBranch = new Label();
+			txtSteamBranch = new TextBox();
 			lblRuntimeSection = new Label();
 			lblRuntimeSectionHelp = new Label();
 			lblMinimumRam = new Label();
@@ -269,6 +271,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			pnlInputs.Controls.Add(btnRemoveTemplate);
 			pnlInputs.Controls.Add(lblSteamAppConfig);
 			pnlInputs.Controls.Add(txtSteamAppConfig);
+			pnlInputs.Controls.Add(lblSteamBranch);
+			pnlInputs.Controls.Add(txtSteamBranch);
 			pnlInputs.Controls.Add(lblRuntimeSection);
 			pnlInputs.Controls.Add(lblRuntimeSectionHelp);
 			pnlInputs.Controls.Add(lblMinimumRam);
@@ -1189,6 +1193,27 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 			txtSteamAppConfig.Name = "txtSteamAppConfig";
 			txtSteamAppConfig.Size = new Size(516, 25);
 			txtSteamAppConfig.TabIndex = 71;
+			//
+			// lblSteamBranch
+			//
+			lblSteamBranch.AutoSize = true;
+			lblSteamBranch.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			lblSteamBranch.ForeColor = Color.FromArgb(158, 172, 194);
+			lblSteamBranch.Location = new Point(12, 2763);
+			lblSteamBranch.Name = "lblSteamBranch";
+			lblSteamBranch.Text = LocalizationManager.Get("GameDefinition.SteamBranch.Label");
+			//
+			// txtSteamBranch
+			//
+			txtSteamBranch.BackColor = Color.FromArgb(12, 21, 36);
+			txtSteamBranch.BorderStyle = BorderStyle.FixedSingle;
+			txtSteamBranch.Font = new Font("Segoe UI", 10F);
+			txtSteamBranch.ForeColor = Color.FromArgb(245, 247, 251);
+			txtSteamBranch.Location = new Point(160, 2759);
+			txtSteamBranch.Name = "txtSteamBranch";
+			txtSteamBranch.Size = new Size(368, 25);
+			txtSteamBranch.MaxLength = 64;
+			txtSteamBranch.TabIndex = 71;
 			// 
 			// lblRuntimeSection
 			// 
@@ -1901,6 +1926,8 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 		private ModernSettingsButton btnRemoveTemplate = null!;
 		private Label lblSteamAppConfig = null!;
 		private TextBox txtSteamAppConfig = null!;
+		private Label lblSteamBranch = null!;
+		private TextBox txtSteamBranch = null!;
 		private Label lblConfigModeHelp = null!;
 		private Label lblRuntimeSection = null!;
 		private Label lblRuntimeSectionHelp = null!;

@@ -306,6 +306,7 @@ namespace Synix_Control_Panel.SynixApp.UI.GameDefinitions
 				AppId = txtAppId.Text,
 				RequiresSteamLogin = chkSteamLogin.Checked,
 				SteamAppConfig = txtSteamAppConfig.Text,
+				SteamBranch = txtSteamBranch.Text,
 				Executable = txtExecutable.Text,
 				Arguments = txtArguments.Text,
 				RconSyntax = txtRconSyntax.Text,

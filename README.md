@@ -48,20 +48,6 @@ Running a dedicated server normally means finding the correct Steam App ID, inst
 
 Synix keeps the management experience local. The main Synix data folder is `C:\Synix`, while custom game-server locations can be placed on another SSD, NVMe drive, or storage folder.
 
-## 🌟 What Is New in v1.0.24
-
-v1.0.24 expands Synix from a server launcher into a more complete local server-management workspace:
-
-- **Server Readiness Center:** Checks required files, runtimes, configuration health, ports, Windows Firewall rules, disk space, process ownership, and recent logs.
-- **Import Existing Server:** Registers a supported existing installation without moving, reinstalling, or overwriting it.
-- **First-Start Assistant:** Explains the remaining setup, connection, configuration, backup, and recovery steps before the first launch.
-- **Plain-English errors:** Shows what happened, what the user can do next, and optional technical details.
-- **Reliable multi-process control:** Tracks launchers, consoles, child processes, replacement processes, and workers so stop and restart operations do not leave ghost processes or start duplicate servers.
-- **Smart Maintenance:** Can wait for players, back up the server, stop its verified process group, update it, and restart it on selected days and times.
-- **Game Support Catalog:** Search and filter all built-in profiles by name, compatibility, configuration, player details, crossplay, server program, and verification status.
-- **Minecraft Java and Bedrock control:** Adds edition-aware installation, configuration, process tracking, console commands, player management, loaders, and native game modes.
-- **Mod & Plugin Manager:** Discovers supported add-on folders, imports reviewed local packages, manages provider IDs, and records rollback information.
-
 ## 💾 Install Synix
 
 ### Option 1: WinGet

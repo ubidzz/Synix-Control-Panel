@@ -1,0 +1,1397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Preview: core interface translation. Missing entries intentionally fall back to English.
+       Game commands, configuration values, paths and user data are not translated. -->
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="_Language.IsPreview" xml:space="preserve"><value>true</value></data>
+  <data name="Language.English" xml:space="preserve">
+    <value>Inglês</value>
+  </data>
+  <data name="Language.French" xml:space="preserve">
+    <value>Francês</value>
+  </data>
+  <data name="Language.German" xml:space="preserve">
+    <value>Alemão</value>
+  </data>
+  <data name="Language.Spanish" xml:space="preserve">
+    <value>Espanhol</value>
+  </data>
+  <data name="Option.DownloadSpeed.Unlimited" xml:space="preserve">
+    <value>Ilimitada</value>
+  </data>
+  <data name="Option.DownloadSpeed.Limited" xml:space="preserve">
+    <value>Limitada</value>
+  </data>
+  <data name="SettingsPage.General.Heading" xml:space="preserve">
+    <value>Geral</value>
+  </data>
+  <data name="SettingsPage.Backups.Heading" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="SettingsPage.Privacy.Heading" xml:space="preserve">
+    <value>Privacidade e segurança</value>
+  </data>
+  <data name="SettingsPage.Advanced.Heading" xml:space="preserve">
+    <value>Avançado</value>
+  </data>
+  <data name="SettingsPage.ReportProblem.Heading" xml:space="preserve">
+    <value>Relatar um problema</value>
+  </data>
+  <data name="SettingsPage.Development.Heading" xml:space="preserve">
+    <value>Desenvolvimento</value>
+  </data>
+  <data name="Menu.ModPluginManager" xml:space="preserve">
+    <value>Gerenciador de mods e plugins</value>
+  </data>
+  <data name="Menu.PlayerManagementCenter" xml:space="preserve">
+    <value>Central de jogadores</value>
+  </data>
+  <data name="Menu.MinecraftServerConsole" xml:space="preserve">
+    <value>Console do servidor Minecraft</value>
+  </data>
+  <data name="Menu.ConnectionInformation" xml:space="preserve">
+    <value>Informações de conexão</value>
+  </data>
+  <data name="Menu.LiveProcessDetails" xml:space="preserve">
+    <value>Detalhes do processo em tempo real</value>
+  </data>
+  <data name="Option.Status.All" xml:space="preserve">
+    <value>Todos os status</value>
+  </data>
+  <data name="Option.Status.Running" xml:space="preserve">
+    <value>Em execução</value>
+  </data>
+  <data name="Option.Status.Stopped" xml:space="preserve">
+    <value>Parado</value>
+  </data>
+  <data name="Option.Status.InProgress" xml:space="preserve">
+    <value>Em andamento</value>
+  </data>
+  <data name="Option.Status.NeedsAttention" xml:space="preserve">
+    <value>Requer atenção</value>
+  </data>
+  <data name="VerificationStep.Start" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="VerificationStep.Stop" xml:space="preserve">
+    <value>Parar</value>
+  </data>
+  <data name="Status.Stopped" xml:space="preserve">
+    <value>Parado</value>
+  </data>
+  <data name="Status.Running" xml:space="preserve">
+    <value>Em execução</value>
+  </data>
+  <data name="Status.Starting" xml:space="preserve">
+    <value>Iniciando</value>
+  </data>
+  <data name="Status.Crashed" xml:space="preserve">
+    <value>Falhou</value>
+  </data>
+  <data name="Status.Stopping" xml:space="preserve">
+    <value>Parando</value>
+  </data>
+  <data name="Status.Installing" xml:space="preserve">
+    <value>Instalando</value>
+  </data>
+  <data name="Status.Updating" xml:space="preserve">
+    <value>Atualizando</value>
+  </data>
+  <data name="Status.BackingUp" xml:space="preserve">
+    <value>Criando backup</value>
+  </data>
+  <data name="Status.Validating" xml:space="preserve">
+    <value>Validando</value>
+  </data>
+  <data name="Status.Exporting" xml:space="preserve">
+    <value>Exportando</value>
+  </data>
+  <data name="Status.Restoring" xml:space="preserve">
+    <value>Restaurando</value>
+  </data>
+  <data name="Status.Deleting" xml:space="preserve">
+    <value>Excluindo</value>
+  </data>
+  <data name="Status.Unknown" xml:space="preserve">
+    <value>Desconhecido</value>
+  </data>
+  <data name="Dashboard.ServerCount.One" xml:space="preserve">
+    <value>{0} servidor</value>
+  </data>
+  <data name="Dashboard.ServerCount.Many" xml:space="preserve">
+    <value>{0} servidores</value>
+  </data>
+  <data name="Dashboard.ServerCount.Filtered" xml:space="preserve">
+    <value>{0} de {1} servidores</value>
+  </data>
+  <data name="Dashboard.Network.PublicAddress" xml:space="preserve">
+    <value>IP público: {0}</value>
+  </data>
+  <data name="Dashboard.Network.LocalAddress" xml:space="preserve">
+    <value>IP da LAN: {0}</value>
+  </data>
+  <data name="ServerSetup.Status.Ready" xml:space="preserve">
+    <value>●  Pronto para salvar</value>
+  </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Revisar configurações</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Verificando alterações…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Configurações válidas. Selecione Avançar: revisar quando estiver pronto para revisar e salvar.</value>
+  </data>
+  <data name="ServerSetup.Button.NextReview" xml:space="preserve">
+    <value>Avançar: revisar</value>
+  </data>
+  <data name="ServerSetup.Button.SaveSettings" xml:space="preserve">
+    <value>Salvar configurações</value>
+  </data>
+  <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
+    <value>●  Ação necessária</value>
+  </data>
+  <data name="ServerSetup.Status.AllChecksPassed" xml:space="preserve">
+    <value>Todas as verificações obrigatórias passaram</value>
+  </data>
+  <data name="ServerSetup.Completion" xml:space="preserve">
+    <value>Configuração concluída: {0}%</value>
+  </data>
+  <data name="ServerSetup.Window.Title" xml:space="preserve">
+    <value>Configuração do servidor</value>
+  </data>
+  <data name="ServerSetup.Window.EditTitle" xml:space="preserve">
+    <value>Editar servidor</value>
+  </data>
+  <data name="ServerSetup.ModeBadge.New" xml:space="preserve">
+    <value>Novo servidor</value>
+  </data>
+  <data name="ServerSetup.ModeBadge.Edit" xml:space="preserve">
+    <value>Editar servidor</value>
+  </data>
+  <data name="ServerSetup.Button.SaveServer" xml:space="preserve">
+    <value>Salvar servidor</value>
+  </data>
+  <data name="ServerSetup.Button.SaveChanges" xml:space="preserve">
+    <value>Salvar alterações</value>
+  </data>
+  <data name="ServerSetup.Page.General.Title" xml:space="preserve">
+    <value>Geral</value>
+  </data>
+  <data name="ServerSetup.Page.Security.Title" xml:space="preserve">
+    <value>Segurança</value>
+  </data>
+  <data name="ServerSetup.Page.World.Title" xml:space="preserve">
+    <value>Geração do mundo</value>
+  </data>
+  <data name="ServerSetup.Page.Network.Title" xml:space="preserve">
+    <value>Rede e RCON</value>
+  </data>
+  <data name="ServerSetup.Page.Automation.Title" xml:space="preserve">
+    <value>Automação</value>
+  </data>
+  <data name="ServerSetup.Page.Discord.Title" xml:space="preserve">
+    <value>Notificações do Discord</value>
+  </data>
+  <data name="ServerSetup.Page.Install.Title" xml:space="preserve">
+    <value>Instalação e inicialização</value>
+  </data>
+  <data name="ServerSetup.Mode.Advanced" xml:space="preserve">
+    <value>Modo: avançado</value>
+  </data>
+  <data name="ServerSetup.Mode.Beginner" xml:space="preserve">
+    <value>Modo: básico</value>
+  </data>
+  <data name="ServerSetup.Port.Game" xml:space="preserve">
+    <value>Porta do jogo</value>
+  </data>
+  <data name="ServerSetup.Port.Query" xml:space="preserve">
+    <value>Porta de consulta</value>
+  </data>
+  <data name="ServerSetup.Port.Ipv6" xml:space="preserve">
+    <value>Porta IPv6</value>
+  </data>
+  <data name="ServerSetup.Port.Rcon" xml:space="preserve">
+    <value>Porta RCON</value>
+  </data>
+  <data name="ServerSetup.Port.App" xml:space="preserve">
+    <value>Porta do aplicativo</value>
+  </data>
+  <data name="ServerSetup.Dialog.SettingsAttention.Title" xml:space="preserve">
+    <value>Verifique as configurações do servidor</value>
+  </data>
+  <data name="ServerSetup.GamePicker.Placeholder" xml:space="preserve">
+    <value>-- Escolha um jogo --</value>
+  </data>
+  <data name="ServerSetup.Placeholder.SelectGame" xml:space="preserve">
+    <value>Selecione um jogo…</value>
+  </data>
+  <data name="ServerSetup.Placeholder.NotRequired" xml:space="preserve">
+    <value>Não obrigatório</value>
+  </data>
+  <data name="ServerSetup.Security.AuthenticationToken" xml:space="preserve">
+    <value>Token de autenticação</value>
+  </data>
+  <data name="ServerSetup.Network.RconToggle.AccessibleName" xml:space="preserve">
+    <value>Ativar RCON</value>
+  </data>
+  <data name="ServerSetup.Automation.EnableSchedule.AccessibleName" xml:space="preserve">
+    <value>Ativar agendador</value>
+  </data>
+  <data name="ServerSetup.Automation.UpdateOnStart.AccessibleName" xml:space="preserve">
+    <value>Atualizar ao iniciar</value>
+  </data>
+  <data name="ServerSetup.Automation.BackupOnStart.AccessibleName" xml:space="preserve">
+    <value>Fazer backup ao iniciar</value>
+  </data>
+  <data name="ServerSetup.Install.DefaultFolder.AccessibleName" xml:space="preserve">
+    <value>Pasta padrão</value>
+  </data>
+  <data name="ServerSetup.Minecraft.Unavailable" xml:space="preserve">
+    <value>Indisponível</value>
+  </data>
+  <data name="ServerSetup.Runtime.ServerPackage" xml:space="preserve">
+    <value>Pacote do servidor</value>
+  </data>
+  <data name="ServerSetup.Runtime.Loader" xml:space="preserve">
+    <value>Carregador</value>
+  </data>
+  <data name="ServerSetup.Runtime.Framework.Title" xml:space="preserve">
+    <value>Framework do servidor</value>
+  </data>
+  <data name="ServerSetup.Runtime.Framework" xml:space="preserve">
+    <value>Framework</value>
+  </data>
+  <data name="ServerSetup.MaxPlayers.Label" xml:space="preserve">
+    <value>Máximo de jogadores</value>
+  </data>
+  <data name="ServerSetup.MaxPlayers.Limited" xml:space="preserve">
+    <value>Máximo de jogadores (limite {0:0})</value>
+  </data>
+  <data name="ServerSetup.SteamAccount.Required.WindowTitle" xml:space="preserve">
+    <value>Conta Steam necessária</value>
+  </data>
+  <data name="ServerSetup.SteamAccount.Required.Title" xml:space="preserve">
+    <value>Conta Steam necessária</value>
+  </data>
+  <data name="AddServer.Title" xml:space="preserve">
+    <value>Adicionar um servidor</value>
+  </data>
+  <data name="AddServer.Heading" xml:space="preserve">
+    <value>Como deseja adicionar um servidor?</value>
+  </data>
+  <data name="AddServer.Create.Title" xml:space="preserve">
+    <value>Criar e instalar um novo servidor</value>
+  </data>
+  <data name="AddServer.Create.Description" xml:space="preserve">
+    <value>Escolha o jogo e as configurações; o Synix baixará os arquivos do servidor.</value>
+  </data>
+  <data name="AddServer.Create.Button" xml:space="preserve">
+    <value>Criar novo</value>
+  </data>
+  <data name="AddServer.Import.Title" xml:space="preserve">
+    <value>Importar um servidor existente</value>
+  </data>
+  <data name="AddServer.Import.Description" xml:space="preserve">
+    <value>Indique uma pasta de servidor existente. Seus arquivos não serão movidos nem substituídos.</value>
+  </data>
+  <data name="AddServer.Import.Button" xml:space="preserve">
+    <value>Importar existente</value>
+  </data>
+  <data name="AddServer.Catalog.Title" xml:space="preserve">
+    <value>Verificar suporte ao jogo primeiro</value>
+  </data>
+  <data name="AddServer.Catalog.Button" xml:space="preserve">
+    <value>Ver catálogo</value>
+  </data>
+  <data name="PlayerCenter.Action.Kick" xml:space="preserve">
+    <value>Expulsar</value>
+  </data>
+  <data name="ModManager.Field.Server" xml:space="preserve">
+    <value>Servidor</value>
+  </data>
+  <data name="ModManager.Field.System" xml:space="preserve">
+    <value>Sistema de complementos</value>
+  </data>
+  <data name="ModManager.Field.InstallArea" xml:space="preserve">
+    <value>Área de instalação</value>
+  </data>
+  <data name="ModManager.Step.Detect" xml:space="preserve">
+    <value>1  Detectar</value>
+  </data>
+  <data name="ModManager.Step.Stop" xml:space="preserve">
+    <value>2  Parar servidor</value>
+  </data>
+  <data name="ModManager.Step.Backup" xml:space="preserve">
+    <value>3  Fazer backup</value>
+  </data>
+  <data name="ModManager.Step.Install" xml:space="preserve">
+    <value>4  Instalar</value>
+  </data>
+  <data name="ModManager.Step.Verify" xml:space="preserve">
+    <value>5  Verificar</value>
+  </data>
+  <data name="ModManager.Step.Restart" xml:space="preserve">
+    <value>6  Reiniciar se necessário</value>
+  </data>
+  <data name="ModManager.Column.AddOn" xml:space="preserve">
+    <value>Complemento</value>
+  </data>
+  <data name="ModManager.Column.Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="ModManager.Column.Version" xml:space="preserve">
+    <value>Versão</value>
+  </data>
+  <data name="ModManager.Column.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ModManager.Column.Security" xml:space="preserve">
+    <value>Segurança</value>
+  </data>
+  <data name="ModManager.Column.Source" xml:space="preserve">
+    <value>Origem</value>
+  </data>
+  <data name="ModManager.Column.Location" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="ModManager.Safety.Title" xml:space="preserve">
+    <value>Lista de segurança automática</value>
+  </data>
+  <data name="ModManager.Button.InstallFile" xml:space="preserve">
+    <value>Instalar de arquivo</value>
+  </data>
+  <data name="ModManager.Button.InstallFramework" xml:space="preserve">
+    <value>Instalar framework</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalog" xml:space="preserve">
+    <value>Explorar catálogo</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalogs" xml:space="preserve">
+    <value>Explorar catálogos</value>
+  </data>
+  <data name="ModManager.Button.OpenFolder" xml:space="preserve">
+    <value>Abrir pasta de complementos</value>
+  </data>
+  <data name="ModManager.Button.Refresh" xml:space="preserve">
+    <value>Atualizar</value>
+  </data>
+  <data name="ModManager.Button.Remove" xml:space="preserve">
+    <value>Remover selecionado</value>
+  </data>
+  <data name="ModManager.Button.Close" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="ModManager.Button.ManageIds" xml:space="preserve">
+    <value>Gerenciar IDs de mods</value>
+  </data>
+  <data name="ModManager.NoFilesChanged" xml:space="preserve">
+    <value>Nenhum arquivo foi alterado.</value>
+  </data>
+  <data name="ModManager.Safety.ServerStopped" xml:space="preserve">
+    <value>Servidor parado</value>
+  </data>
+  <data name="ModManager.Safety.StopFirst" xml:space="preserve">
+    <value>Pare o servidor antes de alterar</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkDetected" xml:space="preserve">
+    <value>Framework detectado</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkRequired" xml:space="preserve">
+    <value>Configuração do framework necessária</value>
+  </data>
+  <data name="ModManager.Safety.FolderAvailable" xml:space="preserve">
+    <value>Pasta do servidor disponível</value>
+  </data>
+  <data name="ModManager.Safety.FolderMissing" xml:space="preserve">
+    <value>Pasta do servidor ausente</value>
+  </data>
+  <data name="ModManager.Safety.SecurityScan" xml:space="preserve">
+    <value>Verificação de segurança antes de instalar</value>
+  </data>
+  <data name="ModManager.Safety.StandardPermissions" xml:space="preserve">
+    <value>Permissões padrão do Windows</value>
+  </data>
+  <data name="ModManager.Safety.RestartRequired" xml:space="preserve">
+    <value>Reinicialização necessária após alterações</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.Name" xml:space="preserve">
+    <value>Complementos do Minecraft</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.ModsTarget" xml:space="preserve">
+    <value>Mods do carregador</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.PluginsTarget" xml:space="preserve">
+    <value>Plugins do servidor</value>
+  </data>
+  <data name="ModManager.Known.Mod" xml:space="preserve">
+    <value>Mod</value>
+  </data>
+  <data name="ModManager.Known.Plugin" xml:space="preserve">
+    <value>Plugin</value>
+  </data>
+  <data name="ResourceMonitor.RowRunning" xml:space="preserve">
+    <value>●  Em execução</value>
+  </data>
+  <data name="Satisfactory.Overview" xml:space="preserve">
+    <value>Visão geral</value>
+  </data>
+  <data name="Satisfactory.Close" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="Satisfactory.Refresh" xml:space="preserve">
+    <value>Atualizar</value>
+  </data>
+  <data name="Satisfactory.Start" xml:space="preserve">
+    <value>Iniciar servidor</value>
+  </data>
+  <data name="Satisfactory.Stop" xml:space="preserve">
+    <value>Parar servidor</value>
+  </data>
+  <data name="Satisfactory.Value" xml:space="preserve">
+    <value>Valor</value>
+  </data>
+  <data name="Satisfactory.ApplyOptions" xml:space="preserve">
+    <value>Aplicar alterações</value>
+  </data>
+  <data name="Satisfactory.SendCommand" xml:space="preserve">
+    <value>Enviar comando</value>
+  </data>
+  <data name="ServerOperation.Name.Configure" xml:space="preserve">
+    <value>Configuração do servidor</value>
+  </data>
+  <data name="ServerSetup.Progress.Details" xml:space="preserve">
+    <value>Detalhes do servidor</value>
+  </data>
+  <data name="ServerSetup.Progress.Required" xml:space="preserve">
+    <value>Configurações obrigatórias</value>
+  </data>
+  <data name="ServerSetup.Progress.Review" xml:space="preserve">
+    <value>Revisar</value>
+  </data>
+  <data name="ServerSetup.Progress.Save" xml:space="preserve">
+    <value>Salvar servidor</value>
+  </data>
+  <data name="ServerSetup.Progress.Details.Hint" xml:space="preserve">
+    <value>Abra Geral para escolher o jogo e nomear o servidor.</value>
+  </data>
+  <data name="ServerSetup.Progress.Review.Hint" xml:space="preserve">
+    <value>Revise suas escolhas sem salvar. Você ainda pode editar qualquer aba.</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Waiting" xml:space="preserve">
+    <value>Aguardando</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Attention" xml:space="preserve">
+    <value>Requer atenção</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Complete" xml:space="preserve">
+    <value>Concluído</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
+    <value>Avançar</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>Revisando</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
+    <value>Pronto</value>
+  </data>
+  <data name="ServerSetup.Progress.Step" xml:space="preserve">
+    <value>Etapa {0}: {1}. {2}</value>
+  </data>
+  <data name="ServerSetup.Review.Title" xml:space="preserve">
+    <value>Revisar configurações</value>
+  </data>
+  <data name="ServerSetup.Review.Description" xml:space="preserve">
+    <value>Revise suas escolhas. Você ainda pode editar qualquer aba antes de salvar.</value>
+  </data>
+  <data name="ServerSetup.Review.Notice" xml:space="preserve">
+    <value>Senhas, tokens, códigos de convite, webhooks e argumentos de inicialização ficam ocultos. Salvar não verifica a inicialização nem o acesso à internet; use o painel para instalar ou iniciar.</value>
+  </data>
+  <data name="ServerSetup.Review.Setting" xml:space="preserve">
+    <value>Configuração</value>
+  </data>
+  <data name="ServerSetup.Review.Value" xml:space="preserve">
+    <value>Sua escolha</value>
+  </data>
+  <data name="ServerSetup.Review.ServerName" xml:space="preserve">
+    <value>Nome do servidor</value>
+  </data>
+  <data name="ServerSetup.Review.Game" xml:space="preserve">
+    <value>Jogo</value>
+  </data>
+  <data name="ServerSetup.Review.Version" xml:space="preserve">
+    <value>Versão do jogo</value>
+  </data>
+  <data name="ServerSetup.Review.Edition" xml:space="preserve">
+    <value>Edição</value>
+  </data>
+  <data name="ServerSetup.Review.Ram" xml:space="preserve">
+    <value>RAM do servidor (GB)</value>
+  </data>
+  <data name="ServerSetup.Review.World" xml:space="preserve">
+    <value>Mapa / mundo</value>
+  </data>
+  <data name="ServerSetup.Review.GameMode" xml:space="preserve">
+    <value>Modo de jogo</value>
+  </data>
+  <data name="ServerSetup.Review.InstallFolder" xml:space="preserve">
+    <value>Pasta de instalação</value>
+  </data>
+  <data name="Catalog.Available" xml:space="preserve">
+    <value>Disponível</value>
+  </data>
+  <data name="Configuration.Editor.SettingCount" xml:space="preserve">
+    <value>{0} de {1} configurações</value>
+  </data>
+  <data name="Configuration.Editor.UnsavedChanges.Many" xml:space="preserve">
+    <value>{0} alterações não salvas</value>
+  </data>
+  <data name="Dashboard.NoServerSelected.Body" xml:space="preserve">
+    <value>Selecione primeiro um servidor na lista.</value>
+  </data>
+  <data name="Dashboard.NoServerSelected.Title" xml:space="preserve">
+    <value>Nenhum servidor selecionado</value>
+  </data>
+  <data name="Diagnostics.Readiness.Result.Ready" xml:space="preserve">
+    <value>Pronto</value>
+  </data>
+  <data name="Diagnostics.Readiness.Result.Review" xml:space="preserve">
+    <value>Revisar</value>
+  </data>
+  <data name="PortRole.Game" xml:space="preserve">
+    <value>Porta do jogo</value>
+  </data>
+  <data name="PortRole.Query" xml:space="preserve">
+    <value>Porta de consulta</value>
+  </data>
+  <data name="PortRole.Rcon" xml:space="preserve">
+    <value>Porta RCON</value>
+  </data>
+  <data name="PortRole.App" xml:space="preserve">
+    <value>Porta do aplicativo</value>
+  </data>
+  <data name="PortRole.Game.Title" xml:space="preserve">
+    <value>Porta do jogo</value>
+  </data>
+  <data name="PortRole.Query.Title" xml:space="preserve">
+    <value>Porta de consulta</value>
+  </data>
+  <data name="PortRole.Rcon.Title" xml:space="preserve">
+    <value>Porta RCON</value>
+  </data>
+  <data name="Configuration.Check.FixConfig" xml:space="preserve">
+    <value>Corrigir configuração</value>
+  </data>
+  <data name="ModSecurity.Status.Unavailable" xml:space="preserve">
+    <value>Indisponível</value>
+  </data>
+  <data name="MinecraftConsole.Quick.Deop.Label" xml:space="preserve">
+    <value>Remover operador</value>
+  </data>
+  <data name="ServerStart.SettingsAttention.Title" xml:space="preserve">
+    <value>Verifique as configurações do servidor</value>
+  </data>
+  <data name="WindowHeader.Close.AccessibleName" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="Dashboard.Backup.Confirm.Title" xml:space="preserve">
+    <value>Confirmar backup do servidor</value>
+  </data>
+  <data name="Dashboard.Restore.Confirm.Title" xml:space="preserve">
+    <value>Confirmar restauração do servidor</value>
+  </data>
+  <data name="Report.Unknown" xml:space="preserve">
+    <value>Desconhecido</value>
+  </data>
+  <data name="Report.Unavailable" xml:space="preserve">
+    <value>Indisponível</value>
+  </data>
+  <data name="GameInput.AuthenticationToken" xml:space="preserve">
+    <value>Token de autenticação</value>
+  </data>
+  <data name="GameInput.AuthenticationToken.Label" xml:space="preserve">
+    <value>Token de autenticação</value>
+  </data>
+  <data name="ServerOperation.Name.Start" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="ServerOperation.Name.Restart" xml:space="preserve">
+    <value>Reiniciar</value>
+  </data>
+  <data name="ServerOperation.Name.Stop" xml:space="preserve">
+    <value>Parar</value>
+  </data>
+  <data name="ServerOperation.Name.Config" xml:space="preserve">
+    <value>Configurar</value>
+  </data>
+  <data name="GameDefinition.Tag.ServerName.Name" xml:space="preserve">
+    <value>Nome do servidor</value>
+  </data>
+  <data name="GameDefinition.Tag.Port.Name" xml:space="preserve">
+    <value>Porta do jogo</value>
+  </data>
+  <data name="GameDefinition.Tag.QueryPort.Name" xml:space="preserve">
+    <value>Porta de consulta</value>
+  </data>
+  <data name="GameDefinition.Tag.Password.Name" xml:space="preserve">
+    <value>Senha do servidor</value>
+  </data>
+  <data name="GameDefinition.Tag.Seed.Name" xml:space="preserve">
+    <value>Semente do mundo</value>
+  </data>
+  <data name="GameDefinition.Tag.WorldSize.Name" xml:space="preserve">
+    <value>Tamanho do mundo</value>
+  </data>
+  <data name="GameDefinition.Tag.Mode.Name" xml:space="preserve">
+    <value>Modo de jogo</value>
+  </data>
+  <data name="GameDefinition.Tag.RconPort.Name" xml:space="preserve">
+    <value>Porta RCON</value>
+  </data>
+  <data name="GameDefinition.Tag.RconPassword.Name" xml:space="preserve">
+    <value>Senha RCON</value>
+  </data>
+  <data name="Text.1B1A4A3B36DFC22C1EE4" xml:space="preserve">
+    <value>↻  Reiniciar</value>
+  </data>
+  <data name="Text.BE66C4F105B89904ED79" xml:space="preserve">
+    <value>+  Adicionar servidor</value>
+  </data>
+  <data name="Text.695155B305760B530D36" xml:space="preserve">
+    <value>■  Parar</value>
+  </data>
+  <data name="Text.0DF1F6C5210F85368B8A" xml:space="preserve">
+    <value>▶  Iniciar</value>
+  </data>
+  <data name="Text.32EFCD09F92A272905F1" xml:space="preserve">
+    <value>✓  Prontidão</value>
+  </data>
+  <data name="Text.B70806C6C2D93404F976" xml:space="preserve">
+    <value>Credenciais de acesso</value>
+  </data>
+  <data name="Text.74ECEE4668229DC04361" xml:space="preserve">
+    <value>Nome da conta, não o nome de exibição do Steam</value>
+  </data>
+  <data name="Text.1FCD02D49EBBD52B384B" xml:space="preserve">
+    <value>Atividade e diagnóstico</value>
+  </data>
+  <data name="Text.2E28AAB93B90457D1678" xml:space="preserve">
+    <value>Senha do administrador</value>
+  </data>
+  <data name="Text.012855FACF11B6858FD1" xml:space="preserve">
+    <value>Porta do aplicativo</value>
+  </data>
+  <data name="Text.1D62D75616FD38521A36" xml:space="preserve">
+    <value>Área</value>
+  </data>
+  <data name="Text.9D70644761665CEA1FDE" xml:space="preserve">
+    <value>Arquivo de backup</value>
+  </data>
+  <data name="Text.0F5BBD5CA04AD4F72861" xml:space="preserve">
+    <value>Fazer backup ao iniciar</value>
+  </data>
+  <data name="Text.9FF20EBBA7CCB0CA561D" xml:space="preserve">
+    <value>Fazer backup do servidor</value>
+  </data>
+  <data name="Text.3227AA9666253F7A7365" xml:space="preserve">
+    <value>Procurar</value>
+  </data>
+  <data name="Text.28BBF5E4E8DC04D61EA5" xml:space="preserve">
+    <value>Procurar pasta</value>
+  </data>
+  <data name="Text.19766ED6CCB2F4A32778" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Text.E0A3BA64FA759DF9B7C8" xml:space="preserve">
+    <value>Verificar valores do Synix</value>
+  </data>
+  <data name="Text.6ABB0361F0B32BEF8441" xml:space="preserve">
+    <value>Escolher pasta</value>
+  </data>
+  <data name="Text.2D57929BE2D29C7BE3DC" xml:space="preserve">
+    <value>Escolher pacote</value>
+  </data>
+  <data name="Text.30F3BBCB43AC48EBFD1C" xml:space="preserve">
+    <value>Escolha o idioma do Synix. As configurações e os valores do jogo permanecem em inglês.</value>
+  </data>
+  <data name="Text.9CC3A043B6A91D450BC3" xml:space="preserve">
+    <value>Limpar</value>
+  </data>
+  <data name="Text.7D9EB7ACB13E24625C40" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="Text.DFA45629AB8769153F0E" xml:space="preserve">
+    <value>Editor de configuração</value>
+  </data>
+  <data name="Text.8097A44203F07EA4116C" xml:space="preserve">
+    <value>Editor de configuração</value>
+  </data>
+  <data name="Text.6198EFCA8E63CD466052" xml:space="preserve">
+    <value>Status da configuração</value>
+  </data>
+  <data name="Text.6DEFAFA2CAA653041739" xml:space="preserve">
+    <value>Configurar</value>
+  </data>
+  <data name="Text.7176F50E66F1BD1104FC" xml:space="preserve">
+    <value>Configurar agendamento</value>
+  </data>
+  <data name="Text.D7D31960DA6507518203" xml:space="preserve">
+    <value>Uso da CPU</value>
+  </data>
+  <data name="Text.DE967EB5C05508CC7A7D" xml:space="preserve">
+    <value>Uso da CPU</value>
+  </data>
+  <data name="Text.E699C2B4C7E4FA83E8F1" xml:space="preserve">
+    <value>Criar arquivo em lote</value>
+  </data>
+  <data name="Text.6D6441A3204BECDDE1CB" xml:space="preserve">
+    <value>Criado</value>
+  </data>
+  <data name="Text.DF8C7C89B3E4CFB1FF6F" xml:space="preserve">
+    <value>Modo escuro</value>
+  </data>
+  <data name="Text.B509EAF7EB0805B82CA2" xml:space="preserve">
+    <value>Alternar modo escuro</value>
+  </data>
+  <data name="Text.6968CF40A73F3487A03E" xml:space="preserve">
+    <value>Argumentos de inicialização padrão</value>
+  </data>
+  <data name="Text.47DE4E70C6DC214B814C" xml:space="preserve">
+    <value>Argumentos de inicialização padrão</value>
+  </data>
+  <data name="Text.030CFC390829811A85AF" xml:space="preserve">
+    <value>Excluir backup</value>
+  </data>
+  <data name="Text.056E6A5F6594451E2753" xml:space="preserve">
+    <value>Excluir servidor</value>
+  </data>
+  <data name="Text.14FDC0F6C77F7978B7AD" xml:space="preserve">
+    <value>Detalhes</value>
+  </data>
+  <data name="Text.2841A3AA116B14C8DEF1" xml:space="preserve">
+    <value>Webhooks do Discord</value>
+  </data>
+  <data name="Text.464C4FFD019E1E9691DC" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Text.F37695A23C899C5215F8" xml:space="preserve">
+    <value>Edição</value>
+  </data>
+  <data name="Text.92C1CDFDF4CB9CF6FCCA" xml:space="preserve">
+    <value>Ativado</value>
+  </data>
+  <data name="Text.96599B7797D3C4D80ED1" xml:space="preserve">
+    <value>Argumentos extras</value>
+  </data>
+  <data name="Text.4035C78A474280CE7F1E" xml:space="preserve">
+    <value>Corrigir configuração</value>
+  </data>
+  <data name="Text.74CCD43303847F265530" xml:space="preserve">
+    <value>Pasta</value>
+  </data>
+  <data name="Text.0E078F2314E8311DAB20" xml:space="preserve">
+    <value>Caminho da pasta</value>
+  </data>
+  <data name="Text.1FD5F5A768D30B9B6651" xml:space="preserve">
+    <value>Jogo</value>
+  </data>
+  <data name="Text.1311D7944778FB4AD68C" xml:space="preserve">
+    <value>Modo de jogo</value>
+  </data>
+  <data name="Text.3E8DBB6C3828E368EDBE" xml:space="preserve">
+    <value>Porta do jogo</value>
+  </data>
+  <data name="Text.56215346C32A2444B7C7" xml:space="preserve">
+    <value>Servidor de jogo</value>
+  </data>
+  <data name="Text.F054BBC09408C30FDCF1" xml:space="preserve">
+    <value>Servidores de jogos</value>
+  </data>
+  <data name="Text.B5847872D81BE16B1771" xml:space="preserve">
+    <value>Catálogo de jogos compatíveis</value>
+  </data>
+  <data name="Text.8CACE39E73446B3AD675" xml:space="preserve">
+    <value>Versão do jogo</value>
+  </data>
+  <data name="Text.9E8A7EC82FAED9A14FA0" xml:space="preserve">
+    <value>Obter token</value>
+  </data>
+  <data name="Text.8DD65D0952ED144CCF6E" xml:space="preserve">
+    <value>Guia</value>
+  </data>
+  <data name="Text.B79CAC926E0B2E347E72" xml:space="preserve">
+    <value>Ajuda</value>
+  </data>
+  <data name="Text.25FBAC53BB846E706EFB" xml:space="preserve">
+    <value>Importar servidor existente</value>
+  </data>
+  <data name="Text.072D8E4338F73F8307C0" xml:space="preserve">
+    <value>Local de instalação</value>
+  </data>
+  <data name="Text.F73780A16B44791C9D49" xml:space="preserve">
+    <value>Servidores instalados</value>
+  </data>
+  <data name="Text.8027F432A7FB7C273A1A" xml:space="preserve">
+    <value>Idioma da interface</value>
+  </data>
+  <data name="Text.A4DD72C4AC5BBC667FC3" xml:space="preserve">
+    <value>Código de convite</value>
+  </data>
+  <data name="Text.A4FE65264EF7DBB38D10" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Text.55519B4895A4D9906EDA" xml:space="preserve">
+    <value>Versão do carregador</value>
+  </data>
+  <data name="Text.47D2A515EF2F05B87D68" xml:space="preserve">
+    <value>Carregando…</value>
+  </data>
+  <data name="Text.E7FDDAD25C086FD12358" xml:space="preserve">
+    <value>Mundo principal</value>
+  </data>
+  <data name="Text.BE176B0015C424B78E9F" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="Text.91433D51005E84C89DD7" xml:space="preserve">
+    <value>Mapa / mundo</value>
+  </data>
+  <data name="Text.D6271860D5F643A7B632" xml:space="preserve">
+    <value>Máximo de jogadores</value>
+  </data>
+  <data name="Text.1744B96470B51BF30935" xml:space="preserve">
+    <value>Rede</value>
+  </data>
+  <data name="Text.79F554AF97ADC0A05FDE" xml:space="preserve">
+    <value>Nenhum dia agendado</value>
+  </data>
+  <data name="Text.1B3F2F7A383F81F4A567" xml:space="preserve">
+    <value>Não obrigatório</value>
+  </data>
+  <data name="Text.2BBA1B9B15644044B222" xml:space="preserve">
+    <value>Autenticação de serviços online</value>
+  </data>
+  <data name="Text.64159808F2A26715BA3E" xml:space="preserve">
+    <value>Abrir pasta de backup</value>
+  </data>
+  <data name="Text.A350826E531AABBD198C" xml:space="preserve">
+    <value>Abrir editor de configuração</value>
+  </data>
+  <data name="Text.C7ECF7D057EE7D3405E2" xml:space="preserve">
+    <value>Abrir log mais recente</value>
+  </data>
+  <data name="Text.DEF3278452C24C7A756A" xml:space="preserve">
+    <value>Abrir pasta do servidor</value>
+  </data>
+  <data name="Text.59BE71333C960FD08E7E" xml:space="preserve">
+    <value>Opcional</value>
+  </data>
+  <data name="Text.84E12AC655DD8D75DD44" xml:space="preserve">
+    <value>Jogadores</value>
+  </data>
+  <data name="Text.72E9A59F5A1D6289DBAC" xml:space="preserve">
+    <value>Porta</value>
+  </data>
+  <data name="Text.22EAC55F97CD73017796" xml:space="preserve">
+    <value>Modo de privacidade</value>
+  </data>
+  <data name="Text.B80A37564FBB3C075320" xml:space="preserve">
+    <value>Consulta</value>
+  </data>
+  <data name="Text.516E776E998FF69A8D69" xml:space="preserve">
+    <value>Porta de consulta</value>
+  </data>
+  <data name="Text.771E2DB0F3BEF2D22BE9" xml:space="preserve">
+    <value>Uso de RAM</value>
+  </data>
+  <data name="Text.4C328BF4603F8E856CAD" xml:space="preserve">
+    <value>Prévia do conteúdo bruto</value>
+  </data>
+  <data name="Text.16C5D21817849765677F" xml:space="preserve">
+    <value>Senha RCON</value>
+  </data>
+  <data name="Text.225EB9FD7C8D1624A15B" xml:space="preserve">
+    <value>Porta RCON</value>
+  </data>
+  <data name="Text.B1A53241AEE398BDDBC1" xml:space="preserve">
+    <value>Pronto para gerenciar</value>
+  </data>
+  <data name="Text.BF53C2057CB18B677699" xml:space="preserve">
+    <value>Atualizar jogadores</value>
+  </data>
+  <data name="Text.BBC627D7B11E5339088A" xml:space="preserve">
+    <value>Administração remota</value>
+  </data>
+  <data name="Text.C3812FC4ACB861D5182F" xml:space="preserve">
+    <value>Remover</value>
+  </data>
+  <data name="Text.E8A9279E12900267A1DF" xml:space="preserve">
+    <value>Dias de reinicialização</value>
+  </data>
+  <data name="Text.BBC2611830E1BE782900" xml:space="preserve">
+    <value>Horário de reinicialização</value>
+  </data>
+  <data name="Text.3F593999A67CF40731E8" xml:space="preserve">
+    <value>Restaurar backup</value>
+  </data>
+  <data name="Text.49C15D2B9D9702D4FF44" xml:space="preserve">
+    <value>Restaurar backup do servidor</value>
+  </data>
+  <data name="Text.E0CE633EA746EF5196B5" xml:space="preserve">
+    <value>Em execução</value>
+  </data>
+  <data name="Text.4A3B87641F16E0F811C2" xml:space="preserve">
+    <value>Servidores em execução</value>
+  </data>
+  <data name="Text.1509F561F2416598629B" xml:space="preserve">
+    <value>Salvar</value>
+  </data>
+  <data name="Text.0637B6730F1724433551" xml:space="preserve">
+    <value>Reinicializações agendadas</value>
+  </data>
+  <data name="Text.2E7AAE6319922181CD1D" xml:space="preserve">
+    <value>Pesquisar nome do jogo…</value>
+  </data>
+  <data name="Text.01F1674FFF3FC5AD8DC9" xml:space="preserve">
+    <value>Pesquisar jogo ou servidor…</value>
+  </data>
+  <data name="Text.6CAABA13463DFF403A37" xml:space="preserve">
+    <value>Pesquisar configurações, caminhos ou valores…</value>
+  </data>
+  <data name="Text.F00F8392B2C39AE7826E" xml:space="preserve">
+    <value>Selecione um backup para continuar.</value>
+  </data>
+  <data name="Text.93D8CAEF74F07185F0BF" xml:space="preserve">
+    <value>Enviar comando</value>
+  </data>
+  <data name="Text.AEF7DE28D52977F1B5CD" xml:space="preserve">
+    <value>Servidor</value>
+  </data>
+  <data name="Text.5435C9CD49190E73AAC1" xml:space="preserve">
+    <value>Configuração do servidor</value>
+  </data>
+  <data name="Text.7FD48896176AE13DC58A" xml:space="preserve">
+    <value>Painel de servidores</value>
+  </data>
+  <data name="Text.16A1DE974A53CBDEA4C1" xml:space="preserve">
+    <value>Detalhes do servidor</value>
+  </data>
+  <data name="Text.BC4816425EBE8079C4F9" xml:space="preserve">
+    <value>Nome do servidor</value>
+  </data>
+  <data name="Text.41CFA866FAA62B2104E6" xml:space="preserve">
+    <value>Nome do servidor</value>
+  </data>
+  <data name="Text.A0F68054D6613673BCF5" xml:space="preserve">
+    <value>Opções do servidor  ▴</value>
+  </data>
+  <data name="Text.10F86A32C69207531263" xml:space="preserve">
+    <value>Senha do servidor</value>
+  </data>
+  <data name="Text.7B60A68A60DA2F0333AA" xml:space="preserve">
+    <value>RAM do servidor (GB)</value>
+  </data>
+  <data name="Text.8C33F13ABED20D6638CD" xml:space="preserve">
+    <value>Central de prontidão do servidor</value>
+  </data>
+  <data name="Text.796D04D8FFEF846F141D" xml:space="preserve">
+    <value>Servidores online</value>
+  </data>
+  <data name="Text.F86BB6FC21DEB1E1F841" xml:space="preserve">
+    <value>Portas de serviço</value>
+  </data>
+  <data name="Text.4FE70949D3E77969ECE8" xml:space="preserve">
+    <value>Configuração</value>
+  </data>
+  <data name="Text.74A883A037BC227F9189" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="Text.5856356326064A450522" xml:space="preserve">
+    <value>Mostrar console do servidor</value>
+  </data>
+  <data name="Text.92079831E5CC0BF95974" xml:space="preserve">
+    <value>Visualização simples</value>
+  </data>
+  <data name="Text.4512FE0408D72862AC67" xml:space="preserve">
+    <value>Tamanho</value>
+  </data>
+  <data name="Text.F08A98135A8DF6ED38C7" xml:space="preserve">
+    <value>Iniciar servidor</value>
+  </data>
+  <data name="Text.835D3FF459F432C23A57" xml:space="preserve">
+    <value>Tarefas de inicialização</value>
+  </data>
+  <data name="Text.2ACE1D3304BA5649A5A1" xml:space="preserve">
+    <value>Nome da conta Steam</value>
+  </data>
+  <data name="Text.1E704E3DA1455CD132D9" xml:space="preserve">
+    <value>Velocidade de download SteamCMD</value>
+  </data>
+  <data name="Text.CB7C1E8DC21E59830716" xml:space="preserve">
+    <value>Parar servidor</value>
+  </data>
+  <data name="Text.1A4F630AC1B69FD00728" xml:space="preserve">
+    <value>Parado</value>
+  </data>
+  <data name="Text.375D0C125CC8B4590775" xml:space="preserve">
+    <value>Visualização estruturada</value>
+  </data>
+  <data name="Text.7E485C2CF2CC85DC20B9" xml:space="preserve">
+    <value>Configurações do Synix</value>
+  </data>
+  <data name="Text.67907590F84228A78098" xml:space="preserve">
+    <value>Testar conexão LAN</value>
+  </data>
+  <data name="Text.A6C3462A3E2E155F2613" xml:space="preserve">
+    <value>Testar conexão WAN</value>
+  </data>
+  <data name="Text.DDE6FA1EFA42980A5A3D" xml:space="preserve">
+    <value>Carga total do sistema</value>
+  </data>
+  <data name="Text.2A8FBB837295BABAD526" xml:space="preserve">
+    <value>RAM total em uso</value>
+  </data>
+  <data name="Text.AAD454AE502B9251A7DB" xml:space="preserve">
+    <value>Desfazer edições</value>
+  </data>
+  <data name="Text.4B9B06633B41446C342E" xml:space="preserve">
+    <value>Atualizar ao iniciar</value>
+  </data>
+  <data name="Text.D56284509EEB667D3032" xml:space="preserve">
+    <value>Atualizar servidor</value>
+  </data>
+  <data name="Text.D63AB4711473B0398FEB" xml:space="preserve">
+    <value>Tempo de atividade</value>
+  </data>
+  <data name="Text.7E8C4DD0D3627B5A23DA" xml:space="preserve">
+    <value>Usar pasta padrão do Synix</value>
+  </data>
+  <data name="Text.730771C7CEF0FB9F5591" xml:space="preserve">
+    <value>Verificar arquivos do jogo</value>
+  </data>
+  <data name="Text.8EC121C93E4A0DE65F26" xml:space="preserve">
+    <value>Valor</value>
+  </data>
+  <data name="Text.61600AA7118C043C99D7" xml:space="preserve">
+    <value>Verificar backup</value>
+  </data>
+  <data name="Text.E3D178B901F8C19B399B" xml:space="preserve">
+    <value>Ver argumentos padrão</value>
+  </data>
+  <data name="Text.90789C12D0731B4405F2" xml:space="preserve">
+    <value>Ver detalhes</value>
+  </data>
+  <data name="Text.33DED6ECB268AFB09FD2" xml:space="preserve">
+    <value>Semente do mundo</value>
+  </data>
+  <data name="Text.59E97D4C50CDAA280770" xml:space="preserve">
+    <value>Tamanho do mundo</value>
+  </data>
+  <data name="DynamicText.00029CBA0C5C049B0F4F" xml:space="preserve">
+    <value>Arquivos</value>
+  </data>
+  <data name="DynamicText.8AB5FCAA02B080A097CB" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="DynamicText.4A683D9AC9F3EB4B325E" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="DynamicText.07974A58F2F45DF701AB" xml:space="preserve">
+    <value>Editar servidor</value>
+  </data>
+  <data name="DynamicText.4343EB764C3E6E4400F1" xml:space="preserve">
+    <value>Editar servidor</value>
+  </data>
+  <data name="DynamicText.8214BA754E823839D94C" xml:space="preserve">
+    <value>Porta IPv6</value>
+  </data>
+  <data name="DynamicText.5F83363AA32B68BAD3E3" xml:space="preserve">
+    <value>Modo: avançado</value>
+  </data>
+  <data name="DynamicText.950660AA706852FE74D6" xml:space="preserve">
+    <value>Modo: básico</value>
+  </data>
+  <data name="DynamicText.87DE7163FF43F16DD0DC" xml:space="preserve">
+    <value>Em execução</value>
+  </data>
+  <data name="DynamicText.BEEA8B6B4E3FC3DA7763" xml:space="preserve">
+    <value>Selecione um jogo…</value>
+  </data>
+  <data name="DynamicText.423401648A096552A248" xml:space="preserve">
+    <value>Pacote do servidor</value>
+  </data>
+  <data name="MessageText.464192041ACD5C461D76" xml:space="preserve">
+    <value>Confirmar backup do servidor</value>
+  </data>
+  <data name="MessageText.C6F572AC4FC25E13AFAC" xml:space="preserve">
+    <value>Confirmar restauração do servidor</value>
+  </data>
+  <data name="MessageText.C2B79A94A0143B014649" xml:space="preserve">
+    <value>Nenhum servidor selecionado</value>
+  </data>
+  <data name="MessageText.7FF51079982199131314" xml:space="preserve">
+    <value>Selecione primeiro um servidor na lista.</value>
+  </data>
+  <data name="MessageText.726B95C83B7011B7B778" xml:space="preserve">
+    <value>Verifique as configurações do servidor</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Required" xml:space="preserve">
+    <value>Semente do mundo (obrigatória)</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Generate" xml:space="preserve">
+    <value>Gerar semente</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Folder" xml:space="preserve">
+    <value>Escolher pasta</value>
+  </data>
+  <data name="EmpyrionMods.Button.RollBack" xml:space="preserve">
+    <value>Reverter importação</value>
+  </data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve">
+    <value>Pesquisar complementos nesta área…</value>
+  </data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve">
+    <value>{0} de {1} complementos correspondem</value>
+  </data>
+  <data name="ModManager.Field.Search" xml:space="preserve">
+    <value>Pesquisar</value>
+  </data>
+  <data name="MinecraftWorkspace.Title" xml:space="preserve">
+    <value>Central de controle Minecraft</value>
+  </data>
+  <data name="MinecraftWorkspace.Overview" xml:space="preserve">
+    <value>Visão geral</value>
+  </data>
+  <data name="MinecraftWorkspace.Console" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="MinecraftWorkspace.Players" xml:space="preserve">
+    <value>Jogadores</value>
+  </data>
+  <data name="MinecraftWorkspace.Settings" xml:space="preserve">
+    <value>Configurações e arquivos</value>
+  </data>
+  <data name="MinecraftWorkspace.Worlds" xml:space="preserve">
+    <value>Mundos</value>
+  </data>
+  <data name="MinecraftWorkspace.Mods" xml:space="preserve">
+    <value>Mods e plugins</value>
+  </data>
+  <data name="MinecraftWorkspace.Backups" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="MinecraftWorkspace.Recovery" xml:space="preserve">
+    <value>Recuperação de alterações</value>
+  </data>
+  <data name="MinecraftWorkspace.Diagnostics" xml:space="preserve">
+    <value>Diagnóstico</value>
+  </data>
+  <data name="MinecraftWorkspace.Schedules" xml:space="preserve">
+    <value>Agendamentos</value>
+  </data>
+  <data name="MinecraftWorkspace.Start" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="MinecraftWorkspace.Stop" xml:space="preserve">
+    <value>Parar</value>
+  </data>
+  <data name="MinecraftWorkspace.Restart" xml:space="preserve">
+    <value>Reiniciar</value>
+  </data>
+  <data name="MinecraftWorkspace.Setup" xml:space="preserve">
+    <value>Configuração do servidor</value>
+  </data>
+  <data name="MinecraftWorkspace.Readiness" xml:space="preserve">
+    <value>Verificações de prontidão</value>
+  </data>
+  <data name="MinecraftWorkspace.Connection" xml:space="preserve">
+    <value>Detalhes da conexão</value>
+  </data>
+  <data name="MinecraftWorkspace.Refresh" xml:space="preserve">
+    <value>Atualizar</value>
+  </data>
+  <data name="MinecraftWorkspace.Working" xml:space="preserve">
+    <value>Processando…</value>
+  </data>
+  <data name="MinecraftWorkspace.Save" xml:space="preserve">
+    <value>Salvar alterações</value>
+  </data>
+  <data name="MinecraftWorkspace.File" xml:space="preserve">
+    <value>Arquivo</value>
+  </data>
+  <data name="MinecraftWorkspace.Format" xml:space="preserve">
+    <value>Formato</value>
+  </data>
+  <data name="MinecraftWorkspace.EditFile" xml:space="preserve">
+    <value>Editar arquivo selecionado</value>
+  </data>
+  <data name="MinecraftWorkspace.StructuredEditor" xml:space="preserve">
+    <value>Editor estruturado</value>
+  </data>
+  <data name="MinecraftWorkspace.Player" xml:space="preserve">
+    <value>Nome do jogador</value>
+  </data>
+  <data name="MinecraftWorkspace.Source" xml:space="preserve">
+    <value>Origem</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyPlayer" xml:space="preserve">
+    <value>Aplicar ação ao jogador</value>
+  </data>
+  <data name="MinecraftWorkspace.World" xml:space="preserve">
+    <value>Mundo</value>
+  </data>
+  <data name="MinecraftWorkspace.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="MinecraftWorkspace.Active" xml:space="preserve">
+    <value>Ativo</value>
+  </data>
+  <data name="MinecraftWorkspace.Available" xml:space="preserve">
+    <value>Disponível</value>
+  </data>
+  <data name="MinecraftWorkspace.NewWorldName" xml:space="preserve">
+    <value>Nome da pasta do novo mundo</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportWorld" xml:space="preserve">
+    <value>Importar ZIP do mundo</value>
+  </data>
+  <data name="MinecraftWorkspace.ActivateWorld" xml:space="preserve">
+    <value>Usar mundo selecionado</value>
+  </data>
+  <data name="MinecraftWorkspace.AddOnId" xml:space="preserve">
+    <value>ID do complemento</value>
+  </data>
+  <data name="MinecraftWorkspace.Version" xml:space="preserve">
+    <value>Versão</value>
+  </data>
+  <data name="MinecraftWorkspace.Loader" xml:space="preserve">
+    <value>Carregador</value>
+  </data>
+  <data name="MinecraftWorkspace.ManageAddOns" xml:space="preserve">
+    <value>Complementos individuais</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportPack" xml:space="preserve">
+    <value>Importar / atualizar pacote</value>
+  </data>
+  <data name="MinecraftWorkspace.Checks" xml:space="preserve">
+    <value>Verificações de compatibilidade</value>
+  </data>
+  <data name="MinecraftWorkspace.Created" xml:space="preserve">
+    <value>Criado</value>
+  </data>
+  <data name="MinecraftWorkspace.Size" xml:space="preserve">
+    <value>Tamanho</value>
+  </data>
+  <data name="MinecraftWorkspace.Files" xml:space="preserve">
+    <value>Arquivos</value>
+  </data>
+  <data name="MinecraftWorkspace.Change" xml:space="preserve">
+    <value>Alteração</value>
+  </data>
+  <data name="MinecraftWorkspace.CreateBackup" xml:space="preserve">
+    <value>Criar backup completo</value>
+  </data>
+  <data name="MinecraftWorkspace.RestoreBackup" xml:space="preserve">
+    <value>Restaurar backup</value>
+  </data>
+  <data name="MinecraftWorkspace.VerifyBackup" xml:space="preserve">
+    <value>Verificar backup</value>
+  </data>
+  <data name="MinecraftWorkspace.EditSchedule" xml:space="preserve">
+    <value>Editar agendamento</value>
+  </data>
+  <data name="MinecraftWorkspace.Enabled" xml:space="preserve">
+    <value>Ativado</value>
+  </data>
+  <data name="MinecraftWorkspace.Disabled" xml:space="preserve">
+    <value>Desativado</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoChange" xml:space="preserve">
+    <value>Desfazer / recuperar alteração</value>
+  </data>
+  <data name="MinecraftWorkspace.Area" xml:space="preserve">
+    <value>Área</value>
+  </data>
+  <data name="MinecraftWorkspace.Detail" xml:space="preserve">
+    <value>Detalhes</value>
+  </data>
+  <data name="MinecraftWorkspace.Performance" xml:space="preserve">
+    <value>Recursos do processo</value>
+  </data>
+  <data name="MinecraftWorkspace.Online" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="MinecraftWorkspace.Logs" xml:space="preserve">
+    <value>Logs recentes</value>
+  </data>
+  <data name="MinecraftWorkspace.Apply" xml:space="preserve">
+    <value>Aplicar alterações</value>
+  </data>
+  <data name="MinecraftWorkspace.Close" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="MinecraftWorkspace.Remove" xml:space="preserve">
+    <value>Remover</value>
+  </data>
+  <data name="MinecraftWorkspace.Add" xml:space="preserve">
+    <value>Adicionar</value>
+  </data>
+  <data name="MinecraftWorkspace.Replace" xml:space="preserve">
+    <value>Substituir</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Kick" xml:space="preserve">
+    <value>Expulsar</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Allow" xml:space="preserve">
+    <value>Adicionar à lista de permissões</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Disallow" xml:space="preserve">
+    <value>Remover da lista de permissões</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Operator" xml:space="preserve">
+    <value>Conceder operador</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Deop" xml:space="preserve">
+    <value>Remover operador</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Ban" xml:space="preserve">
+    <value>Banir (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Pardon" xml:space="preserve">
+    <value>Desbanir (Java)</value>
+  </data>
+  <data name="UniversalMods.Wizard.Button" xml:space="preserve">
+    <value>Importar ZIP / pasta</value>
+  </data>
+  <data name="ModSupport.Title" xml:space="preserve">
+    <value>Suporte e configuração de mods</value>
+  </data>
+  <data name="Language.PreviewNotice" xml:space="preserve">
+    <value>Prévia: controles principais traduzidos. Alguns textos continuam em inglês.</value>
+  </data>
+  <data name="Text.8736DCB51A77046719F5" xml:space="preserve">
+    <value>Abra o console ao iniciar o servidor. Desative para executar os servidores em segundo plano.</value>
+  </data>
+  <data name="Text.A03EE332F98F4733802C" xml:space="preserve">
+    <value>Alterne entre os temas claro e escuro do painel Synix.</value>
+  </data>
+  <data name="Text.A8142050CBD33EE95F3F" xml:space="preserve">
+    <value>Use a velocidade máxima ou limite instalações, atualizações, reparos e verificações de servidores.</value>
+  </data>
+  <data name="Text.1C310A469AD1721A3E91" xml:space="preserve">
+    <value>Monitore e gerencie todos os servidores de jogos em um só lugar.</value>
+  </data>
+  <data name="SettingsPage.General.Subtitle" xml:space="preserve">
+    <value>Configure o comportamento básico do Synix neste computador.</value>
+  </data>
+  <data name="ServerSetup.Page.General.Description" xml:space="preserve">
+    <value>Escolha o jogo e defina a identidade do servidor.</value>
+  </data>
+  <data name="ServerSetup.Page.Security.Description" xml:space="preserve">
+    <value>Gerencie senhas do servidor e credenciais de serviços online.</value>
+  </data>
+</root>
+

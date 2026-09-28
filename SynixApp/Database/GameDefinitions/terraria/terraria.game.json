@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "definitionRevision": 2,
+  "definitionRevision": 3,
   "id": "terraria",
   "catalogOrder": 11,
   "game": "Terraria",
   "aliases": [],
-  "appId": "105610",
+  "appId": "105600",
   "requiresSteamLogin": true,
   "executable": "TerrariaServer.exe",
   "downloadUrl": "",

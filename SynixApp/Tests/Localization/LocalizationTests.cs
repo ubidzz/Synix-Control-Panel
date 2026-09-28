@@ -187,9 +187,14 @@ public sealed class LocalizationTests
 					page.Controls.Find("lblTitleLanguage", true).Single().Text);
 				ComboBox language = Assert.IsAssignableFrom<ComboBox>(
 					page.Controls.Find("cmbLanguage", true).Single());
-				Assert.Equal(
-					["Anglais", "Allemand", "Espagnol", "Français"],
-					language.Items.Cast<object>().Select(item => item.ToString()));
+				Assert.Equal(LocalizationManager.SupportedLanguages.Count, language.Items.Count);
+				string[] labels = language.Items.Cast<object>().Select(item => item.ToString()!).ToArray();
+				Assert.Contains("English", labels);
+				Assert.Contains("Deutsch", labels);
+				Assert.Contains("Español", labels);
+				Assert.Contains("Français", labels);
+				Assert.Contains("简体中文", labels);
+				Assert.Contains("繁體中文", labels);
 
 				page.UiLanguageCode = "fr-FR";
 				page.LimitSteamCmdDownloadSpeed = true;
@@ -818,7 +823,9 @@ public sealed class LocalizationTests
 				StringComparer.Ordinal);
 		Regex placeholder = new(@"\{\d+(?:,[^}:]+)?(?::[^}]+)?\}");
 
-		foreach (string languageCode in new[] { "fr", "de", "es" })
+		foreach (string languageCode in LocalizationManager.SupportedLanguages
+			.Where(language => language.Code != LocalizationManager.DefaultLanguageCode)
+			.Select(language => language.ResourceCultureName))
 		{
 			ResourceSet translated = Assert.IsAssignableFrom<ResourceSet>(
 				manager.GetResourceSet(

@@ -84,6 +84,9 @@ internal static class LocalizationManager
 	public static IReadOnlyList<SupportedLanguage> SupportedLanguages =>
 		Languages;
 
+	public static string NormalizeLanguageCode(string? languageCode) =>
+		ResolveCulture(languageCode).Name;
+
 	public static void Initialize(string? languageCode)
 	{
 		_currentUICulture = ResolveCulture(languageCode);
@@ -610,6 +613,7 @@ internal static class LocalizationManager
 			{
 				if (entry.Key is not string key ||
 					entry.Value is not string value ||
+					key.StartsWith("_", StringComparison.Ordinal) ||
 					(!key.StartsWith("Text.", StringComparison.Ordinal) &&
 						value.Contains('{')))
 				{
@@ -697,7 +701,25 @@ internal static class LocalizationManager
 			try
 			{
 				CultureInfo requestedCulture = CultureInfo.GetCultureInfo(languageCode);
-				language = Languages.FirstOrDefault(candidate =>
+				// Follow script-aware parents before falling back to the language.
+				// zh-TW/zh-HK use zh-Hant; zh-CN/zh-SG use zh-Hans. Matching
+				// only "zh" would silently choose the wrong written Chinese form.
+				for (CultureInfo parent = requestedCulture.Parent;
+					language == null && parent.Name.Length > 0;
+					parent = parent.Parent)
+				{
+					language = Languages.FirstOrDefault(candidate => string.Equals(
+						candidate.Code, parent.Name, StringComparison.OrdinalIgnoreCase));
+				}
+
+				if (language == null && requestedCulture.TwoLetterISOLanguageName == "zh")
+				{
+					string script = requestedCulture.Name.Equals("zh-CHT", StringComparison.OrdinalIgnoreCase)
+						? "zh-Hant" : "zh-Hans";
+					language = Languages.FirstOrDefault(candidate => candidate.Code == script);
+				}
+
+				language ??= Languages.FirstOrDefault(candidate =>
 					string.Equals(
 						CultureInfo.GetCultureInfo(candidate.Code)
 							.TwoLetterISOLanguageName,
@@ -795,7 +817,8 @@ internal static class LocalizationManager
 			return;
 		}
 
-		CultureInfo selectionCulture = resourceCulture.IsNeutralCulture
+		bool isChineseScript = resourceCulture.Name is "zh-Hans" or "zh-Hant";
+		CultureInfo selectionCulture = resourceCulture.IsNeutralCulture && !isChineseScript
 			? CultureInfo.CreateSpecificCulture(resourceCulture.Name)
 			: resourceCulture;
 		if (languages.Any(language => string.Equals(
@@ -814,24 +837,44 @@ internal static class LocalizationManager
 			"fr" => "Language.French",
 			_ => null
 		};
-		string nativeName = languageCode.ToLowerInvariant() switch
+		string nativeName = resourceCulture.Name switch
 		{
-			"de" => "Deutsch",
-			"es" => "Español",
-			"fr" => "Français",
+			"zh-Hans" => "简体中文",
+			"zh-Hant" => "繁體中文",
+			"ja" or "ja-JP" => "日本語",
+			"ko" or "ko-KR" => "한국어",
+			"it" or "it-IT" => "Italiano",
+			"pt-BR" => "Português (Brasil)",
+			"pl" or "pl-PL" => "Polski",
+			"ru" or "ru-RU" => "Русский",
+			"tr" or "tr-TR" => "Türkçe",
+			"de" or "de-DE" => "Deutsch",
+			"es" or "es-ES" => "Español",
+			"fr" or "fr-FR" => "Français",
 			_ => selectionCulture.TextInfo.ToTitleCase(
 				selectionCulture.NativeName)
 		};
+		ResourceSet? catalog = ResourceManager.GetResourceSet(
+			resourceCulture, createIfNotExists: true, tryParents: false);
+		string? previewNotice = catalog?.GetString("_Language.IsPreview") == "true"
+			? catalog.GetString("Language.PreviewNotice") : null;
 		languages.Add(new SupportedLanguage(
 			selectionCulture.Name,
 			resourceKey,
-			nativeName));
+			nativeName,
+			resourceCulture.Name,
+			previewNotice));
 	}
 
 	internal sealed record SupportedLanguage(
 		string Code,
 		string? ResourceKey,
-		string DisplayName);
+		string DisplayName,
+		string ResourceCultureName = "",
+		string? PreviewNotice = null)
+	{
+		public bool IsPreview => !string.IsNullOrWhiteSpace(PreviewNotice);
+	}
 
 	private sealed class TextBinding
 	{

@@ -54,6 +54,7 @@
 	    <LogicalName>Synix.GameDefinitions.SevenDaysToDie.serverconfig.xml</LogicalName>
 	  </EmbeddedResource>
 	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
+	  <EmbeddedResource Include="Database\GameDefinitions\game-text-support.json" />
 	  <EmbeddedResource Include="Database\ModSystems\**\*.modsystem.json" />
 	  <EmbeddedResource Include="Database\ModSystems\**\*.modsupport.json" />
 	</ItemGroup>

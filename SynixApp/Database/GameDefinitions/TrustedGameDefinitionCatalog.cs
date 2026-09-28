@@ -60,6 +60,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string AppId { get; init; } = string.Empty;
 		public bool RequiresSteamLogin { get; init; }
 		public string SteamAppConfig { get; init; } = string.Empty;
+		public string SteamBranch { get; init; } = string.Empty;
 		public string Executable { get; init; } = string.Empty;
 		public string DownloadUrl { get; init; } = string.Empty;
 		public string Arguments { get; init; } = string.Empty;
@@ -243,6 +244,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				AppID = manifest.AppId.Trim(),
 				RequiresSteamLogin = manifest.RequiresSteamLogin,
 				SteamAppConfig = manifest.SteamAppConfig,
+				SteamBranch = manifest.SteamBranch,
 				ExeName = manifest.Executable.Trim(),
 				DownloadUrl = manifest.DownloadUrl.Trim(),
 				RequiredArgs = manifest.Arguments,
@@ -377,6 +379,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					"GameDefinition.Error.NonNumericAppId",
 					resourceName));
 			ValidateSteamAppConfig(manifest.SteamAppConfig, manifest.AppId, resourceName);
+			ValidateSteamBranch(manifest.SteamBranch, resourceName);
 			ValidateRelativePath(manifest.Executable, "executable", resourceName, required: true);
 			ValidateSingleLine(manifest.Arguments, "arguments", resourceName, 16_384);
 			ValidateSingleLine(manifest.RconSyntax, "rconSyntax", resourceName, 4_096);
@@ -1061,6 +1064,18 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 					"GameDefinition.Error.InvalidField",
 					resourceName,
 					field));
+		}
+
+		internal static void ValidateSteamBranch(string? value, string resourceName)
+		{
+			if (value == string.Empty)
+				return;
+			if (value is null || !Regex.IsMatch(value, @"\A[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}\z",
+				RegexOptions.CultureInvariant))
+			{
+				throw new InvalidDataException(LocalizationManager.Get(
+					"GameDefinition.Error.InvalidFieldValue", resourceName, "steamBranch"));
+			}
 		}
 
 		private static void ValidateSteamAppConfig(

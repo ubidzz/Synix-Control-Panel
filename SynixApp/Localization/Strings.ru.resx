@@ -1,0 +1,1397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Preview: core interface translation. Missing entries intentionally fall back to English.
+       Game commands, configuration values, paths and user data are not translated. -->
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="_Language.IsPreview" xml:space="preserve"><value>true</value></data>
+  <data name="Language.English" xml:space="preserve">
+    <value>Английский</value>
+  </data>
+  <data name="Language.French" xml:space="preserve">
+    <value>Французский</value>
+  </data>
+  <data name="Language.German" xml:space="preserve">
+    <value>Немецкий</value>
+  </data>
+  <data name="Language.Spanish" xml:space="preserve">
+    <value>Испанский</value>
+  </data>
+  <data name="Option.DownloadSpeed.Unlimited" xml:space="preserve">
+    <value>Без ограничений</value>
+  </data>
+  <data name="Option.DownloadSpeed.Limited" xml:space="preserve">
+    <value>Ограниченная</value>
+  </data>
+  <data name="SettingsPage.General.Heading" xml:space="preserve">
+    <value>Общие</value>
+  </data>
+  <data name="SettingsPage.Backups.Heading" xml:space="preserve">
+    <value>Резервные копии</value>
+  </data>
+  <data name="SettingsPage.Privacy.Heading" xml:space="preserve">
+    <value>Конфиденциальность и защита</value>
+  </data>
+  <data name="SettingsPage.Advanced.Heading" xml:space="preserve">
+    <value>Дополнительно</value>
+  </data>
+  <data name="SettingsPage.ReportProblem.Heading" xml:space="preserve">
+    <value>Сообщить о проблеме</value>
+  </data>
+  <data name="SettingsPage.Development.Heading" xml:space="preserve">
+    <value>Разработка</value>
+  </data>
+  <data name="Menu.ModPluginManager" xml:space="preserve">
+    <value>Менеджер модов и плагинов</value>
+  </data>
+  <data name="Menu.PlayerManagementCenter" xml:space="preserve">
+    <value>Управление игроками</value>
+  </data>
+  <data name="Menu.MinecraftServerConsole" xml:space="preserve">
+    <value>Консоль сервера Minecraft</value>
+  </data>
+  <data name="Menu.ConnectionInformation" xml:space="preserve">
+    <value>Информация о подключении</value>
+  </data>
+  <data name="Menu.LiveProcessDetails" xml:space="preserve">
+    <value>Данные процесса в реальном времени</value>
+  </data>
+  <data name="Option.Status.All" xml:space="preserve">
+    <value>Все состояния</value>
+  </data>
+  <data name="Option.Status.Running" xml:space="preserve">
+    <value>Работает</value>
+  </data>
+  <data name="Option.Status.Stopped" xml:space="preserve">
+    <value>Остановлен</value>
+  </data>
+  <data name="Option.Status.InProgress" xml:space="preserve">
+    <value>Выполняется</value>
+  </data>
+  <data name="Option.Status.NeedsAttention" xml:space="preserve">
+    <value>Требует внимания</value>
+  </data>
+  <data name="VerificationStep.Start" xml:space="preserve">
+    <value>Запустить</value>
+  </data>
+  <data name="VerificationStep.Stop" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
+  <data name="Status.Stopped" xml:space="preserve">
+    <value>Остановлен</value>
+  </data>
+  <data name="Status.Running" xml:space="preserve">
+    <value>Работает</value>
+  </data>
+  <data name="Status.Starting" xml:space="preserve">
+    <value>Запускается</value>
+  </data>
+  <data name="Status.Crashed" xml:space="preserve">
+    <value>Аварийно завершён</value>
+  </data>
+  <data name="Status.Stopping" xml:space="preserve">
+    <value>Останавливается</value>
+  </data>
+  <data name="Status.Installing" xml:space="preserve">
+    <value>Устанавливается</value>
+  </data>
+  <data name="Status.Updating" xml:space="preserve">
+    <value>Обновляется</value>
+  </data>
+  <data name="Status.BackingUp" xml:space="preserve">
+    <value>Создаётся копия</value>
+  </data>
+  <data name="Status.Validating" xml:space="preserve">
+    <value>Проверяется</value>
+  </data>
+  <data name="Status.Exporting" xml:space="preserve">
+    <value>Экспортируется</value>
+  </data>
+  <data name="Status.Restoring" xml:space="preserve">
+    <value>Восстанавливается</value>
+  </data>
+  <data name="Status.Deleting" xml:space="preserve">
+    <value>Удаляется</value>
+  </data>
+  <data name="Status.Unknown" xml:space="preserve">
+    <value>Неизвестно</value>
+  </data>
+  <data name="Dashboard.ServerCount.One" xml:space="preserve">
+    <value>Серверов: {0}</value>
+  </data>
+  <data name="Dashboard.ServerCount.Many" xml:space="preserve">
+    <value>Серверов: {0}</value>
+  </data>
+  <data name="Dashboard.ServerCount.Filtered" xml:space="preserve">
+    <value>Серверов: {0} из {1}</value>
+  </data>
+  <data name="Dashboard.Network.PublicAddress" xml:space="preserve">
+    <value>Внешний IP: {0}</value>
+  </data>
+  <data name="Dashboard.Network.LocalAddress" xml:space="preserve">
+    <value>Локальный IP: {0}</value>
+  </data>
+  <data name="ServerSetup.Status.Ready" xml:space="preserve">
+    <value>●  Можно сохранить</value>
+  </data>
+  <data name="ServerSetup.Status.ReviewRequired" xml:space="preserve">
+    <value>●  Проверить настройки</value>
+  </data>
+  <data name="ServerSetup.Validation.Checking" xml:space="preserve">
+    <value>Проверка изменений…</value>
+  </data>
+  <data name="ServerSetup.Validation.ReviewRequired" xml:space="preserve">
+    <value>Настройки верны. Нажмите «Далее: проверка», когда будете готовы проверить и сохранить.</value>
+  </data>
+  <data name="ServerSetup.Button.NextReview" xml:space="preserve">
+    <value>Далее: проверка</value>
+  </data>
+  <data name="ServerSetup.Button.SaveSettings" xml:space="preserve">
+    <value>Сохранить настройки</value>
+  </data>
+  <data name="ServerSetup.Status.ActionRequired" xml:space="preserve">
+    <value>●  Требуется действие</value>
+  </data>
+  <data name="ServerSetup.Status.AllChecksPassed" xml:space="preserve">
+    <value>Все обязательные проверки пройдены</value>
+  </data>
+  <data name="ServerSetup.Completion" xml:space="preserve">
+    <value>Настройка завершена на {0}%</value>
+  </data>
+  <data name="ServerSetup.Window.Title" xml:space="preserve">
+    <value>Настройка сервера</value>
+  </data>
+  <data name="ServerSetup.Window.EditTitle" xml:space="preserve">
+    <value>Изменить сервер</value>
+  </data>
+  <data name="ServerSetup.ModeBadge.New" xml:space="preserve">
+    <value>Новый сервер</value>
+  </data>
+  <data name="ServerSetup.ModeBadge.Edit" xml:space="preserve">
+    <value>Изменить сервер</value>
+  </data>
+  <data name="ServerSetup.Button.SaveServer" xml:space="preserve">
+    <value>Сохранить сервер</value>
+  </data>
+  <data name="ServerSetup.Button.SaveChanges" xml:space="preserve">
+    <value>Сохранить изменения</value>
+  </data>
+  <data name="ServerSetup.Page.General.Title" xml:space="preserve">
+    <value>Общие</value>
+  </data>
+  <data name="ServerSetup.Page.Security.Title" xml:space="preserve">
+    <value>Безопасность</value>
+  </data>
+  <data name="ServerSetup.Page.World.Title" xml:space="preserve">
+    <value>Создание мира</value>
+  </data>
+  <data name="ServerSetup.Page.Network.Title" xml:space="preserve">
+    <value>Сеть и RCON</value>
+  </data>
+  <data name="ServerSetup.Page.Automation.Title" xml:space="preserve">
+    <value>Автоматизация</value>
+  </data>
+  <data name="ServerSetup.Page.Discord.Title" xml:space="preserve">
+    <value>Уведомления Discord</value>
+  </data>
+  <data name="ServerSetup.Page.Install.Title" xml:space="preserve">
+    <value>Установка и запуск</value>
+  </data>
+  <data name="ServerSetup.Mode.Advanced" xml:space="preserve">
+    <value>Режим: расширенный</value>
+  </data>
+  <data name="ServerSetup.Mode.Beginner" xml:space="preserve">
+    <value>Режим: простой</value>
+  </data>
+  <data name="ServerSetup.Port.Game" xml:space="preserve">
+    <value>Игровой порт</value>
+  </data>
+  <data name="ServerSetup.Port.Query" xml:space="preserve">
+    <value>Порт запросов</value>
+  </data>
+  <data name="ServerSetup.Port.Ipv6" xml:space="preserve">
+    <value>Порт IPv6</value>
+  </data>
+  <data name="ServerSetup.Port.Rcon" xml:space="preserve">
+    <value>Порт RCON</value>
+  </data>
+  <data name="ServerSetup.Port.App" xml:space="preserve">
+    <value>Порт приложения</value>
+  </data>
+  <data name="ServerSetup.Dialog.SettingsAttention.Title" xml:space="preserve">
+    <value>Проверьте настройки сервера</value>
+  </data>
+  <data name="ServerSetup.GamePicker.Placeholder" xml:space="preserve">
+    <value>-- Выберите игру --</value>
+  </data>
+  <data name="ServerSetup.Placeholder.SelectGame" xml:space="preserve">
+    <value>Выберите игру…</value>
+  </data>
+  <data name="ServerSetup.Placeholder.NotRequired" xml:space="preserve">
+    <value>Не требуется</value>
+  </data>
+  <data name="ServerSetup.Security.AuthenticationToken" xml:space="preserve">
+    <value>Токен авторизации</value>
+  </data>
+  <data name="ServerSetup.Network.RconToggle.AccessibleName" xml:space="preserve">
+    <value>Включить RCON</value>
+  </data>
+  <data name="ServerSetup.Automation.EnableSchedule.AccessibleName" xml:space="preserve">
+    <value>Включить расписание</value>
+  </data>
+  <data name="ServerSetup.Automation.UpdateOnStart.AccessibleName" xml:space="preserve">
+    <value>Обновлять при запуске</value>
+  </data>
+  <data name="ServerSetup.Automation.BackupOnStart.AccessibleName" xml:space="preserve">
+    <value>Копия при запуске</value>
+  </data>
+  <data name="ServerSetup.Install.DefaultFolder.AccessibleName" xml:space="preserve">
+    <value>Стандартная папка</value>
+  </data>
+  <data name="ServerSetup.Minecraft.Unavailable" xml:space="preserve">
+    <value>Недоступно</value>
+  </data>
+  <data name="ServerSetup.Runtime.ServerPackage" xml:space="preserve">
+    <value>Пакет сервера</value>
+  </data>
+  <data name="ServerSetup.Runtime.Loader" xml:space="preserve">
+    <value>Загрузчик</value>
+  </data>
+  <data name="ServerSetup.Runtime.Framework.Title" xml:space="preserve">
+    <value>Фреймворк сервера</value>
+  </data>
+  <data name="ServerSetup.Runtime.Framework" xml:space="preserve">
+    <value>Фреймворк</value>
+  </data>
+  <data name="ServerSetup.MaxPlayers.Label" xml:space="preserve">
+    <value>Максимум игроков</value>
+  </data>
+  <data name="ServerSetup.MaxPlayers.Limited" xml:space="preserve">
+    <value>Максимум игроков (до {0:0})</value>
+  </data>
+  <data name="ServerSetup.SteamAccount.Required.WindowTitle" xml:space="preserve">
+    <value>Требуется аккаунт Steam</value>
+  </data>
+  <data name="ServerSetup.SteamAccount.Required.Title" xml:space="preserve">
+    <value>Требуется аккаунт Steam</value>
+  </data>
+  <data name="AddServer.Title" xml:space="preserve">
+    <value>Добавить сервер</value>
+  </data>
+  <data name="AddServer.Heading" xml:space="preserve">
+    <value>Как вы хотите добавить сервер?</value>
+  </data>
+  <data name="AddServer.Create.Title" xml:space="preserve">
+    <value>Создать и установить новый сервер</value>
+  </data>
+  <data name="AddServer.Create.Description" xml:space="preserve">
+    <value>Выберите игру и настройки, затем Synix загрузит файлы сервера.</value>
+  </data>
+  <data name="AddServer.Create.Button" xml:space="preserve">
+    <value>Создать новый</value>
+  </data>
+  <data name="AddServer.Import.Title" xml:space="preserve">
+    <value>Импортировать существующий сервер</value>
+  </data>
+  <data name="AddServer.Import.Description" xml:space="preserve">
+    <value>Укажите существующую папку сервера. Файлы не будут перемещены или заменены.</value>
+  </data>
+  <data name="AddServer.Import.Button" xml:space="preserve">
+    <value>Импортировать</value>
+  </data>
+  <data name="AddServer.Catalog.Title" xml:space="preserve">
+    <value>Сначала проверить поддержку игры</value>
+  </data>
+  <data name="AddServer.Catalog.Button" xml:space="preserve">
+    <value>Открыть каталог</value>
+  </data>
+  <data name="PlayerCenter.Action.Kick" xml:space="preserve">
+    <value>Исключить</value>
+  </data>
+  <data name="ModManager.Field.Server" xml:space="preserve">
+    <value>Сервер</value>
+  </data>
+  <data name="ModManager.Field.System" xml:space="preserve">
+    <value>Система дополнений</value>
+  </data>
+  <data name="ModManager.Field.InstallArea" xml:space="preserve">
+    <value>Область установки</value>
+  </data>
+  <data name="ModManager.Step.Detect" xml:space="preserve">
+    <value>1  Обнаружение</value>
+  </data>
+  <data name="ModManager.Step.Stop" xml:space="preserve">
+    <value>2  Остановка сервера</value>
+  </data>
+  <data name="ModManager.Step.Backup" xml:space="preserve">
+    <value>3  Копирование файлов</value>
+  </data>
+  <data name="ModManager.Step.Install" xml:space="preserve">
+    <value>4  Установка</value>
+  </data>
+  <data name="ModManager.Step.Verify" xml:space="preserve">
+    <value>5  Проверка</value>
+  </data>
+  <data name="ModManager.Step.Restart" xml:space="preserve">
+    <value>6  Перезапуск при необходимости</value>
+  </data>
+  <data name="ModManager.Column.AddOn" xml:space="preserve">
+    <value>Дополнение</value>
+  </data>
+  <data name="ModManager.Column.Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="ModManager.Column.Version" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="ModManager.Column.Status" xml:space="preserve">
+    <value>Состояние</value>
+  </data>
+  <data name="ModManager.Column.Security" xml:space="preserve">
+    <value>Безопасность</value>
+  </data>
+  <data name="ModManager.Column.Source" xml:space="preserve">
+    <value>Источник</value>
+  </data>
+  <data name="ModManager.Column.Location" xml:space="preserve">
+    <value>Расположение</value>
+  </data>
+  <data name="ModManager.Safety.Title" xml:space="preserve">
+    <value>Автоматическая проверка безопасности</value>
+  </data>
+  <data name="ModManager.Button.InstallFile" xml:space="preserve">
+    <value>Установить из файла</value>
+  </data>
+  <data name="ModManager.Button.InstallFramework" xml:space="preserve">
+    <value>Установить фреймворк</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalog" xml:space="preserve">
+    <value>Открыть каталог</value>
+  </data>
+  <data name="ModManager.Button.BrowseCatalogs" xml:space="preserve">
+    <value>Просмотр каталогов</value>
+  </data>
+  <data name="ModManager.Button.OpenFolder" xml:space="preserve">
+    <value>Открыть папку дополнений</value>
+  </data>
+  <data name="ModManager.Button.Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="ModManager.Button.Remove" xml:space="preserve">
+    <value>Удалить выбранное</value>
+  </data>
+  <data name="ModManager.Button.Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="ModManager.Button.ManageIds" xml:space="preserve">
+    <value>Управление ID модов</value>
+  </data>
+  <data name="ModManager.NoFilesChanged" xml:space="preserve">
+    <value>Файлы не изменены.</value>
+  </data>
+  <data name="ModManager.Safety.ServerStopped" xml:space="preserve">
+    <value>Сервер остановлен</value>
+  </data>
+  <data name="ModManager.Safety.StopFirst" xml:space="preserve">
+    <value>Остановите сервер перед изменениями</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkDetected" xml:space="preserve">
+    <value>Фреймворк обнаружен</value>
+  </data>
+  <data name="ModManager.Safety.FrameworkRequired" xml:space="preserve">
+    <value>Требуется настройка фреймворка</value>
+  </data>
+  <data name="ModManager.Safety.FolderAvailable" xml:space="preserve">
+    <value>Папка сервера доступна</value>
+  </data>
+  <data name="ModManager.Safety.FolderMissing" xml:space="preserve">
+    <value>Папка сервера отсутствует</value>
+  </data>
+  <data name="ModManager.Safety.SecurityScan" xml:space="preserve">
+    <value>Сканирование перед установкой</value>
+  </data>
+  <data name="ModManager.Safety.StandardPermissions" xml:space="preserve">
+    <value>Стандартные права Windows</value>
+  </data>
+  <data name="ModManager.Safety.RestartRequired" xml:space="preserve">
+    <value>После изменений нужен перезапуск</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.Name" xml:space="preserve">
+    <value>Дополнения Minecraft</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.ModsTarget" xml:space="preserve">
+    <value>Моды загрузчика</value>
+  </data>
+  <data name="ModManager.Profile.Minecraft.PluginsTarget" xml:space="preserve">
+    <value>Плагины сервера</value>
+  </data>
+  <data name="ModManager.Known.Mod" xml:space="preserve">
+    <value>Мод</value>
+  </data>
+  <data name="ModManager.Known.Plugin" xml:space="preserve">
+    <value>Плагин</value>
+  </data>
+  <data name="ResourceMonitor.RowRunning" xml:space="preserve">
+    <value>●  Работает</value>
+  </data>
+  <data name="Satisfactory.Overview" xml:space="preserve">
+    <value>Обзор</value>
+  </data>
+  <data name="Satisfactory.Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="Satisfactory.Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="Satisfactory.Start" xml:space="preserve">
+    <value>Запустить сервер</value>
+  </data>
+  <data name="Satisfactory.Stop" xml:space="preserve">
+    <value>Остановить сервер</value>
+  </data>
+  <data name="Satisfactory.Value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="Satisfactory.ApplyOptions" xml:space="preserve">
+    <value>Применить изменения</value>
+  </data>
+  <data name="Satisfactory.SendCommand" xml:space="preserve">
+    <value>Отправить команду</value>
+  </data>
+  <data name="ServerOperation.Name.Configure" xml:space="preserve">
+    <value>Конфигурация сервера</value>
+  </data>
+  <data name="ServerSetup.Progress.Details" xml:space="preserve">
+    <value>Сведения о сервере</value>
+  </data>
+  <data name="ServerSetup.Progress.Required" xml:space="preserve">
+    <value>Обязательные настройки</value>
+  </data>
+  <data name="ServerSetup.Progress.Review" xml:space="preserve">
+    <value>Проверка</value>
+  </data>
+  <data name="ServerSetup.Progress.Save" xml:space="preserve">
+    <value>Сохранить сервер</value>
+  </data>
+  <data name="ServerSetup.Progress.Details.Hint" xml:space="preserve">
+    <value>Откройте «Общие», чтобы выбрать игру и имя сервера.</value>
+  </data>
+  <data name="ServerSetup.Progress.Review.Hint" xml:space="preserve">
+    <value>Проверьте выбор без сохранения. Любую вкладку ещё можно изменить.</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Waiting" xml:space="preserve">
+    <value>Ожидание</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Attention" xml:space="preserve">
+    <value>Требует внимания</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Complete" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Next" xml:space="preserve">
+    <value>Далее</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Current" xml:space="preserve">
+    <value>Проверка</value>
+  </data>
+  <data name="ServerSetup.Progress.Status.Ready" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="ServerSetup.Progress.Step" xml:space="preserve">
+    <value>Шаг {0}: {1}. {2}</value>
+  </data>
+  <data name="ServerSetup.Review.Title" xml:space="preserve">
+    <value>Проверить настройки</value>
+  </data>
+  <data name="ServerSetup.Review.Description" xml:space="preserve">
+    <value>Проверьте выбор. Перед сохранением можно изменить любую вкладку.</value>
+  </data>
+  <data name="ServerSetup.Review.Notice" xml:space="preserve">
+    <value>Пароли, токены, коды приглашений, вебхуки и аргументы запуска скрыты. Сохранение не проверяет запуск и доступ к интернету; устанавливайте или запускайте сервер из панели.</value>
+  </data>
+  <data name="ServerSetup.Review.Setting" xml:space="preserve">
+    <value>Параметр</value>
+  </data>
+  <data name="ServerSetup.Review.Value" xml:space="preserve">
+    <value>Ваш выбор</value>
+  </data>
+  <data name="ServerSetup.Review.ServerName" xml:space="preserve">
+    <value>Имя сервера</value>
+  </data>
+  <data name="ServerSetup.Review.Game" xml:space="preserve">
+    <value>Игра</value>
+  </data>
+  <data name="ServerSetup.Review.Version" xml:space="preserve">
+    <value>Версия игры</value>
+  </data>
+  <data name="ServerSetup.Review.Edition" xml:space="preserve">
+    <value>Издание</value>
+  </data>
+  <data name="ServerSetup.Review.Ram" xml:space="preserve">
+    <value>ОЗУ сервера (ГБ)</value>
+  </data>
+  <data name="ServerSetup.Review.World" xml:space="preserve">
+    <value>Карта / мир</value>
+  </data>
+  <data name="ServerSetup.Review.GameMode" xml:space="preserve">
+    <value>Режим игры</value>
+  </data>
+  <data name="ServerSetup.Review.InstallFolder" xml:space="preserve">
+    <value>Папка установки</value>
+  </data>
+  <data name="Catalog.Available" xml:space="preserve">
+    <value>Доступно</value>
+  </data>
+  <data name="Configuration.Editor.SettingCount" xml:space="preserve">
+    <value>Параметров: {0} из {1}</value>
+  </data>
+  <data name="Configuration.Editor.UnsavedChanges.Many" xml:space="preserve">
+    <value>Несохранённых изменений: {0}</value>
+  </data>
+  <data name="Dashboard.NoServerSelected.Body" xml:space="preserve">
+    <value>Сначала выберите сервер в списке.</value>
+  </data>
+  <data name="Dashboard.NoServerSelected.Title" xml:space="preserve">
+    <value>Сервер не выбран</value>
+  </data>
+  <data name="Diagnostics.Readiness.Result.Ready" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Diagnostics.Readiness.Result.Review" xml:space="preserve">
+    <value>Проверка</value>
+  </data>
+  <data name="PortRole.Game" xml:space="preserve">
+    <value>Игровой порт</value>
+  </data>
+  <data name="PortRole.Query" xml:space="preserve">
+    <value>Порт запросов</value>
+  </data>
+  <data name="PortRole.Rcon" xml:space="preserve">
+    <value>Порт RCON</value>
+  </data>
+  <data name="PortRole.App" xml:space="preserve">
+    <value>Порт приложения</value>
+  </data>
+  <data name="PortRole.Game.Title" xml:space="preserve">
+    <value>Игровой порт</value>
+  </data>
+  <data name="PortRole.Query.Title" xml:space="preserve">
+    <value>Порт запросов</value>
+  </data>
+  <data name="PortRole.Rcon.Title" xml:space="preserve">
+    <value>Порт RCON</value>
+  </data>
+  <data name="Configuration.Check.FixConfig" xml:space="preserve">
+    <value>Исправить настройки</value>
+  </data>
+  <data name="ModSecurity.Status.Unavailable" xml:space="preserve">
+    <value>Недоступно</value>
+  </data>
+  <data name="MinecraftConsole.Quick.Deop.Label" xml:space="preserve">
+    <value>Забрать права оператора</value>
+  </data>
+  <data name="ServerStart.SettingsAttention.Title" xml:space="preserve">
+    <value>Проверьте настройки сервера</value>
+  </data>
+  <data name="WindowHeader.Close.AccessibleName" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="Dashboard.Backup.Confirm.Title" xml:space="preserve">
+    <value>Подтвердить копирование</value>
+  </data>
+  <data name="Dashboard.Restore.Confirm.Title" xml:space="preserve">
+    <value>Подтвердить восстановление</value>
+  </data>
+  <data name="Report.Unknown" xml:space="preserve">
+    <value>Неизвестно</value>
+  </data>
+  <data name="Report.Unavailable" xml:space="preserve">
+    <value>Недоступно</value>
+  </data>
+  <data name="GameInput.AuthenticationToken" xml:space="preserve">
+    <value>Токен авторизации</value>
+  </data>
+  <data name="GameInput.AuthenticationToken.Label" xml:space="preserve">
+    <value>Токен авторизации</value>
+  </data>
+  <data name="ServerOperation.Name.Start" xml:space="preserve">
+    <value>Запустить</value>
+  </data>
+  <data name="ServerOperation.Name.Restart" xml:space="preserve">
+    <value>Перезапустить</value>
+  </data>
+  <data name="ServerOperation.Name.Stop" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
+  <data name="ServerOperation.Name.Config" xml:space="preserve">
+    <value>Настроить</value>
+  </data>
+  <data name="GameDefinition.Tag.ServerName.Name" xml:space="preserve">
+    <value>Имя сервера</value>
+  </data>
+  <data name="GameDefinition.Tag.Port.Name" xml:space="preserve">
+    <value>Игровой порт</value>
+  </data>
+  <data name="GameDefinition.Tag.QueryPort.Name" xml:space="preserve">
+    <value>Порт запросов</value>
+  </data>
+  <data name="GameDefinition.Tag.Password.Name" xml:space="preserve">
+    <value>Пароль сервера</value>
+  </data>
+  <data name="GameDefinition.Tag.Seed.Name" xml:space="preserve">
+    <value>Сид мира</value>
+  </data>
+  <data name="GameDefinition.Tag.WorldSize.Name" xml:space="preserve">
+    <value>Размер мира</value>
+  </data>
+  <data name="GameDefinition.Tag.Mode.Name" xml:space="preserve">
+    <value>Режим игры</value>
+  </data>
+  <data name="GameDefinition.Tag.RconPort.Name" xml:space="preserve">
+    <value>Порт RCON</value>
+  </data>
+  <data name="GameDefinition.Tag.RconPassword.Name" xml:space="preserve">
+    <value>Пароль RCON</value>
+  </data>
+  <data name="Text.1B1A4A3B36DFC22C1EE4" xml:space="preserve">
+    <value>↻  Перезапустить</value>
+  </data>
+  <data name="Text.BE66C4F105B89904ED79" xml:space="preserve">
+    <value>+  Добавить сервер</value>
+  </data>
+  <data name="Text.695155B305760B530D36" xml:space="preserve">
+    <value>■  Остановить</value>
+  </data>
+  <data name="Text.0DF1F6C5210F85368B8A" xml:space="preserve">
+    <value>▶  Запустить</value>
+  </data>
+  <data name="Text.32EFCD09F92A272905F1" xml:space="preserve">
+    <value>✓  Готовность</value>
+  </data>
+  <data name="Text.B70806C6C2D93404F976" xml:space="preserve">
+    <value>Данные доступа</value>
+  </data>
+  <data name="Text.74ECEE4668229DC04361" xml:space="preserve">
+    <value>Имя аккаунта, а не отображаемое имя Steam</value>
+  </data>
+  <data name="Text.1FCD02D49EBBD52B384B" xml:space="preserve">
+    <value>События и диагностика</value>
+  </data>
+  <data name="Text.2E28AAB93B90457D1678" xml:space="preserve">
+    <value>Пароль администратора</value>
+  </data>
+  <data name="Text.012855FACF11B6858FD1" xml:space="preserve">
+    <value>Порт приложения</value>
+  </data>
+  <data name="Text.1D62D75616FD38521A36" xml:space="preserve">
+    <value>Область</value>
+  </data>
+  <data name="Text.9D70644761665CEA1FDE" xml:space="preserve">
+    <value>Файл копии</value>
+  </data>
+  <data name="Text.0F5BBD5CA04AD4F72861" xml:space="preserve">
+    <value>Копия при запуске</value>
+  </data>
+  <data name="Text.9FF20EBBA7CCB0CA561D" xml:space="preserve">
+    <value>Создать копию сервера</value>
+  </data>
+  <data name="Text.3227AA9666253F7A7365" xml:space="preserve">
+    <value>Обзор</value>
+  </data>
+  <data name="Text.28BBF5E4E8DC04D61EA5" xml:space="preserve">
+    <value>Обзор папок</value>
+  </data>
+  <data name="Text.19766ED6CCB2F4A32778" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="Text.E0A3BA64FA759DF9B7C8" xml:space="preserve">
+    <value>Проверить значения Synix</value>
+  </data>
+  <data name="Text.6ABB0361F0B32BEF8441" xml:space="preserve">
+    <value>Выбрать папку</value>
+  </data>
+  <data name="Text.2D57929BE2D29C7BE3DC" xml:space="preserve">
+    <value>Выбрать пакет</value>
+  </data>
+  <data name="Text.30F3BBCB43AC48EBFD1C" xml:space="preserve">
+    <value>Выберите язык Synix. Настройки игры и значения конфигурации остаются на английском.</value>
+  </data>
+  <data name="Text.9CC3A043B6A91D450BC3" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="Text.7D9EB7ACB13E24625C40" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="Text.DFA45629AB8769153F0E" xml:space="preserve">
+    <value>Редактор настроек</value>
+  </data>
+  <data name="Text.8097A44203F07EA4116C" xml:space="preserve">
+    <value>Редактор конфигурации</value>
+  </data>
+  <data name="Text.6198EFCA8E63CD466052" xml:space="preserve">
+    <value>Состояние настроек</value>
+  </data>
+  <data name="Text.6DEFAFA2CAA653041739" xml:space="preserve">
+    <value>Настроить</value>
+  </data>
+  <data name="Text.7176F50E66F1BD1104FC" xml:space="preserve">
+    <value>Настроить расписание</value>
+  </data>
+  <data name="Text.D7D31960DA6507518203" xml:space="preserve">
+    <value>Загрузка ЦП</value>
+  </data>
+  <data name="Text.DE967EB5C05508CC7A7D" xml:space="preserve">
+    <value>Загрузка ЦП</value>
+  </data>
+  <data name="Text.E699C2B4C7E4FA83E8F1" xml:space="preserve">
+    <value>Создать пакетный файл</value>
+  </data>
+  <data name="Text.6D6441A3204BECDDE1CB" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="Text.DF8C7C89B3E4CFB1FF6F" xml:space="preserve">
+    <value>Тёмная тема</value>
+  </data>
+  <data name="Text.B509EAF7EB0805B82CA2" xml:space="preserve">
+    <value>Переключить тёмную тему</value>
+  </data>
+  <data name="Text.6968CF40A73F3487A03E" xml:space="preserve">
+    <value>Стандартные аргументы запуска</value>
+  </data>
+  <data name="Text.47DE4E70C6DC214B814C" xml:space="preserve">
+    <value>Стандартные аргументы запуска</value>
+  </data>
+  <data name="Text.030CFC390829811A85AF" xml:space="preserve">
+    <value>Удалить копию</value>
+  </data>
+  <data name="Text.056E6A5F6594451E2753" xml:space="preserve">
+    <value>Удалить сервер</value>
+  </data>
+  <data name="Text.14FDC0F6C77F7978B7AD" xml:space="preserve">
+    <value>Подробности</value>
+  </data>
+  <data name="Text.2841A3AA116B14C8DEF1" xml:space="preserve">
+    <value>Вебхуки Discord</value>
+  </data>
+  <data name="Text.464C4FFD019E1E9691DC" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
+  <data name="Text.F37695A23C899C5215F8" xml:space="preserve">
+    <value>Издание</value>
+  </data>
+  <data name="Text.92C1CDFDF4CB9CF6FCCA" xml:space="preserve">
+    <value>Включено</value>
+  </data>
+  <data name="Text.96599B7797D3C4D80ED1" xml:space="preserve">
+    <value>Дополнительные аргументы</value>
+  </data>
+  <data name="Text.4035C78A474280CE7F1E" xml:space="preserve">
+    <value>Исправить настройки</value>
+  </data>
+  <data name="Text.74CCD43303847F265530" xml:space="preserve">
+    <value>Папка</value>
+  </data>
+  <data name="Text.0E078F2314E8311DAB20" xml:space="preserve">
+    <value>Путь к папке</value>
+  </data>
+  <data name="Text.1FD5F5A768D30B9B6651" xml:space="preserve">
+    <value>Игра</value>
+  </data>
+  <data name="Text.1311D7944778FB4AD68C" xml:space="preserve">
+    <value>Режим игры</value>
+  </data>
+  <data name="Text.3E8DBB6C3828E368EDBE" xml:space="preserve">
+    <value>Игровой порт</value>
+  </data>
+  <data name="Text.56215346C32A2444B7C7" xml:space="preserve">
+    <value>Игровой сервер</value>
+  </data>
+  <data name="Text.F054BBC09408C30FDCF1" xml:space="preserve">
+    <value>Игровые серверы</value>
+  </data>
+  <data name="Text.B5847872D81BE16B1771" xml:space="preserve">
+    <value>Каталог поддерживаемых игр</value>
+  </data>
+  <data name="Text.8CACE39E73446B3AD675" xml:space="preserve">
+    <value>Версия игры</value>
+  </data>
+  <data name="Text.9E8A7EC82FAED9A14FA0" xml:space="preserve">
+    <value>Получить токен</value>
+  </data>
+  <data name="Text.8DD65D0952ED144CCF6E" xml:space="preserve">
+    <value>Руководство</value>
+  </data>
+  <data name="Text.B79CAC926E0B2E347E72" xml:space="preserve">
+    <value>Справка</value>
+  </data>
+  <data name="Text.25FBAC53BB846E706EFB" xml:space="preserve">
+    <value>Импортировать существующий сервер</value>
+  </data>
+  <data name="Text.072D8E4338F73F8307C0" xml:space="preserve">
+    <value>Путь установки</value>
+  </data>
+  <data name="Text.F73780A16B44791C9D49" xml:space="preserve">
+    <value>Установленные серверы</value>
+  </data>
+  <data name="Text.8027F432A7FB7C273A1A" xml:space="preserve">
+    <value>Язык интерфейса</value>
+  </data>
+  <data name="Text.A4DD72C4AC5BBC667FC3" xml:space="preserve">
+    <value>Код приглашения</value>
+  </data>
+  <data name="Text.A4FE65264EF7DBB38D10" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="Text.55519B4895A4D9906EDA" xml:space="preserve">
+    <value>Версия загрузчика</value>
+  </data>
+  <data name="Text.47D2A515EF2F05B87D68" xml:space="preserve">
+    <value>Загрузка…</value>
+  </data>
+  <data name="Text.E7FDDAD25C086FD12358" xml:space="preserve">
+    <value>Основной мир</value>
+  </data>
+  <data name="Text.BE176B0015C424B78E9F" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="Text.91433D51005E84C89DD7" xml:space="preserve">
+    <value>Карта / мир</value>
+  </data>
+  <data name="Text.D6271860D5F643A7B632" xml:space="preserve">
+    <value>Максимум игроков</value>
+  </data>
+  <data name="Text.1744B96470B51BF30935" xml:space="preserve">
+    <value>Сеть</value>
+  </data>
+  <data name="Text.79F554AF97ADC0A05FDE" xml:space="preserve">
+    <value>Дни не выбраны</value>
+  </data>
+  <data name="Text.1B3F2F7A383F81F4A567" xml:space="preserve">
+    <value>Не требуется</value>
+  </data>
+  <data name="Text.2BBA1B9B15644044B222" xml:space="preserve">
+    <value>Авторизация онлайн-сервисов</value>
+  </data>
+  <data name="Text.64159808F2A26715BA3E" xml:space="preserve">
+    <value>Открыть папку копий</value>
+  </data>
+  <data name="Text.A350826E531AABBD198C" xml:space="preserve">
+    <value>Открыть редактор настроек</value>
+  </data>
+  <data name="Text.C7ECF7D057EE7D3405E2" xml:space="preserve">
+    <value>Открыть последний журнал</value>
+  </data>
+  <data name="Text.DEF3278452C24C7A756A" xml:space="preserve">
+    <value>Открыть папку сервера</value>
+  </data>
+  <data name="Text.59BE71333C960FD08E7E" xml:space="preserve">
+    <value>Необязательно</value>
+  </data>
+  <data name="Text.84E12AC655DD8D75DD44" xml:space="preserve">
+    <value>Игроки</value>
+  </data>
+  <data name="Text.72E9A59F5A1D6289DBAC" xml:space="preserve">
+    <value>Порт</value>
+  </data>
+  <data name="Text.22EAC55F97CD73017796" xml:space="preserve">
+    <value>Режим приватности</value>
+  </data>
+  <data name="Text.B80A37564FBB3C075320" xml:space="preserve">
+    <value>Запрос</value>
+  </data>
+  <data name="Text.516E776E998FF69A8D69" xml:space="preserve">
+    <value>Порт запросов</value>
+  </data>
+  <data name="Text.771E2DB0F3BEF2D22BE9" xml:space="preserve">
+    <value>Использование ОЗУ</value>
+  </data>
+  <data name="Text.4C328BF4603F8E856CAD" xml:space="preserve">
+    <value>Исходный текст</value>
+  </data>
+  <data name="Text.16C5D21817849765677F" xml:space="preserve">
+    <value>Пароль RCON</value>
+  </data>
+  <data name="Text.225EB9FD7C8D1624A15B" xml:space="preserve">
+    <value>Порт RCON</value>
+  </data>
+  <data name="Text.B1A53241AEE398BDDBC1" xml:space="preserve">
+    <value>Готово к управлению</value>
+  </data>
+  <data name="Text.BF53C2057CB18B677699" xml:space="preserve">
+    <value>Обновить список игроков</value>
+  </data>
+  <data name="Text.BBC627D7B11E5339088A" xml:space="preserve">
+    <value>Удалённое управление</value>
+  </data>
+  <data name="Text.C3812FC4ACB861D5182F" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="Text.E8A9279E12900267A1DF" xml:space="preserve">
+    <value>Дни перезапуска</value>
+  </data>
+  <data name="Text.BBC2611830E1BE782900" xml:space="preserve">
+    <value>Время перезапуска</value>
+  </data>
+  <data name="Text.3F593999A67CF40731E8" xml:space="preserve">
+    <value>Восстановить копию</value>
+  </data>
+  <data name="Text.49C15D2B9D9702D4FF44" xml:space="preserve">
+    <value>Восстановить копию сервера</value>
+  </data>
+  <data name="Text.E0CE633EA746EF5196B5" xml:space="preserve">
+    <value>Сейчас работают</value>
+  </data>
+  <data name="Text.4A3B87641F16E0F811C2" xml:space="preserve">
+    <value>Работающие серверы</value>
+  </data>
+  <data name="Text.1509F561F2416598629B" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Text.0637B6730F1724433551" xml:space="preserve">
+    <value>Перезапуск по расписанию</value>
+  </data>
+  <data name="Text.2E7AAE6319922181CD1D" xml:space="preserve">
+    <value>Поиск по названию игры…</value>
+  </data>
+  <data name="Text.01F1674FFF3FC5AD8DC9" xml:space="preserve">
+    <value>Поиск игры или сервера…</value>
+  </data>
+  <data name="Text.6CAABA13463DFF403A37" xml:space="preserve">
+    <value>Поиск настроек, путей или значений…</value>
+  </data>
+  <data name="Text.F00F8392B2C39AE7826E" xml:space="preserve">
+    <value>Выберите копию для продолжения.</value>
+  </data>
+  <data name="Text.93D8CAEF74F07185F0BF" xml:space="preserve">
+    <value>Отправить команду</value>
+  </data>
+  <data name="Text.AEF7DE28D52977F1B5CD" xml:space="preserve">
+    <value>Сервер</value>
+  </data>
+  <data name="Text.5435C9CD49190E73AAC1" xml:space="preserve">
+    <value>Конфигурация сервера</value>
+  </data>
+  <data name="Text.7FD48896176AE13DC58A" xml:space="preserve">
+    <value>Панель серверов</value>
+  </data>
+  <data name="Text.16A1DE974A53CBDEA4C1" xml:space="preserve">
+    <value>Сведения о сервере</value>
+  </data>
+  <data name="Text.BC4816425EBE8079C4F9" xml:space="preserve">
+    <value>Имя сервера</value>
+  </data>
+  <data name="Text.41CFA866FAA62B2104E6" xml:space="preserve">
+    <value>Имя сервера</value>
+  </data>
+  <data name="Text.A0F68054D6613673BCF5" xml:space="preserve">
+    <value>Действия с сервером  ▴</value>
+  </data>
+  <data name="Text.10F86A32C69207531263" xml:space="preserve">
+    <value>Пароль сервера</value>
+  </data>
+  <data name="Text.7B60A68A60DA2F0333AA" xml:space="preserve">
+    <value>ОЗУ сервера (ГБ)</value>
+  </data>
+  <data name="Text.8C33F13ABED20D6638CD" xml:space="preserve">
+    <value>Проверка готовности сервера</value>
+  </data>
+  <data name="Text.796D04D8FFEF846F141D" xml:space="preserve">
+    <value>Серверы в сети</value>
+  </data>
+  <data name="Text.F86BB6FC21DEB1E1F841" xml:space="preserve">
+    <value>Порты служб</value>
+  </data>
+  <data name="Text.4FE70949D3E77969ECE8" xml:space="preserve">
+    <value>Параметр</value>
+  </data>
+  <data name="Text.74A883A037BC227F9189" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Text.5856356326064A450522" xml:space="preserve">
+    <value>Показывать консоль сервера</value>
+  </data>
+  <data name="Text.92079831E5CC0BF95974" xml:space="preserve">
+    <value>Простой вид</value>
+  </data>
+  <data name="Text.4512FE0408D72862AC67" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="Text.F08A98135A8DF6ED38C7" xml:space="preserve">
+    <value>Запустить сервер</value>
+  </data>
+  <data name="Text.835D3FF459F432C23A57" xml:space="preserve">
+    <value>Задачи при запуске</value>
+  </data>
+  <data name="Text.2ACE1D3304BA5649A5A1" xml:space="preserve">
+    <value>Имя аккаунта Steam</value>
+  </data>
+  <data name="Text.1E704E3DA1455CD132D9" xml:space="preserve">
+    <value>Скорость загрузки SteamCMD</value>
+  </data>
+  <data name="Text.CB7C1E8DC21E59830716" xml:space="preserve">
+    <value>Остановить сервер</value>
+  </data>
+  <data name="Text.1A4F630AC1B69FD00728" xml:space="preserve">
+    <value>Остановлен</value>
+  </data>
+  <data name="Text.375D0C125CC8B4590775" xml:space="preserve">
+    <value>Структурированный вид</value>
+  </data>
+  <data name="Text.7E485C2CF2CC85DC20B9" xml:space="preserve">
+    <value>Настройки Synix</value>
+  </data>
+  <data name="Text.67907590F84228A78098" xml:space="preserve">
+    <value>Проверить связь по LAN</value>
+  </data>
+  <data name="Text.A6C3462A3E2E155F2613" xml:space="preserve">
+    <value>Проверить связь по WAN</value>
+  </data>
+  <data name="Text.DDE6FA1EFA42980A5A3D" xml:space="preserve">
+    <value>Общая нагрузка системы</value>
+  </data>
+  <data name="Text.2A8FBB837295BABAD526" xml:space="preserve">
+    <value>Общее использование ОЗУ</value>
+  </data>
+  <data name="Text.AAD454AE502B9251A7DB" xml:space="preserve">
+    <value>Отменить правки</value>
+  </data>
+  <data name="Text.4B9B06633B41446C342E" xml:space="preserve">
+    <value>Обновлять при запуске</value>
+  </data>
+  <data name="Text.D56284509EEB667D3032" xml:space="preserve">
+    <value>Обновить сервер</value>
+  </data>
+  <data name="Text.D63AB4711473B0398FEB" xml:space="preserve">
+    <value>Время работы</value>
+  </data>
+  <data name="Text.7E8C4DD0D3627B5A23DA" xml:space="preserve">
+    <value>Использовать папку Synix</value>
+  </data>
+  <data name="Text.730771C7CEF0FB9F5591" xml:space="preserve">
+    <value>Проверить файлы игры</value>
+  </data>
+  <data name="Text.8EC121C93E4A0DE65F26" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="Text.61600AA7118C043C99D7" xml:space="preserve">
+    <value>Проверить копию</value>
+  </data>
+  <data name="Text.E3D178B901F8C19B399B" xml:space="preserve">
+    <value>Показать стандартные аргументы</value>
+  </data>
+  <data name="Text.90789C12D0731B4405F2" xml:space="preserve">
+    <value>Подробнее</value>
+  </data>
+  <data name="Text.33DED6ECB268AFB09FD2" xml:space="preserve">
+    <value>Сид мира</value>
+  </data>
+  <data name="Text.59E97D4C50CDAA280770" xml:space="preserve">
+    <value>Размер мира</value>
+  </data>
+  <data name="DynamicText.00029CBA0C5C049B0F4F" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="DynamicText.8AB5FCAA02B080A097CB" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="DynamicText.4A683D9AC9F3EB4B325E" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
+  <data name="DynamicText.07974A58F2F45DF701AB" xml:space="preserve">
+    <value>Изменить сервер</value>
+  </data>
+  <data name="DynamicText.4343EB764C3E6E4400F1" xml:space="preserve">
+    <value>Изменить сервер</value>
+  </data>
+  <data name="DynamicText.8214BA754E823839D94C" xml:space="preserve">
+    <value>Порт IPv6</value>
+  </data>
+  <data name="DynamicText.5F83363AA32B68BAD3E3" xml:space="preserve">
+    <value>Режим: расширенный</value>
+  </data>
+  <data name="DynamicText.950660AA706852FE74D6" xml:space="preserve">
+    <value>Режим: простой</value>
+  </data>
+  <data name="DynamicText.87DE7163FF43F16DD0DC" xml:space="preserve">
+    <value>Работает</value>
+  </data>
+  <data name="DynamicText.BEEA8B6B4E3FC3DA7763" xml:space="preserve">
+    <value>Выберите игру…</value>
+  </data>
+  <data name="DynamicText.423401648A096552A248" xml:space="preserve">
+    <value>Пакет сервера</value>
+  </data>
+  <data name="MessageText.464192041ACD5C461D76" xml:space="preserve">
+    <value>Подтвердить копирование</value>
+  </data>
+  <data name="MessageText.C6F572AC4FC25E13AFAC" xml:space="preserve">
+    <value>Подтвердить восстановление</value>
+  </data>
+  <data name="MessageText.C2B79A94A0143B014649" xml:space="preserve">
+    <value>Сервер не выбран</value>
+  </data>
+  <data name="MessageText.7FF51079982199131314" xml:space="preserve">
+    <value>Сначала выберите сервер в списке.</value>
+  </data>
+  <data name="MessageText.726B95C83B7011B7B778" xml:space="preserve">
+    <value>Проверьте настройки сервера</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Required" xml:space="preserve">
+    <value>Сид мира (обязательно)</value>
+  </data>
+  <data name="ServerSetup.World.Seed.Generate" xml:space="preserve">
+    <value>Создать сид</value>
+  </data>
+  <data name="EmpyrionMods.Picker.Folder" xml:space="preserve">
+    <value>Выбрать папку</value>
+  </data>
+  <data name="EmpyrionMods.Button.RollBack" xml:space="preserve">
+    <value>Откатить импорт</value>
+  </data>
+  <data name="ModManager.Inventory.Search" xml:space="preserve">
+    <value>Поиск дополнений в этой области…</value>
+  </data>
+  <data name="ModManager.Inventory.Filtered" xml:space="preserve">
+    <value>Совпадений: {0} из {1} дополнений</value>
+  </data>
+  <data name="ModManager.Field.Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="MinecraftWorkspace.Title" xml:space="preserve">
+    <value>Управление Minecraft</value>
+  </data>
+  <data name="MinecraftWorkspace.Overview" xml:space="preserve">
+    <value>Обзор</value>
+  </data>
+  <data name="MinecraftWorkspace.Console" xml:space="preserve">
+    <value>Консоль</value>
+  </data>
+  <data name="MinecraftWorkspace.Players" xml:space="preserve">
+    <value>Игроки</value>
+  </data>
+  <data name="MinecraftWorkspace.Settings" xml:space="preserve">
+    <value>Настройки и файлы</value>
+  </data>
+  <data name="MinecraftWorkspace.Worlds" xml:space="preserve">
+    <value>Миры</value>
+  </data>
+  <data name="MinecraftWorkspace.Mods" xml:space="preserve">
+    <value>Моды и плагины</value>
+  </data>
+  <data name="MinecraftWorkspace.Backups" xml:space="preserve">
+    <value>Резервные копии</value>
+  </data>
+  <data name="MinecraftWorkspace.Recovery" xml:space="preserve">
+    <value>Восстановление изменений</value>
+  </data>
+  <data name="MinecraftWorkspace.Diagnostics" xml:space="preserve">
+    <value>Диагностика</value>
+  </data>
+  <data name="MinecraftWorkspace.Schedules" xml:space="preserve">
+    <value>Расписания</value>
+  </data>
+  <data name="MinecraftWorkspace.Start" xml:space="preserve">
+    <value>Запустить</value>
+  </data>
+  <data name="MinecraftWorkspace.Stop" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
+  <data name="MinecraftWorkspace.Restart" xml:space="preserve">
+    <value>Перезапустить</value>
+  </data>
+  <data name="MinecraftWorkspace.Setup" xml:space="preserve">
+    <value>Настройка сервера</value>
+  </data>
+  <data name="MinecraftWorkspace.Readiness" xml:space="preserve">
+    <value>Проверки готовности</value>
+  </data>
+  <data name="MinecraftWorkspace.Connection" xml:space="preserve">
+    <value>Сведения о подключении</value>
+  </data>
+  <data name="MinecraftWorkspace.Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="MinecraftWorkspace.Working" xml:space="preserve">
+    <value>Выполняется…</value>
+  </data>
+  <data name="MinecraftWorkspace.Save" xml:space="preserve">
+    <value>Сохранить изменения</value>
+  </data>
+  <data name="MinecraftWorkspace.File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="MinecraftWorkspace.Format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="MinecraftWorkspace.EditFile" xml:space="preserve">
+    <value>Изменить выбранный файл</value>
+  </data>
+  <data name="MinecraftWorkspace.StructuredEditor" xml:space="preserve">
+    <value>Структурный редактор</value>
+  </data>
+  <data name="MinecraftWorkspace.Player" xml:space="preserve">
+    <value>Имя игрока</value>
+  </data>
+  <data name="MinecraftWorkspace.Source" xml:space="preserve">
+    <value>Источник</value>
+  </data>
+  <data name="MinecraftWorkspace.ApplyPlayer" xml:space="preserve">
+    <value>Выполнить действие</value>
+  </data>
+  <data name="MinecraftWorkspace.World" xml:space="preserve">
+    <value>Мир</value>
+  </data>
+  <data name="MinecraftWorkspace.Status" xml:space="preserve">
+    <value>Состояние</value>
+  </data>
+  <data name="MinecraftWorkspace.Active" xml:space="preserve">
+    <value>Активно</value>
+  </data>
+  <data name="MinecraftWorkspace.Available" xml:space="preserve">
+    <value>Доступно</value>
+  </data>
+  <data name="MinecraftWorkspace.NewWorldName" xml:space="preserve">
+    <value>Имя папки нового мира</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportWorld" xml:space="preserve">
+    <value>Импортировать ZIP мира</value>
+  </data>
+  <data name="MinecraftWorkspace.ActivateWorld" xml:space="preserve">
+    <value>Использовать выбранный мир</value>
+  </data>
+  <data name="MinecraftWorkspace.AddOnId" xml:space="preserve">
+    <value>ID дополнения</value>
+  </data>
+  <data name="MinecraftWorkspace.Version" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="MinecraftWorkspace.Loader" xml:space="preserve">
+    <value>Загрузчик</value>
+  </data>
+  <data name="MinecraftWorkspace.ManageAddOns" xml:space="preserve">
+    <value>Отдельные дополнения</value>
+  </data>
+  <data name="MinecraftWorkspace.ImportPack" xml:space="preserve">
+    <value>Импорт / обновление сборки</value>
+  </data>
+  <data name="MinecraftWorkspace.Checks" xml:space="preserve">
+    <value>Проверки совместимости</value>
+  </data>
+  <data name="MinecraftWorkspace.Created" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="MinecraftWorkspace.Size" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="MinecraftWorkspace.Files" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="MinecraftWorkspace.Change" xml:space="preserve">
+    <value>Изменение</value>
+  </data>
+  <data name="MinecraftWorkspace.CreateBackup" xml:space="preserve">
+    <value>Создать полную копию</value>
+  </data>
+  <data name="MinecraftWorkspace.RestoreBackup" xml:space="preserve">
+    <value>Восстановить копию</value>
+  </data>
+  <data name="MinecraftWorkspace.VerifyBackup" xml:space="preserve">
+    <value>Проверить копию</value>
+  </data>
+  <data name="MinecraftWorkspace.EditSchedule" xml:space="preserve">
+    <value>Изменить расписание</value>
+  </data>
+  <data name="MinecraftWorkspace.Enabled" xml:space="preserve">
+    <value>Включено</value>
+  </data>
+  <data name="MinecraftWorkspace.Disabled" xml:space="preserve">
+    <value>Отключено</value>
+  </data>
+  <data name="MinecraftWorkspace.UndoChange" xml:space="preserve">
+    <value>Отменить / восстановить изменение</value>
+  </data>
+  <data name="MinecraftWorkspace.Area" xml:space="preserve">
+    <value>Область</value>
+  </data>
+  <data name="MinecraftWorkspace.Detail" xml:space="preserve">
+    <value>Подробности</value>
+  </data>
+  <data name="MinecraftWorkspace.Performance" xml:space="preserve">
+    <value>Ресурсы процесса</value>
+  </data>
+  <data name="MinecraftWorkspace.Online" xml:space="preserve">
+    <value>В сети</value>
+  </data>
+  <data name="MinecraftWorkspace.Logs" xml:space="preserve">
+    <value>Последние журналы</value>
+  </data>
+  <data name="MinecraftWorkspace.Apply" xml:space="preserve">
+    <value>Применить изменения</value>
+  </data>
+  <data name="MinecraftWorkspace.Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="MinecraftWorkspace.Remove" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="MinecraftWorkspace.Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="MinecraftWorkspace.Replace" xml:space="preserve">
+    <value>Заменить</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Kick" xml:space="preserve">
+    <value>Исключить</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Allow" xml:space="preserve">
+    <value>Добавить в белый список</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Disallow" xml:space="preserve">
+    <value>Удалить из белого списка</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Operator" xml:space="preserve">
+    <value>Выдать права оператора</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Deop" xml:space="preserve">
+    <value>Забрать права оператора</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Ban" xml:space="preserve">
+    <value>Заблокировать (Java)</value>
+  </data>
+  <data name="MinecraftWorkspace.PlayerAction.Pardon" xml:space="preserve">
+    <value>Разблокировать (Java)</value>
+  </data>
+  <data name="UniversalMods.Wizard.Button" xml:space="preserve">
+    <value>Импорт ZIP / папки</value>
+  </data>
+  <data name="ModSupport.Title" xml:space="preserve">
+    <value>Поддержка и настройка модов</value>
+  </data>
+  <data name="Language.PreviewNotice" xml:space="preserve">
+    <value>Предварительный перевод основных элементов. Часть текстов остаётся на английском.</value>
+  </data>
+  <data name="Text.8736DCB51A77046719F5" xml:space="preserve">
+    <value>Открывать консоль при запуске сервера. Отключите для работы серверов в фоновом режиме.</value>
+  </data>
+  <data name="Text.A03EE332F98F4733802C" xml:space="preserve">
+    <value>Переключение панели Synix между светлой и тёмной темами.</value>
+  </data>
+  <data name="Text.A8142050CBD33EE95F3F" xml:space="preserve">
+    <value>Полная или ограниченная скорость при установке, обновлении, восстановлении и проверке серверов.</value>
+  </data>
+  <data name="Text.1C310A469AD1721A3E91" xml:space="preserve">
+    <value>Контроль и управление всеми игровыми серверами в одном месте.</value>
+  </data>
+  <data name="SettingsPage.General.Subtitle" xml:space="preserve">
+    <value>Настройте основное поведение Synix на этом компьютере.</value>
+  </data>
+  <data name="ServerSetup.Page.General.Description" xml:space="preserve">
+    <value>Выберите игру и задайте данные сервера.</value>
+  </data>
+  <data name="ServerSetup.Page.Security.Description" xml:space="preserve">
+    <value>Управление паролями сервера и данными онлайн-сервисов.</value>
+  </data>
+</root>
+

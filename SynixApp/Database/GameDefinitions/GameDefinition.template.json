@@ -8,6 +8,7 @@
   "appId": "000000",
   "requiresSteamLogin": false,
   "steamAppConfig": "",
+  "steamBranch": "",
   "executable": "Server.exe",
   "downloadUrl": "",
   "arguments": "-port {port} -queryport {query} -maxplayers {MaxPlayers}",
