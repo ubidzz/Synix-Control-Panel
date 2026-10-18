@@ -15,6 +15,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+using System.Globalization;
+using Synix_Control_Panel.SynixApp.Localization;
 
 namespace Synix_Control_Panel.SynixApp.UI.Help
 {
@@ -57,6 +59,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		private Dictionary<string, HelpItem> _helpData =
 			new(StringComparer.OrdinalIgnoreCase);
 		private int _visibleArticleCount;
+		private bool _arrangingTranslatedText;
 
 		public HelpGUI()
 		{
@@ -76,9 +79,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				txtSearch.Handle,
 				EmSetCueBanner,
 				IntPtr.Zero,
-				"Search topics, guides, or answers...");
+				LocalizationManager.GetContent("Search topics, guides, or answers..."));
 
-			btnDonateAction.Text = "Open PayPal Donation";
+			btnDonateAction.Text = LocalizationManager.GetContent("Open PayPal Donation");
 			btnDonateAction.UseAccentStyle = true;
 			btnDonateAction.Size = new Size(176, 38);
 
@@ -92,7 +95,84 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				});
 			};
 			qrCard.Controls.Add(btnDonateAction);
+			SizeChanged += (_, _) => ArrangeTranslatedText();
+			articleHeader.SizeChanged += (_, _) => ArrangeTranslatedText();
+			sidebarPanel.SizeChanged += (_, _) => ArrangeTranslatedText();
+			lblFooterHint.Anchor = lblFooterStatus.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			foreach (Label label in new[] { lblTopicTitle, lblTopicCategory, lblArticleBadge,
+				lblSidebarTitle, lblSidebarDescription, lblSearchHint, lblArticleCount,
+				lblContentDescription, lblFooterHint, lblFooterStatus })
+				label.TextChanged += (_, _) => ArrangeTranslatedText();
+			ArrangeTranslatedText();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) => LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
 		}
+
+		// Translations can need more lines than the English designer sample. Keep
+		// the complete heading visible and let the article body retain scrolling.
+		private void ArrangeTranslatedText()
+		{
+			if (_arrangingTranslatedText || IsDisposed) return;
+			_arrangingTranslatedText = true;
+			try
+			{
+				int Px(int value) => (int)Math.Round(value * DeviceDpi / 96f);
+				int Wrap(Label label, int width)
+				{
+					label.AutoSize = false;
+					label.UseMnemonic = false;
+					label.Width = Math.Max(Px(40), width);
+					label.Height = TextRenderer.MeasureText(label.Text, label.Font,
+						new Size(label.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height + Px(2);
+					return label.Height;
+				}
+
+				Wrap(lblSidebarTitle, sidebarPanel.ClientSize.Width - Px(40));
+				lblSidebarDescription.Top = lblSidebarTitle.Bottom + Px(4);
+				Wrap(lblSidebarDescription, sidebarPanel.ClientSize.Width - Px(40));
+				searchCard.Top = lblSidebarDescription.Bottom + Px(10);
+				Wrap(lblSearchHint, sidebarPanel.ClientSize.Width - Px(40));
+				lblSearchHint.Top = sidebarPanel.ClientSize.Height - lblSearchHint.Height - Px(8);
+				Wrap(lblArticleCount, sidebarPanel.ClientSize.Width - Px(40));
+				lblArticleCount.Top = lblSearchHint.Top - lblArticleCount.Height - Px(6);
+				sidebarFooterBorder.Top = lblArticleCount.Top - Px(10);
+				treeNavigation.Top = searchCard.Bottom + Px(15);
+				treeNavigation.Height = Math.Max(Px(60), sidebarFooterBorder.Top - treeNavigation.Top - Px(12));
+
+				Wrap(lblContentDescription, contentHeader.ClientSize.Width - Px(64));
+				contentLayout.RowStyles[0].Height = Math.Max(Px(116), lblContentDescription.Bottom + Px(15));
+				lblArticleBadge.Width = Math.Max(Px(88), TextRenderer.MeasureText(lblArticleBadge.Text, lblArticleBadge.Font).Width + Px(16));
+				lblArticleBadge.Left = articleHeader.ClientSize.Width - lblArticleBadge.Width - Px(24);
+				Wrap(lblTopicCategory, lblArticleBadge.Left - lblTopicCategory.Left - Px(12));
+				lblTopicTitle.Top = Math.Max(Px(40), lblTopicCategory.Bottom + Px(7));
+				lblTopicTitle.AutoEllipsis = false;
+				Wrap(lblTopicTitle, articleHeader.ClientSize.Width - Px(44));
+				articleLayout.RowStyles[0].Height = Math.Max(Px(100), lblTopicTitle.Bottom + Px(16));
+
+				Wrap(lblFooterHint, contentFooter.ClientSize.Width - Px(64));
+				Wrap(lblFooterStatus, contentFooter.ClientSize.Width - Px(64));
+				lblFooterHint.Location = new Point(Px(32), Px(8));
+				lblFooterStatus.Location = new Point(Px(32), lblFooterHint.Bottom + Px(3));
+				contentLayout.RowStyles[2].Height = Math.Max(Px(58), lblFooterStatus.Bottom + Px(8));
+			}
+			finally { _arrangingTranslatedText = false; }
+		}
+
+		private void InterfaceLanguageChanged(object? sender, EventArgs e)
+		{
+			if (IsDisposed) return;
+			if (InvokeRequired) { BeginInvoke(() => InterfaceLanguageChanged(sender, e)); return; }
+			LocalizationManager.Apply(this);
+			_ = SendMessageText(txtSearch.Handle, EmSetCueBanner, IntPtr.Zero,
+				LocalizationManager.GetContent("Search topics, guides, or answers..."));
+			PopulateTree(txtSearch.Text);
+			if (treeNavigation.SelectedNode?.Tag is string topic && _helpData.TryGetValue(topic, out var item))
+				ShowTopic(topic, item);
+			ArrangeTranslatedText();
+		}
+
+		internal static string LocalizedTitle(string title) => LocalizationManager.GetContent(title);
+		internal static string LocalizedAnswer(HelpItem item) => LocalizationManager.GetContent(item.Answer);
 
 		private void InitializeData()
 		{
@@ -100,7 +180,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		}
 
 		internal const string WelcomeText = """
-			Choose a topic on the left to read its instructions. All help articles work offline and remain in English.
+			Choose a topic on the left to read its instructions. All help articles work offline in your selected interface language.
 
 			NEW TO SYNIX?
 			Open First-Time Setup Guide in Getting Started & Setup.
@@ -115,7 +195,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			""";
 
 		// Author one task-focused guide per topic; do not append external documentation.
-		// Keep help offline, in English, and independent of Synix release numbers.
+		// Keep the English source invariant; presentation uses compiled translations.
+		// Keep help offline and independent of Synix release numbers.
 		// Game syntax stays exact. Only actionable download/support links belong here.
 		// Build without a form so content and navigation can be tested together.
 		internal static Dictionary<string, HelpItem> CreateHelpArticles()
@@ -399,7 +480,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					Other pages contain backup locations and transfers, privacy/security options, problem reporting, and advanced/background settings. You do not need to enable advanced options to create a normal server.
 
 					LANGUAGE BEHAVIOR
-					Choose from the languages offered in the selector. Help articles and technical text logs/support reports intentionally remain in English. An unavailable translation can fall back to English.
+					Choose from the languages offered in the selector. Synix controls, help articles, and app-generated messages use the selected language. Game commands, configuration values, and original server output are not translated. Technical log files retain their original diagnostic wording.
 
 					Game-facing text is not translated: commands, configuration keys and values, map names, modes, filenames, launch arguments, identifiers, and output-recognition text must remain in the form the game expects.
 
@@ -1330,7 +1411,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					• Localization: Interface catalogs and generators.
 					• Tests: Feature-focused checks.
 
-					For translations, update user-facing resources together and preserve placeholders. Do not translate commands, keys, tokens, or output-recognition markers. Help and technical reports remain English.
+					For translations, update every language catalog together and preserve placeholders. Include help articles, diagnostics, accessibility text, and game-support descriptions. Do not translate commands, keys, tokens, user values, or output-recognition markers. Original diagnostic records remain unchanged.
 
 					Read the License & Proprietary Terms before redistributing code or builds. Keep real credentials and private logs out of contributions and fixtures.
 					"""),
@@ -1499,10 +1580,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				foreach ((string categoryKey, string displayName, string index)
 					in CategoryDefinitions)
 				{
-					TreeNode categoryNode = new(displayName)
+					TreeNode categoryNode = new(LocalizationManager.GetContent(displayName))
 					{
 						Name = categoryKey,
-						ToolTipText = displayName
+						ToolTipText = LocalizationManager.GetContent(displayName)
 					};
 
 					foreach (KeyValuePair<string, HelpItem> entry in _helpData)
@@ -1516,10 +1597,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 							continue;
 						}
 
-						TreeNode topicNode = new(CreateNavigationCaption(entry.Key))
+						TreeNode topicNode = new(CreateNavigationCaption(LocalizedTitle(entry.Key)))
 						{
 							Tag = entry.Key,
-							ToolTipText = entry.Key
+							ToolTipText = LocalizedTitle(entry.Key)
 						};
 						categoryNode.Nodes.Add(topicNode);
 						firstTopicNode ??= topicNode;
@@ -1577,6 +1658,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			string filter)
 		{
 			return string.IsNullOrEmpty(filter) ||
+				LocalizedTitle(entry.Key).Contains(filter, StringComparison.CurrentCultureIgnoreCase) ||
+				LocalizedAnswer(entry.Value).Contains(filter, StringComparison.CurrentCultureIgnoreCase) ||
 				entry.Key.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
 				entry.Value.Answer.Contains(filter, StringComparison.OrdinalIgnoreCase);
 		}
@@ -1584,45 +1667,45 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		private static string CreateNavigationCaption(string topicTitle)
 		{
 			const int MaximumCaptionLength = 34;
-			return topicTitle.Length <= MaximumCaptionLength
+			StringInfo elements = new(topicTitle);
+			return elements.LengthInTextElements <= MaximumCaptionLength
 				? topicTitle
-				: topicTitle[..(MaximumCaptionLength - 1)] + "…";
+				: elements.SubstringByTextElements(0, MaximumCaptionLength - 1) + "…";
 		}
 
 		private void UpdateSearchStatus(string filter)
 		{
 			lblArticleCount.Text = string.IsNullOrEmpty(filter)
-				? $"{_visibleArticleCount} help articles"
-				: $"{_visibleArticleCount} matching article" +
-					(_visibleArticleCount == 1 ? string.Empty : "s");
+				? LocalizationManager.FormatContent("{0} help articles", _visibleArticleCount)
+				: LocalizationManager.FormatContent(_visibleArticleCount == 1
+					? "{0} matching article" : "{0} matching articles", _visibleArticleCount);
 			lblFooterStatus.Text = string.IsNullOrEmpty(filter)
-				? "KNOWLEDGE BASE READY"
-				: $"{_visibleArticleCount} SEARCH RESULT" +
-					(_visibleArticleCount == 1 ? string.Empty : "S");
+				? LocalizationManager.GetContent("KNOWLEDGE BASE READY")
+				: LocalizationManager.FormatContent("SEARCH RESULTS: {0}", _visibleArticleCount);
 			btnClearSearch.Visible = txtSearch.TextLength > 0;
 		}
 
 		private void ShowWelcome()
 		{
 			qrCard.Visible = false;
-			lblTopicCategory.Text = "SYNIX KNOWLEDGE BASE";
-			lblTopicTitle.Text = "How can we help?";
-			lblArticleBadge.Text = "WELCOME";
-			lblAnswer.Text = WelcomeText;
+			lblTopicCategory.Text = LocalizationManager.GetContent("SYNIX KNOWLEDGE BASE");
+			lblTopicTitle.Text = LocalizationManager.GetContent("How can we help?");
+			lblArticleBadge.Text = LocalizationManager.GetContent("WELCOME");
+			lblAnswer.Text = LocalizationManager.GetContent(WelcomeText);
 			ResetAnswerScroll();
 		}
 
 		private void ShowNoResults(string filter)
 		{
 			qrCard.Visible = false;
-			lblTopicCategory.Text = "SEARCH";
-			lblTopicTitle.Text = "No matching help articles";
-			lblArticleBadge.Text = "NO RESULTS";
+			lblTopicCategory.Text = LocalizationManager.GetContent("SEARCH");
+			lblTopicTitle.Text = LocalizationManager.GetContent("No matching help articles");
+			lblArticleBadge.Text = LocalizationManager.GetContent("NO RESULTS");
 			lblAnswer.Text = string.IsNullOrWhiteSpace(filter)
-				? "No help articles are currently available."
-				: $"Synix could not find a topic containing \"{filter}\".\n\n" +
+				? LocalizationManager.GetContent("No help articles are currently available.")
+				: LocalizationManager.FormatContent("Synix could not find a topic containing \"{0}\".\n\n" +
 					"Try a shorter phrase or search for a related term such as " +
-					"Satisfactory, token, Minecraft, import, transfer, backup, ports, or SteamCMD.";
+					"Satisfactory, token, Minecraft, import, transfer, backup, ports, or SteamCMD.", filter);
 			ResetAnswerScroll();
 		}
 
@@ -1639,9 +1722,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 
 			lblTopicCategory.Text =
 				GetCategoryDisplayName(item.Category).ToUpperInvariant();
-			lblTopicTitle.Text = topicKey;
-			lblArticleBadge.Text = isDonationTopic ? "SUPPORT" : "ARTICLE";
-			lblAnswer.Text = item.Answer;
+			lblTopicTitle.Text = LocalizedTitle(topicKey);
+			lblArticleBadge.Text = LocalizationManager.GetContent(isDonationTopic ? "SUPPORT" : "ARTICLE");
+			lblAnswer.Text = LocalizedAnswer(item);
 			qrCard.Visible = isDonationTopic;
 			btnDonateAction.Visible = isDonationTopic;
 			if (isDonationTopic)
@@ -1650,7 +1733,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				btnDonateAction.BringToFront();
 			}
 
-			lblFooterStatus.Text = "VIEWING HELP ARTICLE";
+			lblFooterStatus.Text = LocalizationManager.GetContent("VIEWING HELP ARTICLE");
 			ResetAnswerScroll();
 			RevealAnswerText(txtSearch.Text.Trim());
 		}
@@ -1686,11 +1769,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					categoryKey,
 					StringComparison.OrdinalIgnoreCase))
 				{
-					return displayName;
+					return LocalizationManager.GetContent(displayName);
 				}
 			}
 
-			return "Help & Support";
+			return LocalizationManager.GetContent("Help & Support");
 		}
 
 		private static string GetCategoryIndex(string categoryKey)
@@ -1792,7 +1875,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				rowBounds.Top,
 				Math.Max(0, rowBounds.Width - 44),
 				rowBounds.Height);
-			string topicTitle = node.Tag as string ?? node.Text;
+			string topicTitle = node.Tag is string key ? LocalizedTitle(key) : node.Text;
 			TextRenderer.DrawText(
 				graphics,
 				topicTitle,
@@ -1912,7 +1995,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 						linkUri.Scheme != Uri.UriSchemeHttps))
 				{
 					throw new InvalidOperationException(
-						"Only web links can be opened from the help center.");
+						LocalizationManager.GetContent("Only web links can be opened from the help center."));
 				}
 
 
@@ -1924,10 +2007,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(
+				LocalizedMessageBox.Show(
 					this,
-					"Could not launch external web link: " + ex.Message,
-					"Synix Link Error",
+					LocalizationManager.FormatContent("Could not launch external web link: {0}", ex.Message),
+					LocalizationManager.GetContent("Synix Link Error"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 			}

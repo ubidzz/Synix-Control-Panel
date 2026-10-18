@@ -210,7 +210,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			LocalizationManager.BindText(lblDescriptionLanguage,
 				selected?.IsPreview == true
 					? "Language.PreviewNotice"
-					: "Text.30F3BBCB43AC48EBFD1C");
+					: "Language.Description");
 		}
 
 		private static void SelectOption(

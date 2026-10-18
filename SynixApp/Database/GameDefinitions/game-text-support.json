@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Game-by-game online searches for all 220 built-in definitions on 2026-10-17. Evidence is field-specific. Unverified means the search did not establish international-character support, not that support is absent. No live game/client authentication certification. Authentication tokens, player usernames, directory names and third-party plugins have separate rules. An untranslated evidence note is intentional; UI labels are localized.",
+  "scope": "Game-by-game online searches for all 220 built-in definitions on 2026-10-17. Evidence is field-specific. Unverified means the search did not establish international-character support, not that support is absent. No live game/client authentication certification. Authentication tokens, player usernames, directory names and third-party plugins have separate rules. Evidence notes retain their English source here and use compiled translations when displayed.",
   "entries": [
     {
       "gameId": "7-days-to-die",

@@ -24,7 +24,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 	{
 		private const int WmNcLButtonDown = 0x00A1;
 		private const int HtCaption = 0x0002;
-		private GameServer _server;
+		private readonly GameServer _server;
+		private bool _arrangingTranslatedText;
 
 		private static readonly Dictionary<string, string> _messages = new()
 		{
@@ -1016,38 +1017,91 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			ThemeManager.Apply(this);
 			headerGlyph.ForeColor = SettingsPalette.Warning;
 			_server = server;
+			SizeChanged += (_, _) => ArrangeTranslatedText();
+			headerPanel.SizeChanged += (_, _) => ArrangeTranslatedText();
+			warningCard.SizeChanged += (_, _) => ArrangeTranslatedText();
+			actionPanel.SizeChanged += (_, _) => ArrangeTranslatedText();
+			RefreshGuidance();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) => LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
+		}
+
+		private void InterfaceLanguageChanged(object? sender, EventArgs e)
+		{
+			if (IsDisposed) return;
+			if (InvokeRequired) { BeginInvoke(() => InterfaceLanguageChanged(sender, e)); return; }
+			LocalizationManager.Apply(this);
+			RefreshGuidance();
+		}
+
+		private void RefreshGuidance()
+		{
+			GameServer server = _server;
 
 			SafetyChecklistReport safetyReport = UserGuidance.BuildSafetyChecklist(server);
 			string warningText = BuildAssistantText(server, safetyReport);
 			txtWarningText.Text = warningText;
-			lblGameName.Text = server.Game;
-			lblWindowTitle.Text = "First-Start Assistant";
-			lblInstructionHeading.Text = "Automatic safety checklist and next steps";
-			lblActionHint.Text = safetyReport.CanContinue
+			LocalizationManager.SetDataText(lblGameName, server.Game);
+			lblWindowTitle.Text = LocalizationManager.GetContent("First-Start Assistant");
+			lblInstructionHeading.Text = LocalizationManager.GetContent("Automatic safety checklist and next steps");
+			lblActionHint.Text = LocalizationManager.GetContent(safetyReport.CanContinue
 				? "Synix will keep checking the server automatically while it starts."
-				: "Fix the blocked checklist item before continuing.";
+				: "Fix the blocked checklist item before continuing.");
 			btnStart.Enabled = safetyReport.CanContinue;
 
 			GameInfo? game = GameDatabase.GetGame(server.Game);
 			if (game?.RequiredLaunchFiles.Length > 0)
 			{
-				lblWarningTitle.Text = "Additional files are required";
-				lblWarningSubtitle.Text = "Complete the required file setup before the dedicated server can start.";
-				btnStart.Text = "I Understand";
+				lblWarningTitle.Text = LocalizationManager.GetContent("Additional files are required");
+				lblWarningSubtitle.Text = LocalizationManager.GetContent("Complete the required file setup before the dedicated server can start.");
+				btnStart.Text = LocalizationManager.GetContent("I Understand");
 			}
 			else if (server.Game.StartsWith("Minecraft", StringComparison.OrdinalIgnoreCase))
 			{
-				lblWarningTitle.Text = "Agreement required";
-				lblWarningSubtitle.Text = "Review the license terms before allowing the first server launch.";
-				btnStart.Text = "I Agree";
-				btnNo.Text = "Decline";
+				lblWarningTitle.Text = LocalizationManager.GetContent("Agreement required");
+				lblWarningSubtitle.Text = LocalizationManager.GetContent("Review the license terms before allowing the first server launch.");
+				btnStart.Text = LocalizationManager.GetContent("I Agree");
+				btnNo.Text = LocalizationManager.GetContent("Decline");
 			}
 			else
 			{
-				lblWarningTitle.Text = "Ready for the first start";
-				lblWarningSubtitle.Text = $"Setup is {safetyReport.CompletionPercentage}% complete. Review the automatic checks before continuing.";
-				btnStart.Text = "Start Server";
+				lblWarningTitle.Text = LocalizationManager.GetContent("Ready for the first start");
+				lblWarningSubtitle.Text = LocalizationManager.FormatContent("Setup is {0}% complete. Review the automatic checks before continuing.", safetyReport.CompletionPercentage);
+				btnStart.Text = LocalizationManager.GetContent("Start Server");
 			}
+			ArrangeTranslatedText();
+		}
+
+		private void ArrangeTranslatedText()
+		{
+			if (_arrangingTranslatedText || IsDisposed) return;
+			_arrangingTranslatedText = true;
+			try
+			{
+				int Px(int value) => (int)Math.Round(value * DeviceDpi / 96f);
+				void Wrap(Label label, int width)
+				{
+					label.AutoSize = false;
+					label.AutoEllipsis = false;
+					label.UseMnemonic = false;
+					label.Width = Math.Max(Px(40), width);
+					label.Height = TextRenderer.MeasureText(label.Text, label.Font,
+						new Size(label.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height + Px(2);
+				}
+				Wrap(lblWarningTitle, lblGameName.Left - lblWarningTitle.Left - Px(12));
+				lblWarningSubtitle.Top = lblWarningTitle.Bottom + Px(6);
+				Wrap(lblWarningSubtitle, headerPanel.ClientSize.Width - lblWarningSubtitle.Left - Px(8));
+				bodyLayout.RowStyles[0].Height = Math.Max(Px(92), lblWarningSubtitle.Bottom + Px(12));
+				Wrap(lblInstructionHeading, warningCard.ClientSize.Width - Px(44));
+				txtWarningText.Top = lblInstructionHeading.Bottom + Px(12);
+				txtWarningText.Height = Math.Max(Px(40), warningCard.ClientSize.Height - txtWarningText.Top - Px(22));
+				lblActionHint.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+				lblActionHint.Location = Point.Empty;
+				Wrap(lblActionHint, actionPanel.ClientSize.Width);
+				btnNo.Top = btnStart.Top = lblActionHint.Bottom + Px(10);
+				bodyLayout.RowStyles[2].Height = Math.Max(Px(74), btnStart.Bottom + Px(8));
+			}
+			finally { _arrangingTranslatedText = false; }
 		}
 
 		internal static string BuildAssistantText(
@@ -1058,9 +1112,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			ConfigurationSupportPresentation support =
 				UserGuidance.GetConfigurationSupport(GameDatabase.GetGame(server.Game));
 			StringBuilder builder = new();
-			builder.AppendLine($"SETUP COMPLETION: {report.CompletionPercentage}%");
+			builder.AppendLine(LocalizationManager.FormatContent("SETUP COMPLETION: {0}%", report.CompletionPercentage));
 			builder.AppendLine();
-			builder.AppendLine("AUTOMATIC SAFETY CHECKLIST");
+			builder.AppendLine(LocalizationManager.GetContent("AUTOMATIC SAFETY CHECKLIST"));
 			foreach (SafetyCheckItem item in report.Items)
 			{
 				string status = item.Level switch
@@ -1069,17 +1123,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					SafetyCheckLevel.Review => "REVIEW",
 					_ => "BLOCKED"
 				};
-				builder.AppendLine($"[{status}] {item.Name}: {item.Details}");
+				builder.AppendLine($"[{LocalizationManager.GetContent(status)}] {item.Name}: {item.Details}");
 			}
 			builder.AppendLine();
-			builder.AppendLine($"CONFIGURATION SUPPORT: {support.Status}");
+			builder.AppendLine(LocalizationManager.FormatContent("CONFIGURATION SUPPORT: {0}", support.Status));
 			builder.AppendLine(support.Summary);
 			builder.AppendLine();
-			builder.AppendLine("CONNECTION INFORMATION");
-			builder.AppendLine($"Game port: {server.Port}. {UserGuidance.GetPortSummary(server)}");
-			builder.AppendLine("After the server starts, use Server Options > Connection Information to copy the correct home-network or internet address.");
+			builder.AppendLine(LocalizationManager.GetContent("CONNECTION INFORMATION"));
+			builder.AppendLine(LocalizationManager.FormatContent("Game port: {0}. {1}", server.Port, UserGuidance.GetPortSummary(server)));
+			builder.AppendLine(LocalizationManager.GetContent("After the server starts, use Server Options > Connection Information to copy the correct home-network or internet address."));
 			builder.AppendLine();
-			builder.AppendLine("GAME-SPECIFIC FIRST-START INFORMATION");
+			builder.AppendLine(LocalizationManager.GetContent("GAME-SPECIFIC FIRST-START INFORMATION"));
 			builder.AppendLine(GetWarningText(server));
 			return builder.ToString().Trim();
 		}
@@ -1091,28 +1145,28 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			{
 				string requiredFiles = string.Join(", ", game.RequiredLaunchFiles);
 				return
-					"ADDITIONAL SETUP FILES REQUIRED:\n\n" +
-					$"This dedicated server needs {requiredFiles}. These files must be created or exported by the game or its official setup tool before the server can start.\n\n" +
-					game.LaunchFileSetupInstructions + "\n\n" +
-					"If the files were created on another computer, copy them into this Synix server folder before starting it.";
+					LocalizationManager.GetContent("ADDITIONAL SETUP FILES REQUIRED:") + "\n\n" +
+					LocalizationManager.FormatContent("This dedicated server needs {0}. These files must be created or exported by the game or its official setup tool before the server can start.", requiredFiles) + "\n\n" +
+					LocalizationManager.GetContent(game.LaunchFileSetupInstructions) + "\n\n" +
+					LocalizationManager.GetContent("If the files were created on another computer, copy them into this Synix server folder before starting it.");
 			}
 
 			if (_messages.TryGetValue(server.Game, out string? customMessage))
 			{
-				return customMessage;
+				return LocalizationManager.GetContent(customMessage);
 			}
 
 			if (game?.NeedsConfigWarning == true &&
 				!string.IsNullOrWhiteSpace(game.WarningMessage))
 			{
-				return game.WarningMessage;
+				return LocalizationManager.GetContent(game.WarningMessage);
 			}
 
-			return
+			return LocalizationManager.GetContent(
 				"Configuration required before the first launch.\n\n" +
 				"1. If the configuration file is missing, the server may need to run once to create it.\n\n" +
 				"2. Shut down the server, then use Server Options > Edit Config File.\n\n" +
-				"3. Some games use their own server manager to complete setup.";
+				"3. Some games use their own server manager to complete setup.");
 		}
 
 		private void TxtWarningText_LinkClicked(object? sender, LinkClickedEventArgs eventArgs)
@@ -1130,7 +1184,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			}
 			catch (Exception exception)
 			{
-				PlainEnglishErrorDialog.ShowError(this, "open the help link", exception.Message);
+				PlainEnglishErrorDialog.ShowError(this, LocalizationManager.GetContent("open the help link"), exception.Message);
 			}
 		}
 
@@ -1144,7 +1198,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				}
 				catch (Exception ex)
 				{
-					PlainEnglishErrorDialog.ShowError(this, "prepare the Minecraft agreement", ex.Message);
+					PlainEnglishErrorDialog.ShowError(this, LocalizationManager.GetContent("prepare the Minecraft agreement"), ex.Message);
 					return;
 				}
 			}
@@ -1159,7 +1213,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			}
 			catch (Exception ex)
 			{
-				PlainEnglishErrorDialog.ShowError(this, "save the first-start setup", ex.Message);
+				PlainEnglishErrorDialog.ShowError(this, LocalizationManager.GetContent("save the first-start setup"), ex.Message);
 			}
 		}
 

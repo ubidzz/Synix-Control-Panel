@@ -59,7 +59,7 @@ public sealed class HelpContentTests
 	[InlineData("fr-FR")]
 	[InlineData("de-DE")]
 	[InlineData("es-ES")]
-	public void Catalog_RemainsEnglishForEveryInterfaceCulture(string cultureName)
+	public void InvariantSourceCatalogAndStableNavigationIdsDoNotChangeWithCulture(string cultureName)
 	{
 		Dictionary<string, HelpItem> baseline = HelpGUI.CreateHelpArticles();
 		CultureInfo originalCulture = CultureInfo.CurrentCulture;

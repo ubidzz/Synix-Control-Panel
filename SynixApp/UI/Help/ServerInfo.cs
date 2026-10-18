@@ -13,6 +13,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Globalization;
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.ServerHandler;
@@ -76,6 +77,22 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			UpdateStatusPresentation(_server.Status);
 			UpdatePerformanceDisplay(0, 0);
 			InitializeMetricsEngine();
+			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;
+			Disposed += (_, _) => LocalizationManager.LanguageChanged -= InterfaceLanguageChanged;
+		}
+
+		private void InterfaceLanguageChanged(object? sender, EventArgs e)
+		{
+			if (IsDisposed) return;
+			LoadServerData();
+			UpdateStatusPresentation(_server.Status);
+		}
+
+		private static void ShowServerValue(Control control, string? value, string fallback = "N/A")
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				LocalizationManager.BindText(control, LocalizationManager.ContentKey(fallback));
+			else LocalizationManager.SetDataText(control, value);
 		}
 
 		protected override void OnHandleCreated(EventArgs eventArgs)
@@ -161,10 +178,10 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				? discordRoutes.Count(route => route.Enabled)
 				: 0;
 
-			lblPageHeading.Text = DisplayOrFallback(_server.ServerName, "Server Overview");
-			lblPageSubtitle.Text =
-				$"{DisplayOrFallback(_server.Game, "Dedicated server")}  •  " +
-				$"{compatibility.DisplayName}  •  Live performance and configuration details";
+			ShowServerValue(lblPageHeading, _server.ServerName, "Server Overview");
+			lblPageSubtitle.Text = LocalizationManager.FormatContent(
+				"{0}  •  {1}  •  Live performance and configuration details",
+				DisplayOrFallback(_server.Game, "Dedicated server"), compatibility.DisplayName);
 
 			SetStatusColor(lblRconActiveText, _server.EnableRcon);
 			SetStatusColor(lblBackupOnStartText, _server.BackupOnStart);
@@ -178,24 +195,21 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblQueryPortText.Text = _server.QueryPort.ToString();
 			lblRconPortText.Text = _server.RconPort.ToString();
 			lblAppPortText.Text = _server.AppPort?.ToString() ?? "N/A";
-			lblServerNameText.Text = DisplayOrFallback(_server.ServerName);
-			lblGameServerText.Text = DisplayOrFallback(_server.DisplayGameName);
-			lblMapText.Text = DisplayOrFallback(_server.WorldName, "Not Required");
-			lblSeedText.Text = DisplayOrFallback(_server.WorldSeed, "Not Required");
-			lblCompetitiveText.Text = DisplayOrFallback(
+			ShowServerValue(lblServerNameText, _server.ServerName);
+			ShowServerValue(lblGameServerText, _server.DisplayGameName);
+			ShowServerValue(lblMapText, _server.WorldName, "Not Required");
+			ShowServerValue(lblSeedText, _server.WorldSeed, "Not Required");
+			ShowServerValue(lblCompetitiveText,
 				GameDatabase.IsMinecraft(_server.Game)
 					? MinecraftControlProfile.NormalizeGameMode(_server.GameMode)
 					: _server.GameMode,
 				"Not Required");
-			lblRconPasswordText.Text = secretsAvailable
-				? DisplayOrFallback(passwords.RconPassword, "Not Required")
-				: "Password unavailable";
-			lblServerPasswordText.Text = secretsAvailable
-				? DisplayOrFallback(passwords.ServerPassword, "Not Required")
-				: "Password unavailable";
-			lblServerAdminPasswordText.Text = secretsAvailable
-				? DisplayOrFallback(passwords.AdminPassword, "Not Required")
-				: "Password unavailable";
+			ShowServerValue(lblRconPasswordText, secretsAvailable ? passwords.RconPassword : null,
+				secretsAvailable ? "Not Required" : "Password unavailable");
+			ShowServerValue(lblServerPasswordText, secretsAvailable ? passwords.ServerPassword : null,
+				secretsAvailable ? "Not Required" : "Password unavailable");
+			ShowServerValue(lblServerAdminPasswordText, secretsAvailable ? passwords.AdminPassword : null,
+				secretsAvailable ? "Not Required" : "Password unavailable");
 			lblAutoRestartText.Text = GetActiveDays(_server.RestartDays);
 			lblGameVersion.Text = GameDatabase.IsMinecraft(_server.Game)
 				? $"{MinecraftControlProfile.NormalizeEdition(_server.MinecraftEdition)} • " +
@@ -211,17 +225,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 
 		private static string DisplayOrFallback(string? value, string fallback = "N/A")
 		{
-			return string.IsNullOrWhiteSpace(value) ? fallback : value;
+			return string.IsNullOrWhiteSpace(value) ? LocalizationManager.GetContent(fallback) : value;
 		}
 
 		private static string GetActiveDays(bool[]? days)
 		{
 			if (days == null || days.Length < 7)
 			{
-				return "No Days Scheduled";
+				return LocalizationManager.GetContent("No Days Scheduled");
 			}
 
-			string[] names = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+			string[] names = CultureInfo.GetCultureInfo(LocalizationManager.CurrentLanguageCode).DateTimeFormat.AbbreviatedDayNames;
 			List<string> active = new();
 
 			for (int index = 0; index < 7; index++)
@@ -234,12 +248,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 
 			return active.Count > 0
 				? string.Join(", ", active)
-				: "No Days Scheduled";
+				: LocalizationManager.GetContent("No Days Scheduled");
 		}
 
 		private static void SetStatusColor(Label label, bool isActive)
 		{
-			label.Text = isActive ? "On" : "Off";
+			label.Text = LocalizationManager.GetContent(isActive ? "On" : "Off");
 			label.ForeColor = isActive ? SuccessColor : DangerColor;
 		}
 
@@ -357,9 +371,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		{
 			_currentCpuPercentage = Math.Clamp(cpuPercentage, 0, 100);
 			lblCpuCardValue.Text = $"{_currentCpuPercentage:0.0}%";
-			lblCpuCaption.Text = _serverProcess != null
+			lblCpuCaption.Text = LocalizationManager.GetContent(_serverProcess != null
 				? "Live CPU usage  •  Updates twice per second"
-				: "Waiting for a running server process";
+				: "Waiting for a running server process");
 
 			double totalRam = Core.TotalRamGb > 0
 				? Core.TotalRamGb
@@ -371,7 +385,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 
 			_currentRamPercentage = Math.Clamp(ramGb / totalRam * 100.0, 0, 100);
 			lblRamCardValue.Text = $"{ramGb:0.00} GB";
-			lblRamCaption.Text = $"{_currentRamPercentage:0.0}% of {totalRam:0.#} GB system memory";
+			lblRamCaption.Text = LocalizationManager.FormatContent("{0:0.0}% of {1:0.#} GB system memory", _currentRamPercentage, totalRam);
 			lblProcessIdValue.Text = _server.PID.HasValue && _server.PID.Value > 0 ? _server.PID.Value.ToString() : "—";
 
 			UpdateMetricBar(pnlCpuTrack, pnlCpuFill, _currentCpuPercentage);
@@ -403,7 +417,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			{
 				displayedStatus = busyState;
 				statusColor = BusyColor;
-				lblStatusCaption.Text = "A server operation is currently in progress";
+				lblStatusCaption.Text = LocalizationManager.GetContent("A server operation is currently in progress");
 				_busyStatusFrame =
 					(_busyStatusFrame + 1) % BusyStatusPresentation.FrameCount;
 			}
@@ -411,20 +425,20 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			{
 				displayedStatus = "Running";
 				statusColor = SuccessColor;
-				lblStatusCaption.Text = "The game server process is online";
+				lblStatusCaption.Text = LocalizationManager.GetContent("The game server process is online");
 			}
 			else if (status.Equals("Stopped", StringComparison.OrdinalIgnoreCase) ||
 				status.Equals("Offline", StringComparison.OrdinalIgnoreCase))
 			{
 				displayedStatus = status;
 				statusColor = DangerColor;
-				lblStatusCaption.Text = "The game server process is not running";
+				lblStatusCaption.Text = LocalizationManager.GetContent("The game server process is not running");
 			}
 			else
 			{
 				displayedStatus = status;
 				statusColor = IdleColor;
-				lblStatusCaption.Text = "Current state reported by the Synix engine";
+				lblStatusCaption.Text = LocalizationManager.GetContent("Current state reported by the Synix engine");
 			}
 
 			lblStatusCardValue.Text = displayedStatus;
@@ -483,8 +497,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			{
 				LocalizedMessageBox.Show(
 					this,
-					"Synix could not unlock the saved Discord webhook information. Open Server Settings and save the webhooks again.",
-					"Discord Webhooks Unavailable",
+					LocalizationManager.GetContent("Synix could not unlock the saved Discord webhook information. Open Server Settings and save the webhooks again."),
+					LocalizationManager.GetContent("Discord Webhooks Unavailable"),
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 				return;

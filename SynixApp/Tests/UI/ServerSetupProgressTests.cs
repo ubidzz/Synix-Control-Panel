@@ -155,6 +155,12 @@ public sealed class ServerSetupProgressTests
 	[InlineData("pl-PL", "Przegląd", "Przeglądanie")]
 	[InlineData("ru-RU", "Проверка", "Проверка")]
 	[InlineData("tr-TR", "Gözden geçir", "Gözden geçiriliyor")]
+	[InlineData("nl-NL", "Controleren", "CONTROLEREN")]
+	[InlineData("sv-SE", "Granska", "GRANSKAR")]
+	[InlineData("cs-CZ", "Kontrola", "KONTROLA")]
+	[InlineData("uk-UA", "Перевірка", "ПЕРЕВІРКА")]
+	[InlineData("id-ID", "Tinjau", "MENINJAU")]
+	[InlineData("vi-VN", "Xem lại", "ĐANG XEM LẠI")]
 	public void OpenSetupUpdatesItsGuideAndReviewLanguageWithoutTranslatingValues(string language, string title, string current)
 	{
 		RunOnSta(() =>
@@ -175,6 +181,37 @@ public sealed class ServerSetupProgressTests
 			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.SaveSettings"), Find<Button>(setup, "btnSave").Text);
 			Find<Button>(setup, "btnNavGeneral").PerformClick();
 			Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), Find<Button>(setup, "btnSave").Text);
+		});
+	}
+
+	[Theory]
+	[InlineData("nl-NL")]
+	[InlineData("sv-SE")]
+	[InlineData("cs-CZ")]
+	[InlineData("uk-UA")]
+	[InlineData("id-ID")]
+	[InlineData("vi-VN")]
+	public void AdditionalLanguageNavigationFitsWithoutEllipsis(string language)
+	{
+		RunOnSta(() =>
+		{
+			LocalizationManager.Initialize(language);
+			using ServerSettingsGUI setup = CreateEcoSetup();
+			setup.Size = setup.MinimumSize;
+			ShowOffscreen(setup);
+			foreach (string name in new[]
+			{
+				"btnNavGeneral", "btnNavSecurity", "btnNavWorld", "btnNavNetwork",
+				"btnNavAutomation", "btnNavDiscord", "btnNavInstall"
+			})
+			{
+				var button = Find<ModernSettingsNavButton>(setup, name);
+				// Match the icon and text insets used by ModernSettingsNavButton.OnPaint.
+				int width = TextRenderer.MeasureText(button.Text, button.Font, Size.Empty,
+					TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix).Width;
+				Assert.True(width <= button.Width - 66,
+					$"Navigation label clips: {language} / {name} / {button.Text}");
+			}
 		});
 	}
 
@@ -437,6 +474,18 @@ public sealed class ServerSetupProgressTests
 	[InlineData("pl-PL", true, true)]
 	[InlineData("ru-RU", true, true)]
 	[InlineData("tr-TR", true, true)]
+	[InlineData("nl-NL", true, true)]
+	[InlineData("nl-NL", false, true)]
+	[InlineData("sv-SE", true, true)]
+	[InlineData("sv-SE", false, true)]
+	[InlineData("cs-CZ", true, true)]
+	[InlineData("cs-CZ", false, true)]
+	[InlineData("uk-UA", true, true)]
+	[InlineData("uk-UA", false, true)]
+	[InlineData("id-ID", true, true)]
+	[InlineData("id-ID", false, true)]
+	[InlineData("vi-VN", true, true)]
+	[InlineData("vi-VN", false, true)]
 	public void ReviewAndCheckpointTextFitInBothThemesAndAllLanguages(string language, bool darkMode, bool minimumSize)
 	{
 		RunOnSta(() =>

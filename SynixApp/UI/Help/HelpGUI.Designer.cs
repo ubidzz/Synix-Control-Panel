@@ -149,7 +149,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(96, 21);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Help Center";
+			lblWindowTitle.Text = LocalizationManager.GetContent("Help Center");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			//
 			// lblWindowSubtitle
@@ -262,7 +262,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblSidebarEyebrow.Name = "lblSidebarEyebrow";
 			lblSidebarEyebrow.Size = new Size(103, 15);
 			lblSidebarEyebrow.TabIndex = 0;
-			lblSidebarEyebrow.Text = "KNOWLEDGE BASE";
+			lblSidebarEyebrow.Text = LocalizationManager.GetContent("KNOWLEDGE BASE");
 			//
 			// lblSidebarTitle
 			//
@@ -273,7 +273,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblSidebarTitle.Name = "lblSidebarTitle";
 			lblSidebarTitle.Size = new Size(173, 32);
 			lblSidebarTitle.TabIndex = 1;
-			lblSidebarTitle.Text = "Browse topics";
+			lblSidebarTitle.Text = LocalizationManager.GetContent("Browse topics");
 			//
 			// lblSidebarDescription
 			//
@@ -283,7 +283,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblSidebarDescription.Name = "lblSidebarDescription";
 			lblSidebarDescription.Size = new Size(290, 34);
 			lblSidebarDescription.TabIndex = 2;
-			lblSidebarDescription.Text = "Search the full knowledge base or expand a category below.";
+			lblSidebarDescription.Text = LocalizationManager.GetContent("Search the full knowledge base or expand a category below.");
 			//
 			// searchCard
 			//
@@ -390,7 +390,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblArticleCount.Name = "lblArticleCount";
 			lblArticleCount.Size = new Size(89, 15);
 			lblArticleCount.TabIndex = 6;
-			lblArticleCount.Text = "0 help articles";
+			lblArticleCount.Text = LocalizationManager.GetContent("0 help articles");
 			//
 			// lblSearchHint
 			//
@@ -402,7 +402,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblSearchHint.Name = "lblSearchHint";
 			lblSearchHint.Size = new Size(164, 13);
 			lblSearchHint.TabIndex = 7;
-			lblSearchHint.Text = "Search checks titles and article text";
+			lblSearchHint.Text = LocalizationManager.GetContent("Search checks titles and article text");
 			//
 			// sidebarRightBorder
 			//
@@ -456,7 +456,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblContentEyebrow.Name = "lblContentEyebrow";
 			lblContentEyebrow.Size = new Size(94, 15);
 			lblContentEyebrow.TabIndex = 0;
-			lblContentEyebrow.Text = "HELP & SUPPORT";
+			lblContentEyebrow.Text = LocalizationManager.GetContent("HELP & SUPPORT");
 			//
 			// lblContentHeading
 			//
@@ -467,7 +467,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblContentHeading.Name = "lblContentHeading";
 			lblContentHeading.Size = new Size(201, 45);
 			lblContentHeading.TabIndex = 1;
-			lblContentHeading.Text = "Help Center";
+			lblContentHeading.Text = LocalizationManager.GetContent("Help Center");
 			//
 			// lblContentDescription
 			//
@@ -478,7 +478,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblContentDescription.Name = "lblContentDescription";
 			lblContentDescription.Size = new Size(413, 17);
 			lblContentDescription.TabIndex = 2;
-			lblContentDescription.Text = "Find setup guidance, command details, and troubleshooting answers.";
+			lblContentDescription.Text = LocalizationManager.GetContent("Find setup guidance, command details, and troubleshooting answers.");
 			//
 			// articleCard
 			//
@@ -536,7 +536,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblTopicCategory.Name = "lblTopicCategory";
 			lblTopicCategory.Size = new Size(140, 15);
 			lblTopicCategory.TabIndex = 0;
-			lblTopicCategory.Text = "SYNIX KNOWLEDGE BASE";
+			lblTopicCategory.Text = LocalizationManager.GetContent("SYNIX KNOWLEDGE BASE");
 			//
 			// lblTopicTitle
 			//
@@ -548,7 +548,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblTopicTitle.Name = "lblTopicTitle";
 			lblTopicTitle.Size = new Size(638, 40);
 			lblTopicTitle.TabIndex = 1;
-			lblTopicTitle.Text = "How can we help?";
+			lblTopicTitle.Text = LocalizationManager.GetContent("How can we help?");
 			//
 			// lblArticleBadge
 			//
@@ -560,7 +560,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblArticleBadge.Name = "lblArticleBadge";
 			lblArticleBadge.Size = new Size(88, 26);
 			lblArticleBadge.TabIndex = 2;
-			lblArticleBadge.Text = "WELCOME";
+			lblArticleBadge.Text = LocalizationManager.GetContent("WELCOME");
 			lblArticleBadge.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// articleDivider
@@ -600,7 +600,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblAnswer.ScrollBars = RichTextBoxScrollBars.Vertical;
 			lblAnswer.Size = new Size(526, 387);
 			lblAnswer.TabIndex = 0;
-			lblAnswer.Text = "Welcome to the Synix Engine Knowledge Base. Select a topic from the navigation panel to begin.";
+			lblAnswer.Text = LocalizationManager.GetContent("Welcome to the Synix Engine Knowledge Base. Select a topic from the navigation panel to begin.");
 			lblAnswer.LinkClicked += lblAnswer_LinkClicked;
 			//
 			// qrCard
@@ -629,7 +629,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblQrHeading.Name = "lblQrHeading";
 			lblQrHeading.Size = new Size(180, 18);
 			lblQrHeading.TabIndex = 0;
-			lblQrHeading.Text = "SCAN TO SUPPORT SYNIX";
+			lblQrHeading.Text = LocalizationManager.GetContent("SCAN TO SUPPORT SYNIX");
 			lblQrHeading.TextAlign = ContentAlignment.MiddleCenter;
 			//
 			// pbQRCode
@@ -654,7 +654,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblQrCaption.Name = "lblQrCaption";
 			lblQrCaption.Size = new Size(180, 50);
 			lblQrCaption.TabIndex = 2;
-			lblQrCaption.Text = "Open the PayPal donation page on your phone.";
+			lblQrCaption.Text = LocalizationManager.GetContent("Open the PayPal donation page on your phone.");
 			lblQrCaption.TextAlign = ContentAlignment.TopCenter;
 			//
 			// contentFooter
@@ -679,7 +679,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblFooterHint.Name = "lblFooterHint";
 			lblFooterHint.Size = new Size(333, 15);
 			lblFooterHint.TabIndex = 0;
-			lblFooterHint.Text = "Ctrl+F  Search     •     Esc  Close     •     Offline help";
+			lblFooterHint.Text = LocalizationManager.GetContent("Ctrl+F  Search     •     Esc  Close     •     Offline help");
 			//
 			// lblFooterStatus
 			//
@@ -690,7 +690,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblFooterStatus.Name = "lblFooterStatus";
 			lblFooterStatus.Size = new Size(195, 18);
 			lblFooterStatus.TabIndex = 1;
-			lblFooterStatus.Text = "KNOWLEDGE BASE READY";
+			lblFooterStatus.Text = LocalizationManager.GetContent("KNOWLEDGE BASE READY");
 			lblFooterStatus.TextAlign = ContentAlignment.MiddleRight;
 			//
 			// HelpGUI
@@ -710,7 +710,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			Name = "HelpGUI";
 			Padding = new Padding(1);
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Synix Help Center";
+			Text = LocalizationManager.GetContent("Synix Help Center");
 			shellLayout.ResumeLayout(false);
 			titleBar.ResumeLayout(false);
 			titleBar.PerformLayout();

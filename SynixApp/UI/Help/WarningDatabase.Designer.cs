@@ -99,7 +99,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(154, 21);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Launch preparation";
+			lblWindowTitle.Text = LocalizationManager.GetContent("Launch preparation");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			btnWindowClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnWindowClose.BackColor = Color.FromArgb(6, 12, 22);
@@ -164,7 +164,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblWarningTitle.Name = "lblWarningTitle";
 			lblWarningTitle.Size = new Size(258, 32);
 			lblWarningTitle.TabIndex = 1;
-			lblWarningTitle.Text = "First-launch preparation";
+			lblWarningTitle.Text = LocalizationManager.GetContent("First-launch preparation");
 			lblWarningSubtitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			lblWarningSubtitle.Font = new Font("Segoe UI", 9.5F);
 			lblWarningSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
@@ -172,7 +172,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblWarningSubtitle.Name = "lblWarningSubtitle";
 			lblWarningSubtitle.Size = new Size(518, 42);
 			lblWarningSubtitle.TabIndex = 2;
-			lblWarningSubtitle.Text = "Review these setup requirements before continuing.";
+			lblWarningSubtitle.Text = LocalizationManager.GetContent("Review these setup requirements before continuing.");
 			lblGameName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			lblGameName.AutoEllipsis = true;
 			lblGameName.BackColor = Color.FromArgb(28, 75, 91);
@@ -183,7 +183,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblGameName.Padding = new Padding(8, 0, 8, 0);
 			lblGameName.Size = new Size(164, 30);
 			lblGameName.TabIndex = 3;
-			lblGameName.Text = "Server";
+			lblGameName.Text = LocalizationManager.GetContent("Server");
 			lblGameName.TextAlign = ContentAlignment.MiddleCenter;
 			warningCard.BorderColor = Color.FromArgb(38, 52, 77);
 			warningCard.Controls.Add(lblInstructionHeading);
@@ -203,7 +203,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblInstructionHeading.Name = "lblInstructionHeading";
 			lblInstructionHeading.Size = new Size(155, 20);
 			lblInstructionHeading.TabIndex = 0;
-			lblInstructionHeading.Text = "Before you continue";
+			lblInstructionHeading.Text = LocalizationManager.GetContent("Before you continue");
 			txtWarningText.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			txtWarningText.BackColor = Color.FromArgb(15, 15, 15);
 			txtWarningText.BorderStyle = BorderStyle.None;
@@ -235,7 +235,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblActionHint.Name = "lblActionHint";
 			lblActionHint.Size = new Size(400, 34);
 			lblActionHint.TabIndex = 0;
-			lblActionHint.Text = "Continue only after you have reviewed the required setup steps.";
+			lblActionHint.Text = LocalizationManager.GetContent("Continue only after you have reviewed the required setup steps.");
 			lblActionHint.TextAlign = ContentAlignment.MiddleLeft;
 			btnNo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnNo.DialogResult = DialogResult.Cancel;
@@ -243,7 +243,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			btnNo.Name = "btnNo";
 			btnNo.Size = new Size(158, 46);
 			btnNo.TabIndex = 1;
-			btnNo.Text = "Remind Me Later";
+			btnNo.Text = LocalizationManager.GetContent("Remind Me Later");
 			btnNo.UseVisualStyleBackColor = true;
 			btnNo.Click += btnNo_Click;
 			btnStart.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -251,7 +251,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			btnStart.Name = "btnStart";
 			btnStart.Size = new Size(170, 46);
 			btnStart.TabIndex = 2;
-			btnStart.Text = "Start Server";
+			btnStart.Text = LocalizationManager.GetContent("Start Server");
 			btnStart.UseAccentStyle = true;
 			btnStart.UseVisualStyleBackColor = true;
 			btnStart.Click += btnStart_Click;
@@ -273,7 +273,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			Padding = new Padding(1);
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Launch Preparation";
+			Text = LocalizationManager.GetContent("Launch Preparation");
 			shellLayout.ResumeLayout(false);
 			titleBar.ResumeLayout(false);
 			titleBar.PerformLayout();

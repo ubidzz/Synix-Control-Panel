@@ -210,7 +210,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnSettings.TabIndex = 2;
 			btnSettings.TabStop = false;
 			btnSettings.Text = LocalizationManager.Get("Text.E5235A4A75E63AAA9740");
-			toolTip1.SetToolTip(btnSettings, "Synix Settings");
+			toolTip1.SetToolTip(btnSettings, LocalizationManager.GetContent("Synix Settings"));
 			btnSettings.UseVisualStyleBackColor = false;
 			btnSettings.Click += btnSettings_Click;
 			// 
@@ -231,7 +231,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnGithub.TabIndex = 3;
 			btnGithub.TabStop = false;
 			btnGithub.Text = LocalizationManager.Get("Text.A7770C6DAAA4BDC22DB6");
-			toolTip1.SetToolTip(btnGithub, "Open Synix on GitHub");
+			toolTip1.SetToolTip(btnGithub, LocalizationManager.GetContent("Open Synix on GitHub"));
 			btnGithub.UseVisualStyleBackColor = false;
 			btnGithub.Click += btnGithub_Click;
 			// 
@@ -252,7 +252,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			btnDiscord.TabIndex = 4;
 			btnDiscord.TabStop = false;
 			btnDiscord.Text = LocalizationManager.Get("Text.3F39D5C348E5B79D06E8");
-			toolTip1.SetToolTip(btnDiscord, "Open the Synix Discord");
+			toolTip1.SetToolTip(btnDiscord, LocalizationManager.GetContent("Open the Synix Discord"));
 			btnDiscord.UseVisualStyleBackColor = false;
 			btnDiscord.Click += btnDiscord_Click;
 			// 
@@ -481,7 +481,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			cpuGauge.Name = "cpuGauge";
 			cpuGauge.Size = new Size(92, 92);
 			cpuGauge.TabIndex = 3;
-			toolTip1.SetToolTip(cpuGauge, "Open Resource Monitor");
+			toolTip1.SetToolTip(cpuGauge, LocalizationManager.GetContent("Open Resource Monitor"));
 			cpuGauge.Click += ResourceGraph_Click;
 			// 
 			// ramCard
@@ -545,7 +545,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			ramGauge.Name = "ramGauge";
 			ramGauge.Size = new Size(92, 92);
 			ramGauge.TabIndex = 3;
-			toolTip1.SetToolTip(ramGauge, "Open Resource Monitor");
+			toolTip1.SetToolTip(ramGauge, LocalizationManager.GetContent("Open Resource Monitor"));
 			ramGauge.Click += ResourceGraph_Click;
 			// 
 			// serversCard

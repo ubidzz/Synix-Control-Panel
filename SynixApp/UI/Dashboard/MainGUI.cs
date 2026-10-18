@@ -252,6 +252,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			EventArgs eventArgs)
 		{
 			PopulateStatusFilters();
+			toolTip1.SetToolTip(btnSettings, LocalizationManager.GetContent("Synix Settings"));
+			toolTip1.SetToolTip(btnGithub, LocalizationManager.GetContent("Open Synix on GitHub"));
+			toolTip1.SetToolTip(btnDiscord, LocalizationManager.GetContent("Open the Synix Discord"));
+			toolTip1.SetToolTip(cpuGauge, LocalizationManager.GetContent("Open Resource Monitor"));
+			toolTip1.SetToolTip(ramGauge, LocalizationManager.GetContent("Open Resource Monitor"));
 			if (_satisfactoryControlMenuItem != null)
 				_satisfactoryControlMenuItem.Text = LocalizationManager.Get("Satisfactory.Title");
 			if (_modPluginManagerMenuItem != null)
@@ -786,7 +791,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			}
 
 			picSelectedServer.Image = server.DisplayIcon;
-			lblSelectedGame.Text = server.DisplayGameName;
+			LocalizationManager.SetDataText(lblSelectedGame, server.DisplayGameName);
 			LocalizationManager.BindText(
 				lblSelectedServerName,
 				"Dashboard.SelectedServer.Summary",

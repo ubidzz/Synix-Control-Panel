@@ -69,7 +69,7 @@ internal static class GameTextSupportCatalog
 		{
 			support ??= new();
 			paragraphs.Add(LocalizationManager.Get("GameText.Field." + field) + ": " + support.StatusText +
-				Environment.NewLine + (support.Notes.Length == 0 ? LocalizationManager.Get("GameText.UnverifiedNote") : support.Notes));
+				Environment.NewLine + (support.Notes.Length == 0 ? LocalizationManager.Get("GameText.UnverifiedNote") : LocalizationManager.GetContent(support.Notes)));
 			if (support.Sources.Count > 0)
 				paragraphs.Add(LocalizationManager.Get("GameText.Sources") + Environment.NewLine + string.Join(Environment.NewLine, support.Sources));
 		}

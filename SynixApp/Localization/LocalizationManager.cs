@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Synix_Control_Panel.SynixApp.Localization;
@@ -68,6 +69,8 @@ internal static class LocalizationManager
 
 	private static readonly ConditionalWeakTable<Control, RuntimeTextBinding>
 		RuntimeTextBindings = new();
+	private static readonly ConditionalWeakTable<Control, TextChangeTracking>
+		DataTextControls = new();
 
 	private static CultureInfo _currentUICulture =
 		CultureInfo.GetCultureInfo(DefaultLanguageCode);
@@ -131,6 +134,21 @@ internal static class LocalizationManager
 			arguments);
 	}
 
+	// Only for Synix-authored, invariant source content (offline articles and
+	// catalog descriptions). Never pass a user's value or game console output.
+	public static string GetContent(string english)
+	{
+		string key = ContentKey(english);
+		return ResourceManager.GetString(key, _currentUICulture) ?? english;
+	}
+
+	public static string FormatContent(string englishTemplate, params object?[] arguments) =>
+		string.Format(_currentUICulture, GetContent(englishTemplate), arguments);
+
+	internal static string ContentKey(string english) => "Content." +
+		Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(
+			english.ReplaceLineEndings("\n")))).Substring(0, 20);
+
 	/// <summary>
 	/// Returns the invariant English resource text for technical logs and other
 	/// support data that must not change with the selected interface language.
@@ -159,6 +177,7 @@ internal static class LocalizationManager
 		params object?[] arguments)
 	{
 		ArgumentNullException.ThrowIfNull(control);
+		DataTextControls.Remove(control);
 		TrackTextChanges(control);
 		RuntimeTextBindings.Remove(control);
 		BindTextValue(
@@ -166,6 +185,16 @@ internal static class LocalizationManager
 			resourceKey,
 			arguments,
 			value => control.Text = value);
+	}
+
+	// A displayed password, server name, or map may coincide with a translated
+	// word (for example "Save"). It is still data, not an interface resource.
+	public static void SetDataText(Control control, string value)
+	{
+		DataTextControls.GetOrCreateValue(control);
+		TextBindings.Remove(control);
+		RuntimeTextBindings.Remove(control);
+		WriteLocalizedText(text => control.Text = text, value);
 	}
 
 	public static void BindAccessibleName(
@@ -287,13 +316,6 @@ internal static class LocalizationManager
 
 	public static void Apply(Control root)
 	{
-		// The Help Center intentionally remains English so support instructions,
-		// screenshots, and terminology match the English support workflow.
-		if (root is global::Synix_Control_Panel.SynixApp.UI.Help.HelpGUI)
-		{
-			return;
-		}
-
 		ApplyControl(root);
 	}
 
@@ -407,11 +429,11 @@ internal static class LocalizationManager
 
 	private static bool ShouldLocalizeText(Control control)
 	{
-		return control is Form
+		return !DataTextControls.TryGetValue(control, out _) && control is (Form
 			or Label
 			or ButtonBase
 			or GroupBox
-			or TabPage;
+			or TabPage);
 	}
 
 	private static void TrackTextChanges(Control control)
@@ -475,7 +497,7 @@ internal static class LocalizationManager
 		object? sender,
 		EventArgs eventArgs)
 	{
-		if (sender is not Control control || _localizedTextWriteDepth > 0)
+		if (sender is not Control control || _localizedTextWriteDepth > 0 || DataTextControls.TryGetValue(control, out _))
 		{
 			return;
 		}
@@ -848,6 +870,12 @@ internal static class LocalizationManager
 			"pl" or "pl-PL" => "Polski",
 			"ru" or "ru-RU" => "Русский",
 			"tr" or "tr-TR" => "Türkçe",
+			"nl" or "nl-NL" => "Nederlands",
+			"sv" or "sv-SE" => "Svenska",
+			"cs" or "cs-CZ" => "Čeština",
+			"uk" or "uk-UA" => "Українська",
+			"id" or "id-ID" => "Bahasa Indonesia",
+			"vi" or "vi-VN" => "Tiếng Việt",
 			"de" or "de-DE" => "Deutsch",
 			"es" or "es-ES" => "Español",
 			"fr" or "fr-FR" => "Français",

@@ -17,20 +17,45 @@ public sealed class AdditionalLanguageTests
 		{ "zh-Hans", "简体中文" }, { "zh-Hant", "繁體中文" },
 		{ "ja-JP", "日本語" }, { "ko-KR", "한국어" },
 		{ "it-IT", "Italiano" }, { "pt-BR", "Português (Brasil)" },
-		{ "pl-PL", "Polski" }, { "ru-RU", "Русский" }, { "tr-TR", "Türkçe" }
+		{ "pl-PL", "Polski" }, { "ru-RU", "Русский" }, { "tr-TR", "Türkçe" },
+		{ "nl-NL", "Nederlands" }, { "sv-SE", "Svenska" },
+		{ "cs-CZ", "Čeština" }, { "uk-UA", "Українська" },
+		{ "id-ID", "Bahasa Indonesia" }, { "vi-VN", "Tiếng Việt" }
 	};
 
 	private static ResourceManager CreateManager() => new(
 		"Synix_Control_Panel.Localization.Strings", typeof(LocalizationManager).Assembly);
 
 	[Theory]
+	[InlineData("nl")]
+	[InlineData("sv")]
+	[InlineData("cs")]
+	[InlineData("uk")]
+	[InlineData("id")]
+	[InlineData("vi")]
+	public void AdditionalLanguagesCoverTheEntireNeutralCatalog(string resourceCulture)
+	{
+		ResourceManager manager = CreateManager();
+		ResourceSet baseline = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
+		ResourceSet catalog = manager.GetResourceSet(CultureInfo.GetCultureInfo(resourceCulture), true, false)!;
+		Assert.NotNull(catalog);
+		foreach (DictionaryEntry entry in baseline)
+		{
+			string key = (string)entry.Key;
+			if (key.StartsWith("_", StringComparison.Ordinal)) continue;
+			Assert.False(string.IsNullOrWhiteSpace(catalog.GetString(key)),
+				$"{resourceCulture} is missing core translation {key}");
+		}
+	}
+
+	[Theory]
 	[MemberData(nameof(NewLanguages))]
-	public void NewCatalogsAreDiscoveredWithNativeNamesAndAnHonestPreviewNotice(string code, string name)
+	public void CompleteCatalogsAreDiscoveredWithNativeNames(string code, string name)
 	{
 		var language = Assert.Single(LocalizationManager.SupportedLanguages, item => item.Code == code);
 		Assert.Equal(name, language.DisplayName);
-		Assert.True(language.IsPreview);
-		Assert.False(string.IsNullOrWhiteSpace(language.PreviewNotice));
+		Assert.False(language.IsPreview);
+		Assert.True(string.IsNullOrWhiteSpace(language.PreviewNotice));
 		using Stream manifest = typeof(LocalizationManager).Assembly.GetManifestResourceStream(
 			"Synix_Control_Panel.Localization.SupportedLanguages.txt")!;
 		using StreamReader reader = new(manifest);
@@ -84,6 +109,18 @@ public sealed class AdditionalLanguageTests
 	[InlineData("ru", "ru-RU")]
 	[InlineData("tr", "tr-TR")]
 	[InlineData("it", "it-IT")]
+	[InlineData("nl", "nl-NL")]
+	[InlineData("nl-BE", "nl-NL")]
+	[InlineData("sv", "sv-SE")]
+	[InlineData("sv-FI", "sv-SE")]
+	[InlineData("cs", "cs-CZ")]
+	[InlineData("cs-CZ", "cs-CZ")]
+	[InlineData("uk", "uk-UA")]
+	[InlineData("uk-UA", "uk-UA")]
+	[InlineData("id", "id-ID")]
+	[InlineData("id-ID", "id-ID")]
+	[InlineData("vi", "vi-VN")]
+	[InlineData("VI-vn", "vi-VN")]
 	[InlineData("fr-CA", "fr-FR")]
 	[InlineData("", "en-US")]
 	[InlineData("unsupported-language", "en-US")]
@@ -131,7 +168,7 @@ public sealed class AdditionalLanguageTests
 				Assert.Equal("Save Server Settings", LocalizationManager.GetEnglish("ServerSetup.Button.SaveSettings"));
 				Assert.Equal("Server Installation", new LocalizedOption(
 					"Server Installation", "ProblemAction.ServerInstallation").Value);
-				Assert.Equal(LocalizationManager.GetEnglish("Configuration.Editor.Error.LineBreak", "example"),
+				Assert.NotEqual(LocalizationManager.GetEnglish("Configuration.Editor.Error.LineBreak", "example"),
 					LocalizationManager.Get("Configuration.Editor.Error.LineBreak", "example"));
 				LocalizationManager.SetLanguage("en-US");
 				LocalizationManager.Apply(form);
@@ -147,7 +184,7 @@ public sealed class AdditionalLanguageTests
 
 	[Theory]
 	[MemberData(nameof(NewLanguages))]
-	public void LanguagePickerPreservesSelectionAndShowsPreviewWithoutClipping(string code, string name)
+	public void LanguagePickerPreservesSelectionAndShowsDescriptionWithoutClipping(string code, string name)
 	{
 		WorkflowUiTest.Run(() =>
 		{
@@ -184,12 +221,12 @@ public sealed class AdditionalLanguageTests
 					new Size(downloadDescription.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height
 					<= downloadDescription.Height, $"Download description clips: {code}");
 				var notice = (Label)page.Controls.Find("lblDescriptionLanguage", true).Single();
-				Assert.Equal(LocalizationManager.Get("Language.PreviewNotice"), notice.Text);
+				Assert.Equal(LocalizationManager.Get("Language.Description"), notice.Text);
 				Assert.True(TextRenderer.MeasureText(name, picker.Font).Width <= picker.Width - 44,
 					$"Language name clips: {name}");
 				Size noticeSize = TextRenderer.MeasureText(notice.Text, notice.Font,
 					new Size(notice.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
-				Assert.True(noticeSize.Height <= notice.Height, $"Preview notice clips: {code}");
+				Assert.True(noticeSize.Height <= notice.Height, $"Language description clips: {code}");
 
 				if (Environment.GetEnvironmentVariable("SYNIX_RENDER_LANGUAGES") == "1")
 				{
@@ -200,7 +237,7 @@ public sealed class AdditionalLanguageTests
 				page.UiLanguageCode = "fr-FR";
 				LocalizationManager.SetLanguage("fr-FR");
 				LocalizationManager.Apply(host);
-				Assert.Equal(LocalizationManager.Get("Text.30F3BBCB43AC48EBFD1C"), notice.Text);
+				Assert.Equal(LocalizationManager.Get("Language.Description"), notice.Text);
 				page.UiLanguageCode = "zh-TW";
 				Assert.Equal("zh-Hant", page.UiLanguageCode);
 			}
@@ -209,7 +246,7 @@ public sealed class AdditionalLanguageTests
 	}
 
 	[Fact]
-	public void CatalogsHaveUniqueKeysAndEveryPreviewEntryHasAnEnglishSource()
+	public void CatalogsHaveUniqueKeysAndEveryEntryHasAnEnglishSource()
 	{
 		string project = Core.FindProjectDirectory(AppContext.BaseDirectory)!;
 		string directory = Path.Combine(project, "Localization");
@@ -221,7 +258,6 @@ public sealed class AdditionalLanguageTests
 			var entries = XDocument.Load(Path.Combine(directory, "Strings" + suffix + ".resx"))
 				.Root!.Elements("data").ToArray();
 			Assert.Equal(entries.Length, entries.Select(data => (string)data.Attribute("name")!).Distinct().Count());
-			if (!language.IsPreview) continue;
 			foreach (var entry in entries.Where(data => !((string)data.Attribute("name")!).StartsWith("_")))
 				Assert.Contains((string)entry.Attribute("name")!, englishKeys);
 		}

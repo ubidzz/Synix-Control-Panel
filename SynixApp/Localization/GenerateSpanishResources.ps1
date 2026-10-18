@@ -1128,6 +1128,14 @@ $operationalTranslations = & (Join-Path $PSScriptRoot 'OperationalTranslations.e
 
 $sourcePath = Join-Path $PSScriptRoot 'Strings.resx'
 $targetPath = Join-Path $PSScriptRoot 'Strings.es.resx'
+$previous = [System.Collections.Generic.Dictionary[string,string]]::new([System.StringComparer]::Ordinal)
+if (Test-Path -LiteralPath $targetPath) {
+    $previousReader = [System.Resources.ResXResourceReader]::new($targetPath)
+    try {
+        foreach ($entry in $previousReader) { $previous[$entry.Key] = [string]$entry.Value }
+    }
+    finally { $previousReader.Close() }
+}
 $reader = [System.Resources.ResXResourceReader]::new($sourcePath)
 $writer = [System.Resources.ResXResourceWriter]::new($targetPath)
 $translatedStaticCount = 0
@@ -1144,12 +1152,23 @@ try {
 		if ($semanticTranslations.Contains($key)) {
 			continue
 		}
+		elseif ($key.StartsWith('Content.', [System.StringComparison]::Ordinal) -and $previous.ContainsKey($key)) {
+            # Content catalogs are maintained and reviewed directly, including
+            # technical paths that must not inherit an older generic translation.
+            $writer.AddResource($key, $previous[$key])
+            $translatedStaticCount++
+        }
 		elseif ($operationalTranslations.Contains($key)) {
             $writer.AddResource($key, [string]$operationalTranslations[$key])
             $translatedStaticCount++
         }
 		elseif ($translations.TryGetValue($english, [ref]$translation)) {
             $writer.AddResource($key, $translation)
+            $translatedStaticCount++
+        }
+        elseif ($previous.ContainsKey($key)) {
+            # Preserve translations maintained directly in the complete catalog.
+            $writer.AddResource($key, $previous[$key])
             $translatedStaticCount++
         }
     }
