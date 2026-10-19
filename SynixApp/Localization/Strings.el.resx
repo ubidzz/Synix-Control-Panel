@@ -6680,4 +6680,52 @@ Windows Η άδεια τείχους προστασίας και η προώθη
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Μεγιστοποίηση ή επαναφορά</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Ελαχιστοποίηση</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Τίτλος παραθύρου</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Απεγκατάσταση του Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Κατάργηση μόνο της εφαρμογής (διατήρηση διακομιστών και δεδομένων)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Κατάργηση εφαρμογής, διαχειριζόμενων διακομιστών και δεδομένων Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Αφαιρεί τις προτιμήσεις της εφαρμογής Synix, την κρυφή μνήμη, τα προσωρινά αρχεία και τις καταχωρίσεις αυτόματης εκκίνησης. Διατηρεί ολόκληρο το C:\Synix, τους διακομιστές παιχνιδιών, τα αντίγραφα ασφαλείας και τα αρχεία ανάκτησης. Η λίστα διακομιστών και οι ρυθμίσεις στο SynixData\servers.json διατηρούνται και φορτώνονται ξανά όταν επανεγκαταστήσετε το Synix.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Ελέγξτε παρακάτω τα αρχεία και τους φακέλους προς διαγραφή. Οι διατηρούμενες τοποθεσίες εξαιρούνται. Η διαγραφή είναι οριστική, ακόμη κι αν αποτύχει αργότερα η απεγκατάσταση της εφαρμογής.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Έχω δημιουργήσει αντίγραφα ασφαλείας όσων χρειάζομαι και θέλω να διαγράψω οριστικά αυτούς τους φακέλους.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Κλείστε το Synix και σταματήστε όλους τους διακομιστές παιχνιδιών πριν αφαιρέσετε τα δεδομένα τους.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Οι εγγραφές διακομιστών άλλαξαν. Ελέγξτε ξανά τους φακέλους πριν διαγράψετε οτιδήποτε.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Απεγκατάσταση</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Η αφαίρεση σταμάτησε. Ορισμένα αρχεία μπορεί να έχουν ήδη διαγραφεί. Το Synix παραμένει εγκατεστημένο. Ελέγξτε τους υπόλοιπους φακέλους πριν δοκιμάσετε ξανά.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Να διαγραφούν επίσης τα αναφερόμενα αντίγραφα ασφαλείας διακομιστών και αρχεία ανάκτησης</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Τα αντίγραφα ασφαλείας και τα αρχεία ανάκτησης θα διατηρηθούν:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Αντίγραφα ασφαλείας και αρχεία ανάκτησης επιλεγμένα για διαγραφή:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Δεν βρέθηκαν αντίγραφα ασφαλείας στις γνωστές τοποθεσίες αντιγράφων του Synix.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Διατηρούμενες τοποθεσίες (εκτός των αντιγράφων που επιλέχθηκαν ρητά παραπάνω):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Κλείστε το Synix πριν από την απεγκατάσταση. Οι διακομιστές παιχνιδιών μπορούν να συνεχίσουν να λειτουργούν όταν αφαιρείται μόνο η εφαρμογή.</value>
+  </data>
 </root>

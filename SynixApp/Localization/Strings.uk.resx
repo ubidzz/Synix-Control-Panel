@@ -7604,5 +7604,53 @@ ARK завантажить цей мод з {2} під час запуску с�
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Максимізувати або відновити</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Мінімізувати</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Заголовок вікна</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Видалення Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Видалити лише застосунок (зберегти сервери та дані)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Видалити застосунок, керовані сервери та дані Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Видаляє налаштування застосунку Synix, кеш, тимчасові файли та записи автозапуску застосунку. Зберігає весь C:\Synix, ігрові сервери, резервні копії та файли відновлення. Список серверів та їхні налаштування у SynixData\servers.json зберігаються й завантажуються знову після повторного встановлення Synix.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Перевірте нижче файли й папки для видалення. Збережені розташування виключено. Видалення незворотне, навіть якщо подальше видалення застосунку завершиться помилкою.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Я створив(ла) резервні копії потрібних даних і хочу назавжди видалити ці папки.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Закрийте Synix і зупиніть усі ігрові сервери перед видаленням їхніх даних.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Записи серверів змінилися. Перевірте папки ще раз перед видаленням.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Видалення зупинено. Деякі файли вже могли бути видалені. Synix усе ще встановлено. Перевірте решту папок перед повторною спробою.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Також видалити перелічені резервні копії серверів і файли відновлення</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Резервні копії та файли відновлення буде збережено:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Резервні копії та файли відновлення, вибрані для видалення:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>У відомих Synix розташуваннях резервних копій нічого не знайдено.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Збережені розташування (крім явно вибраних вище резервних копій):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Закрийте Synix перед видаленням. Якщо видаляється лише застосунок, ігрові сервери можуть продовжувати роботу.</value>
+  </data>
 </root>
 

@@ -7604,5 +7604,53 @@ Als Synix niet opnieuw wordt geopend, voert u uw bestaande Synix-programma uit o
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Maximaliseren of herstellen</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Minimaliseren</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Venstertitel</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Synix verwijderen</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Alleen de app verwijderen (servers en gegevens behouden)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>De app, beheerde servers en Synix-gegevens verwijderen</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Verwijdert Synix-appvoorkeuren, cache, tijdelijke bestanden en opstartvermeldingen van de app. Behoudt heel C:\Synix, gameservers, back-ups en herstelbestanden. De serverlijst en instellingen in SynixData\servers.json blijven behouden en worden opnieuw geladen wanneer je Synix opnieuw installeert.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Controleer hieronder de te verwijderen bestanden en mappen. Behouden locaties worden uitgesloten. Verwijderen is definitief, ook als het verwijderen van de app later mislukt.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Ik heb een back-up gemaakt van wat ik nodig heb en wil deze mappen permanent verwijderen.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Sluit Synix en stop alle gameservers voordat je servergegevens verwijdert.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>De serverregistraties zijn gewijzigd. Controleer de mappen opnieuw voordat je iets verwijdert.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Verwijderen</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Het verwijderen is gestopt. Sommige bestanden zijn mogelijk al verwijderd. Synix is nog geïnstalleerd. Controleer de overgebleven mappen voordat je het opnieuw probeert.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Ook de vermelde serverback-ups en herstelbestanden verwijderen</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Back-ups en herstelbestanden blijven behouden:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Back-ups en herstelbestanden geselecteerd voor verwijdering:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Geen back-ups gevonden op de bekende back-uplocaties van Synix.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Behouden locaties (behalve hierboven uitdrukkelijk geselecteerde back-ups):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Sluit Synix vóór het verwijderen. Gameservers kunnen blijven draaien als alleen de app wordt verwijderd.</value>
+  </data>
 </root>
 

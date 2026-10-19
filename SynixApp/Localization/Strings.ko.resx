@@ -7603,5 +7603,53 @@ Synix이 다시 열리지 않으면 기존의 Synix 프로그램을 실행하거
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>최대화 또는 복원</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>최소화</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>창 제목</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Synix 제거</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>앱만 제거 (서버 및 데이터 유지)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>앱, 관리 중인 서버 및 Synix 데이터 제거</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Synix 앱 환경설정, 캐시, 임시 파일 및 앱 자동 시작 항목을 제거합니다. C:\Synix 전체, 게임 서버, 백업 및 복구 파일은 유지합니다. SynixData\servers.json의 서버 목록과 설정은 보존되며 Synix를 다시 설치하면 다시 불러옵니다.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>아래에서 제거할 파일과 폴더를 확인하세요. 보존할 위치는 제외됩니다. 이후 앱 제거가 실패하더라도 삭제는 영구적입니다.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>필요한 데이터를 백업했으며 이 폴더들을 영구적으로 삭제하는 데 동의합니다.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>서버 데이터를 제거하기 전에 Synix를 닫고 모든 게임 서버를 중지하세요.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>서버 기록이 변경되었습니다. 삭제하기 전에 폴더를 다시 검토하세요.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>제거</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>삭제가 중지되었습니다. 일부 파일은 이미 삭제되었을 수 있습니다. Synix는 아직 설치되어 있습니다. 다시 시도하기 전에 남은 폴더를 확인하세요.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>목록에 있는 서버 백업 및 복구 파일도 삭제</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>유지할 백업 및 복구 파일:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>삭제하도록 선택한 백업 및 복구 파일:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>알려진 Synix 백업 위치에서 백업을 찾지 못했습니다.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>보존할 위치(위에서 명시적으로 선택한 백업 제외):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>제거하기 전에 Synix를 닫으세요. 앱만 제거하는 경우 게임 서버는 계속 실행할 수 있습니다.</value>
+  </data>
 </root>
 

@@ -14114,4 +14114,52 @@ Bewahren Sie vor einer Framework- oder Spieländerung die Welt-, Konfigurations-
   <data name="Content.FEB9356B2EEADF692640" xml:space="preserve"><value>Community Server Plugins</value></data>
   <data name="Content.FF6EEAB0A9848FC8CD5C" xml:space="preserve"><value>Synix erstellt das komplette servergenerierte serverconfig.xml-Layout und verwaltet den Servernamen, das Passwort, den Port, die Spielerbeschränkung, die Welt, den Seed und die Weltgröße. Andere Gameplay-Werte bleiben im Konfigurationseditor editierbar.</value></data>
   <data name="Language.Description" xml:space="preserve"><value>Wählen Sie die Sprache für Synix. Spielbefehle und gespeicherte Werte werden nicht übersetzt.</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Synix deinstallieren</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Nur die App entfernen (Server und Daten behalten)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>App, verwaltete Server und Synix-Daten entfernen</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Entfernt Synix-App-Einstellungen, Cache, temporäre Dateien und Autostarteinträge. Behält den gesamten Ordner C:\Synix, Spielserver, Sicherungen und Wiederherstellungsdateien. Die Serverliste und Einstellungen in SynixData\servers.json bleiben erhalten und werden bei einer Neuinstallation von Synix wieder geladen.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Prüfe unten die zu entfernenden Dateien und Ordner. Aufbewahrte Speicherorte sind ausgenommen. Die Löschung ist endgültig, auch wenn die Deinstallation der App später fehlschlägt.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Ich habe alles Nötige gesichert und möchte diese Ordner dauerhaft löschen.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Schließe Synix und stoppe alle Spielserver, bevor du Serverdaten entfernst.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Die Servereinträge haben sich geändert. Prüfe die Ordner erneut, bevor du etwas entfernst.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Deinstallieren</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Das Entfernen wurde gestoppt. Einige Dateien wurden möglicherweise bereits gelöscht. Synix ist noch installiert. Prüfe die verbleibenden Ordner vor einem erneuten Versuch.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Auch die aufgeführten Serversicherungen und Wiederherstellungsdateien löschen</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Sicherungen und Wiederherstellungsdateien werden behalten:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Zum Löschen ausgewählte Sicherungen und Wiederherstellungsdateien:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>An den bekannten Synix-Sicherungsorten wurden keine Sicherungen gefunden.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Aufbewahrte Speicherorte (außer den oben ausdrücklich ausgewählten Sicherungen):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Schließe Synix vor der Deinstallation. Spielserver können weiterlaufen, wenn nur die App entfernt wird.</value>
+  </data>
 </root>

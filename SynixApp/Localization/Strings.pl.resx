@@ -7603,5 +7603,53 @@ Jeśli Synix nie otwiera się ponownie, uruchom istniejący program Synix lub po
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Maksymalizuj lub przywróć</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Minimalizuj</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Tytuł okna</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Odinstaluj Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Usuń tylko aplikację (zachowaj serwery i dane)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Usuń aplikację, zarządzane serwery i dane Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Usuwa preferencje aplikacji Synix, pamięć podręczną, pliki tymczasowe i wpisy uruchamiania aplikacji. Zachowuje cały C:\Synix, serwery gier, kopie zapasowe i pliki odzyskiwania. Lista serwerów i ich ustawienia w SynixData\servers.json zostają zachowane i są ponownie wczytywane po ponownej instalacji Synix.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Sprawdź poniżej pliki i foldery do usunięcia. Zachowane lokalizacje są wykluczone. Usunięcie jest trwałe, nawet jeśli późniejsza deinstalacja aplikacji się nie powiedzie.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Mam kopię zapasową potrzebnych danych i chcę trwale usunąć te foldery.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Zamknij Synix i zatrzymaj wszystkie serwery gier przed usunięciem ich danych.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Wpisy serwerów uległy zmianie. Sprawdź foldery ponownie przed usunięciem czegokolwiek.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Odinstaluj</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Usuwanie zostało zatrzymane. Niektóre pliki mogły już zostać usunięte. Synix jest nadal zainstalowany. Przed ponowną próbą sprawdź pozostałe foldery.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Usuń także wymienione kopie zapasowe serwerów i pliki odzyskiwania</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Kopie zapasowe i pliki odzyskiwania zostaną zachowane:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Kopie zapasowe i pliki odzyskiwania wybrane do usunięcia:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Nie znaleziono kopii zapasowych w znanych lokalizacjach kopii Synix.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Zachowane lokalizacje (oprócz kopii wyraźnie wybranych powyżej):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Zamknij Synix przed deinstalacją. Serwery gier mogą nadal działać, gdy usuwana jest tylko aplikacja.</value>
+  </data>
 </root>
 

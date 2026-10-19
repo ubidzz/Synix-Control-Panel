@@ -6680,4 +6680,52 @@ ARK इस मॉड को {2} से डाउनलोड करेगा ज
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>अधिकतम करें या बहाल करें</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>न्यूनतम</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>विंडो शीर्षक</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Synix अनइंस्टॉल करें</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>केवल ऐप हटाएँ (सर्वर और डेटा रखें)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>ऐप, प्रबंधित सर्वर और Synix डेटा हटाएँ</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Synix ऐप की प्राथमिकताएँ, कैश, अस्थायी फ़ाइलें और ऐप के स्टार्टअप रिकॉर्ड हटाता है। पूरे C:\Synix, गेम सर्वर, बैकअप और पुनर्प्राप्ति फ़ाइलें सुरक्षित रखता है। SynixData\servers.json में सर्वर सूची और उनकी सेटिंग्स सुरक्षित रहती हैं और Synix फिर से इंस्टॉल करने पर दोबारा लोड हो जाती हैं।</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>नीचे हटाई जाने वाली फ़ाइलों और फ़ोल्डरों की समीक्षा करें। सुरक्षित रखे गए स्थानों को नहीं हटाया जाएगा। बाद में ऐप अनइंस्टॉल करना विफल होने पर भी यह हटाना स्थायी है।</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>मैंने ज़रूरी डेटा का बैकअप ले लिया है और इन फ़ोल्डरों को स्थायी रूप से हटाना चाहता/चाहती हूँ।</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>सर्वर डेटा हटाने से पहले Synix बंद करें और सभी गेम सर्वर रोकें।</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>सर्वर रिकॉर्ड बदल गए हैं। कुछ भी हटाने से पहले फ़ोल्डरों की फिर से समीक्षा करें।</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>अनइंस्टॉल करें</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>हटाने की प्रक्रिया रुक गई। कुछ फ़ाइलें पहले ही हट चुकी हो सकती हैं। Synix अभी भी इंस्टॉल है। दोबारा कोशिश करने से पहले बचे हुए फ़ोल्डरों की समीक्षा करें।</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>सूची में दिए गए सर्वर बैकअप और पुनर्प्राप्ति फ़ाइलें भी हटाएँ</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>बैकअप और पुनर्प्राप्ति फ़ाइलें रखी जाएँगी:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>हटाने के लिए चुने गए बैकअप और पुनर्प्राप्ति फ़ाइलें:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Synix के ज्ञात बैकअप स्थानों में कोई बैकअप नहीं मिला।</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>सुरक्षित रखे गए स्थान (ऊपर स्पष्ट रूप से चुने गए बैकअप को छोड़कर):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>अनइंस्टॉल करने से पहले Synix बंद करें। केवल ऐप हटाने पर गेम सर्वर चलते रह सकते हैं।</value>
+  </data>
 </root>

@@ -71,9 +71,55 @@ Download **`SynixSetup.msi`** from the [latest release](https://github.com/ubidz
 The MSI version:
 
 - Installs Synix for the current Windows user.
+- Provides a setup wizard with the full [Synix license agreement](LICENSE.md) and an application-folder picker. The agreement checkbox starts unchecked; users must accept the terms before the wizard allows them to continue.
+- Defaults to `%LocalAppData%\Programs\Synix`; updates remember the chosen application folder.
+- Shows **Install Synix** when no copy is installed, **Repair or Uninstall** for the same version (including a rebuilt MSI), and **Update Synix** only when the installer is newer. Older installers cannot replace a newer installed version.
 - Adds Synix to the Start Menu.
 - Adds Synix to the Windows Apps list.
 - Supports normal Windows installation, upgrade, and uninstall behavior.
+
+The installer location applies **only to the Synix application**. Existing game servers,
+worlds, saves, configurations, backups, and Synix data stay at their existing paths.
+Choosing another app folder does not move or recreate them. Silent WinGet and in-app
+updates use the registered app folder unless an installation path is explicitly supplied.
+Same-version maintenance services the registered installation, not a replacement product.
+Repair preserves app settings, the server list, game servers, and backups; Windows Installer
+may request the original installation source if it is no longer available. An unattended
+same-version rebuild is blocked rather than silently reinstalling or registering another copy.
+
+Interactive uninstall defaults to **app only**. It removes the installed program, shortcuts,
+app registration, this copy's startup entry, app cache, recognized temporary files, and
+app preferences for this installation's current and older versions. It keeps **all of
+`C:\Synix`**, default and custom game-server folders, server configurations, prerequisites,
+backups, and server recovery files. Close Synix before uninstalling; app-only removal does
+not require stopping the game servers.
+
+In particular, **`C:\Synix\SynixData\servers.json` is preserved unchanged**. This is the
+server list and saved server settings, not the disposable application preferences.
+When Synix is reinstalled, it loads that existing list automatically, including servers
+at custom locations, even if a different application folder is chosen. Reinstall under
+the same Windows account to continue using the saved, Windows-protected passwords.
+The game folders and supporting Synix server data remain in their original locations;
+there is no need to add or download those servers again.
+
+The optional **app, managed servers, and Synix data** removal shows the exact paths first.
+If known server backups or recovery copies exist, a separate **delete backups** option is
+shown and starts **unchecked**. Default, current custom, and historical backup locations
+recorded in this installation's preferences are checked. Keeping backups also protects
+them when nested inside a server or data folder. Backup selection changes require a new
+acknowledgement, followed by a separate permanent-deletion confirmation.
+
+Stop all game servers before choosing server removal. Unregistered server folders, other
+servers' backup folders, and shared parent folders are not swept. Unknown locations and
+backups saved elsewhere are not guessed or searched across the disk. Unsafe, linked,
+unreadable, or changed locations block removal instead of broadening its scope. Interrupted
+server-restore copies retain their recovery records unless explicitly selected for removal.
+Only known, empty app containers are pruned; Windows-managed caches, other users' profiles,
+other installations' registrations, and shared system components are left alone.
+
+Silent uninstalls perform app-only cleanup and keep server data and backups. Upgrades and
+repairs never run this cleanup. Data deletion cannot be rolled back if Windows later fails
+to uninstall the application.
 
 ### Option 3: Standalone
 
@@ -82,6 +128,8 @@ Download **`Synix.Control.Panel.exe`** from the [latest release](https://github.
 - No installation is required.
 - The executable can be placed wherever you prefer.
 - Synix server data remains stored separately inside `C:\Synix`.
+- In-app updates download the standalone EXE and replace the running copy in its existing folder; they do not install the MSI, even when another Synix copy is installed elsewhere.
+- Installed-copy detection uses the registered application folder, including custom locations. If a release lacks the correct standalone download, Synix does not substitute an installer.
 
 > **.NET 10 is included with Synix.** Official Windows releases are self-contained and package the required .NET 10 runtime inside the published Synix executable, so users do not need to install .NET separately. `SynixSetup.msi` contains that same self-contained executable. Including the runtime is why the published application increased from roughly 40 MB to about 119 MB; the MSI download can remain smaller because the installed executable is compressed inside the installer.
 

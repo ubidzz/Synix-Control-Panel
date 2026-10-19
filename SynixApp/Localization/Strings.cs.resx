@@ -7604,5 +7604,53 @@ Pokud se Synix neotevře, spusťte existující program Synix nebo stáhněte ne
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Maximalizace nebo obnovení</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Minimalizovat</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Název okna</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Odinstalovat Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Odebrat pouze aplikaci (zachovat servery a data)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Odebrat aplikaci, spravované servery a data Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Odstraní předvolby aplikace Synix, mezipaměť, dočasné soubory a položky spouštění aplikace. Zachová celý C:\Synix, herní servery, zálohy a soubory pro obnovení. Seznam serverů a jejich nastavení v SynixData\servers.json zůstanou zachovány a po přeinstalaci Synix se znovu načtou.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Zkontrolujte níže uvedené soubory a složky k odstranění. Zachované umístění se neodstraňuje. Smazání je trvalé, i když následná odinstalace aplikace selže.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Zálohoval(a) jsem vše potřebné a chci tyto složky trvale smazat.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Před odstraněním dat serverů zavřete Synix a zastavte všechny herní servery.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Záznamy serverů se změnily. Před odstraněním čehokoli znovu zkontrolujte složky.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Odinstalovat</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Odstraňování bylo zastaveno. Některé soubory již mohly být smazány. Synix je stále nainstalován. Před dalším pokusem zkontrolujte zbývající složky.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Smazat také uvedené zálohy serverů a soubory pro obnovení</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Zálohy a soubory pro obnovení budou zachovány:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Zálohy a soubory pro obnovení vybrané ke smazání:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Ve známých umístěních záloh Synix nebyly nalezeny žádné zálohy.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Zachovaná umístění (kromě výše výslovně vybraných záloh):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Před odinstalací zavřete Synix. Při odstranění pouze aplikace mohou herní servery běžet dál.</value>
+  </data>
 </root>
 

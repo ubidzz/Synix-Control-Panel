@@ -7603,5 +7603,53 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>最大化或恢复</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>最小化</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>窗口标题</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>卸载 Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>仅移除应用（保留服务器和数据）</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>移除应用、托管的服务器和 Synix 数据</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>删除 Synix 应用偏好设置、缓存、临时文件和应用启动项。保留整个 C:\Synix、游戏服务器、备份和恢复文件。 SynixData\servers.json 中的服务器列表和设置会保留，并在重新安装 Synix 时重新加载。</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>请检查下方要删除的文件和文件夹。标记为保留的位置不会被删除。即使随后卸载应用失败，删除操作也无法撤销。</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>我已备份所需内容，并确认永久删除这些文件夹。</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>移除服务器数据前，请关闭 Synix 并停止所有游戏服务器。</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>服务器记录已更改。请重新检查文件夹后再进行删除。</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>卸载</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>删除已停止。部分文件可能已被删除。Synix 仍处于安装状态。重试前请检查剩余文件夹。</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>同时删除列出的服务器备份和恢复文件</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>将保留的备份和恢复文件：</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>已选择删除的备份和恢复文件：</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>在 Synix 已知的备份位置中未找到备份。</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>保留的位置（不含上方明确选择删除的备份）：</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>卸载前请关闭 Synix。如果仅删除应用，游戏服务器可以继续运行。</value>
+  </data>
 </root>
 

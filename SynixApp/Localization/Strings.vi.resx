@@ -7604,5 +7604,53 @@ Nếu Synix không mở lại, chạy chương trình Synix hiện có hoặc t�
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Phóng to hoặc khôi phục</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Thu nhỏ</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Tựa cửa sổ</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Gỡ cài đặt Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Chỉ gỡ ứng dụng (giữ máy chủ và dữ liệu)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Gỡ ứng dụng, các máy chủ được quản lý và dữ liệu Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Xóa tùy chọn ứng dụng Synix, bộ nhớ đệm, tệp tạm và mục khởi động ứng dụng. Giữ nguyên toàn bộ C:\Synix, máy chủ trò chơi, bản sao lưu và tệp khôi phục. Danh sách máy chủ và các thiết lập trong SynixData\servers.json được giữ nguyên và tải lại khi bạn cài đặt lại Synix.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Xem lại bên dưới các tệp và thư mục cần xóa. Các vị trí được giữ lại sẽ được loại trừ. Việc xóa là vĩnh viễn, ngay cả khi gỡ ứng dụng sau đó thất bại.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Tôi đã sao lưu dữ liệu cần thiết và muốn xóa vĩnh viễn các thư mục này.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Đóng Synix và dừng tất cả máy chủ trò chơi trước khi xóa dữ liệu máy chủ.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Bản ghi máy chủ đã thay đổi. Hãy kiểm tra lại các thư mục trước khi xóa bất kỳ thứ gì.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Gỡ cài đặt</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Đã dừng xóa. Một số tệp có thể đã bị xóa. Synix vẫn được cài đặt. Hãy kiểm tra các thư mục còn lại trước khi thử lại.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Xóa cả các bản sao lưu máy chủ và tệp khôi phục được liệt kê</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Các bản sao lưu và tệp khôi phục sẽ được giữ lại:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Các bản sao lưu và tệp khôi phục được chọn để xóa:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Không tìm thấy bản sao lưu ở các vị trí sao lưu Synix đã biết.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Các vị trí được giữ lại (trừ các bản sao lưu đã chọn rõ ràng ở trên):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Đóng Synix trước khi gỡ cài đặt. Máy chủ trò chơi có thể tiếp tục chạy nếu chỉ gỡ ứng dụng.</value>
+  </data>
 </root>
 

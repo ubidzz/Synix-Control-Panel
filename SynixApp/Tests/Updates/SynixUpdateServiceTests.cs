@@ -144,6 +144,19 @@ public sealed class SynixUpdateServiceTests
 		Assert.Equal(SynixInstallationKind.Standalone, installation.Kind);
 	}
 
+	[Theory]
+	[InlineData(@"D:\My Apps\Synix\Synix Control Panel.exe", "Setup", SynixInstallationKind.Setup)]
+	[InlineData(@"D:\My Apps\Synix\Synix Control Panel.exe", "WinGet", SynixInstallationKind.WinGet)]
+	[InlineData(@"D:\My Apps\Synix Portable\Synix Control Panel.exe", "Setup", SynixInstallationKind.Standalone)]
+	[InlineData(@"D:\My Apps\Synix\Portable\Synix Control Panel.exe", "WinGet", SynixInstallationKind.Standalone)]
+	public void CustomInstallFolderMatchesOnlyItsRegisteredExecutable(
+		string executable, string source, SynixInstallationKind expected)
+	{
+		SynixInstallation installation = Core.DetectInstallation(executable,
+			@"D:\My Apps\Synix\", source, officialRelease: true);
+		Assert.Equal(expected, installation.Kind);
+	}
+
 	[Fact]
 	public void StableGitHubRelease_ParsesVerifiedAssets()
 	{
@@ -265,6 +278,22 @@ public sealed class SynixUpdateServiceTests
 
 		Assert.NotNull(asset);
 		Assert.Equal(expectedAsset, asset.Name);
+	}
+
+	[Theory]
+	[InlineData(SynixInstallationKind.Standalone, Core.MsiAssetName)]
+	[InlineData(SynixInstallationKind.Setup, Core.StandaloneAssetName)]
+	[InlineData(SynixInstallationKind.WinGet, Core.StandaloneAssetName)]
+	public void MissingEditionNeverFallsBackToADifferentPackage(
+		SynixInstallationKind installationKind, string otherAsset)
+	{
+		SynixReleaseInfo release = Core.ParseReleaseJson(BuildReleaseJson(assets:
+		[
+			CreateAsset(otherAsset,
+				"https://github.com/ubidzz/Synix-Control-Panel/releases/download/v1.0.22/" + otherAsset,
+				MsiDigest, 123_456)
+		]));
+		Assert.Null(Core.SelectAsset(release, installationKind));
 	}
 
 	[Fact]

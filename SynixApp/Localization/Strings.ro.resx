@@ -6680,4 +6680,52 @@ Dacă Synix nu se redeschide, executaţi programul existent Synix sau descărca�
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Maximizare sau restaurare</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Minimizare</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Titlul ferestrei</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Dezinstalare Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Elimină doar aplicația (păstrează serverele și datele)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Elimină aplicația, serverele gestionate și datele Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Elimină preferințele aplicației Synix, memoria cache, fișierele temporare și intrările de pornire ale aplicației. Păstrează întregul C:\Synix, serverele de jocuri, copiile de siguranță și fișierele de recuperare. Lista serverelor și setările lor din SynixData\servers.json sunt păstrate și reîncărcate când reinstalați Synix.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Verificați mai jos fișierele și folderele de eliminat. Locațiile păstrate sunt excluse. Ștergerea este definitivă, chiar dacă dezinstalarea aplicației eșuează ulterior.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Am salvat o copie de rezervă a datelor necesare și vreau să șterg definitiv aceste foldere.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Închide Synix și oprește toate serverele de jocuri înainte de a elimina datele acestora.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Înregistrările serverelor s-au schimbat. Verifică din nou folderele înainte de a șterge ceva.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Dezinstalează</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Eliminarea s-a oprit. Este posibil ca unele fișiere să fi fost deja șterse. Synix este încă instalat. Verifică folderele rămase înainte de a încerca din nou.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Șterge și copiile de siguranță ale serverelor și fișierele de recuperare enumerate</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Copiile de siguranță și fișierele de recuperare vor fi păstrate:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Copii de siguranță și fișiere de recuperare selectate pentru ștergere:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Nu s-au găsit copii de siguranță în locațiile de backup cunoscute de Synix.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Locații păstrate (cu excepția copiilor selectate explicit mai sus):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Închideți Synix înainte de dezinstalare. Serverele de jocuri pot continua să ruleze dacă este eliminată doar aplicația.</value>
+  </data>
 </root>

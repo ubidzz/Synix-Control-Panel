@@ -1,0 +1,45 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<!-- These actions run only after an explicit button click, before any
+		     install transaction. EndDialog/Ignore finishes this MSI's UI sequence;
+		     Windows Installer then services the already-registered product. Do not
+		     use /i with this rebuilt MSI, fake Installed, or remove/reinstall it. -->
+		<CustomAction Id="SynixRepairInstalledVersion" Directory="System64Folder"
+			ExeCommand="&quot;[System64Folder]msiexec.exe&quot; /famus &quot;[SYNIX_SAME_VERSION_FOUND]&quot; /qb /norestart"
+			Execute="immediate" Return="asyncNoWait" />
+		<CustomAction Id="SynixUninstallInstalledVersion" Directory="System64Folder"
+			ExeCommand="&quot;[System64Folder]msiexec.exe&quot; /x &quot;[SYNIX_SAME_VERSION_FOUND]&quot; /qb /norestart"
+			Execute="immediate" Return="asyncNoWait" />
+		<UI Id="SynixSameVersionMaintenance">
+			<Dialog Id="SynixSameVersionDlg" Width="370" Height="270" Title="!(loc.SynixMaintenanceWindowTitle)">
+				<Control Id="Title" Type="Text" X="20" Y="15" Width="330" Height="22"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceTitle)" />
+				<Control Id="Description" Type="Text" X="20" Y="43" Width="330" Height="36"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceDescription)" />
+				<Control Id="Repair" Type="PushButton" X="20" Y="95" Width="95" Height="23" Text="!(loc.SynixMaintenanceRepair)">
+					<Publish Event="DoAction" Value="SynixRepairInstalledVersion" Order="1" />
+					<Publish Event="EndDialog" Value="Ignore" Order="2" />
+				</Control>
+				<Control Id="RepairDescription" Type="Text" X="130" Y="93" Width="220" Height="42"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceRepairDescription)" />
+				<Control Id="Uninstall" Type="PushButton" X="20" Y="155" Width="95" Height="23" Text="!(loc.SynixMaintenanceUninstall)">
+					<Publish Event="DoAction" Value="SynixUninstallInstalledVersion" Order="1" />
+					<Publish Event="EndDialog" Value="Ignore" Order="2" />
+				</Control>
+				<Control Id="UninstallDescription" Type="Text" X="130" Y="150" Width="220" Height="42"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceUninstallDescription)" />
+				<Control Id="HandoffDescription" Type="Text" X="20" Y="205" Width="330" Height="22"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceHandoffDescription)" />
+				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+				<Control Id="Cancel" Type="PushButton" X="294" Y="243" Width="56" Height="17"
+					Default="yes" Cancel="yes" Text="!(loc.WixUICancel)">
+					<Publish Event="EndDialog" Value="Exit" />
+				</Control>
+			</Dialog>
+			<InstallUISequence>
+				<Show Dialog="SynixSameVersionDlg" After="CostFinalize"
+					Condition="NOT Installed AND SYNIX_SAME_VERSION_FOUND AND NOT WIX_DOWNGRADE_DETECTED" />
+			</InstallUISequence>
+		</UI>
+	</Fragment>
+</Wix>

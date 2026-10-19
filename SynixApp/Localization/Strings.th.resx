@@ -6680,4 +6680,52 @@ ARK จะดาวน์โหลดโมดนี้จาก {2} เมื�
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>ขยายใหญ่สุดหรือเรียกคืน</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>ปรับขนาดให้เล็กที่สุด</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>หัวเรื่องหน้าต่าง</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>ถอนการติดตั้ง Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>ลบเฉพาะแอป (เก็บเซิร์ฟเวอร์และข้อมูลไว้)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>ลบแอป เซิร์ฟเวอร์ที่จัดการ และข้อมูล Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>ลบการตั้งค่าแอป Synix แคช ไฟล์ชั่วคราว และรายการเริ่มต้นแอป โดยเก็บ C:\Synix ทั้งหมด เซิร์ฟเวอร์เกม ข้อมูลสำรอง และไฟล์กู้คืนไว้ รายชื่อเซิร์ฟเวอร์และการตั้งค่าใน SynixData\servers.json จะยังคงอยู่และโหลดอีกครั้งเมื่อคุณติดตั้ง Synix ใหม่</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>ตรวจสอบไฟล์และโฟลเดอร์ที่จะลบด้านล่าง ตำแหน่งที่เก็บไว้จะไม่ถูกลบ การลบเป็นการถาวร แม้ว่าการถอนการติดตั้งแอปจะล้มเหลวในภายหลัง</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>ฉันสำรองข้อมูลที่ต้องการแล้วและต้องการลบโฟลเดอร์เหล่านี้อย่างถาวร</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>ปิด Synix และหยุดเซิร์ฟเวอร์เกมทั้งหมดก่อนลบข้อมูลเซิร์ฟเวอร์</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>บันทึกเซิร์ฟเวอร์มีการเปลี่ยนแปลง ตรวจสอบโฟลเดอร์อีกครั้งก่อนลบสิ่งใด</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>ถอนการติดตั้ง</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>หยุดการลบแล้ว ไฟล์บางส่วนอาจถูกลบไปแล้ว Synix ยังคงติดตั้งอยู่ ตรวจสอบโฟลเดอร์ที่เหลือก่อนลองอีกครั้ง</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>ลบข้อมูลสำรองเซิร์ฟเวอร์และไฟล์กู้คืนที่แสดงในรายการด้วย</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>ข้อมูลสำรองและไฟล์กู้คืนที่จะเก็บไว้:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>ข้อมูลสำรองและไฟล์กู้คืนที่เลือกให้ลบ:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>ไม่พบข้อมูลสำรองในตำแหน่งสำรองข้อมูลที่ Synix รู้จัก</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>ตำแหน่งที่เก็บไว้ (ยกเว้นข้อมูลสำรองที่เลือกไว้อย่างชัดเจนด้านบน):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>ปิด Synix ก่อนถอนการติดตั้ง หากลบเฉพาะแอป เซิร์ฟเวอร์เกมสามารถทำงานต่อได้</value>
+  </data>
 </root>

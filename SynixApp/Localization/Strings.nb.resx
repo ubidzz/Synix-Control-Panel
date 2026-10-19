@@ -6680,4 +6680,52 @@ Hvis Synix ikke åpnes på nytt, kjører du det eksisterende Synix-programmet el
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Maksimer eller gjenopprett</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Minimer</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Vindustittel</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Avinstaller Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Fjern bare appen (behold servere og data)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Fjern appen, administrerte servere og Synix-data</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Fjerner Synix-appens innstillinger, hurtigbuffer, midlertidige filer og oppstartsoppføringer. Beholder hele C:\Synix, spillservere, sikkerhetskopier og gjenopprettingsfiler. Serverlisten og innstillingene i SynixData\servers.json beholdes og lastes inn igjen når du installerer Synix på nytt.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Se gjennom filene og mappene som skal fjernes, nedenfor. Bevarte plasseringer er unntatt. Slettingen er permanent, selv om avinstallasjonen av appen senere mislykkes.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Jeg har sikkerhetskopiert det jeg trenger og vil slette disse mappene permanent.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Lukk Synix og stopp alle spillservere før du fjerner serverdata.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Serveroppføringene er endret. Se gjennom mappene på nytt før du fjerner noe.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Avinstaller</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Fjerningen ble stoppet. Noen filer kan allerede være slettet. Synix er fortsatt installert. Se gjennom de gjenværende mappene før du prøver igjen.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Slett også de oppførte serversikkerhetskopiene og gjenopprettingsfilene</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Sikkerhetskopier og gjenopprettingsfiler beholdes:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Sikkerhetskopier og gjenopprettingsfiler valgt for sletting:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Ingen sikkerhetskopier ble funnet på de kjente Synix-sikkerhetskopiplasseringene.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Bevarte plasseringer (unntatt sikkerhetskopier uttrykkelig valgt ovenfor):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Lukk Synix før avinstallasjon. Spillservere kan fortsette å kjøre når bare appen fjernes.</value>
+  </data>
 </root>

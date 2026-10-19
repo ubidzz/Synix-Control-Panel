@@ -6680,4 +6680,52 @@ Jos Synix ei avaudu uudelleen, suorita nykyinen Synix-ohjelma tai lataa uusin ve
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Suurenna tai palauta</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Pienennä</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Ikkunan nimi</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Poista Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Poista vain sovellus (säilytä palvelimet ja tiedot)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Poista sovellus, hallitut palvelimet ja Synix-tiedot</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Poistaa Synix-sovelluksen asetukset, välimuistin, tilapäistiedostot ja käynnistysmerkinnät. Säilyttää koko C:\Synix-kansion, pelipalvelimet, varmuuskopiot ja palautustiedostot. SynixData\servers.json-tiedoston palvelinluettelo ja asetukset säilytetään ja ladataan uudelleen, kun asennat Synixin uudelleen.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Tarkista alta poistettavat tiedostot ja kansiot. Säilytettävät sijainnit ohitetaan. Poisto on pysyvä, vaikka sovelluksen poistaminen myöhemmin epäonnistuisi.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Olen varmuuskopioinut tarvitsemani tiedot ja haluan poistaa nämä kansiot pysyvästi.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Sulje Synix ja pysäytä kaikki pelipalvelimet ennen palvelintietojen poistamista.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Palvelinten tiedot ovat muuttuneet. Tarkista kansiot uudelleen ennen minkään poistamista.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Poista asennus</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Poistaminen keskeytettiin. Joitakin tiedostoja on ehkä jo poistettu. Synix on edelleen asennettuna. Tarkista jäljellä olevat kansiot ennen uutta yritystä.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Poista myös luetellut palvelinten varmuuskopiot ja palautustiedostot</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Varmuuskopiot ja palautustiedostot säilytetään:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Poistettaviksi valitut varmuuskopiot ja palautustiedostot:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Tunnetuista Synix-varmuuskopioiden sijainneista ei löytynyt varmuuskopioita.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Säilytettävät sijainnit (paitsi yllä erikseen valitut varmuuskopiot):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Sulje Synix ennen poistamista. Pelipalvelimet voivat jatkaa toimintaansa, kun vain sovellus poistetaan.</value>
+  </data>
 </root>

@@ -15,7 +15,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.25</Version>
+		<Version>1.0.26</Version>
 		<AssemblyVersion>$(Version).0</AssemblyVersion>
 		<FileVersion>$(Version).0</FileVersion>
 		<InformationalVersion>$(Version)</InformationalVersion>
@@ -288,7 +288,7 @@
 			<_SynixPublishDirectory>$([System.IO.Path]::GetDirectoryName('$(_SynixPublishPathMarker)'))</_SynixPublishDirectory>
 			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
 			<_SynixMsiProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'SynixInstaller.wixproj'))</_SynixMsiProject>
-			<_SynixMsiBuildOutput>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'bin', 'Release', 'SynixSetup.msi'))</_SynixMsiBuildOutput>
+			<_SynixMsiBuildOutput>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'bin', 'Release', 'en-US', 'SynixSetup.msi'))</_SynixMsiBuildOutput>
 			<_SynixMsiOutput>$([System.IO.Path]::Combine('$(PublishDir)', 'SynixSetup.msi'))</_SynixMsiOutput>
 			<_SynixTestsProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Tests', 'Synix.Tests.csproj'))</_SynixTestsProject>
 			<_SynixDotNetHost Condition="'$(DotNetHostPath)' != ''">$(DotNetHostPath)</_SynixDotNetHost>

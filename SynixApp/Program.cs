@@ -27,6 +27,14 @@ namespace Synix_Control_Panel.SynixApp
 		[STAThread]
 		static void Main(string[] args)
 		{
+			// Installer maintenance must not start the dashboard, restore jobs,
+			// watchdog, server migration, or the background agent.
+			if (SynixUninstallCommand.IsCommand(args))
+			{
+				Environment.ExitCode = SynixUninstallCommand.Run(args);
+				return;
+			}
+
 			if (FirewallCleanupService.IsCleanupCommand(args))
 			{
 				Environment.ExitCode =

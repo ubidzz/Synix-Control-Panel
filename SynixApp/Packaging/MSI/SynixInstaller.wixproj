@@ -4,16 +4,22 @@
 		<OutputName>SynixSetup</OutputName>
 		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\</OutputPath>
 		<InstallerPlatform>x64</InstallerPlatform>
+		<Cultures>en-US</Cultures>
 		<AcceptEula>wix7</AcceptEula>
 		<SuppressValidation>true</SuppressValidation>
 		<Version>$(Version)</Version>
 		<DefineConstants>$(DefineConstants);SynixVersion=$(Version);SynixPublishDir=$(SynixPublishDir);SynixProjectDir=$(SynixProjectDir);SynixAssemblyName=$(SynixAssemblyName)</DefineConstants>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
+	</ItemGroup>
+
 	<Target Name="ValidateSynixMsiInputs" BeforeTargets="Build">
 		<PropertyGroup>
 			<_SynixPublishedExecutable>$([System.IO.Path]::Combine('$(SynixPublishDir)', '$(SynixAssemblyName).exe'))</_SynixPublishedExecutable>
 			<_SynixInstallerIcon>$([System.IO.Path]::Combine('$(SynixProjectDir)', 'Images', 'Synix_logo_Icon.ico'))</_SynixInstallerIcon>
+			<_SynixInstallerSidebar>$([System.IO.Path]::Combine('$(SynixProjectDir)', 'Packaging', 'MSI', 'Assets', 'SynixSidebar.png'))</_SynixInstallerSidebar>
 		</PropertyGroup>
 		<Error Condition="'$(Version)' == ''" Text="The Synix version was not supplied to the MSI project." />
 		<Error Condition="'$(SynixPublishDir)' == ''" Text="The Synix publish folder was not supplied to the MSI project." />
@@ -21,5 +27,6 @@
 		<Error Condition="'$(SynixAssemblyName)' == ''" Text="The Synix assembly name was not supplied to the MSI project." />
 		<Error Condition="!Exists('$(_SynixPublishedExecutable)')" Text="The published Synix executable was not found at $(_SynixPublishedExecutable)." />
 		<Error Condition="!Exists('$(_SynixInstallerIcon)')" Text="The Synix installer icon was not found at $(_SynixInstallerIcon)." />
+		<Error Condition="!Exists('$(_SynixInstallerSidebar)')" Text="The Synix installer sidebar artwork was not found at $(_SynixInstallerSidebar)." />
 	</Target>
 </Project>

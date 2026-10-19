@@ -6680,4 +6680,52 @@ Ha a Synix nem nyílik meg újra, futtassa a meglévő Synix programot, vagy tö
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Maximalizálás vagy visszaállítás</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Kis méretűre állítás</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Ablak címe</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Synix eltávolítása</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Csak az alkalmazás eltávolítása (kiszolgálók és adatok megtartása)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Az alkalmazás, a kezelt kiszolgálók és a Synix-adatok eltávolítása</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Eltávolítja a Synix alkalmazásbeállításait, gyorsítótárát, ideiglenes fájljait és automatikus indítási bejegyzéseit. Megőrzi a teljes C:\Synix mappát, a játékszervereket, a biztonsági másolatokat és a helyreállítási fájlokat. A SynixData\servers.json fájlban tárolt szerverlista és beállítások megmaradnak, és a Synix újratelepítésekor újra betöltődnek.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Ellenőrizze alább az eltávolítandó fájlokat és mappákat. A megőrzött helyek kivételek. A törlés végleges, akkor is, ha az alkalmazás eltávolítása később sikertelen.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Biztonsági másolatot készítettem a szükséges adatokról, és véglegesen törölni szeretném ezeket a mappákat.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>A kiszolgálóadatok eltávolítása előtt zárja be a Synixet, és állítsa le az összes játékkiszolgálót.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>A kiszolgálóbejegyzések megváltoztak. Törlés előtt ellenőrizze újra a mappákat.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Eltávolítás</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Az eltávolítás leállt. Egyes fájlok már törlődhettek. A Synix még telepítve van. Újabb próbálkozás előtt ellenőrizze a megmaradt mappákat.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>A felsorolt szervermentések és helyreállítási fájlok törlése is</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>A biztonsági másolatok és helyreállítási fájlok megmaradnak:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Törlésre kijelölt biztonsági másolatok és helyreállítási fájlok:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Nem találhatók biztonsági másolatok a Synix ismert mentési helyein.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Megőrzött helyek (kivéve a fent kifejezetten kijelölt biztonsági másolatokat):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Az eltávolítás előtt zárja be a Synixet. Ha csak az alkalmazást távolítja el, a játékszerverek tovább futhatnak.</value>
+  </data>
 </root>

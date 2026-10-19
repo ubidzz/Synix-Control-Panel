@@ -7603,5 +7603,53 @@ Eğer Synix yeniden açılmazsa, mevcut Synix programınızı çalıştırın ve
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Genişlet veya geri al</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Minimize Et</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Pencere başlığı</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Synix’i kaldır</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Yalnızca uygulamayı kaldır (sunucuları ve verileri koru)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Uygulamayı, yönetilen sunucuları ve Synix verilerini kaldır</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Synix uygulama tercihlerini, önbelleği, geçici dosyaları ve uygulamanın başlangıç kayıtlarını kaldırır. C:\Synix klasörünün tamamını, oyun sunucularını, yedekleri ve kurtarma dosyalarını korur. SynixData\servers.json dosyasındaki sunucu listesi ve ayarları korunur ve Synix yeniden yüklendiğinde tekrar yüklenir.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Aşağıda kaldırılacak dosya ve klasörleri gözden geçirin. Korunan konumlar hariç tutulur. Uygulamanın kaldırılması daha sonra başarısız olsa bile silme işlemi kalıcıdır.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Gereken verileri yedekledim ve bu klasörleri kalıcı olarak silmek istiyorum.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Sunucu verilerini kaldırmadan önce Synix’i kapatın ve tüm oyun sunucularını durdurun.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Sunucu kayıtları değişti. Bir şey silmeden önce klasörleri tekrar inceleyin.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Kaldır</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Kaldırma durduruldu. Bazı dosyalar zaten silinmiş olabilir. Synix hâlâ yüklü. Yeniden denemeden önce kalan klasörleri inceleyin.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Listelenen sunucu yedeklerini ve kurtarma dosyalarını da sil</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Yedekler ve kurtarma dosyaları korunacak:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Silinmek üzere seçilen yedekler ve kurtarma dosyaları:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Synix'in bilinen yedek konumlarında yedek bulunamadı.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Korunan konumlar (yukarıda açıkça seçilen yedekler hariç):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Kaldırmadan önce Synix'i kapatın. Yalnızca uygulama kaldırıldığında oyun sunucuları çalışmaya devam edebilir.</value>
+  </data>
 </root>
 

@@ -7603,5 +7603,53 @@ ARK會在你啟動伺服器時從{2}下載這個模組。 Synix 不會複製或�
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>最大化或恢復</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>最小化</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>視窗標題</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>解除安裝 Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>僅移除應用程式（保留伺服器和資料）</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>移除應用程式、受管理的伺服器及 Synix 資料</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>刪除 Synix 應用程式偏好設定、快取、暫存檔案和應用程式啟動項目。保留整個 C:\Synix、遊戲伺服器、備份和復原檔案。 SynixData\servers.json 中的伺服器清單和設定會保留，並在重新安裝 Synix 時重新載入。</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>請檢查下方要刪除的檔案和資料夾。標記為保留的位置不會被刪除。即使之後解除安裝應用程式失敗，刪除操作也無法復原。</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>我已備份所需內容，並確認永久刪除這些資料夾。</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>移除伺服器資料前，請關閉 Synix 並停止所有遊戲伺服器。</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>伺服器記錄已變更。請重新檢查資料夾後再進行刪除。</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>解除安裝</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>刪除已停止。部分檔案可能已被刪除。Synix 仍處於安裝狀態。重試前請檢查剩餘資料夾。</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>同時刪除列出的伺服器備份和復原檔案</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>將保留的備份和復原檔案：</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>已選擇刪除的備份和復原檔案：</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>在 Synix 已知的備份位置中找不到備份。</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>保留的位置（不含上方明確選擇刪除的備份）：</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>解除安裝前請關閉 Synix。如果只刪除應用程式，遊戲伺服器可以繼續執行。</value>
+  </data>
 </root>
 

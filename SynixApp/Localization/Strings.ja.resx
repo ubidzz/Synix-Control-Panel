@@ -7603,5 +7603,53 @@ Synixが再開されない場合は、既存のSynixプログラムを実行し�
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>最大化または復元</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>最小化</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>ウィンドウタイトル</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Synix のアンインストール</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>アプリのみを削除（サーバーとデータを保持）</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>アプリ、管理対象サーバー、Synix データを削除</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Synix アプリの設定、キャッシュ、一時ファイル、自動起動の登録を削除します。C:\Synix 全体、ゲームサーバー、バックアップ、復旧用ファイルは保持します。 SynixData\servers.json のサーバー一覧と設定は保持され、Synix を再インストールすると再び読み込まれます。</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>以下の削除対象のファイルとフォルダーを確認してください。保持する場所は除外されます。その後アプリのアンインストールに失敗しても、削除は元に戻せません。</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>必要なデータをバックアップ済みで、これらのフォルダーを完全に削除することに同意します。</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>サーバーデータを削除する前に、Synix を閉じてすべてのゲームサーバーを停止してください。</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>サーバーの記録が変更されました。削除する前にフォルダーをもう一度確認してください。</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>アンインストール</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>削除を停止しました。一部のファイルはすでに削除されている可能性があります。Synix はまだインストールされています。再試行する前に残りのフォルダーを確認してください。</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>一覧のサーバーバックアップと復旧用ファイルも削除する</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>保持するバックアップと復旧用ファイル：</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>削除対象として選択されたバックアップと復旧用ファイル：</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Synix が認識しているバックアップの保存先にバックアップは見つかりませんでした。</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>保持する場所（上で明示的に選択したバックアップを除く）：</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>アンインストールする前に Synix を閉じてください。アプリのみを削除する場合、ゲームサーバーは稼働したままで構いません。</value>
+  </data>
 </root>
 

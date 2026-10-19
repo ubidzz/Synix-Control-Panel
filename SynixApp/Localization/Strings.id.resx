@@ -7604,5 +7604,53 @@ Jika Synix tidak dibuka kembali, jalankan program Synix yang ada atau unduh rili
   <data name="WindowHeader.MaximizeRestore.AccessibleName" xml:space="preserve"><value>Maksimalkan atau kembalikan</value></data>
   <data name="WindowHeader.Minimize.AccessibleName" xml:space="preserve"><value>Minimalkan</value></data>
   <data name="WindowHeader.Title.AccessibleName" xml:space="preserve"><value>Judul jendela</value></data>
+  <data name="Uninstall.Title" xml:space="preserve">
+    <value>Hapus instalasi Synix</value>
+  </data>
+  <data name="Uninstall.AppOnly" xml:space="preserve">
+    <value>Hapus aplikasi saja (simpan server dan data)</value>
+  </data>
+  <data name="Uninstall.Everything" xml:space="preserve">
+    <value>Hapus aplikasi, server yang dikelola, dan data Synix</value>
+  </data>
+  <data name="Uninstall.Keep" xml:space="preserve">
+    <value>Menghapus preferensi aplikasi Synix, cache, file sementara, dan entri startup aplikasi. Mempertahankan seluruh C:\Synix, server game, cadangan, dan file pemulihan. Daftar server dan pengaturannya di SynixData\servers.json tetap tersimpan dan dimuat kembali saat Anda menginstal ulang Synix.</value>
+  </data>
+  <data name="Uninstall.Review" xml:space="preserve">
+    <value>Tinjau file dan folder yang akan dihapus di bawah ini. Lokasi yang dipertahankan dikecualikan. Penghapusan bersifat permanen, meskipun pencopotan aplikasi kemudian gagal.</value>
+  </data>
+  <data name="Uninstall.Confirm" xml:space="preserve">
+    <value>Saya sudah mencadangkan data yang diperlukan dan ingin menghapus folder ini secara permanen.</value>
+  </data>
+  <data name="Uninstall.Stop" xml:space="preserve">
+    <value>Tutup Synix dan hentikan semua server game sebelum menghapus data server.</value>
+  </data>
+  <data name="Uninstall.Changed" xml:space="preserve">
+    <value>Catatan server telah berubah. Tinjau kembali folder sebelum menghapus apa pun.</value>
+  </data>
+  <data name="Uninstall.Remove" xml:space="preserve">
+    <value>Hapus instalasi</value>
+  </data>
+  <data name="Uninstall.Failed" xml:space="preserve">
+    <value>Penghapusan dihentikan. Beberapa file mungkin sudah dihapus. Synix masih terpasang. Tinjau folder yang tersisa sebelum mencoba lagi.</value>
+  </data>
+  <data name="Uninstall.BackupsOption" xml:space="preserve">
+    <value>Hapus juga cadangan server dan file pemulihan yang tercantum</value>
+  </data>
+  <data name="Uninstall.BackupsKeep" xml:space="preserve">
+    <value>Cadangan dan file pemulihan akan dipertahankan:</value>
+  </data>
+  <data name="Uninstall.BackupsDelete" xml:space="preserve">
+    <value>Cadangan dan file pemulihan yang dipilih untuk dihapus:</value>
+  </data>
+  <data name="Uninstall.NoBackups" xml:space="preserve">
+    <value>Tidak ada cadangan yang ditemukan di lokasi cadangan Synix yang diketahui.</value>
+  </data>
+  <data name="Uninstall.KeptLocations" xml:space="preserve">
+    <value>Lokasi yang dipertahankan (kecuali cadangan yang dipilih secara tegas di atas):</value>
+  </data>
+  <data name="Uninstall.CloseApp" xml:space="preserve">
+    <value>Tutup Synix sebelum mencopot pemasangan. Server game dapat tetap berjalan jika hanya aplikasi yang dihapus.</value>
+  </data>
 </root>
 
