@@ -123,6 +123,10 @@ public sealed class ServerManagementEngineTests
 			bool stopped = await Servers.Stop(server, (_, _) => { });
 
 			Assert.True(stopped);
+			Assert.Contains(ServerActivityHistory.Current.Read(server).Entries,
+				entry => entry.Diagnostic?.ResourceKey == "ServerStop.Activity.Tracking");
+			Assert.Contains(ServerActivityHistory.Current.Read(server).Entries,
+				entry => entry.Diagnostic?.ResourceKey is "ServerStop.Activity.CleanStop" or "ServerStop.Activity.ForcedAndVerified");
 			Assert.False(IsTestProcessAlive(processId));
 			Assert.Null(server.PID);
 			Assert.Empty(server.ServerProcesses);

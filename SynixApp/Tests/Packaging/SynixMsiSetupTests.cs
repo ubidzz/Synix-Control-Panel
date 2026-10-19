@@ -37,7 +37,7 @@ public sealed class SynixMsiSetupTests
 	}
 
 	[Fact]
-	public void InteractiveAndSilentUpgradesRestoreAppFolderWithoutOverridingExplicitChoice()
+	public void InteractiveAndSilentUpgradesReadTheRegisteredFolderBeforeGuardingOverrides()
 	{
 		XDocument source = Package;
 		XElement previous = Assert.Single(source.Descendants(Wix + "Property"),
@@ -142,8 +142,8 @@ public sealed class SynixMsiSetupTests
 	{
 		XDocument source = Package;
 		XElement upgrade = Assert.Single(source.Descendants(Wix + "MajorUpgrade"));
-		Assert.Equal("no", (string?)upgrade.Attribute("AllowSameVersionUpgrades"));
-		Assert.Equal("afterInstallInitialize", (string?)upgrade.Attribute("Schedule"));
+		Assert.Equal("yes", (string?)upgrade.Attribute("AllowSameVersionUpgrades"));
+		Assert.Equal("afterInstallExecute", (string?)upgrade.Attribute("Schedule"));
 		Assert.NotNull(upgrade.Attribute("DowngradeErrorMessage"));
 		Assert.Null(upgrade.Attribute("AllowDowngrades"));
 		foreach (string id in new[] { "SYNIX_SETUP_HEADING", "SYNIX_SETUP_DESCRIPTION", "SYNIX_SETUP_REVIEW", "SYNIX_SETUP_ACTION" })
@@ -163,7 +163,7 @@ public sealed class SynixMsiSetupTests
 	}
 
 	[Fact]
-	public void RebuiltSameVersionIsDetectedWithoutRemovingTheRegisteredProduct()
+	public void RebuiltSameVersionIsDetectedSeparatelyForExplicitRepair()
 	{
 		XDocument source = Package;
 		XElement package = Assert.Single(source.Descendants(Wix + "Package"));
@@ -189,15 +189,11 @@ public sealed class SynixMsiSetupTests
 		XDocument source = XDocument.Load(Path.Combine(PackagingDirectory, "SameVersionMaintenance.wxs"));
 		Assert.Contains(Package.Descendants(Wix + "UIRef"), element =>
 			(string?)element.Attribute("Id") == "SynixSameVersionMaintenance");
-		XElement show = Assert.Single(source.Descendants(Wix + "Show"));
+		XElement show = Assert.Single(source.Descendants(Wix + "Show"), element => (string?)element.Attribute("Dialog") == "SynixSameVersionDlg");
 		Assert.Equal("SynixSameVersionDlg", (string?)show.Attribute("Dialog"));
 		Assert.Equal("CostFinalize", (string?)show.Attribute("After"));
 		Assert.Equal("NOT Installed AND SYNIX_SAME_VERSION_FOUND AND NOT WIX_DOWNGRADE_DETECTED", (string?)show.Attribute("Condition"));
-		foreach ((string button, string actionId, string mode) in new[]
-		{
-			("Repair", "SynixRepairInstalledVersion", "/famus"),
-			("Uninstall", "SynixUninstallInstalledVersion", "/x")
-		})
+		foreach ((string button, string actionId, string mode) in new[] { ("Uninstall", "SynixUninstallInstalledVersion", "/x") })
 		{
 			XElement action = Assert.Single(source.Descendants(Wix + "CustomAction"),
 				element => (string?)element.Attribute("Id") == actionId);
@@ -222,6 +218,22 @@ public sealed class SynixMsiSetupTests
 		}
 		Assert.Empty(source.Descendants(Wix + "InstallExecuteSequence"));
 		Assert.Empty(source.Descendants(Wix + "InstallUISequence").Elements(Wix + "Custom"));
+		Assert.DoesNotContain(source.Descendants(Wix + "CustomAction"), element => (string?)element.Attribute("Id") == "SynixRepairInstalledVersion");
+		XElement repair = Assert.Single(source.Descendants(Wix + "Control"), element => (string?)element.Attribute("Id") == "Repair");
+		Assert.Null(repair.Attribute("Default"));
+		Assert.Contains(repair.Elements(Wix + "Publish"), element =>
+			(string?)element.Attribute("Property") == "SYNIX_REPAIR_CONFIRMED" && (string?)element.Attribute("Value") == "1");
+		Assert.Contains(repair.Elements(Wix + "Publish"), element =>
+			(string?)element.Attribute("Event") == "NewDialog" && (string?)element.Attribute("Value") == "LicenseAgreementDlg");
+		Assert.DoesNotContain(repair.Elements(Wix + "Publish"), element => (string?)element.Attribute("Event") is "DoAction" or "Reinstall" or "ReinstallMode" or "EndDialog");
+		Assert.Contains(source.Descendants(Wix + "Show"), element => (string?)element.Attribute("Dialog") == "override WelcomeDlg" &&
+			(string?)element.Attribute("Condition") == "(NOT Installed OR PATCH) AND NOT SYNIX_SAME_VERSION_FOUND");
+		Assert.Contains(source.Descendants(Wix + "Publish"), element => (string?)element.Attribute("Dialog") == "LicenseAgreementDlg" &&
+			(string?)element.Attribute("Control") == "Next" && (string?)element.Attribute("Value") == "VerifyReadyDlg" &&
+			(string?)element.Attribute("Condition") == "NOT Installed AND LicenseAccepted = \"1\" AND (SYNIX_REPAIR_CONFIRMED = \"1\" OR (WIX_UPGRADE_DETECTED AND NOT SYNIX_SAME_VERSION_FOUND AND SYNIX_PREVIOUS_INSTALLFOLDER))");
+		Assert.Contains(source.Descendants(Wix + "Publish"), element => (string?)element.Attribute("Dialog") == "VerifyReadyDlg" &&
+			(string?)element.Attribute("Control") == "Back" && (string?)element.Attribute("Value") == "LicenseAgreementDlg" &&
+			(string?)element.Attribute("Condition") == "NOT Installed AND (SYNIX_REPAIR_CONFIRMED = \"1\" OR (WIX_UPGRADE_DETECTED AND NOT SYNIX_SAME_VERSION_FOUND AND SYNIX_PREVIOUS_INSTALLFOLDER))");
 		XElement cancel = Assert.Single(source.Descendants(Wix + "Control"),
 			element => (string?)element.Attribute("Id") == "Cancel");
 		Assert.Equal("yes", (string?)cancel.Attribute("Default"));
@@ -237,7 +249,7 @@ public sealed class SynixMsiSetupTests
 	}
 
 	[Fact]
-	public void SameVersionRebuildCannotSilentlyInstallADuplicateOrReplaceTheApp()
+	public void SameVersionRebuildRequiresExplicitRepairAndCannotRelocateTheApp()
 	{
 		XDocument source = Package;
 		XElement guard = Assert.Single(source.Descendants(Wix + "CustomAction"),
@@ -247,9 +259,22 @@ public sealed class SynixMsiSetupTests
 		XElement schedule = Assert.Single(source.Descendants(Wix + "InstallExecuteSequence").Elements(Wix + "Custom"),
 			element => (string?)element.Attribute("Action") == "SynixBlockSameVersionInstall");
 		Assert.Equal("InstallInitialize", (string?)schedule.Attribute("Before"));
-		Assert.Equal("NOT Installed AND SYNIX_SAME_VERSION_FOUND", (string?)schedule.Attribute("Condition"));
-		XElement duplicates = Assert.Single(source.Descendants(Wix + "Launch"));
-		Assert.Equal("Installed OR NOT (SYNIX_SAME_VERSION_FOUND >< \";\")", (string?)duplicates.Attribute("Condition"));
+		Assert.Equal("NOT Installed AND NOT (REMOVE = \"ALL\") AND SYNIX_SAME_VERSION_FOUND AND SYNIX_REPAIR_CONFIRMED <> \"1\"", (string?)schedule.Attribute("Condition"));
+		XElement consent = Assert.Single(source.Descendants(Wix + "Property"), element => (string?)element.Attribute("Id") == "SYNIX_REPAIR_CONFIRMED");
+		Assert.Equal("yes", (string?)consent.Attribute("Secure"));
+		Assert.Null(consent.Attribute("Value"));
+		XElement duplicates = Assert.Single(source.Descendants(Wix + "Launch"), element => ((string?)element.Attribute("Condition"))?.Contains(';') == true);
+		Assert.Equal("Installed OR REMOVE = \"ALL\" OR NOT (SYNIX_SAME_VERSION_FOUND >< \";\")", (string?)duplicates.Attribute("Condition"));
+		Assert.Contains(source.Descendants(Wix + "Launch"), element =>
+			(string?)element.Attribute("Condition") == "Installed OR REMOVE = \"ALL\" OR NOT SYNIX_SAME_VERSION_FOUND OR SYNIX_PREVIOUS_INSTALLFOLDER");
+		Assert.Contains(source.Descendants(Wix + "InstallExecuteSequence").Elements(Wix + "Custom"), element =>
+			(string?)element.Attribute("Action") == "SynixBlockRepairFolderChange" &&
+			(string?)element.Attribute("Condition") == "NOT Installed AND NOT (REMOVE = \"ALL\") AND WIX_UPGRADE_DETECTED AND SYNIX_PREVIOUS_INSTALLFOLDER AND NOT (INSTALLFOLDER ~= SYNIX_PREVIOUS_INSTALLFOLDER)");
+		XElement overwrite = Assert.Single(source.Descendants(Wix + "SetProperty"), element => (string?)element.Attribute("Id") == "REINSTALLMODE");
+		Assert.Equal("amus", (string?)overwrite.Attribute("Value"));
+		Assert.Equal("CostFinalize", (string?)overwrite.Attribute("Before"));
+		Assert.Equal("both", (string?)overwrite.Attribute("Sequence"));
+		Assert.Equal("NOT Installed AND SYNIX_SAME_VERSION_FOUND AND SYNIX_REPAIR_CONFIRMED = \"1\"", (string?)overwrite.Attribute("Condition"));
 	}
 
 	[Fact]

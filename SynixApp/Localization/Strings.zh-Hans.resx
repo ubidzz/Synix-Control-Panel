@@ -7651,5 +7651,25 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>卸载前请关闭 Synix。如果仅删除应用，游戏服务器可以继续运行。</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>服务器历史记录</value></data>
+  <data name="History.Search" xml:space="preserve"><value>搜索活动或日期</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>仅显示失败和警告</value></data>
+  <data name="History.When" xml:space="preserve"><value>日期和时间</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>活动</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>配置已保存</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>无法读取或保存历史记录。请检查文件夹访问权限和可用磁盘空间。</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>已跳过部分无法读取的历史记录。</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>重启 Synix 后仍会保留。每个服务器最多保存 {0} 条近期记录。不记录密码和启动命令。</value></data>
+  <data name="History.Details" xml:space="preserve"><value>详细信息（选中文本可复制）</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>无法获取备份状态</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>未经验证的备份</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>没有已完成的备份</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>最近完成的备份：{0}（{1}）</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>根据文件和校验记录显示，不代表重新检查了完整性。超过 7 天的备份会突出显示。</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} 天前</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} 小时前</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>正在检查备份…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>尚未记录此服务器的活动。</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>没有符合筛选条件的活动。</value></data>
 </root>
 

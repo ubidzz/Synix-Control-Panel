@@ -20,12 +20,12 @@
 	<String Id="MaintenanceTypeDlgDescription" Value="Choose Repair to restore Synix, or Uninstall to remove it." />
 	<String Id="SynixMaintenanceWindowTitle" Value="Synix Control Panel Setup" />
 	<String Id="SynixMaintenanceTitle" Value="{\WixUI_Font_Bigger}Repair or uninstall Synix" />
-	<String Id="SynixMaintenanceDescription" Value="Synix [ProductVersion] is already installed. This installer is the same version, so no update is needed." />
+	<String Id="SynixMaintenanceDescription" Value="Synix [ProductVersion] is already installed. Repair restores the application using the files in this installer, including changes from a republished build." />
 	<String Id="SynixMaintenanceRepair" Value="&amp;Repair" />
 	<String Id="SynixMaintenanceRepairDescription" Value="Restore the installed application and shortcuts. Your server list, game servers, settings, and backups are kept." />
 	<String Id="SynixMaintenanceUninstall" Value="&amp;Uninstall" />
 	<String Id="SynixMaintenanceUninstallDescription" Value="Open the installed version's uninstaller. Server and backup removal still require a separate choice and confirmation." />
-	<String Id="SynixMaintenanceHandoffDescription" Value="This window closes and Windows Installer opens the selected maintenance operation." />
+	<String Id="SynixMaintenanceHandoffDescription" Value="Repair continues here. Uninstall closes this window and opens the installed application's uninstaller." />
 	<String Id="InstallDirDlgTitle" Value="{\WixUI_Font_Title}Application folder" />
 	<String Id="InstallDirDlgDescription" Value="Choose where to install the Synix application." />
 	<String Id="InstallDirDlgFolderLabel"

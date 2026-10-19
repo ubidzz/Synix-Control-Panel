@@ -1271,6 +1271,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				return;
 			}
 
+			GameServer? replacedServer = null;
+			int replacementIndex = -1;
+			bool registrySaved = false;
 			try
 			{
 				Core.SetServerSecrets(
@@ -1292,6 +1295,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					{
 						NewServer.IsFirstBoot = false;
 						int index = ServerRegistry.Servers.IndexOf(existing);
+						replacedServer = existing;
+						replacementIndex = index;
 						ServerRegistry.Servers[index] = NewServer;
 					}
 				}
@@ -1325,12 +1330,22 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					}
 				}
 
-				FileHandler.SaveServers();
+				if (!FileHandler.SaveServers())
+					throw new IOException(LocalizationManager.Get("Configuration.Sync.SaveEntry"));
+				registrySaved = true;
+				ServerActivityHistory.Current.Record(NewServer, "ConfigurationSaved");
 				DialogResult = DialogResult.OK;
 				Close();
 			}
 			catch (Exception exception)
 			{
+				if (!registrySaved)
+				{
+					if (replacedServer != null && replacementIndex >= 0 && replacementIndex < ServerRegistry.Servers.Count &&
+						ReferenceEquals(ServerRegistry.Servers[replacementIndex], NewServer))
+						ServerRegistry.Servers[replacementIndex] = replacedServer;
+					else ServerRegistry.Servers.Remove(NewServer);
+				}
 					PlainEnglishErrorDialog.ShowError(
 						this,
 						LocalizationManager.Get(

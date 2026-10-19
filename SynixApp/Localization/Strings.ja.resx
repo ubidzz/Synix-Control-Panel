@@ -7651,5 +7651,25 @@ Synixが再開されない場合は、既存のSynixプログラムを実行し�
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>アンインストールする前に Synix を閉じてください。アプリのみを削除する場合、ゲームサーバーは稼働したままで構いません。</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>サーバーの履歴</value></data>
+  <data name="History.Search" xml:space="preserve"><value>操作や日付を検索</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>失敗と警告のみ</value></data>
+  <data name="History.When" xml:space="preserve"><value>日時</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>操作</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>設定を保存しました</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>履歴を読み取りまたは保存できませんでした。フォルダーのアクセス権とディスクの空き容量を確認してください。</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>読み取れない履歴の一部をスキップしました。</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Synixを再起動しても保持されます。サーバーごとに最新の記録を最大 {0} 件保存します。パスワードと起動コマンドは記録しません。</value></data>
+  <data name="History.Details" xml:space="preserve"><value>詳細（テキストを選択してコピー）</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>バックアップの状態を取得できません</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>未検証のバックアップ</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>完了したバックアップはありません</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>最後に完了したバックアップ：{0}（{1}）</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>ファイルと検証記録に基づく表示で、新たな整合性チェックは行いません。7 日より古いバックアップは強調表示されます。</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} 日前</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} 時間前</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>バックアップを確認中…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>このサーバーのアクティビティはまだ記録されていません。</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>フィルターに一致するアクティビティはありません。</value></data>
 </root>
 

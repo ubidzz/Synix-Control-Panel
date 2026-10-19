@@ -6728,4 +6728,24 @@ Windows Η άδεια τείχους προστασίας και η προώθη
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Κλείστε το Synix πριν από την απεγκατάσταση. Οι διακομιστές παιχνιδιών μπορούν να συνεχίσουν να λειτουργούν όταν αφαιρείται μόνο η εφαρμογή.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Ιστορικό διακομιστή</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Αναζήτηση δραστηριότητας ή ημερομηνίας</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Μόνο αποτυχίες και προειδοποιήσεις</value></data>
+  <data name="History.When" xml:space="preserve"><value>Ημερομηνία και ώρα</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Δραστηριότητα</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Οι ρυθμίσεις αποθηκεύτηκαν</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Δεν ήταν δυνατή η ανάγνωση ή η αποθήκευση του ιστορικού. Ελέγξτε την πρόσβαση στον φάκελο και τον ελεύθερο χώρο στον δίσκο.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Παραλείφθηκαν ορισμένες μη αναγνώσιμες εγγραφές ιστορικού.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Διατηρείται μετά την επανεκκίνηση του Synix. Έως {0} πρόσφατες εγγραφές ανά διακομιστή. Εξαιρούνται κωδικοί πρόσβασης και εντολές εκκίνησης.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Λεπτομέρειες (επιλέξτε κείμενο για αντιγραφή)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Η κατάσταση αντιγράφων δεν είναι διαθέσιμη</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Μη επαληθευμένο αντίγραφο</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Κανένα ολοκληρωμένο αντίγραφο</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Τελευταίο ολοκληρωμένο αντίγραφο: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Βασίζεται σε αρχεία και εγγραφές ελέγχου, χωρίς νέο έλεγχο ακεραιότητας. Επισημαίνονται αντίγραφα παλαιότερα των 7 ημερών.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Πριν από {0} ημέρες</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Πριν από {0} ώρες</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Έλεγχος αντιγράφων…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Δεν έχει καταγραφεί ακόμη δραστηριότητα για αυτόν τον διακομιστή.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Καμία δραστηριότητα δεν ταιριάζει με τα φίλτρα σας.</value></data>
 </root>

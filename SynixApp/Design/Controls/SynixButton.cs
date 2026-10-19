@@ -59,7 +59,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			Cursor = Cursors.Hand;
 			Size = new Size(130, 42);
-			TabStop = false;
+			TabStop = true;
 			UseMnemonic = false;
 		}
 
@@ -97,6 +97,9 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			base.OnEnabledChanged(eventArgs);
 			Invalidate();
 		}
+
+		protected override void OnGotFocus(EventArgs eventArgs) { base.OnGotFocus(eventArgs); Invalidate(); }
+		protected override void OnLostFocus(EventArgs eventArgs) { base.OnLostFocus(eventArgs); Invalidate(); }
 
 		protected override void OnPaintBackground(PaintEventArgs eventArgs)
 		{
@@ -170,8 +173,10 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				textColor,
 				TextFormatFlags.HorizontalCenter |
 				TextFormatFlags.VerticalCenter |
-				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);
+			if (Focused && ShowFocusCues && Enabled)
+				ControlPaint.DrawFocusRectangle(graphics, Rectangle.Inflate(ClientRectangle, -5, -5), textColor, fillColor);
 		}
 	}
 }

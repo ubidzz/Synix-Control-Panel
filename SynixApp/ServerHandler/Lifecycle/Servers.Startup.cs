@@ -31,7 +31,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (selectedDefinition == null)
 				{
 					logCallback?.Invoke(
-						LocalizationManager.Get("ServerStart.Activity.DefinitionMissing", server.Game),
+						ServerActivityHistory.Describe(server, "ServerStart.Activity.DefinitionMissing", server.Game),
 						Color.Red);
 					_ = Core.Instance.SendDiscordNotification(
 						server,
@@ -54,12 +54,12 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				foreach (GamePrerequisiteItem warning in prerequisites.Items.Where(item =>
 					item.State == GamePrerequisiteState.Warning))
 				{
-					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.RequirementWarning", warning.Message), Color.Orange);
+					logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.RequirementWarning", warning.Message), Color.Orange);
 				}
 				if (!prerequisites.CanStart)
 				{
 					string message = prerequisites.ToDisplayText();
-					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.Blocked", message), Color.Red);
+					logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.Blocked", message), Color.Red);
 					_ = Core.Instance.SendDiscordNotification(
 						server,
 						DiscordNotificationEvent.MonitoringWarning,
@@ -87,7 +87,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				catch (SynixPasswordProtectionException)
 				{
 					logCallback?.Invoke(
-						LocalizationManager.Get("ServerStart.Activity.CredentialsLocked"),
+						ServerActivityHistory.Describe(server, "ServerStart.Activity.CredentialsLocked"),
 						Color.Red);
 					return;
 				}
@@ -100,7 +100,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					string message = LocalizationManager.Get(
 						"ServerStart.CredentialAttention.Body",
 						LocalizationManager.TranslateRuntimeText(serverInputError));
-					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.Blocked", message), Color.Red);
+					logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.Blocked", message), Color.Red);
 					if (context == StartContext.Manual && !Core.IsBackgroundServiceMode)
 					{
 						LocalizedMessageBox.Show(
@@ -140,14 +140,14 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						StringComparison.OrdinalIgnoreCase))
 				{
 					logCallback?.Invoke(
-						LocalizationManager.Get("ServerStart.Activity.OxideInstallFailed"),
+						ServerActivityHistory.Describe(server, "ServerStart.Activity.OxideInstallFailed"),
 						Color.Red);
 					return;
 				}
 				if (OxideRuntimeManager.RequiresVanillaRestore(server, selectedDefinition))
 				{
 					logCallback?.Invoke(
-						LocalizationManager.Get("ServerStart.Activity.OxideRestoreRequired"),
+						ServerActivityHistory.Describe(server, "ServerStart.Activity.OxideRestoreRequired"),
 						Color.Orange);
 					return;
 				}
@@ -161,7 +161,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					if (string.IsNullOrWhiteSpace(launchPublicIp))
 					{
 						logCallback?.Invoke(
-							LocalizationManager.Get("ServerStart.Activity.PublicAddressUnavailable"),
+							ServerActivityHistory.Describe(server, "ServerStart.Activity.PublicAddressUnavailable"),
 							Color.Orange);
 					}
 				}
@@ -185,7 +185,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					var dbEntry = GameDatabase.GetGame(server.Game);
 					if (dbEntry == null)
 					{
-						logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.TemplateMissing"), Color.Red);
+						logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.TemplateMissing"), Color.Red);
 						return;
 					}
 
@@ -194,7 +194,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					if (!File.Exists(fullExePath))
 					{
-						logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.ExecutableMissing", fullExePath), Color.Red);
+						logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.ExecutableMissing", fullExePath), Color.Red);
 						_ = Core.Instance.SendDiscordNotification(
 							server,
 							DiscordNotificationEvent.ConfigurationWarning,
@@ -209,7 +209,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					isMinecraft = GameCapabilityResolver.UsesMinecraftLifecycle(server);
 					if (MinecraftControlProfile.IsJava(server))
 					{
-						PrepareMinecraftLauncher(fullExePath, logCallback!);
+						PrepareMinecraftLauncher(server, fullExePath, logCallback!);
 					}
 
 					string invokedId = GameLaunchCommandBuilder.ResolveInvokedAppId(
@@ -228,7 +228,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						out string argumentError))
 					{
 						logCallback?.Invoke(
-							LocalizationManager.Get("ServerStart.Activity.SecurityBlocked", argumentError),
+							ServerActivityHistory.Describe(server, "ServerStart.Activity.SecurityBlocked", argumentError),
 							Color.Red);
 						_ = Core.Instance.SendDiscordNotification(
 							server,
@@ -250,7 +250,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							cleanIdentity);
 						Directory.CreateDirectory(profilePath);
 						logCallback?.Invoke(
-							LocalizationManager.Get("ServerStart.Activity.ArmaProfile", profilePath),
+							ServerActivityHistory.Describe(server, "ServerStart.Activity.ArmaProfile", profilePath),
 							Color.Cyan);
 					}
 
@@ -348,7 +348,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 							if (ReconcileActiveServerProcesses(server, forceDiscovery: true))
 							{
 								logCallback?.Invoke(
-									LocalizationManager.Get(
+									ServerActivityHistory.Describe(server,
 										"ServerStart.Activity.LauncherExitedProcessesRemain",
 										server.ServerProcesses.Count,
 										FormatProcessRegistry(server.ServerProcesses)),
@@ -370,7 +370,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						}
 						catch (Exception ex)
 						{
-							logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.CrashHandlerError", ex.Message), Color.Red);
+							logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.CrashHandlerError", ex.Message), Color.Red);
 							FinalizeStoppedState(server);
 						}
 					};
@@ -379,7 +379,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 			catch (Exception ex)
 			{
-			logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.CriticalError", ex.Message), Color.Red);
+			logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.CriticalError", ex.Message), Color.Red);
 				_ = Core.Instance.SendDiscordNotification(
 					server,
 					DiscordNotificationEvent.MonitoringWarning,
@@ -398,18 +398,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			bool needsUpdate = server.UpdateOnStart || scheduled && server.MaintenanceUpdateBeforeRestart;
 			if (needsBackup && !await backup())
 			{
-				log(LocalizationManager.Get("ServerStart.Maintenance.BackupFailed"), Color.Red);
+				log(ServerActivityHistory.Describe(server, "ServerStart.Maintenance.BackupFailed"), Color.Red);
 				return false;
 			}
 			if (needsUpdate && !await update())
 			{
-				log(LocalizationManager.Get("ServerStart.Maintenance.UpdateFailed"), Color.Red);
+				log(ServerActivityHistory.Describe(server, "ServerStart.Maintenance.UpdateFailed"), Color.Red);
 				return false;
 			}
 			return true;
 		}
 
-		private static void PrepareMinecraftLauncher(string launcherPath, Action<string, Color> logCallback)
+		private static void PrepareMinecraftLauncher(GameServer server, string launcherPath, Action<string, Color> logCallback)
 		{
 			try
 			{
@@ -421,13 +421,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (!string.Equals(original, updated, StringComparison.Ordinal))
 				{
 					File.WriteAllText(launcherPath, updated);
-					logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.MinecraftLauncherUpdated"), Color.Cyan);
+					logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.MinecraftLauncherUpdated"), Color.Cyan);
 				}
 			}
 			catch (Exception ex)
 			{
 
-				logCallback?.Invoke(LocalizationManager.Get("ServerStart.Activity.MinecraftLauncherUpdateFailed", ex.Message), Color.OrangeRed);
+				logCallback?.Invoke(ServerActivityHistory.Describe(server, "ServerStart.Activity.MinecraftLauncherUpdateFailed", ex.Message), Color.OrangeRed);
 			}
 		}
 

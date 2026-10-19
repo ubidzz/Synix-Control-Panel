@@ -31,6 +31,7 @@ namespace Synix_Control_Panel.SynixEngine
 			bool stateChanged = false;
 			foreach (var server in ServerRegistry.Snapshot())
 			{
+				using var historyScope = ServerDiagnosticScope.Begin(server);
 				GameInfo? gameData = GameDatabase.GetGame(server.Game);
 				Process? recoveredProcess = null;
 				bool discoveredByPath = false;
@@ -127,6 +128,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 			process.Exited += async (_, _) =>
 			{
+				using var historyScope = ServerDiagnosticScope.Begin(server);
 				try
 				{
 					if (server.Status == StatusManager.GetStatus(ServerState.Running))

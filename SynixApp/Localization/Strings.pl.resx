@@ -7651,5 +7651,25 @@ Jeśli Synix nie otwiera się ponownie, uruchom istniejący program Synix lub po
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Zamknij Synix przed deinstalacją. Serwery gier mogą nadal działać, gdy usuwana jest tylko aplikacja.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Historia serwera</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Szukaj aktywności lub daty</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Tylko błędy i ostrzeżenia</value></data>
+  <data name="History.When" xml:space="preserve"><value>Data i godzina</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Aktywność</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Zapisano konfigurację</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Nie można odczytać ani zapisać historii. Sprawdź dostęp do folderu i wolne miejsce na dysku.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Pominięto niektóre nieczytelne wpisy historii.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Zachowane między sesjami Synix. Do {0} ostatnich wpisów na serwer. Hasła i polecenia uruchamiania są pomijane.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Szczegóły (zaznacz tekst do skopiowania)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Stan kopii niedostępny</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Niezweryfikowana kopia</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Brak ukończonej kopii</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Ostatnia ukończona kopia: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Na podstawie plików i zapisów weryfikacji, bez ponownego sprawdzania integralności. Kopie starsze niż 7 dni są wyróżniane.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Dni temu: {0}</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Godziny temu: {0}</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Sprawdzanie kopii…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Nie zarejestrowano jeszcze żadnej aktywności dla tego serwera.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Żadna aktywność nie pasuje do filtrów.</value></data>
 </root>
 

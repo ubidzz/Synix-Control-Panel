@@ -8108,7 +8108,7 @@ Verwenden Sie Einstellungen &gt; Erweitert &gt; Fehlerbehebung für sichere Zust
     <value>Bereinigen Sie verwaiste Synix-Server-Firewallregeln</value>
   </data>
   <data name="Text.9CC3A043B6A91D450BC3" xml:space="preserve">
-    <value>KLAR</value>
+    <value>LÖSCHEN</value>
   </data>
   <data name="Text.5776503C1A52F4FA028F" xml:space="preserve">
     <value>Filter löschen</value>
@@ -14162,4 +14162,24 @@ Bewahren Sie vor einer Framework- oder Spieländerung die Welt-, Konfigurations-
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Schließe Synix vor der Deinstallation. Spielserver können weiterlaufen, wenn nur die App entfernt wird.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Serververlauf</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Aktivität oder Datum suchen</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Nur Fehler und Warnungen</value></data>
+  <data name="History.When" xml:space="preserve"><value>Datum und Uhrzeit</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Aktivität</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Konfiguration gespeichert</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Verlauf konnte nicht gelesen oder gespeichert werden. Ordnerzugriff und freien Speicherplatz prüfen.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Einige unlesbare Verlaufseinträge wurden übersprungen.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Bleibt nach einem Synix-Neustart erhalten. Bis zu {0} aktuelle Einträge pro Server. Passwörter und Startbefehle werden nicht gespeichert.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Details (Text zum Kopieren auswählen)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Sicherungsstatus nicht verfügbar</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Ungeprüfte Sicherung</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Keine abgeschlossene Sicherung</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Letzte abgeschlossene Sicherung: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Basiert auf Dateien und Prüfbelegen, ohne erneute Integritätsprüfung. Sicherungen älter als 7 Tage werden hervorgehoben.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Vor {0} Tagen</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Vor {0} Stunden</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Sicherungen werden geprüft…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Für diesen Server wurden noch keine Aktivitäten aufgezeichnet.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Keine Aktivitäten entsprechen Ihren Filtern.</value></data>
 </root>

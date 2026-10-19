@@ -7651,5 +7651,25 @@ ARK會在你啟動伺服器時從{2}下載這個模組。 Synix 不會複製或�
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>解除安裝前請關閉 Synix。如果只刪除應用程式，遊戲伺服器可以繼續執行。</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>伺服器歷程紀錄</value></data>
+  <data name="History.Search" xml:space="preserve"><value>搜尋活動或日期</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>僅顯示失敗和警告</value></data>
+  <data name="History.When" xml:space="preserve"><value>日期與時間</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>活動</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>設定已儲存</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>無法讀取或儲存歷程紀錄。請檢查資料夾存取權限和可用磁碟空間。</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>已略過部分無法讀取的歷程紀錄。</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>重新啟動 Synix 後仍會保留。每個伺服器最多儲存 {0} 筆近期記錄。不記錄密碼和啟動命令。</value></data>
+  <data name="History.Details" xml:space="preserve"><value>詳細資訊（選取文字即可複製）</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>無法取得備份狀態</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>未經驗證的備份</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>沒有已完成的備份</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>最近完成的備份：{0}（{1}）</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>根據檔案與校驗紀錄顯示，不代表重新檢查了完整性。超過 7 天的備份會醒目顯示。</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} 天前</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} 小時前</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>正在檢查備份…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>尚未記錄此伺服器的活動。</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>沒有符合篩選條件的活動。</value></data>
 </root>
 

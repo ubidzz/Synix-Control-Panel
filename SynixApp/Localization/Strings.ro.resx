@@ -6728,4 +6728,24 @@ Dacă Synix nu se redeschide, executaţi programul existent Synix sau descărca�
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Închideți Synix înainte de dezinstalare. Serverele de jocuri pot continua să ruleze dacă este eliminată doar aplicația.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Istoricul serverului</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Caută activitate sau dată</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Doar erori și avertismente</value></data>
+  <data name="History.When" xml:space="preserve"><value>Data și ora</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Activitate</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Configurație salvată</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Istoricul nu a putut fi citit sau salvat. Verifică accesul la dosar și spațiul liber pe disc.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Unele înregistrări ilizibile din istoric au fost omise.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Se păstrează între sesiunile Synix. Până la {0} înregistrări recente pe server. Parolele și comenzile de pornire sunt excluse.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Detalii (selectați textul de copiat)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Starea copiilor nu este disponibilă</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Copie neverificată</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Nicio copie finalizată</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Ultima copie finalizată: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Pe baza fișierelor și a înregistrărilor de verificare, fără o nouă verificare a integrității. Copiile mai vechi de 7 zile sunt evidențiate.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Acum {0} zile</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Acum {0} ore</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Se verifică copiile…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Nu a fost înregistrată încă nicio activitate pentru acest server.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Nicio activitate nu corespunde filtrelor.</value></data>
 </root>

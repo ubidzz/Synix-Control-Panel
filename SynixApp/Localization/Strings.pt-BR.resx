@@ -7651,5 +7651,25 @@ Se Synix não reabrir, execute o programa existente Synix ou transfira a versão
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Feche o Synix antes de desinstalar. Os servidores de jogos podem continuar funcionando se apenas o aplicativo for removido.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Histórico do servidor</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Pesquisar atividade ou data</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Somente falhas e avisos</value></data>
+  <data name="History.When" xml:space="preserve"><value>Data e hora</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Atividade</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Configuração salva</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Não foi possível ler ou salvar o histórico. Verifique o acesso à pasta e o espaço livre em disco.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Algumas entradas ilegíveis do histórico foram ignoradas.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Mantido entre sessões do Synix. Até {0} registros recentes por servidor. Senhas e comandos de inicialização são excluídos.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Detalhes (selecione o texto para copiar)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Status dos backups indisponível</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Backup não verificado</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Nenhum backup concluído</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Último backup concluído: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Baseado nos arquivos e registros, sem uma nova verificação de integridade. Backups com mais de 7 dias são destacados.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Há {0} dias</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Há {0} horas</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Verificando backups…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Ainda não há atividades registradas para este servidor.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Nenhuma atividade corresponde aos filtros.</value></data>
 </root>
 

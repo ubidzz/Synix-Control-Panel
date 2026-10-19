@@ -91,18 +91,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				iconCol.DefaultCellStyle.Padding = new Padding(8);
 
 				dataGridView1.Columns.Insert(0, iconCol);
-				dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-				dataGridView1.RowTemplate.Height = 44;
-				foreach (DataGridViewRow row in dataGridView1.Rows)
-				{
-					row.Height = 44;
-				}
 			}
 
 			GridStyler.DarkTheme(dataGridView1);
 			GridStyler.ApplyRoundedCorners(dataGridView1, 10);
 			typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, dataGridView1, new object[] { true });
 			GridStyler.ApplyDashboardTheme(dataGridView1);
+			InitializeActivityHistory();
+			foreach (Button button in new Button[] { btnHelp, btnSettings, btnGithub, btnDiscord, btnMinimize, btnClose,
+				btnAddServer, btnReadiness, btnServerOptions, btnConfigure, btnStart, btnRestart, btnStop, btnDownloadUpdate })
+				button.TabStop = true;
+			UpdateDashboardAccessibleNames();
 			GridStyler.EnableServerDetailsInteraction(dataGridView1);
 			GridStyler.StyleCloseButton(btnClose);
 			GridStyler.StyleMinimizeButton(btnMinimize);
@@ -251,6 +250,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			object? sender,
 			EventArgs eventArgs)
 		{
+			UpdateDashboardAccessibleNames();
+			if (_historyMenuItem != null) _historyMenuItem.Text = LocalizationManager.Get("History.Title");
+			ConfigureServerGridLayout();
 			PopulateStatusFilters();
 			toolTip1.SetToolTip(btnSettings, LocalizationManager.GetContent("Synix Settings"));
 			toolTip1.SetToolTip(btnGithub, LocalizationManager.GetContent("Open Synix on GitHub"));
@@ -278,6 +280,16 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			UpdateDashboardSummary();
 			UpdateSelectedServerCard();
 			UpdateNetworkLabels();
+		}
+
+		private void UpdateDashboardAccessibleNames()
+		{
+			btnHelp.AccessibleName = LocalizationManager.GetContent("Synix Help Center");
+			btnSettings.AccessibleName = LocalizationManager.GetContent("Synix Settings");
+			btnGithub.AccessibleName = LocalizationManager.GetContent("Open Synix on GitHub");
+			btnDiscord.AccessibleName = LocalizationManager.GetContent("Open the Synix Discord");
+			btnMinimize.AccessibleName = LocalizationManager.Get("WindowHeader.Minimize.AccessibleName");
+			btnClose.AccessibleName = LocalizationManager.Get("WindowHeader.Close.AccessibleName");
 		}
 
 		private void PopulateStatusFilters()
@@ -524,6 +536,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			bool isBold = false,
 			params object?[] arguments)
 		{
+			ServerDiagnosticScope.Record(resourceKey, textColor, arguments);
 			AppendLogCore(
 				LocalizationManager.GetEnglish(resourceKey, arguments),
 				LocalizationManager.Get(resourceKey, arguments),
@@ -755,10 +768,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			object sender,
 			DataGridViewBindingCompleteEventArgs e)
 		{
-			foreach (DataGridViewRow row in dataGridView1.Rows)
-			{
-				row.Height = 44;
-			}
+			ResizeServerGridRows();
 
 			ApplyServerFilter();
 			UpdateDashboardSummary();
@@ -770,6 +780,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			DataGridViewRow? currentRow = dataGridView1.CurrentRow;
 			GameServer? server = currentRow?.DataBoundItem as GameServer;
 			bool hasSelection = server != null && currentRow != null;
+			if (_historyButton != null) _historyButton.Enabled = hasSelection;
+			if (_historyMenuItem != null) _historyMenuItem.Enabled = hasSelection;
 
 			if (btnReadiness != null) btnReadiness.Enabled = hasSelection;
 			if (btnServerOptions != null) btnServerOptions.Enabled = hasSelection;
@@ -896,6 +908,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			if (e.ColumnIndex == colStatus.Index && e.Value is string status)
 			{
 				e.Value = BusyStatusPresentation.GetDisplayStatus(status);
+				// Reserve the same space for the spinner during measurement and paint.
+				e.CellStyle.Padding = new Padding(GridPixels(BusyStatusPresentation.TryGetBusyState(status, out _) ? 35 : 6), GridPixels(6), GridPixels(6), GridPixels(6));
 				e.FormattingApplied = true;
 			}
 		}
@@ -918,11 +932,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				eventArgs.CellBounds,
 				DataGridViewPaintParts.Border);
 
+			int indicatorSize = GridPixels(18);
 			Rectangle indicatorBounds = new(
-				eventArgs.CellBounds.Left + 10,
-				eventArgs.CellBounds.Top + (eventArgs.CellBounds.Height - 18) / 2,
-				18,
-				18);
+				eventArgs.CellBounds.Left + GridPixels(10),
+				eventArgs.CellBounds.Top + (eventArgs.CellBounds.Height - indicatorSize) / 2,
+				indicatorSize,
+				indicatorSize);
 			BusyStatusPresentation.DrawIndicator(
 				eventArgs.Graphics,
 				indicatorBounds,
@@ -931,20 +946,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 				_busyStatusFrame);
 
 			Rectangle textBounds = new(
-				indicatorBounds.Right + 7,
-				eventArgs.CellBounds.Top,
-				Math.Max(0, eventArgs.CellBounds.Right - indicatorBounds.Right - 11),
-				eventArgs.CellBounds.Height);
+				indicatorBounds.Right + GridPixels(7),
+				eventArgs.CellBounds.Top + GridPixels(6),
+				Math.Max(0, eventArgs.CellBounds.Right - indicatorBounds.Right - GridPixels(13)),
+				eventArgs.CellBounds.Height - GridPixels(12));
+			string displayStatus = BusyStatusPresentation.GetDisplayStatus(busyState);
+			Font statusFont = eventArgs.CellStyle?.Font ?? dataGridView1.Font;
+			TextFormatFlags statusFlags = TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding;
+			int textHeight = Math.Min(textBounds.Height, TextRenderer.MeasureText(eventArgs.Graphics, displayStatus,
+				statusFont, new Size(Math.Max(1, textBounds.Width), int.MaxValue), statusFlags).Height);
+			textBounds.Y += (textBounds.Height - textHeight) / 2;
+			textBounds.Height = textHeight;
 			TextRenderer.DrawText(
 				eventArgs.Graphics,
-				BusyStatusPresentation.GetDisplayStatus(busyState),
-				eventArgs.CellStyle?.Font ?? dataGridView1.Font,
+				displayStatus,
+				statusFont,
 				textBounds,
 				SettingsPalette.Warning,
-				TextFormatFlags.Left |
-				TextFormatFlags.VerticalCenter |
-				TextFormatFlags.EndEllipsis |
-				TextFormatFlags.NoPadding);
+				statusFlags);
 			eventArgs.Handled = true;
 		}
 
@@ -1268,7 +1287,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 		{
 			GameServer? selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
-			if (selectedServer == null) return;
+			using var historyScope = ServerDiagnosticScope.Begin(selectedServer);
 
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
 			if (!GameDatabase.SupportsManualConnectionTesting(gameData))
@@ -1334,7 +1353,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 		{
 			GameServer? selectedServer = GetSelectedServer();
 			if (selectedServer == null) return;
-			if (selectedServer == null) return;
+			using var historyScope = ServerDiagnosticScope.Begin(selectedServer);
 
 			GameInfo? gameData = GameDatabase.GetGame(selectedServer.Game);
 			if (!GameDatabase.SupportsManualConnectionTesting(gameData))

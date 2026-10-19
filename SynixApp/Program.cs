@@ -88,6 +88,7 @@ namespace Synix_Control_Panel.SynixApp
 			try
 			{
 				BackgroundServiceManager.WaitForStop(TimeSpan.FromSeconds(5));
+				ServerActivityHistory.Initialize(Path.Combine(Core.DataPath, "ActivityHistory"));
 				BackgroundServiceManager.EnsureRegistrationMatchesSetting();
 				RunSynix(updateSuccessMarker, rolledBackVersion);
 			}

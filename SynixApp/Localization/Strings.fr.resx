@@ -14084,4 +14084,24 @@ Avant un changement de framework ou de jeu, préservez les données du monde, de
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Fermez Synix avant la désinstallation. Les serveurs de jeux peuvent continuer à fonctionner si seule l’application est supprimée.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Historique du serveur</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Rechercher une activité ou une date</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Échecs et avertissements uniquement</value></data>
+  <data name="History.When" xml:space="preserve"><value>Date et heure</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Activité</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Configuration enregistrée</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Impossible de lire ou d’enregistrer l’historique. Vérifiez l’accès au dossier et l’espace disque disponible.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Certaines entrées illisibles de l’historique ont été ignorées.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Conservé entre les sessions Synix. Jusqu’à {0} entrées récentes par serveur. Les mots de passe et commandes de lancement sont exclus.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Détails (sélectionnez le texte à copier)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>État des sauvegardes indisponible</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Sauvegarde non vérifiée</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Aucune sauvegarde terminée</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Dernière sauvegarde terminée : {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Basé sur les fichiers et les attestations, sans nouveau contrôle d’intégrité. Les sauvegardes de plus de 7 jours sont signalées.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Il y a {0} jours</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Il y a {0} heures</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Vérification des sauvegardes…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Aucune activité n’a encore été enregistrée pour ce serveur.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Aucune activité ne correspond à vos filtres.</value></data>
 </root>

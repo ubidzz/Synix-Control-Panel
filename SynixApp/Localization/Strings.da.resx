@@ -6728,4 +6728,24 @@ Hvis Synix ikke åbnes igen, skal du køre det eksisterende Synix-program eller 
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Luk Synix før afinstallation. Spilservere kan fortsætte med at køre, når kun appen fjernes.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Serverhistorik</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Søg efter aktivitet eller dato</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Kun fejl og advarsler</value></data>
+  <data name="History.When" xml:space="preserve"><value>Dato og klokkeslæt</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Aktivitet</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Konfiguration gemt</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Historikken kunne ikke læses eller gemmes. Kontrollér mappeadgang og ledig diskplads.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Nogle ulæselige historikposter blev sprunget over.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Gemmes mellem Synix-sessioner. Op til {0} seneste poster pr. server. Adgangskoder og startkommandoer udelades.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Detaljer (markér tekst for at kopiere)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Sikkerhedskopistatus utilgængelig</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Ikke-verificeret sikkerhedskopi</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Ingen fuldført sikkerhedskopi</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Seneste fuldførte sikkerhedskopi: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Baseret på filer og kontrolposter, uden en ny integritetskontrol. Sikkerhedskopier ældre end 7 dage fremhæves.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>For {0} dage siden</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>For {0} timer siden</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Kontrollerer sikkerhedskopier…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Der er endnu ikke registreret nogen aktivitet for denne server.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Ingen aktivitet matcher dine filtre.</value></data>
 </root>

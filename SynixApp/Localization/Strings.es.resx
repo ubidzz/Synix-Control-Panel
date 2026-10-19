@@ -8106,7 +8106,7 @@ Utilice Configuración &gt; Avanzado &gt; Solucionador de problemas para realiza
     <value>Limpiar las reglas de firewall del servidor Synix huérfano</value>
   </data>
   <data name="Text.9CC3A043B6A91D450BC3" xml:space="preserve">
-    <value>CLARO</value>
+    <value>BORRAR</value>
   </data>
   <data name="Text.5776503C1A52F4FA028F" xml:space="preserve">
     <value>Borrar filtros</value>
@@ -14160,4 +14160,24 @@ Antes de un cambio de framework o juego, preserva los datos del mundo, la config
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Cierra Synix antes de desinstalar. Los servidores de juegos pueden seguir funcionando si solo se elimina la aplicación.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Historial del servidor</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Buscar actividad o fecha</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Solo errores y advertencias</value></data>
+  <data name="History.When" xml:space="preserve"><value>Fecha y hora</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Actividad</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Configuración guardada</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>No se pudo leer o guardar el historial. Comprueba el acceso a la carpeta y el espacio libre en disco.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Se omitieron algunas entradas ilegibles del historial.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Se conserva entre sesiones de Synix. Hasta {0} entradas recientes por servidor. Se excluyen contraseñas y comandos de inicio.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Detalles (selecciona texto para copiar)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Estado de copias no disponible</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Copia sin verificar</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>No hay copias completadas</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Última copia completada: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Basado en archivos y comprobantes, sin una nueva comprobación de integridad. Se resaltan las copias de más de 7 días.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Hace {0} días</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Hace {0} horas</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Comprobando copias…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Todavía no se ha registrado actividad para este servidor.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Ninguna actividad coincide con los filtros.</value></data>
 </root>

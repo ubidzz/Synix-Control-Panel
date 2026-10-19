@@ -7652,5 +7652,25 @@ Om Synix inte öppnas igen kör du det befintliga Synix-programmet eller hämtar
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Stäng Synix före avinstallationen. Spelservrar kan fortsätta att köras när bara appen tas bort.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Serverhistorik</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Sök efter aktivitet eller datum</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Endast fel och varningar</value></data>
+  <data name="History.When" xml:space="preserve"><value>Datum och tid</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Aktivitet</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Konfiguration sparad</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Historiken kunde inte läsas eller sparas. Kontrollera mappåtkomst och ledigt diskutrymme.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Vissa oläsliga historikposter hoppades över.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Sparas mellan Synix-sessioner. Upp till {0} senaste poster per server. Lösenord och startkommandon utelämnas.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Detaljer (markera text för att kopiera)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Säkerhetskopiestatus saknas</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Overifierad säkerhetskopia</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Ingen slutförd säkerhetskopia</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Senaste slutförda säkerhetskopia: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Baserat på filer och kontrollposter, utan ny integritetskontroll. Säkerhetskopior äldre än 7 dagar markeras.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>För {0} dagar sedan</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>För {0} timmar sedan</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Kontrollerar säkerhetskopior…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Ingen aktivitet har registrerats för den här servern ännu.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Ingen aktivitet matchar dina filter.</value></data>
 </root>
 

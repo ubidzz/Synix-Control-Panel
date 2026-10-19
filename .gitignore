@@ -4,6 +4,11 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # User-specific files
+# Local assistant attachments, workspace state, and caches are not application files.
+.codex/
+.codex-*
+.cache/
+
 *.rsuser
 *.suo
 *.user

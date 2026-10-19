@@ -99,6 +99,7 @@ internal static class MinecraftConfigurationSync
 			MinecraftContentTransactions.Undo(server, receipt.Id, rollback: true);
 			throw;
 		}
+		ServerActivityHistory.Current.Record(server, "ConfigurationSaved");
 		Core.Instance.UpdateGridStatus();
 	}
 

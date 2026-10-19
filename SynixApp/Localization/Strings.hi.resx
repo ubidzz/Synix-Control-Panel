@@ -6728,4 +6728,24 @@ ARK इस मॉड को {2} से डाउनलोड करेगा ज
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>अनइंस्टॉल करने से पहले Synix बंद करें। केवल ऐप हटाने पर गेम सर्वर चलते रह सकते हैं।</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>सर्वर का इतिहास</value></data>
+  <data name="History.Search" xml:space="preserve"><value>गतिविधि या तारीख खोजें</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>केवल विफलताएँ और चेतावनियाँ</value></data>
+  <data name="History.When" xml:space="preserve"><value>तारीख और समय</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>गतिविधि</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>कॉन्फ़िगरेशन सहेजा गया</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>इतिहास पढ़ा या सहेजा नहीं जा सका। फ़ोल्डर की पहुँच और डिस्क में खाली जगह जाँचें।</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>इतिहास की कुछ अपठनीय प्रविष्टियाँ छोड़ दी गईं।</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Synix दोबारा खोलने पर भी सुरक्षित रहता है। हर सर्वर की अधिकतम {0} हाल की प्रविष्टियाँ। पासवर्ड और लॉन्च कमांड शामिल नहीं हैं।</value></data>
+  <data name="History.Details" xml:space="preserve"><value>विवरण (कॉपी करने के लिए पाठ चुनें)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>बैकअप की स्थिति उपलब्ध नहीं है</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>असत्यापित बैकअप</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>कोई पूरा हुआ बैकअप नहीं</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>पिछला पूरा हुआ बैकअप: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>फ़ाइलों और जाँच रिकॉर्ड पर आधारित; नई अखंडता जाँच नहीं की जाती। 7 दिन से पुराने बैकअप हाइलाइट किए जाते हैं।</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} दिन पहले</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} घंटे पहले</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>बैकअप जाँचे जा रहे हैं…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>इस सर्वर के लिए अभी तक कोई गतिविधि दर्ज नहीं की गई है।</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>आपके फ़िल्टर से मेल खाने वाली कोई गतिविधि नहीं है।</value></data>
 </root>

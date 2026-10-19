@@ -7652,5 +7652,25 @@ Jika Synix tidak dibuka kembali, jalankan program Synix yang ada atau unduh rili
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Tutup Synix sebelum mencopot pemasangan. Server game dapat tetap berjalan jika hanya aplikasi yang dihapus.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Riwayat server</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Cari aktivitas atau tanggal</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Hanya kegagalan dan peringatan</value></data>
+  <data name="History.When" xml:space="preserve"><value>Tanggal dan waktu</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Aktivitas</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Konfigurasi disimpan</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Riwayat tidak dapat dibaca atau disimpan. Periksa akses folder dan ruang disk yang tersedia.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Beberapa entri riwayat yang tidak dapat dibaca dilewati.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Disimpan antar sesi Synix. Hingga {0} entri terbaru per server. Kata sandi dan perintah peluncuran tidak disertakan.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Detail (pilih teks untuk disalin)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Status cadangan tidak tersedia</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Cadangan belum diverifikasi</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Belum ada cadangan selesai</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Cadangan terakhir yang selesai: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Berdasarkan berkas dan catatan verifikasi, tanpa pemeriksaan integritas baru. Cadangan berusia lebih dari 7 hari ditandai.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} hari lalu</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} jam lalu</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Memeriksa cadangan…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Belum ada aktivitas yang dicatat untuk server ini.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Tidak ada aktivitas yang cocok dengan filter Anda.</value></data>
 </root>
 

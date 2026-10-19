@@ -7652,5 +7652,25 @@ ARK завантажить цей мод з {2} під час запуску с�
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Закрийте Synix перед видаленням. Якщо видаляється лише застосунок, ігрові сервери можуть продовжувати роботу.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Історія сервера</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Пошук за дією або датою</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Лише помилки та попередження</value></data>
+  <data name="History.When" xml:space="preserve"><value>Дата й час</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Дія</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Конфігурацію збережено</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Не вдалося прочитати або зберегти історію. Перевірте доступ до папки та вільне місце на диску.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Деякі нечитабельні записи історії пропущено.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Зберігається після перезапуску Synix. До {0} останніх записів на сервер. Паролі та команди запуску не записуються.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Подробиці (виділіть текст для копіювання)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Стан копій недоступний</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Неперевірена копія</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Немає завершених копій</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Остання завершена копія: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>На основі файлів і записів перевірки, без нової перевірки цілісності. Копії, старші за 7 днів, виділяються.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Днів тому: {0}</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Годин тому: {0}</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Перевірка копій…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Для цього сервера ще не записано жодної події.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Немає подій, що відповідають фільтрам.</value></data>
 </root>
 

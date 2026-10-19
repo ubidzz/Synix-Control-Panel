@@ -6728,4 +6728,24 @@ ARK จะดาวน์โหลดโมดนี้จาก {2} เมื�
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>ปิด Synix ก่อนถอนการติดตั้ง หากลบเฉพาะแอป เซิร์ฟเวอร์เกมสามารถทำงานต่อได้</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>ประวัติเซิร์ฟเวอร์</value></data>
+  <data name="History.Search" xml:space="preserve"><value>ค้นหากิจกรรมหรือวันที่</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>เฉพาะข้อผิดพลาดและคำเตือน</value></data>
+  <data name="History.When" xml:space="preserve"><value>วันที่และเวลา</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>กิจกรรม</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>บันทึกการตั้งค่าแล้ว</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>ไม่สามารถอ่านหรือบันทึกประวัติได้ โปรดตรวจสอบสิทธิ์เข้าถึงโฟลเดอร์และพื้นที่ว่างบนดิสก์</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>ข้ามรายการประวัติบางส่วนที่อ่านไม่ได้แล้ว</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>เก็บไว้แม้จะเปิด Synix ใหม่ สูงสุด {0} รายการล่าสุดต่อเซิร์ฟเวอร์ ไม่บันทึกรหัสผ่านและคำสั่งเปิดเซิร์ฟเวอร์</value></data>
+  <data name="History.Details" xml:space="preserve"><value>รายละเอียด (เลือกข้อความเพื่อคัดลอก)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>ไม่สามารถดูสถานะการสำรองข้อมูลได้</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>ข้อมูลสำรองที่ยังไม่ตรวจสอบ</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>ไม่มีการสำรองข้อมูลที่เสร็จสมบูรณ์</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>การสำรองข้อมูลที่เสร็จสมบูรณ์ล่าสุด: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>อ้างอิงจากไฟล์และบันทึกการตรวจสอบ ไม่ใช่การตรวจสอบความสมบูรณ์ใหม่ ข้อมูลสำรองที่เก่ากว่า 7 วันจะถูกเน้น</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} วันที่แล้ว</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} ชั่วโมงที่แล้ว</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>กำลังตรวจสอบข้อมูลสำรอง…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>ยังไม่มีการบันทึกกิจกรรมสำหรับเซิร์ฟเวอร์นี้</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>ไม่มีกิจกรรมที่ตรงกับตัวกรองของคุณ</value></data>
 </root>

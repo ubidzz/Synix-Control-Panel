@@ -141,8 +141,13 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				textColor,
 				TextFormatFlags.HorizontalCenter |
 				TextFormatFlags.VerticalCenter |
-				TextFormatFlags.EndEllipsis |
+				TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);
+			if (Focused && ShowFocusCues && Enabled)
+				ControlPaint.DrawFocusRectangle(eventArgs.Graphics, Rectangle.Inflate(ClientRectangle, -5, -5), textColor, fillColor);
 		}
+
+		protected override void OnGotFocus(EventArgs eventArgs) { base.OnGotFocus(eventArgs); Invalidate(); }
+		protected override void OnLostFocus(EventArgs eventArgs) { base.OnLostFocus(eventArgs); Invalidate(); }
 	}
 }

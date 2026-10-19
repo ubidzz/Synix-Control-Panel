@@ -7651,5 +7651,25 @@ Se Synix non viene riaperto, eseguire il programma Synix esistente o scaricare l
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Chiudi Synix prima della disinstallazione. I server di gioco possono continuare a funzionare se rimuovi solo l’app.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Cronologia del server</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Cerca attività o data</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Solo errori e avvisi</value></data>
+  <data name="History.When" xml:space="preserve"><value>Data e ora</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Attività</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Configurazione salvata</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Impossibile leggere o salvare la cronologia. Controlla l’accesso alla cartella e lo spazio libero su disco.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Alcune voci illeggibili della cronologia sono state ignorate.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Conservato tra le sessioni di Synix. Fino a {0} voci recenti per server. Password e comandi di avvio sono esclusi.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Dettagli (seleziona il testo da copiare)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Stato dei backup non disponibile</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Backup non verificato</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Nessun backup completato</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Ultimo backup completato: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Basato su file e ricevute, senza un nuovo controllo di integrità. I backup più vecchi di 7 giorni sono evidenziati.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} giorni fa</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} ore fa</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Controllo dei backup…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Non è stata ancora registrata alcuna attività per questo server.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Nessuna attività corrisponde ai filtri.</value></data>
 </root>
 

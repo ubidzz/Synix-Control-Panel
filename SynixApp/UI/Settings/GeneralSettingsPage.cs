@@ -24,6 +24,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		public GeneralSettingsPage()
 		{
 			InitializeComponent();
+			InitializeResponsiveCards();
 			PopulateLocalizedOptions();
 			cmbSteamCmdDownloadMode.SelectedIndexChanged +=
 				SteamCmdDownloadModeSelectionChanged;

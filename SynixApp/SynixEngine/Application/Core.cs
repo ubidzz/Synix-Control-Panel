@@ -92,6 +92,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				foreach (GameServer server in ServerRegistry.Snapshot())
 				{
+					using var historyScope = ServerDiagnosticScope.Begin(server);
 					if (server.Status == StatusManager.GetStatus(ServerState.Running))
 					{
 						string srvId = server.ServerName ?? "unknown_server";
@@ -159,6 +160,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 				foreach (GameServer server in ServerRegistry.Snapshot())
 				{
+					using var historyScope = ServerDiagnosticScope.Begin(server);
 					if (server.Status != StatusManager.GetStatus(ServerState.Running))
 						continue;
 					if (server.MaintenanceRetryAfterUtc > DateTime.UtcNow)

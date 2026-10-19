@@ -7652,5 +7652,25 @@ Nếu Synix không mở lại, chạy chương trình Synix hiện có hoặc t�
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Đóng Synix trước khi gỡ cài đặt. Máy chủ trò chơi có thể tiếp tục chạy nếu chỉ gỡ ứng dụng.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Lịch sử máy chủ</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Tìm hoạt động hoặc ngày</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Chỉ lỗi và cảnh báo</value></data>
+  <data name="History.When" xml:space="preserve"><value>Ngày và giờ</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Hoạt động</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Đã lưu cấu hình</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Không thể đọc hoặc lưu lịch sử. Hãy kiểm tra quyền truy cập thư mục và dung lượng đĩa trống.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Đã bỏ qua một số mục lịch sử không đọc được.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Được giữ lại giữa các phiên Synix. Tối đa {0} mục gần đây cho mỗi máy chủ. Không ghi lại mật khẩu và lệnh khởi chạy.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Chi tiết (chọn văn bản để sao chép)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Không có trạng thái sao lưu</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Bản sao lưu chưa xác minh</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Chưa có bản sao lưu hoàn tất</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Bản sao lưu hoàn tất gần nhất: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Dựa trên tệp và bản ghi xác minh, không kiểm tra lại tính toàn vẹn. Các bản sao lưu cũ hơn 7 ngày được đánh dấu.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} ngày trước</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} giờ trước</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Đang kiểm tra bản sao lưu…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Chưa có hoạt động nào được ghi lại cho máy chủ này.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Không có hoạt động nào khớp với bộ lọc của bạn.</value></data>
 </root>
 

@@ -7651,5 +7651,25 @@ Eğer Synix yeniden açılmazsa, mevcut Synix programınızı çalıştırın ve
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Kaldırmadan önce Synix'i kapatın. Yalnızca uygulama kaldırıldığında oyun sunucuları çalışmaya devam edebilir.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Sunucu geçmişi</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Etkinlik veya tarih ara</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Yalnızca hatalar ve uyarılar</value></data>
+  <data name="History.When" xml:space="preserve"><value>Tarih ve saat</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Etkinlik</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Yapılandırma kaydedildi</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Geçmiş okunamadı veya kaydedilemedi. Klasör erişimini ve boş disk alanını kontrol edin.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Okunamayan bazı geçmiş kayıtları atlandı.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Synix yeniden başlatıldığında korunur. Sunucu başına en fazla {0} son kayıt saklanır. Parolalar ve başlatma komutları kaydedilmez.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Ayrıntılar (kopyalamak için metni seçin)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Yedek durumu kullanılamıyor</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Doğrulanmamış yedek</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Tamamlanmış yedek yok</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Son tamamlanan yedek: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Dosyalara ve doğrulama kayıtlarına dayanır; yeni bir bütünlük kontrolü yapılmaz. 7 günden eski yedekler vurgulanır.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} gün önce</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} saat önce</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Yedekler kontrol ediliyor…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Bu sunucu için henüz etkinlik kaydedilmedi.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Filtrelerinizle eşleşen etkinlik yok.</value></data>
 </root>
 

@@ -6728,4 +6728,24 @@ Ha a Synix nem nyílik meg újra, futtassa a meglévő Synix programot, vagy tö
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Az eltávolítás előtt zárja be a Synixet. Ha csak az alkalmazást távolítja el, a játékszerverek tovább futhatnak.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Kiszolgálóelőzmények</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Tevékenység vagy dátum keresése</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Csak hibák és figyelmeztetések</value></data>
+  <data name="History.When" xml:space="preserve"><value>Dátum és idő</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Tevékenység</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Beállítások mentve</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Az előzmények nem olvashatók vagy menthetők. Ellenőrizze a mappához való hozzáférést és a szabad lemezterületet.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Néhány olvashatatlan előzménybejegyzés kimaradt.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Megmarad a Synix újraindítása után is. Kiszolgálónként legfeljebb {0} legutóbbi bejegyzés. A jelszavakat és indítási parancsokat nem tároljuk.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Részletek (másoláshoz jelölje ki a szöveget)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>A mentések állapota nem érhető el</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Nem ellenőrzött mentés</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Nincs befejezett mentés</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Legutóbbi befejezett mentés: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Fájlok és ellenőrzési feljegyzések alapján, új integritásellenőrzés nélkül. A 7 napnál régebbi mentések kiemelve jelennek meg.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>{0} napja</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>{0} órája</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Mentések ellenőrzése…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Ehhez a kiszolgálóhoz még nincs rögzített tevékenység.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Nincs a szűrőknek megfelelő tevékenység.</value></data>
 </root>

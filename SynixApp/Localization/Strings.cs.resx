@@ -7652,5 +7652,25 @@ Pokud se Synix neotevře, spusťte existující program Synix nebo stáhněte ne
   <data name="Uninstall.CloseApp" xml:space="preserve">
     <value>Před odinstalací zavřete Synix. Při odstranění pouze aplikace mohou herní servery běžet dál.</value>
   </data>
+  <data name="History.Title" xml:space="preserve"><value>Historie serveru</value></data>
+  <data name="History.Search" xml:space="preserve"><value>Hledat aktivitu nebo datum</value></data>
+  <data name="History.Attention" xml:space="preserve"><value>Pouze chyby a varování</value></data>
+  <data name="History.When" xml:space="preserve"><value>Datum a čas</value></data>
+  <data name="History.Activity" xml:space="preserve"><value>Aktivita</value></data>
+  <data name="History.ConfigurationSaved" xml:space="preserve"><value>Konfigurace uložena</value></data>
+  <data name="History.Unavailable" xml:space="preserve"><value>Historii nelze přečíst nebo uložit. Zkontrolujte přístup ke složce a volné místo na disku.</value></data>
+  <data name="History.Recovered" xml:space="preserve"><value>Některé nečitelné záznamy historie byly přeskočeny.</value></data>
+  <data name="History.Retention" xml:space="preserve"><value>Uchovává se mezi spuštěními Synix. Až {0} posledních záznamů na server. Hesla a spouštěcí příkazy se neukládají.</value></data>
+  <data name="History.Details" xml:space="preserve"><value>Podrobnosti (text lze označit a kopírovat)</value></data>
+  <data name="BackupHealth.Unavailable" xml:space="preserve"><value>Stav záloh není dostupný</value></data>
+  <data name="BackupHealth.Unverified" xml:space="preserve"><value>Neověřená záloha</value></data>
+  <data name="BackupHealth.None" xml:space="preserve"><value>Žádná dokončená záloha</value></data>
+  <data name="BackupHealth.Latest" xml:space="preserve"><value>Poslední dokončená záloha: {0} ({1})</value></data>
+  <data name="BackupHealth.Notice" xml:space="preserve"><value>Podle souborů a záznamů ověření, bez nové kontroly integrity. Zálohy starší než 7 dní jsou zvýrazněny.</value></data>
+  <data name="BackupHealth.Days" xml:space="preserve"><value>Před {0} dny</value></data>
+  <data name="BackupHealth.Hours" xml:space="preserve"><value>Před {0} hodinami</value></data>
+  <data name="BackupHealth.Checking" xml:space="preserve"><value>Kontrola záloh…</value></data>
+  <data name="History.Empty" xml:space="preserve"><value>Pro tento server zatím nebyla zaznamenána žádná aktivita.</value></data>
+  <data name="History.NoMatches" xml:space="preserve"><value>Filtrům neodpovídá žádná aktivita.</value></data>
 </root>
 

@@ -31,6 +31,8 @@
 		<DebugType Condition="'$(Configuration)' != 'Debug'">none</DebugType>
 		<DebugSymbols Condition="'$(Configuration)' != 'Debug'">false</DebugSymbols>
 		<PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
+		<!-- Keep local assistant files, caches, and generated checks out of the app and publish inputs. -->
+		<DefaultItemExcludes>$(DefaultItemExcludes);**\.codex\**;**\.codex-*;**\.codex-*\**;**\.cache\**;**\artifacts\**;**\TestResults\**</DefaultItemExcludes>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="SynixApp\**" />
