@@ -121,11 +121,6 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					? "ServerSetup.ModeBadge.Edit"
 					: "ServerSetup.ModeBadge.New");
 			LocalizationManager.BindText(
-				btnSave,
-				_isEditMode
-					? "ServerSetup.Button.SaveChanges"
-					: "ServerSetup.Button.SaveServer");
-			LocalizationManager.BindText(
 				this,
 				_isEditMode
 					? "ServerSetup.Window.EditTitle"
@@ -248,8 +243,6 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				if (!_isEditMode)
 					pnlPageWorld.EnsureRandomSeedForNewServer();
 				SyncGatekeeper();
-				if (!_setupReviewed)
-					ShowSetupReview();
 			};
 
 			pnlPageGeneral.SettingsChanged += PageSettingsChanged;
@@ -397,7 +390,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			LocalizationManager.BindText(lblPageDescription, description);
 			_showingReview = ReferenceEquals(page, pnlPageReview);
 			page.BringToFront();
-			UpdateSetupProgress();
+			UpdateModernStatus();
 		}
 
 		private void UpdateSetupProgress()
@@ -447,7 +440,6 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				"ServerSetup.Review.Title", "ServerSetup.Review.Description");
 			pnlPageReview.SelectNextControl(null, true, true, true, false);
 			_setupReviewed = true;
-			btnSave.Enabled = true;
 			UpdateModernStatus();
 		}
 
@@ -510,8 +502,14 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		private void UpdateModernStatus()
 		{
-			bool ready = btnSave.Enabled;
-			bool needsReview = _requirementsReady && !_setupReviewed && debounceTimer?.Enabled != true;
+			bool valid = _requirementsReady && debounceTimer?.Enabled != true;
+			bool ready = valid && _setupReviewed && _showingReview;
+			bool needsReview = valid && !ready;
+			// Validation enables the next action; only an explicit action opens Review.
+			LocalizationManager.BindText(btnSave, _showingReview
+				? "ServerSetup.Button.SaveSettings"
+				: "ServerSetup.Button.NextReview");
+			btnSave.Enabled = valid;
 			string validationMessage = needsReview
 				? LocalizationManager.Get("ServerSetup.Validation.ReviewRequired")
 				: string.IsNullOrWhiteSpace(_validationMessage)
@@ -943,7 +941,6 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 				if (!_requirementsReady)
 					_setupReviewed = false;
-				btnSave.Enabled = _requirementsReady && _setupReviewed && debounceTimer?.Enabled != true;
 				UpdateModernStatus();
 			}
 			catch (Exception exception)
@@ -1054,7 +1051,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				FocusRequiredSettings();
 				return;
 			}
-			if (!_setupReviewed)
+			if (!_setupReviewed || !_showingReview)
 			{
 				// A queued click or Enter must show the review, never save in the same action.
 				ShowSetupReview();
@@ -1274,6 +1271,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 				return;
 			}
 
+			GameServer? replacedServer = null;
+			int replacementIndex = -1;
+			bool registrySaved = false;
 			try
 			{
 				Core.SetServerSecrets(
@@ -1295,6 +1295,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					{
 						NewServer.IsFirstBoot = false;
 						int index = ServerRegistry.Servers.IndexOf(existing);
+						replacedServer = existing;
+						replacementIndex = index;
 						ServerRegistry.Servers[index] = NewServer;
 					}
 				}
@@ -1328,12 +1330,22 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 					}
 				}
 
-				FileHandler.SaveServers();
+				if (!FileHandler.SaveServers())
+					throw new IOException(LocalizationManager.Get("Configuration.Sync.SaveEntry"));
+				registrySaved = true;
+				ServerActivityHistory.Current.Record(NewServer, "ConfigurationSaved");
 				DialogResult = DialogResult.OK;
 				Close();
 			}
 			catch (Exception exception)
 			{
+				if (!registrySaved)
+				{
+					if (replacedServer != null && replacementIndex >= 0 && replacementIndex < ServerRegistry.Servers.Count &&
+						ReferenceEquals(ServerRegistry.Servers[replacementIndex], NewServer))
+						ServerRegistry.Servers[replacementIndex] = replacedServer;
+					else ServerRegistry.Servers.Remove(NewServer);
+				}
 					PlainEnglishErrorDialog.ShowError(
 						this,
 						LocalizationManager.Get(

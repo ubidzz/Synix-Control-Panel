@@ -35,7 +35,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 
 		[Category("Synix Appearance")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		public Color FocusBorderColor { get; set; } = SettingsPalette.Border;
+		public Color FocusBorderColor { get; set; } = SettingsPalette.Accent;
 
 		[Category("Synix Appearance")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
@@ -151,8 +151,25 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 
 		protected override void OnDropDown(EventArgs eventArgs)
 		{
+			FitDropDownToItems();
 			Invalidate();
 			base.OnDropDown(eventArgs);
+		}
+
+		internal void FitDropDownToItems()
+		{
+			if (IsDisposed || Disposing) return;
+			int padding = (int)Math.Ceiling(36 * DeviceDpi / 96d);
+			int width = Width;
+			int height = Font.Height;
+			foreach (object item in Items)
+			{
+				Size measured = TextRenderer.MeasureText(GetItemText(item), Font, Size.Empty, TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
+				width = Math.Max(width, measured.Width + padding + SystemInformation.VerticalScrollBarWidth);
+				height = Math.Max(height, measured.Height);
+			}
+			DropDownWidth = Math.Max(1, Math.Min(width, Screen.FromControl(this).WorkingArea.Width));
+			ItemHeight = Math.Max(ItemHeight, height + (int)Math.Ceiling(8 * DeviceDpi / 96d));
 		}
 
 		protected override void OnDropDownClosed(EventArgs eventArgs)

@@ -25,6 +25,7 @@ namespace Synix_Control_Panel.SynixEngine
 	{
 		public async Task<bool> StopServerAndReport(GameServer server, bool isManual = true)
 		{
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			using ServerOperationLease operation =
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Stop);
 			if (!operation.Acquired)
@@ -75,6 +76,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		internal async Task SynchronizeFirstGeneratedConfiguration(GameServer server)
 		{
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			ConfigurationApplyResult? optionalResult =
 				await GameFix.ApplyFirstGeneratedConfiguration(server);
 			if (!optionalResult.HasValue)
@@ -533,6 +535,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task<bool> UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false)
 		{
 			ArgumentNullException.ThrowIfNull(server);
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			if (server.Status != StatusManager.GetStatus(ServerState.Stopped) || server.PID.HasValue)
 			{
 				LogLocalized("ServerActions.Operation.RequiresStopped", Color.Orange, true);
@@ -808,6 +811,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.NewServer != null)
 				{
 					GameServer newServer = settingsForm.NewServer;
+					using var historyScope = ServerDiagnosticScope.Begin(newServer);
 					var gameData = GameDatabase.GetGame(newServer.Game);
 					GameFix.ManualConfigWasCreated = false;
 
@@ -1081,6 +1085,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task EditServerAndReport(GameServer server, bool openAutomation = false)
 		{
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			if (server.Status == StatusManager.GetStatus(ServerState.Running) || (server.PID.HasValue && server.PID > 0))
 			{
 				LocalizedMessageBox.Show(
@@ -1215,6 +1220,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> ExecuteStartSequence(GameServer server, string status = "")
 		{
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			ServerOperationKind operationKind = string.IsNullOrWhiteSpace(status)
 				? ServerOperationKind.Start
 				: ServerOperationKind.Restart;
@@ -1528,6 +1534,8 @@ namespace Synix_Control_Panel.SynixEngine
 				StringBuilder batchContent = new StringBuilder();
 				batchContent.AppendLine("@echo off");
 				batchContent.AppendLine("setlocal DisableDelayedExpansion");
+				// The file is UTF-8. Switch before cmd reads any localized names, paths or passwords.
+				batchContent.AppendLine("chcp 65001 >nul || exit /b 1");
 				batchContent.AppendLine($"echo :: ===========================================================================");
 				batchContent.AppendLine($"echo :: SYNIX AUTOMATICALLY GENERATED LAUNCH SCRIPT");
 				batchContent.AppendLine($"echo :: Server: {safeIdentity}");
@@ -1548,7 +1556,7 @@ namespace Synix_Control_Panel.SynixEngine
 				string safeFileName = $"Run_{cleanIdentity}_Server.bat";
 				string fullOutputPath = Path.Combine(server.InstallPath, safeFileName);
 
-				File.WriteAllText(fullOutputPath, batchContent.ToString());
+				File.WriteAllText(fullOutputPath, batchContent.ToString(), new UTF8Encoding(false, true));
 
 				LogLocalized("ServerActions.Activity.ExportSucceeded", Color.SpringGreen, false, fullOutputPath);
 				return true;

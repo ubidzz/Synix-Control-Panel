@@ -12,7 +12,7 @@
 # ============================================================================
 
 # Additional named Spanish interface resources.
-# The Game Definition Builder guide intentionally remains English like the Help Center.
+# The Game Definition Builder guide uses the compiled interface language.
 [ordered]@{
     'ServerSetup.World.Seed.Hint' = 'Genere una semilla para un mundo nuevo o introduzca la suya. Para un mundo existente, conserve su semilla original.'
     'ServerSetup.World.Seed.Generate' = 'Generar semilla'

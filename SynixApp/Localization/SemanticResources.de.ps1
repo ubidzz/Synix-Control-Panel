@@ -12,7 +12,7 @@
 # ============================================================================
 
 # Additional named German interface resources.
-# The Game Definition Builder guide intentionally remains English like the Help Center.
+# The Game Definition Builder guide uses the compiled interface language.
 [ordered]@{
     'ServerSetup.World.Seed.Hint' = 'Erzeugen Sie einen Seed für eine neue Welt oder geben Sie einen eigenen ein. Behalten Sie bei bestehenden Welten den ursprünglichen Seed.'
     'ServerSetup.World.Seed.Generate' = 'Seed erzeugen'

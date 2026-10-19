@@ -51,6 +51,8 @@ public sealed class ServerProcessDiscoveryTests
 				PID = unrelated.Id
 			};
 			Assert.True(await Servers.Stop(staleEntry, (_, _) => { }));
+			Assert.Contains(ServerActivityHistory.Current.Read(staleEntry).Entries,
+				entry => entry.Diagnostic?.ResourceKey == "ServerStop.Activity.NoProcess");
 			Assert.False(unrelated.HasExited, "A matching executable name does not prove server ownership.");
 			Assert.Empty(staleEntry.ServerProcesses);
 			Assert.Null(staleEntry.PID);

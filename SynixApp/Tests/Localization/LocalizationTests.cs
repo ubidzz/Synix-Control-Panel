@@ -187,9 +187,14 @@ public sealed class LocalizationTests
 					page.Controls.Find("lblTitleLanguage", true).Single().Text);
 				ComboBox language = Assert.IsAssignableFrom<ComboBox>(
 					page.Controls.Find("cmbLanguage", true).Single());
-				Assert.Equal(
-					["Anglais", "Allemand", "Espagnol", "Français"],
-					language.Items.Cast<object>().Select(item => item.ToString()));
+				Assert.Equal(LocalizationManager.SupportedLanguages.Count, language.Items.Count);
+				string[] labels = language.Items.Cast<object>().Select(item => item.ToString()!).ToArray();
+				Assert.Contains("English", labels);
+				Assert.Contains("Deutsch", labels);
+				Assert.Contains("Español", labels);
+				Assert.Contains("Français", labels);
+				Assert.Contains("简体中文", labels);
+				Assert.Contains("繁體中文", labels);
 
 				page.UiLanguageCode = "fr-FR";
 				page.LimitSteamCmdDownloadSpeed = true;
@@ -480,7 +485,9 @@ public sealed class LocalizationTests
 			"XML"
 		};
 
-		foreach (string languageCode in new[] { "fr", "de", "es" })
+		foreach (string languageCode in LocalizationManager.SupportedLanguages
+			.Where(language => language.Code != LocalizationManager.DefaultLanguageCode)
+			.Select(language => language.ResourceCultureName))
 		{
 			ResourceSet translated = Assert.IsAssignableFrom<ResourceSet>(
 				manager.GetResourceSet(
@@ -536,7 +543,9 @@ public sealed class LocalizationTests
 			.OrderBy(key => key, StringComparer.Ordinal)
 			.ToArray();
 
-		foreach (string languageCode in new[] { "fr", "de", "es" })
+		foreach (string languageCode in LocalizationManager.SupportedLanguages
+			.Where(language => language.Code != LocalizationManager.DefaultLanguageCode)
+			.Select(language => language.ResourceCultureName))
 		{
 			ResourceSet translated = Assert.IsAssignableFrom<ResourceSet>(
 				manager.GetResourceSet(
@@ -576,7 +585,9 @@ public sealed class LocalizationTests
 				key.StartsWith("MessageText.", StringComparison.Ordinal))
 			.ToArray();
 
-		foreach (string languageCode in new[] { "fr", "de", "es" })
+		foreach (string languageCode in LocalizationManager.SupportedLanguages
+			.Where(language => language.Code != LocalizationManager.DefaultLanguageCode)
+			.Select(language => language.ResourceCultureName))
 		{
 			ResourceSet translated = Assert.IsAssignableFrom<ResourceSet>(
 				manager.GetResourceSet(
@@ -634,7 +645,9 @@ public sealed class LocalizationTests
 				StringComparer.Ordinal);
 		Assert.Equal(requiredEnglishText.Length, required.Count);
 
-		foreach (string languageCode in new[] { "fr", "de", "es" })
+		foreach (string languageCode in LocalizationManager.SupportedLanguages
+			.Where(language => language.Code != LocalizationManager.DefaultLanguageCode)
+			.Select(language => language.ResourceCultureName))
 		{
 			ResourceSet translated = Assert.IsAssignableFrom<ResourceSet>(
 				manager.GetResourceSet(
@@ -818,7 +831,9 @@ public sealed class LocalizationTests
 				StringComparer.Ordinal);
 		Regex placeholder = new(@"\{\d+(?:,[^}:]+)?(?::[^}]+)?\}");
 
-		foreach (string languageCode in new[] { "fr", "de", "es" })
+		foreach (string languageCode in LocalizationManager.SupportedLanguages
+			.Where(language => language.Code != LocalizationManager.DefaultLanguageCode)
+			.Select(language => language.ResourceCultureName))
 		{
 			ResourceSet translated = Assert.IsAssignableFrom<ResourceSet>(
 				manager.GetResourceSet(
@@ -857,11 +872,11 @@ public sealed class LocalizationTests
 			Core.FindProjectDirectory(AppContext.BaseDirectory));
 		Regex directVisibleText = new(
 			"(?<!\\$)\\b(?:Text|HeaderText|PlaceholderText|AccessibleName|" +
-			"AccessibleDescription|Title|Caption|Heading|Description|Filter)" +
+			"AccessibleDescription|ToolTipText|Title|Caption|Heading|Description|Filter)" +
 			"\\s*=\\s*\"(?=[^\"\\r\\n]*[A-Za-z])[^\"\\r\\n]*\"");
 		Regex directDialogText = new(
 			"(?:MessageBox|LocalizedMessageBox)\\.Show\\s*\\(\\s*" +
-			"\"[^\"\\r\\n]*[A-Za-z]|" +
+			"(?:this,\\s*)?\"[^\"\\r\\n]*[A-Za-z]|" +
 			"PlainEnglishErrorDialog\\.ShowError\\s*\\([^,]+,\\s*" +
 			"\"[^\"\\r\\n]*[A-Za-z]",
 			RegexOptions.Singleline);
@@ -880,11 +895,7 @@ public sealed class LocalizationTests
 		{
 			string relativePath = Path.GetRelativePath(projectDirectory, path);
 			if (relativePath.StartsWith("Tests" + Path.DirectorySeparatorChar) ||
-				relativePath.StartsWith("obj" + Path.DirectorySeparatorChar) ||
-				relativePath.Contains(
-					Path.DirectorySeparatorChar + "Help" +
-					Path.DirectorySeparatorChar,
-					StringComparison.OrdinalIgnoreCase))
+				relativePath.StartsWith("obj" + Path.DirectorySeparatorChar))
 			{
 				continue;
 			}

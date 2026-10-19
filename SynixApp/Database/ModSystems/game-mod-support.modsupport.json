@@ -234,26 +234,6 @@
       ]
     },
     {
-      "gameId": "battle-splash-2-0",
-      "status": "NeedsVerification",
-      "reviewedOn": "2026-09-14",
-      "methods": [],
-      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
-      "sources": []
-    },
-    {
-      "gameId": "battlebit-remastered",
-      "status": "Documented",
-      "reviewedOn": "2026-09-14",
-      "methods": [
-        "Community API modules"
-      ],
-      "notes": "BattleBitAPIRunner loads C# modules for a separate API endpoint connected to the community server. It is not the game executable or a mod folder inside it; configure the runner and module dependencies separately.",
-      "sources": [
-        "https://github.com/BattleBit-Community-Servers/BattleBitAPIRunner"
-      ]
-    },
-    {
       "gameId": "beammp",
       "status": "Documented",
       "reviewedOn": "2026-09-14",
@@ -609,14 +589,6 @@
       "sources": []
     },
     {
-      "gameId": "deadside",
-      "status": "NeedsVerification",
-      "reviewedOn": "2026-09-14",
-      "methods": [],
-      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
-      "sources": []
-    },
-    {
       "gameId": "deathmatch-classic",
       "status": "Documented",
       "reviewedOn": "2026-09-14",
@@ -662,14 +634,6 @@
         "https://support.klei.com/hc/en-us/articles/4407489414548-Getting-a-Dedicated-Server-Failed-To-Start-Error-Message",
         "https://github.com/mathielo/dst-dedicated-server/tree/main/DSTClusterConfig/mods"
       ]
-    },
-    {
-      "gameId": "duckside",
-      "status": "NeedsVerification",
-      "reviewedOn": "2026-09-14",
-      "methods": [],
-      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
-      "sources": []
     },
     {
       "gameId": "dune-awakening",
@@ -1475,14 +1439,6 @@
       ]
     },
     {
-      "gameId": "pavlov-vr",
-      "status": "NeedsVerification",
-      "reviewedOn": "2026-09-14",
-      "methods": [],
-      "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
-      "sources": []
-    },
-    {
       "gameId": "pirates-vikings-and-knights-ii",
       "status": "Documented",
       "reviewedOn": "2026-09-14",
@@ -1571,18 +1527,6 @@
       "methods": [],
       "notes": "A server-specific mod/plugin installation method has not yet been established from reliable documentation. Search results for this game were reviewed; client mods, maps without server deployment instructions and control-panel add-ons are not sufficient evidence. Use the package author's server instructions before choosing a destination.",
       "sources": []
-    },
-    {
-      "gameId": "quake-live",
-      "status": "Documented",
-      "reviewedOn": "2026-09-14",
-      "methods": [
-        "minqlx server plugins"
-      ],
-      "notes": "minqlx extends the dedicated server with Python plugins. It targets the Linux server and needs its own loader/configuration; this is not automatic support for Synix's Windows executable.",
-      "sources": [
-        "https://github.com/MinoMino/minqlx"
-      ]
     },
     {
       "gameId": "raceroom",
@@ -1690,18 +1634,6 @@
       "notes": "The developer documents per-plugin subfolders for Java-edition server plugins. The current and legacy editions use different APIs; verify the installed edition and plugin format before using a destination.",
       "sources": [
         "https://forum.rising-world.net/thread/5363-how-to-install-run-a-plugin-java-version/"
-      ]
-    },
-    {
-      "gameId": "risk-of-rain-2",
-      "status": "Documented",
-      "reviewedOn": "2026-09-14",
-      "methods": [
-        "Dedicated-server BepInEx plugins"
-      ],
-      "notes": "Dedicated-server plugins such as R2DSEssentials require the matching BepInEx dependency chain. Match server and client mod requirements; not every client Thunderstore mod works on the dedicated server.",
-      "sources": [
-        "https://thunderstore.io/c/riskofrain2/p/IHarbHD/DebugToolkit/v/3.8.2/"
       ]
     },
     {

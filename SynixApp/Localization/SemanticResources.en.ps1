@@ -15,6 +15,7 @@
 # Machine-facing game commands, launch values, configuration keys, and protocol
 # identifiers intentionally do not belong in this catalog.
 [ordered]@{
+    'Language.Description' = 'Choose the language used by Synix. Game commands and saved values are not translated.'
     'ServerSetup.World.Seed.Hint' = 'Generate a seed for a new world, or enter your own. For an existing world, keep its original seed.'
     'ServerSetup.World.Seed.Generate' = 'Generate seed'
     'GameInput.WorldSeed.RequiredNumber' = 'World Seed is required for {0}: use a whole number from {1} to {2}. Correct it in Server Setup > World Generation.'

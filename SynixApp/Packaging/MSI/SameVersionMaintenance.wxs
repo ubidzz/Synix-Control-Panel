@@ -1,0 +1,55 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<!-- Repair stays in this MSI session, using its embedded payload and the
+		     rollback-protected MajorUpgrade. Only Uninstall hands off to the old
+		     registered product, preserving its explicit server-removal choices. -->
+		<CustomAction Id="SynixUninstallInstalledVersion" Directory="System64Folder"
+			ExeCommand="&quot;[System64Folder]msiexec.exe&quot; /x &quot;[SYNIX_SAME_VERSION_FOUND]&quot; /qb /norestart"
+			Execute="immediate" Return="asyncNoWait" />
+		<UI Id="SynixSameVersionMaintenance">
+			<!-- Keep the license checkbox unchecked and the normal disk-space review.
+			     Updates and repairs reuse the registered directory; only a fresh
+			     installation offers the folder picker. Never run old-product cleanup. -->
+			<Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="SynixSameVersionDlg"
+				Order="10" Condition="SYNIX_SAME_VERSION_FOUND AND NOT Installed" />
+			<Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"
+				Order="10" Condition="NOT Installed AND LicenseAccepted = &quot;1&quot; AND (SYNIX_REPAIR_CONFIRMED = &quot;1&quot; OR (WIX_UPGRADE_DETECTED AND NOT SYNIX_SAME_VERSION_FOUND AND SYNIX_PREVIOUS_INSTALLFOLDER))" />
+			<Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg"
+				Order="10" Condition="NOT Installed AND (SYNIX_REPAIR_CONFIRMED = &quot;1&quot; OR (WIX_UPGRADE_DETECTED AND NOT SYNIX_SAME_VERSION_FOUND AND SYNIX_PREVIOUS_INSTALLFOLDER))" />
+			<Dialog Id="SynixSameVersionDlg" Width="370" Height="270" Title="!(loc.SynixMaintenanceWindowTitle)">
+				<Control Id="Title" Type="Text" X="20" Y="15" Width="330" Height="22"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceTitle)" />
+				<Control Id="Description" Type="Text" X="20" Y="43" Width="330" Height="36"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceDescription)" />
+				<Control Id="Repair" Type="PushButton" X="20" Y="95" Width="95" Height="23" Text="!(loc.SynixMaintenanceRepair)">
+					<Publish Property="SYNIX_REPAIR_CONFIRMED" Value="1" Order="1" />
+					<Publish Property="SYNIX_SETUP_HEADING" Value="Repair Synix" Order="2" />
+					<Publish Property="SYNIX_SETUP_ACTION" Value="&amp;Repair" Order="3" />
+					<Publish Property="SYNIX_SETUP_REVIEW" Value="Restore Synix [ProductVersion] using the application files in this installer. The existing app registration will be replaced. Your server list, game servers, settings and backups will be kept." Order="4" />
+					<Publish Event="NewDialog" Value="LicenseAgreementDlg" Order="5" />
+				</Control>
+				<Control Id="RepairDescription" Type="Text" X="130" Y="93" Width="220" Height="42"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceRepairDescription)" />
+				<Control Id="Uninstall" Type="PushButton" X="20" Y="155" Width="95" Height="23" Text="!(loc.SynixMaintenanceUninstall)">
+					<Publish Event="DoAction" Value="SynixUninstallInstalledVersion" Order="1" />
+					<Publish Event="EndDialog" Value="Ignore" Order="2" />
+				</Control>
+				<Control Id="UninstallDescription" Type="Text" X="130" Y="150" Width="220" Height="42"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceUninstallDescription)" />
+				<Control Id="HandoffDescription" Type="Text" X="20" Y="205" Width="330" Height="22"
+					NoPrefix="yes" Text="!(loc.SynixMaintenanceHandoffDescription)" />
+				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+				<Control Id="Cancel" Type="PushButton" X="294" Y="243" Width="56" Height="17"
+					Default="yes" Cancel="yes" Text="!(loc.WixUICancel)">
+					<Publish Event="EndDialog" Value="Exit" />
+				</Control>
+			</Dialog>
+			<InstallUISequence>
+				<Show Dialog="override WelcomeDlg" Before="ProgressDlg"
+					Condition="(NOT Installed OR PATCH) AND NOT SYNIX_SAME_VERSION_FOUND" />
+				<Show Dialog="SynixSameVersionDlg" After="CostFinalize"
+					Condition="NOT Installed AND SYNIX_SAME_VERSION_FOUND AND NOT WIX_DOWNGRADE_DETECTED" />
+			</InstallUISequence>
+		</UI>
+	</Fragment>
+</Wix>

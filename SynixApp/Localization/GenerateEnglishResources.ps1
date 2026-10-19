@@ -543,6 +543,15 @@ if (Test-Path -LiteralPath $targetPath) {
         $reader.Close()
     }
 
+    # Catalog-authored help and semantic resources can be newer than the
+    # generator tables. Keep them, while explicit source tables remain authoritative.
+    foreach ($entry in $existingResources.GetEnumerator()) {
+        if ($entry.Key -notmatch '^(?:Text|DynamicText|MessageText)\.' -and
+            -not $semanticText.Contains($entry.Key)) {
+            $semanticText[$entry.Key] = $entry.Value
+        }
+    }
+
     $referencedHashKeys = foreach ($file in $sourceFiles) {
         $content = Get-Content -Raw -Path $file.FullName
         foreach ($match in [regex]::Matches(

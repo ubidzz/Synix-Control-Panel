@@ -158,6 +158,53 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 		Assert.Equal("new-fixture-password", security.txtPassword.Text);
 	});
 
+	[Theory]
+	[InlineData("ARK: Survival Ascended", false)]
+	[InlineData("ARK: Survival Evolved", true)]
+	public void InternationalConfigTextAndPasswordsRoundTripWithoutNormalization(string game, bool utf16)
+	{
+		_server.Game = game;
+		string path = FixturePath(ArkPath);
+		Encoding encoding = utf16 ? Encoding.Unicode : new UTF8Encoding(false);
+		WriteFixture(path, ArkConfig, encoding);
+		const string title = "朋友伺服器 サーバー Café Привет";
+		const string join = "密碼e\u0301🔐123";
+		const string admin = "管理員한국어123";
+		// Build the synthetic fixture directly: CodeQL models password-keyed Replace
+		// calls as credential lookups, even when their values are only test constants.
+		string edited = $"""
+			; Keep this comment and these unrelated settings.
+			[ServerSettings]
+			ServerPassword="{join}"
+			ServerAdminPassword="{admin}"
+			RCONPort=44009
+			RCONEnabled=True
+			ServerPVE=False
+			TamingSpeedMultiplier=3.5
+			[SessionSettings]
+			SessionName="{title}"
+			[/Script/Engine.GameSession]
+			MaxPlayers=32
+			[UnrelatedPlugin]
+			ServerAdminPassword="not-the-server-password"
+			""";
+		Assert.False(MinecraftConfigurationSync.IsProperties(_server, path));
+		string stored = "";
+		Save(path, edited, () => { stored = Core.SerializeServersForStorage(ServerRegistry.Servers); return true; });
+		Assert.True(Core.IsProtected(_server.Password));
+		Assert.True(Core.IsProtected(_server.AdminPassword));
+		GameServer reloaded = Assert.Single(Core.DeserializeServersAndMigrate(stored, out int _));
+		Assert.Equal(title, reloaded.ServerName);
+		Assert.True(Core.IsProtected(reloaded.Password));
+		Assert.True(Core.IsProtected(reloaded.AdminPassword));
+		Assert.Equal(join, Core.Reveal(reloaded.Password));
+		Assert.Equal(admin, Core.Reveal(reloaded.AdminPassword));
+		Assert.Equal(edited, File.ReadAllText(path));
+		Assert.Equal(encoding.GetPreamble().Concat(encoding.GetBytes(edited)).ToArray(), File.ReadAllBytes(path));
+		Assert.DoesNotContain(join, stored);
+		Assert.DoesNotContain(admin, stored);
+	}
+
 	[Fact]
 	public void SavingUneditedConfigRepairsDriftAndRepeatedSaveDoesNotReencryptOrPersist()
 	{

@@ -44,6 +44,7 @@ namespace Synix_Control_Panel.SynixEngine
 			bool bold = false,
 			params object?[] arguments)
 		{
+			ServerDiagnosticScope.Record(resourceKey, color, arguments);
 			string technicalMessage = LocalizationManager.GetEnglish(
 				resourceKey,
 				arguments);

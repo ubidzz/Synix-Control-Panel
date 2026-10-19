@@ -1,0 +1,3842 @@
+{
+  "schemaVersion": 1,
+  "scope": "Game-by-game online searches for all 220 built-in definitions on 2026-10-17. Evidence is field-specific. Unverified means the search did not establish international-character support, not that support is absent. No live game/client authentication certification. Authentication tokens, player usernames, directory names and third-party plugins have separate rules. Evidence notes retain their English source here and use compiled translations when displayed.",
+  "entries": [
+    {
+      "gameId": "7-days-to-die",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"7 Days to Die\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "abiotic-factor",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Abiotic Factor\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "action-source",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Action: Source\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "age-of-chivalry",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Age of Chivalry\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "airmen",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Airmen\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "alien-swarm-reactive-drop",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Alien Swarm: Reactive Drop\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "america-s-army-proving-grounds",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"America's Army: Proving Grounds\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "american-truck-simulator",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"American Truck Simulator\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "angels-fall-first",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Angels Fall First\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "archean",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Archean\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "ark-survival-ascended",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"ARK: Survival Ascended\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "ark-survival-evolved",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"ARK: Survival Evolved\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "arma-3",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Arma 3\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "arma-reforger",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Arma Reforger\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified",
+        "notes": "The developer documents a server-name length limit, but this does not establish support for every international script.",
+        "sources": [
+          "https://community.bohemia.net/wiki/Arma_Reforger:Server_Config"
+        ]
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified",
+        "notes": "The developer's password rules and Synix's existing space restrictions still apply. International-character authentication was not established.",
+        "sources": [
+          "https://community.bohemia.net/wiki/Arma_Reforger:Server_Config"
+        ]
+      },
+      "rconPassword": {
+        "status": "Unverified",
+        "notes": "RCON has its own length and space restrictions. Do not infer its character support from the server title or join password.",
+        "sources": [
+          "https://community.bohemia.net/wiki/Arma_Reforger:Server_Config"
+        ]
+      }
+    },
+    {
+      "gameId": "aska",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"ASKA\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "assetto-corsa",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Assetto Corsa\" dedicated server \"name\" \"password\" Unicode characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "assetto-corsa-competizione",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Assetto Corsa Competizione\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "astroneer",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"ASTRONEER\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "atlas",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Atlas\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "automobilista-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Automobilista 2\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "avorion",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Avorion\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "barotrauma",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Barotrauma\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Documented",
+        "notes": "The developer's server-settings implementation accepts text and truncates to the server-name length limit without an ASCII-only filter. Player-name character restrictions are separate and must not be applied to server titles. Client font coverage and current version still matter.",
+        "sources": [
+          "https://github.com/Regalis11/Barotrauma/blob/master/Barotrauma/BarotraumaShared/SharedSource/Networking/ServerSettings.cs"
+        ]
+      },
+      "joinPassword": {
+        "status": "Conditional",
+        "notes": "The developer's server password verifier encodes the configured password with UTF-8 before salting/comparison. This supports international text on the server side; this audit has not tested every client/input method. Passwords must match exactly, including composed characters.",
+        "sources": [
+          "https://github.com/Regalis11/Barotrauma/blob/master/Barotrauma/BarotraumaShared/SharedSource/Networking/ServerSettings.cs"
+        ]
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "beammp",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"BeamMP\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Conditional",
+        "notes": "The developer allows a text Name in ServerConfig.toml and documents a 250-character backend limit. This is documented text input, not a guarantee that every script or emoji is rendered in every client. TOML quoting and formatting rules still apply.",
+        "sources": [
+          "https://docs.beammp.com/server/server-maintenance/",
+          "https://docs.beammp.com/server/manual/"
+        ]
+      },
+      "joinPassword": {
+        "status": "NotApplicable",
+        "notes": "The standard server configuration does not provide a join-password field. Private controls listing, not password authentication; authentication keys are separate credentials. Plugins may add their own access rules.",
+        "sources": [
+          "https://docs.beammp.com/server/server-maintenance/"
+        ]
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "beasts-of-bermuda",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Beasts of Bermuda\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "beyond-the-wire",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Beyond the Wire\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "black-mesa",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Black Mesa\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "blackwake",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Blackwake\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "blade-symphony",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Blade Symphony\" server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "brainbread-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"BrainBread 2\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "chivalry-deadliest-warrior",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Chivalry: Deadliest Warrior\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "chivalry-medieval-warfare",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Chivalry: Medieval Warfare\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "citadel-forged-with-fire",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Citadel: Forged with Fire\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "codename-cure",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Codename CURE\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "colony-survival",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Colony Survival\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "conan-exiles",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Conan Exiles\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "contagion",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Contagion\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "core-keeper",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Core Keeper\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "counter-strike-1-6",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Counter-Strike 1.6\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "counter-strike-condition-zero",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Counter-Strike: Condition Zero\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "counter-strike-source",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Counter-Strike: Source\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "craftopia",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Craftopia\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Restricted",
+        "notes": "The dedicated-server template bundled with Synix specifies a numeric PIN of at most eight digits, not a free-text international password. Leave it empty to disable password protection. This restriction is already recorded in Synix's Craftopia setup guidance.",
+        "sources": [
+          "https://github.com/ubidzz/Synix-Control-Panel/blob/master/SynixApp/Database/GameDefinitions/craftopia/Templates/ServerSetting.ini"
+        ]
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "creativerse",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Creativerse\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "cryofall",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"CryoFall\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "cubic-odyssey",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Cubic Odyssey\" dedicated server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "d-a-t-a",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"D.A.T.A\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "d-i-p-r-i-p",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"D.I.P.R.I.P.\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "dark-and-light",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Dark and Light\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "dark-messiah-of-might-magic-dedicated-server",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Dark Messiah of Might & Magic Dedicated Server\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "darkest-hour-europe-44-45",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Darkest Hour: Europe '44-'45\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "day-of-defeat",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Day of Defeat\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "day-of-defeat-source",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Day of Defeat: Source\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "day-of-dragons",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Day of Dragons\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified",
+        "notes": "A developer-pinned guide describes sServerPassword as accepting combinations of characters for the admin panel. It does not specifically establish Unicode, and this must not be mistaken for a join-password guarantee.",
+        "sources": [
+          "https://steamcommunity.com/app/1088090/discussions/9/4141689926409583736/"
+        ]
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "day-of-infamy",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Day of Infamy\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "days-of-war",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Days of War\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "dayz",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"DayZ\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "deadlived",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Deadlived\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "deadpoly",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"DeadPoly\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "deathmatch-classic",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Deathmatch Classic\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "desynced",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Desynced\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "dino-d-day",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Dino D-Day\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "don-t-starve-together",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Don't Starve Together\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "dune-awakening",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Dune: Awakening\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "dysterra",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Dysterra\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "dystopia",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Dystopia\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "e-y-e-divine-cybermancy",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"E.Y.E: Divine Cybermancy\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "eco",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Eco\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "eden-star",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Eden Star\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "empires-mod",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Empires Mod\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "empyrion-galactic-survival",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Empyrion - Galactic Survival\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "enshrouded",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Enshrouded\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified",
+        "notes": "The developer documents the server name in JSON. JSON encoding alone is not proof of client-side display support.",
+        "sources": [
+          "https://enshrouded.zendesk.com/hc/en-us/articles/16055441447709-Dedicated-Server-Configuration"
+        ]
+      },
+      "joinPassword": {
+        "status": "Unverified",
+        "notes": "Access passwords can belong to user groups/roles in current versions. Their international-character authentication behavior is not established by the configuration guide.",
+        "sources": [
+          "https://enshrouded.zendesk.com/hc/en-us/articles/19191581489309-Server-Roles-Configuration"
+        ]
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "eternal-silence",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Eternal Silence\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "euro-truck-simulator-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Euro Truck Simulator 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "evolution-survival",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Evolution Survival\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "fistful-of-frags",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Fistful of Frags\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "fortress-forever",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Fortress Forever\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "foundry",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Foundry\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "frozen-flame",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Frozen Flame\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "garry-s-mod",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Garry's Mod\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "ground-branch",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Ground Branch\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "ground-branch-cte",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"GROUND BRANCH CTE\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "half-life-2-deathmatch",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Half-Life 2: Deathmatch\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "half-life-deathmatch-source",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Half-Life Deathmatch: Source\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "half-life-dedicated-server",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Half-Life Dedicated Server\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "half-life-opposing-force",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Half-Life: Opposing Force\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "hanako-honor-blade",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Hanako: Honor & Blade\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "heat",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Heat\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "hell-s-new-world",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"HELL'S NEW WORLD\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "hellion",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Hellion\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "holdfast-nations-at-war",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Holdfast: Nations At War\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "humanitz",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"HumanitZ\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "hurtworld",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Hurtworld\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "hypercharge-unboxed",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"HYPERCHARGE: Unboxed\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "icarus",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Icarus\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "insurgency-2014",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Insurgency (2014)\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "insurgency-mod",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Insurgency Mod\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "insurgency-sandstorm",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Insurgency: Sandstorm\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "iosoccer",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"IOSoccer\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "isles-of-yore",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Isles of Yore\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Conditional",
+        "notes": "The developer's 0.3.14 patch notes report a server-browser fix for UTF-8, including Cyrillic and other non-ANSI characters. This is version-specific evidence, not a claim that every client font displays every character.",
+        "sources": [
+          "https://steamcommunity.com/games/1360850/announcements/detail/5293421584009327085"
+        ]
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "jabroni-brawl-episode-3",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Jabroni Brawl: Episode 3\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "jbmod",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"JBMod\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "just-cause-2-multiplayer",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Just Cause 2: Multiplayer\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "just-cause-3-multiplayer",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Just Cause 3 Multiplayer\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "killing-floor",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Killing Floor\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "killing-floor-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Killing Floor 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "last-oasis",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Last Oasis\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "left-4-dead-1",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Left 4 Dead (1)\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "left-4-dead-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Left 4 Dead 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "life-is-feudal-your-own",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Life is Feudal: Your Own\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "logic-world",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Logic World\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "longvinter",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Longvinter\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "mainland",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Mainland\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "medieval-engineers",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Medieval Engineers\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "memories-of-mars",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Memories of Mars\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "military-conflict-vietnam",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Military Conflict: Vietnam\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "minecraft",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Minecraft\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Conditional",
+        "notes": "Java 1.20 introduced UTF-8 server.properties. Java properties Unicode escapes also work with older Java servers. Bedrock documents server-name as text without semicolons. Client fonts and editions can differ; this does not relax Minecraft player-username rules.",
+        "sources": [
+          "https://www.minecraft.net/en-us/article/minecraft-1-20-pre-release-1",
+          "https://learn.microsoft.com/en-us/minecraft/creator/documents/bedrockserver/getting-started?view=minecraft-bedrock-stable"
+        ]
+      },
+      "joinPassword": {
+        "status": "NotApplicable",
+        "notes": "The standard Java and Bedrock server configuration has no join-password setting. Use the game's allowlist and account authentication. Password plugins have their own rules.",
+        "sources": [
+          "https://docs.papermc.io/paper/reference/server-properties/",
+          "https://learn.microsoft.com/en-us/minecraft/creator/documents/bedrockserver/getting-started?view=minecraft-bedrock-stable"
+        ]
+      },
+      "adminPassword": {
+        "status": "NotApplicable",
+        "notes": "Vanilla uses operator permissions rather than a separate administrator password. Java RCON has a separate password; plugin login systems are outside this record.",
+        "sources": [
+          "https://docs.papermc.io/paper/reference/server-properties/",
+          "https://learn.microsoft.com/en-us/minecraft/creator/documents/bedrockserver/getting-started?view=minecraft-bedrock-stable"
+        ]
+      },
+      "rconPassword": {
+        "status": "Unverified",
+        "notes": "Java has rcon.password; Bedrock has no built-in Java RCON endpoint. UTF-8 configuration support does not establish the character handling of every RCON client. Verify the exact server and client together.",
+        "sources": [
+          "https://docs.papermc.io/paper/reference/server-properties/",
+          "https://www.minecraft.net/en-us/article/minecraft-1-20-pre-release-1"
+        ]
+      }
+    },
+    {
+      "gameId": "miscreated",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Miscreated\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "modular-combat",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Modular Combat\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "monday-night-combat",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Monday Night Combat\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "mordhau",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Mordhau\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "mount-blade-ii-bannerlord",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Mount & Blade II: Bannerlord\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "myth-of-empires",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Myth of Empires\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "nanos-world",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"nanos world\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "natural-selection-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Natural Selection 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "necesse",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Necesse\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "neotokyo",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"NEOTOKYO\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "night-of-the-dead",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Night of the Dead\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "nightingale",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Nightingale\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "no-more-room-in-hell",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"No More Room in Hell\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "no-one-survived",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"No One Survived\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "ns2-combat",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"NS2: Combat\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "nuclear-dawn",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Nuclear Dawn\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "nuclear-option",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Nuclear Option\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "onset",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Onset\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Documented",
+        "notes": "The developer explicitly documents UTF-8 icons in server hostnames and demonstrates non-Latin text. servername is limited to 260 characters including formatting; servername_short to 128. Font coverage is still client-dependent.",
+        "sources": [
+          "https://dev.playonset.com/wiki/DedicatedServer",
+          "https://dev.playonset.com/wiki/server_config"
+        ]
+      },
+      "joinPassword": {
+        "status": "Unverified",
+        "notes": "The developer documents a password string, but does not establish its international-character authentication behavior.",
+        "sources": [
+          "https://dev.playonset.com/wiki/server_config"
+        ]
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "operation-harsh-doorstop",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Operation: Harsh Doorstop\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "out-of-reach",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Out of Reach\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "outlaws-of-the-old-west",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Outlaws of the Old West\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "painkiller-hell-damnation",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Painkiller: Hell & Damnation\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "palworld",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Palworld\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified",
+        "notes": "The developer documents ServerName but does not establish its international-character limits.",
+        "sources": [
+          "https://docs.palworldgame.com/settings-and-operation/configuration/"
+        ]
+      },
+      "joinPassword": {
+        "status": "Unverified",
+        "notes": "The developer documents this password field, but does not establish international-character authentication support.",
+        "sources": [
+          "https://docs.palworldgame.com/settings-and-operation/configuration/"
+        ]
+      },
+      "adminPassword": {
+        "status": "Unverified",
+        "notes": "The developer documents this password field, but does not establish international-character authentication support.",
+        "sources": [
+          "https://docs.palworldgame.com/settings-and-operation/configuration/"
+        ]
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "pirates-vikings-and-knights-ii",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Pirates, Vikings, and Knights II\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "pixark",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"PixARK\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "plains-of-pain",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Plains of Pain\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "playervs",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"PlayerVs\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "primal-carnage-extinction",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Primal Carnage: Extinction\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "project-cars",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Project CARS\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "project-cars-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Project CARS 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "project-zomboid",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Project Zomboid\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "puck",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Puck\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "qanga",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"QANGA\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "raceroom",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"RaceRoom\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "re-poly",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Re.Poly\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "red-orchestra-2-heroes-of-stalingrad",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Red Orchestra 2: Heroes of Stalingrad\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "reflex-arena",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Reflex Arena\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "reign-of-kings",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Reign of Kings\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "return-to-moria",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Return to Moria\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "rfactor-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"rFactor 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "ricochet",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Ricochet\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "right-to-rule",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Right to Rule\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "rising-storm-2-vietnam",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Rising Storm 2: Vietnam\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "rising-world",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Rising World\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "runescape-dragonwilds",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"RuneScape: Dragonwilds\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "rust",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Rust\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified",
+        "notes": "The public server.hostname is different from the server.identity data-folder name. The developer's setup guide does not establish universal character support.",
+        "sources": [
+          "https://wiki.facepunch.com/rust/creating-a-server"
+        ]
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "s-box",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"s&box\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "saleblazers",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Saleblazers\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "sapiens",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Sapiens\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "satisfactory",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Satisfactory\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "scp-5k",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"SCP: 5K\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "scp-secret-laboratory",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"SCP: Secret Laboratory\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "scum",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"SCUM\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "serious-sam-2017",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Serious Sam 2017\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "serious-sam-3-bfe",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Serious Sam 3: BFE\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "serious-sam-classics-revolution",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Serious Sam Classics: Revolution\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "serious-sam-hd-the-first-encounter",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Serious Sam HD: The First Encounter\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "serious-sam-hd-the-second-encounter",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Serious Sam HD: The Second Encounter\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "ships-at-sea",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Ships At Sea\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "silica",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Silica\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "smalland-survive-the-wilds",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Smalland: Survive the Wilds\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "sniper-elite-4",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Sniper Elite 4\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "soldat",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Soldat\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "sons-of-the-forest",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Sons Of The Forest\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "soulmask",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Soulmask\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "space-engineers",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Space Engineers\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "squad",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Squad\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "squad-44-post-scriptum",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Squad 44 (Post Scriptum)\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "star-rupture",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"StarRupture\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "starground",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Starground\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "stationeers",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Stationeers\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "stormworks-build-and-rescue",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Stormworks: Build and Rescue\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "subsistence",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Subsistence\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "sunkenland",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Sunkenland\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified",
+        "notes": "The developer's dedicated-server manual could not be verified during this audit. International-character password authentication remains unverified; test the exact server and client before relying on it.",
+        "sources": []
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "survive-the-nights",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Survive the Nights\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "sven-co-op",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Sven Co-op\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "synergy",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Synergy\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "takedown-red-sabre",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Takedown: Red Sabre\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "team-fortress-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Team Fortress 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "team-fortress-2-classified",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Team Fortress 2 Classified\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "team-fortress-2-gold-rush",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Team Fortress 2: Gold Rush\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "team-fortress-2008",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Team Fortress 2008\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "team-fortress-classic",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Team Fortress Classic\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "terraria",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Terraria\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "the-forest",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"The Forest\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "the-front",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"The Front\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "the-haunted-hell-s-reach",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"The Haunted: Hell's Reach\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "the-isle",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"The Isle\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "the-isle-evrima",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"The Isle (Evrima)\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "the-riftbreaker",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"The Riftbreaker\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "tower-unite",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Tower Unite\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "treason",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Treason\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "undoing",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Undoing\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "unturned",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Unturned\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "v-rising",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"V Rising\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "valheim",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Valheim\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "vein",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"VEIN\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "warfork",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Warfork\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "wickland",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Wickland\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "windrose",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Windrose\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "wreckfest",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Wreckfest\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "wreckfest-2",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Wreckfest 2\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "wurm-unlimited",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Wurm Unlimited\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "zero-world",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Zero World\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    },
+    {
+      "gameId": "zombie-panic-source",
+      "searchedOn": "2026-10-17",
+      "searchQuery": "\"Zombie Panic! Source\" dedicated game server name password unicode UTF-8 characters",
+      "serverTitle": {
+        "status": "Unverified"
+      },
+      "joinPassword": {
+        "status": "Unverified"
+      },
+      "adminPassword": {
+        "status": "Unverified"
+      },
+      "rconPassword": {
+        "status": "Unverified"
+      }
+    }
+  ]
+}

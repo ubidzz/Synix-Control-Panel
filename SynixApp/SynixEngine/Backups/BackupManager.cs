@@ -89,6 +89,7 @@ namespace Synix_Control_Panel.SynixEngine
 		public async Task<bool> ExecuteBackup(GameServer server, StartContext context)
 		{
 			ArgumentNullException.ThrowIfNull(server);
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			if (context == StartContext.CrashRecovery) return false;
 			using ServerOperationLease operation =
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Backup);
@@ -573,6 +574,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			ArgumentNullException.ThrowIfNull(backup);
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			using ServerOperationLease operation =
 				ServerOperationCoordinator.TryBegin(server, ServerOperationKind.Restore);
 			if (!operation.Acquired)

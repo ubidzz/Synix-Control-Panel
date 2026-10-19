@@ -152,6 +152,7 @@ namespace Synix_Control_Panel.SynixEngine
 			ArgumentNullException.ThrowIfNull(server);
 			if (notificationEvent == DiscordNotificationEvent.None)
 				return;
+			ServerActivityHistory.Current.Record(server, notificationEvent);
 
 			List<(string Name, string Url)> destinations;
 			try

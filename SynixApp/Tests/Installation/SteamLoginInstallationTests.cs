@@ -39,8 +39,9 @@ public sealed class SteamLoginInstallationTests
 			["Project CARS 2"] = "413770",
 			["Red Orchestra 2: Heroes of Stalingrad"] = "212542",
 			["Serious Sam HD: The First Encounter"] = "41005",
+			["Stormworks: Build and Rescue"] = "573090",
 			["Takedown: Red Sabre"] = "261020",
-			["Terraria"] = "105610",
+			["Terraria"] = "105600",
 			["The Haunted: Hell's Reach"] = "43210"
 		};
 		Dictionary<string, string> actual = GameDatabase.GetGames

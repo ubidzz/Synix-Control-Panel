@@ -121,6 +121,7 @@ namespace Synix_Control_Panel.SynixEngine
 
 		public async Task<bool> ExecuteDynamicProbes(GameServer server, string ip)
 		{
+			using var historyScope = ServerDiagnosticScope.Begin(server);
 			GameInfo? gameData = GameDatabase.GetGame(server.Game);
 			ServerProbeProtocol probeProtocol = GameDatabase.GetProbeProtocol(gameData);
 			bool supportsA2S = probeProtocol == ServerProbeProtocol.A2S;

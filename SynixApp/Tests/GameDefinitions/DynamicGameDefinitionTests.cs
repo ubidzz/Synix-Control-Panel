@@ -33,7 +33,7 @@ public sealed class DynamicGameDefinitionTests
 		Assert.True(beamMp.IsEmbeddedDefinition);
 		Assert.Equal("3809400", starRupture.AppID);
 		Assert.Equal(ServerProbeProtocol.Tcp, beamMp.ProbeProtocol);
-		Assert.Equal(227, games.Count);
+		Assert.Equal(220, games.Count);
 		Assert.Equal(games.Count, TrustedGameDefinitionCatalog.Packages.Count);
 		Assert.All(games, game => Assert.True(game.IsEmbeddedDefinition));
 		Assert.All(games, game => Assert.True(game.CatalogOrder >= 0));
@@ -848,6 +848,7 @@ public sealed class DynamicGameDefinitionTests
 			["Counter-Strike: Condition Zero"] = "90 mod czero",
 			["Day of Defeat"] = "90 mod dod",
 			["Deathmatch Classic"] = "90 mod dmc",
+			["Half-Life Dedicated Server"] = "90 mod valve",
 			["Half-Life: Opposing Force"] = "90 mod gearbox",
 			["Ricochet"] = "90 mod ricochet",
 			["Team Fortress Classic"] = "90 mod tfc"
@@ -898,9 +899,9 @@ public sealed class DynamicGameDefinitionTests
 			GameDefinitionValidator.ValidateSourceDirectory(projectDirectory!);
 
 		Assert.True(report.IsValid, report.ToPlainText());
-		Assert.Equal(227, report.DefinitionCount);
+		Assert.Equal(220, report.DefinitionCount);
 		Assert.True(report.TemplateCount >= 4);
-		Assert.Equal(63, report.PostInstallActionCount);
+		Assert.Equal(61, report.PostInstallActionCount);
 		Assert.True(report.ManagedSettingBindingCount >= 8);
 		Assert.True(
 			report.DefinitionTestCount >= report.DefinitionCount + 4);

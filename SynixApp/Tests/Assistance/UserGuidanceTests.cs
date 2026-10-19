@@ -12,6 +12,7 @@
 // ============================================================================
 using Synix_Control_Panel.SynixApp.Database;
 using Synix_Control_Panel.SynixApp.Design.Controls;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.MonitoringHandler;
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixEngine;
@@ -557,7 +558,12 @@ public sealed class UserGuidanceTests
 				}
 
 				Assert.True(save.Enabled);
+				Assert.Equal(LocalizationManager.Get("ServerSetup.Button.NextReview"), save.Text);
+				Assert.False(setup.Controls.Find("pnlPageReview", true).Single().Visible);
+				save.PerformClick();
 				Assert.True(setup.Controls.Find("pnlPageReview", true).Single().Visible);
+				Assert.Equal(LocalizationManager.Get("ServerSetup.Button.SaveSettings"), save.Text);
+				Assert.Null(setup.NewServer);
 			}
 			catch (Exception exception)
 			{

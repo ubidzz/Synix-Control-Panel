@@ -31,6 +31,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblAdminPassword = new Label();
 			txtAdminPassword = new TextBox();
 			lblCredentialsNote = new Label();
+			lblPasswordCharacters = new Label();
+			lblAdminPasswordCharacters = new Label();
+			btnPasswordCharacters = new ModernSettingsButton();
 			cardAuthenticationToken = new ModernSettingsCard();
 			lblAuthenticationTokenIcon = new Label();
 			lblAuthenticationTokenTitle = new Label();
@@ -59,11 +62,14 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			cardCredentials.Controls.Add(lblAdminPassword);
 			cardCredentials.Controls.Add(txtAdminPassword);
 			cardCredentials.Controls.Add(lblCredentialsNote);
+			cardCredentials.Controls.Add(lblPasswordCharacters);
+			cardCredentials.Controls.Add(lblAdminPasswordCharacters);
+			cardCredentials.Controls.Add(btnPasswordCharacters);
 			cardCredentials.CornerRadius = 12;
 			cardCredentials.FillColor = Color.FromArgb(17, 27, 45);
 			cardCredentials.Location = new Point(0, 0);
 			cardCredentials.Name = "cardCredentials";
-			cardCredentials.Size = new Size(914, 154);
+			cardCredentials.Size = new Size(914, 224);
 			cardCredentials.TabIndex = 2;
 
 			// lblCredentialsIcon
@@ -138,11 +144,29 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			lblCredentialsNote.BackColor = Color.FromArgb(17, 27, 45);
 			lblCredentialsNote.Font = new Font("Segoe UI", 8F);
 			lblCredentialsNote.ForeColor = Color.FromArgb(158, 172, 194);
-			lblCredentialsNote.Location = new Point(24, 116);
+			lblCredentialsNote.Location = new Point(24, 144);
 			lblCredentialsNote.Name = "lblCredentialsNote";
 			lblCredentialsNote.Size = new Size(866, 22);
 			lblCredentialsNote.TabIndex = 6;
 			lblCredentialsNote.Text = LocalizationManager.Get("Text.ED08E4C207A6FC2493D7");
+			// Field-specific character evidence, separate from required-password validation.
+			lblPasswordCharacters.Name = "lblPasswordCharacters";
+			lblPasswordCharacters.Location = new Point(24, 110);
+			lblPasswordCharacters.Size = new Size(414, 28);
+			lblPasswordCharacters.Font = new Font("Segoe UI", 8.5F);
+			lblPasswordCharacters.ForeColor = SettingsPalette.SecondaryText;
+			lblAdminPasswordCharacters.Name = "lblAdminPasswordCharacters";
+			lblAdminPasswordCharacters.Location = new Point(462, 110);
+			lblAdminPasswordCharacters.Size = new Size(428, 28);
+			lblAdminPasswordCharacters.Font = new Font("Segoe UI", 8.5F);
+			lblAdminPasswordCharacters.ForeColor = SettingsPalette.SecondaryText;
+			lblAdminPasswordCharacters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			btnPasswordCharacters.Name = "btnPasswordCharacters";
+			btnPasswordCharacters.Text = LocalizationManager.Get("GameText.Title");
+			btnPasswordCharacters.Location = new Point(24, 176);
+			btnPasswordCharacters.Size = new Size(414, 32);
+			btnPasswordCharacters.TabIndex = 7;
+			btnPasswordCharacters.Enabled = false;
 
 
 			// cardAuthenticationToken

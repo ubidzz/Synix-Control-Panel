@@ -18,5 +18,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Synix Control Panel.csproj" />
+		<EmbeddedResource Include="..\Database\GameDefinitions\steam-download-audit.json" LogicalName="Synix.Tests.SteamDownloadAudit.json" />
 	</ItemGroup>
 </Project>

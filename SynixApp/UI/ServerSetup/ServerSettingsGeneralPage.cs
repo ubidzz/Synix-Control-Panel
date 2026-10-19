@@ -35,6 +35,12 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public ServerSettingsGeneralPage()
 		{
 			InitializeComponent();
+			btnNameCharacters.Click += (_, _) =>
+			{
+				if (!HasSelectedGame) return;
+				using var dialog = new UI.ServerManagement.GameTextSupportDialog(SelectedGame);
+				dialog.ShowDialog(FindForm());
+			};
 			txtName.TextChanged += SettingsControlChanged;
 			cmbGame.SelectedIndexChanged += SelectedGameChanged;
 			cmbGameVersion.SelectedIndexChanged += GameVersionChanged;
@@ -165,6 +171,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		public void RefreshLocalizedPresentation()
 		{
+			btnNameCharacters.Text = GameTextSupportCatalog.TitleSummary(SelectedGame);
 			if (cmbGame.Items.Count > 0)
 			{
 				bool noGameSelected = cmbGame.SelectedIndex == 0;
@@ -179,6 +186,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 
 		public void ConfigureForGame(GameInfo? gameData)
 		{
+			btnNameCharacters.Enabled = gameData != null;
+			btnNameCharacters.Text = GameTextSupportCatalog.TitleSummary(gameData?.Game);
 			ConfigureMaximumPlayersInput(gameData);
 			ConfigureRuntimeCard(gameData);
 			GameManagementCapability capabilities = gameData == null

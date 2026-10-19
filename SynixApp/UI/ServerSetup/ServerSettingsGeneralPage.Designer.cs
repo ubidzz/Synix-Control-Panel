@@ -32,7 +32,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			cmbGame = new ModernSettingsComboBox();
 			lblGameVersion = new Label();
 			cmbGameVersion = new ModernSettingsComboBox();
-			lblIdentityHelper = new Label();
+			btnNameCharacters = new ModernSettingsButton();
 			cardGameplay = new ModernSettingsCard();
 			lblGameplayIcon = new Label();
 			lblGameplayTitle = new Label();
@@ -86,7 +86,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			cardIdentity.Controls.Add(cmbGame);
 			cardIdentity.Controls.Add(lblGameVersion);
 			cardIdentity.Controls.Add(cmbGameVersion);
-			cardIdentity.Controls.Add(lblIdentityHelper);
+			cardIdentity.Controls.Add(btnNameCharacters);
 			cardIdentity.CornerRadius = 12;
 			cardIdentity.FillColor = Color.FromArgb(17, 27, 45);
 			cardIdentity.Location = new Point(0, 0);
@@ -194,17 +194,15 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 			cmbGameVersion.Size = new Size(138, 34);
 			cmbGameVersion.TabIndex = 7;
 
-			// lblIdentityHelper
-			lblIdentityHelper.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			lblIdentityHelper.AutoEllipsis = true;
-			lblIdentityHelper.BackColor = Color.FromArgb(17, 27, 45);
-			lblIdentityHelper.Font = new Font("Segoe UI", 8F);
-			lblIdentityHelper.ForeColor = Color.FromArgb(158, 172, 194);
-			lblIdentityHelper.Location = new Point(24, 187);
-			lblIdentityHelper.Name = "lblIdentityHelper";
-			lblIdentityHelper.Size = new Size(390, 22);
-			lblIdentityHelper.TabIndex = 8;
-			lblIdentityHelper.Text = LocalizationManager.Get("Text.9E09BE4B90E9259491DD");
+			// btnNameCharacters
+			btnNameCharacters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			btnNameCharacters.Font = new Font("Segoe UI", 8.5F);
+			btnNameCharacters.Location = new Point(24, 186);
+			btnNameCharacters.Name = "btnNameCharacters";
+			btnNameCharacters.Size = new Size(390, 28);
+			btnNameCharacters.TabIndex = 8;
+			btnNameCharacters.Text = LocalizationManager.Get("GameText.Title");
+			btnNameCharacters.Enabled = false;
 
 			// cardGameplay
 			cardGameplay.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -709,7 +707,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		internal ModernSettingsComboBox cmbGame;
 		internal Label lblGameVersion;
 		internal ModernSettingsComboBox cmbGameVersion;
-		internal Label lblIdentityHelper;
+		internal ModernSettingsButton btnNameCharacters;
 		internal ModernSettingsCard cardGameplay;
 		internal Label lblGameplayIcon;
 		internal Label lblGameplayTitle;

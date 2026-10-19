@@ -7,7 +7,7 @@
 ![Language](https://img.shields.io/badge/Language-C%23-blue.svg?style=for-the-badge&logo=c-sharp)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-lightgrey.svg?style=for-the-badge&logo=windows)
 ![Privilege](https://img.shields.io/badge/Admin-Not%20Required-blueviolet.svg?style=for-the-badge)
-[![Supported Profiles](https://img.shields.io/badge/Game%20Server%20Profiles-228-00c8ff.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List)
+[![Supported Profiles](https://img.shields.io/badge/Game%20Server%20Profiles-220-00c8ff.svg?style=for-the-badge)](docs/Game-List.md)
 [![CodeQL](https://img.shields.io/badge/Security-CodeQL-2088FF?style=for-the-badge&logo=github)](https://github.com/ubidzz/Synix-Control-Panel/security/code-scanning)
 [![License](https://img.shields.io/badge/License-Personal%20Use-red.svg?style=for-the-badge)](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md)
 [![Donate with PayPal](https://img.shields.io/badge/PayPal-Donate-0079C1?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=FAHU6EH6BX9J8)
@@ -33,7 +33,7 @@ Running a dedicated server normally means finding the correct Steam App ID, inst
 | Without a Server Manager | With Synix |
 |---|---|
 | Install and configure SteamCMD manually | SteamCMD is checked and installed automatically |
-| Search for App IDs and startup arguments | Select from 228 built-in server profiles |
+| Search for App IDs and startup arguments | Select from 220 built-in server profiles |
 | Write and maintain batch files | Configure the server through normal forms and controls |
 | Watch Task Manager for crashes | Use built-in process and resource monitoring |
 | Remember updates, backups, and restarts | Enable automatic maintenance options per server |
@@ -71,9 +71,62 @@ Download **`SynixSetup.msi`** from the [latest release](https://github.com/ubidz
 The MSI version:
 
 - Installs Synix for the current Windows user.
+- Provides a setup wizard with the full [Synix license agreement](LICENSE.md) and an application-folder picker. The agreement checkbox starts unchecked; users must accept the terms before the wizard allows them to continue.
+- Defaults to `%LocalAppData%\Programs\Synix`; updates remember the chosen application folder.
+- Shows **Install Synix** when no copy is installed, **Repair or Uninstall** for the same version (including a rebuilt MSI), and **Update Synix** only when the installer is newer. Older installers cannot replace a newer installed version.
 - Adds Synix to the Start Menu.
 - Adds Synix to the Windows Apps list.
 - Supports normal Windows installation, upgrade, and uninstall behavior.
+
+The installer location applies **only to the Synix application**. Existing game servers,
+worlds, saves, configurations, backups, and Synix data stay at their existing paths.
+Choosing an app folder during a fresh installation does not move or recreate server data.
+Updates and repairs reuse the registered app folder, including silent WinGet and in-app
+updates. To change an existing app's location, choose app-only uninstall and then install
+in the new folder; keep the server list and server data.
+
+For a republished MSI with the same displayed version, **Repair** uses the application
+files embedded in that new installer and replaces the previous app registration. It does
+not launch a repair of the overwritten original MSI. The exact installed MSI still uses
+normal Windows maintenance. Repair keeps app settings, the server list, game servers,
+and backups. Unattended repair of a rebuilt package requires `SYNIX_REPAIR_CONFIRMED=1`;
+without that explicit choice, setup stops before changing anything. Windows Installer's
+registered package cache is still required: an already damaged or deleted cache may need
+the matching original installer to recover.
+
+Interactive uninstall defaults to **app only**. It removes the installed program, shortcuts,
+app registration, this copy's startup entry, app cache, recognized temporary files, and
+app preferences for this installation's current and older versions. It keeps **all of
+`C:\Synix`**, default and custom game-server folders, server configurations, prerequisites,
+backups, and server recovery files. Close Synix before uninstalling; app-only removal does
+not require stopping the game servers.
+
+In particular, **`C:\Synix\SynixData\servers.json` is preserved unchanged**. This is the
+server list and saved server settings, not the disposable application preferences.
+When Synix is reinstalled, it loads that existing list automatically, including servers
+at custom locations, even if a different application folder is chosen. Reinstall under
+the same Windows account to continue using the saved, Windows-protected passwords.
+The game folders and supporting Synix server data remain in their original locations;
+there is no need to add or download those servers again.
+
+The optional **app, managed servers, and Synix data** removal shows the exact paths first.
+If known server backups or recovery copies exist, a separate **delete backups** option is
+shown and starts **unchecked**. Default, current custom, and historical backup locations
+recorded in this installation's preferences are checked. Keeping backups also protects
+them when nested inside a server or data folder. Backup selection changes require a new
+acknowledgement, followed by a separate permanent-deletion confirmation.
+
+Stop all game servers before choosing server removal. Unregistered server folders, other
+servers' backup folders, and shared parent folders are not swept. Unknown locations and
+backups saved elsewhere are not guessed or searched across the disk. Unsafe, linked,
+unreadable, or changed locations block removal instead of broadening its scope. Interrupted
+server-restore copies retain their recovery records unless explicitly selected for removal.
+Only known, empty app containers are pruned; Windows-managed caches, other users' profiles,
+other installations' registrations, and shared system components are left alone.
+
+Silent uninstalls perform app-only cleanup and keep server data and backups. Upgrades and
+repairs never run this cleanup. Data deletion cannot be rolled back if Windows later fails
+to uninstall the application.
 
 ### Option 3: Standalone
 
@@ -82,6 +135,8 @@ Download **`Synix.Control.Panel.exe`** from the [latest release](https://github.
 - No installation is required.
 - The executable can be placed wherever you prefer.
 - Synix server data remains stored separately inside `C:\Synix`.
+- In-app updates download the standalone EXE and replace the running copy in its existing folder; they do not install the MSI, even when another Synix copy is installed elsewhere.
+- Installed-copy detection uses the registered application folder, including custom locations. If a release lacks the correct standalone download, Synix does not substitute an installer.
 
 > **.NET 10 is included with Synix.** Official Windows releases are self-contained and package the required .NET 10 runtime inside the published Synix executable, so users do not need to install .NET separately. `SynixSetup.msi` contains that same self-contained executable. Including the runtime is why the published application increased from roughly 40 MB to about 119 MB; the MSI download can remain smaller because the installed executable is compressed inside the installer.
 
@@ -98,9 +153,9 @@ Synix is intended to make common server-management jobs understandable without h
 - **Built-in help:** Learn about setup, ports, networking, backups, updates, watchdog behavior, and supported server options inside the application.
 - **No artificial instance limit:** Synix does not charge for or restrict the number of server entries you create.
 
-## 🎮 228 Built-In Server Profiles
+## 🎮 220 Built-In Server Profiles
 
-Synix includes **228 built-in dedicated game-server profiles**, with additional profiles and corrections added over time.
+Synix includes **220 built-in dedicated game-server profiles**, with additional profiles and corrections added over time.
 
 Popular profiles include:
 
@@ -113,7 +168,21 @@ Popular profiles include:
 | **Soulmask** | **Space Engineers** | **Squad** | **Stationeers** |
 | **Terraria** | **Unturned** | **Valheim** | **V Rising** |
 
-See the [complete supported game list](https://github.com/ubidzz/Synix-Control-Panel/wiki/Game-List).
+See the [generated game list for this branch](docs/Game-List.md), including SteamCMD download IDs, branch selectors, and account requirements. The list and profile count are generated from Synix's game database; catalog inclusion is not a live-server certification.
+
+### Server history and backup status
+
+- Select a server and choose **Server history** in the Activity & Diagnostics panel or the server menu. Search by activity or date, or show only failures and warnings.
+- History saves per-server startup checks, tracked processes, normal/forced shutdown results, connection-probe results, errors, update results, backup locations/results, restores, and lifecycle events across app restarts. Select an entry to read and copy its full details. Up to 1,000 recent entries are retained, within a 512 KiB limit per server. Detailed records begin with this build; existing basic events remain readable and old text logs are not converted.
+- Records contain timestamps, translated message identifiers, and sanitized diagnostic details. Known passwords, credentials, webhook URLs, and labeled secrets are removed before saving; launch commands, raw console output, and configuration documents are excluded. Records stay in `C:\Synix\SynixData\ActivityHistory`. History follows the server installation folder, so renaming a server keeps its history; moving the server to a different folder starts a separate history.
+- The dashboard's **Backups** column shows the age of the latest completed backup and highlights failed attempts, missing backups, and backups older than seven days. Hover over the cell for dates and details. Files without a completion receipt are shown as unverified.
+- Backup status checks local files and receipts in the current and default backup folders in the background. It does not run a new integrity check, create backups, or change retention settings. Use the existing backup manager to verify an archive or restore it.
+
+### Interface languages
+
+Synix includes 27 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, and Thai.
+
+Choose a language in Synix Settings. The new history and backup status text is included in every language. General settings cards adapt to wrapped translations, drop-down lists expand to fit their items, and shared action buttons support keyboard focus. Game names, user-entered values, file paths, and technical log files are not translated. Translation completeness does not replace native-speaker review.
 
 > Dedicated servers change over time. A profile may need updated arguments after a game or server update. Synix records locally verified install, start, stop, and monitoring results to help identify what has been tested on your computer.
 

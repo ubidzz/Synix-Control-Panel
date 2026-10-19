@@ -198,7 +198,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(94, 21);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Server Info";
+			lblWindowTitle.Text = LocalizationManager.GetContent("Server Info");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			// 
 			// btnMinimize
@@ -314,7 +314,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblPageHeading.Name = "lblPageHeading";
 			lblPageHeading.Size = new Size(867, 43);
 			lblPageHeading.TabIndex = 0;
-			lblPageHeading.Text = "Server Overview";
+			lblPageHeading.Text = LocalizationManager.GetContent("Server Overview");
 			// 
 			// lblPageSubtitle
 			// 
@@ -327,7 +327,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblPageSubtitle.Name = "lblPageSubtitle";
 			lblPageSubtitle.Size = new Size(917, 24);
 			lblPageSubtitle.TabIndex = 1;
-			lblPageSubtitle.Text = "Live performance and configuration details";
+			lblPageSubtitle.Text = LocalizationManager.GetContent("Live performance and configuration details");
 			// 
 			// lblLiveIndicator
 			// 
@@ -339,7 +339,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblLiveIndicator.Name = "lblLiveIndicator";
 			lblLiveIndicator.Size = new Size(128, 28);
 			lblLiveIndicator.TabIndex = 2;
-			lblLiveIndicator.Text = "●  LIVE TELEMETRY";
+			lblLiveIndicator.Text = LocalizationManager.GetContent("●  LIVE TELEMETRY");
 			lblLiveIndicator.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// metricsLayout
@@ -388,7 +388,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblCpuTitle.Name = "lblCpuTitle";
 			lblCpuTitle.Size = new Size(84, 19);
 			lblCpuTitle.TabIndex = 0;
-			lblCpuTitle.Text = "CPU USAGE";
+			lblCpuTitle.Text = LocalizationManager.GetContent("CPU USAGE");
 			// 
 			// lblCpuCardValue
 			// 
@@ -413,7 +413,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblCpuCaption.Name = "lblCpuCaption";
 			lblCpuCaption.Size = new Size(300, 19);
 			lblCpuCaption.TabIndex = 2;
-			lblCpuCaption.Text = "Waiting for a running server process";
+			lblCpuCaption.Text = LocalizationManager.GetContent("Waiting for a running server process");
 			// 
 			// pnlCpuTrack
 			// 
@@ -461,7 +461,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRamTitle.Name = "lblRamTitle";
 			lblRamTitle.Size = new Size(88, 19);
 			lblRamTitle.TabIndex = 0;
-			lblRamTitle.Text = "RAM USAGE";
+			lblRamTitle.Text = LocalizationManager.GetContent("RAM USAGE");
 			// 
 			// lblRamCardValue
 			// 
@@ -473,7 +473,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRamCardValue.Name = "lblRamCardValue";
 			lblRamCardValue.Size = new Size(131, 42);
 			lblRamCardValue.TabIndex = 1;
-			lblRamCardValue.Text = "0.00 GB";
+			lblRamCardValue.Text = LocalizationManager.GetContent("0.00 GB");
 			// 
 			// lblRamCaption
 			// 
@@ -486,7 +486,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRamCaption.Name = "lblRamCaption";
 			lblRamCaption.Size = new Size(292, 19);
 			lblRamCaption.TabIndex = 2;
-			lblRamCaption.Text = "0.0% of system memory";
+			lblRamCaption.Text = LocalizationManager.GetContent("0.0% of system memory");
 			// 
 			// pnlRamTrack
 			// 
@@ -544,7 +544,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblStatusTitle.Name = "lblStatusTitle";
 			lblStatusTitle.Size = new Size(111, 19);
 			lblStatusTitle.TabIndex = 1;
-			lblStatusTitle.Text = "SERVER STATUS";
+			lblStatusTitle.Text = LocalizationManager.GetContent("SERVER STATUS");
 			// 
 			// lblStatusCardValue
 			// 
@@ -557,7 +557,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblStatusCardValue.Name = "lblStatusCardValue";
 			lblStatusCardValue.Size = new Size(306, 39);
 			lblStatusCardValue.TabIndex = 2;
-			lblStatusCardValue.Text = "Stopped";
+			lblStatusCardValue.Text = LocalizationManager.GetContent("Stopped");
 			// 
 			// lblStatusCaption
 			// 
@@ -570,7 +570,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblStatusCaption.Name = "lblStatusCaption";
 			lblStatusCaption.Size = new Size(303, 18);
 			lblStatusCaption.TabIndex = 3;
-			lblStatusCaption.Text = "The game server process is not running";
+			lblStatusCaption.Text = LocalizationManager.GetContent("The game server process is not running");
 			// 
 			// lblProcessIdCaption
 			// 
@@ -582,7 +582,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblProcessIdCaption.Name = "lblProcessIdCaption";
 			lblProcessIdCaption.Size = new Size(27, 15);
 			lblProcessIdCaption.TabIndex = 4;
-			lblProcessIdCaption.Text = "PID";
+			lblProcessIdCaption.Text = LocalizationManager.GetContent("PID");
 			// 
 			// lblProcessIdValue
 			// 
@@ -639,7 +639,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblDetailsTitle.Name = "lblDetailsTitle";
 			lblDetailsTitle.Size = new Size(145, 28);
 			lblDetailsTitle.TabIndex = 0;
-			lblDetailsTitle.Text = "Server Details";
+			lblDetailsTitle.Text = LocalizationManager.GetContent("Server Details");
 			// 
 			// lblDetailsSubtitle
 			// 
@@ -652,7 +652,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblDetailsSubtitle.Name = "lblDetailsSubtitle";
 			lblDetailsSubtitle.Size = new Size(475, 20);
 			lblDetailsSubtitle.TabIndex = 1;
-			lblDetailsSubtitle.Text = "Identity, world, player, and network information";
+			lblDetailsSubtitle.Text = LocalizationManager.GetContent("Identity, world, player, and network information");
 			// 
 			// detailsTable
 			// 
@@ -710,7 +710,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblServerNameCaption.Name = "lblServerNameCaption";
 			lblServerNameCaption.Size = new Size(132, 27);
 			lblServerNameCaption.TabIndex = 0;
-			lblServerNameCaption.Text = "Server Name";
+			lblServerNameCaption.Text = LocalizationManager.GetContent("Server Name");
 			lblServerNameCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblServerNameText
@@ -725,7 +725,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblServerNameText.Name = "lblServerNameText";
 			lblServerNameText.Size = new Size(347, 27);
 			lblServerNameText.TabIndex = 1;
-			lblServerNameText.Text = "My Dedicated Server";
+			lblServerNameText.Text = LocalizationManager.GetContent("My Dedicated Server");
 			lblServerNameText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblGameServerCaption
@@ -740,7 +740,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblGameServerCaption.Name = "lblGameServerCaption";
 			lblGameServerCaption.Size = new Size(132, 27);
 			lblGameServerCaption.TabIndex = 2;
-			lblGameServerCaption.Text = "Game Server";
+			lblGameServerCaption.Text = LocalizationManager.GetContent("Game Server");
 			lblGameServerCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblGameServerText
@@ -755,7 +755,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblGameServerText.Name = "lblGameServerText";
 			lblGameServerText.Size = new Size(347, 27);
 			lblGameServerText.TabIndex = 3;
-			lblGameServerText.Text = "Example Game";
+			lblGameServerText.Text = LocalizationManager.GetContent("Example Game");
 			lblGameServerText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblGameVersionCaption
@@ -770,7 +770,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblGameVersionCaption.Name = "lblGameVersionCaption";
 			lblGameVersionCaption.Size = new Size(132, 27);
 			lblGameVersionCaption.TabIndex = 4;
-			lblGameVersionCaption.Text = "Game Version";
+			lblGameVersionCaption.Text = LocalizationManager.GetContent("Game Version");
 			lblGameVersionCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblGameVersion
@@ -785,7 +785,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblGameVersion.Name = "lblGameVersion";
 			lblGameVersion.Size = new Size(347, 27);
 			lblGameVersion.TabIndex = 5;
-			lblGameVersion.Text = "N/A";
+			lblGameVersion.Text = LocalizationManager.GetContent("N/A");
 			lblGameVersion.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblMapCaption
@@ -800,7 +800,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblMapCaption.Name = "lblMapCaption";
 			lblMapCaption.Size = new Size(132, 27);
 			lblMapCaption.TabIndex = 6;
-			lblMapCaption.Text = "Map / World";
+			lblMapCaption.Text = LocalizationManager.GetContent("Map / World");
 			lblMapCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblMapText
@@ -815,7 +815,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblMapText.Name = "lblMapText";
 			lblMapText.Size = new Size(347, 27);
 			lblMapText.TabIndex = 7;
-			lblMapText.Text = "Main World";
+			lblMapText.Text = LocalizationManager.GetContent("Main World");
 			lblMapText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblSeedCaption
@@ -830,7 +830,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblSeedCaption.Name = "lblSeedCaption";
 			lblSeedCaption.Size = new Size(132, 27);
 			lblSeedCaption.TabIndex = 8;
-			lblSeedCaption.Text = "World Seed";
+			lblSeedCaption.Text = LocalizationManager.GetContent("World Seed");
 			lblSeedCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblSeedText
@@ -860,7 +860,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblGameModeCaption.Name = "lblGameModeCaption";
 			lblGameModeCaption.Size = new Size(132, 27);
 			lblGameModeCaption.TabIndex = 10;
-			lblGameModeCaption.Text = "Game Mode";
+			lblGameModeCaption.Text = LocalizationManager.GetContent("Game Mode");
 			lblGameModeCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblCompetitiveText
@@ -875,7 +875,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblCompetitiveText.Name = "lblCompetitiveText";
 			lblCompetitiveText.Size = new Size(347, 27);
 			lblCompetitiveText.TabIndex = 11;
-			lblCompetitiveText.Text = "PVE";
+			lblCompetitiveText.Text = LocalizationManager.GetContent("PVE");
 			lblCompetitiveText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblMaxPlayersCaption
@@ -890,7 +890,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblMaxPlayersCaption.Name = "lblMaxPlayersCaption";
 			lblMaxPlayersCaption.Size = new Size(132, 27);
 			lblMaxPlayersCaption.TabIndex = 12;
-			lblMaxPlayersCaption.Text = "Max Players";
+			lblMaxPlayersCaption.Text = LocalizationManager.GetContent("Max Players");
 			lblMaxPlayersCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblMaxPlayersText
@@ -920,7 +920,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblGamePortCaption.Name = "lblGamePortCaption";
 			lblGamePortCaption.Size = new Size(132, 27);
 			lblGamePortCaption.TabIndex = 14;
-			lblGamePortCaption.Text = "Game Port";
+			lblGamePortCaption.Text = LocalizationManager.GetContent("Game Port");
 			lblGamePortCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblGamePortText
@@ -950,7 +950,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblQueryPortCaption.Name = "lblQueryPortCaption";
 			lblQueryPortCaption.Size = new Size(132, 27);
 			lblQueryPortCaption.TabIndex = 16;
-			lblQueryPortCaption.Text = "Query Port";
+			lblQueryPortCaption.Text = LocalizationManager.GetContent("Query Port");
 			lblQueryPortCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblQueryPortText
@@ -980,7 +980,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblAppPortCaption.Name = "lblAppPortCaption";
 			lblAppPortCaption.Size = new Size(132, 29);
 			lblAppPortCaption.TabIndex = 18;
-			lblAppPortCaption.Text = "App Port";
+			lblAppPortCaption.Text = LocalizationManager.GetContent("App Port");
 			lblAppPortCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblAppPortText
@@ -995,7 +995,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblAppPortText.Name = "lblAppPortText";
 			lblAppPortText.Size = new Size(347, 29);
 			lblAppPortText.TabIndex = 19;
-			lblAppPortText.Text = "N/A";
+			lblAppPortText.Text = LocalizationManager.GetContent("N/A");
 			lblAppPortText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// pnlConfigurationCard
@@ -1024,7 +1024,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblConfigurationTitle.Name = "lblConfigurationTitle";
 			lblConfigurationTitle.Size = new Size(232, 28);
 			lblConfigurationTitle.TabIndex = 0;
-			lblConfigurationTitle.Text = "Configuration & Security";
+			lblConfigurationTitle.Text = LocalizationManager.GetContent("Configuration & Security");
 			lblConfigurationTitle.UseMnemonic = false;
 			// 
 			// lblConfigurationSubtitle
@@ -1038,7 +1038,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblConfigurationSubtitle.Name = "lblConfigurationSubtitle";
 			lblConfigurationSubtitle.Size = new Size(475, 20);
 			lblConfigurationSubtitle.TabIndex = 1;
-			lblConfigurationSubtitle.Text = "Access controls, startup behavior, and integrations";
+			lblConfigurationSubtitle.Text = LocalizationManager.GetContent("Access controls, startup behavior, and integrations");
 			// 
 			// configurationTable
 			// 
@@ -1093,7 +1093,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblServerPasswordCaption.Name = "lblServerPasswordCaption";
 			lblServerPasswordCaption.Size = new Size(150, 30);
 			lblServerPasswordCaption.TabIndex = 0;
-			lblServerPasswordCaption.Text = "Server Password";
+			lblServerPasswordCaption.Text = LocalizationManager.GetContent("Server Password");
 			lblServerPasswordCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblServerPasswordText
@@ -1108,7 +1108,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblServerPasswordText.Name = "lblServerPasswordText";
 			lblServerPasswordText.Size = new Size(329, 30);
 			lblServerPasswordText.TabIndex = 1;
-			lblServerPasswordText.Text = "Not Required";
+			lblServerPasswordText.Text = LocalizationManager.GetContent("Not Required");
 			lblServerPasswordText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblAdminPasswordCaption
@@ -1123,7 +1123,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblAdminPasswordCaption.Name = "lblAdminPasswordCaption";
 			lblAdminPasswordCaption.Size = new Size(150, 30);
 			lblAdminPasswordCaption.TabIndex = 2;
-			lblAdminPasswordCaption.Text = "Admin Password";
+			lblAdminPasswordCaption.Text = LocalizationManager.GetContent("Admin Password");
 			lblAdminPasswordCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblServerAdminPasswordText
@@ -1138,7 +1138,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblServerAdminPasswordText.Name = "lblServerAdminPasswordText";
 			lblServerAdminPasswordText.Size = new Size(329, 30);
 			lblServerAdminPasswordText.TabIndex = 3;
-			lblServerAdminPasswordText.Text = "Not Required";
+			lblServerAdminPasswordText.Text = LocalizationManager.GetContent("Not Required");
 			lblServerAdminPasswordText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblRconCaption
@@ -1153,7 +1153,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRconCaption.Name = "lblRconCaption";
 			lblRconCaption.Size = new Size(150, 30);
 			lblRconCaption.TabIndex = 4;
-			lblRconCaption.Text = "RCON";
+			lblRconCaption.Text = LocalizationManager.GetContent("RCON");
 			lblRconCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblRconActiveText
@@ -1168,7 +1168,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRconActiveText.Name = "lblRconActiveText";
 			lblRconActiveText.Size = new Size(329, 30);
 			lblRconActiveText.TabIndex = 5;
-			lblRconActiveText.Text = "Off";
+			lblRconActiveText.Text = LocalizationManager.GetContent("Off");
 			lblRconActiveText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblRconPortCaption
@@ -1183,7 +1183,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRconPortCaption.Name = "lblRconPortCaption";
 			lblRconPortCaption.Size = new Size(150, 30);
 			lblRconPortCaption.TabIndex = 6;
-			lblRconPortCaption.Text = "RCON Port";
+			lblRconPortCaption.Text = LocalizationManager.GetContent("RCON Port");
 			lblRconPortCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblRconPortText
@@ -1213,7 +1213,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRconPasswordCaption.Name = "lblRconPasswordCaption";
 			lblRconPasswordCaption.Size = new Size(150, 30);
 			lblRconPasswordCaption.TabIndex = 8;
-			lblRconPasswordCaption.Text = "RCON Password";
+			lblRconPasswordCaption.Text = LocalizationManager.GetContent("RCON Password");
 			lblRconPasswordCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblRconPasswordText
@@ -1228,7 +1228,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblRconPasswordText.Name = "lblRconPasswordText";
 			lblRconPasswordText.Size = new Size(329, 30);
 			lblRconPasswordText.TabIndex = 9;
-			lblRconPasswordText.Text = "Not Required";
+			lblRconPasswordText.Text = LocalizationManager.GetContent("Not Required");
 			lblRconPasswordText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblBackupOnStartCaption
@@ -1243,7 +1243,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblBackupOnStartCaption.Name = "lblBackupOnStartCaption";
 			lblBackupOnStartCaption.Size = new Size(150, 30);
 			lblBackupOnStartCaption.TabIndex = 10;
-			lblBackupOnStartCaption.Text = "Backup on Start";
+			lblBackupOnStartCaption.Text = LocalizationManager.GetContent("Backup on Start");
 			lblBackupOnStartCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblBackupOnStartText
@@ -1258,7 +1258,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblBackupOnStartText.Name = "lblBackupOnStartText";
 			lblBackupOnStartText.Size = new Size(329, 30);
 			lblBackupOnStartText.TabIndex = 11;
-			lblBackupOnStartText.Text = "Off";
+			lblBackupOnStartText.Text = LocalizationManager.GetContent("Off");
 			lblBackupOnStartText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblUpdateOnStartCaption
@@ -1273,7 +1273,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblUpdateOnStartCaption.Name = "lblUpdateOnStartCaption";
 			lblUpdateOnStartCaption.Size = new Size(150, 30);
 			lblUpdateOnStartCaption.TabIndex = 12;
-			lblUpdateOnStartCaption.Text = "Update on Start";
+			lblUpdateOnStartCaption.Text = LocalizationManager.GetContent("Update on Start");
 			lblUpdateOnStartCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lbllUpdateOnStartText
@@ -1288,7 +1288,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lbllUpdateOnStartText.Name = "lbllUpdateOnStartText";
 			lbllUpdateOnStartText.Size = new Size(329, 30);
 			lbllUpdateOnStartText.TabIndex = 13;
-			lbllUpdateOnStartText.Text = "Off";
+			lbllUpdateOnStartText.Text = LocalizationManager.GetContent("Off");
 			lbllUpdateOnStartText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblDiscordAlertsCaption
@@ -1303,7 +1303,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblDiscordAlertsCaption.Name = "lblDiscordAlertsCaption";
 			lblDiscordAlertsCaption.Size = new Size(150, 30);
 			lblDiscordAlertsCaption.TabIndex = 14;
-			lblDiscordAlertsCaption.Text = "Discord Alerts";
+			lblDiscordAlertsCaption.Text = LocalizationManager.GetContent("Discord Alerts");
 			lblDiscordAlertsCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblDiscordActivateText
@@ -1318,7 +1318,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblDiscordActivateText.Name = "lblDiscordActivateText";
 			lblDiscordActivateText.Size = new Size(329, 30);
 			lblDiscordActivateText.TabIndex = 15;
-			lblDiscordActivateText.Text = "Off";
+			lblDiscordActivateText.Text = LocalizationManager.GetContent("Off");
 			lblDiscordActivateText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblAutoRestartCaption
@@ -1333,7 +1333,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblAutoRestartCaption.Name = "lblAutoRestartCaption";
 			lblAutoRestartCaption.Size = new Size(150, 32);
 			lblAutoRestartCaption.TabIndex = 16;
-			lblAutoRestartCaption.Text = "Auto Restart";
+			lblAutoRestartCaption.Text = LocalizationManager.GetContent("Auto Restart");
 			lblAutoRestartCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// lblAutoRestartText
@@ -1348,7 +1348,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblAutoRestartText.Name = "lblAutoRestartText";
 			lblAutoRestartText.Size = new Size(329, 32);
 			lblAutoRestartText.TabIndex = 17;
-			lblAutoRestartText.Text = "No Days Scheduled";
+			lblAutoRestartText.Text = LocalizationManager.GetContent("No Days Scheduled");
 			lblAutoRestartText.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// pnlPathsCard
@@ -1378,7 +1378,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblPathsTitle.Name = "lblPathsTitle";
 			lblPathsTitle.Size = new Size(215, 28);
 			lblPathsTitle.TabIndex = 0;
-			lblPathsTitle.Text = "Paths & Launch Details";
+			lblPathsTitle.Text = LocalizationManager.GetContent("Paths & Launch Details");
 			lblPathsTitle.UseMnemonic = false;
 			// 
 			// lblPathsSubtitle
@@ -1392,7 +1392,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblPathsSubtitle.Name = "lblPathsSubtitle";
 			lblPathsSubtitle.Size = new Size(760, 20);
 			lblPathsSubtitle.TabIndex = 1;
-			lblPathsSubtitle.Text = "Read-only values can be selected and copied for diagnostics";
+			lblPathsSubtitle.Text = LocalizationManager.GetContent("Read-only values can be selected and copied for diagnostics");
 			//
 			// btnDiscordRoutes
 			//
@@ -1401,7 +1401,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			btnDiscordRoutes.Name = "btnDiscordRoutes";
 			btnDiscordRoutes.Size = new Size(222, 42);
 			btnDiscordRoutes.TabIndex = 2;
-			btnDiscordRoutes.Text = "View Discord Webhooks";
+			btnDiscordRoutes.Text = LocalizationManager.GetContent("View Discord Webhooks");
 			btnDiscordRoutes.Visible = false;
 			btnDiscordRoutes.Click += btnDiscordRoutes_Click;
 			//
@@ -1436,7 +1436,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblServerFolderCaption.Name = "lblServerFolderCaption";
 			lblServerFolderCaption.Size = new Size(142, 34);
 			lblServerFolderCaption.TabIndex = 0;
-			lblServerFolderCaption.Text = "Server Folder";
+			lblServerFolderCaption.Text = LocalizationManager.GetContent("Server Folder");
 			lblServerFolderCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// txtServerFolderValue
@@ -1453,7 +1453,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			txtServerFolderValue.Size = new Size(876, 24);
 			txtServerFolderValue.TabIndex = 1;
 			txtServerFolderValue.TabStop = false;
-			txtServerFolderValue.Text = "C:\\Synix\\Games\\Example Server";
+			txtServerFolderValue.Text = LocalizationManager.GetContent("C:\\Synix\\Games\\Example Server");
 			// 
 			// lblExtraArgsCaption
 			// 
@@ -1466,7 +1466,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblExtraArgsCaption.Name = "lblExtraArgsCaption";
 			lblExtraArgsCaption.Size = new Size(142, 35);
 			lblExtraArgsCaption.TabIndex = 4;
-			lblExtraArgsCaption.Text = "Extra Arguments";
+			lblExtraArgsCaption.Text = LocalizationManager.GetContent("Extra Arguments");
 			lblExtraArgsCaption.TextAlign = ContentAlignment.MiddleLeft;
 			// 
 			// txtExtraArgsValue
@@ -1483,7 +1483,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			txtExtraArgsValue.Size = new Size(876, 24);
 			txtExtraArgsValue.TabIndex = 5;
 			txtExtraArgsValue.TabStop = false;
-			txtExtraArgsValue.Text = "No extra arguments";
+			txtExtraArgsValue.Text = LocalizationManager.GetContent("No extra arguments");
 			// 
 			// ServerInfo
 			// 
@@ -1501,7 +1501,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			Name = "ServerInfo";
 			Padding = new Padding(1);
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Server Info";
+			Text = LocalizationManager.GetContent("Server Info");
 			FormClosing += ServerInfo_FormClosing;
 			shellLayout.ResumeLayout(false);
 			titleBar.ResumeLayout(false);

@@ -66,8 +66,8 @@ internal static class GameModSupportCatalog
 		];
 		if (entry?.Methods.Count > 0)
 			paragraphs.Add(LocalizationManager.Get("ModSupport.Methods") + Environment.NewLine +
-				string.Join(Environment.NewLine, entry.Methods.Select(method => "• " + method)));
-		paragraphs.Add(entry?.Status == GameModEvidence.Documented ? entry.Notes :
+				string.Join(Environment.NewLine, entry.Methods.Select(method => "• " + LocalizationManager.GetContent(method))));
+		paragraphs.Add(entry?.Status == GameModEvidence.Documented ? LocalizationManager.GetContent(entry.Notes) :
 			LocalizationManager.Get("ModSupport.UnverifiedNote"));
 		if (entry != null)
 			paragraphs.Add(LocalizationManager.Get("ModSupport.Reviewed", entry.ReviewedOn.ToString("yyyy-MM-dd")));

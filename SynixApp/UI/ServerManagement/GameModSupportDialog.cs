@@ -53,6 +53,9 @@ internal sealed class GameModSupportDialog : Form
 		ThemeManager.Apply(this);
 		details.BackColor = SettingsPalette.Input;
 		details.ForeColor = SettingsPalette.PrimaryText;
+		EventHandler languageChanged = (_, _) => details.Text = GameModSupportCatalog.HelpText(gameName);
+		LocalizationManager.LanguageChanged += languageChanged;
+		Disposed += (_, _) => LocalizationManager.LanguageChanged -= languageChanged;
 	}
 }
 

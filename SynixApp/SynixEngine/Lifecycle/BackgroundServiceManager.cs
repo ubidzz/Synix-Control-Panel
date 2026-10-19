@@ -185,6 +185,7 @@ namespace Synix_Control_Panel.SynixEngine
 			try
 			{
 				Core.IsBackgroundServiceMode = true;
+				ServerActivityHistory.Initialize(Path.Combine(Core.DataPath, "ActivityHistory"));
 				FileHandler.LoadServers();
 				Core.Instance.RebindProcesses().GetAwaiter().GetResult();
 				FileHandler.WriteLogImmediate(

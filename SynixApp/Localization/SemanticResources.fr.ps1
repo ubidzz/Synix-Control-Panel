@@ -12,7 +12,7 @@
 # ============================================================================
 
 # Additional named French interface resources.
-# The Game Definition Builder guide intentionally remains English like the Help Center.
+# The Game Definition Builder guide uses the compiled interface language.
 [ordered]@{
     'ServerSetup.World.Seed.Hint' = "Générez une graine pour un nouveau monde, ou saisissez la vôtre. Pour un monde existant, conservez sa graine d’origine."
     'ServerSetup.World.Seed.Generate' = 'Générer une graine'

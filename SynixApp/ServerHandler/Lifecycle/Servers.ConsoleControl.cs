@@ -92,7 +92,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (management.Succeeded)
 				{
 					logCallback?.Invoke(
-						LocalizationManager.Get("Minecraft.Activity.StopThroughManagement"),
+						ServerActivityHistory.Describe(server, "Minecraft.Activity.StopThroughManagement"),
 						Color.Aqua);
 					return true;
 				}
@@ -103,7 +103,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				if (rcon.Succeeded)
 				{
 					logCallback?.Invoke(
-						LocalizationManager.Get("Minecraft.Activity.StopThroughRcon"),
+						ServerActivityHistory.Describe(server, "Minecraft.Activity.StopThroughRcon"),
 						Color.Aqua);
 					return true;
 				}
@@ -111,18 +111,18 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 			if (TryWriteRedirectedInput(server, "stop"))
 			{
-				logCallback?.Invoke(LocalizationManager.Get("Minecraft.Activity.StopThroughPipe"), Color.Aqua);
+				logCallback?.Invoke(ServerActivityHistory.Describe(server, "Minecraft.Activity.StopThroughPipe"), Color.Aqua);
 				return true;
 			}
 
 			if (targetPid > 0 && await TryWriteConsoleCommand(targetPid, "stop\r"))
 			{
-				logCallback?.Invoke(LocalizationManager.Get("Minecraft.Activity.StopThroughConsole"), Color.Aqua);
+				logCallback?.Invoke(ServerActivityHistory.Describe(server, "Minecraft.Activity.StopThroughConsole"), Color.Aqua);
 				return true;
 			}
 
 			logCallback?.Invoke(
-				LocalizationManager.Get("Minecraft.Activity.ConsoleFallback"),
+				ServerActivityHistory.Describe(server, "Minecraft.Activity.ConsoleFallback"),
 				Color.OrangeRed);
 			return false;
 		}

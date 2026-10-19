@@ -92,6 +92,7 @@ internal static class ServerConfigurationSync
 			}
 			throw;
 		}
+		if (wrote || changes.Count > 0) ServerActivityHistory.Current.Record(server, "ConfigurationSaved");
 		Core.Instance.UpdateGridStatus();
 	}
 

@@ -310,7 +310,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			cardLayoutSteamDownloads.ColumnCount = 3;
 			cardLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 58F));
 			cardLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			cardLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 304F));
+			cardLayoutSteamDownloads.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 364F));
 			cardLayoutSteamDownloads.Controls.Add(settingGlyphSteamDownloads, 0, 0);
 			cardLayoutSteamDownloads.Controls.Add(textLayoutSteamDownloads, 1, 0);
 			cardLayoutSteamDownloads.Controls.Add(downloadControlsLayout, 2, 0);
@@ -385,7 +385,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			// downloadControlsLayout
 			// 
 			downloadControlsLayout.ColumnCount = 3;
-			downloadControlsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 126F));
+			downloadControlsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 186F));
 			downloadControlsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 106F));
 			downloadControlsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			downloadControlsLayout.Controls.Add(cmbSteamCmdDownloadMode, 0, 0);
@@ -551,6 +551,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			cmbLanguage.BorderColor = Color.FromArgb(38, 52, 77);
 			cmbLanguage.DrawMode = DrawMode.OwnerDrawFixed;
 			cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+			cmbLanguage.DropDownWidth = 260;
 			cmbLanguage.FlatStyle = FlatStyle.Flat;
 			cmbLanguage.FocusBorderColor = Color.FromArgb(32, 214, 199);
 			cmbLanguage.Font = new Font("Segoe UI", 10F);

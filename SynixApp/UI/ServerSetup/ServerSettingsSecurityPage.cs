@@ -21,12 +21,21 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 	{
 		private GameInfo? _gameData;
 		private bool _isLoading;
+		private Label lblPasswordCharacters = null!;
+		private Label lblAdminPasswordCharacters = null!;
+		private ModernSettingsButton btnPasswordCharacters = null!;
 
 		public event EventHandler? SettingsChanged;
 
 		public ServerSettingsSecurityPage()
 		{
 			InitializeComponent();
+			btnPasswordCharacters.Click += (_, _) =>
+			{
+				if (_gameData == null) return;
+				using var dialog = new UI.ServerManagement.GameTextSupportDialog(_gameData.Game);
+				dialog.ShowDialog(FindForm());
+			};
 			txtPassword.TextChanged += SettingsControlChanged;
 			txtAdminPassword.TextChanged += SettingsControlChanged;
 			txtAuthenticationToken.TextChanged += SettingsControlChanged;
@@ -112,6 +121,13 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		public void ConfigureForGame(GameInfo? gameData)
 		{
 			_gameData = gameData;
+			btnPasswordCharacters.Enabled = gameData != null;
+			btnPasswordCharacters.Text = LocalizationManager.Get("GameText.Title");
+			GameTextSupportEntry? textSupport = GameTextSupportCatalog.ForGame(gameData?.Game);
+			lblPasswordCharacters.Text = LocalizationManager.Get("GameText.PasswordSummary",
+				textSupport?.JoinPassword.StatusText ?? LocalizationManager.Get("GameText.Status.Unverified"));
+			lblAdminPasswordCharacters.Text = LocalizationManager.Get("GameText.PasswordSummary",
+				textSupport?.AdminPassword.StatusText ?? LocalizationManager.Get("GameText.Status.Unverified"));
 			_isLoading = true;
 			try
 			{

@@ -31,6 +31,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 		public string AppId { get; init; } = string.Empty;
 		public bool RequiresSteamLogin { get; init; }
 		public string SteamAppConfig { get; init; } = string.Empty;
+		public string SteamBranch { get; init; } = string.Empty;
 		public string Executable { get; init; } = string.Empty;
 		public string Arguments { get; init; } = string.Empty;
 		public string RconSyntax { get; init; } = string.Empty;
@@ -101,6 +102,7 @@ namespace Synix_Control_Panel.SynixApp.Database.GameDefinitions
 				["appId"] = draft.AppId.Trim(),
 				["requiresSteamLogin"] = draft.RequiresSteamLogin,
 				["steamAppConfig"] = draft.SteamAppConfig.Trim(),
+				["steamBranch"] = draft.SteamBranch.Trim(),
 				["executable"] = draft.Executable.Trim(),
 				["downloadUrl"] = string.Empty,
 				["arguments"] = draft.Arguments.Trim(),

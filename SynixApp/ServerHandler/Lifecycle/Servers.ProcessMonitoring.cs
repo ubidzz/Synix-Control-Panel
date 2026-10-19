@@ -148,7 +148,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					previousCount = processes.Count;
 					logCallback?.Invoke(
-						LocalizationManager.Get(
+						ServerActivityHistory.Describe(server,
 							"ServerProcess.Activity.Registered",
 							processes.Count,
 							FormatProcessRegistry(processes)),

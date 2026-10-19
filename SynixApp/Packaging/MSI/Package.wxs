@@ -1,4 +1,5 @@
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 	<Package
 		Name="Synix Control Panel"
 		Manufacturer="ubidzz"
@@ -9,10 +10,53 @@
 
 		<MajorUpgrade
 			AllowSameVersionUpgrades="yes"
-			Schedule="afterInstallInitialize"
+			Schedule="afterInstallExecute"
 			DowngradeErrorMessage="A newer version of Synix Control Panel is already installed." />
+		<!-- A rebuild has a new ProductCode and payload. Explicit Repair uses this
+		     package in a rollback-protected replacement, not /f on the old product
+		     (which asks for the overwritten original MSI). Detect equal versions
+		     separately so the UI says Repair, never Update or a second installation. -->
+		<!-- Install the replacement before removing the old registration. Keep the
+		     component identity and application path stable for this late upgrade. -->
+		<Upgrade Id="{e369556b-db95-4d9b-8e86-2b7d50dcd328}">
+			<UpgradeVersion Minimum="$(var.SynixVersion)" IncludeMinimum="yes"
+				Maximum="$(var.SynixVersion)" IncludeMaximum="yes" OnlyDetect="yes"
+				Property="SYNIX_SAME_VERSION_FOUND" />
+		</Upgrade>
+		<Launch Condition="Installed OR REMOVE = &quot;ALL&quot; OR NOT (SYNIX_SAME_VERSION_FOUND &gt;&lt; &quot;;&quot;)"
+			Message="Multiple installations of this Synix version were found. Use Windows Installed Apps to repair or uninstall the individual copies." />
+		<Launch Condition="Installed OR REMOVE = &quot;ALL&quot; OR NOT SYNIX_SAME_VERSION_FOUND OR SYNIX_PREVIOUS_INSTALLFOLDER"
+			Message="Synix's existing application folder could not be found in its registration. Repair the original installation through Windows Installed Apps before using a rebuilt installer. No game servers or data have been changed." />
 
 		<MediaTemplate EmbedCab="yes" />
+
+		<!-- The wizard changes only the application folder, never server/data paths. -->
+		<ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+		<UIRef Id="WixUI_ErrorProgressText" />
+		<UIRef Id="SynixSameVersionMaintenance" />
+		<!-- Keep the standard license page and its unchecked acceptance gate.
+		     Do not pre-set LicenseAccepted or skip this page in the setup wizard. -->
+		<WixVariable Id="WixUILicenseRtf" Value="$(var.SynixProjectDir)\Packaging\MSI\License.rtf" />
+		<!-- The approved portrait artwork fills only the left panel. The matching
+		     bitmap bounds in Package.en-us.wxl keep it clear of the setup text. -->
+		<WixVariable Id="WixUIDialogBmp" Value="$(var.SynixProjectDir)\Packaging\MSI\Assets\SynixSidebar.png" />
+		<Property Id="WIXUI_EXITDIALOGOPTIONALTEXT"
+			Value="Installing or updating Synix never moves your existing game servers or data." />
+		<Property Id="SYNIX_SETUP_HEADING" Value="Install Synix" />
+		<Property Id="SYNIX_SETUP_ACTION" Value="&amp;Install" />
+		<Property Id="SYNIX_SETUP_DESCRIPTION" Value="Install Synix for your Windows account. Choose the application folder. Existing game servers and data will stay where they are." />
+		<Property Id="SYNIX_SETUP_REVIEW" Value="Install Synix in the selected application folder. Existing game servers, saves, configurations, and data will not be moved." />
+		<!-- Only a strictly older related version is labelled Update. The exact
+		     installed MSI retains standard maintenance. Rebuilt equal versions
+		     require the explicit Repair choice before replacing application files. -->
+		<SetProperty Id="SYNIX_SETUP_HEADING" Value="Update Synix" After="FindRelatedProducts" Sequence="ui"
+			Condition="WIX_UPGRADE_DETECTED AND NOT Installed AND NOT SYNIX_SAME_VERSION_FOUND AND NOT WIX_DOWNGRADE_DETECTED" />
+		<SetProperty Id="SYNIX_SETUP_ACTION" Value="&amp;Update" After="FindRelatedProducts" Sequence="ui"
+			Condition="WIX_UPGRADE_DETECTED AND NOT Installed AND NOT SYNIX_SAME_VERSION_FOUND AND NOT WIX_DOWNGRADE_DETECTED" />
+		<SetProperty Id="SYNIX_SETUP_DESCRIPTION" Value="Synix is already installed. Setup will update the application to [ProductVersion] and reuse its current folder. Your game servers and data will be kept." After="FindRelatedProducts" Sequence="ui"
+			Condition="WIX_UPGRADE_DETECTED AND NOT Installed AND NOT SYNIX_SAME_VERSION_FOUND AND NOT WIX_DOWNGRADE_DETECTED" />
+		<SetProperty Id="SYNIX_SETUP_REVIEW" Value="Update the existing Synix application to [ProductVersion]. This is not a clean installation. Game servers, worlds, configurations, backups, and settings will be kept." After="FindRelatedProducts" Sequence="ui"
+			Condition="WIX_UPGRADE_DETECTED AND NOT Installed AND NOT SYNIX_SAME_VERSION_FOUND AND NOT WIX_DOWNGRADE_DETECTED" />
 
 		<Icon
 			Id="SynixIcon.ico"
@@ -20,7 +64,44 @@
 		<Property Id="ARPPRODUCTICON" Value="SynixIcon.ico" />
 		<Property Id="ARPURLINFOABOUT" Value="https://github.com/ubidzz/Synix-Control-Panel" />
 		<Property Id="SYNIXINSTALLSOURCE" Value="Setup" Secure="yes" />
+		<Property Id="SYNIX_REPAIR_CONFIRMED" Secure="yes" />
+		<Property Id="INSTALLFOLDER" Secure="yes" />
+		<Property Id="SYNIX_PREVIOUS_INSTALLFOLDER" Secure="yes">
+			<RegistrySearch Id="FindSynixApplicationFolder" Root="HKCU"
+				Key="Software\ubidzz\Synix Control Panel" Name="InstallLocation"
+				Type="raw" Bitness="always64" />
+		</Property>
+		<!-- Restore the app folder for both interactive and silent upgrades. A
+		     supplied INSTALLFOLDER is checked below before any files are changed. -->
+		<SetProperty Id="INSTALLFOLDER" Value="[SYNIX_PREVIOUS_INSTALLFOLDER]"
+			After="AppSearch" Sequence="both"
+			Condition="NOT INSTALLFOLDER AND SYNIX_PREVIOUS_INSTALLFOLDER" />
 		<SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLFOLDER]" After="CostFinalize" />
+		<!-- Same-version binaries can have different contents. Explicit Repair must
+		     copy this package's files, not retain an equal-version executable. -->
+		<SetProperty Id="REINSTALLMODE" Value="amus" Before="CostFinalize" Sequence="both"
+			Condition="NOT Installed AND SYNIX_SAME_VERSION_FOUND AND SYNIX_REPAIR_CONFIRMED = &quot;1&quot;" />
+
+		<!-- Run in the current user's context, before MSI removes the executable.
+		     The helper cleans app preferences/cache but ALWAYS preserves server data
+		     and backups without an interactive confirmation.
+		     Never run during major upgrades, repairs, or initial installation. -->
+		<CustomAction Id="SynixUninstallOptions" FileRef="SynixExecutable"
+			ExeCommand="--synix-uninstall [UILevel]" Execute="immediate" Return="check" />
+		<!-- Also guard unattended/direct execution: an equal-version rebuild must
+		     not create a duplicate product registration or silently reinstall. -->
+		<CustomAction Id="SynixBlockSameVersionInstall"
+			Error="This version of Synix is already installed. Open this installer to choose Repair or Uninstall. Unattended repair of a rebuilt package requires SYNIX_REPAIR_CONFIRMED=1 and uses the application files in this package." />
+		<CustomAction Id="SynixBlockRepairFolderChange"
+			Error="Updates and repairs must use the existing Synix application folder. Run setup again without an INSTALLFOLDER override. To move only the app, use app-only uninstall and then choose the new folder during installation. No game servers or data have been changed." />
+		<InstallExecuteSequence>
+			<Custom Action="SynixBlockSameVersionInstall" Before="InstallInitialize"
+				Condition="NOT Installed AND NOT (REMOVE = &quot;ALL&quot;) AND SYNIX_SAME_VERSION_FOUND AND SYNIX_REPAIR_CONFIRMED &lt;&gt; &quot;1&quot;" />
+			<Custom Action="SynixBlockRepairFolderChange" Before="InstallInitialize"
+				Condition="NOT Installed AND NOT (REMOVE = &quot;ALL&quot;) AND WIX_UPGRADE_DETECTED AND SYNIX_PREVIOUS_INSTALLFOLDER AND NOT (INSTALLFOLDER ~= SYNIX_PREVIOUS_INSTALLFOLDER)" />
+			<Custom Action="SynixUninstallOptions" Before="InstallInitialize"
+				Condition="Installed AND REMOVE = &quot;ALL&quot; AND NOT UPGRADINGPRODUCTCODE AND NOT REINSTALL" />
+		</InstallExecuteSequence>
 
 		<StandardDirectory Id="LocalAppDataFolder">
 			<Directory Id="LocalProgramsFolder" Name="Programs">
@@ -67,6 +148,8 @@
 							Id="RemoveSynixInstallFolder"
 							Directory="INSTALLFOLDER"
 							On="uninstall" />
+						<RemoveRegistryKey Id="RemoveSynixAppRegistration" Root="HKCU"
+							Key="Software\ubidzz\Synix Control Panel" Action="removeOnUninstall" />
 						<RemoveFolder
 							Id="TrackLocalProgramsFolder"
 							Directory="LocalProgramsFolder"

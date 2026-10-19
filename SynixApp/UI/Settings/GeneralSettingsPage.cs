@@ -24,6 +24,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		public GeneralSettingsPage()
 		{
 			InitializeComponent();
+			InitializeResponsiveCards();
 			PopulateLocalizedOptions();
 			cmbSteamCmdDownloadMode.SelectedIndexChanged +=
 				SteamCmdDownloadModeSelectionChanged;
@@ -93,7 +94,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				?? LocalizationManager.DefaultLanguageCode;
 			set => SelectOption(
 				cmbLanguage,
-				value,
+				LocalizationManager.NormalizeLanguageCode(value),
 				LocalizationManager.DefaultLanguageCode);
 		}
 
@@ -140,6 +141,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			object? sender,
 			EventArgs eventArgs)
 		{
+			UpdateLanguageDescription();
 			if (!_updatingLocalizedOptions)
 			{
 				UiLanguageChanged?.Invoke(this, EventArgs.Empty);
@@ -184,23 +186,32 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				foreach (LocalizationManager.SupportedLanguage language in
 					LocalizationManager.SupportedLanguages)
 				{
-					cmbLanguage.Items.Add(language.ResourceKey == null
-						? LocalizedOption.FromDisplayText(
-							language.Code,
-							language.DisplayName)
-						: new LocalizedOption(
-							language.Code,
-							language.ResourceKey));
+					// Native names remain recognizable after choosing an unfamiliar
+					// language: English must still be identifiable as "English".
+					cmbLanguage.Items.Add(LocalizedOption.FromDisplayText(
+						language.Code, language.DisplayName));
 				}
 				SelectOption(
 					cmbLanguage,
 					selectedLanguage,
 					LocalizationManager.DefaultLanguageCode);
+				UpdateLanguageDescription();
 			}
 			finally
 			{
 				_updatingLocalizedOptions = false;
 			}
+		}
+
+		private void UpdateLanguageDescription()
+		{
+			LocalizationManager.SupportedLanguage? selected =
+				LocalizationManager.SupportedLanguages.FirstOrDefault(
+					language => language.Code == UiLanguageCode);
+			LocalizationManager.BindText(lblDescriptionLanguage,
+				selected?.IsPreview == true
+					? "Language.PreviewNotice"
+					: "Language.Description");
 		}
 
 		private static void SelectOption(

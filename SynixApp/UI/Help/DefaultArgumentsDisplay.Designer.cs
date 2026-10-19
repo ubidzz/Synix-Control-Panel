@@ -98,7 +98,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblWindowTitle.Name = "lblWindowTitle";
 			lblWindowTitle.Size = new Size(207, 21);
 			lblWindowTitle.TabIndex = 1;
-			lblWindowTitle.Text = "Default launch arguments";
+			lblWindowTitle.Text = LocalizationManager.GetContent("Default launch arguments");
 			lblWindowTitle.MouseDown += TitleBar_MouseDown;
 			btnWindowClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnWindowClose.BackColor = Color.FromArgb(6, 12, 22);
@@ -161,7 +161,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblHeading.Name = "lblHeading";
 			lblHeading.Size = new Size(274, 32);
 			lblHeading.TabIndex = 1;
-			lblHeading.Text = "Default startup arguments";
+			lblHeading.Text = LocalizationManager.GetContent("Default startup arguments");
 			lblSubtitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			lblSubtitle.Font = new Font("Segoe UI", 9.5F);
 			lblSubtitle.ForeColor = Color.FromArgb(158, 172, 194);
@@ -169,7 +169,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblSubtitle.Name = "lblSubtitle";
 			lblSubtitle.Size = new Size(620, 38);
 			lblSubtitle.TabIndex = 2;
-			lblSubtitle.Text = "Review how Synix builds the command used to start this server.";
+			lblSubtitle.Text = LocalizationManager.GetContent("Review how Synix builds the command used to start this server.");
 			argumentsCard.BorderColor = Color.FromArgb(38, 52, 77);
 			argumentsCard.Controls.Add(lblArgumentsTitle);
 			argumentsCard.Controls.Add(lblArgumentsHelp);
@@ -189,7 +189,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblArgumentsTitle.Name = "lblArgumentsTitle";
 			lblArgumentsTitle.Size = new Size(191, 20);
 			lblArgumentsTitle.TabIndex = 0;
-			lblArgumentsTitle.Text = "Startup argument template";
+			lblArgumentsTitle.Text = LocalizationManager.GetContent("Startup argument template");
 			lblArgumentsHelp.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			lblArgumentsHelp.Font = new Font("Segoe UI", 8.75F);
 			lblArgumentsHelp.ForeColor = Color.FromArgb(105, 124, 153);
@@ -197,7 +197,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblArgumentsHelp.Name = "lblArgumentsHelp";
 			lblArgumentsHelp.Size = new Size(658, 22);
 			lblArgumentsHelp.TabIndex = 1;
-			lblArgumentsHelp.Text = "This informational view shows the default arguments Synix uses when building the start command.";
+			lblArgumentsHelp.Text = LocalizationManager.GetContent("This informational view shows the default arguments Synix uses when building the start command.");
 			txtArgs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			txtArgs.BackColor = Color.FromArgb(12, 21, 36);
 			txtArgs.BorderStyle = BorderStyle.FixedSingle;
@@ -226,14 +226,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			lblTransparencyNote.Name = "lblTransparencyNote";
 			lblTransparencyNote.Size = new Size(550, 34);
 			lblTransparencyNote.TabIndex = 0;
-			lblTransparencyNote.Text = "Shown for transparency so you can verify the startup command has no hidden arguments.";
+			lblTransparencyNote.Text = LocalizationManager.GetContent("Shown for transparency so you can verify the startup command has no hidden arguments.");
 			lblTransparencyNote.TextAlign = ContentAlignment.MiddleLeft;
 			btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnClose.Location = new Point(574, 8);
 			btnClose.Name = "btnClose";
 			btnClose.Size = new Size(128, 44);
 			btnClose.TabIndex = 1;
-			btnClose.Text = "Close";
+			btnClose.Text = LocalizationManager.GetContent("Close");
 			btnClose.UseAccentStyle = true;
 			btnClose.UseVisualStyleBackColor = true;
 			btnClose.Click += btnClose_Click;
@@ -254,7 +254,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 			Padding = new Padding(1);
 			ShowInTaskbar = false;
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Default Launch Arguments";
+			Text = LocalizationManager.GetContent("Default Launch Arguments");
 			shellLayout.ResumeLayout(false);
 			titleBar.ResumeLayout(false);
 			titleBar.PerformLayout();

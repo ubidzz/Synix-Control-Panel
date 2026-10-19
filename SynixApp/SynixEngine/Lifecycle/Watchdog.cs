@@ -28,6 +28,7 @@ namespace Synix_Control_Panel.SynixEngine
 		{
 			foreach (var server in ServerRegistry.Snapshot())
 			{
+				using var historyScope = ServerDiagnosticScope.Begin(server);
 				var dbEntry = GameDatabase.GetGame(server.Game);
 				bool usesExternalLifecycle = dbEntry?.LaunchBehavior.LifecycleTracking ==
 					GameLifecycleTrackingMode.ExternalDeployment;

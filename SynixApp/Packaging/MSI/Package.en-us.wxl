@@ -1,0 +1,36 @@
+<WixLocalization Culture="en-US" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+	<!-- Render the complete, unmodified portrait in the original left-hand area.
+	     Stock WiX bitmaps span 370 dialog units, which would stretch the artwork
+	     behind the text. All other controls and their navigation stay unchanged. -->
+	<UI Dialog="WelcomeDlg" Control="Bitmap" X="0" Y="0" Width="123" Height="234" />
+	<UI Dialog="MaintenanceWelcomeDlg" Control="Bitmap" X="0" Y="0" Width="123" Height="234" />
+	<UI Dialog="PrepareDlg" Control="Bitmap" X="0" Y="0" Width="123" Height="234" />
+	<UI Dialog="ResumeDlg" Control="Bitmap" X="0" Y="0" Width="123" Height="234" />
+	<UI Dialog="ExitDialog" Control="Bitmap" X="0" Y="0" Width="123" Height="234" />
+	<UI Dialog="FatalError" Control="Bitmap" X="0" Y="0" Width="123" Height="234" />
+	<UI Dialog="UserExit" Control="Bitmap" X="0" Y="0" Width="123" Height="234" />
+	<String Id="WelcomeDlgTitle" Value="{\WixUI_Font_Bigger}[SYNIX_SETUP_HEADING]" />
+	<String Id="WelcomeDlgDescription" Value="[SYNIX_SETUP_DESCRIPTION]" />
+	<String Id="LicenseAgreementDlgTitle" Value="{\WixUI_Font_Title}Synix license agreement" />
+	<String Id="LicenseAgreementDlgDescription" Value="Read the license. You must accept its terms to continue." />
+	<String Id="LicenseAgreementDlgLicenseAcceptedCheckBox" Value="I &amp;accept the terms of the Synix license agreement" />
+	<String Id="MaintenanceWelcomeDlgTitle" Value="{\WixUI_Font_Bigger}Repair or uninstall Synix" />
+	<String Id="MaintenanceWelcomeDlgDescription" Value="Synix [ProductVersion] is already installed. Click Next to repair or uninstall the application." />
+	<String Id="MaintenanceTypeDlgRemoveButton" Value="&amp;Uninstall" />
+	<String Id="MaintenanceTypeDlgDescription" Value="Choose Repair to restore Synix, or Uninstall to remove it." />
+	<String Id="SynixMaintenanceWindowTitle" Value="Synix Control Panel Setup" />
+	<String Id="SynixMaintenanceTitle" Value="{\WixUI_Font_Bigger}Repair or uninstall Synix" />
+	<String Id="SynixMaintenanceDescription" Value="Synix [ProductVersion] is already installed. Repair restores the application using the files in this installer, including changes from a republished build." />
+	<String Id="SynixMaintenanceRepair" Value="&amp;Repair" />
+	<String Id="SynixMaintenanceRepairDescription" Value="Restore the installed application and shortcuts. Your server list, game servers, settings, and backups are kept." />
+	<String Id="SynixMaintenanceUninstall" Value="&amp;Uninstall" />
+	<String Id="SynixMaintenanceUninstallDescription" Value="Open the installed version's uninstaller. Server and backup removal still require a separate choice and confirmation." />
+	<String Id="SynixMaintenanceHandoffDescription" Value="Repair continues here. Uninstall closes this window and opens the installed application's uninstaller." />
+	<String Id="InstallDirDlgTitle" Value="{\WixUI_Font_Title}Application folder" />
+	<String Id="InstallDirDlgDescription" Value="Choose where to install the Synix application." />
+	<String Id="InstallDirDlgFolderLabel"
+		Value="Application folder only. Existing game servers, saves, and data stay in their current locations." />
+	<String Id="VerifyReadyDlgInstallTitle" Value="{\WixUI_Font_Title}[SYNIX_SETUP_HEADING]" />
+	<String Id="VerifyReadyDlgInstall" Value="[SYNIX_SETUP_ACTION]" />
+	<String Id="VerifyReadyDlgInstallText" Value="[SYNIX_SETUP_REVIEW]&#10;&#10;Application folder: [INSTALLFOLDER]" />
+</WixLocalization>

@@ -66,7 +66,7 @@ internal static class ServerDeletionSafety
 		return fullPath;
 	}
 
-	private static string NormalizePath(string path)
+	internal static string NormalizePath(string path)
 	{
 		if (string.IsNullOrWhiteSpace(path) || !Path.IsPathFullyQualified(path) ||
 			path.StartsWith(@"\\?\", StringComparison.Ordinal) ||
@@ -147,7 +147,7 @@ internal static class ServerDeletionSafety
 			yield return Path.Combine(common, "Microsoft");
 	}
 
-	private static string ExpandExistingLongPath(string path)
+	internal static string ExpandExistingLongPath(string path)
 	{
 		StringBuilder buffer = new(32768);
 		uint length = GetLongPathName(path, buffer, (uint)buffer.Capacity);

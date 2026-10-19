@@ -15,7 +15,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/ubidzz/Synix-Control-Panel</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.25</Version>
+		<Version>1.0.26</Version>
 		<AssemblyVersion>$(Version).0</AssemblyVersion>
 		<FileVersion>$(Version).0</FileVersion>
 		<InformationalVersion>$(Version)</InformationalVersion>
@@ -31,6 +31,8 @@
 		<DebugType Condition="'$(Configuration)' != 'Debug'">none</DebugType>
 		<DebugSymbols Condition="'$(Configuration)' != 'Debug'">false</DebugSymbols>
 		<PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
+		<!-- Keep local assistant files, caches, and generated checks out of the app and publish inputs. -->
+		<DefaultItemExcludes>$(DefaultItemExcludes);**\.codex\**;**\.codex-*;**\.codex-*\**;**\.cache\**;**\artifacts\**;**\TestResults\**</DefaultItemExcludes>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="SynixApp\**" />
@@ -54,6 +56,7 @@
 	    <LogicalName>Synix.GameDefinitions.SevenDaysToDie.serverconfig.xml</LogicalName>
 	  </EmbeddedResource>
 	  <EmbeddedResource Include="Database\GameDefinitions\game-verification.json" />
+	  <EmbeddedResource Include="Database\GameDefinitions\game-text-support.json" />
 	  <EmbeddedResource Include="Database\ModSystems\**\*.modsystem.json" />
 	  <EmbeddedResource Include="Database\ModSystems\**\*.modsupport.json" />
 	</ItemGroup>
@@ -287,7 +290,7 @@
 			<_SynixPublishDirectory>$([System.IO.Path]::GetDirectoryName('$(_SynixPublishPathMarker)'))</_SynixPublishDirectory>
 			<_SynixPublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_SynixPublishedExe>
 			<_SynixMsiProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'SynixInstaller.wixproj'))</_SynixMsiProject>
-			<_SynixMsiBuildOutput>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'bin', 'Release', 'SynixSetup.msi'))</_SynixMsiBuildOutput>
+			<_SynixMsiBuildOutput>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Packaging', 'MSI', 'bin', 'Release', 'en-US', 'SynixSetup.msi'))</_SynixMsiBuildOutput>
 			<_SynixMsiOutput>$([System.IO.Path]::Combine('$(PublishDir)', 'SynixSetup.msi'))</_SynixMsiOutput>
 			<_SynixTestsProject>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', 'Tests', 'Synix.Tests.csproj'))</_SynixTestsProject>
 			<_SynixDotNetHost Condition="'$(DotNetHostPath)' != ''">$(DotNetHostPath)</_SynixDotNetHost>

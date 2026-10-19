@@ -24,6 +24,10 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore "SynixApp/Tests/Synix.Tests.csproj"
 
+      - name: Check generated catalog documentation
+        shell: pwsh
+        run: ./Tools/Update-CatalogDocumentation.ps1 -Check
+
       - name: Build tests
         run: dotnet build "SynixApp/Tests/Synix.Tests.csproj" --configuration Release --no-restore
 
