@@ -20,7 +20,11 @@ public sealed class AdditionalLanguageTests
 		{ "pl-PL", "Polski" }, { "ru-RU", "Русский" }, { "tr-TR", "Türkçe" },
 		{ "nl-NL", "Nederlands" }, { "sv-SE", "Svenska" },
 		{ "cs-CZ", "Čeština" }, { "uk-UA", "Українська" },
-		{ "id-ID", "Bahasa Indonesia" }, { "vi-VN", "Tiếng Việt" }
+		{ "id-ID", "Bahasa Indonesia" }, { "vi-VN", "Tiếng Việt" },
+		{ "da-DK", "Dansk" }, { "fi-FI", "Suomi" },
+		{ "nb-NO", "Norsk bokmål" }, { "el-GR", "Ελληνικά" },
+		{ "hu-HU", "Magyar" }, { "ro-RO", "Română" },
+		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" }
 	};
 
 	private static ResourceManager CreateManager() => new(
@@ -33,6 +37,14 @@ public sealed class AdditionalLanguageTests
 	[InlineData("uk")]
 	[InlineData("id")]
 	[InlineData("vi")]
+	[InlineData("da")]
+	[InlineData("fi")]
+	[InlineData("nb")]
+	[InlineData("el")]
+	[InlineData("hu")]
+	[InlineData("ro")]
+	[InlineData("hi")]
+	[InlineData("th")]
 	public void AdditionalLanguagesCoverTheEntireNeutralCatalog(string resourceCulture)
 	{
 		ResourceManager manager = CreateManager();
@@ -46,6 +58,22 @@ public sealed class AdditionalLanguageTests
 			Assert.False(string.IsNullOrWhiteSpace(catalog.GetString(key)),
 				$"{resourceCulture} is missing core translation {key}");
 		}
+	}
+
+	[Theory]
+	[InlineData("da")]
+	[InlineData("fi")]
+	[InlineData("nb")]
+	[InlineData("el")]
+	[InlineData("hu")]
+	[InlineData("ro")]
+	[InlineData("hi")]
+	[InlineData("th")]
+	public void NewCatalogsPreserveTheDownloadSpeedUnit(string resourceCulture)
+	{
+		ResourceSet catalog = CreateManager().GetResourceSet(
+			CultureInfo.GetCultureInfo(resourceCulture), true, false)!;
+		Assert.Equal("Mbps", catalog.GetString("Text.ECF1D7C868EE46FC6DF0"));
 	}
 
 	[Theory]
@@ -82,8 +110,10 @@ public sealed class AdditionalLanguageTests
 		{
 			string? value = catalog.GetString(key);
 			Assert.False(string.IsNullOrWhiteSpace(value), $"{code} is missing {key}");
-			// "Backups" is also normal Portuguese; borrowed words need not differ.
-			if (key != "MinecraftWorkspace.Backups")
+			// "Backups" is normal Portuguese and "General" is normal Romanian;
+			// valid shared words must not be changed just to differ from English.
+			if (key != "MinecraftWorkspace.Backups" &&
+				!(code == "ro-RO" && key == "SettingsPage.General.Heading"))
 				Assert.NotEqual(CreateManager().GetString(key, CultureInfo.InvariantCulture), value);
 		}
 	}
@@ -121,6 +151,25 @@ public sealed class AdditionalLanguageTests
 	[InlineData("id-ID", "id-ID")]
 	[InlineData("vi", "vi-VN")]
 	[InlineData("VI-vn", "vi-VN")]
+	[InlineData("da", "da-DK")]
+	[InlineData("da-DK", "da-DK")]
+	[InlineData("fi", "fi-FI")]
+	[InlineData("fi-FI", "fi-FI")]
+	[InlineData("nb", "nb-NO")]
+	[InlineData("nb-NO", "nb-NO")]
+	[InlineData("no", "nb-NO")]
+	[InlineData("no-NO", "nb-NO")]
+	[InlineData("nn-NO", "en-US")]
+	[InlineData("el", "el-GR")]
+	[InlineData("el-CY", "el-GR")]
+	[InlineData("hu", "hu-HU")]
+	[InlineData("hu-HU", "hu-HU")]
+	[InlineData("ro", "ro-RO")]
+	[InlineData("ro-MD", "ro-RO")]
+	[InlineData("hi", "hi-IN")]
+	[InlineData("hi-IN", "hi-IN")]
+	[InlineData("th", "th-TH")]
+	[InlineData("TH-th", "th-TH")]
 	[InlineData("fr-CA", "fr-FR")]
 	[InlineData("", "en-US")]
 	[InlineData("unsupported-language", "en-US")]

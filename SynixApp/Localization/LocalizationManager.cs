@@ -741,6 +741,11 @@ internal static class LocalizationManager
 					language = Languages.FirstOrDefault(candidate => candidate.Code == script);
 				}
 
+				// "no" is generic Norwegian. Use the available Bokmål catalog;
+				// do not treat the separate Nynorsk language ("nn") as Bokmål.
+				if (language == null && requestedCulture.TwoLetterISOLanguageName == "no")
+					language = Languages.FirstOrDefault(candidate => candidate.Code == "nb-NO");
+
 				language ??= Languages.FirstOrDefault(candidate =>
 					string.Equals(
 						CultureInfo.GetCultureInfo(candidate.Code)
@@ -876,6 +881,14 @@ internal static class LocalizationManager
 			"uk" or "uk-UA" => "Українська",
 			"id" or "id-ID" => "Bahasa Indonesia",
 			"vi" or "vi-VN" => "Tiếng Việt",
+			"da" or "da-DK" => "Dansk",
+			"fi" or "fi-FI" => "Suomi",
+			"nb" or "nb-NO" => "Norsk bokmål",
+			"el" or "el-GR" => "Ελληνικά",
+			"hu" or "hu-HU" => "Magyar",
+			"ro" or "ro-RO" => "Română",
+			"hi" or "hi-IN" => "हिन्दी",
+			"th" or "th-TH" => "ไทย",
 			"de" or "de-DE" => "Deutsch",
 			"es" or "es-ES" => "Español",
 			"fr" or "fr-FR" => "Français",

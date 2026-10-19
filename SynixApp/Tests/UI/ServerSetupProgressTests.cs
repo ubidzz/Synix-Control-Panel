@@ -161,6 +161,14 @@ public sealed class ServerSetupProgressTests
 	[InlineData("uk-UA", "Перевірка", "ПЕРЕВІРКА")]
 	[InlineData("id-ID", "Tinjau", "MENINJAU")]
 	[InlineData("vi-VN", "Xem lại", "ĐANG XEM LẠI")]
+	[InlineData("da-DK", "Gennemse", "GENNEMSER")]
+	[InlineData("fi-FI", "Tarkista", "TARKISTUS")]
+	[InlineData("nb-NO", "Gjennomgå", "GJENNOMGANG")]
+	[InlineData("el-GR", "Έλεγχος", "ΕΛΕΓΧΟΣ")]
+	[InlineData("hu-HU", "Áttekintés", "ÁTTEKINTÉS")]
+	[InlineData("ro-RO", "Verificare", "ÎN VERIFICARE")]
+	[InlineData("hi-IN", "समीक्षा", "समीक्षा जारी")]
+	[InlineData("th-TH", "ตรวจทาน", "กำลังตรวจทาน")]
 	public void OpenSetupUpdatesItsGuideAndReviewLanguageWithoutTranslatingValues(string language, string title, string current)
 	{
 		RunOnSta(() =>
@@ -191,6 +199,14 @@ public sealed class ServerSetupProgressTests
 	[InlineData("uk-UA")]
 	[InlineData("id-ID")]
 	[InlineData("vi-VN")]
+	[InlineData("da-DK")]
+	[InlineData("fi-FI")]
+	[InlineData("nb-NO")]
+	[InlineData("el-GR")]
+	[InlineData("hu-HU")]
+	[InlineData("ro-RO")]
+	[InlineData("hi-IN")]
+	[InlineData("th-TH")]
 	public void AdditionalLanguageNavigationFitsWithoutEllipsis(string language)
 	{
 		RunOnSta(() =>
@@ -486,6 +502,22 @@ public sealed class ServerSetupProgressTests
 	[InlineData("id-ID", false, true)]
 	[InlineData("vi-VN", true, true)]
 	[InlineData("vi-VN", false, true)]
+	[InlineData("da-DK", true, true)]
+	[InlineData("da-DK", false, true)]
+	[InlineData("fi-FI", true, true)]
+	[InlineData("fi-FI", false, true)]
+	[InlineData("nb-NO", true, true)]
+	[InlineData("nb-NO", false, true)]
+	[InlineData("el-GR", true, true)]
+	[InlineData("el-GR", false, true)]
+	[InlineData("hu-HU", true, true)]
+	[InlineData("hu-HU", false, true)]
+	[InlineData("ro-RO", true, true)]
+	[InlineData("ro-RO", false, true)]
+	[InlineData("hi-IN", true, true)]
+	[InlineData("hi-IN", false, true)]
+	[InlineData("th-TH", true, true)]
+	[InlineData("th-TH", false, true)]
 	public void ReviewAndCheckpointTextFitInBothThemesAndAllLanguages(string language, bool darkMode, bool minimumSize)
 	{
 		RunOnSta(() =>
