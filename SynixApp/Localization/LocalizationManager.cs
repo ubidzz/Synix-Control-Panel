@@ -889,6 +889,8 @@ internal static class LocalizationManager
 			"ro" or "ro-RO" => "Română",
 			"hi" or "hi-IN" => "हिन्दी",
 			"th" or "th-TH" => "ไทย",
+			"bg" or "bg-BG" => "Български",
+			"hr" or "hr-HR" => "Hrvatski",
 			"de" or "de-DE" => "Deutsch",
 			"es" or "es-ES" => "Español",
 			"fr" or "fr-FR" => "Français",

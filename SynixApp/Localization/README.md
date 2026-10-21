@@ -4,8 +4,9 @@ Synix ships compiled, offline catalogs for English, French, German, Spanish,
 Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian
 Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian,
 Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian,
-Romanian, Hindi, and Thai (27 language options). Every selectable language must
-contain every entry in the neutral English catalog; partial preview catalogs
+Romanian, Hindi, Thai, Bulgarian, and Croatian (29 language
+options). Every selectable language must contain every entry in the neutral
+English catalog; partial preview catalogs
 are no longer used for these languages.
 
 The language picker displays each language's own name. Regional aliases use

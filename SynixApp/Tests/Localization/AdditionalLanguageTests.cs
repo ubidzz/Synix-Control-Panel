@@ -2,6 +2,7 @@ using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.Resources;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Synix_Control_Panel.SynixApp.Localization;
@@ -24,11 +25,52 @@ public sealed class AdditionalLanguageTests
 		{ "da-DK", "Dansk" }, { "fi-FI", "Suomi" },
 		{ "nb-NO", "Norsk bokmål" }, { "el-GR", "Ελληνικά" },
 		{ "hu-HU", "Magyar" }, { "ro-RO", "Română" },
-		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" }
+		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" },
+		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }
 	};
 
 	private static ResourceManager CreateManager() => new(
 		"Synix_Control_Panel.Localization.Strings", typeof(LocalizationManager).Assembly);
+
+	[Theory]
+	[InlineData("bg", "Напред: Преглед", "Запазване на настройките на сървъра", "Външен вид")]
+	[InlineData("hr", "Dalje: Pregled", "Spremi postavke poslužitelja", "Izgled")]
+	public void AddedLanguagesIncludeReviewAndAppearanceWithoutChangingPreservedPaths(
+		string culture, string review, string save, string appearance)
+	{
+		ResourceSet catalog = CreateManager().GetResourceSet(
+			CultureInfo.GetCultureInfo(culture), true, false)!;
+		Assert.Equal(review, catalog.GetString("ServerSetup.Button.NextReview"));
+		Assert.Equal(save, catalog.GetString("ServerSetup.Button.SaveSettings"));
+		Assert.Equal(appearance, catalog.GetString("Appearance.Title"));
+		Assert.Contains(@"C:\Synix", catalog.GetString("Uninstall.Keep"));
+		Assert.Contains(@"SynixData\servers.json", catalog.GetString("Uninstall.Keep"));
+		Assert.NotEqual(catalog.GetString("Uninstall.AppOnly"), catalog.GetString("Uninstall.Everything"));
+		Assert.NotEqual(catalog.GetString("Uninstall.BackupsKeep"), catalog.GetString("Uninstall.BackupsDelete"));
+		foreach (string key in new[]
+		{
+			"Configuration.Check.FixConfig", "MinecraftConsole.Quick.Kick.Label",
+			"Text.7CB94F75343DF207439A", "DynamicText.B83EC0A78559E32C96D2"
+		})
+			Assert.NotEqual(CreateManager().GetString(key, CultureInfo.InvariantCulture), catalog.GetString(key));
+	}
+
+	[Theory]
+	[InlineData("bg")]
+	[InlineData("hr")]
+	public void AddedLanguagesKeepLiteralWindowsPathsAndConfigurationExamples(string culture)
+	{
+		ResourceManager manager = CreateManager();
+		ResourceSet english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
+		ResourceSet catalog = manager.GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		Regex literal = new(@"\b[A-Za-z]:\\[\w\\.-]+|\b(?:server|app|config)\.[A-Za-z_]\w*");
+		foreach (DictionaryEntry entry in english)
+		{
+			foreach (Match match in literal.Matches((string)entry.Value!))
+				Assert.True(catalog.GetString((string)entry.Key)!.Contains(match.Value.TrimEnd('.'), StringComparison.Ordinal),
+					$"{culture}: literal path or configuration example changed in {entry.Key}: {match.Value}");
+		}
+	}
 
 	[Theory]
 	[InlineData("nl")]
@@ -45,6 +87,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("ro")]
 	[InlineData("hi")]
 	[InlineData("th")]
+	[InlineData("bg")]
+	[InlineData("hr")]
 	public void AdditionalLanguagesCoverTheEntireNeutralCatalog(string resourceCulture)
 	{
 		ResourceManager manager = CreateManager();
@@ -69,6 +113,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("ro")]
 	[InlineData("hi")]
 	[InlineData("th")]
+	[InlineData("bg")]
+	[InlineData("hr")]
 	public void NewCatalogsPreserveTheDownloadSpeedUnit(string resourceCulture)
 	{
 		ResourceSet catalog = CreateManager().GetResourceSet(
@@ -170,6 +216,10 @@ public sealed class AdditionalLanguageTests
 	[InlineData("hi-IN", "hi-IN")]
 	[InlineData("th", "th-TH")]
 	[InlineData("TH-th", "th-TH")]
+	[InlineData("bg", "bg-BG")]
+	[InlineData("bg-BG", "bg-BG")]
+	[InlineData("hr", "hr-HR")]
+	[InlineData("hr-BA", "hr-HR")]
 	[InlineData("fr-CA", "fr-FR")]
 	[InlineData("", "en-US")]
 	[InlineData("unsupported-language", "en-US")]
