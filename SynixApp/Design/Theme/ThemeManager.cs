@@ -23,9 +23,10 @@ namespace Synix_Control_Panel.SynixApp.Design
 			public bool IsWatching { get; set; }
 			public bool BackgroundImageCaptured { get; set; }
 			public Image? DarkBackgroundImage { get; set; }
+			public int? CornerRadius { get; set; }
 		}
 
-		internal sealed class ThemeColors
+		internal sealed record ThemeColors
 		{
 			public required Color Window { get; init; }
 			public required Color TitleBar { get; init; }
@@ -91,7 +92,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			PrimaryText = Color.FromArgb(23, 32, 51),
 			SecondaryText = Color.FromArgb(71, 85, 105),
 			MutedText = Color.FromArgb(100, 116, 139),
-			Accent = Color.FromArgb(0, 137, 123),
+			Accent = Color.FromArgb(0, 128, 115),
 			AccentHover = Color.FromArgb(0, 121, 107),
 			AccentSoft = Color.FromArgb(215, 240, 237),
 			Warning = Color.FromArgb(169, 101, 19),
@@ -106,33 +107,38 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private static readonly ConditionalWeakTable<Control, ThemeRegistration>
 			Registrations = new();
 		private static ThemeColors _current = DarkColors;
+		private static ThemeColors _previous = DarkColors;
+		private sealed record ColorBinding(Color Source, Color Applied);
+		private static readonly ConditionalWeakTable<object, Dictionary<string, ColorBinding>> ColorBindings = new();
 		private static int _themeVersion;
 		private static bool _isApplying;
 
 		public static bool IsDarkMode { get; private set; } = true;
+		public static string ThemeId { get; private set; } = "synix";
+		public static string AccentId { get; private set; } = "default";
+		public static string StyleId { get; private set; } = "rounded";
+		public static int CornerRadius(int roundedRadius) => StyleId == "square" ? 0 : roundedRadius;
 
 		internal static ThemeColors Colors => _current;
 
 		public static event EventHandler? ThemeChanged;
 
-		public static void Initialize(bool darkMode)
+		public static void Initialize(bool darkMode, string? theme = null, string? accent = null, string? style = null)
 		{
+			_previous = _current;
 			IsDarkMode = darkMode;
-			_current = darkMode ? DarkColors : LightColors;
+			ThemeId = ThemeCatalog.NormalizeTheme(theme);
+			AccentId = ThemeCatalog.NormalizeAccent(accent);
+			StyleId = ThemeCatalog.NormalizeStyle(style);
+			_current = ThemeCatalog.Create(darkMode, ThemeId, AccentId, darkMode ? DarkColors : LightColors);
 			_themeVersion++;
 		}
 
-		public static void SetDarkMode(bool darkMode)
-		{
-			if (IsDarkMode == darkMode)
-			{
-				ApplyToOpenForms(force: true);
-				return;
-			}
+		public static void SetDarkMode(bool darkMode) => SetAppearance(darkMode, ThemeId, AccentId, StyleId);
 
-			IsDarkMode = darkMode;
-			_current = darkMode ? DarkColors : LightColors;
-			_themeVersion++;
+		public static void SetAppearance(bool darkMode, string? theme, string? accent, string? style)
+		{
+			Initialize(darkMode, theme, accent, style);
 			ApplyToOpenForms(force: true);
 			ThemeChanged?.Invoke(null, EventArgs.Empty);
 		}
@@ -240,18 +246,21 @@ namespace Synix_Control_Panel.SynixApp.Design
 					registration.DarkBackgroundImage = control.BackgroundImage;
 					registration.BackgroundImageCaptured = true;
 				}
-				control.BackgroundImage = IsDarkMode
+				control.BackgroundImage = IsDarkMode && ThemeId == "synix"
 					? registration.DarkBackgroundImage
 					: null;
 			}
 
-			control.BackColor = MapBackground(control.BackColor, control);
-			control.ForeColor = MapForeground(control.ForeColor);
+			control.BackColor = MapColor(control, "BackColor", control.BackColor, color => MapBackground(color, control));
+			control.ForeColor = MapColor(control, "ForeColor", control.ForeColor, MapForeground);
 
 			if (control is ModernSettingsCard card)
 			{
-				card.FillColor = MapBackground(card.FillColor, card);
-				card.BorderColor = MapPaletteColor(card.BorderColor);
+				card.FillColor = MapColor(card, "FillColor", card.FillColor, color => MapBackground(color, card));
+				card.BorderColor = MapColor(card, "BorderColor", card.BorderColor, MapPaletteColor);
+				ThemeRegistration registration = GetRegistration(card);
+				registration.CornerRadius ??= card.CornerRadius;
+				card.CornerRadius = CornerRadius(registration.CornerRadius.Value);
 			}
 			else if (control is ModernSettingsComboBox comboBox)
 			{
@@ -283,11 +292,12 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 			else if (control is SynixButton synixButton)
 			{
-				synixButton.FillColor = MapBackground(synixButton.FillColor, synixButton);
-				synixButton.FillColorSecondary = MapBackground(
-					synixButton.FillColorSecondary,
-					synixButton);
-				synixButton.BorderColor = MapPaletteColor(synixButton.BorderColor);
+				synixButton.FillColor = MapColor(synixButton, "FillColor", synixButton.FillColor, color => MapBackground(color, synixButton));
+				synixButton.FillColorSecondary = MapColor(synixButton, "FillColorSecondary", synixButton.FillColorSecondary,
+					color => MapBackground(color, synixButton));
+				synixButton.BorderColor = MapColor(synixButton, "BorderColor", synixButton.BorderColor, MapPaletteColor);
+				if (synixButton.FillColor.ToArgb() == SettingsPalette.Accent.ToArgb())
+					synixButton.ForeColor = SettingsPalette.AccentText;
 				if (!IsDarkMode && IsDarkSurface(synixButton.FillColor))
 				{
 					if (IsSuccessColor(originalForeground))
@@ -346,60 +356,88 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (control is ButtonBase button)
 			{
 				button.FlatAppearance.BorderColor =
-					MapPaletteColor(button.FlatAppearance.BorderColor);
+					MapColor(button, "FlatBorder", button.FlatAppearance.BorderColor, MapPaletteColor);
 				button.FlatAppearance.MouseOverBackColor =
-					MapPaletteColor(button.FlatAppearance.MouseOverBackColor);
+					MapColor(button, "FlatHover", button.FlatAppearance.MouseOverBackColor, MapPaletteColor);
 				button.FlatAppearance.MouseDownBackColor =
-					MapPaletteColor(button.FlatAppearance.MouseDownBackColor);
+					MapColor(button, "FlatPressed", button.FlatAppearance.MouseDownBackColor, MapPaletteColor);
 			}
 
 			if (control is DataGridView grid)
 				ApplyGrid(grid);
 			if (control is ToolStrip toolStrip)
 				ApplyToolStrip(toolStrip);
+			if (control.ContextMenuStrip is { } menu)
+				ApplyToolStrip(menu);
 
 			control.Invalidate();
 		}
 
 		private static void ApplyGrid(DataGridView grid)
 		{
-			grid.BackgroundColor = MapBackground(grid.BackgroundColor, grid);
-			grid.GridColor = MapPaletteColor(grid.GridColor);
-			ApplyCellStyle(grid.DefaultCellStyle);
-			ApplyCellStyle(grid.AlternatingRowsDefaultCellStyle);
-			ApplyCellStyle(grid.RowsDefaultCellStyle);
-			ApplyCellStyle(grid.ColumnHeadersDefaultCellStyle);
-			ApplyCellStyle(grid.RowHeadersDefaultCellStyle);
+			grid.BackgroundColor = MapColor(grid, "BackgroundColor", grid.BackgroundColor, color => MapBackground(color, grid));
+			grid.GridColor = MapColor(grid, "GridColor", grid.GridColor, MapPaletteColor);
+			if (grid.Tag is int radius)
+				GridStyler.ApplyRoundedCorners(grid, radius);
+			grid.DefaultCellStyle = ApplyCellStyle(grid, "Default", grid.DefaultCellStyle);
+			grid.AlternatingRowsDefaultCellStyle = ApplyCellStyle(grid, "Alternate", grid.AlternatingRowsDefaultCellStyle);
+			grid.RowsDefaultCellStyle = ApplyCellStyle(grid, "Rows", grid.RowsDefaultCellStyle);
+			grid.ColumnHeadersDefaultCellStyle = ApplyCellStyle(grid, "ColumnHeaders", grid.ColumnHeadersDefaultCellStyle);
+			grid.RowHeadersDefaultCellStyle = ApplyCellStyle(grid, "RowHeaders", grid.RowHeadersDefaultCellStyle);
 
 			foreach (DataGridViewColumn column in grid.Columns)
-				ApplyCellStyle(column.DefaultCellStyle);
+				column.DefaultCellStyle = ApplyCellStyle(column, "Default", column.DefaultCellStyle);
 			foreach (DataGridViewRow row in grid.Rows)
 			{
-				ApplyCellStyle(row.DefaultCellStyle);
+				row.DefaultCellStyle = ApplyCellStyle(row, "Default", row.DefaultCellStyle);
 				foreach (DataGridViewCell cell in row.Cells)
-					ApplyCellStyle(cell.Style);
+					if (cell.HasStyle) cell.Style = ApplyCellStyle(cell, "Default", cell.Style);
 			}
 		}
 
-		private static void ApplyCellStyle(DataGridViewCellStyle style)
+		private static DataGridViewCellStyle ApplyCellStyle(object owner, string prefix, DataGridViewCellStyle style)
 		{
-			style.BackColor = MapBackground(style.BackColor, null);
-			style.ForeColor = MapForeground(style.ForeColor);
-			style.SelectionBackColor = MapPaletteColor(style.SelectionBackColor);
-			style.SelectionForeColor = MapForeground(style.SelectionForeColor);
+			// WinForms may return an ambient-style copy. Keep role bindings on
+			// the stable owner, then assign the completed style back to it.
+			style.BackColor = MapColor(owner, prefix + ".BackColor", style.BackColor, color => MapBackground(color, null));
+			style.ForeColor = MapColor(owner, prefix + ".ForeColor", style.ForeColor, MapForeground);
+			style.SelectionBackColor = MapColor(owner, prefix + ".SelectionBackColor", style.SelectionBackColor, MapPaletteColor);
+			style.SelectionForeColor = MapColor(owner, prefix + ".SelectionForeColor", style.SelectionForeColor, MapForeground);
+			return style;
+		}
+
+		// Retain the original semantic color per property. Mapping only from the
+		// last RGB value loses roles when two theme colors coincide, causing
+		// progressively incorrect colors after repeatedly changing themes.
+		private static Color MapColor(object owner, string property, Color value, Func<Color, Color> map)
+		{
+			Dictionary<string, ColorBinding> bindings = ColorBindings.GetOrCreateValue(owner);
+			Color source = bindings.TryGetValue(property, out ColorBinding? binding) && binding.Applied.ToArgb() == value.ToArgb()
+				? binding.Source : CanonicalColor(value);
+			Color applied = map(source);
+			bindings[property] = new(source, applied);
+			return applied;
+		}
+
+		private static Color CanonicalColor(Color color)
+		{
+			int role = FindPaletteRole(color);
+			return role >= 0 ? PaletteColors(DarkColors)[role] : color;
 		}
 
 		private static void ApplyToolStrip(ToolStrip toolStrip)
 		{
 			toolStrip.BackColor = SettingsPalette.Card;
 			toolStrip.ForeColor = SettingsPalette.PrimaryText;
-			if (toolStrip is ContextMenuStrip && toolStrip.Renderer is not SynixMenuRenderer)
+			if (toolStrip is ToolStripDropDown && toolStrip.Renderer is not SynixMenuRenderer)
 				toolStrip.Renderer = new SynixMenuRenderer();
 
 			foreach (ToolStripItem item in toolStrip.Items)
 			{
 				item.BackColor = SettingsPalette.Card;
 				item.ForeColor = SettingsPalette.PrimaryText;
+				if (item is ToolStripDropDownItem dropDown && dropDown.HasDropDownItems)
+					ApplyToolStrip(dropDown.DropDown);
 			}
 		}
 
@@ -424,6 +462,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 					? SettingsPalette.Input
 					: SettingsPalette.Card;
 			}
+			if (color.IsSystemColor)
+				return control is Form ? SettingsPalette.Window
+					: control is TextBoxBase or ListControl or DataGridView ? SettingsPalette.Input : SettingsPalette.Card;
 
 			return color;
 		}
@@ -443,6 +484,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 			{
 				return SettingsPalette.PrimaryText;
 			}
+			if (color.IsSystemColor)
+				return SettingsPalette.PrimaryText;
 
 			return color;
 		}
@@ -558,7 +601,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 		private static int FindPaletteRole(Color color)
 		{
 			int argb = color.ToArgb();
-			ThemeColors[] palettes = { DarkColors, LightColors };
+			ThemeColors[] palettes = { DarkColors, LightColors, _previous, _current };
 			foreach (ThemeColors palette in palettes)
 			{
 				if (argb == palette.Window.ToArgb()) return 0;
@@ -609,8 +652,18 @@ namespace Synix_Control_Panel.SynixApp.Design
 			if (argb == Color.FromArgb(15, 15, 18).ToArgb()) return 21;
 			if (argb == Color.FromArgb(50, 50, 60).ToArgb()) return 17;
 			if (argb == Color.FromArgb(0, 190, 255).ToArgb()) return 12;
+			if (argb == Color.FromArgb(0, 137, 123).ToArgb()) return 12;
 
 			return -1;
 		}
+
+		private static Color[] PaletteColors(ThemeColors palette) =>
+		[
+			palette.Window, palette.TitleBar, palette.Sidebar, palette.Card, palette.CardHover,
+			palette.Input, palette.AlternateInput, palette.Border, palette.BorderHover, palette.PrimaryText,
+			palette.SecondaryText, palette.MutedText, palette.Accent, palette.AccentHover, palette.AccentSoft,
+			palette.Warning, palette.Selection, palette.Divider, palette.InfoSurface, palette.DisabledSurface,
+			palette.DisabledText, palette.Console
+		];
 	}
 }

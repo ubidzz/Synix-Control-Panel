@@ -97,7 +97,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			else if (UseAccentStyle)
 			{
 				fillColor = _pressed
-					? Color.FromArgb(24, 176, 165)
+					? SettingsPalette.AccentHover
 					: _hovered
 						? SettingsPalette.AccentHover
 						: SettingsPalette.Accent;
@@ -111,7 +111,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 						: SettingsPalette.Input;
 			}
 
-			using GraphicsPath path = RoundedGeometry.Create(bounds, 8);
+			using GraphicsPath path = RoundedGeometry.CreateThemed(bounds, 8);
 			using SolidBrush fillBrush = new(fillColor);
 			Color borderColor = UseAccentStyle && Enabled
 				? fillColor

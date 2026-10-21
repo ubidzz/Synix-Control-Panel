@@ -7671,5 +7671,26 @@ Se Synix non viene riaperto, eseguire il programma Synix esistente o scaricare l
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Controllo dei backup…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Non è stata ancora registrata alcuna attività per questo server.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Nessuna attività corrisponde ai filtri.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Aspetto</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Scegli un tema, un colore di accento e uno stile dei controlli. Le modifiche vengono applicate subito e salvate automaticamente.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Tema colori</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Colore di accento</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Stile dei controlli</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Anteprima</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Reimposta tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafite</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Oceano</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Foresta</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Viola</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Sabbia</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Predefinito del tema</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Verde acqua</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Blu</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rosa</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Ambra</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Verde</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Arrotondato</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Squadrato</value></data>
 </root>
 

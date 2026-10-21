@@ -155,6 +155,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				ShowServerWindowChanged;
 			generalSettingsPage.DarkModeChanged +=
 				DarkModeChanged;
+			generalSettingsPage.AppearanceChanged += AppearanceChanged;
 			generalSettingsPage.SteamCmdDownloadModeChanged +=
 				SteamCmdDownloadModeChanged;
 			generalSettingsPage.SteamCmdDownloadLimitChanged +=
@@ -215,6 +216,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					Properties.Settings.Default.ShowServerWindow;
 				generalSettingsPage.DarkMode =
 					Properties.Settings.Default.DarkMode;
+				generalSettingsPage.ThemeName = Properties.Settings.Default.ThemeName;
+				generalSettingsPage.ThemeAccent = Properties.Settings.Default.ThemeAccent;
+				generalSettingsPage.ThemeStyle = Properties.Settings.Default.ThemeStyle;
 				generalSettingsPage.SteamCmdDownloadLimitMbps =
 					Properties.Settings.Default.SteamCmdDownloadLimitMbps;
 				generalSettingsPage.LimitSteamCmdDownloadSpeed =
@@ -821,6 +825,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			Properties.Settings.Default.DarkMode = generalSettingsPage.DarkMode;
 			Properties.Settings.Default.Save();
 			ThemeManager.SetDarkMode(generalSettingsPage.DarkMode);
+		}
+
+		private void AppearanceChanged(object? sender, EventArgs eventArgs)
+		{
+			if (_loadingSettings) return;
+			Properties.Settings.Default.ThemeName = generalSettingsPage.ThemeName;
+			Properties.Settings.Default.ThemeAccent = generalSettingsPage.ThemeAccent;
+			Properties.Settings.Default.ThemeStyle = generalSettingsPage.ThemeStyle;
+			Properties.Settings.Default.Save();
+			ThemeManager.SetAppearance(generalSettingsPage.DarkMode, generalSettingsPage.ThemeName,
+				generalSettingsPage.ThemeAccent, generalSettingsPage.ThemeStyle);
 		}
 
 		private void SteamCmdDownloadModeChanged(

@@ -178,6 +178,10 @@ See the [generated game list for this branch](docs/Game-List.md), including Stea
 - The dashboard's **Backups** column shows the age of the latest completed backup and highlights failed attempts, missing backups, and backups older than seven days. Hover over the cell for dates and details. Files without a completion receipt are shown as unverified.
 - Backup status checks local files and receipts in the current and default backup folders in the background. It does not run a new integrity check, create backups, or change retention settings. Use the existing backup manager to verify an archive or restore it.
 
+### Appearance
+
+Open **Synix Settings → General** to switch between light and dark mode. Choose a **Synix, Graphite, Ocean, Forest, Violet, or Sand** theme, keep its default accent or select **Teal, Blue, Violet, Rose, Amber, or Green**, and choose **Rounded** or **Square** controls. Changes apply immediately to open windows and are remembered when Synix restarts. **Reset theme** restores the original Synix colors and rounded controls without changing your light/dark preference. Appearance settings only affect Synix, not game configuration or server files.
+
 ### Interface languages
 
 Synix includes 27 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, and Thai.

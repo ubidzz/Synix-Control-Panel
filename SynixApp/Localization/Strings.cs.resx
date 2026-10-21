@@ -7672,5 +7672,26 @@ Pokud se Synix neotevře, spusťte existující program Synix nebo stáhněte ne
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Kontrola záloh…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Pro tento server zatím nebyla zaznamenána žádná aktivita.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Filtrům neodpovídá žádná aktivita.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Vzhled</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Vyberte motiv, barvu zvýraznění a styl ovládacích prvků. Změny se ihned použijí a automaticky uloží.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Barevný motiv</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Barva zvýraznění</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Styl ovládacích prvků</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Náhled</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Obnovit motiv</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Oceán</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Les</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Fialová</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Písek</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Výchozí barva motivu</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Tyrkysová</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Modrá</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Růžová</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Jantarová</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Zelená</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Zaoblený</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Hranatý</value></data>
 </root>
 

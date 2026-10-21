@@ -132,6 +132,30 @@ namespace Synix_Control_Panel.Properties {
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("synix")]
+        public string ThemeName {
+            get { return ((string)(this["ThemeName"])); }
+            set { this["ThemeName"] = value; }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("default")]
+        public string ThemeAccent {
+            get { return ((string)(this["ThemeAccent"])); }
+            set { this["ThemeAccent"] = value; }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("rounded")]
+        public string ThemeStyle {
+            get { return ((string)(this["ThemeStyle"])); }
+            set { this["ThemeStyle"] = value; }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool DisablePremadeConfigurationsForDevelopment {
             get {

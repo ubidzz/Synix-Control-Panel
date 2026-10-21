@@ -7671,5 +7671,26 @@ Synixが再開されない場合は、既存のSynixプログラムを実行し�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>バックアップを確認中…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>このサーバーのアクティビティはまだ記録されていません。</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>フィルターに一致するアクティビティはありません。</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>外観</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>テーマ、アクセントカラー、コントロールのスタイルを選択します。変更はすぐに反映され、自動的に保存されます。</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>配色テーマ</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>アクセントカラー</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>コントロールのスタイル</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>プレビュー</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>テーマをリセット</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>グラファイト</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>オーシャン</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>フォレスト</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>バイオレット</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>サンド</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>テーマの既定値</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>ティール</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>ブルー</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>ローズ</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>アンバー</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>グリーン</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>角丸</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>四角</value></data>
 </root>
 

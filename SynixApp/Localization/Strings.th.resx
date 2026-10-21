@@ -6748,4 +6748,25 @@ ARK จะดาวน์โหลดโมดนี้จาก {2} เมื�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>กำลังตรวจสอบข้อมูลสำรอง…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>ยังไม่มีการบันทึกกิจกรรมสำหรับเซิร์ฟเวอร์นี้</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>ไม่มีกิจกรรมที่ตรงกับตัวกรองของคุณ</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>รูปลักษณ์</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>เลือกธีม สีเน้น และรูปแบบตัวควบคุม การเปลี่ยนแปลงจะมีผลทันทีและบันทึกโดยอัตโนมัติ</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>ธีมสี</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>สีเน้น</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>รูปแบบตัวควบคุม</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>ตัวอย่าง</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>รีเซ็ตธีม</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>กราไฟต์</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>มหาสมุทร</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>ป่า</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>ม่วง</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>ทราย</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>ค่าเริ่มต้นของธีม</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>เขียวอมฟ้า</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>น้ำเงิน</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>ชมพู</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>อำพัน</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>เขียว</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>มุมโค้ง</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>มุมเหลี่ยม</value></data>
 </root>

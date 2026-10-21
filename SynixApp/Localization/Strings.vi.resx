@@ -7672,5 +7672,26 @@ Nếu Synix không mở lại, chạy chương trình Synix hiện có hoặc t�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Đang kiểm tra bản sao lưu…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Chưa có hoạt động nào được ghi lại cho máy chủ này.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Không có hoạt động nào khớp với bộ lọc của bạn.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Giao diện</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Chọn chủ đề, màu nhấn và kiểu điều khiển. Thay đổi được áp dụng ngay và lưu tự động.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Chủ đề màu</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Màu nhấn</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Kiểu điều khiển</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Xem trước</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Đặt lại chủ đề</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Than chì</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Đại dương</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Rừng</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Tím</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Cát</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Mặc định của chủ đề</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Xanh ngọc</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Xanh dương</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Hồng</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Hổ phách</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Xanh lá</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Bo tròn</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Vuông</value></data>
 </root>
 

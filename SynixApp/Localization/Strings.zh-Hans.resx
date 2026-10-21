@@ -7671,5 +7671,26 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>正在检查备份…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>尚未记录此服务器的活动。</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>没有符合筛选条件的活动。</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>外观</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>选择主题、强调色和控件样式。更改会立即生效并自动保存。</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>配色主题</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>强调色</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>控件样式</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>预览</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>重置主题</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>石墨</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>海洋</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>森林</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>紫罗兰</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>沙色</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>主题默认</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>青绿色</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>蓝色</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>玫瑰色</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>琥珀色</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>绿色</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>圆角</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
 </root>
 
