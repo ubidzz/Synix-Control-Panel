@@ -18,6 +18,9 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 {
 	internal static class RoundedGeometry
 	{
+		public static GraphicsPath CreateThemed(Rectangle bounds, int radius) =>
+			Create(bounds, ThemeManager.CornerRadius(radius));
+
 		public static GraphicsPath Create(Rectangle bounds, int radius)
 		{
 			GraphicsPath path = new();

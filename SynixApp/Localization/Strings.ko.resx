@@ -7671,5 +7671,26 @@ Synix이 다시 열리지 않으면 기존의 Synix 프로그램을 실행하거
   <data name="BackupHealth.Checking" xml:space="preserve"><value>백업 확인 중…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>이 서버에 기록된 활동이 아직 없습니다.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>필터와 일치하는 활동이 없습니다.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>모양</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>테마, 강조 색상 및 컨트롤 스타일을 선택하세요. 변경 사항은 즉시 적용되고 자동으로 저장됩니다.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>색상 테마</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>강조 색상</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>컨트롤 스타일</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>미리 보기</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>테마 초기화</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>흑연</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>바다</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>숲</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>보라</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>모래</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>테마 기본값</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>청록</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>파랑</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>장미</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>호박색</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>초록</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>둥근 모서리</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>각진 모서리</value></data>
 </root>
 

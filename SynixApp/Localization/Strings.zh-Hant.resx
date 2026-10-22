@@ -7671,5 +7671,26 @@ ARK會在你啟動伺服器時從{2}下載這個模組。 Synix 不會複製或�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>正在檢查備份…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>尚未記錄此伺服器的活動。</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>沒有符合篩選條件的活動。</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>外觀</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>選擇主題、強調色和控制項樣式。變更會立即生效並自動儲存。</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>配色主題</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>強調色</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>控制項樣式</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>預覽</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>重設主題</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>石墨</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>海洋</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>森林</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>紫羅蘭</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>沙色</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>主題預設</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>青綠色</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>藍色</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>玫瑰色</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>琥珀色</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>綠色</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>圓角</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
 </root>
 

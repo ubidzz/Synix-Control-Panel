@@ -7671,5 +7671,26 @@ Eğer Synix yeniden açılmazsa, mevcut Synix programınızı çalıştırın ve
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Yedekler kontrol ediliyor…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Bu sunucu için henüz etkinlik kaydedilmedi.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Filtrelerinizle eşleşen etkinlik yok.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Görünüm</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Bir tema, vurgu rengi ve denetim stili seçin. Değişiklikler hemen uygulanır ve otomatik kaydedilir.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Renk teması</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Vurgu rengi</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Denetim stili</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Önizleme</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Temayı sıfırla</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Okyanus</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Orman</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Menekşe</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Kum</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Tema varsayılanı</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turkuaz</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Mavi</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Pembe</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Kehribar</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Yeşil</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Yuvarlak</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Köşeli</value></data>
 </root>
 

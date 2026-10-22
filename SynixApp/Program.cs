@@ -136,7 +136,9 @@ namespace Synix_Control_Panel.SynixApp
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			ThemeManager.Initialize(Properties.Settings.Default.DarkMode);
+			ThemeManager.Initialize(Properties.Settings.Default.DarkMode,
+				Properties.Settings.Default.ThemeName, Properties.Settings.Default.ThemeAccent,
+				Properties.Settings.Default.ThemeStyle);
 			Application.Idle += (_, _) =>
 			{
 				ThemeManager.ApplyToOpenForms();

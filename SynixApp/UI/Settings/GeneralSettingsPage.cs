@@ -24,6 +24,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		public GeneralSettingsPage()
 		{
 			InitializeComponent();
+			InitializeAppearanceCard();
 			InitializeResponsiveCards();
 			PopulateLocalizedOptions();
 			cmbSteamCmdDownloadMode.SelectedIndexChanged +=
@@ -167,6 +168,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			_updatingLocalizedOptions = true;
 			try
 			{
+				PopulateAppearanceChoices();
 				cmbSteamCmdDownloadMode.Items.Clear();
 				cmbSteamCmdDownloadMode.Items.AddRange(
 				[

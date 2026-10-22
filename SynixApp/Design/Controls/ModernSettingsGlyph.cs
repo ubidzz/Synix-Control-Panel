@@ -41,7 +41,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 		{
 			eventArgs.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 			Rectangle bounds = new(0, 0, Width - 1, Height - 1);
-			using GraphicsPath path = RoundedGeometry.Create(bounds, 10);
+			using GraphicsPath path = RoundedGeometry.CreateThemed(bounds, 10);
 			using SolidBrush fillBrush = new(SettingsPalette.AccentSoft);
 			using Pen borderPen = new(Color.FromArgb(45, SettingsPalette.Accent), 1F);
 

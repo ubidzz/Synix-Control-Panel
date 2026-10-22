@@ -13,14 +13,15 @@ public partial class GeneralSettingsPage
 		_responsiveCards = new TableLayoutPanel
 		{
 			Name = "generalSettingsCards", AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			Dock = DockStyle.Top, ColumnCount = 1, RowCount = 4, Margin = Padding.Empty
+			Dock = DockStyle.Top, ColumnCount = 1, RowCount = 5, Margin = Padding.Empty
 		};
 		_responsiveCards.ColumnStyles.Add(new(SizeType.Percent, 100));
-		ModernSettingsCard[] cards = [settingsCard, settingsCardDarkMode, settingsCardSteamDownloads, settingsCardLanguage];
+		ModernSettingsCard[] cards = [settingsCardDarkMode, _appearanceCard, settingsCard, settingsCardSteamDownloads, settingsCardLanguage];
 		for (int index = 0; index < cards.Length; index++)
 		{
 			_responsiveCards.RowStyles.Add(new(SizeType.AutoSize));
 			cards[index].Dock = DockStyle.Top;
+			cards[index].TabIndex = index;
 			cards[index].Margin = new Padding(0, 0, 0, 14);
 			_responsiveCards.Controls.Add(cards[index], 0, index);
 		}

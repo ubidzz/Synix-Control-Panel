@@ -7672,5 +7672,26 @@ Om Synix inte öppnas igen kör du det befintliga Synix-programmet eller hämtar
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Kontrollerar säkerhetskopior…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Ingen aktivitet har registrerats för den här servern ännu.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Ingen aktivitet matchar dina filter.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Utseende</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Välj tema, accentfärg och kontrollstil. Ändringarna tillämpas direkt och sparas automatiskt.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Färgtema</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Accentfärg</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Kontrollstil</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Förhandsvisning</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Återställ tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Hav</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Skog</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violett</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Sand</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Temats standard</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turkos</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Blå</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rosa</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Bärnsten</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Grön</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Rundad</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Kantig</value></data>
 </root>
 

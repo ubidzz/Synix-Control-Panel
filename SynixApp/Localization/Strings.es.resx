@@ -14180,4 +14180,25 @@ Antes de un cambio de framework o juego, preserva los datos del mundo, la config
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Comprobando copias…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Todavía no se ha registrado actividad para este servidor.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Ninguna actividad coincide con los filtros.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Apariencia</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Elige un tema, un color de acento y un estilo de controles. Los cambios se aplican al instante y se guardan automáticamente.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Tema de colores</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Color de acento</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Estilo de controles</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Vista previa</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Restablecer tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafito</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Océano</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Bosque</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violeta</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Arena</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Predeterminado del tema</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turquesa</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Azul</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rosa</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Ámbar</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Verde</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Redondeado</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Cuadrado</value></data>
 </root>

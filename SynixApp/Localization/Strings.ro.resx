@@ -6748,4 +6748,25 @@ Dacă Synix nu se redeschide, executaţi programul existent Synix sau descărca�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Se verifică copiile…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Nu a fost înregistrată încă nicio activitate pentru acest server.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Nicio activitate nu corespunde filtrelor.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Aspect</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Alegeți o temă, o culoare de accent și un stil al comenzilor. Modificările se aplică imediat și se salvează automat.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Temă de culori</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Culoare de accent</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Stilul comenzilor</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Previzualizare</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Resetați tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Ocean</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Pădure</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violet</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Nisip</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Implicită pentru temă</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turcoaz</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Albastru</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Roz</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Chihlimbar</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Verde</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Rotunjit</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Pătrat</value></data>
 </root>
