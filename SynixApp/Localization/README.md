@@ -4,7 +4,7 @@ Synix ships compiled, offline catalogs for English, French, German, Spanish,
 Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian
 Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian,
 Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian,
-Romanian, Hindi, Thai, Bulgarian, and Croatian (29 language
+Romanian, Hindi, Thai, Bulgarian, Croatian, and Catalan (30 language
 options). Every selectable language must contain every entry in the neutral
 English catalog; partial preview catalogs
 are no longer used for these languages.
@@ -13,6 +13,40 @@ The language picker displays each language's own name. Regional aliases use
 the corresponding available catalog; generic Norwegian (`no` / `no-NO`)
 selects Bokmål. Nynorsk (`nn` / `nn-NO`) is a different language and is not
 advertised as supported.
+
+## Comprehensive language target
+
+The target is every language exposed by Windows/.NET, with separate writing
+systems where needed. This is a roadmap, not a claim that every target is
+already translated. [The coverage inventory](../../docs/Language-Coverage.md)
+lists the complete current catalogs and every outstanding language/script
+target. Country variants may share a language catalog; they are not counted
+as independently translated languages.
+
+The app only offers catalogs with every English source key present and
+nonblank. Preview catalogs, stale keys and English-only placeholder copies
+are excluded. Unknown writing systems do not silently borrow a different
+script: for example, Latin Hindi is not the default Hindi translation.
+Explicit script catalogs keep their script code, not a guessed country code.
+
+Run `dotnet run --project Tools/LanguageCoverage -- --check` from the
+repository root to check all source catalogs, including files that the app
+would exclude. Use `--markdown` to print an updated inventory. This tool is
+offline, read-only and not shipped in the installed application. The culture
+inventory depends on the Windows/.NET globalization data on the machine;
+there is no hard-coded global language count.
+
+Add translations in complete-language batches. Before exposing a new catalog:
+
+1. Translate every source entry, including help, warnings, themes and
+   accessibility labels, preserving the technical content described below.
+2. Check placeholders and technical syntax and review the meaning of critical
+   security, recovery, update and uninstall instructions.
+3. Review fonts, long labels, navigation, dialogs and live language switching.
+   Right-to-left languages additionally need bidirectional controls and
+   mirroring without changing passwords, paths, commands or server data.
+4. Regenerate the coverage inventory. Catalog completeness is a structural
+   safeguard, not proof of translation accuracy or finished RTL layout.
 
 Coverage includes the dashboard, setup and review, settings, game workspaces,
 mod and plugin management, configuration editing, validation and error
@@ -76,3 +110,12 @@ and sample reviews do not replace native-speaker review of terminology and
 meaning, particularly for security, networking, licensing, and recovery
 instructions. Corrections should update the relevant catalog entry without
 altering technical syntax or the English source to hide a missing translation.
+
+The Catalan catalog started from an offline, machine-assisted draft using
+[Argos Translate's English–Catalan 1.9 package](https://github.com/argosopentech/argospm-index),
+based on OPUS-MT by Jörg Tiedemann and Santhosh Thottingal (the package identifies
+its source model as CC BY 4.0). Headings, technical tokens, key actions and
+safety-sensitive passages were corrected separately. No translation model,
+Python runtime, translation cache or online service is shipped with Synix.
+This does not replace native-speaker review or establish an authoritative
+legal translation; the original English licence remains unchanged.

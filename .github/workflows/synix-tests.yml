@@ -28,6 +28,9 @@ jobs:
         shell: pwsh
         run: ./Tools/Update-CatalogDocumentation.ps1 -Check
 
+      - name: Check complete language catalogs
+        run: dotnet run --project Tools/LanguageCoverage -- --check
+
       - name: Build tests
         run: dotnet build "SynixApp/Tests/Synix.Tests.csproj" --configuration Release --no-restore
 

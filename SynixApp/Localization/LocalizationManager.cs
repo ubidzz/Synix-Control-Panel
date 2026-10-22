@@ -713,54 +713,12 @@ internal static class LocalizationManager
 
 	private static CultureInfo ResolveCulture(string? languageCode)
 	{
-		SupportedLanguage? language = Languages.FirstOrDefault(candidate =>
-			string.Equals(
-				candidate.Code,
-				languageCode,
-				StringComparison.OrdinalIgnoreCase));
-		if (language == null && !string.IsNullOrWhiteSpace(languageCode))
-		{
-			try
-			{
-				CultureInfo requestedCulture = CultureInfo.GetCultureInfo(languageCode);
-				// Follow script-aware parents before falling back to the language.
-				// zh-TW/zh-HK use zh-Hant; zh-CN/zh-SG use zh-Hans. Matching
-				// only "zh" would silently choose the wrong written Chinese form.
-				for (CultureInfo parent = requestedCulture.Parent;
-					language == null && parent.Name.Length > 0;
-					parent = parent.Parent)
-				{
-					language = Languages.FirstOrDefault(candidate => string.Equals(
-						candidate.Code, parent.Name, StringComparison.OrdinalIgnoreCase));
-				}
-
-				if (language == null && requestedCulture.TwoLetterISOLanguageName == "zh")
-				{
-					string script = requestedCulture.Name.Equals("zh-CHT", StringComparison.OrdinalIgnoreCase)
-						? "zh-Hant" : "zh-Hans";
-					language = Languages.FirstOrDefault(candidate => candidate.Code == script);
-				}
-
-				// "no" is generic Norwegian. Use the available Bokmål catalog;
-				// do not treat the separate Nynorsk language ("nn") as Bokmål.
-				if (language == null && requestedCulture.TwoLetterISOLanguageName == "no")
-					language = Languages.FirstOrDefault(candidate => candidate.Code == "nb-NO");
-
-				language ??= Languages.FirstOrDefault(candidate =>
-					string.Equals(
-						CultureInfo.GetCultureInfo(candidate.Code)
-							.TwoLetterISOLanguageName,
-						requestedCulture.TwoLetterISOLanguageName,
-						StringComparison.OrdinalIgnoreCase));
-			}
-			catch (CultureNotFoundException suppressedException)
-			{
-				Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
-			}
-		}
-
-		language ??= Languages[0];
-
+		string? resourceName = LanguageCatalogPolicy.FindBestCatalog(languageCode,
+			Languages.Select(language => language.ResourceCultureName.Length > 0
+				? language.ResourceCultureName : language.Code));
+		SupportedLanguage language = Languages.FirstOrDefault(candidate => string.Equals(
+			candidate.ResourceCultureName.Length > 0 ? candidate.ResourceCultureName : candidate.Code,
+			resourceName, StringComparison.OrdinalIgnoreCase)) ?? Languages[0];
 		return CultureInfo.GetCultureInfo(language.Code);
 	}
 
@@ -844,10 +802,20 @@ internal static class LocalizationManager
 			return;
 		}
 
-		bool isChineseScript = resourceCulture.Name is "zh-Hans" or "zh-Hant";
-		CultureInfo selectionCulture = resourceCulture.IsNeutralCulture && !isChineseScript
-			? CultureInfo.CreateSpecificCulture(resourceCulture.Name)
-			: resourceCulture;
+		if (resourceCulture.Name.Length == 0)
+			return;
+
+		ResourceSet? catalog = ResourceManager.GetResourceSet(
+			resourceCulture, createIfNotExists: true, tryParents: false);
+		ResourceSet english = ResourceManager.GetResourceSet(
+			CultureInfo.InvariantCulture, createIfNotExists: true, tryParents: false)!;
+		LanguageCatalogPolicy.CatalogCoverage coverage = LanguageCatalogPolicy.CheckCatalog(
+			ReadCatalog(english), catalog == null ? null : ReadCatalog(catalog),
+			isEnglish: resourceCulture.TwoLetterISOLanguageName == "en");
+		if (coverage.State != LanguageCatalogPolicy.CatalogState.Complete)
+			return;
+
+		CultureInfo selectionCulture = LanguageCatalogPolicy.GetSelectionCulture(resourceCulture);
 		if (languages.Any(language => string.Equals(
 			language.Code,
 			selectionCulture.Name,
@@ -891,23 +859,24 @@ internal static class LocalizationManager
 			"th" or "th-TH" => "ไทย",
 			"bg" or "bg-BG" => "Български",
 			"hr" or "hr-HR" => "Hrvatski",
+			"ca" or "ca-ES" => "Català",
 			"de" or "de-DE" => "Deutsch",
 			"es" or "es-ES" => "Español",
 			"fr" or "fr-FR" => "Français",
 			_ => selectionCulture.TextInfo.ToTitleCase(
 				selectionCulture.NativeName)
 		};
-		ResourceSet? catalog = ResourceManager.GetResourceSet(
-			resourceCulture, createIfNotExists: true, tryParents: false);
-		string? previewNotice = catalog?.GetString("_Language.IsPreview") == "true"
-			? catalog.GetString("Language.PreviewNotice") : null;
 		languages.Add(new SupportedLanguage(
 			selectionCulture.Name,
 			resourceKey,
 			nativeName,
-			resourceCulture.Name,
-			previewNotice));
+			resourceCulture.Name));
 	}
+
+	private static Dictionary<string, string> ReadCatalog(ResourceSet catalog) =>
+		catalog.Cast<DictionaryEntry>()
+			.Where(entry => entry.Key is string && entry.Value is string)
+			.ToDictionary(entry => (string)entry.Key, entry => (string)entry.Value!, StringComparer.Ordinal);
 
 	internal sealed record SupportedLanguage(
 		string Code,

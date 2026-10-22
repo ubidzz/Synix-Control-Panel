@@ -26,15 +26,43 @@ public sealed class AdditionalLanguageTests
 		{ "nb-NO", "Norsk bokmål" }, { "el-GR", "Ελληνικά" },
 		{ "hu-HU", "Magyar" }, { "ro-RO", "Română" },
 		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" },
-		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }
+		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }, { "ca-ES", "Català" }
 	};
 
 	private static ResourceManager CreateManager() => new(
 		"Synix_Control_Panel.Localization.Strings", typeof(LocalizationManager).Assembly);
 
+	[Fact]
+	public void CatalanCatalogKeepsLiteralCommandsPathsAndIntervals()
+	{
+		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo("ca"), true, false)!;
+		string guide = catalog.GetString("GameDefinitions.Builder.Guide")!;
+		foreach (string literal in new[]
+		{
+			"90 mod folder", "90 mod cstrike", @"Binaries\Win64\Server.exe",
+			@"Saved\Logs\*.log", @"profiles\{Identity}\logs\**\*.log",
+			"[LAUNCH_ARGUMENT_TAGS]", "[RCON_ARGUMENT_TAGS]",
+			"+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\""
+		}) Assert.Contains(literal, guide, StringComparison.Ordinal);
+		Assert.Equal(@"C:\Synix\Games\Example Server", catalog.GetString("Text.09DC887D818AD07E931B"));
+		Assert.Equal("Logs\\*.log\nSaved\\Logs\\**\\*.log", catalog.GetString("Text.070839931CDDA34F168B"));
+		Assert.Contains("1–100", catalog.GetString("Text.1F8DCA1F57379032F8AD"));
+		Assert.Contains("'stop'", catalog.GetString("Minecraft.Activity.StopThroughConsole"));
+	}
+
+	[Fact]
+	public void CatalanCatalogDoesNotContainTranslationToolArtifacts()
+	{
+		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo("ca"), true, false)!;
+		Regex artifact = new(@"@\s*(?:item|info|label|title|option|action|context)\s*:|Constellation name|Spelling dictionary|ZXQ|QXZ|ZAPI");
+		foreach (DictionaryEntry entry in catalog)
+			Assert.False(artifact.IsMatch((string)entry.Value!), $"Translation artifact in {entry.Key}");
+	}
+
 	[Theory]
 	[InlineData("bg", "Напред: Преглед", "Запазване на настройките на сървъра", "Външен вид")]
 	[InlineData("hr", "Dalje: Pregled", "Spremi postavke poslužitelja", "Izgled")]
+	[InlineData("ca", "Següent: Revisió", "Desa la configuració del servidor", "Aparença")]
 	public void AddedLanguagesIncludeReviewAndAppearanceWithoutChangingPreservedPaths(
 		string culture, string review, string save, string appearance)
 	{
@@ -58,6 +86,7 @@ public sealed class AdditionalLanguageTests
 	[Theory]
 	[InlineData("bg")]
 	[InlineData("hr")]
+	[InlineData("ca")]
 	public void AddedLanguagesKeepLiteralWindowsPathsAndConfigurationExamples(string culture)
 	{
 		ResourceManager manager = CreateManager();
@@ -89,6 +118,7 @@ public sealed class AdditionalLanguageTests
 	[InlineData("th")]
 	[InlineData("bg")]
 	[InlineData("hr")]
+	[InlineData("ca")]
 	public void AdditionalLanguagesCoverTheEntireNeutralCatalog(string resourceCulture)
 	{
 		ResourceManager manager = CreateManager();
@@ -115,6 +145,7 @@ public sealed class AdditionalLanguageTests
 	[InlineData("th")]
 	[InlineData("bg")]
 	[InlineData("hr")]
+	[InlineData("ca")]
 	public void NewCatalogsPreserveTheDownloadSpeedUnit(string resourceCulture)
 	{
 		ResourceSet catalog = CreateManager().GetResourceSet(
@@ -156,10 +187,10 @@ public sealed class AdditionalLanguageTests
 		{
 			string? value = catalog.GetString(key);
 			Assert.False(string.IsNullOrWhiteSpace(value), $"{code} is missing {key}");
-			// "Backups" is normal Portuguese and "General" is normal Romanian;
+			// "Backups" is normal Portuguese; "General" is Romanian and Catalan;
 			// valid shared words must not be changed just to differ from English.
 			if (key != "MinecraftWorkspace.Backups" &&
-				!(code == "ro-RO" && key == "SettingsPage.General.Heading"))
+				!(code is "ro-RO" or "ca-ES" && key == "SettingsPage.General.Heading"))
 				Assert.NotEqual(CreateManager().GetString(key, CultureInfo.InvariantCulture), value);
 		}
 	}
@@ -220,6 +251,9 @@ public sealed class AdditionalLanguageTests
 	[InlineData("bg-BG", "bg-BG")]
 	[InlineData("hr", "hr-HR")]
 	[InlineData("hr-BA", "hr-HR")]
+	[InlineData("ca", "ca-ES")]
+	[InlineData("ca-ES", "ca-ES")]
+	[InlineData("ca-AD", "ca-ES")]
 	[InlineData("fr-CA", "fr-FR")]
 	[InlineData("", "en-US")]
 	[InlineData("unsupported-language", "en-US")]
@@ -329,6 +363,8 @@ public sealed class AdditionalLanguageTests
 
 				if (Environment.GetEnvironmentVariable("SYNIX_RENDER_LANGUAGES") == "1")
 				{
+					page.ScrollControlIntoView(picker);
+					Application.DoEvents();
 					using Bitmap image = new(host.Width, host.Height);
 					host.DrawToBitmap(image, new Rectangle(Point.Empty, image.Size));
 					image.Save(Path.Combine(AppContext.BaseDirectory, $"language-{code}.png"));
