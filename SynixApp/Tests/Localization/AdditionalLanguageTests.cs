@@ -26,16 +26,20 @@ public sealed class AdditionalLanguageTests
 		{ "nb-NO", "Norsk bokmål" }, { "el-GR", "Ελληνικά" },
 		{ "hu-HU", "Magyar" }, { "ro-RO", "Română" },
 		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" },
-		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }, { "ca-ES", "Català" }
+		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }, { "ca-ES", "Català" },
+		{ "sk-SK", "Slovenčina" }, { "sl-SI", "Slovenščina" }
 	};
 
 	private static ResourceManager CreateManager() => new(
 		"Synix_Control_Panel.Localization.Strings", typeof(LocalizationManager).Assembly);
 
-	[Fact]
-	public void CatalanCatalogKeepsLiteralCommandsPathsAndIntervals()
+	[Theory]
+	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	public void AddedCatalogsKeepLiteralCommandsPathsAndIntervals(string culture)
 	{
-		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo("ca"), true, false)!;
+		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
 		string guide = catalog.GetString("GameDefinitions.Builder.Guide")!;
 		foreach (string literal in new[]
 		{
@@ -50,19 +54,44 @@ public sealed class AdditionalLanguageTests
 		Assert.Contains("'stop'", catalog.GetString("Minecraft.Activity.StopThroughConsole"));
 	}
 
-	[Fact]
-	public void CatalanCatalogDoesNotContainTranslationToolArtifacts()
+	[Theory]
+	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	public void AddedCatalogsDoNotContainTranslationToolArtifacts(string culture)
 	{
-		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo("ca"), true, false)!;
+		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
 		Regex artifact = new(@"@\s*(?:item|info|label|title|option|action|context)\s*:|Constellation name|Spelling dictionary|ZXQ|QXZ|ZAPI");
 		foreach (DictionaryEntry entry in catalog)
 			Assert.False(artifact.IsMatch((string)entry.Value!), $"Translation artifact in {entry.Key}");
 	}
 
 	[Theory]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	public void SlovakAndSlovenianPreserveEveryFormatAndGamePlaceholder(string culture)
+	{
+		ResourceManager manager = CreateManager();
+		ResourceSet english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
+		ResourceSet catalog = manager.GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		Regex placeholder = new(@"\{\{[^{}]*\}\}|\{[^{}\r\n]+\}");
+		foreach (DictionaryEntry entry in english)
+		{
+			string[] expected = placeholder.Matches((string)entry.Value!)
+				.Select(match => match.Value).Order(StringComparer.Ordinal).ToArray();
+			string[] actual = placeholder.Matches(catalog.GetString((string)entry.Key)!)
+				.Select(match => match.Value).Order(StringComparer.Ordinal).ToArray();
+			Assert.True(expected.SequenceEqual(actual),
+				$"{culture}: a format argument or game placeholder changed in {entry.Key}");
+		}
+	}
+
+	[Theory]
 	[InlineData("bg", "Напред: Преглед", "Запазване на настройките на сървъра", "Външен вид")]
 	[InlineData("hr", "Dalje: Pregled", "Spremi postavke poslužitelja", "Izgled")]
 	[InlineData("ca", "Següent: Revisió", "Desa la configuració del servidor", "Aparença")]
+	[InlineData("sk", "Ďalej: Kontrola", "Uložiť nastavenia servera", "Vzhľad")]
+	[InlineData("sl", "Naprej: Pregled", "Shrani nastavitve strežnika", "Videz")]
 	public void AddedLanguagesIncludeReviewAndAppearanceWithoutChangingPreservedPaths(
 		string culture, string review, string save, string appearance)
 	{
@@ -87,6 +116,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("bg")]
 	[InlineData("hr")]
 	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
 	public void AddedLanguagesKeepLiteralWindowsPathsAndConfigurationExamples(string culture)
 	{
 		ResourceManager manager = CreateManager();
@@ -119,6 +150,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("bg")]
 	[InlineData("hr")]
 	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
 	public void AdditionalLanguagesCoverTheEntireNeutralCatalog(string resourceCulture)
 	{
 		ResourceManager manager = CreateManager();
@@ -146,6 +179,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("bg")]
 	[InlineData("hr")]
 	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
 	public void NewCatalogsPreserveTheDownloadSpeedUnit(string resourceCulture)
 	{
 		ResourceSet catalog = CreateManager().GetResourceSet(
@@ -254,6 +289,10 @@ public sealed class AdditionalLanguageTests
 	[InlineData("ca", "ca-ES")]
 	[InlineData("ca-ES", "ca-ES")]
 	[InlineData("ca-AD", "ca-ES")]
+	[InlineData("sk", "sk-SK")]
+	[InlineData("sk-SK", "sk-SK")]
+	[InlineData("sl", "sl-SI")]
+	[InlineData("SL-si", "sl-SI")]
 	[InlineData("fr-CA", "fr-FR")]
 	[InlineData("", "en-US")]
 	[InlineData("unsupported-language", "en-US")]

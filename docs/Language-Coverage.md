@@ -3,7 +3,7 @@
 
 Target: every non-invariant neutral language reported by Windows/.NET, retaining separate writing-system entries. Regional settings resolve to an appropriate catalog where available; they are not automatically separate translations.
 
-This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **30 structurally complete catalogs, including English**, with **4,540 required text entries per catalog**. **252 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
+This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **32 structurally complete catalogs, including English**, with **4,540 required text entries per catalog**. **250 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
 
 Only complete, non-preview catalogs are eligible for the app's language picker. Empty entries, missing or unexpected source keys, and untranslated English-only copies are rejected. Key coverage does not certify translation accuracy: terminology, technical syntax, layout and accessibility still require review. This inventory does not add new translations or claim that right-to-left layout is finished.
 
@@ -36,6 +36,8 @@ Inventory runtime: .NET 10.0.13; Microsoft Windows NT 10.0.26200.0. Available cu
 | pt-BR | Complete | 0 | 0 |
 | ro | Complete | 0 | 0 |
 | ru | Complete | 0 | 0 |
+| sk | Complete | 0 | 0 |
+| sl | Complete | 0 | 0 |
 | sv | Complete | 0 | 0 |
 | th | Complete | 0 | 0 |
 | tr | Complete | 0 | 0 |
@@ -269,8 +271,8 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | shi-Latn | Tachelhit (Latin) | Tachelhit (Latin) | LTR | Translation needed |
 | shi-Tfng | Tachelhit (Tifinagh) | Tachelhit (Tifinagh) | LTR | Translation needed |
 | si | Sinhala | සිංහල | LTR | Translation needed |
-| sk | Slovak | slovenčina | LTR | Translation needed |
-| sl | Slovenian | slovenščina | LTR | Translation needed |
+| sk | Slovak | slovenčina | LTR | Catalog: sk |
+| sl | Slovenian | slovenščina | LTR | Catalog: sl |
 | sma | Southern Sami | Åarjelsaemien gïele | LTR | Translation needed |
 | smj | Lule Sami | julevsámegiella | LTR | Translation needed |
 | smn | Inari Sami | anarâškielâ | LTR | Translation needed |

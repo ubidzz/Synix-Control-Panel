@@ -860,6 +860,8 @@ internal static class LocalizationManager
 			"bg" or "bg-BG" => "Български",
 			"hr" or "hr-HR" => "Hrvatski",
 			"ca" or "ca-ES" => "Català",
+			"sk" or "sk-SK" => "Slovenčina",
+			"sl" or "sl-SI" => "Slovenščina",
 			"de" or "de-DE" => "Deutsch",
 			"es" or "es-ES" => "Español",
 			"fr" or "fr-FR" => "Français",

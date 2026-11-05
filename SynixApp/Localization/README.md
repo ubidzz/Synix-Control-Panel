@@ -4,7 +4,7 @@ Synix ships compiled, offline catalogs for English, French, German, Spanish,
 Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian
 Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian,
 Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian,
-Romanian, Hindi, Thai, Bulgarian, Croatian, and Catalan (30 language
+Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, and Slovenian (32 language
 options). Every selectable language must contain every entry in the neutral
 English catalog; partial preview catalogs
 are no longer used for these languages.
@@ -111,8 +111,9 @@ meaning, particularly for security, networking, licensing, and recovery
 instructions. Corrections should update the relevant catalog entry without
 altering technical syntax or the English source to hide a missing translation.
 
-The Catalan catalog started from an offline, machine-assisted draft using
-[Argos Translate's English–Catalan 1.9 package](https://github.com/argosopentech/argospm-index),
+The Catalan, Slovak, and Slovenian catalogs started from offline,
+machine-assisted drafts using the corresponding English-to-language
+[Argos Translate 1.9 packages](https://github.com/argosopentech/argospm-index),
 based on OPUS-MT by Jörg Tiedemann and Santhosh Thottingal (the package identifies
 its source model as CC BY 4.0). Headings, technical tokens, key actions and
 safety-sensitive passages were corrected separately. No translation model,
