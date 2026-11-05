@@ -2416,9 +2416,10 @@ Modrinth個下載的檔案都經過了雜湊檢查 。 在不執行 JAR 的情�
 
 3. 官方檔案：https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>此伺服器版本需要相容Metamod:Source和SourceMod的構建。 已編譯的.smx外掛放在ageofchivalry/addons/sourcemod/plugins；伴隨的翻譯、遊戲資料和擴充套件保留其資料夾。</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX 控制面板 — 有限的專有源可用許可證
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX 控制面板 — 有限的專有源可用許可證
 
-版本1.0 — 2026年8月2日
+授權條款修訂版 1.1 — 2026年11月5日
+此編號是授權條款修訂版號，不是 Synix 應用程式版本號。
 版權所有 © 2026 傑森 · 特納 版權所有
 U.S. 版權登記申請:待審
 
@@ -2546,7 +2547,24 @@ Synix的名稱、徽標、視覺形象和相關品牌仍然是Jason Turner的財
 
 本授權條款的例外只有在Jason Turner以書面形式提供時才有效。
 
-疑問或許可申請應該透過官方的Synix GitHub 儲存庫或其他官方的Synix聯絡方式提交。</value></data>
+疑問或許可申請應該透過官方的Synix GitHub 儲存庫或其他官方的Synix聯絡方式提交。
+
+12. 官方下載來源
+
+請僅透過以下官方來源取得 Synix：
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+其他網站提供的副本未經 Jason Turner 驗證，可能不安全、遭修改、已過時或搭售不需要的軟體。Jason Turner 不保證這些副本的安全性或真實性。
+
+列出 Synix、連結至 GitHub 或提供下載，不會轉移所有權，也不代表獲得授權、存在關聯、得到背書或具有官方身分。Synix 仍歸 Jason Turner 所有。
+
+託管、鏡像、透過代理伺服器提供、重新封裝下載內容或將其包裝在額外的下載程式中，均須事先取得書面許可。指向官方來源的連結並不授予此類許可。
+
+第 4.2 節不禁止正確標示 Synix 和 Jason Turner、且直接指向這些官方來源的一般連結。此類連結不會使發布連結的網站成為官方來源。
+
+當 WinGet 套件 ubidzz.Synix 直接從 GitHub 官方發行頁面下載未經修改的安裝程式時，它是獲准使用的安裝方式。這並不授權第三方託管或重新封裝軟體。</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>關鍵設定要求:
 
 1. 引導伺服器一次以構建 &apos;Engine.ini&apos;，然後關閉它。

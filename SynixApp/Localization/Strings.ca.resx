@@ -12215,9 +12215,10 @@ Manté opcional RCON o els punts finals d’administració locals a menys que ti
 
 3. Documentació oficial: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Requereix un metamod compatible:Font i SourceMod construir per a aquesta versió del servidor. Compilat els connectors .smx van en ageofchivalry/addons/sourcemod/plugins; acompanyat de traduccions, jocdata i extensions mantinguen les seves carpetes documentades.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL — LLICÈNCIA PROPIETÀRIA LIMITADA AMB CODI FONT DISPONIBLE
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL — LLICÈNCIA PROPIETÀRIA LIMITADA AMB CODI FONT DISPONIBLE
 
-Versió 1.0 — 2 d’agost de 2026
+Revisió de la llicència 1.1 — 5 de novembre de 2026
+Aquesta és la revisió de la llicència, no la versió de l’aplicació Synix.
 Copyright © 2026 Jason Turner. Tots els drets reservats.
 Sol·licitud de registre de drets d’autor als EUA: pendent
 
@@ -12345,7 +12346,24 @@ Aquesta llicència només s’aplica a les parts de Synix que són propietat de 
 
 Les excepcions a aquesta llicència només són vàlides quan Jason Turner les concedeix per escrit.
 
-Les preguntes o sol·licituds de permís s’han de presentar a través del repositori oficial de Synix a GitHub o d’un altre canal de contacte oficial de Synix.</value></data>
+Les preguntes o sol·licituds de permís s’han de presentar a través del repositori oficial de Synix a GitHub o d’un altre canal de contacte oficial de Synix.
+
+12. FONTS OFICIALS DE DESCÀRREGA
+
+Obteniu Synix únicament a través d’aquestes fonts oficials:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Les còpies proporcionades per altres llocs web no estan verificades per Jason Turner i poden ser insegures, modificades, obsoletes o incloure programari no desitjat. Jason Turner no en garanteix la seguretat ni l’autenticitat.
+
+Incloure Synix en un catàleg, enllaçar a GitHub o oferir una descàrrega no transfereix la propietat ni implica autorització, afiliació, suport o condició oficial. Synix continua sent propietat de Jason Turner.
+
+Allotjar, crear rèpliques, servir mitjançant un servidor intermediari, reempaquetar o incorporar les descàrregues en programes intermediaris requereix permís previ per escrit. Un enllaç a una font oficial no atorga aquest permís.
+
+L’apartat 4.2 no prohibeix els enllaços directes habituals a aquestes fonts oficials que atribueixin correctament Synix a Jason Turner. Aquests enllaços no converteixen el lloc que els publica en una font oficial.
+
+El paquet WinGet ubidzz.Synix és un mètode d’instal·lació aprovat quan descarrega l’instal·lador sense modificar directament de les versions oficials publicades a GitHub. Això no autoritza l’allotjament ni el reempaquetatge per tercers.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CAL UNA CONFIGURACIÓ IMPRESCINDIBLE:
 
 1. Engegueu el servidor un cop per construir 'Engine.ini', després tanqueu- lo.

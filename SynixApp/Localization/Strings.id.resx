@@ -2396,9 +2396,10 @@ Simpan opsi RCON atau titik akhir administrasi lokal kecuali Anda memiliki penga
 
 3. Dokumen resmi: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Memerlukan kompatibel Metamod:Source dan SourceMod build untuk versi server ini. Plugin.smx yang dikompilasi masuk ke ageofchivalry/addons/sourcemod/plugins; terjemahan yang disertakan, gamedata dan ekstensi mempertahankan folder dokumentasi mereka.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>panel kontrol synix — lisensi sumber-tersedia milik terbatas
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>panel kontrol synix — lisensi sumber-tersedia milik terbatas
 
-Versi 1.0 — 2 Agustus 2026
+Revisi lisensi 1.1 — 5 November 2026
+Ini adalah revisi lisensi, bukan versi aplikasi Synix.
 Hak Cipta © 2026 Jason Turner. Semua hak terpelihara.
 U.S. Aplikasi Pendaftaran Hak Cipta: Tertunda
 
@@ -2526,7 +2527,24 @@ Lisensi ini hanya berlaku untuk bagian dari Synix yang dimiliki oleh Jason Turne
 
 Pengecualian untuk lisensi ini hanya berlaku jika diberikan dalam bentuk tulisan oleh Jason Turner.
 
-Pertanyaan atau permintaan izin harus dikirim melalui repositori resmi Synix GitHub atau metode kontak resmi Synix lainnya.</value></data>
+Pertanyaan atau permintaan izin harus dikirim melalui repositori resmi Synix GitHub atau metode kontak resmi Synix lainnya.
+
+12. SUMBER UNDUHAN RESMI
+
+Dapatkan Synix hanya melalui sumber resmi berikut:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Salinan yang disediakan oleh situs web lain tidak diverifikasi oleh Jason Turner dan mungkin tidak aman, telah diubah, kedaluwarsa, atau disertai perangkat lunak yang tidak diinginkan. Jason Turner tidak menjamin keamanan maupun keasliannya.
+
+Mencantumkan Synix, menautkan ke GitHub, atau menawarkan unduhan tidak memindahkan kepemilikan dan tidak menyiratkan izin, afiliasi, dukungan, atau status resmi. Synix tetap menjadi milik Jason Turner.
+
+Menghosting, membuat cermin, menyediakan melalui proksi, mengemas ulang, atau membungkus unduhan dalam program pengunduh tambahan memerlukan izin tertulis sebelumnya. Tautan ke sumber resmi tidak memberikan izin tersebut.
+
+Bagian 4.2 tidak melarang tautan langsung biasa ke sumber resmi ini yang mencantumkan Synix dan Jason Turner secara tepat. Tautan tersebut tidak menjadikan situs web yang menautkannya sebagai sumber resmi.
+
+Paket WinGet ubidzz.Synix merupakan metode instalasi yang disetujui apabila mengunduh penginstal yang tidak dimodifikasi langsung dari rilis resmi GitHub. Hal ini tidak mengizinkan hosting atau pengemasan ulang oleh pihak ketiga.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>SETUP KRITIKAL DIPERLUKAN:
 
 1. Boot server sekali untuk membangun &apos;Engine.ini&apos;, lalu tutup.

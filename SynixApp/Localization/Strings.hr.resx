@@ -12215,9 +12215,10 @@ Zadržite izborne RCON ili administrativne krajnje točke lokalnim osim ako nema
 
 3. Službena dokumentacija: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Za ovu verziju poslužitelja zahtijeva kompatibilnu verziju Metamod:Source i SourceMod. Prevedeni.smx dodaci idu u ageofchivalry/addons/sourcemod/plugins; popratni prijevodi, podaci o igrama i proširenja zadržavaju svoje dokumentirane mape.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX UPRAVLJAČKA PLOČA — OGRANIČENA VLASNIČKA DOSTUPNA LICENCA
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX UPRAVLJAČKA PLOČA — OGRANIČENA VLASNIČKA DOSTUPNA LICENCA
 
-Verzija 1.0 — 2. kolovoza 2026.
+Revizija licence 1.1 — 5. studenoga 2026.
+Ovo je revizija licence, a ne verzija aplikacije Synix.
 Autorska prava © 2026 Jason Turner. Sva prava pridržana.
 Zahtjev za registraciju autorskih prava u SAD-u: na čekanju
 
@@ -12345,7 +12346,24 @@ Ova licenca se odnosi samo na dijelove Synix u vlasništvu Jasona Turnera.
 
 Iznimke od ove licence vrijede samo ako ih Jason Turner dostavi u pisanom obliku.
 
-Pitanja ili zahtjeve za dopuštenje treba podnijeti putem službenog Synix GitHub repozitorija ili druge službene Synix metode kontakta.</value></data>
+Pitanja ili zahtjeve za dopuštenje treba podnijeti putem službenog Synix GitHub repozitorija ili druge službene Synix metode kontakta.
+
+12. SLUŽBENI IZVORI ZA PREUZIMANJE
+
+Synix nabavljajte samo putem ovih službenih izvora:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Kopije koje pružaju druge web-stranice nije provjerio Jason Turner te mogu biti nesigurne, izmijenjene, zastarjele ili sadržavati neželjeni softver. Jason Turner ne jamči njihovu sigurnost ni autentičnost.
+
+Navođenje Synixa, povezivanje na GitHub ili nuđenje preuzimanja ne prenosi vlasništvo i ne podrazumijeva odobrenje, povezanost, podršku ni službeni status. Synix ostaje vlasništvo Jasona Turnera.
+
+Hosting, zrcaljenje, pružanje putem posredničkog poslužitelja, prepakiranje ili uključivanje preuzimanja u dodatne programe za preuzimanje zahtijeva prethodno pisano dopuštenje. Poveznica na službeni izvor ne daje to dopuštenje.
+
+Odjeljak 4.2 ne zabranjuje uobičajene izravne poveznice na ove službene izvore koje ispravno navode Synix i Jasona Turnera. Takve poveznice ne čine web-stranicu koja ih objavljuje službenim izvorom.
+
+Paket WinGet ubidzz.Synix odobrena je metoda instalacije kada preuzima neizmijenjeni instalacijski program izravno iz službenih izdanja na GitHubu. To ne dopušta hosting ni prepakiranje trećim stranama.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>POTREBNO JE KRITIČNO POSTAVLJANJE:
 
 1. Pokrenite poslužitelj jednom za izgradnju ' Engine.ini ', zatim ga isključite.

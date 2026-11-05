@@ -2396,9 +2396,10 @@ Giữ tùy chọn RCON hoặc điểm cuối quản lý cục bộ trừ khi b�
 
 3. Tài liệu chính thức: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Cần một build tương thích Metamod:Source và SourceMod cho phiên bản máy chủ này. Phiên bản.smx plugin được biên dịch vào ageofchivalry/addons/sourcemod/plugins; kèm theo các bản dịch, gamedata và các phần mở rộng giữ lại thư mục tài liệu của họ.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>bảng điều khiển synix — giấy phép mã nguồn có sẵn hạn chế
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>bảng điều khiển synix — giấy phép mã nguồn có sẵn hạn chế
 
-Phiên bản 1.0 — August 2, 2026
+Bản sửa đổi giấy phép 1.1 — ngày 5 tháng 11 năm 2026
+Đây là bản sửa đổi giấy phép, không phải phiên bản ứng dụng Synix.
 Bản quyền © 2026 Jason Turner. Mọi quyền được bảo vệ.
 U.S. Yêu cầu đăng ký bản quyền: đang chờ
 
@@ -2526,7 +2527,24 @@ Giấy phép này chỉ áp dụng cho các phần của Synix thuộc sở hữ
 
 Các ngoại lệ cho giấy phép này chỉ có hiệu lực khi được Jason Turner cung cấp bằng văn bản.
 
-Các câu hỏi hoặc yêu cầu cho phép nên được gửi qua kho chính thức Synix GitHub hoặc một phương pháp liên hệ chính thức Synix khác.</value></data>
+Các câu hỏi hoặc yêu cầu cho phép nên được gửi qua kho chính thức Synix GitHub hoặc một phương pháp liên hệ chính thức Synix khác.
+
+12. NGUỒN TẢI XUỐNG CHÍNH THỨC
+
+Chỉ lấy Synix thông qua các nguồn chính thức sau:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Các bản sao do trang web khác cung cấp không được Jason Turner xác minh và có thể không an toàn, đã bị sửa đổi, lỗi thời hoặc đi kèm phần mềm không mong muốn. Jason Turner không bảo đảm tính an toàn hay tính xác thực của chúng.
+
+Việc liệt kê Synix, liên kết đến GitHub hoặc cung cấp bản tải xuống không chuyển giao quyền sở hữu và không hàm ý có sự cho phép, liên kết, chứng thực hay tư cách chính thức. Synix vẫn thuộc sở hữu của Jason Turner.
+
+Việc lưu trữ, tạo bản sao trên máy chủ khác, cung cấp qua proxy, đóng gói lại hoặc bọc bản tải xuống trong chương trình tải xuống bổ sung phải được cho phép trước bằng văn bản. Liên kết đến nguồn chính thức không cấp quyền đó.
+
+Mục 4.2 không cấm các liên kết trực tiếp thông thường đến những nguồn chính thức này nếu ghi nhận đúng Synix và Jason Turner. Những liên kết đó không biến trang web đặt liên kết thành nguồn chính thức.
+
+Gói WinGet ubidzz.Synix là phương thức cài đặt được chấp thuận khi tải trình cài đặt không bị sửa đổi trực tiếp từ các bản phát hành chính thức trên GitHub. Điều này không cho phép bên thứ ba lưu trữ hoặc đóng gói lại.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CÔNG NGHỆ CẦN GẶP:
 
 1. Bắt đầu máy chủ một lần để xây dựng &apos;Engine.ini&apos;, sau đó tắt nó.

@@ -1,6 +1,7 @@
 # SYNIX CONTROL PANEL — LIMITED PROPRIETARY SOURCE-AVAILABLE LICENSE
 
-**Version 1.0 — August 2, 2026**  
+**License revision 1.1 — November 5, 2026**  
+This is the license revision, not the Synix app version.  
 **Copyright © 2026 Jason Turner. All Rights Reserved.**  
 **U.S. Copyright Registration Application: Pending**
 
@@ -129,3 +130,20 @@ This license applies only to the portions of Synix owned by Jason Turner.
 Exceptions to this license are valid only when provided in writing by Jason Turner.
 
 Questions or permission requests should be submitted through the official Synix GitHub repository or another official Synix contact method.
+
+## 12. Official Download Sources
+
+Obtain Synix only through these official sources:
+
+- https://github.com/ubidzz/Synix-Control-Panel/releases
+- https://synix.info
+
+Copies supplied by other websites are not verified by Jason Turner and may be unsafe, modified, outdated, or bundled with unwanted software. Their safety and authenticity are not guaranteed by Jason Turner.
+
+Listing Synix, linking to GitHub, or offering a download does not transfer ownership or imply authorization, affiliation, endorsement, or official status. Synix remains the property of Jason Turner.
+
+Hosting, mirroring, proxying, repackaging, or wrapping downloads requires prior written permission. A link to an official source does not grant that permission.
+
+Section 4.2 does not prohibit ordinary direct links to these official sources that accurately credit Synix and Jason Turner. Such links do not make the linking website an official source.
+
+The WinGet package ubidzz.Synix is an approved installation method when it downloads the unmodified installer directly from the official GitHub releases. This does not authorize third-party hosting or repackaging.

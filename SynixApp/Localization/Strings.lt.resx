@@ -12817,10 +12817,11 @@ Neprivalomus RCON arba administravimo galinius taškus laikykite vietinius, nebe
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Šiam serveriui reikalinga suderinama Metamod:Source ir SourceMod versija. Sukompiliuoti .smx įskiepiai patenka į ageofchivalry/addons/sourcemod/plugins; pridedami vertimai, gamedata ir plėtiniai išsaugo savo dokumentuotus aplankus.</value>
   </data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve">
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
     <value>SYNIX CONTROL PANEL – RIBOTAS SANDĖLIAVIMO ŠALTINIS
 
-Versija 1.0 — Rugpjūtis 2, 2026
+Licencijos redakcija 1.1 — 2026 m. lapkričio 5 d.
+Tai yra licencijos redakcija, o ne programėlės Synix versija.
 Autorinės teisės © 2026 Jason Turner. Visos teisės saugomos.
 JAV autorių teisių registracijos paraiška: Laukiama
 
@@ -12948,7 +12949,24 @@ Trečiųjų šalių programinė įranga, bibliotekos, žaidimų serverio failai,
 
 Šios licencijos išimtys galioja tik tada, kai jas raštu pateikia Jason Turner.
 
-Klausimai ar prašymai suteikti leidimą turėtų būti pateikiami per oficialią Synix GitHub saugyklą arba kitu oficialiu Synix kontaktiniu metodu.</value>
+Klausimai ar prašymai suteikti leidimą turėtų būti pateikiami per oficialią Synix GitHub saugyklą arba kitu oficialiu Synix kontaktiniu metodu.
+
+12. OFICIALŪS ATSISIUNTIMO ŠALTINIAI
+
+Synix gaukite tik iš šių oficialių šaltinių:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Kitų svetainių pateikiamų kopijų Jason Turner nepatikrino; jos gali būti nesaugios, pakeistos, pasenusios arba pateikiamos kartu su nepageidaujama programine įranga. Jason Turner negarantuoja jų saugumo ar autentiškumo.
+
+Synix įtraukimas į katalogą, nuoroda į GitHub arba atsisiuntimo pasiūlymas neperduoda nuosavybės teisių ir nereiškia leidimo, ryšio, pritarimo ar oficialaus statuso. Synix lieka Jason Turner nuosavybė.
+
+Atsisiunčiamų failų laikymui, veidrodinių kopijų kūrimui, teikimui per tarpinį serverį, perpakavimui ar įtraukimui į papildomas atsisiuntimo programas reikia išankstinio rašytinio leidimo. Nuoroda į oficialų šaltinį tokio leidimo nesuteikia.
+
+4.2 skyrius nedraudžia įprastų tiesioginių nuorodų į šiuos oficialius šaltinius, kuriose tinkamai nurodyti Synix ir Jason Turner. Tokios nuorodos nepaverčia jas skelbiančios svetainės oficialiu šaltiniu.
+
+WinGet paketas ubidzz.Synix yra patvirtintas diegimo būdas, kai nepakeista diegimo programa atsisiunčiama tiesiogiai iš oficialių GitHub leidimų. Tai neleidžia trečiosioms šalims laikyti savo kopijų ar perpakuoti programinės įrangos.</value>
   </data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>PRIVALOMAS KRITINIS NUSTATYMAS:

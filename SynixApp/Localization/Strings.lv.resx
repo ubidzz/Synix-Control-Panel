@@ -12817,10 +12817,11 @@ Saglabājiet vietējos neobligātos RCON vai administrēšanas galapunktus, ja v
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Šai servera versijai ir nepieciešams saderīgs Metamod:Source un SourceMod. Kompilēti .smx spraudņi iet ageofchivalry/addons/sourcemod/plugins; pievienotie tulkojumi, spēļu dati un paplašinājumi saglabā dokumentētās mapes.</value>
   </data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve">
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
     <value>SYNIX KONTROLES PANELIS LI IEROBEŽOTS PROPRIETĀRAIS AVOTS – PIEEJAMA LICENCE
 
-Versija 1.0 — augusts 2, 2026
+Licences redakcija 1.1 — 2026. gada 5. novembris
+Šī ir licences redakcija, nevis lietotnes Synix versija.
 Copyright © 2026 Jason Turner. Visas tiesības aizsargātas.
 ASV Autortiesību reģistrācijas pieteikums: Gaida
 
@@ -12948,7 +12949,24 @@ Trešo pušu programmatūra, bibliotēkas, spēļu serveru faili, SteamCMD kompo
 
 Izņēmumi attiecībā uz šo licenci ir spēkā tikai tad, ja to rakstiski iesniedzis Jason Turner.
 
-Jautājumi vai atļaujas pieprasījumi ir jāiesniedz, izmantojot oficiālo Synix GitHub repozitoriju vai citu oficiālo Synix kontaktu metodi.</value>
+Jautājumi vai atļaujas pieprasījumi ir jāiesniedz, izmantojot oficiālo Synix GitHub repozitoriju vai citu oficiālo Synix kontaktu metodi.
+
+12. OFICIĀLIE LEJUPIELĀDES AVOTI
+
+Iegūstiet Synix tikai no šiem oficiālajiem avotiem:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Citu vietņu piedāvātās kopijas Jason Turner nav pārbaudījis, un tās var būt nedrošas, pārveidotas, novecojušas vai papildinātas ar nevēlamu programmatūru. Jason Turner negarantē to drošību vai autentiskumu.
+
+Synix iekļaušana katalogā, saite uz GitHub vai lejupielādes piedāvājums nenodod īpašumtiesības un nenozīmē atļauju, saistību, atbalstu vai oficiālu statusu. Synix paliek Jason Turner īpašums.
+
+Lejupielāžu mitināšanai, spoguļkopiju veidošanai, nodrošināšanai caur starpniekserveri, pārpakošanai vai iekļaušanai papildu lejupielādes programmās ir nepieciešama iepriekšēja rakstiska atļauja. Saite uz oficiālu avotu šādu atļauju nedod.
+
+4.2. sadaļa neaizliedz parastas tiešās saites uz šiem oficiālajiem avotiem, ja Synix un Jason Turner ir norādīti pareizi. Šādas saites nepadara vietni, kurā tās publicētas, par oficiālu avotu.
+
+WinGet pakotne ubidzz.Synix ir apstiprināta instalēšanas metode, ja tā lejupielādē nemainītu instalētāju tieši no oficiālajiem GitHub laidieniem. Tas nedod trešajām personām atļauju mitināt vai pārpakot programmatūru.</value>
   </data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>NEPIECIEŠAMAIS KRITISKAIS IEKĀRTA:

@@ -2396,9 +2396,10 @@ Houd optionele RCON of beheer eindpunten lokaal, tenzij u een beveiligde regelin
 
 3. Officiële documentatie: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Vereist een compatibele Metamod:Source en SourceMod build voor deze serverversie. Gecompileerde.smx plugins gaan in ageofchivalry/addons/sourcemod/plugins; begeleidende vertalingen, gamedata en extensies behouden hun gedocumenteerde mappen.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL — BEPERKTE EIGENDOM VAN DE BRON-BESCHIKBARE LICENTIE
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL — BEPERKTE EIGENDOM VAN DE BRON-BESCHIKBARE LICENTIE
 
-Versie 1.0 — 2 augustus 2026
+Licentieherziening 1.1 — 5 november 2026
+Dit is de herziening van de licentie, niet de versie van de Synix-app.
 Copyright © 2026 Jason Turner. Alle rechten voorbehouden.
 U.S. Aanvraag voor auteursrechtregistratie: In behandeling
 
@@ -2526,7 +2527,24 @@ Deze licentie is alleen van toepassing op de delen van Synix die eigendom zijn v
 
 Uitzonderingen op deze licentie zijn alleen geldig wanneer deze schriftelijk door Jason Turner worden verstrekt.
 
-Vragen of verzoeken om toestemming moeten worden ingediend via de officiële Synix GitHub repository of een andere officiële Synix contactmethode.</value></data>
+Vragen of verzoeken om toestemming moeten worden ingediend via de officiële Synix GitHub repository of een andere officiële Synix contactmethode.
+
+12. OFFICIËLE DOWNLOADBRONNEN
+
+Verkrijg Synix uitsluitend via deze officiële bronnen:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Exemplaren die door andere websites worden aangeboden, zijn niet door Jason Turner gecontroleerd en kunnen onveilig, gewijzigd of verouderd zijn, of ongewenste software bevatten. Jason Turner garandeert hun veiligheid en echtheid niet.
+
+Synix vermelden, naar GitHub linken of een download aanbieden draagt geen eigendomsrechten over en houdt geen toestemming, verbondenheid, goedkeuring of officiële status in. Synix blijft eigendom van Jason Turner.
+
+Het hosten, spiegelen, via een proxy aanbieden, opnieuw verpakken of in een extra downloadprogramma opnemen van downloads vereist voorafgaande schriftelijke toestemming. Een link naar een officiële bron verleent die toestemming niet.
+
+Artikel 4.2 verbiedt geen gewone directe links naar deze officiële bronnen die Synix en Jason Turner correct vermelden. Zulke links maken de website die ernaar verwijst niet tot een officiële bron.
+
+Het WinGet-pakket ubidzz.Synix is een goedgekeurde installatiemethode wanneer het het ongewijzigde installatieprogramma rechtstreeks uit de officiële GitHub-releases downloadt. Dit geeft derden geen toestemming voor hosting of herverpakking.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>KRITIEKE SETUP VERPLICHT:
 
 1. Start de server eenmaal op om &apos;Engine.ini&apos; te bouwen en sluit deze vervolgens af.

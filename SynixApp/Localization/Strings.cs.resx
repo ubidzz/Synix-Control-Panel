@@ -2396,9 +2396,10 @@ Pokud nemáte zabezpečené uspořádání vzdálené správy, ponechte koncové
 
 3. Oficiální dokumentace: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Vyžaduje kompatibilní Metamod:Source a SourceMod sestavení pro tuto verzi serveru. Kompilované.smx pluginy jdou do ageofchivalry/addons/sourcemod/plugins; doprovodné překlady, herní data a rozšíření si zachovávají své dokumentované složky.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL – LIMITOVANÁ PROPRIETÁRNÍ ZDROJOVÁ LICENCE
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL – LIMITOVANÁ PROPRIETÁRNÍ ZDROJOVÁ LICENCE
 
-Verze 1.0 — 2. srpna 2026
+Revize licence 1.1 — 5. listopadu 2026
+Toto je revize licence, nikoli verze aplikace Synix.
 Autorská práva © 2026 Jason Turner. Všechna práva vyhrazena.
 U.S. Žádost o registraci autorských práv: Čekající
 
@@ -2524,9 +2525,26 @@ Tato licence se vztahuje pouze na části Synix vlastněné Jasonem Turnerem.
 
 11. Písemné povolení
 
-Výjimky z této licence jsou platné pouze tehdy, pokud jsou poskytnuty písemně společností Jason Turner.
+Výjimky z této licence jsou platné pouze tehdy, pokud jsou poskytnuty písemně Jasonem Turnerem.
 
-Otázky nebo žádosti o povolení by měly být předloženy prostřednictvím oficiálního Synix GitHub úložiště nebo jiného oficiálního Synix kontaktní metody.</value></data>
+Otázky nebo žádosti o povolení by měly být předloženy prostřednictvím oficiálního Synix GitHub úložiště nebo jiného oficiálního Synix kontaktní metody.
+
+12. OFICIÁLNÍ ZDROJE KE STAŽENÍ
+
+Synix získávejte pouze prostřednictvím těchto oficiálních zdrojů:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Kopie poskytované jinými weby nejsou ověřeny Jasonem Turnerem a mohou být nebezpečné, upravené, zastaralé nebo obsahovat nežádoucí software. Jason Turner nezaručuje jejich bezpečnost ani pravost.
+
+Uvedení Synix v katalogu, odkaz na GitHub ani nabídka stažení nepřevádí vlastnictví a neznamená povolení, přidružení, podporu ani oficiální status. Synix zůstává majetkem Jasona Turnera.
+
+Hostování, zrcadlení, poskytování přes proxy, přebalování nebo začlenění stahovaných souborů do dalších stahovacích programů vyžaduje předchozí písemné povolení. Odkaz na oficiální zdroj toto povolení neuděluje.
+
+Oddíl 4.2 nezakazuje běžné přímé odkazy na tyto oficiální zdroje, které správně uvádějí Synix a Jasona Turnera. Takové odkazy nečiní odkazující web oficiálním zdrojem.
+
+Balíček WinGet ubidzz.Synix je schválenou metodou instalace, pokud stahuje nezměněný instalační program přímo z oficiálních vydání na GitHub. To nepovoluje hostování ani přebalování třetími stranami.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>Kritické nastavení požadované:
 
 1. Spusťte server jednou pro sestavení &apos;Engine.ini&apos;, pak jej vypněte.

@@ -12817,10 +12817,11 @@ Hoidke valikulised RCON või administreerimise lõpp-punktid lokaalsed, välja a
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Selle serveri versiooni jaoks on vaja ühilduvat Metamod:Source ja SourceMod ehitamist. Kompileeritud .smx pluginad lähevad ageofchivalry/addons/sourcemod/plugins; kaasasolevad tõlked, gamedata ja laiendused säilitavad oma dokumenteeritud kaustad.</value>
   </data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve">
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
     <value>SYNIX KONTROLLIPANEEL – PIIRATUD VARAGA LÄBIVAATAV LITSENTS
 
-Version 1.0 – August 2, 2026
+Litsentsi redaktsioon 1.1 — 5. november 2026
+See on litsentsi redaktsioon, mitte Synixi rakenduse versioon.
 Autoriõigus © 2026 Jason Turner. Kõik õigused kaitstud.
 USA autoriõiguse registreerimise taotlus: ootel
 
@@ -12948,7 +12949,24 @@ See litsents kehtib ainult Jason Turnerile kuuluvate Synix osade kohta.
 
 Selle litsentsi erandid kehtivad ainult juhul, kui need on kirjalikult esitanud Jason Turner.
 
-Küsimused või loataotlused tuleb esitada ametliku Synix GitHub hoidla või muu ametliku Synix kontaktmeetodi kaudu.</value>
+Küsimused või loataotlused tuleb esitada ametliku Synix GitHub hoidla või muu ametliku Synix kontaktmeetodi kaudu.
+
+12. AMETLIKUD ALLALAADIMISALLIKAD
+
+Hankige Synix ainult nende ametlike allikate kaudu:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Teiste veebisaitide pakutavaid koopiaid ei ole Jason Turner kontrollinud ning need võivad olla ohtlikud, muudetud, aegunud või sisaldada soovimatut tarkvara. Jason Turner ei taga nende turvalisust ega ehtsust.
+
+Synixi loetlemine, GitHubile viitamine või allalaadimise pakkumine ei anna omandiõigust ega tähenda luba, seotust, heakskiitu või ametlikku staatust. Synix jääb Jason Turneri omandiks.
+
+Allalaaditavate failide majutamine, peegeldamine, puhverserveri kaudu pakkumine, ümberpakendamine või täiendavasse allalaadimisprogrammi lisamine nõuab eelnevat kirjalikku luba. Link ametlikule allikale seda luba ei anna.
+
+Punkt 4.2 ei keela tavalisi otselinke nendele ametlikele allikatele, kui Synix ja Jason Turner on korrektselt nimetatud. Sellised lingid ei muuda viitavat veebisaiti ametlikuks allikaks.
+
+WinGeti pakett ubidzz.Synix on heakskiidetud paigaldusviis, kui see laadib muutmata paigaldusprogrammi alla otse GitHubi ametlikest väljalasetest. See ei anna kolmandatele isikutele luba failide majutamiseks ega ümberpakendamiseks.</value>
   </data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>NÕUTAV KRIITILINE KOOSSEIS:

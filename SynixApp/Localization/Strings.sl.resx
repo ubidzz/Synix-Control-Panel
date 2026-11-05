@@ -12817,10 +12817,11 @@ Neobvezno RCON ali končne točke dajanja shranjujte na lokalni ravni, razen če
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Za to različico strežnika sta potrebni združljivi gradnji Metamod:Source in SourceMod. Prevedeni vtičniki .smx sodijo v ageofchivalry/addons/sourcemod/plugins; spremljajoči prevodi, gamedata in razširitve ostanejo v mapah, določenih v dokumentaciji.</value>
   </data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve">
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
     <value>NADZORNA PLOŠČA SYNIX – OMEJENA LASTNIŠKA LICENCA ZA DOSTOP DO VIROV
 
-Različica 1.0 — 2. avgust 2026
+Revizija licence 1.1 — 5. november 2026
+To je revizija licence, ne različica aplikacije Synix.
 Copyright © 2026 Jason Turner. Vse pravice pridržane.
 Registrska prijava za avtorske pravice ZDA: še čaka.
 
@@ -12948,7 +12949,24 @@ Ta licenca velja le za dele Synix v lasti Jasona Turnerja.
 
 Izjeme od te licence veljajo le, če jih pisno določi Jason Turner.
 
-Vprašanja ali zahteve za dovoljenje je treba predložiti prek uradnega Synix GitHub skladišča ali drugega uradnega Synix kontaktne metode.</value>
+Vprašanja ali zahteve za dovoljenje je treba predložiti prek uradnega Synix GitHub skladišča ali drugega uradnega Synix kontaktne metode.
+
+12. URADNI VIRI ZA PRENOS
+
+Synix pridobite samo prek teh uradnih virov:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Kopij, ki jih ponujajo druga spletna mesta, Jason Turner ni preveril in so lahko nevarne, spremenjene, zastarele ali priložene neželeni programski opremi. Jason Turner ne jamči za njihovo varnost ali pristnost.
+
+Navedba Synix v katalogu, povezava do GitHub ali ponujanje prenosa ne prenese lastništva in ne pomeni dovoljenja, povezanosti, podpore ali uradnega statusa. Synix ostaja last Jasona Turnerja.
+
+Gostovanje, zrcaljenje, posredovanje prek posredniškega strežnika, ponovno pakiranje ali vključevanje prenosov v dodatne programe za prenos zahteva predhodno pisno dovoljenje. Povezava do uradnega vira tega dovoljenja ne daje.
+
+Razdelek 4.2 ne prepoveduje običajnih neposrednih povezav do teh uradnih virov, ki pravilno navedejo Synix in Jasona Turnerja. Takšne povezave spletnega mesta, ki jih objavi, ne spremenijo v uradni vir.
+
+Paket WinGet ubidzz.Synix je odobren način namestitve, kadar nespremenjeni namestitveni program prenese neposredno iz uradnih izdaj na GitHub. To tretjim osebam ne dovoljuje gostovanja ali ponovnega pakiranja.</value>
   </data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>POTREBNA JE KRITIČNA NASTAVITEV:

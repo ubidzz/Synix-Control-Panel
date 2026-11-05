@@ -2395,9 +2395,10 @@ RAW 명령
 
 3. 공식 문서: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>이 서버 버전에는 호환 가능한 Metamod:Source 및 SourceMod 빌드가 필요합니다. 컴파일된.smx 플러그인은 ageofchivalry/addons/sourcemod/plugins으로 이동합니다; 번역, 게임 데이터, 확장 프로그램은 문서화된 폴더를 유지합니다.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX 컨트롤 패널 — 제한된 독점 소스 사용 가능한 라이센스
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX 컨트롤 패널 — 제한된 독점 소스 사용 가능한 라이센스
 
-버전 1.0 — 2026년 8월 2일
+라이선스 개정판 1.1 — 2026년 11월 5일
+이는 라이선스 개정 번호이며 Synix 앱 버전이 아닙니다.
 저작권 © 2026 제이슨 터너. 모든 권리 보유.
 U.S. 저작권 등록 신청: 보류
 
@@ -2525,7 +2526,24 @@ Synix 브랜딩의 무단 사용은 해당 저작권, 상표, 불공정 경쟁 �
 
 본 라이선스에 대한 예외는 Jason Turner가 서면으로 제공한 경우에만 유효합니다.
 
-질문이나 권한 요청은 공식 Synix GitHub 저장소 또는 다른 공식 Synix 연락 방법을 통해 제출해야합니다.</value></data>
+질문이나 권한 요청은 공식 Synix GitHub 저장소 또는 다른 공식 Synix 연락 방법을 통해 제출해야합니다.
+
+12. 공식 다운로드 출처
+
+다음 공식 출처를 통해서만 Synix를 받으세요:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+다른 웹사이트에서 제공하는 사본은 Jason Turner가 검증하지 않았으며, 안전하지 않거나 수정되었거나 오래된 버전이거나 원치 않는 소프트웨어와 함께 제공될 수 있습니다. Jason Turner는 이러한 사본의 안전성이나 진위를 보장하지 않습니다.
+
+Synix를 목록에 올리거나 GitHub로 연결하거나 다운로드를 제공해도 소유권이 이전되지 않으며, 허가, 제휴, 보증 또는 공식 지위를 의미하지 않습니다. Synix의 소유권은 계속 Jason Turner에게 있습니다.
+
+다운로드 파일의 호스팅, 미러링, 프록시를 통한 제공, 재패키징 또는 별도의 다운로드 프로그램으로 감싸서 제공하는 행위에는 사전 서면 허가가 필요합니다. 공식 출처로 연결하는 링크는 그러한 허가를 부여하지 않습니다.
+
+제 4.2절은 Synix와 Jason Turner를 정확히 명시하고 이러한 공식 출처로 직접 연결하는 일반적인 링크를 금지하지 않습니다. 이러한 링크가 있다고 해서 링크를 게시한 웹사이트가 공식 출처가 되는 것은 아닙니다.
+
+WinGet 패키지 ubidzz.Synix는 수정되지 않은 설치 프로그램을 공식 GitHub 릴리스에서 직접 다운로드하는 경우 승인된 설치 방법입니다. 이는 제삼자의 호스팅이나 재패키징을 허가하는 것이 아닙니다.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>필요한 중요한 설정:
 
 1. 서버를 한 번 부팅하여 &apos;Engine.ini&apos;을 빌드한 다음 종료합니다.

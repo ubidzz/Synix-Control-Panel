@@ -12817,10 +12817,11 @@ Udržujte voliteľné RCON alebo koncové body správy lokálne, pokiaľ nemáte
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Vyžaduje sa kompatibilné zostavenie Metamod:Source a SourceMod pre túto verziu servera. Skompilované doplnky .smx patria do ageofchivalry/addons/sourcemod/plugins; sprievodné preklady, gamedata a rozšírenia zostávajú v priečinkoch určených dokumentáciou.</value>
   </data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve">
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
     <value>SYNIXOVÝ OVLÁDACÍ PANEL - OBMEDZENÁ LICENCIA NA VLASTNÝ ZDROJ
 
-Verzia 1.0 — 2. augusta 2026
+Revízia licencie 1.1 — 5. novembra 2026
+Toto je revízia licencie, nie verzia aplikácie Synix.
 Copyright © 2026 Jason Turner. Všetky práva vyhradené.
 U.S. Registrácia autorských práv Aplikácia: Čakanie
 
@@ -12948,7 +12949,24 @@ Táto licencia sa vzťahuje len na časti Synix vo vlastníctve Jasona Turnera.
 
 Výnimky z tejto licencie sú platné iba vtedy, ak ich písomne poskytne Jason Turner.
 
-Otázky alebo žiadosti o povolenie by sa mali predkladať prostredníctvom oficiálnej Synix GitHub úložiska alebo inej oficiálnej kontaktnej metódy Synix.</value>
+Otázky alebo žiadosti o povolenie by sa mali predkladať prostredníctvom oficiálnej Synix GitHub úložiska alebo inej oficiálnej kontaktnej metódy Synix.
+
+12. OFICIÁLNE ZDROJE NA STIAHNUTIE
+
+Synix získavajte iba prostredníctvom týchto oficiálnych zdrojov:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Kópie poskytované inými webovými stránkami nie sú overené Jasonom Turnerom a môžu byť nebezpečné, upravené, zastarané alebo obsahovať nežiaduci softvér. Jason Turner nezaručuje ich bezpečnosť ani pravosť.
+
+Uvedenie Synix v katalógu, odkaz na GitHub ani ponuka stiahnutia neprevádza vlastníctvo a neznamená povolenie, pridruženie, podporu ani oficiálny status. Synix zostáva majetkom Jasona Turnera.
+
+Hostovanie, zrkadlenie, poskytovanie cez proxy, prebaľovanie alebo začlenenie sťahovaných súborov do ďalších sťahovacích programov vyžaduje predchádzajúce písomné povolenie. Odkaz na oficiálny zdroj toto povolenie neudeľuje.
+
+Oddiel 4.2 nezakazuje bežné priame odkazy na tieto oficiálne zdroje, ktoré správne uvádzajú Synix a Jasona Turnera. Takéto odkazy nerobia z odkazujúcej webovej stránky oficiálny zdroj.
+
+Balík WinGet ubidzz.Synix je schválenou metódou inštalácie, ak sťahuje nezmenený inštalačný program priamo z oficiálnych vydaní na GitHub. To nepovoľuje hostovanie ani prebaľovanie tretími stranami.</value>
   </data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>VYŽADUJE SA KRITICKÉ NASTAVENIE:

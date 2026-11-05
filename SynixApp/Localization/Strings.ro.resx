@@ -1023,9 +1023,10 @@ Păstrați opțional RCON sau administrarea punctelor finale locale, cu excepți
 
 3. Documentație oficială: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Necesită o construcție compatibilă Metamod:Source și SourceMod pentru această versiune de server. Plugin-urile.smx compilate merg în ageofchivalry/addons/sourcemod/plugins; traducerile însoțitoare, gamedata și extensiile își păstrează folderele documentate.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>Panoul de control SYNIX — licenţă limitată proprietar-sursă disponibilă
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>Panoul de control SYNIX — licenţă limitată proprietar-sursă disponibilă
 
-Versiunea 1.0 — 2 august 2026
+Revizuirea licenței 1.1 — 5 noiembrie 2026
+Aceasta este revizuirea licenței, nu versiunea aplicației Synix.
 Drepturi de autor © 2026 Jason Turner. Toate drepturile rezervate.
 U.S. Cerere de înregistrare a drepturilor de autor: În aşteptare
 
@@ -1153,7 +1154,24 @@ Această licenţă se aplică numai porţiunilor de Synix deţinute de Jason Tur
 
 Excepţiile de la această licenţă sunt valabile numai atunci când sunt furnizate în scris de către Jason Turner.
 
-Întrebările sau cererile de permisiune trebuie trimise prin depozitul oficial Synix GitHub sau prin altă metodă oficială de contact Synix.</value></data>
+Întrebările sau cererile de permisiune trebuie trimise prin depozitul oficial Synix GitHub sau prin altă metodă oficială de contact Synix.
+
+12. SURSE OFICIALE DE DESCĂRCARE
+
+Obțineți Synix numai prin intermediul acestor surse oficiale:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Copiile furnizate de alte site-uri nu sunt verificate de Jason Turner și pot fi nesigure, modificate, învechite sau însoțite de software nedorit. Jason Turner nu garantează siguranța sau autenticitatea lor.
+
+Listarea Synix, trimiterea către GitHub sau oferirea unei descărcări nu transferă proprietatea și nu implică autorizare, afiliere, susținere sau statut oficial. Synix rămâne proprietatea lui Jason Turner.
+
+Găzduirea, oglindirea, furnizarea printr-un server proxy, reambalarea sau includerea descărcărilor în programe intermediare de descărcare necesită permisiune scrisă prealabilă. Un link către o sursă oficială nu acordă această permisiune.
+
+Secțiunea 4.2 nu interzice linkurile directe obișnuite către aceste surse oficiale care atribuie corect Synix lui Jason Turner. Astfel de linkuri nu transformă site-ul care le publică într-o sursă oficială.
+
+Pachetul WinGet ubidzz.Synix este o metodă de instalare aprobată atunci când descarcă programul de instalare nemodificat direct din versiunile oficiale publicate pe GitHub. Aceasta nu autorizează găzduirea sau reambalarea de către terți.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>SETUP CRITICAL NECESAR:
 
 1. Porniți serverul o dată pentru a construi &quot;Engine.ini&quot;, apoi opriți-l.

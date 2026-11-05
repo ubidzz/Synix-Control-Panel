@@ -1023,9 +1023,10 @@ Behold valgfrie RCON eller administrasjonsendepunkter lokalt med mindre du har e
 
 3. Offisiell dokumentasjon: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Krever en kompatibel Metamod:Source og SourceMod bygge for denne serverversjonen. Kompilerte.smx plugins går i ageofchivalry / addons/sourcemod/plugins; medfølgende oversettelser, spilldata og utvidelser beholder sine dokumenterte mapper.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL - begrenset proprietær kilde-tilgjengelig lisens
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL - begrenset proprietær kilde-tilgjengelig lisens
 
-Versjon 1.0 – 2. august 2026
+Lisensrevisjon 1.1 — 5. november 2026
+Dette er lisensens revisjon, ikke Synix-appens versjon.
 Opphavsrett © 2026 Jason Turner. Alle rettigheter forbeholdt.
 U.S. Søknad om registrering av opphavsrett: Venter
 
@@ -1153,7 +1154,24 @@ Denne lisensen gjelder bare for de delene av Synix som eies av Jason Turner.
 
 Unntak fra denne lisensen er kun gyldige når de er gitt skriftlig av Jason Turner.
 
-Spørsmål eller forespørsler om tillatelse bør sendes gjennom den offisielle Synix GitHub depotet eller en annen offisiell Synix kontaktmetode.</value></data>
+Spørsmål eller forespørsler om tillatelse bør sendes gjennom den offisielle Synix GitHub depotet eller en annen offisiell Synix kontaktmetode.
+
+12. OFFISIELLE NEDLASTINGSKILDER
+
+Hent Synix bare via disse offisielle kildene:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Kopier fra andre nettsteder er ikke kontrollert av Jason Turner og kan være utrygge, endret, utdaterte eller pakket sammen med uønsket programvare. Jason Turner garanterer ikke at de er trygge eller ekte.
+
+Å føre opp Synix, lenke til GitHub eller tilby en nedlasting overfører ikke eierskap og innebærer ikke tillatelse, tilknytning, godkjenning eller offisiell status. Synix forblir Jason Turners eiendom.
+
+Hosting, speiling, levering via proxy, ompakking eller innpakking av nedlastinger i ekstra nedlastingsprogrammer krever skriftlig forhåndstillatelse. En lenke til en offisiell kilde gir ikke denne tillatelsen.
+
+Avsnitt 4.2 forbyr ikke vanlige direktelenker til disse offisielle kildene som oppgir Synix og Jason Turner korrekt. Slike lenker gjør ikke nettstedet som lenker, til en offisiell kilde.
+
+WinGet-pakken ubidzz.Synix er en godkjent installasjonsmetode når den henter det uendrede installasjonsprogrammet direkte fra de offisielle GitHub-utgivelsene. Dette tillater ikke hosting eller ompakking hos tredjeparter.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>Kritisk oppsett kreves:
 
 1. Start serveren en gang for å bygge &apos;Engine.ini&apos;, og deretter slå den av.

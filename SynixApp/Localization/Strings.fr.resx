@@ -12055,10 +12055,11 @@ Garder facultatif RCON ou d&apos;administration des points de terminaison locaux
 
 3. Documentation officielle: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Nécessite un build compatible Metamod:Source et SourceMod pour cette version de serveur. Les plugins.smx compilés vont dans ageofchivalry/addons/sourcemod/plugins ; les traductions, les données de jeu et les extensions conservent leurs dossiers documentés.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>PANNEAU DE CONTRÔLE SYNIX — LICENCE LIMITÉE PROPRIÉTAIRE SOURCE-DISPONIBLE
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>PANNEAU DE CONTRÔLE SYNIX — LICENCE LIMITÉE PROPRIÉTAIRE SOURCE-DISPONIBLE
 
-Version 1.0 — 2 août 2026
-Tout à propos de Jason Turner. Tous droits réservés.
+Révision de la licence 1.1 — 5 novembre 2026
+Il s’agit de la révision de la licence, et non de la version de l’application Synix.
+Droit d’auteur © 2026 Jason Turner. Tous droits réservés.
 U.S. Demande d&apos;enregistrement du droit d&apos;auteur: En attente
 
 Cette licence s&apos;applique au logiciel Panneau de contrôle Synix, y compris son code source, ses binaires compilés, son interface utilisateur, sa documentation, ses illustrations, ses logos et tout autre matériel inclus (collectivement, le « Logiciel »).
@@ -12185,7 +12186,24 @@ Cette licence s&apos;applique uniquement aux parties de Synix appartenant à Jas
 
 Les exceptions à cette licence ne sont valables que si elles sont fournies par écrit par Jason Turner.
 
-Les questions ou les demandes d&apos;autorisation doivent être soumises via le référentiel officiel Synix GitHub ou une autre méthode de contact officielle Synix.</value></data>
+Les questions ou les demandes d&apos;autorisation doivent être soumises via le référentiel officiel Synix GitHub ou une autre méthode de contact officielle Synix.
+
+12. SOURCES OFFICIELLES DE TÉLÉCHARGEMENT
+
+Obtenez Synix uniquement auprès de ces sources officielles :
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Les copies fournies par d’autres sites web ne sont pas vérifiées par Jason Turner et peuvent être dangereuses, modifiées, obsolètes ou accompagnées de logiciels indésirables. Jason Turner ne garantit ni leur sécurité ni leur authenticité.
+
+Référencer Synix, créer un lien vers GitHub ou proposer un téléchargement ne transfère aucun droit de propriété et n’implique aucune autorisation, affiliation, approbation ni aucun statut officiel. Synix reste la propriété de Jason Turner.
+
+L’hébergement, la mise en miroir, la transmission par un serveur mandataire, le reconditionnement ou l’intégration des téléchargements dans un programme intermédiaire nécessitent une autorisation écrite préalable. Un lien vers une source officielle n’accorde pas cette autorisation.
+
+La section 4.2 n’interdit pas les liens directs ordinaires vers ces sources officielles qui attribuent correctement Synix à Jason Turner. Ces liens ne font pas du site qui les publie une source officielle.
+
+Le paquet WinGet ubidzz.Synix est une méthode d’installation approuvée lorsqu’il télécharge le programme d’installation non modifié directement depuis les versions officielles publiées sur GitHub. Cela n’autorise ni l’hébergement ni le reconditionnement par des tiers.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CONFIGURATION CRITIQUE REQUISE:
 
 1. Démarrez le serveur une fois pour construire &apos;Engine.ini&apos;, puis arrêtez-le.

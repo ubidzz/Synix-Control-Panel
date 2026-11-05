@@ -46,9 +46,9 @@ public sealed class HelpContentTests
 	}
 
 	[Theory]
-	[InlineData("License & Proprietary Terms", "398121174F3022BF0D94C7C41A9DE911500B09B76319D194080675EC2E8A1124")]
+	[InlineData("License & Proprietary Terms", "79EACF949BA087EFCC408493E88C2D092959BF79CF46B28F0C1917D37C48C28F")]
 	[InlineData("Donate & Support Development", "D04779E1D2FA691FDC9151B27037A87CA16C0BE3C86CFE80D86C169F42618C68")]
-	public void LicenseAndDonationText_RemainUnchanged(string title, string expectedHash)
+	public void LicenseAndDonationText_MatchExpectedContent(string title, string expectedHash)
 	{
 		string answer = HelpGUI.CreateHelpArticles()[title].Answer;
 		Assert.Equal(expectedHash, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(answer))));

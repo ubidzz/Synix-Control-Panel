@@ -50,6 +50,17 @@ Synix keeps the management experience local. The main Synix data folder is `C:\S
 
 ## 💾 Install Synix
 
+Use only the [official Synix GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases)
+or [synix.info](https://synix.info) to obtain Synix. Copies supplied by other websites
+are not verified by Jason Turner and may be unsafe, modified, outdated, or bundled
+with unwanted software. Listing Synix, linking to GitHub, or offering a download
+does not give another site ownership, authorization, or official status. Synix
+belongs to Jason Turner; hosting, mirroring, proxying, repackaging, or wrapping
+downloads requires prior written permission. See the [license](LICENSE.md#12-official-download-sources).
+
+WinGet is an approved installation method when the `ubidzz.Synix` package downloads
+the unmodified installer directly from the official GitHub releases.
+
 ### Option 1: WinGet
 
 Open Command Prompt or PowerShell and run:
@@ -297,7 +308,7 @@ Synix is designed to run as a normal Windows user for routine server management.
 
 Synix is an independently developed application and does not currently have a paid code-signing certificate. Microsoft Defender SmartScreen may therefore show a warning while a new release builds reputation.
 
-- Download Synix only from the [official GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases).
+- Obtain Synix only through the [official GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases) or [synix.info](https://synix.info).
 - Confirm that the download came from the official Synix project.
 - If SmartScreen provides the option and you trust the download, select **More info** and then **Run anyway**.
 - Do not disable Windows security features solely to run Synix.
