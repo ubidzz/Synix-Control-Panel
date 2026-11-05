@@ -49,7 +49,8 @@ public sealed class AdditionalLanguageTests
 			"+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\""
 		}) Assert.Contains(literal, guide, StringComparison.Ordinal);
 		Assert.Equal(@"C:\Synix\Games\Example Server", catalog.GetString("Text.09DC887D818AD07E931B"));
-		Assert.Equal("Logs\\*.log\nSaved\\Logs\\**\\*.log", catalog.GetString("Text.070839931CDDA34F168B"));
+		// Resource values can retain Windows checkout line endings; compare the literal lines.
+		Assert.Equal("Logs\\*.log\nSaved\\Logs\\**\\*.log", catalog.GetString("Text.070839931CDDA34F168B")?.ReplaceLineEndings("\n"));
 		Assert.Contains("1–100", catalog.GetString("Text.1F8DCA1F57379032F8AD"));
 		Assert.Contains("'stop'", catalog.GetString("Minecraft.Activity.StopThroughConsole"));
 	}
