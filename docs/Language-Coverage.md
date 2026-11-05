@@ -3,11 +3,11 @@
 
 Target: every non-invariant neutral language reported by Windows/.NET, retaining separate writing-system entries. Regional settings resolve to an appropriate catalog where available; they are not automatically separate translations.
 
-This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **32 structurally complete catalogs, including English**, with **4,540 required text entries per catalog**. **250 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
+This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **35 structurally complete catalogs, including English**, with **4,540 required text entries per catalog**. **247 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
 
 Only complete, non-preview catalogs are eligible for the app's language picker. Empty entries, missing or unexpected source keys, and untranslated English-only copies are rejected. Key coverage does not certify translation accuracy: terminology, technical syntax, layout and accessibility still require review. This inventory does not add new translations or claim that right-to-left layout is finished.
 
-Inventory runtime: .NET 10.0.13; Microsoft Windows NT 10.0.26200.0. Available cultures depend on the installed Windows/.NET globalization data; regenerate on the supported release environment rather than treating this number as a permanent global total. See [Microsoft's CultureInfo documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo) and [Windows Forms bidirectional layout guidance](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/advanced/bi-directional-support-for-windows-forms-applications).
+Inventory runtime: .NET 10.0.14; Microsoft Windows NT 10.0.26200.0. Available cultures depend on the installed Windows/.NET globalization data; regenerate on the supported release environment rather than treating this number as a permanent global total. See [Microsoft's CultureInfo documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo) and [Windows Forms bidirectional layout guidance](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/advanced/bi-directional-support-for-windows-forms-applications).
 
 ## Current catalogs
 
@@ -21,6 +21,7 @@ Inventory runtime: .NET 10.0.13; Microsoft Windows NT 10.0.26200.0. Available cu
 | el | Complete | 0 | 0 |
 | en-US | Complete | 0 | 0 |
 | es | Complete | 0 | 0 |
+| et | Complete | 0 | 0 |
 | fi | Complete | 0 | 0 |
 | fr | Complete | 0 | 0 |
 | hi | Complete | 0 | 0 |
@@ -30,6 +31,8 @@ Inventory runtime: .NET 10.0.13; Microsoft Windows NT 10.0.26200.0. Available cu
 | it | Complete | 0 | 0 |
 | ja | Complete | 0 | 0 |
 | ko | Complete | 0 | 0 |
+| lt | Complete | 0 | 0 |
+| lv | Complete | 0 | 0 |
 | nb | Complete | 0 | 0 |
 | nl | Complete | 0 | 0 |
 | pl | Complete | 0 | 0 |
@@ -111,7 +114,7 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | en | English | English | LTR | Catalog: en-US |
 | eo | Esperanto | esperanto | LTR | Translation needed |
 | es | Spanish | español | LTR | Catalog: es |
-| et | Estonian | eesti | LTR | Translation needed |
+| et | Estonian | eesti | LTR | Catalog: et |
 | eu | Basque | euskara | LTR | Translation needed |
 | ewo | Ewondo | ewondo | LTR | Translation needed |
 | fa | Persian | فارسی | RTL | Translation needed; RTL layout review needed |
@@ -189,11 +192,11 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | ln | Lingala | lingála | LTR | Translation needed |
 | lo | Lao | ລາວ | LTR | Translation needed |
 | lrc | Northern Luri | لۊری شومالی | RTL | Translation needed; RTL layout review needed |
-| lt | Lithuanian | lietuvių | LTR | Translation needed |
+| lt | Lithuanian | lietuvių | LTR | Catalog: lt |
 | lu | Luba-Katanga | Tshiluba | LTR | Translation needed |
 | luo | Luo | Dholuo | LTR | Translation needed |
 | luy | Luyia | Luluhia | LTR | Translation needed |
-| lv | Latvian | latviešu | LTR | Translation needed |
+| lv | Latvian | latviešu | LTR | Catalog: lv |
 | mai | Maithili | मैथिली | LTR | Translation needed |
 | mas | Masai | Maa | LTR | Translation needed |
 | mer | Meru | Kĩmĩrũ | LTR | Translation needed |

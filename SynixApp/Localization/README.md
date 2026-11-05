@@ -4,10 +4,10 @@ Synix ships compiled, offline catalogs for English, French, German, Spanish,
 Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian
 Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian,
 Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian,
-Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, and Slovenian (32 language
-options). Every selectable language must contain every entry in the neutral
-English catalog; partial preview catalogs
-are no longer used for these languages.
+Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian,
+Estonian, Latvian, and Lithuanian (35 language options). Every selectable
+language must contain every entry in the neutral English catalog; partial
+preview catalogs are no longer used for these languages.
 
 The language picker displays each language's own name. Regional aliases use
 the corresponding available catalog; generic Norwegian (`no` / `no-NO`)
@@ -115,7 +115,13 @@ The Catalan, Slovak, and Slovenian catalogs started from offline,
 machine-assisted drafts using the corresponding English-to-language
 [Argos Translate 1.9 packages](https://github.com/argosopentech/argospm-index),
 based on OPUS-MT by Jörg Tiedemann and Santhosh Thottingal (the package identifies
-its source model as CC BY 4.0). Headings, technical tokens, key actions and
+its source model as CC BY 4.0). The Latvian and Lithuanian catalogs use the
+OPUS-MT transformer-big models for
+[English–Latvian](https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-en-lv) and
+[English–Lithuanian](https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-en-lt)
+by the Helsinki-NLP team (CC BY 4.0), also run offline. The Estonian draft used
+the English–Estonian 1.9 package by Aleksey Kutashov, trained with OPUS and the other corpora
+credited in that package's README. Headings, technical tokens, key actions and
 safety-sensitive passages were corrected separately. No translation model,
 Python runtime, translation cache or online service is shipped with Synix.
 This does not replace native-speaker review or establish an authoritative
