@@ -99,6 +99,8 @@ public sealed class HelpContentQualityTests
 		string[] expectedUrls =
 		[
 			"https://github.com/ubidzz/Synix-Control-Panel/releases/latest",
+			"https://github.com/ubidzz/Synix-Control-Panel/releases",
+			"https://synix.info",
 			"https://github.com/ubidzz/Synix-Control-Panel/issues",
 			"https://github.com/ubidzz/Synix-Control-Panel",
 			"https://discord.gg/WduKEU3j8s",

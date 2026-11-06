@@ -50,6 +50,17 @@ Synix keeps the management experience local. The main Synix data folder is `C:\S
 
 ## 💾 Install Synix
 
+Use only the [official Synix GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases)
+or [synix.info](https://synix.info) to obtain Synix. Copies supplied by other websites
+are not verified by Jason Turner and may be unsafe, modified, outdated, or bundled
+with unwanted software. Listing Synix, linking to GitHub, or offering a download
+does not give another site ownership, authorization, or official status. Synix
+belongs to Jason Turner; hosting, mirroring, proxying, repackaging, or wrapping
+downloads requires prior written permission. See the [license](LICENSE.md#12-official-download-sources).
+
+WinGet is an approved installation method when the `ubidzz.Synix` package downloads
+the unmodified installer directly from the official GitHub releases.
+
 ### Option 1: WinGet
 
 Open Command Prompt or PowerShell and run:
@@ -178,11 +189,17 @@ See the [generated game list for this branch](docs/Game-List.md), including Stea
 - The dashboard's **Backups** column shows the age of the latest completed backup and highlights failed attempts, missing backups, and backups older than seven days. Hover over the cell for dates and details. Files without a completion receipt are shown as unverified.
 - Backup status checks local files and receipts in the current and default backup folders in the background. It does not run a new integrity check, create backups, or change retention settings. Use the existing backup manager to verify an archive or restore it.
 
+### Appearance
+
+Open **Synix Settings → General** to switch between light and dark mode. Choose a **Synix, Graphite, Ocean, Forest, Violet, or Sand** theme, keep its default accent or select **Teal, Blue, Violet, Rose, Amber, or Green**, and choose **Rounded** or **Square** controls. Changes apply immediately to open windows and are remembered when Synix restarts. **Reset theme** restores the original Synix colors and rounded controls without changing your light/dark preference. Appearance settings only affect Synix, not game configuration or server files.
+
 ### Interface languages
 
-Synix includes 27 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, and Thai.
+Synix includes 35 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian, Estonian, Latvian, and Lithuanian.
 
 Choose a language in Synix Settings. The new history and backup status text is included in every language. General settings cards adapt to wrapped translations, drop-down lists expand to fit their items, and shared action buttons support keyboard focus. Game names, user-entered values, file paths, and technical log files are not translated. Translation completeness does not replace native-speaker review.
+
+The language roadmap targets all Windows/.NET languages and separate writing systems. See the [language coverage inventory](docs/Language-Coverage.md) for current catalogs and remaining translation/layout work. Only complete catalogs appear in the language picker; the target list is not a claim that all languages are already translated.
 
 > Dedicated servers change over time. A profile may need updated arguments after a game or server update. Synix records locally verified install, start, stop, and monitoring results to help identify what has been tested on your computer.
 
@@ -291,7 +308,7 @@ Synix is designed to run as a normal Windows user for routine server management.
 
 Synix is an independently developed application and does not currently have a paid code-signing certificate. Microsoft Defender SmartScreen may therefore show a warning while a new release builds reputation.
 
-- Download Synix only from the [official GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases).
+- Obtain Synix only through the [official GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases) or [synix.info](https://synix.info).
 - Confirm that the download came from the official Synix project.
 - If SmartScreen provides the option and you trust the download, select **More info** and then **Run anyway**.
 - Do not disable Windows security features solely to run Synix.

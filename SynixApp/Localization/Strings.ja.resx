@@ -2395,10 +2395,11 @@ RAW コマンド
 
 3. 官報https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>このサーババージョンには互換性のある Metamod:Source と SourceMod のビルドが必要です。 コンパイルされた.smx プラグインは ageofchivalry/addons/sourcemod/plugins に移動します。 翻訳、ゲームデータ、拡張は文書フォルダを保持します。</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX コントロールパネル - 限定プロプライエタリソースライセンス
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX コントロールパネル - 限定プロプライエタリソースライセンス
 
-バージョン1.0 - 2026年8月2日
-ジェイソン・ターナー すべての権利を保有します。
+ライセンス改訂 1.1 — 2026年11月5日
+これはライセンスの改訂番号であり、Synix アプリのバージョンではありません。
+著作権 © 2026 Jason Turner. すべての権利を保有します。
 U.S. 著作権登録申請
 
 このライセンスは次のものに適用されます。 Synix ソースコード、コンパイルされたバイナリ、ユーザインタフェース、文書、アートワーク、ロゴ、その他の含まれる資料を含むコントロールパネルソフトウェア（総称して「ソフトウェア」）。
@@ -2525,7 +2526,24 @@ Synixブランドの無許可使用は、適用される著作権、商標、不
 
 このライセンスに対する例外は、Jason Turner が書面で提供した場合のみ有効である。
 
-質問や許可の申し出は公式Synix GitHubリポジトリまたは他の公式Synix連絡方法を通して提出する。</value></data>
+質問や許可の申し出は公式Synix GitHubリポジトリまたは他の公式Synix連絡方法を通して提出する。
+
+12. 公式ダウンロード元
+
+Synix は次の公式配布元からのみ入手してください。
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+他のウェブサイトが提供するコピーは Jason Turner による検証を受けておらず、安全でない、改変されている、古い、または不要なソフトウェアが同梱されている可能性があります。Jason Turner はそれらの安全性や真正性を保証しません。
+
+Synix を掲載すること、GitHub へのリンクを設置すること、またはダウンロードを提供することによって、所有権が移転したり、許可、提携、推奨、公式の地位が認められたりすることはありません。Synix の所有権は引き続き Jason Turner に帰属します。
+
+ダウンロードのホスティング、ミラーリング、プロキシ経由での提供、再パッケージ化、または追加のダウンロードプログラムへの組み込みには、事前の書面による許可が必要です。公式配布元へのリンクは、その許可を与えるものではありません。
+
+第 4.2 節は、Synix と Jason Turner を正しく明記した、これらの公式配布元への通常の直接リンクを禁止するものではありません。そのようなリンクを設置しても、そのウェブサイトが公式配布元になるわけではありません。
+
+WinGet パッケージ ubidzz.Synix は、改変されていないインストーラーを GitHub の公式リリースから直接ダウンロードする場合、承認されたインストール方法です。これは第三者によるホスティングや再パッケージ化を許可するものではありません。</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>必要なクリティカル設定:
 
 1. サーバを一度ブートして &apos;Engine.ini&apos; をビルドし、それからシャットダウンします。
@@ -7671,5 +7689,28 @@ Synixが再開されない場合は、既存のSynixプログラムを実行し�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>バックアップを確認中…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>このサーバーのアクティビティはまだ記録されていません。</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>フィルターに一致するアクティビティはありません。</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>外観</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>テーマ、アクセントカラー、コントロールのスタイルを選択します。変更はすぐに反映され、自動的に保存されます。</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>配色テーマ</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>アクセントカラー</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>コントロールのスタイル</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>プレビュー</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>テーマをリセット</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>グラファイト</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>オーシャン</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>フォレスト</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>バイオレット</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>サンド</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>テーマの既定値</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>ティール</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>ブルー</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>ローズ</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>アンバー</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>グリーン</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>角丸</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>四角</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>アクティブ数を共有</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>任意設定：Synix の実行中（バックグラウンドを含む）、ランダムなセッションコードを毎分 synix.info に送信します。サーバーのデータは送信されません。アクティブ状態は 3 分後に期限切れになります。初期設定はオンです。ここでオフにできます。</value></data>
 </root>
 

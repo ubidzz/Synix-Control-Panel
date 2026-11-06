@@ -27,6 +27,14 @@ namespace Synix_Control_Panel.Properties {
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShareActivityCount {
+            get { return (bool)this["ShareActivityCount"]; }
+            set { this["ShareActivityCount"] = value; }
+        }
         
         public static Settings Default {
             get {
@@ -128,6 +136,30 @@ namespace Synix_Control_Panel.Properties {
             set {
                 this["DarkMode"] = value;
             }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("synix")]
+        public string ThemeName {
+            get { return ((string)(this["ThemeName"])); }
+            set { this["ThemeName"] = value; }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("default")]
+        public string ThemeAccent {
+            get { return ((string)(this["ThemeAccent"])); }
+            set { this["ThemeAccent"] = value; }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("rounded")]
+        public string ThemeStyle {
+            get { return ((string)(this["ThemeStyle"])); }
+            set { this["ThemeStyle"] = value; }
         }
 
         [global::System.Configuration.UserScopedSettingAttribute()]

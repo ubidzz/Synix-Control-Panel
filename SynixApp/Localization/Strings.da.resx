@@ -1023,9 +1023,10 @@ Hold valgfrie RCON eller administrationsslutpunkter lokale, medmindre du har en 
 
 3. Officiel dokumentation: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Kræver en kompatibel Metamod:Source og SourceMod build til denne serverversion. Kompilerede.smx plugins går i ageofchivalry/addons/sourcemod/plugins; ledsagende oversættelser, spildata og udvidelser bevarer deres dokumenterede mapper.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL – BEGRÆNSET PROPRIETÆR KILDETILGÆNGELIG LICENS
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL – BEGRÆNSET PROPRIETÆR KILDETILGÆNGELIG LICENS
 
-Version 1.0 — 2. august 2026
+Licensrevision 1.1 — 5. november 2026
+Dette er licensens revision, ikke Synix-appens version.
 Ophavsret © 2026 Jason Turner. Alle rettigheder forbeholdes.
 U.S. Ansøgning om registrering af ophavsret: Afventende
 
@@ -1153,7 +1154,24 @@ Denne licens gælder kun for de dele af Synix, der ejes af Jason Turner.
 
 Undtagelser til denne licens er kun gyldige, når de er givet skriftligt af Jason Turner.
 
-Spørgsmål eller anmodninger om tilladelse skal indsendes via den officielle Synix GitHub repository eller en anden officiel Synix kontakt metode.</value></data>
+Spørgsmål eller anmodninger om tilladelse skal indsendes via den officielle Synix GitHub repository eller en anden officiel Synix kontakt metode.
+
+12. OFFICIELLE DOWNLOADKILDER
+
+Hent kun Synix via disse officielle kilder:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Kopier fra andre websteder er ikke kontrolleret af Jason Turner og kan være usikre, ændrede, forældede eller leveret sammen med uønsket software. Jason Turner garanterer ikke deres sikkerhed eller ægthed.
+
+At opføre Synix på en liste, linke til GitHub eller tilbyde en download overfører ikke ejerskab og indebærer ikke tilladelse, tilknytning, anbefaling eller officiel status. Synix forbliver Jason Turners ejendom.
+
+Hosting, spejling, levering via proxy, ompakning eller indpakning af downloads i ekstra downloadprogrammer kræver forudgående skriftlig tilladelse. Et link til en officiel kilde giver ikke denne tilladelse.
+
+Afsnit 4.2 forbyder ikke almindelige direkte links til disse officielle kilder, når Synix og Jason Turner krediteres korrekt. Sådanne links gør ikke det websted, der linker, til en officiel kilde.
+
+WinGet-pakken ubidzz.Synix er en godkendt installationsmetode, når den henter det uændrede installationsprogram direkte fra de officielle GitHub-udgivelser. Dette tillader ikke hosting eller ompakning hos tredjeparter.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>Kritisk SETUP påkrævet:
 
 1. Start serveren én gang for at bygge &apos;Engine.ini&apos;, og luk den derefter ned.
@@ -6748,4 +6766,27 @@ Hvis Synix ikke åbnes igen, skal du køre det eksisterende Synix-program eller 
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Kontrollerer sikkerhedskopier…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Der er endnu ikke registreret nogen aktivitet for denne server.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Ingen aktivitet matcher dine filtre.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Udseende</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Vælg et tema, en accentfarve og en kontrolstil. Ændringer anvendes med det samme og gemmes automatisk.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Farvetema</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Accentfarve</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Kontrolstil</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Forhåndsvisning</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Nulstil tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Hav</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Skov</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violet</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Sand</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Temaets standard</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turkis</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Blå</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rosa</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Rav</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Grøn</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Afrundet</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Kantet</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Del aktivitetstælling</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valgfrit: send en tilfældig sessionskode til synix.info hvert minut, mens Synix kører, også i baggrunden. Ingen serverdata sendes. Aktiviteten udløber efter 3 minutter. Slået til som standard. Du kan slå det fra her.</value></data>
 </root>

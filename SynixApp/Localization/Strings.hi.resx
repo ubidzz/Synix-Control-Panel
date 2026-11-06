@@ -1023,9 +1023,10 @@ Synix के मौजूदा रीस्टार्ट और रखरख�
 
 3. आधिकारिक दस्तावेज़: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>इस सर्वर संस्करण के लिए एक संगत Metamod:Source और SourceMod बिल्ड की आवश्यकता होती है। कम्पाइलेड.smx प्लगइन ageofchivalry/addons/sourcemod/plugins में जाते हैं; साथ में अनुवाद, गेमडाटा और विस्तारण अपने दस्तावेज़ीकृत फ़ोल्डर बनाए रखते हैं।</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>Synix नियंत्रण पैनल - सीमित स्वामित्व स्रोत उपलब्ध लाइसेंस
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>Synix नियंत्रण पैनल - सीमित स्वामित्व स्रोत उपलब्ध लाइसेंस
 
-संस्करण 1.0- अगस्त 2, 2026
+लाइसेंस संशोधन 1.1 — 5 नवंबर 2026
+यह लाइसेंस का संशोधन है, Synix ऐप का संस्करण नहीं।
 सर्वाधिकार सुरक्षित © 2026 जेसन टर्नर. सभी अधिकार सुरक्षित.
 U.S. कॉपीराइट रजिस्ट्रेशन अनुप्रयोग: इंतजार में
 
@@ -1153,7 +1154,24 @@ Synix ब्रांडिंग का अनधिकृत उपयोग �
 
 इस लाइसेंस के लिए अपवाद केवल तब वैध होते हैं जब उन्हें जेसन टर्नर द्वारा लिखित रूप में प्रदान किया जाता है।
 
-प्रश्नों या अनुमति अनुरोधों को आधिकारिक Synix GitHub रिपोजिटरी या अन्य आधिकारिक Synix संपर्क विधि के माध्यम से प्रस्तुत किया जाना चाहिए।</value></data>
+प्रश्नों या अनुमति अनुरोधों को आधिकारिक Synix GitHub रिपोजिटरी या अन्य आधिकारिक Synix संपर्क विधि के माध्यम से प्रस्तुत किया जाना चाहिए।
+
+12. आधिकारिक डाउनलोड स्रोत
+
+Synix केवल इन आधिकारिक स्रोतों से प्राप्त करें:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+अन्य वेबसाइटों से मिलने वाली प्रतियाँ Jason Turner द्वारा सत्यापित नहीं हैं और वे असुरक्षित, संशोधित, पुरानी या अवांछित सॉफ़्टवेयर के साथ बंडल की गई हो सकती हैं। Jason Turner उनकी सुरक्षा या प्रामाणिकता की गारंटी नहीं देते।
+
+Synix को सूचीबद्ध करने, GitHub का लिंक देने या डाउनलोड उपलब्ध कराने से स्वामित्व हस्तांतरित नहीं होता और न ही अनुमति, संबद्धता, समर्थन या आधिकारिक दर्जे का संकेत मिलता है। Synix, Jason Turner की संपत्ति बना रहता है।
+
+डाउनलोड की होस्टिंग, मिररिंग, प्रॉक्सी के माध्यम से उपलब्धता, दोबारा पैकेजिंग या अतिरिक्त डाउनलोड प्रोग्राम में लपेटकर वितरण के लिए पहले से लिखित अनुमति आवश्यक है। आधिकारिक स्रोत का लिंक ऐसी अनुमति नहीं देता।
+
+धारा 4.2 इन आधिकारिक स्रोतों के सामान्य सीधे लिंक पर रोक नहीं लगाती, बशर्ते उनमें Synix और Jason Turner को सही श्रेय दिया जाए। ऐसे लिंक देने से वह वेबसाइट आधिकारिक स्रोत नहीं बन जाती।
+
+WinGet पैकेज ubidzz.Synix एक स्वीकृत इंस्टॉलेशन विधि है, जब वह अपरिवर्तित इंस्टॉलर को सीधे आधिकारिक GitHub रिलीज़ से डाउनलोड करता है। इससे तृतीय पक्षों को होस्टिंग या दोबारा पैकेजिंग की अनुमति नहीं मिलती।</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>आवश्यक महत्वपूर्ण सेटअप:
 
 1. &apos;Engine.ini&apos; बनाने के लिए सर्वर को एक बार बूट करें, फिर इसे बंद करें.
@@ -6748,4 +6766,27 @@ ARK इस मॉड को {2} से डाउनलोड करेगा ज
   <data name="BackupHealth.Checking" xml:space="preserve"><value>बैकअप जाँचे जा रहे हैं…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>इस सर्वर के लिए अभी तक कोई गतिविधि दर्ज नहीं की गई है।</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>आपके फ़िल्टर से मेल खाने वाली कोई गतिविधि नहीं है।</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>दिखावट</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>थीम, एक्सेंट रंग और नियंत्रण शैली चुनें। बदलाव तुरंत लागू होते हैं और अपने आप सहेजे जाते हैं।</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>रंग थीम</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>एक्सेंट रंग</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>नियंत्रण शैली</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>पूर्वावलोकन</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>थीम रीसेट करें</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>ग्रेफाइट</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>महासागर</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>वन</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>बैंगनी</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>रेत</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>थीम का डिफ़ॉल्ट</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>नीलहरित</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>नीला</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>गुलाबी</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>अंबर</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>हरा</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>गोल कोने</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>चौकोर कोने</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>सक्रियता की गिनती साझा करें</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>वैकल्पिक: Synix के चलने के दौरान, पृष्ठभूमि में भी, हर मिनट synix.info को एक यादृच्छिक सत्र कोड भेजें। सर्वर का कोई डेटा नहीं भेजा जाता। सक्रियता 3 मिनट बाद समाप्त होती है। डिफ़ॉल्ट रूप से चालू। आप इसे यहाँ बंद कर सकते हैं।</value></data>
 </root>

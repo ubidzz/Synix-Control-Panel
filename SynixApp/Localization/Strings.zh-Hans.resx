@@ -2416,9 +2416,10 @@ Modrinth 下载是哈希检查。 在不运行 JAR 的情况下检查 JAR 元数
 
 3. 正式文件：https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>对于此服务器版本,需要兼容的 Metamod:Source 和 SourceMod 构建。 编译后的.smx 插件放在 ageofchivalry/addons/sourcemod/plugins 中;伴随的翻译、游戏数据和扩展保留其文档文件夹。</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX 控制面板 — 有限的专有源可用许可证
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX 控制面板 — 有限的专有源可用许可证
 
-版本1.0 — 2026年8月2日
+许可修订版 1.1 — 2026年11月5日
+此编号是许可修订版号，不是 Synix 应用版本号。
 版权所有©2026 杰森·特纳. 版权所有 保留所有权利
 U.S. 版权注册申请:待定
 
@@ -2428,7 +2429,7 @@ U.S. 版权注册申请:待定
 
 软件是许可的,而不是出售的。
 
-我们保留软件的所有权利、所有权和利益,包括所有版权和其他知识产权。 根据本许可,不会向您转让任何所有权。
+Jason Turner 保留软件的所有权利、所有权和利益，包括所有版权和其他知识产权。根据本许可，不会向您转让任何所有权。
 
 2. 有限许可证授予
 
@@ -2452,7 +2453,7 @@ U.S. 版权注册申请:待定
 
 4. 限制
 
-未经本网站事先书面同意,您不得:
+未经 Jason Turner 事先书面许可，您不得：
 
 4.1 商业使用
 
@@ -2544,9 +2545,26 @@ Synix名称,徽标,视觉形象和相关的品牌仍然是Jason Turner的财产�
 
 11. 书面许可
 
-本许可证的例外情况只有在本网站书面提供的情况下才有效。
+本许可证的例外情况只有在 Jason Turner 以书面形式许可时才有效。
 
-问题或权限请求应通过官方Synix GitHub存储库或其他官方Synix联系方式提交。</value></data>
+问题或权限请求应通过官方Synix GitHub存储库或其他官方Synix联系方式提交。
+
+12. 官方下载来源
+
+请仅通过以下官方来源获取 Synix：
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+其他网站提供的副本未经 Jason Turner 验证，可能不安全、被修改、已过时或捆绑了不需要的软件。Jason Turner 不保证这些副本的安全性或真实性。
+
+列出 Synix、链接至 GitHub 或提供下载，不会转移所有权，也不意味着获得授权、存在关联、得到认可或具有官方身份。Synix 仍归 Jason Turner 所有。
+
+托管、镜像、通过代理提供、重新打包下载内容或将其封装在额外的下载程序中，均须事先获得书面许可。指向官方来源的链接并不授予此类许可。
+
+第 4.2 节不禁止准确注明 Synix 和 Jason Turner 的、指向这些官方来源的普通直接链接。此类链接不会使发布链接的网站成为官方来源。
+
+当 WinGet 软件包 ubidzz.Synix 直接从 GitHub 官方发布页面下载未经修改的安装程序时，它是获准使用的安装方式。这并不授权第三方托管或重新打包软件。</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>所需的关键设置:
 
 1. 引导服务器一次以构建&quot;Engine.ini &quot;, 然后关闭它。
@@ -7671,5 +7689,28 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>正在检查备份…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>尚未记录此服务器的活动。</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>没有符合筛选条件的活动。</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>外观</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>选择主题、强调色和控件样式。更改会立即生效并自动保存。</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>配色主题</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>强调色</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>控件样式</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>预览</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>重置主题</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>石墨</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>海洋</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>森林</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>紫罗兰</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>沙色</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>主题默认</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>青绿色</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>蓝色</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>玫瑰色</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>琥珀色</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>绿色</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>圆角</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>分享活跃数量</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>可选：在 Synix 运行期间（包括后台运行），每分钟向 synix.info 发送一个随机会话代码。不会发送服务器数据。活跃状态在 3 分钟后过期。默认开启。您可以在此关闭。</value></data>
 </root>
 

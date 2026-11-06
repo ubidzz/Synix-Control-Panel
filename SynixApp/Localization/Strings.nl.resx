@@ -2396,9 +2396,10 @@ Houd optionele RCON of beheer eindpunten lokaal, tenzij u een beveiligde regelin
 
 3. Officiële documentatie: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Vereist een compatibele Metamod:Source en SourceMod build voor deze serverversie. Gecompileerde.smx plugins gaan in ageofchivalry/addons/sourcemod/plugins; begeleidende vertalingen, gamedata en extensies behouden hun gedocumenteerde mappen.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL — BEPERKTE EIGENDOM VAN DE BRON-BESCHIKBARE LICENTIE
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL — BEPERKTE EIGENDOM VAN DE BRON-BESCHIKBARE LICENTIE
 
-Versie 1.0 — 2 augustus 2026
+Licentieherziening 1.1 — 5 november 2026
+Dit is de herziening van de licentie, niet de versie van de Synix-app.
 Copyright © 2026 Jason Turner. Alle rechten voorbehouden.
 U.S. Aanvraag voor auteursrechtregistratie: In behandeling
 
@@ -2526,7 +2527,24 @@ Deze licentie is alleen van toepassing op de delen van Synix die eigendom zijn v
 
 Uitzonderingen op deze licentie zijn alleen geldig wanneer deze schriftelijk door Jason Turner worden verstrekt.
 
-Vragen of verzoeken om toestemming moeten worden ingediend via de officiële Synix GitHub repository of een andere officiële Synix contactmethode.</value></data>
+Vragen of verzoeken om toestemming moeten worden ingediend via de officiële Synix GitHub repository of een andere officiële Synix contactmethode.
+
+12. OFFICIËLE DOWNLOADBRONNEN
+
+Verkrijg Synix uitsluitend via deze officiële bronnen:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Exemplaren die door andere websites worden aangeboden, zijn niet door Jason Turner gecontroleerd en kunnen onveilig, gewijzigd of verouderd zijn, of ongewenste software bevatten. Jason Turner garandeert hun veiligheid en echtheid niet.
+
+Synix vermelden, naar GitHub linken of een download aanbieden draagt geen eigendomsrechten over en houdt geen toestemming, verbondenheid, goedkeuring of officiële status in. Synix blijft eigendom van Jason Turner.
+
+Het hosten, spiegelen, via een proxy aanbieden, opnieuw verpakken of in een extra downloadprogramma opnemen van downloads vereist voorafgaande schriftelijke toestemming. Een link naar een officiële bron verleent die toestemming niet.
+
+Artikel 4.2 verbiedt geen gewone directe links naar deze officiële bronnen die Synix en Jason Turner correct vermelden. Zulke links maken de website die ernaar verwijst niet tot een officiële bron.
+
+Het WinGet-pakket ubidzz.Synix is een goedgekeurde installatiemethode wanneer het het ongewijzigde installatieprogramma rechtstreeks uit de officiële GitHub-releases downloadt. Dit geeft derden geen toestemming voor hosting of herverpakking.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>KRITIEKE SETUP VERPLICHT:
 
 1. Start de server eenmaal op om &apos;Engine.ini&apos; te bouwen en sluit deze vervolgens af.
@@ -7672,5 +7690,28 @@ Als Synix niet opnieuw wordt geopend, voert u uw bestaande Synix-programma uit o
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Back-ups controleren…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Er is nog geen activiteit voor deze server vastgelegd.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Geen activiteit komt overeen met uw filters.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Weergave</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Kies een thema, accentkleur en stijl voor bedieningselementen. Wijzigingen worden direct toegepast en automatisch opgeslagen.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Kleurenthema</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Accentkleur</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Stijl van bediening</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Voorbeeld</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Thema herstellen</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafiet</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Oceaan</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Bos</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violet</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Zand</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Standaard van thema</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turkoois</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Blauw</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Roze</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Amber</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Groen</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Afgerond</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Vierkant</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Actieve sessies delen</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optioneel: stuur elke minuut een willekeurige sessiecode naar synix.info terwijl Synix draait, ook op de achtergrond. Er worden geen servergegevens verzonden. Activiteit verloopt na 3 minuten. Standaard ingeschakeld. Je kunt dit hier uitschakelen.</value></data>
 </root>
 

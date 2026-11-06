@@ -1023,9 +1023,10 @@ Modrinth Οι λήψεις ελέγχονται με κατακερματισμ�
 
 3. Επίσημη τεκμηρίωση: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Απαιτεί μια συμβατή κατασκευή Metamod:Source και SourceMod για αυτήν την έκδοση διακομιστή. Τα μεταγλωττισμένα πρόσθετα.πηγαίνουν στην ηλικία της ιπποσύνης /addons/sourcemod/pluginsΟι συνοδευτικές μεταφράσεις, τα δεδομένα παιχνιδιών και οι επεκτάσεις διατηρούν τους τεκμηριωμένους φακέλους τους.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>ΠΙΝΑΚΑΣ ΕΛΕΓΧΟΥ ΠΕΡΙΟΡΙΣΜΕΝΗ ΙΔΙΟΚΤΗΤΙΚΗ ΠΗΓΗ-ΔΙΑΘΕΣΙΜΗ ΑΔΕΙΑ
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>ΠΙΝΑΚΑΣ ΕΛΕΓΧΟΥ ΠΕΡΙΟΡΙΣΜΕΝΗ ΙΔΙΟΚΤΗΤΙΚΗ ΠΗΓΗ-ΔΙΑΘΕΣΙΜΗ ΑΔΕΙΑ
 
-Έκδοση 1.0 — 2 Αυγούστου 2026
+Αναθεώρηση άδειας 1.1 — 5 Νοεμβρίου 2026
+Αυτή είναι η αναθεώρηση της άδειας, όχι η έκδοση της εφαρμογής Synix.
 Πνευματική ιδιοκτησία © 2026 Τζέισον Τέρνερ. Όλα τα δικαιώματα διατηρούνται.
 U.S. Αίτηση Καταχώρισης Πνευματικών Δικαιωμάτων: Εκκρεμές
 
@@ -1035,7 +1036,7 @@ U.S. Αίτηση Καταχώρισης Πνευματικών Δικαιωμά
 
 Το Λογισμικό παρέχεται με άδεια χρήσης, δεν πωλείται.
 
-Η Εταιρεία διατηρεί όλα τα δικαιώματα, τίτλους και συμφέροντα στο Λογισμικό, συμπεριλαμβανομένων όλων των πνευματικών δικαιωμάτων και άλλων δικαιωμάτων πνευματικής ιδιοκτησίας. Κανένα δικαίωμα ιδιοκτησίας δεν μεταβιβάζεται σε εσάς βάσει αυτής της άδειας.
+Ο Jason Turner διατηρεί όλα τα δικαιώματα, τίτλους και συμφέροντα στο Λογισμικό, συμπεριλαμβανομένων όλων των πνευματικών δικαιωμάτων και άλλων δικαιωμάτων πνευματικής ιδιοκτησίας. Κανένα δικαίωμα ιδιοκτησίας δεν μεταβιβάζεται σε εσάς βάσει αυτής της άδειας.
 
 2. Χορήγηση περιορισμένης άδειας χρήσης
 
@@ -1151,9 +1152,26 @@ U.S. Αίτηση Καταχώρισης Πνευματικών Δικαιωμά
 
 11. ΓΡΑΠΤΗ ΑΔΕΙΑ
 
-Εξαιρέσεις σε αυτή την άδεια είναι έγκυρες μόνο όταν παρέχονται γραπτώς από την Εταιρεία.
+Εξαιρέσεις από αυτή την άδεια ισχύουν μόνο όταν παρέχονται γραπτώς από τον Jason Turner.
 
-Οι ερωτήσεις ή τα αιτήματα άδειας θα πρέπει να υποβάλλονται μέσω του επίσημου αποθετηρίου Synix GitHub ή μέσω άλλης επίσημης μεθόδου επικοινωνίας Synix.</value></data>
+Οι ερωτήσεις ή τα αιτήματα άδειας θα πρέπει να υποβάλλονται μέσω του επίσημου αποθετηρίου Synix GitHub ή μέσω άλλης επίσημης μεθόδου επικοινωνίας Synix.
+
+12. ΕΠΙΣΗΜΕΣ ΠΗΓΕΣ ΛΗΨΗΣ
+
+Αποκτήστε το Synix μόνο μέσω αυτών των επίσημων πηγών:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Τα αντίγραφα που παρέχονται από άλλους ιστοτόπους δεν έχουν ελεγχθεί από τον Jason Turner και ενδέχεται να είναι μη ασφαλή, τροποποιημένα, παρωχημένα ή να συνοδεύονται από ανεπιθύμητο λογισμικό. Ο Jason Turner δεν εγγυάται την ασφάλεια ή τη γνησιότητά τους.
+
+Η καταχώριση του Synix, η σύνδεση προς το GitHub ή η προσφορά λήψης δεν μεταβιβάζει κυριότητα και δεν συνεπάγεται εξουσιοδότηση, σχέση συνεργασίας, έγκριση ή επίσημη ιδιότητα. Το Synix παραμένει ιδιοκτησία του Jason Turner.
+
+Η φιλοξενία, η δημιουργία αντιγράφων σε άλλους διακομιστές, η παροχή μέσω διακομιστή μεσολάβησης, η ανασυσκευασία ή η ενσωμάτωση λήψεων σε πρόσθετα προγράμματα λήψης απαιτεί προηγούμενη γραπτή άδεια. Ένας σύνδεσμος προς επίσημη πηγή δεν παρέχει αυτή την άδεια.
+
+Η ενότητα 4.2 δεν απαγορεύει τους συνήθεις άμεσους συνδέσμους προς αυτές τις επίσημες πηγές, εφόσον αναφέρουν ορθά το Synix και τον Jason Turner. Τέτοιοι σύνδεσμοι δεν καθιστούν τον ιστότοπο που τους δημοσιεύει επίσημη πηγή.
+
+Το πακέτο WinGet ubidzz.Synix αποτελεί εγκεκριμένη μέθοδο εγκατάστασης όταν κατεβάζει το μη τροποποιημένο πρόγραμμα εγκατάστασης απευθείας από τις επίσημες εκδόσεις στο GitHub. Αυτό δεν επιτρέπει τη φιλοξενία ή την ανασυσκευασία από τρίτους.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>ΚΡΙΤΙΚΗ ΟΡΓΑΝΩΣΗ ΠΟΥ ΑΠΑΙΤΕΙΤΑΙ:
 
 1. Ξεκινήστε το διακομιστή μία φορά για να δημιουργήσετε το &apos;Engine.ini&apos; και, στη συνέχεια, κλείστε το.
@@ -6748,4 +6766,27 @@ Windows Η άδεια τείχους προστασίας και η προώθη
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Έλεγχος αντιγράφων…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Δεν έχει καταγραφεί ακόμη δραστηριότητα για αυτόν τον διακομιστή.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Καμία δραστηριότητα δεν ταιριάζει με τα φίλτρα σας.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Εμφάνιση</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Επιλέξτε θέμα, χρώμα έμφασης και στυλ στοιχείων ελέγχου. Οι αλλαγές εφαρμόζονται αμέσως και αποθηκεύονται αυτόματα.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Χρωματικό θέμα</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Χρώμα έμφασης</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Στυλ στοιχείων</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Προεπισκόπηση</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Επαναφορά θέματος</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Γραφίτης</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Ωκεανός</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Δάσος</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Βιολετί</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Άμμος</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Προεπιλογή θέματος</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Πετρόλ</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Μπλε</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Ροζ</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Κεχριμπάρι</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Πράσινο</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Στρογγυλεμένο</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Τετράγωνο</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Κοινοποίηση ενεργής χρήσης</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Προαιρετικά: αποστολή τυχαίου κωδικού συνεδρίας στο synix.info κάθε λεπτό όσο εκτελείται το Synix, ακόμη και στο παρασκήνιο. Δεν αποστέλλονται δεδομένα διακομιστών. Η δραστηριότητα λήγει μετά από 3 λεπτά. Ενεργοποιημένο από προεπιλογή. Μπορείτε να το απενεργοποιήσετε εδώ.</value></data>
 </root>

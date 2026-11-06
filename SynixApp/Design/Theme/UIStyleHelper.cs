@@ -117,7 +117,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 			int radius = 8;
 
 			using (GraphicsPath outline = GetRoundedPath(new Rectangle(0, 0, p.Width - 1, p.Height - 1), radius))
-			using (Pen cyanPen = new Pen(Color.FromArgb(0, 190, 255), 1f))
+			using (Pen cyanPen = new Pen(SettingsPalette.Accent, 1f))
 			{
 				e.Graphics.DrawPath(cyanPen, outline);
 			}

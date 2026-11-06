@@ -1023,9 +1023,10 @@ Tartsa helyileg az opcionális RCON vagy adminisztrációs végpontokat, hacsak 
 
 3. Hivatalos dokumentáció: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Ehhez a kiszolgálói verzióhoz kompatibilis Metamod:Source és SourceMod build szükséges. A lefordított.smx bővítmények az ageofchivalry/addons/sourcemod/plugins mappába kerülnek; a kísérő fordítások, játékadatok és bővítmények megtartják a dokumentált mappáikat.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL – KORLÁTOZOTT, VÁLLALATI FORRÁSÚ, ELÉRHETŐ LICENC
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL – KORLÁTOZOTT, VÁLLALATI FORRÁSÚ, ELÉRHETŐ LICENC
 
-1.0 verzió - 2026. augusztus 2.
+Licencfelülvizsgálat: 1.1 — 2026. november 5.
+Ez a licenc felülvizsgálati száma, nem a Synix alkalmazás verziója.
 Szerzői jog © 2026 Jason Turner. Minden jog fenntartva.
 U.S. Szerzői jogi regisztrációs kérelem: Függőben
 
@@ -1153,7 +1154,24 @@ Ez a licenc csak a Synix Jason Turner tulajdonában lévő részeire vonatkozik.
 
 A jelen licenc alól kivételt csak a Jason Turner által írásban engedélyezett esetekben lehet tenni.
 
-A kérdéseket vagy engedélykérelmeket a hivatalos Synix GitHub tárolón vagy más hivatalos Synix kapcsolatfelvételi módszeren keresztül kell benyújtani.</value></data>
+A kérdéseket vagy engedélykérelmeket a hivatalos Synix GitHub tárolón vagy más hivatalos Synix kapcsolatfelvételi módszeren keresztül kell benyújtani.
+
+12. HIVATALOS LETÖLTÉSI FORRÁSOK
+
+A Synix alkalmazást kizárólag ezeken a hivatalos forrásokon keresztül szerezze be:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+A más webhelyekről származó példányokat Jason Turner nem ellenőrizte, és azok nem biztonságosak, módosítottak vagy elavultak lehetnek, illetve nem kívánt szoftvert tartalmazhatnak. Jason Turner nem garantálja ezek biztonságát vagy eredetiségét.
+
+A Synix felsorolása, a GitHubra mutató hivatkozás vagy a letöltés felkínálása nem ruház át tulajdonjogot, és nem jelent engedélyt, kapcsolatot, jóváhagyást vagy hivatalos státuszt. A Synix továbbra is Jason Turner tulajdona.
+
+A letöltések tárhelyen történő elhelyezéséhez, tükrözéséhez, proxyn keresztüli továbbításához, újracsomagolásához vagy további letöltőprogramokba foglalásához előzetes írásbeli engedély szükséges. Egy hivatalos forrásra mutató hivatkozás nem ad ilyen engedélyt.
+
+A 4.2. szakasz nem tiltja az ezekre a hivatalos forrásokra mutató szokásos közvetlen hivatkozásokat, amelyek megfelelően feltüntetik a Synix és Jason Turner nevét. Az ilyen hivatkozások nem teszik hivatalos forrássá az azokat közlő webhelyet.
+
+A WinGet ubidzz.Synix csomag jóváhagyott telepítési mód, ha a módosítatlan telepítőt közvetlenül a hivatalos GitHub-kiadásokból tölti le. Ez nem engedélyezi harmadik felek számára a tárhelyen történő terjesztést vagy az újracsomagolást.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>Kritikus beállítás szükséges:
 
 1. Indítsa el a szervert egyszer a &apos;Engine.ini&apos; építéséhez, majd állítsa le.
@@ -6748,4 +6766,27 @@ Ha a Synix nem nyílik meg újra, futtassa a meglévő Synix programot, vagy tö
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Mentések ellenőrzése…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Ehhez a kiszolgálóhoz még nincs rögzített tevékenység.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Nincs a szűrőknek megfelelő tevékenység.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Megjelenés</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Válasszon témát, kiemelőszínt és vezérlőstílust. A változások azonnal életbe lépnek és automatikusan mentődnek.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Színtéma</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Kiemelőszín</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Vezérlőstílus</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Előnézet</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Téma visszaállítása</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Óceán</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Erdő</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Ibolya</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Homok</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Téma alapértelmezése</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Türkiz</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Kék</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rózsaszín</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Borostyán</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Zöld</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Lekerekített</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Szögletes</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Aktív használat megosztása</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcionális: véletlenszerű munkamenetkód küldése a synix.info oldalnak percenként, amíg a Synix fut, a háttérben is. Szerveradatok nem kerülnek elküldésre. Az aktivitás 3 perc után lejár. Alapértelmezetten bekapcsolva. Itt kikapcsolhatja.</value></data>
 </root>

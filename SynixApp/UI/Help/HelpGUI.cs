@@ -1419,7 +1419,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				["License & Proprietary Terms"] = new HelpItem("Support",
 					"SYNIX CONTROL PANEL — LIMITED PROPRIETARY SOURCE-AVAILABLE LICENSE\n" +
 					"\n" +
-					"Version 1.0 — August 2, 2026\n" +
+					"License revision 1.1 — November 5, 2026\n" +
+					"This is the license revision, not the Synix app version.\n" +
 					"Copyright © 2026 Jason Turner. All Rights Reserved.\n" +
 					"U.S. Copyright Registration Application: Pending\n" +
 					"\n" +
@@ -1547,7 +1548,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 					"\n" +
 					"Exceptions to this license are valid only when provided in writing by Jason Turner.\n" +
 					"\n" +
-					"Questions or permission requests should be submitted through the official Synix GitHub repository or another official Synix contact method."),
+					"Questions or permission requests should be submitted through the official Synix GitHub repository or another official Synix contact method.\n" +
+					"\n" +
+					"12. OFFICIAL DOWNLOAD SOURCES\n" +
+					"\n" +
+					"Obtain Synix only through these official sources:\n" +
+					"\n" +
+					"• https://github.com/ubidzz/Synix-Control-Panel/releases\n" +
+					"• https://synix.info\n" +
+					"\n" +
+					"Copies supplied by other websites are not verified by Jason Turner and may be unsafe, modified, outdated, or bundled with unwanted software. Their safety and authenticity are not guaranteed by Jason Turner.\n" +
+					"\n" +
+					"Listing Synix, linking to GitHub, or offering a download does not transfer ownership or imply authorization, affiliation, endorsement, or official status. Synix remains the property of Jason Turner.\n" +
+					"\n" +
+					"Hosting, mirroring, proxying, repackaging, or wrapping downloads requires prior written permission. A link to an official source does not grant that permission.\n" +
+					"\n" +
+					"Section 4.2 does not prohibit ordinary direct links to these official sources that accurately credit Synix and Jason Turner. Such links do not make the linking website an official source.\n" +
+					"\n" +
+					"The WinGet package ubidzz.Synix is an approved installation method when it downloads the unmodified installer directly from the official GitHub releases. This does not authorize third-party hosting or repackaging."),
 
 				["Donate & Support Development"] = new HelpItem("Support",
 					"SUPPORT THE PROJECT:\n\n" +

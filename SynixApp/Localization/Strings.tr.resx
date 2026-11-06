@@ -2395,9 +2395,10 @@ Güvenli bir uzaktan yönetim düzenlemesine sahip olmadıkça RCON veya yöneti
 
 3. Resmi Belge: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Bu sunucu sürümü için uyumlu bir Metamod:Source ve SourceMod yapı gerektirir. Derlenmiş.smx eklentileri ageofchivalry/addons/sourcemod/plugins&apos;e gider; eşlik eden çeviriler, gamedata ve eklentiler belgelenmiş klasörlerini korurlar.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX KONTROL PANELİ - Kısıtlı Özel Kaynak Lisansı
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX KONTROL PANELİ - Kısıtlı Özel Kaynak Lisansı
 
-Versiyon 1.0 — 2 Ağustos 2026
+Lisans revizyonu 1.1 — 5 Kasım 2026
+Bu, Synix uygulamasının sürümü değil, lisansın revizyonudur.
 Telif hakkı © 2026 Jason Turner. Tüm hakları saklıdır.
 U.S. Telif Hakları Kayıt Başvurusu: Bekleniyor
 
@@ -2525,7 +2526,24 @@ Bu lisans sadece Synix&apos;in Jason Turner&apos;a ait olan bölümlerine uygula
 
 Bu lisans için istisnalar sadece Jason Turner tarafından yazılı olarak sağlandığında geçerlidir.
 
-Sorular veya izin talepleri resmi Synix GitHub deposu veya diğer resmi Synix iletişim yöntemi aracılığıyla sunulmalıdır.</value></data>
+Sorular veya izin talepleri resmi Synix GitHub deposu veya diğer resmi Synix iletişim yöntemi aracılığıyla sunulmalıdır.
+
+12. RESMÎ İNDİRME KAYNAKLARI
+
+Synix’i yalnızca şu resmî kaynaklar üzerinden edinin:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Diğer web sitelerinin sunduğu kopyalar Jason Turner tarafından doğrulanmamıştır; güvensiz, değiştirilmiş, eski veya istenmeyen yazılımlarla birlikte paketlenmiş olabilir. Jason Turner bunların güvenliğini ya da özgünlüğünü garanti etmez.
+
+Synix’i listelemek, GitHub’a bağlantı vermek veya indirme sunmak mülkiyeti devretmez; izin, bağlılık, onay veya resmî statü anlamına gelmez. Synix, Jason Turner’ın mülkiyetinde kalır.
+
+İndirmeleri barındırmak, yansıtmak, vekil sunucu üzerinden sunmak, yeniden paketlemek veya ek indirme programlarına sarmalamak için önceden yazılı izin gerekir. Resmî bir kaynağa verilen bağlantı bu izni sağlamaz.
+
+4.2. bölüm, Synix ve Jason Turner’ı doğru şekilde belirten ve bu resmî kaynaklara doğrudan yönlendiren olağan bağlantıları yasaklamaz. Bu tür bağlantılar, bağlantıyı veren web sitesini resmî bir kaynak hâline getirmez.
+
+WinGet paketi ubidzz.Synix, değiştirilmemiş yükleyiciyi doğrudan resmî GitHub sürümlerinden indirdiğinde onaylı bir kurulum yöntemidir. Bu, üçüncü tarafların barındırma veya yeniden paketleme yapmasına izin vermez.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>KRİTİK KURULUŞ GEREKLİ:
 
 1. Sunucuyu &apos;Engine.ini&apos; inşa etmek için bir kez başlatın, sonra kapatın.
@@ -7671,5 +7689,28 @@ Eğer Synix yeniden açılmazsa, mevcut Synix programınızı çalıştırın ve
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Yedekler kontrol ediliyor…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Bu sunucu için henüz etkinlik kaydedilmedi.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Filtrelerinizle eşleşen etkinlik yok.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Görünüm</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Bir tema, vurgu rengi ve denetim stili seçin. Değişiklikler hemen uygulanır ve otomatik kaydedilir.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Renk teması</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Vurgu rengi</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Denetim stili</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Önizleme</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Temayı sıfırla</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Okyanus</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Orman</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Menekşe</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Kum</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Tema varsayılanı</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turkuaz</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Mavi</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Pembe</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Kehribar</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Yeşil</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Yuvarlak</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Köşeli</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Etkinlik sayısını paylaş</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>İsteğe bağlı: Synix çalışırken, arka plan dahil, her dakika synix.info adresine rastgele bir oturum kodu gönderin. Sunucu verileri gönderilmez. Etkinlik 3 dakika sonra sona erer. Varsayılan olarak açıktır. Buradan kapatabilirsiniz.</value></data>
 </root>
 

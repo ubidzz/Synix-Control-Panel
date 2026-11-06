@@ -2,6 +2,7 @@ using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.Resources;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Synix_Control_Panel.SynixApp.Localization;
@@ -24,11 +25,163 @@ public sealed class AdditionalLanguageTests
 		{ "da-DK", "Dansk" }, { "fi-FI", "Suomi" },
 		{ "nb-NO", "Norsk bokmål" }, { "el-GR", "Ελληνικά" },
 		{ "hu-HU", "Magyar" }, { "ro-RO", "Română" },
-		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" }
+		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" },
+		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }, { "ca-ES", "Català" },
+		{ "sk-SK", "Slovenčina" }, { "sl-SI", "Slovenščina" },
+		{ "et-EE", "Eesti" }, { "lv-LV", "Latviešu" }, { "lt-LT", "Lietuvių" }
 	};
 
 	private static ResourceManager CreateManager() => new(
 		"Synix_Control_Panel.Localization.Strings", typeof(LocalizationManager).Assembly);
+
+	[Theory]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
+	public void BalticCatalogsKeepFilePickerPatternsAndSeparators(string culture)
+	{
+		ResourceManager manager = CreateManager();
+		ResourceSet english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
+		ResourceSet catalog = manager.GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		foreach (DictionaryEntry entry in english)
+		{
+			string key = (string)entry.Key;
+			string source = (string)entry.Value!;
+			if (!key.Contains("Filter", StringComparison.Ordinal) || !source.Contains('|')) continue;
+			string[] expected = source.Split('|');
+			string[] actual = catalog.GetString(key)!.Split('|');
+			Assert.True(expected.Length == actual.Length, $"{culture}: file filter separators changed in {key}");
+			for (int index = 1; index < expected.Length; index += 2)
+				Assert.True(expected[index] == actual[index], $"{culture}: file pattern changed in {key}");
+		}
+	}
+
+	[Theory]
+	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
+	public void AddedCatalogsKeepLiteralCommandsPathsAndIntervals(string culture)
+	{
+		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		string guide = catalog.GetString("GameDefinitions.Builder.Guide")!;
+		foreach (string literal in new[]
+		{
+			"90 mod folder", "90 mod cstrike", @"Binaries\Win64\Server.exe",
+			@"Saved\Logs\*.log", @"profiles\{Identity}\logs\**\*.log",
+			"[LAUNCH_ARGUMENT_TAGS]", "[RCON_ARGUMENT_TAGS]",
+			"+rcon.port {rcon_port} +rcon.password \"{rcon_pass}\""
+		}) Assert.Contains(literal, guide, StringComparison.Ordinal);
+		Assert.Equal(@"C:\Synix\Games\Example Server", catalog.GetString("Text.09DC887D818AD07E931B"));
+		// Resource values can retain Windows checkout line endings; compare the literal lines.
+		Assert.Equal("Logs\\*.log\nSaved\\Logs\\**\\*.log", catalog.GetString("Text.070839931CDDA34F168B")?.ReplaceLineEndings("\n"));
+		Assert.Contains("1–100", catalog.GetString("Text.1F8DCA1F57379032F8AD"));
+		Assert.Contains("'stop'", catalog.GetString("Minecraft.Activity.StopThroughConsole"));
+	}
+
+	[Theory]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
+	public void BalticCatalogsKeepWinGetCommandsLiteral(string culture)
+	{
+		string guide = CreateManager().GetString("Content.8579FAD0312C27797E9E",
+			CultureInfo.GetCultureInfo(culture))!;
+		foreach (string command in new[] { "install", "list", "upgrade", "uninstall" })
+			Assert.Contains($"winget {command} --exact --id ubidzz.Synix", guide, StringComparison.Ordinal);
+	}
+
+	[Theory]
+	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
+	public void AddedCatalogsDoNotContainTranslationToolArtifacts(string culture)
+	{
+		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		Regex artifact = new(@"@\s*(?:item|info|label|title|option|action|context)\s*:|Constellation name|Spelling dictionary|ZXQ|QXZ|ZAPI");
+		foreach (DictionaryEntry entry in catalog)
+			Assert.False(artifact.IsMatch((string)entry.Value!), $"Translation artifact in {entry.Key}");
+	}
+
+	[Theory]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
+	public void AddedCatalogsPreserveEveryFormatAndGamePlaceholder(string culture)
+	{
+		ResourceManager manager = CreateManager();
+		ResourceSet english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
+		ResourceSet catalog = manager.GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		Regex placeholder = new(@"\{\{[^{}]*\}\}|\{[^{}\r\n]+\}");
+		foreach (DictionaryEntry entry in english)
+		{
+			string[] expected = placeholder.Matches((string)entry.Value!)
+				.Select(match => match.Value).Order(StringComparer.Ordinal).ToArray();
+			string[] actual = placeholder.Matches(catalog.GetString((string)entry.Key)!)
+				.Select(match => match.Value).Order(StringComparer.Ordinal).ToArray();
+			Assert.True(expected.SequenceEqual(actual),
+				$"{culture}: a format argument or game placeholder changed in {entry.Key}");
+		}
+	}
+
+	[Theory]
+	[InlineData("bg", "Напред: Преглед", "Запазване на настройките на сървъра", "Външен вид")]
+	[InlineData("hr", "Dalje: Pregled", "Spremi postavke poslužitelja", "Izgled")]
+	[InlineData("ca", "Següent: Revisió", "Desa la configuració del servidor", "Aparença")]
+	[InlineData("sk", "Ďalej: Kontrola", "Uložiť nastavenia servera", "Vzhľad")]
+	[InlineData("sl", "Naprej: Pregled", "Shrani nastavitve strežnika", "Videz")]
+	[InlineData("et", "Edasi: ülevaatus", "Salvesta serveri seaded", "Välimus")]
+	[InlineData("lv", "Tālāk: pārskatīt", "Saglabāt servera iestatījumus", "Izskats")]
+	[InlineData("lt", "Toliau: peržiūra", "Išsaugoti serverio nustatymus", "Išvaizda")]
+	public void AddedLanguagesIncludeReviewAndAppearanceWithoutChangingPreservedPaths(
+		string culture, string review, string save, string appearance)
+	{
+		ResourceSet catalog = CreateManager().GetResourceSet(
+			CultureInfo.GetCultureInfo(culture), true, false)!;
+		Assert.Equal(review, catalog.GetString("ServerSetup.Button.NextReview"));
+		Assert.Equal(save, catalog.GetString("ServerSetup.Button.SaveSettings"));
+		Assert.Equal(appearance, catalog.GetString("Appearance.Title"));
+		Assert.Contains(@"C:\Synix", catalog.GetString("Uninstall.Keep"));
+		Assert.Contains(@"SynixData\servers.json", catalog.GetString("Uninstall.Keep"));
+		Assert.NotEqual(catalog.GetString("Uninstall.AppOnly"), catalog.GetString("Uninstall.Everything"));
+		Assert.NotEqual(catalog.GetString("Uninstall.BackupsKeep"), catalog.GetString("Uninstall.BackupsDelete"));
+		foreach (string key in new[]
+		{
+			"Configuration.Check.FixConfig", "MinecraftConsole.Quick.Kick.Label",
+			"Text.7CB94F75343DF207439A", "DynamicText.B83EC0A78559E32C96D2"
+		})
+			Assert.NotEqual(CreateManager().GetString(key, CultureInfo.InvariantCulture), catalog.GetString(key));
+	}
+
+	[Theory]
+	[InlineData("bg")]
+	[InlineData("hr")]
+	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
+	public void AddedLanguagesKeepLiteralWindowsPathsAndConfigurationExamples(string culture)
+	{
+		ResourceManager manager = CreateManager();
+		ResourceSet english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
+		ResourceSet catalog = manager.GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		Regex literal = new(@"\b[A-Za-z]:\\[\w\\.-]+|\b(?:server|app|config)\.[A-Za-z_]\w*");
+		foreach (DictionaryEntry entry in english)
+		{
+			foreach (Match match in literal.Matches((string)entry.Value!))
+				Assert.True(catalog.GetString((string)entry.Key)!.Contains(match.Value.TrimEnd('.'), StringComparison.Ordinal),
+					$"{culture}: literal path or configuration example changed in {entry.Key}: {match.Value}");
+		}
+	}
 
 	[Theory]
 	[InlineData("nl")]
@@ -45,6 +198,14 @@ public sealed class AdditionalLanguageTests
 	[InlineData("ro")]
 	[InlineData("hi")]
 	[InlineData("th")]
+	[InlineData("bg")]
+	[InlineData("hr")]
+	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
 	public void AdditionalLanguagesCoverTheEntireNeutralCatalog(string resourceCulture)
 	{
 		ResourceManager manager = CreateManager();
@@ -69,6 +230,14 @@ public sealed class AdditionalLanguageTests
 	[InlineData("ro")]
 	[InlineData("hi")]
 	[InlineData("th")]
+	[InlineData("bg")]
+	[InlineData("hr")]
+	[InlineData("ca")]
+	[InlineData("sk")]
+	[InlineData("sl")]
+	[InlineData("et")]
+	[InlineData("lv")]
+	[InlineData("lt")]
 	public void NewCatalogsPreserveTheDownloadSpeedUnit(string resourceCulture)
 	{
 		ResourceSet catalog = CreateManager().GetResourceSet(
@@ -110,10 +279,10 @@ public sealed class AdditionalLanguageTests
 		{
 			string? value = catalog.GetString(key);
 			Assert.False(string.IsNullOrWhiteSpace(value), $"{code} is missing {key}");
-			// "Backups" is normal Portuguese and "General" is normal Romanian;
+			// "Backups" is normal Portuguese; "General" is Romanian and Catalan;
 			// valid shared words must not be changed just to differ from English.
 			if (key != "MinecraftWorkspace.Backups" &&
-				!(code == "ro-RO" && key == "SettingsPage.General.Heading"))
+				!(code is "ro-RO" or "ca-ES" && key == "SettingsPage.General.Heading"))
 				Assert.NotEqual(CreateManager().GetString(key, CultureInfo.InvariantCulture), value);
 		}
 	}
@@ -170,6 +339,23 @@ public sealed class AdditionalLanguageTests
 	[InlineData("hi-IN", "hi-IN")]
 	[InlineData("th", "th-TH")]
 	[InlineData("TH-th", "th-TH")]
+	[InlineData("bg", "bg-BG")]
+	[InlineData("bg-BG", "bg-BG")]
+	[InlineData("hr", "hr-HR")]
+	[InlineData("hr-BA", "hr-HR")]
+	[InlineData("ca", "ca-ES")]
+	[InlineData("ca-ES", "ca-ES")]
+	[InlineData("ca-AD", "ca-ES")]
+	[InlineData("sk", "sk-SK")]
+	[InlineData("sk-SK", "sk-SK")]
+	[InlineData("sl", "sl-SI")]
+	[InlineData("SL-si", "sl-SI")]
+	[InlineData("et", "et-EE")]
+	[InlineData("et-EE", "et-EE")]
+	[InlineData("lv", "lv-LV")]
+	[InlineData("LV-lv", "lv-LV")]
+	[InlineData("lt", "lt-LT")]
+	[InlineData("lt-LT", "lt-LT")]
 	[InlineData("fr-CA", "fr-FR")]
 	[InlineData("", "en-US")]
 	[InlineData("unsupported-language", "en-US")]
@@ -279,6 +465,8 @@ public sealed class AdditionalLanguageTests
 
 				if (Environment.GetEnvironmentVariable("SYNIX_RENDER_LANGUAGES") == "1")
 				{
+					page.ScrollControlIntoView(picker);
+					Application.DoEvents();
 					using Bitmap image = new(host.Width, host.Height);
 					host.DrawToBitmap(image, new Rectangle(Point.Empty, image.Size));
 					image.Save(Path.Combine(AppContext.BaseDirectory, $"language-{code}.png"));

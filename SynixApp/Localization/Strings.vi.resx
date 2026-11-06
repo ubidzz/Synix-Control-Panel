@@ -2396,9 +2396,10 @@ Giữ tùy chọn RCON hoặc điểm cuối quản lý cục bộ trừ khi b�
 
 3. Tài liệu chính thức: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Cần một build tương thích Metamod:Source và SourceMod cho phiên bản máy chủ này. Phiên bản.smx plugin được biên dịch vào ageofchivalry/addons/sourcemod/plugins; kèm theo các bản dịch, gamedata và các phần mở rộng giữ lại thư mục tài liệu của họ.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>bảng điều khiển synix — giấy phép mã nguồn có sẵn hạn chế
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>bảng điều khiển synix — giấy phép mã nguồn có sẵn hạn chế
 
-Phiên bản 1.0 — August 2, 2026
+Bản sửa đổi giấy phép 1.1 — ngày 5 tháng 11 năm 2026
+Đây là bản sửa đổi giấy phép, không phải phiên bản ứng dụng Synix.
 Bản quyền © 2026 Jason Turner. Mọi quyền được bảo vệ.
 U.S. Yêu cầu đăng ký bản quyền: đang chờ
 
@@ -2526,7 +2527,24 @@ Giấy phép này chỉ áp dụng cho các phần của Synix thuộc sở hữ
 
 Các ngoại lệ cho giấy phép này chỉ có hiệu lực khi được Jason Turner cung cấp bằng văn bản.
 
-Các câu hỏi hoặc yêu cầu cho phép nên được gửi qua kho chính thức Synix GitHub hoặc một phương pháp liên hệ chính thức Synix khác.</value></data>
+Các câu hỏi hoặc yêu cầu cho phép nên được gửi qua kho chính thức Synix GitHub hoặc một phương pháp liên hệ chính thức Synix khác.
+
+12. NGUỒN TẢI XUỐNG CHÍNH THỨC
+
+Chỉ lấy Synix thông qua các nguồn chính thức sau:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Các bản sao do trang web khác cung cấp không được Jason Turner xác minh và có thể không an toàn, đã bị sửa đổi, lỗi thời hoặc đi kèm phần mềm không mong muốn. Jason Turner không bảo đảm tính an toàn hay tính xác thực của chúng.
+
+Việc liệt kê Synix, liên kết đến GitHub hoặc cung cấp bản tải xuống không chuyển giao quyền sở hữu và không hàm ý có sự cho phép, liên kết, chứng thực hay tư cách chính thức. Synix vẫn thuộc sở hữu của Jason Turner.
+
+Việc lưu trữ, tạo bản sao trên máy chủ khác, cung cấp qua proxy, đóng gói lại hoặc bọc bản tải xuống trong chương trình tải xuống bổ sung phải được cho phép trước bằng văn bản. Liên kết đến nguồn chính thức không cấp quyền đó.
+
+Mục 4.2 không cấm các liên kết trực tiếp thông thường đến những nguồn chính thức này nếu ghi nhận đúng Synix và Jason Turner. Những liên kết đó không biến trang web đặt liên kết thành nguồn chính thức.
+
+Gói WinGet ubidzz.Synix là phương thức cài đặt được chấp thuận khi tải trình cài đặt không bị sửa đổi trực tiếp từ các bản phát hành chính thức trên GitHub. Điều này không cho phép bên thứ ba lưu trữ hoặc đóng gói lại.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CÔNG NGHỆ CẦN GẶP:
 
 1. Bắt đầu máy chủ một lần để xây dựng &apos;Engine.ini&apos;, sau đó tắt nó.
@@ -7672,5 +7690,28 @@ Nếu Synix không mở lại, chạy chương trình Synix hiện có hoặc t�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Đang kiểm tra bản sao lưu…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Chưa có hoạt động nào được ghi lại cho máy chủ này.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Không có hoạt động nào khớp với bộ lọc của bạn.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Giao diện</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Chọn chủ đề, màu nhấn và kiểu điều khiển. Thay đổi được áp dụng ngay và lưu tự động.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Chủ đề màu</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Màu nhấn</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Kiểu điều khiển</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Xem trước</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Đặt lại chủ đề</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Than chì</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Đại dương</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Rừng</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Tím</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Cát</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Mặc định của chủ đề</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Xanh ngọc</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Xanh dương</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Hồng</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Hổ phách</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Xanh lá</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Bo tròn</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Vuông</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Chia sẻ số phiên đang hoạt động</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Tùy chọn: gửi mã phiên ngẫu nhiên đến synix.info mỗi phút khi Synix đang chạy, kể cả trong nền. Không gửi dữ liệu máy chủ. Trạng thái hoạt động hết hạn sau 3 phút. Mặc định bật. Bạn có thể tắt tại đây.</value></data>
 </root>
 

@@ -138,7 +138,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				textColor = ForeColor;
 			}
 
-			using GraphicsPath path = RoundedGeometry.Create(bounds, radius);
+			using GraphicsPath path = RoundedGeometry.CreateThemed(bounds, radius);
 			using SolidBrush fillBrush = new(fillColor);
 			graphics.FillPath(fillBrush, path);
 

@@ -2395,10 +2395,11 @@ Mantenere gli endpoint facoltativi RCON o di amministrazione locali a meno che n
 
 3. Documentazione ufficiale: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Richiede una build compatibile Metamod:Source e SourceMod per questa versione server. I plugin.smx compilati vanno in ageofchivalry/addons/sourcemod/plugins; le traduzioni di accompagnamento, i gamedata e le estensioni mantengono le loro cartelle documentate.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>PANNELLO DI CONTROLLO SYNIX — LICENZA LIMITATA PROPRIETARIA SOURCE-DISPONIBILE
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>PANNELLO DI CONTROLLO SYNIX — LICENZA LIMITATA PROPRIETARIA SOURCE-DISPONIBILE
 
-Versione 1.0 — 2 agosto 2026
-Copyright © 2026 Jason Turner. tutti i diritti riservati. Tutti i diritti riservati.
+Revisione della licenza 1.1 — 5 novembre 2026
+Questa è la revisione della licenza, non la versione dell’app Synix.
+Copyright © 2026 Jason Turner. Tutti i diritti riservati.
 U.S. Domanda di registrazione del copyright: In sospeso
 
 La presente licenza si applica al software Control Panel Synix, compreso il codice sorgente, i binari compilati, l&apos;interfaccia utente, la documentazione, la grafica, i loghi e altri materiali inclusi (collettivamente, il &quot;Software&quot;).
@@ -2525,7 +2526,24 @@ Questa licenza si applica solo alle parti di Synix di proprietà di Jason Turner
 
 Le eccezioni a questa licenza sono valide solo se fornite per iscritto da Jason Turner.
 
-Le domande o le richieste di autorizzazione devono essere inviate tramite il repository ufficiale Synix GitHub o un altro metodo di contatto ufficiale Synix.</value></data>
+Le domande o le richieste di autorizzazione devono essere inviate tramite il repository ufficiale Synix GitHub o un altro metodo di contatto ufficiale Synix.
+
+12. FONTI UFFICIALI PER IL DOWNLOAD
+
+Ottenere Synix esclusivamente tramite queste fonti ufficiali:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Le copie fornite da altri siti web non sono verificate da Jason Turner e potrebbero essere pericolose, modificate, obsolete o accompagnate da software indesiderato. Jason Turner non ne garantisce la sicurezza né l’autenticità.
+
+Inserire Synix in un elenco, collegarsi a GitHub oppure offrire un download non trasferisce la proprietà né implica autorizzazione, affiliazione, approvazione o status ufficiale. Synix rimane di proprietà di Jason Turner.
+
+Ospitare, creare copie speculari, distribuire tramite proxy, riconfezionare o incorporare i download in programmi intermediari richiede un’autorizzazione scritta preventiva. Un collegamento a una fonte ufficiale non concede tale autorizzazione.
+
+La sezione 4.2 non vieta i normali collegamenti diretti a queste fonti ufficiali che attribuiscano correttamente Synix a Jason Turner. Tali collegamenti non rendono il sito che li pubblica una fonte ufficiale.
+
+Il pacchetto WinGet ubidzz.Synix è un metodo di installazione approvato quando scarica il programma di installazione non modificato direttamente dalle versioni ufficiali pubblicate su GitHub. Ciò non autorizza terzi a ospitare o riconfezionare il software.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CRITICAL SETUP RICHIESTO:
 
 1. Avviare il server una volta per costruire &apos;Engine.ini&apos;, quindi spegnerlo.
@@ -7671,5 +7689,28 @@ Se Synix non viene riaperto, eseguire il programma Synix esistente o scaricare l
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Controllo dei backup…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Non è stata ancora registrata alcuna attività per questo server.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Nessuna attività corrisponde ai filtri.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Aspetto</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Scegli un tema, un colore di accento e uno stile dei controlli. Le modifiche vengono applicate subito e salvate automaticamente.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Tema colori</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Colore di accento</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Stile dei controlli</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Anteprima</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Reimposta tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafite</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Oceano</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Foresta</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Viola</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Sabbia</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Predefinito del tema</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Verde acqua</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Blu</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rosa</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Ambra</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Verde</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Arrotondato</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Squadrato</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Condividi l’attività</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Facoltativo: invia un codice di sessione casuale a synix.info ogni minuto mentre Synix è in esecuzione, anche in background. Non vengono inviati dati dei server. L’attività scade dopo 3 minuti. Attivato per impostazione predefinita. Puoi disattivarlo qui.</value></data>
 </root>
 

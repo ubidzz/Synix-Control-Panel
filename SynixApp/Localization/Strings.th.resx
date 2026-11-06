@@ -1023,9 +1023,10 @@ Modrinth ดาวน์โหลดถูกตรวจสอบ ข้อม�
 
 3. เอกสารทางการ: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>จำเป็นต้องใช้รุ่นที่เข้ากันได้ Metamod:Source และ SourceMod สำหรับเวอร์ชันของเซิร์ฟเวอร์นี้ ส่วนเสริม.smx ที่ถูกวิเคราะห์ ไปยัง ageofchivalry/addons/sourcemod/plugins; การแปลที่มาพร้อมกัน, ข้อมูลเกมและส่วนขยายยังคงอยู่ในโฟลเดอร์เอกสารของมัน</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>พาเนลควบคุม SYNIX - ใบอนุญาตซอฟต์แวร์ที่มีอยู่
+  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>พาเนลควบคุม SYNIX - ใบอนุญาตซอฟต์แวร์ที่มีอยู่
 
-รุ่น 1.0- 28 กรกฎาคม 2026
+ฉบับแก้ไขใบอนุญาต 1.1 — 5 พฤศจิกายน ค.ศ. 2026
+นี่คือฉบับแก้ไขของใบอนุญาต ไม่ใช่เวอร์ชันของแอป Synix
 สงวนลิขสิทธิ์ © 2026 เจสัน เทอร์เนอร์ สิทธิ์ทั้งหมด
 U.S. คำขอจดทะเบียนลิขสิทธิ์: ยังรออยู่
 
@@ -1153,7 +1154,24 @@ GitHub forks สามารถใช้ได้เพียงเพื่อ�
 
 ข้อยกเว้นจากใบอนุญาตนี้มีผลเฉพาะเมื่อแจ้งเป็นลายลักษณ์อักษรโดย Jason Turner
 
-คำถามหรือคำขออนุญาตควรจะส่งผ่านทางเว็บไซต์ Synix GitHub หรือทางอื่นที่เกี่ยวข้องกับ Synix</value></data>
+คำถามหรือคำขออนุญาตควรจะส่งผ่านทางเว็บไซต์ Synix GitHub หรือทางอื่นที่เกี่ยวข้องกับ Synix
+
+12. แหล่งดาวน์โหลดอย่างเป็นทางการ
+
+รับ Synix ผ่านแหล่งอย่างเป็นทางการเหล่านี้เท่านั้น:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+สำเนาที่เว็บไซต์อื่นให้บริการไม่ได้รับการตรวจสอบโดย Jason Turner และอาจไม่ปลอดภัย ถูกดัดแปลง ล้าสมัย หรือมาพร้อมกับซอฟต์แวร์ที่ไม่ต้องการ Jason Turner ไม่รับประกันความปลอดภัยหรือความแท้ของสำเนาเหล่านั้น
+
+การแสดงรายการ Synix การลิงก์ไปยัง GitHub หรือการให้ดาวน์โหลดไม่ได้โอนกรรมสิทธิ์ และไม่ได้หมายถึงการได้รับอนุญาต ความเกี่ยวข้อง การรับรอง หรือสถานะอย่างเป็นทางการ Synix ยังคงเป็นทรัพย์สินของ Jason Turner
+
+การโฮสต์ ทำมิเรอร์ ให้บริการผ่านพร็อกซี จัดแพ็กเกจใหม่ หรือครอบไฟล์ดาวน์โหลดด้วยโปรแกรมดาวน์โหลดเพิ่มเติม ต้องได้รับอนุญาตเป็นลายลักษณ์อักษรล่วงหน้า ลิงก์ไปยังแหล่งอย่างเป็นทางการไม่ได้ให้สิทธิ์ดังกล่าว
+
+ข้อ 4.2 ไม่ห้ามลิงก์โดยตรงตามปกติไปยังแหล่งอย่างเป็นทางการเหล่านี้ ซึ่งให้เครดิตแก่ Synix และ Jason Turner อย่างถูกต้อง ลิงก์ดังกล่าวไม่ได้ทำให้เว็บไซต์ที่เผยแพร่ลิงก์กลายเป็นแหล่งอย่างเป็นทางการ
+
+แพ็กเกจ WinGet ubidzz.Synix เป็นวิธีติดตั้งที่ได้รับอนุมัติเมื่อดาวน์โหลดตัวติดตั้งที่ไม่ถูกดัดแปลงโดยตรงจากรุ่นที่เผยแพร่อย่างเป็นทางการบน GitHub ทั้งนี้ไม่ได้อนุญาตให้บุคคลที่สามโฮสต์หรือจัดแพ็กเกจใหม่</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>ต้องการการตั้งค่าที่สำคัญ:
 
 1. บูตเซิร์ฟเวอร์ครั้งหนึ่งเพื่อสร้าง &apos;Engine.ini&apos; แล้วปิดมัน
@@ -6748,4 +6766,27 @@ ARK จะดาวน์โหลดโมดนี้จาก {2} เมื�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>กำลังตรวจสอบข้อมูลสำรอง…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>ยังไม่มีการบันทึกกิจกรรมสำหรับเซิร์ฟเวอร์นี้</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>ไม่มีกิจกรรมที่ตรงกับตัวกรองของคุณ</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>รูปลักษณ์</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>เลือกธีม สีเน้น และรูปแบบตัวควบคุม การเปลี่ยนแปลงจะมีผลทันทีและบันทึกโดยอัตโนมัติ</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>ธีมสี</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>สีเน้น</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>รูปแบบตัวควบคุม</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>ตัวอย่าง</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>รีเซ็ตธีม</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>กราไฟต์</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>มหาสมุทร</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>ป่า</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>ม่วง</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>ทราย</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>ค่าเริ่มต้นของธีม</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>เขียวอมฟ้า</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>น้ำเงิน</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>ชมพู</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>อำพัน</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>เขียว</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>มุมโค้ง</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>มุมเหลี่ยม</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>แชร์จำนวนเซสชันที่ใช้งาน</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>ไม่บังคับ: ส่งรหัสเซสชันแบบสุ่มไปยัง synix.info ทุกนาทีขณะที่ Synix ทำงาน รวมถึงในเบื้องหลัง โดยไม่ส่งข้อมูลเซิร์ฟเวอร์ สถานะการใช้งานจะหมดอายุหลังจาก 3 นาที เปิดไว้โดยค่าเริ่มต้น คุณสามารถปิดได้ที่นี่</value></data>
 </root>

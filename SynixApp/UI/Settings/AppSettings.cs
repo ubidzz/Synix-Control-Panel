@@ -155,6 +155,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				ShowServerWindowChanged;
 			generalSettingsPage.DarkModeChanged +=
 				DarkModeChanged;
+			generalSettingsPage.AppearanceChanged += AppearanceChanged;
 			generalSettingsPage.SteamCmdDownloadModeChanged +=
 				SteamCmdDownloadModeChanged;
 			generalSettingsPage.SteamCmdDownloadLimitChanged +=
@@ -177,6 +178,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				VerifyPackageRequested;
 			privacySettingsPage.PrivacyModeChanged +=
 				PrivacyModeChanged;
+			privacySettingsPage.ShareActivityCountChanged += ShareActivityCountChanged;
 			privacySettingsPage.CheckForDDoSChanged +=
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
@@ -215,6 +217,9 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					Properties.Settings.Default.ShowServerWindow;
 				generalSettingsPage.DarkMode =
 					Properties.Settings.Default.DarkMode;
+				generalSettingsPage.ThemeName = Properties.Settings.Default.ThemeName;
+				generalSettingsPage.ThemeAccent = Properties.Settings.Default.ThemeAccent;
+				generalSettingsPage.ThemeStyle = Properties.Settings.Default.ThemeStyle;
 				generalSettingsPage.SteamCmdDownloadLimitMbps =
 					Properties.Settings.Default.SteamCmdDownloadLimitMbps;
 				generalSettingsPage.LimitSteamCmdDownloadSpeed =
@@ -235,6 +240,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					Properties.Settings.Default.MaxBackups;
 				privacySettingsPage.PrivacyMode =
 					Properties.Settings.Default.PrivacyMode;
+				privacySettingsPage.ShareActivityCount = Properties.Settings.Default.ShareActivityCount;
 				privacySettingsPage.CheckForDDoS =
 					Properties.Settings.Default.CheckDDoS;
 				advancedSettingsPage.ElevatedSystemTasks =
@@ -479,6 +485,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			Properties.Settings.Default.CustomBackupPath =
 				dialog.SelectedPath;
 			Properties.Settings.Default.Save();
+		}
+
+		private void ShareActivityCountChanged(object? sender, EventArgs e)
+		{
+			if (_loadingSettings) return;
+			Properties.Settings.Default.ShareActivityCount = privacySettingsPage.ShareActivityCount;
+			Properties.Settings.Default.Save();
+			UsageStatisticsService.ApplyPreference();
 		}
 
 		private async void PrivacyModeChanged(
@@ -821,6 +835,17 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			Properties.Settings.Default.DarkMode = generalSettingsPage.DarkMode;
 			Properties.Settings.Default.Save();
 			ThemeManager.SetDarkMode(generalSettingsPage.DarkMode);
+		}
+
+		private void AppearanceChanged(object? sender, EventArgs eventArgs)
+		{
+			if (_loadingSettings) return;
+			Properties.Settings.Default.ThemeName = generalSettingsPage.ThemeName;
+			Properties.Settings.Default.ThemeAccent = generalSettingsPage.ThemeAccent;
+			Properties.Settings.Default.ThemeStyle = generalSettingsPage.ThemeStyle;
+			Properties.Settings.Default.Save();
+			ThemeManager.SetAppearance(generalSettingsPage.DarkMode, generalSettingsPage.ThemeName,
+				generalSettingsPage.ThemeAccent, generalSettingsPage.ThemeStyle);
 		}
 
 		private void SteamCmdDownloadModeChanged(
