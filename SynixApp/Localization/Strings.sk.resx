@@ -15886,4 +15886,6 @@ Pred zmenou rámca alebo hry, zachovať svet, konfiguráciu a plugin dát. Skont
   <data name="Appearance.Square" xml:space="preserve">
     <value>Hranaté</value>
   </data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Zdieľať počet aktívnych relácií</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Voliteľné: odosielať náhodný kód relácie na synix.info každú minútu, keď Synix beží, aj na pozadí. Údaje serverov sa neodosielajú. Aktivita vyprší po 3 minútach. Predvolene zapnuté. Tu môžete túto možnosť vypnúť.</value></data>
 </root>

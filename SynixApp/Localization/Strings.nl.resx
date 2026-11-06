@@ -7711,5 +7711,7 @@ Als Synix niet opnieuw wordt geopend, voert u uw bestaande Synix-programma uit o
   <data name="Appearance.Green" xml:space="preserve"><value>Groen</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Afgerond</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Vierkant</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Actieve sessies delen</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optioneel: stuur elke minuut een willekeurige sessiecode naar synix.info terwijl Synix draait, ook op de achtergrond. Er worden geen servergegevens verzonden. Activiteit verloopt na 3 minuten. Standaard ingeschakeld. Je kunt dit hier uitschakelen.</value></data>
 </root>
 

@@ -236,11 +236,13 @@ namespace Synix_Control_Panel.SynixApp
 						MessageBoxIcon.Warning);
 				}
 
+				UsageStatisticsService.ApplyPreference();
 				Application.Run(mainWindow);
 			}
 			finally
 			{
 				SynixSessionRecovery.EndSession();
+				UsageStatisticsService.StopForExit();
 				FileHandler.FlushLogsAsync()
 					.GetAwaiter()
 					.GetResult();

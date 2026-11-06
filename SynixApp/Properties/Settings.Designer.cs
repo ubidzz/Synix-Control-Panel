@@ -27,6 +27,14 @@ namespace Synix_Control_Panel.Properties {
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShareActivityCount {
+            get { return (bool)this["ShareActivityCount"]; }
+            set { this["ShareActivityCount"] = value; }
+        }
         
         public static Settings Default {
             get {

@@ -14264,4 +14264,6 @@ Prije promjene okvira ili igre, sačuvajte svijet, konfiguraciju i podatke o dod
   <data name="Appearance.Green" xml:space="preserve"><value>Zelena</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Zaobljene</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Pravokutne</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Dijeli broj aktivnih sesija</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Neobavezno: šaljite nasumični kod sesije na synix.info jednom u minuti dok Synix radi, uključujući rad u pozadini. Podaci poslužitelja ne šalju se. Aktivnost istječe nakon 3 minute. Prema zadanim postavkama uključeno. Ovdje možete isključiti ovu opciju.</value></data>
 </root>

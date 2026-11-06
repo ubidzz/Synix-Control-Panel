@@ -178,6 +178,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				VerifyPackageRequested;
 			privacySettingsPage.PrivacyModeChanged +=
 				PrivacyModeChanged;
+			privacySettingsPage.ShareActivityCountChanged += ShareActivityCountChanged;
 			privacySettingsPage.CheckForDDoSChanged +=
 				CheckForDDoSChanged;
 			advancedSettingsPage.ElevatedSystemTasksChanged +=
@@ -239,6 +240,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 					Properties.Settings.Default.MaxBackups;
 				privacySettingsPage.PrivacyMode =
 					Properties.Settings.Default.PrivacyMode;
+				privacySettingsPage.ShareActivityCount = Properties.Settings.Default.ShareActivityCount;
 				privacySettingsPage.CheckForDDoS =
 					Properties.Settings.Default.CheckDDoS;
 				advancedSettingsPage.ElevatedSystemTasks =
@@ -483,6 +485,14 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			Properties.Settings.Default.CustomBackupPath =
 				dialog.SelectedPath;
 			Properties.Settings.Default.Save();
+		}
+
+		private void ShareActivityCountChanged(object? sender, EventArgs e)
+		{
+			if (_loadingSettings) return;
+			Properties.Settings.Default.ShareActivityCount = privacySettingsPage.ShareActivityCount;
+			Properties.Settings.Default.Save();
+			UsageStatisticsService.ApplyPreference();
 		}
 
 		private async void PrivacyModeChanged(

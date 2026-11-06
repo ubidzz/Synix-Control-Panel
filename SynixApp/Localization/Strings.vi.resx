@@ -7711,5 +7711,7 @@ Nếu Synix không mở lại, chạy chương trình Synix hiện có hoặc t�
   <data name="Appearance.Green" xml:space="preserve"><value>Xanh lá</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Bo tròn</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Vuông</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Chia sẻ số phiên đang hoạt động</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Tùy chọn: gửi mã phiên ngẫu nhiên đến synix.info mỗi phút khi Synix đang chạy, kể cả trong nền. Không gửi dữ liệu máy chủ. Trạng thái hoạt động hết hạn sau 3 phút. Mặc định bật. Bạn có thể tắt tại đây.</value></data>
 </root>
 

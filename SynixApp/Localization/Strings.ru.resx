@@ -7710,5 +7710,7 @@ ARK загрузит этот мод из {2} при запуске сервер
   <data name="Appearance.Green" xml:space="preserve"><value>Зелёный</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Скруглённый</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Прямоугольный</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Передавать данные об активности</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Необязательно: отправлять случайный код сеанса на synix.info каждую минуту, пока Synix работает, в том числе в фоне. Данные серверов не отправляются. Активность истекает через 3 минуты. По умолчанию включено. Здесь можно отключить эту функцию.</value></data>
 </root>
 

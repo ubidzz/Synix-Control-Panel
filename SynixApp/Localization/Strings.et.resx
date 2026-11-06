@@ -15886,4 +15886,6 @@ Enne raamistiku või mängu muutmist säilitage maailma, konfiguratsiooni ja plu
   <data name="Appearance.Square" xml:space="preserve">
     <value>Kandiline</value>
   </data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Jaga aktiivsuse arvu</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valikuline: saada juhuslik seansikood saidile synix.info iga minut, kui Synix töötab, ka taustal. Serveriandmeid ei saadeta. Aktiivsus aegub 3 minuti pärast. Vaikimisi sisse lülitatud. Saate selle siin välja lülitada.</value></data>
 </root>

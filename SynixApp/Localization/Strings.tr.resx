@@ -7710,5 +7710,7 @@ Eğer Synix yeniden açılmazsa, mevcut Synix programınızı çalıştırın ve
   <data name="Appearance.Green" xml:space="preserve"><value>Yeşil</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Yuvarlak</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Köşeli</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Etkinlik sayısını paylaş</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>İsteğe bağlı: Synix çalışırken, arka plan dahil, her dakika synix.info adresine rastgele bir oturum kodu gönderin. Sunucu verileri gönderilmez. Etkinlik 3 dakika sonra sona erer. Varsayılan olarak açıktır. Buradan kapatabilirsiniz.</value></data>
 </root>
 

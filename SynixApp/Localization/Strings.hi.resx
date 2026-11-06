@@ -6787,4 +6787,6 @@ ARK इस मॉड को {2} से डाउनलोड करेगा ज
   <data name="Appearance.Green" xml:space="preserve"><value>हरा</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>गोल कोने</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>चौकोर कोने</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>सक्रियता की गिनती साझा करें</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>वैकल्पिक: Synix के चलने के दौरान, पृष्ठभूमि में भी, हर मिनट synix.info को एक यादृच्छिक सत्र कोड भेजें। सर्वर का कोई डेटा नहीं भेजा जाता। सक्रियता 3 मिनट बाद समाप्त होती है। डिफ़ॉल्ट रूप से चालू। आप इसे यहाँ बंद कर सकते हैं।</value></data>
 </root>

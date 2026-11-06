@@ -6787,4 +6787,6 @@ Windows Η άδεια τείχους προστασίας και η προώθη
   <data name="Appearance.Green" xml:space="preserve"><value>Πράσινο</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Στρογγυλεμένο</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Τετράγωνο</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Κοινοποίηση ενεργής χρήσης</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Προαιρετικά: αποστολή τυχαίου κωδικού συνεδρίας στο synix.info κάθε λεπτό όσο εκτελείται το Synix, ακόμη και στο παρασκήνιο. Δεν αποστέλλονται δεδομένα διακομιστών. Η δραστηριότητα λήγει μετά από 3 λεπτά. Ενεργοποιημένο από προεπιλογή. Μπορείτε να το απενεργοποιήσετε εδώ.</value></data>
 </root>

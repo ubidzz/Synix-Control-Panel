@@ -7711,5 +7711,7 @@ Om Synix inte öppnas igen kör du det befintliga Synix-programmet eller hämtar
   <data name="Appearance.Green" xml:space="preserve"><value>Grön</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Rundad</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Kantig</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Dela aktivitetsräkning</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valfritt: skicka en slumpmässig sessionskod till synix.info varje minut medan Synix körs, även i bakgrunden. Inga serverdata skickas. Aktiviteten upphör efter 3 minuter. Påslaget som standard. Du kan stänga av det här.</value></data>
 </root>
 

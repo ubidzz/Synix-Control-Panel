@@ -14264,4 +14264,6 @@ Synix прилага отново поддържаното Oxide време за
   <data name="Appearance.Green" xml:space="preserve"><value>Зелено</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Заоблени</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Правоъгълни</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Споделяне на активността</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>По избор: изпращайте случаен код на сесията до synix.info веднъж в минута, докато Synix работи, включително във фонов режим. Не се изпращат данни за сървърите. Активността изтича след 3 минути. Включено по подразбиране. Можете да го изключите тук.</value></data>
 </root>

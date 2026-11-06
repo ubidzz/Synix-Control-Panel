@@ -7710,5 +7710,7 @@ ARK會在你啟動伺服器時從{2}下載這個模組。 Synix 不會複製或�
   <data name="Appearance.Green" xml:space="preserve"><value>綠色</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>圓角</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>分享活躍數量</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>選用：在 Synix 執行期間（包括背景執行），每分鐘向 synix.info 傳送一個隨機工作階段代碼。不會傳送伺服器資料。活躍狀態在 3 分鐘後到期。預設開啟。您可以在此關閉。</value></data>
 </root>
 

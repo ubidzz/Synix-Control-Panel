@@ -14221,4 +14221,6 @@ Bewahren Sie vor einer Framework- oder Spieländerung die Welt-, Konfigurations-
   <data name="Appearance.Green" xml:space="preserve"><value>Grün</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Abgerundet</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Eckig</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Aktivitätszählung teilen</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optional: Während Synix läuft, auch im Hintergrund, jede Minute einen zufälligen Sitzungscode an synix.info senden. Es werden keine Serverdaten gesendet. Aktivität verfällt nach 3 Minuten. Standardmäßig aktiviert. Sie können dies hier deaktivieren.</value></data>
 </root>

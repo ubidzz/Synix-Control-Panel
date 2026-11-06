@@ -15886,4 +15886,6 @@ Prieš keičiant sistemą ar žaidimą, išsaugokite pasaulį, konfigūraciją i
   <data name="Appearance.Square" xml:space="preserve">
     <value>Kampuotas</value>
   </data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Bendrinti aktyvumo skaičių</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Pasirenkama: kas minutę siųsti atsitiktinį seanso kodą į synix.info, kol Synix veikia, taip pat ir fone. Serverių duomenys nesiunčiami. Aktyvumas baigiasi po 3 minučių. Pagal numatytuosius nustatymus įjungta. Čia galite išjungti.</value></data>
 </root>

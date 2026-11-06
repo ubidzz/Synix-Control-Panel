@@ -7710,5 +7710,7 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="Appearance.Green" xml:space="preserve"><value>绿色</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>圆角</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>分享活跃数量</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>可选：在 Synix 运行期间（包括后台运行），每分钟向 synix.info 发送一个随机会话代码。不会发送服务器数据。活跃状态在 3 分钟后过期。默认开启。您可以在此关闭。</value></data>
 </root>
 

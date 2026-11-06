@@ -7711,5 +7711,7 @@ ARK завантажить цей мод з {2} під час запуску с�
   <data name="Appearance.Green" xml:space="preserve"><value>Зелений</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Заокруглений</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Прямокутний</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Передавати дані про активність</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Необов’язково: надсилати випадковий код сеансу на synix.info щохвилини, поки Synix працює, зокрема у фоновому режимі. Дані серверів не надсилаються. Активність спливає через 3 хвилини. Типово ввімкнено. Тут можна вимкнути цю функцію.</value></data>
 </root>
 

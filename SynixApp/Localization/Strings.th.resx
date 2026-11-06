@@ -6787,4 +6787,6 @@ ARK จะดาวน์โหลดโมดนี้จาก {2} เมื�
   <data name="Appearance.Green" xml:space="preserve"><value>เขียว</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>มุมโค้ง</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>มุมเหลี่ยม</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>แชร์จำนวนเซสชันที่ใช้งาน</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>ไม่บังคับ: ส่งรหัสเซสชันแบบสุ่มไปยัง synix.info ทุกนาทีขณะที่ Synix ทำงาน รวมถึงในเบื้องหลัง โดยไม่ส่งข้อมูลเซิร์ฟเวอร์ สถานะการใช้งานจะหมดอายุหลังจาก 3 นาที เปิดไว้โดยค่าเริ่มต้น คุณสามารถปิดได้ที่นี่</value></data>
 </root>

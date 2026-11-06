@@ -7710,5 +7710,7 @@ Synixが再開されない場合は、既存のSynixプログラムを実行し�
   <data name="Appearance.Green" xml:space="preserve"><value>グリーン</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>角丸</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>四角</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>アクティブ数を共有</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>任意設定：Synix の実行中（バックグラウンドを含む）、ランダムなセッションコードを毎分 synix.info に送信します。サーバーのデータは送信されません。アクティブ状態は 3 分後に期限切れになります。初期設定はオンです。ここでオフにできます。</value></data>
 </root>
 

@@ -7710,5 +7710,7 @@ Se Synix não reabrir, execute o programa existente Synix ou transfira a versão
   <data name="Appearance.Green" xml:space="preserve"><value>Verde</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Arredondado</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Quadrado</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Compartilhar atividade</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: enviar um código de sessão aleatório para synix.info a cada minuto enquanto o Synix estiver em execução, inclusive em segundo plano. Nenhum dado de servidor é enviado. A atividade expira após 3 minutos. Ativado por padrão. Você pode desativar aqui.</value></data>
 </root>
 

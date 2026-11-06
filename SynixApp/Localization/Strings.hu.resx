@@ -6787,4 +6787,6 @@ Ha a Synix nem nyílik meg újra, futtassa a meglévő Synix programot, vagy tö
   <data name="Appearance.Green" xml:space="preserve"><value>Zöld</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Lekerekített</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Szögletes</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Aktív használat megosztása</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcionális: véletlenszerű munkamenetkód küldése a synix.info oldalnak percenként, amíg a Synix fut, a háttérben is. Szerveradatok nem kerülnek elküldésre. Az aktivitás 3 perc után lejár. Alapértelmezetten bekapcsolva. Itt kikapcsolhatja.</value></data>
 </root>

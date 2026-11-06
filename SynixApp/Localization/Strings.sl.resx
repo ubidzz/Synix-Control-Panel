@@ -15886,4 +15886,6 @@ Preden se okvir ali igra spremeni, ohrani svet, konfiguracijo in plugin podatke.
   <data name="Appearance.Square" xml:space="preserve">
     <value>Oglato</value>
   </data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Deli število aktivnih sej</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Izbirno: pošljite naključno kodo seje na synix.info vsako minuto, ko Synix deluje, tudi v ozadju. Podatki strežnikov se ne pošiljajo. Aktivnost poteče po 3 minutah. Privzeto vklopljeno. Tukaj lahko to izklopite.</value></data>
 </root>

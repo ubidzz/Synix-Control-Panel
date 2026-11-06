@@ -14264,4 +14264,6 @@ Abans d’un marc de treball o canvi de joc, preservar el món, configuració i 
   <data name="Appearance.Green" xml:space="preserve"><value>Verd</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Arrodonit</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Quadrat</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Comparteix el recompte d’activitat</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: envia un codi de sessió aleatori a synix.info cada minut mentre Synix s’executa, també en segon pla. No s’envien dades dels servidors. L’activitat caduca al cap de 3 minuts. Activat per defecte. Ho pots desactivar aquí.</value></data>
 </root>

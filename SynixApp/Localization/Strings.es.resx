@@ -14219,4 +14219,6 @@ Antes de un cambio de framework o juego, preserva los datos del mundo, la config
   <data name="Appearance.Green" xml:space="preserve"><value>Verde</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Redondeado</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Cuadrado</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Compartir actividad</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: enviar un código de sesión aleatorio a synix.info cada minuto mientras Synix se ejecuta, también en segundo plano. No se envían datos de servidores. La actividad caduca tras 3 minutos. Activado por defecto. Puedes desactivarlo aquí.</value></data>
 </root>

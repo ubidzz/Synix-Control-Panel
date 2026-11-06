@@ -14143,4 +14143,6 @@ Avant un changement de framework ou de jeu, préservez les données du monde, de
   <data name="Appearance.Green" xml:space="preserve"><value>Vert</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Arrondi</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Carré</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Partager l’activité</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Facultatif : envoyer un code de session aléatoire à synix.info chaque minute pendant que Synix fonctionne, même en arrière-plan. Aucune donnée de serveur n’est envoyée. L’activité expire après 3 minutes. Activé par défaut. Vous pouvez le désactiver ici.</value></data>
 </root>

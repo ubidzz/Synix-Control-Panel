@@ -6787,4 +6787,6 @@ Jos Synix ei avaudu uudelleen, suorita nykyinen Synix-ohjelma tai lataa uusin ve
   <data name="Appearance.Green" xml:space="preserve"><value>Vihreä</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Pyöristetty</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Kulmikas</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Jaa aktiivisuustieto</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valinnainen: lähetä satunnainen istuntokoodi synix.info-sivustolle minuutin välein, kun Synix on käynnissä, myös taustalla. Palvelintietoja ei lähetetä. Aktiivisuus vanhenee 3 minuutissa. Oletuksena käytössä. Voit poistaa sen käytöstä tästä.</value></data>
 </root>

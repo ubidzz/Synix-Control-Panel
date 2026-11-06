@@ -7711,5 +7711,7 @@ Pokud se Synix neotevře, spusťte existující program Synix nebo stáhněte ne
   <data name="Appearance.Green" xml:space="preserve"><value>Zelená</value></data>
   <data name="Appearance.Rounded" xml:space="preserve"><value>Zaoblený</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Hranatý</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Sdílet počet aktivních relací</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Volitelné: odesílat náhodný kód relace na synix.info jednou za minutu, když Synix běží, i na pozadí. Data serverů se neodesílají. Aktivita vyprší po 3 minutách. Ve výchozím stavu zapnuto. Zde lze vypnout.</value></data>
 </root>
 
