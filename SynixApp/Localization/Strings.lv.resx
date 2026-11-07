@@ -12817,15 +12817,17 @@ Saglabājiet vietējos neobligātos RCON vai administrēšanas galapunktus, ja v
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Šai servera versijai ir nepieciešams saderīgs Metamod:Source un SourceMod. Kompilēti .smx spraudņi iet ageofchivalry/addons/sourcemod/plugins; pievienotie tulkojumi, spēļu dati un paplašinājumi saglabā dokumentētās mapes.</value>
   </data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
-    <value>SYNIX KONTROLES PANELIS LI IEROBEŽOTS PROPRIETĀRAIS AVOTS – PIEEJAMA LICENCE
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX KONTROLES PANELIS LI IEROBEŽOTS PROPRIETĀRAIS AVOTS – PIEEJAMA LICENCE
 
-Licences redakcija 1.1 — 2026. gada 5. novembris
+Licences versija 1.3 — 2026. gada 7. novembris
+
 Šī ir licences redakcija, nevis lietotnes Synix versija.
 Copyright © 2026 Jason Turner. Visas tiesības aizsargātas.
 ASV Autortiesību reģistrācijas pieteikums: Gaida
 
-Šī licence attiecas uz Synix vadības paneļa programmatūru, ieskaitot tās pirmkodu, apkopotus bināros failus, lietotāja interfeisu, dokumentāciju, mākslas darbus, logotipus un citus iekļautos materiālus (kopā "Programmatūra").
+Šī licence attiecas uz Synix vadības paneļa programmatūru, ieskaitot tās pirmkodu, apkopotus bināros failus, lietotāja interfeisu, dokumentāciju, mākslas darbus, logotipus un citus iekļautos materiālus (kopā &quot;Programmatūra&quot;).
+
+13. un 14. sadaļā ir arī izskaidrota oficiālās Synix vietnes, aktivitāšu skaitītāja un izvēles attālā pārvaldnieka konfidencialitātes prakse. Tie raksturo pašreizējo pakalpojumu; tie nemaina tālāk norādīto personīgo, nekomerciālo licences piešķiršanu.
 
 1. ĪPAŠNIEKI
 
@@ -12966,8 +12968,81 @@ Lejupielāžu mitināšanai, spoguļkopiju veidošanai, nodrošināšanai caur s
 
 4.2. sadaļa neaizliedz parastas tiešās saites uz šiem oficiālajiem avotiem, ja Synix un Jason Turner ir norādīti pareizi. Šādas saites nepadara vietni, kurā tās publicētas, par oficiālu avotu.
 
-WinGet pakotne ubidzz.Synix ir apstiprināta instalēšanas metode, ja tā lejupielādē nemainītu instalētāju tieši no oficiālajiem GitHub laidieniem. Tas nedod trešajām personām atļauju mitināt vai pārpakot programmatūru.</value>
-  </data>
+WinGet pakotne ubidzz.Synix ir apstiprināta instalēšanas metode, ja tā lejupielādē nemainītu instalētāju tieši no oficiālajiem GitHub laidieniem. Tas nedod trešajām personām atļauju mitināt vai pārpakot programmatūru.
+
+13. Tiešraides aktivitāšu skaitītājs un konfidencialitāte
+
+Synix ietver izvēles tiešraides aktivitāšu skaitītāju, kas novērtē Synix sesiju skaitu https://synix.info. Šī funkcija ir iespējota pēc noklusējuma. Varat to jebkurā laikā izslēgt sadaļā Iestatījumi &gt; Konfidencialitāte un drošība &gt; Kopīgot aktīvo skaitu, neierobežojot citas Synix funkcijas. Tiek ievērota iepriekš saglabātā izvēle.
+
+Kad tas ir iespējots, Synix nosūta HTTPS klātbūtnes signālu uz https://synix.info/api/presence startēšanas laikā un aptuveni ik pēc 10 minūtēm, kamēr lietotne darbojas, tostarp fonā. Signāls satur nejaušu pagaidu sesijas kodu un vispārēju Synix lietojumprogrammas identifikatoru bez ziņojuma pamatteksta. Sesijas kods tiek glabāts tikai atmiņā un tiek aizstāts, kad sākas jauna atskaites sesija; tas nav pastāvīgs ierīces identifikators.
+
+Skaitītājs neaugšupielādē jūsu vārdu, e-pasta adresi, paroles, servera vai atskaņotāja informāciju, konfigurācijas vērtības, failus vai iekārtas identifikatorus.
+
+Katrai sesijai vietnes skaitītājs saglabā tikai sesijas koda jaucējkodu un tās pēdējā signāla laiku. Publiskā vietne parāda tikai kopējo aktīvo sesiju skaitu, kas ir aptuvens, nevis unikālo cilvēku skaits. Sesijas skaitīšana tiek pārtraukta pēc 15 minūtēm bez signāla. Neaktīvi skaitītāju ieraksti kļūst piemēroti tīrīšanai pēc 30 minūtēm un tiek noņemti, kad tiek veikti nākamie skaitītāju pieprasījumi. Synix nesaista šos skaitītāju ierakstus ar attālā pārziņa kontiem vai pārī savienotu datoru identitātēm.
+
+Izslēdzot funkciju, tiek apturēti turpmāki klātbūtnes signāli un tiek veikts viens pēc iespējas labāks pieprasījums noņemt pašreizējo sesiju. Aizverot Synix, tiek mēģināts arī noņemt; ja noņemšana nevar sasniegt vietni, sesija tiek automātiski pārtraukta pēc neaktivitātes perioda.
+
+Tāpat kā jebkura interneta pieslēguma gadījumā, vietnes mitināšanas pakalpojumi saņem parastu savienojuma informāciju, piemēram, izcelsmes IP adresi un pieprasījuma laiku, un var to apstrādāt vai reģistrēt saskaņā ar savām privātuma politikām. Šī informācija netiek saglabāta Synix aktivitāšu skaitītāju tabulā vai netiek rādīta publiskajā skaitā.
+
+14. Attālās piekļuves privātums un drošība
+
+14.1. Izvēles piekļuve un datu pārdošanu nedrīkst
+
+Attālā pārvaldība vietnē https://manager.synix.info nav obligāta un ir izslēgta, līdz savienojat pārī ar datoru un apstiprināt pieprasījuma kontu šī datora lietotnē Synix. Synix varat izmantot lokāli bez pārziņa konta. Publisko aktivitāšu skaitītājs ir atsevišķs, un to var atspējot neatkarīgi.
+
+Synix nepārdod, neiznomā, netirgo un neizpauž jūsu konta informāciju, pārī savienoto datoru informāciju, attālās darbības vai servera informāciju reklāmdevējiem vai datu brokeriem. Synix neizmanto šo informāciju mērķtiecīgai reklāmai un neizmanto no tās reklāmas profilus. Informācija tiek apstrādāta, lai nodrošinātu jūsu izvēlētās funkcijas, autentificētu piekļuvi, darbinātu pakalpojumu un aizsargātu to pret ļaunprātīgu izmantošanu.
+
+Attālā piekļuve nav nulles krātuves pakalpojums. Tam nepieciešami tālāk aprakstītie ierobežotie konta, savienošanas pārī, darbības un drošības ieraksti. Šie ieraksti netiek publicēti publiskajā aktivitāšu skaitītājā vai nav pieejami citiem pārziņa kontiem, izmantojot pakalpojumu.
+
+14.2. Kas paliek jūsu datorā
+
+Attālais pārvaldnieks neaugšupielādē un neuzglabā jūsu spēļu pasaules, spēļu servera failus, konfigurācijas faila saturu, dublējuma arhīva saturu, neapstrādātu konsoles izvadi vai spēļu servera paroles. Attālās dublēšanas un atjaunošanas komandas darbojas pārī savienotajā datorā; dublējuma faili paliek tur konfigurētajās vietās. Pārvaldnieks nav mākoņa dublējuma krātuve un nenodrošina neierobežotu attālo darbvirsmu, patvaļīgas čaulas komandas vai vispārēju failu pārlūkošanu.
+
+Synix saglabā vietējos iestatījumus, serveru sarakstu, vēsturi, dublējumus un savienošanas pārī stāvokli jūsu datorā. Pārī savienota datora privātā parakstīšanas atslēga paliek Windows atslēgu krātuvē. Synix dod priekšroku TPM nodrošinātai krātuvei, ja tā ir pieejama, un citādi atbalsta ar Windows aizsargātu programmatūras atslēgu, tostarp saderīgā VMs. TPM pieejamība negarantē, ka dators ir bezkompromiss.
+
+Šie paziņojumi apraksta Synix attālo pārvaldību. Spēlēm, Steam, modifikācijām, Discord integrācijai, eksportam un atbalsta pārskatiem, ko izvēlaties kopīgot, ir savas datu plūsmas. Neievietojiet paroles vai citu sensitīvu informāciju datoru nosaukumos, serveru nosaukumos vai dublējuma failu nosaukumos, jo šīs etiķetes var parādīties pārvaldniekā.
+
+14.3. informācija, ko pārvaldnieks apstrādā un uzglabā
+
+— konts un autentifikācija: jūsu izvēlētais lietotājvārds, konta identifikators, izveides laiks, drošības preferences, paroles jaucējkods, šifrēta autentifikācijas noslēpums, ja tas ir iespējots, piekļuves atslēgas publiskie akreditācijas dati, kad tas ir iespējots, un pagaidu verifikācijas/sesijas ieraksti. Paroles un verifikācijas kodi tiek apstrādāti, lai pārbaudītu pierakstīšanos; pastāvīgās paroles netiek saglabātas kā lasāms teksts. Synix nesaņem jūsu pirksta nospiedumu, sejas attēlu, piekļuves atslēgas privāto atslēgu vai pārī savienotā datora privāto parakstīšanas atslēgu. Reģistrācija neprasa īsto vārdu vai e-pasta adresi.
+— savienošana pārī un savienojums: jūsu izvēlētā datora etiķete, nejaušs ierīces identifikators, tās publiskā parakstīšanas atslēga, konta saistība, paziņotais atslēgas nodrošinātāja veids, savienošanas pārī apstiprināšanas stāvoklis un pēdējais savienojuma laiks. Kluss autentificēts releja savienojums var palikt atvērts, kamēr darbojas Synix, lai vietne varētu nekavējoties pamodināt pārī savienoto lietotni. Relejs pārraida modināšanas/atvienošanas paziņojumus un savienojuma metadatus, nevis spēļu failus vai servera momentuzņēmumus.
+— parādītais statuss: ierobežoti serveru identifikatori, nosaukumi, spēļu nosaukumi, darbības stāvoklis, spēlētāju skaits, darbspējas laiks, pieejamās darbības, jaunākais dublēšanas laiks/statuss un visa datora CPU un lietotie/kopējie RAM rādījumi. Lietojumprogramma nosūta šos kopsavilkumus, kamēr ir aktīvs autentificēts pārvaldnieka skats. CPU/RAM atjauninājumi attiecas uz pārī savienotiem datoriem; detalizēti servera atjauninājumi attiecas uz atlasīto datoru. Atjauninājumi parasti tiek izpildīti ik pēc 10 sekundēm un tiek apturēti pēc aktīvo skatu aizvēršanas, atvienošanas, derīguma termiņa beigām vai slēpšanas. Citas aktīvās pārlūkprogrammas sesijas var uzturēt savus skatus.
+— pieprasītās darbības un dublējumkopijas: servera/darbības identifikatori, pieprasījuma laiks, norise/rezultāts un, ja pieprasāt rezerves kopijas, rezerves identifikatori, failu nosaukumi, datumi, izmēri un integritātes etiķetes. Dublējuma saturs un pilni vietējie ceļi šim līdzeklim netiek nosūtīti.
+— drošība un ļaunprātīgas izmantošanas novēršana: neizdevušās pierakstīšanās veids, grupēts mēģinājumu skaits un laiki, atkopšanas/drošības notikuma veids un attiecīgās datora etiķetes. Īstermiņa ātruma ierobežojuma ierakstos var izmantot savienojuma IP adrešu un konta identifikatoru atslēgvārdus. Synix konta brīdinājumu ierakstos nav mēģinājumu ievadīt paroles, verifikācijas kodus, neapstrādātas IP adreses vai pārlūkprogrammas pirkstu nospiedumus. Hostinga pakalpojumu sniedzēji var atsevišķi apstrādāt savienojuma informāciju, kā paskaidrots 14.6. sadaļā.
+
+Vietne obligāti apstrādā atļautos kopsavilkumus un komandas, lai nodrošinātu attālo pārvaldību. HTTPS un šifrēti releju savienojumi aizsargā trafiku tranzītā; tas nav apgalvojums, ka mitināšanas pakalpojums nevar apstrādāt datus.
+
+14.4. Saglabāšana un dzēšana
+
+— konta akreditācijas dati un iestatījumi tiek saglabāti, līdz konts tiek izdzēsts. Apstiprinātie savienošanas pārī ieraksti saglabājas, līdz dators tiek atvienots pārī vai konts tiek izdzēsts.
+— statusa momentuzņēmumi un CPU/RAM rādījumi tiek pārrakstīti ar jaunākiem rādījumiem, un tie kļūst piemēroti tīrīšanai pēc 15 minūtēm bez nomaiņas. Pēdējā savienojuma laiks paliek pārī savienošanas ieraksta daļa.
+— attālo komandu ieraksti, rezultāti un atgrieztie rezerves izvēles metadati kļūst piemēroti tīrīšanai pēc 24 stundām.
+— atkopšanas/drošības notikumi un neveiksmīgas pierakstīšanās brīdinājumi kļūst piemēroti tīrīšanai pēc 90 dienām. Neizdevušās pierakstīšanās gadījumā tiek saglabātas ne vairāk kā 100 jaunākās grupas; saskaņošanas kļūmes 10 minūšu laikā tiek grupētas kopā.
+— pārlūkprogrammas sesijas beidzas pēc 30 minūtēm bez pārvaldnieka pieprasījuma vai kopumā pēc 8 stundām. Verifikācijas mēģinājumi beidzas pēc 5 minūtēm; pagaidu paroles atkopšanas termiņš beidzas 10 minūšu laikā un ir vienreiz lietojams. Tīrīšanas laikā tiek noņemti verifikācijas, atkopšanas, atkārtošanas aizsardzības un ātruma ierobežojuma ieraksti, kuriem beidzies derīguma termiņš. Nepilnīgas konta reģistrācijas kļūst piemērotas tīrīšanai pēc 24 stundām.
+
+Derīguma termiņš aptur autorizāciju pat pirms ieraksta fiziskas noņemšanas. Regulāra datu bāzes tīrīšana tiek veikta turpmāko pakalpojumu pieprasījumu laikā, ne vairāk kā reizi 10 minūtēs pārvaldnieka tīrīšanai, tāpēc iepriekš minētie periodi ir derīguma termiņi vai tīrīšanas piemērotības periodi, nevis solījumi par dzēšanu precīzā acumirklī. Pakalpojumu sniedzēja žurnāliem un rezerves kopijām ir atsevišķi dzīves cikli.
+
+Atvienojot pārī, atlasītais savienojums pārī un ar to saistītie attālie ieraksti tiek dzēsti no aktīvā pakalpojuma datu bāzes. Atkopšanas/drošības vēsture var palikt kontā norādītajā periodā. Dzēšot pārziņa kontu, no aktīvā pakalpojuma datu bāzes tiek noņemti tā akreditācijas dati, savienojumi pārī, momentuzņēmumi, komandas un konta drošības/atkopšanas ieraksti. Tas neizdzēš jūsu vietējos spēļu serverus, pasaules, iestatījumus vai dublējuma failus. Īslaicīgi ļaunprātīgas izmantošanas novēršanas ieraksti un pakalpojumu sniedzēja reģistrētie žurnāli vai dublējumkopijas ne vienmēr tiek nekavējoties izdzēstas, veicot nevienu darbību.
+
+14.5. Jūsu vadīklas un pierakstīšanās aizsardzība
+
+Lai pierakstītos, nepieciešama jūsu parole, kā arī esoša ieejas atslēga vai autentifikators, piemēram, Google Authenticator. Konti, kas konfigurēti, lai pieprasītu abas metodes, ievēro abas prasības. Lai mainītu paroli, atvienotu datoru, izmantojot vietni, un dzēstu pārziņa kontu, ir nepieciešama jauna verifikācija, lai veiktu šīs izmaiņas.
+
+Iepriekš apstiprināts pārī savienots dators var izsniegt pagaidu paroli, ja aizmirstat savas vietnes paroli. Tas nevar atlasīt citu kontu. Pagaidu parole neapiet un nenoņem esošās ieejas atslēgas/autentifikatora prasības, un pirms pārziņa ievadīšanas ir jāizvēlas jauna parole. Pabeidzot atkopšanu, tiek atsauktas citas pārlūkprogrammas sesijas.
+
+Synix pārvaldnieks saglabā savu pārlūkprogrammas pieteikšanās pilnvaru pašreizējās cilnes atmiņā, nevis sīkfailos, vietējā krātuvē vai sesijas krātuvē. Atsvaidzinot vai aizverot cilni, šī pieteikšanās tiek zaudēta. Tas neliedz jūsu pārlūkprogrammai vai paroļu pārvaldniekam saglabāt akreditācijas datus, ja vēlaties, un tas neapraksta sīkfailus, ko atsevišķi iestatījuši mitināšanas/drošības pakalpojumu sniedzēji vai publiskās vietnes tulkošanas pakalpojums.
+
+Varat izrakstīties, atsaukt visas pārlūkprogrammas sesijas vai atvienot datoru pārī. Vietējā lietotne Synix var atspējot attālo savienojumu un atvienot to pārī, nepierakstoties vietnē. Bezsaistē tas aptur attālo piekļuvi lokāli un mēģina atkārtoti noņemt vietni, kad ir pieejams savienojums. Restartējot lietotni vai Windows, netiek automātiski atjaunots skaidri noņemts savienojums pārī. Joprojām ir pieejama tikai vietēja lietošana.
+
+14.6. Hostings, publiskās lapas un drošības ierobežojumi
+
+Oficiālajā vietnē tiek izmantoti OpenAI vietņu mitināšanas un Cloudflare pakalpojumi piegādei, glabāšanai, drošībai un modināšanas relejam. Šie pakalpojumu sniedzēji apstrādā informāciju, kas nepieciešama šo pakalpojumu sniegšanai, un var saņemt IP adreses, pieprasījumu galvenes, laikus un citus savienojuma metadatus vai saglabāt savus darbības žurnālus un rezerves kopijas. Uz to apstrādi attiecas viņu privātuma politikas: https://openai.com/policies/privacy-policy/ un https://www.cloudflare.com/privacypolicy/.
+
+Publisku lapu automātiskā tulkošana un GitHub lejupielādes ir iesaistīti to attiecīgie pakalpojumu sniedzēji. Privātais pārvaldnieks ir nošķirts no publiskajām lapām un neielādē publisko tulkojumu nodrošinātāju vai reklāmas skriptus. Synix neapgalvo, ka, apmeklējot jebkuru vietni, netiek izveidoti sīkfaili, žurnāli vai saglabāti dati. Informāciju var arī izpaust, ja to pieprasa likums; iepriekš minētā nepārdošanas apņemšanās nekavē nepieciešamo mitināšanu vai likumīgu izpaušanu.
+
+Synix izmanto autentificētu savienošanu pārī, parakstītus datora pieprasījumus, šifrētus tīkla savienojumus, konta piekļuves pārbaudes un īslaicīgus apstiprinājumus, lai samazinātu nesankcionētu piekļuvi. Šie drošības pasākumi nepadara attālo piekļuvi bezriska un negarantē aizsardzību pret katru uzbrukumu, uzlauztu datoru/pārlūkprogrammu, nozagtām verifikācijas metodēm vai uzlauztu pakalpojumu. Atjauniniet Synix un Windows, aizsargājiet savu kontu un verifikācijas metodes un apstipriniet tikai tos datorus un kontus, kurus kontrolējat.
+
+Šis paziņojums ir publisks vietnē https://synix.info/license/, un tas ir iekļauts lietotnes palīdzības centrā un instalēšanas programmā. Jautājumus par konfidencialitāti var uzdot, izmantojot oficiālās atbalsta iespējas vietnē https://synix.info/support/. Nepublicējiet paroles, atkopšanas kodus vai citu privāta konta informāciju publiskajos atbalsta ziņojumos. Šī paziņojuma atjauninājumiem ir jauns pārskatījums un datums.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>NEPIECIEŠAMAIS KRITISKAIS IEKĀRTA:
 
@@ -15888,4 +15963,5 @@ Pirms sistēmas vai spēles maiņas saglabājiet pasaules, konfigurācijas un sp
   </data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Kopīgot aktivitātes skaitu</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Pēc izvēles: sūtīt nejaušu sesijas kodu uz synix.info reizi minūtē, kamēr Synix darbojas, arī fonā. Serveru dati netiek sūtīti. Aktivitāte beidzas pēc 3 minūtēm. Pēc noklusējuma ieslēgts. Šeit varat to izslēgt.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Trūkst iegultās Synix licences.</value></data>
 </root>

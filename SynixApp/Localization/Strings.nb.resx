@@ -1023,14 +1023,17 @@ Behold valgfrie RCON eller administrasjonsendepunkter lokalt med mindre du har e
 
 3. Offisiell dokumentasjon: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Krever en kompatibel Metamod:Source og SourceMod bygge for denne serverversjonen. Kompilerte.smx plugins går i ageofchivalry / addons/sourcemod/plugins; medfølgende oversettelser, spilldata og utvidelser beholder sine dokumenterte mapper.</value></data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL - begrenset proprietær kilde-tilgjengelig lisens
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX CONTROL PANEL - begrenset proprietær kilde-tilgjengelig lisens
 
-Lisensrevisjon 1.1 — 5. november 2026
+Lisensrevisjon 1.3 – 7. november 2026
+
 Dette er lisensens revisjon, ikke Synix-appens versjon.
 Opphavsrett © 2026 Jason Turner. Alle rettigheter forbeholdt.
 U.S. Søknad om registrering av opphavsrett: Venter
 
 Denne lisensen gjelder for programvaren Synix KontrollpanelComment, inkludert kildekoden, kompilerte binære filer, brukergrensesnitt, dokumentasjon, illustrasjoner, logoer og annet inkludert materiale (samlet kalt &quot;programvaren&quot;).
+
+Avsnitt 13 og 14 forklarer også personvernpraksisen til den offisielle Synix-nettsiden, aktivitetstelleren og valgfri fjernbehandling. De beskriver dagens tjeneste; de endrer ikke den personlige, ikke-kommersielle lisenstildelingen nedenfor.
 
 1. EIERSKAP
 
@@ -1171,7 +1174,81 @@ Hosting, speiling, levering via proxy, ompakking eller innpakking av nedlastinge
 
 Avsnitt 4.2 forbyr ikke vanlige direktelenker til disse offisielle kildene som oppgir Synix og Jason Turner korrekt. Slike lenker gjør ikke nettstedet som lenker, til en offisiell kilde.
 
-WinGet-pakken ubidzz.Synix er en godkjent installasjonsmetode når den henter det uendrede installasjonsprogrammet direkte fra de offisielle GitHub-utgivelsene. Dette tillater ikke hosting eller ompakking hos tredjeparter.</value></data>
+WinGet-pakken ubidzz.Synix er en godkjent installasjonsmetode når den henter det uendrede installasjonsprogrammet direkte fra de offisielle GitHub-utgivelsene. Dette tillater ikke hosting eller ompakking hos tredjeparter.
+
+13. Live Activity Counter og personvern
+
+Synix inkluderer en valgfri live-aktivitetteller som estimerer antall kjørende Synix-økter på https://synix.info. Denne funksjonen er aktivert som standard. Du kan slå den av når som helst i Innstillinger &gt; Personvern og sikkerhet &gt; Del aktivt antall uten å begrense andre Synix-funksjoner. En tidligere lagret av-preferanse respekteres.
+
+Mens den er aktivert, sender Synix et HTTPS tilstedeværelsessignal til https://synix.info/api/presence ved oppstart og omtrent hvert 10. minutt mens appen kjører, inkludert i bakgrunnen. Signalet inneholder en tilfeldig midlertidig sesjonskode og en generisk Synix-applikasjonsidentifikator, uten meldingstekst. Sesjonskoden lagres kun i minnet og erstattes når en ny rapporteringsøkt starter; det er ikke en permanent enhetsidentifikator.
+
+Telleren laster ikke opp navn, e-postadresse, passord, server- eller spillerinformasjon, konfigurasjonsverdier, filer eller maskinidentifikatorer.
+
+For hver økt lagrer nettstedets teller kun en hash av øktkoden og tidspunktet for det siste signalet. Det offentlige nettstedet viser bare det samlede antallet aktive økter, som er et estimat i stedet for en telling av unike personer. En økt slutter å telle etter 15 minutter uten signal. Inaktive tellerposter blir kvalifisert for opprydding etter 30 minutter og fjernes når påfølgende tellerforespørsler utfører opprydding. Synix kobler ikke disse tellepostene til eksterne administratorkontoer eller sammenkoblede datamaskinidentiteter.
+
+Å slå av funksjonen stopper ytterligere tilstedeværelsessignaler og sender en forespørsel om å fjerne den gjeldende økten. Lukking av Synix forsøker også å fjerne; hvis fjerning ikke kan nå nettstedet, slutter økten å telle automatisk etter inaktivitetsperioden.
+
+Som med enhver Internett-tilkobling, mottar nettstedets vertstjenester vanlig tilkoblingsinformasjon, for eksempel den opprinnelige IP-adressen og forespørselstidspunktet, og kan behandle eller logge den under deres egne retningslinjer for personvern. Denne informasjonen lagres ikke i Synixs aktivitettellertabell eller vises i den offentlige tellingen.
+
+14. Fjerntilgang Personvern og sikkerhet
+
+14.1 Valgfri tilgang og ikke salg av data
+
+Ekstern administrasjon på https://manager.synix.info er valgfritt og er slått av til du parer en datamaskin og godkjenner forespørselskontoen i Synix-appen på den datamaskinen. Du kan bruke Synix lokalt uten en managerkonto. Den offentlige aktivitetstelleren er separat og kan deaktiveres uavhengig.
+
+Synix selger, leier, bytter eller avslører ikke kontoinformasjonen din, informasjon om sammenkoblede datamaskiner, ekstern aktivitet eller serverinformasjon til annonsører eller datameglere. Synix bruker ikke denne informasjonen til målrettet annonsering eller bygger reklameprofiler fra den. Informasjon behandles for å gi funksjonene du velger, autentisere tilgang, betjene tjenesten og beskytte den mot misbruk.
+
+Fjerntilgang er ikke en null-lagringstjeneste. Den trenger de begrensede konto-, parings-, drifts- og sikkerhetspostene beskrevet nedenfor. Disse postene publiseres ikke i den offentlige aktivitetsdisken eller eksponeres for andre managerkontoer gjennom tjenesten.
+
+14.2 Hva blir værende på datamaskinen din
+
+Den eksterne administratoren laster ikke opp eller lagrer spillverdenene dine, spillserverfiler, konfigurasjonsfilinnhold, sikkerhetskopieringsarkivinnhold, råkonsollutdata eller spillserverpassord. Ekstern sikkerhetskopiering og gjenopprettingskommandoer kjøres på den sammenkoblede datamaskinen; sikkerhetskopifiler forblir på plasseringene som er konfigurert der. Behandleren er ikke lagringsplass for sikkerhetskopiering i skyen og gir ikke ubegrenset eksternt skrivebord, vilkårlige skallkommandoer eller generell filsurfing.
+
+Synix beholder sine lokale innstillinger, serverliste, historikk, sikkerhetskopier og sammenkoblingstilstand på datamaskinen din. En sammenkoblet datamaskins private signeringsnøkkel forblir i Windows nøkkellagring. Synix foretrekker TPM-støttet lagring når den er tilgjengelig og støtter ellers en Windows-beskyttet programvarenøkkel, inkludert på kompatibel VMs. TPM tilgjengelighet er ikke en garanti for at en datamaskin er kompromissløs.
+
+Disse setningene beskriver Synix fjernadministrasjon. Spill, Steam, mods, Discord-integrasjoner, eksporter og støtterapporter du velger å dele har sine egne dataflyter. Ikke legg passord eller annen sensitiv informasjon i datamaskinnavn, servernavn eller sikkerhetskopifilnavn, fordi disse etikettene kan vises i administratoren.
+
+14.3 Informasjon som lederen behandler og lagrer
+
+- Konto og autentisering: Ditt valgte brukernavn, kontoidentifikator, opprettelsestid, sikkerhetspreferanser, en saltet passordhash, kryptert autentiseringshemmelighet når aktivert, offentlig adgangsnøkkel når aktivert, og midlertidige verifikasjons-/sesjonsposter. Passord og bekreftelseskoder behandles for å sjekke pålogging; permanente passord lagres ikke som lesbar tekst. Synix mottar ikke ditt fingeravtrykk, ansiktsbilde, adgangsnøkkel eller den sammenkoblede datamaskinens private signeringsnøkkel. Registrering krever ikke et ekte navn eller e-postadresse.
+- Paring og tilkobling: Datamaskinetiketten du velger, en tilfeldig enhetsidentifikator, dens offentlige signeringsnøkkel, kontotilknytning, rapportert nøkkelleverandørtype, paringsgodkjenningstilstand og siste tilkoblingstid. En stille autentisert reléforbindelse kan forbli åpen mens Synix kjører slik at nettstedet kan vekke den sammenkoblede appen umiddelbart. Reléet bærer vekke-/frakoblingsmeldinger og tilkoblingsmetadata, ikke spillfiler eller server-øyeblikksbilder.
+- Vist status: Begrensede serveridentifikatorer, navn, spillnavn, kjørestatus, spillertellinger, oppetid, tilgjengelige handlinger, siste sikkerhetskopieringstid/-status og hele datamaskinens CPU og brukte/totale RAM-avlesninger. Appen sender disse sammendragene mens en autentisert ledervisning er aktiv. CPU/RAM-oppdateringer dekker sammenkoblede datamaskiner; detaljerte serveroppdateringer dekker den valgte datamaskinen. Oppdateringer kjører normalt hvert 10. sekund og stopper etter at aktive visninger lukkes, kobles fra, utløper eller blir skjult etter behov. Andre aktive nettleserøkter kan holde sine egne visninger i gang.
+- Forespurte handlinger og sikkerhetskopier: Server-/handlingsidentifikatorer, forespørselstidspunkt, fremdrift/resultat, og, når du ber om sikkerhetskopieringsvalg, sikkerhetskopiidentifikatorer, filnavn, datoer, størrelser og integritetsetiketter. Sikkerhetskopiert innhold og fullstendige lokale baner sendes ikke for denne funksjonen.
+- Sikkerhet og forebygging av misbruk: Mislykket påloggingstype, gruppert antall forsøk og tider, type gjenoppretting/sikkerhetshendelse og relevante datamaskinetiketter. Kortvarige rategrenseposter kan bruke nøkkelhasher for tilkoblings-IP-adresser og kontoidentifikatorer. Synixs kontovarslingsposter inneholder ikke forsøkte passord, bekreftelseskoder, ubehandlede IP-adresser eller nettleserfingeravtrykk. Vertsleverandører kan behandle tilkoblingsinformasjon separat som forklart i avsnitt 14.6.
+
+Nettstedet behandler nødvendigvis de tillatte sammendragene og kommandoene for å gi fjernadministrasjon. HTTPS og krypterte reléforbindelser beskytter trafikk i transitt; dette er ikke en påstand om at vertstjenesten ikke kan behandle dataene.
+
+14.4 Oppbevaring og sletting
+
+- Kontolegitimasjon og -innstillinger forblir til kontoen slettes. Godkjente sammenkoblingsposter forblir til datamaskinen kobles fra eller kontoen slettes.
+- Statusbilder og CPU/RAM-avlesninger overskrives av nyere avlesninger og blir kvalifisert for opprydding etter 15 minutter uten erstatning. Tiden for siste tilkobling forblir en del av sammenkoblingsrekorden.
+- Eksterne kommandoposter, resultater og returnerte metadata for sikkerhetskopiering blir kvalifisert for opprydding etter 24 timer.
+- Gjenopprettings-/sikkerhetshendelser og mislykkede påloggingsvarsler blir kvalifisert for opprydding etter 90 dager. Mislykkede pålogginger beholder maksimalt de 100 nyeste gruppene; samsvarende feil innenfor en 10-minutters periode er gruppert sammen.
+- Nettleserøkter utløper etter 30 minutter uten managerforespørsler eller etter 8 timer totalt. Verifikasjonsforsøk utløper etter 5 minutter; gjenoppretting av midlertidig passord utløper innen 10 minutter og er engangsbruk. Utløpte verifiserings-, gjenopprettings-, avspillingsbeskyttelse og hastighetsgrenseposter fjernes under opprydding. Ufullstendige kontoregistreringer blir kvalifisert for opprydding etter 24 timer.
+
+Utløp stopper autorisasjonen selv før en post er fysisk fjernet. Rutinemessig databaseopprydding kjører under påfølgende tjenesteforespørsler, maksimalt én gang hvert 10. minutt for opprydding av ledere, så periodene ovenfor er utløps- eller oppryddingskvalifiserte perioder i stedet for løfter om sletting på et eksakt øyeblikk. Leverandørlogger og sikkerhetskopier har separate livssykluser.
+
+Oppheving av paring sletter den valgte sammenkoblingen og tilhørende eksterne poster fra den aktive tjenestedatabasen. Gjenopprettings-/sikkerhetshistorikk kan forbli på kontoen i perioden ovenfor. Sletting av en managerkonto fjerner påloggingsinformasjon, sammenkoblinger, øyeblikksbilder, kommandoer og kontosikkerhets-/gjenopprettingsposter fra den aktive tjenestedatabasen. Den sletter ikke dine lokale spillservere, verdener, innstillinger eller sikkerhetskopifiler. Kortvarige misbruksforebyggende poster og leverandørholdte logger eller sikkerhetskopier slettes ikke nødvendigvis umiddelbart av noen av handlingene.
+
+14.5 Dine kontroller og påloggingsbeskyttelse
+
+Pålogging krever passordet ditt pluss en eksisterende passord eller autentisering, for eksempel Google Authenticator. Kontoer som er konfigurert til å kreve begge metodene, holder begge kravene. Å endre et passord, koble fra en datamaskin via nettstedet og slette en managerkonto krever ny bekreftelse for den spesifikke endringen.
+
+En tidligere godkjent sammenkoblet datamaskin kan utstede et midlertidig passord hvis du glemmer passordet til nettstedet ditt. Den kan ikke velge en annen konto. Det midlertidige passordet omgår eller fjerner ikke dine eksisterende krav til passord/autentisering, og du må velge et nytt passord før du går inn i administratoren. Fullføring av gjenoppretting tilbakekaller de andre nettleserøktene dine.
+
+Synixs leder beholder nettleserpåloggingstokenet i minnet til den gjeldende fanen, ikke i informasjonskapsler, lokal lagring eller øktlagring. Ved å oppdatere eller lukke fanen mister du påloggingen. Dette hindrer ikke nettleseren eller passordbehandleren din fra å lagre legitimasjon hvis du velger det, og det beskriver ikke informasjonskapsler satt separat av hosting-/sikkerhetsleverandører eller det offentlige nettstedets oversettelsestjeneste.
+
+Du kan logge av, tilbakekalle alle nettleserøkter eller koble fra en datamaskin. Den lokale Synix-appen kan deaktivere og koble fra den eksterne tilkoblingen uten å logge på nettstedet. Når den er frakoblet, stopper den ekstern tilgang lokalt og prøver å fjerne nettstedet på nytt når en tilkobling er tilgjengelig. Å starte appen på nytt eller Windows gjenoppretter ikke automatisk en eksplisitt fjernet sammenkobling. Kun lokal bruk er fortsatt tilgjengelig.
+
+14.6 Hosting, offentlige sider og sikkerhetsgrenser
+
+Den offisielle nettsiden bruker OpenAIs nettstedshosting og Cloudflare-tjenester for levering, lagring, sikkerhet og vekkerrelé. Disse leverandørene behandler informasjonen som er nødvendig for å levere disse tjenestene og kan motta IP-adresser, be om overskrifter, tider og andre tilkoblingsmetadata, eller beholde sine egne driftslogger og sikkerhetskopier. Personvernreglene deres gjelder for behandlingen: https://openai.com/policies/privacy-policy/ og https://www.cloudflare.com/privacypolicy/.
+
+Automatisk oversettelse på offentlige sider og GitHub-nedlastinger involverer deres respektive leverandører. Den private lederen er atskilt fra de offentlige sidene og laster ikke inn den offentlige oversettelsesleverandøren eller reklameskriptene. Synix gjør ikke en generell påstand om at besøk på noen av nettsidene ikke skaper informasjonskapsler, logger eller lagrede data. Informasjon kan også utleveres der det er lovpålagt; forpliktelsen om ikke-salg ovenfor forhindrer ikke nødvendig hosting eller lovlig avsløring.
+
+Synix bruker autentisert sammenkobling, signerte datamaskinforespørsler, krypterte nettverkstilkoblinger, kontotilgangskontroller og kortvarige godkjenninger for å redusere uautorisert tilgang. Disse sikkerhetstiltakene gjør ikke fjerntilgang risikofri eller garanterer beskyttelse mot hvert angrep, en kompromittert datamaskin/nettleser, stjålne verifiseringsmetoder eller en kompromittert tjeneste. Hold Synix og Windows oppdatert, beskytt kontoen din og verifiseringsmetoder, og godkjenn kun datamaskiner og kontoer du kontrollerer.
+
+Denne kunngjøringen er offentlig på https://synix.info/license/ og er inkludert i appens hjelpesenter og installasjonsprogram. Personvernspørsmål kan stilles gjennom de offisielle støttealternativene på https://synix.info/support/. Ikke legg inn passord, gjenopprettingskoder eller annen privat kontoinformasjon i offentlige støttemeldinger. Oppdateringer av denne kunngjøringen har en ny revisjon og dato.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>Kritisk oppsett kreves:
 
 1. Start serveren en gang for å bygge &apos;Engine.ini&apos;, og deretter slå den av.
@@ -6789,4 +6866,5 @@ Hvis Synix ikke åpnes på nytt, kjører du det eksisterende Synix-programmet el
   <data name="Appearance.Square" xml:space="preserve"><value>Firkantet</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Del aktivitetstelling</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valgfritt: send en tilfeldig øktkode til synix.info hvert minutt mens Synix kjører, også i bakgrunnen. Ingen serverdata sendes. Aktiviteten utløper etter 3 minutter. Slått på som standard. Du kan slå det av her.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Den innebygde Synix-lisensen mangler.</value></data>
 </root>

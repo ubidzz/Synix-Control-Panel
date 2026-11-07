@@ -12215,14 +12215,17 @@ Manté opcional RCON o els punts finals d’administració locals a menys que ti
 
 3. Documentació oficial: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Requereix un metamod compatible:Font i SourceMod construir per a aquesta versió del servidor. Compilat els connectors .smx van en ageofchivalry/addons/sourcemod/plugins; acompanyat de traduccions, jocdata i extensions mantinguen les seves carpetes documentades.</value></data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL — LLICÈNCIA PROPIETÀRIA LIMITADA AMB CODI FONT DISPONIBLE
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX CONTROL PANEL — LLICÈNCIA PROPIETÀRIA LIMITADA AMB CODI FONT DISPONIBLE
 
-Revisió de la llicència 1.1 — 5 de novembre de 2026
+Revisió de la llicència 1.3 — 7 de novembre de 2026
+
 Aquesta és la revisió de la llicència, no la versió de l’aplicació Synix.
 Copyright © 2026 Jason Turner. Tots els drets reservats.
 Sol·licitud de registre de drets d’autor als EUA: pendent
 
-Aquesta llicència s’aplica al programari Synix Control Panel, inclosos el codi font, els binaris compilats, la interfície d’usuari, la documentació, les il·lustracions, els logotips i la resta de materials inclosos (conjuntament, el "Programari").
+Aquesta llicència s’aplica al programari Synix Control Panel, inclosos el codi font, els binaris compilats, la interfície d’usuari, la documentació, les il·lustracions, els logotips i la resta de materials inclosos (conjuntament, el &quot;Programari&quot;).
+
+Les seccions 13 i 14 també expliquen les pràctiques de privadesa del lloc web oficial Synix, el comptador d&apos;activitats i el gestor remot opcional. Descriuen el servei actual; no canvien la concessió de llicència personal i no comercial a continuació.
 
 1. TITULARITAT
 
@@ -12330,7 +12333,7 @@ Res d’aquesta llicència garanteix que una acció o un recurs concret estigui 
 
 9. EXCLUSIÓ DE GARANTIES I LIMITACIÓ DE RESPONSABILITAT
 
-EL PROGRAMARI ES PROPORCIONA "TAL COM ÉS" I "SEGONS DISPONIBILITAT", SENSE CAP GARANTIA EXPRESSA NI IMPLÍCITA, INCLOSES LES GARANTIES DE COMERCIABILITAT, IDONEÏTAT PER A UNA FINALITAT CONCRETA, TITULARITAT I NO INFRACCIÓ.
+EL PROGRAMARI ES PROPORCIONA &quot;TAL COM ÉS&quot; I &quot;SEGONS DISPONIBILITAT&quot;, SENSE CAP GARANTIA EXPRESSA NI IMPLÍCITA, INCLOSES LES GARANTIES DE COMERCIABILITAT, IDONEÏTAT PER A UNA FINALITAT CONCRETA, TITULARITAT I NO INFRACCIÓ.
 
 EN LA MÀXIMA MESURA PERMESA PER LA LLEI, JASON TURNER NO SERÀ RESPONSABLE DE CAP DANY DIRECTE, INDIRECTE, INCIDENTAL, ESPECIAL, CONSEQÜENCIAL O PUNITIU, NI DE CAP PÈRDUA DE DADES, BENEFICIS, INGRESSOS, FITXERS DE SERVIDOR, MONS DE JOC, ACTIVITAT EMPRESARIAL O DISPONIBILITAT DEL SERVEI DERIVADA DEL PROGRAMARI O DEL SEU ÚS, O QUE HI ESTIGUI RELACIONADA.
 
@@ -12363,7 +12366,81 @@ Allotjar, crear rèpliques, servir mitjançant un servidor intermediari, reempaq
 
 L’apartat 4.2 no prohibeix els enllaços directes habituals a aquestes fonts oficials que atribueixin correctament Synix a Jason Turner. Aquests enllaços no converteixen el lloc que els publica en una font oficial.
 
-El paquet WinGet ubidzz.Synix és un mètode d’instal·lació aprovat quan descarrega l’instal·lador sense modificar directament de les versions oficials publicades a GitHub. Això no autoritza l’allotjament ni el reempaquetatge per tercers.</value></data>
+El paquet WinGet ubidzz.Synix és un mètode d’instal·lació aprovat quan descarrega l’instal·lador sense modificar directament de les versions oficials publicades a GitHub. Això no autoritza l’allotjament ni el reempaquetatge per tercers.
+
+13. Comptador d&apos;activitats en directe i privadesa
+
+Synix inclou un comptador d&apos;activitats en directe opcional que estima el nombre de Synix sessions en execució el https://synix.info. Aquesta funció està activada per defecte. Pots desactivar-lo en qualsevol moment a Configuració &gt; Privadesa i seguretat &gt; Comparteix el recompte d&apos;actius sense limitar altres funcions Synix. Es respecta una preferència desada prèviament.
+
+Mentre està activat, Synix envia un senyal de presència HTTPS a https://synix.info/api/presence a l&apos;inici i aproximadament cada 10 minuts mentre s&apos;executa l&apos;aplicació, inclòs en segon pla. El senyal conté un codi de sessió temporal aleatori i un identificador d&apos;aplicació genèric Synix, sense cos del missatge. El codi de sessió només es conserva a la memòria i es substitueix quan s&apos;inicia una nova sessió d&apos;informes; no és un identificador de dispositiu permanent.
+
+El comptador no carrega el vostre nom, adreça electrònica, contrasenyes, informació del servidor o del jugador, valors de configuració, fitxers o identificadors de la màquina.
+
+Per a cada sessió, el comptador del lloc web només emmagatzema un hash del codi de sessió i l&apos;hora del seu darrer senyal. El lloc web públic només mostra el recompte agregat de sessions actives, que és una estimació en lloc d&apos;un recompte de persones úniques. Una sessió deixa de comptar després de 15 minuts sense senyal. Els registres de comptador inactius es tornen aptes per a la neteja després de 30 minuts i s&apos;eliminen quan les sol·licituds de comptador posteriors realitzen la neteja. Synix no enllaça aquests registres de comptador amb comptes de gestor remot o identitats d&apos;ordinador aparellat.
+
+Si desactiva la funció, s&apos;atura més senyals de presència i fa una sol·licitud d&apos;esforç per eliminar la sessió actual. Tancar Synix també intenta eliminar-lo; si l&apos;eliminació no pot arribar al lloc web, la sessió deixa de comptar automàticament després del període d&apos;inactivitat.
+
+Com amb qualsevol connexió a Internet, els serveis d&apos;allotjament del lloc web reben informació de connexió normal, com ara l&apos;adreça IP d&apos;origen i l&apos;hora de sol·licitud, i poden processar-la o registrar-la sota les seves pròpies polítiques de privadesa. Aquesta informació no s&apos;emmagatzema a la taula de comptadors d&apos;activitats de Synix ni es mostra al recompte públic.
+
+14. Privadesa i seguretat d&apos;accés remot
+
+14.1 Accés opcional i sense venda de dades
+
+La gestió remota a https://manager.synix.info és opcional i està desactivada fins que sincronitzeu un ordinador i aproveu el compte sol·licitant a l&apos;aplicació Synix d&apos;aquest ordinador. Podeu utilitzar Synix localment sense un compte de gestor. El comptador d&apos;activitats públiques és independent i es pot desactivar de manera independent.
+
+Synix no ven, lloga, comercialitza ni revela la informació del vostre compte, la informació de l&apos;ordinador emparellat, l&apos;activitat remota o la informació del servidor a anunciants o intermediaris de dades. Synix no utilitza aquesta informació per a publicitat dirigida ni crea perfils publicitaris a partir d&apos;ella. La informació es processa per proporcionar les funcions que trieu, autenticar l&apos;accés, operar el servei i protegir-lo contra els abusos.
+
+L&apos;accés remot no és un servei d&apos;emmagatzematge zero. Necessita els registres limitats de compte, aparellament, operació i seguretat que es descriuen a continuació. Aquests registres no es publiquen al mostrador d&apos;activitats públiques ni s&apos;exposen a altres comptes de gestor mitjançant el servei.
+
+14.2 Què queda a l&apos;ordinador
+
+El gestor remot no carrega ni emmagatzema els vostres mons de joc, fitxers del servidor de jocs, continguts dels fitxers de configuració, continguts de l&apos;arxiu de còpia de seguretat, sortida de la consola en brut o contrasenyes del servidor de jocs. Les ordres de còpia de seguretat i restauració remotes s&apos;executen a l&apos;ordinador emparellat; els fitxers de còpia de seguretat romanen a les ubicacions configurades allí. El gestor no és un emmagatzematge de còpies de seguretat al núvol i no ofereix un escriptori remot sense restriccions, ordres d&apos;intèrpret d&apos;ordres arbitràries ni navegació general de fitxers.
+
+Synix manté la configuració local, la llista de servidors, els historials, les còpies de seguretat i l&apos;estat d&apos;aparellament a l&apos;ordinador. La clau de signatura privada d&apos;un ordinador emparellat es manté a l&apos;emmagatzematge de claus Windows. Synix prefereix l&apos;emmagatzematge amb còpia de seguretat de TPM quan està disponible i, en cas contrari, admet una clau de programari protegida amb Windows, inclòs el VMs compatible. TPM la disponibilitat no és una garantia que un ordinador no estigui compromès.
+
+Aquestes declaracions descriuen Synix la gestió remota. Els jocs, Steam, les modificacions, les integracions de Discord, les exportacions i els informes de suport que trieu compartir tenen els seus propis fluxos de dades. No introduïu contrasenyes ni cap altra informació sensible als noms d&apos;ordinadors, de servidors o de fitxers de còpia de seguretat, perquè aquestes etiquetes poden aparèixer al gestor.
+
+14.3 Informació que el Gestor processa i emmagatzema
+
+- Compte i autenticació: el vostre nom d&apos;usuari escollit, identificador del compte, temps de creació, preferències de seguretat, un hash de contrasenya salat, secret de l&apos;autenticador xifrat quan està activat, credencials públiques de clau de pas quan està activat i registres de sessió/verificació temporals. Les contrasenyes i els codis de verificació es processen per comprovar l&apos;inici de sessió; les contrasenyes permanents no s&apos;emmagatzemen com a text llegible. Synix no rep la vostra empremta digital, la imatge facial, la clau privada de la contrasenya ni la clau de signatura privada de l&apos;ordinador aparellat. El registre no requereix un nom real ni una adreça de correu electrònic.
+- Emparellament i connexió: l&apos;etiqueta de l&apos;ordinador que trieu, un identificador de dispositiu aleatori, la seva clau de signatura pública, l&apos;associació del compte, el tipus de proveïdor de claus informat, l&apos;estat d&apos;aprovació de l&apos;aparellament i l&apos;hora de la darrera connexió. Una connexió de relé autenticada silenciosa pot romandre oberta mentre Synix s&apos;executa perquè el lloc web pugui activar l&apos;aplicació aparellada immediatament. El relé transporta avisos d&apos;activació/desconnexió i metadades de connexió, no fitxers de jocs ni instantànies del servidor.
+- Estat mostrat: identificadors de servidors limitats, noms, noms de jocs, estat d&apos;execució, recomptes de jugadors, temps d&apos;activitat, accions disponibles, temps/estat de còpia de seguretat més recents i lectures CPU i RAM usades/totals de l&apos;ordinador. L&apos;aplicació envia aquests resums mentre hi ha una visualització de gestor autenticada activa. CPU/RAM les actualitzacions cobreixen ordinadors emparellats; les actualitzacions detallades del servidor cobreixen l&apos;ordinador seleccionat. Les actualitzacions normalment s&apos;executen cada 10 segons i s&apos;aturen després que les visualitzacions actives es tanquin, es desconnectin, caduquin o s&apos;ocultin segons correspongui. Altres sessions actives del navegador poden mantenir les seves pròpies visualitzacions en funcionament.
+- Accions i còpies de seguretat sol·licitades: els identificadors de servidor/acció, temps de sol·licitud, progrés/resultat i, quan sol·liciteu opcions de còpia de seguretat, identificadors de còpia de seguretat, noms de fitxer, dates, mides i etiquetes d&apos;integritat. El contingut de còpia de seguretat i els camins locals complets no s&apos;envien per a aquesta funció.
+- Prevenció de seguretat i abús: tipus d&apos;inici de sessió fallit, recompte i temps d&apos;intents agrupats, tipus d&apos;esdeveniment de recuperació/seguretat i etiquetes d&apos;ordinador rellevants. Els registres de límit de velocitat de curta durada poden utilitzar hash amb clau d&apos;adreces IP de connexió i identificadors de compte. Els registres d&apos;alerta de compte de Synix no contenen contrasenyes d&apos;intent, codis de verificació, adreces IP sense processar ni empremtes dactilars del navegador. Els proveïdors d&apos;allotjament poden processar per separat la informació de connexió tal com s&apos;explica a la Secció 14.6.
+
+El lloc web necessàriament processa els resums i ordres permesos per proporcionar una gestió remota. HTTPS i les connexions de retransmissió xifrades protegeixen el trànsit en trànsit; això no és una afirmació que el servei d&apos;allotjament no pugui processar les dades.
+
+14.4 Retenció i supressió
+
+: les credencials i la configuració del compte es mantenen fins que se suprimeix el compte. Els registres d&apos;aparellament aprovats es mantenen fins que l&apos;ordinador es desvinculeu o s&apos;elimini el compte.
+- Les instantànies d&apos;estat i les lectures CPU/RAM es sobreescriuen per lectures més noves i es tornen aptes per a la neteja després de 15 minuts sense substituir-les. L&apos;hora de la darrera connexió continua sent part del registre d&apos;aparellament.
+: els registres d&apos;ordres remots, els resultats i les metadades de les opcions de còpia de seguretat retornades es poden netejar després de 24 hores.
+: els esdeveniments de recuperació/seguretat i les alertes d&apos;inici de sessió fallits es tornen aptes per a la neteja després de 90 dies. Els inicis de sessió fallits conserven com a màxim els 100 grups més recents; Els errors coincidents en un període de 10 minuts s&apos;agrupen.
+: les sessions del navegador caduquen al cap de 30 minuts sense sol·licituds del gestor o després de 8 hores en total. Els intents de verificació caduquen al cap de 5 minuts; la recuperació temporal de la contrasenya caduca en 10 minuts i és d&apos;un sol ús. Els registres caducats de verificació, recuperació, protecció de reproducció i límit de velocitat s&apos;eliminen durant la neteja. Els registres de compte incomplets es tornen elegibles per a la neteja després de 24 hores.
+
+La caducitat atura l&apos;autorització fins i tot abans que s&apos;elimini físicament un registre. La neteja rutinària de la base de dades s&apos;executa durant les sol·licituds de servei posteriors, com a màxim una vegada cada 10 minuts per a la neteja del gestor, de manera que els períodes anteriors són períodes de caducitat o d&apos;elegibilitat per a la neteja en lloc de promeses d&apos;esborrament en un instant exacte. Els registres del proveïdor i les còpies de seguretat tenen cicles de vida separats.
+
+La desvinculació elimina l&apos;aparellament seleccionat i els seus registres remots associats de la base de dades del servei actiu. L&apos;historial de recuperació/seguretat pot romandre al compte durant el període anterior. En suprimir un compte de gestor, se n&apos;eliminen les credencials, els aparellaments, les instantànies, les ordres i els registres de seguretat/recuperació del compte de la base de dades del servei actiu. No elimina els vostres servidors de jocs locals, mons, configuració o fitxers de còpia de seguretat. Els registres de prevenció d&apos;abús de curta durada i els registres o les còpies de seguretat del proveïdor no s&apos;esborren necessàriament immediatament amb cap acció.
+
+14.5 Els vostres controls i protecció d&apos;inici de sessió
+
+L&apos;inici de sessió requereix la vostra contrasenya més una clau d&apos;accés o un autenticador existent, com ara Google Authenticator. Els comptes configurats per requerir els dos mètodes mantenen els dos requisits. Canviar una contrasenya, desvincular un ordinador a través del lloc web i suprimir un compte de gestor requereixen una nova verificació per a aquest canvi específic.
+
+Un ordinador vinculat prèviament aprovat pot emetre una contrasenya temporal si oblideu la contrasenya del vostre lloc web. No pot seleccionar un altre compte. La contrasenya temporal no passa per alt ni elimina els requisits existents de clau de pas/autenticador, i heu de triar una nova contrasenya abans d&apos;entrar al gestor. En completar la recuperació, es revocaran les altres sessions del navegador. El gestor de
+
+Synix manté el testimoni d&apos;inici de sessió del navegador a la memòria de la pestanya actual, no a les galetes, l&apos;emmagatzematge local o l&apos;emmagatzematge de la sessió. En actualitzar o tancar la pestanya es perd aquest inici de sessió. Això no impedeix que el vostre navegador o gestor de contrasenyes desi les credencials si ho trieu, i no descriu les galetes establertes per separat pels proveïdors d&apos;allotjament/seguretat o el servei de traducció del lloc web públic.
+
+Podeu tancar la sessió, revocar totes les sessions del navegador o desvincular un ordinador. L&apos;aplicació local Synix pot desactivar i desvincular la seva connexió remota sense iniciar la sessió al lloc web. Quan està fora de línia, atura l&apos;accés remot localment i torna a intentar l&apos;eliminació del lloc web quan hi hagi una connexió disponible. Reiniciar l&apos;aplicació o Windows no restaura automàticament un aparellament eliminat explícitament. L&apos;ús només local segueix disponible.
+
+14.6 Allotjament, pàgines públiques i límits de seguretat
+
+El lloc web oficial utilitza els serveis d&apos;allotjament i Cloudflare de llocs de OpenAI per a l&apos;entrega, l&apos;emmagatzematge, la seguretat i el relé d&apos;activació. Aquests proveïdors processen la informació necessària per oferir aquests serveis i poden rebre adreces IP, capçaleres de sol·licitud, hores i altres metadades de connexió, o conservar els seus propis registres operatius i còpies de seguretat. Les seves polítiques de privadesa s&apos;apliquen al seu tractament: https://openai.com/policies/privacy-policy/ i https://www.cloudflare.com/privacypolicy/.
+
+La traducció automàtica de pàgines públiques i les descàrregues GitHub impliquen els seus respectius proveïdors. El gestor privat està separat de les pàgines públiques i no carrega el proveïdor de traducció pública ni els scripts publicitaris. Synix no afirma generalment que visitar cap lloc web no crea galetes, registres o dades emmagatzemades. La informació també es pot revelar quan sigui legalment requerit; el compromís de no venda anterior no impedeix l&apos;allotjament necessari o les divulgacions lícites.
+
+Synix utilitza aparellaments autenticats, sol·licituds d&apos;ordinador signades, connexions de xarxa xifrades, comprovacions d&apos;accés al compte i aprovacions de curta durada per reduir l&apos;accés no autoritzat. Aquestes garanties no fan que l&apos;accés remot estigui lliure de riscos ni garanteix la protecció contra cada atac, un ordinador/navegador compromès, mètodes de verificació robats o un servei compromès. Manteniu Synix i Windows actualitzats, protegiu el vostre compte i els mètodes de verificació i aproveu només els ordinadors i els comptes que controleu.
+
+Aquest avís és públic a https://synix.info/license/ i s&apos;inclou al Centre d&apos;ajuda i a l&apos;instal·lador de l&apos;aplicació. Les preguntes de privadesa es poden plantejar a través de les opcions d&apos;assistència oficials a https://synix.info/support/. No publiqueu contrasenyes, codis de recuperació ni altra informació privada del compte als missatges públics d&apos;assistència. Les actualitzacions d&apos;aquest avís inclouen una nova revisió i data.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CAL UNA CONFIGURACIÓ IMPRESCINDIBLE:
 
 1. Engegueu el servidor un cop per construir 'Engine.ini', després tanqueu- lo.
@@ -14266,4 +14343,5 @@ Abans d’un marc de treball o canvi de joc, preservar el món, configuració i 
   <data name="Appearance.Square" xml:space="preserve"><value>Quadrat</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Comparteix el recompte d’activitat</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: envia un codi de sessió aleatori a synix.info cada minut mentre Synix s’executa, també en segon pla. No s’envien dades dels servidors. L’activitat caduca al cap de 3 minuts. Activat per defecte. Ho pots desactivar aquí.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Falta la llicència Synix incrustada.</value></data>
 </root>

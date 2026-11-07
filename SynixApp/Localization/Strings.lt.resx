@@ -12817,15 +12817,17 @@ Neprivalomus RCON arba administravimo galinius taškus laikykite vietinius, nebe
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Šiam serveriui reikalinga suderinama Metamod:Source ir SourceMod versija. Sukompiliuoti .smx įskiepiai patenka į ageofchivalry/addons/sourcemod/plugins; pridedami vertimai, gamedata ir plėtiniai išsaugo savo dokumentuotus aplankus.</value>
   </data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
-    <value>SYNIX CONTROL PANEL – RIBOTAS SANDĖLIAVIMO ŠALTINIS
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX CONTROL PANEL – RIBOTAS SANDĖLIAVIMO ŠALTINIS
 
-Licencijos redakcija 1.1 — 2026 m. lapkričio 5 d.
+Licencijos 1.3 versija – 2026 m. lapkričio 7 d
+
 Tai yra licencijos redakcija, o ne programėlės Synix versija.
 Autorinės teisės © 2026 Jason Turner. Visos teisės saugomos.
 JAV autorių teisių registracijos paraiška: Laukiama
 
 Ši licencija taikoma Synix valdymo skydo programinei įrangai, įskaitant jos išeities kodą, sukompiliuotas dvejetaines programas, vartotojo sąsają, dokumentaciją, meno kūrinius, logotipus ir kitas įtrauktas medžiagas (kartu –SoftwarePrograminė įranga“).
+
+13 ir 14 skyriuose taip pat paaiškinama oficialios Synix svetainės, veiklos skaitiklio ir pasirenkamo nuotolinio tvarkyklės privatumo praktika. Jie apibūdina esamą paslaugą; jie nekeičia toliau nurodytos asmeninės nekomercinės licencijos.
 
 1. NUOSAVYBĖ
 
@@ -12966,8 +12968,81 @@ Atsisiunčiamų failų laikymui, veidrodinių kopijų kūrimui, teikimui per tar
 
 4.2 skyrius nedraudžia įprastų tiesioginių nuorodų į šiuos oficialius šaltinius, kuriose tinkamai nurodyti Synix ir Jason Turner. Tokios nuorodos nepaverčia jas skelbiančios svetainės oficialiu šaltiniu.
 
-WinGet paketas ubidzz.Synix yra patvirtintas diegimo būdas, kai nepakeista diegimo programa atsisiunčiama tiesiogiai iš oficialių GitHub leidimų. Tai neleidžia trečiosioms šalims laikyti savo kopijų ar perpakuoti programinės įrangos.</value>
-  </data>
+WinGet paketas ubidzz.Synix yra patvirtintas diegimo būdas, kai nepakeista diegimo programa atsisiunčiama tiesiogiai iš oficialių GitHub leidimų. Tai neleidžia trečiosioms šalims laikyti savo kopijų ar perpakuoti programinės įrangos.
+
+13. Tiesioginės veiklos skaitiklis ir privatumas
+
+Synix apima pasirenkamą tiesioginės veiklos skaitiklį, kuris apskaičiuoja Synix seansų skaičių https://synix.info. Ši funkcija įjungta pagal numatytuosius nustatymus. Jį galite bet kada išjungti skiltyje „Nustatymai“ &gt; „Privatumas ir sauga“ &gt; „Bendrinti aktyvų skaičių“, neribodami kitų Synix funkcijų. Atsižvelgiama į anksčiau išsaugotą pirmenybę.
+
+Kai įjungta, Synix siunčia HTTPS buvimo signalą į https://synix.info/api/presence paleidžiant ir maždaug kas 10 minučių, kol programa veikia, įskaitant fone. Signale yra atsitiktinis laikinasis seanso kodas ir bendras programos Synix identifikatorius be pranešimo turinio. Seanso kodas saugomas tik atmintyje ir pakeičiamas, kai prasideda nauja ataskaitų sesija; tai nėra nuolatinis įrenginio identifikatorius.
+
+Skaitiklis neįkelia jūsų vardo, el. pašto adreso, slaptažodžių, serverio ar grotuvo informacijos, konfigūracijos verčių, failų ar įrenginio identifikatorių.
+
+Kiekvienam seansui svetainės skaitiklis išsaugo tik seanso kodo maišą ir naujausio signalo laiką. Viešoje svetainėje rodomas tik bendras aktyvių seansų skaičius, kuris yra apytikslis, o ne unikalių žmonių skaičius. Seansas nustoja skaičiuoti po 15 minučių be signalo. Neaktyvūs skaitiklio įrašai tampa tinkami išvalyti po 30 minučių ir pašalinami, kai atliekamos kitos skaitiklio užklausos. Synix šių skaitiklio įrašų nesusieja su nuotolinio valdytojo paskyromis arba suporuoto kompiuterio tapatybėmis.
+
+Išjungus funkciją sustabdomi tolesni buvimo signalai ir pateikiama viena užklausa pašalinti esamą seansą. Uždarius Synix taip pat bandoma pašalinti; jei pašalinimas negali pasiekti svetainės, seansas automatiškai nustoja skaičiuoti pasibaigus neveiklumo laikotarpiui.
+
+Kaip ir bet kokio interneto ryšio atveju, svetainės prieglobos paslaugos gauna įprastą ryšio informaciją, pvz., pradinį IP adresą ir užklausos laiką, ir gali ją apdoroti arba užregistruoti pagal savo privatumo politiką. Ši informacija nesaugoma Synix aktyvumo skaitiklių lentelėje arba nerodoma viešajame skaičiavime.
+
+14. Nuotolinės prieigos privatumas ir saugumas
+
+14.1 Pasirenkama prieiga ir neparduodama duomenų
+
+Nuotolinis valdymas https://manager.synix.info yra neprivalomas ir išjungiamas, kol nesusiejate kompiuterį ir patvirtinate užklausą pateikiančią paskyrą to kompiuterio programoje Synix. Galite naudoti Synix vietoje be valdytojo paskyros. Viešosios veiklos skaitiklis yra atskiras ir gali būti išjungtas atskirai.
+
+Synix neparduoda, nenuomoja, neprekiauja ir neatskleidžia jūsų paskyros informacijos, suporuoto kompiuterio informacijos, nuotolinės veiklos ar serverio informacijos reklamuotojams ar duomenų tarpininkams. Synix nenaudoja šios informacijos tikslinei reklamai ir nekuria iš jos reklaminių profilių. Informacija apdorojama siekiant suteikti jūsų pasirinktas funkcijas, autentifikuoti prieigą, naudoti paslaugą ir apsaugoti ją nuo piktnaudžiavimo.
+
+Nuotolinė prieiga nėra nulinės saugyklos paslauga. Tam reikia ribotos paskyros, susiejimo, veikimo ir saugos įrašų, aprašytų toliau. Šie įrašai nėra skelbiami viešajame veiklos skaitiklyje ir per paslaugą nerodomi kitoms valdytojo paskyroms.
+
+14.2 Kas lieka jūsų kompiuteryje
+
+Nuotolinis valdytojas neįkelia ir nesaugo jūsų žaidimų pasaulių, žaidimų serverio failų, konfigūracijos failų turinio, atsarginės kopijos archyvo turinio, neapdorotos konsolės išvesties ar žaidimų serverio slaptažodžių. Suporuotame kompiuteryje vykdomos nuotolinės atsarginės kopijos ir atkūrimo komandos; atsarginės kopijos lieka ten sukonfigūruotose vietose. Valdytojas nėra atsarginių kopijų saugykla debesyje ir neteikia neriboto nuotolinio darbalaukio, savavališkų apvalkalo komandų ar bendro failų naršymo.
+
+Synix išsaugo vietinius nustatymus, serverių sąrašą, istorijas, atsargines kopijas ir susiejimo būseną jūsų kompiuteryje. Suporuoto kompiuterio privatus pasirašymo raktas lieka Windows raktų saugykloje. Synix teikia pirmenybę TPM palaikomai saugyklai, kai yra, ir kitaip palaiko Windows apsaugotą programinės įrangos raktą, įskaitant suderinamą VMs. TPM prieinamumas negarantuoja, kad kompiuteris yra bekompromisis.
+
+Šie teiginiai apibūdina Synix nuotolinį valdymą. Žaidimai, Steam, modifikacijos, „Discord“ integracijos, eksportavimas ir palaikymo ataskaitos, kurias pasirenkate bendrinti, turi savo duomenų srautus. Nedėkite slaptažodžių ar kitos neskelbtinos informacijos į kompiuterių pavadinimus, serverių pavadinimus ar atsarginių failų pavadinimus, nes šios etiketės gali būti rodomos tvarkyklėje.
+
+14.3 Informacija, kurią valdytojas apdoroja ir saugo
+
+– Paskyra ir autentifikavimas: jūsų pasirinktas naudotojo vardas, paskyros identifikatorius, sukūrimo laikas, saugos nuostatos, slaptažodžio maiša, užšifruota autentifikavimo paslaptis, kai įjungta, slaptažodžio viešieji kredencialai, kai įjungta, ir laikini patvirtinimo / seanso įrašai. Slaptažodžiai ir patvirtinimo kodai apdorojami norint patikrinti prisijungimą; nuolatiniai slaptažodžiai nėra saugomi kaip skaitomas tekstas. Synix negauna jūsų pirštų atspaudų, veido vaizdo, slaptažodžio privataus rakto arba suporuoto kompiuterio privataus pasirašymo rakto. Registruojantis nereikalaujama tikro vardo ar el. pašto adreso.
+– Susiejimas ir prisijungimas: jūsų pasirinkta kompiuterio etiketė, atsitiktinis įrenginio identifikatorius, jo viešasis pasirašymo raktas, paskyros susiejimas, praneštas rakto teikėjo tipas, poravimo patvirtinimo būsena ir paskutinis prisijungimo laikas. Tylus autentifikuotas relės ryšys gali likti atidarytas, kol veikia Synix, todėl svetainė gali nedelsiant pažadinti susietą programą. Relė neša pranešimus apie pažadinimą / atjungimą ir ryšio metaduomenis, o ne žaidimų failus ar serverio momentines nuotraukas.
+– rodoma būsena: riboti serverio identifikatoriai, pavadinimai, žaidimų pavadinimai, veikimo būsena, žaidėjų skaičius, veikimo laikas, galimi veiksmai, naujausias atsarginės kopijos laikas / būsena ir viso kompiuterio CPU bei naudotų / bendrų RAM rodmenų. Programa siunčia šias suvestines, kai aktyvus autentifikuoto valdytojo rodinys. CPU/RAM atnaujinimai apima suporuotus kompiuterius; išsamūs serverio atnaujinimai apima pasirinktą kompiuterį. Atnaujinimai paprastai vykdomi kas 10 sekundžių ir pristabdomi, kai aktyvūs rodiniai uždaromi, atjungiami, pasibaigia arba, jei reikia, paslėpti. Kiti aktyvūs naršyklės seansai gali išlaikyti savo rodinius.
+– Prašomi veiksmai ir atsarginės kopijos: serverio / veiksmo identifikatoriai, užklausos laikas, eiga / rezultatas ir, kai prašote pasirinkti atsarginę kopiją, atsarginės kopijos identifikatoriai, failų pavadinimai, datos, dydžiai ir vientisumo etiketės. Atsarginis turinys ir visi vietiniai keliai šiai funkcijai nesiunčiami.
+– Sauga ir piktnaudžiavimo prevencija: nepavykusio prisijungimo tipas, sugrupuotas bandymų skaičius ir laikas, atkūrimo / saugos įvykio tipas ir atitinkamos kompiuterio etiketės. Trumpalaikiuose greičio limito įrašuose gali būti naudojamos prisijungimo IP adresų ir paskyros identifikatorių maišos. Synix paskyros įspėjimų įrašuose nėra bandytų slaptažodžių, patvirtinimo kodų, neapdorotų IP adresų ar naršyklės pirštų atspaudų. Prieglobos paslaugų teikėjai gali atskirai apdoroti ryšio informaciją, kaip paaiškinta 14.6 skirsnyje.
+
+Svetainė būtinai apdoroja leistinas santraukas ir komandas, kad būtų užtikrintas nuotolinis valdymas. HTTPS ir šifruotos relės jungtys apsaugo srautą tranzitu; tai nėra teiginys, kad prieglobos paslauga negali apdoroti duomenų.
+
+14.4 Išlaikymas ir ištrynimas
+
+– paskyros kredencialai ir nustatymai išlieka tol, kol paskyra bus ištrinta. Patvirtinti poravimo įrašai išlieka tol, kol kompiuteris bus atsietas arba paskyra ištrinta.
+– būsenos momentinės nuotraukos ir CPU/RAM rodmenys perrašomi naujesniais rodmenimis ir tampa tinkami išvalyti po 15 minučių be pakeitimo. Paskutinio prisijungimo laikas lieka poravimo įrašo dalimi.
+– nuotolinių komandų įrašai, rezultatai ir grąžinti atsarginio pasirinkimo metaduomenys tampa tinkami išvalyti po 24 valandų.
+– atkūrimo / saugos įvykiai ir nepavykusio prisijungimo įspėjimai tampa tinkami išvalyti po 90 dienų. Nepavykus prisijungti išsaugo daugiausia 100 naujausių grupių; suderinami gedimai per 10 minučių yra sugrupuojami.
+– naršyklės seansai baigiasi po 30 minučių be vadovo užklausų arba po 8 valandų. Patikrinimo bandymai baigiasi po 5 minučių; laikinas slaptažodžio atkūrimas baigiasi per 10 minučių ir yra vienkartinis. Išvalymo metu pašalinami pasibaigusio patvirtinimo, atkūrimo, pakartojimo apsaugos ir greičio apribojimo įrašai. Neužbaigtas paskyros registracijas galima išvalyti po 24 valandų.
+
+Pasibaigus galiojimo laikui, autorizacija sustabdoma dar prieš fiziškai pašalinant įrašą. Įprastas duomenų bazės išvalymas vykdomas teikiant paskesnes paslaugų užklausas, daugiausiai kartą per 10 minučių vadovo valymui, todėl aukščiau nurodyti laikotarpiai yra galiojimo pabaigos arba tinkamumo valyti laikotarpiai, o ne pažadai ištrinti tikslią akimirką. Teikėjo žurnalai ir atsarginės kopijos turi atskirus gyvavimo ciklus.
+
+Atsiejimas ištrina pasirinktą susiejimą ir su juo susijusius nuotolinius įrašus iš aktyvių paslaugų duomenų bazės. Atkūrimo / saugos istorija gali likti paskyroje aukščiau nurodytu laikotarpiu. Ištrynus valdytojo paskyrą iš aktyvių paslaugų duomenų bazės pašalinami jos kredencialai, poros, momentinės nuotraukos, komandos ir paskyros saugos / atkūrimo įrašai. Tai neištrina jūsų vietinių žaidimų serverių, pasaulių, nustatymų ar atsarginių failų. Trumpalaikiai piktnaudžiavimo prevencijos įrašai ir teikėjo turimi žurnalai arba atsarginės kopijos nebūtinai iš karto ištrinami bet kuriuo iš veiksmų.
+
+14.5 Valdikliai ir prisijungimo apsauga
+
+Norint prisijungti, reikalingas slaptažodis ir esamas slaptažodis arba autentifikavimo priemonė, pvz., Google Authenticator. Paskyros, sukonfigūruotos taip, kad reikalauti abiejų metodų, išlaiko abu reikalavimus. Norint pakeisti slaptažodį, atsieti kompiuterį per svetainę ir ištrinti valdytojo paskyrą, reikia iš naujo patvirtinti tą konkretų pakeitimą.
+
+Anksčiau patvirtintas suporuotas kompiuteris gali išduoti laikiną slaptažodį, jei pamiršite savo svetainės slaptažodį. Jis negali pasirinkti kitos paskyros. Laikinasis slaptažodis neapeina ir nepašalina esamų slaptažodžio/autentifikatoriaus reikalavimų, todėl prieš įeidami į valdytoją turite pasirinkti naują slaptažodį. Užbaigus atkūrimą, anuliuojami kiti naršyklės seansai.
+
+Synix valdytojas išsaugo savo naršyklės prisijungimo prieigos raktą dabartinio skirtuko atmintyje, o ne slapukuose, vietinėje saugykloje ar seanso atmintyje. Atnaujinus arba uždarius skirtuką prarandamas prisijungimas. Tai netrukdo jūsų naršyklei arba slaptažodžių tvarkyklei išsaugoti kredencialus, jei pasirenkate, ir neaprašomi slapukai, kuriuos atskirai nustato prieglobos / saugos teikėjai arba viešosios svetainės vertimo tarnyba.
+
+Galite atsijungti, atšaukti visas naršyklės sesijas arba atsieti kompiuterį. Vietinė programa Synix gali išjungti ir atsieti nuotolinį ryšį neprisijungus prie svetainės. Kai neprisijungęs, jis sustabdo nuotolinę prieigą vietoje ir bando pašalinti svetainę iš naujo, kai pasiekiamas ryšys. Iš naujo paleidus programą arba Windows, aiškiai pašalintas susiejimas automatiškai neatkuriamas. Galimas tik vietinis naudojimas.
+
+14.6 Priegloba, viešieji puslapiai ir saugos apribojimai
+
+Oficialioje svetainėje naudojamos OpenAI svetainių prieglobos ir Cloudflare paslaugos pristatymui, saugojimui, apsaugai ir pažadinimo relei. Šie teikėjai apdoroja informaciją, reikalingą toms paslaugoms teikti, ir gali gauti IP adresus, užklausų antraštes, laiką ir kitus ryšio metaduomenis arba saugoti savo veiklos žurnalus ir atsargines kopijas. Jų tvarkymui taikoma jų privatumo politika: https://openai.com/policies/privacy-policy/ ir https://www.cloudflare.com/privacypolicy/.
+
+Viešųjų puslapių automatinis vertimas ir GitHub atsisiuntimai yra susiję su atitinkamais teikėjais. Privatus valdytojas yra atskirtas nuo viešųjų puslapių ir neįkelia viešojo vertimo teikėjo ar reklaminių scenarijų. Synix visiškai neteigia, kad apsilankius bet kurioje svetainėje nekuriami slapukai, žurnalai ar saugomi duomenys. Informacija taip pat gali būti atskleista, kai to reikalauja teisės aktai; pirmiau nurodytas įsipareigojimas neparduoti netrukdo būtinai prieglobai arba teisėtam atskleidimui.
+
+Synix naudoja autentifikuotą susiejimą, pasirašytas kompiuterio užklausas, šifruotus tinklo ryšius, paskyros prieigos patikras ir trumpalaikius patvirtinimus, kad sumažintų neteisėtą prieigą. Šios apsaugos priemonės nepadaro nuotolinės prieigos nerizikingos ir negarantuoja apsaugos nuo kiekvienos atakos, pažeisto kompiuterio / naršyklės, pavogtų patvirtinimo metodų ar pažeistos paslaugos. Atnaujinkite Synix ir Windows, apsaugokite paskyrą ir patvirtinimo metodus bei patvirtinkite tik jūsų valdomus kompiuterius ir paskyras.
+
+Šis pranešimas yra viešas https://synix.info/license/ ir įtrauktas į programos pagalbos centrą bei diegimo programą. Privatumo klausimus galima kelti naudojantis oficialiomis palaikymo parinktimis adresu https://synix.info/support/. Neskelbkite slaptažodžių, atkūrimo kodų ar kitos privačios paskyros informacijos viešuose palaikymo pranešimuose. Šio pranešimo atnaujinimai turi naują peržiūrą ir datą.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>PRIVALOMAS KRITINIS NUSTATYMAS:
 
@@ -15888,4 +15963,5 @@ Prieš keičiant sistemą ar žaidimą, išsaugokite pasaulį, konfigūraciją i
   </data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Bendrinti aktyvumo skaičių</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Pasirenkama: kas minutę siųsti atsitiktinį seanso kodą į synix.info, kol Synix veikia, taip pat ir fone. Serverių duomenys nesiunčiami. Aktyvumas baigiasi po 3 minučių. Pagal numatytuosius nustatymus įjungta. Čia galite išjungti.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Trūksta įterptosios Synix licencijos.</value></data>
 </root>

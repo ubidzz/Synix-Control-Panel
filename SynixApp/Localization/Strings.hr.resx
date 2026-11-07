@@ -12215,14 +12215,17 @@ Zadržite izborne RCON ili administrativne krajnje točke lokalnim osim ako nema
 
 3. Službena dokumentacija: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Za ovu verziju poslužitelja zahtijeva kompatibilnu verziju Metamod:Source i SourceMod. Prevedeni.smx dodaci idu u ageofchivalry/addons/sourcemod/plugins; popratni prijevodi, podaci o igrama i proširenja zadržavaju svoje dokumentirane mape.</value></data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX UPRAVLJAČKA PLOČA — OGRANIČENA VLASNIČKA DOSTUPNA LICENCA
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX UPRAVLJAČKA PLOČA — OGRANIČENA VLASNIČKA DOSTUPNA LICENCA
 
-Revizija licence 1.1 — 5. studenoga 2026.
+Revizija licence 1.3 — 7. studenog 2026
+
 Ovo je revizija licence, a ne verzija aplikacije Synix.
 Autorska prava © 2026 Jason Turner. Sva prava pridržana.
 Zahtjev za registraciju autorskih prava u SAD-u: na čekanju
 
-Ova se licenca odnosi na softver Synix Control Panel, uključujući njegov izvorni kod, kompajlirane binarne datoteke, korisničko sučelje, dokumentaciju, umjetnička djela, logotipe i ostale uključene materijale (zajedničkim nazivom "Softver").
+Ova se licenca odnosi na softver Synix Control Panel, uključujući njegov izvorni kod, kompajlirane binarne datoteke, korisničko sučelje, dokumentaciju, umjetnička djela, logotipe i ostale uključene materijale (zajedničkim nazivom &quot;Softver&quot;).
+
+Odjeljci 13 i 14 također objašnjavaju prakse privatnosti službene Synix web stranice, brojača aktivnosti i izbornog udaljenog upravitelja. Oni opisuju trenutnu uslugu; oni ne mijenjaju dolje dodijeljenu osobnu, nekomercijalnu licencu.
 
 1. VLASNIŠTVO
 
@@ -12330,7 +12333,7 @@ Ništa u ovoj licenci ne jamči da će bilo koja posebna radnja ili pravni lijek
 
 9. ODRICANJE OD ODGOVORNOSTI I OGRANIČENJE ODGOVORNOSTI
 
-SOFTVER SE ISPORUČUJE "KAKAV JE" I "KAKO JE DOSTUPAN," BEZ JAMSTVA BILO KOJE VRSTE, IZRIČITOG ILI PODRAZUMIJEVANO, UKLJUČUJUĆI JAMSTVA PRIKLADNOSTI ZA PRODAJU, PRIKLADNOSTI ZA ODREĐENU NAMJENU, VLASNIŠTVA I NEKRŠENJA PRAVA.
+SOFTVER SE ISPORUČUJE &quot;KAKAV JE&quot; I &quot;KAKO JE DOSTUPAN,&quot; BEZ JAMSTVA BILO KOJE VRSTE, IZRIČITOG ILI PODRAZUMIJEVANO, UKLJUČUJUĆI JAMSTVA PRIKLADNOSTI ZA PRODAJU, PRIKLADNOSTI ZA ODREĐENU NAMJENU, VLASNIŠTVA I NEKRŠENJA PRAVA.
 
 U MAKSIMALNOJ MJERI DOPUŠTENOJ ZAKONOM, JASON TURNER NEĆE BITI ODGOVORAN ZA BILO KAKVU IZRAVNU, NEIZRAVNU, SLUČAJNU, POSEBNU, POSLJEDIČNU ILI EKSEMPLARNU ŠTETU ILI ZA BILO KAKAV GUBITAK PODATAKA, DOBITI, PRIHODA, POSLUŽITELJSKIH DATOTEKA, SVJETOVA IGRICA, POSLOVANJA ILI DOSTUPNOSTI USLUGA KOJE PROIZLAZE IZ ILI POVEZANE UZ SOFTVER ILI NJEGOVO UPOTREBU.
 
@@ -12363,7 +12366,81 @@ Hosting, zrcaljenje, pružanje putem posredničkog poslužitelja, prepakiranje i
 
 Odjeljak 4.2 ne zabranjuje uobičajene izravne poveznice na ove službene izvore koje ispravno navode Synix i Jasona Turnera. Takve poveznice ne čine web-stranicu koja ih objavljuje službenim izvorom.
 
-Paket WinGet ubidzz.Synix odobrena je metoda instalacije kada preuzima neizmijenjeni instalacijski program izravno iz službenih izdanja na GitHubu. To ne dopušta hosting ni prepakiranje trećim stranama.</value></data>
+Paket WinGet ubidzz.Synix odobrena je metoda instalacije kada preuzima neizmijenjeni instalacijski program izravno iz službenih izdanja na GitHubu. To ne dopušta hosting ni prepakiranje trećim stranama.
+
+13. Brojač aktivnosti uživo i privatnost
+
+Synix uključuje izborni brojač aktivnosti uživo koji procjenjuje broj pokrenutih Synix sesija na https://synix.info. Ova je značajka omogućena prema zadanim postavkama. Možete ga isključiti u bilo kojem trenutku u Postavkama &gt; Privatnost i sigurnost &gt; Dijeli aktivni broj bez ograničavanja drugih značajki Synix. Prethodno spremljena postavka isključenja se poštuje.
+
+Dok je omogućen, Synix šalje HTTPS signal prisutnosti na https://synix.info/api/presence pri pokretanju i otprilike svakih 10 minuta dok aplikacija radi, uključujući i u pozadini. Signal sadrži nasumični privremeni kod sesije i generički identifikator aplikacije Synix, bez tijela poruke. Kod sesije čuva se samo u memoriji i zamjenjuje se kada započne nova sesija izvješćivanja; to nije stalni identifikator uređaja.
+
+Brojač ne učitava vaše ime, adresu e-pošte, lozinke, podatke o poslužitelju ili igraču, konfiguracijske vrijednosti, datoteke ili identifikatore stroja.
+
+Za svaku sesiju, brojač web stranice pohranjuje samo hash koda sesije i vrijeme njenog posljednjeg signala. Javno web mjesto prikazuje samo ukupni broj aktivnih sesija, što je procjena, a ne broj jedinstvenih ljudi. Sesija se prestaje brojati nakon 15 minuta bez signala. Neaktivni zapisi brojača postaju prihvatljivi za čišćenje nakon 30 minuta i uklanjaju se kada sljedeći zahtjevi brojača izvrše čišćenje. Synix ne povezuje ove zapise brojača s računima udaljenog upravitelja ili identitetima uparenih računala.
+
+Isključivanjem značajke zaustavljaju se daljnji signali prisutnosti i postavlja se jedan zahtjev za uklanjanje trenutne sesije. Zatvaranje Synix također pokušava ukloniti; ako uklanjanje ne može doći do web stranice, sesija se automatski prestaje brojati nakon razdoblja neaktivnosti.
+
+Kao i kod bilo koje internetske veze, usluge hostinga web stranice primaju uobičajene podatke o vezi, kao što su izvorna IP adresa i vrijeme zahtjeva, te ih mogu obraditi ili zabilježiti prema vlastitim pravilima o privatnosti. Ove informacije nisu pohranjene u tablici brojača aktivnosti Synix niti prikazane u javnom brojaču.
+
+14. Privatnost i sigurnost daljinskog pristupa
+
+14.1 Izborni pristup i zabrana prodaje podataka
+
+Daljinsko upravljanje na https://manager.synix.info nije obavezno i isključeno je dok ne uparite računalo i ne odobrite račun koji zahtijeva u aplikaciji Synix na tom računalu. Možete koristiti Synix lokalno bez računa upravitelja. Brojač javnih aktivnosti je zaseban i može se samostalno isključiti.
+
+Synix ne prodaje, ne iznajmljuje, ne trguje niti otkriva podatke o vašem računu, podatke o uparenom računalu, aktivnosti na daljinu ili podatke o poslužitelju oglašivačima ili posrednicima podataka. Synix ne koristi ove informacije za ciljano oglašavanje niti od njih gradi reklamne profile. Podaci se obrađuju za pružanje značajki koje odaberete, autentifikaciju pristupa, upravljanje uslugom i zaštitu od zlouporabe.
+
+Daljinski pristup nije usluga bez pohrane. Potrebni su ograničeni računi, uparivanje, operativni i sigurnosni zapisi opisani u nastavku. Ti se zapisi ne objavljuju u javnom brojaču aktivnosti niti se izlažu drugim računima upravitelja putem usluge.
+
+14.2 Što ostaje na vašem računalu
+
+Udaljeni upravitelj ne učitava niti pohranjuje vaše svjetove igre, datoteke poslužitelja igre, sadržaj konfiguracijske datoteke, sadržaj sigurnosne kopije-arhive, neobrađeni izlaz konzole ili lozinke poslužitelja igre. Naredbe za daljinsko sigurnosno kopiranje i vraćanje pokreću se na uparenom računalu; datoteke sigurnosne kopije ostaju na lokacijama koje su tamo konfigurirane. Upravitelj nije pohrana sigurnosnih kopija u oblaku i ne pruža neograničenu udaljenu radnu površinu, proizvoljne naredbe ljuske ili općenito pregledavanje datoteka.
+
+Synix čuva svoje lokalne postavke, popis poslužitelja, povijesti, sigurnosne kopije i stanje uparivanja na vašem računalu. Privatni ključ za potpisivanje uparenog računala ostaje u pohrani ključeva Windows. Synix preferira pohranu s podrškom za TPM kada je dostupna i inače podržava softverski ključ zaštićen Windows, uključujući na kompatibilnom VMs. Dostupnost TPM nije jamstvo da je računalo beskompromitirano.
+
+Ove izjave opisuju Synix daljinsko upravljanje. Igre, Steam, modifikacije, integracije Discorda, izvozi i izvješća o podršci koja odlučite dijeliti imaju vlastite tokove podataka. Nemojte stavljati lozinke ili druge osjetljive informacije u nazive računala, nazive poslužitelja ili nazive datoteka sigurnosne kopije jer se te oznake mogu pojaviti u upravitelju.
+
+14.3 Informacije koje upravitelj obrađuje i pohranjuje
+
+- Račun i provjera autentičnosti: Vaše odabrano korisničko ime, identifikator računa, vrijeme kreiranja, sigurnosne preferencije, raspršena šifra lozinke, šifrirana tajna autentifikatora kada je omogućena, javne vjerodajnice ključa kada je omogućena i privremeni zapisi verifikacije/sesije. Lozinke i kontrolni kodovi obrađuju se za provjeru prijave; trajne lozinke nisu pohranjene kao čitljiv tekst. Synix ne prima vaš otisak prsta, sliku lica, privatni ključ zaporke ili privatni ključ za potpisivanje uparenog računala. Registracija ne zahtijeva pravo ime ili adresu e-pošte.
+- Uparivanje i povezivanje: Oznaka računala koju odaberete, nasumični identifikator uređaja, njegov javni ključ za potpisivanje, pridruživanje računa, prijavljeni tip davatelja ključa, stanje odobrenja uparivanja i vrijeme posljednje veze. Tiha autentificirana relejna veza može ostati otvorena dok Synix radi tako da web mjesto može odmah probuditi uparenu aplikaciju. Relej prenosi obavijesti o buđenju/prekidu veze i metapodatke o vezi, a ne datoteke igara ili snimke poslužitelja.
+- Prikazani status: Ograničeni identifikatori poslužitelja, nazivi, nazivi igara, stanje pokretanja, broj igrača, vrijeme neprekidnog rada, dostupne radnje, posljednje vrijeme/status sigurnosne kopije i očitanja cijelog računala CPU i korišteno/ukupno RAM. Aplikacija šalje ove sažetke dok je autentificirani prikaz upravitelja aktivan. CPU/RAM ažuriranja pokrivaju uparena računala; detaljna ažuriranja poslužitelja pokrivaju odabrano računalo. Ažuriranja se obično pokreću svakih 10 sekundi i pauziraju nakon što se aktivni prikazi zatvore, prekinu vezu, isteknu ili postanu skriveni, ovisno o tome što je primjenjivo. Druge aktivne sesije preglednika mogu održavati svoje vlastite prikaze aktivnima.
+- Tražene radnje i sigurnosne kopije: Identifikatori poslužitelja/radnje, vrijeme zahtjeva, napredak/rezultat i, kada zatražite izbor sigurnosne kopije, identifikatori sigurnosne kopije, nazivi datoteka, datumi, veličine i oznake integriteta. Sadržaj sigurnosne kopije i pune lokalne staze ne šalju se za ovu značajku.
+- Sigurnost i sprječavanje zlouporabe: vrsta neuspjele prijave, grupirani broj i vrijeme pokušaja, vrsta događaja oporavka/sigurnosti i relevantne oznake računala. Kratkotrajni zapisi ograničenja brzine mogu koristiti ključeve hashova IP adresa veze i identifikatora računa. Evidencija upozorenja računa Synix ne sadrži pokušaje unosa lozinki, verifikacijskih kodova, neobrađenih IP adresa ili otisaka prstiju preglednika. Davatelji usluga hostinga mogu zasebno obrađivati ​​informacije o povezivanju kao što je objašnjeno u odjeljku 14.6.
+
+Web stranica nužno obrađuje dopuštene sažetke i naredbe za pružanje daljinskog upravljanja. HTTPS i šifrirane relejne veze štite promet u tranzitu; ovo nije tvrdnja da usluga hostinga ne može obraditi podatke.
+
+14.4 Zadržavanje i brisanje
+
+- vjerodajnice računa i postavke ostaju dok se račun ne izbriše. Odobreni zapisi o uparivanju ostaju sve dok se računalo ne uparuje ili dok se račun ne izbriše.
+- Snimke statusa i očitanja CPU/RAM prebrisana su novijim očitanjima i postaju prikladna za čišćenje nakon 15 minuta bez zamjene. Vrijeme posljednje veze ostaje dio zapisa o uparivanju.
+- Zapisi daljinskih naredbi, rezultati i vraćeni metapodaci izbora sigurnosne kopije postaju podobni za čišćenje nakon 24 sata.
+- Oporavak/sigurnosni događaji i upozorenja o neuspješnoj prijavi postaju kvalificirani za čišćenje nakon 90 dana. Neuspjele prijave zadržavaju najviše 100 najnovijih grupa; neuspjesi podudaranja unutar razdoblja od 10 minuta grupiraju se zajedno.
+- Sesije preglednika ističu nakon 30 minuta bez zahtjeva upravitelja ili nakon ukupno 8 sati. Pokušaji verifikacije istječu nakon 5 minuta; oporavak privremene lozinke istječe unutar 10 minuta i jednokratna je upotreba. Zapisi o provjeri, oporavku, zaštiti od ponovne reprodukcije i ograničenju brzine uklanjaju se tijekom čišćenja. Nepotpune registracije računa ispunjavaju uvjete za čišćenje nakon 24 sata.
+
+Istek zaustavlja autorizaciju čak i prije nego što se zapis fizički ukloni. Rutinsko čišćenje baze podataka izvodi se tijekom naknadnih zahtjeva za uslugom, najviše jednom svakih 10 minuta za čišćenje upravitelja, tako da su gore navedena razdoblja isteka ili razdoblja prihvatljivosti za čišćenje, a ne obećanja brisanja u točnom trenutku. Dnevnici pružatelja usluga i sigurnosne kopije imaju odvojene životne cikluse.
+
+Poništavanje uparivanja briše odabrano uparivanje i njegove povezane udaljene zapise iz baze podataka aktivne usluge. Povijest oporavka/sigurnosne zaštite može ostati na računu za gore navedeno razdoblje. Brisanjem računa upravitelja uklanjaju se njegove vjerodajnice, uparivanja, snimke, naredbe i zapisi o sigurnosti/oporavku računa iz aktivne baze podataka usluge. Ne briše vaše lokalne poslužitelje igara, svjetove, postavke ili sigurnosne kopije datoteka. Kratkotrajni zapisi o sprječavanju zlouporabe i zapisnici ili sigurnosne kopije koje čuva davatelj usluga ne moraju se nužno odmah izbrisati bilo kojom radnjom.
+
+14.5 Vaše kontrole i zaštita prijave
+
+Za prijavu je potrebna vaša lozinka plus postojeći pristupni ključ ili autentifikator, kao što je Google Authenticator. Računi konfigurirani da zahtijevaju obje metode zadržavaju oba zahtjeva. Promjena lozinke, rasparivanje računala putem web-mjesta i brisanje računa upravitelja zahtijevaju novu potvrdu za tu određenu promjenu.
+
+Prethodno odobreno upareno računalo može izdati privremenu lozinku ako zaboravite lozinku svoje web stranice. Ne može odabrati drugi račun. Privremena lozinka ne zaobilazi niti uklanja vaše postojeće zahtjeve za zaporkom/autentifikatorom i morate odabrati novu lozinku prije ulaska u upravitelja. Dovršetak oporavka opoziva vaše druge sesije preglednika. Upravitelj
+
+Synix čuva svoj token za prijavu u preglednik u memoriji trenutne kartice, a ne u kolačićima, lokalnoj pohrani ili pohrani sesije. Osvježavanjem ili zatvaranjem kartice gubi se ta prijava. To ne sprječava vaš preglednik ili upravitelj lozinki da spremaju vjerodajnice ako to odaberete i ne opisuje kolačiće koje zasebno postavljaju davatelji usluga hostinga/sigurnosti ili prevoditeljski servis javne web stranice.
+
+Možete se odjaviti, opozvati sve sesije preglednika ili raspariti računalo. Lokalna Synix aplikacija može onemogućiti i raspariti svoju udaljenu vezu bez prijave na web mjesto. Kada je izvan mreže, zaustavlja daljinski pristup lokalno i ponovno pokušava ukloniti web mjesto kada je veza dostupna. Ponovno pokretanje aplikacije ili Windows ne vraća automatski izričito uklonjeno uparivanje. Ostaje dostupna samo lokalna uporaba.
+
+14.6 Hosting, javne stranice i sigurnosna ograničenja
+
+Službeno web mjesto koristi OpenAI hosting stranica i Cloudflare usluge za isporuku, pohranu, sigurnost i relej za buđenje. Ti pružatelji usluga obrađuju informacije potrebne za isporuku tih usluga i mogu primati IP adrese, zaglavlja zahtjeva, vremena i druge metapodatke o povezivanju ili zadržati vlastite operativne zapisnike i sigurnosne kopije. Njihova pravila o privatnosti primjenjuju se na njihovu obradu: https://openai.com/policies/privacy-policy/ i https://www.cloudflare.com/privacypolicy/.
+
+Automatski prijevod javnih stranica i preuzimanja GitHub uključuju odgovarajuće pružatelje usluga. Privatni upravitelj je odvojen od javnih stranica i ne učitava javnog pružatelja usluga prijevoda ili reklamne skripte. Synix ne iznosi paušalnu tvrdnju da posjet bilo kojoj web stranici ne stvara kolačiće, zapise ili pohranjene podatke. Informacije se također mogu otkriti kada je to propisano zakonom; gore navedena obveza zabrane prodaje ne sprječava nužno hosting ili zakonita otkrivanja.
+
+Synix koristi autentificirano uparivanje, potpisane računalne zahtjeve, šifrirane mrežne veze, provjere pristupa računu i kratkotrajna odobrenja za smanjenje neovlaštenog pristupa. Ove zaštitne mjere ne čine udaljeni pristup bez rizika niti jamče zaštitu od svakog napada, kompromitiranog računala/preglednika, ukradenih metoda verifikacije ili kompromitirane usluge. Redovno ažurirajte Synix i Windows, zaštitite svoj račun i metode verifikacije i odobrite samo računala i račune koje kontrolirate.
+
+Ova je obavijest javna na https://synix.info/license/ i uključena je u centar za pomoć i program za instalaciju aplikacije. Pitanja o privatnosti mogu se postaviti putem službenih opcija podrške na https://synix.info/support/. Nemojte objavljivati ​​lozinke, kodove za oporavak ili druge privatne informacije o računu u javnim porukama podrške. Ažuriranja ove obavijesti nose novu reviziju i datum.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>POTREBNO JE KRITIČNO POSTAVLJANJE:
 
 1. Pokrenite poslužitelj jednom za izgradnju ' Engine.ini ', zatim ga isključite.
@@ -14266,4 +14343,5 @@ Prije promjene okvira ili igre, sačuvajte svijet, konfiguraciju i podatke o dod
   <data name="Appearance.Square" xml:space="preserve"><value>Pravokutne</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Dijeli broj aktivnih sesija</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Neobavezno: šaljite nasumični kod sesije na synix.info jednom u minuti dok Synix radi, uključujući rad u pozadini. Podaci poslužitelja ne šalju se. Aktivnost istječe nakon 3 minute. Prema zadanim postavkama uključeno. Ovdje možete isključiti ovu opciju.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Nedostaje ugrađena licenca Synix.</value></data>
 </root>

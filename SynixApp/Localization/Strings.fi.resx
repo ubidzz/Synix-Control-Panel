@@ -1023,14 +1023,17 @@ Pidä valinnaiset RCON- tai hallintapäätepisteet paikallisina, ellei sinulla o
 
 3. Virallinen dokumentaatio: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Vaatii yhteensopivan Metamod:Source- ja SourceMod-koontiversion tätä palvelinversiota varten. Käännetyt.smx-liitännäiset menevät ageofchivalry/addons/sourcemod/plugins-kansioon; mukana tulevat käännökset, pelitiedot ja laajennukset säilyttävät dokumentoidut kansiot.</value></data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX-OHJAUSPANEELI – RAJOITETTU PROPRIETARY SOURCE-SAATAVILLA LISENSSI
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX-OHJAUSPANEELI – RAJOITETTU PROPRIETARY SOURCE-SAATAVILLA LISENSSI
 
-Lisenssin tarkistusversio 1.1 — 5. marraskuuta 2026
+Lisenssiversio 1.3 – 7.11.2026
+
 Tämä on lisenssin tarkistusversio, ei Synix-sovelluksen versio.
 Tekijänoikeus © 2026 Jason Turner. Kaikki oikeudet pidätetään.
 U.S. Tekijänoikeusrekisteröintihakemus: Odottamassa
 
 Tämä käyttöoikeussopimus koskee Synix Ohjauspaneeli -ohjelmistoa, mukaan lukien sen lähdekoodi, käännetyt binäärit, käyttöliittymä, dokumentaatio, grafiikka, logot ja muut sisältyvät materiaalit (yhdessä &quot;Ohjelmisto&quot;).
+
+Kohdissa 13 ja 14 selitetään myös virallisen Synix-sivuston, aktiviteettilaskurin ja valinnaisen etähallinnan tietosuojakäytännöt. Ne kuvaavat nykyistä palvelua; ne eivät muuta alla olevaa henkilökohtaista, ei-kaupallista käyttölupaa.
 
 1. OMISTAJA
 
@@ -1171,7 +1174,81 @@ Latausten ylläpitäminen, peilaaminen, välittäminen välityspalvelimen kautta
 
 Kohta 4.2 ei kiellä tavallisia suoria linkkejä näihin virallisiin lähteisiin, kun Synix ja Jason Turner mainitaan asianmukaisesti. Tällaiset linkit eivät tee linkittävästä verkkosivustosta virallista lähdettä.
 
-WinGet-paketti ubidzz.Synix on hyväksytty asennustapa, kun se lataa muuttamattoman asennusohjelman suoraan virallisista GitHub-julkaisuista. Tämä ei oikeuta kolmansia osapuolia ylläpitämään omia kopioita tai paketoimaan ohjelmaa uudelleen.</value></data>
+WinGet-paketti ubidzz.Synix on hyväksytty asennustapa, kun se lataa muuttamattoman asennusohjelman suoraan virallisista GitHub-julkaisuista. Tämä ei oikeuta kolmansia osapuolia ylläpitämään omia kopioita tai paketoimaan ohjelmaa uudelleen.
+
+13. Live-aktiviteettilaskuri ja yksityisyys
+
+Synix sisältää valinnaisen live-aktiivisuuslaskurin, joka arvioi käynnissä olevien Synix istuntojen määrän https://synix.info. Tämä ominaisuus on oletuksena käytössä. Voit poistaa sen käytöstä milloin tahansa kohdassa Asetukset &gt; Tietosuoja ja suojaus &gt; Jaa aktiivinen määrä rajoittamatta muita Synix ominaisuuksia. Aiemmin tallennettua asetusta kunnioitetaan.
+
+Kun Synix on käytössä, se lähettää HTTPS läsnäolosignaalin numeroon https://synix.info/api/presence käynnistyksen yhteydessä ja noin 10 minuutin välein sovelluksen ollessa käynnissä, myös taustalla. Signaali sisältää satunnaisen tilapäisen istuntokoodin ja yleisen Synix sovellustunnisteen ilman viestin runkoa. Istuntokoodi säilytetään vain muistissa ja korvataan, kun uusi raportointiistunto alkaa; se ei ole pysyvä laitetunniste.
+
+Laskuri ei lataa nimeäsi, sähköpostiosoitettasi, salasanojasi, palvelin- tai pelaajatietoja, asetusarvoja, tiedostoja tai koneen tunnisteita.
+
+Jokaista istuntoa kohti verkkosivuston laskuri tallentaa vain istuntokoodin tiivisteen ja sen viimeisimmän signaalin ajan. Julkinen verkkosivusto näyttää vain aktiivisten istuntojen kokonaismäärän, joka on pikemminkin arvio kuin yksittäisten ihmisten lukumäärä. Istunnon laskenta lakkaa 15 minuutin kuluttua ilman signaalia. Ei-aktiiviset laskuritietueet voidaan puhdistaa 30 minuutin kuluttua, ja ne poistetaan, kun myöhemmät laskuritietueet suorittavat siivouksen. Synix ei linkitä näitä laskuritietueita etähallintatileihin tai tietokonepareihin.
+
+Ominaisuuden poistaminen käytöstä pysäyttää muut läsnäolosignaalit ja tekee parhaan mahdollisen pyynnön nykyisen istunnon poistamiseksi. Sulkeminen Synix yrittää myös poistaa; jos poisto ei pääse verkkosivustolle, istunnon laskeminen lopetetaan automaattisesti käyttämättömyysajan jälkeen.
+
+Kuten minkä tahansa Internet-yhteyden yhteydessä, myös verkkosivuston isännöintipalvelut saavat tavallisia yhteystietoja, kuten alkuperäisen IP-osoitteen ja pyyntöajan, ja voivat käsitellä tai kirjata ne omien tietosuojakäytäntöjensä mukaisesti. Näitä tietoja ei tallenneta henkilön Synix aktiivisuuslaskuritaulukkoon eikä näytetä julkisessa laskussa.
+
+14. Etäkäytön tietosuoja ja turvallisuus
+
+14.1 Valinnainen pääsy ja ei tietojen myyntiä
+
+Etähallinta osoitteessa https://manager.synix.info on valinnainen ja pois päältä, kunnes muodostat laiteparin ja hyväksyt pyytävän tilin kyseisen tietokoneen sovelluksessa Synix. Voit käyttää Synixa paikallisesti ilman hallinnoijan tiliä. Julkinen aktiviteettilaskuri on erillinen ja se voidaan poistaa käytöstä itsenäisesti.
+
+Synix ei myy, vuokraa, vaihda tai paljasta tilitietojasi, tietokoneparitietojasi, etätoimintojasi tai palvelintietojasi mainostajille tai tiedonvälittäjille. Synix ei käytä näitä tietoja kohdennettuun mainontaan tai rakenna niistä mainosprofiileja. Tietoja käsitellään valitsemiesi ominaisuuksien tarjoamiseksi, pääsyn todentamiseksi, palvelun käyttämiseksi ja sen suojaamiseksi väärinkäytöltä.
+
+Etäkäyttö ei ole tallennustilapalvelu. Se tarvitsee rajoitetut tilit, pariliitokset, toiminta- ja turvallisuustietueet, jotka on kuvattu alla. Näitä tietueita ei julkaista julkisessa aktiivisuuslaskurissa tai paljasteta muille hallinnoijan tileille palvelun kautta.
+
+14.2 Mitä tietokoneeseen jää
+
+Etähallinta ei lataa tai tallenna pelimaailmojasi, pelipalvelintiedostoja, asetustiedostojen sisältöä, varmuuskopio-arkiston sisältöä, konsolin raakatulostusta tai pelipalvelimen salasanoja. Etävarmuuskopiointi- ja palautuskomennot suoritetaan pariksi liitetyssä tietokoneessa; varmuuskopiotiedostot jäävät sinne määritettyihin paikkoihin. Hallinta ei ole pilvitallennustila, eikä se tarjoa rajoittamatonta etätyöpöytää, mielivaltaisia ​​komentotulkkikomentoja tai yleistä tiedostojen selaamista.
+
+Synix säilyttää paikalliset asetukset, palvelinluettelon, historiat, varmuuskopiot ja pariliitoksen tilan tietokoneellasi. Pariksi liitetyn tietokoneen yksityinen allekirjoitusavain säilyy Windows-avainmuistissa. Synix suosii TPM-tuettua tallennustilaa, kun se on saatavilla, ja tukee muuten Windows-suojattua ohjelmistoavainta, mukaan lukien yhteensopivat VMs. TPM saatavuus ei takaa, että tietokone on tinkimätön.
+
+Nämä lauseet kuvaavat Synix etähallintaa. Pelit, Steam, modit, Discord-integraatiot, vientituotteet ja tukiraportit, jotka valitset jaettavaksi, sisältävät omat tietovirtansa. Älä sijoita salasanoja tai muita arkaluontoisia tietoja tietokoneiden nimiin, palvelimien nimiin tai varmuuskopiotiedostojen nimiin, koska ne voivat näkyä hallinnassa.
+
+14.3 Tiedot, joita johtaja käsittelee ja tallentaa
+
+- Tili ja todennus: Valitsemasi käyttäjätunnus, tilin tunniste, luontiaika, suojausasetukset, suolattu salasanan tiiviste, salattu todennuksen salaisuus, kun se on käytössä, julkiset tunnistetiedot, kun käytössä, ja tilapäinen vahvistus/istuntotietueet. Salasanat ja vahvistuskoodit käsitellään sisäänkirjautumisen tarkistamiseksi. pysyviä salasanoja ei tallenneta luettavana tekstinä. Synix ei vastaanota sormenjälkeäsi, kasvokuvaasi, salasanan yksityistä avainta tai pariksi liitetyn tietokoneen yksityistä allekirjoitusavainta. Rekisteröityminen ei vaadi oikeaa nimeä tai sähköpostiosoitetta.
+- Pariliitos ja yhteys: valitsemasi tietokoneen tunniste, satunnainen laitetunniste, sen julkinen allekirjoitusavain, tiliyhteys, raportoitu avaimen tarjoajan tyyppi, pariliitoksen hyväksymistila ja viimeisin yhteysaika. Hiljainen todennettu välitysyhteys voi pysyä auki, kun Synix on käynnissä, jotta verkkosivusto voi herättää pariksi liitetyn sovelluksen välittömästi. Rele kuljettaa herätys-/katkaisuilmoituksia ja yhteyden metatietoja, ei pelitiedostoja tai palvelimen tilannekuvia.
+- Näytön tila: rajoitetut palvelintunnisteet, nimet, pelien nimet, toimintatila, pelaajien määrä, käytettävyys, käytettävissä olevat toiminnot, viimeisin varmuuskopiointiaika/tila ja koko tietokoneen CPU ja käytetty/koko RAM lukema. Sovellus lähettää nämä yhteenvedot, kun todennettu johtajanäkymä on aktiivinen. CPU/RAM päivitykset kattavat pariksi liitetyt tietokoneet; yksityiskohtaiset palvelinpäivitykset kattavat valitun tietokoneen. Päivitykset suoritetaan normaalisti 10 sekunnin välein ja keskeytyvät sen jälkeen, kun aktiiviset näkymät sulkeutuvat, irrotetaan, vanhenevat tai muuttuvat piilotetuiksi. Muut aktiiviset selainistunnot voivat pitää omat näkymänsä käynnissä.
+- Pyydetyt toimet ja varmuuskopiot: Palvelimen/toiminnon tunnisteet, pyynnön aika, edistyminen/tulos ja, kun pyydät varmuuskopion valintoja, varmuuskopioiden tunnisteet, tiedostonimet, päivämäärät, koot ja eheystunnisteet. Varmuuskopiosisältöä ja kaikkia paikallisia polkuja ei lähetetä tälle ominaisuudelle.
+– Suojaus ja väärinkäytön esto: Epäonnistunut kirjautumistyyppi, ryhmitelty yritysmäärä ja -ajat, palautus-/tietoturvatapahtuman tyyppi ja asiaankuuluvat tietokoneen tunnisteet. Lyhytikäiset nopeusrajoitustietueet voivat käyttää yhteyksien IP-osoitteiden ja tilitunnisteiden avaimella varustettuja tiivisteitä. Synix-tilin hälytystietueet eivät sisällä salasanoja, vahvistuskoodeja, käsittelemättömiä IP-osoitteita tai selaimen sormenjälkiä. Isännöintipalveluntarjoajat voivat käsitellä yhteystietoja erikseen kohdan 14.6 mukaisesti.
+
+Verkkosivusto käsittelee välttämättä sallitut yhteenvedot ja komennot etähallinnan mahdollistamiseksi. HTTPS ja salatut välitysyhteydet suojaavat liikennettä; Tämä ei tarkoita, että isännöintipalvelu ei voisi käsitellä tietoja.
+
+14.4 Säilyttäminen ja poistaminen
+
+- Tilin tunnistetiedot ja asetukset säilyvät, kunnes tili poistetaan. Hyväksytyt paritustietueet säilyvät, kunnes tietokoneesta poistetaan laitepari tai tili poistetaan.
+– Tilavedosten ja CPU/RAM-lukemien päälle kirjoitetaan uudemmat lukemat, ja ne voidaan puhdistaa 15 minuutin kuluttua ilman vaihtamista. Viimeisen yhteyden aika jää osaksi pariliitostietuetta.
+– Etäkomentotietueet, tulokset ja palautetut varmuuskopion metatiedot voidaan puhdistaa 24 tunnin kuluttua.
+– Palautus-/tietoturvatapahtumat ja epäonnistuneet kirjautumisilmoitukset voidaan poistaa 90 päivän kuluttua. Epäonnistuneet kirjautumiset säilyttävät enintään 100 viimeisintä ryhmää; 10 minuutin aikana tapahtuneet yhteensopivuusvirheet ryhmitellään yhteen.
+- Selainistunnot vanhenevat 30 minuutin kuluttua ilman esimiehen pyyntöjä tai yhteensä 8 tunnin kuluttua. Vahvistusyritykset vanhenevat 5 minuutin kuluttua; väliaikainen salasanan palautus vanhenee 10 minuutissa ja on kertakäyttöinen. Vanhentuneet vahvistus-, palautus-, toistosuoja- ja nopeusrajoitustietueet poistetaan siivouksen aikana. Puutteelliset tilin rekisteröinnit voidaan puhdistaa 24 tunnin kuluttua.
+
+Vanheneminen pysäyttää valtuutuksen jo ennen kuin tietue on fyysisesti poistettu. Tietokannan rutiinipuhdistus suoritetaan myöhempien palvelupyyntöjen aikana, korkeintaan 10 minuutin välein johtajan siivoamista varten, joten yllä olevat ajanjaksot ovat vanhenemis- tai puhdistuskelpoisuusjaksoja eikä lupauksia tyhjennyksestä tarkalleen hetkessä. Palveluntarjoajan lokeilla ja varmuuskopioilla on erilliset elinkaaret.
+
+Parituksen purkaminen poistaa valitun pariliitoksen ja siihen liittyvät etätietueet aktiivisesta palvelutietokannasta. Palautus-/turvahistoria voi jäädä tilille yllä olevan ajanjakson ajan. Hallinnoijan tilin poistaminen poistaa sen kirjautumistiedot, pariliitokset, tilannevedokset, komennot ja tilin suojaus-/palautustietueet aktiivisesta palvelutietokannasta. Se ei poista paikallisia pelipalvelimia, maailmoja, asetuksia tai varmuuskopiotiedostoja. Lyhytaikaisia ​​väärinkäytön ehkäisytietueita ja palveluntarjoajan hallussa olevia lokeja tai varmuuskopioita ei välttämättä poisteta välittömästi kummallakaan toimilla.
+
+14.5 Säätimet ja sisäänkirjautumisen suojaus
+
+Kirjautuminen vaatii salasanasi sekä olemassa olevan salasanan tai todentajan, kuten Google Authenticator. Tilit, jotka on määritetty vaatimaan molempia menetelmiä, säilyttävät molemmat vaatimukset. Salasanan vaihtaminen, tietokoneen pariliitoksen purkaminen verkkosivuston kautta ja hallinnoijan tilin poistaminen edellyttävät uutta vahvistusta kyseistä muutosta varten.
+
+Aiemmin hyväksytty pariksi liitetty tietokone voi antaa väliaikaisen salasanan, jos unohdat verkkosivustosi salasanan. Se ei voi valita toista tiliä. Väliaikainen salasana ei ohita tai poista olemassa olevia salasana-/autentikaattorivaatimuksiasi, ja sinun on valittava uusi salasana ennen hallintaan siirtymistä. Palautuksen suorittaminen peruuttaa muut selainistunnot.
+
+Synix:n johtaja säilyttää selaimen kirjautumistunnuksen nykyisen välilehden muistissa, ei evästeissä, paikallisessa tai istunnon tallennustilassa. Välilehden päivittäminen tai sulkeminen menettää kirjautumisen. Tämä ei estä selaintasi tai salasanojen hallintaa tallentamasta valtuustietoja, jos haluat, eikä se kuvaa isännöinti-/tietoturvapalveluntarjoajien tai julkisen verkkosivuston käännöspalvelun erikseen asettamia evästeitä.
+
+Voit kirjautua ulos, peruuttaa kaikki selainistunnot tai purkaa tietokoneen pariliitoksen. Paikallinen Synix-sovellus voi poistaa etäyhteyden käytöstä ja katkaista pariliitoksen kirjautumatta sisään verkkosivustolle. Offline-tilassa se pysäyttää etäkäytön paikallisesti ja yrittää uudelleen verkkosivuston poistamista, kun yhteys on käytettävissä. Sovelluksen uudelleenkäynnistäminen tai Windows ei palauta automaattisesti nimenomaisesti poistettua pariliitosta. Vain paikallinen käyttö on edelleen käytettävissä.
+
+14.6 Isännöinti, julkiset sivut ja suojausrajat
+
+Virallinen verkkosivusto käyttää OpenAI-sivustojen isännöinti- ja Cloudflare-palveluita toimitukseen, varastointiin, turvallisuuteen ja herätysvälitykseen. Nämä palveluntarjoajat käsittelevät näiden palvelujen toimittamiseen tarvittavia tietoja ja voivat vastaanottaa IP-osoitteita, pyyntöotsikoita, aikoja ja muita yhteyden metatietoja tai säilyttää omat toimintalokinsa ja varmuuskopionsa. Niiden käsittelyyn sovelletaan heidän tietosuojakäytäntöjään: https://openai.com/policies/privacy-policy/ ja https://www.cloudflare.com/privacypolicy/.
+
+Julkisen sivun automaattinen käännös ja GitHub-lataukset ovat mukana vastaavien palveluntarjoajien kautta. Yksityinen johtaja on erillään julkisista sivuista eikä lataa julkista käännöspalvelua tai mainosskriptejä. Synix ei väitä, että kummallakaan verkkosivustolla käyminen ei luo evästeitä, lokeja tai tallennettuja tietoja. Tietoja voidaan myös luovuttaa, jos laki vaatii; yllä oleva ei-myyntisitoumus ei estä tarpeellista isännöintiä tai laillista paljastamista.
+
+Synix käyttää todennettua pariliitosta, allekirjoitettuja tietokonepyyntöjä, salattuja verkkoyhteyksiä, tilin käyttötarkistuksia ja lyhytaikaisia ​​hyväksyntöjä luvaton käytön vähentämiseksi. Nämä suojatoimenpiteet eivät tee etäkäytöstä riskitöntä eivätkä takaa suojaa jokaista hyökkäystä, vaarantunutta tietokonetta/selainta, varastettuja vahvistusmenetelmiä tai vaarantunutta palvelua vastaan. Pidä Synix ja Windows ajan tasalla, suojaa tiliäsi ja vahvistusmenetelmiäsi ja hyväksy vain hallitsemasi tietokoneet ja tilit.
+
+Tämä ilmoitus on julkinen osoitteessa https://synix.info/license/ ja se sisältyy sovelluksen ohjekeskukseen ja asennusohjelmaan. Tietosuojakysymyksiä voi esittää virallisten tukivaihtoehtojen kautta osoitteessa https://synix.info/support/. Älä julkaise salasanoja, palautuskoodeja tai muita yksityisiä tilitietoja julkisissa tukiviesteissä. Tämän ilmoituksen päivitykset sisältävät uuden version ja päivämäärän.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>Kriittinen SETUP vaaditaan:
 
 1. Käynnistä palvelin kerran rakentaaksesi &apos;Engine.ini&apos; ja sammuta se sitten.
@@ -6789,4 +6866,5 @@ Jos Synix ei avaudu uudelleen, suorita nykyinen Synix-ohjelma tai lataa uusin ve
   <data name="Appearance.Square" xml:space="preserve"><value>Kulmikas</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Jaa aktiivisuustieto</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valinnainen: lähetä satunnainen istuntokoodi synix.info-sivustolle minuutin välein, kun Synix on käynnissä, myös taustalla. Palvelintietoja ei lähetetä. Aktiivisuus vanhenee 3 minuutissa. Oletuksena käytössä. Voit poistaa sen käytöstä tästä.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Sulautettu Synix-lisenssi puuttuu.</value></data>
 </root>

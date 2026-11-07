@@ -12170,14 +12170,17 @@ Mantener opcional RCON Los puntos finales de administración o administración l
 
 3. Documentación oficial: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Requiere una compilación compatible Metamod:Source y SourceMod para esta versión de servidor. Los plugins.smx compilados van a ageofchivalry/addons/sourcemod/plugins; las traducciones, los datos del juego y las extensiones conservan sus carpetas documentadas.</value></data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>PANEL DE CONTROL DE SYNIX — LICENCIA LIMITADA PROPIETARIA DISPONIBLE DE FUENTE
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>PANEL DE CONTROL DE SYNIX — LICENCIA LIMITADA PROPIETARIA DISPONIBLE DE FUENTE
 
-Revisión de la licencia 1.1 — 5 de noviembre de 2026
+Revisión de licencia 1.3 — 7 de noviembre de 2026
+
 Esta es la revisión de la licencia, no la versión de la aplicación Synix.
 Copyright © 2026 Jason Turner. Todos los derechos reservados.
 U.S. Solicitud de Registro de Derechos de Autor: Pendiente
 
 Esta licencia se aplica al software Panel de control Synix, incluido su código fuente, binarios compilados, interfaz de usuario, documentación, ilustraciones, logotipos y otros materiales incluidos (colectivamente, el &quot;Software&quot;).
+
+Las secciones 13 y 14 también explican las prácticas de privacidad del sitio web oficial Synix, el contador de actividad y el administrador remoto opcional. Describen el servicio actual; no cambian la concesión de licencia personal y no comercial a continuación.
 
 1. PROPIEDAD
 
@@ -12318,7 +12321,81 @@ Alojar, crear réplicas, servir mediante un proxy, reempaquetar o incorporar las
 
 La sección 4.2 no prohíbe los enlaces directos habituales a estas fuentes oficiales que atribuyan correctamente Synix a Jason Turner. Esos enlaces no convierten al sitio que los publica en una fuente oficial.
 
-El paquete de WinGet ubidzz.Synix es un método de instalación aprobado cuando descarga el instalador sin modificar directamente desde las versiones oficiales publicadas en GitHub. Esto no autoriza el alojamiento ni el reempaquetado por terceros.</value></data>
+El paquete de WinGet ubidzz.Synix es un método de instalación aprobado cuando descarga el instalador sin modificar directamente desde las versiones oficiales publicadas en GitHub. Esto no autoriza el alojamiento ni el reempaquetado por terceros.
+
+13. Privacidad y contador de actividad en vivo
+
+Synix incluye un contador de actividad en vivo opcional que estima el número de sesiones Synix en ejecución en https://synix.info. Esta función está habilitada de forma predeterminada. Puedes desactivarlo en cualquier momento en Configuración &gt; Privacidad y seguridad &gt; Compartir recuento activo sin limitar otras funciones Synix. Se respeta una preferencia previamente guardada.
+
+Mientras está habilitado, Synix envía una señal de presencia HTTPS a https://synix.info/api/presence al iniciar y aproximadamente cada 10 minutos mientras se ejecuta la aplicación, incluso en segundo plano. La señal contiene un código de sesión temporal aleatorio y un identificador de aplicación genérico Synix, sin cuerpo de mensaje. El código de sesión se conserva únicamente en la memoria y se reemplaza cuando comienza una nueva sesión de informes; no es un identificador de dispositivo permanente.
+
+El contador no carga su nombre, dirección de correo electrónico, contraseñas, información del servidor o del jugador, valores de configuración, archivos o identificadores de máquina.
+
+Para cada sesión, el contador del sitio web almacena solo un hash del código de sesión y la hora de su última señal. El sitio web público muestra sólo el recuento agregado de sesiones activas, que es una estimación más que un recuento de personas únicas. Una sesión deja de contar después de 15 minutos sin señal. Los registros de contador inactivos se vuelven elegibles para la limpieza después de 30 minutos y se eliminan cuando las solicitudes de contador posteriores realizan la limpieza. Synix no vincula estos registros de contador a cuentas de administrador remoto ni a identidades de computadoras emparejadas.
+
+Desactivar la función detiene más señales de presencia y realiza una solicitud de máximo esfuerzo para eliminar la sesión actual. Cerrar Synix también intenta eliminarlo; Si la eliminación no puede llegar al sitio web, la sesión deja de contar automáticamente después del período de inactividad.
+
+Al igual que con cualquier conexión a Internet, los servicios de alojamiento del sitio web reciben información de conexión ordinaria, como la dirección IP de origen y la hora de solicitud, y pueden procesarla o registrarla según sus propias políticas de privacidad. Esta información no se almacena en la tabla de contador de actividad de Synix ni se muestra en el recuento público.
+
+14. Privacidad y seguridad del acceso remoto
+
+14.1 Acceso Opcional y No Venta de Datos
+
+La administración remota en https://manager.synix.info es opcional y está desactivada hasta que empareje una computadora y apruebe la cuenta solicitante en la aplicación Synix de esa computadora. Puedes usar Synix localmente sin una cuenta de administrador. El contador de actividad pública está separado y se puede desactivar de forma independiente.
+
+Synix no vende, alquila, comercia ni divulga la información de su cuenta, información de computadoras emparejadas, actividad remota o información del servidor a anunciantes o corredores de datos. Synix no utiliza esta información para publicidad dirigida ni crea perfiles publicitarios a partir de ella. La información se procesa para proporcionar las funciones que usted elija, autenticar el acceso, operar el servicio y protegerlo contra abusos.
+
+El acceso remoto no es un servicio de almacenamiento cero. Necesita los registros limitados de cuenta, emparejamiento, operativos y de seguridad que se describen a continuación. Estos registros no se publican en el contador de actividad pública ni se exponen a otras cuentas de administrador a través del servicio.
+
+14.2 Qué permanece en su computadora
+
+El administrador remoto no carga ni almacena sus mundos de juego, archivos del servidor de juegos, contenidos de archivos de configuración, contenidos de archivos de respaldo, salida de consola sin procesar ni contraseñas de servidores de juegos. Los comandos remotos de copia de seguridad y restauración se ejecutan en la computadora emparejada; Los archivos de copia de seguridad permanecen en las ubicaciones configuradas allí. El administrador no es un almacenamiento de respaldo en la nube y no proporciona escritorio remoto sin restricciones, comandos de shell arbitrarios ni exploración general de archivos.
+
+Synix mantiene su configuración local, lista de servidores, historiales, copias de seguridad y estado de emparejamiento en su computadora. La clave de firma privada de una computadora emparejada permanece en el almacenamiento de claves Windows. Synix prefiere el almacenamiento respaldado por TPM cuando esté disponible y, de lo contrario, admite una clave de software protegida por Windows, incluso en VMs compatible. TPM la disponibilidad no es garantía de que una computadora no esté comprometida.
+
+Estas declaraciones describen Synix la gestión remota. Los juegos, Steam, modificaciones, integraciones de Discord, exportaciones e informes de soporte que elijas compartir tienen sus propios flujos de datos. No coloque contraseñas u otra información confidencial en nombres de computadoras, nombres de servidores o nombres de archivos de respaldo, porque esas etiquetas pueden aparecer en el administrador.
+
+14.3 Información que el Gestor procesa y almacena
+
+- Cuenta y autenticación: su nombre de usuario elegido, identificador de cuenta, hora de creación, preferencias de seguridad, un hash de contraseña salado, secreto de autenticación cifrado cuando está habilitado, credenciales públicas de clave de acceso cuando está habilitado y registros temporales de verificación/sesión. Las contraseñas y los códigos de verificación se procesan para verificar el inicio de sesión; Las contraseñas permanentes no se almacenan como texto legible. Synix no recibe su huella digital, imagen de su rostro, clave privada de acceso ni clave de firma privada de la computadora emparejada. El registro no solicita un nombre real ni una dirección de correo electrónico.
+- Emparejamiento y conexión: la etiqueta de computadora que elija, un identificador de dispositivo aleatorio, su clave de firma pública, asociación de cuenta, tipo de proveedor de clave informado, estado de aprobación de emparejamiento y hora de la última conexión. Una conexión de retransmisión silenciosa y autenticada puede permanecer abierta mientras se ejecuta Synix para que el sitio web pueda activar la aplicación emparejada inmediatamente. El relé transporta avisos de activación/desconexión y metadatos de conexión, no archivos de juegos ni instantáneas del servidor.
+- Estado mostrado: identificadores de servidor limitados, nombres, nombres de juegos, estado de ejecución, recuentos de jugadores, tiempo de actividad, acciones disponibles, hora/estado de la última copia de seguridad y lecturas de toda la computadora CPU y usadas/total RAM. La aplicación envía estos resúmenes mientras está activa una vista de administrador autenticado. CPU/RAM las actualizaciones cubren computadoras emparejadas; Las actualizaciones detalladas del servidor cubren la computadora seleccionada. Las actualizaciones normalmente se ejecutan cada 10 segundos y se detienen después de que las vistas activas se cierran, desconectan, caducan o se ocultan, según corresponda. Otras sesiones activas del navegador pueden mantener sus propias vistas en ejecución.
+- Acciones solicitadas y copias de seguridad: los identificadores de servidor/acción, tiempo de solicitud, progreso/resultado y, cuando solicita opciones de copia de seguridad, identificadores de copia de seguridad, nombres de archivos, fechas, tamaños y etiquetas de integridad. El contenido de la copia de seguridad y las rutas locales completas no se envían para esta función.
+- Seguridad y prevención de abusos: tipo de inicio de sesión fallido, recuento y tiempos de intentos agrupados, tipo de evento de recuperación/seguridad y etiquetas de computadora relevantes. Los registros de límite de velocidad de corta duración pueden utilizar hashes con clave de direcciones IP de conexión e identificadores de cuenta. Los registros de alerta de cuenta de Synix no contienen intentos de contraseña, códigos de verificación, direcciones IP sin procesar ni huellas digitales del navegador. Los proveedores de alojamiento pueden procesar por separado la información de conexión como se explica en la Sección 14.6.
+
+El sitio web procesa necesariamente los resúmenes y comandos permitidos para facilitar la gestión remota. HTTPS y las conexiones de retransmisión cifradas protegen el tráfico en tránsito; Esto no es una afirmación de que el servicio de alojamiento no pueda procesar los datos.
+
+14.4 Retención y Eliminación
+
+: las credenciales y la configuración de la cuenta permanecen hasta que se elimina la cuenta. Los registros de emparejamiento aprobados permanecen hasta que se desempareje la computadora o se elimine la cuenta.
+: las instantáneas de estado y las lecturas CPU/RAM se sobrescriben con lecturas más nuevas y se vuelven elegibles para limpieza después de 15 minutos sin reemplazo. La hora de la última conexión sigue siendo parte del registro de emparejamiento.
+: los registros de comandos remotos, los resultados y los metadatos de opción de copia de seguridad devueltos se vuelven elegibles para la limpieza después de 24 horas.
+: los eventos de recuperación/seguridad y las alertas de inicio de sesión fallidas se vuelven elegibles para la limpieza después de 90 días. Los inicios de sesión fallidos conservan como máximo los 100 grupos más recientes; Las fallas de coincidencia dentro de un período de 10 minutos se agrupan.
+: las sesiones del navegador caducan después de 30 minutos sin solicitudes del administrador o después de 8 horas en total. Los intentos de verificación caducan después de 5 minutos; La recuperación de contraseña temporal caduca en 10 minutos y es de un solo uso. Los registros caducados de verificación, recuperación, protección de reproducción y límite de velocidad se eliminan durante la limpieza. Los registros de cuentas incompletos son elegibles para su limpieza después de 24 horas.
+
+La caducidad detiene la autorización incluso antes de que se elimine físicamente un registro. La limpieza de rutina de la base de datos se ejecuta durante solicitudes de servicio posteriores, como máximo una vez cada 10 minutos para la limpieza del administrador, por lo que los períodos anteriores son períodos de vencimiento o de elegibilidad de limpieza en lugar de promesas de borrado en un instante exacto. Los registros del proveedor y las copias de seguridad tienen ciclos de vida separados.
+
+La desvinculación elimina el emparejamiento seleccionado y sus registros remotos asociados de la base de datos del servicio activo. El historial de recuperación/seguridad puede permanecer en la cuenta durante el período anterior. Al eliminar una cuenta de administrador, se eliminan sus credenciales, emparejamientos, instantáneas, comandos y registros de seguridad/recuperación de la cuenta de la base de datos del servicio activo. No elimina los servidores de juegos locales, los mundos, la configuración ni los archivos de copia de seguridad. Los registros de prevención de abusos de corta duración y los registros o copias de seguridad mantenidos por el proveedor no necesariamente se borran inmediatamente con ninguna de las acciones.
+
+14.5 Sus controles y protección de inicio de sesión
+
+El inicio de sesión requiere su contraseña más una clave de acceso o un autenticador existente, como Google Authenticator. Las cuentas configuradas para requerir ambos métodos mantienen ambos requisitos. Cambiar una contraseña, desvincular una computadora a través del sitio web y eliminar una cuenta de administrador requiere una nueva verificación para ese cambio específico.
+
+Una computadora emparejada previamente aprobada puede emitir una contraseña temporal si olvida la contraseña de su sitio web. No puede seleccionar otra cuenta. La contraseña temporal no omite ni elimina los requisitos existentes de clave de acceso/autenticador, y debe elegir una nueva contraseña antes de ingresar al administrador. Completar la recuperación revoca las otras sesiones del navegador. El administrador de
+
+Synix mantiene su token de inicio de sesión del navegador en la memoria de la pestaña actual, no en cookies, almacenamiento local o almacenamiento de sesión. Al actualizar o cerrar la pestaña se pierde ese inicio de sesión. Esto no impide que su navegador o administrador de contraseñas guarden las credenciales si así lo desea, y no describe las cookies configuradas por separado por los proveedores de alojamiento/seguridad o el servicio de traducción del sitio web público.
+
+Puede cerrar sesión, revocar todas las sesiones del navegador o desvincular una computadora. La aplicación local Synix puede desactivar y desvincular su conexión remota sin iniciar sesión en el sitio web. Cuando está desconectado, detiene el acceso remoto localmente y vuelve a intentar eliminar el sitio web cuando hay una conexión disponible. Reiniciar la aplicación o Windows no restaura automáticamente un emparejamiento eliminado explícitamente. El uso solo local sigue estando disponible.
+
+14.6 Alojamiento, páginas públicas y límites de seguridad
+
+El sitio web oficial utiliza el alojamiento de sitios de OpenAI y los servicios de Cloudflare para la entrega, el almacenamiento, la seguridad y el relé de activación. Estos proveedores procesan la información necesaria para brindar esos servicios y pueden recibir direcciones IP, encabezados de solicitud, horarios y otros metadatos de conexión, o conservar sus propios registros operativos y copias de seguridad. Sus políticas de privacidad se aplican a su procesamiento: https://openai.com/policies/privacy-policy/ y https://www.cloudflare.com/privacypolicy/.
+
+La traducción automática de páginas públicas y las descargas GitHub involucran a sus respectivos proveedores. El administrador privado está separado de las páginas públicas y no carga el proveedor de traducción público ni los guiones publicitarios. Synix no afirma de forma general que visitar cualquiera de los sitios web no genere cookies, registros ni datos almacenados. La información también podrá divulgarse cuando así lo exija la ley; El compromiso de no venta anterior no impide el alojamiento necesario ni las divulgaciones legales.
+
+Synix utiliza emparejamiento autenticado, solicitudes de computadora firmadas, conexiones de red cifradas, verificaciones de acceso a cuentas y aprobaciones de corta duración para reducir el acceso no autorizado. Estas salvaguardas no hacen que el acceso remoto esté libre de riesgos ni garantizan protección contra cada ataque, una computadora/navegador comprometido, métodos de verificación robados o un servicio comprometido. Mantenga Synix y Windows actualizados, proteja su cuenta y sus métodos de verificación, y apruebe solo las computadoras y cuentas que usted controle.
+
+Este aviso es público en https://synix.info/license/ y está incluido en el Centro de ayuda y el instalador de la aplicación. Se pueden plantear preguntas sobre privacidad a través de las opciones de soporte oficiales en https://synix.info/support/. No publique contraseñas, códigos de recuperación u otra información de cuenta privada en mensajes de soporte públicos. Las actualizaciones de este aviso llevan una nueva revisión y fecha.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CONFIGURACIÓN CRÍTICA REQUIRIDA:
 
 1. Inicie el servidor una vez para compilar &apos;Engine.ini&apos;, luego ciérrelo.
@@ -14221,4 +14298,5 @@ Antes de un cambio de framework o juego, preserva los datos del mundo, la config
   <data name="Appearance.Square" xml:space="preserve"><value>Cuadrado</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Compartir actividad</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: enviar un código de sesión aleatorio a synix.info cada minuto mientras Synix se ejecuta, también en segundo plano. No se envían datos de servidores. La actividad caduca tras 3 minutos. Activado por defecto. Puedes desactivarlo aquí.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Falta la licencia Synix integrada.</value></data>
 </root>

@@ -2396,14 +2396,17 @@ Giữ tùy chọn RCON hoặc điểm cuối quản lý cục bộ trừ khi b�
 
 3. Tài liệu chính thức: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Cần một build tương thích Metamod:Source và SourceMod cho phiên bản máy chủ này. Phiên bản.smx plugin được biên dịch vào ageofchivalry/addons/sourcemod/plugins; kèm theo các bản dịch, gamedata và các phần mở rộng giữ lại thư mục tài liệu của họ.</value></data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>bảng điều khiển synix — giấy phép mã nguồn có sẵn hạn chế
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>bảng điều khiển synix — giấy phép mã nguồn có sẵn hạn chế
 
-Bản sửa đổi giấy phép 1.1 — ngày 5 tháng 11 năm 2026
+Bản sửa đổi giấy phép 1.3 — ngày 7 tháng 11 năm 2026
+
 Đây là bản sửa đổi giấy phép, không phải phiên bản ứng dụng Synix.
 Bản quyền © 2026 Jason Turner. Mọi quyền được bảo vệ.
 U.S. Yêu cầu đăng ký bản quyền: đang chờ
 
 Giấy phép này áp dụng cho phần mềm Control Panel Synix, bao gồm mã nguồn, binary biên dịch, giao diện người dùng, tài liệu, tác phẩm nghệ thuật, logo và các tài liệu khác (tổng hợp, &quot;Phần mềm&quot;).
+
+Phần 13 và 14 cũng giải thích các biện pháp bảo mật của trang web Synix chính thức, bộ đếm hoạt động và trình quản lý từ xa tùy chọn. Họ mô tả dịch vụ hiện tại; họ không thay đổi việc cấp giấy phép cá nhân, phi thương mại dưới đây.
 
 1. Sở hữu
 
@@ -2544,7 +2547,81 @@ Việc lưu trữ, tạo bản sao trên máy chủ khác, cung cấp qua proxy,
 
 Mục 4.2 không cấm các liên kết trực tiếp thông thường đến những nguồn chính thức này nếu ghi nhận đúng Synix và Jason Turner. Những liên kết đó không biến trang web đặt liên kết thành nguồn chính thức.
 
-Gói WinGet ubidzz.Synix là phương thức cài đặt được chấp thuận khi tải trình cài đặt không bị sửa đổi trực tiếp từ các bản phát hành chính thức trên GitHub. Điều này không cho phép bên thứ ba lưu trữ hoặc đóng gói lại.</value></data>
+Gói WinGet ubidzz.Synix là phương thức cài đặt được chấp thuận khi tải trình cài đặt không bị sửa đổi trực tiếp từ các bản phát hành chính thức trên GitHub. Điều này không cho phép bên thứ ba lưu trữ hoặc đóng gói lại.
+
+13. Bộ đếm hoạt động trực tiếp và quyền riêng tư
+
+Synix bao gồm bộ đếm hoạt động trực tiếp tùy chọn ước tính số phiên Synix đang chạy trên https://synix.info. Tính năng này được bật theo mặc định. Bạn có thể tắt tính năng này bất kỳ lúc nào trong Cài đặt &gt; Quyền riêng tư &amp; Bảo mật &gt; Chia sẻ số lượng hoạt động mà không giới hạn các tính năng khác của Synix. Tùy chọn đã lưu trước đó sẽ được tôn trọng.
+
+Khi được bật, Synix sẽ gửi tín hiệu hiện diện HTTPS đến https://synix.info/api/presence khi khởi động và khoảng 10 phút một lần khi ứng dụng chạy, kể cả ở chế độ nền. Tín hiệu chứa mã phiên tạm thời ngẫu nhiên và mã nhận dạng ứng dụng Synix chung, không có nội dung thông báo. Mã phiên chỉ được lưu trong bộ nhớ và được thay thế khi phiên báo cáo mới bắt đầu; nó không phải là mã định danh thiết bị cố định.
+
+Bộ đếm không tải lên tên, địa chỉ email, mật khẩu, thông tin máy chủ hoặc trình phát, giá trị cấu hình, tệp hoặc mã nhận dạng máy của bạn.
+
+Đối với mỗi phiên, bộ đếm của trang web chỉ lưu trữ một mã băm của mã phiên và thời gian có tín hiệu mới nhất. Trang web công cộng chỉ hiển thị tổng số phiên hoạt động, đây là ước tính chứ không phải là số lượng người duy nhất. Một phiên dừng đếm sau 15 phút mà không có tín hiệu. Bản ghi bộ đếm không hoạt động sẽ đủ điều kiện để dọn dẹp sau 30 phút và bị xóa khi các yêu cầu bộ đếm tiếp theo thực hiện việc dọn dẹp. Synix không liên kết các bản ghi truy cập này với tài khoản người quản lý từ xa hoặc danh tính máy tính được ghép nối.
+
+Việc tắt tính năng này sẽ dừng các tín hiệu hiện diện khác và đưa ra một yêu cầu nỗ lực cao nhất để xóa phiên hiện tại. Đóng Synix cũng cố gắng loại bỏ; nếu việc xóa không thể truy cập được trang web, phiên sẽ tự động dừng tính sau khoảng thời gian không hoạt động.
+
+Giống như bất kỳ kết nối Internet nào, dịch vụ lưu trữ của trang web nhận thông tin kết nối thông thường, chẳng hạn như địa chỉ IP gốc và thời gian yêu cầu, đồng thời có thể xử lý hoặc ghi lại thông tin đó theo chính sách bảo mật của riêng họ. Thông tin này không được lưu trữ trong bảng đếm hoạt động của Synix hoặc được hiển thị trong số lượng công khai.
+
+14. Quyền riêng tư và bảo mật truy cập từ xa
+
+14.1 Quyền truy cập tùy chọn và không bán dữ liệu
+
+Quản lý từ xa tại https://manager.synix.info là tùy chọn và tắt cho đến khi bạn ghép nối một máy tính và phê duyệt tài khoản yêu cầu trong ứng dụng Synix trên máy tính đó. Bạn có thể sử dụng Synix cục bộ mà không cần tài khoản người quản lý. Bộ đếm hoạt động công cộng là riêng biệt và có thể bị vô hiệu hóa một cách độc lập.
+
+Synix không bán, thuê, trao đổi hoặc tiết lộ thông tin tài khoản, thông tin máy tính được ghép nối, hoạt động từ xa hoặc thông tin máy chủ của bạn cho các nhà quảng cáo hoặc nhà môi giới dữ liệu. Synix không sử dụng thông tin này cho mục đích quảng cáo hoặc xây dựng hồ sơ quảng cáo từ thông tin đó. Thông tin được xử lý để cung cấp các tính năng bạn chọn, xác thực quyền truy cập, vận hành dịch vụ và bảo vệ dịch vụ khỏi bị lạm dụng.
+
+Truy cập từ xa không phải là dịch vụ không lưu trữ. Nó cần có tài khoản giới hạn, hồ sơ ghép nối, hoạt động và bảo mật được mô tả bên dưới. Những hồ sơ này không được công bố trên quầy hoạt động công khai hoặc được hiển thị cho các tài khoản người quản lý khác thông qua dịch vụ.
+
+14.2 Những gì lưu lại trên máy tính của bạn
+
+Trình quản lý từ xa không tải lên hoặc lưu trữ thế giới trò chơi, tệp máy chủ trò chơi, nội dung tệp cấu hình, nội dung lưu trữ dự phòng, đầu ra bảng điều khiển thô hoặc mật khẩu máy chủ trò chơi. Các lệnh sao lưu và khôi phục từ xa chạy trên máy tính được ghép nối; các tập tin sao lưu vẫn ở vị trí được định cấu hình ở đó. Trình quản lý không phải là bộ lưu trữ sao lưu đám mây và không cung cấp máy tính để bàn từ xa không hạn chế, các lệnh shell tùy ý hoặc duyệt tệp chung.
+
+Synix giữ cài đặt cục bộ, danh sách máy chủ, lịch sử, bản sao lưu và trạng thái ghép nối trên máy tính của bạn. Khóa ký riêng của máy tính được ghép nối vẫn nằm trong bộ lưu trữ khóa Windows. Synix ưu tiên bộ lưu trữ được hỗ trợ bởi TPM khi có sẵn và mặt khác hỗ trợ khóa phần mềm được bảo vệ Windows, kể cả trên VMs tương thích. Tính khả dụng của TPM không phải là sự đảm bảo rằng máy tính sẽ không bị ảnh hưởng.
+
+Những câu này mô tả quản lý từ xa Synix. Trò chơi, Steam, bản mod, tích hợp Discord, xuất và báo cáo hỗ trợ mà bạn chọn chia sẻ đều có luồng dữ liệu riêng. Không đặt mật khẩu hoặc thông tin nhạy cảm khác vào tên máy tính, tên máy chủ hoặc tên tệp sao lưu vì những nhãn đó có thể xuất hiện trong trình quản lý.
+
+14.3 Thông tin Người quản lý xử lý và lưu trữ
+
+- Tài khoản và xác thực: Tên người dùng đã chọn, số nhận dạng tài khoản, thời gian tạo, tùy chọn bảo mật, hàm băm mật khẩu mặn, bí mật của trình xác thực được mã hóa khi được bật, thông tin xác thực công khai mã khóa khi được bật và bản ghi phiên/xác minh tạm thời. Mật khẩu và mã xác minh được xử lý để kiểm tra đăng nhập; mật khẩu vĩnh viễn không được lưu trữ dưới dạng văn bản có thể đọc được. Synix không nhận được dấu vân tay, hình ảnh khuôn mặt, khóa riêng của mật mã hoặc khóa ký riêng của máy tính được ghép nối. Đăng ký không yêu cầu tên thật hoặc địa chỉ email.
+- Ghép nối và kết nối: Nhãn máy tính bạn chọn, mã nhận dạng thiết bị ngẫu nhiên, khóa ký công khai, liên kết tài khoản, loại nhà cung cấp khóa được báo cáo, trạng thái phê duyệt ghép nối và thời gian kết nối gần đây nhất. Kết nối chuyển tiếp được xác thực yên tĩnh có thể vẫn mở trong khi Synix chạy để trang web có thể đánh thức ứng dụng được ghép nối ngay lập tức. Rơle mang thông báo đánh thức/ngắt kết nối và siêu dữ liệu kết nối, không phải tệp trò chơi hoặc ảnh chụp nhanh máy chủ.
+- Trạng thái được hiển thị: Số nhận dạng máy chủ bị giới hạn, tên, tên trò chơi, trạng thái đang chạy, số lượng người chơi, thời gian hoạt động, hành động khả dụng, thời gian/trạng thái sao lưu mới nhất và CPU trên toàn máy tính cũng như/tổng ​​số chỉ số RAM đã sử dụng. Ứng dụng sẽ gửi những bản tóm tắt này trong khi chế độ xem người quản lý được xác thực đang hoạt động. Các bản cập nhật CPU/RAM bao gồm các máy tính được ghép nối; cập nhật máy chủ chi tiết bao gồm máy tính đã chọn. Các bản cập nhật thường chạy 10 giây một lần và tạm dừng sau khi chế độ xem đang hoạt động đóng, ngắt kết nối, hết hạn hoặc bị ẩn nếu có. Các phiên trình duyệt đang hoạt động khác có thể duy trì chế độ xem của riêng chúng.
+- Hành động được yêu cầu và bản sao lưu: Số nhận dạng máy chủ/hành động, thời gian yêu cầu, tiến trình/kết quả và khi bạn yêu cầu các lựa chọn sao lưu, số nhận dạng dự phòng, tên tệp, ngày tháng, kích thước và nhãn tính toàn vẹn. Nội dung sao lưu và đường dẫn cục bộ đầy đủ không được gửi cho tính năng này.
+- Ngăn chặn lạm dụng và bảo mật: Loại đăng nhập không thành công, số lần và số lần thử được nhóm, loại sự kiện khôi phục/bảo mật và nhãn máy tính có liên quan. Các bản ghi giới hạn tốc độ tồn tại trong thời gian ngắn có thể sử dụng hàm băm có khóa của địa chỉ IP kết nối và số nhận dạng tài khoản. Bản ghi cảnh báo tài khoản của Synix không chứa mật khẩu, mã xác minh, địa chỉ IP thô hoặc dấu vân tay của trình duyệt. Nhà cung cấp dịch vụ lưu trữ có thể xử lý thông tin kết nối riêng biệt như được giải thích trong Phần 14.6.
+
+Trang web nhất thiết phải xử lý các bản tóm tắt và lệnh được phép để cung cấp khả năng quản lý từ xa. HTTPS và các kết nối chuyển tiếp được mã hóa bảo vệ lưu lượng truyền tải; đây không phải là tuyên bố rằng dịch vụ lưu trữ không thể xử lý dữ liệu.
+
+14.4 Giữ lại và xóa
+
+- Thông tin đăng nhập và cài đặt tài khoản vẫn được giữ nguyên cho đến khi tài khoản bị xóa. Bản ghi ghép nối đã được phê duyệt vẫn còn cho đến khi máy tính được hủy ghép nối hoặc tài khoản bị xóa.
+- Ảnh chụp nhanh trạng thái và chỉ số CPU/RAM bị ghi đè bởi các chỉ số mới hơn và đủ điều kiện để dọn dẹp sau 15 phút mà không cần thay thế. Thời gian kết nối lần cuối vẫn là một phần của bản ghi ghép nối.
+- Các bản ghi lệnh từ xa, kết quả và siêu dữ liệu lựa chọn sao lưu được trả về sẽ đủ điều kiện để dọn dẹp sau 24 giờ.
+- Các sự kiện khôi phục/bảo mật và cảnh báo đăng nhập không thành công sẽ đủ điều kiện để dọn dẹp sau 90 ngày. Những lần đăng nhập không thành công chỉ giữ lại tối đa 100 nhóm gần đây nhất; các lỗi khớp trong khoảng thời gian 10 phút được nhóm lại với nhau.
+- Phiên trình duyệt hết hạn sau 30 phút mà không có yêu cầu của người quản lý hoặc sau 8 giờ tổng thể. Các nỗ lực xác minh sẽ hết hạn sau 5 phút; quá trình khôi phục mật khẩu tạm thời hết hạn trong vòng 10 phút và chỉ sử dụng một lần. Các bản ghi xác minh, khôi phục, bảo vệ phát lại và giới hạn tốc độ đã hết hạn sẽ bị xóa trong quá trình dọn dẹp. Đăng ký tài khoản chưa hoàn tất sẽ đủ điều kiện để được xóa sau 24 giờ.
+
+Hết hạn ngừng ủy quyền ngay cả trước khi bản ghi bị xóa về mặt vật lý. Quá trình dọn dẹp cơ sở dữ liệu định kỳ diễn ra trong các yêu cầu dịch vụ tiếp theo, tối đa 10 phút một lần để dọn dẹp người quản lý, do đó, các khoảng thời gian trên là khoảng thời gian hết hạn hoặc đủ điều kiện dọn dẹp chứ không phải là lời hứa xóa ngay lập tức. Nhật ký nhà cung cấp và bản sao lưu có vòng đời riêng biệt.
+
+Việc hủy ghép nối sẽ xóa ghép nối đã chọn và các bản ghi từ xa liên quan của nó khỏi cơ sở dữ liệu dịch vụ đang hoạt động. Lịch sử khôi phục/bảo mật có thể vẫn còn trong tài khoản trong khoảng thời gian trên. Việc xóa tài khoản người quản lý sẽ xóa thông tin xác thực, ghép nối, ảnh chụp nhanh, lệnh và bản ghi bảo mật/khôi phục tài khoản khỏi cơ sở dữ liệu dịch vụ đang hoạt động. Nó không xóa các máy chủ trò chơi, thế giới, cài đặt hoặc tệp sao lưu cục bộ của bạn. Các hồ sơ ngăn chặn lạm dụng trong thời gian ngắn và nhật ký hoặc bản sao lưu do nhà cung cấp lưu giữ không nhất thiết phải bị xóa ngay lập tức bằng một trong hai hành động.
+
+14.5 Quyền kiểm soát và bảo vệ đăng nhập của bạn
+
+Đăng nhập yêu cầu mật khẩu của bạn cộng với mật mã hoặc mã xác thực hiện có, chẳng hạn như Google Authenticator. Các tài khoản được định cấu hình để yêu cầu cả hai phương pháp sẽ giữ nguyên cả hai yêu cầu. Việc thay đổi mật khẩu, hủy ghép nối máy tính thông qua trang web và xóa tài khoản người quản lý yêu cầu xác minh mới cho thay đổi cụ thể đó.
+
+Máy tính được ghép nối đã được phê duyệt trước đó có thể cấp mật khẩu tạm thời nếu bạn quên mật khẩu trang web của mình. Nó không thể chọn một tài khoản khác. Mật khẩu tạm thời không bỏ qua hoặc loại bỏ các yêu cầu về mật mã/trình xác thực hiện có của bạn và bạn phải chọn mật khẩu mới trước khi vào trình quản lý. Quá trình khôi phục hoàn tất sẽ thu hồi các phiên trình duyệt khác của bạn.
+
+Trình quản lý của Synix giữ mã thông báo đăng nhập trình duyệt của nó trong bộ nhớ của tab hiện tại, không phải trong cookie, bộ nhớ cục bộ hoặc bộ nhớ phiên. Làm mới hoặc đóng tab sẽ mất thông tin đăng nhập đó. Điều này không ngăn trình duyệt hoặc trình quản lý mật khẩu của bạn lưu thông tin xác thực nếu bạn chọn và nó không mô tả các cookie được đặt riêng bởi nhà cung cấp dịch vụ lưu trữ/bảo mật hoặc dịch vụ dịch thuật của trang web công cộng.
+
+Bạn có thể đăng xuất, thu hồi tất cả các phiên trình duyệt hoặc hủy ghép nối máy tính. Ứng dụng Synix cục bộ có thể vô hiệu hóa và hủy ghép nối kết nối từ xa mà không cần đăng nhập vào trang web. Khi ngoại tuyến, nó sẽ dừng truy cập từ xa cục bộ và thử xóa trang web khi có kết nối. Khởi động lại ứng dụng hoặc Windows không tự động khôi phục ghép nối đã bị xóa rõ ràng. Việc sử dụng chỉ ở địa phương vẫn có sẵn.
+
+14.6 Lưu trữ, Trang công cộng và Giới hạn bảo mật
+
+Trang web chính thức sử dụng dịch vụ lưu trữ Sites và Cloudflare của OpenAI để phân phối, lưu trữ, bảo mật và chuyển tiếp đánh thức. Các nhà cung cấp này xử lý thông tin cần thiết để cung cấp các dịch vụ đó và có thể nhận địa chỉ IP, tiêu đề yêu cầu, thời gian và siêu dữ liệu kết nối khác hoặc giữ lại nhật ký hoạt động và bản sao dự phòng của riêng họ. Chính sách quyền riêng tư của họ áp dụng cho quá trình xử lý của họ: https://openai.com/policies/privacy-policy/ và https://www.cloudflare.com/privacypolicy/.
+
+Dịch tự động trên trang công khai và tải xuống GitHub liên quan đến các nhà cung cấp tương ứng của họ. Trình quản lý riêng tách biệt với các trang công khai và không tải nhà cung cấp dịch vụ dịch công khai hoặc tập lệnh quảng cáo. Synix không đưa ra tuyên bố chung chung rằng việc truy cập một trong hai trang web sẽ không tạo ra cookie, nhật ký hoặc dữ liệu được lưu trữ. Thông tin cũng có thể được tiết lộ khi pháp luật yêu cầu; cam kết không bán ở trên không ngăn cản việc lưu trữ cần thiết hoặc tiết lộ hợp pháp.
+
+Synix sử dụng ghép nối được xác thực, yêu cầu máy tính đã ký, kết nối mạng được mã hóa, kiểm tra quyền truy cập tài khoản và phê duyệt trong thời gian ngắn để giảm truy cập trái phép. Các biện pháp bảo vệ này không giúp việc truy cập từ xa không gặp rủi ro hoặc đảm bảo khả năng bảo vệ khỏi mọi cuộc tấn công, máy tính/trình duyệt bị xâm nhập, phương pháp xác minh bị đánh cắp hoặc dịch vụ bị xâm nhập. Luôn cập nhật Synix và Windows, bảo vệ tài khoản và phương pháp xác minh của bạn, đồng thời chỉ phê duyệt các máy tính và tài khoản mà bạn kiểm soát.
+
+Thông báo này được công khai tại https://synix.info/license/ và được bao gồm trong Trung tâm trợ giúp và trình cài đặt của ứng dụng. Các câu hỏi về quyền riêng tư có thể được nêu ra thông qua các tùy chọn hỗ trợ chính thức tại https://synix.info/support/. Không đăng mật khẩu, mã khôi phục hoặc thông tin tài khoản riêng tư khác trong các tin nhắn hỗ trợ công khai. Các cập nhật cho thông báo này có bản sửa đổi và ngày tháng mới.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CÔNG NGHỆ CẦN GẶP:
 
 1. Bắt đầu máy chủ một lần để xây dựng &apos;Engine.ini&apos;, sau đó tắt nó.
@@ -7713,5 +7790,6 @@ Nếu Synix không mở lại, chạy chương trình Synix hiện có hoặc t�
   <data name="Appearance.Square" xml:space="preserve"><value>Vuông</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Chia sẻ số phiên đang hoạt động</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Tùy chọn: gửi mã phiên ngẫu nhiên đến synix.info mỗi phút khi Synix đang chạy, kể cả trong nền. Không gửi dữ liệu máy chủ. Trạng thái hoạt động hết hạn sau 3 phút. Mặc định bật. Bạn có thể tắt tại đây.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Thiếu giấy phép Synix được nhúng.</value></data>
 </root>
 

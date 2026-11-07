@@ -2395,14 +2395,17 @@ Zachowaj opcjonalne punkty końcowe RCON lub administracyjne lokalnie, chyba że
 
 3. Oficjalna dokumentacja: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Wymaga zgodnej kompilacji Metamod:Source i SourceMod dla tej wersji serwera. Skompilowane wtyczki.smx trafiają do ageofchivalry/addons/sourcemod/plugins; tłumaczenia towarzyszące, dane gry i rozszerzenia zachowują swoje foldery dokumentacji.</value></data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve"><value>SYNIX CONTROL PANEL — OGRANICZONA, WŁASNOŚCIOWA LICENCJA DOSTĘPNA Z ŹRÓDŁA
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX CONTROL PANEL — OGRANICZONA, WŁASNOŚCIOWA LICENCJA DOSTĘPNA Z ŹRÓDŁA
 
-Rewizja licencji 1.1 — 5 listopada 2026
+Wersja licencji 1.3 — 7 listopada 2026 r
+
 Jest to rewizja licencji, a nie wersja aplikacji Synix.
 Prawa autorskie © 2026 Jason Turner. Wszystkie prawa zastrzeżone.
 U.S. Wniosek o rejestrację praw autorskich: Pending
 
 Niniejsza licencja dotyczy oprogramowania Panel sterowania Synix, w tym jego kodu źródłowego, skompilowanych plików binarnych, interfejsu użytkownika, dokumentacji, grafiki, logo i innych dołączonych materiałów (łącznie zwanych „Oprogramowaniem”).
+
+Sekcje 13 i 14 wyjaśniają również praktyki dotyczące prywatności oficjalnej strony internetowej Synix, licznika aktywności i opcjonalnego zdalnego menedżera. Opisują obecną usługę; nie zmieniają one poniższej osobistej, niekomercyjnej licencji.
 
 1. WŁASNOŚĆ
 
@@ -2543,7 +2546,81 @@ Hosting, tworzenie kopii lustrzanych, udostępnianie przez serwer pośrednicząc
 
 Punkt 4.2 nie zabrania zwykłych bezpośrednich łączy do tych oficjalnych źródeł, które prawidłowo wskazują Synix i Jasona Turnera. Takie łącza nie czynią witryny, która je zamieszcza, oficjalnym źródłem.
 
-Pakiet WinGet ubidzz.Synix jest zatwierdzoną metodą instalacji, gdy pobiera niezmodyfikowany instalator bezpośrednio z oficjalnych wydań na GitHub. Nie upoważnia to osób trzecich do hostingu ani przepakowywania.</value></data>
+Pakiet WinGet ubidzz.Synix jest zatwierdzoną metodą instalacji, gdy pobiera niezmodyfikowany instalator bezpośrednio z oficjalnych wydań na GitHub. Nie upoważnia to osób trzecich do hostingu ani przepakowywania.
+
+13. Licznik aktywności na żywo i prywatność
+
+Synix zawiera opcjonalny licznik aktywności na żywo, który szacuje liczbę uruchomionych sesji Synix na https://synix.info. Ta funkcja jest domyślnie włączona. Możesz ją wyłączyć w dowolnym momencie, wybierając Ustawienia &gt; Prywatność i bezpieczeństwo &gt; Udostępnij liczbę aktywnych aktywności, nie ograniczając innych funkcji Synix. Respektowane są wcześniej zapisane preferencje.
+
+Po włączeniu Synix wysyła sygnał obecności HTTPS do https://synix.info/api/presence podczas uruchamiania i mniej więcej co 10 minut podczas działania aplikacji, także w tle. Sygnał zawiera losowy tymczasowy kod sesji i ogólny identyfikator aplikacji Synix, bez treści komunikatu. Kod sesji jest przechowywany wyłącznie w pamięci i jest zastępowany w momencie rozpoczęcia nowej sesji raportowania; nie jest to stały identyfikator urządzenia.
+
+Licznik nie przesyła Twojego imienia i nazwiska, adresu e-mail, haseł, informacji o serwerze lub odtwarzaczu, wartości konfiguracyjnych, plików ani identyfikatorów komputera.
+
+Dla każdej sesji licznik witryny przechowuje jedynie skrót kodu sesji i czas jej ostatniego sygnału. W publicznej witrynie internetowej wyświetlana jest jedynie łączna liczba aktywnych sesji, która jest wartością szacunkową, a nie liczbą unikalnych osób. Sesja przestaje się liczyć po 15 minutach bez sygnału. Nieaktywne rekordy liczników kwalifikują się do czyszczenia po 30 minutach i są usuwane, gdy kolejne żądania licznika wykonują czyszczenie. Synix nie łączy tych rekordów liczników z kontami zdalnego menedżera ani tożsamościami sparowanych komputerów.
+
+Wyłączenie tej funkcji powoduje zatrzymanie dalszych sygnałów obecności i wykonanie jednego żądania usunięcia bieżącej sesji. Zamknięcie Synix powoduje również próbę usunięcia; jeśli usunięcie nie może dotrzeć do witryny, sesja przestaje się liczyć automatycznie po upływie okresu bezczynności.
+
+Podobnie jak w przypadku każdego połączenia internetowego, usługi hostingowe witryny otrzymują zwykłe informacje o połączeniu, takie jak początkowy adres IP i czas żądania, i mogą je przetwarzać lub rejestrować zgodnie z własną polityką prywatności. Informacje te nie są przechowywane w tabeli liczników aktywności Synix ani wyświetlane w publicznych licznikach.
+
+14. Prywatność i bezpieczeństwo zdalnego dostępu
+
+14.1 Opcjonalny dostęp i brak sprzedaży danych
+
+Zdalne zarządzanie w https://manager.synix.info jest opcjonalne i wyłączone do czasu sparowania komputera i zatwierdzenia żądającego konta w aplikacji Synix na tym komputerze. Możesz używać Synix lokalnie, bez konta menedżera. Licznik aktywności publicznej jest oddzielny i można go niezależnie wyłączyć.
+
+Synix nie sprzedaje, nie wynajmuje, nie handluje ani nie ujawnia informacji o koncie, sparowanych komputerach, aktywności zdalnej ani informacji o serwerze reklamodawcom ani brokerom danych. Synix nie wykorzystuje tych informacji do celów reklamy ukierunkowanej ani nie tworzy na ich podstawie profili reklamowych. Informacje są przetwarzane w celu zapewnienia wybranych przez Ciebie funkcji, uwierzytelnienia dostępu, obsługi usługi i ochrony przed nadużyciami.
+
+Dostęp zdalny nie jest usługą niewymagającą przechowywania danych. Potrzebuje opisanych poniżej zapisów dotyczących ograniczonego konta, parowania, operacji i bezpieczeństwa. Zapisy te nie są publikowane w publicznym liczniku aktywności ani udostępniane innym kontom menedżerów za pośrednictwem usługi.
+
+14.2 Co pozostaje na Twoim komputerze
+
+Zdalny menedżer nie przesyła ani nie przechowuje twoich światów gier, plików serwera gier, zawartości plików konfiguracyjnych, zawartości kopii zapasowych i archiwów, surowych danych wyjściowych konsoli ani haseł serwera gier. Polecenia zdalnego tworzenia kopii zapasowych i przywracania działają na sparowanym komputerze; pliki kopii zapasowych pozostają w skonfigurowanych tam lokalizacjach. Menedżer nie jest magazynem kopii zapasowych w chmurze i nie zapewnia nieograniczonego zdalnego pulpitu, dowolnych poleceń powłoki ani ogólnego przeglądania plików.
+
+Synix zachowuje swoje ustawienia lokalne, listę serwerów, historie, kopie zapasowe i stan parowania na Twoim komputerze. Prywatny klucz podpisywania sparowanego komputera pozostaje w magazynie kluczy Windows. Synix preferuje pamięć masową opartą na TPM, jeśli jest dostępna, i poza tym obsługuje klucz programowy chroniony Windows, w tym na zgodnym VMs. Dostępność TPM nie gwarantuje, że komputer jest bezkompromisowy.
+
+Te stwierdzenia opisują zdalne zarządzanie Synix. Gry, Steam, mody, integracje Discord, eksporty i raporty pomocy technicznej, które zdecydujesz się udostępnić, mają własne przepływy danych. Nie umieszczaj haseł ani innych poufnych informacji w nazwach komputerów, nazwach serwerów ani nazwach plików kopii zapasowych, ponieważ te etykiety mogą pojawić się w menedżerze.
+
+14.3 Informacje przetwarzane i przechowywane przez Menedżera
+
+- Konto i uwierzytelnianie: wybrana przez Ciebie nazwa użytkownika, identyfikator konta, czas utworzenia, preferencje bezpieczeństwa, solony skrót hasła, zaszyfrowany sekret uwierzytelniający, jeśli jest włączony, publiczne dane uwierzytelniające klucza dostępu, jeśli są włączone, oraz tymczasowe zapisy weryfikacji/sesji. Hasła i kody weryfikacyjne są przetwarzane w celu sprawdzenia logowania; hasła stałe nie są przechowywane w postaci czytelnego tekstu. Synix nie otrzymuje Twojego odcisku palca, obrazu twarzy, klucza prywatnego ani prywatnego klucza podpisywania sparowanego komputera. Rejestracja nie wymaga podania prawdziwego imienia i nazwiska ani adresu e-mail.
+- Parowanie i połączenie: wybrana etykieta komputera, losowy identyfikator urządzenia, jego publiczny klucz podpisujący, powiązanie konta, zgłoszony typ dostawcy klucza, stan zatwierdzenia parowania i czas ostatniego połączenia. Ciche uwierzytelnione połączenie przekaźnikowe może pozostać otwarte podczas działania Synix, dzięki czemu witryna internetowa może natychmiast obudzić sparowaną aplikację. Przekaźnik przenosi powiadomienia o wznowieniu/rozłączeniu i metadane połączenia, a nie pliki gier czy migawki serwerów.
+- Wyświetlany stan: ograniczone identyfikatory serwerów, nazwy, nazwy gier, stan działania, liczba graczy, czas działania, dostępne akcje, ostatni czas/stan tworzenia kopii zapasowych oraz odczyty całego komputera CPU i używanego/całkowitego RAM. Aplikacja wysyła te podsumowania, gdy aktywny jest widok uwierzytelnionego menedżera. Aktualizacje CPU/RAM obejmują sparowane komputery; szczegółowe aktualizacje serwera obejmują wybrany komputer. Aktualizacje zwykle są uruchamiane co 10 sekund i wstrzymują się po zamknięciu, rozłączeniu, wygaśnięciu lub ukryciu aktywnych widoków, w zależności od przypadku. Inne aktywne sesje przeglądarki mogą utrzymywać własne widoki.
+— Żądane działania i kopie zapasowe: identyfikatory serwera/akcji, czas żądania, postęp/wynik oraz, w przypadku żądania kopii zapasowych, opcje tworzenia kopii zapasowych, identyfikatory kopii zapasowych, nazwy plików, daty, rozmiary i etykiety integralności. W przypadku tej funkcji zawartość kopii zapasowej i pełne ścieżki lokalne nie są wysyłane.
+— Bezpieczeństwo i zapobieganie nadużyciom: typ nieudanego logowania, liczba i godziny pogrupowanych prób, typ zdarzenia odzyskiwania/bezpieczeństwa oraz odpowiednie etykiety komputerów. Krótkotrwałe rekordy z limitami szybkości mogą wykorzystywać kluczowane skróty adresów IP połączeń i identyfikatorów kont. Zapisy alertów konta Synix nie zawierają prób haseł, kodów weryfikacyjnych, surowych adresów IP ani odcisków palców przeglądarki. Dostawcy usług hostingowych mogą oddzielnie przetwarzać informacje o połączeniu, jak wyjaśniono w punkcie 14.6.
+
+Strona internetowa koniecznie przetwarza dozwolone podsumowania i polecenia w celu zapewnienia zdalnego zarządzania. HTTPS i szyfrowane połączenia przekaźnikowe chronią ruch tranzytowy; nie jest to twierdzenie, że usługa hostingowa nie może przetwarzać danych.
+
+14.4 Przechowywanie i usuwanie
+
+- Poświadczenia i ustawienia konta pozostają do momentu usunięcia konta. Zatwierdzone zapisy parowania pozostają do czasu rozparowania komputera lub usunięcia konta.
+— Migawki stanu i odczyty CPU/RAM są zastępowane nowszymi odczytami i kwalifikują się do czyszczenia po 15 minutach bez wymiany. Czas ostatniego połączenia pozostaje częścią rekordu parowania.
+— Rekordy poleceń zdalnych, wyniki i zwrócone metadane dotyczące wyboru kopii zapasowych kwalifikują się do czyszczenia po 24 godzinach.
+— Zdarzenia odzyskiwania/bezpieczeństwa i alerty o nieudanym logowaniu kwalifikują się do czyszczenia po 90 dniach. Nieudane logowania powodują zachowanie maksymalnie 100 najnowszych grup; awarie dopasowania w okresie 10 minut są grupowane razem.
+- Sesje przeglądarki wygasają po 30 minutach bez żądań menedżera lub łącznie po 8 godzinach. Próby weryfikacji wygasają po 5 minutach; odzyskiwanie hasła tymczasowego wygasa w ciągu 10 minut i jest jednorazowe. Wygasłe rekordy weryfikacji, odzyskiwania, ochrony przed ponownym odtwarzaniem i limitów szybkości są usuwane podczas czyszczenia. Niekompletne rejestracje kont kwalifikują się do oczyszczenia po 24 godzinach.
+
+Wygaśnięcie powoduje zatrzymanie autoryzacji nawet przed fizycznym usunięciem rekordu. Rutynowe czyszczenie bazy danych odbywa się podczas kolejnych zleceń serwisowych, maksymalnie raz na 10 minut w przypadku czyszczenia przez menedżera, więc powyższe okresy są okresami wygaśnięcia lub kwalifikowania się do czyszczenia, a nie obietnicą usunięcia dokładnie w tej chwili. Dzienniki dostawcy i kopie zapasowe mają oddzielne cykle życia.
+
+Rozparowanie usuwa wybrane parowanie i powiązane z nim zdalne rekordy z bazy danych aktywnych usług. Historia odzyskiwania/bezpieczeństwa może pozostać na koncie przez powyższy okres. Usunięcie konta menedżera powoduje usunięcie jego poświadczeń, par, migawek, poleceń i zapisów dotyczących zabezpieczeń/odzyskiwania konta z bazy danych aktywnych usług. Nie usuwa lokalnych serwerów gier, światów, ustawień ani plików kopii zapasowych. Krótkotrwałe zapisy dotyczące zapobiegania nadużyciom oraz dzienniki lub kopie zapasowe przechowywane przez dostawcę niekoniecznie muszą zostać natychmiast usunięte w wyniku któregokolwiek działania.
+
+14.5 Twoja kontrola i ochrona logowania
+
+Logowanie wymaga hasła oraz istniejącego klucza dostępu lub uwierzytelnienia, takiego jak Google Authenticator. Konta skonfigurowane tak, aby wymagały obu metod, zachowują oba wymagania. Zmiana hasła, rozparowanie komputera za pośrednictwem witryny internetowej i usunięcie konta menedżera wymagają ponownej weryfikacji pod kątem tej konkretnej zmiany.
+
+Wcześniej zatwierdzony sparowany komputer może wystawić hasło tymczasowe, jeśli zapomnisz hasła do swojej witryny. Nie może wybrać innego konta. Hasło tymczasowe nie omija ani nie usuwa istniejących wymagań dotyczących klucza dostępu/uwierzytelniacza i przed wejściem do menedżera należy wybrać nowe hasło. Zakończenie odzyskiwania anuluje pozostałe sesje przeglądarki.
+
+Menedżer Synix przechowuje token logowania przeglądarki w pamięci bieżącej karty, a nie w plikach cookie, pamięci lokalnej ani pamięci sesji. Odświeżenie lub zamknięcie karty powoduje utratę loginu. Nie uniemożliwia to Twojej przeglądarce lub menedżerowi haseł zapisywania danych uwierzytelniających, jeśli tak zdecydujesz, i nie opisuje plików cookie ustawianych oddzielnie przez dostawców hostingu/bezpieczeństwa lub usługę tłumaczenia publicznej witryny internetowej.
+
+Możesz się wylogować, odwołać wszystkie sesje przeglądarki lub rozparować komputer. Lokalna aplikacja Synix może wyłączyć i rozparować zdalne połączenie bez konieczności logowania się na stronie internetowej. W trybie offline zatrzymuje lokalny dostęp zdalny i ponawia próbę usunięcia witryny, gdy połączenie jest dostępne. Ponowne uruchomienie aplikacji lub Windows nie przywraca automatycznie jawnie usuniętego parowania. Nadal możliwe jest użycie wyłącznie lokalne.
+
+14.6 Hosting, strony publiczne i ograniczenia bezpieczeństwa
+
+Oficjalna strona korzysta z hostingu Witryn OpenAI i usług Cloudflare w zakresie dostawy, przechowywania, bezpieczeństwa i przekaźnika wybudzania. Dostawcy ci przetwarzają informacje potrzebne do świadczenia tych usług i mogą otrzymywać adresy IP, nagłówki żądań, godziny i inne metadane połączeń lub przechowywać własne dzienniki operacyjne i kopie zapasowe. Przy ich przetwarzaniu obowiązują ich polityki prywatności: https://openai.com/policies/privacy-policy/ i https://www.cloudflare.com/privacypolicy/.
+
+Automatyczne tłumaczenie stron publicznych i pobieranie GitHub wymagają odpowiednich dostawców. Menedżer prywatny jest oddzielony od stron publicznych i nie ładuje publicznego dostawcy tłumaczeń ani skryptów reklamowych. Synix nie zawiera ogólnego twierdzenia, że ​​odwiedzanie którejkolwiek witryny internetowej nie powoduje tworzenia plików cookie, dzienników ani przechowywanych danych. Informacje mogą być również ujawniane, jeżeli jest to wymagane prawnie; powyższe zobowiązanie do zakazu sprzedaży nie uniemożliwia niezbędnego hostingu ani ujawnień zgodnych z prawem.
+
+Synix wykorzystuje uwierzytelnione parowanie, podpisane żądania komputera, szyfrowane połączenia sieciowe, kontrole dostępu do konta i krótkotrwałe zatwierdzenia, aby ograniczyć nieautoryzowany dostęp. Zabezpieczenia te nie sprawiają, że zdalny dostęp jest wolny od ryzyka ani nie gwarantują ochrony przed każdym atakiem, zainfekowanym komputerem/przeglądarką, skradzionymi metodami weryfikacji lub skompromitowaną usługą. Aktualizuj Synix i Windows, chroń swoje konto i metody weryfikacji oraz zatwierdzaj tylko komputery i konta, które kontrolujesz.
+
+To powiadomienie jest dostępne publicznie pod adresem https://synix.info/license/ i znajduje się w Centrum pomocy oraz instalatorze aplikacji. Pytania dotyczące prywatności można zadawać za pośrednictwem oficjalnych opcji pomocy technicznej pod adresem https://synix.info/support/. Nie publikuj haseł, kodów odzyskiwania ani innych informacji o koncie prywatnym w publicznych wiadomościach pomocy technicznej. Aktualizacje niniejszego zawiadomienia mają nową wersję i datę.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>WYMAGANA KRYTYCZNA KONFIGURACJA:
 
 1. Uruchom serwer raz, aby zbudować &apos;Engine.ini&apos;, a następnie zamknąć go.
@@ -7712,5 +7789,6 @@ Jeśli Synix nie otwiera się ponownie, uruchom istniejący program Synix lub po
   <data name="Appearance.Square" xml:space="preserve"><value>Kanciasty</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Udostępniaj liczbę aktywnych sesji</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcjonalnie: wysyłaj losowy kod sesji do synix.info co minutę, gdy Synix działa, także w tle. Dane serwerów nie są wysyłane. Aktywność wygasa po 3 minutach. Domyślnie włączone. Możesz wyłączyć tę opcję tutaj.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Brakuje wbudowanej licencji Synix.</value></data>
 </root>
 

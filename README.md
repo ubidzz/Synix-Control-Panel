@@ -302,7 +302,24 @@ Synix is designed to run as a normal Windows user for routine server management.
 - Normal server installation and management do not require Synix to remain elevated.
 - Server files stay organized under `C:\Synix` or a location selected by the user.
 - Optional Windows-level actions can request permission only when Windows requires it.
-- Synix does not upload your server list or passwords to a Synix-hosted cloud service.
+- Local-only use does not upload your server list. If you enable remote management, Synix sends the limited status summaries described below; game-server passwords and configuration-file contents stay on the hosting computer.
+
+## 🔒 Optional Remote Access and Privacy
+
+Use [Synix Manager](https://manager.synix.info/) to manage computers you explicitly pair and approve in the Synix app. Remote access is optional; local server management does not require an account. The public activity counter is a separate setting.
+
+**Synix does not sell, rent, trade, or disclose account, computer, remote-activity, or server information to advertisers or data brokers, and does not use it for targeted advertising.**
+
+- **Your server files stay local.** Game worlds, configuration-file contents, backup-archive contents, raw console output, and game-server passwords are not uploaded to the manager. Backup and restore run on the paired PC. The website displays backup names, dates, sizes, and status when needed, not the files themselves.
+- **Limited storage is necessary.** The service stores your chosen username, protected authentication records, approved computer identities, and connection/security records. While you view the manager, it receives limited server status and each paired computer's CPU/RAM readings. This is not a zero-storage service. Avoid sensitive information in computer names, server names, and backup filenames.
+- **Short-lived operational records.** New readings replace old ones; snapshots become eligible for cleanup after 15 minutes without replacement. Remote actions and backup-choice metadata become eligible after 24 hours, and security/recovery events and failed sign-in alerts after 90 days. Failed attempts retain at most 100 recent groups. Cleanup occurs on later requests; these are not exact physical-erasure deadlines.
+- **Owner verification.** Sign-in requires a password plus a passkey or authenticator. Password changes, website unpairing, and account deletion require fresh verification. Accounts requiring both methods still require both. Recovery from an approved paired PC never removes or bypasses those methods.
+- **Your controls.** Sign out, revoke sessions, unpair in the app without a website login, or delete the manager account. These actions do not remove local game servers or backups. Account deletion removes the account and associated remote records from the active database; provider logs/backups and short-lived abuse-prevention records can have separate retention.
+- **Browser and hosting disclosure.** Manager login tokens stay in the current tab's memory, not browser storage or Synix login cookies. Hosting/security providers can process connection information and set their own cookies. HTTPS protects traffic in transit; the hosting service processes the permitted data. Security safeguards reduce risk but do not guarantee protection against every attack or a compromised device.
+
+The optional public counter sends a random session signal every **10 minutes**, stops counting after **15 minutes** without a signal, and makes inactive records eligible for cleanup after **30 minutes**. It publishes only an aggregate count and is not linked to manager accounts.
+
+Read the complete [remote-access privacy and security notice](LICENSE.md#14-remote-access-privacy-and-security), also public on the [Synix website](https://synix.info/license/#14-remote-access-privacy-and-security). Account/pairing retention, password recovery, provider processing, and deletion limits are explained there.
 
 ## 🔐 Windows SmartScreen Notice
 
@@ -358,7 +375,7 @@ The Synix knowledge base is included directly in the application and covers:
 - **Installer:** WiX-based per-user MSI
 - **Distribution:** GitHub Releases and WinGet
 - **Publishing:** Self-contained .NET 10 Windows x64 single-file executable; the runtime is included with both the standalone application and `SynixSetup.msi`
-- **Data:** Local versioned JSON persistence with sequential migrations and pre-migration backups; no SQL database required
+- **Desktop data:** Local versioned JSON persistence with sequential migrations and pre-migration backups; no local SQL database required. The optional remote manager has a hosted database for the limited records described in the privacy notice.
 - **Password protection:** Windows user-bound encryption with portable encrypted transfer support
 - **Monitoring:** Windows process, CPU, memory, socket, and WMI integration
 - **Networking:** A2S and additional UDP, TCP, HTTP, and local process checks
@@ -387,7 +404,7 @@ Synix is developed independently and made available for personal use without a s
 
 ## 📄 License
 
-Synix Control Panel is source-available for **personal, non-commercial use** under the [Synix Limited Proprietary License](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md).
+Synix Control Panel is source-available for **personal, non-commercial use** under the [Synix Limited Proprietary License](LICENSE.md), revision 1.3 (November 7, 2026), including the public activity-counter and remote-access privacy notices.
 
 You may view the source and make private personal modifications. Redistribution, public modified releases, rebranding, and commercial use require written permission from the copyright holder.
 

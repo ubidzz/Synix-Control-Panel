@@ -12817,15 +12817,17 @@ Hoidke valikulised RCON või administreerimise lõpp-punktid lokaalsed, välja a
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Selle serveri versiooni jaoks on vaja ühilduvat Metamod:Source ja SourceMod ehitamist. Kompileeritud .smx pluginad lähevad ageofchivalry/addons/sourcemod/plugins; kaasasolevad tõlked, gamedata ja laiendused säilitavad oma dokumenteeritud kaustad.</value>
   </data>
-  <data name="Content.79EACF949BA087EFCC40" xml:space="preserve">
-    <value>SYNIX KONTROLLIPANEEL – PIIRATUD VARAGA LÄBIVAATAV LITSENTS
+  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX KONTROLLIPANEEL – PIIRATUD VARAGA LÄBIVAATAV LITSENTS
 
-Litsentsi redaktsioon 1.1 — 5. november 2026
+Litsentsi versioon 1.3 – 7. november 2026
+
 See on litsentsi redaktsioon, mitte Synixi rakenduse versioon.
 Autoriõigus © 2026 Jason Turner. Kõik õigused kaitstud.
 USA autoriõiguse registreerimise taotlus: ootel
 
-See litsents kehtib Synix juhtpaneeli tarkvarale, sealhulgas selle lähtekoodile, kompileeritud binaaridele, kasutajaliidesele, dokumentatsioonile, kunstiteostele, logodele ja muudele kaasasolevatele materjalidele (ühiselt "tarkvara").
+See litsents kehtib Synix juhtpaneeli tarkvarale, sealhulgas selle lähtekoodile, kompileeritud binaaridele, kasutajaliidesele, dokumentatsioonile, kunstiteostele, logodele ja muudele kaasasolevatele materjalidele (ühiselt &quot;tarkvara&quot;).
+
+Jaotistes 13 ja 14 selgitatakse ka ametliku Synix veebisaidi, tegevusloenduri ja valikulise kaughalduri privaatsuspõhimõtteid. Need kirjeldavad praegust teenust; need ei muuda allpool toodud isiklikku mitteärilist litsentsi.
 
 1. OMANDID
 
@@ -12933,7 +12935,7 @@ Miski selles litsentsis ei taga, et mis tahes konkreetne jõustamismeede või õ
 
 9. DISCLAIMER JA VASTUTUSE PIIRAMINE
 
-TARKVARA on esitatud "nagu on" ja "nii, kui see on kättesaadav", ilma igasuguse hoiatuseta, ekspressimise või rakendamiseta, kaasa arvatud vastastikused tagatised, sobivus konkreetseks otstarbeks, pealkiri ja mitterikkumine.
+TARKVARA on esitatud &quot;nagu on&quot; ja &quot;nii, kui see on kättesaadav&quot;, ilma igasuguse hoiatuseta, ekspressimise või rakendamiseta, kaasa arvatud vastastikused tagatised, sobivus konkreetseks otstarbeks, pealkiri ja mitterikkumine.
 
 Seadusega lubatud maksimaalses ulatuses ei vastuta Jason TURNER mis tahes otsese, kaudse, juhusliku, eri-, juhusliku või erandliku kahju eest ega igasuguse andmete, kasumi, TULU, lennutoimikute, mängumaailmade, äri või teenuse kadumise eest, mis tuleneb tarkvarast või selle kasutamisest või on sellega seotud.
 
@@ -12966,8 +12968,81 @@ Allalaaditavate failide majutamine, peegeldamine, puhverserveri kaudu pakkumine,
 
 Punkt 4.2 ei keela tavalisi otselinke nendele ametlikele allikatele, kui Synix ja Jason Turner on korrektselt nimetatud. Sellised lingid ei muuda viitavat veebisaiti ametlikuks allikaks.
 
-WinGeti pakett ubidzz.Synix on heakskiidetud paigaldusviis, kui see laadib muutmata paigaldusprogrammi alla otse GitHubi ametlikest väljalasetest. See ei anna kolmandatele isikutele luba failide majutamiseks ega ümberpakendamiseks.</value>
-  </data>
+WinGeti pakett ubidzz.Synix on heakskiidetud paigaldusviis, kui see laadib muutmata paigaldusprogrammi alla otse GitHubi ametlikest väljalasetest. See ei anna kolmandatele isikutele luba failide majutamiseks ega ümberpakendamiseks.
+
+13. Reaalajas tegevuste loendur ja privaatsus
+
+Synix sisaldab valikulist reaalajas aktiivsuse loendurit, mis hindab Synix töötavate seansside arvu seadmel https://synix.info. See funktsioon on vaikimisi lubatud. Saate selle igal ajal välja lülitada menüüs Seaded &gt; Privaatsus ja turvalisus &gt; Aktiivsete arvude jagamine ilma muid Synix funktsioone piiramata. Eelnevalt salvestatud eelistust peetakse kinni.
+
+Kui see on lubatud, saadab Synix HTTPS kohalolekusignaali numbrile https://synix.info/api/presence käivitamisel ja umbes iga 10 minuti järel rakenduse töötamise ajal, sealhulgas taustal. Signaal sisaldab juhuslikku ajutist seansi koodi ja üldist Synix rakenduse identifikaatorit ilma sõnumi kehata. Seansi koodi hoitakse ainult mälus ja see asendatakse uue aruandlusseansi alguses; see ei ole püsiv seadme identifikaator.
+
+Loendur ei laadi üles teie nime, e-posti aadressi, paroole, serveri või mängija teavet, konfiguratsiooniväärtusi, faile ega masina identifikaatoreid.
+
+Iga seansi kohta salvestab veebisaidi loendur ainult seansi koodi räsi ja selle viimase signaali kellaaja. Avalik veebisait kuvab ainult aktiivsete seansside koondarvu, mis on pigem hinnanguline kui unikaalsete inimeste arv. Seansi loendamine lõpetatakse pärast 15 minutit ilma signaalita. Mitteaktiivsed loenduri kirjed muutuvad puhastamiseks kõlblikuks 30 minuti pärast ja eemaldatakse, kui järgnevad loenduri taotlused puhastavad. Synix ei seo neid loendurikirjeid kaughalduri kontode ega seotud arvuti identiteetidega.
+
+Funktsiooni väljalülitamine peatab edasised kohalolekusignaalid ja teeb ühe parima taotluse praeguse seansi eemaldamiseks. Synix sulgemine üritab samuti eemaldada; kui eemaldamine ei jõua veebisaidile, peatub seansi loendamine automaatselt pärast passiivsusperioodi.
+
+Nagu iga Interneti-ühenduse puhul, saavad veebisaidi hostimisteenused tavalist ühenduseteavet, nagu lähte IP-aadress ja päringu aeg, ning võivad seda töödelda või logida oma privaatsuspoliitika alusel. Seda teavet ei salvestata Synix aktiivsusloendurite tabelisse ega kuvata avalikus loendus.
+
+14. Kaugjuurdepääsu privaatsus ja turvalisus
+
+14.1 Valikuline juurdepääs ja andmete müügi keelamine
+
+Kaughaldus rakenduses https://manager.synix.info on valikuline ja on välja lülitatud seni, kuni ühendate arvuti ja kinnitate taotleva konto selle arvuti rakenduses Synix. Saate Synix-i kasutada kohapeal ilma haldurikontota. Avaliku tegevuse loendur on eraldiseisev ja seda saab iseseisvalt keelata.
+
+Synix ei müü, rendi, ei vaheta ega avalda reklaamijatele ega andmevahendajatele teie kontoteavet, seotud arvutiteavet, kaugtegevust ega serveriteavet. Synix ei kasuta seda teavet sihitud reklaamimiseks ega loo sellest reklaamiprofiile. Teavet töödeldakse teie valitud funktsioonide pakkumiseks, juurdepääsu autentimiseks, teenuse kasutamiseks ja selle kaitsmiseks kuritarvitamise eest.
+
+Kaugjuurdepääs ei ole salvestusruumita teenus. See vajab allpool kirjeldatud piiratud konto-, sidumis-, töö- ja turvakirjeid. Neid kirjeid ei avaldata avalikus tegevusloenduris ega avalikustata teenuse kaudu teistele haldurikontodele.
+
+14.2 Mis jääb teie arvutisse
+
+Kaughaldur ei laadi üles ega salvesta teie mängumaailmu, mänguserveri faile, konfiguratsioonifailide sisu, varukoopiate arhiivi sisu, konsooli töötlemata väljundit ega mänguserveri paroole. Kaugvarundamise ja taastamise käsud töötavad seotud arvutis; varufailid jäävad seal konfigureeritud asukohtadesse. Haldur ei ole pilvevarundusmälu ega paku piiranguteta kaugtöölauda, ​​suvalisi shellikäske ega üldist failide sirvimist.
+
+Synix säilitab teie arvutis kohalikud sätted, serverite loendi, ajaloo, varukoopiad ja sidumisoleku. Seotud arvuti privaatne allkirjastamisvõti jääb Windows võtmemällu. Synix eelistab võimalusel TPM-ga toetatud salvestusruumi ja toetab muul viisil Windows-ga kaitstud tarkvaravõtit, sealhulgas ühilduval VMs-l. TPM saadavus ei garanteeri, et arvuti on kompromissitu.
+
+Need avaldused kirjeldavad Synix kaughaldust. Mängudel, Steam-l, modifikatsioonidel, Discordi integreerimisel, ekspordil ja tugiaruannetel, mille soovite jagada, on oma andmevood. Ärge sisestage paroole ega muud tundlikku teavet arvutinimedesse, serverinimedesse ega varufailide nimedesse, kuna need sildid võivad ilmuda halduris.
+
+14.3 Teave, mida haldur töötleb ja talletab
+
+– Konto ja autentimine: teie valitud kasutajanimi, konto identifikaator, loomise aeg, turvaeelistused, salastatud parooli räsi, krüptitud autentimise saladus, kui see on lubatud, pääsuvõti avalikud mandaadid, kui see on lubatud, ja ajutised kinnitus-/seansikirjed. Sisselogimise kontrollimiseks töödeldakse paroole ja kinnituskoode; püsiparoole ei salvestata loetava tekstina. Synix ei saa teie sõrmejälge, näopilti, parooli privaatvõtit ega seotud arvuti privaatset allkirjastamisvõtit. Registreerimiseks ei nõuta pärisnime ega e-posti aadressi.
+– sidumine ja ühendus: teie valitud arvutisilt, juhuslik seadme identifikaator, selle avalik allkirjastamisvõti, konto seos, teatatud võtmepakkuja tüüp, sidumise kinnitusolek ja viimane ühenduse aeg. Vaikne autentitud releeühendus võib Synix töötamise ajal avatuks jääda, et veebisait saaks seotud rakenduse kohe äratada. Relee kannab äratuse/ühenduse katkestamise teateid ja ühenduse metaandmeid, mitte mängufaile ega serveri hetktõmmiseid.
+– kuvatav olek: piiratud serveri identifikaatorid, nimed, mängude nimed, töö olek, mängijate arv, tööaeg, saadaolevad toimingud, viimane varundusaeg/olek ning kogu arvuti CPU ja kasutatud/kogu RAM näidud. Rakendus saadab need kokkuvõtted, kui autentitud haldurivaade on aktiivne. CPU/RAM värskendused hõlmavad seotud arvuteid; üksikasjalikud serverivärskendused hõlmavad valitud arvutit. Värskendused käivituvad tavaliselt iga 10 sekundi järel ja peatatakse pärast aktiivsete vaadete sulgemist, ühenduse katkestamist, aegumist või peidemist. Teised aktiivsed brauseri seansid võivad oma vaateid töös hoida.
+– nõutud toimingud ja varukoopiad: serveri/toimingu identifikaatorid, päringu aeg, edenemine/tulemus ja, kui taotlete varundusvalikuid, varukoopia identifikaatorid, failinimed, kuupäevad, suurused ja terviklikkuse sildid. Selle funktsiooni jaoks ei saadeta varundamissisu ega täielikke kohalikke teid.
+– Turvalisus ja väärkasutuse vältimine: ebaõnnestunud sisselogimistüüp, rühmitatud katsete arv ja ajad, taaste-/turvasündmuse tüüp ja asjakohased arvutisildid. Lühiajalised kiiruspiirangu kirjed võivad kasutada ühenduse IP-aadresside ja konto identifikaatorite võtmega räsi. Synix kontohoiatuste kirjed ei sisalda proovitud paroole, kinnituskoode, töötlemata IP-aadresse ega brauseri sõrmejälgi. Majutusteenuse pakkujad võivad ühendusteavet eraldi töödelda, nagu on selgitatud jaotises 14.6.
+
+Veebisait töötleb kaughalduse tagamiseks tingimata lubatud kokkuvõtteid ja käske. HTTPS ja krüpteeritud releeühendused kaitsevad transiidiliiklust; see ei ole väide, et hostimisteenus ei saa andmeid töödelda.
+
+14.4 Säilitamine ja kustutamine
+
+– konto mandaadid ja seaded jäävad alles, kuni konto kustutatakse. Kinnitatud sidumiskirjed säilivad seni, kuni arvuti sidumine tühistatakse või konto kustutatakse.
+– oleku hetktõmmised ja CPU/RAM näidud kirjutatakse üle uuemate näitudega ja need muutuvad puhastamiseks kõlblikuks 15 minuti pärast ilma asendamiseta. Viimase ühenduse aeg jääb sidumiskirje osaks.
+– Kaugkäskude kirjed, tulemused ja tagastatud varuvaliku metaandmed muutuvad puhastamiseks kõlblikuks 24 tunni pärast.
+– taaste-/turbesündmused ja ebaõnnestunud sisselogimismärguanded muutuvad puhastamiseks kõlblikuks 90 päeva pärast. Ebaõnnestunud sisselogimised säilitavad maksimaalselt 100 viimast rühma; 10-minutilise perioodi jooksul ilmnenud tõrked rühmitatakse.
+– brauseri seansid aeguvad 30 minuti pärast ilma halduri taotlusteta või üldiselt 8 tunni pärast. Kinnituskatsed aeguvad 5 minuti pärast; ajutine parooli taastamine aegub 10 minuti jooksul ja on ühekordselt kasutatav. Aegunud kinnitamise, taastamise, taasesituse kaitse ja kiirusepiirangu kirjed eemaldatakse puhastamise käigus. Mittetäielikud konto registreerimised muutuvad puhastamiseks kõlblikuks 24 tunni pärast.
+
+Aegumine peatab autoriseerimise isegi enne, kui kirje füüsiliselt eemaldatakse. Andmebaasi rutiinne puhastamine toimub järgnevate teenusepäringute ajal, halduri puhastamiseks kõige rohkem iga 10 minuti järel, nii et ülaltoodud perioodid on aegumis- või puhastamiskõlblikkuse perioodid, mitte täpse hetkega kustutamise lubadused. Pakkuja logidel ja varukoopiatel on eraldi elutsüklid.
+
+Sidumisest loobumine kustutab valitud sidumise ja sellega seotud kaugkirjed aktiivse teenuse andmebaasist. Taaste-/turvaajalugu võib ülaltoodud perioodiks kontole jääda. Haldurikonto kustutamisel eemaldatakse aktiivse teenuse andmebaasist selle mandaadid, sidumised, hetktõmmised, käsud ja konto turvalisuse/taastekirjed. See ei kustuta teie kohalikke mänguservereid, maailmu, sätteid ega varufaile. Lühiajalised väärkasutuse vältimise kirjed ja pakkuja hallatavad logid või varukoopiad ei pruugi kumbki toiminguga koheselt kustutada.
+
+14.5 Teie juhtnupud ja sisselogimiskaitse
+
+Sisselogimiseks on vaja teie parooli ja olemasolevat pääsuvõtit või autentimist, nt Google Authenticator. Mõlemat meetodit nõudma konfigureeritud kontod säilitavad mõlemad nõuded. Parooli muutmine, arvuti sidumise katkestamine veebisaidi kaudu ja haldurikonto kustutamine nõuavad selle konkreetse muudatuse jaoks värsket kinnitust.
+
+Varem kinnitatud seotud arvuti võib väljastada ajutise parooli, kui unustate oma veebisaidi parooli. See ei saa valida teist kontot. Ajutine parool ei lähe mööda ega eemalda teie olemasolevaid parooli/autentija nõudeid ning enne haldurisse sisenemist peate valima uue parooli. Taastamise lõpetamine tühistab teie muud brauseri seansid.
+
+Synix haldur hoiab oma brauseri sisselogimisluba praeguse vahekaardi mälus, mitte küpsistes, kohalikus salvestusruumis või seansimälus. Vahekaardi värskendamine või sulgemine kaotab selle sisselogimise. See ei takista teie brauseril või paroolihalduril teie valikul mandaate salvestamast ega kirjelda küpsiseid, mille on eraldi seadnud hostimise/turbe pakkujad või avaliku veebisaidi tõlketeenus.
+
+Saate välja logida, kõik brauseri seansid tühistada või arvuti sidumise tühistada. Kohalik rakendus Synix saab oma kaugühenduse keelata ja lahti siduda ilma veebisaidile sisse logimata. Võrguühenduseta peatab see kohaliku kaugjuurdepääsu ja proovib uuesti veebisaidi eemaldamist, kui ühendus on saadaval. Rakenduse või Windows taaskäivitamine ei taasta automaatselt selgesõnaliselt eemaldatud sidumist. Ainult kohalik kasutamine on endiselt saadaval.
+
+14.6 Hosting, avalikud lehed ja turvapiirangud
+
+Ametlik veebisait kasutab OpenAI saitide hostimise ja Cloudflare teenuseid kohaletoimetamiseks, salvestuseks, turvalisuseks ja äratusreleeks. Need pakkujad töötlevad nende teenuste osutamiseks vajalikku teavet ja võivad saada IP-aadresse, päringu päiseid, aegu ja muid ühenduse metaandmeid või säilitada oma tegevuslogid ja varukoopiad. Nende töötlemisel kehtivad nende privaatsuspoliitika: https://openai.com/policies/privacy-policy/ ja https://www.cloudflare.com/privacypolicy/.
+
+Avaliku lehe automaatne tõlge ja GitHub allalaadimine hõlmavad vastavaid teenusepakkujaid. Privaatne haldur on avalikest lehtedest eraldi ega laadi avalikku tõlketeenuse pakkujat ega reklaamiskripte. Synix ei väida üldiselt, et kummagi veebisaidi külastamine ei loo küpsiseid, logisid ega salvestatud andmeid. Teavet võidakse avaldada ka siis, kui seadus seda nõuab; ülaltoodud mittemüügikohustus ei takista vajalikku hostimist ega seaduslikku avalikustamist.
+
+Synix kasutab volitamata juurdepääsu vähendamiseks autentitud sidumist, allkirjastatud arvutipäringuid, krüpteeritud võrguühendusi, kontole juurdepääsu kontrolle ja lühiajalisi kinnitusi. Need kaitsemeetmed ei muuda kaugjuurdepääsu riskivabaks ega taga kaitset iga rünnaku, ohustatud arvuti/brauseri, varastatud kinnitusmeetodite või rikutud teenuse eest. Hoidke Synix ja Windows ajakohasena, kaitske oma kontot ja kinnitusmeetodeid ning kinnitage ainult teie juhitavad arvutid ja kontod.
+
+See teade on avalik aadressil https://synix.info/license/ ning see sisaldub rakenduse abikeskuses ja installiprogrammis. Privaatsusküsimusi saab tõstatada ametlike tugivalikute kaudu aadressil https://synix.info/support/. Ärge postitage avalikesse tugisõnumitesse paroole, taastekoode ega muud privaatset kontoteavet. Selle teatise värskendustel on uus versioon ja kuupäev.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve">
     <value>NÕUTAV KRIITILINE KOOSSEIS:
 
@@ -15888,4 +15963,5 @@ Enne raamistiku või mängu muutmist säilitage maailma, konfiguratsiooni ja plu
   </data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Jaga aktiivsuse arvu</value></data>
   <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valikuline: saada juhuslik seansikood saidile synix.info iga minut, kui Synix töötab, ka taustal. Serveriandmeid ei saadeta. Aktiivsus aegub 3 minuti pärast. Vaikimisi sisse lülitatud. Saate selle siin välja lülitada.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Manustatud litsents Synix puudub.</value></data>
 </root>
