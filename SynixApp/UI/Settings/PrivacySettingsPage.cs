@@ -18,11 +18,57 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 	public partial class PrivacySettingsPage : UserControl
 	{
 		private readonly ModernSettingsToggle _shareActivityCount = new();
+		private readonly Label _remoteStatus = new();
 
 		public PrivacySettingsPage()
 		{
 			InitializeComponent();
 			AddActivityCountCard();
+			AddRemoteManagerCard();
+		}
+
+		private void AddRemoteManagerCard()
+		{
+			var card = new ModernSettingsCard
+			{
+				Name = "remoteManagerCard", Location = new Point(0, 480), Size = new Size(818, 220),
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				BackColor = SettingsPalette.Window, FillColor = SettingsPalette.Card,
+				BorderColor = SettingsPalette.Border, Padding = new Padding(22, 18, 22, 18)
+			};
+			var layout = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4, BackColor = SettingsPalette.Card };
+			layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
+			layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+			layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+			layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+			var title = new Label { Dock = DockStyle.Fill, ForeColor = SettingsPalette.PrimaryText,
+				Font = new Font("Segoe UI", 12F, FontStyle.Bold) };
+			LocalizationManager.BindText(title, "RemoteManager.Title");
+			layout.Controls.Add(title, 0, 0);
+			var description = new Label { Dock = DockStyle.Fill, ForeColor = SettingsPalette.SecondaryText, Font = new Font("Segoe UI", 9.5F) };
+			LocalizationManager.BindText(description, "RemoteManager.Description");
+			layout.Controls.Add(description, 0, 1);
+			var button = new ModernSettingsButton { AutoSize = true, Dock = DockStyle.Left };
+			LocalizationManager.BindText(button, "RemoteManager.ManagePairing");
+			button.Click += (_, _) => { using var dialog = new RemoteManagerDialog(); dialog.ShowDialog(FindForm()); };
+			_remoteStatus.Name = "remoteConnectionStatus";
+			_remoteStatus.Dock = DockStyle.Fill;
+			_remoteStatus.TextAlign = ContentAlignment.MiddleLeft;
+			_remoteStatus.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			layout.Controls.Add(_remoteStatus, 0, 2);
+			layout.Controls.Add(button, 0, 3); card.Controls.Add(layout); Controls.Add(card);
+			void RefreshStatus()
+			{
+				var service = SynixEngine.RemoteManagerService.Shared;
+				LocalizationManager.SetDataText(_remoteStatus, service.ConnectionStatus);
+				_remoteStatus.ForeColor = service.IsConnected ? Color.Turquoise : SettingsPalette.SecondaryText;
+			}
+			// UI-only refresh; no network calls. Dispose with the page and pause when hidden.
+			components ??= new Container();
+			var timer = new System.Windows.Forms.Timer(components) { Interval = 1000 };
+			timer.Tick += (_, _) => RefreshStatus();
+			VisibleChanged += (_, _) => { timer.Enabled = Visible; if (Visible) RefreshStatus(); };
+			RefreshStatus(); timer.Enabled = Visible;
 		}
 
 		[Browsable(false)]

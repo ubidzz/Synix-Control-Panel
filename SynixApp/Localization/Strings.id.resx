@@ -7789,7 +7789,55 @@ Jika Synix tidak dibuka kembali, jalankan program Synix yang ada atau unduh rili
   <data name="Appearance.Rounded" xml:space="preserve"><value>Membulat</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Persegi</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Bagikan hitungan aktif</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opsional: kirim kode sesi acak ke synix.info setiap menit selama Synix berjalan, termasuk di latar belakang. Tidak ada data server yang dikirim. Aktivitas kedaluwarsa setelah 3 menit. Aktif secara bawaan. Anda dapat menonaktifkannya di sini.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opsional: kirim kode sesi acak ke synix.info setiap 10 menit selama Synix berjalan, termasuk di latar belakang. Tidak ada data server yang dikirim. Aktivitas kedaluwarsa setelah 15 menit. Aktif secara bawaan. Anda dapat menonaktifkannya di sini.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Pengelola jarak jauh</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Pasangkan komputer ini untuk melihat, menjalankan, menghentikan, memulai ulang, dan mencadangkan server dari situs Synix. Akses jarak jauh tetap nonaktif sampai Anda menyetujui pemasangan di sini.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Pasangkan atau putuskan komputer ini</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>PC server saya</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Buat kode pemasangan</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Setujui akun ini</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Hapus pasangan dan putuskan</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Kendalikan komputer ini dari situs Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nama komputer yang ditampilkan di situs</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Buka pengelola Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Masuk ke situs dan masukkan kode ini. Hanya setujui nama pengguna Anda sendiri di sini.
+
+Biarkan Synix terbuka atau diminimalkan. Koneksi siaga mendeteksi saat Anda masuk. Detail server diperbarui setiap 10 detik selama dilihat. Menghapus pasangan menonaktifkan akses jarak jauh tanpa menghentikan server.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Masukkan nama komputer.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Menunggu permintaan pemasangan dari akun Anda…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Pemasangan disetujui untuk {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kode kedaluwarsa. Buat kode pemasangan baru.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Akun yang meminta kendali: {0}
+Setujui hanya jika ini nama pengguna Anda.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Tidak dapat memeriksa pemasangan. Periksa koneksi internet Anda.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Tidak dapat menghubungi pengelola Synix. Silakan coba lagi.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identitas komputer: kunci yang dilindungi TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identitas komputer: kunci perangkat lunak yang dilindungi Windows (TPM tidak tersedia)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Belum dipasangkan</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Dipasangkan — menunggu koneksi</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Terputus secara lokal. Coba hapus lagi saat terhubung.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Pemasangan tidak dapat dimuat. Akses jarak jauh dinonaktifkan.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Pemasangan harus disetujui di komputer ini.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Akses jarak jauh dinonaktifkan. Pengaturan pemasangan tidak dapat disimpan.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Terputus secara lokal — menghapus pasangan di situs</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Terhubung ke pengelola jarak jauh</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Dipasangkan — menunggu masuk</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Pasangan di situs dihapus. Akses jarak jauh dinonaktifkan.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Koneksi tidak tersedia — mencoba lagi</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Pengaturan koneksi jarak jauh tidak valid.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Pengelola Synix mengembalikan respons yang tidak valid.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Hubungkan kembali ke internet dan selesaikan penghapusan pasangan lama terlebih dahulu.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Buat kode pemasangan baru.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[PENGELOLA JARAK JAUH] Tindakan {0} diminta untuk {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Pulihkan kata sandi situs</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Buat kata sandi sementara</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Batalkan pemulihan ini</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Tampilkan kata sandi sementara</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Buat kata sandi sementara di sini. Masuk ke situs dengannya dan autentikasi dua faktor atau kunci sandi yang ada, lalu pilih kata sandi baru. Jika kedua metode diwajibkan, keduanya tetap wajib. Kata sandi ini berlaku sekali dan kedaluwarsa setelah 10 menit. Kata sandi asli tetap berlaku sampai pemulihan selesai.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Akun: {0}. Siap membuat kata sandi sementara.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Akun: {0}. Kedaluwarsa dalam {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Pemulihan kedaluwarsa atau dicabut. Mulai lagi.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Terlalu banyak permintaan. Coba lagi nanti.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Lisensi Synix yang tertanam tidak ada.</value></data>
 </root>
 

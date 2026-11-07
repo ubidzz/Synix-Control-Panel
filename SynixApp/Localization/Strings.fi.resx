@@ -6865,6 +6865,54 @@ Jos Synix ei avaudu uudelleen, suorita nykyinen Synix-ohjelma tai lataa uusin ve
   <data name="Appearance.Rounded" xml:space="preserve"><value>Pyöristetty</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Kulmikas</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Jaa aktiivisuustieto</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valinnainen: lähetä satunnainen istuntokoodi synix.info-sivustolle minuutin välein, kun Synix on käynnissä, myös taustalla. Palvelintietoja ei lähetetä. Aktiivisuus vanhenee 3 minuutissa. Oletuksena käytössä. Voit poistaa sen käytöstä tästä.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valinnainen: lähetä satunnainen istuntokoodi synix.info-sivustolle 10 minuutin välein, kun Synix on käynnissä, myös taustalla. Palvelintietoja ei lähetetä. Aktiivisuus vanhenee 15 minuutissa. Oletuksena käytössä. Voit poistaa sen käytöstä tästä.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Etähallinta</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Liitä tämä tietokone, jotta voit tarkastella, käynnistää, pysäyttää, käynnistää uudelleen ja varmuuskopioida palvelimia Synix-sivustolta. Etäkäyttö pysyy poissa käytöstä, kunnes hyväksyt liitoksen tässä.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Liitä tai irrota tämä tietokone</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Oma palvelintietokone</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Luo liitoskoodi</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Hyväksy tämä tili</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Poista liitos ja katkaise yhteys</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Hallitse tätä tietokonetta Synix-sivustolta</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Sivustolla näkyvä tietokoneen nimi</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Avaa Synix-hallinta</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Kirjaudu sivustolle ja anna tämä koodi. Hyväksy tässä vain oma käyttäjätunnuksesi.
+
+Pidä Synix avoinna tai pienennettynä. Odotustilassa oleva yhteys kuuntelee kirjautumista. Palvelintiedot päivittyvät katselun aikana 10 sekunnin välein. Liitoksen poistaminen estää etäkäytön pysäyttämättä palvelimia.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Anna tietokoneelle nimi.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Odotetaan tilisi liitospyyntöä…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Liitos hyväksytty käyttäjälle {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Koodi vanheni. Luo uusi liitoskoodi.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Hallintaa pyytävä tili: {0}
+Hyväksy vain, jos tämä on oma käyttäjätunnuksesi.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Liitosta ei voitu tarkistaa. Tarkista internetyhteys.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synix-hallintaan ei saada yhteyttä. Yritä uudelleen.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Tietokoneen tunniste: TPM-suojattu avain</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Tietokoneen tunniste: Windowsin suojaama ohjelmistoavain (TPM ei ole käytettävissä)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Ei liitetty</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Liitetty — odotetaan yhteyttä</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Yhteys katkaistu paikallisesti. Yritä poistoa uudelleen, kun yhteys toimii.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Liitosta ei voitu ladata. Etäkäyttö on poistettu käytöstä.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Liitos on hyväksyttävä paikallisesti.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Etäkäyttö poistettu käytöstä. Liitosasetuksia ei voitu tallentaa.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Yhteys katkaistu paikallisesti — poistetaan sivuston liitos</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Yhdistetty etähallintaan</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Liitetty — odotetaan kirjautumista</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Sivuston liitos poistettu. Etäkäyttö on poistettu käytöstä.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Yhteys ei ole käytettävissä — yritetään uudelleen</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Virheelliset etäyhteysasetukset.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix-hallinta palautti virheellisen vastauksen.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Yhdistä internetiin ja viimeistele ensin vanhan liitoksen poistaminen.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Luo uusi liitoskoodi.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ETÄHALLINTA] Toimintoa {0} pyydetty palvelimelle {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Palauta sivuston salasana</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Luo tilapäinen salasana</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Peruuta tämä palautus</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Näytä tilapäinen salasana</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Luo tilapäinen salasana tässä. Kirjaudu sillä ja nykyisellä kaksivaiheisella tunnistuksella tai pääsyavaimella sivustolle ja valitse uusi salasana. Jos molemmat menetelmät vaaditaan, niitä vaaditaan edelleen. Salasana toimii kerran ja vanhenee 10 minuutissa. Alkuperäinen salasana on voimassa palautuksen valmistumiseen asti.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Tili: {0}. Valmis luomaan tilapäisen salasanan.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Tili: {0}. Vanhenee {1} kuluttua.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Palautus on vanhentunut tai peruutettu. Aloita uudelleen.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Liikaa pyyntöjä. Yritä myöhemmin uudelleen.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Sulautettu Synix-lisenssi puuttuu.</value></data>
 </root>

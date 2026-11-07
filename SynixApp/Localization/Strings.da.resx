@@ -6865,6 +6865,54 @@ Hvis Synix ikke åbnes igen, skal du køre det eksisterende Synix-program eller 
   <data name="Appearance.Rounded" xml:space="preserve"><value>Afrundet</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Kantet</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Del aktivitetstælling</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valgfrit: send en tilfældig sessionskode til synix.info hvert minut, mens Synix kører, også i baggrunden. Ingen serverdata sendes. Aktiviteten udløber efter 3 minutter. Slået til som standard. Du kan slå det fra her.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valgfrit: send en tilfældig sessionskode til synix.info hvert 10. minut, mens Synix kører, også i baggrunden. Ingen serverdata sendes. Aktiviteten udløber efter 15 minutter. Slået til som standard. Du kan slå det fra her.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Fjernstyring</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Par denne computer for at se, starte, stoppe, genstarte og sikkerhedskopiere servere fra Synix-webstedet. Fjernadgang er slået fra, indtil du godkender parringen her.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Par eller afbryd denne computer</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Min server-pc</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Generér parringskode</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Godkend denne konto</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Fjern parring og afbryd</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Styr denne computer fra Synix-webstedet</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Computernavn vist på webstedet</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Åbn Synix-fjernstyring</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Log ind på webstedet, og indtast denne kode. Godkend kun dit eget brugernavn her.
+
+Hold Synix åbent eller minimeret. En hvilende forbindelse venter på login. Serveroplysninger opdateres hvert 10. sekund, mens de vises. Fjernes parringen, deaktiveres fjernadgang uden at stoppe serverne.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Indtast et computernavn.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Venter på din kontos anmodning om parring…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Parring godkendt for {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Koden er udløbet. Generér en ny parringskode.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Konto, der anmoder om kontrol: {0}
+Godkend kun, hvis dette er dit brugernavn.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Parringen kunne ikke kontrolleres. Kontrollér internetforbindelsen.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synix-fjernstyring kunne ikke kontaktes. Prøv igen.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Computeridentitet: TPM-beskyttet nøgle</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Computeridentitet: Windows-beskyttet softwarenøgle (TPM er ikke tilgængelig)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Ikke parret</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Parret — venter på forbindelse</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Afbrudt lokalt. Prøv at fjerne parringen igen, når forbindelsen er tilbage.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Parringen kunne ikke indlæses. Fjernadgang er deaktiveret.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Parringen skal godkendes lokalt.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Fjernadgang deaktiveret. Parringsindstillingerne kunne ikke gemmes.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Afbrudt lokalt — fjerner parring på webstedet</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Forbundet til fjernstyringen</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Parret — venter på login</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Parringen på webstedet er fjernet. Fjernadgang er deaktiveret.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Forbindelse utilgængelig — prøver igen</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Ugyldige indstillinger for fjernforbindelse.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix-fjernstyring returnerede et ugyldigt svar.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Opret forbindelse til internettet, og afslut først fjernelsen af den gamle parring.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Generér en ny parringskode.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[FJERNSTYRING] {0} anmodet for {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Gendan adgangskode til websted</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Opret midlertidig adgangskode</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Annuller denne gendannelse</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Vis midlertidig adgangskode</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Opret en midlertidig adgangskode her. Log ind på webstedet med den og din eksisterende tofaktorgodkendelse eller adgangsnøgle, og vælg en ny adgangskode. Hvis begge metoder kræves, kræves de stadig. Koden virker én gang og udløber efter 10 minutter. Din oprindelige adgangskode er gyldig, indtil gendannelsen er afsluttet.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Konto: {0}. Klar til at oprette en midlertidig adgangskode.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Konto: {0}. Udløber om {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Gendannelsen er udløbet eller tilbagekaldt. Start igen.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>For mange anmodninger. Prøv igen senere.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Den indlejrede Synix-licens mangler.</value></data>
 </root>

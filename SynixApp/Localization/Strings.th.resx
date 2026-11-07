@@ -6865,6 +6865,54 @@ ARK จะดาวน์โหลดโมดนี้จาก {2} เมื�
   <data name="Appearance.Rounded" xml:space="preserve"><value>มุมโค้ง</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>มุมเหลี่ยม</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>แชร์จำนวนเซสชันที่ใช้งาน</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>ไม่บังคับ: ส่งรหัสเซสชันแบบสุ่มไปยัง synix.info ทุกนาทีขณะที่ Synix ทำงาน รวมถึงในเบื้องหลัง โดยไม่ส่งข้อมูลเซิร์ฟเวอร์ สถานะการใช้งานจะหมดอายุหลังจาก 3 นาที เปิดไว้โดยค่าเริ่มต้น คุณสามารถปิดได้ที่นี่</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>ไม่บังคับ: ส่งรหัสเซสชันแบบสุ่มไปยัง synix.info ทุก 10 นาทีขณะที่ Synix ทำงาน รวมถึงในเบื้องหลัง โดยไม่ส่งข้อมูลเซิร์ฟเวอร์ สถานะการใช้งานจะหมดอายุหลังจาก 15 นาที เปิดไว้โดยค่าเริ่มต้น คุณสามารถปิดได้ที่นี่</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>การจัดการระยะไกล</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>จับคู่คอมพิวเตอร์เครื่องนี้เพื่อดู เริ่ม หยุด เริ่มใหม่ และสำรองข้อมูลเซิร์ฟเวอร์จากเว็บไซต์ Synix การเข้าถึงระยะไกลจะปิดอยู่จนกว่าคุณจะอนุมัติการจับคู่ที่นี่</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>จับคู่หรือยกเลิกการเชื่อมต่อคอมพิวเตอร์เครื่องนี้</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>คอมพิวเตอร์เซิร์ฟเวอร์ของฉัน</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>สร้างรหัสจับคู่</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>อนุมัติบัญชีนี้</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>ยกเลิกการจับคู่และตัดการเชื่อมต่อ</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>ควบคุมคอมพิวเตอร์เครื่องนี้จากเว็บไซต์ Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>ชื่อคอมพิวเตอร์ที่แสดงบนเว็บไซต์</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>เปิดตัวจัดการ Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>เข้าสู่ระบบบนเว็บไซต์แล้วป้อนรหัสนี้ อนุมัติเฉพาะชื่อผู้ใช้ของคุณเองที่นี่
+
+เปิด Synix ไว้หรือย่อหน้าต่าง การเชื่อมต่อที่รออยู่จะตรวจจับการเข้าสู่ระบบ รายละเอียดเซิร์ฟเวอร์จะอัปเดตทุก 10 วินาทีขณะดู การยกเลิกการจับคู่จะปิดการเข้าถึงระยะไกลโดยไม่หยุดเซิร์ฟเวอร์</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>ป้อนชื่อคอมพิวเตอร์</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>กำลังรอคำขอจับคู่จากบัญชีของคุณ…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>อนุมัติการจับคู่สำหรับ {0} แล้ว</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>รหัสหมดอายุแล้ว สร้างรหัสจับคู่ใหม่</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>บัญชีที่ขอควบคุม: {0}
+อนุมัติเฉพาะเมื่อเป็นชื่อผู้ใช้ของคุณเท่านั้น</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>ไม่สามารถตรวจสอบการจับคู่ได้ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>ไม่สามารถติดต่อตัวจัดการ Synix ได้ โปรดลองอีกครั้ง</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>ข้อมูลระบุตัวตนคอมพิวเตอร์: คีย์ที่ป้องกันด้วย TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>ข้อมูลระบุตัวตนคอมพิวเตอร์: คีย์ซอฟต์แวร์ที่ป้องกันด้วย Windows (ไม่มี TPM)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>ยังไม่ได้จับคู่</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>จับคู่แล้ว — กำลังรอการเชื่อมต่อ</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>ตัดการเชื่อมต่อในเครื่องแล้ว ลองลบอีกครั้งเมื่อเชื่อมต่อได้</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>ไม่สามารถโหลดข้อมูลการจับคู่ได้ การเข้าถึงระยะไกลถูกปิดใช้งาน</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>ต้องอนุมัติการจับคู่บนคอมพิวเตอร์เครื่องนี้</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>ปิดการเข้าถึงระยะไกลแล้ว ไม่สามารถบันทึกการตั้งค่าการจับคู่ได้</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>ตัดการเชื่อมต่อในเครื่องแล้ว — กำลังลบการจับคู่กับเว็บไซต์</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>เชื่อมต่อกับตัวจัดการระยะไกลแล้ว</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>จับคู่แล้ว — กำลังรอการเข้าสู่ระบบ</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>ลบการจับคู่กับเว็บไซต์แล้ว การเข้าถึงระยะไกลถูกปิดใช้งาน</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>ไม่สามารถเชื่อมต่อได้ — กำลังลองใหม่</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>การตั้งค่าการเชื่อมต่อระยะไกลไม่ถูกต้อง</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>ตัวจัดการ Synix ส่งการตอบกลับที่ไม่ถูกต้อง</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>เชื่อมต่ออินเทอร์เน็ตอีกครั้งและลบการจับคู่เดิมให้เสร็จก่อน</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>สร้างรหัสจับคู่ใหม่</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[การจัดการระยะไกล] มีคำขอ {0} สำหรับ {1}</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>กู้คืนรหัสผ่านเว็บไซต์</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>สร้างรหัสผ่านชั่วคราว</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>ยกเลิกการกู้คืนนี้</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>แสดงรหัสผ่านชั่วคราว</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>สร้างรหัสผ่านชั่วคราวที่นี่ ใช้รหัสนี้ร่วมกับการยืนยันสองขั้นตอนหรือพาสคีย์เดิมเพื่อลงชื่อเข้าใช้เว็บไซต์ แล้วเลือกรหัสผ่านใหม่ หากต้องใช้ทั้งสองวิธีก็ยังต้องใช้ทั้งสองวิธี รหัสนี้ใช้ได้ครั้งเดียวและหมดอายุใน 10 นาที รหัสผ่านเดิมยังใช้ได้จนกว่าจะกู้คืนเสร็จ</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>บัญชี: {0} พร้อมสร้างรหัสผ่านชั่วคราว</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>บัญชี: {0} หมดอายุใน {1}</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>การกู้คืนหมดอายุหรือถูกเพิกถอน โปรดเริ่มใหม่</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>มีคำขอมากเกินไป โปรดลองอีกครั้งภายหลัง</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>ใบอนุญาต Synix ที่ฝังไว้หายไป</value></data>
 </root>

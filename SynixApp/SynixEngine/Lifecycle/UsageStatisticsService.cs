@@ -12,7 +12,9 @@ internal sealed class UsageStatisticsService : IAsyncDisposable
     private static readonly Uri Endpoint = new("https://synix.info/api/presence");
     private static readonly Lazy<UsageStatisticsService> SharedInstance = new(() => new(
         new HttpClient(new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false })
-        { Timeout = Timeout.InfiniteTimeSpan }, TimeSpan.FromSeconds(60)));
+        { Timeout = Timeout.InfiniteTimeSpan }, HeartbeatInterval));
+
+    internal static readonly TimeSpan HeartbeatInterval = TimeSpan.FromMinutes(10);
 
     private readonly object _gate = new();
     private readonly HttpClient _client;

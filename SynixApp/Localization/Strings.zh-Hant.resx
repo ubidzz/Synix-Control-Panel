@@ -7788,7 +7788,55 @@ ARK會在你啟動伺服器時從{2}下載這個模組。 Synix 不會複製或�
   <data name="Appearance.Rounded" xml:space="preserve"><value>圓角</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>分享活躍數量</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>選用：在 Synix 執行期間（包括背景執行），每分鐘向 synix.info 傳送一個隨機工作階段代碼。不會傳送伺服器資料。活躍狀態在 3 分鐘後到期。預設開啟。您可以在此關閉。</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>選用：在 Synix 執行期間（包括背景執行），每 10 分鐘向 synix.info 傳送一個隨機工作階段代碼。不會傳送伺服器資料。活躍狀態在 15 分鐘後到期。預設開啟。您可以在此關閉。</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>遠端管理</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>配對此電腦後，即可透過 Synix 網站檢視、啟動、停止、重新啟動及備份伺服器。在此處核准配對之前，遠端存取會保持關閉。</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>配對或中斷此電腦的連線</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>我的伺服器電腦</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>產生配對碼</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>核准此帳號</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>取消配對並中斷連線</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>透過 Synix 網站控制此電腦</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>網站上顯示的電腦名稱</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>開啟 Synix 管理員</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>登入網站並輸入此配對碼。請在此處僅核准您自己的使用者名稱。
+
+請保持 Synix 開啟或最小化。待命連線會偵測登入。檢視伺服器資訊時，資訊每 10 秒更新一次。取消配對會關閉遠端存取，但不會停止伺服器。</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>請輸入電腦名稱。</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>正在等待您的帳號要求配對…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>已核准 {0} 的配對</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>配對碼已過期。請產生新的配對碼。</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>要求控制的帳號：{0}
+請僅在此使用者名稱屬於您時核准。</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>無法檢查配對狀態。請檢查您的網際網路連線。</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>無法連線至 Synix 管理員。請重試。</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>電腦身分：受 TPM 保護的金鑰</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>電腦身分：受 Windows 保護的軟體金鑰（TPM 無法使用）</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>尚未配對</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>已配對 — 等待連線</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>已在本機中斷連線。請在連線後重試移除。</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>無法載入配對資訊。遠端存取已停用。</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>需要在此電腦上核准配對。</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>遠端存取已停用。無法儲存配對設定。</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>已在本機中斷連線 — 正在移除網站配對</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>已連線至遠端管理員</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>已配對 — 等待登入</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>已移除網站配對。遠端存取已停用。</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>無法連線 — 正在重試</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>遠端連線設定無效。</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix 管理員傳回無效的回應。</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>請重新連線至網際網路，並先完成移除舊配對。</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>請產生新的配對碼。</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[遠端管理] 已要求對 {1} 執行 {0} 操作。</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>復原網站密碼</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>建立臨時密碼</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>取消此次復原</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>顯示臨時密碼</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>在此建立臨時密碼。使用該密碼及現有的雙重驗證或通行金鑰登入網站，然後設定新密碼。如果原本要求兩種驗證方式，仍須完成兩種驗證。臨時密碼只能使用一次，10 分鐘後失效。復原完成前，原密碼仍然有效。</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>帳戶：{0}。可以建立臨時密碼。</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>帳戶：{0}。將於 {1} 後失效。</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>復原已過期或遭撤銷。請重新開始。</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>請求過多。請稍後再試。</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>嵌入式 Synix 許可證遺失。</value></data>
 </root>
 

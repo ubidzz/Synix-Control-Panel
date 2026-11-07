@@ -7788,7 +7788,55 @@ Jeśli Synix nie otwiera się ponownie, uruchom istniejący program Synix lub po
   <data name="Appearance.Rounded" xml:space="preserve"><value>Zaokrąglony</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Kanciasty</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Udostępniaj liczbę aktywnych sesji</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcjonalnie: wysyłaj losowy kod sesji do synix.info co minutę, gdy Synix działa, także w tle. Dane serwerów nie są wysyłane. Aktywność wygasa po 3 minutach. Domyślnie włączone. Możesz wyłączyć tę opcję tutaj.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcjonalnie: wysyłaj losowy kod sesji do synix.info co 10 minut, gdy Synix działa, także w tle. Dane serwerów nie są wysyłane. Aktywność wygasa po 15 minutach. Domyślnie włączone. Możesz wyłączyć tę opcję tutaj.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Zdalne zarządzanie</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Sparuj ten komputer, aby przeglądać, uruchamiać, zatrzymywać, restartować i tworzyć kopie zapasowe serwerów przez stronę Synix. Zdalny dostęp pozostaje wyłączony do zatwierdzenia parowania tutaj.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Sparuj lub odłącz ten komputer</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mój komputer serwerowy</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Wygeneruj kod parowania</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Zatwierdź to konto</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Usuń parowanie i rozłącz</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Steruj tym komputerem ze strony Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nazwa komputera widoczna na stronie</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Otwórz zarządzanie Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Zaloguj się na stronie i wpisz ten kod. Zatwierdzaj tutaj tylko własną nazwę użytkownika.
+
+Pozostaw Synix otwarty lub zminimalizowany. Połączenie w stanie oczekiwania nasłuchuje logowania. Szczegóły serwerów są aktualizowane co 10 sekund podczas przeglądania. Usunięcie parowania wyłącza zdalny dostęp bez zatrzymywania serwerów.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Wpisz nazwę komputera.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Oczekiwanie na żądanie parowania z Twojego konta…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Parowanie zatwierdzone dla {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kod wygasł. Wygeneruj nowy kod parowania.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Konto żądające sterowania: {0}
+Zatwierdź tylko, jeśli to Twoja nazwa użytkownika.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Nie można sprawdzić parowania. Sprawdź połączenie internetowe.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Nie można połączyć się z zarządzaniem Synix. Spróbuj ponownie.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Tożsamość komputera: klucz chroniony przez TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Tożsamość komputera: klucz programowy chroniony przez Windows (TPM niedostępny)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Niesparowany</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Sparowany — oczekiwanie na połączenie</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Rozłączono lokalnie. Ponów usuwanie po odzyskaniu połączenia.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Nie można wczytać parowania. Zdalny dostęp jest wyłączony.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Wymagane jest lokalne zatwierdzenie parowania.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Zdalny dostęp wyłączony. Nie można zapisać ustawień parowania.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Rozłączono lokalnie — usuwanie parowania na stronie</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Połączono ze zdalnym zarządzaniem</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Sparowany — oczekiwanie na logowanie</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Usunięto parowanie na stronie. Zdalny dostęp jest wyłączony.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Połączenie niedostępne — ponawianie</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Nieprawidłowe ustawienia połączenia zdalnego.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Zarządzanie Synix zwróciło nieprawidłową odpowiedź.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Najpierw połącz się z internetem i dokończ usuwanie starego parowania.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Wygeneruj nowy kod parowania.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ZDALNE ZARZĄDZANIE] Zażądano {0} dla {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Odzyskaj hasło do witryny</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Utwórz hasło tymczasowe</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Anuluj odzyskiwanie</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Pokaż hasło tymczasowe</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Utwórz tutaj hasło tymczasowe. Zaloguj się nim w witrynie i użyj obecnego uwierzytelniania dwuskładnikowego lub klucza dostępu, a następnie wybierz nowe hasło. Jeśli wymagane są obie metody, nadal będą wymagane. Hasło działa raz i wygasa po 10 minutach. Dotychczasowe hasło pozostaje ważne do zakończenia odzyskiwania.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Konto: {0}. Możesz utworzyć hasło tymczasowe.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Konto: {0}. Wygasa za {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Odzyskiwanie wygasło lub zostało cofnięte. Zacznij ponownie.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Zbyt wiele żądań. Spróbuj ponownie później.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Brakuje wbudowanej licencji Synix.</value></data>
 </root>
 

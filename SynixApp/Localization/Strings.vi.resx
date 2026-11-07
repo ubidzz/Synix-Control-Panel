@@ -7789,7 +7789,55 @@ Nếu Synix không mở lại, chạy chương trình Synix hiện có hoặc t�
   <data name="Appearance.Rounded" xml:space="preserve"><value>Bo tròn</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Vuông</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Chia sẻ số phiên đang hoạt động</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Tùy chọn: gửi mã phiên ngẫu nhiên đến synix.info mỗi phút khi Synix đang chạy, kể cả trong nền. Không gửi dữ liệu máy chủ. Trạng thái hoạt động hết hạn sau 3 phút. Mặc định bật. Bạn có thể tắt tại đây.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Tùy chọn: gửi mã phiên ngẫu nhiên đến synix.info mỗi 10 phút khi Synix đang chạy, kể cả trong nền. Không gửi dữ liệu máy chủ. Trạng thái hoạt động hết hạn sau 15 phút. Mặc định bật. Bạn có thể tắt tại đây.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Quản lý từ xa</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Ghép nối máy tính này để xem, khởi động, dừng, khởi động lại và sao lưu máy chủ từ trang web Synix. Quyền truy cập từ xa vẫn tắt cho đến khi bạn phê duyệt ghép nối tại đây.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Ghép nối hoặc ngắt kết nối máy tính này</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Máy tính máy chủ của tôi</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Tạo mã ghép nối</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Phê duyệt tài khoản này</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Hủy ghép nối và ngắt kết nối</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Điều khiển máy tính này từ trang web Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Tên máy tính hiển thị trên trang web</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Mở trình quản lý Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Đăng nhập trang web và nhập mã này. Chỉ phê duyệt tên người dùng của chính bạn tại đây.
+
+Giữ Synix mở hoặc thu nhỏ. Một kết nối chờ sẽ nhận biết việc đăng nhập. Thông tin máy chủ cập nhật mỗi 10 giây khi đang xem. Hủy ghép nối sẽ tắt quyền truy cập từ xa mà không dừng máy chủ.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Nhập tên máy tính.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Đang chờ yêu cầu ghép nối từ tài khoản của bạn…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Đã phê duyệt ghép nối cho {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Mã đã hết hạn. Hãy tạo mã ghép nối mới.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Tài khoản yêu cầu điều khiển: {0}
+Chỉ phê duyệt nếu đây là tên người dùng của bạn.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Không thể kiểm tra ghép nối. Hãy kiểm tra kết nối internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Không thể liên hệ trình quản lý Synix. Vui lòng thử lại.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Danh tính máy tính: khóa được TPM bảo vệ</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Danh tính máy tính: khóa phần mềm được Windows bảo vệ (không có TPM)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Chưa ghép nối</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Đã ghép nối — đang chờ kết nối</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Đã ngắt kết nối cục bộ. Thử xóa lại khi có kết nối.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Không thể tải thông tin ghép nối. Quyền truy cập từ xa đã tắt.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Cần phê duyệt ghép nối trên máy tính này.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Quyền truy cập từ xa đã tắt. Không thể lưu cài đặt ghép nối.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Đã ngắt kết nối cục bộ — đang xóa ghép nối trên trang web</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Đã kết nối với trình quản lý từ xa</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Đã ghép nối — đang chờ đăng nhập</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Đã xóa ghép nối trên trang web. Quyền truy cập từ xa đã tắt.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Không có kết nối — đang thử lại</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Cài đặt kết nối từ xa không hợp lệ.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Trình quản lý Synix trả về phản hồi không hợp lệ.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Kết nối lại internet và hoàn tất việc xóa ghép nối cũ trước.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Tạo mã ghép nối mới.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[QUẢN LÝ TỪ XA] Đã yêu cầu {0} cho {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Khôi phục mật khẩu trang web</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Tạo mật khẩu tạm thời</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Hủy lần khôi phục này</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Hiện mật khẩu tạm thời</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Tạo mật khẩu tạm thời tại đây. Đăng nhập trang web bằng mật khẩu đó và xác thực hai yếu tố hoặc khóa truy cập hiện có, rồi chọn mật khẩu mới. Nếu cả hai phương thức đều bắt buộc, yêu cầu đó vẫn giữ nguyên. Mật khẩu chỉ dùng một lần và hết hạn sau 10 phút. Mật khẩu gốc vẫn có hiệu lực đến khi khôi phục xong.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Tài khoản: {0}. Sẵn sàng tạo mật khẩu tạm thời.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Tài khoản: {0}. Hết hạn sau {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Lần khôi phục đã hết hạn hoặc bị thu hồi. Hãy bắt đầu lại.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Quá nhiều yêu cầu. Hãy thử lại sau.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Thiếu giấy phép Synix được nhúng.</value></data>
 </root>
 

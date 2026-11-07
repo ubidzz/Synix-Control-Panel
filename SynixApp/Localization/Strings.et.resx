@@ -15962,6 +15962,54 @@ Enne raamistiku või mängu muutmist säilitage maailma, konfiguratsiooni ja plu
     <value>Kandiline</value>
   </data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Jaga aktiivsuse arvu</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valikuline: saada juhuslik seansikood saidile synix.info iga minut, kui Synix töötab, ka taustal. Serveriandmeid ei saadeta. Aktiivsus aegub 3 minuti pärast. Vaikimisi sisse lülitatud. Saate selle siin välja lülitada.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valikuline: saada juhuslik seansikood saidile synix.info iga 10 minuti järel, kui Synix töötab, ka taustal. Serveriandmeid ei saadeta. Aktiivsus aegub 15 minuti pärast. Vaikimisi sisse lülitatud. Saate selle siin välja lülitada.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Kaughaldus</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Seo see arvuti, et Synixi veebisaidilt servereid vaadata, käivitada, peatada, taaskäivitada ja varundada. Kaugjuurdepääs jääb välja lülitatuks, kuni kinnitad sidumise siin.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Seo või lahuta see arvuti</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Minu serveriarvuti</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Loo sidumiskood</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Kinnita see konto</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Eemalda seos ja katkesta ühendus</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Juhi seda arvutit Synixi veebisaidilt</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Veebisaidil kuvatav arvuti nimi</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Ava Synixi haldus</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Logi veebisaidile sisse ja sisesta see kood. Kinnita siin ainult enda kasutajanimi.
+
+Hoia Synix avatuna või minimeerituna. Ootel ühendus tuvastab sisselogimise. Serverite andmed uuenevad vaatamise ajal iga 10 sekundi järel. Seose eemaldamine lülitab kaugjuurdepääsu välja servereid peatamata.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Sisesta arvuti nimi.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Sinu konto sidumistaotluse ootel…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Sidumine kinnitatud kasutajale {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kood aegus. Loo uus sidumiskood.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Juhtimist taotlev konto: {0}
+Kinnita ainult siis, kui see on sinu kasutajanimi.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Sidumist ei saa kontrollida. Kontrolli internetiühendust.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synixi haldusega ei saa ühendust. Proovi uuesti.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Arvuti identiteet: TPM-iga kaitstud võti</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Arvuti identiteet: Windowsi kaitstud tarkvaravõti (TPM pole saadaval)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Sidumata</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Seotud — ühenduse ootel</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Ühendus katkestatud kohapeal. Proovi eemaldamist pärast ühendamist uuesti.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Sidumist ei saanud laadida. Kaugjuurdepääs on keelatud.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Sidumine tuleb kinnitada selles arvutis.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Kaugjuurdepääs on keelatud. Sidumisseadeid ei saanud salvestada.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Ühendus katkestatud kohapeal — veebisaidi seose eemaldamine</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Kaughaldusega ühendatud</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Seotud — sisselogimise ootel</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Veebisaidi seos eemaldatud. Kaugjuurdepääs on keelatud.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Ühendus pole saadaval — uus katse</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Vigased kaugühenduse seaded.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synixi haldus tagastas vigase vastuse.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Loo uuesti internetiühendus ja lõpeta esmalt vana seose eemaldamine.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Loo uus sidumiskood.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[KAUGHALDUS] Toiming {0} taotletud serverile {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Taasta veebisaidi parool</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Loo ajutine parool</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Tühista see taastamine</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Näita ajutist parooli</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Loo siin ajutine parool. Logi sellega ja oma olemasoleva kaheastmelise kinnituse või pääsuvõtmega veebisaidile sisse ning vali uus parool. Kui nõutud on mõlemad meetodid, jäävad mõlemad kohustuslikuks. Parool töötab ühe korra ja aegub 10 minuti pärast. Algne parool kehtib taastamise lõpuni.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Konto: {0}. Ajutise parooli loomiseks valmis.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Konto: {0}. Aegub {1} pärast.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Taastamine aegus või tühistati. Alusta uuesti.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Liiga palju päringuid. Proovi hiljem uuesti.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Manustatud litsents Synix puudub.</value></data>
 </root>

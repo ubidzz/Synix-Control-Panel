@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -14299,6 +14299,54 @@ Bewahren Sie vor einer Framework- oder Spieländerung die Welt-, Konfigurations-
   <data name="Appearance.Rounded" xml:space="preserve"><value>Abgerundet</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Eckig</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Aktivitätszählung teilen</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optional: Während Synix läuft, auch im Hintergrund, jede Minute einen zufälligen Sitzungscode an synix.info senden. Es werden keine Serverdaten gesendet. Aktivität verfällt nach 3 Minuten. Standardmäßig aktiviert. Sie können dies hier deaktivieren.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optional: Während Synix läuft, auch im Hintergrund, alle 10 Minuten einen zufälligen Sitzungscode an synix.info senden. Es werden keine Serverdaten gesendet. Aktivität verfällt nach 15 Minuten. Standardmäßig aktiviert. Sie können dies hier deaktivieren.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Fernverwaltung</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Koppeln Sie diesen Computer, um Server über die Synix-Website anzuzeigen, zu starten, zu stoppen, neu zu starten und zu sichern. Der Fernzugriff bleibt bis zu Ihrer Bestätigung hier deaktiviert.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Diesen Computer koppeln oder trennen</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mein Server-PC</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Kopplungscode erzeugen</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Dieses Konto bestätigen</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Kopplung aufheben und trennen</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Diesen Computer über die Synix-Website steuern</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Auf der Website angezeigter Computername</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix-Verwaltung öffnen</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Melden Sie sich auf der Website an und geben Sie diesen Code ein. Bestätigen Sie hier nur Ihren eigenen Benutzernamen.
+
+Lassen Sie Synix geöffnet oder minimiert. Eine Verbindung wartet im Hintergrund auf die Anmeldung. Serverdetails werden während der Anzeige alle 10 Sekunden aktualisiert. Das Aufheben der Kopplung deaktiviert den Fernzugriff, ohne Server zu stoppen.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Geben Sie einen Computernamen ein.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Warten auf die Kopplungsanfrage Ihres Kontos…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Kopplung für {0} bestätigt</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Code abgelaufen. Erzeugen Sie einen neuen Kopplungscode.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Konto mit Steuerungsanfrage: {0}
+Bestätigen Sie nur Ihren eigenen Benutzernamen.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Kopplung konnte nicht geprüft werden. Prüfen Sie die Internetverbindung.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Die Synix-Verwaltung ist nicht erreichbar. Versuchen Sie es erneut.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Computeridentität: TPM-geschützter Schlüssel</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Computeridentität: Windows-geschützter Softwareschlüssel (TPM nicht verfügbar)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Nicht gekoppelt</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Gekoppelt — Verbindung ausstehend</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Lokal getrennt. Wiederholen Sie das Entfernen bei bestehender Verbindung.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Kopplung konnte nicht geladen werden. Fernzugriff ist deaktiviert.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Die Kopplung muss lokal bestätigt werden.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Fernzugriff deaktiviert. Kopplungseinstellungen konnten nicht gespeichert werden.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Lokal getrennt — Kopplung auf der Website wird entfernt</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Mit der Fernverwaltung verbunden</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Gekoppelt — wartet auf Anmeldung</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Website-Kopplung entfernt. Fernzugriff ist deaktiviert.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Verbindung nicht verfügbar — erneuter Versuch</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Ungültige Einstellungen für die Fernverbindung.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Die Synix-Verwaltung hat eine ungültige Antwort zurückgegeben.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Stellen Sie zuerst die Internetverbindung wieder her und entfernen Sie die alte Kopplung vollständig.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Erzeugen Sie einen neuen Kopplungscode.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[FERNVERWALTUNG] {0} für {1} angefordert.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Website-Passwort wiederherstellen</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Temporäres Passwort erstellen</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Wiederherstellung abbrechen</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Temporäres Passwort anzeigen</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Erstellen Sie hier ein temporäres Passwort. Melden Sie sich damit und Ihrer bestehenden Zwei-Faktor-Authentifizierung oder Ihrem Passkey auf der Website an und wählen Sie ein neues Passwort. Sind beide Methoden erforderlich, bleibt das so. Das Passwort gilt einmal und läuft nach 10 Minuten ab. Ihr bisheriges Passwort bleibt bis zum Abschluss gültig.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Konto: {0}. Bereit zum Erstellen eines temporären Passworts.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Konto: {0}. Läuft in {1} ab.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Wiederherstellung abgelaufen oder widerrufen. Beginnen Sie erneut.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Zu viele Anfragen. Versuchen Sie es später erneut.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Die eingebettete Synix-Lizenz fehlt.</value></data>
 </root>

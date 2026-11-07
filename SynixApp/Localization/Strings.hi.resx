@@ -6865,6 +6865,54 @@ ARK इस मॉड को {2} से डाउनलोड करेगा ज
   <data name="Appearance.Rounded" xml:space="preserve"><value>गोल कोने</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>चौकोर कोने</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>सक्रियता की गिनती साझा करें</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>वैकल्पिक: Synix के चलने के दौरान, पृष्ठभूमि में भी, हर मिनट synix.info को एक यादृच्छिक सत्र कोड भेजें। सर्वर का कोई डेटा नहीं भेजा जाता। सक्रियता 3 मिनट बाद समाप्त होती है। डिफ़ॉल्ट रूप से चालू। आप इसे यहाँ बंद कर सकते हैं।</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>वैकल्पिक: Synix के चलने के दौरान, पृष्ठभूमि में भी, हर 10 मिनट synix.info को एक यादृच्छिक सत्र कोड भेजें। सर्वर का कोई डेटा नहीं भेजा जाता। सक्रियता 15 मिनट बाद समाप्त होती है। डिफ़ॉल्ट रूप से चालू। आप इसे यहाँ बंद कर सकते हैं।</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>दूरस्थ प्रबंधन</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Synix वेबसाइट से सर्वर देखने, शुरू करने, रोकने, फिर से शुरू करने और बैकअप लेने के लिए इस कंप्यूटर को जोड़ें। यहाँ जोड़ने की मंज़ूरी मिलने तक दूरस्थ पहुँच बंद रहेगी।</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>इस कंप्यूटर को जोड़ें या अलग करें</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>मेरा सर्वर कंप्यूटर</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>जोड़ने का कोड बनाएँ</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>इस खाते को मंज़ूरी दें</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>जोड़ना हटाएँ और कनेक्शन बंद करें</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Synix वेबसाइट से इस कंप्यूटर को नियंत्रित करें</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>वेबसाइट पर दिखने वाला कंप्यूटर का नाम</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix प्रबंधक खोलें</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>वेबसाइट में लॉग इन करें और यह कोड डालें। यहाँ केवल अपने उपयोगकर्ता नाम को मंज़ूरी दें।
+
+Synix को खुला या छोटा करके रखें। एक निष्क्रिय कनेक्शन लॉग इन का इंतज़ार करता है। देखते समय सर्वर की जानकारी हर 10 सेकंड में अपडेट होती है। जोड़ना हटाने से सर्वर बंद किए बिना दूरस्थ पहुँच बंद हो जाती है।</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>कंप्यूटर का नाम डालें।</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>आपके खाते से जोड़ने के अनुरोध का इंतज़ार है…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>{0} के लिए जोड़ने की मंज़ूरी दी गई</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>कोड की समय सीमा समाप्त हो गई। जोड़ने का नया कोड बनाएँ।</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>नियंत्रण माँगने वाला खाता: {0}
+केवल तभी मंज़ूरी दें जब यह आपका उपयोगकर्ता नाम हो।</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>जोड़ने की स्थिति जाँची नहीं जा सकी। अपना इंटरनेट कनेक्शन जाँचें।</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synix प्रबंधक से संपर्क नहीं हो सका। कृपया फिर कोशिश करें।</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>कंप्यूटर की पहचान: TPM से सुरक्षित कुंजी</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>कंप्यूटर की पहचान: Windows से सुरक्षित सॉफ़्टवेयर कुंजी (TPM उपलब्ध नहीं है)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>जुड़ा नहीं है</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>जुड़ा है — कनेक्शन का इंतज़ार है</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>स्थानीय कनेक्शन बंद है। कनेक्ट होने पर हटाने की फिर कोशिश करें।</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>जोड़ने की जानकारी लोड नहीं हो सकी। दूरस्थ पहुँच बंद है।</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>इस कंप्यूटर पर जोड़ने की मंज़ूरी देना ज़रूरी है।</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>दूरस्थ पहुँच बंद है। जोड़ने की सेटिंग सहेजी नहीं जा सकीं।</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>स्थानीय कनेक्शन बंद है — वेबसाइट से जोड़ना हटाया जा रहा है</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>दूरस्थ प्रबंधक से जुड़ा है</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>जुड़ा है — लॉग इन का इंतज़ार है</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>वेबसाइट से जोड़ना हटा दिया गया। दूरस्थ पहुँच बंद है।</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>कनेक्शन उपलब्ध नहीं है — फिर कोशिश की जा रही है</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>दूरस्थ कनेक्शन की सेटिंग अमान्य हैं।</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix प्रबंधक ने अमान्य जवाब दिया।</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>इंटरनेट से फिर जुड़ें और पहले पुराना जोड़ना हटाना पूरा करें।</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>जोड़ने का नया कोड बनाएँ।</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[दूरस्थ प्रबंधन] {1} के लिए {0} का अनुरोध किया गया।</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>वेबसाइट का पासवर्ड पुनर्प्राप्त करें</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>अस्थायी पासवर्ड बनाएँ</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>यह पुनर्प्राप्ति रद्द करें</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>अस्थायी पासवर्ड दिखाएँ</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>यहाँ अस्थायी पासवर्ड बनाएँ। उससे और अपने मौजूदा दो-चरणीय सत्यापन या पासकी से वेबसाइट पर साइन इन करें, फिर नया पासवर्ड चुनें। यदि दोनों तरीके अनिवार्य हैं, तो दोनों अनिवार्य रहेंगे। यह केवल एक बार काम करता है और 10 मिनट बाद समाप्त हो जाता है। पुनर्प्राप्ति पूरी होने तक पुराना पासवर्ड मान्य रहता है।</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>खाता: {0}। अस्थायी पासवर्ड बनाने के लिए तैयार।</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>खाता: {0}। {1} में समाप्त होगा।</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>पुनर्प्राप्ति समाप्त या रद्द हो गई। फिर शुरू करें।</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>बहुत अधिक अनुरोध। बाद में फिर कोशिश करें।</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>एम्बेडेड Synix लाइसेंस गायब है।</value></data>
 </root>

@@ -6865,6 +6865,54 @@ Windows Η άδεια τείχους προστασίας και η προώθη
   <data name="Appearance.Rounded" xml:space="preserve"><value>Στρογγυλεμένο</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Τετράγωνο</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Κοινοποίηση ενεργής χρήσης</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Προαιρετικά: αποστολή τυχαίου κωδικού συνεδρίας στο synix.info κάθε λεπτό όσο εκτελείται το Synix, ακόμη και στο παρασκήνιο. Δεν αποστέλλονται δεδομένα διακομιστών. Η δραστηριότητα λήγει μετά από 3 λεπτά. Ενεργοποιημένο από προεπιλογή. Μπορείτε να το απενεργοποιήσετε εδώ.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Προαιρετικά: αποστολή τυχαίου κωδικού συνεδρίας στο synix.info κάθε 10 λεπτά όσο εκτελείται το Synix, ακόμη και στο παρασκήνιο. Δεν αποστέλλονται δεδομένα διακομιστών. Η δραστηριότητα λήγει μετά από 15 λεπτά. Ενεργοποιημένο από προεπιλογή. Μπορείτε να το απενεργοποιήσετε εδώ.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Απομακρυσμένη διαχείριση</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Συσχετίστε αυτόν τον υπολογιστή για να βλέπετε, να ξεκινάτε, να σταματάτε, να επανεκκινείτε και να δημιουργείτε αντίγραφα ασφαλείας των διακομιστών από τον ιστότοπο Synix. Η απομακρυσμένη πρόσβαση παραμένει ανενεργή μέχρι να εγκρίνετε τη συσχέτιση εδώ.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Συσχέτιση ή αποσύνδεση υπολογιστή</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Ο υπολογιστής διακομιστή μου</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Δημιουργία κωδικού συσχέτισης</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Έγκριση αυτού του λογαριασμού</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Κατάργηση συσχέτισης και αποσύνδεση</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Ελέγξτε αυτόν τον υπολογιστή από τον ιστότοπο Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Όνομα υπολογιστή που εμφανίζεται στον ιστότοπο</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Άνοιγμα διαχείρισης Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Συνδεθείτε στον ιστότοπο και εισαγάγετε αυτόν τον κωδικό. Εγκρίνετε εδώ μόνο το δικό σας όνομα χρήστη.
+
+Κρατήστε το Synix ανοιχτό ή ελαχιστοποιημένο. Μια σύνδεση σε αναμονή ανιχνεύει τη σύνδεση στον λογαριασμό. Τα στοιχεία των διακομιστών ενημερώνονται κάθε 10 δευτερόλεπτα κατά την προβολή τους. Η κατάργηση συσχέτισης απενεργοποιεί την απομακρυσμένη πρόσβαση χωρίς να σταματά τους διακομιστές.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Εισαγάγετε όνομα υπολογιστή.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Αναμονή αιτήματος συσχέτισης από τον λογαριασμό σας…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Η συσχέτιση εγκρίθηκε για {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Ο κωδικός έληξε. Δημιουργήστε νέο κωδικό συσχέτισης.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Λογαριασμός που ζητά έλεγχο: {0}
+Εγκρίνετε μόνο αν αυτό είναι το όνομα χρήστη σας.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Αδυναμία ελέγχου της συσχέτισης. Ελέγξτε τη σύνδεσή σας στο διαδίκτυο.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Αδυναμία επικοινωνίας με τη διαχείριση Synix. Δοκιμάστε ξανά.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Ταυτότητα υπολογιστή: κλειδί με προστασία TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Ταυτότητα υπολογιστή: κλειδί λογισμικού με προστασία Windows (TPM μη διαθέσιμο)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Χωρίς συσχέτιση</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Συσχετισμένος — αναμονή σύνδεσης</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Αποσυνδέθηκε τοπικά. Δοκιμάστε ξανά την κατάργηση όταν συνδεθείτε.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Αδυναμία φόρτωσης της συσχέτισης. Η απομακρυσμένη πρόσβαση είναι ανενεργή.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Απαιτείται έγκριση συσχέτισης σε αυτόν τον υπολογιστή.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Η απομακρυσμένη πρόσβαση απενεργοποιήθηκε. Αδυναμία αποθήκευσης των ρυθμίσεων συσχέτισης.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Αποσυνδέθηκε τοπικά — κατάργηση συσχέτισης στον ιστότοπο</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Συνδεδεμένος στην απομακρυσμένη διαχείριση</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Συσχετισμένος — αναμονή σύνδεσης στον λογαριασμό</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Η συσχέτιση στον ιστότοπο καταργήθηκε. Η απομακρυσμένη πρόσβαση είναι ανενεργή.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Μη διαθέσιμη σύνδεση — νέα προσπάθεια</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Μη έγκυρες ρυθμίσεις απομακρυσμένης σύνδεσης.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Η διαχείριση Synix επέστρεψε μη έγκυρη απόκριση.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Συνδεθείτε ξανά στο διαδίκτυο και ολοκληρώστε πρώτα την κατάργηση της παλιάς συσχέτισης.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Δημιουργήστε νέο κωδικό συσχέτισης.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ΑΠΟΜΑΚΡΥΣΜΕΝΗ ΔΙΑΧΕΙΡΙΣΗ] Ζητήθηκε {0} για {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Ανάκτηση κωδικού ιστοτόπου</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Δημιουργία προσωρινού κωδικού</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Ακύρωση ανάκτησης</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Εμφάνιση προσωρινού κωδικού</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Δημιουργήστε εδώ έναν προσωρινό κωδικό. Συνδεθείτε στον ιστότοπο με αυτόν και την υπάρχουσα επαλήθευση δύο παραγόντων ή το κλειδί πρόσβασης και επιλέξτε νέο κωδικό. Αν απαιτούνται και οι δύο μέθοδοι, παραμένουν υποχρεωτικές. Ο κωδικός λειτουργεί μία φορά και λήγει μετά από 10 λεπτά. Ο αρχικός κωδικός ισχύει μέχρι να ολοκληρωθεί η ανάκτηση.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Λογαριασμός: {0}. Έτοιμο για δημιουργία προσωρινού κωδικού.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Λογαριασμός: {0}. Λήγει σε {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Η ανάκτηση έληξε ή ανακλήθηκε. Ξεκινήστε ξανά.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Πάρα πολλά αιτήματα. Δοκιμάστε αργότερα.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Λείπει η ενσωματωμένη άδεια Synix.</value></data>
 </root>

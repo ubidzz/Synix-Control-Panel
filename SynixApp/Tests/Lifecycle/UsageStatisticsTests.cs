@@ -7,7 +7,7 @@ namespace Synix_Control_Panel.Tests;
 
 public sealed class UsageStatisticsTests
 {
-    private sealed record Sent(HttpMethod Method, Uri? Uri, string? Credential, bool HasBody, string[] Headers);
+    private sealed record Sent(HttpMethod Method, Uri? Uri, string? Credential, bool HasBody, string[] Headers, string UserAgent);
     private sealed class Handler : HttpMessageHandler
     {
         internal readonly Channel<Sent> Requests = Channel.CreateUnbounded<Sent>();
@@ -17,7 +17,7 @@ public sealed class UsageStatisticsTests
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             Requests.Writer.TryWrite(new(request.Method, request.RequestUri, request.Headers.Authorization?.Parameter,
-                request.Content != null, request.Headers.Select(header => header.Key).Order().ToArray()));
+                request.Content != null, request.Headers.Select(header => header.Key).Order().ToArray(), request.Headers.UserAgent.ToString()));
             return Response(request, cancellationToken);
         }
         internal async Task<Sent> Next() => await Requests.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
@@ -47,11 +47,16 @@ public sealed class UsageStatisticsTests
         Assert.Matches("^[0-9a-f]{64}$", heartbeat.Credential!);
         Assert.False(heartbeat.HasBody);
         Assert.Equal(new[] { "Authorization", "User-Agent" }, heartbeat.Headers);
+        Assert.Equal("Synix", heartbeat.UserAgent);
         await service.SetEnabledAsync(true); // Reapplying a setting must not create a second reporting loop.
         await service.SetEnabledAsync(false);
         Sent removal = await handler.Next();
         Assert.Equal(HttpMethod.Delete, removal.Method);
+        Assert.Equal(heartbeat.Uri, removal.Uri);
         Assert.Equal(heartbeat.Credential, removal.Credential);
+        Assert.False(removal.HasBody);
+        Assert.Equal(heartbeat.Headers, removal.Headers);
+        Assert.Equal("Synix", removal.UserAgent);
         Assert.False(handler.Requests.Reader.TryRead(out _));
     }
 

@@ -6865,6 +6865,54 @@ Dacă Synix nu se redeschide, executaţi programul existent Synix sau descărca�
   <data name="Appearance.Rounded" xml:space="preserve"><value>Rotunjit</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Pătrat</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Partajează activitatea</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opțional: trimite un cod de sesiune aleatoriu către synix.info în fiecare minut cât timp Synix rulează, inclusiv în fundal. Nu sunt trimise date despre servere. Activitatea expiră după 3 minute. Activat implicit. Îl puteți dezactiva aici.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opțional: trimite un cod de sesiune aleatoriu către synix.info la fiecare 10 minute cât timp Synix rulează, inclusiv în fundal. Nu sunt trimise date despre servere. Activitatea expiră după 15 minute. Activat implicit. Îl puteți dezactiva aici.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Administrare la distanță</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Asociază acest computer pentru a vizualiza, porni, opri, reporni și crea copii de siguranță ale serverelor de pe site-ul Synix. Accesul la distanță rămâne dezactivat până aprobi asocierea aici.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Asociază sau deconectează acest computer</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>PC-ul meu server</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Generează cod de asociere</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Aprobă acest cont</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Elimină asocierea și deconectează</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Controlează acest computer de pe site-ul Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Numele computerului afișat pe site</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Deschide administrarea Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Conectează-te pe site și introdu acest cod. Aprobă aici doar propriul nume de utilizator.
+
+Păstrează Synix deschis sau minimizat. O conexiune în așteptare detectează autentificarea. Detaliile serverelor se actualizează la fiecare 10 secunde în timpul vizualizării. Eliminarea asocierii dezactivează accesul la distanță fără a opri serverele.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Introdu un nume pentru computer.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Se așteaptă solicitarea de asociere a contului tău…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Asociere aprobată pentru {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Cod expirat. Generează un nou cod de asociere.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Cont care solicită controlul: {0}
+Aprobă doar dacă acesta este numele tău de utilizator.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Asocierea nu a putut fi verificată. Verifică conexiunea la internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Administrarea Synix nu poate fi contactată. Încearcă din nou.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identitatea computerului: cheie protejată prin TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identitatea computerului: cheie software protejată de Windows (TPM indisponibil)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Neasociat</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Asociat — se așteaptă conexiunea</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Deconectat local. Reîncearcă eliminarea după conectare.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Asocierea nu a putut fi încărcată. Accesul la distanță este dezactivat.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Asocierea trebuie aprobată pe acest computer.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Acces la distanță dezactivat. Setările asocierii nu au putut fi salvate.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Deconectat local — se elimină asocierea de pe site</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Conectat la administrarea la distanță</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Asociat — se așteaptă autentificarea</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Asocierea cu site-ul a fost eliminată. Accesul la distanță este dezactivat.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Conexiune indisponibilă — se reîncearcă</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Setări de conexiune la distanță nevalide.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Administrarea Synix a returnat un răspuns nevalid.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Reconectează-te la internet și finalizează mai întâi eliminarea vechii asocieri.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Generează un nou cod de asociere.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ADMINISTRARE LA DISTANȚĂ] Acțiunea {0} a fost solicitată pentru {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Recuperează parola site-ului</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Creează o parolă temporară</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Anulează această recuperare</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Arată parola temporară</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Creează aici o parolă temporară. Autentifică-te pe site cu ea și cu autentificarea în doi pași sau cheia de acces existentă, apoi alege o parolă nouă. Dacă sunt necesare ambele metode, ambele rămân obligatorii. Parola funcționează o singură dată și expiră după 10 minute. Parola inițială rămâne valabilă până la finalizarea recuperării.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Cont: {0}. Poți crea o parolă temporară.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Cont: {0}. Expiră în {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Recuperarea a expirat sau a fost revocată. Reîncepe.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Prea multe solicitări. Încearcă mai târziu.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Licența Synix încorporată lipsește.</value></data>
 </root>

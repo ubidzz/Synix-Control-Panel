@@ -15962,6 +15962,54 @@ Prieš keičiant sistemą ar žaidimą, išsaugokite pasaulį, konfigūraciją i
     <value>Kampuotas</value>
   </data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Bendrinti aktyvumo skaičių</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Pasirenkama: kas minutę siųsti atsitiktinį seanso kodą į synix.info, kol Synix veikia, taip pat ir fone. Serverių duomenys nesiunčiami. Aktyvumas baigiasi po 3 minučių. Pagal numatytuosius nustatymus įjungta. Čia galite išjungti.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Pasirenkama: kas 10 minučių siųsti atsitiktinį seanso kodą į synix.info, kol Synix veikia, taip pat ir fone. Serverių duomenys nesiunčiami. Aktyvumas baigiasi po 15 minučių. Pagal numatytuosius nustatymus įjungta. Čia galite išjungti.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Nuotolinis valdymas</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Susiekite šį kompiuterį, kad Synix svetainėje galėtumėte peržiūrėti, paleisti, sustabdyti, iš naujo paleisti serverius ir kurti jų atsargines kopijas. Nuotolinė prieiga liks išjungta, kol čia patvirtinsite susiejimą.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Susieti arba atjungti šį kompiuterį</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mano serverio kompiuteris</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Sukurti susiejimo kodą</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Patvirtinti šią paskyrą</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Pašalinti susiejimą ir atjungti</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Valdykite šį kompiuterį iš Synix svetainės</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Svetainėje rodomas kompiuterio pavadinimas</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Atidaryti Synix valdymą</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Prisijunkite prie svetainės ir įveskite šį kodą. Čia patvirtinkite tik savo naudotojo vardą.
+
+Palikite Synix atidarytą arba sumažintą. Laukiantis ryšys aptinka prisijungimą. Peržiūrint serverių duomenys atnaujinami kas 10 sekundžių. Pašalinus susiejimą nuotolinė prieiga išjungiama nesustabdant serverių.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Įveskite kompiuterio pavadinimą.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Laukiama jūsų paskyros susiejimo užklausos…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Susiejimas patvirtintas: {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kodo galiojimas baigėsi. Sukurkite naują susiejimo kodą.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Valdymo prašanti paskyra: {0}
+Patvirtinkite tik jei tai jūsų naudotojo vardas.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Nepavyksta patikrinti susiejimo. Patikrinkite interneto ryšį.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Nepavyksta susisiekti su Synix valdymu. Bandykite dar kartą.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Kompiuterio tapatybė: TPM apsaugotas raktas</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Kompiuterio tapatybė: Windows apsaugotas programinis raktas (TPM nepasiekiamas)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Nesusieta</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Susieta — laukiama ryšio</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Atjungta vietoje. Prisijungę bandykite pašalinti dar kartą.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Nepavyko įkelti susiejimo. Nuotolinė prieiga išjungta.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Susiejimą reikia patvirtinti šiame kompiuteryje.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Nuotolinė prieiga išjungta. Nepavyko išsaugoti susiejimo nustatymų.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Atjungta vietoje — šalinamas susiejimas su svetaine</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Prisijungta prie nuotolinio valdymo</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Susieta — laukiama prisijungimo prie paskyros</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Susiejimas su svetaine pašalintas. Nuotolinė prieiga išjungta.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Ryšys nepasiekiamas — bandoma dar kartą</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Netinkami nuotolinio ryšio nustatymai.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix valdymas pateikė netinkamą atsakymą.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Vėl prisijunkite prie interneto ir pirmiausia užbaikite seno susiejimo šalinimą.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Sukurkite naują susiejimo kodą.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[NUOTOLINIS VALDYMAS] Serveriui {1} paprašyta veiksmo {0}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Atkurti svetainės slaptažodį</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Sukurti laikiną slaptažodį</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Atšaukti šį atkūrimą</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Rodyti laikiną slaptažodį</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Čia sukurkite laikiną slaptažodį. Prisijunkite prie svetainės juo ir esamu dviejų veiksnių autentifikavimu arba prieigos raktu, tada pasirinkite naują slaptažodį. Jei reikia abiejų metodų, abu lieka privalomi. Slaptažodis vienkartinis ir galioja 10 minučių. Pradinis slaptažodis galioja iki atkūrimo pabaigos.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Paskyra: {0}. Galima sukurti laikiną slaptažodį.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Paskyra: {0}. Galioja dar {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Atkūrimas baigė galioti arba buvo atšauktas. Pradėkite iš naujo.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Per daug užklausų. Bandykite vėliau.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Trūksta įterptosios Synix licencijos.</value></data>
 </root>

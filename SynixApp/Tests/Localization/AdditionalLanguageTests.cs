@@ -2,6 +2,7 @@ using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.Resources;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -28,17 +29,43 @@ public sealed class AdditionalLanguageTests
 		{ "hi-IN", "हिन्दी" }, { "th-TH", "ไทย" },
 		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }, { "ca-ES", "Català" },
 		{ "sk-SK", "Slovenčina" }, { "sl-SI", "Slovenščina" },
-		{ "et-EE", "Eesti" }, { "lv-LV", "Latviešu" }, { "lt-LT", "Lietuvių" }
+		{ "et-EE", "Eesti" }, { "lv-LV", "Latviešu" }, { "lt-LT", "Lietuvių" },
+		{ "ms-MY", "Bahasa Melayu" }, { "fil-PH", "Filipino" }
 	};
 
 	private static ResourceManager CreateManager() => new(
 		"Synix_Control_Panel.Localization.Strings", typeof(LocalizationManager).Assembly);
 
 	[Theory]
+	[InlineData("ms")]
+	[InlineData("fil")]
+	public void NewCatalogsKeepDiagnosticSymbolsAndActivityPrefixes(string culture)
+	{
+		ResourceManager manager = CreateManager();
+		ResourceSet english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
+		ResourceSet translated = manager.GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
+		int[] Symbols(string value) => value.EnumerateRunes()
+			.Where(rune => rune.Value is >= 0x2600 and <= 0x27BF or >= 0x1F000 and <= 0x1FAFF)
+			.Select(rune => rune.Value).Order().ToArray();
+		foreach (DictionaryEntry entry in english)
+		{
+			string source = (string)entry.Value!;
+			string value = translated.GetString((string)entry.Key)!;
+			Assert.True(Symbols(source).SequenceEqual(Symbols(value)),
+				$"{culture}: diagnostic symbols changed in {entry.Key}");
+			if (source.StartsWith('[') && source.Contains("] ", StringComparison.Ordinal))
+				Assert.True(value.StartsWith('[') && value.Contains("] ", StringComparison.Ordinal),
+					$"{culture}: activity prefix lost in {entry.Key}");
+		}
+	}
+
+	[Theory]
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
-	public void BalticCatalogsKeepFilePickerPatternsAndSeparators(string culture)
+	[InlineData("ms")]
+	[InlineData("fil")]
+	public void AddedCatalogsKeepFilePickerPatternsAndSeparators(string culture)
 	{
 		ResourceManager manager = CreateManager();
 		ResourceSet english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
@@ -63,6 +90,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
+	[InlineData("ms")]
+	[InlineData("fil")]
 	public void AddedCatalogsKeepLiteralCommandsPathsAndIntervals(string culture)
 	{
 		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
@@ -85,7 +114,9 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
-	public void BalticCatalogsKeepWinGetCommandsLiteral(string culture)
+	[InlineData("ms")]
+	[InlineData("fil")]
+	public void AddedCatalogsKeepWinGetCommandsLiteral(string culture)
 	{
 		string guide = CreateManager().GetString("Content.8579FAD0312C27797E9E",
 			CultureInfo.GetCultureInfo(culture))!;
@@ -100,6 +131,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
+	[InlineData("ms")]
+	[InlineData("fil")]
 	public void AddedCatalogsDoNotContainTranslationToolArtifacts(string culture)
 	{
 		ResourceSet catalog = CreateManager().GetResourceSet(CultureInfo.GetCultureInfo(culture), true, false)!;
@@ -114,6 +147,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
+	[InlineData("ms")]
+	[InlineData("fil")]
 	public void AddedCatalogsPreserveEveryFormatAndGamePlaceholder(string culture)
 	{
 		ResourceManager manager = CreateManager();
@@ -140,6 +175,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et", "Edasi: ülevaatus", "Salvesta serveri seaded", "Välimus")]
 	[InlineData("lv", "Tālāk: pārskatīt", "Saglabāt servera iestatījumus", "Izskats")]
 	[InlineData("lt", "Toliau: peržiūra", "Išsaugoti serverio nustatymus", "Išvaizda")]
+	[InlineData("ms", "Seterusnya: Semakan", "Simpan Tetapan Pelayan", "Penampilan")]
+	[InlineData("fil", "Susunod: Suriin", "I-save ang mga Setting ng Server", "Hitsura")]
 	public void AddedLanguagesIncludeReviewAndAppearanceWithoutChangingPreservedPaths(
 		string culture, string review, string save, string appearance)
 	{
@@ -169,6 +206,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
+	[InlineData("ms")]
+	[InlineData("fil")]
 	public void AddedLanguagesKeepLiteralWindowsPathsAndConfigurationExamples(string culture)
 	{
 		ResourceManager manager = CreateManager();
@@ -206,6 +245,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
+	[InlineData("ms")]
+	[InlineData("fil")]
 	public void AdditionalLanguagesCoverTheEntireNeutralCatalog(string resourceCulture)
 	{
 		ResourceManager manager = CreateManager();
@@ -238,6 +279,8 @@ public sealed class AdditionalLanguageTests
 	[InlineData("et")]
 	[InlineData("lv")]
 	[InlineData("lt")]
+	[InlineData("ms")]
+	[InlineData("fil")]
 	public void NewCatalogsPreserveTheDownloadSpeedUnit(string resourceCulture)
 	{
 		ResourceSet catalog = CreateManager().GetResourceSet(
@@ -356,6 +399,12 @@ public sealed class AdditionalLanguageTests
 	[InlineData("LV-lv", "lv-LV")]
 	[InlineData("lt", "lt-LT")]
 	[InlineData("lt-LT", "lt-LT")]
+	[InlineData("ms", "ms-MY")]
+	[InlineData("ms-MY", "ms-MY")]
+	[InlineData("ms-BN", "ms-MY")]
+	[InlineData("ms-SG", "ms-MY")]
+	[InlineData("fil", "fil-PH")]
+	[InlineData("FIL-ph", "fil-PH")]
 	[InlineData("fr-CA", "fr-FR")]
 	[InlineData("", "en-US")]
 	[InlineData("unsupported-language", "en-US")]

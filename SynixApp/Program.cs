@@ -243,6 +243,7 @@ namespace Synix_Control_Panel.SynixApp
 			{
 				SynixSessionRecovery.EndSession();
 				UsageStatisticsService.StopForExit();
+				RemoteManagerService.StopForExit();
 				FileHandler.FlushLogsAsync()
 					.GetAwaiter()
 					.GetResult();

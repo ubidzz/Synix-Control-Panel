@@ -15962,6 +15962,54 @@ Pirms sistēmas vai spēles maiņas saglabājiet pasaules, konfigurācijas un sp
     <value>Kvadrātveida</value>
   </data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Kopīgot aktivitātes skaitu</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Pēc izvēles: sūtīt nejaušu sesijas kodu uz synix.info reizi minūtē, kamēr Synix darbojas, arī fonā. Serveru dati netiek sūtīti. Aktivitāte beidzas pēc 3 minūtēm. Pēc noklusējuma ieslēgts. Šeit varat to izslēgt.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Pēc izvēles: sūtīt nejaušu sesijas kodu uz synix.info ik pēc 10 minūtēm, kamēr Synix darbojas, arī fonā. Serveru dati netiek sūtīti. Aktivitāte beidzas pēc 15 minūtēm. Pēc noklusējuma ieslēgts. Šeit varat to izslēgt.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Attālā pārvaldība</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Savienojiet šo datoru pārī, lai Synix vietnē skatītu, palaistu, apturētu, restartētu serverus un veidotu to rezerves kopijas. Attālā piekļuve paliek izslēgta, līdz šeit apstiprināt savienošanu pārī.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Savienot pārī vai atvienot šo datoru</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mans servera dators</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Izveidot pāra kodu</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Apstiprināt šo kontu</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Noņemt pāri un atvienot</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Vadiet šo datoru no Synix vietnes</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Vietnē redzamais datora nosaukums</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Atvērt Synix pārvaldību</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Piesakieties vietnē un ievadiet šo kodu. Šeit apstipriniet tikai savu lietotājvārdu.
+
+Atstājiet Synix atvērtu vai minimizētu. Gaidīšanas savienojums nosaka pieteikšanos. Serveru dati skatīšanas laikā tiek atjaunināti ik pēc 10 sekundēm. Pāra noņemšana izslēdz attālo piekļuvi, neapturot serverus.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Ievadiet datora nosaukumu.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Gaida jūsu konta pieprasījumu savienot pārī…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Savienošana pārī apstiprināta: {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Koda derīguma termiņš ir beidzies. Izveidojiet jaunu pāra kodu.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Konts, kas pieprasa vadību: {0}
+Apstipriniet tikai tad, ja tas ir jūsu lietotājvārds.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Nevar pārbaudīt pāra savienojumu. Pārbaudiet interneta savienojumu.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Nevar sazināties ar Synix pārvaldību. Mēģiniet vēlreiz.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Datora identitāte: ar TPM aizsargāta atslēga</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Datora identitāte: ar Windows aizsargāta programmatūras atslēga (TPM nav pieejams)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Nav savienots pārī</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Savienots pārī — gaida savienojumu</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Lokāli atvienots. Mēģiniet noņemt vēlreiz pēc savienošanās.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Nevarēja ielādēt pāra savienojumu. Attālā piekļuve ir atspējota.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Savienošana pārī jāapstiprina šajā datorā.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Attālā piekļuve atspējota. Nevarēja saglabāt pāra iestatījumus.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Lokāli atvienots — noņem pāra savienojumu ar vietni</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Savienots ar attālo pārvaldību</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Savienots pārī — gaida pieteikšanos</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Pāra savienojums ar vietni noņemts. Attālā piekļuve ir atspējota.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Savienojums nav pieejams — mēģina vēlreiz</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Nederīgi attālā savienojuma iestatījumi.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix pārvaldība atgrieza nederīgu atbildi.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Atjaunojiet interneta savienojumu un vispirms pabeidziet vecā pāra noņemšanu.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Izveidojiet jaunu pāra kodu.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ATTĀLĀ PĀRVALDĪBA] Serverim {1} pieprasīta darbība {0}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Atjaunot vietnes paroli</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Izveidot pagaidu paroli</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Atcelt šo atjaunošanu</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Rādīt pagaidu paroli</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Šeit izveidojiet pagaidu paroli. Piesakieties vietnē ar to un esošo divfaktoru autentifikāciju vai piekļuves atslēgu, pēc tam izvēlieties jaunu paroli. Ja ir vajadzīgas abas metodes, abas paliek obligātas. Paroli var izmantot vienreiz, un tā beidzas pēc 10 minūtēm. Sākotnējā parole ir derīga līdz atjaunošanas pabeigšanai.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Konts: {0}. Var izveidot pagaidu paroli.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Konts: {0}. Beidzas pēc {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Atjaunošanas laiks ir beidzies vai tā ir atsaukta. Sāciet vēlreiz.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Pārāk daudz pieprasījumu. Mēģiniet vēlāk.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Trūkst iegultās Synix licences.</value></data>
 </root>

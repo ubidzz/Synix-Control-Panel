@@ -6865,6 +6865,54 @@ Ha a Synix nem nyílik meg újra, futtassa a meglévő Synix programot, vagy tö
   <data name="Appearance.Rounded" xml:space="preserve"><value>Lekerekített</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Szögletes</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Aktív használat megosztása</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcionális: véletlenszerű munkamenetkód küldése a synix.info oldalnak percenként, amíg a Synix fut, a háttérben is. Szerveradatok nem kerülnek elküldésre. Az aktivitás 3 perc után lejár. Alapértelmezetten bekapcsolva. Itt kikapcsolhatja.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcionális: véletlenszerű munkamenetkód küldése a synix.info oldalnak 10 percenként, amíg a Synix fut, a háttérben is. Szerveradatok nem kerülnek elküldésre. Az aktivitás 15 perc után lejár. Alapértelmezetten bekapcsolva. Itt kikapcsolhatja.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Távoli kezelés</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Párosítsd ezt a számítógépet, hogy a Synix webhelyéről megtekinthesd, elindíthasd, leállíthasd és újraindíthasd a szervereket, illetve biztonsági mentést készíthess. A távoli hozzáférés kikapcsolva marad, amíg itt jóvá nem hagyod a párosítást.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>A számítógép párosítása vagy leválasztása</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Saját szervergép</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Párosítási kód létrehozása</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>A fiók jóváhagyása</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Párosítás törlése és leválasztás</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>A számítógép vezérlése a Synix webhelyéről</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>A webhelyen megjelenő számítógépnév</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix-kezelő megnyitása</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Jelentkezz be a webhelyen, és add meg ezt a kódot. Itt csak a saját felhasználónevedet hagyd jóvá.
+
+Hagyd a Synixet nyitva vagy kis méretben. Egy készenléti kapcsolat figyeli a bejelentkezést. A szerveradatok megtekintés közben 10 másodpercenként frissülnek. A párosítás törlése a szerverek leállítása nélkül tiltja le a távoli hozzáférést.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Adj meg egy számítógépnevet.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Várakozás a fiókod párosítási kérelmére…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Párosítás jóváhagyva: {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>A kód lejárt. Hozz létre új párosítási kódot.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>A vezérlést kérő fiók: {0}
+Csak akkor hagyd jóvá, ha ez a te felhasználóneved.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>A párosítás nem ellenőrizhető. Ellenőrizd az internetkapcsolatot.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>A Synix-kezelő nem érhető el. Próbáld újra.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Számítógép-azonosító: TPM által védett kulcs</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Számítógép-azonosító: Windows által védett szoftveres kulcs (TPM nem érhető el)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Nincs párosítva</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Párosítva — várakozás a kapcsolódásra</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Helyileg leválasztva. Kapcsolódás után próbáld újra az eltávolítást.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>A párosítás nem tölthető be. A távoli hozzáférés letiltva.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>A párosítást ezen a számítógépen kell jóváhagyni.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Távoli hozzáférés letiltva. A párosítási beállítások nem menthetők.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Helyileg leválasztva — a webhelyes párosítás eltávolítása</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Csatlakoztatva a távoli kezelőhöz</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Párosítva — várakozás a bejelentkezésre</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>A webhelyes párosítás eltávolítva. A távoli hozzáférés letiltva.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>A kapcsolat nem érhető el — újrapróbálkozás</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Érvénytelen távoli kapcsolati beállítások.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>A Synix-kezelő érvénytelen választ adott.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Csatlakozz újra az internethez, és előbb fejezd be a korábbi párosítás eltávolítását.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Hozz létre új párosítási kódot.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[TÁVOLI KEZELÉS] {0} művelet kérve ehhez: {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Webhelyjelszó helyreállítása</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Ideiglenes jelszó létrehozása</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Helyreállítás megszakítása</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Ideiglenes jelszó megjelenítése</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Itt létrehozhat egy ideiglenes jelszót. Jelentkezzen be vele a webhelyen, használja meglévő kétlépcsős hitelesítését vagy hozzáférési kulcsát, majd válasszon új jelszót. Ha mindkét módszer kötelező, továbbra is mindkettő szükséges. A jelszó egyszer használható és 10 perc után lejár. Az eredeti jelszó a helyreállítás befejezéséig érvényes.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Fiók: {0}. Létrehozható az ideiglenes jelszó.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Fiók: {0}. Lejár: {1} múlva.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>A helyreállítás lejárt vagy visszavonták. Kezdje újra.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Túl sok kérés. Próbálja újra később.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>A beágyazott Synix licenc hiányzik.</value></data>
 </root>

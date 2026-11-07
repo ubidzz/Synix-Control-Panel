@@ -3,7 +3,7 @@
 
 Target: every non-invariant neutral language reported by Windows/.NET, retaining separate writing-system entries. Regional settings resolve to an appropriate catalog where available; they are not automatically separate translations.
 
-This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **35 structurally complete catalogs, including English**, with **4,542 required text entries per catalog**. **247 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
+This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **37 structurally complete catalogs, including English**, with **4,542 required text entries per catalog**. **245 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
 
 Only complete, non-preview catalogs are eligible for the app's language picker. Empty entries, missing or unexpected source keys, and untranslated English-only copies are rejected. Key coverage does not certify translation accuracy: terminology, technical syntax, layout and accessibility still require review. This inventory does not add new translations or claim that right-to-left layout is finished.
 
@@ -23,6 +23,7 @@ Inventory runtime: .NET 10.0.14; Microsoft Windows NT 10.0.26200.0. Available cu
 | es | Complete | 0 | 0 |
 | et | Complete | 0 | 0 |
 | fi | Complete | 0 | 0 |
+| fil | Complete | 0 | 0 |
 | fr | Complete | 0 | 0 |
 | hi | Complete | 0 | 0 |
 | hr | Complete | 0 | 0 |
@@ -33,6 +34,7 @@ Inventory runtime: .NET 10.0.14; Microsoft Windows NT 10.0.26200.0. Available cu
 | ko | Complete | 0 | 0 |
 | lt | Complete | 0 | 0 |
 | lv | Complete | 0 | 0 |
+| ms | Complete | 0 | 0 |
 | nb | Complete | 0 | 0 |
 | nl | Complete | 0 | 0 |
 | pl | Complete | 0 | 0 |
@@ -122,7 +124,7 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | ff-Adlm | Fula (Adlam) | 𞤆𞤵𞤤𞤢𞤪 (𞤀𞤁𞤂𞤢𞤃) | RTL | Translation needed; RTL layout review needed |
 | ff-Latn | Fula (Latin) | Fula (Latin) | LTR | Translation needed |
 | fi | Finnish | suomi | LTR | Catalog: fi |
-| fil | Filipino | Filipino | LTR | Translation needed |
+| fil | Filipino | Filipino | LTR | Catalog: fil |
 | fo | Faroese | føroyskt | LTR | Translation needed |
 | fr | French | français | LTR | Catalog: fr |
 | fur | Friulian | furlan | LTR | Translation needed |
@@ -213,7 +215,7 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | mni-Beng | Manipuri (Bangla) | মৈতৈলোন্ (বাংলা) | LTR | Translation needed |
 | moh | Mohawk | Kanienʼkéha | LTR | Translation needed |
 | mr | Marathi | मराठी | LTR | Translation needed |
-| ms | Malay | Melayu | LTR | Translation needed |
+| ms | Malay | Melayu | LTR | Catalog: ms |
 | mt | Maltese | Malti | LTR | Translation needed |
 | mua | Mundang | MUNDAŊ | LTR | Translation needed |
 | my | Burmese | မြန်မာ | LTR | Translation needed |

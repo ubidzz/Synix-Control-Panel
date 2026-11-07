@@ -7788,7 +7788,55 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="Appearance.Rounded" xml:space="preserve"><value>圆角</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>分享活跃数量</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>可选：在 Synix 运行期间（包括后台运行），每分钟向 synix.info 发送一个随机会话代码。不会发送服务器数据。活跃状态在 3 分钟后过期。默认开启。您可以在此关闭。</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>可选：在 Synix 运行期间（包括后台运行），每 10 分钟向 synix.info 发送一个随机会话代码。不会发送服务器数据。活跃状态在 15 分钟后过期。默认开启。您可以在此关闭。</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>远程管理</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>配对此计算机后，即可通过 Synix 网站查看、启动、停止、重启和备份服务器。在此处批准配对之前，远程访问将保持关闭。</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>配对或断开此计算机</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>我的服务器电脑</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>生成配对码</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>批准此账户</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>取消配对并断开连接</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>通过 Synix 网站控制此计算机</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>网站上显示的计算机名称</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>打开 Synix 管理器</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>登录网站并输入此配对码。请在此处仅批准您自己的用户名。
+
+请保持 Synix 打开或最小化。待机连接会检测登录。在查看服务器信息时，信息每 10 秒更新一次。取消配对会关闭远程访问，但不会停止服务器。</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>请输入计算机名称。</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>正在等待您的账户请求配对…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>已批准 {0} 的配对</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>配对码已过期。请生成新的配对码。</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>请求控制的账户：{0}
+请仅在此用户名属于您时批准。</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>无法检查配对状态。请检查您的互联网连接。</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>无法连接到 Synix 管理器。请重试。</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>计算机身份：受 TPM 保护的密钥</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>计算机身份：受 Windows 保护的软件密钥（TPM 不可用）</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>未配对</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>已配对 — 等待连接</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>已在本地断开连接。请在联网后重试移除。</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>无法加载配对信息。远程访问已禁用。</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>需要在此计算机上批准配对。</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>远程访问已禁用。无法保存配对设置。</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>已在本地断开连接 — 正在移除网站配对</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>已连接到远程管理器</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>已配对 — 等待登录</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>已移除网站配对。远程访问已禁用。</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>连接不可用 — 正在重试</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>远程连接设置无效。</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix 管理器返回了无效响应。</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>请重新连接互联网，并先完成移除旧配对。</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>请生成新的配对码。</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[远程管理] 已请求对 {1} 执行 {0} 操作。</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>恢复网站密码</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>创建临时密码</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>取消此次恢复</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>显示临时密码</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>在此创建临时密码。使用该密码及现有的双重验证或通行密钥登录网站，然后设置新密码。如果原来要求两种验证方式，则仍需完成两种验证。临时密码仅可使用一次，10 分钟后过期。恢复完成前，原密码仍然有效。</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>账户：{0}。可以创建临时密码。</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>账户：{0}。将在 {1} 后过期。</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>恢复已过期或被撤销。请重新开始。</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>请求过多。请稍后重试。</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>嵌入式 Synix 许可证丢失。</value></data>
 </root>
 

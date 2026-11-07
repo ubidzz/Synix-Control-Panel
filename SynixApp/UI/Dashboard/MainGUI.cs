@@ -70,6 +70,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			ThemeManager.Apply(this);
 
 			FileHandler.LoadServers();
+			Shown += (_, _) => RemoteManagerService.Resume();
 			AddGuidanceMenuItems();
 			PopulateStatusFilters();
 			LocalizationManager.LanguageChanged += InterfaceLanguageChanged;

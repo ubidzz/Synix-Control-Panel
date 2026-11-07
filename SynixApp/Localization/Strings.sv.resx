@@ -7789,7 +7789,55 @@ Om Synix inte öppnas igen kör du det befintliga Synix-programmet eller hämtar
   <data name="Appearance.Rounded" xml:space="preserve"><value>Rundad</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Kantig</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Dela aktivitetsräkning</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valfritt: skicka en slumpmässig sessionskod till synix.info varje minut medan Synix körs, även i bakgrunden. Inga serverdata skickas. Aktiviteten upphör efter 3 minuter. Påslaget som standard. Du kan stänga av det här.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Valfritt: skicka en slumpmässig sessionskod till synix.info var 10:e minut medan Synix körs, även i bakgrunden. Inga serverdata skickas. Aktiviteten upphör efter 15 minuter. Påslaget som standard. Du kan stänga av det här.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Fjärrhanterare</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Parkoppla datorn för att visa, starta, stoppa, starta om och säkerhetskopiera servrar från Synix webbplats. Fjärråtkomst förblir avstängd tills du godkänner parkopplingen här.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Parkoppla eller koppla från datorn</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Min serverdator</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Skapa parkopplingskod</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Godkänn det här kontot</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Ta bort parkoppling och koppla från</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Styr datorn från Synix webbplats</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Datornamn som visas på webbplatsen</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Öppna Synix-hanteraren</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Logga in på webbplatsen och ange koden. Godkänn bara ditt eget användarnamn här.
+
+Låt Synix vara öppet eller minimerat. En vilande anslutning väntar på inloggning. Serveruppgifter uppdateras var 10:e sekund medan de visas. Om parkopplingen tas bort stängs fjärråtkomst av utan att servrarna stoppas.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Ange ett datornamn.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Väntar på parkopplingsbegäran från ditt konto…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Parkoppling godkänd för {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Koden har gått ut. Skapa en ny parkopplingskod.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Konto som begär kontroll: {0}
+Godkänn bara om det är ditt användarnamn.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Kunde inte kontrollera parkopplingen. Kontrollera internetanslutningen.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Kunde inte nå Synix-hanteraren. Försök igen.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Datoridentitet: TPM-skyddad nyckel</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Datoridentitet: Windows-skyddad programvarunyckel (TPM är inte tillgängligt)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Inte parkopplad</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Parkopplad — väntar på anslutning</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Frånkopplad lokalt. Försök ta bort parkopplingen igen när anslutningen är tillbaka.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Parkopplingen kunde inte läsas in. Fjärråtkomst är avstängd.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Parkopplingen måste godkännas lokalt.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Fjärråtkomst avstängd. Parkopplingsinställningarna kunde inte sparas.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Frånkopplad lokalt — tar bort parkopplingen på webbplatsen</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Ansluten till fjärrhanteraren</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Parkopplad — väntar på inloggning</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Parkopplingen på webbplatsen har tagits bort. Fjärråtkomst är avstängd.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Anslutning saknas — försöker igen</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Ogiltiga inställningar för fjärranslutning.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix-hanteraren gav ett ogiltigt svar.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Anslut till internet och slutför borttagningen av den gamla parkopplingen först.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Skapa en ny parkopplingskod.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[FJÄRRHANTERARE] {0} begärdes för {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Återställ webbplatsens lösenord</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Skapa tillfälligt lösenord</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Avbryt denna återställning</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Visa tillfälligt lösenord</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Skapa ett tillfälligt lösenord här. Logga in på webbplatsen med det och din befintliga tvåfaktorsautentisering eller åtkomstnyckel och välj ett nytt lösenord. Om båda metoderna krävs förblir båda obligatoriska. Det fungerar en gång och löper ut efter 10 minuter. Ditt ursprungliga lösenord gäller tills återställningen är klar.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Konto: {0}. Klart att skapa ett tillfälligt lösenord.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Konto: {0}. Löper ut om {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Återställningen har löpt ut eller återkallats. Börja om.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>För många förfrågningar. Försök igen senare.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Den inbäddade Synix-licensen saknas.</value></data>
 </root>
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -14297,6 +14297,54 @@ Antes de un cambio de framework o juego, preserva los datos del mundo, la config
   <data name="Appearance.Rounded" xml:space="preserve"><value>Redondeado</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Cuadrado</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Compartir actividad</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: enviar un código de sesión aleatorio a synix.info cada minuto mientras Synix se ejecuta, también en segundo plano. No se envían datos de servidores. La actividad caduca tras 3 minutos. Activado por defecto. Puedes desactivarlo aquí.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: enviar un código de sesión aleatorio a synix.info cada 10 minutos mientras Synix se ejecuta, también en segundo plano. No se envían datos de servidores. La actividad caduca tras 15 minutos. Activado por defecto. Puedes desactivarlo aquí.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Administrador remoto</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Vincula este equipo para ver, iniciar, detener, reiniciar y respaldar servidores desde la web de Synix. El acceso remoto permanece desactivado hasta que apruebes la vinculación aquí.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Vincular o desconectar este equipo</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mi equipo servidor</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Generar código de vinculación</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Aprobar esta cuenta</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Desvincular y desconectar</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Controla este equipo desde la web de Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nombre del equipo mostrado en la web</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Abrir el administrador de Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Inicia sesión en la web e introduce este código. Aprueba aquí únicamente tu propio nombre de usuario.
+
+Mantén Synix abierto o minimizado. Una conexión en espera detecta el inicio de sesión. Los detalles del servidor se actualizan cada 10 segundos mientras se consultan. Desvincular desactiva el acceso remoto sin detener los servidores.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Introduce un nombre para el equipo.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Esperando la solicitud de vinculación de tu cuenta…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Vinculación aprobada para {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>El código ha caducado. Genera un código de vinculación nuevo.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Cuenta que solicita el control: {0}
+Aprueba solo si es tu nombre de usuario.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>No se pudo comprobar la vinculación. Revisa la conexión a internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>No se pudo contactar con el administrador de Synix. Inténtalo de nuevo.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identidad del equipo: clave protegida por TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identidad del equipo: clave de software protegida por Windows (TPM no disponible)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Sin vincular</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Vinculado — esperando conexión</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Desconectado localmente. Reintenta la desvinculación cuando haya conexión.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>No se pudo cargar la vinculación. El acceso remoto está desactivado.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Es necesario aprobar la vinculación en este equipo.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Acceso remoto desactivado. No se pudo guardar la configuración de vinculación.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Desconectado localmente — eliminando la vinculación de la web</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Conectado al administrador remoto</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Vinculado — esperando el inicio de sesión</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Vinculación de la web eliminada. El acceso remoto está desactivado.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Conexión no disponible — reintentando</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Configuración de conexión remota no válida.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>El administrador de Synix devolvió una respuesta no válida.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Primero vuelve a conectarte a internet y termina de eliminar la vinculación anterior.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Genera un código de vinculación nuevo.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ADMINISTRADOR REMOTO] Se ha solicitado {0} para {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Recuperar contraseña del sitio</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Crear contraseña temporal</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Cancelar esta recuperación</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Mostrar contraseña temporal</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Crea una contraseña temporal aquí. Inicia sesión en el sitio con ella y tu autenticación de dos factores o clave de acceso existente; luego elige una contraseña nueva. Si se requieren ambos métodos, seguirán siendo obligatorios. Solo funciona una vez y caduca a los 10 minutos. Tu contraseña original sigue siendo válida hasta completar la recuperación.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Cuenta: {0}. Puedes crear una contraseña temporal.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Cuenta: {0}. Caduca en {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>La recuperación caducó o se revocó. Empieza de nuevo.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Demasiadas solicitudes. Inténtalo más tarde.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Falta la licencia Synix integrada.</value></data>
 </root>

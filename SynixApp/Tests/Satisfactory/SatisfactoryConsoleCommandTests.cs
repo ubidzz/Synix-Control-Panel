@@ -119,7 +119,11 @@ public sealed class SatisfactoryConsoleCommandTests
 				console.AddLine("Different boundary at the same index");
 				console.AddLine(Line('B'));
 			};
-			using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(1));
+			// Cases that dispatch a command must first capture the native UIA log
+			// boundary. Match the positive tests' budget so a busy desktop does not
+			// cancel that setup before this test reaches the stale-token check.
+			bool sendsCommand = failure is "old-token" or "cleared-log" or "replaced-boundary";
+			using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(sendsCommand ? 5 : 1));
 			if (failure == "canceled") timeout.Cancel();
 			Task<string> operation = Generate(console, timeout.Token, failure != "wrong-owner");
 			Pump(operation, timeout);
@@ -127,7 +131,7 @@ public sealed class SatisfactoryConsoleCommandTests
 			Assert.NotNull(error);
 			Assert.DoesNotContain(Token('A'), error.ToString());
 			Assert.DoesNotContain(Token('B'), error.ToString());
-			Assert.Equal(failure is "old-token" or "cleared-log" or "replaced-boundary" ? 1 : 0, console.Commands);
+			Assert.Equal(sendsCommand ? 1 : 0, console.Commands);
 			if (failure == "command-draft") Assert.Equal("save-game", console.Draft);
 		});
 	}

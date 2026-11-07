@@ -7789,7 +7789,55 @@ Als Synix niet opnieuw wordt geopend, voert u uw bestaande Synix-programma uit o
   <data name="Appearance.Rounded" xml:space="preserve"><value>Afgerond</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Vierkant</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Actieve sessies delen</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optioneel: stuur elke minuut een willekeurige sessiecode naar synix.info terwijl Synix draait, ook op de achtergrond. Er worden geen servergegevens verzonden. Activiteit verloopt na 3 minuten. Standaard ingeschakeld. Je kunt dit hier uitschakelen.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optioneel: stuur elke 10 minuten een willekeurige sessiecode naar synix.info terwijl Synix draait, ook op de achtergrond. Er worden geen servergegevens verzonden. Activiteit verloopt na 15 minuten. Standaard ingeschakeld. Je kunt dit hier uitschakelen.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Beheer op afstand</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Koppel deze computer om servers via de Synix-website te bekijken, starten, stoppen, herstarten en back-ups te maken. Toegang op afstand blijft uit totdat je de koppeling hier goedkeurt.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Deze computer koppelen of loskoppelen</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mijn server-pc</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Koppelcode genereren</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Dit account goedkeuren</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Koppeling verwijderen en verbreken</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Bedien deze computer via de Synix-website</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Computernaam op de website</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix-beheer openen</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Meld je aan op de website en voer deze code in. Keur hier alleen je eigen gebruikersnaam goed.
+
+Houd Synix open of geminimaliseerd. Een stille verbinding wacht op aanmelding. Servergegevens worden tijdens het bekijken elke 10 seconden bijgewerkt. Ontkoppelen schakelt toegang op afstand uit zonder servers te stoppen.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Voer een computernaam in.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Wachten op het koppelverzoek van je account…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Koppeling goedgekeurd voor {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Code verlopen. Genereer een nieuwe koppelcode.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Account dat bediening aanvraagt: {0}
+Keur dit alleen goed als het jouw gebruikersnaam is.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Koppeling kon niet worden gecontroleerd. Controleer je internetverbinding.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synix-beheer is niet bereikbaar. Probeer het opnieuw.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Computeridentiteit: door TPM beveiligde sleutel</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Computeridentiteit: door Windows beveiligde softwaresleutel (TPM niet beschikbaar)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Niet gekoppeld</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Gekoppeld — wachten op verbinding</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Lokaal losgekoppeld. Probeer verwijderen opnieuw zodra er verbinding is.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Koppeling kon niet worden geladen. Toegang op afstand is uitgeschakeld.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>De koppeling moet lokaal worden goedgekeurd.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Toegang op afstand uitgeschakeld. Koppelingsinstellingen konden niet worden opgeslagen.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Lokaal losgekoppeld — websitekoppeling wordt verwijderd</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Verbonden met beheer op afstand</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Gekoppeld — wachten op aanmelding</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Websitekoppeling verwijderd. Toegang op afstand is uitgeschakeld.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Verbinding niet beschikbaar — opnieuw proberen</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Ongeldige instellingen voor de externe verbinding.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix-beheer gaf een ongeldig antwoord.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Herstel eerst de internetverbinding en voltooi het verwijderen van de oude koppeling.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Genereer een nieuwe koppelcode.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[BEHEER OP AFSTAND] {0} aangevraagd voor {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Websitewachtwoord herstellen</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Tijdelijk wachtwoord maken</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Dit herstel annuleren</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Tijdelijk wachtwoord tonen</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Maak hier een tijdelijk wachtwoord. Meld je daarmee en je bestaande tweestapsverificatie of passkey aan op de website en kies een nieuw wachtwoord. Als beide methoden vereist zijn, blijven beide vereist. Het werkt één keer en verloopt na 10 minuten. Je oorspronkelijke wachtwoord blijft geldig totdat het herstel is voltooid.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Account: {0}. Klaar om een tijdelijk wachtwoord te maken.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Account: {0}. Verloopt over {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Herstel verlopen of ingetrokken. Begin opnieuw.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Te veel aanvragen. Probeer het later opnieuw.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>De ingebouwde Synix-licentie ontbreekt.</value></data>
 </root>
 

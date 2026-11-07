@@ -195,7 +195,7 @@ Open **Synix Settings → General** to switch between light and dark mode. Choos
 
 ### Interface languages
 
-Synix includes 35 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian, Estonian, Latvian, and Lithuanian.
+Synix includes 37 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian, Estonian, Latvian, Lithuanian, Malay (Bahasa Melayu), and Filipino.
 
 Choose a language in Synix Settings. The new history and backup status text is included in every language. General settings cards adapt to wrapped translations, drop-down lists expand to fit their items, and shared action buttons support keyboard focus. Game names, user-entered values, file paths, and technical log files are not translated. Translation completeness does not replace native-speaker review.
 

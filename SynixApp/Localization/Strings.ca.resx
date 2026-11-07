@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -14342,6 +14342,54 @@ Abans d’un marc de treball o canvi de joc, preservar el món, configuració i 
   <data name="Appearance.Rounded" xml:space="preserve"><value>Arrodonit</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Quadrat</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Comparteix el recompte d’activitat</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: envia un codi de sessió aleatori a synix.info cada minut mentre Synix s’executa, també en segon pla. No s’envien dades dels servidors. L’activitat caduca al cap de 3 minuts. Activat per defecte. Ho pots desactivar aquí.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: envia un codi de sessió aleatori a synix.info cada 10 minuts mentre Synix s’executa, també en segon pla. No s’envien dades dels servidors. L’activitat caduca al cap de 15 minuts. Activat per defecte. Ho pots desactivar aquí.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Gestió remota</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Vincula aquest ordinador per veure, iniciar, aturar, reiniciar i fer còpies de seguretat dels servidors des del web de Synix. L’accés remot queda desactivat fins que aprovis la vinculació aquí.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Vincula o desconnecta aquest ordinador</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>El meu ordinador servidor</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Genera un codi de vinculació</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Aprova aquest compte</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Desvincula i desconnecta</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Controla aquest ordinador des del web de Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nom de l’ordinador que es mostra al web</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Obre el gestor de Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Inicia sessió al web i introdueix aquest codi. Aprova aquí només el teu nom d’usuari.
+
+Mantén Synix obert o minimitzat. Una connexió en espera detecta l’inici de sessió. Les dades dels servidors s’actualitzen cada 10 segons mentre es consulten. Desvincular desactiva l’accés remot sense aturar els servidors.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Introdueix un nom per a l’ordinador.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>S’espera la sol·licitud de vinculació del teu compte…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Vinculació aprovada per a {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>El codi ha caducat. Genera un codi de vinculació nou.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Compte que sol·licita el control: {0}
+Aprova’l només si és el teu nom d’usuari.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>No es pot comprovar la vinculació. Comprova la connexió a internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>No es pot contactar amb el gestor de Synix. Torna-ho a provar.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identitat de l’ordinador: clau protegida per TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identitat de l’ordinador: clau de programari protegida per Windows (TPM no disponible)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>No vinculat</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Vinculat — s’espera la connexió</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Desconnectat localment. Torna a provar l’eliminació quan hi hagi connexió.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>No s’ha pogut carregar la vinculació. L’accés remot està desactivat.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Cal aprovar la vinculació en aquest ordinador.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Accés remot desactivat. No s’ha pogut desar la configuració de vinculació.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Desconnectat localment — s’elimina la vinculació amb el web</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Connectat al gestor remot</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Vinculat — s’espera l’inici de sessió</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>S’ha eliminat la vinculació amb el web. L’accés remot està desactivat.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Connexió no disponible — es torna a provar</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Configuració de connexió remota no vàlida.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>El gestor de Synix ha retornat una resposta no vàlida.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Torna a connectar-te a internet i acaba primer d’eliminar la vinculació anterior.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Genera un codi de vinculació nou.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[GESTIÓ REMOTA] S’ha sol·licitat {0} per a {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Recupera la contrasenya del lloc</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Crea una contrasenya temporal</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Cancel·la aquesta recuperació</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Mostra la contrasenya temporal</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Crea aquí una contrasenya temporal. Inicia sessió al lloc amb ella i la verificació de dos factors o clau d’accés existent, i tria una contrasenya nova. Si calen tots dos mètodes, continuen sent obligatoris. Només funciona un cop i caduca al cap de 10 minuts. La contrasenya original és vàlida fins que acaba la recuperació.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Compte: {0}. Pots crear una contrasenya temporal.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Compte: {0}. Caduca d’aquí a {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>La recuperació ha caducat o s’ha revocat. Torna a començar.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Massa sol·licituds. Torna-ho a provar més tard.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Falta la llicència Synix incrustada.</value></data>
 </root>

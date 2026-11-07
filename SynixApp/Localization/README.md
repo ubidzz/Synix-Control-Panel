@@ -5,7 +5,7 @@ Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian
 Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian,
 Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian,
 Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian,
-Estonian, Latvian, and Lithuanian (35 language options). Every selectable
+Estonian, Latvian, Lithuanian, Malay, and Filipino (37 language options). Every selectable
 language must contain every entry in the neutral English catalog; partial
 preview catalogs are no longer used for these languages.
 
@@ -126,3 +126,13 @@ safety-sensitive passages were corrected separately. No translation model,
 Python runtime, translation cache or online service is shipped with Synix.
 This does not replace native-speaker review or establish an authoritative
 legal translation; the original English licence remains unchanged.
+
+The Malay and Filipino catalogs were drafted locally with machine assistance
+from [MADLAD-400-3B-MT](https://huggingface.co/google/madlad400-3b-mt)
+(Apache 2.0) and [NLLB-200 distilled 1.3B](https://huggingface.co/facebook/nllb-200-distilled-1.3B)
+(CC BY-NC 4.0), respectively, then corrected for interface terminology,
+diagnostic markers, technical examples, and safety-sensitive instructions.
+The app bundles only static text resources, with no translation model or
+online translation dependency. These translations are not certified and
+still benefit from native-speaker review. Malay uses the Latin script;
+Filipino uses the `fil` catalog and `fil-PH` selection culture.

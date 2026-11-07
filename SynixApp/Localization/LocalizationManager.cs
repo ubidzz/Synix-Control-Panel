@@ -865,6 +865,8 @@ internal static class LocalizationManager
 			"et" or "et-EE" => "Eesti",
 			"lv" or "lv-LV" => "Latviešu",
 			"lt" or "lt-LT" => "Lietuvių",
+			"ms" or "ms-MY" => "Bahasa Melayu",
+			"fil" or "fil-PH" => "Filipino",
 			"de" or "de-DE" => "Deutsch",
 			"es" or "es-ES" => "Español",
 			"fr" or "fr-FR" => "Français",

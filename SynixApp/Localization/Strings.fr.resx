@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -14221,6 +14221,54 @@ Avant un changement de framework ou de jeu, préservez les données du monde, de
   <data name="Appearance.Rounded" xml:space="preserve"><value>Arrondi</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Carré</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Partager l’activité</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Facultatif : envoyer un code de session aléatoire à synix.info chaque minute pendant que Synix fonctionne, même en arrière-plan. Aucune donnée de serveur n’est envoyée. L’activité expire après 3 minutes. Activé par défaut. Vous pouvez le désactiver ici.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Facultatif : envoyer un code de session aléatoire à synix.info toutes les 10 minutes pendant que Synix fonctionne, même en arrière-plan. Aucune donnée de serveur n’est envoyée. L’activité expire après 15 minutes. Activé par défaut. Vous pouvez le désactiver ici.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Gestionnaire distant</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Associez cet ordinateur pour afficher, démarrer, arrêter, redémarrer et sauvegarder les serveurs depuis le site Synix. L’accès distant reste désactivé jusqu’à votre approbation ici.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Associer ou déconnecter cet ordinateur</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mon PC serveur</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Générer un code d’association</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Approuver ce compte</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Dissocier et déconnecter</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Contrôler cet ordinateur depuis le site Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nom de l’ordinateur affiché sur le site</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Ouvrir le gestionnaire Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Connectez-vous au site et saisissez ce code. N’approuvez ici que votre propre nom d’utilisateur.
+
+Gardez Synix ouvert ou réduit. Une connexion en attente détecte la connexion au compte. Les détails des serveurs s’actualisent toutes les 10 secondes pendant leur consultation. La dissociation désactive l’accès distant sans arrêter les serveurs.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Saisissez un nom d’ordinateur.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>En attente de la demande d’association de votre compte…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Association approuvée pour {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Code expiré. Générez un nouveau code d’association.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Compte demandant le contrôle : {0}
+Approuvez uniquement s’il s’agit de votre nom d’utilisateur.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Impossible de vérifier l’association. Vérifiez votre connexion internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Impossible de joindre le gestionnaire Synix. Réessayez.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identité de l’ordinateur : clé protégée par TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identité de l’ordinateur : clé logicielle protégée par Windows (TPM indisponible)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Non associé</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Associé — en attente de connexion</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Déconnecté localement. Réessayez la suppression une fois connecté.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Impossible de charger l’association. L’accès distant est désactivé.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>L’association doit être approuvée sur cet ordinateur.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Accès distant désactivé. Impossible d’enregistrer les paramètres d’association.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Déconnecté localement — suppression de l’association au site</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Connecté au gestionnaire distant</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Associé — en attente de connexion au compte</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Association au site supprimée. L’accès distant est désactivé.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Connexion indisponible — nouvelle tentative</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Paramètres de connexion distante non valides.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Le gestionnaire Synix a renvoyé une réponse non valide.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Reconnectez-vous d’abord à internet et terminez la suppression de l’ancienne association.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Générez un nouveau code d’association.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[GESTIONNAIRE DISTANT] Action {0} demandée pour {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Récupérer le mot de passe du site</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Créer un mot de passe temporaire</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Annuler cette récupération</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Afficher le mot de passe temporaire</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Créez un mot de passe temporaire ici. Connectez-vous au site avec ce mot de passe et votre authentification à deux facteurs ou clé d’accès existante, puis choisissez un nouveau mot de passe. Si les deux méthodes sont exigées, elles le restent. Il est utilisable une fois et expire après 10 minutes. Votre ancien mot de passe reste valide jusqu’à la fin de la récupération.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Compte : {0}. Prêt à créer un mot de passe temporaire.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Compte : {0}. Expire dans {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Récupération expirée ou révoquée. Recommencez.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Trop de demandes. Réessayez plus tard.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>La licence Synix intégrée est manquante.</value></data>
 </root>

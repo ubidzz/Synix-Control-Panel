@@ -7788,7 +7788,55 @@ Eğer Synix yeniden açılmazsa, mevcut Synix programınızı çalıştırın ve
   <data name="Appearance.Rounded" xml:space="preserve"><value>Yuvarlak</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Köşeli</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Etkinlik sayısını paylaş</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>İsteğe bağlı: Synix çalışırken, arka plan dahil, her dakika synix.info adresine rastgele bir oturum kodu gönderin. Sunucu verileri gönderilmez. Etkinlik 3 dakika sonra sona erer. Varsayılan olarak açıktır. Buradan kapatabilirsiniz.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>İsteğe bağlı: Synix çalışırken, arka plan dahil, her 10 dakikada bir synix.info adresine rastgele bir oturum kodu gönderin. Sunucu verileri gönderilmez. Etkinlik 15 dakika sonra sona erer. Varsayılan olarak açıktır. Buradan kapatabilirsiniz.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Uzaktan yönetim</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Sunucuları Synix web sitesinden görüntülemek, başlatmak, durdurmak, yeniden başlatmak ve yedeklemek için bu bilgisayarı eşleştirin. Burada eşleştirmeyi onaylayana kadar uzaktan erişim kapalı kalır.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Bu bilgisayarı eşleştir veya bağlantısını kes</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Sunucu bilgisayarım</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Eşleştirme kodu oluştur</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Bu hesabı onayla</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Eşleştirmeyi kaldır ve bağlantıyı kes</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Bu bilgisayarı Synix web sitesinden yönetin</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Web sitesinde gösterilen bilgisayar adı</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix yöneticisini aç</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Web sitesine giriş yapın ve bu kodu girin. Burada yalnızca kendi kullanıcı adınızı onaylayın.
+
+Synix'i açık veya simge durumunda tutun. Beklemedeki bağlantı, giriş yapılmasını algılar. Sunucu ayrıntıları görüntülenirken 10 saniyede bir güncellenir. Eşleştirmeyi kaldırmak sunucuları durdurmadan uzaktan erişimi kapatır.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Bir bilgisayar adı girin.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Hesabınızın eşleştirme isteği bekleniyor…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>{0} için eşleştirme onaylandı</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kodun süresi doldu. Yeni bir eşleştirme kodu oluşturun.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Kontrol isteyen hesap: {0}
+Yalnızca bu sizin kullanıcı adınızsa onaylayın.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Eşleştirme kontrol edilemiyor. İnternet bağlantınızı kontrol edin.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synix yöneticisine ulaşılamıyor. Lütfen yeniden deneyin.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Bilgisayar kimliği: TPM korumalı anahtar</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Bilgisayar kimliği: Windows korumalı yazılım anahtarı (TPM kullanılamıyor)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Eşleştirilmedi</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Eşleştirildi — bağlantı bekleniyor</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Yerel bağlantı kesildi. Bağlandığınızda kaldırmayı yeniden deneyin.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Eşleştirme yüklenemedi. Uzaktan erişim devre dışı.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Eşleştirmenin bu bilgisayarda onaylanması gerekiyor.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Uzaktan erişim devre dışı. Eşleştirme ayarları kaydedilemedi.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Yerel bağlantı kesildi — web sitesi eşleştirmesi kaldırılıyor</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Uzaktan yöneticiye bağlandı</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Eşleştirildi — giriş bekleniyor</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Web sitesi eşleştirmesi kaldırıldı. Uzaktan erişim devre dışı.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Bağlantı kullanılamıyor — yeniden deneniyor</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Geçersiz uzaktan bağlantı ayarları.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix yöneticisi geçersiz yanıt döndürdü.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>İnternete yeniden bağlanın ve önce eski eşleştirmeyi kaldırmayı tamamlayın.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Yeni bir eşleştirme kodu oluşturun.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[UZAKTAN YÖNETİM] {1} için {0} istendi.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Web sitesi parolasını kurtar</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Geçici parola oluştur</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Bu kurtarmayı iptal et</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Geçici parolayı göster</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Burada geçici bir parola oluşturun. Bu parola ve mevcut iki faktörlü doğrulamanız veya geçiş anahtarınızla web sitesine giriş yapıp yeni bir parola seçin. İki yöntem de gerekliyse ikisi de zorunlu kalır. Parola tek kullanımlıktır ve 10 dakika sonra sona erer. Asıl parolanız kurtarma tamamlanana kadar geçerlidir.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Hesap: {0}. Geçici parola oluşturmaya hazır.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Hesap: {0}. Kalan süre: {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Kurtarma süresi doldu veya iptal edildi. Yeniden başlayın.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Çok fazla istek. Daha sonra tekrar deneyin.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Gömülü Synix lisansı eksik.</value></data>
 </root>
 

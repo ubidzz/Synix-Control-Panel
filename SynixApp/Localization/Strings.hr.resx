@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -14342,6 +14342,54 @@ Prije promjene okvira ili igre, sačuvajte svijet, konfiguraciju i podatke o dod
   <data name="Appearance.Rounded" xml:space="preserve"><value>Zaobljene</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Pravokutne</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Dijeli broj aktivnih sesija</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Neobavezno: šaljite nasumični kod sesije na synix.info jednom u minuti dok Synix radi, uključujući rad u pozadini. Podaci poslužitelja ne šalju se. Aktivnost istječe nakon 3 minute. Prema zadanim postavkama uključeno. Ovdje možete isključiti ovu opciju.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Neobavezno: šaljite nasumični kod sesije na synix.info svakih 10 minuta dok Synix radi, uključujući rad u pozadini. Podaci poslužitelja ne šalju se. Aktivnost istječe nakon 15 minuta. Prema zadanim postavkama uključeno. Ovdje možete isključiti ovu opciju.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Udaljeno upravljanje</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Uparite ovo računalo za pregled, pokretanje, zaustavljanje, ponovno pokretanje i sigurnosno kopiranje poslužitelja putem web-stranice Synix. Udaljeni pristup ostaje isključen dok ovdje ne odobrite uparivanje.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Upari ili odspoji ovo računalo</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Moje poslužiteljsko računalo</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Generiraj kod za uparivanje</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Odobri ovaj račun</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Ukloni uparivanje i odspoji</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Upravljajte ovim računalom putem web-stranice Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Naziv računala prikazan na web-stranici</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Otvori upravljanje Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Prijavite se na web-stranici i unesite ovaj kod. Ovdje odobrite samo svoje korisničko ime.
+
+Ostavite Synix otvoren ili minimiziran. Veza u stanju čekanja osluškuje prijavu. Podaci o poslužiteljima osvježavaju se svakih 10 sekundi tijekom pregleda. Uklanjanje uparivanja isključuje udaljeni pristup bez zaustavljanja poslužitelja.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Unesite naziv računala.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Čeka se zahtjev vašeg računa za uparivanje…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Uparivanje odobreno za {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kod je istekao. Generirajte novi kod za uparivanje.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Račun koji traži upravljanje: {0}
+Odobrite samo ako je ovo vaše korisničko ime.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Uparivanje nije moguće provjeriti. Provjerite internetsku vezu.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Nije moguće kontaktirati upravljanje Synix. Pokušajte ponovno.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identitet računala: ključ zaštićen TPM-om</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identitet računala: softverski ključ zaštićen sustavom Windows (TPM nije dostupan)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Nije upareno</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Upareno — čeka se veza</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Lokalno odspojeno. Ponovite uklanjanje kad veza bude dostupna.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Uparivanje nije moguće učitati. Udaljeni pristup je isključen.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Potrebno je lokalno odobrenje uparivanja.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Udaljeni pristup isključen. Postavke uparivanja nije moguće spremiti.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Lokalno odspojeno — uklanja se uparivanje s web-stranice</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Povezano s udaljenim upravljanjem</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Upareno — čeka se prijava</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Uparivanje s web-stranice uklonjeno. Udaljeni pristup je isključen.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Veza nije dostupna — ponovni pokušaj</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Neispravne postavke udaljene veze.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Upravljanje Synix vratilo je neispravan odgovor.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Prvo se povežite s internetom i dovršite uklanjanje starog uparivanja.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Generirajte novi kod za uparivanje.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[UDALJENO UPRAVLJANJE] Zatraženo je {0} za {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Oporavi lozinku web-mjesta</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Stvori privremenu lozinku</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Otkaži ovaj oporavak</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Prikaži privremenu lozinku</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Ovdje stvorite privremenu lozinku. Prijavite se njome na web-mjesto uz postojeću dvofaktorsku provjeru ili pristupni ključ, pa odaberite novu lozinku. Ako su potrebne obje metode, obje ostaju obvezne. Lozinka vrijedi jednom i istječe nakon 10 minuta. Izvorna lozinka vrijedi do završetka oporavka.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Račun: {0}. Spremno za stvaranje privremene lozinke.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Račun: {0}. Istječe za {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Oporavak je istekao ili opozvan. Počnite ponovno.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Previše zahtjeva. Pokušajte kasnije.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Nedostaje ugrađena licenca Synix.</value></data>
 </root>

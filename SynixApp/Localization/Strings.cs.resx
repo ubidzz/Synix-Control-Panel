@@ -7789,7 +7789,55 @@ Pokud se Synix neotevře, spusťte existující program Synix nebo stáhněte ne
   <data name="Appearance.Rounded" xml:space="preserve"><value>Zaoblený</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Hranatý</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Sdílet počet aktivních relací</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Volitelné: odesílat náhodný kód relace na synix.info jednou za minutu, když Synix běží, i na pozadí. Data serverů se neodesílají. Aktivita vyprší po 3 minutách. Ve výchozím stavu zapnuto. Zde lze vypnout.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Volitelné: odesílat náhodný kód relace na synix.info každých 10 minut, když Synix běží, i na pozadí. Data serverů se neodesílají. Aktivita vyprší po 15 minutách. Ve výchozím stavu zapnuto. Zde lze vypnout.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Vzdálená správa</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Spárujte tento počítač a prohlížejte, spouštějte, zastavujte, restartujte a zálohujte servery z webu Synix. Vzdálený přístup zůstane vypnutý, dokud zde párování neschválíte.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Spárovat nebo odpojit tento počítač</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Můj serverový počítač</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Vygenerovat párovací kód</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Schválit tento účet</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Zrušit párování a odpojit</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Ovládejte tento počítač z webu Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Název počítače zobrazený na webu</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Otevřít správu Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Přihlaste se na webu a zadejte tento kód. Zde schvalujte pouze své vlastní uživatelské jméno.
+
+Nechte Synix otevřený nebo minimalizovaný. Připojení v pohotovosti čeká na přihlášení. Podrobnosti serverů se při prohlížení aktualizují každých 10 sekund. Zrušení párování vypne vzdálený přístup bez zastavení serverů.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Zadejte název počítače.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Čeká se na žádost vašeho účtu o spárování…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Párování schváleno pro {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Platnost kódu vypršela. Vygenerujte nový párovací kód.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Účet žádající o ovládání: {0}
+Schvalte jej pouze tehdy, pokud jde o vaše uživatelské jméno.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Párování nelze ověřit. Zkontrolujte připojení k internetu.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Správu Synix se nepodařilo kontaktovat. Zkuste to znovu.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identita počítače: klíč chráněný pomocí TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identita počítače: softwarový klíč chráněný systémem Windows (TPM není k dispozici)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Nespárováno</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Spárováno — čeká se na připojení</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Místně odpojeno. Po připojení zkuste odebrání znovu.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Párování nelze načíst. Vzdálený přístup je vypnutý.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Párování je třeba schválit na tomto počítači.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Vzdálený přístup vypnut. Nastavení párování nelze uložit.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Místně odpojeno — odstraňuje se párování na webu</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Připojeno ke vzdálené správě</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Spárováno — čeká se na přihlášení</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Párování na webu bylo odstraněno. Vzdálený přístup je vypnutý.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Připojení není dostupné — další pokus</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Neplatné nastavení vzdáleného připojení.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Správa Synix vrátila neplatnou odpověď.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Nejprve se připojte k internetu a dokončete odstranění původního párování.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Vygenerujte nový párovací kód.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[VZDÁLENÁ SPRÁVA] Požadováno {0} pro {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Obnovit heslo webu</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Vytvořit dočasné heslo</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Zrušit toto obnovení</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Zobrazit dočasné heslo</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Zde vytvořte dočasné heslo. Přihlaste se s ním na webu a použijte stávající dvoufaktorové ověření nebo přístupový klíč. Pak zvolte nové heslo. Jsou-li vyžadovány obě metody, zůstávají povinné obě. Heslo funguje jednou a vyprší za 10 minut. Původní heslo platí až do dokončení obnovení.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Účet: {0}. Připraveno k vytvoření dočasného hesla.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Účet: {0}. Vyprší za {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Obnovení vypršelo nebo bylo odvoláno. Začněte znovu.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Příliš mnoho požadavků. Zkuste to později.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Chybí vložená licence Synix.</value></data>
 </root>
 

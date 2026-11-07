@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -14337,6 +14337,54 @@ Before a framework or game change, preserve the world, configuration, and plugin
   <data name="Appearance.Rounded" xml:space="preserve"><value>Rounded</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Square</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Share active count</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optional: send a random session code to synix.info once a minute while Synix runs, including in the background. No server data is sent. Counts expire after 3 minutes. On by default. You can turn it off here.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optional: send a random session code to synix.info every 10 minutes while Synix runs, including in the background. No server data is sent. Counts expire after 15 minutes. On by default. You can turn it off here.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Remote manager</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Pair this computer to view, start, stop, restart and back up servers from the Synix website. Remote access stays off until you approve pairing here.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Pair or disconnect this computer</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>My server PC</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Generate pairing code</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Approve this account</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Unpair and disconnect</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Control this computer from the Synix website</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Computer name shown on the website</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Open Synix manager</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Sign in on the website and enter this code. Approve only your own username here.
+
+Keep Synix open or minimized. A quiet connection listens for sign-in. Server details update every 10 seconds while viewed. Unpairing disables remote access without stopping servers.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Enter a computer name.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Waiting for your account to request pairing…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Pairing approved for {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Code expired. Generate a new pairing code.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Account requesting control: {0}
+Approve only if this is your username.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Unable to check pairing. Check your internet connection.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Unable to contact the Synix manager. Please try again.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Computer identity: TPM-backed key</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Computer identity: Windows-protected software key (TPM unavailable)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Not paired</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Paired — waiting to connect</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Disconnected locally. Retry removal when connected.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Pairing could not be loaded. Remote access is disabled.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Local pairing approval is required.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Remote access disabled. Pairing settings could not be saved.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Disconnected locally — removing website pairing</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Connected to the remote manager</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Paired — listening for sign-in</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Website pairing removed. Remote access is disabled.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Connection unavailable — retrying</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Invalid remote connection settings.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>The Synix manager returned an invalid response.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Reconnect to the internet and finish removing the old pairing first.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Generate a new pairing code.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[REMOTE MANAGER] {0} requested for {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Recover website password</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Create temporary password</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Cancel this recovery</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Show temporary password</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Create a temporary password here. Sign in on the website with it and your existing 2FA or passkey, then choose a new password. If both methods are required, both remain required. It works once and expires after 10 minutes. Your original password stays valid until recovery finishes.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Account: {0}. Ready to create a temporary password.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Account: {0}. Expires in {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Recovery expired or revoked. Start again.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Too many requests. Try again later.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>The embedded Synix license is missing.</value></data>
 </root>

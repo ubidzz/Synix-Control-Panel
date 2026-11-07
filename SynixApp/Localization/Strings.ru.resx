@@ -7788,7 +7788,55 @@ ARK загрузит этот мод из {2} при запуске сервер
   <data name="Appearance.Rounded" xml:space="preserve"><value>Скруглённый</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Прямоугольный</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Передавать данные об активности</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Необязательно: отправлять случайный код сеанса на synix.info каждую минуту, пока Synix работает, в том числе в фоне. Данные серверов не отправляются. Активность истекает через 3 минуты. По умолчанию включено. Здесь можно отключить эту функцию.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Необязательно: отправлять случайный код сеанса на synix.info каждые 10 минут, пока Synix работает, в том числе в фоне. Данные серверов не отправляются. Активность истекает через 15 минут. По умолчанию включено. Здесь можно отключить эту функцию.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Удалённое управление</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Свяжите этот компьютер с сайтом Synix, чтобы просматривать, запускать, останавливать, перезапускать серверы и создавать резервные копии. Удалённый доступ выключен, пока вы не подтвердите привязку здесь.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Привязать или отключить компьютер</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Мой серверный ПК</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Создать код привязки</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Подтвердить эту учётную запись</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Отвязать и отключить</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Управляйте этим компьютером с сайта Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Имя компьютера на сайте</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Открыть управление Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Войдите на сайт и введите этот код. Подтверждайте здесь только своё имя пользователя.
+
+Оставьте Synix открытым или свёрнутым. Соединение в режиме ожидания отслеживает вход. Сведения о серверах обновляются каждые 10 секунд во время просмотра. Отвязка отключает удалённый доступ, не останавливая серверы.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Введите имя компьютера.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Ожидание запроса на привязку от вашей учётной записи…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Привязка подтверждена для {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Срок действия кода истёк. Создайте новый код привязки.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Учётная запись, запрашивающая управление: {0}
+Подтверждайте только своё имя пользователя.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Не удалось проверить привязку. Проверьте подключение к интернету.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Не удалось связаться с управлением Synix. Повторите попытку.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Идентификатор компьютера: ключ с защитой TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Идентификатор компьютера: программный ключ с защитой Windows (TPM недоступен)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Не привязан</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Привязан — ожидание соединения</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Локально отключён. Повторите удаление после подключения.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Не удалось загрузить привязку. Удалённый доступ отключён.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Необходимо подтвердить привязку на этом компьютере.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Удалённый доступ отключён. Не удалось сохранить настройки привязки.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Локально отключён — удаление привязки на сайте</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Подключён к удалённому управлению</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Привязан — ожидание входа</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Привязка на сайте удалена. Удалённый доступ отключён.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Соединение недоступно — повторная попытка</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Недопустимые настройки удалённого соединения.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Управление Synix вернуло недопустимый ответ.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Сначала подключитесь к интернету и завершите удаление старой привязки.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Создайте новый код привязки.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[УДАЛЁННОЕ УПРАВЛЕНИЕ] Запрошено действие {0} для {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Восстановить пароль сайта</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Создать временный пароль</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Отменить восстановление</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Показать временный пароль</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Создайте здесь временный пароль. Войдите на сайт с ним и существующей двухфакторной проверкой или ключом доступа, затем выберите новый пароль. Если требуются оба способа, оба останутся обязательными. Пароль одноразовый и истекает через 10 минут. Старый пароль действует до завершения восстановления.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Аккаунт: {0}. Можно создать временный пароль.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Аккаунт: {0}. Истекает через {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Восстановление истекло или отозвано. Начните заново.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Слишком много запросов. Попробуйте позже.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Встроенная лицензия Synix отсутствует.</value></data>
 </root>
 

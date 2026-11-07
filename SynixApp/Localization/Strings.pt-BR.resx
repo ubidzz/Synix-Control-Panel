@@ -7788,7 +7788,55 @@ Se Synix não reabrir, execute o programa existente Synix ou transfira a versão
   <data name="Appearance.Rounded" xml:space="preserve"><value>Arredondado</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Quadrado</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Compartilhar atividade</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: enviar um código de sessão aleatório para synix.info a cada minuto enquanto o Synix estiver em execução, inclusive em segundo plano. Nenhum dado de servidor é enviado. A atividade expira após 3 minutos. Ativado por padrão. Você pode desativar aqui.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcional: enviar um código de sessão aleatório para synix.info a cada 10 minutos enquanto o Synix estiver em execução, inclusive em segundo plano. Nenhum dado de servidor é enviado. A atividade expira após 15 minutos. Ativado por padrão. Você pode desativar aqui.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Gerenciador remoto</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Vincule este computador para visualizar, iniciar, parar, reiniciar e fazer backup dos servidores pelo site do Synix. O acesso remoto fica desativado até você aprovar o vínculo aqui.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Vincular ou desconectar este computador</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Meu PC servidor</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Gerar código de vinculação</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Aprovar esta conta</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Desvincular e desconectar</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Controle este computador pelo site do Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nome do computador exibido no site</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Abrir o gerenciador do Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Entre no site e digite este código. Aprove aqui apenas seu próprio nome de usuário.
+
+Mantenha o Synix aberto ou minimizado. Uma conexão em espera detecta o login. Os detalhes dos servidores são atualizados a cada 10 segundos durante a visualização. Desvincular desativa o acesso remoto sem parar os servidores.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Digite um nome para o computador.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Aguardando a solicitação de vinculação da sua conta…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Vinculação aprovada para {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Código expirado. Gere um novo código de vinculação.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Conta solicitando controle: {0}
+Aprove somente se este for seu nome de usuário.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Não foi possível verificar a vinculação. Verifique sua conexão com a internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Não foi possível contatar o gerenciador do Synix. Tente novamente.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identidade do computador: chave protegida por TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identidade do computador: chave de software protegida pelo Windows (TPM indisponível)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Não vinculado</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Vinculado — aguardando conexão</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Desconectado localmente. Tente remover novamente quando houver conexão.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Não foi possível carregar a vinculação. O acesso remoto está desativado.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>A vinculação precisa ser aprovada neste computador.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Acesso remoto desativado. Não foi possível salvar as configurações de vinculação.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Desconectado localmente — removendo a vinculação do site</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Conectado ao gerenciador remoto</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Vinculado — aguardando login</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Vinculação com o site removida. O acesso remoto está desativado.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Conexão indisponível — tentando novamente</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Configurações de conexão remota inválidas.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>O gerenciador do Synix retornou uma resposta inválida.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Reconecte-se à internet e conclua primeiro a remoção da vinculação anterior.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Gere um novo código de vinculação.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[GERENCIADOR REMOTO] Ação {0} solicitada para {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Recuperar senha do site</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Criar senha temporária</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Cancelar esta recuperação</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Mostrar senha temporária</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Crie uma senha temporária aqui. Entre no site com ela e sua autenticação de dois fatores ou chave de acesso existente; depois escolha uma nova senha. Se os dois métodos forem obrigatórios, continuarão sendo. A senha funciona uma vez e expira após 10 minutos. A senha original permanece válida até a recuperação terminar.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Conta: {0}. Pronto para criar uma senha temporária.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Conta: {0}. Expira em {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Recuperação expirada ou revogada. Comece novamente.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Muitas solicitações. Tente novamente mais tarde.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>A licença Synix incorporada está faltando.</value></data>
 </root>
 

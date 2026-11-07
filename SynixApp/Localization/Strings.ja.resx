@@ -7788,7 +7788,55 @@ Synixが再開されない場合は、既存のSynixプログラムを実行し�
   <data name="Appearance.Rounded" xml:space="preserve"><value>角丸</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>四角</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>アクティブ数を共有</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>任意設定：Synix の実行中（バックグラウンドを含む）、ランダムなセッションコードを毎分 synix.info に送信します。サーバーのデータは送信されません。アクティブ状態は 3 分後に期限切れになります。初期設定はオンです。ここでオフにできます。</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>任意設定：Synix の実行中（バックグラウンドを含む）、ランダムなセッションコードを10 分ごとに synix.info に送信します。サーバーのデータは送信されません。アクティブ状態は 15 分後に期限切れになります。初期設定はオンです。ここでオフにできます。</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>リモート管理</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>このコンピューターをペアリングすると、Synixのウェブサイトからサーバーの表示、起動、停止、再起動、バックアップができます。ここでペアリングを承認するまで、リモートアクセスは無効のままです。</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>このコンピューターをペアリングまたは切断</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>自分のサーバーPC</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>ペアリングコードを生成</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>このアカウントを承認</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>ペアリングを解除して切断</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Synixのウェブサイトからこのコンピューターを操作</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>ウェブサイトに表示するコンピューター名</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synixマネージャーを開く</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>ウェブサイトにサインインして、このコードを入力してください。ここでは自分のユーザー名だけを承認してください。
+
+Synixを開いたまま、または最小化したままにしてください。待機中の接続がサインインを検知します。閲覧中はサーバー情報が10秒ごとに更新されます。ペアリングを解除すると、サーバーを停止せずにリモートアクセスを無効にします。</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>コンピューター名を入力してください。</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>アカウントからのペアリング要求を待っています…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>{0}のペアリングを承認しました</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>コードの有効期限が切れました。新しいペアリングコードを生成してください。</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>操作を要求しているアカウント: {0}
+自分のユーザー名である場合のみ承認してください。</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>ペアリングを確認できません。インターネット接続を確認してください。</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synixマネージャーに接続できません。もう一度お試しください。</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>コンピューターの識別情報: TPMで保護されたキー</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>コンピューターの識別情報: Windowsで保護されたソフトウェアキー（TPMは利用不可）</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>ペアリングされていません</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>ペアリング済み — 接続待機中</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>ローカルで切断しました。接続できたら削除を再試行してください。</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>ペアリング情報を読み込めませんでした。リモートアクセスは無効です。</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>このコンピューターでペアリングを承認する必要があります。</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>リモートアクセスは無効です。ペアリング設定を保存できませんでした。</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>ローカルで切断済み — ウェブサイトのペアリングを削除中</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>リモートマネージャーに接続しました</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>ペアリング済み — サインイン待機中</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>ウェブサイトのペアリングを削除しました。リモートアクセスは無効です。</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>接続できません — 再試行中</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>リモート接続の設定が無効です。</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synixマネージャーから無効な応答が返されました。</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>インターネットに再接続し、先に以前のペアリングの削除を完了してください。</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>新しいペアリングコードを生成してください。</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[リモート管理] {1}に対して{0}が要求されました。</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>ウェブサイトのパスワードを復元</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>一時パスワードを作成</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>この復元をキャンセル</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>一時パスワードを表示</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>ここで一時パスワードを作成します。そのパスワードと既存の二要素認証またはパスキーでウェブサイトにサインインし、新しいパスワードを選んでください。両方の認証方法が必須の場合は引き続き両方が必要です。一時パスワードは一度だけ使用でき、10分後に失効します。元のパスワードは復元が完了するまで有効です。</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>アカウント：{0}。一時パスワードを作成できます。</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>アカウント：{0}。有効期限まで {1}。</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>復元が期限切れまたは取り消されました。やり直してください。</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>リクエストが多すぎます。しばらくしてから再試行してください。</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>埋め込まれた Synix ライセンスがありません。</value></data>
 </root>
 

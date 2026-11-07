@@ -57,7 +57,7 @@ internal static class SynixUninstallCommand
 	private static Task RemoveDataAsync(SynixUninstallPlan plan) => Task.Run(() => WithClosedDashboard(() =>
 	{
 		plan.EnsurePathsUnchanged(CreatePaths());
-		plan.Execute(explicitlyConfirmed: true, () => EnsureServersStopped(plan));
+		plan.Execute(explicitlyConfirmed: true, () => EnsureServersStopped(plan), beforeDeletion: RemoteManagerService.PrepareForUninstall);
 		RemoveStartupEntry();
 	}));
 
@@ -83,7 +83,7 @@ internal static class SynixUninstallCommand
 		SynixUninstallPlan plan = SynixUninstallPlan.Create(CreatePaths(), removeServers: false);
 		// Game servers may keep running: this scope never touches their folders,
 		// C:\Synix, backup locations, server prerequisites or recovery data.
-		plan.Execute(explicitlyConfirmed: true, () => { });
+		plan.Execute(explicitlyConfirmed: true, () => { }, beforeDeletion: RemoteManagerService.PrepareForUninstall);
 		RemoveStartupEntry();
 	});
 

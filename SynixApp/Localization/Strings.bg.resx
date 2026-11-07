@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -14342,6 +14342,54 @@ Synix прилага отново поддържаното Oxide време за
   <data name="Appearance.Rounded" xml:space="preserve"><value>Заоблени</value></data>
   <data name="Appearance.Square" xml:space="preserve"><value>Правоъгълни</value></data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Споделяне на активността</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>По избор: изпращайте случаен код на сесията до synix.info веднъж в минута, докато Synix работи, включително във фонов режим. Не се изпращат данни за сървърите. Активността изтича след 3 минути. Включено по подразбиране. Можете да го изключите тук.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>По избор: изпращайте случаен код на сесията до synix.info на всеки 10 минути, докато Synix работи, включително във фонов режим. Не се изпращат данни за сървърите. Активността изтича след 15 минути. Включено по подразбиране. Можете да го изключите тук.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Отдалечено управление</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Сдвоете този компютър, за да преглеждате, стартирате, спирате, рестартирате и архивирате сървъри от сайта на Synix. Отдалеченият достъп остава изключен, докато не одобрите сдвояването тук.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Сдвояване или изключване на компютъра</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Моят сървърен компютър</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Генериране на код за сдвояване</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Одобряване на този акаунт</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Премахване на сдвояването и изключване</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Управлявайте този компютър от сайта на Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Име на компютъра, показвано на сайта</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Отваряне на управлението на Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Влезте в сайта и въведете този код. Одобрявайте тук само собственото си потребителско име.
+
+Оставете Synix отворен или минимизиран. Връзка в изчакване следи за влизане. Данните за сървърите се обновяват на всеки 10 секунди, докато ги преглеждате. Премахването на сдвояването изключва отдалечения достъп, без да спира сървърите.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Въведете име на компютъра.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Изчаква се заявка за сдвояване от вашия акаунт…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Сдвояването е одобрено за {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Кодът е изтекъл. Генерирайте нов код за сдвояване.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Акаунт, заявяващ управление: {0}
+Одобрете само ако това е вашето потребителско име.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Сдвояването не може да се провери. Проверете интернет връзката.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Няма връзка с управлението на Synix. Опитайте отново.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Самоличност на компютъра: ключ, защитен с TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Самоличност на компютъра: софтуерен ключ, защитен от Windows (TPM е недостъпен)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Не е сдвоен</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Сдвоен — изчаква връзка</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Локално изключен. Опитайте премахването отново, когато има връзка.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Сдвояването не може да се зареди. Отдалеченият достъп е изключен.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Необходимо е локално одобрение на сдвояването.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Отдалеченият достъп е изключен. Настройките за сдвояване не могат да се запазят.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Локално изключен — премахва се сдвояването от сайта</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Свързан с отдалеченото управление</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Сдвоен — изчаква влизане</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Сдвояването на сайта е премахнато. Отдалеченият достъп е изключен.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Връзката е недостъпна — нов опит</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Невалидни настройки за отдалечена връзка.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Управлението на Synix върна невалиден отговор.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Първо се свържете с интернет и завършете премахването на старото сдвояване.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Генерирайте нов код за сдвояване.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ОТДАЛЕЧЕНО УПРАВЛЕНИЕ] Заявено действие {0} за {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Възстановяване на парола за сайта</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Създаване на временна парола</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Отмяна на възстановяването</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Показване на временната парола</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Създайте временна парола тук. Влезте в сайта с нея и съществуващата двуфакторна проверка или ключ за достъп, след което изберете нова парола. Ако се изискват и двата метода, те остават задължителни. Паролата е еднократна и изтича след 10 минути. Първоначалната парола важи до завършване на възстановяването.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Акаунт: {0}. Готовност за създаване на временна парола.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Акаунт: {0}. Изтича след {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Възстановяването е изтекло или отменено. Започнете отново.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Твърде много заявки. Опитайте по-късно.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Вграденият лиценз Synix липсва.</value></data>
 </root>

@@ -15962,6 +15962,54 @@ Preden se okvir ali igra spremeni, ohrani svet, konfiguracijo in plugin podatke.
     <value>Oglato</value>
   </data>
   <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Deli število aktivnih sej</value></data>
-  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Izbirno: pošljite naključno kodo seje na synix.info vsako minuto, ko Synix deluje, tudi v ozadju. Podatki strežnikov se ne pošiljajo. Aktivnost poteče po 3 minutah. Privzeto vklopljeno. Tukaj lahko to izklopite.</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Izbirno: pošljite naključno kodo seje na synix.info vsakih 10 minut, ko Synix deluje, tudi v ozadju. Podatki strežnikov se ne pošiljajo. Aktivnost poteče po 15 minutah. Privzeto vklopljeno. Tukaj lahko to izklopite.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Oddaljeno upravljanje</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Seznanite ta računalnik za ogled, zagon, ustavitev, ponovni zagon in varnostno kopiranje strežnikov prek spletnega mesta Synix. Oddaljeni dostop ostane izklopljen, dokler tukaj ne odobrite seznanjanja.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Seznani ali odklopi ta računalnik</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Moj strežniški računalnik</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Ustvari kodo za seznanjanje</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Odobri ta račun</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Odstrani seznanitev in odklopi</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Upravljajte ta računalnik prek spletnega mesta Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Ime računalnika, prikazano na spletnem mestu</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Odpri upravljanje Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Prijavite se na spletno mesto in vnesite to kodo. Tukaj odobrite samo svoje uporabniško ime.
+
+Synix naj ostane odprt ali minimiran. Povezava v pripravljenosti čaka na prijavo. Podatki o strežnikih se med ogledom osvežujejo vsakih 10 sekund. Odstranitev seznanitve onemogoči oddaljeni dostop brez ustavitve strežnikov.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Vnesite ime računalnika.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Čakanje na zahtevo vašega računa za seznanjanje…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Seznanjanje odobreno za {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Koda je potekla. Ustvarite novo kodo za seznanjanje.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Račun, ki zahteva nadzor: {0}
+Odobrite samo, če je to vaše uporabniško ime.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Seznanjanja ni mogoče preveriti. Preverite internetno povezavo.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Z upravljanjem Synix ni mogoče vzpostaviti povezave. Poskusite znova.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identiteta računalnika: ključ, zaščiten s TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identiteta računalnika: programski ključ, zaščiten s sistemom Windows (TPM ni na voljo)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Ni seznanjen</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Seznanjen — čakanje na povezavo</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Lokalno odklopljen. Znova poskusite odstraniti seznanitev, ko bo povezava na voljo.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Seznanitve ni mogoče naložiti. Oddaljeni dostop je onemogočen.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Seznanjanje je treba odobriti lokalno.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Oddaljeni dostop onemogočen. Nastavitev seznanjanja ni mogoče shraniti.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Lokalno odklopljen — odstranjevanje seznanitve s spletnega mesta</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Povezan z oddaljenim upravljanjem</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Seznanjen — čakanje na prijavo</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Seznanitev na spletnem mestu odstranjena. Oddaljeni dostop je onemogočen.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Povezava ni na voljo — ponovni poskus</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Neveljavne nastavitve oddaljene povezave.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Upravljanje Synix je vrnilo neveljaven odgovor.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Najprej se povežite z internetom in dokončajte odstranitev stare seznanitve.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Ustvarite novo kodo za seznanjanje.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ODDALJENO UPRAVLJANJE] Zahtevano {0} za {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Obnovi geslo spletnega mesta</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Ustvari začasno geslo</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Prekliči to obnovitev</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Pokaži začasno geslo</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Tukaj ustvarite začasno geslo. Z njim in obstoječim dvostopenjskim preverjanjem ali ključem za dostop se prijavite na spletno mesto in izberite novo geslo. Če sta zahtevani obe metodi, ostaneta obvezni obe. Geslo velja enkrat in poteče po 10 minutah. Prvotno geslo velja do konca obnovitve.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Račun: {0}. Pripravljeno za ustvarjanje začasnega gesla.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Račun: {0}. Poteče čez {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Obnovitev je potekla ali bila preklicana. Začnite znova.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Preveč zahtev. Poskusite pozneje.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Manjka vdelana licenca Synix.</value></data>
 </root>
