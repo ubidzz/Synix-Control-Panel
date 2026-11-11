@@ -19,8 +19,10 @@ internal sealed class RemoteManagerService
     private static readonly string StatePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "Synix", "RemoteManager", "pairing.dat");
     private readonly object _gate = new();
-    private readonly HttpClient _client = new(new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false })
+    private readonly HttpClient _client = new(CreateTransport())
         { Timeout = TimeSpan.FromSeconds(15), MaxResponseContentBufferSize = 131072 };
+    internal static HttpClientHandler CreateTransport() => new()
+        { AllowAutoRedirect = false, UseCookies = false, CheckCertificateRevocationList = true };
     private RemotePairingState? _state;
     private CancellationTokenSource? _stop;
     private Task _loop = Task.CompletedTask;
@@ -158,7 +160,14 @@ internal sealed class RemoteManagerService
         var state = State ?? throw new InvalidOperationException(LocalizationManager.Get("RemoteManager.CodeExpired"));
         if (state.Enabled || state.PendingUnpair) throw new InvalidOperationException(LocalizationManager.Get("RemoteManager.NewCode"));
         await SendAsync<JsonElement>("device/approve", new { claimId }, state).ConfigureAwait(false);
-        lock (_gate) Persist(state with { Enabled = true, Account = account });
+        lock (_gate)
+        {
+            // Unpairing or replacing a pending identity while approval is in flight
+            // must never let its delayed response restore remote access locally.
+            if (!ReferenceEquals(_state, state))
+                throw new InvalidOperationException(LocalizationManager.Get("RemoteManager.NewCode"));
+            Persist(state with { Enabled = true, Account = account });
+        }
         Start();
     }
     internal void Start()
@@ -331,7 +340,8 @@ internal sealed class RemoteManagerService
                 socket.Options.KeepAliveTimeout = TimeSpan.FromSeconds(20);
                 using var connection = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
                 connection.CancelAfter(TimeSpan.FromMinutes(61));
-                await socket.ConnectAsync(uri, connection.Token).ConfigureAwait(false);
+                // Use the same certificate and redirect policy for HTTPS and WSS.
+                await socket.ConnectAsync(uri, _client, connection.Token).ConfigureAwait(false);
                 backoff = 1;
                 byte[] buffer = new byte[64];
                 while (socket.State == WebSocketState.Open && !cancellation.IsCancellationRequested)
