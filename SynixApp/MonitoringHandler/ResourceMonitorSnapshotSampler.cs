@@ -28,7 +28,8 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 		string ExecutablePath,
 		double CpuPercentage,
 		double RamGb,
-		double RamPercentage)
+		double RamPercentage,
+		ResourceProcessKey? ConsoleOwner = null)
 	{
 		internal ResourceProcessKey Key => new(ProcessId, StartTimeUtc);
 	}
@@ -81,7 +82,9 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 				IReadOnlyList<ServerProcessIdentity> identities = _processDiscovery(server);
-				foreach (ServerProcessIdentity identity in identities)
+				IReadOnlyList<ResourceConsoleProcess> consoleProcesses = ResourceConsoleProcessDiscovery.Find(identities, parentProcessIds);
+				Dictionary<int, ResourceProcessKey?> consoleOwners = consoleProcesses.ToDictionary(process => process.Identity.ProcessId, process => process.ConsoleOwner);
+				foreach (ServerProcessIdentity identity in identities.Concat(consoleProcesses.Select(process => process.Identity)))
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 					if (!discoveredProcessIds.Add(identity.ProcessId))
@@ -124,7 +127,8 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 							identity.ExecutablePath,
 							cpuPercentage,
 							ramGb,
-							ramPercentage));
+							ramPercentage,
+							consoleOwners.GetValueOrDefault(process.Id)));
 						totalUsage.TotalCpuPercent += cpuPercentage;
 						totalUsage.TotalRamMB += ramGb * 1024.0;
 					}

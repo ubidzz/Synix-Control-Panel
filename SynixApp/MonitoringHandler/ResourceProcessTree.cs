@@ -37,6 +37,11 @@ internal static class ResourceProcessTree
 				parents[process.ProcessId] = process.ParentProcessId is int parentId &&
 					parentId != process.ProcessId && members.TryGetValue(parentId, out var parent) &&
 					parent.StartTimeUtc <= process.StartTimeUtc ? parentId : null;
+				// A delegated console host may be launched by Windows rather than the
+				// game. Nest that display-only association under its verified client.
+				if (parents[process.ProcessId] == null && process.ConsoleOwner is { } owner &&
+					owner.ProcessId != process.ProcessId && members.TryGetValue(owner.ProcessId, out var client) && client.Key == owner)
+					parents[process.ProcessId] = owner.ProcessId;
 			}
 
 			foreach (int processId in members.Keys)
