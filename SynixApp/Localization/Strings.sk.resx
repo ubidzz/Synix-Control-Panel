@@ -12817,9 +12817,9 @@ Udržujte voliteľné RCON alebo koncové body správy lokálne, pokiaľ nemáte
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Vyžaduje sa kompatibilné zostavenie Metamod:Source a SourceMod pre túto verziu servera. Skompilované doplnky .smx patria do ageofchivalry/addons/sourcemod/plugins; sprievodné preklady, gamedata a rozšírenia zostávajú v priečinkoch určených dokumentáciou.</value>
   </data>
-  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIXOVÝ OVLÁDACÍ PANEL - OBMEDZENÁ LICENCIA NA VLASTNÝ ZDROJ
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIXOVÝ OVLÁDACÍ PANEL - OBMEDZENÁ LICENCIA NA VLASTNÝ ZDROJ
 
-Revízia licencie 1.3 – 7. novembra 2026
+Revízia licencie 1.4 – 11. novembra 2026
 
 Toto je revízia licencie, nie verzia aplikácie Synix.
 Copyright © 2026 Jason Turner. Všetky práva vyhradené.
@@ -12996,7 +12996,7 @@ Vzdialený prístup nie je služba s nulovým úložiskom. Vyžaduje si obmedzen
 
 14.2 Čo zostane vo vašom počítači
 
-Vzdialený manažér nenahráva ani neukladá vaše herné svety, súbory herného servera, obsah konfiguračných súborov, obsah zálohy a archívu, nespracovaný výstup konzoly ani heslá herného servera. Príkazy vzdialeného zálohovania a obnovy sa spúšťajú na spárovanom počítači; záložné súbory zostávajú na miestach, ktoré sú tam nakonfigurované. Správca nie je cloudové zálohovacie úložisko a neposkytuje neobmedzenú vzdialenú plochu, ľubovoľné príkazy shellu ani všeobecné prehliadanie súborov.
+Synix automaticky neodovzdáva herné svety, súbory herného servera, obsah konfiguračných súborov, obsah zálohy a archívu, nespracovaný výstup konzoly alebo uložené heslá herného servera. Vzdialené zálohovanie a obnovenie bežia na spárovanom počítači; záložné súbory zostávajú na miestach, ktoré sú tam nakonfigurované. Ak sa na webovej lokalite rozhodnete zadať príkaz hernej konzoly, jeho text sa spracuje a odošle do spárovaného počítača vrátane všetkých citlivých hodnôt, ktoré do tohto textu vložíte. Správca nie je cloudové zálohovacie úložisko a neposkytuje neobmedzenú vzdialenú plochu, príkazový riadok Windows ani všeobecné prehliadanie súborov.
 
 Synix uchováva svoje lokálne nastavenia, zoznam serverov, históriu, zálohy a stav párovania vo vašom počítači. Súkromný podpisový kľúč spárovaného počítača zostáva v úložisku kľúčov Windows. Synix uprednostňuje úložisko zálohované TPM, ak je k dispozícii, a inak podporuje softvérový kľúč chránený Windows, a to aj na kompatibilnom VMs. Dostupnosť TPM nie je zárukou, že počítač je bez kompromisov.
 
@@ -13006,8 +13006,9 @@ Tieto vyhlásenia popisujú vzdialenú správu Synix. Hry, Steam, mody, integrá
 
 - Účet a autentifikácia: Vami zvolené používateľské meno, identifikátor účtu, čas vytvorenia, bezpečnostné preferencie, osolená hodnota hash hesla, šifrované tajomstvo autentifikátora, keď je povolené, verejné prihlasovacie údaje prístupového kľúča, keď je povolené, a dočasné záznamy o overení/relácii. Heslá a overovacie kódy sa spracúvajú na kontrolu prihlásenia; trvalé heslá sa neukladajú ako čitateľný text. Synix neprijíma váš odtlačok prsta, obrázok tváre, súkromný kľúč alebo súkromný podpisový kľúč spárovaného počítača. Registrácia nevyžaduje skutočné meno ani e-mailovú adresu.
 - Párovanie a pripojenie: Označenie počítača, ktoré si vyberiete, náhodný identifikátor zariadenia, jeho verejný podpisový kľúč, priradenie účtu, nahlásený typ poskytovateľa kľúča, stav schválenia párovania a čas posledného pripojenia. Počas prevádzky Synix môže zostať otvorené tiché overené reléové pripojenie, takže webová stránka môže okamžite prebudiť spárovanú aplikáciu. Relé prenáša upozornenia na prebudenie/odpojenie a metadáta pripojenia, nie súbory hier alebo snímky servera.
-- Zobrazený stav: Obmedzené identifikátory servera, názvy, názvy hier, stav spustenia, počet hráčov, doba prevádzky, dostupné akcie, posledný čas/stav zálohovania a údaje CPU celého počítača a použité/celkové hodnoty RAM. Aplikácia odosiela tieto súhrny, keď je aktívne zobrazenie overeného správcu. Aktualizácie CPU/RAM pokrývajú spárované počítače; podrobné aktualizácie servera pokrývajú vybraný počítač. Aktualizácie sa zvyčajne spúšťajú každých 10 sekúnd a pozastavia sa po zatvorení, odpojení, vypršaní platnosti alebo po skrytí aktívnych zobrazení. Ostatné aktívne relácie prehliadača môžu ponechať spustené svoje vlastné zobrazenia.
+- Zobrazený stav: Obmedzené identifikátory servera, názvy, názvy hier, stav spustenia, počet hráčov, doba prevádzky, dostupné akcie, posledný čas/stav zálohovania a údaje CPU celého počítača a použité/celkové hodnoty RAM. Aplikácia odosiela tieto súhrny, keď je aktívne zobrazenie overeného správcu. Aktualizácie CPU/RAM pokrývajú spárované počítače; podrobné aktualizácie servera pokrývajú vybraný počítač. Aktualizácie sa zvyčajne spúšťajú každých 10 sekúnd a pozastavia sa po zatvorení, odpojení, vypršaní platnosti alebo po skrytí aktívnych zobrazení. Ostatné aktívne relácie prehliadača môžu ponechať spustené svoje vlastné zobrazenia. Samostatné súhrnné hodnoty zobrazujú celkové využitie CPU a RAM bežiacimi procesmi herných serverov vrátane ich sledovaných spúšťacích a pracovných procesov. Údaje o celom počítači zahŕňajú aj rýchlosti odosielania a prijímania cez aktívne sieťové adaptéry s bránou vrátane prevádzky LAN. S týmito údajmi sa neposielajú identifikátory adaptérov, IP adresy, obsah paketov ani adresy navštívených webových stránok.
 - Požadované akcie a zálohy: Identifikátory servera/akcie, čas požiadavky, priebeh/výsledok, a keď požadujete voľby zálohovania, aj identifikátory zálohy, názvy súborov, dátumy, veľkosti a štítky integrity. Pre túto funkciu sa neposiela obsah zálohy a úplné miestne cesty.
+- Príkazy hernej konzoly: Nepriehľadný identifikátor spustenia hry, krátkodobé schválenie odomknutia a text príkazu, ktorý odošlete. Čakajúci text je zašifrovaný v databáze služieb a po autorizácii doručenia sa z tohto záznamu odstráni. Nie je zahrnutá v zozname posledných akcií ani v záznamoch o výstrahách týkajúcich sa účtu. Výsledok doručenia znamená, že text bol odoslaný do hry, nie to, že ho hra prijala alebo dokončila. Odpovede hry a miestny strom procesov sa neodovzdávajú.
 - Bezpečnosť a prevencia zneužitia: Typ neúspešného prihlásenia, počet a časy skupinových pokusov, typ udalosti obnovenia/zabezpečenia a príslušné štítky počítača. Krátkodobé záznamy rýchlostného limitu môžu používať kľúčové hodnoty hash adries IP pripojení a identifikátorov účtov. Záznamy upozornení na účet Synix neobsahujú pokusy o zadanie hesla, overovacie kódy, nespracované adresy IP ani odtlačky prstov prehliadača. Poskytovatelia hostingu môžu samostatne spracovávať informácie o pripojení, ako je vysvetlené v časti 14.6.
 
 Webová stránka nevyhnutne spracováva povolené súhrny a príkazy na poskytovanie vzdialenej správy. HTTPS a šifrované prenosové spojenia chránia prenos; nejde o tvrdenie, že hostingová služba nemôže údaje spracovať.
@@ -13017,6 +13018,7 @@ Webová stránka nevyhnutne spracováva povolené súhrny a príkazy na poskytov
 - Poverenia a nastavenia účtu zostanú, kým účet neodstránite. Schválené záznamy o párovaní zostávajú, kým sa počítač nezruší alebo kým sa neodstráni účet.
 - Stavové snímky a hodnoty CPU/RAM sú prepísané novšími hodnotami a po 15 minútach bez výmeny budú vhodné na vyčistenie. Čas posledného pripojenia zostáva súčasťou záznamu o párovaní.
 - Záznamy vzdialených príkazov, výsledky a vrátené metadáta zálohovania sa stanú vhodnými na vyčistenie po 24 hodinách.
+- Platnosť čakajúcich príkazov hernej konzoly vyprší po 30 sekundách. Nedoručený text sa stáva oprávneným na vymazanie po uplynutí platnosti alebo odvolaní; schválená dodávka to okamžite vymaže. Platnosť schválenia konzoly vyprší do troch minút. Identifikátor akcie a výsledok pevného doručenia sa riadia 24-hodinovým obdobím záznamu akcie.
 – Udalosti obnovenia/zabezpečenia a upozornenia na neúspešné prihlásenie budú oprávnené na vyčistenie po 90 dňoch. Pri neúspešných prihláseniach sa zachová najviac 100 najnovších skupín; chyby zhody v priebehu 10 minút sú zoskupené.
 - Platnosť relácií prehliadača vyprší po 30 minútach bez požiadaviek manažéra alebo celkovo po 8 hodinách. Platnosť pokusov o overenie vyprší po 5 minútach; dočasné obnovenie hesla vyprší do 10 minút a je na jedno použitie. Záznamy overenia, obnovy, ochrany pred opakovaným prehrávaním a limitu rýchlosti sa počas čistenia odstránia. Neúplné registrácie účtu budú oprávnené na vyčistenie po 24 hodinách.
 
@@ -13027,6 +13029,8 @@ Zrušenie párovania vymaže vybrané párovanie a súvisiace vzdialené záznam
 14.5 Vaše ovládacie prvky a ochrana pri prihlásení
 
 Prihlásenie vyžaduje vaše heslo a existujúci prístupový kľúč alebo autentifikátor, ako napríklad Google Authenticator. Účty nakonfigurované tak, aby vyžadovali obe metódy, zachovávajú obe požiadavky. Zmena hesla, zrušenie párovania počítača prostredníctvom webu a odstránenie účtu správcu si vyžadujú nové overenie danej konkrétnej zmeny.
+
+Odomknutie vlastného vstupu z hernej konzoly si navyše vyžaduje aktuálne heslo účtu a nové overenie podľa existujúcich požiadaviek na spôsob účtu. Schválenie je viazané na jednu reláciu prehliadača, spárovaný počítač, uložený server a živú hru, ktorá beží až tri minúty. Zastavenie, reštart, zatvorená konzola, vypnuté nastavenie konzoly alebo stratený proces bráni ďalším príkazom. Odpojením alebo skrytím karty správcu sa skončí schválenie tejto karty. Normálne tlačidlá akcií servera si zachovávajú svoje existujúce požiadavky na prihlásenie. Kvalifikujú sa iba podporované vstupné pripojenia vlastnené hrou; samotný jedinečný identifikátor neoprávňuje na zápis do príkazového riadka Windows.
 
 Predtým schválený spárovaný počítač môže vydať dočasné heslo, ak zabudnete heslo svojej webovej stránky. Nemôže vybrať iný účet. Dočasné heslo neobchádza ani neodstraňuje vaše existujúce požiadavky na prístupový kľúč/autentikátor a pred vstupom do manažéra si musíte zvoliť nové heslo. Dokončenie obnovy zruší vaše ďalšie relácie prehliadača.
 
@@ -16012,4 +16016,6 @@ Schváľte ho iba vtedy, ak ide o vaše používateľské meno.</value></data>
   <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Obnovenie vypršalo alebo bolo odvolané. Začnite znova.</value></data>
   <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Priveľa požiadaviek. Skúste to neskôr.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Vložená licencia Synix chýba.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Pripojenie k bežiacemu serveru „{0}“ bolo obnovené (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Pripojenie k bežiacemu serveru „{0}“ nájdenému v jeho inštalačnom priečinku bolo obnovené (PID: {1}).</value></data>
 </root>

@@ -18,6 +18,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Synix Control Panel.csproj" />
+		<ProjectReference Include="ConsoleFixture\ConsoleFixture.csproj" ReferenceOutputAssembly="false" />
+		<Compile Remove="ConsoleFixture\**\*.cs" />
 		<EmbeddedResource Include="..\Database\GameDefinitions\steam-download-audit.json" LogicalName="Synix.Tests.SteamDownloadAudit.json" />
 	</ItemGroup>
+	<Target Name="CopyConsoleFixture" AfterTargets="Build">
+		<ItemGroup><ConsoleFixtureFiles Include="$(MSBuildProjectDirectory)\ConsoleFixture\bin\$(Configuration)\net10.0\bedrock_server.*" /></ItemGroup>
+		<Copy SourceFiles="@(ConsoleFixtureFiles)" DestinationFolder="$(TargetDir)ConsoleFixture" />
+	</Target>
 </Project>

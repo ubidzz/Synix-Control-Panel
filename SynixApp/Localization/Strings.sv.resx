@@ -2396,9 +2396,9 @@ Håll valfria RCON eller administrationsslutpunkter lokala om du inte har ett s�
 
 3. Officiell dokumentation: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Kräver en kompatibel Metamod:Source och SourceMod build för den här serverversionen. Kompilerade.smx-plugins går till ageofchivalry/addons/sourcemod/plugins; medföljande översättningar, speldata och tillägg behåller sina dokumenterade mappar.</value></data>
-  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX KONTROLLPANEL – BEGRÄNSAD PROPRIETÄR KÄLLTILLGÄNGLIG LICENS
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX KONTROLLPANEL – BEGRÄNSAD PROPRIETÄR KÄLLTILLGÄNGLIG LICENS
 
-Licensrevision 1.3 – 7 november 2026
+Licensrevision 1.4 – 11 november 2026
 
 Detta är licensens revision, inte Synix-appens version.
 Upphovsrätt © 2026 Jason Turner. Alla rättigheter reserverade.
@@ -2575,7 +2575,7 @@ Fjärråtkomst är inte en nolllagringstjänst. Den behöver de begränsade kont
 
 14.2 Vad som finns kvar på din dator
 
-Fjärrhanteraren laddar inte upp eller lagrar dina spelvärldar, spelserverfiler, konfigurationsfilinnehåll, säkerhetskopieringsarkivinnehåll, råkonsolutgång eller spelserverlösenord. Kommandon för fjärrsäkerhetskopiering och återställning körs på den ihopparade datorn; säkerhetskopior finns kvar på de platser som konfigurerats där. Hanteraren är inte lagringsutrymme för molnbackup och tillhandahåller inte obegränsat fjärrskrivbord, godtyckliga skalkommandon eller allmän filbläddring.
+Synix laddar inte automatiskt upp spelvärldar, spelserverfiler, konfigurationsfilinnehåll, säkerhetskopieringsarkivinnehåll, råkonsolutgång eller sparade spelserverlösenord. Fjärrsäkerhetskopiering och återställning körs på den ihopparade datorn; säkerhetskopior finns kvar på de platser som konfigurerats där. Om du väljer att skriva ett spelkonsolkommando på webbplatsen, bearbetas dess text och vidarebefordras till den parade datorn, inklusive alla känsliga värden du lägger i texten. Hanteraren är inte lagring för molnsäkerhetskopiering och ger inte obegränsad fjärrskrivbord, Windows kommandopromptåtkomst eller allmän filbläddring.
 
 Synix behåller sina lokala inställningar, serverlista, historik, säkerhetskopior och ihopparningstillstånd på din dator. En parad dators privata signeringsnyckel stannar i Windows-nyckellagringen. Synix föredrar TPM-stödd lagring när den är tillgänglig och stöder i övrigt en Windows-skyddad mjukvarunyckel, inklusive på kompatibel VMs. TPM tillgänglighet är inte en garanti för att en dator är kompromisslös.
 
@@ -2585,8 +2585,9 @@ Dessa uttalanden beskriver Synix fjärrhantering. Spel, Steam, mods, Discord-int
 
 - Konto och autentisering: Ditt valda användarnamn, kontoidentifierare, skapandetid, säkerhetsinställningar, en saltad lösenordshash, krypterad autentiseringshemlighet när den är aktiverad, offentliga autentiseringsuppgifter för lösenord när den är aktiverad och tillfälliga verifierings-/sessionsposter. Lösenord och verifieringskoder behandlas för att kontrollera inloggningen; permanenta lösenord lagras inte som läsbar text. Synix tar inte emot ditt fingeravtryck, ansiktsbild, privata lösenordsnyckel eller din parade dators privata signeringsnyckel. Registrering kräver inte ett riktigt namn eller e-postadress.
 - Parning och anslutning: Datoretiketten du väljer, en slumpmässig enhetsidentifierare, dess offentliga signeringsnyckel, kontoassociation, rapporterad nyckelleverantörstyp, godkännandestatus för ihopkoppling och senaste anslutningstid. En tyst autentiserad reläanslutning kan förbli öppen medan Synix körs så att webbplatsen kan väcka den ihopparade appen omedelbart. Reläet bär meddelanden om väckning/frånkoppling och anslutningsmetadata, inte spelfiler eller ögonblicksbilder från servern.
-- Visad status: Begränsad serveridentifierare, namn, spelnamn, körstatus, antal spelare, drifttid, tillgängliga åtgärder, senaste backuptid/status och CPU för hela datorn och använda/totala RAM-avläsningar. Appen skickar dessa sammanfattningar medan en autentiserad managervy är aktiv. CPU/RAM-uppdateringar täcker ihopparade datorer; detaljerade serveruppdateringar täcker den valda datorn. Uppdateringar körs normalt var tionde sekund och pausas efter att aktiva vyer har stängts, kopplats bort, upphört att gälla eller blivit dolda. Andra aktiva webbläsarsessioner kan hålla sina egna vyer igång.
+- Visad status: Begränsad serveridentifierare, namn, spelnamn, körstatus, antal spelare, drifttid, tillgängliga åtgärder, senaste backuptid/status och CPU för hela datorn och använda/totala RAM-avläsningar. Appen skickar dessa sammanfattningar medan en autentiserad managervy är aktiv. CPU/RAM-uppdateringar täcker ihopparade datorer; detaljerade serveruppdateringar täcker den valda datorn. Uppdateringar körs normalt var tionde sekund och pausas efter att aktiva vyer har stängts, kopplats bort, upphört att gälla eller blivit dolda. Andra aktiva webbläsarsessioner kan hålla sina egna vyer igång. Separata totalvärden visar den sammanlagda CPU- och RAM-användningen för körande spelserverprocesser, inklusive deras spårade start- och arbetsprocesser. Mätvärdena för hela datorn omfattar också sändnings- och mottagningshastigheter på aktiva nätverkskort med gateway, inklusive LAN-trafik. Kortidentifierare, IP-adresser, paketinnehåll och besökta webbadresser skickas inte med dessa mätvärden.
 - Begärda åtgärder och säkerhetskopior: Server/åtgärdsidentifierare, begärantid, framsteg/resultat och, när du begär säkerhetskopieringsval, säkerhetskopieringsidentifierare, filnamn, datum, storlekar och integritetsetiketter. Säkerhetskopieringsinnehåll och fullständiga lokala sökvägar skickas inte för den här funktionen.
+- Spelkonsolkommandon: En ogenomskinlig identifierare för spelkörning, kortlivat upplåsningsgodkännande och kommandotext du skickar. Väntande text krypteras i tjänstedatabasen och tas bort från den posten när leverans är auktoriserad. Det ingår inte i listan över senaste åtgärder eller kontovarningsposter. Ett leveransresultat betyder att texten skickades till spelet, inte att spelet accepterade eller slutförde det. Spelsvar och det lokala processträdet laddas inte upp.
 - Säkerhet och förebyggande av missbruk: Misslyckad inloggningstyp, grupperat antal försök och tider, typ av återställning/säkerhetshändelse och relevanta datoretiketter. Kortlivade hastighetsgränsposter kan använda nyckelhaschar för anslutnings-IP-adresser och kontoidentifierare. Synixs kontovarningsposter innehåller inte försök till lösenord, verifieringskoder, obearbetade IP-adresser eller webbläsarfingeravtryck. Värdleverantörer kan behandla anslutningsinformation separat enligt beskrivningen i avsnitt 14.6.
 
 Webbplatsen behandlar nödvändigtvis de tillåtna sammanfattningarna och kommandona för att tillhandahålla fjärrhantering. HTTPS och krypterade reläanslutningar skyddar trafik i transit; detta är inte ett påstående om att värdtjänsten inte kan behandla data.
@@ -2596,6 +2597,7 @@ Webbplatsen behandlar nödvändigtvis de tillåtna sammanfattningarna och komman
 - Kontouppgifter och inställningar finns kvar tills kontot raderas. Godkända kopplingsposter finns kvar tills datorn kopplas bort eller kontot raderas.
 - Statusöversiktsbilder och CPU/RAM-avläsningar skrivs över av nyare avläsningar och blir kvalificerade för rensning efter 15 minuter utan ersättning. Senaste anslutningstiden förblir en del av kopplingsrekordet.
 - Fjärrkommandoposter, resultat och returnerad backup-valmetadata blir kvalificerade för rensning efter 24 timmar.
+- Väntande spelkonsolkommandon löper ut efter 30 sekunder. Ej levererad text blir kvalificerad för radering vid utgång eller återkallelse; godkänd leverans rensar den omedelbart. Konsolgodkännanden löper ut inom tre minuter. Åtgärdsidentifieraren och det fasta leveransresultatet följer den 24-timmars åtgärdsregistreringsperioden.
 - Återställnings-/säkerhetshändelser och misslyckade inloggningsvarningar blir kvalificerade för rensning efter 90 dagar. Misslyckade inloggningar behåller högst de 100 senaste grupperna; matchningsfel inom en 10-minutersperiod grupperas tillsammans.
 - Webbläsarsessioner upphör efter 30 minuter utan chefsbegäranden eller efter 8 timmar totalt. Verifieringsförsök upphör efter 5 minuter; återställning av tillfälligt lösenord går ut inom 10 minuter och är engångsbruk. Utgångna poster för verifiering, återställning, uppspelningsskydd och hastighetsgräns tas bort under rensningen. Ofullständiga kontoregistreringar blir kvalificerade för rensning efter 24 timmar.
 
@@ -2606,6 +2608,8 @@ Ta bort parkoppling tar bort den valda parkopplingen och dess associerade fjärr
 14.5 Dina kontroller och inloggningsskydd
 
 Inloggning kräver ditt lösenord plus en befintlig lösenordsnyckel eller autentisering, som Google Authenticator. Konton som är konfigurerade för att kräva båda metoderna håller båda kraven. Att ändra ett lösenord, koppla bort en dator via webbplatsen och ta bort ett förvaltarkonto kräver ny verifiering för den specifika ändringen.
+
+Upplåsning av anpassad spelkonsolinmatning kräver dessutom det aktuella kontolösenordet och ny verifiering enligt kontots befintliga metodkrav. Godkännandet är knutet till en webbläsarsession, parad dator, sparad server och livespel som körs i upp till tre minuter. Ett stopp, omstart, stängd konsol, inaktiverad konsolinställning eller förlorad process förhindrar ytterligare kommandon. Om du kopplar bort eller döljer chefsfliken avslutas godkännandet för den. De normala serveråtgärdsknapparna behåller sina befintliga inloggningskrav. Endast stödda spelägda ingångsanslutningar kvalificerar sig; en unik identifierare ensam tillåter inte skrivning i en Windows-kommandotolk.
 
 En tidigare godkänd ihopkopplad dator kan utfärda ett tillfälligt lösenord om du glömmer ditt webbplatslösenord. Det kan inte välja ett annat konto. Det tillfälliga lösenordet kringgår eller tar inte bort dina befintliga krav för lösenordsnyckel/autentisering, och du måste välja ett nytt lösenord innan du går in i administratören. Om du slutför återställningen återkallas dina andra webbläsarsessioner.
 
@@ -7839,5 +7843,7 @@ Godkänn bara om det är ditt användarnamn.</value></data>
   <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Återställningen har löpt ut eller återkallats. Börja om.</value></data>
   <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>För många förfrågningar. Försök igen senare.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Den inbäddade Synix-licensen saknas.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Anslutningen till servern "{0}" som körs har återställts (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Anslutningen till servern "{0}" som hittades körande i installationsmappen har återställts (PID: {1}).</value></data>
 </root>
 

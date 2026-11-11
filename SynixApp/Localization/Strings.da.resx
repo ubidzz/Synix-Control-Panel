@@ -1023,9 +1023,9 @@ Hold valgfrie RCON eller administrationsslutpunkter lokale, medmindre du har en 
 
 3. Officiel dokumentation: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Kræver en kompatibel Metamod:Source og SourceMod build til denne serverversion. Kompilerede.smx plugins går i ageofchivalry/addons/sourcemod/plugins; ledsagende oversættelser, spildata og udvidelser bevarer deres dokumenterede mapper.</value></data>
-  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX CONTROL PANEL – BEGRÆNSET PROPRIETÆR KILDETILGÆNGELIG LICENS
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX CONTROL PANEL – BEGRÆNSET PROPRIETÆR KILDETILGÆNGELIG LICENS
 
-Licensrevision 1.3 — 7. november 2026
+Licensrevision 1.4 — 11. november 2026
 
 Dette er licensens revision, ikke Synix-appens version.
 Ophavsret © 2026 Jason Turner. Alle rettigheder forbeholdes.
@@ -1202,7 +1202,7 @@ Fjernadgang er ikke en nullagringstjeneste. Den har brug for de begrænsede kont
 
 14.2 Hvad bliver på din computer
 
-Fjernadministratoren uploader eller gemmer ikke dine spilverdener, spilserverfiler, konfigurationsfilindhold, sikkerhedskopieringsarkivindhold, rå konsoloutput eller spilserveradgangskoder. Kommandoer til fjernsikkerhedskopiering og -gendannelse køres på den parrede computer; backup-filer forbliver på de steder, der er konfigureret der. Manageren er ikke backup-lager i skyen og giver ikke ubegrænset fjernskrivebord, vilkårlige shell-kommandoer eller generel filsøgning.
+Synix uploader ikke automatisk spilverdener, spilserverfiler, konfigurationsfilindhold, backuparkivindhold, rå konsoloutput eller gemte spilserveradgangskoder. Fjernsikkerhedskopiering og -gendannelse køres på den parrede computer; backup-filer forbliver på de steder, der er konfigureret der. Hvis du vælger at skrive en spilkonsolkommando på webstedet, behandles dens tekst og videresendes til den parrede computer, inklusive eventuelle følsomme værdier, du lægger i teksten. Manageren er ikke cloud backup-lager og giver ikke ubegrænset fjernskrivebord, Windows kommandopromptadgang eller generel filsøgning.
 
 Synix beholder sine lokale indstillinger, serverliste, historier, sikkerhedskopier og parringstilstand på din computer. En parret computers private signeringsnøgle forbliver i Windows nøglelager. Synix foretrækker TPM-støttet lager, når det er tilgængeligt og understøtter på anden måde en Windows-beskyttet softwarenøgle, inklusive på kompatibel VMs. TPM tilgængelighed er ikke en garanti for, at en computer er kompromisløs.
 
@@ -1212,8 +1212,9 @@ Disse udsagn beskriver Synix fjernstyring. Spil, Steam, mods, Discord-integratio
 
 - Konto og godkendelse: Dit valgte brugernavn, konto-id, oprettelsestidspunkt, sikkerhedspræferencer, en saltet adgangskodehash, krypteret autentificeringshemmelighed, når den er aktiveret, adgangsnøgle offentlige legitimationsoplysninger, når aktiveret, og midlertidige verifikations-/sessionsregistreringer. Adgangskoder og bekræftelseskoder behandles for at kontrollere login; permanente adgangskoder gemmes ikke som læsbar tekst. Synix modtager ikke dit fingeraftryk, ansigtsbillede, adgangsnøgle private nøgle eller parrede computers private signaturnøgle. Registrering kræver ikke et rigtigt navn eller e-mailadresse.
 - Parring og forbindelse: Computeretiket, du vælger, en tilfældig enheds-id, dens offentlige signeringsnøgle, kontotilknytning, rapporteret nøgleudbydertype, parringsgodkendelsestilstand og sidste forbindelsestid. En stille autentificeret relæforbindelse kan forblive åben, mens Synix kører, så hjemmesiden kan vække den parrede app med det samme. Relæet bærer wake/disconnect-meddelelser og forbindelsesmetadata, ikke spilfiler eller serversnapshots.
-- Vist status: Begrænsede server-id&apos;er, navne, spilnavne, kørende tilstand, spillerantal, oppetid, tilgængelige handlinger, seneste backup-tid/-status og hele computerens CPU og brugte/i alt RAM aflæsninger. Appen sender disse oversigter, mens en godkendt administratorvisning er aktiv. CPU/RAM opdateringer dækker parrede computere; detaljerede serveropdateringer dækker den valgte computer. Opdateringer kører normalt hvert 10. sekund og holder pause, efter at aktive visninger lukkes, afbrydes, udløber eller bliver skjult, alt efter hvad der er relevant. Andre aktive browsersessioner kan holde deres egne visninger kørende.
+- Vist status: Begrænsede server-id&apos;er, navne, spilnavne, kørende tilstand, spillerantal, oppetid, tilgængelige handlinger, seneste backup-tid/-status og hele computerens CPU og brugte/i alt RAM aflæsninger. Appen sender disse oversigter, mens en godkendt administratorvisning er aktiv. CPU/RAM opdateringer dækker parrede computere; detaljerede serveropdateringer dækker den valgte computer. Opdateringer kører normalt hvert 10. sekund og holder pause, efter at aktive visninger lukkes, afbrydes, udløber eller bliver skjult, alt efter hvad der er relevant. Andre aktive browsersessioner kan holde deres egne visninger kørende. Separate totaler viser det samlede CPU- og RAM-forbrug for kørende spilserverprocesser, herunder deres sporede start- og arbejdsprocesser. Aflæsningerne for hele computeren omfatter også sende- og modtagehastigheder på aktive netværksadaptere med gateway, inklusive LAN-trafik. Adapteridentifikatorer, IP-adresser, pakkeindhold og besøgte webadresser sendes ikke med disse aflæsninger.
 - Anmodede handlinger og sikkerhedskopier: Server-/handlingsidentifikatorerne, anmodningstidspunkt, fremskridt/resultat, og, når du anmoder om sikkerhedskopieringsvalg, backup-id&apos;er, filnavne, datoer, størrelser og integritetsetiketter. Sikkerhedskopieringsindhold og fulde lokale stier sendes ikke for denne funktion.
+- Spilkonsolkommandoer: En uigennemsigtig spil-run identifikator, kortvarig oplåsningsgodkendelse og kommandotekst, du indsender. Afventende tekst er krypteret i servicedatabasen og fjernes fra denne post, når levering er godkendt. Det er ikke inkluderet i listen over seneste handlinger eller kontoadvarsler. Et leveringsresultat betyder, at teksten blev sendt til spillet, ikke at spillet accepterede eller fuldførte det. Spilsvar og det lokale procestræ uploades ikke.
 - Sikkerhed og forebyggelse af misbrug: Mislykket logintype, grupperet antal forsøg og tidspunkter, gendannelses-/sikkerhedsbegivenhedstype og relevante computeretiketter. Kortvarige hastighedsgrænseregistreringer kan bruge nøglehash af forbindelses IP-adresser og konto-id&apos;er. Synixs kontoadvarsler indeholder ikke forsøg på adgangskoder, bekræftelseskoder, rå IP-adresser eller browserfingeraftryk. Hostingudbydere kan separat behandle forbindelsesoplysninger som forklaret i afsnit 14.6.
 
 Hjemmesiden behandler nødvendigvis de tilladte oversigter og kommandoer for at give fjernstyring. HTTPS og krypterede relæforbindelser beskytter trafik i transit; dette er ikke en påstand om, at hosting-tjenesten ikke kan behandle dataene.
@@ -1223,6 +1224,7 @@ Hjemmesiden behandler nødvendigvis de tilladte oversigter og kommandoer for at 
 - Kontolegitimationsoplysninger og -indstillinger forbliver, indtil kontoen slettes. Godkendte parringsregistreringer forbliver, indtil computeren ophæves, eller kontoen slettes.
 - Statussnapshots og CPU/RAM-aflæsninger overskrives af nyere aflæsninger og bliver berettiget til oprydning efter 15 minutter uden udskiftning. Sidste forbindelsestid forbliver en del af parringsregistreringen.
 - Fjernkommandoposter, resultater og returnerede metadata om sikkerhedskopiering bliver berettiget til oprydning efter 24 timer.
+- Afventende spilkonsolkommandoer udløber efter 30 sekunder. Ikke-leveret tekst bliver berettiget til sletning ved udløb eller tilbagekaldelse; godkendt levering rydder det straks. Konsolgodkendelser udløber inden for tre minutter. Handlingsidentifikatoren og det faste leveringsresultat følger den 24-timers handlingsregistreringsperiode.
 - Genoprettelse/sikkerhedsbegivenheder og mislykkede login-advarsler bliver berettiget til oprydning efter 90 dage. Mislykkede logins bevarer højst de 100 seneste grupper; matchende fejl inden for en 10-minutters periode er grupperet sammen.
 - Browsersessioner udløber efter 30 minutter uden manageranmodninger eller efter 8 timer generelt. Verifikationsforsøg udløber efter 5 minutter; midlertidig gendannelse af adgangskode udløber inden for 10 minutter og er engangsbrug. Udløbne verifikations-, gendannelses-, genafspilningsbeskyttelses- og hastighedsgrænseposter fjernes under oprydning. Ufuldstændige kontoregistreringer bliver berettiget til oprydning efter 24 timer.
 
@@ -1233,6 +1235,8 @@ Ophævelse af parring sletter den valgte parring og dens tilknyttede fjernregist
 14.5 Dine kontroller og loginbeskyttelse
 
 Log ind kræver din adgangskode plus en eksisterende adgangsnøgle eller autentificering, såsom Google Authenticator. Konti, der er konfigureret til at kræve begge metoder, holder begge krav. Ændring af en adgangskode, ophævelse af parringen af ​​en computer via webstedet og sletning af en managerkonto kræver ny bekræftelse for den specifikke ændring.
+
+Oplåsning af brugerdefineret spilkonsolindgang kræver desuden den aktuelle kontoadgangskode og ny bekræftelse i henhold til kontoens eksisterende metodekrav. Godkendelse er bundet til én browsersession, parret computer, gemt server og live-spil, der kører i op til tre minutter. Et stop, genstart, lukket konsol, deaktiveret konsolindstilling eller tabt proces forhindrer yderligere kommandoer. Hvis du afbryder eller skjuler administratorfanen, afsluttes denne fanes godkendelse. De normale serverhandlingsknapper beholder deres eksisterende login-krav. Kun understøttede spil-ejede inputforbindelser kvalificerer; en unik identifikator alene tillader ikke skrivning i en Windows kommandoprompt.
 
 En tidligere godkendt parret computer kan udstede en midlertidig adgangskode, hvis du glemmer adgangskoden til din hjemmeside. Den kan ikke vælge en anden konto. Den midlertidige adgangskode omgår eller fjerner ikke dine eksisterende krav til adgangsnøgle/autentificering, og du skal vælge en ny adgangskode, før du går ind i manageren. Fuldførelse af gendannelse tilbagekalder dine andre browsersessioner.
 
@@ -6915,4 +6919,6 @@ Godkend kun, hvis dette er dit brugernavn.</value></data>
   <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Gendannelsen er udløbet eller tilbagekaldt. Start igen.</value></data>
   <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>For mange anmodninger. Prøv igen senere.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Den indlejrede Synix-licens mangler.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Forbindelsen til den kørende server "{0}" er genoprettet (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Forbindelsen til den kørende server "{0}", som blev fundet i installationsmappen, er genoprettet (PID: {1}).</value></data>
 </root>

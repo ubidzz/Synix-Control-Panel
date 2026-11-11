@@ -2395,9 +2395,9 @@ Güvenli bir uzaktan yönetim düzenlemesine sahip olmadıkça RCON veya yöneti
 
 3. Resmi Belge: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Bu sunucu sürümü için uyumlu bir Metamod:Source ve SourceMod yapı gerektirir. Derlenmiş.smx eklentileri ageofchivalry/addons/sourcemod/plugins&apos;e gider; eşlik eden çeviriler, gamedata ve eklentiler belgelenmiş klasörlerini korurlar.</value></data>
-  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX KONTROL PANELİ - Kısıtlı Özel Kaynak Lisansı
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX KONTROL PANELİ - Kısıtlı Özel Kaynak Lisansı
 
-Lisans revizyonu 1.3 — 7 Kasım 2026
+Lisans revizyonu 1.4 — 11 Kasım 2026
 
 Bu, Synix uygulamasının sürümü değil, lisansın revizyonudur.
 Telif hakkı © 2026 Jason Turner. Tüm hakları saklıdır.
@@ -2574,7 +2574,7 @@ Uzaktan erişim sıfır depolama hizmeti değildir. Aşağıda açıklanan sın�
 
 14.2 Bilgisayarınızda Neler Kalır?
 
-Uzak yönetici, oyun dünyalarınızı, oyun sunucusu dosyalarınızı, yapılandırma dosyası içeriklerinizi, yedekleme arşiv içeriklerinizi, ham konsol çıktınızı veya oyun sunucusu şifrelerinizi yüklemez veya saklamaz. Eşleştirilen bilgisayarda uzaktan yedekleme ve geri yükleme komutları çalıştırılır; yedekleme dosyaları orada yapılandırılan konumlarda kalır. Yönetici, bulut yedekleme depolaması değildir ve sınırsız uzak masaüstü, isteğe bağlı kabuk komutları veya genel dosya taraması sağlamaz.
+Synix, oyun dünyalarını, oyun sunucusu dosyalarını, yapılandırma dosyası içeriklerini, yedekleme arşiv içeriklerini, ham konsol çıktısını veya kayıtlı oyun sunucusu şifrelerini otomatik olarak yüklemez. Eşleştirilen bilgisayarda uzaktan yedekleme ve geri yükleme çalıştırması; yedekleme dosyaları orada yapılandırılan konumlarda kalır. Web sitesinde bir oyun konsolu komutu yazmayı seçerseniz, metni işlenir ve o metne koyduğunuz hassas değerler de dahil olmak üzere eşleştirilmiş bilgisayara iletilir. Yönetici, bulut yedekleme depolaması değildir ve sınırsız uzak masaüstü, Windows komut istemi erişimi veya genel dosya taraması sağlamaz.
 
 Synix yerel ayarlarını, sunucu listesini, geçmişlerini, yedeklemelerini ve eşleştirme durumunu bilgisayarınızda tutar. Eşleştirilmiş bir bilgisayarın özel imzalama anahtarı, Windows anahtar deposunda kalır. Synix, mevcut olduğunda TPM destekli depolamayı tercih eder ve aksi takdirde uyumlu VMs dahil olmak üzere Windows korumalı bir yazılım anahtarını destekler. TPM&apos;nin kullanılabilirliği, bilgisayarın ödünsüz olduğunun garantisi değildir.
 
@@ -2584,8 +2584,9 @@ Bu ifadeler Synix uzaktan yönetimini açıklamaktadır. Paylaşmayı seçtiğin
 
 - Hesap ve kimlik doğrulama: Seçtiğiniz kullanıcı adı, hesap tanımlayıcınız, oluşturma zamanı, güvenlik tercihleri, tuzlu şifre karması, etkinleştirildiğinde şifrelenmiş kimlik doğrulayıcı sırrı, etkinleştirildiğinde ortak geçiş anahtarı kimlik bilgileri ve geçici doğrulama/oturum kayıtları. Oturum açma işleminin kontrol edilmesi için parolalar ve doğrulama kodları işlenir; kalıcı şifreler okunabilir metin olarak saklanmaz. Synix parmak izinizi, yüz resminizi, geçiş anahtarı özel anahtarınızı veya eşleştirilmiş bilgisayarın özel imzalama anahtarını almaz. Kayıt sırasında gerçek bir isim veya e-posta adresi talep edilmez.
 - Eşleştirme ve bağlantı: Seçtiğiniz bilgisayar etiketi, rastgele bir cihaz tanımlayıcısı, genel imzalama anahtarı, hesap ilişkisi, rapor edilen anahtar sağlayıcı türü, eşleştirme onay durumu ve son bağlantı zamanı. Synix çalışırken sessiz bir kimlik doğrulamalı geçiş bağlantısı açık kalabilir, böylece web sitesi eşlenen uygulamayı hemen uyandırabilir. Röle, oyun dosyalarını veya sunucu anlık görüntülerini değil, uyandırma/bağlantıyı kesme bildirimlerini ve bağlantı meta verilerini taşır.
-- Görüntülenen durum: Sınırlı sunucu tanımlayıcıları, adlar, oyun adları, çalışma durumu, oyuncu sayıları, çalışma süresi, mevcut eylemler, en son yedekleme süresi/durumu ve tüm bilgisayar CPU ve kullanılan/toplam RAM okumaları. Uygulama, bu özetleri kimliği doğrulanmış bir yönetici görünümü etkinken gönderir. CPU/RAM güncellemeleri eşleştirilmiş bilgisayarları kapsar; ayrıntılı sunucu güncellemeleri seçilen bilgisayarı kapsar. Güncellemeler normalde her 10 saniyede bir çalıştırılır ve etkin görünümler kapatıldıktan, bağlantı kesildikten, süresi dolduktan veya duruma göre gizlendikten sonra duraklatılır. Diğer etkin tarayıcı oturumları kendi görünümlerini çalışır durumda tutabilir.
+- Görüntülenen durum: Sınırlı sunucu tanımlayıcıları, adlar, oyun adları, çalışma durumu, oyuncu sayıları, çalışma süresi, mevcut eylemler, en son yedekleme süresi/durumu ve tüm bilgisayar CPU ve kullanılan/toplam RAM okumaları. Uygulama, bu özetleri kimliği doğrulanmış bir yönetici görünümü etkinken gönderir. CPU/RAM güncellemeleri eşleştirilmiş bilgisayarları kapsar; ayrıntılı sunucu güncellemeleri seçilen bilgisayarı kapsar. Güncellemeler normalde her 10 saniyede bir çalıştırılır ve etkin görünümler kapatıldıktan, bağlantı kesildikten, süresi dolduktan veya duruma göre gizlendikten sonra duraklatılır. Diğer etkin tarayıcı oturumları kendi görünümlerini çalışır durumda tutabilir. Ayrı toplamlar, izlenen başlatıcı ve çalışan süreçleri de dahil olmak üzere çalışan oyun sunucusu süreçlerinin birleşik CPU ve RAM kullanımını gösterir. Tüm bilgisayara ait ölçümler, LAN trafiği dahil olmak üzere ağ geçidi olan etkin ağ bağdaştırıcılarındaki gönderme ve alma hızlarını da içerir. Bu ölçümlerle birlikte bağdaştırıcı kimlikleri, IP adresleri, paket içerikleri veya ziyaret edilen web adresleri gönderilmez.
 - İstenen eylemler ve yedeklemeler: Sunucu/eylem tanımlayıcıları, istek zamanı, ilerleme/sonuç ve yedekleme seçenekleri talep ettiğinizde, yedekleme tanımlayıcıları, dosya adları, tarihler, boyutlar ve bütünlük etiketleri. Bu özellik için yedekleme içerikleri ve tam yerel yollar gönderilmez.
+- Oyun konsolu komutları: Opak bir oyun çalıştırma tanımlayıcısı, kısa ömürlü kilit açma onayı ve gönderdiğiniz komut metni. Bekleyen metin, hizmet veritabanında şifrelenir ve teslimata izin verildiğinde bu kayıttan kaldırılır. Son işlemler listesine veya hesap uyarı kayıtlarına dahil edilmez. Teslimat sonucu, oyunun metni kabul ettiği veya tamamladığı değil, metnin oyuna gönderildiği anlamına gelir. Oyun yanıtları ve yerel süreç ağacı yüklenmez.
 - Güvenlik ve kötüye kullanımı önleme: Başarısız oturum açma türü, gruplandırılmış deneme sayısı ve süreleri, kurtarma/güvenlik olayı türü ve ilgili bilgisayar etiketleri. Kısa ömürlü hız sınırı kayıtları, bağlantı IP adreslerinin ve hesap tanımlayıcılarının anahtarlanmış karmalarını kullanabilir. Synix&apos;nin hesap uyarı kayıtları, denenen şifreleri, doğrulama kodlarını, ham IP adreslerini veya tarayıcı parmak izlerini içermez. Barındırma sağlayıcıları, Bölüm 14.6&apos;da açıklandığı gibi bağlantı bilgilerini ayrı ayrı işleyebilir.
 
 Web sitesi, uzaktan yönetimi sağlamak için mutlaka izin verilen özetleri ve komutları işler. HTTPS ve şifreli röle bağlantıları aktarım halindeki trafiği korur; bu, barındırma hizmetinin verileri işleyemeyeceği iddiası değildir.
@@ -2595,6 +2596,7 @@ Web sitesi, uzaktan yönetimi sağlamak için mutlaka izin verilen özetleri ve 
 - Hesap silinene kadar hesap kimlik bilgileri ve ayarları kalır. Onaylanan eşleştirme kayıtları, bilgisayarın eşleşmesi kaldırılana veya hesap silinene kadar kalır.
 - Durum anlık görüntüleri ve CPU/RAM okumaları, daha yeni okumalar tarafından üzerine yazılır ve değiştirilmeden 15 dakika sonra temizlenmeye uygun hale gelir. Son bağlantı süresi eşleştirme kaydının bir parçası olarak kalır.
 - Uzaktan komut kayıtları, sonuçları ve döndürülen yedekleme seçeneği meta verileri 24 saat sonra temizlenmeye uygun hale gelir.
+- Bekleyen oyun konsolu komutlarının süresi 30 saniye sonra dolar. Teslim edilmeyen metin, sürenin dolması veya iptal edilmesi durumunda silinmeye uygun hale gelir; Onaylanan teslimat bunu derhal temizler. Konsol onaylarının süresi üç dakika içinde dolar. Eylem tanımlayıcısı ve sabit teslimat sonucu, 24 saatlik eylem kaydı periyodunu takip eder.
 - Kurtarma/güvenlik olayları ve başarısız oturum açma uyarıları, 90 gün sonra temizlenmeye uygun hale gelir. Başarısız oturum açma işlemleri en son 100 grubu korur; 10 dakikalık süre içindeki eşleştirme hataları birlikte gruplandırılır.
 - Tarayıcı oturumları, yönetici talebi olmadan 30 dakika sonra veya genel olarak 8 saat sonra sona erer. Doğrulama girişimleri 5 dakika sonra sona erer; geçici şifre kurtarmanın süresi 10 dakika içinde dolar ve tek kullanımlıktır. Süresi dolmuş doğrulama, kurtarma, tekrar oynatma koruması ve hız sınırı kayıtları temizleme sırasında kaldırılır. Eksik hesap kayıtları 24 saat sonra temizlenmeye uygun hale gelir.
 
@@ -2605,6 +2607,8 @@ Eşleştirmeyi kaldırma, seçilen eşleştirmeyi ve bununla ilişkili uzak kay�
 14.5 Kontrolleriniz ve Oturum Açma Korumanız
 
 Oturum açmak için şifrenizin yanı sıra Google Authenticator gibi mevcut bir şifre veya kimlik doğrulayıcı gerekir. Her iki yöntemi de gerektirecek şekilde yapılandırılmış hesaplar her iki gereksinimi de korur. Bir şifreyi değiştirmek, bir bilgisayarın web sitesi üzerinden eşleşmesini kaldırmak ve bir yönetici hesabını silmek, söz konusu değişiklik için yeni bir doğrulama gerektirir.
+
+Özel oyun konsolu girişinin kilidini açmak ayrıca mevcut hesap şifresini ve hesabın mevcut yöntem gereksinimleri kapsamında yeni doğrulamayı gerektirir. Onay, bir tarayıcı oturumuna, eşleştirilmiş bilgisayara, kayıtlı sunucuya ve canlı oyunun üç dakikaya kadar çalıştırılmasına bağlıdır. Durdurma, yeniden başlatma, kapalı konsol, devre dışı bırakılmış konsol ayarı veya kayıp işlem, daha fazla komut verilmesini engeller. Yönetici sekmesinin bağlantısını kesmek veya gizlemek, o sekmenin onayını sona erdirir. Normal sunucu eylemi düğmeleri mevcut oturum açma gereksinimlerini korur. Yalnızca desteklenen oyuna ait giriş bağlantıları geçerlidir; benzersiz bir tanımlayıcı tek başına Windows komut istemine yazmaya yetki vermez.
 
 Daha önce onaylanmış eşleştirilmiş bir bilgisayar, web sitesi şifrenizi unutmanız durumunda geçici bir şifre verebilir. Başka bir hesap seçemez. Geçici şifre, mevcut şifre/kimlik doğrulama gereksinimlerinizi atlamaz veya kaldırmaz ve yöneticiye girmeden önce yeni bir şifre seçmeniz gerekir. Kurtarma işlemi tamamlandığında diğer tarayıcı oturumlarınız iptal edilir.
 
@@ -7838,5 +7842,7 @@ Yalnızca bu sizin kullanıcı adınızsa onaylayın.</value></data>
   <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Kurtarma süresi doldu veya iptal edildi. Yeniden başlayın.</value></data>
   <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Çok fazla istek. Daha sonra tekrar deneyin.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Gömülü Synix lisansı eksik.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Çalışan "{0}" sunucusuna yeniden bağlanıldı (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Kurulum klasöründe bulunan çalışan "{0}" sunucusuna yeniden bağlanıldı (PID: {1}).</value></data>
 </root>
 

@@ -14,6 +14,8 @@
 # Additional named Spanish interface resources.
 # The Game Definition Builder guide uses the compiled interface language.
 [ordered]@{
+    'Status.Activity.Reconnected' = '[SYNIX] Se restableció la conexión con el servidor «{0}», que sigue en ejecución (PID: {1}).'
+    'Status.Activity.ReconnectedByPath' = '[SYNIX] Se restableció la conexión con el servidor «{0}», encontrado en ejecución en su carpeta de instalación (PID: {1}).'
     'ServerSetup.World.Seed.Hint' = 'Genere una semilla para un mundo nuevo o introduzca la suya. Para un mundo existente, conserve su semilla original.'
     'ServerSetup.World.Seed.Generate' = 'Generar semilla'
     'GameInput.WorldSeed.RequiredNumber' = 'La semilla del mundo es obligatoria para {0}: use un entero de {1} a {2}. Corríjala en Configuración del servidor > Generación del mundo.'

@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Synix_Control_Panel.SynixApp.ServerHandler;
 
 namespace Synix_Control_Panel.SynixEngine;
 
@@ -243,6 +244,7 @@ internal sealed class RemoteManagerService
         Task notifications = ListenForWakeAsync(lifetime.Token);
         bool active = false, serverDetails = false, resourcesActive = false;
         using var resources = new RemoteComputerResourceSampler();
+        using var computerResources = new RemoteSystemResourceSampler();
         try
         {
         while (!cancellation.IsCancellationRequested)
@@ -263,7 +265,17 @@ internal sealed class RemoteManagerService
                 }
                 var payload = new Dictionary<string, object>();
                 if (servers != null) payload["servers"] = servers;
-                if (resourcesActive) payload["resources"] = resources.Capture();
+                if (resourcesActive)
+                {
+                    RemoteComputerResources serverUsage = new(null, null);
+                    if (ApplicationUiService.IsAvailable)
+                    {
+                        var processes = ApplicationUiService.Invoke(() =>
+                            RemoteComputerResourceSampler.SnapshotProcesses(ServerRegistry.Snapshot()));
+                        serverUsage = resources.Capture(processes);
+                    }
+                    payload["resources"] = serverUsage with { Computer = computerResources.Capture() };
+                }
                 var reply = await SendAsync<RemotePollReply>("device/poll", payload, state, cancellation).ConfigureAwait(false);
                 if (!reply.Paired) { _statusKey = "RemoteManager.WaitingApproval"; return; }
                 bool firstSnapshot = (!serverDetails && (reply.ServerDetails ?? reply.Active)) ||
@@ -271,7 +283,7 @@ internal sealed class RemoteManagerService
                 active = reply.Active;
                 serverDetails = reply.ServerDetails ?? active;
                 resourcesActive = reply.ResourcesActive == true;
-                if (!resourcesActive) resources.Reset();
+                if (!resourcesActive) { resources.Reset(); computerResources.Reset(); }
                 _apiConnected = true;
                 delay = active ? 10 : Timeout.Infinite;
                 _statusKey = active ? "RemoteManager.Connected" : "RemoteManager.Listening";
@@ -290,7 +302,7 @@ internal sealed class RemoteManagerService
                 return;
             }
             catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException or IOException or CryptographicException or JsonException or InvalidOperationException)
-            { active = false; serverDetails = false; resourcesActive = false; resources.Reset(); delay = 30; _apiConnected = false; _statusKey = "RemoteManager.Reconnecting"; }
+            { active = false; serverDetails = false; resourcesActive = false; resources.Reset(); computerResources.Reset(); delay = 30; _apiConnected = false; _statusKey = "RemoteManager.Reconnecting"; }
             try { await _wake.WaitAsync(delay == Timeout.Infinite ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(delay), cancellation).ConfigureAwait(false); }
             catch (OperationCanceledException) { return; }
         }
@@ -372,12 +384,23 @@ internal sealed class RemoteManagerService
                     {
                         // UI work can wait in the queue. Authorize here, not before posting it,
                         // and check the local pairing and deadline again after the network wait.
+                        JsonElement authorization = default;
                         if (!await AuthorizeExecutionAsync(command, state, () => State,
-                            token => SendAsync<JsonElement>("device/authorize-command", new { commandId = command.Id }, state, token), cancellation))
+                            async token => authorization = await SendAsync<JsonElement>("device/authorize-command", new { commandId = command.Id }, state, token), cancellation))
                         { completion.TrySetResult("cancelled"); return; }
                         var server = ServerRegistry.Snapshot().FirstOrDefault(x => ServerActivityHistory.ServerKey(x) == command.ServerId);
                         if (server == null) { completion.TrySetResult("unsupported"); return; }
                         var summary = RemoteManagerProtocol.Summarize(server, Core.Instance.isDownloadActive);
+                        if (command.Action == "console")
+                        {
+                            // No command text is written to activity, diagnostics or result data.
+                            bool sent = summary.CanConsole && summary.ConsoleRunId == command.ConsoleRunId &&
+                                authorization.TryGetProperty("consoleRunId", out var run) && run.GetString() == command.ConsoleRunId &&
+                                authorization.TryGetProperty("consoleText", out var text) && text.ValueKind == JsonValueKind.String &&
+                                await OwnedGameConsole.SendAsync(server, command.ConsoleRunId, text.GetString(),
+                                    command.Expires, () => IsCurrentPairing(State, state), cancellation);
+                            completion.TrySetResult(sent ? "sent" : "console-locked"); return;
+                        }
                         if (command.Action == "update" && summary.UpdateSupport != "supported") { completion.TrySetResult("unsupported"); return; }
                         bool allowed = command.Action switch { "start" => summary.CanStart, "stop" => summary.CanStop, "restart" => summary.CanRestart, "backup" => summary.CanBackup, "list-backups" or "restore" => summary.CanRestore, "update" => summary.CanUpdate, _ => false };
                         if (!allowed) { completion.TrySetResult(server.IsFirstBoot || server.SteamAuthenticationRequired ? "setup-required" : "busy"); return; }

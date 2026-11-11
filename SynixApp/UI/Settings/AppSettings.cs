@@ -787,6 +787,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 
 			Properties.Settings.Default.ShowServerWindow =
 				generalSettingsPage.ShowServerWindow;
+			if (!Properties.Settings.Default.ShowServerWindow)
+				Synix_Control_Panel.SynixApp.ServerHandler.OwnedGameConsole.InvalidateAll();
 			Properties.Settings.Default.Save();
 		}
 

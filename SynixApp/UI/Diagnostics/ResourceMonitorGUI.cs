@@ -45,7 +45,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 		private static Color DangerColor => SettingsPalette.Danger;
 		private static Color TrackColor => SettingsPalette.Divider;
 
-		private readonly Dictionary<int, DataGridViewRow> _rowsByProcessId = new();
+		private readonly HashSet<ResourceProcessKey> _collapsedProcesses = [];
+		private IReadOnlyList<ResourceProcessTreeNode> _processTree = [];
 		private readonly GameServer? _serverFilter;
 		private readonly CancellationTokenSource _refreshCancellation = new();
 		private readonly ResourceMonitorSnapshotSampler _snapshotSampler = new();
@@ -57,6 +58,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 		{
 			_serverFilter = serverFilter;
 			InitializeComponent();
+			// Keep the process tree first without changing the stored column indexes.
+			colExecutable.DisplayIndex = 0;
+			colServerName.DisplayIndex = 1;
+			colPid.DisplayIndex = 2;
+			colStatus.DisplayIndex = 3;
+			foreach (DataGridViewColumn column in resourceGrid.Columns)
+				column.SortMode = DataGridViewColumnSortMode.NotSortable;
+			resourceGrid.CellClick += ProcessTreeCellClick;
+			resourceGrid.KeyDown += ProcessTreeKeyDown;
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			{
 				ThemeManager.Apply(this);
@@ -237,33 +247,65 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 
 		private void ApplyUsageSnapshot(ResourceUsageSnapshot snapshot)
 		{
+			_processTree = ResourceProcessTree.Build(snapshot.Processes);
+			_collapsedProcesses.IntersectWith(snapshot.Processes.Select(process => process.Key));
+			RenderProcessTree();
+			// Summary cards always include all processes, including collapsed workers.
+			UpdateSummaryCards(snapshot.TotalUsage, snapshot.Processes.Count);
+		}
+
+		private void RenderProcessTree()
+		{
 			resourceGrid.SuspendLayout();
 			try
 			{
-				HashSet<int> sampledProcessIds = snapshot.Processes
-					.Select(process => process.ProcessId)
-					.ToHashSet();
-				foreach (ResourceProcessUsage process in snapshot.Processes)
+				ResourceProcessTreeNode[] visible = ResourceProcessTree.VisibleNodes(
+					_processTree, _collapsedProcesses).ToArray();
+				ResourceProcessKey[] currentKeys = resourceGrid.Rows.Cast<DataGridViewRow>()
+					.Select(row => ((ResourceProcessTreeNode)row.Tag!).Process.Key).ToArray();
+				if (!currentKeys.SequenceEqual(visible.Select(node => node.Process.Key)))
 				{
-					if (!_rowsByProcessId.TryGetValue(
-						process.ProcessId,
-						out DataGridViewRow? row))
+					var selected = resourceGrid.CurrentRow?.Tag as ResourceProcessTreeNode;
+					int selectedColumn = resourceGrid.CurrentCell?.ColumnIndex ?? colExecutable.Index;
+					int topIndex = resourceGrid.FirstDisplayedScrollingRowIndex;
+					ResourceProcessKey? topKey = topIndex >= 0 ? currentKeys[topIndex] : null;
+					resourceGrid.Rows.Clear();
+					if (visible.Length > 0) resourceGrid.Rows.Add(visible.Length);
+					int selectedIndex = Array.FindIndex(visible, node => node.Process.Key == selected?.Process.Key);
+					if (selectedIndex >= 0)
+						resourceGrid.CurrentCell = resourceGrid.Rows[selectedIndex].Cells[selectedColumn];
+					else
 					{
-						int rowIndex = resourceGrid.Rows.Add();
-						row = resourceGrid.Rows[rowIndex];
-						row.Cells[colStatus.Index].Style.ForeColor = SuccessColor;
-						_rowsByProcessId.Add(process.ProcessId, row);
+						resourceGrid.ClearSelection();
+						resourceGrid.CurrentCell = null;
 					}
+					int restoredTop = Array.FindIndex(visible, node => node.Process.Key == topKey);
+					if (visible.Length > 0 && topIndex >= 0)
+						resourceGrid.FirstDisplayedScrollingRowIndex = restoredTop >= 0
+							? restoredTop : Math.Min(topIndex, visible.Length - 1);
+				}
 
+				for (int index = 0; index < visible.Length; index++)
+				{
+					ResourceProcessTreeNode node = visible[index];
+					ResourceProcessUsage process = node.Process;
+					DataGridViewRow row = resourceGrid.Rows[index];
+					row.Tag = node;
+					string marker = node.HasChildren
+						? (_collapsedProcesses.Contains(process.Key) ? "▸  " : "▾  ")
+						: (node.Depth > 0 ? "└─  " : "    ");
 					row.SetValues(
 						LocalizationManager.Get("ResourceMonitor.RowRunning"),
 						process.ServerName,
 						process.ProcessId.ToString(),
-						$"{process.ExecutableName}  •  {process.ProcessRole}",
+						marker + process.ExecutableName,
 						$"{process.CpuPercentage:N1}%",
 						LocalizationManager.Get(
 							"ResourceMonitor.RamValue",
 							process.RamGb));
+					row.Cells[colStatus.Index].Style.ForeColor = SuccessColor;
+					row.Cells[colExecutable.Index].Style.Padding = new Padding(
+						12 + node.Depth * (int)Math.Round(18.0 * DeviceDpi / 96.0), 0, 12, 0);
 					row.Cells[colExecutable.Index].ToolTipText =
 						string.IsNullOrWhiteSpace(process.ExecutablePath)
 							? process.ExecutableName
@@ -271,24 +313,58 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 					row.Cells[colCpuUsage.Index].Tag = process.CpuPercentage;
 					row.Cells[colRamUsage.Index].Tag = process.RamPercentage;
 				}
-
-				foreach (int staleProcessId in _rowsByProcessId.Keys
-					.Where(processId => !sampledProcessIds.Contains(processId))
-					.ToList())
-				{
-					resourceGrid.Rows.Remove(_rowsByProcessId[staleProcessId]);
-					_rowsByProcessId.Remove(staleProcessId);
-				}
-
-				UpdateSummaryCards(snapshot.TotalUsage, snapshot.Processes.Count);
-				resourceGrid.ClearSelection();
-				resourceGrid.CurrentCell = null;
 				resourceGrid.Invalidate();
 			}
 			finally
 			{
 				resourceGrid.ResumeLayout();
 			}
+		}
+
+		private void ProcessTreeCellClick(object? sender, DataGridViewCellEventArgs eventArgs)
+		{
+			if (eventArgs.RowIndex < 0 || eventArgs.ColumnIndex != colExecutable.Index ||
+				resourceGrid.Rows[eventArgs.RowIndex].Tag is not ResourceProcessTreeNode { HasChildren: true } node)
+				return;
+			if (!_collapsedProcesses.Add(node.Process.Key)) _collapsedProcesses.Remove(node.Process.Key);
+			RenderProcessTree();
+		}
+
+		private void ProcessTreeKeyDown(object? sender, KeyEventArgs eventArgs)
+		{
+			if (eventArgs.Modifiers != Keys.None ||
+				resourceGrid.CurrentRow?.Tag is not ResourceProcessTreeNode node)
+				return;
+			if (eventArgs.KeyCode == Keys.Left)
+			{
+				if (node.HasChildren && _collapsedProcesses.Add(node.Process.Key)) RenderProcessTree();
+				else SelectProcessTreeRow(node.Parent);
+			}
+			else if (eventArgs.KeyCode == Keys.Right)
+			{
+				if (_collapsedProcesses.Remove(node.Process.Key)) RenderProcessTree();
+				else if (node.HasChildren)
+					SelectProcessTreeRow(_processTree.First(child => child.Parent == node.Process.Key).Process.Key);
+			}
+			else if (eventArgs.KeyCode == Keys.Space && node.HasChildren)
+			{
+				if (!_collapsedProcesses.Add(node.Process.Key)) _collapsedProcesses.Remove(node.Process.Key);
+				RenderProcessTree();
+			}
+			else return;
+			eventArgs.Handled = true;
+			eventArgs.SuppressKeyPress = true;
+		}
+
+		private void SelectProcessTreeRow(ResourceProcessKey? key)
+		{
+			if (key == null) return;
+			foreach (DataGridViewRow row in resourceGrid.Rows)
+				if (row.Tag is ResourceProcessTreeNode node && node.Process.Key == key)
+				{
+					resourceGrid.CurrentCell = row.Cells[colExecutable.Index];
+					return;
+				}
 		}
 
 		private void UpdateSummaryCards(
@@ -492,7 +568,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 			tmrRefresh.Stop();
 			tmrRefresh.Tick -= tmrRefresh_Tick;
 			_refreshCancellation.Cancel();
-			_rowsByProcessId.Clear();
+			_processTree = [];
+			_collapsedProcesses.Clear();
 			resourceGrid.Rows.Clear();
 		}
 

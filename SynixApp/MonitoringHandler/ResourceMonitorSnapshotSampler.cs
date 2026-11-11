@@ -19,13 +19,21 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 {
 	internal sealed record ResourceProcessUsage(
 		int ProcessId,
+		DateTime StartTimeUtc,
+		int? ParentProcessId,
+		GameServer Server,
 		string ServerName,
 		string ExecutableName,
-		string ProcessRole,
+		bool IsPrimary,
 		string ExecutablePath,
 		double CpuPercentage,
 		double RamGb,
-		double RamPercentage);
+		double RamPercentage)
+	{
+		internal ResourceProcessKey Key => new(ProcessId, StartTimeUtc);
+	}
+
+	internal readonly record struct ResourceProcessKey(int ProcessId, DateTime StartTimeUtc);
 
 	internal sealed record ResourceUsageSnapshot(
 		ResourceMonitor.ServerUsage TotalUsage,
@@ -37,7 +45,7 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 	/// </summary>
 	internal sealed class ResourceMonitorSnapshotSampler
 	{
-		private readonly Dictionary<int, (double CpuMilliseconds, DateTime SampleTime)> _cpuSamples = new();
+		private readonly Dictionary<ResourceProcessKey, (double CpuMilliseconds, DateTime SampleTime)> _cpuSamples = new();
 		private readonly Func<GameServer, IReadOnlyList<ServerProcessIdentity>> _processDiscovery;
 
 		internal ResourceMonitorSnapshotSampler(
@@ -65,7 +73,8 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 			ResourceMonitor.ServerUsage totalUsage = new();
 			List<ResourceProcessUsage> processes = [];
 			HashSet<int> discoveredProcessIds = [];
-			HashSet<int> activeProcessIds = [];
+			HashSet<ResourceProcessKey> activeProcesses = [];
+			IReadOnlyDictionary<int, int> parentProcessIds = Servers.GetParentProcessIds();
 			DateTime currentTime = DateTime.UtcNow;
 
 			foreach (GameServer server in servers)
@@ -85,9 +94,13 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 							continue;
 
 						process.Refresh();
+						DateTime startTimeUtc = process.StartTime.ToUniversalTime();
+						if (identity.StartTimeUtc.HasValue && identity.StartTimeUtc.Value != startTimeUtc)
+							continue;
+						ResourceProcessKey processKey = new(process.Id, startTimeUtc);
 						double currentCpuMilliseconds = process.TotalProcessorTime.TotalMilliseconds;
 						double cpuPercentage = CalculateCpuPercentage(
-							identity.ProcessId,
+							processKey,
 							currentCpuMilliseconds,
 							currentTime);
 						double ramGb = process.WorkingSet64 / 1024.0 / 1024.0 / 1024.0;
@@ -99,12 +112,15 @@ namespace Synix_Control_Panel.SynixApp.MonitoringHandler
 						if (string.IsNullOrWhiteSpace(executableName))
 							executableName = process.ProcessName + ".exe";
 
-						activeProcessIds.Add(process.Id);
+						activeProcesses.Add(processKey);
 						processes.Add(new ResourceProcessUsage(
 							process.Id,
+							startTimeUtc,
+							parentProcessIds.TryGetValue(process.Id, out int parentId) ? parentId : null,
+							server,
 							server.ServerName,
 							executableName,
-							server.PID == process.Id ? "Primary" : "Child / worker",
+							server.PID == process.Id,
 							identity.ExecutablePath,
 							cpuPercentage,
 							ramGb,
@@ -127,23 +143,23 @@ catch (ArgumentException suppressedException)
 				}
 			}
 
-			foreach (int staleProcessId in _cpuSamples.Keys
-				.Where(processId => !activeProcessIds.Contains(processId))
+			foreach (ResourceProcessKey staleProcess in _cpuSamples.Keys
+				.Where(process => !activeProcesses.Contains(process))
 				.ToList())
 			{
-				_cpuSamples.Remove(staleProcessId);
+				_cpuSamples.Remove(staleProcess);
 			}
 
 			return new ResourceUsageSnapshot(totalUsage, processes);
 		}
 
 		private double CalculateCpuPercentage(
-			int processId,
+			ResourceProcessKey processKey,
 			double currentCpuMilliseconds,
 			DateTime currentTime)
 		{
 			double cpuPercentage = 0;
-			if (_cpuSamples.TryGetValue(processId, out var previous))
+			if (_cpuSamples.TryGetValue(processKey, out var previous))
 			{
 				double elapsedMilliseconds = (currentTime - previous.SampleTime).TotalMilliseconds;
 				if (elapsedMilliseconds > 0)
@@ -154,7 +170,7 @@ catch (ArgumentException suppressedException)
 				}
 			}
 
-			_cpuSamples[processId] = (currentCpuMilliseconds, currentTime);
+			_cpuSamples[processKey] = (currentCpuMilliseconds, currentTime);
 			return Math.Clamp(cpuPercentage, 0, 100);
 		}
 	}

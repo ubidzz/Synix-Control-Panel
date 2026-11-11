@@ -12817,9 +12817,9 @@ Hoidke valikulised RCON või administreerimise lõpp-punktid lokaalsed, välja a
   <data name="Content.394E79896072E49A70E9" xml:space="preserve">
     <value>Selle serveri versiooni jaoks on vaja ühilduvat Metamod:Source ja SourceMod ehitamist. Kompileeritud .smx pluginad lähevad ageofchivalry/addons/sourcemod/plugins; kaasasolevad tõlked, gamedata ja laiendused säilitavad oma dokumenteeritud kaustad.</value>
   </data>
-  <data name="Content.54A7DDCCFE4644D7D908" xml:space="preserve"><value>SYNIX KONTROLLIPANEEL – PIIRATUD VARAGA LÄBIVAATAV LITSENTS
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX KONTROLLIPANEEL – PIIRATUD VARAGA LÄBIVAATAV LITSENTS
 
-Litsentsi versioon 1.3 – 7. november 2026
+Litsentsi versioon 1.4 – 11. november 2026
 
 See on litsentsi redaktsioon, mitte Synixi rakenduse versioon.
 Autoriõigus © 2026 Jason Turner. Kõik õigused kaitstud.
@@ -12996,7 +12996,7 @@ Kaugjuurdepääs ei ole salvestusruumita teenus. See vajab allpool kirjeldatud p
 
 14.2 Mis jääb teie arvutisse
 
-Kaughaldur ei laadi üles ega salvesta teie mängumaailmu, mänguserveri faile, konfiguratsioonifailide sisu, varukoopiate arhiivi sisu, konsooli töötlemata väljundit ega mänguserveri paroole. Kaugvarundamise ja taastamise käsud töötavad seotud arvutis; varufailid jäävad seal konfigureeritud asukohtadesse. Haldur ei ole pilvevarundusmälu ega paku piiranguteta kaugtöölauda, ​​suvalisi shellikäske ega üldist failide sirvimist.
+Synix ei laadi automaatselt üles mängumaailmu, mänguserveri faile, konfiguratsioonifailide sisu, varukoopia-arhiivi sisu, konsooli töötlemata väljundit ega salvestatud mänguserveri paroole. Kaugvarundamine ja taastamine töötab seotud arvutis; varufailid jäävad seal konfigureeritud asukohtadesse. Kui otsustate veebisaidile mängukonsooli käsu tippida, töödeldakse selle teksti ja edastatakse seotud arvutisse, sealhulgas kõik tundlikud väärtused, mille olete sellesse teksti sisestanud. Haldur ei ole pilvevarundusmälu ega paku piiranguteta kaugtöölauda, ​​Windows käsuviibajuurdepääsu ega üldist failide sirvimist.
 
 Synix säilitab teie arvutis kohalikud sätted, serverite loendi, ajaloo, varukoopiad ja sidumisoleku. Seotud arvuti privaatne allkirjastamisvõti jääb Windows võtmemällu. Synix eelistab võimalusel TPM-ga toetatud salvestusruumi ja toetab muul viisil Windows-ga kaitstud tarkvaravõtit, sealhulgas ühilduval VMs-l. TPM saadavus ei garanteeri, et arvuti on kompromissitu.
 
@@ -13006,8 +13006,9 @@ Need avaldused kirjeldavad Synix kaughaldust. Mängudel, Steam-l, modifikatsioon
 
 – Konto ja autentimine: teie valitud kasutajanimi, konto identifikaator, loomise aeg, turvaeelistused, salastatud parooli räsi, krüptitud autentimise saladus, kui see on lubatud, pääsuvõti avalikud mandaadid, kui see on lubatud, ja ajutised kinnitus-/seansikirjed. Sisselogimise kontrollimiseks töödeldakse paroole ja kinnituskoode; püsiparoole ei salvestata loetava tekstina. Synix ei saa teie sõrmejälge, näopilti, parooli privaatvõtit ega seotud arvuti privaatset allkirjastamisvõtit. Registreerimiseks ei nõuta pärisnime ega e-posti aadressi.
 – sidumine ja ühendus: teie valitud arvutisilt, juhuslik seadme identifikaator, selle avalik allkirjastamisvõti, konto seos, teatatud võtmepakkuja tüüp, sidumise kinnitusolek ja viimane ühenduse aeg. Vaikne autentitud releeühendus võib Synix töötamise ajal avatuks jääda, et veebisait saaks seotud rakenduse kohe äratada. Relee kannab äratuse/ühenduse katkestamise teateid ja ühenduse metaandmeid, mitte mängufaile ega serveri hetktõmmiseid.
-– kuvatav olek: piiratud serveri identifikaatorid, nimed, mängude nimed, töö olek, mängijate arv, tööaeg, saadaolevad toimingud, viimane varundusaeg/olek ning kogu arvuti CPU ja kasutatud/kogu RAM näidud. Rakendus saadab need kokkuvõtted, kui autentitud haldurivaade on aktiivne. CPU/RAM värskendused hõlmavad seotud arvuteid; üksikasjalikud serverivärskendused hõlmavad valitud arvutit. Värskendused käivituvad tavaliselt iga 10 sekundi järel ja peatatakse pärast aktiivsete vaadete sulgemist, ühenduse katkestamist, aegumist või peidemist. Teised aktiivsed brauseri seansid võivad oma vaateid töös hoida.
+– kuvatav olek: piiratud serveri identifikaatorid, nimed, mängude nimed, töö olek, mängijate arv, tööaeg, saadaolevad toimingud, viimane varundusaeg/olek ning kogu arvuti CPU ja kasutatud/kogu RAM näidud. Rakendus saadab need kokkuvõtted, kui autentitud haldurivaade on aktiivne. CPU/RAM värskendused hõlmavad seotud arvuteid; üksikasjalikud serverivärskendused hõlmavad valitud arvutit. Värskendused käivituvad tavaliselt iga 10 sekundi järel ja peatatakse pärast aktiivsete vaadete sulgemist, ühenduse katkestamist, aegumist või peidemist. Teised aktiivsed brauseri seansid võivad oma vaateid töös hoida. Eraldi koondnäidud näitavad töötavate mänguserveri protsesside CPU ja RAM-i kogukasutust, sealhulgas nende jälgitavaid käivitus- ja tööprotsesse. Kogu arvuti näidud hõlmavad ka aktiivsete lüüsiga võrguadapterite saatmis- ja vastuvõtukiirusi, sealhulgas LAN-liiklust. Nende näitudega ei saadeta adapterite tunnuseid, IP-aadresse, pakettide sisu ega külastatud veebiaadresse.
 – nõutud toimingud ja varukoopiad: serveri/toimingu identifikaatorid, päringu aeg, edenemine/tulemus ja, kui taotlete varundusvalikuid, varukoopia identifikaatorid, failinimed, kuupäevad, suurused ja terviklikkuse sildid. Selle funktsiooni jaoks ei saadeta varundamissisu ega täielikke kohalikke teid.
+– mängukonsooli käsud: läbipaistmatu mängu käitamise identifikaator, lühiajaline avamiskinnitus ja teie edastatav käsutekst. Ootel tekst krüpteeritakse teenuse andmebaasis ja eemaldatakse sellest kirjest, kui tarnimine on lubatud. See ei sisaldu hiljutiste toimingute loendis ega konto hoiatusteadete kirjetes. Edastamise tulemus tähendab, et tekst saadeti mängu, mitte seda, et mäng võttis selle vastu või lõpetas selle. Mängu vastuseid ja kohalikku protsessipuud ei laadita üles.
 – Turvalisus ja väärkasutuse vältimine: ebaõnnestunud sisselogimistüüp, rühmitatud katsete arv ja ajad, taaste-/turvasündmuse tüüp ja asjakohased arvutisildid. Lühiajalised kiiruspiirangu kirjed võivad kasutada ühenduse IP-aadresside ja konto identifikaatorite võtmega räsi. Synix kontohoiatuste kirjed ei sisalda proovitud paroole, kinnituskoode, töötlemata IP-aadresse ega brauseri sõrmejälgi. Majutusteenuse pakkujad võivad ühendusteavet eraldi töödelda, nagu on selgitatud jaotises 14.6.
 
 Veebisait töötleb kaughalduse tagamiseks tingimata lubatud kokkuvõtteid ja käske. HTTPS ja krüpteeritud releeühendused kaitsevad transiidiliiklust; see ei ole väide, et hostimisteenus ei saa andmeid töödelda.
@@ -13017,6 +13018,7 @@ Veebisait töötleb kaughalduse tagamiseks tingimata lubatud kokkuvõtteid ja k�
 – konto mandaadid ja seaded jäävad alles, kuni konto kustutatakse. Kinnitatud sidumiskirjed säilivad seni, kuni arvuti sidumine tühistatakse või konto kustutatakse.
 – oleku hetktõmmised ja CPU/RAM näidud kirjutatakse üle uuemate näitudega ja need muutuvad puhastamiseks kõlblikuks 15 minuti pärast ilma asendamiseta. Viimase ühenduse aeg jääb sidumiskirje osaks.
 – Kaugkäskude kirjed, tulemused ja tagastatud varuvaliku metaandmed muutuvad puhastamiseks kõlblikuks 24 tunni pärast.
+– ootel mängukonsooli käsud aeguvad 30 sekundi pärast. Edastamata tekst muutub aegumisel või tühistamisel kustutamiseks kõlblikuks; kinnitatud tarne tühjendab selle kohe. Konsooli kinnitused aeguvad kolme minuti jooksul. Toimingu identifikaator ja fikseeritud tarnetulemus järgivad 24-tunnist toimingu registreerimisperioodi.
 – taaste-/turbesündmused ja ebaõnnestunud sisselogimismärguanded muutuvad puhastamiseks kõlblikuks 90 päeva pärast. Ebaõnnestunud sisselogimised säilitavad maksimaalselt 100 viimast rühma; 10-minutilise perioodi jooksul ilmnenud tõrked rühmitatakse.
 – brauseri seansid aeguvad 30 minuti pärast ilma halduri taotlusteta või üldiselt 8 tunni pärast. Kinnituskatsed aeguvad 5 minuti pärast; ajutine parooli taastamine aegub 10 minuti jooksul ja on ühekordselt kasutatav. Aegunud kinnitamise, taastamise, taasesituse kaitse ja kiirusepiirangu kirjed eemaldatakse puhastamise käigus. Mittetäielikud konto registreerimised muutuvad puhastamiseks kõlblikuks 24 tunni pärast.
 
@@ -13027,6 +13029,8 @@ Sidumisest loobumine kustutab valitud sidumise ja sellega seotud kaugkirjed akti
 14.5 Teie juhtnupud ja sisselogimiskaitse
 
 Sisselogimiseks on vaja teie parooli ja olemasolevat pääsuvõtit või autentimist, nt Google Authenticator. Mõlemat meetodit nõudma konfigureeritud kontod säilitavad mõlemad nõuded. Parooli muutmine, arvuti sidumise katkestamine veebisaidi kaudu ja haldurikonto kustutamine nõuavad selle konkreetse muudatuse jaoks värsket kinnitust.
+
+Kohandatud mängukonsooli sisendi avamiseks on vaja lisaks praegust konto parooli ja konto olemasolevate meetodinõuete alusel värsket kinnitust. Heakskiit on seotud ühe brauseri seansiga, seotud arvutiga, salvestatud serveriga ja reaalajas mänguga, mis kestab kuni kolm minutit. Peatamine, taaskäivitamine, suletud konsool, keelatud konsooli seadistus või kaotatud protsess takistab edasisi käske. Halduri vahekaardi lahtiühendamine või peitmine lõpetab selle vahekaardi heakskiidu. Tavalised serveritoimingu nupud säilitavad oma olemasolevad sisselogimisnõuded. Kvalifitseeruvad ainult toetatud mängu omanduses olevad sisendühendused; unikaalne identifikaator üksi ei luba Windows käsureale kirjutamist.
 
 Varem kinnitatud seotud arvuti võib väljastada ajutise parooli, kui unustate oma veebisaidi parooli. See ei saa valida teist kontot. Ajutine parool ei lähe mööda ega eemalda teie olemasolevaid parooli/autentija nõudeid ning enne haldurisse sisenemist peate valima uue parooli. Taastamise lõpetamine tühistab teie muud brauseri seansid.
 
@@ -16012,4 +16016,6 @@ Kinnita ainult siis, kui see on sinu kasutajanimi.</value></data>
   <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Taastamine aegus või tühistati. Alusta uuesti.</value></data>
   <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Liiga palju päringuid. Proovi hiljem uuesti.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Manustatud litsents Synix puudub.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Ühendus töötava serveriga „{0}“ on taastatud (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Ühendus paigalduskaustast leitud töötava serveriga „{0}“ on taastatud (PID: {1}).</value></data>
 </root>
