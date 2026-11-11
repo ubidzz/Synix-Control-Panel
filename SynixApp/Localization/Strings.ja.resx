@@ -7844,5 +7844,8 @@ Synixを開いたまま、または最小化したままにしてください。
   <data name="Help.LicenseMissing" xml:space="preserve"><value>埋め込まれた Synix ライセンスがありません。</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] 実行中のサーバー「{0}」に再接続しました (PID: {1})。</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] インストールフォルダーで見つかった実行中のサーバー「{0}」に再接続しました (PID: {1})。</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>リモートアクセスのペアリングは転送されません。リモートアクセスを使用する場合は、Synix の復元後に manager.synix.info で新しいコンピューターをアカウントとペアリングしてください。</value>
+  </data>
 </root>
 

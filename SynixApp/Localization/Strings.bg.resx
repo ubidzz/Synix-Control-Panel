@@ -14398,4 +14398,7 @@ Synix прилага отново поддържаното Oxide време за
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Вграденият лиценз Synix липсва.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Връзката с работещия сървър „{0}“ е възстановена (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Връзката с работещия сървър „{0}“, намерен в неговата инсталационна папка, е възстановена (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Сдвояването за отдалечен достъп не се прехвърля. Ако използвате отдалечен достъп, след възстановяването на Synix сдвоете новия компютър с акаунта си на manager.synix.info.</value>
+  </data>
 </root>

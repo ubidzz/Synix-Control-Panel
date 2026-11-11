@@ -14398,4 +14398,7 @@ Luluskan hanya jika ini nama pengguna anda.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Lesen Synix terbenam tiada.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Disambungkan semula ke pelayan "{0}" yang sedang berjalan (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Disambungkan semula ke pelayan "{0}" yang ditemui sedang berjalan dalam folder pemasangannya (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Pemadanan akses jauh tidak dipindahkan. Jika anda menggunakan akses jauh, padankan komputer baharu dengan akaun anda di manager.synix.info selepas memulihkan Synix.</value>
+  </data>
 </root>

@@ -16018,4 +16018,7 @@ Schváľte ho iba vtedy, ak ide o vaše používateľské meno.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Vložená licencia Synix chýba.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Pripojenie k bežiacemu serveru „{0}“ bolo obnovené (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Pripojenie k bežiacemu serveru „{0}“ nájdenému v jeho inštalačnom priečinku bolo obnovené (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Spárovanie pre vzdialený prístup sa neprenáša. Ak používate vzdialený prístup, po obnovení Synix spárujte nový počítač so svojím účtom na manager.synix.info.</value>
+  </data>
 </root>

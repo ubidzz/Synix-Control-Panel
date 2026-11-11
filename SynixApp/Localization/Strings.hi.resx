@@ -6921,4 +6921,7 @@ Synix को खुला या छोटा करके रखें। ए�
   <data name="Help.LicenseMissing" xml:space="preserve"><value>एम्बेडेड Synix लाइसेंस गायब है।</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] चल रहे सर्वर "{0}" से फिर से कनेक्ट हो गया (PID: {1})।</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] इंस्टॉलेशन फ़ोल्डर में मिले चल रहे सर्वर "{0}" से फिर से कनेक्ट हो गया (PID: {1})।</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>रिमोट एक्सेस की पेयरिंग स्थानांतरित नहीं होती। यदि आप रिमोट एक्सेस का उपयोग करते हैं, तो Synix को पुनर्स्थापित करने के बाद नए कंप्यूटर को manager.synix.info पर अपने खाते से पेयर करें।</value>
+  </data>
 </root>

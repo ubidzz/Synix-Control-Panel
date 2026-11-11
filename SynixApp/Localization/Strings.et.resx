@@ -16018,4 +16018,7 @@ Kinnita ainult siis, kui see on sinu kasutajanimi.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Manustatud litsents Synix puudub.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Ühendus töötava serveriga „{0}“ on taastatud (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Ühendus paigalduskaustast leitud töötava serveriga „{0}“ on taastatud (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Kaugjuurdepääsu sidumist ei kanta üle. Kui kasutate kaugjuurdepääsu, siduge uus arvuti pärast Synixi taastamist oma kontoga aadressil manager.synix.info.</value>
+  </data>
 </root>

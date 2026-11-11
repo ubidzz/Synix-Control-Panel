@@ -7845,5 +7845,8 @@ Schvalte jej pouze tehdy, pokud jde o vaše uživatelské jméno.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Chybí vložená licence Synix.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Připojení k běžícímu serveru „{0}“ bylo obnoveno (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Připojení k běžícímu serveru „{0}“ nalezenému v jeho instalační složce bylo obnoveno (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Spárování pro vzdálený přístup se nepřenáší. Pokud používáte vzdálený přístup, po obnovení Synix spárujte nový počítač se svým účtem na manager.synix.info.</value>
+  </data>
 </root>
 

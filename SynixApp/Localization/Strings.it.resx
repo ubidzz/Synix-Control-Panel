@@ -7844,5 +7844,8 @@ Approva solo se è il tuo nome utente.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Manca la licenza Synix incorporata.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Connessione ristabilita al server "{0}" già in esecuzione (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Connessione ristabilita al server "{0}" trovato in esecuzione nella sua cartella di installazione (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>L'associazione per l'accesso remoto non viene trasferita. Se utilizzi l'accesso remoto, dopo aver ripristinato Synix associa il nuovo computer al tuo account su manager.synix.info.</value>
+  </data>
 </root>
 

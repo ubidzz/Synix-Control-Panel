@@ -7844,5 +7844,8 @@ Yalnızca bu sizin kullanıcı adınızsa onaylayın.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Gömülü Synix lisansı eksik.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Çalışan "{0}" sunucusuna yeniden bağlanıldı (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Kurulum klasöründe bulunan çalışan "{0}" sunucusuna yeniden bağlanıldı (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Uzaktan erişim eşleştirmesi aktarılmaz. Uzaktan erişim kullanıyorsanız Synix'i geri yükledikten sonra yeni bilgisayarı manager.synix.info adresindeki hesabınızla eşleştirin.</value>
+  </data>
 </root>
 

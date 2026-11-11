@@ -1144,11 +1144,13 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				},
 				LocalizationManager.Get(
 					"Settings.Transfer.ImportCompleteTitle"),
-				_selectedImportPasswordProtected
+				(_selectedImportPasswordProtected
 					? LocalizationManager.Get(
 						"Settings.Transfer.ImportCompleteEncrypted")
 					: LocalizationManager.Get(
-						"Settings.Transfer.ImportCompleteNormal"));
+						"Settings.Transfer.ImportCompleteNormal")) +
+				Environment.NewLine + Environment.NewLine +
+				LocalizationManager.Get("Settings.Backup.Transfer.RemoteAccessNotice"));
 
 			if (imported)
 			{

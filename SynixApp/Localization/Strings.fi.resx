@@ -6921,4 +6921,7 @@ Hyväksy vain, jos tämä on oma käyttäjätunnuksesi.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Sulautettu Synix-lisenssi puuttuu.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Yhteys käynnissä olevaan palvelimeen ”{0}” on palautettu (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Yhteys asennuskansiosta löytyneeseen käynnissä olevaan palvelimeen ”{0}” on palautettu (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Etäkäytön pariliitosta ei siirretä. Jos käytät etäkäyttöä, liitä uusi tietokone tiliisi osoitteessa manager.synix.info Synixin palauttamisen jälkeen.</value>
+  </data>
 </root>

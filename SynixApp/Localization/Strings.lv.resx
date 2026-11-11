@@ -16018,4 +16018,7 @@ Apstipriniet tikai tad, ja tas ir jūsu lietotājvārds.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Trūkst iegultās Synix licences.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Atjaunots savienojums ar darbojošos serveri “{0}” (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Atjaunots savienojums ar tā instalācijas mapē atrasto darbojošos serveri “{0}” (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Attālinātās piekļuves pārošana netiek pārsūtīta. Ja izmantojat attālināto piekļuvi, pēc Synix atjaunošanas savienojiet jauno datoru pārī ar savu kontu vietnē manager.synix.info.</value>
+  </data>
 </root>

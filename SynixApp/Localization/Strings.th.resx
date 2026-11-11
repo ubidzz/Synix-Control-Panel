@@ -6921,4 +6921,7 @@ ARK จะดาวน์โหลดโมดนี้จาก {2} เมื�
   <data name="Help.LicenseMissing" xml:space="preserve"><value>ใบอนุญาต Synix ที่ฝังไว้หายไป</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] เชื่อมต่อกับเซิร์ฟเวอร์ "{0}" ที่กำลังทำงานอยู่อีกครั้งแล้ว (PID: {1})</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] เชื่อมต่อกับเซิร์ฟเวอร์ "{0}" ที่พบว่ากำลังทำงานอยู่ในโฟลเดอร์ติดตั้งอีกครั้งแล้ว (PID: {1})</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>การจับคู่สำหรับการเข้าถึงระยะไกลจะไม่ถูกย้าย หากคุณใช้การเข้าถึงระยะไกล ให้จับคู่คอมพิวเตอร์เครื่องใหม่กับบัญชีของคุณที่ manager.synix.info หลังจากกู้คืน Synix</value>
+  </data>
 </root>

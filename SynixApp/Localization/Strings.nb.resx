@@ -6921,4 +6921,7 @@ Godkjenn bare hvis dette er ditt brukernavn.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Den innebygde Synix-lisensen mangler.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Tilkoblingen til serveren "{0}" som kjører, er gjenopprettet (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Tilkoblingen til serveren "{0}" som ble funnet kjørende i installasjonsmappen, er gjenopprettet (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Paring for ekstern tilgang overføres ikke. Hvis du bruker ekstern tilgang, må du pare den nye datamaskinen med kontoen din på manager.synix.info etter at Synix er gjenopprettet.</value>
+  </data>
 </root>

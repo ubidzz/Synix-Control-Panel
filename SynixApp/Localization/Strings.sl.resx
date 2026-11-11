@@ -16018,4 +16018,7 @@ Odobrite samo, če je to vaše uporabniško ime.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Manjka vdelana licenca Synix.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Povezava z delujočim strežnikom »{0}« je bila obnovljena (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Povezava z delujočim strežnikom »{0}«, najdenim v njegovi namestitveni mapi, je bila obnovljena (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Seznanjanje za oddaljeni dostop se ne prenese. Če uporabljate oddaljeni dostop, po obnovitvi Synixa seznanite novi računalnik s svojim računom na manager.synix.info.</value>
+  </data>
 </root>

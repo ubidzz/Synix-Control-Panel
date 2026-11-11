@@ -14353,4 +14353,7 @@ Aprueba solo si es tu nombre de usuario.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Falta la licencia Synix integrada.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Se restableció la conexión con el servidor «{0}», que sigue en ejecución (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Se restableció la conexión con el servidor «{0}», encontrado en ejecución en su carpeta de instalación (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>La vinculación de acceso remoto no se transfiere. Si utiliza el acceso remoto, después de restaurar Synix vincule el nuevo equipo con su cuenta en manager.synix.info.</value>
+  </data>
 </root>

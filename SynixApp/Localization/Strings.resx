@@ -14393,4 +14393,7 @@ Approve only if this is your username.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>The embedded Synix license is missing.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Reconnected to running server "{0}" (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Reconnected to running server "{0}" found in its installation folder (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Remote access pairing does not transfer. If you use remote access, pair the new computer with your account at manager.synix.info after restoring Synix.</value>
+  </data>
 </root>

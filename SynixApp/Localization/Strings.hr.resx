@@ -14398,4 +14398,7 @@ Odobrite samo ako je ovo vaše korisničko ime.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Nedostaje ugrađena licenca Synix.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Ponovno je uspostavljena veza s pokrenutim poslužiteljem „{0}“ (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Ponovno je uspostavljena veza s pokrenutim poslužiteljem „{0}“ pronađenim u njegovoj instalacijskoj mapi (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Uparivanje za udaljeni pristup ne prenosi se. Ako koristite udaljeni pristup, nakon vraćanja Synixa uparite novo računalo sa svojim računom na manager.synix.info.</value>
+  </data>
 </root>

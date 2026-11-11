@@ -7845,5 +7845,8 @@ Keur dit alleen goed als het jouw gebruikersnaam is.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>De ingebouwde Synix-licentie ontbreekt.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Opnieuw verbonden met de actieve server "{0}" (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Opnieuw verbonden met de actieve server "{0}" die in de installatiemap is gevonden (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>De koppeling voor externe toegang wordt niet overgezet. Als u externe toegang gebruikt, koppelt u de nieuwe computer na het herstellen van Synix aan uw account op manager.synix.info.</value>
+  </data>
 </root>
 

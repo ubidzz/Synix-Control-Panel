@@ -14355,4 +14355,7 @@ Bestätigen Sie nur Ihren eigenen Benutzernamen.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Die eingebettete Synix-Lizenz fehlt.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Verbindung zum laufenden Server „{0}“ wiederhergestellt (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Verbindung zum laufenden Server „{0}“, der in seinem Installationsordner gefunden wurde, wiederhergestellt (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Die Kopplung für den Fernzugriff wird nicht übertragen. Wenn Sie den Fernzugriff nutzen, koppeln Sie den neuen Computer nach der Wiederherstellung von Synix unter manager.synix.info mit Ihrem Konto.</value>
+  </data>
 </root>

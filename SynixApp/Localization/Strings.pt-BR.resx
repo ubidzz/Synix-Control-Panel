@@ -7844,5 +7844,8 @@ Aprove somente se este for seu nome de usuário.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>A licença Synix incorporada está faltando.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Conexão restabelecida com o servidor "{0}" em execução (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Conexão restabelecida com o servidor "{0}" encontrado em execução na pasta de instalação (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>O pareamento de acesso remoto não é transferido. Se você usa acesso remoto, após restaurar o Synix, pareie o novo computador com sua conta em manager.synix.info.</value>
+  </data>
 </root>
 

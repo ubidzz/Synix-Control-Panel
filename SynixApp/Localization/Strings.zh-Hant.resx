@@ -7844,5 +7844,8 @@ ARK會在你啟動伺服器時從{2}下載這個模組。 Synix 不會複製或�
   <data name="Help.LicenseMissing" xml:space="preserve"><value>嵌入式 Synix 許可證遺失。</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] 已重新連線至正在執行的伺服器「{0}」（PID: {1}）。</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] 已重新連線至在安裝資料夾中找到的正在執行的伺服器「{0}」（PID: {1}）。</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>遠端存取配對不會隨移轉轉移。如果您使用遠端存取，請在還原 Synix 後，於 manager.synix.info 將新電腦與您的帳戶配對。</value>
+  </data>
 </root>
 

@@ -6921,4 +6921,7 @@ Windows Η άδεια τείχους προστασίας και η προώθη
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Λείπει η ενσωματωμένη άδεια Synix.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Αποκαταστάθηκε η σύνδεση με τον διακομιστή «{0}» που εκτελείται (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Αποκαταστάθηκε η σύνδεση με τον διακομιστή «{0}» που βρέθηκε να εκτελείται στον φάκελο εγκατάστασής του (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Η σύζευξη για απομακρυσμένη πρόσβαση δεν μεταφέρεται. Αν χρησιμοποιείτε απομακρυσμένη πρόσβαση, μετά την επαναφορά του Synix συνδέστε τον νέο υπολογιστή με τον λογαριασμό σας στο manager.synix.info.</value>
+  </data>
 </root>

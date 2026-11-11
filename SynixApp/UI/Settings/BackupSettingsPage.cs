@@ -31,10 +31,12 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		private readonly Label _importEstimateLabel;
 		private DateTime _transferStartedUtc;
 		private bool _verifyPackageReady;
+		private int _transferNoticeHeight;
 
 		public BackupSettingsPage()
 		{
 			InitializeComponent();
+			AutoScroll = true;
 			(
 				_exportSynixButton,
 				_normalExportButton,
@@ -152,11 +154,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			_transferProgressBar.Visible = busy;
 			if (busy)
 			{
-				_transferStatusLabel.Location = new Point(22, 132);
+				_transferStatusLabel.Location = new Point(22, 132 + _transferNoticeHeight);
 				_transferStatusLabel.Size = new Size(774, 19);
-				_transferEtaLabel.Location = new Point(22, 151);
+				_transferEtaLabel.Location = new Point(22, 151 + _transferNoticeHeight);
 				_transferEtaLabel.Size = new Size(774, 17);
-				_transferProgressBar.Location = new Point(22, 169);
+				_transferProgressBar.Location = new Point(22, 169 + _transferNoticeHeight);
 				_transferProgressBar.Size = new Size(774, 9);
 				_transferStartedUtc = DateTime.UtcNow;
 				_transferEtaLabel.Text = string.Empty;
@@ -164,11 +166,11 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			}
 			else
 			{
-				_transferStatusLabel.Location = new Point(570, 132);
+				_transferStatusLabel.Location = new Point(570, 132 + _transferNoticeHeight);
 				_transferStatusLabel.Size = new Size(226, 19);
-				_transferEtaLabel.Location = new Point(570, 151);
+				_transferEtaLabel.Location = new Point(570, 151 + _transferNoticeHeight);
 				_transferEtaLabel.Size = new Size(226, 17);
-				_transferProgressBar.Location = new Point(570, 169);
+				_transferProgressBar.Location = new Point(570, 169 + _transferNoticeHeight);
 				_transferProgressBar.Size = new Size(226, 9);
 				_transferEtaLabel.Visible = false;
 			}
@@ -447,9 +449,19 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 				Style = ProgressBarStyle.Continuous,
 				Visible = false
 			};
+			Label remoteAccessNotice = new()
+			{
+				Name = "transferRemoteAccessNotice",
+				Location = new Point(22, 79),
+				Size = new Size(774, 38),
+				Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+				ForeColor = Color.FromArgb(255, 199, 82)
+			};
+			LocalizationManager.BindText(remoteAccessNotice, "Settings.Backup.Transfer.RemoteAccessNotice");
 
 			card.Controls.Add(title);
 			card.Controls.Add(description);
+			card.Controls.Add(remoteAccessNotice);
 			card.Controls.Add(exportEstimateLabel);
 			card.Controls.Add(importEstimateLabel);
 			card.Controls.Add(exportButton);
@@ -461,6 +473,35 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			card.Controls.Add(progressBar);
 			Controls.Add(card);
 			card.BringToFront();
+
+			Control[] transferControls = [exportEstimateLabel, importEstimateLabel,
+				exportButton, normalExportButton, importButton, verifyButton,
+				statusLabel, etaLabel, progressBar];
+			bool arrangingNotice = false;
+			void ArrangeNotice()
+			{
+				if (arrangingNotice || card.IsDisposed) return;
+				arrangingNotice = true;
+				try
+				{
+					remoteAccessNotice.Width = Math.Max(1, card.ClientSize.Width - card.Padding.Horizontal);
+					remoteAccessNotice.Height = TextRenderer.MeasureText(
+						remoteAccessNotice.Text, remoteAccessNotice.Font,
+						new Size(remoteAccessNotice.Width, int.MaxValue),
+						TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height;
+					int noticeHeight = remoteAccessNotice.Height + 10;
+					int shift = noticeHeight - _transferNoticeHeight;
+					_transferNoticeHeight = noticeHeight;
+					foreach (Control control in transferControls) control.Top += shift;
+					card.Height = 184 + noticeHeight;
+					AutoScrollMinSize = new Size(0, 326 + card.Height + 12);
+				}
+				finally { arrangingNotice = false; }
+			}
+			card.SizeChanged += (_, _) => ArrangeNotice();
+			remoteAccessNotice.TextChanged += (_, _) => ArrangeNotice();
+			remoteAccessNotice.FontChanged += (_, _) => ArrangeNotice();
+			ArrangeNotice();
 
 			return (
 				exportButton,

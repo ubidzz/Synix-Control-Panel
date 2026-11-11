@@ -16018,4 +16018,7 @@ Patvirtinkite tik jei tai jūsų naudotojo vardas.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Trūksta įterptosios Synix licencijos.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Vėl prisijungta prie veikiančio serverio „{0}“ (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Vėl prisijungta prie diegimo aplanke rasto veikiančio serverio „{0}“ (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Nuotolinės prieigos susiejimas neperkeliamas. Jei naudojate nuotolinę prieigą, atkūrę Synix susiekite naują kompiuterį su savo paskyra svetainėje manager.synix.info.</value>
+  </data>
 </root>

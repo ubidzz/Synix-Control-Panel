@@ -14398,4 +14398,7 @@ Aprubahan lang kung ito ang iyong username.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Ang naka-embed na Synix lisensya ay nawawala.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Naibalik ang koneksyon sa tumatakbong server na "{0}" (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Naibalik ang koneksyon sa tumatakbong server na "{0}" na natagpuan sa folder ng pag-install nito (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Hindi naililipat ang pagpapares para sa malayuang pag-access. Kung gumagamit ka ng malayuang pag-access, ipares ang bagong computer sa iyong account sa manager.synix.info pagkatapos ibalik ang Synix.</value>
+  </data>
 </root>

@@ -6921,4 +6921,7 @@ Godkend kun, hvis dette er dit brugernavn.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Den indlejrede Synix-licens mangler.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Forbindelsen til den kørende server "{0}" er genoprettet (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Forbindelsen til den kørende server "{0}", som blev fundet i installationsmappen, er genoprettet (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Parring til fjernadgang overføres ikke. Hvis du bruger fjernadgang, skal du parre den nye computer med din konto på manager.synix.info efter gendannelse af Synix.</value>
+  </data>
 </root>

@@ -7844,5 +7844,8 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="Help.LicenseMissing" xml:space="preserve"><value>嵌入式 Synix 许可证丢失。</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] 已重新连接到正在运行的服务器“{0}”（PID: {1}）。</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] 已重新连接到在安装文件夹中找到的正在运行的服务器“{0}”（PID: {1}）。</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>远程访问配对不会随迁移转移。如果您使用远程访问，请在恢复 Synix 后，在 manager.synix.info 上将新电脑与您的账户配对。</value>
+  </data>
 </root>
 

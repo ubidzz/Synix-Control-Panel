@@ -7845,5 +7845,8 @@ Godkänn bara om det är ditt användarnamn.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Den inbäddade Synix-licensen saknas.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Anslutningen till servern "{0}" som körs har återställts (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Anslutningen till servern "{0}" som hittades körande i installationsmappen har återställts (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Parkopplingen för fjärråtkomst överförs inte. Om du använder fjärråtkomst ska du parkoppla den nya datorn med ditt konto på manager.synix.info efter att du har återställt Synix.</value>
+  </data>
 </root>
 

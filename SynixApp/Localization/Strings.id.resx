@@ -7845,5 +7845,8 @@ Setujui hanya jika ini nama pengguna Anda.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Lisensi Synix yang tertanam tidak ada.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Terhubung kembali ke server "{0}" yang sedang berjalan (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Terhubung kembali ke server "{0}" yang ditemukan sedang berjalan di folder instalasinya (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Pemasangan untuk akses jarak jauh tidak ikut dipindahkan. Jika Anda menggunakan akses jarak jauh, pasangkan komputer baru dengan akun Anda di manager.synix.info setelah memulihkan Synix.</value>
+  </data>
 </root>
 

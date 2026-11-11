@@ -14398,4 +14398,7 @@ Aprova’l només si és el teu nom d’usuari.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Falta la llicència Synix incrustada.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] S’ha restablert la connexió amb el servidor «{0}», que continua en execució (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] S’ha restablert la connexió amb el servidor «{0}», trobat en execució a la seva carpeta d’instal·lació (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>La vinculació d'accés remot no es transfereix. Si utilitzeu l'accés remot, després de restaurar Synix vinculeu l'ordinador nou al vostre compte a manager.synix.info.</value>
+  </data>
 </root>

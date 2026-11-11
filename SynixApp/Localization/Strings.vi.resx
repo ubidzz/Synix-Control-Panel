@@ -7845,5 +7845,8 @@ Chỉ phê duyệt nếu đây là tên người dùng của bạn.</value></dat
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Thiếu giấy phép Synix được nhúng.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Đã kết nối lại với máy chủ "{0}" đang chạy (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Đã kết nối lại với máy chủ "{0}" được tìm thấy đang chạy trong thư mục cài đặt (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Liên kết truy cập từ xa không được chuyển sang máy mới. Nếu bạn sử dụng truy cập từ xa, hãy liên kết máy tính mới với tài khoản của bạn tại manager.synix.info sau khi khôi phục Synix.</value>
+  </data>
 </root>
 

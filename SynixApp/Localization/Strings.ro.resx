@@ -6921,4 +6921,7 @@ Aprobă doar dacă acesta este numele tău de utilizator.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Licența Synix încorporată lipsește.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Conexiunea cu serverul „{0}” aflat în execuție a fost restabilită (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Conexiunea cu serverul „{0}” găsit în execuție în folderul său de instalare a fost restabilită (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Asocierea pentru acces la distanță nu se transferă. Dacă utilizați accesul la distanță, după restaurarea Synix asociați noul computer cu contul dvs. pe manager.synix.info.</value>
+  </data>
 </root>

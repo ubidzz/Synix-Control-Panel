@@ -7844,5 +7844,8 @@ Synix를 열어 두거나 최소화해 두세요. 대기 중인 연결이 로그
   <data name="Help.LicenseMissing" xml:space="preserve"><value>내장된 Synix 라이센스가 없습니다.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] 실행 중인 서버 "{0}"에 다시 연결했습니다 (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] 설치 폴더에서 발견한 실행 중인 서버 "{0}"에 다시 연결했습니다 (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>원격 액세스 페어링은 이전되지 않습니다. 원격 액세스를 사용하는 경우 Synix를 복원한 후 manager.synix.info에서 새 컴퓨터를 계정과 페어링하세요.</value>
+  </data>
 </root>
 

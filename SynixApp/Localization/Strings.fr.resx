@@ -14277,4 +14277,7 @@ Approuvez uniquement s’il s’agit de votre nom d’utilisateur.</value></data
   <data name="Help.LicenseMissing" xml:space="preserve"><value>La licence Synix intégrée est manquante.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Connexion rétablie avec le serveur « {0} » déjà en cours d’exécution (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Connexion rétablie avec le serveur « {0} » trouvé en cours d’exécution dans son dossier d’installation (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>L'association pour l'accès à distance n'est pas transférée. Si vous utilisez l'accès à distance, associez le nouvel ordinateur à votre compte sur manager.synix.info après avoir restauré Synix.</value>
+  </data>
 </root>

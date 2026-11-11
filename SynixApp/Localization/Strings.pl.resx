@@ -7844,5 +7844,8 @@ Zatwierdź tylko, jeśli to Twoja nazwa użytkownika.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Brakuje wbudowanej licencji Synix.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Ponownie połączono z działającym serwerem „{0}” (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Ponownie połączono z działającym serwerem „{0}” znalezionym w jego folderze instalacyjnym (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Powiązanie dostępu zdalnego nie jest przenoszone. Jeśli korzystasz z dostępu zdalnego, po przywróceniu Synix powiąż nowy komputer ze swoim kontem na manager.synix.info.</value>
+  </data>
 </root>
 

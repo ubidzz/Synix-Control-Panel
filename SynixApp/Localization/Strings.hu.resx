@@ -6921,4 +6921,7 @@ Csak akkor hagyd jóvá, ha ez a te felhasználóneved.</value></data>
   <data name="Help.LicenseMissing" xml:space="preserve"><value>A beágyazott Synix licenc hiányzik.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Újra létrejött a kapcsolat a futó „{0}” szerverrel (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Újra létrejött a kapcsolat a telepítési mappájában megtalált, futó „{0}” szerverrel (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>A távoli hozzáféréshez tartozó párosítás nem kerül át. Ha távoli hozzáférést használ, a Synix visszaállítása után párosítsa az új számítógépet a fiókjával a manager.synix.info oldalon.</value>
+  </data>
 </root>

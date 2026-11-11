@@ -7844,5 +7844,8 @@ ARK загрузит этот мод из {2} при запуске сервер
   <data name="Help.LicenseMissing" xml:space="preserve"><value>Встроенная лицензия Synix отсутствует.</value></data>
   <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Соединение с работающим сервером «{0}» восстановлено (PID: {1}).</value></data>
   <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Соединение с работающим сервером «{0}», найденным в папке установки, восстановлено (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Привязка для удалённого доступа не переносится. Если вы используете удалённый доступ, после восстановления Synix привяжите новый компьютер к своей учётной записи на manager.synix.info.</value>
+  </data>
 </root>
 
