@@ -17,22 +17,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 	partial class DiscordWebhookRouteDialog
 	{
 		private System.ComponentModel.IContainer components;
-		private Label lblTitle;
-		private Label lblDescription;
-		private Label lblName;
-		private TextBox txtName;
-		private Label lblWebhook;
-		private TextBox txtWebhook;
-		private Label lblEnabled;
-		private ModernSettingsToggle chkEnabled;
-		private Label lblPreset;
-		private ModernSettingsComboBox cmbPreset;
-		private CheckedListBox lstEvents;
-		private Label lblSelection;
-		private Label lblStatus;
-		private ModernSettingsButton btnTest;
-		private ModernSettingsButton btnCancel;
-		private ModernSettingsButton btnSave;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -236,5 +220,22 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			ResumeLayout(false);
 			PerformLayout();
 		}
+
+		private Label lblTitle;
+		private Label lblDescription;
+		private Label lblName;
+		private TextBox txtName;
+		private Label lblWebhook;
+		private TextBox txtWebhook;
+		private Label lblEnabled;
+		private ModernSettingsToggle chkEnabled;
+		private Label lblPreset;
+		private ModernSettingsComboBox cmbPreset;
+		private CheckedListBox lstEvents;
+		private Label lblSelection;
+		private Label lblStatus;
+		private ModernSettingsButton btnTest;
+		private ModernSettingsButton btnCancel;
+		private ModernSettingsButton btnSave;
 	}
 }

@@ -244,7 +244,7 @@ internal sealed class ModImportWizard : Form
 	{
 		Selection = null; PackageSha256 = "";
 		_grid.Rows.Clear(); _details.Clear(); _continue.Enabled = false;
-		_guidance.ShowGuidance(ModInstallGuidance.Pending);
+		_guidance.ShowGuidance(ModInstallGuidance.CreatePending());
 	}
 	private void SetReading(bool reading)
 	{

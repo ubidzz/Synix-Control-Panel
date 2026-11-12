@@ -17,29 +17,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 	partial class DiscordSettingsPage
 	{
 		private System.ComponentModel.IContainer components;
-		private ModernSettingsCard cardMaster;
-		private Label lblMasterTitle;
-		private Label lblMasterDescription;
-		private Label lblMasterEnabled;
-		private ModernSettingsToggle chkMasterEnabled;
-		private Label lblMasterWebhook;
-		private TextBox txtMasterWebhook;
-		private ModernSettingsButton btnTestMaster;
-		private Label lblMasterPreset;
-		private ModernSettingsComboBox cmbMasterPreset;
-		private Label lblMasterEvents;
-		private CheckedListBox lstMasterEvents;
-		private Label lblMasterSummary;
-		private ModernSettingsCard cardAdvanced;
-		private Label lblAdvancedTitle;
-		private Label lblAdvancedDescription;
-		private Label lblRouteCount;
-		private DataGridView gridRoutes;
-		private ModernSettingsButton btnAdd;
-		private ModernSettingsButton btnEdit;
-		private ModernSettingsButton btnRemove;
-		private ModernSettingsButton btnTestRoute;
-		private Label lblStatus;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -320,5 +297,29 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			((System.ComponentModel.ISupportInitialize)gridRoutes).EndInit();
 			ResumeLayout(false);
 		}
+
+		private ModernSettingsCard cardMaster;
+		private Label lblMasterTitle;
+		private Label lblMasterDescription;
+		private Label lblMasterEnabled;
+		private ModernSettingsToggle chkMasterEnabled;
+		private Label lblMasterWebhook;
+		private TextBox txtMasterWebhook;
+		private ModernSettingsButton btnTestMaster;
+		private Label lblMasterPreset;
+		private ModernSettingsComboBox cmbMasterPreset;
+		private Label lblMasterEvents;
+		private CheckedListBox lstMasterEvents;
+		private Label lblMasterSummary;
+		private ModernSettingsCard cardAdvanced;
+		private Label lblAdvancedTitle;
+		private Label lblAdvancedDescription;
+		private Label lblRouteCount;
+		private DataGridView gridRoutes;
+		private ModernSettingsButton btnAdd;
+		private ModernSettingsButton btnEdit;
+		private ModernSettingsButton btnRemove;
+		private ModernSettingsButton btnTestRoute;
+		private Label lblStatus;
 	}
 }

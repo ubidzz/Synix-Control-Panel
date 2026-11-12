@@ -52,7 +52,7 @@ internal sealed class ModInstallGuidancePanel : UserControl
 			layout.Controls.Add(card, 0, i);
 		}
 		Controls.Add(layout);
-		ShowGuidance(ModInstallGuidance.Pending);
+		ShowGuidance(ModInstallGuidance.CreatePending());
 	}
 
 	internal void ShowGuidance(ModInstallGuidance guidance)

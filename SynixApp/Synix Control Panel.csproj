@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net10.0-windows</TargetFramework>
+		<TargetFramework>net11.0-windows</TargetFramework>
 		<RootNamespace>Synix_Control_Panel</RootNamespace>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -33,6 +33,8 @@
 		<PackageIcon>SyniX logo with glowing accents.png</PackageIcon>
 		<!-- Keep local assistant files, caches, and generated checks out of the app and publish inputs. -->
 		<DefaultItemExcludes>$(DefaultItemExcludes);**\.codex\**;**\.codex-*;**\.codex-*\**;**\.cache\**;**\artifacts\**;**\TestResults\**</DefaultItemExcludes>
+		<!-- MSI build files appear and disappear during publishing; they are not app project items. -->
+		<DefaultItemExcludes>$(DefaultItemExcludes);Packaging\MSI\bin\**;Packaging\MSI\obj\**</DefaultItemExcludes>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="SynixApp\**" />
@@ -65,7 +67,7 @@
 	<ItemGroup>
 		<AssemblyMetadata Include="SynixBuildChannel" Value="$(SynixBuildChannel)" />
 		<InternalsVisibleTo Include="Synix.Tests" />
-		<PackageReference Include="System.Management" Version="10.0.7" />
+		<PackageReference Include="System.Management" Version="11.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -89,6 +91,9 @@
 	    <SubType>Form</SubType>
 	  </Compile>
 	  <Compile Update="UI\ServerManagement\SatisfactoryControlDialog.Designer.cs">
+	    <DependentUpon>SatisfactoryControlDialog.cs</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\ServerManagement\SatisfactoryControlDialog.Layout.cs">
 	    <DependentUpon>SatisfactoryControlDialog.cs</DependentUpon>
 	  </Compile>
 	  <Compile Update="UI\Dashboard\MainGUI.Designer.cs">
@@ -308,8 +313,10 @@
 		<Error Condition="!Exists('$(_SynixDotNetHost)')" Text="The 64-bit .NET host was not found at $(_SynixDotNetHost). Repair the Visual Studio .NET SDK before publishing." />
 		<Message Text="Starting the published EXE in hidden smoke-test mode..." Importance="high" />
 		<Exec Command="&quot;$(_SynixPublishedExe)&quot; --synix-publish-smoke-test" WorkingDirectory="$(_SynixPublishDirectory)" Timeout="30000" />
+		<Message Text="Building the Synix automated tests before packaging..." Importance="high" />
+		<Exec Command="&quot;$(_SynixDotNetHost)&quot; build &quot;$(_SynixTestsProject)&quot; --configuration Release --nologo" WorkingDirectory="$(MSBuildProjectDirectory)" />
 		<Message Text="Running the complete Synix automated test suite before packaging..." Importance="high" />
-		<Exec Command="&quot;$(_SynixDotNetHost)&quot; test &quot;$(_SynixTestsProject)&quot; --configuration Release --logger &quot;console;verbosity=minimal&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
+		<Exec Command="&quot;$(_SynixDotNetHost)&quot; test &quot;$(_SynixTestsProject)&quot; --configuration Release --no-build --logger &quot;console;verbosity=minimal&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" />
 		<PropertyGroup>
 			<_SynixAutomatedTestsUtc>$([System.DateTime]::UtcNow.ToString('O'))</_SynixAutomatedTestsUtc>
 		</PropertyGroup>

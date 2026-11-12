@@ -3,11 +3,11 @@
 
 Target: every non-invariant neutral language reported by Windows/.NET, retaining separate writing-system entries. Regional settings resolve to an appropriate catalog where available; they are not automatically separate translations.
 
-This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **37 structurally complete catalogs, including English**, with **4,542 required text entries per catalog**. **245 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
+This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **37 structurally complete catalogs, including English**, with **4,591 required text entries per catalog**. **245 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
 
 Only complete, non-preview catalogs are eligible for the app's language picker. Empty entries, missing or unexpected source keys, and untranslated English-only copies are rejected. Key coverage does not certify translation accuracy: terminology, technical syntax, layout and accessibility still require review. This inventory does not add new translations or claim that right-to-left layout is finished.
 
-Inventory runtime: .NET 10.0.14; Microsoft Windows NT 10.0.26200.0. Available cultures depend on the installed Windows/.NET globalization data; regenerate on the supported release environment rather than treating this number as a permanent global total. See [Microsoft's CultureInfo documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo) and [Windows Forms bidirectional layout guidance](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/advanced/bi-directional-support-for-windows-forms-applications).
+Inventory runtime: .NET 11.0.0; Microsoft Windows NT 10.0.26200.0. Available cultures depend on the installed Windows/.NET globalization data; regenerate on the supported release environment rather than treating this number as a permanent global total. See [Microsoft's CultureInfo documentation](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo) and [Windows Forms bidirectional layout guidance](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/advanced/bi-directional-support-for-windows-forms-applications).
 
 ## Current catalogs
 

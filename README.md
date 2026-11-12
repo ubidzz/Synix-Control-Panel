@@ -149,7 +149,7 @@ Download **`Synix.Control.Panel.exe`** from the [latest release](https://github.
 - In-app updates download the standalone EXE and replace the running copy in its existing folder; they do not install the MSI, even when another Synix copy is installed elsewhere.
 - Installed-copy detection uses the registered application folder, including custom locations. If a release lacks the correct standalone download, Synix does not substitute an installer.
 
-> **.NET 10 is included with Synix.** Official Windows releases are self-contained and package the required .NET 10 runtime inside the published Synix executable, so users do not need to install .NET separately. `SynixSetup.msi` contains that same self-contained executable. Including the runtime is why the published application increased from roughly 40 MB to about 119 MB; the MSI download can remain smaller because the installed executable is compressed inside the installer.
+> **.NET 11 is included with Synix.** Official Windows releases are self-contained and package the required .NET 11 runtime inside the published Synix executable, so users do not need to install .NET separately. `SynixSetup.msi` contains that same self-contained executable. Bundling the runtime increases the application's size; the MSI download can remain smaller because the installed executable is compressed inside the installer.
 
 > **Upgrading from v1.0.20 or earlier:** Older installed releases used the Inno Setup `SynixSetup.exe` installer. Uninstall that installed version first, then install `SynixSetup.msi`. This does not remove the servers and settings stored inside `C:\Synix`.
 
@@ -370,20 +370,21 @@ The Synix knowledge base is included directly in the application and covers:
 
 ## 💻 Technical Overview
 
-- **Application:** C# with .NET 10 and Windows Forms
+- **Application:** C# with .NET 11 and Windows Forms
+- **Build tools:** .NET 11 SDK, selected by `global.json`, with updated Visual Studio 2026 or the .NET command line
 - **Architecture:** Shared, asynchronous server-management engine with a local desktop interface
 - **Game definitions:** Strict embedded JSON profiles with validated capabilities and no arbitrary script, plugin, assembly, or DLL loading
 - **Controller selection:** Manifest-driven built-in lifecycle, console, configuration, and player controllers
 - **Installer:** WiX-based per-user MSI
 - **Distribution:** GitHub Releases and WinGet
-- **Publishing:** Self-contained .NET 10 Windows x64 single-file executable; the runtime is included with both the standalone application and `SynixSetup.msi`
+- **Publishing:** Self-contained .NET 11 Windows x64 single-file executable; the runtime is included with both the standalone application and `SynixSetup.msi`
 - **Desktop data:** Local versioned JSON persistence with sequential migrations and pre-migration backups; no local SQL database required. The optional remote manager has a hosted database for the limited records described in the privacy notice.
 - **Password protection:** Windows user-bound encryption with portable encrypted transfer support
 - **Monitoring:** Windows process, CPU, memory, socket, and WMI integration
 - **Networking:** A2S and additional UDP, TCP, HTTP, and local process checks
 - **Quality checks:** Automated tests, CodeQL scanning, package hashes, and a release-readiness report
 
-Official Synix release packages include the .NET 10 runtime and do not require users to install .NET separately. Developers building Synix from source still need the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+Official Synix release packages include the .NET 11 runtime and do not require users to install .NET separately. Developers build Synix with the [.NET 11 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/11.0). The repository's `global.json` selects SDK 11.0.100 or a later stable .NET 11 feature band. Source builds and tests run on the .NET 11 Windows Desktop Runtime.
 
 ## 🖼️ Gallery
 

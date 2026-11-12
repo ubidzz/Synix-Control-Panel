@@ -21,9 +21,6 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 	{
 		private GameInfo? _gameData;
 		private bool _isLoading;
-		private Label lblPasswordCharacters = null!;
-		private Label lblAdminPasswordCharacters = null!;
-		private ModernSettingsButton btnPasswordCharacters = null!;
 
 		public event EventHandler? SettingsChanged;
 
