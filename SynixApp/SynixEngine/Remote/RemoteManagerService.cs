@@ -329,13 +329,14 @@ internal sealed class RemoteManagerService
         {
             try
             {
-                var relay = await SendAsync<RemoteRelayReply>("device/relay", new { }, state, cancellation).ConfigureAwait(false);
-                var uri = new Uri(relay.Url);
-                if (uri.Scheme != "wss" || !string.IsNullOrEmpty(uri.UserInfo) || !string.IsNullOrEmpty(uri.Query) ||
-                    !(uri.Host.EndsWith(".workers.dev", StringComparison.OrdinalIgnoreCase) || uri.Host.Equals("relay.synix.info", StringComparison.OrdinalIgnoreCase)))
-                    throw new HttpRequestException(LocalizationManager.Get("RemoteManager.InvalidSettings"));
+                var relay = await SendAsync<RemoteRelayReply>("device/relay", new { proof = RemoteManagerProtocol.RelayProof }, state, cancellation).ConfigureAwait(false);
+                var uri = RemoteManagerProtocol.ValidateRelay(relay);
+                if (!IsCurrentPairing(State, state)) return;
                 using var socket = new ClientWebSocket();
-                socket.Options.SetRequestHeader("Authorization", "Bearer " + relay.Token);
+                using (CngKey key = OpenKey(state))
+                using (RSA rsa = new RSACng(key))
+                    foreach (var header in RemoteManagerProtocol.CreateRelayHeaders(relay, rsa))
+                        socket.Options.SetRequestHeader(header.Key, header.Value);
                 socket.Options.KeepAliveInterval = TimeSpan.FromSeconds(45);
                 socket.Options.KeepAliveTimeout = TimeSpan.FromSeconds(20);
                 using var connection = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
@@ -396,7 +397,7 @@ internal sealed class RemoteManagerService
                         // and check the local pairing and deadline again after the network wait.
                         JsonElement authorization = default;
                         if (!await AuthorizeExecutionAsync(command, state, () => State,
-                            async token => authorization = await SendAsync<JsonElement>("device/authorize-command", new { commandId = command.Id }, state, token), cancellation))
+                            async token => authorization = await AuthorizeCommandAsync(command, state, token), cancellation))
                         { completion.TrySetResult("cancelled"); return; }
                         var server = ServerRegistry.Snapshot().FirstOrDefault(x => ServerActivityHistory.ServerKey(x) == command.ServerId);
                         if (server == null) { completion.TrySetResult("unsupported"); return; }
@@ -430,7 +431,7 @@ internal sealed class RemoteManagerService
                             if (backup is null) { completion.TrySetResult("backup-unavailable"); return; }
                             // Refresh authorization after catalog I/O, immediately before destructive work.
                             if (!await AuthorizeExecutionAsync(command, state, () => State,
-                                token => SendAsync<JsonElement>("device/authorize-command", new { commandId = command.Id }, state, token), cancellation))
+                                token => AuthorizeCommandAsync(command, state, token), cancellation))
                             { completion.TrySetResult("cancelled"); return; }
                             var restored = await Core.Instance.RestoreServerBackupAsync(server, backup);
                             completion.TrySetResult(restored.Succeeded ? "completed" : "failed"); return;
@@ -465,6 +466,14 @@ internal sealed class RemoteManagerService
     private static bool IsCurrentPairing(RemotePairingState? current, RemotePairingState expected) =>
         current is { Enabled: true, PendingUnpair: false } &&
         current.DeviceId == expected.DeviceId && current.KeyName == expected.KeyName;
+
+    private async Task<JsonElement> AuthorizeCommandAsync(RemoteCommand command, RemotePairingState state, CancellationToken cancellation)
+    {
+        var reply = await SendAsync<JsonElement>("device/authorize-command", new { commandId = command.Id }, state, cancellation).ConfigureAwait(false);
+        if (!RemoteManagerProtocol.Authorizes(command, reply))
+            throw new HttpRequestException(LocalizationManager.Get("RemoteManager.InvalidResponse"));
+        return reply;
+    }
 
     internal static async Task<bool> AuthorizeExecutionAsync(RemoteCommand command, RemotePairingState expected,
         Func<RemotePairingState?> currentState, Func<CancellationToken, Task> authorize,

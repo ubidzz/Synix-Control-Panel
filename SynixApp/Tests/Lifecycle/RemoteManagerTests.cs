@@ -198,6 +198,65 @@ public sealed class RemoteManagerTests
     }
 
     [Theory]
+    [InlineData("device/poll?redirect=other")]
+    [InlineData("device/poll#unpair")]
+    [InlineData("device/../account/delete")]
+    [InlineData("device/unknown")]
+    public void SigningIsLimitedToKnownComputerEndpoints(string route)
+    {
+        using RSA key = RSA.Create(2048);
+        Assert.Throws<ArgumentException>(() => RemoteManagerProtocol.CreateRequest(route, new { }, key));
+    }
+
+    [Theory]
+    [InlineData("wss://another-tenant.workers.dev/connect")]
+    [InlineData("wss://synix-wake-relay.synix-website.workers.dev.evil.example/connect")]
+    [InlineData("ws://synix-wake-relay.synix-website.workers.dev/connect")]
+    [InlineData("wss://synix-wake-relay.synix-website.workers.dev:8443/connect")]
+    [InlineData("wss://synix-wake-relay.synix-website.workers.dev/other")]
+    [InlineData("wss://synix-wake-relay.synix-website.workers.dev/connect?token=leak")]
+    [InlineData("wss://synix-wake-relay.synix-website.workers.dev/connect#fragment")]
+    [InlineData("wss://user@synix-wake-relay.synix-website.workers.dev/connect")]
+    public void RelayCredentialsNeverGoToAnUnapprovedEndpoint(string endpoint)
+    {
+        Assert.Throws<HttpRequestException>(() => RemoteManagerProtocol.ValidateRelay(
+            new(endpoint, "test.token.signature", 3600, RemoteManagerProtocol.RelayProof)));
+    }
+
+    [Fact]
+    public void RelayHandshakeRequiresKeyProofAndBindsTheExactTokenAndDestination()
+    {
+        using RSA key = RSA.Create(2048), otherKey = RSA.Create(2048);
+        var reply = new RemoteRelayReply(RemoteManagerProtocol.RelayEndpoint.AbsoluteUri, "test.token.signature", 3600, RemoteManagerProtocol.RelayProof);
+        var headers = RemoteManagerProtocol.CreateRelayHeaders(reply, key);
+        string message = $"1\nhttps://synix-wake-relay.synix-website.workers.dev\nGET\n/connect\n{headers["X-Synix-Relay-Time"]}\n{headers["X-Synix-Relay-Nonce"]}\n{Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(reply.Token)))}";
+        string encoded = headers["X-Synix-Relay-Signature"].Replace('-', '+').Replace('_', '/');
+        byte[] proof = Convert.FromBase64String(encoded.PadRight((encoded.Length + 3) / 4 * 4, '='));
+        Assert.True(key.VerifyData(Encoding.UTF8.GetBytes(message), proof, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+        Assert.False(otherKey.VerifyData(Encoding.UTF8.GetBytes(message), proof, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+        Assert.False(key.VerifyData(Encoding.UTF8.GetBytes(message.Replace("/connect", "/disconnect")), proof, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+        Assert.False(key.VerifyData(Encoding.UTF8.GetBytes(message + "changed token"), proof, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+        Assert.NotEqual(headers["X-Synix-Relay-Nonce"], RemoteManagerProtocol.CreateRelayHeaders(reply, key)["X-Synix-Relay-Nonce"]);
+        foreach (var invalid in new[] { reply with { Proof = null }, reply with { ExpiresIn = 3601 }, reply with { ExpiresIn = 0 }, reply with { Token = "token\r\nheader" } })
+            Assert.Throws<HttpRequestException>(() => RemoteManagerProtocol.ValidateRelay(invalid));
+    }
+
+    [Fact]
+    public void WebsiteApprovalMustExplicitlyMatchEveryCommandField()
+    {
+        var command = new RemoteCommand("command", "server", "restore", 1800000030, "backup", "run");
+        JsonElement Reply(object value) => JsonSerializer.SerializeToElement(value, RemoteManagerProtocol.Json);
+        Assert.True(RemoteManagerProtocol.Authorizes(command, Reply(new { authorized = true, command })));
+        foreach (var changed in new[] { command with { Id = "other" }, command with { ServerId = "other" },
+            command with { Action = "stop" }, command with { Expires = command.Expires + 1 },
+            command with { BackupId = "other" }, command with { ConsoleRunId = "other" } })
+            Assert.False(RemoteManagerProtocol.Authorizes(command, Reply(new { authorized = true, command = changed })));
+        foreach (var invalid in new[] { Reply(new { authorized = false, command }), Reply(new { command }),
+            Reply(new { authorized = "true", command }), Reply(new { authorized = true }), Reply(new { authorized = true, command = "invalid" }), Reply(new { }) })
+            Assert.False(RemoteManagerProtocol.Authorizes(command, invalid));
+    }
+
+    [Theory]
     [InlineData("start")]
     [InlineData("update")]
     public void CommandsRequireEnabledPairingAllowlistedActionFreshExpiryAndNoReplay(string action)
