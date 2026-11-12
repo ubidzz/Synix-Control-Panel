@@ -50,6 +50,17 @@ Synix keeps the management experience local. The main Synix data folder is `C:\S
 
 ## 💾 Install Synix
 
+Use only the [official Synix GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases)
+or [synix.info](https://synix.info) to obtain Synix. Copies supplied by other websites
+are not verified by Jason Turner and may be unsafe, modified, outdated, or bundled
+with unwanted software. Listing Synix, linking to GitHub, or offering a download
+does not give another site ownership, authorization, or official status. Synix
+belongs to Jason Turner; hosting, mirroring, proxying, repackaging, or wrapping
+downloads requires prior written permission. See the [license](LICENSE.md#12-official-download-sources).
+
+WinGet is an approved installation method when the `ubidzz.Synix` package downloads
+the unmodified installer directly from the official GitHub releases.
+
 ### Option 1: WinGet
 
 Open Command Prompt or PowerShell and run:
@@ -138,7 +149,7 @@ Download **`Synix.Control.Panel.exe`** from the [latest release](https://github.
 - In-app updates download the standalone EXE and replace the running copy in its existing folder; they do not install the MSI, even when another Synix copy is installed elsewhere.
 - Installed-copy detection uses the registered application folder, including custom locations. If a release lacks the correct standalone download, Synix does not substitute an installer.
 
-> **.NET 10 is included with Synix.** Official Windows releases are self-contained and package the required .NET 10 runtime inside the published Synix executable, so users do not need to install .NET separately. `SynixSetup.msi` contains that same self-contained executable. Including the runtime is why the published application increased from roughly 40 MB to about 119 MB; the MSI download can remain smaller because the installed executable is compressed inside the installer.
+> **.NET 11 is included with Synix.** Official Windows releases are self-contained and package the required .NET 11 runtime inside the published Synix executable, so users do not need to install .NET separately. `SynixSetup.msi` contains that same self-contained executable. Bundling the runtime increases the application's size; the MSI download can remain smaller because the installed executable is compressed inside the installer.
 
 > **Upgrading from v1.0.20 or earlier:** Older installed releases used the Inno Setup `SynixSetup.exe` installer. Uninstall that installed version first, then install `SynixSetup.msi`. This does not remove the servers and settings stored inside `C:\Synix`.
 
@@ -178,11 +189,17 @@ See the [generated game list for this branch](docs/Game-List.md), including Stea
 - The dashboard's **Backups** column shows the age of the latest completed backup and highlights failed attempts, missing backups, and backups older than seven days. Hover over the cell for dates and details. Files without a completion receipt are shown as unverified.
 - Backup status checks local files and receipts in the current and default backup folders in the background. It does not run a new integrity check, create backups, or change retention settings. Use the existing backup manager to verify an archive or restore it.
 
+### Appearance
+
+Open **Synix Settings → General** to switch between light and dark mode. Choose a **Synix, Graphite, Ocean, Forest, Violet, or Sand** theme, keep its default accent or select **Teal, Blue, Violet, Rose, Amber, or Green**, and choose **Rounded** or **Square** controls. Changes apply immediately to open windows and are remembered when Synix restarts. **Reset theme** restores the original Synix colors and rounded controls without changing your light/dark preference. Appearance settings only affect Synix, not game configuration or server files.
+
 ### Interface languages
 
-Synix includes 27 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, and Thai.
+Synix includes 37 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian, Estonian, Latvian, Lithuanian, Malay (Bahasa Melayu), and Filipino.
 
 Choose a language in Synix Settings. The new history and backup status text is included in every language. General settings cards adapt to wrapped translations, drop-down lists expand to fit their items, and shared action buttons support keyboard focus. Game names, user-entered values, file paths, and technical log files are not translated. Translation completeness does not replace native-speaker review.
+
+The language roadmap targets all Windows/.NET languages and separate writing systems. See the [language coverage inventory](docs/Language-Coverage.md) for current catalogs and remaining translation/layout work. Only complete catalogs appear in the language picker; the target list is not a claim that all languages are already translated.
 
 > Dedicated servers change over time. A profile may need updated arguments after a game or server update. Synix records locally verified install, start, stop, and monitoring results to help identify what has been tested on your computer.
 
@@ -238,6 +255,7 @@ Synix uses game and framework profiles instead of maintaining a database of ever
 ### Monitoring and Recovery
 
 - Displays overall and per-server CPU and memory information.
+- Resource Monitor and Live Process Details show an expandable parent-to-worker process tree. Each process keeps its own CPU/RAM readings, and totals include collapsed workers. Click a parent process or use Left/Right or Space to expand or collapse its workers.
 - Monitors running server processes through the Synix Watchdog.
 - Can record crashes and begin configured recovery behavior.
 - Uses A2S, TCP, UDP, HTTP, process, or socket checks where supported.
@@ -285,13 +303,31 @@ Synix is designed to run as a normal Windows user for routine server management.
 - Normal server installation and management do not require Synix to remain elevated.
 - Server files stay organized under `C:\Synix` or a location selected by the user.
 - Optional Windows-level actions can request permission only when Windows requires it.
-- Synix does not upload your server list or passwords to a Synix-hosted cloud service.
+- Local-only use does not upload your server list. If you enable remote management, Synix sends the limited status summaries described below; game-server passwords and configuration-file contents stay on the hosting computer.
+
+## 🔒 Optional Remote Access and Privacy
+
+Use [Synix Manager](https://manager.synix.info/) to manage computers you explicitly pair and approve in the Synix app. Remote access is optional; local server management does not require an account. The public activity counter is a separate setting.
+
+**Synix does not sell, rent, trade, or disclose account, computer, remote-activity, or server information to advertisers or data brokers, and does not use it for targeted advertising.**
+
+- **Your server files stay local.** Synix does not automatically upload game worlds, configuration-file contents, backup-archive contents, raw console output, or saved game-server passwords. Backup and restore run on the paired PC. The website displays backup names, dates, sizes, and status when needed, not the files themselves. Commands you type on the website are relayed to the game, including anything sensitive you put in their text.
+- **Protected game-console input.** Unlocking requires the current account password and fresh authenticator/passkey verification; accounts requiring both must complete both. Approval lasts three minutes for one server run. Synix-generated Minecraft Java launchers and direct Bedrock servers use a private game input pipe and an open Synix console window. PIDs stay on the PC. Custom launch scripts, recovered consoles and unsupported games stay locked. Stop, restart, closing the console or disabling its setting invalidates the run; disconnecting or hiding the website tab locks that tab. Regular server-action buttons keep their existing sign-in requirements. See [game-console commands](docs/Remote-Console.md).
+- **Limited storage is necessary.** The service stores your chosen username, protected authentication records, approved computer identities, and connection/security records. While you view the manager, it receives limited server status and combined CPU/RAM readings for running game servers on each paired computer (including tracked launchers and workers). The larger usage cards exclude other applications and Windows, and both are zero when all game servers are stopped. Each computer card separately shows whole-computer CPU, used/total RAM, and average network send/receive speeds, including LAN traffic. Network identifiers, addresses, packet contents, and browsing destinations are not uploaded for these readings. This is not a zero-storage service. Avoid sensitive information in computer names, server names, and backup filenames.
+- **Short-lived operational records.** New readings replace old ones; snapshots become eligible for cleanup after 15 minutes without replacement. Remote actions and backup-choice metadata become eligible after 24 hours, and security/recovery events and failed sign-in alerts after 90 days. Failed attempts retain at most 100 recent groups. Cleanup occurs on later requests; these are not exact physical-erasure deadlines.
+- **Owner verification.** Sign-in requires a password plus a passkey or authenticator. Password changes, website unpairing, and account deletion require fresh verification. Accounts requiring both methods still require both. Recovery from an approved paired PC never removes or bypasses those methods.
+- **Your controls.** Sign out, revoke sessions, unpair in the app without a website login, or delete the manager account. These actions do not remove local game servers or backups. Account deletion removes the account and associated remote records from the active database; provider logs/backups and short-lived abuse-prevention records can have separate retention.
+- **Browser and hosting disclosure.** Manager login tokens stay in the current tab's memory, not browser storage or Synix login cookies. Hosting/security providers can process connection information and set their own cookies. HTTPS protects traffic in transit; the hosting service processes the permitted data. Security safeguards reduce risk but do not guarantee protection against every attack or a compromised device.
+
+The optional public counter sends a random session signal every **10 minutes**, stops counting after **15 minutes** without a signal, and makes inactive records eligible for cleanup after **30 minutes**. It publishes only an aggregate count and is not linked to manager accounts.
+
+Read the complete [remote-access privacy and security notice](LICENSE.md#14-remote-access-privacy-and-security), also public on the [Synix website](https://synix.info/license/#14-remote-access-privacy-and-security). Account/pairing retention, password recovery, provider processing, and deletion limits are explained there.
 
 ## 🔐 Windows SmartScreen Notice
 
 Synix is an independently developed application and does not currently have a paid code-signing certificate. Microsoft Defender SmartScreen may therefore show a warning while a new release builds reputation.
 
-- Download Synix only from the [official GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases).
+- Obtain Synix only through the [official GitHub releases](https://github.com/ubidzz/Synix-Control-Panel/releases) or [synix.info](https://synix.info).
 - Confirm that the download came from the official Synix project.
 - If SmartScreen provides the option and you trust the download, select **More info** and then **Run anyway**.
 - Do not disable Windows security features solely to run Synix.
@@ -334,20 +370,21 @@ The Synix knowledge base is included directly in the application and covers:
 
 ## 💻 Technical Overview
 
-- **Application:** C# with .NET 10 and Windows Forms
+- **Application:** C# with .NET 11 and Windows Forms
+- **Build tools:** .NET 11 SDK, selected by `global.json`, with updated Visual Studio 2026 or the .NET command line
 - **Architecture:** Shared, asynchronous server-management engine with a local desktop interface
 - **Game definitions:** Strict embedded JSON profiles with validated capabilities and no arbitrary script, plugin, assembly, or DLL loading
 - **Controller selection:** Manifest-driven built-in lifecycle, console, configuration, and player controllers
 - **Installer:** WiX-based per-user MSI
 - **Distribution:** GitHub Releases and WinGet
-- **Publishing:** Self-contained .NET 10 Windows x64 single-file executable; the runtime is included with both the standalone application and `SynixSetup.msi`
-- **Data:** Local versioned JSON persistence with sequential migrations and pre-migration backups; no SQL database required
+- **Publishing:** Self-contained .NET 11 Windows x64 single-file executable; the runtime is included with both the standalone application and `SynixSetup.msi`
+- **Desktop data:** Local versioned JSON persistence with sequential migrations and pre-migration backups; no local SQL database required. The optional remote manager has a hosted database for the limited records described in the privacy notice.
 - **Password protection:** Windows user-bound encryption with portable encrypted transfer support
 - **Monitoring:** Windows process, CPU, memory, socket, and WMI integration
 - **Networking:** A2S and additional UDP, TCP, HTTP, and local process checks
 - **Quality checks:** Automated tests, CodeQL scanning, package hashes, and a release-readiness report
 
-Official Synix release packages include the .NET 10 runtime and do not require users to install .NET separately. Developers building Synix from source still need the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+Official Synix release packages include the .NET 11 runtime and do not require users to install .NET separately. Developers build Synix with the [.NET 11 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/11.0). The repository's `global.json` selects SDK 11.0.100 or a later stable .NET 11 feature band. Source builds and tests run on the .NET 11 Windows Desktop Runtime.
 
 ## 🖼️ Gallery
 
@@ -370,7 +407,7 @@ Synix is developed independently and made available for personal use without a s
 
 ## 📄 License
 
-Synix Control Panel is source-available for **personal, non-commercial use** under the [Synix Limited Proprietary License](https://github.com/ubidzz/Synix-Control-Panel/blob/master/LICENSE.md).
+Synix Control Panel is source-available for **personal, non-commercial use** under the [Synix Limited Proprietary License](LICENSE.md), revision 1.3 (November 7, 2026), including the public activity-counter and remote-access privacy notices.
 
 You may view the source and make private personal modifications. Redistribution, public modified releases, rebranding, and commercial use require written permission from the copyright holder.
 

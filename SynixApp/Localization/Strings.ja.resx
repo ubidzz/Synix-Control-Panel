@@ -2395,13 +2395,17 @@ RAW コマンド
 
 3. 官報https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>このサーババージョンには互換性のある Metamod:Source と SourceMod のビルドが必要です。 コンパイルされた.smx プラグインは ageofchivalry/addons/sourcemod/plugins に移動します。 翻訳、ゲームデータ、拡張は文書フォルダを保持します。</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX コントロールパネル - 限定プロプライエタリソースライセンス
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX コントロールパネル - 限定プロプライエタリソースライセンス
 
-バージョン1.0 - 2026年8月2日
-ジェイソン・ターナー すべての権利を保有します。
+ライセンス改訂 1.4 — 2026 年 11 月 11 日
+
+これはライセンスの改訂番号であり、Synix アプリのバージョンではありません。
+著作権 © 2026 Jason Turner. すべての権利を保有します。
 U.S. 著作権登録申請
 
 このライセンスは次のものに適用されます。 Synix ソースコード、コンパイルされたバイナリ、ユーザインタフェース、文書、アートワーク、ロゴ、その他の含まれる資料を含むコントロールパネルソフトウェア（総称して「ソフトウェア」）。
+
+セクション 13 と 14 では、Synix の公式 Web サイト、アクティビティ カウンター、およびオプションのリモート マネージャーのプライバシー慣行についても説明します。これらは現在のサービスについて説明しています。以下の個人用、非営利ライセンスの付与は変更されません。
 
 1. 所有権
 
@@ -2525,7 +2529,102 @@ Synixブランドの無許可使用は、適用される著作権、商標、不
 
 このライセンスに対する例外は、Jason Turner が書面で提供した場合のみ有効である。
 
-質問や許可の申し出は公式Synix GitHubリポジトリまたは他の公式Synix連絡方法を通して提出する。</value></data>
+質問や許可の申し出は公式Synix GitHubリポジトリまたは他の公式Synix連絡方法を通して提出する。
+
+12. 公式ダウンロード元
+
+Synix は次の公式配布元からのみ入手してください。
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+他のウェブサイトが提供するコピーは Jason Turner による検証を受けておらず、安全でない、改変されている、古い、または不要なソフトウェアが同梱されている可能性があります。Jason Turner はそれらの安全性や真正性を保証しません。
+
+Synix を掲載すること、GitHub へのリンクを設置すること、またはダウンロードを提供することによって、所有権が移転したり、許可、提携、推奨、公式の地位が認められたりすることはありません。Synix の所有権は引き続き Jason Turner に帰属します。
+
+ダウンロードのホスティング、ミラーリング、プロキシ経由での提供、再パッケージ化、または追加のダウンロードプログラムへの組み込みには、事前の書面による許可が必要です。公式配布元へのリンクは、その許可を与えるものではありません。
+
+第 4.2 節は、Synix と Jason Turner を正しく明記した、これらの公式配布元への通常の直接リンクを禁止するものではありません。そのようなリンクを設置しても、そのウェブサイトが公式配布元になるわけではありません。
+
+WinGet パッケージ ubidzz.Synix は、改変されていないインストーラーを GitHub の公式リリースから直接ダウンロードする場合、承認されたインストール方法です。これは第三者によるホスティングや再パッケージ化を許可するものではありません。
+
+13. ライブアクティビティカウンターとプライバシー
+
+Synix には、https://synix.info. で実行中の Synix セッションの数を推定するオプションのライブ アクティビティ カウンターが含まれています。この機能はデフォルトで有効になっています。他の Synix 機能を制限することなく、[設定] &gt; [プライバシーとセキュリティ] &gt; [アクティブ数の共有]でいつでもオフにできます。以前に保存された設定が尊重されます。
+
+有効になっている間、Synix は、起動時およびバックグラウンドを含むアプリの実行中約 10 分ごとに、HTTPS プレゼンス信号を https://synix.info/api/presence に送信します。この信号には、ランダムな一時セッション コードと汎用 Synix アプリケーション識別子が含まれており、メッセージ本文は含まれていません。セッション コードはメモリ内にのみ保持され、新しいレポート セッションが開始されると置き換えられます。これは永続的なデバイス識別子ではありません。
+
+カウンターは、あなたの名前、電子メールアドレス、パスワード、サーバーまたはプレーヤーの情報、設定値、ファイル、またはマシン識別子をアップロードしません。
+
+各セッションについて、Web サイトのカウンターにはセッション コードのハッシュと最新のシグナルの時刻のみが保存されます。公開 Web サイトには、アクティブ セッションの合計数のみが表示されます。これは、一意のユーザーの数ではなく推定値です。信号がない状態で 15 分経過すると、セッションのカウントが停止します。非アクティブなカウンター レコードは 30 分後にクリーンアップの対象となり、後続のカウンター リクエストがクリーンアップを実行すると削除されます。 Synix は、これらのカウンター レコードをリモート マネージャー アカウントまたはペアになったコンピューターの ID にリンクしません。
+
+この機能をオフにすると、それ以降のプレゼンス信号が停止され、現在のセッションを削除するためのベストエフォート型リクエストが 1 回行われます。 Synix を閉じると、削除も試行されます。削除が Web サイトに到達できない場合、非アクティブ期間が経過するとセッションのカウントが自動的に停止します。
+
+他のインターネット接続と同様、Web サイトのホスティング サービスは発信元 IP アドレスやリクエスト時間などの通常の接続情報を受け取り、独自のプライバシー ポリシーに基づいてそれを処理または記録する場合があります。この情報は、Synix のアクティビティ カウンター テーブルには保存されず、公開カウントにも表示されません。
+
+14. リモートアクセスのプライバシーとセキュリティ
+
+14.1 オプションのアクセスとデータの販売禁止
+
+https://manager.synix.info でのリモート管理はオプションであり、コンピューターをペアリングし、そのコンピューター上の Synix アプリで要求元のアカウントを承認するまでオフになります。マネージャー アカウントがなくても、Synix をローカルで使用できます。パブリック アクティビティ カウンタは独立しており、個別に無効にすることができます。
+
+Synix は、お客様のアカウント情報、ペアリングされたコンピューター情報、リモート アクティビティ、またはサーバー情報を広告主やデータ ブローカーに販売、賃貸、取引、または開示することはありません。 Synix は、この情報をターゲットを絞った広告に使用したり、そこから広告プロファイルを構築したりすることはありません。情報は、お客様が選択した機能を提供し、アクセスを認証し、サービスを運用し、悪用から保護するために処理されます。
+
+リモート アクセスはストレージを必要としないサービスではありません。以下に説明する、制限されたアカウント、ペアリング、操作、およびセキュリティの記録が必要です。これらの記録は、公開アクティビティ カウンターに公開されたり、サービスを通じて他のマネージャー アカウントに公開されたりすることはありません。
+
+14.2 コンピュータに残るもの
+
+Synix は、ゲーム ワールド、ゲーム サーバー ファイル、構成ファイルのコンテンツ、バックアップ/アーカイブ コンテンツ、生のコンソール出力、または保存されたゲーム サーバー パスワードを自動的にアップロードしません。リモート バックアップと復元は、ペアリングされたコンピュータ上で実行されます。バックアップ ファイルは、そこで構成された場所に残ります。 Web サイトでゲーム コンソール コマンドを入力することを選択すると、そのテキストに入力した機密値も含めて、そのテキストが処理されてペアリングされたコンピューターに中継されます。マネージャーはクラウド バックアップ ストレージではなく、無制限のリモート デスクトップ、Windows コマンド プロンプト アクセス、または一般的なファイルの参照を提供しません。
+
+Synix は、ローカル設定、サーバー リスト、履歴、バックアップ、ペアリング状態をコンピューターに保存します。ペアリングされたコンピューターの秘密署名キーは、Windows キー ストレージに残ります。 Synix は、利用可能な場合は TPM でバックアップされたストレージを優先し、それ以外の場合は、互換性のある VMs を含む、Windows で保護されたソフトウェア キーをサポートします。 TPM の可用性は、コンピュータが侵害されていないことを保証するものではありません。
+
+これらのステートメントは、Synix リモート管理について説明します。共有することを選択したゲーム、Steam、MOD、Discord 統合、エクスポート、およびサポート レポートには、独自のデータ フローがあります。コンピュータ名、サーバー名、またはバックアップ ファイル名にパスワードやその他の機密情報を含めないでください。これらのラベルがマネージャーに表示される可能性があります。
+
+14.3 管理者が処理および保存する情報
+
+- アカウントと認証: 選択したユーザー名、アカウント識別子、作成時間、セキュリティ設定、ソルト付きパスワード ハッシュ、暗号化された認証シークレット (有効な場合)、パスキー公開資格情報 (有効な場合)、および一時的な検証/セッション レコード。パスワードと検証コードはサインインを確認するために処理されます。永続的なパスワードは、読み取り可能なテキストとして保存されません。 Synix は、指紋、顔画像、パスキー秘密キー、またはペアリングされたコンピューターの秘密署名キーを受け取りません。登録には実名やメールアドレスは必要ありません。
+- ペアリングと接続: 選択したコンピューターのラベル、ランダムなデバイス識別子、その公開署名キー、アカウントの関連付け、報告されたキープロバイダーの種類、ペアリングの承認状態、および最終接続時間。 Synix の実行中は静かな認証済みリレー接続を開いたままにすることができるため、Web サイトはペアリングされたアプリをすぐに起動できます。リレーは、ゲーム ファイルやサーバー スナップショットではなく、ウェイク/切断通知と接続メタデータを伝送します。
+- 表示されるステータス: 限定されたサーバー識別子、名前、ゲーム名、実行状態、プレイヤー数、稼働時間、利用可能なアクション、最新のバックアップ時間/ステータス、およびコンピューター全体の CPU および使用済み/合計 RAM の読み取り値。アプリは、認証されたマネージャー ビューがアクティブなときにこれらの概要を送信します。 CPU/RAM アップデートは、ペアリングされたコンピューターを対象としています。詳細なサーバー更新には、選択したコンピュータが含まれます。更新は通常 10 秒ごとに実行され、アクティブなビューが閉じるか、切断されるか、期限切れになるか、該当する場合は非表示になると一時停止します。他のアクティブなブラウザ セッションは、独自のビューを実行し続けることができます。 個別の合計値には、実行中のゲームサーバープロセスによる CPU と RAM の合計使用量が表示され、追跡対象の起動プロセスとワーカープロセスも含まれます。コンピューター全体の測定値には、ゲートウェイが設定された有効なネットワークアダプターの送受信速度も含まれ、LAN 通信も対象となります。これらの測定値とともに、アダプター識別子、IP アドレス、パケット内容、閲覧先のアドレスが送信されることはありません。
+- 要求されたアクションとバックアップ: サーバー/アクションの識別子、要求時間、進行状況/結果、およびバックアップの選択を要求する場合は、バックアップ識別子、ファイル名、日付、サイズ、整合性ラベル。この機能では、バックアップの内容と完全なローカル パスは送信されません。
+- ゲームコンソールコマンド: 不透明なゲーム実行識別子、短期間のロック解除承認、および送信するコマンド テキスト。保留中のテキストはサービス データベース内で暗号化され、配信が承認されるとそのレコードから削除されます。これは、最近のアクション リストやアカウント アラート レコードには含まれません。配信結果は、テキストがゲームに送信されたことを意味し、ゲームがテキストを受け入れたり完了したりしたことを意味するものではありません。ゲームの応答とローカル プロセス ツリーはアップロードされません。
+- セキュリティと不正行為の防止: 失敗したサインインの種類、グループ化された試行回数と回数、回復/セキュリティ イベントの種類、および関連するコンピューターのラベル。有効期間の短いレート制限レコードでは、接続 IP アドレスとアカウント ID のキー付きハッシュが使用される場合があります。 Synix のアカウント アラート レコードには、試行されたパスワード、確認コード、生の IP アドレス、ブラウザの指紋は含まれていません。ホスティングプロバイダーは、セクション 14.6 で説明されているように、接続情報を個別に処理する場合があります。
+
+Web サイトは、リモート管理を提供するために、許可されたサマリーとコマンドを必ず処理します。 HTTPS と暗号化されたリレー接続により、転送中のトラフィックが保護されます。これは、ホスティング サービスがデータを処理できないという主張ではありません。
+
+14.4 保存と削除
+
+- アカウントの資格情報と設定は、アカウントが削除されるまで残ります。承認されたペアリング記録は、コンピュータのペアリングが解除されるか、アカウントが削除されるまで残ります。
+- ステータスのスナップショットと CPU/RAM の読み取り値は、新しい読み取り値によって上書きされ、置き換えられない場合は 15 分後にクリーンアップの対象になります。最終接続時間はペアリング記録の一部として残ります。
+- リモート コマンドのレコード、結果、および返されたバックアップ選択メタデータは、24 時間後にクリーンアップの対象になります。
+- 保留中のゲームコンソールコマンドは 30 秒後に期限切れになります。未配信のテキストは、有効期限または失効時に削除の対象となります。承認された配信はすぐにクリアされます。コンソールの承認は 3 分以内に期限切れになります。アクション ID と固定配信結果は、24 時間のアクション記録期間の後に続きます。
+- 回復/セキュリティ イベントおよびサインイン失敗アラートは、90 日後にクリーンアップの対象になります。失敗したサインインでは、最大 100 個の最新グループが保持されます。 10 分以内のマッチング失敗はグループ化されます。
+- ブラウザ セッションは、マネージャーの要求がない場合は 30 分後、または全体で 8 時間後に期限切れになります。検証の試行は 5 分後に期限切れになります。一時パスワードの回復は 10 分以内に有効期限が切れ、使い捨てです。期限切れの検証、リカバリ、リプレイ保護、およびレート制限レコードは、クリーンアップ中に削除されます。不完全なアカウント登録は 24 時間後にクリーンアップの対象になります。
+
+期限切れにより、レコードが物理的に削除される前であっても認証が停止されます。定期的なデータベース クリーンアップは、後続のサービス リクエスト中に実行され、マネージャーのクリーンアップでは最大 10 分に 1 回実行されるため、上記の期間は、正確な瞬間に消去されることを約束するものではなく、有効期限またはクリーンアップ資格のある期間です。プロバイダーのログとバックアップ コピーには別個のライフサイクルがあります。
+
+ペアリングを解除すると、選択したペアリングとそれに関連付けられたリモート レコードがアクティブなサービス データベースから削除されます。上記期間のアカウントにはリカバリ/セキュリティ履歴が残る場合があります。マネージャー アカウントを削除すると、その資格情報、ペアリング、スナップショット、コマンド、およびアカウント セキュリティ/リカバリ レコードがアクティブなサービス データベースから削除されます。ローカルのゲームサーバー、ワールド、設定、バックアップファイルは削除されません。有効期間の短い悪用防止記録およびプロバイダーが保持するログまたはバックアップは、いずれのアクションによってもすぐに消去されるとは限りません。
+
+14.5 コントロールとサインイン保護
+
+サインインには、パスワードに加えて、Google Authenticator などの既存のパスキーまたは認証子が必要です。両方の方法を必要とするように構成されたアカウントでは、両方の要件が維持されます。パスワードの変更、Web サイト経由でのコンピュータのペアリング解除、マネージャー アカウントの削除には、その特定の変更について新たに検証する必要があります。
+
+カスタム ゲームコンソール入力のロックを解除するには、現在のアカウントのパスワードと、アカウントの既存の方法要件に基づく新たな検証がさらに必要です。承認は、1 つのブラウザ セッション、ペアリングされたコンピュータ、保存されたサーバー、および最大 3 分間のライブ ゲームの実行に関連付けられます。停止、再起動、コンソールの終了、コンソール設定の無効化、またはプロセスの喪失により、それ以降のコマンドは実行できなくなります。 「マネージャー」タブを切断または非表示にすると、そのタブの承認が終了します。通常のサーバー アクション ボタンは、既存のサインイン要件を維持します。サポートされているゲーム所有の入力接続のみが対象となります。一意の識別子だけでは、Windows コマンド プロンプトへの書き込みは許可されません。
+
+Web サイトのパスワードを忘れた場合、以前に承認されたペアリングされたコンピューターは一時パスワードを発行できます。別のアカウントを選択することはできません。一時パスワードは既存のパスキー/認証者の要件をバイパスしたり削除したりするものではないため、マネージャーに入る前に新しいパスワードを選択する必要があります。リカバリを完了すると、他のブラウザ セッションが取り消されます。
+
+Synix のマネージャーは、ブラウザーのログイン トークンを Cookie、ローカル ストレージ、またはセッション ストレージではなく、現在のタブのメモリに保持します。タブを更新または閉じると、そのログインは失われます。これは、ユーザーが選択した場合、ブラウザーまたはパスワード マネージャーが資格情報を保存することを妨げるものではありません。また、ホスティング/セキュリティ プロバイダーまたは公開 Web サイトの翻訳サービスによって個別に設定される Cookie についても説明しません。
+
+サインアウトしたり、すべてのブラウザー セッションを取り消したり、コンピューターのペアリングを解除したりできます。ローカル Synix アプリは、Web サイトにサインインせずにリモート接続を無効にしてペアリングを解除できます。オフラインの場合、リモート アクセスをローカルで停止し、接続が利用可能になったときに Web サイトの削除を再試行します。アプリまたは Windows を再起動しても、明示的に削除されたペアリングは自動的に復元されません。ローカルのみでの使用は引き続き可能です。
+
+14.6 ホスティング、公開ページ、およびセキュリティ制限
+
+公式 Web サイトは、配信、保管、セキュリティ、ウェイク リレーに OpenAI のサイト ホスティングと Cloudflare サービスを使用しています。これらのプロバイダーは、サービスを提供するために必要な情報を処理し、IP アドレス、リクエスト ヘッダー、時刻、その他の接続メタデータを受信したり、独自の操作ログやバックアップ コピーを保持したりする場合があります。プライバシー ポリシーは、https://openai.com/policies/privacy-policy/ および https://www.cloudflare.com/privacypolicy/. の処理に適用されます。
+
+公開ページの自動翻訳と GitHub のダウンロードには、それぞれのプロバイダーが関与します。プライベート マネージャーはパブリック ページから分離されており、パブリックの翻訳プロバイダーや広告スクリプトをロードしません。 Synix は、どちらの Web サイトにアクセスしても Cookie、ログ、または保存されたデータが作成されないと包括的に主張するものではありません。法的に義務付けられている場合には、情報が開示される場合もあります。上記の販売禁止の約束は、必要なホスティングや合法的な開示を妨げる​​ものではありません。
+
+Synix は、認証されたペアリング、署名されたコンピューター要求、暗号化されたネットワーク接続、アカウント アクセス チェック、および短期間の承認を使用して、不正アクセスを削減します。これらの保護手段は、リモート アクセスをリスクフリーにするものではなく、あらゆる攻撃、侵害されたコンピュータ/ブラウザ、盗まれた検証方法、または侵害されたサービスに対する保護を保証するものではありません。 Synix と Windows を常に最新の状態に保ち、アカウントと検証方法を保護し、自分が管理するコンピューターとアカウントのみを承認します。
+
+この通知は https://synix.info/license/ で公開されており、アプリのヘルプセンターとインストーラーに含まれています。プライバシーに関する質問は、https://synix.info/support/. の公式サポート オプションを通じて提起できます。パスワード、リカバリ コード、またはその他のプライベート アカウント情報を公開サポート メッセージに投稿しないでください。この通知の更新には、新しい改訂版と日付が含まれます。</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>必要なクリティカル設定:
 
 1. サーバを一度ブートして &apos;Engine.ini&apos; をビルドし、それからシャットダウンします。
@@ -7671,5 +7770,82 @@ Synixが再開されない場合は、既存のSynixプログラムを実行し�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>バックアップを確認中…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>このサーバーのアクティビティはまだ記録されていません。</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>フィルターに一致するアクティビティはありません。</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>外観</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>テーマ、アクセントカラー、コントロールのスタイルを選択します。変更はすぐに反映され、自動的に保存されます。</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>配色テーマ</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>アクセントカラー</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>コントロールのスタイル</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>プレビュー</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>テーマをリセット</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>グラファイト</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>オーシャン</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>フォレスト</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>バイオレット</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>サンド</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>テーマの既定値</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>ティール</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>ブルー</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>ローズ</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>アンバー</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>グリーン</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>角丸</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>四角</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>アクティブ数を共有</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>任意設定：Synix の実行中（バックグラウンドを含む）、ランダムなセッションコードを10 分ごとに synix.info に送信します。サーバーのデータは送信されません。アクティブ状態は 15 分後に期限切れになります。初期設定はオンです。ここでオフにできます。</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>リモート管理</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>このコンピューターをペアリングすると、Synixのウェブサイトからサーバーの表示、起動、停止、再起動、バックアップができます。ここでペアリングを承認するまで、リモートアクセスは無効のままです。</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>このコンピューターをペアリングまたは切断</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>自分のサーバーPC</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>ペアリングコードを生成</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>このアカウントを承認</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>ペアリングを解除して切断</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Synixのウェブサイトからこのコンピューターを操作</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>ウェブサイトに表示するコンピューター名</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synixマネージャーを開く</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>ウェブサイトにサインインして、このコードを入力してください。ここでは自分のユーザー名だけを承認してください。
+
+Synixを開いたまま、または最小化したままにしてください。待機中の接続がサインインを検知します。閲覧中はサーバー情報が10秒ごとに更新されます。ペアリングを解除すると、サーバーを停止せずにリモートアクセスを無効にします。</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>コンピューター名を入力してください。</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>アカウントからのペアリング要求を待っています…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>{0}のペアリングを承認しました</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>コードの有効期限が切れました。新しいペアリングコードを生成してください。</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>操作を要求しているアカウント: {0}
+自分のユーザー名である場合のみ承認してください。</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>ペアリングを確認できません。インターネット接続を確認してください。</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synixマネージャーに接続できません。もう一度お試しください。</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>コンピューターの識別情報: TPMで保護されたキー</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>コンピューターの識別情報: Windowsで保護されたソフトウェアキー（TPMは利用不可）</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>ペアリングされていません</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>ペアリング済み — 接続待機中</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>ローカルで切断しました。接続できたら削除を再試行してください。</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>ペアリング情報を読み込めませんでした。リモートアクセスは無効です。</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>このコンピューターでペアリングを承認する必要があります。</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>リモートアクセスは無効です。ペアリング設定を保存できませんでした。</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>ローカルで切断済み — ウェブサイトのペアリングを削除中</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>リモートマネージャーに接続しました</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>ペアリング済み — サインイン待機中</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>ウェブサイトのペアリングを削除しました。リモートアクセスは無効です。</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>接続できません — 再試行中</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>リモート接続の設定が無効です。</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synixマネージャーから無効な応答が返されました。</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>インターネットに再接続し、先に以前のペアリングの削除を完了してください。</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>新しいペアリングコードを生成してください。</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[リモート管理] {1}に対して{0}が要求されました。</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>ウェブサイトのパスワードを復元</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>一時パスワードを作成</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>この復元をキャンセル</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>一時パスワードを表示</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>ここで一時パスワードを作成します。そのパスワードと既存の二要素認証またはパスキーでウェブサイトにサインインし、新しいパスワードを選んでください。両方の認証方法が必須の場合は引き続き両方が必要です。一時パスワードは一度だけ使用でき、10分後に失効します。元のパスワードは復元が完了するまで有効です。</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>アカウント：{0}。一時パスワードを作成できます。</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>アカウント：{0}。有効期限まで {1}。</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>復元が期限切れまたは取り消されました。やり直してください。</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>リクエストが多すぎます。しばらくしてから再試行してください。</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>埋め込まれた Synix ライセンスがありません。</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] 実行中のサーバー「{0}」に再接続しました (PID: {1})。</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] インストールフォルダーで見つかった実行中のサーバー「{0}」に再接続しました (PID: {1})。</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>リモートアクセスのペアリングは転送されません。リモートアクセスを使用する場合は、Synix の復元後に manager.synix.info で新しいコンピューターをアカウントとペアリングしてください。</value>
+  </data>
 </root>
 

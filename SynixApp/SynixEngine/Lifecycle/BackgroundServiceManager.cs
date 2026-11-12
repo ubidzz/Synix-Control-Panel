@@ -191,6 +191,7 @@ namespace Synix_Control_Panel.SynixEngine
 				FileHandler.WriteLogImmediate(
 					"Synix_Background_Service",
 					$"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Background monitoring started.\r\n");
+				UsageStatisticsService.ApplyPreference();
 				stopEvent.WaitOne();
 				FileHandler.SaveServers();
 				FileHandler.FlushLogsAsync().GetAwaiter().GetResult();
@@ -206,6 +207,7 @@ namespace Synix_Control_Panel.SynixEngine
 			finally
 			{
 				Core.IsBackgroundServiceMode = false;
+				UsageStatisticsService.StopForExit();
 				try { mutex.ReleaseMutex(); }
 				catch (ApplicationException suppressedException)
 				{

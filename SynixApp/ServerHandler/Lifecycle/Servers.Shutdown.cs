@@ -24,6 +24,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		public static async Task<bool> Stop(GameServer server, Action<string, Color> logCallback, bool isManual = true)
 		{
 			ArgumentNullException.ThrowIfNull(logCallback);
+			OwnedGameConsole.Invalidate(server);
 			Dictionary<int, DateTime?> trackedProcesses = [];
 			int targetPid = 0;
 
@@ -314,6 +315,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 		private static void FinalizeStoppedState(GameServer server)
 		{
+			OwnedGameConsole.Invalidate(server);
 			MinecraftConsoleHub.NotifyStopped(server);
 			server.Status = StatusManager.GetStatus(ServerState.Stopped);
 			server.PID = null;

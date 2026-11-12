@@ -128,7 +128,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Color fill = Selected
 					? SettingsPalette.Selection
 					: SettingsPalette.CardHover;
-				using GraphicsPath path = RoundedGeometry.Create(bounds, 9);
+				using GraphicsPath path = RoundedGeometry.CreateThemed(bounds, 9);
 				using SolidBrush fillBrush = new(fill);
 				eventArgs.Graphics.FillPath(fillBrush, path);
 			}

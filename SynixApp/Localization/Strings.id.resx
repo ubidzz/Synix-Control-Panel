@@ -2396,13 +2396,17 @@ Simpan opsi RCON atau titik akhir administrasi lokal kecuali Anda memiliki penga
 
 3. Dokumen resmi: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Memerlukan kompatibel Metamod:Source dan SourceMod build untuk versi server ini. Plugin.smx yang dikompilasi masuk ke ageofchivalry/addons/sourcemod/plugins; terjemahan yang disertakan, gamedata dan ekstensi mempertahankan folder dokumentasi mereka.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>panel kontrol synix — lisensi sumber-tersedia milik terbatas
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>panel kontrol synix — lisensi sumber-tersedia milik terbatas
 
-Versi 1.0 — 2 Agustus 2026
+Revisi lisensi 1.4 — 11 November 2026
+
+Ini adalah revisi lisensi, bukan versi aplikasi Synix.
 Hak Cipta © 2026 Jason Turner. Semua hak terpelihara.
 U.S. Aplikasi Pendaftaran Hak Cipta: Tertunda
 
 Lisensi ini berlaku untuk perangkat lunak Panel Kontrol Synix, termasuk kode sumbernya, biner yang dikompilasi, antarmuka pengguna, dokumentasi, karya seni, logo, dan bahan-bahan lainnya yang termasuk (bersama-sama, &quot;Perangkat Lunak&quot;).
+
+Bagian 13 dan 14 juga menjelaskan praktik privasi situs web resmi Synix, penghitung aktivitas, dan pengelola jarak jauh opsional. Mereka menggambarkan layanan saat ini; mereka tidak mengubah pemberian lisensi pribadi non-komersial di bawah ini.
 
 1. PEMERIKSAAN
 
@@ -2526,7 +2530,102 @@ Lisensi ini hanya berlaku untuk bagian dari Synix yang dimiliki oleh Jason Turne
 
 Pengecualian untuk lisensi ini hanya berlaku jika diberikan dalam bentuk tulisan oleh Jason Turner.
 
-Pertanyaan atau permintaan izin harus dikirim melalui repositori resmi Synix GitHub atau metode kontak resmi Synix lainnya.</value></data>
+Pertanyaan atau permintaan izin harus dikirim melalui repositori resmi Synix GitHub atau metode kontak resmi Synix lainnya.
+
+12. SUMBER UNDUHAN RESMI
+
+Dapatkan Synix hanya melalui sumber resmi berikut:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Salinan yang disediakan oleh situs web lain tidak diverifikasi oleh Jason Turner dan mungkin tidak aman, telah diubah, kedaluwarsa, atau disertai perangkat lunak yang tidak diinginkan. Jason Turner tidak menjamin keamanan maupun keasliannya.
+
+Mencantumkan Synix, menautkan ke GitHub, atau menawarkan unduhan tidak memindahkan kepemilikan dan tidak menyiratkan izin, afiliasi, dukungan, atau status resmi. Synix tetap menjadi milik Jason Turner.
+
+Menghosting, membuat cermin, menyediakan melalui proksi, mengemas ulang, atau membungkus unduhan dalam program pengunduh tambahan memerlukan izin tertulis sebelumnya. Tautan ke sumber resmi tidak memberikan izin tersebut.
+
+Bagian 4.2 tidak melarang tautan langsung biasa ke sumber resmi ini yang mencantumkan Synix dan Jason Turner secara tepat. Tautan tersebut tidak menjadikan situs web yang menautkannya sebagai sumber resmi.
+
+Paket WinGet ubidzz.Synix merupakan metode instalasi yang disetujui apabila mengunduh penginstal yang tidak dimodifikasi langsung dari rilis resmi GitHub. Hal ini tidak mengizinkan hosting atau pengemasan ulang oleh pihak ketiga.
+
+13. Penghitung Aktivitas Langsung dan Privasi
+
+Synix menyertakan penghitung aktivitas langsung opsional yang memperkirakan jumlah sesi Synix yang berjalan di https://synix.info. Fitur ini diaktifkan secara default. Anda dapat mematikannya kapan saja di Pengaturan &gt; Privasi &amp; Keamanan &gt; Bagikan jumlah aktif tanpa membatasi fitur Synix lainnya. Preferensi yang disimpan sebelumnya akan dihormati.
+
+Saat diaktifkan, Synix mengirimkan sinyal kehadiran HTTPS ke https://synix.info/api/presence saat startup dan setiap 10 menit saat aplikasi berjalan, termasuk di latar belakang. Sinyal berisi kode sesi sementara acak dan pengidentifikasi aplikasi Synix umum, tanpa isi pesan. Kode sesi hanya disimpan di memori dan diganti ketika sesi pelaporan baru dimulai; ini bukan pengenal perangkat permanen.
+
+Penghitung tidak mengunggah nama, alamat email, kata sandi, informasi server atau pemutar, nilai konfigurasi, file, atau pengidentifikasi mesin Anda.
+
+Untuk setiap sesi, penghitung situs web hanya menyimpan hash kode sesi dan waktu sinyal terbarunya. Situs web publik hanya menampilkan jumlah sesi aktif agregat, yang merupakan perkiraan, bukan jumlah orang unik. Sesi berhenti dihitung setelah 15 menit tanpa sinyal. Catatan penghitung yang tidak aktif akan memenuhi syarat untuk pembersihan setelah 30 menit dan dihapus ketika permintaan penghitung berikutnya melakukan pembersihan. Synix tidak menghubungkan catatan penghitung ini ke akun manajer jarak jauh atau identitas komputer berpasangan.
+
+Mematikan fitur akan menghentikan sinyal kehadiran lebih lanjut dan membuat satu permintaan upaya terbaik untuk menghapus sesi saat ini. Menutup Synix juga mencoba menghapusnya; jika penghapusan tidak dapat menjangkau situs web, sesi akan berhenti dihitung secara otomatis setelah periode tidak aktif.
+
+Seperti halnya koneksi Internet lainnya, layanan hosting situs web menerima informasi koneksi biasa, seperti alamat IP asal dan waktu permintaan, dan dapat memproses atau mencatatnya berdasarkan kebijakan privasi mereka sendiri. Informasi ini tidak disimpan dalam tabel penghitung aktivitas Synix atau ditampilkan dalam penghitungan publik.
+
+14. Privasi dan Keamanan Akses Jarak Jauh
+
+14.1 Akses Opsional dan Tidak Ada Penjualan Data
+
+Manajemen jarak jauh di https://manager.synix.info bersifat opsional dan tidak aktif hingga Anda memasangkan komputer dan menyetujui akun yang meminta di aplikasi Synix di komputer tersebut. Anda dapat menggunakan Synix secara lokal tanpa akun pengelola. Penghitung aktivitas publik terpisah dan dapat dinonaktifkan secara mandiri.
+
+Synix tidak menjual, menyewakan, memperdagangkan, atau mengungkapkan informasi akun Anda, informasi komputer berpasangan, aktivitas jarak jauh, atau informasi server kepada pengiklan atau pialang data. Synix tidak menggunakan informasi ini untuk iklan bertarget atau membuat profil iklan dari informasi tersebut. Informasi diproses untuk menyediakan fitur yang Anda pilih, mengautentikasi akses, mengoperasikan layanan, dan melindunginya dari penyalahgunaan.
+
+Akses jarak jauh bukanlah layanan tanpa penyimpanan. Ini memerlukan catatan akun, pemasangan, operasional, dan keamanan terbatas yang dijelaskan di bawah. Catatan ini tidak dipublikasikan di penghitung aktivitas publik atau diekspos ke akun manajer lain melalui layanan.
+
+14.2 Apa yang Tersisa di Komputer Anda
+
+Synix tidak secara otomatis mengunggah dunia game, file server game, konten file konfigurasi, konten arsip cadangan, output konsol mentah, atau kata sandi server game yang disimpan. Pencadangan dan pemulihan jarak jauh dijalankan pada komputer yang dipasangkan; file cadangan tetap berada di lokasi yang dikonfigurasi di sana. Jika Anda memilih untuk mengetikkan perintah konsol game di situs web, teksnya akan diproses dan diteruskan ke komputer yang dipasangkan, termasuk nilai sensitif apa pun yang Anda masukkan ke dalam teks tersebut. Manajer bukanlah penyimpanan cadangan cloud dan tidak menyediakan desktop jarak jauh tanpa batas, akses command-prompt Windows, atau penelusuran file umum.
+
+Synix menyimpan pengaturan lokal, daftar server, riwayat, cadangan, dan status pemasangan di komputer Anda. Kunci penandatanganan pribadi komputer yang dipasangkan tetap berada di penyimpanan kunci Windows. Synix lebih memilih penyimpanan yang didukung TPM bila tersedia dan mendukung kunci perangkat lunak yang dilindungi Windows, termasuk pada VMs yang kompatibel. Ketersediaan TPM bukan jaminan bahwa komputer tidak terkompromi.
+
+Pernyataan ini menjelaskan manajemen jarak jauh Synix. Game, Steam, mod, integrasi Discord, ekspor, dan laporan dukungan yang Anda pilih untuk dibagikan memiliki aliran datanya sendiri. Jangan memasukkan kata sandi atau informasi sensitif lainnya pada nama komputer, nama server, atau nama file cadangan, karena label tersebut dapat muncul di pengelola.
+
+14.3 Informasi yang Diproses dan Disimpan oleh Manajer
+
+- Akun dan autentikasi: Nama pengguna pilihan Anda, pengidentifikasi akun, waktu pembuatan, preferensi keamanan, hash kata sandi yang diberi garam, rahasia pengautentikasi terenkripsi saat diaktifkan, kredensial publik kunci sandi saat diaktifkan, dan catatan verifikasi/sesi sementara. Kata sandi dan kode verifikasi diproses untuk memeriksa proses masuk; kata sandi permanen tidak disimpan sebagai teks yang dapat dibaca. Synix tidak menerima sidik jari, gambar wajah, kunci sandi pribadi, atau kunci penandatanganan pribadi komputer yang dipasangkan. Pendaftaran tidak meminta nama asli atau alamat email.
+- Pemasangan dan koneksi: Label komputer yang Anda pilih, pengidentifikasi perangkat acak, kunci penandatanganan publiknya, asosiasi akun, jenis penyedia kunci yang dilaporkan, status persetujuan pemasangan, dan waktu koneksi terakhir. Koneksi relai terautentikasi yang tenang dapat tetap terbuka saat Synix berjalan sehingga situs web dapat segera membangunkan aplikasi yang dipasangkan. Relai membawa pemberitahuan bangun/putuskan koneksi dan metadata koneksi, bukan file game atau snapshot server.
+- Status yang ditampilkan: Pengidentifikasi server terbatas, nama, nama game, status berjalan, jumlah pemain, waktu aktif, tindakan yang tersedia, waktu/status pencadangan terbaru, dan CPU seluruh komputer serta pembacaan RAM yang digunakan/total. Aplikasi mengirimkan ringkasan ini saat tampilan pengelola yang diautentikasi aktif. Pembaruan CPU/RAM mencakup komputer yang dipasangkan; pembaruan server terperinci mencakup komputer yang dipilih. Pembaruan biasanya berjalan setiap 10 detik dan dijeda setelah tampilan aktif ditutup, terputus, kedaluwarsa, atau disembunyikan sebagaimana berlaku. Sesi browser aktif lainnya dapat menjaga tampilannya tetap berjalan. Total terpisah menunjukkan gabungan penggunaan CPU dan RAM oleh proses server game yang sedang berjalan, termasuk proses peluncur dan pekerja yang dilacak. Pembacaan seluruh komputer juga mencakup kecepatan kirim dan terima pada adaptor jaringan aktif yang memiliki gateway, termasuk lalu lintas LAN. Identitas adaptor, alamat IP, isi paket, dan tujuan penjelajahan tidak dikirim bersama pembacaan ini.
+- Tindakan dan pencadangan yang diminta: Server/pengidentifikasi tindakan, waktu permintaan, kemajuan/hasil, dan, ketika Anda meminta pilihan pencadangan, pengidentifikasi cadangan, nama file, tanggal, ukuran, dan label integritas. Konten cadangan dan jalur lokal lengkap tidak dikirim untuk fitur ini.
+- Perintah konsol game: Pengidentifikasi permainan yang tidak jelas, persetujuan buka kunci yang berumur pendek, dan teks perintah yang Anda kirimkan. Teks yang tertunda dienkripsi dalam database layanan dan dihapus dari catatan tersebut ketika pengiriman diotorisasi. Ini tidak disertakan dalam daftar tindakan terkini atau catatan peringatan akun. Hasil pengiriman berarti teks dikirim ke game, bukan game yang menerima atau menyelesaikannya. Respons game dan pohon proses lokal tidak diunggah.
+- Pencegahan keamanan dan penyalahgunaan: Jenis masuk yang gagal, jumlah dan waktu upaya yang dikelompokkan, jenis peristiwa pemulihan/keamanan, dan label komputer yang relevan. Catatan batas kecepatan yang berumur pendek mungkin menggunakan hash yang dikunci dari alamat IP koneksi dan pengidentifikasi akun. Catatan peringatan akun Synix tidak berisi percobaan kata sandi, kode verifikasi, alamat IP mentah, atau sidik jari browser. Penyedia hosting dapat memproses informasi koneksi secara terpisah sebagaimana dijelaskan dalam Bagian 14.6.
+
+Situs web harus memproses ringkasan dan perintah yang diizinkan untuk menyediakan manajemen jarak jauh. HTTPS dan koneksi relai terenkripsi melindungi lalu lintas saat transit; ini bukan klaim bahwa layanan hosting tidak dapat memproses data.
+
+14.4 Retensi dan Penghapusan
+
+- Kredensial dan pengaturan akun tetap ada hingga akun dihapus. Catatan pemasangan yang disetujui tetap ada hingga komputer dilepas atau akun dihapus.
+- Cuplikan status dan pembacaan CPU/RAM ditimpa dengan pembacaan yang lebih baru dan memenuhi syarat untuk pembersihan setelah 15 menit tanpa penggantian. Waktu koneksi terakhir tetap menjadi bagian dari catatan pemasangan.
+- Catatan perintah jarak jauh, hasil, dan metadata pilihan cadangan yang dikembalikan memenuhi syarat untuk pembersihan setelah 24 jam.
+- Perintah konsol game yang tertunda akan kedaluwarsa setelah 30 detik. Teks yang tidak terkirim berhak untuk dihapus jika sudah habis masa berlakunya atau dicabut; pengiriman yang disetujui akan segera menghapusnya. Persetujuan konsol akan habis masa berlakunya dalam waktu tiga menit. Pengidentifikasi tindakan dan hasil pengiriman tetap mengikuti periode catatan tindakan 24 jam.
+- Peristiwa pemulihan/keamanan dan peringatan login yang gagal memenuhi syarat untuk pembersihan setelah 90 hari. Proses masuk yang gagal mempertahankan paling banyak 100 grup terbaru; kegagalan pencocokan dalam periode 10 menit dikelompokkan bersama.
+- Sesi browser berakhir setelah 30 menit tanpa permintaan manajer atau setelah 8 jam secara keseluruhan. Upaya verifikasi berakhir setelah 5 menit; pemulihan kata sandi sementara berakhir dalam 10 menit dan hanya sekali pakai. Catatan verifikasi, pemulihan, perlindungan pemutaran ulang, dan batas kecepatan yang sudah habis masa berlakunya akan dihapus selama pembersihan. Pendaftaran akun yang tidak lengkap akan memenuhi syarat untuk pembersihan setelah 24 jam.
+
+Kedaluwarsa menghentikan otorisasi bahkan sebelum catatan dihapus secara fisik. Pembersihan basis data rutin dijalankan selama permintaan layanan berikutnya, paling banyak sekali setiap 10 menit untuk pembersihan manajer, sehingga periode di atas adalah periode kedaluwarsa atau periode kelayakan pembersihan, bukan janji penghapusan pada saat yang tepat. Log penyedia dan salinan cadangan memiliki siklus hidup yang terpisah.
+
+Membatalkan pasangan akan menghapus pasangan yang dipilih dan catatan jarak jauh yang terkait dari database layanan aktif. Riwayat pemulihan/keamanan mungkin tetap ada pada akun untuk periode di atas. Menghapus akun manajer akan menghapus kredensial, pasangan, snapshot, perintah, dan catatan keamanan/pemulihan akun dari database layanan aktif. Itu tidak menghapus server game lokal, dunia, pengaturan, atau file cadangan Anda. Catatan pencegahan penyalahgunaan yang berumur pendek dan log atau cadangan yang disimpan penyedia tidak serta merta dihapus dengan tindakan apa pun.
+
+14.5 Kontrol dan Perlindungan Masuk Anda
+
+Proses masuk memerlukan kata sandi Anda ditambah kunci sandi atau pengautentikasi yang ada, seperti Google Authenticator. Akun yang dikonfigurasi untuk mewajibkan kedua metode mempertahankan kedua persyaratan tersebut. Mengubah kata sandi, memutuskan sambungan komputer melalui situs web, dan menghapus akun pengelola memerlukan verifikasi baru untuk perubahan spesifik tersebut.
+
+Membuka kunci masukan konsol permainan khusus juga memerlukan kata sandi akun saat ini dan verifikasi baru berdasarkan persyaratan metode akun yang ada. Persetujuan terikat pada satu sesi browser, komputer berpasangan, server tersimpan, dan permainan langsung yang dijalankan hingga tiga menit. Berhenti, mulai ulang, konsol tertutup, pengaturan konsol dinonaktifkan, atau proses hilang mencegah perintah lebih lanjut. Memutuskan atau menyembunyikan tab pengelola akan mengakhiri persetujuan tab tersebut. Tombol tindakan server normal mempertahankan persyaratan masuk yang ada. Hanya koneksi masukan milik game yang didukung yang memenuhi syarat; pengidentifikasi unik saja tidak mengizinkan penulisan ke dalam prompt perintah Windows.
+
+Komputer berpasangan yang disetujui sebelumnya dapat mengeluarkan kata sandi sementara jika Anda lupa kata sandi situs web Anda. Itu tidak dapat memilih akun lain. Kata sandi sementara tidak mengabaikan atau menghapus persyaratan kunci sandi/pengautentikasi Anda yang ada, dan Anda harus memilih kata sandi baru sebelum masuk ke pengelola. Menyelesaikan pemulihan akan mencabut sesi browser Anda yang lain.
+
+Manajer Synix menyimpan token login browsernya di memori tab saat ini, bukan di cookie, penyimpanan lokal, atau penyimpanan sesi. Menyegarkan atau menutup tab akan menghilangkan login tersebut. Hal ini tidak mencegah browser atau pengelola kata sandi Anda menyimpan kredensial jika Anda mau, dan tidak menjelaskan cookie yang disetel secara terpisah oleh penyedia hosting/keamanan atau layanan terjemahan situs web publik.
+
+Anda dapat keluar, mencabut semua sesi browser, atau memutuskan sambungan komputer. Aplikasi Synix lokal dapat menonaktifkan dan memutuskan sambungan jarak jauhnya tanpa masuk ke situs web. Saat offline, ia menghentikan akses jarak jauh secara lokal dan mencoba lagi penghapusan situs web ketika koneksi tersedia. Memulai ulang aplikasi atau Windows tidak secara otomatis memulihkan pasangan yang dihapus secara eksplisit. Penggunaan khusus lokal tetap tersedia.
+
+14.6 Hosting, Halaman Publik, dan Batas Keamanan
+
+Situs web resmi menggunakan hosting Situs OpenAI dan layanan Cloudflare untuk pengiriman, penyimpanan, keamanan, dan relai bangun. Penyedia ini memproses informasi yang diperlukan untuk memberikan layanan tersebut dan mungkin menerima alamat IP, header permintaan, waktu, dan metadata koneksi lainnya, atau menyimpan log operasional dan salinan cadangan mereka sendiri. Kebijakan privasi mereka berlaku untuk pemrosesan mereka: https://openai.com/policies/privacy-policy/ dan https://www.cloudflare.com/privacypolicy/.
+
+Terjemahan otomatis halaman publik dan unduhan GitHub melibatkan penyedia masing-masing. Manajer pribadi terpisah dari halaman publik dan tidak memuat penyedia terjemahan publik atau skrip iklan. Synix tidak membuat klaim menyeluruh bahwa mengunjungi situs web mana pun tidak menghasilkan cookie, log, atau data tersimpan. Informasi juga dapat diungkapkan jika diwajibkan secara hukum; komitmen larangan penjualan di atas tidak menghalangi hosting yang diperlukan atau pengungkapan yang sah.
+
+Synix menggunakan pemasangan yang diautentikasi, permintaan komputer yang ditandatangani, koneksi jaringan terenkripsi, pemeriksaan akses akun, dan persetujuan jangka pendek untuk mengurangi akses tidak sah. Perlindungan ini tidak membuat akses jarak jauh bebas risiko atau menjamin perlindungan terhadap setiap serangan, komputer/browser yang disusupi, metode verifikasi yang dicuri, atau layanan yang disusupi. Selalu perbarui Synix dan Windows, lindungi akun Anda dan metode verifikasi, serta setujui hanya komputer dan akun yang Anda kendalikan.
+
+Pemberitahuan ini bersifat publik di https://synix.info/license/ dan disertakan dalam Pusat Bantuan dan penginstal aplikasi. Pertanyaan privasi dapat diajukan melalui opsi dukungan resmi di https://synix.info/support/. Jangan memposting kata sandi, kode pemulihan, atau informasi akun pribadi lainnya dalam pesan dukungan publik. Pembaruan pada pemberitahuan ini membawa revisi dan tanggal baru.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>SETUP KRITIKAL DIPERLUKAN:
 
 1. Boot server sekali untuk membangun &apos;Engine.ini&apos;, lalu tutup.
@@ -7672,5 +7771,82 @@ Jika Synix tidak dibuka kembali, jalankan program Synix yang ada atau unduh rili
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Memeriksa cadangan…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Belum ada aktivitas yang dicatat untuk server ini.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Tidak ada aktivitas yang cocok dengan filter Anda.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Tampilan</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Pilih tema, warna aksen, dan gaya kontrol. Perubahan langsung diterapkan dan disimpan secara otomatis.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Tema warna</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Warna aksen</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Gaya kontrol</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Pratinjau</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Atur ulang tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Samudra</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Hutan</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Ungu</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Pasir</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Bawaan tema</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Toska</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Biru</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Merah muda</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Kuning ambar</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Hijau</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Membulat</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Persegi</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Bagikan hitungan aktif</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opsional: kirim kode sesi acak ke synix.info setiap 10 menit selama Synix berjalan, termasuk di latar belakang. Tidak ada data server yang dikirim. Aktivitas kedaluwarsa setelah 15 menit. Aktif secara bawaan. Anda dapat menonaktifkannya di sini.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Pengelola jarak jauh</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Pasangkan komputer ini untuk melihat, menjalankan, menghentikan, memulai ulang, dan mencadangkan server dari situs Synix. Akses jarak jauh tetap nonaktif sampai Anda menyetujui pemasangan di sini.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Pasangkan atau putuskan komputer ini</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>PC server saya</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Buat kode pemasangan</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Setujui akun ini</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Hapus pasangan dan putuskan</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Kendalikan komputer ini dari situs Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nama komputer yang ditampilkan di situs</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Buka pengelola Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Masuk ke situs dan masukkan kode ini. Hanya setujui nama pengguna Anda sendiri di sini.
+
+Biarkan Synix terbuka atau diminimalkan. Koneksi siaga mendeteksi saat Anda masuk. Detail server diperbarui setiap 10 detik selama dilihat. Menghapus pasangan menonaktifkan akses jarak jauh tanpa menghentikan server.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Masukkan nama komputer.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Menunggu permintaan pemasangan dari akun Anda…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Pemasangan disetujui untuk {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kode kedaluwarsa. Buat kode pemasangan baru.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Akun yang meminta kendali: {0}
+Setujui hanya jika ini nama pengguna Anda.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Tidak dapat memeriksa pemasangan. Periksa koneksi internet Anda.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Tidak dapat menghubungi pengelola Synix. Silakan coba lagi.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identitas komputer: kunci yang dilindungi TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identitas komputer: kunci perangkat lunak yang dilindungi Windows (TPM tidak tersedia)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Belum dipasangkan</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Dipasangkan — menunggu koneksi</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Terputus secara lokal. Coba hapus lagi saat terhubung.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Pemasangan tidak dapat dimuat. Akses jarak jauh dinonaktifkan.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Pemasangan harus disetujui di komputer ini.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Akses jarak jauh dinonaktifkan. Pengaturan pemasangan tidak dapat disimpan.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Terputus secara lokal — menghapus pasangan di situs</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Terhubung ke pengelola jarak jauh</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Dipasangkan — menunggu masuk</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Pasangan di situs dihapus. Akses jarak jauh dinonaktifkan.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Koneksi tidak tersedia — mencoba lagi</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Pengaturan koneksi jarak jauh tidak valid.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Pengelola Synix mengembalikan respons yang tidak valid.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Hubungkan kembali ke internet dan selesaikan penghapusan pasangan lama terlebih dahulu.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Buat kode pemasangan baru.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[PENGELOLA JARAK JAUH] Tindakan {0} diminta untuk {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Pulihkan kata sandi situs</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Buat kata sandi sementara</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Batalkan pemulihan ini</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Tampilkan kata sandi sementara</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Buat kata sandi sementara di sini. Masuk ke situs dengannya dan autentikasi dua faktor atau kunci sandi yang ada, lalu pilih kata sandi baru. Jika kedua metode diwajibkan, keduanya tetap wajib. Kata sandi ini berlaku sekali dan kedaluwarsa setelah 10 menit. Kata sandi asli tetap berlaku sampai pemulihan selesai.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Akun: {0}. Siap membuat kata sandi sementara.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Akun: {0}. Kedaluwarsa dalam {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Pemulihan kedaluwarsa atau dicabut. Mulai lagi.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Terlalu banyak permintaan. Coba lagi nanti.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Lisensi Synix yang tertanam tidak ada.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Terhubung kembali ke server "{0}" yang sedang berjalan (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Terhubung kembali ke server "{0}" yang ditemukan sedang berjalan di folder instalasinya (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Pemasangan untuk akses jarak jauh tidak ikut dipindahkan. Jika Anda menggunakan akses jarak jauh, pasangkan komputer baru dengan akun Anda di manager.synix.info setelah memulihkan Synix.</value>
+  </data>
 </root>
 

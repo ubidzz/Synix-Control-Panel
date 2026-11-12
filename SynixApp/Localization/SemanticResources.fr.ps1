@@ -14,6 +14,8 @@
 # Additional named French interface resources.
 # The Game Definition Builder guide uses the compiled interface language.
 [ordered]@{
+    'Status.Activity.Reconnected' = "[SYNIX] Connexion rétablie avec le serveur « {0} » déjà en cours d’exécution (PID: {1})."
+    'Status.Activity.ReconnectedByPath' = "[SYNIX] Connexion rétablie avec le serveur « {0} » trouvé en cours d’exécution dans son dossier d’installation (PID: {1})."
     'ServerSetup.World.Seed.Hint' = "Générez une graine pour un nouveau monde, ou saisissez la vôtre. Pour un monde existant, conservez sa graine d’origine."
     'ServerSetup.World.Seed.Generate' = 'Générer une graine'
     'GameInput.WorldSeed.RequiredNumber' = 'La graine du monde est obligatoire pour {0} : entrez un entier de {1} à {2}. Corrigez-la dans Configuration du serveur > Génération du monde.'

@@ -16,10 +16,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install .NET 10 SDK
+      - name: Install .NET 11 SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
+
+      - name: Show selected SDK and installed runtimes
+        run: dotnet --info
 
       - name: Restore dependencies
         run: dotnet restore "SynixApp/Tests/Synix.Tests.csproj"
@@ -27,6 +30,9 @@ jobs:
       - name: Check generated catalog documentation
         shell: pwsh
         run: ./Tools/Update-CatalogDocumentation.ps1 -Check
+
+      - name: Check complete language catalogs
+        run: dotnet run --project Tools/LanguageCoverage -- --check
 
       - name: Build tests
         run: dotnet build "SynixApp/Tests/Synix.Tests.csproj" --configuration Release --no-restore

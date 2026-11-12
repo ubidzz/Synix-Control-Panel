@@ -166,6 +166,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					}
 				}
 
+				OwnedGameConsole.Invalidate(server);
 				server.HasAnnouncedOnline = false;
 				server.IsProbing = false;
 				server.LastProbeTime = null;
@@ -175,6 +176,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				ProcessStartInfo? psi = null;
 				string finalArgs = "";
 				bool isMinecraft = false;
+				bool ownedConsole = false;
 				bool hideWindow = selectedDefinition != null &&
 					GameLaunchCommandBuilder.ShouldHideServerWindow(
 						selectedDefinition,
@@ -263,6 +265,13 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 						isMinecraft && hideWindow,
 						isMinecraft && hideWindow);
 
+					if (!hideWindow && Properties.Settings.Default.ShowServerWindow &&
+						RemoteManagerService.Shared.State is { Enabled: true, PendingUnpair: false })
+					{
+						var direct = OwnedGameConsole.Prepare(server, fullExePath, finalArgs, binDir, dbEntry.LaunchBehavior.RunElevated);
+						if (direct != null) { psi = direct; ownedConsole = true; }
+					}
+
 					if (!psi.UseShellExecute)
 					{
 						psi.EnvironmentVariables["SteamAppId"] = invokedId;
@@ -318,6 +327,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 
 					server.RunningProcess = proc;
 					server.PID = proc.Id;
+					if (ownedConsole) { OwnedGameConsole.Attach(server, proc); OwnedGameConsole.ShowWindow(server); }
 					server.LastProcessDiscoveryUtc = DateTime.MinValue;
 					RefreshServerProcessRegistry(server, forceDiscovery: true);
 					_ = CaptureSpawnedServerProcesses(server, logCallback!);
@@ -338,6 +348,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 					proc.EnableRaisingEvents = true;
 					proc.Exited += async (s, e) =>
 					{
+						OwnedGameConsole.Invalidate(server, proc);
 						try
 						{
 							if (IsStoppingStatus(server.Status))

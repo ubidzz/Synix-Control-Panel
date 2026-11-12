@@ -15,6 +15,8 @@
 # Machine-facing game commands, launch values, configuration keys, and protocol
 # identifiers intentionally do not belong in this catalog.
 [ordered]@{
+    'Status.Activity.Reconnected' = '[SYNIX] Reconnected to running server "{0}" (PID: {1}).'
+    'Status.Activity.ReconnectedByPath' = '[SYNIX] Reconnected to running server "{0}" found in its installation folder (PID: {1}).'
     'Language.Description' = 'Choose the language used by Synix. Game commands and saved values are not translated.'
     'ServerSetup.World.Seed.Hint' = 'Generate a seed for a new world, or enter your own. For an existing world, keep its original seed.'
     'ServerSetup.World.Seed.Generate' = 'Generate seed'

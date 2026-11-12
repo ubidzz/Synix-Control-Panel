@@ -302,7 +302,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 				return;
 
 			int radius = grid.Tag is int configuredRadius ? configuredRadius : 8;
-			using GraphicsPath path = RoundedGeometry.Create(
+			using GraphicsPath path = RoundedGeometry.CreateThemed(
 				new Rectangle(0, 0, grid.Width, grid.Height),
 				radius);
 			Region? oldRegion = grid.Region;
@@ -317,7 +317,7 @@ namespace Synix_Control_Panel.SynixApp.Design
 
 			int radius = grid.Tag is int configuredRadius ? configuredRadius : 8;
 			eventArgs.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			using GraphicsPath path = RoundedGeometry.Create(
+			using GraphicsPath path = RoundedGeometry.CreateThemed(
 				new Rectangle(0, 0, grid.Width - 1, grid.Height - 1),
 				radius);
 			using Pen borderPen = new(SettingsPalette.Border, 1F);

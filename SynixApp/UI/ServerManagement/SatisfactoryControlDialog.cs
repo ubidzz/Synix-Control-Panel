@@ -31,6 +31,7 @@ public partial class SatisfactoryControlDialog : Form
 	public SatisfactoryControlDialog()
 	{
 		InitializeComponent();
+		InitializeLayout();
 		if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			ThemeManager.Apply(this);
 		StyleTable(overviewGrid);

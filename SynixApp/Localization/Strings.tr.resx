@@ -2395,13 +2395,17 @@ Güvenli bir uzaktan yönetim düzenlemesine sahip olmadıkça RCON veya yöneti
 
 3. Resmi Belge: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Bu sunucu sürümü için uyumlu bir Metamod:Source ve SourceMod yapı gerektirir. Derlenmiş.smx eklentileri ageofchivalry/addons/sourcemod/plugins&apos;e gider; eşlik eden çeviriler, gamedata ve eklentiler belgelenmiş klasörlerini korurlar.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX KONTROL PANELİ - Kısıtlı Özel Kaynak Lisansı
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX KONTROL PANELİ - Kısıtlı Özel Kaynak Lisansı
 
-Versiyon 1.0 — 2 Ağustos 2026
+Lisans revizyonu 1.4 — 11 Kasım 2026
+
+Bu, Synix uygulamasının sürümü değil, lisansın revizyonudur.
 Telif hakkı © 2026 Jason Turner. Tüm hakları saklıdır.
 U.S. Telif Hakları Kayıt Başvurusu: Bekleniyor
 
 Bu lisans, kaynak kodu, derlenmiş ikililer, kullanıcı arayüzü, belgeler, sanat eserleri, logolar ve diğer dahili materyaller (toplumsal olarak &quot;Software&quot;) dahil olmak üzere Synix Kontrol Paneli yazılımı için geçerlidir.
+
+Bölüm 13 ve 14 ayrıca resmi Synix web sitesinin, etkinlik sayacının ve isteğe bağlı uzaktan yöneticinin gizlilik uygulamalarını da açıklamaktadır. Mevcut hizmeti anlatıyorlar; aşağıdaki kişisel, ticari olmayan lisans verme hakkını değiştirmezler.
 
 1. MÜLKİYET
 
@@ -2525,7 +2529,102 @@ Bu lisans sadece Synix&apos;in Jason Turner&apos;a ait olan bölümlerine uygula
 
 Bu lisans için istisnalar sadece Jason Turner tarafından yazılı olarak sağlandığında geçerlidir.
 
-Sorular veya izin talepleri resmi Synix GitHub deposu veya diğer resmi Synix iletişim yöntemi aracılığıyla sunulmalıdır.</value></data>
+Sorular veya izin talepleri resmi Synix GitHub deposu veya diğer resmi Synix iletişim yöntemi aracılığıyla sunulmalıdır.
+
+12. RESMÎ İNDİRME KAYNAKLARI
+
+Synix’i yalnızca şu resmî kaynaklar üzerinden edinin:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Diğer web sitelerinin sunduğu kopyalar Jason Turner tarafından doğrulanmamıştır; güvensiz, değiştirilmiş, eski veya istenmeyen yazılımlarla birlikte paketlenmiş olabilir. Jason Turner bunların güvenliğini ya da özgünlüğünü garanti etmez.
+
+Synix’i listelemek, GitHub’a bağlantı vermek veya indirme sunmak mülkiyeti devretmez; izin, bağlılık, onay veya resmî statü anlamına gelmez. Synix, Jason Turner’ın mülkiyetinde kalır.
+
+İndirmeleri barındırmak, yansıtmak, vekil sunucu üzerinden sunmak, yeniden paketlemek veya ek indirme programlarına sarmalamak için önceden yazılı izin gerekir. Resmî bir kaynağa verilen bağlantı bu izni sağlamaz.
+
+4.2. bölüm, Synix ve Jason Turner’ı doğru şekilde belirten ve bu resmî kaynaklara doğrudan yönlendiren olağan bağlantıları yasaklamaz. Bu tür bağlantılar, bağlantıyı veren web sitesini resmî bir kaynak hâline getirmez.
+
+WinGet paketi ubidzz.Synix, değiştirilmemiş yükleyiciyi doğrudan resmî GitHub sürümlerinden indirdiğinde onaylı bir kurulum yöntemidir. Bu, üçüncü tarafların barındırma veya yeniden paketleme yapmasına izin vermez.
+
+13. Canlı Etkinlik Sayacı ve Gizlilik
+
+Synix, https://synix.info. üzerinde çalışan Synix oturumlarının sayısını tahmin eden isteğe bağlı bir canlı etkinlik sayacı içerir. Bu özellik varsayılan olarak etkindir. Diğer Synix özelliklerini sınırlamadan Ayarlar &gt; Gizlilik ve Güvenlik &gt; Aktif sayıyı paylaş bölümünden istediğiniz zaman kapatabilirsiniz. Daha önce kaydedilmiş bir tercihe saygı gösterilir.
+
+Etkinleştirildiğinde, Synix, başlangıçta ve arka plan da dahil olmak üzere uygulama çalışırken yaklaşık her 10 dakikada bir https://synix.info/api/presence&apos;ye bir HTTPS varlık sinyali gönderir. Sinyal, mesaj gövdesi olmayan, rastgele bir geçici oturum kodu ve genel bir Synix uygulama tanımlayıcısı içerir. Oturum kodu yalnızca bellekte tutulur ve yeni bir raporlama oturumu başladığında değiştirilir; kalıcı bir cihaz tanımlayıcısı değildir.
+
+Sayaç adınızı, e-posta adresinizi, şifrelerinizi, sunucu veya oynatıcı bilgilerinizi, konfigürasyon değerlerinizi, dosyalarınızı veya makine tanımlayıcılarınızı yüklemez.
+
+Her oturum için, web sitesinin sayacı yalnızca oturum kodunun karma değerini ve en son sinyalin zamanını saklar. Herkese açık web sitesi yalnızca toplam aktif oturum sayısını görüntüler; bu, benzersiz kişilerin sayısından ziyade bir tahmindir. Bir oturum, sinyal olmadan 15 dakika geçtikten sonra sayımı durdurur. Etkin olmayan sayaç kayıtları 30 dakika sonra temizlenmeye uygun hale gelir ve sonraki sayaç talepleri temizleme gerçekleştirdiğinde kaldırılır. Synix, bu sayaç kayıtlarını uzaktan yönetici hesaplarına veya eşleştirilmiş bilgisayar kimliklerine bağlamaz.
+
+Özelliğin kapatılması, daha fazla varlık sinyalini durdurur ve mevcut oturumu kaldırmak için en iyi çabayı gösteren bir istekte bulunur. Synix&apos;nin kapatılması aynı zamanda kaldırma girişiminde de bulunur; kaldırma işlemi web sitesine ulaşamazsa, işlem yapılmayan sürenin ardından oturumun sayımı otomatik olarak durdurulur.
+
+Herhangi bir İnternet bağlantısında olduğu gibi, web sitesinin barındırma hizmetleri, kaynak IP adresi ve istek zamanı gibi sıradan bağlantı bilgilerini alır ve bunları kendi gizlilik politikaları kapsamında işleyebilir veya günlüğe kaydedebilir. Bu bilgi Synix&apos;nin etkinlik sayacı tablosunda saklanmaz veya genel sayımda görüntülenmez.
+
+14. Uzaktan Erişim Gizliliği ve Güvenliği
+
+14.1 İsteğe Bağlı Erişim ve Veri Satışının Yapılmaması
+
+https://manager.synix.info&apos;de uzaktan yönetim isteğe bağlıdır ve siz bir bilgisayarı eşleştirip bu bilgisayardaki Synix uygulamasında istekte bulunan hesabı onaylayana kadar kapalıdır. Synix&apos;yi yönetici hesabı olmadan yerel olarak kullanabilirsiniz. Herkese açık etkinlik sayacı ayrıdır ve bağımsız olarak devre dışı bırakılabilir.
+
+Synix, hesap bilgilerinizi, eşleştirilmiş bilgisayar bilgilerinizi, uzaktan etkinliğinizi veya sunucu bilgilerinizi reklamverenlere veya veri aracılarına satmaz, kiralamaz, takas etmez veya açıklamaz. Synix bu bilgileri hedefli reklamcılık için kullanmaz veya bundan reklam profilleri oluşturmaz. Bilgiler, seçtiğiniz özellikleri sağlamak, erişimi doğrulamak, hizmeti çalıştırmak ve kötüye kullanıma karşı korumak için işlenir.
+
+Uzaktan erişim sıfır depolama hizmeti değildir. Aşağıda açıklanan sınırlı hesap, eşleştirme, operasyonel ve güvenlik kayıtlarına ihtiyacı vardır. Bu kayıtlar halka açık etkinlik sayacında yayınlanmaz veya hizmet aracılığıyla diğer yönetici hesaplarına sunulmaz.
+
+14.2 Bilgisayarınızda Neler Kalır?
+
+Synix, oyun dünyalarını, oyun sunucusu dosyalarını, yapılandırma dosyası içeriklerini, yedekleme arşiv içeriklerini, ham konsol çıktısını veya kayıtlı oyun sunucusu şifrelerini otomatik olarak yüklemez. Eşleştirilen bilgisayarda uzaktan yedekleme ve geri yükleme çalıştırması; yedekleme dosyaları orada yapılandırılan konumlarda kalır. Web sitesinde bir oyun konsolu komutu yazmayı seçerseniz, metni işlenir ve o metne koyduğunuz hassas değerler de dahil olmak üzere eşleştirilmiş bilgisayara iletilir. Yönetici, bulut yedekleme depolaması değildir ve sınırsız uzak masaüstü, Windows komut istemi erişimi veya genel dosya taraması sağlamaz.
+
+Synix yerel ayarlarını, sunucu listesini, geçmişlerini, yedeklemelerini ve eşleştirme durumunu bilgisayarınızda tutar. Eşleştirilmiş bir bilgisayarın özel imzalama anahtarı, Windows anahtar deposunda kalır. Synix, mevcut olduğunda TPM destekli depolamayı tercih eder ve aksi takdirde uyumlu VMs dahil olmak üzere Windows korumalı bir yazılım anahtarını destekler. TPM&apos;nin kullanılabilirliği, bilgisayarın ödünsüz olduğunun garantisi değildir.
+
+Bu ifadeler Synix uzaktan yönetimini açıklamaktadır. Paylaşmayı seçtiğiniz oyunlar, Steam, modlar, Discord entegrasyonları, dışa aktarmalar ve destek raporları kendi veri akışlarına sahiptir. Bilgisayar adlarına, sunucu adlarına veya yedekleme dosya adlarına parola veya diğer hassas bilgileri koymayın; çünkü bu etiketler yöneticide görünebilir.
+
+14.3 Yöneticinin İşlediği ve Sakladığı Bilgiler
+
+- Hesap ve kimlik doğrulama: Seçtiğiniz kullanıcı adı, hesap tanımlayıcınız, oluşturma zamanı, güvenlik tercihleri, tuzlu şifre karması, etkinleştirildiğinde şifrelenmiş kimlik doğrulayıcı sırrı, etkinleştirildiğinde ortak geçiş anahtarı kimlik bilgileri ve geçici doğrulama/oturum kayıtları. Oturum açma işleminin kontrol edilmesi için parolalar ve doğrulama kodları işlenir; kalıcı şifreler okunabilir metin olarak saklanmaz. Synix parmak izinizi, yüz resminizi, geçiş anahtarı özel anahtarınızı veya eşleştirilmiş bilgisayarın özel imzalama anahtarını almaz. Kayıt sırasında gerçek bir isim veya e-posta adresi talep edilmez.
+- Eşleştirme ve bağlantı: Seçtiğiniz bilgisayar etiketi, rastgele bir cihaz tanımlayıcısı, genel imzalama anahtarı, hesap ilişkisi, rapor edilen anahtar sağlayıcı türü, eşleştirme onay durumu ve son bağlantı zamanı. Synix çalışırken sessiz bir kimlik doğrulamalı geçiş bağlantısı açık kalabilir, böylece web sitesi eşlenen uygulamayı hemen uyandırabilir. Röle, oyun dosyalarını veya sunucu anlık görüntülerini değil, uyandırma/bağlantıyı kesme bildirimlerini ve bağlantı meta verilerini taşır.
+- Görüntülenen durum: Sınırlı sunucu tanımlayıcıları, adlar, oyun adları, çalışma durumu, oyuncu sayıları, çalışma süresi, mevcut eylemler, en son yedekleme süresi/durumu ve tüm bilgisayar CPU ve kullanılan/toplam RAM okumaları. Uygulama, bu özetleri kimliği doğrulanmış bir yönetici görünümü etkinken gönderir. CPU/RAM güncellemeleri eşleştirilmiş bilgisayarları kapsar; ayrıntılı sunucu güncellemeleri seçilen bilgisayarı kapsar. Güncellemeler normalde her 10 saniyede bir çalıştırılır ve etkin görünümler kapatıldıktan, bağlantı kesildikten, süresi dolduktan veya duruma göre gizlendikten sonra duraklatılır. Diğer etkin tarayıcı oturumları kendi görünümlerini çalışır durumda tutabilir. Ayrı toplamlar, izlenen başlatıcı ve çalışan süreçleri de dahil olmak üzere çalışan oyun sunucusu süreçlerinin birleşik CPU ve RAM kullanımını gösterir. Tüm bilgisayara ait ölçümler, LAN trafiği dahil olmak üzere ağ geçidi olan etkin ağ bağdaştırıcılarındaki gönderme ve alma hızlarını da içerir. Bu ölçümlerle birlikte bağdaştırıcı kimlikleri, IP adresleri, paket içerikleri veya ziyaret edilen web adresleri gönderilmez.
+- İstenen eylemler ve yedeklemeler: Sunucu/eylem tanımlayıcıları, istek zamanı, ilerleme/sonuç ve yedekleme seçenekleri talep ettiğinizde, yedekleme tanımlayıcıları, dosya adları, tarihler, boyutlar ve bütünlük etiketleri. Bu özellik için yedekleme içerikleri ve tam yerel yollar gönderilmez.
+- Oyun konsolu komutları: Opak bir oyun çalıştırma tanımlayıcısı, kısa ömürlü kilit açma onayı ve gönderdiğiniz komut metni. Bekleyen metin, hizmet veritabanında şifrelenir ve teslimata izin verildiğinde bu kayıttan kaldırılır. Son işlemler listesine veya hesap uyarı kayıtlarına dahil edilmez. Teslimat sonucu, oyunun metni kabul ettiği veya tamamladığı değil, metnin oyuna gönderildiği anlamına gelir. Oyun yanıtları ve yerel süreç ağacı yüklenmez.
+- Güvenlik ve kötüye kullanımı önleme: Başarısız oturum açma türü, gruplandırılmış deneme sayısı ve süreleri, kurtarma/güvenlik olayı türü ve ilgili bilgisayar etiketleri. Kısa ömürlü hız sınırı kayıtları, bağlantı IP adreslerinin ve hesap tanımlayıcılarının anahtarlanmış karmalarını kullanabilir. Synix&apos;nin hesap uyarı kayıtları, denenen şifreleri, doğrulama kodlarını, ham IP adreslerini veya tarayıcı parmak izlerini içermez. Barındırma sağlayıcıları, Bölüm 14.6&apos;da açıklandığı gibi bağlantı bilgilerini ayrı ayrı işleyebilir.
+
+Web sitesi, uzaktan yönetimi sağlamak için mutlaka izin verilen özetleri ve komutları işler. HTTPS ve şifreli röle bağlantıları aktarım halindeki trafiği korur; bu, barındırma hizmetinin verileri işleyemeyeceği iddiası değildir.
+
+14.4 Saklama ve Silme
+
+- Hesap silinene kadar hesap kimlik bilgileri ve ayarları kalır. Onaylanan eşleştirme kayıtları, bilgisayarın eşleşmesi kaldırılana veya hesap silinene kadar kalır.
+- Durum anlık görüntüleri ve CPU/RAM okumaları, daha yeni okumalar tarafından üzerine yazılır ve değiştirilmeden 15 dakika sonra temizlenmeye uygun hale gelir. Son bağlantı süresi eşleştirme kaydının bir parçası olarak kalır.
+- Uzaktan komut kayıtları, sonuçları ve döndürülen yedekleme seçeneği meta verileri 24 saat sonra temizlenmeye uygun hale gelir.
+- Bekleyen oyun konsolu komutlarının süresi 30 saniye sonra dolar. Teslim edilmeyen metin, sürenin dolması veya iptal edilmesi durumunda silinmeye uygun hale gelir; Onaylanan teslimat bunu derhal temizler. Konsol onaylarının süresi üç dakika içinde dolar. Eylem tanımlayıcısı ve sabit teslimat sonucu, 24 saatlik eylem kaydı periyodunu takip eder.
+- Kurtarma/güvenlik olayları ve başarısız oturum açma uyarıları, 90 gün sonra temizlenmeye uygun hale gelir. Başarısız oturum açma işlemleri en son 100 grubu korur; 10 dakikalık süre içindeki eşleştirme hataları birlikte gruplandırılır.
+- Tarayıcı oturumları, yönetici talebi olmadan 30 dakika sonra veya genel olarak 8 saat sonra sona erer. Doğrulama girişimleri 5 dakika sonra sona erer; geçici şifre kurtarmanın süresi 10 dakika içinde dolar ve tek kullanımlıktır. Süresi dolmuş doğrulama, kurtarma, tekrar oynatma koruması ve hız sınırı kayıtları temizleme sırasında kaldırılır. Eksik hesap kayıtları 24 saat sonra temizlenmeye uygun hale gelir.
+
+Sürenin dolması, kayıt fiziksel olarak kaldırılmadan önce bile yetkilendirmeyi durdurur. Rutin veritabanı temizliği, sonraki hizmet talepleri sırasında, yönetici temizliği için en fazla 10 dakikada bir gerçekleştirilir; dolayısıyla yukarıdaki süreler, tam olarak anında silinme vaadinden ziyade sona erme veya temizlemeye uygunluk dönemleridir. Sağlayıcı günlükleri ve yedek kopyaların ayrı yaşam döngüleri vardır.
+
+Eşleştirmeyi kaldırma, seçilen eşleştirmeyi ve bununla ilişkili uzak kayıtları etkin hizmet veritabanından siler. Kurtarma/güvenlik geçmişi yukarıdaki süre boyunca hesapta kalabilir. Bir yönetici hesabının silinmesi, bu hesabın kimlik bilgilerini, eşleşmelerini, anlık görüntülerini, komutlarını ve hesap güvenliği/kurtarma kayıtlarını etkin hizmet veritabanından kaldırır. Yerel oyun sunucularınızı, dünyalarınızı, ayarlarınızı veya yedekleme dosyalarınızı silmez. Kısa ömürlü kötüye kullanımı önleme kayıtları ve sağlayıcı tarafından tutulan günlükler veya yedeklemeler, her iki işlemle de hemen silinmeyebilir.
+
+14.5 Kontrolleriniz ve Oturum Açma Korumanız
+
+Oturum açmak için şifrenizin yanı sıra Google Authenticator gibi mevcut bir şifre veya kimlik doğrulayıcı gerekir. Her iki yöntemi de gerektirecek şekilde yapılandırılmış hesaplar her iki gereksinimi de korur. Bir şifreyi değiştirmek, bir bilgisayarın web sitesi üzerinden eşleşmesini kaldırmak ve bir yönetici hesabını silmek, söz konusu değişiklik için yeni bir doğrulama gerektirir.
+
+Özel oyun konsolu girişinin kilidini açmak ayrıca mevcut hesap şifresini ve hesabın mevcut yöntem gereksinimleri kapsamında yeni doğrulamayı gerektirir. Onay, bir tarayıcı oturumuna, eşleştirilmiş bilgisayara, kayıtlı sunucuya ve canlı oyunun üç dakikaya kadar çalıştırılmasına bağlıdır. Durdurma, yeniden başlatma, kapalı konsol, devre dışı bırakılmış konsol ayarı veya kayıp işlem, daha fazla komut verilmesini engeller. Yönetici sekmesinin bağlantısını kesmek veya gizlemek, o sekmenin onayını sona erdirir. Normal sunucu eylemi düğmeleri mevcut oturum açma gereksinimlerini korur. Yalnızca desteklenen oyuna ait giriş bağlantıları geçerlidir; benzersiz bir tanımlayıcı tek başına Windows komut istemine yazmaya yetki vermez.
+
+Daha önce onaylanmış eşleştirilmiş bir bilgisayar, web sitesi şifrenizi unutmanız durumunda geçici bir şifre verebilir. Başka bir hesap seçemez. Geçici şifre, mevcut şifre/kimlik doğrulama gereksinimlerinizi atlamaz veya kaldırmaz ve yöneticiye girmeden önce yeni bir şifre seçmeniz gerekir. Kurtarma işlemi tamamlandığında diğer tarayıcı oturumlarınız iptal edilir.
+
+Synix&apos;nin yöneticisi, tarayıcı oturum açma belirtecini çerezlerde, yerel depolamada veya oturum depolamasında değil, geçerli sekmenin hafızasında tutar. Sekmeyi yenilemek veya kapatmak, bu oturum açma bilgisini kaybeder. Bu, tarayıcınızın veya şifre yöneticinizin, isterseniz kimlik bilgilerini kaydetmesini engellemez ve barındırma/güvenlik sağlayıcıları veya genel web sitesinin çeviri hizmeti tarafından ayrı olarak ayarlanan çerezleri tanımlamaz.
+
+Oturumu kapatabilir, tüm tarayıcı oturumlarını iptal edebilir veya bir bilgisayarın eşleştirmesini kaldırabilirsiniz. Yerel Synix uygulaması, web sitesinde oturum açmadan uzak bağlantısını devre dışı bırakabilir ve eşleştirmeyi kaldırabilir. Çevrimdışı olduğunda, yerel olarak uzaktan erişimi durdurur ve bağlantı mevcut olduğunda web sitesini kaldırmayı yeniden dener. Uygulamanın veya Windows&apos;nin yeniden başlatılması, açıkça kaldırılmış bir eşleştirmeyi otomatik olarak geri yüklemez. Yalnızca yerel kullanım mümkün olmaya devam ediyor.
+
+14.6 Barındırma, Genel Sayfalar ve Güvenlik Sınırları
+
+Resmi web sitesi teslimat, depolama, güvenlik ve uyandırma aktarımı için OpenAI&apos;nin Site barındırma ve Cloudflare hizmetlerini kullanır. Bu sağlayıcılar, bu hizmetleri sunmak için gereken bilgileri işler ve IP adreslerini, istek başlıklarını, saatleri ve diğer bağlantı meta verilerini alabilir veya kendi operasyonel günlüklerini ve yedek kopyalarını saklayabilir. İşlemeleri için gizlilik politikaları geçerlidir: https://openai.com/policies/privacy-policy/ ve https://www.cloudflare.com/privacypolicy/.
+
+Genel sayfa otomatik çeviri ve GitHub indirmeleri ilgili sağlayıcıları içerir. Özel yönetici genel sayfalardan ayrıdır ve genel çeviri sağlayıcısını veya reklam metinlerini yüklemez. Synix, her iki web sitesini ziyaret etmenin hiçbir çerez, günlük veya kayıtlı veri oluşturmadığına dair genel bir iddiada bulunmaz. Bilgiler yasal olarak gerekli olduğu durumlarda da açıklanabilir; Yukarıdaki satış yapmama taahhüdü, gerekli barındırma veya yasal açıklamaları engellemez.
+
+Synix, yetkisiz erişimi azaltmak için kimlik doğrulamalı eşleştirme, imzalı bilgisayar istekleri, şifreli ağ bağlantıları, hesap erişim kontrolleri ve kısa süreli onaylar kullanır. Bu korumalar, uzaktan erişimi risksiz hale getirmez veya her türlü saldırıya, güvenliği ihlal edilen bilgisayar/tarayıcıya, çalınan doğrulama yöntemlerine veya güvenliği ihlal edilen hizmete karşı korumayı garanti etmez. Synix ve Windows&apos;yi güncel tutun, hesabınızı ve doğrulama yöntemlerinizi koruyun ve yalnızca kontrol ettiğiniz bilgisayarları ve hesapları onaylayın.
+
+Bu bildirim https://synix.info/license/ adresinde herkese açıktır ve uygulamanın Yardım Merkezinde ve yükleyicisinde yer almaktadır. Gizlilikle ilgili sorular https://synix.info/support/. adresindeki resmi destek seçenekleri aracılığıyla sorulabilir. Herkese açık destek mesajlarında şifreleri, kurtarma kodlarını veya diğer özel hesap bilgilerini paylaşmayın. Bu bildirime yapılan güncellemeler yeni bir revizyon ve tarih içermektedir.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>KRİTİK KURULUŞ GEREKLİ:
 
 1. Sunucuyu &apos;Engine.ini&apos; inşa etmek için bir kez başlatın, sonra kapatın.
@@ -7671,5 +7770,82 @@ Eğer Synix yeniden açılmazsa, mevcut Synix programınızı çalıştırın ve
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Yedekler kontrol ediliyor…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Bu sunucu için henüz etkinlik kaydedilmedi.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Filtrelerinizle eşleşen etkinlik yok.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Görünüm</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Bir tema, vurgu rengi ve denetim stili seçin. Değişiklikler hemen uygulanır ve otomatik kaydedilir.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Renk teması</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Vurgu rengi</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Denetim stili</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Önizleme</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Temayı sıfırla</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Okyanus</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Orman</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Menekşe</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Kum</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Tema varsayılanı</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turkuaz</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Mavi</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Pembe</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Kehribar</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Yeşil</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Yuvarlak</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Köşeli</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Etkinlik sayısını paylaş</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>İsteğe bağlı: Synix çalışırken, arka plan dahil, her 10 dakikada bir synix.info adresine rastgele bir oturum kodu gönderin. Sunucu verileri gönderilmez. Etkinlik 15 dakika sonra sona erer. Varsayılan olarak açıktır. Buradan kapatabilirsiniz.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Uzaktan yönetim</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Sunucuları Synix web sitesinden görüntülemek, başlatmak, durdurmak, yeniden başlatmak ve yedeklemek için bu bilgisayarı eşleştirin. Burada eşleştirmeyi onaylayana kadar uzaktan erişim kapalı kalır.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Bu bilgisayarı eşleştir veya bağlantısını kes</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Sunucu bilgisayarım</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Eşleştirme kodu oluştur</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Bu hesabı onayla</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Eşleştirmeyi kaldır ve bağlantıyı kes</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Bu bilgisayarı Synix web sitesinden yönetin</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Web sitesinde gösterilen bilgisayar adı</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix yöneticisini aç</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Web sitesine giriş yapın ve bu kodu girin. Burada yalnızca kendi kullanıcı adınızı onaylayın.
+
+Synix'i açık veya simge durumunda tutun. Beklemedeki bağlantı, giriş yapılmasını algılar. Sunucu ayrıntıları görüntülenirken 10 saniyede bir güncellenir. Eşleştirmeyi kaldırmak sunucuları durdurmadan uzaktan erişimi kapatır.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Bir bilgisayar adı girin.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Hesabınızın eşleştirme isteği bekleniyor…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>{0} için eşleştirme onaylandı</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Kodun süresi doldu. Yeni bir eşleştirme kodu oluşturun.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Kontrol isteyen hesap: {0}
+Yalnızca bu sizin kullanıcı adınızsa onaylayın.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Eşleştirme kontrol edilemiyor. İnternet bağlantınızı kontrol edin.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synix yöneticisine ulaşılamıyor. Lütfen yeniden deneyin.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Bilgisayar kimliği: TPM korumalı anahtar</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Bilgisayar kimliği: Windows korumalı yazılım anahtarı (TPM kullanılamıyor)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Eşleştirilmedi</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Eşleştirildi — bağlantı bekleniyor</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Yerel bağlantı kesildi. Bağlandığınızda kaldırmayı yeniden deneyin.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Eşleştirme yüklenemedi. Uzaktan erişim devre dışı.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Eşleştirmenin bu bilgisayarda onaylanması gerekiyor.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Uzaktan erişim devre dışı. Eşleştirme ayarları kaydedilemedi.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Yerel bağlantı kesildi — web sitesi eşleştirmesi kaldırılıyor</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Uzaktan yöneticiye bağlandı</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Eşleştirildi — giriş bekleniyor</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Web sitesi eşleştirmesi kaldırıldı. Uzaktan erişim devre dışı.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Bağlantı kullanılamıyor — yeniden deneniyor</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Geçersiz uzaktan bağlantı ayarları.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix yöneticisi geçersiz yanıt döndürdü.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>İnternete yeniden bağlanın ve önce eski eşleştirmeyi kaldırmayı tamamlayın.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Yeni bir eşleştirme kodu oluşturun.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[UZAKTAN YÖNETİM] {1} için {0} istendi.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Web sitesi parolasını kurtar</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Geçici parola oluştur</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Bu kurtarmayı iptal et</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Geçici parolayı göster</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Burada geçici bir parola oluşturun. Bu parola ve mevcut iki faktörlü doğrulamanız veya geçiş anahtarınızla web sitesine giriş yapıp yeni bir parola seçin. İki yöntem de gerekliyse ikisi de zorunlu kalır. Parola tek kullanımlıktır ve 10 dakika sonra sona erer. Asıl parolanız kurtarma tamamlanana kadar geçerlidir.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Hesap: {0}. Geçici parola oluşturmaya hazır.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Hesap: {0}. Kalan süre: {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Kurtarma süresi doldu veya iptal edildi. Yeniden başlayın.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Çok fazla istek. Daha sonra tekrar deneyin.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Gömülü Synix lisansı eksik.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Çalışan "{0}" sunucusuna yeniden bağlanıldı (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Kurulum klasöründe bulunan çalışan "{0}" sunucusuna yeniden bağlanıldı (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Uzaktan erişim eşleştirmesi aktarılmaz. Uzaktan erişim kullanıyorsanız Synix'i geri yükledikten sonra yeni bilgisayarı manager.synix.info adresindeki hesabınızla eşleştirin.</value>
+  </data>
 </root>
 

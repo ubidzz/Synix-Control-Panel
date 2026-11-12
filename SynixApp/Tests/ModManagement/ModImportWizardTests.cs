@@ -230,7 +230,7 @@ public sealed class ModImportWizardTests : IDisposable
 			Assert.Empty(wizard.PackageSha256);
 			Assert.Empty(grid.Rows.Cast<DataGridViewRow>());
 			Assert.False(Find(wizard, "confirmModImportPlan").Enabled);
-			Assert.Equal(ModInstallGuidance.Pending.Destination, Find(wizard, "modGuideDestination").Text);
+			Assert.Equal(ModInstallGuidance.CreatePending().Destination, Find(wizard, "modGuideDestination").Text);
 			Assert.DoesNotContain(_server.InstallPath, Find(wizard, "modGuideDestination").Text);
 			Assert.Empty(Directory.GetFileSystemEntries(_server.InstallPath));
 		}

@@ -367,5 +367,8 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerSetup
 		internal Label lblInviteCode;
 		internal TextBox txtInviteCode;
 		internal Label lblInviteCodeNote;
+		private Label lblPasswordCharacters = null!;
+		private Label lblAdminPasswordCharacters = null!;
+		private ModernSettingsButton btnPasswordCharacters = null!;
 	}
 }

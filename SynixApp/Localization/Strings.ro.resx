@@ -1023,13 +1023,17 @@ Păstrați opțional RCON sau administrarea punctelor finale locale, cu excepți
 
 3. Documentație oficială: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Necesită o construcție compatibilă Metamod:Source și SourceMod pentru această versiune de server. Plugin-urile.smx compilate merg în ageofchivalry/addons/sourcemod/plugins; traducerile însoțitoare, gamedata și extensiile își păstrează folderele documentate.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>Panoul de control SYNIX — licenţă limitată proprietar-sursă disponibilă
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>Panoul de control SYNIX — licenţă limitată proprietar-sursă disponibilă
 
-Versiunea 1.0 — 2 august 2026
+Revizuirea licenței 1.4 — 11 noiembrie 2026
+
+Aceasta este revizuirea licenței, nu versiunea aplicației Synix.
 Drepturi de autor © 2026 Jason Turner. Toate drepturile rezervate.
 U.S. Cerere de înregistrare a drepturilor de autor: În aşteptare
 
 Această licenţă se aplică software-ului Synix Panou de control, inclusiv codului sursă, fişierelor binare compilate, interfeţei cu utilizatorul, documentaţiei, ilustraţiilor, siglelor şi altor materiale incluse (denumite colectiv „Software”).
+
+Secțiunile 13 și 14 explică, de asemenea, practicile de confidențialitate ale site-ului web oficial Synix, contorului de activități și managerului de la distanță opțional. Ele descriu serviciul curent; nu modifică acordarea de licență personală, necomercială de mai jos.
 
 1. PROPRIETATEA
 
@@ -1153,7 +1157,102 @@ Această licenţă se aplică numai porţiunilor de Synix deţinute de Jason Tur
 
 Excepţiile de la această licenţă sunt valabile numai atunci când sunt furnizate în scris de către Jason Turner.
 
-Întrebările sau cererile de permisiune trebuie trimise prin depozitul oficial Synix GitHub sau prin altă metodă oficială de contact Synix.</value></data>
+Întrebările sau cererile de permisiune trebuie trimise prin depozitul oficial Synix GitHub sau prin altă metodă oficială de contact Synix.
+
+12. SURSE OFICIALE DE DESCĂRCARE
+
+Obțineți Synix numai prin intermediul acestor surse oficiale:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Copiile furnizate de alte site-uri nu sunt verificate de Jason Turner și pot fi nesigure, modificate, învechite sau însoțite de software nedorit. Jason Turner nu garantează siguranța sau autenticitatea lor.
+
+Listarea Synix, trimiterea către GitHub sau oferirea unei descărcări nu transferă proprietatea și nu implică autorizare, afiliere, susținere sau statut oficial. Synix rămâne proprietatea lui Jason Turner.
+
+Găzduirea, oglindirea, furnizarea printr-un server proxy, reambalarea sau includerea descărcărilor în programe intermediare de descărcare necesită permisiune scrisă prealabilă. Un link către o sursă oficială nu acordă această permisiune.
+
+Secțiunea 4.2 nu interzice linkurile directe obișnuite către aceste surse oficiale care atribuie corect Synix lui Jason Turner. Astfel de linkuri nu transformă site-ul care le publică într-o sursă oficială.
+
+Pachetul WinGet ubidzz.Synix este o metodă de instalare aprobată atunci când descarcă programul de instalare nemodificat direct din versiunile oficiale publicate pe GitHub. Aceasta nu autorizează găzduirea sau reambalarea de către terți.
+
+13. Contor de activități live și confidențialitate
+
+Synix include un contor opțional de activitate live care estimează numărul de sesiuni Synix care rulează pe https://synix.info. Această caracteristică este activată implicit. Îl puteți dezactiva oricând în Setări &gt; Confidențialitate și securitate &gt; Partajare număr activ fără a limita alte funcții Synix. Se respectă o preferință off salvată anterior.
+
+Când este activat, Synix trimite un semnal de prezență HTTPS către https://synix.info/api/presence la pornire și aproximativ la fiecare 10 minute în timp ce aplicația rulează, inclusiv în fundal. Semnalul conține un cod de sesiune temporar aleatoriu și un identificator de aplicație generic Synix, fără corp de mesaj. Codul de sesiune este păstrat doar în memorie și este înlocuit atunci când începe o nouă sesiune de raportare; nu este un identificator permanent de dispozitiv.
+
+Contorul nu vă încarcă numele, adresa de e-mail, parolele, informațiile despre server sau jucător, valorile de configurare, fișierele sau identificatorii mașinii.
+
+Pentru fiecare sesiune, contorul site-ului web stochează doar un hash al codului de sesiune și ora celui mai recent semnal al acestuia. Site-ul web public afișează numai numărul total de sesiuni active, care este mai degrabă o estimare decât un număr de persoane unice. O sesiune nu mai numără după 15 minute fără semnal. Înregistrările de contor inactive devin eligibile pentru curățare după 30 de minute și sunt eliminate atunci când solicitările ulterioare de contor efectuează curățarea. Synix nu conectează aceste înregistrări de contor la conturi de manager la distanță sau la identitățile computerului asociat.
+
+Dezactivarea funcției oprește semnalele de prezență ulterioare și face o solicitare de efort pentru a elimina sesiunea curentă. Închiderea Synix încearcă, de asemenea, eliminarea; dacă eliminarea nu poate ajunge pe site-ul web, sesiunea se oprește automat după perioada de inactivitate.
+
+Ca și în cazul oricărei conexiuni la Internet, serviciile de găzduire ale site-ului web primesc informații obișnuite de conectare, cum ar fi adresa IP de origine și ora solicitării, și le pot procesa sau înregistra conform propriilor politici de confidențialitate. Aceste informații nu sunt stocate în tabelul de contor de activitate al lui Synix sau afișate în numărătoarea publică.
+
+14. Acces de la distanță Confidențialitate și securitate
+
+14.1 Acces opțional și nicio vânzare de date
+
+Gestionarea de la distanță la https://manager.synix.info este opțională și este dezactivată până când asociați un computer și aprobați contul solicitant în aplicația Synix de pe acel computer. Puteți utiliza Synix local fără un cont de manager. Contorul de activitate publică este separat și poate fi dezactivat independent.
+
+Synix nu vinde, închiriază, comercializează sau dezvăluie informații despre contul dvs., informații despre computere asociate, activitatea de la distanță sau informații despre server către agenții de publicitate sau brokerii de date. Synix nu folosește aceste informații pentru publicitate direcționată și nu construiește profiluri publicitare din aceasta. Informațiile sunt procesate pentru a oferi caracteristicile pe care le alegeți, pentru a autentifica accesul, pentru a opera serviciul și pentru a-l proteja împotriva abuzului.
+
+Accesul de la distanță nu este un serviciu fără stocare. Are nevoie de înregistrările limitate ale contului, de asociere, operaționale și de securitate descrise mai jos. Aceste înregistrări nu sunt publicate în ghișeul de activitate publică sau expuse altor conturi de manager prin intermediul serviciului.
+
+14.2 Ce rămâne pe computer
+
+Synix nu încarcă automat lumi de joc, fișiere server de joc, conținut fișier de configurare, conținut de backup-arhivă, ieșire brută de consolă sau parole salvate de server de joc. Backup și restaurare la distanță rulează pe computerul asociat; fișierele de rezervă rămân în locațiile configurate acolo. Dacă alegeți să introduceți o comandă pentru consola de jocuri pe site, textul acesteia este procesat și transmis către computerul asociat, inclusiv orice valori sensibile pe care le introduceți în textul respectiv. Managerul nu este stocare de rezervă în cloud și nu oferă desktop la distanță nerestricționat, acces la promptul de comandă Windows sau navigare generală a fișierelor.
+
+Synix își păstrează setările locale, lista de servere, istoricele, copiile de rezervă și starea de asociere pe computer. Cheia de semnare privată a unui computer asociat rămâne în stocarea cheii Windows. Synix preferă stocarea bazată pe TPM atunci când este disponibilă și acceptă în alt mod o cheie software protejată de Windows, inclusiv pe VMs compatibil. Disponibilitatea TPM nu este o garanție că un computer nu este compromis.
+
+Aceste declarații descriu managementul de la distanță Synix. Jocurile, Steam, modificările, integrările Discord, exporturile și rapoartele de asistență pe care alegeți să le partajați au propriile lor fluxuri de date. Nu introduceți parole sau alte informații sensibile în numele computerelor, numele serverelor sau numele fișierelor de rezervă, deoarece acele etichete pot apărea în manager.
+
+14.3 Informații pe care managerul le procesează și le stochează
+
+- Cont și autentificare: numele de utilizator ales, identificatorul contului, timpul de creare, preferințele de securitate, un hash de parolă sărat, secretul de autentificare criptat când este activat, acreditările publice ale cheii de acces când sunt activate și înregistrările temporare de verificare/sesiune. Parolele și codurile de verificare sunt procesate pentru a verifica conectarea; parolele permanente nu sunt stocate ca text care poate fi citit. Synix nu primește amprenta dvs., imaginea feței, cheia privată de acces sau cheia privată de semnare a computerului asociat. Înregistrarea nu necesită un nume real sau o adresă de e-mail.
+- Asociere și conexiune: eticheta computerului pe care o alegeți, un identificator aleatoriu al dispozitivului, cheia publică de semnare a acestuia, asocierea contului, tipul de furnizor de cheie raportat, starea de aprobare a asocierii și ora ultimei conexiuni. O conexiune de releu silențioasă autentificată poate rămâne deschisă în timp ce Synix rulează, astfel încât site-ul web să poată activa imediat aplicația asociată. Releul transportă notificări de activare/deconectare și metadate de conexiune, nu fișiere de joc sau instantanee de server.
+- Stare afișată: identificatori limitati de server, nume, nume de joc, stare de rulare, număr de jucători, timp de funcționare, acțiuni disponibile, ultima durată/stare de rezervă și citiri CPU pentru întregul computer și citiri RAM utilizate/total. Aplicația trimite aceste rezumate în timp ce o vizualizare de manager autentificată este activă. Actualizările CPU/RAM acoperă computerele asociate; actualizările detaliate ale serverului acoperă computerul selectat. Actualizările rulează în mod normal la fiecare 10 secunde și se întrerup după ce vizualizările active se închid, se deconectează, expiră sau devin ascunse, după caz. Alte sesiuni de browser active își pot menține propriile vizualizări. Totalurile separate arată utilizarea combinată a CPU și RAM de către procesele serverelor de jocuri care rulează, inclusiv procesele lor de lansare și de lucru urmărite. Valorile pentru întregul computer includ și vitezele de trimitere și primire ale adaptoarelor de rețea active cu gateway, inclusiv traficul LAN. Identificatorii adaptoarelor, adresele IP, conținutul pachetelor și adresele web vizitate nu sunt trimise împreună cu aceste valori.
+- Acțiuni și copii de rezervă solicitate: identificatorii serverului/acțiunii, timpul solicitării, progresul/rezultatul și, atunci când solicitați opțiuni de rezervă, identificatorii de rezervă, numele fișierelor, datele, dimensiunile și etichetele de integritate. Conținutul de rezervă și căile locale complete nu sunt trimise pentru această funcție.
+- Comenzi pentru consola de jocuri: un identificator opac de rulare a jocului, aprobare de deblocare de scurtă durată și text de comandă pe care îl trimiteți. Textul în așteptare este criptat în baza de date a serviciului și este eliminat din acea înregistrare atunci când livrarea este autorizată. Nu este inclus în lista de acțiuni recente sau în înregistrările de alertă de cont. Un rezultat de livrare înseamnă că textul a fost trimis în joc, nu că jocul l-a acceptat sau l-a finalizat. Răspunsurile jocului și arborele de proces local nu sunt încărcate.
+- Securitate și prevenire a abuzurilor: tip de conectare eșuat, număr și timpi de încercări grupate, tip de eveniment de recuperare/securitate și etichete relevante pentru computer. Înregistrările cu limită de rată de scurtă durată pot folosi coduri hash ale adreselor IP de conexiune și identificatori de cont. Înregistrările Synix privind alertele de cont nu conțin parole de încercare, coduri de verificare, adrese IP brute sau amprente digitale ale browserului. Furnizorii de găzduire pot procesa separat informațiile de conectare, așa cum este explicat în Secțiunea 14.6.
+
+Site-ul web prelucrează în mod necesar rezumatele și comenzile permise pentru a oferi management de la distanță. HTTPS și conexiunile releu criptate protejează traficul în tranzit; aceasta nu este o pretenție că serviciul de găzduire nu poate procesa datele.
+
+14.4 Reținere și ștergere
+
+- Acreditările și setările contului rămân până când contul este șters. Înregistrările de împerechere aprobate rămân până când computerul nu este asociat sau până când contul este șters.
+- Instantaneele de stare și citirile CPU/RAM sunt suprascrise cu citiri mai noi și devin eligibile pentru curățare după 15 minute fără înlocuire. Ora ultimei conexiuni rămâne parte din înregistrarea de asociere.
+- Înregistrările comenzilor de la distanță, rezultatele și metadatele returnate ale opțiunii de rezervă devin eligibile pentru curățare după 24 de ore.
+- Comenzile în așteptare ale consolei de joc expiră după 30 de secunde. Textul nelivrat devine eligibil pentru ștergere la expirare sau revocare; livrarea aprobată o eliberează imediat. Aprobarile consolei expiră în trei minute. Identificatorul acțiunii și rezultatul livrării fixe urmează perioadei de înregistrare a acțiunii de 24 de ore.
+- Evenimentele de recuperare/securitate și alertele de conectare nereușită devin eligibile pentru curățare după 90 de zile. Conectările eșuate păstrează cel mult cele mai recente 100 de grupuri; eșecurile de potrivire într-o perioadă de 10 minute sunt grupate împreună.
+- Sesiunile de browser expiră după 30 de minute fără solicitările managerului sau după 8 ore în total. Încercările de verificare expiră după 5 minute; recuperarea temporară a parolei expiră în 10 minute și este de unică folosință. Înregistrările expirate de verificare, recuperare, protecție împotriva reluării și limită de rată sunt eliminate în timpul curățării. Înregistrările de cont incomplete devin eligibile pentru curățare după 24 de ore.
+
+Expirarea oprește autorizarea chiar înainte ca o înregistrare să fie eliminată fizic. Curățarea de rutină a bazei de date rulează în timpul solicitărilor de servicii ulterioare, cel mult o dată la 10 minute pentru curățarea managerului, astfel încât perioadele de mai sus sunt perioade de expirare sau de eligibilitate pentru curățare, mai degrabă decât promisiuni de ștergere la un moment exact. Jurnalele furnizorului și copiile de rezervă au cicluri de viață separate.
+
+Dezasamblarea șterge împerecherea selectată și înregistrările la distanță asociate din baza de date a serviciului activ. Istoricul de recuperare/securitate poate rămâne în contul pentru perioada de mai sus. Ștergerea unui cont de manager elimină acreditările, asocierile, instantaneele, comenzile și înregistrările de securitate/recuperare a contului din baza de date a serviciului activ. Nu șterge serverele locale de jocuri, lumile, setările sau fișierele de rezervă. Înregistrările de scurtă durată privind prevenirea abuzului și jurnalele sau copiile de rezervă deținute de furnizor nu sunt neapărat șterse imediat prin nicio acțiune.
+
+14.5 Comenzile dvs. și protecția la conectare
+
+Conectarea necesită parola dvs. plus o cheie de acces sau un autentificator existent, cum ar fi Google Authenticator. Conturile configurate să necesite ambele metode păstrează ambele cerințe. Schimbarea unei parole, deconectarea unui computer prin intermediul site-ului web și ștergerea unui cont de manager necesită o nouă verificare pentru modificarea respectivă.
+
+Deblocarea intrării personalizate a consolei de joc necesită, în plus, parola curentă a contului și o nouă verificare conform cerințelor metodei existente ale contului. Aprobarea este legată de o sesiune de browser, computer asociat, server salvat și rularea jocului live timp de până la trei minute. O oprire, repornire, consolă închisă, setare consolă dezactivată sau un proces pierdut împiedică alte comenzi. Deconectarea sau ascunderea filei manager încheie aprobarea filei respective. Butoanele normale de acțiune pe server își păstrează cerințele de conectare existente. Se califică numai conexiunile de intrare deținute de joc acceptate; un identificator unic singur nu autorizează scrierea într-un prompt de comandă Windows.
+
+Un computer asociat aprobat anterior poate emite o parolă temporară dacă uitați parola site-ului dvs. Nu poate selecta alt cont. Parola temporară nu ocolește și nu elimină cerințele existente pentru cheia de acces/autentificare și trebuie să alegeți o nouă parolă înainte de a intra în manager. Terminarea recuperării vă revocă celelalte sesiuni de browser.
+
+Managerul lui Synix păstrează simbolul de conectare al browserului în memoria filei curente, nu în cookie-uri, stocarea locală sau stocarea sesiunii. Reîmprospătarea sau închiderea filei pierde acea autentificare. Acest lucru nu împiedică browserul sau managerul de parole să salveze acreditările dacă alegeți și nu descrie module cookie setate separat de furnizorii de găzduire/securitate sau de serviciul de traducere al site-ului web public.
+
+Puteți să vă deconectați, să revocați toate sesiunile de browser sau să deconectați un computer. Aplicația locală Synix poate dezactiva și deconecta conexiunea la distanță fără a vă conecta la site. Când este offline, oprește accesul de la distanță la nivel local și reîncearcă eliminarea site-ului web atunci când este disponibilă o conexiune. Repornirea aplicației sau Windows nu restabilește automat o asociere eliminată în mod explicit. Utilizarea numai locală rămâne disponibilă.
+
+14.6 Gazduire, pagini publice și limite de securitate
+
+Site-ul oficial folosește găzduirea site-urilor OpenAI și serviciile Cloudflare pentru livrare, stocare, securitate și releu de trezire. Acești furnizori prelucrează informațiile necesare pentru a furniza aceste servicii și pot primi adrese IP, solicită antete, ore și alte metadate de conexiune sau pot păstra propriile lor jurnalele operaționale și copiile de rezervă. Politicile lor de confidențialitate se aplică procesării lor: https://openai.com/policies/privacy-policy/ și https://www.cloudflare.com/privacypolicy/.
+
+Traducerea automată a paginilor publice și descărcările GitHub implică furnizorii respectivi. Managerul privat este separat de paginile publice și nu încarcă furnizorul public de traduceri sau scripturile publicitare. Synix nu face o pretenție generală că vizitarea unui site web nu creează cookie-uri, jurnale sau date stocate. Informațiile pot fi, de asemenea, dezvăluite acolo unde este necesar prin lege; angajamentul de interzicere a vânzării de mai sus nu împiedică găzduirea necesară sau dezvăluirile legale.
+
+Synix utilizează împerechere autentificată, solicitări de computer semnate, conexiuni de rețea criptate, verificări de acces la cont și aprobări de scurtă durată pentru a reduce accesul neautorizat. Aceste măsuri de siguranță nu fac accesul la distanță fără riscuri și nu garantează protecție împotriva fiecărui atac, a unui computer/browser compromis, a metodelor de verificare furate sau a unui serviciu compromis. Păstrați Synix și Windows actualizate, protejați-vă contul și metodele de verificare și aprobați numai computerele și conturile pe care le controlați.
+
+Această notificare este publică la https://synix.info/license/ și este inclusă în Centrul de ajutor și programul de instalare al aplicației. Întrebările privind confidențialitatea pot fi ridicate prin intermediul opțiunilor oficiale de asistență la https://synix.info/support/. Nu publicați parole, coduri de recuperare sau alte informații despre contul privat în mesajele publice de asistență. Actualizările acestei notificări includ o nouă revizuire și o nouă dată.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>SETUP CRITICAL NECESAR:
 
 1. Porniți serverul o dată pentru a construi &quot;Engine.ini&quot;, apoi opriți-l.
@@ -6748,4 +6847,81 @@ Dacă Synix nu se redeschide, executaţi programul existent Synix sau descărca�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Se verifică copiile…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Nu a fost înregistrată încă nicio activitate pentru acest server.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Nicio activitate nu corespunde filtrelor.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Aspect</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Alegeți o temă, o culoare de accent și un stil al comenzilor. Modificările se aplică imediat și se salvează automat.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Temă de culori</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Culoare de accent</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Stilul comenzilor</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Previzualizare</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Resetați tema</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Ocean</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Pădure</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violet</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Nisip</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Implicită pentru temă</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turcoaz</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Albastru</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Roz</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Chihlimbar</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Verde</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Rotunjit</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Pătrat</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Partajează activitatea</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opțional: trimite un cod de sesiune aleatoriu către synix.info la fiecare 10 minute cât timp Synix rulează, inclusiv în fundal. Nu sunt trimise date despre servere. Activitatea expiră după 15 minute. Activat implicit. Îl puteți dezactiva aici.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Administrare la distanță</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Asociază acest computer pentru a vizualiza, porni, opri, reporni și crea copii de siguranță ale serverelor de pe site-ul Synix. Accesul la distanță rămâne dezactivat până aprobi asocierea aici.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Asociază sau deconectează acest computer</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>PC-ul meu server</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Generează cod de asociere</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Aprobă acest cont</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Elimină asocierea și deconectează</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Controlează acest computer de pe site-ul Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Numele computerului afișat pe site</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Deschide administrarea Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Conectează-te pe site și introdu acest cod. Aprobă aici doar propriul nume de utilizator.
+
+Păstrează Synix deschis sau minimizat. O conexiune în așteptare detectează autentificarea. Detaliile serverelor se actualizează la fiecare 10 secunde în timpul vizualizării. Eliminarea asocierii dezactivează accesul la distanță fără a opri serverele.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Introdu un nume pentru computer.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Se așteaptă solicitarea de asociere a contului tău…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Asociere aprobată pentru {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Cod expirat. Generează un nou cod de asociere.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Cont care solicită controlul: {0}
+Aprobă doar dacă acesta este numele tău de utilizator.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Asocierea nu a putut fi verificată. Verifică conexiunea la internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Administrarea Synix nu poate fi contactată. Încearcă din nou.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identitatea computerului: cheie protejată prin TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identitatea computerului: cheie software protejată de Windows (TPM indisponibil)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Neasociat</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Asociat — se așteaptă conexiunea</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Deconectat local. Reîncearcă eliminarea după conectare.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Asocierea nu a putut fi încărcată. Accesul la distanță este dezactivat.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>Asocierea trebuie aprobată pe acest computer.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Acces la distanță dezactivat. Setările asocierii nu au putut fi salvate.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Deconectat local — se elimină asocierea de pe site</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Conectat la administrarea la distanță</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Asociat — se așteaptă autentificarea</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Asocierea cu site-ul a fost eliminată. Accesul la distanță este dezactivat.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Conexiune indisponibilă — se reîncearcă</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Setări de conexiune la distanță nevalide.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Administrarea Synix a returnat un răspuns nevalid.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Reconectează-te la internet și finalizează mai întâi eliminarea vechii asocieri.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Generează un nou cod de asociere.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[ADMINISTRARE LA DISTANȚĂ] Acțiunea {0} a fost solicitată pentru {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Recuperează parola site-ului</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Creează o parolă temporară</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Anulează această recuperare</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Arată parola temporară</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Creează aici o parolă temporară. Autentifică-te pe site cu ea și cu autentificarea în doi pași sau cheia de acces existentă, apoi alege o parolă nouă. Dacă sunt necesare ambele metode, ambele rămân obligatorii. Parola funcționează o singură dată și expiră după 10 minute. Parola inițială rămâne valabilă până la finalizarea recuperării.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Cont: {0}. Poți crea o parolă temporară.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Cont: {0}. Expiră în {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Recuperarea a expirat sau a fost revocată. Reîncepe.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Prea multe solicitări. Încearcă mai târziu.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>Licența Synix încorporată lipsește.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Conexiunea cu serverul „{0}” aflat în execuție a fost restabilită (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Conexiunea cu serverul „{0}” găsit în execuție în folderul său de instalare a fost restabilită (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>Asocierea pentru acces la distanță nu se transferă. Dacă utilizați accesul la distanță, după restaurarea Synix asociați noul computer cu contul dvs. pe manager.synix.info.</value>
+  </data>
 </root>

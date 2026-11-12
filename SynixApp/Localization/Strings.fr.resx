@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -12055,13 +12055,17 @@ Garder facultatif RCON ou d&apos;administration des points de terminaison locaux
 
 3. Documentation officielle: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Nécessite un build compatible Metamod:Source et SourceMod pour cette version de serveur. Les plugins.smx compilés vont dans ageofchivalry/addons/sourcemod/plugins ; les traductions, les données de jeu et les extensions conservent leurs dossiers documentés.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>PANNEAU DE CONTRÔLE SYNIX — LICENCE LIMITÉE PROPRIÉTAIRE SOURCE-DISPONIBLE
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>PANNEAU DE CONTRÔLE SYNIX — LICENCE LIMITÉE PROPRIÉTAIRE SOURCE-DISPONIBLE
 
-Version 1.0 — 2 août 2026
-Tout à propos de Jason Turner. Tous droits réservés.
+Révision de licence 1.4 — 11 novembre 2026
+
+Il s’agit de la révision de la licence, et non de la version de l’application Synix.
+Droit d’auteur © 2026 Jason Turner. Tous droits réservés.
 U.S. Demande d&apos;enregistrement du droit d&apos;auteur: En attente
 
 Cette licence s&apos;applique au logiciel Panneau de contrôle Synix, y compris son code source, ses binaires compilés, son interface utilisateur, sa documentation, ses illustrations, ses logos et tout autre matériel inclus (collectivement, le « Logiciel »).
+
+Les sections 13 et 14 expliquent également les pratiques de confidentialité du site Web officiel Synix, du compteur d&apos;activité et du gestionnaire à distance en option. Ils décrivent le service actuel ; ils ne modifient pas l&apos;octroi de licence personnelle et non commerciale ci-dessous.
 
 1. Propriété
 
@@ -12185,7 +12189,102 @@ Cette licence s&apos;applique uniquement aux parties de Synix appartenant à Jas
 
 Les exceptions à cette licence ne sont valables que si elles sont fournies par écrit par Jason Turner.
 
-Les questions ou les demandes d&apos;autorisation doivent être soumises via le référentiel officiel Synix GitHub ou une autre méthode de contact officielle Synix.</value></data>
+Les questions ou les demandes d&apos;autorisation doivent être soumises via le référentiel officiel Synix GitHub ou une autre méthode de contact officielle Synix.
+
+12. SOURCES OFFICIELLES DE TÉLÉCHARGEMENT
+
+Obtenez Synix uniquement auprès de ces sources officielles :
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Les copies fournies par d’autres sites web ne sont pas vérifiées par Jason Turner et peuvent être dangereuses, modifiées, obsolètes ou accompagnées de logiciels indésirables. Jason Turner ne garantit ni leur sécurité ni leur authenticité.
+
+Référencer Synix, créer un lien vers GitHub ou proposer un téléchargement ne transfère aucun droit de propriété et n’implique aucune autorisation, affiliation, approbation ni aucun statut officiel. Synix reste la propriété de Jason Turner.
+
+L’hébergement, la mise en miroir, la transmission par un serveur mandataire, le reconditionnement ou l’intégration des téléchargements dans un programme intermédiaire nécessitent une autorisation écrite préalable. Un lien vers une source officielle n’accorde pas cette autorisation.
+
+La section 4.2 n’interdit pas les liens directs ordinaires vers ces sources officielles qui attribuent correctement Synix à Jason Turner. Ces liens ne font pas du site qui les publie une source officielle.
+
+Le paquet WinGet ubidzz.Synix est une méthode d’installation approuvée lorsqu’il télécharge le programme d’installation non modifié directement depuis les versions officielles publiées sur GitHub. Cela n’autorise ni l’hébergement ni le reconditionnement par des tiers.
+
+13. Compteur d&apos;activité en direct et confidentialité
+
+Synix inclut un compteur d&apos;activité en direct facultatif qui estime le nombre de sessions Synix en cours d&apos;exécution sur https://synix.info. Cette fonctionnalité est activée par défaut. Vous pouvez le désactiver à tout moment dans Paramètres &gt; Confidentialité et sécurité &gt; Partager le nombre actif sans limiter les autres fonctionnalités de Synix. Une préférence précédemment enregistrée est respectée.
+
+Lorsqu&apos;il est activé, Synix envoie un signal de présence HTTPS à https://synix.info/api/presence au démarrage et environ toutes les 10 minutes pendant l&apos;exécution de l&apos;application, y compris en arrière-plan. Le signal contient un code de session temporaire aléatoire et un identifiant d&apos;application générique Synix, sans corps de message. Le code de session est conservé uniquement en mémoire et est remplacé lorsqu&apos;une nouvelle session de reporting démarre ; ce n&apos;est pas un identifiant permanent de l&apos;appareil.
+
+Le compteur ne télécharge pas votre nom, votre adresse e-mail, vos mots de passe, les informations sur le serveur ou le joueur, les valeurs de configuration, les fichiers ou les identifiants de la machine.
+
+Pour chaque session, le compteur du site Web stocke uniquement un hash du code de session et l&apos;heure de son dernier signal. Le site Web public affiche uniquement le nombre total de sessions actives, qui est une estimation plutôt qu&apos;un nombre de personnes uniques. Une séance cesse de compter après 15 minutes sans signal. Les enregistrements de compteur inactifs deviennent éligibles au nettoyage après 30 minutes et sont supprimés lorsque des demandes de compteur ultérieures effectuent un nettoyage. Synix ne relie pas ces enregistrements de compteur aux comptes de gestionnaire distant ou aux identités d&apos;ordinateurs couplés.
+
+La désactivation de la fonctionnalité arrête les autres signaux de présence et effectue une demande de la meilleure façon possible pour supprimer la session en cours. La fermeture de Synix tente également la suppression ; si la suppression ne peut pas atteindre le site Web, la session cesse automatiquement de compter après la période d&apos;inactivité.
+
+Comme pour toute connexion Internet, les services d&apos;hébergement du site Web reçoivent des informations de connexion ordinaires, telles que l&apos;adresse IP d&apos;origine et l&apos;heure de la demande, et peuvent les traiter ou les enregistrer conformément à leurs propres politiques de confidentialité. Ces informations ne sont pas stockées dans le tableau du compteur d&apos;activité de Synix ni affichées dans le décompte public.
+
+14. Confidentialité et sécurité de l&apos;accès à distance
+
+14.1 Accès facultatif et aucune vente de données
+
+La gestion à distance à https://manager.synix.info est facultative et est désactivée jusqu&apos;à ce que vous associiez un ordinateur et approuviez le compte demandeur dans l&apos;application Synix sur cet ordinateur. Vous pouvez utiliser Synix localement sans compte gestionnaire. Le compteur d&apos;activité publique est séparé et peut être désactivé indépendamment.
+
+Synix ne vend, ne loue, n&apos;échange ni ne divulgue les informations de votre compte, les informations sur l&apos;ordinateur couplé, l&apos;activité à distance ou les informations sur le serveur à des annonceurs ou à des courtiers en données. Synix n&apos;utilise pas ces informations à des fins de publicité ciblée et ne crée pas de profils publicitaires à partir de celles-ci. Les informations sont traitées pour fournir les fonctionnalités que vous choisissez, authentifier l&apos;accès, exploiter le service et le protéger contre les abus.
+
+L&apos;accès à distance n&apos;est pas un service sans stockage. Il a besoin des enregistrements limités de compte, de couplage, de fonctionnement et de sécurité décrits ci-dessous. Ces enregistrements ne sont pas publiés dans le compteur d&apos;activité publique ni exposés à d&apos;autres comptes gestionnaires via le service.
+
+14.2 Ce qui reste sur votre ordinateur
+
+Synix ne télécharge pas automatiquement les mondes de jeu, les fichiers du serveur de jeu, le contenu des fichiers de configuration, le contenu des archives de sauvegarde, la sortie brute de la console ou les mots de passe du serveur de jeu enregistrés. Sauvegarde et restauration à distance exécutées sur l&apos;ordinateur couplé ; les fichiers de sauvegarde restent dans les emplacements qui y sont configurés. Si vous choisissez de saisir une commande de console de jeu sur le site Web, son texte est traité et transmis à l&apos;ordinateur couplé, y compris toutes les valeurs sensibles que vous avez saisies dans ce texte. Le gestionnaire n&apos;est pas un stockage de sauvegarde dans le cloud et ne fournit pas de bureau à distance illimité, d&apos;accès à l&apos;invite de commande Windows ou de navigation générale dans les fichiers.
+
+Synix conserve ses paramètres locaux, sa liste de serveurs, ses historiques, ses sauvegardes et son état de couplage sur votre ordinateur. La clé de signature privée d&apos;un ordinateur couplé reste dans le stockage de clés Windows. Synix préfère le stockage sauvegardé par TPM lorsqu&apos;il est disponible et prend autrement en charge une clé logicielle protégée par Windows, y compris sur les VMs compatibles. TPM la disponibilité ne garantit pas qu&apos;un ordinateur n&apos;est pas compromis.
+
+Ces déclarations décrivent Synix la gestion à distance. Les jeux, Steam, les mods, les intégrations Discord, les exportations et les rapports d&apos;assistance que vous choisissez de partager ont leurs propres flux de données. Ne mettez pas de mots de passe ou d&apos;autres informations sensibles dans les noms d&apos;ordinateurs, de serveurs ou de fichiers de sauvegarde, car ces étiquettes peuvent apparaître dans le gestionnaire.
+
+14.3 Informations que le gestionnaire traite et stocke
+
+- Compte et authentification : nom d&apos;utilisateur choisi, identifiant de compte, heure de création, préférences de sécurité, hachage de mot de passe salé, secret d&apos;authentification crypté lorsqu&apos;il est activé, informations d&apos;identification publiques de clé d&apos;accès lorsqu&apos;elles sont activées et enregistrements de vérification/session temporaires. Les mots de passe et les codes de vérification sont traités pour vérifier la connexion ; les mots de passe permanents ne sont pas stockés sous forme de texte lisible. Synix ne reçoit pas votre empreinte digitale, votre image faciale, votre clé privée de clé d&apos;accès ou la clé de signature privée de l&apos;ordinateur couplé. L&apos;inscription ne demande pas de vrai nom ni d&apos;adresse e-mail.
+- Couplage et connexion : l&apos;étiquette de l&apos;ordinateur que vous choisissez, un identifiant d&apos;appareil aléatoire, sa clé de signature publique, l&apos;association de compte, le type de fournisseur de clé signalé, l&apos;état d&apos;approbation du couplage et l&apos;heure de la dernière connexion. Une connexion relais authentifiée et silencieuse peut rester ouverte pendant l&apos;exécution de Synix afin que le site Web puisse réactiver immédiatement l&apos;application couplée. Le relais transporte des notifications de réveil/déconnexion et des métadonnées de connexion, pas des fichiers de jeu ou des instantanés de serveur.
+- Statut affiché : identifiants de serveur limités, noms, noms de jeux, état d&apos;exécution, nombre de joueurs, disponibilité, actions disponibles, dernière heure/état de sauvegarde et lectures de l&apos;ordinateur entier CPU et utilisées/totales RAM. L&apos;application envoie ces résumés lorsqu&apos;une vue de gestionnaire authentifié est active. CPU/RAM les mises à jour couvrent les ordinateurs couplés ; les mises à jour détaillées du serveur couvrent l&apos;ordinateur sélectionné. Les mises à jour s&apos;exécutent normalement toutes les 10 secondes et s&apos;arrêtent après la fermeture, la déconnexion, l&apos;expiration ou le masquage des vues actives, le cas échéant. Les autres sessions de navigateur actives peuvent conserver leurs propres vues en cours d&apos;exécution. Des totaux distincts indiquent l&apos;utilisation cumulée du CPU et de la RAM par les processus des serveurs de jeux en cours d&apos;exécution, y compris leurs processus de lancement et de travail suivis. Les mesures de l&apos;ensemble de l&apos;ordinateur comprennent également les débits d&apos;envoi et de réception des adaptateurs réseau actifs disposant d&apos;une passerelle, y compris le trafic LAN. Les identifiants des adaptateurs, les adresses IP, le contenu des paquets et les destinations de navigation ne sont pas transmis avec ces mesures.
+- Actions et sauvegardes demandées : les identifiants du serveur/action, l&apos;heure de la demande, la progression/résultat et, lorsque vous demandez des choix de sauvegarde, les identifiants de sauvegarde, les noms de fichiers, les dates, les tailles et les étiquettes d&apos;intégrité. Le contenu de la sauvegarde et les chemins locaux complets ne sont pas envoyés pour cette fonctionnalité.
+- Commandes de la console de jeu : un identifiant opaque de jeu, une approbation de déverrouillage de courte durée et le texte de commande que vous soumettez. Le texte en attente est crypté dans la base de données du service et est supprimé de cet enregistrement lorsque la livraison est autorisée. Il n&apos;est pas inclus dans la liste des actions récentes ni dans les enregistrements d&apos;alertes de compte. Un résultat de livraison signifie que le texte a été envoyé au jeu, et non que le jeu l&apos;a accepté ou terminé. Les réponses du jeu et l&apos;arborescence des processus locaux ne sont pas téléchargées.
+- Sécurité et prévention des abus : type d&apos;échec de connexion, nombre et heures de tentatives groupées, type d&apos;événement de récupération/sécurité et étiquettes d&apos;ordinateur pertinentes. Les enregistrements de limite de débit de courte durée peuvent utiliser des hachages à clé d&apos;adresses IP de connexion et d&apos;identifiants de compte. Les enregistrements d&apos;alerte de compte de Synix ne contiennent pas de tentatives de mots de passe, de codes de vérification, d&apos;adresses IP brutes ou d&apos;empreintes digitales de navigateur. Les fournisseurs d&apos;hébergement peuvent traiter séparément les informations de connexion, comme expliqué à la section 14.6.
+
+Le site Internet traite nécessairement les résumés et commandes autorisés pour assurer la gestion à distance. HTTPS et les connexions relais cryptées protègent le trafic en transit ; cela ne veut pas dire que le service d’hébergement ne peut pas traiter les données.
+
+14.4 Conservation et suppression
+
+- Les informations d&apos;identification et les paramètres du compte restent jusqu&apos;à ce que le compte soit supprimé. Les enregistrements de couplage approuvés restent jusqu&apos;à ce que l&apos;ordinateur soit dissocié ou que le compte soit supprimé.
+- Les instantanés d&apos;état et les lectures CPU/RAM sont écrasés par des lectures plus récentes et deviennent éligibles au nettoyage après 15 minutes sans remplacement. L’heure de la dernière connexion fait partie de l’enregistrement d’appairage.
+: Les enregistrements de commandes à distance, les résultats et les métadonnées de choix de sauvegarde renvoyées deviennent éligibles au nettoyage après 24 heures.
+- Les commandes de console de jeu en attente expirent après 30 secondes. Le texte non livré peut être supprimé à l&apos;expiration ou à la révocation ; la livraison approuvée l&apos;efface immédiatement. Les approbations de la console expirent dans un délai de trois minutes. L&apos;identifiant de l&apos;action et le résultat de livraison fixe suivent la période d&apos;enregistrement de l&apos;action de 24 heures.
+: Les événements de récupération/sécurité et les alertes d&apos;échec de connexion deviennent éligibles au nettoyage après 90 jours. Les connexions échouées conservent au maximum les 100 groupes les plus récents ; les échecs de correspondance sur une période de 10 minutes sont regroupés.
+- Les sessions du navigateur expirent après 30 minutes sans demande du responsable ou après 8 heures au total. Les tentatives de vérification expirent après 5 minutes ; la récupération de mot de passe temporaire expire dans les 10 minutes et est à usage unique. Les enregistrements expirés de vérification, de récupération, de protection contre la relecture et de limite de débit sont supprimés lors du nettoyage. Les enregistrements de compte incomplets deviennent éligibles au nettoyage après 24 heures.
+
+L&apos;expiration arrête l&apos;autorisation avant même qu&apos;un enregistrement ne soit physiquement supprimé. Le nettoyage de routine de la base de données s&apos;exécute lors des demandes de service ultérieures, au maximum une fois toutes les 10 minutes pour le nettoyage du gestionnaire. Les périodes ci-dessus sont donc des périodes d&apos;expiration ou d&apos;éligibilité au nettoyage plutôt que des promesses d&apos;effacement à un instant précis. Les journaux du fournisseur et les copies de sauvegarde ont des cycles de vie distincts.
+
+Le dissociation supprime le couplage sélectionné et ses enregistrements distants associés de la base de données du service actif. L’historique de récupération/sécurité peut rester sur le compte pendant la période ci-dessus. La suppression d&apos;un compte gestionnaire supprime ses informations d&apos;identification, ses associations, ses instantanés, ses commandes et ses enregistrements de sécurité/récupération de compte de la base de données du service actif. Il ne supprime pas vos serveurs de jeu locaux, vos mondes, vos paramètres ou vos fichiers de sauvegarde. Les enregistrements de courte durée de prévention des abus et les journaux ou sauvegardes détenus par le fournisseur ne sont pas nécessairement effacés immédiatement par l&apos;une ou l&apos;autre action.
+
+14.5 Vos contrôles et protection de connexion
+
+La connexion nécessite votre mot de passe ainsi qu&apos;un mot de passe ou un authentifiant existant, tel que Google Authenticator. Les comptes configurés pour exiger les deux méthodes conservent les deux exigences. La modification d&apos;un mot de passe, la dissociation d&apos;un ordinateur via le site Web et la suppression d&apos;un compte gestionnaire nécessitent une nouvelle vérification pour ce changement spécifique.
+
+Le déverrouillage d&apos;une entrée personnalisée dans la console de jeu nécessite en outre le mot de passe du compte actuel et une nouvelle vérification selon les exigences de méthode existantes du compte. L&apos;approbation est liée à une session de navigateur, à un ordinateur couplé, à un serveur enregistré et à un jeu en direct d&apos;une durée maximale de trois minutes. Un arrêt, un redémarrage, une console fermée, un paramètre de console désactivé ou un processus perdu empêchent d&apos;autres commandes. La déconnexion ou le masquage de l&apos;onglet Gestionnaire met fin à l&apos;approbation de cet onglet. Les boutons d&apos;action normaux du serveur conservent leurs exigences de connexion existantes. Seules les connexions d&apos;entrée appartenant au jeu prises en charge sont éligibles ; un identifiant unique à lui seul n&apos;autorise pas l&apos;écriture dans une invite de commande Windows.
+
+Un ordinateur couplé précédemment approuvé peut émettre un mot de passe temporaire si vous oubliez le mot de passe de votre site Web. Il ne peut pas sélectionner un autre compte. Le mot de passe temporaire ne contourne ni ne supprime vos exigences de clé d&apos;accès/authentificateur existantes, et vous devez choisir un nouveau mot de passe avant d&apos;accéder au gestionnaire. La fin de la récupération révoque vos autres sessions de navigateur. Le gestionnaire de
+
+Synix conserve son jeton de connexion au navigateur dans la mémoire de l&apos;onglet actuel, et non dans les cookies, le stockage local ou le stockage de session. L&apos;actualisation ou la fermeture de l&apos;onglet perd cette connexion. Cela n&apos;empêche pas votre navigateur ou votre gestionnaire de mots de passe d&apos;enregistrer vos informations d&apos;identification si vous le souhaitez, et cela ne décrit pas les cookies définis séparément par les fournisseurs d&apos;hébergement/de sécurité ou le service de traduction du site Web public.
+
+Vous pouvez vous déconnecter, révoquer toutes les sessions du navigateur ou dissocier un ordinateur. L&apos;application locale Synix peut désactiver et dissocier sa connexion à distance sans se connecter au site Web. Lorsqu&apos;il est hors ligne, il arrête l&apos;accès à distance localement et réessaye de supprimer le site Web lorsqu&apos;une connexion est disponible. Le redémarrage de l&apos;application ou de Windows ne restaure pas automatiquement un couplage explicitement supprimé. L&apos;utilisation locale uniquement reste disponible.
+
+14.6 Hébergement, pages publiques et limites de sécurité
+
+Le site officiel utilise l&apos;hébergement des sites de OpenAI et les services de Cloudflare pour la livraison, le stockage, la sécurité et le relais de réveil. Ces fournisseurs traitent les informations nécessaires à la fourniture de ces services et peuvent recevoir des adresses IP, des en-têtes de requête, des heures et d&apos;autres métadonnées de connexion, ou conserver leurs propres journaux opérationnels et copies de sauvegarde. Leurs politiques de confidentialité s&apos;appliquent à leur traitement : https://openai.com/policies/privacy-policy/ et https://www.cloudflare.com/privacypolicy/.
+
+La traduction automatique des pages publiques et les téléchargements GitHub impliquent leurs fournisseurs respectifs. Le gestionnaire privé est distinct des pages publiques et ne charge pas le fournisseur de traduction public ni les scripts publicitaires. Synix ne prétend pas de manière générale que la visite de l&apos;un ou l&apos;autre site Web ne crée aucun cookie, journal ou donnée stockée. Les informations peuvent également être divulguées lorsque la loi l&apos;exige ; l&apos;engagement de non-vente ci-dessus n&apos;empêche pas l&apos;hébergement nécessaire ou les divulgations licites.
+
+Synix utilise un couplage authentifié, des requêtes informatiques signées, des connexions réseau cryptées, des contrôles d&apos;accès au compte et des approbations de courte durée pour réduire les accès non autorisés. Ces mesures de protection ne rendent pas l&apos;accès à distance sans risque et ne garantissent pas une protection contre toute attaque, un ordinateur/navigateur compromis, des méthodes de vérification volées ou un service compromis. Gardez Synix et Windows à jour, protégez votre compte et vos méthodes de vérification, et approuvez uniquement les ordinateurs et les comptes que vous contrôlez.
+
+Cet avis est public à https://synix.info/license/ et est inclus dans le centre d&apos;aide et le programme d&apos;installation de l&apos;application. Les questions de confidentialité peuvent être soulevées via les options d&apos;assistance officielles à l&apos;adresse https://synix.info/support/. Ne publiez pas de mots de passe, de codes de récupération ou d&apos;autres informations de compte privé dans les messages d&apos;assistance publics. Les mises à jour de cet avis comportent une nouvelle révision et une nouvelle date.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>CONFIGURATION CRITIQUE REQUISE:
 
 1. Démarrez le serveur une fois pour construire &apos;Engine.ini&apos;, puis arrêtez-le.
@@ -14104,4 +14203,81 @@ Avant un changement de framework ou de jeu, préservez les données du monde, de
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Vérification des sauvegardes…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Aucune activité n’a encore été enregistrée pour ce serveur.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Aucune activité ne correspond à vos filtres.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Apparence</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Choisissez un thème, une couleur d’accent et un style de commandes. Les changements sont appliqués immédiatement et enregistrés automatiquement.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Thème de couleurs</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Couleur d’accent</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Style des commandes</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Aperçu</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Réinitialiser le thème</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Graphite</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Océan</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Forêt</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violet</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Sable</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Par défaut du thème</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turquoise</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Bleu</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rose</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Ambre</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Vert</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Arrondi</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Carré</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Partager l’activité</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Facultatif : envoyer un code de session aléatoire à synix.info toutes les 10 minutes pendant que Synix fonctionne, même en arrière-plan. Aucune donnée de serveur n’est envoyée. L’activité expire après 15 minutes. Activé par défaut. Vous pouvez le désactiver ici.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Gestionnaire distant</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Associez cet ordinateur pour afficher, démarrer, arrêter, redémarrer et sauvegarder les serveurs depuis le site Synix. L’accès distant reste désactivé jusqu’à votre approbation ici.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Associer ou déconnecter cet ordinateur</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mon PC serveur</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Générer un code d’association</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Approuver ce compte</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Dissocier et déconnecter</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Contrôler cet ordinateur depuis le site Synix</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Nom de l’ordinateur affiché sur le site</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Ouvrir le gestionnaire Synix</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Connectez-vous au site et saisissez ce code. N’approuvez ici que votre propre nom d’utilisateur.
+
+Gardez Synix ouvert ou réduit. Une connexion en attente détecte la connexion au compte. Les détails des serveurs s’actualisent toutes les 10 secondes pendant leur consultation. La dissociation désactive l’accès distant sans arrêter les serveurs.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Saisissez un nom d’ordinateur.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>En attente de la demande d’association de votre compte…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Association approuvée pour {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Code expiré. Générez un nouveau code d’association.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Compte demandant le contrôle : {0}
+Approuvez uniquement s’il s’agit de votre nom d’utilisateur.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Impossible de vérifier l’association. Vérifiez votre connexion internet.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Impossible de joindre le gestionnaire Synix. Réessayez.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Identité de l’ordinateur : clé protégée par TPM</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Identité de l’ordinateur : clé logicielle protégée par Windows (TPM indisponible)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Non associé</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Associé — en attente de connexion</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Déconnecté localement. Réessayez la suppression une fois connecté.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Impossible de charger l’association. L’accès distant est désactivé.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>L’association doit être approuvée sur cet ordinateur.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Accès distant désactivé. Impossible d’enregistrer les paramètres d’association.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Déconnecté localement — suppression de l’association au site</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Connecté au gestionnaire distant</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Associé — en attente de connexion au compte</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Association au site supprimée. L’accès distant est désactivé.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Connexion indisponible — nouvelle tentative</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Paramètres de connexion distante non valides.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Le gestionnaire Synix a renvoyé une réponse non valide.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Reconnectez-vous d’abord à internet et terminez la suppression de l’ancienne association.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Générez un nouveau code d’association.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[GESTIONNAIRE DISTANT] Action {0} demandée pour {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Récupérer le mot de passe du site</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Créer un mot de passe temporaire</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Annuler cette récupération</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Afficher le mot de passe temporaire</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Créez un mot de passe temporaire ici. Connectez-vous au site avec ce mot de passe et votre authentification à deux facteurs ou clé d’accès existante, puis choisissez un nouveau mot de passe. Si les deux méthodes sont exigées, elles le restent. Il est utilisable une fois et expire après 10 minutes. Votre ancien mot de passe reste valide jusqu’à la fin de la récupération.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Compte : {0}. Prêt à créer un mot de passe temporaire.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Compte : {0}. Expire dans {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Récupération expirée ou révoquée. Recommencez.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Trop de demandes. Réessayez plus tard.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>La licence Synix intégrée est manquante.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Connexion rétablie avec le serveur « {0} » déjà en cours d’exécution (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Connexion rétablie avec le serveur « {0} » trouvé en cours d’exécution dans son dossier d’installation (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>L'association pour l'accès à distance n'est pas transférée. Si vous utilisez l'accès à distance, associez le nouvel ordinateur à votre compte sur manager.synix.info après avoir restauré Synix.</value>
+  </data>
 </root>

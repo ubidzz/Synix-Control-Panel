@@ -17,24 +17,6 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 	partial class DiscordRoutingInfoDialog
 	{
 		private System.ComponentModel.IContainer components;
-		private Panel titleBar;
-		private PictureBox picLogo;
-		private Label lblWindowTitle;
-		private Button btnTitleClose;
-		private Label titleBottomBorder;
-		private Label lblHeading;
-		private Label lblDescription;
-		private ModernSettingsCard informationCard;
-		private Label lblInformationIcon;
-		private Label lblInformationTitle;
-		private Label lblInformationText;
-		private DataGridView gridRoutes;
-		private DataGridViewTextBoxColumn statusColumn;
-		private DataGridViewTextBoxColumn destinationColumn;
-		private DataGridViewTextBoxColumn eventsColumn;
-		private DataGridViewTextBoxColumn webhookColumn;
-		private Label lblCount;
-		private ModernSettingsButton btnClose;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -281,5 +263,24 @@ namespace Synix_Control_Panel.SynixApp.UI.Discord
 			((System.ComponentModel.ISupportInitialize)gridRoutes).EndInit();
 			ResumeLayout(false);
 		}
+
+		private Panel titleBar;
+		private PictureBox picLogo;
+		private Label lblWindowTitle;
+		private Button btnTitleClose;
+		private Label titleBottomBorder;
+		private Label lblHeading;
+		private Label lblDescription;
+		private ModernSettingsCard informationCard;
+		private Label lblInformationIcon;
+		private Label lblInformationTitle;
+		private Label lblInformationText;
+		private DataGridView gridRoutes;
+		private DataGridViewTextBoxColumn statusColumn;
+		private DataGridViewTextBoxColumn destinationColumn;
+		private DataGridViewTextBoxColumn eventsColumn;
+		private DataGridViewTextBoxColumn webhookColumn;
+		private Label lblCount;
+		private ModernSettingsButton btnClose;
 	}
 }

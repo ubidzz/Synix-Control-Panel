@@ -14,6 +14,8 @@
 # Additional named German interface resources.
 # The Game Definition Builder guide uses the compiled interface language.
 [ordered]@{
+    'Status.Activity.Reconnected' = '[SYNIX] Verbindung zum laufenden Server „{0}“ wiederhergestellt (PID: {1}).'
+    'Status.Activity.ReconnectedByPath' = '[SYNIX] Verbindung zum laufenden Server „{0}“, der in seinem Installationsordner gefunden wurde, wiederhergestellt (PID: {1}).'
     'ServerSetup.World.Seed.Hint' = 'Erzeugen Sie einen Seed für eine neue Welt oder geben Sie einen eigenen ein. Behalten Sie bei bestehenden Welten den ursprünglichen Seed.'
     'ServerSetup.World.Seed.Generate' = 'Seed erzeugen'
     'GameInput.WorldSeed.RequiredNumber' = 'Für {0} ist ein Welt-Seed als ganze Zahl von {1} bis {2} erforderlich. Korrigieren Sie ihn unter Servereinrichtung > Weltgenerierung.'

@@ -1023,13 +1023,17 @@ Tartsa helyileg az opcionális RCON vagy adminisztrációs végpontokat, hacsak 
 
 3. Hivatalos dokumentáció: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Ehhez a kiszolgálói verzióhoz kompatibilis Metamod:Source és SourceMod build szükséges. A lefordított.smx bővítmények az ageofchivalry/addons/sourcemod/plugins mappába kerülnek; a kísérő fordítások, játékadatok és bővítmények megtartják a dokumentált mappáikat.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL – KORLÁTOZOTT, VÁLLALATI FORRÁSÚ, ELÉRHETŐ LICENC
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX CONTROL PANEL – KORLÁTOZOTT, VÁLLALATI FORRÁSÚ, ELÉRHETŐ LICENC
 
-1.0 verzió - 2026. augusztus 2.
+Licenc 1.4-es verzió – 2026. november 11.
+
+Ez a licenc felülvizsgálati száma, nem a Synix alkalmazás verziója.
 Szerzői jog © 2026 Jason Turner. Minden jog fenntartva.
 U.S. Szerzői jogi regisztrációs kérelem: Függőben
 
 Ez a licenc a Synix Vezérlőpult szoftverre vonatkozik, beleértve a forráskódját, a lefordított bináris fájlokat, a felhasználói felületet, a dokumentációt, a grafikát, a logókat és az egyéb mellékelt anyagokat (együttesen a „Szoftver”).
+
+A 13. és 14. szakasz a hivatalos Synix webhely, a tevékenységszámláló és az opcionális távoli kezelő adatvédelmi gyakorlatát is ismerteti. Leírják az aktuális szolgáltatást; nem változtatnak az alábbi személyes, nem kereskedelmi engedélyeken.
 
 1. TULAJDONJOG
 
@@ -1153,7 +1157,102 @@ Ez a licenc csak a Synix Jason Turner tulajdonában lévő részeire vonatkozik.
 
 A jelen licenc alól kivételt csak a Jason Turner által írásban engedélyezett esetekben lehet tenni.
 
-A kérdéseket vagy engedélykérelmeket a hivatalos Synix GitHub tárolón vagy más hivatalos Synix kapcsolatfelvételi módszeren keresztül kell benyújtani.</value></data>
+A kérdéseket vagy engedélykérelmeket a hivatalos Synix GitHub tárolón vagy más hivatalos Synix kapcsolatfelvételi módszeren keresztül kell benyújtani.
+
+12. HIVATALOS LETÖLTÉSI FORRÁSOK
+
+A Synix alkalmazást kizárólag ezeken a hivatalos forrásokon keresztül szerezze be:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+A más webhelyekről származó példányokat Jason Turner nem ellenőrizte, és azok nem biztonságosak, módosítottak vagy elavultak lehetnek, illetve nem kívánt szoftvert tartalmazhatnak. Jason Turner nem garantálja ezek biztonságát vagy eredetiségét.
+
+A Synix felsorolása, a GitHubra mutató hivatkozás vagy a letöltés felkínálása nem ruház át tulajdonjogot, és nem jelent engedélyt, kapcsolatot, jóváhagyást vagy hivatalos státuszt. A Synix továbbra is Jason Turner tulajdona.
+
+A letöltések tárhelyen történő elhelyezéséhez, tükrözéséhez, proxyn keresztüli továbbításához, újracsomagolásához vagy további letöltőprogramokba foglalásához előzetes írásbeli engedély szükséges. Egy hivatalos forrásra mutató hivatkozás nem ad ilyen engedélyt.
+
+A 4.2. szakasz nem tiltja az ezekre a hivatalos forrásokra mutató szokásos közvetlen hivatkozásokat, amelyek megfelelően feltüntetik a Synix és Jason Turner nevét. Az ilyen hivatkozások nem teszik hivatalos forrássá az azokat közlő webhelyet.
+
+A WinGet ubidzz.Synix csomag jóváhagyott telepítési mód, ha a módosítatlan telepítőt közvetlenül a hivatalos GitHub-kiadásokból tölti le. Ez nem engedélyezi harmadik felek számára a tárhelyen történő terjesztést vagy az újracsomagolást.
+
+13. Élő tevékenység számláló és adatvédelem A
+
+Synix opcionális élő tevékenységszámlálót tartalmaz, amely megbecsüli a futó Synix munkamenetek számát a https://synix.info. napon. Ez a funkció alapértelmezés szerint engedélyezve van. Bármikor kikapcsolhatja a Beállítások &gt; Adatvédelem és biztonság &gt; Aktív szám megosztása menüpontban anélkül, hogy korlátozná a többi Synix funkciót. A korábban elmentett beállítást a rendszer tiszteletben tartja.
+
+Ha engedélyezve van, az Synix HTTPS jelenléti jelet küld a https://synix.info/api/presence számra indításkor és körülbelül 10 percenként, amíg az alkalmazás fut, beleértve a háttérben is. A jel egy véletlenszerű ideiglenes munkamenet kódot és egy általános Synix alkalmazásazonosítót tartalmaz, üzenettörzs nélkül. A munkamenet kódja csak a memóriában tárolódik, és új jelentési munkamenet indulásakor lecserélődik; ez nem állandó eszközazonosító.
+
+A számláló nem tölti fel az Ön nevét, e-mail címét, jelszavait, szerver- vagy lejátszóinformációit, konfigurációs értékeit, fájljait vagy gépazonosítóit.
+
+Minden munkamenethez a webhely számlálója csak a munkamenet kódjának kivonatát és a legutóbbi jel időpontját tárolja. A nyilvános webhely csak az aktív munkamenetek összesített számát jeleníti meg, amely inkább becslés, nem pedig egyedi emberek száma. Egy munkamenet számolása 15 perc után leáll, ha nincs jel. Az inaktív számlálórekordok 30 perc elteltével jogosultak a törlésre, és eltávolításra kerülnek, amikor a következő számlálórekordok tisztítást hajtanak végre. A Synix nem kapcsolja ezeket a számlálórekordokat távoli kezelői fiókokhoz vagy párosított számítógépes identitásokhoz.
+
+A funkció kikapcsolása leállítja a további jelenléti jeleket, és a lehető legjobban kéri az aktuális munkamenet eltávolítását. A Synix bezárása szintén megkísérli az eltávolítást; Ha az eltávolítás nem éri el a webhelyet, a munkamenet számolása az inaktivitási időszak után automatikusan leáll.
+
+Mint minden internetkapcsolat esetében, a webhely tárhelyszolgáltatásai is szokásos kapcsolódási információkat kapnak, például a kiindulási IP-címet és a kérés időpontját, és feldolgozhatják vagy naplózhatják azokat saját adatvédelmi szabályzataik szerint. Ezek az információk nem tárolódnak a Synix tevékenységszámláló táblázatában, és nem jelennek meg a nyilvános számlálóban.
+
+14. Távoli hozzáférés adatvédelem és biztonság
+
+14.1 Opcionális hozzáférés és az adatok értékesítésének tilalma
+
+A https://manager.synix.info távfelügyelet nem kötelező, és mindaddig ki van kapcsolva, amíg nem párosítja a számítógépet, és jóvá nem hagyja a kérelmező fiókot az adott számítógépen található Synix alkalmazásban. A Synix helyileg kezelői fiók nélkül is használható. A nyilvános tevékenységszámláló különálló, és önállóan letiltható.
+
+Synix nem ad el, nem ad bérbe, nem kereskedik, és nem adja ki az Ön fiókinformációit, párosított számítógép-információit, távoli tevékenységét vagy szerverinformációit hirdetőknek vagy adatközvetítőknek. A Synix nem használja fel ezeket az információkat célzott reklámozásra, és nem épít belőlük hirdetési profilokat. Az információkat az Ön által választott funkciók biztosítása, a hozzáférés hitelesítése, a szolgáltatás működtetése és a visszaélések elleni védelme érdekében dolgozzuk fel.
+
+A távoli hozzáférés nem tárhely nélküli szolgáltatás. Szüksége van az alább leírt korlátozott fiók-, párosítási, működési és biztonsági rekordokra. Ezeket a rekordokat nem teszik közzé a nyilvános tevékenységszámlálóban, és nem teszik közzé más kezelői fiókok számára a szolgáltatáson keresztül.
+
+14.2 Mi marad a számítógépén
+
+A Synix nem tölti fel automatikusan a játékvilágokat, a játékszerver-fájlokat, a konfigurációs fájlok tartalmát, a biztonsági mentési archívum tartalmát, a nyers konzolkimenetet vagy a mentett játékszerver-jelszavakat. Távoli biztonsági mentés és visszaállítás fut a párosított számítógépen; a biztonsági mentési fájlok az ott beállított helyeken maradnak. Ha úgy dönt, hogy beír egy játékkonzol-parancsot a webhelyen, a rendszer feldolgozza annak szövegét, és továbbítja a párosított számítógéphez, beleértve a szövegben megadott érzékeny értékeket is. A kezelő nem felhőalapú biztonsági mentési tárhely, és nem biztosít korlátlan távoli asztalt, Windows parancssori hozzáférést vagy általános fájlböngészést.
+
+Synix megőrzi helyi beállításait, szerverlistáját, előzményeit, biztonsági másolatait és párosítási állapotát a számítógépén. A párosított számítógép privát aláíró kulcsa a Windows kulcstárolóban marad. A Synix előnyben részesíti a TPM-alapú tárhelyet, ha elérhető, és egyébként támogatja a Windows-védett szoftverkulcsot, beleértve a kompatibilis VMs-t is. A TPM elérhetőség nem garancia arra, hogy a számítógép kompromisszummentes.
+
+Ezek a kijelentések a Synix távoli kezelést írják le. A megosztani kívánt játékok, Steam, modok, Discord-integrációk, exportálások és támogatási jelentések saját adatfolyammal rendelkeznek. Ne írjon be jelszavakat vagy más bizalmas információkat a számítógépek, a kiszolgálók vagy a biztonsági mentési fájlnevek közé, mert ezek a címkék megjelenhetnek a kezelőben.
+
+14.3 A Menedzser által feldolgozott és tárolt információk
+
+– Fiók és hitelesítés: Az Ön választott felhasználóneve, fiókazonosítója, létrehozási ideje, biztonsági beállítások, titkosított jelszó-kivonat, titkosított hitelesítési titok, ha engedélyezve van, nyilvános hitelesítő adatok, ha engedélyezve van, és ideiglenes ellenőrzési/munkameneti rekordok. A jelszavak és ellenőrző kódok feldolgozása a bejelentkezés ellenőrzéséhez történik; az állandó jelszavakat a rendszer nem tárolja olvasható szövegként. A Synix nem kapja meg az ujjlenyomatát, az arcképét, a jelszó privát kulcsát vagy a párosított számítógép privát aláíró kulcsát. A regisztrációhoz nem kell valódi név vagy e-mail cím megadása.
+– Párosítás és csatlakozás: A választott számítógépcímke, véletlenszerű eszközazonosító, nyilvános aláíró kulcsa, fióktársítás, a jelentett kulcs-szolgáltató típusa, a párosítás jóváhagyási állapota és az utolsó csatlakozási idő. A csendes hitelesített közvetítőkapcsolat nyitva maradhat, amíg a Synix fut, így a webhely azonnal felébresztheti a párosított alkalmazást. A közvetítő az ébresztési/lekapcsolási értesítéseket és a csatlakozási metaadatokat hordozza, nem játékfájlokat vagy szerver-pillanatképeket.
+– Megjelenített állapot: Korlátozott szerverazonosítók, nevek, játéknevek, futó állapot, játékosok száma, üzemidő, elérhető műveletek, legfrissebb mentési idő/állapot, valamint a teljes számítógép CPU és használt/összes RAM leolvasása. Az alkalmazás elküldi ezeket az összefoglalókat, amikor egy hitelesített kezelői nézet aktív. CPU/RAM frissítések a párosított számítógépekre vonatkoznak; a részletes szerverfrissítések a kiválasztott számítógépre vonatkoznak. A frissítések általában 10 másodpercenként futnak, és az aktív nézetek bezárása, leválasztása, lejárta vagy elrejtése után szünetelnek. Más aktív böngészőmunkamenetek megtarthatják saját nézeteiket. A külön összesített értékek a futó játékszerver-folyamatok együttes CPU- és RAM-használatát mutatják, beleértve a nyomon követett indító- és munkafolyamataikat. A teljes számítógép adatai az átjáróval rendelkező aktív hálózati adapterek küldési és fogadási sebességét is tartalmazzák, a LAN-forgalommal együtt. Ezekkel az adatokkal nem továbbítjuk az adapterazonosítókat, az IP-címeket, a csomagok tartalmát vagy a meglátogatott webcímeket.
+– Kért műveletek és biztonsági mentések: A szerver/művelet azonosítói, a kérés ideje, az előrehaladás/eredmény, és ha biztonsági mentési lehetőségeket kér, a biztonsági mentés azonosítói, fájlnevek, dátumok, méretek és integritáscímkék. Ehhez a funkcióhoz a rendszer nem küldi el a biztonsági másolat tartalmát és a teljes helyi elérési utat.
+– Játékkonzolparancsok: Átláthatatlan játék futtatási azonosító, rövid távú feloldási jóváhagyás és beküldött parancsszöveg. A függőben lévő szöveg titkosítva van a szolgáltatási adatbázisban, és eltávolításra kerül a rekordból, amikor a kézbesítés engedélyezve van. Nem szerepel a legutóbbi műveletek listájában vagy a fiókfigyelmeztetések rekordjaiban. A kézbesítés eredménye azt jelenti, hogy a szöveget elküldték a játéknak, nem azt, hogy a játék elfogadta vagy befejezte azt. A játékválaszok és a helyi folyamatfa nincs feltöltve.
+– Biztonság és visszaélések megelőzése: Sikertelen bejelentkezés típusa, csoportosított kísérletek száma és időpontja, helyreállítási/biztonsági eseménytípus és megfelelő számítógépes címkék. A rövid élettartamú sebességkorlát-rekordok a kapcsolat IP-címeinek és fiókazonosítóinak kulcsolt kivonatait használhatják. Az Synix fiókfigyelmeztetési rekordjai nem tartalmaznak jelszavakat, ellenőrző kódokat, nyers IP-címeket vagy böngésző ujjlenyomatokat. A tárhelyszolgáltatók külön feldolgozhatják a csatlakozási információkat a 14.6. szakaszban leírtak szerint.
+
+A webhely szükségszerűen feldolgozza az engedélyezett összefoglalókat és parancsokat a távoli kezelés érdekében. HTTPS és titkosított közvetítő kapcsolatok védik a tranzitforgalmat; ez nem azt jelenti, hogy a tárhely szolgáltatás nem tudja feldolgozni az adatokat.
+
+14.4 Megőrzés és törlés
+
+– A fiók hitelesítő adatai és beállításai a fiók törléséig megmaradnak. A jóváhagyott párosítási rekordok a számítógép párosításának megszüntetéséig vagy a fiók törléséig megmaradnak.
+– Az állapot-pillanatképeket és az CPU/RAM értékeket felülírják az újabb értékek, és csere nélkül 15 perc elteltével megtisztíthatók. Az utolsó csatlakozási idő a párosítási rekord része marad.
+– A távoli parancsrekordok, eredmények és visszaadott biztonsági mentési metaadatok 24 óra elteltével jogosultak a tisztításra.
+– A függőben lévő játékkonzolparancsok 30 másodperc után lejárnak. A kézbesítetlen szöveg a lejárat vagy visszavonás után törölhetővé válik; jóváhagyott szállítás azonnal törli. A konzol jóváhagyása három percen belül lejár. A műveletazonosító és a rögzített kézbesítés eredménye a 24 órás akció-rekord periódusát követi.
+– A helyreállítási/biztonsági események és a sikertelen bejelentkezési figyelmeztetések 90 nap után jogosultak a tisztításra. A sikertelen bejelentkezések legfeljebb a 100 legutóbbi csoportot tartják meg; a 10 perces időszakon belüli megfelelő hibákat csoportosítja.
+– A böngésző-munkamenetek 30 perccel a menedzser kérése nélkül lejárnak, vagy összességében 8 óra elteltével. Az ellenőrzési kísérletek 5 perc múlva lejárnak; Az ideiglenes jelszó-helyreállítás 10 percen belül lejár, és egyszer használatos. A lejárt ellenőrzési, helyreállítási, visszajátszásvédelmi és sebességkorlátozási rekordok eltávolításra kerülnek a tisztítás során. A hiányos fiókregisztráció 24 óra elteltével megtisztítható.
+
+A lejárat leállítja az engedélyezést még azelőtt, hogy a rekordot fizikailag eltávolítanák. A rutinszerű adatbázis-tisztítás a következő szolgáltatási kérések során fut le, legfeljebb 10 percenként a menedzserek tisztításához, így a fenti időszakok lejárati vagy tisztítási jogosultsági időszakok, nem pedig a pontos pillanatban történő törlés ígérete. A szolgáltatói naplóknak és a biztonsági másolatoknak külön életciklusuk van.
+
+A párosítás megszüntetése törli a kiválasztott párosítást és a hozzá tartozó távoli rekordokat az aktív szolgáltatási adatbázisból. A helyreállítási/biztonsági előzmények a fenti időszakra a fiókban maradhatnak. A kezelői fiók törlése eltávolítja annak hitelesítő adatait, párosításait, pillanatképeit, parancsait és fiókbiztonsági/helyreállítási rekordjait az aktív szolgáltatási adatbázisból. Nem törli a helyi játékszervereket, világokat, beállításokat vagy biztonsági mentési fájlokat. A rövid életű visszaélés-megelőzési rekordok és a szolgáltató által tárolt naplók vagy biztonsági másolatok nem feltétlenül törlődnek azonnal egyik művelettel sem.
+
+14.5 Az Ön kezelőszervei és bejelentkezési védelem
+
+A bejelentkezéshez jelszóra, valamint meglévő jelszóra vagy hitelesítőre van szükség, például Google Authenticator. A mindkét módszert igénylő fiókok mindkét követelményt megtartják. A jelszó megváltoztatása, a számítógép párosításának megszüntetése a webhelyen keresztül és a kezelői fiók törlése új ellenőrzést igényel az adott módosításhoz.
+
+Az egyéni játékkonzol-bemenet feloldásához emellett a jelenlegi fiók jelszavára és a fiók meglévő módszerkövetelményei szerinti friss ellenőrzésre van szükség. A jóváhagyás egy böngésző munkamenethez, párosított számítógéphez, mentett szerverhez és élő játékhoz kötött, legfeljebb három percig. A leállítás, újraindítás, zárt konzol, letiltott konzolbeállítás vagy elveszett folyamat megakadályozza a további parancsokat. A kezelőlap leválasztása vagy elrejtése véget vet a lap jóváhagyásának. A normál szerverművelet gombok megtartják meglévő bejelentkezési követelményeiket. Csak a támogatott játék tulajdonában lévő bemeneti kapcsolatok jogosultak; az egyedi azonosító önmagában nem engedélyezi a Windows parancssorba való írást.
+
+Egy korábban jóváhagyott párosított számítógép ideiglenes jelszót adhat ki, ha elfelejti a webhely jelszavát. Nem választhat másik fiókot. Az ideiglenes jelszó nem kerüli meg és nem távolítja el a meglévő jelszó-/hitelesítő-követelményeket, és új jelszót kell választania, mielőtt belépne a kezelőbe. A helyreállítás befejezése visszavonja a többi böngészőmunkamenetet.
+
+Synix kezelője a böngésző bejelentkezési tokent az aktuális lap memóriájában tartja, nem a cookie-kban, a helyi tárhelyen vagy a munkamenet tárolójában. A lap frissítése vagy bezárása elveszíti a bejelentkezést. Ez nem akadályozza meg böngészőjét vagy jelszókezelőjét abban, hogy elmentse a hitelesítő adatokat, ha úgy dönt, és nem írja le a tárhely-/biztonsági szolgáltatók vagy a nyilvános webhely fordítószolgálata által külön beállított cookie-kat.
+
+Kijelentkezhet, visszavonhatja az összes böngészőmunkamenetet, vagy megszakíthatja a számítógép párosítását. A helyi Synix alkalmazás letilthatja és megszüntetheti távoli kapcsolatát anélkül, hogy bejelentkezne a webhelyre. Offline állapotban leállítja a helyi távoli hozzáférést, és újra megpróbálja eltávolítani a webhelyet, amikor elérhető a kapcsolat. Az alkalmazás vagy a Windows újraindítása nem állítja vissza automatikusan a kifejezetten eltávolított párosítást. A csak helyi használat továbbra is elérhető.
+
+14.6 Tárhely, nyilvános oldalak és biztonsági korlátok
+
+A hivatalos webhely a OpenAI Webhelyek tárhelyét és az Cloudflare szolgáltatásait használja a kézbesítéshez, tároláshoz, biztonsághoz és az ébresztéshez. Ezek a szolgáltatók feldolgozzák a szolgáltatások nyújtásához szükséges információkat, és kaphatnak IP-címeket, kérésfejléceket, időpontokat és egyéb kapcsolódási metaadatokat, vagy megőrzik saját működési naplóikat és biztonsági másolataikat. Feldolgozásukra adatvédelmi szabályzataik vonatkoznak: https://openai.com/policies/privacy-policy/ és https://www.cloudflare.com/privacypolicy/.
+
+A nyilvános oldalak automatikus fordítása és a GitHub letöltések a megfelelő szolgáltatókat érintik. A privát kezelő elkülönül a nyilvános oldalaktól, és nem tölti be a nyilvános fordításszolgáltatót vagy a hirdetési szkripteket. A Synix nem állítja általánosságban azt, hogy egyik webhely felkeresése sem hoz létre cookie-kat, naplókat vagy tárolt adatokat. Információk is nyilvánosságra hozhatók, ha azt törvény írja elő; a fenti eladás tilalmi kötelezettségvállalás nem akadályozza meg a szükséges tárolást vagy jogszerű közzétételt.
+
+Synix hitelesített párosítást, aláírt számítógépes kéréseket, titkosított hálózati kapcsolatokat, fiókhozzáférés-ellenőrzéseket és rövid távú jóváhagyásokat használ az illetéktelen hozzáférés csökkentése érdekében. Ezek a biztosítékok nem teszik kockázatmentessé a távoli hozzáférést, és nem garantálnak védelmet minden támadás, feltört számítógép/böngésző, ellopott ellenőrzési módszerek vagy feltört szolgáltatás ellen. Tartsa naprakészen az Synix és Windows adatokat, védje fiókját és az ellenőrzési módszereket, és csak az Ön által felügyelt számítógépeket és fiókokat hagyja jóvá.
+
+Ez az értesítés nyilvános a https://synix.info/license/ címen, és megtalálható az alkalmazás Súgójában és telepítőjében. Az adatvédelemmel kapcsolatos kérdéseket a hivatalos támogatási lehetőségeken keresztül teheti fel: https://synix.info/support/. Ne tegyen közzé jelszavakat, helyreállítási kódokat vagy más privát fiókinformációkat nyilvános támogatási üzenetekben. A közlemény frissítései új verziót és dátumot tartalmaznak.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>Kritikus beállítás szükséges:
 
 1. Indítsa el a szervert egyszer a &apos;Engine.ini&apos; építéséhez, majd állítsa le.
@@ -6748,4 +6847,81 @@ Ha a Synix nem nyílik meg újra, futtassa a meglévő Synix programot, vagy tö
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Mentések ellenőrzése…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Ehhez a kiszolgálóhoz még nincs rögzített tevékenység.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Nincs a szűrőknek megfelelő tevékenység.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Megjelenés</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Válasszon témát, kiemelőszínt és vezérlőstílust. A változások azonnal életbe lépnek és automatikusan mentődnek.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Színtéma</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Kiemelőszín</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Vezérlőstílus</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Előnézet</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Téma visszaállítása</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafit</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Óceán</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Erdő</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Ibolya</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Homok</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Téma alapértelmezése</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Türkiz</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Kék</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Rózsaszín</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Borostyán</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Zöld</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Lekerekített</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Szögletes</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Aktív használat megosztása</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Opcionális: véletlenszerű munkamenetkód küldése a synix.info oldalnak 10 percenként, amíg a Synix fut, a háttérben is. Szerveradatok nem kerülnek elküldésre. Az aktivitás 15 perc után lejár. Alapértelmezetten bekapcsolva. Itt kikapcsolhatja.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Távoli kezelés</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Párosítsd ezt a számítógépet, hogy a Synix webhelyéről megtekinthesd, elindíthasd, leállíthasd és újraindíthasd a szervereket, illetve biztonsági mentést készíthess. A távoli hozzáférés kikapcsolva marad, amíg itt jóvá nem hagyod a párosítást.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>A számítógép párosítása vagy leválasztása</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Saját szervergép</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Párosítási kód létrehozása</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>A fiók jóváhagyása</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Párosítás törlése és leválasztás</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>A számítógép vezérlése a Synix webhelyéről</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>A webhelyen megjelenő számítógépnév</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix-kezelő megnyitása</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Jelentkezz be a webhelyen, és add meg ezt a kódot. Itt csak a saját felhasználónevedet hagyd jóvá.
+
+Hagyd a Synixet nyitva vagy kis méretben. Egy készenléti kapcsolat figyeli a bejelentkezést. A szerveradatok megtekintés közben 10 másodpercenként frissülnek. A párosítás törlése a szerverek leállítása nélkül tiltja le a távoli hozzáférést.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Adj meg egy számítógépnevet.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Várakozás a fiókod párosítási kérelmére…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Párosítás jóváhagyva: {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>A kód lejárt. Hozz létre új párosítási kódot.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>A vezérlést kérő fiók: {0}
+Csak akkor hagyd jóvá, ha ez a te felhasználóneved.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>A párosítás nem ellenőrizhető. Ellenőrizd az internetkapcsolatot.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>A Synix-kezelő nem érhető el. Próbáld újra.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Számítógép-azonosító: TPM által védett kulcs</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Számítógép-azonosító: Windows által védett szoftveres kulcs (TPM nem érhető el)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Nincs párosítva</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Párosítva — várakozás a kapcsolódásra</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Helyileg leválasztva. Kapcsolódás után próbáld újra az eltávolítást.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>A párosítás nem tölthető be. A távoli hozzáférés letiltva.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>A párosítást ezen a számítógépen kell jóváhagyni.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Távoli hozzáférés letiltva. A párosítási beállítások nem menthetők.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Helyileg leválasztva — a webhelyes párosítás eltávolítása</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Csatlakoztatva a távoli kezelőhöz</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Párosítva — várakozás a bejelentkezésre</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>A webhelyes párosítás eltávolítva. A távoli hozzáférés letiltva.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>A kapcsolat nem érhető el — újrapróbálkozás</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Érvénytelen távoli kapcsolati beállítások.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>A Synix-kezelő érvénytelen választ adott.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Csatlakozz újra az internethez, és előbb fejezd be a korábbi párosítás eltávolítását.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Hozz létre új párosítási kódot.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[TÁVOLI KEZELÉS] {0} művelet kérve ehhez: {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Webhelyjelszó helyreállítása</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Ideiglenes jelszó létrehozása</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Helyreállítás megszakítása</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Ideiglenes jelszó megjelenítése</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Itt létrehozhat egy ideiglenes jelszót. Jelentkezzen be vele a webhelyen, használja meglévő kétlépcsős hitelesítését vagy hozzáférési kulcsát, majd válasszon új jelszót. Ha mindkét módszer kötelező, továbbra is mindkettő szükséges. A jelszó egyszer használható és 10 perc után lejár. Az eredeti jelszó a helyreállítás befejezéséig érvényes.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Fiók: {0}. Létrehozható az ideiglenes jelszó.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Fiók: {0}. Lejár: {1} múlva.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>A helyreállítás lejárt vagy visszavonták. Kezdje újra.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Túl sok kérés. Próbálja újra később.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>A beágyazott Synix licenc hiányzik.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Újra létrejött a kapcsolat a futó „{0}” szerverrel (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Újra létrejött a kapcsolat a telepítési mappájában megtalált, futó „{0}” szerverrel (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>A távoli hozzáféréshez tartozó párosítás nem kerül át. Ha távoli hozzáférést használ, a Synix visszaállítása után párosítsa az új számítógépet a fiókjával a manager.synix.info oldalon.</value>
+  </data>
 </root>

@@ -370,11 +370,38 @@ public sealed class SynixMsiSetupTests
 	}
 
 	[Fact]
+	public void ActivityCounterLicenseExplainsTheDefaultOptOutAndLimitedSignal()
+	{
+		string canonical = File.ReadAllText(Path.Combine(ProjectDirectory, "..", "LICENSE.md"));
+		Match section = Regex.Match(canonical,
+			@"(?ms)^## 13\. Live Activity Counter and Privacy\r?\n(?<body>.*?)(?=^## |\z)");
+		Assert.True(section.Success, "The license must explain the optional live activity counter.");
+		string disclosure = section.Groups["body"].Value;
+		Assert.Equal("True", new Properties.Settings().Properties[nameof(Properties.Settings.ShareActivityCount)].DefaultValue);
+		Assert.Contains("enabled by default", disclosure);
+		XDocument resources = XDocument.Load(Path.Combine(ProjectDirectory, "Localization", "Strings.resx"));
+		string Label(string key) => Assert.Single(resources.Root!.Elements("data"),
+			entry => (string?)entry.Attribute("name") == key).Element("value")!.Value;
+		Assert.Contains($"Settings > {Label("SettingsPage.Privacy.Heading")} > {Label("Settings.Privacy.ActivityCount.Title")}", disclosure);
+		Assert.Contains("turn it off at any time", disclosure);
+		Assert.Contains("without limiting other Synix features", disclosure);
+		Assert.Contains("https://synix.info/api/presence", disclosure);
+		Assert.Contains("random temporary session code", disclosure);
+		Assert.Contains("no message body", disclosure);
+		Assert.Contains("does not upload your name, email address, passwords, server or player information, configuration values, files, or machine identifiers", disclosure);
+		Assert.Contains("stops further presence signals", disclosure);
+		Assert.Contains("request to remove the current session", disclosure);
+		Assert.Contains("15 minutes without a signal", disclosure);
+		Assert.Contains("originating IP address and request time", disclosure);
+	}
+
+	[Fact]
 	public void DisplayedLicenseContainsTheEntireCanonicalLicenseWithoutChangedTerms()
 	{
 		string canonical = File.ReadAllText(Path.Combine(ProjectDirectory, "..", "LICENSE.md"));
 		string expected = string.Join('\n', canonical.ReplaceLineEndings("\n").Split('\n')
 			.Select(line => Regex.Replace(line, @"^#{1,6} ", "").Replace("**", "").TrimEnd())).Trim();
+		Assert.Equal(expected, SynixApp.UI.Help.HelpGUI.CreateHelpArticles()["License & Proprietary Terms"].Answer);
 		WorkflowUiTest.Run(() =>
 		{
 			using RichTextBox text = new();

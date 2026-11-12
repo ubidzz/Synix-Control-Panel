@@ -49,8 +49,11 @@ The project owner may revise, decline, or delay a contribution when it conflicts
 ## Development requirements
 
 - Windows 10 or Windows 11
-- Visual Studio with .NET desktop development support, or the .NET 10 SDK
+- Updated Visual Studio 2026 with .NET desktop development support, or the .NET 11 SDK
+- The .NET 11 Windows Desktop Runtime for running source builds and tests
 - The `Synix Control Panel.sln` solution
+
+The repository selects SDK 11.0.100 or a later stable .NET 11 feature band through `global.json`. Synix and its tests target `net11.0-windows`; the supporting command-line tools target `net11.0`. The GitHub workflow uses the same .NET 11 SDK and runtime.
 
 Run the automated test project before submitting a pull request:
 

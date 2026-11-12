@@ -136,7 +136,7 @@ internal sealed class SynixUninstallPlan
 		return new(paths, fingerprint, servers.AsReadOnly(), SynixAppCleanup.Discover(paths), removeServers, deleteBackups);
 	}
 
-	internal void Execute(bool explicitlyConfirmed, Action ensureStopped, Action<string>? progress = null)
+	internal void Execute(bool explicitlyConfirmed, Action ensureStopped, Action<string>? progress = null, Action? beforeDeletion = null)
 	{
 		if (!explicitlyConfirmed) throw new InvalidOperationException(LocalizationManager.Get("Uninstall.Confirm"));
 		ensureStopped();
@@ -154,6 +154,7 @@ internal sealed class SynixUninstallPlan
 		foreach (string container in _emptyContainers) ValidateTarget(container);
 		ensureStopped();
 		EnsureUnchanged();
+		beforeDeletion?.Invoke();
 		foreach (string file in Files)
 		{
 			ValidateTarget(file, isFile: true);

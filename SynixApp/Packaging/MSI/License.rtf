@@ -1,12 +1,14 @@
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0 Segoe UI;}}\viewkind4\uc1\pard\f0\fs18
-SYNIX CONTROL PANEL \u8212? LIMITED PROPRIETARY SOURCE-AVAILABLE LICENSE\par
+{\rtf1\ansi\deff0{\fonttbl{\f0 Segoe UI;}}\f0\fs20 SYNIX CONTROL PANEL \u8212? LIMITED PROPRIETARY SOURCE-AVAILABLE LICENSE\par
 \par
-License revision 1.1 \u8212? November 5, 2026\par
+License revision 1.4 \u8212? November 11, 2026\par
+\par
 This is the license revision, not the Synix app version.\par
 Copyright \u169? 2026 Jason Turner. All Rights Reserved.\par
 U.S. Copyright Registration Application: Pending\par
 \par
 This license applies to the Synix Control Panel software, including its source code, compiled binaries, user interface, documentation, artwork, logos, and other included materials (collectively, the \u8220?Software\u8221?).\par
+\par
+Sections 13 and 14 also explain the privacy practices of the official Synix website, activity counter, and optional remote manager. They describe the current service; they do not change the personal, non-commercial license grant below.\par
 \par
 1. Ownership\par
 \par
@@ -148,4 +150,81 @@ Hosting, mirroring, proxying, repackaging, or wrapping downloads requires prior 
 Section 4.2 does not prohibit ordinary direct links to these official sources that accurately credit Synix and Jason Turner. Such links do not make the linking website an official source.\par
 \par
 The WinGet package ubidzz.Synix is an approved installation method when it downloads the unmodified installer directly from the official GitHub releases. This does not authorize third-party hosting or repackaging.\par
-}
+\par
+13. Live Activity Counter and Privacy\par
+\par
+Synix includes an optional live activity counter that estimates the number of running Synix sessions on https://synix.info. This feature is enabled by default. You can turn it off at any time in Settings > Privacy & Security > Share active count without limiting other Synix features. A previously saved off preference is respected.\par
+\par
+While enabled, Synix sends an HTTPS presence signal to https://synix.info/api/presence on startup and about every 10 minutes while the app runs, including in the background. The signal contains a random temporary session code and a generic Synix application identifier, with no message body. The session code is kept only in memory and is replaced when a new reporting session starts; it is not a permanent device identifier.\par
+\par
+The counter does not upload your name, email address, passwords, server or player information, configuration values, files, or machine identifiers.\par
+\par
+For each session, the website's counter stores only a hash of the session code and the time of its latest signal. The public website displays only the aggregate active-session count, which is an estimate rather than a count of unique people. A session stops counting after 15 minutes without a signal. Inactive counter records become eligible for cleanup after 30 minutes and are removed when subsequent counter requests perform cleanup. Synix does not link these counter records to remote-manager accounts or paired-computer identities.\par
+\par
+Turning the feature off stops further presence signals and makes one best-effort request to remove the current session. Closing Synix also attempts removal; if removal cannot reach the website, the session stops counting automatically after the inactivity period.\par
+\par
+As with any Internet connection, the website's hosting services receive ordinary connection information, such as the originating IP address and request time, and may process or log it under their own privacy policies. This information is not stored in Synix's activity-counter table or displayed in the public count.\par
+\par
+14. Remote Access Privacy and Security\par
+\par
+14.1 Optional Access and No Sale of Data\par
+\par
+Remote management at https://manager.synix.info is optional and is off until you pair a computer and approve the requesting account in the Synix app on that computer. You can use Synix locally without a manager account. The public activity counter is separate and can be disabled independently.\par
+\par
+Synix does not sell, rent, trade, or disclose your account information, paired-computer information, remote activity, or server information to advertisers or data brokers. Synix does not use this information for targeted advertising or build advertising profiles from it. Information is processed to provide the features you choose, authenticate access, operate the service, and protect it against abuse.\par
+\par
+Remote access is not a zero-storage service. It needs the limited account, pairing, operational, and security records described below. These records are not published in the public activity counter or exposed to other manager accounts through the service.\par
+\par
+14.2 What Stays on Your Computer\par
+\par
+Synix does not automatically upload game worlds, game-server files, configuration-file contents, backup-archive contents, raw console output, or saved game-server passwords. Remote backup and restore run on the paired computer; backup files remain in the locations configured there. If you choose to type a game-console command on the website, its text is processed and relayed to the paired computer, including any sensitive values you put in that text. The manager is not cloud backup storage and does not provide unrestricted remote desktop, Windows command-prompt access, or general file browsing.\par
+\par
+Synix keeps its local settings, server list, histories, backups, and pairing state on your computer. A paired computer's private signing key stays in Windows key storage. Synix prefers TPM-backed storage when available and otherwise supports a Windows-protected software key, including on compatible VMs. TPM availability is not a guarantee that a computer is uncompromised.\par
+\par
+These statements describe Synix remote management. Games, Steam, mods, Discord integrations, exports, and support reports you choose to share have their own data flows. Do not put passwords or other sensitive information in computer names, server names, or backup filenames, because those labels can appear in the manager.\par
+\par
+14.3 Information the Manager Processes and Stores\par
+\par
+- Account and authentication: Your chosen username, account identifier, creation time, security preferences, a salted password hash, encrypted authenticator secret when enabled, passkey public credentials when enabled, and temporary verification/session records. Passwords and verification codes are processed to check sign-in; permanent passwords are not stored as readable text. Synix does not receive your fingerprint, face image, passkey private key, or paired computer's private signing key. Registration does not request a real name or email address.\par
+- Pairing and connection: The computer label you choose, a random device identifier, its public signing key, account association, reported key-provider type, pairing approval state, and last connection time. A quiet authenticated relay connection can remain open while Synix runs so the website can wake the paired app immediately. The relay carries wake/disconnect notices and connection metadata, not game files or server snapshots.\par
+- Displayed status: Limited server identifiers, names, game names, running state, player counts, uptime, available actions, latest backup time/status, combined CPU and RAM readings from running game-server processes (including their tracked launchers and workers), and separate whole-computer CPU, used/total RAM, and network send/receive rates. Computer network rates include LAN traffic on active gateway adapters; adapter identifiers, IP addresses, packet contents, and browsing destinations are not sent with these readings. The app sends these summaries while an authenticated manager view is active. CPU/RAM updates cover paired computers; detailed server updates cover the selected computer. Updates normally run every 10 seconds and pause after active views close, disconnect, expire, or become hidden as applicable. Other active browser sessions can keep their own views running.\par
+- Requested actions and backups: The server/action identifiers, request time, progress/result, and, when you request backup choices, backup identifiers, filenames, dates, sizes, and integrity labels. Backup contents and full local paths are not sent for this feature.\par
+- Game-console commands: An opaque game-run identifier, short-lived unlock approval, and command text you submit. Pending text is encrypted in the service database and is removed from that record when delivery is authorized. It is not included in the recent-action list or account-alert records. A delivery result means the text was sent to the game, not that the game accepted or completed it. Game responses and the local process tree are not uploaded.\par
+- Security and abuse prevention: Failed sign-in type, grouped attempt count and times, recovery/security event type, and relevant computer labels. Short-lived rate-limit records may use keyed hashes of connection IP addresses and account identifiers. Synix's account-alert records do not contain attempted passwords, verification codes, raw IP addresses, or browser fingerprints. Hosting providers may separately process connection information as explained in Section 14.6.\par
+\par
+The website necessarily processes the permitted summaries and commands to provide remote management. HTTPS and encrypted relay connections protect traffic in transit; this is not a claim that the hosting service cannot process the data.\par
+\par
+14.4 Retention and Deletion\par
+\par
+- Account credentials and settings remain until the account is deleted. Approved pairing records remain until the computer is unpaired or the account is deleted.\par
+- Status snapshots and CPU/RAM readings are overwritten by newer readings and become eligible for cleanup after 15 minutes without replacement. Last-connection time remains part of the pairing record.\par
+- Remote command records, results, and returned backup-choice metadata become eligible for cleanup after 24 hours.\par
+- Pending game-console commands expire after 30 seconds. Undelivered text becomes eligible for deletion on expiry or revocation; approved delivery clears it immediately. Console approvals expire within three minutes. The action identifier and fixed delivery result follow the 24-hour action-record period.\par
+- Recovery/security events and failed sign-in alerts become eligible for cleanup after 90 days. Failed sign-ins retain at most the 100 most recent groups; matching failures within a 10-minute period are grouped together.\par
+- Browser sessions expire after 30 minutes without manager requests or after 8 hours overall. Verification attempts expire after 5 minutes; temporary-password recovery expires within 10 minutes and is single-use. Expired verification, recovery, replay-protection, and rate-limit records are removed during cleanup. Incomplete account registrations become eligible for cleanup after 24 hours.\par
+\par
+Expiry stops authorization even before a record is physically removed. Routine database cleanup runs during subsequent service requests, at most once every 10 minutes for manager cleanup, so the periods above are expiry or cleanup-eligibility periods rather than promises of erasure at an exact instant. Provider logs and backup copies have separate lifecycles.\par
+\par
+Unpairing deletes the selected pairing and its associated remote records from the active service database. Recovery/security history may remain with the account for the period above. Deleting a manager account removes its credentials, pairings, snapshots, commands, and account security/recovery records from the active service database. It does not delete your local game servers, worlds, settings, or backup files. Short-lived abuse-prevention records and provider-held logs or backups are not necessarily erased immediately by either action.\par
+\par
+14.5 Your Controls and Sign-in Protection\par
+\par
+Sign-in requires your password plus an existing passkey or authenticator, such as Google Authenticator. Accounts configured to require both methods keep both requirements. Changing a password, unpairing a computer through the website, and deleting a manager account require fresh verification for that specific change.\par
+\par
+Unlocking custom game-console input additionally requires the current account password and fresh verification under the account's existing method requirements. Approval is tied to one browser session, paired computer, saved server and live game run for up to three minutes. A stop, restart, closed console, disabled console setting or lost process prevents further commands. Disconnecting or hiding the manager tab ends that tab's approval. The normal server-action buttons keep their existing sign-in requirements. Only supported game-owned input connections qualify; a unique identifier alone does not authorize writing into a Windows command prompt.\par
+\par
+A previously approved paired computer can issue a temporary password if you forget your website password. It cannot select another account. The temporary password does not bypass or remove your existing passkey/authenticator requirements, and you must choose a new password before entering the manager. Completing recovery revokes your other browser sessions.\par
+\par
+Synix's manager keeps its browser login token in the current tab's memory, not in cookies, local storage, or session storage. Refreshing or closing the tab loses that login. This does not prevent your browser or password manager from saving credentials if you choose, and it does not describe cookies set separately by hosting/security providers or the public website's translation service.\par
+\par
+You can sign out, revoke all browser sessions, or unpair a computer. The local Synix app can disable and unpair its remote connection without signing in to the website. When offline, it stops remote access locally and retries website removal when a connection is available. Restarting the app or Windows does not automatically restore an explicitly removed pairing. Local-only use remains available.\par
+\par
+14.6 Hosting, Public Pages, and Security Limits\par
+\par
+The official website uses OpenAI's Sites hosting and Cloudflare services for delivery, storage, security, and the wake relay. These providers process the information needed to deliver those services and may receive IP addresses, request headers, times, and other connection metadata, or retain their own operational logs and backup copies. Their privacy policies apply to their processing: https://openai.com/policies/privacy-policy/ and https://www.cloudflare.com/privacypolicy/.\par
+\par
+Public-page automatic translation and GitHub downloads involve their respective providers. The private manager is separate from the public pages and does not load the public translation provider or advertising scripts. Synix does not make a blanket claim that visiting either website creates no cookies, logs, or stored data. Information may also be disclosed where legally required; the no-sale commitment above does not prevent necessary hosting or lawful disclosures.\par
+\par
+Synix uses authenticated pairing, signed computer requests, encrypted network connections, account access checks, and short-lived approvals to reduce unauthorized access. These safeguards do not make remote access risk-free or guarantee protection against every attack, a compromised computer/browser, stolen verification methods, or a compromised service. Keep Synix and Windows updated, protect your account and verification methods, and approve only computers and accounts you control.\par
+\par
+This notice is public at https://synix.info/license/ and is included in the app's Help Center and installer. Privacy questions can be raised through the official support options at https://synix.info/support/. Do not post passwords, recovery codes, or other private account information in public support messages. Updates to this notice carry a new revision and date.}

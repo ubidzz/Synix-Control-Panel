@@ -98,6 +98,21 @@ public sealed class SynixUninstallTests
 	}
 
 	[Fact]
+	public void PairingCleanupWaitsForConsentAndPreflightAndRunsBeforeFileRemoval()
+	{
+		using Fixture fixture = new();
+		fixture.WriteServers();
+		SynixUninstallPlan plan = SynixUninstallPlan.Create(fixture.Paths);
+		int calls = 0;
+		void Cleanup() { calls++; Assert.True(File.Exists(fixture.ServerFile)); }
+		Assert.Throws<InvalidOperationException>(() => plan.Execute(false, () => { }, beforeDeletion: Cleanup));
+		Assert.Throws<InvalidOperationException>(() => plan.Execute(true, () => throw new InvalidOperationException("running"), beforeDeletion: Cleanup));
+		Assert.Equal(0, calls);
+		plan.Execute(true, () => { }, beforeDeletion: Cleanup);
+		Assert.Equal(1, calls);
+	}
+
+	[Fact]
 	public void ADeletionFailureKeepsTheRegistryForRecovery()
 	{
 		using Fixture fixture = new();

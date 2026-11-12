@@ -134,15 +134,34 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			}
 
 			processTree.Add(rootPid);
+			IReadOnlyDictionary<int, int> parents = GetParentProcessIds();
+			Queue<int> pendingParents = new();
+			pendingParents.Enqueue(rootPid);
+			while (pendingParents.Count > 0)
+			{
+				int parentId = pendingParents.Dequeue();
+				foreach ((int processId, int parentProcessId) in parents)
+				{
+					if (parentProcessId == parentId && processTree.Add(processId))
+						pendingParents.Enqueue(processId);
+				}
+			}
+			return processTree;
+		}
+
+		// A presentation-only parent map. Callers must still verify server ownership;
+		// a parent PID alone never authorizes commands or process control.
+		internal static IReadOnlyDictionary<int, int> GetParentProcessIds()
+		{
+			Dictionary<int, int> parents = [];
 			IntPtr snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			if (snapshot == InvalidHandleValue)
 			{
-				return processTree;
+				return parents;
 			}
 
 			try
 			{
-				List<(int ProcessId, int ParentProcessId)> allProcesses = [];
 				ProcessEntry32 entry = new ProcessEntry32
 				{
 					Size = (uint)Marshal.SizeOf<ProcessEntry32>()
@@ -152,24 +171,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				{
 					do
 					{
-						allProcesses.Add(((int)entry.ProcessId, (int)entry.ParentProcessId));
+						parents[(int)entry.ProcessId] = (int)entry.ParentProcessId;
 						entry.Size = (uint)Marshal.SizeOf<ProcessEntry32>();
 					}
 					while (Process32Next(snapshot, ref entry));
-				}
-
-				Queue<int> pendingParents = new Queue<int>();
-				pendingParents.Enqueue(rootPid);
-				while (pendingParents.Count > 0)
-				{
-					int parentId = pendingParents.Dequeue();
-					foreach ((int processId, int parentProcessId) in allProcesses)
-					{
-						if (parentProcessId == parentId && processTree.Add(processId))
-						{
-							pendingParents.Enqueue(processId);
-						}
-					}
 				}
 			}
 			finally
@@ -177,7 +182,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				CloseHandle(snapshot);
 			}
 
-			return processTree;
+			return parents;
 		}
 
 		private static void TrackInstallDirectoryProcesses(

@@ -532,7 +532,7 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async Task<bool> UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false)
+		public async Task<bool> UpdateServerAndReport(GameServer server, string serverProcess, bool autoRestart = false, bool remoteRequest = false)
 		{
 			ArgumentNullException.ThrowIfNull(server);
 			using var historyScope = ServerDiagnosticScope.Begin(server);
@@ -542,6 +542,11 @@ namespace Synix_Control_Panel.SynixEngine
 				return false;
 			}
 			bool ServerUpdating = false;
+			// Remote updates are confirmed on the website. Recheck the local state
+			// before any prompts, file changes or downloads, even if its snapshot was ready.
+			if (remoteRequest && (serverProcess != "UPDATE" ||
+				!RemoteManagerProtocol.Summarize(server, isDownloadActive).CanUpdate))
+				return false;
 
 			if (serverProcess == "UPDATE")
 			{
@@ -563,7 +568,7 @@ namespace Synix_Control_Panel.SynixEngine
 				}
 
 				ServerUpdating = true;
-				if (!autoRestart)
+				if (!autoRestart && !remoteRequest)
 				{
 					var confirm = LocalizedMessageBox.Show(
 						LocalizationManager.Get(
@@ -743,7 +748,7 @@ namespace Synix_Control_Panel.SynixEngine
 					catch (Exception exception)
 					{
 						LogLocalized("ServerActions.Activity.OxideError", Color.Red, true, exception.Message);
-						if (!IsBackgroundServiceMode)
+						if (!IsBackgroundServiceMode && !remoteRequest)
 							LocalizedMessageBox.Show(
 								LocalizationManager.Get(
 									"ServerActions.Oxide.ReapplyFailed.Body",
@@ -1218,8 +1223,11 @@ namespace Synix_Control_Panel.SynixEngine
 			}
 		}
 
-		public async Task<bool> ExecuteStartSequence(GameServer server, string status = "")
+		public async Task<bool> ExecuteStartSequence(GameServer server, string status = "", bool remoteRequest = false)
 		{
+			// Remote control may use saved, already-started servers only. Setup and
+			// Steam authentication always remain explicit actions on the hosting PC.
+			if (remoteRequest && (server.IsFirstBoot || server.SteamAuthenticationRequired)) return false;
 			using var historyScope = ServerDiagnosticScope.Begin(server);
 			ServerOperationKind operationKind = string.IsNullOrWhiteSpace(status)
 				? ServerOperationKind.Start
@@ -1236,7 +1244,7 @@ namespace Synix_Control_Panel.SynixEngine
 			bool isMaintenance = status.Equals("MAINTENANCE", StringComparison.OrdinalIgnoreCase);
 			bool isWatchdog = status.Equals("WATCHDOG", StringComparison.OrdinalIgnoreCase);
 			bool requiresVerifiedStop = RequiresVerifiedStopBeforeStartValidation(status);
-			StartContext currentContext = isMaintenance
+			StartContext currentContext = isMaintenance || remoteRequest
 				? StartContext.Scheduled
 				: isWatchdog
 					? StartContext.CrashRecovery
@@ -1247,7 +1255,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (!PassResourceGuard(out string guardMsg))
 				{
 					Log(guardMsg, System.Drawing.Color.Red, true);
-					if (!IsBackgroundServiceMode)
+					if (!IsBackgroundServiceMode && !remoteRequest)
 						LocalizedMessageBox.Show(
 							LocalizationManager.TranslateRuntimeText(guardMsg),
 							LocalizationManager.Get(
@@ -1260,7 +1268,7 @@ namespace Synix_Control_Panel.SynixEngine
 				if (!await EnsureSteamAuthenticationAfterImport(server, status))
 					return false;
 
-				bool showInteractiveErrors = string.IsNullOrWhiteSpace(status) || isRestart;
+				bool showInteractiveErrors = !remoteRequest && (string.IsNullOrWhiteSpace(status) || isRestart);
 
 				if (isRestart)
 				{

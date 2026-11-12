@@ -2396,13 +2396,17 @@ Houd optionele RCON of beheer eindpunten lokaal, tenzij u een beveiligde regelin
 
 3. Officiële documentatie: https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>Vereist een compatibele Metamod:Source en SourceMod build voor deze serverversie. Gecompileerde.smx plugins gaan in ageofchivalry/addons/sourcemod/plugins; begeleidende vertalingen, gamedata en extensies behouden hun gedocumenteerde mappen.</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX CONTROL PANEL — BEPERKTE EIGENDOM VAN DE BRON-BESCHIKBARE LICENTIE
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX CONTROL PANEL — BEPERKTE EIGENDOM VAN DE BRON-BESCHIKBARE LICENTIE
 
-Versie 1.0 — 2 augustus 2026
+Licentieherziening 1.4 — 11 november 2026
+
+Dit is de herziening van de licentie, niet de versie van de Synix-app.
 Copyright © 2026 Jason Turner. Alle rechten voorbehouden.
 U.S. Aanvraag voor auteursrechtregistratie: In behandeling
 
 Deze licentie is van toepassing op de Synix Configuratiescherm-software, inclusief de broncode, gecompileerde binaire bestanden, gebruikersinterface, documentatie, illustraties, logo&apos;s en andere opgenomen materialen (gezamenlijk de &quot;Software&quot;).
+
+In secties 13 en 14 worden ook de privacypraktijken van de officiële Synix-website, activiteitenteller en optionele externe manager uitgelegd. Ze beschrijven de huidige service; ze veranderen niets aan de persoonlijke, niet-commerciële licentieverlening hieronder.
 
 1. EIGENDOM
 
@@ -2526,7 +2530,102 @@ Deze licentie is alleen van toepassing op de delen van Synix die eigendom zijn v
 
 Uitzonderingen op deze licentie zijn alleen geldig wanneer deze schriftelijk door Jason Turner worden verstrekt.
 
-Vragen of verzoeken om toestemming moeten worden ingediend via de officiële Synix GitHub repository of een andere officiële Synix contactmethode.</value></data>
+Vragen of verzoeken om toestemming moeten worden ingediend via de officiële Synix GitHub repository of een andere officiële Synix contactmethode.
+
+12. OFFICIËLE DOWNLOADBRONNEN
+
+Verkrijg Synix uitsluitend via deze officiële bronnen:
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+Exemplaren die door andere websites worden aangeboden, zijn niet door Jason Turner gecontroleerd en kunnen onveilig, gewijzigd of verouderd zijn, of ongewenste software bevatten. Jason Turner garandeert hun veiligheid en echtheid niet.
+
+Synix vermelden, naar GitHub linken of een download aanbieden draagt geen eigendomsrechten over en houdt geen toestemming, verbondenheid, goedkeuring of officiële status in. Synix blijft eigendom van Jason Turner.
+
+Het hosten, spiegelen, via een proxy aanbieden, opnieuw verpakken of in een extra downloadprogramma opnemen van downloads vereist voorafgaande schriftelijke toestemming. Een link naar een officiële bron verleent die toestemming niet.
+
+Artikel 4.2 verbiedt geen gewone directe links naar deze officiële bronnen die Synix en Jason Turner correct vermelden. Zulke links maken de website die ernaar verwijst niet tot een officiële bron.
+
+Het WinGet-pakket ubidzz.Synix is een goedgekeurde installatiemethode wanneer het het ongewijzigde installatieprogramma rechtstreeks uit de officiële GitHub-releases downloadt. Dit geeft derden geen toestemming voor hosting of herverpakking.
+
+13. Teller voor live-activiteiten en privacy
+
+Synix bevat een optionele live-activiteitenteller die het aantal actieve Synix-sessies op https://synix.info. schat. Deze functie is standaard ingeschakeld. U kunt dit op elk gewenst moment uitschakelen via Instellingen &gt; Privacy en beveiliging &gt; Actieve telling delen zonder andere Synix-functies te beperken. Een eerder opgeslagen voorkeur wordt gerespecteerd.
+
+Indien ingeschakeld, verzendt Synix een HTTPS-aanwezigheidssignaal naar https://synix.info/api/presence bij het opstarten en ongeveer elke 10 minuten terwijl de app actief is, ook op de achtergrond. Het signaal bevat een willekeurige tijdelijke sessiecode en een generieke applicatie-ID Synix, zonder berichttekst. De sessiecode wordt alleen in het geheugen bewaard en vervangen wanneer een nieuwe rapportagesessie start; het is geen permanente apparaatidentificatie.
+
+De teller uploadt uw naam, e-mailadres, wachtwoorden, server- of spelerinformatie, configuratiewaarden, bestanden of machine-ID&apos;s niet.
+
+Voor elke sessie slaat de teller van de website alleen een hash op van de sessiecode en het tijdstip van het laatste signaal. De openbare website geeft alleen het totale aantal actieve sessies weer, wat eerder een schatting is dan een telling van unieke mensen. Een sessie stopt met tellen na 15 minuten zonder signaal. Inactieve tellerrecords komen na 30 minuten in aanmerking voor opschoning en worden verwijderd wanneer daaropvolgende tellerverzoeken een opschoning uitvoeren. Synix koppelt deze tellerrecords niet aan accounts van externe managers of gekoppelde computeridentiteiten.
+
+Als u de functie uitschakelt, worden verdere aanwezigheidssignalen gestopt en wordt met één inspanningsverzoek de huidige sessie verwijderd. Als u Synix sluit, wordt ook geprobeerd het programma te verwijderen; als de verwijdering de website niet kan bereiken, stopt de sessie automatisch met tellen na de inactiviteitsperiode.
+
+Zoals bij elke internetverbinding ontvangen de hostingdiensten van de website gewone verbindingsinformatie, zoals het oorspronkelijke IP-adres en de verzoektijd, en kunnen deze deze verwerken of loggen volgens hun eigen privacybeleid. Deze informatie wordt niet opgeslagen in de activiteitentellertabel van Synix of weergegeven in de openbare telling.
+
+14. Privacy en beveiliging van externe toegang
+
+14.1 Optionele toegang en geen verkoop van gegevens
+
+Beheer op afstand bij https://manager.synix.info is optioneel en staat uit totdat u een computer koppelt en het aanvragende account goedkeurt in de Synix-app op die computer. U kunt Synix lokaal gebruiken zonder manageraccount. De openbare activiteitenteller is apart en kan onafhankelijk worden uitgeschakeld.
+
+Synix verkoopt, verhuurt, verhandelt of maakt uw accountgegevens, gekoppelde computergegevens, externe activiteit of servergegevens niet openbaar aan adverteerders of gegevensmakelaars. Synix gebruikt deze informatie niet voor gerichte reclame en bouwt hier ook geen advertentieprofielen op. Informatie wordt verwerkt om de door u gekozen functies te bieden, de toegang te verifiëren, de dienst te exploiteren en deze te beschermen tegen misbruik.
+
+Externe toegang is geen service zonder opslag. Het heeft de beperkte account-, koppelings-, operationele en beveiligingsgegevens nodig die hieronder worden beschreven. Deze records worden niet gepubliceerd in de openbare activiteitenteller of via de service zichtbaar voor andere manageraccounts.
+
+14.2 Wat er op uw computer blijft staan
+
+Synix uploadt niet automatisch gamewerelden, gameserverbestanden, inhoud van configuratiebestanden, back-uparchiefinhoud, onbewerkte console-uitvoer of opgeslagen gameserverwachtwoorden. Back-up en herstel op afstand worden uitgevoerd op de gekoppelde computer; back-upbestanden blijven op de daar geconfigureerde locaties. Als u ervoor kiest een gameconsole-opdracht op de website te typen, wordt de tekst ervan verwerkt en doorgestuurd naar de gekoppelde computer, inclusief eventuele gevoelige waarden die u in die tekst invoert. De manager is geen cloudback-upopslag en biedt geen onbeperkt extern bureaublad, Windows-opdrachtprompttoegang of algemeen bladeren door bestanden.
+
+Synix bewaart de lokale instellingen, serverlijst, geschiedenis, back-ups en koppelingsstatus op uw computer. De privéondertekeningssleutel van een gekoppelde computer blijft in de Windows-sleutelopslag. Synix geeft de voorkeur aan door TPM ondersteunde opslag indien beschikbaar en ondersteunt anderszins een door Windows beveiligde softwaresleutel, ook op compatibele VMs. De beschikbaarheid van TPM is geen garantie dat een computer compromisloos is.
+
+Deze verklaringen beschrijven Synix beheer op afstand. Games, Steam, mods, Discord-integraties, exports en ondersteuningsrapporten die u wilt delen, hebben hun eigen gegevensstromen. Plaats geen wachtwoorden of andere gevoelige informatie in computernamen, servernamen of back-upbestandsnamen, omdat deze labels in de manager kunnen verschijnen.
+
+14.3 Informatie die de manager verwerkt en opslaat
+
+- Account en authenticatie: de door u gekozen gebruikersnaam, account-ID, aanmaaktijd, beveiligingsvoorkeuren, een gezouten wachtwoordhash, gecodeerd authenticatorgeheim indien ingeschakeld, openbare toegangscodes indien ingeschakeld en tijdelijke verificatie-/sessierecords. Wachtwoorden en verificatiecodes worden verwerkt om de aanmelding te controleren; permanente wachtwoorden worden niet als leesbare tekst opgeslagen. Synix ontvangt uw vingerafdruk, gezichtsafbeelding, persoonlijke sleutel of de persoonlijke ondertekeningssleutel van uw gekoppelde computer niet. Voor registratie is geen echte naam of e-mailadres vereist.
+- Koppeling en verbinding: het computerlabel dat u kiest, een willekeurige apparaat-ID, de openbare ondertekeningssleutel, de accountkoppeling, het gerapporteerde type sleutelprovider, de goedkeuringsstatus van de koppeling en de laatste verbindingstijd. Een stille, geverifieerde relaisverbinding kan open blijven terwijl Synix actief is, zodat de website de gekoppelde app onmiddellijk kan activeren. Het relais draagt ​​meldingen over het ontwaken/verbreken van de verbinding en metadata over de verbinding, geen gamebestanden of server-snapshots.
+- Weergegeven status: beperkte server-ID&apos;s, namen, gamenamen, actieve status, aantal spelers, uptime, beschikbare acties, laatste back-uptijd/-status en CPU voor de hele computer en gebruikte/totale RAM-metingen. De app verzendt deze samenvattingen terwijl een geverifieerde managerweergave actief is. CPU/RAM-updates hebben betrekking op gekoppelde computers; gedetailleerde serverupdates hebben betrekking op de geselecteerde computer. Updates worden normaal gesproken elke 10 seconden uitgevoerd en worden onderbroken nadat actieve weergaven worden gesloten, ontkoppeld, verlopen of verborgen worden, indien van toepassing. Andere actieve browsersessies kunnen hun eigen weergaven actief houden. Afzonderlijke totalen tonen het gecombineerde CPU- en RAM-gebruik van actieve gameserverprocessen, inclusief hun gevolgde start- en werkprocessen. De metingen voor de hele computer omvatten ook de verzend- en ontvangstsnelheden van actieve netwerkadapters met een gateway, inclusief LAN-verkeer. Adapter-ID&apos;s, IP-adressen, pakketinhoud en bezochte webadressen worden niet met deze metingen verzonden.
+- Aangevraagde acties en back-ups: de server-/actie-ID&apos;s, verzoektijd, voortgang/resultaat en, wanneer u back-upkeuzes aanvraagt, back-up-ID&apos;s, bestandsnamen, datums, groottes en integriteitslabels. Voor deze functie worden geen back-upinhoud en volledige lokale paden verzonden.
+- Gameconsole-opdrachten: een ondoorzichtige game-run-ID, kortstondige ontgrendelingsgoedkeuring en opdrachttekst die u indient. Tekst die in behandeling is, wordt gecodeerd in de servicedatabase en wordt uit dat record verwijderd wanneer de bezorging wordt geautoriseerd. Het is niet opgenomen in de lijst met recente acties of in de accountwaarschuwingsrecords. Een bezorgresultaat betekent dat de tekst naar de game is verzonden, niet dat de game deze heeft geaccepteerd of voltooid. Spelreacties en de lokale procesboom worden niet geüpload.
+- Beveiliging en preventie van misbruik: mislukt aanmeldingstype, aantal gegroepeerde pogingen en tijden, type herstel/beveiligingsgebeurtenis en relevante computerlabels. Kortstondige snelheidslimietrecords kunnen gecodeerde hashes van verbindings-IP-adressen en account-ID&apos;s gebruiken. De accountwaarschuwingsrecords van Synix bevatten geen wachtwoordpogingen, verificatiecodes, onbewerkte IP-adressen of browservingerafdrukken. Hostingproviders kunnen verbindingsinformatie afzonderlijk verwerken, zoals uitgelegd in paragraaf 14.6.
+
+De website verwerkt noodzakelijkerwijs de toegestane samenvattingen en opdrachten om beheer op afstand mogelijk te maken. HTTPS en gecodeerde relaisverbindingen beschermen het verkeer onderweg; dit is geen claim dat de hostingservice de gegevens niet kan verwerken.
+
+14.4 Bewaren en verwijderen
+
+- Accountgegevens en instellingen blijven behouden totdat het account wordt verwijderd. Goedgekeurde koppelingsgegevens blijven behouden totdat de computer wordt ontkoppeld of het account wordt verwijderd.
+- Statussnapshots en CPU/RAM-metingen worden overschreven door nieuwere metingen en komen na 15 minuten zonder vervanging in aanmerking voor opschoning. De tijd van de laatste verbinding blijft onderdeel van het koppelingsrecord.
+- Records van externe opdrachten, resultaten en geretourneerde metagegevens van back-upkeuzes komen na 24 uur in aanmerking voor opschoning.
+- Openstaande opdrachten op de gameconsole verlopen na 30 seconden. Niet-bezorgde tekst komt in aanmerking voor verwijdering bij het verlopen of intrekken; goedgekeurde levering maakt het onmiddellijk duidelijk. Consolegoedkeuringen verlopen binnen drie minuten. De actie-ID en het vaste leveringsresultaat volgen de actieregistratieperiode van 24 uur.
+- Herstel-/beveiligingsgebeurtenissen en waarschuwingen voor mislukte aanmelding komen na 90 dagen in aanmerking voor opschoning. Bij mislukte aanmeldingen blijven maximaal de 100 meest recente groepen behouden; matchingfouten binnen een periode van 10 minuten worden gegroepeerd.
+- Browsersessies verlopen na 30 minuten zonder managerverzoeken of na 8 uur in totaal. Verificatiepogingen verlopen na 5 minuten; tijdelijk wachtwoordherstel verloopt binnen 10 minuten en is voor eenmalig gebruik. Verlopen verificatie-, herstel-, herhalingsbeveiliging- en snelheidslimietrecords worden tijdens het opschonen verwijderd. Onvolledige accountregistraties komen na 24 uur in aanmerking voor opschoning.
+
+Verlopen stopt de autorisatie zelfs voordat een record fysiek wordt verwijderd. Het routinematig opschonen van de database wordt uitgevoerd tijdens daaropvolgende serviceaanvragen, maximaal één keer per 10 minuten voor het opschonen van de manager. De bovenstaande perioden zijn dus verval- of opschoonperiodes en geen beloften van verwijdering op een exact moment. Providerlogboeken en back-upkopieën hebben afzonderlijke levenscycli.
+
+Bij het ontkoppelen worden de geselecteerde koppeling en de bijbehorende externe records verwijderd uit de actieve servicedatabase. De herstel-/beveiligingsgeschiedenis kan gedurende de bovenstaande periode bij het account blijven. Als u een manageraccount verwijdert, worden de inloggegevens, koppelingen, momentopnamen, opdrachten en accountbeveiligings-/herstelrecords verwijderd uit de actieve servicedatabase. Het verwijdert uw lokale gameservers, werelden, instellingen of back-upbestanden niet. Kortstondige gegevens ter voorkoming van misbruik en logboeken of back-ups van de provider worden door geen van beide acties noodzakelijkerwijs onmiddellijk gewist.
+
+14.5 Uw bedieningselementen en aanmeldingsbeveiliging
+
+Voor aanmelding zijn uw wachtwoord en een bestaande toegangssleutel of authenticator nodig, zoals Google Authenticator. Accounts die zijn geconfigureerd om beide methoden te vereisen, behouden beide vereisten. Voor het wijzigen van een wachtwoord, het ontkoppelen van een computer via de website en het verwijderen van een manageraccount is een nieuwe verificatie voor die specifieke wijziging vereist.
+
+Voor het ontgrendelen van aangepaste gameconsole-invoer zijn bovendien het huidige accountwachtwoord en nieuwe verificatie vereist volgens de bestaande methodevereisten van het account. Goedkeuring is gebonden aan één browsersessie, gekoppelde computer, opgeslagen server en live game die maximaal drie minuten duurt. Een stop, herstart, gesloten console, uitgeschakelde console-instelling of verloren proces voorkomt verdere opdrachten. Als u de verbinding met het tabblad Manager verbreekt of verbergt, wordt de goedkeuring van dat tabblad beëindigd. De normale serveractieknoppen behouden hun bestaande aanmeldingsvereisten. Alleen ondersteunde invoerverbindingen die eigendom zijn van de game komen in aanmerking; een unieke identificatie alleen geeft geen toestemming om naar een Windows-opdrachtprompt te schrijven.
+
+Een eerder goedgekeurde gekoppelde computer kan een tijdelijk wachtwoord afgeven als u uw websitewachtwoord vergeet. Er kan geen ander account worden geselecteerd. Het tijdelijke wachtwoord omzeilt of verwijdert uw bestaande wachtwoord-/authenticatorvereisten niet en u moet een nieuw wachtwoord kiezen voordat u naar de manager gaat. Als u het herstel voltooit, worden uw andere browsersessies ingetrokken.
+
+De manager van Synix bewaart zijn browserinlogtoken in het geheugen van het huidige tabblad, niet in cookies, lokale opslag of sessie-opslag. Als u het tabblad vernieuwt of sluit, gaat de aanmelding verloren. Dit verhindert niet dat uw browser of wachtwoordbeheerder de inloggegevens opslaat als u dat wenst, en er worden geen cookies beschreven die afzonderlijk zijn ingesteld door hosting-/beveiligingsproviders of de vertaaldienst van de openbare website.
+
+U kunt zich afmelden, alle browsersessies intrekken of een computer ontkoppelen. De lokale Synix-app kan de externe verbinding uitschakelen en ontkoppelen zonder in te loggen op de website. Wanneer het offline is, stopt het de externe toegang lokaal en probeert het de website opnieuw te verwijderen zodra er een verbinding beschikbaar is. Als u de app of Windows opnieuw start, wordt een expliciet verwijderde koppeling niet automatisch hersteld. Alleen lokaal gebruik blijft beschikbaar.
+
+14.6 Hosting, openbare pagina&apos;s en beveiligingslimieten
+
+De officiële website maakt gebruik van de Sites-hosting- en Cloudflare-services van OpenAI voor levering, opslag, beveiliging en het wake relay. Deze providers verwerken de informatie die nodig is om deze services te leveren en kunnen IP-adressen ontvangen, headers, tijden en andere metagegevens over de verbinding opvragen, of hun eigen operationele logboeken en back-upkopieën bewaren. Op hun verwerking is hun privacybeleid van toepassing: https://openai.com/policies/privacy-policy/ en https://www.cloudflare.com/privacypolicy/.
+
+Automatische vertalingen van openbare pagina&apos;s en GitHub-downloads zijn afhankelijk van hun respectieve providers. De privébeheerder staat los van de openbare pagina&apos;s en laadt de openbare vertaalaanbieder of advertentiescripts niet. Synix beweert niet dat het bezoeken van beide websites geen cookies, logbestanden of opgeslagen gegevens oplevert. Informatie kan ook openbaar worden gemaakt indien dit wettelijk vereist is; de bovenstaande niet-verkoopverplichting staat noodzakelijke hosting of wettige openbaarmakingen niet in de weg.
+
+Synix maakt gebruik van geverifieerde koppeling, ondertekende computerverzoeken, gecodeerde netwerkverbindingen, controles van accounttoegang en kortstondige goedkeuringen om ongeautoriseerde toegang te verminderen. Deze beveiligingen maken toegang op afstand niet risicovrij en garanderen geen bescherming tegen elke aanval, een gecompromitteerde computer/browser, gestolen verificatiemethoden of een gecompromitteerde dienst. Houd Synix en Windows bijgewerkt, bescherm uw account en verificatiemethoden en keur alleen computers en accounts goed die u beheert.
+
+Deze kennisgeving is openbaar op https://synix.info/license/ en is opgenomen in het Helpcentrum en het installatieprogramma van de app. Vragen over privacy kunnen worden gesteld via de officiële ondersteuningsopties op https://synix.info/support/. Plaats geen wachtwoorden, herstelcodes of andere privéaccountgegevens in openbare ondersteuningsberichten. Updates van deze kennisgeving hebben een nieuwe herziening en datum.</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>KRITIEKE SETUP VERPLICHT:
 
 1. Start de server eenmaal op om &apos;Engine.ini&apos; te bouwen en sluit deze vervolgens af.
@@ -7672,5 +7771,82 @@ Als Synix niet opnieuw wordt geopend, voert u uw bestaande Synix-programma uit o
   <data name="BackupHealth.Checking" xml:space="preserve"><value>Back-ups controleren…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>Er is nog geen activiteit voor deze server vastgelegd.</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>Geen activiteit komt overeen met uw filters.</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>Weergave</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>Kies een thema, accentkleur en stijl voor bedieningselementen. Wijzigingen worden direct toegepast en automatisch opgeslagen.</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>Kleurenthema</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>Accentkleur</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>Stijl van bediening</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>Voorbeeld</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>Thema herstellen</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>Grafiet</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>Oceaan</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>Bos</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>Violet</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>Zand</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>Standaard van thema</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>Turkoois</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>Blauw</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>Roze</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>Amber</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>Groen</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>Afgerond</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>Vierkant</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>Actieve sessies delen</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>Optioneel: stuur elke 10 minuten een willekeurige sessiecode naar synix.info terwijl Synix draait, ook op de achtergrond. Er worden geen servergegevens verzonden. Activiteit verloopt na 15 minuten. Standaard ingeschakeld. Je kunt dit hier uitschakelen.</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>Beheer op afstand</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>Koppel deze computer om servers via de Synix-website te bekijken, starten, stoppen, herstarten en back-ups te maken. Toegang op afstand blijft uit totdat je de koppeling hier goedkeurt.</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>Deze computer koppelen of loskoppelen</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>Mijn server-pc</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>Koppelcode genereren</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>Dit account goedkeuren</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>Koppeling verwijderen en verbreken</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>Bedien deze computer via de Synix-website</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>Computernaam op de website</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>Synix-beheer openen</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>Meld je aan op de website en voer deze code in. Keur hier alleen je eigen gebruikersnaam goed.
+
+Houd Synix open of geminimaliseerd. Een stille verbinding wacht op aanmelding. Servergegevens worden tijdens het bekijken elke 10 seconden bijgewerkt. Ontkoppelen schakelt toegang op afstand uit zonder servers te stoppen.</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>Voer een computernaam in.</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>Wachten op het koppelverzoek van je account…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>Koppeling goedgekeurd voor {0}</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>Code verlopen. Genereer een nieuwe koppelcode.</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>Account dat bediening aanvraagt: {0}
+Keur dit alleen goed als het jouw gebruikersnaam is.</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>Koppeling kon niet worden gecontroleerd. Controleer je internetverbinding.</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>Synix-beheer is niet bereikbaar. Probeer het opnieuw.</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>Computeridentiteit: door TPM beveiligde sleutel</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>Computeridentiteit: door Windows beveiligde softwaresleutel (TPM niet beschikbaar)</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>Niet gekoppeld</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>Gekoppeld — wachten op verbinding</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>Lokaal losgekoppeld. Probeer verwijderen opnieuw zodra er verbinding is.</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>Koppeling kon niet worden geladen. Toegang op afstand is uitgeschakeld.</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>De koppeling moet lokaal worden goedgekeurd.</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>Toegang op afstand uitgeschakeld. Koppelingsinstellingen konden niet worden opgeslagen.</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>Lokaal losgekoppeld — websitekoppeling wordt verwijderd</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>Verbonden met beheer op afstand</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>Gekoppeld — wachten op aanmelding</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>Websitekoppeling verwijderd. Toegang op afstand is uitgeschakeld.</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>Verbinding niet beschikbaar — opnieuw proberen</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>Ongeldige instellingen voor de externe verbinding.</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix-beheer gaf een ongeldig antwoord.</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>Herstel eerst de internetverbinding en voltooi het verwijderen van de oude koppeling.</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>Genereer een nieuwe koppelcode.</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[BEHEER OP AFSTAND] {0} aangevraagd voor {1}.</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>Websitewachtwoord herstellen</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>Tijdelijk wachtwoord maken</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>Dit herstel annuleren</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>Tijdelijk wachtwoord tonen</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>Maak hier een tijdelijk wachtwoord. Meld je daarmee en je bestaande tweestapsverificatie of passkey aan op de website en kies een nieuw wachtwoord. Als beide methoden vereist zijn, blijven beide vereist. Het werkt één keer en verloopt na 10 minuten. Je oorspronkelijke wachtwoord blijft geldig totdat het herstel is voltooid.</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>Account: {0}. Klaar om een tijdelijk wachtwoord te maken.</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>Account: {0}. Verloopt over {1}.</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>Herstel verlopen of ingetrokken. Begin opnieuw.</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>Te veel aanvragen. Probeer het later opnieuw.</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>De ingebouwde Synix-licentie ontbreekt.</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] Opnieuw verbonden met de actieve server "{0}" (PID: {1}).</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] Opnieuw verbonden met de actieve server "{0}" die in de installatiemap is gevonden (PID: {1}).</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>De koppeling voor externe toegang wordt niet overgezet. Als u externe toegang gebruikt, koppelt u de nieuwe computer na het herstellen van Synix aan uw account op manager.synix.info.</value>
+  </data>
 </root>
 

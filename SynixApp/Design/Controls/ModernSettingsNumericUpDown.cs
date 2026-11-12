@@ -323,7 +323,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			eventArgs.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			Rectangle bounds = new(0, 0, Width - 1, Height - 1);
-			using GraphicsPath path = RoundedGeometry.Create(bounds, 8);
+			using GraphicsPath path = RoundedGeometry.CreateThemed(bounds, 8);
 			Color fillColor = SettingsPalette.Input;
 			using SolidBrush fillBrush = new(fillColor);
 			Color borderColor = SettingsPalette.Border;

@@ -18,7 +18,7 @@ namespace Synix_Control_Panel.SynixEngine.ModManagement;
 // a review must not inspect secrets, create destinations or change server state.
 internal sealed record ModInstallGuidance(string Compatibility, string Destination, string Activation, string Recovery)
 {
-	internal static ModInstallGuidance Pending => new(Text("PendingCompatibility"), Text("PendingDestination"),
+	internal static ModInstallGuidance CreatePending() => new(Text("PendingCompatibility"), Text("PendingDestination"),
 		Text("PendingActivation"), Text("PendingRecovery"));
 
 	internal static ModInstallGuidance Create(GameServer server, ModImportChoice choice, ModPackagePreview? preview = null)

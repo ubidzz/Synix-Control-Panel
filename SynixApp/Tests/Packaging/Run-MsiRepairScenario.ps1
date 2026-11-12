@@ -71,7 +71,7 @@ try {
     }
     [IO.File]::WriteAllText((Join-Path $scenarioRoot 'dummy/Fixture.csproj'), @'
 <Project Sdk="Microsoft.NET.Sdk">
- <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><AssemblyName>Fixture</AssemblyName><Version>1.0.26</Version><PublishSingleFile>true</PublishSingleFile></PropertyGroup>
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net11.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><AssemblyName>Fixture</AssemblyName><Version>1.0.26</Version><PublishSingleFile>true</PublishSingleFile></PropertyGroup>
 </Project>
 '@)
     [IO.File]::WriteAllText((Join-Path $scenarioRoot 'dummy/Program.cs'), @'

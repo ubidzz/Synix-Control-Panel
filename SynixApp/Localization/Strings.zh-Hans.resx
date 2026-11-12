@@ -2416,19 +2416,23 @@ Modrinth 下载是哈希检查。 在不运行 JAR 的情况下检查 JAR 元数
 
 3. 正式文件：https://tripwireinteractive.atlassian.net/</value></data>
   <data name="Content.394E79896072E49A70E9" xml:space="preserve"><value>对于此服务器版本,需要兼容的 Metamod:Source 和 SourceMod 构建。 编译后的.smx 插件放在 ageofchivalry/addons/sourcemod/plugins 中;伴随的翻译、游戏数据和扩展保留其文档文件夹。</value></data>
-  <data name="Content.398121174F3022BF0D94" xml:space="preserve"><value>SYNIX 控制面板 — 有限的专有源可用许可证
+  <data name="Content.F91F63CB8463862C6775" xml:space="preserve"><value>SYNIX 控制面板 — 有限的专有源可用许可证
 
-版本1.0 — 2026年8月2日
+许可证修订版 1.4 — 2026 年 11 月 11 日
+
+此编号是许可修订版号，不是 Synix 应用版本号。
 版权所有©2026 杰森·特纳. 版权所有 保留所有权利
 U.S. 版权注册申请:待定
 
 本许可适用于 Synix 控制面板 软件,包括其源代码、编译的二进制文件、用户界面、文档、艺术作品、徽标和其他包含的材料(统称为&quot;软件 &quot; ) 。
 
+第 13 和 14 节还解释了 Synix 官方网站、活动计数器和可选远程管理器的隐私惯例。它们描述了当前的服务；他们不会更改下面授予的个人非商业许可。
+
 1. 所有权
 
 软件是许可的,而不是出售的。
 
-我们保留软件的所有权利、所有权和利益,包括所有版权和其他知识产权。 根据本许可,不会向您转让任何所有权。
+Jason Turner 保留软件的所有权利、所有权和利益，包括所有版权和其他知识产权。根据本许可，不会向您转让任何所有权。
 
 2. 有限许可证授予
 
@@ -2452,7 +2456,7 @@ U.S. 版权注册申请:待定
 
 4. 限制
 
-未经本网站事先书面同意,您不得:
+未经 Jason Turner 事先书面许可，您不得：
 
 4.1 商业使用
 
@@ -2544,9 +2548,104 @@ Synix名称,徽标,视觉形象和相关的品牌仍然是Jason Turner的财产�
 
 11. 书面许可
 
-本许可证的例外情况只有在本网站书面提供的情况下才有效。
+本许可证的例外情况只有在 Jason Turner 以书面形式许可时才有效。
 
-问题或权限请求应通过官方Synix GitHub存储库或其他官方Synix联系方式提交。</value></data>
+问题或权限请求应通过官方Synix GitHub存储库或其他官方Synix联系方式提交。
+
+12. 官方下载来源
+
+请仅通过以下官方来源获取 Synix：
+
+• https://github.com/ubidzz/Synix-Control-Panel/releases
+• https://synix.info
+
+其他网站提供的副本未经 Jason Turner 验证，可能不安全、被修改、已过时或捆绑了不需要的软件。Jason Turner 不保证这些副本的安全性或真实性。
+
+列出 Synix、链接至 GitHub 或提供下载，不会转移所有权，也不意味着获得授权、存在关联、得到认可或具有官方身份。Synix 仍归 Jason Turner 所有。
+
+托管、镜像、通过代理提供、重新打包下载内容或将其封装在额外的下载程序中，均须事先获得书面许可。指向官方来源的链接并不授予此类许可。
+
+第 4.2 节不禁止准确注明 Synix 和 Jason Turner 的、指向这些官方来源的普通直接链接。此类链接不会使发布链接的网站成为官方来源。
+
+当 WinGet 软件包 ubidzz.Synix 直接从 GitHub 官方发布页面下载未经修改的安装程序时，它是获准使用的安装方式。这并不授权第三方托管或重新打包软件。
+
+13. 实时活动计数器和隐私
+
+Synix 包括一个可选的实时活动计数器，用于估计 https://synix.info. 上正在运行的 Synix 会话的数量。此功能默认启用。您可以随时在“设置”&gt;“隐私和安全”&gt;“共享活跃计数”中将其关闭，而不会限制其他 Synix 功能。先前保存的偏好受到尊重。
+
+启用后，Synix 在启动时以及应用程序运行时（包括在后台）大约每 10 分钟向 https://synix.info/api/presence 发送一个 HTTPS 存在信号。该信号包含随机临时会话代码和通用 Synix 应用标识符，没有消息正文。会话代码仅保存在内存中，并在新的报告会话开始时被替换；它不是永久的设备标识符。
+
+计数器不会上传您的姓名、电子邮件地址、密码、服务器或玩家信息、配置值、文件或机器标识符。
+
+对于每个会话，网站的计数器仅存储会话代码的哈希值及其最新信号的时间。公共网站仅显示活动会话总数，这是估计值，而不是唯一人数的计数。会话在没有信号的情况下 15 分钟后停止计数。非活动计数器记录在 30 分钟后即可进行清理，并在后续计数器请求执行清理时被删除。 Synix 不会将这些计数器记录链接到远程管理员帐户或配对计算机身份。
+
+关闭该功能会停止进一步的存在信号，并尽力发出删除当前会话的请求。关闭 Synix 也会尝试删除；如果删除无法到达网站，则会话在不活动期结束后自动停止计数。
+
+与任何互联网连接一样，网站的托管服务会接收普通连接信息，例如原始 IP 地址和请求时间，并可能根据自己的隐私政策对其进行处理或记录。此信息不会存储在 Synix 的活动计数器表中，也不会显示在公共计数中。
+
+14. 远程访问隐私和安全
+
+14.1 可选访问和禁止出售数据
+
+https://manager.synix.info 的远程管理是可选的，并且在您配对计算机并在该计算机上的 Synix 应用程序中批准请求帐户之前处于关闭状态。您无需经理帐户即可在本地使用 Synix。公共活动计数器是独立的，可以独立禁用。
+
+Synix 不会向广告商或数据经纪人出售、出租、交易或披露您的帐户信息、配对计算机信息、远程活动或服务器信息。 Synix 不会将此信息用于有针对性的广告或从中构建广告配置文件。处理信息是为了提供您选择的功能、验证访问权限、操作服务并防止滥用。
+
+远程访问不是零存储服务。它需要如下所述的有限帐户、配对、操作和安全记录。这些记录不会在公共活动柜台中发布，也不会通过该服务向其他经理帐户公开。
+
+14.2 计算机上保留的内容
+
+Synix 不会自动上传游戏世界、游戏服务器文件、配置文件内容、备份存档内容、原始控制台输出或保存的游戏服务器密码。远程备份和恢复在配对计算机上运行；备份文件保留在此处配置的位置。如果您选择在网站上键入游戏控制台命令，其文本将被处理并转发到配对的计算机，包括您在该文本中输入的任何敏感值。该管理器不是云备份存储，不提供无限制的远程桌面、Windows 命令提示符访问或一般文件浏览。
+
+Synix 在您的计算机上保留其本地设置、服务器列表、历史记录、备份和配对状态。配对计算机的私有签名密钥保留在 Windows 密钥存储中。 Synix 更喜欢 TPM 支持的存储（如果可用），否则支持 Windows 保护的软件密钥，包括在兼容的 VMs 上。 TPM 可用性并不能保证计算机不会受到损害。
+
+这些语句描述了 Synix 远程管理。您选择共享的游戏、Steam、模组、Discord 集成、导出和支持报告都有自己的数据流。请勿将密码或其他敏感信息放入计算机名称、服务器名称或备份文件名中，因为这些标签可能会出现在管理器中。
+
+14.3 管理器处理和存储的信息
+
+- 帐户和身份验证：您选择的用户名、帐户标识符、创建时间、安全首选项、加盐密码哈希、启用时的加密身份验证器秘密、启用时的密钥公共凭据以及临时验证/会话记录。处理密码和验证码以检查登录；永久密码不存储为可读文本。 Synix 不会接收您的指纹、面部图像、密钥私钥或配对计算机的私钥。注册不需要真实姓名或电子邮件地址。
+- 配对和连接：您选择的计算机标签、随机设备标识符、其公共签名密钥、帐户关联、报告的密钥提供商类型、配对批准状态和上次连接时间。当 Synix 运行时，安静的经过身份验证的中继连接可以保持打开状态，以便网站可以立即唤醒配对的应用程序。中继携带唤醒/断开通知和连接元数据，而不是游戏文件或服务器快照。
+- 显示状态：有限服务器标识符、名称、游戏名称、运行状态、玩家数量、正常运行时间、可用操作、最新备份时间/状态以及整机 CPU 和已用/总 RAM 读数。当经过身份验证的经理视图处于活动状态时，应用程序会发送这些摘要。 CPU/RAM 更新覆盖配对计算机；详细的服务器更新涵盖所选计算机。更新通常每 10 秒运行一次，并在活动视图关闭、断开连接、过期或隐藏（如果适用）后暂停。其他活动的浏览器会话可以保持自己的视图运行。 单独的汇总值显示正在运行的游戏服务器进程的 CPU 和 RAM 总使用量，包括受跟踪的启动进程和工作进程。整台计算机的读数还包括具有网关的活动网络适配器的发送和接收速率，其中包括 LAN 流量。这些读数不会附带适配器标识符、IP 地址、数据包内容或浏览的网站地址。
+- 请求的操作和备份：服务器/操作标识符、请求时间、进度/结果，以及当您请求备份选择时，备份标识符、文件名、日期、大小和完整性标签。此功能不会发送备份内容和完整本地路径。
+- 游戏控制台命令：不透明的游戏运行标识符、短暂的解锁批准以及您提交的命令文本。待处理文本在服务数据库中进行加密，并在授权交付时从该记录中删除。它不包含在最近操作列表或帐户警报记录中。发送结果意味着文本已发送到游戏，而不是游戏接受或完成它。游戏响应和本地进程树不会上传。
+- 安全和滥用预防：登录失败类型、分组尝试计数和次数、恢复/安全事件类型以及相关计算机标签。短期速率限制记录可以使用连接 IP 地址和帐户标识符的密钥散列。 Synix 的帐户警报记录不包含尝试密码、验证码、原始 IP 地址或浏览器指纹。托管提供商可以单独处理连接信息，如第 14.6 节中所述。
+
+网站必须处理允许的摘要和命令以提供远程管理。 HTTPS和加密中继连接保护传输中的流量；这并不是说托管服务无法处理数据。
+
+14.4 保留和删除
+
+- 帐户凭据和设置将保留，直到帐户被删除。批准的配对记录将保留，直到计算机取消配对或删除帐户。
+- 状态快照和 CPU/RAM 读数被较新的读数覆盖，并在 15 分钟后变得符合清理条件，无需更换。最后连接时间仍然是配对记录的一部分。
+- 远程命令记录、结果和返回的备份选择元数据在 24 小时后即可进行清理。
+- 待处理的游戏控制台命令在 30 秒后过期。未送达的文本在到期或撤销时可以删除；批准的交货立即清除。控制台批准将在三分钟内过期。操作标识符和固定交付结果遵循 24 小时操作记录周期。
+- 恢复/安全事件和登录失败警报将在 90 天后进行清理。登录失败最多保留最近100个群组； 10 分钟内的匹配失败会被分组在一起。
+- 浏览器会话在没有管理员请求的 30 分钟后或总共 8 小时后过期。验证尝试在 5 分钟后过期；临时密码恢复在 10 分钟内过期，并且是一次性的。过期的验证、恢复、重放保护和速率限制记录将在清理过程中删除。不完整的帐户注册将在 24 小时后进行清理。
+
+即使在物理删除记录之前，到期也会停止授权。例行数据库清理会在后续服务请求期间运行，最多每 10 分钟一次以进行管理器清理，因此上述期间是到期或清理资格期间，而不是承诺立即删除。提供程序日志和备份副本具有不同的生命周期。
+
+取消配对将从活动服务数据库中删除选定的配对及其关联的远程记录。上述期间的恢复/安全历史记录可能会保留在帐户中。删除经理帐户将从活动服务数据库中删除其凭据、配对、快照、命令和帐户安全/恢复记录。它不会删除您的本地游戏服务器、世界、设置或备份文件。短期的防滥用记录和提供商持有的日志或备份不一定会通过这两种操作立即删除。
+
+14.5 您的控制和登录保护
+
+登录需要您的密码以及现有的密钥或身份验证器，例如 Google Authenticator。配置为需要这两种方法的帐户保留这两种要求。更改密码、通过网站取消计算机配对以及删除经理帐户都需要对该特定更改进行重新验证。
+
+解锁自定义游戏控制台输入还需要当前帐户密码和帐户现有方法要求下的最新验证。批准与一个浏览器会话、配对的计算机、保存的服务器和最多运行三分钟的实时游戏相关。停止、重新启动、关闭控制台、禁用控制台设置或丢失进程会阻止进一步的命令。断开或隐藏管理器选项卡将结束该选项卡的批准。普通的服务器操作按钮保留其现有的登录要求。仅受支持的游戏拥有的输入连接符合资格；单独的唯一标识符并不授权写入 Windows 命令提示符。
+
+如果您忘记了网站密码，之前批准的配对计算机可以发出临时密码。它无法选择其他帐户。临时密码不会绕过或删除您现有的密钥/身份验证器要求，并且您必须在进入管理器之前选择新密码。完成恢复将撤销您的其他浏览器会话。
+
+Synix 的管理器将其浏览器登录令牌保存在当前选项卡的内存中，而不是保存在 cookie、本地存储或会话存储中。刷新或关闭选项卡会丢失该登录信息。这不会阻止您的浏览器或密码管理器保存凭据（如果您选择），并且它不会描述由托管/安全提供商或公共网站的翻译服务单独设置的 cookie。
+
+您可以注销、撤销所有浏览器会话或取消计算机配对。本地Synix应用程序可以在不登录网站的情况下禁用和取消配对其远程连接。离线时，它会在本地停止远程访问，并在连接可用时重试网站删除。重新启动应用程序或 Windows 不会自动恢复明确删除的配对。仅限本地使用仍然可用。
+
+14.6 托管、公共页面和安全限制
+
+官方网站使用 OpenAI 的站点托管和 Cloudflare 服务进行交付、存储、安全和唤醒中继。这些提供商处理提供这些服务所需的信息，并可能接收 IP 地址、请求标头、时间和其他连接元数据，或保留自己的操作日志和备份副本。他们的隐私政策适用于他们的处理：https://openai.com/policies/privacy-policy/ 和 https://www.cloudflare.com/privacypolicy/.
+
+公共页面自动翻译和GitHub下载涉及各自的提供商。私人管理器与公共页面分离，并且不加载公共翻译提供商或广告脚本。 Synix 并未全面声明访问任一网站不会创建 cookie、日志或存储数据。如果法律要求，也可以披露信息；上述不销售承诺并不妨碍必要的托管或合法披露。
+
+Synix 使用经过身份验证的配对、签名的计算机请求、加密的网络连接、帐户访问检查和短期批准来减少未经授权的访问。这些保护措施并不能使远程访问没有风险，也不能保证防止每次攻击、计算机/浏览器受损、验证方法被盗或服务受损。保持 Synix 和 Windows 更新，保护您的帐户和验证方法，并仅批准您控制的计算机和帐户。
+
+此通知在 https://synix.info/license/ 上公开，并包含在应用程序的帮助中心和安装程序中。隐私问题可以通过 https://synix.info/support/. 的官方支持选项提出。请勿在公共支持消息中发布密码、恢复代码或其他私人帐户信息。本通知的更新包含新的修订版本和日期。</value></data>
   <data name="Content.3A9E909856144F8382FA" xml:space="preserve"><value>所需的关键设置:
 
 1. 引导服务器一次以构建&quot;Engine.ini &quot;, 然后关闭它。
@@ -7671,5 +7770,82 @@ Windows 防火墙权限和路由器端口转发不同。 Synix 检查本地冲�
   <data name="BackupHealth.Checking" xml:space="preserve"><value>正在检查备份…</value></data>
   <data name="History.Empty" xml:space="preserve"><value>尚未记录此服务器的活动。</value></data>
   <data name="History.NoMatches" xml:space="preserve"><value>没有符合筛选条件的活动。</value></data>
+  <data name="Appearance.Title" xml:space="preserve"><value>外观</value></data>
+  <data name="Appearance.Description" xml:space="preserve"><value>选择主题、强调色和控件样式。更改会立即生效并自动保存。</value></data>
+  <data name="Appearance.Theme" xml:space="preserve"><value>配色主题</value></data>
+  <data name="Appearance.Accent" xml:space="preserve"><value>强调色</value></data>
+  <data name="Appearance.Style" xml:space="preserve"><value>控件样式</value></data>
+  <data name="Appearance.Preview" xml:space="preserve"><value>预览</value></data>
+  <data name="Appearance.Reset" xml:space="preserve"><value>重置主题</value></data>
+  <data name="Appearance.Synix" xml:space="preserve"><value>Synix</value></data>
+  <data name="Appearance.Graphite" xml:space="preserve"><value>石墨</value></data>
+  <data name="Appearance.Ocean" xml:space="preserve"><value>海洋</value></data>
+  <data name="Appearance.Forest" xml:space="preserve"><value>森林</value></data>
+  <data name="Appearance.Violet" xml:space="preserve"><value>紫罗兰</value></data>
+  <data name="Appearance.Sand" xml:space="preserve"><value>沙色</value></data>
+  <data name="Appearance.DefaultAccent" xml:space="preserve"><value>主题默认</value></data>
+  <data name="Appearance.Teal" xml:space="preserve"><value>青绿色</value></data>
+  <data name="Appearance.Blue" xml:space="preserve"><value>蓝色</value></data>
+  <data name="Appearance.Rose" xml:space="preserve"><value>玫瑰色</value></data>
+  <data name="Appearance.Amber" xml:space="preserve"><value>琥珀色</value></data>
+  <data name="Appearance.Green" xml:space="preserve"><value>绿色</value></data>
+  <data name="Appearance.Rounded" xml:space="preserve"><value>圆角</value></data>
+  <data name="Appearance.Square" xml:space="preserve"><value>直角</value></data>
+  <data name="Settings.Privacy.ActivityCount.Title" xml:space="preserve"><value>分享活跃数量</value></data>
+  <data name="Settings.Privacy.ActivityCount.Description" xml:space="preserve"><value>可选：在 Synix 运行期间（包括后台运行），每 10 分钟向 synix.info 发送一个随机会话代码。不会发送服务器数据。活跃状态在 15 分钟后过期。默认开启。您可以在此关闭。</value></data>
+  <data name="RemoteManager.Title" xml:space="preserve"><value>远程管理</value></data>
+  <data name="RemoteManager.Description" xml:space="preserve"><value>配对此计算机后，即可通过 Synix 网站查看、启动、停止、重启和备份服务器。在此处批准配对之前，远程访问将保持关闭。</value></data>
+  <data name="RemoteManager.ManagePairing" xml:space="preserve"><value>配对或断开此计算机</value></data>
+  <data name="RemoteManager.DefaultComputer" xml:space="preserve"><value>我的服务器电脑</value></data>
+  <data name="RemoteManager.GenerateCode" xml:space="preserve"><value>生成配对码</value></data>
+  <data name="RemoteManager.Approve" xml:space="preserve"><value>批准此账户</value></data>
+  <data name="RemoteManager.Unpair" xml:space="preserve"><value>取消配对并断开连接</value></data>
+  <data name="RemoteManager.Heading" xml:space="preserve"><value>通过 Synix 网站控制此计算机</value></data>
+  <data name="RemoteManager.ComputerName" xml:space="preserve"><value>网站上显示的计算机名称</value></data>
+  <data name="RemoteManager.OpenWebsite" xml:space="preserve"><value>打开 Synix 管理器</value></data>
+  <data name="RemoteManager.Instructions" xml:space="preserve"><value>登录网站并输入此配对码。请在此处仅批准您自己的用户名。
+
+请保持 Synix 打开或最小化。待机连接会检测登录。在查看服务器信息时，信息每 10 秒更新一次。取消配对会关闭远程访问，但不会停止服务器。</value></data>
+  <data name="RemoteManager.EnterName" xml:space="preserve"><value>请输入计算机名称。</value></data>
+  <data name="RemoteManager.WaitingClaim" xml:space="preserve"><value>正在等待您的账户请求配对…</value></data>
+  <data name="RemoteManager.ApprovedFormat" xml:space="preserve"><value>已批准 {0} 的配对</value></data>
+  <data name="RemoteManager.CodeExpired" xml:space="preserve"><value>配对码已过期。请生成新的配对码。</value></data>
+  <data name="RemoteManager.ClaimFormat" xml:space="preserve"><value>请求控制的账户：{0}
+请仅在此用户名属于您时批准。</value></data>
+  <data name="RemoteManager.CheckFailed" xml:space="preserve"><value>无法检查配对状态。请检查您的互联网连接。</value></data>
+  <data name="RemoteManager.Unavailable" xml:space="preserve"><value>无法连接到 Synix 管理器。请重试。</value></data>
+  <data name="RemoteManager.IdentityTpm" xml:space="preserve"><value>计算机身份：受 TPM 保护的密钥</value></data>
+  <data name="RemoteManager.IdentitySoftware" xml:space="preserve"><value>计算机身份：受 Windows 保护的软件密钥（TPM 不可用）</value></data>
+  <data name="RemoteManager.NotPaired" xml:space="preserve"><value>未配对</value></data>
+  <data name="RemoteManager.WaitingConnection" xml:space="preserve"><value>已配对 — 等待连接</value></data>
+  <data name="RemoteManager.RemovalPending" xml:space="preserve"><value>已在本地断开连接。请在联网后重试移除。</value></data>
+  <data name="RemoteManager.LoadFailed" xml:space="preserve"><value>无法加载配对信息。远程访问已禁用。</value></data>
+  <data name="RemoteManager.WaitingApproval" xml:space="preserve"><value>需要在此计算机上批准配对。</value></data>
+  <data name="RemoteManager.SaveFailed" xml:space="preserve"><value>远程访问已禁用。无法保存配对设置。</value></data>
+  <data name="RemoteManager.RemovingPairing" xml:space="preserve"><value>已在本地断开连接 — 正在移除网站配对</value></data>
+  <data name="RemoteManager.Connected" xml:space="preserve"><value>已连接到远程管理器</value></data>
+  <data name="RemoteManager.Listening" xml:space="preserve"><value>已配对 — 等待登录</value></data>
+  <data name="RemoteManager.PairingRemoved" xml:space="preserve"><value>已移除网站配对。远程访问已禁用。</value></data>
+  <data name="RemoteManager.Reconnecting" xml:space="preserve"><value>连接不可用 — 正在重试</value></data>
+  <data name="RemoteManager.InvalidSettings" xml:space="preserve"><value>远程连接设置无效。</value></data>
+  <data name="RemoteManager.InvalidResponse" xml:space="preserve"><value>Synix 管理器返回了无效响应。</value></data>
+  <data name="RemoteManager.FinishUnpair" xml:space="preserve"><value>请重新连接互联网，并先完成移除旧配对。</value></data>
+  <data name="RemoteManager.NewCode" xml:space="preserve"><value>请生成新的配对码。</value></data>
+  <data name="RemoteManager.ActionRequested" xml:space="preserve"><value>[远程管理] 已请求对 {1} 执行 {0} 操作。</value></data>
+  <data name="RemoteManager.RecoveryTitle" xml:space="preserve"><value>恢复网站密码</value></data>
+  <data name="RemoteManager.RecoveryGenerate" xml:space="preserve"><value>创建临时密码</value></data>
+  <data name="RemoteManager.RecoveryCancel" xml:space="preserve"><value>取消此次恢复</value></data>
+  <data name="RemoteManager.RecoveryShow" xml:space="preserve"><value>显示临时密码</value></data>
+  <data name="RemoteManager.RecoveryInstructions" xml:space="preserve"><value>在此创建临时密码。使用该密码及现有的双重验证或通行密钥登录网站，然后设置新密码。如果原来要求两种验证方式，则仍需完成两种验证。临时密码仅可使用一次，10 分钟后过期。恢复完成前，原密码仍然有效。</value></data>
+  <data name="RemoteManager.RecoveryReady" xml:space="preserve"><value>账户：{0}。可以创建临时密码。</value></data>
+  <data name="RemoteManager.RecoveryExpires" xml:space="preserve"><value>账户：{0}。将在 {1} 后过期。</value></data>
+  <data name="RemoteManager.RecoveryExpired" xml:space="preserve"><value>恢复已过期或被撤销。请重新开始。</value></data>
+  <data name="RemoteManager.RecoveryLimited" xml:space="preserve"><value>请求过多。请稍后重试。</value></data>
+  <data name="Help.LicenseMissing" xml:space="preserve"><value>嵌入式 Synix 许可证丢失。</value></data>
+  <data name="Status.Activity.Reconnected" xml:space="preserve"><value>[SYNIX] 已重新连接到正在运行的服务器“{0}”（PID: {1}）。</value></data>
+  <data name="Status.Activity.ReconnectedByPath" xml:space="preserve"><value>[SYNIX] 已重新连接到在安装文件夹中找到的正在运行的服务器“{0}”（PID: {1}）。</value></data>
+  <data name="Settings.Backup.Transfer.RemoteAccessNotice" xml:space="preserve">
+    <value>远程访问配对不会随迁移转移。如果您使用远程访问，请在恢复 Synix 后，在 manager.synix.info 上将新电脑与您的账户配对。</value>
+  </data>
 </root>
 
