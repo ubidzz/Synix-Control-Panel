@@ -2,6 +2,7 @@ using System.Drawing;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Windows.Forms;
+using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Design.Controls;
 using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixApp.UI.Settings;
@@ -14,6 +15,63 @@ namespace Synix_Control_Panel.Tests;
 public sealed class OperationalLayoutTests
 {
 	public static IEnumerable<object[]> Languages() => LocalizationManager.SupportedLanguages.Select(language => new object[] { language.Code });
+
+	[Theory]
+	[MemberData(nameof(Languages))]
+	public void PrivacyCardsFitTheirTextAndKeepRecoveryBesidePairingWhenThereIsRoom(string language)
+	{
+		WorkflowUiTest.Run(() =>
+		{
+			try
+			{
+				LocalizationManager.Initialize(language);
+				foreach (bool dark in new[] { true, false })
+				{
+					ThemeManager.Initialize(dark);
+					using Form host = new() { ShowInTaskbar = false, StartPosition = FormStartPosition.Manual, Location = new Point(-32000, -32000) };
+					using PrivacySettingsPage page = new() { Dock = DockStyle.Fill };
+					host.Controls.Add(page); host.Show(); ThemeManager.Apply(host);
+					Control Find(string name) => page.Controls.Find(name, true).Single();
+					Control pairing = Find("manageRemotePairing"), recovery = Find("recoverWebsitePassword");
+					Assert.Equal(LocalizationManager.Get("RemoteManager.RecoveryTitle"), recovery.Text);
+					Assert.Equal(RemoteManagerService.Shared.State is { Enabled: true, PendingUnpair: false }, recovery.Enabled);
+					Assert.True(recovery.TabStop);
+					foreach (int width in new[] { 600, 818, 1000, 600 })
+					{
+						host.ClientSize = new Size(width, 540); Application.DoEvents(); page.PerformLayout();
+						Assert.False(page.HorizontalScroll.Visible);
+						var cards = Find("privacySettingsCards").Controls.Cast<Control>().OrderBy(card => card.Top).ToArray();
+						for (int index = 1; index < cards.Length; index++) Assert.True(cards[index].Top >= cards[index - 1].Bottom);
+						foreach (string name in new[] { "activityCountDescription", "remoteManagerDescription", "remoteConnectionStatus" })
+						{
+							Control label = Find(name);
+							int needed = TextRenderer.MeasureText(label.Text, label.Font, new Size(label.Width, int.MaxValue),
+								TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix).Height;
+							Assert.True(label.Height >= needed, $"{language}/{width}: {name} requires {needed}px, has {label.Height}px.");
+						}
+						Control actions = Find("remoteManagerActions");
+						Assert.True(actions.ClientRectangle.Contains(pairing.Bounds));
+						Assert.True(actions.ClientRectangle.Contains(recovery.Bounds));
+						Assert.False(pairing.Bounds.IntersectsWith(recovery.Bounds));
+						if (language == "en-US" && width == 818)
+						{
+							float scale = page.DeviceDpi / 96f;
+							Assert.True(Find("activityCountCard").Height < 150 * scale);
+							Assert.True(Find("remoteManagerCard").Height < 210 * scale);
+							Assert.Equal(pairing.Top, recovery.Top);
+						}
+						if (Environment.GetEnvironmentVariable("SYNIX_RENDER_LANGUAGES") == "1" && width == 818 && language is "en-US" or "de-DE")
+						{
+							host.ClientSize = new Size(width, 800); Application.DoEvents();
+							using Bitmap image = new(page.Width, page.Height); page.DrawToBitmap(image, new Rectangle(Point.Empty, image.Size));
+							image.Save(Path.Combine(AppContext.BaseDirectory, $"privacy-settings-{language}-{(dark ? "dark" : "light")}.png"));
+						}
+					}
+				}
+			}
+			finally { ThemeManager.Initialize(true); LocalizationManager.Initialize("en-US"); }
+		});
+	}
 
 	[Theory]
 	[MemberData(nameof(Languages))]

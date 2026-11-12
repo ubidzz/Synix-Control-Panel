@@ -23,45 +23,101 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 		public PrivacySettingsPage()
 		{
 			InitializeComponent();
-			AddActivityCountCard();
-			AddRemoteManagerCard();
+			AutoScroll = true;
+			var cards = new TableLayoutPanel
+			{
+				Name = "privacySettingsCards", Dock = DockStyle.Top, AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 4,
+				Margin = Padding.Empty
+			};
+			cards.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+			ModernSettingsCard[] sections = [settingsCard, settingsCardDDoS, CreateActivityCountCard(), CreateRemoteManagerCard()];
+			for (int index = 0; index < sections.Length; index++)
+			{
+				cards.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+				sections[index].Dock = DockStyle.Top;
+				sections[index].Margin = new Padding(0, 0, 0, 14);
+				sections[index].TabIndex = index;
+				cards.Controls.Add(sections[index], 0, index);
+			}
+			Controls.Add(cards);
 		}
 
-		private void AddRemoteManagerCard()
+		private ModernSettingsCard CreateRemoteManagerCard()
 		{
 			var card = new ModernSettingsCard
 			{
-				Name = "remoteManagerCard", Location = new Point(0, 480), Size = new Size(818, 220),
-				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				Name = "remoteManagerCard", AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				BackColor = SettingsPalette.Window, FillColor = SettingsPalette.Card,
-				BorderColor = SettingsPalette.Border, Padding = new Padding(22, 18, 22, 18)
+				BorderColor = SettingsPalette.Border, Padding = new Padding(22, 16, 22, 16)
 			};
-			var layout = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4, BackColor = SettingsPalette.Card };
-			layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
-			layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-			layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
-			layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
-			var title = new Label { Dock = DockStyle.Fill, ForeColor = SettingsPalette.PrimaryText,
+			var layout = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 4,
+				Margin = Padding.Empty, BackColor = SettingsPalette.Card };
+			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+			for (int row = 0; row < 4; row++) layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			var title = new Label { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 0, 0, 8),
+				ForeColor = SettingsPalette.PrimaryText, UseMnemonic = false, UseCompatibleTextRendering = false,
 				Font = new Font("Segoe UI", 12F, FontStyle.Bold) };
 			LocalizationManager.BindText(title, "RemoteManager.Title");
 			layout.Controls.Add(title, 0, 0);
-			var description = new Label { Dock = DockStyle.Fill, ForeColor = SettingsPalette.SecondaryText, Font = new Font("Segoe UI", 9.5F) };
+			var description = new Label { Name = "remoteManagerDescription", AutoSize = true, Dock = DockStyle.Fill,
+				Margin = new Padding(0, 0, 0, 10), UseMnemonic = false, UseCompatibleTextRendering = false,
+				ForeColor = SettingsPalette.SecondaryText, Font = new Font("Segoe UI", 9.5F) };
 			LocalizationManager.BindText(description, "RemoteManager.Description");
 			layout.Controls.Add(description, 0, 1);
-			var button = new ModernSettingsButton { AutoSize = true, Dock = DockStyle.Left };
+			var actions = new FlowLayoutPanel { Name = "remoteManagerActions", Dock = DockStyle.Fill,
+				AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, WrapContents = true,
+				Margin = Padding.Empty, BackColor = SettingsPalette.Card };
+			var button = new ModernSettingsButton { Name = "manageRemotePairing", AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink, MinimumSize = new Size(0, 36),
+				Padding = new Padding(10, 4, 10, 4), Margin = new Padding(0, 0, 12, 6) };
 			LocalizationManager.BindText(button, "RemoteManager.ManagePairing");
-			button.Click += (_, _) => { using var dialog = new RemoteManagerDialog(); dialog.ShowDialog(FindForm()); };
+			var recover = new ModernSettingsButton { Name = "recoverWebsitePassword", AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink, MinimumSize = new Size(0, 36),
+				Padding = new Padding(10, 4, 10, 4), Margin = new Padding(0, 0, 0, 6) };
+			LocalizationManager.BindText(recover, "RemoteManager.RecoveryTitle");
+			recover.Click += (_, _) =>
+			{
+				RefreshStatus();
+				if (!recover.Enabled) return;
+				using var dialog = new RemoteRecoveryDialog(SynixEngine.RemoteManagerService.Shared);
+				dialog.ShowDialog(FindForm());
+				RefreshStatus();
+			};
+			button.Click += (_, _) =>
+			{
+				using var dialog = new RemoteManagerDialog();
+				dialog.ShowDialog(FindForm());
+				RefreshStatus();
+			};
+			actions.Controls.Add(button); actions.Controls.Add(recover);
 			_remoteStatus.Name = "remoteConnectionStatus";
+			_remoteStatus.AutoSize = true;
 			_remoteStatus.Dock = DockStyle.Fill;
+			_remoteStatus.Margin = new Padding(0, 0, 0, 10);
+			_remoteStatus.UseMnemonic = false;
+			_remoteStatus.UseCompatibleTextRendering = false;
 			_remoteStatus.TextAlign = ContentAlignment.MiddleLeft;
 			_remoteStatus.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			layout.Controls.Add(_remoteStatus, 0, 2);
-			layout.Controls.Add(button, 0, 3); card.Controls.Add(layout); Controls.Add(card);
+			layout.Controls.Add(actions, 0, 3); card.Controls.Add(layout);
+			void FitContent()
+			{
+				int width = Math.Max(1, card.DisplayRectangle.Width);
+				title.MaximumSize = description.MaximumSize = _remoteStatus.MaximumSize = new Size(width, 0);
+				actions.MaximumSize = new Size(width, 0);
+				button.MaximumSize = new Size(Math.Max(1, width - button.Margin.Horizontal), 0);
+				recover.MaximumSize = new Size(width, 0);
+			}
+			card.SizeChanged += (_, _) => FitContent();
+			DpiChangedAfterParent += (_, _) => FitContent();
 			void RefreshStatus()
 			{
 				var service = SynixEngine.RemoteManagerService.Shared;
 				LocalizationManager.SetDataText(_remoteStatus, service.ConnectionStatus);
 				_remoteStatus.ForeColor = service.IsConnected ? Color.Turquoise : SettingsPalette.SecondaryText;
+				recover.Enabled = service.State is { Enabled: true, PendingUnpair: false };
 			}
 			// UI-only refresh; no network calls. Dispose with the page and pause when hidden.
 			components ??= new Container();
@@ -69,6 +125,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			timer.Tick += (_, _) => RefreshStatus();
 			VisibleChanged += (_, _) => { timer.Enabled = Visible; if (Visible) RefreshStatus(); };
 			RefreshStatus(); timer.Enabled = Visible;
+			return card;
 		}
 
 		[Browsable(false)]
@@ -86,39 +143,40 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			remove => _shareActivityCount.CheckedChanged -= value;
 		}
 
-		private void AddActivityCountCard()
+		private ModernSettingsCard CreateActivityCountCard()
 		{
-			AutoScroll = true;
 			var card = new ModernSettingsCard
 			{
-				Name = "activityCountCard", Location = new Point(0, 264), Size = new Size(818, 200),
-				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+				Name = "activityCountCard", AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				BackColor = SettingsPalette.Window, FillColor = SettingsPalette.Card,
-				BorderColor = SettingsPalette.Border, Padding = new Padding(22, 18, 22, 18)
+				BorderColor = SettingsPalette.Border, Padding = new Padding(22, 16, 22, 16)
 			};
 			var layout = new TableLayoutPanel
 			{
-				Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 2, BackColor = SettingsPalette.Card
+				Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				ColumnCount = 2, RowCount = 2, Margin = Padding.Empty, BackColor = SettingsPalette.Card
 			};
 			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70));
 			layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-			layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+			layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			var title = new Label
 			{
-				Text = LocalizationManager.Get("Settings.Privacy.ActivityCount.Title"), AutoSize = true,
+				AutoSize = true, UseMnemonic = false, UseCompatibleTextRendering = false,
 				Dock = DockStyle.Fill, Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-				ForeColor = SettingsPalette.PrimaryText, Margin = new Padding(0, 0, 12, 12)
+				ForeColor = SettingsPalette.PrimaryText, Margin = new Padding(0, 0, 12, 8)
 			};
+			LocalizationManager.BindText(title, "Settings.Privacy.ActivityCount.Title");
 			var description = new Label
 			{
-				Text = LocalizationManager.Get("Settings.Privacy.ActivityCount.Description"),
+				Name = "activityCountDescription", AutoSize = true, UseMnemonic = false, UseCompatibleTextRendering = false,
 				Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9.5F),
 				ForeColor = SettingsPalette.SecondaryText, Margin = Padding.Empty
 			};
+			LocalizationManager.BindText(description, "Settings.Privacy.ActivityCount.Description");
 			_shareActivityCount.Name = "shareActivityCount";
-			_shareActivityCount.AccessibleName = title.Text;
-			_shareActivityCount.AccessibleDescription = description.Text;
+			LocalizationManager.BindAccessibleName(_shareActivityCount, "Settings.Privacy.ActivityCount.Title");
+			LocalizationManager.BindAccessibleDescription(_shareActivityCount, "Settings.Privacy.ActivityCount.Description");
 			_shareActivityCount.Size = new Size(54, 30);
 			_shareActivityCount.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			layout.Controls.Add(title, 0, 0);
@@ -126,7 +184,15 @@ namespace Synix_Control_Panel.SynixApp.UI.Settings
 			layout.Controls.Add(description, 0, 1);
 			layout.SetColumnSpan(description, 2);
 			card.Controls.Add(layout);
-			Controls.Add(card);
+			void FitContent()
+			{
+				int width = Math.Max(1, card.DisplayRectangle.Width);
+				title.MaximumSize = new Size(Math.Max(1, width - (int)layout.ColumnStyles[1].Width - title.Margin.Horizontal), 0);
+				description.MaximumSize = new Size(width, 0);
+			}
+			card.SizeChanged += (_, _) => FitContent();
+			DpiChangedAfterParent += (_, _) => FitContent();
+			return card;
 		}
 
 		[Browsable(false)]
