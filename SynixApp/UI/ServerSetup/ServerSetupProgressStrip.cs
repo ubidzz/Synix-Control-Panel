@@ -151,6 +151,7 @@ public sealed class ServerSetupProgressStrip : UserControl
 			e.Graphics.FillEllipse(fill, circle);
 			e.Graphics.DrawEllipse(outline, circle);
 			TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter |
+				(LocalizationManager.IsRightToLeft ? TextFormatFlags.RightToLeft : 0) |
 				TextFormatFlags.NoPrefix | TextFormatFlags.EndEllipsis;
 			TextRenderer.DrawText(e.Graphics, State == StepState.Complete ? "✓" : (_index + 1).ToString(), Font, circle, color, flags);
 			TextRenderer.DrawText(e.Graphics, Text, Font, new Rectangle(Px(4), Px(39), Width - Px(8), Px(19)),

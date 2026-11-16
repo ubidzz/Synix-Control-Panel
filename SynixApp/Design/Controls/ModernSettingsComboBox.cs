@@ -106,8 +106,9 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			bool drawingEditArea =
 				(eventArgs.State & DrawItemState.ComboBoxEdit) != 0;
 			int rightPadding = drawingEditArea ? 44 : 18;
+			bool rightToLeft = RightToLeft == RightToLeft.Yes;
 			Rectangle textBounds = new(
-				eventArgs.Bounds.X + 10,
+				eventArgs.Bounds.X + (rightToLeft ? rightPadding - 10 : 10),
 				eventArgs.Bounds.Y,
 				Math.Max(0, eventArgs.Bounds.Width - rightPadding),
 				eventArgs.Bounds.Height);
@@ -117,7 +118,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Font,
 				textBounds,
 				itemForeColor,
-				TextFormatFlags.Left |
+				(rightToLeft ? TextFormatFlags.Right | TextFormatFlags.RightToLeft : TextFormatFlags.Left) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);
@@ -235,6 +236,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 
 		private void DrawModernChrome(Graphics graphics)
 		{
+			bool rightToLeft = RightToLeft == RightToLeft.Yes;
 			using SolidBrush inputBrush = new(SettingsPalette.Input);
 			graphics.FillRectangle(inputBrush, ClientRectangle);
 
@@ -251,7 +253,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Math.Max(28, Math.Min(ClientSize.Height, 34)),
 				Math.Max(1, ClientSize.Width / 2));
 			Rectangle textBounds = new(
-				10,
+				rightToLeft ? buttonWidth + 6 : 10,
 				0,
 				Math.Max(0, ClientSize.Width - buttonWidth - 16),
 				ClientSize.Height);
@@ -261,7 +263,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Font,
 				textBounds,
 				Enabled ? SettingsPalette.PrimaryText : SettingsPalette.MutedText,
-				TextFormatFlags.Left |
+				(rightToLeft ? TextFormatFlags.Right | TextFormatFlags.RightToLeft : TextFormatFlags.Left) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);
@@ -272,7 +274,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				arrowBackground,
 				borderColor,
 				arrowColor,
-				true);
+				true,
+				rightToLeft);
 		}
 	}
 }

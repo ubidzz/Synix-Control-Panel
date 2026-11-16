@@ -12,6 +12,7 @@
 // ============================================================================
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Reflection;
 using System.Resources;
@@ -37,8 +38,10 @@ internal static class LocalizationManager
 	private static readonly IReadOnlyList<SupportedLanguage> Languages =
 		DiscoverSupportedLanguages();
 
-	private static readonly IReadOnlyDictionary<string, string>
+	private static readonly ConcurrentDictionary<string, string>
 		StaticTextKeys = BuildStaticTextKeyMap();
+	private static readonly HashSet<string> IndexedCultures = new(StringComparer.OrdinalIgnoreCase);
+	private static readonly object TextIndexLock = new();
 
 	private static readonly IReadOnlyList<TranslationFragment>
 		DynamicTextFragments = BuildTranslationFragments("DynamicText.");
@@ -71,6 +74,8 @@ internal static class LocalizationManager
 		RuntimeTextBindings = new();
 	private static readonly ConditionalWeakTable<Control, TextChangeTracking>
 		DataTextControls = new();
+	private static readonly ConditionalWeakTable<Control, TextChangeTracking>
+		InterfaceTextControls = new();
 
 	private static CultureInfo _currentUICulture =
 		CultureInfo.GetCultureInfo(DefaultLanguageCode);
@@ -83,6 +88,7 @@ internal static class LocalizationManager
 	public static event EventHandler? LanguageChanged;
 
 	public static string CurrentLanguageCode => _currentUICulture.Name;
+	public static bool IsRightToLeft => _currentUICulture.TextInfo.IsRightToLeft;
 
 	public static IReadOnlyList<SupportedLanguage> SupportedLanguages =>
 		Languages;
@@ -93,6 +99,7 @@ internal static class LocalizationManager
 	public static void Initialize(string? languageCode)
 	{
 		_currentUICulture = ResolveCulture(languageCode);
+		IndexCultureText(_currentUICulture);
 		CultureInfo.CurrentUICulture = _currentUICulture;
 		CultureInfo.DefaultThreadCurrentUICulture = _currentUICulture;
 	}
@@ -108,6 +115,7 @@ internal static class LocalizationManager
 			return false;
 		}
 
+		IndexCultureText(culture);
 		_currentUICulture = culture;
 		CultureInfo.CurrentUICulture = culture;
 		CultureInfo.DefaultThreadCurrentUICulture = culture;
@@ -178,6 +186,7 @@ internal static class LocalizationManager
 	{
 		ArgumentNullException.ThrowIfNull(control);
 		DataTextControls.Remove(control);
+		ApplyReadingDirection(control);
 		TrackTextChanges(control);
 		RuntimeTextBindings.Remove(control);
 		BindTextValue(
@@ -192,9 +201,31 @@ internal static class LocalizationManager
 	public static void SetDataText(Control control, string value)
 	{
 		DataTextControls.GetOrCreateValue(control);
+		InterfaceTextControls.Remove(control);
+		control.RightToLeft = RightToLeft.No;
 		TextBindings.Remove(control);
 		RuntimeTextBindings.Remove(control);
 		WriteLocalizedText(text => control.Text = text, value);
+	}
+
+	// Read-only article controls can opt in; editable commands, paths, passwords,
+	// numeric fields and console output keep their original reading direction.
+	public static void UseInterfaceTextDirection(Control control)
+	{
+		ArgumentNullException.ThrowIfNull(control);
+		InterfaceTextControls.GetOrCreateValue(control);
+		ApplyReadingDirection(control);
+	}
+
+	private static void ApplyReadingDirection(Control control)
+	{
+		bool isInterfaceText = !DataTextControls.TryGetValue(control, out _) &&
+			(control is Label or ButtonBase or GroupBox or TabPage or ListBox or ToolStrip ||
+			 control is ComboBox { DropDownStyle: ComboBoxStyle.DropDownList } ||
+			 InterfaceTextControls.TryGetValue(control, out _));
+		// Keep the existing window/scroll-container geometry. WinForms AutoScroll
+		// with RTL and right-anchored children can otherwise hide the scrollbars.
+		control.RightToLeft = isInterfaceText && IsRightToLeft ? RightToLeft.Yes : RightToLeft.No;
 	}
 
 	public static void BindAccessibleName(
@@ -322,6 +353,13 @@ internal static class LocalizationManager
 	private static void ApplyControl(Control control)
 	{
 		TrackControlTreeChanges(control);
+		ApplyReadingDirection(control);
+		if (!DataTextControls.TryGetValue(control, out _) &&
+			(control is Label or ButtonBase or ComboBox or GroupBox or TabPage or DataGridView or ListView ||
+			 InterfaceTextControls.TryGetValue(control, out _)) &&
+			!control.Font.Name.Contains("Symbol", StringComparison.OrdinalIgnoreCase) &&
+			!control.Font.Name.Contains("Icons", StringComparison.OrdinalIgnoreCase))
+			LocalizedFont.Apply(control);
 
 		if (ShouldLocalizeText(control))
 		{
@@ -375,6 +413,7 @@ internal static class LocalizationManager
 
 		if (control.ContextMenuStrip is ContextMenuStrip attachedMenu)
 		{
+			ApplyReadingDirection(attachedMenu);
 			ApplyToolStripItems(attachedMenu.Items);
 		}
 
@@ -541,6 +580,8 @@ internal static class LocalizationManager
 	{
 		foreach (ToolStripItem item in items)
 		{
+			LocalizedFont.Apply(item);
+			item.RightToLeft = IsRightToLeft ? RightToLeft.Yes : RightToLeft.No;
 			ApplyBoundText(
 				item,
 				() => item.Text ?? string.Empty,
@@ -611,42 +652,55 @@ internal static class LocalizationManager
 		}
 	}
 
-	private static IReadOnlyDictionary<string, string> BuildStaticTextKeyMap()
+	private static ConcurrentDictionary<string, string> BuildStaticTextKeyMap()
 	{
-		Dictionary<string, string> keys =
+		ConcurrentDictionary<string, string> keys =
 			new(StringComparer.Ordinal);
-		IEnumerable<CultureInfo> cultures =
-			new[] { CultureInfo.InvariantCulture }
-				.Concat(Languages.Select(language =>
-					CultureInfo.GetCultureInfo(language.Code)));
+		AddCultureText(keys, CultureInfo.InvariantCulture);
+		return keys;
+	}
 
-		foreach (CultureInfo culture in cultures)
+	private static void IndexCultureText(CultureInfo culture)
+	{
+		lock (TextIndexLock)
 		{
-			ResourceSet? resourceSet = ResourceManager.GetResourceSet(
-				culture,
-				createIfNotExists: true,
-				tryParents: true);
-			if (resourceSet is null)
+			if (IndexedCultures.Add(culture.Name))
+				AddCultureText(StaticTextKeys, culture);
+		}
+	}
+
+	private static void AddCultureText(ConcurrentDictionary<string, string> keys, CultureInfo culture)
+	{
+		ResourceSet? resourceSet = ResourceManager.GetResourceSet(
+			culture,
+			createIfNotExists: true,
+			tryParents: true);
+		if (resourceSet is null)
+		{
+			return;
+		}
+
+		// Prefer canonical captions when two English phrases share a translation
+		// (for example "Save" and "Save server" can both become "Enregistrer").
+		// Explicit BindText callers still retain their exact resource key.
+		foreach (DictionaryEntry entry in resourceSet.Cast<DictionaryEntry>()
+			.OrderBy(entry => entry.Key is string key && key.StartsWith("Text.", StringComparison.Ordinal) ? 0 : 1)
+			.ThenBy(entry => entry.Key is string key
+				? ResourceManager.GetString(key, CultureInfo.InvariantCulture)?.Length ?? int.MaxValue
+				: int.MaxValue)
+			.ThenBy(entry => (string)entry.Key, StringComparer.Ordinal))
+		{
+			if (entry.Key is not string key ||
+				entry.Value is not string value ||
+				key.StartsWith("_", StringComparison.Ordinal) ||
+				(!key.StartsWith("Text.", StringComparison.Ordinal) &&
+					value.Contains('{')))
 			{
 				continue;
 			}
 
-			foreach (DictionaryEntry entry in resourceSet)
-			{
-				if (entry.Key is not string key ||
-					entry.Value is not string value ||
-					key.StartsWith("_", StringComparison.Ordinal) ||
-					(!key.StartsWith("Text.", StringComparison.Ordinal) &&
-						value.Contains('{')))
-				{
-					continue;
-				}
-
-				keys.TryAdd(value, key);
-			}
+			keys.TryAdd(value, key);
 		}
-
-		return keys;
 	}
 
 	private static IReadOnlyList<TranslationFragment> BuildTranslationFragments(
@@ -779,6 +833,9 @@ internal static class LocalizationManager
 			Synix_Control_Panel.SynixEngine.ApplicationLogService.WriteSuppressedException(suppressedException);
 		}
 
+		// Coverage checks read every catalog. Release those sets before retaining
+		// only English and the languages actually selected during this session.
+		ResourceManager.ReleaseAllResources();
 		return languages
 			.OrderBy(language => language.Code == DefaultLanguageCode ? 0 : 1)
 			.ThenBy(language => language.DisplayName, StringComparer.CurrentCulture)
@@ -805,24 +862,32 @@ internal static class LocalizationManager
 		if (resourceCulture.Name.Length == 0)
 			return;
 
-		ResourceSet? catalog = ResourceManager.GetResourceSet(
-			resourceCulture, createIfNotExists: true, tryParents: false);
+		CultureInfo selectionCulture = LanguageCatalogPolicy.GetSelectionCulture(resourceCulture);
+		if (languages.Any(language => string.Equals(
+			language.Code, selectionCulture.Name, StringComparison.OrdinalIgnoreCase)))
+			return;
+
+		string satellitePath = Path.Combine(AppContext.BaseDirectory, resourceCulture.Name,
+			$"{typeof(LocalizationManager).Assembly.GetName().Name}.resources.dll");
+		IReadOnlyDictionary<string, string>? catalog;
+		if (File.Exists(satellitePath))
+		{
+			catalog = LanguageCatalogReader.ReadSatellite(satellitePath, resourceCulture.Name);
+		}
+		else
+		{
+			// Single-file publishing can bundle satellites instead of leaving files.
+			ResourceSet? bundled = ResourceManager.GetResourceSet(
+				resourceCulture, createIfNotExists: true, tryParents: false);
+			catalog = bundled == null ? null : ReadCatalog(bundled);
+		}
 		ResourceSet english = ResourceManager.GetResourceSet(
 			CultureInfo.InvariantCulture, createIfNotExists: true, tryParents: false)!;
 		LanguageCatalogPolicy.CatalogCoverage coverage = LanguageCatalogPolicy.CheckCatalog(
-			ReadCatalog(english), catalog == null ? null : ReadCatalog(catalog),
+			ReadCatalog(english), catalog,
 			isEnglish: resourceCulture.TwoLetterISOLanguageName == "en");
 		if (coverage.State != LanguageCatalogPolicy.CatalogState.Complete)
 			return;
-
-		CultureInfo selectionCulture = LanguageCatalogPolicy.GetSelectionCulture(resourceCulture);
-		if (languages.Any(language => string.Equals(
-			language.Code,
-			selectionCulture.Name,
-			StringComparison.OrdinalIgnoreCase)))
-		{
-			return;
-		}
 
 		string languageCode = selectionCulture.TwoLetterISOLanguageName;
 		string? resourceKey = languageCode.ToLowerInvariant() switch
@@ -867,6 +932,93 @@ internal static class LocalizationManager
 			"lt" or "lt-LT" => "Lietuvių",
 			"ms" or "ms-MY" => "Bahasa Melayu",
 			"fil" or "fil-PH" => "Filipino",
+			"af" or "af-ZA" => "Afrikaans",
+			"cy" or "cy-GB" => "Cymraeg",
+			"az-Latn" => "Azərbaycanca (latın)",
+			"az-Cyrl" => "Азәрбајҹанҹа (Кирил)",
+			"be" or "be-BY" => "Беларуская",
+			"bn" or "bn-BD" => "বাংলা",
+			"bs-Latn" => "Bosanski (latinica)",
+			"bs-Cyrl" => "Босански (ћирилица)",
+			"uz-Cyrl" => "Ўзбекча (Кирилл)",
+			"hi-Latn" => "Hindī (Latin)",
+			"tzm-Tfng" => "ⵜⴰⵎⴰⵣⵉⵖⵜ (ⵜⵉⴼⵉⵏⴰⵖ)",
+			"ak" => "Akan",
+			"ast" => "Asturianu",
+			"bem" => "Ichibemba",
+			"bm" => "Bamanankan",
+			"bo" => "བོད་ཡིག",
+			"ceb" => "Cebuano",
+			"co" => "Corsu",
+			"cv" => "Чăвашла",
+			"dv" => "ދިވެހި",
+			"dz" => "རྫོང་ཁ",
+			"ee" => "Eʋegbe",
+			"ff-Latn" => "Fulfulde (Latin)",
+			"ff-Adlm" => "𞤊𞤵𞤤𞤬𞤵𞤤𞤣𞤫 (𞤀𞤁𞤂𞤀𞤃)",
+			"fur" => "Furlan",
+			"fy" => "Frysk",
+			"gn" => "Avañe’ẽ",
+			"gsw" => "Schwiizerdüütsch",
+			"haw" => "ʻŌlelo Hawaiʻi",
+			"kab" => "Taqbaylit",
+			"kam" => "Kikamba",
+			"kea" => "Kabuverdianu",
+			"ki" => "Gĩkũyũ",
+			"kr-Latn" => "Kanuri (Latin)",
+			"ks-Arab" => "کٲشُر (عربی)",
+			"ks-Deva" => "कॉशुर (देवनागरी)",
+			"lg" => "Luganda",
+			"ln" => "Lingála",
+			"luo" => "Dholuo",
+			"mai" => "मैथिली",
+			"mni-Beng" => "মৈতৈলোন্",
+			"my" => "မြန်မာစာ",
+			"nso" => "Sesotho sa Leboa",
+			"nus" => "Thok Nath",
+			"om" => "Afaan Oromoo",
+			"pa-Guru" => "ਪੰਜਾਬੀ (ਗੁਰਮੁਖੀ)",
+			"pap" => "Papiamentu",
+			"rn" => "Ikirundi",
+			"sa" => "संस्कृतम्",
+			"sd-Arab" => "سنڌي",
+			"sg" => "Sängö",
+			"ss" => "SiSwati",
+			"st" => "Sesotho",
+			"su-Latn" => "Basa Sunda (Latin)",
+			"ti" => "ትግርኛ",
+			"tn" => "Setswana",
+			"ts" => "XiTsonga",
+			"ug" => "ئۇيغۇرچە",
+			"wo" => "Wolof",
+			"yi" => "ייִדיש",
+			"yo" => "Yorùbá",
+			"eu" or "eu-ES" => "Euskara",
+			"ga" or "ga-IE" => "Gaeilge",
+			"gl" or "gl-ES" => "Galego",
+			"gu" or "gu-IN" => "ગુજરાતી",
+			"hy" or "hy-AM" => "Հայերեն",
+			"is" or "is-IS" => "Íslenska",
+			"ka" or "ka-GE" => "ქართული",
+			"kk" or "kk-KZ" => "Қазақша",
+			"kn" or "kn-IN" => "ಕನ್ನಡ",
+			"mk" or "mk-MK" => "Македонски",
+			"ml" or "ml-IN" => "മലയാളം",
+			"mr" or "mr-IN" => "मराठी",
+			"ne" or "ne-NP" => "नेपाली",
+			"sq" or "sq-AL" => "Shqip",
+			"sr-Cyrl" => "Српски (ћирилица)",
+			"sr-Latn" => "Srpski (latinica)",
+			"am" => "አማርኛ",
+			"ar" => "العربية",
+			"he" => "עברית",
+			"fa" => "فارسی",
+			"ur" => "اردو",
+			"nn" => "Norsk nynorsk",
+			"eo" => "Esperanto",
+			"sw" or "sw-KE" => "Kiswahili",
+			"ta" or "ta-IN" => "தமிழ்",
+			"te" or "te-IN" => "తెలుగు",
 			"de" or "de-DE" => "Deutsch",
 			"es" or "es-ES" => "Español",
 			"fr" or "fr-FR" => "Français",

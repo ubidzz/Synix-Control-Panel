@@ -954,6 +954,8 @@ namespace Synix_Control_Panel.SynixApp.UI.Dashboard
 			string displayStatus = BusyStatusPresentation.GetDisplayStatus(busyState);
 			Font statusFont = eventArgs.CellStyle?.Font ?? dataGridView1.Font;
 			TextFormatFlags statusFlags = TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding;
+			if (LocalizationManager.IsRightToLeft)
+				statusFlags |= TextFormatFlags.RightToLeft | TextFormatFlags.Right;
 			int textHeight = Math.Min(textBounds.Height, TextRenderer.MeasureText(eventArgs.Graphics, displayStatus,
 				statusFont, new Size(Math.Max(1, textBounds.Width), int.MaxValue), statusFlags).Height);
 			textBounds.Y += (textBounds.Height - textHeight) / 2;

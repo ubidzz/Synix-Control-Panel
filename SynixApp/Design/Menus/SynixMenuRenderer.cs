@@ -121,7 +121,9 @@ namespace Synix_Control_Panel.SynixApp.Design
 				? AccentBorder
 				: SettingsPalette.PrimaryText;
 
-			TextRenderer.DrawText(e.Graphics, e.Item.Text, e.Item.Font ?? SystemFonts.MenuFont, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
+			TextRenderer.DrawText(e.Graphics, e.Item.Text, e.Item.Font ?? SystemFonts.MenuFont, textRect, textColor,
+				TextFormatFlags.VerticalCenter | (e.Item.RightToLeft == RightToLeft.Yes
+					? TextFormatFlags.Right | TextFormatFlags.RightToLeft : TextFormatFlags.Left));
 		}
 
 		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)

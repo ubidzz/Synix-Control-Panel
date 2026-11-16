@@ -1487,6 +1487,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Configuration
 				badgeBounds,
 				typeColor,
 				TextFormatFlags.HorizontalCenter |
+				(LocalizationManager.IsRightToLeft ? TextFormatFlags.RightToLeft : 0) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.EndEllipsis);
 			eventArgs.Handled = true;

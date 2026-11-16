@@ -195,9 +195,9 @@ Open **Synix Settings → General** to switch between light and dark mode. Choos
 
 ### Interface languages
 
-Synix includes 37 interface languages: English, French, German, Spanish, Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian, Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian, Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian, Estonian, Latvian, Lithuanian, Malay (Bahasa Melayu), and Filipino.
+Synix includes 155 offline language and writing-system options, including English. Each catalog contains all 4,591 current interface and help-text entries. The [language coverage inventory](docs/Language-Coverage.md) lists every included catalog and the remaining Windows/.NET targets. Separate writing systems, such as Serbian Latin and Cyrillic, have their own catalogs; regional aliases are not counted as additional translations.
 
-Choose a language in Synix Settings. The new history and backup status text is included in every language. General settings cards adapt to wrapped translations, drop-down lists expand to fit their items, and shared action buttons support keyboard focus. Game names, user-entered values, file paths, and technical log files are not translated. Translation completeness does not replace native-speaker review.
+Choose a language in Synix Settings. History, backup status, recovery instructions, and the offline Help Center are included in every catalog. General settings cards adapt to wrapped translations, language selectors fit long names, and interface captions and help text support right-to-left reading. Game names, user-entered values, file paths, and technical log files are not translated. The expanded catalogs include machine-assisted translations. Complete catalogs can be added before native-speaker review, and community wording corrections are welcome; complete key coverage does not certify accuracy.
 
 The language roadmap targets all Windows/.NET languages and separate writing systems. See the [language coverage inventory](docs/Language-Coverage.md) for current catalogs and remaining translation/layout work. Only complete catalogs appear in the language picker; the target list is not a claim that all languages are already translated.
 

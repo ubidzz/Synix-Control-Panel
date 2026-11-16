@@ -32,7 +32,11 @@ public partial class GeneralSettingsPage
 			label.AutoEllipsis = false;
 			label.UseMnemonic = false;
 			label.TextChanged += (_, _) => ArrangeLocalizedCards();
+			label.FontChanged += (_, _) => ArrangeLocalizedCards();
 		}
+		cmbLanguage.FontChanged += (_, _) => ArrangeLocalizedCards();
+		cmbSteamCmdDownloadMode.FontChanged += (_, _) => ArrangeLocalizedCards();
+		lblSteamCmdDownloadUnit.FontChanged += (_, _) => ArrangeLocalizedCards();
 		_responsiveCards.SizeChanged += (_, _) => ArrangeLocalizedCards();
 		DpiChangedAfterParent += (_, _) => ArrangeLocalizedCards();
 		ArrangeLocalizedCards();
@@ -45,18 +49,32 @@ public partial class GeneralSettingsPage
 		try
 		{
 			float scale = DeviceDpi / 96f;
+			// The painted selector reserves a 34px arrow and 16px text inset.
+			// Leave another 6px so the longest caption is not ellipsized.
+			const int selectorChromeWidth = 56;
+			int modeWidth = cmbSteamCmdDownloadMode.Items.Cast<object>()
+				.Select(item => TextRenderer.MeasureText(item.ToString(), cmbSteamCmdDownloadMode.Font).Width)
+				.DefaultIfEmpty(0).Max();
+			int unitWidth = TextRenderer.MeasureText(lblSteamCmdDownloadUnit.Text, lblSteamCmdDownloadUnit.Font).Width;
+			int downloadWidth = Math.Max(350,
+				(int)Math.Ceiling((modeWidth + unitWidth + downloadControlsLayout.Margin.Horizontal
+					+ cmbSteamCmdDownloadMode.Margin.Horizontal) / scale)
+				+ 106 + 12 + selectorChromeWidth);
+			int languageWidth = Math.Max(260, (int)Math.Ceiling((cmbLanguage.Items.Cast<object>()
+				.Select(item => TextRenderer.MeasureText(item.ToString(), cmbLanguage.Font).Width)
+				.DefaultIfEmpty(0).Max() + cmbLanguage.Margin.Horizontal) / scale) + selectorChromeWidth);
 			ArrangeCard(settingsCard, cardLayout, textLayout, lblTitle, lblDescription, chkShowServerWindow, 70, false, scale);
 			ArrangeCard(settingsCardDarkMode, cardLayoutDarkMode, textLayoutDarkMode, lblTitleDarkMode, lblDescriptionDarkMode, chkDarkMode, 70, false, scale);
 			ArrangeCard(settingsCardSteamDownloads, cardLayoutSteamDownloads, textLayoutSteamDownloads,
-				lblTitleSteamDownloads, lblDescriptionSteamDownloads, downloadControlsLayout, 350, true, scale);
+				lblTitleSteamDownloads, lblDescriptionSteamDownloads, downloadControlsLayout, downloadWidth, true, scale);
 			ArrangeCard(settingsCardLanguage, cardLayoutLanguage, textLayoutLanguage,
-				lblTitleLanguage, lblDescriptionLanguage, cmbLanguage, 260, true, scale);
+				lblTitleLanguage, lblDescriptionLanguage, cmbLanguage, languageWidth, true, scale);
 			downloadControlsLayout.ColumnStyles[0].SizeType = SizeType.Percent;
 			downloadControlsLayout.ColumnStyles[0].Width = 100;
 			downloadControlsLayout.ColumnStyles[1].SizeType = SizeType.Absolute;
 			downloadControlsLayout.ColumnStyles[1].Width = 106 * scale;
 			downloadControlsLayout.ColumnStyles[2].SizeType = SizeType.Absolute;
-			downloadControlsLayout.ColumnStyles[2].Width = TextRenderer.MeasureText(lblSteamCmdDownloadUnit.Text, lblSteamCmdDownloadUnit.Font).Width + 12 * scale;
+			downloadControlsLayout.ColumnStyles[2].Width = unitWidth + 12 * scale;
 			cmbLanguage.FitDropDownToItems();
 			cmbSteamCmdDownloadMode.FitDropDownToItems();
 		}
@@ -67,7 +85,7 @@ public partial class GeneralSettingsPage
 		Label title, Label description, Control input, int inputWidth, bool canStack, float scale)
 	{
 		if (card.IsDisposed || card.Disposing || input.IsDisposed) return;
-		bool stacked = canStack && card.Width < 780 * scale;
+		bool stacked = canStack && card.Width < Math.Max(780, 430 + inputWidth) * scale;
 		layout.SuspendLayout();
 		try
 		{
@@ -78,7 +96,9 @@ public partial class GeneralSettingsPage
 			layout.SetCellPosition(input, new TableLayoutPanelCellPosition(stacked ? 1 : 2, stacked ? 1 : 0));
 			layout.SetColumnSpan(input, stacked ? 2 : 1);
 			layout.SetColumnSpan(text, stacked ? 2 : 1);
-			int textWidth = Math.Max(60, card.DisplayRectangle.Width - layout.Padding.Horizontal - (int)(58 * scale) - (stacked ? 0 : (int)(inputWidth * scale)));
+			int textWidth = Math.Max(60, card.DisplayRectangle.Width - layout.Padding.Horizontal - (int)(58 * scale)
+				- (stacked ? 0 : (int)(inputWidth * scale)) - text.Margin.Horizontal - text.Padding.Horizontal
+				- Math.Max(title.Margin.Horizontal, description.Margin.Horizontal));
 			int titleHeight = TextHeight(title, textWidth) + (int)(8 * scale);
 			int descriptionHeight = TextHeight(description, textWidth) + (int)(4 * scale);
 			text.RowStyles[0].SizeType = SizeType.Absolute;

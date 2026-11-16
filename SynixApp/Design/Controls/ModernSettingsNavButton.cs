@@ -119,6 +119,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 
 		protected override void OnPaint(PaintEventArgs eventArgs)
 		{
+			bool rightToLeft = RightToLeft == RightToLeft.Yes;
 			eventArgs.Graphics.Clear(SettingsPalette.Sidebar);
 			eventArgs.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -137,7 +138,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			{
 				using SolidBrush accentBrush = new(SettingsPalette.Accent);
 				using GraphicsPath accentPath = RoundedGeometry.Create(
-					new Rectangle(0, 10, 4, Height - 20),
+					new Rectangle(rightToLeft ? Width - 4 : 0, 10, 4, Height - 20),
 					2);
 				eventArgs.Graphics.FillPath(accentBrush, accentPath);
 			}
@@ -156,7 +157,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				eventArgs.Graphics,
 				IconGlyph,
 				_glyphFont,
-				new Rectangle(18, 0, 30, Height),
+				new Rectangle(rightToLeft ? Width - 48 : 18, 0, 30, Height),
 				textColor,
 				TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 
@@ -164,9 +165,9 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				eventArgs.Graphics,
 				Text,
 				Font,
-				new Rectangle(58, 0, Width - 66, Height),
+				new Rectangle(rightToLeft ? 8 : 58, 0, Width - 66, Height),
 				textColor,
-				TextFormatFlags.Left |
+				(rightToLeft ? TextFormatFlags.Right | TextFormatFlags.RightToLeft : TextFormatFlags.Left) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);
