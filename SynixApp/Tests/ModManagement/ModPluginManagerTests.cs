@@ -13,6 +13,7 @@
 using Synix_Control_Panel.SynixApp.ServerHandler;
 using Synix_Control_Panel.SynixApp.Design;
 using Synix_Control_Panel.SynixApp.Database;
+using Synix_Control_Panel.SynixApp.Localization;
 using Synix_Control_Panel.SynixEngine;
 using Synix_Control_Panel.SynixEngine.ModManagement;
 using System.IO.Compression;
@@ -865,6 +866,7 @@ public sealed class ModPluginManagerTests
 		string root = CreateTestDirectory();
 		string profileRoot = CreateTestDirectory();
 		string? previousRoot = ModSystemCatalog.ExternalProfileRootOverride;
+		string previousLanguage = LocalizationManager.CurrentLanguageCode;
 		try
 		{
 			ModSystemCatalog.ExternalProfileRootOverride = profileRoot;
@@ -873,6 +875,10 @@ public sealed class ModPluginManagerTests
 			{
 				try
 				{
+					// Luxembourgish's menu caption matches the old unescaped English
+					// window title. Index it first to reproduce a previous language switch.
+					LocalizationManager.Initialize("lb-LU");
+					LocalizationManager.Initialize("en-US");
 					using ModPluginManager manager = new(new GameServer
 					{
 						Game = game,
@@ -900,6 +906,16 @@ public sealed class ModPluginManagerTests
 					Assert.False(heading.UseMnemonic);
 					Assert.DoesNotContain("&&", heading.Text);
 					Assert.Equal(heading.Text, manager.Text);
+					Assert.Equal("Mod and Plugin Manager", manager.Text);
+					foreach (string language in new[] { "fr-FR", "lb-LU", "en-US" })
+					{
+						LocalizationManager.Initialize(language);
+						LocalizationManager.Apply(manager);
+						ThemeManager.Apply(manager);
+						Assert.DoesNotContain("&&", heading.Text);
+						Assert.Equal(LocalizationManager.GetContent("Mod and Plugin Manager"), heading.Text);
+						Assert.Equal(heading.Text, manager.Text);
+					}
 					Control readPackage = manager.Controls.Find("manageProviderModIds", true).Single();
 					Control manageIds = manager.Controls.Find("importAddOnPackage", true).Single();
 					Assert.Equal(manageIds.Enabled, readPackage.Enabled);
@@ -921,6 +937,7 @@ public sealed class ModPluginManagerTests
 		}
 		finally
 		{
+			LocalizationManager.Initialize(previousLanguage);
 			ModSystemCatalog.ExternalProfileRootOverride = previousRoot;
 			Directory.Delete(root, true);
 			Directory.Delete(profileRoot, true);

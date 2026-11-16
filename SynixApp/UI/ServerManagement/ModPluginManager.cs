@@ -57,8 +57,9 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 		{
 			_server = server ?? throw new ArgumentNullException(nameof(server));
 			_profiles = ModSystemCatalog.GetProfiles(server);
-			// The menu resource escapes '&' for ToolStrip mnemonics; window text does not.
-			Text = LocalizationManager.Get("Menu.ModPluginManager").Replace("&&", "&");
+			// Bind the plain title directly; a translated menu caption can contain
+			// mnemonic escapes and can otherwise be matched again during localization.
+			LocalizationManager.BindText(this, "Content.A2C5320A033A0FA69DFC");
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimumSize = new Size(1240, 760);
@@ -71,6 +72,7 @@ namespace Synix_Control_Panel.SynixApp.UI.ServerManagement
 				Text,
 				28, 20, 640, 42, 19F);
 			pageHeading.Name = "modPluginManagerHeading";
+			LocalizationManager.BindText(pageHeading, "Content.A2C5320A033A0FA69DFC");
 			Controls.Add(pageHeading);
 			_importLocations = Button(LocalizationManager.Get("UniversalMods.Wizard.Advanced"), 710, 20, 242);
 			_importLocations.Name = "configureModImportLocations";

@@ -99,7 +99,7 @@ public partial class GeneralSettingsPage
 		Label label = new()
 		{
 			Name = key.Replace('.', '_'), AutoSize = true, Dock = DockStyle.Top,
-			Margin = new Padding(0, 0, 0, 6), UseMnemonic = false,
+			Margin = new Padding(0, 0, 0, 6), UseMnemonic = false, UseCompatibleTextRendering = false,
 			Font = new Font("Segoe UI", heading ? 12 : 9.5f, heading ? FontStyle.Bold : FontStyle.Regular),
 			ForeColor = heading ? SettingsPalette.PrimaryText : SettingsPalette.SecondaryText
 		};
