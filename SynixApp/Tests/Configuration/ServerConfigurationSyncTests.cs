@@ -315,7 +315,11 @@ public sealed class ServerConfigurationSyncTests : IDisposable
 			Assert.Equal(path, definition!.ResolveFullPath(_server));
 			Assert.True(GameLaunchCommandBuilder.TryBuildArguments(_server, GameDatabase.GetGame(game)!, "258550",
 				Core.RevealServerPasswords(_server), out string arguments, out string error), error);
-			Assert.Contains("+server.identity \"Original\"", arguments);
+			IReadOnlyList<string> launchArguments = WindowsLaunchArguments.Parse(arguments);
+			int identityIndex = Assert.Single(Enumerable.Range(0, launchArguments.Count),
+				index => launchArguments[index] == "+server.identity");
+			Assert.InRange(identityIndex, 0, launchArguments.Count - 2);
+			Assert.Equal("Original", launchArguments[identityIndex + 1]);
 		}
 		Assert.Equal(1, saves);
 	}
