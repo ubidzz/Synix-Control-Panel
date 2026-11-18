@@ -1,18 +1,15 @@
 # Synix interface languages
 
-Synix ships compiled, offline catalogs for English, French, German, Spanish,
-Simplified Chinese, Traditional Chinese, Japanese, Korean, Italian, Brazilian
-Portuguese, Polish, Russian, Turkish, Dutch, Swedish, Czech, Ukrainian,
-Indonesian, Vietnamese, Danish, Finnish, Norwegian Bokmål, Greek, Hungarian,
-Romanian, Hindi, Thai, Bulgarian, Croatian, Catalan, Slovak, Slovenian,
-Estonian, Latvian, Lithuanian, Malay, and Filipino (37 language options). Every selectable
-language must contain every entry in the neutral English catalog; partial
-preview catalogs are no longer used for these languages.
+Synix ships compiled, offline translation catalogs. The
+[coverage inventory](../../docs/Language-Coverage.md) lists every current
+catalog and outstanding Windows/.NET language or writing-system target.
+Every selectable language must contain every entry in the neutral English
+catalog; partial preview catalogs are not offered in the language picker.
 
 The language picker displays each language's own name. Regional aliases use
 the corresponding available catalog; generic Norwegian (`no` / `no-NO`)
-selects Bokmål. Nynorsk (`nn` / `nn-NO`) is a different language and is not
-advertised as supported.
+selects Bokmål. Nynorsk (`nn` / `nn-NO`) requires its own catalog and never
+silently resolves to Bokmål.
 
 ## Comprehensive language target
 
@@ -104,12 +101,31 @@ original three translations. They cover exact-culture resource completeness,
 placeholder preservation, offline article coverage and technical examples,
 live switching, aliases, unchanged user input, fallback behavior, and layout.
 The source guard also includes the Help windows and visible tooltip text.
+`ExpandedLanguageBatchTests` additionally checks the new script-specific
+catalog choices, diagnostic symbols, recovery instructions and technical tokens.
 
 The expanded catalogs include machine-assisted translations. Structural tests
 and sample reviews do not replace native-speaker review of terminology and
 meaning, particularly for security, networking, licensing, and recovery
 instructions. Corrections should update the relevant catalog entry without
 altering technical syntax or the English source to hide a missing translation.
+
+Native-speaker review is not a release prerequisite for a complete catalog.
+Machine-assisted translations may ship while wording is refined through user
+reports. Reports should include the selected language, the text shown, where
+it appears, and the suggested wording. Never include passwords or other
+private server data. Broken technical syntax, missing text, or an identified
+reversal of a destructive-action or account-recovery warning must still be
+corrected before that catalog is enabled.
+
+The Azerbaijani, Bosnian, and Uzbek Cyrillic catalogs are derived from their
+Latin-script translations using the corresponding
+[Unicode CLDR transforms](https://github.com/unicode-org/cldr/tree/main/common/transforms),
+with spelling adjustments for the target script. Latin-script Hindi is
+derived from a protected Hindi translation using the Windows ICU
+Devanagari-to-Latin transform. Technical names, paths, commands, and placeholders
+are kept verbatim. These conversions run only during catalog preparation;
+Synix does not ship a transliteration or translation model.
 
 The Catalan, Slovak, and Slovenian catalogs started from offline,
 machine-assisted drafts using the corresponding English-to-language
@@ -136,3 +152,59 @@ The app bundles only static text resources, with no translation model or
 online translation dependency. These translations are not certified and
 still benefit from native-speaker review. Malay uses the Latin script;
 Filipino uses the `fil` catalog and `fil-PH` selection culture.
+
+The expanded language batch uses local machine-assisted drafts
+from [MADLAD-400-3B-MT](https://huggingface.co/google/madlad400-3b-mt), through
+[Nextcloud's CTranslate2 int8 conversion](https://huggingface.co/Nextcloud-AI/madlad400-3b-mt-ct2-int8)
+(Apache 2.0, revision `aa32bbdeba7880eff2096ec044cb155a340a9400`) and
+[NLLB-200 distilled 600M](https://huggingface.co/facebook/nllb-200-distilled-600M),
+through [the CTranslate2 int8 conversion](https://huggingface.co/mydubber-org/nllb-200-distilled-600M-ct2-int8)
+(CC BY-NC 4.0, revision `9e63a771e9ec358ef812d2ea149d97e16d5f8cee`). Further
+catalogs and corrections use [OpenNMT's NLLB-200-3.3B int8 conversion](https://huggingface.co/OpenNMT/nllb-200-3.3B-ct2-int8)
+(CC BY-NC 4.0, revision `28d998cc8548ad62f4f98cf8860928c3af99b97b`). Corrections
+cover interface actions, untranslated fragments, translation artifacts and
+critical pairing, recovery and deletion wording. Each catalog includes all
+English source entries, including offline help. Community wording corrections
+remain welcome; completeness and automated checks do not certify accuracy.
+Only the translated text ships with Synix. Models, generators and caches
+used for this batch are kept outside the application and repository.
+
+Tifinagh and Adlam interface text uses Windows' Ebrima font to avoid missing-character
+boxes. Tibetan and Dzongkha use Microsoft Himalaya at a larger readable size.
+Language switching restores the previous interface fonts, including menu and
+grid styles. Editable technical fields retain their fonts and contents. The
+settings cards measure the selected fonts and reserve space for wrapped text.
+
+Azerbaijani, Bosnian, Serbian, and Uzbek have separate Latin and Cyrillic
+catalogs. Hindi has Devanagari and Latin-script catalogs. A script-specific
+catalog does not claim support for a different writing system of the same
+language.
+
+Fula has separate Latin and Adlam catalogs. The Adlam text derives from the
+Latin catalog using the [Library of Congress Adlam correspondences](https://www.loc.gov/catdir/cpso/romanization/adlam37.pdf),
+including long vowels, consonant length and nasal combinations. Technical
+identifiers, paths, numbers and placeholders retain their original spelling.
+
+## Reading direction and resource loading
+
+Right-to-left cultures set the reading direction of interface captions,
+buttons, menus and read-only help text. Custom-drawn controls use matching
+text flags. Editable technical values, console output, user-data labels and
+scrolling containers retain their existing direction and geometry. This
+supports right-to-left text without claiming that every window has a fully
+mirrored layout. Community feedback can improve usability for complex scripts;
+native-speaker review is not a prerequisite for adding a complete catalog.
+
+Use `UseInterfaceTextDirection` for read-only rich text that contains app
+instructions. Use `SetDataText` for user values. Switching the interface
+language does not change the formatting culture used by game configuration.
+
+For ordinary folder builds, catalog discovery reads embedded resource data
+directly from satellite PE files without loading each satellite assembly.
+Single-file builds use the bundled ResourceManager fallback. Discovery
+releases resource sets used for completeness checks. The text lookup index
+starts with English and adds languages when selected, retaining those
+entries for live switching. Adding catalogs therefore does not keep every
+translation table in the live text index at startup. Bind help titles to
+their exact content keys so similar translated captions cannot select a
+different article title.

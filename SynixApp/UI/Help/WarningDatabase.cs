@@ -1015,6 +1015,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		{
 			InitializeComponent();
 			ThemeManager.Apply(this);
+			Localization.LocalizationManager.UseInterfaceTextDirection(txtWarningText);
 			headerGlyph.ForeColor = SettingsPalette.Warning;
 			_server = server;
 			SizeChanged += (_, _) => ArrangeTranslatedText();

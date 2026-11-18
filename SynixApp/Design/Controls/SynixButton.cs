@@ -172,6 +172,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				contentBounds,
 				textColor,
 				TextFormatFlags.HorizontalCenter |
+				(RightToLeft == RightToLeft.Yes ? TextFormatFlags.RightToLeft : 0) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);

@@ -217,7 +217,8 @@ namespace Synix_Control_Panel.SynixApp.Design
 					? SettingsPalette.AccentText
 					: SettingsPalette.PrimaryText;
 				TextRenderer.DrawText(g, text, _sliderFont, textRect, textColor,
-					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter |
+					(chk.RightToLeft == RightToLeft.Yes ? TextFormatFlags.RightToLeft : 0));
 			}
 		}
 
@@ -255,6 +256,12 @@ namespace Synix_Control_Panel.SynixApp.Design
 			}
 
 			flags |= TextFormatFlags.NoPrefix;
+			if (lbl.RightToLeft == RightToLeft.Yes)
+			{
+				flags |= TextFormatFlags.RightToLeft;
+				if ((flags & TextFormatFlags.HorizontalCenter) == 0)
+					flags ^= TextFormatFlags.Right;
+			}
 			Rectangle textBounds = new(
 				lbl.Padding.Left,
 				lbl.Padding.Top,

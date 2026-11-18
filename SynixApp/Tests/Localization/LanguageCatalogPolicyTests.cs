@@ -105,6 +105,23 @@ public sealed class LanguageCatalogPolicyTests
 		Assert.Null(FindBestCatalog("pa-PK", ["pa"]));
 	}
 
+	[Theory]
+	[InlineData("kr", "kr-Latn", "kr-Arab")]
+	[InlineData("kr-NG", "kr-Latn", "kr-Arab")]
+	[InlineData("mni", "mni-Beng", "mni-Mtei")]
+	[InlineData("mni-IN", "mni-Beng", "mni-Mtei")]
+	[InlineData("pa", "pa-Guru", "pa-Arab")]
+	[InlineData("pa-IN", "pa-Guru", "pa-Arab")]
+	[InlineData("pa-PK", "pa-Arab", "pa-Guru")]
+	[InlineData("su", "su-Latn", "su-Sund")]
+	[InlineData("su-ID", "su-Latn", "su-Sund")]
+	public void ScriptlessAliasesSelectTheCorrectCatalog(string requested, string expected, string other)
+	{
+		Assert.Equal(expected, FindBestCatalog(requested, [other, expected]));
+		Assert.Null(FindBestCatalog(requested, [other]));
+		Assert.Null(FindBestCatalog(other, [expected]));
+	}
+
 	[Fact]
 	public void AmbiguousRegionalScriptsAreNotGuessedFromADifferentRegion()
 	{
@@ -162,8 +179,9 @@ public sealed class LanguageCatalogPolicyTests
 	[Fact]
 	public void UntranslatedScriptDoesNotAppearSupportedInTheApp()
 	{
-		Assert.Equal("en-US", LocalizationManager.NormalizeLanguageCode("hi-Latn"));
-		Assert.DoesNotContain(LocalizationManager.SupportedLanguages, language => language.Code == "hi-Latn");
+		Assert.Equal("en-US", LocalizationManager.NormalizeLanguageCode("hi-Arab"));
+		Assert.DoesNotContain(LocalizationManager.SupportedLanguages, language => language.Code == "hi-Arab");
+		Assert.Equal("hi-Latn", LocalizationManager.NormalizeLanguageCode("hi-Latn"));
 		Assert.Equal("hi-IN", LocalizationManager.NormalizeLanguageCode("hi"));
 	}
 }

@@ -30,7 +30,19 @@ public sealed class AdditionalLanguageTests
 		{ "bg-BG", "Български" }, { "hr-HR", "Hrvatski" }, { "ca-ES", "Català" },
 		{ "sk-SK", "Slovenčina" }, { "sl-SI", "Slovenščina" },
 		{ "et-EE", "Eesti" }, { "lv-LV", "Latviešu" }, { "lt-LT", "Lietuvių" },
-		{ "ms-MY", "Bahasa Melayu" }, { "fil-PH", "Filipino" }
+		{ "ms-MY", "Bahasa Melayu" }, { "fil-PH", "Filipino" },
+		{ "af-ZA", "Afrikaans" }, { "cy-GB", "Cymraeg" },
+		{ "az-Latn", "Azərbaycanca (latın)" }, { "be-BY", "Беларуская" },
+		{ "bn-BD", "বাংলা" }, { "bs-Latn", "Bosanski (latinica)" },
+		{ "eu-ES", "Euskara" }, { "ga-IE", "Gaeilge" }, { "gl-ES", "Galego" },
+		{ "gu-IN", "ગુજરાતી" }, { "hy-AM", "Հայերեն" }, { "is-IS", "Íslenska" },
+		{ "ka-GE", "ქართული" }, { "kk-KZ", "Қазақша" }, { "kn-IN", "ಕನ್ನಡ" },
+		{ "mk-MK", "Македонски" }, { "ml-IN", "മലയാളം" }, { "mr-IN", "मराठी" },
+		{ "ne-NP", "नेपाली" }, { "sq-AL", "Shqip" }, { "sr-Cyrl", "Српски (ћирилица)" },
+		{ "sw-KE", "Kiswahili" }, { "ta-IN", "தமிழ்" }, { "te-IN", "తెలుగు" },
+		{ "sr-Latn", "Srpski (latinica)" }, { "am-ET", "አማርኛ" }, { "ar-SA", "العربية" },
+		{ "he-IL", "עברית" }, { "fa-IR", "فارسی" }, { "ur-PK", "اردو" },
+		{ "nn-NO", "Norsk nynorsk" }
 	};
 
 	private static ResourceManager CreateManager() => new(
@@ -371,7 +383,7 @@ public sealed class AdditionalLanguageTests
 	[InlineData("nb-NO", "nb-NO")]
 	[InlineData("no", "nb-NO")]
 	[InlineData("no-NO", "nb-NO")]
-	[InlineData("nn-NO", "en-US")]
+	[InlineData("nn-NO", "nn-NO")]
 	[InlineData("el", "el-GR")]
 	[InlineData("el-CY", "el-GR")]
 	[InlineData("hu", "hu-HU")]
@@ -466,8 +478,11 @@ public sealed class AdditionalLanguageTests
 		});
 	}
 
+	public static IEnumerable<object[]> LayoutLanguages() => LocalizationManager.SupportedLanguages
+		.Select(language => new object[] { language.Code, language.DisplayName });
+
 	[Theory]
-	[MemberData(nameof(NewLanguages))]
+	[MemberData(nameof(LayoutLanguages))]
 	public void LanguagePickerPreservesSelectionAndShowsDescriptionWithoutClipping(string code, string name)
 	{
 		WorkflowUiTest.Run(() =>
@@ -495,7 +510,7 @@ public sealed class AdditionalLanguageTests
 					option.Value == "en-US" && option.ToString() == "English");
 				var downloadMode = (ComboBox)page.Controls.Find("cmbSteamCmdDownloadMode", true).Single();
 				foreach (object option in downloadMode.Items)
-					Assert.True(TextRenderer.MeasureText(option.ToString(), downloadMode.Font).Width <= downloadMode.Width - 44,
+					Assert.True(TextRenderer.MeasureText(option.ToString(), downloadMode.Font).Width <= downloadMode.ClientSize.Width - 50,
 						$"Download mode clips: {code} / {option}");
 				var downloadTitle = (Label)page.Controls.Find("lblTitleSteamDownloads", true).Single();
 				Assert.True(TextRenderer.MeasureText(downloadTitle.Text, downloadTitle.Font).Width <= downloadTitle.Width,
@@ -506,7 +521,7 @@ public sealed class AdditionalLanguageTests
 					<= downloadDescription.Height, $"Download description clips: {code}");
 				var notice = (Label)page.Controls.Find("lblDescriptionLanguage", true).Single();
 				Assert.Equal(LocalizationManager.Get("Language.Description"), notice.Text);
-				Assert.True(TextRenderer.MeasureText(name, picker.Font).Width <= picker.Width - 44,
+				Assert.True(TextRenderer.MeasureText(name, picker.Font).Width <= picker.ClientSize.Width - 50,
 					$"Language name clips: {name}");
 				Size noticeSize = TextRenderer.MeasureText(notice.Text, notice.Font,
 					new Size(notice.Width, int.MaxValue), TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);

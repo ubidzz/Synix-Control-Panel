@@ -70,6 +70,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				return;
 			}
 			ThemeManager.Apply(this);
+			LocalizationManager.UseInterfaceTextDirection(lblAnswer);
 
 			InitializeData();
 			PopulateTree();
@@ -1569,7 +1570,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		{
 			qrCard.Visible = false;
 			lblTopicCategory.Text = LocalizationManager.GetContent("SYNIX KNOWLEDGE BASE");
-			lblTopicTitle.Text = LocalizationManager.GetContent("How can we help?");
+			LocalizationManager.BindText(lblTopicTitle, LocalizationManager.ContentKey("How can we help?"));
 			lblArticleBadge.Text = LocalizationManager.GetContent("WELCOME");
 			lblAnswer.Text = LocalizationManager.GetContent(WelcomeText);
 			ResetAnswerScroll();
@@ -1579,7 +1580,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 		{
 			qrCard.Visible = false;
 			lblTopicCategory.Text = LocalizationManager.GetContent("SEARCH");
-			lblTopicTitle.Text = LocalizationManager.GetContent("No matching help articles");
+			LocalizationManager.BindText(lblTopicTitle, LocalizationManager.ContentKey("No matching help articles"));
 			lblArticleBadge.Text = LocalizationManager.GetContent("NO RESULTS");
 			lblAnswer.Text = string.IsNullOrWhiteSpace(filter)
 				? LocalizationManager.GetContent("No help articles are currently available.")
@@ -1602,7 +1603,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 
 			lblTopicCategory.Text =
 				GetCategoryDisplayName(item.Category).ToUpperInvariant();
-			lblTopicTitle.Text = LocalizedTitle(topicKey);
+			LocalizationManager.BindText(lblTopicTitle, LocalizationManager.ContentKey(topicKey));
 			lblArticleBadge.Text = LocalizationManager.GetContent(isDonationTopic ? "SUPPORT" : "ARTICLE");
 			lblAnswer.Text = LocalizedAnswer(item);
 			qrCard.Visible = isDonationTopic;
@@ -1762,7 +1763,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				treeNavigation.Font,
 				textBounds,
 				selected ? SettingsPalette.PrimaryText : SettingsPalette.SecondaryText,
-				TextFormatFlags.Left |
+				(LocalizationManager.IsRightToLeft ? TextFormatFlags.Right | TextFormatFlags.RightToLeft : TextFormatFlags.Left) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);
@@ -1785,7 +1786,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				lblSidebarEyebrow.Font,
 				indexBounds,
 				SettingsPalette.Accent,
-				TextFormatFlags.Left |
+				(LocalizationManager.IsRightToLeft ? TextFormatFlags.Right | TextFormatFlags.RightToLeft : TextFormatFlags.Left) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.NoPrefix);
 
@@ -1800,7 +1801,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Help
 				lblSidebarEyebrow.Font,
 				textBounds,
 				SettingsPalette.PrimaryText,
-				TextFormatFlags.Left |
+				(LocalizationManager.IsRightToLeft ? TextFormatFlags.Right | TextFormatFlags.RightToLeft : TextFormatFlags.Left) |
 				TextFormatFlags.VerticalCenter |
 				TextFormatFlags.EndEllipsis |
 				TextFormatFlags.NoPrefix);

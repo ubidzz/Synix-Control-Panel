@@ -8,6 +8,18 @@ namespace Synix_Control_Panel.SynixApp.Localization;
 /// </summary>
 internal static class LanguageCatalogPolicy
 {
+	// These Windows culture names omit a script parent. Keep the CLDR defaults
+	// explicit so a neutral/default-region request can find its script catalog.
+	// Other regions and explicit writing systems are still checked separately.
+	// https://github.com/unicode-org/cldr/blob/main/common/supplemental/likelySubtags.xml
+	private static readonly Dictionary<string, string> ScriptlessAliases = new(StringComparer.OrdinalIgnoreCase)
+	{
+		["kr"] = "Latn", ["kr-NG"] = "Latn",
+		["mni"] = "Beng", ["mni-IN"] = "Beng",
+		["pa"] = "Guru", ["pa-IN"] = "Guru", ["pa-PK"] = "Arab",
+		["su"] = "Latn", ["su-ID"] = "Latn"
+	};
+
 	private static readonly HashSet<string> ScriptFamilies = CultureInfo.GetCultures(CultureTypes.NeutralCultures)
 		.Where(culture => GetExplicitScript(culture.Name) != null)
 		.Select(culture => culture.TwoLetterISOLanguageName).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -116,6 +128,7 @@ internal static class LanguageCatalogPolicy
 		string? script = ParentsAndSelf(culture).Select(parent => GetExplicitScript(parent.Name))
 			.FirstOrDefault(value => value != null);
 		if (script != null) return script;
+		if (ScriptlessAliases.TryGetValue(culture.Name, out script)) return script;
 		// .NET supplies script parents for defaults such as zh -> zh-CN -> zh-Hans.
 		// Do not infer a regional script from a DIFFERENT region's default.
 		CultureInfo specific = CultureInfo.CreateSpecificCulture(culture.Name);

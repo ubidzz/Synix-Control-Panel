@@ -3,7 +3,7 @@
 
 Target: every non-invariant neutral language reported by Windows/.NET, retaining separate writing-system entries. Regional settings resolve to an appropriate catalog where available; they are not automatically separate translations.
 
-This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **37 structurally complete catalogs, including English**, with **4,591 required text entries per catalog**. **245 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
+This snapshot contains **284 language/writing-system targets** across **251 base language codes**. Synix has **155 structurally complete catalogs, including English**, with **4,591 required text entries per catalog**. **116 target entries still need a translation**. Generic aliases (for example Chinese and Norwegian) can share an existing catalog; target counts are not counts of distinct translations.
 
 Only complete, non-preview catalogs are eligible for the app's language picker. Empty entries, missing or unexpected source keys, and untranslated English-only copies are rejected. Key coverage does not certify translation accuracy: terminology, technical syntax, layout and accessibility still require review. This inventory does not add new translations or claim that right-to-left layout is finished.
 
@@ -13,43 +13,161 @@ Inventory runtime: .NET 11.0.0; Microsoft Windows NT 10.0.26200.0. Available cul
 
 | Catalog | Source coverage | Missing/blank keys | Unexpected keys |
 |---|---|---:|---:|
+| af | Complete | 0 | 0 |
+| ak | Complete | 0 | 0 |
+| am | Complete | 0 | 0 |
+| ar | Complete | 0 | 0 |
+| as | Complete | 0 | 0 |
+| ast | Complete | 0 | 0 |
+| az-Cyrl | Complete | 0 | 0 |
+| az-Latn | Complete | 0 | 0 |
+| ba | Complete | 0 | 0 |
+| be | Complete | 0 | 0 |
+| bem | Complete | 0 | 0 |
 | bg | Complete | 0 | 0 |
+| bho | Complete | 0 | 0 |
+| bm | Complete | 0 | 0 |
+| bn | Complete | 0 | 0 |
+| bo | Complete | 0 | 0 |
+| bs-Cyrl | Complete | 0 | 0 |
+| bs-Latn | Complete | 0 | 0 |
 | ca | Complete | 0 | 0 |
+| ceb | Complete | 0 | 0 |
+| ckb | Complete | 0 | 0 |
+| co | Complete | 0 | 0 |
 | cs | Complete | 0 | 0 |
+| cv | Complete | 0 | 0 |
+| cy | Complete | 0 | 0 |
 | da | Complete | 0 | 0 |
 | de | Complete | 0 | 0 |
+| dv | Complete | 0 | 0 |
+| dz | Complete | 0 | 0 |
+| ee | Complete | 0 | 0 |
 | el | Complete | 0 | 0 |
 | en-US | Complete | 0 | 0 |
+| eo | Complete | 0 | 0 |
 | es | Complete | 0 | 0 |
 | et | Complete | 0 | 0 |
+| eu | Complete | 0 | 0 |
+| fa | Complete | 0 | 0 |
+| ff-Adlm | Complete | 0 | 0 |
+| ff-Latn | Complete | 0 | 0 |
 | fi | Complete | 0 | 0 |
 | fil | Complete | 0 | 0 |
+| fo | Complete | 0 | 0 |
 | fr | Complete | 0 | 0 |
+| fur | Complete | 0 | 0 |
+| fy | Complete | 0 | 0 |
+| ga | Complete | 0 | 0 |
+| gd | Complete | 0 | 0 |
+| gl | Complete | 0 | 0 |
+| gn | Complete | 0 | 0 |
+| gsw | Complete | 0 | 0 |
+| gu | Complete | 0 | 0 |
+| ha | Complete | 0 | 0 |
+| haw | Complete | 0 | 0 |
+| he | Complete | 0 | 0 |
 | hi | Complete | 0 | 0 |
+| hi-Latn | Complete | 0 | 0 |
 | hr | Complete | 0 | 0 |
 | hu | Complete | 0 | 0 |
+| hy | Complete | 0 | 0 |
 | id | Complete | 0 | 0 |
+| ig | Complete | 0 | 0 |
+| is | Complete | 0 | 0 |
 | it | Complete | 0 | 0 |
 | ja | Complete | 0 | 0 |
+| jv | Complete | 0 | 0 |
+| ka | Complete | 0 | 0 |
+| kab | Complete | 0 | 0 |
+| kam | Complete | 0 | 0 |
+| kea | Complete | 0 | 0 |
+| ki | Complete | 0 | 0 |
+| kk | Complete | 0 | 0 |
+| km | Complete | 0 | 0 |
+| kn | Complete | 0 | 0 |
 | ko | Complete | 0 | 0 |
+| kr-Latn | Complete | 0 | 0 |
+| ks-Arab | Complete | 0 | 0 |
+| ks-Deva | Complete | 0 | 0 |
+| ky | Complete | 0 | 0 |
+| lb | Complete | 0 | 0 |
+| lg | Complete | 0 | 0 |
+| ln | Complete | 0 | 0 |
+| lo | Complete | 0 | 0 |
 | lt | Complete | 0 | 0 |
+| luo | Complete | 0 | 0 |
 | lv | Complete | 0 | 0 |
+| mai | Complete | 0 | 0 |
+| mg | Complete | 0 | 0 |
+| mi | Complete | 0 | 0 |
+| mk | Complete | 0 | 0 |
+| ml | Complete | 0 | 0 |
+| mn | Complete | 0 | 0 |
+| mni-Beng | Complete | 0 | 0 |
+| mr | Complete | 0 | 0 |
 | ms | Complete | 0 | 0 |
+| mt | Complete | 0 | 0 |
+| my | Complete | 0 | 0 |
 | nb | Complete | 0 | 0 |
+| ne | Complete | 0 | 0 |
 | nl | Complete | 0 | 0 |
+| nn | Complete | 0 | 0 |
+| nso | Complete | 0 | 0 |
+| nus | Complete | 0 | 0 |
+| oc | Complete | 0 | 0 |
+| om | Complete | 0 | 0 |
+| or | Complete | 0 | 0 |
+| pa-Guru | Complete | 0 | 0 |
+| pap | Complete | 0 | 0 |
 | pl | Complete | 0 | 0 |
+| ps | Complete | 0 | 0 |
 | pt-BR | Complete | 0 | 0 |
+| rn | Complete | 0 | 0 |
 | ro | Complete | 0 | 0 |
 | ru | Complete | 0 | 0 |
+| rw | Complete | 0 | 0 |
+| sa | Complete | 0 | 0 |
+| sc | Complete | 0 | 0 |
+| sd-Arab | Complete | 0 | 0 |
+| sg | Complete | 0 | 0 |
+| si | Complete | 0 | 0 |
 | sk | Complete | 0 | 0 |
 | sl | Complete | 0 | 0 |
+| sn | Complete | 0 | 0 |
+| so | Complete | 0 | 0 |
+| sq | Complete | 0 | 0 |
+| sr-Cyrl | Complete | 0 | 0 |
+| sr-Latn | Complete | 0 | 0 |
+| ss | Complete | 0 | 0 |
+| st | Complete | 0 | 0 |
+| su-Latn | Complete | 0 | 0 |
 | sv | Complete | 0 | 0 |
+| sw | Complete | 0 | 0 |
+| ta | Complete | 0 | 0 |
+| te | Complete | 0 | 0 |
+| tg | Complete | 0 | 0 |
 | th | Complete | 0 | 0 |
+| ti | Complete | 0 | 0 |
+| tk | Complete | 0 | 0 |
+| tn | Complete | 0 | 0 |
 | tr | Complete | 0 | 0 |
+| ts | Complete | 0 | 0 |
+| tt | Complete | 0 | 0 |
+| tzm-Tfng | Complete | 0 | 0 |
+| ug | Complete | 0 | 0 |
 | uk | Complete | 0 | 0 |
+| ur | Complete | 0 | 0 |
+| uz-Cyrl | Complete | 0 | 0 |
+| uz-Latn | Complete | 0 | 0 |
 | vi | Complete | 0 | 0 |
+| wo | Complete | 0 | 0 |
+| xh | Complete | 0 | 0 |
+| yi | Complete | 0 | 0 |
+| yo | Complete | 0 | 0 |
 | zh-Hans | Complete | 0 | 0 |
 | zh-Hant | Complete | 0 | 0 |
+| zu | Complete | 0 | 0 |
 
 ## Translation and layout backlog
 
@@ -58,48 +176,48 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | Target | Language / writing system | Native name | Direction | Existing catalog / remaining work |
 |---|---|---|---|---|
 | aa | Afar | Afar | LTR | Translation needed |
-| af | Afrikaans | Afrikaans | LTR | Translation needed |
+| af | Afrikaans | Afrikaans | LTR | Catalog: af |
 | agq | Aghem | Aghem | LTR | Translation needed |
-| ak | Akan | Akan | LTR | Translation needed |
-| am | Amharic | አማርኛ | LTR | Translation needed |
-| ar | Arabic | العربية | RTL | Translation needed; RTL layout review needed |
+| ak | Akan | Akan | LTR | Catalog: ak |
+| am | Amharic | አማርኛ | LTR | Catalog: am |
+| ar | Arabic | العربية | RTL | Catalog: ar; RTL layout review needed |
 | arn | Mapuche | Mapudungun | LTR | Translation needed |
-| as | Assamese | অসমীয়া | LTR | Translation needed |
+| as | Assamese | অসমীয়া | LTR | Catalog: as |
 | asa | Asu | Kipare | LTR | Translation needed |
-| ast | Asturian | asturianu | LTR | Translation needed |
-| az | Azerbaijani | azərbaycan | LTR | Translation needed |
-| az-Cyrl | Azerbaijani (Cyrillic) | азәрбајҹан (Кирил) | LTR | Translation needed |
-| az-Latn | Azerbaijani (Latin) | azərbaycan (latın) | LTR | Translation needed |
-| ba | Bashkir | башҡорт теле | LTR | Translation needed |
+| ast | Asturian | asturianu | LTR | Catalog: ast |
+| az | Azerbaijani | azərbaycan | LTR | Catalog: az-Latn |
+| az-Cyrl | Azerbaijani (Cyrillic) | азәрбајҹан (Кирил) | LTR | Catalog: az-Cyrl |
+| az-Latn | Azerbaijani (Latin) | azərbaycan (latın) | LTR | Catalog: az-Latn |
+| ba | Bashkir | башҡорт теле | LTR | Catalog: ba |
 | bas | Basaa | Ɓàsàa | LTR | Translation needed |
-| be | Belarusian | беларуская | LTR | Translation needed |
-| bem | Bemba | Ichibemba | LTR | Translation needed |
+| be | Belarusian | беларуская | LTR | Catalog: be |
+| bem | Bemba | Ichibemba | LTR | Catalog: bem |
 | bez | Bena | Hibena | LTR | Translation needed |
 | bg | Bulgarian | български | LTR | Catalog: bg |
 | bgc | Haryanvi | हरियाणवी | LTR | Translation needed |
-| bho | Bhojpuri | भोजपुरी | LTR | Translation needed |
+| bho | Bhojpuri | भोजपुरी | LTR | Catalog: bho |
 | bin | Edo | Ẹ̀dó | LTR | Translation needed |
-| bm | Bamanankan | bamanakan | LTR | Translation needed |
-| bn | Bangla | বাংলা | LTR | Translation needed |
-| bo | Tibetan | བོད་སྐད་ | LTR | Translation needed |
+| bm | Bamanankan | bamanakan | LTR | Catalog: bm |
+| bn | Bangla | বাংলা | LTR | Catalog: bn |
+| bo | Tibetan | བོད་སྐད་ | LTR | Catalog: bo |
 | br | Breton | brezhoneg | LTR | Translation needed |
 | brx | Bodo | बर’ | LTR | Translation needed |
-| bs | Bosnian | bosanski | LTR | Translation needed |
-| bs-Cyrl | Bosnian (Cyrillic) | босански (ћирилица) | LTR | Translation needed |
-| bs-Latn | Bosnian (Latin) | bosanski (latinica) | LTR | Translation needed |
+| bs | Bosnian | bosanski | LTR | Catalog: bs-Latn |
+| bs-Cyrl | Bosnian (Cyrillic) | босански (ћирилица) | LTR | Catalog: bs-Cyrl |
+| bs-Latn | Bosnian (Latin) | bosanski (latinica) | LTR | Catalog: bs-Latn |
 | byn | Blin | Blin | LTR | Translation needed |
 | ca | Catalan | català | LTR | Catalog: ca |
 | ccp | Chakma | 𑄌𑄋𑄴𑄟𑄳𑄦 | LTR | Translation needed |
 | ce | Chechen | нохчийн | LTR | Translation needed |
-| ceb | Cebuano | Cebuano | LTR | Translation needed |
+| ceb | Cebuano | Cebuano | LTR | Catalog: ceb |
 | cgg | Chiga | Rukiga | LTR | Translation needed |
 | chr | Cherokee | ᏣᎳᎩ | LTR | Translation needed |
-| ckb | Central Kurdish | کوردیی ناوەندی | RTL | Translation needed; RTL layout review needed |
-| co | Corsican | corsu | LTR | Translation needed |
+| ckb | Central Kurdish | کوردیی ناوەندی | RTL | Catalog: ckb; RTL layout review needed |
+| co | Corsican | corsu | LTR | Catalog: co |
 | cs | Czech | čeština | LTR | Catalog: cs |
 | cu | Church Slavic | Church Slavic | LTR | Translation needed |
-| cv | Chuvash | чӑваш | LTR | Translation needed |
-| cy | Welsh | Cymraeg | LTR | Translation needed |
+| cv | Chuvash | чӑваш | LTR | Catalog: cv |
+| cy | Welsh | Cymraeg | LTR | Catalog: cy |
 | da | Danish | dansk | LTR | Catalog: da |
 | dav | Taita | Kitaita | LTR | Translation needed |
 | de | German | Deutsch | LTR | Catalog: de |
@@ -107,219 +225,219 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | doi | Dogri | डोगरी | LTR | Translation needed |
 | dsb | Lower Sorbian | dolnoserbšćina | LTR | Translation needed |
 | dua | Duala | duálá | LTR | Translation needed |
-| dv | Divehi | Divehi | RTL | Translation needed; RTL layout review needed |
+| dv | Divehi | Divehi | RTL | Catalog: dv; RTL layout review needed |
 | dyo | Jola-Fonyi | joola | LTR | Translation needed |
-| dz | Dzongkha | རྫོང་ཁ | LTR | Translation needed |
+| dz | Dzongkha | རྫོང་ཁ | LTR | Catalog: dz |
 | ebu | Embu | Kĩembu | LTR | Translation needed |
-| ee | Ewe | Eʋegbe | LTR | Translation needed |
+| ee | Ewe | Eʋegbe | LTR | Catalog: ee |
 | el | Greek | Ελληνικά | LTR | Catalog: el |
 | en | English | English | LTR | Catalog: en-US |
-| eo | Esperanto | esperanto | LTR | Translation needed |
+| eo | Esperanto | esperanto | LTR | Catalog: eo |
 | es | Spanish | español | LTR | Catalog: es |
 | et | Estonian | eesti | LTR | Catalog: et |
-| eu | Basque | euskara | LTR | Translation needed |
+| eu | Basque | euskara | LTR | Catalog: eu |
 | ewo | Ewondo | ewondo | LTR | Translation needed |
-| fa | Persian | فارسی | RTL | Translation needed; RTL layout review needed |
-| ff | Fula | Pulaar | LTR | Translation needed |
-| ff-Adlm | Fula (Adlam) | 𞤆𞤵𞤤𞤢𞤪 (𞤀𞤁𞤂𞤢𞤃) | RTL | Translation needed; RTL layout review needed |
-| ff-Latn | Fula (Latin) | Fula (Latin) | LTR | Translation needed |
+| fa | Persian | فارسی | RTL | Catalog: fa; RTL layout review needed |
+| ff | Fula | Pulaar | LTR | Catalog: ff-Latn |
+| ff-Adlm | Fula (Adlam) | 𞤆𞤵𞤤𞤢𞤪 (𞤀𞤁𞤂𞤢𞤃) | RTL | Catalog: ff-Adlm; RTL layout review needed |
+| ff-Latn | Fula (Latin) | Fula (Latin) | LTR | Catalog: ff-Latn |
 | fi | Finnish | suomi | LTR | Catalog: fi |
 | fil | Filipino | Filipino | LTR | Catalog: fil |
-| fo | Faroese | føroyskt | LTR | Translation needed |
+| fo | Faroese | føroyskt | LTR | Catalog: fo |
 | fr | French | français | LTR | Catalog: fr |
-| fur | Friulian | furlan | LTR | Translation needed |
-| fy | Western Frisian | Frysk | LTR | Translation needed |
-| ga | Irish | Gaeilge | LTR | Translation needed |
-| gd | Scottish Gaelic | Gàidhlig | LTR | Translation needed |
-| gl | Galician | galego | LTR | Translation needed |
-| gn | Guarani | avañe’ẽ | LTR | Translation needed |
-| gsw | Swiss German | Schwiizertüütsch | LTR | Translation needed |
-| gu | Gujarati | ગુજરાતી | LTR | Translation needed |
+| fur | Friulian | furlan | LTR | Catalog: fur |
+| fy | Western Frisian | Frysk | LTR | Catalog: fy |
+| ga | Irish | Gaeilge | LTR | Catalog: ga |
+| gd | Scottish Gaelic | Gàidhlig | LTR | Catalog: gd |
+| gl | Galician | galego | LTR | Catalog: gl |
+| gn | Guarani | avañe’ẽ | LTR | Catalog: gn |
+| gsw | Swiss German | Schwiizertüütsch | LTR | Catalog: gsw |
+| gu | Gujarati | ગુજરાતી | LTR | Catalog: gu |
 | guz | Gusii | Ekegusii | LTR | Translation needed |
 | gv | Manx | Gaelg | LTR | Translation needed |
-| ha | Hausa | Hausa | LTR | Translation needed |
-| haw | Hawaiian | ʻŌlelo Hawaiʻi | LTR | Translation needed |
-| he | Hebrew | עברית | RTL | Translation needed; RTL layout review needed |
+| ha | Hausa | Hausa | LTR | Catalog: ha |
+| haw | Hawaiian | ʻŌlelo Hawaiʻi | LTR | Catalog: haw |
+| he | Hebrew | עברית | RTL | Catalog: he; RTL layout review needed |
 | hi | Hindi | हिन्दी | LTR | Catalog: hi |
-| hi-Latn | Hindi (Latin) | Hindi (Latin) | LTR | Translation needed |
+| hi-Latn | Hindi (Latin) | Hindi (Latin) | LTR | Catalog: hi-Latn |
 | hr | Croatian | hrvatski | LTR | Catalog: hr |
 | hsb | Upper Sorbian | hornjoserbšćina | LTR | Translation needed |
 | hu | Hungarian | magyar | LTR | Catalog: hu |
-| hy | Armenian | հայերեն | LTR | Translation needed |
+| hy | Armenian | հայերեն | LTR | Catalog: hy |
 | ia | Interlingua | interlingua | LTR | Translation needed |
 | ibb | Ibibio | Ibibio-Efik | LTR | Translation needed |
 | id | Indonesian | Indonesia | LTR | Catalog: id |
-| ig | Igbo | Igbo | LTR | Translation needed |
+| ig | Igbo | Igbo | LTR | Catalog: ig |
 | ii | Yi | ꆈꌠꉙ | LTR | Translation needed |
-| is | Icelandic | íslenska | LTR | Translation needed |
+| is | Icelandic | íslenska | LTR | Catalog: is |
 | it | Italian | italiano | LTR | Catalog: it |
 | iu | Inuktitut | Inuktitut | LTR | Translation needed |
 | iu-Latn | Inuktitut (Latin) | Inuktitut (Latin) | LTR | Translation needed |
 | ja | Japanese | 日本語 | LTR | Catalog: ja |
 | jgo | Ngomba | Ndaꞌa | LTR | Translation needed |
 | jmc | Machame | Kimachame | LTR | Translation needed |
-| jv | Javanese | Jawa | LTR | Translation needed |
+| jv | Javanese | Jawa | LTR | Catalog: jv |
 | jv-Java | Javanese (Javanese) | Javanese (Javanese) | LTR | Translation needed |
-| ka | Georgian | ქართული | LTR | Translation needed |
-| kab | Kabyle | Taqbaylit | LTR | Translation needed |
-| kam | Kamba | Kikamba | LTR | Translation needed |
+| ka | Georgian | ქართული | LTR | Catalog: ka |
+| kab | Kabyle | Taqbaylit | LTR | Catalog: kab |
+| kam | Kamba | Kikamba | LTR | Catalog: kam |
 | kde | Makonde | Chimakonde | LTR | Translation needed |
-| kea | Kabuverdianu | kabuverdianu | LTR | Translation needed |
+| kea | Kabuverdianu | kabuverdianu | LTR | Catalog: kea |
 | kgp | Kaingang | kanhgág | LTR | Translation needed |
 | khq | Koyra Chiini | Koyra ciini | LTR | Translation needed |
-| ki | Kikuyu | Gikuyu | LTR | Translation needed |
-| kk | Kazakh | қазақ тілі | LTR | Translation needed |
+| ki | Kikuyu | Gikuyu | LTR | Catalog: ki |
+| kk | Kazakh | қазақ тілі | LTR | Catalog: kk |
 | kkj | Kako | kakɔ | LTR | Translation needed |
 | kl | Kalaallisut | kalaallisut | LTR | Translation needed |
 | kln | Kalenjin | Kalenjin | LTR | Translation needed |
-| km | Khmer | ខ្មែរ | LTR | Translation needed |
-| kn | Kannada | ಕನ್ನಡ | LTR | Translation needed |
+| km | Khmer | ខ្មែរ | LTR | Catalog: km |
+| kn | Kannada | ಕನ್ನಡ | LTR | Catalog: kn |
 | ko | Korean | 한국어 | LTR | Catalog: ko |
 | kok | Konkani | कोंकणी | LTR | Translation needed |
-| kr | Kanuri | Kanuri | LTR | Translation needed |
-| kr-Latn | Kanuri (Latin) | Kanuri (Latin) | LTR | Translation needed |
-| ks | Kashmiri | کٲشُر | RTL | Translation needed; RTL layout review needed |
-| ks-Arab | Kashmiri (Arabic) | کٲشُر (عربی) | RTL | Translation needed; RTL layout review needed |
-| ks-Deva | Kashmiri (Devanagari) | कॉशुर (देवनागरी) | LTR | Translation needed |
+| kr | Kanuri | Kanuri | LTR | Catalog: kr-Latn |
+| kr-Latn | Kanuri (Latin) | Kanuri (Latin) | LTR | Catalog: kr-Latn |
+| ks | Kashmiri | کٲشُر | RTL | Catalog: ks-Arab; RTL layout review needed |
+| ks-Arab | Kashmiri (Arabic) | کٲشُر (عربی) | RTL | Catalog: ks-Arab; RTL layout review needed |
+| ks-Deva | Kashmiri (Devanagari) | कॉशुर (देवनागरी) | LTR | Catalog: ks-Deva |
 | ksb | Shambala | Kishambaa | LTR | Translation needed |
 | ksf | Bafia | rikpa | LTR | Translation needed |
 | ksh | Colognian | Kölsch | LTR | Translation needed |
 | kw | Cornish | kernewek | LTR | Translation needed |
-| ky | Kyrgyz | кыргызча | LTR | Translation needed |
+| ky | Kyrgyz | кыргызча | LTR | Catalog: ky |
 | la | Latin | Latin | LTR | Translation needed |
 | lag | Langi | Kɨlaangi | LTR | Translation needed |
-| lb | Luxembourgish | Lëtzebuergesch | LTR | Translation needed |
-| lg | Ganda | Luganda | LTR | Translation needed |
+| lb | Luxembourgish | Lëtzebuergesch | LTR | Catalog: lb |
+| lg | Ganda | Luganda | LTR | Catalog: lg |
 | lkt | Lakota | Lakȟólʼiyapi | LTR | Translation needed |
-| ln | Lingala | lingála | LTR | Translation needed |
-| lo | Lao | ລາວ | LTR | Translation needed |
+| ln | Lingala | lingála | LTR | Catalog: ln |
+| lo | Lao | ລາວ | LTR | Catalog: lo |
 | lrc | Northern Luri | لۊری شومالی | RTL | Translation needed; RTL layout review needed |
 | lt | Lithuanian | lietuvių | LTR | Catalog: lt |
 | lu | Luba-Katanga | Tshiluba | LTR | Translation needed |
-| luo | Luo | Dholuo | LTR | Translation needed |
+| luo | Luo | Dholuo | LTR | Catalog: luo |
 | luy | Luyia | Luluhia | LTR | Translation needed |
 | lv | Latvian | latviešu | LTR | Catalog: lv |
-| mai | Maithili | मैथिली | LTR | Translation needed |
+| mai | Maithili | मैथिली | LTR | Catalog: mai |
 | mas | Masai | Maa | LTR | Translation needed |
 | mer | Meru | Kĩmĩrũ | LTR | Translation needed |
 | mfe | Morisyen | kreol morisien | LTR | Translation needed |
-| mg | Malagasy | Malagasy | LTR | Translation needed |
+| mg | Malagasy | Malagasy | LTR | Catalog: mg |
 | mgh | Makhuwa-Meetto | Makua | LTR | Translation needed |
 | mgo | Metaʼ | metaʼ | LTR | Translation needed |
-| mi | Māori | Māori | LTR | Translation needed |
-| mk | Macedonian | македонски | LTR | Translation needed |
-| ml | Malayalam | മലയാളം | LTR | Translation needed |
-| mn | Mongolian | монгол | LTR | Translation needed |
+| mi | Māori | Māori | LTR | Catalog: mi |
+| mk | Macedonian | македонски | LTR | Catalog: mk |
+| ml | Malayalam | മലയാളം | LTR | Catalog: ml |
+| mn | Mongolian | монгол | LTR | Catalog: mn |
 | mn-Mong | Mongolian (Mongolian) | Mongolian (Mongolian) | LTR | Translation needed |
-| mni | Manipuri | মৈতৈলোন্ | LTR | Translation needed |
-| mni-Beng | Manipuri (Bangla) | মৈতৈলোন্ (বাংলা) | LTR | Translation needed |
+| mni | Manipuri | মৈতৈলোন্ | LTR | Catalog: mni-Beng |
+| mni-Beng | Manipuri (Bangla) | মৈতৈলোন্ (বাংলা) | LTR | Catalog: mni-Beng |
 | moh | Mohawk | Kanienʼkéha | LTR | Translation needed |
-| mr | Marathi | मराठी | LTR | Translation needed |
+| mr | Marathi | मराठी | LTR | Catalog: mr |
 | ms | Malay | Melayu | LTR | Catalog: ms |
-| mt | Maltese | Malti | LTR | Translation needed |
+| mt | Maltese | Malti | LTR | Catalog: mt |
 | mua | Mundang | MUNDAŊ | LTR | Translation needed |
-| my | Burmese | မြန်မာ | LTR | Translation needed |
+| my | Burmese | မြန်မာ | LTR | Catalog: my |
 | mzn | Mazanderani | مازرونی | RTL | Translation needed; RTL layout review needed |
 | naq | Nama | Khoekhoegowab | LTR | Translation needed |
 | nb | Norwegian Bokmål | norsk bokmål | LTR | Catalog: nb |
 | nd | North Ndebele | isiNdebele | LTR | Translation needed |
 | nds | Low German | Low German | LTR | Translation needed |
-| ne | Nepali | नेपाली | LTR | Translation needed |
+| ne | Nepali | नेपाली | LTR | Catalog: ne |
 | nl | Dutch | Nederlands | LTR | Catalog: nl |
 | nmg | Kwasio | Kwasio | LTR | Translation needed |
-| nn | Norwegian Nynorsk | norsk nynorsk | LTR | Translation needed |
+| nn | Norwegian Nynorsk | norsk nynorsk | LTR | Catalog: nn |
 | nnh | Ngiemboon | Shwóŋò ngiembɔɔn | LTR | Translation needed |
 | no | Norwegian | norsk | LTR | Catalog: nb |
 | nqo | N’Ko | ߒߞߏ | RTL | Translation needed; RTL layout review needed |
 | nr | South Ndebele | South Ndebele | LTR | Translation needed |
-| nso | Sesotho sa Leboa | Sesotho sa Leboa | LTR | Translation needed |
-| nus | Nuer | Thok Nath | LTR | Translation needed |
+| nso | Sesotho sa Leboa | Sesotho sa Leboa | LTR | Catalog: nso |
+| nus | Nuer | Thok Nath | LTR | Catalog: nus |
 | nyn | Nyankole | Runyankore | LTR | Translation needed |
-| oc | Occitan | Occitan | LTR | Translation needed |
-| om | Oromo | Oromoo | LTR | Translation needed |
-| or | Odia | ଓଡ଼ିଆ | LTR | Translation needed |
+| oc | Occitan | Occitan | LTR | Catalog: oc |
+| om | Oromo | Oromoo | LTR | Catalog: om |
+| or | Odia | ଓଡ଼ିଆ | LTR | Catalog: or |
 | os | Ossetic | ирон | LTR | Translation needed |
-| pa | Punjabi | ਪੰਜਾਬੀ | LTR | Translation needed |
+| pa | Punjabi | ਪੰਜਾਬੀ | LTR | Catalog: pa-Guru |
 | pa-Arab | Punjabi (Arabic) | پنجابی (عربی) | RTL | Translation needed; RTL layout review needed |
-| pa-Guru | Punjabi (Gurmukhi) | ਪੰਜਾਬੀ (ਗੁਰਮੁਖੀ) | LTR | Translation needed |
-| pap | Papiamento | Papiamentu | LTR | Translation needed |
+| pa-Guru | Punjabi (Gurmukhi) | ਪੰਜਾਬੀ (ਗੁਰਮੁਖੀ) | LTR | Catalog: pa-Guru |
+| pap | Papiamento | Papiamentu | LTR | Catalog: pap |
 | pcm | Nigerian Pidgin | Naijíriá Píjin | LTR | Translation needed |
 | pl | Polish | polski | LTR | Catalog: pl |
 | prg | Prussian | prūsiskan | LTR | Translation needed |
-| ps | Pashto | پښتو | RTL | Translation needed; RTL layout review needed |
+| ps | Pashto | پښتو | RTL | Catalog: ps; RTL layout review needed |
 | pt | Portuguese | português | LTR | Catalog: pt-BR |
 | qu | Quechua | Runasimi | LTR | Translation needed |
 | quc | Kʼicheʼ | Kʼicheʼ | LTR | Translation needed |
 | raj | Rajasthani | राजस्थानी | LTR | Translation needed |
 | rm | Romansh | rumantsch | LTR | Translation needed |
-| rn | Rundi | Ikirundi | LTR | Translation needed |
+| rn | Rundi | Ikirundi | LTR | Catalog: rn |
 | ro | Romanian | română | LTR | Catalog: ro |
 | rof | Rombo | Kihorombo | LTR | Translation needed |
 | ru | Russian | русский | LTR | Catalog: ru |
-| rw | Kinyarwanda | Kinyarwanda | LTR | Translation needed |
+| rw | Kinyarwanda | Kinyarwanda | LTR | Catalog: rw |
 | rwk | Rwa | Kiruwa | LTR | Translation needed |
-| sa | Sanskrit | संस्कृत भाषा | LTR | Translation needed |
+| sa | Sanskrit | संस्कृत भाषा | LTR | Catalog: sa |
 | sah | Yakut | саха тыла | LTR | Translation needed |
 | saq | Samburu | Kisampur | LTR | Translation needed |
 | sat | Santali | ᱥᱟᱱᱛᱟᱲᱤ | LTR | Translation needed |
 | sat-Olck | Santali (Ol Chiki) | ᱥᱟᱱᱛᱟᱲᱤ (ᱚᱞ ᱪᱤᱠᱤ) | LTR | Translation needed |
 | sbp | Sangu | Ishisangu | LTR | Translation needed |
-| sc | Sardinian | sardu | LTR | Translation needed |
-| sd | Sindhi | سنڌي | RTL | Translation needed; RTL layout review needed |
-| sd-Arab | Sindhi (Arabic) | سنڌي (عربي) | RTL | Translation needed; RTL layout review needed |
+| sc | Sardinian | sardu | LTR | Catalog: sc |
+| sd | Sindhi | سنڌي | RTL | Catalog: sd-Arab; RTL layout review needed |
+| sd-Arab | Sindhi (Arabic) | سنڌي (عربي) | RTL | Catalog: sd-Arab; RTL layout review needed |
 | sd-Deva | Sindhi (Devanagari) | सिन्धी (देवनागिरी) | LTR | Translation needed |
 | se | Northern Sami | davvisámegiella | LTR | Translation needed |
 | seh | Sena | sena | LTR | Translation needed |
 | ses | Koyraboro Senni | Koyraboro senni | LTR | Translation needed |
-| sg | Sango | Sängö | LTR | Translation needed |
+| sg | Sango | Sängö | LTR | Catalog: sg |
 | shi | Tachelhit | ⵜⴰⵛⵍⵃⵉⵜ | LTR | Translation needed |
 | shi-Latn | Tachelhit (Latin) | Tachelhit (Latin) | LTR | Translation needed |
 | shi-Tfng | Tachelhit (Tifinagh) | Tachelhit (Tifinagh) | LTR | Translation needed |
-| si | Sinhala | සිංහල | LTR | Translation needed |
+| si | Sinhala | සිංහල | LTR | Catalog: si |
 | sk | Slovak | slovenčina | LTR | Catalog: sk |
 | sl | Slovenian | slovenščina | LTR | Catalog: sl |
 | sma | Southern Sami | Åarjelsaemien gïele | LTR | Translation needed |
 | smj | Lule Sami | julevsámegiella | LTR | Translation needed |
 | smn | Inari Sami | anarâškielâ | LTR | Translation needed |
 | sms | Skolt Sami | Skolt Sami | LTR | Translation needed |
-| sn | Shona | chiShona | LTR | Translation needed |
-| so | Somali | Soomaali | LTR | Translation needed |
-| sq | Albanian | shqip | LTR | Translation needed |
-| sr | Serbian | српски | LTR | Translation needed |
-| sr-Cyrl | Serbian (Cyrillic) | српски (ћирилица) | LTR | Translation needed |
-| sr-Latn | Serbian (Latin) | srpski (latinica) | LTR | Translation needed |
-| ss | siSwati | siSwati | LTR | Translation needed |
+| sn | Shona | chiShona | LTR | Catalog: sn |
+| so | Somali | Soomaali | LTR | Catalog: so |
+| sq | Albanian | shqip | LTR | Catalog: sq |
+| sr | Serbian | српски | LTR | Catalog: sr-Latn |
+| sr-Cyrl | Serbian (Cyrillic) | српски (ћирилица) | LTR | Catalog: sr-Cyrl |
+| sr-Latn | Serbian (Latin) | srpski (latinica) | LTR | Catalog: sr-Latn |
+| ss | siSwati | siSwati | LTR | Catalog: ss |
 | ssy | Saho | Saho | LTR | Translation needed |
-| st | Sesotho | Sesotho | LTR | Translation needed |
-| su | Sundanese | Basa Sunda | LTR | Translation needed |
-| su-Latn | Sundanese (Latin) | Basa Sunda (Latin) | LTR | Translation needed |
+| st | Sesotho | Sesotho | LTR | Catalog: st |
+| su | Sundanese | Basa Sunda | LTR | Catalog: su-Latn |
+| su-Latn | Sundanese (Latin) | Basa Sunda (Latin) | LTR | Catalog: su-Latn |
 | sv | Swedish | svenska | LTR | Catalog: sv |
-| sw | Kiswahili | Kiswahili | LTR | Translation needed |
+| sw | Kiswahili | Kiswahili | LTR | Catalog: sw |
 | syr | Syriac | ܣܘܪܝܝܐ | RTL | Translation needed; RTL layout review needed |
-| ta | Tamil | தமிழ் | LTR | Translation needed |
-| te | Telugu | తెలుగు | LTR | Translation needed |
+| ta | Tamil | தமிழ் | LTR | Catalog: ta |
+| te | Telugu | తెలుగు | LTR | Catalog: te |
 | teo | Teso | Kiteso | LTR | Translation needed |
-| tg | Tajik | тоҷикӣ | LTR | Translation needed |
+| tg | Tajik | тоҷикӣ | LTR | Catalog: tg |
 | th | Thai | ไทย | LTR | Catalog: th |
-| ti | Tigrinya | ትግርኛ | LTR | Translation needed |
+| ti | Tigrinya | ትግርኛ | LTR | Catalog: ti |
 | tig | Tigre | Tigre | LTR | Translation needed |
-| tk | Turkmen | türkmen dili | LTR | Translation needed |
-| tn | Setswana | Setswana | LTR | Translation needed |
+| tk | Turkmen | türkmen dili | LTR | Catalog: tk |
+| tn | Setswana | Setswana | LTR | Catalog: tn |
 | to | Tongan | lea fakatonga | LTR | Translation needed |
 | tr | Turkish | Türkçe | LTR | Catalog: tr |
-| ts | Xitsonga | Xitsonga | LTR | Translation needed |
-| tt | Tatar | татар | LTR | Translation needed |
+| ts | Xitsonga | Xitsonga | LTR | Catalog: ts |
+| tt | Tatar | татар | LTR | Catalog: tt |
 | twq | Tasawaq | Tasawaq senni | LTR | Translation needed |
 | tzm | Central Atlas Tamazight | Tamaziɣt n laṭlaṣ | LTR | Translation needed |
 | tzm-Arab | Central Atlas Tamazight (Arabic) | Central Atlas Tamazight (Arabic) | RTL | Translation needed; RTL layout review needed |
-| tzm-Tfng | Central Atlas Tamazight (Tifinagh) | Central Atlas Tamazight (Tifinagh) | LTR | Translation needed |
-| ug | Uyghur | ئۇيغۇرچە | RTL | Translation needed; RTL layout review needed |
+| tzm-Tfng | Central Atlas Tamazight (Tifinagh) | Central Atlas Tamazight (Tifinagh) | LTR | Catalog: tzm-Tfng |
+| ug | Uyghur | ئۇيغۇرچە | RTL | Catalog: ug; RTL layout review needed |
 | uk | Ukrainian | українська | LTR | Catalog: uk |
-| ur | Urdu | اردو | RTL | Translation needed; RTL layout review needed |
-| uz | Uzbek | o‘zbek | LTR | Translation needed |
+| ur | Urdu | اردو | RTL | Catalog: ur; RTL layout review needed |
+| uz | Uzbek | o‘zbek | LTR | Catalog: uz-Latn |
 | uz-Arab | Uzbek (Arabic) | اوزبیک (عربی) | RTL | Translation needed; RTL layout review needed |
-| uz-Cyrl | Uzbek (Cyrillic) | ўзбекча (Кирил) | LTR | Translation needed |
-| uz-Latn | Uzbek (Latin) | o‘zbek (lotin) | LTR | Translation needed |
+| uz-Cyrl | Uzbek (Cyrillic) | ўзбекча (Кирил) | LTR | Catalog: uz-Cyrl |
+| uz-Latn | Uzbek (Latin) | o‘zbek (lotin) | LTR | Catalog: uz-Latn |
 | vai | Vai | ꕙꔤ | LTR | Translation needed |
 | vai-Latn | Vai (Latin) | Vai (Latin) | LTR | Translation needed |
 | vai-Vaii | Vai (Vai) | Vai (Vai) | LTR | Translation needed |
@@ -329,18 +447,18 @@ An existing catalog is a language fallback, not a claim of country-specific word
 | vun | Vunjo | Kyivunjo | LTR | Translation needed |
 | wae | Walser | Walser | LTR | Translation needed |
 | wal | Wolaytta | Wolaytta | LTR | Translation needed |
-| wo | Wolof | Wolof | LTR | Translation needed |
-| xh | isiXhosa | IsiXhosa | LTR | Translation needed |
+| wo | Wolof | Wolof | LTR | Catalog: wo |
+| xh | isiXhosa | IsiXhosa | LTR | Catalog: xh |
 | xog | Soga | Olusoga | LTR | Translation needed |
 | yav | Yangben | nuasue | LTR | Translation needed |
-| yi | Yiddish | ייִדיש | RTL | Translation needed; RTL layout review needed |
-| yo | Yoruba | Èdè Yorùbá | LTR | Translation needed |
+| yi | Yiddish | ייִדיש | RTL | Catalog: yi; RTL layout review needed |
+| yo | Yoruba | Èdè Yorùbá | LTR | Catalog: yo |
 | yrl | Nheengatu | nheẽgatu | LTR | Translation needed |
 | zgh | Standard Moroccan Tamazight | ⵜⴰⵎⴰⵣⵉⵖⵜ | LTR | Translation needed |
 | zh | Chinese | 中文 | LTR | Catalog: zh-Hans |
 | zh-Hans | Chinese (Simplified) | 中文（简体） | LTR | Catalog: zh-Hans |
 | zh-Hant | Chinese (Traditional) | 中文（繁體） | LTR | Catalog: zh-Hant |
-| zu | isiZulu | isiZulu | LTR | Translation needed |
+| zu | isiZulu | isiZulu | LTR | Catalog: zu |
 
 ## Updating the inventory
 

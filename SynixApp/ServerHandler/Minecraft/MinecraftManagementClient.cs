@@ -10,6 +10,8 @@
 //    rebrand, or sell this code or derivative works without written consent.
 // 3. The "Synix" brand and logic remain the property of Jason Turner.
 // ============================================================================
+using System.Net;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -113,14 +115,26 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			timeout.CancelAfter(TimeSpan.FromSeconds(5));
 			try
 			{
+				using SocketsHttpHandler handler = new()
+				{
+					UseProxy = false,
+					AllowAutoRedirect = false,
+					ConnectCallback = (_, token) => LocalServerConnectionIdentity.ConnectAsync(
+						server, settings.Host, settings.Port, token)
+				};
+				using HttpMessageInvoker invoker = new(handler, disposeHandler: false);
 				using ClientWebSocket socket = new();
+				socket.Options.HttpVersion = HttpVersion.Version11;
+				socket.Options.HttpVersionPolicy = HttpVersionPolicy.RequestVersionExact;
 				socket.Options.SetRequestHeader(
 					"Authorization",
 					$"Bearer {settings.Secret}");
 				socket.Options.AddSubProtocol("minecraft-v1");
 				string scheme = settings.TlsEnabled ? "wss" : "ws";
-				Uri endpoint = new($"{scheme}://{settings.Host}:{settings.Port}/");
-				await socket.ConnectAsync(endpoint, timeout.Token);
+				Uri endpoint = new UriBuilder(scheme, settings.Host.Trim('[', ']'), settings.Port).Uri;
+				// ConnectCallback verifies the actual peer before the HTTP handshake
+				// (and its Authorization header) can be written to this connection.
+				await socket.ConnectAsync(endpoint, invoker, timeout.Token);
 
 				const int requestId = 1;
 				Dictionary<string, object?> request = new()
@@ -177,7 +191,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				return new(false, default, LocalizationManager.Get("Minecraft.Management.Timeout"));
 			}
 			catch (Exception exception) when (
-				exception is WebSocketException or IOException or JsonException or UriFormatException)
+				exception is WebSocketException or HttpRequestException or IOException or JsonException or UriFormatException)
 			{
 				return new(false, default, LocalizationManager.Get("Minecraft.Management.ConnectionUnavailable", exception.Message));
 			}

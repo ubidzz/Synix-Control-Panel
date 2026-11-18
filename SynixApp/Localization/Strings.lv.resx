@@ -1,45 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -12825,7 +12825,7 @@ Licences versija 1.4 — 2026. gada 11. novembris
 Copyright © 2026 Jason Turner. Visas tiesības aizsargātas.
 ASV Autortiesību reģistrācijas pieteikums: Gaida
 
-Šī licence attiecas uz Synix vadības paneļa programmatūru, ieskaitot tās pirmkodu, apkopotus bināros failus, lietotāja interfeisu, dokumentāciju, mākslas darbus, logotipus un citus iekļautos materiālus (kopā &quot;Programmatūra&quot;).
+Šī licence attiecas uz Synix vadības paneļa programmatūru, ieskaitot tās pirmkodu, apkopotus bināros failus, lietotāja interfeisu, dokumentāciju, mākslas darbus, logotipus un citus iekļautos materiālus (kopā "Programmatūra").
 
 13. un 14. sadaļā ir arī izskaidrota oficiālās Synix vietnes, aktivitāšu skaitītāja un izvēles attālā pārvaldnieka konfidencialitātes prakse. Tie raksturo pašreizējo pakalpojumu; tie nemaina tālāk norādīto personīgo, nekomerciālo licences piešķiršanu.
 
@@ -12937,7 +12937,7 @@ Nekas šajā licencē negarantē, ka jebkura konkrēta izpildes darbība vai tie
 
 PROGRAMMATŪRA BEZ JEBKĀDAS VEIDA, IZTEIKTAS VAI NETIEŠAS GARANTIJAS, TOSTARP GARANTIJAS PAR UZRAUDZĪBU, PIEMĒROTĪBU NOTEIKTAM MĒRĶIM, NOTEIKTAM NOSAUKUMAM, NOSAUKUMAM UN NE PĀRKĀPUMAM.
 
-JASON TURNER MAKSIMĀLI PAREDZĒTAM TIESĪBU AIZLIEGTAJAM, JASON TURNER NAV ATBILDĪGS PAR JEBKĀDU TIEŠU, NETIEŠU, NEGATĪVU, SĪKĀKU, SEKVENCI VAI EKSPLUATANTU ZAUDĒJUMIEM DATU, PEĻŅAS, IEŅĒMUMU, SERVĒJU VAI TIESAS, UZ UZŅĒMUMU, VAI PAKUMU, VAI PAKŠŅĒMUMA PIEEJAMĪBA NO NO PIEEJAMĪBAS ATŠŠŠŠŅEMĪBAS NO DATUTUTUVES.
+Maksimālajā tiesību aktos atļautajā apmērā Jason Turner nav atbildīgs par jebkādiem tiešiem, netiešiem, nejaušiem, īpašiem, izrietošiem vai soda rakstura zaudējumiem, kā arī par datu, peļņas, ieņēmumu, serveru failu, spēļu pasauļu, uzņēmējdarbības vai pakalpojuma pieejamības zudumu, kas rodas no programmatūras vai tās lietošanas vai ir ar to saistīts.
 
 Jūs esat atbildīgs par rezerves kopiju uzturēšanu un pārbaudi, vai Programmatūra ir piemērota Jūsu sistēmas un spēļu servera videi.
 

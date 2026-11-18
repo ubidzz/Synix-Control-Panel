@@ -26,6 +26,32 @@ namespace Synix_Control_Panel.Tests;
 public sealed class LocalizationTests
 {
 	[Fact]
+	public void EveryLanguageCatalog_DoesNotIntroduceRepeatedLetterArtifacts()
+	{
+		ResourceManager resources = new("Synix_Control_Panel.Localization.Strings", typeof(LocalizationManager).Assembly);
+		try
+		{
+			Dictionary<string, string> english = resources.GetResourceSet(CultureInfo.InvariantCulture, true, false)!
+				.Cast<DictionaryEntry>().ToDictionary(entry => (string)entry.Key, entry => (string)entry.Value!);
+			Regex repeatedLetters = new(@"([^\W\d_]['’]?)\1{3,}");
+			foreach (var language in LocalizationManager.SupportedLanguages)
+			{
+				ResourceSet catalog = resources.GetResourceSet(CultureInfo.GetCultureInfo(language.ResourceCultureName), true, false)!;
+				foreach (DictionaryEntry entry in catalog)
+				{
+					string key = (string)entry.Key;
+					if (!english.TryGetValue(key, out string? source)) continue;
+					foreach (Match repetition in repeatedLetters.Matches((string)entry.Value!))
+						Assert.True(source.Contains(repetition.Value, StringComparison.Ordinal),
+							$"{language.ResourceCultureName}: repeated-letter translation artifact in {key}");
+				}
+				resources.ReleaseAllResources();
+			}
+		}
+		finally { resources.ReleaseAllResources(); }
+	}
+
+	[Fact]
 	public void SupportedLanguages_IncludeEnglishFrenchGermanAndSpanish()
 	{
 		Assert.Contains(
@@ -664,7 +690,7 @@ public sealed class LocalizationTests
 			foreach ((string key, string englishText) in required)
 			{
 				Assert.True(translatedValues.TryGetValue(key, out string? value));
-				Assert.NotEqual(englishText, value);
+				Assert.True(englishText != value, $"{languageCode}: untranslated operational dialog {key}: {englishText}");
 			}
 		}
 	}

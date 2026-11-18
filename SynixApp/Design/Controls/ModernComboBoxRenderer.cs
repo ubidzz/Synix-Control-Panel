@@ -24,7 +24,8 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			Color backgroundColor,
 			Color borderColor,
 			Color arrowColor,
-			bool drawOuterBorder)
+			bool drawOuterBorder,
+			bool rightToLeft = false)
 		{
 			if (bounds.Width <= 2 || bounds.Height <= 2)
 			{
@@ -35,7 +36,7 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 				Math.Max(28, Math.Min(bounds.Height, 34)),
 				Math.Max(1, bounds.Width / 2));
 			Rectangle buttonBounds = new(
-				bounds.Right - buttonWidth,
+				rightToLeft ? bounds.Left + 1 : bounds.Right - buttonWidth,
 				bounds.Top + 1,
 				buttonWidth - 1,
 				bounds.Height - 2);
@@ -46,9 +47,9 @@ namespace Synix_Control_Panel.SynixApp.Design.Controls
 			using Pen dividerPen = new(borderColor, 1F);
 			graphics.DrawLine(
 				dividerPen,
-				buttonBounds.Left,
+				rightToLeft ? buttonBounds.Right : buttonBounds.Left,
 				buttonBounds.Top + 4,
-				buttonBounds.Left,
+				rightToLeft ? buttonBounds.Right : buttonBounds.Left,
 				buttonBounds.Bottom - 4);
 
 			graphics.SmoothingMode = SmoothingMode.AntiAlias;

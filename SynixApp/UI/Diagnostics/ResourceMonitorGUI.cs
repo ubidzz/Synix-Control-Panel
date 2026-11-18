@@ -539,6 +539,7 @@ namespace Synix_Control_Panel.SynixApp.UI.Diagnostics
 				messageBounds,
 				SettingsPalette.MutedText,
 				TextFormatFlags.HorizontalCenter |
+				(LocalizationManager.IsRightToLeft ? TextFormatFlags.RightToLeft : 0) |
 				TextFormatFlags.VerticalCenter);
 		}
 
