@@ -12,7 +12,6 @@
 // ============================================================================
 using Synix_Control_Panel.SynixEngine;
 using System.Buffers.Binary;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -57,9 +56,8 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			timeout.CancelAfter(TimeSpan.FromSeconds(5));
 			try
 			{
-				using TcpClient client = new(AddressFamily.InterNetwork);
-				await client.ConnectAsync(IPAddress.Loopback, server.RconPort, timeout.Token);
-				using NetworkStream stream = client.GetStream();
+				using Stream stream = await LocalServerConnectionIdentity.ConnectAsync(
+					server, "127.0.0.1", server.RconPort, timeout.Token);
 
 				const int authenticationId = 73_101;
 				await WritePacketAsync(
@@ -150,7 +148,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		}
 
 		private static async Task<RconPacket> ReadAuthenticationResponseAsync(
-			NetworkStream stream,
+			Stream stream,
 			int authenticationId,
 			CancellationToken cancellationToken)
 		{
@@ -165,7 +163,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		}
 
 		private static async Task WritePacketAsync(
-			NetworkStream stream,
+			Stream stream,
 			int requestId,
 			int packetType,
 			string body,
@@ -177,7 +175,7 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 		}
 
 		private static async Task<RconPacket> ReadPacketAsync(
-			NetworkStream stream,
+			Stream stream,
 			CancellationToken cancellationToken)
 		{
 			byte[] lengthBytes = new byte[4];

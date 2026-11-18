@@ -88,7 +88,9 @@ public sealed class LaunchSecurityTests
 		Assert.Contains(server.ExtraArgs, arguments);
 		var start = GameLaunchCommandBuilder.CreateProcessStartInfo(
 			@"C:\Synix\Games\Test\server.exe", arguments, server.InstallPath, false, true, false);
-		Assert.Equal(arguments, start.Arguments);
+		Assert.Empty(start.Arguments);
+		Assert.Contains("two  words", start.ArgumentList);
+		Assert.Contains("native%EXAMPLE%with!literal!", start.ArgumentList);
 		Assert.Equal(@"C:\Synix\Games\Test\server.exe", start.FileName);
 	}
 

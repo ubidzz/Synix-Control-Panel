@@ -49,11 +49,10 @@ internal static class OwnedGameConsole
         else if (!Path.GetFileName(executable).Equals(MinecraftControlProfile.BedrockExecutableName, StringComparison.OrdinalIgnoreCase)) return null;
         if (!Path.IsPathFullyQualified(executable) || !File.Exists(executable)) return null;
         // No shell interprets these arguments or any subsequently submitted text.
-        return new ProcessStartInfo(executable, arguments) {
-            WorkingDirectory = directory, UseShellExecute = false, CreateNoWindow = true,
-            RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true,
-            StandardInputEncoding = new UTF8Encoding(false)
-        };
+        ProcessStartInfo info = GameLaunchCommandBuilder.CreateProcessStartInfo(
+            executable, arguments, directory, false, true, true, true);
+        info.StandardInputEncoding = new UTF8Encoding(false);
+        return info;
     }
 
     internal static bool TryReadJavaLauncher(string script, out string java, out string suffix)

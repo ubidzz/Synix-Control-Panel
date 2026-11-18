@@ -81,7 +81,8 @@ public sealed class GameLaunchCommandBuilderTests
 			if (launcherKind == GameLauncherKind.NativeExecutable)
 			{
 				Assert.Equal(executablePath, startInfo.FileName);
-				Assert.Equal(arguments, startInfo.Arguments);
+				Assert.Empty(startInfo.Arguments);
+				Assert.Equal(WindowsLaunchArguments.Parse(arguments), startInfo.ArgumentList);
 			}
 			else
 			{
@@ -112,7 +113,7 @@ public sealed class GameLaunchCommandBuilderTests
 			passwords,
 			out string launchArguments,
 			out string launchError), launchError);
-		Assert.Contains($"-userToken=\"{authenticationToken}\"", launchArguments);
+		Assert.Contains($"-userToken={authenticationToken}", WindowsLaunchArguments.Parse(launchArguments));
 
 		Assert.True(GameLaunchCommandBuilder.TryBuildArguments(
 			server,
@@ -122,7 +123,7 @@ public sealed class GameLaunchCommandBuilderTests
 			out string redactedArguments,
 			out string redactionError), redactionError);
 		Assert.DoesNotContain(authenticationToken, redactedArguments);
-		Assert.Contains("-userToken=\"********\"", redactedArguments);
+		Assert.Contains("-userToken=********", WindowsLaunchArguments.Parse(redactedArguments));
 	}
 
 	[Fact]
@@ -138,7 +139,8 @@ public sealed class GameLaunchCommandBuilderTests
 			redirectStandardInput: false);
 
 		Assert.Equal(executablePath, startInfo.FileName);
-		Assert.Equal("-batchmode +server.port 28015", startInfo.Arguments);
+		Assert.Empty(startInfo.Arguments);
+		Assert.Equal(["-batchmode", "+server.port", "28015"], startInfo.ArgumentList);
 		Assert.False(startInfo.UseShellExecute);
 		Assert.True(startInfo.CreateNoWindow);
 		Assert.Equal(ProcessWindowStyle.Hidden, startInfo.WindowStyle);
@@ -459,7 +461,7 @@ public sealed class GameLaunchCommandBuilderTests
 			Assert.Contains("-SteamAppId=1527890", arguments);
 			Assert.DoesNotContain("-SteamAppId=2214780", arguments);
 			Assert.Contains("-QueryPort=27016", arguments);
-			Assert.Contains("-worldsettings=\"MyServer.json\"", arguments);
+			Assert.Contains("-worldsettings=MyServer.json", WindowsLaunchArguments.Parse(arguments));
 
 			Core.SetServerPasswords(server, passwords);
 			GameArgumentTestPreview preview = Core.BuildGameArgumentTestPreview(server);

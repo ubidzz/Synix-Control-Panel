@@ -15,6 +15,7 @@ using Synix_Control_Panel.SynixEngine;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Synix_Control_Panel.SynixApp.ServerHandler
 {
@@ -226,7 +227,16 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				template = $"-Xmx{ramToUse}M -Xms{ramToUse}M";
 			}
 
-			if (template.Contains("{rcon}", StringComparison.Ordinal))
+			bool nativeArguments = !commandScript && !forBatchFile;
+			if (nativeArguments)
+			{
+				// Insert only trusted syntax before splitting. User fields are expanded
+				// afterwards, so quotes/spaces in a field cannot create additional options.
+				template = template.Replace("{rcon}", server.EnableRcon ? definition.RconSyntax ?? "" : "", StringComparison.Ordinal)
+					.Replace("{crossplay}", values["{crossplay}"], StringComparison.Ordinal)
+					.Replace("{crossplay_public_ip}", values["{crossplay_public_ip}"], StringComparison.Ordinal);
+			}
+			else if (template.Contains("{rcon}", StringComparison.Ordinal))
 			{
 				string formattedRcon = string.Empty;
 				if (server.EnableRcon && !string.IsNullOrWhiteSpace(definition.RconSyntax))
@@ -244,7 +254,9 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 				values["{mode}"] = GameFix.ResolveGameModeValue(definition, server.GameMode);
 			}
 
-			if (!TryExpandTemplate(template, values, commandScript, forBatchFile, out arguments, out errorMessage))
+			if (!(nativeArguments
+				? TryExpandNativeTemplate(template, values, out arguments, out errorMessage)
+				: TryExpandTemplate(template, values, commandScript, forBatchFile, out arguments, out errorMessage)))
 				return false;
 			if (includeExtraArguments && !string.IsNullOrWhiteSpace(server.ExtraArgs))
 				arguments = AppendExtraArguments(arguments, server.ExtraArgs);
@@ -267,6 +279,24 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			if (!string.IsNullOrWhiteSpace(server.ExtraArgs))
 				arguments = $"{arguments} {LocalizationManager.Get("ServerStart.Arguments.CustomHidden")}".Trim();
 			return true;
+		}
+
+		private static bool TryExpandNativeTemplate(string template, IReadOnlyDictionary<string, string> values,
+			out string arguments, out string errorMessage)
+		{
+			arguments = errorMessage = string.Empty;
+			try
+			{
+				arguments = string.Join(" ", WindowsLaunchArguments.Parse(template).Select(argument =>
+					WindowsLaunchArguments.Quote(Regex.Replace(argument, @"\{[^{}]+\}", match =>
+						values.TryGetValue(match.Value, out string? value) ? value : match.Value))));
+				return true;
+			}
+			catch (ArgumentException exception)
+			{
+				errorMessage = exception.Message;
+				return false;
+			}
 		}
 
 		private static bool TryExpandTemplate(string template, IReadOnlyDictionary<string, string> values,
@@ -434,9 +464,10 @@ namespace Synix_Control_Panel.SynixApp.ServerHandler
 			{
 				startInfo = new ProcessStartInfo
 				{
-					FileName = executablePath,
-					Arguments = arguments ?? string.Empty
+					FileName = executablePath
 				};
+				foreach (string argument in WindowsLaunchArguments.Parse(arguments ?? string.Empty))
+					startInfo.ArgumentList.Add(argument);
 			}
 
 			startInfo.WorkingDirectory = workingDirectory;

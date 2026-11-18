@@ -95,7 +95,8 @@ public sealed class EmpyrionConfigurationTests : IDisposable
 			createNoWindow: true, redirectStandardInput: false);
 		Assert.Equal(Path.Combine(_root, "EmpyrionLauncher.exe"), startInfo.FileName);
 		Assert.Equal(_root, startInfo.WorkingDirectory);
-		Assert.Equal("-startDedi", startInfo.Arguments);
+		Assert.Empty(startInfo.Arguments);
+		Assert.Equal(["-startDedi"], startInfo.ArgumentList);
 		Assert.False(startInfo.UseShellExecute);
 	}
 
